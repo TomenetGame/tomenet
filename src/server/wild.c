@@ -348,7 +348,7 @@ void wild_spawn_towns(bool TOC_near_Bree) {
 
 		/* reserve sector 0,0 for special occasions, such as
 		   Highlander Tournament dungeon and PvP Arena tower - C. Blue */
-		if (!y && !x) retry = TRUE; /* ((sector00separation)) */
+		if (x == WPOS_SECTOR000_X && y == WPOS_SECTOR000_Y) retry = TRUE; /* ((sector000separation)) */
 
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
@@ -663,7 +663,7 @@ void wild_add_monster(struct worldpos *wpos) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
-	if (sector00separation && in_sector00(wpos)) return;
+	if (sector000separation && in_sector000(wpos)) return;
 
 	/* reset the monster sorting function */
 	set_mon_num_hook_wild(wpos);

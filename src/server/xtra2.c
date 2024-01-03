@@ -9453,11 +9453,11 @@ void player_death(int Ind) {
 	if (p_ptr->global_event_temp & PEVF_NOGHOST_00) hell = TRUE;
 	/* or instead teleport them to surface */
 	/* added wpos checks due to weirdness. -Molt */
-	if (p_ptr->wpos.wx != WPOS_SECTOR00_X && p_ptr->wpos.wy != WPOS_SECTOR00_Y && (p_ptr->global_event_temp & PEVF_SAFEDUN_00)) {
+	if (p_ptr->wpos.wx != WPOS_SECTOR000_X && p_ptr->wpos.wy != WPOS_SECTOR000_Y && (p_ptr->global_event_temp & PEVF_SAFEDUN_00)) {
 		s_printf("Somethin weird with %s. GET is %d\n", p_ptr->name, p_ptr->global_event_temp);
 		msg_broadcast(0, "Uh oh, somethin's not right here.");
 	}
-	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && p_ptr->csane >= 0 && in_sector00_dun(&p_ptr->wpos) && !p_ptr->suicided) {
+	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && p_ptr->csane >= 0 && in_sector000_dun(&p_ptr->wpos) && !p_ptr->suicided) {
 		s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		s_printf("%s (%d%s) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
@@ -9466,7 +9466,7 @@ void player_death(int Ind) {
 		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
-		if (!sector00downstairs) p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
+		if (!sector000downstairs) p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
 		p_ptr->recall_pos.wx = 0;
 		p_ptr->recall_pos.wy = 0;
 		p_ptr->recall_pos.wz = 0;
@@ -9491,7 +9491,7 @@ void player_death(int Ind) {
 		p_ptr->update |= (PU_BONUS);
 
 		/* Inform him about his situation */
-		if (!sector00downstairs) msg_print(Ind, "\377oYou were defeated too early and have to sit out the remaining time!");
+		if (!sector000downstairs) msg_print(Ind, "\377oYou were defeated too early and have to sit out the remaining time!");
 		else msg_print(Ind, "\377oYou were defeated too early, find the staircase and re-enter the dungeon!");
 
 		p_ptr->soft_deaths++;
@@ -14302,9 +14302,9 @@ void blood_bond(int Ind, object_type *o_ptr) {
 	p2_ptr = Players[Ind2];
 
 	/* not during pvp-only or something (Highlander Tournament) */
-	if (sector00separation &&
-	    ((p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y) ||
-	    (p2_ptr->wpos.wx == WPOS_SECTOR00_X && p2_ptr->wpos.wy == WPOS_SECTOR00_Y))) {
+	if (sector000separation &&
+	    ((p_ptr->wpos.wx == WPOS_SECTOR000_X && p_ptr->wpos.wy == WPOS_SECTOR000_Y) ||
+	    (p2_ptr->wpos.wx == WPOS_SECTOR000_X && p2_ptr->wpos.wy == WPOS_SECTOR000_Y))) {
 		msg_print(Ind, "You cannot blood bond right now.");
 		return;
 	}

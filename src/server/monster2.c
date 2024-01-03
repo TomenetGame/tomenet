@@ -2393,7 +2393,7 @@ void update_mon(int m_idx, bool dist) {
 
 			/* Telepathy can see all "nearby" monsters with "minds" */
 			if ((p_ptr->telepathy || (p_ptr->prace == RACE_DRACONIAN)) &&
-			    !(in_sector00(wpos) && (sector00flags2 & LF2_NO_ESP)) &&
+			    !(in_sector000(wpos) && (sector000flags2 & LF2_NO_ESP)) &&
 			    !(l_ptr && (l_ptr->flags2 & LF2_NO_ESP)) &&
 			    !(l_ptr && (l_ptr->flags2 & LF2_LIMIT_ESP) && d > 10)
 			    ) {
@@ -2467,7 +2467,7 @@ void update_mon(int m_idx, bool dist) {
 			if (ge_special_sector && in_arena(&p_ptr->wpos))
 				flag = TRUE;
 
-			if ((in_sector00(wpos) && (sector00flags2 & LF2_ESP)) ||
+			if ((in_sector000(wpos) && (sector000flags2 & LF2_ESP)) ||
 			    (l_ptr && (l_ptr->flags2 & LF2_ESP)))
 				flag = TRUE;
 		}

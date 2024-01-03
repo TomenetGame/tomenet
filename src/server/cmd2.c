@@ -849,8 +849,8 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	sound(Ind, "recall", NULL, SFX_TYPE_COMMAND, TRUE); //"teleport"
 #endif
 
-	/* Beacons in sector00 lead to Bree transportation; other beacons aren't used atm. */
-	if (!in_sector00_xy(&p_ptr->wpos)) return(FALSE);
+	/* Beacons in sector00 dungeon/tower/surface lead to Bree transportation; other beacons aren't used atm. */
+	if (!in_sector00(&p_ptr->wpos)) return(FALSE);
 
 	for (ev_idx = 0; ev_idx < MAX_GLOBAL_EVENTS; ev_idx++) {
 		ge = &global_event[ev_idx];

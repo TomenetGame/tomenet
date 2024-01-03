@@ -2220,12 +2220,12 @@ static void player_setup(int Ind, bool new) {
 #endif
 	}
 
-	/* hack for sector00separation (Highlander Tournament): Players mustn't enter sector 0,0 */
+	/* hack for sector000separation (Highlander Tournament): Players mustn't enter sector 0,0 */
 	/* note that this hack will also prevent players who got disconnected during Highlander Tourney
 	   to continue it, but that must be accepted. Otherwise players could exploit it and just join
 	   with a certain character during highlander tourneys and continue to level it up
 	   infinitely! :) So, who gets disconnected will be removed from the event! */
-	//if (sector00separation && ...) {
+	//if (sector000separation && ...) {
 #ifdef DM_MODULES
 	/* count validate participation in any active events, otherwise kick */
 	if (in_module(wpos)) {
@@ -2252,16 +2252,16 @@ static void player_setup(int Ind, bool new) {
 		}
 	}
 	/* Standard check for everyone - just skip it if he is inside an eligible adventure module (TODO: maybe also skip if he is in an eligible global event). */
-	if (!found_module && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
+	if (!found_module && wpos->wx == WPOS_SECTOR000_X && wpos->wy == WPOS_SECTOR000_Y) { //TODO: Check if an event is even running in sector00 atm, otherwise he may spawn here
 #else
-	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
+	if (wpos->wx == WPOS_SECTOR000_X && wpos->wy == WPOS_SECTOR000_Y) { //TODO: Check if an event is even running in sector00 atm, otherwise he may spawn here
 #endif
 		/* Teleport him out of the event area */
 #if 0
 		switch rand_int(3) {
-		case 0:	wpos->wx = WPOS_SECTOR00_ADJAC_X;
-		case 1:	wpos->wy = WPOS_SECTOR00_ADJAC_Y; break;
-		case 2: wpos->wx = WPOS_SECTOR00_ADJAC_X;
+		case 0:	wpos->wx = WPOS_SECTOR000_ADJAC_X;
+		case 1:	wpos->wy = WPOS_SECTOR000_ADJAC_Y; break;
+		case 2: wpos->wx = WPOS_SECTOR000_ADJAC_X;
 		}
 #else
 		wpos->wx = cfg.town_x;

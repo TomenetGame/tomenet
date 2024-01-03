@@ -876,13 +876,13 @@ int cron_1h_last_hour = -1; /* -1 to call immediately after server restart */
 
 /* for global events (xtra1.c, slash.c) */
 global_event_type global_event[MAX_GLOBAL_EVENTS];
-int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
+int sector000separation = 0; /* some events separate world surface sector 0,0,0 from the worldmap
 			 to use it in a special way - WoR won't work either */
-int sector00downstairs = 0; /* remember that sector 0,0 contains staircases downwards at the moment */
-int sector00music = 0, sector00musicalt = 0, sector00musicalt2 = 0; /* special event music */
-int sector00music_dun = 0, sector00musicalt_dun = 0, sector00musicalt2_dun = 0; /* special event music (dungeon) */
-int sector00wall = 0; /* outer wall tile around the sector to be displayed instead of FEAT_PERM_CLEAR */
-u32b sector00flags1 = 0x0, sector00flags2 = 0x0; /* floor flags */
+int sector000downstairs = 0; /* remember that sector 0,0 contains staircases downwards at the moment */
+int sector000music = 0, sector000musicalt = 0, sector000musicalt2 = 0; /* special event music */
+int sector000music_dun = 0, sector000musicalt_dun = 0, sector000musicalt2_dun = 0; /* special event music (dungeon) */
+int sector000wall = 0; /* outer wall tile around the sector to be displayed instead of FEAT_PERM_CLEAR */
+u32b sector000flags1 = 0x0, sector000flags2 = 0x0; /* floor flags */
 int ge_special_sector = 0; /* to make it known that a certain sector (or multiple sectors, given in
 			    defines.h as WPOS_ constants) are now in special use for global events. */
 u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS]; /* Remember account IDs of players who are supposed to receive */

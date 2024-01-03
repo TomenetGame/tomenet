@@ -2119,7 +2119,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* unable to summon on this floor? */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON))
-	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_SUMMON))) {
+	    || (in_sector000(wpos) && (sector000flags2 & LF2_NO_SUMMON))) {
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
@@ -2129,7 +2129,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* unable to teleport on this floor? */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
-	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE))
+	    || (in_sector000(wpos) && (sector000flags2 & LF2_NO_TELE))
 	    /* don't start futile attempts to tele on non-tele grids? */
 	    || (!stupid && (!(f2 & RF2_EMPTY_MIND) || (f2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
 		/* Remove teleport spells */
@@ -4411,7 +4411,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* unable to summon on this floor? */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON))
-	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_SUMMON))) {
+	    || (in_sector000(wpos) && (sector000flags2 & LF2_NO_SUMMON))) {
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
@@ -4421,7 +4421,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* unable to teleport on this floor? */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
-	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE))
+	    || (in_sector000(wpos) && (sector000flags2 & LF2_NO_TELE))
 	    /* don't start futile attempts to tele on non-tele grids? */
 	    || (!stupid && (!(f2 & RF2_EMPTY_MIND) || (f2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
 		/* Remove teleport spells */

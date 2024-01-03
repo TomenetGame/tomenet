@@ -6890,7 +6890,7 @@
 #define LF2_PITNEST_HI		0x00000100L	/* high threat pit/nest on level */
 #define LF2_ITEM_OOD		0x00000200L	/* ood item on level */
 #define LF2_ARTIFACT		0x00000400L	/* artifact on level */
-#define LF2_INDOORS		0x00000800L	/* world surface (sector00 usually) is treated like a dungeon floor, causing no sun burn to vampires */
+#define LF2_INDOORS		0x00000800L	/* world surface (sector000 usually) is treated like a dungeon floor, causing no sun burn to vampires */
 
 #define LF2_NO_RUN		0x00001000L	/* Cannot run on this level, walk only */
 #define LF2_NO_TELE		0x00002000L	/* Cannot use phase/tele on this level */
@@ -9119,35 +9119,35 @@ extern int PlayerUID;
 
 
 /* Hard-coded coordinates keeping track of special worldmap locations */
-/* Location of our protected and used-for-special-cases sector 'sector00'. Make sure that events that use this sector don't collide! */
-#define WPOS_SECTOR00_X		0
-#define WPOS_SECTOR00_Y		0
-#define WPOS_SECTOR00_Z		0
+/* Location of our protected and used-for-special-cases sector 'sector000'. Make sure that events that use this sector don't collide! */
+#define WPOS_SECTOR000_X		0
+#define WPOS_SECTOR000_Y		0
+#define WPOS_SECTOR000_Z		0
 /* Location of the special-events sector's dungeon (must be either -1 or 1, for dungeon or tower): */
-#define WPOS_SECTOR00_Z_DUN	-1
-/* If we want to get out of sector00, what coords can be used? (Used to kick/keep players out who don't participate): */
-#define WPOS_SECTOR00_ADJAC_X	1
-#define WPOS_SECTOR00_ADJAC_Y	1
+#define WPOS_SECTOR000_Z_DUN	-1
+/* If we want to get out of sector000, what coords can be used? (Used to kick/keep players out who don't participate): */
+#define WPOS_SECTOR000_ADJAC_X	1
+#define WPOS_SECTOR000_ADJAC_Y	1
 
 /* Deathmatch location of global event 'Highlander Tournament': */
-#define WPOS_HIGHLANDER_X	WPOS_SECTOR00_X
-#define WPOS_HIGHLANDER_Y	WPOS_SECTOR00_Y
-#define WPOS_HIGHLANDER_Z	WPOS_SECTOR00_Z
-#define WPOS_HIGHLANDER_DUN_Z	WPOS_SECTOR00_Z_DUN	/* ...and preparation dungeon location. */
+#define WPOS_HIGHLANDER_X	WPOS_SECTOR000_X
+#define WPOS_HIGHLANDER_Y	WPOS_SECTOR000_Y
+#define WPOS_HIGHLANDER_Z	WPOS_SECTOR000_Z
+#define WPOS_HIGHLANDER_DUN_Z	WPOS_SECTOR000_Z_DUN	/* ...and preparation dungeon location. */
 
 /* important: note connection of WPOS_ARENA_ and 'ge_special_sector' */
 #define WPOS_ARENA_X		(cfg.town_x)		/* location of global event 'Arena Monster Challenge' */
 #define WPOS_ARENA_Y		(cfg.town_y)
 #define WPOS_ARENA_Z		2			/* Use top-most floor of the 'Training Tower' dungeon located at that x,y sector (Bree) */
 
-#define WPOS_PVPARENA_X		WPOS_SECTOR00_X		/* location of pvp arena for MODE_PVP players */
-#define WPOS_PVPARENA_Y		WPOS_SECTOR00_Y
-#define WPOS_PVPARENA_Z		(-WPOS_SECTOR00_Z_DUN)	/* use opposite side of the sector00-dungeon, as to not interfere with any events! Because the PvP arena must be available 24/7! */
+#define WPOS_PVPARENA_X		WPOS_SECTOR000_X		/* location of pvp arena for MODE_PVP players */
+#define WPOS_PVPARENA_Y		WPOS_SECTOR000_Y
+#define WPOS_PVPARENA_Z		(-WPOS_SECTOR000_Z_DUN)	/* use opposite side of the sector00-dungeon, as to not interfere with any events! Because the PvP arena must be available 24/7! */
 /* Note: PvP-Arena MUST be at 1st floor of its dungeon/tower, because DM_MODULES count on that and sit on it. (see below) ^^ */
 
 /* Location of the Modules dungeon, also located in the event sector 0,0,
    but on the opposite side of the event dungeon and above the PvP-Arena (counting on pvp-arena always being on 1st floor!), so they don't collide: */
-#define WPOS_SECTOR00_Z_MODULE	(2 * (-WPOS_SECTOR00_Z_DUN))
+#define WPOS_SECTOR000_Z_MODULE	(2 * (-WPOS_SECTOR000_Z_DUN))
 
 #ifdef ARCADE_SERVER
  #define WPOS_ARCADE_X		(cfg.town_x)
@@ -9346,18 +9346,18 @@ extern int PlayerUID;
 #define on_irondeepdive(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && !(wpos)->wz)
 
-/* in sector00, and it is active (separated)? */
+/* in sector000, and it is active (separated)? */
 #define in_sector00(wpos) \
-	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz == WPOS_SECTOR00_Z)
-#define in_sector00_dun(wpos) \
-	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * WPOS_SECTOR00_Z_DUN > 0)
+	(sector000separation && (wpos)->wx == WPOS_SECTOR000_X && (wpos)->wy == WPOS_SECTOR000_Y)
+#define in_sector000(wpos) \
+	(sector000separation && (wpos)->wx == WPOS_SECTOR000_X && (wpos)->wy == WPOS_SECTOR000_Y && (wpos)->wz == WPOS_SECTOR000_Z)
+#define in_sector000_dun(wpos) \
+	(sector000separation && (wpos)->wx == WPOS_SECTOR000_X && (wpos)->wy == WPOS_SECTOR000_Y && (wpos)->wz * WPOS_SECTOR000_Z_DUN > 0)
 #ifdef DM_MODULES
- #define in_sector00_xy(wpos) \
-	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y)
  #define in_module(wpos) \
-	((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && \
-	(wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE * SGN(WPOS_SECTOR00_Z_MODULE) && /* pseudo-EQV, lul */ \
-	(wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) <= WPOS_SECTOR00_Z_MODULE * SGN(WPOS_SECTOR00_Z_MODULE) + DM_MODULES_DUNGEON_SIZE - 1)
+	((wpos)->wx == WPOS_SECTOR000_X && (wpos)->wy == WPOS_SECTOR000_Y && \
+	(wpos)->wz * SGN(WPOS_SECTOR000_Z_MODULE) >= WPOS_SECTOR000_Z_MODULE * SGN(WPOS_SECTOR000_Z_MODULE) && /* pseudo-EQV, lul */ \
+	(wpos)->wz * SGN(WPOS_SECTOR000_Z_MODULE) <= WPOS_SECTOR000_Z_MODULE * SGN(WPOS_SECTOR000_Z_MODULE) + DM_MODULES_DUNGEON_SIZE - 1)
 #endif
 
 /* in the arena monster challenge? (which should be in TT) */

@@ -623,7 +623,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	if (randint(100) < 20) { /* 30 */
 		/* XXX Empty fountain doesn't need 'type', does it? */
 #ifdef DM_MODULES
-		if (in_module(wpos)) { // Just edit modules w/ fountains in sector00 tower
+		if (in_module(wpos)) { // Just edit modules w/ fountains in sector000 tower
 			// Hack - Retain FEAT_FOUNTAIN so it persists thru module_save() - Kurzel
 			cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
 			// Make it drinkable...
@@ -9353,7 +9353,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			}
 
 			/* Hack -- add *more* downstairs for Highlander Tournament event */
-			if (sector00separation && in_highlander_dun(wpos) && dun_lev > COMFORT_PASSAGE_DEPTH) {
+			if (sector000separation && in_highlander_dun(wpos) && dun_lev > COMFORT_PASSAGE_DEPTH) {
 				/* Place 3 or 4 down stairs near some walls */
 				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2, NULL);
 			}
@@ -9883,9 +9883,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if (in_valinor(wpos)
 	    /* No dungeon shops on final floor of a dungeon */
 	    || d_ptr->maxdepth == ABS(wpos->wz)
-	    /* No dungeon shops in sector00 dungeons */
-	    || in_sector00_dun(wpos)
-	    /* No dungeon shops in highlander dungeon (usually same as sector00 dungeon) */
+	    /* No dungeon shops in sector000 dungeons */
+	    || in_sector000_dun(wpos)
+	    /* No dungeon shops in highlander dungeon (usually same as sector000 dungeon) */
 	    || in_highlander_dun(wpos)
 	    /* No dungeon shops in AMC */
 	    || in_arena(wpos)

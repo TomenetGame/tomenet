@@ -13855,9 +13855,10 @@ void init_treasure_classes(void) {
 int check_for_wand_of_wonder(int sval, struct worldpos *wpos) {
 	if (sval != SV_WAND_WONDER) return(sval); /* identity */
 
-	/* Restrict: Leave out some especially powerful spells for pvp balance reasons. */
-	/* Highlander Tournament or PvP-arena */
-	if (wpos && !wpos->wx && !wpos->wy && ((!wpos->wz && sector00separation) || wpos->wz > 0)) {
+	/* Restrict: Leave out some especially powerful spells for pvp balance reasons, in.. */
+	if (wpos && wpos->wx == WPOS_SECTOR000_X && wpos->wy == WPOS_SECTOR000_Y && (
+	    (wpos->wz == WPOS_SECTOR000_Z && sector000separation) || /* Highlander Tournament, final surface battle */
+	    wpos->wz * WPOS_PVPARENA_Z > 0)) { /* PvP-arena */
 		/* no ball spell effects for cheap mass zapping in PvP */
 		sval = rand_int(SV_WAND_WONDER - 4 - 2 - 1);
 		if (sval >= SV_WAND_DRAIN_LIFE) sval += 2; /* skip drain life and polymorph */

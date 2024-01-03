@@ -2626,9 +2626,9 @@ extern unsigned char runtime_server;
 
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
-extern int sector00separation, sector00downstairs, sector00wall, ge_special_sector; /* see variable.c */
-extern int sector00music, sector00musicalt, sector00musicalt2, sector00music_dun, sector00musicalt_dun, sector00musicalt2_dun;
-extern u32b sector00flags1, sector00flags2;
+extern int sector000separation, sector000downstairs, sector000wall, ge_special_sector; /* see variable.c */
+extern int sector000music, sector000musicalt, sector000musicalt2, sector000music_dun, sector000musicalt_dun, sector000musicalt2_dun;
+extern u32b sector000flags1, sector000flags2;
 extern u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS];
 extern int ge_contender_buffer_deed[MAX_CONTENDER_BUFFERS];
 extern u32b achievement_buffer_ID[MAX_ACHIEVEMENT_BUFFERS];

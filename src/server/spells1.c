@@ -592,7 +592,7 @@ bool teleport_away(int m_idx, int dis) {
 
 	/* anti-teleport floors apply to monsters too? */
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
-	if (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector000(wpos) && (sector000flags2 & LF2_NO_TELE)) return(FALSE);
 
 	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
 	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
@@ -721,7 +721,7 @@ void teleport_to_player(int Ind, int m_idx) {
 
 	/* anti-teleport floors apply to monsters too? */
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
-	if (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE)) return;
+	if (in_sector000(wpos) && (sector000flags2 & LF2_NO_TELE)) return;
 
 	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
 	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
@@ -849,7 +849,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) return(FALSE);
 
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death && !left_shop) {
@@ -1182,7 +1182,7 @@ void teleport_player_to(int Ind, int ny, int nx, bool forced) {
 		if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) fail = TRUE;
 
 		if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) fail = TRUE;
-		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) fail = TRUE;
+		if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) fail = TRUE;
 		//if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 		/* Space/Time Anchor */
@@ -1381,7 +1381,7 @@ void teleport_player_level(int Ind, bool force) {
 
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && !force) return;
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE) && !force) return;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE) && !force) return;
+	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE) && !force) return;
 
 	/* Space/Time Anchor */
 	if ((p_ptr->anti_tele || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) && !force) return;
@@ -1636,7 +1636,7 @@ bool retreat_player(int Ind, int dis) {
 
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) return(FALSE);
 
 	/* Check if we have an adjacent target, otherwise there is nothing to retreat from */
 	if (!(target_okay(Ind) && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) <= 1)) return(FALSE);
@@ -9702,7 +9702,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 	else if (who == PROJECTOR_TERRAIN) {
 		if ((l_ptr && (l_ptr->flags2 & LF2_FAIR_TERRAIN_DAM)) ||
-		    (in_sector00(wpos) && (sector00flags2 & LF2_FAIR_TERRAIN_DAM)))
+		    (in_sector000(wpos) && (sector000flags2 & LF2_FAIR_TERRAIN_DAM)))
 			dam = (p_ptr->mhp * (8 + rand_int(5))) / 15 + 1;
 			/* (4hp is lvl 1 char's min); maybe TODO: give high level players a slight advantage (cause higher loss if they die) */
 

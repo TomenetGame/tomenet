@@ -4318,7 +4318,7 @@ void do_quit(int ind, bool tellclient) {
 	if (connp->id == -1 ||
 	    isdungeontown(&p_ptr->wpos) ||
 	    on_irondeepdive(&p_ptr->wpos) || /* exception: since monsters don't spawn in IDDC entrance sector, allow fast-quit here too */
-	    (istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !(sector00separation && in_sector00(&p_ptr->wpos)))) {
+	    (istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !(sector000separation && in_sector000(&p_ptr->wpos)))) {
 		Destroy_connection(ind, "client quit");
 	}
 	// Otherwise wait for the timeout
@@ -6713,9 +6713,9 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		}
 	}
 #endif
-	else if (sector00separation) {
+	else if (sector000separation) {
 		/* Hack for Dungeon Keeper  */
-		if (in_sector00(wpos) && (sector00flags2 & LF2_INDOORS)) {
+		if (in_sector000(wpos) && (sector000flags2 & LF2_INDOORS)) {
 			ville = TRUE;
 			desc = "Lost Vault";
 			loc_pre = "a";
@@ -10150,7 +10150,7 @@ static int Receive_run(int ind) {
 
 		if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(ind);
 		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return Receive_walk(ind);
-		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN)) return Receive_walk(ind);
+		if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_RUN)) return Receive_walk(ind);
 
 		/* check for status impairments (lack of light is checked in run_test()) */
 		if (p_ptr->confused || p_ptr->blind)

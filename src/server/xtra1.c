@@ -3340,7 +3340,7 @@ void calc_boni(int Ind) {
 
 	/* Not a limit, but good place maybe */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_RES_HEAL)) ||
-	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RES_HEAL)))
+	    (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_RES_HEAL)))
 		p_ptr->no_heal = TRUE;
 
 
@@ -4664,7 +4664,7 @@ void calc_boni(int Ind) {
 	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
 	    && !p_ptr->ghost && !(p_ptr->global_event_temp & PEVF_INDOORS_00)
 	    && !(l_ptr && (l_ptr->flags2 & LF2_INDOORS))
-	    && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS))) {
+	    && !(in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS))) {
 		/* damage from sunlight */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
@@ -6692,12 +6692,12 @@ void calc_boni(int Ind) {
 #endif
 
 	if (((l_ptr && (l_ptr->flags2 & LF2_NO_SPEED)) ||
-	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_SPEED)))
+	    (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_SPEED)))
 	    && p_ptr->pspeed > 110 && !p_ptr->admin_dm)
 		p_ptr->pspeed = 110;
 
 	if (((l_ptr && (l_ptr->flags2 & LF2_NO_RES_HEAL)) ||
-	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RES_HEAL)))
+	    (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_RES_HEAL)))
 	    && !p_ptr->admin_dm) {
 		p_ptr->resist_acid = FALSE;
 		p_ptr->resist_elec = FALSE;
@@ -7859,7 +7859,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->cleanup = 0; /* no cleaning up needed so far (for when the event ends) */
 	ge->noghost = FALSE;
 	for (i = 0; i < 128; i++) {
-		ge->beacon_wpos[i] = (worldpos) { WPOS_SECTOR00_X, WPOS_SECTOR00_Y, 32767 }; /* 32767 = unused; assume default values, events have to set them to the correct ones */
+		ge->beacon_wpos[i] = (worldpos) { WPOS_SECTOR000_X, WPOS_SECTOR000_Y, 32767 }; /* 32767 = unused; assume default values, events have to set them to the correct ones */
 		ge->beacon_parm[i] = 0;
 	}
 
@@ -8500,9 +8500,9 @@ static void process_global_event(int ge_id) {
 	elapsed_turns = turn - ge->start_turn - ge->paused_turns;
 	elapsed = elapsed_turns / cfg.fps;
 
-	wpos.wx = WPOS_SECTOR00_X; /* sector 0,0 by default, for 'sector00separation' */
-	wpos.wy = WPOS_SECTOR00_Y;
-	wpos.wz = WPOS_SECTOR00_Z;
+	wpos.wx = WPOS_SECTOR000_X; /* sector 0,0 by default, for 'sector000separation' */
+	wpos.wy = WPOS_SECTOR000_Y;
+	wpos.wz = WPOS_SECTOR000_Z;
 
 	/* catch absurdities (happens on turn overflow) */
 	if (elapsed_turns > 100000 * cfg.fps) {
@@ -8718,8 +8718,8 @@ static void process_global_event(int ge_id) {
 		switch (ge->state[0]) {
 		case 0: /* prepare level, gather everyone, start exp'ing */
 			ge->cleanup = 1;
-			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
-			sector00flags1 = sector00flags2 = 0x0;
+			sector000separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			sector000flags1 = sector000flags2 = 0x0;
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
@@ -8783,15 +8783,15 @@ static void process_global_event(int ge_id) {
 					ge->extra[6] = x;
 					ge->extra[7] = y;
 
-					sector00downstairs++;
+					sector000downstairs++;
 				}
 			} else {
 				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
 			}
 
-			sector00music_dun = 62;
-			sector00musicalt_dun = 0;
-			sector00musicalt2_dun = 0;
+			sector000music_dun = 62;
+			sector000musicalt_dun = 0;
+			sector000musicalt2_dun = 0;
 
 			/* teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
@@ -8844,7 +8844,7 @@ static void process_global_event(int ge_id) {
 			n = 0;
 			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X && Players[i]->wpos.wy == WPOS_SECTOR00_Y) {
+				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR000_X && Players[i]->wpos.wy == WPOS_SECTOR000_Y) {
 					n++;
 					j = i;
 					/* count players who have already been kicked out of the dungeon by pseudo-dying */
@@ -8861,20 +8861,20 @@ static void process_global_event(int ge_id) {
 										and there's no staircase to re-enter the dungeon.. */
 			else if (elapsed - ge->announcement_time >= 600 - 45) { /* give a warning, peace ends soon */
 				for (i = 1; i <= NumPlayers; i++)
-					if (Players[i]->wpos.wx == WPOS_SECTOR00_X && Players[i]->wpos.wy == WPOS_SECTOR00_Y)
+					if (Players[i]->wpos.wx == WPOS_SECTOR000_X && Players[i]->wpos.wy == WPOS_SECTOR000_Y)
 						msg_print(i, "\377f[The slaughter will begin soon!]");
 				ge->state[0] = 2;
 			}
 			break;
 		case 2: /* final exp phase after the warning has been issued - end prematurely if needed (see above) */
-			sector00music_dun = 63;
-			sector00musicalt_dun = 0;
-			sector00musicalt2_dun = 0;
+			sector000music_dun = 63;
+			sector000musicalt_dun = 0;
+			sector000musicalt2_dun = 0;
 
 			n = 0;
 			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X && Players[i]->wpos.wy == WPOS_SECTOR00_Y) {
+				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR000_X && Players[i]->wpos.wy == WPOS_SECTOR000_Y) {
 					n++;
 					j = i;
 					if (!Players[i]->wpos.wz) k++;
@@ -8895,27 +8895,27 @@ static void process_global_event(int ge_id) {
 			/* remember time stamp when we entered deathmatch phase (for spawning a baddy) */
 			ge->state[2] = turn - ge->start_turn; /* this keeps it /gefforward friendly */
 			ge->state[3] = 0;
-			sector00music = 47; /* death match theme */
-			sector00musicalt = 0;
-			sector00musicalt2 = 0;
+			sector000music = 47; /* death match theme */
+			sector000musicalt = 0;
+			sector000musicalt2 = 0;
 
 			/* got a staircase to remove? */
 			if (ge->extra[5]) {
 				zcave = getcave(&wpos);
 				zcave[ge->extra[7]][ge->extra[6]].feat = FEAT_DIRT;
 				everyone_lite_spot(&wpos, ge->extra[7], ge->extra[6]);
-				sector00downstairs--;
+				sector000downstairs--;
 				ge->extra[5] = 0;
 			}
 
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
-				if (p_ptr->admin_dm || p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y) continue;
+				if (p_ptr->admin_dm || p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y) continue;
 
 				if (p_ptr->party) {
 					for (j = 1; j <= NumPlayers; j++) {
 						if (j == i) continue;
-						if (Players[j]->wpos.wx != WPOS_SECTOR00_X || Players[j]->wpos.wy != WPOS_SECTOR00_Y) continue;
+						if (Players[j]->wpos.wx != WPOS_SECTOR000_X || Players[j]->wpos.wy != WPOS_SECTOR000_Y) continue;
 						/* leave party */
 						if (Players[j]->party == p_ptr->party) party_leave(i, FALSE);
 					}
@@ -8942,8 +8942,8 @@ static void process_global_event(int ge_id) {
 				p_ptr->global_event_temp |= PEVF_AUTOPVP_00;
 
 				if (Players[i]->wpos.wz) {
-					p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
-					p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
+					p_ptr->recall_pos.wx = WPOS_SECTOR000_X;
+					p_ptr->recall_pos.wy = WPOS_SECTOR000_Y;
 					p_ptr->recall_pos.wz = 0;
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 					recall_player(i, "");
@@ -9027,7 +9027,7 @@ static void process_global_event(int ge_id) {
 			}
 
 			p_ptr = Players[j];
-			if (!in_sector00(&p_ptr->wpos)) { /* not ok.. */
+			if (!in_sector000(&p_ptr->wpos)) { /* not ok.. */
 				ge->state[0] = 255; /* no winner, d'oh */
 				break;
 			}
@@ -9078,7 +9078,7 @@ static void process_global_event(int ge_id) {
 
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
-				if (in_sector00(&p_ptr->wpos)) {
+				if (in_sector000(&p_ptr->wpos)) {
 					for (j = INVEN_TOTAL; j >= 0; j--) /* Erase the highlander amulets */
 						if (p_ptr->inventory[j].tval == TV_AMULET &&
 						    ((p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) ||
@@ -9099,15 +9099,15 @@ static void process_global_event(int ge_id) {
 				}
 			}
 
-			sector00flags1 = sector00flags2 = 0x0;
-			sector00separation--;
+			sector000flags1 = sector000flags2 = 0x0;
+			sector000separation--;
 
 			/* still got a staircase to remove? */
 			if (ge->extra[5]) {
 				zcave = getcave(&wpos);
 				zcave[ge->extra[7]][ge->extra[6]].feat = FEAT_DIRT;
 				everyone_lite_spot(&wpos, ge->extra[7], ge->extra[6]);
-				sector00downstairs--;
+				sector000downstairs--;
 				ge->extra[5] = 0;
 			}
 
@@ -9243,13 +9243,13 @@ static void process_global_event(int ge_id) {
 
 			ge->state[1] = 0;
 			ge->cleanup = 1;
-			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
-			sector00music = 64;
-			sector00musicalt = 46; /* terrifying (notele) music */
-			sector00musicalt2 = 46;
-			sector00flags1 = LF1_NO_MAGIC_MAP | LF1_NO_MAGIC;
-			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES_HEAL | LF2_FAIR_TERRAIN_DAM | LF2_INDOORS;
-			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
+			sector000separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			sector000music = 64;
+			sector000musicalt = 46; /* terrifying (notele) music */
+			sector000musicalt2 = 46;
+			sector000flags1 = LF1_NO_MAGIC_MAP | LF1_NO_MAGIC;
+			sector000flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES_HEAL | LF2_FAIR_TERRAIN_DAM | LF2_INDOORS;
+			sector000wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
@@ -9474,13 +9474,13 @@ static void process_global_event(int ge_id) {
 					if (Players[i]->id != ge->participant[j]) continue;
 					p_ptr = Players[i];
 
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y
-					    || p_ptr->wpos.wz != WPOS_SECTOR00_Z) {
-						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
-						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
-						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
+					if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y
+					    || p_ptr->wpos.wz != WPOS_SECTOR000_Z) {
+						p_ptr->recall_pos.wx = WPOS_SECTOR000_X;
+						p_ptr->recall_pos.wy = WPOS_SECTOR000_Y;
+						p_ptr->recall_pos.wz = WPOS_SECTOR000_Z;
 						p_ptr->global_event_temp = 0x0;
-						if (!WPOS_SECTOR00_Z) p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						if (!WPOS_SECTOR000_Z) p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						else p_ptr->new_level_method = LEVEL_RAND;
 						/* don't spawn them too close to a beacon */
 						p_ptr->avoid_loc = k;
@@ -9511,7 +9511,7 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
+				if (!Players[i]->admin_dm && in_sector000(&Players[i]->wpos))
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
@@ -9522,11 +9522,11 @@ static void process_global_event(int ge_id) {
 			if (elapsed - ge->announcement_time < 300) break;//start after 300s
 
 #ifdef USE_SOUND_2010
-			sector00music = 65;
-			sector00musicalt = 47; /* death match music */
-			sector00musicalt2 = 47;
+			sector000music = 65;
+			sector000musicalt = 47; /* death match music */
+			sector000musicalt2 = 47;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
+				if (!Players[i]->admin_dm && in_sector000(&Players[i]->wpos))
 					handle_music(i);
 #endif
 
@@ -9536,7 +9536,7 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
+				if (!Players[i]->admin_dm && in_sector000(&Players[i]->wpos))
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
@@ -9589,8 +9589,8 @@ static void process_global_event(int ge_id) {
 				break;
 			}
 
-			sector00flags1 = sector00flags2 = 0x0;
-			sector00separation--;
+			sector000flags1 = sector000flags2 = 0x0;
+			sector000separation--;
 
 			/* cleanly teleport all lingering admins out instead of displacing them into (non-generated) pvp-dungeon ^^ */
 			for (i = 1; i <= NumPlayers; i++)
@@ -9615,7 +9615,7 @@ static void process_global_event(int ge_id) {
 	case GE_ADVENTURE:
 		switch (ge->state[0]) {
 		case 0: /* require active participation to start <- what does this mean? */
-			sector00separation++; // in_sector00..() check needs this to function
+			sector000separation++; // in_sector000..() check needs this to function
 
 			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
 
@@ -9659,7 +9659,7 @@ static void process_global_event(int ge_id) {
 			if (!n) ge->state[0] = 255;
 			break;
 		case 255: /* clean-up or restart */
-			sector00separation--;
+			sector000separation--;
 
 			/* wipe participation */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {

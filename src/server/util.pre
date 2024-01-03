@@ -315,7 +315,7 @@ artifact_type a_info[MAX_A_IDX];
 
 /* Stuff for global events */
 /* extern global_event_type global_event[MAX_GLOBAL_EVENTS];   see types.h - C. Blue */
-extern int sector00separation;
+extern int sector000separation;
 extern int ge_special_sector;
 extern u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS];
 extern int ge_contender_buffer_deed[MAX_ACHIEVEMENT_BUFFERS];

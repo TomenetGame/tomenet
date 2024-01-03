@@ -7336,9 +7336,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 		/* we have gone off the map */
 		if (!in_bounds(y, x)) {
-			/* Hack: Nobody leaves (0, 0) while sector00separation is on - mikaelh */
-			if (sector00separation && wpos->wx == WPOS_SECTOR00_X &&
-			    wpos->wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
+			/* Hack: Nobody leaves (0, 0) while sector000separation is on - mikaelh */
+			if (sector000separation && wpos->wx == WPOS_SECTOR000_X &&
+			    wpos->wy == WPOS_SECTOR000_Y && !is_admin(p_ptr)) {
 				return;
 			}
 
@@ -7374,9 +7374,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				return;
 			}
 
-			/* Hack: Nobody enters (0, 0) while sector00separation is on - mikaelh */
-			if (sector00separation && nwpos.wx == WPOS_SECTOR00_X &&
-			    nwpos.wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
+			/* Hack: Nobody enters (0, 0) while sector000separation is on - mikaelh */
+			if (sector000separation && nwpos.wx == WPOS_SECTOR000_X &&
+			    nwpos.wy == WPOS_SECTOR000_Y && !is_admin(p_ptr)) {
 				p_ptr->px = oldx;
 				p_ptr->py = oldy;
 				return;

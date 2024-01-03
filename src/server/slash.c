@@ -2431,7 +2431,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (in_sector00(&p_ptr->wpos)) lflags2 = sector00flags2;
+			if (in_sector000(&p_ptr->wpos)) lflags2 = sector000flags2;
 			else if (p_ptr->wpos.wz) {
 				l_ptr = getfloor(&p_ptr->wpos);
 				if (l_ptr) lflags2 = l_ptr->flags2;
@@ -2462,7 +2462,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (in_sector00(&p_ptr->wpos)) lflags2 = sector00flags2;
+			if (in_sector000(&p_ptr->wpos)) lflags2 = sector000flags2;
 			else if (p_ptr->wpos.wz) {
 				l_ptr = getfloor(&p_ptr->wpos);
 				if (l_ptr) lflags2 = l_ptr->flags2;

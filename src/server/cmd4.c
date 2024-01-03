@@ -1061,7 +1061,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 				char col = '\0';
 
 				if (admin && attr != 'G' && q_ptr->wpos.wz && !isdungeontown(&q_ptr->wpos) &&
-				    (q_ptr->wpos.wz || (in_sector00(&q_ptr->wpos) && sector00separation))) {
+				    (q_ptr->wpos.wz || (in_sector000(&q_ptr->wpos) && sector000separation))) {
 					int lv = getlevel(&q_ptr->wpos);
 					struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
 
@@ -2208,7 +2208,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		for (x = 0; x < MAX_WILD_X; x++) {
 			if (!admin && !(p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] & (1U << ((x + y * MAX_WILD_X) % 8)))) continue;
-			if (!x && !y && !admin) continue; /* Skip sector00 event stuff */
+			if (x == WPOS_SECTOR000_X && y == WPOS_SECTOR000_Y && !admin) continue; /* Skip sector00 event stuff */
 
 			d_ptr = wild_info[y][x].tower;
 			if (d_ptr &&

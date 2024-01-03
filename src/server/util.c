@@ -1794,15 +1794,15 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 48, 0, 0); //Monster Arena Challenge
 		return;
-	} else if (in_sector00(&p_ptr->wpos)) {
+	} else if (in_sector000(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, sector00music, sector00musicalt, sector00musicalt2);
+		Send_music(Ind, sector000music, sector000musicalt, sector000musicalt2);
 		return;
-	} else if (in_sector00_dun(&p_ptr->wpos)) {
+	} else if (in_sector000_dun(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, sector00music_dun, sector00musicalt_dun, sector00musicalt2_dun);
+		Send_music(Ind, sector000music_dun, sector000musicalt_dun, sector000musicalt2_dun);
 		return;
 	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 		if (p_ptr->wpos.wz == 1 || p_ptr->wpos.wz == -1) Send_music(Ind, 98, 55, 55); //party/halloween
@@ -2247,7 +2247,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 
 	/* don't play outdoor (or any other) ambient sfx if we're in a special pseudo-indoors sector */
 	if ((l_ptr && (l_ptr->flags2 & LF2_INDOORS)) ||
-	    (in_sector00(wpos) && (sector00flags2 & LF2_INDOORS))) {
+	    (in_sector000(wpos) && (sector000flags2 & LF2_INDOORS))) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE);
 		return;
 	}
@@ -2398,7 +2398,7 @@ void process_ambient_sfx(void) {
 		if (p_ptr->wpos.wz) continue;
 		/* for Dungeon Keeper event, considered indoors */
 		//if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) continue;
-		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) continue;
+		if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS)) continue;
 
 		w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		if (w_ptr->ambient_sfx_counteddown) continue;

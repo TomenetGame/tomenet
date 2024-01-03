@@ -1841,7 +1841,7 @@ bool player_day(int Ind) {
 		ret = TRUE;
 	}
 	if (p_ptr->wpos.wz) return(ret);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return(FALSE);
+	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
@@ -1899,7 +1899,7 @@ bool player_night(int Ind) {
 		ret = TRUE;
 	}
 	if (p_ptr->wpos.wz) return(ret);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return(FALSE);
+	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
@@ -1982,8 +1982,8 @@ void world_surface_day(struct worldpos *wpos) {
 
 	if (!zcave) return; /* paranoia */
 
-	if (sector00separation && 0 == WPOS_SECTOR00_Z &&
-	    wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
+	if (sector000separation && 0 == WPOS_SECTOR000_Z &&
+	    wpos->wx == WPOS_SECTOR000_X && wpos->wy == WPOS_SECTOR000_Y) return;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return;
 
 	/* Hack -- Scan the level */
@@ -2008,8 +2008,8 @@ void world_surface_night(struct worldpos *wpos) {
 
 	if (!zcave) return; /* paranoia */
 
-	if (sector00separation && 0 == WPOS_SECTOR00_Z &&
-	    wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
+	if (sector000separation && 0 == WPOS_SECTOR000_Z &&
+	    wpos->wx == WPOS_SECTOR000_X && wpos->wy == WPOS_SECTOR000_Y) return;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return;
 
 	/* Hack -- Scan the level */
@@ -4056,9 +4056,8 @@ static void process_player_begin(int Ind) {
 
 	/* Mega-Hack -- Random teleportation XXX XXX XXX */
 	if ((p_ptr->teleport) && (rand_int(100) < 1)
-	    /* not during highlander tournament */
-	    && (p_ptr->wpos.wx || p_ptr->wpos.wy || !sector00separation))
-	{
+	    /* not during highlander tournament (or other events, for now) */
+	    && !(in_sector000(&p_ptr->wpos) && sector000separation)) {
 		/* Teleport player */
 		teleport_player(Ind, 40, FALSE);
 	}
@@ -4442,10 +4441,10 @@ bool can_use_wordofrecall(player_type *p_ptr) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* special restriction for global events (Highlander Tournament) */
-	if (sector00separation && !is_admin(p_ptr) && (
-	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy)
+	if (sector000separation && !is_admin(p_ptr) && (
+	    (p_ptr->wpos.wx == WPOS_SECTOR000_X && p_ptr->wpos.wy == WPOS_SECTOR000_Y)
 #if 0 /* for now not needed, as we only call this function atm to check on start of a global event */
-	    || (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy))
+	    || (p_ptr->recall_pos.wx == WPOS_SECTOR000_X && p_ptr->recall_pos.wy == WPOS_SECTOR000_Y))
 	    && !(p_ptr->global_event_temp & PEVF_PASS_00)
 #else
 	    )
@@ -4472,7 +4471,7 @@ bool can_use_wordofrecall(player_type *p_ptr) {
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) return(FALSE);
 	//if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return(FALSE);
 
 	/* Space/Time Anchor */
@@ -4501,7 +4500,7 @@ static void do_recall(int Ind, bool bypass) {
 	disturb(Ind, 0, 0);
 
 	/* special restriction for global events (Highlander Tournament) */
-	if (sector00separation && !is_admin(p_ptr) && (
+	if (sector000separation && !is_admin(p_ptr) && (
 	    (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy) ||
 	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy))) {
 		if (!pass) {
@@ -6974,8 +6973,8 @@ bool stale_level(struct worldpos *wpos, int grace) {
 static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 	int j;
 
-	/* Highlander Tournament sector00 is static while players are in dungeon! */
-	if (in_sector00(wpos) && sector00separation) return;
+	/* Highlander Tournament sector000 is static while players are in dungeon! */
+	if (in_sector000(wpos) && sector000separation) return;
 
 	/* Arena Monster Challenge */
 	if (ge_special_sector && in_arena(wpos)) return;
@@ -7651,9 +7650,9 @@ static void process_various(void) {
 					if (!inarea(&p_ptr->wpos, &wpos)) continue;
 
  #if 1 /* Recall players out? */
-					p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
-					p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
-					p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
+					p_ptr->recall_pos.wx = WPOS_SECTOR000_X;
+					p_ptr->recall_pos.wy = WPOS_SECTOR000_Y;
+					p_ptr->recall_pos.wz = WPOS_SECTOR000_Z;
 					p_ptr->new_level_method = LEVEL_RAND;
 					recall_player(i, "");
   #ifdef USE_SOUND_2010
@@ -7870,7 +7869,7 @@ static void process_world(void) {
 			/* Ignore characters that are not in a dungeon/tower */
 			if (p_ptr->wpos.wz == 0) {
 				/* Don't interrupt events though */
-				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+				if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y || !sector000separation) continue;
 			}
 			break;
 		}
@@ -7907,7 +7906,7 @@ static void process_world(void) {
 			/* Ignore characters that are not in a dungeon/tower */
 			if (p_ptr->wpos.wz == 0) {
 				/* Don't interrupt events though */
-				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+				if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y || !sector000separation) continue;
 			}
 			break;
 		}
@@ -7968,7 +7967,7 @@ static void process_world(void) {
 			/* Ignore characters that are not in a dungeon/tower */
 			if (p_ptr->wpos.wz == 0) {
 				/* Don't interrupt events though */
-				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+				if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y || !sector000separation) continue;
 			}
 			break;
 		}
@@ -8001,7 +8000,7 @@ static void process_world(void) {
 			/* Ignore characters that are not in a dungeon/tower */
 			if (p_ptr->wpos.wz == 0) {
 				/* Don't interrupt events though */
-				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+				if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y || !sector000separation) continue;
 			}
 			break;
 		}
@@ -8077,7 +8076,7 @@ static void process_world(void) {
 			/* Ignore characters that are not in a dungeon/tower */
 			if (p_ptr->wpos.wz == 0) {
 				/* Don't interrupt events though */
-				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+				if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y || !sector000separation) continue;
 			}
 			break;
 		}
@@ -8156,7 +8155,7 @@ static void process_world(void) {
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+					if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y || !sector000separation) continue;
 				}
 				break;
 			}
@@ -9047,7 +9046,7 @@ void process_player_change_wpos(int Ind) {
 
 	/* Highlander Tournament hack: pseudo-teleport the player
 	   after he took a staircase inside the highlander dungeon */
-	if (sector00separation && in_highlander_dun(&p_ptr->wpos) && l_ptr)
+	if (sector000separation && in_highlander_dun(&p_ptr->wpos) && l_ptr)
 		starty = l_ptr->hgt + 1; /* for the code right below :) ("Hack -- handle smaller floors") */
 
 	/* Hack -- handle smaller floors */
@@ -9315,7 +9314,7 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	/* Did we enter/leave a no-run level? Temporarily disable/reenable warning_run */
-	if ((l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) || (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN))) {
+	if ((l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) || (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_RUN))) {
 		if (p_ptr->warning_run < 3) p_ptr->warning_run += 10;
 	} else if (p_ptr->warning_run >= 10) p_ptr->warning_run -= 10;
 
@@ -9389,7 +9388,7 @@ void process_player_change_wpos(int Ind) {
 	}
 #endif
 	if (!p_ptr->warning_worldmap && p_ptr->wpos.wz == 0 &&
-	    !in_sector00(&p_ptr->wpos) &&
+	    !in_sector000(&p_ptr->wpos) &&
 	    (ABS(p_ptr->wpos.wx - 32) >= 2 || ABS(p_ptr->wpos.wy - 32) >= 2)) {
 		msg_print(Ind, "\374\377yHINT: You can press '\377oM\377y' or '\377o~0\377y'to browse a worldmap.");
 		msg_print(Ind, "\374\377y      Towns, for example Bree, are denoted as yellow 'T'.");
@@ -9398,7 +9397,7 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	if (!p_ptr->warning_dungeon && p_ptr->wpos.wz == 0 &&
-	    !in_sector00(&p_ptr->wpos) &&
+	    !in_sector000(&p_ptr->wpos) &&
 	    (ABS(p_ptr->wpos.wx - 32) >= 3 || ABS(p_ptr->wpos.wy - 32) >= 3)) {
 		msg_print(Ind, "\374\377yHINT: Consider going to the Training Tower first, to gain some levels.");
 		msg_print(Ind, "\374\377y      After that, seek out a dungeon. The tower is located in Bree.");

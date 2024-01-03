@@ -2456,7 +2456,7 @@ bool outdoor_affects(struct worldpos *wpos) {
 	struct dun_level *l_ptr = getfloor(wpos);
 
 	/* Definitely excluded locations */
-	if ((in_sector00(wpos) && (sector00flags2 & LF2_INDOORS))
+	if ((in_sector000(wpos) && (sector000flags2 & LF2_INDOORS))
 	    || (l_ptr && (l_ptr->flags2 & LF2_INDOORS)))
 		return(FALSE);
 
@@ -2919,26 +2919,26 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	else if ((c_ptr->info & CAVE_LITE) || c_ptr->special) palanim = FALSE;
 
 #if 0
-	/* bad hack to display visible wall instead of clear wall in sector00 events */
-	if (sector00separation &&
+	/* bad hack to display visible wall instead of clear wall in sector000 events */
+	if (sector000separation &&
 	    *cp == ' ' && feat == FEAT_PERM_CLEAR
-	    && in_sector00(&p_ptr->wpos)
-	    && sector00wall) {
+	    && in_sector000(&p_ptr->wpos)
+	    && sector000wall) {
 		if (!p_ptr->font_map_solid_walls) {
-			*cp = p_ptr->f_char[sector00wall];
-			a = p_ptr->f_attr[sector00wall];
+			*cp = p_ptr->f_char[sector000wall];
+			a = p_ptr->f_attr[sector000wall];
 		} else { /* hack */
-			*cp = p_ptr->f_char_solid[sector00wall];
-			a = p_ptr->f_attr_solid[sector00wall];
+			*cp = p_ptr->f_char_solid[sector000wall];
+			a = p_ptr->f_attr_solid[sector000wall];
 		}
 	}
 #else
-	/* bad hack to display visible wall instead of clear wall in sector00 events */
-	if (sector00separation &&
+	/* bad hack to display visible wall instead of clear wall in sector000 events */
+	if (sector000separation &&
 	    feat == FEAT_PERM_CLEAR
-	    && in_sector00(&p_ptr->wpos)
-	    && sector00wall)
-		feat = sector00wall;
+	    && in_sector000(&p_ptr->wpos)
+	    && sector000wall)
+		feat = sector000wall;
 #endif
 
 	/* Access floor */
@@ -5024,7 +5024,7 @@ static void wild_display_map(int Ind, char mode) {
 
 				if (!admin) {
 					/* Skip all the sector00 event stuff */
-					if (!x && !y) dun = tow = NULL;
+					if (x == WPOS_SECTOR000_X && y == WPOS_SECTOR000_Y) dun = tow = NULL;
 					/* Skip special stuff */
 					if (dun) {
 						if ((dun->flags1 & DF1_UNLISTED) ||
@@ -7491,7 +7491,7 @@ void map_area(int Ind) {
 	if (!(zcave = getcave(wpos))) return;
 	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
-	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
+	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Pick an area to map */
 	y1 = TRADPANEL_ROW_MIN - randint(10);
@@ -7563,7 +7563,7 @@ void mind_map_level(int Ind, int pow) {
 
 	/* for mindcrafters too (NR requires) */
 	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
-	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
+	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* build list of players to share the vision with */
 	/* oneself too */
@@ -7757,7 +7757,7 @@ void wiz_lite(int Ind) {
 
 	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
-	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
+	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Scan all normal grids */
 	for (y = 1; y < p_ptr->cur_hgt - 1; y++) {
@@ -7849,7 +7849,7 @@ void wiz_lite_extra(int Ind) {
 
 	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
-	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
+	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Scan all normal grids */
 	for (y = 0; y < p_ptr->cur_hgt; y++) {
@@ -9228,7 +9228,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool town = istown(wpos) || isdungeontown(wpos);
 	bool townarea = istownarea(wpos, MAX_TOWNAREA);
 	//unused atm	bool dungeon_town = isdungeontown(wpos);
-	bool sector00 = (in_sector00(wpos));
+	bool sector000 = (in_sector000(wpos));
 	bool valinor = in_valinor(wpos);
 	bool nr_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;
 	bool arena_pvp = in_pvparena(wpos);
@@ -9236,7 +9236,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool death_fate = in_deathfate_x(wpos);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */
-	if (!arena_monster && !arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !nr_bottom && !death_fate) return(TRUE);
+	if (!arena_monster && !arena_pvp && !bree && !town && !townarea && !sector000 && !valinor && !nr_bottom && !death_fate) return(TRUE);
 
 	/* preserve arenas; disallow trees for balancing (pvp-arena) */
 	if (arena_pvp || arena_monster || death_fate || valinor) return(FALSE);
@@ -9252,18 +9252,18 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_IVY:
 	case FEAT_DEAD_TREE:
 	case FEAT_ICE:
-		if (town || sector00 || valinor || nr_bottom) return(FALSE);
+		if (town || sector000 || valinor || nr_bottom) return(FALSE);
 		break;
 
 	case FEAT_WALL_EXTRA: /* tested by earthquake(), destroy_area(), project_f() for GF_STONE_WALL (stone prison, wall creation) */
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
-		if (town || townarea || sector00 || valinor || nr_bottom) return(FALSE);
+		if (town || townarea || sector000 || valinor || nr_bottom) return(FALSE);
 		break;
 
 	case FEAT_TREE: /* also for 'digging' and 'stone2mud' */
 	case FEAT_BUSH: /* just moved here because FEAT_TREE is also here */
-		if (town || sector00 || valinor || nr_bottom) return(FALSE);
+		if (town || sector000 || valinor || nr_bottom) return(FALSE);
 		break;
 
 	case FEAT_GLYPH:
@@ -9271,7 +9271,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		dun_level *l_ptr = getfloor(wpos);
 
 		/* generally allow in town, restrictions are applied in cave_set_feat_live().) */
-		if (sector00 || valinor || nr_bottom) return(FALSE);
+		if (sector000 || valinor || nr_bottom) return(FALSE);
 
 		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUNES)) return(FALSE);
 		break;
@@ -9459,8 +9459,8 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 		return;
 	}
 
-	/* no weather in sector00 during events */
-	if (in_sector00(&p_ptr->wpos)) {
+	/* no weather in sector000 during events */
+	if (in_sector000(&p_ptr->wpos) && sector000separation) {
 		if (!entered_level) return;
 		/* erase weather */
 		Send_weather(Ind, -1, 0, WEATHER_GEN_TICKS,
