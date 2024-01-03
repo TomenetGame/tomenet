@@ -4769,6 +4769,7 @@ main window, not when you switch fonts of the subwindows.
 Font mapping files have the following syntax for mapping lines:
   F:index:attribute/character
   R:index:attribute/character
+  U:tval:attribute/character
 with 'attribute' and 'character' being optional.
 Servers of internal version > 4.9.1 (using git code from 3. Jan 2024 or later)
 can also process client mappings of objects, done in similar manner to above:
@@ -4788,8 +4789,15 @@ all of these in the client's in-game monster lore (~7) or in the spoiler file
 lib/game/r_info.txt. The monster index is the number located right after 'N:'.
 You can also use Mikael's monster search website under ~R .
 
+U-lines:
+The 'U' stands for 'unknown type', meaning a specific base object type (tval).
+You can see tvals in the client's lib/game folder in file k_info.txt, it's the
+first number after "I:" within an item definition block.
+This mapping will be used for flavoured (ie coloured) items that you don't know
+yet, for example potions, scrolls, mushrooms, magic devices.
+
 K-lines:
-The 'K' stands for object 'kind', meaning a specific object tupe. You can see
+The 'K' stands for object 'kind', meaning a specific object kind. You can see
 all of these in the client's lib/game folder in file k_info.txt. The index is
 the number right after "N:" at the very beginning of an item definition block.
 
