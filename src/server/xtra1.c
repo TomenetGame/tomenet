@@ -7970,9 +7970,9 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 		// Indefinite "challenge" events, managed by a DM. Use /gestop to cancel.
 		ge->state[1] = exec_lua(0, format("return adventure_type(\"%s\", 7)", parm));
-		if (ge->state[1] == 1) announce_global_event(n);
 
-		for (i = 0; i < 64; i++) // GE_EXTRA in adventures.lua (default 0)   ---- TODO?: in adventure_extra() -> GE_EXTRA there are way less than 64 fields defined!
+		// for (i = 0; i < 64; i++) // Up to 64, only 7 defined (so far)
+		for (i = 0; i < 7; i++) // GE_EXTRA in adventures.lua
 			ge->extra[i] = exec_lua(0, format("return adventure_extra(\"%s\", %d)", parm, i + 1));
 		ge->beacon_wpos[0].wz = ge->extra[6]; // Required to exit the event!
 
@@ -9615,25 +9615,7 @@ static void process_global_event(int ge_id) {
 	case GE_ADVENTURE:
 		switch (ge->state[0]) {
 		case 0: /* require active participation to start <- what does this mean? */
- #if 0 /* eligibility check has just been done above; and also, this check is wrong */
-			n = 0;
-			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
-				if (!ge->participant[j]) continue;
-				// n++; // Count participants even if offline / logged out! Dead players would be 0'd.
-				for (i = 1; i <= NumPlayers; i++) { // OR ... count present players only! (disabled for now) - Kurzel
-					if (Players[i]->id != ge->participant[j]) continue;
-					p_ptr = Players[i];
-					// we want players who signed up, ie who are OUTSIDE the event? nobody can be inside already at this point? this line seems wrong:
-					if (in_module(&p_ptr->wpos) && (p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
-				}
-			}
-			if (!n) ge->state[0] = 255;
-			else
-			ge->state[0] = 1; // begin!
-		break;
-		case 1: /* prepare a dungeon */
- #endif /* ... move directly into 'case 1', or there'd be a second of delay, looking weird. */
-			ge->cleanup = 1;
+			sector00separation++; // in_sector00..() check needs this to function
 
 			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
 
@@ -9651,7 +9633,7 @@ static void process_global_event(int ge_id) {
 				unstatic_level(&wpos);
 			}
 
-			/* teleport the participants into the dungeon */
+			/* load module(s) and teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
 				for (i = 1; i <= NumPlayers; i++) {
@@ -9661,9 +9643,9 @@ static void process_global_event(int ge_id) {
 				}
 			}
 
-			ge->state[0] = 2;
+			ge->state[0] = 1;
 			break;
-		case 2: /* monitor for participation */
+		case 1: /* monitor for participation */
 			n = 0;
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
@@ -9677,6 +9659,7 @@ static void process_global_event(int ge_id) {
 			if (!n) ge->state[0] = 255;
 			break;
 		case 255: /* clean-up or restart */
+			sector00separation--;
 
 			/* wipe participation */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
