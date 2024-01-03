@@ -28,6 +28,7 @@ MAGELOCK_II = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local ret, x, y, c_ptr
+
 			y = player.py
 			x = player.px
 			warding_glyph(Ind)
@@ -83,6 +84,7 @@ ESSENSESPEED = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 			local s
+
 			s = 5 + get_level(Ind, ESSENSESPEED, 20)
 			if s > 24 then
 				s = 24
@@ -95,6 +97,7 @@ ESSENSESPEED = add_spell {
 	end,
 	["info"] = 	function()
 			local s
+
 			s = 5 + get_level(Ind, ESSENSESPEED, 20)
 			if s > 24 then
 				s = 24

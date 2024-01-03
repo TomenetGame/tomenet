@@ -1,5 +1,6 @@
 function get_speed()
 	local spd
+
 --  22->35skill+10, 19->39skill+10, 17->42skill+10
 	spd = get_level(Ind, QUICKFEET, 17)
 	if spd > 10 then
@@ -109,6 +110,7 @@ HERBALTEA = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local lvl
+
 			lvl = get_level(Ind, HERBALTEA, 50)
 
 			msg_print(Ind, "That tasted bitter sweet.")
@@ -229,6 +231,7 @@ FOCUS = add_spell {
 	["spell"] = 	function()
 			local lev = get_level(Ind, FOCUS, 35)
 			local dur = rand_int(5) + 15 + get_level(Ind, FOCUS, 10)
+
 			if lev < 1 then lev = 1 end
 			if lev > 10 then lev = 10 end
 			fire_ball(Ind, GF_EXTRA_TOHIT, 0, lev + (dur * 100), 1, " calls on your inner focus.")
@@ -236,6 +239,7 @@ FOCUS = add_spell {
 			end,
 	["info"] = 	function()
 			local lev = get_level(Ind, FOCUS, 35)
+
 			if lev < 1 then lev = 1 end
 			if lev > 10 then lev = 10 end
 			return "+" .. lev .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))
@@ -258,6 +262,7 @@ FOCUS_II = add_spell {
 	["spell"] = 	function()
 			local lev = get_level(Ind, FOCUS, 30)
 			local dur = rand_int(5) + 15 + get_level(Ind, FOCUS, 10)
+
 			if lev < 15 then lev = 15 end
 			if lev > 25 then lev = 25 end
 			fire_ball(Ind, GF_EXTRA_TOHIT, 0, lev + (dur * 100), 1, " calls on your inner focus.")
@@ -265,6 +270,7 @@ FOCUS_II = add_spell {
 			end,
 	["info"] = 	function()
 			local lev = get_level(Ind, FOCUS, 30)
+
 			if lev < 15 then lev = 15 end
 			if lev > 25 then lev = 25 end
 			return "+" .. lev .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))

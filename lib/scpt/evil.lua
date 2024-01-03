@@ -114,7 +114,7 @@ function recall(i, dep)
 end
 
 function player_send(name, x, y, z, msg)
-	i=ind(name);
+	local i=ind(name);
 	players(i).recall_pos.wx=x;
 	players(i).recall_pos.wy=y;
 	players(i).recall_pos.wz=z;
@@ -128,11 +128,11 @@ function highlander(name, x, y)
 end
 
 function jail(name, time, reason)
-	i=ind(name);
+	local i=ind(name);
 	imprison(i, time, reason);
 end
 
 function team(name, tnum)
-	i=ind(name);
+	local i=ind(name);
 	players(i).team=tnum;
 end

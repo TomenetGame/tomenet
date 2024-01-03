@@ -120,6 +120,7 @@ OREGEN = add_spell {
 	end,
 	["info"] = 	function()
 			local p = 200 + get_level(Ind, OREGEN, 500)
+
 			p = p / 10
 			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 "..p.."HP/10MP tick"
 	end,
@@ -151,6 +152,7 @@ OSUBJUGATION = add_spell {
 --ENABLE_DEATHKNIGHT:
 function get_netherbolt_dam(Ind)
 	local lev
+
 	lev = get_level(Ind, NETHERBOLT, 50) + 21
 	return 0 + (lev * 3) / 5, 1 + lev
 end
@@ -171,6 +173,7 @@ NETHERBOLT = add_spell {
 	end,
 	["info"] = 	function()
 		local x, y
+
 		x, y = get_netherbolt_dam(Ind)
 		return "dam "..x.."d"..y
 	end,

@@ -2,6 +2,7 @@
 
 function get_healing_percents(limit_lev)
 	local perc
+
 	perc = get_level(Ind, HEALING_I, 31)
 	if limit_lev ~= 0 then
 		if perc > (limit_lev * 3) / 5 then
@@ -28,6 +29,7 @@ function get_healing_cap(limit_lev)
 end
 function get_healing_power(limit_lev)
 	local pow, cap
+
 	pow = player.mhp * get_healing_percents(limit_lev) / 100
 	cap = get_healing_cap(limit_lev)
 	if pow > cap then
@@ -186,6 +188,7 @@ REGENERATION = add_spell {
 	["info"] = 	function()
 			local p = 10 + get_level(Ind, REGENERATION, 200)
 			local p10 = p / 10
+
 			p = p - p10 * 10
 			return "dur "..(5 + get_level(Ind, REGENERATION, 50)).."+d10 heal "..p10.."."..p
 	end,
@@ -271,6 +274,7 @@ DELCURSES_I = add_spell {
 	["fail"] = 	20,
 	["spell"] = 	function()
 			local done
+
 			done = remove_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,
@@ -289,6 +293,7 @@ DELCURSES_II = add_spell {
 	["fail"] = 	-20,
 	["spell"] = 	function()
 			local done
+
 			done = remove_all_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,

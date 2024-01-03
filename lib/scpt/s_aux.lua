@@ -920,6 +920,7 @@ end
 --There is also a safe C version of this function in object1.c.
 function get_spellbook_name_colour(i)
 	local s
+
 	s = __spell_school[i][1]
 	-- green for priests
 	if (s >= SCHOOL_HOFFENSE and s <= SCHOOL_HSUPPORT) then return TERM_GREEN end
@@ -1005,7 +1006,9 @@ function pre_exec_spell_item(s)
 		if not __tmp_spells[s].get_item.inven then __tmp_spells[s].get_item.inven = FALSE end
 		if not __tmp_spells[s].get_item.equip then __tmp_spells[s].get_item.equip = FALSE end
 		if not __tmp_spells[s].get_item.floor then __tmp_spells[s].get_item.floor = FALSE end
+
 		local ret
+
 		ret, __pre_exec_item = get_item_aux(0, __tmp_spells[s].get_item.prompt, __tmp_spells[s].get_item.equip, __tmp_spells[s].get_item.inven, __tmp_spells[s].get_item.floor)
 		return ret
 	end

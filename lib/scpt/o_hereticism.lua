@@ -150,6 +150,7 @@ FIRERES = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local dur
+
 		dur = randint(15) + 20 + get_level(Ind, FIRERES, 25)
 		if get_level(Ind, FIRERES, 50) >= 21 then
 			set_melee_brand(Ind, dur, TBRAND_HELLFIRE, 10, TRUE, TRUE)
@@ -195,6 +196,7 @@ OEXTRASTATS = add_spell {
 
 function get_chaosbolt2_dam(Ind)
 	local lev
+
 	--must at same level have at least same damage as identically named CHAOSBOLT to make 'priority' work
 	lev = get_level(Ind, CHAOSBOLT2, 50) + 21
 	return 0 + (lev * 3) / 5 + 1, 1 + lev + 1

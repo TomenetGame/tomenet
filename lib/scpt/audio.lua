@@ -546,6 +546,8 @@ function get_music_name(idx)
 end
 --just for do_cmd_options_mus_sdl():
 function get_music_index(name)
+    local i
+
     for i = 1, getn(audio_bgm) do
         if audio_bgm[i] == name then
             return(i - 1)

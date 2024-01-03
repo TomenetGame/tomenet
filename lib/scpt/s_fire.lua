@@ -203,6 +203,7 @@ FIERYAURA_I = add_spell {
 	["fail"] = 	0,
 	["spell"] = 	function()
 		local type
+
 --		if (get_level(Ind, FIERYAURA, 50) >= 8) then
 --			type = SHIELD_GREAT_FIRE
 --		else
@@ -228,6 +229,7 @@ FIERYAURA_II = add_spell {
 	["fail"] = 	-55,
 	["spell"] = 	function()
 		local type
+
 --		if (get_level(Ind, FIERYAURA, 50) >= 8) then
 --			type = SHIELD_GREAT_FIRE
 --		else

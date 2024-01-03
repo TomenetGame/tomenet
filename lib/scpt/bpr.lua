@@ -5,6 +5,7 @@
 --Using class name string instead of numerical index just in case there's a server-client incompatibility after another class gets added.
 function classname2index(cn)
 	local c
+
 	c = 0
 	if cn == "Warrior" then c = 0 end
 	if cn == "Istar" then c = 1 end
@@ -28,6 +29,7 @@ end
 --(A) just return fixed values from the table?
 function get_class_bpr(cn, n)
 	local c
+
 	c = classname2index(cn)
 	return "S" .. __class_bpr[c + 1][n + 1][1] .. "D" .. __class_bpr[c + 1][n + 1][2] .. "B" .. __class_bpr[c + 1][n + 1][3]
 end
@@ -40,6 +42,7 @@ function get_class_bpr2(cn, wwgt, st, dx)
 --	return "X" --means "disabled"
 	local div, wgt, mul, str_adj, str_index, dex_index, numblow
 	local c, bpr
+
 	c = classname2index(cn)
 	--some classes don't have significant weapon-BpR usage
 	if wwgt == 0 or st < 3 or dx < 3 then

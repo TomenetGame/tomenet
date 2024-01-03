@@ -2,6 +2,7 @@
 
 function get_healing_percents2(limit_lev)
 	local perc
+
 	perc = get_level(Ind, HHEALING_I, 31)
 	if limit_lev ~= 0 then
 		if perc > (limit_lev * 3) / 5 then
@@ -30,6 +31,7 @@ function get_healing_cap2(limit_lev)
 end
 function get_healing_power2(limit_lev)
 	local pow, cap
+
 	pow = player.mhp * get_healing_percents2(limit_lev) / 100
 	cap = get_healing_cap2(limit_lev)
 	if pow > cap then
@@ -41,6 +43,7 @@ end
 -- Keep consistent with GHOST_XP_LOST -- hardcoded mess
 function get_exp_loss()
 	local pow
+
 	--ENABLE_INSTANT_RES?
 	if (def_hack("TEMP0", nil) == 1) then
 		pow = (36 * (735 - (5 * get_level(Ind, HRESURRECT)))) / 735
@@ -71,6 +74,7 @@ HCUREWOUNDS_I = add_spell {
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			local hd, pow
+
 			hd = get_level(Ind, HCUREWOUNDS_I, 18)
 			if (hd > 9) then hd = 9 end
 			pow = damroll(hd, 8)
@@ -103,6 +107,7 @@ HCUREWOUNDS_II = add_spell {
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			local hd, pow
+
 			hd = get_level(Ind, HCUREWOUNDS_I, 27) + 1
 			if (hd > 14) then hd = 14 end
 			pow = damroll(hd, 8)
@@ -205,6 +210,7 @@ HDELCURSES_I = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
+
 			done = remove_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 			end,
@@ -226,6 +232,7 @@ HDELCURSES_II = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
+
 			done = remove_all_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 			end,

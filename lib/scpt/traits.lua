@@ -2,8 +2,8 @@
 -- during character creation process. - C. Blue
 
 function get_trait_diz(r_title, l)
-    local i
-    i = 0
+    local i = 0
+
     while __traits_diz[i * 2 + 1] ~= nil do
         if __traits_diz[i * 2 + 1] == r_title then
             if __traits_diz[i * 2 + 2][l + 1] == nil then

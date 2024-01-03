@@ -375,6 +375,7 @@ ODELCURSES_I = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
+
 			done = remove_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,
@@ -395,6 +396,7 @@ ODELCURSES_II = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
+
 			done = remove_all_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,
@@ -536,6 +538,7 @@ GUARDIANSPIRIT_I = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local dur = 20 + randint(10) + get_level(Ind, GUARDIANSPIRIT_I, 70)
+
 			set_protevil(Ind, dur, TRUE)
 			set_savingthrow(Ind, dur)
 	end,
@@ -561,6 +564,7 @@ GUARDIANSPIRIT_II = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 		local dur = 20 + randint(10) + get_level(Ind, GUARDIANSPIRIT_I, 70)
+
 		set_protevil(Ind, dur, TRUE)
 		set_savingthrow(Ind, dur)
 		set_spirit_shield(Ind, 19 + get_level(Ind, GUARDIANSPIRIT_II, 95), dur)

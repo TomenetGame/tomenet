@@ -9,7 +9,7 @@
 --        -1 = display generic advice, always shown, that is very important (ghost status, black breath..).
 --        0..max = different help topics, specified by the player.
 function quest_towneltalk(Ind, msg, topic)
-	local hinted, hintsub, i, w, x, y, z
+	local hinted, hintsub, i, w, x, y, z, admin
 
 	hinted = 0
 	hintsub = 0 --subsequent hints that chain grammatically for nice flow of text

@@ -109,6 +109,8 @@ adj_mag_stat = {0,0,0,1,1,1,2,2,3,3,4,4,5,6,7,8,9,10,11,12,13,14,16,18,21,24,27,
 
 function hamming(u)
   local x = 0
+  local i
+
   for i = 0,31 do
     x = x + bshr(band(u,bshl(1,i)),i)
   end
@@ -236,7 +238,9 @@ function rcraft_max(u)
 end
 
 function rcraft_prt(u,w)
+  local i
   local U,C,row,col
+
   if w~=0 then
     C = TERM_GREEN
     row,col = 9,16

@@ -85,6 +85,7 @@ LIGHTNINGBOLT_I = add_spell {
 	end,
 	["info"] = 	function()
 			local x, y
+
 			x, y = get_lightningbolt_dam(Ind, 1)
 			return "dam "..x.."d"..y
 	end,
@@ -107,6 +108,7 @@ LIGHTNINGBOLT_II = add_spell {
 	end,
 	["info"] = 	function()
 			local x, y
+
 			x, y = get_lightningbolt_dam(Ind, 15)
 			return "dam "..x.."d"..y
 	end,
@@ -129,6 +131,7 @@ LIGHTNINGBOLT_III = add_spell {
 	end,
 	["info"] = 	function()
 			local x, y
+
 			x, y = get_lightningbolt_dam(Ind, 0)
 			return "dam "..x.."d"..y
 	end,
@@ -188,6 +191,7 @@ POISONBLOOD = add_spell {
 	["fail"] = 	-30,
 	["spell"] = 	function()
 			local dur
+
 			dur = randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)
 			set_oppose_pois(Ind, dur)
 			set_melee_brand(Ind, dur, TBRAND_POIS, 10, TRUE, FALSE)
@@ -212,10 +216,12 @@ THUNDERSTORM = add_spell {
 	["spell"] = 	function()
 			--hack: linear spell-power gain
 			local lev = (player.s_info[SKILL_SPELL + 1].value) / 2500
+
 			set_tim_thunder(Ind, randint(10) + 15 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 14), 10 + get_level(Ind, THUNDERSTORM, 98) + lev)
 	end,
 	["info"] = 	function()
 			local lev = (player.s_info[SKILL_SPELL + 1].value) / 2500
+
 			return "dam "..(5 + get_level(Ind, THUNDERSTORM, 14)).."d"..(10 + get_level(Ind, THUNDERSTORM, 98) + lev).." dur "..(15 + get_level(Ind, THUNDERSTORM, 25)).."+d10"
 	end,
 	["desc"] = 	{

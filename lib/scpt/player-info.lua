@@ -6,10 +6,10 @@
 
 -- display some information about a specified player.
 function p_in(i)
--- +1 offset
-local p = players(i)
+	-- +1 offset
+	local p = players(i)
 
--- Ind is global.
+	-- Ind is global.
 	msg_print(Ind, "location: ("..p.px..","..p.py..") of ["..(p.wpos.wx)..","..(p.wpos.wy).."], "..(p.wpos.wz*50).."ft  AU:"..p.au)
 	msg_print(Ind, "HP:"..p.chp.."/"..p.mhp.."  SP:"..p.cmp.."/"..p.mmp.."  SN:"..p.csane.."/"..p.msane.."  XP:"..p.exp.."/"..p.max_exp)
 	msg_print(Ind, "St:"..p.stat_cur[1].."/"..p.stat_max[1].." In:"..p.stat_cur[2].."/"..p.stat_max[2].." Wi:"..p.stat_cur[3].."/"..p.stat_max[3].." Dx:"..p.stat_cur[4].."/"..p.stat_max[4].." Co:"..p.stat_cur[5].."/"..p.stat_max[5].." Ch:"..p.stat_cur[6].."/"..p.stat_max[6])
@@ -19,10 +19,10 @@ end
 -- display some information about a specified object in inventory.
 -- (prolly easier to use gdb..)
 function o_in(i, j)
--- +1 offset
-local o = players(i).inventory[j+1]
+	-- +1 offset
+	local o = players(i).inventory[j+1]
 
--- Ind is global.
+	-- Ind is global.
 	msg_print(Ind, "location: ("..o.ix..","..o.iy..") of ["..(o.wpos.wx)..","..(o.wpos.wy).."], "..(o.wpos.wz*50).."ft")
 	msg_print(Ind, "k_idx:"..o.k_idx.." tval:"..o.tval.." sval:"..o.sval.." bpval:"..o.bpval.." pval:"..o.pval)
 	msg_print(Ind, "name1:"..o.name1.." name2:"..o.name2.." name3:"..o.name3.." xtra1:"..o.xtra1.." xtra2:"..o.xtra2)
@@ -32,9 +32,10 @@ end
 
 -- give knowledge about traps
 function trap_k()
-local i = 0
-local p = players(Ind)
--- for(i=0;i<255;i++)
+	local i = 0
+	local p = players(Ind)
+
+	-- for(i=0;i<255;i++)
 	while (i < 256)
 	do
 		i = i + 1
@@ -44,7 +45,7 @@ end
 
 -- namely.
 function adj_xp(i, amt)
-local p = players(i)
+	local p = players(i)
 
 	p.max_exp = amt
 	p.exp = amt
@@ -53,9 +54,10 @@ end
 -- resurrect/exterminate all the uniques
 -- also nice to test mimics.
 function res_uni(state)
-local i = 0
-local p = players(Ind)
--- for(i=0;i<255;i++)
+	local i = 0
+	local p = players(Ind)
+
+	-- for(i=0;i<255;i++)
 	while (i < 1152)
 	do
 		i = i + 1
@@ -65,9 +67,10 @@ end
 
 -- make every item 'known'
 function id_all(state)
-local i = 0
-local p = players(Ind)
--- for(i=0;i<255;i++)
+	local i = 0
+	local p = players(Ind)
+
+	-- for(i=0;i<255;i++)
 	while (i < 640)
 	do
 		i = i + 1
@@ -83,8 +86,8 @@ end
 
 -- namely.
 function healup(i)
-local p = players(i)
-local j = 0
+	local p = players(i)
+	local j = 0
 
 	p.exp = p.max_exp
 	p.chp = p.mhp
@@ -117,6 +120,7 @@ function init()
 --	pern_dofile(Ind, "evil.lua")
 --	pern_dofile(Ind, "zz.lua")
 --	pern_dofile(Ind, "jir.lua")
+--	pern_dofile(Ind, "moltor.lua")
 	pern_dofile(Ind, "it.lua")
 	pern_dofile(Ind, "mikaelh.lua")
 
@@ -128,9 +132,10 @@ end
 
 -- get all the skills (cept antimagic)
 function learn()
-local i = 0
-local p = players(Ind)
--- 0xffffffff
+	local i = 0
+	local p = players(Ind)
+
+	-- 0xffffffff
 	while (i < MAX_SKILLS)
 	do
 		i = i + 1
@@ -144,13 +149,14 @@ end
 
 -- set specified skill
 function skill(skill, val)
-local p = players(Ind)
+	local p = players(Ind)
+
 	p.s_info[skill + 1].value = val
 end
 
 -- set antimagic skill (you'll need it :)
 function antimagic(val)
-local p = players(Ind)
+	local p = players(Ind)
+
 	p.s_info[SKILL_ANTIMAGIC + 1].value = val
 end
-

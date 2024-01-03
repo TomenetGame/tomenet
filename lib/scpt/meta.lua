@@ -17,11 +17,13 @@ function get_server_notes(x)
 			return notes
 		end
 	end
-	return game, version
+	--return game, version
+	return ""
 end
 
 function get_game_version(x)
 	local game, version = "unknown", "unknown"
+	local i
 
 	for i = 1, getn(x) do
 		if x[i].label == "game" then game = x[i][1] end
@@ -32,6 +34,7 @@ end
 
 function get_players(x)
 	local players = ""
+	local i
 
 	for i = 1, getn(x) do
 		if x[i].label == "player" then
@@ -51,6 +54,7 @@ end
 
 function get_players_count(x)
 	local nb = 0
+	local i
 
 	for i = 1, getn(x) do
 		if x[i].label == "player" then
@@ -76,6 +80,7 @@ function meta_display(xml_feed)
 			if x[i].label == "server" then
 				local game, version = get_game_version(x[i])
 				local cat_name = game .. " " .. version
+				local extra
 
 				cat_slot = 0
 				for k, e in categories do
@@ -93,7 +98,6 @@ function meta_display(xml_feed)
 --				local server_notes
 --				server_notes = get_server_notes(x[i])
 
-				local extra
 				if get_players_count(x[i]) == 1 then
 					extra = "\255b" .. get_players_count(x[i]) .. " player"
 				else
@@ -161,8 +165,7 @@ end
 
 -- META_PINGS - set/update ping and display it
 function meta_add_ping(pos, ping)
-	local attr
-	local unit
+	local attr, unit, spacer
 
 	meta_list[pos][5] = ping
 	unit = " ms"

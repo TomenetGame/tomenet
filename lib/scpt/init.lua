@@ -8,6 +8,7 @@ _ALERT = function(s) print(s) end
 -- Beware of the scary undefined globals
 function safe_getglobal(x)
 	local v = rawget(globals(), x)
+
 	if v then
 		return v
 	else
@@ -19,13 +20,15 @@ settagmethod(tag(nil), "getglobal", safe_getglobal)
 
 -- A function for checking if a global is either not defined or not set to 0
 function def(x)
-        local v = rawget(globals(), x)
-        return (not v or v ~= 0)
+	local v = rawget(globals(), x)
+
+	return (not v or v ~= 0)
 end
 
 -- Same as def() except that the default value for undefined global can be set
 function def_hack(x, default)
 	local v = rawget(globals(), x)
+
 	if v then
 		return v~= 0
 	else
@@ -68,6 +71,7 @@ pern_dofile(Ind, "cblue.lua")
 pern_dofile(Ind, "evil.lua")
 -- pern_dofile(Ind, "zz.lua") -- file isn't there? -the_sandman
 --pern_dofile(Ind, "jir.lua")
+--pern_dofile(Ind, "moltor.lua")
 pern_dofile(Ind, "it.lua")
 pern_dofile(Ind, "mikaelh.lua")
 

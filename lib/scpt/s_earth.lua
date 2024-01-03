@@ -11,6 +11,7 @@ STONESKIN = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 			local type
+
 			if get_level(Ind, STONESKIN, 50) >= 25 then
 				type = SHIELD_COUNTER
 			else

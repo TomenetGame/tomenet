@@ -223,6 +223,7 @@ POISONRES = add_spell {
 	["fail"] = 	-10,
 	["spell"] = 	function()
 		local dur
+
 		dur = randint(15) + 20 + get_level(Ind, POISONRES, 25)
 		set_melee_brand(Ind, dur, TBRAND_POIS, 10, TRUE, TRUE)
 		fire_ball(Ind, GF_TBRAND_POIS, 0, dur, 2, " calls perilous shadows imbuing you.")
@@ -251,6 +252,7 @@ OBLINK = add_spell {
 	["fail"] = 	-20,
 	["spell"] = 	function()
 		local dist = 3 + get_level(Ind, OBLINK, 69) / 17
+
 		retreat_player(Ind, dist)
 	end,
 	["info"] = 	function()
@@ -313,6 +315,7 @@ OINVIS = add_spell {
 	["fail"] = 	-40,
 	["spell"] = 	function()
 		local dur = randint(20) + 15 + get_level(Ind, OINVIS, 50)
+
 		set_invis(Ind, dur, 20 + get_level(Ind, OINVIS, 50))
 		--set_shroud(Ind, dur, 10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
@@ -329,6 +332,7 @@ OINVIS = add_spell {
 
 function get_chaosbolt_dam(Ind)
 	local lev
+
 	lev = get_level(Ind, CHAOSBOLT, 50) + 21
 	return 0 + (lev * 3) / 5, 1 + lev
 end
@@ -349,6 +353,7 @@ CHAOSBOLT = add_spell {
 	end,
 	["info"] = 	function()
 		local x, y
+
 		x, y = get_chaosbolt_dam(Ind)
 		return "dam "..x.."d"..y
 	end,

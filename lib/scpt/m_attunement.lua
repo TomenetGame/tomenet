@@ -61,16 +61,16 @@ MHASTE = add_spell {
 	["mana_max"] = 	15,
 	["fail"] = 	1,
 	["spell"] = 	function()
-			local spd
-			spd = get_level(Ind, MHASTE, 25)
+			local spd = get_level(Ind, MHASTE, 25)
+
 			if spd > 10 then
 				spd = 10
 			end
 			set_fast(Ind, 30 + randint(10) + get_level(Ind, MHASTE, 17), spd)
 			end,
 	["info"] = 	function()
-			local spd
-			spd = get_level(Ind, MHASTE, 25)
+			local spd = get_level(Ind, MHASTE, 25)
+
 			if spd > 10 then
 				spd = 10
 			end

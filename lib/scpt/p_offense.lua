@@ -167,6 +167,7 @@ HORBDRAIN_I = add_spell {
 	["ftk"] = 2,
 	["spell"] = 	function(args)
 		local typ
+
 		typ = GF_HOLY_ORB
 		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 300), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,
@@ -190,6 +191,7 @@ HORBDRAIN_II = add_spell {
 	["ftk"] = 2,
 	["spell"] = 	function(args)
 		local typ
+
 		typ = GF_HOLY_ORB
 		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 560), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,

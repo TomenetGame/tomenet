@@ -9,6 +9,7 @@ end
 -- Beware of the scary undefined globals
 function safe_getglobal(x)
 	local v = rawget(globals(), x)
+
 	if v then
 		return v
 	else
@@ -22,12 +23,14 @@ settagmethod(tag(nil), "getglobal", safe_getglobal)
 -- The default value in case the global isn't set is true
 function def(x)
 	local v = rawget(globals(), x)
+
 	return (not v or v ~= 0)
 end
 
 -- Same as def() except that the default value for undefined global can be set
 function def_hack(x, default)
 	local v = rawget(globals(), x)
+
 	if v then
 		return v~= 0
 	else

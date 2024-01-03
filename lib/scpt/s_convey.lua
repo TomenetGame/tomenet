@@ -10,6 +10,7 @@ BLINK = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 			local dist = 6 + get_level(Ind, BLINK, 6)
+
 			teleport_player(Ind, dist, TRUE);
 	end,
 	["info"] = 	function()
@@ -45,6 +46,7 @@ TELEPORT = add_spell {
 	["fail"] = 	50,
 	["spell"] = 	function()
 			local dist = 100 + get_level(Ind, TELEPORT, 100)
+
 			teleport_player(Ind, dist, FALSE)
 	end,
 	["info"] = 	function()

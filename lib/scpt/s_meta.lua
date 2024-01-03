@@ -123,7 +123,8 @@ DELCURSES_I = add_spell {
 	["mana_max"] = 	20,
 	["fail"] = 	20,
 	["spell"] = 	function()
-			done = remove_curse(Ind)
+			local done = remove_curse(Ind)
+
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,
 	["info"] = 	function()

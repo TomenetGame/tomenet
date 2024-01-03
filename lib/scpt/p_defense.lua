@@ -14,6 +14,7 @@ HBLESSING_I = add_spell {
 	["spell"] = 	function()
 			if player.blessed_power <= 8 then
 				local dur
+
 				player.blessed_power = 8
 				dur = 9 + randint(get_level(Ind, HBLESSING_I, 25))
 				set_blessed(Ind, dur, TRUE)
@@ -44,6 +45,7 @@ HBLESSING_II = add_spell {
 	["spell"] = 	function()
 			if player.blessed_power <= 14 then
 				local dur
+
 				player.blessed_power = 14
 				dur = 17 + randint(get_level(Ind, HBLESSING_I, 25))
 				set_blessed(Ind, dur, TRUE)
@@ -73,6 +75,7 @@ HBLESSING_III = add_spell {
 	["spell"] = 	function()
 			if player.blessed_power <= 20 then
 				local dur
+
 				player.blessed_power = 20
 				dur = 32 + randint(get_level(Ind, HBLESSING_I, 25))
 				set_blessed(Ind, dur, TRUE)
@@ -251,6 +254,7 @@ HRUNEPROT = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local x, y
+
 			y = player.py
 			x = player.px
 			warding_glyph(Ind)

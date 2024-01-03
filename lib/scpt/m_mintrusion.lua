@@ -17,8 +17,8 @@ function get_psiblast_dam(Ind, limit_lev)
 end
 
 function get_psistorm_dam(Ind, limit_lev)
-	local lev
-	lev = get_level(Ind, MPSISTORM_I, 200)
+	local lev = get_level(Ind, MPSISTORM_I, 200)
+
 	if limit_lev ~= 0 and lev > limit_lev * 4 then lev = limit_lev * 4 + (lev - limit_lev * 4) / 2 end
 	return 33 + lev
 end
@@ -194,11 +194,13 @@ MMINDBLAST_I = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			local d, s, p
+
 			d, s, p = get_psiblast_dam(Ind, 1)
 			fire_grid_bolt(Ind, GF_PSI, args.dir, damroll(d, s) + p, "")
 			end,
 	["info"] = 	function()
 			local d, s, p
+
 			d, s, p = get_psiblast_dam(Ind, 1)
 			return "power "..d.."d"..s.."+"..p
 			end,
@@ -218,11 +220,13 @@ MMINDBLAST_II = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			local d, s, p
+
 			d, s, p = get_psiblast_dam(Ind, 20)
 			fire_grid_bolt(Ind, GF_PSI, args.dir, damroll(d, s) + p, "")
 			end,
 	["info"] = 	function()
 			local d, s, p
+
 			d, s, p = get_psiblast_dam(Ind, 20)
 			return "power "..d.."d"..s.."+"..p
 			end,
@@ -242,11 +246,13 @@ MMINDBLAST_III = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			local d, s, p
+
 			d, s, p = get_psiblast_dam(Ind, 0)
 			fire_grid_bolt(Ind, GF_PSI, args.dir, damroll(d, s) + p, "")
 			end,
 	["info"] = 	function()
 			local d, s, p
+
 			d, s, p = get_psiblast_dam(Ind, 0)
 			return "power "..d.."d"..s.."+"..p
 			end,
@@ -265,13 +271,13 @@ MPSISTORM_I = add_spell {
 	["fail"] = 	5,
 	["direction"] = TRUE,
 	["spell"] = function(args)
-		local d
-		d = get_psistorm_dam(Ind, 1)
+		local d = get_psistorm_dam(Ind, 1)
+
 		fire_cloud(Ind, GF_PSI, args.dir, d, 3 + get_level(Ind, MPSISTORM_I, 4), 6 + get_level(Ind, MPSISTORM_I, 4), 14, " releases a psi storm for")
 	end,
 	["info"] = function()
-		local d
-		d = get_psistorm_dam(Ind, 1)
+		local d = get_psistorm_dam(Ind, 1)
+
 		return "dam "..d.." rad "..(3 + get_level(Ind, MPSISTORM_I, 4)).." dur "..(6 + get_level(Ind, MPSISTORM_I, 4))
 	end,
 	["desc"] = { "A psionic storm that damages and disturbs all minds within an area.", }
@@ -288,13 +294,13 @@ MPSISTORM_II = add_spell {
 	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["spell"] = function(args)
-		local d
-		d = get_psistorm_dam(Ind, 0)
+		local d  = get_psistorm_dam(Ind, 0)
+
 		fire_cloud(Ind, GF_PSI, args.dir, d, 3 + get_level(Ind, MPSISTORM_I, 4), 6 + get_level(Ind, MPSISTORM_I, 4), 14, " releases a psi storm for")
 	end,
 	["info"] = function()
-		local d
-		d = get_psistorm_dam(Ind, 0)
+		local d = get_psistorm_dam(Ind, 0)
+
 		return "dam "..d.." rad "..(3 + get_level(Ind, MPSISTORM_I, 4)).." dur "..(6 + get_level(Ind, MPSISTORM_I, 4))
 	end,
 	["desc"] = { "A psionic storm that damages and disturbs all minds within an area.", }
@@ -335,11 +341,13 @@ MMAP = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local pow = get_level(Ind, MMAP)
+
 			if pow > 15 then pow = 15 end
 			mind_map_level(Ind, pow)
 			end,
 	["info"] = 	function()
 			local pow = get_level(Ind, MMAP)
+
 			if pow > 15 then pow = 15 end
 			return "power "..pow
 			end,

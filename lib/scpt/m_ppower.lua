@@ -3,6 +3,7 @@
 
 function get_pyro_dam(Ind, limit_lev)
 	local lev, llev, lev2
+
 	lev = get_level(Ind, MPYROKINESIS_I, 700)
 	llev = limit_lev * 14
 	if limit_lev ~= 0 and lev > llev then lev = llev + (lev - llev) / 2 end
@@ -13,6 +14,7 @@ function get_pyro_dam(Ind, limit_lev)
 end
 function get_cryo_dam(Ind, limit_lev)
 	local lev, llev, lev2
+
 	lev = get_level(Ind, MCRYOKINESIS_I, 750)
 	llev = limit_lev * 15
 	if limit_lev ~= 0 and lev > llev then lev = llev + (lev - llev) / 2 end
@@ -54,6 +56,7 @@ MBLINK = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 			local dist = 6 + get_level(Ind, MBLINK, 6)
+
 			teleport_player(Ind, dist, TRUE)
 			end,
 	["info"] = 	function()
@@ -74,6 +77,7 @@ MTELEPORT = add_spell {
 	["fail"] = 	20,
 	["spell"] = 	function()
 			local dist = 100 + get_level(Ind, MTELEPORT, 100)
+
 			teleport_player(Ind, dist, FALSE)
 			end,
 	["info"] = 	function()
@@ -184,11 +188,13 @@ MPYROKINESIS_I = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			local n, p
+
 			n, p = get_pyro_dam(Ind, 1)
 			fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
 			end,
 	["info"] = 	function()
 			n, p = get_pyro_dam(Ind, 1)
+
 			return "dam "..(n + p)
 			end,
 	["desc"] = 	{ "Causes a severe inflammation to burn your opponent.", }
@@ -207,11 +213,13 @@ MPYROKINESIS_II = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			local n, p
+
 			n, p = get_pyro_dam(Ind, 0)
 			fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
 			end,
 	["info"] = 	function()
 			n, p = get_pyro_dam(Ind, 0)
+
 			return "dam "..(n + p)
 			end,
 	["desc"] = 	{ "Causes a severe inflammation to burn your opponent.", }
@@ -231,11 +239,13 @@ MCRYOKINESIS_I = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			local n, p
+
 			n, p = get_cryo_dam(Ind, 1)
 			fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
 			end,
 	["info"] = 	function()
 			local n, p
+
 			n, p = get_cryo_dam(Ind, 1)
 			return "dam "..(n + p)
 			end,
@@ -255,11 +265,13 @@ MCRYOKINESIS_II = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			local n, p
+
 			n, p = get_cryo_dam(Ind, 0)
 			fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
 			end,
 	["info"] = 	function()
 			local n, p
+
 			n, p = get_cryo_dam(Ind, 0)
 			return "dam "..(n + p)
 			end,
