@@ -221,8 +221,6 @@ struct object_kind {
 	byte extra;		/* Something */
 
 
-	u16b static_idx;	/* Mapping from our dynamic k_idx to static k_info.txt index, for custom font */
-
 	byte k_attr;		/* Standard object attribute */
 	char32_t k_char;	/* Standard object character */
 

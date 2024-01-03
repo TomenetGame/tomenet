@@ -2754,9 +2754,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			/* Advance the index */
 			k_head->name_size += strlen(s);
 
-			/* Create index-mapping for custom fonts */
-			k_ptr->static_idx = kidx;
-			/* For quest_statuseffect() */
+			/* Create index-mapping for custom fonts and for quest_statuseffect() */
 			k_info_num[kidx] = i;
 
 			/* Next... */
