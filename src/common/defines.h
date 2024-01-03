@@ -9357,7 +9357,7 @@ extern int PlayerUID;
  #define in_module(wpos) \
 	((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && \
 	(wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE * SGN(WPOS_SECTOR00_Z_MODULE) && /* pseudo-EQV, lul */ \
-	(wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) <= WPOS_SECTOR00_Z_MODULE * SGN(WPOS_SECTOR00_Z_MODULE + DM_MODULES_DUNGEON_SIZE - 1))
+	(wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) <= WPOS_SECTOR00_Z_MODULE * SGN(WPOS_SECTOR00_Z_MODULE) + DM_MODULES_DUNGEON_SIZE - 1)
 #endif
 
 /* in the arena monster challenge? (which should be in TT) */
