@@ -400,7 +400,7 @@ extern header *k_head;
 extern object_kind *k_info;
 extern char *k_name;
 extern char *k_text;
-extern s16b k_info_num[MAX_K_IDX];
+extern u16b k_info_num[MAX_K_IDX];
 extern header *t_head;
 extern trap_kind *t_info;
 extern char *t_name;

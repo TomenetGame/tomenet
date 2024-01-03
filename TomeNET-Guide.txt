@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 1. January 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 3. January 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4770,6 +4770,12 @@ Font mapping files have the following syntax for mapping lines:
   F:index:attribute/character
   R:index:attribute/character
 with 'attribute' and 'character' being optional.
+Servers of internal version > 4.9.1 (using git code from 3. Jan 2024 or later)
+can also process client mappings of objects, done in similar manner to above:
+  K:index:attribute/character
+
+'Attribute' is the colour, these are listed as TERM_ constants in defines.h.
+'Character' is the (possibly ASCII) index in the custom font file.
 
 F-lines:
 The 'F' stands for 'feature', meaning a specific terrain tile such as floors,
@@ -4781,6 +4787,11 @@ The 'R' stands for 'monster', meaning a specific base monster type. You can see
 all of these in the client's in-game monster lore (~7) or in the spoiler file
 lib/game/r_info.txt. The monster index is the number located right after 'N:'.
 You can also use Mikael's monster search website under ~R .
+
+K-lines:
+The 'K' stands for object 'kind', meaning a specific object tupe. You can see
+all of these in the client's lib/game folder in file k_info.txt. The index is
+the number right after "N:" at the very beginning of an item definition block.
 
 These mapping lines will remap the specified feature or monster to the symbol
 with the number 'character' in your font, which may range from 0 to 255, and

@@ -1107,6 +1107,7 @@ errr process_pref_file(cptr name) {
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 
+printf("processing prf file %s\n", name);
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 

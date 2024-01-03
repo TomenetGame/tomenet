@@ -2852,20 +2852,23 @@ static void set_player_font_definitions(int ind, int player) {
 	}
 
 	for (i = 0; i < MAX_K_IDX; i++) {
-		p_ptr->k_char[i] = connp->Client_setup.k_char[i];
-		p_ptr->k_attr[i] = connp->Client_setup.k_attr[i];
+		/* map k_info.txt static indices that are used on client side to our dynamically generated k_idx array on server side. */
+		j = k_info_num[i];
 
-		if (p_ptr->k_attr[i] || p_ptr->k_char[i]) custom_font = TRUE;
+		p_ptr->k_char[j] = connp->Client_setup.k_char[i];
+		p_ptr->k_attr[j] = connp->Client_setup.k_attr[i];
 
-		if (!p_ptr->k_char[i]) p_ptr->k_char[i] = k_info[i].x_char;
-		if (!p_ptr->k_attr[i]) p_ptr->k_attr[i] = k_info[i].x_attr;
+		if (p_ptr->k_attr[j] || p_ptr->k_char[j]) custom_font = TRUE;
+
+		if (!p_ptr->k_char[j]) p_ptr->k_char[j] = k_info[j].x_char;
+		if (!p_ptr->k_attr[j]) p_ptr->k_attr[j] = k_info[j].x_attr;
 
 #if 1
-		if (!p_ptr->d_attr[i]) p_ptr->d_attr[i] = k_info[i].d_attr;
-		if (!p_ptr->d_char[i]) p_ptr->d_char[i] = k_info[i].d_char;
+		if (!p_ptr->d_attr[j]) p_ptr->d_attr[j] = k_info[j].d_attr;
+		if (!p_ptr->d_char[j]) p_ptr->d_char[j] = k_info[j].d_char;
 #else
-		if (!p_ptr->k_attr[i]) p_ptr->d_attr[i] = k_info[i].d_attr;
-		if (!p_ptr->k_char[i]) p_ptr->d_char[i] = k_info[i].d_char;
+		if (!p_ptr->k_attr[j]) p_ptr->d_attr[j] = k_info[j].d_attr;
+		if (!p_ptr->k_char[j]) p_ptr->d_char[j] = k_info[j].d_char;
 #endif
 	}
 

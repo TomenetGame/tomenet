@@ -221,25 +221,22 @@ struct object_kind {
 	byte extra;		/* Something */
 
 
-	byte k_attr;		/* Standard object attribute */
-	char32_t k_char;		/* Standard object character */
+	u16b static_idx;	/* Mapping from our dynamic k_idx to static k_info.txt index, for custom font */
 
+	byte k_attr;		/* Standard object attribute */
+	char32_t k_char;	/* Standard object character */
 
 	byte d_attr;		/* Default object attribute */
-	char32_t d_char;		/* Default object character */
-
+	char32_t d_char;	/* Default object character */
 
 	byte x_attr;		/* Desired object attribute */
-	char32_t x_char;		/* Desired object character */
+	char32_t x_char;	/* Desired object character */
 
 
 	bool has_flavor;	/* This object has a flavor */
-
 	bool easy_know;		/* This object is always known (if aware) */
 
-
 /*	bool aware;	*/	/* The player is "aware" of the item's effects */
-
 /*	bool tried;	*/	/* The player has "tried" one of the items */
 
 	u32b esp;		/* ESP flags */

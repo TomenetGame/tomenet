@@ -445,7 +445,7 @@ object_kind *k_info;
 char *k_name;
 char *k_text;
 
-s16b k_info_num[MAX_K_IDX]; /* mapper from internal k_idx to the N-numbers in k_info.txt */
+u16b k_info_num[MAX_K_IDX]; /* mapper from internal k_idx to the N-numbers in k_info.txt */
 
 /*
  * The artifact arrays

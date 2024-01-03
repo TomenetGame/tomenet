@@ -2644,7 +2644,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what) {
  * Initialize the "k_info" array, by parsing an ascii "template" file
  */
 errr init_k_info_txt(FILE *fp, char *buf) {
-	int i, idx = 0;
+	int i, idx = 0, kidx;
 	char *s, *t;
 #ifdef KIND_DIZ
 	char tmp[MSG_LEN];
@@ -2716,14 +2716,16 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			/* Verify that colon */
 			if (!s) return(1);
 
+			/* Before proceeding to that colon, get the 'static' index (ie the index in k_info.txt).
+			   Added it in Jan 2024, just to create a mapping of the static indices specified in k_info.txt to our in-engine indices we build here,
+			   in order to allow custom fonts to reliably map objects. */
+			kidx = atoi(buf + 2);
+
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
 			if (!*s) return(1);
-
-			/* Get the index */
-			//i = atoi(buf + 2);
 
 			/* Count it up */
 			i = ++idx;
@@ -2740,9 +2742,6 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			/* Point at the "info" */
 			k_ptr = &k_info[i];
 
-			/* For quest_statuseffect() */
-			k_info_num[atoi(buf + 2)] = i;
-
 			/* Hack -- Verify space */
 			if (k_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
@@ -2754,6 +2753,11 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 
 			/* Advance the index */
 			k_head->name_size += strlen(s);
+
+			/* Create index-mapping for custom fonts */
+			k_ptr->static_idx = kidx;
+			/* For quest_statuseffect() */
+			k_info_num[kidx] = i;
 
 			/* Next... */
 			continue;
