@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. January 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 4. January 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4995,7 +4995,8 @@ an order. The first attribute you choose will be raised most.
 However, know that all your stats are randomly modified slightly, each
 character that you create even with same race and class will be a bit
 different. Sometimes you are lucky and get really high attributes at the
-beginning. And sometimes you get more gold to start with. If you don't like
+beginning. And sometimes you get more gold to start with, especially if your
+stats turned out lower, balancing stats against gold. If you don't like
 the resulting stats after you finished character creation, suicide and start
 over.
 
@@ -5016,6 +5017,11 @@ that gives you one more BpR i.e. 3 BpR and just discard your starting weapon.
 Note: The stat points you distribute have no effect on the maximum value your
 character can get by quaffing stat potions. These points to distribute are
 basically just "free stat potions".
+
+Should you not distribute all your stat points, you will get a warning message
+that you have to confirm to proceed. In that case your character will start
+with bonus Au (gold pieces) depending on how many stat points you 'sacrificed'
+ie didn't allocate.
 
 Now you can choose a difficulty level you wish to play on. Options are
 n) Normal  g) no Ghost  H) Hellish  e) Everlasting
