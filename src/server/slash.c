@@ -5583,6 +5583,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			msg_format(Ind, "\377sUptime: %d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
 			return;
+#ifdef SERVER_PORTALS
+		} else if (prefix(messagelc, "/initportal")) { /* initialize inter-server portal */
+			return;
+#endif
 		}
 
 
