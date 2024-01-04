@@ -2440,6 +2440,10 @@ void load_birth_file(cptr name) {
 	file_name[249] = '\0';
 	int tmp, i, r;
 
+
+	/* Assume invalid until we completely loaded it successfully */
+	valid_dna = FALSE;
+
 	/* add '.dna' extension if not already existing */
 	if (strlen(name) > 4) {
 		if (name[strlen(name) - 1] == 'a' &&
@@ -2541,7 +2545,7 @@ void load_birth_file(cptr name) {
 #endif
 
 	/* Validate */
-	valid_dna = 1; //Safety for mis-hacked dna files in future? - Kurzel
+	valid_dna = TRUE; //Safety for mis-hacked dna files in future? - Kurzel
 
 	/* Done */
 	fclose(fp);

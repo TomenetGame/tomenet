@@ -469,7 +469,7 @@ race_redraw:
 		if (c == '#') {
 			if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) j = dna_race;
 			else {
-				valid_dna = 0;
+				valid_dna = FALSE;
 				hazard = FALSE;
 				auto_reincarnation = FALSE;
 				continue;
@@ -733,7 +733,7 @@ trait_redraw:
 		if (c == '#') {
 			if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) j = dna_trait;
 			else {
-				valid_dna = 0;
+				valid_dna = FALSE;
 				hazard = FALSE;
 				auto_reincarnation = FALSE;
 				continue;
@@ -990,14 +990,14 @@ class_redraw:
 					break;
 				}
 				if (i == Setup.max_class) {
-					valid_dna = 0;
-					hazard = FALSE,
+					valid_dna = FALSE;
+					hazard = FALSE;
 					auto_reincarnation = FALSE;
 					continue;
 				}
 #endif
 			} else {
-				valid_dna = 0;
+				valid_dna = FALSE;
 				hazard = FALSE;
 				auto_reincarnation = FALSE;
 				continue;
