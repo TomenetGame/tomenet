@@ -541,7 +541,7 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll) {
  *
  * For efficiency, we include a chunk of "calc_boni()".
  */
-static bool get_stats(int Ind, int stat_order[6]) {
+static s16b get_stats(int Ind, int stat_order[6]) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, tries = 1000;
 
@@ -684,7 +684,7 @@ static bool get_stats(int Ind, int stat_order[6]) {
 		/* If client has been hacked or a version desync error occured, quit. */
 		if (free_points < 0) {
 			s_printf("EXPLOIT: %s allocates too many (+%d) stat points.\n", p_ptr->name, -free_points);
-			return(FALSE);
+			return(-1);
 		} else if (free_points) s_printf("STATPOINTS: %s allocates not all (-%d) stat points.\n", p_ptr->name, free_points);
 
 		/* Apply selected stats */
@@ -695,7 +695,7 @@ static bool get_stats(int Ind, int stat_order[6]) {
 		}
 	}
 
-	return(TRUE);
+	return(free_points);
 }
 
 
@@ -1034,13 +1034,11 @@ static void get_ahw(int Ind) {
 /*
  * Get the player's starting money
  */
-static void get_money(int Ind) {
+static void get_money(int Ind, s16b free_points) {
 	player_type *p_ptr = Players[Ind];
-	int	i, gold;
-
-	/* Social Class determines starting gold */
-	/*gold = (p_ptr->sc * 6) + randint(100) + 300; - the suicide spam to get more gold was annoying.. */
-	gold = randint(20) + 350;
+	int gold = 0;
+#if 0 /* old system - not used anymore because too arbitrary thresholds and not fitting the stat-point allocation system */
+	int i;
 
 	/* Process the stats */
 	for (i = 0; i < 6; i++) {
@@ -1050,6 +1048,41 @@ static void get_money(int Ind) {
 		else if (stat_use[i] > 18) gold -= 50;
 		else gold -= (stat_use[i] - 8) * 5;
 	}
+
+	/* Social Class determines starting gold */
+ #if 0 /* 0'ed: the suicide spam to get more gold was annoying.. */
+	gold += (p_ptr->sc * 6) + randint(100) + 300;
+ #else
+	gold += randint(20) + 350;
+ #endif
+#else /* Reworked the complete Au bonus system for more fairness and interesting balance, hopefully... - C. Blue */
+ #if 0 /* This actually leads to extra Au bonus for using few, but in turn very high stats, which seems weird. */
+	int i;
+
+	/* Process the stats */
+	for (i = 0; i < 6; i++) {
+		/* Linear increase (for fair stats) or deduction (for poor stats) */
+		gold -= (stat_use[i] - 15) * 5;
+  #if 0 /* Especially great stats already cost especially many stat points during character creation, using the new (ie non-random but point-allocation) system; should not double-tax it here again. */
+		/* Selected decrease for especially great stats? */
+		if (stat_use[i] >= 18) gold -= (stat_use[i] - 17) * 10;
+  #endif
+	}
+ #else /* Instead, give Au bonus for non-allocated stat points, which is a true matter of balance here. */
+  #if 0 /* Sounds cool but actually bad idea, because it is very easy to sacrifice some unimportant points to gain a huge advantage for things like IDDC or adventures! */
+	gold += (free_points + 1) * (free_points + 1) * 10 - 10; /* Exponential gain: Create an skill-lacking nouveau riche character >,> */
+  #else /* Still reward somewhat exponentially, but much less, and only add few and linear Au when reaching zero used stat points, so lowering stats into negatives (-1 or -2) will not add further exponential explosion! */
+	if (free_points > 30) {
+		gold += (free_points - 30) * 6; // only little Au gain for negative stat points
+		free_points = 30;
+	}
+	gold += (free_points + 15) * (free_points + 15) / 5 - 45; /* Exponential gain: Sacrifice unnecessary skill points for some monetary gain */
+  #endif
+ #endif
+
+	/* Social Class determines starting gold */
+	gold += randint(20) + 150 + p_ptr->sc / 5; /* sc: 1..100; this little influence should not lead to suicide spam surely...? :-p */
+#endif
 
 	/* Minimum 100 gold */
 	if (gold < 100) gold = 100;
@@ -1061,71 +1094,91 @@ static void get_money(int Ind) {
 	p_ptr->tim_watchlist = 0;
 	p_ptr->pstealing = 0;
 
-#ifdef RPG_SERVER /* casters need to buy a decent book, warriors don't */
- #if 0
-	p_ptr->au = 1000;
- #else
-  #if STARTEQ_TREATMENT < 3
-	switch (p_ptr->pclass) {
-	case CLASS_MAGE:	p_ptr->au += 850; break;
-   #ifdef ENABLE_CPRIEST
-	case CLASS_CPRIEST:
-   #endif
-	case CLASS_PRIEST:      p_ptr->au += 600; break;
-	case CLASS_SHAMAN:	p_ptr->au += 550; break;
-	case CLASS_RUNEMASTER:  p_ptr->au += 500; break;
-	case CLASS_MINDCRAFTER:	p_ptr->au += 500; break;
-	case CLASS_ROGUE:	p_ptr->au += 400; break;
-	case CLASS_ARCHER:	p_ptr->au += 400; break;
-	case CLASS_ADVENTURER:	p_ptr->au += 300; break;
-	case CLASS_RANGER:      p_ptr->au += 200; break;
-   #ifdef ENABLE_DEATHKNIGHT
-	case CLASS_DEATHKNIGHT:
-   #endif
-   #ifdef ENABLE_HELLKNIGHT
-	case CLASS_HELLKNIGHT:	//cannot happen here
-   #endif
-	case CLASS_PALADIN:     p_ptr->au += 200; break;
-	case CLASS_DRUID:	p_ptr->au += 200; break;
-	case CLASS_MIMIC:	p_ptr->au += 100; break;
-	case CLASS_WARRIOR:	p_ptr->au += 0; break;// they can sell their eq.
-	default:		;
-	}
-  #else
-	switch (p_ptr->pclass) {
-	case CLASS_MAGE:	p_ptr->au += 1000; break;
-	case CLASS_SHAMAN:	p_ptr->au += 1000; break;
-	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
-   #ifdef ENABLE_CPRIEST
-	case CLASS_CPRIEST:
-   #endif
-	case CLASS_PRIEST:      p_ptr->au += 800; break;
-	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
-	case CLASS_ADVENTURER:	p_ptr->au += 700; break;
-	case CLASS_DRUID:	p_ptr->au += 600; break;
-	case CLASS_RANGER:      p_ptr->au += 600; break;
-   #ifdef ENABLE_DEATHKNIGHT
-	case CLASS_DEATHKNIGHT:
-   #endif
-   #ifdef ENABLE_HELLKNIGHT
-	case CLASS_HELLKNIGHT:	//cannot happen here
-   #endif
-	case CLASS_PALADIN:     p_ptr->au += 600; break;
-	case CLASS_ROGUE:	p_ptr->au += 600; break;
-	case CLASS_MIMIC:	p_ptr->au += 600; break;
-	case CLASS_WARRIOR:	p_ptr->au += 600; break;
-	case CLASS_ARCHER:	p_ptr->au += 400; break; /* gets ammo, bow, lantern, extra phases! */
-	default:		;
-	}
-  #endif
- #endif
-#else
- #if STARTEQ_TREATMENT == 3
+	/* --- Gain extra gold depending on class' needs and server settings --- */
+
+#if STARTEQ_TREATMENT == 3 /* Players cannot sell starter items. (default) */
 	p_ptr->au += 300;
- #else
-	if ((p_ptr->pclass != CLASS_WARRIOR) && (p_ptr->pclass != CLASS_MIMIC))
-		p_ptr->au += 200; /* their startup eq sells for most */
+#else /* Players can sell starter items! */
+	/* Some classes have starter items that sell for A LOT, being instantly sold basically (see [...] values further below)! */
+ #if 0
+	//TODO: set those items (IV amulet, invis pot, self-know pot) to 100% off; adjust +Au bonus of all classes according to their [<Au value>] numbers
+ #else /* ..until the above 'TODO' is resolved: */
+	/* Just a generic placeholder Au bonus for all classes (as if their starter items were not sellable) */
+	p_ptr->au += 200;
  #endif
+#endif
+
+#ifdef RPG_SERVER /* casters need to buy a decent book, warriors don't -- approximate book value of starter items, MINUS beginner books (except single scrolls), given in brackets */
+	switch (p_ptr->pclass) {
+	/* get starter books */
+	case CLASS_MAGE:	p_ptr->au += 250; break; //						[500]
+ #ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:	//cannot happen here
+ #endif
+	case CLASS_PRIEST:      p_ptr->au += 250; break; //						[580]
+	case CLASS_SHAMAN:	p_ptr->au += 250; break; //						[1700 (IV amulet: 1350)]
+
+	/* get starter scroll */
+	case CLASS_MINDCRAFTER:	p_ptr->au += 400; break; //						[600]
+	case CLASS_RANGER:      p_ptr->au += 400; break; //						[750]
+	case CLASS_ROGUE:	p_ptr->au += 400; break; //						[200]
+ #ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT: //									[750]
+ #endif
+ #ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:	//cannot happen here
+ #endif
+	case CLASS_PALADIN:     p_ptr->au += 400; break; //						[875]
+	case CLASS_DRUID:	p_ptr->au += 300; break; //is op anyway					[1150 (invis pot: 1000)]
+
+	/* doesn't get anything but can be anything */
+	case CLASS_ADVENTURER:	p_ptr->au += 450; break; //						[200]
+
+	/* doesn't get/need anything */
+	case CLASS_ARCHER:	p_ptr->au += 150; break; //escape mechanism/xbow maybe			[650 (w/o long bow)]
+	case CLASS_MIMIC:	p_ptr->au += 50; break; //low bpr, no real spells to make up for it	[3000 (self-know pot: 2000]
+	case CLASS_WARRIOR:	p_ptr->au += 0; break; //can sell starter equipment if required?	[1250]
+	case CLASS_RUNEMASTER:  p_ptr->au += 0; break; //doesn't use/need spells			[450]
+	}
+#else
+ /* Light-version of RPG server gold boni, for the normal server:
+    Extra Au, added specifically for events/challenges that don't allow you to get more spells easily and early on.
+    This creates a disparity between classes that start with a fully fledged starter spell book or especially
+    runemasters who do not require books at all to continuously increase their power with each early on level up,
+    and hybrid classes that start with only one specific very low-level spell scroll and need to spend excessive
+    money to acquire even one more low level spell.
+    Example events concerned: Highly Kurzel's adventure modules, but to some minor extent also Ironman Deep Dive Challenge.*/
+	switch (p_ptr->pclass) {
+	/* get starter books */
+	case CLASS_MAGE:	p_ptr->au += 0; break;
+ #ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:	//cannot happen here
+ #endif
+	case CLASS_PRIEST:      p_ptr->au += 0; break;
+	case CLASS_SHAMAN:	p_ptr->au += 0; break;
+
+	/* get starter scroll */
+	case CLASS_MINDCRAFTER:	p_ptr->au += 200; break;
+	case CLASS_RANGER:      p_ptr->au += 200; break;
+	case CLASS_ROGUE:	p_ptr->au += 200; break;
+ #ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+ #endif
+ #ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:	//cannot happen here
+ #endif
+	case CLASS_PALADIN:     p_ptr->au += 200; break;
+	case CLASS_DRUID:	p_ptr->au += 100; break; //is op anyway
+
+	/* doesn't get anything but can be anything */
+	case CLASS_ADVENTURER:	p_ptr->au += 250; break;
+
+	/* doesn't get/need anything */
+	case CLASS_ARCHER:	p_ptr->au += 50; break; //escape mechanism/xbow maybe
+	case CLASS_MIMIC:	p_ptr->au += 50; break; //low bpr, no real spells to make up for it
+	case CLASS_WARRIOR:	p_ptr->au += 0; break;
+	case CLASS_RUNEMASTER:  p_ptr->au += 0; break; //doesn't use/need spells
+	}
 #endif
 
 	/* Since it's not a king/queen */
@@ -1220,6 +1273,8 @@ static void player_wipe(int Ind) {
  * will be given instead.	- Jir -
  */
 static byte player_init[2][MAX_CLASS][5][3] = {
+	/* Format: { tval, sval, pval } */
+
     { /* Normal body */
 	{
 		/* Warrior */
@@ -2127,10 +2182,8 @@ static void player_outfit(int Ind) {
 	o_ptr->discount = 100;
 	do_player_outfit();
  #else
-	if (p_ptr->pclass == CLASS_ARCHER)
-	p_ptr->au += 100;
-	else
-	p_ptr->au += 50;
+	if (p_ptr->pclass == CLASS_ARCHER) p_ptr->au += 100; /* for buying extra phase door scrolls */
+	else p_ptr->au += 50; /* generic RPG-server increase */
  #endif
 #endif
 
@@ -3275,6 +3328,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	cptr accname = connp->nick, name = connp->c_name;
 	int race = connp->race, class = connp->class, trait = connp->trait, sex = connp->sex;
 	int stat_order[6];
+	s16b free_points = 0;
 	stat_order[0] = connp->stat_order[0];
 	stat_order[1] = connp->stat_order[1];
 	stat_order[2] = connp->stat_order[2];
@@ -3590,8 +3644,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Actually Generate */
 	p_ptr->maximize = cfg.maximize ? TRUE : FALSE;
 
-	/* No autoroller */
-	if (!get_stats(Ind, stat_order)) return(FALSE);
+	/* No autoroller; -1 = exploit or client bug: Tried to allocate too many stat points. */
+	if ((free_points = get_stats(Ind, stat_order)) == -1) return(FALSE);
 
 	/* Roll for base hitpoints */
 	get_extra(Ind);
@@ -3603,7 +3657,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	get_history(Ind);
 
 	/* Roll for gold */
-	get_money(Ind);
+	get_money(Ind, free_points);
 
 	/* for PVP-mode chars: set level and skill, execute hacks */
 	if (p_ptr->mode & MODE_PVP) {
