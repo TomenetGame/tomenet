@@ -20,17 +20,18 @@ end
 
 -- save a floor
 function module_save(wx,wy,wz,name)
-  wpos = make_wpos(wx,wy,wz)
-  path = lua_path_build(name)
+  local wpos = make_wpos(wx,wy,wz)
+  local path = lua_path_build(name)
 
   -- msg_print(Ind,"Saving Module File: "..path)
   -- msg_print(Ind,"wpos: ("..wx..","..wy..","..wz..")")
   
-  file = writeto(""..path, "w");
+  local file = writeto(""..path, "w");
 
   -- dimensions
-  w = dun_get_wid(wpos)
-  h = dun_get_hgt(wpos)
+  local w = dun_get_wid(wpos)
+  local h = dun_get_hgt(wpos)
+
   -- msg_print(Ind,"WRITE (w,h): ("..w..","..h..")")
   write(w.."\n")
   write(h.."\n")
@@ -38,7 +39,8 @@ function module_save(wx,wy,wz,name)
   -- features, monsters, items
   for x = 0, MAX_WID do
     for y = 0, MAX_HGT do
-      f,r,e,t,s = 0,0,0,0,0
+      local f,r,e,t,s = 0,0,0,0,0
+
       f = check_feat(wpos,y,x)
       write(f.."\n")
       r = check_monster(wpos,y,x)
@@ -53,19 +55,21 @@ function module_save(wx,wy,wz,name)
   end
 
   -- entry positions
-  ux = level_up_x(wpos)
-  ux = level_up_x(wpos)
-  uy = level_up_y(wpos)
+  local ux = level_up_x(wpos)
+  local ux = level_up_x(wpos)
+  local uy = level_up_y(wpos)
   -- msg_print(Ind,"WRITE (ux,uy): ("..ux..","..uy..")")
   write(ux.."\n")
   write(uy.."\n")
-  dx = level_down_x(wpos)
-  dy = level_down_y(wpos)
+ 
+  local dx = level_down_x(wpos)
+  local dy = level_down_y(wpos)
   -- msg_print(Ind,"WRITE (dx,dy): ("..dx..","..dy..")")
   write(dx.."\n")
   write(dy.."\n")
-  rx = level_rand_x(wpos)
-  ry = level_rand_y(wpos)
+
+  local rx = level_rand_x(wpos)
+  local ry = level_rand_y(wpos)
   -- msg_print(Ind,"WRITE (rx,ry): ("..rx..","..ry..")")
   write(rx.."\n")
   write(ry.."\n")
@@ -78,21 +82,24 @@ end
 -- load a floor
 function module_load(wx,wy,wz,name,light)
   if wz == 0 then return 1 end -- paranoia - no surface modules, yet
-  wpos = make_wpos(wx,wy,wz)
-  path = lua_path_build(name)
+
+  local wpos = make_wpos(wx,wy,wz)
+  local path = lua_path_build(name)
 
   -- msg_print(Ind,"Loading Module File: "..path)
   -- msg_print(Ind,"wpos: ("..wx..","..wy..","..wz..")")
 
-  file = readfrom(""..path, "r");
+  local file = readfrom(""..path, "r");
 
-  w = read("*n")
-  h = read("*n")
+  local w = read("*n")
+  local h = read("*n")
   -- msg_print(Ind,"READ (w,h): ("..w..","..h..")")
 
-  W = (MAX_WID - w) * 2 / SCREEN_WID
-  H = (MAX_HGT - h) * 2 / SCREEN_HGT
+  local W = (MAX_WID - w) * 2 / SCREEN_WID
+  local H = (MAX_HGT - h) * 2 / SCREEN_HGT
   -- msg_print(Ind,"READ (W,H): ("..W..","..H..")")
+
+  local x, y, f, r, e, t, s
 
   generate_cave_blank(wpos,W,H,light)
   summon_override(1) -- SO_ALL
@@ -117,18 +124,20 @@ function module_load(wx,wy,wz,name,light)
   summon_override(0) -- SO_NONE
 
   -- entry positions
-  ux = read("*n")
-  uy = read("*n")
+  local ux = read("*n")
+  local uy = read("*n")
   -- msg_print(Ind,"READ (ux,uy): ("..ux..","..uy..")")
   new_level_up_x(wpos,ux)
   new_level_up_y(wpos,uy)
-  dx = read("*n")
-  dy = read("*n")
+
+  local dx = read("*n")
+  local dy = read("*n")
   -- msg_print(Ind,"READ (dx,dy): ("..dx..","..dy..")")
   new_level_down_x(wpos,dx)
   new_level_down_y(wpos,dy)
-  rx = read("*n")
-  ry = read("*n")
+
+  local rx = read("*n")
+  local ry = read("*n")
   -- msg_print(Ind,"READ (rx,ry): ("..rx..","..ry..")")
   new_level_rand_x(wpos,rx)
   new_level_rand_y(wpos,ry)

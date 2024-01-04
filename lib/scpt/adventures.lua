@@ -132,7 +132,9 @@ function adventure_description(t,j)
 end
 
 function adventure_count(t)
-  count = 0
+  local count = 0
+  local i
+
   for i = GE_EXTRA[t][4],GE_EXTRA[t][5] do
     count = count + players_on_depth(make_wpos(0,0,i))
   end
