@@ -43,6 +43,7 @@
 #define WPF_PMSG	0x0800	/* private message - P */
 #define WPF_SINFO	0x1000
 #define WPF_IRCCHAT	0x2000	/* chat message from IRC relay - S */
+//hole
 #define WPF_PORTAL	0x8000	/* SERVER_PORTALS */
 
 /* World message flags */
