@@ -3347,6 +3347,8 @@ static void set_server_option(char * option, char * value) {
 		cfg.store_turns = atoi(value);
 	else if (!strcmp(option, "DUN_STORE_TURNS"))
 		cfg.dun_store_turns = atoi(value);
+	else if (!strcmp(option, "BOOK_STORE_TURNS_PERC"))
+		cfg.book_store_turns_perc = atoi(value);
 	else if (!strcmp(option, "PUBLIC_RFE"))
 		cfg.public_rfe = str_to_boolean(value);
 	else if (!strcmp(option, "AUTO_PURGE"))

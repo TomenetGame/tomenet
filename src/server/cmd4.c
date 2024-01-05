@@ -2932,6 +2932,7 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "dun_unusual: %d (default = 200)\n", cfg.dun_unusual);
 		fprintf(fff, "Stores change their inventory every ~%d seconds.\n", (cfg.store_turns * 10) / cfg.fps);
 		fprintf(fff, "Dungeon Stores change their inventory every ~%d seconds.\n", (cfg.dun_store_turns * 10) / cfg.fps);
+		fprintf(fff, "Book Stores change their inventory at %d%% turns.\n", cfg.book_store_turns_perc);
 
 		fprintf(fff, "starting town: location [%d, %d], baselevel(%d)\n", cfg.town_x, cfg.town_y, cfg.town_base);
 

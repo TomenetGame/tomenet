@@ -1781,19 +1781,16 @@ static int return_level(store_type *st_ptr, int town_base_level) {
 	if (sti_ptr->flags1 & SF1_RANDOM) level = 0;
 	else level = rand_range(1, STORE_OBJ_LEVEL); //usually 5
 
-//	if (sti_ptr->flags1 & SF1_DEPEND_LEVEL) level += dun_level;
+	/* For example higher level books in bookstores outside of Bree: */
+	//if (sti_ptr->flags1 & SF1_DEPEND_LEVEL) level += dun_level;
+	if (sti_ptr->flags1 & SF1_DEPEND_LEVEL) level += town_base_level;
 
 	/* used for rare dungeon stores */
 	if (sti_ptr->flags1 & SF1_SHALLOW_LEVEL) level += 5 + rand_int(5);
 	if (sti_ptr->flags1 & SF1_MEDIUM_LEVEL) level += 25 + rand_int(25);
 	if (sti_ptr->flags1 & SF1_DEEP_LEVEL) level += 45 + rand_int(45); /* if < 50 will prevent tomes in XBM, but occurs only rarely */
 
-//	if (sti_ptr->flags1 & SF1_ALL_ITEM) level += p_ptr->lev;
-
-	/* Better books in bookstores outside of Bree */
-	if (st_ptr->st_idx == STORE_BOOK ||
-	    st_ptr->st_idx == STORE_BOOK_DUN)
-		level += town_base_level;
+	//if (sti_ptr->flags1 & SF1_ALL_ITEM) level += p_ptr->lev;
 
 	return(level);
 }
@@ -3497,6 +3494,7 @@ void store_stole(int Ind, int item) {
 		if (st_ptr->stock_num == 0) {
 			/* This should do a nice restock */
 			//st_ptr->last_visit = 0;
+			//st_ptr->last_visit = -10L * (p_ptr->wpos.wz ? cfg.dun_store_turns : cfg.store_turns);
 			st_ptr->last_visit = -10L * cfg.store_turns;
 		}
 
@@ -4768,7 +4766,9 @@ void do_cmd_store(int Ind) {
 	p_ptr->tim_store = STORE_TURNOUT;
 
 	/* Calculate the number of store maintainances since the last visit */
-	maintain_num = (turn - st_ptr->last_visit) / (10L * (p_ptr->wpos.wz ? cfg.dun_store_turns : cfg.store_turns));
+	maintain_num = (turn - st_ptr->last_visit) / (10L *
+	    ((((st_ptr->st_idx == STORE_BOOK || st_ptr->st_idx == STORE_BOOK_DUN || st_ptr->st_idx == STORE_LIBRARY || st_ptr->st_idx == STORE_HIDDENLIBRARY || st_ptr->st_idx == STORE_FORBIDDENLIBRARY) ? cfg.book_store_turns_perc : 100)
+	    * (p_ptr->wpos.wz ? cfg.dun_store_turns : cfg.store_turns) + 99) / 100));
 
 	/* Maintain the store max. 10 times.
 	   Note: this value could probably be reduced down to 4, with
@@ -5189,8 +5189,7 @@ void store_shuffle(store_type *st_ptr) {
  */
 void store_maint(store_type *st_ptr) {
 	int j;
-	//owner_type *ot_ptr;
-	int tries = 200;
+	int tries;
 
 #if 0
 	/* Ignore home */
@@ -5275,35 +5274,21 @@ void store_maint(store_type *st_ptr) {
 	}
 
 
-
 	/* Choose the number of slots to keep */
 	j = st_ptr->stock_num;
-
 	/* Sell a few items */
 	j = j - randint(1 + st_ptr->stock_size / STORE_TURNOVER_DIV);
-
-#if 0 /* making it dependant on shop size instead - C. Blue */
-	/* Never keep more than "STORE_MAX_KEEP" slots */
-	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
-#else
+	/* Keep at most this many items */
 	if (j > (st_ptr->stock_size * 7) / 8) j = (st_ptr->stock_size * 7) / 8;
-#endif
-
-#if 0 /* making it dependant on shop size instead - C. Blue */
-	/* Always "keep" at least "STORE_MIN_KEEP" items */
-	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
-#else
+	/* Keep at least this many items */
 	if (j < st_ptr->stock_size / 4) j = st_ptr->stock_size / 4;
-#endif
 
-	/* Hack for Libraries: fluctuate books more often.
-	   Reason: It's probably a bit too annoying to wait for specific books. - C. Blue */
-	if (st_ptr->st_idx == STORE_BOOK ||
-	    st_ptr->st_idx == STORE_BOOK_DUN ||
-	    st_ptr->st_idx == STORE_LIBRARY ||
-	    st_ptr->st_idx == STORE_HIDDENLIBRARY ||
-	    st_ptr->st_idx == STORE_FORBIDDENLIBRARY)
+	if ((st_info[st_ptr->st_idx].flags2 & SF2_KEEP_QUART) && j > st_ptr->stock_size / 4)
+		j = st_ptr->stock_size / 4;
+	else if ((st_info[st_ptr->st_idx].flags2 & SF2_KEEP_HALF) && j > st_ptr->stock_size / 2)
 		j = st_ptr->stock_size / 2;
+	else if ((st_info[st_ptr->st_idx].flags2 & SF2_KEEP_TQUART) && j > (st_ptr->stock_size * 3) / 4)
+		j = (st_ptr->stock_size * 3) / 4;
 
 	/* Hack -- prevent "underflow" */
 	if (j < 0) j = 0;
@@ -5312,41 +5297,25 @@ void store_maint(store_type *st_ptr) {
 	while (st_ptr->stock_num > j) store_delete(st_ptr);
 
 
-
 	/* Choose the number of slots to fill */
 	j = st_ptr->stock_num;
-
 	/* Buy some more items */
 	j = j + randint(1 + st_ptr->stock_size / STORE_TURNOVER_DIV);
-
-#if 0 /* making it dependant on shop size instead - C. Blue */
-	/* Never keep more than "STORE_MAX_KEEP" slots */
-	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
-#else
+	/* Buy at most this many items */
 	if (j > (st_ptr->stock_size * 7) / 8) j = (st_ptr->stock_size * 7) / 8;
-#endif
-
-#if 0 /* making it dependant on shop size instead - C. Blue */
-	/* Always "keep" at least "STORE_MIN_KEEP" items */
-	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
-#else
+	/* Buy at least this many items */
 	if (j < st_ptr->stock_size / 4) j = st_ptr->stock_size / 4;
-#endif
 
 	/* Hack -- prevent "overflow" */
 	if (j >= st_ptr->stock_size) j = st_ptr->stock_size - 1;
 
-	/* Hack for Libraries: Keep especially many books, which fluctuate often.
-	   Reason: It's probably a bit too annoying to wait for specific books. - C. Blue */
-	if (st_ptr->st_idx == STORE_BOOK ||
-	    st_ptr->st_idx == STORE_BOOK_DUN ||
-	    st_ptr->st_idx == STORE_LIBRARY ||
-	    st_ptr->st_idx == STORE_HIDDENLIBRARY ||
-	    st_ptr->st_idx == STORE_FORBIDDENLIBRARY)
-		j = st_ptr->stock_size - rand_int((st_ptr->stock_size * 1) / 16);
+	tries = st_ptr->stock_size - rand_int(st_ptr->stock_size / 16);
+	if ((st_info[st_ptr->st_idx].flags2 & SF2_FILL_WELL) && j < tries)
+		j = tries;
 
 	/* Acquire some new items */
 	/* We want speed & healing & mana pots in the BM */
+	tries = 200;
 	while (st_ptr->stock_num < j) {
 		store_create(st_ptr);
 		tries--;
@@ -5364,11 +5333,11 @@ void store_init(store_type *st_ptr) {
 
 
 	/* Pick an owner */
-//	st_ptr->owner = rand_int(MAX_STORE_OWNERS);
+	//st_ptr->owner = rand_int(MAX_STORE_OWNERS);
 	st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(MAX_STORE_OWNERS)];
 
 	/* Activate the new owner */
-//	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
+	//ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
 	//ot_ptr = &ow_info[st_ptr->owner];
 
 
@@ -5386,7 +5355,7 @@ void store_init(store_type *st_ptr) {
 	 * BEFORE player birth to enable store restocking
 	 */
 	/* so let's not employ it :) */
-//	st_ptr->last_visit = -100L * cfg.store_turns;
+	//st_ptr->last_visit = -100L * cfg.store_turns;
 
 	/* Clear any old items */
 	for (k = 0; k < st_ptr->stock_size; k++)
@@ -7288,7 +7257,9 @@ void reward_deed_blessing(int Ind, int item) {
 }
 
 /* Set store_debugging_mode and put stores into a special mode that helps debugging their stocks - C. Blue
-   note: may be called every 10 turns (since cfg.store_turns is multiplied by 10). */
+   May be called every 10 turns (since cfg.store_turns is multiplied by 10).
+   Currently doesn't support cfg.dun_store_turns for dungeon stores, using normal cfg.store_turns for them.
+   Currently doesn't support cfg.book_store_turns_perc. */
 void store_debug_stock() {
 	int i, j, n, maintain_num, what;
 	store_type *st_ptr;

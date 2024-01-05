@@ -4267,6 +4267,7 @@ struct server_opts {
 
 	s16b store_turns;
 	s16b dun_store_turns;
+	s16b book_store_turns_perc;
 	char resting_rate;
 	char party_xp_boost;
 

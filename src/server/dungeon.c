@@ -10266,7 +10266,9 @@ void dungeon(void) {
 
 	/* Process debugging/helper functions - C. Blue */
 	if (store_debug_mode &&
-	    /* '/ 10 ' stands for quick motion, ie time * 10 */
+	    /* '/ 10 ' stands for quick motion, ie time * 10.
+	       Doesn't support cfg.dun_store_turns, but instead just uses cfg.store_turns even for dungeon stores.
+	       Doesn't support cfg.book_store_turns_perc. */
 	    (!(turn % ((store_debug_mode * (10L * cfg.store_turns)) / store_debug_quickmotion))))
 		store_debug_stock();
 

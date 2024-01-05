@@ -420,7 +420,7 @@ G:9:o
 W:120
 # more fireproof spell scrolls and codices:
 #F:GOOD
-F:GREAT
+F:GREAT | FILL_WELL | KEEP_TQUART
 
 #N:9:Pet Shop
 #I:100:Egg
@@ -760,7 +760,7 @@ A:2:1:3:4:0:27
 #O:8:9:10:11
 O:42:43:44:45:4:58
 G:9:y
-F:RANDOM | DEPEND_LEVEL | MEDIUM_LEVEL | HARD_STEAL
+F:RANDOM | DEPEND_LEVEL | MEDIUM_LEVEL | HARD_STEAL | FILL_WELL | KEEP_TQUART
 W:0
 #UNUSED W:24
 
@@ -773,7 +773,7 @@ A:2:1:3:0:0:27
 #O:8:9:10:11
 O:42:43:44:45:4:58
 G:9:v
-F:RANDOM | DEPEND_LEVEL | DEEP_LEVEL
+F:RANDOM | DEPEND_LEVEL | DEEP_LEVEL | FILL_WELL | KEEP_TQUART
 F:RARE
 W:0
 #UNUSED W:12
@@ -1116,7 +1116,7 @@ A:2:1:3:4:27:0
 O:42:43:44:45:4:58
 G:9:r
 #deeper store -> higher level books, added NO_DISCOUNT for IDDC, to be consistent with IDDC town stores, SELL67 to counterbalance it
-F:DEPEND_LEVEL | NO_DISCOUNT |  SELL67
+F:DEPEND_LEVEL | NO_DISCOUNT |  SELL67 | FILL_WELL | KEEP_TQUART
 #more fireproof stuff:
 F:GREAT
 #W:72
@@ -1552,7 +1552,7 @@ G:9:o
 W:120
 # more fireproof spell scrolls and codices:
 #F:GOOD
-F:GREAT | NO_DISCOUNT | BUY67
+F:GREAT | NO_DISCOUNT | BUY67 | FILL_WELL | KEEP_TQUART
 #F:HARD_STEAL	(removed for IDDC_IRON_COOP)
 
 #N:79:Pet Shop

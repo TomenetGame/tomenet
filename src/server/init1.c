@@ -1463,12 +1463,13 @@ static cptr st_info_flags1[] = {
 };
 static cptr st_info_flags2[] = {
 	//"COMMON",
-	"MUSEUM",
-	"",
-	"",
-	"",
 
-	"",
+	"MUSEUM",
+	"KEEP_QUART",
+	"KEEP_HALF",
+	"KEEP_TQUART",
+
+	"FILL_WELL",
 	"",
 	"",
 	"",

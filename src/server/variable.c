@@ -180,7 +180,7 @@ server_opts cfg = {
 	32,32,		// town_x, town_y
 	0,		// town_base,
 
-	200, 50,	// store_turns, dun_store_turns
+	200, 50, 50,	// store_turns, dun_store_turns, book_store_turns_perc
 	/* char */
 	3, 2,		// resting_rate, party_xp_boost
 

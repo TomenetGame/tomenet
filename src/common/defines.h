@@ -1624,27 +1624,14 @@
 #define MAX_STORE_OWNERS	6	/* Max size for st_ptr->owners[] */
 
 #define STORE_INVEN_MAX		120		/* Max number of discrete objs in inven [48] */
-#define STORE_CHOICES		64 /*34 -> 56*/	/* Number of items to choose stock from (defined in st_info.txt) */
+#define STORE_CHOICES		64		/* Number of items to choose stock from (defined in st_info.txt) */
 #define STORE_OBJ_LEVEL		5		/* Magic Level for normal stores */
 #define STORE_TURNOVER_DIV	3		/* Normal shop turnover, per day (stock_size / this = randint(amount of items to turnover)) */
-#if 0
-#define STORE_MIN_KEEP		10		/* Min slots to "always" keep full */
-#define STORE_MAX_KEEP		42		/* Max slots to "always" keep full */
-#else /* 0 */
-#define STORE_MIN_KEEP		6		/* Min slots to "always" keep full */
-#define STORE_MAX_KEEP		24		/* Max slots to "always" keep full */
-#endif /* 0 */
 #define STORE_SHUFFLE		20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT		60		/* Max turns a player may stay in a store if crowded */
-#define STORE_TURNS		(cfg.store_turns)	/* Number of turns between turnovers */
+#define STORE_TURNS		(cfg.store_turns)	/* UNUSED (cfg.store_turns and cfg.dun_store_turns are used instead) - Number of turns between turnovers */
 
 #define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
-
-#if 0
-#define STORE_TURNS		200		/* Number of turns between turnovers */
-#define STORE_SHUFFLE		25		/* 1/Chance (per day) of an owner changing */
-#define STORE_TURNS		500		/* Number of turns between turnovers */
-#endif
 
 /* Stores/buildings defines */
 #define STORE_HATED		0
@@ -1689,8 +1676,12 @@
 
 #define SF1_NO_DISCOUNT3	(SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)	/* Hack: Reduce discounts somewhat */
 
+//#define SF2_COMMON		0x0000000L	/* UNUSED */
 #define SF2_MUSEUM		0x00000001L
-//#define SF2_COMMON		0x0000000L	/* Currently no effect */
+#define SF2_KEEP_QUART		0x00000002L	/* On store inventory turnover, keep at most 1/4 of the stock, resulting in somewhat more new items (for book stores mostly) */
+#define SF2_KEEP_HALF		0x00000004L	/* On store inventory turnover, keep at most half the stock, resulting in more new items (for book stores mostly) */
+#define SF2_KEEP_TQUART		0x00000008L	/* On store inventory turnover, keep at most 3/4 of the stock, resulting in somewhat more new items (for book stores mostly) */
+#define SF2_FILL_WELL		0x00000010L	/* Fill up store inventory on turnover, so only few slots remain empty (potentially for buying items from the player). For book stores mostly. */
 
 
 /* This seems to be bad, but backported once anyway;
