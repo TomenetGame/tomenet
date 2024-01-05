@@ -268,7 +268,8 @@ end
 
 -- Custom objects:
 -- Ind can be negative if the item is carried/dropped by a monster instead of a player.
--- o_idx is 0 if it's now not an item on the floor (but in player/monster inventory)
+-- o_idx is 0 if it's now not an item on the floor (but in player/monster inventory) - ie when the item was picked up.
+-- This function is called right _before_ item is destroyed or timed out, so o_idx or slot can still be valid.
 -- slot > 0: inven slot where we carry it now; 0: item was used up/consumed by player, -1: dropped, -2: thrown, -3: fired, -4: destroyed, -5: timed out; -6: stolen by trap, -7: by monster, -8: by player
 function custom_object_carrystate(Ind, o_idx, slot, index)
 end
@@ -276,7 +277,7 @@ end
 function custom_object_equipstate(Ind, slot, index)
 end
 -- Ind can be 0 if the item is currently not carried by a player but on the floor; Ind < 0: currently carried by a monster
--- Function is called right _before_ item is destroyed, so o_idx or slot can still be valid.
+-- This function is called right _before_ item is destroyed, so o_idx or slot can still be valid.
 -- o_idx is 0 if the item wasn't on the floor. slot is 0 if the item wasn't in player/monster inventory.
 function custom_object_destruction(Ind, o_idx, slot, index)
 end
