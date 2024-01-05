@@ -7133,7 +7133,7 @@ void reward_deed_item(int Ind, int item) {
 		msg_print(Ind, "That's not a deed.");
 		return;
 	}
-//	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
+	//if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
 	if (o2_ptr->owner && o2_ptr->owner != p_ptr->id) {
 		msg_print(Ind, "\377oYou can only redeem your own deeds for items.");
 		return;
@@ -7184,7 +7184,7 @@ void reward_deed_item(int Ind, int item) {
 		break;
 	case SV_DEED_PVP_START:
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000);
-		if (!o_ptr->note) o_ptr->note = quark_add("");
+		//if (!o_ptr->note) o_ptr->note = quark_add("");
 		msg_print(Ind, "\377GThe mayor's secretary hands you an item and gives you a supportive pat.");
 		lev = 1; dis = 0;
 		break;

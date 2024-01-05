@@ -6840,7 +6840,7 @@ void do_cmd_fire(int Ind, int dir) {
 		/* Not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion.
 		   Basically, we want to turn everything level 0 that he could buy in town shops and then drop for someone else to pick up and utilize/monetize. */
 		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
-		o_ptr->xtra9 = 1; //mark as unsellable
+		o_ptr->mode |= MODE_STARTER_ITEM; //hack: mark as unsellable
 	}
 #endif
 
@@ -8266,7 +8266,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion.
 			   Basically, we want to turn everything level 0 that he could buy in town shops and then drop for someone else to pick up and utilize/monetize. */
 			if ((!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) && o_ptr->tval != TV_CHEST) o_ptr->level = 0;
-			o_ptr->xtra9 = 1; //mark as unsellable
+			o_ptr->mode |= MODE_STARTER_ITEM; //hack: mark as unsellable
 		}
 #endif
 	}

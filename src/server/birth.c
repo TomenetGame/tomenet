@@ -1759,43 +1759,27 @@ void admin_outfit(int Ind, int realm) {
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
-	o_ptr->mode = p_ptr->mode; \
+	o_ptr->mode = p_ptr->mode | MODE_STARTER_ITEM; \
 	o_ptr->level = 1; \
-	o_ptr->xtra9 = 1; /* mark as starter item */ \
 	(void)inven_carry_equip(Ind, o_ptr);
 #else
  #if STARTEQ_TREATMENT == 3
-  #if 0
-    #define do_player_outfit()	\
+  #define do_player_outfit()	\
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
-	o_ptr->mode = p_ptr->mode; \
+	o_ptr->mode = p_ptr->mode | MODE_STARTER_ITEM; \
 	o_ptr->level = 0; \
-	o_ptr->discount = 100; /* <- replaced this by making level-0-items unsellable in general */ \
-	/* if (!o_ptr->note) o_ptr->note = quark_add(""); -- hack to hide 'unsalable' (or formerly '100% off') tag? */ \
 	(void)inven_carry_equip(Ind, o_ptr);
-  #else
-    #define do_player_outfit()	\
-	object_aware(Ind, o_ptr); \
-	object_known(o_ptr); \
-	o_ptr->ident |= ID_MENTAL; \
-	o_ptr->owner = p_ptr->id; \
-	o_ptr->mode = p_ptr->mode; \
-	o_ptr->level = 0; \
-	o_ptr->xtra9 = 1; /*mark as starter item, implies unsellable */ \
-	(void)inven_carry_equip(Ind, o_ptr);
-  #endif
  #else
-    #define do_player_outfit()	\
+  #define do_player_outfit()	\
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
-	o_ptr->mode = p_ptr->mode; \
+	o_ptr->mode = p_ptr->mode | MODE_STARTER_ITEM; \
 	o_ptr->level = 0; \
-	o_ptr->xtra9 = 1; /* mark as starter item */ \
 	(void)inven_carry_equip(Ind, o_ptr);
  #endif
 #endif

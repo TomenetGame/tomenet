@@ -10138,7 +10138,7 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir) {
 	int fuse;
 
-	/* Set 'dir' if any (for fire-wall charge) (NOTE: This collides with inventory_loss_starteritems marker ^^) */
+	/* Set 'dir' if any (for fire-wall charge) */
 	o2_ptr->xtra9 = dir;
 
 	/* Hack: Allow setting custom fuse length via '!Fxx' inscription! */

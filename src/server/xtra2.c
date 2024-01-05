@@ -8799,7 +8799,7 @@ static void inven_death_damage(int Ind, int verbose) {
   #endif
  #endif
 		/* protect starter items? this is mainly for starter spell books.. */
-		if (!inventory_loss_starteritems && o_ptr->xtra9 == 1) continue;
+		if (!inventory_loss_starteritems && (o_ptr->mode & MODE_STARTER_ITEM)) continue;
 
 		if (magik(DEATH_PACK_ITEM_LOST)) {
 			k = o_ptr->number;
