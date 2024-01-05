@@ -1775,6 +1775,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	}
 
 #if (STARTEQ_TREATMENT > 1)
+	/* Items belonging to and then being dropped by a character whose level is < cfg.newbies_cannot_drop become unsalable. */
  #ifndef RPG_SERVER
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL && o_ptr->tval != TV_CHEST) {

@@ -1238,7 +1238,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			/* Print a message */
   #if 0
 			fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
-					q_ptr->name, (q_ptr->mode == MODE_HARD)?"hellish ":"",
+					q_ptr->name, (q_ptr->mode & MODE_HARD) ? "hellish " : "",
 					race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
 					(q_ptr->total_winner)?
 					    ((p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?

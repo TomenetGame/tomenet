@@ -6833,6 +6833,7 @@ void do_cmd_fire(int Ind, int dir) {
 	}
 
 #if (STARTEQ_TREATMENT > 1)
+	/* Items belonging to and then being dropped by a character whose level is < cfg.newbies_cannot_drop become unsalable. */
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    //o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && --cannot fire keys or chests oO
 	    o_ptr->tval != TV_SPECIAL) {
@@ -8259,6 +8260,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	if (!bashing) {
 #if (STARTEQ_TREATMENT > 1)
+		/* Items belonging to and then being dropped by a character whose level is < cfg.newbies_cannot_drop become unsalable. */
 		if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 		    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
 			/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion.

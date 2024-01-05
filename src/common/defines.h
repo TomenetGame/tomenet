@@ -7874,14 +7874,14 @@ extern int PlayerUID;
 #define CLIENT_PARTY		0x0001
 
 /* Diff mode (type is 'byte') */
-#define MODE_NORMAL		0x00
+#define MODE_NORMAL		0x00	/* WARNING: This flag is ONLY valid to use in comparisons against MODE_MASK'ed mode flags! */
 #define MODE_SOLO		0x01	/* Soloist mode: Unworldly and cannot trade with anybody. */
 # define MODE_MALE_OLD		0x01	/* (flag kept atm for backward compat <= 4.7.1.1) */
 
-#define MODE_HARD		0x02	/* Penalized */
-#define MODE_NO_GHOST		0x04	/* traditional 'hellish' is 3 */
-#define MODE_EVERLASTING	0x08	/* No death counter */
-#define MODE_PVP		0x10
+#define MODE_HARD		0x02	/* Player-flag only (not for items): Penalized */
+#define MODE_NO_GHOST		0x04	/* Player-flag only (not for items): traditional 'hellish' is 3 */
+#define MODE_EVERLASTING	0x08	/* Player and item flag: No death counter */
+#define MODE_PVP		0x10	/* Player and item flag: Specific PvP-mode character/item. */
 
 #define MODE_XXX		0x20	/* UNUSED //hole */
 # define MODE_FRUIT_BAT_OLD	0x20	/* (flag kept atm for backward compat <= 4.7.1.1) */
@@ -7895,6 +7895,8 @@ extern int PlayerUID;
 #define MODE_FRUIT_BAT		0x0200
 #define MODE_DED_IDDC_OK	0x0400
 #define MODE_DED_PVP_OK		0x0800
+
+#define MODE_STARTER_ITEM	0x1000	/* Items only: Mark as 'starter item', making it potentially unsalable, depending on server settings. */
 
 #define MODE_MASK		(MODE_SOLO | MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* "real" character modes, rather than 'softer modifiers' */
 

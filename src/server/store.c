@@ -5898,14 +5898,22 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
 	(especially new items bought in the shops) and convert them all to everlasting */
 	if (Ind && (p_ptr->mode & MODE_EVERLASTING)) {
-		o_ptr->mode = MODE_EVERLASTING;
-		j_ptr->mode = MODE_EVERLASTING;
+		/* Depending on charmode_trading_restrictions, we might have to clear other mode flags out */
+		o_ptr->mode &= ~MODE_PVP;
+		j_ptr->mode &= ~MODE_PVP;
+		/* Now ours */
+		o_ptr->mode |= MODE_EVERLASTING;
+		j_ptr->mode |= MODE_EVERLASTING;
 	}
 
 	/* A PvP-player will get his items convert to pvp-mode */
 	if (Ind && (p_ptr->mode & MODE_PVP)) {
-		o_ptr->mode = MODE_PVP;
-		j_ptr->mode = MODE_PVP;
+		/* Depending on charmode_trading_restrictions, we might have to clear other mode flags out */
+		o_ptr->mode &= ~MODE_EVERLASTING;
+		j_ptr->mode &= ~MODE_EVERLASTING;
+		/* Now ours */
+		o_ptr->mode |= MODE_PVP;
+		j_ptr->mode |= MODE_PVP;
 	}
 
 	/* They match, so they must be similar */

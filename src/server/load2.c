@@ -519,7 +519,7 @@ static void rd_item(object_type *o_ptr) {
 	rd_string(note, 128);
 	/* Save the inscription */
 	if (note[0]) o_ptr->note = quark_add(note);
-#if 0 /* done by o_ptr->xtra9 marker now */
+#if 0 /* done by o_ptr->xtra9 == 1 marker now, or by new MODE_STARTER_ITEM instead */
 	/* hack: 'empty' inscription (startup items) cannot
 	   be saved this way, so we try to restore it now.. - collides with stolen goods! */
 	else if (o_ptr->discount == 100 && o_ptr->level == 0

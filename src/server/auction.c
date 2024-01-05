@@ -537,26 +537,11 @@ void auction_remove_bid(int auction_id, int bid_id)
 bool auction_mode_check(int Ind, int auction_id)
 {
 	auction_type *auc_ptr = &auctions[auction_id];
-#if 0 /* I took the liberty of messing around ;) - C. Blue */
-	player_type *p_ptr = Players[Ind];
-
-	if ((auc_ptr->mode == MODE_EVERLASTING) && (p_ptr->mode != MODE_EVERLASTING))
-		return(FALSE); /* covers charmode_trading_restrictions 0 and 1 */
-	if ((cfg.charmode_trading_restrictions == 2) &&
-	    ((auc_ptr->mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)))
-		return(FALSE); /* added check for charmode_trading_restrictions level 2 */
-
-	return(TRUE);
-
-#else
-
 	object_type forge_dummy;
 
-	forge_dummy.owner = auc_ptr->owner; /* assuming auction_type.owner is same kind of 'id' value
-					    as o_ptr->owner here; correct me if wrong please - C. Blue */
+	forge_dummy.owner = auc_ptr->owner;
 	forge_dummy.mode = auc_ptr->mode;
 	return(compat_pomode(Ind, &forge_dummy) == NULL);
-#endif
 }
 
 void auction_print_error(int Ind, int n)

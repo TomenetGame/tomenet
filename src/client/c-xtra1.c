@@ -3307,7 +3307,7 @@ void display_player(int hist) {
 		else if (p_ptr->mode & MODE_HARD) {
 			if (p_ptr->lives == -1) c_put_str(TERM_SLATE, "Hard (extra hard, 3 lives)", y_rowmode, FIRST_COL);
 			else c_put_str(TERM_SLATE, format("Hard (extra hard, %d of 3 lives left)", p_ptr->lives), y_rowmode, FIRST_COL);
-		} else {/*(p_ptr->mode == MODE_NORMAL)*/
+		} else {/* !(p_ptr->mode & MODE_MASK) aka MODE_NORMAL */
 			if (p_ptr->lives == -1) c_put_str(TERM_WHITE, "Normal (3 lives)", y_rowmode, FIRST_COL);
 			else c_put_str(TERM_WHITE, format("Normal (%d of 3 lives left)", p_ptr->lives), y_rowmode, FIRST_COL);
 		}
