@@ -848,25 +848,24 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr) {
 
 
 /*
- * Determine if the current store will purchase the given item
- *
- * Note that a shop-keeper must refuse to buy "worthless" items
+ * Determine if the current store will purchase the given item.
+ * Note that a shop-keeper must refuse to buy "worthless" items.
  */
-static bool store_will_buy(int Ind, object_type *o_ptr) {
+static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 #ifdef PLAYER_STORES
 	/* player stores don't buy anything */
-	if (p_ptr->store_num <= -2) return(FALSE);
+	if (p_ptr->store_num <= -2) return(2);
 #endif
 
 	/* Hack: The Mathom House */
 	if (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) {
 		/* Museums won't buy true artifacts, since they'd be
 		   conserved and out of reach for players thereby. */
-		if (true_artifact_p(o_ptr)) return(FALSE);
+		if (true_artifact_p(o_ptr)) return(3);
 		/* Museum does accept even worthless donations.. */
-		return(TRUE);
+		return(0);
 	}
 
 	/* Switch on the store */
@@ -898,12 +897,12 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 			break;
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN: /* Chest clones */
-			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) return(TRUE);
-			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) return(TRUE);
-			return(FALSE);
+			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) return(0);
+			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) return(0);
+			return(1);
 #endif
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -914,7 +913,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(1);
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CROWN:
@@ -926,7 +925,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_DRAG_ARMOR:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -937,7 +936,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(1);
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
@@ -950,7 +949,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOMERANG:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -962,14 +961,14 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOK:
 			if (get_book_name_color(o_ptr) != TERM_GREEN &&
 			    get_book_name_color(o_ptr) != TERM_WHITE) /* unused custom books */
-				 return(FALSE);
+				 return(1);
 		case TV_SCROLL:
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_BLUNT:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -981,12 +980,12 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_SATCHEL && o_ptr->sval != SV_SI_POTION_BELT) return(FALSE);
+			if (o_ptr->sval != SV_SI_SATCHEL && o_ptr->sval != SV_SI_POTION_BELT) return(1);
 			break;
 #endif
 #ifdef ENABLE_DEMOLITIONIST
 		case TV_TOOL:
-			if (o_ptr->sval != SV_TOOL_GRINDER) return(FALSE);
+			if (o_ptr->sval != SV_TOOL_GRINDER) return(1);
 			break;
 		case TV_CHEMICAL:
 #endif
@@ -999,7 +998,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOTTLE:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1011,7 +1010,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOK:
 			if (get_book_name_color(o_ptr) != TERM_L_BLUE &&
 			    get_book_name_color(o_ptr) != TERM_WHITE) /* unused custom books */
-				return(FALSE);
+				return(1);
 		case TV_AMULET:
 		case TV_RING:
 		case TV_STAFF:
@@ -1028,15 +1027,15 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 #ifdef ENABLE_DEMOLITIONIST
 		case TV_CHEMICAL:
 			/* Just because of novice mages dropping this... */
-			if (o_ptr->sval != SV_SALTPETRE) return(FALSE); else break;
+			if (o_ptr->sval != SV_SALTPETRE) return(1); else break;
 #endif
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_MDEVP_WRAPPING) return(FALSE);
+			if (o_ptr->sval != SV_SI_MDEVP_WRAPPING) return(1);
 			break;
 #endif
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1054,7 +1053,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 #endif	/* 0 */
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1067,7 +1066,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_RUNE:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1078,7 +1077,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOTS:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1090,7 +1089,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_RING:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1104,10 +1103,10 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_CHARGE:
 #endif
 			break;
-		case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE); else break;
-		case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE); else break;
+		case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(1); else break;
+		case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(1); else break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1126,10 +1125,10 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_RING:
 			if ((o_ptr->sval != SV_RING_RES_NETHER) &&
 			    (o_ptr->sval != SV_RING_FLAMES) &&
-			    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(FALSE);
+			    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(1);
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1137,21 +1136,21 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_BOOK:
 			/* The owner is actually a druid? >_> */
-			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return(FALSE);
+			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return(1);
 			break;
 		case TV_FOOD:
 			if ((o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) || /* all mushrooms are of a herbalist's interest! */
 			    (o_ptr->sval == SV_FOOD_WAYBREAD) || (o_ptr->sval == SV_FOOD_ATHELAS) || /* 'normal' food, but counts as herbalist stuff due to their special nature */
 			    (o_ptr->sval == SV_FOOD_PINT_OF_ALE) || (o_ptr->sval == SV_FOOD_PINT_OF_WINE)) /* owner likes booze for a change =_= */
 				 break;
-			return(FALSE);
+			return(1);
 		case TV_POTION:
 			/* Juice is nice */
 			if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
-			    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
+			    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(1);
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1164,7 +1163,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOTTLE:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 	case STORE_SPEC_SCROLL:
@@ -1173,7 +1172,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_SCROLL:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 	case STORE_SPEC_CLOSECOMBAT:
@@ -1181,7 +1180,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(1);
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CROWN:
@@ -1202,7 +1201,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_MSTAFF:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1211,7 +1210,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(1);
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
@@ -1219,7 +1218,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOMERANG:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
@@ -1229,43 +1228,57 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOK:
 			break;
 		default:
-			return(FALSE);
+			return(1);
 		}
 		break;
 
 	case STORE_STRADER: /* For ironman dungeons */
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_TRAPKIT_BAG) return(FALSE);
+			if (o_ptr->sval != SV_SI_TRAPKIT_BAG) return(1);
 			break;
 #endif
 		/* doesn't like very cheap items */
-		if (object_value(Ind, o_ptr) < 10) return(FALSE);
+		if (object_value(Ind, o_ptr) < 10) return(1);
 		break;
 	}
 
-
 	/* XXX XXX XXX Ignore "worthless" items */
-	if (object_value(Ind, o_ptr) <= 0) return(FALSE);
+	if (object_value(Ind, o_ptr) <= 0) return(1);
 
 	/* XXX Never OK to sell keys */
-	if (o_ptr->tval == TV_KEY) return(FALSE);
+	if (o_ptr->tval == TV_KEY) return(4);
 
-	/* This prevents suicide-cheeze */
-#if 0 /* changed to allow selling own level 0 rewards that weren't discounted */
+	/* Note: We currently allow selling someone else's level-0 items, eg unique monsters' DROP_CHOSEN items/artifacts (and also starter items). */
+	//if (!o_ptr->level && o_ptr->owner != p_ptr->id) return(5);
+
+#if STARTEQ_TREATMENT >= 2
+	if (o_ptr->mode & MODE_STARTER_ITEM) {
  #if STARTEQ_TREATMENT == 3
-	if (o_ptr->level < 1) return(FALSE);
+		/* Cannot sell any starter items, including own ones */
+		return(6);
+ #else
+		/* Prevent suicide-item-accumulation-cheeze, but allow selling own level 0 rewards (that weren't 100% discounted) */
+		if (o_ptr->owner != p_ptr->id) return(7);
  #endif
- #if STARTEQ_TREATMENT == 2
-	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return(FALSE);
- #endif
-#else
- #if STARTEQ_TREATMENT > 1
-	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return(FALSE);
- #endif
+	}
 #endif
+
 	/* Assume okay */
-	return(TRUE);
+	return(0);
+}
+static bool store_will_buy(int Ind, object_type *o_ptr) {
+	switch(store_will_buy_aux(Ind, o_ptr)) {
+	case 0: return(TRUE);
+	case 1: msg_print(Ind, "I don't want that!"); break;
+	case 2: msg_print(Ind, "I am only selling goods, not buying them."); break;
+	case 3: msg_print(Ind, "Sorry, we do not accept true artifacts."); break;
+	case 4: msg_print(Ind, "You cannot sell house keys."); break;
+	case 5: msg_print(Ind, "You cannot sell level-0 items that you don't own."); break;
+	case 6: msg_print(Ind, "You cannot sell starter items."); break;
+	case 7: msg_print(Ind, "You cannot sell starter items that you don't own."); break;
+	}
+	return(FALSE);
 }
 
 static int get_spellbook_store_order(int pval) {
@@ -4149,11 +4162,7 @@ void store_sell(int Ind, int item, int amt) {
 	if (!o_ptr->tval) return;
 
 	/* Check for validity of sale */
-	if (!store_will_buy(Ind, o_ptr)) {
-		msg_print(Ind, "I don't want that!");
-		return;
-	}
-
+	if (!store_will_buy(Ind, o_ptr)) return;
 
 #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART && o_ptr->pval2 >= 1) {
@@ -4323,10 +4332,7 @@ void store_confirm(int Ind) {
 	if (!o_ptr->tval) return;
 
 	/* Check for validity of sale */
-	if (!store_will_buy(Ind, o_ptr)) {
-		msg_print(Ind, "I don't want that!");
-		return;
-	}
+	if (!store_will_buy(Ind, o_ptr)) return;
 
 #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART && o_ptr->pval2 >= 1) {
