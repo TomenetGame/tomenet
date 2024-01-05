@@ -14628,7 +14628,7 @@ bool master_level(int Ind, char * parms) {
 			}
 		} else { /* Custom tower/dungeon */
 			if (parms[3] == 't' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP)) {
-				printf("tower: flags %x,%x,%x\n", f1, f2, f3);
+				s_printf("tower: flags %x,%x,%x\n", f1, f2, f3);
 				if ((zcave = getcave(&p_ptr->wpos))) {
 					zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
 					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
@@ -14642,7 +14642,7 @@ bool master_level(int Ind, char * parms) {
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 			}
 			if (parms[3] == 'd' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN)) {
-				printf("dungeon: flags %x,%x,%x\n", f1, f2, f3);
+				s_printf("dungeon: flags %x,%x,%x\n", f1, f2, f3);
 				if ((zcave = getcave(&p_ptr->wpos))) {
 					zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
 					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {

@@ -6659,7 +6659,7 @@ static void process_games(int Ind) {
 					tmp_obj = p_ptr->inventory[ball];
 					tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
 					drop_near(TRUE, 0, &tmp_obj, -1, &p_ptr->wpos, oy, ox);
-					printf("dropping at %d %d (%d)\n", ox, oy, try);
+					s_printf("dropping at %d %d (%d)\n", ox, oy, try);
 					inven_item_increase(Ind, ball, -999);
 					inven_item_optimize(Ind, ball);
 					break;
@@ -9071,7 +9071,7 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 
-	//printf("finding area (%d,%d)\n",startx,starty);
+	//s_printf("finding area (%d,%d)\n", startx, starty);
 	/* Place the player in an empty space */
 	for (j = 0; j < 5000; j++) {
 		/* Increasing distance */

@@ -2846,7 +2846,7 @@ void init_swearing() {
 				s_printf("Failed to read swearing.txt: %s\n", strerror(ferror(fp)));
 			}
 		}
-		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
+		//s_printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
 	} while (!feof(fp) && i < MAX_SWEAR - 1);
 
@@ -2891,7 +2891,7 @@ void init_swearing() {
 			}
 		}
 
-		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
+		//s_printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
 	} while (!feof(fp) && i < MAX_NONSWEAR - 1);
 
@@ -3414,7 +3414,7 @@ static void set_server_option(char * option, char * value) {
 	else if (!strcmp(option, "LEAK_INFO"))
 		cfg.leak_info = atoi(value);
 
-	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
+	else s_printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 
 
@@ -3500,8 +3500,8 @@ bool load_server_cfg(void) {
 
 	/* Failure */
 	if (cfg_file == (FILE*)NULL) {
-		//printf("Error : cannot open file tomenet.cfg\n");
-		printf("Error : cannot open file '%s'\n", MANGBAND_CFG);
+		//s_printf("Error : cannot open file tomenet.cfg\n");
+		s_printf("Error : cannot open file '%s'\n", MANGBAND_CFG);
 		return(FALSE);
 	}
 

@@ -2010,7 +2010,7 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 				return(TERM_LITE);
 			default:
 				/* This is annoying - mikaelh */
-//				printf("fla: %x\n", r_ptr->flags4 & 0x3fffff00);
+				//s_printf("fla: %x\n", r_ptr->flags4 & 0x3fffff00);
 				break;
 			}
 		}

@@ -26,7 +26,7 @@ char metadata[16384];
 
 int main(int argc, char *argv[]) {
 	if (argc == 2) host = argv[1];
-	printf("Evileye meta client started\n");
+	s_printf("Evileye meta client started\n");
 	callmeta();
 	/* ok so its not sigaction... */
 	signal(SIGINT, SIG_IGN);

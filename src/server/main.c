@@ -125,17 +125,17 @@ static void migrate_files(void) {
 	FILE *fp;
 
 	/* Check that lib/config exists */
-	printf("Verifying ANGBAND_DIR_CONFIG: %s ...", ANGBAND_DIR_CONFIG);
+	s_printf("Verifying ANGBAND_DIR_CONFIG: %s ...", ANGBAND_DIR_CONFIG);
 	dp = opendir(ANGBAND_DIR_CONFIG);
 	if (!dp) {
-		printf("failed.\nTrying to create ANGBAND_DIR_CONFIG instead ...");
+		s_printf("failed.\nTrying to create ANGBAND_DIR_CONFIG instead ...");
 		/* Try to create lib/config */
 #ifdef WINDOWS
 		if (mkdir(ANGBAND_DIR_CONFIG) != 0) {
 #else
 		if (mkdir(ANGBAND_DIR_CONFIG, 0777) != 0) {
 #endif
-			printf("failed.\n");
+			s_printf("failed.\n");
 			errval = errno;
 			fprintf(stderr, "Failed to create directory \"%s\"! (errno = %d)", ANGBAND_DIR_CONFIG, errval);
 		} else {
@@ -153,31 +153,31 @@ static void migrate_files(void) {
 			rename("tomenet.cfg", buf);
 		}
 	} else {
-		printf("ok.\n");
+		s_printf("ok.\n");
 		closedir(dp);
 	}
 
 	/* Check the new location of account file */
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
-	printf("Verifying account file location: %s ...", buf);
+	s_printf("Verifying account file location: %s ...", buf);
 	fp = fopen(buf, "r");
 	if (!fp) {
-		printf("failed.\nTrying to locate it in working folder instead ...");
+		s_printf("failed.\nTrying to locate it in working folder instead ...");
 		/* Check the old location */
 		fp = fopen("tomenet.acc", "r");
 		if (fp) {
 			fclose(fp);
 
-			printf("ok.\nTrying to move it to ANGBAND_DIR_SAVE ...");
+			s_printf("ok.\nTrying to move it to ANGBAND_DIR_SAVE ...");
 
 			/* Move from old to new location */
 			if (rename("tomenet.acc", buf) != 0) {
-				printf("failed.\n");
+				s_printf("failed.\n");
 				fprintf(stderr, "Could not move tomenet.acc to new location in %s!\n", buf);
-			} else printf("ok.\n");
+			} else s_printf("ok.\n");
 		}
 	} else {
-		printf("ok.\n");
+		s_printf("ok.\n");
 		fclose(fp);
 	}
 }
@@ -259,8 +259,8 @@ int main(int argc, char *argv[]) {
 	/* Acquire the version strings */
 	version_build();
 
-	printf("%s\n", longVersion);
-	printf("%s\n", os_version);
+	s_printf("%s\n", longVersion);
+	s_printf("%s\n", os_version);
 
 	/* Possibly move the server config files and the account file */
 	migrate_files();

@@ -1686,7 +1686,7 @@ static int verify_move_human(void) {
 		char buf[10];
 
 #ifdef GO_DEBUGPRINT
-		printf("Both players passed consecutively, so the game ends.\n");
+		s_printf("Both players passed consecutively, so the game ends.\n");
 #endif
 		/* determine score */
 		scoring = TRUE;
@@ -1769,7 +1769,7 @@ static int verify_move_CPU(void) {
 	/* Catch timeout! Oops. */
 	if (engine_api == EAPI_FUEGO && !strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
  #ifdef GO_DEBUGPRINT
-		printf("Your opponent's time has run out, therefore you have won the match!\n");
+		s_printf("Your opponent's time has run out, therefore you have won the match!\n");
  #endif
 		return(4);
 	}
@@ -1777,14 +1777,14 @@ static int verify_move_CPU(void) {
 	/* CPU resigns */
 	else if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "= resign")) {
 #ifdef GO_DEBUGPRINT
-		printf("Your opponent has resigned, you have won the match!\n");
+		s_printf("Your opponent has resigned, you have won the match!\n");
 #endif
 		return(5);
 	}
 	/* CPU passes */
 	else if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "= PASS")) {
 #ifdef GO_DEBUGPRINT
-		printf("CPU passed.\n");
+		s_printf("CPU passed.\n");
 #endif
 //		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, "'pass'");
 		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, "passed");
@@ -1886,7 +1886,7 @@ static int verify_move_CPU(void) {
 		char buf[10];
 
 #ifdef GO_DEBUGPRINT
-		printf("Both players passed consecutively, so the game ends.\n");
+		s_printf("Both players passed consecutively, so the game ends.\n");
 #endif
 		/* determine score */
 		scoring = TRUE;
@@ -2064,7 +2064,7 @@ static void go_engine_move_result(int move_result) {
 		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, "  ");
 
 #ifdef GO_DEBUGPRINT
-		printf("Result: %s\n", result);
+		s_printf("Result: %s\n", result);
 #endif
 #ifdef GO_DEBUGLOG
 		s_printf("GO_RESULT: %s\n", result);
@@ -2429,7 +2429,7 @@ static int test_for_response() {
 
 	/* don't output just a single line feed */
 #ifdef GO_DEBUGPRINT
-	if (strlen(pipe_buf[pipe_buf_current_line])) printf("<%s>\n", pipe_buf[pipe_buf_current_line]);
+	if (strlen(pipe_buf[pipe_buf_current_line])) s_printf("<%s>\n", pipe_buf[pipe_buf_current_line]);
 #endif
 
 	/* Check for certain important responses */
@@ -2507,7 +2507,7 @@ static int test_for_response() {
 	/* If we read a complete response to a command,
 	   reduce amount of pending responses left,
 	   and check if we have to react ie initiate a new command */
-//	printf("---RESPONSE COMPLETE---\n");
+	//s_printf("---RESPONSE COMPLETE---\n");
 	pipe_response_complete = 0;
 
 #ifdef GO_DEBUGLOG
@@ -2523,12 +2523,12 @@ static int test_for_response() {
 			/* paranoia: '= W+0' */
 			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
 #ifdef GO_DEBUGPRINT
-				printf("White wins!\n");
+				s_printf("White wins!\n");
 #endif
 				go_engine_move_result(2000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]));
 			} else {
 #ifdef GO_DEBUGPRINT
-				printf("The game is a draw!\n");
+				s_printf("The game is a draw!\n");
 #endif
 				go_engine_move_result(6);
 			}
@@ -2538,12 +2538,12 @@ static int test_for_response() {
 			/* paranoia: '= B+0' */
 			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
 #ifdef GO_DEBUGPRINT
-				printf("Black wins!\n");
+				s_printf("Black wins!\n");
 #endif
 				go_engine_move_result(1000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]));
 			} else {
 #ifdef GO_DEBUGPRINT
-				printf("The game is a draw!\n");
+				s_printf("The game is a draw!\n");
 #endif
 				go_engine_move_result(6);
 			}
@@ -2554,7 +2554,7 @@ static int test_for_response() {
 	    pipe_buf[MAX_GTP_LINES - 1][2] == '0') {
 		scoring = FALSE;
 #ifdef GO_DEBUGPRINT
-		printf("The game is a draw!\n");
+		s_printf("The game is a draw!\n");
 #endif
 		go_engine_move_result(6); //jigo!
 	}
@@ -2675,7 +2675,7 @@ static int wait_for_response() {
 				if (lbuf[strlen(lbuf) - 1] == '\n') {
 					/* don't output just a single line feed */
 #ifdef GO_DEBUGPRINT
-					if (strlen(pipe_buf[r])) printf("<%s>\n", pipe_buf[r]);
+					if (strlen(pipe_buf[r])) s_printf("<%s>\n", pipe_buf[r]);
 #endif
 					/* Check for certain important responses */
 					if (strlen(pipe_buf[r]) > 2 &&
@@ -2713,7 +2713,7 @@ static int wait_for_response() {
 		}
 		if (r < MAX_GTP_LINES - 1 -1) r++;
 	} while (cont != 2);
-//	printf("---RESPONSE COMPLETE---\n");
+	//s_printf("---RESPONSE COMPLETE---\n");
 
 	/* Hack: Deliver certain important responses back outside */
 	if (tmp[0]) {
@@ -2736,10 +2736,10 @@ static void writeToPipe(char *data) {
 #ifdef GO_DEBUGLOG
 	if (strcmp(data, "showboard")) /* this command is a bit spammy maybe */
 		s_printf("GO_COMMAND: <%s>\n", data);//go_engine_next_action
-//	printf("writeToPipe: %s\n", fw == NULL ? "NULL" : "ok");
-//fw==NULL -> Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Arrr.. sorry, I can't find a fitting player around right now");
+	//s_printf("writeToPipe: %s\n", fw == NULL ? "NULL" : "ok");
+	//fw==NULL -> Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Arrr.. sorry, I can't find a fitting player around right now");
 #endif
-//	if (go_err(DOWN, NONE, "writeToPipe")) return;
+	//if (go_err(DOWN, NONE, "writeToPipe")) return;
 
 	/* Before actually writing, clear all pending replies we can get! */
 	if (go_engine_processing) go_engine_process();
@@ -2821,7 +2821,7 @@ static void readFromPipe(char *buf, int *cont) {
 	int ch = 0;
 	char c[2];
 
-//	if (go_err(DOWN, NONE, "readFromPipe")) return;
+	//if (go_err(DOWN, NONE, "readFromPipe")) return;
 
 #ifdef HIDDEN_STAGE
 	if (hidden_stage_active) {
@@ -2830,7 +2830,7 @@ static void readFromPipe(char *buf, int *cont) {
 			ch = fgetc(hs_fr);
 			if (!ch) break;
 			if (ch == EOF) {
-//printf("feof: %d, ferror: %d\n", feof(fr), ferror(fr));
+				//s_printf("feof: %d, ferror: %d\n", feof(fr), ferror(fr));
 				(*cont) = 0;
 				break;
 			}
@@ -2851,7 +2851,7 @@ static void readFromPipe(char *buf, int *cont) {
 		ch = fgetc(fr);
 		if (!ch) break;
 		if (ch == EOF) {
-//printf("feof: %d, ferror: %d\n", feof(fr), ferror(fr));
+			//s_printf("feof: %d, ferror: %d\n", feof(fr), ferror(fr));
 			(*cont) = 0;
 			break;
 		}
@@ -2886,7 +2886,7 @@ static int handle_loading() {
 		if (lbuf[0] && lbuf[strlen(lbuf) - 1] == '\n') strcpy(reply, "");
 		readFromPipe(lbuf, &cont);
 		if (lbuf[0]) {
-//			printf("<%s>\n", lbuf);
+			//s_printf("<%s>\n", lbuf);
 			if (strlen(reply) + strlen(lbuf) >= 240) {
 				s_printf("GO_ERROR: LINE TOO LONG\n");
 				return(1);
@@ -2895,7 +2895,7 @@ static int handle_loading() {
 			if (reply[0] && reply[strlen(reply) - 1] == '\n') {
 				reply[strlen(reply) - 1] = 0;
  #ifdef GO_DEBUGPRINT
-				printf("<%s>\n", reply);
+				s_printf("<%s>\n", reply);
  #endif
 			}
 		}

@@ -7689,7 +7689,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			cs_ptr = cs_ptr->next;
 			if (!tcv) {
 				csmove = FALSE;
-				printf("csmove is false\n");
+				s_printf("csmove is false\n");
 			}
 		}
 	}

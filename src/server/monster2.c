@@ -4316,10 +4316,9 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
 	}
 
 	/* Abort */
-	if (tries >= 50)
-		return(FALSE);
+	if (tries >= 50) return(FALSE);
 
-	/*printf("Trying to place a monster at %d, %d.\n", y, x);*/
+	/* s_printf("Trying to place a monster at %d, %d.\n", y, x); */
 
 	/* Attempt to place the monster, allow groups */
 	if (place_monster(wpos, y, x, slp, TRUE)) return(TRUE);

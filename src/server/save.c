@@ -2089,7 +2089,7 @@ bool load_player(int Ind) {
 		    (version_minor != sf_minor) ||
 		    (version_patch != sf_patch)) {
 			/* Message */
-			printf("Converted a %d.%d.%d savefile.\n",
+			s_printf("Converted a %d.%d.%d savefile.\n",
 					sf_major, sf_minor, sf_patch);
 		}
 
@@ -2692,7 +2692,7 @@ static bool load_server_info_classic(void) {
 		    (version_minor != sf_minor) ||
 		    (version_patch != sf_patch)) {
 			/* Message */
-			printf("Converted a %d.%d.%d server savefile.\n",
+			s_printf("Converted a %d.%d.%d server savefile.\n",
 					sf_major, sf_minor, sf_patch);
 		}
 
@@ -2746,7 +2746,7 @@ bool save_server_info() {
 	char safe[MAX_PATH_LENGTH];
 
 #if DEBUG_LEVEL > 1
-	printf("saving server info...\n");
+	s_printf("saving server info...\n");
 #endif
 	/* New savefile */
 	path_build(safe, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "server.new");
@@ -2982,7 +2982,7 @@ void save_quests(void) {
 	char safe[MAX_PATH_LENGTH];
 
 #if DEBUG_LEVEL > 1
-	printf("saving quest info...\n");
+	s_printf("saving quest info...\n");
 #endif
 	path_build(safe, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "quests.new");
 	fd_kill(safe);

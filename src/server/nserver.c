@@ -997,7 +997,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 					if (!strcasecmp(p_ptr->realname, real_name) &&
 					    //!strcasecmp(p_ptr->accountname, acc_name) &&  --not needed, can't access nick_name from different account
 					    !strcasecmp(p_ptr->addr, addr) && cfg.runlevel != 1024) {
-						printf("%s %s\n", p_ptr->realname, p_ptr->addr);
+						s_printf("%s %s\n", p_ptr->realname, p_ptr->addr);
 						Destroy_connection(p_ptr->conn, "resume connection");
 					}
 					else if (!strcasecmp(p_ptr->addr, addr)) return(E_IN_USE_PC);
@@ -1028,7 +1028,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			//if (strcasecmp(connp->nick, acc_name)) continue;  --not needed, can't access nick_name from different account
 			if (!strcasecmp(connp->real, real_name) &&
 			    !strcasecmp(connp->addr, addr) && cfg.runlevel != 1024) {
-				printf("%s %s\n", connp->real, connp->addr);
+				s_printf("%s %s\n", connp->real, connp->addr);
 				Destroy_connection(i, "resume connection");
 			}
 			else return(E_IN_USE_DUP);
@@ -4381,8 +4381,8 @@ static int Receive_login(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1) {
 		errno = 0;
-		printf("%d\n", n);
-		plog("Failed reading login packet");
+		s_printf("%d\n", n);
+		s_printf("Failed reading login packet");
 		Destroy_connection(ind, "receive error in login");
 		return(-1);
 	}
@@ -5525,7 +5525,7 @@ static int Receive_file(int ind) {
 				return(1);
 				break;
 			default:
-				printf("unknown file transfer packet\n");
+				s_printf("unknown file transfer packet\n");
 				x = 0;
 		}
 		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x ? PKT_FILE_ACK : PKT_FILE_ERR, fnum);
@@ -5556,7 +5556,7 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len) {
 	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
 	if (Sockbuf_write(&connp->c, buf, len) != len) {
-		printf("failed sending file data\n");
+		s_printf("failed sending file data\n");
 	}
 	return(1);
 }
@@ -5740,7 +5740,7 @@ static int Receive_ack(int ind) {
 
 	connp->rtt_timeouts = 0;
 
-	/*printf("Received ack to data sent at %d.\n", rel_loops);*/
+	/* s_printf("Received ack to data sent at %d.\n", rel_loops); */
 
 	return(1);
 }

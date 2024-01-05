@@ -8263,7 +8263,7 @@ void house_creation(int Ind, bool floor, bool jail) {
 	char buildargs[3];
 
 	/* set master_move_hook : a bit like a setuid really ;) */
-	printf("floor: %d jail: %d\n",floor,jail);
+	s_printf("floor: %d jail: %d\n", floor, jail);
 
 	/* No building in town */
 	if (wpos->wz) {

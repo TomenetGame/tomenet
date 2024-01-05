@@ -4932,7 +4932,7 @@ void load_quests(void) {
 		if ((QUEST_SF_VERSION_MAJOR != qsf_major) ||
 		    (QUEST_SF_VERSION_MINOR != qsf_minor) ||
 		    (QUEST_SF_VERSION_PATCH != qsf_patch)) {
-			printf("Converted a %d.%d.%d quests savefile.\n",
+			s_printf("Converted a %d.%d.%d quests savefile.\n",
 			    qsf_major, qsf_minor, qsf_patch);
 		}
 		return; //TRUE;

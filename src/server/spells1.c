@@ -13138,7 +13138,7 @@ msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
-			if (grids > 500) printf("grids %d\n", grids);
+			if (grids > 500) s_printf("grids %d\n", grids);
 		}
 	}
 
