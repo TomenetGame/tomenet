@@ -1462,8 +1462,6 @@ static cptr st_info_flags1[] = {
 	"ZEROLEVEL"
 };
 static cptr st_info_flags2[] = {
-	//"COMMON",
-
 	"MUSEUM",
 	"KEEP_QUART",
 	"KEEP_HALF",
