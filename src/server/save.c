@@ -15,6 +15,7 @@ void wr_u16b(u16b v);
 void wr_s16b(s16b v);
 void wr_u32b(u32b v);
 void wr_s32b(s32b v);
+void wr_u64b(u64b v);
 void wr_string(cptr str);
 static void write_buffer();
 
@@ -86,6 +87,18 @@ void wr_u32b(u32b v) {
 
 void wr_s32b(s32b v) {
 	wr_u32b((u32b)v);
+}
+
+void wr_u64b(u64b v) {
+	sf_put(v & 0xFF);
+	sf_put((v >> 8) & 0xFF);
+	sf_put((v >> 16) & 0xFF);
+	sf_put((v >> 24) & 0xFF);
+
+	sf_put((v >> 32) & 0xFF);
+	sf_put((v >> 40) & 0xFF);
+	sf_put((v >> 48) & 0xFF);
+	sf_put((v >> 56) & 0xFF);
 }
 
 void wr_string(cptr str) {
@@ -247,6 +260,42 @@ static void wr_item(object_type *o_ptr) {
 	wr_u16b(o_ptr->f_reidx);
 	wr_s16b(o_ptr->f_special);
 	wr_byte((unsigned char)o_ptr->f_reward);
+
+	/* item history tracking */
+	wr_u32b(o_ptr->slain_monsters);
+	wr_u32b(o_ptr->slain_uniques);
+	wr_u32b(o_ptr->slain_players);
+	wr_u32b(o_ptr->times_activated);
+	wr_u32b(o_ptr->time_equipped);
+	wr_u32b(o_ptr->time_carried);
+
+	wr_u32b(o_ptr->slain_orcs);
+	wr_u32b(o_ptr->slain_trolls);
+	wr_u32b(o_ptr->slain_giants);
+	wr_u32b(o_ptr->slain_animals);
+	wr_u32b(o_ptr->slain_dragons);
+	wr_u32b(o_ptr->slain_demons);
+	wr_u32b(o_ptr->slain_undead);
+	wr_u32b(o_ptr->slain_evil);
+
+	wr_byte(o_ptr->slain_bosses);
+	wr_byte(o_ptr->slain_nazgul);
+	wr_byte(o_ptr->slain_superuniques);
+	wr_byte(o_ptr->slain_sauron);
+	wr_byte(o_ptr->slain_morgoth);
+	wr_byte(o_ptr->slain_zuaon);
+
+	wr_u64b(o_ptr->done_damage);
+	wr_u64b(o_ptr->done_healing);
+	wr_u16b(o_ptr->got_damaged);
+	wr_u16b(o_ptr->got_repaired);
+	wr_u16b(o_ptr->got_enchanted);
+
+	/* custom lua scripts */
+	wr_s16b(o_ptr->custom_lua_carrystate);
+	wr_s16b(o_ptr->custom_lua_equipstate);
+	wr_s16b(o_ptr->custom_lua_destruction);
+	wr_s16b(o_ptr->custom_lua_usage);
 }
 
 /*

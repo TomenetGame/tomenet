@@ -15,6 +15,7 @@ void rd_u16b(u16b *ip);
 void rd_s16b(s16b *ip);
 void rd_u32b(u32b *ip);
 void rd_s32b(s32b *ip);
+void rd_u64b(u64b *ip);
 void rd_string(char *str, int max);
 
 /*
@@ -205,6 +206,17 @@ void rd_u32b(u32b *ip) {
 }
 void rd_s32b(s32b *ip) {
 	rd_u32b((u32b*)ip);
+}
+void rd_u64b(u64b *ip) {
+	(*ip) = sf_get();
+	(*ip) |= ((u64b)(sf_get()) << 8);
+	(*ip) |= ((u64b)(sf_get()) << 16);
+	(*ip) |= ((u64b)(sf_get()) << 24);
+
+	(*ip) |= ((u64b)(sf_get()) << 32);
+	(*ip) |= ((u64b)(sf_get()) << 40);
+	(*ip) |= ((u64b)(sf_get()) << 48);
+	(*ip) |= ((u64b)(sf_get()) << 56);
 }
 
 
@@ -568,6 +580,44 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->f_special);
 		rd_byte(&tmpbyte);
 		o_ptr->f_reward = (char)tmpbyte;
+	}
+
+	if (!older_than(4, 9, 10)) {
+		/* item history tracking */
+		rd_u32b(&o_ptr->slain_monsters);
+		rd_u32b(&o_ptr->slain_uniques);
+		rd_u32b(&o_ptr->slain_players);
+		rd_u32b(&o_ptr->times_activated);
+		rd_u32b(&o_ptr->time_equipped);
+		rd_u32b(&o_ptr->time_carried);
+
+		rd_u32b(&o_ptr->slain_orcs);
+		rd_u32b(&o_ptr->slain_trolls);
+		rd_u32b(&o_ptr->slain_giants);
+		rd_u32b(&o_ptr->slain_animals);
+		rd_u32b(&o_ptr->slain_dragons);
+		rd_u32b(&o_ptr->slain_demons);
+		rd_u32b(&o_ptr->slain_undead);
+		rd_u32b(&o_ptr->slain_evil);
+
+		rd_byte(&o_ptr->slain_bosses);
+		rd_byte(&o_ptr->slain_nazgul);
+		rd_byte(&o_ptr->slain_superuniques);
+		rd_byte(&o_ptr->slain_sauron);
+		rd_byte(&o_ptr->slain_morgoth);
+		rd_byte(&o_ptr->slain_zuaon);
+
+		rd_u64b(&o_ptr->done_damage);
+		rd_u64b(&o_ptr->done_healing);
+		rd_u16b(&o_ptr->got_damaged);
+		rd_u16b(&o_ptr->got_repaired);
+		rd_u16b(&o_ptr->got_enchanted);
+
+		/* custom lua scripts */
+		rd_s16b(&o_ptr->custom_lua_carrystate);
+		rd_s16b(&o_ptr->custom_lua_equipstate);
+		rd_s16b(&o_ptr->custom_lua_destruction);
+		rd_s16b(&o_ptr->custom_lua_usage);
 	}
 
 

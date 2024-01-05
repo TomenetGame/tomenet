@@ -7903,7 +7903,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 
 /* backup all house prices and contents for all players to lib/save/estate/.
    partial: don't stop with failure if a character files can't be read. */
-#define ESTATE_BACKUP_VERSION "v6"
+#define ESTATE_BACKUP_VERSION "v7"
 bool backup_estate(bool partial) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
@@ -8248,13 +8248,16 @@ void restore_estate(int Ind) {
 	int data_len, r;
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
+
 	int conversion = 0;
+	object_type_v6 forge_v6, *o_ptr_v6 = &forge_v6;
 	object_type_v5 forge_v5, *o_ptr_v5 = &forge_v5;
 	object_type_v4 forge_v4, *o_ptr_v4 = &forge_v4;
 	object_type_v3 forge_v3, *o_ptr_v3 = &forge_v3;
 	object_type_v2 forge_v2, *o_ptr_v2 = &forge_v2;
 	object_type_v2a forge_v2a, *o_ptr_v2a = &forge_v2a;
 	object_type_v2b forge_v2b, *o_ptr_v2b = &forge_v2b;
+
 
 	s_printf("Restoring real estate for %s...\n", p_ptr->name);
 
@@ -8281,12 +8284,20 @@ void restore_estate(int Ind) {
 	s_printf("  reading a version '%s' estate file.\n", version);
 
 	/* convert older version object types */
-	if (streq(version, "v2")) conversion = 1;
-	if (streq(version, "v2a")) conversion = 2;
-	if (streq(version, "v2b")) conversion = 3;
-	if (streq(version, "v3")) conversion = 4;
-	if (streq(version, "v4")) conversion = 5;
-	if (streq(version, "v5")) conversion = 6;
+	if (streq(version, ESTATE_BACKUP_VERSION)) conversion = 0;
+	else if (streq(version, "v2")) conversion = 1;
+	else if (streq(version, "v2a")) conversion = 2;
+	else if (streq(version, "v2b")) conversion = 3;
+	else if (streq(version, "v3")) conversion = 4;
+	else if (streq(version, "v4")) conversion = 5;
+	else if (streq(version, "v5")) conversion = 6;
+	else if (streq(version, "v6")) conversion = 7;
+	else {
+		s_printf("  error: Invalid backup version.\nfailed.\n");
+		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
+		fclose(fp);
+		return;
+	}
 
 	/* open temporary file for writing the stuff the player left over */
 	strcpy(buf2, buf);
@@ -8905,6 +8916,138 @@ void restore_estate(int Ind) {
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
 				break;
+			case 7: r = fread(o_ptr_v5, sizeof(object_type_v5), 1, fp);
+				o_ptr->owner = o_ptr_v5->owner;
+				o_ptr->killer = o_ptr_v5->killer;
+				o_ptr->level = o_ptr_v5->level;
+				o_ptr->k_idx = o_ptr_v5->k_idx;
+				o_ptr->h_idx = o_ptr_v5->h_idx;
+				o_ptr->wpos = o_ptr_v5->wpos;
+				o_ptr->iy = o_ptr_v5->iy;
+				o_ptr->ix = o_ptr_v5->ix;
+				o_ptr->tval = o_ptr_v5->tval;
+				o_ptr->sval = o_ptr_v5->sval;
+				o_ptr->tval2 = o_ptr_v5->tval2;
+				o_ptr->sval2 = o_ptr_v5->sval2;
+				o_ptr->bpval = o_ptr_v5->bpval;
+				o_ptr->pval = o_ptr_v5->pval;
+				o_ptr->pval2 = o_ptr_v5->pval2;
+				o_ptr->pval3 = o_ptr_v5->pval3;
+				o_ptr->pval_org = o_ptr_v5->pval_org;
+				o_ptr->bpval_org = o_ptr_v5->bpval_org;
+				o_ptr->to_h_org = o_ptr_v5->to_h_org;
+				o_ptr->to_d_org = o_ptr_v5->to_d_org;
+				o_ptr->to_a_org = o_ptr_v5->to_a_org;
+				o_ptr->sigil = o_ptr_v5->sigil;
+				o_ptr->sseed = o_ptr_v5->sseed;
+				o_ptr->discount = o_ptr_v5->discount;
+				o_ptr->number = o_ptr_v5->number;
+				o_ptr->weight = o_ptr_v5->weight;
+				o_ptr->name1 = o_ptr_v5->name1;
+				o_ptr->name2 = o_ptr_v5->name2;
+				o_ptr->name2b = o_ptr_v5->name2b;
+				o_ptr->name3 = o_ptr_v5->name3;
+				o_ptr->name4 = o_ptr_v5->name4;
+				o_ptr->attr = o_ptr_v5->attr;
+				o_ptr->mode = o_ptr_v5->mode;
+				o_ptr->xtra1 = o_ptr_v5->xtra1;
+				o_ptr->xtra2 = o_ptr_v5->xtra2;
+				o_ptr->xtra3 = o_ptr_v5->xtra3;
+				o_ptr->xtra4 = o_ptr_v5->xtra4;
+				o_ptr->xtra5 = o_ptr_v5->xtra5;
+				o_ptr->xtra6 = o_ptr_v5->xtra6;
+				o_ptr->xtra7 = o_ptr_v5->xtra7;
+				o_ptr->xtra8 = o_ptr_v5->xtra8;
+				o_ptr->xtra9 = o_ptr_v5->xtra9;
+				o_ptr->uses_dir = o_ptr_v5->uses_dir;
+#ifdef PLAYER_STORES
+				o_ptr->ps_idx_x = o_ptr_v5->ps_idx_x;
+				o_ptr->ps_idx_y = o_ptr_v5->ps_idx_y;
+				o_ptr->appraised_value = o_ptr_v5->appraised_value;
+#endif
+				o_ptr->to_h = o_ptr_v5->to_h;
+				o_ptr->to_d = o_ptr_v5->to_d;
+				o_ptr->to_a = o_ptr_v5->to_a;
+				o_ptr->ac = o_ptr_v5->ac;
+				o_ptr->dd = o_ptr_v5->dd;
+				o_ptr->ds = o_ptr_v5->ds;
+				o_ptr->ident = o_ptr_v5->ident;
+				o_ptr->timeout = o_ptr_v5->timeout;
+				o_ptr->timeout_magic = o_ptr_v5->timeout_magic;
+				o_ptr->recharging = o_ptr_v5->recharging;
+				o_ptr->marked = o_ptr_v5->marked;
+				o_ptr->marked2 = o_ptr_v5->marked2;
+				o_ptr->questor = o_ptr_v5->questor;
+				o_ptr->quest = o_ptr_v5->quest;
+				o_ptr->quest_stage = o_ptr_v5->quest_stage;
+				o_ptr->questor_idx = o_ptr_v5->questor_idx;
+				o_ptr->questor_invincible = o_ptr_v5->questor_invincible;
+				o_ptr->quest_credited = o_ptr_v5->quest_credited;
+				o_ptr->note = o_ptr_v5->note;
+				o_ptr->note_utag = o_ptr_v5->note_utag;
+				o_ptr->inven_order = o_ptr_v5->inven_order;
+				o_ptr->next_o_idx = o_ptr_v5->next_o_idx;
+				o_ptr->held_m_idx = o_ptr_v5->held_m_idx;
+				o_ptr->auto_insc = o_ptr_v5->auto_insc;
+				o_ptr->stack_pos = o_ptr_v5->stack_pos;
+				o_ptr->cheeze_dlv = o_ptr_v5->cheeze_dlv;
+				o_ptr->cheeze_plv = o_ptr_v5->cheeze_plv;
+				o_ptr->cheeze_plv_carry = o_ptr_v5->cheeze_plv_carry;
+				o_ptr->housed = o_ptr_v5->housed;
+				o_ptr->changed = o_ptr_v5->changed;
+				o_ptr->NR_tradable = o_ptr_v5->NR_tradable;
+				o_ptr->no_soloist = o_ptr_v5->no_soloist;
+				o_ptr->temp = o_ptr_v5->temp;
+				o_ptr->iron_trade = o_ptr_v5->iron_trade;
+				o_ptr->iron_turn = o_ptr_v5->iron_turn;
+				o_ptr->embed = o_ptr_v5->embed;
+				o_ptr->id = o_ptr_v5->id;
+				o_ptr->f_id = o_ptr_v5->f_id;
+				strcpy(o_ptr->f_name, o_ptr_v5->f_name);
+				o_ptr->f_turn = o_ptr_v5->f_turn;
+				o_ptr->f_time = o_ptr_v5->f_time;
+				o_ptr->f_wpos = o_ptr_v5->f_wpos;
+				o_ptr->f_dun = o_ptr_v5->f_dun;
+				o_ptr->f_player = o_ptr_v5->f_player;
+				o_ptr->f_player_turn = o_ptr_v5->f_player_turn;
+				o_ptr->f_ridx = o_ptr_v5->f_ridx;
+				o_ptr->f_reidx = o_ptr_v5->f_reidx;
+				o_ptr->f_special = o_ptr_v5->f_special;
+				o_ptr->f_reward = o_ptr_v5->f_reward;
+				o_ptr->number2 = o_ptr_v6->number2;
+				o_ptr->note2 = o_ptr_v6->note2;
+				o_ptr->note2_utag = o_ptr_v6->note2_utag;
+				//convert:
+				o_ptr->slain_monsters = 0;
+				o_ptr->slain_uniques = 0;
+				o_ptr->slain_players = 0;
+				o_ptr->times_activated = 0;
+				o_ptr->time_equipped = 0;
+				o_ptr->time_carried = 0;
+				o_ptr->slain_orcs = 0;
+				o_ptr->slain_trolls = 0;
+				o_ptr->slain_giants = 0;
+				o_ptr->slain_animals = 0;
+				o_ptr->slain_dragons = 0;
+				o_ptr->slain_demons = 0;
+				o_ptr->slain_undead = 0;
+				o_ptr->slain_evil = 0;
+				o_ptr->slain_bosses = 0;
+				o_ptr->slain_nazgul = 0;
+				o_ptr->slain_superuniques = 0;
+				o_ptr->slain_sauron = 0;
+				o_ptr->slain_morgoth = 0;
+				o_ptr->slain_zuaon = 0;
+				o_ptr->done_damage = 0;
+				o_ptr->done_healing = 0;
+				o_ptr->got_damaged = 0;
+				o_ptr->got_repaired = 0;
+				o_ptr->got_enchanted = 0;
+				o_ptr->custom_lua_carrystate = 0;
+				o_ptr->custom_lua_equipstate = 0;
+				o_ptr->custom_lua_destruction = 0;
+				o_ptr->custom_lua_usage = 0;
+				break;
 			}
 			if (r == 0) {
 				s_printf("  error: Failed to read object.\n");
@@ -8986,6 +9129,9 @@ void restore_estate(int Ind) {
 					case 6:
 						(void)fwrite(o_ptr_v5, sizeof(object_type_v5), 1, fp_tmp);
 						break;
+					case 7:
+						(void)fwrite(o_ptr_v6, sizeof(object_type_v6), 1, fp_tmp);
+						break;
 					}
 #endif
 
@@ -9034,6 +9180,9 @@ void restore_estate(int Ind) {
 					break;
 				case 6:
 					(void)fwrite(o_ptr_v5, sizeof(object_type_v5), 1, fp_tmp);
+					break;
+				case 7:
+					(void)fwrite(o_ptr_v6, sizeof(object_type_v6), 1, fp_tmp);
 					break;
 				}
 
