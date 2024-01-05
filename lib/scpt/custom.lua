@@ -283,6 +283,6 @@ function custom_object_destruction(Ind, o_idx, slot, index)
 end
 -- o_idx is 0 if the item wasn't on the floor (but in player inventory)
 -- slot is 0 if the item wasn't in player inventory (but on the floor)
--- Usage: 0 = activate, 1 = read, 2 = quaff, 3 = eat, 4 = aim, 5 = use, 6 = zap, 7 = disarm-attempt, 8 = disarm-failed, 9 = disarmed, 10 = opened, 11 = closed
+-- Usage: 0 = activate, 1 = read, 2 = quaff, 3 = eat, 4 = aim, 5 = use, 6 = zap, 7 = disarm-attempt, 8 = disarm-failed, 9 = disarmed, 10 = opened, 11 = bashed
 function custom_object_usage(Ind, o_idx, slot, usage, index)
 end

@@ -2901,6 +2901,8 @@ void do_cmd_open(int Ind, int dir) {
 #ifdef USE_SOUND_2010
 				sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
+				if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, -1, 10, o_ptr->custom_lua_usage));
+
 				/* Apply chest traps, if any */
 				trp = chest_trap(Ind, y, x, c_ptr->o_idx);
 
@@ -5056,6 +5058,8 @@ void do_cmd_disarm(int Ind, int dir) {
  #endif
 			} else msg_print(Ind, "\377yYou fail to extinguish the fuse!");
 			disturb(Ind, 0, 0);
+
+			if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
 			return;
 		}
 #endif
@@ -5105,6 +5109,8 @@ void do_cmd_disarm(int Ind, int dir) {
 				o_ptr->pval = (0 - o_ptr->pval);
 				do_id_trap(Ind, o_ptr->pval);
 				done = TRUE;
+
+				if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
 			}
 
 			/* Failure -- Keep trying */
@@ -5121,6 +5127,8 @@ void do_cmd_disarm(int Ind, int dir) {
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
+
+				if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
 			}
 
 			/* Failure -- Set off the trap */
@@ -5138,6 +5146,8 @@ void do_cmd_disarm(int Ind, int dir) {
 					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
+
+					if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
 				}
 				done = TRUE;
 			}
@@ -5177,7 +5187,12 @@ void do_cmd_disarm(int Ind, int dir) {
 					cs_erase(c_ptr, cs_ptr);
 					cave_set_feat_live(wpos, y, x, j);
 					//todo maybe: get the charge back, if we still consider it functional
-				} else msg_print(Ind, "\377yYou fail to extinguish the fuse!");
+
+					//if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
+				} else {
+					msg_print(Ind, "\377yYou fail to extinguish the fuse!");
+					//if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
+				}
 				disturb(Ind, 0, 0);
 				return;
 			}
@@ -5198,6 +5213,8 @@ void do_cmd_disarm(int Ind, int dir) {
 					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y and option \377oeasy_disarm_montraps\377y (in '=7') for easier mass-disarming of monster traps.");
 				p_ptr->warning_edmt = 1;
 			}
+
+			//if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
 		}
 
 		/* Disarm a trap */
@@ -8396,6 +8413,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Hack -- Handle stuff */
 	handle_stuff(Ind);
+
+	if (bashing && o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, item < 0 ? -item : 0, item >= 0 ? item : -1, 12, o_ptr->custom_lua_usage));
 
 
 	/* Travel until stopped */

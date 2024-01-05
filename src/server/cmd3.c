@@ -150,6 +150,7 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	/* Handles overflow */
 	pack_overflow(Ind);
 
+	if (o_ptr->custom_lua_equipstate) exec_lua(0, format("custom_object_equipstate(%d,%d,%d)", Ind, posn, o_ptr->custom_lua_equipstate));
 
 	/* Describe the result */
 	if (amt < o_ptr->number)
@@ -568,6 +569,8 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 			} else q_ptr->questor[o_ptr->questor_idx].mo_idx = o_idx;
 		}
 	}
+
+	if (o_ptr->custom_lua_carrystate) exec_lua(0, format("custom_object_carrystate(%d,%d,-1,%d)", Ind, o_idx, o_ptr->custom_lua_carrystate));
 
 	return(o_idx);
 }
@@ -1248,6 +1251,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	}
 
 	process_hooks(HOOK_WIELD, "d", Ind);
+	if (o_ptr->custom_lua_equipstate) exec_lua(0, format("custom_object_equipstate(%d,%d,%d)", Ind, slot, o_ptr->custom_lua_equipstate));
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2058,6 +2062,8 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 
 	/* Mark as forcibly dropped, to suppress !W triggering */
 	o_ptr->temp |= 0x04;
+
+	if (o_ptr->custom_lua_destruction) exec_lua(0, format("custom_object_destruction(%d,0,%d,%d)", Ind, item, o_ptr->custom_lua_destruction));
 
 	/* Eliminate the item (from the pack) */
 	if (item >= 0) {

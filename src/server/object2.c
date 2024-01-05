@@ -275,6 +275,8 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	}
 #endif
 
+	if (o_ptr->custom_lua_destruction) exec_lua(0, format("custom_object_destruction(0,%d,0,%d)", o_idx, o_ptr->custom_lua_destruction));
+
 	/* Excise */
 	excise_object_idx(o_idx);
 
@@ -11658,6 +11660,8 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	forge.k_idx = 0;
 	Send_subinven(Ind, i, 'a', TERM_WHITE, 0, &forge, "");
 #endif
+
+	if (o_ptr->custom_lua_carrystate) exec_lua(0, format("custom_object_carrystate(%d,0,%d,%d)", Ind, i, o_ptr->custom_lua_carrystate));
 
 	return(i);
 }

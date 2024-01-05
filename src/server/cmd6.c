@@ -648,6 +648,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	else if (p_ptr->prace != RACE_VAMPIRE)
 		(void)set_food(Ind, p_ptr->food + feed / 3);
 
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 3, o_ptr->custom_lua_usage));
 
 	/* Hack -- really allow certain foods to be "preserved" */
 	if (keep) return;
@@ -1324,6 +1325,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	process_hooks(HOOK_QUAFF, "d", Ind);
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 2, o_ptr->custom_lua_usage));
 
 	if (o_ptr->tval != TV_SPECIAL) ident = quaff_potion(Ind, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 	else exec_lua(0, format("custom_object(%d,%d,0)", Ind, item));
@@ -3363,6 +3365,8 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 		msg_format(Ind, "\375\377sYou acquire \377y%s\377s gold pieces.", val2);
  #endif
 
+		if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 1, o_ptr->custom_lua_usage));
+
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
@@ -3407,6 +3411,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	process_hooks(HOOK_READ, "d", Ind);
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 1, o_ptr->custom_lua_usage));
 
 	/* Assume the scroll will get used up */
 	used_up = TRUE;
@@ -3958,6 +3963,8 @@ void do_cmd_use_staff(int Ind, int item) {
 		return;
 	}
 
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 5, o_ptr->custom_lua_usage));
+
 	ident = use_staff(Ind, o_ptr->sval, rad, TRUE, &use_charge);
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
@@ -4235,6 +4242,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		return;
 	}
 
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 4, o_ptr->custom_lua_usage));
 
 
 	/* XXX Hack -- Extract the "sval" effect */
@@ -4880,6 +4888,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	}
 
 	process_hooks(HOOK_ZAP, "d", Ind);
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 6, o_ptr->custom_lua_usage));
 
 #ifdef NEW_MDEV_STACKING
 	pval_old = o_ptr->pval;
@@ -5141,6 +5150,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	}
 
 	process_hooks(HOOK_ZAP, "d", Ind);
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 6, o_ptr->custom_lua_usage));
 
 #ifdef NEW_MDEV_STACKING
 	pval_old = o_ptr->pval;
@@ -5951,6 +5961,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 	process_hooks(HOOK_ACTIVATE, "d", Ind);
+	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 0, o_ptr->custom_lua_usage));
 
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
