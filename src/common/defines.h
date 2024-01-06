@@ -6848,7 +6848,7 @@
 
 #define LF1_DEEP_WATER		0x10000000L	/* Dungeon uses deep water as floor tile: Make all water streamers/rivers deep too */
 #define LF1_DEEP_LAVA		0x20000000L	/* Dungeon uses deep lava as floor tile: Make all lava streamers/rivers deep too */
-//#define LF1_SPAWN_MARKER	0x40000000L	/* Mark that a special monster has already been spawned; Added for Nether Guards in the Nether Realm */
+#define LF1_SPAWN_MARKER	0x40000000L	/* Mark that a special monster has already been spawned; Added for Nether Guards in the Nether Realm */
 #define LF1_NO_MULTIPLY		0x80000000L /* for scrolls of vermin control */
 
 #define LF1_FEELING_MASK \
@@ -6904,6 +6904,7 @@
 #define LF2_CYCLIC_STAIRS	0x10000000L	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
 #define LF2_NO_MARTYR_SAC	0x20000000L	/* This level does not allow any divine/hellish favour: No Martyr/Blood Sacrifice */
 #define LF2_NO_TRAPS		0x40000000L	/* Disallow any traps and monster traps on this floor */
+#define LF2_STATIC		0x80000000L	/* Floor is static until this flag is cleared */
 
 
 /* vault flags for v_info */

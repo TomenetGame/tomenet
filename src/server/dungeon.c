@@ -6972,6 +6972,10 @@ bool stale_level(struct worldpos *wpos, int grace) {
 
 static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 	int j;
+	dun_level *l_ptr = getfloor(wpos);
+
+	/* For events or admin intervention: Floor flag 'STATIC' keeps floor artificially static until floor is deallocated or flag is cleared. */
+	if (l_ptr && (l_ptr->flags2 & LF2_STATIC)) return;
 
 	/* Highlander Tournament sector000 is static while players are in dungeon! */
 	if (in_sector000(wpos) && sector000separation) return;
@@ -6980,44 +6984,42 @@ static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 	if (ge_special_sector && in_arena(wpos)) return;
 
 	// Anyone on this depth?
-	for (j = 1; j <= NumPlayers; j++) {
+	for (j = 1; j <= NumPlayers; j++)
 		if (inarea(&Players[j]->wpos, wpos)) return;
-	}
 
-	// If this level is static and no one is actually on it
-	//if (stale_level(wpos)) {
-		/* limit static time in Ironman Deep Dive Challenge a lot */
-		if (in_irondeepdive(wpos)) {
-			if (isdungeontown(wpos)) {
-				if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min
-			} else if ((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) {
-				/* still 2 minutes static for very shallow levels */
-				if (stale_level(wpos, 120)) new_players_on_depth(wpos, 0, FALSE);//2 min
-			} else if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min (was 10)
-		} else {
-			switch (fast_unstat) {
-			case 1: //SAURON_FLOOR_FAST_UNSTAT
-				j = 60 * 60; //1h
-				break;
-			case 2: //DI_DEATH_FATE
+	// --- If this level is static and no one is actually on it: ---
+
+	/* limit static time in Ironman Deep Dive Challenge a lot */
+	if (in_irondeepdive(wpos)) {
+		if (isdungeontown(wpos)) {
+			if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min
+		} else if ((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) {
+			/* still 2 minutes static for very shallow levels */
+			if (stale_level(wpos, 120)) new_players_on_depth(wpos, 0, FALSE);//2 min
+		} else if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min (was 10)
+	} else {
+		switch (fast_unstat) {
+		case 1: //SAURON_FLOOR_FAST_UNSTAT
+			j = 60 * 60; //1h
+			break;
+		case 2: //DI_DEATH_FATE
 #if 0 /* Not working instantly. Done in process_player_change_wpos() instead. */
-				new_players_on_depth(wpos, 0, FALSE);
-				if (getcave(wpos)) dealloc_dungeon_level(wpos);
+			new_players_on_depth(wpos, 0, FALSE);
+			if (getcave(wpos)) dealloc_dungeon_level(wpos);
 #else
-				j = 0;
-				break;
+			j = 0;
+			break;
 #endif
-			default: //normal (fast_unstat = FALSE)
-				j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
-				break;
-			}
-
-			/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-			if (((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
-			    stale_level(wpos, j))
-				new_players_on_depth(wpos, 0, FALSE);
+		default: //normal dungeon floor (fast_unstat = FALSE)
+			j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
+			break;
 		}
-	//}
+
+		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
+		if (((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
+		    stale_level(wpos, j))
+			new_players_on_depth(wpos, 0, FALSE);
+	}
 }
 
 /*

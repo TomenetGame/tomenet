@@ -342,6 +342,8 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	int this_o_idx, next_o_idx = 0;
 
 	monster_race *r_ptr = race_inf(m_ptr);
+	dun_level *l_ptr;
+
 
 	/* Custom LUA hacks? */
 	if (m_ptr->custom_lua_deletion) exec_lua(0, format("custom_monster_deletion(%d,%d)", i, m_ptr->custom_lua_deletion));
@@ -350,6 +352,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	y = m_ptr->fy;
 	x = m_ptr->fx;
 	wpos = &m_ptr->wpos;
+	l_ptr = getfloor(wpos);
 
 	/* maybe log to be safe */
 	if (m_ptr->questor)
@@ -366,6 +369,9 @@ void delete_monster_idx(int i, bool unfound_arts) {
 
 	/* Hack -- count the number of "reproducers" */
 	if (r_ptr->flags7 & RF7_MULTIPLY) num_repro--;
+
+	/* Track RI_NETHER_GUARD to be at most 1 per floor (dungeon only) */
+	if (l_ptr && (l_ptr->flags1 & LF1_SPAWN_MARKER)) l_ptr->flags1 &= ~LF1_SPAWN_MARKER;
 
 	/* Remove it from everybody's view */
 	for (Ind = 1; Ind <= NumPlayers; Ind++) {
@@ -2980,7 +2986,7 @@ static int get_prison_monster(void) {
  */
 /* lots of hard-coded stuff in here -C. Blue */
 int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning) {
-	int		i, Ind, j, m_idx, dlev;
+	int		i, Ind, j, dlev;
 	bool		already_on_level = FALSE;
 	cave_type	*c_ptr;
 	dun_level	*l_ptr = getfloor(wpos);
@@ -3250,21 +3256,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 		if ((r_idx == RI_ZU_AON) && !nr_bottom) return(32);
 #endif
 
-		/* Nether Guard isn't a unique but there's only 1 guard per level */
-		if (r_idx == RI_NETHER_GUARD) {
-#if DEBUG_LEVEL > 2
-			s_printf("Checking for old Nether Guards\n");
-#endif
-			for (i = m_top - 1; i >= 0; i--) {
-				m_idx = m_fast[i];
-				m_ptr = &m_list[m_idx];
-				if (!m_ptr->r_idx) {
-					m_fast[i] = m_fast[--m_top];
-					continue;
-				}
-				if ((m_ptr->r_idx == RI_NETHER_GUARD) && inarea(wpos, &m_ptr->wpos)) return(33);
-			}
-		}
+		/* (dungeon only) Nether Guard isn't a unique but there's only 1 guard per level */
+		if (r_idx == RI_NETHER_GUARD && l_ptr && (l_ptr->flags1 & LF1_SPAWN_MARKER)) return(33);
 
 		/* Morgoth may not spawn 'live' if the players on his level aren't prepared correctly */
 		/* Morgoth may not spawn 'live' at all (!) if MORGOTH_NO_TELE_VAULTS is defined!
@@ -3495,6 +3488,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* Mega-Hack -- catch "failure" */
 	if (!c_ptr->m_idx) return(49);
 
+
+	/* --- Success! --- */
+
+
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
 
@@ -3537,6 +3534,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		else /* Stay at minimum: 1/3 HP */
 			m_ptr->maxhp = m_ptr->maxhp / 3;
 	}
+
+	/* (dungeon only) Prevent more than 1 NG per floor */
+	if (r_idx == RI_NETHER_GUARD && l_ptr) l_ptr->flags1 |= LF1_SPAWN_MARKER;
 
 	/* And start out fully healthy */
 	m_ptr->hp = m_ptr->maxhp;
