@@ -2116,7 +2116,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Hack: Fix silly names on artifact flavoured items (rings/amulets) */
 	if (artifact_p(o_ptr) && aware && !known && !special_rop && !(mode & 2048)) aware = FALSE;
 
-
 	/* Analyze the object */
 	switch (o_ptr->tval) {
 	/* Some objects are easy to describe */
@@ -2190,21 +2189,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* keep our special randart naming ;) 'the slow digestion of..' */
 		if (o_ptr->name1 == ART_RANDART && known) break;
 
-#if 0
-		/* Suppress flavour */
-		if (artifact_p(o_ptr) && known && !(mode & 512)) {
-			//obsolete	basenm = "& Amulet~";
-			break;
-		}
-#endif
-
 		/* "Amulets of Luck" are just called "Talismans" -C. Blue */
 		if ((o_ptr->sval == SV_AMULET_LUCK) && aware) {
-			if (!(mode & 512)) basenm = "& Talisman~";
-			else {
+			if (mode & 512) {
+				/* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
 				modstr = amulet_adj[indexx];
 				basenm = "& # Talisman~";
+				break;
 			}
+			basenm = "& Talisman~";
 			break;
 		}
 		/* Optionally flavoury */
@@ -2222,7 +2215,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		   If the k-name starts on '&' it's actually an alternative base item name,
 		   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
 		if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
-			if (short_item_names || !aware) basenm = k_name + k_ptr->name;
+			if ((short_item_names || aware) && !(mode & 512)) basenm = k_name + k_ptr->name;
 			else {
 				strcpy(basenm2, "& #");
 				strcat(basenm2, k_name + k_ptr->name + 1);
@@ -2232,21 +2225,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
 			else basenm = "& # Amulet~";
 		}
-
 		break;
 
 	/* Rings (including a few "Specials") */
 	case TV_RING:
 		/* keep our special randart naming ;) 'the slow digestion of..' */
 		if (o_ptr->name1 == ART_RANDART && known && !special_rop) break;
-
-#if 0
-		/* Suppress flavour */
-		if (artifact_p(o_ptr) && known && !(mode & 512)) {
-			//obsolete	basenm = "& Amulet~";
-			break;
-		}
-#endif
 
 		/* Color the object */
 		modstr = ring_adj[indexx];
@@ -2257,7 +2241,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		   If the k-name starts on '&' it's actually an alternative base item name,
 		   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
 		if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
-			if (short_item_names || !aware) basenm = k_name + k_ptr->name;
+			if ((short_item_names || aware) && !(mode & 512)) basenm = k_name + k_ptr->name;
 			else {
 				strcpy(basenm2, "& #");
 				strcat(basenm2, k_name + k_ptr->name + 1);
@@ -2267,7 +2251,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
 			else basenm = "& # Ring~";
 		}
-
 		break;
 
 	case TV_STAFF:
@@ -2303,11 +2286,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	}
 
 	case TV_SCROLL:
-		/* Suppress flavour */
-		if (artifact_p(o_ptr) && known && !(mode & 512)) {
-			basenm = "& Scroll~";
+#ifdef NEW_WILDERNESS_MAP_SCROLLS
+		/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
+		if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
+			basenm = "& Wilderness Map Piece~";
 			break;
 		}
+#endif
 
 		if (o_ptr->sval == SV_SCROLL_CHEQUE) {
 			if (mode & 256)
@@ -2317,13 +2302,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			break;
 		}
 
-#ifdef NEW_WILDERNESS_MAP_SCROLLS
-		/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
-		if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
-			basenm = "& Wilderness Map Piece~";
+		/* Suppress flavour (Scroll of Sleeping) */
+		if (artifact_p(o_ptr) && known && !(mode & 512)) {
+			basenm = "& Scroll~";
 			break;
 		}
-#endif
 
 		/* Color the object */
 		modstr = scroll_adj[indexx];
@@ -2335,7 +2318,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	case TV_POTION:
 	case TV_POTION2:
-		/* Suppress flavour */
+		/* Suppress flavour (Potion of Amber) */
 		if (artifact_p(o_ptr) && known && !(mode & 512)) {
 			basenm = "& Potion~";
 			break;
