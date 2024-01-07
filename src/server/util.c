@@ -6573,6 +6573,9 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	dun_level *l_ptr = getfloor(wpos);
 	bool felt = FALSE;
 
+	/* No feelings on world surface for now */
+	if (!wpos->wz) return(TRUE);
+
 	/* No feelings! */
 	if (d_ptr && (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE))) return(TRUE);
 
