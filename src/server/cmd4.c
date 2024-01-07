@@ -3808,12 +3808,12 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 #ifdef ENABLE_INSTANT_RES
 	if (p_ptr->insta_res) {
  #ifdef INSTANT_RES_EXCEPTION
-		if (in_netherrealm(&p_ptr->wpos)) msg_print(Ind, "Instant Resurrection does not work in the Nether Realm!");
+		if (in_netherrealm(&p_ptr->wpos)) msg_print(Ind, "\377RInstant Resurrection does not work in the Nether Realm!");
 		else
  #endif
 		if (p_ptr->wpos.wz) {
 			instant_res_cost = dlev * dlev * 10 + 10;
-			msg_format(Ind, "Instant Resurrection is active. (Would cost \377%c%d Au\377w at your current depth.)", (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'w', instant_res_cost);
+			msg_format(Ind, "\377GInstant Resurrection is active.\377w (Would cost \377%c%d Au\377w at your current depth.)", (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'G', instant_res_cost);
 		} else {
 			/* Start sqrt() approx with first estimate */
 			int l = 13 + p_ptr->lev / 5, k = 0, m = 200, lp = l;
@@ -3821,9 +3821,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 			instant_res_cost = (p_ptr->au + p_ptr->balance - 10) / 10;
 			/* Special case */
  #if 0
-			if (instant_res_cost < 0) msg_print(Ind, "Instant Resurrection is active. (But you haven't got sufficient funds.)");
+			if (instant_res_cost < 0) msg_print(Ind, "\377GInstant Resurrection is active.\377w (But you have \377Rinsufficient\377w funds.)");
  #else //optimize (luls): no need to calc dlev 0 insta-res, since it gives the same msg atm.
-			if (instant_res_cost < 1) msg_print(Ind, "Instant Resurrection is active. (But you haven't got sufficient funds.)");
+			if (instant_res_cost < 1) msg_print(Ind, "\377GInstant Resurrection is active.\377w (But you have \377Rinsufficient\377w funds.)");
  #endif
 			else {
 				/* Cap at dlev 200 */
@@ -3838,13 +3838,13 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 						l = (l + k) / 2;
 					} else break;
 				}
-				if (l == 200) msg_print(Ind, "Instant Resurrection is active. (Your funds suffice for any dungeon level.)");
+				if (l == 200) msg_print(Ind, "\377GInstant Resurrection is active.\377w (Your funds suffice for any dungeon level.)");
  #if 0 //true, but silyl and not very exact..
-				else if (!l) msg_print(Ind, "Instant Resurrection is active. (Your funds suffice only for the Bree area.)");
+				else if (!l) msg_print(Ind, "\377GInstant Resurrection is active.\377w (Your funds suffice only for the Bree area.)");
  #else //better maybe
-				else if (!l) msg_print(Ind, "Instant Resurrection is active. (But you haven't got sufficient funds.)");
+				else if (!l) msg_print(Ind, "\377GInstant Resurrection is active.\377w (But you have \377Rinsufficient\377w funds.)");
  #endif
-				else msg_format(Ind, "Instant Resurrection is active. (Your funds suffice for dungeon level %d.)", l);
+				else msg_format(Ind, "\377GInstant Resurrection is active.\377w (Your funds suffice for dungeon level %d.)", l);
 			}
 		}
 	}
@@ -3991,63 +3991,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	/* show intercept chance if we have intercept skill or MA skill (which gives +intercept chance) -- moved to MKEY_INTERCEPT, set by these two skills */
 	//if (get_skill(p_ptr, SKILL_INTERCEPT) || get_skill(p_ptr, SKILL_MARTIAL_ARTS)) check_intercept(Ind);
 
-#if 0 /* this is already displayed to the left */
-	/* Insanity warning (better message needed!) */
-	if (p_ptr->csane < p_ptr->msane / 8)
-		msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
-	else if (p_ptr->csane < p_ptr->msane / 4)
-		msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
-	else if (p_ptr->csane < p_ptr->msane / 2)
-		msg_print(Ind, "\377yYou feel insanity creep into your mind..");
-	else
-		msg_print(Ind, "\377wYou are sane.");
-#endif
-
-#if 0 /* deprecated, new one below.. */
-	if (p_ptr->body_monster) {
-		monster_race *r_ptr = &r_info[p_ptr->body_monster];
-		msg_format(Ind, "You %shave a head.", r_ptr->body_parts[BODY_HEAD] ? "" : "don't ");
-		msg_format(Ind, "You %shave arms.", r_ptr->body_parts[BODY_ARMS] ? "" : "don't ");
-		msg_format(Ind, "You can %s use weapons.", r_ptr->body_parts[BODY_WEAPON] ? "" : "not");
-		msg_format(Ind, "You can %s wear %s.", r_ptr->body_parts[BODY_FINGER] ? "" : "not", r_ptr->body_parts[BODY_FINGER] == 1 ? "a ring" : "rings");
-		msg_format(Ind, "You %shave a torso.", r_ptr->body_parts[BODY_TORSO] ? "" : "don't ");
-		msg_format(Ind, "You %shave legs/suitable feet for shoes.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
-	} else if (p_ptr->fruit_bat) {
-		msg_print(Ind, "You have a head.");
-		msg_print(Ind, "You can wear rings.");
-		msg_print(Ind, "You don't have a torso, but you can wear cloaks.");
-	}
-#endif
-#if 0 /* another one.. */
-	bool i_ringr = TRUE, i_ringl = TRUE, i_neck = TRUE, i_head = TRUE, i_outer = TRUE;
-	bool i_light = TRUE, i_arms = TRUE, i_tool = TRUE, i_wield = TRUE, i_bow = TRUE;
-	bool i_ammo = TRUE, i_hands = TRUE, i_feet = TRUE, i_body = TRUE;
-
-	if (p_ptr->fruit_bat) {
-		i_wield = i_bow = i_ammo = i_hands i_feet = i_body = FALSE;
-	}
-	if (p_ptr->body_monster) {
-		if (!r_ptr->body_parts[BODY_WEAPON]) i_wield = i_bow = FALSE;
-		if (r_ptr->body_parts[BODY_FINGER] <= 1) i_ringl = FALSE;
-		if (!r_ptr->body_parts[BODY_FINGER]) i_ringr = FALSE;
-		if (!r_ptr->body_parts[BODY_HEAD]) i_neck = i_head = FALSE;
-		if (!r_ptr->body_parts[BODY_WEAPON] &&
-		    !r_ptr->body_parts[BODY_FINGER] &&
-		    !r_ptr->body_parts[BODY_HEAD] &&
-		    !r_ptr->body_parts[BODY_ARMS])
-			i_light = FALSE;
-		if (!r_ptr->body_parts[BODY_TORSO]) i_body = i_outer = i_ammo = FALSE;
-		if (!r_ptr->body_parts[BODY_ARMS]) i_arms = FALSE;
-		if (!r_ptr->body_parts[BODY_WEAPON] &&
-		    !r_ptr->body_parts[BODY_ARMS])
-			i_tool = FALSE;
-		if (!r_ptr->body_parts[BODY_FINGER] &&
-		    !r_ptr->body_parts[BODY_ARMS])
-			i_hands = FALSE;
-		if (!r_ptr->body_parts[BODY_LEGS]) i_feet = FALSE;
-	}
-#endif
-#if 1 /* just use item_tester_hook_wear() to prevent duplicate stuff.. */
+	/* just use item_tester_hook_wear() to prevent duplicate stuff.. */
 	if (p_ptr->body_monster &&
 	    p_ptr->pclass != CLASS_DRUID && p_ptr->prace != RACE_VAMPIRE &&
 	    (p_ptr->pclass != CLASS_SHAMAN || !mimic_shaman_fulleq(r_info[p_ptr->body_monster].d_char))) {
@@ -4097,21 +4041,24 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		if (!item_tester_hook_wear(Ind, INVEN_AMMO)) msg_print(Ind, "  you cannot carry ammunition.");
 		if (!item_tester_hook_wear(Ind, INVEN_TOOL)) msg_print(Ind, "  you cannot use tools.");
 	}
-#endif
 
 	if (p_ptr->pclass == CLASS_DRUID) { /* compare mimic_druid in defines.h */
-		if (lev >= 5) msg_print(Ind, "\377GYou know how to change into a Cave Bear (#160) and Panther (#198)");
-		if (lev >= 10) msg_print(Ind, "\377GYou know how to change into a Grizzly Bear (#191) and Yeti (#154)");
-		if (lev >= 15) msg_print(Ind, "\377GYou know how to change into a Griffon (#279) and Sasquatch (#343)");
-		if (lev >= 20) msg_print(Ind, "\377GYou know how to change into a Werebear (#414), Great Eagle (#335), Aranea (#963) and Great White Shark (#898)");
-		if (lev >= 25) msg_print(Ind, "\377GYou know how to change into a Wyvern (#334) and Multi-hued Hound (#513)");
-		if (lev >= 30) msg_print(Ind, "\377GYou know how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)");
-		if (lev >= 35) msg_print(Ind, "\377GYou know how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
-		if (lev >= 40) msg_print(Ind, "\377GYou know how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)");
-		if (lev >= 45) msg_print(Ind, "\377GYou know how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
-		if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Gorm (#1069), Jabberwock (#778) and Greater Kraken (#775)");// and Leviathan (#782)");
-		if (lev >= 55) msg_print(Ind, "\377GYou know how to change into a Horned Serpent (#1131)");
-		if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Firebird (#1127)");
+		if (lev >= 5) {
+			msg_print(Ind, "\377BAs a druid you have learned how to shapeshift into a...");
+			msg_format(Ind, "\377B Cave Bear (#160) and Panther (#198)%s", lev >= 10 ? "," : "");
+		}
+		if (lev >= 10) msg_format(Ind, "\377B Grizzly Bear (#191) and Yeti (#154)%s", lev >= 15 ? "," : ".");
+		if (lev >= 15) msg_format(Ind, "\377B Griffon (#279) and Sasquatch (#343)%s", lev >= 20 ? "," : ".");
+		if (lev >= 20) msg_format(Ind, "\377B Werebear (#414), Great Eagle (#335), Aranea (#963), Great White Shark (#898)%s", lev >= 25 ? "," : ".");
+		if (lev >= 25) msg_format(Ind, "\377B Wyvern (#334) and Multi-hued Hound (#513)%s", lev >= 30 ? "," : ".");
+		if (lev >= 30) msg_format(Ind, "\377B 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)%s", lev >= 35 ? "," : ".");
+		if (lev >= 35) msg_format(Ind, "\377B 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)%s", lev >= 40 ? "," : ".");
+		if (lev >= 40) msg_format(Ind, "\377B an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)%s", lev >= 45 ? "," : ".");
+		if (lev >= 45) msg_format(Ind, "\377B Maulotaur (#723) and Winged Horror (#704)%s", lev >= 50 ? "," : ".");// and Behemoth (#716)");
+		if (lev >= 50) msg_format(Ind, "\377B Gorm (#1069), Jabberwock (#778) and Greater Kraken (#775)%s", lev >= 55 ? "," : ".");// and Leviathan (#782)");
+		/* Don't spam just 1 line for 1 single form -_- */
+		if (lev >= 60) msg_print(Ind, "\377B Horned Serpent (#1131) and Firebird (#1127).");
+		else if (lev >= 55) msg_print(Ind, "\377B Horned Serpent (#1131).");
 	}
 
 	if (p_ptr->tim_mimic)
@@ -4119,9 +4066,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		    r_name + r_info[p_ptr->tim_mimic_what].name, p_ptr->tim_mimic_what, p_ptr->tim_mimic);
 
 	if (p_ptr->prace == RACE_VAMPIRE) {
-		if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
+		if (lev >= 20) msg_print(Ind, "\377BYou are able to change into a vampire bat (#391).");
 #ifdef VAMPIRIC_MIST
-		if (lev >= 35) msg_print(Ind, "\377GYou are able to turn into vampiric mist (#365).");
+		if (lev >= 35) msg_print(Ind, "\377BYou are able to change into vampiric mist (#365).");
 #endif
 	}
 
