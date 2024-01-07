@@ -461,7 +461,11 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		if (!object_known_p(Ind, o_ptr)) return(price);
 
 		if (o_ptr->name2) price += e_info[o_ptr->name2b].cost; /* 'Indestructible' ego, pft */
+#if 0 /* cheapo, basically just a tip :/ */
 		if (o_ptr->pval != 0) price += r_info[o_ptr->pval].level * 100;
+#else /* can be a very serious tip. Worth selling forms you don't need, perhaps even? (1/10 of npc stores' selling price) */
+		if (o_ptr->pval != 0) price += ((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) / 10;
+#endif
 		break;
 	case 1:
 		/* npc shop sells: very expensive */
