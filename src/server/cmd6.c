@@ -7977,6 +7977,7 @@ bool unmagic(int Ind) {
 		set_tim_ffall(Ind, 0) +
 		set_tim_lev(Ind, 0) +
 		set_tim_regen(Ind, 0, 0) +
+		set_tim_mp2hp(Ind, 0, 0, 0) +
 		set_tim_thunder(Ind, 0, 0, 0) +
 		set_res_fear(Ind, 0) +
 		do_focus(Ind, 0, 0) +
