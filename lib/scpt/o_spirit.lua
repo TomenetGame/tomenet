@@ -446,8 +446,7 @@ POSSESS = add_spell {
 			fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
 	end,
 	["info"] = 	function()
-			--return "power "..(10 + get_level(Ind, POSSESS, 150))
-			return ""
+			return "power "..(10 + get_level(Ind, POSSESS, 150)).." range 17" -- MAX_RANGE - 1
 	end,
 	["desc"] =	{
 			"Tries to manipulate the mind of a monster",
@@ -470,8 +469,7 @@ POSSESS_II = add_spell {
 			fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), 3, "focusses")
 	end,
 	["info"] = 	function()
-			--return "power "..(10 + get_level(Ind, POSSESS, 150))
-			return ""
+			return "power "..(10 + get_level(Ind, POSSESS, 150)).." range 17" -- MAX_RANGE - 1
 	end,
 	["desc"] =	{
 			"Tries to manipulate the mind of your target and others around it",
@@ -494,8 +492,7 @@ POSSESS_III = add_spell {
 			project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, POSSESS, 150), "focusses")
 	end,
 	["info"] = 	function()
-			--return "power "..(10 + get_level(Ind, POSSESS, 150))
-			return ""
+			return "power "..(10 + get_level(Ind, POSSESS, 150)).." range 17" -- MAX_RANGE - 1
 	end,
 	["desc"] =	{
 			"Tries to manipulate the mind of all monsters in sight",
