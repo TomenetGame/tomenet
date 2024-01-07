@@ -11470,7 +11470,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
 #endif
-#ifndef UNIQUES_KILLED_ARRAY
+#if !defined(UNIQUES_KILLED_ARRAY) || defined(RPG_SERVER)
 	int i;
 #endif
 	wilderness_type *wild;
