@@ -8433,7 +8433,6 @@ void restore_estate(int Ind) {
 				o_ptr->questor_idx = o_ptr_v2->questor_idx;
 				o_ptr->questor_invincible = o_ptr_v2->questor_invincible;
 				o_ptr->quest_credited = o_ptr_v2->quest_credited;
-				o_ptr->note = 0;	//convert
 				o_ptr->note_utag = o_ptr_v2->note_utag;
 				o_ptr->inven_order = o_ptr_v2->inven_order;
 				o_ptr->next_o_idx = o_ptr_v2->next_o_idx;
@@ -8446,14 +8445,59 @@ void restore_estate(int Ind) {
 				o_ptr->housed = o_ptr_v2->housed;
 				o_ptr->changed = o_ptr_v2->changed;
 				o_ptr->NR_tradable = o_ptr_v2->NR_tradable;
-				o_ptr->no_soloist = FALSE;	//convert
 				o_ptr->temp = o_ptr_v2->temp;
 				o_ptr->iron_trade = o_ptr_v2->iron_trade;
 				o_ptr->iron_turn = o_ptr_v2->iron_turn;
-				o_ptr->embed = 0; //convert
-				//convert:
+				//convert; (2)
+				o_ptr->no_soloist = FALSE;
+				o_ptr->iron_turn = 0;
+				//convert: (3)
+				o_ptr->note = 0;
+				 //convert: (4)
+				o_ptr->embed = 0;
+				//convert: (5)
+				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->f_turn = o_ptr->f_time = 0;
+				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->f_dun = 0;
+				o_ptr->f_player = o_ptr->f_player_turn = 0;
+				o_ptr->f_ridx = o_ptr->f_reidx = 0;
+				o_ptr->f_special = o_ptr->f_reward = 0;
+				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
+				//convert: (7)
+				o_ptr->slain_monsters = 0;
+				o_ptr->slain_uniques = 0;
+				o_ptr->slain_players = 0;
+				o_ptr->times_activated = 0;
+				o_ptr->time_equipped = 0;
+				o_ptr->time_carried = 0;
+				o_ptr->slain_orcs = 0;
+				o_ptr->slain_trolls = 0;
+				o_ptr->slain_giants = 0;
+				o_ptr->slain_animals = 0;
+				o_ptr->slain_dragons = 0;
+				o_ptr->slain_demons = 0;
+				o_ptr->slain_undead = 0;
+				o_ptr->slain_evil = 0;
+				o_ptr->slain_bosses = 0;
+				o_ptr->slain_nazgul = 0;
+				o_ptr->slain_superuniques = 0;
+				o_ptr->slain_sauron = 0;
+				o_ptr->slain_morgoth = 0;
+				o_ptr->slain_zuaon = 0;
+				o_ptr->done_damage = 0;
+				o_ptr->done_healing = 0;
+				o_ptr->got_damaged = 0;
+				o_ptr->got_repaired = 0;
+				o_ptr->got_enchanted = 0;
+				o_ptr->custom_lua_carrystate = 0;
+				o_ptr->custom_lua_equipstate = 0;
+				o_ptr->custom_lua_destruction = 0;
+				o_ptr->custom_lua_usage = 0;
+				//convert (8):
+				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
 				break;
 			case 2: r = fread(o_ptr_v2a, sizeof(object_type_v2a), 1, fp);
 				o_ptr->owner = o_ptr_v2a->owner;
@@ -8522,7 +8566,6 @@ void restore_estate(int Ind) {
 				o_ptr->questor_idx = o_ptr_v2a->questor_idx;
 				o_ptr->questor_invincible = o_ptr_v2a->questor_invincible;
 				o_ptr->quest_credited = o_ptr_v2a->quest_credited;
-				o_ptr->note = 0;	//convert
 				o_ptr->note_utag = o_ptr_v2a->note_utag;
 				o_ptr->inven_order = o_ptr_v2a->inven_order;
 				o_ptr->next_o_idx = o_ptr_v2a->next_o_idx;
@@ -8535,14 +8578,58 @@ void restore_estate(int Ind) {
 				o_ptr->housed = o_ptr_v2a->housed;
 				o_ptr->changed = o_ptr_v2a->changed;
 				o_ptr->NR_tradable = o_ptr_v2a->NR_tradable;
-				o_ptr->no_soloist = FALSE;	//convert
 				o_ptr->temp = o_ptr_v2a->temp;
 				o_ptr->iron_trade = o_ptr_v2a->iron_trade;
-				o_ptr->iron_turn = 0;		//convert
-				o_ptr->embed = 0; //convert
-				//convert:
+				//convert;
+				o_ptr->no_soloist = FALSE;
+				o_ptr->iron_turn = 0;
+				//convert: (3)
+				o_ptr->note = 0;
+				 //convert: (4)
+				o_ptr->embed = 0;
+				//convert: (5)
+				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->f_turn = o_ptr->f_time = 0;
+				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->f_dun = 0;
+				o_ptr->f_player = o_ptr->f_player_turn = 0;
+				o_ptr->f_ridx = o_ptr->f_reidx = 0;
+				o_ptr->f_special = o_ptr->f_reward = 0;
+				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
+				//convert: (7)
+				o_ptr->slain_monsters = 0;
+				o_ptr->slain_uniques = 0;
+				o_ptr->slain_players = 0;
+				o_ptr->times_activated = 0;
+				o_ptr->time_equipped = 0;
+				o_ptr->time_carried = 0;
+				o_ptr->slain_orcs = 0;
+				o_ptr->slain_trolls = 0;
+				o_ptr->slain_giants = 0;
+				o_ptr->slain_animals = 0;
+				o_ptr->slain_dragons = 0;
+				o_ptr->slain_demons = 0;
+				o_ptr->slain_undead = 0;
+				o_ptr->slain_evil = 0;
+				o_ptr->slain_bosses = 0;
+				o_ptr->slain_nazgul = 0;
+				o_ptr->slain_superuniques = 0;
+				o_ptr->slain_sauron = 0;
+				o_ptr->slain_morgoth = 0;
+				o_ptr->slain_zuaon = 0;
+				o_ptr->done_damage = 0;
+				o_ptr->done_healing = 0;
+				o_ptr->got_damaged = 0;
+				o_ptr->got_repaired = 0;
+				o_ptr->got_enchanted = 0;
+				o_ptr->custom_lua_carrystate = 0;
+				o_ptr->custom_lua_equipstate = 0;
+				o_ptr->custom_lua_destruction = 0;
+				o_ptr->custom_lua_usage = 0;
+				//convert (8):
+				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
 				break;
 			case 3: r = fread(o_ptr_v2b, sizeof(object_type_v2b), 1, fp);
 				o_ptr->owner = o_ptr_v2b->owner;
@@ -8611,7 +8698,6 @@ void restore_estate(int Ind) {
 				o_ptr->questor_idx = o_ptr_v2b->questor_idx;
 				o_ptr->questor_invincible = o_ptr_v2b->questor_invincible;
 				o_ptr->quest_credited = o_ptr_v2b->quest_credited;
-				o_ptr->note = 0;	//convert
 				o_ptr->note_utag = o_ptr_v2b->note_utag;
 				o_ptr->inven_order = o_ptr_v2b->inven_order;
 				o_ptr->next_o_idx = o_ptr_v2b->next_o_idx;
@@ -8628,10 +8714,53 @@ void restore_estate(int Ind) {
 				o_ptr->temp = o_ptr_v2b->temp;
 				o_ptr->iron_trade = o_ptr_v2b->iron_trade;
 				o_ptr->iron_turn = o_ptr_v2b->iron_turn;
-				o_ptr->embed = 0; //convert
 				//convert:
+				o_ptr->note = 0;
+				 //convert: (4)
+				o_ptr->embed = 0;
+				//convert: (5)
+				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->f_turn = o_ptr->f_time = 0;
+				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->f_dun = 0;
+				o_ptr->f_player = o_ptr->f_player_turn = 0;
+				o_ptr->f_ridx = o_ptr->f_reidx = 0;
+				o_ptr->f_special = o_ptr->f_reward = 0;
+				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
+				//convert: (7)
+				o_ptr->slain_monsters = 0;
+				o_ptr->slain_uniques = 0;
+				o_ptr->slain_players = 0;
+				o_ptr->times_activated = 0;
+				o_ptr->time_equipped = 0;
+				o_ptr->time_carried = 0;
+				o_ptr->slain_orcs = 0;
+				o_ptr->slain_trolls = 0;
+				o_ptr->slain_giants = 0;
+				o_ptr->slain_animals = 0;
+				o_ptr->slain_dragons = 0;
+				o_ptr->slain_demons = 0;
+				o_ptr->slain_undead = 0;
+				o_ptr->slain_evil = 0;
+				o_ptr->slain_bosses = 0;
+				o_ptr->slain_nazgul = 0;
+				o_ptr->slain_superuniques = 0;
+				o_ptr->slain_sauron = 0;
+				o_ptr->slain_morgoth = 0;
+				o_ptr->slain_zuaon = 0;
+				o_ptr->done_damage = 0;
+				o_ptr->done_healing = 0;
+				o_ptr->got_damaged = 0;
+				o_ptr->got_repaired = 0;
+				o_ptr->got_enchanted = 0;
+				o_ptr->custom_lua_carrystate = 0;
+				o_ptr->custom_lua_equipstate = 0;
+				o_ptr->custom_lua_destruction = 0;
+				o_ptr->custom_lua_usage = 0;
+				//convert (8):
+				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
 				break;
 			case 4: r = fread(o_ptr_v3, sizeof(object_type_v3), 1, fp);
 				o_ptr->owner = o_ptr_v3->owner;
@@ -8717,10 +8846,51 @@ void restore_estate(int Ind) {
 				o_ptr->temp = o_ptr_v3->temp;
 				o_ptr->iron_trade = o_ptr_v3->iron_trade;
 				o_ptr->iron_turn = o_ptr_v3->iron_turn;
-				o_ptr->embed = 0; //convert
 				//convert:
+				o_ptr->embed = 0;
+				//convert: (5)
+				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->f_turn = o_ptr->f_time = 0;
+				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->f_dun = 0;
+				o_ptr->f_player = o_ptr->f_player_turn = 0;
+				o_ptr->f_ridx = o_ptr->f_reidx = 0;
+				o_ptr->f_special = o_ptr->f_reward = 0;
+				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
+				//convert: (7)
+				o_ptr->slain_monsters = 0;
+				o_ptr->slain_uniques = 0;
+				o_ptr->slain_players = 0;
+				o_ptr->times_activated = 0;
+				o_ptr->time_equipped = 0;
+				o_ptr->time_carried = 0;
+				o_ptr->slain_orcs = 0;
+				o_ptr->slain_trolls = 0;
+				o_ptr->slain_giants = 0;
+				o_ptr->slain_animals = 0;
+				o_ptr->slain_dragons = 0;
+				o_ptr->slain_demons = 0;
+				o_ptr->slain_undead = 0;
+				o_ptr->slain_evil = 0;
+				o_ptr->slain_bosses = 0;
+				o_ptr->slain_nazgul = 0;
+				o_ptr->slain_superuniques = 0;
+				o_ptr->slain_sauron = 0;
+				o_ptr->slain_morgoth = 0;
+				o_ptr->slain_zuaon = 0;
+				o_ptr->done_damage = 0;
+				o_ptr->done_healing = 0;
+				o_ptr->got_damaged = 0;
+				o_ptr->got_repaired = 0;
+				o_ptr->got_enchanted = 0;
+				o_ptr->custom_lua_carrystate = 0;
+				o_ptr->custom_lua_equipstate = 0;
+				o_ptr->custom_lua_destruction = 0;
+				o_ptr->custom_lua_usage = 0;
+				//convert (8):
+				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
 				break;
 			case 5: r = fread(o_ptr_v4, sizeof(object_type_v4), 1, fp);
 				o_ptr->owner = o_ptr_v4->owner;
@@ -8808,9 +8978,6 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v4->iron_turn;
 				o_ptr->embed = o_ptr_v4->embed;
 				//convert:
-				o_ptr->number2 = 0;
-				o_ptr->note2 = o_ptr->note2_utag = 0;
-				//convert:
 				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
 				o_ptr->f_turn = o_ptr->f_time = 0;
 				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
@@ -8818,6 +8985,41 @@ void restore_estate(int Ind) {
 				o_ptr->f_player = o_ptr->f_player_turn = 0;
 				o_ptr->f_ridx = o_ptr->f_reidx = 0;
 				o_ptr->f_special = o_ptr->f_reward = 0;
+				//convert: (6)
+				o_ptr->number2 = 0;
+				o_ptr->note2 = o_ptr->note2_utag = 0;
+				//convert: (7)
+				o_ptr->slain_monsters = 0;
+				o_ptr->slain_uniques = 0;
+				o_ptr->slain_players = 0;
+				o_ptr->times_activated = 0;
+				o_ptr->time_equipped = 0;
+				o_ptr->time_carried = 0;
+				o_ptr->slain_orcs = 0;
+				o_ptr->slain_trolls = 0;
+				o_ptr->slain_giants = 0;
+				o_ptr->slain_animals = 0;
+				o_ptr->slain_dragons = 0;
+				o_ptr->slain_demons = 0;
+				o_ptr->slain_undead = 0;
+				o_ptr->slain_evil = 0;
+				o_ptr->slain_bosses = 0;
+				o_ptr->slain_nazgul = 0;
+				o_ptr->slain_superuniques = 0;
+				o_ptr->slain_sauron = 0;
+				o_ptr->slain_morgoth = 0;
+				o_ptr->slain_zuaon = 0;
+				o_ptr->done_damage = 0;
+				o_ptr->done_healing = 0;
+				o_ptr->got_damaged = 0;
+				o_ptr->got_repaired = 0;
+				o_ptr->got_enchanted = 0;
+				o_ptr->custom_lua_carrystate = 0;
+				o_ptr->custom_lua_equipstate = 0;
+				o_ptr->custom_lua_destruction = 0;
+				o_ptr->custom_lua_usage = 0;
+				//convert (8):
+				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
 				break;
 			case 6: r = fread(o_ptr_v5, sizeof(object_type_v5), 1, fp);
 				o_ptr->owner = o_ptr_v5->owner;
@@ -8920,6 +9122,38 @@ void restore_estate(int Ind) {
 				//convert:
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
+				//convert: (7)
+				o_ptr->slain_monsters = 0;
+				o_ptr->slain_uniques = 0;
+				o_ptr->slain_players = 0;
+				o_ptr->times_activated = 0;
+				o_ptr->time_equipped = 0;
+				o_ptr->time_carried = 0;
+				o_ptr->slain_orcs = 0;
+				o_ptr->slain_trolls = 0;
+				o_ptr->slain_giants = 0;
+				o_ptr->slain_animals = 0;
+				o_ptr->slain_dragons = 0;
+				o_ptr->slain_demons = 0;
+				o_ptr->slain_undead = 0;
+				o_ptr->slain_evil = 0;
+				o_ptr->slain_bosses = 0;
+				o_ptr->slain_nazgul = 0;
+				o_ptr->slain_superuniques = 0;
+				o_ptr->slain_sauron = 0;
+				o_ptr->slain_morgoth = 0;
+				o_ptr->slain_zuaon = 0;
+				o_ptr->done_damage = 0;
+				o_ptr->done_healing = 0;
+				o_ptr->got_damaged = 0;
+				o_ptr->got_repaired = 0;
+				o_ptr->got_enchanted = 0;
+				o_ptr->custom_lua_carrystate = 0;
+				o_ptr->custom_lua_equipstate = 0;
+				o_ptr->custom_lua_destruction = 0;
+				o_ptr->custom_lua_usage = 0;
+				//convert (8):
+				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
 				break;
 			case 7: r = fread(o_ptr_v6, sizeof(object_type_v6), 1, fp);
 				o_ptr->owner = o_ptr_v6->owner;
@@ -9052,6 +9286,8 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_equipstate = 0;
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
+				//convert (8):
+				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
 				break;
 			case 8: r = fread(o_ptr_v7, sizeof(object_type_v7), 1, fp);
 				o_ptr->owner = o_ptr_v7->owner;
