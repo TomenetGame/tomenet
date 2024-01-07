@@ -941,6 +941,7 @@ struct player_type
 	s16b steamblast_y;
 
 	bool player_list_window;
+	int item_newest;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

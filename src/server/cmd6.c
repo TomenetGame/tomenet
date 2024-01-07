@@ -1959,10 +1959,8 @@ void do_cmd_fill_bottle(int Ind) {
  */
 void do_cmd_empty_potion(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
-
 	//bool ident;
-	int tval;//, k_idx, item;
-
+	int tval, in_slot = p_ptr->item_newest;//, k_idx, item;
 	object_type *o_ptr, *q_ptr, forge;
 	//cptr q, s;
 
@@ -2025,6 +2023,8 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	invcopy(q_ptr, lookup_kind(TV_BOTTLE, SV_EMPTY_BOTTLE));
 	q_ptr->level = 1;
 
+	if (p_ptr->item_newest == slot && o_ptr->number == 1) in_slot = p_ptr->item_newest = -1;
+
 	/* Destroy a potion in the pack */
 	inven_item_increase(Ind, slot, -1);
 	inven_item_describe(Ind, slot);
@@ -2041,10 +2041,18 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 #ifdef ENABLE_SUBINVEN
-	if (auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE)) return;
+	if (auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE)) {
+		/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
+		p_ptr->item_newest = in_slot;
+
+		return;
+	}
 #endif
 	slot = inven_carry(Ind, q_ptr);
 	if (slot >= 0) inven_item_describe(Ind, slot);
+
+	/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
+	p_ptr->item_newest = in_slot;
 }
 
 

@@ -1893,7 +1893,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			//return;//disabled for anti-cheeze
 			if (!tk) {
-				msg_print(Ind, "\377oUsage: /empty (inventory slot letter)");
+				msg_print(Ind, "\377oUsage: /empty (inventory slot letter|+)");
+				return;
+			}
+			if (message3[0] == '+') {
+				if (p_ptr->item_newest >= 0) do_cmd_empty_potion(Ind, p_ptr->item_newest);
 				return;
 			}
 			if ((slot = a2slot(Ind, token[1][0], TRUE, FALSE)) == -1) return;
