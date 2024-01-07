@@ -9833,14 +9833,21 @@ int Send_Guide(int Ind, byte search_type, int lineno, const char* search_string)
 }
 
 int Send_indicators(int Ind, u32b indicators) {
-	connection_t *connp = Conn[Players[Ind]->conn];
-	//player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+	player_type *p_ptr2;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for indicators (%d.%d.%d)",
 					Ind, connp->state, connp->id));
 		return(0);
+	}
+
+	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
+		if (is_atleast(&p_ptr2->version, 4, 7, 3, 1, 0, 0)) {
+			connp2 = Conn[p_ptr2->conn];
+			Packet_printf(&connp2->c, "%c%d", PKT_INDICATORS, indicators);
+		}
 	}
 
 	return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
