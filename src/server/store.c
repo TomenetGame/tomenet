@@ -7414,10 +7414,14 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 	/* Advance to inscription contents */
 	p += 2;
 
+	/* Just '@S'? Return the unmodified price then. */
+	if (!*p) return(price);
+
 	/* Base-item keeper marker, skip (no price relevance) */
 	if (*p == 'B') {
-		if (p[2] == ';') p += 3;
-		else if (p[3] == ';') p += 4;
+		if (!p[1]) return(price); /* Just '@SB'? Return the unmodified price then. */
+		else if (p[2] == ';') p += 3;
+		else if (p[2] && p[3] == ';') p += 4;
 		else p++;
 	}
 
