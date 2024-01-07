@@ -6164,7 +6164,7 @@ void update_view(int Ind) {
 	if (p_ptr->wpos.wz) {
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
-		if (l_ptr && l_ptr->flags1 & LF1_NO_MAP) unmap = TRUE;
+		if (l_ptr && (l_ptr->flags1 & LF1_NO_MAP)) unmap = TRUE;
 	}
 
 
@@ -6974,7 +6974,7 @@ void update_view(int Ind) {
 	if (!(zcave = getcave(wpos))) return;
 	if (p_ptr->wpos.wz) {
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
-		if (l_ptr && l_ptr->flags1 & LF1_NO_MAP) unmap = TRUE;
+		if (l_ptr && (l_ptr->flags1 & LF1_NO_MAP)) unmap = TRUE;
 	}
 
 
@@ -7566,7 +7566,7 @@ void mind_map_level(int Ind, int pow) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* for mindcrafters too (NR requires) */
-	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* build list of players to share the vision with */
@@ -7760,7 +7760,7 @@ void wiz_lite(int Ind) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
-	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Scan all normal grids */
@@ -7852,7 +7852,7 @@ void wiz_lite_extra(int Ind) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
-	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Scan all normal grids */

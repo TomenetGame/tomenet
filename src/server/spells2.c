@@ -5397,7 +5397,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	if (l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_GENO)) return(FALSE);
 
 	bypass_invuln = TRUE;
 
@@ -5496,7 +5496,7 @@ bool genocide(int Ind) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	if (l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);	// double check..
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_GENO)) return(FALSE);	// double check..
 
 	/* Search all monsters and find the closest */
 	for (i = 1; i < m_max; i++) {
@@ -5562,7 +5562,7 @@ bool obliteration(int who) {
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
-	if (l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_GENO)) return(FALSE);
 
 	bypass_invuln = TRUE;
 
@@ -5749,7 +5749,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
-	if (l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY)) return;
 
 	/* among others, make sure town areas aren't affected.. */
 	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;

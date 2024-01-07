@@ -8786,7 +8786,7 @@ void process_player_change_wpos(int Ind) {
 	   However, if the code somewhere calls add_dungeon() of type 0 but forgets to add DF2_RANDOM,
 	   the result might be a dungeon that has no defined width and height.
 	   We catch that here to make an admin's debugging life easier. - C. Blue */
-	if (l_ptr && !l_ptr->wid) s_printf("L_PTR WARNING: Level has dimension zero. Check for missing DF2_RANDOM flag!\n");
+	if (l_ptr && (!l_ptr->wid || !l_ptr->hgt)) s_printf("L_PTR WARNING: Level has dimension zero. Check for missing DF2_RANDOM flag!\n");
 
 	/* Clear the "marked" and "lit" flags for each cave grid */
 	for (y = 0; y < MAX_HGT; y++)

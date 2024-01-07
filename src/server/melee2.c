@@ -2143,7 +2143,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (f7 & RF7_S_NOEXP) s_clone = 100;
 
 	/* Only innate spells */
-	//(restricted it a bit, see guide)	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
+	//(restricted it a bit, see guide)	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) f5 = f6 = 0;
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
@@ -4435,7 +4435,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	if (f7 & RF7_S_NOEXP) s_clone = 100;
 
 	/* Only innate spells */
-	//(restricted it a bit, see guide)	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
+	//(restricted it a bit, see guide)	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) f5 = f6 = 0;
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
