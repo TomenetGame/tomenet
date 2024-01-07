@@ -10694,7 +10694,7 @@ static int Receive_activate_skill(int ind) {
 	if (p_ptr &&
 	    (p_ptr->energy >= level_speed(&p_ptr->wpos) ||
 	    /* some abilities don't require energy: */
-	    mkey == MKEY_DODGE || mkey == MKEY_PARRYBLOCK ||
+	    mkey == MKEY_DODGE || mkey == MKEY_PARRYBLOCK || mkey == MKEY_INTERCEPT ||
 	    mkey == MKEY_SHOOT_TILL_KILL || mkey == MKEY_DUAL_MODE)) {
 		/* Ability-dependant sanity checking */
 		switch (mkey) {
@@ -10734,14 +10734,6 @@ static int Receive_activate_skill(int ind) {
 			msg_print(player, "\377oYou need your body to use a skill.");
 			return(2);
 		}
-
-#if 0
-		/* Break goi/manashield */
-		if (mkey != MKEY_DODGE) { // it's not real 'activation'
-			if (p_ptr->invuln) set_invuln(player, 0);
-			if (p_ptr->tim_manashield) set_tim_manashield(player, 0);
-		}
-#endif
 
 		switch (mkey) {
 		case MKEY_MIMICRY:
