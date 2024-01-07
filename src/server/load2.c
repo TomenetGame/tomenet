@@ -1817,7 +1817,7 @@ static bool rd_extra(int Ind) {
 		p_ptr->party = tmp8u; /* convert the old byte to u16b - mikaelh */
 	}
 	else rd_u16b(&p_ptr->party);
-	if (s_older_than(4, 9, 12)) {
+	if (older_than(4, 9, 12)) {
 		rd_byte(&tmp8u);
 		p_ptr->mode = tmp8u;
 	} else rd_u16b(&p_ptr->mode);
