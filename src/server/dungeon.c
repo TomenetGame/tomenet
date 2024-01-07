@@ -5277,11 +5277,13 @@ static bool process_player_end_aux(int Ind) {
 		/* Regeneration spell (Nature) and mushroom of fast metabolism */
 		if (p_ptr->tim_regen_pow > 0) hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE, TRUE);
 		/* Nether Sap spell (Unlife) */
-		else if (p_ptr->tim_regen_pow < 0 && p_ptr->cmp >= p_ptr->tim_regen_cost) {
-			p_ptr->cmp -= p_ptr->tim_regen_cost;
-			p_ptr->redraw |= PR_MANA;
-			/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.) */
-			hp_player(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE, TRUE);
+		else if (p_ptr->tim_regen_pow < 0) {
+			if (p_ptr->cmp >= p_ptr->tim_regen_cost) {
+				p_ptr->cmp -= p_ptr->tim_regen_cost;
+				p_ptr->redraw |= PR_MANA;
+				/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.) */
+				hp_player(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE, TRUE);
+			} else (void)set_tim_mp2hp(Ind, 0, 0, 0);  /* End prematurely when OOM */
 		}
 	}
 
