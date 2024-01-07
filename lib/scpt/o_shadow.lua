@@ -197,7 +197,7 @@ DARKBOLT_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
-	["fail"] = 	-70,
+	["fail"] = 	-80,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -246,10 +246,10 @@ OBLINK = add_spell {
 	["name"] = 	"Retreat",
 	["name2"] = 	"Retr",
 	["school"] = 	{SCHOOL_OSHADOW},
-	["level"] = 	13,
-	["mana"] = 	6,
-	["mana_max"] = 	6,
-	["fail"] = 	-20,
+	["level"] = 	8,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
+	["fail"] = 	-7,
 	["spell"] = 	function()
 		local dist = 3 + get_level(Ind, OBLINK, 69) / 17
 
@@ -267,10 +267,10 @@ SHADOWGATE = add_spell {
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_CONVEYANCE},
 	["am"] = 	75,
 	["spell_power"] = 0,
-	["level"] = 	20,
+	["level"] = 	26,
 	["mana"] = 	6,
 	["mana_max"] = 	6,
-	["fail"] = 	-30,
+	["fail"] = 	-50,
 	["spell"] = 	function()
 		--begin at ANNOY_DISTANCE as a minimum, to overcome
 		do_shadow_gate(Ind, 4 + get_level(Ind, SHADOWGATE, 12))

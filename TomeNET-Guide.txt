@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 4. January 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 7. January 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -21181,17 +21181,24 @@ All Unlife spells are Wisdom-based.)
     Blindness       Blinds your target.
                     Required skill level for first spell level: 3.
 
-    Detect Invisible
-                    Detects all invisible creatures nearby.
-                    (See (5.14) for details about invisibility.)
-                    Required skill level for first spell level: 3.
-
     Veil of Night   Causes your target to fall asleep instantly.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 5.
 
                     Tier II: Level 20.
                     It expands around you.
+
+    Detect Invisible
+                    Detects all invisible creatures nearby.
+                    (See (5.14) for details about invisibility.)
+                    Required skill level for first spell level: 8.
+
+    Retreat         Swiftly jump backwards from your current adjacent target,
+                    if any. Note that while this is actually ignores a lot of
+                    anti-teleport effects, it does get cancelled by no-teleport
+                    floor grids, eg those inside no-teleport vaults, because
+                    the still air on these will prevent your shadowy moves.
+                    Required skill level for first spell level: 8.
 
     Shadow Bolt     Channels shadow into a bolt attack.
                     Required skill level for first spell level: 10.
@@ -21206,13 +21213,6 @@ All Unlife spells are Wisdom-based.)
                     Lv 10: Additionally grants temporary poison resistance.
                     Required skill level for first spell level: 10.
 
-    Retreat         Swiftly jump backwards from your current adjacent target,
-                    if any. Note that while this is actually ignores a lot of
-                    anti-teleport effects, it does get cancelled by no-teleport
-                    floor grids, eg those inside no-teleport vaults, because
-                    the still air on these will prevent your shadowy moves.
-                    Required skill level for first spell level: 13.
-
     Darkness        Causes a burst of darkness around you, possibly blinding
                     nearby creatures.
                     If you are a trapper, you are probably aware that monster
@@ -21225,7 +21225,7 @@ All Unlife spells are Wisdom-based.)
                     Required skill level for first spell level: 18.
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight.
-                    Required skill level for first spell level: 20.
+                    Required skill level for first spell level: 26.
                     Shared spell (see above): O.Shadow, Conveyance.
                     This spell cannot be found in the Conveyance tome.
 

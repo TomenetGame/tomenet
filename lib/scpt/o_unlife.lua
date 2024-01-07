@@ -138,13 +138,13 @@ OSUBJUGATION = add_spell {
 	["level"] = 	26,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	-10,
+	["fail"] = 	-55,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			project_los(Ind, GF_STASIS, 1000 + 5 + get_level(Ind, OSUBJUGATION, 50), "casts a spell")
+			project_los(Ind, GF_STASIS, 1000 + randint(5) + 20 + get_level(Ind, OSUBJUGATION, 50), "casts a spell")
 	end,
 	["info"] = 	function()
-			return "dur "..(5 + get_level(Ind, OSUBJUGATION, 50))
+			return "dur d5+"..(20 + get_level(Ind, OSUBJUGATION, 50))
 	end,
 	["desc"] = 	{ "Attempts to subjugate all undead lesser than you.", }
 }
@@ -258,8 +258,8 @@ OWRAITHSTEP = add_spell {
 	["name2"] = 	"Wraith",
 	["school"] = 	{SCHOOL_OUNLIFE, SCHOOL_OSHADOW},
 	["level"] = 	46,
-	["mana"] = 	45,
-	["mana_max"] = 	45,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
