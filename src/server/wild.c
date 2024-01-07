@@ -663,6 +663,7 @@ void wild_add_monster(struct worldpos *wpos) {
 	int monst_x, monst_y, r_idx;
 	int tries = 0;
 	cave_type **zcave;
+	dun_level *l_ptr = getfloor(wpos);
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -689,7 +690,7 @@ void wild_add_monster(struct worldpos *wpos) {
 	/* Set the second hook according to the terrain type */
 	set_mon_num2_hook(zcave[monst_y][monst_x].feat);
 
-	get_mon_num_prep(0, NULL);
+	get_mon_num_prep(0, l_ptr ? l_ptr->uniques_killed : NULL);
 
 	/* get the monster */
 	r_idx = get_mon_num(monster_level, monster_level);
@@ -1122,13 +1123,15 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* add the inhabitants */
 	if (!(w_ptr->flags & WILD_F_HOME_OWNERS)) {
 		if (at_home) {
+			dun_level *l_ptr = getfloor(wpos);
+
 			/* determine the home owners species */
 			get_mon_num_hook = wild_monst_aux_home_owner;
 
 			/* Set the second hook according to the floor type */
 			set_mon_num2_hook(zcave[y1][x1].feat);
 
-			get_mon_num_prep(0, NULL);
+			get_mon_num_prep(0, l_ptr ? l_ptr->uniques_killed : NULL);
 
 			/* homeowners can be tough */
 			r_idx = get_mon_num(w_ptr->radius, w_ptr->radius);
@@ -1152,13 +1155,15 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* add the invaders */
 	if (!(w_ptr->flags & WILD_F_INVADERS)) {
 		if (taken_over) {
+			dun_level *l_ptr = getfloor(wpos);
+
 			/* determine the invaders species*/
 			get_mon_num_hook = wild_monst_aux_invaders;
 
 			/* Set the second hook according to the floor type */
 			set_mon_num2_hook(zcave[y1][x1].feat);
 
-			get_mon_num_prep(0, NULL);
+			get_mon_num_prep(0, l_ptr ? l_ptr->uniques_killed : NULL);
 			r_idx = get_mon_num((w_ptr->radius / 2) + 1, w_ptr->radius / 2);
 
 			/* add the monsters */
