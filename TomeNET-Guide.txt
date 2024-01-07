@@ -17997,6 +17997,9 @@ create a character!):
     effect (as from items) against monsters, but not against other players.
     (Note: This invisibility effect will not result in the usual purple colour
     of the player's symbol, it's still there though.)
+    Last but not least once mist form is learned, vampires can pass through
+    walls of houses they have legal access rights to, even without the player
+    explicitely changing into vampiric mist.
     However, Vampires cannot perform a lot of physical actions in mist form,
     such as fighting, and the creeping mist moves slower than they would in
     their normal form. Vampires can use their full equipment in mist form too.

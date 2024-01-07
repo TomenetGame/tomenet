@@ -7698,7 +7698,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	if (!player_can_enter(Ind, c_ptr->feat, FALSE) || !csmove) {
 		bool my_home = FALSE;
 
-		if (p_ptr->tim_wraith || p_ptr->ghost) {
+		if (p_ptr->tim_wraith || p_ptr->ghost ||
+		    (p_ptr->prace == RACE_VAMPIRE && p_ptr->lev >= 35) /* vampire mist QoL hack */
+		    ) {
 			if (c_ptr->feat == FEAT_WALL_HOUSE) {
 				if (!wraith_access_virtual(Ind, y, x)) {
 					msg_print(Ind, "The wall blocks your movement.");
@@ -7709,7 +7711,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 					return;
 				}
-				msg_print(Ind, "\377GYou pass through the house wall.");
+				if (p_ptr->tim_wraith || p_ptr->ghost) msg_print(Ind, "You pass through the house wall.");
+				else msg_print(Ind, "You swiftly change into vampiric mist to pass through the house wall."); /* Vampire race QoL */
 				my_home = TRUE;
 			}
 		}
