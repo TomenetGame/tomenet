@@ -4720,7 +4720,7 @@ void interact_macros(void) {
 		/* Selections */
 		l = 2;
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B) Save macros to named / global.prf / form-named pref file");
+		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yL\377B) Save macros to named / global.prf / form-named / class pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
@@ -4829,7 +4829,7 @@ void interact_macros(void) {
 		/* Save a 'macro' file as <cname>_<form name> pref file, or revert to just cname if in player form */
 		else if (i == 'F') {
 			/* Prompt */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file named for form (or 'global.prf' for account-wide)");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file named for form");// (or 'global.prf' for account-wide)"); <- actually implement "global-<form>.prf" maybe? :O
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
@@ -4837,6 +4837,24 @@ void interact_macros(void) {
 			/* Default filename */
 			if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
 			else sprintf(tmp, "%s.prf", cname);
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			(void)macro_dump(tmp);
+		}
+
+		/* Save a 'macro' file as <class>.prf pref file */
+		else if (i == 'L') {
+			/* Prompt */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a class-specific macro file");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
+
+			/* Default filename */
+			sprintf(tmp, "%s.prf", p_ptr->cp_ptr->title);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
