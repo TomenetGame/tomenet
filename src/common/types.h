@@ -630,10 +630,12 @@ struct cave_type {
 #ifdef HOUSE_PAINTING
 	byte colour;	/* colour that overrides the usual colour of a feature */
 #endif
-
 	byte htemp;		/* Temporary value for cave building process in generate_hmap() */
-
 	u16b slippery;		/* Slippery for this/1000 turns */
+#if 0 /* todo: replace CAVE_LITE etc flags by actual light counters here, to allow for faster handling of static light sources */
+	byte light_white;	/* Amount of white light shone onto this grid */
+	byte light_fiery;	/* Amount of fiery light shone onto this grid */
+#endif
 
 	s16b custom_lua_tunnel_hand;		/* only if dug manually (excluding quiet_borer aka mimic forms); negative value: just the attempt is enough. */
 	s16b custom_lua_tunnel;			/* any kind of tunneling success; negative value: just the attempt is enough. */
