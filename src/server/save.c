@@ -1306,7 +1306,7 @@ static void wr_floor(struct worldpos *wpos) {
 	wr_byte(level_rand_x(wpos));
 
 	l_ptr = getfloor(wpos);
-	if (l_ptr) { /* Actually well-defined here: Always TRUE for all wpos.wz != 0, ie dungeons and towers; always FALSE for world surface. */
+	if (l_ptr) { /* Paranoia */
 		wr_u32b(l_ptr->id);
 		wr_u32b(l_ptr->flags1);
 		wr_u32b(l_ptr->flags2);
@@ -1315,7 +1315,7 @@ static void wr_floor(struct worldpos *wpos) {
 		/* IDDC_REFUGES */
 		wr_byte(l_ptr->refuge_x);
 		wr_byte(l_ptr->refuge_y);
-	} //else for (i = 0; i < 16; i++) wr_byte(0); //wrong while l_ptr is exactly saved for non-world-surface
+	} else for (i = 0; i < 16; i++) wr_byte(0); //shouldn't happen!
 
 	/*** Simple "Run-Length-Encoding" of cave ***/
 	/* for each each row */

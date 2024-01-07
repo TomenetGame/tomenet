@@ -2845,26 +2845,29 @@ static errr rd_floor(void) {
 	rd_byte(&tmp);
 	new_level_rand_x(&wpos, tmp);
 
-	if (l_ptr) { /* Actually well-defined here: Always TRUE for all wpos.wz != 0, ie dungeons and towers; always FALSE for world surface. */
-		time_t now;
+	/* Before 4,9,11, l_ptr was always defined for all wpos.wz != 0, ie dungeons and towers; and always NULL for world surface. */
+	if (!s_older_than(4, 9, 11) || wpos.wz) {
+		if (l_ptr) { /* Paranoia */
+			time_t now;
 
-		now = time(&now);
-		l_ptr->lastused = now; /* Hm, this means resetting a death-static floor timeout, so it's static for the full original duration once more.. well, no harm done probably. */
+			now = time(&now);
+			l_ptr->lastused = now; /* Hm, this means resetting a death-static floor timeout, so it's static for the full original duration once more.. well, no harm done probably. */
 
-		if (!s_older_than(4, 5, 18)) rd_u32b(&l_ptr->id);
+			if (!s_older_than(4, 5, 18)) rd_u32b(&l_ptr->id);
 
-		rd_u32b(&l_ptr->flags1);
-		if (!s_older_than(4, 5, 18)) rd_u32b(&l_ptr->flags2);
+			rd_u32b(&l_ptr->flags1);
+			if (!s_older_than(4, 5, 18)) rd_u32b(&l_ptr->flags2);
 
-		rd_byte(&l_ptr->hgt);
-		rd_byte(&l_ptr->wid);
+			rd_byte(&l_ptr->hgt);
+			rd_byte(&l_ptr->wid);
 
-		if (!s_older_than(4, 9, 2)) {
-			/* IDDC_REFUGES */
-			rd_byte(&l_ptr->refuge_x);
-			rd_byte(&l_ptr->refuge_y);
-		}
-	} //else strip_bytes(16); //wrong, while l_ptr is exactly saved for non-world-surface
+			if (!s_older_than(4, 9, 2)) {
+				/* IDDC_REFUGES */
+				rd_byte(&l_ptr->refuge_x);
+				rd_byte(&l_ptr->refuge_y);
+			}
+		} else strip_bytes(16); //shouldn't happen
+	}
 
 	/*** Run length decoding ***/
 
