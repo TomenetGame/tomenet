@@ -93,6 +93,27 @@ static void process_weather_control(void);
     //&& p_ptr->afk
     //&& p_ptr->idle_char > STARVE_KICK_TIMER) //reuse idle-starve-kick-timer for this
 
+static int fast_sqrt_10div6[120] = { /* 0..120, with 1 decimal place resolution, with the specified index being assumed to get pseudo-int-divided by 6 before going through sqrt() calc. */
+     0, 4, 6, 7, 8, 9,10,11,12,12,	13,14,14,15,15,16,16,17,17,18,
+    18,19,19,20,20,20,21,21,22,22,	22,23,23,23,24,24,24,25,25,25,
+    26,26,26,27,27,27,28,28,28,29,	29,29,29,30,30,30,31,31,31,31,
+    32,32,32,32,33,33,33,33,34,34,	34,34,35,35,35,35,36,36,36,36,
+    37,37,37,37,37,38,38,38,38,39,	39,39,39,39,40,40,40,40,40,41,
+    41,41,41,41,42,42,42,42,42,43,	43,43,43,43,44,44,44,44,44,45,
+};
+static int fast_sqrt_10[371] = { /* 0..370, with 1 decimal place resolution. Since MMP can be much higher than 371, the value needs to be divided by 6 before feeding as index. */
+     0,10,14,17,20,22,24,26,28,30,		32,33,35,36,37,39,40,41,42,44, /* <- redundant line, as up to here it's covered by fast_sqrt_10div6 already. Included just for completion's sake. */
+    45,46,47,48,49,50,51,52,53,54,		55,56,57,57,58,59,60,61,62,62,			63,64,65,66,66,67,68,69,69,70,			71,71,72,73,73,74,75,75,76,77,
+    77,78,79,79,80,81,81,82,82,83,		84,84,85,85,86,87,87,88,88,89,			89,90,91,91,92,92,93,93,94,94,			95,95,96,96,97,97,98,98,99,99,
+    100,100,101,101,102,102,103,103,104,104,	105,105,106,106,107,107,108,108,109,109,	110,110,110,111,111,112,112,113,113,114,	114,114,115,115,116,116,117,117,117,118,
+    118,119,119,120,120,120,121,121,122,122,	122,123,123,124,124,124,125,125,126,126,	126,127,127,128,128,128,129,129,130,130,	130,131,131,132,132,132,133,133,133,134,
+    134,135,135,135,136,136,136,137,137,137,	138,138,139,139,139,140,140,140,141,141,	141,142,142,142,143,143,144,144,144,145,	145,145,146,146,146,147,147,147,148,148,
+    148,149,149,149,150,150,150,151,151,151,	152,152,152,153,153,153,154,154,154,155,	155,155,156,156,156,157,157,157,157,158,	158,158,159,159,159,160,160,160,161,161,
+    161,162,162,162,162,163,163,163,164,164,	164,165,165,165,166,166,166,166,167,167,	167,168,168,168,169,169,169,169,170,170,	170,171,171,171,171,172,172,172,173,173,
+    173,173,174,174,174,175,175,175,175,176,	176,176,177,177,177,177,178,178,178,179,	179,179,179,180,180,180,181,181,181,181,	182,182,182,182,183,183,183,184,184,184,
+    184,185,185,185,185,186,186,186,187,187,	187,187,188,188,188,188,189,189,189,189,	190,190,190,191,191,191,191,192,192,192,	192
+};
+
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -6248,6 +6269,28 @@ static bool process_player_end_aux(int Ind) {
 		p_ptr->no_alert = TRUE;
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
 		p_ptr->no_alert = FALSE;
+	}
+
+	/* Charm/Possess: Drain Mana */
+	if (p_ptr->mcharming) {
+		int drain, drain_frac;
+
+		if (p_ptr->mmp < 120) drain = fast_sqrt_10div6[p_ptr->mmp];
+		else drain = fast_sqrt_10[p_ptr->mmp / 6];
+		drain = (drain * p_ptr->mcharming);
+		drain_frac = drain % 100;
+		drain = drain / 100;
+
+		if (rand_int(100) < drain_frac) p_ptr->cmp--; /* handle first decimal place via probability */
+		p_ptr->cmp -= drain;
+		if (p_ptr->cmp < 0) p_ptr->cmp = 0;
+
+		/* Redraw */
+		p_ptr->redraw |= (PR_MANA);
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+
+		if (!p_ptr->cmp) do_mstopcharm(Ind);
 	}
 
 	/* Note changes */
