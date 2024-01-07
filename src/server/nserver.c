@@ -4639,7 +4639,7 @@ static int Receive_login(int ind) {
 		if ((connp->password_verified || /* <- for "***" reorder hack! Original connp->pass has long been free'd again. */
 		    connp->pass) && (accfail = GetAccount(&acc, connp->nick, connp->pass, FALSE))) { /* Note: Calling GetAccount() with pass = NULL is fine! */
 			int *id_list;
-			byte tmpm;
+			u16b tmpm;
 			char colour_sequence[3];
 			/* server flags to tell the client more about us - just informational purpose: */
 			u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;
@@ -6101,9 +6101,9 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 	if (race == RACE_DRACONIAN) trait = 0;
 #endif
 
-	/* Hack: Transmitted 'mode' is int, not char, so we can stuff this in */
+	/* Hack: Transmitted 'mode' is int, not u16b, so we can stuff this in */
 	if (is_atleast(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->fruit_bat == 1) mode |= MODE_FRUIT_BAT;
-	/* Abuse 'byte mode;' even more for stuffing in another byte to let the client know whether we're admin etc.
+	/* Abuse 'u16b mode;' even more for stuffing in another byte to let the client know whether we're admin etc.
 	   We skip 0x0100 and 0x0200 because of MODE_FRUIT_BAT hack.  */
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
 		mode |= (p_ptr->admin_wiz ? 0x0400 : 0x0) | (p_ptr->admin_dm ? 0x0800 : 0x0);

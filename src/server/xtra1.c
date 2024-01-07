@@ -10356,7 +10356,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		cptr comp;
 		cptr acc;
 		u32b pid;
-		byte w, pmode;
+		u16b w, pmode;
 		bool total_winner, once_winner;
 		char o_name[ONAME_LEN];
 		dungeon_type *d_ptr;
@@ -10570,7 +10570,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		return; }
 	case RID_SEND_GOLD: {
 		int i;
-		byte pmode;
+		u16b pmode;
 		cptr comp;
 		cptr acc;
 		u32b pid, total = p_ptr->mail_gold;

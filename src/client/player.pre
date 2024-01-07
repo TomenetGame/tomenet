@@ -531,7 +531,7 @@ struct player_type {
 
 	player_list_type *blood_bond; /* Norc is now happy :) */
 
-	byte mode; /* Difficulty MODE */
+	u16b mode; /* Difficulty MODE */
 
 	s32b esp_link; /* Mental link */
 	byte esp_link_type;

@@ -322,8 +322,10 @@ static void rd_item(object_type *o_ptr) {
 		if (older_than(4, 4, 14)) {
 			rd_s32b(&tmp32s);
 			o_ptr->mode = tmp32s;
-		}
-		else rd_byte(&o_ptr->mode);
+		} else if (older_than(4, 9, 12)) {
+			rd_byte(&tmpbyte);
+			o_ptr->mode = tmpbyte;
+		} else rd_u16b(&o_ptr->mode);
 	}
 
 	/* Kind (discarded though - Jir -) */
@@ -1503,6 +1505,7 @@ static void rd_quests() {
 static void rd_guilds() {
 	int i;
 	u16b tmp16u;
+	byte tmpbyte;
 
 	rd_u16b(&tmp16u);
 	if (tmp16u > MAX_GUILDS) {
@@ -1518,8 +1521,12 @@ static void rd_guilds() {
 		rd_string(guilds[i].name, 80);
 		rd_s32b(&guilds[i].master);
 		rd_s32b(&guilds[i].members);
-		if (!s_older_than(4, 5, 2)) rd_byte(&guilds[i].cmode);
-		else {
+		if (!s_older_than(4, 5, 2)) {
+			if (s_older_than(4, 9, 12)) {
+				rd_byte(&tmpbyte);
+				guilds[i].cmode = tmpbyte;
+			} else rd_u16b(&guilds[i].cmode);
+		} else {
 			cptr name = NULL;
 
 			/* first entry is dummy anyway */
@@ -1556,6 +1563,7 @@ static void rd_guilds() {
  */
 static void rd_party(int n) {
 	party_type *party_ptr = &parties[n];
+	byte tmpbyte;
 
 	/* Party name */
 	rd_string(party_ptr->name, NAME_LEN);
@@ -1568,13 +1576,19 @@ static void rd_party(int n) {
 	rd_s32b(&party_ptr->created);
 
 	/* Party type and members */
-	if (!s_older_than(4, 1, 7))
-		rd_byte(&party_ptr->mode);
-	else
-		party_ptr->mode = 0;
+	if (!s_older_than(4, 1, 7)) {
+		if (s_older_than(4, 9, 12)) {
+			rd_byte(&tmpbyte);
+			party_ptr->mode = tmpbyte;
+		} else rd_u16b(&party_ptr->mode);
+	} else party_ptr->mode = 0;
 
-	if (!s_older_than(4, 5, 2)) rd_byte(&party_ptr->cmode);
-	else {
+	if (!s_older_than(4, 5, 2)) {
+		if (s_older_than(4, 9, 12)) {
+			rd_byte(&tmpbyte);
+			party_ptr->cmode = tmpbyte;
+		} else rd_u16b(&party_ptr->cmode);
+	} else {
 		/* first entry is dummy anyway; party in use at all? if not then we're done */
 		if (n == 0 || !party_ptr->members) party_ptr->cmode = 0;
 		else {
@@ -1619,6 +1633,7 @@ static void rd_house(int n) {
 	house_type *house_ptr = &houses[n];
 	cave_type **zcave;
 	object_type dump;
+	byte tmpbyte;
 
 	rd_byte(&house_ptr->x);
 	rd_byte(&house_ptr->y);
@@ -1626,7 +1641,12 @@ static void rd_house(int n) {
 	rd_byte(&house_ptr->dy);
 	MAKE(house_ptr->dna, struct dna_type);
 	rd_u32b(&house_ptr->dna->creator);
-	if (!s_older_than(4, 4, 14)) rd_byte(&house_ptr->dna->mode);
+	if (!s_older_than(4, 4, 14)) {
+		if (s_older_than(4, 9, 12)) {
+			rd_byte(&tmpbyte);
+			house_ptr->dna->mode = tmpbyte;
+		} else rd_u16b(&house_ptr->dna->mode);
+	}
 	rd_s32b(&house_ptr->dna->owner);
 	rd_byte(&house_ptr->dna->owner_type);
 #if 0 /* player hash is read _AFTER_ houses! So this is done via /fix-house-modes instead- C. Blue */
@@ -1797,7 +1817,10 @@ static bool rd_extra(int Ind) {
 		p_ptr->party = tmp8u; /* convert the old byte to u16b - mikaelh */
 	}
 	else rd_u16b(&p_ptr->party);
-	rd_byte(&p_ptr->mode);
+	if (s_older_than(4, 9, 12)) {
+		rd_byte(&tmp8u);
+		p_ptr->mode = tmp8u;
+	} else rd_u16b(&p_ptr->mode);
 
 	/* Special Race/Class info */
 	rd_byte(&p_ptr->hitdie);
@@ -3054,6 +3077,7 @@ static void rd_auctions() {
 	auction_type *auc_ptr;
 	bid_type *bid_ptr;
 	s32b tmp32s;
+	byte tmpbyte;
 
 	old_auction_alloc = auction_alloc;
 	if (!s_older_than(4, 4, 10)) rd_u32b(&auction_alloc);
@@ -3068,7 +3092,10 @@ static void rd_auctions() {
 		auc_ptr = &auctions[i];
 		rd_byte(&auc_ptr->status);
 		rd_byte(&auc_ptr->flags);
-		rd_byte(&auc_ptr->mode);
+		if (s_older_than(4, 9, 12)) {
+			rd_byte(&tmpbyte);
+			auc_ptr->mode = tmpbyte;
+		} else rd_u16b(&auc_ptr->mode);
 		rd_s32b(&auc_ptr->owner);
 		rd_item(&auc_ptr->item);
 		C_MAKE(auc_ptr->desc, 160, char);
@@ -3778,7 +3805,8 @@ errr rd_server_savefile() {
 	/* Read the player name database if new enough */
 	{
 		char name[80];
-		byte level, max_plv, old_party, guild, race, class, mode;
+		byte level, max_plv, old_party, guild, race, class;
+		u16b mode;
 		u32b acct, guild_flags;
 		u16b party;
 		u16b xorder;
@@ -3803,7 +3831,12 @@ errr rd_server_savefile() {
 			if (s_older_than(4, 4, 28) && race >= RACE_KOBOLD) race++;
 #endif
 			rd_byte(&class);
-			if (!s_older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
+			if (!s_older_than(4, 2, 2)) {
+				if (s_older_than(4, 9, 12)) {
+					rd_byte(&tmp8u);
+					mode = tmp8u;
+				} else rd_u16b(&mode);
+			} else mode = 0;
 			rd_byte(&level);
 			if (s_older_than(4, 7, 6)) max_plv = level;
 			else rd_byte(&max_plv);

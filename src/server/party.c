@@ -4406,7 +4406,7 @@ cptr lookup_player_name(int id) {
 /*
  * Get the player's character mode (needed for account overview screen only).
  */
-byte lookup_player_mode(int id) {
+u16b lookup_player_mode(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
@@ -5415,7 +5415,7 @@ void account_checkexpiry(int Ind) {
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order) {
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, u16b mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order) {
 	int slot;
 	hash_entry *ptr;
 
@@ -5460,7 +5460,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order) {
+void verify_player(cptr name, int id, u32b account, byte race, byte class, u16b mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order) {
 	hash_entry *ptr = lookup_player(id);
 
 	/* For savegame conversion 4.2.0 -> 4.2.2: */

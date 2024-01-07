@@ -33,7 +33,7 @@ struct worldpos{
 
 struct object_type
 {
-	byte mode;			/* Player that found it */
+	u16b mode;			/* Player that found it */
 	s32b owner;			/* Player that found it */
 	s16b level;			/* Level req */
 
@@ -738,7 +738,7 @@ struct player_type
 
 	player_list_type	*blood_bond;	/* Norc is now happy :) */
 
-	byte mode; /* Difficulty MODE */
+	u16b mode; /* Difficulty MODE */
 
 	s32b esp_link; /* Mental link */
 	byte esp_link_type;

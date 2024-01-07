@@ -7146,7 +7146,7 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 /* compare mode compatibility (eg player/player for merchants guild post, player/party, player/guild member) - C. Blue
    Note: returns NULL if compatible.
    Note: We don't handle MODE_SOLO, so it has to be checked explicitely whenever important. */
-cptr compat_mode(byte mode1, byte mode2) {
+cptr compat_mode(u16b mode1, u16b mode2) {
 	if (mode1 & MODE_PVP) {
 		if (!(mode2 & MODE_PVP)) {
 			return("non-pvp");

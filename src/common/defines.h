@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	11
+#define SF_VERSION_PATCH	12
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -7876,23 +7876,23 @@ extern int PlayerUID;
 #define CLIENT_PARTY		0x0001
 
 /* Diff mode (type is 'byte') */
-#define MODE_NORMAL		0x00	/* WARNING: This flag is ONLY valid to use in comparisons against MODE_MASK'ed mode flags! */
-#define MODE_SOLO		0x01	/* Soloist mode: Unworldly and cannot trade with anybody. */
-# define MODE_MALE_OLD		0x01	/* (flag kept atm for backward compat <= 4.7.1.1) */
+#define MODE_NORMAL		0x0000	/* WARNING: This flag is ONLY valid to use in comparisons against MODE_MASK'ed mode flags! */
+#define MODE_SOLO		0x0001	/* Soloist mode: Unworldly and cannot trade with anybody. */
+# define MODE_MALE_OLD		0x0001	/* (flag kept atm for backward compat <= 4.7.1.1) */
 
-#define MODE_HARD		0x02	/* Player-flag only (not for items): Penalized */
-#define MODE_NO_GHOST		0x04	/* Player-flag only (not for items): traditional 'hellish' is 3 */
-#define MODE_EVERLASTING	0x08	/* Player and item flag: No death counter */
-#define MODE_PVP		0x10	/* Player and item flag: Specific PvP-mode character/item. */
+#define MODE_HARD		0x0002	/* Player-flag only (not for items): Penalized */
+#define MODE_NO_GHOST		0x0004	/* Player-flag only (not for items): traditional 'hellish' is 3 */
+#define MODE_EVERLASTING	0x0008	/* Player and item flag: No death counter */
+#define MODE_PVP		0x0010	/* Player and item flag: Specific PvP-mode character/item. */
 
-#define MODE_XXX		0x20	/* UNUSED //hole */
-# define MODE_FRUIT_BAT_OLD	0x20	/* (flag kept atm for backward compat <= 4.7.1.1) */
+#define MODE_XXX		0x0020	/* UNUSED //hole */
+# define MODE_FRUIT_BAT_OLD	0x0020	/* (flag kept atm for backward compat <= 4.7.1.1) */
 
-#define MODE_DED_IDDC		0x40	/* Dedicated extra character slot for Ironman Deep Dive Challenge */
-#define MODE_DED_PVP		0x80	/* Dedicated extra character slot for PvP-mode */
+#define MODE_DED_IDDC		0x0040	/* Dedicated extra character slot for Ironman Deep Dive Challenge */
+#define MODE_DED_PVP		0x0080	/* Dedicated extra character slot for PvP-mode */
 
 /* Temporary control flags only used during char creation.
-   NOTE: modes are bytes, but 'connp->sex' is int (and sex/dna_sex are s16b on client-side), so this is ok for just that purpose! */
+   NOTE: modes are u16b (were bytes even), but 'connp->sex' is int (and sex/dna_sex are s16b on client-side), so this is ok for just that purpose! */
 #define MODE_MALE		0x0100
 #define MODE_FRUIT_BAT		0x0200
 #define MODE_DED_IDDC_OK	0x0400

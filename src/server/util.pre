@@ -328,8 +328,8 @@ struct party_type
 	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
-	byte cmode;	     /* Guild creator's character mode */
-	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
+	u16b cmode;		/* Guild creator's character mode */
+	u16b mode;		/* 'Iron Team' or normal party? (C. Blue) */
 	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
 	u32b flags;		/* Party rules flags */
 	s32b iron_trade;	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
@@ -340,7 +340,7 @@ struct guild_type
 	const char *name; /* [MAX_CHARS]; */
 	s32b master;		/* Guildmaster unique player ID */
 	s32b members;		/* Number of guild members */
-	byte cmode;	     /* Guild creator's character mode */
+	u16b cmode;		/* Guild creator's character mode */
 	u32b flags;		/* Guild rules flags */
 	s16b minlev;		/* minimum level to join */
 };
