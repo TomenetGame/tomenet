@@ -5201,6 +5201,18 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	}
 #endif
 
+#if STARTEQ_TREATMENT >= 2
+	if (o_ptr->mode & MODE_STARTER_ITEM) {
+ #if STARTEQ_TREATMENT == 3
+		/* Cannot sell any starter items, including own ones */
+		fprintf(fff, "\377sThis is a starter item and therefore cannot be sold to shops.\n");
+ #else
+		/* Prevent suicide-item-accumulation-cheeze, but allow selling own level 0 rewards (that weren't 100% discounted) */
+		if (o_ptr->owner != p_ptr->id) fprintf(fff, "\377sThis is a starter item. It can therefore only be sold by its owner.\n");
+ #endif
+	}
+#endif
+
 #ifdef SUBINVEN_LIMIT_GROUP
 	if (o_ptr->tval == TV_SUBINVEN) fprintf(fff, "\377WYou cannot use more than one of this type of container at a time.\n");
 #endif
