@@ -3137,13 +3137,14 @@ static errr init_alloc(void) {
 	/*** Create unique monster mask arrays ***/
 	C_MAKE(allow_uniques, MAX_R_IDX, char);
 	C_MAKE(reject_uniques, MAX_R_IDX, char);
+	C_MAKE(orcs_only, MAX_R_IDX, char);
 
 	for (i = 1; i < MAX_R_IDX; i++) {
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
-		if (r_ptr->flags1 & RF1_UNIQUE)
-			reject_uniques[i] = TRUE;
+		if (r_ptr->flags1 & RF1_UNIQUE) reject_uniques[i] = orcs_only[i] = TRUE;
+		if (r_ptr->d_char != 'o') orcs_only[i] = TRUE;
 	}
 
 	/* Success */

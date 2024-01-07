@@ -11258,7 +11258,8 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	get_mon_num_hook = xorder_aux;
 	xorder_aux_extra = p_ptr->total_winner;
-	get_mon_num_prep(0, NULL);
+	if (!strcmp(p_ptr->name, "Goblin Slayer")) get_mon_num_prep(0, orcs_only); /* Kurzel - Goblins Only! */
+	else get_mon_num_prep(0, reject_uniques);
 	i = 3 + rand_int(3);
 
 	r = 0;
@@ -11271,9 +11272,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		/* To keep Goblin Slayer check in check: */
 		if (lev < 0) break;
 	} while (((lev - 5) > r_info[r].level && lev >= 5) ||
-	    (r_info[r].flags1 & RF1_UNIQUE) ||
 	    (r_info[r].flags7 & RF7_MULTIPLY) ||
-	    ((!strcmp(p_ptr->name, "Goblin Slayer") && r_info[r].d_char != 'o')) || /* Kurzel - Goblins Only! */
 	    !r_info[r].level); /* "no town quests" ;) */
 	    //r_info[r].level <= 2); /* no Training Tower quests */
 

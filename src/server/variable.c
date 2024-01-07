@@ -409,8 +409,7 @@ s16b *alloc_race_index_level;
 /*
  * Unique monster mask arrays.
  */
-char *allow_uniques;
-char *reject_uniques;
+char *allow_uniques, *reject_uniques, *orcs_only;
 
 
 /*
