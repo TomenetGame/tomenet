@@ -11198,10 +11198,9 @@ void alloc_dungeon_level(struct worldpos *wpos) {
 	zcave = C_NEW(MAX_HGT, cave_type*);
 
 	/* Allocate each row */
-	for (i = 0; i < MAX_HGT; i++) {
+	for (i = 0; i < MAX_HGT; i++)
 		/* Allocate it */
 		C_MAKE(zcave[i], MAX_WID, cave_type);
-	}
 
 	if (wpos->wz) {
 		struct dun_level *dlp;
@@ -11211,7 +11210,11 @@ void alloc_dungeon_level(struct worldpos *wpos) {
 		dlp->cave = zcave;
 		dlp->creationtime = time(NULL);
 	} else {
-		w_ptr->cave = zcave;
+		w_ptr->surface.cave = zcave;
+
+		/* Unlike dungeon floors, worldmap surface sectors are always max sized. */
+		w_ptr->surface.wid = MAX_WID;
+		w_ptr->surface.hgt = MAX_HGT;
 
 		/* init ambient sfx */
 		w_ptr->ambient_sfx_dummy = FALSE;
@@ -11329,8 +11332,7 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 		d_ptr = (wpos->wz > 0 ? w_ptr->tower : w_ptr->dungeon);
 		dlp = &d_ptr->level[ABS(wpos->wz) - 1];
 		dlp->cave = NULL;
-	}
-	else w_ptr->cave = NULL;
+	} else w_ptr->surface.cave = NULL;
 }
 
 /* added 'force' to delete it even if someone is still inside,
@@ -11421,7 +11423,9 @@ static bool del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 				d_ptr->level[i].ondepth = 0;//obsolete?
 			}
 			if (d_ptr->level[i].cave) dealloc_dungeon_level(&twpos);
+#ifndef UNIQUES_KILLED_ARRAY
 			C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+#endif
 		}
 		/* free the floors all at once */
 		C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
@@ -11466,7 +11470,9 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
 #endif
+#ifndef UNIQUES_KILLED_ARRAY
 	int i;
+#endif
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
 	wild = &wild_info[wpos->wy][wpos->wx];
@@ -11582,9 +11588,10 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 #endif
 
 	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-	for (i = 0; i < d_ptr->maxdepth; i++) {
+#ifndef UNIQUES_KILLED_ARRAY
+	for (i = 0; i < d_ptr->maxdepth; i++)
 		C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
-	}
+#endif
 
 	s_printf("add_dungeon completed (type %d, %s).\n", type, tower ? "tower" : "dungeon");
 }
@@ -11594,7 +11601,9 @@ void verify_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
 #endif
+#ifndef UNIQUES_KILLED_ARRAY
 	int i;
+#endif
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
 	wild = &wild_info[wpos->wy][wpos->wx];
@@ -11688,14 +11697,18 @@ void verify_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags
 
 	if (old_maxdepth > d_ptr->maxdepth) {
 		s_printf("verify_dungeon (type %d, %s) : Shrinking dungeon from %d to %d floors.\n", type, tower ? "tower" : "dungeon", old_maxdepth, d_ptr->maxdepth);
+#ifndef UNIQUES_KILLED_ARRAY
 		for (i = d_ptr->maxdepth; i < old_maxdepth; i++)
 			C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+#endif
 		SHRINK(d_ptr->level, old_maxdepth, d_ptr->maxdepth, struct dun_level);
 	} else if (old_maxdepth < d_ptr->maxdepth) {
 		s_printf("verify_dungeon (type %d, %s) : Growing dungeon from %d to %d floors.\n", type, tower ? "tower" : "dungeon", old_maxdepth, d_ptr->maxdepth);
 		GROW(d_ptr->level, old_maxdepth, d_ptr->maxdepth, struct dun_level);
+#ifndef UNIQUES_KILLED_ARRAY
 		for (i = old_maxdepth; i < d_ptr->maxdepth; i++)
 			C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+#endif
 	}
 	//else s_printf("verify_dungeon (type %d, %s) completed without size change.\n", type, tower ? "tower" : "dungeon");
 }

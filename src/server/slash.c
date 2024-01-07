@@ -7558,8 +7558,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						tpos.wx = wx;
 						tpos.wy = wy;
 						if (wild_info[wy][wx].dungeon) {
-							xo = wild_info[wy][wx].up_x;
-							yo = wild_info[wy][wx].up_y;
+							xo = wild_info[wy][wx].surface.up_x;
+							yo = wild_info[wy][wx].surface.up_y;
 							if (xo < 2 || xo >= MAX_WID - 2 || always_relocate_x) {
 								x = personal_relocate ? p_ptr->px : 2 + rand_int(MAX_WID - 4);
 								new_level_up_x(&tpos, x);
@@ -7572,8 +7572,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							}
 						}
 						if (wild_info[wy][wx].tower) {
-							xo = wild_info[wy][wx].dn_x;
-							yo = wild_info[wy][wx].dn_y;
+							xo = wild_info[wy][wx].surface.dn_x;
+							yo = wild_info[wy][wx].surface.dn_y;
 							if (xo < 2 || xo >= MAX_WID - 2 || always_relocate_x) {
 								x = personal_relocate ? p_ptr->px : 2 + rand_int(MAX_WID - 4);
 								new_level_down_x(&tpos, x);
@@ -7658,12 +7658,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									*(wild->tower) = *(wild->dungeon);
 									*(wild->dungeon) = dun_tmp;
 
-									pos_tmp = wild->dn_x;
-									wild->dn_x = wild->up_x;
-									wild->up_x = pos_tmp;
-									pos_tmp = wild->dn_y;
-									wild->dn_y = wild->up_y;
-									wild->up_y = pos_tmp;
+									pos_tmp = wild->surface.dn_x;
+									wild->surface.dn_x = wild->surface.up_x;
+									wild->surface.up_x = pos_tmp;
+									pos_tmp = wild->surface.dn_y;
+									wild->surface.dn_y = wild->surface.up_y;
+									wild->surface.up_y = pos_tmp;
 								} else {
 									/* change tower to dungeon */
 									wild->dungeon = wild->tower;
@@ -7671,10 +7671,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									wild->flags |= WILD_F_DOWN;
 									wild->flags &= ~WILD_F_UP;
 
-									wild->dn_x = wild->up_x;
-									wild->dn_y = wild->up_y;
-									wild->up_x = 0;//superfluous
-									wild->up_y = 0;//superfluous
+									wild->surface.dn_x = wild->surface.up_x;
+									wild->surface.dn_y = wild->surface.up_y;
+									wild->surface.up_x = 0;//superfluous
+									wild->surface.up_y = 0;//superfluous
 								}
 							}
 						} else {
@@ -7745,12 +7745,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									*(wild->tower) = *(wild->dungeon);
 									*(wild->dungeon) = dun_tmp;
 
-									pos_tmp = wild->dn_x;
-									wild->dn_x = wild->up_x;
-									wild->up_x = pos_tmp;
-									pos_tmp = wild->dn_y;
-									wild->dn_y = wild->up_y;
-									wild->up_y = pos_tmp;
+									pos_tmp = wild->surface.dn_x;
+									wild->surface.dn_x = wild->surface.up_x;
+									wild->surface.up_x = pos_tmp;
+									pos_tmp = wild->surface.dn_y;
+									wild->surface.dn_y = wild->surface.up_y;
+									wild->surface.up_y = pos_tmp;
 								} else {
 									/* change dungeon to tower */
 									wild->tower = wild->dungeon;
@@ -7758,10 +7758,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									wild->flags |= WILD_F_UP;
 									wild->flags &= ~WILD_F_DOWN;
 
-									wild->up_x = wild->dn_x;
-									wild->up_y = wild->dn_y;
-									wild->dn_x = 0;//superfluous
-									wild->dn_y = 0;//superfluous
+									wild->surface.up_x = wild->surface.dn_x;
+									wild->surface.up_y = wild->surface.dn_y;
+									wild->surface.dn_x = 0;//superfluous
+									wild->surface.dn_y = 0;//superfluous
 								}
 							}
 						} else {
@@ -7850,10 +7850,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							wild->flags |= (flags & WILD_F_UP);
 							wild_new->flags |= WILD_F_UP;
 
-							wild->dn_x = wild_new->dn_x;
-							wild->dn_y = wild_new->dn_y;
-							wild_new->dn_x = p_ptr->px;
-							wild_new->dn_y = p_ptr->py;
+							wild->surface.dn_x = wild_new->surface.dn_x;
+							wild->surface.dn_y = wild_new->surface.dn_y;
+							wild_new->surface.dn_x = p_ptr->px;
+							wild_new->surface.dn_y = p_ptr->py;
 							zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
 
 							if (d_ptr->id != 0) {
@@ -7893,10 +7893,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							wild->flags |= (flags & WILD_F_DOWN);
 							wild_new->flags |= WILD_F_DOWN;
 
-							wild->up_x = wild_new->up_x;
-							wild->up_y = wild_new->up_y;
-							wild_new->up_x = p_ptr->px;
-							wild_new->up_y = p_ptr->py;
+							wild->surface.up_x = wild_new->surface.up_x;
+							wild->surface.up_y = wild_new->surface.up_y;
+							wild_new->surface.up_x = p_ptr->px;
+							wild_new->surface.up_y = p_ptr->py;
 							zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
 
 							if (d_ptr->id != 0) {
@@ -11119,7 +11119,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = 0;
 					for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 					if (used && k) msg_format(Ind, "\377g  %2d,%2d", x, y);
-					else if (wild_info[y][x].ondepth > k) {
+					else if (wild_info[y][x].surface.ondepth > k) {
 						msg_format(Ind, "  %2d,%2d", x, y);
 						if (unstat) master_level_specific(Ind, &tpos, "u");
 					}

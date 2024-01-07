@@ -2209,8 +2209,11 @@ struct dun_level {
 	byte hgt;		/* Vault height */
 	byte wid;		/* Vault width */
 /*	char feeling[80] */	/* feeling description */
+#ifndef UNIQUES_KILLED_ARRAY /* normal method (note that the memory allocations for this just use the constant 'MAX_R_IDX' anyway) */
 	char *uniques_killed;
-
+#else /* new method for when wilderness_type got 'surface' added, for easier allocation instead of headache */
+	char uniques_killed[MAX_R_IDX];
+#endif
 	cave_type **cave;	/* Leave this the last entry (for aesthetic reason) */
 
 	int fake_town_num;	/* for dungeon stores: which town we abuse the stores from */
@@ -2283,13 +2286,9 @@ struct wilderness_type {
 	u32b flags;	/* various */
 	struct dungeon_type *tower;
 	struct dungeon_type *dungeon;
-	s16b ondepth;
-	time_t lastused;
-	time_t total_static_time;
-	cave_type **cave;
-	byte up_x, up_y;
-	byte dn_x, dn_y;
-	byte rn_x, rn_y;
+
+	struct dun_level surface;	/* To also use dungeon floor flags LF1/LF2, although not all of those are applicable */
+
 	s32b own;	/* King owning the wild */
 
 	/* client-side worldmap-sector-specific weather:

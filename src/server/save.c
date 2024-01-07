@@ -2433,8 +2433,8 @@ static void new_wr_wild() {
 			w_ptr = &wild_info[y][x];
 			wr_wild(w_ptr);
 			if (w_ptr->flags & WILD_F_DOWN) {
-				wr_byte(w_ptr->up_x);
-				wr_byte(w_ptr->up_y);
+				wr_byte(w_ptr->surface.up_x);
+				wr_byte(w_ptr->surface.up_y);
 				wr_u16b(w_ptr->dungeon->id);
 				wr_u16b(w_ptr->dungeon->type);
 				wr_u16b(w_ptr->dungeon->baselevel);
@@ -2467,8 +2467,8 @@ static void new_wr_wild() {
 #endif
 			}
 			if (w_ptr->flags & WILD_F_UP) {
-				wr_byte(w_ptr->dn_x);
-				wr_byte(w_ptr->dn_y);
+				wr_byte(w_ptr->surface.dn_x);
+				wr_byte(w_ptr->surface.dn_y);
 				wr_u16b(w_ptr->tower->id);
 				wr_u16b(w_ptr->tower->type);
 				wr_u16b(w_ptr->tower->baselevel);

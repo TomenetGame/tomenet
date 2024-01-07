@@ -418,8 +418,12 @@ void init_wild_info() {
 	//init_wild_info_aux(0,0);
 
 	for (x = 0; x < MAX_WILD_X; x++)
-		for (y = 0; y < MAX_WILD_Y; y++)
+		for (y = 0; y < MAX_WILD_Y; y++) {
 			wild_info[y][x].bled = WILD_GRASSLAND;
+#ifndef UNIQUES_KILLED_ARRAY
+			if (!(wild_info[y][x].surface.uniques_killed)) C_MAKE(wild_info[y][x].surface.uniques_killed, MAX_R_IDX, char);
+#endif
+		}
 }
 
 
@@ -3852,10 +3856,10 @@ void wilderness_gen(struct worldpos *wpos) {
 	if (!istown(wpos)) {
 		/* Tower */
 		if ((w_ptr->flags & WILD_F_UP) && can_go_up(wpos, 0x1)) {
-			zcave[w_ptr->dn_y][w_ptr->dn_x].feat = FEAT_LESS;
+			zcave[w_ptr->surface.dn_y][w_ptr->surface.dn_x].feat = FEAT_LESS;
 			d_ptr = w_ptr->tower;
-			x = w_ptr->dn_x;
-			y = w_ptr->dn_y;
+			x = w_ptr->surface.dn_x;
+			y = w_ptr->surface.dn_y;
 			if (d_ptr && in_bounds_wide(y, x) && //paranoia
 			    /* don't overwrite house walls if house contains a staircase
 			       (also see second check for this, in decorate_dungeon_entrance()) */
@@ -3865,10 +3869,10 @@ void wilderness_gen(struct worldpos *wpos) {
 		}
 		/* Dungeon */
 		if ((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1)) {
-			zcave[w_ptr->up_y][w_ptr->up_x].feat = FEAT_MORE;
+			zcave[w_ptr->surface.up_y][w_ptr->surface.up_x].feat = FEAT_MORE;
 			d_ptr = w_ptr->dungeon;
-			x = w_ptr->up_x;
-			y = w_ptr->up_y;
+			x = w_ptr->surface.up_x;
+			y = w_ptr->surface.up_y;
 			if (d_ptr && in_bounds_wide(y, x) && //paranoia
 			    /* don't overwrite house walls if house contains a staircase
 			       (also see second check for this, in decorate_dungeon_entrance()) */

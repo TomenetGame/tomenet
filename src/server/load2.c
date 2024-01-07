@@ -4015,11 +4015,14 @@ errr rd_server_savefile() {
 }
 
 void new_rd_wild() {
-	int x, y, i;
+	int x, y;
+#ifndef UNIQUES_KILLED_ARRAY
+	int i;
+#endif
 #ifdef DUNGEON_VISIT_BONUS
 	int dungeons = 0;
 #endif
-	wilderness_type *wptr;
+	wilderness_type *w_ptr;
 	struct dungeon_type *d_ptr;
 	u32b tmp;
 
@@ -4027,12 +4030,12 @@ void new_rd_wild() {
 	rd_u32b(&tmp);	/* MAX_WILD_X */
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		for (x = 0; x < MAX_WILD_X; x++) {
-			wptr = &wild_info[y][x];
-			rd_wild(wptr);
-			if (wptr->flags & WILD_F_DOWN) {
+			w_ptr = &wild_info[y][x];
+			rd_wild(w_ptr);
+			if (w_ptr->flags & WILD_F_DOWN) {
 				MAKE(d_ptr, struct dungeon_type);
-				rd_byte(&wptr->up_x);
-				rd_byte(&wptr->up_y);
+				rd_byte(&w_ptr->surface.up_x);
+				rd_byte(&w_ptr->surface.up_y);
 				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
@@ -4117,15 +4120,16 @@ void new_rd_wild() {
 #endif
 
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-				for (i = 0; i < d_ptr->maxdepth; i++) {
+#ifndef UNIQUES_KILLED_ARRAY /* see types.h, note about 'surface' in dun_level type. */
+				for (i = 0; i < d_ptr->maxdepth; i++)
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
-				}
-				wptr->dungeon = d_ptr;
+#endif
+				w_ptr->dungeon = d_ptr;
 			}
-			if (wptr->flags & WILD_F_UP) {
+			if (w_ptr->flags & WILD_F_UP) {
 				MAKE(d_ptr, struct dungeon_type);
-				rd_byte(&wptr->dn_x);
-				rd_byte(&wptr->dn_y);
+				rd_byte(&w_ptr->surface.dn_x);
+				rd_byte(&w_ptr->surface.dn_y);
 				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
@@ -4210,10 +4214,11 @@ void new_rd_wild() {
 #endif
 
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-				for (i = 0; i < d_ptr->maxdepth; i++) {
+#ifndef UNIQUES_KILLED_ARRAY /* see types.h, note about 'surface' in dun_level type. */
+				for (i = 0; i < d_ptr->maxdepth; i++)
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
-				}
-				wptr->tower = d_ptr;
+#endif
+				w_ptr->tower = d_ptr;
 			}
 		}
 	}

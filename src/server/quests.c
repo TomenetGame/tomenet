@@ -550,7 +550,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 				/* specialty: avoid players, so we don't have to teleport
 				   them around in case we have to deallocate the sector */
 				if (!wpos->wz) {
-					if (wild_info[y2][x2].ondepth && tries > 250) continue;
+					if (wild_info[y2][x2].surface.ondepth && tries > 250) continue;
 				} else if (wpos->wz < 0) {
 					if (wild_info[y2][x2].dungeon->level[ABS(wpos->wz) - 1].ondepth && tries > 250) continue;
 				} else {
@@ -588,7 +588,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 
 				/* specialty: avoid players, so we don't have to teleport
 				   them around in case we have to deallocate the sector */
-				if (wild_info[y][x].ondepth && tries > 1000) continue;
+				if (wild_info[y][x].surface.ondepth && tries > 1000) continue;
 
 				bool match = FALSE;
 

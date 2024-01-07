@@ -402,6 +402,10 @@
 #endif
 
 
+/* 'uniques_killed': Declare it as char array instead of pointer that requires memory allocation? */
+#define UNIQUES_KILLED_ARRAY
+
+
 /*
  * Hack -- This is used to make sure that every player that has a structure
  * dedicated to them is actually connected

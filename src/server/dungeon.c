@@ -6953,7 +6953,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 		if (l_ptr->lastused) {
 			if (now - l_ptr->lastused > grace) return(TRUE);
 		} else if (now - l_ptr->creationtime > grace) return(TRUE);
-	} else if (now - wild_info[wpos->wy][wpos->wx].lastused > grace) {
+	} else if (now - wild_info[wpos->wy][wpos->wx].surface.lastused > grace) {
 #if 0
 		/* Never allow dealloc where there are houses */
 		/* For now at least */
@@ -8789,11 +8789,10 @@ void process_player_change_wpos(int Ind) {
 	if (l_ptr && !l_ptr->wid) s_printf("L_PTR WARNING: Level has dimension zero. Check for missing DF2_RANDOM flag!\n");
 
 	/* Clear the "marked" and "lit" flags for each cave grid */
-	for (y = 0; y < MAX_HGT; y++) {
-		for (x = 0; x < MAX_WID; x++) {
+	for (y = 0; y < MAX_HGT; y++)
+		for (x = 0; x < MAX_WID; x++)
 			p_ptr->cave_flag[y][x] = 0;
-		}
-	}
+
 	/* Player now starts mapping this dungeon (as far as its flags allow) */
 	if (l_ptr) p_ptr->dlev_id = l_ptr->id;
 	else p_ptr->dlev_id = 0;
@@ -10521,15 +10520,19 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Br
 					w_ptr = &wild_info[y][x];
 					if (w_ptr->flags & WILD_F_DOWN) {
 						d_ptr = w_ptr->dungeon;
+#ifndef UNIQUES_KILLED_ARRAY
 						for (i = 0; i < d_ptr->maxdepth; i++)
 							C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+#endif
 						C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 						KILL(d_ptr, struct dungeon_type);
 					}
 					if (w_ptr->flags & WILD_F_UP) {
 						d_ptr = w_ptr->tower;
+#ifndef UNIQUES_KILLED_ARRAY
 						for (i = 0; i < d_ptr->maxdepth; i++)
 							C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+#endif
 						C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 						KILL(d_ptr, struct dungeon_type);
 					}

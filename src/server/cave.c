@@ -37,7 +37,7 @@ cave_type **getcave(struct worldpos *wpos) {
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wx > MAX_WILD_X || wpos->wx < 0 || wpos->wy > MAX_WILD_Y || wpos->wy < 0) return(NULL);
 	if (wpos->wz == 0) {
-		return(wild->cave);
+		return(wild->surface.cave);
 	} else {
 		if (wpos->wz > 0) {
 			if (wild->tower && wpos->wz <= wild->tower->maxdepth) {
@@ -69,8 +69,8 @@ struct dun_level *getfloor(struct worldpos *wpos) {
 
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) {
-		/* return(wild); */
-		return(NULL);
+		//return(NULL);
+		return(&wild->surface);
 	} else {
 		if (wpos->wz > 0) {
 			if (!wild->tower) return(NULL); /* <- for wpos_old check in process_player_change_wpos() after highlander dungeon removal! */
@@ -86,7 +86,7 @@ void new_level_up_x(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) wild->up_x = pos;
+	if (wpos->wz == 0) wild->surface.up_x = pos;
 	else if (wpos->wz > 0)
 		wild->tower->level[wpos->wz - 1].up_x = pos;
 	else
@@ -96,7 +96,7 @@ void new_level_up_y(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) wild->up_y = pos;
+	if (wpos->wz == 0) wild->surface.up_y = pos;
 	else if (wpos->wz > 0)
 		wild->tower->level[wpos->wz - 1].up_y = pos;
 	else
@@ -106,7 +106,7 @@ void new_level_down_x(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) wild->dn_x = pos;
+	if (wpos->wz == 0) wild->surface.dn_x = pos;
 	else if (wpos->wz > 0)
 		wild->tower->level[wpos->wz - 1].dn_x = pos;
 	else
@@ -116,7 +116,7 @@ void new_level_down_y(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) wild->dn_y = pos;
+	if (wpos->wz == 0) wild->surface.dn_y = pos;
 	else if (wpos->wz > 0)
 		wild->tower->level[wpos->wz - 1].dn_y = pos;
 	else
@@ -126,7 +126,7 @@ void new_level_rand_x(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) wild->rn_x = pos;
+	if (wpos->wz == 0) wild->surface.rn_x = pos;
 	else if (wpos->wz > 0)
 		wild->tower->level[wpos->wz - 1].rn_x = pos;
 	else
@@ -136,7 +136,7 @@ void new_level_rand_y(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) wild->rn_y = pos;
+	if (wpos->wz == 0) wild->surface.rn_y = pos;
 	else if (wpos->wz > 0)
 		wild->tower->level[wpos->wz - 1].rn_y = pos;
 	else
@@ -147,42 +147,42 @@ byte level_up_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return(wild->up_x);
+	if (wpos->wz == 0) return(wild->surface.up_x);
 	return(wpos->wz > 0? wild->tower->level[wpos->wz - 1].up_x : wild->dungeon->level[ABS(wpos->wz) - 1].up_x);
 }
 byte level_up_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return(wild->up_y);
+	if (wpos->wz == 0) return(wild->surface.up_y);
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].up_y : wild->dungeon->level[ABS(wpos->wz) - 1].up_y);
 }
 byte level_down_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return(wild->dn_x);
+	if (wpos->wz == 0) return(wild->surface.dn_x);
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_x : wild->dungeon->level[ABS(wpos->wz) - 1].dn_x);
 }
 byte level_down_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return(wild->dn_y);
+	if (wpos->wz == 0) return(wild->surface.dn_y);
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_y : wild->dungeon->level[ABS(wpos->wz) - 1].dn_y);
 }
 byte level_rand_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return(wild->rn_x);
+	if (wpos->wz == 0) return(wild->surface.rn_x);
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_x : wild->dungeon->level[ABS(wpos->wz) - 1].rn_x);
 }
 byte level_rand_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return(wild->rn_y);
+	if (wpos->wz == 0) return(wild->surface.rn_y);
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_y : wild->dungeon->level[ABS(wpos->wz) - 1].rn_y);
 }
 
@@ -367,7 +367,11 @@ static void update_uniques_killed(struct worldpos *wpos) {
 	/* Update the list of uniques that have been killed by all players on the level */
 	l_ptr = getfloor(wpos);
 
+#ifndef UNIQUES_KILLED_ARRAY
 	if (l_ptr && l_ptr->uniques_killed) {
+#else /* see types.h, note about 'surface' in dun_level type. */
+	if (l_ptr) {
+#endif
 		int admins = 0, players = 0;
 
 		for (i = 1; i <= NumPlayers; i++) {
@@ -477,13 +481,13 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		if (!l_ptr->ondepth) l_ptr->lastused = 0;
 		if (value > 0) l_ptr->lastused = now;
 	} else {
-		w_ptr->ondepth = (inc ? w_ptr->ondepth + value : value);
-		if (w_ptr->ondepth < 0) w_ptr->ondepth = 0;
-		if (!w_ptr->ondepth) w_ptr->lastused = 0;
-		if (value > 0) w_ptr->lastused = now;
+		w_ptr->surface.ondepth = (inc ? w_ptr->surface.ondepth + value : value);
+		if (w_ptr->surface.ondepth < 0) w_ptr->surface.ondepth = 0;
+		if (!w_ptr->surface.ondepth) w_ptr->surface.lastused = 0;
+		if (value > 0) w_ptr->surface.lastused = now;
 		/* remove 'deposited' true artefacts if last player leaves a level,
 		   and if true artefacts aren't allowed to be stored (in houses for example) */
-		if (!w_ptr->ondepth && cfg.anti_arts_wild) {
+		if (!w_ptr->surface.ondepth && cfg.anti_arts_wild) {
 			for (i = 0; i < o_max; i++) {
 				o_ptr = &o_list[i];
 				if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
@@ -878,7 +882,7 @@ s_printf("CHKMOR: tmphp=%d,org_maxhp=%d,num_on_depth=%d\n", tmphp, m_ptr->org_ma
 int players_on_depth(struct worldpos *wpos) {
 	if (wpos->wx > MAX_WILD_X || wpos->wx < 0 || wpos->wy > MAX_WILD_Y || wpos->wy < 0) return(0);
 	if (wpos->wz == 0)
-		return(wild_info[wpos->wy][wpos->wx].ondepth);
+		return(wild_info[wpos->wy][wpos->wx].surface.ondepth);
 	else {
 		struct dungeon_type *d_ptr;
 
