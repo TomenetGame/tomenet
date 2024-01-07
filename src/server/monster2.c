@@ -427,7 +427,15 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	if (m_ptr->charmedignore) {
 		int Ind = find_player(m_ptr->charmedignore);
 
-		if (Ind) Players[Ind]->mcharming--;
+		if (Ind) {
+			player_type *p_ptr = Players[Ind];
+
+			p_ptr->mcharming--;
+			if (!p_ptr->mcharming) {
+				p_ptr->redraw2 |= (PR2_INDICATORS); /* Redraw indicator */
+				msg_print(Ind, "Your charm spell breaks!");
+			}
+		}
 		m_ptr->charmedignore = 0;
 	}
 

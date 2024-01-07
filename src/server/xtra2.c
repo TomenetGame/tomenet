@@ -2354,6 +2354,9 @@ bool set_dispersion(int Ind, byte v) {
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -5929,7 +5932,15 @@ bool monster_death(int Ind, int m_idx) {
 	if (m_ptr->charmedignore) {
 		int Ind = find_player(m_ptr->charmedignore);
 
-		if (Ind) Players[Ind]->mcharming--;
+		if (Ind) {
+			player_type *p_ptr = Players[Ind];
+
+			p_ptr->mcharming--;
+			if (!p_ptr->mcharming) {
+				p_ptr->redraw2 |= (PR2_INDICATORS); /* Redraw indicator */
+				msg_print(Ind, "Your charm spell breaks!");
+			}
+		}
 		m_ptr->charmedignore = 0;
 	}
 
@@ -11406,7 +11417,15 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	if (m_ptr->charmedignore) {
 		int Ind = find_player(m_ptr->charmedignore);
 
-		if (Ind) Players[Ind]->mcharming--;
+		if (Ind) {
+			player_type *p_ptr = Players[Ind];
+
+			p_ptr->mcharming--;
+			if (!p_ptr->mcharming) {
+				p_ptr->redraw2 |= (PR2_INDICATORS); /* Redraw indicator */
+				msg_print(Ind, "Your charm spell breaks!");
+			}
+		}
 		m_ptr->charmedignore = 0;
 	}
 
@@ -12572,6 +12591,7 @@ cptr look_mon_desc(int m_idx, bool check_immortal) {
 	if (r_ptr->flags3 & RF3_DEMON) living = FALSE;
 	if (strchr("Egv", r_ptr->d_char)) living = FALSE;
 
+	if (m_ptr->charmedignore) return("\377Bcharmed\377-");
 
 	/* Healthy monsters */
 	if (m_ptr->hp >= m_ptr->maxhp) {
@@ -13363,17 +13383,17 @@ bool target_set(int Ind, int dir) {
 			} else if (p_ptr->target_idx[i] < 0) {
 				q_ptr = Players[0 - p_ptr->target_idx[i]];
 				if (q_ptr->body_monster) {
-#ifdef ENABLE_SUBCLASS_TITLE
+ #ifdef ENABLE_SUBCLASS_TITLE
 					snprintf(out_val, sizeof(out_val), "%s the %s (%s%s%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), (q_ptr->sclass) ? " " : "", get_ptitle2(q_ptr, FALSE));
-#else
+ #else
 					snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
-#endif
+ #endif
 				} else {
-#ifdef ENABLE_SUBCLASS_TITLE
+ #ifdef ENABLE_SUBCLASS_TITLE
 					snprintf(out_val, sizeof(out_val), "%s the %s%s%s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), (q_ptr->sclass) ? " " : "", get_ptitle2(q_ptr, FALSE));
-#else
+ #else
 					snprintf(out_val, sizeof(out_val), "%s the %s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE));
-#endif
+ #endif
 				}
 			}
 			//strcpy(out_val, "[<dir>, t, q] ");

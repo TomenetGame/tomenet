@@ -12564,6 +12564,10 @@ void process_monsters(void) {
 				    || p_ptr->conn == NOT_CONNECTED
 				    || !inarea(&p_ptr->wpos, &m_ptr->wpos)) {
 					p_ptr->mcharming--;
+					if (!p_ptr->mcharming) {
+						p_ptr->redraw2 |= (PR2_INDICATORS); /* Redraw indicator */
+						msg_print(Ind, "Your charm spell breaks!");
+					}
 					m_ptr->charmedignore = 0;
 				}
 			} else m_ptr->charmedignore = 0; /* Charmer is gone, break the spell */

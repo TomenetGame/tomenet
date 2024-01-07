@@ -2359,6 +2359,12 @@
 #define ROW_TEMP_TBRAND		24
 #define COL_TEMP_TBRAND		5
 
+#define ROW_DISPERSION		24
+#define COL_DISPERSION		8
+
+#define ROW_CHARM		25
+#define COL_CHARM		5
+
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 
@@ -4825,6 +4831,8 @@
 #define IND_ESP         0x00000040L /* Active timed full ESP */
 #define IND_MELEE_BRAND	0x00000080L /* Active timed melee weapon brand */
 #define IND_REGEN	0x00000100L /* Active timed hp regeneration boost */
+#define IND_DISPERSION	0x00000200L /* Active dispersion (not timed, switchable!) */
+#define IND_CHARM	0x00000400L /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

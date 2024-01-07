@@ -6538,7 +6538,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Mindcrafter's charm spell, makes monsters ignore you and your teammates (mostly..) */
 	case GF_CHARMIGNORE: {
-		int diff = 1;
+		int diff = 1, old_charming = p_ptr->mcharming;
 
 		no_dam = TRUE;
 
@@ -6584,6 +6584,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		m_ptr->charmedignore = p_ptr->id;
 		/* Count our victims, just for optimization atm */
 		p_ptr->mcharming++;
+		if (!old_charming) p_ptr->redraw2 |= (PR2_INDICATORS); /* Redraw indicator */
 
 		note = " seems to forget you were an enemy";
 		break; }

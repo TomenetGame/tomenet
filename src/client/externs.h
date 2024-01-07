@@ -752,6 +752,8 @@ extern void prt_indicator_res_divine(bool is_active);
 extern void prt_indicator_esp(bool is_active);
 extern void prt_indicator_melee_brand(bool is_active);
 extern void prt_indicator_regen(bool is_active);
+extern void prt_indicator_dispersion(bool is_active);
+extern void prt_indicator_charm(bool is_active);
 
 extern void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
 extern char whats_under_your_feet[ONAME_LEN];

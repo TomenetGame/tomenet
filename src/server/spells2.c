@@ -10674,6 +10674,8 @@ bool do_mstopcharm(int Ind) {
 
 	if (p_ptr->mcharming == 0) return(FALSE); /* optimization */
 	p_ptr->mcharming = 0;
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	for (m = m_top - 1; m >= 0; m--) {
 		m_ptr = &m_list[m_fast[m]];
@@ -10681,6 +10683,7 @@ bool do_mstopcharm(int Ind) {
 		m_ptr->charmedignore = 0;
 		notice = TRUE;
 	}
+
 	if (notice) msg_print(Ind, "Your charm spell breaks!");
 	return(notice);
 }
