@@ -1321,7 +1321,7 @@ int player_store_base(object_type *o_ptr) {
 	if (!o_ptr->note || !(c = strstr(quark_str(o_ptr->note), "@SB"))) return(0);
 
 	/* No specific amount specified? Default to 1 */
-	if (c[4] != ';' && c[5] != ';') keep = 1;
+	if (!c[3] || !c[4] || (c[4] != ';' && c[5] != ';')) keep = 1;
 	/* Specified an amount, must range from 1 to 99 [MAX_STACK_SIZE-1] */
 	else keep = atoi(c + 3);
 
