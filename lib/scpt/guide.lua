@@ -206,10 +206,10 @@ guide_spell = {
     "Healing",
     "Recovery",
     "Vermin Control",
-    "Thunderstorm",
+    --"Thunderstorm", --duplicate (Air)
     "Regeneration",
     "Grow Trees",
-    "Poison Blood", --36
+    "Poison Blood", --35
 
     "Phase Door",
     "Disarm",
@@ -226,7 +226,7 @@ guide_spell = {
     "Vision",
     "Sense Hidden",
     "Reveal Ways",
-    "Sense Minds", --51
+    "Sense Minds", --50
 
     "Magelock",
     "Slow Monster",
@@ -240,7 +240,7 @@ guide_spell = {
     "Wraithform",
     "Stop Wraithform",
     "Disenchantment Beam",
-    "Hellfire", --63
+    "Hellfire", --62
 
     "Curse",
     "Call Light",
@@ -249,7 +249,7 @@ guide_spell = {
     "Redemption",
     "Orb of Draining",
     "Doomed Grounds",
-    "Earthquake", --70
+    "Earthquake", --69
 
     "Blessing",
     "Holy Resistance",
@@ -266,7 +266,7 @@ guide_spell = {
     "Restoration",
     "Faithful Focus",
     "Resurrection",
-    "Soul Curing", --85
+    "Soul Curing", --84
 
     "Remove Fear",
     "Call Light",
@@ -275,7 +275,7 @@ guide_spell = {
     "Sanctuary",
     "Satisfy Hunger",
     "Sense Surroundings",
-    "Zeal", --93
+    "Zeal", --92
 
     "Cause Fear",
     "Blindness",
@@ -288,7 +288,7 @@ guide_spell = {
     "Shadow Shroud",
     "Chaos Bolt",
     "Drain Life",
-    "Darkness Storm", --105
+    "Darkness Storm", --104
 
     "Cause Wounds",
     "Tame Fear",
@@ -301,7 +301,7 @@ guide_spell = {
     "Ethereal Eye",
     "Possess",
     "Stop Possess",
-    "Guardian Spirit", --117
+    "Guardian Spirit", --116
     "Purification Rites",
 
     "Terror",
@@ -315,7 +315,7 @@ guide_spell = {
     "Wicked Oath",
     "Levitation",
     "Robes of Havoc",
-    "Blood Sacrifice", --129
+    "Blood Sacrifice", --128
 
     "Nature's Call",
     "Toxic Moisture",
@@ -327,7 +327,7 @@ guide_spell = {
     "Quickfeet",
     "Herbal Tea",
     "Extra Growth",
-    "Focus", --139
+    "Focus", --138
 
     "Psychic Hammer",
     "Psychokinesis",
@@ -347,7 +347,7 @@ guide_spell = {
     "Accelerate Nerves",
     "Telepathy",
     "Recognition",
-    "Stabilize Thoughts", --157
+    "Stabilize Thoughts", --156
 
     "Psionic Blast",
     "Psi Storm",
@@ -369,7 +369,7 @@ guide_spell = {
     "Empowerment",
     "The Silent Force",
     "Sphere of Destruction",
-    "Gateway", --177
+    "Gateway", --176
 
     "Fatigue",
     "Detect Lifeforce",
@@ -380,11 +380,11 @@ guide_spell = {
     "Permeation",
     "Siphon Life",
     "Touch of Hunger",
-    "Wraithstep", --187
+    "Wraithstep", --186
 
     --additional Shadow spells
     "Retreat",
     "Shadow Stream",
     "Dispersion",
-    "Stop Dispersion", --191
+    "Stop Dispersion", --190
 }
