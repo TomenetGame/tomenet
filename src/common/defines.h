@@ -553,9 +553,26 @@
 /* Max ego base type restrictions */
 #define MAX_EGO_BASETYPES	10
 
+
 #ifdef CLIENT_SIDE
  /* Client-side unique list */
  #define MAX_UNIQUES		300
+
+ //defines.h: (for client-side, from angband)
+ /* Given an array, determine how many elements are in it: */
+ //note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
+ #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+
+ /* Client-side auto inscriptions - doubled to 200 after introduction of auto-pickup/destroy in 4.7.4;
+    increased to 500 on player request, whatever. */
+ #define MAX_AUTO_INSCRIPTIONS	500
+
+ #define AUTOINS_MATCH_LEN	55
+ #define AUTOINS_TAG_LEN	19
+
+ #define MAX_PLAYERS_LISTED	100
+
+ #define PRF_BODY_SEPARATOR	'^'
 #endif
 
 
@@ -917,6 +934,9 @@
 
 /* Set Sauron's boost factor (1/n chance to cast spells) [67,75] */
 #define SAURON_SPELL_BOOST	67
+
+/* Replace strict no_hp_regen/no_mp_regen that just exits the regen-functions by a regen&drain-workaround? */
+#define NO_REGEN_ALT
 
 
 /* ----------------------------------------------- (Rather specific 'features', could go to defines-features.h instead)  ----------------------------------------------- */
@@ -6943,7 +6963,8 @@
 
 
 
-/*** Macro Definitions ***/
+/*** ----- Macro Definitions ----- ***/
+
 
 #ifdef CLIENT_SIDE
  /*
@@ -7811,14 +7832,6 @@ extern int PlayerUID;
 
  /* Play slightly quieter shriek sfx to not blast people's ear drums =P [0..100] */
  #define SFX_SHRIEK_VOLUME	50
-#endif
-
-
-#ifdef CLIENT_SIDE
- //defines.h: (for client-side, from angband)
- /* Given an array, determine how many elements are in it: */
- //note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
- #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
 #endif
 
 
@@ -9169,17 +9182,6 @@ extern int PlayerUID;
 #define INVENTORY_CHANGE_ERASE	3
 
 
-#ifdef CLIENT_SIDE
- /* Client-side auto inscriptions - doubled to 200 after introduction of auto-pickup/destroy in 4.7.4;
-    increased to 500 on player request, whatever. */
- #define MAX_AUTO_INSCRIPTIONS	500
-
- #define AUTOINS_MATCH_LEN 55
- #define AUTOINS_TAG_LEN 19
-
- #define MAX_PLAYERS_LISTED 100
-#endif
-
 /* Maximum amount of ping reception times logged for each player */
 #define MAX_PING_RECVS_LOGGED	10
 
@@ -9495,7 +9497,3 @@ extern int PlayerUID;
 
 /* For debugging - fixed */
 //#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_XPROTECT && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
-
-#ifdef CLIENT_SIDE
- #define PRF_BODY_SEPARATOR '^'
-#endif

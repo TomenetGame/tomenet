@@ -4318,7 +4318,7 @@ void calc_boni(int Ind) {
 			if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
 		}
 
-		/* powerful lights and anti-undead/evil items damage [mimicked] undead,
+		/* powerful lights and anti-undead/evil items damage (mimicked) undead,
 		   while anti-demon/evil items damage hell knights and (mimicked) demons */
 		j = anti_undead(o_ptr, p_ptr);
 		hold = anti_demon(o_ptr, p_ptr);
@@ -6630,7 +6630,13 @@ void calc_boni(int Ind) {
 	/* Display the speed (if needed) */
 	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
 
-
+#if 0 /* not atm */
+	/* Cannot regenerate MP while keeping a spell up that requires active resource to run.
+	   Note: martyrdom is handled inside regenmana() instead. boundless rage is zeal, which isn't affected by mp really.
+	   p_ptr->voidx should stop mp-regen, but there is currently no way to turn it off (zero it) except for leaving the floor.
+	   Also there are no stop-spells for spirit_shield, kinetic_shield (and tim_regen_pow, but that one is not important). */
+	if (p_ptr->tim_manashield || p_ptr->spirit_shield || p_ptr->kinetic_shield || p_ptr->mcharming || p_ptr->dispersion || p_ptr->tim_regen_pow < 0) p_ptr->no_regen_mp = TRUE;
+#endif
 
 	/* swapping in AUTO_ID items will instantly ID inventory and equipment.
 	   Careful, we're called from birth->player_setup->player_night maybe,
@@ -6657,6 +6663,7 @@ void calc_boni(int Ind) {
 
 /* -------------------- Limits -------------------- */
 
+#ifdef NO_REGEN_ALT
 	/* no_hp_regen special workings: Actually simulates having hp-drain and hp-regen at the same time, keeping each other in check.
 	   Weakness: If the player has additional HP regen sources (skills) he will still effectively regen HP and setting the regenerate flag will even help him to do so. */
 	if (p_ptr->no_hp_regen) {
@@ -6667,7 +6674,7 @@ void calc_boni(int Ind) {
 			//csheet_boni[14].cb[5] |= CB6_RRGHP; /* don't display this maybe */
 		}
 	}
-	/* Same hack as bove for no_mp_regen */
+	/* Same hack as above for no_mp_regen */
 	if (p_ptr->no_mp_regen) {
 		if (!p_ptr->drain_mana) {
 			p_ptr->drain_mana = 1;
@@ -6676,6 +6683,7 @@ void calc_boni(int Ind) {
 			//csheet_boni[14].cb[5] |= CB6_RRGHP; /* don't display this maybe */
 		}
 	}
+#endif
 
 	/* Make sure we don't get negative stealth from monster body malus */
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;

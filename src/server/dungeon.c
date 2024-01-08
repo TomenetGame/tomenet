@@ -722,7 +722,9 @@ static void regenhp(int Ind, int percent) {
 	int	old_chp;
 	int	freeze_test_heal = p_ptr->test_heal;
 
-	//if (p_ptr->no_hp_regen) return;
+#ifndef NO_REGEN_ALT
+	if (p_ptr->no_hp_regen) return;
+#endif
 
 	/* Save the old hitpoints */
 	old_chp = p_ptr->chp;
@@ -757,7 +759,9 @@ static void regenmana(int Ind, int percent) {
 	if (p_ptr->martyr) return;
 #endif
 
-	//if (p_ptr->no_mp_regen) return;
+#ifndef NO_REGEN_ALT
+	if (p_ptr->no_mp_regen) return;
+#endif
 
 	old_cmp = p_ptr->cmp;
 	new_mana = ((s32b)p_ptr->mmp) * percent + PY_REGEN_MNBASE;
@@ -5293,21 +5297,6 @@ static bool process_player_end_aux(int Ind) {
 	/* Blood Magic, aka Auras, draw from your blood and thereby slow your regeneration down to 1/4 if all 3 auras are enabled */
 	regen_amount = regen_amount / (1 + (p_ptr->aura[AURA_FEAR] ? 1 : 0) + (p_ptr->aura[AURA_SHIVER] ? 1 : 0) + (p_ptr->aura[AURA_DEATH] ? 1 : 0));
 
-	/* Increase regeneration by flat amount from timed regeneration powers */
-	if (p_ptr->tim_regen) {
-		/* Regeneration spell (Nature) and mushroom of fast metabolism */
-		if (p_ptr->tim_regen_pow > 0) hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE, TRUE);
-		/* Nether Sap spell (Unlife) */
-		else if (p_ptr->tim_regen_pow < 0) {
-			if (p_ptr->cmp >= p_ptr->tim_regen_cost) {
-				p_ptr->cmp -= p_ptr->tim_regen_cost;
-				p_ptr->redraw |= PR_MANA;
-				/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.) */
-				hp_player(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE, TRUE);
-			} else (void)set_tim_mp2hp(Ind, 0, 0, 0);  /* End prematurely when OOM */
-		}
-	}
-
 	/* Poisoned or cut yields no healing */
 	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->sun_burn
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
@@ -5325,6 +5314,22 @@ static bool process_player_end_aux(int Ind) {
 	/* Regenerate Hit Points if needed */
 	if (p_ptr->chp < p_ptr->mhp && regen_amount && !p_ptr->martyr)
 		regenhp(Ind, regen_amount);
+
+
+	/* Increase regeneration by flat amount from timed regeneration powers */
+	if (p_ptr->tim_regen) {
+		/* Regeneration spell (Nature) and mushroom of fast metabolism */
+		if (p_ptr->tim_regen_pow > 0) hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE, TRUE);
+		/* Nether Sap spell (Unlife) */
+		else if (p_ptr->tim_regen_pow < 0) {
+			if (p_ptr->cmp >= p_ptr->tim_regen_cost) {
+				p_ptr->cmp -= p_ptr->tim_regen_cost;
+				p_ptr->redraw |= PR_MANA;
+				/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.) */
+				hp_player(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE, TRUE);
+			} else (void)set_tim_mp2hp(Ind, 0, 0, 0);  /* End prematurely when OOM */
+		}
+	}
 
 
 	/* Undiminish healing penalty in PVP mode */
