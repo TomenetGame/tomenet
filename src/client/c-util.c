@@ -4720,12 +4720,12 @@ void interact_macros(void) {
 		/* Selections */
 		l = 2;
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yL\377B) Save macros to named / global.prf / form-named / class pref file");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
+		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yA\377B) Save macros to named / global.prf / form-named / class pref file");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w/\377yL\377w) Load macros from a pref file / load current class-specific pref file");
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yG\377w/\377yC\377w/\377yB\377w/\377yU\377w/\377yA\377w) Forget global.prf / <character>.prf / both / most / all");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yG\377w/\377yC\377w/\377yB\377w/\377yU\377w/\377yX\377w) Forget global.prf / <character>.prf / both / most / all");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yt\377w/\377yi\377w) Test a key for an existing macro / list all currently defined macros");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yw\377w) Switch the macro(s) of two keys");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ua\377s) Enter a new macro action manually. Afterwards..");
@@ -4777,6 +4777,26 @@ void interact_macros(void) {
 			//sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
 			/* Use the character name by default - mikaelh */
 			sprintf(tmp, "%s.prf", cname);
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Process the given filename */
+			(void)process_pref_file(tmp);
+
+			/* Pref files may change settings, so reload the keymap - mikaelh */
+			keymap_init();
+		}
+
+		/* Load class-specific pref file */
+		else if (i == 'L') {
+			/* Prompt */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Load current class-specific pref file");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
+
+			sprintf(tmp, "%s.prf", class_info[class].title);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -4846,7 +4866,7 @@ void interact_macros(void) {
 		}
 
 		/* Save a 'macro' file as <class>.prf pref file */
-		else if (i == 'L') {
+		else if (i == 'A') {
 			/* Prompt */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a class-specific macro file");
 
@@ -5860,8 +5880,8 @@ void interact_macros(void) {
 		}
 
 		else if (i == 'B') {
-			/* Forget macros loaded from character.prf */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget character-specific macros");
+			/* Forget macros loaded from global.prf and character.prf */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget global and character-specific macros");
 
 			for (i = 0; i < macro__num; i++) {
 				string_free(macro__pat[i]);
@@ -5917,8 +5937,8 @@ void interact_macros(void) {
 		}
 
 		else if (i == 'U') {
-			/* Forget macros loaded from character.prf */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget character-specific macros");
+			/* Forget all automatically loaded macros (global, charname, race, trait, class) */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget all auto-loaded macros");
 
 			for (i = 0; i < macro__num; i++) {
 				string_free(macro__pat[i]);
@@ -5968,16 +5988,16 @@ void interact_macros(void) {
 #endif
 
 			macro_processing_exclusive = FALSE;
-			c_msg_print("Reninitialized all macros, omitting all usually customized prf-files:");
+			c_msg_print("Reninitialized all macros, omitting all auto-loaded prf-files:");
 			c_msg_format(" 'global.prf', '%s.prf', '%s.prf', '%s.prf, '%s.prf'", cname,
 			    race < Setup.max_race ? race_info[race].title : "NO_RACE",
 			    trait < Setup.max_trait ? trait_info[trait].title : "NO_TRAIT",
 			    class < Setup.max_class ? class_info[class].title : "NO_CLASS");
 		}
 
-		else if (i == 'A') {
+		else if (i == 'X') {
 			/* Forget macros loaded from character.prf */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget character-specific macros");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget all macros");
 
 			for (i = 0; i < macro__num; i++) {
 				string_free(macro__pat[i]);
