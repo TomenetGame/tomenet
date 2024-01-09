@@ -155,9 +155,17 @@ end
 -- pgod? 100% sure it won't work
 --[[
 function get_god_level(i, sch)
---	local player = players(i)
-	if __schools[sch].gods[player.pgod] then
-		return (s_info[__schools[sch].gods[player.pgod].skill + 1].value * __schools[sch].gods[player.pgod].mul) / __schools[sch].gods[player.pgod].div
+--	local ply
+
+	-- client-side (0) or server-side (>=1) ?
+	if i ~= 0 then
+		ply = players(i)
+	else
+		ply = player
+	end
+
+	if __schools[sch].gods[ply.pgod] then
+		return (s_info[__schools[sch].gods[ply.pgod].skill + 1].value * __schools[sch].gods[ply.pgod].mul) / __schools[sch].gods[ply.pgod].div
 	else
 		return nil
 	end
@@ -166,11 +174,13 @@ end
 
 -- Change this fct if I want to switch to learnable spells
 function get_level_school(i, s, max, min, inven_slot)
-	local lvl, sch, index, num, bonus
+	local lvl, sch, index, num, bonus, ply
 
 	-- client-side (0) or server-side (>=1) ?
 	if i ~= 0 then
-		player = players(i)
+		ply = players(i)
+	else
+		ply = player
 	end
 
 	lvl = 0
@@ -186,12 +196,12 @@ function get_level_school(i, s, max, min, inven_slot)
 		local r, p, ok = 0, 0, 0, 0
 
 		-- Take the basic skill value
-		r = player.s_info[(school(sch).skill) + 1].value
+		r = ply.s_info[(school(sch).skill) + 1].value
 
 		-- Are we under sorcery effect ?
 		p = 0
 		if __schools[sch].sorcery then
-			p = player.s_info[SKILL_SORCERY + 1].value
+			p = ply.s_info[SKILL_SORCERY + 1].value
 		end
 
 		-- Find the higher
@@ -222,10 +232,10 @@ function get_level_school(i, s, max, min, inven_slot)
 
 --	--Hack: Disruption Shield only for Istari. Not for Adventurer/Ranger.
 --	if spell(s).name == "Disruption Shield" then
---		if player.pclass == CLASS_RANGER then
+--		if ply.pclass == CLASS_RANGER then
 --			lvl = 0
 --		end
---		if player.pclass == CLASS_ADVENTURER then
+--		if ply.pclass == CLASS_ADVENTURER then
 --			lvl = 0
 --		end
 --	end
@@ -289,13 +299,13 @@ end
 
 -- Get the amount of mana(or power) needed
 function get_mana(i, s, inven_slot)
---	local mana
+--	local mana, ply
 --	mana = spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
 
 --	--under influence of Martyrdom, spells cost more mana:
---	if i ~= 0 then player = players(i) end
+--	if i ~= 0 then ply = players(i) else ply = player end
 --	--exempt Martyrdom itself from its double mana cost
---	if player.martyr > 0 and s ~= HMARTYR then mana = mana * 2 end
+--	if ply.martyr > 0 and s ~= HMARTYR then mana = mana * 2 end
 
 --	return mana
 
@@ -313,18 +323,22 @@ end
 
 -- Return the amount of power(mana, piety, whatever) for the spell
 function get_power(i, s)
+	local ply
+
 	-- client-side (0) or server-side (>=1) ?
 	if i ~= 0 then
-		player = players(i)
+		ply = players(i)
+	else
+		ply = player
 	end
 
 	if check_affect(s, "piety", FALSE) then
-		return player.grace
+		return ply.grace
 	else
-	    if player.cmp == nil then
-		return player.csp
+	    if ply.cmp == nil then
+		return ply.csp
 	    else
-		return player.cmp
+		return ply.cmp
 	    end
 	end
 end
@@ -359,7 +373,7 @@ function print_book2(i, inven_slot, sval, spl)
 --[[STOREBROWSE
 	if inven_slot ~= -1 then
 		--from inventory
-		book = get_inven_sval(Ind, inven_slot)
+		book = get_inven_sval(i, inven_slot)
 	else
 		--browsing within a store!
 		book = sval
@@ -367,7 +381,7 @@ function print_book2(i, inven_slot, sval, spl)
 ]]
 	if inven_slot >= 0 then
 		--from inventory
-		book = get_inven_sval(Ind, inven_slot)
+		book = get_inven_sval(i, inven_slot)
 	else
 		--browsing within a store!
 		book = sval
@@ -677,16 +691,16 @@ end
 -- Returns spell chance of failure for spell
 function spell_chance(i, s, inven_slot)
 	local chance, s_ptr
-	local player, ls
+	local ply, ls
 
 	s_ptr = spell(s)
 
 	--hack: LIMIT_SPELLS uses top-level failrate here instead of worse one we had at lower level!
 	-- client-side (0) or server-side (>=1) ?
 	if i ~= 0 then
-		player = players(i)
-		ls = player.limit_spells
-		player.limit_spells = 0
+		ply = players(i)
+		ls = ply.limit_spells
+		ply.limit_spells = 0
 	--client version recent enough to even know 'hack_force_spell_level'? (otherwise we'd get a lua error)
 	elseif (def_hack("hack_force_spell_level", nil)) then
 		ls = hack_force_spell_level
@@ -714,8 +728,8 @@ function spell_chance(i, s, inven_slot)
 	--unhack: LIMIT_SPELLS
 	-- client-side (0) or server-side (>=1) ?
 	if i ~= 0 then
-		player = players(i)
-		player.limit_spells = ls
+		ply = players(i)
+		ply.limit_spells = ls
 	--client version recent enough to even know 'hack_force_spell_level'? (otherwise we'd get a lua error)
 	elseif (def_hack("hack_force_spell_level", nil)) then
 		hack_force_spell_level = ls
@@ -758,19 +772,23 @@ end
 -- one question.. why this should be LUA anyway?
 -- because accessing lua table is so badly easier in lua
 function cast_school_spell(i, s, s_ptr, no_cost, other)
+	local ply
+
 	-- client-side (0) or server-side (>=1) ?
 	if i ~= 0 then
-		player = players(i)
+		ply = players(i)
+	else
+		ply = player
 	end
 
 	local use = FALSE
 
 	-- No magic
-	if check_antimagic(Ind, get_spell_am(s)) == TRUE then
+	if check_antimagic(i, get_spell_am(s)) == TRUE then
 --Next line is already in the server sources.
 --		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
-		local energy = level_speed(player.wpos);
-		player.energy = player.energy - energy
+		local energy = level_speed(ply.wpos);
+		ply.energy = ply.energy - energy
 		return 1 --continue ftk
 	end
 
@@ -780,17 +798,17 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	-- if it costs something then some condition must be met
 	if not no_cost then
 		-- Require lite
-		if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite(Ind) == TRUE)) then
-			local energy = level_speed(player.wpos);
-			player.energy = player.energy - energy
+		if (check_affect(s, "blind")) and ((ply.blind > 0) or (no_lite(i) == TRUE)) then
+			local energy = level_speed(ply.wpos);
+			ply.energy = ply.energy - energy
 			msg_print(i, "You cannot see!")
 			return 0
 		end
 
 		-- Not when confused
-		if (check_affect(s, "confusion")) and (player.confused > 0) then
-			local energy = level_speed(player.wpos);
-			player.energy = player.energy - energy
+		if (check_affect(s, "confusion")) and (ply.confused > 0) then
+			local energy = level_speed(ply.wpos);
+			ply.energy = ply.energy - energy
 			msg_print(i, "You are too confused!")
 			return 0
 		end
@@ -804,9 +822,9 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 		-- Enough mana
 		if (get_mana(i, s, other.book) > get_power(i, s)) then
-			local energy = level_speed(player.wpos);
+			local energy = level_speed(ply.wpos);
 			--withdraw a little bit of energy just to prevent command-spam
-			player.energy = player.energy - energy / 3
+			ply.energy = ply.energy - energy / 3
 			--if (get_check2("You do not have enough "..get_power_name(s)..", do you want to try anyway?", FALSE) == FALSE) then return end
 			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
 			__cur_inven_slot = -1
@@ -873,33 +891,37 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 	if use == TRUE then
 		-- Take a turn
-		local energy = level_speed(player.wpos);
-		player.energy = player.energy - energy
+		local energy = level_speed(ply.wpos);
+		ply.energy = ply.energy - energy
 	end
 
-	player.redraw = bor(player.redraw, PR_MANA)
-	--player.window = bor(player.window, PW_PLAYER)
-	--player.window = bor(player.window, PW_SPELL)
+	ply.redraw = bor(ply.redraw, PR_MANA)
+	--ply.window = bor(ply.window, PW_PLAYER)
+	--ply.window = bor(ply.window, PW_SPELL)
 
 	return 1
 end
 
 
 function test_school_spell(i, s, inven_slot)
+	local ply
+
 	-- client-side (0) or server-side (>=1) ?
 	if i ~= 0 then
-		player = players(i)
+		ply = players(i)
+	else
+		ply = player
 	end
 
 	local use = FALSE
 
 	-- Require lite
-	if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite(Ind) == TRUE)) then
+	if (check_affect(s, "blind")) and ((ply.blind > 0) or (no_lite(i) == TRUE)) then
 		return 1
 	end
 
 	-- Not when confused
-	if (check_affect(s, "confusion")) and (player.confused > 0) then
+	if (check_affect(s, "confusion")) and (ply.confused > 0) then
 		return 2
 	end
 
