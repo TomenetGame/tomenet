@@ -33,7 +33,8 @@
 
 #define RAINY_TOMB /* Display rainy weather for the mood? +_+ - C. Blue */
 
-/* Enable hack in inkey() to allow using right/left arrow keys and pos1/end inside a text input prompt. */
+/* Enable hack in inkey() to allow using right/left arrow keys and pos1/end inside a text input prompt.
+   Note that this hack is only active while inkey_interact_macros = TRUE, which currently is inside the macro menu, when prompted for file names. */
 #if defined(USE_X11) || defined(USE_GCU)
  #define ALLOW_ARROW_KEYS_IN_PROMPT
 #endif
