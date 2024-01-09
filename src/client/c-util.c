@@ -33,6 +33,8 @@
 
 #define RAINY_TOMB /* Display rainy weather for the mood? +_+ - C. Blue */
 
+static bool inkey_location_keys = FALSE;
+
 
 
 #ifdef SET_UID
@@ -771,7 +773,15 @@ static char inkey_aux(void) {
 
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
-c_msg_format("ch=%d",ch);
+			//Linux/X11:
+			//up:<-><------>31,95,70,70,53,50,13
+			//right:<------>31,95,70,70,53,51,13
+			//down:><------>31,95,70,70,53,52,13
+			//left:><------>31,95,70,70,53,49,13
+			//pos1:		31,95,70,70,53,48,13
+			//end:		31,95,70,70,53,55,13
+			//pgup:		31,95,70,70,53,53,13
+			//pgdn:		31,95,70,70,53,54,13
 
 			if (parse_macro && ch == MACRO_WAIT) {
 				buf_atoi[0] = '0';
@@ -1117,6 +1127,12 @@ char inkey(void) {
 	int w = 0;
 	int skipping = FALSE;
 
+#define INKEY_LOCATION_KEY_SIZE 8
+	static bool inkey_location_key_active = FALSE;
+	static int inkey_location_key_index = 0;
+	static char inkey_location_key_sequence[INKEY_LOCATION_KEY_SIZE];
+
+
 	/* Hack -- handle delayed "flush()" */
 	if (flush_later) {
 		/* Done */
@@ -1175,7 +1191,7 @@ char inkey(void) {
 			done = TRUE;
 		}
 
-		/* Hack */
+		/* Hack -- used to get a macro trigger (for that we need raw Term_inkey() passthrough, without any macro accidentally triggering from these keys read). */
 		if (inkey_base) {
 			char xh;
 #if 0 /* don't block.. */
@@ -1347,6 +1363,13 @@ char inkey(void) {
 
 		/* Hack -- strip "control-underscore" special-macro-triggers */
 		case 31:
+			/* Crazy hack: Enable use of arrow keys, added for askfor_aux() */
+			if (inkey_location_keys) {
+				inkey_location_key_active = TRUE;
+				inkey_location_key_index = -1;
+				break;
+			}
+
 			/* Strip this key */
 			ch = 0;
 			/* Inside a "underscore" sequence */
@@ -1354,6 +1377,68 @@ char inkey(void) {
 			/* Strip chars (always) */
 			strip_chars = TRUE;
 			break;
+		}
+
+		/* Process/end crazy hack */
+		if (inkey_location_key_active) {
+			/* Process char, add it to sequence code */
+			inkey_location_key_index++;
+			if (inkey_location_key_index < INKEY_LOCATION_KEY_SIZE) /* <- Paranoia test: Prevent buffer overflow */
+				inkey_location_key_sequence[inkey_location_key_index] = ch;
+			else { /* This shouldn't happen ever */
+				inkey_location_key_active = FALSE;
+				ch = 0;
+				break;
+			}
+
+			if (ch == 13) { /* End */
+				/* Terminate character collection */
+				inkey_location_key_active = FALSE;
+
+				/* Evaluate and return hack value. Note #0 is always '31', #6 always '13', or we wouldn't be here. */
+				if (inkey_location_key_sequence[1] == 95 &&
+				    inkey_location_key_sequence[2] == 70 &&
+				    inkey_location_key_sequence[3] == 70 &&
+				    inkey_location_key_sequence[4] == 53)
+					/* For values, compare table in inkey_aux() */
+					switch (inkey_location_key_sequence[5]) {
+					case 48: // Pos1
+						ch = -125;
+						break;
+					case 49: // Arrow left
+						ch = -127;
+						break;
+					case 50: // Arrow up
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					case 51: // Arrow right
+						ch = -128;
+						break;
+					case 52: // Arrow down
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					case 53: // Page up
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					case 54: // Page down
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					case 55: // End
+						ch = -126;
+						break;
+					default:
+						/* Unknown sequence, discard */
+						ch = 0;
+					}
+				/* Unknown sequence, discard */
+				else ch = 0;
+			}
+			/* Continue receiving chars */
+			else ch = 0;
 		}
 
 
@@ -2208,7 +2293,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 			Term_gotoxy(x + l, y);
 
 		/* Get a key */
+		inkey_location_keys = TRUE;
 		i = inkey();
+		inkey_location_keys = FALSE;
 
 		/* Analyze the key */
 		switch (i) {
@@ -2265,9 +2352,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		/* move by one */
 		case KTRL('A'):
+		case -127: //inkey_location_keys hack
 			if (l > 0) l--;
 			break;
 		case KTRL('S'):
+		case -128: //inkey_location_keys
 			if (l < k) l++;
 			break;
 		/* jump words */
@@ -2301,9 +2390,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 		/* end/begin (pos1) */
 		case KTRL('V'):
+		case -125: //inkey_location_keys hack
 			l = 0;
 			break;
 		case KTRL('B'):
+		case -126: //inkey_location_keys hack
 			l = k;
 			break;
 
