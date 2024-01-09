@@ -5199,14 +5199,14 @@ static int Receive_play(int ind) {
 			}
 		}
 
-#if 0
+ #if 0
 		/* Read class extra */
 		n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
 		if (n <= 0) {
 			Destroy_connection(ind, "Misread class extra");
 			return(-1);
 		}
-#endif	// 0
+ #endif	// 0
 
 		/* Read the options */
 		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
@@ -5267,12 +5267,12 @@ static int Receive_play(int ind) {
 				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
 
 			if (n <= 0) {
-#ifdef STRICT_RECEIVE_PLAY
+ #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread unknown redefinitions");
 				return(-1);
-#else
+ #else
 				break;
-#endif
+ #endif
 			}
 
 			if (max_char < connp->Client_setup.u_char[i]) max_char = connp->Client_setup.u_char[i];
@@ -5291,22 +5291,22 @@ static int Receive_play(int ind) {
 				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
 
 			if (n <= 0) {
-#ifdef STRICT_RECEIVE_PLAY
+ #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread feature redefinitions");
 				return(-1);
-#else
+ #else
 				break;
-#endif
+ #endif
 			}
 
 			if (max_char < connp->Client_setup.f_char[i]) max_char = connp->Client_setup.f_char[i];
 		}
 
 		/* Read the "object" char/attrs */
-#if 1 /*todo: fix*/
+ #if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_K_IDX;
 		else
-#endif
+ #endif
 		limit = MAX_K_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
 			connp->Client_setup.k_char[i] = 0; /* Needs to be initialized for proper packet read. */
@@ -5317,22 +5317,22 @@ static int Receive_play(int ind) {
 				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
 
 			if (n <= 0) {
-#ifdef STRICT_RECEIVE_PLAY
+ #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread object redefinitions");
 				return(-1);
-#else
+ #else
 				break;
-#endif
+ #endif
 			}
 
 			if (max_char < connp->Client_setup.k_char[i]) max_char = connp->Client_setup.k_char[i];
 		}
 
 		/* Read the "monster" char/attrs */
-#if 1 /*todo: fix*/
+ #if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_R_IDX;
 		else
-#endif
+ #endif
 		limit = MAX_R_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
 			connp->Client_setup.r_char[i] = 0; /* Needs to be initialized for proper packet read. */
@@ -5343,12 +5343,12 @@ static int Receive_play(int ind) {
 				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 
 			if (n <= 0) {
-#ifdef STRICT_RECEIVE_PLAY
+ #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread monster redefinitions");
 				return(-1);
-#else
+ #else
 				break;
-#endif
+ #endif
 			}
 
 			if (max_char < connp->Client_setup.r_char[i]) max_char = connp->Client_setup.r_char[i];

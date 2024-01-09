@@ -771,6 +771,7 @@ static char inkey_aux(void) {
 
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
+c_msg_format("ch=%d",ch);
 
 			if (parse_macro && ch == MACRO_WAIT) {
 				buf_atoi[0] = '0';
@@ -11737,7 +11738,7 @@ void handle_process_font_file(void) {
  #endif
 
 	/* Just to be sure. During the font parsing the offset needs to be 0.*/
-	char_map_offset = 0;
+	char_map_offset = 0; //paranoia
 
 	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
 	get_screen_font_name(fname);
