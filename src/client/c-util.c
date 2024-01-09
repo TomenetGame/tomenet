@@ -33,7 +33,13 @@
 
 #define RAINY_TOMB /* Display rainy weather for the mood? +_+ - C. Blue */
 
+/* Enable hack in inkey() to allow using right/left arrow keys and pos1/end inside a text input prompt. */
+#if defined(USE_X11) || defined(USE_GCU)
+ #define ALLOW_ARROW_KEYS_IN_PROMPT
+#endif
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 static bool inkey_location_keys = FALSE;
+#endif
 
 
 
@@ -782,6 +788,7 @@ static char inkey_aux(void) {
 			//end:		31,95,70,70,53,55,13
 			//pgup:		31,95,70,70,53,53,13
 			//pgdn:		31,95,70,70,53,54,13
+			//Note that, depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/
 
 			if (parse_macro && ch == MACRO_WAIT) {
 				buf_atoi[0] = '0';
@@ -1127,10 +1134,12 @@ char inkey(void) {
 	int w = 0;
 	int skipping = FALSE;
 
-#define INKEY_LOCATION_KEY_SIZE 8
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+ #define INKEY_LOCATION_KEY_SIZE 8
 	static bool inkey_location_key_active = FALSE;
 	static int inkey_location_key_index = 0;
 	static char inkey_location_key_sequence[INKEY_LOCATION_KEY_SIZE];
+#endif
 
 
 	/* Hack -- handle delayed "flush()" */
@@ -1363,12 +1372,14 @@ char inkey(void) {
 
 		/* Hack -- strip "control-underscore" special-macro-triggers */
 		case 31:
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 			/* Crazy hack: Enable use of arrow keys, added for askfor_aux() */
 			if (inkey_location_keys) {
 				inkey_location_key_active = TRUE;
 				inkey_location_key_index = -1;
 				break;
 			}
+#endif
 
 			/* Strip this key */
 			ch = 0;
@@ -1379,6 +1390,7 @@ char inkey(void) {
 			break;
 		}
 
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		/* Process/end crazy hack */
 		if (inkey_location_key_active) {
 			/* Process char, add it to sequence code */
@@ -1440,6 +1452,7 @@ char inkey(void) {
 			/* Continue receiving chars */
 			else ch = 0;
 		}
+#endif
 
 
 		/* Hack -- Set "after_macro" code */
@@ -2293,9 +2306,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 			Term_gotoxy(x + l, y);
 
 		/* Get a key */
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		inkey_location_keys = TRUE;
+		if (modify_ok) i = KTRL('E'); //Simulate CTRL+E press once, to enter 'edit' mode right away.
+		else
+#endif
 		i = inkey();
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		inkey_location_keys = FALSE;
+#endif
 
 		/* Analyze the key */
 		switch (i) {
@@ -2340,11 +2359,18 @@ bool askfor_aux(char *buf, int len, char mode) {
 				l--;
 				if (search) search_changed = TRUE; /* Search term was changed */
 			}
-			if (k > l && l > 0) {
+			else if (k > l && l > 0) {
 			  /* Move the rest of the line one back, including
 			     char under cursor and cursor) */
 				for (j = l; j < k; j++) buf[j - 1] = buf[j];
 				l--;
+				k--;
+				if (search) search_changed = TRUE; /* Search term was changed */
+			}
+			else if (!l && k > 0) {
+			    /* Specialty: Behave like DELETE key instead of BACKSPACE key if at the start of the text */
+				/* Move the rest of the line one back */
+				for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
 				k--;
 				if (search) search_changed = TRUE; /* Search term was changed */
 			}
