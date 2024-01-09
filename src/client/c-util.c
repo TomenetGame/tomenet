@@ -2313,6 +2313,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	bool nohist = (mode & ASKFOR_PRIVATE) || len < 20;
 	int cur_hist;
 
+
 	if (mode & ASKFOR_CHATTING) cur_hist = hist_chat_end;
 	else cur_hist = hist_end;
 
@@ -2369,8 +2370,14 @@ bool askfor_aux(char *buf, int len, char mode) {
 		/* Get a key */
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		inkey_location_keys = TRUE;
+ #if 0 /* All of this isn't that cool. Instead, let's only auto-enter edit mode if user actually presses an arrow/positional key, making use of this whole feature thing. */
+  #if 0 /* This also changes colour from yellow to white */
 		if (modify_ok) i = KTRL('E'); //Simulate CTRL+E press once, to enter 'edit' mode right away.
 		else
+  #else /* This retains the yellow starter prompt colour, better */
+		if (modify_ok) k = strlen(buf);
+  #endif
+ #endif
 #endif
 		i = inkey();
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
@@ -2408,6 +2415,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -124:
 #endif
+			/* Navigational key pressed -> implicitely enter edit mode */
+			if (modify_ok) k = strlen(buf);
+
 			if (k > l) {
 				/* Move the rest of the line one back */
 				for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
@@ -2418,12 +2428,12 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		case 0x7F: /* well...not DEL but Backspace too it seems =P */
 		case '\010': /* Backspace removes char before cursor */
-			if (k == l && k > 0) {
+			if (k == l && k > 0) { /* Pressed while cursor is at the end of the line */
 				k--;
 				l--;
 				if (search) search_changed = TRUE; /* Search term was changed */
 			}
-			else if (k > l && l > 0) {
+			else if (k > l && l > 0) { /* Pressed while cursor is somewhere in between the line */
 			  /* Move the rest of the line one back, including
 			     char under cursor and cursor) */
 				for (j = l; j < k; j++) buf[j - 1] = buf[j];
@@ -2431,12 +2441,17 @@ bool askfor_aux(char *buf, int len, char mode) {
 				k--;
 				if (search) search_changed = TRUE; /* Search term was changed */
 			}
-			else if (!l && k > 0) {
+			else if (!l && k > 0) { /* Pressed while cursor is at the beginning of the line */
+#if 0
 			    /* Specialty: Behave like DELETE key instead of BACKSPACE key if at the start of the text */
 				/* Move the rest of the line one back */
 				for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
 				k--;
 				if (search) search_changed = TRUE; /* Search term was changed */
+#else
+			    /* Specialty: Erase the whole line, emulating the "usual" behaviour when any key is pressed without ALLOW_ARROW_KEYS_IN_PROMPT enabled, if user didn't explicitely enter edit mode via CTRL+E. */
+				k = 0;
+#endif
 			}
 			break;
 
@@ -2445,16 +2460,25 @@ bool askfor_aux(char *buf, int len, char mode) {
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -127: //inkey_location_keys hack
 #endif
+			/* Navigational key pressed -> implicitely enter edit mode */
+			if (modify_ok) k = strlen(buf);
+
 			if (l > 0) l--;
 			break;
 		case KTRL('S'):
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -128: //inkey_location_keys
 #endif
+			/* Navigational key pressed -> implicitely enter edit mode */
+			if (modify_ok) k = strlen(buf);
+
 			if (l < k) l++;
 			break;
 		/* jump words */
 		case KTRL('Q'):
+			/* Navigational key pressed -> implicitely enter edit mode */
+			if (modify_ok) k = strlen(buf);
+
 			if (!l) break;
 
 			tail = FALSE;
@@ -2470,6 +2494,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (l < 0) l = 0;
 			break;
 		case KTRL('W'):
+			/* Navigational key pressed -> implicitely enter edit mode */
+			if (modify_ok) k = strlen(buf);
+
 			if (l == k) break;
 
 			tail = FALSE;
@@ -2487,12 +2514,18 @@ bool askfor_aux(char *buf, int len, char mode) {
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -125: //inkey_location_keys hack
 #endif
+			/* Navigational key pressed -> implicitely enter edit mode */
+			if (modify_ok) k = strlen(buf);
+
 			l = 0;
 			break;
 		case KTRL('B'):
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -126: //inkey_location_keys hack
 #endif
+			/* Navigational key pressed -> implicitely enter edit mode */
+			if (modify_ok) k = strlen(buf);
+
 			l = k;
 			break;
 
@@ -2657,7 +2690,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-#if 0 /* was: erase line. Can just hit ESC though, so if 0'ed as it's now used to cycle chat modes instead */
+#if 0 /* was: erase line. Can just hit ESC/Backspace though, so if 0'ed as it's now used to cycle chat modes instead */
 		case KTRL('U'):
 			k = 0;
 			break;
