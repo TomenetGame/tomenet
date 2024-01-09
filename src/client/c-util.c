@@ -35,9 +35,7 @@
 
 /* Enable hack in inkey() to allow using right/left arrow keys and pos1/end inside a text input prompt.
    Note that this hack is only active while inkey_interact_macros = TRUE, which currently is inside the macro menu, when prompted for file names. */
-#if defined(USE_X11) || defined(USE_GCU)
- #define ALLOW_ARROW_KEYS_IN_PROMPT
-#endif
+#define ALLOW_ARROW_KEYS_IN_PROMPT
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 static bool inkey_location_keys = FALSE;
 #endif
@@ -780,16 +778,28 @@ static char inkey_aux(void) {
 
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
+
 			//Linux/X11:
-			//up:<-><------>31,95,70,70,53,50,13
-			//right:<------>31,95,70,70,53,51,13
-			//down:><------>31,95,70,70,53,52,13
-			//left:><------>31,95,70,70,53,49,13
+			//up:		31,95,70,70,53,50,13
+			//right:	31,95,70,70,53,51,13
+			//down:		31,95,70,70,53,52,13
+			//left:		31,95,70,70,53,49,13
 			//pos1:		31,95,70,70,53,48,13
 			//end:		31,95,70,70,53,55,13
 			//pgup:		31,95,70,70,53,53,13
 			//pgdn:		31,95,70,70,53,54,13
 			//Note that, depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/
+
+			//Windows:
+			//up:		31,120,52,56,13
+			//right:	31,120,52,68,13
+			//down:		31,120,53,48,13
+			//left:		31,120,52,66,13
+			//pos1:		31,120,52,55,13
+			//end:		31,120,52,70,13
+			//pgup:		31,120,52,57,13
+			//pgdn:		31,120,53,49,13
+			//del:		31,120,53,51,13
 
 			if (parse_macro && ch == MACRO_WAIT) {
 				buf_atoi[0] = '0';
@@ -1409,6 +1419,55 @@ char inkey(void) {
 				inkey_location_key_active = FALSE;
 
 				/* Evaluate and return hack value. Note #0 is always '31', #6 always '13', or we wouldn't be here. */
+#ifdef WINDOWS
+				if (inkey_location_key_sequence[1] == 120 &&
+				    inkey_location_key_sequence[2] == 52)
+					/* For values, compare table in inkey_aux() */
+					switch (inkey_location_key_sequence[3]) {
+					case 55: // Pos1
+						ch = -125;
+						break;
+					case 70: // End
+						ch = -126;
+						break;
+					case 66: // Arrow left
+						ch = -127;
+						break;
+					case 56: // Arrow up
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					case 68: // Arrow right
+						ch = -128;
+						break;
+					case 57: // Page up
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					default:
+						/* Unknown sequence, discard */
+						ch = 0;
+					}
+				else if (inkey_location_key_sequence[1] == 120 &&
+				    inkey_location_key_sequence[2] == 53)
+					/* For values, compare table in inkey_aux() */
+					switch (inkey_location_key_sequence[3]) {
+					case 48: // Arrow down
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					case 49: // Page down
+						/* Currently unsupported sequence, discard */
+						ch = 0;
+						break;
+					case 51: // Del
+						ch = -124;
+						break;
+					default:
+						/* Unknown sequence, discard */
+						ch = 0;
+					}
+ #else /* assume POSIX */
 				if (inkey_location_key_sequence[1] == 95 &&
 				    inkey_location_key_sequence[2] == 70 &&
 				    inkey_location_key_sequence[3] == 70 &&
@@ -1447,6 +1506,7 @@ char inkey(void) {
 						/* Unknown sequence, discard */
 						ch = 0;
 					}
+ #endif
 				/* Unknown sequence, discard */
 				else ch = 0;
 			}
@@ -2345,6 +2405,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case 0x7F: /* DEL or ASCII 127 removes the char under cursor */
 #endif
 		case KTRL('D'):
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+		case -124:
+#endif
 			if (k > l) {
 				/* Move the rest of the line one back */
 				for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
@@ -2379,11 +2442,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		/* move by one */
 		case KTRL('A'):
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -127: //inkey_location_keys hack
+#endif
 			if (l > 0) l--;
 			break;
 		case KTRL('S'):
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -128: //inkey_location_keys
+#endif
 			if (l < k) l++;
 			break;
 		/* jump words */
@@ -2417,11 +2484,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 		/* end/begin (pos1) */
 		case KTRL('V'):
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -125: //inkey_location_keys hack
+#endif
 			l = 0;
 			break;
 		case KTRL('B'):
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 		case -126: //inkey_location_keys hack
+#endif
 			l = k;
 			break;
 
