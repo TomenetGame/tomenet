@@ -157,6 +157,7 @@ struct inventory_change_type {
 struct player_type
 {
 	int conn;		/* Connection number */
+	int Ind;
 	const char *name;	/* Nickname */
 	const char *basename;
 	const char *realname;	/* Userid */
@@ -179,6 +180,7 @@ struct player_type
 	s32b turns_online;
 	s32b turns_afk;
 	s32b turns_idle;
+	s32b turns_active;
 
 	hostile_type *hostile;	/* List of players we wish to attack */
 
