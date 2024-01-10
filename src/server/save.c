@@ -1974,22 +1974,29 @@ static void verify_player_activitytime(int Ind) {
 	/* For rollback detection */
 	at_diff = atime - p_ptr->turns_active;
 
+	/* Paranoia - negative difference, shouldn't happen */
+	if (at_diff < 0) {
+		s_printf("Activitytime file (load): WARNING - ignoring -diff for player <%s>: %d (d-savegame~-%02d:%02dh).\n", pname, atime, -at_diff / (cfg.fps * 3600), (-at_diff / (cfg.fps * 60)) % 60);
+		return;
+	}
+
 	//Hm, the save message is omitted as it is spammy; this one isn't, but we still don't really need this info, so just adding the 'if' for it, for important cases...
 	if (at_diff) //only log important occurances
 	s_printf("Activitytime file (load): Read for player <%s>: %d (d-savegame~%02d:%02dh).\n", pname, atime, at_diff / (cfg.fps * 3600), (at_diff / (cfg.fps * 60)) % 60);
+
+	/* If there is a *HUGE* difference, that might also point at turn overflow actually, instead of a rollback.
+	   Turn overflow Can happen every ~13 months at s32b and 60 cfg.fps.
+	   However, note that this time span is actual character _activity_, so it will cover much longer online-time spans.
+	   In that case, we assume that this is the former and adjust the difference. */
+	if (at_diff > cfg.fps * 3600 * 24 * 31 * 3) { // more than 3 months -> assume turn overflow
+		at_diff = 2147483647 - atime + p_ptr->turns_active;
+		s_printf("Probable turns_active overflow. Correcting activity-time discrepancy to %02d:%02dh.\n", at_diff / (cfg.fps * 3600), (at_diff / (cfg.fps * 60)) % 60);
+	}
 
 	if (at_diff) {
 		s32b au;
 		int lv, i;
 		object_type cheque;
-
-		/* If there is a *HUGE* difference, that might also point at 'turn' overflow actually, instead of a rollback.
-		   Turn overflow Can happen every ~4 years at s32b.
-		   In that case, we assume that this is the former and just reset the difference and don't do anything rollback-related. */
-		if (at_diff > cfg.fps * 3600 * 24 * 31) {
-			s_printf("PROBABLE 'turn' OVERFLOW DETECTED. Ignoring activity-time discrepancy.\n");
-			return; // more than a month -> ignore
-		}
 
 		/* Rollback detected! */
 
