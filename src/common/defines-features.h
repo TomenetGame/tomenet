@@ -295,7 +295,7 @@
 #ifdef ENABLE_MERCHANT_MAIL
  //#define MERCHANT_MAIL_INFINITE /* If enabled, it'll bounce forever. [no] */
  #define MAX_MERCHANT_MAILS 100
- /* <this> x (MAX_MERCHANT_MAILS / cfg.fps) seconds  [36 -> 1 min] */
+ /* <this> x (MAX_MERCHANT_MAILS / cfg.fps) seconds  [36 -> 1 min, ie 36*100/60] */
  #define MERCHANT_MAIL_DURATION 36
  #ifdef TEST_SERVER
   #define MERCHANT_MAIL_TIMEOUT 36
