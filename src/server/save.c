@@ -1980,7 +1980,10 @@ static void verify_player_activitytime(int Ind) {
 		/* If there is a *HUGE* difference, that might also point at 'turn' overflow actually, instead of a rollback.
 		   Turn overflow Can happen every ~4 years at s32b.
 		   In that case, we assume that this is the former and just reset the difference and don't do anything rollback-related. */
-		if (at_diff > cfg.fps * 3600 * 24 * 31) return; // more than a month -> ignore
+		if (at_diff > cfg.fps * 3600 * 24 * 31) {
+			s_printf("PROBABLE 'turn' OVERFLOW DETECTED. Ignoring activity-time discrepancy.\n");
+			return; // more than a month -> ignore
+		}
 
 		/* Rollback detected! */
 
