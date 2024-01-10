@@ -3403,6 +3403,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Init only the most basic info */
 	p_ptr->Ind = Ind;
 	p_ptr->version = connp->version;
+	strncpy(p_ptr->accountname, accname, ACCNAME_LEN - 1); /* Note: length check is not required, as all names are already capped in Contact() */
+	p_ptr->accountname[ACCNAME_LEN - 1] = 0;
 
 	/* Receive info found in PKT_SCREEN_DIM otherwise */
 	p_ptr->screen_wid = connp->Client_setup.screen_wid;

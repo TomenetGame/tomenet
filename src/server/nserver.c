@@ -939,6 +939,7 @@ static bool forbidden_name(char *cname) {
 
 static void Trim_name(char *nick_name) {
 	char *ptr;
+
 	/* spaces at the beginning are impossible thanks to Check_names */
 	/* remove spaces at the end */
 	for (ptr = &nick_name[strlen(nick_name)]; ptr-- > nick_name; ) {
@@ -3078,13 +3079,16 @@ static int Handle_login(int ind) {
 	}
 	p_ptr = Players[NumPlayers + 1];
 	p_ptr->Ind = NumPlayers + 1;
+
+	/* Note: length checks are not required, as all names are already capped in Contact() */
 	strncpy(p_ptr->realname, connp->real, REALNAME_LEN - 1);
 	p_ptr->realname[REALNAME_LEN - 1] = 0;
 	strncpy(p_ptr->hostname, connp->host, HOSTNAME_LEN - 1); /* cap ridiculously long hostnames - C. Blue */
 	p_ptr->hostname[HOSTNAME_LEN - 1] = 0;
-	strncpy(p_ptr->accountname, connp->nick, ACCNAME_LEN - 1);
+	strncpy(p_ptr->accountname, connp->nick, ACCNAME_LEN - 1); /* accountname is now already copied in player_birth(), could be removed here */
 	p_ptr->accountname[ACCNAME_LEN - 1] = 0;
 	strcpy(p_ptr->addr, connp->addr);
+
 	p_ptr->version = connp->version; /* this actually copies the extended version structure */
 	p_ptr->v_unknown = is_newer_than(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, !VERSION_BUILD ? 1 : VERSION_BUILD); /* +1: account for 'test' client! */
 	p_ptr->v_test_latest = is_same_as(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, !VERSION_BUILD ? 1 : VERSION_BUILD);
