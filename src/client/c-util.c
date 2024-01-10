@@ -778,6 +778,10 @@ static char inkey_aux(void) {
 
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
+#if 1
+//if (ch)
+//c_msg_format("ch=%d", ch);
+#endif
 
 			//Linux/X11:
 			//up:		31,95,70,70,53,50,13

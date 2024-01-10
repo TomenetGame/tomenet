@@ -148,10 +148,12 @@
 #endif
 
 /* death_type definitions */
+#define DEATH_NONE	-1 /* no death set yet (init state) */
 #define DEATH_PERMA	0
 #define DEATH_INSANITY	1
 #define DEATH_GHOST	2
-#define DEATH_QUIT	3 /* suicide/retirement */
+#define DEATH_QUIT_SUI	3 /* suicide */
+#define DEATH_QUIT_RET	4 /* retirement */
 
 
 /* If during certain events, remember his/her account ID, for handing out a reward
@@ -173,13 +175,13 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 		switch (p_ptr->global_event_type[j]) {
 		case GE_HIGHLANDER:
 			if (p_ptr->global_event_progress[j][0] < 5) break; /* only rewarded if already in deathmatch phase! */
-			if (death_type >= DEATH_QUIT) break; /* no reward for suiciding! */
+			if (death_type == DEATH_QUIT_SUI || death_type == DEATH_QUIT_RET) break; /* no reward for suiciding! */
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
 			return;
 		case GE_DUNGEON_KEEPER:
 			if (p_ptr->global_event_progress[j][0] < 1) break; /* only rewarded if actually already in the labyrinth! */
-			if (death_type >= DEATH_QUIT) break; /* no reward for suiciding! */
+			if (death_type == DEATH_QUIT_SUI || death_type == DEATH_QUIT_RET) break; /* no reward for suiciding! */
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
 			return;
@@ -8590,7 +8592,7 @@ void merchant_mail_death(const char pname[CNAME_LEN]) {
 }
 #endif
 
-/* Deletes a ghost-dead player, cleans up his business, and disconnects him.
+/* Deletes a ghost-dead player, cleans up his business, sends chardump info and disconnects him.
    static_floor: TRUE if player ghost-dies or his ghost is destroyed.
                  FALSE for non-final death or suicide.
    NOTE:
@@ -8731,19 +8733,26 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		C_KILL(id_list, ids, int);
 	}
 
-
 	/* Remove him from the player name database */
 	delete_player_name(p_ptr->name);
 
 	/* Put him on the high score list */
-	if (!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
-		add_high_score(Ind);
+	if (!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING))) add_high_score(Ind);
 
 	/* Format string for death reason */
-	if (death_type == DEATH_QUIT) strcpy(buf, "Committed suicide");
+	if (death_type == DEATH_QUIT_SUI) strcpy(buf, "Committed suicide");
+	else if (death_type == DEATH_QUIT_RET) strcpy(buf, "Retired");
 	else if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 		snprintf(buf, sizeof(buf), "Killed by %s (%d pts)", p_ptr->really_died_from, total_points(Ind));
 	else snprintf(buf, sizeof(buf), "Killed by %s (%d pts)", p_ptr->died_from, total_points(Ind));
+
+	/* NOTE: Net_output1() can possibly result in a "write error" if something is wrong with the player's connection.
+	   The write error would excise him from the player database prematurely, so Ind indices would shift.
+	   For that reason, there must NOT be any more operations on Ind of this player after this, or a wrong player
+	   might get affected instead! - C. Blue */
+	if (death_type == DEATH_GHOST) Send_chardump(Ind, "-ghost");
+	else Send_chardump(Ind, "-death");
+	Net_output1(Ind);
 
 	/* Get rid of him */
 	Destroy_connection(p_ptr->conn, buf);
@@ -9040,12 +9049,11 @@ void player_death(int Ind) {
 	//wilderness_type *wild;
 	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity"), penalty = FALSE;
 	char titlebuf[160];
-	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
+	int death_type = DEATH_NONE; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 #ifdef TOMENET_WORLDS
 	bool world_broadcast = TRUE;
 #endif
 	bool just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
-	bool retire = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 	object_type *inventory_copy = C_NEW(INVEN_TOTAL, object_type);
 
@@ -9970,7 +9978,7 @@ void player_death(int Ind) {
 			//todo: use 'died_from' (insanity-blinking-style):
 			msg_format(Ind, "\374\377%c**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377%c**", msg_layout, msg_layout);
 
-s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+			s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 
 			if (cfg.unikill_format)
 			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
@@ -9980,12 +9988,8 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
-			death_type = DEATH_INSANITY;
-			if (p_ptr->ghost) {
-				death_type = DEATH_GHOST;
-				Send_chardump(Ind, "-ghost");
-			} else Send_chardump(Ind, "-death");
-			Net_output1(Ind);
+			if (p_ptr->ghost) death_type = DEATH_GHOST;
+			else death_type = DEATH_INSANITY;
 		} else if (p_ptr->ghost) {
 			/* Tell him */
 			msg_format(Ind, "\374\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
@@ -10000,13 +10004,12 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 #endif
 
 #ifdef ENABLE_SUBCLASS_TITLE
-if (p_ptr->sclass) {
-	s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; subclass=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, class_info[p_ptr->sclass - 1].title, p_ptr->deaths);
-} else {
-	s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
-}
+			if (p_ptr->sclass)
+				s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; subclass=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, class_info[p_ptr->sclass - 1].title, p_ptr->deaths);
+			else
+				s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 #else
-s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+			s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 #endif
 
 			if (cfg.unikill_format) {
@@ -10118,11 +10121,9 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really killed and destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
-s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n", pvp ? "PVP" : "NOGHOST", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+			s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n", pvp ? "PVP" : "NOGHOST", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 
 			death_type = DEATH_PERMA;
-			Send_chardump(Ind, "-death");
-			Net_output1(Ind);
 		}
 #ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
@@ -10349,9 +10350,8 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an Iron Champion\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
 		s_printf("%s%s - %s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
-		retire = TRUE;
-		death_type = DEATH_QUIT;
-s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+		death_type = DEATH_QUIT_RET;
+		s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	}
 	else if (!p_ptr->total_winner) {
 		/* assume newb_suicide option for world broadcasts */
@@ -10366,8 +10366,8 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 			s_printf("%s - %s (%d%s) committed pvp-suicide.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : "")); /* just so the death-log script won't trigger on 'committed suicide' */
 		else
 			s_printf("%s - %s (%d%s) committed suicide.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
-		death_type = DEATH_QUIT;
-s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+		death_type = DEATH_QUIT_SUI;
+		s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	} else {
 		if (in_valinor(&p_ptr->wpos)) {
 			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s (%d) has retired to the shores of valinor.", p_ptr->name, p_ptr->lev);
@@ -10377,13 +10377,12 @@ s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deat
 			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
 		s_printf("%s%s - %s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
-		retire = TRUE;
-		death_type = DEATH_QUIT;
-s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+		death_type = DEATH_QUIT_RET;
+		s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	}
 
 	if (is_admin(p_ptr)) {
-		if (death_type == -1) snprintf(buf, sizeof(buf), "\376\377D%s enters a ghostly state.", p_ptr->name);
+		if (death_type == DEATH_NONE) snprintf(buf, sizeof(buf), "\376\377D%s enters a ghostly state.", p_ptr->name);
 		else snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
 	}
 
@@ -10391,7 +10390,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	/* handle the secret_dungeon_master option */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 		/* handle newbie suicide option by manually doing 'msg_broadcast': */
-		if (death_type == DEATH_QUIT) {
+		if (death_type == DEATH_QUIT_SUI || death_type == DEATH_QUIT_RET) { //as if retirement... impossible, as you cannot king at max_plv 1.
 			/* Tell every player */
 			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -10435,12 +10434,6 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 		/* prevent suicide spam, if set in cfg */
 		check_roller(Ind);
-
-		if (!p_ptr->ghost) {
-			if (retire) Send_chardump(Ind, "-retirement");
-			else Send_chardump(Ind, "-death");
-			Net_output1(Ind);
-		}
 
 		erase_player(Ind, death_type, FALSE);
 
