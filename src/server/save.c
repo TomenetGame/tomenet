@@ -1793,10 +1793,16 @@ static bool save_player_activitytime(int Ind, char *pname) {
 			at[1] = ((Players[Ind]->turns_active >> 8) & 0xFF);
 			at[2] = ((Players[Ind]->turns_active >> 16) & 0xFF);
 			at[3] = ((Players[Ind]->turns_active >> 24) & 0xFF);
-			write(fd, at, 4);
+			if (write(fd, at, 4) != 4) {
+				ok = FALSE;
+				s_printf("Activitytime file (save): Failed to write() for player <%s>.\n", pname);
+			}
 
 			/* Attempt to close it */
-			if (my_fclose(fff)) ok = FALSE;
+			if (my_fclose(fff)) {
+				ok = FALSE;
+				s_printf("Activitytime file (save): Failed to close file for player <%s>.\n", pname);
+			}
 
 			/* Free the buffer */
 			C_FREE(fff_buf, MAX_BUF_SIZE, char);
@@ -1809,7 +1815,7 @@ static bool save_player_activitytime(int Ind, char *pname) {
 			/* Remove "broken" files */
 			(void)fd_kill(name);
 
-			s_printf("Activitytime file (save): Failed to save for player <%s>.\n", pname);
+			s_printf("Activitytime file (save): Failed to open file for player <%s>.\n", pname);
 		}
 	} else {
 		ok = FALSE;
