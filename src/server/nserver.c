@@ -955,6 +955,7 @@ static void Trim_name(char *nick_name) {
 
 /* verify that account, user, host name are valid,
    and that we're resuming from the same IP address if we're resuming  */
+#define ALLOW_RESUMING_FROM_NEW_IP
 static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume) {
 	player_type *p_ptr = NULL;
 	connection_t *connp = NULL;
@@ -971,13 +972,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn != NOT_CONNECTED ) {
 				p_ptr = Players[i];
-				/*
-				 * FIXME: p_ptr->name is character name while nick_name is
-				 * account name, so this check always fail.  Evileye? :)
-				 */
-				if (strcasecmp(p_ptr->name, nick_name) == 0) {
-					/*plog(format("%s %s", Players[i]->name, nick_name));*/
-
+				if (!strcasecmp(p_ptr->name, nick_name)) {
 					/* The following code allows you to "override" an
 					 * existing connection by connecting again  -Crimson */
 
@@ -992,15 +987,29 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 					 * in 'character edit' mode		- Jir -
 					 */
 
+					if (cfg.runlevel == 1024) return(E_CLOSED); /* Server is set to sc_shutdown(), until then not accepting new connections? */
+
 					/* resume connection at this point is not compatible
 					   with multicharacter accounts */
-					if (!strcasecmp(p_ptr->realname, real_name) &&
-					    //!strcasecmp(p_ptr->accountname, acc_name) &&  --not needed, can't access nick_name from different account
-					    !strcasecmp(p_ptr->addr, addr) && cfg.runlevel != 1024) {
-						s_printf("%s %s\n", p_ptr->realname, p_ptr->addr);
+					if (TRUE
+#if 0 /* E_IN_USE_PC: Only exists on POSIX, while realname is 'PLAYER' on WINDOWS always, so don't give POSIX players a disadvantage here */
+					    && !strcasecmp(p_ptr->realname, real_name)
+#endif
+#ifndef ALLOW_RESUMING_FROM_NEW_IP
+					    //&& !strcasecmp(p_ptr->accountname, acc_name) &&  --not needed, can't access nick_name from different account
+					    && !strcasecmp(p_ptr->addr, addr)
+#endif
+					    ) {
+						s_printf("Resuming connection for: <%s> <%s@%s>\n", p_ptr->name, p_ptr->realname, p_ptr->addr);
+#ifndef ALLOW_RESUMING_FROM_NEW_IP
 						Destroy_connection(p_ptr->conn, "resume connection");
+#else
+						Destroy_connection(p_ptr->conn, format("resume connection%s", strcasecmp(p_ptr->addr, addr) ? " (new ip)" : ""));
+#endif
 					}
+#ifndef ALLOW_RESUMING_FROM_NEW_IP
 					else if (!strcasecmp(p_ptr->addr, addr)) return(E_IN_USE_PC);
+#endif
 					else return(E_IN_USE);
 				}
 
@@ -4942,13 +4951,16 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, format("Account and character names must be at least 2 characters long.", ACC_CHAR_MIN_LEN));
 				break;
 			case E_IN_USE_PC:
-				Destroy_connection(ind, "You are still logged in from another PC. Please wait 30 seconds and try again.");
+				Destroy_connection(ind, "You are still logged in by another PC user. Please wait 30 seconds and try again.");
 				break;
 			case E_IN_USE_DUP:
 				Destroy_connection(ind, "You are already logging in from another instance of the game.");
 				break;
 			case E_IN_USE:
 				Destroy_connection(ind, "Login not possible because you are still logged in from another IP address.");
+				break;
+			case E_CLOSED:
+				Destroy_connection(ind, "Server is closed for pending shutdown, please try again after it restarted.");
 				break;
 			default:
 				Destroy_connection(ind, "Security violation");

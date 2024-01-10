@@ -3888,10 +3888,10 @@ void client_init(char *argv1, bool skip) {
 				quit("Sorry, the game is full.  Try again later.");
 				break;
 			case E_IN_USE:
-				quit("That nickname is already in use. If it is your nickname, wait 30 seconds and try again.");
+				quit("Login not possible because you are still logged in from another IP address.");
 				break;
 			case E_IN_USE_PC:
-				quit("You are still logged in from another PC. Please wait 30 seconds and try again.");
+				quit("You are still logged in by another PC user. Please wait 30 seconds and try again.");
 				break;
 			case E_IN_USE_DUP:
 				quit("You are already logging in from another instance of the game.");
@@ -3908,6 +3908,9 @@ void client_init(char *argv1, bool skip) {
 				break;
 			case E_BANNED:
 				quit("You are temporarily banned from connecting to this server!");
+				break;
+			case E_CLOSED:
+				quit("Server is closed for pending shutdown, please try again after it restarted.");
 				break;
 			default:
 				quit(format("Connection failed with status %d.", status));
