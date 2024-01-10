@@ -1064,6 +1064,16 @@ bool process_player_name(int Ind, bool sf) {
 }
 
 
+static void handle_kingly(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	/* Retirement in Valinor? - C. Blue :) */
+	if (in_valinor(&p_ptr->wpos)) kingly(Ind, 2);
+	else if (p_ptr->total_winner) {
+		if (p_ptr->iron_winner) kingly(Ind, 4);
+		else kingly(Ind, 1);
+	} else if (p_ptr->iron_winner) kingly(Ind, 3);
+}
 
 /*
  * Hack -- commit suicide
@@ -1092,12 +1102,7 @@ void do_cmd_suicide(int Ind) {
 	/* Hack -- clear ghost */
 	p_ptr->ghost = 0;
 
-	if (p_ptr->total_winner) {
-		if (p_ptr->iron_winner) kingly(Ind, 4);
-		else kingly(Ind, 1);
-	} else if (p_ptr->iron_winner) kingly(Ind, 3);
-	/* Retirement in Valinor? - C. Blue :) */
-	if (in_valinor(&p_ptr->wpos)) kingly(Ind, 2);
+	handle_kingly(Ind);
 
 	/* Kill him */
 	p_ptr->deathblow = 0;
@@ -1825,7 +1830,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 
 	high_score the_score;
 
-	char out_val[256];
+	char out_val[256], out_val2[256], out_val_floor[20];
 
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
@@ -1979,46 +1984,29 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		/* Dump the first line */
 		fprintf(fff, "%s\n", out_val);
 
+		/* Prepare 2nd line for next info: What floor we stopped on, max floor reached, extra info (killed Morgoth or not) */
+		if (!strcasecmp(the_score.how, "*Winner*")) { /* Valinor - omit showing current dungeon level */
+			cdun = 0; //hack: "town"
+			strcpy(out_val_floor, "in Valinor");
+		} else strcpy(out_val_floor, "in town");
+		snprintf(out_val2, sizeof(out_val2),
+		    "%s%s%s", cdun ? format(
+		    "               on %s %d",
+		    wilderness ? "wilderness level" : "dungeon level", cdun) : format(
+		    "               %s", out_val_floor),
+		    mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+
 		/* Another line of info */
 		if (strcasecmp(the_score.how, "Winner") && strcasecmp(the_score.how, "*Winner*") && strcasecmp(the_score.how, "Iron Champion") && strcasecmp(the_score.how, "Iron Emperor"))
-			snprintf(out_val, sizeof(out_val),
-				"               Killed by %s\n"
-				"               on %s %d%s%s",
-				the_score.how, wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+			snprintf(out_val, sizeof(out_val), "               Killed by %s\n%s", the_score.how, out_val2);
 		else if (!strcasecmp(the_score.how, "Winner"))
-			snprintf(out_val, sizeof(out_val),
-				"               \377vRetired after a legendary career\n"
-				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+			snprintf(out_val, sizeof(out_val), "               \377vRetired after a legendary career\n%s", out_val2);
 		else if (!strcasecmp(the_score.how, "*Winner*"))
-			snprintf(out_val, sizeof(out_val),
-				"               \377vRetired on the shores of Valinor\n"
-				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+			snprintf(out_val, sizeof(out_val), "               \377vRetired on the shores of Valinor\n%s", out_val2);
 		else if (!strcasecmp(the_score.how, "Iron Champion"))
-			snprintf(out_val, sizeof(out_val),
-				"               \377sRetired Iron Champion\n"
-				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+			snprintf(out_val, sizeof(out_val), "               \377sRetired Iron Champion\n%s", out_val2);
 		else if (!strcasecmp(the_score.how, "Iron Emperor"))
-			snprintf(out_val, sizeof(out_val),
-				"               \377vRetired from the Iron Throne\n"
-				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
-
-		/* Hack -- some people die in the town */
-		if (!cdun)
-		{
-			/* (can't be in Valinor while we're in town, can we) */
-			if (strcasecmp(the_score.how, "Winner"))
-				snprintf(out_val, sizeof(out_val),
-					"               Killed by %s\n"
-					"               in town%s",
-					the_score.how, mdun > cdun ? format(" (max %d)", mdun) : "");
-			else
-				snprintf(out_val, sizeof(out_val),
-					"               \377vRetired after a legendary career\n"
-					"               in town%s", mdun > cdun ? format(" (max %d)", mdun) : "");
-		}
-
-		/* Append a "maximum level" */
-		//if (mdun > cdun) strcat(out_val, format(" (max %d)", mdun));
+			snprintf(out_val, sizeof(out_val), "               \377vRetired from the Iron Throne\n%s", out_val2);
 
 		/* Dump the info */
 		fprintf(fff, "%s\n", out_val);
@@ -2345,9 +2333,7 @@ void close_game(void) {
 		/* Handle death */
 		if (p_ptr->death) {
 			/* Handle retirement */
-		        /* Retirement in Valinor? - C. Blue :) */
-			if (in_valinor(&p_ptr->wpos)) kingly(i, 2);
-			else if (p_ptr->total_winner) kingly(i, 1);
+			handle_kingly(i);
 
 			/* Save memories */
 			if (!save_player(i)) msg_print(i, "death save failed!");
