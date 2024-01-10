@@ -8601,7 +8601,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
 	char buf[1024];
 	int i, k;
-	int *id_list, ids;
+	int *id_list, ids, pid = p_ptr->id;
 	global_event_type *ge;
 
 	/* Remove ID from any ongoing events in case a new/same player takes ID */
@@ -8753,6 +8753,8 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	if (death_type == DEATH_GHOST) Send_chardump(Ind, "-ghost");
 	else Send_chardump(Ind, "-death");
 	Net_output1(Ind);
+	/* Catch connection destruction from Net_output1(): */
+	if (p_ptr->id != pid) return; /* Already destroyed, don't destroy another (wrong) player's connection! */
 
 	/* Get rid of him */
 	Destroy_connection(p_ptr->conn, buf);
