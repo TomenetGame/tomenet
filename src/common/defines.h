@@ -1618,6 +1618,7 @@
 #define SPECIAL_FILE_TRAP		14
 #define SPECIAL_FILE_RECALL		15
 #define SPECIAL_FILE_MOTD2		16
+#define SPECIAL_FILE_EXTRAINFO		17	/* Same as /ex command, just as a file to browse -- not implemented */
 
 
 /*

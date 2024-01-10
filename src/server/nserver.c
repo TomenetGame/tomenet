@@ -12977,6 +12977,11 @@ static int Receive_special_line(int ind) {
 		case SPECIAL_FILE_RECALL:
 			do_cmd_knowledge_dungeons(player);
 			break;
+#if 0 //not implemented
+		case SPECIAL_FILE_EXTRAINFO:
+			do_cmd_check_extra_info(player);
+			break;
+#endif
 		}
 	}
 

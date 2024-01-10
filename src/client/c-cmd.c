@@ -4306,7 +4306,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 /* Added based on cmd_the_guide() to similarly browse the client-side spoiler files. - C. Blue
    Remember things such as last line visited, last search term.. for up to this - 1 different fixed files (0 is reserved for 'not saved'). */
 #define MAX_REMEMBERANCE_INDICES 11
-void browse_local_file(char* fname, int rememberance_index) {
+void browse_local_file(const char* angband_path, char* fname, int rememberance_index) {
 	static int line_cur[MAX_REMEMBERANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBERANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBERANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBERANCE_INDICES] = { -1 };
 	static char lastsearch[MAX_REMEMBERANCE_INDICES][MAX_CHARS] = { 0 };
 
@@ -4346,7 +4346,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 	}
 
 	file_lastline[rememberance_index] = -1; //always try anew if the file is valid
-	path_build(path, 1024, ANGBAND_DIR_GAME, fname);
+	path_build(path, 1024, angband_path, fname);
 
 	/* init the file */
 	errno = 0;
@@ -6345,34 +6345,34 @@ static void cmd_spoilers(void) {
 
 		switch (i) {
 		case 'k':
-			browse_local_file("k_info.txt", 1);
+			browse_local_file(ANGBAND_DIR_GAME, "k_info.txt", 1);
 			break;
 		case 'e':
-			browse_local_file("e_info.txt", 2);
+			browse_local_file(ANGBAND_DIR_GAME, "e_info.txt", 2);
 			break;
 		case 'r':
-			browse_local_file("r_info.txt", 3);
+			browse_local_file(ANGBAND_DIR_GAME, "r_info.txt", 3);
 			break;
 		case 'E':
-			browse_local_file("re_info.txt", 4);
+			browse_local_file(ANGBAND_DIR_GAME, "re_info.txt", 4);
 			break;
 		case 'a':
-			browse_local_file("a_info.txt", 5);
+			browse_local_file(ANGBAND_DIR_GAME, "a_info.txt", 5);
 			break;
 		case 'v':
-			browse_local_file("v_info.txt", 6);
+			browse_local_file(ANGBAND_DIR_GAME, "v_info.txt", 6);
 			break;
 		case 'd':
-			browse_local_file("d_info.txt", 7);
+			browse_local_file(ANGBAND_DIR_GAME, "d_info.txt", 7);
 			break;
 		case 'f':
-			browse_local_file("f_info.txt", 8);
+			browse_local_file(ANGBAND_DIR_GAME, "f_info.txt", 8);
 			break;
 		case 't':
-			browse_local_file("tr_info.txt", 9);
+			browse_local_file(ANGBAND_DIR_GAME, "tr_info.txt", 9);
 			break;
 		case 's':
-			browse_local_file("st_info.txt", 10);
+			browse_local_file(ANGBAND_DIR_GAME, "st_info.txt", 10);
 			break;
 		case KTRL('Q'):
 			i = ESCAPE;
@@ -6389,6 +6389,143 @@ static void cmd_spoilers(void) {
 			bell();
 		}
 	}
+}
+
+#include <dirent.h> /* for cmd_notes() */
+static void cmd_notes(void) {
+	static int y = 0, j_sel = 0;
+	int i = 0, d, vertikal_offset = 3, horiz_offset = 5;
+	int row, col = 3;
+
+	char ch = 0;
+	bool inkey_msg_old;
+
+	char notes_fname[1024][MAX_CHARS], path[1024];
+	int notes_files = 0;
+	char tmp_name[256];
+
+	DIR *dir;
+	struct dirent *ent;
+
+
+	Term_clear();
+	topline_icky = TRUE;
+
+	/* read all locally available fonts */
+	path_build(path, 1024, ANGBAND_DIR_USER, "");
+	if (!(dir = opendir(path))) {
+		c_msg_format("Couldn't open user directory (%s).", path);
+		return;
+	}
+
+	while ((ent = readdir(dir))) {
+		c_msg_format("found %s", tmp_name);
+		strcpy(tmp_name, ent->d_name);
+		if (!strncmp(tmp_name, "notes-", 6)) {
+			c_msg_print("  ADDED");
+			strcpy(notes_fname[notes_files], tmp_name);
+			notes_files++;
+		}
+	}
+	closedir(dir);
+
+	/* suppress hybrid macros */
+	inkey_msg_old = inkey_msg;
+	inkey_msg = TRUE;
+
+	while (ch != ESCAPE) {
+		Term_putstr(0,  0, -1, TERM_BLUE, "Browse notes-*.txt files (in TomeNET's lib/user folder)");
+
+		row = 1;
+		if (!notes_files) Term_putstr(col, row++, -1, TERM_WHITE, format("You have not receveid any notes yet. (To write a note, use the \377y/note\377w command.)"));
+		else {
+			//Term_putstr(col, row++, -1, TERM_WHITE, format("Found %d notes-files from other players (Press \377yENTER\377w to browse selected):", notes_files));
+			Term_putstr(col, row++, -1, TERM_WHITE, format("Found %d notes-files from other players:", notes_files));
+			Term_putstr(col, row++, -1, TERM_WHITE, "\377ydirectional keys\377w navigate, \377ys\377w search, \377yESC\377w leave, \377BRETURN\377w browse");
+		}
+
+		/* Display the notes */
+		for (i = y - 10 ; i <= y + 10 ; i++) {
+			if (i < 0 || i >= notes_files) {
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                          ");
+				continue;
+			}
+
+			if (i == y) j_sel = i;
+
+			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, format("  %3d", i + 1));
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                   ");
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, TERM_WHITE, notes_fname[i]);
+		}
+
+		/* display static selector */
+		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
+
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		/* Hack to disable macros: Macros on SHIFT+X for example prohibits 'X' menu choice here.. */
+		ch = inkey();
+		/* ..and reenable macros right away again, so navigation via arrow keys works. */
+
+		switch (ch) {
+		case '\n': case '\r':
+			browse_local_file(ANGBAND_DIR_USER, notes_fname[j_sel], 0);
+			break;
+		case KTRL('Q'):
+			i = ESCAPE;
+			/* fall through */
+		case ESCAPE:
+			break;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????", FALSE);
+			break;
+		case ':':
+			cmd_message();
+			break;
+		case 's': /* Search for receipient name */
+			{
+			char searchstr[MAX_CHARS] = { 0 };
+
+			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) note receipient name: ");
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			if (!searchstr[0]) break;
+
+			for (i = 0; i < notes_files; i++)
+				if (my_strcasestr(notes_fname[i], searchstr)) break;
+			if (i < notes_files) j_sel = y = i;
+			break;
+			}
+		case '9':
+		case 'p':
+			y = (y - 10 + notes_files) % notes_files;
+			break;
+		case '3':
+		case ' ':
+			y = (y + 10 + notes_files) % notes_files;
+			break;
+		case '1':
+			y = notes_files - 1;
+			break;
+		case '7':
+			y = 0;
+			break;
+		case '8':
+		case '2':
+			d = keymap_dirs[ch & 0x7F];
+			y = (y + ddy[d] + notes_files) % notes_files;
+			break;
+		case '\010':
+			y = (y - 1 + notes_files) % notes_files;
+			break;
+		default:
+			bell();
+		}
+	}
+
+	inkey_msg = inkey_msg_old;
+	Term_clear();
 }
 
 /*
@@ -6466,13 +6603,14 @@ void cmd_check_misc(void) {
 			Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yi\377w) Server settings");
 			Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377yj\377w) Message history");
 			Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377yk\377w) Chat history");
-			row += 6;
+			row += 5;
 
-			Term_putstr( 5, row, -1, TERM_WHITE, "(\377y?\377w) Help");
-			Term_putstr(40, row, -1, TERM_WHITE, "(\377yg\377w) The Guide");
-			Term_putstr( 5, row + 1, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat for extra info)");
-			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yl\377w) Spoiler files (in lib/game)");
-			row += 3;
+			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377y?\377w) Help");
+			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yg\377w) The Guide (also use \377y/?\377w)");
+			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yx\377w) Extra info (same as \377y/ex\377w)");
+			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yl\377w) Spoiler files (in lib/game)");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yn\377w) Notes you received from others");
+			row += 4;
 
 			/* Folders */
 			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UT\377w) Open program folder");
@@ -6638,6 +6776,14 @@ void cmd_check_misc(void) {
 			break;
 		case 'l':
 			cmd_spoilers();
+			redraw = TRUE;
+			break;
+		case 'x':
+			//Send_special_line(SPECIAL_FILE_EXTRAINFO, 0, ""); --not implemented
+			Send_msg("/ex");
+			break;
+		case 'n':
+			cmd_notes();
 			redraw = TRUE;
 			break;
 		case KTRL('Q'):
