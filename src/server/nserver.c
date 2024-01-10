@@ -895,12 +895,12 @@ static bool forbidden_name(char *cname) {
 #endif
 	if (!strcmp(name, "indetermination")) return(TRUE);
 	if (!strcmp(name, "life draining")) return(TRUE);
-	if (!strcmp(name, "Quitting")) return(TRUE);
-	if (!strcmp(name, "Interrupting")) return(TRUE);
+	if (!strcmp(name, "quitting")) return(TRUE);
+	if (!strcmp(name, "interrupting")) return(TRUE);
 	/* not that important (just for in-game death msg design) */
-	if (strstr(name, "Farmer Maggot's dog")) return(TRUE);
-	if (!strcmp(name, "Morgoth, Lord of Darkness")) return(TRUE);
-	if (!strcmp(name, "It")) return(TRUE); //only for log file actually?
+	if (strstr(name, "farmer maggot's dog")) return(TRUE);
+	if (!strcmp(name, "morgoth, lord of darkness")) return(TRUE);
+	if (!strcmp(name, "it")) return(TRUE); //only for log file actually?
 	if (!strcmp(name, "starvation")) return(TRUE);
 	if (!strcmp(name, "poisonous food")) return(TRUE);
 	/* ..and there are a couple of unimportant death causes, which aren't checked, just set. */
@@ -912,8 +912,10 @@ static bool forbidden_name(char *cname) {
 	if (!strcmp(name, "irc")) return(TRUE);
 
 //ENABLE_GO_GAME - don't allow posing as one of the AI players
-	if (strstr(name, " (AI)")) return(TRUE);
-	if (strstr(name, "Godalf, The ")) return(TRUE);
+	if (strstr(name, " (ai)")) return(TRUE);
+	if (strstr(name, "godalf, The ")) return(TRUE);
+
+	if (strstr(name, ".activitytime")) return(TRUE); /* For automatic rollback playtime loss detection */
 
 
 	path_build(path_buf, 1024, ANGBAND_DIR_CONFIG, "badnames.txt");
