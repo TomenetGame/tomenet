@@ -1927,7 +1927,7 @@ static bool file_exist(char *buf) {
    For this to work, it's important that in case of rollback, the existing .activitytime files must NOT be overwritten. */
 static void verify_player_activitytime(int Ind) {
 	int fd = -1;
-	char name[CNAME_LEN + 13], pname[CNAME_LEN];
+	char name[1024], pname[CNAME_LEN];
 	unsigned char at[4];
 	s32b atime = 0, at_diff;
 	player_type *p_ptr = Players[Ind];
