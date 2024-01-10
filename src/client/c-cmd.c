@@ -4317,6 +4317,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, *buf2ptr;
 	char path[1024], bufdummy[MAX_CHARS + 1];
 	FILE *fff;
+	byte attr;
 
 	int i;
 	char *res;
@@ -4382,8 +4383,14 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 
 	while (TRUE) {
 		if (!skip_redraw) Term_clear();
-		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, (file_lastline[rememberance_index] - line_cur[rememberance_index]) + 1, file_lastline[rememberance_index] + 1));
-		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[rememberance_index] + 1, file_lastline[rememberance_index] + 1));
+
+		if (line_cur[rememberance_index] == file_lastline[rememberance_index] - maxlines
+		    || file_lastline[rememberance_index] < maxlines)
+			attr = TERM_ORANGE;
+		else attr = TERM_L_BLUE;
+
+		if (backwards) Term_putstr(23,  0, -1, attr, format("[%s - line %5d of %5d]", fname, (file_lastline[rememberance_index] - line_cur[rememberance_index]) + 1, file_lastline[rememberance_index] + 1));
+		else Term_putstr(23,  0, -1, attr, format("[%s - line %5d of %5d]", fname, line_cur[rememberance_index] + 1, file_lastline[rememberance_index] + 1));
 #ifdef REGEX_SEARCH
 		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,#:src,nx,pv,mark,rs,chpt,line");
 #else
