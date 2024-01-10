@@ -1965,6 +1965,7 @@ extern int gettown(int Ind);
 extern void merchant_mail_delivery(int Ind);
 extern bool merchant_mail_carry(int Ind, int i);
 #endif
+void ps_set_cheque_value(object_type *o_ptr, u32b value);
 
 /* util.c */
 extern bool suppress_message, suppress_boni;

@@ -7773,7 +7773,7 @@ u32b ps_get_cheque_value(object_type *o_ptr) {
 }
 
 /* Set 4-Byte cheque value from 4 Bytes xtra1..xtra4 - C. Blue */
-static void ps_set_cheque_value(object_type *o_ptr, u32b value) {
+void ps_set_cheque_value(object_type *o_ptr, u32b value) {
 	o_ptr->xtra1 = value & 0xFF;
 	o_ptr->xtra2 = (value & 0xFF00) >> 8;
 	o_ptr->xtra3 = (value & 0xFF0000) >> 16;

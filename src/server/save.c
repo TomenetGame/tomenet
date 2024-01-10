@@ -1711,14 +1711,11 @@ static bool save_player_aux(int Ind, char *name) {
 	int fd = -1;
 	int mode = 0644;
 
-
 	/* No file yet */
 	fff = NULL;
 
-
 	/* File type is "SAVE" */
 	FILE_TYPE(FILE_TYPE_SAVE);
-
 
 	/* Create the savefile */
 	fd = fd_make(name, mode);
@@ -1751,15 +1748,75 @@ static bool save_player_aux(int Ind, char *name) {
 		if (!ok) (void)fd_kill(name);
 	}
 
-
 	/* Failure */
 	if (!ok) return(FALSE);
 
-	/* Successful save */
-	/*server_saved = TRUE;*/
-
 	/* Success */
 	return(TRUE);
+}
+
+static bool save_player_activitytime(int Ind, char *pname) {
+	bool ok = TRUE;
+	int fd = -1;
+	int mode = 0644;
+	char name[1024], at[4];
+
+	/* No file yet */
+	fff = NULL;
+
+	/* File type is "SAVE" */
+	FILE_TYPE(FILE_TYPE_SAVE);
+
+	strcpy(name, format("%s.activitytime", pname));
+
+	/* Create the savefile */
+	fd_kill(name); //remove existing one first
+	fd = fd_make(name, mode);
+
+	/* File is okay */
+	if (fd >= 0) {
+		/* Close the "fd" */
+		(void)fd_close(fd);
+
+		/* Open the savefile */
+		fff = my_fopen(name, "wb");
+
+		/* Successful open */
+		if (fff) {
+			/* Allocate a buffer */
+			fff_buf = C_NEW(MAX_BUF_SIZE, char);
+			fff_buf_pos = 0;
+
+			/* Write the savefile */
+			//wr_s32b(Players[Ind]->turns_active);
+			at[0] = (Players[Ind]->turns_active & 0xFF);
+			at[1] = ((Players[Ind]->turns_active >> 8) & 0xFF);
+			at[2] = ((Players[Ind]->turns_active >> 16) & 0xFF);
+			at[3] = ((Players[Ind]->turns_active >> 24) & 0xFF);
+			write(fd, at, 4);
+
+			/* Attempt to close it */
+			if (my_fclose(fff)) ok = FALSE;
+
+			/* Free the buffer */
+			C_FREE(fff_buf, MAX_BUF_SIZE, char);
+
+			//spammy, as characters are saved all the time while frequently while being online
+			//s_printf("Activitytime file (save): Saved for player <%s>: %d.\n", pname, Players[Ind]->turns_active);
+		} else {
+			ok = FALSE;
+
+			/* Remove "broken" files */
+			(void)fd_kill(name);
+
+			s_printf("Activitytime file (save): Failed to save for player <%s>.\n", pname);
+		}
+	} else {
+		ok = FALSE;
+		s_printf("Activitytime file (save): Cannot get file handle for player <%s>.\n", pname);
+	}
+
+	return(ok);
 }
 
 
@@ -1772,18 +1829,12 @@ bool save_player(int Ind) {
 	int result = FALSE;
 	char safe[1024];
 
-
 #ifdef SET_UID
-
 # ifdef SECURE
-
 	/* Get "games" permissions */
 	beGames();
-
 # endif
-
 #endif
-
 
 	/* New savefile */
 	strcpy(safe, p_ptr->savefile);
@@ -1795,10 +1846,10 @@ bool save_player(int Ind) {
 	strcat(safe, "n");
 #endif /* VM */
 
-	/* Remove it */
+	/* Remove ".new" savefile */
 	fd_kill(safe);
 
-	/* Attempt to save the player */
+	/* Attempt to save the player, to "<savefile>.new" */
 	if (save_player_aux(Ind, safe)) {
 		char temp[1024];
 
@@ -1812,48 +1863,43 @@ bool save_player(int Ind) {
 		strcat(temp, "o");
 #endif /* VM */
 
-		/* Remove it */
+		/* Remove ".old" savefile */
 		fd_kill(temp);
 
-		/* Preserve old savefile */
+		/* Preserve old savefile: Rename already existing savefile to "<savefile>.old" */
 		fd_move(p_ptr->savefile, temp);
 
-		/* Activate new savefile */
+		/* Activate new savefile: Rename "<savefile>.new" to just the normal "<savefile>". */
 		fd_move(safe, p_ptr->savefile);
 
-		/* Remove preserved savefile */
+		/* Remove preserved savefile, "<savefile>.old" */
 		fd_kill(temp);
 
 		/* Hack -- Pretend the character was loaded */
 		/*character_loaded = TRUE;*/
 
 #ifdef VERIFY_SAVEFILE
-
 		/* Lock on savefile */
 		strcpy(temp, savefile);
 		strcat(temp, ".lok");
 
 		/* Remove lock file */
 		fd_kill(temp);
-
 #endif
 
 		/* Success */
 		result = TRUE;
+
+		/* Also save his (recent) activity time */
+		save_player_activitytime(Ind, p_ptr->savefile);
 	}
 
-
 #ifdef SET_UID
-
 # ifdef SECURE
-
 	/* Drop "games" permissions */
 	bePlayer();
-
 # endif
-
 #endif
-
 
 	/* Return the result */
 	return(result);
@@ -1871,6 +1917,120 @@ static bool file_exist(char *buf) {
 	else return(FALSE);
 }
 
+/* Checks saved player activity time, for automatic rollback detection and handling. - C. Blue
+   For this to work, it's important that in case of rollback, the existing .activitytime files must NOT be overwritten. */
+static void verify_player_activitytime(int Ind) {
+	int fd = -1;
+	char name[CNAME_LEN + 13], pname[CNAME_LEN];
+	unsigned char at[4];
+	s32b atime = 0, at_diff;
+	player_type *p_ptr = Players[Ind];
+
+	/* No file yet */
+	fff = NULL;
+
+	/* File type is "SAVE" */
+	FILE_TYPE(FILE_TYPE_SAVE);
+
+	strcpy(pname, p_ptr->name);
+	strcpy(name, format("%s.activitytime", p_ptr->savefile));
+
+	/* Verify the existence of the savefile */
+	if (!file_exist(name)) {
+		s_printf("Activitytime file (load): Doesn't exist for player <%s>.)\n", pname);
+		return;
+	}
+
+	/* Open the savefile */
+	fd = fd_open(name, O_RDONLY);
+
+	/* No file */
+	if (fd < 0) {
+		s_printf("Activitytime file (load): Cannot be opened for player <%s>.\n", pname);
+		return;
+	}
+
+	/* Read the first four bytes */
+	if (fd_read(fd, (char*)(at), 4)) {
+		s_printf("Activitytime file (load): Cannot be read for player <%s>.\n", pname);
+
+		/* Close the file */
+		(void)fd_close(fd);
+
+		return;
+	}
+
+	/* Close the file */
+	(void)fd_close(fd);
+
+	atime = (s32b)(at[0] | (at[1] << 8) | (at[2] << 16) | (at[3] << 24));
+
+	/* For rollback detection */
+	at_diff = atime - p_ptr->turns_active;
+
+	//Hm, the save message is omitted as it is spammy; this one isn't, but we still don't really need this info, so just adding the 'if' for it, for important cases...
+	if (at_diff) //only log important occurances
+	s_printf("Activitytime file (load): Read for player <%s>: %d (d-savegame~%02d:%02dh).\n", pname, atime, at_diff / (cfg.fps * 3600), (at_diff / (cfg.fps * 60)) % 60);
+
+	if (at_diff) {
+		s32b au;
+		int lv, i;
+		object_type cheque;
+
+		/* If there is a *HUGE* difference, that might also point at 'turn' overflow actually, instead of a rollback.
+		   Turn overflow Can happen every ~4 years at s32b.
+		   In that case, we assume that this is the former and just reset the difference and don't do anything rollback-related. */
+		if (at_diff > cfg.fps * 3600 * 24 * 31) return; // more than a month -> ignore
+
+		/* Rollback detected! */
+
+		/* Ignore trivial rollbacks */
+		if (at_diff < cfg.fps * 3600 / 4) return; // less than 1/4 hour -> ignore
+
+		/* Reimburse based on character level and time lost, in minutes (cfg.fps * 60) */
+		if (at_diff > cfg.fps * 3600 * 24) at_diff = cfg.fps * 3600 * 24; //cap time at 24h (note that this is player ACTIVITY time, so it can accomodate for way longer rollbacks!)
+		lv = p_ptr->lev <= 50 ? p_ptr->lev * 10 : 500 + ((p_ptr->lev - 50) * 10) / 5;
+#if 0
+		/*   1h: 10->  6k, 20-> 24k, 30->  54k, 40->  96k, 50-> 150k
+		     6h: 10-> 36k, 20->144k, 30-> 324k, 40-> 576k, 50-> 900k
+		    12h: 10-> 72k, 20->288k, 30-> 648k, 40->1152k, 50->1800k
+		    24h: 10->144k, 20->576k, 30->1296k, 40->2304k, 50->3600k, 59(aka 99)->5149k */
+		au = ((lv * lv) / 1000) * (at_diff / (cfg.fps * 60));
+#else
+		/*   1h: 10->  2k, 20-> 16k, 30->  54k, 40-> 128k, 50-> 250k
+		     6h: 10-> 12k, 20-> 96k, 30-> 324k, 40-> 768k, 50->1500k
+		    12h: 10-> 24k, 20->192k, 30-> 648k, 40->1536k, 50->3000k
+		    24h: 10-> 48k, 20->384k, 30->1296k, 40->3072k, 50->6000k, 59(aka 99)->10265k */
+		au = ((lv * lv * lv) / 1000) / 30 * (at_diff / (cfg.fps * 60));
+#endif
+		s_printf("ROLLBACK DETECTED! Reimbursing player with %d Au - ", au);
+
+		/* Edge case: Giving gold to the player's inventory or bank account directly might not work if the sum would cause an s32b overflow,
+		   so we just send a cheque instead - also more stylish ^^. */
+		invcopy(&cheque, lookup_kind(TV_SCROLL, SV_SCROLL_CHEQUE));
+		ps_set_cheque_value(&cheque, au);
+		cheque.owner = p_ptr->id;
+		cheque.ident |= ID_NO_HIDDEN;
+		cheque.mode = p_ptr->mode;
+		cheque.level = 0;
+		cheque.note = quark_add("Rollback reimbursement");
+
+		/* Send it via merchants guild mail */
+		for (i = 0; i < MAX_MERCHANT_MAILS; i++) if (!mail_sender[i][0]) break;
+		if (i == MAX_MERCHANT_MAILS) { /* oops oO */
+			s_printf("ERROR (out of mail capacity).\n");
+			return;
+		}
+		mail_forge[i] = cheque;
+		strcpy(mail_sender[i], "SYSTEM");
+		strcpy(mail_target[i], p_ptr->name);
+		strcpy(mail_target_acc[i], p_ptr->accountname);
+		mail_duration[i] = (5 * cfg.fps) / MAX_MERCHANT_MAILS ; // 5 seconds
+		mail_COD[i] = FALSE;
+		mail_xfee[i] = 0;
+		s_printf("mail successful.\n");
+	}
+}
 
 /*
  * Attempt to Load a "savefile"
@@ -2092,7 +2252,7 @@ bool load_player(int Ind) {
 					sf_major, sf_minor, sf_patch);
 		}
 
-		/* Player is dead */
+		/* Player is dead -- TODO: check if this code isn't totally outdated, obsolete and wrong */
 		if (p_ptr->death) {
 			/* Player is no longer "dead" */
 			p_ptr->death = FALSE;
@@ -2115,8 +2275,8 @@ bool load_player(int Ind) {
 		}
 
 		p_ptr->body_changed = TRUE;
-
 		update_sanity_bars(p_ptr);
+		verify_player_activitytime(Ind); // Rollback detection and handling
 
 		/* Success */
 		return(TRUE);
