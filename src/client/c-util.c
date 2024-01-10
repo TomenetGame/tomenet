@@ -778,7 +778,7 @@ static char inkey_aux(void) {
 
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
-#if 1
+#if 0
 //if (ch)
 //c_msg_format("ch=%d", ch);
 #endif
