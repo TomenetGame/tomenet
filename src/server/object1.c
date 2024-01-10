@@ -3857,6 +3857,10 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 	fprintf(fff, "\n");
 }
 
+/* For displaying expected weapon damage prognosis on weapon inspection:
+   Add player's own current slay flags to the weapon's, so we really get the damage we "would have"?
+   Currently still missing monster brands/aura brands.		- C. Blue*/
+#define DISPLAY_DAMAGE_INTRINSIC_SLAYS
 
 /* XXX this ignores the chance of extra dmg via 'critical hit' */
 static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1) {
@@ -3946,6 +3950,11 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 		fprintf(fff, "    \377Uoo\377w against all monsters\n");
 	} else {
 		/* Normal */
+
+#ifdef DISPLAY_DAMAGE_INTRINSIC_SLAYS
+		/* add player's own current slay flags to the weapon's, so we really get the damage we "would have"... */
+		f1 |= p_ptr->slay | p_ptr->slay_equip | p_ptr->slay_melee; // TODO: Add monster brands and aura brands! And maybe temp-melee-weapon brands from enchantment spells.
+#endif
 
 		if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
 		if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
@@ -4044,6 +4053,11 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32
 //	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
 //	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
 	fprintf(fff, "\377sUsing it you would have %d throw%s and do an average damage per throw of:\n", p_ptr->num_fire, (p_ptr->num_fire > 1) ? "s" : "");
+
+#ifdef DISPLAY_DAMAGE_INTRINSIC_SLAYS
+	/* add player's own current slay flags to the weapon's, so we really get the damage we "would have"... */
+	f1 |= p_ptr->slay | p_ptr->slay_equip; // TODO maybe: Add monster brands and aura brands, if applicable to ranged weapons
+#endif
 
 	if (f1 & TR1_SLAY_ANIMAL) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
@@ -4168,6 +4182,11 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 	suppress_boni = TRUE;
 	calc_boni(Ind);
 
+#ifdef DISPLAY_DAMAGE_INTRINSIC_SLAYS
+	/* add player's own current slay flags to the weapon's, so we really get the damage we "would have"... */
+	f1 |= p_ptr->slay | p_ptr->slay_equip; // TODO maybe: Add monster brands and aura brands, if applicable to ranged weapons
+#endif
+
 	/* combine slay flags of ammo and bow */
 	f1 |= bow_f1;
 
@@ -4260,6 +4279,11 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 	suppress_message = TRUE;
 	suppress_boni = TRUE;
 	calc_boni(Ind);
+
+#ifdef DISPLAY_DAMAGE_INTRINSIC_SLAYS
+	/* add player's own current slay flags to the weapon's, so we really get the damage we "would have"... */
+	f1 |= p_ptr->slay | p_ptr->slay_equip; // TODO maybe: Add monster brands and aura brands, if applicable to ranged weapons
+#endif
 
 	/* combine slay flags of ammo and bow */
 	f1 |= ammo_f1;
