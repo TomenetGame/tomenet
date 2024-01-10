@@ -8393,14 +8393,14 @@ void export_player_store_offers(int *export_turns) {
 				while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
 				if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 				else attr = get_attr_from_tval(o_ptr);
-				fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"wgt\":%d, \"name\":\"%s\"}",
-				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, json_escape_str(o_name_escaped, o_name, sizeof(o_name_escaped)));
+				fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"flags4\":%d,\"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"wgt\":%d, \"name\":\"%s\"}",
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, k_info[o_ptr->k_idx].flags4, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, json_escape_str(o_name_escaped, o_name, sizeof(o_name_escaped)));
 				kommao = TRUE;
  #else
 				if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 				else attr = get_attr_from_tval(o_ptr);
-				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %d, %ld Au) %s\n",
-				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, o_name); //or just x,y?
+				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %d, %d, %ld Au, %d) %s\n",
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, k_info[o_ptr->k_idx].flags4, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, o_name); //or just x,y?
  #endif
 			}
 		}
