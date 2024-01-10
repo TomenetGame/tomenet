@@ -3133,7 +3133,7 @@ static int Handle_login(int ind) {
 
 	/* Hack -- terminate the data stream sent to the client */
 	if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
-		Destroy_connection(p_ptr->conn, "write error");
+		Destroy_connection(p_ptr->conn, "write error (0)");
 		return(-1);
 	}
 
@@ -4092,7 +4092,7 @@ void Handle_input(int fd, int arg) {
 
 	if (connp->c.len > 0) {
 		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
-			Destroy_connection(ind, "write error");
+			Destroy_connection(ind, "write error (1)");
 			return;
 		}
 		Send_reliable(ind);
@@ -4227,7 +4227,7 @@ int Net_output(void) {
 	//		and send it to the client.
 			if (connp->c.len > 0) {
 				if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
-					Destroy_connection(p_ptr->conn, "write error");
+					Destroy_connection(p_ptr->conn, "write error (2)");
 					continue;
 				}
 				Send_reliable(p_ptr->conn);
@@ -4258,7 +4258,7 @@ int Net_output1(int Ind) {
 
 	if (connp->c.len > 0) {
 		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
-			Destroy_connection(p_ptr->conn, "write error");
+			Destroy_connection(p_ptr->conn, "write error (3)");
 			return(3);
 		} else {
 			Send_reliable(p_ptr->conn);
@@ -4279,7 +4279,7 @@ int Send_reply(int ind, int replyto, int result) {
 
 	n = Packet_printf(&connp->c, "%c%c%c", PKT_REPLY, replyto, result);
 	if (n == -1) {
-		Destroy_connection(ind, "write error");
+		Destroy_connection(ind, "write error (4)");
 		return(-1);
 	}
 
@@ -5590,12 +5590,12 @@ int Send_reliable(int ind) {
 
 	if (Sockbuf_write(&connp->w, connp->c.buf, connp->c.len) != connp->c.len) {
 		plog("Cannot write reliable data");
-		Destroy_connection(ind, "write error");
+		Destroy_connection(ind, "write error (5)");
 		return(-1);
 	}
 	if ((num_written = Sockbuf_flush(&connp->w)) < connp->w.len) {
 		plog(format("Cannot flush reliable data (%d)", num_written));
-		Destroy_connection(ind, "flush error");
+		Destroy_connection(ind, "flush error (0)");
 
 #if 0
 		/* Very bad hack :/ - C. Blue */
@@ -5645,7 +5645,7 @@ int Send_reliable_old(int ind) {
 		    len, rel_off, turn, max_todo) <= 0
 		    || Sockbuf_write(&connp->w, read_buf, len) != len) {
 			plog("Cannot write reliable data");
-			Destroy_connection(ind, "write error");
+			Destroy_connection(ind, "write error (6)");
 			return(-1);
 		}
 
@@ -5655,7 +5655,7 @@ int Send_reliable_old(int ind) {
 				break;
 			} else {
 				plog(format("Cannot flush reliable data (%d)", n));
-				Destroy_connection(ind, "flush error");
+				Destroy_connection(ind, "flush error (1)");
 				return(-1);
 			}
 		}
