@@ -1277,8 +1277,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		/* Display extra information */
-		else if (prefix(messagelc, "/extra") ||
-		    (prefix(messagelc, "/ex") && !prefix(messagelc, "/exit"))) {
+		else if (prefix(messagelc, "/extra") || (prefix(messagelc, "/ex") && (messagelc[3] == ' ' || !messagelc[3]))) {
 			do_cmd_check_extra_info(Ind, (admin && !tk));
 			return;
 		}
@@ -13043,6 +13042,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 			else if (prefix(messagelc, "/reorder")) {
 				reorder_pack(Ind);
+				return;
+			}
+			else if (prefix(messagelc, "/exportpstores")) {
+#if 0 /* export_turns is local in dungeon() only atm */
+				export_turns = 1;
+#else
+				int export_turns = 1;
+
+				while (export_turns) export_player_store_offers(&export_turns);
+#endif
+				msg_print(Ind, "Player stores exported.");
 				return;
 			}
 		}
