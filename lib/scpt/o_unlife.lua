@@ -263,13 +263,14 @@ OWRAITHSTEP = add_spell {
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_tim_wraithstep(Ind, randint(30) + 20 + get_level(Ind, OWRAITHSTEP, 40))
+			set_tim_wraithstep(Ind, 6)
 	end,
 	["info"] = 	function()
-			return "dur "..(20 + get_level(Ind, OWRAITHSTEP, 40)).."+d30"
+			return "dur 6 + oo"
 	end,
 	["desc"] = 	{
-			"Renders you temporarily immaterial, but the effect will cease",
-			"immediately when you step from walls into open space again.",
+			"Weakens the barrier to the immaterial realm for a few turns.",
+			"If you enter solid walls during this time you will remain immaterial",
+			"infinitely, until you step out of the walls again into open space.",
 	}
 }

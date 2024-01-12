@@ -489,6 +489,10 @@ static void prt_bpr(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	byte attr = p_ptr->num_blow ? TERM_L_GREEN : TERM_RED;
 
+	if ((p_ptr->tim_extra & 0x1) && (p_ptr->tim_extra & 0xF0)) {
+		Send_bpr(Ind, 255, TERM_L_DARK);//TERM_ACID)
+		return;
+	}
 	if (p_ptr->tim_wraith) {
 		Send_bpr(Ind, 255, TERM_WHITE);
 		return;

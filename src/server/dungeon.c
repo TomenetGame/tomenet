@@ -5514,10 +5514,17 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_meditation)
 		(void)set_tim_meditation(Ind, p_ptr->tim_meditation - minus);
 
-	/* Hack -- Wraithform/Wraithstep */
-	if (p_ptr->tim_wraith) {
-		if (p_ptr->tim_extra & 0x1) (void)set_tim_wraithstep(Ind, p_ptr->tim_wraith - minus_magic);
-		else (void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus_magic);
+	/* Hack -- Wraithform (Not for Wraithstep though, it lasts indefinitely) */
+	if (p_ptr->tim_wraith && !(p_ptr->tim_extra & 0x1)) (void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus_magic);
+
+	/* Wraithstep: Check if we're within the few turns of weakened immaterium, allowing us to enter solid walls if we want to */
+	if ((p_ptr->tim_extra & 0x1) && (p_ptr->tim_extra & 0xF0)) {
+		p_ptr->tim_extra -= 0x10;
+		if (!(p_ptr->tim_extra & 0xF0)) {
+			p_ptr->tim_extra &= ~0x1;
+			msg_print(Ind, "The boundary to the immaterium returns to normal.");
+			p_ptr->redraw |= PR_BPR_WRAITH;
+		}
 	}
 
 	/* Hack -- Hallucinating */

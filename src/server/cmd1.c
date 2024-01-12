@@ -6943,6 +6943,16 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith) pass_wall = TRUE;
 	else pass_wall = FALSE;
 
+	/* Enter Wraithstep */
+	if ((p_ptr->tim_extra & 0x1) && (p_ptr->tim_extra & 0xF0) && !pass_wall && !(f_info[feature].flags1 & FF1_FLOOR)) {
+		p_ptr->tim_extra &= ~0xF0;
+		p_ptr->tim_wraith = 1;
+		p_ptr->redraw |= PR_BPR_WRAITH;
+		msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
+		msg_print(Ind, "You turn into a wraith!");
+		p_ptr->wraith_in_wall = pass_wall = TRUE;
+	}
+
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
 		if (feature == FEAT_HOME || (feature >= FEAT_DOOR_HEAD && feature <= FEAT_DOOR_TAIL)
 		    || feature == FEAT_BUSH || feature == FEAT_TREE || feature == FEAT_DEAD_TREE)

@@ -1447,8 +1447,8 @@ bool set_tim_wraith(int Ind, int v) {
 
 			zcave = getcave(&p_ptr->wpos);
 
-			/* prevent running out of wraithform if we have a permanent source -> refresh it */
 			if (zcave && in_bounds(p_ptr->py, p_ptr->px)) {
+				/* prevent running out of wraithform if we have a permanent source -> refresh it */
 				if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags2 & RF2_PASS_WALL)) v = 10000;
 				else {
 					/* if a worn item grants wraith form, don't let it run out */
@@ -1473,6 +1473,7 @@ bool set_tim_wraith(int Ind, int v) {
 						}
 					}
 				}
+				/* We don't have a permanent source */
 				if (v != 10000) {
 					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 					msg_print(Ind, "You lose your wraith powers.");
@@ -1517,81 +1518,40 @@ bool set_tim_wraithstep(int Ind, int v) {
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* Hack -- Force good values */
-	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	v = (v > 15) ? 15 : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_wraith) {
 			if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) ||
 			    (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC))) {
-				msg_print(Ind, "You feel different for a moment.");
-				v = 0;
+				//msg_print(Ind, "You feel different for a moment.");
+				msg_print(Ind, "You fail to become immaterial here.");
+				return(FALSE);
 			} else {
-				msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
-				msg_print(Ind, "You turn into a wraith!");
+				msg_print(Ind, "The boundary to the immaterium weakens for you.");
 				notice = TRUE;
-
 				p_ptr->wraith_in_wall = TRUE;
 				p_ptr->redraw |= PR_BPR_WRAITH;
 			}
+		} else {
+			msg_print(Ind, "You are already immaterial.");
+			return(FALSE);
 		}
-		p_ptr->tim_extra |= 0x1; //hack: mark as wraithstep, to distinguish from normal wraithform
+
+		/* Use the value */
+		p_ptr->tim_extra = 0x10 * v + 0x1;
 	}
 
 	/* Shut */
 	else {
-		if (p_ptr->tim_wraith) {
-			/* In town it only runs out if you are not on a wall
-			 * To prevent breaking into houses */
-			/* important! check for illegal spaces */
-			cave_type **zcave;
-
-			zcave = getcave(&p_ptr->wpos);
-
-			/* prevent running out of wraithform if we have a permanent source -> refresh it */
-			if (zcave && in_bounds(p_ptr->py, p_ptr->px)) {
-				if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags2 & RF2_PASS_WALL)) v = 10000;
-				else {
-					/* if a worn item grants wraith form, don't let it run out */
-					u32b f1, f2, f3, f4, f5, f6, esp;
-					object_type *o_ptr;
-					int i;
-
-					/* Scan the usable inventory */
-					for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-						o_ptr = &p_ptr->inventory[i];
-
-						/* Skip missing items */
-						if (!o_ptr->k_idx) continue;
-
-						/* Extract the item flags */
-						object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-						if (f3 & (TR3_WRAITH)) {
-							//p_ptr->wraith_form = TRUE;
-							v = 10000;
-							p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
-							break;
-						}
-					}
-				}
-				if (v != 10000) {
-					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
-					msg_print(Ind, "You lose your wraith powers.");
-					p_ptr->redraw |= PR_BPR_WRAITH;
-					notice = TRUE;
-
-					/* That will hopefully prevent game hinging when loading */
-					if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
-
-					p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
-				}
-			}
-			else v = 1;
+		if ((p_ptr->tim_extra & 0x1) && (p_ptr->tim_extra & 0xF0)) {
+			msg_print(Ind, "The boundary to the immaterium returns to normal.");
+			p_ptr->redraw |= PR_BPR_WRAITH;
+			notice = TRUE;
+			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 		}
 	}
-
-	/* Use the value */
-	p_ptr->tim_wraith = v;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);
