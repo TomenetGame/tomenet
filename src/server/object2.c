@@ -13517,9 +13517,10 @@ void inverse_cursed(object_type *o_ptr) {
 	/* reverse +pval/bpval */
 	/* Be more lenient for items that only increase attributes */
 	if ((f1 & TR1_PVAL_MASK) == (f1 & TR1_ATTR_MASK) && !(f5 & TR5_PVAL_MASK)) {
+		// note: could also consider -(o_ptr->pval - 1) / 2 for different rounding (Beruthiel ends up +2 instead of +3) (1->1, 3->2, 5->3, 7->4)
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = (-o_ptr->pval) / 2 + 1;
+			o_ptr->pval = (-o_ptr->pval) / 2 + 1; // (1->1, 2->2, 4->3, 6->4)
 			if (o_ptr->pval > 5) o_ptr->pval = 5;
 		}
 		if (o_ptr->bpval < 0) {
@@ -13528,9 +13529,10 @@ void inverse_cursed(object_type *o_ptr) {
 			if (o_ptr->bpval > 5) o_ptr->bpval = 5;
 		}
 	} else {
+		// note: could also consider -(o_ptr->pval - 2) / 3 for somehwat better stats (1->1, 4->2, 7->3, 10->4)
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
+			o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK) (1->1, 5->2, 9->3, 13->4)
 			if (o_ptr->pval > 3) o_ptr->pval = 3; //thinking EA/Life, but just paranoia really..
 		}
 		if (o_ptr->bpval < 0) {
