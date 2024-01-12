@@ -259,18 +259,23 @@
 
 /* Do vampires not suffer Black Breath at all? */
 #define VAMPIRES_BB_IMMUNE
-/* Will negative boni on cursed items become (scaled) positive ones when wielded by vampires?
-   (0 = rather inconsistent method, 1 = recommended method) */
-#define VAMPIRES_INV_CURSED 1
-/* New specialty (super-experimental): Change cursed randarts into something useful? */
-#ifdef VAMPIRES_INV_CURSED
- #define INVERSE_CURSED_RANDARTS
-#endif
 /* Allow vampires to polymorph into vampiric mist at 40, obtaining some special feats? */
 #define VAMPIRIC_MIST
 
 /* Specialty: Do vampire istari gain access to occult Shadow school? */
 #define VAMP_ISTAR_SHADOW
+
+/* Will negative boni on cursed items become (scaled) positive ones when wielded by true vampires (RACE_VAMPIRE)
+   or hell knights (CLASS_HELL_KNIGHT), provided the item is eligible (HEAVY_CURSE)? - C. Blue
+   (0 = rather inconsistent method, 1 = recommended method) */
+#define VAMPIRES_INV_CURSED 1
+#ifdef VAMPIRES_INV_CURSED
+ /* New specialty (super-experimental): Change cursed randarts too (into something useful)? */
+ #define INVERSE_CURSED_RANDARTS
+
+ /* Will randarts retain their positive abilities on flipping? (mostly for auto-id) */
+ #define INVERSE_CURSED_RETAIN
+#endif
 
 /* Allow ordering a specific item in a store */
 #define ENABLE_ITEM_ORDER

@@ -13276,16 +13276,6 @@ void hack_particular_item(void) {
 }
 
 #ifdef VAMPIRES_INV_CURSED
-/* Reverse negative boni on a cursed item while equipped by a true undead (RACE_VAMPIRE) player,
-   provided the item is eligible (HEAVY_CURSE). - C. Blue */
-/* Will randarts retain their positive abilities on flipping? (mostly for auto-id) */
- #define INVERSE_CURSED_RETAIN
- #ifdef INVERSE_CURSED_RETAIN
-  //TR3_BLESSED -- cursed items cannot have BLESSED flag, TR3_PERMA_CURSE -- not happening on randarts
-  #define TR3_BAD_MASK (TR3_AUTO_CURSE | TR3_NO_TELE | TR3_NO_MAGIC | TR3_TY_CURSE | TR3_DRAIN_EXP | TR3_TELEPORT | TR3_AGGRAVATE | TR3_CURSED | TR3_HEAVY_CURSE)
-  #define TR4_BAD_MASK (TR4_NEVER_BLOW | TR4_BLACK_BREATH | TR4_DG_CURSE | TR4_CLONE | TR4_CURSE_NO_DROP)
-  #define TR5_BAD_MASK (TR5_DRAIN_MANA | TR5_DRAIN_HP)
- #endif
 void inverse_cursed(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 

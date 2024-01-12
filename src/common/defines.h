@@ -5340,6 +5340,7 @@
 	TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
 #endif	/* 0 */
 
+
 /* ToME hack for trapkits */
 #define TRAP2_AUTOMATIC_5	0x00000001L     /* Trap automatically rearms itself, 1 in 5 failure */
 #define TRAP2_AUTOMATIC_99	0x00000002L     /* Trap automatically rearms itself */
@@ -5388,15 +5389,9 @@
 #define TR2_RES_CHAOS			0x40000000L
 #define TR2_RES_DISEN			0x80000000L
 
+
 #if 0
 #define TR3_KNOWLEDGE			0x00000001L	/* Later */
-#define TR3_XXX2			0x00000002L	/* Later */
-#define TR3_XXX3			0x00000004L	/* Later */
-#define TR3_XXX4			0x00000008L	/* Later */
-#define TR3_XXX5			0x00000010L	/* Later */
-#define TR3_XXX6			0x00000020L	/* Later */
-#define TR3_XXX7			0x00000040L	/* Later */
-#define TR3_XXX8			0x00000080L	/* Later */
 #endif	/* 0 */
 /* Flags from ToME - Jir - */
 
@@ -5432,6 +5427,11 @@
 #define TR3_CURSED			0x20000000L	/* Item is Cursed */
 #define TR3_HEAVY_CURSE			0x40000000L	/* Item is Heavily Cursed */
 #define TR3_PERMA_CURSE			0x80000000L	/* Item is Perma Cursed */
+
+#ifdef INVERSE_CURSED_RETAIN
+ // Note about these two flags: TR3_BLESSED -- cursed items cannot have BLESSED flag, TR3_PERMA_CURSE -- not happening on randarts
+ #define TR3_BAD_MASK (TR3_AUTO_CURSE | TR3_NO_TELE | TR3_NO_MAGIC | TR3_TY_CURSE | TR3_DRAIN_EXP | TR3_TELEPORT | TR3_AGGRAVATE | TR3_CURSED | TR3_HEAVY_CURSE)
+#endif
 
 
 #define TR4_NEVER_BLOW		0x00000001L     /* Weapon can't attack */
@@ -5470,6 +5470,10 @@
 
 #define TR4_NULL_MASK		0xFFFFFFFCL	//unused
 
+#ifdef INVERSE_CURSED_RETAIN
+ #define TR4_BAD_MASK (TR4_NEVER_BLOW | TR4_BLACK_BREATH | TR4_DG_CURSE | TR4_CLONE | TR4_CURSE_NO_DROP)
+#endif
+
 
  #define TR5_TEMPORARY		0x00000001L		/* In timeout turns it is destroyed -- not implemented -- */
 #define TR5_DRAIN_MANA		0x00000002L		/* Drains mana */
@@ -5481,6 +5485,7 @@
  #define TR5_WOUNDING			0x00000080L	/* Wounds monsters -- not implemented -- (maybe give +hit/+dam bonus?) */
  #define TR5_FULL_NAME		0x00000100L		/* Uses direct name from k_info - a bunch of items have this seemingly randomly (mostly books?), but it's UNUSED appearently/not implemented -- */
 #define TR5_LUCK		0x00000200L		/* Luck += pval */
+//hole:
 #define TR5_XXX			0x00000400L	//hole (was plasma res)
  #define TR5_LEVELS		0x00000800L		/* Can gain exp/exp levels !! -- unused -- */
 #define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
@@ -5507,6 +5512,10 @@
 /* Hack -- flag set 5 -- mask for "pval-dependant" flags. */
 #define TR5_PVAL_MASK   \
 	(TR5_CRIT | TR5_LUCK | TR5_DISARM)
+
+#ifdef INVERSE_CURSED_RETAIN
+ #define TR5_BAD_MASK (TR5_DRAIN_MANA | TR5_DRAIN_HP)
+#endif
 
 
 #define TR6_INSTA_EGO		0x00000001L		/* Similar to INSTA_ART, this item is always an ego item */
