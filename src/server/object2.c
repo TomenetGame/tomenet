@@ -13514,29 +13514,36 @@ void inverse_cursed(object_type *o_ptr) {
 	if (!is_armour(o_ptr->tval) && o_ptr->to_a > 15) o_ptr->to_a = 15;
 
 	/* reverse +pval/bpval */
-	/* Be more lenient for items that only increase attributes */
+ #define FLIP_METHOD 2
+ #if FLIP_METHOD == 1
+  #define FLIP_ATTR(v) (-(v) / 2 + 1)		/* (1->1, 2->2, 4->3, 6->4) */
+  #define FLIP_PVAL(v) ((-(v) + 3) / 4)		/* (1->1, 5->2, 9->3, 13->4) */
+ #else /* 2 :-p */
+  #define FLIP_ATTR(v) ((-(v) + 1) / 2)		/* stricter rounding (Beruthiel ends up +2 instead of +3) (1->1, 3->2, 5->3, 7->4, can Doom amulet be -9? -> +5) */
+  #define FLIP_PVAL(v) ((-(v) + 2) / 3)		/* somehwat better stats (Angmar ends up +4 instead of +3) (1->1, 4->2, 7->3, 10->4) */
+ #endif
+	/* Be more lenient for items that only increase attributes (STR/INT/WIS/DEX/CON/CHR) */
 	if ((f1 & TR1_PVAL_MASK) == (f1 & TR1_ATTR_MASK) && !(f5 & TR5_PVAL_MASK)) {
-		// note: could also consider -(o_ptr->pval - 1) / 2 for different rounding (Beruthiel ends up +2 instead of +3) (1->1, 3->2, 5->3, 7->4)
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = (-o_ptr->pval) / 2 + 1; // (1->1, 2->2, 4->3, 6->4)
+			o_ptr->pval = FLIP_ATTR(o_ptr->pval);
 			if (o_ptr->pval > 5) o_ptr->pval = 5;
 		}
 		if (o_ptr->bpval < 0) {
 			o_ptr->bpval_org = o_ptr->bpval;
-			o_ptr->bpval = (-o_ptr->bpval) / 2 + 1;
+			o_ptr->bpval = FLIP_ATTR(o_ptr->bpval);
 			if (o_ptr->bpval > 5) o_ptr->bpval = 5;
 		}
 	} else {
-		// note: could also consider -(o_ptr->pval - 2) / 3 for somehwat better stats (1->1, 4->2, 7->3, 10->4)
+		// note: could also consider (-o_ptr->pval + 2) / 3 for 
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK) (1->1, 5->2, 9->3, 13->4)
+			o_ptr->pval = FLIP_PVAL(o_ptr->pval);
 			if (o_ptr->pval > 3) o_ptr->pval = 3; //thinking EA/Life, but just paranoia really..
 		}
 		if (o_ptr->bpval < 0) {
 			o_ptr->bpval_org = o_ptr->bpval;
-			o_ptr->bpval = -(o_ptr->bpval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
+			o_ptr->bpval = FLIP_PVAL(o_ptr->bpval);
 			if (o_ptr->bpval > 3) o_ptr->bpval = 3; //thinking EA/Life, but just paranoia really..
 		}
 	}
