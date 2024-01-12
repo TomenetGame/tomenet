@@ -5514,7 +5514,7 @@
 	(TR5_CRIT | TR5_LUCK | TR5_DISARM)
 
 #ifdef INVERSE_CURSED_RETAIN
- #define TR5_BAD_MASK (TR5_DRAIN_MANA | TR5_DRAIN_HP)
+ #define TR5_BAD_MASK (TR5_DRAIN_MANA | TR5_DRAIN_HP | TR5_WHITE_LIGHT) /* Note: WHITE_LIGHT triggers anti_undead() and anti_demon() */
 #endif
 
 
