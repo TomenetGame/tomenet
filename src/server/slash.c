@@ -8148,12 +8148,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_type *o_ptr;
 				u32b f1, f2, f3, f4, f5, f6, esp;
 				int min_pval = -999, min_ap = -999, tries = 10000, min_todam = -999;
-				bool no_am = FALSE, no_aggr = FALSE, no_curse = FALSE;
+				bool no_am = FALSE, no_aggr = FALSE, aggr = FALSE, no_curse = FALSE, heavy_curse = FALSE;
 				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
 
 				if (tk < 1 || tk > 6) {
-					msg_print(Ind, "\377oUsage: /reart <slot> [+<min pval>] [<min artifact power>] [D<dam>] [A] [R] [C]");
-					msg_print(Ind, "A: No-AM, R: No Aggr, C: No curse.");
+					msg_print(Ind, "\377oUsage: /reart <slot> [+<min pval>] [<min artifact power>] [D<dam>] [A] [R|G] [C|H]");
+					msg_print(Ind, "A: No-AM, R: No Aggr, G: Must aggravate, C: No curse, H: must be heavily curse.");
 					return;
 				}
 
@@ -8175,8 +8175,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					else if (token[i][0] == 'D') min_todam = atoi(token[i] + 1);
 					else if (token[i][0] == 'A') no_am = TRUE;
 					else if (token[i][0] == 'R') no_aggr = TRUE;
+					else if (token[i][0] == 'G') aggr = TRUE;
 					else if (token[i][0] == 'C') no_curse = TRUE;
+					else if (token[i][0] == 'H') heavy_curse = TRUE;
 					else min_ap = atoi(token[i]);
+				}
+
+				if (aggr && no_aggr) {
+					msg_print(Ind, "\377yCannot use 'R' and 'G' flag together, mutually exclusive.");
+					return;
+				}
+				if (heavy_curse && no_curse) {
+					msg_print(Ind, "\377yCannot use 'C' and 'H' flag together, mutually exclusive.");
+					return;
 				}
 
 				if (min_ap > -999 || min_pval > -999 || min_todam > -999 || no_am || no_aggr)
@@ -8191,7 +8202,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377w no Anti-Magic Shell.");
 				if (no_aggr)
 					msg_print(Ind, "\377w no AGGRAVATE.");
-
+				if (aggr)
+					msg_print(Ind, "\377w must AGGRAVATE.");
+				if (no_curse)
+					msg_print(Ind, "\377w no curse.");
+				if (heavy_curse)
+					msg_print(Ind, "\377D Must be heavily curse.");
 
 				th = o_ptr->to_h; td = o_ptr->to_d; ta = o_ptr->to_a; //for jewelry
 #if 0/*no good because on cursing, the stats aren't just inverted but also modified!*/
@@ -8233,8 +8249,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (artifact_power(randart_make(o_ptr)) < min_ap) continue;
 					if (o_ptr->to_d < min_todam) continue;
 					if (no_aggr && (f3 & TR3_AGGRAVATE)) continue;
+					if (aggr && !(f3 & TR3_AGGRAVATE)) continue;
 					if (no_am && (f3 & TR3_NO_MAGIC)) continue;
 					if (no_curse && cursed_p(o_ptr)) continue;
+					if (heavy_curse && !(f3 & TR3_HEAVY_CURSE)) continue;
 					break;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (10000))!");
