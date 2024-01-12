@@ -9673,7 +9673,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 			/* Automatically disable permanent wraith form (set_tim_wraith) */
 			p_ptr->tim_wraith = 0; //avoid duplicate message
-			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
+			p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			p_ptr->update |= PU_BONUS;
 			p_ptr->redraw |= PR_BPR_WRAITH;
 		}
@@ -9694,14 +9694,14 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 #ifdef ENABLE_OUNLIFE
 	/* Leaving a wall with Wraithstep */
-	if (p_ptr->tim_wraith && (p_ptr->tim_extra & 0x1)
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)
 	    && cave_floor_grid(&zcave[y][x]) && (ox == -1 || !cave_floor_grid(&zcave[oy][ox]))) {
 		set_tim_wraith(Ind, 0);
 	}
 	/* Entering a wall with Wraithstep */
-	else if ((p_ptr->tim_extra & 0x1) && (p_ptr->tim_extra & 0xF0)
+	else if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)
 	    && !cave_floor_grid(&zcave[y][x]) && (ox == -1 || cave_floor_grid(&zcave[oy][ox]))) {
-		p_ptr->tim_extra &= ~0xF0;
+		p_ptr->tim_wraithstep &= ~0xF0;
 		p_ptr->tim_wraith = 1;
 		p_ptr->redraw |= PR_BPR_WRAITH;
 		msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);

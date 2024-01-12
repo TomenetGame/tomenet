@@ -8522,7 +8522,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		//p_ptr->window |= PW_OVERHEAD;
 
 		/* Wraithstep spell stops if it's not a wall anymore */
-		if (p_ptr->tim_wraith && (p_ptr->tim_extra & 0x1) &&
+		if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) &&
 		    cave_floor_grid(c_ptr) && wall && /* Floor now, but was wall? */
 		    p_ptr->px == x && p_ptr->py == y)
 			set_tim_wraithstep(i, 0);

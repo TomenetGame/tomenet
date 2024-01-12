@@ -6944,8 +6944,8 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	else pass_wall = FALSE;
 
 	/* Enter Wraithstep */
-	if ((p_ptr->tim_extra & 0x1) && (p_ptr->tim_extra & 0xF0) && !pass_wall && !(f_info[feature].flags1 & FF1_FLOOR)) {
-		p_ptr->tim_extra &= ~0xF0;
+	if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0) && !pass_wall && !(f_info[feature].flags1 & FF1_FLOOR)) {
+		p_ptr->tim_wraithstep &= ~0xF0;
 		p_ptr->tim_wraith = 1;
 		p_ptr->redraw |= PR_BPR_WRAITH;
 		msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
@@ -8071,6 +8071,9 @@ int see_wall(int Ind, int dir, int y, int x) {
 
 	/* Ghosts run right through everything */
 	if ((p_ptr->ghost || p_ptr->tim_wraith)) return(FALSE);
+
+	/* Wraithstep initialization phase? */
+	if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)) return(FALSE);
 
 #if 0
 	/* Do wilderness hack, keep running from one outside level to another */

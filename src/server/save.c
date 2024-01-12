@@ -975,7 +975,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->blessed + p_ptr->blessed_power * 100 + (p_ptr->blessed_own ? 10000 : 0));
 	wr_s16b(p_ptr->tim_invis);
 	wr_byte(p_ptr->go_level_top);//ENABLE_GO_GAME
-	wr_byte(p_ptr->tim_extra);
+	wr_byte(p_ptr->tim_wraithstep);
 	wr_s16b(p_ptr->see_infra);
 	wr_s16b(p_ptr->tim_infra);
 	wr_s16b(p_ptr->oppose_fire);

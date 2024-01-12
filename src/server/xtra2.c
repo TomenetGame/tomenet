@@ -1428,7 +1428,7 @@ bool set_tim_wraith(int Ind, int v) {
 				p_ptr->redraw |= PR_BPR_WRAITH;
 			}
 		}
-		p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
+		p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 #if 0	// I can't remember what was it for..
 		// but for sure it's wrong
 //it was probably for the old hack to prevent wraithing in/around town and breaking into houses that way - C. Blue
@@ -1468,7 +1468,7 @@ bool set_tim_wraith(int Ind, int v) {
 						if (f3 & (TR3_WRAITH)) {
 							//p_ptr->wraith_form = TRUE;
 							v = 10000;
-							p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
+							p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 							break;
 						}
 					}
@@ -1483,7 +1483,7 @@ bool set_tim_wraith(int Ind, int v) {
 					/* That will hopefully prevent game hinging when loading */
 					if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
 
-					p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
+					p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 				}
 			}
 			else v = 1;
@@ -1540,16 +1540,16 @@ bool set_tim_wraithstep(int Ind, int v) {
 		}
 
 		/* Use the value */
-		p_ptr->tim_extra = 0x10 * v + 0x1;
+		p_ptr->tim_wraithstep = 0x10 * v + 0x1;
 	}
 
 	/* Shut */
 	else {
-		if ((p_ptr->tim_extra & 0x1) && (p_ptr->tim_extra & 0xF0)) {
+		if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)) {
 			msg_print(Ind, "The boundary to the immaterium returns to normal.");
 			p_ptr->redraw |= PR_BPR_WRAITH;
 			notice = TRUE;
-			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
+			p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 		}
 	}
 

@@ -2098,7 +2098,7 @@ static bool rd_extra(int Ind) {
 	rd_byte(&tmp8u);
 	p_ptr->go_level_top = tmp8u; //ENABLE_GO_GAME
 	if (p_ptr->go_level_top < p_ptr->go_level) p_ptr->go_level_top = p_ptr->go_level; //fix older save files
-	rd_byte(&p_ptr->tim_extra);
+	rd_byte(&p_ptr->tim_wraithstep);
 	rd_s16b(&p_ptr->see_infra);
 	rd_s16b(&p_ptr->tim_infra);
 	rd_s16b(&p_ptr->oppose_fire);
