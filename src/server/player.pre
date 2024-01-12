@@ -51,6 +51,8 @@ struct object_type
 
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter */
+	s32b pval2;			/* Extra enchantment item extra-parameter */
+	s32b pval3;			/* Extra enchantment item extra-parameter */
 
 	byte discount;			/* Discount (if any) */
 
