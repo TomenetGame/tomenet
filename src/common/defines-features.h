@@ -266,7 +266,7 @@
 #define VAMP_ISTAR_SHADOW
 
 /* Will negative boni on cursed items become (scaled) positive ones when wielded by true vampires (RACE_VAMPIRE)
-   or hell knights (CLASS_HELL_KNIGHT), provided the item is eligible (HEAVY_CURSE)? - C. Blue
+   or hell knights (CLASS_HELLKNIGHT), provided the item is eligible (HEAVY_CURSE)? - C. Blue
    (0 = rather inconsistent method, 1 = recommended method) */
 #define VAMPIRES_INV_CURSED 1
 #ifdef VAMPIRES_INV_CURSED
