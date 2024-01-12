@@ -13297,7 +13297,7 @@ void inverse_cursed(object_type *o_ptr) {
 		artifact_type a_org, *a_ptr;
 		bool anti_undead_org;
 		bool anti_demon_org;
-		int tries = 1000;
+		int tries = 1000, old_lite_rad, lite_rad;
   #else
 		int tries = 20;
   #endif
@@ -13320,6 +13320,10 @@ void inverse_cursed(object_type *o_ptr) {
 		a_org.flags5 &= ~TR5_BAD_MASK;
 		anti_undead_org = anti_undead(o_ptr, &player);
 		anti_demon_org = anti_demon(o_ptr, &player);
+		/* Remove all light flags too, as we're fine with just having at least as much light, but will also accept getting more light! */
+		old_lite_rad = ((a_org.flags3 & TR3_LITE1) ? 1 : 0) + ((a_org.flags4 & TR4_LITE2) ? 2 : 0) + ((a_org.flags4 & TR4_LITE3) ? 3 : 0);
+		a_org.flags3 &= ~TR3_LITE1;
+		a_org.flags4 &= ~(TR4_LITE2 | TR4_LITE3);
   #endif
 
 		swap = o_ptr->pval3; /* remember the flipped randart in the future */
@@ -13362,6 +13366,11 @@ void inverse_cursed(object_type *o_ptr) {
 			if ((a_ptr->flags4 & a_org.flags4) != a_org.flags4) continue;
 			if ((a_ptr->flags5 & a_org.flags5) != a_org.flags5) continue;
 			if ((a_ptr->flags6 & a_org.flags6) != a_org.flags6) continue;
+
+			/* Recount light, as we're fine with just having at least as much light, but will also accept getting more light! */
+			lite_rad = ((a_ptr->flags3 & TR3_LITE1) ? 1 : 0) + ((a_ptr->flags4 & TR4_LITE2) ? 2 : 0) + ((a_ptr->flags4 & TR4_LITE3) ? 3 : 0);
+			if (lite_rad < old_lite_rad) continue;
+
 			if (!anti_undead_org && anti_undead(o_ptr, &player)) continue;
    #ifdef ENABLE_HELLKNIGHT
 			if (!anti_demon_org && anti_demon(o_ptr, &player)) continue;
