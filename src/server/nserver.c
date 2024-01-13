@@ -3334,9 +3334,11 @@ static int Handle_login(int ind) {
 		}
 	}
 
-	/* warning_rest only occurs once per account */
+ #if WARING_REST_TIMES > 0
+	/* warning_rest only occurs n times per account */
 	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = WARNING_REST_TIMES;
-#else
+ #endif
+#else /* ARCADE_SERVER: */
 	/* no greeting */
 	greeting = FALSE;
 
@@ -12737,11 +12739,12 @@ static int Receive_rest(int ind) {
 		if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos) * 2) - 1) {
 			/* Set flag */
 			p_ptr->resting = TRUE;
-			/* Actually don't clear warning completely =p. Keep +1 warning in reserve..uhh */
 #if WARNING_REST_TIMES > 0
+			/* Actually don't clear warning completely =p. Keep +1 warning in reserve..uhh */
 			if (p_ptr->warning_rest < WARNING_REST_TIMES - 1) p_ptr->warning_rest = WARNING_REST_TIMES - 1;
 			else p_ptr->warning_rest = WARNING_REST_TIMES;
 #else
+			/* No more warnings about resting once we rested, for this session */
 			if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
 #endif
 
