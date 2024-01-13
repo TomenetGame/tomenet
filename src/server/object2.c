@@ -12524,7 +12524,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON) ||
 		    //(f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
 		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: */
-		    ((l == 2 || o_ptr->name1 || no_res_lite) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
+		    ((l == 2 || o_ptr->name1) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
 			return(1);
 	} else {
 		if ((f3 & TR3_BLESSED) ||
