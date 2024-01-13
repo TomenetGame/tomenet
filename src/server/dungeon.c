@@ -5319,14 +5319,20 @@ static bool process_player_end_aux(int Ind) {
 	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
 		/* Regeneration spell (Nature) and mushroom of fast metabolism */
-		if (p_ptr->tim_regen_pow > 0) hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), FALSE, TRUE);
+		if (p_ptr->tim_regen_pow > 0) {
+			/* Actually 'quiet' and give msg afterwards */
+			i = hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE, TRUE);
+			msg_format(Ind, "\377gYou are healed for %d points.", i);
+		}
 		/* Nether Sap spell (Unlife) */
 		else if (p_ptr->tim_regen_pow < 0) {
 			if (p_ptr->cmp >= p_ptr->tim_regen_cost) {
 				p_ptr->cmp -= p_ptr->tim_regen_cost;
 				p_ptr->redraw |= PR_MANA;
-				/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.) */
-				hp_player(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), FALSE, TRUE);
+				/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.)
+				   Actually 'quiet' and give msg afterwards */
+				i = hp_player(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE, TRUE);
+				msg_format(Ind, "\377gYou are healed for %d points.", i);
 			} else (void)set_tim_mp2hp(Ind, 0, 0, 0);  /* End prematurely when OOM */
 		}
 	}

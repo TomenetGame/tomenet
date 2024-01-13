@@ -683,7 +683,7 @@ bool do_shadow_gate(int Ind, int range) {
  *   set 'autoeffect' to TRUE if you want to do forced healing without
  *   any implications.
  */
-bool hp_player(int Ind, int num, bool quiet, bool autoeffect) {
+s16b hp_player(int Ind, int num, bool quiet, bool autoeffect) {
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before healing
@@ -769,7 +769,7 @@ bool hp_player(int Ind, int num, bool quiet, bool autoeffect) {
 #endif
 	}
 
-	return(TRUE);
+	return(num);
 }
 
 

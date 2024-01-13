@@ -11259,7 +11259,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 		} else {
 			/* Healed */
-			hp_player(Ind, dam, TRUE, FALSE); /* Actually 'quiet' .. */
+			dam = hp_player(Ind, dam, TRUE, FALSE); /* Actually 'quiet' .. */
 			/* ..and then we just print the received-message (omitting the message for the caster): */
 			msg_format(Ind, "\377gYou are healed for %d points.", dam);
 			dam = 0;
