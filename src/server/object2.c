@@ -12410,14 +12410,14 @@ s_printf("A_TIMEOUT: handle_art_d 2 (%d)\n", aidx);
 byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
+	bool no_res_lite;
 
 	/* Assumption: Only undead get this.
 	   (Affects true vampires and mimicked undead forms.) */
 	if (!p_ptr->suscep_life) return(FALSE);
-
 	/* only concerns wearable items */
 	if (wield_slot(0, o_ptr) == -1) return(FALSE);
-
+	/* Cursed items never harm undead */
 	if (cursed_p(o_ptr)) return(FALSE);
 
 	/* hack: it's carried by the wight-king! */
@@ -12433,13 +12433,14 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	if (f4 & TR4_LITE2) l += 2;
 	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
+	no_res_lite = (!p_ptr->resist_lite && !(f2 & TR2_RES_LITE));
 
 	/* be less strict to mimicked undead forms */
 	if (p_ptr->prace != RACE_VAMPIRE) {
 		/* powerful lights and anti-undead/evil items damage undead */
 		if (l) { /* light sources, or other items that provide light */
 			if ((f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD)) return(1);
-			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || !p_ptr->resist_lite)) return(2);
+			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || no_res_lite)) return(2);
 		} else {
 			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD)) return(1); /* allow undead to kill each other with *slay undead* weapons =p */
 		}
@@ -12452,9 +12453,9 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD) ||
 		    ////(o_ptr->name1 && (f5 & TR5_WHITE_LIGHT)) || /* exempt: +lite caused by BRAND_FIRE mod; covered by just checking for white light below: */
 		    //(f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
-		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: (Added BLESSED to Devotion amulet though, to actually exempt it) */
+		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: */
 		    (l > 2) ||
-		    ((l == 2 || o_ptr->name1 || !p_ptr->resist_lite) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
+		    ((l == 2 || o_ptr->name1 || no_res_lite) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
 			return(1);
 	} else {
 		if ((f3 & TR3_BLESSED) ||
@@ -12471,14 +12472,14 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
+	bool no_res_lite;
 
 	/* Assumptions: Vampires are both, demons are just suscep_good, only demons get suscep_good.
 	   (Affects hell knights and mimicked demon forms.) */
 	if (!p_ptr->demon) return(FALSE);
-
 	/* only concerns wearable items */
 	if (wield_slot(0, o_ptr) == -1) return(FALSE);
-
+	/* Cursed items never harm demons */
 	if (cursed_p(o_ptr)) return(FALSE);
 
 	/* hack: it's carried by the wight-king! */
@@ -12494,6 +12495,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 	if (f4 & TR4_LITE2) l += 2;
 	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
+	no_res_lite = (!p_ptr->resist_lite && !(f2 & TR2_RES_LITE));
 
 	/* be less strict to mimicked demon forms */
 	if (TRUE
@@ -12509,7 +12511,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 		   reasoning is that undead and demon mimic forms should be treated equally in this regard. */
 		if (l) { /* light sources, or other items that provide light */
 			if ((f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON)) return(1);
-			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || !p_ptr->resist_lite)) return(2);
+			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || no_res_lite)) return(2);
 		} else {
 			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON)) return(2); /* allow demons to kill each other with *slay demon* weapons =p */
 		}
@@ -12521,8 +12523,8 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 		if ((f3 & TR3_BLESSED) ||
 		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON) ||
 		    //(f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
-		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: (Added BLESSED to Devotion amulet though, to actually exempt it) */
-		    ((l >= 2 || o_ptr->name1) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
+		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: */
+		    ((l == 2 || o_ptr->name1 || no_res_lite) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
 			return(1);
 	} else {
 		if ((f3 & TR3_BLESSED) ||
