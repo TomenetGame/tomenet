@@ -2663,17 +2663,17 @@ static char color_name[CLIENT_PALETTE_SIZE][8] = {
 };
 #ifdef EXTENDED_BG_COLOURS
  /* Format: (fg, bg) */
- static char color_ext_name[TERMX_AMT][2][8] = {	/* TERMX_BLUE */
+ static char color_ext_name[TERMX_AMT][2][8] = {
 	//{"#0000ff", "#444444", },
 	//{"#ffffff", "#0000ff", },
 	//{"#666666", "#0000ff", },
-	{"#aaaaaa", "#112288", },
-	{"#aaaaaa", "#007700", },
-	{"#aaaaaa", "#770000", },
-	{"#aaaaaa", "#777700", },
-	{"#aaaaaa", "#555555", },
-	{"#aaaaaa", "#BBBBBB", },
-	{"#aaaaaa", "#333388", },
+	{"#aaaaaa", "#112288", },	/* TERMX_BLUE */
+	{"#aaaaaa", "#007700", },	/* TERMX_GREEN */
+	{"#aaaaaa", "#770000", },	/* TERMX_RED */
+	{"#aaaaaa", "#AAAA00", },	/* TERMX_YELLOW */
+	{"#aaaaaa", "#555555", },	/* TERMX_GREY */
+	{"#aaaaaa", "#BBBBBB", },	/* TERMX_WHITE */
+	{"#aaaaaa", "#333388", },	/* TERMX_PURPLE */
 };
 #endif
 static void enable_common_colormap_x11() {

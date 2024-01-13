@@ -2912,8 +2912,14 @@ int Receive_char(void) {
 #endif
 		//for gcu: Term_xtra(TERM_XTRA_SHAPE, 2);
 
+#if defined(TEST_CLIENT) && defined(EXTENDED_BG_COLOURS)
+		/* Highlight player by using a background colour */
+		a = TERMX_YELLOW;
+#else
+		/* Highlight player by placing the cursor under/around him */
 		Term_set_cursor(1);
 		Term_gotoxy(x, y);
+#endif
 
 		/* for X11:
 		Term_curs_x11() ->
