@@ -12406,7 +12406,8 @@ s_printf("A_TIMEOUT: handle_art_d 2 (%d)\n", aidx);
 	}
 }
 
-/* Check whether an item causes HP drain on an undead player (vampire) who wears/wields it */
+/* Check whether an item causes HP drain on an undead player (vampire) who wears/wields it.
+   Returns 0 (FALSE) if not affected, 1 if strongly affected, 2 if weakly affected. */
 byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
@@ -12468,7 +12469,8 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 #ifdef ENABLE_HELLKNIGHT
 /* Check whether an item causes HP drain on a demonic player (hell knight) who wears/wields it.
    Less strict than anti_undead(), since Vampires aren't really supposed to wear any light,
-   while for hell knights they don't have any intrinsic light source! */
+   while for hell knights they don't have any intrinsic light source!
+   Returns 0 (FALSE) if not affected, 1 if strongly affected, 2 if weakly affected. */
 byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
