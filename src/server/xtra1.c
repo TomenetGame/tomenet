@@ -4322,22 +4322,6 @@ void calc_boni(int Ind) {
 			if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
 		}
 
-		/* powerful lights and anti-undead/evil items damage (mimicked) undead,
-		   while anti-demon/evil items damage hell knights and (mimicked) demons */
-		j = anti_undead(o_ptr, p_ptr);
-		hold = anti_demon(o_ptr, p_ptr);
-		if (hold > j) j = hold;
-		switch (j) {
-		case 1:
-			if (i == INVEN_HEAD || i == INVEN_HANDS) p_ptr->drain_mana++;
-			else p_ptr->drain_life++;
-			break;
-		case 2:
-			if (i == INVEN_HEAD || i == INVEN_HANDS) p_ptr->no_mp_regen = TRUE;
-			else p_ptr->no_hp_regen = TRUE;
-			break;
-		}
-
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
 		if (f2 & TR2_IM_ACID) { p_ptr->immune_acid = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IACID; }
@@ -4612,6 +4596,31 @@ void calc_boni(int Ind) {
 		/* Apply the mental bonuses tp hit/damage, if known */
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
+	}
+
+	/* Has to be done here as it may depend on other items granting light resistance,
+	   so all items have to be applied first: */
+	/* powerful lights and anti-undead/evil items damage (mimicked) undead,
+	   while anti-demon/evil items damage hell knights and (mimicked) demons */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		/* Skip missing items */
+		if (!o_ptr->k_idx) continue;
+
+		j = anti_undead(o_ptr, p_ptr);
+		hold = anti_demon(o_ptr, p_ptr);
+		if (hold > j) j = hold;
+
+		switch (j) {
+		case 1:
+			if (i == INVEN_HEAD || i == INVEN_HANDS) p_ptr->drain_mana++;
+			else p_ptr->drain_life++;
+			break;
+		case 2:
+			if (i == INVEN_HEAD || i == INVEN_HANDS) p_ptr->no_mp_regen = TRUE;
+			else p_ptr->no_hp_regen = TRUE;
+			break;
+		}
 	}
 
 	p_ptr->antimagic += am_bonus;
