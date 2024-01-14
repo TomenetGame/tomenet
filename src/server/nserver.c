@@ -6236,7 +6236,7 @@ int Send_history(int Ind, int line, cptr hist) {
 /* XXX 'pval' is sent only when the item is TV_BOOK (same with Send_equip)
  * otherwise you can use badly-cracked client :)	- Jir -
  *
- * TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit -1. */
+ * TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit 255. */
  */
 int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
@@ -6299,7 +6299,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 }
 
 #ifdef ENABLE_SUBINVEN
-/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit -1. */
+/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit 255. */
 int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
@@ -6346,7 +6346,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 #endif
 
 /* Added for custom books. */
-/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit -1. */
+/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit 255. */
 int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
@@ -6417,7 +6417,7 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 }
 
 //int Send_equip(int Ind, char pos, byte attr, int wgt, byte tval, cptr name)
-/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit -1. */
+/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit 255. */
 int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	char uses_dir = 0;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
@@ -6518,7 +6518,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 }
 
 /* Added for WIELD_BOOKS */
-/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit -1. */
+/* TODO: Don't transmit sval for flavoured items if player is unaware of the flavour! Instead, transmit 255. */
 int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	char uses_dir = 0;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
