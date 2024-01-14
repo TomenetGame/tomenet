@@ -33,7 +33,7 @@
 
 #define RAINY_TOMB /* Display rainy weather for the mood? +_+ - C. Blue */
 
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 static bool inkey_location_keys = FALSE;
 #endif
 
@@ -652,11 +652,11 @@ void sync_xsleep(int milliseconds) {
 }
 
 
-/* Wrapped inkey() function to use with ALLOW_ARROW_KEYS_IN_PROMPT. - C. Blue */
+/* Wrapped inkey() function to use with ALLOW_NAVI_KEYS_IN_PROMPT. - C. Blue */
 char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
 	char i;
 
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 	inkey_location_keys = TRUE;
  #if 0 /* All of this isn't that cool. Instead, let's only auto-enter edit mode if user actually presses an arrow/positional key, making use of this whole feature thing. */
   #if 0 /* This also changes colour from yellow to white */
@@ -672,7 +672,7 @@ char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
 
 	i = inkey();
 
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 	inkey_location_keys = FALSE;
 #endif
 
@@ -1175,7 +1175,7 @@ char inkey(void) {
 	int w = 0;
 	int skipping = FALSE;
 
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
  #define INKEY_LOCATION_KEY_SIZE 8
 	static bool inkey_location_key_active = FALSE;
 	static int inkey_location_key_index = 0;
@@ -1413,7 +1413,7 @@ char inkey(void) {
 
 		/* Hack -- strip "control-underscore" special-macro-triggers */
 		case 31:
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 			/* Crazy hack: Enable use of arrow keys, added for askfor_aux() */
 			if (inkey_location_keys) {
 				inkey_location_key_active = TRUE;
@@ -1431,7 +1431,7 @@ char inkey(void) {
 			break;
 		}
 
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 		/* Process/end crazy hack */
 		if (inkey_location_key_active) {
 			/* Process char, add it to sequence code */
@@ -1455,22 +1455,22 @@ char inkey(void) {
 					/* For values, compare table in inkey_aux() */
 					switch (inkey_location_key_sequence[3]) {
 					case 55: // Pos1
-						ch = -125;
+						ch = NAVI_KEY_POS1;
 						break;
 					case 70: // End
-						ch = -126;
+						ch = NAVI_KEY_END;
 						break;
 					case 66: // Arrow left
-						ch = -127;
+						ch = NAVI_KEY_LEFT;
 						break;
 					case 56: // Arrow up
-						ch = -122;
+						ch = NAVI_KEY_UP;
 						break;
 					case 68: // Arrow right
-						ch = -128;
+						ch = NAVI_KEY_RIGHT;
 						break;
 					case 57: // Page up
-						ch = -120;
+						ch = NAVI_KEY_PAGEUP;
 						break;
 					default:
 						/* Unknown sequence, discard */
@@ -1481,13 +1481,13 @@ char inkey(void) {
 					/* For values, compare table in inkey_aux() */
 					switch (inkey_location_key_sequence[3]) {
 					case 48: // Arrow down
-						ch = -123;
+						ch = NAVI_KEY_DOWN;
 						break;
 					case 49: // Page down
-						ch = -121;
+						ch = NAVI_KEY_PAGEDOWN;
 						break;
 					case 51: // Del
-						ch = -124;
+						ch = NAVI_KEY_DEL;
 						break;
 					default:
 						/* Unknown sequence, discard */
@@ -1501,28 +1501,28 @@ char inkey(void) {
 					/* For values, compare table in inkey_aux() */
 					switch (inkey_location_key_sequence[5]) {
 					case 48: // Pos1
-						ch = -125;
+						ch = NAVI_KEY_POS1;
 						break;
 					case 49: // Arrow left
-						ch = -127;
+						ch = NAVI_KEY_LEFT;
 						break;
 					case 50: // Arrow up
-						ch = -122;
+						ch = NAVI_KEY_UP;
 						break;
 					case 51: // Arrow right
-						ch = -128;
+						ch = NAVI_KEY_RIGHT;
 						break;
 					case 52: // Arrow down
-						ch = -123;
+						ch = NAVI_KEY_DOWN;
 						break;
 					case 53: // Page up
-						ch = -120;
+						ch = NAVI_KEY_PAGEUP;
 						break;
 					case 54: // Page down
-						ch = -121;
+						ch = NAVI_KEY_PAGEDOWN;
 						break;
 					case 55: // End
-						ch = -126;
+						ch = NAVI_KEY_END;
 						break;
 					default:
 						/* Unknown sequence, discard */
@@ -2414,12 +2414,12 @@ bool askfor_aux(char *buf, int len, char mode) {
 			done = TRUE;
 			break;
 
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 		/* Discard those positioning keys that are unusable for string input: */
-		case -120:	/* page up */
-		case -121:	/* page down */
-		case -122:	/* arrow up */
-		case -123:	/* arrow down */
+		case NAVI_KEY_UP:
+		case NAVI_KEY_DOWN:
+		case NAVI_KEY_PAGEUP:
+		case NAVI_KEY_PAGEDOWN:
 			continue;
 #endif
 
@@ -2429,9 +2429,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case 0x7F: /* DEL or ASCII 127 removes the char under cursor */
 #endif
 		case KTRL('D'):
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -124:
-#endif
+		case NAVI_KEY_DEL:
 			/* Navigational key pressed -> implicitely enter edit mode */
 			if (modify_allowed) k = strlen(buf);
 
@@ -2443,7 +2441,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-		case 0x7F: /* well...not DEL but Backspace too it seems =P */
+		case 0x7F: /* POSIX (there DEL = BACKSPACE): well...not DEL but Backspace too it seems =P */
 		case '\010': /* Backspace removes char before cursor */
 			if (k == l && k > 0) { /* Pressed while cursor is at the end of the line */
 				k--;
@@ -2466,7 +2464,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 				k--;
 				if (search) search_changed = TRUE; /* Search term was changed */
 #else
-			    /* Specialty: Erase the whole line, emulating the "usual" behaviour when any key is pressed without ALLOW_ARROW_KEYS_IN_PROMPT enabled, if user didn't explicitely enter edit mode via CTRL+E. */
+			    /* Specialty: Erase the whole line, emulating the "usual" behaviour when any key is pressed without ALLOW_NAVI_KEYS_IN_PROMPT enabled, if user didn't explicitely enter edit mode via CTRL+E. */
 				k = 0;
 #endif
 			}
@@ -2474,18 +2472,14 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		/* move by one */
 		case KTRL('A'):
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -127: //inkey_location_keys hack
-#endif
+		case NAVI_KEY_LEFT:
 			/* Navigational key pressed -> implicitely enter edit mode */
 			if (modify_allowed) k = strlen(buf);
 
 			if (l > 0) l--;
 			break;
 		case KTRL('S'):
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -128: //inkey_location_keys
-#endif
+		case NAVI_KEY_RIGHT:
 			/* Navigational key pressed -> implicitely enter edit mode */
 			if (modify_allowed) k = strlen(buf);
 
@@ -2528,18 +2522,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 		/* end/begin (pos1) */
 		case KTRL('V'):
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -125: //inkey_location_keys hack
-#endif
+		case NAVI_KEY_POS1:
+
 			/* Navigational key pressed -> implicitely enter edit mode */
 			if (modify_allowed) k = strlen(buf);
 
 			l = 0;
 			break;
 		case KTRL('B'):
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -126: //inkey_location_keys hack
-#endif
+		case NAVI_KEY_END:
 			/* Navigational key pressed -> implicitely enter edit mode */
 			if (modify_allowed) k = strlen(buf);
 
@@ -7967,11 +7958,12 @@ void auto_inscriptions(void) {
 	/* Prevent hybrid macros from triggering in here */
 	inkey_msg = TRUE;
 
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+	inkey_interact_macros = TRUE;
+#endif
+
 	/* Process requests until done */
 	while (1) {
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		inkey_interact_macros = TRUE;
-#endif
 		if (redraw) {
 			/* Clear screen */
 			Term_clear();
@@ -8074,7 +8066,7 @@ void auto_inscriptions(void) {
 		inkey_flag = TRUE;
 
 		/* Wait for keypress */
-		switch (inkey()) {
+		switch (inkey_combo(FALSE, NULL, NULL)) {
 		case KTRL('T'):
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????", 2);
@@ -8150,6 +8142,7 @@ void auto_inscriptions(void) {
 		case '3': //pgdn
 		case 'n':
 		case ' ':
+		case NAVI_KEY_PAGEDOWN:
 			cur_page++;
 			if (cur_page > max_page) cur_page = 0;
 			redraw = TRUE;
@@ -8157,21 +8150,25 @@ void auto_inscriptions(void) {
 		case '9': //pgup
 		case 'p':
 		case '\b':
+		case NAVI_KEY_PAGEUP:
 			cur_page--;
 			if (cur_page < 0) cur_page = max_page;
 			redraw = TRUE;
 			break;
 		case '1': //end
+		case NAVI_KEY_END:
 			cur_page = max_page;
 			cur_line = 0;
 			redraw = TRUE;
 			break;
 		case '7': //home
+		case NAVI_KEY_POS1:
 			cur_page = 0;
 			cur_line = 0;
 			redraw = TRUE;
 			break;
 		case '2':
+		case NAVI_KEY_DOWN:
 #ifndef INTEGRATED_SELECTOR
 			Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, " ");
 #endif
@@ -8185,6 +8182,7 @@ void auto_inscriptions(void) {
 			}
 			break;
 		case '8':
+		case NAVI_KEY_UP:
 #ifndef INTEGRATED_SELECTOR
 			Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, " ");
 #endif
@@ -8328,10 +8326,8 @@ void auto_inscriptions(void) {
 		case '6':
 		case '\n':
 		case '\r':
+		case NAVI_KEY_RIGHT:
 //INTEGRATED_SELECTOR: - 2
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-			inkey_interact_macros = TRUE;
-#endif
 			/* Clear previous matching string */
 			Term_putstr(6 - 2, cur_line + 1, -1, TERM_L_GREEN, "                                                       ");
 			/* Go to the correct location */
@@ -8485,6 +8481,10 @@ void auto_inscriptions(void) {
 
 	/* Re-enable hybrid macros */
 	inkey_msg = FALSE;
+
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+	inkey_interact_macros = FALSE;
+#endif
 }
 
 /* Helper function for option manipulation - check before and after, and refresh stuff if the changes made require it.

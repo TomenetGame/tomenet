@@ -2380,7 +2380,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 	Term_save();
 
-	inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_ARROW_KEYS_IN_PROMPT is enabled! */
+	inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_NAVI_KEYS_IN_PROMPT is enabled! */
 
 	while (TRUE) {
 		/* We just wanted to do a chapter search which resulted a hard-coded substitution that isn't a real chapter but instead falls back to normal search? */
@@ -3037,9 +3037,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			continue;
 
 		/* navigate line up */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -122:
-#endif
+		case NAVI_KEY_UP:
 		case '8': case '\010': case 0x7F: //rl:'k'
 			line--;
 			if (line < 0) line = guide_lastline - maxlines + 1;
@@ -3047,18 +3045,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			continue;
 
 		/* navigate line down */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -123:
-#endif
+		case NAVI_KEY_DOWN:
 		case '2': case '\r': case '\n': //rl:'j'
 			line++;
 			if (line > guide_lastline - maxlines) line = 0;
 			continue;
 
 		/* page up */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -120:
-#endif
+		case NAVI_KEY_PAGEUP:
 		case '9': case 'p': //rl:?
 		case 'P':
 			if (line == 0) line = guide_lastline - maxlines + 1;
@@ -3070,9 +3064,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			continue;
 
 		/* page down */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -121:
-#endif
+		case NAVI_KEY_PAGEDOWN:
 		case '3': case 'n': case ' ': //rl:?
 		case 'N':
 			if (line < guide_lastline - maxlines) {
@@ -3087,17 +3079,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			continue;
 
 		/* home key to reset */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -125:
-#endif
+		case NAVI_KEY_POS1:
 		case '7': //rl:?
 			line = 0;
 			continue;
 
 		/* support end key too.. */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -126:
-#endif
+		case NAVI_KEY_END:
 		case '1': //rl:?
 			line = guide_lastline - maxlines + 1;
 			if (line < 0) line = 0;
@@ -4408,7 +4396,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 
 	Term_save();
 
-	inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_ARROW_KEYS_IN_PROMPT is enabled! */
+	inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_NAVI_KEYS_IN_PROMPT is enabled! */
 
 	while (TRUE) {
 		if (!skip_redraw) Term_clear();
@@ -4832,9 +4820,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 			continue;
 
 		/* navigate up */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -122:
-#endif
+		case NAVI_KEY_UP:
 		case '8': case '\010': case 0x7F: //rl:'k'
 			line_cur[rememberance_index]--;
 			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines + 1;
@@ -4842,18 +4828,14 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 			continue;
 
 		/* navigate down */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -123:
-#endif
+		case NAVI_KEY_DOWN:
 		case '2': case '\r': case '\n': //rl:'j'
 			line_cur[rememberance_index]++;
 			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = 0;
 			continue;
 
 		/* page up */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -120:
-#endif
+		case NAVI_KEY_PAGEUP:
 		case '9': case 'p': //rl:?
 			if (line_cur[rememberance_index] == 0) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines + 1;
 			else line_cur[rememberance_index] -= maxlines;
@@ -4861,9 +4843,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 			continue;
 
 		/* page down */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -121:
-#endif
+		case NAVI_KEY_PAGEDOWN:
 		case '3': case 'n': case ' ': //rl:?
 			if (line_cur[rememberance_index] < file_lastline[rememberance_index] - maxlines) {
 				line_cur[rememberance_index] += maxlines;
@@ -4873,17 +4853,13 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 			continue;
 
 		/* home key to reset */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -125:
-#endif
+		case NAVI_KEY_POS1:
 		case '7': //rl:?
 			line_cur[rememberance_index] = 0;
 			continue;
 
 		/* support end key too.. */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		case -126:
-#endif
+		case NAVI_KEY_END:
 		case '1': //rl:?
 			line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines + 1;
 			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;

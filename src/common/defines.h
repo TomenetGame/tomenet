@@ -573,6 +573,17 @@
  #define MAX_PLAYERS_LISTED	100
 
  #define PRF_BODY_SEPARATOR	'^'
+
+  /* For ALLOW_NAVI_KEYS_IN_PROMPT */
+  #define NAVI_KEY_UP		-127
+  #define NAVI_KEY_DOWN		-126
+  #define NAVI_KEY_LEFT		-125
+  #define NAVI_KEY_RIGHT	-124
+  #define NAVI_KEY_PAGEUP	-123
+  #define NAVI_KEY_PAGEDOWN	-122
+  #define NAVI_KEY_POS1		-121
+  #define NAVI_KEY_END		-120
+  #define NAVI_KEY_DEL		-119	/* Windows only, not available on POSIX (there DEL is same as BACKSPACE) */
 #endif
 
 
@@ -3437,7 +3448,7 @@
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 
-/* Ones borrowed from PernAngband.<---->- Jir - */
+/* Ones borrowed from PernAngband.	- Jir - */
 /*
  * Max sizes of the following arrays
  */

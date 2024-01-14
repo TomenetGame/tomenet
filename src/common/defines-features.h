@@ -631,7 +631,7 @@
    - cmd_check_misc() (the knowledge menu).
    - auto_inscriptions().
  */
- #define ALLOW_ARROW_KEYS_IN_PROMPT
+ #define ALLOW_NAVI_KEYS_IN_PROMPT
 #endif
 
 
