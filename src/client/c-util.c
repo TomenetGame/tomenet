@@ -681,12 +681,10 @@ char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
 		if (inkey_shift_special == 0x2) i = KTRL('E'); /* CTRL+BACKSPACE = erase word */
 		if (inkey_shift_special == 0x1) i = KTRL('D'); /* SHIFT+BACKSPACE = DELETE -- for POSIX: 'Emulate' non-existant DEL key. */
 	}
- #if 1		/* not working right: Initial CTRL+LEFT/RIGHT press is stuck in inkey() and only released after any subsequent key press (after which it works though!) */
 	else if (inkey_shift_special == 0x2) switch (i) {
 		case NAVI_KEY_LEFT: i = KTRL('Q'); break; /* CTRL+LEFT = jump a word left */
 		case NAVI_KEY_RIGHT: i = KTRL('W'); break; /* CTRL+RIGHT = jump a word right */
 	}
- #endif
 #endif
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
