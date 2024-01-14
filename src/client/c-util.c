@@ -33,9 +33,6 @@
 
 #define RAINY_TOMB /* Display rainy weather for the mood? +_+ - C. Blue */
 
-/* Enable hack in inkey() to allow using right/left arrow keys and pos1/end inside a text input prompt.
-   Note that this hack is only active while inkey_interact_macros = TRUE, which currently is inside the macro menu, when prompted for file names. */
-#define ALLOW_ARROW_KEYS_IN_PROMPT
 #ifdef ALLOW_ARROW_KEYS_IN_PROMPT
 static bool inkey_location_keys = FALSE;
 #endif
@@ -653,6 +650,35 @@ void sync_xsleep(int milliseconds) {
 		window_stuff();
 	}
 }
+
+
+/* Wrapped inkey() function to use with ALLOW_ARROW_KEYS_IN_PROMPT. - C. Blue */
+char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
+	char i;
+
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+	inkey_location_keys = TRUE;
+ #if 0 /* All of this isn't that cool. Instead, let's only auto-enter edit mode if user actually presses an arrow/positional key, making use of this whole feature thing. */
+  #if 0 /* This also changes colour from yellow to white */
+	if (modify_allowed) i = KTRL('E'); //Simulate CTRL+E press once, to enter 'edit' mode right away.
+	else
+  #else /* This retains the yellow starter prompt colour, better */
+	if (modify_allowed
+	    && cursor_pos && input_str) /* <- two paranoia checks against wrong parm usage */
+		*cursor_pos = strlen(input_str);
+  #endif
+ #endif
+#endif
+
+	i = inkey();
+
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+	inkey_location_keys = FALSE;
+#endif
+
+	return(i);
+}
+
 
 /*
  * Helper function called only from "inkey()"
@@ -1423,7 +1449,7 @@ char inkey(void) {
 				inkey_location_key_active = FALSE;
 
 				/* Evaluate and return hack value. Note #0 is always '31', #6 always '13', or we wouldn't be here. */
-#ifdef WINDOWS
+ #ifdef WINDOWS
 				if (inkey_location_key_sequence[1] == 120 &&
 				    inkey_location_key_sequence[2] == 52)
 					/* For values, compare table in inkey_aux() */
@@ -1438,15 +1464,13 @@ char inkey(void) {
 						ch = -127;
 						break;
 					case 56: // Arrow up
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -122;
 						break;
 					case 68: // Arrow right
 						ch = -128;
 						break;
 					case 57: // Page up
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -120;
 						break;
 					default:
 						/* Unknown sequence, discard */
@@ -1457,12 +1481,10 @@ char inkey(void) {
 					/* For values, compare table in inkey_aux() */
 					switch (inkey_location_key_sequence[3]) {
 					case 48: // Arrow down
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -123;
 						break;
 					case 49: // Page down
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -121;
 						break;
 					case 51: // Del
 						ch = -124;
@@ -1485,23 +1507,19 @@ char inkey(void) {
 						ch = -127;
 						break;
 					case 50: // Arrow up
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -122;
 						break;
 					case 51: // Arrow right
 						ch = -128;
 						break;
 					case 52: // Arrow down
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -123;
 						break;
 					case 53: // Page up
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -120;
 						break;
 					case 54: // Page down
-						/* Currently unsupported sequence, discard */
-						ch = 0;
+						ch = -121;
 						break;
 					case 55: // End
 						ch = -126;
@@ -2299,7 +2317,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	bool tail = FALSE;
 	int l_old = l;
-	bool modify_ok = TRUE;
+	bool modify_allowed = TRUE;
 
 	/* For clipboard pasting */
 	char tmpbuf[MSG_LEN], *tmpc;
@@ -2346,7 +2364,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	Term_erase(x, y, len);
 	if (mode & ASKFOR_PRIVATE) {
 		c_prt_last(TERM_YELLOW, buf[0] ? "(default)" : "", y, x, vis_len);
-		modify_ok = FALSE;
+		modify_allowed = FALSE;
 	} else c_prt_last(TERM_YELLOW, buf, y, x, vis_len);
 
 	if (mode & ASKFOR_CHATTING) {
@@ -2372,21 +2390,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			Term_gotoxy(x + l, y);
 
 		/* Get a key */
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		inkey_location_keys = TRUE;
- #if 0 /* All of this isn't that cool. Instead, let's only auto-enter edit mode if user actually presses an arrow/positional key, making use of this whole feature thing. */
-  #if 0 /* This also changes colour from yellow to white */
-		if (modify_ok) i = KTRL('E'); //Simulate CTRL+E press once, to enter 'edit' mode right away.
-		else
-  #else /* This retains the yellow starter prompt colour, better */
-		if (modify_ok) k = strlen(buf);
-  #endif
- #endif
-#endif
-		i = inkey();
-#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
-		inkey_location_keys = FALSE;
-#endif
+		i = inkey_combo(modify_allowed, &k, buf);
 
 		/* Analyze the key */
 		switch (i) {
@@ -2410,6 +2414,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 			done = TRUE;
 			break;
 
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+		/* Discard those positioning keys that are unusable for string input: */
+		case -120:	/* page up */
+		case -121:	/* page down */
+		case -122:	/* arrow up */
+		case -123:	/* arrow down */
+			continue;
+#endif
+
 #if 0 /* urxvt actually seems to recognize 0x7F as BACKSPACE, unlike other terminals \
 	which just ignore it, resulting in the Backspace key working like Delete key, \
 	so we better keep this disabled here and move it back to '\010' below. - C. Blue */
@@ -2420,7 +2433,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case -124:
 #endif
 			/* Navigational key pressed -> implicitely enter edit mode */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			if (k > l) {
 				/* Move the rest of the line one back */
@@ -2465,7 +2478,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case -127: //inkey_location_keys hack
 #endif
 			/* Navigational key pressed -> implicitely enter edit mode */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			if (l > 0) l--;
 			break;
@@ -2474,14 +2487,14 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case -128: //inkey_location_keys
 #endif
 			/* Navigational key pressed -> implicitely enter edit mode */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			if (l < k) l++;
 			break;
 		/* jump words */
 		case KTRL('Q'):
 			/* Navigational key pressed -> implicitely enter edit mode */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			if (!l) break;
 
@@ -2499,7 +2512,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 		case KTRL('W'):
 			/* Navigational key pressed -> implicitely enter edit mode */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			if (l == k) break;
 
@@ -2519,7 +2532,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case -125: //inkey_location_keys hack
 #endif
 			/* Navigational key pressed -> implicitely enter edit mode */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			l = 0;
 			break;
@@ -2528,7 +2541,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case -126: //inkey_location_keys hack
 #endif
 			/* Navigational key pressed -> implicitely enter edit mode */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			l = k;
 			break;
@@ -2743,7 +2756,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		/* word-size backspace */
 		case KTRL('E'): {
 			/* hack: CTRL+E is also the designated 'edit' key to edit a predefined default string */
-			if (modify_ok) k = strlen(buf);
+			if (modify_allowed) k = strlen(buf);
 
 			/* actual 'real' CTRL+E functionality following now */
 
@@ -2935,7 +2948,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		}
 
 		/* can only edit the default string with first key press being the designated 'edit' key */
-		modify_ok = FALSE;
+		modify_allowed = FALSE;
 
 		/* Terminate */
 		buf[k] = '\0';
@@ -7956,6 +7969,9 @@ void auto_inscriptions(void) {
 
 	/* Process requests until done */
 	while (1) {
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+		inkey_interact_macros = TRUE;
+#endif
 		if (redraw) {
 			/* Clear screen */
 			Term_clear();
@@ -8313,6 +8329,9 @@ void auto_inscriptions(void) {
 		case '\n':
 		case '\r':
 //INTEGRATED_SELECTOR: - 2
+#ifdef ALLOW_ARROW_KEYS_IN_PROMPT
+			inkey_interact_macros = TRUE;
+#endif
 			/* Clear previous matching string */
 			Term_putstr(6 - 2, cur_line + 1, -1, TERM_L_GREEN, "                                                       ");
 			/* Go to the correct location */

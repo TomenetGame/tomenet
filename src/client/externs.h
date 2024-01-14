@@ -605,6 +605,7 @@ extern void clear_macros(void);
 extern void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag);
 extern bool macro_del(cptr pat);
 extern char inkey(void);
+extern char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str);
 extern void keymap_init(void);
 extern void bell(void);
 extern void bell_silent(void);

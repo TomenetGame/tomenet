@@ -620,6 +620,18 @@
 
  /* Allow redefining black colour (#0) too, and allow redefining any colour to #000000 (aka allow redefining all colours completely and freely)? */
  #define CUSTOMIZE_COLOURS_FREELY
+
+ /* Enable hack in inkey() to allow using right/left arrow keys and pos1/end inside a text input prompt.
+   Note that this hack is only active while inkey_interact_macros = TRUE or net_fd = -1 (client startup phase).
+   - net_fd is -1 in the TomeNET startup login screen and account overview screen.
+   And inkey_interact_macros is TRUE in...
+   - the macro menu, when prompted for file names.
+   - cmd_the_guide() and browse_local_file() - may currently be commented out or not, see comment there, change anytime if desired.
+   - cmd_spoilers().
+   - cmd_check_misc() (the knowledge menu).
+   - auto_inscriptions().
+ */
+ #define ALLOW_ARROW_KEYS_IN_PROMPT
 #endif
 
 
