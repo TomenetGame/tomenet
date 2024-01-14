@@ -656,6 +656,10 @@ void sync_xsleep(int milliseconds) {
 char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
 	char i;
 
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+	inkey_shift_special = 0x0;
+#endif
+
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 	inkey_location_keys = TRUE;
  #if 0 /* All of this isn't that cool. Instead, let's only auto-enter edit mode if user actually presses an arrow/positional key, making use of this whole feature thing. */
@@ -671,6 +675,19 @@ char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
 #endif
 
 	i = inkey();
+
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+	if (i == '\010' || i == 0x7F) { /* BACKSPACE (or on POSIX also: DELETE) */
+		if (inkey_shift_special == 0x2) i = KTRL('E'); /* CTRL+BACKSPACE = erase word */
+		if (inkey_shift_special == 0x1) i = KTRL('D'); /* SHIFT+BACKSPACE = DELETE -- for POSIX: 'Emulate' non-existant DEL key. */
+	}
+ #if 1		/* not working right: Initial CTRL+LEFT/RIGHT press is stuck in inkey() and only released after any subsequent key press (after which it works though!) */
+	else if (inkey_shift_special == 0x2) switch (i) {
+		case NAVI_KEY_LEFT: i = KTRL('Q'); break; /* CTRL+LEFT = jump a word left */
+		case NAVI_KEY_RIGHT: i = KTRL('W'); break; /* CTRL+RIGHT = jump a word right */
+	}
+ #endif
+#endif
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 	inkey_location_keys = FALSE;
@@ -804,32 +821,6 @@ static char inkey_aux(void) {
 
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
-#if 0
-//if (ch)
-//c_msg_format("ch=%d", ch);
-#endif
-
-			//Linux/X11:
-			//up:		31,95,70,70,53,50,13
-			//right:	31,95,70,70,53,51,13
-			//down:		31,95,70,70,53,52,13
-			//left:		31,95,70,70,53,49,13
-			//pos1:		31,95,70,70,53,48,13
-			//end:		31,95,70,70,53,55,13
-			//pgup:		31,95,70,70,53,53,13
-			//pgdn:		31,95,70,70,53,54,13
-			//Note that, depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/
-
-			//Windows:
-			//up:		31,120,52,56,13
-			//right:	31,120,52,68,13
-			//down:		31,120,53,48,13
-			//left:		31,120,52,66,13
-			//pos1:		31,120,52,55,13
-			//end:		31,120,52,70,13
-			//pgup:		31,120,52,57,13
-			//pgdn:		31,120,53,49,13
-			//del:		31,120,53,51,13
 
 			if (parse_macro && ch == MACRO_WAIT) {
 				buf_atoi[0] = '0';
@@ -1355,6 +1346,30 @@ char inkey(void) {
 		/* Get a key (see above) */
 		kk = ch = inkey_aux();//		<-(y)!! in -c (terminal) mode, this waits for keypress (META_DISPLAYPINGS_LATER)
 
+		//Linux/X11:
+		//up:		31,95,70,70,53,50,13
+		//right:	31,95,70,70,53,51,13
+		//down:		31,95,70,70,53,52,13
+		//left:		31,95,70,70,53,49,13
+		//pos1:		31,95,70,70,53,48,13
+		//end:		31,95,70,70,53,55,13
+		//pgup:		31,95,70,70,53,53,13
+		//pgdn:		31,95,70,70,53,54,13
+		//Note that, depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/
+		//CTRL+navikey:	31,78,95,70,70,53,x,13
+
+		//Windows:
+		//up:		31,120,52,56,13
+		//right:	31,120,52,68,13
+		//down:		31,120,53,48,13
+		//left:		31,120,52,66,13
+		//pos1:		31,120,52,55,13
+		//end:		31,120,52,70,13
+		//pgup:		31,120,52,57,13
+		//pgdn:		31,120,53,49,13
+		//del:		31,120,53,51,13
+		//CTRL+navikey:	31,67,120,52/53,x,13
+
 		/* Finished a "control-underscore" sequence */
 		if (parse_under && (ch <= 32)) {
 			/* Found the edge */
@@ -1445,15 +1460,19 @@ char inkey(void) {
 			}
 
 			if (ch == 13) { /* End */
+				int pos = 1; /* CTRL key pressed together with navigational key? */
+
 				/* Terminate character collection */
 				inkey_location_key_active = FALSE;
 
 				/* Evaluate and return hack value. Note #0 is always '31', #6 always '13', or we wouldn't be here. */
  #ifdef WINDOWS
-				if (inkey_location_key_sequence[1] == 120 &&
-				    inkey_location_key_sequence[2] == 52)
+				if (inkey_location_key_sequence[1] == 67) pos = 2;
+
+				if (inkey_location_key_sequence[pos] == 120 &&
+				    inkey_location_key_sequence[pos + 1] == 52)
 					/* For values, compare table in inkey_aux() */
-					switch (inkey_location_key_sequence[3]) {
+					switch (inkey_location_key_sequence[pos + 2]) {
 					case 55: // Pos1
 						ch = NAVI_KEY_POS1;
 						break;
@@ -1476,10 +1495,10 @@ char inkey(void) {
 						/* Unknown sequence, discard */
 						ch = 0;
 					}
-				else if (inkey_location_key_sequence[1] == 120 &&
-				    inkey_location_key_sequence[2] == 53)
+				else if (inkey_location_key_sequence[pos] == 120 &&
+				    inkey_location_key_sequence[pos + 1] == 53)
 					/* For values, compare table in inkey_aux() */
-					switch (inkey_location_key_sequence[3]) {
+					switch (inkey_location_key_sequence[pos + 2]) {
 					case 48: // Arrow down
 						ch = NAVI_KEY_DOWN;
 						break;
@@ -1494,12 +1513,14 @@ char inkey(void) {
 						ch = 0;
 					}
  #else /* assume POSIX */
-				if (inkey_location_key_sequence[1] == 95 &&
-				    inkey_location_key_sequence[2] == 70 &&
-				    inkey_location_key_sequence[3] == 70 &&
-				    inkey_location_key_sequence[4] == 53)
+				if (inkey_location_key_sequence[1] == 78) pos = 2;
+
+				if (inkey_location_key_sequence[pos] == 95 &&
+				    inkey_location_key_sequence[pos + 1] == 70 &&
+				    inkey_location_key_sequence[pos + 2] == 70 &&
+				    inkey_location_key_sequence[pos + 3] == 53)
 					/* For values, compare table in inkey_aux() */
-					switch (inkey_location_key_sequence[5]) {
+					switch (inkey_location_key_sequence[pos + 4]) {
 					case 48: // Pos1
 						ch = NAVI_KEY_POS1;
 						break;
@@ -1531,6 +1552,10 @@ char inkey(void) {
  #endif
 				/* Unknown sequence, discard */
 				else ch = 0;
+
+ #ifdef ENABLE_SHIFT_SPECIALKEYS
+				if (pos == 2) inkey_shift_special |= 0x2; /* CTRL has been pressed together with navigational key */
+ #endif
 			}
 			/* Continue receiving chars */
 			else ch = 0;
