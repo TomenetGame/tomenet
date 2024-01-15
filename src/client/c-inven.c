@@ -471,7 +471,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 #ifdef SMART_SWAP
 	char buf3[ONAME_LEN];
 	bool chk_multi = (mode & CHECK_MULTI) != 0;
-	int i_found = -1, tval, sval, pval, method;
+	int i_found = -1, tval = -1, sval = -1, pval = -1, method;
 #endif
 	bool charged = (mode & CHECK_CHARGED) != 0;
 #ifdef ENABLE_SUBINVEN
@@ -556,16 +556,15 @@ bool get_item_hook_find_obj(int *item, int mode) {
     } else if (subinven) {
 	/* Scan all subinvens for item name match */
 	int l;
+	object_type *o_ptr;
 
 	/* Exception: If !inven_first, we need to scan equip, then subinvens, then normal inven.
 	   This is important for magic devices that can be equipped (WIELD_DEVICES). */
 	if (!inven_first) {
 		/* Scan the equipment now, before subinventories */
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-			object_type *o_ptr = &inventory[i];
-
+			o_ptr = &inventory[i];
 			if (!item_tester_okay(o_ptr)) continue;
-
 #if 0
 			if (my_strcasestr(inventory_name[i], buf)) {
 #else
@@ -602,6 +601,36 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
 					for (k = 0; k < INVEN_PACK; k++) {
 						if (k == i) continue;
+
+						if (inventory[k].tval == TV_SUBINVEN) {
+							for (j = 0; j < inventory[k].pval; j++) {
+								strcpy(buf3, subinventory_name[k][j]);
+								ptr = buf3;
+								while (*ptr) {
+									/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+									   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+									if (*ptr == '@') ptr++;
+									else *ptr = tolower(*ptr);
+									ptr++;
+								}
+								/* Skip fully charging stacks */
+								if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+								    //(partially charging) || strstr(buf3, "(~)")
+								    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
+									continue;
+
+								if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+								if (subinventory[k][j].tval == inventory[i].tval && /* unnecessary check, but whatever */
+								    strstr(buf3, buf2)) {
+									i = (k + 1) * 100 + j;
+									break;
+								}
+							}
+							if (j == inventory[k].pval) continue;
+							k = INVEN_PACK - 1; //hax (to leave the outer loop too, and use this item) */
+							break;
+						}
+
 						strcpy(buf3, inventory_name[k]);
 						ptr = buf3;
 						while (*ptr) {
@@ -642,7 +671,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		for (j = 0; j < inventory[l].pval; j++) {
 			i = j;
 
-			object_type *o_ptr = &subinventory[l][i];
+			o_ptr = &subinventory[l][i];
 
 			if (!item_tester_okay(o_ptr)) continue;
 
@@ -684,7 +713,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					//if (stop != INVEN_PACK) /* no need, as we just already processed equipment? */
 					for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 						if (k == i) continue;
-						strcpy(buf3, subinventory_name[l][k]);
+						strcpy(buf3, inventory_name[k]);
 						ptr = buf3;
 						while (*ptr) {
 							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
@@ -700,7 +729,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 							continue;
 
 						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-						if (subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
+						if (inventory[k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
 						    strstr(buf3, buf2)) {
 							ic = k;
 							break;
