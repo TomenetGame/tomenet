@@ -8311,8 +8311,7 @@ void auto_inscriptions(void) {
 
 			/* Process the given filename */
 			load_auto_inscriptions(tmp);
-			for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
-			break;
+			apply_auto_inscriptions(-1, FALSE);
 		case 's':
 			/* Prompt */
 			clear_from(21);
@@ -8407,11 +8406,11 @@ void auto_inscriptions(void) {
 			/* Get a new tag string */
 			if (!askfor_aux(buf, AUTOINS_TAG_LEN - 1, 0)) {
 				/* in case match was changed, we may also need to reapply */
-				for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
+				apply_auto_inscriptions(cur_page * AUTOINS_PAGESIZE + cur_line, FALSE);
 				continue;
 			}
 			strcpy(auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line], buf);
-			for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
+			apply_auto_inscriptions(cur_page * AUTOINS_PAGESIZE + cur_line, FALSE);
 
 			/* comfort hack - fake advancing ;) */
 #ifndef INTEGRATED_SELECTOR
@@ -8483,7 +8482,7 @@ void auto_inscriptions(void) {
 			i = cur_page * AUTOINS_PAGESIZE + cur_line;
 			auto_inscription_force[i] = !auto_inscription_force[i];
 			/* if we changed to 'forced', we may need to reapply - note that competing inscriptions aren't well-defined here */
-			if (auto_inscription_force[i]) for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
+			if (auto_inscription_force[i]) apply_auto_inscriptions(i, FALSE);
 			redraw = TRUE;
 			break;
 		default:
@@ -8509,6 +8508,24 @@ void auto_inscriptions(void) {
 	inkey_interact_macros = FALSE;
 #endif
 }
+
+/* Apply all (insc_idx = -1) or one specific (insc_idx) auto-inscription to the complete inventory */
+void apply_auto_inscriptions(int insc_idx, bool force) {
+	int i;
+#ifdef ENABLE_SUBINVEN
+	int s;
+#endif
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		apply_auto_inscriptions_aux(i, insc_idx, force);
+#ifdef ENABLE_SUBINVEN
+		if (inventory[i].tval == TV_SUBINVEN)
+			for (s = 0; s < inventory[i].pval; s++)
+				apply_auto_inscriptions_aux((i + 1) * 100 + s, insc_idx, force);
+#endif
+	}
+}
+
 
 /* Helper function for option manipulation - check before and after, and refresh stuff if the changes made require it.
    init: TRUE before an option gets changed, FALSE afterwards. */

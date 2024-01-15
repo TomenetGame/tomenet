@@ -1466,7 +1466,7 @@ void cmd_apply_autoins(void) {
 	/* Get the item */
 	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
-	apply_auto_inscriptions(item, TRUE);
+	apply_auto_inscriptions_aux(item, -1, TRUE);
 	if (c_cfg.auto_inscribe) Send_autoinscribe(item);
 }
 

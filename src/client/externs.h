@@ -686,6 +686,7 @@ extern void copy_to_clipboard(char *buf);
 extern bool paste_from_clipboard(char *buf, bool global);
 extern void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method, bool afford);
 extern void set_bigmap(int bm, bool verbose);
+extern void apply_auto_inscriptions(int insc_idx, bool force);
 
 /* c-store.c */
 extern bool leave_store;
@@ -925,7 +926,7 @@ extern int Send_request_key(int id, char key);
 extern int Send_request_num(int id, int num);
 extern int Send_request_str(int id, char *str);
 extern int Send_request_cfr(int id, int cfr);
-extern void apply_auto_inscriptions(int slot, bool force);
+extern void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force);
 extern int Send_client_setup(void);
 extern int Send_audio(void);
 extern int Send_font(void);
