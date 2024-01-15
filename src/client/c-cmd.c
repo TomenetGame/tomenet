@@ -2057,11 +2057,22 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 	char *ress;
 
 	/* We expect to start positioned on the '\n' of the line we want to read, aka at its very end */
-	fseek(f, -1, SEEK_CUR);
+	if (fseek(f, -1, SEEK_CUR)) {
+		/* Did we try to go beyond the beginning of the file? Emulate 'EOF' aka return 'NULL' */
+		return(NULL);
+	}
 	while ((c = fgetc(f)) != '\n') {
+		/* Did we hit the beginning of the file? */
+		if (ftell(f) == 1) {
+			/* Position on the very first character of the file */
+			fseek(f, 0, SEEK_SET);
+			ress = fgets(buf, max, f);
+			fseek(f, 0, SEEK_SET);
+			return(ress);
+		}
+		/* Move backwards from end to beginning of the line, character by character */
 		res = fseek(f, -2, SEEK_CUR);
-		/* Did we hit the beginning of the file? Emulate 'EOF' aka return 'NULL' */
-		if (res == -1) return(NULL);
+		if (res == -1) return(NULL); //paranoia, can't hit begining of line here
 	}
 	/* We're now on the beginning of the line we want to read */
 	pos = ftell(f);
@@ -3048,7 +3059,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		case NAVI_KEY_DOWN:
 		case '2': case '\r': case '\n': //rl:'j'
 			line++;
-			if (line > guide_lastline - maxlines) line = 0;
+			if (line > guide_lastline - maxlines + 1) line = 0;
 			continue;
 
 		/* page up */
@@ -3073,7 +3084,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				else
 #endif
 				line += maxlines;
-				if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
+				if (line > guide_lastline - maxlines + 1) line = guide_lastline - maxlines + 1;
 				if (line < 0) line = 0;
 			} else line = 0;
 			continue;
@@ -4321,7 +4332,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 /* Added based on cmd_the_guide() to similarly browse the client-side spoiler files. - C. Blue
    Remember things such as last line visited, last search term.. for up to this - 1 different fixed files (0 is reserved for 'not saved'). */
 #define MAX_REMEMBERANCE_INDICES 11
-void browse_local_file(const char* angband_path, char* fname, int rememberance_index) {
+void browse_local_file(const char* angband_path, char* fname, int rememberance_index, bool reverse) {
 	static int line_cur[MAX_REMEMBERANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBERANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBERANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBERANCE_INDICES] = { -1 };
 	static char lastsearch[MAX_REMEMBERANCE_INDICES][MAX_CHARS] = { 0 };
 
@@ -4330,12 +4341,15 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line_cur[rememberance_index];
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS];
 	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, *buf2ptr;
-	char path[1024], bufdummy[MAX_CHARS + 1];
+	char path[1024];
+#ifndef BUFFER_LOCAL_FILE
+	char bufdummy[MAX_CHARS + 1];
+	char *res;
+#endif
 	FILE *fff;
 	byte attr;
 
 	int i;
-	char *res;
 
 #ifdef REGEX_SEARCH
 	bool search_regexp = FALSE;
@@ -4361,7 +4375,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		//lastsearch[rememberance_index][0] = 0; //maybe just keep this, doesn't hurt
 	}
 
-	file_lastline[rememberance_index] = -1; //always try anew if the file is valid
+	file_lastline[rememberance_index] = -1; //always try anew whether the file is valid
 	path_build(path, 1024, angband_path, fname);
 
 	/* init the file */
@@ -4375,8 +4389,12 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		return;
 	}
 
+#ifdef BUFFER_LOCAL_FILE
+	if (fgets(buf, 81 , fff)) file_lastline[rememberance_index] = 0;
+#else
 	/* count lines */
 	while (fgets(buf, 81 , fff)) file_lastline[rememberance_index]++;
+#endif
 	my_fclose(fff);
 
 	/* empty file? */
@@ -4389,6 +4407,33 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 	}
 
 	fff = my_fopen(path, "r");
+#ifdef BUFFER_LOCAL_FILE
+	/* buffer file, for easy reverse browsing */
+	i = 0;
+	if (reverse) {
+		fseek(fff, -1, SEEK_END);
+		while (fgets_inverse(buf, 81 , fff)) {
+			buf[strlen(buf) - 1] = 0; //strip trailing newlines
+			strcpy(local_file_line[i++], buf);
+			if (i == LOCAL_FILE_LINES_MAX) {
+				c_msg_format("\377The file %s is too big to get buffered, cut off at line %d.", fname, LOCAL_FILE_LINES_MAX);
+				break;
+			}
+		}
+		file_lastline[rememberance_index] = i - 1;
+	} else {
+		while (fgets(buf, 81 , fff)) {
+			buf[strlen(buf) - 1] = 0; //strip trailing newlines
+			strcpy(local_file_line[i++], buf);
+			if (i == LOCAL_FILE_LINES_MAX) {
+				c_msg_format("\377The file %s is too big to get buffered, cut off at line %d.", fname, LOCAL_FILE_LINES_MAX);
+				break;
+			}
+		}
+		file_lastline[rememberance_index] = i - 1;
+	}
+	my_fclose(fff);
+#endif
 
 	/* init searches */
 	searchstr[0] = 0;
@@ -4418,6 +4463,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		if (skip_redraw) goto skipped_redraw;
 		restore_pos = FALSE;
 
+#ifndef BUFFER_LOCAL_FILE
 		/* Always begin at zero */
 		if (backwards) fseek(fff, -1, SEEK_END);
 		else fseek(fff, 0, SEEK_SET);
@@ -4428,16 +4474,22 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		} else {
 			if (!searchwrap) for (n = 0; n < line_cur[rememberance_index]; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
 		}
+#endif
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
 		withinsearch[0] = 0;
 		for (n = 0; n < maxlines; n++) {
+#ifndef BUFFER_LOCAL_FILE
 			if (backwards) res = fgets_inverse(buf, 81, fff);
 			else res = fgets(buf, 81, fff);
 			/* Reached end of file? -> No need to try and display further lines */
 			if (!res) break;
 
 			buf[strlen(buf) - 1] = 0; //strip trailing newlines
+#else
+			if (line_cur[rememberance_index] + n > file_lastline[rememberance_index]) buf[0] = 0;
+			else strcpy(buf, local_file_line[line_cur[rememberance_index] + n]);
+#endif
 
 			/* Automatically add colours to "(x.yza)" formatted chapter markers */
 			cp = buf;
@@ -4491,10 +4543,12 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 						if (backwards) {
 							backwards = FALSE;
 							searchline = file_lastline[rememberance_index] - searchline;
+ #ifndef BUFFER_LOCAL_FILE
 							/* Skip end of line, advancing to next line */
 							fseek(fff, 1, SEEK_CUR);
 							/* This line has already been read too, by fgets_inverse(), so skip too */
 							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+ #endif
 						}
 
 						searchstr[0] = 0;
@@ -4518,10 +4572,12 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 					if (backwards) {
 						backwards = FALSE;
 						searchline = file_lastline[rememberance_index] - searchline;
+ #ifndef BUFFER_LOCAL_FILE
 						/* Skip end of line, advancing to next line */
 						fseek(fff, 1, SEEK_CUR);
 						/* This line has already been read too, by fgets_inverse(), so skip too */
 						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+ #endif
 					}
 
 					strcpy(withinsearch, searchstr);
@@ -4831,7 +4887,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		case NAVI_KEY_DOWN:
 		case '2': case '\r': case '\n': //rl:'j'
 			line_cur[rememberance_index]++;
-			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = 0;
+			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines + 1) line_cur[rememberance_index] = 0;
 			continue;
 
 		/* page up */
@@ -4845,9 +4901,9 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		/* page down */
 		case NAVI_KEY_PAGEDOWN:
 		case '3': case 'n': case ' ': //rl:?
-			if (line_cur[rememberance_index] < file_lastline[rememberance_index] - maxlines) {
+			if (line_cur[rememberance_index] < file_lastline[rememberance_index] - maxlines + 1) {
 				line_cur[rememberance_index] += maxlines;
-				if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines;
+				if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines + 1) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines + 1;
 				if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 			} else line_cur[rememberance_index] = 0;
 			continue;
@@ -5084,7 +5140,9 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 
 		/* exit */
 		case ESCAPE: //case 'q': case KTRL('Q'):
+#ifndef BUFFER_LOCAL_FILE
 			my_fclose(fff);
+#endif
 			Term_load();
 #ifdef REGEX_SEARCH
 			if (!ires) regfree(&re_src);
@@ -5094,7 +5152,9 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		}
 	}
 
+#ifndef BUFFER_LOCAL_FILE
 	my_fclose(fff);
+#endif
 	Term_load();
 	inkey_interact_macros = FALSE;
 }
@@ -6382,34 +6442,34 @@ static void cmd_spoilers(void) {
 
 		switch (i) {
 		case 'k':
-			browse_local_file(ANGBAND_DIR_GAME, "k_info.txt", 1);
+			browse_local_file(ANGBAND_DIR_GAME, "k_info.txt", 1, FALSE);
 			break;
 		case 'e':
-			browse_local_file(ANGBAND_DIR_GAME, "e_info.txt", 2);
+			browse_local_file(ANGBAND_DIR_GAME, "e_info.txt", 2, FALSE);
 			break;
 		case 'r':
-			browse_local_file(ANGBAND_DIR_GAME, "r_info.txt", 3);
+			browse_local_file(ANGBAND_DIR_GAME, "r_info.txt", 3, FALSE);
 			break;
 		case 'E':
-			browse_local_file(ANGBAND_DIR_GAME, "re_info.txt", 4);
+			browse_local_file(ANGBAND_DIR_GAME, "re_info.txt", 4, FALSE);
 			break;
 		case 'a':
-			browse_local_file(ANGBAND_DIR_GAME, "a_info.txt", 5);
+			browse_local_file(ANGBAND_DIR_GAME, "a_info.txt", 5, FALSE);
 			break;
 		case 'v':
-			browse_local_file(ANGBAND_DIR_GAME, "v_info.txt", 6);
+			browse_local_file(ANGBAND_DIR_GAME, "v_info.txt", 6, FALSE);
 			break;
 		case 'd':
-			browse_local_file(ANGBAND_DIR_GAME, "d_info.txt", 7);
+			browse_local_file(ANGBAND_DIR_GAME, "d_info.txt", 7, FALSE);
 			break;
 		case 'f':
-			browse_local_file(ANGBAND_DIR_GAME, "f_info.txt", 8);
+			browse_local_file(ANGBAND_DIR_GAME, "f_info.txt", 8, FALSE);
 			break;
 		case 't':
-			browse_local_file(ANGBAND_DIR_GAME, "tr_info.txt", 9);
+			browse_local_file(ANGBAND_DIR_GAME, "tr_info.txt", 9, FALSE);
 			break;
 		case 's':
-			browse_local_file(ANGBAND_DIR_GAME, "st_info.txt", 10);
+			browse_local_file(ANGBAND_DIR_GAME, "st_info.txt", 10, FALSE);
 			break;
 		case KTRL('Q'):
 			i = ESCAPE;
@@ -6432,7 +6492,7 @@ static void cmd_spoilers(void) {
 static void cmd_notes(void) {
 	static int y = 0, j_sel = 0;
 	int i = 0, d, vertikal_offset = 3, horiz_offset = 5;
-	int row, col = 3;
+	int row, col = 1;
 
 	char ch = 0;
 	bool inkey_msg_old;
@@ -6456,10 +6516,8 @@ static void cmd_notes(void) {
 	}
 
 	while ((ent = readdir(dir))) {
-		c_msg_format("found %s", tmp_name);
 		strcpy(tmp_name, ent->d_name);
 		if (!strncmp(tmp_name, "notes-", 6)) {
-			c_msg_print("  ADDED");
 			strcpy(notes_fname[notes_files], tmp_name);
 			notes_files++;
 		}
@@ -6478,7 +6536,11 @@ static void cmd_notes(void) {
 		else {
 			//Term_putstr(col, row++, -1, TERM_WHITE, format("Found %d notes-files from other players (Press \377yENTER\377w to browse selected):", notes_files));
 			Term_putstr(col, row++, -1, TERM_WHITE, format("Found %d notes-files from other players:", notes_files));
-			Term_putstr(col, row++, -1, TERM_WHITE, "\377ydirectional keys\377w navigate, \377ys\377w search, \377yESC\377w leave, \377BRETURN\377w browse");
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+			Term_putstr(col, row++, -1, TERM_WHITE, "\377ydirectional keys\377w, \377ys\377w search, \377yESC\377w leave, \377BRETURN\377w reverse browse, \377BSHIFT+RET\377w browse");
+#else
+			Term_putstr(col, row++, -1, TERM_WHITE, "\377ydirectional keys\377w, \377ys\377w search, \377yESC\377w leave, \377BRETURN\377w reverse browse");
+#endif
 		}
 
 		/* Display the notes */
@@ -6503,12 +6565,19 @@ static void cmd_notes(void) {
 		Term->scr->cu = 1;
 
 		/* Hack to disable macros: Macros on SHIFT+X for example prohibits 'X' menu choice here.. */
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+		inkey_shift_special = 0x0;
+#endif
 		ch = inkey();
 		/* ..and reenable macros right away again, so navigation via arrow keys works. */
 
 		switch (ch) {
 		case '\n': case '\r':
-			browse_local_file(ANGBAND_DIR_USER, notes_fname[j_sel], 0);
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+			browse_local_file(ANGBAND_DIR_USER, notes_fname[j_sel], 0, (inkey_shift_special == 0x1) ? FALSE : TRUE);
+#else
+			browse_local_file(ANGBAND_DIR_USER, notes_fname[j_sel], 0, TRUE);
+#endif
 			break;
 		case KTRL('Q'):
 			i = ESCAPE;
