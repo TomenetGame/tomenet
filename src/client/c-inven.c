@@ -318,9 +318,7 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 
 				/* paranoia or very long item name that got shortened, omitting the 'of', for some reason by object_desc() perhaps -
 				   anyway, we accept the item for now, might need changing -_- */
-				if (!oname2ptr) {
-					break;
-				}
+				if (!oname2ptr) break;
 
 				/* If name is equal -> 'Success' - same item exists in equipment as our original inventory item :/.
 				    So, postpone our original item for now and continue searching the equipment for a different one instead. */
@@ -412,10 +410,9 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 
 #ifdef SMART_SWAP
 		if (i_found != -1) {
-			/* Skip same-type inventory items to become our alternative replacement item for swapping. */
-			if (tval == inventory[i].tval && sval == inventory[i].sval) {
-				continue;
-			}
+			/* Skip same-type inventory items to become our alternative replacement item for swapping.
+			   TODO: Apply method 1/2/3 here, instead of just 1. */
+			if (tval == inventory[i].tval && sval == inventory[i].sval) continue;
 		}
 #endif
 
@@ -429,7 +426,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 			sval = inventory[*cp].sval;
 			/* Continue searching for an item */
 			*cp = -1;
-			/* Only search the inventory this time though */
+			/* Only search the inventory this time though -- assume non inven_first aka reversed traversal direction >_> */
 			if (stop > INVEN_PACK) stop = INVEN_PACK;
 			if (j >= stop) j = stop - 1;
 			/* Do not AGAIN replace the alternative item we might find */
@@ -467,14 +464,14 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
  */
 cptr get_item_hook_find_obj_what;
 bool get_item_hook_find_obj(int *item, int mode) {
-	int i, j;
+	int i, j, stop;
 	char buf[ONAME_LEN];
 	char buf1[ONAME_LEN], buf2[ONAME_LEN], *ptr; /* for manual strcasestr() */
 	bool inven_first = (mode & INVEN_FIRST) != 0;
 #ifdef SMART_SWAP
 	char buf3[ONAME_LEN];
 	bool chk_multi = (mode & CHECK_MULTI) != 0;
-	int i_found = -1;
+	int i_found = -1, tval, sval, pval, method;
 #endif
 	bool charged = (mode & CHECK_CHARGED) != 0;
 #ifdef ENABLE_SUBINVEN
@@ -482,8 +479,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 #endif
 
 	strcpy(buf, "");
-	if (!get_string(get_item_hook_find_obj_what, buf, 79))
-		return(FALSE);
+	if (!get_string(get_item_hook_find_obj_what, buf, 79)) return(FALSE);
 
 #ifdef ENABLE_SUBINVEN
     if (using_subinven != -1) {
@@ -638,8 +634,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	/* Fall through and scan inventory normally, after we didn't find anything in subinvens. */
     }
 #endif
-	for (j = inven_first ? 0 : INVEN_TOTAL - 1;
-	    inven_first ? (j < INVEN_TOTAL) : (j >= 0);
+	stop = INVEN_TOTAL;
+	for (j = inven_first ? 0 : stop - 1;
+	    inven_first ? (j < stop) : (j >= 0);
 	    inven_first ? j++ : j--) {
 		/* translate back so order within each - inven & equip - is alphabetically again */
 		if (!inven_first) {
@@ -650,6 +647,14 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		object_type *o_ptr = &inventory[i];
 
 		if (!item_tester_okay(o_ptr)) continue;
+
+#ifdef SMART_SWAP
+		if (i_found != -1) {
+			/* Skip same-type inventory items to become our alternative replacement item for swapping.
+			   TODO: Apply method 1/2/3 here, instead of just 1. */
+			if (tval == inventory[i].tval && sval == inventory[i].sval) continue;
+		}
+#endif
 
 #if 0
 		if (my_strcasestr(inventory_name[i], buf)) {
@@ -681,7 +686,22 @@ bool get_item_hook_find_obj(int *item, int mode) {
 				char *buf1p, *buf3p;
 				int k;
 
-				if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+				tval = inventory[i].tval;
+				sval = inventory[i].sval;
+				pval = inventory[i].pval; //basically only for spellbooks
+
+				/* Compare tval and sval directly, assuming they are available - true for non-flavour items */
+				if (sval != 255 || tval == TV_BOOK) {
+					buf1p = buf1;
+					method = 1; /* compare tval+sval (non-flavour items, or known flavour items (hahaa!)) */
+				}
+				/* Compare item names, assuming flavoured item*/
+				else {
+					buf1p = strstr(buf1, " of ");
+					if (!buf1p) method = 3; /* aka auto-accept anything -_- */
+					else method = 2; /* compare rest of the item name (unknown flavoured items) */
+				}
+
 				for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 					strcpy(buf3, inventory_name[k]);
 					ptr = buf3;
@@ -692,13 +712,48 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						else *ptr = tolower(*ptr);
 						ptr++;
 					}
-
-					if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+ #if 0 /* old, unclean (and 'buggy' for items of same tval+sval but with different pval, yet we certainly don't want to treat them as 'different') */
 					/* Actually we should only test for equipment slots that fulfill wield_slot() condition
 					   for the inventory item, but since we don't have this function client-side we just test all.. */
 					if (strstr(buf3, buf2) && !strcmp(buf1p, buf3p)) {
+ #else /* quick, rough fix, copy-pasted from new get_tag_aux(). Todo: clean this mess up in a similar fashion to get_tag()+get_tag_aux() */
+					if (!inventory[k].tval) continue;
+
+					switch (method) {
+					case 1:
+						/* Compare tval and sval directly, assuming they are available - true for non-flavour items.
+						   Almost no need to check bpval or pval, because switching items in such a manner doesn't make much sense,
+						   not even for polymorph rings, EXCEPT for spell books! */
+						if (inventory[k].tval != tval || inventory[k].sval != sval || (inventory[k].tval == TV_BOOK && inventory[k].sval == SV_SPELLBOOK && inventory[k].pval != pval)) continue;
+						break;
+					case 2:
+						/* Compare item names, assuming flavoured item*/
+						buf3p = strstr(buf3, " of ");
+
+						/* paranoia or very long item name that got shortened, omitting the 'of', for some reason by object_desc() perhaps -
+						   anyway, we accept the item for now, might need changing -_- */
+						if (!buf3p) break;
+
+						/* If name is equal -> 'Success' - same item exists in equipment as our original inventory item :/.
+						    So, postpone our original item for now and continue searching the equipment for a different one instead. */
+						if (strcmp(buf1p, buf3p)) continue;
+						break;
+					case 3: /* Badly processable item name - always accept -_- */
+						break;
+					}
+
+					/* Final check: It must have a matching tag though, of course */
+					if (strstr(buf3, buf2)) {
+ #endif
 						/* remember this item to use it if we don't find a different one.. */
 						i_found = i;
+
+						/* Only search the inventory this time though -- assume non inven_first aka reversed traversal direction >_> */
+						if (stop > INVEN_PACK) stop = INVEN_PACK;
+						if (j >= stop) j = stop - 1;
+						/* Do not AGAIN replace the alternative item we might find */
+						mode &= ~CHECK_MULTI;
+
 						break;
 					}
 				}
