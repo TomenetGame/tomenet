@@ -2734,6 +2734,10 @@ void do_cmd_open(int Ind, int dir) {
 
 	if (!(zcave = getcave(wpos))) return;
 
+#ifdef ENABLE_OUNLIFE
+	/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
 
 	/* Ghosts cannot open doors ; not in WRAITHFORM */
 	if ((cannot_spectral && !is_admin(p_ptr)) || cannot_form) {
@@ -3193,6 +3197,11 @@ void do_cmd_close(int Ind, int dir) {
 
 	if (!(zcave = getcave(wpos))) return;
 
+#ifdef ENABLE_OUNLIFE
+	/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+
 	/* Ghosts cannot close ; not in WRAITHFORM */
 	if ((cannot_spectral && !is_admin(p_ptr)) || cannot_form) {
 		msg_print(Ind, "You cannot close things!");
@@ -3497,6 +3506,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	/* Get a direction to tunnel, or Abort */
 	if (!dir) return; /* dir == 0 is currently possible since bad_dir() is used in nserver.c, but client doesn't send such dir usually, and it has no use for digging atm. */
+
+#ifdef ENABLE_OUNLIFE
+	/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
 	if (CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
@@ -4987,6 +5001,11 @@ void do_cmd_disarm(int Ind, int dir) {
 
 	if (!(zcave = getcave(wpos))) return;
 
+#ifdef ENABLE_OUNLIFE
+	/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+
 	/* Ghosts cannot disarm ; not in WRAITHFORM */
 	if (CANNOT_OPERATE_SPECTRAL) {
 		msg_print(Ind, "Without a material body you cannot disarm things!");
@@ -5404,6 +5423,11 @@ void do_cmd_bash(int Ind, int dir) {
 
 	if (!(zcave = getcave(wpos))) return;
 
+#ifdef ENABLE_OUNLIFE
+	/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+
 	/* Ghosts cannot bash ; not in WRAITHFORM */
 	if (CANNOT_OPERATE_SPECTRAL) {
 		/* Message */
@@ -5800,6 +5824,11 @@ void do_cmd_spike(int Ind, int dir) {
 
 	if (!(zcave = getcave(wpos))) return;
 
+#ifdef ENABLE_OUNLIFE
+	/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+
 	/* Ghosts cannot spike ; not in WRAITHFORM */
 	if (CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
 		/* Message */
@@ -5905,12 +5934,17 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				dir = rand_int(9) + 1;
 		}
 
-		if (p_ptr->steamblast_timer == -1 && dir != 5 &&
-		    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) {
+		if (p_ptr->steamblast_timer == -1 && dir != 5) {
 			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 			if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
-				do_steamblast(Ind, p_ptr->px + ddx[dir], p_ptr->py + ddy[dir]);
-				return;
+#ifdef ENABLE_OUNLIFE
+				/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+				if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+				if (!CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) {
+					do_steamblast(Ind, p_ptr->px + ddx[dir], p_ptr->py + ddy[dir]);
+					return;
+				}
 			}
 		}
 
@@ -5951,21 +5985,31 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			if ((cfg.door_bump_open & BUMP_OPEN_DOOR) &&
 			    p_ptr->easy_open &&
 			    (c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			    (c_ptr->feat <= FEAT_DOOR_TAIL) &&
-			    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
-				do_cmd_open(Ind, dir);
-				return;
+			    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
+#ifdef ENABLE_OUNLIFE
+				/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+				if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+				if (!CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
+					do_cmd_open(Ind, dir);
+					return;
+				}
 			}
 			else if ((cfg.door_bump_open & BUMP_OPEN_DOOR) &&
 			    p_ptr->easy_open &&
-			    (c_ptr->feat == FEAT_HOME_HEAD) &&
-			    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
+			    (c_ptr->feat == FEAT_HOME_HEAD)) {
 				if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) { /* orig house failure */
 					if ((!(cfg.door_bump_open & BUMP_OPEN_HOUSE) ||
 					    !access_door(Ind, cs_ptr->sc.ptr, FALSE)) &&
 					    !admin_p(Ind)) {
-						do_cmd_open(Ind, dir);
-						return;
+#ifdef ENABLE_OUNLIFE
+						/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+						if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+						if (!CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
+							do_cmd_open(Ind, dir);
+							return;
+						}
 					}
 				}
 			}
@@ -6066,19 +6110,27 @@ int do_cmd_run(int Ind, int dir) {
 			}
 
 			/* Handle the cfg_door_bump option */
-			if (cfg.door_bump_open && p_ptr->easy_open && !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
+			if (cfg.door_bump_open && p_ptr->easy_open) {
 				/* Get requested grid */
 				c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 				if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 				    ((c_ptr->feat == FEAT_HOME))) {
+					bool ret = TRUE;
+
 					/* Check if we have enough energy to open the door */
 					if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-						/* If so, open it. */
-						do_cmd_open(Ind, dir);
+#ifdef ENABLE_OUNLIFE
+						/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+						if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+						if (!CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
+							/* If so, open it. */
+							do_cmd_open(Ind, dir);
+						} else ret = FALSE;
 					}
-					return(2);
+					if (ret) return(2);
 				}
 			}
 
@@ -7328,6 +7380,11 @@ void do_cmd_fire(int Ind, int dir) {
 								/* No negative damage */
 								if (tdam < 0) tdam = 0;
 
+#ifdef ENABLE_OUNLIFE
+								/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+								if (p_ptr->tim_wraith && !q_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+
 								/* can't attack while in WRAITHFORM (explosion still works) */
 								if (p_ptr->tim_wraith && !q_ptr->tim_wraith) tdam = 0;
 
@@ -7552,10 +7609,17 @@ void do_cmd_fire(int Ind, int dir) {
 
 					if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam * MIRROR_REDUCE_DAM_TAKEN_RANGED + 99) / 100;
 
+#ifdef ENABLE_OUNLIFE
+					/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+					if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) &&
+						((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
+						    set_tim_wraith(Ind, 0);
+#endif
 					/* can't attack while in WRAITHFORM (explosion still works) */
 					/* wraithed players can attack wraithed monsters - mikaelh */
 					if (p_ptr->tim_wraith &&
-					    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) tdam = 0;
+					    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
+						    tdam = 0;
 
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;

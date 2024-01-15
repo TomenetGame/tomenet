@@ -8212,6 +8212,11 @@ void do_cmd_fletchery(int Ind) {
 			    q_ptr = &o_list[0 - item];
 #endif
 
+#ifdef ENABLE_OUNLIFE
+			/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+			if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+
 			if (CANNOT_OPERATE_SPECTRAL) { /* Not in WRAITHFORM ^^ */
 				msg_print(Ind, "You can't pick up rubble in incorporeal form!");
 				return;

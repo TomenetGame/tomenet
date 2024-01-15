@@ -3139,6 +3139,12 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	}
 #endif
 
+#ifdef ENABLE_OUNLIFE
+	/* Attacking on purpose terminates Wraithstep */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) && !q_ptr->tim_wraith)
+		set_tim_wraith(Ind, 0);
+#endif
+
 	/* Restrict attacking in WRAITHFORM */
 	if (p_ptr->tim_wraith && !q_ptr->tim_wraith) return;
 
@@ -4407,6 +4413,14 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	if (p_ptr->mon_vis[c_ptr->m_idx]) recent_track(m_ptr->r_idx);
 	/* Track a new monster */
 	if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
+
+#ifdef ENABLE_OUNLIFE
+	/* Attacking on purpose terminates Wraithstep */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) &&
+	    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) {
+		set_tim_wraith(Ind, 0);
+	}
+#endif
 
 	/* can't attack while in WRAITHFORM */
 	/* wraithed players can attack wraithed monsters - mikaelh */

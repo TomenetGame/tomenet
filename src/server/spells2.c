@@ -5016,6 +5016,11 @@ void throw_dirt(int Ind) {
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
+#ifdef ENABLE_OUNLIFE
+	/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
+	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
+#endif
+
 	if (CANNOT_OPERATE_SPECTRAL) {
 		msg_print(Ind, "You cannot throw sand without a material body!");
 		if (!is_admin(p_ptr)) return;
