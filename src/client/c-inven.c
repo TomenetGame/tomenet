@@ -168,9 +168,10 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 	cptr s;
 	bool charged = (mode & CHECK_CHARGED) != 0, charged_ready = (mode & CHECK_CHARGED_READY) != 0;
 	int mode_ready = (mode & ~CHECK_CHARGED) | CHECK_CHARGED_READY; /* Must prevent accidental recursion by removing CHECK_CHARGED, instead we want to check for readiness-to-use! */
+	int mode_unmulti = (mode & ~CHECK_MULTI);
 	int k, tval, sval, pval;
 #ifdef SMART_SWAP
-	int m;
+	int m, method;
 	bool chk_multi = (mode & CHECK_MULTI) != 0;
 	char *oname1ptr, *oname2ptr;
 #endif
@@ -204,6 +205,20 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 		/* Skip items that don't fit (for mkey) */
 		if (!item_tester_okay(&inventory[i])) return(FALSE);
 	}
+
+#ifdef SMART_SWAP
+	/* Compare tval and sval directly, assuming they are available - true for non-flavour items */
+	if (sval != 255 || tval == TV_BOOK) {
+		oname1ptr = buf;
+		method = 1; /* compare tval+sval (non-flavour items, or known flavour items (hahaa!)) */
+	}
+	/* Compare item names, assuming flavoured item*/
+	else {
+		oname1ptr = strstr(buf, " of ");
+		if (!oname1ptr) method = 3; /* aka auto-accept anything -_- */
+		else method = 2; /* compare rest of the item name (unknown flavoured items) */
+	}
+#endif
 
 	/* Skip empty inscriptions (those which don't contain any @.. tag) */
 	if (!(s = strchr(buf, '@'))) return(FALSE);
@@ -270,6 +285,7 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 		/* Accept item, for now! (Still gotta pass smart swap perhaps, see next below) */
 
 #ifdef SMART_SWAP
+		/* Cannot smart-swap items inside subinventories or from equipment (only _to_ equipment) */
 		if (!chk_multi || i > INVEN_PACK || si != -1) {
 #endif
 #ifdef ENABLE_SUBINVEN
@@ -285,27 +301,39 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 		/* Check for tag-matching, same tval+sval item in the equipment.
 		   If found, rather search the inventory for tag-matching non-same-tval+sval alternative.
 		   If we cannot find such an inventory item, go with the original inventory item. */
+		k = -1;
 		for (m = INVEN_WIELD; m < INVEN_TOTAL; m++) {
-			/* Compare tval and sval directly, assuming they are available - true for non-flavour items */
-			if (inventory[m].sval != 255 || inventory[m].tval == TV_BOOK) {
-				/* No need to check bpval or pval, because switching items in such a manner doesn't make much sense, not even for polymorph rings, EXCEPT for spell books! */
+			if (!inventory[m].tval) continue;
+
+			switch (method) {
+			case 1:
+				/* Compare tval and sval directly, assuming they are available - true for non-flavour items.
+				   Almost no need to check bpval or pval, because switching items in such a manner doesn't make much sense,
+				   not even for polymorph rings, EXCEPT for spell books! */
 				if (inventory[m].tval != tval || inventory[m].sval != sval || (inventory[m].tval == TV_BOOK && inventory[m].sval == SV_SPELLBOOK && inventory[m].pval != pval)) continue;
-			}
-			/* Compare item names, assuming flavoured item*/
-			else {
-				oname1ptr = strstr(buf, " of ");
+				break;
+			case 2:
+				/* Compare item names, assuming flavoured item*/
 				oname2ptr = strstr(inventory_name[m], " of ");
 
 				/* paranoia or very long item name that got shortened, omitting the 'of', for some reason by object_desc() perhaps -
 				   anyway, we accept the item for now, might need changing -_- */
-				if (oname1ptr && oname2ptr) {
-					/* If name is equal -> 'Success' - same item exists in equipment as our original inventory item :/.
-					    So, postpone our original item for now and continue searching the equipment for a different one instead. */
-					if (strcmp(oname1ptr, oname2ptr)) continue;
+				if (!oname2ptr) {
+					break;
 				}
+
+				/* If name is equal -> 'Success' - same item exists in equipment as our original inventory item :/.
+				    So, postpone our original item for now and continue searching the equipment for a different one instead. */
+				if (strcmp(oname1ptr, oname2ptr)) continue;
+				break;
+			case 3: /* Badly processable item name - always accept -_- */
+				break;
 			}
+
 			/* Final check: It must have a matching tag though, of course */
-			if (get_tag_aux(m, &k, tag, mode)) break;
+			if (get_tag_aux(m, &k, tag, mode_unmulti)) {
+				break;
+			}
 		}
 
 		/* Found no equipment alternative */
@@ -353,7 +381,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	int start, stop, step;
 	bool inven_first = (mode & INVEN_FIRST) != 0;
 #ifdef SMART_SWAP
-	int i_found = -1;
+	int i_found = -1, tval, sval;
 #endif
 
 	/* neither inventory nor equipment is allowed to be searched? */
@@ -382,13 +410,32 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 			i = j;
 		}
 
+#ifdef SMART_SWAP
+		if (i_found != -1) {
+			/* Skip same-type inventory items to become our alternative replacement item for swapping. */
+			if (tval == inventory[i].tval && sval == inventory[i].sval) {
+				continue;
+			}
+		}
+#endif
+
 		if (get_tag_aux(i, cp, tag, mode)) return(TRUE);
 #ifdef SMART_SWAP
 		/* Check for 'postponed' hack: */
 		if (*cp != -1) {
 			/* We did find a valid item but postpone it for later, as we search for another alternative item first */
 			i_found = *cp;
+			tval = inventory[*cp].tval;
+			sval = inventory[*cp].sval;
+			/* Continue searching for an item */
 			*cp = -1;
+			/* Only search the inventory this time though */
+			if (stop > INVEN_PACK) stop = INVEN_PACK;
+			if (j >= stop) j = stop - 1;
+			/* Do not AGAIN replace the alternative item we might find */
+			mode &= ~CHECK_MULTI;
+			/* No need to scan for subinventories below, as we may not use them for smart-swapping */
+			continue;
 		}
 #endif
 
@@ -397,14 +444,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 		if (inventory[i].tval == TV_SUBINVEN)
 			for (si = 0; si < inventory[i].pval; si++) {
 				if (get_tag_aux((i + 1) * 100 + si, cp, tag, mode)) return(TRUE);
- #ifdef SMART_SWAP
-				/* Check for 'postponed' hack: */
-				if (*cp != -1) {
-					/* We did find a valid item but postpone it for later, as we search for another alternative item first */
-					i_found = *cp;
-					*cp = -1;
-				}
- #endif
+				/* (Note: Items in subinven cannot be smart-swapped, so there is no check here regarding that, unlike above for normal inventory.) */
 		}
 #endif
 	}
