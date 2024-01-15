@@ -4753,21 +4753,22 @@
 /*
  * Bit flags for the "c_get_item" function
  */
-#define USE_EQUIP	0x0001	/* Allow equip items */
-#define USE_INVEN	0x0002	/* Allow inven items */
-#define USE_FLOOR	0x0004	/* Allow floor items */
-#define USE_EXTRA	0x0008	/* Allow extra items, aka call item by name instead of slot */
-#define INVEN_FIRST	0x0010	/* Seach for inscription tag in inventory first */
-#define SPECIAL_REQ	0x0020	/* Allow pressing '-' key to switch the request in a special way */
-#define USE_LIMIT	0x0040	/* Allow spell level limit */
-#define CHECK_MULTI	0x0080	/* For swap command with USE_EXTRA (search by name): Check multiple items and avoid ones that we've already equipped */
-#define NEWEST		0x0100	/* Allow pressing '+' key to re-use the newest item we previously acquired */
-#define CHECK_CHARGED	0x0200	/* For Havoc rods: Try to find non-charging ones */
-#define NO_FAIL_MSG	0x0400	/* Don't display 'You do not have an eligible item.' message. Because our calling function will give a more specific message instead. */
-#define EQUIP_FIRST	0x0800	/* Item selection: Display equipment first (for item 'A'ctivation) */
+#define USE_EQUIP		0x0001	/* Allow equip items */
+#define USE_INVEN		0x0002	/* Allow inven items */
+#define USE_FLOOR		0x0004	/* Allow floor items */
+#define USE_EXTRA		0x0008	/* Allow extra items, aka call item by name instead of slot */
+#define INVEN_FIRST		0x0010	/* Seach for inscription tag in inventory first */
+#define SPECIAL_REQ		0x0020	/* Allow pressing '-' key to switch the request in a special way */
+#define USE_LIMIT		0x0040	/* Allow spell level limit */
+#define CHECK_MULTI		0x0080	/* For swap command with USE_EXTRA (search by name): Check multiple items and avoid ones that we've already equipped */
+#define NEWEST			0x0100	/* Allow pressing '+' key to re-use the newest item we previously acquired */
+#define CHECK_CHARGED		0x0200	/* For (Havoc) rods: Try to find non-charging ones */
+#define NO_FAIL_MSG		0x0400	/* Don't display 'You do not have an eligible item.' message. Because our calling function will give a more specific message instead. */
+#define EQUIP_FIRST		0x0800	/* Item selection: Display equipment first (for item 'A'ctivation) */
 #ifdef ENABLE_SUBINVEN
- #define USE_SUBINVEN	0x1000	/* Allow subinventory items */
+ #define USE_SUBINVEN		0x1000	/* Allow subinventory items */
 #endif
+#define CHECK_CHARGED_READY	0x2000	/* For (Havoc) rods: Try to find non-charging ones, specifically ONLY allow readily usable items, not charging/empty ones. */
 
 /*
  * Bit flags for the "p_ptr->notice" variable
