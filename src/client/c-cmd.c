@@ -1423,7 +1423,7 @@ void cmd_destroy(byte flag) {
 
 	if (!c_cfg.no_verify_destroy) {
 		if (num == amt)
-			sprintf(out_val, "Really destroy %s?", inventory_name[item]name);
+			sprintf(out_val, "Really destroy %s?", name);
 		else
 			sprintf(out_val, "Really destroy %d of your %s?", amt, name);
 		if (!get_check2(out_val, FALSE)) return;
