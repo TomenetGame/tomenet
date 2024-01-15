@@ -2951,6 +2951,8 @@ int Receive_message(void) {
 	if (!strncmp(buf + 6, "Note from ", 10) || (got_note && buf[2] == ' ')) {
 		FILE *fp;
 		char path[1024];
+		time_t ct = time(NULL);
+		struct tm* ctl = localtime(&ct);
 
 		path_build(path, 1024, ANGBAND_DIR_USER, format("notes-%s.txt", nick));
 		fp = fopen(path, "a");
@@ -2982,7 +2984,7 @@ int Receive_message(void) {
 				c2++;
 			}
 
-			fprintf(fp, "%s\n", buf2);
+			fprintf(fp, "[%04d/%02d/%02d - %02d:%02d] %s\n", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min, buf2);
 			fclose(fp);
 		}
 		got_note = TRUE;
