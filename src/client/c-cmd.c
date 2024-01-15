@@ -2067,7 +2067,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 	pos = ftell(f);
 	ress = fgets(buf, max, f);
 
-	/* Rewind by this line + 1, to fulful our starting expectation for next time again */
+	/* Rewind by this line + 1, to fulfil our starting expectation for next time again */
 	fseek(f, pos - 1, SEEK_SET);
 
 	return(ress);
