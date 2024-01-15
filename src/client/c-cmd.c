@@ -1237,8 +1237,7 @@ void cmd_wield(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA)))
-		return;
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA))) return;
 
 	/* Send it */
 	Send_wield(item);
@@ -1251,8 +1250,7 @@ void cmd_wield2(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA)))
-		return;
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA))) return;
 
 	/* Send it */
 	Send_wield2(item);
@@ -1265,27 +1263,31 @@ void cmd_observe(byte mode) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Examine which item? ", (mode | USE_EXTRA)))
-		return;
+	if (!c_get_item(&item, "Examine which item? ", (mode | USE_EXTRA))) return;
 
 	/* Send it */
 	Send_observe(item);
 }
 
 void cmd_take_off(void) {
-	int item, amt = 255;
+	int item, amt = 255, num;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP | USE_EXTRA))) return;
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) num = subinventory[item / 100 - 1][item % 100].number;
+	else
+#endif
+	num = inventory[item].number;
 
 	/* New in 4.4.7a, for ammunition: Can take off a certain amount - C. Blue */
-	if (inventory[item].number > 1 && verified_item
+	if (num > 1 && verified_item
 	    && is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		inkey_letter_all = TRUE;
-		amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
+		amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
 		Send_take_off_amt(item, amt);
 	} else
 		Send_take_off(item);
@@ -1360,15 +1362,15 @@ void cmd_swap(void) {
 
 
 void cmd_destroy(byte flag) {
-	int item, amt;
+	int item, amt, num, tval;
 	char out_val[MSG_LEN];
+	cptr name;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Destroy what? ", (flag | USE_EXTRA))) return;
-
 
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
@@ -1395,15 +1397,24 @@ void cmd_destroy(byte flag) {
 		/* Send it */
 		Send_destroy(item, amt);
 		return;
-	}
+	} else if (item >= 100) {
+		num = subinventory[item / 100 - 1][item % 100].number;
+		tval = subinventory[item / 100 - 1][item % 100].tval;
+		name = subinventory_name[item / 100 - 1][item % 100];
+	} else
 #endif
+	{
+		num = inventory[item].number;
+		tval = inventory[item].tval;
+		name = inventory_name[item];
+	}
 
 	/* Get an amount */
-	if (inventory[item].number > 1) {
-		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = inventory[item].number;
+	if (num > 1) {
+		if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item) amt = num;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
 		}
 	} else amt = 1;
 
@@ -1411,10 +1422,10 @@ void cmd_destroy(byte flag) {
 	if (!amt) return;
 
 	if (!c_cfg.no_verify_destroy) {
-		if (inventory[item].number == amt)
-			sprintf(out_val, "Really destroy %s?", inventory_name[item]);
+		if (num == amt)
+			sprintf(out_val, "Really destroy %s?", inventory_name[item]name);
 		else
-			sprintf(out_val, "Really destroy %d of your %s?", amt, inventory_name[item]);
+			sprintf(out_val, "Really destroy %d of your %s?", amt, name);
 		if (!get_check2(out_val, FALSE)) return;
 	}
 
@@ -1461,8 +1472,7 @@ void cmd_uninscribe(byte flag) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Uninscribe what? ", (flag | USE_EXTRA)))
-		return;
+	if (!c_get_item(&item, "Uninscribe what? ", (flag | USE_EXTRA))) return;
 
 	/* Send it */
 	Send_uninscribe(item);
@@ -1643,8 +1653,7 @@ void cmd_refill(void) {
 	item_tester_hook = item_tester_oils;
 	p = "Refill with which light? ";
 
-	if (!c_get_item(&item, p, (USE_INVEN)))
-		return;
+	if (!c_get_item(&item, p, (USE_INVEN))) return;
 
 	/* Send it */
 	Send_fill(item);
@@ -7762,11 +7771,9 @@ void cmd_throw(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 	get_item_hook_find_obj_what = "Item name? ";
 
-	if (!c_get_item(&item, "Throw what? ", (USE_INVEN | USE_EQUIP | USE_EXTRA)))
-		return;
+	if (!c_get_item(&item, "Throw what? ", (USE_INVEN | USE_EQUIP | USE_EXTRA))) return;
 
-	if (!get_dir(&dir))
-		return;
+	if (!get_dir(&dir)) return;
 
 	/* Send it */
 	Send_throw(item, dir);
