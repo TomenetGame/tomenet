@@ -6440,7 +6440,11 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Recharge rods in player's inventory */
 	/* this should be moved to 'timeout'? */
+#ifdef WIELD_DEVICES
+	for (i = 0; i <= INVEN_WIELD; i++) {
+#else
 	for (i = 0; i < INVEN_PACK; i++) {
+#endif
 		o_ptr = &p_ptr->inventory[i];
 
 		/* Examine all charging rods */
