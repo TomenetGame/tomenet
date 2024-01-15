@@ -4577,10 +4577,14 @@ void paint_house(int Ind, int x, int y, int k) {
 	int hwx, hwy;
 
 	/* Sanity check */
-	if (k < 0 || k >= INVEN_PACK) return;
-
-	/* see if we have a potion */
+	if (!verify_inven_item(Ind, k)) return;
+#ifdef ENABLE_SUBINVEN
+	if (k >= 100) o_ptr = &p_ptr->subinventory[k / 100 - 1][k % 100];
+	else
+#endif
 	o_ptr = &p_ptr->inventory[k];
+
+	/* See if we have a potion */
 	if (!o_ptr->k_idx) {
 		msg_print(Ind, "\377oThat inventory slot is empty!");
 		return;

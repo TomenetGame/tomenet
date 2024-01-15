@@ -12287,7 +12287,7 @@ static int Receive_admin_house(int ind) {
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-//		use_esp_link(&player, LINKF_OBJ);
+		//use_esp_link(&player, LINKF_OBJ);
 	}
 	else player = 0;
 
