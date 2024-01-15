@@ -4577,7 +4577,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		ident = TRUE;
 		//o_ptr->pval += 60;
 		/* up to a 50% faster with maxed MD - the_sandman */
-		o_ptr->pval += 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+		o_ptr->pval += 75 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 		break;
 
 	case SV_ROD_ILLUMINATION:
@@ -5313,7 +5313,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		set_recall(Ind, rand_int(20) + 15, o_ptr);
 		ident = TRUE;
 		/* up to a 50% faster with maxed MD - the_sandman */
-		o_ptr->pval += 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+		o_ptr->pval += 75 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 		break;
 
 	case SV_ROD_ILLUMINATION:
