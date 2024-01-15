@@ -4833,6 +4833,10 @@ void calc_boni(int Ind) {
 	/* Bloating slows the player down (a little) */
 	if (p_ptr->food >= PY_FOOD_MAX) p_ptr->pspeed -= 10;
 
+	/* Being weakened by hunger? */
+	if (p_ptr->food < PY_FOOD_FAINT) { p_ptr->stat_add[A_STR] -= 2; csheet_boni[14].pstr -= 2; }
+	else if (p_ptr->food < PY_FOOD_WEAK) { p_ptr->stat_add[A_STR] -= 1; csheet_boni[14].pstr -= 1; }
+
 	/* Searching slows the player down */
 	if (p_ptr->searching) {
 		int sneakiness = get_skill(p_ptr, SKILL_SNEAKINESS);
