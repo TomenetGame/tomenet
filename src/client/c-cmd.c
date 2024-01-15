@@ -2072,7 +2072,6 @@ void cmd_high_scores(void) {
 	peruse_file();
 }
 
-//#ifndef BUFFER_GUIDE
 static char *fgets_inverse(char *buf, int max, FILE *f) {
 	int c, res, pos;
 	char *ress;
@@ -2104,7 +2103,6 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 
 	return(ress);
 }
-//#endif
 
 /* Local Guide invocation -
    search_type: 1 = search, 2 = strict search (all upper-case), 3 = chapter search, 4 = line number,
@@ -4384,9 +4382,11 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS];
 	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, *buf2ptr;
 	char path[1024];
+	char *res;
 #ifndef BUFFER_LOCAL_FILE
 	char bufdummy[MAX_CHARS + 1];
-	char *res;
+#else
+	static int fseek_pseudo = 0; //fake a file position, within our buffered guide string array
 #endif
 	FILE *fff;
 	byte attr;
@@ -4455,7 +4455,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 	if (reverse) {
 		fseek(fff, -1, SEEK_END);
 		while (fgets_inverse(buf, 81 , fff)) {
-			buf[strlen(buf) - 1] = 0; //strip trailing newlines
+			//buf[strlen(buf) - 1] = 0; //strip trailing newlines -- done later
 			strcpy(local_file_line[i++], buf);
 			if (i == LOCAL_FILE_LINES_MAX) {
 				c_msg_format("\377The file %s is too big to get buffered, cut off at line %d.", fname, LOCAL_FILE_LINES_MAX);
@@ -4465,7 +4465,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		file_lastline[rememberance_index] = i - 1;
 	} else {
 		while (fgets(buf, 81 , fff)) {
-			buf[strlen(buf) - 1] = 0; //strip trailing newlines
+			//buf[strlen(buf) - 1] = 0; //strip trailing newlines -- done later
 			strcpy(local_file_line[i++], buf);
 			if (i == LOCAL_FILE_LINES_MAX) {
 				c_msg_format("\377The file %s is too big to get buffered, cut off at line %d.", fname, LOCAL_FILE_LINES_MAX);
@@ -4516,6 +4516,15 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		} else {
 			if (!searchwrap) for (n = 0; n < line_cur[rememberance_index]; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
 		}
+#else
+		/* Always begin at zero */
+		if (backwards) fseek_pseudo = file_lastline[rememberance_index];
+		else fseek_pseudo = 0;
+		if (backwards) {
+			if (!searchwrap) fseek_pseudo -= line_cur[rememberance_index];
+		} else {
+			if (!searchwrap) fseek_pseudo += line_cur[rememberance_index];
+		}
 #endif
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
@@ -4524,14 +4533,27 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 #ifndef BUFFER_LOCAL_FILE
 			if (backwards) res = fgets_inverse(buf, 81, fff);
 			else res = fgets(buf, 81, fff);
+#else
+			if (backwards) {
+				if (fseek_pseudo < 0) {
+					fseek_pseudo = 0;
+					res = NULL; //emulate EOF
+				} else res = buf;
+				strcpy(buf, local_file_line[fseek_pseudo]);
+				fseek_pseudo--;
+			} else {
+				if (fseek_pseudo > file_lastline[rememberance_index]) {
+					fseek_pseudo = file_lastline[rememberance_index];
+					res = NULL; //emulate EOF
+				} else res = buf;
+				strcpy(buf, local_file_line[fseek_pseudo]);
+				fseek_pseudo++;
+			}
+#endif
 			/* Reached end of file? -> No need to try and display further lines */
 			if (!res) break;
 
 			buf[strlen(buf) - 1] = 0; //strip trailing newlines
-#else
-			if (line_cur[rememberance_index] + n > file_lastline[rememberance_index]) buf[0] = 0;
-			else strcpy(buf, local_file_line[line_cur[rememberance_index] + n]);
-#endif
 
 			/* Automatically add colours to "(x.yza)" formatted chapter markers */
 			cp = buf;
@@ -4590,6 +4612,8 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 							fseek(fff, 1, SEEK_CUR);
 							/* This line has already been read too, by fgets_inverse(), so skip too */
 							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+ #else
+							fseek_pseudo += 2;
  #endif
 						}
 
@@ -4619,6 +4643,8 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 						fseek(fff, 1, SEEK_CUR);
 						/* This line has already been read too, by fgets_inverse(), so skip too */
 						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+ #else
+						fseek_pseudo += 2;
  #endif
 					}
 
