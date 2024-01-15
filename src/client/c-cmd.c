@@ -4386,7 +4386,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 #ifndef BUFFER_LOCAL_FILE
 	char bufdummy[MAX_CHARS + 1];
 #else
-	static int fseek_pseudo = 0; //fake a file position, within our buffered guide string array
+	static int fseek_pseudo[MAX_REMEMBERANCE_INDICES] = { 0 }; //fake a file position, within our buffered guide string array
 #endif
 	FILE *fff;
 	byte attr;
@@ -4518,12 +4518,12 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 		}
 #else
 		/* Always begin at zero */
-		if (backwards) fseek_pseudo = file_lastline[rememberance_index];
-		else fseek_pseudo = 0;
+		if (backwards) fseek_pseudo[rememberance_index] = file_lastline[rememberance_index];
+		else fseek_pseudo[rememberance_index] = 0;
 		if (backwards) {
-			if (!searchwrap) fseek_pseudo -= line_cur[rememberance_index];
+			if (!searchwrap) fseek_pseudo[rememberance_index] -= line_cur[rememberance_index];
 		} else {
-			if (!searchwrap) fseek_pseudo += line_cur[rememberance_index];
+			if (!searchwrap) fseek_pseudo[rememberance_index] += line_cur[rememberance_index];
 		}
 #endif
 
@@ -4535,19 +4535,19 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 			else res = fgets(buf, 81, fff);
 #else
 			if (backwards) {
-				if (fseek_pseudo < 0) {
-					fseek_pseudo = 0;
+				if (fseek_pseudo[rememberance_index] < 0) {
+					fseek_pseudo[rememberance_index] = 0;
 					res = NULL; //emulate EOF
 				} else res = buf;
-				strcpy(buf, local_file_line[fseek_pseudo]);
-				fseek_pseudo--;
+				strcpy(buf, local_file_line[fseek_pseudo[rememberance_index]]);
+				fseek_pseudo[rememberance_index]--;
 			} else {
-				if (fseek_pseudo > file_lastline[rememberance_index]) {
-					fseek_pseudo = file_lastline[rememberance_index];
+				if (fseek_pseudo[rememberance_index] > file_lastline[rememberance_index]) {
+					fseek_pseudo[rememberance_index] = file_lastline[rememberance_index];
 					res = NULL; //emulate EOF
 				} else res = buf;
-				strcpy(buf, local_file_line[fseek_pseudo]);
-				fseek_pseudo++;
+				strcpy(buf, local_file_line[fseek_pseudo[rememberance_index]]);
+				fseek_pseudo[rememberance_index]++;
 			}
 #endif
 			/* Reached end of file? -> No need to try and display further lines */
@@ -4613,7 +4613,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 							/* This line has already been read too, by fgets_inverse(), so skip too */
 							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
  #else
-							fseek_pseudo += 2;
+							fseek_pseudo[rememberance_index] += 2;
  #endif
 						}
 
@@ -4644,7 +4644,7 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 						/* This line has already been read too, by fgets_inverse(), so skip too */
 						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
  #else
-						fseek_pseudo += 2;
+						fseek_pseudo[rememberance_index] += 2;
  #endif
 					}
 
