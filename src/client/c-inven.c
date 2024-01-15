@@ -598,9 +598,38 @@ bool get_item_hook_find_obj(int *item, int mode) {
 				    )) {
 					/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
 					char *buf1p, *buf3p;
-					int k;
+					int k, ic = -1;
 
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+
+					/* WIELD_DEVICES : Check equip first! */
+					for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
+						if (k == i) continue;
+						strcpy(buf3, subinventory_name[l][k]);
+						ptr = buf3;
+						while (*ptr) {
+							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+							if (*ptr == '@') ptr++;
+							else *ptr = tolower(*ptr);
+							ptr++;
+						}
+						/* Skip fully charging stacks */
+						if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+						    //(partially charging) || strstr(buf3, "(~)")
+						    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
+							continue;
+
+						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+						if (subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
+						    strstr(buf3, buf2)) {
+							ic = k;
+							break;
+						}
+					}
+
+					/* Check the current subinventory */
+					if (ic == -1)
 					for (k = 0; k < inventory[l].pval; k++) {
 						if (k == i) continue;
 						strcpy(buf3, subinventory_name[l][k]);
@@ -621,10 +650,39 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
 						if (subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
 						    strstr(buf3, buf2)) {
-							i = k;
+							ic = k;
 							break;
 						}
 					}
+
+					/* Check normal inventory too */
+					if (ic == -1)
+					for (k = 0; k < INVEN_PACK; k++) {
+						if (k == i) continue;
+						strcpy(buf3, subinventory_name[l][k]);
+						ptr = buf3;
+						while (*ptr) {
+							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+							if (*ptr == '@') ptr++;
+							else *ptr = tolower(*ptr);
+							ptr++;
+						}
+						/* Skip fully charging stacks */
+						if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+						    //(partially charging) || strstr(buf3, "(~)")
+						    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
+							continue;
+
+						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+						if (subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
+						    strstr(buf3, buf2)) {
+							ic = k;
+							break;
+						}
+					}
+
+					if (ic == -1) continue;
 				}
 				*item = i + (l + 1) * 100;
 				return(TRUE);
