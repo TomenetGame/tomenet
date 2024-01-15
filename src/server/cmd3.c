@@ -5283,7 +5283,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	   So we cannot reference to it anymore in that case and use 'all' instead. */
 	if (all) ;//kind of spammy - msg_print(Ind, "You stow all of it.");
 	else if (amt - i_ptr->number == 0) {
-		msg_print(Ind, "No free bag space to stow that item.");
+		msg_print(Ind, "\377yNo free bag space to stow that item.");
 		return;
 	} else msg_print(Ind, "You have at least enough bag space to stow some of it.");
 
