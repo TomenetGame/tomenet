@@ -2257,6 +2257,26 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			init_search_type = 2;
 			strcpy(init_search_string, "Class         STR");
 		}
+		/* Also allow directly jumping to any attribute */
+		else if (!strcmp(buf, "STR")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Strength (STR)");
+		} else if (!strcmp(buf, "INT")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Intelligence (INT)");
+		} else if (!strcmp(buf, "WIS")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Wisdom (WIS)");
+		} else if (!strcmp(buf, "DEX")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Dexterity (DEX)");
+		} else if (!strcmp(buf, "CON")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Constitution (CON)");
+		} else if (!strcmp(buf, "CHR")) {
+			init_search_type = 2;
+			strcpy(init_search_string,  "Charisma (CHR)");
+		}
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "reincar")) strcpy(init_search_string, "reincarnation");
 		else if (!strcasecmp(buf, "go")) strcpy(init_search_string, "Go challenge");
 		/* Pft, inconsistency - basically, data uses 'color' while text uses 'colour'.. */
