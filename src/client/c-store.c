@@ -504,7 +504,8 @@ static void store_chat(void) {
 }
 
 static void store_sell(void) {
-	int item, amt;
+	int item, amt, num, tval;
+	cptr name;
 
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
 		if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN)))
@@ -517,12 +518,25 @@ static void store_sell(void) {
 			return;
 	}
 
+#ifdef ENABLE_SUBINVEN
+if (item >= 100) {
+		num = subinventory[item / 100 - 1][item % 100].number;
+		tval = subinventory[item / 100 - 1][item % 100].tval;
+		name = subinventory_name[item / 100 - 1][item % 100];
+	} else
+#endif
+	{
+		num = inventory[item].number;
+		tval = inventory[item].tval;
+		name = inventory_name[item];
+	}
+
 	/* Get an amount */
-	if (inventory[item].number > 1) {
-		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = inventory[item].number;
+	if (num > 1) {
+		if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item) amt = num;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
 		}
 	} else amt = 1;
 
@@ -530,10 +544,10 @@ static void store_sell(void) {
 	if (store_num == STORE_MATHOM_HOUSE) {
 		char out_val[160];
 
-		if (inventory[item].number == amt)
-			sprintf(out_val, "Really donate %s?", inventory_name[item]);
+		if (num == amt)
+			sprintf(out_val, "Really donate %s?", name);
 		else
-			sprintf(out_val, "Really donate %d of your %s?", amt, inventory_name[item]);
+			sprintf(out_val, "Really donate %d of your %s?", amt, name);
 		if (!get_check2(out_val, FALSE)) return;
 	}
 

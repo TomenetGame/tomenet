@@ -1030,7 +1030,18 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	   The idea is future client compatibility in case more custom bags are added, so items are already compatible. */
 	if (inven) mode |= USE_SUBINVEN;
 
-	if (mode & USE_SUBINVEN) subinven = extra = TRUE; /* Since we cannot list normal inven + subinven at the same time, we NEED 'extra' access via item name */
+	if (mode & USE_SUBINVEN) {
+		subinven = TRUE;
+
+		/* Hack: Since we cannot list normal inven + subinven at the same time, we NEED 'extra' access via item name.
+		   If USE_EXTRA wasn't set though we must be careful to set get_item_extra_hook so it's not a null pointer! */
+		if (!extra) {
+			item_tester_hook = NULL;
+			get_item_hook_find_obj_what = "Item name? ";
+			get_item_extra_hook = get_item_hook_find_obj;
+			extra = TRUE;
+		}
+	}
 #endif
 
 	/* Too long description - shorten? */
@@ -1545,9 +1556,23 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				else bell_silent();
 				break;
 			}
+#if 0
 			which = 'a' + item_newest;
 			/* fall through to process 'which' */
 			__attribute__ ((fallthrough));
+#else
+			/* Validate the item */
+			if (!get_item_okay(item_newest)) {
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
+				break;
+			}
+
+			*cp = item_newest;
+			item = TRUE;
+			done = TRUE;
+			break;
+#endif
 
 		default:
 			/* Extract "query" setting */

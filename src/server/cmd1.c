@@ -1581,7 +1581,7 @@ void whats_under_your_feet(int Ind, bool force) {
    If the item was from the floor, o_idx must be specified, otherwise it must be -1.
    Returns TRUE if we have to set try_pickup = FALSE in carry() */
 bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought) {
-	int i, num;
+	int i, num, slot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
 	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE;
@@ -1617,7 +1617,9 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		/* Eligible subinventory found, try to move as much as possible */
 		stowed_some = TRUE;
-		if ((fully_stowed = subinven_stow_aux(Ind, o_ptr, i))) break; /* If complete stack was moved, we're done */
+		slot = subinven_stow_aux(Ind, o_ptr, i);
+		Send_item_newest(Ind, (i + 1) * 100 + ABS(slot) - 1);
+		if ((fully_stowed = (slot > 0))) break; /* If complete stack was moved, we're done */
  #ifdef SUBINVEN_LIMIT_GROUP
 		break;
  #endif

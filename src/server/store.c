@@ -4107,8 +4107,8 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
  * Sell an item to the store (or home)
  */
 void store_sell(int Ind, int item, int amt) {
-	player_type *p_ptr = Players[Ind];
-	//store_type *st_ptr;
+	player_type	*p_ptr = Players[Ind];
+	//store_type	*st_ptr;
 
 	s64b		price;
 	//int		choice;
@@ -4118,12 +4118,25 @@ void store_sell(int Ind, int item, int amt) {
 
 	char		o_name[ONAME_LEN];
 
-	/* Sanity check */
-	if (item < 0 || item >= INVEN_TOTAL) return;
+	/* Sanity check - mikaelh */
+	if (!verify_inven_item(Ind, item)) return;
+
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Get the item (in the pack) */
+		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+	} else
+#endif
+	{
+		/* Get the item (in the pack) */
+		if (item >= 0) o_ptr = &p_ptr->inventory[item];
+		/* Get the item (on the floor) */
+		else o_ptr = &o_list[0 - item];
+	}
 
 	/* Check for client-side exploit! */
-	if (p_ptr->inventory[item].number < amt) {
-		s_printf("$INTRUSION$ Bad amount %d of %d! (Home) Sold by %s.\n", amt, p_ptr->inventory[item].number, p_ptr->name);
+	if (o_ptr->number < amt) {
+		s_printf("$INTRUSION$ Bad amount %d of %d! (Home) Sold by %s.\n", amt, o_ptr->number, p_ptr->name);
 		msg_print(Ind, "You don't have that many!");
 		return;
 	}
@@ -4145,20 +4158,6 @@ void store_sell(int Ind, int item, int amt) {
 
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;
-
-	/* Get the item (in the pack) */
-	if (item >= 0) {
-		/* Sanity check - mikaelh */
-		if (item < 0 || item >= INVEN_TOTAL)
-			return;
-
-		o_ptr = &p_ptr->inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else {
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
@@ -4182,7 +4181,7 @@ void store_sell(int Ind, int item, int amt) {
 		u32b f4, fx;
 
 		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx, &fx);
-		if ((item >= INVEN_WIELD) ) {
+		if ((item % 100 >= INVEN_WIELD) ) { /* ENABLE_SUBINVEN */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;
 		} else if (f4 & TR4_CURSE_NO_DROP) {
@@ -4263,6 +4262,10 @@ void store_sell(int Ind, int item, int amt) {
 	/* Real store */
 	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
 		/* Describe the transaction */
+#ifdef ENABLE_SUBINVEN
+		if (item >= 100) msg_format(Ind, "Selling %s (%c)(%c).", o_name, index_to_label(item / 100 - 1),  index_to_label(item % 100));
+		else
+#endif
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
 
 		/* Haggle for it */
@@ -4314,22 +4317,18 @@ void store_confirm(int Ind) {
 	price = p_ptr->current_sell_price;
 
 	/* -------------------Repeated checks in case inven changed (rods recharging->restacking) */
-	/* Get the item (in the pack) */
-	if (item >= 0) {
-		/* Sanity check - mikaelh */
-		if (item < 0 || item >= INVEN_TOTAL)
-			return;
-
-		o_ptr = &p_ptr->inventory[item];
-	}
-	/* Get the item (on the floor) */
-	else {
-#if 0
-		o_ptr = &o_list[0 - item];
-#else
-		return;
+	if (!verify_inven_item(Ind, item)) return;
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Get the item (in the pack) */
+		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+	} else
 #endif
-	}
+	/* Get the item (in the pack) */
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
+	/* Get the item (on the floor) */
+	else o_ptr = &o_list[0 - item];
+
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
 
@@ -4352,7 +4351,7 @@ void store_confirm(int Ind) {
 		u32b f4, fx;
 
 		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx, &fx);
-		if ((item >= INVEN_WIELD) ) {
+		if ((item % 100 >= INVEN_WIELD) ) { /* ENABLE_SUBINVEN */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;
 		} else if (f4 & TR4_CURSE_NO_DROP) {

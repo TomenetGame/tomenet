@@ -1164,7 +1164,8 @@ void cmd_equip(void) {
 }
 
 void cmd_drop(byte flag) {
-	int item, amt;
+	int item, amt, num, tval;
+	bool equipped;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
@@ -1174,6 +1175,8 @@ void cmd_drop(byte flag) {
 
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
+		equipped = FALSE;
+
 		/* Get an amount */
 		if (subinventory[using_subinven][item % 100].number > 1) {
 			if (is_cheap_misc(subinventory[using_subinven][item % 100].tval) && c_cfg.whole_ammo_stack && !verified_item
@@ -1188,17 +1191,26 @@ void cmd_drop(byte flag) {
 
 		Send_drop(item, amt);
 		return;
-	}
+	} else if (item >= 100) {
+		equipped = FALSE;
+		num = subinventory[item / 100 - 1][item % 100].number;
+		tval = subinventory[item / 100 - 1][item % 100].tval;
+	} else
 #endif
+	{
+		equipped = item >= INVEN_WIELD;
+		num = inventory[item].number;
+		tval = inventory[item].tval;
+	}
 
 	/* Get an amount */
-	if (inventory[item].number > 1) {
-		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item
-		    && item < INVEN_WIELD) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
-			amt = inventory[item].number;
+	if (num > 1) {
+		if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item
+		    && !equipped) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
+			amt = num;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
 		}
 	}
 	else amt = 1;

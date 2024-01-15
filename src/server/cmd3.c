@@ -4860,14 +4860,14 @@ void do_cmd_query_symbol(int Ind, char sym) {
 #endif // 0
 
 #ifdef ENABLE_SUBINVEN
-/* Attempt to stow as much as possible of an object (stack) from OUTSIDE our inventory into a subinventory container.
+/* Attempt to stow as much as possible of an object (stack) from OUTSIDE our inventory into a specific (sslot) subinventory container.
    Increases player's total_weight. Does not delete source item if moved, just reduces its number (down to 0).
-   Returns TRUE if fully stowed. (Note: There is no function subinven_stow() actually.) */
-bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
+   Returns <slot+1> if fully stowed, <-slot-1> if partially stowed, otherwise 0. (Note: There is no function subinven_stow() actually.). */
+s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr, forge_copy, forge_part, *i_ptr_tmp = i_ptr;
-	int i, inum, inum_org = i_ptr->number, xnum, Gnum;
+	int i, inum, inum_org = i_ptr->number, xnum, Gnum, slot = -1;
 	char o_name[ONAME_LEN];
 	u32b f3 = 0x0, dummy;
 
@@ -4914,6 +4914,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
+				slot = i;
 
 				/* Magic device? */
 				if (forge_part.tval) {
@@ -4996,6 +4997,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
  #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
+			slot = i;
 
 			i_ptr->number = 0; /* Mark for erasure */
 			/* Manually do this here for now: Update subinven slot for client. */
@@ -5013,11 +5015,11 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	/* Managed to merge fully? Erase source object then. */
 	if (!i_ptr->number) {
 		/* Fully moved */
-		return(TRUE);
+		return(slot + 1);
 	}
 
 	/* Still not fully moved */
-	return(FALSE);
+	return(slot != -1 ? -slot - 1 : 0);
 }
 
 /* Just check if this object can stack with an existing item in this subinventory.
