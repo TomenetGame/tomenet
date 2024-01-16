@@ -20805,6 +20805,9 @@ these limitations will be lifted.
 
     BONI:           At 50, know some intrinsics just by looking at an entity
                     such as monsters, players, traps or fountains.
+                    If you wish to see these lines in the message log too
+                    instead of just the main screen's top line, enable the
+                    option 'target_history' in the options ('=') menu.
 
 
 - Temporal          [Spells are INT-based.]
