@@ -14,8 +14,6 @@
 /* For gettimeofday */
 #include <sys/time.h>
 
-static void console_talk_aux(char *message);
-
 
 /* Ignore roman number suffix when checking for similar names? */
 #define SIMILAR_ROMAN
@@ -23,9 +21,15 @@ static void console_talk_aux(char *message);
 /* Attempt to concatenate multiple chat lines to spot broken-up swear words? */
 #define ENABLE_MULTILINE_CENSOR
 
+/* Checking intercept and dodge chances gives not just vs current level monster but also 2x that level info?
+   (Note: Parry and block are independant of monster level, so they aren't affected.) */
+#define CHECK_CHANCES_DUAL
+
+
+
+static void console_talk_aux(char *message);
 
 #ifndef HAS_MEMSET
-
 /*
  * For those systems that don't have "memset()"
  *
@@ -37,7 +41,6 @@ char *memset(char *s, int c, huge n) {
 	for (t = s; n--; ) *t++ = c;
 	return(s);
 }
-
 #endif
 
 
@@ -3791,18 +3794,12 @@ void msg_guild_print(int Ind, cptr msg, cptr msg_u) {
 
 #if 0 /* unused atm */
 static char* dodge_diz(int chance) {
-	if (chance < 5)
-		return("almost no");
-	else if (chance < 14)
-		return("a slight");
-	else if (chance < 23)
-		return("a significant");
-	else if (chance < 30)
-		return("a good");
-	else if (chance < 40)
-		return("a very good");
-	else
-		return("a high");
+	if (chance < 5) return("almost no");
+	else if (chance < 14) return("a slight");
+	else if (chance < 23) return("a significant");
+	else if (chance < 30) return("a good");
+	else if (chance < 40) return("a very good");
+	else return("a high");
 }
 #endif
 
@@ -3834,21 +3831,20 @@ void check_dodge(int Ind) {
 		msg_format(Ind, "You will usually dodge a level %d monster.", dun_level);
  #endif
 #else
-	int lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
+	int lev;
 
+ #ifndef CHECK_CHANCES_DUAL
+	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
 	if (is_admin(p_ptr))
-		msg_format(Ind, "You have a %d%%/%d%% chance of dodging a level %d/%d monster.",
-		    apply_dodge_chance(Ind, p_ptr->lev), apply_dodge_chance(Ind, lev), p_ptr->lev, lev);
-
-/*
-	msg_format(Ind, "You have %s/%s chance of dodging a level %d/%d monster.",
-		dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), dodge_diz(apply_dodge_chance(Ind, lev)),
-		p_ptr->lev, lev);
-
-	msg_format(Ind, "You have %s chance of dodging a level %d monster.",
-	    dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), p_ptr->lev);
-*/
-
+ #else
+	if (is_admin(p_ptr)) lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
+	else lev = p_ptr->lev * 2 < 100 ? p_ptr->lev * 2 : 100;
+	if (TRUE)
+ #endif
+	msg_format(Ind, "You have a %d%%/%d%% chance of dodging a level %d/%d monster.",
+	    apply_dodge_chance(Ind, p_ptr->lev), apply_dodge_chance(Ind, lev), p_ptr->lev, lev);
+	/*msg_format(Ind, "You have %s/%s chance of dodging a level %d/%d monster.",
+	    dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), dodge_diz(apply_dodge_chance(Ind, lev)), p_ptr->lev, lev);*/
 	else msg_format(Ind, "You have a %d%% chance of dodging a level %d monster's attack.",
 	    apply_dodge_chance(Ind, p_ptr->lev), p_ptr->lev);
 #endif
@@ -3857,11 +3853,18 @@ void check_dodge(int Ind) {
 
 void check_intercept(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
+	int lev;
 
+#ifndef CHECK_CHANCES_DUAL
+	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
 	if (is_admin(p_ptr))
-		msg_format(Ind, "You have a %d%%/%d%% chance of intercepting a level %d/%d monster.",
-		    calc_grab_chance(p_ptr, 100, p_ptr->lev), calc_grab_chance(p_ptr, 100, lev), p_ptr->lev, lev);
+#else
+	if (is_admin(p_ptr)) lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
+	else lev = p_ptr->lev * 2 < 100 ? p_ptr->lev * 2 : 100;
+	if (TRUE)
+#endif
+	msg_format(Ind, "You have a %d%%/%d%% chance of intercepting a level %d/%d monster.",
+	    calc_grab_chance(p_ptr, 100, p_ptr->lev), calc_grab_chance(p_ptr, 100, lev), p_ptr->lev, lev);
 	else msg_format(Ind, "You have a %d%% chance of intercepting a level %d monster's attack.",
 	    calc_grab_chance(p_ptr, 100, p_ptr->lev), p_ptr->lev);
 
@@ -3880,50 +3883,31 @@ void check_parryblock(int Ind) {
 		msg_format(Ind, "You have exactly %d%%/%d%% real chance of parrying/blocking.",
 			apc, abc);
 	} else {
-		if (!apc)
-			strcpy(msg, "You cannot parry at the moment. ");
-			//msg_print(Ind, "You cannot parry at the moment.");
  #if 0
-		else if (apc < 5)
-			msg_print(Ind, "You have almost no chance of parrying.");
-		else if (apc < 10)
-			msg_print(Ind, "You have a slight chance of parrying.");
-		else if (apc < 20)
-			msg_print(Ind, "You have a significant chance of parrying.");
-		else if (apc < 30)
-			msg_print(Ind, "You have a good chance of parrying.");
-		else if (apc < 40)
-			msg_print(Ind, "You have a very good chance of parrying.");
-		else if (apc < 50)
-			msg_print(Ind, "You have an excellent chance of parrying.");
-		else
-			msg_print(Ind, "You have a superb chance of parrying.");
+		if (!apc) strcpy(msg, "You cannot parry at the moment. ");
+		else if (apc < 5) msg_print(Ind, "You have almost no chance of parrying.");
+		else if (apc < 10) msg_print(Ind, "You have a slight chance of parrying.");
+		else if (apc < 20) msg_print(Ind, "You have a significant chance of parrying.");
+		else if (apc < 30) msg_print(Ind, "You have a good chance of parrying.");
+		else if (apc < 40) msg_print(Ind, "You have a very good chance of parrying.");
+		else if (apc < 50) msg_print(Ind, "You have an excellent chance of parrying.");
+		else msg_print(Ind, "You have a superb chance of parrying.");
  #else
-		else strcpy(msg, format("You have a %d%% chance of parrying. ",
-			apc));
+		if (!apc) strcpy(msg, "You cannot parry at the moment. ");
+		else strcpy(msg, format("You have a %d%% chance of parrying. ", apc));
  #endif
-
-		if (!abc)
-			strcat(msg, "You cannot block at the moment.");
-			//msg_print(Ind, "You cannot block at the moment.");
  #if 0
-		else if (abc < 5)
-			msg_print(Ind, "You have almost no chance of blocking.");
-		else if (abc < 14)
-			msg_print(Ind, "You have a slight chance of blocking.");
-		else if (abc < 23)
-			msg_print(Ind, "You have a significant chance of blocking.");
-		else if (abc < 33)
-			msg_print(Ind, "You have a good chance of blocking.");
-		else if (abc < 43)
-			msg_print(Ind, "You have a very good chance of blocking.");
-		else if (abc < 48)
-			msg_print(Ind, "You have an excellent chance of blocking.");
-		else
-			msg_print(Ind, "You have a superb chance of blocking.");
+		if (!abc) msg_print(Ind, "You cannot block at the moment.");
+		else if (abc < 5) msg_print(Ind, "You have almost no chance of blocking.");
+		else if (abc < 14) msg_print(Ind, "You have a slight chance of blocking.");
+		else if (abc < 23) msg_print(Ind, "You have a significant chance of blocking.");
+		else if (abc < 33) msg_print(Ind, "You have a good chance of blocking.");
+		else if (abc < 43) msg_print(Ind, "You have a very good chance of blocking.");
+		else if (abc < 48) msg_print(Ind, "You have an excellent chance of blocking.");
+		else msg_print(Ind, "You have a superb chance of blocking.");
  #else
-		else strcat(msg, format("You have a %d%% chance of blocking.",
-			abc));
+		if (!abc) strcat(msg, "You cannot block at the moment.");
+		else strcat(msg, format("You have a %d%% chance of blocking.", abc));
  #endif
 		msg_print(Ind, msg);
 	}
