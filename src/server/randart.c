@@ -2298,7 +2298,15 @@ artifact_type *randart_make(object_type *o_ptr) {
 			}
 		}
 	}
-
+	/* Artefacts that have an item base type that intrinsically uses flames can never get white light instead. */
+	if (k_ptr->tval == TV_LITE)
+		switch (k_ptr->sval) {
+		case SV_LITE_TORCH:
+		case SV_LITE_LANTERN:
+		case SV_LITE_TORCH_EVER:
+		case SV_LITE_DWARVEN:
+			a_ptr->flags5 &= ~TR5_WHITE_LIGHT;
+		}
 
 	a_ptr->cost = (ap - RANDART_QUALITY + 50);
 	if (a_ptr->cost < 0) {
