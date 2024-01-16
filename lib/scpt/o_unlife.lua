@@ -34,7 +34,7 @@ OSLOWMONSTER_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-				fire_grid_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, OSLOWMONSTER_I, 100), "drains power from your muscles")
+				fire_grid_bolt(Ind, GF_LIFE_SLOW, args.dir, 5 + get_level(Ind, OSLOWMONSTER_I, 100), "drains power from your muscles")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, OSLOWMONSTER_I, 100))
@@ -53,7 +53,7 @@ OSLOWMONSTER_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-				project_los(Ind, GF_OLD_SLOW, 5 + get_level(Ind, OSLOWMONSTER_I, 100), "drains power from your muscles")
+				project_los(Ind, GF_LIFE_SLOW, 5 + get_level(Ind, OSLOWMONSTER_I, 100), "drains power from your muscles")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, OSLOWMONSTER_I, 100))

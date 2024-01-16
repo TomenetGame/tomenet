@@ -5129,6 +5129,7 @@
 #define GF_STOP			162 /* special fx: scroll of rune of protection in a monster trap - C. Blue */
 #define GF_CAUSE		163 /* 'Curse' actually, the monster spell */
 #define GF_FLARE		164 /* Combination of LITE_WEAK and FIRE damage, for Flare Missile */
+#define GF_LIFE_SLOW		165 /* Same as GF_OLD_SLOW aka 'Slow Monsters', but based on fatigue, therefore doesn't affect creatures that know no fatigue. */
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */
