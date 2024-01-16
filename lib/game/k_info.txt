@@ -1027,7 +1027,7 @@ P:16:1d4:-2:0:0
 N:122:& Shield~ of Deflection
 G:):G
 I:34:10:0
-W:80:0:100:10000
+W:80:0:120:10000
 A:80/4
 $USE_NEW_SHIELDS$P:25:1d1:0:0:0
 $USE_NEW_SHIELDS!P:10:1d1:0:0:10
@@ -1107,7 +1107,7 @@ $NEW_SHIELDS_NO_AC$F:EASY_KNOW
 N:130:& Small Metal Shield~
 G:):s
 I:34:3:0
-W:10:0:65:50
+W:10:0:75:50
 A:14/1
 #$USE_NEW_SHIELDS$P:13:1d2:0:0:0
 $USE_NEW_SHIELDS$P:17:1d2:0:0:0
@@ -6974,7 +6974,7 @@ D:Multiple of these can be read at once for creating an even bigger house.
 N:882:& Orcish Shield~
 G:):D
 I:34:7:0
-W:40:0:100:15000
+W:40:0:120:15000
 A:40/4
 $USE_NEW_SHIELDS$P:20:1d3:0:0:0
 $USE_NEW_SHIELDS!P:5:1d3:0:0:5

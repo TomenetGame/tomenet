@@ -462,7 +462,7 @@ D:lie, cheat and steal - but never ready to actually fight.
 
 N:30:of Thorin
 I:34:3:2
-W:36:6:65:140000
+W:36:6:75:140000
 $USE_NEW_SHIELDS!P:3:1d2:0:0:25
 $USE_NEW_SHIELDS$P:17:1d2:0:0:15
 F:STR | CON | HIDE_TYPE |
@@ -475,7 +475,7 @@ D:this little metal shield is proof against the Element of Earth.
 
 N:31:of Celegorm
 I:34:4:0
-W:18:5:60:40000
+W:18:5:80:40000
 $USE_NEW_SHIELDS!P:4:1d2:0:0:20
 $USE_NEW_SHIELDS$P:19:1d2:0:0:15
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK
@@ -2279,7 +2279,7 @@ D:truly more than it appears.
 
 N:169:of Gil-galad
 I:34:10:4
-W:80:4:80:85000
+W:80:4:100:85000
 $USE_NEW_SHIELDS!P:10:1d3:0:0:30
 $USE_NEW_SHIELDS$P:25:1d3:0:0:15
 F:ACTIVATE |
@@ -2387,7 +2387,7 @@ D:who seek life beyond death.
 
 N:176:of the Haradrim
 I:34:4:2
-W:15:12:120:35000
+W:15:12:100:35000
 $USE_NEW_SHIELDS!P:4:1d2:0:0:15
 $USE_NEW_SHIELDS$P:19:1d2:0:0:15
 F:ACTIVATE |
