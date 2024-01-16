@@ -20669,6 +20669,7 @@ these limitations will be lifted.
                     current floor. Doesn't work on unnatural creatures.
                     Works on all currently existing breeders and also on all
                     that may spawn in the future on this same dungeon floor.
+                    (Same effect as scroll of vermin control.)
                     Required skill level for first spell level: 10.
 
     Recovery        Neutralizes poison, cures diseases, heals cuts,
@@ -21551,6 +21552,7 @@ All Unlife spells are Wisdom-based.)
                     current dungeon floor. Doesn't work on unnatural creatures.
                     Works on all currently existing breeders and also on all
                     that may spawn in the future on this same dungeon floor.
+                    (Same effect as scroll of vermin control.)
                     Required skill level for first spell level: 13.
 
     Nether Sap      Draws from nether undercurrents to continuously replenish
