@@ -718,38 +718,54 @@ void sync_xsleep(int milliseconds) {
 }
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
-/* Scan a buffer of key inputs whether it forms a special sequence of a navigational key */
-int scan_navi_key(cptr buf) {
+/* Scan a buffer of key inputs whether it forms a special sequence of a navigational key. - C. Blue
+
+   'string_input_relevance': Only scan for navigational keys that have concrete relevance during string input, ignore the rest.
+   Currently, relevant keys for line-input are: left, right, pos1, end, del, ctrl+left, ctrl+right.
+
+   This is especially important as it leaves shift+arrow macros untouched and working,
+   which contain ESC keys and might be pressed as panic keys by the player if he gets attacked by a monster while typing.
+
+   TODO maybe: catch the non-special key backspace here too (and shift+backspace, ctrl+backspace), just to cancel their macros during string input as well. */
+int scan_navi_key(cptr buf, bool string_input_relevance) {
 	int i;
 	cptr bufp = buf;
 	char c;
 	int found = TRUE;
+	bool sk_shift = FALSE, sk_ctrl = FALSE, sk_alt = FALSE;
 
 	if (strlen(buf) < nks_minlen) return(0);
 
 	/* Verify special key sequence starter */
 	for (i = 0; (c = nks_start[i]); i++) if (*bufp++ != c) { found = FALSE; break; }
+
 	/* Strip shiftkeys - we want ANY of the navigationalkey+shiftkeys combos to get ignored as macro, as we may process them all.
 	   Also we assume that shiftkey marker are only 1 byte long.
 	   We don't need to process shiftkeys in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead. */
 	if (*bufp == nks_ctrl[0]) {
+		sk_ctrl = TRUE;
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		//inkey_shift_special |= 0x2; //should be redundant, as this flag should be set already via e.s.s. functionality
  #endif
 		bufp++;
 	}
 	if (*bufp == nks_shift[0]) {
+		sk_shift = TRUE;
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		//inkey_shift_special |= 0x1; //should be redundant, as this flag should be set already via e.s.s. functionality
  #endif
 		bufp++;
 	}
 	if (*bufp == nks_alt[0]) {
+		if (string_input_relevance) return(0); // Irrelevant key!
+		sk_alt = TRUE;
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		//inkey_shift_special |= 0x4; //should be redundant, as this flag should be set already via e.s.s. functionality
  #endif
 		bufp++;
 	}
+	if (string_input_relevance && sk_shift && sk_ctrl) return(0); // Irrelevant key!
+
 	/* Verify presence of end-of-shiftkeys marker */
 	for (i = 0; (c = nks_skterm[i]); i++) if (*bufp++ != c) { found = FALSE; break; }
 	/* At least on POSIX there are always two static chars in the middle */
@@ -760,44 +776,74 @@ int scan_navi_key(cptr buf) {
 	found = 0;
 
 	for (i = 0; (c = nks_del[i]); i++) if (*(bufp + i) != c) break;
-	if (i && !c) found = NAVI_KEY_DEL;
+	if (i && !c) {
+		found = NAVI_KEY_DEL;
+		if (string_input_relevance && (sk_shift || sk_ctrl || sk_alt)) return(0); // Irrelevant key!
+	}
 	if (!found) {
 		for (i = 0; (c = nks_u[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_UP;
+		if (i && !c) {
+			found = NAVI_KEY_UP;
+			if (string_input_relevance) return(0); // Irrelevant key!
+		}
 	}
 	if (!found) {
 		for (i = 0; (c = nks_r[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_RIGHT;
+		if (i && !c) {
+			found = NAVI_KEY_RIGHT;
+			if (string_input_relevance && sk_shift) return(0); // Irrelevant key!
+		}
 	}
 	if (!found) {
 		for (i = 0; (c = nks_d[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_DOWN;
+		if (i && !c) {
+			found = NAVI_KEY_DOWN;
+			if (string_input_relevance) return(0); // Irrelevant key!
+		}
 	}
 	if (!found) {
 		for (i = 0; (c = nks_l[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_LEFT;
+		if (i && !c) {
+			found = NAVI_KEY_LEFT;
+			if (string_input_relevance && sk_shift) return(0); // Irrelevant key!
+		}
 	}
 	if (!found) {
 		for (i = 0; (c = nks_pu[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_PAGEUP;
+		if (i && !c) {
+			found = NAVI_KEY_PAGEUP;
+			if (string_input_relevance) return(0); // Irrelevant key!
+		}
 	}
 	if (!found) {
 		for (i = 0; (c = nks_pd[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_PAGEDOWN;
+		if (i && !c) {
+			found = NAVI_KEY_PAGEDOWN;
+			if (string_input_relevance) return(0); // Irrelevant key!
+		}
 	}
 	if (!found) {
 		for (i = 0; (c = nks_p[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_POS1;
+		if (i && !c) {
+			found = NAVI_KEY_POS1;
+			if (string_input_relevance && (sk_shift || sk_ctrl || sk_alt)) return(0); // Irrelevant key!
+		}
 	}
 	if (!found) {
 		for (i = 0; (c = nks_e[i]); i++) if (*(bufp + i) != c) break;
-		if (i && !c) found = NAVI_KEY_END;
+		if (i && !c) {
+			found = NAVI_KEY_END;
+			if (string_input_relevance && (sk_shift || sk_ctrl || sk_alt)) return(0); // Irrelevant key!
+		}
 	}
 	/* Assume all key sequences are equally long,
 	   just pick one of them (that is guaranteed to be in use in any OS variant, ie not 'DEL') to advance pointer accordingly */
 	bufp += strlen(nks_u);
 	/* Verify special key sequence terminator */
 	for (i = 0; (c = nks_term[i]); i++) if (*bufp++ != c) { found = 0; break; }
+
+
+	/* 'found' = 0 -> unknown sequence, discard */
 
 	return(found);
 }
@@ -1181,8 +1227,10 @@ static char inkey_aux(void) {
 	}
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+ #ifdef SOME_NAVI_KEYS_DISABLE_MACROS_IN_PROMPTS
 	/* Specifically prevent any macros on navigation keys, as we want to process these keys directly in the current situation (ie some sort of message input prompt)? */
-	if (inkey_location_keys && (ch_navi = scan_navi_key(buf))) return(ch_navi);
+	if (inkey_location_keys && (ch_navi = scan_navi_key(buf, TRUE))) return(ch_navi);
+ #endif
 #endif
 
 	/* Check for a successful macro */
@@ -1559,7 +1607,7 @@ char inkey(void) {
 			break;
 
 		/* Hack -- strip "control-underscore" special-macro-triggers */
-		case 31:
+		case 31: /* == nks_start[0] : Start marker of special key sequence */
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 			/* Crazy hack: Enable use of arrow keys, added for askfor_aux() */
 			if (inkey_location_keys) {
@@ -1591,103 +1639,12 @@ char inkey(void) {
 				break;
 			}
 
-			if (ch == 13) { /* End */
-				int pos = 1; /* CTRL key pressed together with navigational key? */
-
+			if (ch == nks_term[0]) { /* == 13 : End marker of special key sequence */
 				/* Terminate character collection */
 				inkey_location_key_active = FALSE;
 
 				/* Evaluate and return hack value. Note #0 is always '31', #6 always '13', or we wouldn't be here. */
- #ifdef WINDOWS
-				if (inkey_location_key_sequence[1] == 67) pos = 2; //skip CTRL -- We don't need to process shiftkeys in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead.
-
-				if (inkey_location_key_sequence[pos] == 120 &&
-				    inkey_location_key_sequence[pos + 1] == 52)
-					/* For values, compare table in inkey_aux() */
-					switch (inkey_location_key_sequence[pos + 2]) {
-					case 55: // Pos1
-						ch = NAVI_KEY_POS1;
-						break;
-					case 70: // End
-						ch = NAVI_KEY_END;
-						break;
-					case 66: // Arrow left
-						ch = NAVI_KEY_LEFT;
-						break;
-					case 56: // Arrow up
-						ch = NAVI_KEY_UP;
-						break;
-					case 68: // Arrow right
-						ch = NAVI_KEY_RIGHT;
-						break;
-					case 57: // Page up
-						ch = NAVI_KEY_PAGEUP;
-						break;
-					default:
-						/* Unknown sequence, discard */
-						ch = 0;
-					}
-				else if (inkey_location_key_sequence[pos] == 120 &&
-				    inkey_location_key_sequence[pos + 1] == 53)
-					/* For values, compare table in inkey_aux() */
-					switch (inkey_location_key_sequence[pos + 2]) {
-					case 48: // Arrow down
-						ch = NAVI_KEY_DOWN;
-						break;
-					case 49: // Page down
-						ch = NAVI_KEY_PAGEDOWN;
-						break;
-					case 51: // Del
-						ch = NAVI_KEY_DEL;
-						break;
-					default:
-						/* Unknown sequence, discard */
-						ch = 0;
-					}
- #else /* assume POSIX */
-				if (inkey_location_key_sequence[1] == 78) pos = 2; //skip CTRL -- We don't need to process shiftkeys in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead. */
-
-				if (inkey_location_key_sequence[pos] == 95 &&
-				    inkey_location_key_sequence[pos + 1] == 70 &&
-				    inkey_location_key_sequence[pos + 2] == 70 &&
-				    inkey_location_key_sequence[pos + 3] == 53)
-					/* For values, compare table in inkey_aux() */
-					switch (inkey_location_key_sequence[pos + 4]) {
-					case 48: // Pos1
-						ch = NAVI_KEY_POS1;
-						break;
-					case 49: // Arrow left
-						ch = NAVI_KEY_LEFT;
-						break;
-					case 50: // Arrow up
-						ch = NAVI_KEY_UP;
-						break;
-					case 51: // Arrow right
-						ch = NAVI_KEY_RIGHT;
-						break;
-					case 52: // Arrow down
-						ch = NAVI_KEY_DOWN;
-						break;
-					case 53: // Page up
-						ch = NAVI_KEY_PAGEUP;
-						break;
-					case 54: // Page down
-						ch = NAVI_KEY_PAGEDOWN;
-						break;
-					case 55: // End
-						ch = NAVI_KEY_END;
-						break;
-					default:
-						/* Unknown sequence, discard */
-						ch = 0;
-					}
- #endif
-				/* Unknown sequence, discard */
-				else ch = 0;
-
- #ifdef ENABLE_SHIFT_SPECIALKEYS
-				if (pos == 2) inkey_shift_special |= 0x2; /* CTRL has been pressed together with navigational key */
- #endif
+				ch = scan_navi_key(inkey_location_key_sequence, FALSE);
 			}
 			/* Continue receiving chars */
 			else ch = 0;

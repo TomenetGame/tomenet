@@ -637,6 +637,11 @@
    It is FALSE especially when typing in a chat message, so panic macros will still work if player is unexpectedly attacked by a monster while typing.
   */
  #define ALLOW_NAVI_KEYS_IN_PROMPT
+ #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+  /* During string input (chat messages!) navigational keys will actually override any macros put on them, not even normal macros on them will work.
+     Only some navigational keys will do this: Those that actually have a real function in string input.  */
+  #define SOME_NAVI_KEYS_DISABLE_MACROS_IN_PROMPTS
+ #endif
 #endif
 
 
