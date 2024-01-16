@@ -2047,7 +2047,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	bool		show_armour = FALSE;
 	bool		show_shield = FALSE;
 
-	cptr		s, u;
+	cptr		s_ptr, tmp_ptr;
 	char		*t;
 
 	char		p1 = '(', p2 = ')';
@@ -2415,7 +2415,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 
 		/* Skip the ampersand (and space) */
-		s = basenm + 2;
+		s_ptr = basenm + 2;
 
 		/* No prefix */
 		if (!pref) {
@@ -2443,7 +2443,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			   on 'the', so prevent a second 'The ' for those */
 			if (!(mode & 128)) t = object_desc_str(t, "The ");
 			if (strstr(k_name + k_ptr->name, "the ") == k_name + k_ptr->name) {
-				s += 4;
+				s_ptr += 4;
 				skip_base_article = TRUE;
 			}
 		}
@@ -2455,7 +2455,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 
 		/* A single one, with a vowel in the modifier */
-		else if ((*s == '#') && is_a_vowel(modstr[0])) {
+		else if ((*s_ptr == '#') && is_a_vowel(modstr[0])) {
 			t = object_desc_str(t, "an ");
 		}
 
@@ -2465,7 +2465,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 
 		/* A single one, with a vowel */
-		else if (is_a_vowel(*s)) t = object_desc_str(t, "an ");
+		else if (is_a_vowel(*s_ptr)) t = object_desc_str(t, "an ");
 
 		/* A single one, without a vowel */
 		else t = object_desc_str(t, "a ");
@@ -2474,7 +2474,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Hack -- objects that "never" take an article */
 	else {
 		/* No ampersand */
-		s = basenm;
+		s_ptr = basenm;
 
 		/* No pref */
 		if (!pref) {
@@ -2497,7 +2497,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			   on 'the', so prevent a second 'The ' for those */
 			if (!(mode & 128)) t = object_desc_str(t, "The ");
 			if (strstr(k_name + k_ptr->name, "the ") == k_name + k_ptr->name) {
-				s += 4;
+				s_ptr += 4;
 				skip_base_article = TRUE;
 			}
 		}
@@ -2547,12 +2547,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	}
 
 	/* Paranoia -- skip illegal tildes */
-	/* while (*s == '~') s++; */
+	/* while (*s_ptr == '~') s_ptr++; */
 
 	/* Copy the string */
-	for (; *s; s++) {
+	for (; *s_ptr; s_ptr++) {
 		/* Pluralizer */
-		if (*s == '~') {
+		if (*s_ptr == '~') {
 			/* Hack -- The only one of its kind - 'No more Tunic of the Wind' instead of 'Tunics' */
 			if (known && artifact_p(o_ptr) && !(mode & 2048)) continue;
 
@@ -2604,7 +2604,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			}
 		}
 		/* Modifier */
-		else if (*s == '#') {
+		else if (*s_ptr == '#') {
 			/* Grab any ego-item name */
 			if (o_ptr->tval == TV_ROD_MAIN) {
 				t = object_desc_chr(t, ' ');
@@ -2617,17 +2617,17 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			}
 
 			/* Insert the modifier */
-			for (u = modstr; *u; u++) *t++ = *u;
+			for (tmp_ptr = modstr; *tmp_ptr; tmp_ptr++) *t++ = *tmp_ptr;
 		}
 		/* Cheque value */
-		else if (*s == '$') {
+		else if (*s_ptr == '$') {
 			sprintf(tmp_val, "%d", ps_get_cheque_value(o_ptr));
 			t = object_desc_str(t, tmp_val);
 		}
 		/* Normal */
 		else {
 			/* Copy */
-			*t++ = *s;
+			*t++ = *s_ptr;
 		}
 	}
 
@@ -3245,11 +3245,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Use the standard inscription if available */
 	if (o_ptr->note && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-		char *u = tmp_val;
-
+		tmp_ptr = tmp_val;
 		strcpy(tmp_val, quark_str(o_ptr->note));
-		for (; *u && (*u != '#'); u++);
-		*u = '\0';
+		for (; *tmp_ptr && (*tmp_ptr != '#'); tmp_ptr++);
+		*tmp_ptr = '\0';
 	}
 
 	/* Note "cursed" if the item is known to be cursed */
