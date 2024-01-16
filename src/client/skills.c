@@ -703,45 +703,9 @@ bool item_tester_hook_weapon(object_type *o_ptr) {
 }
 /* this actually tests for spell scrolls, not the custom tome itself */
 bool item_tester_hook_custom_tome(object_type *o_ptr) {
-#if 0
-	bool free = TRUE;
-#endif
-
 	/* check for correct book type */
 	if (o_ptr->tval != TV_BOOK || o_ptr->sval != SV_SPELLBOOK) return(FALSE);
 	return(TRUE);
-
-#if 0
-	/* and even check for blank pages left */
- #if 0 /* we don't know bpval! */
-	switch (o_ptr->bpval) {
-	case 0: i = 0; break;
-	case 1: if (o_ptr->xtra1) i = 0; break;
-	case 2: if (o_ptr->xtra2) i = 0; break;
-	case 3: if (o_ptr->xtra3) i = 0; break;
-	case 4: if (o_ptr->xtra4) i = 0; break;
-	case 5: if (o_ptr->xtra5) i = 0; break;
-	case 6: if (o_ptr->xtra6) i = 0; break;
-	case 7: if (o_ptr->xtra7) i = 0; break;
-	case 8: if (o_ptr->xtra8) i = 0; break;
-	default: if (o_ptr->xtra9) i = 0; break;
-	}
- #else /* hard-code, ouch */
-	switch (o_ptr->sval) {
-	case 100:
-		if (o_ptr->xtra3) free = FALSE;
-		break;
-	case 101:
-		if (o_ptr->xtra4) free = FALSE;
-		break;
-	case 102:
-		if (o_ptr->xtra5) free = FALSE;
-		break;
-	}
- #endif
-
-	return free;
-#endif
 }
 bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
 	return(is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD);

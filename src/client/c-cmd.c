@@ -1688,6 +1688,9 @@ void cmd_activate(void) {
 	get_item_hook_find_obj_what = "Activatable item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
+	/* Could in theory add a client-side check for is_custom_tome() here, because we know the bpval, so we can verify if there are still pages left.
+	   Not really needed though, as the server-side checks in place work fine too. */
+
 	/* Currently, most activatable items must be worn as they are equippable items.
 	   Exceptions are: Custom books, book of the dead, golem scrolls and runes. */
 #ifdef ENABLE_SUBINVEN
@@ -7449,7 +7452,8 @@ void cmd_message(void) {
 			return;
 		} else if (!strncasecmp(buf, "// ", 3)) { /* Directly access LUA client-side - C. Blue */
 			/* Hack: Ind is 1 on client-side by default, set it to 0 so some functions (eg prn()) would be able to recognize client-side execution */
-			c_msg_format("Ind=0; %s", string_exec_lua(0, buf + 3));
+			//c_msg_format("Ind=0; %s", string_exec_lua(0, buf + 3)); -- not needed, Ind isn't queried anyway, it's function(i), so '0' can be passed just fine.
+			c_msg_format("%s", string_exec_lua(0, buf + 3));
 			inkey_msg = FALSE;
 			return;
 		}

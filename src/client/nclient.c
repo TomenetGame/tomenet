@@ -2102,7 +2102,8 @@ int Receive_inven(void) {
 		/* I hated it too much I swapped them	- Jir - */
 	inventory[pos - 'a'].sval = sval;
 	inventory[pos - 'a'].tval = tval;
-	inventory[pos - 'a'].pval = pval;
+	if (tval == TV_BOOK && is_custom_tome(sval)) inventory[pos - 'a'].bpval = pval;
+	else inventory[pos - 'a'].pval = pval;
 	inventory[pos - 'a'].name1 = name1;
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
@@ -2173,7 +2174,8 @@ int Receive_subinven(void) {
 		/* I hated it too much I swapped them	- Jir - */
 	subinventory[ipos][pos - 'a'].sval = sval;
 	subinventory[ipos][pos - 'a'].tval = tval;
-	subinventory[ipos][pos - 'a'].pval = pval;
+	if (tval == TV_BOOK && is_custom_tome(sval)) subinventory[ipos][pos - 'a'].bpval = pval;
+	else subinventory[ipos][pos - 'a'].pval = pval;
 	subinventory[ipos][pos - 'a'].name1 = name1;
 	subinventory[ipos][pos - 'a'].attr = attr;
 	subinventory[ipos][pos - 'a'].weight = wgt;
@@ -2272,7 +2274,8 @@ int Receive_inven_wide(void) {
 		/* I hated it too much I swapped them	- Jir - */
 	inventory[pos - 'a'].sval = sval;
 	inventory[pos - 'a'].tval = tval;
-	inventory[pos - 'a'].pval = pval;
+	if (tval == TV_BOOK && is_custom_tome(sval)) inventory[pos - 'a'].bpval = pval;
+	else inventory[pos - 'a'].pval = pval;
 	inventory[pos - 'a'].name1 = name1;
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
@@ -2384,7 +2387,8 @@ int Receive_equip(void) {
 
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
-	inventory[pos - 'a' + INVEN_WIELD].pval = pval;
+	if (tval == TV_BOOK && is_custom_tome(sval)) inventory[pos - 'a' + INVEN_WIELD].bpval = pval;
+	else inventory[pos - 'a' + INVEN_WIELD].pval = pval;
 	inventory[pos - 'a' + INVEN_WIELD].name1 = name1;
 	inventory[pos - 'a' + INVEN_WIELD].attr = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
@@ -2447,7 +2451,8 @@ int Receive_equip_wide(void) {
 
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
-	inventory[pos - 'a' + INVEN_WIELD].pval = pval;
+	if (tval == TV_BOOK && is_custom_tome(sval)) inventory[pos - 'a' + INVEN_WIELD].bpval = pval;
+	else inventory[pos - 'a' + INVEN_WIELD].pval = pval;
 	inventory[pos - 'a' + INVEN_WIELD].name1 = name1;
 	inventory[pos - 'a' + INVEN_WIELD].attr = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
