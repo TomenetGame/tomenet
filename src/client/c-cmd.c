@@ -7447,6 +7447,11 @@ void cmd_message(void) {
 			if (re_init_sound() == 0) c_message_add("Audio packs have been reloaded and audio been reinitialized successfully.");
 			inkey_msg = FALSE;
 			return;
+		} else if (!strncasecmp(buf, "// ", 3)) { /* Directly access LUA client-side - C. Blue */
+			/* Hack: Ind is 1 on client-side by default, set it to 0 so some functions (eg prn()) would be able to recognize client-side execution */
+			c_msg_format("Ind=0; %s", string_exec_lua(0, buf + 3));
+			inkey_msg = FALSE;
+			return;
 		}
 
 		Send_msg(buf);
@@ -9120,7 +9125,7 @@ static void cmd_script_exec_local() {
 	buf[0] = '\0';
 	if (!get_string("Script> ", buf, 80)) return;
 
-	exec_lua(0, buf);
+	c_msg_format("%s", string_exec_lua(0, buf));
 }
 
 

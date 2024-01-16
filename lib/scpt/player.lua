@@ -74,3 +74,8 @@ function ind_combo(name)
 	if p2 ~= p then p = p2 end
 	return p, players(p).name
 end
+
+-- For new client-side "// " command - C. Blue
+function prn(tolua_S)
+	c_msg_print(tolua_S.."#")
+end

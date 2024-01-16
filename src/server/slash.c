@@ -378,9 +378,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 	/* hack -- non-token ones first */
 	if ((prefix(messagelc, "/script ") ||
-	    //prefix(messagelc, "/scr") || used for /scream now
-	    prefix(messagelc, "/ ") ||	// use with care!
-	    prefix(messagelc, "//") ||	// use with care!
+	    prefix(messagelc, "/ ") ||	// use with care! ("//" is client-side equivalent)
 	    prefix(messagelc, "/lua ")) && admin) {
 		if (colon)
 			master_script_exec(Ind, colon);
