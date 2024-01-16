@@ -11232,12 +11232,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		} else
 #endif
 		{
+			dam = hp_player(Ind, dam, TRUE, FALSE); /* Actually 'quiet' .. */
 			//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points!.", p_ptr->name, dam);
 			if (IS_OTHER_PLAYER(-who, Ind)) { /* paranoia? also don't notify ourselves about healing ourselves */
 				msg_format(-who, "\377w%s has been healed for \377g%d\377w hit points.", p_ptr->name, dam);
 				msg_format(Ind, "\377g%s heals you for %d hit points.", Players[-who]->name, dam);
 			} else msg_format(Ind, "\377gYou are healed for %d hit points.", dam);
-			hp_player(Ind, dam, TRUE, FALSE);
 			dam = 0;
 		}
 		break;
