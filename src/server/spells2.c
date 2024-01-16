@@ -7794,9 +7794,16 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 /* TODO: the result should be affected by skills (and not plev) */
 
 bool lite_line(int Ind, int dir, int dam, bool starlight) {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+	if (dir == 5 && !target_okay(Ind)) {
+		player_type *p_ptr = Players[Ind];
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 
-	return(project_hook(Ind, starlight? GF_STARLITE : GF_LITE_WEAK, dir, dam, flg, ""));
+		return(project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, starlight ? GF_STARLITE : GF_LITE_WEAK, flg, ""));
+	} else {
+		int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+
+		return(project_hook(Ind, starlight ? GF_STARLITE : GF_LITE_WEAK, dir, dam, flg, ""));
+	}
 }
 
 bool drain_life(int Ind, int dir, int dam) {
@@ -7813,21 +7820,42 @@ bool annihilate(int Ind, int dir, int dam) {
 }
 
 bool wall_to_mud(int Ind, int dir) {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+	if (dir == 5 && !target_okay(Ind)) {
+		player_type *p_ptr = Players[Ind];
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 
-	return(project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
+		return(project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, 20 + randint(30), GF_KILL_WALL, flg, ""));
+	} else {
+		int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+
+		return(project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
+	}
 }
 
 bool destroy_trap_door(int Ind, int dir) {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+	if (dir == 5 && !target_okay(Ind)) {
+		player_type *p_ptr = Players[Ind];
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 
-	return(project_hook(Ind, GF_KILL_TRAP_DOOR, dir, 0, flg, ""));
+		return(project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP_DOOR, flg, ""));
+	} else {
+		int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+
+		return(project_hook(Ind, GF_KILL_TRAP_DOOR, dir, 0, flg, ""));
+	}
 }
 
 bool disarm_trap_door(int Ind, int dir) {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+	if (dir == 5 && !target_okay(Ind)) {
+		player_type *p_ptr = Players[Ind];
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 
-	return(project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
+		return(project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP, flg, ""));
+	} else {
+		int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+
+		return(project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
+	}
 }
 
 bool heal_monster(int Ind, int dir) {
