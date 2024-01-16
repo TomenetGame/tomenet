@@ -34,17 +34,22 @@
  */
 /*#define TERM_MULTI	TERM_VIOLET */
 
+/* Special: Further shorten the very long item names of royal armour [optionally only if we already omit its article for length constraints (mode & 8) ]: */
+#define ROYAL_ARMOUR_SHORTEN_NAME
+/* Don't shorten the item name of the artifact 'Antiriad': */
+#define ROYAL_ARMOUR_SHORTEN_ANTIRIAD_ONLY
+/* Don't shorten the item name of the artifact 'Antiriad' in its depleted version: */
+#define ROYAL_ARMOUR_SHORTEN_ANTIRIAD_DEPLETED
+
+
+
 
 #if EXTRA_FLAVORS
-
  #define MAX_MODIFIERS	6       /* Used with rings (see below) */
-
 static cptr ring_adj2[MAX_ROCKS2] = {
 	"", "Brilliant", "Dark", "Enchanting", "Murky", "Bright"
 };
-
 #endif	// EXTRA_FLAVORS
-
 
 /*
  * Rings (adjectives and colors)
@@ -2047,7 +2052,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	bool		show_armour = FALSE;
 	bool		show_shield = FALSE;
 
-	cptr		s_ptr, tmp_ptr;
+	cptr		s_ptr;
 	char		*t;
 
 	char		p1 = '(', p2 = ')';
@@ -2390,8 +2395,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	t = buf;
 
 	/* hack: questors have an arbitrary name */
-	if (o_ptr->questor)
-		basenm = q_info[o_ptr->quest - 1].questor[o_ptr->questor_idx].name;
+	if (o_ptr->questor) basenm = q_info[o_ptr->quest - 1].questor[o_ptr->questor_idx].name;
 	/* hack: quest items have an arbitrary name */
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST
 	    && o_ptr->xtra4) /* <- extra check, in case a silyl admin tries to wish for one ;) */
@@ -2507,19 +2511,34 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			/* Nothing */
 		}
 	}
-#if 0
-	/* Special: Shorten 'heavy' for heavy armour, if we already omit 'the' or anything -- for now only for Antiriad */
-	if (known && (mode & 8) && o_ptr->name1 == ART_ANTIRIAD) { //not for ART_ANTIRIAD_DEPLETED actually
+
+#ifdef ROYAL_ARMOUR_SHORTEN_NAME
+	/* Special: Shorten 'heavy' for heavy armour, if we already omit 'the' or anything */
+	if (known
+ #if 0
+	    && (mode & 8) /* Only if we're already shortening the name anyway, leaving out the item's article, due to length constraints? */
+ #endif
+ #ifdef ROYAL_ARMOUR_SHORTEN_ANTIRIAD_ONLY
+	    && (o_ptr->name1 == ART_ANTIRIAD || o_ptr->name1 == ART_ANTIRIAD_DEPLETED) //for now only for Antiriad?
+ #endif
+ #ifndef ROYAL_ARMOUR_SHORTEN_ANTIRIAD_DEPLETED
+	    && o_ptr->name1 != ART_ANTIRIAD_DEPLETED //not for the depleted version actually?
+ #endif
+	    ) {
 		if (strstr(k_name + k_ptr->name, "Heavy Adam") == k_name + k_ptr->name) {
-			s += 6 + 10 + 1;
+			s_ptr += 6 + 11; //'heavy ' + 'adamantite '
 			t = object_desc_str(t, "H.Adamant.");
 		}
 		else if (strstr(k_name + k_ptr->name, "Heavy Ribbed Adam") == k_name + k_ptr->name) {
-			s += 6 + 7 + 10 + 1;
+			s_ptr += 6 + 7 + 11; //'heavy ' + 'ribbed ' + 'adamantite '
 			t = object_desc_str(t, "H.Ribbed Adamant.");
 		}
 		else if (strstr(k_name + k_ptr->name, "Heavy Mith") == k_name + k_ptr->name) {
-			s += 6;
+			s_ptr += 6; // 'heavy '
+			t = object_desc_str(t, "H.");
+		}
+		else if (strstr(k_name + k_ptr->name, "Heavy Ribbed Mith") == k_name + k_ptr->name) {
+			s_ptr += 6; // 'heavy '
 			t = object_desc_str(t, "H.");
 		}
 	}
@@ -2605,6 +2624,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 		/* Modifier */
 		else if (*s_ptr == '#') {
+			cptr tmp_cptr;
+
 			/* Grab any ego-item name */
 			if (o_ptr->tval == TV_ROD_MAIN) {
 				t = object_desc_chr(t, ' ');
@@ -2617,7 +2638,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			}
 
 			/* Insert the modifier */
-			for (tmp_ptr = modstr; *tmp_ptr; tmp_ptr++) *t++ = *tmp_ptr;
+			for (tmp_cptr = modstr; *tmp_cptr; tmp_cptr++) *t++ = *tmp_cptr;
 		}
 		/* Cheque value */
 		else if (*s_ptr == '$') {
@@ -3245,7 +3266,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Use the standard inscription if available */
 	if (o_ptr->note && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-		tmp_ptr = tmp_val;
+		char *tmp_ptr = tmp_val;
+
 		strcpy(tmp_val, quark_str(o_ptr->note));
 		for (; *tmp_ptr && (*tmp_ptr != '#'); tmp_ptr++);
 		*tmp_ptr = '\0';
