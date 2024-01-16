@@ -7148,7 +7148,7 @@ D:Identifies all items you are carrying.
 N:900:Vermin Control
 G:?:d
 I:70:61:0
-W:15:0:5:2000
+W:15:0:5:1000
 A:15/4
 D:Stops natural breeders on your dungeon level from multiplying any further.
 D:This effects all existing breeders and all that get spawned in the future.
