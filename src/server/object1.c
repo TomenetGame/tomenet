@@ -2023,7 +2023,7 @@ static char *object_desc_lnum(char *t, uint n) {
  *        (not used in player/home inventory, but used in player stores again.) - C. Blue
  *  +128 - Don't prefix "The"
  *  +256 - Short name: Only the purely textual name, no stats/level/owner/status.
- *  +512 - Don't suppress flavour for flavoured true arts (insta-arts, ie rings and amulets) (for ~4 list)
+ *  +512 - Don't suppress flavour for flavoured true arts or hacked-base-name items (insta-arts, ie rings and amulets) (for ~4 list)
  * +1024 - Assume that no flavours are known by the player (added for exporting player store item list)
  *         ONLY works with Ind == 0.
  * +2048 - Do not display anything referring to the base item (for seals and wrapped gifts). Add +32 too when using this.
@@ -2040,7 +2040,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	bool		aware = FALSE;
 	bool		known = FALSE;
 
-	bool		append_name = FALSE;
+	bool		append_name = FALSE, hacked_base_name = FALSE;
 	bool		switched_ego_prefix_and_modstr = FALSE;
 
 	bool		show_weapon = FALSE;
@@ -2113,7 +2113,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 
 	/* Hack: Fix silly names on artifact flavoured items (rings/amulets) */
-	if (artifact_p(o_ptr) && aware && !known && !special_rop && !(mode & 2048)) aware = FALSE;
+	if (artifact_p(o_ptr) && (k_info[o_ptr->k_idx].flags3 & TR3_INSTA_ART) && aware && !known && !special_rop && !(mode & 2048)) aware = FALSE;
 
 	/* Analyze the object */
 	switch (o_ptr->tval) {
@@ -2185,71 +2185,38 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Amulets (including a few "Specials") */
 	case TV_AMULET:
-		/* keep our special randart naming ;) 'the slow digestion of..' */
-		if (o_ptr->name1 == ART_RANDART && known) break;
-
 		/* "Amulets of Luck" are just called "Talismans" -C. Blue */
 		if ((o_ptr->sval == SV_AMULET_LUCK) && aware) {
-			if (mode & 512) {
-				/* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
+			if (mode & 512) { /* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
 				modstr = amulet_adj[indexx];
 				basenm = "& # Talisman~";
 				break;
 			}
 			basenm = "& Talisman~";
+			hacked_base_name = TRUE;
 			break;
 		}
 		/* Optionally flavoury */
 		if (o_ptr->sval == SV_AMULET_INVINCIBILITY) {
 			basenm = "& Administrative Decree~";
+			hacked_base_name = TRUE;
 			break;
 		}
 
 		/* Color the object */
 		modstr = amulet_adj[indexx];
-
-		if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
-
-		/* Hack for insta-arts: Use alternative name from k_info?
-		   If the k-name starts on '&' it's actually an alternative base item name,
-		   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
-		if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
-			if ((short_item_names || aware) && !(mode & 512)) basenm = k_name + k_ptr->name;
-			else {
-				strcpy(basenm2, "& #");
-				strcat(basenm2, k_name + k_ptr->name + 1);
-				basenm = basenm2;
-			}
-		} else {
-			if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
-			else basenm = "& # Amulet~";
-		}
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
+		else basenm = "& # Amulet~";
 		break;
 
 	/* Rings (including a few "Specials") */
 	case TV_RING:
-		/* keep our special randart naming ;) 'the slow digestion of..' */
-		if (o_ptr->name1 == ART_RANDART && known && !special_rop) break;
-
 		/* Color the object */
 		modstr = ring_adj[indexx];
-
-		if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)) || special_rop)) append_name = TRUE;
-
-		/* Hack for insta-arts: Use alternative name from k_info?
-		   If the k-name starts on '&' it's actually an alternative base item name,
-		   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
-		if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
-			if ((short_item_names || aware) && !(mode & 512)) basenm = k_name + k_ptr->name;
-			else {
-				strcpy(basenm2, "& #");
-				strcat(basenm2, k_name + k_ptr->name + 1);
-				basenm = basenm2;
-			}
-		} else {
-			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
-			else basenm = "& # Ring~";
-		}
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
+		else basenm = "& # Ring~";
 		break;
 
 	case TV_STAFF:
@@ -2288,7 +2255,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 #ifdef NEW_WILDERNESS_MAP_SCROLLS
 		/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
 		if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
+			if (mode & 512) { /* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
+				modstr = scroll_adj[indexx];
+				basenm = "& Wilderness Map Piece~ titled \"#\"";
+				break;
+			}
 			basenm = "& Wilderness Map Piece~";
+			hacked_base_name = TRUE;
 			break;
 		}
 #endif
@@ -2298,12 +2271,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				basenm = "& Cheque~";
 			else
 				basenm = "& Cheque~ worth $ Au";
-			break;
-		}
-
-		/* Suppress flavour (Scroll of Sleeping) */
-		if (artifact_p(o_ptr) && known && !(mode & 512)) {
-			basenm = "& Scroll~";
+			hacked_base_name = TRUE;
 			break;
 		}
 
@@ -2312,17 +2280,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
 		else basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
-		//basenm = "& Scroll~ titled \"#\"";
 		break;
 
 	case TV_POTION:
 	case TV_POTION2:
-		/* Suppress flavour (Potion of Amber) */
-		if (artifact_p(o_ptr) && known && !(mode & 512)) {
-			basenm = "& Potion~";
-			break;
-		}
-
 		/* Color the object */
 		modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? STATIC_COLORS : 0)]; /* the first n potions have static flavours */
 		if (aware) append_name = TRUE;
@@ -2395,6 +2356,35 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		return;
 	}
 
+	/* Handle flavoured randart names: Keep our special randart naming ;) 'the slow digestion of..' */
+	if (o_ptr->name1 == ART_RANDART && known && !special_rop) {
+		//no flavour
+		modstr = "";
+		append_name = FALSE;
+		//no object-kind name prefix
+		if (!hacked_base_name) basenm = (k_name + k_ptr->name);
+	}
+	/* Handle flavoured insta-art names */
+	/* Redundant 'if' condition: modstr+unswitched can only be flavoured arts, and flavoured arts are always insta-arts (paranoia) */
+	else if (modstr[0] && !switched_ego_prefix_and_modstr && (f3 & TR3_INSTA_ART)) {
+		append_name = FALSE;
+
+		/* Hack for insta-arts: Use alternative name from k_info?
+		   If the k-name starts on '&' it's actually an alternative base item name,
+		   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
+		if (*(k_ptr->name + k_name) == '&') {
+#if 0 /* Stop displaying the flavour colour once the insta-art is identified? */
+			if ((short_item_names || aware) && !(mode & 512)) basenm = k_name + k_ptr->name;
+#else
+			if ((short_item_names) && !(mode & 512)) basenm = k_name + k_ptr->name;
+#endif
+			else {
+				strcpy(basenm2, "& #");
+				strcat(basenm2, k_name + k_ptr->name + 1);
+				basenm = basenm2;
+			}
+		}
+	}
 
 	/* Start dumping the result */
 	t = buf;
