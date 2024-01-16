@@ -5352,7 +5352,7 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Regenerate depleted Stamina */
-	if ((p_ptr->cst < p_ptr->mst) && !p_ptr->shadow_running) {
+	if ((p_ptr->cst < p_ptr->mst) && !p_ptr->shadow_running && !p_ptr->dispersion) {
 		//int s = 2 * (76 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
 		int s = regen_boost_stamina * (54 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
 
