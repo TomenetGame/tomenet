@@ -1687,7 +1687,7 @@ static void display_inven(void) {
 #ifdef ENABLE_SUBINVEN
 			subwgt = 0;
 			if (o_ptr->tval == TV_SUBINVEN) {
-				for (n = 0; n < o_ptr->pval; n++) {
+				for (n = 0; n < o_ptr->bpval; n++) {
 					o2_ptr = &subinventory[i][n];
 					if (!o2_ptr->tval) break;
 					subwgt += o2_ptr->weight * o2_ptr->number;
@@ -1695,7 +1695,7 @@ static void display_inven(void) {
 				wgt += subwgt;
 
 				/* Add fill state to subinven bag name? */
-				strcat(o_name, format(" [%d/%d]", n, o_ptr->pval));
+				strcat(o_name, format(" [%d/%d]", n, o_ptr->bpval));
 				//o_name[MSG_LEN] = 0; /* Ensure overflow protection */
 			}
 #endif
@@ -1759,7 +1759,7 @@ static void display_subinven(void) {
 		if (inventory[islot].tval != TV_SUBINVEN) continue;
 
 		i_ptr = &inventory[islot];
-		subinven_size = i_ptr->pval;
+		subinven_size = i_ptr->bpval;
 
 
 		/* Describe the subinventory type itself in one extra line*/
@@ -2017,7 +2017,7 @@ void show_inven_header(void) {
 		if (o_ptr->tval == TV_SUBINVEN) {
 			object_type *o2_ptr;;
 
-			for (z = 0; z < o_ptr->pval; z++) {
+			for (z = 0; z < o_ptr->bpval; z++) {
 				o2_ptr = &subinventory[i][z];
 				if (!o2_ptr->tval) break;
 				totalwgt += o2_ptr->weight * o2_ptr->number;
@@ -2164,7 +2164,7 @@ void show_inven(void) {
 #ifdef ENABLE_SUBINVEN
 			subwgt = 0;
 			if (o_ptr->tval == TV_SUBINVEN) {
-				for (l = 0; l < o_ptr->pval; l++) {
+				for (l = 0; l < o_ptr->bpval; l++) {
 					o2_ptr = &subinventory[i][l];
 					if (!o2_ptr->tval) break;
 					subwgt += o2_ptr->weight * o2_ptr->number;
@@ -2173,7 +2173,7 @@ void show_inven(void) {
 				wgt += subwgt;
 
 				/* Add fill state to subinven bag name? */
-				strcat(out_desc[j], format(" [%d/%d]", l, o_ptr->pval));
+				strcat(out_desc[j], format(" [%d/%d]", l, o_ptr->bpval));
 				out_desc[j][lim] = 0; /* Ensure overflow protection */
 			}
 #endif
@@ -2249,7 +2249,7 @@ void show_subinven(int islot) {
 	char	out_desc[23][ONAME_LEN];
 
 	object_type *i_ptr = &inventory[islot];
-	int subinven_size = i_ptr->pval;
+	int subinven_size = i_ptr->bpval;
 
 #ifdef USE_SOUND_2010
  #if 0 /* actually too spammy because the inventory is opened for a lot of fast-paced actions all the time. */
@@ -2377,9 +2377,9 @@ void show_subinven(int islot) {
 	}
 
 	/* Mention the two basic commands for handling subinventories */
-	//c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - 's': unstow, 'a': container-dependant activate.", k, inventory[islot].pval), 0, 0);
-	if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
-	else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
+	//c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - 's': unstow, 'a': container-dependant activate.", k, inventory[islot].bpval), 0, 0);
+	if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].bpval), 0, 0);
+	else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, x/d/k/{/}.", k, inventory[islot].bpval), 0, 0);
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);

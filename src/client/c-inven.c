@@ -84,7 +84,7 @@ static bool get_item_okay(int i) {
 		i = i % 100;
 
 		/* Illegal items */
-		if ((i < 0) || (i >= inventory[s].pval)) return(FALSE);
+		if ((i < 0) || (i >= inventory[s].bpval)) return(FALSE);
 
 		/* Verify the item */
 		if (!item_tester_okay(&subinventory[s][i])) return(FALSE);
@@ -439,7 +439,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 #ifdef ENABLE_SUBINVEN
 		/* Also scan all items inside sub-bags */
 		if (inventory[i].tval == TV_SUBINVEN)
-			for (si = 0; si < inventory[i].pval; si++) {
+			for (si = 0; si < inventory[i].bpval; si++) {
 				if (get_tag_aux((i + 1) * 100 + si, cp, tag, mode)) return(TRUE);
 				/* (Note: Items in subinven cannot be smart-swapped, so there is no check here regarding that, unlike above for normal inventory.) */
 		}
@@ -603,7 +603,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						if (k == i) continue;
 
 						if (inventory[k].tval == TV_SUBINVEN) {
-							for (j = 0; j < inventory[k].pval; j++) {
+							for (j = 0; j < inventory[k].bpval; j++) {
 								strcpy(buf3, subinventory_name[k][j]);
 								ptr = buf3;
 								while (*ptr) {
@@ -626,7 +626,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 									break;
 								}
 							}
-							if (j == inventory[k].pval) continue;
+							if (j == inventory[k].bpval) continue;
 							k = INVEN_PACK - 1; //hax (to leave the outer loop too, and use this item) */
 							break;
 						}
@@ -668,7 +668,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		/* Assume that subinvens are always at the beginning of the inventory! */
 		if (inventory[l].tval != TV_SUBINVEN) break;
 
-		for (j = 0; j < inventory[l].pval; j++) {
+		for (j = 0; j < inventory[l].bpval; j++) {
 			i = j;
 
 			o_ptr = &subinventory[l][i];
@@ -738,7 +738,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 
 					/* Check the current subinventory */
 					if (ic == -1)
-					for (k = 0; k < inventory[l].pval; k++) {
+					for (k = 0; k < inventory[l].bpval; k++) {
 						if (k == i) continue;
 						strcpy(buf3, subinventory_name[l][k]);
 						ptr = buf3;
@@ -1111,7 +1111,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			/* Check all _specialized_ container types. Chests are not eligible. */
 			if (inventory[k].sval >= SV_SI_CHEST_SMALL_WOODEN && inventory[k].sval <= SV_SI_CHEST_LARGE_STEEL) continue;
 
-			for (j = 0; j < inventory[k].pval; j++) {
+			for (j = 0; j < inventory[k].bpval; j++) {
 				if (!get_item_okay((k + 1) * 100 + j)) continue;
 				found_subinven = TRUE;
  #if 0

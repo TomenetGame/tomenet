@@ -963,7 +963,7 @@ void cmd_subinven(int islot) {
 	int c;
 	char buf[MSG_LEN];
 	object_type *i_ptr = &inventory[islot];
-	int subinven_size = i_ptr->pval;
+	int subinven_size = i_ptr->bpval;
 	bool leave = FALSE;
 
 	Term_save();
