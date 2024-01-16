@@ -2186,6 +2186,7 @@ A very useful inscription for (heavily) cursed items:
                 If n isn't specified it will use the default value '10'.
                 This is useful for consumables such as healing potions, to
                 draw your attention to them when you're running low.
+                Eg: !W15
                 (This warning can only get triggered when the count of the item
                 stack is reduced, eg when an item is consumed.)
                 WARNING: Don't confuse this inscription with !w. It does NOT
@@ -2203,6 +2204,7 @@ Other ! inscriptions:
     !Fn         If the server has the (experimental) Demolitionist perk enabled
                 this inscription can be used on blast charges to customize the
                 fuse length to n seconds, where nn must be within 0 to 15.
+                Eg: !F15
     !E          Prevent eating this food item.
     !q          Prevent quaffing this potion.
     !r          Prevent reading this scroll.
@@ -2302,7 +2304,7 @@ Sling ammunition and boomerangs:
     !R          Prevents ricochetting.
 
 Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
-    !X          If you pick up an unidentified item, you will automatically
+    !X[n]       If you pick up an unidentified item, you will automatically
                 read a scroll to identify it.
                 This inscription also works on 'The Stone of Lore'.
                 It does not work for Arcane Lore, since that is purely a bag ID
@@ -2311,6 +2313,11 @@ Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
                 you pick up an item. That means if you use means that can fail,
                 such as spells or magic devices, and you do fail, there will be
                 no automatic retry, you will have to ID it manually.
+                An optional number can be specified after the "!X" to restrict
+                which items will be identified:
+                 0: Only ID flavoured items.
+                 1: Never ID flavoured items.
+                Eg: !X0
                 See (5.7) for more information about identification.
 
 Bags (subinventory):

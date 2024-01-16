@@ -7141,7 +7141,7 @@ byte get_spellbook_name_colour(int pval) {
 void apply_XID(int Ind, object_type *o_ptr, int slot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr;
-	int index;
+	int index, tc;
 	bool ID_spell1_found = FALSE, ID_spell1a_found = FALSE, ID_spell1b_found = FALSE, ID_spell2_found = FALSE, ID_spell3_found = FALSE, ID_spell4_found = FALSE;
 	byte failure = 0x0;
 #ifdef ENABLE_SUBINVEN
@@ -7162,7 +7162,10 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		if (!can_use(Ind, i_ptr)) continue;
 
 		/* Check if the player does want this feature (!X - for now :) ) */
-		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+		if (!(tc = check_guard_inscription(i_ptr->note, 'X'))) continue;
+		/* Allow 'treasure class': No flavoured items (2), only flavoured items (1), all items (-1 aka not specified). */
+		if (tc == 1 && !object_has_flavor(o_ptr->k_idx)) continue;
+		else if (tc == 2 && object_has_flavor(o_ptr->k_idx)) continue;
 
 		/* Can't use them? skip */
 		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
@@ -7195,7 +7198,10 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		    i_ptr->name1 != ART_STONE_LORE) continue;
 
 		/* Check if the player does want this feature (!X - for now :) ) */
-		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+		if (!(tc = check_guard_inscription(i_ptr->note, 'X'))) continue;
+		/* Allow 'treasure class': No flavoured items (2), only flavoured items (1), all items (-1 aka not specified). */
+		if (tc == 1 && !object_has_flavor(o_ptr->k_idx)) continue;
+		else if (tc == 2 && object_has_flavor(o_ptr->k_idx)) continue;
 
 		/* Item is still charging up? */
 		if (i_ptr->recharging) continue;
@@ -7278,7 +7284,10 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		if (!can_use(Ind, i_ptr)) continue;
 
 		/* Check if the player does want this feature (!X - for now :) ) */
-		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+		if (!(tc = check_guard_inscription(i_ptr->note, 'X'))) continue;
+		/* Allow 'treasure class': No flavoured items (2), only flavoured items (1), all items (-1 aka not specified). */
+		if (tc == 1 && !object_has_flavor(o_ptr->k_idx)) continue;
+		else if (tc == 2 && object_has_flavor(o_ptr->k_idx)) continue;
 
 		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 			msg_format(Ind, "\377%cYour anti-magic prevents you from using your magic device.", COLOUR_AM_OWN);
@@ -7314,7 +7323,10 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		if (!can_use(Ind, i_ptr)) continue;
 
 		/* Check if the player does want this feature (!X - for now :) ) */
-		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+		if (!(tc = check_guard_inscription(i_ptr->note, 'X'))) continue;
+		/* Allow 'treasure class': No flavoured items (2), only flavoured items (1), all items (-1 aka not specified). */
+		if (tc == 1 && !object_has_flavor(o_ptr->k_idx)) continue;
+		else if (tc == 2 && object_has_flavor(o_ptr->k_idx)) continue;
 
 		/* Can't use them? skip. (Note: Even 'Revelation' requires these, luckily) */
 		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
