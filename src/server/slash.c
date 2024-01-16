@@ -1321,6 +1321,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		/* Now this command is opened for everyone */
 		else if (prefix(messagelc, "/recall") || prefix(messagelc, "/rec")) {
+//#define R_REQUIRES_AWARE /* Item can only be used for '@R' inscription if we're aware of its flavour? */
 			if (admin) {
 				if (!p_ptr->word_recall) set_recall_timer(Ind, 1);
 				else set_recall_timer(Ind, 0);
@@ -1373,6 +1374,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						for (j = 0; j < o_ptr->bpval; j++) {
 							o2_ptr = &p_ptr->subinventory[i][j];
 							if (!o2_ptr->k_idx) break;
+ #ifdef R_REQUIRES_AWARE
+							if (!object_aware_p(Ind, o2_ptr)) continue;
+ #endif
 							if (!find_inscription(o2_ptr->note, "@R")) continue;
 
 							item = (i + 1) * 100 + j; /* Encode index for global inventory (inven+subinvens) */
@@ -1382,7 +1386,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						if (item == -1) continue;
 						/* We found our rod, leave outer loop too */
 						break;
-					} else
+					}
+#endif
+#ifdef R_REQUIRES_AWARE
+					if (!object_aware_p(Ind, o2_ptr)) continue;
 #endif
 					if (!find_inscription(o_ptr->note, "@R")) continue;
 
@@ -1454,19 +1461,48 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* ALERT! Hard-coded! */
 				switch (o_ptr->tval) {
 				case TV_SCROLL:
+#ifdef R_REQUIRES_AWARE
+					if (o_ptr->sval != SV_SCROLL_WORD_OF_RECALL) {
+						msg_print(Ind, "\377oThat is not a scroll of word of recall.");
+						return;
+					}
+#endif
 					do_cmd_read_scroll(Ind, item);
 					break;
 				case TV_ROD:
+#ifdef R_REQUIRES_AWARE
+					if (o_ptr->sval != SV_ROD_RECALL) {
+						msg_print(Ind, "\377oThat is not a rod of recall.");
+						return;
+					}
+#endif
 					do_cmd_zap_rod(Ind, item, 0);
 					break;
 				/* Cast Recall spell - mikaelh */
 				case TV_BOOK:
 					cast_school_spell(Ind, item, spell, -1, -1, 0);
 					break;
-				default:
+				default: {
+#ifdef R_REQUIRES_AWARE
+					u32b f3, dummy;
+
+					object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
+					if (!(f3 & TR3_ACTIVATE)) {
+						msg_print(Ind, "\377oThat object cannot be activated.");
+						return;
+					}
+					if (!item_activation(o_ptr)) { //paranoia
+						msg_print(Ind, "\377oThe item does not activate for word of recall.");
+						return;
+					}
+					if (!strstr(item_activation(o_ptr), "word of recall")) {
+						msg_print(Ind, "\377oThe item does not activate for word of recall.");
+						return;
+					}
+#endif
 					do_cmd_activate(Ind, item, 0);
-					//msg_print(Ind, "\377oYou cannot recall with that.");
 					break;
+					}
 				}
 			}
 
