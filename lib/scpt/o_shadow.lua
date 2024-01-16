@@ -377,8 +377,9 @@ DISPERSION = add_spell {
 	end,
 	["desc"] = 	{
 		"Evade melee and bolt attacks by dispersing into shadow form",
-		"at the cost of your stamina, per evaded attack.",
-		"Automatically ends when stamina is depleted.",
+		"at a certain chance per evaded attack to deplete 1 point of stamina.",
+		"The spell will automatically end if your stamina is depleted.",
+		"Stamina will not regenerate while Dispersion is active.",
 	}
 }
 STOPDISPERSION = add_spell {
