@@ -2123,6 +2123,14 @@ static void player_outfit(int Ind) {
 		do_player_outfit();
 	}
 
+	/* Maiar all start with 1.000 in Astral, so maybe we just give them that Power Bolt I spell :| */
+	if (p_ptr->prace == RACE_MAIA) {
+		invcopy(o_ptr, lookup_kind(TV_BOOK, SV_SPELLBOOK));
+		o_ptr->pval = __lua_POWERBOLT;
+		o_ptr->number = 1;
+		do_player_outfit();
+	}
+
 	/* hack for mimics: pick a type of poly ring - C. Blue */
 #if 0 /* disabled for now */
 	if (p_ptr->pclass == CLASS_MIMIC) {

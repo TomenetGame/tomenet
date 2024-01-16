@@ -2605,7 +2605,7 @@ extern bool watch_cp, watch_nr, watch_df;
 extern int __lua_HHEALING, __lua_HBLESSING, __lua_HDELFEAR;
 extern int __lua_MSCARE, __lua_M_FIRST, __lua_M_LAST;
 extern int __lua_P_FIRST, __lua_P_LAST;
-extern int __lua_OFEAR, __lua_FOCUS;
+extern int __lua_OFEAR, __lua_FOCUS, __lua_POWERBOLT;
 
 extern int cron_1h_last_hour; /* manage cron_1h calls */
 extern int regen_boost_stamina;

@@ -72,6 +72,7 @@ POWERBOLT_I = add_spell {
 			"Neutral: conjures up a bolt of lightning.",
 		}
 }
+__lua_POWERBOLT = POWERBOLT_I
 POWERBOLT_II = add_spell {
 	["name"] = 	"Power Bolt II",
 	["name2"] = 	"PBolt II",
