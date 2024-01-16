@@ -6599,12 +6599,12 @@ bool monster_death(int Ind, int m_idx) {
 					object_type forge;
 					int s_chem =
 #ifdef NO_RUST_NO_HYDROXIDE
-					    randint(9);
+					    randint(CHEMICALS_NUM);
 
 					if (s_chem >= SV_METAL_HYDROXIDE) s_chem++;
 					if (s_chem >= SV_RUST) s_chem++;
 #else
-					    randint(11);
+					    randint(CHEMICALS_NUM);
 #endif
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, s_chem));

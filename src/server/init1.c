@@ -1684,6 +1684,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "DEMOLITIONIST_IDDC_ONLY") && negation) invalid = TRUE;
 #endif
+#ifndef NO_RUST_NO_HYDROXIDE
+		if (streq(m, "NO_RUST_NO_HYDROXIDE") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "NO_RUST_NO_HYDROXIDE") && negation) invalid = TRUE;
+#endif
 #ifndef ENABLE_SUBINVEN
 		if (streq(m, "ENABLE_SUBINVEN") && !negation) invalid = TRUE;
 #else
@@ -1718,6 +1723,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_OUNLIFE") &&
 		    strcmp(m, "ENABLE_DEMOLITIONIST") &&
 		    strcmp(m, "DEMOLITIONIST_IDDC_ONLY") &&
+		    strcmp(m, "NO_RUST_NO_HYDROXIDE") &&
 		    strcmp(m, "ENABLE_SUBINVEN") &&
 		    strcmp(m, "TOOL_NOTHEFT_COMBO") &&
 			TRUE)

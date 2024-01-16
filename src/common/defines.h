@@ -4469,6 +4469,11 @@
     */
 /* Optionally enable simplifications of ingredients and formulas: */
  #define NO_RUST_NO_HYDROXIDE		/* Note: Rusty items can still be ground and will just turn into normal metal powder instead, assuming the item was only partially rusted ^^. */
+ #ifdef NO_RUST_NO_HYDROXIDE
+  #define CHEMICALS_NUM 9
+ #else
+  #define CHEMICALS_NUM 11
+ #endif
  #define NO_OIL_ACID			/* We don't need lamp oil to create acid, as heating is implied by our fire-type light souce (which is needed though!) */
 /* TV_CHARGE svals */
  #define SV_CHARGE_BLAST		1	/* Charges can be thrown for immediate detonation or activated to detonate after a few seconds or put into trap kits? */
@@ -4486,7 +4491,7 @@
  #define SV_CHARGE_CONCUSSION		13	/* extra stun effect */
  #define SV_CHARGE_XCONCUSSION		14	/* extra STUN effect */
  #define SV_CHARGE_UNDERGROUND		15	/* create water/lava (blast open a hidden underground vein) */
-/* TV_CHEMICAL svals */
+/* TV_CHEMICAL svals (11 ingredients, 9 with NO_RUST_NO_HYDROXIDE enabled) */
  #define SV_CHARCOAL		1	/* small amount, your basic fuel ingredient to burn shits (>' ')> */
  #define SV_SULFUR		2	/* small amount, easens combustion */
  #define SV_SALTPETRE		3	/* large amount, oxygen source boosting combustion speed */
