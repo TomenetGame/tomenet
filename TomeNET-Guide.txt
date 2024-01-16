@@ -6978,12 +6978,21 @@ which types   :!:   for you on a single key press automatically:
 An alternative way to utilize macros is to not rely on item inscriptions, but
 instead call the target object directly by its name!
 
-This can either be an item name, as it appears in your inventory, or a spell
-name if you want your macro to cast a spell.
+This is actually the default behaviour of the 'Macro Wizard' (invoked by % z
+keys) and the recommended way, as it is more flexible, although command-key-
+based macros could be seen as more clean (these macros use the @[<KEY>]<NUMBER>
+format with the key being optional, also called a 'tag' or tag-based macros).
 
-The clue is that when you are asked "Aim which wand?", "Read which scroll?",
-"Cast from which book?" etc. you can also press '@' key to directly type in
-a name.
+If your client version is 4.9.1 or older, the name-based macro is also be the
+only way that works with subinventories (such as potion belt, or antistatic
+wrapping, etc), newer versions can use tag-based macros fine.
+
+The text specified can either be an item name, as it appears in your inventory,
+or a spell name if you want your macro to cast a spell. It can be a partial
+item name too, including the item's inscription, so it could also be a tag
+that is inscribed on an item.
+When asked "Aim which wand?", "Read which scroll?", "Cast from which book?" etc
+you can also press '@' key to directly type in a name.
 Note: In the special case of books, you will then be able to type in
 a spell name instead of a book name, and the game will search your books for
 that spell automatically.
@@ -6991,8 +7000,11 @@ that spell automatically.
 So, instead of inscribing your potions of Healing '@q1' and having a macro
 '\e)q1' you could also just have a macro '\e)q@Healing\r'.
 
-Or, instead of inscribing a Beginner Cantrips book '@m1' and macroing the spell
-Manathrust with '\e)*tm@11\r9a-' you could also just make a macro
+Or you could make a macro '\e)q@@q1\r' which would quaff any potion inscribed
+'@q1', treating that inscription as a simple text comparison rather than a tag.
+
+Or, instead of inscribing a Beginner Cantrips book '@m0' and macroing the spell
+Manathrust with '\e)*tm@11\r0a-' you could also just make a macro
 '\e)*tm@11\r@Manathrust\r-' without the need to inscribe your book.
 
 In fact you could make a macro '\e)*tm@Cast a spell\r@Manathrust\r-'.
@@ -7033,6 +7045,7 @@ or confused etc) to you. So if you carry for example Manathrust I but also
 the 2nd tier Manathrust II and your 'Mana' school is trained high enough to
 unlock Manathrust II then it will automatically attempt to cast II (and fail
 the attempt if you don't have enough MP for it or are blinded etc!).
+
 
 
 (3.10) Experience, level-ups and skill points
@@ -13230,6 +13243,10 @@ Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 and a non-everlasting player!
 Vermin Control  Stops breeders on the whole floor from multiplying. Doesn't
                 have effect on certain non-natural breeders such as Unmakers.
+                This scroll affects all currently existing breeders on the
+                dungeon level, but also all breeders that additionall may get
+                spawned in the future, so Vermin Control doesn't need to be
+                used more than once per dungeon floor, ever.
 
 
 Wands/Rods/Staves
@@ -20650,6 +20667,8 @@ these limitations will be lifted.
 
     Vermin Control  Prevents vermin from breeding any further on your
                     current floor. Doesn't work on unnatural creatures.
+                    Works on all currently existing breeders and also on all
+                    that may spawn in the future on this same dungeon floor.
                     Required skill level for first spell level: 10.
 
     Recovery        Neutralizes poison, cures diseases, heals cuts,
@@ -21243,8 +21262,10 @@ All Unlife spells are Wisdom-based.)
                     (Note: There is a spell of the same name in 'Hereticism'.)
 
     Dispersion      Enters a shadow form, evading 100% melee attacks and bolt
-                    attacks at the cost of your stamina. The spell will end
-                    automatically if stamina is depleted.
+                    attacks at a chance per evaded attack to deplete one point
+                    of stamina. The spell will end automatically if stamina is
+                    depleted, and stamina will not regenerate while the spell
+                    is still active.
                     The probability for each evaded attack to cost you 1 ST
                     starts at 50% and goes down to 25% the further the spell
                     is trained.
@@ -21523,9 +21544,10 @@ All Unlife spells are Wisdom-based.)
                     Detect all living creatures nearby.
                     Required skill level for first spell level: 11.
 
-    Tainted Grounds Prevents any vermin from multiplying any further,
-                    effective on the whole dungeon level.
-                    Doesn't work on unnatural creatures.
+    Tainted Grounds Prevents any vermin from multiplying any further on your
+                    current dungeon floor. Doesn't work on unnatural creatures.
+                    Works on all currently existing breeders and also on all
+                    that may spawn in the future on this same dungeon floor.
                     Required skill level for first spell level: 13.
 
     Nether Sap      Draws from nether undercurrents to continuously replenish
