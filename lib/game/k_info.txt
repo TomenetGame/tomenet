@@ -2884,6 +2884,7 @@ G:~:s
 I:7:0:0
 W:0:0:250:0
 A:75/1
+F:EASY_KNOW
 
 
 ##### Various Stuff #####

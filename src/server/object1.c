@@ -2834,19 +2834,17 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Hack -- Chests must be described in detail */
 	if (o_ptr->tval == TV_CHEST) {
-		/* Not searched yet */
-		if (!known) {
+		/* May be "empty" - cannot happen with SUBINVEN_CHESTS as chests will be immediately converted to TV_SUBINVEN on emptying, except for Ruined Chests. */
+		if (!o_ptr->pval) t = object_desc_str(t, " (empty)");
+		/* Not searched yet - even though we perhaps didn't know the chest yet, we could still at least see whether it was empty or not (above). Important for Ruined Chests too. */
+		else if (!known) {
 			/* Nothing */
 #ifdef SUBINVEN_CHESTS
 			t = object_desc_str(t, " (shut tight)"); /* To visually distinguish this lootable chest from subinven-chests in our inventory */
 #endif
 		}
-		/* May be "empty" - cannot happen with SUBINVEN_CHESTS as chests will be immediately converted to TV_SUBINVEN on emptying, except for Ruined Chests. */
-		else if (!o_ptr->pval)
-			t = object_desc_str(t, " (empty)");
 		/* May be "disarmed" */
-		else if (o_ptr->pval < 0)
-			t = object_desc_str(t, " (disarmed)");
+		else if (o_ptr->pval < 0) t = object_desc_str(t, " (disarmed)");
 		/* Describe the traps, if any */
 		else if (o_ptr->pval) {
 			/* Describe the traps */
