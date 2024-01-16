@@ -1190,7 +1190,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 
 	/* Ego-item */
 	if (o_ptr->name2) {
-//		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 		a_ptr = ego_make(o_ptr);
 
 		(*f1) |= a_ptr->flags1;
