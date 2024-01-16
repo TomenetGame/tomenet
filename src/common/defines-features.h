@@ -634,7 +634,8 @@
    - cmd_spoilers().
    - cmd_check_misc() (the knowledge menu).
    - auto_inscriptions().
- */
+   It is FALSE especially when typing in a chat message, so panic macros will still work if player is unexpectedly attacked by a monster while typing.
+  */
  #define ALLOW_NAVI_KEYS_IN_PROMPT
 #endif
 

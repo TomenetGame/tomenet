@@ -35,6 +35,73 @@
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 static bool inkey_location_keys = FALSE;
+  /* Navigation keys/special keys sequence initializer */
+  #define NAVI_KEY_SEQ_START		{ 31, 0}
+ #ifdef WINDOWS
+  /* CTRL pressed */
+  #define NAVI_KEY_SEQ_CTRL		{ 67, 0}
+  /* SHIFT pressed */
+  #define NAVI_KEY_SEQ_SHIFT		{ 83 , 0}
+  /* ALT pressed */
+  #define NAVI_KEY_SEQ_ALT		{ 65 , 0}
+  /* Shiftkey terminator marker */
+  #define NAVI_KEY_SEQ_SHIFTKEY_TERM	{ 120, 0 }
+  /* Static middle sequence */
+  #define NAVI_KEY_SEQ_SKIP		{ 0 }
+  /* Navigation key codes */
+  #define NAVI_KEY_SEQ_UP		{ 52,  56, 0}
+  #define NAVI_KEY_SEQ_RIGHT		{ 52,  68, 0}
+  #define NAVI_KEY_SEQ_DOWN		{ 53,  48, 0}
+  #define NAVI_KEY_SEQ_LEFT		{ 52,  66, 0}
+  #define NAVI_KEY_SEQ_POS1		{ 52,  55, 0}
+  #define NAVI_KEY_SEQ_END		{ 52,  70, 0}
+  #define NAVI_KEY_SEQ_PAGEUP		{ 52,  57, 0}
+  #define NAVI_KEY_SEQ_PAGEDOWN		{ 53,  49, 0}
+  #define NAVI_KEY_SEQ_DEL		{ 53,  51, 0}
+ #else /* POSIX, at least working on Linux/X11 */
+  /* CTRL pressed */
+  #define NAVI_KEY_SEQ_CTRL		{ 78, 0 }
+  /* SHIFT pressed */
+  #define NAVI_KEY_SEQ_SHIFT		{ 83, 0 }
+  /* ALT pressed */
+  #define NAVI_KEY_SEQ_ALT		{ 79, 0 }
+  /* Shiftkey terminator marker */
+  #define NAVI_KEY_SEQ_SHIFTKEY_TERM	{ 95, 0 }
+  /* Static middle sequence */
+  #define NAVI_KEY_SEQ_SKIP		{ 70, 70, 0 }
+  /* Navigation key codes */
+  #define NAVI_KEY_SEQ_UP		{ 53,  50, 0 }
+  #define NAVI_KEY_SEQ_RIGHT		{ 53,  51, 0 }
+  #define NAVI_KEY_SEQ_DOWN		{ 53,  52, 0 }
+  #define NAVI_KEY_SEQ_LEFT		{ 53,  49, 0 }
+  #define NAVI_KEY_SEQ_POS1		{ 53,  48, 0 }
+  #define NAVI_KEY_SEQ_END		{ 53,  55, 0 }
+  #define NAVI_KEY_SEQ_PAGEUP		{ 53,  53, 0 }
+  #define NAVI_KEY_SEQ_PAGEDOWN		{ 53,  54, 0 }
+  /* Depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/ */
+  #define NAVI_KEY_SEQ_DEL		{ 0 }
+ #endif
+  /* The closing marker of all special key sequences */
+ #define NAVI_KEY_SEQ_TERM		{ 13, 0 }
+
+ char nks_start[] = NAVI_KEY_SEQ_START;
+ char nks_term[] = NAVI_KEY_SEQ_TERM;
+ char nks_ctrl[] = NAVI_KEY_SEQ_CTRL;
+ char nks_shift[] = NAVI_KEY_SEQ_SHIFT;
+ char nks_alt[] = NAVI_KEY_SEQ_ALT;
+ char nks_skterm[] = NAVI_KEY_SEQ_SHIFTKEY_TERM;
+ char nks_skip[] = NAVI_KEY_SEQ_SKIP;
+ char nks_u[] = NAVI_KEY_SEQ_UP;
+ char nks_r[] = NAVI_KEY_SEQ_RIGHT;
+ char nks_d[] = NAVI_KEY_SEQ_DOWN;
+ char nks_l[] = NAVI_KEY_SEQ_LEFT;
+ char nks_p[] = NAVI_KEY_SEQ_POS1;
+ char nks_e[] = NAVI_KEY_SEQ_END;
+ char nks_pu[] = NAVI_KEY_SEQ_PAGEUP;
+ char nks_pd[] = NAVI_KEY_SEQ_PAGEDOWN;
+ char nks_del[] = NAVI_KEY_SEQ_DEL;
+ /* Minimum length to even start string comparisons, or it couln't possibly be a 'special' trigger key: */
+ int nks_minlen;
 #endif
 
 
@@ -183,8 +250,7 @@ static int macro_maybe(cptr buf, int n) {
 		if (macro__cmd[i] && ((shopping && !c_cfg.macros_in_stores) || !inkey_flag || inkey_msg)) continue;
 
 		/* Check for "prefix" */
-		if (prefix(macro__pat[i], buf))
-		{
+		if (prefix(macro__pat[i], buf)) {
 			/* Ignore complete macros */
 			if (!streq(macro__pat[i], buf)) return(i);
 		}
@@ -651,6 +717,91 @@ void sync_xsleep(int milliseconds) {
 	}
 }
 
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+/* Scan a buffer of key inputs whether it forms a special sequence of a navigational key */
+int scan_navi_key(cptr buf) {
+	int i;
+	cptr bufp = buf;
+	char c;
+	int found = TRUE;
+
+	if (strlen(buf) < nks_minlen) return(0);
+
+	/* Verify special key sequence starter */
+	for (i = 0; (c = nks_start[i]); i++) if (*bufp++ != c) { found = FALSE; break; }
+	/* Strip shiftkeys - we want ANY of the navigationalkey+shiftkeys combos to get ignored as macro, as we may process them all.
+	   Also we assume that shiftkey marker are only 1 byte long.
+	   We don't need to process shiftkeys in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead. */
+	if (*bufp == nks_ctrl[0]) {
+ #ifdef ENABLE_SHIFT_SPECIALKEYS
+		//inkey_shift_special |= 0x2; //should be redundant, as this flag should be set already via e.s.s. functionality
+ #endif
+		bufp++;
+	}
+	if (*bufp == nks_shift[0]) {
+ #ifdef ENABLE_SHIFT_SPECIALKEYS
+		//inkey_shift_special |= 0x1; //should be redundant, as this flag should be set already via e.s.s. functionality
+ #endif
+		bufp++;
+	}
+	if (*bufp == nks_alt[0]) {
+ #ifdef ENABLE_SHIFT_SPECIALKEYS
+		//inkey_shift_special |= 0x4; //should be redundant, as this flag should be set already via e.s.s. functionality
+ #endif
+		bufp++;
+	}
+	/* Verify presence of end-of-shiftkeys marker */
+	for (i = 0; (c = nks_skterm[i]); i++) if (*bufp++ != c) { found = FALSE; break; }
+	/* At least on POSIX there are always two static chars in the middle */
+	for (i = 0; (c = nks_skip[i]); i++) if (*bufp++ != c) { found = FALSE; break; }
+	/* Now check for the various keys */
+	if (!found) return(0);
+
+	found = 0;
+
+	for (i = 0; (c = nks_del[i]); i++) if (*(bufp + i) != c) break;
+	if (i && !c) found = NAVI_KEY_DEL;
+	if (!found) {
+		for (i = 0; (c = nks_u[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_UP;
+	}
+	if (!found) {
+		for (i = 0; (c = nks_r[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_RIGHT;
+	}
+	if (!found) {
+		for (i = 0; (c = nks_d[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_DOWN;
+	}
+	if (!found) {
+		for (i = 0; (c = nks_l[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_LEFT;
+	}
+	if (!found) {
+		for (i = 0; (c = nks_pu[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_PAGEUP;
+	}
+	if (!found) {
+		for (i = 0; (c = nks_pd[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_PAGEDOWN;
+	}
+	if (!found) {
+		for (i = 0; (c = nks_p[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_POS1;
+	}
+	if (!found) {
+		for (i = 0; (c = nks_e[i]); i++) if (*(bufp + i) != c) break;
+		if (i && !c) found = NAVI_KEY_END;
+	}
+	/* Assume all key sequences are equally long,
+	   just pick one of them (that is guaranteed to be in use in any OS variant, ie not 'DEL') to advance pointer accordingly */
+	bufp += strlen(nks_u);
+	/* Verify special key sequence terminator */
+	for (i = 0; (c = nks_term[i]); i++) if (*bufp++ != c) { found = 0; break; }
+
+	return(found);
+}
+#endif
 
 /* Wrapped inkey() function to use with ALLOW_NAVI_KEYS_IN_PROMPT. - C. Blue */
 char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
@@ -721,6 +872,9 @@ char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
 static char inkey_aux(void) {
 	int	k = 0, n, p = 0, w = 0;
 	char	ch = 0;
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+	char	ch_navi;
+#endif
 	cptr	pat, act;
 	char	buf[1024];
 	char	buf_atoi[5];
@@ -1026,6 +1180,11 @@ static char inkey_aux(void) {
 		}
 	}
 
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+	/* Specifically prevent any macros on navigation keys, as we want to process these keys directly in the current situation (ie some sort of message input prompt)? */
+	if (inkey_location_keys && (ch_navi = scan_navi_key(buf))) return(ch_navi);
+#endif
+
 	/* Check for a successful macro */
 	k = macro_ready(buf);
 
@@ -1043,7 +1202,6 @@ static char inkey_aux(void) {
 		/* Return the key */
 		return(ch);
 	}
-
 
 	/* Access the macro pattern */
 	pat = macro__pat[k];
@@ -1344,30 +1502,6 @@ char inkey(void) {
 		/* Get a key (see above) */
 		kk = ch = inkey_aux();//		<-(y)!! in -c (terminal) mode, this waits for keypress (META_DISPLAYPINGS_LATER)
 
-		//Linux/X11:
-		//up:		31,95,70,70,53,50,13
-		//right:	31,95,70,70,53,51,13
-		//down:		31,95,70,70,53,52,13
-		//left:		31,95,70,70,53,49,13
-		//pos1:		31,95,70,70,53,48,13
-		//end:		31,95,70,70,53,55,13
-		//pgup:		31,95,70,70,53,53,13
-		//pgdn:		31,95,70,70,53,54,13
-		//Note that, depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/
-		//CTRL+navikey:	31,78,95,70,70,53,x,13
-
-		//Windows:
-		//up:		31,120,52,56,13
-		//right:	31,120,52,68,13
-		//down:		31,120,53,48,13
-		//left:		31,120,52,66,13
-		//pos1:		31,120,52,55,13
-		//end:		31,120,52,70,13
-		//pgup:		31,120,52,57,13
-		//pgdn:		31,120,53,49,13
-		//del:		31,120,53,51,13
-		//CTRL+navikey:	31,67,120,52/53,x,13
-
 		/* Finished a "control-underscore" sequence */
 		if (parse_under && (ch <= 32)) {
 			/* Found the edge */
@@ -1465,7 +1599,7 @@ char inkey(void) {
 
 				/* Evaluate and return hack value. Note #0 is always '31', #6 always '13', or we wouldn't be here. */
  #ifdef WINDOWS
-				if (inkey_location_key_sequence[1] == 67) pos = 2;
+				if (inkey_location_key_sequence[1] == 67) pos = 2; //skip CTRL -- We don't need to process shiftkeys in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead.
 
 				if (inkey_location_key_sequence[pos] == 120 &&
 				    inkey_location_key_sequence[pos + 1] == 52)
@@ -1511,7 +1645,7 @@ char inkey(void) {
 						ch = 0;
 					}
  #else /* assume POSIX */
-				if (inkey_location_key_sequence[1] == 78) pos = 2;
+				if (inkey_location_key_sequence[1] == 78) pos = 2; //skip CTRL -- We don't need to process shiftkeys in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead. */
 
 				if (inkey_location_key_sequence[pos] == 95 &&
 				    inkey_location_key_sequence[pos + 1] == 70 &&
@@ -1790,6 +1924,11 @@ void keymap_init(void) {
 		/* Save the direction */
 		keymap_dirs[i] = hack_dir;
 	}
+
+
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+	nks_minlen = strlen(nks_start) + strlen(nks_skterm) + strlen(nks_skip) + strlen(nks_term) + 1;
+#endif
 }
 
 
