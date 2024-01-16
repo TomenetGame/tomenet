@@ -8613,11 +8613,11 @@ void apply_auto_inscriptions(int insc_idx, bool force) {
 #endif
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
-		apply_auto_inscriptions_aux(i, insc_idx, force);
+		(void)apply_auto_inscriptions_aux(i, insc_idx, force);
 #ifdef ENABLE_SUBINVEN
 		if (inventory[i].tval == TV_SUBINVEN)
 			for (s = 0; s < inventory[i].bpval; s++)
-				apply_auto_inscriptions_aux((i + 1) * 100 + s, insc_idx, force);
+				(void)apply_auto_inscriptions_aux((i + 1) * 100 + s, insc_idx, force);
 #endif
 	}
 }

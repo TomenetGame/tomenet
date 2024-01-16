@@ -5314,7 +5314,7 @@ int Receive_inventory_revision(void) {
 
 #if 0 /* moved to Receive_inven...() - cleaner and works much better (ID and *ID*) */
 	/* AUTOINSCRIBE - moved to Receive_inventory_revision() */
-	apply_auto_inscriptions(FALSE);
+	apply_auto_inscriptions(-1, FALSE);
 #endif
 
 	return(1);
@@ -5469,13 +5469,14 @@ void apply_auto_pickup(char *item_name) {
 
 /* Apply client-side auto-inscriptions - C. Blue
    'insc_idx': -1 to apply all auto-inscriptions, otherwise only apply one particular auto-inscription.
-   'force': overwrite existing non-trivial inscription. */
-void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
+   'force': overwrite existing non-trivial inscription.
+   Returns 'TRUE' if the item is now inscribed, no matter whether by us or already before we tried, else FALSE. */
+bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	int i;
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
 	char *match, tag_buf[ONAME_LEN];
-	bool auto_inscribe, found;
+	bool auto_inscribe, found, has_insc = FALSE;
 #ifdef REGEX_SEARCH
 	int ires = -999;
 	regex_t re_src;
@@ -5492,7 +5493,7 @@ void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 		slot %= 100;
 
 		/* skip empty items */
-		if (!subinventory[sslot][slot].tval) return;
+		if (!subinventory[sslot][slot].tval) return(FALSE);
 
 		iname = subinventory_name[sslot][slot];
 		iinsc = subinventory_inscription[sslot][slot];
@@ -5501,7 +5502,7 @@ void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 #endif
 	{
 		/* skip empty items */
-		if (!inventory[slot].tval) return;
+		if (!inventory[slot].tval) return(FALSE);
 
 		iname = inventory_name[slot];
 		iinsc = inventory_inscription[slot];
@@ -5515,10 +5516,12 @@ void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	auto_inscribe = FALSE;
 	/* look for 1st '{' which must be level requirements on ANY item */
 	ex = strstr(iname, "{");
-	if (ex == NULL) return; /* paranoia - should always be FALSE */
+	if (ex == NULL) return(FALSE); /* paranoia - should always be FALSE */
 	strcpy(ex_buf, ex + 1);
 	/* look for 2nd '{' which MUST be an inscription */
 	ex = strstr(ex_buf, "{");
+
+	if (ex) has_insc = TRUE;
 
 	/* Add "fake-artifact" inscriptions using '#' */
 	if (iinsc) {
@@ -5553,7 +5556,7 @@ void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	}
  #if 0 /* is '!' UNavailable? */
 	/* already has a real inscription? -> can't auto-inscribe */
-	if (!auto_inscribe) return;
+	if (!auto_inscribe) return(has_insc);
  #else
 	/* save for checking for already existing target inscription */
 	if (ex && strlen(ex) > 2) {
@@ -5661,7 +5664,7 @@ void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 		if (found) break;
 	}
 	/* no match found? */
-	if (i == stop) return;
+	if (i == stop) return(has_insc);
 
 	/* send the new inscription */
 	/* security hack: avoid infinite looping */
@@ -5671,12 +5674,15 @@ void apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	    /* These last three are actually NOT empty inscriptions, so they don't really need checking here: */
 	    strcmp(auto_inscription_tag[i], "cursed") &&
 	    strcmp(auto_inscription_tag[i], "on sale") &&
-	    strcmp(auto_inscription_tag[i], "stolen"))
+	    strcmp(auto_inscription_tag[i], "stolen")) {
 #ifdef ENABLE_SUBINVEN
 		Send_inscribe((sslot + 1) * 100 + slot, auto_inscription_tag[i]);
 #else
 		Send_inscribe(slot, auto_inscription_tag[i]);
 #endif
+		return(TRUE);
+	}
+	return(has_insc);
 }
 
 int Receive_account_info(void) {
