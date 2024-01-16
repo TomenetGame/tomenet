@@ -390,7 +390,9 @@ void process_command() {
 	case KTRL('T'): xhtml_screenshot("screenshot????", FALSE); break;
 	case KTRL('I'): cmd_lagometer(); break;
 
+#ifdef TEST_CLIENT
 //#define CTRLC_DEBUG /* Use CTRL-C for some special debug stuff instead of its normal function (audio shortcut)? */
+#endif
 
 #ifdef USE_SOUND_2010
 	case KTRL('U'): interact_audio(); break;
@@ -419,7 +421,7 @@ void process_command() {
 #ifdef CTRLC_DEBUG /* only for debugging purpose - dump some client-side special config */
 	case KTRL('C'):
 		//c_msg_format("Client FPS: %d", cfg_client_fps);
-		handle_process_font_file();
+		//handle_process_font_file();
 		break;
 #endif
 	default: cmd_raw_key(command_cmd); break;
