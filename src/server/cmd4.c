@@ -86,6 +86,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	bool admin = is_admin(p_ptr);
 	bool shown = FALSE;
+	bool antiriad = FALSE;
 
 	object_type forge, *o_ptr;
 	artifact_type *a_ptr;
@@ -128,6 +129,12 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 
 		/* Skip disabled (or bugged, if that happens) artifacts */
 		if (a_ptr->cur_num == 1 && !a_ptr->carrier && !admin) continue;
+
+		/* Hack for Antiriad, which are two artifacts in one */
+		if (k == ART_ANTIRIAD || k == ART_ANTIRIAD_DEPLETED) {
+			if (antiriad) continue;
+			antiriad = TRUE;
+		}
 
 		/* Assume okay */
 		okay[k] = TRUE;
