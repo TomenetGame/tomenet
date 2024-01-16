@@ -390,23 +390,17 @@ errr my_fclose(FILE *fff) {
  *
  * Process tabs, strip internal non-printables
  */
-errr my_fgets(FILE *fff, char *buf, huge n, bool conv)
-{
+errr my_fgets(FILE *fff, char *buf, huge n, bool conv) {
 	huge i = 0;
-
 	char *s;
-
 	char tmp[1024];
 
 	/* Read a line */
-	if (fgets(tmp, 1024, fff))
-	{
+	if (fgets(tmp, 1024, fff)) {
 		/* Convert weirdness */
-		for (s = tmp; *s; s++)
-		{
+		for (s = tmp; *s; s++) {
 			/* Handle newline */
-			if (*s == '\n')
-			{
+			if (*s == '\n') {
 				/* Terminate */
 				buf[i] = '\0';
 
@@ -415,8 +409,7 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv)
 			}
 
 			/* Handle tabs */
-			else if (*s == '\t')
-			{
+			else if (*s == '\t') {
 				/* Hack -- require room */
 				if (i + 8 >= n) break;
 
@@ -427,12 +420,26 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv)
 				while (!(i % 8)) buf[i++] = ' ';
 			}
 
+			/* Even without 'conv' being TRUE: Allow using \{c colour codes in *_info.txt files too */
+			else if (*s == '\\' && *(s + 1) == '{') {
+				/* Convert '\{' to '\377' colour code */
+				*s = '\377';
+
+				/* Copy */
+				buf[i++] = *s;
+
+				/* Skip next char ('{') */
+				s++;
+
+				/* Check length */
+				if (i >= n) break;
+			}
+
 			/* Handle printables */
-			else if (isprint(*s) || *s == '\377')
-			{
+			else if (isprint(*s) || *s == '\377') {
 				/* easier to edit perma files */
-				if (conv && *s == '{' && *(s + 1) != '{')
-					*s = '\377';
+				if (conv && *s == '{' && *(s + 1) != '{') *s = '\377';
+
 				/* Copy */
 				buf[i++] = *s;
 
