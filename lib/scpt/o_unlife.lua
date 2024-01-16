@@ -126,6 +126,8 @@ OREGEN = add_spell {
 	end,
 	["desc"] = 	{
 			"Draws from nether undercurrents to replenish your health.",
+			"The spell ends prematurely if you run out of mana.",
+			"The spell will continue draining MP even if your Hit Points are full.",
 			"--- This spell is only usable by true vampires. ---",
 	}
 }
