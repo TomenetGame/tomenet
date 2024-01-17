@@ -10724,7 +10724,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Br
 	scan_accounts();
 	scan_houses();
 
-#if defined CLIENT_SIDE_WEATHER && !defined CLIENT_WEATHER_GLOBAL
+#if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
 	/* initialize weather */
 	wild_weather_init();
 #endif
@@ -11326,7 +11326,7 @@ static void process_firework_creation() {
 }
 
 
-#if defined CLIENT_SIDE_WEATHER && defined CLIENT_WEATHER_GLOBAL
+#if defined(CLIENT_SIDE_WEATHER) && defined(CLIENT_WEATHER_GLOBAL)
 /* Update all affected (ie on worldmap surface) players' client-side weather.
    NOTE: Called on opportunity of _global_ weather undergoing any change. */
 static void players_weather() {
@@ -11344,7 +11344,7 @@ static void players_weather() {
 }
 #endif
 
-#if defined CLIENT_WEATHER_GLOBAL || !defined CLIENT_SIDE_WEATHER
+#if defined(CLIENT_WEATHER_GLOBAL) || !defined(CLIENT_SIDE_WEATHER)
 /* manage and toggle weather and wind state - C. Blue
    NOTE: Called once per second,
          and for CLIENT_SIDE_WEATHER only if also CLIENT_WEATHER_GLOBAL. */
@@ -12149,7 +12149,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 #endif
 
 #if 0 /* enable? */
- #if defined CLIENT_SIDE_WEATHER && !defined CLIENT_WEATHER_GLOBAL
+ #if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
     {	int wind, real_speed_vertical;
 	/* hack: wind without rain doesn't count, since it might confuse the players */
 	if (!wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) return;

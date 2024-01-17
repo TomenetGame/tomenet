@@ -4720,7 +4720,7 @@ static int Receive_login(int ind) {
 				sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
 			else
 				sflags3 |= (1 & 0xFF) | ((0 & 0xFF00) << 8) | ((0 & 0xFF) << 16);
-#elif defined (ARCADE_SERVER)
+#elif defined(ARCADE_SERVER)
 			if (sflags0 & SFLG0_RPG_ADMIN)
 				sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
 			else

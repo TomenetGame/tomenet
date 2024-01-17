@@ -9343,7 +9343,7 @@ void season_change(int s, bool force) {
 	struct worldpos wpos;
 
 	/* if 'force' is off, at least ensure correct weather frequency here: */
-#if defined CLIENT_WEATHER_GLOBAL || !defined CLIENT_SIDE_WEATHER
+#if defined(CLIENT_WEATHER_GLOBAL) || !defined(CLIENT_SIDE_WEATHER)
 	/* adjust weather somewhat according to season! (server-side or global weather) */
 	switch (s) {
 	case SEASON_SPRING: /* rain relatively often */
