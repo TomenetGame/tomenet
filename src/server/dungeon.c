@@ -12184,39 +12184,41 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 
 #ifdef IRRITATING_WEATHER /* Hinder player movement if running against the wind speed */
  #if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
-    {	int wind, real_speed_vertical;
-	/* hack: just 'wind' (invisible/inaudible) without actual rain/snow/sand doesn't count, since it might confuse the players */
-	if (!wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) return;
+	if (!p_ptr->grid_house && !p_ptr->wpos.wz) {
+		int wind, real_speed_vertical;
 
-	real_speed_vertical = *real_speed;
-	/* running against strong wind is slower :) - C. Blue */
-	wind = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind;
-	if (!wind || *real_speed != cfg.running_speed) ;
-		/* if no wind, or if we're already slowed down: nothing */
-	else if (wind % 2) {
-		/* west wind */
-		if (p_ptr->find_current == 1 || p_ptr->find_current == 4 || p_ptr->find_current == 7)
-			*real_speed = (*real_speed * (wind + 3)) / 10;
-	} else {
-		/* east wind */
-		if (p_ptr->find_current == 3 || p_ptr->find_current == 6 || p_ptr->find_current == 9)
-			*real_speed = (*real_speed * (wind + 6)) / 10;
+		/* hack: just 'wind' (invisible/inaudible) without actual rain/snow/sand doesn't count, since it might confuse the players */
+		if (!wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) return;
+
+		real_speed_vertical = *real_speed;
+		/* running against strong wind is slower :) - C. Blue */
+		wind = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind;
+		if (!wind || *real_speed != cfg.running_speed) ;
+			/* if no wind, or if we're already slowed down: nothing */
+		else if (wind % 2) {
+			/* west wind */
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 4 || p_ptr->find_current == 7)
+				*real_speed = (*real_speed * (wind + 3)) / 10;
+		} else {
+			/* east wind */
+			if (p_ptr->find_current == 3 || p_ptr->find_current == 6 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * (wind + 6)) / 10;
+		}
+		/* also check vertical winds (which are only used for exactly this purpose here) */
+		wind = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind_vertical;
+		if (!wind || real_speed_vertical != cfg.running_speed) ;
+			/* if no wind, or if we're already slowed down: nothing */
+		else if (wind % 2) {
+			/* west wind */
+			if (p_ptr->find_current == 7 || p_ptr->find_current == 8 || p_ptr->find_current == 9)
+				real_speed_vertical = (real_speed_vertical * (wind + 3)) / 10;
+		} else {
+			/* east wind */
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 2 || p_ptr->find_current == 3)
+				real_speed_vertical = (real_speed_vertical * (wind + 6)) / 10;
+		}
+		if (real_speed_vertical < *real_speed) *real_speed = real_speed_vertical;
 	}
-	/* also check vertical winds (which are only used for exactly this purpose here) */
-	wind = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind_vertical;
-	if (!wind || real_speed_vertical != cfg.running_speed) ;
-		/* if no wind, or if we're already slowed down: nothing */
-	else if (wind % 2) {
-		/* west wind */
-		if (p_ptr->find_current == 7 || p_ptr->find_current == 8 || p_ptr->find_current == 9)
-			real_speed_vertical = (real_speed_vertical * (wind + 3)) / 10;
-	} else {
-		/* east wind */
-		if (p_ptr->find_current == 1 || p_ptr->find_current == 2 || p_ptr->find_current == 3)
-			real_speed_vertical = (real_speed_vertical * (wind + 6)) / 10;
-	}
-	if (real_speed_vertical < *real_speed) *real_speed = real_speed_vertical;
-    }
  #endif
 #endif
 }
