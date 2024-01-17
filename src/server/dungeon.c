@@ -5882,37 +5882,38 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 #ifdef IRRITATING_WEATHER
-	switch (p_ptr->weather_influence) {
-	case 0: break; //no bad weather
-	case 1: break; //rainstorm - no effect
-	case 2: //snowstorm
-		if (p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold
-		    || worn_armour_weight(p_ptr) >= 140 + (p_ptr->inventory[INVEN_HEAD].tval ? 0 : 50) + (p_ptr->inventory[INVEN_OUTER].tval ? 0 : 50) /* surpass chain mail weight ^^ */
-		    || (p_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK && p_ptr->inventory[INVEN_OUTER].sval == SV_FUR_CLOAK))
-			break;
-		if (!rand_int(5)) {
-			int dam = (p_ptr->chp * (3 + rand_int(5)) + 99) / 100;
+	if (!p_ptr->grid_house)
+		switch (p_ptr->weather_influence) {
+		case 0: break; //no bad weather
+		case 1: break; //rainstorm - no effect
+		case 2: //snowstorm
+			if (p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold
+			    || worn_armour_weight(p_ptr) >= 140 + (p_ptr->inventory[INVEN_HEAD].tval ? 0 : 50) + (p_ptr->inventory[INVEN_OUTER].tval ? 0 : 50) /* surpass chain mail weight ^^ */
+			    || (p_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK && p_ptr->inventory[INVEN_OUTER].sval == SV_FUR_CLOAK))
+				break;
+			if (!rand_int(5)) {
+				int dam = (p_ptr->chp * (3 + rand_int(5)) + 99) / 100;
 
-			if (dam && p_ptr->chp > dam) {
-				//msg_format(Ind, "The winds are freezing you for \377o%d\377w damage.", dam);
-				if (!rand_int(3)) msg_format(Ind, "\377wThe wind is freezing you!"); //less spam
-				bypass_invuln = FALSE; /* Disruption shield protects from this type of damage */
-				take_hit(Ind, dam, "freezing winds", 0);
-				bypass_invuln = TRUE;
-				/* Note: No inventory damage =p */
-			} else msg_format(Ind, "\377wThe wind is freezing you!");
-		}
-		break;
-	case 3: //sandstorm
-		if (p_ptr->resist_shard || p_ptr->resist_blind || p_ptr->no_cut
-		    || get_skill(p_ptr, SKILL_EARTH) >= 30)
+				if (dam && p_ptr->chp > dam) {
+					//msg_format(Ind, "The winds are freezing you for \377o%d\377w damage.", dam);
+					if (!rand_int(3)) msg_format(Ind, "\377wThe wind is freezing you!"); //less spam
+					bypass_invuln = FALSE; /* Disruption shield protects from this type of damage */
+					take_hit(Ind, dam, "freezing winds", 0);
+					bypass_invuln = TRUE;
+					/* Note: No inventory damage =p */
+				} else msg_format(Ind, "\377wThe wind is freezing you!");
+			}
 			break;
-		if (!rand_int(15)) {
-			msg_format(Ind, "\377yThe sand storm is blinding you!");
-			set_blind_quiet(Ind, p_ptr->blind + rand_int(7));
+		case 3: //sandstorm
+			if (p_ptr->resist_shard || p_ptr->resist_blind || p_ptr->no_cut
+			    || get_skill(p_ptr, SKILL_EARTH) >= 30)
+				break;
+			if (!rand_int(15)) {
+				msg_format(Ind, "\377yThe sand storm is blinding you!");
+				set_blind_quiet(Ind, p_ptr->blind + rand_int(7));
+			}
+			break;
 		}
-		break;
-	}
 #endif
 
 	/* Temporary blessing of luck */
