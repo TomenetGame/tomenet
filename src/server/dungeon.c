@@ -5887,7 +5887,7 @@ static bool process_player_end_aux(int Ind) {
 	case 1: break; //rainstorm - no effect
 	case 2: //snowstorm
 		if (p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold
-		    || worn_armour_weight(p_ptr) >= 140 + (p_ptr->inventory[INVEN_HEAD].tval ? 0 : 30)
+		    || worn_armour_weight(p_ptr) >= 140 + (p_ptr->inventory[INVEN_HEAD].tval ? 0 : 50) + (p_ptr->inventory[INVEN_OUTER].tval ? 0 : 50) /* surpass chain mail weight ^^ */
 		    || (p_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK && p_ptr->inventory[INVEN_OUTER].sval == SV_FUR_CLOAK))
 			break;
 		if (!rand_int(5)) {
