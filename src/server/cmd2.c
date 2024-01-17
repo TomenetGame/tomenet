@@ -2490,6 +2490,12 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 	} else if (dna->mode & MODE_PVP) return(FALSE);
 	else if (dna->mode & MODE_EVERLASTING) return(FALSE);
 
+	/* Soloist can ONLY access his own houses */
+	if (p_ptr->mode & MODE_SOLO) {
+		if (dna->owner_type == OT_PLAYER && p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return(TRUE);
+		return(FALSE);
+	}
+
 	/* Test for cumulative restrictions */
 	if (p_ptr->dna != dna->creator) {
 		if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level) {
@@ -2589,6 +2595,12 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 	} else if (dna->mode & MODE_PVP) return(DOOR_COLOUR_INCOMPATIBLE);
 	else if (dna->mode & MODE_EVERLASTING) return(DOOR_COLOUR_INCOMPATIBLE);
 
+	/* Soloist can ONLY access his own houses */
+	if (p_ptr->mode & MODE_SOLO) {
+		if (dna->owner_type == OT_PLAYER && p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return(TERM_L_GREEN);
+		return(DOOR_COLOUR_INCOMPATIBLE);
+	}
+
 	/* test house access permissions */
 	switch (dna->owner_type) {
 	case OT_PLAYER:
@@ -2675,7 +2687,7 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 
 	/* we have no permission to access */
 	return(TERM_SLATE);
-//	if (dna->a_flags & ACF_STORE) return(TERM_MULTI); /* older idea. Instead, see PLAYER_STORE - C. Blue */
+	//if (dna->a_flags & ACF_STORE) return(TERM_MULTI); /* older idea. Instead, see PLAYER_STORE - C. Blue */
 }
 
 cptr get_house_owner(struct c_special *cs_ptr) {
@@ -2683,7 +2695,7 @@ cptr get_house_owner(struct c_special *cs_ptr) {
 	struct dna_type *dna = cs_ptr->sc.ptr;
 	strcpy(string, "nobody.");
 	if (dna->owner) {
-//		char *name;
+		//char *name;
 		cptr name;
 
 		switch (dna->owner_type) {
