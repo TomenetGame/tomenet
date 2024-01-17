@@ -4055,6 +4055,9 @@ struct player_type {
 	int custom_weather;		/* used /cw command */
 	int joke_weather;		/* personal rain^^ */
 	bool no_weather;
+#ifdef IRRITATING_WEATHER
+	char weather_influence;		/* irritating effects of really bad weather */
+#endif
 
 	/* buffer for anti-cheeze system, just to reduce file access to tomenet.acc */
 	s32b cheeze_value, cheeze_self_value;

@@ -3662,6 +3662,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 			/* only damage boots, as the damage is coming from the floor - maybe sometimes cloak too.
 			   (from lava, we also do the same for fires though, too complicated to distinguish those here..) */
 			object_type *o_ptr = &p_ptr->inventory[rand_int(4) ? INVEN_FEET : INVEN_OUTER];
+
 			if (o_ptr->k_idx && set_fire_destroy(o_ptr)) {
 				u32b dummy, f2, f5;
 

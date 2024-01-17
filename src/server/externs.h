@@ -2220,6 +2220,7 @@ extern bool set_tim_meditation(int Ind, int v);
 extern bool set_tim_wraith(int Ind, int v);
 extern bool set_tim_wraithstep(int Ind, int v);
 extern bool set_blind(int Ind, int v);
+extern bool set_blind_quiet(int Ind, int v);
 extern bool set_confused(int Ind, int v);
 extern bool set_poisoned(int Ind, int v, int attacker);
 extern bool set_diseased(int Ind, int v, int attacker);

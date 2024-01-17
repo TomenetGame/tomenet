@@ -5038,8 +5038,7 @@ static bool process_player_end_aux(int Ind) {
 						if (2 * amt > p_ptr->cmp - 1) amt = (p_ptr->cmp - 1) / 2;
 					}
 
-					/* Disruption shield protects from this type of damage */
-					bypass_invuln = FALSE;
+					bypass_invuln = FALSE; /* Disruption shield protects from this type of damage */
 					take_hit(Ind, amt, " walls ...", 0);
 					bypass_invuln = TRUE;
 				} else {
@@ -5881,6 +5880,40 @@ static bool process_player_end_aux(int Ind) {
 		/* Apply some healing */
 		(void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1), p_ptr->cut_attacker);
 	}
+
+#ifdef IRRITATING_WEATHER
+	switch (p_ptr->weather_influence) {
+	case 0: break; //no bad weather
+	case 1: break; //rainstorm - no effect
+	case 2: //snowstorm
+		if (p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold
+		    || worn_armour_weight(p_ptr) >= 140 + (p_ptr->inventory[INVEN_HEAD].tval ? 0 : 30)
+		    || (p_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK && p_ptr->inventory[INVEN_OUTER].sval == SV_FUR_CLOAK))
+			break;
+		if (!rand_int(5)) {
+			int dam = (p_ptr->chp * (3 + rand_int(5)) + 99) / 100;
+
+			if (dam && p_ptr->chp > dam) {
+				//msg_format(Ind, "The winds are freezing you for \377o%d\377w damage.", dam);
+				if (!rand_int(3)) msg_format(Ind, "\377wThe wind is freezing you!"); //less spam
+				bypass_invuln = FALSE; /* Disruption shield protects from this type of damage */
+				take_hit(Ind, dam, "freezing winds", 0);
+				bypass_invuln = TRUE;
+				/* Note: No inventory damage =p */
+			} else msg_format(Ind, "\377wThe wind is freezing you!");
+		}
+		break;
+	case 3: //sandstorm
+		if (p_ptr->resist_shard || p_ptr->resist_blind || p_ptr->no_cut
+		    || get_skill(p_ptr, SKILL_EARTH) >= 30)
+			break;
+		if (!rand_int(15)) {
+			msg_format(Ind, "\377yThe sand storm is blinding you!");
+			set_blind_quiet(Ind, p_ptr->blind + rand_int(7));
+		}
+		break;
+	}
+#endif
 
 	/* Temporary blessing of luck */
 	if (p_ptr->bless_temp_luck
@@ -12148,10 +12181,10 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 	}
 #endif
 
-#if 0 /* Hinder player movement if running against the wind speed - enable? */
+#ifdef IRRITATING_WEATHER /* Hinder player movement if running against the wind speed */
  #if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
     {	int wind, real_speed_vertical;
-	/* hack: wind without rain doesn't count, since it might confuse the players */
+	/* hack: just 'wind' (invisible/inaudible) without actual rain/snow/sand doesn't count, since it might confuse the players */
 	if (!wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) return;
 
 	real_speed_vertical = *real_speed;

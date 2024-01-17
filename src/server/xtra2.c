@@ -1648,6 +1648,71 @@ bool set_blind(int Ind, int v) { /* bad status effect */
 	/* Result */
 	return(TRUE);
 }
+/* Same as set_blind() just without messages to the affected player. */
+bool set_blind_quiet(int Ind, int v) { /* bad status effect */
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	if (p_ptr->martyr && v) return(FALSE);
+
+	/* the admin wizard can not be blinded */
+	if (p_ptr->admin_wiz && v > p_ptr->blind) return(1);
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->blind) {
+			disturb(Ind, 1, 0); /* stop running and searching */
+			msg_format_near(Ind, "%s gropes around blindly!", p_ptr->name);
+			notice = TRUE;
+		}
+
+		break_shadow_running(Ind);
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->blind) {
+			msg_format_near(Ind, "%s can see again.", p_ptr->name);
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->blind = v;
+
+	/* Nothing to notice */
+	if (!notice) return(FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Forget stuff */
+	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS);
+
+	/* Update the monsters */
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Redraw the "blind" */
+	p_ptr->redraw |= (PR_BLIND);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return(TRUE);
+}
 
 
 /*

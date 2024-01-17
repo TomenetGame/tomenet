@@ -9501,23 +9501,24 @@ int Send_unique_monster(int Ind, int r_idx) {
 int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds) {
 	int n, i, c;
 	int cx1, cy1, cx2, cy2;
+	player_type *p_ptr = Players[Ind];
 
 	/* Note: This is NOT the client-side limit, but rather the current
 	   server-side limit how many clouds we want to transmit to the client. */
 	const int cloud_limit = 10;
 
-	connection_t *connp = Conn[Players[Ind]->conn];
+	connection_t *connp = Conn[p_ptr->conn];
 
 	/* Mind-linked to someone? Send him our weather */
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 	/* If we're the target, we won't see our own weather */
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	/* Get target player */
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 
 
-	wilderness_type *w_ptr = &wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx];
+	wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 
 	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0)) return(0);
 
@@ -9552,14 +9553,23 @@ if (weather_type > 0) s_printf("weather_type: %d\n", weather_type);
 		else if (!weather_wind) weather_type = 0;
 		/* Not enough wind? Turn it up (aka set it to either max west (1) or max east (2)) */
 		else if (weather_wind > 2) weather_wind = (weather_wind - 1) % 2 + 1;
+#ifdef IRRITATING_WEATHER
+		p_ptr->weather_influence = 3; /* Blinding sand storms */
+	} else if (weather_type % 10 == 2 && weather_wind >= 1 && weather_wind <= 2) /* Freezing snow storms */
+		p_ptr->weather_influence = 2;
+	else if (weather_type % 10 == 1 && weather_wind >= 1 && weather_wind <= 2) /* Rain storm? No effect atm. */
+		p_ptr->weather_influence = 1;
+	else p_ptr->weather_influence = 0; /* No harsh weather conditions irritating us */
+#else
 	}
+#endif
 
 	n = Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d%d", PKT_WEATHER,
 	    weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed,
-	    Players[Ind]->panel_col_prt, Players[Ind]->panel_row_prt, c);
+	    p_ptr->panel_col_prt, p_ptr->panel_row_prt, c);
 	if (connp2) Packet_printf(&connp2->c, "%c%d%d%d%d%d%d%d%d", PKT_WEATHER,
 	    weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed,
-	    Players[Ind]->panel_col_prt, Players[Ind]->panel_row_prt, c);
+	    p_ptr->panel_col_prt, p_ptr->panel_row_prt, c);
 
 #ifdef TEST_SERVER
 #if 0
@@ -9572,10 +9582,10 @@ s_printf("clouds_to_update %d (%d)\n", c, w_ptr->clouds_to_update);
 		for (i = 0; i < cloud_limit; i++) {
 #if 0 /* unfinished//also, make it visible to all players, so if0 here - see "/jokeweather" instead */
 			/* fun stuff ;) abuse the last cloud for this */
-			if (Players[Ind]->joke_weather && (i == cloud_limit - 1)) {
+			if (p_ptr->joke_weather && (i == cloud_limit - 1)) {
 				n = Packet_printf(&connp->c, "%d%d%d%d%d%d%d%d", i,
-				    Players[Ind]->px - 1, Players[Ind]->py,
-				    Players[Ind]->px + 1, Players[Ind]->py,
+				    p_ptr->px - 1, p_ptr->py,
+				    p_ptr->px + 1, p_ptr->py,
 				    7, 0, 0);
 				continue;
 			}
@@ -9594,10 +9604,10 @@ s_printf("clouds_to_update %d (%d)\n", c, w_ptr->clouds_to_update);
 				   to local coordinates for the client, who only
 				   has to pay attention to one sector at a time
 				   (ie the one the player is currently in): */
-				cx1 = w_ptr->cloud_x1[i] - Players[Ind]->wpos.wx * MAX_WID;
-				cy1 = w_ptr->cloud_y1[i] - Players[Ind]->wpos.wy * MAX_HGT;
-				cx2 = w_ptr->cloud_x2[i] - Players[Ind]->wpos.wx * MAX_WID;
-				cy2 = w_ptr->cloud_y2[i] - Players[Ind]->wpos.wy * MAX_HGT;
+				cx1 = w_ptr->cloud_x1[i] - p_ptr->wpos.wx * MAX_WID;
+				cy1 = w_ptr->cloud_y1[i] - p_ptr->wpos.wy * MAX_HGT;
+				cx2 = w_ptr->cloud_x2[i] - p_ptr->wpos.wx * MAX_WID;
+				cy2 = w_ptr->cloud_y2[i] - p_ptr->wpos.wy * MAX_HGT;
 				/* hack: 'disable' a cloud slot */
 				if (w_ptr->cloud_x1[i] == -9999) cx1 = -9999;
 

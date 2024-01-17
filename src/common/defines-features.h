@@ -75,6 +75,9 @@
 #endif
 #define MAX_CLOUDS 1000
 
+/* Harsh weather gives us trouble of some sort? */
+#define IRRITATING_WEATHER
+
 #define EXTRA_LEVEL_FEELINGS	/* enable extra level feelings, remotely angband-style, warning about dangers */
 #define M_EGO_NEW_FLICKER	/* ego monsters flicker between base r_ptr and ego colour */
 #define NEW_ANTIMAGIC_RATIO	/* new darksword-vs-skill ratio for antimagic: weapon up to 30%, skill up to 50% */
