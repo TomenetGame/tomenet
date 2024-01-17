@@ -10747,7 +10747,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						if (p_ptr->wpos.wx == x && p_ptr->wpos.wy == y) return;
 
 						p_ptr->recall_pos = rpos;
-						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						p_ptr->new_level_method = LEVEL_OUTSIDE_CENTER;
 						recall_player(Ind, "");
 						return;
 					}

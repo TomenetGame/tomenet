@@ -9098,6 +9098,19 @@ void process_player_change_wpos(int Ind) {
 			starty = emergency_y;
 		}
 		break;
+
+	case LEVEL_OUTSIDE_CENTER: /* Special admin debugging, not for player transport */
+		tries = 0;
+		do {
+			startx = (l_ptr ? l_ptr->wid : MAX_WID) / 2 + (rand_int(tries * 2 + 1) - tries) / 4;
+			starty = (l_ptr ? l_ptr->hgt : MAX_HGT) / 2 + (rand_int(tries * 2 + 1) - tries) / 4;
+		} while (!cave_floor_bold(zcave, starty, startx) && (++tries < 100));
+		if (tries == 100) {
+			startx = 1;
+			starty = 1;
+		}
+		break;
+
 	case LEVEL_TO_TEMPLE:
 		/* Try to find a temple's sickbay area */
 		for (y = 0; y < MAX_HGT; y++) {
