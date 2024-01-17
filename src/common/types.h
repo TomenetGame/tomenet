@@ -2450,7 +2450,8 @@ struct wilderness_type {
 	/* client-side worldmap-sector-specific weather:
 	   (possible ideas for future: transmit x,y,wid,hgt weather frame
 	   for current level too instead of always using full size gen.) */
-	int weather_type, weather_wind, weather_wind_vertical, weather_intensity, weather_speed;
+	int weather_type, weather_wind, weather_wind_vertical; /* weather_wind_vertical: only used for IRRITATING_WEATHER to counter player movement speed */
+	int weather_intensity, weather_speed; /* weather_intensity: Just visually, how many weather elements to draw on screen aka density; weather_speed: Just visually, how fast elements move. */
 	bool weather_updated;	/* notice any change in local weather (like a PR_ flag would do) */
 	int clouds_to_update;	/* number of clouds that were changed since last update (for efficiency) */
 	bool cloud_updated[10];	/* 'has cloud been changed?' */
