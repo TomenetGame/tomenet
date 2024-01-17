@@ -10707,26 +10707,46 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/towea")) { /* teleport player to a sector with weather going */
 				int x, y;
 
-				for (x = 0; x < 64; x++)
-					for (y = 0; y < 64; y++)
-						if (wild_info[y][x].weather_type > 0 &&
-						    (wild_info[y][x].weather_type == 1 || //rain
-						    wild_info[y][x].weather_type == 2 || //snow
-						    wild_info[y][x].weather_type == 3) && //sandstorm
-						    wild_info[y][x].cloud_idx[0] > 0 &&
-						    wild_info[y][x].cloud_x1[0] > 0) {
-							/* skip sectors 'before' us? (counting from bottom left corner) */
-							if (tk && (y < p_ptr->wpos.wy || (y == p_ptr->wpos.wy && x <= p_ptr->wpos.wx))) continue;
-							/* we're already here? pick a different sector */
-							if (p_ptr->wpos.wx == x && p_ptr->wpos.wy == y) continue;
+				if (k) msg_format(Ind, "Skipping %d.", k);
+				if (tk >= 2) msg_format(Ind, "Requiring wind (fastest 1...3 slowest) %d.", atoi(token[2]));
+				if (tk >= 3) msg_format(Ind, "Requiring weather type %d.", atoi(token[3]));
 
-							p_ptr->recall_pos.wx = x;
-							p_ptr->recall_pos.wy = y;
-							p_ptr->recall_pos.wz = 0;
-							p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-							recall_player(Ind, "");
-							return;
+				for (x = 0; x < MAX_WILD_X; x++)
+					for (y = 0; y < MAX_WILD_Y; y++) {
+						if (wild_info[y][x].weather_type <= 0 ||
+						    wild_info[y][x].cloud_idx[0] == -1 || wild_info[y][x].cloud_x1[0] == -9999)
+							continue;
+
+						/* skip sectors with too little wind? */
+						if (tk >= 2 && atoi(token[2]) &&
+						    (!wild_info[y][x].weather_wind || (wild_info[y][x].weather_wind + 1) / 2 > atoi(token[2])))
+							continue;
+
+						/* Require specific weather type? */
+						if (tk >= 3 && (wild_info[y][x].weather_type != atoi(token[3]))) continue;
+
+						/* skip n sectors? */
+						if (k) {
+							k--;
+							continue;
 						}
+
+						/* skip sectors 'before' us? (counting from bottom left corner) */
+						//if (tk && (y < p_ptr->wpos.wy || (y == p_ptr->wpos.wy && x <= p_ptr->wpos.wx))) continue;
+
+						msg_format(Ind, "weather type %d, wind %d.", wild_info[y][x].weather_type, wild_info[y][x].weather_wind);
+
+						/* we're already here? */
+						if (p_ptr->wpos.wx == x && p_ptr->wpos.wy == y) return;
+
+						p_ptr->recall_pos.wx = x;
+						p_ptr->recall_pos.wy = y;
+						p_ptr->recall_pos.wz = 0;
+						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						recall_player(Ind, "");
+						return;
+					}
+				if (x == MAX_WILD_X && y == MAX_WILD_Y) msg_print(Ind, "\377yNo weather found.");
 				return;
 			}
 			else if (prefix(messagelc, "/screenflash")) { /* testing - send screenflash request */
