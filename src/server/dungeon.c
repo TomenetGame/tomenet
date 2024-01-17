@@ -11569,17 +11569,17 @@ static void process_wild_weather() {
 
 		/* create cloud? limit value depends on season */
 		else if (clouds < max_clouds_seasonal) {
-#ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
+ #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
 			//around Bree
 			cloud_create(i, 32 * MAX_HGT, 32 * MAX_WID, FALSE);
 			cloud_state[i] = 1;
-#else
+ #else
 			/* create cloud at random starting x, y world _grid_ coords (!) */
 			cloud_create(i,
 			    rand_int(MAX_WILD_X * MAX_WID),
 			    rand_int(MAX_WILD_Y * MAX_HGT),
 			    FALSE);
-#endif
+ #endif
 		}
 	}
 
@@ -11592,7 +11592,7 @@ static void process_wild_weather() {
    clients via buffered direction & duration.)
    New note: Negative values should probably work too (inverse direction). */
 static void cloud_set_movement(int i) {
-#ifdef WEATHER_NO_CLOUD_MOVEMENT
+ #ifdef WEATHER_NO_CLOUD_MOVEMENT
 { /* hack: Try to fix the eternal rain bug:
      Disable cloud movement for now - C. Blue */
 	cloud_xm100[i] = 0;
@@ -11600,20 +11600,20 @@ static void cloud_set_movement(int i) {
 	cloud_mdur[i] = 30 + rand_int(300);
 	return;
 }
-#endif
+ #endif
 
-#ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
- #if 0
+ #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
+  #if 0
 	cloud_xm100[i] = 100;
 	cloud_ym100[i] = 100;
 	cloud_mdur[i] = 10;
- #endif
- #if 1
+  #endif
+  #if 1
 	cloud_xm100[i] = 0;
 	cloud_ym100[i] = 0;
 	cloud_mdur[i] = 10;
- #endif
-#else
+  #endif
+ #else
 	if (rand_int(2)) {
 		/* no pseudo-wind */
 		cloud_xm100[i] = 0;
@@ -11624,7 +11624,7 @@ static void cloud_set_movement(int i) {
 		cloud_ym100[i] = randint(100);
 	}
 	cloud_mdur[i] = 30 + rand_int(300); /* seconds */
-#endif
+ #endif
 }
 
 /* remove cloud status off all previously affected wilderness sectors,
@@ -11640,14 +11640,14 @@ static void cloud_set_movement(int i) {
    NOTE: 'change' means that either cloud movement changes or that
          a wild sector toggles affected/unaffected state, simply. */
 /* make rain fall down slower? */
-#if 1
- #define WEATHER_GEN_TICKS 3
- #define WEATHER_SNOW_MULT 3
-#else
+ #if 1
+  #define WEATHER_GEN_TICKS 3
+  #define WEATHER_SNOW_MULT 3
+ #else
 /* make rain fall down faster? (recommended) */
- #define WEATHER_GEN_TICKS 2
- #define WEATHER_SNOW_MULT 4
-#endif
+  #define WEATHER_GEN_TICKS 2
+  #define WEATHER_SNOW_MULT 4
+ #endif
 static void cloud_move(int i, bool newly_created) {
 	bool resend_dir = FALSE, sector_changed;
 	wilderness_type *w_ptr;
@@ -11753,9 +11753,9 @@ static void cloud_move(int i, bool newly_created) {
 		   may as well ignore and leave this sector now. */
 		if (!was_affected && !can_become_affected) continue;
 
-#ifdef TEST_SERVER
+ #ifdef TEST_SERVER
 //SPAM(after a short while) s_printf("cloud-debug 1.\n");
-#endif
+ #endif
 		/* is the sector affected now after moving? */
 		/* calculate coordinates for deciding test case */
 		/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */
@@ -11779,18 +11779,18 @@ static void cloud_move(int i, bool newly_created) {
 		/* is sector affected now? add cloud to its local cloud array */
 		if (d <= cloud_dsum[i]) {
 			is_affected = TRUE;
-#ifdef TEST_SERVER
+ #ifdef TEST_SERVER
 //s_printf("cloud-debug 2.\n");
-#endif
+ #endif
 
 			/* update old cloud data or add a new entry if it didn't exist previously */
 			for (j = 0; j < 10; j++) {
 				/* unchanged cloud situation leads to continuing.. */
 				if (was_affected && w_ptr->cloud_idx[j] != i) continue;
 				if (!was_affected && w_ptr->cloud_idx[j] != -1) continue;
-#ifdef TEST_SERVER
+ #ifdef TEST_SERVER
 //s_printf("cloud-debug 3.\n");
-#endif
+ #endif
 
 				/* imprint cloud data to this wild sector's local cloud array */
 				w_ptr->cloud_idx[j] = i;
@@ -11801,13 +11801,13 @@ static void cloud_move(int i, bool newly_created) {
 				w_ptr->cloud_dsum[j] = cloud_dsum[i];
 				w_ptr->cloud_xm100[j] = cloud_xm100[i];
 				w_ptr->cloud_ym100[j] = cloud_ym100[i];
-#if 0
+ #if 0
 				/* meta data for Send_weather() */
 				if (!w_ptr->cloud_updated[j]) {
 					w_ptr->cloud_updated[j] = TRUE;
 					w_ptr->clouds_to_update++;
 				}
-#endif
+ #endif
 				/* define weather situation accordingly */
 				switch (w_ptr->type) {
 				case WILD_ICE:
@@ -11820,23 +11820,23 @@ static void cloud_move(int i, bool newly_created) {
 					/* depends on season */
 					w_ptr->weather_type = (season == SEASON_WINTER ? 2 : 1);
 				}
-#ifdef TEST_SERVER
+ #ifdef TEST_SERVER
 //s_printf("weather_type debug: wt=%d, x,y=%d,%d.\n", w_ptr->weather_type, x, y);
-#if 0
+  #if 0
 if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos.wy == y) {
     s_printf("weather_type debug: wt=%d, x,y=%d,%d.\n", w_ptr->weather_type, x, y);
     s_printf("cloud debug all: cidx=%d, x1,y1=%d,%d, dsum=%d.\n",
 	w_ptr->cloud_idx[j], w_ptr->cloud_x1[j], w_ptr->cloud_y1[j], w_ptr->cloud_dsum[j]);
 }
-#endif
-#endif
+  #endif
+ #endif
 
-#ifndef WEATHER_WINDS /* no winds */
+ #ifndef WEATHER_WINDS /* no winds */
 				w_ptr->weather_wind = 0; /* todo: change =p (implement winds, actually -- currently we're
 				                            using pseudo-winds by just setting random cloud movement - C. Blue */
 				w_ptr->weather_wind_vertical = 0;
-#else /* winds */
- #ifndef WEATHER_NO_CLOUD_MOVEMENT /* Cloud movemenet is disabled as a workaround for the 'eternal rain' bug.. */
+ #else /* winds */
+  #ifndef WEATHER_NO_CLOUD_MOVEMENT /* Cloud movemenet is disabled as a workaround for the 'eternal rain' bug.. */
 				/* note- pretty provisional implementation, since winds shouldnt depend
 				   on cloud movement, but actually the other way round ;) This is merely
 				   so we get to see some wind already, and these 'winds' would also conflict
@@ -11848,7 +11848,7 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 				if (cloud_ym100[i] > 40) w_ptr->weather_wind_vertical = 5 - (2 * ((cloud_ym100[i] - 40) / 21));
 				else if (cloud_ym100[i] < -40) w_ptr->weather_wind_vertical = 6 - (2 * ((-cloud_ym100[i] - 40) / 21));
 				else w_ptr->weather_wind_vertical = 0;
- #else /* ..so a little hack is needed to bring back 'windy' weather^^ - C. Blue */
+  #else /* ..so a little hack is needed to bring back 'windy' weather^^ - C. Blue */
 				/* hack - randomly assume some winds, that stay sufficiently consistent */
 				{
 					/* this should allow smooth/consistent winds over slight changes in a player's wilderness position: */
@@ -11870,47 +11870,47 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 					}
 					w_ptr->weather_wind_vertical = 0;
 				}
+  #endif
  #endif
-#endif
 
 				w_ptr->weather_intensity =
 				    ((w_ptr->weather_type == 2 || w_ptr->weather_type == 3) && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
 				    5 : 8;
 				w_ptr->weather_speed =
-#if 1 /* correct! (this is a different principle than 'weather_intensity' above) */
+ #if 1 /* correct! (this is a different principle than 'weather_intensity' above) */
 				    (w_ptr->weather_type == 2 || w_ptr->weather_type == 3) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS :
 				    /* hack: for non-windy rainfall, accelerate raindrop falling speed by 1: */
 				    (w_ptr->weather_wind ? 1 * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS - 1);
-#else /* just for testing stuff */
+ #else /* just for testing stuff */
 				    ((w_ptr->weather_type == 2 || w_ptr->weather_type == 3) && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
 				    WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
-#endif
+ #endif
 				break;
 			}
 		}
 		/* sector is not affected. If it was previously affected,
 		   delete cloud from its local array now. */
 		else if (was_affected) {
-#ifdef TEST_SERVER
+ #ifdef TEST_SERVER
 //s_printf("cloud-debug 4.\n");
-#endif
+ #endif
 			/* erase cloud locally */
 			w_ptr->cloud_idx[was_affected_idx] = -1;
 			w_ptr->cloud_x1[was_affected_idx] = -9999; /* hack for client: client sees this as 'disabled' */
-#if 0
+ #if 0
 			/* meta data for Send_weather() */
 			if (!w_ptr->cloud_updated[was_affected_idx]) {
 				w_ptr->cloud_updated[was_affected_idx] = TRUE;
 				w_ptr->clouds_to_update++;
 			}
-#endif
+ #endif
 
 			/* if this was the last cloud in this sector,
 			   define (stop) weather situation accordingly */
 			if (final_cloud_in_sector) {
-#ifdef TEST_SERVER
+ #ifdef TEST_SERVER
 //s_printf("cloud-debug 5.\n");
-#endif
+ #endif
 				w_ptr->weather_type = 0; /* make weather 'run out slowly' */
 			}
 		}
@@ -11970,13 +11970,13 @@ static void cloud_erase(int i) {
 			/* erase cloud locally */
 			w_ptr->cloud_idx[was_affected_idx] = -1;
 			w_ptr->cloud_x1[was_affected_idx] = -9999; /* hack for client: client sees this as 'disabled' */
-#if 0
+ #if 0
 			/* meta data for Send_weather() */
 			if (!w_ptr->cloud_updated[was_affected_idx]) {
 				w_ptr->cloud_updated[was_affected_idx] = TRUE;
 				w_ptr->clouds_to_update++;
 			}
-#endif
+ #endif
 
 			/* if this was the last cloud in this sector,
 			   define (stop) weather situation accordingly */
@@ -12058,9 +12058,9 @@ void local_weather_update(void) {
 	   Note: this is synched to all players in the same worldmap sector,
 	   for consistency. :) */
 	int thunderstorm, thunderclap = 999;
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 	int vol = rand_int(86);
-#endif
+ #endif
 
 	thunderstorm = (turn / (cfg.fps * 3600)) % 6; /* n out of every 6 world map sector clusters have thunderstorms going */
 	if (!(turn % (cfg.fps * 10))) thunderclap = rand_int(5); /* every 10s there is a 1 in 5 chance of thunderclap (in a thunderstorm area) */
@@ -12073,31 +12073,31 @@ void local_weather_update(void) {
 		if (Players[i]->wpos.wz) continue;
 
 		/* HACK part 2: if harsh weather, play random world-sector-synched thunderclaps */
-#if 0 /* debug */
+ #if 0 /* debug */
 		if (thunderclap == 0) {
 			s_printf("p %d - w %d, t %d\n",
 			    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6,
 			    thunderstorm,
 			    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type);
 		}
-#endif
+ #endif
 		if (thunderclap == 0 &&
 		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
 		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind &&
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 			sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86); //weather: screen flashing implied
-#endif
+ #endif
 		}
 
 		/* no change in local situation? nothing to do then */
 		if (!wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_updated) continue;
 		/* update player's local weather */
-#ifdef TEST_SERVER /* DEBUG */
-#if 0
+ #ifdef TEST_SERVER /* DEBUG */
+  #if 0
 s_printf("updating weather for player %d.\n", i);
-#endif
-#endif
+  #endif
+ #endif
 		player_weather(i, FALSE, TRUE, FALSE);
 	}
 	/* reclear 'weather_updated' flag after all players have been updated */
@@ -12148,7 +12148,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 	}
 #endif
 
-#if 0 /* enable? */
+#if 0 /* Hinder player movement if running against the wind speed - enable? */
  #if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
     {	int wind, real_speed_vertical;
 	/* hack: wind without rain doesn't count, since it might confuse the players */

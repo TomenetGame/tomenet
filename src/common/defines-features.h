@@ -68,7 +68,11 @@
 #define ENABLE_MCRAFT		/* 'Mindcrafter' class - C. Blue */
 #define NEW_TOMES		/* customizable spellbooks */
 
-#define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
+/* Server uses Send_weather() so the client draws the weather [NEW], instead of the server displaying its own weather animations for players [old]. */
+#define CLIENT_SIDE_WEATHER
+#ifdef CLIENT_SIDE_WEATHER
+ //#define CLIENT_WEATHER_GLOBAL	/* All worldmap sectors have the same weather at any time, no 'clouds' exist */
+#endif
 #define MAX_CLOUDS 1000
 
 #define EXTRA_LEVEL_FEELINGS	/* enable extra level feelings, remotely angband-style, warning about dangers */
