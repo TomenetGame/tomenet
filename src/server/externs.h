@@ -1011,6 +1011,9 @@ extern s32b house_price_area(int area, bool has_moat, bool random);
 extern s32b initial_house_price(house_type *h_ptr);
 extern s32b house_price_player(s32b house_price, int charisma);
 extern int wild_gettown(int x, int y);
+#if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
+extern bool pos_in_weather(struct worldpos *wpos, int x, int y);
+#endif
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);

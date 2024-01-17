@@ -11790,6 +11790,9 @@ static void cloud_move(int i, bool newly_created) {
  #ifdef TEST_SERVER
 //SPAM(after a short while) s_printf("cloud-debug 1.\n");
  #endif
+
+		/* NOTE: Basically same code in c-xtra1.c:do_weather(), dungeon.c:cloud_move(), wild.c:pos_in_weather() */
+
 		/* is the sector affected now after moving? */
 		/* calculate coordinates for deciding test case */
 		/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */

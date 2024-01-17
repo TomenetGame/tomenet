@@ -10704,8 +10704,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
+#if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
 			else if (prefix(messagelc, "/towea")) { /* teleport player to a sector with weather going */
 				int x, y;
+				struct worldpos rpos = { 0, 0, 0} ;
 
 				if (k) msg_format(Ind, "Skipping %d.", k);
 				if (tk >= 2) msg_format(Ind, "Requiring wind (fastest 1...3 slowest) %d.", atoi(token[2]));
@@ -10725,6 +10727,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						/* Require specific weather type? */
 						if (tk >= 3 && (wild_info[y][x].weather_type != atoi(token[3]))) continue;
 
+						/* There must be some visible weather elements */
+						rpos.wx = x;
+						rpos.wy = y;
+						if (!pos_in_weather(&rpos, MAX_WID / 2, MAX_HGT / 2)) continue;
+
 						/* skip n sectors? */
 						if (k) {
 							k--;
@@ -10739,9 +10746,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						/* we're already here? */
 						if (p_ptr->wpos.wx == x && p_ptr->wpos.wy == y) return;
 
-						p_ptr->recall_pos.wx = x;
-						p_ptr->recall_pos.wy = y;
-						p_ptr->recall_pos.wz = 0;
+						p_ptr->recall_pos = rpos;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						recall_player(Ind, "");
 						return;
@@ -10749,6 +10754,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (x == MAX_WILD_X && y == MAX_WILD_Y) msg_print(Ind, "\377yNo weather found.");
 				return;
 			}
+#endif
 			else if (prefix(messagelc, "/screenflash")) { /* testing - send screenflash request */
 				/* Usage: /screenflash [char/accname] */
 

@@ -4868,3 +4868,47 @@ int wild_gettown(int x, int y) {
 	/* paranoia - shouldn't be possible */
 	return(-1);
 }
+
+#if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
+/* Is the [x,y] pos on a specific worldmap sector currently within actual weather elements being drawn? */
+bool pos_in_weather(struct worldpos *wpos, int x, int y) {
+	int j, dx, dy, d;
+	bool with_clouds, outside_clouds;
+
+	if (wpos->wz) return(FALSE);
+
+	/* NOTE: Basically same code in c-xtra1.c:do_weather(), dungeon.c:cloud_move(), wild.c:pos_in_weather() */
+
+	/* test pos for validity in regards to cloud */
+	with_clouds = FALSE; /* assume no clouds exist */
+	outside_clouds = TRUE; /* assume not within any clouds area */
+	for (j = 0; j < 10; j++) {
+		if (cloud_x1[j] != -9999) { /* does cloud exist? */
+			/* at least one cloud restriction applies */
+			with_clouds = TRUE;
+
+			/* note: distance calc code is taken from server's distance() */
+			/* Calculate distance to cloud focus point 1: */
+			dy = (y > cloud_y1[j]) ? (y - cloud_y1[j]) : (cloud_y1[j] - y);
+			dx = (x > cloud_x1[j]) ? (x - cloud_x1[j]) : (cloud_x1[j] - x);
+			d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+			/* Calculate distance to cloud focus point 2: */
+			dy = (y > cloud_y2[j]) ? (y - cloud_y2[j]) : (cloud_y2[j] - y);
+			dx = (x > cloud_x2[j]) ? (x - cloud_x2[j]) : (cloud_x2[j] - x);
+			/* ..and sum them up */
+			d += (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+
+			/* distance within cloud? */
+			if (d <= cloud_dsum[j] &&
+			/* distance near cloud borders? plus, chance to thin
+			   out when getting closer to the border. */
+			    (rand_int(100) >= (d - ((cloud_dsum[j] * 3) / 4)) * 4))
+				outside_clouds = FALSE;
+		}
+	}
+	/* clouds apply but we're not within their areas? discard */
+	if (with_clouds && outside_clouds) return(FALSE);
+	//if (outside_clouds) ---TODO: Check code for correctness!
+	return(TRUE);
+}
+#endif
