@@ -1972,7 +1972,10 @@ int Receive_hp(void) {
 	if (c_cfg.hp_bar) bar = TRUE;
 
 	/* ..Display hack for temporarily boosted HP -_- */
-	if (cur > 10000) {
+	if (cur > 5000 /* Checking for > 10000 can cause bugs if our HP drop < 0 aka when we die, while under boosted effect!
+			  So we ensure leeway of exactly the middle, +/-5000, to reach the 10000 hack:
+			  On the one hand allow having up to <5k HP and on the other hand allow taking up to <5k damage below 0 HP on death. */
+	    ) {
 		cur -= 10000;
 		hp_boosted = TRUE;
 	} else hp_boosted = FALSE;
