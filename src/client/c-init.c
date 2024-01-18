@@ -2484,7 +2484,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* rarity */
 				p2 = strchr(p1, ':') + 1;
-				/* hack, 255 counts as diabled */
+				/* hack, 255 counts as disabled */
 				if (atoi(p1) == 255) {
 					/* overwrite previous rarity/depth information */
 					sprintf(info_tmp, "This artifact is unfindable. ");
