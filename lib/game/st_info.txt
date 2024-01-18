@@ -36,7 +36,7 @@ N:0:General Store
 #more light sources (for RPG mainly) to get higher chance for brightness lamps
 I:100:& Wooden Torch~
 I:100:& Wooden Torch~
-I:100:& Wooden Torch~
+I:100:& Brass Lantern~
 I:100:& Brass Lantern~
 I:100:& Brass Lantern~
 #I:95:& Flask~ of oil
@@ -59,12 +59,12 @@ I:46:& Fur Cloak~
 #boomerang
 T:30:15:1
 #trapping kits
-T:20:46:1
-T:7:46:2
-T:5:46:3
-T:15:46:4
-T:12:46:5
-T:9:46:6
+T:100:46:1
+T:35:46:2
+T:25:46:3
+T:75:46:4
+T:60:46:5
+T:45:46:6
 #mummy wrapping
 T:15:12:7
 #piece of wood? (player store sign) - maybe don't make it available from npc shops at all!
