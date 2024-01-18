@@ -9689,15 +9689,6 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	    && cave_floor_grid(&zcave[y][x]) && (ox == -1 || !cave_floor_grid(&zcave[oy][ox]))) {
 		set_tim_wraith(Ind, 0);
 	}
-	/* Entering a wall with Wraithstep */
-	else if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)
-	    && !cave_floor_grid(&zcave[y][x]) && (ox == -1 || cave_floor_grid(&zcave[oy][ox]))) {
-		p_ptr->tim_wraithstep &= ~0xF0;
-		p_ptr->tim_wraith = 1;
-		p_ptr->redraw |= PR_BPR_WRAITH;
-		msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
-		msg_print(Ind, "You turn into a wraith!");
-	}
 #endif
 
 #ifdef USE_SOUND_2010

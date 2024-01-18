@@ -6935,22 +6935,22 @@ static bool wraith_access_virtual(int Ind, int y, int x) {
 
 
 /* borrowed from ToME	- Jir - */
-/* 'comfortably': also check for things like lava if player isn't fire immune. - C. Blue */
+/* 'comfortably': also check for things like lava if player isn't fire immune. - C. Blue
+ * This function is a mess and needs cleaning up, especially with wraith step now.
+ * Why do we have all three flags WALL, NO_WALK, CAN_PASS and then still proceed PERMANENT on top of it even...? */
 bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	player_type *p_ptr = Players[Ind];
 	bool pass_wall;
 	bool only_wall = FALSE;
 
 	/* Dungeon Master pass through everything (cept array boundary :) */
-	if (p_ptr->admin_dm && !(f_info[feature].flags2 & FF2_BOUNDARY))
-		return(TRUE);
+	if (p_ptr->admin_dm && !(f_info[feature].flags2 & FF2_BOUNDARY)) return(TRUE);
 
 	/* Special one-way doors for quests: Allow traversing if we're on a CAVE_ICKY grid. */
 	if (feature == FEAT_ESCAPE_DOOR || feature == FEAT_SICKBAY_DOOR) {
 		cave_type cave = getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px];
 
-		if ((cave.info & CAVE_ICKY) || (f_info[cave.feat].flags1 & FF1_PROTECTED))
-			return(TRUE);
+		if ((cave.info & CAVE_ICKY) || (f_info[cave.feat].flags1 & FF1_PROTECTED)) return(TRUE);
 		return(FALSE);
 	}
 
@@ -6958,16 +6958,6 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	//if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
 	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith) pass_wall = TRUE;
 	else pass_wall = FALSE;
-
-	/* Enter Wraithstep */
-	if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0) && !pass_wall && !(f_info[feature].flags1 & FF1_FLOOR)) {
-		p_ptr->tim_wraithstep &= ~0xF0;
-		p_ptr->tim_wraith = 1;
-		p_ptr->redraw |= PR_BPR_WRAITH;
-		msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
-		msg_print(Ind, "You turn into a wraith!");
-		p_ptr->wraith_in_wall = pass_wall = TRUE;
-	}
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
 		if (feature == FEAT_HOME || (feature >= FEAT_DOOR_HEAD && feature <= FEAT_DOOR_TAIL)
@@ -6983,64 +6973,73 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 #endif
 
 	switch (feature) {
-		case FEAT_DEEP_WATER:
-			if (comfortably &&
-			    //!(p_ptr->immune_water || p_ptr->res_water ||.
-			    !(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
-				return(FALSE);
-			return(TRUE);	/* you can pass, but you may suffer dmg */
+	case FEAT_DEEP_WATER:
+		if (comfortably &&
+		    //!(p_ptr->immune_water || p_ptr->res_water ||.
+		    !(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
+			break;
+		return(TRUE);	/* you can pass, but you may suffer dmg */
 
-		case FEAT_SHAL_LAVA:
-		case FEAT_DEEP_LAVA:
-		case FEAT_FIRE:
-		case FEAT_GREAT_FIRE:
-			if (comfortably && !p_ptr->immune_fire &&
-			    !(p_ptr->resist_fire && p_ptr->oppose_fire))
-				return(FALSE);
-			return(TRUE);	/* you can pass, but you may suffer dmg */
+	case FEAT_SHAL_LAVA:
+	case FEAT_DEEP_LAVA:
+	case FEAT_FIRE:
+	case FEAT_GREAT_FIRE:
+		if (comfortably && !p_ptr->immune_fire &&
+		    !(p_ptr->resist_fire && p_ptr->oppose_fire))
+			break;
+		return(TRUE);	/* you can pass, but you may suffer dmg */
 
-		case FEAT_DEAD_TREE:
-			if ((p_ptr->levitate) || pass_wall || p_ptr->town_pass_trees)
-			    return(TRUE);
-			else return(FALSE);
-		case FEAT_BUSH:
-		case FEAT_TREE:
-			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
-			if ((p_ptr->levitate) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
-				return(TRUE);
-			else return(FALSE);
+	case FEAT_DEAD_TREE:
+		if ((p_ptr->levitate) || pass_wall || p_ptr->town_pass_trees) return(TRUE);
+		break;
+	case FEAT_BUSH:
+	case FEAT_TREE:
+		/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
+		if ((p_ptr->levitate) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
+			return(TRUE);
+		else break;
 #if 0
-		case FEAT_WALL_HOUSE:
-			if (!pass_wall || !wraith_access_virtual(Ind), xxx, yyy) return(FALSE);
-			else return(TRUE);
+	case FEAT_WALL_HOUSE:
+		if (!pass_wall || !wraith_access_virtual(Ind), xxx, yyy) return(FALSE);
+		return(TRUE);
 #endif
 
-		default:
-			if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB))
-				return(TRUE);
-			if ((p_ptr->levitate) &&
-			    ((f_info[feature].flags1 & FF1_CAN_LEVITATE) ||
-			    (f_info[feature].flags1 & FF1_CAN_FEATHER)))
-				return(TRUE);
-			else if (only_wall && (f_info[feature].flags1 & FF1_FLOOR))
-				return(FALSE);
-			else if ((p_ptr->feather_fall || p_ptr->tim_wraith) &&
-			    (f_info[feature].flags1 & FF1_CAN_FEATHER))
-				return(TRUE);
-			else if ((pass_wall || only_wall) &&
-			     (f_info[feature].flags1 & FF1_CAN_PASS))
-				return(TRUE);
-			else if (f_info[feature].flags1 & FF1_NO_WALK)
-				return(FALSE);
-			else if ((f_info[feature].flags1 & FF1_WEB) &&
-			    (!(r_info[p_ptr->body_monster].flags7 & RF7_SPIDER)))
-				return(FALSE);
+	default:
+		if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB)) return(TRUE);
+		if ((p_ptr->levitate) && ((f_info[feature].flags1 & FF1_CAN_LEVITATE) || (f_info[feature].flags1 & FF1_CAN_FEATHER))) return(TRUE);
 
-			else if ((f_info[feature].flags1 & FF1_WALL) && (!pass_wall || (f_info[feature].flags1 & FF1_PERMANENT)))
-				return(FALSE);
+		if (only_wall && (f_info[feature].flags1 & FF1_FLOOR)) break;
+		else if ((p_ptr->feather_fall || p_ptr->tim_wraith) && (f_info[feature].flags1 & FF1_CAN_FEATHER)) return(TRUE);
+
+		if ((pass_wall || only_wall) && (f_info[feature].flags1 & FF1_CAN_PASS)) return(TRUE);
+		/* Permanent walls that aren't specific 'terrain' (eg mountains): Cannot enter even in wraithform */
+		else if (f_info[feature].flags1 & FF1_WALL) {
+			if ((f_info[feature].flags1 & FF1_PERMANENT) && !(f_info[feature].flags1 & FF1_CAN_PASS)) return(FALSE);
+			if (!pass_wall || (f_info[feature].flags1 & FF1_PERMANENT)) break;
+		}
+		/* doors, etc */
+		if (f_info[feature].flags1 & FF1_NO_WALK) break;
+		else if ((f_info[feature].flags1 & FF1_WEB) && (!(r_info[p_ptr->body_monster].flags7 & RF7_SPIDER))) break;
+
+		return(TRUE);
 	}
 
-	return(TRUE);
+	/* Enter Wraithstep */
+	if (!comfortably && (p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)
+#if 0
+	     && !pass_wall &&
+	    !(f_info[feature].flags1 & FF1_FLOOR) && !((f_info[feature].flags1 & FF1_LOS) && !(f_info[feature].flags1 & FF1_WALL))
+#endif
+	    ) {
+		p_ptr->tim_wraithstep &= ~0xF0;
+		p_ptr->tim_wraith = 1;
+		p_ptr->redraw |= PR_BPR_WRAITH;
+		msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
+		msg_print(Ind, "You turn into a wraith!");
+		return(TRUE);
+	}
+
+	return(FALSE);
 }
 
 /* Helper function for move_player():
