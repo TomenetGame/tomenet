@@ -8186,6 +8186,12 @@ void auto_inscriptions(void) {
 			cmd_message();
 			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
+		case '{':
+			cmd_inscribe(USE_INVEN);
+			break;
+		case '}':
+			cmd_uninscribe(USE_INVEN);
+			break;
 		case '?':
 		case 'h':
 			Term_clear();
@@ -8571,17 +8577,21 @@ void auto_inscriptions(void) {
 			/* toggle force-inscribe (same as '!' prefix) */
 			auto_inscription_force[cur_idx] = !auto_inscription_force[cur_idx];
 			/* if we changed to 'forced', we may need to reapply - note that competing inscriptions aren't well-defined here */
-			if (auto_inscription_force[cur_idx]) apply_auto_inscriptions(i, FALSE);
+			if (auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx, FALSE);
 			redraw = TRUE;
 			break;
 		case 'b':
 			/* toggle bags-only */
 			auto_inscription_subinven[cur_idx] = !auto_inscription_subinven[cur_idx];
+			/* if we changed to 'all' and it was 'forced' too, we may need to reapply - note that competing inscriptions aren't well-defined here */
+			if (!auto_inscription_subinven[cur_idx] && auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx, FALSE);
 			redraw = TRUE;
 			break;
 		case 't':
 			/* toggle disabled-state */
 			auto_inscription_disabled[cur_idx] = !auto_inscription_disabled[cur_idx];
+			/* if we changed to 're-enable' and it was 'forced' too, we may need to reapply - note that competing inscriptions aren't well-defined here */
+			if (!auto_inscription_disabled[cur_idx] && auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx, FALSE);
 			redraw = TRUE;
 			break;
 		default:

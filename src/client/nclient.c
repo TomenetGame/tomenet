@@ -5375,6 +5375,8 @@ void apply_auto_pickup(char *item_name) {
 
 		/* skip empty auto-inscriptions */
 		if (!match[0]) continue;
+		/* skip disabled auto-inscriptions */
+		if (auto_inscription_disabled[i]) continue;
 
 		/* do nothing if match is not set to auto-pickup (for items we dont want to pickup nor destroy, mainly for chests) */
 		if (!(c_cfg.auto_pickup && auto_inscription_autopickup[i]) && !(c_cfg.auto_destroy && auto_inscription_autodestroy[i]) && !dau) continue;
@@ -5554,43 +5556,49 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 		/* if so, auto-inscribe it instead */
 		auto_inscribe = TRUE;
 	}
- #if 0 /* is '!' UNavailable? */
+#if 0 /* is '!' UNavailable? */
 	/* already has a real inscription? -> can't auto-inscribe */
 	if (!auto_inscribe) return(has_insc);
- #else
+#else
 	/* save for checking for already existing target inscription */
 	if (ex && strlen(ex) > 2) {
 		strncpy(tag_buf, ex + 1, strlen(ex) - 2);
 		tag_buf[strlen(ex) - 2] = '\0'; /* terminate */
 	}
 	else strcpy(tag_buf, ""); /* initialise as empty */
- #endif
+#endif
 
 	/* look for matching auto-inscription */
 	for (i = start; i < stop; i++) {
 		match = auto_inscription_match[i];
 		/* skip empty auto-inscriptions */
 		if (!match[0]) continue;
- #if 0 /* disallow empty inscription? */
+#if 0 /* disallow empty inscription? */
 		if (!auto_inscription_tag[i][0]) continue;
- #endif
+#endif
+		/* skip disabled auto-inscriptions */
+		if (auto_inscription_disabled[i]) continue;
+#ifdef ENABLE_SUBINVEN
+		/* skip bag-only auto-inscriptions if not in a bag */
+		if (auto_inscription_subinven[i] && sslot == -1) continue;
+#endif
 
- #if 1 /* is '!' available? */
+#if 1 /* is '!' available? */
 		/* if item already has an inscription, only allow to overwrite it if 'forced'. */
 		if (!auto_inscribe) {
-  #if 0 /* legacy '!' marker, deprecated */
+ #if 0 /* legacy '!' marker, deprecated */
 		/* if auto-inscription begins with '!', which stands for 'always overwrite' */
 			if (match[0] != '!') continue;
 			else match++;
 			/* already carrying this very inscription? don't need to inscribe it AGAIN then */
 			if (!strcmp(auto_inscription_tag[i], tag_buf)) continue;
 		} else if (match[0] == '!') match++;
-  #else
+ #else
 			if (!auto_inscription_force[i]) continue;
 			if (!strcmp(auto_inscription_tag[i], tag_buf)) continue;
 		}
-  #endif
  #endif
+#endif
 
 		/* 'all items' super wildcard? - this only works for auto-pickup/destroy, not for auto-inscribing */
 		if (!strcmp(match, "#")) continue;
@@ -5624,9 +5632,9 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 #endif
 		{
 			/* found a matching inscription? */
- #if 0 /* no '#' wildcard allowed */
+#if 0 /* no '#' wildcard allowed */
 			if (strstr(iname, match)) break;
- #else /* '#' wildcard allowed: a random number (including 0) of random chars */
+#else /* '#' wildcard allowed: a random number (including 0) of random chars */
 			/* prepare */
 			strcpy(ex_buf, match);
 			ex2 = (char*)iname;
@@ -5659,7 +5667,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 				}
 			} while (TRUE);
 		}
- #endif
+#endif
 
 		if (found) break;
 	}

@@ -328,6 +328,8 @@ void initialize_player_ins_files(void) {
 #ifdef REGEX_SEARCH
 		auto_inscription_invalid[i] = FALSE;
 #endif
+		auto_inscription_subinven[i] = FALSE;
+		auto_inscription_disabled[i] = FALSE;
 	}
 
 #if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
