@@ -2104,6 +2104,8 @@ void save_auto_inscriptions(cptr name) {
 		fprintf(fp, "%s\n", auto_inscription_tag[i]);
 		fprintf(fp, "%d\n", auto_inscription_autopickup[i]);
 		fprintf(fp, "%d\n", auto_inscription_autodestroy[i]);
+		fprintf(fp, "%d\n", auto_inscription_subinven[i]); //ENABLE_SUBINVEN
+		fprintf(fp, "%d\n", auto_inscription_disabled[i]);
 	}
 
 	fclose(fp);
@@ -2116,7 +2118,7 @@ void load_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024], *bufptr, dummy[1024], *rptr;
 	char file_name[256], vtag[5];
-	int i, c, j, c_eff, version, vmaj, vmin, vex;
+	int i, c, j, c_eff, version, vmaj, vmin, vpatch;
 	bool replaced, force;
 #ifdef REGEX_SEARCH
 	int ires = -999;
@@ -2151,98 +2153,26 @@ void load_auto_inscriptions(cptr name) {
 		return;
 	}
 	/* extract version */
-	sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n", &vmaj, &vmin, &vex, vtag);
-//c_message_add(format("n='%s',v=%d,%d,%d,%s.", name,vmaj,vmin,vex,vtag));
+	sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n", &vmaj, &vmin, &vpatch, vtag);
 	if (vmaj < 4 || /* at most 4.7.1a */
 	    (vmaj == 4 && (vmin < 7 ||
-	    (vmin == 7 && (vex < 1 ||
-	    (vex == 1 && (streq(vtag, "") || streq(vtag, "a"))))))))
+	    (vmin == 7 && (vpatch < 1 ||
+	    (vpatch == 1 && (!vtag[0] || vtag[0] == 'a')))))))
 		version = 1;
-	else if (vmaj == 4 && vmin == 7 && vex < 4) /* older than 4.7.4 */
+	else if (vmaj == 4 && vmin == 7 && vpatch < 4) /* older than 4.7.4 */
 		version = 2;
-	else
+	else if (vmaj == 4 && (vmin < 9 ||
+	    (vmin == 9 && (vpatch < 1 || (vpatch == 1 && (!vtag[0] || vtag[0] == '-')))))) // '-Test' client tag
 		version = 3;
+	else
+		version = 4;
 
-#if 0 /* completely overwrite/erase current auto-inscriptions */
-	/* load inscriptions (2 lines each) */
-	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-		if (fgets(auto_inscription_match[i], AUTOINS_MATCH_LEN, fp) == NULL)
-			strcpy(auto_inscription_match[i], "");
-		if (strlen(auto_inscription_match[i])) auto_inscription_match[i][strlen(auto_inscription_match[i]) - 1] = '\0';
-
-		if (fgets(auto_inscription_tag[i], AUTOINS_TAG_LEN, fp) == NULL)
-			strcpy(auto_inscription_tag[i], "");
-		if (strlen(auto_inscription_tag[i])) auto_inscription_tag[i][strlen(auto_inscription_tag[i]) - 1] = '\0';
-	}
-
-	fclose(fp);
-//	c_msg_print("Auto-inscriptions loaded.");
+#ifdef TEST_CLIENT
+	//c_msg_format("Read a v%d.%d.%d%s .ins file, version %d.", vmaj, vmin, vpatch, vtag, version);
 #endif
-#if 0 /* attempt to merge current auto-inscriptions somewhat */
-	/* load inscriptions (2 lines each) */
-	c = -1; /* current internal auto-inscription slot to set */
-	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-		replaced = FALSE;
 
-		/* try to read a match */
-		if (fgets(buf, AUTOINS_MATCH_LEN + 1, fp) == NULL) {
-			fclose(fp);
-			return;
-		}
-		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+	/* attempt to merge current auto-inscriptions, and give priority to those we want to load here */
 
-		/* skip empty matches */
-		if (buf[0] == '\0') {
-			/* try to read according tag */
-			if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
-				fclose(fp);
-				return;
-			}
-			continue;
-		}
-
-		/* check for duplicate entry (if it already exists)
-		   and replace older entry simply */
-		for (j = 0; j < MAX_AUTO_INSCRIPTIONS; j++) {
-			if (!strcmp(buf, auto_inscription_match[j])) {
-				/* try to read according tag */
-				if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
-					fclose(fp);
-					return;
-				}
-				if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
-				strcpy(auto_inscription_tag[j], buf);
-
-				replaced = TRUE;
-				break;
-			}
-		}
-		if (replaced) continue;
-
-		/* search for free match-slot */
-		c++;
-		while (strlen(auto_inscription_match[c]) && c < MAX_AUTO_INSCRIPTIONS) c++;
-		if (c == MAX_AUTO_INSCRIPTIONS) {
-			/* give a warning maybe */
-			//c_msg_print("Auto-inscriptions partially loaded and merged.");
-			fclose(fp);
-			return;
-		}
-		/* set slot */
-		strcpy(auto_inscription_match[c], buf);
-
-		/* load according tag */
-		if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
-			fclose(fp);
-			return;
-		}
-		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
-		strcpy(auto_inscription_tag[c], buf);
-	}
-	//c_msg_print("Auto-inscriptions loaded/merged.");
-	fclose(fp);
-#endif
-#if 1 /* attempt to merge current auto-inscriptions, and give priority to those we want to load here */
 	/* load inscriptions (2 lines each) */
 	c = 0; /* current internal auto-inscription slot to set */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
@@ -2268,6 +2198,11 @@ void load_auto_inscriptions(cptr name) {
 			if (buf[0]) buf[strlen(buf) - 1] = 0;
 			/* try to read automation flags */
 			if (version >= 3) {
+				if (fgets(buf, 5, fp) == NULL) break;
+				if (fgets(buf, 5, fp) == NULL) 	break;
+			}
+			/* try to read 'bags-only' and 'disabled' flags */
+			if (version >= 4) {
 				if (fgets(buf, 5, fp) == NULL) break;
 				if (fgets(buf, 5, fp) == NULL) 	break;
 			}
@@ -2299,6 +2234,14 @@ void load_auto_inscriptions(cptr name) {
 				auto_inscription_autopickup[j] = atoi(buf);
 				if (fgets(buf, 5, fp) == NULL) break;
 				auto_inscription_autodestroy[j] = atoi(buf);
+			}
+
+			/* try to read 'bags-only' and 'disabled' flags */
+			if (version >= 4) {
+				if (fgets(buf, 5, fp) == NULL) break;
+				auto_inscription_subinven[j] = atoi(buf);
+				if (fgets(buf, 5, fp) == NULL) break;
+				auto_inscription_disabled[j] = atoi(buf);
 			}
 
 			replaced = TRUE;
@@ -2352,6 +2295,14 @@ void load_auto_inscriptions(cptr name) {
 			auto_inscription_autodestroy[c_eff] = atoi(buf);
 		}
 
+		/* try to read 'bags-only' and 'disabled' flags */
+		if (version >= 4) {
+			if (fgets(buf, 5, fp) == NULL) break;
+			auto_inscription_subinven[c_eff] = atoi(buf);
+			if (fgets(buf, 5, fp) == NULL) break;
+			auto_inscription_disabled[c_eff] = atoi(buf);
+		}
+
 		if (c >= 0) c++;
 		(void)rptr; /*stfu already, compiler O_O*/
 	}
@@ -2359,14 +2310,20 @@ void load_auto_inscriptions(cptr name) {
 	fclose(fp);
 
 	/* Auto-convert old version files: Write new version back to disk. */
-	if (version == 1) {
-		c_message_add("Old auto-inscription wildcards ('?') have been converted to new version ('#').");
-		save_auto_inscriptions(name);
-	} else if (version == 2) {
-		c_message_add("Old auto-inscriptions were converted to new version supporting autopick/destroy."); //welllll, not exactly :-s
+	switch (version) {
+	case 1:
+		c_message_add("Old auto-inscription wildcards ('?') updated to new version ('#').");
+		/* fall through */
+	case 2:
+		c_message_add("Old auto-inscriptions updated to support auto-pickup/-destroy."); //welllll, not exactly :-s
+		/* fall through */
+	case 3:
+		c_message_add("Old auto-inscriptions updated to support bags-only/disabled flags."); //welllll, not exactly :-s
+		/* fall through */
+
+		/* Always re-save the converted inscriptions */
 		save_auto_inscriptions(name);
 	}
-#endif
 }
 
 /* Save Character-Birth file (*.dna) */

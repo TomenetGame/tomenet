@@ -71,7 +71,7 @@
 /* Client-side only: Client release version tag, or empty if none
    (such as "a", "b" etc) used in window title and file dumps */
 #ifdef CLIENT_SIDE
- #define CLIENT_TAG		""
+ #define CLIENT_TAG		"a"
  #ifndef TEST_CLIENT
   #define CLIENT_VERSION_TAG	CLIENT_TAG
  #else

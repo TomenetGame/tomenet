@@ -8501,6 +8501,8 @@ void auto_inscriptions(void) {
 #ifdef REGEX_SEARCH
 			auto_inscription_invalid[cur_idx] = FALSE;
 #endif
+			auto_inscription_subinven[cur_idx] = FALSE;
+			auto_inscription_disabled[cur_idx] = FALSE;
 #if 0
 			/* also auto-advance by 1 line, for convenience */
 			cur_line++;
@@ -8514,14 +8516,16 @@ void auto_inscriptions(void) {
 			break;
 		case 'c':
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-				auto_inscription_match[cur_idx][0] = 0;
-				auto_inscription_tag[cur_idx][0] = 0;
-				auto_inscription_autopickup[cur_idx] = FALSE;
-				auto_inscription_autodestroy[cur_idx] = FALSE;
-				auto_inscription_force[cur_idx] = FALSE;
+				auto_inscription_match[i][0] = 0;
+				auto_inscription_tag[i][0] = 0;
+				auto_inscription_autopickup[i] = FALSE;
+				auto_inscription_autodestroy[i] = FALSE;
+				auto_inscription_force[i] = FALSE;
 #ifdef REGEX_SEARCH
-				auto_inscription_invalid[cur_idx] = FALSE;
+				auto_inscription_invalid[i] = FALSE;
 #endif
+				auto_inscription_subinven[i] = FALSE;
+				auto_inscription_disabled[i] = FALSE;
 			}
 			/* comfort hack - jump to first line */
 #ifndef INTEGRATED_SELECTOR
