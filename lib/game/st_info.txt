@@ -171,6 +171,7 @@ I:100:Remove Curse
 I:100:Blessing
 I:100:Holy Chant
 I:100:Heroism
+I:100:Boldness
 I:100:Word of Recall
 I:100:Word of Recall
 I:100:Word of Recall
@@ -644,6 +645,7 @@ T:50:71:61
 T:10:71:44
 T:10:71:27
 T:10:71:32
+T:10:71:28
 F:PRICE4 | PRICE2
 A:2:4:28:48:0:0
 O:64:64:64:64:64:64
