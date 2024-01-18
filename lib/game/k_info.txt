@@ -275,7 +275,7 @@ F:INSTA_ART
 N:30:& Broken Dagger~
 G:|:D
 I:23:1:0
-W:0:0:10:1
+W:0:0:20:1
 A:0/2:5/2
 P:0:1d1:-2:-4:0
 F:SHOW_MODS
@@ -340,7 +340,7 @@ F:SHOW_MODS | MUST2H
 N:38:& Main Gauche~
 G:|:W
 I:23:5:0
-W:3:0:21:25
+W:3:0:30:25
 A:3/1
 P:0:1d5:0:0:0
 F:SHOW_MODS
@@ -380,7 +380,7 @@ F:SHOW_MODS | COULD2H
 N:43:& Dagger~
 G:|:W
 I:23:4:0
-W:0:0:15:10
+W:0:0:24:10
 A:0/1:5/1:10/1:20/1
 P:0:1d4:0:0:0
 F:SHOW_MODS
@@ -428,6 +428,7 @@ A:10/1
 P:0:2d4:0:0:0
 F:SHOW_MODS
 
+#note: Whip weight is currently inconsistent with the rest of the weapons, should be ~7 lbs. Just keeping it at 3.0 for 3-bpr breakpoint. - C. Blue
 N:49:& Whip~
 G:\:D
 I:21:2:0
@@ -3251,7 +3252,7 @@ F:SHOW_MODS | MUST2H
 N:386:& Hatchet~
 G:/:u
 I:24:5:0
-W:3:0:70:85
+W:3:0:60:85
 A:3/1
 #:10/1
 P:0:2d3:0:0:0
@@ -4605,7 +4606,7 @@ F:IGNORE_WATER
 N:533:& Cleaver~
 G:/:s
 I:24:1:0
-W:2:0:50:45
+W:2:0:40:45
 A:2/1
 #:8/1
 P:0:1d5:0:0:0
@@ -8356,7 +8357,7 @@ F:INSTA_ART | TUNNEL | MUST2H
 N:1033:& Tomahawk~
 G:/:u
 I:24:3:0
-W:15:0:80:140
+W:15:0:75:140
 A:15/2
 P:0:2d4:0:0:0
 F:SHOW_MODS
