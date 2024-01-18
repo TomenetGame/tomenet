@@ -2809,21 +2809,14 @@ static void process_world_player(int Ind) {
 	 */
 
 	/* Check for creature generation */
-#if 0 /* too many people idling all day.. ;) */
-	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
-	    (!season_halloween && (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0))) ||
-	    (season_halloween && (istown(&p_ptr->wpos) && (rand_int((in_bree(&p_ptr->wpos) ?
-		HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0))))
-#else /* ..so no longer depending on amount of players in town: */
 	if (((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
 	    (!season_halloween && istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE) == 0)) ||
 	    (season_halloween && istown(&p_ptr->wpos) &&
 	    (rand_int(in_bree(&p_ptr->wpos) ? HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)))
 	    /* avoid admins spawning stuff */
-	    && !(p_ptr->admin_dm || p_ptr->admin_wiz))
-#endif
-	{
+	    && !(p_ptr->admin_dm || p_ptr->admin_wiz)) {
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 		/* Should we disallow those with MULTIPLY flags to spawn on surface? */
 		if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER)) {
 			/* Set the monster generation depth */
@@ -8309,6 +8302,15 @@ static void process_world(void) {
 
 		/* Process the world of that player */
 		process_world_player(i);
+	}
+
+	/* Additional townie monster spawn (t, ie specifically Bree), independant of any players present! */
+	if (!rand_int(TOWNIE_RESPAWN_CHANCE)) {
+		struct worldpos wpos = { cfg.town_x, cfg.town_y, 0 };
+
+		monster_level = 0;
+		(void)alloc_monster(&wpos, MAX_SIGHT + 5, FALSE);
+		//wild_add_monster(&wpos);
 	}
 }
 
