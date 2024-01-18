@@ -7809,7 +7809,8 @@ void cmd_throw(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 	get_item_hook_find_obj_what = "Item name? ";
 
-	if (!c_get_item(&item, "Throw what? ", (USE_INVEN | USE_EQUIP | USE_EXTRA))) return;
+	/* USE_INVEN: Since we can throw equipped weapons now, it seems more likely that if inven and equip items match the inscription, we prefer to throw from inven first! */
+	if (!c_get_item(&item, "Throw what? ", (INVEN_FIRST | USE_INVEN | USE_EQUIP | USE_EXTRA))) return;
 
 	if (!get_dir(&dir)) return;
 
