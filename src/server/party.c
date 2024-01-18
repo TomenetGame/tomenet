@@ -1068,6 +1068,7 @@ int check_account(char *accname, char *c_name, int *Ind) {
 	/* Make sure noone creates a character of the same name as another player's accountname!
 	   This is important for new feat of messaging to an account instead of character name. - C. Blue */
 	char c2_name[MAX_CHARS];
+
 	strcpy(c2_name, c_name);
 	//c2_name[0] = toupper(c2_name[0]);
 	bool acc1_success = GetAccount(&acc, accname, NULL, FALSE);
@@ -1181,14 +1182,27 @@ int check_account(char *accname, char *c_name, int *Ind) {
 			/* Cannot create another character while being logged on, if not ACC_MULTI.
 			   Allow to login with the same name to 'resume connection' though. */
 			if (!(flags & ACC_MULTI)) {
-				/* check for login-timing exploit */
+				player_type *p_ptr;
+
+				/* check for login-timing exploit (currently makes subsequent 'normal' check redundant). */
 				if ((i = check_multi_exploit(accname, c_name))) {
 					*Ind = -i;
 					return(-2);
 				}
 				/* check for normal ineligible multi-login attempts */
 				for (i = 1; i <= NumPlayers; i++) {
-					if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name)) {
+					p_ptr = Players[i];
+					if (p_ptr->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, p_ptr->name)) {
+#ifdef ALLOW_LOGIN_REPLACE_IN_TOWN
+						if (istown(&p_ptr->wpos)) {
+							s_printf("Replacing connection for: <%s> <%s@%s>\n", p_ptr->name, p_ptr->realname, p_ptr->addr);
+							Destroy_connection(p_ptr->conn, "replacing connection");
+							break;
+						} else {
+							*Ind = i;
+							return(-10);
+						}
+#endif
 						*Ind = i;
 						return(-2);
 					}

@@ -902,9 +902,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 		/* check again. If still here, just transport him to Bree for now -_- */
 		if (c_ptr->m_idx < 0) {
 			p_ptr->new_level_method = LEVEL_RAND;
-			p_ptr->recall_pos.wx = cfg.town_x;
-			p_ptr->recall_pos.wy = cfg.town_y;
-			p_ptr->recall_pos.wz = 0;
+			p_ptr->recall_pos = BREE_WPOS;
 			recall_player(Ind, "A strange force teleports you far away.");
 		}
 	} else if (c_ptr->m_idx > 0) {

@@ -3352,9 +3352,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oThere is no easy way out of this fight!");
 					if (!is_admin(p_ptr)) return;
 				}
-				p_ptr->recall_pos.wx = cfg.town_x;
-				p_ptr->recall_pos.wy = cfg.town_y;
-				p_ptr->recall_pos.wz = 0;
+				p_ptr->recall_pos = BREE_WPOS;
 				p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 				recall_player(Ind, "");
 				msg_format(Ind, "\377%cYou leave the arena again.", COLOUR_DUNGEON);

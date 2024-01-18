@@ -942,9 +942,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	p_ptr->global_event_type[ev_idx] = GE_NONE; /* no longer participant */
 
 	msg_print(Ind, "\377GYou are transported out of here and far away!");
-	p_ptr->recall_pos.wx = cfg.town_x;
-	p_ptr->recall_pos.wy = cfg.town_y;
-	p_ptr->recall_pos.wz = 0;
+	p_ptr->recall_pos = BREE_WPOS;
 	p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 	p_ptr->global_event_temp = 0x0; /* clear all flags */
 	recall_player(Ind, "");

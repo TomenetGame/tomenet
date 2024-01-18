@@ -2230,18 +2230,14 @@ static void player_setup(int Ind, bool new) {
 	if ((wpos->wx >= MAX_WILD_X) || (wpos->wy >= MAX_WILD_Y) || (wpos->wz > MAX_DEPTH) ||
 	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -MAX_DEPTH)) {
 		s_printf("Ultra-hack executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
-		wpos->wx = cfg.town_x;
-		wpos->wy = cfg.town_y;
-		wpos->wz = 0;
+		wpos = BREE_WPOS_P;
 	}
 	/* If dungeon existences changed, restore players who saved
 	   within a now-invalid dungeon - C. Blue */
 	if (((wpos->wz > 0) && (wild_info[wpos->wy][wpos->wx].tower == NULL)) ||
 	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == NULL))) {
 		s_printf("Ultra-hack #2 executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
-		wpos->wx = cfg.town_x;
-		wpos->wy = cfg.town_y;
-		wpos->wz = 0;
+		wpos = BREE_WPOS_P;
 
 #ifdef ALLOW_NR_CROSS_ITEMS
 		for (i = 1; i < INVEN_TOTAL; i++)
@@ -2340,9 +2336,7 @@ static void player_setup(int Ind, bool new) {
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
 		switch (p_ptr->global_event_type[d]) {
 		case GE_ARENA_MONSTER:
-			wpos->wx = cfg.town_x;
-			wpos->wy = cfg.town_y;
-			wpos->wz = 0;
+			wpos = BREE_WPOS_P;
 			break;
 		}
 	}
@@ -2415,9 +2409,7 @@ static void player_setup(int Ind, bool new) {
 	/* Default location if just starting */
 	//if (wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py == 0 && p_ptr->px == 0) {
 	if (new) {
-		p_ptr->wpos.wx = cfg.town_x;
-		p_ptr->wpos.wy = cfg.town_y;
-		p_ptr->wpos.wz = 0;
+		p_ptr->wpos = BREE_WPOS;
 #if 0	// moved afterwards (since town can be non-allocated here)
 		p_ptr->py = level_down_y(wpos);
 		p_ptr->px = level_down_x(wpos);

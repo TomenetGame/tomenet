@@ -360,6 +360,7 @@ extern house_type *houses, *houses_bak;
 extern store_type *fake_store;
 extern int fake_store_visited[MAX_VISITED_PLAYER_STORES];
 #endif
+extern struct worldpos BREE_WPOS, *BREE_WPOS_P;
 extern s32b num_houses;
 extern u32b house_alloc;
 extern int GetInd[];

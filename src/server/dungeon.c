@@ -4336,8 +4336,7 @@ void recall_player(int Ind, char *message) {
 				msg_print(Ind, "\377aIf you enter a dungeon or tower, \377Rretirement\377a is assumed \377Rautomatically\377a.");
 
 				process_player_change_wpos(Ind);
-				p_ptr->recall_pos.wx = cfg.town_x;
-				p_ptr->recall_pos.wy = cfg.town_y;
+				p_ptr->recall_pos = BREE_WPOS;
 
 				wpcopy(&old_wpos, &p_ptr->wpos);
 				wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
@@ -4419,8 +4418,7 @@ void recall_player(int Ind, char *message) {
 			//msg_print(Ind, "\377aIf you enter a dungeon or tower, \377Rretirement\377a is assumed \377Rautomatically\377a.");
 
 			process_player_change_wpos(Ind);
-			p_ptr->recall_pos.wx = cfg.town_x;
-			p_ptr->recall_pos.wy = cfg.town_y;
+			p_ptr->recall_pos = BREE_WPOS;
 
 			wpcopy(&old_wpos, &p_ptr->wpos);
 			wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
@@ -7772,8 +7770,7 @@ static void process_various(void) {
 		if (season_xmas) { /* XMAS */
 			if (santa_claus_timer > 0) santa_claus_timer--;
 			if (santa_claus_timer == 0) {
-				struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
-				cave_type **zcave = getcave(&wpos);
+				cave_type **zcave = getcave(BREE_WPOS_P);
 
 				if (zcave) { /* anyone in town? */
 					int x, y, tries = 50;
@@ -7781,12 +7778,12 @@ static void process_various(void) {
 					/* Try nine locations */
 					while (--tries) {
 						/* Pick location nearby hard-coded town centre */
-						scatter(&wpos, &y, &x, 34, 96, 10, 0);
+						scatter(BREE_WPOS_P, &y, &x, 34, 96, 10, 0);
 
 						/* Require "empty" floor grids */
 						if (!cave_empty_bold(zcave, y, x)) continue;
 
-						if (place_monster_aux(&wpos, y, x, RI_SANTA2, FALSE, FALSE, 0, 0) == 0) {
+						if (place_monster_aux(BREE_WPOS_P, y, x, RI_SANTA2, FALSE, FALSE, 0, 0) == 0) {
 							s_printf("%s XMAS: Generated Santa Claus.\n", showtime());
 							santa_claus_timer = -1; /* put generation on hold */
 							break;
@@ -8306,11 +8303,8 @@ static void process_world(void) {
 
 	/* Additional townie monster spawn (t, ie specifically Bree), independant of any players present! */
 	if (!rand_int(TOWNIE_RESPAWN_CHANCE)) {
-		struct worldpos wpos = { cfg.town_x, cfg.town_y, 0 };
-
 		monster_level = 0;
-		(void)alloc_monster(&wpos, MAX_SIGHT + 5, FALSE);
-		//wild_add_monster(&wpos);
+		(void)alloc_monster(BREE_WPOS_P, MAX_SIGHT + 5, FALSE);
 	}
 }
 
@@ -10732,16 +10726,11 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Br
 	 * - Jir -
 	 */
 	if (!server_dungeon) {
-		struct worldpos twpos;
-
-		twpos.wx = cfg.town_x;
-		twpos.wy = cfg.town_y;
-		twpos.wz = 0;
 		/* Allocate space for it */
-		alloc_dungeon_level(&twpos);
+		alloc_dungeon_level(BREE_WPOS_P);
 
 		/* Actually generate the town */
-		generate_cave(&twpos, NULL);
+		generate_cave(BREE_WPOS_P, NULL);
 	}
 
 	/* Finish initializing dungeon monsters */

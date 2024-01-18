@@ -268,6 +268,8 @@ struct xorder_type xorders[MAX_XORDERS]; /* server quest data */
 struct iddc_type iddc[128]; //(hardcode, ew)
 #endif
 
+struct worldpos BREE_WPOS, *BREE_WPOS_P = &BREE_WPOS;
+
 /* The information about houses */
 house_type *houses, *houses_bak;
 s32b num_houses = 0;

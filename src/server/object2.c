@@ -13294,7 +13294,6 @@ void inverse_cursed(object_type *o_ptr) {
 	if (o_ptr->name1 == ART_RANDART) {
 		object_type forge_bak, *o_ptr_bak = &forge_bak;
 		s32b old_owner, swap;
-		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 		player_type player;
 		u16b ident = (o_ptr->ident & ~ID_CURSED); /* Resulting item is not allowed to be cursed, so we need to drop this ident state */
   #ifdef INVERSE_CURSED_RETAIN
@@ -13356,7 +13355,7 @@ void inverse_cursed(object_type *o_ptr) {
 			randart_make(o_ptr);
 
 			/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed again which is unnecessary as we just did that already */
-			apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
+			apply_magic(BREE_WPOS_P, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
 			o_ptr->ident = ident; /* Keep identification states, a little bonus QoL.. */
 
 			/* Forbid some flags and being cursed AGAIN or this was pointless */
@@ -13564,7 +13563,6 @@ void reverse_cursed(object_type *o_ptr) {
 	if (o_ptr->name1 == ART_RANDART) {
 		s32b old_owner, swap, lev;
 		u16b ident = o_ptr->ident;
-		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 
 		if (!o_ptr->pval3 || o_ptr->pval2 <= 1) return; //paranoia @ pval3?
 		swap = o_ptr->name3;
@@ -13579,7 +13577,7 @@ void reverse_cursed(object_type *o_ptr) {
 		//note_toggle_cursed(o_ptr, TRUE); -- not needed, it gets already added
 
 		/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed randomly */
-		apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
+		apply_magic(BREE_WPOS_P, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
   #if 0
 		o_ptr->level = lev; /* Restore original level requirements! */
   #else

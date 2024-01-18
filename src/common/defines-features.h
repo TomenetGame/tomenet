@@ -505,6 +505,12 @@
    Note that retrieval from 'minimap_yoff' from server-side is just needed for this. - C. Blue */
 //#define WILDMAP_ALLOW_SELECTOR_SCROLLING
 
+/* Player login: Allow resuming from a different IP instead */
+#define ALLOW_RESUMING_FROM_NEW_IP
+/* Player login: Allow 'resuming' with a different character name, aka 'replacing',
+   provided the character to be kicked is in a valid location such as town, that doesn't require a timeout. */
+#define ALLOW_LOGIN_REPLACE_IN_TOWN
+
 
 
 /* ------------------------------------------------------------------------- */

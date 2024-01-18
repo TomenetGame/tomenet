@@ -9114,9 +9114,7 @@ static void process_global_event(int ge_id) {
 							inven_item_optimize(i, j);
 						}
 					p_ptr->global_event_type[ge_id] = GE_NONE; /* no longer participant */
-					p_ptr->recall_pos.wx = cfg.town_x;
-					p_ptr->recall_pos.wy = cfg.town_y;
-					p_ptr->recall_pos.wz = 0;
+					p_ptr->recall_pos = BREE_WPOS;
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 					p_ptr->global_event_temp = 0x0; /* clear all flags */
 					recall_player(i, "");
@@ -9183,9 +9181,8 @@ static void process_global_event(int ge_id) {
 					Players[i]->recall_pos.wz = 0;
 					recall_player(i, "\377yThe arena wizards teleport you out of here!");
 				}
-			if (getcave(&wpos)) { /* check that the level is allocated - mikaelh */
+			if (getcave(&wpos)) /* check that the level is allocated - mikaelh */
 				dealloc_dungeon_level(&wpos);
-			}
 #endif
 
 			ge_special_sector++;
@@ -9622,9 +9619,7 @@ static void process_global_event(int ge_id) {
 			/* cleanly teleport all lingering admins out instead of displacing them into (non-generated) pvp-dungeon ^^ */
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
-					Players[i]->recall_pos.wx = cfg.town_x;
-					Players[i]->recall_pos.wy = cfg.town_y;
-					Players[i]->recall_pos.wz = 0;
+					Players[i]->recall_pos = BREE_WPOS;
 					Players[i]->new_level_method = LEVEL_OUTSIDE_RAND;
 					recall_player(i, "");
 				}
@@ -9695,9 +9690,7 @@ static void process_global_event(int ge_id) {
 					if (Players[i]->id != ge->participant[j]) continue;
 					p_ptr = Players[i];
 					if (in_module(&p_ptr->wpos) && ((p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4]))) { // GE_EXTRA - adventures.lua
-						p_ptr->recall_pos.wx = cfg.town_x;
-						p_ptr->recall_pos.wy = cfg.town_y;
-						p_ptr->recall_pos.wz = 0;
+						p_ptr->recall_pos = BREE_WPOS;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						p_ptr->global_event_type[ge_id] = GE_NONE; /* no longer a participant */
 						p_ptr->global_event_temp = 0x0; /* clear all flags */

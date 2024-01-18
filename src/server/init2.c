@@ -2537,6 +2537,9 @@ void init_spells(s16b new_size)
 static errr init_other(void) {
 	//int i, k, n;
 
+	BREE_WPOS.wx = cfg.town_x;
+	BREE_WPOS.wy = cfg.town_y;
+	BREE_WPOS.wz = 0;
 
 	/*** Prepare the "dungeon" information ***/
 

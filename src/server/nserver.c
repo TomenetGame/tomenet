@@ -958,7 +958,6 @@ static void Trim_name(char *nick_name) {
 
 /* verify that account, user, host name are valid,
    and that we're resuming from the same IP address if we're resuming  */
-#define ALLOW_RESUMING_FROM_NEW_IP
 static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume) {
 	player_type *p_ptr = NULL;
 	connection_t *connp = NULL;
@@ -985,11 +984,12 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 					 * identical.  Note that it may be possobile to spoof this,
 					 * kicking someone off.  This is a quick hack that should
 					 * be replaced with proper password checking.
+					 * -- this issue has been alleviated by an extra GetAccount() check right before we're called now. - C. Blue
 					 */
+
 					/* XXX another Hack -- don't allow to resume connection if
 					 * in 'character edit' mode		- Jir -
 					 */
-
 					if (cfg.runlevel == 1024) return(E_CLOSED); /* Server is set to sc_shutdown(), until then not accepting new connections? */
 
 					/* resume connection at this point is not compatible
@@ -1060,6 +1060,19 @@ int check_multi_exploit(char *acc, char *nick) {
 		if (!connp->c_name) continue;//hasn't chosen a character to login with yet?
 		if (!strcasecmp(connp->c_name, nick)) continue; //this case is instead handled by part 1/2: resume connection!
 		if (strcasecmp(connp->nick, acc)) continue;
+
+#ifdef ALLOW_LOGIN_REPLACE_IN_TOWN
+		if (connp->id != -1) {
+			player_type *p_ptr = Players[GetInd[connp->id]];
+
+			if (istown(&p_ptr->wpos)) {
+				s_printf("Replacing connection for: <%s>(was <%s>) <%s@%s>\n", connp->c_name, p_ptr->name, connp->real, connp->addr);
+				Destroy_connection(p_ptr->conn, "replacing connection");
+				return(FALSE);
+			}
+		}
+#endif
+
 		s_printf("check_multi_exploit=TRUE\n");
 
 #if 1
@@ -4520,6 +4533,15 @@ static int Receive_login(int ind) {
 			/* remove disallowed chars and spaces at the end */
 			Trim_name(connp->nick);
 
+			if (!connp->nick[0]) {
+				Destroy_connection(ind, "Pick a name and password!"); //for older clients up to 4.6.1a which didn't prevent entering empty creds
+				return(-1);
+			}
+			if (!connp->pass[0]) {
+				Destroy_connection(ind, "You must enter a password too!");
+				return(-1);
+			}
+
 			/* Check if player tries to create an account of the same name as
 			   an already existing character - give an error message.
 			   (Mostly for new feat 'privmsg to account name' - C. Blue) */
@@ -4534,6 +4556,14 @@ static int Receive_login(int ind) {
 						return(-1);
 					}
 					WIPE(&acc, struct account);
+				}
+			}
+
+			if (strlen(connp->pass) < PASSWORD_MIN_LEN) {
+				/* For now only restrict pw len for newly created accounts, so people can still log in with their old (too short) passwords */
+				if (!Admin_GetAccount(&acc, connp->nick)) {
+					Destroy_connection(ind, format("Password length must be at least %d!", PASSWORD_MIN_LEN));
+					return(-1);
 				}
 			}
 
@@ -4563,6 +4593,12 @@ static int Receive_login(int ind) {
 				return(-1);
 			}
 
+			/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
+			if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0)) {
+				/* Use memfrob for the password - mikaelh */
+				my_memfrob(connp->pass, strlen(connp->pass));
+			}
+
 			/* Check if an account name already exists that is too similar to the new account name to be created --
 			   must be called before GetAccount() is called, because that function
 			   imprints the condensed name onto a newly created account.
@@ -4574,23 +4610,19 @@ static int Receive_login(int ind) {
 			}
 			WIPE(&acc, struct account);
 
-			if (!connp->nick[0]) {
-				Destroy_connection(ind, "Pick a name and password!"); //for older clients up to 4.6.1a which didn't prevent entering empty creds
+			/* For skip-motd hack for persistent message log across relogs -
+			   we need to do this here before calling GetAccount() for password verification further below
+			   as that will actually timestamp the account anew (if the password is successfully verified). */
+			connp->laston_real = acc.acc_laston_real;
+			WIPE(&acc, struct account);
+
+			/* Check_names() might allow (depending on ALLOW_ defines) to resume from different IP address.
+			   Problem: The password has not yet been checked. So someone could spoof the connection and get someone kicked w/o need to know his password.
+			   So we verify it first, just for Check_names(), here: */
+			if (!GetAccount(&acc, connp->nick, connp->pass, FALSE)) {
+				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
 				return(-1);
 			}
-			if (!connp->pass[0]) {
-				Destroy_connection(ind, "You must enter a password too!");
-				return(-1);
-			}
-
-			if (strlen(connp->pass) < PASSWORD_MIN_LEN) {
-				/* For now only restrict pw len for newly created accounts, so people can still log in with their old (too short) passwords */
-				if (!Admin_GetAccount(&acc, connp->nick)) {
-					Destroy_connection(ind, format("Password length must be at least %d!", PASSWORD_MIN_LEN));
-					return(-1);
-				}
-			}
-
 			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
 				if (res == E_LETTER)
 					Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
@@ -4622,12 +4654,6 @@ static int Receive_login(int ind) {
 					return(-1);
 				}
 			}
-			/* For skip-motd hack for persistent message log across relogs -
-			   we need to do this here before calling GetAccount() for password verification further below
-			   as that will actually timestamp the account anew (if the password is successfully verified). */
-			connp->laston_real = acc.acc_laston_real;
-			WIPE(&acc, struct account);
-
 			/* Check for forbidden names (swearing): */
 
 			/* Check account name for swearing.. */
@@ -4644,12 +4670,6 @@ static int Receive_login(int ind) {
 			}
 #endif
 			/* (Note: since 'real' name is always replaced by "PLAYER", we don't need to check that one for swearing.) */
-
-			/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
-			if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0)) {
-				/* Use memfrob for the password - mikaelh */
-				my_memfrob(connp->pass, strlen(connp->pass));
-			}
 		}
 
 		accfail = FALSE;
@@ -4887,9 +4907,6 @@ static int Receive_login(int ind) {
 			return(-1);
 		case -2: //NOT OK
 			/* fail login here */
-#if 0 /* true, but.. */
-			Destroy_connection(ind, "Multiple logins on the same account aren't allowed.");
-#else /* ..give more descriptive instructions */
 		{
 			connection_t *err_connp;
 
@@ -4899,10 +4916,23 @@ static int Receive_login(int ind) {
 
 			if (err_connp && err_connp->state != CONN_FREE
 			    && err_connp->timeout && (err_connp->start + err_connp->timeout * cfg.fps >= turn))
-				Destroy_connection(ind, format("You have to wait for %d seconds until your other character has timed out.\nTo prevent this kind of cooldown, log out in town areas only.", (err_connp->start + err_connp->timeout * cfg.fps - turn +(cfg.fps - 1)) / cfg.fps));
+				Destroy_connection(ind, format("You have to wait for %d seconds until your other character has timed out.\nTo prevent this kind of cooldown, log out in town areas only.", (err_connp->start + err_connp->timeout * cfg.fps - turn + (cfg.fps - 1)) / cfg.fps));
 			else Destroy_connection(ind, "Multiple logins on the same account aren't allowed."); //fallback (shouldn't happen)
 		}
-#endif
+			return(-1);
+		case -10: //same as -2, but cannot wait for timeout ever, as the character logged in still has an alive connection!
+			/* fail login here */
+		{
+			connection_t *err_connp;
+
+			if (err_Ind > 0) err_connp = Conn[Players[err_Ind]->conn];
+			else if (err_Ind < 0) err_connp = Conn[-err_Ind];
+			else err_connp = NULL;
+
+			if (err_connp && err_connp->state != CONN_FREE && err_connp->timeout) /* timeout: Character is apparently logged in outside of towns/instant-log zones :/ zonk! */
+				Destroy_connection(ind, "You are already logged in with a character and it is outside of any town area,\nso it cannot get disconnected and you cannot login, sorry.");
+			else Destroy_connection(ind, "Multiple logins on the same account aren't allowed."); //fallback (shouldn't happen)
+		}
 			return(-1);
 		case -3: /* Out of character slots! */
 			Destroy_connection(ind, "Character amount limit reached.");
@@ -4959,7 +4989,7 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, format("Account and character names must be at least 2 characters long.", ACC_CHAR_MIN_LEN));
 				break;
 			case E_IN_USE_PC:
-				Destroy_connection(ind, "You are still logged in by another PC user. Please wait 30 seconds and try again.");
+				Destroy_connection(ind, format("You are still logged in by another PC user. Please wait %d seconds and try again.", IDLE_TIMEOUT));
 				break;
 			case E_IN_USE_DUP:
 				Destroy_connection(ind, "You are already logging in from another instance of the game.");
