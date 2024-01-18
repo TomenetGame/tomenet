@@ -17536,6 +17536,7 @@ Aside from blast charges it's possible to craft fireworks:
 ----------------------------------------------------------
 Charcoal + sulfur + 2x saltpetre + 2x reactive metal powder
  + scroll of light or scroll of fire = scroll of firework (of random type)
+Using a scroll of fire will always result in 'big' types of firework scrolls.
 
 
 
