@@ -8052,6 +8052,7 @@ Chain_Macro:
 #define INTEGRATED_SELECTOR /* Allows for a match length of 55 instead of 53 */
 #define AUTOINS_PAGESIZE 20
 #define AUTOINS_FORCE_COL 'o'
+#define AUTOINS_DIS_SUB_MATCH /* Colour the match string to indicate subinven/disabled flags, instead of just the index number */
 void auto_inscriptions(void) {
 	int i, max_page = (MAX_AUTO_INSCRIPTIONS + AUTOINS_PAGESIZE - 1) / AUTOINS_PAGESIZE - 1, cur_idx;
 	static int cur_line = 0, cur_page = 0;
@@ -8102,7 +8103,11 @@ void auto_inscriptions(void) {
 #endif
 				c = 's'; //TERM_SLATE
 				/* build a whole line */
+#ifdef AUTOINS_DIS_SUB_MATCH
+				strcpy(match_buf, format("\377%c>\377%c", c, auto_inscription_disabled[cur_idx] ? 'D' : (auto_inscription_subinven[cur_idx] ? 'y' : 'w')));
+#else
 				strcpy(match_buf, format("\377%c>\377w", c));
+#endif
 				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
@@ -8112,9 +8117,17 @@ void auto_inscriptions(void) {
 				    c, auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', tag_buf);
 
 #ifdef INTEGRATED_SELECTOR
+ #ifdef AUTOINS_DIS_SUB_MATCH
 				Term_putstr(0, i + 1, -1, TERM_WHITE, fff);
+ #else
+				Term_putstr(0, i + 1, -1, auto_inscription_disabled[cur_idx] ? TERM_L_DARK : (auto_inscription_subinven[cur_idx] ? TERM_YELLOW : TERM_WHITE), fff);
+ #endif
 #else
+ #ifdef AUTOINS_DIS_SUB_MATCH
 				Term_putstr(2, i + 1, -1, TERM_WHITE, fff);
+ #else
+				Term_putstr(2, i + 1, -1, auto_inscription_disabled[cur_idx] ? TERM_L_DARK : (auto_inscription_subinven[cur_idx] ? TERM_YELLOW : TERM_WHITE), fff);
+ #endif
 #endif
 			}
 		}
@@ -8127,7 +8140,11 @@ void auto_inscriptions(void) {
 				else if (i == prev_line) c = 's'; //TERM_SLATE
 				else continue;
 				/* build a whole line */
+ #ifdef AUTOINS_DIS_SUB_MATCH
+				strcpy(match_buf, format("\377%c>\377%c", c, auto_inscription_disabled[cur_idx] ? 'D' : (auto_inscription_subinven[cur_idx] ? 'y' : 'w')));
+ #else
 				strcpy(match_buf, format("\377%c>\377w", c));
+ #endif
 				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
@@ -8136,11 +8153,11 @@ void auto_inscriptions(void) {
 				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
 				    c, auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', tag_buf);
 
-#ifdef INTEGRATED_SELECTOR
+ #ifdef AUTOINS_DIS_SUB_MATCH
 				Term_putstr(0, i + 1, -1, TERM_WHITE, fff);
-#else
-				Term_putstr(2, i + 1, -1, TERM_WHITE, fff);
-#endif
+ #else
+				Term_putstr(0, i + 1, -1, auto_inscription_disabled[cur_idx] ? TERM_L_DARK : (auto_inscription_subinven[cur_idx] ? TERM_YELLOW : TERM_WHITE), fff);
+ #endif
 			}
 		}
 		prev_line = cur_line;
@@ -8185,7 +8202,7 @@ void auto_inscriptions(void) {
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In a regexp string, the '#' will no longer have a wildcard function.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Regular expressions are parsed case-insensitively.");
 #endif
-			i++;
+			//i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item inscriptions to be applied:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "No special rules here, it works the same as manual inscriptions.");
@@ -8193,7 +8210,9 @@ void auto_inscriptions(void) {
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Press 'f' to toggle force-inscribing, which will overwrite an existing");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Inscription always. Otherwise just trivial ones, eg discount tags.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "An orange tag text colour (instead of white) indicates forced-mode.");//AUTOINS_FORCE_COL
-			i++;
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Press 'b' to toggle an inscription to ONLY apply on items inside bags.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Press 't' to toggle an inscription (disables/re-enables it).");
+			//i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Troubleshooting:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "The auto-inscription menu tries to merge all applicable .ins files:");
@@ -8553,6 +8572,16 @@ void auto_inscriptions(void) {
 			auto_inscription_force[cur_idx] = !auto_inscription_force[cur_idx];
 			/* if we changed to 'forced', we may need to reapply - note that competing inscriptions aren't well-defined here */
 			if (auto_inscription_force[cur_idx]) apply_auto_inscriptions(i, FALSE);
+			redraw = TRUE;
+			break;
+		case 'b':
+			/* toggle bags-only */
+			auto_inscription_subinven[cur_idx] = !auto_inscription_subinven[cur_idx];
+			redraw = TRUE;
+			break;
+		case 't':
+			/* toggle disabled-state */
+			auto_inscription_disabled[cur_idx] = !auto_inscription_disabled[cur_idx];
 			redraw = TRUE;
 			break;
 		default:
