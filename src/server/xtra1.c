@@ -490,7 +490,7 @@ static void prt_bpr(int Ind) {
 	byte attr = p_ptr->num_blow ? TERM_L_GREEN : TERM_RED;
 
 	if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)) {
-		Send_bpr(Ind, 255, TERM_L_DARK);//TERM_ACID)
+		Send_bpr(Ind, 255, TERM_UMBER);//TERM_ACID/TERM_L_DARK
 		return;
 	}
 	if (p_ptr->tim_wraith) {
