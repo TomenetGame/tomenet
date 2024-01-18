@@ -1360,8 +1360,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 #ifdef ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
 		if (subinven) {
-			if (spammy) strcat(out_val, " \% bag,");
-			else strcat(out_val, " \% for bag,");
+			if (spammy) strcat(out_val, " ! bag,");
+			else strcat(out_val, " ! for bag,");
 		}
 #endif
 
@@ -1397,7 +1397,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			break;
 
 #ifdef ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
-		case '%':
+		case '!':
 			if (subinven) {
 				int i;
 				int old_tval = item_tester_tval;
