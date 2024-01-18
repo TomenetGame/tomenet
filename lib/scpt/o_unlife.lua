@@ -262,7 +262,7 @@ OWRAITHSTEP = add_spell {
 	["level"] = 	46,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	-85,
+	["fail"] = 	-95,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			set_tim_wraithstep(Ind, 6)
