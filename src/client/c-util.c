@@ -8051,8 +8051,9 @@ Chain_Macro:
 
 #define INTEGRATED_SELECTOR /* Allows for a match length of 55 instead of 53 */
 #define AUTOINS_PAGESIZE 20
+#define AUTOINS_FORCE_COL 'o'
 void auto_inscriptions(void) {
-	int i, max_page = (MAX_AUTO_INSCRIPTIONS + AUTOINS_PAGESIZE - 1) / AUTOINS_PAGESIZE - 1, idx;
+	int i, max_page = (MAX_AUTO_INSCRIPTIONS + AUTOINS_PAGESIZE - 1) / AUTOINS_PAGESIZE - 1, cur_idx;
 	static int cur_line = 0, cur_page = 0;
 	char temp, tempbuf[MAX_CHARS]; //assuming that AUTOINS_MATCH_LEN + 8 and AUTOINS_TAG_LEN + 2 are always <= MAX_CHARS
 #ifdef INTEGRATED_SELECTOR
@@ -8089,91 +8090,63 @@ void auto_inscriptions(void) {
 
 			/* Describe */
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
-			Term_putstr(2, 21, -1, TERM_L_UMBER, "(8/2) go up/down, (SPACE/BKSP or p) page down/up, (P) chat-paste, (ESC) exit");
-			Term_putstr(2, 22, -1, TERM_L_UMBER, "(e,RET/?,h/f/d/c) Edit/Help/Force/Delete/CLEAR ALL, (a) Auto-pickup/destroy");
-			Term_putstr(2, 23, -1, TERM_L_UMBER, "(w/x) move up/down, (l/s/S) Load/save from/to an '.ins' / 'global.ins' file");
+			Term_putstr(2, 21, -1, TERM_L_UMBER, "(\377y8\377U/\377y2\377U/\377ySPACE\377U/\377yBKSP\377U/\377yp\377U) navigate, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
+			Term_putstr(2, 22, -1, TERM_L_UMBER, "(\377yESC\377U\377U/\377y?\377U,\377yh\377U/\377ye\377U,\377yRET\377U/\377yd\377U/\377yc\377U) exit/help/edit/delete/CLEAR ALL, (\377ya\377U) auto-pickup/destroy");
+			Term_putstr(2, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move up/down, (\377yl\377U/\377ys\377U/\377yS\377U) Load/save from/to an '\377u.ins\377U' / '\377uglobal.ins\377U' file");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
-				idx = cur_page * AUTOINS_PAGESIZE + i;
+				cur_idx = cur_page * AUTOINS_PAGESIZE + i;
 #ifdef INTEGRATED_SELECTOR
 				if (i == cur_line) c = '4'; //TERM_SELECTOR
 				else
 #endif
 				c = 's'; //TERM_SLATE
 				/* build a whole line */
-#if 0 /* squeeze out every last char we could use for the inscription */
-				strcpy(match_buf, format("\377%c<\377w", c));
-#else
 				strcpy(match_buf, format("\377%c>\377w", c));
-#endif
-				if (auto_inscription_invalid[idx]) strcat(match_buf, "\377R");
-				strcat(match_buf, auto_inscription_match[idx]);
-#if 0 /* squeeze out every last char we could use for the inscription */
-				strcat(match_buf, format("\377%c>", c));
-#endif
-				strcpy(tag_buf, "\377y");
-				strcat(tag_buf, auto_inscription_tag[idx]);
-#if 0 /* squeeze out every last char we could use for the inscription */
-				sprintf(fff, "%3d %-62s %s%s<%s\377%c>", idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[idx] ? "\377RA\377-" : (auto_inscription_autopickup[idx] ? "\377Ga\377-" : " "),
-				    auto_inscription_invalid[idx] ? "  " : "", /* silyl sprintf %- formatting.. */
-				    tag_buf, c);
-#else
-				sprintf(fff, "%3d %-59s %s%s\377%c>%s", idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[idx] ? "\377RA\377-" : (auto_inscription_autopickup[idx] ? "\377Ga\377-" : " "),
-				    auto_inscription_invalid[idx] ? "  " : "", /* silyl sprintf %- formatting.. */
-				    c, tag_buf);
-#endif
+				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
+				strcat(match_buf, auto_inscription_match[cur_idx]);
+				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
+				sprintf(fff, "%3d %-59s %s%s\377%c>\377%c%-19s", cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
+				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
+				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
+				    c, auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', tag_buf);
 
 #ifdef INTEGRATED_SELECTOR
-				Term_putstr(0, i + 1, -1, auto_inscription_force[idx] ? TERM_L_BLUE : TERM_WHITE, fff);
+				Term_putstr(0, i + 1, -1, TERM_WHITE, fff);
 #else
-				Term_putstr(2, i + 1, -1, auto_inscription_force[idx] ? TERM_L_BLUE : TERM_WHITE, fff);
+				Term_putstr(2, i + 1, -1, TERM_WHITE, fff);
 #endif
 			}
 		}
 #ifdef INTEGRATED_SELECTOR
 		else {
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
-				idx = cur_page * AUTOINS_PAGESIZE + i;
+				cur_idx = cur_page * AUTOINS_PAGESIZE + i;
 
 				if (i == cur_line) c = '4'; //TERM_SELECTOR
 				else if (i == prev_line) c = 's'; //TERM_SLATE
 				else continue;
 				/* build a whole line */
-#if 0 /* squeeze out every last char we could use for the inscription */
-				strcpy(match_buf, format("\377%c<\377w", c));
-#else
 				strcpy(match_buf, format("\377%c>\377w", c));
-#endif
-				if (auto_inscription_invalid[idx]) strcat(match_buf, "\377R");
-				strcat(match_buf, auto_inscription_match[idx]);
-#if 0 /* squeeze out every last char we could use for the inscription */
-				strcat(match_buf, format("\377%c>", c));
-#endif
-				strcpy(tag_buf, "\377y");
-				strcat(tag_buf, auto_inscription_tag[idx]);
-#if 0 /* squeeze out every last char we could use for the inscription */
-				sprintf(fff, "%3d %-62s %s%s<%s\377%c>", idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[idx] ? "\377RA\377-" : (auto_inscription_autopickup[idx] ? "\377Ga\377-" : " "),
-				    auto_inscription_invalid[idx] ? "  " : "", /* silyl sprintf %- formatting.. */
-				    tag_buf, c);
-#else
-				sprintf(fff, "%3d %-59s %s%s\377%c>%s", idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[idx] ? "\377RA\377-" : (auto_inscription_autopickup[idx] ? "\377Ga\377-" : " "),
-				    auto_inscription_invalid[idx] ? "  " : "", /* silyl sprintf %- formatting.. */
-				    c, tag_buf);
-#endif
+				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
+				strcat(match_buf, auto_inscription_match[cur_idx]);
+				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
+				sprintf(fff, "%3d %-59s %s%s\377%c>\377%c%-19s", cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
+				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
+				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
+				    c, auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', tag_buf);
 
 #ifdef INTEGRATED_SELECTOR
-				Term_putstr(0, i + 1, -1, auto_inscription_force[idx] ? TERM_L_BLUE : TERM_WHITE, fff);
+				Term_putstr(0, i + 1, -1, TERM_WHITE, fff);
 #else
-				Term_putstr(2, i + 1, -1, auto_inscription_force[idx] ? TERM_L_BLUE : TERM_WHITE, fff);
+				Term_putstr(2, i + 1, -1, TERM_WHITE, fff);
 #endif
 			}
 		}
 		prev_line = cur_line;
 #endif
+
+		cur_idx = cur_page * AUTOINS_PAGESIZE + cur_line;
 		redraw = TRUE;
 
 		/* display editing 'cursor' */
@@ -8206,17 +8179,10 @@ void auto_inscriptions(void) {
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item name matches:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "The item name you enter is used as a partial match.");
-#if 0 /* legacy '!' marker */
-			Term_putstr( 0, i++, -1, TERM_WHITE, "If you prefix it with a '!' then any existing inscription will");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "be overwritten. Otherwise just trivial ones are, eg discount tags.");
-#endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, "You can use '#' as wildcards, eg \"Rod#Healing\".");
 #ifdef REGEX_SEARCH
 			Term_putstr( 0, i++, -1, TERM_WHITE, "If you prefix a line with '$' the string will be interpreted as regexp.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In a regexp string, the '#' will no longer have a wildcard function.");
- #if 0 /* legacy '!' marker */
-			Term_putstr( 0, i++, -1, TERM_WHITE, "If you want to combine '!' and '$', have the '!' go first: !$regexp.");
- #endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Regular expressions are parsed case-insensitively.");
 #endif
 			i++;
@@ -8224,11 +8190,9 @@ void auto_inscriptions(void) {
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item inscriptions to be applied:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "No special rules here, it works the same as manual inscriptions.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "So you could even specify \"@@\" if you want a power-inscription.");
-#if 1 /* '!' has been replaced */
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Press 'f' to toggle force-inscribing, which will overwrite an existing");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Inscription always. Otherwise just trivial ones, eg discount tags.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "A light blue inscription index number indicates forced-mode.");
-#endif
+			Term_putstr( 0, i++, -1, TERM_WHITE, "An orange tag text colour (instead of white) indicates forced-mode.");//AUTOINS_FORCE_COL
 			i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Troubleshooting:");
@@ -8244,13 +8208,13 @@ void auto_inscriptions(void) {
 		case 'P':
 			/* Paste currently selected entry to chat */
 			strcpy(match_buf, "\377s<\377w");
-			strcat(match_buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line]);
+			strcat(match_buf, auto_inscription_match[cur_idx]);
 			strcat(match_buf, "\377s>");
-			strcpy(tag_buf, "\377y");
-			strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line]);
-			sprintf(tmp, "\377sAuto-inscription %3d: %s%s<%s\377s>", cur_page * AUTOINS_PAGESIZE + cur_line + 1,
+			strcpy(tag_buf, auto_inscription_tag[cur_idx]);
+			sprintf(tmp, "\377sAuto-inscription %3d: %s%s<\377%c%s\377s>", cur_idx + 1,
 			    match_buf,
-			    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + cur_line] ? "\377RA\377s" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + cur_line] ? "\377Ga\377s" : " "),
+			    auto_inscription_autodestroy[cur_idx] ? "\377RA\377s" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377s" : " "),
+			    auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w',
 			    tag_buf);
 			Send_paste_msg(tmp);
 			redraw = FALSE;
@@ -8315,8 +8279,7 @@ void auto_inscriptions(void) {
 			}
 			break;
 		case 'x':
-			idx = cur_page * AUTOINS_PAGESIZE + cur_line;
-			if (idx >= MAX_AUTO_INSCRIPTIONS - 1) break;
+			if (cur_idx >= MAX_AUTO_INSCRIPTIONS - 1) break;
 
 			cur_line++;
 			redraw = FALSE;
@@ -8327,35 +8290,42 @@ void auto_inscriptions(void) {
 				redraw = TRUE;
 			}
 
-			strcpy(tempbuf, auto_inscription_match[idx]);
-			strcpy(auto_inscription_match[idx], auto_inscription_match[idx + 1]);
-			strcpy(auto_inscription_match[idx + 1], tempbuf);
+			strcpy(tempbuf, auto_inscription_match[cur_idx]);
+			strcpy(auto_inscription_match[cur_idx], auto_inscription_match[cur_idx + 1]);
+			strcpy(auto_inscription_match[cur_idx + 1], tempbuf);
 
-			strcpy(tempbuf, auto_inscription_tag[idx]);
-			strcpy(auto_inscription_tag[idx], auto_inscription_tag[idx + 1]);
-			strcpy(auto_inscription_tag[idx + 1], tempbuf);
+			strcpy(tempbuf, auto_inscription_tag[cur_idx]);
+			strcpy(auto_inscription_tag[cur_idx], auto_inscription_tag[cur_idx + 1]);
+			strcpy(auto_inscription_tag[cur_idx + 1], tempbuf);
 
-			temp = auto_inscription_autodestroy[idx];
-			auto_inscription_autodestroy[idx] = auto_inscription_autodestroy[idx + 1];
-			auto_inscription_autodestroy[idx + 1] = temp;
+			temp = auto_inscription_autodestroy[cur_idx];
+			auto_inscription_autodestroy[cur_idx] = auto_inscription_autodestroy[cur_idx + 1];
+			auto_inscription_autodestroy[cur_idx + 1] = temp;
 
-			temp = auto_inscription_autopickup[idx];
-			auto_inscription_autopickup[idx] = auto_inscription_autopickup[idx + 1];
-			auto_inscription_autopickup[idx + 1] = temp;
+			temp = auto_inscription_autopickup[cur_idx];
+			auto_inscription_autopickup[cur_idx] = auto_inscription_autopickup[cur_idx + 1];
+			auto_inscription_autopickup[cur_idx + 1] = temp;
 
-			temp = auto_inscription_force[idx];
-			auto_inscription_force[idx] = auto_inscription_force[idx + 1];
-			auto_inscription_force[idx + 1] = temp;
+			temp = auto_inscription_force[cur_idx];
+			auto_inscription_force[cur_idx] = auto_inscription_force[cur_idx + 1];
+			auto_inscription_force[cur_idx + 1] = temp;
 
 #ifdef REGEX_SEARCH
-			temp = auto_inscription_invalid[idx];
-			auto_inscription_invalid[idx] = auto_inscription_invalid[idx + 1];
-			auto_inscription_invalid[idx + 1] = temp;
+			temp = auto_inscription_invalid[cur_idx];
+			auto_inscription_invalid[cur_idx] = auto_inscription_invalid[cur_idx + 1];
+			auto_inscription_invalid[cur_idx + 1] = temp;
 #endif
+
+			temp = auto_inscription_subinven[cur_idx]; //ENABLE_SUBINVEN
+			auto_inscription_subinven[cur_idx] = auto_inscription_subinven[cur_idx + 1];
+			auto_inscription_subinven[cur_idx + 1] = temp;
+
+			temp = auto_inscription_disabled[cur_idx];
+			auto_inscription_disabled[cur_idx] = auto_inscription_disabled[cur_idx + 1];
+			auto_inscription_disabled[cur_idx + 1] = temp;
 			break;
 		case 'w':
-			idx = cur_page * AUTOINS_PAGESIZE + cur_line;
-			if (!idx) break;
+			if (!cur_idx) break;
 
 			cur_line--;
 			redraw = FALSE;
@@ -8366,31 +8336,39 @@ void auto_inscriptions(void) {
 				redraw = TRUE;
 			}
 
-			strcpy(tempbuf, auto_inscription_match[idx]);
-			strcpy(auto_inscription_match[idx], auto_inscription_match[idx - 1]);
-			strcpy(auto_inscription_match[idx - 1], tempbuf);
+			strcpy(tempbuf, auto_inscription_match[cur_idx]);
+			strcpy(auto_inscription_match[cur_idx], auto_inscription_match[cur_idx - 1]);
+			strcpy(auto_inscription_match[cur_idx - 1], tempbuf);
 
-			strcpy(tempbuf, auto_inscription_tag[idx]);
-			strcpy(auto_inscription_tag[idx], auto_inscription_tag[idx - 1]);
-			strcpy(auto_inscription_tag[idx - 1], tempbuf);
+			strcpy(tempbuf, auto_inscription_tag[cur_idx]);
+			strcpy(auto_inscription_tag[cur_idx], auto_inscription_tag[cur_idx - 1]);
+			strcpy(auto_inscription_tag[cur_idx - 1], tempbuf);
 
-			temp = auto_inscription_autodestroy[idx];
-			auto_inscription_autodestroy[idx] = auto_inscription_autodestroy[idx - 1];
-			auto_inscription_autodestroy[idx - 1] = temp;
+			temp = auto_inscription_autodestroy[cur_idx];
+			auto_inscription_autodestroy[cur_idx] = auto_inscription_autodestroy[cur_idx - 1];
+			auto_inscription_autodestroy[cur_idx - 1] = temp;
 
-			temp = auto_inscription_autopickup[idx];
-			auto_inscription_autopickup[idx] = auto_inscription_autopickup[idx - 1];
-			auto_inscription_autopickup[idx - 1] = temp;
+			temp = auto_inscription_autopickup[cur_idx];
+			auto_inscription_autopickup[cur_idx] = auto_inscription_autopickup[cur_idx - 1];
+			auto_inscription_autopickup[cur_idx - 1] = temp;
 
-			temp = auto_inscription_force[idx];
-			auto_inscription_force[idx] = auto_inscription_force[idx - 1];
-			auto_inscription_force[idx - 1] = temp;
+			temp = auto_inscription_force[cur_idx];
+			auto_inscription_force[cur_idx] = auto_inscription_force[cur_idx - 1];
+			auto_inscription_force[cur_idx - 1] = temp;
 
 #ifdef REGEX_SEARCH
-			temp = auto_inscription_invalid[idx];
-			auto_inscription_invalid[idx] = auto_inscription_invalid[idx - 1];
-			auto_inscription_invalid[idx - 1] = temp;
+			temp = auto_inscription_invalid[cur_idx];
+			auto_inscription_invalid[cur_idx] = auto_inscription_invalid[cur_idx - 1];
+			auto_inscription_invalid[cur_idx - 1] = temp;
 #endif
+
+			temp = auto_inscription_subinven[cur_idx]; //ENABLE_SUBINVEN
+			auto_inscription_subinven[cur_idx] = auto_inscription_subinven[cur_idx - 1];
+			auto_inscription_subinven[cur_idx - 1] = temp;
+
+			temp = auto_inscription_disabled[cur_idx];
+			auto_inscription_disabled[cur_idx] = auto_inscription_disabled[cur_idx - 1];
+			auto_inscription_disabled[cur_idx - 1] = temp;
 			break;
 		case 'l':
 			/* Prompt */
@@ -8408,6 +8386,7 @@ void auto_inscriptions(void) {
 			/* Process the given filename */
 			load_auto_inscriptions(tmp);
 			apply_auto_inscriptions(-1, FALSE);
+			break;
 		case 's':
 			/* Prompt */
 			clear_from(21);
@@ -8450,7 +8429,7 @@ void auto_inscriptions(void) {
 			Term_putstr(6 - 2, cur_line + 1, -1, TERM_L_GREEN, "                                                       ");
 			/* Go to the correct location */
 			Term_gotoxy(7 - 2, cur_line + 1);
-			strcpy(buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line]);
+			strcpy(buf, auto_inscription_match[cur_idx]);
 			/* Get a new matching string */
 			if (!askfor_aux(buf, AUTOINS_MATCH_LEN - 1, 0)) continue;
 
@@ -8467,7 +8446,7 @@ void auto_inscriptions(void) {
 			Term_putstr(6 - 2, cur_line + 1, -1, TERM_L_GREEN, "                                                       ");
 			Term_putstr(7 - 2, cur_line + 1, -1, TERM_WHITE, buf_ptr);
 			/* ok */
-			strcpy(auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line], buf_ptr);
+			strcpy(auto_inscription_match[cur_idx], buf_ptr);
 
 #ifdef REGEX_SEARCH
 			/* Actually test regexp for validity right away, so we can avoid spam/annoyance/searching later. */
@@ -8478,35 +8457,28 @@ void auto_inscriptions(void) {
 				regptr++;
 				ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
 				if (ires != 0) {
-					auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = TRUE;
-					c_msg_format("\377oInvalid regular expression in auto-inscription #%d.", cur_page * AUTOINS_PAGESIZE + cur_line + 1);
+					auto_inscription_invalid[cur_idx] = TRUE;
+					c_msg_format("\377oInvalid regular expression in auto-inscription #%d.", cur_idx + 1);
 					/* Re-colour the line to indicate error */
 					Term_putstr(11, cur_line + 1, -1, TERM_L_RED, buf_ptr);
-				} else auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
+				} else auto_inscription_invalid[cur_idx] = FALSE;
 				regfree(&re_src);
 			}
 #endif
 
-#if 0 /* squeeze out every last char we could use for the inscription */
-			/* Clear previous tag string */
-			Term_putstr(62, cur_line + 1, -1, TERM_L_GREEN, "                ");
-			/* Go to the correct location */
-			Term_gotoxy(63, cur_line + 1);
-#else
 			/* Clear previous tag string */
 			Term_putstr(61, cur_line + 1, -1, TERM_L_GREEN, "                  ");
 			/* Go to the correct location */
 			Term_gotoxy(62, cur_line + 1);
-#endif
-			strcpy(buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line]);
+			strcpy(buf, auto_inscription_tag[cur_idx]);
 			/* Get a new tag string */
 			if (!askfor_aux(buf, AUTOINS_TAG_LEN - 1, 0)) {
 				/* in case match was changed, we may also need to reapply */
-				apply_auto_inscriptions(cur_page * AUTOINS_PAGESIZE + cur_line, FALSE);
+				apply_auto_inscriptions(cur_idx, FALSE);
 				continue;
 			}
-			strcpy(auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line], buf);
-			apply_auto_inscriptions(cur_page * AUTOINS_PAGESIZE + cur_line, FALSE);
+			strcpy(auto_inscription_tag[cur_idx], buf);
+			apply_auto_inscriptions(cur_idx, FALSE);
 
 			/* comfort hack - fake advancing ;) */
 #ifndef INTEGRATED_SELECTOR
@@ -8521,13 +8493,13 @@ void auto_inscriptions(void) {
 			}
 			break;
 		case 'd':
-			auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line][0] = 0;
-			auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line][0] = 0;
-			auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
-			auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
-			auto_inscription_force[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
+			auto_inscription_match[cur_idx][0] = 0;
+			auto_inscription_tag[cur_idx][0] = 0;
+			auto_inscription_autopickup[cur_idx] = FALSE;
+			auto_inscription_autodestroy[cur_idx] = FALSE;
+			auto_inscription_force[cur_idx] = FALSE;
 #ifdef REGEX_SEARCH
-			auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
+			auto_inscription_invalid[cur_idx] = FALSE;
 #endif
 #if 0
 			/* also auto-advance by 1 line, for convenience */
@@ -8542,13 +8514,13 @@ void auto_inscriptions(void) {
 			break;
 		case 'c':
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-				auto_inscription_match[i][0] = 0;
-				auto_inscription_tag[i][0] = 0;
-				auto_inscription_autopickup[i] = FALSE;
-				auto_inscription_autodestroy[i] = FALSE;
-				auto_inscription_force[i] = FALSE;
+				auto_inscription_match[cur_idx][0] = 0;
+				auto_inscription_tag[cur_idx][0] = 0;
+				auto_inscription_autopickup[cur_idx] = FALSE;
+				auto_inscription_autodestroy[cur_idx] = FALSE;
+				auto_inscription_force[cur_idx] = FALSE;
 #ifdef REGEX_SEARCH
-				auto_inscription_invalid[i] = FALSE;
+				auto_inscription_invalid[cur_idx] = FALSE;
 #endif
 			}
 			/* comfort hack - jump to first line */
@@ -8560,25 +8532,23 @@ void auto_inscriptions(void) {
 			break;
 		case 'a':
 			/* cycle: nothing / auto-pickup / auto-destroy */
-			i = cur_page * AUTOINS_PAGESIZE + cur_line;
-			if (!auto_inscription_autopickup[i]) {
-				if (!auto_inscription_autodestroy[i])
-					auto_inscription_autopickup[i] = TRUE;
-				else auto_inscription_autopickup[i] = auto_inscription_autodestroy[i] = FALSE; /* <- shouldn't happen (someone messed up his .ins) */
+			if (!auto_inscription_autopickup[cur_idx]) {
+				if (!auto_inscription_autodestroy[cur_idx])
+					auto_inscription_autopickup[cur_idx] = TRUE;
+				else auto_inscription_autopickup[cur_idx] = auto_inscription_autodestroy[cur_idx] = FALSE; /* <- shouldn't happen (someone messed up his .ins) */
 			} else {
-				if (auto_inscription_autodestroy[i])
-					auto_inscription_autopickup[i] = auto_inscription_autodestroy[i] = FALSE;
+				if (auto_inscription_autodestroy[cur_idx])
+					auto_inscription_autopickup[cur_idx] = auto_inscription_autodestroy[cur_idx] = FALSE;
 				else
-					auto_inscription_autodestroy[i] = TRUE;
+					auto_inscription_autodestroy[cur_idx] = TRUE;
 			}
 			redraw = TRUE;
 			break;
 		case 'f':
 			/* toggle force-inscribe (same as '!' prefix) */
-			i = cur_page * AUTOINS_PAGESIZE + cur_line;
-			auto_inscription_force[i] = !auto_inscription_force[i];
+			auto_inscription_force[cur_idx] = !auto_inscription_force[cur_idx];
 			/* if we changed to 'forced', we may need to reapply - note that competing inscriptions aren't well-defined here */
-			if (auto_inscription_force[i]) apply_auto_inscriptions(i, FALSE);
+			if (auto_inscription_force[cur_idx]) apply_auto_inscriptions(i, FALSE);
 			redraw = TRUE;
 			break;
 		default:
@@ -8625,7 +8595,7 @@ void apply_auto_inscriptions(int insc_idx, bool force) {
 
 /* Helper function for option manipulation - check before and after, and refresh stuff if the changes made require it.
    init: TRUE before an option gets changed, FALSE afterwards. */
- void options_immediate(bool init) {
+void options_immediate(bool init) {
 	static bool changed1, changed2, changed3;
 	static bool changed4a, changed4b, changed4c;
 	static bool changed5, changed5a, changed6;

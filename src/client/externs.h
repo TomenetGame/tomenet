@@ -410,6 +410,8 @@ extern bool auto_inscription_force[MAX_AUTO_INSCRIPTIONS];
 #ifdef REGEX_SEARCH
 extern bool auto_inscription_invalid[MAX_AUTO_INSCRIPTIONS];
 #endif
+extern bool auto_inscription_subinven[MAX_AUTO_INSCRIPTIONS];//ENABLE_SUBINVEN
+extern bool auto_inscription_disabled[MAX_AUTO_INSCRIPTIONS];
 
 /* Monster health memory (health_redraw) */
 extern int mon_health_num;
