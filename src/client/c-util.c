@@ -8410,7 +8410,7 @@ void auto_inscriptions(void) {
 
 			/* Process the given filename */
 			load_auto_inscriptions(tmp);
-			apply_auto_inscriptions(-1, FALSE);
+			apply_auto_inscriptions(-1);
 			break;
 		case 's':
 			/* Prompt */
@@ -8499,11 +8499,11 @@ void auto_inscriptions(void) {
 			/* Get a new tag string */
 			if (!askfor_aux(buf, AUTOINS_TAG_LEN - 1, 0)) {
 				/* in case match was changed, we may also need to reapply */
-				apply_auto_inscriptions(cur_idx, FALSE);
+				apply_auto_inscriptions(cur_idx);
 				continue;
 			}
 			strcpy(auto_inscription_tag[cur_idx], buf);
-			apply_auto_inscriptions(cur_idx, FALSE);
+			apply_auto_inscriptions(cur_idx);
 
 			/* comfort hack - fake advancing ;) */
 #ifndef INTEGRATED_SELECTOR
@@ -8577,21 +8577,21 @@ void auto_inscriptions(void) {
 			/* toggle force-inscribe (same as '!' prefix) */
 			auto_inscription_force[cur_idx] = !auto_inscription_force[cur_idx];
 			/* if we changed to 'forced', we may need to reapply - note that competing inscriptions aren't well-defined here */
-			if (auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx, FALSE);
+			if (auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx);
 			redraw = TRUE;
 			break;
 		case 'b':
 			/* toggle bags-only */
 			auto_inscription_subinven[cur_idx] = !auto_inscription_subinven[cur_idx];
 			/* if we changed to 'all' and it was 'forced' too, we may need to reapply - note that competing inscriptions aren't well-defined here */
-			if (!auto_inscription_subinven[cur_idx] && auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx, FALSE);
+			if (!auto_inscription_subinven[cur_idx] && auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx);
 			redraw = TRUE;
 			break;
 		case 't':
 			/* toggle disabled-state */
 			auto_inscription_disabled[cur_idx] = !auto_inscription_disabled[cur_idx];
 			/* if we changed to 're-enable' and it was 'forced' too, we may need to reapply - note that competing inscriptions aren't well-defined here */
-			if (!auto_inscription_disabled[cur_idx] && auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx, FALSE);
+			if (!auto_inscription_disabled[cur_idx] && auto_inscription_force[cur_idx]) apply_auto_inscriptions(cur_idx);
 			redraw = TRUE;
 			break;
 		default:
@@ -8619,18 +8619,20 @@ void auto_inscriptions(void) {
 }
 
 /* Apply all (insc_idx = -1) or one specific (insc_idx) auto-inscription to the complete inventory */
-void apply_auto_inscriptions(int insc_idx, bool force) {
+void apply_auto_inscriptions(int insc_idx) {
 	int i;
 #ifdef ENABLE_SUBINVEN
 	int s;
 #endif
 
+	if (c_cfg.auto_inscr_off) return;
+
 	for (i = 0; i < INVEN_TOTAL; i++) {
-		(void)apply_auto_inscriptions_aux(i, insc_idx, force);
+		(void)apply_auto_inscriptions_aux(i, insc_idx, FALSE);
 #ifdef ENABLE_SUBINVEN
 		if (inventory[i].tval == TV_SUBINVEN)
 			for (s = 0; s < inventory[i].bpval; s++)
-				(void)apply_auto_inscriptions_aux((i + 1) * 100 + s, insc_idx, force);
+				(void)apply_auto_inscriptions_aux((i + 1) * 100 + s, insc_idx, FALSE);
 #endif
 	}
 }
@@ -8642,7 +8644,7 @@ void options_immediate(bool init) {
 	static bool changed1, changed2, changed3;
 	static bool changed4a, changed4b, changed4c;
 	static bool changed5, changed5a, changed6;
-	static bool changed7;
+	static bool changed7, changed8;
 
 	if (init) {
 		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
@@ -8651,6 +8653,7 @@ void options_immediate(bool init) {
 		changed5a = c_cfg.equip_set_colour;
 		changed6 = c_cfg.colourize_bignum;
 		changed7 = c_cfg.load_form_macros;
+		changed8 = c_cfg.auto_inscr_off;
 		return;
 	}
 
@@ -8681,6 +8684,7 @@ void options_immediate(bool init) {
 		else sprintf(tmp, "%s.prf", cname);
 		(void)process_pref_file(tmp);
 	}
+	if (changed8 != c_cfg.auto_inscr_off && !c_cfg.auto_inscr_off) apply_auto_inscriptions(-1);
 }
 
 /*

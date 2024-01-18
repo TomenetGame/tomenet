@@ -2065,7 +2065,7 @@ int Receive_apply_auto_insc(void) {
 	char ch, slot;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &slot)) <= 0) return(n);
-	apply_auto_inscriptions_aux((int)slot, -1, FALSE);
+	(void)apply_auto_inscriptions_aux((int)slot, -1, FALSE);
 	return(1);
 }
 
@@ -5314,7 +5314,7 @@ int Receive_inventory_revision(void) {
 
 #if 0 /* moved to Receive_inven...() - cleaner and works much better (ID and *ID*) */
 	/* AUTOINSCRIBE - moved to Receive_inventory_revision() */
-	apply_auto_inscriptions(-1, FALSE);
+	apply_auto_inscriptions(-1);
 #endif
 
 	return(1);
@@ -5489,7 +5489,11 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	int iinsc, iilen;
 #ifdef ENABLE_SUBINVEN
 	int sslot = -1;
+#endif
 
+	if (c_cfg.auto_inscr_off) return(FALSE);
+
+#ifdef ENABLE_SUBINVEN
 	if (slot >= 100) {
 		sslot = slot / 100 - 1;
 		slot %= 100;
