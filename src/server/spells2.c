@@ -7835,7 +7835,7 @@ bool wall_to_mud(int Ind, int dir) {
 bool destroy_trap_door(int Ind, int dir) {
 	if (dir == 5 && !target_okay(Ind)) {
 		player_type *p_ptr = Players[Ind];
-		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 
 		return(project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP_DOOR, flg, ""));
 	} else {
@@ -7848,7 +7848,7 @@ bool destroy_trap_door(int Ind, int dir) {
 bool disarm_trap_door(int Ind, int dir) {
 	if (dir == 5 && !target_okay(Ind)) {
 		player_type *p_ptr = Players[Ind];
-		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 
 		return(project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP, flg, ""));
 	} else {
