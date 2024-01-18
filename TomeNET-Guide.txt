@@ -21601,6 +21601,10 @@ All Unlife spells are Wisdom-based.)
                     into and pass solid walls. However, the effect will cease
                     immediately as soon as you step from walls back into open
                     space again.
+                    Wraithstep will trigger whenever you try to enter a grid
+                    that is impassable to you, but would be passable in wraith
+                    form. So it doesn't trigger on fixed terrain types but
+                    depends on your current abilities to pass specific terrain.
                     Required skill level for first spell level: 46.
                     Shared spell (see above): O.Unlife, O.Shadow.
                     This spell cannot be found in the Shadow tome.

@@ -272,7 +272,7 @@ OWRAITHSTEP = add_spell {
 	end,
 	["desc"] = 	{
 			"Weakens the barrier to the immaterial realm for a few turns.",
-			"If you enter solid walls during this time you will remain immaterial",
-			"infinitely, until you step out of the walls again into open space.",
+			"If you enter terrain that is impassable to you during this time you will",
+			"remain immaterial infinitely, until you step out again onto open floor.",
 	}
 }
