@@ -12,7 +12,9 @@
 #ifdef ENABLE_SUBINVEN
  #define USE_SUBINVEN	0x1000	/* Allow subinventory items */
 #endif
-
+#ifdef ENABLE_SUBINVEN
+ #define EXCLUDE_SUBINVEN	0x4000	/* For selecting a subinventory - forbid selecting items INSIDE a subinventory, as there cannot be subinventories within subinventories. */
+#endif
 
 #define BASE_PALETTE_SIZE 16	/* Basic palette size, of non-animated colours (TERM_MULTI being the first animated one) */
 #ifdef EXTENDED_COLOURS_PALANIM

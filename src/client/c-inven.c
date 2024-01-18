@@ -17,6 +17,12 @@
    Note: SMART_SWAP needs the 'smart handling' code in cmd_swap() to work properly. */
 #define SMART_SWAP
 
+/* In item prompts, allow switching from normal inven/equip into a subinventory? */
+#ifdef ENABLE_SUBINVEN
+ #define ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
+#endif
+
+
 
 bool verified_item = FALSE;
 bool abort_prompt = FALSE;
@@ -1028,7 +1034,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 #ifdef ENABLE_SUBINVEN
 	/* Hack: Always enable subinven when we also have inven enabled, for now.
 	   The idea is future client compatibility in case more custom bags are added, so items are already compatible. */
-	if (inven) mode |= USE_SUBINVEN;
+	if (inven && !(mode & EXCLUDE_SUBINVEN)) mode |= USE_SUBINVEN;
 
 	if (mode & USE_SUBINVEN) {
 		subinven = TRUE;
@@ -1346,11 +1352,18 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			else strcat(out_val, " @ to name,");
 		}
 
-		/* Limit? */
+		/* Limit? (for SFLG1_LIMIT_SPELLS -- default: disabled) */
 		if (limit) {
 			if (spammy) strcat(out_val, " # limit,");
 			else strcat(out_val, " # to limit,");
 		}
+
+#ifdef ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
+		if (subinven) {
+			if (spammy) strcat(out_val, " \% bag,");
+			else strcat(out_val, " \% for bag,");
+		}
+#endif
 
 		if (spammy) strcat(out_val, " - switch, + new,");
 		/* Special request toggle? */
@@ -1383,6 +1396,66 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			xhtml_screenshot("screenshot????", FALSE);
 			break;
 
+#ifdef ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
+		case '%':
+			if (subinven) {
+				int i;
+				int old_tval = item_tester_tval;
+				cptr old_obj_what = get_item_hook_find_obj_what;
+				bool (*old_extra_hook)(int *cp, int mode) = get_item_extra_hook;
+				int old_max_weight = item_tester_max_weight;
+				bool (*old_tester_hook)(object_type *o_ptr) = item_tester_hook;
+
+				item_tester_tval = TV_SUBINVEN;
+				get_item_hook_find_obj_what = "Bag name? ";
+				get_item_extra_hook = get_item_hook_find_obj;
+				item_tester_max_weight = 0;
+				item_tester_hook = 0;
+
+				/* Fix the screen if necessary */
+				if (command_see) Term_load();
+
+				if (!c_get_item(&i, "Use which bag? ", (USE_INVEN | EXCLUDE_SUBINVEN | NO_FAIL_MSG))) {
+					if (i == -2) c_msg_print("You have no bags.");
+					if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
+
+					/* Return to our original inventory-browsing prompt */
+					item_tester_tval = old_tval;
+					get_item_hook_find_obj_what = old_obj_what;
+					get_item_extra_hook = old_extra_hook;
+					item_tester_max_weight = old_max_weight;
+					item_tester_hook = old_tester_hook;
+
+					break;
+				} else if (c_cfg.item_error_beep) bell();
+				else bell_silent();
+
+				/* Select this bag (subinventory) */
+				using_subinven = i;
+
+				/* Continue looking for our original item type(s) in this newly selected subinventory */
+				item_tester_tval = old_tval;
+				get_item_hook_find_obj_what = old_obj_what;
+				get_item_extra_hook = old_extra_hook;
+				item_tester_max_weight = old_max_weight;
+				item_tester_hook = old_tester_hook;
+
+				/* Got valid item selected from subinventory */
+				if (c_get_item(&i, pmt, (mode | EXCLUDE_SUBINVEN) & ~NO_FAIL_MSG)) {
+					*cp = i;
+					item = TRUE;
+					done = TRUE;
+				}
+				/* Leave subinventory again and return to our main inventory */
+				using_subinven = -1;
+
+				/* Fix the screen if necessary */
+				//if (command_see) Term_save();
+				break;
+			} else if (c_cfg.item_error_beep) bell();
+			else bell_silent();
+			break;
+#endif
 		case '*':
 		case '?':
 		case ' ':

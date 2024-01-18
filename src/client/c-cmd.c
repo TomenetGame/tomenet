@@ -7871,7 +7871,7 @@ void cmd_browse(int item) {
 
 		item_tester_hook = item_tester_browsable;
 
-		if (!c_get_item(&item, "Browse which book/container? ", (USE_INVEN |
+		if (!c_get_item(&item, "Browse which book/container? ", (USE_INVEN | EXCLUDE_SUBINVEN |
 		    USE_EQUIP | /* for WIELD_BOOKS */
 		    USE_EXTRA | NO_FAIL_MSG))) {
 			if (item == -2) c_msg_print("You have no books that you can read, nor containers to peruse.");
