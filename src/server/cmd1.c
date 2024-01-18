@@ -8480,15 +8480,17 @@ static bool run_test(int Ind) {
 	    (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) ||
 	    (r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD) ));
 
-	cave_type *c_ptr;
+	cave_type *c_ptr, **zcave;
 	byte *w_ptr;
-	cave_type **zcave;
 	struct c_special *cs_ptr;
+	bool unprotected;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* XXX -- Ghosts never stop running */
 	if (p_ptr->ghost || p_ptr->tim_wraith) return(FALSE);
+
+	unprotected = !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED);
 
 	/* No options yet */
 	option = 0;
@@ -8516,7 +8518,10 @@ static bool run_test(int Ind) {
 		w_ptr = &p_ptr->cave_flag[row][col];
 
 		/* unlit grids abort running */
-		if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW))) {
+		if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW))
+		    /* Except inside inns, which are assumed to be perma-lit! Otherwise the dark house walls during night would
+		       prevent the player from running along the inner walls of the inn if he didn't have a light source! - C. Blue */
+		    && unprotected) {
 			if (p_ptr->warning_run_lite != 10) {
 				p_ptr->warning_run_lite++;
 				if (p_ptr->warning_run_lite == 9) {
@@ -8538,7 +8543,7 @@ static bool run_test(int Ind) {
 			if (p_ptr->mon_vis[c_ptr->m_idx] &&
 			   (!(m_list[c_ptr->m_idx].special) &&
 			   r_info[m_list[c_ptr->m_idx].r_idx].level != 0))
-					return(TRUE);
+				return(TRUE);
 
 		}
 
