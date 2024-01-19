@@ -13432,7 +13432,7 @@ void inverse_cursed(object_type *o_ptr) {
 					if ((iend = strstr(tmp, "@^"))) strcat(o_name, iend + 2);
 				}
 				/* Catch the potential +1 string overflow and fix it */
-				if (o_name[ONAME_LEN - 1]) o_name[ONAME_LEN - 1] = 0;
+				o_name[ONAME_LEN - 1] = 0;
 
 				/* -- Apply new power inscription if there was one -- */
 				(void)check_power_inscribe(0, o_ptr, NULL, o_name);
@@ -13610,7 +13610,7 @@ void reverse_cursed(object_type *o_ptr) {
 				if ((iend = strstr(tmp, "@^"))) strcat(o_name, iend + 2);
 			}
 			/* Catch the potential +1 string overflow and fix it */
-			if (o_name[ONAME_LEN - 1]) o_name[ONAME_LEN - 1] = 0;
+			o_name[ONAME_LEN - 1] = 0;
 
 			/* -- Apply new power inscription if there was one -- */
 			(void)check_power_inscribe(0, o_ptr, NULL, o_name);
