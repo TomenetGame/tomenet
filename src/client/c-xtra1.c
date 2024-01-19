@@ -1740,10 +1740,10 @@ static void display_inven(void) {
  * Choice window "shadow" of the "show_subinven()" function.
  */
 static void display_subinven(void) {
-	int n, islot;
+	int n, islot, col_n;
 
 	char o_name[ONAME_LEN];
-	char tmp_val[80];
+	char tmp_val[80], *c;
 
 	int i, k = 0, last_k = 0, z;
 	long int wgt;
@@ -1777,7 +1777,7 @@ static void display_subinven(void) {
 		/* Add slot index label */
 		sprintf(o_name, "[%c]", index_to_label(islot));
 		Term_putstr(0, last_k, -1, i, o_name);
-		/* Erase the rest of the line */
+		/* Erase the rest of the line (we haven't written anything to it yet, so don't need to check o_name length or anything) */
 		Term_erase(3, last_k, 255);
 
 		/* Add bag object name */
@@ -1789,7 +1789,10 @@ static void display_subinven(void) {
 		if (n > MAX_CHARS - 5) n = MAX_CHARS - 5;
 		Term_putstr(4, last_k, n, i_ptr->attr, o_name);
 		/* Erase the rest of the line */
-		Term_erase(4 + n, last_k, 255);
+		col_n = 0;
+		c = o_name;
+		while ((c = strchr(c, '\377'))) { c++; col_n += 2; } /* Take colour codes into account! */
+		Term_erase(4 + n - col_n, last_k, 255);
 		/* account for this extra line */
 		last_k++;
 		bagheader_x = 4 + n;
@@ -1850,7 +1853,10 @@ static void display_subinven(void) {
 			Term_putstr(5, last_k + i, n, o_ptr->attr, o_name);
 
 			/* Erase the rest of the line */
-			Term_erase(5 + n, last_k + i, 255);
+			col_n = 0;
+			c = o_name;
+			while ((c = strchr(c, '\377'))) { c++; col_n += 2; } /* Take colour codes into account! */
+			Term_erase(5 + n - col_n, last_k + i, 255);
 
 			/* Display the weight if needed */
 			if (c_cfg.show_weights && o_ptr->weight) {
@@ -1895,10 +1901,10 @@ static void display_subinven(void) {
 #define EQUIP_TEXT_COLOUR2 TERM_YELLOW
 static void display_equip(void) {
 	byte	a;
-	int	i, n;
+	int	i, n, col_n;
 	long int	wgt;
 	object_type *o_ptr;
-	char	o_name[ONAME_LEN];
+	char	o_name[ONAME_LEN], *c;
 	char	tmp_val[80];
 
 	/* Find the "final" slot */
@@ -1942,7 +1948,10 @@ static void display_equip(void) {
 		Term_putstr(3, i - INVEN_WIELD, n, o_ptr->attr, o_name);
 
 		/* Erase the rest of the line */
-		Term_erase(3 + n, i - INVEN_WIELD, 255);
+		col_n = 0;
+		c = o_name;
+		while ((c = strchr(c, '\377'))) { c++; col_n += 2; } /* Take colour codes into account! */
+		Term_erase(3 + n - col_n, i - INVEN_WIELD, 255);
 
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight) {
