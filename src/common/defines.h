@@ -199,10 +199,10 @@
 #define MAX_CHARS		80	/* typically 1 line */
 #define MAX_CHARS_WIDE		160	/* typically a line with possibly colour codes */
 
-/* max length of item names including inscription */
+/* max length + 1 of item names including inscription */
 #define ONAME_LEN		160
 
-/* max length of monster names (with pronominum etc) */
+/* max length + 1 of monster names (with pronominum etc) */
 #define MNAME_LEN		80
 
 /* max length of party/guild names + 1 */
@@ -219,7 +219,7 @@
 /* Minimum length of account and character names */
 #define ACC_CHAR_MIN_LEN	2
 
-/* Lengths of fields used in tomenet.acc file */
+/* Lengths + 1 of fields used in tomenet.acc file (account name, normalised account name and password) */
 #define ACCFILE_NAME_LEN	30
 #define ACCFILE_PASSWD_LEN	20
 
