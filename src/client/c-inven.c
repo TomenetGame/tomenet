@@ -1000,7 +1000,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool newest = FALSE;
 	bool equip_first = FALSE;
 #ifdef ENABLE_SUBINVEN
-	bool subinven = FALSE, found_subinven = FALSE;
+	bool found_subinven = FALSE;
+	bool subinven = FALSE; /* are items inside subinventory/subinventories (possible) subject to choose from? */
+	bool use_subinven = FALSE; /* can we select subinven items to enter? */
 	int sub_i = (using_subinven + 1) * 100;
 #endif
 	bool safe_input = FALSE;
@@ -1038,6 +1040,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	if (mode & USE_SUBINVEN) {
 		subinven = TRUE;
+		use_subinven = TRUE;
 
 		/* Hack: Since we cannot list normal inven + subinven at the same time, we NEED 'extra' access via item name.
 		   If USE_EXTRA wasn't set though we must be careful to set get_item_extra_hook so it's not a null pointer! */
@@ -1057,6 +1060,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	if (using_subinven != -1) {
 		inven = equip = FALSE; /* If we are inside a specific subinventory already, disallow normal inventory */
 		subinven = TRUE; /* ..and definitely allow subinven, of course. */
+		use_subinven = FALSE; /* There are no choosable bags inside actual bags! */
 	}
 #endif
 
@@ -1359,7 +1363,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		}
 
 #ifdef ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
-		if (subinven) {
+		if (use_subinven) {
 			if (spammy) strcat(out_val, " ! bag,");
 			else strcat(out_val, " ! for bag,");
 		}
@@ -1398,7 +1402,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 #ifdef ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
 		case '!':
-			if (subinven) {
+			if (use_subinven) {
 				int i;
 				int old_tval = item_tester_tval;
 				cptr old_obj_what = get_item_hook_find_obj_what;
