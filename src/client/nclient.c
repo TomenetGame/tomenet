@@ -2141,6 +2141,7 @@ int Receive_inven(void) {
 	} else inventory_inscription[pos - 'a'] = 0;
 
 	strncpy(inventory_name[pos - 'a'], name, ONAME_LEN - 1);
+	inventory_name[pos - 'a'][ONAME_LEN - 1] = 0;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
@@ -2214,6 +2215,7 @@ int Receive_subinven(void) {
 	} else subinventory_inscription[ipos][pos - 'a'] = 0;
 
 	strncpy(subinventory_name[ipos][pos - 'a'], name, ONAME_LEN - 1);
+	subinventory_name[ipos][pos - 'a'][ONAME_LEN - 1] = 0;
 
 	//problem: update subinventory live. eg after activation-consumption, but also after unstow w/ latency?
 	//maybe this, bad style?
@@ -2325,6 +2327,7 @@ int Receive_inven_wide(void) {
 	} else inventory_inscription[pos - 'a'] = 0;
 
 	strncpy(inventory_name[pos - 'a'], name, ONAME_LEN - 1);
+	inventory_name[pos - 'a'][ONAME_LEN - 1] = 0;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
@@ -2422,6 +2425,7 @@ int Receive_equip(void) {
 		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);
 	else
 		strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, ONAME_LEN - 1);
+	inventory_name[pos - 'a' + INVEN_WIELD][ONAME_LEN - 1] = 0;
 
 	/* new hack for '(unavailable)' equipment slots: handle INVEN_ARM slot a bit cleaner: */
 	if (pos == 'a') {
@@ -2497,6 +2501,7 @@ int Receive_equip_wide(void) {
 		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);
 	else
 		strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, ONAME_LEN - 1);
+	inventory_name[pos - 'a' + INVEN_WIELD][ONAME_LEN - 1] = 0;
 
 	/* new hack for '(unavailable)' equipment slots: handle INVEN_ARM slot a bit cleaner: */
 	if (pos == 'a') {
