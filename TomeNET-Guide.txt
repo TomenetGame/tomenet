@@ -2372,6 +2372,22 @@ Some examples for inscriptions to use with macros:
 
 etc.. you get the idea. :)
 
+
+There is also a special variant of the tag-macro inscription, when you have
+only one type of item you want to use for a specific action, for example
+refilling your torch from a stack of spare torches in your inventory:
+  @<commandkey>%
+
+When you press the <commandkey>, This macro will not prompt for an item but
+immediately use the inscribed item for the action.
+Example for refilling your equipped torch with torches in your inventory,
+inscribe the torches in your inventory:
+  @F%
+
+Now if you press F (that is Shift+F) to refill torch, you will not get prompted
+but one of the inscribed torches is automatically used for the macro.
+
+
 You can also inscribe items just to remember their abilities. For example
 if you find an armour that is an artifact, and you found out it resists
 fire and acid, you might inscribe it {ResFire,ResAcid} so that you will
