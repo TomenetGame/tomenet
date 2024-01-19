@@ -392,7 +392,7 @@ STOPDISPERSION = add_spell {
 	["fail"] = 	101,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		set_dispersion(Ind, 0);
+		set_dispersion(Ind, 0, 0);
 	end,
 	["info"] = 	function()
 		return ""
