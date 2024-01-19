@@ -4195,20 +4195,20 @@ void client_init(char *argv1, bool skip) {
  #endif
 
 		/* reset inventory */
-		for (bytes = 0; bytes < INVEN_TOTAL; bytes++) {
+		for (bytes = 0; bytes < INVEN_TOTAL; bytes++) { //abuse 'bytes' as counter
 			WIPE(&inventory[bytes], object_type);
 			inventory_name[bytes][0] = 0;
 			inventory_inscription[bytes] = 0;
 			inventory_inscription_len[bytes] = 0;
  #ifdef ENABLE_SUBINVEN
 			if (bytes > INVEN_PACK) continue;
-			for (retries = 0; retries <= SUBINVEN_PACK; retries++) {
+			for (retries = 0; retries <= SUBINVEN_PACK; retries++) { //abuse 'retries' as counter
 				subinventory[bytes][retries].tval = 0;
 				subinventory_name[bytes][retries][0] = 0;
 			}
  #endif
 		}
-		for (bytes = 0; bytes < INVEN_TOTAL - INVEN_WIELD; bytes++) equip_set[bytes] = 0;
+		for (bytes = 0; bytes < INVEN_TOTAL - INVEN_WIELD; bytes++) equip_set[bytes] = 0; //abuse 'bytes' as counter
 		item_newest = -1;
 
 		/* retuuurrrnnnn... */
