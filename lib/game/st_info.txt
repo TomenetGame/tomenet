@@ -950,7 +950,7 @@ A:2:1:3:4:0:0
 O:11:15:26:40:11:15
 F:MEDIUM_LEVEL | VHARD_STEAL | PRICE1
 G:+:s
-W:24
+W:48
 
 N:60:Secret Black Market
 A:2:1:3:0:0:0
