@@ -4000,7 +4000,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 //	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
 #if 0 /* don't colour the # of bpr */
 	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per round of:\n", p_ptr->num_blow, (p_ptr->num_blow > 1) ? "s" : "");
-#else /* colour the # of bpr -- compare with prt_bpr() */
+#else /* colour the # of bpr -- compare with prt_bpr_wraith() */
 	{
 		byte attr = TERM_L_GREEN;//TERM_L_WHITE;
 

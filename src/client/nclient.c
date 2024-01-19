@@ -246,7 +246,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_CONFUSED]	= Receive_confused;
 	receive_tbl[PKT_POISON]		= Receive_poison;
 	receive_tbl[PKT_STUDY]		= Receive_study;
-	receive_tbl[PKT_BPR]		= Receive_bpr;
+	receive_tbl[PKT_BPR]		= Receive_bpr_wraith;
 	receive_tbl[PKT_FOOD]		= Receive_food;
 	receive_tbl[PKT_FEAR]		= Receive_fear;
 	receive_tbl[PKT_SPEED]		= Receive_speed;
@@ -3323,15 +3323,19 @@ int Receive_study(void) {
 	return(1);
 }
 
-int Receive_bpr(void) {
+int Receive_bpr_wraith(void) {
 	int n;
-	char ch;
+	char ch, bpr_str[20];
 	byte bpr, attr;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &bpr, &attr)) <= 0) return(n);
+	if (is_older_than(&server_version, 4, 9, 1, 0, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &bpr, &attr)) <= 0) return(n);
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%s", &ch, &bpr, &attr, bpr_str)) <= 0) return(n);
+	}
 
 	if (screen_icky) Term_switch(0);
-	prt_bpr(bpr, attr);
+	prt_bpr_wraith(bpr, attr, bpr_str);
 	if (screen_icky) Term_switch(0);
 	return(1);
 }

@@ -996,6 +996,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->tim_wraith);
 	wr_byte(p_ptr->wraith_in_wall);
 	wr_byte(p_ptr->dispersion);
+	wr_byte(p_ptr->dispersion_tim);
 	wr_byte(p_ptr->searching);
 	wr_byte(p_ptr->maximize);
 	wr_byte(p_ptr->preserve);

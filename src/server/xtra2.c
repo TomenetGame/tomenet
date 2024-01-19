@@ -2344,7 +2344,7 @@ bool set_blessed(int Ind, int v, bool own) {
 	return(TRUE);
 }
 
-bool set_dispersion(int Ind, byte v) {
+bool set_dispersion(int Ind, byte v, byte d) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -2371,6 +2371,7 @@ bool set_dispersion(int Ind, byte v) {
 
 	/* Use the value */
 	p_ptr->dispersion = v;
+	p_ptr->dispersion_tim = d;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

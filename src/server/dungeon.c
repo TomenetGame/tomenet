@@ -5355,6 +5355,11 @@ static bool process_player_end_aux(int Ind) {
 			p_ptr->redraw |= (PR_STAMINA);
 		}
 	}
+	/* Dispersion spell if it has a duration (new version) */
+	if (p_ptr->dispersion_tim) {
+		p_ptr->dispersion_tim--;
+		if (!p_ptr->dispersion_tim) set_dispersion(Ind, 0, 0);
+	}
 
 	/* Disturb if we are done resting */
 	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->cmp == p_ptr->mmp) && (p_ptr->cst == p_ptr->mst)

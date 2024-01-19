@@ -7948,7 +7948,7 @@ bool unmagic(int Ind) {
 		//set_stopped(Ind, 0) + -- no, it's a rune of protection that locks us down, not an internal effect
 		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) +
 		set_blessed(Ind, 0, FALSE) +
-		set_dispersion(Ind, 0) +
+		set_dispersion(Ind, 0, 0) +
 		set_hero(Ind, 0) +
 		set_shero(Ind, 0) +
 		set_fury(Ind, 0) +
@@ -9476,5 +9476,5 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 void use_stamina(player_type *p_ptr, byte st) {
 	p_ptr->cst -= st;
 	p_ptr->redraw |= PR_STAMINA;
-	if (!p_ptr->cst && p_ptr->dispersion) set_dispersion(p_ptr->Ind, 0);
+	if (!p_ptr->cst && p_ptr->dispersion) set_dispersion(p_ptr->Ind, 0, 0);
 }

@@ -489,6 +489,7 @@ struct player_type
 	s16b blessed_power;
 	bool blessed_own;
 	byte dispersion;
+	byte dispersion_tim;
 	s16b tim_invis;			/* Timed -- See Invisible */
 	s16b tim_infra;			/* Timed -- Infra Vision */
 	s16b tim_wraith;		/* Timed -- Wraithform */

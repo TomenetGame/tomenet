@@ -2120,6 +2120,7 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->tim_wraith);
 	rd_byte((byte *)&p_ptr->wraith_in_wall);
 	if (!older_than(4, 9, 6)) rd_byte(&p_ptr->dispersion);
+	if (!older_than(4, 9, 13)) rd_byte(&p_ptr->dispersion_tim);
 	rd_byte(&p_ptr->searching);
 	rd_byte(&p_ptr->maximize);
 	rd_byte(&p_ptr->preserve);

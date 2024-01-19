@@ -7084,7 +7084,7 @@ int Send_study(int Ind, bool study) {
 
 /* Sends either BpR or Wraithform status.
    To send Wraithform, bpr must be 255. */
-int Send_bpr(int Ind, byte bpr, byte attr) {
+int Send_bpr_wraith(int Ind, byte bpr, byte attr, cptr bpr_str) {
 	int Ind2;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL;
@@ -7092,7 +7092,9 @@ int Send_bpr(int Ind, byte bpr, byte attr) {
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
-		if (bpr != 255 || is_atleast(&Players[Ind2]->version, 4, 6, 1, 2, 0, 1))
+		if (is_atleast(&Players[Ind2]->version, 4, 9, 1, 0, 0, 1))
+			Packet_printf(&connp2->c, "%c%c%c%s", PKT_BPR, bpr, attr, bpr_str);
+		else if (bpr != 255 || is_atleast(&Players[Ind2]->version, 4, 6, 1, 2, 0, 1))
 			Packet_printf(&connp2->c, "%c%c%c", PKT_BPR, bpr, attr);
 	}
 
@@ -7103,6 +7105,8 @@ int Send_bpr(int Ind, byte bpr, byte attr) {
 		return(0);
 	}
 
+	if (is_atleast(&Players[Ind]->version, 4, 9, 1, 0, 0, 1))
+		return(Packet_printf(&connp->c, "%c%c%c%s", PKT_BPR, bpr, attr, bpr_str));
 	if (bpr == 255 && is_older_than(&Players[Ind]->version, 4, 6, 1, 2, 0, 1)) return(0);
 	return Packet_printf(&connp->c, "%c%c%c", PKT_BPR, bpr, attr);
 }

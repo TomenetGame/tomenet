@@ -485,16 +485,16 @@ static void prt_study(int Ind) {
 }
 
 
-static void prt_bpr(int Ind) {
+static void prt_bpr_wraith(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	byte attr = p_ptr->num_blow ? TERM_L_GREEN : TERM_RED;
 
 	if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)) {
-		Send_bpr(Ind, 255, TERM_UMBER);//TERM_ACID/TERM_L_DARK
+		Send_bpr_wraith(Ind, 255, TERM_UMBER, "WStep ");//TERM_ACID/TERM_L_DARK
 		return;
 	}
 	if (p_ptr->tim_wraith) {
-		Send_bpr(Ind, 255, TERM_WHITE);
+		Send_bpr_wraith(Ind, 255, TERM_WHITE, "");
 		return;
 	}
 
@@ -532,7 +532,7 @@ static void prt_bpr(int Ind) {
 	/* Indicate temporary +EA buffs, but only if we can attack at all */
 	if (p_ptr->extra_blows && p_ptr->num_blow) attr = TERM_L_BLUE;
 
-	Send_bpr(Ind, p_ptr->num_blow, attr);
+	Send_bpr_wraith(Ind, p_ptr->num_blow, attr, "");
 }
 
 
@@ -1029,7 +1029,7 @@ static void prt_frame_extra(int Ind) {
 		prt_study(Ind);
 	else
 		/* Blows/Round */
-		prt_bpr(Ind);
+		prt_bpr_wraith(Ind);
 }
 
 
@@ -7664,7 +7664,7 @@ void redraw_stuff(int Ind) {
 	} else {
 		if (p_ptr->redraw & PR_BPR_WRAITH) {
 			p_ptr->redraw &= ~(PR_BPR_WRAITH);
-			prt_bpr(Ind);
+			prt_bpr_wraith(Ind);
 		}
 	}
 }

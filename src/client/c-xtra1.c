@@ -1120,14 +1120,15 @@ void prt_study(bool study) {
 }
 
 /* Prints blows/round in main window - important and changable stat! - C. Blue */
-void prt_bpr(byte bpr, byte attr) {
+void prt_bpr_wraith(byte bpr, byte attr, cptr bpr_str) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	/* hack: display active wraithform indicator instead */
-	if (bpr == 255) c_put_str(attr, "Wraith", ROW_BPR, COL_BPR);
+	if (bpr_str[0]) c_put_str(attr, bpr_str, ROW_BPR, COL_BPR);
+	else if (bpr == 255) c_put_str(attr, "Wraith", ROW_BPR, COL_BPR);
 	else c_put_str(attr, format("%2d BpR", bpr), ROW_BPR, COL_BPR);
 
 	/* restore cursor position */
