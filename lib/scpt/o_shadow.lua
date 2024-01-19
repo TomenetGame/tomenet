@@ -370,10 +370,10 @@ DISPERSION = add_spell {
 	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		set_dispersion(Ind, 50 - get_level(Ind, DISPERSION, 72), 25 + get_level(Ind, DISPERSION, 30));
+		set_dispersion(Ind, 50 - get_level(Ind, DISPERSION, 72), 35 + get_level(Ind, DISPERSION, 30));
 	end,
 	["info"] = 	function()
-		return "dur "..(25 + get_level(Ind, DISPERSION, 30))..", 1 ST cost: "..(50 - get_level(Ind, DISPERSION, 72)).."%"
+		return "dur "..(35 + get_level(Ind, DISPERSION, 30))..", 1 ST cost: "..(50 - get_level(Ind, DISPERSION, 72)).."%"
 	end,
 	["desc"] = 	{
 		"Evade melee and bolt attacks by dispersing into shadow form",
