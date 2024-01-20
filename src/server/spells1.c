@@ -2898,7 +2898,10 @@ static bool can_rust(object_type *o_ptr) {
 }
 
 #ifdef ENABLE_DEMOLITIONIST
-/* Specialties just for grinding tool application */
+/* Specialties just for grinding tool application.
+   Note that this function (unlike contains_significant_wood()) does NOT check if an item consists of some amount of metal,
+   but specifically checks for a few demolitionist-related types of metal interesting to us - mainly those that can rust!
+   So it will actually return FALSE for Mithril etc! */
 bool contains_significant_reactive_metal(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_BOOMERANG:
@@ -2908,7 +2911,8 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 			return(FALSE);
 		}
 		return(TRUE);
-	case TV_ROD: /* Note: Omit "-plated" varieties */
+	case TV_ROD: /* They are all made of metal, but only some metals are interesting to us: (and we assume unnamed metals aren't "interesting" either): */
+		/* Note: We omit "-plated" varieties, assuming the plating is too miniscule ^^ */
 		if (streq(rod_adj[o_ptr->sval], "Aluminium") ||
 		    streq(rod_adj[o_ptr->sval], "Cast Iron") ||
 		    streq(rod_adj[o_ptr->sval], "Iron") ||
@@ -2916,7 +2920,8 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 		    streq(rod_adj[o_ptr->sval], "Zinc"))
 			return(TRUE);
 		return(FALSE);
-	case TV_WAND: /* Note: Omit "-plated" varieties */
+	case TV_WAND:/* They are all made of metal, but only some metals are interesting to us (and we assume unnamed metals aren't "interesting" either): */
+		/* Note: We omit "-plated" varieties, assuming the plating is too miniscule ^^ */
 		if (streq(wand_adj[o_ptr->sval], "Aluminium") ||
 		    streq(wand_adj[o_ptr->sval], "Cast Iron") ||
 		    streq(wand_adj[o_ptr->sval], "Iron") ||
