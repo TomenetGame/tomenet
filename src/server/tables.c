@@ -1893,8 +1893,8 @@ player_race race_info[MAX_RACE] = {
 		-4, 0, 20, -6, 5, 4, 5, -20,
 		14, 280,//320
 		255, 70,
-		72, 6, 100, 25,
-		66, 4, 100, 20,
+		180,  6, 255, 25, /* copy-paste of Draconian atm. Note that these values are byte, so cannot > 255 anyway. - C. Blue */
+		150,  4, 230, 20,
 		0,
 		//No archer, rogue
 		CF_ALL & ~CFR & ~CFA,
