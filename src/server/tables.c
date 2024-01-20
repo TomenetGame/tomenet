@@ -1821,8 +1821,8 @@ player_race race_info[MAX_RACE] = {
 		0,  0,  0,  0,  0,  10,  0,  0,
 		8,  80, /* 8, 35 */ /* 80% for the new RPG_SERVER originally */
 		14,  6,
-		72,  6, 180, 25,
-		66,  4, 150, 20,
+		57,  5, 130,  8,
+		53,  4, 115,  6,
 		0,
 		CF_ALL,
 		50,
