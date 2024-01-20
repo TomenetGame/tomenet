@@ -6529,6 +6529,7 @@ void calc_boni(int Ind) {
 	}
 
 #if 0 /* doesn't work well because it's mostly a continuous increase from hardly-noticing to massive-drowning */
+//TODO: Use new rework, see drowning routine in dungeon.c!
 	/* Swimming-indicator (maybe a bit too cheezy) */
 	p_ptr->heavy_swim = FALSE;
 	//if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)) { --actually don't count these in
@@ -6539,8 +6540,8 @@ void calc_boni(int Ind) {
 			int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
 
 			/* temporary abs weight calc */
-			if (p_ptr->wt + p_ptr->total_weight / 10 > 170 + swim * 2) {
-				long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2;
+			if (p_ptr->wt * 10 + p_ptr->total_weight / 10 > 170 + swim * 2) {
+				long factor = (p_ptr->wt * 10 + p_ptr->total_weight / 10) - 150 - swim * 2;
 
 				if (factor >= 20) p_ptr->heavy_swim = TRUE;
 			}
