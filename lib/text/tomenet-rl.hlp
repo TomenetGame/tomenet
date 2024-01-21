@@ -28,7 +28,7 @@ i   Inventory   I  Examine       . Run                 switch chat mode
 x   Look        ^W Locate (map)  \{B< Go up\{w           ^O  Chat history
 m   Use ability M  Show minimap  \{B> Go down\{w         ^P  All message history
 o   Open door      (also try ~0) \{B@ Player list\{w     ^R  Redraw screen
-p   Open mind   \{BO  Party menu\{w    ~ Knowledge menu  ^S  Spike a door
+p   Open mind   \{BO  Party menu\{w    ~ Knowledge menu  ^S  Spike (jam) a door
 q   Quaff       \{BQ  Suicide\{w       + Tunnel (dig)    ^T  Screenshot
 r   Read scroll R  Rest          { Inscribe        \{B^Q  Quit the game (and
 s   Search      #  Search mode   } Uninscribe          \{B(auto-save window layout)

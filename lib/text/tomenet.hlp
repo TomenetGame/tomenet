@@ -28,7 +28,7 @@ k   Destroy     K Force-stack    \{B: Chat\{w                    switch chat mod
 l   Look        L Locate (map)   \{B< Go up\{w           CTRL+O  Chat history
 m   Use ability M Show minimap   \{B> Go down\{w         CTRL+P  All message history
 o   Open door     (also try ~0)  \{B@ Player list\{w     CTRL+R  Redraw screen
-p   Open mind   \{BP Party menu\{w     ~ Knowledge menu  CTRL+S  Spike a door
+p   Open mind   \{BP Party menu\{w     ~ Knowledge menu  CTRL+S  Spike (jam) a door
 q   Quaff       \{BQ Suicide\{w        + Tunnel (dig)    CTRL+T  Screenshot
 r   Read scroll R Rest           { Inscribe        \{BCTRL+Q  Quit the game (and
 s   Search      S Search mode    } Uninscribe         \{B(auto-save window layout)
