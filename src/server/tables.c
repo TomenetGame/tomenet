@@ -1893,8 +1893,8 @@ player_race race_info[MAX_RACE] = {
 		-4, 0, 20, -6, 5, 4, 5, -20,
 		14, 280,//320
 		255, 70,
-		180,  6, 255, 25, /* copy-paste of Draconian atm. Note that these values are byte, so cannot > 255 anyway. - C. Blue */
-		150,  4, 230, 20,
+		240,  6, 255, 25, //dnd Treant: 30ft, 4500 lbs, luls. But can also be 15-25 ft. Wgt still silyl, even 5-digits.
+		180,  4, 255, 20,
 		0,
 		//No archer, rogue
 		CF_ALL & ~CFR & ~CFA,
@@ -1957,7 +1957,7 @@ player_race race_info[MAX_RACE] = {
 			'+', 0, },
 		},},
 
-	{ "Draconian",	// "Dragonrider", "Thunderlord"
+	{ "Draconian",	// "Dragonrider", "Thunderlord" --actually, while Dragonriders would be GOOD, Draconians would be EVIL? :/
 		//{  6,  3,  -10,  0,  5,  5 },
 		//{  6,  2,  -2,  1,  3,  5 },
 		//{  6,  2,  1,  1,  3,  5 },
@@ -1965,8 +1965,8 @@ player_race race_info[MAX_RACE] = {
 		0,  7,  10,  -5,  10,  10,  15,  5,
 		12,  300,//350
 		14,  6,
-		180,  6, 255, 25,
-		150,  4, 230, 20,
+		108,  6, 255, 25, //Dnd 4e: Average Height: 6´ 2˝–6´ 8˝. BUT..also: 5 1/2..up to 9"+ oO.
+		66,  4, 220, 20, //Dnd: Average Weight: 220–320 lb
 		5,
 		CF_ALL,
 		95,
@@ -2109,8 +2109,8 @@ player_race race_info[MAX_RACE] = {
 		-2,  3, 20,  2,  -4, 13, 10, -10,
 		11,  240,//270
 		100, 30,
-		90, 10, 180, 20,
-		82, 10, 170, 15,
+		82, 5, 190, 20,	//copy-paste from Dunadain for now
+		78,  6, 180, 15,
 		15,
 		//No paladin,druid,priest,shaman/mimic
 #ifdef ENABLE_DEATHKNIGHT
