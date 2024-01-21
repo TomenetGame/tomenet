@@ -6528,8 +6528,8 @@ void calc_boni(int Ind) {
 		p_ptr->old_heavy_tool = p_ptr->heavy_tool;
 	}
 
-#if 0 /* doesn't work well because it's mostly a continuous increase from hardly-noticing to massive-drowning */
-//TODO: Use new rework, see drowning routine in dungeon.c!
+#if 0 //TODO: Completely outdated code, do not enable. Use new rework, see drowning routine in dungeon.c! - C. Blue
+	/* doesn't work well because it's mostly a continuous increase from hardly-noticing to massive-drowning */
 	/* Swimming-indicator (maybe a bit too cheezy) */
 	p_ptr->heavy_swim = FALSE;
 	//if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)) { --actually don't count these in

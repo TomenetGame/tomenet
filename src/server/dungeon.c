@@ -28,6 +28,9 @@
 /* How fast HP/MP regenerate when 'resting'. [3] */
 #define RESTING_RATE	(cfg.resting_rate)
 
+/* Inverse of (1 - assumed density of wood relative to water), we're assuming 0.5, so it's "1 / (1 - 0.5)" = 2. */
+#define WOOD_INV_DENSITY 2
+
 /* Half-Trolls and especially Trolls regenerate extraordinarily quickly (both players and monsters) */
 #define TROLL_REGENERATION
 /* Hydras regenerate extraordinarily quickly aka regrowing their heads (both players and monsters) */
@@ -4877,72 +4880,183 @@ static bool process_player_end_aux(int Ind) {
 
 		/* Drowning, but not ghosts */
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
-			bool carry_wood = FALSE;
+			/* Rewrote this whole routine to take into account DSMs, wood helping thanks to its relative density, subinventories etc. - C. Blue */
+			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) &&
+			    !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC))) {
+				bool huge_wood = FALSE, cold = cold_place(&p_ptr->wpos);
+				int wood_weight, water_weight, required_wood_weight, drowning;
 
-			for (i = 0; i < INVEN_PACK; i++) {
-				o_ptr = &p_ptr->inventory[i];
-				if (!o_ptr->k_idx) break;
-				if (o_ptr->tval == TV_GOLEM && o_ptr->sval == SV_GOLEM_WOOD) {
-					carry_wood = TRUE;
-					break;
-				}
-			}
+				/* Calculate actual weight dragging us down and amount of wood pulling us up */
+				wood_weight = 0;
+				water_weight = (p_ptr->can_swim ? 0 : p_ptr->wt * 10) + p_ptr->total_weight;
+				j = -1;
+				for (i = 0; i < INVEN_PACK; i++) {
+					o_ptr = &p_ptr->inventory[i];
+					if (!o_ptr->k_idx) break;
 
-			/* note: TODO (bug): items should get damaged even if player can_swim,
-			   but this might devalue swimming too much compared to levitation. Dunno. */
-			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim) &&
-			    !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & (RF7_AQUATIC | RF7_CAN_SWIM)))) {
-				int hit = p_ptr->mhp >> 6;
-				int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
-
-				hit += randint(p_ptr->mhp >> 5);
-				if (!hit) hit = 1;
-
-				/* Take CON into consideration(max 30%) */
-				//note: if hit was 1, this can each result in 0 aka no hit!
-				hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
-				if (p_ptr->suscep_life) hit >>= 1;
-				else if (p_ptr->demon) hit >>= 1;
-
-				/* temporary abs weight calc */
-				if (p_ptr->wt + p_ptr->total_weight / 10 > 170 + swim * 2) { // 190
-					if (carry_wood) {
-						/* Clinging to the massive piece of wood, we're safe */
-						if (!rand_int(5)) msg_print(Ind, "You cling to the wood!");
-					} else { /* Take damage from drowning */
-						long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2; // 170
-
-						/* too heavy, always drown? */
-						if (factor < 300 && randint(factor) < 20) hit = 0;
-
-						/* Hack: Take STR and DEX into consideration (max 28%) */
-						if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2) ||
-						    magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]) / 2)
-							hit = 0;
-
-						if (magik(swim)) hit = 0;
-
-						if (hit) msg_print(Ind, "\377rYou're drowning!");
-
-						/* harm equipments (even hit == 0) */
-						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-						    magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->levitate &&
-						    !p_ptr->immune_water) {
-							if (!p_ptr->resist_water || magik(50)) {
-								if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
-									inven_damage(Ind, set_water_destroy, 1);
-								equip_damage(Ind, GF_WATER);
-							}
+#ifdef ENABLE_SUBINVEN
+					ppea_subinv: /* sigh - I really don't want to add a helper function just for the contents of this loop -_- */
+					if (j != -1) {
+						o_ptr = &p_ptr->subinventory[i][j];
+						if (!o_ptr->k_idx) {
+							j = -1;
+							continue;
 						}
-
-						if (randint(1000 - factor) < 10 && !p_ptr->sustain_str) {
-							msg_print(Ind, "\377oYou are weakened by the exertion of swimming!");
-							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
-						}
-						 /* Inventory can be immune, but cold immunity cannot avert drowning */
-						if (cold_place(&p_ptr->wpos)) (void)cold_dam(Ind, hit, "drowning", 0);
-						take_hit(Ind, hit, "drowning", 0);
 					}
+#endif
+
+					/* DSMs have neutral buoyancy */
+					if (o_ptr->tval == TV_DRAG_ARMOR) water_weight -= o_ptr->weight * o_ptr->number;
+
+					/* Wood helps, massive piece is an instant game changer - except for people CRAZILY overloaded perhaps.
+					   It also helps against backpack taking damage now, as we can put our backpack on it, or keep ourselves out of the water far enough maybe ^^. */
+					if (o_ptr->tval == TV_GOLEM && o_ptr->sval == SV_GOLEM_WOOD) huge_wood = TRUE;
+					/* Wood helps us, but note that we shouldn't disregard that wooden weapons often also contain a significant amount of metal that would counteract the effect.
+					   Trying to alleviate this a bit by checking whether it's a weapon, but that in turn will add mistakes if the weapon indeed was purely made of wood (club?) ^^.
+					   Well, we'll just have to accept the approximations. */
+					if (contains_significant_wood(o_ptr)) {
+						if (is_melee_weapon(o_ptr->tval)) {
+							water_weight -= (o_ptr->number * o_ptr->weight * 2) / 3;
+							wood_weight += (o_ptr->number * o_ptr->weight * 2) / 3;
+						} else {
+							water_weight -= o_ptr->number * o_ptr->weight;
+							wood_weight += o_ptr->number * o_ptr->weight; // massive piece: 1100, piece: 40
+						}
+					}
+
+#ifdef ENABLE_SUBINVEN
+					if (j != -1) {
+						/* Process next item in subinventory */
+						j++;
+						if (j == o_ptr->bpval) {
+							j = -1;
+							continue;
+						}
+						goto ppea_subinv;
+					} else if (o_ptr->tval == TV_SUBINVEN) { // assumption: There can be no subinventories inside subinventories!
+						/* Process items in subinventory, starting with the first item */
+						j = 0;
+						goto ppea_subinv;
+					}
+#endif
+				}
+
+				/* Calculate required amount of wood we need to carry in order to make us float safely. */
+				required_wood_weight = water_weight * WOOD_INV_DENSITY;
+				drowning = required_wood_weight - wood_weight; /* If we're >=0 then we're not drowning as the wood we carry is enough to keep us floating */
+
+				/* We're drowning because we don't have enough wood to keep us afloat? */
+				if (drowning >= 0) {
+					int swim;
+
+					/* --- Now test if we can 'swim' somehow, which nullifies 'hit'/ --- */
+
+					/* Swimming skill:
+					   Note that race weight is byte and max used is actually 255 (Ent/Draconian).
+					   Maxed out swimming, therefore we must be able to at least sustain 255 lbs =p,
+					   plus some extra weight we're carrying with us.
+					   Normal minimum (no items) drowning at 0 wood, relative water density 0.5, depending on race: 1000 (yeek) .. 5100 (Ent/Draconian)
+
+					   Ensure that the swimming skill (also unrealistically) doesn't create insane extra value for small/light races:
+					   So we let it depend on our weight or size or both:
+					   Size aka p_ptr->ht goes from 33 (Hobbit) to 180 (Draconian/Ent) and is byte,
+					   weight aka p_ptr->wt goes from 50 (Hobbit) to 255 (Draconian/Ent) and is byte too.
+
+					   Note: Typical inven for fighters is super roughly (depends on mdevs vs potions/scrolls) ~200 lbs,
+					         equipment ~60 lbs (or 80 lbs with Mattock) = ~2600 _extra_ object weight just form items.
+					         With real-life endgame stuff, can be more like total of ~330 lbs for fighter chars.
+					         Light chars (Dodgers) can be 120..160 lbs. Mages however may hit 280 lbs from mana potions and books,
+					         their mage staff is 9.0 and wooden though. */
+					/* - Light race has it easier to swim in general:
+					     Scale so heavy races (16.500 swimming) need to train swimming more than light races (6.000 swimming) to carry themselves ^^.
+					   - Heavy race can sustain more total armour (~38%) at maxed swimming in general:
+					     Scale so heavy races can still/barely have full armour at max swimming skill, while light races can sustain somewhat less armour weight :) */
+					swim = get_skill_scale(p_ptr, SKILL_SWIM, 850 * 50);
+					//swim = ((r_info[p_ptr->body_monster].flags7 & RF7_CAN_SWIM) && swim < 500) ? 500 : swim;
+					//swim += 390 - (adj_chr_gold[p_ptr->stat_ind[A_STR]] + adj_chr_gold[p_ptr->stat_ind[A_DEX]] * 2); //0..150
+					swim += (adj_str_wgt[p_ptr->stat_ind[A_STR]] * 2 + adj_str_wgt[p_ptr->stat_ind[A_DEX]] * 4) - 30; //0..150 too :)
+					/* Balance vs total character weight: This supports around 280 lbs total weight as maximum without drowning. */
+					swim = (swim * 3) / 4;
+					/* Try to counter drowning with swimming capabilities. */
+					drowning = drowning / WOOD_INV_DENSITY - (swim * (p_ptr->ht + p_ptr->wt + 350)) / 100; //also use 'ht': It's disadvantageous to have bad BMI! =p
+
+					/* If we're STILL drowning, we take damage */
+					if (drowning >= 0) {
+						int hit;
+
+						/* Drowning damage per drowning 'tick' */
+						hit = (p_ptr->mhp >> 6) + randint(p_ptr->mhp >> 5);
+						/* Take CON into consideration (max 30%) */
+						hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
+						/* Now regarding RACE_VAMPIRE - they cannot drown, but they take damage from 'running water'.
+						   So I decided on middle grounds and just assume all rivers, oceans, ponds and even puddles (fortunately these
+						   are usually FEAT_SHAL_WATER though) are 'running water' and just reduce the drowning damage somewhat. - C. Blue */
+						if (p_ptr->suscep_life) hit >>= 1;
+						else if (p_ptr->demon) hit >>= 1;
+						/* Always take damage? */
+						if (!hit) hit = rand_int(3) ? 0 : 1;
+
+						if (hit) {
+							/* Freezing place, add extra cold damage? */
+							if (cold && !p_ptr->immune_cold) {
+								i = hit;
+								if (p_ptr->resist_cold) i = (i + 2) / 3;
+								if (p_ptr->oppose_cold) i = (i + 2) / 3;
+								hit += i;
+#ifdef TEST_SERVER
+								msg_format(Ind, "\377rYou're drowning in freezing water for %d damage!", hit);
+							} else msg_format(Ind, "\377rYou're drowning for %d damage!", hit);
+#else
+								msg_print(Ind, "\377rYou're drowning in freezing water!");
+							} else msg_print(Ind, "\377rYou're drowning!");
+#endif
+							take_hit(Ind, hit, "drowning", 0);
+						}
+					}
+
+					/* Swimming, whether successful or not, can drain STR. */
+					if (!rand_int(adj_str_wgt[p_ptr->stat_ind[A_CON]]) && !p_ptr->sustain_str) {
+						msg_print(Ind, "\377oYou are weakened by the exertion of swimming!");
+						dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
+					}
+				}
+
+				/* If we're, after all (enough wood and/or enough swiming) not drowning... */
+				if (drowning < 0) {
+					/* Special flavour message when not drowning and carrying a huge block of wood */
+					if (huge_wood && !rand_int(5)) {
+						/* Give specific message for flavour, about clinging to the massive piece of wood, being our 'main relief' ;) */
+						msg_print(Ind, "You float in the water safely, clinging to the wood.");
+					}
+
+					/* Freezing place, still take cold damage? */
+					if (cold && !p_ptr->immune_cold) {
+						/* Same damage calc as for drowning -> consistent with the added cold damage when drowning in freezing water: */
+						i = (p_ptr->mhp >> 6) + randint(p_ptr->mhp >> 5);
+						if (p_ptr->resist_cold) i = (i + 2) / 3;
+						if (p_ptr->oppose_cold) i = (i + 2) / 3;
+#ifdef TEST_SERVER
+						msg_format(Ind, "\377rYou're freezing for %d damage!", i);
+#else
+						msg_print(Ind, "\377rYou're freezing!");
+#endif
+						take_hit(Ind, i, "freezing water", 0);
+					}
+				}
+
+				/* Harm items while in water (even if we're not drowning/taking damage, ie hit == 0).
+				   Items should get damaged even if player can_swim
+				   but this might devalue swimming too much compared to levitation. */
+				if (!p_ptr->tim_wraith && !p_ptr->levitate && !p_ptr->immune_water && !rand_int(p_ptr->resist_water ? 3 : 1)
+				    && TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(WATER_ITEM_DAMAGE_CHANCE)) {
+					/* Trying to keep the backpack from getting soaked too much */
+					if (!(huge_wood && drowning < 0) && !magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900))) {
+						/* Apply water damage to inventory. If it has no effect (so we don't harm more than 1 slot at a time here),
+						   but we're in a freezing place, apply cold damage to inventory too. */
+						if (!inven_damage(Ind, set_water_destroy, 1) && cold) inven_damage(Ind, set_cold_destroy, 1);
+					}
+					/* Can't prevent our body being inside the water though */
+					equip_damage(Ind, GF_WATER);
 				}
 			}
 		}
