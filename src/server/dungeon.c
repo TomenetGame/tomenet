@@ -3356,7 +3356,7 @@ static bool auto_retaliate_test(int Ind) {
 
 		/* scan the inscription for @O */
 		while (*inscription != '\0') {
-			if (*inscription == '@') {
+			if (*inscription == '@' && inscription[1] != '\0') {
 				inscription++;
 
 				/* a valid @O has been located */
