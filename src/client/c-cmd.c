@@ -1007,6 +1007,10 @@ void cmd_subinven(int islot) {
 			break;
 		}
 		else switch (ch) {
+		default:
+			if (c_cfg.item_error_beep) bell(); //not really an item selection error though
+			else bell_silent();
+			continue;
 		case ESCAPE:
 			/* Leave subinventory */
 			leave = TRUE;

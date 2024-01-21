@@ -1431,8 +1431,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 					item_tester_hook = old_tester_hook;
 
 					break;
-				} else if (c_cfg.item_error_beep) bell();
-				else bell_silent();
+				}
 
 				/* Select this bag (subinventory) */
 				using_subinven = i;
@@ -1450,6 +1449,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 					item = TRUE;
 					done = TRUE;
 				}
+
 				/* Leave subinventory again and return to our main inventory */
 				using_subinven = -1;
 
@@ -1663,7 +1663,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 			/* Validate the item */
 			if (!get_item_okay(k)) {
-				if (c_cfg.item_error_beep) bell();
+				if (c_cfg.item_error_beep) bell(); //not necessarily an item selection error though, as we also just catch ANY invalid key here in 'default'
 				else bell_silent();
 				break;
 			}
