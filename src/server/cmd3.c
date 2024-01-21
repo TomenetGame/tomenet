@@ -5264,7 +5264,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 				msg_print(Ind, "Rod types must be known in order to stow it in your antistatic wrapping!");
 				continue;
 			}
-			if (i_ptr->tval == TV_ROD && object_aware_p(Ind, i_ptr) && rod_requires_direction(Ind, i_ptr))) {
+			if (i_ptr->tval == TV_ROD && object_aware_p(Ind, i_ptr) && rod_requires_direction(Ind, i_ptr)) {
 				msg_print(Ind, "Rods must be non-directional in order to stow it in your antistatic wrapping!");
 				continue;
 			}
