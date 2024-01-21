@@ -5185,7 +5185,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
  #ifdef SUBINVEN_LIMIT_GROUP
 	int prev_type = -1;
  #endif
-	bool all = FALSE;
+	bool all = FALSE, any_bag = FALSE, eligible_bag = FALSE;
 
 	/* Error checks */
 	if (islot < 0) return;
@@ -5235,6 +5235,8 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		s_ptr = &p_ptr->inventory[i];
 		/* Scan for existing subinventories */
 		if (s_ptr->tval != TV_SUBINVEN) break; /* This assumes that subinvens are always the top-most items of the inventory! */
+
+		any_bag = TRUE;
 		t = get_subinven_group(s_ptr->sval);
  #ifdef SUBINVEN_LIMIT_GROUP
 		if (t == prev_type) continue; /* This assumes that subinvens are sorted by svals, which is true for all inventory items actually. */
@@ -5244,27 +5246,36 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		/* Check item to move against valid tvals to be put into specific container (subinventory) types */
 		case SV_SI_GROUP_CHEST_MIN:
 			/* Allow all storable items in chests */
+			eligible_bag = TRUE;
 			break;
 		case SV_SI_SATCHEL:
 			if (i_ptr->tval != TV_CHEMICAL) continue;
+			eligible_bag = TRUE;
 			break;
 		case SV_SI_TRAPKIT_BAG:
 			if (i_ptr->tval != TV_TRAPKIT) continue;
+			eligible_bag = TRUE;
 			break;
 		case SV_SI_MDEVP_WRAPPING:
  #if 1
 			/* Extra hint for unidentified rods, instead of simply claiming that there is no bag space (as no chest is found and wrapping isn't eligible for unid'ed rods): */
 			if (i_ptr->tval == TV_ROD && !object_aware_p(Ind, i_ptr)) {
 				/* The reason is that rod_requires_direction() will always return(TRUE) for unknown rods anyway. */
-				msg_print(Ind, "The rod's type must be known in order to stow it in your antistatic wrapping!");
+				msg_print(Ind, "Rod types must be known in order to stow it in your antistatic wrapping!");
+				continue;
+			}
+			if (i_ptr->tval == TV_ROD && object_aware_p(Ind, i_ptr) && rod_requires_direction(Ind, i_ptr))) {
+				msg_print(Ind, "Rods must be non-directional in order to stow it in your antistatic wrapping!");
 				continue;
 			}
  #endif
-			/* Note that unknown rods will automatically return(TRUE) for requiring direction, even if they really don't. */
+			/* Note that unknown/unaware rods will automatically return(TRUE) for requiring direction, even if they really don't. */
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
+			eligible_bag = TRUE;
 			break;
 		case SV_SI_POTION_BELT:
 			if (i_ptr->tval != TV_POTION && i_ptr->tval != TV_POTION2 && i_ptr->tval != TV_BOTTLE) continue;
+			eligible_bag = TRUE;
 			break;
 		default:
 			continue;
@@ -5278,6 +5289,14 @@ void do_cmd_subinven_move(int Ind, int islot) {
  #ifdef SUBINVEN_LIMIT_GROUP
 		//break;  -- replaced by 'continue;' further above
  #endif
+	}
+	if (!any_bag) {
+		msg_print(Ind, "\377yYou don't have any bags to stow items.");
+		return;
+	}
+	if (!eligible_bag) {
+		msg_print(Ind, "\377yNo eligible bag found to stow that type of item.");
+		return;
 	}
 
 	/* Moved anything at all?
