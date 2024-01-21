@@ -3133,6 +3133,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if (!n) msg_print(Ind, "\377WNo events are currently running.");
 				else {
+					msg_print(Ind, "\377d ");
 					msg_print(Ind, " \377WType \377U/evinfo number\377W for information on the event of that number.");
 					msg_print(Ind, " \377WType \377U/evsign number\377W to participate in the event of that number.");
 				}
