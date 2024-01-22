@@ -3229,26 +3229,32 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 		a = access_door_colour(Ind, h_ptr->dna);
 		fprintf(fff, "\377%c", color_attr_to_char(a));
 
-		if (!admin)
+		if (admin)
+			/* admin sees fine door x,y instead of rough subsector [x,y] */
+			fprintf(fff, "%3d) [%4d] <%2d,%2d> (%d,%d)", total, i,
+			    h_ptr->dx, h_ptr->dy, h_ptr->wpos.wx, h_ptr->wpos.wy);
+		else if (p_ptr->privileged >= 2)
+			/* very privileged char can see actual house index (added for fixing bugged houses of specific players) */
+			fprintf(fff, "%3d) [%4d] [%d,%d] in %s", total, i,
+			    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
+			    wpos_format_compact(Ind, &h_ptr->wpos));
+		else
 #if 1 /* compress even more, for non-admins, or they have too wide a line for house tag */
-		fprintf(fff, "%3d) [%d,%d] (%2d,%2d)", total,
-		    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
-		    h_ptr->wpos.wx, h_ptr->wpos.wy);
-		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
+			fprintf(fff, "%3d) [%d,%d] (%2d,%2d)", total,
+			    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
+			    h_ptr->wpos.wx, h_ptr->wpos.wy);
+			    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 #elif 0 /* compress a bit, too wide line for house tag otherwise */
-		fprintf(fff, "%3d) [%d,%d] %s", total,
-		    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
-		    wpos_format_compact(Ind, &h_ptr->wpos));
-		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
+				fprintf(fff, "%3d) [%d,%d] %s", total,
+			    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
+			    wpos_format_compact(Ind, &h_ptr->wpos));
+			    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 #else
-		fprintf(fff, "%3d)   [%d,%d] in %s", total,
-		    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
-		    wpos_format_compact(Ind, &h_ptr->wpos));
-		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
+			fprintf(fff, "%3d)   [%d,%d] in %s", total,
+			    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
+			    wpos_format_compact(Ind, &h_ptr->wpos));
+			    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 #endif
-		else /* admin sees fine door x,y instead of rough subsector [x,y] */
-		fprintf(fff, "%3d) [%4d] <%2d,%2d> (%d,%d)", total, i,
-		    h_ptr->dx, h_ptr->dy, h_ptr->wpos.wx, h_ptr->wpos.wy);
 
 		if (dna->creator == p_ptr->dna) {
 			s32b price = house_price_player(dna->price, p_ptr->stat_ind[A_CHR]);
