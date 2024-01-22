@@ -3231,7 +3231,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 
 		if (admin)
 			/* admin sees fine door x,y instead of rough subsector [x,y] */
-			fprintf(fff, "%3d) [%4d] <%2d,%2d> (%d,%d)", total, i,
+			fprintf(fff, "%3d) %4d <%3d,%2d> (%d,%d)", total, i,
 			    h_ptr->dx, h_ptr->dy, h_ptr->wpos.wx, h_ptr->wpos.wy);
 		else if (p_ptr->privileged >= 2)
 			/* very privileged char can see actual house index (added for fixing bugged houses of specific players) */
@@ -3310,7 +3310,11 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 
 		case OT_PARTY:
 			name = parties[dna->owner].name;
-			if (strlen(name)) fprintf(fff, " of party '%s'", name);
+			if (admin) {
+				if (strlen(name)) fprintf(fff, " oP '%s'", name);
+			} else {
+				if (strlen(name)) fprintf(fff, " of party '%s'", name);
+			}
  #if 0	// nothig so far.
 			else {
 				s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
@@ -3320,18 +3324,30 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 			break;
 		case OT_CLASS:
 			name = class_info[dna->owner].title;
-			if (strlen(name)) fprintf(fff, " of class %s", name);
+			if (admin) {
+				if (strlen(name)) fprintf(fff, " oC %s", name);
+			} else {
+				if (strlen(name)) fprintf(fff, " of class %s", name);
+			}
 			break;
 		case OT_RACE:
 			name = race_info[dna->owner].title;
-			if (strlen(name)) fprintf(fff, " of race %s", name);
+			if (admin) {
+				if (strlen(name)) fprintf(fff, " oR %s", name);
+			} else {
+				if (strlen(name)) fprintf(fff, " of race %s", name);
+			}
 			break;
 		case OT_GUILD:
 			name = guilds[dna->owner].name;
-			if (strlen(name)) fprintf(fff, " of guild '%s'", name);
+			if (admin) {
+				if (strlen(name)) fprintf(fff, " oG '%s'", name);
+			} else {
+				if (strlen(name)) fprintf(fff, " of guild '%s'", name);
+			}
 			break;
 		}
-#endif	// 0
+#endif
 
 		fprintf(fff, "\n");
 	}
