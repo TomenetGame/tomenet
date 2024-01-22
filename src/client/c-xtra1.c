@@ -1740,10 +1740,14 @@ static void display_inven(void) {
  * Choice window "shadow" of the "show_subinven()" function.
  */
 static void display_subinven(void) {
-	int n, islot, col_n;
+	int n, islot;
 
 	char o_name[ONAME_LEN];
-	char tmp_val[80], *c;
+	char tmp_val[80];
+#ifdef X_INFO_TXT_COLOURS
+	char *c;
+	int col_n;
+#endif
 
 	int i, k = 0, last_k = 0, z;
 	long int wgt;
@@ -1909,11 +1913,15 @@ static void display_subinven(void) {
 #define EQUIP_TEXT_COLOUR2 TERM_YELLOW
 static void display_equip(void) {
 	byte	a;
-	int	i, n, col_n;
-	long int	wgt;
+	int	i, n;
+	long int wgt;
 	object_type *o_ptr;
-	char	o_name[ONAME_LEN], *c;
+	char	o_name[ONAME_LEN];
 	char	tmp_val[80];
+#ifdef X_INFO_TXT_COLOURS
+	char *c;
+	int col_n;
+#endif
 
 	/* Find the "final" slot */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
