@@ -4082,6 +4082,8 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 
 	/* create working copies */
 	strcpy(line, buf);
+	/* '!i' explanation: The first index (i=0) may not yet be the array's null-terminator, but just point at string index 0 and hence be 0.
+	    If it is 0 and the string was empty, then c[1] is guaranteed to be a 0-terminator, to avoid buffer overrun here (so an additional i < MSG_LEN check is not needed here). */
 	for (i = 0; !i || c[i]; i++) cc[i] = c[i];
 	cc[i] = 0;
 
@@ -4194,6 +4196,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
+	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
 
 	/* reduce 'h' after consonant except for c or s */
 	//TODO: do HIGHLY_EFFECTIVE_CENSOR first probably
@@ -4224,6 +4227,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
+	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
  #endif
 
  #ifdef HIGHLY_EFFECTIVE_CENSOR
@@ -4281,6 +4285,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
+	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
  #endif
 
 	/* reduce repeated chars (>3 for consonants, >2 for vowel) */
@@ -4328,6 +4333,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
+	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
 
 	/* check for swear words and censor them */
 	for (i = 0; swear[i].word[0]; i++) {
@@ -4624,6 +4630,7 @@ int handle_censor(char *line) {
 	}
 	lcopy[i] = '\0';
 	cc[i] = 0;
+	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
 
  #ifdef CENSOR_PH_TO_F
 	/* reduce ph to f */
@@ -4646,6 +4653,7 @@ int handle_censor(char *line) {
 	}
 	lcopy[i] = '\0';
 	cc[i] = 0;
+	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
  #endif
 
  #ifdef REDUCE_DUPLICATE_H
@@ -4666,6 +4674,7 @@ int handle_censor(char *line) {
 	}
 	lcopy[i] = '\0';
 	cc[i] = 0;
+	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
  #endif
 
  #ifdef CENSOR_LEET
