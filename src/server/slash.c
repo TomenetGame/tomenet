@@ -11531,7 +11531,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "That character name doesn't exist.");
 					return;
 				}
-				if (!backup_one_estate(&p_ptr->wpos, p_ptr->px, p_ptr->py, pid)) {
+				if (!backup_one_estate(&p_ptr->wpos, p_ptr->px, p_ptr->py, -1, pid)) {
 					msg_print(Ind, "...failed.");
 					return;
 				}
@@ -13130,6 +13130,46 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				while (export_turns) export_player_store_offers(&export_turns);
 #endif
 				msg_print(Ind, "Player stores exported.");
+				return;
+			}
+			/* retrieve items from a (possibly lost due to changed rng) list house */
+			else if (prefix(messagelc, "/gettradhouseitems")) {
+				int h_idx;
+				house_type *h_ptr;
+				char *cpid;
+				s32b pid;
+
+				h_idx = k;
+				if (!tk || h_idx < 0 || h_idx >= num_houses) {
+					msg_format(Ind, "Usage: /gettradhouseitems <0..%d> [<player name to save estate to>]", num_houses);
+					return;
+				}
+				h_ptr = &houses[h_idx];
+				if (!(h_ptr->flags & HF_TRAD)) {
+					msg_format(Ind, "The house %d is not a trad-house.", h_idx);
+					return;
+				}
+
+				cpid = strchr(message3, ' ');
+				if (!cpid) pid = p_ptr->id;
+				else if (!(pid = lookup_player_id(cpid + 1))) {
+					msg_format(Ind, "That dest character name '%s' doesn't exist.", cpid + 1);
+					return;
+				}
+
+				j = -1;
+				if (h_ptr->dna->owner &&
+				    (h_ptr->dna->owner_type == OT_PLAYER)) {
+					j = lookup_player_mode(h_ptr->dna->owner);
+				}
+
+				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d.", h_idx, h_ptr->dna->mode, j, h_ptr->colour);
+
+				if (!backup_one_estate(NULL, 0, 0, h_idx, pid)) {
+					msg_print(Ind, "...failed.");
+					return;
+				}
+				msg_print(Ind, "...done.");
 				return;
 			}
 		}

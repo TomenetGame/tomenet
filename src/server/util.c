@@ -8066,13 +8066,15 @@ bool backup_char_estate(int Ind, s32b h_id, s32b id) {
 		if (!dna->owner) continue; /* not owned */
 		if ((dna->owner_type == OT_PLAYER) && (dna->owner == h_id)) {
 			if (Ind) msg_format(Ind, "House %d at (%d,%d) %d,%d:", i, houses[i].wpos.wx, houses[i].wpos.wy, houses[i].dx, houses[i].dy);
-			if (!backup_one_estate(&houses[i].wpos, houses[i].dx, houses[i].dy, id)) res = FALSE;
+			if (!backup_one_estate(&houses[i].wpos, houses[i].dx, houses[i].dy, -1, id)) res = FALSE;
 		}
 	}
 	return(res);
 }
-/* Backup one house and give content ownership to a specific character */
-bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
+/* Backup one house and give content ownership to a specific character.
+   If h_idx is not -1, ie a house index is provided, hwpos/hx/hy will all be ignored,
+   and instead derived from the house of the index h_idx. */
+bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, int h_idx, s32b id) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
 	cptr name;
@@ -8084,29 +8086,44 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	struct worldpos *wpos;
 	object_type *o_ptr;
 
-	s_printf("Backing up a house (%d,%d,%d - %d,%d - %d)... ", hwpos->wx, hwpos->wy, hwpos->wz, hx, hy, id);
-	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	/* If h_idx is specified, ignore hx, hy */
+	if (h_idx != -1) {
+		i = h_idx;
+		h_ptr = &houses[i];
 
+		hx = h_ptr->x;
+		hy = h_ptr->y;
+		wpos = &h_ptr->wpos;
+
+		s_printf("Backing up a house (%d,%d,%d - %d,%d - %d)... ", wpos->wx, wpos->wy, wpos->wz, hx, hy, id);
+	} else {
+		s_printf("Backing up a house (%d,%d,%d - %d,%d - %d)... ", hwpos->wx, hwpos->wy, hwpos->wz, hx, hy, id);
+
+		/* scan house on which door we're sitting */
+		i = pick_house(hwpos, hy, hx);
+		if (i == -1) {
+			s_printf(" error: No estate here.\n");
+			return(FALSE);
+		}
+
+		h_ptr = &houses[i];
+		wpos = &h_ptr->wpos;
+	}
+
+	/* get player name from id, to which to save the estate to */
+	name = lookup_player_name(id);
+	if (!name) {
+		s_printf(" warning: couldn't fetch player name of id %d.\n", id);
+		return(FALSE);
+	}
+
+	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 	/* create folder lib/save/estate if not existing */
 #if defined(WINDOWS) && !defined(CYGWIN)
 	mkdir(buf2);
 #else
 	mkdir(buf2, 0770);
 #endif
-
-	/* scan house on which door we're sitting */
-	i = pick_house(hwpos, hy, hx);
-	if (i == -1) {
-		s_printf(" error: No estate here.\n");
-		return(FALSE);
-	}
-	h_ptr = &houses[i];
-	wpos = &h_ptr->wpos;
-	name = lookup_player_name(id);
-	if (!name) {
-		s_printf(" warning: couldn't fetch player name of id %d.\n", id);
-		return(FALSE);
-	}
 
 	/* create backup file if required, or append to it */
 	/* create actual filename from character name (same as used for sf_delete or process_player_name) */
