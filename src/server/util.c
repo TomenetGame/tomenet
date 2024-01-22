@@ -4336,7 +4336,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	if (!i) cc[1] = 0; /* Add "null-terminator". The first cc[0] is not a real terminator but still a reference to a string position (0 in this case). */
 
 	/* check for swear words and censor them */
-	for (i = 0; swear[i].word[0]; i++) {
+	for (i = 0; swear[i].word[0] && i < MAX_SWEAR; i++) {
 		if (!swear[i].level) continue;
 		offset = 0;
 
@@ -4519,7 +4519,7 @@ int handle_censor(char *line) {
 
  #if 1	/* extra: also apply non-swearing in advance here, for exact matching (ie case-sensitive, non-alphanum, etc) */
 	/* Maybe todo: Also apply nonswear to lcopy2 (the non-reduced version of lcopy) afterwards */
-	for (i = 0; nonswear[i][0]; i++) {
+	for (i = 0; nonswear[i][0] && i < MAX_NONSWEAR; i++) {
   #ifndef HIGHLY_EFFECTIVE_CENSOR
 		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
 		   This is done because those nonswearing-words are usually supposed to counter wrong positives
@@ -4714,7 +4714,7 @@ int handle_censor(char *line) {
 	if ((word = strstr(lcopy2, "ashole")) ||
 	    (word = strstr(lcopy2, "ashoie")))
 		/* use severity level of 'ashole' (condensed) for 'asshole' */
-		for (i = 0; swear[i].word[0]; i++) {
+		for (i = 0; swear[i].word[0] && i < MAX_SWEAR; i++) {
 			if (!swear[i].level) continue;
 			if (!strcmp(swear[i].word, "ashole")) {
 				j_pre = swear[i].level;
@@ -4776,7 +4776,7 @@ int handle_censor(char *line) {
  #endif
 //s_printf("ns: '%s'  '%s'\n", lcopy, lcopy2); //DEBUG
 	/* Maybe todo: Also apply nonswear to lcopy2 (the non-reduced version of lcopy) afterwards */
-	for (i = 0; nonswear[i][0]; i++) {
+	for (i = 0; nonswear[i][0] && i < MAX_NONSWEAR; i++) {
  #ifndef HIGHLY_EFFECTIVE_CENSOR
 		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
 		   This is done because those nonswearing-words are usually supposed to counter wrong positives

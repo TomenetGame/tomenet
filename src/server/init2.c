@@ -2852,6 +2852,7 @@ void init_swearing() {
 		//s_printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
 	} while (!feof(fp) && i < MAX_SWEAR - 1);
+	if (!feof(fp)) s_printf("Too large swearing.txt, exceeding %d - 1 elements.\n", MAX_SWEAR);
 
 	/* obsolete: (if enabled, swear_add stuff must be placed into server_startup_post, not server_startup) - C. Blue
 	   still enabling this though, for re-initialising swearing while server runs. */
@@ -2897,6 +2898,7 @@ void init_swearing() {
 		//s_printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
 	} while (!feof(fp) && i < MAX_NONSWEAR - 1);
+	if (!feof(fp)) s_printf("Too large nonswearing.txt, exceeding %d - 1 elements.\n", MAX_NONSWEAR);
 
 	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue
 	   still enabling this though, for re-initialising swearing while server runs. */

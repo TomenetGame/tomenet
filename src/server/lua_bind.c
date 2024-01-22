@@ -1333,7 +1333,7 @@ bool lua_mimic_humanoid(int r_idx) {
 void swear_add(char *word, int level) {
 	int i;
 
-	for (i = 0; i < MAX_SWEAR; i++) {
+	for (i = 0; i < MAX_SWEAR - 1; i++) {
 		if (swear[i].word[0]) continue;
 		strcpy(swear[i].word, word);
 		swear[i].level = level;
@@ -1350,7 +1350,7 @@ int swear_get_level(int i) {
 void nonswear_add(char *word, int affix) {
 	int i;
 
-	for (i = 0; i < MAX_NONSWEAR; i++) {
+	for (i = 0; i < MAX_NONSWEAR - 1; i++) {
 		if (nonswear[i][0]) continue;
 		strcpy(nonswear[i], word);
 		nonswear_affix[i] = affix;

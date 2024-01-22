@@ -13818,67 +13818,72 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 	if (inscription == NULL) return;
 
 	/* scan the inscription for @R */
-	while (*inscription != '\0') {
-		if (*inscription == '@') {
+	while (*inscription) {
+		inscription++;
+		if (*(inscription - 1) != '@' || *inscription != 'R') continue;
+
+		/* a valid @R has been located, check subsequent character */
+		inscription++;
+		if (!(*inscription)) break; /* was just '@R' */
+
+		/* @RW for World(Wilderness) travel */
+		/* It would be also amusing to limit the distance.. */
+		if ((*inscription == 'W') || (*inscription == 'X')) {
+			unsigned char * next;
+
 			inscription++;
-
-			/* a valid @R has been located */
-			if (*inscription == 'R') {
-				inscription++;
-				/* @RW for World(Wilderness) travel */
-				/* It would be also amusing to limit the distance.. */
-				if ((*inscription == 'W') || (*inscription == 'X')) {
-					unsigned char * next;
-
-					inscription++;
-					p_ptr->recall_pos.wx = atoi((char *)inscription) % MAX_WILD_X;
-					p_ptr->recall_pos.wz = 0;
-					next = (unsigned char *)strchr((char *)inscription,',');
-					if (next) {
-						if (++next) p_ptr->recall_pos.wy = atoi((char*)next) % MAX_WILD_Y;
-					}
-				}
-				else if (*inscription == 'Y') {
-					inscription++;
-					p_ptr->recall_pos.wy = atoi((char*)inscription) % MAX_WILD_Y;
-					p_ptr->recall_pos.wz = 0;
-				}
-#if 1
-				/* @RT for inter-Town travels (not fully implemented yet) */
-				else if (*inscription == 'T') {
-					inscription++;
-					p_ptr->recall_pos.wx = p_ptr->town_x;
-					p_ptr->recall_pos.wy = p_ptr->town_y;
-					p_ptr->recall_pos.wz = 0;
-				}
-#endif
-				else {
-					int tmp = 0;
-
-					if (*inscription == 'Z') inscription++;
-
-					/* convert the inscription into a level index */
-					if ((tmp = atoi((char*)inscription) /
-							(p_ptr->depth_in_feet ? 50 : 1)))
-						p_ptr->recall_pos.wz = tmp;
-
-					/* catch user mistake: missing W in @RWx,y */
-					while (*inscription != '\0') {
-						if (*inscription == ',') {
-							p_ptr->recall_pos.wz = 0;
-							return;
-						}
-						inscription++;
-					}
-				}
+			p_ptr->recall_pos.wx = atoi((char *)inscription) % MAX_WILD_X;
+			p_ptr->recall_pos.wz = 0;
+			next = (unsigned char *)strchr((char *)inscription,',');
+			if (next) {
+				if (++next) p_ptr->recall_pos.wy = atoi((char*)next) % MAX_WILD_Y;
 			}
 		}
-		inscription++;
+		else if (*inscription == 'Y') {
+			inscription++;
+			p_ptr->recall_pos.wy = atoi((char*)inscription) % MAX_WILD_Y;
+			p_ptr->recall_pos.wz = 0;
+		}
+#if 1
+		/* @RT for inter-Town travels (not fully implemented yet) */
+		else if (*inscription == 'T') {
+			inscription++;
+			p_ptr->recall_pos.wx = p_ptr->town_x;
+			p_ptr->recall_pos.wy = p_ptr->town_y;
+			p_ptr->recall_pos.wz = 0;
+		}
+#endif
+		else {
+			int tmp = 0;
+
+			if (*inscription == 'Z') {
+				inscription++; /* @RZ<depth> = @R<depth>, is this some old deprecated syntax compability code? */
+				if (!(*inscription)) break;
+			}
+
+			/* convert the inscription into a level index */
+			if ((tmp = atoi((char*)inscription) / (p_ptr->depth_in_feet ? 50 : 1))) p_ptr->recall_pos.wz = tmp;
+
+			/* catch user mistake: missing W in @RWx,y */
+			while (*inscription) {
+				if (*inscription == ',') {
+					p_ptr->recall_pos.wz = 0;
+					return;
+				}
+				inscription++;
+			}
+		}
 	}
 
 	/* sanity check or crash */
 	if (p_ptr->recall_pos.wx < 0) p_ptr->recall_pos.wx = 0;
 	if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
+	if (p_ptr->recall_pos.wx >= MAX_WILD_X) p_ptr->recall_pos.wx = MAX_WILD_X - 1;
+	if (p_ptr->recall_pos.wy >= MAX_WILD_Y) p_ptr->recall_pos.wy = MAX_WILD_Y - 1;
+#if 0 /* MAX_DUNGEON_DEPTH is actually unused */
+	if (p_ptr->recall_pos.wz < -MAX_DUNGEON_DEPTH) p_ptr->recall_pos.wz = -MAX_DUNGEON_DEPTH;
+	if (p_ptr->recall_pos.wz > MAX_DUNGEON_DEPTH) p_ptr->recall_pos.wz = MAX_DUNGEON_DEPTH;
+#endif
 }
 
 bool set_recall_timer(int Ind, int v) {
