@@ -8693,7 +8693,7 @@ void options_immediate(bool init) {
 static bool do_cmd_options_aux(int page, cptr info, int select) {
 	char	ch;
 	int	i, k, n = 0, k_no_advance;
-	static int k_lasttime[6] = { 0, 0, 0, 0, 0, 0};
+	static int k_lasttime[OPT_PAGES + 1] = { 0 }; //+1: page 1 is actually indexed at 1, not at 0
 	int	opt[24];
 	char	buf[256];
 	bool	tmp;
@@ -8701,7 +8701,7 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 	if (select != -1) k_lasttime[page] = select;
 	k = k_no_advance = k_lasttime[page];
 
-	/* Lookup the options */
+	/* Lookup the options on this particular page (actually it's just 22 options per page, not 24) */
 	for (i = 0; i < 24; i++) opt[i] = 0;
 
 	/* Scan the options */
