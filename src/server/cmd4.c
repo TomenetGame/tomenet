@@ -3231,7 +3231,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 
 		if (!admin)
 #if 1 /* compress even more, for non-admins, or they have too wide a line for house tag */
-		fprintf(fff, "%3d) [%d,%d] (%d,%d)", total,
+		fprintf(fff, "%3d) [%d,%d] (%2d,%2d)", total,
 		    h_ptr->dx * 5 / MAX_WID, h_ptr->dy * 5 / MAX_HGT,
 		    h_ptr->wpos.wx, h_ptr->wpos.wy);
 		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
@@ -3247,7 +3247,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 #endif
 		else /* admin sees fine door x,y instead of rough subsector [x,y] */
-		fprintf(fff, "%3d) <%d,%d> (%d,%d)", total,
+		fprintf(fff, "%3d) [%4d] <%2d,%2d> (%d,%d)", total, i,
 		    h_ptr->dx, h_ptr->dy, h_ptr->wpos.wx, h_ptr->wpos.wy);
 
 		if (dna->creator == p_ptr->dna) {
