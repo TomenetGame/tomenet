@@ -8091,8 +8091,8 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, int h_idx, s32b i
 		i = h_idx;
 		h_ptr = &houses[i];
 
-		hx = h_ptr->x;
-		hy = h_ptr->y;
+		hx = h_ptr->dx;
+		hy = h_ptr->dy;
 		wpos = &h_ptr->wpos;
 
 		s_printf("Backing up a house (%d,%d,%d - %d,%d - %d)... ", wpos->wx, wpos->wy, wpos->wz, hx, hy, id);
