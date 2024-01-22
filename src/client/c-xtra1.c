@@ -1789,10 +1789,14 @@ static void display_subinven(void) {
 		if (n > MAX_CHARS - 5) n = MAX_CHARS - 5;
 		Term_putstr(4, last_k, n, i_ptr->attr, o_name);
 		/* Erase the rest of the line */
+#ifdef X_INFO_TXT_COLOURS
 		col_n = 0;
 		c = o_name;
 		while ((c = strchr(c, '\377'))) { c++; col_n += 2; } /* Take colour codes into account! */
 		Term_erase(4 + n - col_n, last_k, 255);
+#else
+		Term_erase(4 + n, last_k, 255);
+#endif
 		/* account for this extra line */
 		last_k++;
 		bagheader_x = 4 + n;
@@ -1853,10 +1857,14 @@ static void display_subinven(void) {
 			Term_putstr(5, last_k + i, n, o_ptr->attr, o_name);
 
 			/* Erase the rest of the line */
+#ifdef X_INFO_TXT_COLOURS
 			col_n = 0;
 			c = o_name;
 			while ((c = strchr(c, '\377'))) { c++; col_n += 2; } /* Take colour codes into account! */
 			Term_erase(5 + n - col_n, last_k + i, 255);
+#else
+			Term_erase(5 + n, last_k + i, 255);
+#endif
 
 			/* Display the weight if needed */
 			if (c_cfg.show_weights && o_ptr->weight) {
@@ -1948,10 +1956,14 @@ static void display_equip(void) {
 		Term_putstr(3, i - INVEN_WIELD, n, o_ptr->attr, o_name);
 
 		/* Erase the rest of the line */
+#if defined(X_INFO_TXT_COLOURS) || 1 /* 1: actually, runes on items use a colour code! So we might need this regardless */
 		col_n = 0;
 		c = o_name;
 		while ((c = strchr(c, '\377'))) { c++; col_n += 2; } /* Take colour codes into account! */
 		Term_erase(3 + n - col_n, i - INVEN_WIELD, 255);
+#else
+		Term_erase(3 + n, i - INVEN_WIELD, 255);
+#endif
 
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight) {

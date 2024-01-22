@@ -423,6 +423,7 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv) {
 				while (!(i % 8)) buf[i++] = ' ';
 			}
 
+#ifdef X_INFO_TXT_COLOURS
 			/* Even without 'conv' being TRUE: Allow using \{c colour codes in *_info.txt files too */
 			else if (*s == '\\' && *(s + 1) == '{') {
 				/* Convert '\{' to '\377' colour code */
@@ -437,6 +438,7 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv) {
 				/* Check length */
 				if (i >= n) break;
 			}
+#endif
 
 			/* Handle printables */
 			else if (isprint(*s) || *s == '\377') {

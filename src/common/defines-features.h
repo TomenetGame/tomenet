@@ -511,6 +511,10 @@
    provided the character to be kicked is in a valid location such as town, that doesn't require a timeout. */
 #define ALLOW_LOGIN_REPLACE_IN_TOWN
 
+/* Allow use of colour codes via \{x in *_info.txt files. Could have risky implications.
+   (However note, in equipment, colour codes are already used by rune sigils.) */
+#define X_INFO_TXT_COLOURS
+
 
 
 /* ------------------------------------------------------------------------- */
