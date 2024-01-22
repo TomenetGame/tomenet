@@ -8900,7 +8900,7 @@ extern int PlayerUID;
 #define DUNGEON_DOL_GULDUR	23
 
 /* Max depth of each dungeon(max_depth - min_depth) */
-#define MAX_DUNGEON_DEPTH	128
+#define MAX_DUNGEON_DEPTH	128	/* UNUSED! */
 
 #define DUNGEON_MODE_NONE	0
 #define DUNGEON_MODE_AND	1
