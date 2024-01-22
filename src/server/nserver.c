@@ -5065,8 +5065,9 @@ static int Receive_login(int ind) {
 	return(0);
 }
 
-#define RECEIVE_PLAY_SIZE_462		(2 * 6 + OPT_MAX + 8    + 2 * (TV_MAX + MAX_F_IDX        + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
-#define RECEIVE_PLAY_SIZE		(2 * 6 + OPT_MAX        + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
+#define RECEIVE_PLAY_SIZE		(2 * 6 + OPT_MAX +8     + 2 * (TV_MAX + MAX_F_IDX        + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
+#define RECEIVE_PLAY_SIZE_462		(2 * 6 + OPT_MAX_154 +8 + 2 * (TV_MAX + MAX_F_IDX        + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
+#define RECEIVE_PLAY_SIZE_OPT154	(2 * 6 + OPT_MAX_154    + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXCOMPAT	(2 * 6 + OPT_MAX_COMPAT + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXOLD	(2 * 6 + OPT_MAX_OLD    + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
 //#define STRICT_RECEIVE_PLAY
@@ -5218,11 +5219,13 @@ static int Receive_play(int ind) {
 		connp->trait = trait;
 
 		//if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
+		if (is_newer_than(&connp->version, 4, 9, 1, 0, 0, 0)) limit = RECEIVE_PLAY_SIZE;
+		else
 #if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = RECEIVE_PLAY_SIZE_462;
 		else
 #endif
-		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) limit = RECEIVE_PLAY_SIZE;
+		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) limit = RECEIVE_PLAY_SIZE_OPT154;
 		else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) limit = RECEIVE_PLAY_SIZE_OPTMAXCOMPAT;
 		else limit = RECEIVE_PLAY_SIZE_OPTMAXOLD;
 		if (limit > connp->r.len - (connp->r.ptr - connp->r.buf)) {
@@ -5259,8 +5262,16 @@ static int Receive_play(int ind) {
  #endif	// 0
 
 		/* Read the options */
-		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
+		if (is_newer_than(&connp->version, 4, 9, 1, 0, 0, 0)) {
 			for (i = 0; i < OPT_MAX; i++) {
+				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
+				if (n <= 0) {
+					Destroy_connection(ind, "Misread options");
+					return(-1);
+				}
+			}
+		} else if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
+			for (i = 0; i < OPT_MAX_154; i++) {
 				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "Misread options");
@@ -13101,8 +13112,16 @@ static int Receive_options(int ind) {
 		bool options[OPT_MAX];
 		player_type *p_ptr = Players[player];
 
-		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
+		if (is_newer_than(&connp->version, 4, 9, 1, 0, 0, 0)) {
 			for (i = 0; i < OPT_MAX; i++) {
+				n = Packet_scanf(&connp->r, "%c", &options[i]);
+				if (n <= 0) {
+					Destroy_connection(ind, "read error");
+					return(n);
+				}
+			}
+		} else if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
+			for (i = 0; i < OPT_MAX_154; i++) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "read error");

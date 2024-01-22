@@ -1530,8 +1530,11 @@ int Net_start(int sex, int race, int class) {
 		Packet_printf(&wbuf, "%hd", stat_order[i]);
 
 	/* Send the options */
-	if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 1)) {
+	if (is_newer_than(&server_version, 4, 9, 1, 0, 0, 0)) {
 		for (i = 0; i < OPT_MAX; i++)
+			Packet_printf(&wbuf, "%c", Client_setup.options[i]);
+	} else if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 1)) {
+		for (i = 0; i < OPT_MAX_154; i++)
 			Packet_printf(&wbuf, "%c", Client_setup.options[i]);
 	} else if (is_newer_than(&server_version, 4, 5, 5, 0, 0, 0)) {
 		for (i = 0; i < OPT_MAX_COMPAT; i++)
@@ -6500,8 +6503,11 @@ int Send_options(void) {
 
 	if ((n = Packet_printf(&wbuf, "%c", PKT_OPTIONS)) <= 0) return(n);
 	/* Send each option */
-	if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 1)) {
+	if (is_newer_than(&server_version, 4, 9, 1, 0, 0, 0)) {
 		for (i = 0; i < OPT_MAX; i++)
+			Packet_printf(&wbuf, "%c", Client_setup.options[i]);
+	} else 	if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 1)) {
+		for (i = 0; i < OPT_MAX_154; i++)
 			Packet_printf(&wbuf, "%c", Client_setup.options[i]);
 	} else if (is_newer_than(&server_version, 4, 5, 5, 0, 0, 0)) {
 		for (i = 0; i < OPT_MAX_COMPAT; i++)

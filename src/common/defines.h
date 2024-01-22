@@ -1967,10 +1967,11 @@
 
 
 /*** Option Definitions ***/
-#define OPT_MAX		154	/* 6+1 pages a 22 options */
+#define OPT_PAGES	9	/* at least: number of pages of options in = menu */
+#define OPT_MAX		(198+1)	/* at least: 9 pages a 22 options (+1 for termination, paranoia in any case, as we xfer all options in one as a single string) */
+#define OPT_MAX_154	154	/* 6+1 pages a 22 options, valid until 4.9.1.0.0.0 */
 #define OPT_MAX_COMPAT	128	/* 64; 96 */
 #define OPT_MAX_OLD	96	/* for clients <= 4.5.5 */
-
 
 /*
  * Maximum number of "normal" pack slots, and the index of the "overflow"
