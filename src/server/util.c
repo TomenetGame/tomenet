@@ -393,7 +393,7 @@ errr my_fclose(FILE *fff) {
  *
  * Process tabs, strip internal non-printables
  */
-errr my_fgets(FILE *fff, char *buf, huge n, bool conv) {
+static errr my_fgets_aux(FILE *fff, char *buf, huge n, bool conv, bool col) {
 	huge i = 0;
 	char *s;
 	char tmp[1024];
@@ -425,7 +425,7 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv) {
 
 #ifdef X_INFO_TXT_COLOURS
 			/* Even without 'conv' being TRUE: Allow using \{c colour codes in *_info.txt files too */
-			else if (*s == '\\' && *(s + 1) == '{') {
+			else if (col && *s == '\\' && *(s + 1) == '{') {
 				/* Convert '\{' to '\377' colour code */
 				*s = '\377';
 
@@ -459,6 +459,12 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv) {
 
 	/* Failure */
 	return(1);
+}
+errr my_fgets(FILE *fff, char *buf, huge n, bool conv) {
+	return(my_fgets_aux(fff, buf, n, conv, FALSE));
+}
+errr my_fgets_col(FILE *fff, char *buf, huge n, bool conv) {
+	return(my_fgets_aux(fff, buf, n, conv, TRUE));
 }
 
 

@@ -1992,6 +1992,7 @@ extern errr path_parse(char *buf, int max, cptr file);
 extern errr path_temp(char *buf, int max);
 extern FILE *my_fopen(cptr file, cptr mode);
 extern errr my_fgets(FILE *fff, char *buf, huge n, bool conv);
+extern errr my_fgets_col(FILE *fff, char *buf, huge n, bool conv);
 extern int get_playerind(char *name);
 extern int get_playerind_loose(char *name);
 extern int get_playerslot_loose(int Ind, char *iname);

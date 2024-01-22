@@ -2674,7 +2674,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 	k_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
+	while (0 == my_fgets_col(fp, buf, 1024, FALSE)) {
 		/* Advance the line number */
 		error_line++;
 
@@ -3764,7 +3764,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
+	while (0 == my_fgets_col(fp, buf, 1024, FALSE)) {
 		/* Advance the line number */
 		error_line++;
 
