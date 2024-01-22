@@ -6144,13 +6144,17 @@ void home_sell(int Ind, int item, int amt) {
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) {
-		o_ptr = &p_ptr->inventory[item];
-	}
-	/* Get the item (on the floor) */
-	else { /* Never.. */
-		o_ptr = &o_list[0 - item];
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Get the item (in the pack) */
+		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+	} else
+#endif
+	{
+		/* Get the item (in the pack) */
+		if (item >= 0) o_ptr = &p_ptr->inventory[item];
+		/* Get the item (on the floor) */
+		else o_ptr = &o_list[0 - item];
 	}
 
 	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
@@ -6194,10 +6198,19 @@ void home_sell(int Ind, int item, int amt) {
 		return;
 	}
 
-
-
-	/* Get the inventory item */
-	o_ptr = &p_ptr->inventory[item];
+	/* Get the inventory item again */
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Get the item (in the pack) */
+		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+	} else
+#endif
+	{
+		/* Get the item (in the pack) */
+		if (item >= 0) o_ptr = &p_ptr->inventory[item];
+		/* Get the item (on the floor) */
+		else o_ptr = &o_list[0 - item];
+	}
 
 	/* Sigil (reset it) - Kurzel (fix the list house exploit) */
 	if (sold_obj.sigil) {
