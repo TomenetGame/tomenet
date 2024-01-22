@@ -1634,6 +1634,7 @@ static void clear_channel(int c) {
 	if (channel_type[c] == SFX_TYPE_WEATHER)
 		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, 100));
 
+	if (channel_sample[c] == -1) return;
 	samples[channel_sample[c]].current_channel = -1;
 	channel_sample[c] = -1;
 }
