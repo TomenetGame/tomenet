@@ -2117,7 +2117,7 @@ void save_auto_inscriptions(cptr name) {
 void load_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024], *bufptr, dummy[1024], *rptr;
-	char file_name[256], vtag[5];
+	char file_name[256], vtag[7];
 	int i, c, j, c_eff, version, vmaj, vmin, vpatch;
 	bool replaced, force;
 #ifdef REGEX_SEARCH
