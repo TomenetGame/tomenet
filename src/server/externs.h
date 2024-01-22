@@ -1664,7 +1664,7 @@ extern bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2
 extern bool teleport_away(int m_idx, int dis);
 extern bool teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_force(int Ind, int dis);
-extern void teleport_player_to(int Ind, int ny, int nx, bool forced);
+extern void teleport_player_to(int Ind, int ny, int nx, char forced);
 extern void teleport_player_level(int Ind, bool force);
 extern void teleport_players_level(struct worldpos *wpos);
 extern bool retreat_player(int Ind, int dis);

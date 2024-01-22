@@ -13172,6 +13172,31 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "...done.");
 				return;
 			}
+			/* retrieve items from a (possibly lost due to changed rng) list house */
+			else if (prefix(messagelc, "/tohou")) {
+				int h_idx;
+				house_type *h_ptr;
+
+				h_idx = k;
+				if (!tk || h_idx < 0 || h_idx >= num_houses) {
+					msg_format(Ind, "Usage: /tohou <0..%d>", num_houses);
+					return;
+				}
+				h_ptr = &houses[h_idx];
+
+				if (!inarea(&h_ptr->wpos, &p_ptr->wpos)) {
+					p_ptr->recall_pos.wx = h_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = h_ptr->wpos.wy;
+					p_ptr->recall_pos.wz = h_ptr->wpos.wz;
+					if (!p_ptr->recall_pos.wz) p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					else p_ptr->new_level_method = LEVEL_RAND;
+					recall_player(Ind, "\377yA magical gust of wind lifts you up and carries you away!");
+					process_player_change_wpos(Ind);
+				}
+
+				teleport_player_to(Ind, h_ptr->dy, h_ptr->dx, -2);
+				return;
+			}
 		}
 	}
 

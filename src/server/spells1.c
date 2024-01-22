@@ -1147,8 +1147,10 @@ void teleport_player_force(int Ind, int dis) {
  *
  * This function is slightly obsessive about correctness.
  * (Not anymore: This function allows teleporting into vaults (!))
+ * force = TRUE: Skip some anti-tele checks.
+ * force = -2: Skip all checks, even if the target grid is still occupied by another monster or player -- admin debug usage only!
  */
-void teleport_player_to(int Ind, int ny, int nx, bool forced) {
+void teleport_player_to(int Ind, int ny, int nx, char forced) {
 	player_type *p_ptr = Players[Ind];
 
 	int y, x, oy, ox, dis = 1, ctr = 0;
@@ -1194,6 +1196,10 @@ void teleport_player_to(int Ind, int ny, int nx, bool forced) {
 		}
 	}
 
+	if (forced == -2) {
+		x = nx;
+		y = ny;
+	} else
 	/* Find a usable location */
 	while (tries) {
 		/* Pick a nearby legal location */
