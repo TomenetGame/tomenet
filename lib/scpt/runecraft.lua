@@ -145,8 +145,11 @@ end
 function rspell_cost(u,s)
   local XX = band(u,ENHA)~=0 and E[band(u,TYPE)] or T[band(u,TYPE)]
   local l = XX[3]
-  local x = rspell_scale(s, l, XX[4]) * M[band(u,MODE)][3] / 10
-  return x < l and l or x
+  local x = rspell_scale(s,l,XX[4]) * M[band(u,MODE)][3] / 10
+  -- Nerfed runespell cost reduction here, preventing < 100% cost? - Kurzel
+  -- return x < l and l or x
+  -- Reverting, as it seems like a bug!
+  return x
 end
 
 function rspell_failure(p,u,x,c)
