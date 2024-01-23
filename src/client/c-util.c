@@ -1371,7 +1371,7 @@ char inkey(void) {
 	int skipping = FALSE;
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
- #define INKEY_LOCATION_KEY_SIZE 8
+ #define INKEY_LOCATION_KEY_SIZE (10+5) /* +5: paranoia reserve vs buffer overflow */
 	static bool inkey_location_key_active = FALSE;
 	static int inkey_location_key_index = 0;
 	static char inkey_location_key_sequence[INKEY_LOCATION_KEY_SIZE];
