@@ -5106,12 +5106,13 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
-
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
 				/* Manually do this here for now: Update subinven slot for client. */
 				display_subinven_aux(Ind, sslot, i);
 				/* That was the rest of the stack? Done. */
 				if (!i_ptr->number) break;
+				/* Continue with remaining, still unstowed partial amount */
+				inum = i_ptr->number;
 			} else /* Couldn't use this slot at all */
 				i_ptr->number = inum; /* Unhack 'number' */
 		} else {
