@@ -3802,7 +3802,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->pclass == CLASS_MAGE &&
 	    /* fix old chars: add the skill */
 	    !p_ptr->s_info[SKILL_OSHADOW].mod) {
-		p_ptr->s_info[SKILL_OSHADOW].value = 0;
+		p_ptr->s_info[SKILL_OSHADOW].value = 1000;
 		/* base value taken from standard istar schools;
 		   +bonus: they supposedly gain 15% on OSHADOW in tables.c, we give 13.3% to get a round, not over-the-top number */
 		p_ptr->s_info[SKILL_OSHADOW].mod = 1500 + 200;
