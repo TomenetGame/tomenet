@@ -1430,6 +1430,8 @@ player_race race_info[MAX_RACE] = {
 		CF_ALL,
 		100,
 
+		//skills: vmod, value; mmod, mod
+
 		/* HUMAN POWER!! */
 		{{ SKILL_INTERCEPT, //SKILL_TRAINING,
 			'+', 1000,
@@ -2434,6 +2436,8 @@ player_class class_info[MAX_CLASS] = {
 		10, 8,  10, 0,  0,  0,  45, 40,
 		10, 0,//6,  10,//9, 10,
 		//11, 0,
+
+		//skills: vmod, value; mmod, mod
 
 		{{ SKILL_COMBAT,
 			'+', 3000,
