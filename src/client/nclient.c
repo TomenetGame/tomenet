@@ -3059,11 +3059,13 @@ int Receive_message(void) {
 		char *we_sent_p = strchr(buf, '[');
 
 		if (we_sent_p) {
-			char we_sent_buf[NAME_LEN + 1 + 10];
+			char we_sent_buf[NAME_LEN + 1 + 10], *we_sent_p_end;
 
 			strncpy(we_sent_buf, we_sent_p + 1, NAME_LEN + 1 + 10);
 			we_sent_buf[NAME_LEN + 10] = '\0';
-			if (strchr(we_sent_buf, ']')) {
+			if ((we_sent_p_end = strchr(we_sent_buf, ']'))
+			    && we_sent_p_end - we_sent_p <= NAME_LEN /* Prevent buffer overflow if the [...] wasn't a name but some longer text that was just within brackets for some reason */
+			    ) {
 				char exact_name[NAME_LEN + 1], *en_p = exact_name;
 
 				/* we found SOME name, so don't test it again */
