@@ -3610,7 +3610,13 @@ void store_purchase(int Ind, int item, int amt) {
 		return;
 	}
 
-	if ((st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) && !is_admin(p_ptr)) {
+#ifdef PLAYER_STORES
+	if ((p_ptr->store_num >= 0) &&
+#else
+	if (
+#endif
+	    (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM)
+	    && !is_admin(p_ptr)) {
 		msg_print(Ind, "Only authorised personnel may transfer items from the mathom house.");
 		return;
 	}
@@ -4245,8 +4251,11 @@ void store_sell(int Ind, int item, int amt) {
 	}
 
 	/* Museum */
-//	if (p_ptr->store_num == STORE_MATHOM_HOUSE)
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num >= 0 && (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM)) {
+#else
 	if (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) {
+#endif
 		/* Save the info for the confirmation */
 		p_ptr->current_selling = item;
 		p_ptr->current_sell_amt = amt;
@@ -4309,7 +4318,11 @@ void store_confirm(int Ind) {
 		return;
 	}
 
+#ifdef PLAYER_STORES
+	museum = (p_ptr->store_num >= 0 && (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM)) ? TRUE : FALSE;
+#else
 	museum = (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) ? TRUE : FALSE;
+#endif
 
 	/* Restore the variables */
 	item = p_ptr->current_selling;
