@@ -16716,6 +16716,10 @@ stated.
                                 your melee attacks (weapon as well as martial
                                 arts will be branded by it (cold brand) and
                                 you are granted resistance to cold.
+                                Additionally at 30, cold magic or breaths you 
+                                generate will solidify into cutting ice shards
+                                while your aura is active, dealing ice damage.
+                                This element conversion reduces damage to 2/3.
                                 The aura is automatically enabled when you
                                 train the skill; you can disable the aura in
                                 the 'm' menu. Typing '/ex' command into chat
@@ -16733,6 +16737,11 @@ stated.
                                 your melee attacks (weapon as well as martial
                                 arts) will be branded by it (alternating plasma
                                 or ice brand). (See (5.3) for brand details.)
+                                Additionally at 40, cold magic or breaths you 
+                                generate will solidify into cutting ice shards
+                                while your aura is active, dealing ice damage.
+                                Fire produced will likewise ionize into plasma!
+                                This element conversion reduces damage to 2/3.
                                 The aura is automatically enabled when you
                                 train the skill; you can disable the aura in
                                 the 'm' menu. Typing '/ex' command into chat

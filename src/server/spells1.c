@@ -12458,6 +12458,23 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	/* Non-unique monster names might start on lower-case, due to usage of snprintf() which doesn't know '%^s' formatting.. */
 	char pattacker[MAX_CHARS];
 
+	/* Hack - Upgrade GF_FIRE/COLD for strong, active blood magic! - Kurzel */
+	if (who < 0 && who > PROJECTOR_UNUSUAL) { // Only players have blood magic...
+		player_type *p_ptr = Players[-who];
+		if (typ == GF_COLD)
+			if ((p_ptr->aura[AURA_SHIVER] && (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30)) ||
+			(p_ptr->aura[AURA_DEATH] && (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40))) {
+				typ = GF_ICE;
+				dam *= 2;
+				dam /= 3;
+			}
+		if (typ == GF_FIRE)
+			if (p_ptr->aura[AURA_DEATH] && (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40)) {
+				typ = GF_PLASMA;
+				dam *= 2;
+				dam /= 3;
+			}
+	}
 
 	strcpy(pattacker, attacker);
 	pattacker[0] = toupper(pattacker[0]);

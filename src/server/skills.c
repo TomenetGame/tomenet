@@ -689,10 +689,12 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_AURA_SHIVER:
 		if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[AURA_SHIVER] = TRUE;
 		if (old_value < 300 && new_value >= 300) msg_print(Ind, "\374\377GYour shivering aura brands your melee attacks with frost!");
+		if (old_value < 300 && new_value >= 300) msg_print(Ind, "\374\377GYour shivering aura coverts cold to shattering ice!");
 		break;
 	case SKILL_AURA_DEATH:
 		if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[AURA_DEATH] = TRUE;
 		if (old_value < 400 && new_value >= 400) msg_print(Ind, "\374\377GYour aura of death brands your melee attacks with plasma and ice!");
+		if (old_value < 400 && new_value >= 400) msg_print(Ind, "\374\377GYour aura of death converts fire and cold to plasma and ice!");
 		break;
 	case SKILL_DIG:
 #if 0 /* obsolete */
