@@ -16012,7 +16012,7 @@ stated.
                                 item and reducing your chance to get disarmed.
 
                                 If your Combat skill isn't zero, then you can
-                                press 'm' to check your base chance of
+                                press 'm' to check your actual chances of
                                 parrying (weapon) and blocking (shield), see
                                 (7.11) for more details about parry/block.
 
@@ -16315,13 +16315,16 @@ stated.
                                 interception chance in both cases, as long as
                                 you keep Martial Arts at maximum possible.)
 
-                                You can check your average interception chance
-                                against opponents of same level by pressing
+                                You can check your interception chance against
+                                monsters of same and double level by pressing
                                 'm' and choosing "Check intercept chance".
 
                                 Slightly increases your Dodging skill, simply
                                 by increasing your Martial Arts skill, as if
                                 'Dodging' was a parent skill of Martial Arts.
+                                You can check your dodging chance against
+                                opponents of same and double level by pressing
+                                'm' and choosing "Check dodge chance".
 
                                 Grants +1 extra attack at 2,10,20,30,40,45,50
                                 each, so up to +7 blows per round in total.
@@ -16363,8 +16366,8 @@ stated.
                                 you have a weapon or shield equipped or not or
                                 whether you have autoretaliation on or off.
 
-                                You can check your average interception chance
-                                against opponents of same level by pressing
+                                You can check your interception chance against
+                                opponents of same and double level by pressing
                                 'm' and choosing "Check intercept chance".
 
                                 Classes that have the Interception skill
@@ -17082,8 +17085,8 @@ stated.
                                 dwelling deeper than usual will not affect
                                 your dodge chance.)
 
-                                You can check your average dodging chance
-                                against opponents of same level by pressing
+                                You can check your dodging chance against
+                                opponents of same and double level by pressing
                                 'm' and choosing "Check dodge chance".
                                 Depending on the server version you might see
                                 textual descriptions instead of raw numbers:
