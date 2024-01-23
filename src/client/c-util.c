@@ -2376,7 +2376,7 @@ bool paste_from_clipboard(char *buf, bool global) {
 /* Helper function for message-history search done inside askfor_aux(),
    supporting wildcards '*'. - C. Blue */
 static bool search_history_aux(const char *msg, const char *buf) {
-	static char tmpbuf[MSG_LEN], *tmpc, *tmpc2;
+	static char tmpbuf[MSG_LEN], *tmpc, *tmpc2, swapbuf[MSG_LEN];
 	static const char *msgc, *msgc_tmp;
 
 	/* Handle wildcard segments (or final term) on a working copy */
@@ -2384,7 +2384,13 @@ static bool search_history_aux(const char *msg, const char *buf) {
 	tmpc = tmpbuf;
 	msgc = msg;
 	while (*tmpc) {
+#if 0 /* overwriting own buffer? */
 		strcpy(tmpbuf, tmpc);
+#else /* safe copy */
+		strcpy(swapbuf, tmpc);
+		strcpy(tmpbuf, swapbuf);
+#endif
+
 		if ((tmpc2 = strchr(tmpbuf, '*'))) {
 			*tmpc2 = 0;
 			tmpc = tmpc2 + 1;
