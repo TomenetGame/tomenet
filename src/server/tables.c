@@ -2603,7 +2603,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1500, },
 		{ SKILL_DIVINATION,
 			'+', 0,
-			'+', 1500, },
+			'+', 1400, },
 		{ SKILL_CONVEYANCE,
 			'+', 0,
 			'+', 1500, },
@@ -2620,7 +2620,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1500, },
 		{ SKILL_UDUN,
 			'+', 0,
-			'+', 1500, },
+			'+', 1400, },
 		{ SKILL_NECROMANCY, /* Necromancy for this class - experimental */
 			'+', 0,
 			'+', 1100, },
