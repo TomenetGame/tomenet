@@ -1453,7 +1453,22 @@ static errr CheckEvent(bool wait) {
 	resize_window_x11_timers_handle();
 
 	/* Do not wait unless requested */
-	if (!wait && !XPending(Metadpy->dpy)) return(1);
+	if (!wait) {
+		/* The XPending() call caused an X11 error once:
+
+		X Error of failed request:  BadMatch (invalid parameter attributes)
+		  Major opcode of failed request:  42 (X_SetInputFocus)
+		  Serial number of failed request:  12
+		  Current serial number in output stream:  12
+
+		It was suggested that this can happen due to asynchronous vs synchronous clashes in bad X11 code and to rememdy this, XSync() can be added.
+		I don't know if this really works, and the bug is hard to reproduce (timing issues with windows being drawable or not perhaps):
+		*/
+		XSync(Metadpy->dpy, 0);
+
+		/* This caused the X11 error above in rare circumstances. Shouldn't matter during actual gameplay though, only if window states change. */
+		if (!XPending(Metadpy->dpy)) return(1);
+	}
 
 	/* Load the Event */
 	XNextEvent(Metadpy->dpy, xev);
