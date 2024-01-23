@@ -12466,14 +12466,12 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if ((p_ptr->aura[AURA_SHIVER] && (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30)) ||
 			(p_ptr->aura[AURA_DEATH] && (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40))) {
 				typ = GF_ICE;
-				dam *= 2;
-				dam /= 3;
+				dam = (dam * 2 + 2) / 3;
 			}
 		if (typ == GF_FIRE)
 			if (p_ptr->aura[AURA_DEATH] && (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40)) {
 				typ = GF_PLASMA;
-				dam *= 2;
-				dam /= 3;
+				dam = (dam * 2 + 2) / 3;
 			}
 	}
 
