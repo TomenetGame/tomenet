@@ -266,8 +266,13 @@
 /* Allow vampires to polymorph into vampiric mist at 40, obtaining some special feats? */
 #define VAMPIRIC_MIST
 
+/* Note about vampire istari, not getting access to all normal istar spells:
+   They currently cannot train Water or Nature school, Divination is at 75% and Fire Flash is unusable.
+   These are for compensation/balance, and also lore I guess: */
 /* Specialty: Do vampire istari gain access to occult Shadow school? */
 #define VAMP_ISTAR_SHADOW
+/* Specialty: Do vampire istari gain access to occult Unlife school? */
+#define VAMP_ISTAR_UNLIFE
 
 /* Will negative boni on cursed items become (scaled) positive ones when wielded by true vampires (RACE_VAMPIRE)
    or hell knights (CLASS_HELLKNIGHT), provided the item is eligible (HEAVY_CURSE)? - C. Blue
