@@ -2939,8 +2939,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* limit */
-			message2[j + MSG_LEN - 1] = '\0';
+			/* limit - paranoia as it should ofc already be limited */
+			message2[MSG_LEN - 1] = '\0';
 
 			/* Check whether target is actually online by now :) */
 			if ((i = find_player_name(tname)) // <- doesn't check for admin-dm, which this does: name_lookup(Ind, tname, FALSE, FALSE, TRUE))
