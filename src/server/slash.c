@@ -2753,8 +2753,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/note")) {
 			int notes = 0, found_note = MAX_NOTES;
 			bool colon = FALSE;
-			char tname[MAX_SLASH_LINE_LEN], *tpname; /* target's account name (must be *long* cause we temporarily store whole message2 in it..pft */
 			struct account acc;
+			/* tname: target's account name, but we also store the whole message2 in it at times..pft - this horrible mess needs a rewrite. -_-
+			   Also needs +extra name space, in case the account name was longer than the character name,
+			   as we replace a specified charname with its accountname at some point! */
+			char tname[MAX_SLASH_LINE_LEN + ACCNAME_LEN + 1], *tpname;
 
 			j = 0;
 
@@ -2843,10 +2846,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 					tpname[0] = ':';
 				} else {
+					/* replace the character name given with an account name instead! */
 					strcpy(tname, "/note ");
 					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
 					strcat(tname, ":");
 					strcat(tname, tpname + 1);
+					tname[MSG_LEN - 1] = 0; /* in case the account name was longer than the character name! */
 					strcpy(message2, tname);
 					strcpy(tname, "");
 				}
