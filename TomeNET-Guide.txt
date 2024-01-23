@@ -18009,7 +18009,8 @@ create a character!):
     conjure holy fire or utilize magic of water or nature school. Neither can
     they make use of mimicry techniques (with the exception of vampire bat and
     vampiric mist, see below) or holy or spirit spells.
-    As a specialty, vampire istari are able to learn the occult shadow school.
+    As a specialty, vampire istari are able to learn the occult shadow school
+    and unlife school, which are not accessible to istari of other races.
     They are unable to train in anti-magic in order to suppress magic, but they
     can make use of items that provide anti-magic effects.
     Aside from darkness they also resist sanity-draining effects somewhat,
@@ -18301,6 +18302,9 @@ create a character!):
     effectively use the 'Disruption Shield' spell they are very vulnerable.
     A high-level istar can be very powerful, but getting there can be a
     difficult journey.
+    As a specialty, vampire istari are able to learn the occult shadow school
+    and the occult unlife school, as they cannot train water or nature schools
+    and also don't have access to the holy-fire based Fireflash spell.
 
     Hint:
     An istar has very few hit points compared to other classes, making
