@@ -1277,7 +1277,7 @@ static bool sound_sdl_init(bool no_cache) {
 static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x, int dist_y) {
 	Mix_Chunk *wave = NULL;
 	int s, vols = 100;
-	bool test = FALSE;
+	bool test = FALSE, real_event = (event >= 0 && event < SOUND_MAX_2010);
 
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_sound) return(TRUE); /* claim that it 'succeeded' */
@@ -1285,7 +1285,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 
 #ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
-	if (samples[event].volume) vols = samples[event].volume;
+	if (real_event && samples[event].volume) vols = samples[event].volume;
 #endif
 
 	/* hack: */
@@ -1303,7 +1303,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 			return(found);
 		}
 		/* stop sound of this type? */
-		else {
+		else if (real_event) {
 			for (s = 0; s < cfg_max_channels; s++) {
 				if (channel_sample[s] == event && channel_player_id[s] == player_id) {
 					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
@@ -1314,12 +1314,12 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 		}
 	}
 
+	/* Paranoia */
+	if (!real_event) return(FALSE);
+
 	if (type == SFX_TYPE_AMBIENT_LOCAL) {
 		//todo
 	}
-
-	/* Paranoia */
-	if (event < 0 || event >= SOUND_MAX_2010) return(FALSE);
 
 	if (samples[event].disabled) return(TRUE); /* claim that it 'succeeded' */
 
