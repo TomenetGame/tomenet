@@ -2108,7 +2108,7 @@ void copy_to_clipboard(char *buf) {
 #ifdef WINDOWS
 	size_t len;
 	int pos = 0, end_of_name = 0;
-	char *c, *c2, buf_esc[MSG_LEN + 10];
+	char *c, *c2, buf_esc[MSG_LEN + 10]; //+10: room for turning '/' occurances into '//'
 	static char buf_prev[MSG_LEN + 10];
 
 	/* escape all ' (up to 10 before overflow) */
@@ -2184,7 +2184,7 @@ void copy_to_clipboard(char *buf) {
 
 #ifdef USE_X11 /* relies on xclip being installed! */
 	int r, pos = 0, end_of_name = 0;
-	char *c, *c2, buf_esc[MSG_LEN + 10];
+	char *c, *c2, buf_esc[MSG_LEN + 10]; //+10: room for turning '/' occurances into '//'
 	static char buf_prev[MSG_LEN + 10];
 
 	/* escape all ' (up to 10 before overflow) */
