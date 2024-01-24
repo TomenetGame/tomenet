@@ -10322,9 +10322,9 @@ void dungeon(void) {
 					/* Remove all linebreaks or LUA will break */
 					c = str - 1;
 					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
-					/* Trim trailing spaces */
-					while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
 
+					/* If str actually isn't empty (buffer overflow then on accessing strlen-1), trim trailing spaces */
+					while (*c && c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
 #if AI_MULTILINE > 0
 					/* Dissect -possibly very long- response string into multiple chat messages if required;
 					   only treat the last one with shortening/cutting procedures. */
@@ -10379,57 +10379,62 @@ void dungeon(void) {
 					/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
 					str[maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
 
-					/* Special maintenance/status response given by control scripts? */
-					if (!((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
-						/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
-						   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
-						c = str + strlen(str) - 1;
-						while(c > str && ((*c != '.' && *c != '?'  && *c != '!' && *c != ';') || within_parentheses)) {
-							if (open_parenthesis) {
-								if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE;
-								if (*c == '(') within_parentheses = FALSE;
+					/* Anything left to process? Or we will get buffer overflows from accessing strlen-1 positions */
+					if (*str) {
+						/* Special maintenance/status response given by control scripts? */
+						if (!((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
+							/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
+							   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
+							c = str + strlen(str) - 1;
+							while(c > str && ((*c != '.' && *c != '?'  && *c != '!' && *c != ';') || within_parentheses)) {
+								if (open_parenthesis) {
+									if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE;
+									if (*c == '(') within_parentheses = FALSE;
+								}
+								c--;
 							}
-							c--;
-						}
-						/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
-						if (c == str) {
-							c = str + strlen(str) - 1;
-							while(c > str && *c != ',') c--;
-							/* Avoid sillily short results */
-							if (c < str + 10) c = str;
-						}
-						/* ..and some crazy ones don't even have a comma :/ ..*/
-						if (c == str) {
-							char *c1, *c2, *c3, *c4, *c5;
+							/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
+							if (c == str) {
+								c = str + strlen(str) - 1;
+								while(c > str && *c != ',') c--;
+								/* Avoid sillily short results */
+								if (c < str + 10) c = str;
+							}
+							/* ..and some crazy ones don't even have a comma :/ ..*/
+							if (c == str) {
+								char *c1, *c2, *c3, *c4, *c5;
 
-							c = str + strlen(str) - 1;
-							/* Beeeest effort at "language" gogo.. */
-							c1 = my_strcasestr(str, "that");
-							c2 = my_strcasestr(str, "what");
-							c3 = my_strcasestr(str, "which");
-							c4 = my_strcasestr(str, "who");
-							c5 = my_strcasestr(str, "where");
-							if (c2 > c1) c1 = c2;
-							if (c3 > c1) c1 = c3;
-							if (c4 > c1) c1 = c4;
-							if (c5 > c1) c1 = c5;
-							c = c1;
-							/* Also strip the space before this word */
-							if (c > str) c--;
-							/* Avoid sillily short results */
-							if (c < str + 10) c = NULL;
-						}
+								c = str + strlen(str) - 1;
+								/* Beeeest effort at "language" gogo.. */
+								c1 = my_strcasestr(str, "that");
+								c2 = my_strcasestr(str, "what");
+								c3 = my_strcasestr(str, "which");
+								c4 = my_strcasestr(str, "who");
+								c5 = my_strcasestr(str, "where");
+								if (c2 > c1) c1 = c2;
+								if (c3 > c1) c1 = c3;
+								if (c4 > c1) c1 = c4;
+								if (c5 > c1) c1 = c5;
+								c = c1;
+								/* Also strip the space before this word */
+								if (c > str) c--;
+								/* Avoid sillily short results */
+								if (c < str + 10) c = NULL;
+							}
 
-						/* Found any valid way to somehow truncate the line? =_= */
-						if (c) {
-							if (*c != '?' && *c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
-							*(c + 1) = 0;
-						}
+							/* Found any valid way to somehow truncate the line? =_= */
+							if (c) {
+								if (*c != '?' && *c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
+								*(c + 1) = 0;
+							}
 
-						/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
-						while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.' || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!'))) str[strlen(str) - 1] = 0;
+							/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
+							if (*str && *(str + 1)) // paranoia? ensure there is some string left, so strlen-2 doesn't buffer-overflow */
+								while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.'
+								    || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!')))
+									str[strlen(str) - 1] = 0;
+						}
 					}
-
 #if AI_MULTILINE > 0
 					/* Add the treated 'str' to our multiline array too, just to make it look orderly ^^ */
 					strcpy(strm[m_max], str);
