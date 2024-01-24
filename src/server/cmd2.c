@@ -5135,7 +5135,6 @@ void do_cmd_disarm(int Ind, int dir) {
 				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
-				o_ptr->pval = (0 - o_ptr->pval);
 				do_id_trap(Ind, o_ptr->pval);
 				done = TRUE;
 
