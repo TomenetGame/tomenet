@@ -14547,7 +14547,7 @@ void unstatic_level(struct worldpos *wpos) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (Players[i]->st_anchor) {
 			Players[i]->st_anchor = 0;
-			msg_print(GetInd[Players[i]->id], "Your space/time anchor breaks");
+			msg_print(i, "Your space/time anchor breaks");
 		}
 	}
 	for (i = 1; i <= NumPlayers; i++) {
