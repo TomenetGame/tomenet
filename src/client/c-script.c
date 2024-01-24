@@ -150,14 +150,14 @@ static struct luaL_reg pern_iolib[] = {
  * better avoid to use them maybe */
 
 #define DYADIC(name, op) \
-	s32b name(s32b a, s32b b); \
-	s32b name(s32b a, s32b b) { \
+	u32b name(u32b a, u32b b); \
+	u32b name(u32b a, u32b b) { \
 		return(a op b); \
 	}
 
 #define MONADIC(name, op) \
-	s32b name(s32b b); \
-	s32b name(s32b b) { \
+	u32b name(u32b b); \
+	u32b name(u32b b) { \
 		return(op b); \
 	}
 

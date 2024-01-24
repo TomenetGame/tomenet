@@ -23,21 +23,21 @@ typedef unsigned int u32b;
 typedef u32b char32_t;
 
 
-$extern s32b intMod(s32b a, s32b b);
-$extern s32b intAnd(s32b a, s32b b);
-$extern s32b intOr(s32b a, s32b b);
-$extern s32b intXor(s32b a, s32b b);
-$extern s32b intShiftl(s32b a, s32b b);
-$extern s32b intShiftr(s32b a, s32b b);
-$extern s32b intBitNot(s32b b);
+$extern u32b intMod(u32b a, u32b b);
+$extern u32b intAnd(u32b a, u32b b);
+$extern u32b intOr(u32b a, u32b b);
+$extern u32b intXor(u32b a, u32b b);
+$extern u32b intShiftl(u32b a, u32b b);
+$extern u32b intShiftr(u32b a, u32b b);
+$extern u32b intBitNot(u32b b);
 
-extern s32b intMod @ mod(s32b a, s32b b);
-extern s32b intAnd @ band(s32b a, s32b b);
-extern s32b intOr @ bor(s32b a, s32b b);
-extern s32b intXor @ bxor(s32b a, s32b b);
-extern s32b intShiftl @ bshl(s32b a, s32b b);
-extern s32b intShiftr @ bshr(s32b a, s32b b);
-extern s32b intBitNot @ bnot(s32b b);
+extern u32b intMod @ mod(u32b a, u32b b);
+extern u32b intAnd @ band(u32b a, u32b b);
+extern u32b intOr @ bor(u32b a, u32b b);
+extern u32b intXor @ bxor(u32b a, u32b b);
+extern u32b intShiftl @ bshl(u32b a, u32b b);
+extern u32b intShiftr @ bshr(u32b a, u32b b);
+extern u32b intBitNot @ bnot(u32b b);
 
 extern bool pern_dofile(int Ind, char *file);
 extern int exec_lua(int Ind, char *file);
