@@ -17878,10 +17878,12 @@ create a character!):
     land, they were summoned to guard the forests of Middle-earth.
     Being much like trees they are very slow but strong and do not have
     to feed as often. Because they consist of wood, they are quite
-    susceptible to fire and they don't drown in water. As the Shepherds
-    of the Trees, they can learn to sense the presence of others, such
-    as animals at level 10, orcs at 15, trolls at 20, giants at 25,
-    dragons at 30, demons at 40 and all evil-minded creatures at level 50.
+    susceptible to fire and they don't drown in water (unless overloaded by
+    items).
+    As the Shepherds of the Trees, they can learn to sense the presence of
+    others, such as animals at level 10, orcs at 15, trolls at 20, giants
+    at 25, dragons at 30, demons at 40 and all evil-minded creatures at
+    level 50.
     At level 4 Ents learn to see invisible things. In general, they accumulate
     experience very slowly and they do not eat normal food but they are able to
     consume liquids. Trees will slightly bend aside to let ents pass through.
@@ -18435,8 +18437,11 @@ create a character!):
     To find out the level and special abilities of a monster form, press '~'
     followed by '7' and look it up, then consult section (7.7) for how the
     monster details translate into mimic abilities.
-    To find out how many monsters you already killed and how many you need
-    in total to learn a form, press the '~' key followed by '2'.
+    To find out how many monsters you already killed, which forms you have
+    learned and how many you need in total to learn a form, press the '~'
+    key followed by '2'. To see all your learned forms, you can alternatively
+    use the "/forms" chat command.
+
     To polymorph into a form, press 'm' key, like casting a magic spell.
     (Forms that have DISBELIEVE ability are skipped when using the normal
     'Polymorph Self' spell. You have to explicitely use your (c) power:
@@ -18596,7 +18601,7 @@ create a character!):
     have good dexterity if they aim at training ranged weapons.
     At 7 they learn the ranger-exclusive fighting technique 'Track Animals'.
     At level 8 rangers learn to find paths passing thick woods, and at 15 they
-    have become very able swimmers as well.
+    have become able swimmers as well.
 
     If you're planning to make use of ranged weapons, the first thing you
     should do when you created your character is making a macro for firing your
@@ -18668,7 +18673,8 @@ create a character!):
     into an animal ('m' key), since all animals can pass forest easily.
     Also starting at 5 they learn the first form (cave bear) that can pass
     mountain terrain, and later they also learn flying forms (griffon).
-    To review which forms you can transform into, use the /ex command.
+    To review which forms you can transform into, use the "/ex" or the "/forms"
+    chat command, or press ~ followed by 2 and @.
     To see an overview of the forms and their abilities, see (7.7c).
 
     Hints:
@@ -19597,7 +19603,8 @@ F: flag list
                 The 'REFLECTING' flag on monsters gives them a flat 50% chance
                 to reflect physical or magical projectiles and resistance to
                 any light-based attacks.)
-    CAN_SWIM    The player can pass water fields without problems.
+    CAN_SWIM    The player can swim in water, provided he isn't carrying too
+                many/heavy items.
     CAN_FLY     The player can levitate.
     STUPID      -2 intelligence.
     SMART       +2 intelligence.
@@ -19787,7 +19794,7 @@ All cold-immunes
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
 Example: An ent mimic won't drown in water, but if it polymorphs into an orc,
-it loses the intrinsic ability to pass water since orcs aren't made of wood.
+it loses the intrinsic ability to swim in water since orcs aren't made of wood.
 
 
 Attributes and miscellaneous abilities can also be affected by certain aspects
@@ -20605,7 +20612,7 @@ these limitations will be lifted.
 
                     Tier II: Level 40.
 
-    BONI:           Passing water at 30,
+    BONI:           Swim in water at 30,
                     water resistance at 40.
                     Items that go bad over time due to warmth while being
                     carried will last longer depending on how high this skill
@@ -20747,7 +20754,7 @@ these limitations will be lifted.
     BONI:           Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration, so doesn't stack with
                     item flag regeneration) at 30,
-                    pass trees and water easily at 30,
+                    pass trees and swim in water at 30,
                     poison resistance at 40.
 
 
