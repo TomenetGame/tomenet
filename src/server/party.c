@@ -5092,9 +5092,9 @@ void scan_accounts() {
 #endif
 		}
 
-//		if (modified) WriteAccount(&acc, FALSE);
+		//if (modified) WriteAccount(&acc, FALSE);
 		if (modified) {
-			fseek(fp, -sizeof(struct account), SEEK_CUR);
+			fseek(fp, -((long)(sizeof(struct account))), SEEK_CUR);
 			if (fwrite(&acc, sizeof(struct account), 1, fp) < 1) {
 				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 			}
