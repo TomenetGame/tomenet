@@ -385,7 +385,7 @@ static void rd_item(object_type *o_ptr) {
 		if (o_ptr->name1 == 255) o_ptr->name1 = ART_RANDART;
 		o_ptr->name2 = old_name2;
 	}
-	rd_s32b(&o_ptr->name3);
+	rd_u32b(&o_ptr->name3);
 	if (!older_than(4, 6, 10)) {
 		rd_s32b(&o_ptr->timeout);
 		rd_s32b(&o_ptr->timeout_magic);

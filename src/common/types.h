@@ -725,7 +725,7 @@ struct object_type {
 	u16b name1;			/* Artifact type, if any */
 	u16b name2;			/* Ego-Item type, if any */
 	u16b name2b;			/* 2e Ego-Item type, if any */
-	s32b name3;			/* Randart seed, if any (now it's common with ego-items -Jir-) */
+	u32b name3;			/* Randart seed, if any (now it's common with ego-items -Jir-) */
 	u16b name4;			/* Index of randart name in file 'randarts.txt', solely for fun set bonus - C. Blue */
 	byte attr;			/* colour in inventory (for client) */
 

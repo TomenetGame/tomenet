@@ -166,7 +166,7 @@ static void wr_item(object_type *o_ptr) {
 
 	wr_u16b(o_ptr->name1);
 	wr_u16b(o_ptr->name2);
-	wr_s32b(o_ptr->name3);
+	wr_u32b(o_ptr->name3);
 	wr_s32b(o_ptr->timeout);
 	wr_s32b(o_ptr->timeout_magic);
 	wr_s32b(o_ptr->recharging);
