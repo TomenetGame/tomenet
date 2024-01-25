@@ -5136,6 +5136,10 @@ void do_cmd_disarm(int Ind, int dir) {
 #endif
 				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
 				do_id_trap(Ind, o_ptr->pval);
+
+				/* Actually disarm it */
+				o_ptr->pval = (0 - o_ptr->pval);
+
 				done = TRUE;
 
 				if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
