@@ -6336,20 +6336,20 @@
 
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
-#define RF1_DISABLE_MASK	(0x0)
-#define RF2_DISABLE_MASK	(0x0)
-#define RF3_DISABLE_MASK	(0x0)
-#define RF4_DISABLE_MASK	(0x0)
+#define RF1_DISABLE_MASK	(0x0U)
+#define RF2_DISABLE_MASK	(0x0U)
+#define RF3_DISABLE_MASK	(0x0U)
+#define RF4_DISABLE_MASK	(0x0U)
 
 #define RF5_DISABLE_MASK	(RF5_BO_POIS)
 #define RF6_DISABLE_MASK	(RF6_RAISE_DEAD | RF6_HAND_DOOM)
-#define RF7_DISABLE_MASK	(0x0)
+#define RF7_DISABLE_MASK	(0x0U)
 
-#define RF8_DISABLE_MASK	(0x0)
-#define RF9_DISABLE_MASK	(0x0)
+#define RF8_DISABLE_MASK	(0x0U)
+#define RF9_DISABLE_MASK	(0x0U)
 
-#define RF0_DISABLE_MASK	(0x0)
-#define RFA_DISABLE_MASK	(0x0)
+#define RF0_DISABLE_MASK	(0x0U)
+#define RFA_DISABLE_MASK	(0x0U)
 
 /*
  * Hack -- choose "intelligent" spells when desperate
