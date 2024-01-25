@@ -2666,7 +2666,9 @@ Dive        A trip into the dungeon, usually quite deep compared to the
 
 DS          Disruption shield. A must-have spell for istari (mages).
 
-DSM         Dragon Scale Mail. Legendary pieces of armour.
+DSM         Dragon Scale Mail. Legendary pieces of armour, that actually has
+            neutral water buoyancy. When mentioned, its meaning usually
+            includes Dracolich Bone Armour, which works exactly the same.
 
 Excellents  Items that pseudo-identified as 'excellent'.
 
@@ -12933,6 +12935,14 @@ Blasted armour  Armour that has the prefix "blasted" has much less +AC bonus
                 negative numbers.
                 However, other than bad +AC the armour is not cursed or impared
                 in any way.
+Dragon Scale Mail
+Dracolich Bone Armour
+                Legendary piece of armour that often grants some elemental
+                immunity and can be activated for elemental breath.
+                Also has neutral water buoyancy, so it doesn't hamper (nor
+                help) your ability to swim in terms of weight it puts on you.
+                Usually When mentioning DSM, the Dracolich version is included,
+                it also works the same as DSM, so it's just different in name.
 Dragonrider Coat
                 Resists heat & cold.
 Elven Cloak     Increases your stealth and luck.
