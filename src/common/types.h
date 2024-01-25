@@ -2879,7 +2879,7 @@ struct skill_type {
 	s16b father;				/* Father in the skill tree */
 	s16b order;				/* Order in the tree */
 
-	u32b flags1;				/* Skill flags */
+	u32b flags1;				/* Skill flags -- actually just 'byte' type on client-side, or rather, we only transmit the first byte. */
 	byte tval;	/* tval associated */
 };
 

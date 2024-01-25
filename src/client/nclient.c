@@ -2078,7 +2078,8 @@ int Receive_apply_auto_insc(void) {
 int Receive_inven(void) {
 	int n;
 	char ch;
-	char pos, attr, tval, sval, uses_dir = 0;
+	char pos, uses_dir = 0;
+	byte attr, tval, sval;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN], *insc;
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
@@ -2686,7 +2687,7 @@ int Receive_skill_init(void) {
 	int n;
 	char ch;
 	u16b i;
-	u16b father, mkey, order;
+	s16b father, mkey, order;
 	char name[MSG_LEN], desc[MSG_LEN], act[MSG_LEN];
 	u32b flags1;
 	byte tval;
@@ -2737,7 +2738,7 @@ int Receive_skill_info(void) {
 	char ch;
 	s32b val;
 	int i, mod, dev, mkey;
-	char flags1;
+	byte flags1;
 
 	if (is_newer_than(&server_version, 4, 4, 4, 1, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%c%d", &ch, &i, &val, &mod, &dev, &flags1, &mkey)) <= 0) return(n);
