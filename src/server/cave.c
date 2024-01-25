@@ -6605,10 +6605,10 @@ void update_view(int Ind) {
 /*
  * Mask of bits used in a single octant
  */
-#define VINFO_BITS_3 0x3FFFFFFF
-#define VINFO_BITS_2 0xFFFFFFFF
-#define VINFO_BITS_1 0xFFFFFFFF
-#define VINFO_BITS_0 0xFFFFFFFF
+#define VINFO_BITS_3 0x3FFFFFFFU
+#define VINFO_BITS_2 0xFFFFFFFFU
+#define VINFO_BITS_1 0xFFFFFFFFU
+#define VINFO_BITS_0 0xFFFFFFFFU
 
 
 /*

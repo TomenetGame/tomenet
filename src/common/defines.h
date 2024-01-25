@@ -147,25 +147,25 @@
 
 
 /* Main server flags */
-#define SFLG0_NORMAL		0x00000000
-#define SFLG0_RPG		0x00000001
-#define SFLG0_FUN		0x00000002
-#define SFLG0_PARTY		0x00000004
-#define SFLG0_ARCADE		0x00000008
-#define SFLG0_TEST		0x00000010
-#define SFLG0_RPG_ADMIN		0x00000020
-#define SFLG0_DED_IDDC		0x00000040
-#define SFLG0_DED_PVP		0x00000080
-#define SFLG0_NO_PK		0x00000100
-#define SFLG0_PVP_MAIA		0x00000200	/* Maiar in PvP-mode start at level 20 or above and hence need to set their trait in the client already */
+#define SFLG0_NORMAL		0x00000000U
+#define SFLG0_RPG		0x00000001U
+#define SFLG0_FUN		0x00000002U
+#define SFLG0_PARTY		0x00000004U
+#define SFLG0_ARCADE		0x00000008U
+#define SFLG0_TEST		0x00000010U
+#define SFLG0_RPG_ADMIN		0x00000020U
+#define SFLG0_DED_IDDC		0x00000040U
+#define SFLG0_DED_PVP		0x00000080U
+#define SFLG0_NO_PK		0x00000100U
+#define SFLG0_PVP_MAIA		0x00000200U	/* Maiar in PvP-mode start at level 20 or above and hence need to set their trait in the client already */
 
 /* Feature flags */
-#define SFLG1_NORMAL		0x00000000
-#define SFLG1_PARTY		0x00000001
-#define SFLG1_BIG_MAP		0x00000002
-#define SFLG1_NEW_SHIELDS_NO_AC	0x00000004
-#define SFLG1_LIMIT_SPELLS	0x00000008
-#define SFLG1_WEAPONS_NO_AC	0x00000010
+#define SFLG1_NORMAL		0x00000000U
+#define SFLG1_PARTY		0x00000001U
+#define SFLG1_BIG_MAP		0x00000002U
+#define SFLG1_NEW_SHIELDS_NO_AC	0x00000004U
+#define SFLG1_LIMIT_SPELLS	0x00000008U
+#define SFLG1_WEAPONS_NO_AC	0x00000010U
 
 
 /* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
@@ -1677,46 +1677,46 @@
 #define STORE_MAX_ACTION	6
 
 /* Store flags */
-#define SF1_DEPEND_LEVEL	0x00000001L	/* Item kind levels depend on dungeon level */
-#define SF1_SHALLOW_LEVEL	0x00000002L	/* Add a little to minimum item level */
-#define SF1_MEDIUM_LEVEL	0x00000004L	/* Add to minimum item level */
-#define SF1_DEEP_LEVEL		0x00000008L	/* Add much to minimum item level */
-#define SF1_RARE		0x00000010L	/* k-chance must be >= 3 */
-#define SF1_VERY_RARE		0x00000020L	/* k-chance must be >= 8 */
-#define SF1_FLAT_BASE		0x00000040L	/* a) prevent rare base item types, b) give all base item types same probability */
-#define SF1_ALL_ITEM		0x00000080L	/* Works as the BM */
-#define SF1_RANDOM		0x00000100L	/* Sets level to 0 for apply_magic() if it isn't increased by ..._LEVEL store flags anyway. */
-#define SF1_FORCE_LEVEL		0x00000200L	/* Prevent items of much lower kind level than store level. Applies to T-256 wildcard only. */
-#define SF1_BUY50		0x00000400L	/* Shop buys for 50% of value (can be combined with BUY66, for 1/3 sell value) */
-#define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
-#define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
-#define SF1_EGO			0x00002000L	/* often has ego items (should go with SF1_GOOD and SF1_GREAT) */
-#define SF1_RARE_EGO		0x00004000L	/* reroll on simple ego items (value<9000 or rarest rarity<7) at 75% probability */
-#define SF1_PRICE1		0x00008000L	/* prices * 1.5 */
-#define SF1_PRICE2		0x00010000L	/* double prices */
-#define SF1_PRICE4		0x00020000L	/* prices * 4 */
-#define SF1_PRICE16		0x00040000L	/* prices * 16 */
-#define SF1_GOOD		0x00080000L	/* apply_magic good */
-#define SF1_GREAT		0x00100000L	/* apply_magic great */
-#define SF1_PRICY_ITEMS1	0x00200000L	/* items are worth 3000+ */
-#define SF1_PRICY_ITEMS2	0x00400000L	/* items are worth 8000+ */
-#define SF1_PRICY_ITEMS3	0x00800000L	/* items are worth 15000+ */
-#define SF1_PRICY_ITEMS4	0x01000000L	/* items are worth 25000+ (except runes) */
-#define SF1_HARD_STEAL		0x02000000L	/* hard to steal from this shop */
-#define SF1_VHARD_STEAL		0x04000000L	/* very hard to steal from this shop */
-#define SF1_SPECIAL		0x08000000L	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
-#define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
-#define SF1_NO_DISCOUNT1	0x20000000L	/* no 20+% discounts even */
-#define SF1_SELL67		0x40000000L	/* Store sells for 67% of value (can be combined with BUY50, for 1/3 sell value) */
-#define SF1_ZEROLEVEL		0x80000000L	/* all items are level 0 and can't be traded */
+#define SF1_DEPEND_LEVEL	0x00000001U	/* Item kind levels depend on dungeon level */
+#define SF1_SHALLOW_LEVEL	0x00000002U	/* Add a little to minimum item level */
+#define SF1_MEDIUM_LEVEL	0x00000004U	/* Add to minimum item level */
+#define SF1_DEEP_LEVEL		0x00000008U	/* Add much to minimum item level */
+#define SF1_RARE		0x00000010U	/* k-chance must be >= 3 */
+#define SF1_VERY_RARE		0x00000020U	/* k-chance must be >= 8 */
+#define SF1_FLAT_BASE		0x00000040U	/* a) prevent rare base item types, b) give all base item types same probability */
+#define SF1_ALL_ITEM		0x00000080U	/* Works as the BM */
+#define SF1_RANDOM		0x00000100U	/* Sets level to 0 for apply_magic() if it isn't increased by ..._LEVEL store flags anyway. */
+#define SF1_FORCE_LEVEL		0x00000200U	/* Prevent items of much lower kind level than store level. Applies to T-256 wildcard only. */
+#define SF1_BUY50		0x00000400U	/* Shop buys for 50% of value (can be combined with BUY66, for 1/3 sell value) */
+#define SF1_NO_DISCOUNT		0x00000800U	/* no discount at all */
+#define SF1_NO_DISCOUNT2	0x00001000U	/* no 50%/75%/90% off */
+#define SF1_EGO			0x00002000U	/* often has ego items (should go with SF1_GOOD and SF1_GREAT) */
+#define SF1_RARE_EGO		0x00004000U	/* reroll on simple ego items (value<9000 or rarest rarity<7) at 75% probability */
+#define SF1_PRICE1		0x00008000U	/* prices * 1.5 */
+#define SF1_PRICE2		0x00010000U	/* double prices */
+#define SF1_PRICE4		0x00020000U	/* prices * 4 */
+#define SF1_PRICE16		0x00040000U	/* prices * 16 */
+#define SF1_GOOD		0x00080000U	/* apply_magic good */
+#define SF1_GREAT		0x00100000U	/* apply_magic great */
+#define SF1_PRICY_ITEMS1	0x00200000U	/* items are worth 3000+ */
+#define SF1_PRICY_ITEMS2	0x00400000U	/* items are worth 8000+ */
+#define SF1_PRICY_ITEMS3	0x00800000U	/* items are worth 15000+ */
+#define SF1_PRICY_ITEMS4	0x01000000U	/* items are worth 25000+ (except runes) */
+#define SF1_HARD_STEAL		0x02000000U	/* hard to steal from this shop */
+#define SF1_VHARD_STEAL		0x04000000U	/* very hard to steal from this shop */
+#define SF1_SPECIAL		0x08000000U	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
+#define SF1_BUY67		0x10000000U	/* Shop buys for 67% of value */
+#define SF1_NO_DISCOUNT1	0x20000000U	/* no 20+% discounts even */
+#define SF1_SELL67		0x40000000U	/* Store sells for 67% of value (can be combined with BUY50, for 1/3 sell value) */
+#define SF1_ZEROLEVEL		0x80000000U	/* all items are level 0 and can't be traded */
 
 #define SF1_NO_DISCOUNT3	(SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)	/* Hack: Reduce discounts somewhat */
 
-#define SF2_MUSEUM		0x00000001L
-#define SF2_KEEP_QUART		0x00000002L	/* On store inventory turnover, keep at most 1/4 of the stock, resulting in somewhat more new items (for book stores mostly) */
-#define SF2_KEEP_HALF		0x00000004L	/* On store inventory turnover, keep at most half the stock, resulting in more new items (for book stores mostly) */
-#define SF2_KEEP_TQUART		0x00000008L	/* On store inventory turnover, keep at most 3/4 of the stock, resulting in somewhat more new items (for book stores mostly) */
-#define SF2_FILL_WELL		0x00000010L	/* Fill up store inventory on turnover, so only few slots remain empty (potentially for buying items from the player). For book stores mostly. */
+#define SF2_MUSEUM		0x00000001U
+#define SF2_KEEP_QUART		0x00000002U	/* On store inventory turnover, keep at most 1/4 of the stock, resulting in somewhat more new items (for book stores mostly) */
+#define SF2_KEEP_HALF		0x00000004U	/* On store inventory turnover, keep at most half the stock, resulting in more new items (for book stores mostly) */
+#define SF2_KEEP_TQUART		0x00000008U	/* On store inventory turnover, keep at most 3/4 of the stock, resulting in somewhat more new items (for book stores mostly) */
+#define SF2_FILL_WELL		0x00000010U	/* Fill up store inventory on turnover, so only few slots remain empty (potentially for buying items from the player). For book stores mostly. */
 
 
 /* This seems to be bad, but backported once anyway;
@@ -2653,31 +2653,31 @@
 #define MAX_EFFECTS		256	/* 256, 128 */
 #define MAX_EFFECTS_PLAYER	256	/* 128, 32 */
 
-#define EFF_WAVE		0x00000001	/* A circle whose radius increase */
-#define EFF_LAST		0x00000002	/* The wave lasts */
-#define EFF_STORM		0x00000004	/* The area follows the player */
-#define EFF_WALL		0x00000008	/* A cloud shaped like a beam */
-#define EFF_CROSSHAIR_A		0x00000010	/* Arcade Server */
-#define EFF_CROSSHAIR_B		0x00000020	/* Arcade Server */
-#define EFF_CROSSHAIR_C		0x00000040	/* Arcade Server */
-#define EFF_THINWAVE		0x00000080	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
-#define EFF_VORTEX		0x00000100	/* The area follows the target - Kurzel */
-#define EFF_SEEKER		0x00000200	/* Real-time-moving homing projectile */
-#define EFF_METEOR		0x00000400	/* Announce that a meteor will be landing here, then have it crash down */
-#define EFF_TEMP		0x00000800	/* Arbitrary temporary flag for extra functionality, for example for casting a one-time sfx */
+#define EFF_WAVE		0x00000001U	/* A circle whose radius increase */
+#define EFF_LAST		0x00000002U	/* The wave lasts */
+#define EFF_STORM		0x00000004U	/* The area follows the player */
+#define EFF_WALL		0x00000008U	/* A cloud shaped like a beam */
+#define EFF_CROSSHAIR_A		0x00000010U	/* Arcade Server */
+#define EFF_CROSSHAIR_B		0x00000020U	/* Arcade Server */
+#define EFF_CROSSHAIR_C		0x00000040U	/* Arcade Server */
+#define EFF_THINWAVE		0x00000080U	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
+#define EFF_VORTEX		0x00000100U	/* The area follows the target - Kurzel */
+#define EFF_SEEKER		0x00000200U	/* Real-time-moving homing projectile */
+#define EFF_METEOR		0x00000400U	/* Announce that a meteor will be landing here, then have it crash down */
+#define EFF_TEMP		0x00000800U	/* Arbitrary temporary flag for extra functionality, for example for casting a one-time sfx */
 //hole
-#define EFF_SELF		0x00100000	/* Pendant to PROJECT_SELF: Effects created by projections with this flag receive EFF_SELF, to remain harmful to the caster himself too. */
-#define EFF_DUMMY		0x00200000	/* Effect deals no damage to anything */
-#define EFF_FALLING_STAR	0x00400000
-#define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
-#define EFF_LIGHTNING1		0x01000000	/* For Nether Realm finishing */
-#define EFF_LIGHTNING2		0x02000000	/* For Nether Realm finishing */
-#define EFF_LIGHTNING3		0x04000000	/* For Nether Realm finishing */
-#define EFF_RAINING		0x08000000	/* New ideas for pushing the edge of Rogue-like gaming ^^ */
-#define EFF_FIREWORKS1		0x10000000	/* For NEW_YEARS_EVE =) - C. Blue*/
-#define EFF_FIREWORKS2		0x20000000	/* For new year's eve too. */
-#define EFF_FIREWORKS3		0x40000000	/* For new year's eve too. */
-#define EFF_SNOWING		0x80000000	/* For WINTER_SEASON */
+#define EFF_SELF		0x00100000U	/* Pendant to PROJECT_SELF: Effects created by projections with this flag receive EFF_SELF, to remain harmful to the caster himself too. */
+#define EFF_DUMMY		0x00200000U	/* Effect deals no damage to anything */
+#define EFF_FALLING_STAR	0x00400000U
+#define EFF_THUNDER_VISUAL	0x00800000U	/* For 'Thunderstorm' spell electrocution */
+#define EFF_LIGHTNING1		0x01000000U	/* For Nether Realm finishing */
+#define EFF_LIGHTNING2		0x02000000U	/* For Nether Realm finishing */
+#define EFF_LIGHTNING3		0x04000000U	/* For Nether Realm finishing */
+#define EFF_RAINING		0x08000000U	/* New ideas for pushing the edge of Rogue-like gaming ^^ */
+#define EFF_FIREWORKS1		0x10000000U	/* For NEW_YEARS_EVE =) - C. Blue*/
+#define EFF_FIREWORKS2		0x20000000U	/* For new year's eve too. */
+#define EFF_FIREWORKS3		0x40000000U	/* For new year's eve too. */
+#define EFF_SNOWING		0x80000000U	/* For WINTER_SEASON */
 
 
 
@@ -4606,50 +4606,50 @@
 /*
  * Special cave grid flags
  */
-#define CAVE_MARK	0x00000001	/* memorized feature */
-#define CAVE_GLOW	0x00000002	/* self-illuminating */
-#define CAVE_ICKY	0x00000004	/* part of a vault */
-#define CAVE_ROOM	0x00000008	/* part of a room */
+#define CAVE_MARK	0x00000001U	/* memorized feature */
+#define CAVE_GLOW	0x00000002U	/* self-illuminating */
+#define CAVE_ICKY	0x00000004U	/* part of a vault */
+#define CAVE_ROOM	0x00000008U	/* part of a room */
 
-#define CAVE_LITE	0x00000010	/* lite flag  */
-#define CAVE_VIEW	0x00000020	/* view flag */
-#define CAVE_TEMP	0x00000040	/* temp flag */
-#define CAVE_XTRA	0x00000080	/* misc flag, used for temporary short-term operations just like CAVE_TEMP. Hance not feasible for actual storage of any info. */
+#define CAVE_LITE	0x00000010U	/* lite flag  */
+#define CAVE_VIEW	0x00000020U	/* view flag */
+#define CAVE_TEMP	0x00000040U	/* temp flag */
+#define CAVE_XTRA	0x00000080U	/* misc flag, used for temporary short-term operations just like CAVE_TEMP. Hance not feasible for actual storage of any info. */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
 
 /* -- note: p_ptr->cave_flag[] is only 1 byte in size, so it uses only the above flags. The rest are for c_ptr->info which is 4 bytes. -- */
 
-#define CAVE_NOPK	0x00000100	/* no pkill (arena?, tavern) */
-#define CAVE_STCK	0x00000200	/* sticky (no-tele vault), not icky (prison?) */
-#define CAVE_DARKEN	0x00000400	/* world surface at night - change colours to darker variants */
-#define CAVE_ICKY_PERMA	0x00000800 	/* part of a perma-walled vault */
+#define CAVE_NOPK	0x00000100U	/* no pkill (arena?, tavern) */
+#define CAVE_STCK	0x00000200U	/* sticky (no-tele vault), not icky (prison?) */
+#define CAVE_DARKEN	0x00000400U	/* world surface at night - change colours to darker variants */
+#define CAVE_ICKY_PERMA	0x00000800U 	/* part of a perma-walled vault */
 
-#define CAVE_PROT	0x00001000	/* no monster spawn/teleport/summon/movement on; no players teleport/recall to; no item stacking; cannot drop true arts; no traps/charges; cannot steal; no sunburn */
-#define CAVE_NEST_PIT	0x00002000	/* grid is part of a monster nest and target for monster placement */
-#define CAVE_MAGELOCK	0x00004000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
-#define CAVE_JAIL	0x00008000	/* part of a jail: for special colour/lighting of jail walls */
+#define CAVE_PROT	0x00001000U	/* no monster spawn/teleport/summon/movement on; no players teleport/recall to; no item stacking; cannot drop true arts; no traps/charges; cannot steal; no sunburn */
+#define CAVE_NEST_PIT	0x00002000U	/* grid is part of a monster nest and target for monster placement */
+#define CAVE_MAGELOCK	0x00004000U	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
+#define CAVE_JAIL	0x00008000U	/* part of a jail: for special colour/lighting of jail walls */
 
-#define CAVE_LITE_VAMP	0x00010000	/* lite flag for RACE_VAMPIRE 'light' */
-#define CAVE_LITE_WHITE	0x00020000	/* lite flag for non-fiery light sources */
-#define CAVE_GUILD_SUS	0x00040000	/* floor of a suspended guild hall, due to the guild's leaderlessnes */
-#define CAVE_WATERY	0x00080000	/* For doors/stairs: Are they adjacent to water grids? */
+#define CAVE_LITE_VAMP	0x00010000U	/* lite flag for RACE_VAMPIRE 'light' */
+#define CAVE_LITE_WHITE	0x00020000U	/* lite flag for non-fiery light sources */
+#define CAVE_GUILD_SUS	0x00040000U	/* floor of a suspended guild hall, due to the guild's leaderlessnes */
+#define CAVE_WATERY	0x00080000U	/* For doors/stairs: Are they adjacent to water grids? */
 
-#define CAVE_SWITCH	0x00100000	/* Players can always switch position here, like on staircase grids (for grids around stores) */
-#define CAVE_GLOW_HACK	0x00200000	/* bad hack for hard-coded questor lights for now // self-illuminating */
-#define CAVE_GLOW_HACK_LAMP	0x00400000 	/* bad hack for hard-coded questor lights for now // self-illuminating, in fire-flickering style (TERM_LAMP) */
-#define CAVE_ENCASED	0x00800000	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
+#define CAVE_SWITCH	0x00100000U	/* Players can always switch position here, like on staircase grids (for grids around stores) */
+#define CAVE_GLOW_HACK	0x00200000U	/* bad hack for hard-coded questor lights for now // self-illuminating */
+#define CAVE_GLOW_HACK_LAMP	0x00400000U 	/* bad hack for hard-coded questor lights for now // self-illuminating, in fire-flickering style (TERM_LAMP) */
+#define CAVE_ENCASED	0x00800000U	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
 
-#define CAVE_NOYIELD	0x01000000	/* Will not yield any items or treasure when tunneled */
-#define CAVE_DECAL	0x02000000	/* Impossible to interact with anything on this grid or the grid itself except for looking at it (only implemented for monsters atm) */
-#define CAVE_MINED	0x04000000	/* Just for warning_tunnel_hidden, set when a treasure vein was mined on this grid */
-#define CAVE_NO_PROB	0x08000000	/* Cannot enter this grid via Probability Travel (but can exit) */
+#define CAVE_NOYIELD	0x01000000U	/* Will not yield any items or treasure when tunneled */
+#define CAVE_DECAL	0x02000000U	/* Impossible to interact with anything on this grid or the grid itself except for looking at it (only implemented for monsters atm) */
+#define CAVE_MINED	0x04000000U	/* Just for warning_tunnel_hidden, set when a treasure vein was mined on this grid */
+#define CAVE_NO_PROB	0x08000000U	/* Cannot enter this grid via Probability Travel (but can exit) */
 
-#define CAVE_NO_MONSTER	0x10000000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
-#define CAVE_SCRT	0x20000000	/* Secret grid, cannot be uncovered by magic mapping or similar means, but only manually by looking at it directly via line of sight. */
-#define CAVE_REFUGE	0x40000000	/* IDDC refuge grid */
-#define CAVE_LITE_TYPE_CHANGED	0x80000000	/* Temp flag for lighting code: Required when when player with non-CAVE_LITE_WHITE light source crosses static CAVE_LITE_WHITE grids, or they won't be redrawn after re-receiving their CAVE_LITE_WHITE colour. - C. Blue */
+#define CAVE_NO_MONSTER	0x10000000U	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
+#define CAVE_SCRT	0x20000000U	/* Secret grid, cannot be uncovered by magic mapping or similar means, but only manually by looking at it directly via line of sight. */
+#define CAVE_REFUGE	0x40000000U	/* IDDC refuge grid */
+#define CAVE_LITE_TYPE_CHANGED	0x80000000U	/* Temp flag for lighting code: Required when when player with non-CAVE_LITE_WHITE light source crosses static CAVE_LITE_WHITE grids, or they won't be redrawn after re-receiving their CAVE_LITE_WHITE colour. - C. Blue */
 //super hypothetical: maybe add CAVE_LITE_MON in the future, for monster-lit grids.
 
 #if 0	/* for future expansion.. */
@@ -4668,45 +4668,45 @@
  * Bit flags for the "project()" function
  *
  */
-#define PROJECT_JUMP	0x00000001	/* Jump directly to the target location (this is a hack) */
-#define PROJECT_BEAM	0x00000002	/* Work as a beam weapon (affect every grid passed through) */
-#define PROJECT_THRU	0x00000004	/* Continue "through" the target (used for "bolts"/"beams") */
-#define PROJECT_STOP	0x00000008	/* Stop as soon as we hit a monster (used for "bolts") */
+#define PROJECT_JUMP	0x00000001U	/* Jump directly to the target location (this is a hack) */
+#define PROJECT_BEAM	0x00000002U	/* Work as a beam weapon (affect every grid passed through) */
+#define PROJECT_THRU	0x00000004U	/* Continue "through" the target (used for "bolts"/"beams") */
+#define PROJECT_STOP	0x00000008U	/* Stop as soon as we hit a monster (used for "bolts") */
 
-#define PROJECT_GRID	0x00000010	/* Affect each grid in the "blast area" in some way */
-#define PROJECT_ITEM	0x00000020	/* Affect each object in the "blast area" in some way */
-#define PROJECT_KILL	0x00000040	/* Affect each monster in the "blast area" in some way */
-#define PROJECT_HIDE	0x00000080	/* Hack -- disable "visual" feedback from projection */
+#define PROJECT_GRID	0x00000010U	/* Affect each grid in the "blast area" in some way */
+#define PROJECT_ITEM	0x00000020U	/* Affect each object in the "blast area" in some way */
+#define PROJECT_KILL	0x00000040U	/* Affect each monster in the "blast area" in some way */
+#define PROJECT_HIDE	0x00000080U	/* Hack -- disable "visual" feedback from projection */
 
-#define PROJECT_STAY	0x00000100	/* Create an 'effect' on the grid (cloud/wall/special fx) */
-#define PROJECT_SELF	0x00000200	/* Affect the projector too */
-#define PROJECT_DUMY	0x00000400	/* Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.) */
-#define PROJECT_GRAV	0x00000800	/* Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT) */
+#define PROJECT_STAY	0x00000100U	/* Create an 'effect' on the grid (cloud/wall/special fx) */
+#define PROJECT_SELF	0x00000200U	/* Affect the projector too */
+#define PROJECT_DUMY	0x00000400U	/* Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.) */
+#define PROJECT_GRAV	0x00000800U	/* Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT) */
 
-#define PROJECT_PLAY	0x00001000	/* Affect friendly players too, including the projector. (for GF_HEALINGCLOUD) */
-#define PROJECT_NORF	0x00002000	/* cannot be deflected by REFLECT monster flag */
-#define PROJECT_FULL	0x00004000	/* Deal full damage over radius spread (May dehack many things with this! - Kurzel) */
-#define PROJECT_EVSG	0x00008000	/* 'Entity vs Grid': It's a bolt spell that can hit EITHER mon/py OR floor/item. */
+#define PROJECT_PLAY	0x00001000U	/* Affect friendly players too, including the projector. (for GF_HEALINGCLOUD) */
+#define PROJECT_NORF	0x00002000U	/* cannot be deflected by REFLECT monster flag */
+#define PROJECT_FULL	0x00004000U	/* Deal full damage over radius spread (May dehack many things with this! - Kurzel) */
+#define PROJECT_EVSG	0x00008000U	/* 'Entity vs Grid': It's a bolt spell that can hit EITHER mon/py OR floor/item. */
 
-#define PROJECT_NODO	0x00010000	/* cannot be dodged (basically used in the same places as NORF) */
-#define PROJECT_LODF	0x00020000	/* can not often be deflected by shield-blocking. */
-#define PROJECT_NODF	0x00040000	/* cannot be deflected by shield-blocking at all. */
-#define PROJECT_RNAF	0x00080000	/* has no adverse effects if resisted (added for time runecraft on high-elven characters) */
+#define PROJECT_NODO	0x00010000U	/* cannot be dodged (basically used in the same places as NORF) */
+#define PROJECT_LODF	0x00020000U	/* can not often be deflected by shield-blocking. */
+#define PROJECT_NODF	0x00040000U	/* cannot be deflected by shield-blocking at all. */
+#define PROJECT_RNAF	0x00080000U	/* has no adverse effects if resisted (added for time runecraft on high-elven characters) */
 
-#define PROJECT_STAR	0x00100000	/* Cast 8 rays and hit the central grid at target location. - Kurzel */
-#define PROJECT_TRAP	0x00200000	/* Caused by a set-up incident, added for blast charges (ENABLE_DEMOLITIONIST) to allow larger GF_DETONATION radius */
-#define PROJECT_BOUN	0x00400000	/* Attack has bounced at least once */
+#define PROJECT_STAR	0x00100000U	/* Cast 8 rays and hit the central grid at target location. - Kurzel */
+#define PROJECT_TRAP	0x00200000U	/* Caused by a set-up incident, added for blast charges (ENABLE_DEMOLITIONIST) to allow larger GF_DETONATION radius */
+#define PROJECT_BOUN	0x00400000U	/* Attack has bounced at least once */
 
 /* ToME expansions */
 #if 0	/* soon */
-#define PROJECT_VIEWABLE	0x00000100   /* Affect monsters in LOS */
-#define PROJECT_METEOR_SHOWER	0x00000200   /* Affect random grids */
-#define PROJECT_BLAST		0x00000400   /* Like Mega_blast, but will only affect viewable grids */
-#define PROJECT_PANEL		0x00000800   /* Affect everything in the panel. */
-#define PROJECT_ALL		0x00001000   /* Affect every single grid. */
-#define PROJECT_WALL		0x00002000
-#define PROJECT_MANA_PATH	0x00004000   /* Follow a mana path. */
-#define PROJECT_ABSORB_MANA	0x00008000   /* The spell increase in power as it absord grid's mana. */
+#define PROJECT_VIEWABLE	0x00000100U   /* Affect monsters in LOS */
+#define PROJECT_METEOR_SHOWER	0x00000200U   /* Affect random grids */
+#define PROJECT_BLAST		0x00000400U   /* Like Mega_blast, but will only affect viewable grids */
+#define PROJECT_PANEL		0x00000800U   /* Affect everything in the panel. */
+#define PROJECT_ALL		0x00001000U   /* Affect every single grid. */
+#define PROJECT_WALL		0x00002000U
+#define PROJECT_MANA_PATH	0x00004000U   /* Follow a mana path. */
+#define PROJECT_ABSORB_MANA	0x00008000U   /* The spell increase in power as it absord grid's mana. */
 #endif	/* 0 */
 
 
@@ -4723,38 +4723,38 @@
 /*
  * Some bit-flags for the "smart" field
  */
-#define SM_RES_ACID		0x00000001
-#define SM_RES_ELEC		0x00000002
-#define SM_RES_FIRE		0x00000004
-#define SM_RES_COLD		0x00000008
-#define SM_RES_POIS	0x00000010
-#define SM_RES_NETH	0x00000020
-#define SM_RES_LITE	0x00000040
-#define SM_RES_DARK	0x00000080
-#define SM_RES_FEAR		0x00000100
-#define SM_RES_CONF		0x00000200
-#define SM_RES_CHAOS		0x00000400
-#define SM_RES_DISEN		0x00000800
-#define SM_RES_BLIND	0x00001000
-#define SM_RES_NEXUS	0x00002000
-#define SM_RES_SOUND	0x00004000
-#define SM_RES_SHARD	0x00008000
-#define SM_OPP_ACID		0x00010000
-#define SM_OPP_ELEC		0x00020000
-#define SM_OPP_FIRE		0x00040000
-#define SM_OPP_COLD		0x00080000
-#define SM_OPP_POIS	0x00100000
-#define SM_RES_WATE	0x00200000
-#define SM_RES_MANA	0x00400000
-#define SM_RES_TIME	0x00800000
-#define SM_IMM_ACID		0x01000000
-#define SM_IMM_ELEC		0x02000000
-#define SM_IMM_FIRE		0x04000000
-#define SM_IMM_COLD		0x08000000
-#define SM_IMM_NETH	0x10000000
-#define SM_IMM_WATE	0x20000000
-#define SM_IMM_FREE	0x40000000
-#define SM_IMM_MANA	0x80000000
+#define SM_RES_ACID		0x00000001U
+#define SM_RES_ELEC		0x00000002U
+#define SM_RES_FIRE		0x00000004U
+#define SM_RES_COLD		0x00000008U
+#define SM_RES_POIS	0x00000010U
+#define SM_RES_NETH	0x00000020U
+#define SM_RES_LITE	0x00000040U
+#define SM_RES_DARK	0x00000080U
+#define SM_RES_FEAR		0x00000100U
+#define SM_RES_CONF		0x00000200U
+#define SM_RES_CHAOS		0x00000400U
+#define SM_RES_DISEN		0x00000800U
+#define SM_RES_BLIND	0x00001000U
+#define SM_RES_NEXUS	0x00002000U
+#define SM_RES_SOUND	0x00004000U
+#define SM_RES_SHARD	0x00008000U
+#define SM_OPP_ACID		0x00010000U
+#define SM_OPP_ELEC		0x00020000U
+#define SM_OPP_FIRE		0x00040000U
+#define SM_OPP_COLD		0x00080000U
+#define SM_OPP_POIS	0x00100000U
+#define SM_RES_WATE	0x00200000U
+#define SM_RES_MANA	0x00400000U
+#define SM_RES_TIME	0x00800000U
+#define SM_IMM_ACID		0x01000000U
+#define SM_IMM_ELEC		0x02000000U
+#define SM_IMM_FIRE		0x04000000U
+#define SM_IMM_COLD		0x08000000U
+#define SM_IMM_NETH	0x10000000U
+#define SM_IMM_WATE	0x20000000U
+#define SM_IMM_FREE	0x40000000U
+#define SM_IMM_MANA	0x80000000U
 
 
 /*
@@ -4783,127 +4783,127 @@
 /*
  * Bit flags for the "p_ptr->notice" variable
  */
-#define PN_COMBINE	0x00000001L	/* Combine the pack */
-#define PN_REORDER	0x00000002L	/* Reorder the pack */
+#define PN_COMBINE	0x00000001U	/* Combine the pack */
+#define PN_REORDER	0x00000002U	/* Reorder the pack */
 /* xxx (many) */
 
 
 /*
  * Bit flags for the "p_ptr->update" variable
  */
-#define PU_BONUS	0x00000001L	/* Calculate boni */
-#define PU_TORCH	0x00000002L	/* Calculate torch radius */
-#define PU_SKILL_INFO	0x00000004L	/* Update client skill info */
-#define PU_SANITY	0x00000008L     /* Calculate csane and msane */
-#define PU_HP		0x00000010L	/* Calculate chp and mhp */
-#define PU_MANA		0x00000020L	/* Calculate cmp and mmp */
+#define PU_BONUS	0x00000001U	/* Calculate boni */
+#define PU_TORCH	0x00000002U	/* Calculate torch radius */
+#define PU_SKILL_INFO	0x00000004U	/* Update client skill info */
+#define PU_SANITY	0x00000008U     /* Calculate csane and msane */
+#define PU_HP		0x00000010U	/* Calculate chp and mhp */
+#define PU_MANA		0x00000020U	/* Calculate cmp and mmp */
 /* xxx */
-#define PU_SKILL_MOD	0x00000080L	/* Update client skill values/... */
+#define PU_SKILL_MOD	0x00000080U	/* Update client skill values/... */
 /* xxx (many) */
 /* xxx (many) */
-#define PU_UN_VIEW	0x00010000L	/* Forget view */
-#define PU_UN_LITE	0x00020000L	/* Forget lite */
+#define PU_UN_VIEW	0x00010000U	/* Forget view */
+#define PU_UN_LITE	0x00020000U	/* Forget lite */
 /* xxx (many) */
-#define PU_VIEW		0x00100000L	/* Update view */
-#define PU_LITE		0x00200000L	/* Update lite */
+#define PU_VIEW		0x00100000U	/* Update view */
+#define PU_LITE		0x00200000U	/* Update lite */
 /* xxx */
-#define PU_MONSTERS	0x01000000L	/* Update monsters */
-#define PU_DISTANCE	0x02000000L	/* Update distances */
+#define PU_MONSTERS	0x01000000U	/* Update monsters */
+#define PU_DISTANCE	0x02000000U	/* Update distances */
 /* xxx */
-#define PU_FLOW		0x10000000L	/* Update flow */
-#define PU_MUSIC	0x40000000L	/* Update music */
-#define PU_LUA		0x80000000L	/* Update LUA scripts */
+#define PU_FLOW		0x10000000U	/* Update flow */
+#define PU_MUSIC	0x40000000U	/* Update music */
+#define PU_LUA		0x80000000U	/* Update LUA scripts */
 /* xxx (many) */
 
 
 /*
  * Bit flags for the "p_ptr->redraw" variable
  */
-#define PR_MISC		0x00000001L	/* Display Race/Class/Trait */
-#define PR_TITLE	0x00000002L	/* Display Title */
-#define PR_LEV		0x00000004L	/* Display Level */
-#define PR_EXP		0x00000008L	/* Display Experience */
-#define PR_STATS	0x00000010L	/* Display Stats */
-#define PR_ARMOR	0x00000020L	/* Display Armor */
-#define PR_HP		0x00000040L	/* Display Hitpoints */
-#define PR_MANA		0x00000080L	/* Display Mana */
-#define PR_GOLD		0x00000100L	/* Display Gold */
-#define PR_DEPTH	0x00000200L	/* Display Depth */
-#define PR_HISTORY	0x00000400L	/* Display History */
-#define PR_HEALTH	0x00000800L	/* Display Health Bar */
-#define PR_CUT		0x00001000L	/* Display Extra (Cut) */
-#define PR_STUN		0x00002000L	/* Display Extra (Stun/Paralysis) */
-#define PR_HUNGER	0x00004000L	/* Display Extra (Hunger) */
-#define PR_VARIOUS	0x00008000L	/* Display Various info (age, etc.) */
-#define PR_BLIND	0x00010000L	/* Display Extra (Blind/Hallu) */
-#define PR_CONFUSED	0x00020000L	/* Display Extra (Confused) */
-#define PR_AFRAID	0x00040000L	/* Display Extra (Afraid) */
-#define PR_POISONED	0x00080000L	/* Display Extra (Poisoned) */
-#define PR_STATE	0x00100000L	/* Display Extra (State) */
-#define PR_SPEED	0x00200000L	/* Display Extra (Speed) */
-#define PR_STUDY	0x00400000L	/* Display Extra (Study) */
-#define PR_PLUSSES	0x00800000L	/* Display Plusses to Hit/Damage */
-#define PR_EXTRA	0x01000000L	/* Display Extra Info */
-#define PR_BASIC	0x02000000L	/* Display Basic Info */
-#define PR_MAP		0x04000000L	/* Display Map */
-#define PR_WIPE		0x08000000L	/* Hack -- Total Redraw */
-#define PR_SKILLS	0x10000000L	/* Display Skills */
-#define PR_SANITY	0x20000000L     /* Display Sanity */
-#define PR_ENCUMBERMENT	0x40000000L	/* Display Encumberment status line */
-#define PR_STAMINA	0x80000000L	/* Display Stamina */
+#define PR_MISC		0x00000001U	/* Display Race/Class/Trait */
+#define PR_TITLE	0x00000002U	/* Display Title */
+#define PR_LEV		0x00000004U	/* Display Level */
+#define PR_EXP		0x00000008U	/* Display Experience */
+#define PR_STATS	0x00000010U	/* Display Stats */
+#define PR_ARMOR	0x00000020U	/* Display Armor */
+#define PR_HP		0x00000040U	/* Display Hitpoints */
+#define PR_MANA		0x00000080U	/* Display Mana */
+#define PR_GOLD		0x00000100U	/* Display Gold */
+#define PR_DEPTH	0x00000200U	/* Display Depth */
+#define PR_HISTORY	0x00000400U	/* Display History */
+#define PR_HEALTH	0x00000800U	/* Display Health Bar */
+#define PR_CUT		0x00001000U	/* Display Extra (Cut) */
+#define PR_STUN		0x00002000U	/* Display Extra (Stun/Paralysis) */
+#define PR_HUNGER	0x00004000U	/* Display Extra (Hunger) */
+#define PR_VARIOUS	0x00008000U	/* Display Various info (age, etc.) */
+#define PR_BLIND	0x00010000U	/* Display Extra (Blind/Hallu) */
+#define PR_CONFUSED	0x00020000U	/* Display Extra (Confused) */
+#define PR_AFRAID	0x00040000U	/* Display Extra (Afraid) */
+#define PR_POISONED	0x00080000U	/* Display Extra (Poisoned) */
+#define PR_STATE	0x00100000U	/* Display Extra (State) */
+#define PR_SPEED	0x00200000U	/* Display Extra (Speed) */
+#define PR_STUDY	0x00400000U	/* Display Extra (Study) */
+#define PR_PLUSSES	0x00800000U	/* Display Plusses to Hit/Damage */
+#define PR_EXTRA	0x01000000U	/* Display Extra Info */
+#define PR_BASIC	0x02000000U	/* Display Basic Info */
+#define PR_MAP		0x04000000U	/* Display Map */
+#define PR_WIPE		0x08000000U	/* Hack -- Total Redraw */
+#define PR_SKILLS	0x10000000U	/* Display Skills */
+#define PR_SANITY	0x20000000U     /* Display Sanity */
+#define PR_ENCUMBERMENT	0x40000000U	/* Display Encumberment status line */
+#define PR_STAMINA	0x80000000U	/* Display Stamina */
 
-#define PR_BPR_WRAITH	0x00400000L	/* Re-use (!) to display BpR and also Wraithform */
+#define PR_BPR_WRAITH	0x00400000U	/* Re-use (!) to display BpR and also Wraithform */
 
 /*
  * Bit flags for the "p_ptr->redraw2" variable
  */
-#define PR2_MAP_FWD	0x00000001L	/* Redraw the map just for a mind-linking player. (Also triggers visual title-bigmap-hack.) */
-#define PR2_MAP_SCR	0x00000002L	/* Redraw just the scr map, not the ovl one */
-#define PR2_CSHEET_FWD	0x00000004L	/* Redraw the character sheet (aka resend info for all its pages) just for mind-linking player. */
-#define PR2_INDICATORS	0x00000008L	/* Redraw indicators for timed properties */
+#define PR2_MAP_FWD	0x00000001U	/* Redraw the map just for a mind-linking player. (Also triggers visual title-bigmap-hack.) */
+#define PR2_MAP_SCR	0x00000002U	/* Redraw just the scr map, not the ovl one */
+#define PR2_CSHEET_FWD	0x00000004U	/* Redraw the character sheet (aka resend info for all its pages) just for mind-linking player. */
+#define PR2_INDICATORS	0x00000008U	/* Redraw indicators for timed properties */
 
 /*
  * Bit flags for the "prt_indicators" function
  */
-#define IND_RES_FIRE    0x00000001L /* Active timed resistance to fire */
-#define IND_RES_COLD    0x00000002L /* Active timed resistance to cold */
-#define IND_RES_ELEC    0x00000004L /* Active timed resistance to electricity */
-#define IND_RES_ACID    0x00000008L /* Active timed resistance to acid */
-#define IND_RES_POIS    0x00000010L /* Active timed resistance to poison */
-#define IND_RES_DIVINE  0x00000020L /* Active timed divine resistances (currently it's only mana res) */
-#define IND_ESP         0x00000040L /* Active timed full ESP */
-#define IND_MELEE_BRAND	0x00000080L /* Active timed melee weapon brand */
-#define IND_REGEN	0x00000100L /* Active timed hp regeneration boost */
-#define IND_DISPERSION	0x00000200L /* Active dispersion (not timed, switchable!) */
-#define IND_CHARM	0x00000400L /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
+#define IND_RES_FIRE    0x00000001U /* Active timed resistance to fire */
+#define IND_RES_COLD    0x00000002U /* Active timed resistance to cold */
+#define IND_RES_ELEC    0x00000004U /* Active timed resistance to electricity */
+#define IND_RES_ACID    0x00000008U /* Active timed resistance to acid */
+#define IND_RES_POIS    0x00000010U /* Active timed resistance to poison */
+#define IND_RES_DIVINE  0x00000020U /* Active timed divine resistances (currently it's only mana res) */
+#define IND_ESP         0x00000040U /* Active timed full ESP */
+#define IND_MELEE_BRAND	0x00000080U /* Active timed melee weapon brand */
+#define IND_REGEN	0x00000100U /* Active timed hp regeneration boost */
+#define IND_DISPERSION	0x00000200U /* Active dispersion (not timed, switchable!) */
+#define IND_CHARM	0x00000400U /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)
  */
 /* flags also used by the client as term window flags */
-#define PW_INVEN	0x00000001L	/* Display inven/equip */
-#define PW_EQUIP	0x00000002L	/* Display equip/inven */
-/*#define PW_SPELL	0x00000004L*/	/* Display spell list */
-#define PW_PLAYER	0x00000004L	/* Display character -- unused */
-#define PW_MSGNOCHAT	0x00000008L	/* Display messages except chat */
-#define PW_MESSAGE	0x00000010L	/* Display messages */
-#define PW_CHAT		0x00000020L	/* Display chat messages */
-#define PW_MINIMAP	0x00000040L	/* Display minimap */
-#define PW_LAGOMETER	0x00000080L	/* Display the lag-o-meter */
-#define PW_PLAYERLIST	0x00000100L	/* Display player list */
-#define PW_PLAYER2	0x00000200L	/* Display boni & resistances page of the character sheet ("Chh") */
-#define PW_SUBINVEN	0x00000400L	/* Display subinventory contents */
+#define PW_INVEN	0x00000001U	/* Display inven/equip */
+#define PW_EQUIP	0x00000002U	/* Display equip/inven */
+/*#define PW_SPELL	0x00000004U*/	/* Display spell list */
+#define PW_PLAYER	0x00000004U	/* Display character -- unused */
+#define PW_MSGNOCHAT	0x00000008U	/* Display messages except chat */
+#define PW_MESSAGE	0x00000010U	/* Display messages */
+#define PW_CHAT		0x00000020U	/* Display chat messages */
+#define PW_MINIMAP	0x00000040U	/* Display minimap */
+#define PW_LAGOMETER	0x00000080U	/* Display the lag-o-meter */
+#define PW_PLAYERLIST	0x00000100U	/* Display player list */
+#define PW_PLAYER2	0x00000200U	/* Display boni & resistances page of the character sheet ("Chh") */
+#define PW_SUBINVEN	0x00000400U	/* Display subinventory contents */
 /* flags currently not used by the client: */
-#define PW_OVERHEAD	0x00001000L	/* Display overhead view */
-#define PW_MONSTER	0x00002000L	/* Display monster recall */
-#define PW_OBJECT	0x00004000L	/* Display object recall */
-#define PW_ALLITEMS	0x00008000L	/* Display all inventory and equipment (all slots count as 'changed') */
-#define PW_ALLITEMS_FWD	0x00010000L	/* Display all inventory for mind-linking player */
+#define PW_OVERHEAD	0x00001000U	/* Display overhead view */
+#define PW_MONSTER	0x00002000U	/* Display monster recall */
+#define PW_OBJECT	0x00004000U	/* Display object recall */
+#define PW_ALLITEMS	0x00008000U	/* Display all inventory and equipment (all slots count as 'changed') */
+#define PW_ALLITEMS_FWD	0x00010000U	/* Display all inventory for mind-linking player */
 #if 1
- #define PW_INIT		0x00020000L	/* Various initialisations, that are too early to be done in Handle_login() or player_setup() to work. */
+ #define PW_INIT		0x00020000U	/* Various initialisations, that are too early to be done in Handle_login() or player_setup() to work. */
 #else /* Since this is just needed initially for now, we don't need to use up a flag slot for it. */
  #ifdef ENABLE_SUBINVEN
-  #define PW_SUBINVEN	0x00020000L	/* (Initially) send all subinventory contents to the player */
+  #define PW_SUBINVEN	0x00020000U	/* (Initially) send all subinventory contents to the player */
  #endif
 #endif
 
@@ -5307,40 +5307,40 @@
  * powerful as actually granting resistance/immunity to the wearer.
  */
 
-#define TR1_STR			0x00000001L	/* STR += "pval" */
-#define TR1_INT			0x00000002L	/* INT += "pval" */
-#define TR1_WIS			0x00000004L	/* WIS += "pval" */
-#define TR1_DEX			0x00000008L	/* DEX += "pval" */
-#define TR1_CON				0x00000010L	/* CON += "pval" */
-#define TR1_CHR				0x00000020L	/* CHR += "pval" */
-#define TR1_MANA			0x00000040L	/* SP += "pval" * SP / 10 */
-/* #define TR1_SPELL_SPEED		0x00000080L */	/* Spell Speed += pval */
- #define TR1_SPELL			0x00000080L	/* Spell Speed += pval -- unused, remove me -- */
+#define TR1_STR			0x00000001U	/* STR += "pval" */
+#define TR1_INT			0x00000002U	/* INT += "pval" */
+#define TR1_WIS			0x00000004U	/* WIS += "pval" */
+#define TR1_DEX			0x00000008U	/* DEX += "pval" */
+#define TR1_CON				0x00000010U	/* CON += "pval" */
+#define TR1_CHR				0x00000020U	/* CHR += "pval" */
+#define TR1_MANA			0x00000040U	/* SP += "pval" * SP / 10 */
+/* #define TR1_SPELL_SPEED		0x00000080U */	/* Spell Speed += pval */
+ #define TR1_SPELL			0x00000080U	/* Spell Speed += pval -- unused, remove me -- */
 //HOLE
-#define TR1_STEALTH		0x00000100L	/* Stealth += "pval" */
-#define TR1_SEARCH		0x00000200L	/* Search += "pval" */
-#define TR1_INFRA		0x00000400L	/* Infra += "pval" */
-#define TR1_TUNNEL		0x00000800L	/* Tunnel += "pval" */
-#define TR1_SPEED			0x00001000L	/* Speed += "pval" */
-#define TR1_BLOWS			0x00002000L	/* Blows += "pval" */
-#define TR1_LIFE			0x00004000L	/* Later */
-#define TR1_VAMPIRIC			0x00008000L	/* XXX4 */
-#define TR1_SLAY_ANIMAL		0x00010000L
-#define TR1_SLAY_EVIL		0x00020000L
-#define TR1_SLAY_UNDEAD		0x00040000L
-#define TR1_SLAY_DEMON		0x00080000L
-#define TR1_SLAY_ORC			0x00100000L
-#define TR1_SLAY_TROLL			0x00200000L
-#define TR1_SLAY_GIANT			0x00400000L
-#define TR1_SLAY_DRAGON			0x00800000L
-#define TR1_KILL_DRAGON		0x01000000L	/* Execute Dragon */
-#define TR1_KILL_DEMON		0x02000000L	/* Execute Demon */
-#define TR1_KILL_UNDEAD		0x04000000L	/* Execute Undead */
-#define TR1_BRAND_POIS		0x08000000L
-#define TR1_BRAND_ACID			0x10000000L
-#define TR1_BRAND_ELEC			0x20000000L
-#define TR1_BRAND_FIRE			0x40000000L
-#define TR1_BRAND_COLD			0x80000000L
+#define TR1_STEALTH		0x00000100U	/* Stealth += "pval" */
+#define TR1_SEARCH		0x00000200U	/* Search += "pval" */
+#define TR1_INFRA		0x00000400U	/* Infra += "pval" */
+#define TR1_TUNNEL		0x00000800U	/* Tunnel += "pval" */
+#define TR1_SPEED			0x00001000U	/* Speed += "pval" */
+#define TR1_BLOWS			0x00002000U	/* Blows += "pval" */
+#define TR1_LIFE			0x00004000U	/* Later */
+#define TR1_VAMPIRIC			0x00008000U	/* XXX4 */
+#define TR1_SLAY_ANIMAL		0x00010000U
+#define TR1_SLAY_EVIL		0x00020000U
+#define TR1_SLAY_UNDEAD		0x00040000U
+#define TR1_SLAY_DEMON		0x00080000U
+#define TR1_SLAY_ORC			0x00100000U
+#define TR1_SLAY_TROLL			0x00200000U
+#define TR1_SLAY_GIANT			0x00400000U
+#define TR1_SLAY_DRAGON			0x00800000U
+#define TR1_KILL_DRAGON		0x01000000U	/* Execute Dragon */
+#define TR1_KILL_DEMON		0x02000000U	/* Execute Demon */
+#define TR1_KILL_UNDEAD		0x04000000U	/* Execute Undead */
+#define TR1_BRAND_POIS		0x08000000U
+#define TR1_BRAND_ACID			0x10000000U
+#define TR1_BRAND_ELEC			0x20000000U
+#define TR1_BRAND_FIRE			0x40000000U
+#define TR1_BRAND_COLD			0x80000000U
 
 /* mask for all damage multipliers (brands & slays) */
 #define TR1_MULTMASK		(TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID | TR1_BRAND_POIS | \
@@ -5365,91 +5365,91 @@
 
 
 /* ToME hack for trapkits */
-#define TRAP2_AUTOMATIC_5	0x00000001L     /* Trap automatically rearms itself, 1 in 5 failure */
-#define TRAP2_AUTOMATIC_99	0x00000002L     /* Trap automatically rearms itself */
-#define TRAP2_KILL_GHOST	0x00000004L     /* Trap also affects PASS_WALL creatures */
-#define TRAP2_TELEPORT_TO	0x00000008L     /* After everything else, teleport to player */
-#define TRAP2_ONLY_DRAGON		0x00000010L     /* Affect only dragons & other AFFECTed creatures */
-#define TRAP2_ONLY_DEMON		0x00000020L     /* Affect only demons & other AFFECTed creatures */
-#define TRAP2_ONLY_ANIMAL	0x00000100L     /* Affect only animals & other AFFECTed creatures */
-#define TRAP2_ONLY_UNDEAD	0x00000200L     /* Affect only undead & others */
-#define TRAP2_ONLY_EVIL		0x00000400L     /* Affect only evil creatures &c. */
+#define TRAP2_AUTOMATIC_5	0x00000001U     /* Trap automatically rearms itself, 1 in 5 failure */
+#define TRAP2_AUTOMATIC_99	0x00000002U     /* Trap automatically rearms itself */
+#define TRAP2_KILL_GHOST	0x00000004U     /* Trap also affects PASS_WALL creatures */
+#define TRAP2_TELEPORT_TO	0x00000008U     /* After everything else, teleport to player */
+#define TRAP2_ONLY_DRAGON		0x00000010U     /* Affect only dragons & other AFFECTed creatures */
+#define TRAP2_ONLY_DEMON		0x00000020U     /* Affect only demons & other AFFECTed creatures */
+#define TRAP2_ONLY_ANIMAL	0x00000100U     /* Affect only animals & other AFFECTed creatures */
+#define TRAP2_ONLY_UNDEAD	0x00000200U     /* Affect only undead & others */
+#define TRAP2_ONLY_EVIL		0x00000400U     /* Affect only evil creatures &c. */
 
 /* mask for monster-specific traps */
 #define TRAP2_ONLY_MASK		(TRAP2_ONLY_DRAGON | TRAP2_ONLY_DEMON | TRAP2_ONLY_ANIMAL | \
 				 TRAP2_ONLY_UNDEAD | TRAP2_ONLY_EVIL )
 
-#define TR2_SUST_STR		0x00000001L
-#define TR2_SUST_INT		0x00000002L
-#define TR2_SUST_WIS		0x00000004L
-#define TR2_SUST_DEX		0x00000008L
-#define TR2_SUST_CON			0x00000010L
-#define TR2_SUST_CHR			0x00000020L
-#define TR2_RES_WATER			0x00000040L	/* Resist Water */
-#define TR2_IM_NETHER			0x00000080L     /* Immunity to nether */
-#define TR2_IM_ACID		0x00000100L
-#define TR2_IM_ELEC		0x00000200L
-#define TR2_IM_FIRE		0x00000400L
-#define TR2_IM_COLD		0x00000800L
-#define TR2_IM_POISON			0x00001000L
-#define TR2_IM_WATER			0x00002000L	/* Water immunity, should also let you breathe under water */
-#define TR2_FREE_ACT			0x00004000L	/* Free Action */
-#define TR2_HOLD_LIFE	 		0x00008000L	/* Hold Life */
-#define TR2_RES_ACID		0x00010000L
-#define TR2_RES_ELEC		0x00020000L
-#define TR2_RES_FIRE		0x00040000L
-#define TR2_RES_COLD		0x00080000L
-#define TR2_RES_POIS			0x00100000L
-#define TR2_RES_FEAR			0x00200000L
-#define TR2_RES_LITE			0x00400000L
-#define TR2_RES_DARK			0x00800000L
-#define TR2_RES_BLIND		0x01000000L
-#define TR2_RES_CONF		0x02000000L
-#define TR2_RES_SOUND		0x04000000L
-#define TR2_RES_SHARDS		0x08000000L
-#define TR2_RES_NETHER			0x10000000L
-#define TR2_RES_NEXUS			0x20000000L
-#define TR2_RES_CHAOS			0x40000000L
-#define TR2_RES_DISEN			0x80000000L
+#define TR2_SUST_STR		0x00000001U
+#define TR2_SUST_INT		0x00000002U
+#define TR2_SUST_WIS		0x00000004U
+#define TR2_SUST_DEX		0x00000008U
+#define TR2_SUST_CON			0x00000010U
+#define TR2_SUST_CHR			0x00000020U
+#define TR2_RES_WATER			0x00000040U	/* Resist Water */
+#define TR2_IM_NETHER			0x00000080U     /* Immunity to nether */
+#define TR2_IM_ACID		0x00000100U
+#define TR2_IM_ELEC		0x00000200U
+#define TR2_IM_FIRE		0x00000400U
+#define TR2_IM_COLD		0x00000800U
+#define TR2_IM_POISON			0x00001000U
+#define TR2_IM_WATER			0x00002000U	/* Water immunity, should also let you breathe under water */
+#define TR2_FREE_ACT			0x00004000U	/* Free Action */
+#define TR2_HOLD_LIFE	 		0x00008000U	/* Hold Life */
+#define TR2_RES_ACID		0x00010000U
+#define TR2_RES_ELEC		0x00020000U
+#define TR2_RES_FIRE		0x00040000U
+#define TR2_RES_COLD		0x00080000U
+#define TR2_RES_POIS			0x00100000U
+#define TR2_RES_FEAR			0x00200000U
+#define TR2_RES_LITE			0x00400000U
+#define TR2_RES_DARK			0x00800000U
+#define TR2_RES_BLIND		0x01000000U
+#define TR2_RES_CONF		0x02000000U
+#define TR2_RES_SOUND		0x04000000U
+#define TR2_RES_SHARDS		0x08000000U
+#define TR2_RES_NETHER			0x10000000U
+#define TR2_RES_NEXUS			0x20000000U
+#define TR2_RES_CHAOS			0x40000000U
+#define TR2_RES_DISEN			0x80000000U
 
 
 #if 0
-#define TR3_KNOWLEDGE			0x00000001L	/* Later */
+#define TR3_KNOWLEDGE			0x00000001U	/* Later */
 #endif	/* 0 */
 /* Flags from ToME - Jir - */
 
-#define TR3_SH_FIRE		0x00000001L     /* Immolation (Fire) */
-#define TR3_SH_ELEC		0x00000002L     /* Electric Sheath */
-#define TR3_SH_COLD		0x00000004L		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */
-#define TR3_AUTO_CURSE		0x00000008L     /* The obj will recurse itself */
-#define TR3_NO_TELE			0x00000010L     /* Anti-teleportation */
-#define TR3_NO_MAGIC			0x00000020L     /* Anti-magic */
-#define TR3_WRAITH			0x00000040L     /* Wraithform */
-#define TR3_TY_CURSE			0x00000080L     /* The Ancient Curse */
-#define TR3_EASY_KNOW		0x00000100L	/* Aware -> Known, aka no ID necessary. (May need *ID* though if this type of item can really gain name1/2/2b.) */
-#define TR3_HIDE_TYPE		0x00000200L	/* Hide "pval" description */
-#define TR3_SHOW_MODS		0x00000400L	/* Always show Tohit/Todam */
-#define TR3_INSTA_ART		0x00000800L	/* Item must be a (true) artifact */
-#define TR3_FEATHER			0x00001000L	/* Feather Falling */
-#define TR3_LITE1			0x00002000L	/* Permanent Light */
-#define TR3_SEE_INVIS			0x00004000L	/* See Invisible */
-#define TR3_REGEN_MANA			0x00008000L	/* Item induces regeneration */
-#define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
-#define TR3_REGEN		0x00020000L	/* Item induces regeneration */
-#define TR3_XTRA_MIGHT		0x00040000L	/* Bows get extra multiplier */
-#define TR3_XTRA_SHOTS		0x00080000L	/* Bows get extra shots */
-#define TR3_IGNORE_ACID			0x00100000L	/* Item ignores Acid Damage */
-#define TR3_IGNORE_ELEC			0x00200000L	/* Item ignores Elec Damage */
-#define TR3_IGNORE_FIRE			0x00400000L	/* Item ignores Fire Damage */
-#define TR3_IGNORE_COLD			0x00800000L	/* Item ignores Cold Damage */
-#define TR3_ACTIVATE		0x01000000L	/* Item can be activated */
-#define TR3_DRAIN_EXP		0x02000000L	/* Item drains Experience */
-#define TR3_TELEPORT		0x04000000L	/* Item teleports player */
-#define TR3_AGGRAVATE		0x08000000L	/* Item aggravates monsters */
-#define TR3_BLESSED			0x10000000L	/* Item is Blessed */
-#define TR3_CURSED			0x20000000L	/* Item is Cursed */
-#define TR3_HEAVY_CURSE			0x40000000L	/* Item is Heavily Cursed */
-#define TR3_PERMA_CURSE			0x80000000L	/* Item is Perma Cursed */
+#define TR3_SH_FIRE		0x00000001U     /* Immolation (Fire) */
+#define TR3_SH_ELEC		0x00000002U     /* Electric Sheath */
+#define TR3_SH_COLD		0x00000004U		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */
+#define TR3_AUTO_CURSE		0x00000008U     /* The obj will recurse itself */
+#define TR3_NO_TELE			0x00000010U     /* Anti-teleportation */
+#define TR3_NO_MAGIC			0x00000020U     /* Anti-magic */
+#define TR3_WRAITH			0x00000040U     /* Wraithform */
+#define TR3_TY_CURSE			0x00000080U     /* The Ancient Curse */
+#define TR3_EASY_KNOW		0x00000100U	/* Aware -> Known, aka no ID necessary. (May need *ID* though if this type of item can really gain name1/2/2b.) */
+#define TR3_HIDE_TYPE		0x00000200U	/* Hide "pval" description */
+#define TR3_SHOW_MODS		0x00000400U	/* Always show Tohit/Todam */
+#define TR3_INSTA_ART		0x00000800U	/* Item must be a (true) artifact */
+#define TR3_FEATHER			0x00001000U	/* Feather Falling */
+#define TR3_LITE1			0x00002000U	/* Permanent Light */
+#define TR3_SEE_INVIS			0x00004000U	/* See Invisible */
+#define TR3_REGEN_MANA			0x00008000U	/* Item induces regeneration */
+#define TR3_SLOW_DIGEST		0x00010000U	/* Item slows down digestion */
+#define TR3_REGEN		0x00020000U	/* Item induces regeneration */
+#define TR3_XTRA_MIGHT		0x00040000U	/* Bows get extra multiplier */
+#define TR3_XTRA_SHOTS		0x00080000U	/* Bows get extra shots */
+#define TR3_IGNORE_ACID			0x00100000U	/* Item ignores Acid Damage */
+#define TR3_IGNORE_ELEC			0x00200000U	/* Item ignores Elec Damage */
+#define TR3_IGNORE_FIRE			0x00400000U	/* Item ignores Fire Damage */
+#define TR3_IGNORE_COLD			0x00800000U	/* Item ignores Cold Damage */
+#define TR3_ACTIVATE		0x01000000U	/* Item can be activated */
+#define TR3_DRAIN_EXP		0x02000000U	/* Item drains Experience */
+#define TR3_TELEPORT		0x04000000U	/* Item teleports player */
+#define TR3_AGGRAVATE		0x08000000U	/* Item aggravates monsters */
+#define TR3_BLESSED			0x10000000U	/* Item is Blessed */
+#define TR3_CURSED			0x20000000U	/* Item is Cursed */
+#define TR3_HEAVY_CURSE			0x40000000U	/* Item is Heavily Cursed */
+#define TR3_PERMA_CURSE			0x80000000U	/* Item is Perma Cursed */
 
 #ifdef INVERSE_CURSED_RETAIN
  // Note about these two flags: TR3_BLESSED -- cursed items cannot have BLESSED flag, TR3_PERMA_CURSE -- not happening on randarts
@@ -5457,80 +5457,80 @@
 #endif
 
 
-#define TR4_NEVER_BLOW		0x00000001L     /* Weapon can't attack */
- #define TR4_PRECOGNITION	0x00000002L     /* Like activating the cheat mode -- unused -- */
- #define TR4_BLACK_BREATH	0x00000004L     /* Tolkien's Black Breath -- unused -- */
-#define TR4_RECHARGE            0x00000008L     /* For artifact Wands and Staffs */
-#define TR4_LEVITATE			0x00000010L     /* This one and ONLY this one allow you to fly over trees */
-#define TR4_DG_CURSE			0x00000020L     /* The Ancient Morgothian Curse */
-#define TR4_SHOULD2H			0x00000040L     /* Can wield it 2 Handed */
-#define TR4_MUST2H			0x00000080L     /* Must wield it 2 Handed */
-#define TR4_COULD2H		0x00000100L     /* Can wield it 2 Handed */
-#define TR4_CLONE		0x00000200L     /* Can clone monsters */
-#define TR4_SPECIAL_GENE	0x00000400L     /* The object can only be generated in special conditions like quests, special dungeons, ... */
-#define TR4_CLIMB		0x00000800L     /* Allow climbing mountains */
+#define TR4_NEVER_BLOW		0x00000001U     /* Weapon can't attack */
+ #define TR4_PRECOGNITION	0x00000002U     /* Like activating the cheat mode -- unused -- */
+ #define TR4_BLACK_BREATH	0x00000004U     /* Tolkien's Black Breath -- unused -- */
+#define TR4_RECHARGE            0x00000008U     /* For artifact Wands and Staffs */
+#define TR4_LEVITATE			0x00000010U     /* This one and ONLY this one allow you to fly over trees */
+#define TR4_DG_CURSE			0x00000020U     /* The Ancient Morgothian Curse */
+#define TR4_SHOULD2H			0x00000040U     /* Can wield it 2 Handed */
+#define TR4_MUST2H			0x00000080U     /* Must wield it 2 Handed */
+#define TR4_COULD2H		0x00000100U     /* Can wield it 2 Handed */
+#define TR4_CLONE		0x00000200U     /* Can clone monsters */
+#define TR4_SPECIAL_GENE	0x00000400U     /* The object can only be generated in special conditions like quests, special dungeons, ... */
+#define TR4_CLIMB		0x00000800U     /* Allow climbing mountains */
 /* rods only -- consider make them like trapkits - Jir - */
- #define TR4_FAST_CAST			0x00001000L     /* Rod is x2 time faster to use -- unused -- */
- #define TR4_CAPACITY			0x00002000L     /* Rod can take x2 mana -- unused -- */
-#define TR4_CHARGING			0x00004000L     /* Rod recharge faster */
- #define TR4_CHEAPNESS			0x00008000L     /* Rod spells are cheaper(in mana cost) to cast -- unused - */
-#define TR4_FOUNTAIN		0x00010000L     /* Available as fountain (for potions) */
-#define TR4_ANTIMAGIC_50	0x00020000L     /* Forbid magic */
-#define TR4_ANTIMAGIC_30	0x00040000L     /* Forbid magic */
-#define TR4_ANTIMAGIC_20	0x00080000L     /* Forbid magic */
-#define TR4_ANTIMAGIC_10		0x00100000L     /* Forbid magic */
-#define TR4_EASY_USE			0x00200000L     /* Easily activable */
- #define TR4_RECHARGED			0x00400000L     /* Object has been recharged once -- unused -- */
- #define TR3_NO_NORM_ART		0x00800000L	/* ??? -- unused -- */
- #define TR4_ULTIMATE		0x01000000L     /* ULTIMATE artifact -- unused -- */
-#define TR4_AUTO_ID		0x02000000L     /* Id stuff on floor */
-#define TR4_LITE2		0x04000000L     /* lite radius 2 */
-#define TR4_LITE3		0x08000000L     /* lite radius 3 */
-#define TR4_FUEL_LITE			0x10000000L     /* fuelable lite */
- #define TR4_ART_EXP			0x20000000L     /* Will accumulate xp -- unused -- */
-#define TR4_CURSE_NO_DROP		0x40000000L     /* The obj wont be dropped */
- #define TR4_NO_RECHARGE		0x80000000L     /* Object Cannot be recharged -- practically unused -- */
+ #define TR4_FAST_CAST			0x00001000U     /* Rod is x2 time faster to use -- unused -- */
+ #define TR4_CAPACITY			0x00002000U     /* Rod can take x2 mana -- unused -- */
+#define TR4_CHARGING			0x00004000U     /* Rod recharge faster */
+ #define TR4_CHEAPNESS			0x00008000U     /* Rod spells are cheaper(in mana cost) to cast -- unused - */
+#define TR4_FOUNTAIN		0x00010000U     /* Available as fountain (for potions) */
+#define TR4_ANTIMAGIC_50	0x00020000U     /* Forbid magic */
+#define TR4_ANTIMAGIC_30	0x00040000U     /* Forbid magic */
+#define TR4_ANTIMAGIC_20	0x00080000U     /* Forbid magic */
+#define TR4_ANTIMAGIC_10		0x00100000U     /* Forbid magic */
+#define TR4_EASY_USE			0x00200000U     /* Easily activable */
+ #define TR4_RECHARGED			0x00400000U     /* Object has been recharged once -- unused -- */
+ #define TR3_NO_NORM_ART		0x00800000U	/* ??? -- unused -- */
+ #define TR4_ULTIMATE		0x01000000U     /* ULTIMATE artifact -- unused -- */
+#define TR4_AUTO_ID		0x02000000U     /* Id stuff on floor */
+#define TR4_LITE2		0x04000000U     /* lite radius 2 */
+#define TR4_LITE3		0x08000000U     /* lite radius 3 */
+#define TR4_FUEL_LITE			0x10000000U     /* fuelable lite */
+ #define TR4_ART_EXP			0x20000000U     /* Will accumulate xp -- unused -- */
+#define TR4_CURSE_NO_DROP		0x40000000U     /* The obj wont be dropped */
+ #define TR4_NO_RECHARGE		0x80000000U     /* Object Cannot be recharged -- practically unused -- */
 
-#define TR4_NULL_MASK		0xFFFFFFFCL	//unused
+#define TR4_NULL_MASK		0xFFFFFFFCU	//unused
 
 #ifdef INVERSE_CURSED_RETAIN
  #define TR4_BAD_MASK (TR4_NEVER_BLOW | TR4_BLACK_BREATH | TR4_DG_CURSE | TR4_CLONE | TR4_CURSE_NO_DROP)
 #endif
 
 
- #define TR5_TEMPORARY		0x00000001L		/* In timeout turns it is destroyed -- not implemented -- */
-#define TR5_DRAIN_MANA		0x00000002L		/* Drains mana */
-#define TR5_DRAIN_HP		0x00000004L		/* Drains hp */
-#define TR5_VORPAL		0x00000008L		/* XXX5 */
-#define TR5_IMPACT			0x00000010L	/* Cause Earthquakes */
-#define TR5_CRIT			0x00000020L	/* More critical hits */
-#define TR5_ATTR_MULTI			0x00000040L	/* Object shimmer -- only allowed in k_info */
- #define TR5_WOUNDING			0x00000080L	/* Wounds monsters -- not implemented -- (maybe give +hit/+dam bonus?) */
- #define TR5_FULL_NAME		0x00000100L		/* Uses direct name from k_info - a bunch of items have this seemingly randomly (mostly books?), but it's UNUSED appearently/not implemented -- */
-#define TR5_LUCK		0x00000200L		/* Luck += pval */
+ #define TR5_TEMPORARY		0x00000001U		/* In timeout turns it is destroyed -- not implemented -- */
+#define TR5_DRAIN_MANA		0x00000002U		/* Drains mana */
+#define TR5_DRAIN_HP		0x00000004U		/* Drains hp */
+#define TR5_VORPAL		0x00000008U		/* XXX5 */
+#define TR5_IMPACT			0x00000010U	/* Cause Earthquakes */
+#define TR5_CRIT			0x00000020U	/* More critical hits */
+#define TR5_ATTR_MULTI			0x00000040U	/* Object shimmer -- only allowed in k_info */
+ #define TR5_WOUNDING			0x00000080U	/* Wounds monsters -- not implemented -- (maybe give +hit/+dam bonus?) */
+ #define TR5_FULL_NAME		0x00000100U		/* Uses direct name from k_info - a bunch of items have this seemingly randomly (mostly books?), but it's UNUSED appearently/not implemented -- */
+#define TR5_LUCK		0x00000200U		/* Luck += pval */
 //hole:
-#define TR5_XXX			0x00000400L	//hole (was plasma res)
- #define TR5_LEVELS		0x00000800L		/* Can gain exp/exp levels !! -- unused -- */
-#define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
-#define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
-#define TR5_IGNORE_DISEN		0x00004000L	/* For 'Arcane' ego power for Heavy winners-only armour */
-#define TR5_RES_TELE			0x00008000L     /* Formerly for Sky Dragon Scale Mail -- now only used by Space-Time anchor. */
- #define TR5_DECAY		0x00010000L		/* Decay -- unused -- */
-#define TR5_IGNORE_MANA		0x00020000L		/* Item ignores Mana Damage */
-#define TR5_IGNORE_WATER	0x00040000L		/* Item ignores Water damage */
-#define TR5_RES_TIME		0x00080000L
-#define TR5_RES_MANA			0x00100000L
- #define TR5_REDUC_FIRE			0x00200000L	/* Later */
- #define TR5_REDUC_COLD			0x00400000L	/* Later */
- #define TR5_REDUC_ELEC			0x00800000L	/* Later */
- #define TR5_REDUC_ACID		0x01000000L		/* Later */
-#define TR5_DISARM		0x02000000L
-#define TR5_NO_ENCHANT		0x04000000L
-#define TR5_CHAOTIC		0x08000000L
-#define TR5_INVIS			0x10000000L
-#define TR5_REFLECT			0x20000000L
-#define TR5_PASS_WATER			0x40000000L
-#define TR5_WINNERS_ONLY		0x80000000L
+#define TR5_XXX			0x00000400U	//hole (was plasma res)
+ #define TR5_LEVELS		0x00000800U		/* Can gain exp/exp levels !! -- unused -- */
+#define TR5_FORCE_DEPTH			0x00001000U	/* Can only occur on depth >= its k_info level */
+#define TR5_WHITE_LIGHT			0x00002000U	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
+#define TR5_IGNORE_DISEN		0x00004000U	/* For 'Arcane' ego power for Heavy winners-only armour */
+#define TR5_RES_TELE			0x00008000U     /* Formerly for Sky Dragon Scale Mail -- now only used by Space-Time anchor. */
+ #define TR5_DECAY		0x00010000U		/* Decay -- unused -- */
+#define TR5_IGNORE_MANA		0x00020000U		/* Item ignores Mana Damage */
+#define TR5_IGNORE_WATER	0x00040000U		/* Item ignores Water damage */
+#define TR5_RES_TIME		0x00080000U
+#define TR5_RES_MANA			0x00100000U
+ #define TR5_REDUC_FIRE			0x00200000U	/* Later */
+ #define TR5_REDUC_COLD			0x00400000U	/* Later */
+ #define TR5_REDUC_ELEC			0x00800000U	/* Later */
+ #define TR5_REDUC_ACID		0x01000000U		/* Later */
+#define TR5_DISARM		0x02000000U
+#define TR5_NO_ENCHANT		0x04000000U
+#define TR5_CHAOTIC		0x08000000U
+#define TR5_INVIS			0x10000000U
+#define TR5_REFLECT			0x20000000U
+#define TR5_PASS_WATER			0x40000000U
+#define TR5_WINNERS_ONLY		0x80000000U
 
 /* Hack -- flag set 5 -- mask for "pval-dependant" flags. */
 #define TR5_PVAL_MASK   \
@@ -5541,20 +5541,20 @@
 #endif
 
 
-#define TR6_INSTA_EGO		0x00000001L		/* Similar to INSTA_ART, this item is always an ego item */
-#define TR6_STARTUP		0x00000002L		/* For weapons: Can be picked for starter item on character creation, without passing the (level<=15 && dam>=0) check. */
- #define TR6_EVENT_HALLOWEEN	0x00000004L		/* Item not available if no event is running -- unused */
- #define TR6_EVENT_XMAS		0x00000008L		/* Item not available if no event is running -- unused */
+#define TR6_INSTA_EGO		0x00000001U		/* Similar to INSTA_ART, this item is always an ego item */
+#define TR6_STARTUP		0x00000002U		/* For weapons: Can be picked for starter item on character creation, without passing the (level<=15 && dam>=0) check. */
+ #define TR6_EVENT_HALLOWEEN	0x00000004U		/* Item not available if no event is running -- unused */
+ #define TR6_EVENT_XMAS		0x00000008U		/* Item not available if no event is running -- unused */
 /* Not yet implemented/used: Susceptibilities. Cold might be needed. For monsters, even susc-poison is implemented.
    For the player I think fire and cold are enough. (C. Blue) */
- #define TR6_SENS_FIRE			0x00000010L	/* makes user susceptible to fire -- unused */
- #define TR6_SENS_COLD			0x00000020L	/* makes user susceptible to cold -- unused  */
- #define TR6_SENS_ACID			0x00000040L	/* makes user susceptible to acid -- unused  */
- #define TR6_SENS_ELEC			0x00000080L	/* makes user susceptible to lightning -- unused  */
+ #define TR6_SENS_FIRE			0x00000010U	/* makes user susceptible to fire -- unused */
+ #define TR6_SENS_COLD			0x00000020U	/* makes user susceptible to cold -- unused  */
+ #define TR6_SENS_ACID			0x00000040U	/* makes user susceptible to acid -- unused  */
+ #define TR6_SENS_ELEC			0x00000080U	/* makes user susceptible to lightning -- unused  */
 //Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
-#define TR6_OFTEN_EGO		0x00000100L		/* Item has higher chance to be generated with ego power */
-#define TR6_UNBLESSED		0x00000200L		/* Item never receives flags that hurt an undead/demonic wielder, from ego or art powers */
-#define TR6_RETURNING		0x00000400L		/* Item automatically returns to owner when thrown (artifact ammo does this already, without need for this flag) */
+#define TR6_OFTEN_EGO		0x00000100U		/* Item has higher chance to be generated with ego power */
+#define TR6_UNBLESSED		0x00000200U		/* Item never receives flags that hurt an undead/demonic wielder, from ego or art powers */
+#define TR6_RETURNING		0x00000400U		/* Item automatically returns to owner when thrown (artifact ammo does this already, without need for this flag) */
 
 
 /* Character Sheet Boni Data Flags for Char/Byte PKT Transfer - Kurzel */
@@ -5682,55 +5682,55 @@
 
 
 /* Item-generation restriction flags */
-#define RESF_NONE		0x00000000
+#define RESF_NONE		0x00000000U
 
-#define RESF_WINNER		0x00000001	/* allow TR5_WINNERS_ONLY items */
-#define RESF_NOTRUEART		0x00000002	/* prevent true artifacts */
-#define RESF_NORANDART		0x00000004	/* prevent random artifacts */
-#define RESF_NODOUBLEEGO	0x00000008	/* prevent double ego items */
+#define RESF_WINNER		0x00000001U	/* allow TR5_WINNERS_ONLY items */
+#define RESF_NOTRUEART		0x00000002U	/* prevent true artifacts */
+#define RESF_NORANDART		0x00000004U	/* prevent random artifacts */
+#define RESF_NODOUBLEEGO	0x00000008U	/* prevent double ego items */
 
-#define RESF_NOHIDSM		0x00000010	/* prevent generation of high dragon scale mails: Only base elements + poison, metallics and pseudo. */
-#define RESF_LOWSPEED		0x00000020	/* not more than +4 speed */
-#define RESF_NOHISPEED		0x00000040	/* not more than +6 speed */
-#define RESF_LOWVALUE		0x00000080	/* no items worth more than 35000 Au */
+#define RESF_NOHIDSM		0x00000010U	/* prevent generation of high dragon scale mails: Only base elements + poison, metallics and pseudo. */
+#define RESF_LOWSPEED		0x00000020U	/* not more than +4 speed */
+#define RESF_NOHISPEED		0x00000040U	/* not more than +6 speed */
+#define RESF_LOWVALUE		0x00000080U	/* no items worth more than 35000 Au */
 
-#define RESF_MIDVALUE		0x00000100	/* no items worth more than 50000 Au */
-#define RESF_NOHIVALUE		0x00000200	/* no items worth more than 100000 Au */
+#define RESF_MIDVALUE		0x00000100U	/* no items worth more than 50000 Au */
+#define RESF_NOHIVALUE		0x00000200U	/* no items worth more than 100000 Au */
 
-#define RESF_NOETHEREAL		0x00000400	/* no 'ethereal' ego power (ammo) */
+#define RESF_NOETHEREAL		0x00000400U	/* no 'ethereal' ego power (ammo) */
 #if 0 /* not implemented: */
- #define RESF_KINDMID		0x00000800	/* k_info value of 500..10000 */
- #define RESF_KINDHI		0x00001000	/* k_info value of 10000.. */
- #define RESF_EGOLOW		0x00002000	/* e_info value of ..1000 */
- #define RESF_EGOMID		0x00004000	/* e_info value of 1000..9000 */
+ #define RESF_KINDMID		0x00000800U	/* k_info value of 500..10000 */
+ #define RESF_KINDHI		0x00001000U	/* k_info value of 10000.. */
+ #define RESF_EGOLOW		0x00002000U	/* e_info value of ..1000 */
+ #define RESF_EGOMID		0x00004000U	/* e_info value of 1000..9000 */
 #else /* use it for actual stuff.. */
- #define RESF_COND_FORCE	0x00000800	/* force item drop of desired type according to conditions */
- #define RESF_COND_LSWORD	0x00001000	/* force a sword (swordmen, rogues) */
- #define RESF_BOOST_PVAL	0x00002000	/* for create_reward(): Boost lowish pvals for certain items to make them guaranteedly quite useful */
- #define RESF_CONDF_NOMSTAFF	0x00004000	/* don't allow mage staves (persistent; for Saruman, when he chosen-drops a guaranteed one, this avoids duplicates) -- */
+ #define RESF_COND_FORCE	0x00000800U	/* force item drop of desired type according to conditions */
+ #define RESF_COND_LSWORD	0x00001000U	/* force a sword (swordmen, rogues) */
+ #define RESF_BOOST_PVAL	0x00002000U	/* for create_reward(): Boost lowish pvals for certain items to make them guaranteedly quite useful */
+ #define RESF_CONDF_NOMSTAFF	0x00004000U	/* don't allow mage staves (persistent; for Saruman, when he chosen-drops a guaranteed one, this avoids duplicates) -- */
 #endif
-#define RESF_EGOHI		0x00008000	/* e_info value of 9000.. */
+#define RESF_EGOHI		0x00008000U	/* e_info value of 9000.. */
 
-#define RESF_LIFE		0x00010000	/* allow +LIFE randarts */
-#define RESF_DEBUG_ITEM		0x00020000	/* generate a certain item (k_idx) for debugging purpose */
-#define RESF_STOREFLAT		0x00040000	/* generate all base item types with same probability */
-#define RESF_FORCERANDART	0x00080000	/* generate a random artifact */
+#define RESF_LIFE		0x00010000U	/* allow +LIFE randarts */
+#define RESF_DEBUG_ITEM		0x00020000U	/* generate a certain item (k_idx) for debugging purpose */
+#define RESF_STOREFLAT		0x00040000U	/* generate all base item types with same probability */
+#define RESF_FORCERANDART	0x00080000U	/* generate a random artifact */
 
-#define RESF_NO_ENCHANT		0x00100000	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
-#define RESF_SAURON		0x00200000	/* don't generate The One Ring, as player has already slain Sauron. -- This flag is abused for no_soloist drops eg from Santa Claus! */
+#define RESF_NO_ENCHANT		0x00100000U	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
+#define RESF_SAURON		0x00200000U	/* don't generate The One Ring, as player has already slain Sauron. -- This flag is abused for no_soloist drops eg from Santa Claus! */
 
-#define RESF_COND_SWORD		0x00400000	/* don't allow weapons besides a sword (swordmen, rogues) */
-#define RESF_COND_DARKSWORD	0x00800000	/* don't allow weapons besides a dark sword (unbelievers) */
+#define RESF_COND_SWORD		0x00400000U	/* don't allow weapons besides a sword (swordmen, rogues) */
+#define RESF_COND_DARKSWORD	0x00800000U	/* don't allow weapons besides a dark sword (unbelievers) */
 
-#define RESF_COND_BLUNT		0x01000000	/* don't allow weapons besides a blunt weapon (priests) */
-#define RESF_CONDF_NOSWORD	0x02000000	/* don't allow swords (shamans) -- */
-#define RESF_CONDF_MSTAFF	0x04000000	/* force a mage staff (mages) */
-#define RESF_COND_SLING		0x08000000	/* don't allow weapons besides a sling (clears condition) or ammo (doesn't clear condition) (slingers) */
+#define RESF_COND_BLUNT		0x01000000U	/* don't allow weapons besides a blunt weapon (priests) */
+#define RESF_CONDF_NOSWORD	0x02000000U	/* don't allow swords (shamans) -- */
+#define RESF_CONDF_MSTAFF	0x04000000U	/* force a mage staff (mages) */
+#define RESF_COND_SLING		0x08000000U	/* don't allow weapons besides a sling (clears condition) or ammo (doesn't clear condition) (slingers) */
 
-#define RESF_COND_RANGED	0x10000000	/* don't allow weapons besides ranged weapons (clear condition) or ammo (doesn't clear condition) (archers) */
-#define RESF_CONDF_RUNE		0x20000000	/* force a rune (runemasters) */
-#define RESF_COND2_LARMOUR	0x40000000	/* mostly avoid dropping heavy armour (persistent) */
-#define RESF_COND2_HARMOUR	0x80000000	/* mostly avoid dropping light armour (persistent) */
+#define RESF_COND_RANGED	0x10000000U	/* don't allow weapons besides ranged weapons (clear condition) or ammo (doesn't clear condition) (archers) */
+#define RESF_CONDF_RUNE		0x20000000U	/* force a rune (runemasters) */
+#define RESF_COND2_LARMOUR	0x40000000U	/* mostly avoid dropping heavy armour (persistent) */
+#define RESF_COND2_HARMOUR	0x80000000U	/* mostly avoid dropping light armour (persistent) */
 
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
@@ -5746,24 +5746,24 @@
 
 
 /* ESP defines */
-#define ESP_ORC			0x00000001L
-#define ESP_TROLL		0x00000002L
-#define ESP_DRAGON		0x00000004L
-#define ESP_GIANT		0x00000008L
-#define ESP_DEMON		0x00000010L
-#define ESP_UNDEAD		0x00000020L
-#define ESP_EVIL		0x00000040L
-#define ESP_ANIMAL		0x00000080L
-#define ESP_DRAGONRIDER		0x00000100L
-#define ESP_GOOD		0x00000200L
-#define ESP_NONLIVING		0x00000400L
-#define ESP_UNIQUE		0x00000800L
-#define ESP_SPIDER		0x00001000L
-/* #define ESP_PLAYER		0x08000000L */
-#define R_ESP_LOW		0x10000000L /* animal,giant,orc,troll,dr,good,nonliving,spider */
-#define R_ESP_HIGH		0x20000000L /* dragon,demon,undead,evil,unique */
-#define R_ESP_ANY		0x40000000L /* random esp == R_ESP from ego flags */
-#define ESP_ALL			0x80000000L
+#define ESP_ORC			0x00000001U
+#define ESP_TROLL		0x00000002U
+#define ESP_DRAGON		0x00000004U
+#define ESP_GIANT		0x00000008U
+#define ESP_DEMON		0x00000010U
+#define ESP_UNDEAD		0x00000020U
+#define ESP_EVIL		0x00000040U
+#define ESP_ANIMAL		0x00000080U
+#define ESP_DRAGONRIDER		0x00000100U
+#define ESP_GOOD		0x00000200U
+#define ESP_NONLIVING		0x00000400U
+#define ESP_UNIQUE		0x00000800U
+#define ESP_SPIDER		0x00001000U
+/* #define ESP_PLAYER		0x08000000U */
+#define R_ESP_LOW		0x10000000U /* animal,giant,orc,troll,dr,good,nonliving,spider */
+#define R_ESP_HIGH		0x20000000U /* dragon,demon,undead,evil,unique */
+#define R_ESP_ANY		0x40000000U /* random esp == R_ESP from ego flags */
+#define ESP_ALL			0x80000000U
 
 #define ESP_R_MASK		(R_ESP_LOW | R_ESP_HIGH | R_ESP_ANY)
 
@@ -5775,42 +5775,42 @@
 
 
 /*** Ego flags ***/
-#define ETR1_SUSTAIN		0x00000001L	/* Ego-Item gives a Random Sustain */
-#define ETR1_OLD_RESIST		0x00000002L	/* The old "extra power" random high resist */
-#define ETR1_ABILITY		0x00000004L	/* Ego-Item has a random Sustain */
-#define ETR1_R_ELEM		0x00000008L	/* Item resists Acid/Fire/Cold/Elec or Poison */
-#define ETR1_R_LOW		0x00000010L	/* Item has a random low resist */
-#define ETR1_R_HIGH		0x00000020L	/* Item has a random high resist */
-#define ETR1_R_ANY		0x00000040L	/* Item has one additional resist */
-#define ETR1_R_DRAGON		0x00000080L	/* Item gets "Dragon" Resist -- UNUSED//HOLE, verify implementation on use, because of hard-coded values */
-#define ETR1_SLAY_WEAP		0x00000100L	/* Special 'Slaying' bonus */
-#define ETR1_DAM_DIE		0x00000200L	/* Item has an additional dam die */
-#define ETR1_DAM_SIZE		0x00000400L	/* Item has greater damage dice */
-#define ETR1_PVAL_M1		0x00000800L	/* Item has +1 to pval */
-#define ETR1_PVAL_M2		0x00001000L	/* Item has +(up to 2) to pval */
-#define ETR1_PVAL_M3		0x00002000L	/* Item has +(up to 3) to pval */
-#define ETR1_PVAL_M5		0x00004000L	/* Item has +(up to 5) to pval */
-#define ETR1_AC_M5		0x00008000L	/* Item has +(up to 5) to AC */
-#define ETR1_NO_DOUBLE_EGO	0x00010000L	/* Item may not have two ego powers */
-#define ETR1_R_HIGH_IMMUNITY	0x00020000L	/* Item has a random high resistance or base immunity */
+#define ETR1_SUSTAIN		0x00000001U	/* Ego-Item gives a Random Sustain */
+#define ETR1_OLD_RESIST		0x00000002U	/* The old "extra power" random high resist */
+#define ETR1_ABILITY		0x00000004U	/* Ego-Item has a random Sustain */
+#define ETR1_R_ELEM		0x00000008U	/* Item resists Acid/Fire/Cold/Elec or Poison */
+#define ETR1_R_LOW		0x00000010U	/* Item has a random low resist */
+#define ETR1_R_HIGH		0x00000020U	/* Item has a random high resist */
+#define ETR1_R_ANY		0x00000040U	/* Item has one additional resist */
+#define ETR1_R_DRAGON		0x00000080U	/* Item gets "Dragon" Resist -- UNUSED//HOLE, verify implementation on use, because of hard-coded values */
+#define ETR1_SLAY_WEAP		0x00000100U	/* Special 'Slaying' bonus */
+#define ETR1_DAM_DIE		0x00000200U	/* Item has an additional dam die */
+#define ETR1_DAM_SIZE		0x00000400U	/* Item has greater damage dice */
+#define ETR1_PVAL_M1		0x00000800U	/* Item has +1 to pval */
+#define ETR1_PVAL_M2		0x00001000U	/* Item has +(up to 2) to pval */
+#define ETR1_PVAL_M3		0x00002000U	/* Item has +(up to 3) to pval */
+#define ETR1_PVAL_M5		0x00004000U	/* Item has +(up to 5) to pval */
+#define ETR1_AC_M5		0x00008000U	/* Item has +(up to 5) to AC */
+#define ETR1_NO_DOUBLE_EGO	0x00010000U	/* Item may not have two ego powers */
+#define ETR1_R_HIGH_IMMUNITY	0x00020000U	/* Item has a random high resistance or base immunity */
 //HOLE
-#define ETR1_R_ESP		0x01000000L	/* Item has a random ESP */
-#define ETR1_NO_SEED		0x02000000L	/* Item doesn't have random seed */
-#define ETR1_LOW_ABILITY	0x04000000L	/* like ABILITY without top esp */
-#define ETR1_R_P_ABILITY	0x08000000L	/* Item has a random pval-affected ability */
-#define ETR1_R_STAT		0x10000000L	/* Item affects a random stat */
-#define ETR1_R_STAT_SUST	0x20000000L	/* Item affects a random stat & sustains it */
-#define ETR1_R_IMMUNITY		0x40000000L	/* Item gives a random base immunity */
-#define ETR1_LIMIT_BLOWS	0x80000000L	/* Only on 'Aman' weapons atm - reduces bpr */
+#define ETR1_R_ESP		0x01000000U	/* Item has a random ESP */
+#define ETR1_NO_SEED		0x02000000U	/* Item doesn't have random seed */
+#define ETR1_LOW_ABILITY	0x04000000U	/* like ABILITY without top esp */
+#define ETR1_R_P_ABILITY	0x08000000U	/* Item has a random pval-affected ability */
+#define ETR1_R_STAT		0x10000000U	/* Item affects a random stat */
+#define ETR1_R_STAT_SUST	0x20000000U	/* Item affects a random stat & sustains it */
+#define ETR1_R_IMMUNITY		0x40000000U	/* Item gives a random base immunity */
+#define ETR1_LIMIT_BLOWS	0x80000000U	/* Only on 'Aman' weapons atm - reduces bpr */
 
 #define ETR1_EASYKNOW_MASK	\
 	(0xFFFFFFFF & ~(ETR1_DAM_DIE | ETR1_DAM_SIZE | ETR1_PVAL_M1 | \
 	ETR1_PVAL_M2 | ETR1_PVAL_M3 | ETR1_PVAL_M5 | ETR1_LIMIT_BLOWS | \
 	ETR1_AC_M5 | ETR1_NO_DOUBLE_EGO | ETR1_NO_SEED))
 
-#define ETR2_R_SLAY		0x00000001L	/* random slay mod */
+#define ETR2_R_SLAY		0x00000001U	/* random slay mod */
 
-#define ETR2_EASYKNOW_MASK	0xFFFFFFFFL
+#define ETR2_EASYKNOW_MASK	0xFFFFFFFFU
 
 
 /* "Biases" for random artifact gen */
@@ -5927,148 +5927,148 @@
 /*
  * New monster race bit flags
  */
-#define RF1_UNIQUE			0x00000001	/* Unique Monster */
-#define RF1_RAND_100			0x00000002	/* 100% random movement */
-#define RF1_MALE			0x00000004	/* Male gender */
-#define RF1_FEMALE			0x00000008	/* Female gender */
-#define RF1_CHAR_CLEAR		0x00000010	/* Absorbs symbol */
-#define RF1_CHAR_MULTI		0x00000020	/* Changes symbol */
-#define RF1_ATTR_CLEAR		0x00000040	/* Absorbs color */
-#define RF1_ATTR_MULTI		0x00000080	/* Changes color depending on breaths */
-#define RF1_FORCE_DEPTH			0x00000100	/* Start at "correct" depth */
-#define RF1_FORCE_MAXHP			0x00000200	/* Start with max hitpoints */
-#define RF1_FORCE_SLEEP			0x00000400	/* Start out with very low energy - but this is now deprecated since monsters even start out with negative energy nowadays to avoid insta-breath-kills - C. Blue */
-#define RF1_RAND_5			0x00000800	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
-#define RF1_FRIEND		0x00001000	/* Arrive with a friend */
-#define RF1_FRIENDS		0x00002000	/* Arrive with some friends */
-#define RF1_ESCORT		0x00004000	/* Arrive with an escort */
-#define RF1_ESCORTS		0x00008000	/* Arrive with some escorts */
-#define RF1_DROP_1			0x00010000	/* Drop exactly 1 item/gold pile */
-#define RF1_DROP_2			0x00020000	/* Drop exactly 2 items/gold piles */
-#define RF1_RAND_25			0x00040000	/* Moves randomly (25%) */
-#define RF1_RAND_50			0x00080000	/* Moves randomly (50%) */
-#define RF1_ONLY_GOLD		0x00100000	/* Drop only gold */
-#define RF1_ONLY_ITEM		0x00200000	/* Drop only items */
-#define RF1_DROP_60		0x00400000	/* Drop an item/gold (60%) */
-#define RF1_DROP_90		0x00800000	/* Drop an item/gold (90%) */
-#define RF1_DROP_1D2			0x01000000	/* Drop 1d2 items/gold */
-#define RF1_DROP_2D2			0x02000000	/* Drop 2d2 items/gold */
-#define RF1_DROP_3D2			0x04000000	/* Drop 3d2 items/gold */
-#define RF1_DROP_4D2			0x08000000	/* Drop 4d2 items/gold */
-#define RF1_DROP_GOOD		0x10000000	/* Drop good items */
-#define RF1_DROP_GREAT		0x20000000	/* Drop great items */
-#define RF1_DROP_USEFUL		0x40000000	/* Drop "useful" items -- not implemented, unused (Dolphiner only) */
-#define RF1_DROP_CHOSEN		0x80000000	/* Drop "chosen" items */
+#define RF1_UNIQUE			0x00000001U	/* Unique Monster */
+#define RF1_RAND_100			0x00000002U	/* 100% random movement */
+#define RF1_MALE			0x00000004U	/* Male gender */
+#define RF1_FEMALE			0x00000008U	/* Female gender */
+#define RF1_CHAR_CLEAR		0x00000010U	/* Absorbs symbol */
+#define RF1_CHAR_MULTI		0x00000020U	/* Changes symbol */
+#define RF1_ATTR_CLEAR		0x00000040U	/* Absorbs color */
+#define RF1_ATTR_MULTI		0x00000080U	/* Changes color depending on breaths */
+#define RF1_FORCE_DEPTH			0x00000100U	/* Start at "correct" depth */
+#define RF1_FORCE_MAXHP			0x00000200U	/* Start with max hitpoints */
+#define RF1_FORCE_SLEEP			0x00000400U	/* Start out with very low energy - but this is now deprecated since monsters even start out with negative energy nowadays to avoid insta-breath-kills - C. Blue */
+#define RF1_RAND_5			0x00000800U	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
+#define RF1_FRIEND		0x00001000U	/* Arrive with a friend */
+#define RF1_FRIENDS		0x00002000U	/* Arrive with some friends */
+#define RF1_ESCORT		0x00004000U	/* Arrive with an escort */
+#define RF1_ESCORTS		0x00008000U	/* Arrive with some escorts */
+#define RF1_DROP_1			0x00010000U	/* Drop exactly 1 item/gold pile */
+#define RF1_DROP_2			0x00020000U	/* Drop exactly 2 items/gold piles */
+#define RF1_RAND_25			0x00040000U	/* Moves randomly (25%) */
+#define RF1_RAND_50			0x00080000U	/* Moves randomly (50%) */
+#define RF1_ONLY_GOLD		0x00100000U	/* Drop only gold */
+#define RF1_ONLY_ITEM		0x00200000U	/* Drop only items */
+#define RF1_DROP_60		0x00400000U	/* Drop an item/gold (60%) */
+#define RF1_DROP_90		0x00800000U	/* Drop an item/gold (90%) */
+#define RF1_DROP_1D2			0x01000000U	/* Drop 1d2 items/gold */
+#define RF1_DROP_2D2			0x02000000U	/* Drop 2d2 items/gold */
+#define RF1_DROP_3D2			0x04000000U	/* Drop 3d2 items/gold */
+#define RF1_DROP_4D2			0x08000000U	/* Drop 4d2 items/gold */
+#define RF1_DROP_GOOD		0x10000000U	/* Drop good items */
+#define RF1_DROP_GREAT		0x20000000U	/* Drop great items */
+#define RF1_DROP_USEFUL		0x40000000U	/* Drop "useful" items -- not implemented, unused (Dolphiner only) */
+#define RF1_DROP_CHOSEN		0x80000000U	/* Drop "chosen" items */
 
 /*
  * New monster race bit flags
  */
-#define RF2_STUPID			0x00000001	/* Monster is stupid */
-#define RF2_SMART			0x00000002	/* Monster is smart */
-#define RF2_CAN_SPEAK			0x00000004	/* TY: can speak */
-#define RF2_REFLECTING			0x00000008	/* Reflects bolts */
-#define RF2_INVISIBLE		0x00000010	/* Monster avoids vision */
-#define RF2_COLD_BLOOD		0x00000020	/* Monster avoids infra */
-#define RF2_EMPTY_MIND		0x00000040	/* Monster avoids telepathy */
-#define RF2_WEIRD_MIND		0x00000080	/* Monster avoids telepathy? */
-#define RF2_DEATH_ORB			0x00000100	/* Death Orb */
-#define RF2_REGENERATE			0x00000200	/* Monster regenerates */
-#define RF2_SHAPECHANGER		0x00000400	/* TY: shapechanger */
-#define RF2_ATTR_ANY			0x00000800	/* TY: Attr_any - can shimmer in any colour */
-#define RF2_POWERFUL		0x00001000	/* Monster has strong breath */
-#define RF2_ELDRITCH_HORROR	0x00002000	/* Sanity-blasting horror    */
-#define RF2_AURA_FIRE		0x00004000	/* Burns in melee */
-#define RF2_AURA_ELEC		0x00008000	/* Shocks in melee */
-#define RF2_OPEN_DOOR			0x00010000	/* Monster can open doors */
-#define RF2_BASH_DOOR			0x00020000	/* Monster can bash doors */
-#define RF2_PASS_WALL			0x00040000	/* Monster can pass walls */
-#define RF2_KILL_WALL			0x00080000	/* Monster can destroy walls */
-#define RF2_MOVE_BODY		0x00100000	/* Monster can move monsters */
-#define RF2_KILL_BODY		0x00200000	/* Monster can kill monsters */
-#define RF2_TAKE_ITEM		0x00400000	/* Monster can pick up items */
-#define RF2_KILL_ITEM		0x00800000	/* Monster can crush items */
-#define RF2_NEVER_BLOW			0x01000000	/* Never make physical blow */
-#define RF2_NEVER_MOVE			0x02000000	/* Never make physical move */
-#define RF2_NEVER_ACT			0x04000000	/* Monster doesn't perform any kind of movement, attacks, spells or whatever. */
-#define RF2_NO_ESCORT			0x08000000	/* monster will never occur in groups, like escorts or nests/pits */
-#define RF2_NO_NEST		0x10000000	/* monster will never occur in groups, like escorts or nests/pits */
-#define RF2_ROAMING		0x20000000	/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
-#define RF2_REGENERATE_T2	0x40000000	/* Monster has half-troll-like regeneration */
-#define RF2_REGENERATE_TH	0x80000000	/* Monster has troll- or hydra-like regeneration */
+#define RF2_STUPID			0x00000001U	/* Monster is stupid */
+#define RF2_SMART			0x00000002U	/* Monster is smart */
+#define RF2_CAN_SPEAK			0x00000004U	/* TY: can speak */
+#define RF2_REFLECTING			0x00000008U	/* Reflects bolts */
+#define RF2_INVISIBLE		0x00000010U	/* Monster avoids vision */
+#define RF2_COLD_BLOOD		0x00000020U	/* Monster avoids infra */
+#define RF2_EMPTY_MIND		0x00000040U	/* Monster avoids telepathy */
+#define RF2_WEIRD_MIND		0x00000080U	/* Monster avoids telepathy? */
+#define RF2_DEATH_ORB			0x00000100U	/* Death Orb */
+#define RF2_REGENERATE			0x00000200U	/* Monster regenerates */
+#define RF2_SHAPECHANGER		0x00000400U	/* TY: shapechanger */
+#define RF2_ATTR_ANY			0x00000800U	/* TY: Attr_any - can shimmer in any colour */
+#define RF2_POWERFUL		0x00001000U	/* Monster has strong breath */
+#define RF2_ELDRITCH_HORROR	0x00002000U	/* Sanity-blasting horror    */
+#define RF2_AURA_FIRE		0x00004000U	/* Burns in melee */
+#define RF2_AURA_ELEC		0x00008000U	/* Shocks in melee */
+#define RF2_OPEN_DOOR			0x00010000U	/* Monster can open doors */
+#define RF2_BASH_DOOR			0x00020000U	/* Monster can bash doors */
+#define RF2_PASS_WALL			0x00040000U	/* Monster can pass walls */
+#define RF2_KILL_WALL			0x00080000U	/* Monster can destroy walls */
+#define RF2_MOVE_BODY		0x00100000U	/* Monster can move monsters */
+#define RF2_KILL_BODY		0x00200000U	/* Monster can kill monsters */
+#define RF2_TAKE_ITEM		0x00400000U	/* Monster can pick up items */
+#define RF2_KILL_ITEM		0x00800000U	/* Monster can crush items */
+#define RF2_NEVER_BLOW			0x01000000U	/* Never make physical blow */
+#define RF2_NEVER_MOVE			0x02000000U	/* Never make physical move */
+#define RF2_NEVER_ACT			0x04000000U	/* Monster doesn't perform any kind of movement, attacks, spells or whatever. */
+#define RF2_NO_ESCORT			0x08000000U	/* monster will never occur in groups, like escorts or nests/pits */
+#define RF2_NO_NEST		0x10000000U	/* monster will never occur in groups, like escorts or nests/pits */
+#define RF2_ROAMING		0x20000000U	/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
+#define RF2_REGENERATE_T2	0x40000000U	/* Monster has half-troll-like regeneration */
+#define RF2_REGENERATE_TH	0x80000000U	/* Monster has troll- or hydra-like regeneration */
 
 #define RF2_NO_GROUP_MASK	(RF2_NO_ESCORT)		/* | RF2_NO_NEST */
 
 /*
  * New monster race bit flags
  */
-#define RF3_ORC			0x00000001	/* Orc */
-#define RF3_TROLL		0x00000002	/* Troll */
-#define RF3_GIANT		0x00000004	/* Giant */
-#define RF3_DRAGON		0x00000008	/* Dragon */
-#define RF3_DEMON			0x00000010	/* Demon */
-#define RF3_UNDEAD			0x00000020	/* Undead */
-#define RF3_EVIL			0x00000040	/* Evil */
-#define RF3_ANIMAL			0x00000080	/* Animal */
-#define RF3_DRAGONRIDER		0x00000100	/* DG: DragonRider */
-#define RF3_GOOD		0x00000200	/* Good */
-#define RF3_AURA_COLD		0x00000400	/* Freezes in melee */
-#define RF3_NONLIVING		0x00000800	/* TY: Non-Living (?) */
-#define RF3_HURT_LITE			0x00001000	/* Hurt by lite */
-#define RF3_HURT_ROCK			0x00002000	/* Hurt by rock remover */
-#define RF3_SUSCEP_FIRE			0x00004000	/* Hurt badly by fire */
-#define RF3_SUSCEP_COLD			0x00008000	/* Hurt badly by cold */
-#define RF3_IM_ACID		0x00010000	/* Resist acid a lot */
-#define RF3_IM_ELEC		0x00020000	/* Resist elec a lot */
-#define RF3_IM_FIRE		0x00040000	/* Resist fire a lot */
-#define RF3_IM_COLD		0x00080000	/* Resist cold a lot */
-#define RF3_IM_POIS			0x00100000	/* Resist poison a lot */
-#define RF3_RES_TELE			0x00200000	/* Resist teleportation */
-#define RF3_RES_NETH			0x00400000	/* Resist nether a lot */
-#define RF3_RES_WATE			0x00800000	/* Resist water */
-#define RF3_IM_WATER		0x01000000L	/* Water immunity, should also let you breathe under water */
-#define RF3_RES_NEXU		0x02000000	/* Resist nexus */
-#define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
-#define RF3_AI_HYBRID		0x08000000	/* Monster is AI_ANNOY while target player isn't in melee (aka on adjacent grid) */
-#define RF3_NO_FEAR			0x10000000	/* Cannot be scared */
-#define RF3_NO_STUN			0x20000000	/* Cannot be stunned */
-#define RF3_NO_CONF			0x40000000	/* Cannot be confused */
-#define RF3_NO_SLEEP			0x80000000	/* Cannot be slept */
+#define RF3_ORC			0x00000001U	/* Orc */
+#define RF3_TROLL		0x00000002U	/* Troll */
+#define RF3_GIANT		0x00000004U	/* Giant */
+#define RF3_DRAGON		0x00000008U	/* Dragon */
+#define RF3_DEMON			0x00000010U	/* Demon */
+#define RF3_UNDEAD			0x00000020U	/* Undead */
+#define RF3_EVIL			0x00000040U	/* Evil */
+#define RF3_ANIMAL			0x00000080U	/* Animal */
+#define RF3_DRAGONRIDER		0x00000100U	/* DG: DragonRider */
+#define RF3_GOOD		0x00000200U	/* Good */
+#define RF3_AURA_COLD		0x00000400U	/* Freezes in melee */
+#define RF3_NONLIVING		0x00000800U	/* TY: Non-Living (?) */
+#define RF3_HURT_LITE			0x00001000U	/* Hurt by lite */
+#define RF3_HURT_ROCK			0x00002000U	/* Hurt by rock remover */
+#define RF3_SUSCEP_FIRE			0x00004000U	/* Hurt badly by fire */
+#define RF3_SUSCEP_COLD			0x00008000U	/* Hurt badly by cold */
+#define RF3_IM_ACID		0x00010000U	/* Resist acid a lot */
+#define RF3_IM_ELEC		0x00020000U	/* Resist elec a lot */
+#define RF3_IM_FIRE		0x00040000U	/* Resist fire a lot */
+#define RF3_IM_COLD		0x00080000U	/* Resist cold a lot */
+#define RF3_IM_POIS			0x00100000U	/* Resist poison a lot */
+#define RF3_RES_TELE			0x00200000U	/* Resist teleportation */
+#define RF3_RES_NETH			0x00400000U	/* Resist nether a lot */
+#define RF3_RES_WATE			0x00800000U	/* Resist water */
+#define RF3_IM_WATER		0x01000000U	/* Water immunity, should also let you breathe under water */
+#define RF3_RES_NEXU		0x02000000U	/* Resist nexus */
+#define RF3_RES_DISE		0x04000000U	/* Resist disenchantment */
+#define RF3_AI_HYBRID		0x08000000U	/* Monster is AI_ANNOY while target player isn't in melee (aka on adjacent grid) */
+#define RF3_NO_FEAR			0x10000000U	/* Cannot be scared */
+#define RF3_NO_STUN			0x20000000U	/* Cannot be stunned */
+#define RF3_NO_CONF			0x40000000U	/* Cannot be confused */
+#define RF3_NO_SLEEP			0x80000000U	/* Cannot be slept */
 
 /*
  * New monster race bit flags
  */
-#define RF4_SHRIEK		0x00000001	/* Shriek for help */
-#define RF4_UNMAGIC		0x00000002	/* Cancel player's timed spell */
-#define RF4_TRAPS		0x00000004	/* Create Traps */
-#define RF4_ROCKET		0x00000008	/* TY: Rocket */
-#define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
-#define RF4_ARROW_2			0x00000020	/* Fire a shot (heavy) */
-#define RF4_ARROW_3			0x00000040	/* Fire a bolt (heavy) */
-#define RF4_ARROW_4			0x00000080	/* Fire a missile (heavy) */
-#define RF4_BR_ACID		0x00000100	/* Breathe Acid */
-#define RF4_BR_ELEC		0x00000200	/* Breathe Elec */
-#define RF4_BR_FIRE		0x00000400	/* Breathe Fire */
-#define RF4_BR_COLD		0x00000800	/* Breathe Cold */
-#define RF4_BR_POIS			0x00001000	/* Breathe Poison */
-#define RF4_BR_NETH			0x00002000	/* Breathe Nether */
-#define RF4_BR_LITE			0x00004000	/* Breathe Lite */
-#define RF4_BR_DARK			0x00008000	/* Breathe Dark */
-#define RF4_BR_CONF		0x00010000	/* Breathe Confusion */
-#define RF4_BR_SOUN		0x00020000	/* Breathe Sound */
-#define RF4_BR_CHAO		0x00040000	/* Breathe Chaos */
-#define RF4_BR_DISE		0x00080000	/* Breathe Disenchant */
-#define RF4_BR_NEXU			0x00100000	/* Breathe Nexus */
-#define RF4_BR_TIME			0x00200000	/* Breathe Time */
-#define RF4_BR_INER			0x00400000	/* Breathe Inertia */
-#define RF4_BR_GRAV			0x00800000	/* Breathe Gravity */
-#define RF4_BR_SHAR		0x01000000	/* Breathe Shards */
-#define RF4_BR_PLAS		0x02000000	/* Breathe Plasma */
-#define RF4_BR_WALL		0x04000000	/* Breathe Force */
-#define RF4_BR_MANA		0x08000000	/* Breathe Mana */
-#define RF4_BR_DISI			0x10000000	/* Breathe Disintegration */
-#define RF4_BR_NUKE			0x20000000	/* TY: Toxic Breath */
-#define RF4_MOAN			0x40000000	/* For Halloween event :) -C. Blue */
-#define RF4_BOULDER			0x80000000	/* Hurl Boulder (Vanilla) */
+#define RF4_SHRIEK		0x00000001U	/* Shriek for help */
+#define RF4_UNMAGIC		0x00000002U	/* Cancel player's timed spell */
+#define RF4_TRAPS		0x00000004U	/* Create Traps */
+#define RF4_ROCKET		0x00000008U	/* TY: Rocket */
+#define RF4_ARROW_1			0x00000010U	/* Fire an arrow (light) */
+#define RF4_ARROW_2			0x00000020U	/* Fire a shot (heavy) */
+#define RF4_ARROW_3			0x00000040U	/* Fire a bolt (heavy) */
+#define RF4_ARROW_4			0x00000080U	/* Fire a missile (heavy) */
+#define RF4_BR_ACID		0x00000100U	/* Breathe Acid */
+#define RF4_BR_ELEC		0x00000200U	/* Breathe Elec */
+#define RF4_BR_FIRE		0x00000400U	/* Breathe Fire */
+#define RF4_BR_COLD		0x00000800U	/* Breathe Cold */
+#define RF4_BR_POIS			0x00001000U	/* Breathe Poison */
+#define RF4_BR_NETH			0x00002000U	/* Breathe Nether */
+#define RF4_BR_LITE			0x00004000U	/* Breathe Lite */
+#define RF4_BR_DARK			0x00008000U	/* Breathe Dark */
+#define RF4_BR_CONF		0x00010000U	/* Breathe Confusion */
+#define RF4_BR_SOUN		0x00020000U	/* Breathe Sound */
+#define RF4_BR_CHAO		0x00040000U	/* Breathe Chaos */
+#define RF4_BR_DISE		0x00080000U	/* Breathe Disenchant */
+#define RF4_BR_NEXU			0x00100000U	/* Breathe Nexus */
+#define RF4_BR_TIME			0x00200000U	/* Breathe Time */
+#define RF4_BR_INER			0x00400000U	/* Breathe Inertia */
+#define RF4_BR_GRAV			0x00800000U	/* Breathe Gravity */
+#define RF4_BR_SHAR		0x01000000U	/* Breathe Shards */
+#define RF4_BR_PLAS		0x02000000U	/* Breathe Plasma */
+#define RF4_BR_WALL		0x04000000U	/* Breathe Force */
+#define RF4_BR_MANA		0x08000000U	/* Breathe Mana */
+#define RF4_BR_DISI			0x10000000U	/* Breathe Disintegration */
+#define RF4_BR_NUKE			0x20000000U	/* TY: Toxic Breath */
+#define RF4_MOAN			0x40000000U	/* For Halloween event :) -C. Blue */
+#define RF4_BOULDER			0x80000000U	/* Hurl Boulder (Vanilla) */
 
 #define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ROCKET | \
 	RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | \
@@ -6079,51 +6079,51 @@
 /* NOTE: BR_DISI is not considered as 'radius spell', since this can
  * eliminate walls between the caster and the player. */
 #if 0
- #define RF4_RADIUS_SPELLS (0xafffff08) /* Changed for Halloween event, now includes ranged MOAN. -C. Blue */
+ #define RF4_RADIUS_SPELLS (0xafffff08U) /* Changed for Halloween event, now includes ranged MOAN. -C. Blue */
  //1010-1111-1111-1111-1111-1111-0000-1000
 #else
  /* Note: RF4_BR_DISI and RF4_ROCKET _can_ be used for 'tunneling' by monsters just
     because they are _excluded_ here. Including them would break that. */
- #define RF4_RADIUS_SPELLS (RF4_MOAN | RF4_BR_NUKE | 0x0fffff00)
+ #define RF4_RADIUS_SPELLS (RF4_MOAN | RF4_BR_NUKE | 0x0fffff00U)
 #endif
 
 /*
  * New monster race bit flags
  */
-#define RF5_BA_ACID		0x00000001	/* Acid Ball */
-#define RF5_BA_ELEC		0x00000002	/* Elec Ball */
-#define RF5_BA_FIRE		0x00000004	/* Fire Ball */
-#define RF5_BA_COLD		0x00000008	/* Cold Ball */
-#define RF5_BA_POIS			0x00000010	/* Poison Ball */
-#define RF5_BA_NETH			0x00000020	/* Nether Ball */
-#define RF5_BA_WATE			0x00000040	/* Water Ball */
-#define RF5_BA_MANA			0x00000080	/* Mana Storm */
-#define RF5_BA_DARK		0x00000100	/* Darkness Storm */
-#define RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
-#define RF5_MIND_BLAST		0x00000400	/* Blast Mind */
-#define RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
-#define RF5_CURSE			0x00001000	/* Cause Light Wound */
-#define RF5_BO_CODE			0x00002000
-#define RF5_BA_NUKE			0x00004000	/* TY: Nuke Ball */
-#define RF5_BA_CHAO			0x00008000	/* Chaos Ball */
-#define RF5_BO_ACID		0x00010000	/* Acid Bolt */
-#define RF5_BO_ELEC		0x00020000	/* Elec Bolt */
-#define RF5_BO_FIRE		0x00040000	/* Fire Bolt */
-#define RF5_BO_COLD		0x00080000	/* Cold Bolt */
-#define RF5_BO_POIS			0x00100000	/* Poison Bolt (implemented but unused: Only used by Judge Mortis) */
-#define RF5_BO_NETH			0x00200000	/* Nether Bolt */
-#define RF5_BO_WATE			0x00400000	/* Water Bolt */
-#define RF5_BO_MANA			0x00800000	/* Mana Bolt */
-#define RF5_BO_PLAS		0x01000000	/* Plasma Bolt */
-#define RF5_BO_ICEE		0x02000000	/* Ice Bolt */
-#define RF5_MISSILE		0x04000000	/* Magic Missile */
-#define RF5_SCARE		0x08000000	/* Frighten Player */
-#define RF5_BLIND			0x10000000	/* Blind Player */
-#define RF5_CONF			0x20000000	/* Confuse Player */
-#define RF5_SLOW			0x40000000	/* Slow Player */
-#define RF5_HOLD			0x80000000	/* Paralyze Player */
+#define RF5_BA_ACID		0x00000001U	/* Acid Ball */
+#define RF5_BA_ELEC		0x00000002U	/* Elec Ball */
+#define RF5_BA_FIRE		0x00000004U	/* Fire Ball */
+#define RF5_BA_COLD		0x00000008U	/* Cold Ball */
+#define RF5_BA_POIS			0x00000010U	/* Poison Ball */
+#define RF5_BA_NETH			0x00000020U	/* Nether Ball */
+#define RF5_BA_WATE			0x00000040U	/* Water Ball */
+#define RF5_BA_MANA			0x00000080U	/* Mana Storm */
+#define RF5_BA_DARK		0x00000100U	/* Darkness Storm */
+#define RF5_DRAIN_MANA		0x00000200U	/* Drain Mana */
+#define RF5_MIND_BLAST		0x00000400U	/* Blast Mind */
+#define RF5_BRAIN_SMASH		0x00000800U	/* Smash Brain */
+#define RF5_CURSE			0x00001000U	/* Cause Light Wound */
+#define RF5_BO_CODE			0x00002000U
+#define RF5_BA_NUKE			0x00004000U	/* TY: Nuke Ball */
+#define RF5_BA_CHAO			0x00008000U	/* Chaos Ball */
+#define RF5_BO_ACID		0x00010000U	/* Acid Bolt */
+#define RF5_BO_ELEC		0x00020000U	/* Elec Bolt */
+#define RF5_BO_FIRE		0x00040000U	/* Fire Bolt */
+#define RF5_BO_COLD		0x00080000U	/* Cold Bolt */
+#define RF5_BO_POIS			0x00100000U	/* Poison Bolt (implemented but unused: Only used by Judge Mortis) */
+#define RF5_BO_NETH			0x00200000U	/* Nether Bolt */
+#define RF5_BO_WATE			0x00400000U	/* Water Bolt */
+#define RF5_BO_MANA			0x00800000U	/* Mana Bolt */
+#define RF5_BO_PLAS		0x01000000U	/* Plasma Bolt */
+#define RF5_BO_ICEE		0x02000000U	/* Ice Bolt */
+#define RF5_MISSILE		0x04000000U	/* Magic Missile */
+#define RF5_SCARE		0x08000000U	/* Frighten Player */
+#define RF5_BLIND			0x10000000U	/* Blind Player */
+#define RF5_CONF			0x20000000U	/* Confuse Player */
+#define RF5_SLOW			0x40000000U	/* Slow Player */
+#define RF5_HOLD			0x80000000U	/* Paralyze Player */
 
-#define RF5_PLAYER_SPELLS (0xffffffff & ~(RF5_DRAIN_MANA))
+#define RF5_PLAYER_SPELLS (0xffffffffU & ~(RF5_DRAIN_MANA))
 #define RF5_RADIUS_SPELLS ( RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | \
 		RF5_BA_COLD | RF5_BA_POIS | RF5_BA_NETH | RF5_BA_WATE | \
 		RF5_BA_MANA | RF5_BA_DARK | RF5_BA_NUKE | RF5_BA_CHAO )
@@ -6131,39 +6131,39 @@
 /*
  * New monster race bit flags
  */
-#define RF6_HASTE		0x00000001	/* Speed self */
-#define RF6_HAND_DOOM		0x00000002	/* Hand of Doom */
-#define RF6_HEAL		0x00000004	/* Heal self */
-#define RF6_S_ANIMALS		0x00000008	/* Summon animals */
-#define RF6_BLINK			0x00000010	/* Teleport Short */
-#define RF6_TPORT			0x00000020	/* Teleport Long */
-#define RF6_RAISE_DEAD			0x00000040	/* Raise Dead -- not implemented */
+#define RF6_HASTE		0x00000001U	/* Speed self */
+#define RF6_HAND_DOOM		0x00000002U	/* Hand of Doom */
+#define RF6_HEAL		0x00000004U	/* Heal self */
+#define RF6_S_ANIMALS		0x00000008U	/* Summon animals */
+#define RF6_BLINK			0x00000010U	/* Teleport Short */
+#define RF6_TPORT			0x00000020U	/* Teleport Long */
+#define RF6_RAISE_DEAD			0x00000040U	/* Raise Dead -- not implemented */
 //HOLE^not implemented, but used in r_info
-#define RF6_S_BUG			0x00000080	/* Summon Software bug */
-#define RF6_TELE_TO		0x00000100	/* Move player to monster */
-#define RF6_TELE_AWAY		0x00000200	/* Move player far away */
-#define RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
-#define RF6_S_RNG		0x00000800	/* Summon RNG */
-#define RF6_DARKNESS			0x00001000	/* Create Darkness */
-#define RF6_S_ANIMAL			0x00002000	/* Summon animals */
-#define RF6_FORGET			0x00004000	/* Cause amnesia */
-#define RF6_S_DRAGONRIDER		0x00008000	/* Summon DragonRiders */
-#define RF6_S_KIN		0x00010000	/* Summon "kin" */
-#define RF6_S_HI_DEMONS		0x00020000	/* Summon greater demons! */
-#define RF6_S_MONSTER		0x00040000	/* Summon Monster */
-#define RF6_S_MONSTERS		0x00080000	/* Summon Monsters */
-#define RF6_S_ANTS			0x00100000	/* Summon Ants */
-#define RF6_S_SPIDERS			0x00200000	/* Summon Spiders */
-#define RF6_S_HOUNDS			0x00400000	/* Summon Hounds */
-#define RF6_S_HYDRAS			0x00800000	/* Summon Hydras */
-#define RF6_S_ANGEL		0x01000000	/* Summon Angel */
-#define RF6_S_DEMON		0x02000000	/* Summon Demon */
-#define RF6_S_UNDEAD		0x04000000	/* Summon Undead */
-#define RF6_S_DRAGON		0x08000000	/* Summon Dragon */
-#define RF6_S_HI_UNDEAD			0x10000000	/* Summon Greater Undead */
-#define RF6_S_HI_DRAGONS		0x20000000	/* Summon Ancient Dragon */
-#define RF6_S_NAZGUL			0x40000000	/* Summon Unique Wraith */
-#define RF6_S_UNIQUE			0x80000000	/* Summon Unique Monster */
+#define RF6_S_BUG			0x00000080U	/* Summon Software bug */
+#define RF6_TELE_TO		0x00000100U	/* Move player to monster */
+#define RF6_TELE_AWAY		0x00000200U	/* Move player far away */
+#define RF6_TELE_LEVEL		0x00000400U	/* Move player vertically */
+#define RF6_S_RNG		0x00000800U	/* Summon RNG */
+#define RF6_DARKNESS			0x00001000U	/* Create Darkness */
+#define RF6_S_ANIMAL			0x00002000U	/* Summon animals */
+#define RF6_FORGET			0x00004000U	/* Cause amnesia */
+#define RF6_S_DRAGONRIDER		0x00008000U	/* Summon DragonRiders */
+#define RF6_S_KIN		0x00010000U	/* Summon "kin" */
+#define RF6_S_HI_DEMONS		0x00020000U	/* Summon greater demons! */
+#define RF6_S_MONSTER		0x00040000U	/* Summon Monster */
+#define RF6_S_MONSTERS		0x00080000U	/* Summon Monsters */
+#define RF6_S_ANTS			0x00100000U	/* Summon Ants */
+#define RF6_S_SPIDERS			0x00200000U	/* Summon Spiders */
+#define RF6_S_HOUNDS			0x00400000U	/* Summon Hounds */
+#define RF6_S_HYDRAS			0x00800000U	/* Summon Hydras */
+#define RF6_S_ANGEL		0x01000000U	/* Summon Angel */
+#define RF6_S_DEMON		0x02000000U	/* Summon Demon */
+#define RF6_S_UNDEAD		0x04000000U	/* Summon Undead */
+#define RF6_S_DRAGON		0x08000000U	/* Summon Dragon */
+#define RF6_S_HI_UNDEAD			0x10000000U	/* Summon Greater Undead */
+#define RF6_S_HI_DRAGONS		0x20000000U	/* Summon Ancient Dragon */
+#define RF6_S_NAZGUL			0x40000000U	/* Summon Unique Wraith */
+#define RF6_S_UNIQUE			0x80000000U	/* Summon Unique Monster */
 
 #define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | \
 		RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY)
@@ -6172,75 +6172,75 @@
 /*
  * New monster race bit flags from ToME.		- Jir -
  */
-#define RF7_AQUATIC		0x00000001	/* Aquatic monster */
-#define RF7_CAN_SWIM		0x00000002	/* Monster can swim */
-#define RF7_CAN_FLY		0x00000004	/* Monster can fly */
-#define RF7_FRIENDLY		0x00000008	/* Monster is friendly */
-#define RF7_PET				0x00000010	/* Monster is a pet */
-#define RF7_CAN_CLIMB			0x00000020	/* Monster can climb */
-#define RF7_SPIDER			0x00000040	/* Monster is a spider (can pass webs) */
-#define RF7_NAZGUL			0x00000080	/* Monster is a Nazgul */
-#define RF7_DG_CURSE		0x00000100	/* If killed the monster grant a DG Curse to the player */
-#define RF7_MORTAL		0x00000200	/* Is it mortal? -- UNUSED -- [HOLE] */
-#define RF7_NO_DEATH		0x00000400	/* Cannot be killed */
-#define RF7_NO_TARGET		0x00000800	/* Cannot be targeted */
-#define RF7_AI_ANNOY			0x00001000	/* Try to tease the player */
-#define RF7_AI_SPECIAL			0x00002000	/* For quests */
-#define RF7_NEUTRAL			0x00004000	/* Monster is neutral */
-#define RF7_DROPART			0x00008000	/* not implemented - Drops an artifact */
-#define RF7_DROPRANDART		0x00010000	/* not implemented - Drops a random artifact */
-#define RF7_AI_PLAYER		0x00020000	/* not implemented */
-#define RF7_NO_THEFT		0x00040000	/* unused (stealing from monsters is disabled) */
-#define RF7_ASTAR		0x00080000	/* monster uses A* pathfinding (use with care, might strain CPU) */
-#define RF7_NO_ESP			0x00100000	/* monster isn't ESPable */
-#define RF7_ATTR_BASE			0x00200000	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
-#define RF7_VORTEX			0x00400000	/* experimental: flicker extremely fast - not working atm */
-#define RF7_OOD_20			0x00800000	/* Cannot occur more than 20 levels OoD */
-#define RF7_OOD_15		0x01000000	/* Cannot occur more than 15 levels OoD */
-#define RF7_OOD_10		0x02000000	/* Cannot occur more than 10 levels OoD */
-#define RF7_ATTR_BNW		0x04000000	/* Monster flickers w/ TERM_BNW colour (ie black and white), also see SLOW_ATTR_BNW */
-#define RF7_S_LOWEXP		0x08000000	/* Summons/Clones give little exp */
-#define RF7_S_NOEXP			0x10000000	/* Summons/Clones don't give exp */
-#define RF7_ATTR_BREATH			0x20000000	/* Use client breath colouring (unused & not implemented) */
-#define RF7_MULTIPLY			0x40000000	/* Monster reproduces */
-#define RF7_DISBELIEVE			0x80000000	/* Antimagic shield */
+#define RF7_AQUATIC		0x00000001U	/* Aquatic monster */
+#define RF7_CAN_SWIM		0x00000002U	/* Monster can swim */
+#define RF7_CAN_FLY		0x00000004U	/* Monster can fly */
+#define RF7_FRIENDLY		0x00000008U	/* Monster is friendly */
+#define RF7_PET				0x00000010U	/* Monster is a pet */
+#define RF7_CAN_CLIMB			0x00000020U	/* Monster can climb */
+#define RF7_SPIDER			0x00000040U	/* Monster is a spider (can pass webs) */
+#define RF7_NAZGUL			0x00000080U	/* Monster is a Nazgul */
+#define RF7_DG_CURSE		0x00000100U	/* If killed the monster grant a DG Curse to the player */
+#define RF7_MORTAL		0x00000200U	/* Is it mortal? -- UNUSED -- [HOLE] */
+#define RF7_NO_DEATH		0x00000400U	/* Cannot be killed */
+#define RF7_NO_TARGET		0x00000800U	/* Cannot be targeted */
+#define RF7_AI_ANNOY			0x00001000U	/* Try to tease the player */
+#define RF7_AI_SPECIAL			0x00002000U	/* For quests */
+#define RF7_NEUTRAL			0x00004000U	/* Monster is neutral */
+#define RF7_DROPART			0x00008000U	/* not implemented - Drops an artifact */
+#define RF7_DROPRANDART		0x00010000U	/* not implemented - Drops a random artifact */
+#define RF7_AI_PLAYER		0x00020000U	/* not implemented */
+#define RF7_NO_THEFT		0x00040000U	/* unused (stealing from monsters is disabled) */
+#define RF7_ASTAR		0x00080000U	/* monster uses A* pathfinding (use with care, might strain CPU) */
+#define RF7_NO_ESP			0x00100000U	/* monster isn't ESPable */
+#define RF7_ATTR_BASE			0x00200000U	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
+#define RF7_VORTEX			0x00400000U	/* experimental: flicker extremely fast - not working atm */
+#define RF7_OOD_20			0x00800000U	/* Cannot occur more than 20 levels OoD */
+#define RF7_OOD_15		0x01000000U	/* Cannot occur more than 15 levels OoD */
+#define RF7_OOD_10		0x02000000U	/* Cannot occur more than 10 levels OoD */
+#define RF7_ATTR_BNW		0x04000000U	/* Monster flickers w/ TERM_BNW colour (ie black and white), also see SLOW_ATTR_BNW */
+#define RF7_S_LOWEXP		0x08000000U	/* Summons/Clones give little exp */
+#define RF7_S_NOEXP			0x10000000U	/* Summons/Clones don't give exp */
+#define RF7_ATTR_BREATH			0x20000000U	/* Use client breath colouring (unused & not implemented) */
+#define RF7_MULTIPLY			0x40000000U	/* Monster reproduces */
+#define RF7_DISBELIEVE			0x80000000U	/* Antimagic shield */
 
 
 /*
  * Monster race flags
  */
-#define RF8_DUNGEON		0x00000001	/* inverse of non-existing 'RF8_WILD_ONLY' */
-#define RF8_WILD_TOWN		0x00000002
-#define RF8_WILD_EASY		0x00000004
-#define RF8_WILD_SHORE		0x00000008
-#define RF8_WILD_OCEAN			0x00000010
-#define RF8_WILD_WASTE			0x00000020
-#define RF8_WILD_WOOD			0x00000040
-#define RF8_WILD_VOLCANO		0x00000080
-#define RF8_WILD_LAKE		0x00000100
-#define RF8_WILD_MOUNTAIN	0x00000200
-#define RF8_WILD_GRASS		0x00000400
-#define RF8_NO_CUT		0x00000800
-#define RF8_CTHANGBAND			0x00001000
-#define RF8_PERNANGBAND			0x00002000
-#define RF8_ZANGBAND			0x00004000
-#define RF8_JOKEANGBAND			0x00008000
-#define RF8_ANGBAND		0x00010000
-#define RF8_BLUEBAND		0x00020000	/* C. Blue's bestiary */
-#define RF8_NO_AUTORET		0x00040000	/* don't auto-retaliate against this monster */
-#define RF8_WILD_DESERT		0x00080000
-#define RF8_WILD_ICE			0x00100000
-#define RF8_NETHER_REALM		0x00200000	/* may only spawn in the Nether Realm */
-#define RF8_PLURAL			0x00400000	/* The monster's name is already in plural form */
-#define RF8_NO_BLOCK			0x00800000	/* This monster never blocks hits */
-#define RF8_ALLOW_RUNNING	0x01000000	/* Player may run even with this monster (awake) in LoS */
-#define RF8_AVOID_PERMAWALLS	0x02000000	/* spawns distant of permanent walls (maybe/only for Dor) */
-#define RF8_PSEUDO_UNIQUE	0x04000000	/* Not a unique monster (does not appear in the uniques list), but named/looks like one (added for Santa Claus); monster form cannot be learnt by mimics. Cannot be cloned. */
-#define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
-#define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */
-#define RF8_FINAL_GUARDIAN		0x20000000	/* Note! This flag is NOT set/used in r_info.txt! Instead, the monster is defined as FINAL_GUARDIAN_ in d_info.txt! */
-#define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
-#define RF8_WILD_TOO			0x80000000
+#define RF8_DUNGEON		0x00000001U	/* inverse of non-existing 'RF8_WILD_ONLY' */
+#define RF8_WILD_TOWN		0x00000002U
+#define RF8_WILD_EASY		0x00000004U
+#define RF8_WILD_SHORE		0x00000008U
+#define RF8_WILD_OCEAN			0x00000010U
+#define RF8_WILD_WASTE			0x00000020U
+#define RF8_WILD_WOOD			0x00000040U
+#define RF8_WILD_VOLCANO		0x00000080U
+#define RF8_WILD_LAKE		0x00000100U
+#define RF8_WILD_MOUNTAIN	0x00000200U
+#define RF8_WILD_GRASS		0x00000400U
+#define RF8_NO_CUT		0x00000800U
+#define RF8_CTHANGBAND			0x00001000U
+#define RF8_PERNANGBAND			0x00002000U
+#define RF8_ZANGBAND			0x00004000U
+#define RF8_JOKEANGBAND			0x00008000U
+#define RF8_ANGBAND		0x00010000U
+#define RF8_BLUEBAND		0x00020000U	/* C. Blue's bestiary */
+#define RF8_NO_AUTORET		0x00040000U	/* don't auto-retaliate against this monster */
+#define RF8_WILD_DESERT		0x00080000U
+#define RF8_WILD_ICE			0x00100000U
+#define RF8_NETHER_REALM		0x00200000U	/* may only spawn in the Nether Realm */
+#define RF8_PLURAL			0x00400000U	/* The monster's name is already in plural form */
+#define RF8_NO_BLOCK			0x00800000U	/* This monster never blocks hits */
+#define RF8_ALLOW_RUNNING	0x01000000U	/* Player may run even with this monster (awake) in LoS */
+#define RF8_AVOID_PERMAWALLS	0x02000000U	/* spawns distant of permanent walls (maybe/only for Dor) */
+#define RF8_PSEUDO_UNIQUE	0x04000000U	/* Not a unique monster (does not appear in the uniques list), but named/looks like one (added for Santa Claus); monster form cannot be learnt by mimics. Cannot be cloned. */
+#define RF8_GENO_PERSIST	0x08000000U	/* Don't automatically genocide/compact this monster */
+#define RF8_GENO_NO_THIN		0x10000000U	/* Don't genocide this monster when thinning out surface spawns */
+#define RF8_FINAL_GUARDIAN		0x20000000U	/* Note! This flag is NOT set/used in r_info.txt! Instead, the monster is defined as FINAL_GUARDIAN_ in d_info.txt! */
+#define RF8_WILD_SWAMP			0x40000000U	/* ToDo: Implement Swamp */
+#define RF8_WILD_TOO			0x80000000U
 
 #define RF8_WILD_TOO_MASK \
 	( RF8_WILD_TOWN | RF8_WILD_EASY | RF8_WILD_SHORE | \
@@ -6257,73 +6257,73 @@
 /*
  * Monster race flags
  */
-#define RF9_DROP_CORPSE		0x00000001
-#define RF9_DROP_SKELETON	0x00000002
-#define RF9_HAS_LITE		0x00000004		/* Carries a lite */
-#define RF9_MIMIC		0x00000008		/* REALLY looks like an object ... only nastier */
-#define RF9_HAS_EGG			0x00000010	/* Can be monster's eggs -- used in r_info but not in the code */
-#define RF9_IMPRESSED			0x00000020	/* The monster can follow you on each level until he dies */
-#define RF9_SUSCEP_ACID			0x00000040	/* Susceptible to acid */
-#define RF9_SUSCEP_ELEC			0x00000080	/* Susceptible to lightning */
-#define RF9_SUSCEP_POIS		0x00000100		/* Susceptible to poison */
-#define RF9_KILL_TREES		0x00000200		/* Monster can eat trees */
-#define RF9_WYRM_PROTECT	0x00000400		/* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
-#define RF9_NO_CREDIT		0x00000800		/* Monster won't give any kill/form credit. */
-#define RF9_ONLY_DEPTH			0x00001000	/* The monster can only be generated at the GIVEN depth */
-#define RF9_SPECIAL_GENE		0x00002000	/* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
-#define RF9_NO_REDUCE			0x00004000	/* The monster cannot be afflicted by non-temporary stat-reducing effects */
-#define RF9_RES_ACID			0x00008000L
-#define RF9_RES_ELEC		0x00010000L
-#define RF9_RES_FIRE		0x00020000L
-#define RF9_RES_COLD		0x00040000L
-#define RF9_RES_POIS		0x00080000L
-#define RF9_RES_LITE			0x00100000L
-#define RF9_RES_DARK			0x00200000L
-#define RF9_RES_BLIND			0x00400000L
-#define RF9_RES_SOUND			0x00800000L
-#define RF9_RES_SHARDS		0x01000000L
-#define RF9_RES_CHAOS		0x02000000L
-#define RF9_RES_TIME		0x04000000L
-#define RF9_RES_MANA		0x08000000L
-#define RF9_VAMPIRIC			0x10000000
-#define RF9_IM_TELE			0x20000000      /* Resist teleportation */
-#define RF9_IM_PSI			0x40000000	/* Immune to psi */
-#define RF9_RES_PSI			0x80000000	/* Resist psi */
+#define RF9_DROP_CORPSE		0x00000001U
+#define RF9_DROP_SKELETON	0x00000002U
+#define RF9_HAS_LITE		0x00000004U		/* Carries a lite */
+#define RF9_MIMIC		0x00000008U		/* REALLY looks like an object ... only nastier */
+#define RF9_HAS_EGG			0x00000010U	/* Can be monster's eggs -- used in r_info but not in the code */
+#define RF9_IMPRESSED			0x00000020U	/* The monster can follow you on each level until he dies */
+#define RF9_SUSCEP_ACID			0x00000040U	/* Susceptible to acid */
+#define RF9_SUSCEP_ELEC			0x00000080U	/* Susceptible to lightning */
+#define RF9_SUSCEP_POIS		0x00000100U		/* Susceptible to poison */
+#define RF9_KILL_TREES		0x00000200U		/* Monster can eat trees */
+#define RF9_WYRM_PROTECT	0x00000400U		/* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
+#define RF9_NO_CREDIT		0x00000800U		/* Monster won't give any kill/form credit. */
+#define RF9_ONLY_DEPTH			0x00001000U	/* The monster can only be generated at the GIVEN depth */
+#define RF9_SPECIAL_GENE		0x00002000U	/* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
+#define RF9_NO_REDUCE			0x00004000U	/* The monster cannot be afflicted by non-temporary stat-reducing effects */
+#define RF9_RES_ACID			0x00008000U
+#define RF9_RES_ELEC		0x00010000U
+#define RF9_RES_FIRE		0x00020000U
+#define RF9_RES_COLD		0x00040000U
+#define RF9_RES_POIS		0x00080000U
+#define RF9_RES_LITE			0x00100000U
+#define RF9_RES_DARK			0x00200000U
+#define RF9_RES_BLIND			0x00400000U
+#define RF9_RES_SOUND			0x00800000U
+#define RF9_RES_SHARDS		0x01000000U
+#define RF9_RES_CHAOS		0x02000000U
+#define RF9_RES_TIME		0x04000000U
+#define RF9_RES_MANA		0x08000000U
+#define RF9_VAMPIRIC			0x10000000U
+#define RF9_IM_TELE			0x20000000U      /* Resist teleportation */
+#define RF9_IM_PSI			0x40000000U	/* Immune to psi */
+#define RF9_RES_PSI			0x80000000U	/* Resist psi */
 
 
 /* New monster attack spells and stuff - C. Blue */
-#define RF0_S_HI_MONSTER	0x00000001
-#define RF0_S_HI_MONSTERS	0x00000002
-#define RF0_S_HI_UNIQUE		0x00000004
-#define RF0_BO_DISE		0x00000008
-#define RF0_BA_DISE			0x00000010
-#define RF0_S_DEMONS			0x00000020	/* Summon Demons -- unused */
-#define RF0_S_DRAGONS			0x00000040	/* Summon Dragons -- unused */
-#define RF0_S_HI_DEMON			0x00000080	/* Summon Greater Demon (Tzeentch) */
-#define RF0_S_HI_DRAGON		0x00000100		/* Summon Ancient Dragon -- unused */
-#define RF0_BA_LITE		0x00000200		/* Mirror: Globe of Light */
-#define RF0_BO_WALL		0x00000400		/* Mirror: Strike */
-#define RF0_BA_HELLFIRE		0x00000800		/* Mirror: Hellfire */
-#define RF0_BO_LITE			0x00001000	/* Mirror: Power Ray */
-#define RF0_BO_DARK			0x00002000	/* Mirror: Power Ray */
-#define RF0_DISPEL			0x00004000	/* Mirror: Vengenance [Corrupted] */
-#define RF0_WATERPOISON			0x00008000	/* Mirror: Toxic Moisture I/II */
-#define RF0_ICEPOISON		0x00010000		/* Mirror: Toxic Moisture III */
-#define RF0_BO_CHAOS		0x00020000		/* Mirror: Chaos Bolt (Shadow/HOff) */
-#define RF0_DRAIN_LIFE		0x00040000		/* Mirror: Drain Life (Shadow/Necro) */
-#define RF0_BO_PSI		0x00080000		/* Mirror: Psionic Blast [+Psi Storm] */
+#define RF0_S_HI_MONSTER	0x00000001U
+#define RF0_S_HI_MONSTERS	0x00000002U
+#define RF0_S_HI_UNIQUE		0x00000004U
+#define RF0_BO_DISE		0x00000008U
+#define RF0_BA_DISE			0x00000010U
+#define RF0_S_DEMONS			0x00000020U	/* Summon Demons -- unused */
+#define RF0_S_DRAGONS			0x00000040U	/* Summon Dragons -- unused */
+#define RF0_S_HI_DEMON			0x00000080U	/* Summon Greater Demon (Tzeentch) */
+#define RF0_S_HI_DRAGON		0x00000100U		/* Summon Ancient Dragon -- unused */
+#define RF0_BA_LITE		0x00000200U		/* Mirror: Globe of Light */
+#define RF0_BO_WALL		0x00000400U		/* Mirror: Strike */
+#define RF0_BA_HELLFIRE		0x00000800U		/* Mirror: Hellfire */
+#define RF0_BO_LITE			0x00001000U	/* Mirror: Power Ray */
+#define RF0_BO_DARK			0x00002000U	/* Mirror: Power Ray */
+#define RF0_DISPEL			0x00004000U	/* Mirror: Vengenance [Corrupted] */
+#define RF0_WATERPOISON			0x00008000U	/* Mirror: Toxic Moisture I/II */
+#define RF0_ICEPOISON		0x00010000U		/* Mirror: Toxic Moisture III */
+#define RF0_BO_CHAOS		0x00020000U		/* Mirror: Chaos Bolt (Shadow/HOff) */
+#define RF0_DRAIN_LIFE		0x00040000U		/* Mirror: Drain Life (Shadow/Necro) */
+#define RF0_BO_PSI		0x00080000U		/* Mirror: Psionic Blast [+Psi Storm] */
 //hole
 
 #define RF0_NONFAIL_LIMITER	24			/* note! RF0_OFFSET + this = Spells that cannot fail on casting, because they are not cast spells but 'skills'. */
 
-#define RF0_BR_ICE		0x01000000		/* For Bahamuth */
-#define RF0_BR_WATER		0x02000000		/* Finally no more antimagic field vs water hounds :p */
-#define RF0_HEAL_PHYS		0x04000000		/* Mirror: Heal by physical means, eg Potion of Healing */
-#define RF0_BLINK_PHYS		0x08000000		/* Mirror: Phase door scroll */
-#define RF0_TPORT_PHYS			0x10000000	/* Mirror: Teleportation scroll */
-#define RF0_ADMINISTRATIVE_PUSH		0x20000000	/* Push back */
-#define RF0_METEOR_SWARM		0x40000000	/* Targetted delayed orbital attack */
-#define RF0_ADMINISTRATIVE_HOLD		0x80000000	/* Irresistible paralysis */
+#define RF0_BR_ICE		0x01000000U		/* For Bahamuth */
+#define RF0_BR_WATER		0x02000000U		/* Finally no more antimagic field vs water hounds :p */
+#define RF0_HEAL_PHYS		0x04000000U		/* Mirror: Heal by physical means, eg Potion of Healing */
+#define RF0_BLINK_PHYS		0x08000000U		/* Mirror: Phase door scroll */
+#define RF0_TPORT_PHYS			0x10000000U	/* Mirror: Teleportation scroll */
+#define RF0_ADMINISTRATIVE_PUSH		0x20000000U	/* Push back */
+#define RF0_METEOR_SWARM		0x40000000U	/* Targetted delayed orbital attack */
+#define RF0_ADMINISTRATIVE_HOLD		0x80000000U	/* Irresistible paralysis */
 
 /* Note: Even if RF0_HEAL_PHYS was ever enabled for non-mirror monsters, it is still NOT a player-spell ever,
          as it intrinsically depends on an item (potion of healing */
@@ -6332,7 +6332,7 @@
 
 
 /* Additional basic flags (ie not spell-flags, 'S:') */
-//#define RFA_NO_INTERCEPT	0x00000001		/* Cannot intercept this monster */
+//#define RFA_NO_INTERCEPT	0x00000001U		/* Cannot intercept this monster */
 
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
@@ -6644,125 +6644,125 @@
 /* flags belonging to (+) family may be cleared to cause the according
    effect when desired, any time in the code, it's harmless ;)
    (the wilderness generation function will set them again after processing.) */
-#define	WILD_F_GENERATED	0x00000001	/* wilderness has been generated once - actually unused now after splitting it up into more detailed flags below, which are marked (+) - C. Blue */
-#define	WILD_F_INHABITED	0x00000002	/* if unset, add some monsters on day/night change (part of the (+) flag family actually, semantically) */
-#define	WILD_F_IN_MEMORY	0x00000004
-#define	WILD_F_UP		0x00000008	/* these are to show dungeons etc. */
-#define	WILD_F_DOWN		0x00000010
-#define WILD_F_LOCKUP		0x00000020	/* lock to prevent creation */
-#define WILD_F_LOCKDOWN		0x00000040
+#define	WILD_F_GENERATED	0x00000001U	/* wilderness has been generated once - actually unused now after splitting it up into more detailed flags below, which are marked (+) - C. Blue */
+#define	WILD_F_INHABITED	0x00000002U	/* if unset, add some monsters on day/night change (part of the (+) flag family actually, semantically) */
+#define	WILD_F_IN_MEMORY	0x00000004U
+#define	WILD_F_UP		0x00000008U	/* these are to show dungeons etc. */
+#define	WILD_F_DOWN		0x00000010U
+#define WILD_F_LOCKUP		0x00000020U	/* lock to prevent creation */
+#define WILD_F_LOCKDOWN		0x00000040U
 
-#define WILD_F_INVADERS		0x00000080	/* (+) if unset, spawn some invaders */
-#define WILD_F_HOME_OWNERS	0x00000100	/* (+) if unset, respawn home-owners */
-#define WILD_F_BONES		0x00000200	/* (+) if unset, spawn some bones */
-#define WILD_F_FOOD		0x00000400	/* (+) if unset, spawn some food (not regrowing gardens, see below for that one) */
-#define WILD_F_OBJECTS		0x00000800	/* (+) if unset, spawn some objects */
-#define WILD_F_CASH		0x00001000	/* (+) if unset, spawn some cash */
-#define WILD_F_GARDENS		0x00002000	/* (+) if unset, regrow gardens */
+#define WILD_F_INVADERS		0x00000080U	/* (+) if unset, spawn some invaders */
+#define WILD_F_HOME_OWNERS	0x00000100U	/* (+) if unset, respawn home-owners */
+#define WILD_F_BONES		0x00000200U	/* (+) if unset, spawn some bones */
+#define WILD_F_FOOD		0x00000400U	/* (+) if unset, spawn some food (not regrowing gardens, see below for that one) */
+#define WILD_F_OBJECTS		0x00000800U	/* (+) if unset, spawn some objects */
+#define WILD_F_CASH		0x00001000U	/* (+) if unset, spawn some cash */
+#define WILD_F_GARDENS		0x00002000U	/* (+) if unset, regrow gardens */
 
 
 /*** Features flags -- DG ***/
-#define FF1_NO_WALK		0x00000001L
-#define FF1_NO_VISION		0x00000002L /* unused*/
+#define FF1_NO_WALK		0x00000001U
+#define FF1_NO_VISION		0x00000002U /* unused*/
 //HOLE^
-#define FF1_CAN_FEATHER		0x00000004L
-#define FF1_CAN_PASS		0x00000008L
-#define FF1_FLOOR		0x00000010L
-#define FF1_WALL		0x00000020L
-#define FF1_PERMANENT		0x00000040L
-#define FF1_CAN_LEVITATE	0x00000080L
-#define FF1_REMEMBER		0x00000100L	/* Causes cave_plain_floor_grid() to be false, ie it's not a plain, boring grid but something to remember, ie getting/keeping CAVE_MARK. */
-#define FF1_NOTICE		0x00000200L	/* Will be eligible target of 'l'ook command */
-#define FF1_DONT_NOTICE_RUNNING	0x00000400L
-#define FF1_CAN_RUN		0x00000800L
-#define FF1_DOOR		0x00001000L
- #define FF1_SUPPORT_LIGHT	0x00002000L	/* -- currently NO EFFECT! -- */
+#define FF1_CAN_FEATHER		0x00000004U
+#define FF1_CAN_PASS		0x00000008U
+#define FF1_FLOOR		0x00000010U
+#define FF1_WALL		0x00000020U
+#define FF1_PERMANENT		0x00000040U
+#define FF1_CAN_LEVITATE	0x00000080U
+#define FF1_REMEMBER		0x00000100U	/* Causes cave_plain_floor_grid() to be false, ie it's not a plain, boring grid but something to remember, ie getting/keeping CAVE_MARK. */
+#define FF1_NOTICE		0x00000200U	/* Will be eligible target of 'l'ook command */
+#define FF1_DONT_NOTICE_RUNNING	0x00000400U
+#define FF1_CAN_RUN		0x00000800U
+#define FF1_DOOR		0x00001000U
+ #define FF1_SUPPORT_LIGHT	0x00002000U	/* -- currently NO EFFECT! -- */
 //HOLE^
-#define FF1_CAN_CLIMB		0x00004000L
-#define FF1_TUNNELABLE		0x00008000L
-#define FF1_WEB			0x00010000L
-#define FF1_ALLOW_TELE		0x00020000L
-#define FF1_SLOW_RUNNING_1	0x00040000L	/* half speed */
-#define FF1_SLOW_RUNNING_2	0x00080000L	/* quarter speed */
-#define FF1_SLOW_LEVITATING_1	0x00100000L
-#define FF1_SLOW_LEVITATING_2	0x00200000L
-#define FF1_SLOW_CLIMBING_1	0x00400000L
-#define FF1_SLOW_CLIMBING_2	0x00800000L
-#define FF1_SLOW_WALKING_1	0x01000000L
-#define FF1_SLOW_WALKING_2	0x02000000L
-#define FF1_SLOW_SWIMMING_1	0x04000000L
-#define FF1_SLOW_SWIMMING_2	0x08000000L
-#define FF1_PROTECTED		0x10000000L	/* monsters cannot teleport to nor spawn on this grid */
-#define FF1_LOS			0x20000000L	/* can shoot/cast/throw through this one, but may not be able to walk through (FEAT_DARK_PIT) */
-#define FF1_BLOCK_LOS		0x40000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
-#define FF1_BLOCK_CONTACT	0x80000000L	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
+#define FF1_CAN_CLIMB		0x00004000U
+#define FF1_TUNNELABLE		0x00008000U
+#define FF1_WEB			0x00010000U
+#define FF1_ALLOW_TELE		0x00020000U
+#define FF1_SLOW_RUNNING_1	0x00040000U	/* half speed */
+#define FF1_SLOW_RUNNING_2	0x00080000U	/* quarter speed */
+#define FF1_SLOW_LEVITATING_1	0x00100000U
+#define FF1_SLOW_LEVITATING_2	0x00200000U
+#define FF1_SLOW_CLIMBING_1	0x00400000U
+#define FF1_SLOW_CLIMBING_2	0x00800000U
+#define FF1_SLOW_WALKING_1	0x01000000U
+#define FF1_SLOW_WALKING_2	0x02000000U
+#define FF1_SLOW_SWIMMING_1	0x04000000U
+#define FF1_SLOW_SWIMMING_2	0x08000000U
+#define FF1_PROTECTED		0x10000000U	/* monsters cannot teleport to nor spawn on this grid */
+#define FF1_LOS			0x20000000U	/* can shoot/cast/throw through this one, but may not be able to walk through (FEAT_DARK_PIT) */
+#define FF1_BLOCK_LOS		0x40000000U	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
+#define FF1_BLOCK_CONTACT	0x80000000U	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
 
 /* for switching places with another player: */
 #define FF1_SWITCH_MASK \
 	(FF1_FLOOR | FF1_CAN_FEATHER | FF1_CAN_LEVITATE | FF1_CAN_RUN | FF1_CAN_CLIMB)
 
 
-#define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by wall_lighting. Implies SPECIAL_LITE. */
-#define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by wall_lighting, if it's winter season, due to assumed snow-covering. Implies SPECIAL_LITE if successful. */
-#define FF2_SPECIAL_LITE	0x00000004L	/* Gets coloured slate/gets slightly darkened by special fx: no LoS/no GLOW. This is implied by LAMP_LITE and successful LAMP_LITE_SNOW. */
-#define FF2_NIGHT_DARK		0x00000008L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
-#define FF2_NO_SHADE		0x00000010L	/* Don't shade to TERM_SLATE in view_shade_floor (or vault walls become indistinguishable from granite, without magic light) */
-#define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
-#define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For more floor/wall grids: Get coloured by floor/wall_lighting, if user has toggled the according option. */
-#define FF2_NO_ARTICLE		0x00000080L	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
-#define FF2_GLOW		0x00000100L	/* Always visible, lit via CAVE_GLOW. */
-#define FF2_ENTER_FROM_SPECIAL	0x00000200L	/* This grid can only be entered if the player is standing on CAVE_ICKY or FF1_PROTECTED */
-#define FF2_NO_PROB		0x00000400L	/* Don't allow probability travel onto this grid */
-#define FF2_ATTR_MULTI		0x00000800L	/* Ignore feat's base colour, instead cycle through the S-line colours each time the player refreshes his view on the feat. */
-#define FF2_SHINE		0x00001000L	/* Shines light on surrounding grids, causing (CAVE_GLOW_HACK | CAVE_GLOW) on them and itself, for permanent lighting. */
+#define FF2_LAMP_LITE		0x00000001U	/* Gets coloured by wall_lighting. Implies SPECIAL_LITE. */
+#define FF2_LAMP_LITE_SNOW	0x00000002U	/* Gets coloured by wall_lighting, if it's winter season, due to assumed snow-covering. Implies SPECIAL_LITE if successful. */
+#define FF2_SPECIAL_LITE	0x00000004U	/* Gets coloured slate/gets slightly darkened by special fx: no LoS/no GLOW. This is implied by LAMP_LITE and successful LAMP_LITE_SNOW. */
+#define FF2_NIGHT_DARK		0x00000008U	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
+#define FF2_NO_SHADE		0x00000010U	/* Don't shade to TERM_SLATE in view_shade_floor (or vault walls become indistinguishable from granite, without magic light) */
+#define FF2_NO_LITE_WHITEN	0x00000020U	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
+#define FF2_LAMP_LITE_OPTIONAL	0x00000040U	/* For more floor/wall grids: Get coloured by floor/wall_lighting, if user has toggled the according option. */
+#define FF2_NO_ARTICLE		0x00000080U	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
+#define FF2_GLOW		0x00000100U	/* Always visible, lit via CAVE_GLOW. */
+#define FF2_ENTER_FROM_SPECIAL	0x00000200U	/* This grid can only be entered if the player is standing on CAVE_ICKY or FF1_PROTECTED */
+#define FF2_NO_PROB		0x00000400U	/* Don't allow probability travel onto this grid */
+#define FF2_ATTR_MULTI		0x00000800U	/* Ignore feat's base colour, instead cycle through the S-line colours each time the player refreshes his view on the feat. */
+#define FF2_SHINE		0x00001000U	/* Shines light on surrounding grids, causing (CAVE_GLOW_HACK | CAVE_GLOW) on them and itself, for permanent lighting. */
     /* TODO: unlight shine'd upon grids upon destruction of this grid; handle live-causes of LoS-blocking between this grid and the shine'd upon grids (eg someone tree'ing, quake..)! */
-#define FF2_SHINE_FIRE		0x00002000L	/* Changes FF2_SHINE effect to fiery light (instead of neutral aka white light). */
-#define FF2_SHINE2		0x00004000L	/* rad 2. Stacks with FF2_SHINE. */
+#define FF2_SHINE_FIRE		0x00002000U	/* Changes FF2_SHINE effect to fiery light (instead of neutral aka white light). */
+#define FF2_SHINE2		0x00004000U	/* rad 2. Stacks with FF2_SHINE. */
 //hole
-#define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
+#define FF2_BOUNDARY		0x80000000U	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 
 
 /*** Dungeon type flags -- DG ***/
 
-#define DF1_PRINCIPAL		0x00000001L	/* Is a principal dungeon --- These don't provide certain boni meant for incentivising visiting -- currently not impemented */
-#define DF1_MAZE		0x00000002L	/* Is a maze-type dungeon */
-#define DF1_SMALLEST		0x00000004L	/* Creates VERY small levels like The Maze */
-#define DF1_SMALL		0x00000008L	/* Creates small levels like Dol Goldor */
+#define DF1_PRINCIPAL		0x00000001U	/* Is a principal dungeon --- These don't provide certain boni meant for incentivising visiting -- currently not impemented */
+#define DF1_MAZE		0x00000002U	/* Is a maze-type dungeon */
+#define DF1_SMALLEST		0x00000004U	/* Creates VERY small levels like The Maze */
+#define DF1_SMALL		0x00000008U	/* Creates small levels like Dol Goldor */
 
-#define DF1_BIG			0x00000010L	/* Creates big levels like Moria, and Angband dungeons */
-#define DF1_NO_DOORS		0x00000020L	/* No doors on rooms, like Barrowdowns, Old Forest etc) */
-#define DF1_WATER_RIVER		0x00000040L	/* Allow a single water streamer on a level */
-#define DF1_LAVA_RIVER		0x00000080L	/* Allow a single lava streamer on a level */
+#define DF1_BIG			0x00000010U	/* Creates big levels like Moria, and Angband dungeons */
+#define DF1_NO_DOORS		0x00000020U	/* No doors on rooms, like Barrowdowns, Old Forest etc) */
+#define DF1_WATER_RIVER		0x00000040U	/* Allow a single water streamer on a level */
+#define DF1_LAVA_RIVER		0x00000080U	/* Allow a single lava streamer on a level */
 
-#define DF1_WATER_RIVERS	0x00000100L	/* Allow multiple water streamers on a level */
-#define DF1_LAVA_RIVERS		0x00000200L	/* Allow multiple lava streamers on a level */
-#define DF1_CAVE		0x00000400L	/* Allow rooms */
-#define DF1_CAVERN		0x00000800L	/* Allow cavern rooms */
+#define DF1_WATER_RIVERS	0x00000100U	/* Allow multiple water streamers on a level */
+#define DF1_LAVA_RIVERS		0x00000200U	/* Allow multiple lava streamers on a level */
+#define DF1_CAVE		0x00000400U	/* Allow rooms */
+#define DF1_CAVERN		0x00000800U	/* Allow cavern rooms */
 
-#define DF1_NO_UP		0x00001000L	/* Disallow up stairs */
-#define DF1_HOT			0x00002000L	/* Corpses on ground and in pack decay quicker through heat */
-#define DF1_COLD		0x00004000L	/* Corpses on ground and in pack decay quicker through cold */
-#define DF1_FORCE_DOWN		0x00008000L	/* No up stairs generated */
+#define DF1_NO_UP		0x00001000U	/* Disallow up stairs */
+#define DF1_HOT			0x00002000U	/* Corpses on ground and in pack decay quicker through heat */
+#define DF1_COLD		0x00004000U	/* Corpses on ground and in pack decay quicker through cold */
+#define DF1_FORCE_DOWN		0x00008000U	/* No up stairs generated */
 
-#define DF1_FORGET		0x00010000L	/* Features are forgotten, like the Maze and Illusory Castle */
-#define DF1_NO_DESTROY		0x00020000L	/* No destroyed levels in dungeon */
-#define DF1_SAND_VEIN		0x00040000L	/* Like in the sandworm lair */
-#define DF1_CIRCULAR_ROOMS	0x00080000L	/* Allow circular rooms */
+#define DF1_FORGET		0x00010000U	/* Features are forgotten, like the Maze and Illusory Castle */
+#define DF1_NO_DESTROY		0x00020000U	/* No destroyed levels in dungeon */
+#define DF1_SAND_VEIN		0x00040000U	/* Like in the sandworm lair */
+#define DF1_CIRCULAR_ROOMS	0x00080000U	/* Allow circular rooms */
 
-#define DF1_EMPTY		0x00100000L	/* All arena levels */
-#define DF1_UNLISTED		0x00200000L	/* This dungeon won't be listed in players' dungeon lists (~8, cmd4.c) or info stores (eg mathom house, store.c) */
-#define DF1_FLAT		0x00400000L	/* Creates paths to next areas at edge of level, like Barrowdowns */
-#define DF1_TOWER		0x00800000L	/* You start at bottom and go up rather than the reverse */
+#define DF1_EMPTY		0x00100000U	/* All arena levels */
+#define DF1_UNLISTED		0x00200000U	/* This dungeon won't be listed in players' dungeon lists (~8, cmd4.c) or info stores (eg mathom house, store.c) */
+#define DF1_FLAT		0x00400000U	/* Creates paths to next areas at edge of level, like Barrowdowns */
+#define DF1_TOWER		0x00800000U	/* You start at bottom and go up rather than the reverse */
 
-#define DF1_RANDOM_TOWNS	0x01000000L	/* Allow random towns -- this flag is a relic and not implemented */
-#define DF1_DOUBLE		0x02000000L	/* Creates double-walled dungeon like Helcaraxe and Erebor --- UNUSED */
-#define DF1_LIFE_LEVEL		0x04000000L	/* Creates dungeon level on modified 'game of life' algorithm --- UH, CHECK */
-#define DF1_EVOLVE		0x08000000L	/* Evolving, pulsing levels like Heart of the Earth --- UNUSED */
+#define DF1_RANDOM_TOWNS	0x01000000U	/* Allow random towns -- this flag is a relic and not implemented */
+#define DF1_DOUBLE		0x02000000U	/* Creates double-walled dungeon like Helcaraxe and Erebor --- UNUSED */
+#define DF1_LIFE_LEVEL		0x04000000U	/* Creates dungeon level on modified 'game of life' algorithm --- UH, CHECK */
+#define DF1_EVOLVE		0x08000000U	/* Evolving, pulsing levels like Heart of the Earth --- UNUSED */
 
-#define DF1_ADJUST_LEVEL_1	0x10000000L	/* Minimum monster level will be equal to dungeon level --- UNUSED */
-#define DF1_ADJUST_LEVEL_2	0x20000000L	/* Minimum monster level will be double the dungeon level --- UNUSED */
-#define DF1_NO_RECALL		0x40000000L	/* No recall allowed; also includes everything NO_RECALL_INTO does! */
-#define DF1_NO_STREAMERS	0x80000000L	/* No streamers (water, lava, trees) */
+#define DF1_ADJUST_LEVEL_1	0x10000000U	/* Minimum monster level will be equal to dungeon level --- UNUSED */
+#define DF1_ADJUST_LEVEL_2	0x20000000U	/* Minimum monster level will be double the dungeon level --- UNUSED */
+#define DF1_NO_RECALL		0x40000000U	/* No recall allowed; also includes everything NO_RECALL_INTO does! */
+#define DF1_NO_STREAMERS	0x80000000U	/* No streamers (water, lava, trees) */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set by admin on dungeon creation) too much */
@@ -6781,51 +6781,51 @@
  */
 
 /* Maybe better DF2_PRELOADED? */
-#define DF2_RANDOM		0x00000001L /* random dungeon - not preloaded */
+#define DF2_RANDOM		0x00000001U /* random dungeon - not preloaded */
 /* DF2_IRON => DF1_NO_RECALL + DF1_FORCE_DOWN */
-#define DF2_IRON		0x00000002L /* one way dungeon - return portal at max level */
-#define DF2_HELL		0x00000004L /* hellish dungeon - forces hellish mode on all */
+#define DF2_IRON		0x00000002U /* one way dungeon - return portal at max level */
+#define DF2_HELL		0x00000004U /* hellish dungeon - forces hellish mode on all */
 /* DF2_NO_MAP => DF1_FORGET */
-/*#define DF2_NO_MAP		0x00000008L *//* player never gains level knowledge */
-#define DF2_NO_RECALL_INTO	0x00000008L /* Player may not recall downwards into this dungeon \
+/*#define DF2_NO_MAP		0x00000008U *//* player never gains level knowledge */
+#define DF2_NO_RECALL_INTO	0x00000008U /* Player may not recall downwards into this dungeon \
 					       upwards into this tower. Added it especially for Nether Realm - C. Blue \
 					       Note: this also prevents probability travel while inside, \
 					             floating into it, and sending items via telekinesis, \
 					             and it prevents ghost-floating deeper into it. */
-#define DF2_NO_MAGIC_MAP	0x00000010L /* non magic-mappable */
-#define DF2_MISC_STORES		0x00000020L /* spawn low-level dungeon stores such as under "RPG Server" rules */
-#define DF2_TOWNS_IRONRECALL	0x00000040L /* DF2_IRON: if level allows premature recalling then it has a town */
-#define DF2_NO_DEATH		0x00000080L /* death penalty is reduced */
+#define DF2_NO_MAGIC_MAP	0x00000010U /* non magic-mappable */
+#define DF2_MISC_STORES		0x00000020U /* spawn low-level dungeon stores such as under "RPG Server" rules */
+#define DF2_TOWNS_IRONRECALL	0x00000040U /* DF2_IRON: if level allows premature recalling then it has a town */
+#define DF2_NO_DEATH		0x00000080U /* death penalty is reduced */
 
-#define DF2_IRONFIX1		0x00000100L /* DF2_IRON: but you may recall every 250 ft */
-#define DF2_IRONFIX2		0x00000200L /* DF2_IRON: but you may recall every 500 ft */
-#define DF2_IRONFIX3		0x00000400L /* DF2_IRON: but you may recall every 750 ft */
-#define DF2_IRONFIX4		0x00000800L /* DF2_IRON: but you may recall every 1000 ft */
+#define DF2_IRONFIX1		0x00000100U /* DF2_IRON: but you may recall every 250 ft */
+#define DF2_IRONFIX2		0x00000200U /* DF2_IRON: but you may recall every 500 ft */
+#define DF2_IRONFIX3		0x00000400U /* DF2_IRON: but you may recall every 750 ft */
+#define DF2_IRONFIX4		0x00000800U /* DF2_IRON: but you may recall every 1000 ft */
 
-#define DF2_IRONRND1		0x00001000L /* DF2_IRON: but each dlvl has 20% chance of allowing recall */
-#define DF2_IRONRND2		0x00002000L /* DF2_IRON: but each dlvl has 10% chance of allowing recall */
-#define DF2_IRONRND3		0x00004000L /* DF2_IRON: but each dlvl has 7% chance of allowing recall */
-#define DF2_IRONRND4		0x00008000L /* DF2_IRON: but each dlvl has 5% chance of allowing recall */
+#define DF2_IRONRND1		0x00001000U /* DF2_IRON: but each dlvl has 20% chance of allowing recall */
+#define DF2_IRONRND2		0x00002000U /* DF2_IRON: but each dlvl has 10% chance of allowing recall */
+#define DF2_IRONRND3		0x00004000U /* DF2_IRON: but each dlvl has 7% chance of allowing recall */
+#define DF2_IRONRND4		0x00008000U /* DF2_IRON: but each dlvl has 5% chance of allowing recall */
 
-#define DF2_NO_ENTRY_STAIR	0x00010000L /* Can't be entered by staircases */
-#define DF2_NO_ENTRY_WOR	0x00020000L /* Can't be entered by word-of-recall (plain and less restrictive than NO_RECALL_INTO) */
-#define DF2_NO_ENTRY_PROB	0x00040000L /* Can't be entered by probability travel */
-#define DF2_NO_ENTRY_FLOAT	0x00080000L /* Can't be entered by floating */
+#define DF2_NO_ENTRY_STAIR	0x00010000U /* Can't be entered by staircases */
+#define DF2_NO_ENTRY_WOR	0x00020000U /* Can't be entered by word-of-recall (plain and less restrictive than NO_RECALL_INTO) */
+#define DF2_NO_ENTRY_PROB	0x00040000U /* Can't be entered by probability travel */
+#define DF2_NO_ENTRY_FLOAT	0x00080000U /* Can't be entered by floating */
 
-#define DF2_NO_EXIT_STAIR	0x00100000L /* Can't be exited by staircases */
-#define DF2_NO_EXIT_WOR		0x00200000L /* Can't be exited by word-of-recall */
-#define DF2_NO_EXIT_PROB	0x00400000L /* Can't be exited by probability travel */
-#define DF2_NO_EXIT_FLOAT	0x00800000L /* Can't be exited by floating */
+#define DF2_NO_EXIT_STAIR	0x00100000U /* Can't be exited by staircases */
+#define DF2_NO_EXIT_WOR		0x00200000U /* Can't be exited by word-of-recall */
+#define DF2_NO_EXIT_PROB	0x00400000U /* Can't be exited by probability travel */
+#define DF2_NO_EXIT_FLOAT	0x00800000U /* Can't be exited by floating */
 
-#define DF2_NO_STAIRS_UP	0x01000000L /* no '<' staircases inside */
-#define DF2_NO_STAIRS_DOWN	0x02000000L /* no '>' staircases inside */
-#define DF2_TOWNS_FIX		0x04000000L /* generated towns every n levels (for HUGE ironman) */
-#define DF2_TOWNS_RND		0x08000000L /* generated towns with n% chance (for HUGE ironman) */
+#define DF2_NO_STAIRS_UP	0x01000000U /* no '<' staircases inside */
+#define DF2_NO_STAIRS_DOWN	0x02000000U /* no '>' staircases inside */
+#define DF2_TOWNS_FIX		0x04000000U /* generated towns every n levels (for HUGE ironman) */
+#define DF2_TOWNS_RND		0x08000000U /* generated towns with n% chance (for HUGE ironman) */
 
-#define DF2_ADJUST_LEVEL_1_2	0x10000000L /* Minimum monster level will be half the dungeon level --- UNUSED */
-#define DF2_NO_SHAFT		0x20000000L /* No shafts --- UNUSED (#if0'ed) */
-#define DF2_ADJUST_LEVEL_PLAYER	0x40000000L /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
-#define DF2_DELETED		0x80000000L /* Deleted, but not yet removed */
+#define DF2_ADJUST_LEVEL_1_2	0x10000000U /* Minimum monster level will be half the dungeon level --- UNUSED */
+#define DF2_NO_SHAFT		0x20000000U /* No shafts --- UNUSED (#if0'ed) */
+#define DF2_ADJUST_LEVEL_PLAYER	0x40000000U /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
+#define DF2_DELETED		0x80000000U /* Deleted, but not yet removed */
 
 #define DF2_NO_ENTRY_MASK	(DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)
 #define DF2_NO_EXIT_MASK	(DF2_NO_EXIT_STAIR | DF2_NO_EXIT_WOR | DF2_NO_EXIT_PROB | DF2_NO_EXIT_FLOAT)
@@ -6838,45 +6838,45 @@
 
 
 /* moar flags */
-#define DF3_JAIL_DUNGEON	0x00000001L	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
-#define DF3_HIDDENLIB		0x00000002L	/* allow generation of 'Hidden Library' dungeon store (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
-#define DF3_NO_SIMPLE_STORES	0x00000004L	/* disallow generation misc ironman helper stores and of low-level dungeon stores (was herbalist, but excluded it for now, so it may actually spawn in IDDC) (should be set for IDDC) */
-#define DF3_NO_DUNGEON_BONUS	0x00000008L	/* This dungeon never yields bonus experience from dungeon_bonus[] (rare exploration) (should be set for IDDC) */
+#define DF3_JAIL_DUNGEON	0x00000001U	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
+#define DF3_HIDDENLIB		0x00000002U	/* allow generation of 'Hidden Library' dungeon store (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
+#define DF3_NO_SIMPLE_STORES	0x00000004U	/* disallow generation misc ironman helper stores and of low-level dungeon stores (was herbalist, but excluded it for now, so it may actually spawn in IDDC) (should be set for IDDC) */
+#define DF3_NO_DUNGEON_BONUS	0x00000008U	/* This dungeon never yields bonus experience from dungeon_bonus[] (rare exploration) (should be set for IDDC) */
 
-#define DF3_EXP_5		0x00000010L	/* Add +5% bonus to experience gains while inside this dungeon */
-#define DF3_EXP_10		0x00000020L	/* Add +10% bonus to experience gains while inside this dungeon */
-#define DF3_EXP_20		0x00000040L	/* Add +20% bonus to experience gains while inside this dungeon */
-#define DF3_LUCK_1		0x00000080L	/* Add +1 luck while inside this dungeon */
+#define DF3_EXP_5		0x00000010U	/* Add +5% bonus to experience gains while inside this dungeon */
+#define DF3_EXP_10		0x00000020U	/* Add +10% bonus to experience gains while inside this dungeon */
+#define DF3_EXP_20		0x00000040U	/* Add +20% bonus to experience gains while inside this dungeon */
+#define DF3_LUCK_1		0x00000080U	/* Add +1 luck while inside this dungeon */
 
-#define DF3_LUCK_5		0x00000100L	/* Add +5 luck while inside this dungeon */
-#define DF3_LUCK_20		0x00000200L	/* Add +20 luck while inside this dungeon */
-#define DF3_LUCK_PROG_IDDC	0x00000400L	/* Add luck progressively while inside this dungeon, for Ironman Deep Dive Challenge */
-#define DF3_SHORT_IDDC		0x00000800L	/* As theme in IDDC, this dungeon only has half as many floors as usual */
+#define DF3_LUCK_5		0x00000100U	/* Add +5 luck while inside this dungeon */
+#define DF3_LUCK_20		0x00000200U	/* Add +20 luck while inside this dungeon */
+#define DF3_LUCK_PROG_IDDC	0x00000400U	/* Add luck progressively while inside this dungeon, for Ironman Deep Dive Challenge */
+#define DF3_SHORT_IDDC		0x00000800U	/* As theme in IDDC, this dungeon only has half as many floors as usual */
 
-#define DF3_DERARE_MONSTERS	0x00001000L	/* Treat rarity of all monsters as '1' aka most common */
-#define DF3_MANY_MONSTERS	0x00002000L	/* Spawn 1.5x as many monsters as usual */
-#define DF3_VMANY_MONSTERS	0x00004000L	/* Spawn twice as many monsters as usual */
-#define DF3_DEEPSUPPLY		0x00008000L	/* allow generation of dungeon stores offering supplies, on deep floors (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
+#define DF3_DERARE_MONSTERS	0x00001000U	/* Treat rarity of all monsters as '1' aka most common */
+#define DF3_MANY_MONSTERS	0x00002000U	/* Spawn 1.5x as many monsters as usual */
+#define DF3_VMANY_MONSTERS	0x00004000U	/* Spawn twice as many monsters as usual */
+#define DF3_DEEPSUPPLY		0x00008000U	/* allow generation of dungeon stores offering supplies, on deep floors (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
 
-#define DF3_NO_WALL_STREAMERS	0x00010000L	/* No streamers (any wall types) */
-#define DF3_NOT_EMPTY		0x00020000L	/* Disallow arena levels */
-#define DF3_NOT_WATERY		0x00040000L	/* No 'watery' dungeon -> no water rivers */
-#define DF3_FEW_ROOMS		0x00080000L	/* Less room_build() calls for any sort of struct (including vaults) */
+#define DF3_NO_WALL_STREAMERS	0x00010000U	/* No streamers (any wall types) */
+#define DF3_NOT_EMPTY		0x00020000U	/* Disallow arena levels */
+#define DF3_NOT_WATERY		0x00040000U	/* No 'watery' dungeon -> no water rivers */
+#define DF3_FEW_ROOMS		0x00080000U	/* Less room_build() calls for any sort of struct (including vaults) */
 
-#define DF3_NO_VAULTS		0x00100000L	/* Less room_build() calls for any sort of struct (including vaults) */
-#define DF3_NO_MAZE		0x00200000L	/* don't build (perma)mazes */
-#define DF3_NO_EMPTY		0x00400000L	/* don't build empty levels (arenas) */
-#define DF3_NO_DESTROYED	0x00800000L	/* don't build 'destroyed' levels */
+#define DF3_NO_VAULTS		0x00100000U	/* Less room_build() calls for any sort of struct (including vaults) */
+#define DF3_NO_MAZE		0x00200000U	/* don't build (perma)mazes */
+#define DF3_NO_EMPTY		0x00400000U	/* don't build empty levels (arenas) */
+#define DF3_NO_DESTROYED	0x00800000U	/* don't build 'destroyed' levels */
 
-#define DF3_NO_TELE		0x01000000L	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering). Implies LF1_NO_MAGIC! */
-#define DF3_NO_ESP		0x02000000L	/* Disallow any ESP */
-#define DF3_NO_SUMMON		0x04000000L	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
-#define DF3_LIMIT_ESP		0x08000000L	/* All ESP gets its range limited */
+#define DF3_NO_TELE		0x01000000U	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering). Implies LF1_NO_MAGIC! */
+#define DF3_NO_ESP		0x02000000U	/* Disallow any ESP */
+#define DF3_NO_SUMMON		0x04000000U	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
+#define DF3_LIMIT_ESP		0x08000000U	/* All ESP gets its range limited */
 
-#define DF3_DARK		0x10000000L	/* All unlit levels */
-#define DF3_NO_DARK		0x20000000L	/* Don't build unlit levels */
-#define DF3_SALT_WATER		0x40000000L	/* Dungeon has salt water instead of freshwater */
-#define DF3_CYCLIC_STAIRS	0x80000000L	/* Final level gets further stairs in dungeon's traversal direction generated that will lead out via (wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
+#define DF3_DARK		0x10000000U	/* All unlit levels */
+#define DF3_NO_DARK		0x20000000U	/* Don't build unlit levels */
+#define DF3_SALT_WATER		0x40000000U	/* Dungeon has salt water instead of freshwater */
+#define DF3_CYCLIC_STAIRS	0x80000000U	/* Final level gets further stairs in dungeon's traversal direction generated that will lead out via (wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set by admin on dungeon creation) too much */
@@ -6886,35 +6886,35 @@
 
 
 /* level flags for dun_level */
-#define LF1_DUNGEON_TOWN	0x00000001L /* is a dungeon town! (why was there a flag hole at 0x1 here? oO) */
-#define LF1_ASK_LEAVE		0x00000002L /* XXX */
-#define LF1_NO_STAIR		0x00000004L /* XXX ok */
-#define LF1_SPECIAL		0x00000008L /* XXX */
+#define LF1_DUNGEON_TOWN	0x00000001U /* is a dungeon town! (why was there a flag hole at 0x1 here? oO) */
+#define LF1_ASK_LEAVE		0x00000002U /* XXX */
+#define LF1_NO_STAIR		0x00000004U /* XXX ok */
+#define LF1_SPECIAL		0x00000008U /* XXX */
 
-#define LF1_NO_NEW_MONSTER	0x00000010L /* XXX ok */
-#define LF1_DESC		0x00000020L /* XXX */
-#define LF1_NO_GENO		0x00000040L
-#define LF1_NO_MAP		0x00000080L /* player never gains level knowledge */
+#define LF1_NO_NEW_MONSTER	0x00000010U /* XXX ok */
+#define LF1_DESC		0x00000020U /* XXX */
+#define LF1_NO_GENO		0x00000040U
+#define LF1_NO_MAP		0x00000080U /* player never gains level knowledge */
 
-#define LF1_NO_MAGIC_MAP	0x00000100L /* player never does magic mapping */
-#define LF1_NO_DESTROY		0x00000200L /* Cannot use Destruction spells/Earthquakes */
-#define LF1_NO_MAGIC		0x00000400L /* very nasty */
-#define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
+#define LF1_NO_MAGIC_MAP	0x00000100U /* player never does magic mapping */
+#define LF1_NO_DESTROY		0x00000200U /* Cannot use Destruction spells/Earthquakes */
+#define LF1_NO_MAGIC		0x00000400U /* very nasty */
+#define LF1_NO_GHOST		0x00000800U /* Players who die on this level are erased completely! */
 
-#define LF1_IRON_RECALL		0x00001000L /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
-#define LF1_RANDOM_TOWN		0x00002000L /* it's a random (dungeon) town (for tracking in IDDC) */
-#define LF1_CUSTOM_GATEWAY	0x00004000L /* Marker that on this floor a custom gateway has been placed by a player (limiter) */
-#define LF1_FAST_DIVE		0x00008000L /* Floor is in the process of being generated by a fast diver: ghost/probability travel */
+#define LF1_IRON_RECALL		0x00001000U /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
+#define LF1_RANDOM_TOWN		0x00002000U /* it's a random (dungeon) town (for tracking in IDDC) */
+#define LF1_CUSTOM_GATEWAY	0x00004000U /* Marker that on this floor a custom gateway has been placed by a player (limiter) */
+#define LF1_FAST_DIVE		0x00008000U /* Floor is in the process of being generated by a fast diver: ghost/probability travel */
 
-#define LF1_WATER		0x01000000L	/* for DIGGING: water rivers or base grids are being used */
-#define LF1_LAVA		0x02000000L	/* for DIGGING: lava rivers or base grids are being used */
-#define LF1_NO_WATER		0x04000000L	/* for DIGGING: water rivers or base grids are being used */
-#define LF1_NO_LAVA		0x08000000L	/* for DIGGING: lava rivers or base grids are being used */
+#define LF1_WATER		0x01000000U	/* for DIGGING: water rivers or base grids are being used */
+#define LF1_LAVA		0x02000000U	/* for DIGGING: lava rivers or base grids are being used */
+#define LF1_NO_WATER		0x04000000U	/* for DIGGING: water rivers or base grids are being used */
+#define LF1_NO_LAVA		0x08000000U	/* for DIGGING: lava rivers or base grids are being used */
 
-#define LF1_DEEP_WATER		0x10000000L	/* Dungeon uses deep water as floor tile: Make all water streamers/rivers deep too */
-#define LF1_DEEP_LAVA		0x20000000L	/* Dungeon uses deep lava as floor tile: Make all lava streamers/rivers deep too */
-#define LF1_SPAWN_MARKER	0x40000000L	/* Mark that a special monster has already been spawned; Added for Nether Guards in the Nether Realm */
-#define LF1_NO_MULTIPLY		0x80000000L /* for scrolls of vermin control */
+#define LF1_DEEP_WATER		0x10000000U	/* Dungeon uses deep water as floor tile: Make all water streamers/rivers deep too */
+#define LF1_DEEP_LAVA		0x20000000U	/* Dungeon uses deep lava as floor tile: Make all lava streamers/rivers deep too */
+#define LF1_SPAWN_MARKER	0x40000000U	/* Mark that a special monster has already been spawned; Added for Nether Guards in the Nether Realm */
+#define LF1_NO_MULTIPLY		0x80000000U /* for scrolls of vermin control */
 
 #define LF1_FEELING_MASK \
 	(LF1_NO_GENO | LF1_NO_MAP | LF1_NO_MAGIC_MAP | \
@@ -6931,68 +6931,69 @@
  */
 
 /* extra level flags for dun_level -- for 'extra feeling' generation */
-#define LF2_UNIQUE		0x00000001L	/* a unique monster has been generated */
-#define LF2_OOD			0x00000002L	/* a freely roaming ood has been generated */
-#define LF2_OOD_FREE		0x00000004L	/* a freely roaming ood has been generated */
-#define LF2_OOD_HI		0x00000008L	/* a freely roaming ood has been generated */
+#define LF2_UNIQUE		0x00000001U	/* a unique monster has been generated */
+#define LF2_OOD			0x00000002U	/* a freely roaming ood has been generated */
+#define LF2_OOD_FREE		0x00000004U	/* a freely roaming ood has been generated */
+#define LF2_OOD_HI		0x00000008U	/* a freely roaming ood has been generated */
 
-#define LF2_VAULT		0x00000010L	/* a vault has been generated */
-#define LF2_VAULT_OPEN		0x00000020L	/* a non-closed vault has been generated (ew) */
-#define LF2_VAULT_HI		0x00000040L	/* a highly ood in vault been generated */
-#define LF2_PITNEST		0x00000080L	/* pit/nest on level */
+#define LF2_VAULT		0x00000010U	/* a vault has been generated */
+#define LF2_VAULT_OPEN		0x00000020U	/* a non-closed vault has been generated (ew) */
+#define LF2_VAULT_HI		0x00000040U	/* a highly ood in vault been generated */
+#define LF2_PITNEST		0x00000080U	/* pit/nest on level */
 
-#define LF2_PITNEST_HI		0x00000100L	/* high threat pit/nest on level */
-#define LF2_ITEM_OOD		0x00000200L	/* ood item on level */
-#define LF2_ARTIFACT		0x00000400L	/* artifact on level */
-#define LF2_INDOORS		0x00000800L	/* world surface (sector000 usually) is treated like a dungeon floor, causing no sun burn to vampires */
+#define LF2_PITNEST_HI		0x00000100U	/* high threat pit/nest on level */
+#define LF2_ITEM_OOD		0x00000200U	/* ood item on level */
+#define LF2_ARTIFACT		0x00000400U	/* artifact on level */
+#define LF2_INDOORS		0x00000800U	/* world surface (sector000 usually) is treated like a dungeon floor, causing no sun burn to vampires */
 
-#define LF2_NO_RUN		0x00001000L	/* Cannot run on this level, walk only */
-#define LF2_NO_TELE		0x00002000L	/* Cannot use phase/tele on this level */
-#define LF2_NO_DETECT		0x00004000L	/* Cannot use detection on this level */
-#define LF2_NO_ESP		0x00008000L	/* ESP is disabled on this level */
+#define LF2_NO_RUN		0x00001000U	/* Cannot run on this level, walk only */
+#define LF2_NO_TELE		0x00002000U	/* Cannot use phase/tele on this level */
+#define LF2_NO_DETECT		0x00004000U	/* Cannot use detection on this level */
+#define LF2_NO_ESP		0x00008000U	/* ESP is disabled on this level */
 
-#define LF2_ESP			0x00010000L	/* Everyone on the level automatically gains full ESP */
-#define LF2_NO_SPEED		0x00020000L	/* Everyone on the level moves at most at +0 speed */
-#define LF2_NO_RES_HEAL		0x00040000L	/* Players on the level will have no elemental resistances/immunities and unable to utilise healing magic/potions */
-#define LF2_LIMIT_ESP		0x00080000L	/* All ESP gets limited in range */
+#define LF2_ESP			0x00010000U	/* Everyone on the level automatically gains full ESP */
+#define LF2_NO_SPEED		0x00020000U	/* Everyone on the level moves at most at +0 speed */
+#define LF2_NO_RES_HEAL		0x00040000U	/* Players on the level will have no elemental resistances/immunities and unable to utilise healing magic/potions */
+#define LF2_LIMIT_ESP		0x00080000U	/* All ESP gets limited in range */
 
-#define LF2_FAIR_TERRAIN_DAM	0x00100000L	/* Terain damage each player takes is roughly a fixed percentage of his max HP */
-#define LF2_DUN_BOSS		0x00200000L
-#define LF2_COLLAPSING		0x00400000L	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
-#define LF2_NO_SUMMON		0x00800000L	/* disallow any summoning (to go with NO_TELE :) for new experimental dungeoneering) */
+#define LF2_FAIR_TERRAIN_DAM	0x00100000U	/* Terain damage each player takes is roughly a fixed percentage of his max HP */
+#define LF2_DUN_BOSS		0x00200000U
+#define LF2_COLLAPSING		0x00400000U	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
+#define LF2_NO_SUMMON		0x00800000U	/* disallow any summoning (to go with NO_TELE :) for new experimental dungeoneering) */
 
-#define LF2_NO_LIVE_SPAWN	0x01000000L	/* disallow any live-spawn of monsters (like in IDDC, could be used for that actually) */
-#define LF2_NO_SPAWN		0x02000000L	/* disallow any monster spawn, even at level generation time. Monsters must be placed manually, hard-codedly, if desired. */
-#define LF2_BROKEN		0x04000000L	/* Control generation of broken feats. */
-#define LF2_NO_RUNES		0x08000000L	/* Disallow runes of protection on this floor */
+#define LF2_NO_LIVE_SPAWN	0x01000000U	/* disallow any live-spawn of monsters (like in IDDC, could be used for that actually) */
+#define LF2_NO_SPAWN		0x02000000U	/* disallow any monster spawn, even at level generation time. Monsters must be placed manually, hard-codedly, if desired. */
+#define LF2_BROKEN		0x04000000U	/* Control generation of broken feats. */
+#define LF2_NO_RUNES		0x08000000U	/* Disallow runes of protection on this floor */
 
-#define LF2_CYCLIC_STAIRS	0x10000000L	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
-#define LF2_NO_MARTYR_SAC	0x20000000L	/* This level does not allow any divine/hellish favour: No Martyr/Blood Sacrifice */
-#define LF2_NO_TRAPS		0x40000000L	/* Disallow any traps and monster traps on this floor */
-#define LF2_STATIC		0x80000000L	/* Floor is static until this flag is cleared */
+#define LF2_CYCLIC_STAIRS	0x10000000U	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
+#define LF2_NO_MARTYR_SAC	0x20000000U	/* This level does not allow any divine/hellish favour: No Martyr/Blood Sacrifice */
+#define LF2_NO_TRAPS		0x40000000U	/* Disallow any traps and monster traps on this floor */
+#define LF2_STATIC		0x80000000U	/* Floor is static until this flag is cleared */
 
 
 /* vault flags for v_info */
-#define VF1_FORCE_FLAGS		0x00000001L
-#define VF1_NO_TELEPORT		0x00000002L
-#define VF1_NO_GENO		0x00000004L
-#define VF1_NO_MAP		0x00000008L	/* player never gains level knowledge */
-#define VF1_NO_MAGIC_MAP	0x00000010L	/* player never does magic mapping */
-#define VF1_NO_DESTROY		0x00000020L
-#define VF1_NO_MAGIC		0x00000040L /* very nasty */
+#define VF1_FORCE_FLAGS		0x00000001U
+#define VF1_NO_TELEPORT		0x00000002U
+#define VF1_NO_GENO		0x00000004U
+#define VF1_NO_MAP		0x00000008U	/* player never gains level knowledge */
 
-#define VF1_NO_EASY_TRUEARTS	0x001000000L /* on shallow levels, this vault won't contain any truearts */
-#define VF1_NO_EASY_RANDARTS	0x002000000L /* on shallow levels, this vault won't contain any randarts */
-#define VF1_RARE_TRUEARTS	0x004000000L /* reduced chance to contain truearts */
-#define VF1_RARE_RANDARTS	0x008000000L /* reduced chance to contain randarts */
+#define VF1_NO_MAGIC_MAP	0x00000010U	/* player never does magic mapping */
+#define VF1_NO_DESTROY		0x00000020U
+#define VF1_NO_MAGIC		0x00000040U /* very nasty */
 
-#define VF1_NO_TRUEARTS		0x01000000L /* this vault won't contain any truearts (except if a monster drops one) */
-#define VF1_NO_RANDARTS		0x02000000L /* this vault won't contain any randarts (except if a monster drops one) */
+#define VF1_NO_EASY_TRUEARTS	0x00100000U /* on shallow levels, this vault won't contain any truearts */
+#define VF1_NO_EASY_RANDARTS	0x00200000U /* on shallow levels, this vault won't contain any randarts */
+#define VF1_RARE_TRUEARTS	0x00400000U /* reduced chance to contain truearts */
+#define VF1_RARE_RANDARTS	0x00800000U /* reduced chance to contain randarts */
 
-#define VF1_NO_PENETR		0x10000000L /* river/lava never penetrates vault */
-#define VF1_HIVES		0x20000000L /* put same vaults like beehives */
-#define VF1_NO_MIRROR		0x40000000L /* not suitable for mirroring */
-#define VF1_NO_ROTATE		0x80000000L /* not suitable for rotation */
+#define VF1_NO_TRUEARTS		0x01000000U /* this vault won't contain any truearts (except if a monster drops one) */
+#define VF1_NO_RANDARTS		0x02000000U /* this vault won't contain any randarts (except if a monster drops one) */
+
+#define VF1_NO_PENETR		0x10000000U /* river/lava never penetrates vault */
+#define VF1_HIVES		0x20000000U /* put same vaults like beehives */
+#define VF1_NO_MIRROR		0x40000000U /* not suitable for mirroring */
+#define VF1_NO_ROTATE		0x80000000U /* not suitable for rotation */
 
 
 
@@ -8035,38 +8036,38 @@ extern int PlayerUID;
  * Hats off to the precedent coders!	- Jir -
  */
 /* jk */
-#define FTRAP_CHEST		0x000000001 /* may appear on chests */
-#define FTRAP_DOOR		0x000000002 /* may appear on doors/floors */
-#define FTRAP_FLOOR		0x000000004 /* may appear on floor */
-#define FTRAP_CHANGE		0x000000008 /* Color changing */
-#define FTRAP_SPECIAL_GENE	0x000000010 /* Dont randomly generate */
-#define FTRAP_LEVEL_GEN		0x000000020
-#define FTRAP_XXX7		0x000000040
-#define FTRAP_XXX8		0x000000080
-#define FTRAP_XXX9		0x000000100
-#define FTRAP_XXX10		0x000000200
-#define FTRAP_XXX11		0x000000400
-#define FTRAP_XXX12		0x000000800
-#define FTRAP_XXX13		0x000001000
-#define FTRAP_XXX14		0x000002000
-#define FTRAP_XXX15		0x000004000
-#define FTRAP_XXX16		0x000008000
-#define FTRAP_LEVEL1		0x000010000 /* low level ball/bolt trap */
-#define FTRAP_LEVEL2		0x000020000 /* medium level ball/bolt trap */
-#define FTRAP_LEVEL3		0x000040000 /* high level ball/bolt trap */
-#define FTRAP_LEVEL4		0x000080000 /* oops level ball/bolt trap */
-#define FTRAP_XXX21		0x000100000
-#define FTRAP_XXX22		0x000200000
-#define FTRAP_XXX23		0x000400000
-#define FTRAP_XXX24		0x000800000
-#define FTRAP_XXX25		0x001000000
-#define FTRAP_XXX26		0x002000000
-#define FTRAP_XXX27		0x004000000
-#define FTRAP_XXX28		0x008000000
-#define FTRAP_XXX29		0x010000000
-#define FTRAP_XXX30		0x020000000
-#define FTRAP_EASY_ID		0x040000000
-#define FTRAP_NO_ID		0x080000000	/* nominally implemented (but not used) */
+#define FTRAP_CHEST		0x00000001U /* may appear on chests */
+#define FTRAP_DOOR		0x00000002U /* may appear on doors/floors */
+#define FTRAP_FLOOR		0x00000004U /* may appear on floor */
+#define FTRAP_CHANGE		0x00000008U /* Color changing */
+#define FTRAP_SPECIAL_GENE	0x00000010U /* Dont randomly generate */
+#define FTRAP_LEVEL_GEN		0x00000020U
+#define FTRAP_XXX7		0x00000040U
+#define FTRAP_XXX8		0x00000080U
+#define FTRAP_XXX9		0x00000100U
+#define FTRAP_XXX10		0x00000200U
+#define FTRAP_XXX11		0x00000400U
+#define FTRAP_XXX12		0x00000800U
+#define FTRAP_XXX13		0x00001000U
+#define FTRAP_XXX14		0x00002000U
+#define FTRAP_XXX15		0x00004000U
+#define FTRAP_XXX16		0x00008000U
+#define FTRAP_LEVEL1		0x00010000U /* low level ball/bolt trap */
+#define FTRAP_LEVEL2		0x00020000U /* medium level ball/bolt trap */
+#define FTRAP_LEVEL3		0x00040000U /* high level ball/bolt trap */
+#define FTRAP_LEVEL4		0x00080000U /* oops level ball/bolt trap */
+#define FTRAP_XXX21		0x00100000U
+#define FTRAP_XXX22		0x00200000U
+#define FTRAP_XXX23		0x00400000U
+#define FTRAP_XXX24		0x00800000U
+#define FTRAP_XXX25		0x01000000U
+#define FTRAP_XXX26		0x02000000U
+#define FTRAP_XXX27		0x04000000U
+#define FTRAP_XXX28		0x08000000U
+#define FTRAP_XXX29		0x10000000U
+#define FTRAP_XXX30		0x20000000U
+#define FTRAP_EASY_ID		0x40000000U
+#define FTRAP_NO_ID		0x80000000U	/* nominally implemented (but not used) */
 
 /* jk */
 #define STAT_DEC_TEMPORARY	1
@@ -8708,21 +8709,21 @@ extern int PlayerUID;
 
 
 /* SKill flags - Note: Only the first byte is transferred to client-side */
-#define SKF1_HIDDEN             0x00000001	/* Starts hidden */
-#define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */
-#define SKF1_DUMMY		0x00000004	/* Just for visual ordering */
-#define SKF1_MAX_1		0x00000008	/* Skill maxes at 1.000 */
-#define SKF1_MAX_10		0x00000010	/* Skill maxes at 10.000 */
-#define SKF1_MAX_20		0x00000020	/* Skill maxes at 20.000 */
-#define SKF1_MAX_25		0x00000040	/* Skill maxes at 25.000 */
-#define SKF1_AUTO_MAX		0x00000080	/* Skill is always automatically at maximum */
+#define SKF1_HIDDEN             0x00000001U	/* Starts hidden */
+#define SKF1_AUTO_HIDE		0x00000002U	/* Starts hidden */
+#define SKF1_DUMMY		0x00000004U	/* Just for visual ordering */
+#define SKF1_MAX_1		0x00000008U	/* Skill maxes at 1.000 */
+#define SKF1_MAX_10		0x00000010U	/* Skill maxes at 10.000 */
+#define SKF1_MAX_20		0x00000020U	/* Skill maxes at 20.000 */
+#define SKF1_MAX_25		0x00000040U	/* Skill maxes at 25.000 */
+#define SKF1_AUTO_MAX		0x00000080U	/* Skill is always automatically at maximum */
 /* --- the first byte ends here! --- */
-#define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
-#define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */
-#define SKF1_MKEY_SPELL		0x10000000	/* mkey is realm spell type */
-#define SKF1_MKEY_TVAL		0x20000000	/* mkey uses specific tval(not used) */
-#define SKF1_MKEY_ITEM		0x40000000	/* mkey requires an item */
-#define SKF1_MKEY_DIRECTION	0x80000000	/* mkey requires direction */
+#define SKF1_MKEY_SCHOOL	0x04000000U	/* mkey is school type */
+#define SKF1_MKEY_HARDCODE	0x08000000U	/* mkey uses hard-coded routine */
+#define SKF1_MKEY_SPELL		0x10000000U	/* mkey is realm spell type */
+#define SKF1_MKEY_TVAL		0x20000000U	/* mkey uses specific tval(not used) */
+#define SKF1_MKEY_ITEM		0x40000000U	/* mkey requires an item */
+#define SKF1_MKEY_DIRECTION	0x80000000U	/* mkey requires direction */
 
 
 
@@ -9044,17 +9045,17 @@ extern int PlayerUID;
 #endif
 
 /* player flags while participating in global events (p_ptr->global_event_temp) */
-#define PEVF_NONE		0x00000000
-#define PEVF_PASS_00		0x00000001 /* may enter/leave sector 0,0 */
-#define PEVF_NOGHOST_00		0x00000002 /* will permanently die in sector 0,0 */
-#define PEVF_SAFEDUN_00		0x00000004 /* won't die in dungeon/tower in 0,0 */
-#define PEVF_AUTOPVP_00		0x00000008 /* will always be hostile to others in 0,0 */
-#define PEVF_SEPDUN_00		0x00000010 /* unable to leave dungeon or tower in 0,0 via stairs */
-#define PEVF_NO_RUN_00		0x00000020 /* can only walk but not run in 0,0 */
-#define PEVF_NOTELE_00		0x00000040 /* cannot use phasing/teleportation in 0,0 */
-#define PEVF_INDOORS_00		0x00000080 /* the 0,0 event is classified as indoors, so vampires don't get sun burn */
-#define PEVF_ICKY_OK		0x00000100 /* allow wpos changes onto CAVE_ICKY grid */
-#define PEVF_STCK_OK		0x00000200 /* allow wpos changes onto CAVE_STCK grid */
+#define PEVF_NONE		0x00000000U
+#define PEVF_PASS_00		0x00000001U /* may enter/leave sector 0,0 */
+#define PEVF_NOGHOST_00		0x00000002U /* will permanently die in sector 0,0 */
+#define PEVF_SAFEDUN_00		0x00000004U /* won't die in dungeon/tower in 0,0 */
+#define PEVF_AUTOPVP_00		0x00000008U /* will always be hostile to others in 0,0 */
+#define PEVF_SEPDUN_00		0x00000010U /* unable to leave dungeon or tower in 0,0 via stairs */
+#define PEVF_NO_RUN_00		0x00000020U /* can only walk but not run in 0,0 */
+#define PEVF_NOTELE_00		0x00000040U /* cannot use phasing/teleportation in 0,0 */
+#define PEVF_INDOORS_00		0x00000080U /* the 0,0 event is classified as indoors, so vampires don't get sun burn */
+#define PEVF_ICKY_OK		0x00000100U /* allow wpos changes onto CAVE_ICKY grid */
+#define PEVF_STCK_OK		0x00000200U /* allow wpos changes onto CAVE_STCK grid */
 
 /* for achievements (top PvP mode rank) - C. Blue */
 #define ACHV_PVP_MAX		1
@@ -9296,26 +9297,26 @@ extern int PlayerUID;
 
 
 /* account flags */
-#define ACC_TRIAL	0x00000001	/* Account is awaiting validation */
-#define ACC_ADMIN	0x00000002	/* Account members are admins */
-#define ACC_MULTI	0x00000004	/* Simultaneous play */
-#define ACC_NOSCORE	0x00000008	/* No scoring allowed */
-#define ACC_RESTRICTED	0x00000010	/* is restricted (ie after cheezing) */
-#define ACC_VRESTRICTED	0x00000020	/* is restricted (ie after cheating) */
-#define ACC_PRIVILEGED	0x00000040	/* has privileged powers (ie for running quests) */
-#define ACC_VPRIVILEGED	0x00000080	/* has privileged powers (ie for running quests) */
-#define ACC_PVP		0x00000100	/* may kill other players */
-#define ACC_NOPVP	0x00000200	/* is not able to kill other players */
-#define ACC_ANOPVP	0x00000400	/* cannot kill other players; gets punished on trying */
-#define ACC_GREETED	0x00000800	/* This player has received a one-time greeting. */
-#define ACC_QUIET	0x00001000	/* may not chat or emote in public */
-#define ACC_VQUIET	0x00002000	/* may not chat or emote, be it public or private */
-#define ACC_BANNED	0x00004000	/* account is temporarily suspended */
-#define ACC_DELD	0x00008000	/* Delete account/members */
+#define ACC_TRIAL	0x00000001U	/* Account is awaiting validation */
+#define ACC_ADMIN	0x00000002U	/* Account members are admins */
+#define ACC_MULTI	0x00000004U	/* Simultaneous play */
+#define ACC_NOSCORE	0x00000008U	/* No scoring allowed */
+#define ACC_RESTRICTED	0x00000010U	/* is restricted (ie after cheezing) */
+#define ACC_VRESTRICTED	0x00000020U	/* is restricted (ie after cheating) */
+#define ACC_PRIVILEGED	0x00000040U	/* has privileged powers (ie for running quests) */
+#define ACC_VPRIVILEGED	0x00000080U	/* has privileged powers (ie for running quests) */
+#define ACC_PVP		0x00000100U	/* may kill other players */
+#define ACC_NOPVP	0x00000200U	/* is not able to kill other players */
+#define ACC_ANOPVP	0x00000400U	/* cannot kill other players; gets punished on trying */
+#define ACC_GREETED	0x00000800U	/* This player has received a one-time greeting. */
+#define ACC_QUIET	0x00001000U	/* may not chat or emote in public */
+#define ACC_VQUIET	0x00002000U	/* may not chat or emote, be it public or private */
+#define ACC_BANNED	0x00004000U	/* account is temporarily suspended */
+#define ACC_DELD	0x00008000U	/* Delete account/members */
 
-#define ACC_GUILD_ADDER	0x20000000	/* Character who died last was a guild adder (for auto-re-add) */
-#define ACC_WARN_SALE	0x40000000	/* 'Warn' that he has sold items in a player store */
-#define ACC_WARN_REST	0x80000000	/* Received a one-time warning about resting */
+#define ACC_GUILD_ADDER	0x20000000U	/* Character who died last was a guild adder (for auto-re-add) */
+#define ACC_WARN_SALE	0x40000000U	/* 'Warn' that he has sold items in a player store */
+#define ACC_WARN_REST	0x80000000U	/* Received a one-time warning about resting */
 
 
 /* CS_flags - Cave special types */
@@ -9346,15 +9347,15 @@ extern int PlayerUID;
 
 
 /* Guild flags */
-#define GFLG_NONE		0x00000000
-#define GFLG_EVERLASTING	0x00000001	/* it's an everlasting-mode guild (for auto_readd) */
-#define GFLG_PVP		0x00000002	/* it's a pvp-mode guild (for auto_readd) - currently not eligible */
-#define GFLG_AUTO_READD		0x00000004	/* automatically adds a player again after his char died, within 20 minutes */
-#define GFLG_ALLOW_ADDERS	0x00000008	/* enable adding more people by designated 'adders' (see PGF_ADDER below) */
+#define GFLG_NONE		0x00000000U
+#define GFLG_EVERLASTING	0x00000001U	/* it's an everlasting-mode guild (for auto_readd) */
+#define GFLG_PVP		0x00000002U	/* it's a pvp-mode guild (for auto_readd) - currently not eligible */
+#define GFLG_AUTO_READD		0x00000004U	/* automatically adds a player again after his char died, within 20 minutes */
+#define GFLG_ALLOW_ADDERS	0x00000008U	/* enable adding more people by designated 'adders' (see PGF_ADDER below) */
 
 /* Player guild flags */
-#define PGF_NONE		0x00000000
-#define PGF_ADDER		0x00000001	/* player may add other players to the guild although he's not the leader */
+#define PGF_NONE		0x00000000U
+#define PGF_ADDER		0x00000001U	/* player may add other players to the guild although he's not the leader */
 
 
 
