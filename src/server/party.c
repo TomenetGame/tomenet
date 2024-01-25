@@ -565,7 +565,7 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 				/* Update the timestamp if the password is successfully verified - mikaelh */
 				if (val == 0) {
 					c_acc->acc_laston_real = c_acc->acc_laston = time(NULL);
-					fseek(fp, -sizeof(struct account), SEEK_CUR);
+					fseek(fp, -((signed long)sizeof(struct account)), SEEK_CUR);
 					if (fwrite(c_acc, sizeof(struct account), 1, fp) < 1) {
 						s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 					}
