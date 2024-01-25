@@ -69,7 +69,7 @@ static FILE	*fff;
 /*
  * Local savefile buffer
  */
-static char	*fff_buf;
+static byte	*fff_buf;
 static int	fff_buf_pos = 0;
 #define MAX_BUF_SIZE	4096
 
@@ -3439,7 +3439,7 @@ errr rd_savefile_new(int Ind) {
 	if (!fff) return(-1);
 
 	/* Allocate a new buffer */
-	fff_buf = C_NEW(MAX_BUF_SIZE, char);
+	fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 	fff_buf_pos = MAX_BUF_SIZE;
 
 	/* Call the sub-function */
@@ -3509,7 +3509,7 @@ errr rd_server_savefile() {
 	if (!fff) return(-1);
 
 	/* Allocate a new buffer */
-	fff_buf = C_NEW(MAX_BUF_SIZE, char);
+	fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 	fff_buf_pos = MAX_BUF_SIZE;
 
 	/* Read the version */
@@ -4734,7 +4734,7 @@ static errr load_quests_file() {
 	if (!fff) return(-1);
 
 	/* Allocate a new buffer */
-	fff_buf = C_NEW(MAX_BUF_SIZE, char);
+	fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 	fff_buf_pos = MAX_BUF_SIZE;
 
 	/* Read the version */

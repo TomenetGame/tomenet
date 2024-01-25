@@ -27,7 +27,7 @@ static void write_buffer();
 
 static FILE	*fff;		/* Current save "file" */
 
-static char	*fff_buf;	/* Savefile buffer */
+static byte	*fff_buf;	/* Savefile buffer */
 static int	fff_buf_pos;	/* Buffer position */
 
 #define MAX_BUF_SIZE	4096
@@ -1732,7 +1732,7 @@ static bool save_player_aux(int Ind, char *name) {
 		/* Successful open */
 		if (fff) {
 			/* Allocate a buffer */
-			fff_buf = C_NEW(MAX_BUF_SIZE, char);
+			fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 			fff_buf_pos = 0;
 
 			/* Write the savefile */
@@ -1785,7 +1785,7 @@ static bool save_player_activitytime(int Ind, char *pname) {
 		/* Successful open */
 		if (fff) {
 			/* Allocate a buffer */
-			fff_buf = C_NEW(MAX_BUF_SIZE, char);
+			fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 			fff_buf_pos = 0;
 
 			/* Write the savefile */
@@ -2761,7 +2761,7 @@ static bool save_server_aux(char *name) {
 		/* Successful open */
 		if (fff) {
 			/* Allocate a buffer */
-			fff_buf = C_NEW(MAX_BUF_SIZE, char);
+			fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 			fff_buf_pos = 0;
 
 			/* Write the savefile */
@@ -3142,7 +3142,7 @@ static bool save_quests_aux(char *name) {
 		(void)fd_close(fd);
 		fff = my_fopen(name, "wb");
 		if (fff) {
-			fff_buf = C_NEW(MAX_BUF_SIZE, char);
+			fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 			fff_buf_pos = 0;
 			if (save_quests_file()) ok = TRUE;
 			if (my_fclose(fff)) ok = FALSE;
