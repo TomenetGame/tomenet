@@ -1762,7 +1762,8 @@ static bool save_player_activitytime(int Ind, char *pname) {
 	bool ok = TRUE;
 	int fd = -1;
 	int mode = 0644;
-	char name[1024], at[4];
+	char name[1024];
+	byte at[4];
 
 	/* No file yet */
 	fff = NULL;
@@ -1792,10 +1793,10 @@ static bool save_player_activitytime(int Ind, char *pname) {
 
 			/* Write the savefile */
 			//wr_s32b(Players[Ind]->turns_active);
-			at[0] = (Players[Ind]->turns_active & 0xFF);
-			at[1] = ((Players[Ind]->turns_active >> 8) & 0xFF);
-			at[2] = ((Players[Ind]->turns_active >> 16) & 0xFF);
-			at[3] = ((Players[Ind]->turns_active >> 24) & 0xFF);
+			at[0] = (((unsigned int)Players[Ind]->turns_active) & 0xFF);
+			at[1] = (((unsigned int)(Players[Ind]->turns_active) >> 8) & 0xFF);
+			at[2] = (((unsigned int)(Players[Ind]->turns_active) >> 16) & 0xFF);
+			at[3] = (((unsigned int)(Players[Ind]->turns_active) >> 24) & 0xFF);
 			if (write(fd, at, 4) != 4) {
 				ok = FALSE;
 				s_printf("Activitytime file (save): Failed to write() for player <%s>.\n", pname);
