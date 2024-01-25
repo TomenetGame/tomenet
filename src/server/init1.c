@@ -5947,7 +5947,7 @@ static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
  */
 errr init_d_info_txt(FILE *fp, char *buf) {
 	int i, j;
-	byte rule_num = 0;
+	s16b rule_num = 0;
 	byte r_char_number = 0;
 	char *s, *t;
 
