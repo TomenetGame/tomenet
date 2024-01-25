@@ -1261,11 +1261,13 @@ static void wr_floor(struct worldpos *wpos) {
 	byte n;
 
 	unsigned char runlength;
+	/* init RLE control vars to some 'reserved' value, usually the highest we can express in their type,
+	   and set as rule that it may not be used by the scripts, so it stays distinguished as init-marker. */
 	byte prev_feature = 0xff;
 	u32b prev_info = 0xffffffff;
-	s16b prev_custom_lua_tunnel_hand = 0xffff;
-	s16b prev_custom_lua_tunnel = 0xffff;
-	s16b prev_custom_lua_search = 0xffff;
+	s16b prev_custom_lua_tunnel_hand = (s16b)0xffff;
+	s16b prev_custom_lua_tunnel = (s16b)0xffff;
+	s16b prev_custom_lua_search = (s16b)0xffff;
 	byte prev_custom_lua_search_diff_minus = 0xff;
 	byte prev_custom_lua_search_diff_chance = 0xff;
 	s16b prev_custom_lua_newlivefeat = 0xffff;
