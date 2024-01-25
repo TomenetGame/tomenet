@@ -8132,6 +8132,8 @@ static void process_world(void) {
 			/* connection already has a character fully logged in? ignore! */
 			if (connp->state == 0x08) continue; // 0x08 = CONN_PLAYING
 
+			if (connp->id == -1) continue;
+
 			/* We now check all characters that aren't in-game yet, but in state 0x04 aka CONN_LOGIN:
 			   That is either still in character list screen or in character creation process. */
 
@@ -8238,6 +8240,8 @@ static void process_world(void) {
 
 			/* connection already has a character fully logged in? ignore! */
 			if (connp->state == 0x08) continue; // 0x08 = CONN_PLAYING
+
+			if (connp->id == -1) continue;
 
 #if 0 /* 0: don't restart even for those who just have logged in their account name and aren't creating a character yet */
 			if (!connp->c_name) continue; //has not chosen a character name to login yet? ignore then
