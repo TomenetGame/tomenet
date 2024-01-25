@@ -4040,9 +4040,9 @@ struct player_type {
 	bool aura[MAX_AURAS];		/* allow toggling auras for possibly more tactical utilization - C. Blue */
 
 	/* for C_BLUE_AI, new thingy: Monsters that are able to ignore a "tank" player */
-	int heal_turn[20 + 1];		/* records the amount of healing the player received for each of 20 consecutive turns */
+	u32b heal_turn[20 + 1];		/* records the amount of healing the player received for each of 20 consecutive turns */
 	u32b heal_turn_20, heal_turn_10, heal_turn_5;
-	int dam_turn[20 + 1];		/* records the amount of damage the player dealt for each of 20 consecutive turns */
+	u32b dam_turn[20 + 1];		/* records the amount of damage the player dealt for each of 20 consecutive turns */
 	u32b dam_turn_20, dam_turn_10, dam_turn_5;
 
 	/* for PvP mode: keep track of kills/progress for adding a reward or something - C. Blue */

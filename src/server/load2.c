@@ -2991,7 +2991,8 @@ static errr rd_floor(void) {
 		if (x == 255 && y == 255 && n == 255) break;
 
 		c_ptr = &zcave[y][x];
-		while (n--) {
+		while (n) {
+			n--;
 			rd_byte(&k);
 			cs_ptr = ReplaceCS(c_ptr, k);
 			csfunc[k].load(cs_ptr);
