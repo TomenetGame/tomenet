@@ -706,6 +706,7 @@ static bool sound_sdl_init(bool no_cache) {
 		search++;
 		/* Event name (key): Trim spaces/tabs */
 		while (*buffer && (buffer[strlen(buffer) - 1] == ' ' || buffer[strlen(buffer) - 1] == '\t')) buffer[strlen(buffer) - 1] = 0;
+		if (!(*buffer)) continue; /* No key (aka event) name given */
 		/* File name (value): Trim spaces/tabs */
 		while (*search && (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t')) search[strlen(search) - 1] = 0;
 		if (!(*search)) continue; /* No value (aka name) given for the key */
@@ -1017,6 +1018,7 @@ static bool sound_sdl_init(bool no_cache) {
 		search++;
 		/* Event name (key): Trim spaces/tabs */
 		while (*buffer && (buffer[strlen(buffer) - 1] == ' ' || buffer[strlen(buffer) - 1] == '\t')) buffer[strlen(buffer) - 1] = 0;
+		if (!(*buffer)) continue; /* No key (aka event) name given */
 		/* File name (value): Trim spaces/tabs */
 		while (*search && (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t')) search[strlen(search) - 1] = 0;
 		if (!(*search)) continue; /* No value (aka name) given for the key */
