@@ -52,7 +52,7 @@ PRE_ALWAYS static __m128i mm_recursion(__m128i *a, __m128i *b,
 inline static void gen_rand_all(void) {
     int i;
     __m128i r, r1, r2, mask;
-    mask = _mm_set_epi32(MSK4, MSK3, MSK2, MSK1);
+    mask = _mm_set_epi32((signed int)MSK4, (signed int)MSK3, (signed int)MSK2, (signed int)MSK1);
 
     r1 = _mm_load_si128(&sfmt[N - 2].si);
     r2 = _mm_load_si128(&sfmt[N - 1].si);
