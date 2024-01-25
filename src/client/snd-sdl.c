@@ -703,9 +703,12 @@ static bool sound_sdl_init(bool no_cache) {
 		/* no event name given? */
 		if (!search) continue;
 		*search = 0;
+		search++;
 		/* Event name (key): Trim spaces/tabs */
-		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
-		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
+		while (*buffer && (buffer[strlen(buffer) - 1] == ' ' || buffer[strlen(buffer) - 1] == '\t')) buffer[strlen(buffer) - 1] = 0;
+		/* File name (value): Trim spaces/tabs */
+		while (*search && (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t')) search[strlen(search) - 1] = 0;
+		if (!(*search)) continue; /* No value (aka name) given for the key */
 
 		/* Set the event name */
 		cfg_name = buffer;
@@ -723,7 +726,7 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 
 		/* Songs: Trim spaces/tabs */
-		c = search + 1;
+		c = search;
 		while (*c == ' ' || *c == '\t') c++;
 		sample_list = c;
 
@@ -1011,9 +1014,12 @@ static bool sound_sdl_init(bool no_cache) {
 		/* no event name given? */
 		if (!search) continue;
 		*search = 0;
+		search++;
 		/* Event name (key): Trim spaces/tabs */
-		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
-		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
+		while (*buffer && (buffer[strlen(buffer) - 1] == ' ' || buffer[strlen(buffer) - 1] == '\t')) buffer[strlen(buffer) - 1] = 0;
+		/* File name (value): Trim spaces/tabs */
+		while (*search && (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t')) search[strlen(search) - 1] = 0;
+		if (!(*search)) continue; /* No value (aka name) given for the key */
 
 		/* Set the event name */
 		cfg_name = buffer;
@@ -1031,7 +1037,7 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 
 		/* Songs: Trim spaces/tabs */
-		c = search + 1;
+		c = search;
 		while (*c == ' ' || *c == '\t') c++;
 		song_list = c;
 
