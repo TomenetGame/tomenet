@@ -2137,7 +2137,8 @@ errr Term_addstr(int n, byte a, cptr s) {
 	if (Term->scr->cx + n >= w) res = n = w - Term->scr->cx;
 
 	/* Copy string characters to array of char32_t. */
-	char32_t wcs[n];
+	char32_t wcs[n + 1];
+	wcs[n] = 0;
 	for (int i = 0; i < n; i++) wcs[i]=(char32_t)s[i];
 
 	/* Queue the first "n" characters for display */
