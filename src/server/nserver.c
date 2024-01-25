@@ -1888,7 +1888,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 	memcpy(&connp->version, version, sizeof(version_type));
 #endif
 	connp->start = turn;
-	connp->magic = rand() + my_port + sock + turn;
+	connp->magic = rand() + my_port + sock + turn; //TODO-undefined: this causes integer overflow, which is undefined. Replace it with bitwise op instead, if that's ok.
 	connp->id = -1;
 	connp->timeout = LISTEN_TIMEOUT;
 /* - not used - mikaelh
