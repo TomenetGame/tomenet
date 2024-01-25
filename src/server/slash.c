@@ -12514,25 +12514,42 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Use this command to fix 'ghost' houses that aren't placed in the game world but are still owned by someone.
 				   After running this command, do /chouse <cname> to recount his houses and fix his house count that way. */
 				house_type *h_ptr;
-				int x, y;
+				int x, y, start = 0, stop = num_houses;
 				char owner[MAX_CHARS], owner_type[20];
+				worldpos hwpos;
 
-				if (tk < 2) {
+				if (tk < 1 || tk > 2) {
 					msg_print(Ind, "Usage: /unownhouse <x> <y>   (door coordinates in your current sector)");
+					msg_print(Ind, "Usage: /unownhouse <h-idx>   (global house index)");
 					return;
 				}
-				x = atoi(token[1]);
-				y = atoi(token[2]);
+				if (tk == 2) {
+					x = atoi(token[1]);
+					y = atoi(token[2]);
+					hwpos = p_ptr->wpos;
+				} else {
+					start = atoi(token[1]);
+					if (start < 0 || start >= num_houses) {
+						msg_format(Ind, "House index must range from 0 to %d.", num_houses);
+						return;
+					}
+					stop = start + 1;
 
-				for (i = 0; i < num_houses; i++) {
+					h_ptr = &houses[start];
+					hwpos = h_ptr->wpos;
+					x = h_ptr->dx;
+					y = h_ptr->dy;
+				}
+
+				for (i = start; i < stop; i++) {
 					h_ptr = &houses[i];
 					//if (h_ptr->dna == dna) {
-					if (h_ptr->wpos.wx != p_ptr->wpos.wx || h_ptr->wpos.wy != p_ptr->wpos.wy ||
+					if (h_ptr->wpos.wx != hwpos.wx || h_ptr->wpos.wy != hwpos.wy ||
 					    h_ptr->dx != x || h_ptr->dy != y)
 						continue;
 					if (!(h_ptr->flags & HF_STOCK)) {
 						//msg_print(Ind, "\377oThat house may not be unowned. (~HF_STOCK)");
-						msg_format(Ind, "\377oThat house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d) is not eligible.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy);
+						msg_format(Ind, "\377oThat house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d, (%2d,%2d)) is not eligible.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy, hwpos.wx, hwpos.wy);
 						//return;
 						continue;
 					}
@@ -12553,7 +12570,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						strcpy(owner, "UNDEFINED");
 					}
 
-					msg_format(Ind, "\377DThe house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d) is unowned.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy);
+					msg_format(Ind, "\377DThe house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d, (%2d,%2d)) is unowned.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy, hwpos.wx, hwpos.wy);
 
 					h_ptr->dna->creator = 0L;
 					h_ptr->dna->owner = 0L;
