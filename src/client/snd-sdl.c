@@ -1627,6 +1627,9 @@ static void clear_channel(int c) {
 	}
 
 	if (c == ambient_channel) {
+		/* Note (1/2): -fsanitize=threads gives a warning here that setting this to -1 may collide with it being checked for -1 in ambient_handle_fading(), compare there.
+		   However, first, this warning doesn't seem to make sense.
+		   Second, there is a years old SDL bug apparently, that has Mix_HasFinished() return 0 after it was already faded out, if looping is true. */
 		ambient_channel = -1;
 		return;
 	}
@@ -2224,6 +2227,9 @@ static void play_sound_ambient(int event) {
 void ambient_handle_fading(void) {
 	int vols = 100;
 
+	/* Note (2/2): -fsanitize=threads gives a warning here that checking this for -1 may collide with it being set to -1 in clear_channel(), compare there.
+	   However, first, this warning doesn't seem to make sense.
+	   Second, there is a years old SDL bug apparently, that has Mix_HasFinished() return 0 after it was already faded out, if looping is true. */
 	if (ambient_channel == -1) { //paranoia
 		ambient_fading = 0;
 		return;
