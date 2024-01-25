@@ -1270,7 +1270,7 @@ static void wr_floor(struct worldpos *wpos) {
 	s16b prev_custom_lua_search = (s16b)0xffff;
 	byte prev_custom_lua_search_diff_minus = 0xff;
 	byte prev_custom_lua_search_diff_chance = 0xff;
-	s16b prev_custom_lua_newlivefeat = 0xffff;
+	s16b prev_custom_lua_newlivefeat = (s16b)0xffff;
 
 	struct c_special *cs_ptr;
 	cave_type *c_ptr, **zcave;
