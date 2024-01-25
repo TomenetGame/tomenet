@@ -4254,7 +4254,9 @@ void update_jukebox_timepos(void) {
 	   That means in case you install SDL2_mixer manually into /usr/local instead of /usr, you'll have to edit the makefile and replace sdl2-config calls with the
 	   correctl7 prefixed paths to /usr/local/lib and /usr/loca/include instead of /usr/lib and /usr/include. -_-
 	   Or you overwrite your repo version at /usr prefix instead. I guess best is to just wait till the SDL2_mixer package is in the official repository.. */
-	i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //catches when we reach end of song and restart playing at 0s
+	if (music_cur != -1 && music_cur_song != -1)
+		i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //catches when we reach end of song and restart playing at 0s
+	else i = 0;
 	if (curmus_timepos != -1) curmus_timepos = i;
 	/* Update jukebox song time stamp */
 	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
