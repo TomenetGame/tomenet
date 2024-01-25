@@ -7336,6 +7336,7 @@ static void purge_old() {
 }
 
 /*
+ * Log suspicious items inside hollow houses to tomenet.log
  * TODO: Check for OT_GUILD (or guild will be mere den of cheeze)
  */
 void cheeze(object_type *o_ptr) {
@@ -7369,10 +7370,13 @@ void cheeze(object_type *o_ptr) {
 }
 
 
-/* Traditional (Vanilla) houses version of cheeze()	- Jir - */
+/*
+ * Log suspicious items inside trad houses to tomenet.log
+ * Traditional (Vanilla) houses version of cheeze()	- Jir -
+ */
 #ifndef USE_MANG_HOUSE_ONLY
 void cheeze_trad_house() {
-#if CHEEZELOG_LEVEL > 3
+ #if CHEEZELOG_LEVEL > 3
 	int i, j;
 	house_type *h_ptr;
 	object_type *o_ptr;
@@ -7429,7 +7433,7 @@ void cheeze_trad_house() {
 			}
 		}
 	}
-#endif // CHEEZELOG_LEVEL > 3
+ #endif // CHEEZELOG_LEVEL > 3
 }
 #endif	// USE_MANG_HOUSE_ONLY
 
@@ -7601,12 +7605,12 @@ static void scan_objs() {
 
 #ifndef USE_MANG_HOUSE_ONLY
 	/* Additional cheeze check for all those items inside of mangband-style houses */
-#if CHEEZELOG_LEVEL > 1
-#if CHEEZELOG_LEVEL < 4
+ #if CHEEZELOG_LEVEL > 1
+  #if CHEEZELOG_LEVEL < 4
 	if (!(turn % (cfg.fps * 3600)))
-#endif	/* CHEEZELOG_LEVEL (4) */
+  #endif	/* CHEEZELOG_LEVEL (4) */
 		cheeze_trad_house();
-#endif	/* CHEEZELOG_LEVEL (1) */
+ #endif	/* CHEEZELOG_LEVEL (1) */
 #endif	/* USE_MANG_HOUSE_ONLY */
 
 }

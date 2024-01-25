@@ -7407,21 +7407,33 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
+#if 0
+/* This function was maybe supposed to show specifically cheezed items, at least the name makes sense for it.
+   As we don't have a specific way of combining all the cheeze into one log for now, and this function always was
+   just used to view tomenet.log I'm disabling this command now until it actually makes sense,
+   and just move the tomenet.log viewing to a new command "/log", named appropriately. - C. Blue */
 			/* take 'cheezelog'
 			 * result is output to the logfile */
 			else if (prefix(messagelc, "/cheeze")) {
 				char path[MAX_PATH_LENGTH];
 				object_type *o_ptr;
 
+				/* Note: cheeze() and cheeze_trad_house() are called every hour in scan_objs() in dungeon.c */
 				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
 					cheeze(o_ptr);
 				}
-
 				cheeze_trad_house();
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
+				do_cmd_check_other_prepare(Ind, path, "Server Log File");
+				return;
+			}
+#endif
+			else if (prefix(messagelc, "/log")) {
+				char path[MAX_PATH_LENGTH];
 
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
-				do_cmd_check_other_prepare(Ind, path, "Log File");
+				do_cmd_check_other_prepare(Ind, path, "Server Log File");
 				return;
 			}
 			/* Respawn monsters on the floor
