@@ -1256,7 +1256,7 @@ static u32b new_accid() {
 	C_MAKE(t_map, MAX_ACCOUNTS / 8, char);
 	while (fread(&t_acc, sizeof(struct account), 1, fp)) {
 		if (t_acc.flags & ACC_DELD) continue;
-		t_map[t_acc.id / 8] |= (1U << (t_acc.id % 8));
+		t_map[t_acc.id / 8] |= ((char)(1U << (t_acc.id % 8)));
 		num_entries++;
 	}
 

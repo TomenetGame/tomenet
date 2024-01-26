@@ -55,7 +55,7 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i) {
 	else
 		p_ptr->s_info[i].dummy = FALSE;
 #else
-	p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
+	p_ptr->s_info[i].flags1 = (byte)(s_info[i].flags1 & 0xFF);
 
 	/* hack: Rangers can train limited Archery skill */
 	if (p_ptr->pclass == CLASS_RANGER && i == SKILL_ARCHERY)
