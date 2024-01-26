@@ -401,13 +401,11 @@ u32b acc_get_guild_dna(char *name) {
 	return(acc.guild_dna);
 }
 
-int acc_set_deed_event(char *name, char deed_sval) {
+int acc_set_deed_event(char *name, byte deed_sval) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
+	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
 
 	acc.deed_event = deed_sval;
 
@@ -430,13 +428,11 @@ char acc_get_deed_event(char *name) {
 
 	return(acc.deed_event);
 }
-int acc_set_deed_achievement(char *name, char deed_sval) {
+int acc_set_deed_achievement(char *name, byte deed_sval) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
+	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
 
 	acc.deed_achievement = deed_sval;
 

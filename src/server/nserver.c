@@ -8199,7 +8199,7 @@ s_printf("wx,wy=%d,%d, tx,ty=%d,%d\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->tm
 }
 
 //int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name)
-int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval, char *powers) {
+int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s16b pval, char *powers) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
@@ -8241,7 +8241,7 @@ int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cpt
 }
 
 /* Send_store() variant for custom spellbooks */
-int Send_store_wide(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
+int Send_store_wide(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s16b pval,
     s16b xtra1, s16b xtra2, s16b xtra3, s16b xtra4, s16b xtra5, s16b xtra6, s16b xtra7, s16b xtra8, s16b xtra9) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
@@ -8284,7 +8284,7 @@ int Send_store_wide(int Ind, char pos, byte attr, int wgt, int number, int price
 }
 
 /* For new non-shop stores (SPECIAL flag) - C. Blue */
-int Send_store_special_str(int Ind, char line, char col, char attr, char *str) {
+int Send_store_special_str(int Ind, char line, char col, byte attr, char *str) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
@@ -8312,7 +8312,7 @@ int Send_store_special_str(int Ind, char line, char col, char attr, char *str) {
 }
 
 /* For new non-shop stores (SPECIAL flag) - C. Blue */
-int Send_store_special_char(int Ind, char line, char col, char attr, char c) {
+int Send_store_special_char(int Ind, char line, char col, byte attr, char c) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
@@ -8416,7 +8416,7 @@ int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int pur
 	}
 }
 
-int Send_store_action(int Ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag) {
+int Send_store_action(int Ind, char pos, u16b bact, u16b action, cptr name, byte attr, char letter, s16b cost, byte flag) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
@@ -9132,7 +9132,7 @@ int Send_special_line_pos(int Ind, int line) {
 	return Packet_printf(&connp->c, "%c%d", PKT_SPECIAL_LINE_POS, line);
 }
 
-int Send_floor(int Ind, char tval) {
+int Send_floor(int Ind, byte tval) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {

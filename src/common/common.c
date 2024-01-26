@@ -136,7 +136,7 @@ int color_char_to_attr(char c) {
  * Convert a color to a color letter.
  * The colors are: dwsorgbuDWvyRGBU, as shown below
  */
-char color_attr_to_char(int a) {
+char color_attr_to_char(byte a) {
 	switch (a) {
 		case TERM_DARK: return 'd';
 		case TERM_WHITE: return 'w';

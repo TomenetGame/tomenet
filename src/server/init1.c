@@ -7530,7 +7530,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
 			int q, lite, ridx, reidx, minlv, maxlv, tval, sval;
-			char ch, attr;
+			char ch;
+			byte attr;
 			int good, great, vgreat;
 			int pval, bpval, name1, name2, name2b;
 
@@ -7820,7 +7821,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* we have 3 sub-types of 'm' lines */
 			if (buf[1] == ':') { /* init */
 				int amt, grp, scat, clo, ridx, reidx, lvmin, lvmax;
-				unsigned char rchar, rattr;
+				char rchar;
+				byte rattr;
 
 				s = buf + 2;
 				if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%c:%c:%d:%d%79[^:]",
@@ -7838,7 +7840,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_mspawn->clones = clo;
 				q_mspawn->ridx = ridx;
 				q_mspawn->reidx = reidx;
-				q_mspawn->rchar = rchar == '-' ? 255 : rchar;
+				q_mspawn->rchar = rchar == '-' ? 127 : rchar;
 				q_mspawn->rattr = rattr == '-' ? 255 : color_char_to_attr(rattr);
 				q_mspawn->rlevmin = lvmin;
 				q_mspawn->rlevmax = lvmax;
@@ -7989,7 +7991,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'S' for questor changes/polymorphing/hostility */
 		if (buf[0] == 'S') {
 			int q, talk, despawn, invinc, dfail, ridx, reidx, lev;
-			unsigned char rchar, rattr;
+			char rchar;
+			byte rattr;
 
 			s = buf + 2;
 			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%c:%c:%d",
@@ -8009,7 +8012,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			if (ridx) q_qmorph->ridx = ridx;
 			q_qmorph->reidx = reidx;
-			if (rchar == '-') q_qmorph->rchar = 255; /* keep */
+			if (rchar == '-') q_qmorph->rchar = 127; /* keep */
 			else q_qmorph->rchar = rchar;
 			if (rattr == '-') q_qmorph->rattr = 255; /* keep */
 			else q_qmorph->rattr = color_char_to_attr(rattr);
@@ -8556,7 +8559,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (ABS(goal) > QI_GOALS) return(1);
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				for (j = 0; j < k; j++) {
-					if (rchar[j] == '-') rchar[j] = 254; /* any */
+					if (rchar[j] == '-') rchar[j] = 126; /* any */
 					q_kill->rchar[j] = rchar[j];
 
 					if (rattr[j] == '-') q_kill->rattr[j] = 254; /* any */
@@ -8564,7 +8567,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 				/* disable the unused criteria */
 				for (j = k; j < 5; j++) {
-					q_kill->rchar[j] = 255;
+					q_kill->rchar[j] = 127;
 					q_kill->rattr[j] = 255;
 				}
 				continue;
@@ -8771,7 +8774,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* we have 2 sub-types of 'B' lines */
 			if (buf[1] == ':') { /* init, object feats */
 				int pval, lev, wgt;
-				char ochar, oattr;
+				char ochar;
+				byte oattr;
 
 				s = buf + 2;
 				if (7 != sscanf(s, "%d:%d:%c:%c:%d:%d:%79[^:]",

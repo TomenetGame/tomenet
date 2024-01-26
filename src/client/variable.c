@@ -439,7 +439,8 @@ char artifact_list_activation[MAX_A_IDX][80];
 /* For artifact lore */
 char kind_list_name[MAX_K_IDX][80];
 int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx = 0;
-char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
+char kind_list_char[MAX_K_IDX];
+byte kind_list_attr[MAX_K_IDX];
 
 /* For screenshots, to unmap custom fonts back to normally readable characters */
 char monster_mapping_org[MAX_R_IDX + 1];

@@ -93,7 +93,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 	char fmt[16];
 	char buf[MAX_CHARS];
 #ifdef COLOURED_ARTS
-	char cattr;
+	byte cattr;
 #endif
 
 
@@ -685,7 +685,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 #define ANTI_MAXPLV_EXPLOIT
 //#define ANTI_MAXPLV_EXPLOIT_SOFTLEV
 #define ANTI_MAXPLV_EXPLOIT_SOFTEXP
-static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin) {
+static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, byte attr, bool admin) {
 	player_type *p_ptr = Players[Ind];
 	int modify_number = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0);
 	cptr p = "";

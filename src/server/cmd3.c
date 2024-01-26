@@ -4264,7 +4264,7 @@ void do_cmd_look(int Ind, int dir) {
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0 - c_ptr->m_idx] &&
 	    (!Players[0 - c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
 		char extrainfo[MAX_CHARS] = { 0 };
-		char attr;
+		byte attr;
 
 		q_ptr = Players[0 - c_ptr->m_idx];
 		/* If we are soloist, we just display everyone in white anyway, what gives.. */

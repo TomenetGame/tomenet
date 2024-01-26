@@ -8252,7 +8252,8 @@ void export_player_store_offers(int *export_turns) {
 	int i, keep;
 	long price;
 	object_type forge, *o_ptr = &forge;
-	char o_name[ONAME_LEN], o_name_escaped[2 * ONAME_LEN], log[MAX_CHARS], attr;
+	char o_name[ONAME_LEN], o_name_escaped[2 * ONAME_LEN], log[MAX_CHARS];
+	byte attr;
 	struct timeval time_begin, time_end, time_delta;
 
 #ifdef EXPORT_JSON

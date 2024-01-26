@@ -5740,7 +5740,7 @@ qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
 	for (i = 0; i < 5; i++) {
 		p->name[i] = NULL;
 
-		p->rchar[i] = 254;
+		p->rchar[i] = 126;
 		p->rattr[i] = 254;
 
 	}

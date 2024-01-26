@@ -3047,7 +3047,7 @@ void display_lagometer(bool display_commands) {
  #endif
 	int cur_lag;
 	char *underscore, *underscore2, *underscore2a, c_graph[60 * 3 + 1];
-	char attrc = TERM_VIOLET; /* silyl compiler */
+	char attrc = 'v'; /* silyl compiler */
 	char attrc_prev = attrc0; /* assume best case at the top line */
 #endif
 

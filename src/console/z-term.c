@@ -632,7 +632,8 @@ extern term *ang_term[];
 
 void flicker() {
 	int y, x, i;
-	char ch, attr;
+	char ch;
+	byte attr;
 	term *tterm, *old;
 
 	old = Term;

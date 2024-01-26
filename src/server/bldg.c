@@ -972,10 +972,10 @@ static void town_history(void) {
 /*
  * compare_weapon_aux2 -KMW-
  */
-static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, int mult, int bonus, char attr[80], u32b f1, u32b f2, u32b f3, byte color) {
+static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, int mult, int bonus, char attr_str[80], u32b f1, u32b f2, u32b f3, byte color) {
 	char tmp_str[80];
 
-	c_put_str(color, attr, r, c);
+	c_put_str(color, attr_str, r, c);
 
 	if (o_ptr->tval == TV_BOW || is_ammo(o_ptr->tval))
 		strnfmt(tmp_str, 80, "Attack: %d-%d damage",

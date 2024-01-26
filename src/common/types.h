@@ -2524,7 +2524,7 @@ struct store_action_type {
 	char letter;			/* Action letter */
 	s16b action;			/* Action code */
 	s16b action_restr;		/* Action restriction */
-	byte flags;		/* Client flags */
+	byte flags;			/* Client flags */
 };
 
 
@@ -4730,7 +4730,7 @@ struct c_store_extra {
 	u16b actions[6];		/* Actions(refers to ba_info) */
 	u16b bact[6];		/* ba_ptr->action */
 	char action_name[6][40];
-	char action_attr[6];
+	byte action_attr[6];
 	u16b action_restr[6];
 	char letter[6];
 	s16b cost[6];

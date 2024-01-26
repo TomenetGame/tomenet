@@ -983,8 +983,8 @@ extern cptr longVersion, os_version;
 extern cptr shortVersion;
 extern void version_build(void);
 extern int find_realm(int book);
-extern char color_attr_to_char(int a);
-extern int color_char_to_attr(char c);
+extern char color_attr_to_char(byte a);
+extern byte color_char_to_attr(char c);
 extern byte mh_attr(int max);
 extern char *my_strcasestr(const char *big, const char *little);
 extern char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);
@@ -1139,7 +1139,8 @@ extern char artifact_list_activation[MAX_A_IDX][80];
 
 extern char kind_list_name[MAX_K_IDX][80];
 extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx;
-extern char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
+extern char kind_list_char[MAX_K_IDX];
+extern byte kind_list_attr[MAX_K_IDX];
 
 extern char monster_mapping_org[MAX_R_IDX + 1];
 extern struct u32b_char_dict_t *monster_mapping_mod;

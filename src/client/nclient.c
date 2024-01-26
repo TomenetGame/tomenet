@@ -2162,7 +2162,8 @@ int Receive_inven(void) {
 int Receive_subinven(void) {
 	int n, ipos;
 	char ch;
-	char iposc, pos, attr, tval, sval, uses_dir = 0;
+	char iposc, pos, uses_dir = 0;
+	byte tval, sval, attr;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN], *insc;
  #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
@@ -2235,7 +2236,8 @@ int Receive_subinven(void) {
 int Receive_inven_wide(void) {
 	int n;
 	char ch;
-	char pos, attr, tval, sval, *insc, ident = 0;
+	char pos, *insc, ident = 0;
+	byte attr, tval, sval;
 	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	byte xtra1b, xtra2b, xtra3b, xtra4b, xtra5b, xtra6b, xtra7b, xtra8b, xtra9b;
 	s16b wgt, amt, pval, name1 = 0;
@@ -2374,7 +2376,8 @@ char *equipment_slot_names[] = {
 int Receive_equip(void) {
 	int n;
 	char ch;
-	char pos, attr, tval, sval, uses_dir;
+	char pos, uses_dir;
+	byte attr, tval, sval;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
@@ -2448,7 +2451,8 @@ int Receive_equip(void) {
 int Receive_equip_wide(void) {
 	int n;
 	char ch;
-	char pos, attr, tval, sval, uses_dir;
+	char pos, uses_dir;
+	byte attr, tval, sval;
 	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
@@ -4026,8 +4030,8 @@ int Receive_special_other(void) {
 int Receive_store_action(void) {
 	int n;
 	short bact, action, cost;
-	char ch, pos, name[MAX_CHARS], letter, attr;
-	byte flag;
+	char ch, pos, name[MAX_CHARS], letter;
+	byte attr, flag;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0) return(n);
 
@@ -4047,8 +4051,8 @@ int Receive_store_action(void) {
 
 int Receive_store(void) {
 	int n, price;
-	char ch, pos, name[ONAME_LEN], tval, sval, powers[MAX_CHARS_WIDE];
-	byte attr;
+	char ch, pos, name[ONAME_LEN], powers[MAX_CHARS_WIDE];
+	byte attr, tval, sval;
 	s16b wgt, num, pval;
 
 	if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
@@ -4082,8 +4086,8 @@ int Receive_store(void) {
 
 int Receive_store_wide(void) {
 	int n, price;
-	char ch, pos, name[ONAME_LEN], tval, sval;
-	byte attr;
+	char ch, pos, name[ONAME_LEN];
+	byte attr, tval, sval;
 	s16b wgt, num, pval;
 	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	byte xtra1b, xtra2b, xtra3b, xtra4b, xtra5b, xtra6b, xtra7b, xtra8b, xtra9b;
@@ -4137,11 +4141,11 @@ int Receive_store_wide(void) {
 /* For new SPECIAL store flag, stores that don't have inventory - C. Blue */
 int Receive_store_special_str(void) {
 	int n;
-	char ch, line, col, attr;
+	char ch, line, col;
+	byte attr;
 	char str[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%s", &ch, &line, &col, &attr, str)) <= 0)
-		return(n);
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%s", &ch, &line, &col, &attr, str)) <= 0) return(n);
 	if (!shopping) return(1);
 
 	c_put_str(attr, str, line, col);
@@ -4156,11 +4160,11 @@ int Receive_store_special_str(void) {
 /* For new SPECIAL store flag, stores that don't have inventory - C. Blue */
 int Receive_store_special_char(void) {
 	int n;
-	char ch, line, col, attr;
+	char ch, line, col;
+	byte attr;
 	char c, str[2];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &line, &col, &attr, &c)) <= 0)
-		return(n);
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &line, &col, &attr, &c)) <= 0) return(n);
 	if (!shopping) return(1);
 
 	str[0] = c;
@@ -4529,8 +4533,9 @@ int Receive_boni_col(void) {
 
 int Receive_special_line(void) {
 	int n, p;
-	char ch, attr, ab, ap;
+	char ch, ab, ap;
 	s32b max, line;
+	byte attr;
 	char buf[ONAME_LEN]; /* Allow colour codes! (was: MAX_CHARS, which is just 80) */
 	int x, y, phys_line;
 #ifdef REGEX_SEARCH
@@ -4541,6 +4546,7 @@ int Receive_special_line(void) {
 		if ((n = Packet_scanf(&rbuf, "%c%d%d%c%I", &ch, &max, &line, &attr, buf)) <= 0) return(n);
 	} else {
 		s16b old_max, old_line;
+
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &old_max, &old_line, &attr, buf)) <= 0) return(n);
 		max = old_max;
 		line = old_line;
@@ -4669,7 +4675,8 @@ int Receive_special_line_pos(void) {
 
 int Receive_floor(void) {
 	int n;
-	char ch, tval;
+	char ch;
+	byte tval;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &tval)) <= 0) return(n);
 
