@@ -15,7 +15,7 @@ But, as you get more experienced you will become better at surviving. Have fun!
 \{sKeys that already have predefined macros on them are coloured grey like this.
 \{D-------------------------------------------------------------------------------
 a   Aim wand    A Activate       ! Show BBS        |  Uniques slain list
-b   Browse book B Bash door      # Highscores      =  Options menu
+b   Browse book B Bash sth./so.  # Highscores      =  Options menu
 c   Close door  C Character      $ Drop gold       "  Load prf file (abs path)
 d   Drop        D Disarm         % Macro menu      \  Bypass the keymap (raw)
 e   Equip       \{BE Eat\{w            & Auto inscribe   CTRL+G  Pick up one item
