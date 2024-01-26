@@ -2131,6 +2131,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line;
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, tempstr[MAX_CHARS + 1];
+	char tempstr_KL[MSG_LEN + MAX_CHARS], tempstr2_KL[MSG_LEN + MAX_CHARS]; //for CTRL+K and CTRL+L functionality
 #ifndef BUFFER_GUIDE
 	char path[1024], bufdummy[MAX_CHARS + 1];
 	FILE *fff;
@@ -4313,7 +4314,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_clear();
 			Term_putstr(23,  0, -1, TERM_L_BLUE, "[The Guide - Navigation Keys]");
 			i = 1;
-			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
+			//Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
 #ifdef REGEX_SEARCH
 			Term_putstr(26,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,c,#:src,nx,pv,mark,rs,chpt,line");
  #ifdef GUIDE_BOOKMARKS
@@ -4349,11 +4350,12 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #ifdef GUIDE_BOOKMARKS
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'b' / 'B'      : Open bookmark menu / add bookmark at current position.");
 #endif
+			Term_putstr( 0, i++, -1, TERM_WHITE, " CTRL+K/L       : Copy current lines to clipboard / Chat-paste current line #.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " ESC            : The Escape key will exit the guide screen.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "Searching for all-caps only gives 'emphasized' results first in a line (flags).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Searching in all-caps gives 'emphasized' results first in a line (eg flags).");
 			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
 			continue;
@@ -4369,6 +4371,42 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 			inkey_interact_macros = FALSE;
 			return;
+		case KTRL('K'): /* copy current chat line to clipboard */
+			sprintf(tempstr_KL, "The Guide (line #%d):: %s", line + 1, guide_line[line]);
+			tempstr_KL[strlen(tempstr_KL) - 1] = 0; /* Trim trailing '\n' */
+			copy_to_clipboard(tempstr_KL);
+			break;
+		case KTRL('L'): /* paste current line number and line (and subsequent lines) to chat */
+			sprintf(tempstr_KL, "%s %s %s", guide_line[line], guide_line[line + 1], guide_line[line + 2]);
+			/* Replace linebreaks with spaces */
+			cp = tempstr_KL;
+			while (*cp) {
+				if (*cp == '\n') *cp = ' ';
+				cp++;
+			}
+			/* Trim duplicate spaces, minus/equal signs; remove colour codes */
+			cp = tempstr_KL;
+			cp2 = tempstr2_KL;
+			while (*cp) {
+				while(*cp == '\377') {
+					cp++;
+					if (*cp) cp++;
+				}
+				*cp2 = *cp;
+				/* shorten multiple spaces, hyphens or equal-signs in a row to just one */
+				if (*cp == ' ') while(*++cp == ' ');
+				else if (*cp == '-') while(*++cp == '-');
+				else if (*cp == '=') while(*++cp == '=');
+				else cp++;
+				cp2++;
+			}
+			*cp2 = 0;
+			/* Add line number header */
+			sprintf(tempstr_KL, "\377wThe Guide (line %d)::\377B %s", line + 1, tempstr2_KL);
+			/* Trim to legal value and send */
+			tempstr_KL[MSG_LEN - 1] = 0;
+			Send_msg(tempstr_KL);
+			break;
 		}
 	}
 
@@ -5207,11 +5245,12 @@ void browse_local_file(const char* angband_path, char* fname, int rememberance_i
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a' / 'A'      : Mark old/new search results on currently visible file part.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'S'            : ..resets screen to where you were before you did a search.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " '#'            : Jump to a specific line number.");
+			//Term_putstr( 0, i++, -1, TERM_WHITE, " CTRL+K/L       : Copy current lines to clipboard / Chat-paste current line #.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " ESC            : The Escape key will exit the file screen.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "Searching for all-caps only gives 'emphasized' results first in a line (flags).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Searching in all-caps gives 'emphasized' results first in a line (eg flags).");
 			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
 			continue;
