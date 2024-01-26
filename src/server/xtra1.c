@@ -10258,7 +10258,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		old_rand = Rand_quick;
 		tmp_seed = Rand_value;
 		Rand_quick = TRUE;
-		Rand_value = (3623 * p_ptr->wpos.wy + 29753) * (2843 * p_ptr->wpos.wx + 48869) + p_ptr->wpos.wz + (379 * (turn / HOUR) + 41);
+		Rand_value = (3623u * p_ptr->wpos.wy + 29753) * (2843u * p_ptr->wpos.wx + 48869) + p_ptr->wpos.wz + (379u * (turn / HOUR) + 41);
 		apply_magic(&p_ptr->wpos, &forge, 0, FALSE, FALSE, FALSE, FALSE, RESF_NO_ENCHANT);
 		Rand_quick = old_rand;
 		Rand_value = tmp_seed;
