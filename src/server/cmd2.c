@@ -6313,6 +6313,7 @@ int breakage_chance(object_type *o_ptr) {
 	case TV_AXE:
 	case TV_BLUNT:
 	case TV_POLEARM:
+		if (is_throwing_weapon(o_ptr)) return(2);
 		return(3);
 	}
 
