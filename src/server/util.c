@@ -4512,7 +4512,7 @@ int handle_censor(char *line) {
  #ifdef SMARTER_NONSWEARING
 	/* non-swearing extra check (reduces insignificant characters) */
 	bool reduce;
-	char ccns[MSG_LEN];
+	int ccns[MSG_LEN];
  #endif
 
 	strcpy(lcopy, line);
@@ -4866,9 +4866,12 @@ int handle_censor(char *line) {
 
  #ifdef ENABLE_MULTILINE_CENSOR
 int handle_ml_censor(int Ind, char *line) {
-	int cl;
+	int cl, old_keep = MSG_LEN / 3, max_keep = (MSG_LEN * 4) / 7, half_keep = max_keep / 2, min_keep = NAME_LEN + 2;
 	player_type *p_ptr = Players[Ind];
-	char tmpbuf[MSG_LEN];
+	char tmpbuf[MSG_LEN], *c, *c_end;
+
+	/* Empty line? - Clear */
+	if (!(*line)) return(0);
 
 	/* Attempt single-line censor first and quit if that already succeeds */
 	cl = handle_censor(line);
@@ -4879,32 +4882,40 @@ int handle_ml_censor(int Ind, char *line) {
 	}
 
 	/* Construct relevant line to check, from the beginnning and ending parts of chat input lines.
-	   Note: We abuse 'NAME_LEN' also as limiter for swear word length. */
+	   Note: We abuse 'NAME_LEN' also as limiter/minimum ensured checking length for swear word length. */
 
-	/* Note: Uf a line gets cut off in the middle of a word, new swearwords might get created that way, eg brass -> br -snip- ass.
+	/* Note: If a line gets cut off in the middle of a word, new swearwords might get created that way, eg brass -> br -snip- ass.
 	   For that reason we always try to not cut words into two pieces here. */
 
-	/* Make room by discarding a bit of the beginning of the line, that has already long been checked */
-	if (strlen(p_ptr->multi_chat_line) >= MAX_CHARS - NAME_LEN * 2 - 2) {
-		char *c = p_ptr->multi_chat_line + strlen(p_ptr->multi_chat_line) - NAME_LEN - 2;
+	/* We are already building a line? Continue with the last 'old_keep' chars from it. */
+	if (*(p_ptr->multi_chat_line)) {
+		/* Make room by discarding a bit of the beginning of the line, that has already long been checked */
+		if (strlen(p_ptr->multi_chat_line) > old_keep) {
+			/* Keep the rest of our line */
+			c_end = p_ptr->multi_chat_line + strlen(p_ptr->multi_chat_line) - 1;
+			c = c_end - old_keep;
+			/* Don't cut words in parts, this could result in swear words that didn't exist previously */
+			while (c_end - c > min_keep && *c != ' ' && *c != '.' && *c != ',') c++; /* only accept 'safe' characters, eg '!' could be part of l33tsp34k */
 
-		/* Don't cut words in parts, this could result in swear words that didn't exist previously */
-		while (c - p_ptr->multi_chat_line <= NAME_LEN * 2 + 2 && *c != ' ' && *c != '.' && *c != ',') c--;
-		strcpy(tmpbuf, c);
-		strcpy(p_ptr->multi_chat_line, tmpbuf);
+			strcpy(tmpbuf, c);
+			strcpy(p_ptr->multi_chat_line, tmpbuf);
+		}
 	}
 
-	/* Line is long -> add beginning and end of new line? */
-	if (strlen(line) > NAME_LEN * 2) {
-		char *c = line + strlen(line) - NAME_LEN;
-
+	/* New line is long -> add beginning and end of it! */
+	if (strlen(line) > max_keep) {
 		/* Add spacer (maybe superfluous) */
 		strcat(p_ptr->multi_chat_line, " ");
 
+		/* add beginning of the line */
+		c = line + half_keep;
 		/* Don't cut words in parts, this could result in swear words that didn't exist previously */
-		while (line + strlen(line) - c <= NAME_LEN * 2 && *c != ' ' && *c != '.' && *c != ',') c--;
+		while (c - line > min_keep && *c != ' ' && *c != '.' && *c != ',') c--; /* only accept 'safe' characters, eg '!' could be part of l33tsp34k */
 		/* Add the beginning */
-		strncat(p_ptr->multi_chat_line, line, c - line);
+		strncat(p_ptr->multi_chat_line, line, c - line); // (note: strncat() always adds null-termination)
+
+		/* Add spacer (maybe superfluous) */
+		strcat(p_ptr->multi_chat_line, " ");
 
 		/* Check if we pass just fine */
 //s_printf("ML_CENSOR(1): %s\n", p_ptr->multi_chat_line);
@@ -4914,13 +4925,12 @@ int handle_ml_censor(int Ind, char *line) {
 			p_ptr->multi_chat_line[0] = 0;
 		}
 
-		/* Add spacer (maybe superfluous) */
-		strcat(p_ptr->multi_chat_line, " ");
-
-		/* Add the ending, for next time */
-		c = line + strlen(line) - 1 - NAME_LEN;
+		/* Add/start with the ending, for next time aka next line */
+		c_end = line + strlen(line) - 1;
+		c = c_end - half_keep;
 		/* Don't cut words in parts, this could result in swear words that didn't exist previously */
-		while (line + strlen(line) - c <= NAME_LEN * 2 + 1 && *c != ' ' && *c != '.' && *c != ',') c--;
+		while (c_end - c > min_keep && *c != ' ' && *c != '.' && *c != ',') c++;
+
 		strcpy(tmpbuf, c);
 		strcpy(p_ptr->multi_chat_line, tmpbuf);
 	} else { /* Line is short -> add the whole line */
@@ -5770,14 +5780,19 @@ static void player_talk_aux(int Ind, char *message) {
 		message_u[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
 		snprintf(tmessage_u, sizeof(tmessage_u), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message_u + 11);
 	} else if (!rp_me) {
+ #ifndef KURZEL_PK
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
 		message_u[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
 
- #ifndef KURZEL_PK
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
 		snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message_u + mycolor);
  #else
+		/* prevent buffer overflow */
+		message[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
+		message_u[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
+
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
 		snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message_u + mycolor);
  #endif
 	} else {
@@ -5786,22 +5801,35 @@ static void player_talk_aux(int Ind, char *message) {
 		else return;
 		if (mycolor) c_n = message[5];
 
-		/* prevent buffer overflow */
-		message[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
-		message_u[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
 		if (rp_me_gen) {
  #ifndef KURZEL_PK
+			/* prevent buffer overflow */
+			message[MSG_LEN - 1 - strlen(sender) - 5 + 4 + mycolor] = 0;
+			message_u[MSG_LEN - 1 - strlen(sender) - 5 + 4 + mycolor] = 0;
+
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s%s]", c_n, sender, message + 3 + mycolor);
 			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[%s%s]", c_n, sender, message_u + 3 + mycolor);
  #else
+			/* prevent buffer overflow */
+			message[MSG_LEN - 1 - strlen(sender) - 9 + 4 + mycolor] = 0;
+			message_u[MSG_LEN - 1 - strlen(sender) - 9 + 4 + mycolor] = 0;
+
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s%s\377%c]", c_b, c_n, sender, message + 3 + mycolor, c_b);
 			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[\377%c%s%s\377%c]", c_b, c_n, sender, message_u + 3 + mycolor, c_b);
  #endif
 		} else {
  #ifndef KURZEL_PK
+			/* prevent buffer overflow */
+			message[MSG_LEN - 1 - strlen(sender) - 6 + 4 + mycolor] = 0;
+			message_u[MSG_LEN - 1 - strlen(sender) - 6 + 4 + mycolor] = 0;
+
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
 			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[%s %s]", c_n, sender, message_u + 4 + mycolor);
  #else
+			/* prevent buffer overflow */
+			message[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
+			message_u[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
+
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4 + mycolor, c_b);
 			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message_u + 4 + mycolor, c_b);
  #endif
@@ -5858,12 +5886,17 @@ static void player_talk_aux(int Ind, char *message) {
 			message_u[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
 			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, q_ptr->censor_swearing ? message + 11 : message_u + 11);
 		} else if (!rp_me) {
+ #ifndef KURZEL_PK
+			/* prevent buffer overflow */
+			message[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
+			message_u[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
+
+			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, q_ptr->censor_swearing ? message + mycolor : message_u + mycolor);
+ #else
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
 			message_u[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
- #ifndef KURZEL_PK
-			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, q_ptr->censor_swearing ? message + mycolor : message_u + mycolor);
- #else
+
 			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, q_ptr->censor_swearing ? message + mycolor : message_u + mycolor);
  #endif
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
@@ -6097,22 +6130,19 @@ void toggle_afk(int Ind, char *msg)
  * tabs ('\t').  Thus, this function splits them and calls
  * "player_talk_aux" to do the dirty work.
  */
-void player_talk(int Ind, char *message)
-{
+void player_talk(int Ind, char *message) {
 	char *cur, *next;
 
 	/* Start at the beginning */
 	cur = message;
 
 	/* Process until out of messages */
-	while (cur)
-	{
+	while (cur) {
 		/* Find the next tab */
 		next = strchr(cur, '\t');
 
 		/* Stop out the tab */
-		if (next)
-		{
+		if (next) {
 			/* Replace with \0 */
 			*next = '\0';
 		}
@@ -6121,13 +6151,10 @@ void player_talk(int Ind, char *message)
 		player_talk_aux(Ind, cur);
 
 		/* Move to the next one */
-		if (next)
-		{
+		if (next) {
 			/* One step past the \0 */
 			cur = next + 1;
-		}
-		else
-		{
+		} else {
 			/* No more message */
 			cur = NULL;
 		}
