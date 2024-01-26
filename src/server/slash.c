@@ -866,6 +866,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			char *pi_pos = NULL, *pir_pos;
 			bool redux = FALSE;
 
+#ifdef ENABLE_SUBINVEN
+			bool within_subinven = FALSE;
+			int s;
+#endif
+
+
 			if (tk >= 2 && (pi_pos = strstr(token[2], "@@"))) {
 				/* Check for redux version of power inscription */
 				if ((pir_pos = strstr(token[2], "@@@"))) {
@@ -890,6 +896,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			for (i = h; i <= j; i++) {
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
+
+#ifdef ENABLE_SUBINVEN
+				/* If we tag an empty subinventory _specifically_, treat it directly as object,
+				   if we tag a non-empty subinventory, instead treat the items inside it.
+				   If we didn't specifically tag it, treat it and the items inside it. */
+				if (o_ptr->tval == TV_SUBINVEN) {
+					if (h == j) { /* Specifically targetted this subinven */
+						if (p_ptr->subinventory[i][0].tval) { /* Not empty */
+							within_subinven = TRUE;
+							s = 0;
+							o_ptr = &p_ptr->subinventory[i][0];
+							/* Hack: Do 'mass-tagging' (see below) of the items _inside_ the subinven, even if we specifically targetted this subinven: */
+							if (h == j) h = -1;
+						}
+						/* Fall through to treat it directly */
+					} else { /* Just mass-tagging */
+						within_subinven = TRUE;
+						/* First, we keep treating the subinven directly, then all items inside it */
+						s = -1;
+					}
+				}
+				tag_subinven:
+#endif
 
 				/* skip inscribed items, except if we designated one item in particular (j==h) */
 				if (o_ptr->note &&
@@ -953,9 +982,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						    format("%s-!k", quark_str(o_ptr->note)) :
 						    format("%s-%s", quark_str(o_ptr->note), token[2]));
 				}
+
+#ifdef ENABLE_SUBINVEN
+				if (within_subinven) {
+					if (s != -1) display_subinven_aux(Ind, i, s);
+					s++;
+					if (s >= p_ptr->inventory[i].bpval || !p_ptr->subinventory[i][s].tval) {
+						within_subinven = FALSE;
+						if (h == -1) h = j; /* Unhack */
+						continue;
+					}
+					o_ptr = &p_ptr->subinventory[i][s];
+					goto tag_subinven;
+				}
+#endif
 			}
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+#if 0 /* not this? */
+			p_ptr->notice |= (PN_COMBINE);
+#endif
 
 			return;
 		}
@@ -970,6 +1016,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			bool remove_all = !strcmp(ax, "*");
 			bool remove_pseudo = !strcmp(ax, "p");
 			bool remove_unique = !strcmp(ax, "u");
+#ifdef ENABLE_SUBINVEN
+			bool within_subinven = FALSE;
+			int s;
+#endif
 
 			for (i = 0; i < (remove_pseudo || remove_unique ? INVEN_TOTAL : INVEN_PACK); i++) {
 				o_ptr = &(p_ptr->inventory[i]);
@@ -977,14 +1027,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Skip empty slots */
 				if (!o_ptr->tval) continue;
 
+#ifdef ENABLE_SUBINVEN
+				if (o_ptr->tval == TV_SUBINVEN) {
+					within_subinven = TRUE;
+					/* First, we keep treating the subinven directly, then all items inside it */
+					s = -1;
+				}
+				untag_subinven:
+#endif
+
 				/* skip uninscribed items */
-				if (!o_ptr->note) continue;
+				if (!o_ptr->note) goto untag_continue;
 
 				/* remove all inscriptions? */
 				if (remove_all) {
 					o_ptr->note = 0;
 					o_ptr->note_utag = 0;
-					continue;
+					goto untag_continue;
 				}
 
 				if (remove_unique && o_ptr->note_utag) {
@@ -998,27 +1057,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						if (note2[0]) o_ptr->note = quark_add(note2);
 						else o_ptr->note = 0;
 					} else o_ptr->note_utag = 0; //paranoia?
-					continue;
+					goto untag_continue;
 				}
 
 				/* just remove pseudo-id tags? */
 				if (remove_pseudo) {
 					/* prevent 'empty' inscriptions from being erased by this */
-					if ((quark_str(o_ptr->note))[0] == '\0') continue;
+					if ((quark_str(o_ptr->note))[0] == '\0') goto untag_continue;
 
 					note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
 					if (!note2[0]) {
 						o_ptr->note = 0;
 						o_ptr->note_utag = 0; //paranoia
 					} else o_ptr->note = quark_add(note2);
-					continue;
+					goto untag_continue;
 				}
 
 				/* ignore pseudo-id inscriptions */
 				note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
 
 				/* skip non-matching tags */
-				if (strcmp(note2, ax)) continue;
+				if (strcmp(note2, ax)) goto untag_continue;
 
 				if (!noteid[0]) {
 					/* tag removed, no more inscription */
@@ -1029,6 +1088,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					o_ptr->note = quark_add(noteid);
 					o_ptr->note_utag = 0; //in case tag == unique name
 				}
+
+				untag_continue: /* Added for ENABLE_SUBINVEN -_- */
+#ifdef ENABLE_SUBINVEN
+				if (within_subinven) {
+					if (s != -1) display_subinven_aux(Ind, i, s);
+					s++;
+					if (s >= p_ptr->inventory[i].bpval || !p_ptr->subinventory[i][s].tval) {
+						within_subinven = FALSE;
+						continue;
+					}
+					o_ptr = &p_ptr->subinventory[i][s];
+					goto untag_subinven;
+				}
+#endif
 			}
 
 			/* Combine the pack */
