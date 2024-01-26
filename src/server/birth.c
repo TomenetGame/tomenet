@@ -3591,7 +3591,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	if (sex & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1;
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
-	p_ptr->dna |= (randint(65535) << 16);
+	p_ptr->dna |= ((u32b)randint(65535) << 16);
 	p_ptr->male = (sex & MODE_MALE) ? 1 : 0;
 	p_ptr->prace = race;
 	p_ptr->pclass = class;

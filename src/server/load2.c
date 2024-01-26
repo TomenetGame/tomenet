@@ -1515,7 +1515,7 @@ static void rd_guilds() {
 	for (i = 0; i < tmp16u; i++) {
 		if (!s_older_than(4, 5, 8)) rd_u32b(&guilds[i].dna);
 		else {
-			guilds[i].dna = rand_int(0xFFFF) << 16;
+			guilds[i].dna = (u32b)rand_int(0xFFFF) << 16;
 			guilds[i].dna += rand_int(0xFFFF);
 		}
 		rd_string(guilds[i].name, 80);

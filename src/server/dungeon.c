@@ -2157,9 +2157,9 @@ static unsigned int colour_std[BASE_PALETTE_SIZE] = {
 	0xc79d55,      /* LUMBER */
 };
 
-#define COLOUR_R(i) ((colour_std[i] & 0xff0000) >> 16)
-#define COLOUR_G(i) ((colour_std[i] & 0x00ff00) >> 8)
-#define COLOUR_B(i) (colour_std[i] & 0x0000ff)
+#define COLOUR_R(i) ((int)((colour_std[i] & 0xff0000) >> 16))
+#define COLOUR_G(i) ((int)((colour_std[i] & 0x00ff00) >> 8))
+#define COLOUR_B(i) ((int)(colour_std[i] & 0x0000ff))
 
 #define COLOUR_DIFF_R(i,j) ((int)COLOUR_R(i) - (int)COLOUR_R(j))
 #define COLOUR_DIFF_G(i,j) ((int)COLOUR_G(i) - (int)COLOUR_G(j))
