@@ -1207,7 +1207,7 @@ extern int guide_races, guide_classes, guide_skills, guide_schools, guide_spells
 extern char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
 extern int guide_chapters, guide_endofcontents;
 #ifdef BUFFER_LOCAL_FILE
-extern char local_file_line[LOCAL_FILE_LINES_MAX][MAX_CHARS + 1];
+extern char local_file_line[LOCAL_FILE_LINES_MAX][MAX_CHARS_WIDE + 1];
 #endif
 
 extern byte showing_inven, showing_equip;

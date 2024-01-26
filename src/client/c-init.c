@@ -3045,7 +3045,7 @@ static void init_floor_mapping(void) {
 char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1]; //one extra char per line for newline char '\n'
 #endif
 #ifdef BUFFER_LOCAL_FILE
-char local_file_line[LOCAL_FILE_LINES_MAX][MAX_CHARS + 1]; //one extra char per line for newline char '\n'
+char local_file_line[LOCAL_FILE_LINES_MAX][MAX_CHARS_WIDE + 1]; //one extra char per line for newline char '\n'
 #endif
 void init_guide(void) {
 	int i;

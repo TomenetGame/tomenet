@@ -4426,19 +4426,19 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line_cur[remembrance_index];
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS];
-	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, *buf2ptr;
-	char tempstr_KL[MSG_LEN + MAX_CHARS], tempstr2_KL[MSG_LEN + MAX_CHARS]; //for CTRL+K and CTRL+L functionality
+	char buf[MAX_CHARS_WIDE * 2 + 1], buf2[MAX_CHARS_WIDE * 2 + 1], *cp, *cp2, *buf2ptr;
+	char tempstr_KL[MAX_CHARS_WIDE * 3 + MAX_CHARS], tempstr2_KL[MAX_CHARS_WIDE * 3 + MAX_CHARS]; //for CTRL+K and CTRL+L functionality
 	char path[1024];
-	char *res;
+
+	int i, q_offset = 0;
+	char *res, *bufp_offset;
 #ifndef BUFFER_LOCAL_FILE
-	char bufdummy[MAX_CHARS + 1];
+	char bufdummy[MAX_CHARS_WIDE + 1];
 #else
 	static int fseek_pseudo[MAX_REMEMBRANCE_INDICES] = { 0 }; //fake a file position, within our buffered guide string array
 #endif
 	FILE *fff;
-	byte attr;
-
-	int i;
+	byte attr, attr_prev, attr_b;
 
 #ifdef REGEX_SEARCH
 	bool search_regexp = FALSE;
@@ -4479,10 +4479,10 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 	}
 
 #ifdef BUFFER_LOCAL_FILE
-	if (fgets(buf, 81 , fff)) file_lastline[remembrance_index] = 0;
+	if (fgets(buf, MAX_CHARS_WIDE + 1, fff)) file_lastline[remembrance_index] = 0;
 #else
 	/* count lines */
-	while (fgets(buf, 81 , fff)) file_lastline[remembrance_index]++;
+	while (fgets(buf, MAX_CHARS_WIDE + 1, fff)) file_lastline[remembrance_index]++;
 #endif
 	my_fclose(fff);
 
@@ -4501,7 +4501,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 	i = 0;
 	if (reverse) {
 		fseek(fff, -1, SEEK_END);
-		while (fgets_inverse(buf, 81 , fff)) {
+		while (fgets_inverse(buf, MAX_CHARS_WIDE + 1, fff)) {
 			//buf[strlen(buf) - 1] = 0; //strip trailing newlines -- done later
 			strcpy(local_file_line[i++], buf);
 			if (i == LOCAL_FILE_LINES_MAX) {
@@ -4511,7 +4511,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 		}
 		file_lastline[remembrance_index] = i - 1;
 	} else {
-		while (fgets(buf, 81 , fff)) {
+		while (fgets(buf, MAX_CHARS_WIDE + 1, fff)) {
 			//buf[strlen(buf) - 1] = 0; //strip trailing newlines -- done later
 			strcpy(local_file_line[i++], buf);
 			if (i == LOCAL_FILE_LINES_MAX) {
@@ -4549,7 +4549,6 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 #endif
 		Term_putstr( 7, bottomline, -1, TERM_SLATE,  "SPC/n,p,ENT,BCK,ESC");
 		Term_putstr( 0, bottomline, -1, TERM_YELLOW, "?:Help");
-		Term_putstr( 0, i++, -1, TERM_WHITE, "Searching in all-caps gives 'emphasized' results first in a line (eg flags).");
 		if (skip_redraw) goto skipped_redraw;
 		restore_pos = FALSE;
 
@@ -4560,9 +4559,9 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
 		if (backwards) {
-			if (!searchwrap) for (n = 0; n < line_cur[remembrance_index]; n++) res = fgets_inverse(buf, 81, fff); //res just slays non-existant compiler warning..what
+			if (!searchwrap) for (n = 0; n < line_cur[remembrance_index]; n++) res = fgets_inverse(buf, MAX_CHARS_WIDE + 1, fff); //res just slays non-existant compiler warning..what
 		} else {
-			if (!searchwrap) for (n = 0; n < line_cur[remembrance_index]; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
+			if (!searchwrap) for (n = 0; n < line_cur[remembrance_index]; n++) res = fgets(buf, MAX_CHARS_WIDE + 1, fff); //res just slays compiler warning
 		}
 #else
 		/* Always begin at zero */
@@ -4579,8 +4578,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 		withinsearch[0] = 0;
 		for (n = 0; n < maxlines; n++) {
 #ifndef BUFFER_LOCAL_FILE
-			if (backwards) res = fgets_inverse(buf, 81, fff);
-			else res = fgets(buf, 81, fff);
+			if (backwards) res = fgets_inverse(buf, MAX_CHARS_WIDE + 1, fff);
+			else res = fgets(buf, MAX_CHARS_WIDE + 1, fff);
 #else
 			if (backwards) {
 				if (fseek_pseudo[remembrance_index] < 0) {
@@ -4659,7 +4658,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 							/* Skip end of line, advancing to next line */
 							fseek(fff, 1, SEEK_CUR);
 							/* This line has already been read too, by fgets_inverse(), so skip too */
-							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+							res = fgets(bufdummy, MAX_CHARS_WIDE + 1, fff); //res just slays compiler warning
  #else
 							fseek_pseudo[remembrance_index] += 2;
  #endif
@@ -4690,7 +4689,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 						/* Skip end of line, advancing to next line */
 						fseek(fff, 1, SEEK_CUR);
 						/* This line has already been read too, by fgets_inverse(), so skip too */
-						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+						res = fgets(bufdummy, MAX_CHARS_WIDE + 1, fff); //res just slays compiler warning
  #else
 						fseek_pseudo[remembrance_index] += 2;
  #endif
@@ -4927,8 +4926,24 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			}
 
 
+			/* Apply horizontal scroll
+			   -- TODO: take care of colour codes, in both extra string length and reapplying them if they got cut off due to offsetting */
+			bufp_offset = ((int)strlen(buf2) >= q_offset) ? (buf2 + q_offset) : "";
+			/* For horizontal scrolling: Parse correct colour code that we might have skipped */
+			attr = attr_b = attr_prev = TERM_WHITE;
+			if (q_offset) {
+				for (i = 0; i < q_offset; i++) {
+					if (buf2[i] != '\377') continue;
+					if (buf2[i + 1] == '.') attr = attr_prev;
+					else if (isalpha(buf2[i + 1]) || isdigit(buf2[i + 1])) {
+						attr_prev = attr_b;
+						attr = attr_b = color_char_to_attr(buf2[i + 1]);
+					}
+				}
+			}
+
 			/* Display processed line, colourized by chapters and search results (and 'syntax' highlighting) */
-			Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
+			Term_putstr(0, 2 + n, -1, attr, bufp_offset);
 		}
 
 		/* failed to find search string? wrap around and search once more,
@@ -5004,6 +5019,22 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 		case '2': case '\r': case '\n': //rl:'j'
 			line_cur[remembrance_index]++;
 			if (line_cur[remembrance_index] > file_lastline[remembrance_index] - maxlines + 1) line_cur[remembrance_index] = 0;
+			continue;
+
+		/* horizontal scroll left */
+		case NAVI_KEY_LEFT:
+		case '4': case '<': case 'h':
+			q_offset = (q_offset >= 40) ? (q_offset - 40) : 0;
+			continue;
+
+		/* horizontal scroll right */
+		case NAVI_KEY_RIGHT:
+		case '6': case '>': case 'l':
+			q_offset = q_offset + 40;
+			if (q_offset > MAX_CHARS_WIDE - MAX_CHARS) { /* Prevent buffer overflow. We just pick an arbitrary value here, randomly picked from Receive_special_line():buf[]. */
+				q_offset -= 40;
+				if (q_offset < 0) q_offset = 0; /* Edge case, paranoia. */
+			}
 			continue;
 
 		/* page up */
@@ -6644,6 +6675,7 @@ static void cmd_spoilers(void) {
 }
 
 #include <dirent.h> /* for cmd_notes() */
+#define MAX_NOTES_FILES 9999
 static void cmd_notes(void) {
 	static int y = 0, j_sel = 0;
 	int i = 0, d, vertikal_offset = 3, horiz_offset = 5;
@@ -6652,7 +6684,7 @@ static void cmd_notes(void) {
 	char ch = 0;
 	bool inkey_msg_old;
 
-	char notes_fname[1024][MAX_CHARS], path[1024];
+	char notes_fname[MAX_NOTES_FILES][MAX_CHARS], path[1024];
 	int notes_files = 0;
 	char tmp_name[256];
 
@@ -6675,6 +6707,10 @@ static void cmd_notes(void) {
 		if (!strncmp(tmp_name, "notes-", 6)) {
 			strcpy(notes_fname[notes_files], tmp_name);
 			notes_files++;
+			if (notes_files == MAX_NOTES_FILES) {
+				c_msg_format("\377oWARNING: Amount of 'notes-' files exceeds processable maximum (%d)!", MAX_NOTES_FILES);
+				break;
+			}
 		}
 	}
 	closedir(dir);
