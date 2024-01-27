@@ -1359,22 +1359,27 @@ static bool group_name_legal_characters(cptr name) {
 }
 
 static bool party_name_legal(int Ind, char *name) {
-	char *ptr, buf[NAME_LEN];
-	char buf2[NAME_LEN];
+	char *ptr, buf[NAME_LEN], buf2[NAME_LEN];
 
 	if (strlen(name) >= NAME_LEN) {
 		msg_format(Ind, "\377yParty name must not exceed %d characters!", NAME_LEN - 1);
 		return(FALSE);
 	}
 
-	strncpy(buf, name, NAME_LEN);
+	strncpy(buf2, name, NAME_LEN);
 	buf[NAME_LEN - 1] = '\0';
 	/* remove spaces at the beginning */
-	for (ptr = buf; ptr < buf + strlen(buf); ) {
+	for (ptr = buf2; ptr < buf2 + strlen(buf2); ) {
 		if (isspace(*ptr)) ptr++;
 		else break;
 	}
 	strcpy(buf, ptr);
+	/* name consisted only of spaces? */
+	if (!buf[0]) {
+		msg_print(Ind, "\377ySorry, names must not just consist of spaces.");
+		return(FALSE);
+	}
+
 	/* remove spaces at the end */
 	for (ptr = buf + strlen(buf); ptr-- > buf; ) {
 		if (isspace(*ptr)) *ptr = '\0';
