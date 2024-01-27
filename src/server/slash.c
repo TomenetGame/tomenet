@@ -13304,17 +13304,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				teleport_player_to(Ind, h_ptr->dy, h_ptr->dx, -2);
 				return;
 			}
+			/* NOTE: Mushroom fields are currently only reindexed on WILD_F_GARDENS flag, so they would need to be saved to disk or each server restart clears WILD_F_GARDENS */
 			else if (prefix(messagelc, "/mushroomfields")) {
-				char buf[MAX_CHARS] = { 0 };
+				char buf[MAX_CHARS] = { 0 }, c;
+				struct worldpos tpos;
 
 				msg_format(Ind, "mushroom_fields: %d", mushroom_fields);
+				tpos.wz = 0;
 				j = 0;
 				for (i = 0; i < mushroom_fields; i++) {
-					strcat(buf, format("(%2d,%2d) [%3d,%2d]   ",
+					tpos.wx = mushroom_field_wx[i];
+					tpos.wy = mushroom_field_wy[i];
+					if (istownarea(&tpos, MAX_TOWNAREA)) c = 'y';
+					else c = 'w';
+
+					strcat(buf, format("\377%c(%2d,%2d) [%3d,%2d]   ", c,
 					    mushroom_field_wx[i], mushroom_field_wy[i],
 					    mushroom_field_x[i], mushroom_field_y[i]));
+
 					j++;
-					if (j == 3 || i == mushroom_fields - 1) {
+					if (j == 4 || i == mushroom_fields - 1) {
 						msg_format(Ind, buf);
 						buf[0] = 0;
 						j = 0;
