@@ -802,7 +802,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	int i;
 	char orientation;
 	object_type food, *o_ptr;
-	int tmp_seed;
+	u32b tmp_seed;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 
