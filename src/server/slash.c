@@ -13322,14 +13322,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			/* Allocates the whole wilderness */
-			else if (prefix(messagelc, "/allocwild")) {
+			/* Allocates and deallocates every sector of the whole wilderness */
+			else if (prefix(messagelc, "/cyclewild")) {
 				int wx, wy;
 				struct worldpos tpos;
 				cave_type **zcave;
 
 				tpos.wz = 0;
-				msg_print(Ind, "Allocating all wilderness..");
+				msg_print(Ind, "Allocating+deallocating all wilderness, sector by sector..");
 				for (wx = 0; wx < MAX_WILD_X; wx++) {
 					for (wy = 0; wy < MAX_WILD_Y; wy++) {
 						tpos.wx = wx;
@@ -13338,9 +13338,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							alloc_dungeon_level(&tpos);
 							//wilderness_gen(&tpos);
 							generate_cave(&tpos, NULL);
+							dealloc_dungeon_level(&tpos);
 						}
 					}
-					msg_format(Ind, "..generated column %d.", wx);
+					msg_format(Ind, "..cycled column %d.", wx);
 				}
 				msg_print(Ind, "...done!");
 				return;
