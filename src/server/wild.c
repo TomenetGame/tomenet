@@ -857,22 +857,24 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	/* randomize, so food doesn't grow at always same garden coordinates */
 	Rand_value = turn;
 
-	/* initially clear all previous items from it! */
-	if (!(w_ptr->flags & WILD_F_GARDENS)) /* initially only */
-	for (i = 0; i < o_max; i++) {
-		o_ptr = &o_list[i];
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-		/* Skip objects not here */
-		if (!inarea(&o_ptr->wpos, wpos)) continue;
-		/* Skip carried objects */
-		if (o_ptr->held_m_idx) continue;
-		/* Skip monster trap objects */
-		if (o_ptr->embed == 1) continue;
-		/* if it's on our field, erase it */
-		if (o_ptr->iy >= y1 && o_ptr->iy <= y2 &&
-		    o_ptr->ix >= x1 && o_ptr->ix <= x2)
-			delete_object_idx(i, TRUE);
+	if (!(w_ptr->flags & WILD_F_GARDENS)) { /* initially only */
+		/* initially clear all previous items from it! */
+		for (i = 0; i < o_max; i++) {
+			o_ptr = &o_list[i];
+			/* Skip dead objects */
+			if (!o_ptr->k_idx) continue;
+			/* Skip objects not here */
+			if (!inarea(&o_ptr->wpos, wpos)) continue;
+			/* Skip carried objects */
+			if (o_ptr->held_m_idx) continue;
+			/* Skip monster trap objects */
+			if (o_ptr->embed == 1) continue;
+			/* if it's on our field, erase it */
+			if (o_ptr->iy >= y1 && o_ptr->iy <= y2 &&
+			    o_ptr->ix >= x1 && o_ptr->ix <= x2)
+				delete_object_idx(i, TRUE);
+		}
+		
 	}
 
 	/* alternating rows of crops */
@@ -885,46 +887,38 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 
 				/* Hack -- only drop food the first time */
 				if (w_ptr->flags & WILD_F_GARDENS) continue;
-
 				/* random chance of food */
-				if (rand_int(100) < 40) {
-					switch (type) {
-					case WILD_CROP_POTATO:
-						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_POTATO));
-						break;
+				if (rand_int(100) >= 40) continue;
 
-					case WILD_CROP_CABBAGE:
-						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_HEAD_OF_CABBAGE));
-						break;
-
-					case WILD_CROP_CARROT:
-						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_CARROT));
-						break;
-
-					case WILD_CROP_BEET:
-						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_BEET));
-						break;
-
-					case WILD_CROP_SQUASH:
-						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_SQUASH));
-						break;
-
-					case WILD_CROP_CORN:
-						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_EAR_OF_CORN));
-						break;
-
-					/* hack -- useful mushrooms are rare */
-					case WILD_CROP_MUSHROOM:
-						invcopy(&food, lookup_kind(TV_FOOD, rand_int(rand_int(20))));
-						break;
-					default:
-						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_SLIME_MOLD));
-						break;
-					}
-					food.marked2 = ITEM_REMOVAL_NEVER;
-					food.level = 1;
-					drop_near(TRUE, 0, &food, -1, wpos, y, x);
+				switch (type) {
+				case WILD_CROP_POTATO:
+					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_POTATO));
+					break;
+				case WILD_CROP_CABBAGE:
+					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_HEAD_OF_CABBAGE));
+					break;
+				case WILD_CROP_CARROT:
+					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_CARROT));
+					break;
+				case WILD_CROP_BEET:
+					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_BEET));
+					break;
+				case WILD_CROP_SQUASH:
+					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_SQUASH));
+					break;
+				case WILD_CROP_CORN:
+					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_EAR_OF_CORN));
+					break;
+				case WILD_CROP_MUSHROOM: /* hack -- useful mushrooms are rare */
+					invcopy(&food, lookup_kind(TV_FOOD, rand_int(rand_int(20))));
+					break;
+				default:
+					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_SLIME_MOLD));
+					break;
 				}
+				food.marked2 = ITEM_REMOVAL_NEVER;
+				food.level = 1;
+				drop_near(TRUE, 0, &food, -1, wpos, y, x);
 			}
 		}
 	}
