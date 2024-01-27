@@ -847,11 +847,9 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	orientation = rand_int(2);
 
 	/* initially fill with a layer of dirt */
-	for (y = y1; y <= y2; y++) {
-		for (x = x1; x <= x2; x++) {
+	for (y = y1; y <= y2; y++)
+		for (x = x1; x <= x2; x++)
 			zcave[y][x].feat = FEAT_LOOSE_DIRT;
-		}
-	}
 
 	/* save the RNG */
 	tmp_seed = Rand_value;
@@ -860,7 +858,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	Rand_value = turn;
 
 	/* initially clear all previous items from it! */
-	if (!(w_ptr->flags & WILD_F_GARDENS))
+	if (!(w_ptr->flags & WILD_F_GARDENS)) /* initially only */
 	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
 		/* Skip dead objects */
@@ -884,6 +882,10 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 			if (((!orientation) && (y % 2)) || ((orientation) && (x % 2))) {
 				/* set to crop */
 				zcave[y][x].feat = FEAT_CROP;
+
+				/* Hack -- only drop food the first time */
+				if (w_ptr->flags & WILD_F_GARDENS) continue;
+
 				/* random chance of food */
 				if (rand_int(100) < 40) {
 					switch (type) {
@@ -919,10 +921,9 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 						invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_SLIME_MOLD));
 						break;
 					}
-					/* Hack -- only drop food the first time */
 					food.marked2 = ITEM_REMOVAL_NEVER;
 					food.level = 1;
-					if (!(w_ptr->flags & WILD_F_GARDENS)) drop_near(TRUE, 0, &food, -1, wpos, y, x);
+					drop_near(TRUE, 0, &food, -1, wpos, y, x);
 				}
 			}
 		}
