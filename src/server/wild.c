@@ -454,11 +454,6 @@ void init_wild_info() {
 static bool wild_monst_aux_town(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-#if 0
-	/* Maggot is allowed :) */
-	if (r_idx == RI_FARMER_MAGGOT) return(TRUE);
-#endif
-
 	if (r_ptr->flags8 & RF8_WILD_TOWN) return(TRUE);
 	return(FALSE);
 }
@@ -816,7 +811,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	x1 = x2 = y1 = y2 = -1;
 
 	/* choose which type of garden it is */
-	type = rand_int(7);
+	type = rand_int(WILD_CROP_TYPES);
 
 	/* choose a 'good' location for the garden */
 
@@ -874,7 +869,23 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 			    o_ptr->ix >= x1 && o_ptr->ix <= x2)
 				delete_object_idx(i, TRUE);
 		}
-		
+
+		/* Remember/reindex mushroom fields all over the world, for Farmer Maggot! */
+		if (type == WILD_CROP_MUSHROOM) {
+			for (i = 0; i < mushroom_fields; i++) {
+				if (mushroom_field_wx[i] == wpos->wx && mushroom_field_wy[i] == wpos->wy &&
+				    mushroom_field_x[i] == (x1 + x2) / 2 && mushroom_field_y[i] == (y1 + y2) / 2)
+					break;
+			}
+			/* Not yet indexed? Add it. */
+			if (i == mushroom_fields && mushroom_fields < MAX_MUSHROOM_FIELDS) {
+				mushroom_field_wx[i] = wpos->wx;
+				mushroom_field_wy[i] = wpos->wy;
+				mushroom_field_x[i] = (x1 + x2) / 2;
+				mushroom_field_y[i] = (y1 + y2) / 2;
+				mushroom_fields++;
+			}
+		}
 	}
 
 	/* alternating rows of crops */
@@ -912,7 +923,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 				case WILD_CROP_MUSHROOM: /* hack -- useful mushrooms are rare */
 					invcopy(&food, lookup_kind(TV_FOOD, rand_int(rand_int(20))));
 					break;
-				default:
+				default: //paranoia
 					invcopy(&food, lookup_kind(TV_FOOD, SV_FOOD_SLIME_MOLD));
 					break;
 				}
@@ -2702,7 +2713,7 @@ static void bleed_with_neighbors(struct worldpos *wpos) {
 	int c, d, tmp, side[2], start, end, opposite;
 	bool do_bleed[4], bleed_zero[4];
 	int share_point[4][2];
-	int old_seed = Rand_value;
+	u32b old_seed = Rand_value;
 	bool rand_old = Rand_quick;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	struct worldpos neighbor, neighbor_tmp;

@@ -296,17 +296,15 @@ O:0:100:0:0
 # Soon MOAN will be removed again?
 B:MOAN:*
 B:MOAN:*
-F:ALLOW_RUNNING | UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE |
-F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY |
+F:ALLOW_RUNNING | UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE | SPECIAL_GENE 
+F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY | OPEN_DOOR | BASH_DOOR
+F:NO_CONF | NO_SLEEP | MORTAL | BASEANGBAND | HAS_LITE
 #Don't drop.. then no1 hunts you..
-F:ONLY_ITEM | DROP_90 | DROP_GOOD |
-F:NEVER_MOVE | NO_DEATH |
-F:OPEN_DOOR | BASH_DOOR | SPECIAL_GENE |
-F:NO_CONF | NO_SLEEP | NEUTRAL |
 #F:DROP_GOOD | DROP_GREAT | DROP_60 | ONLY_ITEM |
-F:MORTAL | BASEANGBAND | HAS_LITE
-D:He's lost his dogs. He's had his mushrooms stolen. He's not a happy
-D:hobbit!
+F:ONLY_ITEM | DROP_90 | DROP_GOOD
+F:NEVER_MOVE | NO_DEATH |
+#| NEUTRAL |  --make him spawnable :)
+D:He's lost his dogs. He's had his mushrooms stolen. He's not a happy hobbit!
 
 N:9:Blubbering idiot
 G:t:W

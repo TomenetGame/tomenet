@@ -639,6 +639,10 @@
    This is not so much used to create wilderness than to check stuff - don't touch! */
 #define MAX_TOWNAREA	3
 
+/* How many mushroom fields on the global world surface map will we index for Farmer Maggot spawning?
+   At 64x64 = 4096 worldmap sectors, the value should be able to index all generated mushroom 'gardens'. */
+#define MAX_MUSHROOM_FIELDS	1024
+
 /*
  * Maximum size of the "lite" array (see "cave.c")
  * Note that the "lite radius" will NEVER exceed 5, and even if the "lite"
@@ -6633,6 +6637,7 @@
 #define		WILD_CROP_MUSHROOM	4
 #define		WILD_CROP_SQUASH	5
 #define		WILD_CROP_CORN		6
+#define WILD_CROP_TYPES 7
 
 /* used for wilderness generation */
 #define		DIR_NORTH		0

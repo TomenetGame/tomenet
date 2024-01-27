@@ -13304,6 +13304,47 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				teleport_player_to(Ind, h_ptr->dy, h_ptr->dx, -2);
 				return;
 			}
+			else if (prefix(messagelc, "/mushroomfields")) {
+				char buf[MAX_CHARS] = { 0 };
+
+				msg_format(Ind, "mushroom_fields: %d", mushroom_fields);
+				j = 0;
+				for (i = 0; i < mushroom_fields; i++) {
+					strcat(buf, format("(%2d,%2d) [%3d,%2d]   ",
+					    mushroom_field_wx[i], mushroom_field_wy[i],
+					    mushroom_field_x[i], mushroom_field_y[i]));
+					j++;
+					if (j == 3 || i == mushroom_fields - 1) {
+						msg_format(Ind, buf);
+						buf[0] = 0;
+						j = 0;
+					}
+				}
+				return;
+			}
+			/* Allocates the whole wilderness */
+			else if (prefix(messagelc, "/allocwild")) {
+				int wx, wy;
+				struct worldpos tpos;
+				cave_type **zcave;
+
+				tpos.wz = 0;
+				msg_print(Ind, "Allocating all wilderness..");
+				for (wx = 0; wx < MAX_WILD_X; wx++) {
+					for (wy = 0; wy < MAX_WILD_Y; wy++) {
+						tpos.wx = wx;
+						tpos.wy = wy;
+						if (!(zcave = getcave(&tpos))) {
+							alloc_dungeon_level(&tpos);
+							//wilderness_gen(&tpos);
+							generate_cave(&tpos, NULL);
+						}
+					}
+					msg_format(Ind, "..generated column %d.", wx);
+				}
+				msg_print(Ind, "...done!");
+				return;
+			}
 		}
 	}
 

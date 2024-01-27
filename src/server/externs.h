@@ -2780,3 +2780,5 @@ extern byte global_temp_y[TEMP_MAX];
 extern byte global_temp_x[TEMP_MAX];
 
 extern bool restart_panic, restart_unstatice_bree, restart_unstatice_towns, restart_unstatice_surface, restart_unstatice_dungeons;
+
+extern u16b mushroom_field_wx[MAX_MUSHROOM_FIELDS], mushroom_field_wy[MAX_MUSHROOM_FIELDS], mushroom_field_x[MAX_MUSHROOM_FIELDS], mushroom_field_y[MAX_MUSHROOM_FIELDS], mushroom_fields;

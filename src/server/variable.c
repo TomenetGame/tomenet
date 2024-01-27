@@ -1089,3 +1089,6 @@ byte global_temp_y[TEMP_MAX];
 byte global_temp_x[TEMP_MAX];
 
 bool restart_panic = FALSE, restart_unstatice_bree = FALSE, restart_unstatice_towns = FALSE, restart_unstatice_surface = FALSE, restart_unstatice_dungeons = FALSE;
+
+/* World map global mushroom fields, for Farmer Maggot ^^ */
+u16b mushroom_field_wx[MAX_MUSHROOM_FIELDS], mushroom_field_wy[MAX_MUSHROOM_FIELDS], mushroom_field_x[MAX_MUSHROOM_FIELDS], mushroom_field_y[MAX_MUSHROOM_FIELDS], mushroom_fields = 0;
