@@ -3565,15 +3565,17 @@ int re_init_sound() {
 			puts("ERROR: SDL audio has no init function.");
 			return(-1);
 		}
+ #ifdef SOUND_SDL
 		if ((err = re_init_sound_sdl()) == 0) {
- #ifdef DEBUG_SOUND
+  #ifdef DEBUG_SOUND
 			puts(format("USE_SOUND_2010: successfully loaded module %d.", i));
- #endif
+  #endif
 			break;
 		} else {
 			puts("ERROR: SDL audio failed to re-initialize.");
 			return err;
 		}
+ #endif
 	}
  #ifdef DEBUG_SOUND
 	puts("USE_SOUND_2010: done scanning modules");
