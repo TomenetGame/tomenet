@@ -9264,7 +9264,7 @@ static void process_global_event(int ge_id) {
 	case GE_DUNGEON_KEEPER:
 		switch (ge->state[0]) {
 		case 0: { /* prepare level, gather everyone, begin */
-			int bx[3], by[3];
+			int bx[4], by[4];
 
 			ge->state[1] = 0;
 			ge->cleanup = 1;
@@ -9468,7 +9468,8 @@ static void process_global_event(int ge_id) {
 				}
 				if (!n) continue;
 				cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
-				bx[k] = x; by[k] = y;
+				bx[k] = x;
+				by[k] = y;
 				k++;
 			}
 			if (!k) s_printf("..COULDN'T PLACE exit beacons\n");
