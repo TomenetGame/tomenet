@@ -1097,8 +1097,7 @@ static void Console(int fd, int arg) {
 	/* See what we got */
 	/* this code added by thaler, 6/28/97 */
 	fgets(buf, 1024, stdin);
-	if (buf[ strlen(buf) - 1 ] == '\n')
-	    buf[ strlen(buf) - 1 ] = '\0';
+	if (*buf && buf[strlen(buf) - 1] == '\n') buf[strlen(buf) - 1] = '\0';
 
 	for (i = 0; i < strlen(buf) && buf[i] != ' '; i++) {
 		/* Capitalize each letter until we hit a space */
@@ -1106,32 +1105,23 @@ static void Console(int fd, int arg) {
 	}
 
 	/* Process our input */
-	if (!strncmp(buf, "HELLO", 5))
-		s_printf("Hello.  How are you?\n");
-
-	if (!strncmp(buf, "SHUTDOWN", 8))
-		shutdown_server();
-
-
+	if (!strncmp(buf, "HELLO", 5)) s_printf("Hello.  How are you?\n");
+	if (!strncmp(buf, "SHUTDOWN", 8)) shutdown_server();
 	if (!strncmp(buf, "STATUS", 6)) {
 		s_printf("There %s %d %s.\n", (NumPlayers != 1 ? "are" : "is"), NumPlayers, (NumPlayers != 1 ? "players" : "player"));
-
 		if (NumPlayers > 0) {
 			s_printf("%s:\n", (NumPlayers > 1 ? "They are" : "He is"));
 			for (i = 1; i <= NumPlayers; i++)
 				s_printf("\t%s\n", Players[i]->name);
 		}
 	}
-
 	if (!strncmp(buf, "MESSAGE", 7)) {
 		/* Send message to all players */
 		for (i = 1; i <= NumPlayers; i++)
 			msg_format(i, "[Server Admin] %s", &buf[8]);
-
 		/* Acknowledge */
 		s_printf("Message sent.\n");
 	}
-
 	if (!strncmp(buf, "KELDON", 6)) {
 		/* Whatever I need at the moment */
 	}

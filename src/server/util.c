@@ -8336,7 +8336,7 @@ void restore_estate(int Ind) {
 		fclose(fp);
 		return;
 	}
-	version[strlen(version) - 1] = '\0';
+	if (*version) version[strlen(version) - 1] = '\0';
 	s_printf("  reading a version '%s' estate file.\n", version);
 
 	/* convert older version object types */

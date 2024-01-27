@@ -8191,7 +8191,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		/* trim spaces .. and also quotes */
 		p2p = parm2;
 		while (*p2p == ' ' || *p2p == '"') p2p++;
-		while (p2p[strlen(p2p) - 1] == ' ' || p2p[strlen(p2p) - 1] == '"') p2p[strlen(p2p) - 1] = 0;
+		if (*p2p) while (p2p[strlen(p2p) - 1] == ' ' || p2p[strlen(p2p) - 1] == '"') p2p[strlen(p2p) - 1] = 0;
 
 		/* Scan the monster races */
 		for (i = 1; i < MAX_R_IDX - 1; i++) {
@@ -8251,7 +8251,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 				/* trim spaces just to be sure */
 				p2ep = parm2e;
 				while (*p2ep == ' ') p2ep++;
-				while (p2ep[strlen(p2ep) - 1] == ' ') p2ep[strlen(p2ep) - 1] = 0;
+				if (*p2ep) while (p2ep[strlen(p2ep) - 1] == ' ') p2ep[strlen(p2ep) - 1] = 0;
 
 				/* IMPOSSIBLE-- no ego power specified, it was just spaces? */
 				//if (!strlen(parm2e))
@@ -9985,7 +9985,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		/* trim */
 		while (*str == ' ') str++;
-		while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+		if (*str) while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
 		if (!(*str)) return;
 		for (i = 0; i < strlen(str) - 1; i++) {
 			if (str[i] == ' ' && str[i + 1] == ' ') continue;

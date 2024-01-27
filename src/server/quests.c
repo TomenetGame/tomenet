@@ -3910,7 +3910,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 	/* check for pure '?': trim leading/trailing spaces */
 	while (*str == ' ') str++;
-	while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+	if (*str) while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
 	/* check for '?': */
 	if (!strcmp(str, "?")) help = TRUE;
 
@@ -3923,7 +3923,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	}
 	/* trim leading/trailing spaces */
 	while (*str == ' ') str++;
-	while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+	if (*str) while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
 	/* reduce multi-spaces */
 	c = str;
 	ct = text;

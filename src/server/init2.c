@@ -2845,12 +2845,9 @@ void init_swearing() {
 
 	do {
 		if (fscanf(fp, "%s%d\n", swear[i].word, &swear[i].level) == EOF) {
-			if (!feof(fp)) {
-				s_printf("Failed to read swearing.txt: %s\n", strerror(ferror(fp)));
-			}
-		}
+			if (!feof(fp)) s_printf("Failed to read swearing.txt: %s\n", strerror(ferror(fp)));
+		} else i++;
 		//s_printf("%d %s %d\n", i, swear[i].word, swear[i].level);
-		i++;
 	} while (!feof(fp) && i < MAX_SWEAR - 1);
 	if (!feof(fp)) s_printf("Too large swearing.txt, exceeding %d - 1 elements.\n", MAX_SWEAR);
 
@@ -2873,11 +2870,9 @@ void init_swearing() {
 	do {
 		//if (fscanf(fp, "%s\n", nonswear[i]) == EOF) {
 		if (!fgets(nonswear[i], NAME_LEN, fp)) {
-			if (!feof(fp))
-				s_printf("Failed to read nonswearing.txt: %s\n", strerror(ferror(fp)));
-		}
-		/* get rid of '\n' char */
-		else {
+			if (!feof(fp)) s_printf("Failed to read nonswearing.txt: %s\n", strerror(ferror(fp)));
+		} else if (*nonswear[i]) {
+			/* get rid of '\n' char */
 			nonswear[i][strlen(nonswear[i]) - 1] = '\0';
 			/* translate 'affix' placeholder */
 			nonswear_affix[i] = 0;
@@ -2893,10 +2888,9 @@ void init_swearing() {
 				nonswear[i][strlen(nonswear[i]) - 1] = '\0';
 				nonswear_affix[i] += 2;
 			}
+			i++;
 		}
-
 		//s_printf("%d %s %d\n", i, swear[i].word, swear[i].level);
-		i++;
 	} while (!feof(fp) && i < MAX_NONSWEAR - 1);
 	if (!feof(fp)) s_printf("Too large nonswearing.txt, exceeding %d - 1 elements.\n", MAX_NONSWEAR);
 
@@ -3451,7 +3445,7 @@ static void load_server_cfg_aux(FILE * cfg) {
 	/* Read in lines until we hit EOF */
 	while (fgets(line, 256, cfg) != NULL) {
 		// Chomp off the end of line character
-		line[strlen(line) - 1] = '\0';
+		if (*line) line[strlen(line) - 1] = '\0';
 
 		/* Parse the line that has been read in */
 		// If the line begins with a # or is empty, ignore it
@@ -3477,17 +3471,15 @@ static void load_server_cfg_aux(FILE * cfg) {
 
 			/* Set the option or value */
 			if (!option) option = newword;
-			else if ((!value) && (newword[0] != '='))
-			{
+			else if ((!value) && (newword[0] != '=')) {
 				value = newword;
 				/* Hack -- ignore "" around values */
 				if (value[0] == '"') value++;
-				if (value[strlen(value) - 1] == '"') value[strlen(value) - 1] = '\0';
+				if (*value && value[strlen(value) - 1] == '"') value[strlen(value) - 1] = '\0';
 			}
 
 			// If we have a completed option and value, then try to set it
-			if (option && value)
-			{
+			if (option && value) {
 				set_server_option(option, value);
 				break;
 			}

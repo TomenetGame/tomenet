@@ -7385,7 +7385,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			strcpy(q_ptr->codename, codename);
 			strcpy(q_ptr->creator, creator);
 
-			if (tolower(tmpbuf[strlen(tmpbuf) - 1]) == 'x') disabled = TRUE;
+			if (*tmpbuf && tolower(tmpbuf[strlen(tmpbuf) - 1]) == 'x') disabled = TRUE;
 			else disabled = FALSE;
 			q_ptr->repeatable = atoi(tmpbuf); /* this defaults to 0 if just 'x' is specified without a number */
 			q_ptr->auto_accept = (byte)aa;

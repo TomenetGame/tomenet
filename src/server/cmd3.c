@@ -2197,7 +2197,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 			}
 		}
 
-		if (strlen(powins) != l && powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
+		if (*powins && strlen(powins) != l && powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
 		/* Don't show actual magical properties of books */
 		return;
 	}
@@ -2312,7 +2312,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 		if (f2 & (TR2_IM_WATER)) i_w = TRUE;
 		if (f2 & (TR2_IM_NETHER)) i_n = TRUE;
 		if ((tmp = (i_f || i_c || i_e || i_a || i_p || i_w || i_n))) {
-			if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+			if (*powins && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 			strcat(powins, "*");
 			if (i_f) strcat(powins, "F");
 			if (i_c) strcat(powins, "C");
@@ -2328,7 +2328,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	{
 		if (!(i_f && i_c && i_e && i_a)) {
 			if ((f2 & TR2_RES_FIRE) && (f2 & TR2_RES_COLD) && (f2 & TR2_RES_ELEC) && (f2 & TR2_RES_ACID)) {
-				if (!tmp && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+				if (!tmp && *powins && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 				strcat(powins, "Base");
 			} else {
 				i_f = (f2 & TR2_RES_FIRE) && !(f2 & TR2_IM_FIRE);
@@ -2336,7 +2336,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 				i_e = (f2 & TR2_RES_ELEC) && !(f2 & TR2_IM_ELEC);
 				i_a = (f2 & TR2_RES_ACID) && !(f2 & TR2_IM_ACID);
 				if (i_f | i_c | i_e | i_a) {
-					if (!tmp && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+					if (!tmp && *powins && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 					if (i_f) strcat(powins, "f");
 					if (i_c) strcat(powins, "c");
 					if (i_e) strcat(powins, "e");
@@ -2389,7 +2389,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	/* Specialty: Trap kits use TRAP2_ flags instead of normal TR2_ flags,
 	   and they probably fit best at this position here: */
 	if (o_ptr->tval == TV_TRAPKIT) {
-		if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+		if (strlen(powins) != l && *powins && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 		if (f2 & TRAP2_AUTOMATIC_99) strcat(powins, "*Auto*");
 		else if (f2 & TRAP2_AUTOMATIC_5) strcat(powins, "Auto");
 		/* These are already a given from the item name */
@@ -2418,7 +2418,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 		tmp = tmpf1 || tmpf2 || tmpf3;
 	}
 	if (tmp) {
-		if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+		if (strlen(powins) != l && *powins && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 
 		if (f3 & (TR3_SH_ELEC | TR3_SH_COLD | TR3_SH_FIRE)) strcat(powins, "A");
 		if (f3 & TR3_SH_ELEC) strcat(powins, "E");
@@ -2451,10 +2451,10 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	}
 	if (esp) {
 		if (esp & ESP_ALL) {
-			if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+			if (strlen(powins) != l && *powins && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 			strcat(powins, "ESP");
 		} else if (!redux) {
-			if (!tmp && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+			if (!tmp && *powins && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 			strcat(powins, "~");
 			if (esp & ESP_SPIDER) strcat(powins, "S");
 			if (esp & ESP_ORC) strcat(powins, "o");
@@ -2539,7 +2539,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 #endif
 		if (am < 0) am = 0;
 
-		if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+		if (strlen(powins) != l && *powins && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 		strcat(powins, format("%d%%", am));
 	}
 }
@@ -2858,7 +2858,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 				}
 
 				/* new: trim trailing spaces, if anything was deleted */
-				if (delete) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
+				if (delete && *modins) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
 			}
 			/* append? */
 			if (append) {

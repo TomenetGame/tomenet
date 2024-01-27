@@ -1928,7 +1928,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		clev = atoi(the_score.cur_lev);
 		mlev = atoi(the_score.max_lev);
 #if 0
-		if (the_score.cur_dun[strlen(the_score.cur_dun) - 1] == '\001') {
+		if (*the_score.cur_dun && the_score.cur_dun[strlen(the_score.cur_dun) - 1] == '\001') {
 			wilderness = TRUE;
 			the_score.cur_dun[strlen(the_score.cur_dun) - 1] = '\0';
 		}
@@ -1967,7 +1967,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		}
 
 		/* Hack ;) Remember if the player was a former winner */
-		if (the_score.how[strlen(the_score.how) - 1] == '\001') {
+		if (*the_score.how && the_score.how[strlen(the_score.how) - 1] == '\001') {
 			strcpy(extra_info, ". (Defeated Morgoth)");
 			the_score.how[strlen(the_score.how) - 1] = '\0';
 		}

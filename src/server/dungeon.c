@@ -10332,7 +10332,7 @@ void dungeon(void) {
 					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
 
 					/* If str actually isn't empty (buffer overflow then on accessing strlen-1), trim trailing spaces */
-					while (*c && c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
+					if (*c) while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
 #if AI_MULTILINE > 0
 					/* Dissect -possibly very long- response string into multiple chat messages if required;
 					   only treat the last one with shortening/cutting procedures. */

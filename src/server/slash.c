@@ -5416,7 +5416,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			c = token[1];
 			while (*c == ' ') c++;
 			email = c;
-			while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
+			if (*c) while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
 			/* Note: This doesn't adhere to RFC 5322/5321 */
 			while (*c) {
 				/* Allow one '@' */
@@ -7210,7 +7210,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* trim */
 				while (*str == ' ') str++;
-				while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+				if (*str) while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
 				if (!(*str)) return;
 				for (i = 0; i < strlen(str) - 1; i++) {
 					if (str[i] == ' ' && str[i + 1] == ' ') continue;
@@ -13345,7 +13345,7 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 	strncpy(nameproc, name, MAX_CHARS_WIDE - 1);
 	nameproc[MAX_CHARS_WIDE - 1] = 0;
 	while (*nameproc == ' ') nameproc++;
-	while (nameproc[strlen(nameproc) - 1] == ' ') nameproc[strlen(nameproc) - 1] = 0;
+	if (*nameproc) while (nameproc[strlen(nameproc) - 1] == ' ') nameproc[strlen(nameproc) - 1] = 0;
 	if (!(*nameproc)) {
 		strcpy(response, "You must specify a character or account name.");
 		return;

@@ -2719,7 +2719,9 @@ static int wait_for_response() {
 	if (tmp[0]) {
 #if 0
 		/* also convert to upper-case */
-		char *tptr = tmp + strlen(tmp) - 1;
+		char *tptr = tmp;
+
+		if (*tptr) tptr += strlen(tptr) - 1;
 		while (tptr > tmp) *tptr-- = toupper(*tptr);
 #endif
 #ifdef GO_DEBUGLOG

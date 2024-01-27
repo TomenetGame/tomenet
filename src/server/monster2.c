@@ -1976,7 +1976,7 @@ void player_desc(int Ind, char *desc, int Ind2, int mode) {
 		/* The monster is visible, so use its gender */
 		if (!q_ptr->male) strcpy(desc, "herself");
 		else strcpy(desc, "himself");
-//		else strcpy(desc, "itself");
+		//else strcpy(desc, "itself");
 	}
 
 	/* Handle all other visible monster requests */
