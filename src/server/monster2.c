@@ -3483,7 +3483,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 		if (wpos->wz) return(56);
 
 		/* Scan this area for mushroom fields */
-		if (!istownarea(wpos, MAX_TOWNAREA)) return(57);
+		//if (!istownarea(wpos, MAX_TOWNAREA)) return(57); /* Maggot would never dare to leave town and go on an adventure.. */
 		for (i = 0; i < mushroom_fields; i++) {
 			if (mushroom_field_wx[i] != wpos->wx || mushroom_field_wy[i] != wpos->wy) continue;
 			mfx[mfs] = mushroom_field_x[i];
