@@ -51,13 +51,18 @@
 #define USER_VOLUME_MUS
 
 #ifdef SOUND_AL_SDL
+ // port from SDL to AL? Future stuff, if SDL3 still sux (or we want full 3d head model sfx)
+#elif 0
+ #include <SDL/SDL.h>
+ #include <SDL/SDL_mixer.h>
+ #include <SDL/SDL_thread.h>
+#elif 1
+ /* This works for SDL2 on Arm64, Linux and MinGW (i686-w64-mingw32) */
+ #include <SDL.h>
+ #include <SDL_mixer.h>
+ #include <SDL_thread.h>
 #else
-/*
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
-#include <SDL/SDL_thread.h>
-*/
-/* This is the way recommended by the SDL web page */
+ /* This is the way recommended by the SDL web page (this was from SDL1-times though) -- this was used till almost end of jan 2024 */
  #include "SDL.h"
  #include "SDL_mixer.h"
  #include "SDL_thread.h"
