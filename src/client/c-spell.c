@@ -1072,6 +1072,8 @@ s32b get_school_spell(cptr do_what, int *item_book) {
 	//int tmp;
 	int sval, pval;
 
+//TODO: Subinventories!!! Prevent sending a wrong item_book etc to Receive_activate_skill!
+
 	hack_force_spell = -1;
 	hack_force_spell_level = 0;
 
