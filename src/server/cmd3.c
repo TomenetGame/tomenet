@@ -1071,7 +1071,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			if (item >= 0) {
 				item = replay_inven_changes(Ind, item);
 				o_ptr = &(p_ptr->inventory[item]);
-				if (item == 0xFF) {
+				if (item == 0x7FFF) {
 					Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 					return(-1); //item is gone, shouldn't happen
 				}
@@ -1106,7 +1106,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			if (item >= 0) {
 				item = replay_inven_changes(Ind, item);
 				o_ptr = &(p_ptr->inventory[item]);
-				if (item == 0xFF) {
+				if (item == 0x7FFF) {
 					Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 					return(-1); //item is gone, shouldn't happen
 				}
@@ -1144,7 +1144,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 				if (item >= 0) {
 					item = replay_inven_changes(Ind, item);
 					o_ptr = &(p_ptr->inventory[item]);
-					if (item == 0xFF) {
+					if (item == 0x7FFF) {
 						Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 						return(-1); //item is gone, shouldn't happen
 					}

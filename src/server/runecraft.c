@@ -24,7 +24,13 @@
  */
 bool rune_enchant(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item];
+	object_type *o_ptr;
+
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return(FALSE);
+#endif
+
+	o_ptr = &p_ptr->inventory[item];
 
 	/* Not worn? */
 	if (INVEN_WIELD > item) {

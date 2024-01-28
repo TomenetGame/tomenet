@@ -3690,6 +3690,10 @@ bool create_artifact_aux(int Ind, int item) {
 	s32b old_owner;/* anti-cheeze :) */
 	u32b resf = make_resf(p_ptr);
 
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return(FALSE);
+#endif
+
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
@@ -3808,12 +3812,17 @@ bool curse_spell(int Ind) {	// could be void
 
 bool curse_spell_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item];
+	object_type *o_ptr;
 	char o_name[ONAME_LEN];
+
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return(FALSE);
+#endif
+
+	o_ptr = &p_ptr->inventory[item];
 
 	p_ptr->current_curse = FALSE;
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
-
 
 	if (artifact_p(o_ptr) && (randint(10) < 8)) {
 		msg_print(Ind, "The artifact resists your attempts.");
@@ -3894,6 +3903,10 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	bool okay = FALSE;
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
+
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return(FALSE);
+#endif
 
 	/* Assume enchant weapon */
 	item_tester_hook = item_tester_hook_weapon;
@@ -4018,6 +4031,10 @@ bool ident_spell_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
+
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return(FALSE);
+#endif
 
 	/* clean up special hack, originally for !X on ID spells
 	   but now actually used for everything (scrolls etc) */
@@ -4194,6 +4211,10 @@ bool identify_fully_item(int Ind, int item) {
 bool identify_fully_item_quiet(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
+
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return(FALSE);
+#endif
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -4383,6 +4404,10 @@ bool recharge_aux(int Ind, int item, int pow) {
 	player_type *p_ptr = Players[Ind];
 	int i, t, lev, dr;
 	object_type *o_ptr;
+
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return(FALSE);
+#endif
 
 	/* Special hack marker */
 	if (pow >= 10000) return(recharge_antiriad(Ind, item, pow));
@@ -9058,6 +9083,10 @@ void tome_creation_aux(int Ind, int item) {
 	char		o_name[ONAME_LEN];
 	s16b		*xtra;
 
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return;
+#endif
+
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
@@ -9954,12 +9983,19 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 /* Grind metallic objects to poweder for use as ingredient */
 void grind_chemicals(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item]; /* Metallic object */
+	object_type *o_ptr;
 	object_type forge, *q_ptr = &forge; /* Resulting metal powder */
 	char o_name[ONAME_LEN];
-	int i, tv = o_ptr->tval, sv = o_ptr->sval;
+	int i, tv, sv;
 	bool metal, wood;
 
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return;
+#endif
+
+	o_ptr = &p_ptr->inventory[item]; /* Metallic object */
+	tv = o_ptr->tval;
+	sv = o_ptr->sval;
 
 	/* Safety mechanism in case we're crafing via inscriptions and make a..mistake */
 	if (item >= INVEN_WIELD) {
@@ -10478,8 +10514,16 @@ void detonate_charge(int o_idx) {
          Code locs: Store buying/stealing (store.c), telekinesis (xtra2.c), picking up the gift (cmd1.c). */
 void wrap_gift(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item], *ow_ptr = &p_ptr->inventory[p_ptr->current_activation], forge;
+	object_type *o_ptr, *ow_ptr, forge;
 	bool empty = (item == p_ptr->current_activation);
+
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return;
+if (p_ptr->current_activation >= 100) return;
+#endif
+
+	o_ptr = &p_ptr->inventory[item];
+	ow_ptr = &p_ptr->inventory[p_ptr->current_activation];
 
 	s_printf("GIFTWRAPPING: %d, %d", o_ptr->tval, o_ptr->sval);
 

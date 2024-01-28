@@ -13983,6 +13983,10 @@ void telekinesis_aux(int Ind, int item) {
 
 	p_ptr->current_telekinesis = NULL;
 
+#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
+if (item >= 100) return;
+#endif
+
 	/* Get the item (in the pack) */
 	if (item >= 0) {
 		q_ptr = &p_ptr->inventory[item];

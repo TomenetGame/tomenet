@@ -12685,25 +12685,29 @@ void inven_index_erase(int Ind, s16b slot) {
 /*
  * Apply recorded changes to an inventory slot number - mikaelh
  * Note that slot can be -1 for MKEY_SCHOOL handling for example. Seems fine.
- * -- Maybe todo: Update for ENABLE_SUBINVEN
+ * -- Maybe TODO!!!: Update for ENABLE_SUBINVEN
  */
 s16b replay_inven_changes(int Ind, s16b slot) {
 	player_type *p_ptr = Players[Ind];
 	inventory_change_type *inv_change;
 
+#ifdef ENABLE_SUBINVEN
+	/* TODO: Implement for subinven, instead of just returning identity!! */
+	if (slot >= 100) return(slot);
+#endif
+
 	inv_change = p_ptr->inventory_changes;
 	while (inv_change) {
 		switch (inv_change->type) {
-			case INVENTORY_CHANGE_SLIDE:
-				if (slot >= inv_change->begin && slot <= inv_change->end)
-					slot += inv_change->mod;
-				break;
-			case INVENTORY_CHANGE_MOVE:
-				if (slot == inv_change->begin) slot = inv_change->end;
-				break;
-			case INVENTORY_CHANGE_ERASE:
-				if (slot == inv_change->begin) return(0xFF);
-				break;
+		case INVENTORY_CHANGE_SLIDE:
+			if (slot >= inv_change->begin && slot <= inv_change->end) slot += inv_change->mod;
+			break;
+		case INVENTORY_CHANGE_MOVE:
+			if (slot == inv_change->begin) slot = inv_change->end;
+			break;
+		case INVENTORY_CHANGE_ERASE:
+			if (slot == inv_change->begin) return(0x7FFF);
+			break;
 		}
 		inv_change = inv_change->next;
 	}

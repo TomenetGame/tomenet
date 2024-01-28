@@ -10471,7 +10471,7 @@ static int Receive_aim_wand(int ind) {
 		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -10511,7 +10511,7 @@ static int Receive_drop(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -10733,7 +10733,7 @@ static int Receive_destroy(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -10972,14 +10972,18 @@ static int Receive_activate_skill(int ind) {
 			do_cmd_set_trap(player, book, spell);
 			break;
 		case MKEY_SCHOOL:
+#ifdef ENABLE_SUBINVEN
+//TODO: Implement subinven!!! (Or rather, reject, as we cannot cast etc from within subinv, except for mix_chemicals)
+if (item >= 100 || book >= 100) return(1);
+#endif
 			book = replay_inven_changes(player, book);
-			if (book == 0xFF) {
+			if (book == 0x7FFF) {
 				msg_print(player, "Command failed because item is gone.");
 				return(1);
 			}
 			/* Note that item can be -1 if the spell doesn't use any inventory item (unlike eg Telekinesis) */
 			item = replay_inven_changes(player, item);
-			if (item == 0xFF) {
+			if (item == 0x7FFF) {
 				msg_print(player, "Command failed because item is gone.");
 				return(1);
 			}
@@ -11185,7 +11189,7 @@ static int Receive_quaff(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11223,7 +11227,7 @@ static int Receive_read(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11305,7 +11309,7 @@ static int Receive_take_off(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11343,7 +11347,7 @@ static int Receive_take_off_amt(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11399,7 +11403,7 @@ static int Receive_use(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11447,7 +11451,7 @@ static int Receive_throw(int ind) {
 		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11485,7 +11489,7 @@ static int Receive_wield(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11543,7 +11547,7 @@ static int Receive_zap(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11592,7 +11596,7 @@ static int Receive_zap_dir(int ind) {
 		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11691,7 +11695,7 @@ static int Receive_inscribe(int ind) {
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11725,7 +11729,7 @@ static int Receive_uninscribe(int ind) {
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11759,7 +11763,7 @@ static int Receive_autoinscribe(int ind) {
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11802,7 +11806,7 @@ static int Receive_activate(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11849,7 +11853,7 @@ static int Receive_activate_dir(int ind) {
 		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -11975,7 +11979,7 @@ static int Receive_eat(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -12013,7 +12017,7 @@ static int Receive_fill(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -12296,7 +12300,7 @@ static int Receive_item(int ind) {
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -12332,7 +12336,7 @@ static int Receive_spell(int ind) {
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -14075,7 +14079,7 @@ static int Receive_wield2(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -14110,7 +14114,7 @@ static int Receive_wield3(int ind) {
 		/* Note that wield3 requires both INVEN_WIELD and INVEN_ARM to have an item.
 		   Not sure if this replay-code check here makes any sense.. */
 		s16b item = replay_inven_changes(player, INVEN_WIELD);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
@@ -14331,7 +14335,7 @@ static int Receive_force_stack(int ind) {
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
-		if (item == 0xFF) {
+		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
