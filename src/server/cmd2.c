@@ -5009,6 +5009,7 @@ void do_cmd_disarm(int Ind, int dir) {
 	bool more = FALSE, done = FALSE;
 	cave_type **zcave;
 
+
 	if (!(zcave = getcave(wpos))) return;
 
 #ifdef ENABLE_OUNLIFE
@@ -5027,6 +5028,7 @@ void do_cmd_disarm(int Ind, int dir) {
 	/* Get a direction (or abort) */
 	if (dir) {
 		struct c_special *cs_ptr;
+
 		/* Get location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -5042,16 +5044,8 @@ void do_cmd_disarm(int Ind, int dir) {
 			t_idx = cs_ptr->sc.trap.t_idx;
 
 		/* Nothing useful */
-#if 0
-		if (!((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-		      (c_ptr->feat <= FEAT_TRAP_TAIL)) &&
-		    (o_ptr->tval != TV_CHEST))
-
-		    //!(c_ptr->special.sc.ptr->found)) &&
-#endif
-
 		if ((!t_idx || !cs_ptr->sc.trap.found) &&
-		    (o_ptr->tval != TV_CHEST) &&
+		    o_ptr->tval != TV_CHEST &&
 		    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP))
 #ifdef ENABLE_DEMOLITIONIST
 		    && !(o_ptr->tval == TV_CHARGE && o_ptr->timeout)
@@ -5085,7 +5079,7 @@ void do_cmd_disarm(int Ind, int dir) {
  #ifdef USE_SOUND_2010
 				sound_near_site(p_ptr->py, p_ptr->px, wpos, 0, "item_rune", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-			} else msg_print(Ind, "\377yYou fail to extinguish the fuse!");
+			} else msg_print(Ind, "\377yYou fail to extinguish the fuse!"); //TODO: Add 'more = TRUE' functionality
 			disturb(Ind, 0, 0);
 
 			if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
@@ -5095,96 +5089,87 @@ void do_cmd_disarm(int Ind, int dir) {
 
 		/* Normal disarm */
 		else if (o_ptr->tval == TV_CHEST) {
-			t_ptr = &t_info[o_ptr->pval];
-
-			/* Disarm the chest */
-			//more = do_cmd_disarm_chest(y, x, c_ptr->o_idx);
-
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			/* Get the "disarm" factor */
-			i = p_ptr->skill_dis;
-
-			/* Penalize some conditions */
-			if (p_ptr->blind || no_lite(Ind)) i = i / 10;
-			if (p_ptr->confused || p_ptr->image) i = i / 10;
-
-			/* Extract the difficulty */
-			j = i - t_ptr->difficulty * 3;
-
-			/* Always have a small chance of success */
-			if (j < 2) j = 2;
-
 			/* Must find the trap first. */
-			if (!object_known_p(Ind, o_ptr))
-				msg_print(Ind, "I don't see any traps.");
-
+			if (!object_known_p(Ind, o_ptr)) msg_print(Ind, "I don't see any traps.");
 			/* Already disarmed/unlocked */
-			else if (o_ptr->pval <= 0)
-				msg_print(Ind, "The chest is not trapped.");
-
+			else if (o_ptr->pval <= 0) msg_print(Ind, "The chest is not trapped.");
 			/* Success (get a lot of experience) */
-			else if (rand_int(100) < j) {
-				/* S(he) is no longer afk */
-				un_afk_idle(Ind);
-				p_ptr->warning_trap = 1;
-
-				msg_print(Ind, "You have disarmed the chest.");
-#ifdef USE_SOUND_2010
-				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
-#endif
-				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
-				do_id_trap(Ind, o_ptr->pval);
-
-				/* Actually disarm it */
-				o_ptr->pval = (0 - o_ptr->pval);
-
-				done = TRUE;
-
-				if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
-			}
-
-			/* Failure -- Keep trying */
-			else if ((i > 5) && (randint(i) > 5)) {
-				/* S(he) is no longer afk */
-				un_afk_idle(Ind);
-				p_ptr->warning_trap = 1;
-
-				/* We may keep trying */
-				more = TRUE;
-				done = TRUE;
-				msg_print(Ind, "You failed to disarm the chest.");
-
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
-
-				if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
-			}
-
-			/* Failure -- Set off the trap */
 			else {
-				/* Paranoia to have a separate 'if' for this - at this point, the chest must be validly trapped */
-				if (chest_trap(Ind, y, x, c_ptr->o_idx)) {
-					/* S(he) is no longer afk */
-					un_afk_idle(Ind);
-					p_ptr->warning_trap = 1;
-					msg_print(Ind, "You set off a trap!");
-					if ((o_ptr->xtra3 & 0x1) || /* Erase chest whenever the trap was set off */
-					    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Erase the chest if it got ruined by the trap */
-						delete_object_idx(c_ptr->o_idx, FALSE);
-					break_cloaking(Ind, 0);
+				t_ptr = &t_info[o_ptr->pval];
+
+				/* Disarm the chest */
+				//more = do_cmd_disarm_chest(y, x, c_ptr->o_idx);
+
+				/* Get the "disarm" factor */
+				i = p_ptr->skill_dis;
+
+				/* Penalize some conditions */
+				if (p_ptr->blind || no_lite(Ind)) i = i / 10;
+				if (p_ptr->confused || p_ptr->image) i = i / 10;
+
+				/* Extract the difficulty */
+				j = i - t_ptr->difficulty * 3;
+
+				/* Always have a small chance of success */
+				if (j < 2) j = 2;
+
+				/* S(he) is no longer afk */
+				un_afk_idle(Ind);
+				p_ptr->warning_trap = 1;
+
+				if (rand_int(100) < j) {
+					msg_print(Ind, "You have disarmed the chest.");
+#ifdef USE_SOUND_2010
+					sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
+					do_id_trap(Ind, o_ptr->pval);
+
+					/* Actually disarm it */
+					o_ptr->pval = (0 - o_ptr->pval);
+
+					done = TRUE;
+
+					if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
+				}
+				/* Failure -- Keep trying */
+				else if ((i > 5) && (randint(i) > 5)) {
+					/* We may keep trying */
+					more = TRUE;
+					done = TRUE;
+					msg_print(Ind, "You failed to disarm the chest.");
+
 					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
 
 					if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
 				}
-				done = TRUE;
+				/* Failure -- Set off the trap */
+				else {
+					/* Paranoia to have a separate 'if' for this - at this point, the chest must be validly trapped */
+					if (chest_trap(Ind, y, x, c_ptr->o_idx)) {
+						msg_print(Ind, "You set off a trap!");
+						if ((o_ptr->xtra3 & 0x1) || /* Erase chest whenever the trap was set off */
+						    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Erase the chest if it got ruined by the trap */
+							delete_object_idx(c_ptr->o_idx, FALSE);
+
+						break_cloaking(Ind, 0);
+						break_shadow_running(Ind);
+						stop_precision(Ind);
+						stop_shooting_till_kill(Ind);
+
+						if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
+					}
+					done = TRUE;
+				}
 			}
 
 			/* XXX hrm it's ugly */
+			/* We didn't spot any trap on the chest/it wasn't trapped, and there is also no other trap around to disarm? Then we're done. */
 			if ((!t_idx || !cs_ptr->sc.trap.found) &&
 			    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP)))
 				done = TRUE;
@@ -5223,6 +5208,7 @@ void do_cmd_disarm(int Ind, int dir) {
 					//if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
 				} else {
 					msg_print(Ind, "\377yYou fail to extinguish the fuse!");
+					//TODO: Add 'more = TRUE' functionality
 					//if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 8, o_ptr->custom_lua_usage));
 				}
 				disturb(Ind, 0, 0);
