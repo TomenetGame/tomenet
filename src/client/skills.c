@@ -809,6 +809,7 @@ void do_activate_skill(int x_idx, int item) {
 	char out_val[160];
 	int dir = 0;
 	s32b spell = 0L;
+
 	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE) {
 		switch (s_info[x_idx].action_mkey) {
 		case MKEY_MIMICRY:

@@ -6328,9 +6328,7 @@ int Send_spell(int item, int spell) {
 int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux) {
 	int n;
 
-	if ((n = Packet_printf(&wbuf, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL,
-					mkey, book, spell, dir, item, aux)) <= 0)
-		return(n);
+	if ((n = Packet_printf(&wbuf, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, mkey, book, spell, dir, item, aux)) <= 0) return(n);
 	return(1);
 }
 
