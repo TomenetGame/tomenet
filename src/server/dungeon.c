@@ -4965,8 +4965,8 @@ static bool process_player_end_aux(int Ind) {
 					   Note: Typical inven for fighters is super roughly (depends on mdevs vs potions/scrolls) ~200 lbs,
 					         equipment ~60 lbs (or 80 lbs with Mattock) = ~2600 _extra_ object weight just form items.
 					         With real-life endgame stuff, can be more like total of ~330 lbs for fighter chars.
-					         Light chars (Dodgers) can be 120..160 lbs. Mages however may hit 280 lbs from mana potions and books,
-					         their mage staff is 9.0 and wooden though. */
+					         Light chars (Dodgers) can be 120..160 lbs. Mages however may hit 200 lbs from mana potions and books,
+					         their mage staff is 9.0 and wooden though, offsetting the remaining ~15-20 lbs equipment. */
 					/* - Light race has it easier to swim in general:
 					     Scale so heavy races (16.500 swimming) need to train swimming more than light races (6.000 swimming) to carry themselves ^^.
 					   - Heavy race can sustain more total armour (~38%) at maxed swimming in general:
