@@ -6765,7 +6765,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 
 		case EGO_FREE_ACTION:
 		case EGO_SLAYING:	case EGO_AGILITY:
-		case EGO_MOTION:
+		case EGO_BOOTS_FA:
 		case EGO_RISTARI:
 		case EGO_AURA_COLD2:	case EGO_AURA_FIRE2:	case EGO_AURA_ELEC2:
 
@@ -9275,7 +9275,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			//boots
 			case EGO_LEVITATION:
-			case EGO_MOTION:
+			case EGO_BOOTS_FA:
 			//case EGO_JUMPING: //hmmm
 
 			//body armour

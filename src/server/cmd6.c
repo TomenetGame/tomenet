@@ -7112,7 +7112,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		} else if (is_ego_p(o_ptr, EGO_JUMP)) {
 			teleport_player(Ind, 10, TRUE);
-			o_ptr->recharging = 15 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
+			o_ptr->recharging = 13 + randint(3) - get_skill_scale(p_ptr, SKILL_DEVICE, 9);
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			/* Done */

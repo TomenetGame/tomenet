@@ -3048,7 +3048,7 @@
 #define EGO_CLUMSINESS		56
 #define EGO_SLOW_DESCENT	57
 #define EGO_QUIET		58
-#define EGO_MOTION		59
+#define EGO_BOOTS_FA		59
 #define EGO_SPEED		60
 #define EGO_DWARVISHENDU	61
 #define EGO_NOISE		62
