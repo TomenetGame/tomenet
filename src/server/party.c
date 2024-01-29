@@ -63,14 +63,11 @@ bool WriteAccount(struct account *r_acc, bool new) {
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb+");
 
-	if (!fp) {
-		/* Attempt to create a new file */
-		fp = fopen(buf, "wb+");
-	}
+	/* Attempt to create a new file */
+	if (!fp) fp = fopen(buf, "wb+");
 
-	if (!fp) {
-		s_printf("Could not open tomenet.acc file! (errno = %d)\n", errno);
-	} else {
+	if (!fp) s_printf("Could not open tomenet.acc file! (errno = %d)\n", errno);
+	else {
 		while (!feof(fp) && !found) {
 			retval = fread(&c_acc, sizeof(struct account), 1, fp);
 			if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
@@ -83,19 +80,14 @@ bool WriteAccount(struct account *r_acc, bool new) {
 		}
 		if (found) {
 			fseek(fp, -((signed int)sizeof(struct account)), SEEK_CUR);
-			if (fwrite(r_acc, sizeof(struct account), 1, fp) < 1) {
+			if (fwrite(r_acc, sizeof(struct account), 1, fp) < 1)
 				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
-			}
 		}
 		if (new) {
-			if (delpos != -1L) {
-				fseek(fp, delpos, SEEK_SET);
-			} else {
-				fseek(fp, 0L, SEEK_END);
-			}
-			if (fwrite(r_acc, sizeof(struct account), 1, fp) < 1) {
+			if (delpos != -1L) fseek(fp, delpos, SEEK_SET);
+			else fseek(fp, 0L, SEEK_END);
+			if (fwrite(r_acc, sizeof(struct account), 1, fp) < 1)
 				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
-			}
 			found = 1;
 		}
 	}
@@ -2789,8 +2781,41 @@ void del_guild(int id) {
 	char temp[160];
 	int i;
 
-	/* Clear the guild hall */
+	/* log! (to track auto-disbanding of leaderless guilds) */
+	s_printf("DEL_GUILD: '%s' (%d)\n", guilds[id].name, id);
+	snprintf(temp, 160, "\374\377yThe guild '\377%c%s\377y' no longer exists.", COLOUR_CHAT_GUILD, guilds[id].name);
+
+	/* erase guild hall */
+#if 0 /* not needed, since there can only be one guild hall */
 	kill_houses(id, OT_GUILD);
+#else
+	if ((i = guilds[id].h_idx)) {
+		struct dna_type *dna;
+
+		i--; // (guild house index 0 means 'no house')
+		dna = houses[i].dna;
+
+		e_printf("(%s) %s (%d, %d) BACKUP-GUILD\n", showtime(), guilds[id].name, guilds[id].master, guilds[id].members); /* log to erasure.log file for compact overview */
+
+		/* save real estate.. */
+		if (!backup_one_estate(NULL, 0, 0, i, guilds[id].name))
+			s_printf("(Estate backup: Guild hall failed!)\n");
+		/* ..and rename estate file to indicate it's just a backup! */
+		else ef_rename(guilds[id].name);
+
+		dna->owner = 0L;
+		dna->creator = 0L;
+		dna->a_flags = ACF_NONE;
+		kill_house_contents(&houses[i]);
+
+		/* and in case it was suspended due to leaderlessness,
+		   so the next guild buying this house won't get a surprise.. */
+		houses[i].flags &= ~HF_GUILD_SUS;
+		fill_house(&houses[i], FILL_GUILD_SUS_UNDO, NULL);
+
+		guilds[id].h_idx = 0;//obsolete?
+	}
+#endif
 
 	/* delete pending guild notes */
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
@@ -2804,13 +2829,6 @@ void del_guild(int id) {
 	/* erase guild bbs */
 	for (i = 0; i < BBS_LINES; i++) strcpy(gbbs_line[id][i], "");
 
-	/* log! (to track auto-disbanding of leaderless guilds) */
-	s_printf("DEL_GUILD: '%s' (%d)\n", guilds[id].name, id);
-
-	/* Tell everyone */
-	snprintf(temp, 160, "\374\377yThe guild '\377%c%s\377y' no longer exists.", COLOUR_CHAT_GUILD, guilds[id].name);
-	msg_broadcast(0, temp);
-
 	/* Clear the basic info */
 	guilds[id].members = 0; /* it should be zero anyway */
 	strcpy(guilds[id].name, "");
@@ -2818,29 +2836,11 @@ void del_guild(int id) {
 	guilds[id].flags = GFLG_NONE;
 	guilds[id].minlev = 0;
 
-	/* erase guild hall */
-#if 0 /* not needed, since there can only be one guild hall */
-	kill_houses(id, OT_GUILD);
-#else
-	if (guilds[id].h_idx) {
-		struct dna_type *dna = houses[guilds[id].h_idx - 1].dna;
-
-		dna->owner = 0L;
-		dna->creator = 0L;
-		dna->a_flags = ACF_NONE;
-		kill_house_contents(&houses[guilds[id].h_idx - 1]);
-
-		/* and in case it was suspended due to leaderlessness,
-		   so the next guild buying this house won't get a surprise.. */
-		houses[guilds[id].h_idx - 1].flags &= ~HF_GUILD_SUS;
-		fill_house(&houses[guilds[id].h_idx - 1], FILL_GUILD_SUS_UNDO, NULL);
-
-		guilds[id].h_idx = 0;//obsolete?
-	}
-#endif
-
 	/* Find and destroy the guild key! */
 	erase_guild_key(id);
+
+	/* Tell everyone */
+	msg_broadcast(0, temp);
 }
 void guild_timeout(int id) {
 	int i;
@@ -4302,24 +4302,22 @@ hash_entry *lookup_player(int id) {
 /*
  * Get the player's level. (In the distant past, this stored the player's highest level.)
  */
-byte lookup_player_level(int id) {
+char lookup_player_level(int id) {
 	hash_entry *ptr;
 
-	if ((ptr = lookup_player(id)))
-		return(ptr->level);
+	if ((ptr = lookup_player(id))) return(ptr->level);
 
 	/* Not found */
-	return(-1L);
+	return(-1);
 }
 /* Return a player's custom sort order of a character in his account overview screen */
-byte lookup_player_order(s32b id) {
+char lookup_player_order(s32b id) {
 	hash_entry *ptr;
 
-	if ((ptr = lookup_player(id)))
-		return(ptr->order);
+	if ((ptr = lookup_player(id))) return(ptr->order);
 
 	/* Not found */
-	return(-1L);
+	return(-1);
 }
 void set_player_order(s32b id, byte order) {
 	hash_entry *ptr = lookup_player(id);
@@ -4329,34 +4327,32 @@ void set_player_order(s32b id, byte order) {
 /*
  * Get the player's highest level.
  */
-byte lookup_player_maxplv(int id) {
+char lookup_player_maxplv(int id) {
 	hash_entry *ptr;
 
-	if ((ptr = lookup_player(id)))
-		return(ptr->max_plv);
+	if ((ptr = lookup_player(id))) return(ptr->max_plv);
 
 	/* Not found */
-	return(-1L);
+	return(-1);
 }
 
-byte lookup_player_admin(int id) {
+char lookup_player_admin(int id) {
 	hash_entry *ptr;
 
-	if ((ptr = lookup_player(id)))
-		return(ptr->admin ? 1 : 0);
+	if ((ptr = lookup_player(id))) return(ptr->admin ? 1 : 0);
 
 	/* Not found */
-	return(-1L);
+	return(-1);
 }
 
 u16b lookup_player_type(int id) {
 	hash_entry *ptr;
 
-	if ((ptr = lookup_player(id)))
-		return(ptr->race | (ptr->class << 8));
+	if ((ptr = lookup_player(id))) return(ptr->race | (ptr->class << 8));
 
 	/* Not found */
-	return(-1L);
+	//return(-1L); -- unsigned!
+	return(0);
 }
 
 /*
@@ -4385,11 +4381,11 @@ s32b lookup_player_guild(int id) {
 u32b lookup_player_guildflags(int id) {
 	hash_entry *ptr;
 
-	if ((ptr = lookup_player(id)))
-		return(ptr->guild_flags);
+	if ((ptr = lookup_player(id))) return(ptr->guild_flags);
 
 	/* Not found */
-	return(-1L);
+	//return(-1L); -- unsigned!
+	return(0U);
 }
 
 /*
@@ -4424,8 +4420,7 @@ cptr lookup_player_name(int id) {
 u16b lookup_player_mode(int id) {
 	hash_entry *ptr;
 
-	if ((ptr = lookup_player(id)))
-		return(ptr->mode);
+	if ((ptr = lookup_player(id))) return(ptr->mode);
 
 	/* Not found */
 	return(255);
@@ -4598,6 +4593,7 @@ int lookup_player_id_messy(cptr name) {
 
 u32b lookup_player_account(int id) {
 	hash_entry *ptr;
+
 	if ((ptr = lookup_player(id)))
 		return(ptr->account);
 
@@ -4605,13 +4601,13 @@ u32b lookup_player_account(int id) {
 	return(0L);
 }
 
-byte lookup_player_winner(int id) {
+char lookup_player_winner(int id) {
 	hash_entry *ptr;
-	if ((ptr = lookup_player(id)))
-		return(ptr->winner);
+
+	if ((ptr = lookup_player(id))) return(ptr->winner);
 
 	/* Not found */
-	return(-1L);
+	return(-1);
 }
 
 void stat_player(char *name, bool on) {
@@ -4624,9 +4620,7 @@ void stat_player(char *name, bool on) {
 		slot = hash_slot(id);
 		ptr = hash_table[slot];
 		while (ptr) {
-			if (ptr->id == id) {
-				ptr->laston = on ? 0L : time(&ptr->laston);
-			}
+			if (ptr->id == id) ptr->laston = on ? 0L : time(&ptr->laston);
 			ptr = ptr->next;
 		}
 	}
@@ -4818,6 +4812,9 @@ void sf_rename(const char *name, bool keep_copy) {
 
 	path_build(fname, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);
 	path_build(fname_new, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "__bak__");
+
+	//TODO: Check if file already exists, if yes, add incrementing number to the file name
+
 	strcat(fname_new, temp); //note: might theoretically exceed MAX_PATH_LENGTH, but practically not really :-p
 	if (keep_copy) {
 		FILE *fp1 = NULL;
@@ -4916,6 +4913,9 @@ void ef_rename(const char *name) {
 	path_build(epath, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 	path_build(fname, MAX_PATH_LENGTH, epath, temp);
 	path_build(fname_new, MAX_PATH_LENGTH, epath, "__bak__");
+
+	//TODO: Check if file already exists, if yes, add incrementing number to the file name
+
 	strcat(fname_new, temp); //note: might theoretically exceed MAX_PATH_LENGTH, but practically not really :-p
 	rename(fname, fname_new);
 }
@@ -5261,7 +5261,7 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 		backup = TRUE;
 
 		/* save all real estate.. */
-		if (!backup_char_estate(0, ptr->id, ptr->id))
+		if (!backup_char_estate(0, ptr->id, ptr->name))
 			s_printf("(Estate backup: At least one house failed!)\n");
 		/* ..and rename estate file to indicate it's just a backup! */
 		ef_rename(ptr->name);

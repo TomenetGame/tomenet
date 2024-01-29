@@ -8100,7 +8100,7 @@ bool backup_estate(bool partial) {
 }
 /* Backup all houses that belong to a specific character and give content ownership to another character:
    h_id = character who owns the houses, id = character name to use for the estate savefile. */
-bool backup_char_estate(int Ind, s32b h_id, s32b id) {
+bool backup_char_estate(int Ind, s32b h_id, cptr target_name) {
 	int i;
 	bool res = TRUE;
 
@@ -8110,7 +8110,7 @@ bool backup_char_estate(int Ind, s32b h_id, s32b id) {
 		if (!dna->owner) continue; /* not owned */
 		if ((dna->owner_type == OT_PLAYER) && (dna->owner == h_id)) {
 			if (Ind) msg_format(Ind, "House %d at (%d,%d) %d,%d:", i, houses[i].wpos.wx, houses[i].wpos.wy, houses[i].dx, houses[i].dy);
-			if (!backup_one_estate(&houses[i].wpos, houses[i].dx, houses[i].dy, -1, id)) res = FALSE;
+			if (!backup_one_estate(&houses[i].wpos, houses[i].dx, houses[i].dy, -1, target_name)) res = FALSE;
 		}
 	}
 	return(res);
@@ -8118,10 +8118,9 @@ bool backup_char_estate(int Ind, s32b h_id, s32b id) {
 /* Backup one house and give content ownership to a specific character.
    If h_idx is not -1, ie a house index is provided, hwpos/hx/hy will all be ignored,
    and instead derived from the house of the index h_idx. */
-bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, int h_idx, s32b id) {
+bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, int h_idx, cptr target_name) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
-	cptr name;
 	int i, j, k;
 	int sy, sx, ey,ex , x, y;
 	cave_type **zcave, *c_ptr;
@@ -8139,26 +8138,21 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, int h_idx, s32b i
 		hy = h_ptr->dy;
 		wpos = &h_ptr->wpos;
 
-		s_printf("Backing up a house (%d,%d,%d - %d,%d - %d)... ", wpos->wx, wpos->wy, wpos->wz, hx, hy, id);
+		s_printf("Backing up a house via h_idx (%d,%d,%d - %d,%d (%d) - %s)... ", wpos->wx, wpos->wy, wpos->wz, hx, hy, i, target_name);
 	} else {
-		s_printf("Backing up a house (%d,%d,%d - %d,%d - %d)... ", hwpos->wx, hwpos->wy, hwpos->wz, hx, hy, id);
+		s_printf("Backing up a house via d-x/y (%d,%d,%d - %d,%d ", hwpos->wx, hwpos->wy, hwpos->wz, hx, hy);
 
 		/* scan house on which door we're sitting */
 		i = pick_house(hwpos, hy, hx);
 		if (i == -1) {
+			s_printf("(%d) - %s)... ", i, target_name);
 			s_printf(" error: No estate here.\n");
 			return(FALSE);
 		}
 
+		s_printf("(%d)- %s)... ", i, target_name);
 		h_ptr = &houses[i];
 		wpos = &h_ptr->wpos;
-	}
-
-	/* get player name from id, to which to save the estate to */
-	name = lookup_player_name(id);
-	if (!name) {
-		s_printf(" warning: couldn't fetch player name of id %d.\n", id);
-		return(FALSE);
 	}
 
 	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
@@ -8172,8 +8166,8 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, int h_idx, s32b i
 	/* create backup file if required, or append to it */
 	/* create actual filename from character name (same as used for sf_delete or process_player_name) */
 	k = 0;
-	for (j = 0; name[j]; j++) {
-		c = name[j];
+	for (j = 0; target_name[j]; j++) {
+		c = target_name[j];
 		/* Accept some letters */
 		if (isalphanum(c)) savefile[k++] = c;
 		/* Convert space, dot, and underscore to underscore */
@@ -8242,6 +8236,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, int h_idx, s32b i
 			sx = h_ptr->x + 1;
 			ey = h_ptr->y + h_ptr->coords.rect.height - 1;
 			ex = h_ptr->x + h_ptr->coords.rect.width - 1;
+
 			for (y = sy; y < ey; y++) {
 				for (x = sx; x < ex; x++) {
 					c_ptr = &zcave[y][x];

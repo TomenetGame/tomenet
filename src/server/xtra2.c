@@ -8655,7 +8655,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		sf_rename(p_ptr->name, TRUE);
 
 		/* save all real estate.. */
-		if (!backup_char_estate(0, p_ptr->id, p_ptr->id))
+		if (!backup_char_estate(0, p_ptr->id, p_ptr->name))
 			s_printf("(Estate backup: At least one house failed!)\n");
 		/* ..and rename estate file to indicate it's just a backup! */
 		ef_rename(p_ptr->name);

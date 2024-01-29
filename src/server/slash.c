@@ -11612,16 +11612,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				s32b pid;
 
 				if (!tk) {
-					msg_print(Ind, "Usage: /backup_one_estate <character name>");
+					msg_print(Ind, "Usage: /backup_one_estate <target name>");
 					return;
 				}
 				msg_print(Ind, "Backing up one real estate...");
 				message3[0] = toupper(message3[0]); /* char names always start on upper-case */
 				if (!(pid = lookup_player_id(message3))) {
-					msg_print(Ind, "That character name doesn't exist.");
-					return;
+					msg_print(Ind, "Warning: That character name doesn't exist.");
+					//return; -- allow specifying ANY target name though, for example for guilds!
 				}
-				if (!backup_one_estate(&p_ptr->wpos, p_ptr->px, p_ptr->py, -1, pid)) {
+				if (!backup_one_estate(&p_ptr->wpos, p_ptr->px, p_ptr->py, -1, message3)) {
 					msg_print(Ind, "...failed.");
 					return;
 				}
@@ -11652,7 +11652,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				msg_format(Ind, "Backing up all estate of character '%s' (%d)", message3, hid);
 				msg_format(Ind, " and give it to character '%s' (%d)...", pid_name, pid);
-				if (!backup_char_estate(Ind, hid, pid)) {
+				if (!backup_char_estate(Ind, hid, pid_name)) {
 					msg_print(Ind, "At least one failed.");
 					return;
 				}
@@ -13243,8 +13243,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/gettradhouseitems")) {
 				int h_idx;
 				house_type *h_ptr;
-				char *cpid;
-				s32b pid;
+				char *tname;
 
 				h_idx = k;
 				if (!tk || h_idx < 0 || h_idx >= num_houses) {
@@ -13257,10 +13256,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				cpid = strchr(message3, ' ');
-				if (!cpid) pid = p_ptr->id;
-				else if (!(pid = lookup_player_id(cpid + 1))) {
-					msg_format(Ind, "That dest character name '%s' doesn't exist.", cpid + 1);
+				tname = strchr(message3, ' ');
+				if (!tname) tname = p_ptr->name;
+				else if (!lookup_player_id(++tname)) {
+					msg_format(Ind, "That dest character name '%s' doesn't exist.", tname);
 					return;
 				}
 
@@ -13270,9 +13269,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					j = lookup_player_mode(h_ptr->dna->owner);
 				}
 
-				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d.", h_idx, h_ptr->dna->mode, j, h_ptr->colour);
+				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d -> %s", h_idx, h_ptr->dna->mode, j, h_ptr->colour, tname);
 
-				if (!backup_one_estate(NULL, 0, 0, h_idx, pid)) {
+				if (!backup_one_estate(NULL, 0, 0, h_idx, tname)) {
 					msg_print(Ind, "...failed.");
 					return;
 				}
