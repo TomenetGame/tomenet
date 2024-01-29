@@ -4796,7 +4796,8 @@ void sf_delete(const char *name) {
 /* Back up a player save file instead of just deleting it */
 void sf_rename(const char *name, bool keep_copy) {
 	int i, k = 0;
-	char temp[128], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
+	char temp[MAX_PATH_LENGTH], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
+	struct stat filestat;
 
 	/* Extract "useful" letters */
 	for (i = 0; name[i]; i++) {
@@ -4816,6 +4817,16 @@ void sf_rename(const char *name, bool keep_copy) {
 	//TODO: Check if file already exists, if yes, add incrementing number to the file name
 
 	strcat(fname_new, temp); //note: might theoretically exceed MAX_PATH_LENGTH, but practically not really :-p
+
+	/* File already exists? Then add incrementing number to the file name */
+	i = 2;
+	strcpy(temp, fname_new);
+	while (stat(fname_new, &filestat) != -1) {
+		strcpy(fname_new, temp);
+		strcat(fname_new, format("_#%d", i++));
+	}
+	if (i > 2) s_printf("sf_rename: Added incremental backup savefile number %d\n", i - 1);
+
 	if (keep_copy) {
 		FILE *fp1 = NULL;
 		FILE *fp2 = NULL;
@@ -4895,8 +4906,9 @@ void sf_rename(const char *name, bool keep_copy) {
 /* Rename an estate savefile (without changing the owner's name, just a simple file rn) */
 void ef_rename(const char *name) {
 	int i, k = 0;
-	char temp[128], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
+	char temp[MAX_PATH_LENGTH], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
 	char epath[MAX_PATH_LENGTH];
+	struct stat filestat;
 
 	/* Extract "useful" letters */
 	for (i = 0; name[i]; i++) {
@@ -4914,9 +4926,17 @@ void ef_rename(const char *name) {
 	path_build(fname, MAX_PATH_LENGTH, epath, temp);
 	path_build(fname_new, MAX_PATH_LENGTH, epath, "__bak__");
 
-	//TODO: Check if file already exists, if yes, add incrementing number to the file name
-
 	strcat(fname_new, temp); //note: might theoretically exceed MAX_PATH_LENGTH, but practically not really :-p
+
+	/* File already exists? Then add incrementing number to the file name */
+	i = 2;
+	strcpy(temp, fname_new);
+	while (stat(fname_new, &filestat) != -1) {
+		strcpy(fname_new, temp);
+		strcat(fname_new, format("_#%d", i++));
+	}
+	if (i > 2) s_printf("ef_rename: Added incremental backup savefile number %d (%s->%s)\n", i - 1, fname, fname_new);
+
 	rename(fname, fname_new);
 }
 
