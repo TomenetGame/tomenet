@@ -75,6 +75,7 @@ HEALING_I = add_spell {
 			"***Automatically projecting***",
 	}
 }
+__lua_HEALING_I = HEALING_I
 HEALING_II = add_spell {
 	["name"] = 	"Healing II",
 	["name2"] = 	"Heal II",

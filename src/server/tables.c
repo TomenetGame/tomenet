@@ -3249,7 +3249,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 900, },
 		{ SKILL_NATURE,
-			'+', 0,
+			'+', 1000,
 			'+', 900, },
 		{ SKILL_DIVINATION,
 			'+', 0,

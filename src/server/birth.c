@@ -1349,7 +1349,8 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Ranger */
 		{ TV_SWORD, SV_LONG_SWORD, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
-		{ TV_BOOK, 50, 0 },
+		//{ TV_BOOK, 50, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
 		{ TV_BOW, SV_LONG_BOW, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
 	},
@@ -1508,7 +1509,8 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Ranger */
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_BOOK, 50, 0 },
+		//{ TV_BOOK, 50, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
 		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL, 0 },//instead of unusable bow. alternatives: invis-pot, id-all-scroll?, mapping, rll, csw/ccw?
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
 	},
@@ -1615,6 +1617,7 @@ void init_player_outfits(void) {
 #endif
 		player_init[s][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 		player_init[s][CLASS_DRUID][3][2] = __lua_FOCUS;
+		player_init[s][CLASS_RANGER][2][2] = __lua_HEALING_I;
 	}
 }
 
