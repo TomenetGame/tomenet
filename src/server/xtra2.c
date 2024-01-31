@@ -641,6 +641,52 @@ bool set_tim_esp(int Ind, int v) {
 	return(TRUE);
 }
 
+/* Magical mirror from water and air, forming a solid mirage in the air, granting REFLECTING. */
+bool set_tim_deflect(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_deflect) {
+			msg_print(Ind, "Moisture starts glittering and solidifying in the air!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_deflect) {
+			msg_print(Ind, "The air around you loses its mirroring effects.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_deflect = v;
+
+	/* Nothing to notice */
+	if (!notice) return(FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return(TRUE);
+}
+
 /*
  * Set "p_ptr->st_anchor", notice observable changes
  */
@@ -3879,53 +3925,6 @@ bool do_divine_xtra_res(int Ind, int v) {
 	return(FALSE);
 }
 #endif
-
-/*
- * Set "p_ptr->tim_deflect", notice observable changes  --  currently unused
- * This just grants REFLECTION flag.
- */
-bool set_tim_deflect(int Ind, int v) {
-	player_type *p_ptr = Players[Ind];
-	bool notice = FALSE;
-
-	/* Hack -- Force good values */
-	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-	/* Open */
-	if (v) {
-		if (!p_ptr->tim_deflect) {
-			msg_print(Ind, "A deflective shield forms around your body!");
-			notice = TRUE;
-		}
-	}
-
-	/* Shut */
-	else {
-		if (p_ptr->tim_deflect) {
-			msg_print(Ind, "Your deflective shield crumbles away.");
-			notice = TRUE;
-		}
-	}
-
-
-	/* Use the value */
-	p_ptr->tim_deflect = v;
-
-	/* Nothing to notice */
-	if (!notice) return(FALSE);
-
-	/* Disturb */
-	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-
-	/* Recalculate boni */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Handle stuff */
-	handle_stuff(Ind);
-
-	/* Result */
-	return(TRUE);
-}
 
 /*
  * Set "p_ptr->sh_fire/cold/elec", notice observable changes

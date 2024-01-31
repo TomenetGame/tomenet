@@ -7079,6 +7079,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 			o_ptr->recharging = 15 + randint(3) - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
+		case ART_COBALTFOCUS:
+			set_tim_deflect(Ind, 30 + randint(10));
+			o_ptr->recharging = randint(10) + 80 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
+			break;
 		case ART_FIST:
 			set_melee_brand(Ind, 30 + rand_int(5) + get_skill_scale(p_ptr, SKILL_DEVICE, 10), TBRAND_HELLFIRE, 10, TRUE, FALSE);
 			o_ptr->recharging = 350 - get_skill_scale(p_ptr, SKILL_DEVICE, 200) + randint(50);

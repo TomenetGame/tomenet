@@ -210,6 +210,8 @@ music_info[10].desc},
 {233, "temporary resistance boost every 50..150+d50 turns"},
 --case ART_HELLFIRE:--236
 {236, "invoking hellfire (400..600) every 30+d10 turns"},
+--case ART_COBALT:--237
+{237, "mirage mirror for 30+d10 turns every 30..80+d10 turns"},
 --case ART_SPIRITSHARD:--244
 {244, "turning into a wraith every 50..100+d50 turns"},
 --case ART_GOGGLES_DM:--261

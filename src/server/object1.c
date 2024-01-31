@@ -3614,6 +3614,8 @@ cptr item_activation(object_type *o_ptr) {
 		return("invoking a force bolt (8..24d8) every d2 turns");
 	case ART_SMASHER:
 		return("destroying doors every 10..15+d3 turns");
+	case ART_COBALTFOCUS:
+		return("mirage mirror for 30+d10 turns every 30..80+d10 turns");
 	case ART_FIST:
 		return("hellfire brand every 150..350+d50 turns");
 	case ART_WARPSPEAR:

@@ -230,3 +230,23 @@ THUNDERSTORM = add_spell {
 			"(Thunderbolts deal compound damage of electricity, sound and light.)"
 	}
 }
+
+VAPORMIRROR = add_spell {
+	["name"] = 	"Mirage Mirror",
+	["name2"] = 	"MMirr",
+	["school"] = 	{SCHOOL_AIR, SCHOOL_WATER },
+	["level"] = 	35,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	-75,
+	["spell_power"] = 0,
+	["spell"] = 	function()
+			set_tim_deflect(Ind, randint(5) + 20 + get_level(Ind, VAPORMIRROR, 30))
+	end,
+	["info"] = 	function()
+			return "dur "..(20 + get_level(Ind, VAPORMIRROR, 30)).."+d5"
+	end,
+	["desc"] = 	{
+			"Creates a solid mirage from moisture in the air around you",
+			"that acts as a magical mirror and reflects projectiles.", }
+}

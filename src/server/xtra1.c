@@ -4761,10 +4761,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->tim_lev) p_ptr->levitate = TRUE;
 
 	/* Temp ESP */
-	if (p_ptr->tim_esp) {
-		//p_ptr->telepathy = TRUE;
-		p_ptr->telepathy |= ESP_ALL;
-	}
+	if (p_ptr->tim_esp) p_ptr->telepathy |= ESP_ALL;
 
 	/* Temporary invisibility */
 	if (p_ptr->tim_invis_power > p_ptr->tim_invis_power2)
@@ -4813,10 +4810,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->tim_invis) p_ptr->see_inv = TRUE;
 
 	/* Temporary infravision boost */
-	if (p_ptr->tim_infra) {
-		//p_ptr->see_infra++;
-		p_ptr->see_infra += 5;
-	}
+	if (p_ptr->tim_infra) p_ptr->see_infra += 5;
 
 	/* Heart is boldened */
 	if (p_ptr->res_fear_temp || p_ptr->hero || p_ptr->shero ||
