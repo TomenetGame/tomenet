@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 23. January 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 31. January 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20622,6 +20622,12 @@ these limitations will be lifted.
 
                     Tier II: Level 40.
 
+    Mirage Mirror   Grants temporary reflection, reflecting physical and
+                    magical projectiles such as bolts or arrows, same as
+                    having an item or form that grants REFLECT/REFLECTING.
+                    Required skill level for first spell level: 35.
+                    Shared spell (see above): Air, Water.
+
     BONI:           Swim in water at 30,
                     water resistance at 40.
                     Items that go bad over time due to warmth while being
@@ -20669,6 +20675,12 @@ these limitations will be lifted.
 
     Invisibility    Turns you invisible. (See (5.14) for details.)
                     Required skill level for first spell level: 30.
+
+    Mirage Mirror   Grants temporary reflection, reflecting physical and
+                    magical projectiles such as bolts or arrows, same as
+                    having an item or form that grants REFLECT/REFLECTING.
+                    Required skill level for first spell level: 35.
+                    Shared spell (see above): Air, Water.
 
     BONI:           Feather falling at 30,
                     levitation at 45.
@@ -21611,6 +21623,17 @@ All Unlife spells are Wisdom-based.)
                     that may spawn in the future on this same dungeon floor.
                     (Same effect as scroll of vermin control.)
                     Required skill level for first spell level: 13.
+
+    Mists of Decay  Engulfs your form in mist that will inhibit intrinsic hit
+                    point regeneration of any enemy that enters it.
+                    Only works at 100% effectiveness on enemies whose level is
+                    not greater than the spell's current power. It will still
+                    work on higher enemies, but their natural regeneration will
+                    not be completely suppressed anymore and the effectiveness
+                    will drop off fast the higher the level discrepancy.
+                    Required skill level for first spell level: 20.
+
+                    Tier II: Level 40.
 
     Nether Sap      Draws from nether undercurrents to continuously replenish
                     your health at the cost of draining your mana.
