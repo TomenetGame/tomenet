@@ -2116,9 +2116,9 @@ player_race race_info[MAX_RACE] = {
 		15,
 		//No paladin,druid,priest,shaman/mimic
 #ifdef ENABLE_DEATHKNIGHT
-		(CF_ALL & ~CFD & ~CFP & ~CFM & ~CFS) | CFK,
+		(CF_ALL & ~CFD & ~CFP & ~CFM & ~CFS & ~CFN) | CFK,
 #else
-		CF_ALL & ~CFL & ~CFD & ~CFP & ~CFM & ~CFS,
+		CF_ALL & ~CFD & ~CFP & ~CFM & ~CFS & ~CFN & ~CFL,
 #endif
 		125,
 
