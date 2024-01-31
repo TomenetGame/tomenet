@@ -301,7 +301,7 @@ ANTIREGEN_I = add_spell {
 	["info"] = 	function()
 		return "pow "..(get_antiregen_pow(Ind, 8)).." rad 1 dur "..(25 + get_level(Ind, ANTIREGEN_I, 20))
 			end,
-	["desc"] = 	{ "Inhibits your enemies' natural regeneration capabilities.",
+	["desc"] = 	{ "Inhibits adjacent enemies' natural regeneration capabilities.",
 			  "Reduced effect vs enemies of levels exceeding the spell's power.", }
 }
 
@@ -322,6 +322,6 @@ ANTIREGEN_II = add_spell {
 	["info"] = 	function()
 		return "pow "..(get_antiregen_pow(Ind, 0)).." rad 1 dur "..(25 + get_level(Ind, ANTIREGEN_I, 20))
 			end,
-	["desc"] = 	{ "Inhibits your enemies' natural regeneration capabilities.",
+	["desc"] = 	{ "Inhibits adjacent enemies' natural regeneration capabilities.",
 			  "Reduced effect vs enemies of levels exceeding the spell's power.", }
 }
