@@ -286,7 +286,7 @@ FIRESTORM = add_spell {
 			fire_wave(Ind, GF_HELLFIRE, 0, 114 + get_level(Ind, FIRESTORM, 258), 1, 25 + get_level(Ind, FIRESTORM, 50), 8, EFF_STORM, " conjures hellfire for")
 		end,
 	["info"] = 	function()
-			return "dam "..(114 + get_level(Ind, FIRESTORM, 258)).." rad 1 dur "..(25 + get_level(Ind, FIRESTORM, 50))
+			return "dam "..(114 + get_level(Ind, FIRESTORM, 258)).." rad 1 dur "..((25 + get_level(Ind, FIRESTORM, 50)) / 4)
 		end,
 	["desc"] = 	{ "Envelops you in hellfire, burning your opponents to ashes.", }
 }

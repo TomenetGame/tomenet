@@ -299,7 +299,7 @@ ANTIREGEN_I = add_spell {
 		fire_wave(Ind, GF_NO_REGEN, 0, get_antiregen_pow(Ind, 8), 1, 25 + get_level(Ind, ANTIREGEN_I, 20), 8, EFF_STORM, " conjures mists of decay")
 			end,
 	["info"] = 	function()
-		return "pow "..(get_antiregen_pow(Ind, 8)).." rad 1 dur "..(25 + get_level(Ind, ANTIREGEN_I, 20))
+		return "pow "..(get_antiregen_pow(Ind, 8)).." rad 1 dur "..((25 + get_level(Ind, ANTIREGEN_I, 20)) / 4)
 			end,
 	["desc"] = 	{ "Inhibits adjacent enemies' natural regeneration capabilities.",
 			  "Reduced effect vs enemies of levels exceeding the spell's power.", }
@@ -320,7 +320,7 @@ ANTIREGEN_II = add_spell {
 		fire_wave(Ind, GF_NO_REGEN, 0, get_antiregen_pow(Ind, 0), 1, 25 + get_level(Ind, ANTIREGEN_I, 20), 8, EFF_STORM, " conjures mists of decay")
 			end,
 	["info"] = 	function()
-		return "pow "..(get_antiregen_pow(Ind, 0)).." rad 1 dur "..(25 + get_level(Ind, ANTIREGEN_I, 20))
+		return "pow "..(get_antiregen_pow(Ind, 0)).." rad 1 dur "..((25 + get_level(Ind, ANTIREGEN_I, 20)) / 4)
 			end,
 	["desc"] = 	{ "Inhibits adjacent enemies' natural regeneration capabilities.",
 			  "Reduced effect vs enemies of levels exceeding the spell's power.", }
