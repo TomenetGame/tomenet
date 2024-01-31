@@ -1848,6 +1848,7 @@ byte spell_color(int type) {
 	case GF_THUNDER:	return(randint(3) != 1 ? TERM_ELEC : (randint(2) == 1 ? TERM_YELLOW : TERM_LITE));
 	case GF_ANNIHILATION:	return(randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
 	case GF_OLD_SLEEP:	return(TERM_L_DARK); /* Occult: for Veil of Night as wave */
+	case GF_NO_REGEN:	return(TERM_DARKNESS);
 	}
 
 	/* Standard "color" */
@@ -1920,6 +1921,7 @@ bool spell_color_animation(int type) {
 	case GF_THUNDER:	return(TRUE);//(randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
 	case GF_ANNIHILATION:	return(TRUE);//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 	case GF_OLD_SLEEP:	return(FALSE);/* Occult: For Veil of Night as wave */
+	case GF_NO_REGEN:	return(FALSE);
 	}
 
 	/* Standard "color" */
@@ -2001,6 +2003,7 @@ byte spell_color(int type) {
 	case GF_THUNDER:	return(TERM_THUNDER);
 	case GF_ANNIHILATION:	return(TERM_ANNI);
 	case GF_OLD_SLEEP:	return(TERM_L_DARK); /* Occult: for Veil of Night as wave */
+	case GF_NO_REGEN:	return(TERM_DARKNESS);
 	}
 
 	/* Standard "color" */
@@ -4512,6 +4515,7 @@ int divide_spell_damage(int dam, int div, int typ) {
 	case GF_CURING:
 	case GF_STASIS: /* uses +1000 as hack - could be hacked like GF_DARK_WEAK etc if we really need ball-style stasis, but for now this is fine */
 	case GF_MAKE_TRAP: /* encodes +clone_trapping * 1000 */
+	case GF_NO_REGEN: /* spell's pow vs monster level decides about success */
 		return(dam);
 
 	/* These are reduced despite 'dam' storing functionality - it is carefully calculated around that. */
@@ -7459,6 +7463,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			dam *= 6; dam /= (randint(6) + 6);
 		}
 		if (!dam) dam = 1;
+		break;
+
+	case GF_NO_REGEN:
+		//m_ptr->hold_hp_regen_perc = 100 - (dam >= m_ptr->level ? 100 : (dam > m_ptr->level - 20 ? 100 - (m_ptr->level - dam) * 5 : 0));
+		m_ptr->hold_hp_regen_perc = 100 - (dam >= m_ptr->level ? 100 : (((((100 * dam) / m_ptr->level) * dam) / m_ptr->level) * dam) / m_ptr->level);
+		m_ptr->hold_hp_regen = 3;
+		no_dam = TRUE;
 		break;
 
 	/* Polymorph monster (Use "dam" as "power") */
@@ -12204,6 +12215,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 		break;
 
+	case GF_NO_REGEN:
+		//p_ptr->hold_hp_regen_perc = 100 - (dam >= p_ptr->lev ? 100 : (dam > p_ptr->lev - 20 ? 100 - (p_ptr->lev - dam) * 5 : 0));
+		p_ptr->hold_hp_regen_perc = 100 - (dam >= p_ptr->lev ? 100 : (((((100 * dam) / p_ptr->lev) * dam) / p_ptr->lev) * dam) / p_ptr->lev);
+		p_ptr->hold_hp_regen = 3;
+		dam = 0;
+		break;
+
 	/* Default */
 	default:
 		/* No damage */
@@ -14153,6 +14171,10 @@ int approx_damage(int m_idx, int dam, int typ) {
 		if (dam > 1200) dam = 1200;
 		if (r_ptr->flags1 & RF1_UNIQUE) dam /= 2;
 		if (!dam) dam = 1;
+		break;
+
+	case GF_NO_REGEN:
+		dam = 0;
 		break;
 
 	case GF_OLD_POLY:

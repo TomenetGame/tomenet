@@ -1833,6 +1833,9 @@ static void regen_monsters(void) {
 			/* Hack -- Some monsters regenerate quickly */
 			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
 
+			if (m_ptr->hold_hp_regen) frac = (frac * m_ptr->hold_hp_regen_perc) / 100;
+			if (!frac) continue;
+
 			if (m_ptr->r_idx == RI_BLUE) frac /= 40;
 
 			/* Hack -- Regenerate */
@@ -5401,7 +5404,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Blood Magic, aka Auras, draw from your blood and thereby slow your regeneration down to 1/4 if all 3 auras are enabled */
 	regen_amount = regen_amount / (1 + (p_ptr->aura[AURA_FEAR] ? 1 : 0) + (p_ptr->aura[AURA_SHIVER] ? 1 : 0) + (p_ptr->aura[AURA_DEATH] ? 1 : 0));
 
-	/* Poisoned or cut yields no healing */
+	/* Poisoned or cut yields no intrinsic healing (aka regeneration) */
 	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->sun_burn
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
 	    /* Trolls and Hydras continue to regenerate even while cut (it's the whole point of their regen) */
@@ -5414,6 +5417,8 @@ static bool process_player_end_aux(int Ind) {
 
 	/* But Biofeedback always helps -- TODO: Test the results a bit */
 	if (p_ptr->biofeedback) regen_amount += randint(1024) + regen_amount;
+
+	if (p_ptr->hold_hp_regen) regen_amount = (regen_amount * p_ptr->hold_hp_regen_perc) / 100;
 
 	/* Regenerate Hit Points if needed */
 	if (p_ptr->chp < p_ptr->mhp && regen_amount && !p_ptr->martyr)
@@ -6743,17 +6748,17 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	if (p_ptr->tim_blacklist) {// && !p_ptr->afk) {
+	if (p_ptr->tim_blacklist) // && !p_ptr->afk)
 		/* Count down towards turnout */
 		p_ptr->tim_blacklist--;
-	}
 
 #if 1 /* use turns instead of day/night cycles */
-	if (p_ptr->tim_watchlist) {
+	if (p_ptr->tim_watchlist)
 		/* Count down towards turnout */
 		p_ptr->tim_watchlist--;
-	}
 #endif
+
+	if (p_ptr->hold_hp_regen) p_ptr->hold_hp_regen--;
 
 	if (p_ptr->pstealing) {
 		/* Count down towards turnout */

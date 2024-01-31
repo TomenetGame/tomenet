@@ -2078,6 +2078,7 @@ struct monster_type {
 	s16b stuck;			/* energy to track spellcasting possibility after monster was just stuck in terrain or between other monsters */
 
 	byte clone_trapping;		/* Traps laid out by this monster will have diminishing returns in XP gain for disarming (eg for Robin Hood in the IDDC) */
+	byte hold_hp_regen, hold_hp_regen_perc;
 
 	s16b custom_lua_death;		/* Runs custom lua script on death */
 	s16b custom_lua_deletion;	/* Runs custom lua script on deletion */
@@ -4051,6 +4052,7 @@ struct player_type {
 	long heal_effect;
 	bool no_heal;			/* for special events */
 	bool no_hp_regen, no_mp_regen;	/* for anti_undead/anti_demon soft version, for mimicked forms */
+	byte hold_hp_regen, hold_hp_regen_perc;
 
 	/* for client-side weather */
 	bool panel_changed;

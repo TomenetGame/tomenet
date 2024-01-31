@@ -276,3 +276,52 @@ OWRAITHSTEP = add_spell {
 			"remain immaterial infinitely, until you step out again onto open floor.",
 	}
 }
+
+function get_antiregen_pow(Ind, limit_lev)
+	local lev = get_level(Ind, ANTIREGEN_I, 109)
+
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 2 end
+	return 33 + lev
+end
+
+ANTIREGEN_I = add_spell {
+	["name"] = 	"Mists of Decay I",
+	["name2"] = 	"MoD I",
+	["school"] = 	{SCHOOL_OUNLIFE},
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	-30,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		fire_wave(Ind, GF_NO_REGEN, 0, get_antiregen_pow(Ind, 8), 1, 25 + get_level(Ind, ANTIREGEN_I, 20), 8, EFF_STORM, " conjures mists of decay")
+			end,
+	["info"] = 	function()
+		return "pow "..(get_antiregen_pow(Ind, 8)).." rad 1 dur "..(25 + get_level(Ind, ANTIREGEN_I, 20))
+			end,
+	["desc"] = 	{ "Inhibits your enemies' natural regeneration capabilities.",
+			  "Reduced effect vs enemies of levels exceeding the spell's power.", }
+}
+
+ANTIREGEN_II = add_spell {
+	["name"] = 	"Mists of Decay II",
+	["name2"] = 	"MoD II",
+	["school"] = 	{SCHOOL_OUNLIFE},
+	["spell_power"] = 0,
+	["level"] = 	40,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	-85,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		fire_wave(Ind, GF_NO_REGEN, 0, get_antiregen_pow(Ind, 0), 1, 25 + get_level(Ind, ANTIREGEN_I, 20), 8, EFF_STORM, " conjures mists of decay")
+			end,
+	["info"] = 	function()
+		return "pow "..(get_antiregen_pow(Ind, 0)).." rad 1 dur "..(25 + get_level(Ind, ANTIREGEN_I, 20))
+			end,
+	["desc"] = 	{ "Inhibits your enemies' natural regeneration capabilities.",
+			  "Reduced effect vs enemies of levels exceeding the spell's power.", }
+}

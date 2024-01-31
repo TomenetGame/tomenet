@@ -10836,6 +10836,7 @@ u32b mod_ball_spell_flags(int typ, u32b flags) {
 	case GF_UNBREATH:
 	case GF_THUNDER:
 	case GF_ANNIHILATION:
+	case GF_NO_REGEN:
 		return(flags | PROJECT_LODF);
 	/* very powerful 'force' stuff */
 	case GF_FORCE:

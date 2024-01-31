@@ -10065,6 +10065,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if (m_ptr->silenced > 0) m_ptr->silenced--;
 	else if (m_ptr->silenced < 0) m_ptr->silenced++;
 
+	/* Handle Mists of Decay */
+	if (m_ptr->hold_hp_regen) m_ptr->hold_hp_regen--;
+
 	/* Handle "stopped" */
 	if (m_ptr->no_move) {
 		m_ptr->no_move--;
