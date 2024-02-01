@@ -4542,7 +4542,6 @@ static int Receive_login(int ind) {
 					/* However, if our account already exists then allow it to continue existing. */
 					if (!Admin_GetAccount(&acc, connp->nick)) {
 						Destroy_connection(ind, "Name already in use.");
-						Sockbuf_flush(&connp->w);
 						return(-1);
 					}
 					WIPE(&acc, struct account);
