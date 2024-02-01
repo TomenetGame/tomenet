@@ -15622,7 +15622,8 @@ BLIND           blindness.
 CONFUSE         confusion (or chaos).
 TERRIFY         fear.
 PARALYZE        free action.
-EXP_xx          hold life, necromancy skill, necro+unlife maxed, level 99.
+EXP_xx          hold life; necromancy skill; necromancy AND unlife skill maxed;
+                attaining character level level 99.
                 This attack drains xp and the only full protection is being
                 level 99 or having both Necromancy and Unlife both at 50.000.
                 Other than that, reducing the chance to lose xp from this
@@ -15645,7 +15646,7 @@ UN_BONUS        disenchantment.
                 If unresisted, this attack will disenchant a random piece of
                 your equipment. The damage can partially be mitigated by having
                 disenchantment resistance.
-UN_POWER        magic device skill, fast-casting UN_POWER monster forms.
+UN_POWER        magic device skill; fast-casting UN_POWER monster forms.
                 It drains charges/energy from your items:
                 "Energy drains from your pack" for magic devices or polymorph
                 rings in your inventory or "Energy drains from your equipment"
@@ -16543,7 +16544,7 @@ stated.
                                 before that you only sense 'good' or 'cursed'.
 
     +Wizardry
-        .Sorcery                Learn to use spells of ALL magic schools at
+        .Sorcery                Learn to use spells of ALL wizardry schools at
                                 once, instead of training a particular branch!
                                 Note that if you train Sorcery your character's
                                 mana pool will become sensitive to usage of
@@ -18035,8 +18036,10 @@ create a character!):
     vampiric mist, see below) or holy or spirit spells.
     As a specialty, vampire istari are able to learn the occult shadow school
     and unlife school, which are not accessible to istari of other races.
-    They are unable to train in anti-magic in order to suppress magic, but they
-    can make use of items that provide anti-magic effects.
+    These two schools are not affected by Sorcery though, so they have to be
+    trained separately.
+    Vampires are unable to train in anti-magic in order to suppress magic, but
+    they can make use of items that provide anti-magic effects.
     Aside from darkness they also resist sanity-draining effects somewhat,
     cold, time, nether, they're immune to poison and it's hard to drain their
     life force - this is also true for life force drained by items a vampire
@@ -18329,6 +18332,8 @@ create a character!):
     As a specialty, vampire istari are able to learn the occult shadow school
     and the occult unlife school, as they cannot train water or nature schools
     and also don't have access to the holy-fire based Fireflash spell.
+    These two schools, Shadow and Unlife, are not affected by Sorcery though,
+    so they have to be trained additionally to any Sorcery skill.
 
     Hint:
     An istar has very few hit points compared to other classes, making
