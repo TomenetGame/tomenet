@@ -646,6 +646,10 @@ bool set_tim_deflect(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
+	/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
+	   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
+	set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -2273,6 +2277,10 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
+	/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
+	   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
+	set_tim_deflect(Ind, 0);
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -2280,14 +2288,20 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	if (v) {
 		if (!p_ptr->shield) {
 			switch (o) {
-				case SHIELD_ICE:
-					msg_print(Ind, "You are shielded by grinding ice!");
+			case SHIELD_COUNTER:
+				msg_print(Ind, "You are shielded by floating shards of rock!");
 				break;
-				case SHIELD_PLASMA:
-					msg_print(Ind, "You are shielded by searing plasma!");
+			case SHIELD_FIRE:
+				msg_print(Ind, "You are shielded by burning fire!");
 				break;
-				default:
-					msg_print(Ind, "A mystic shield forms around your body!");
+			case SHIELD_ICE:
+				msg_print(Ind, "You are shielded by grinding ice!");
+				break;
+			case SHIELD_PLASMA:
+				msg_print(Ind, "You are shielded by searing plasma!");
+				break;
+			default:
+				msg_print(Ind, "A mystic shield forms around your body!");
 				break;
 			}
 			notice = TRUE;
@@ -2298,14 +2312,20 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	else {
 		if (p_ptr->shield) {
 			switch (o) {
-				case SHIELD_ICE:
-					msg_print(Ind, "\377WYou are no longer shielded by \377Bice.");
+			case SHIELD_COUNTER:
+				msg_print(Ind, "\377WYou are no longer shielded by \377ufloating shards of rock\377W.");
 				break;
-				case SHIELD_PLASMA:
-					msg_print(Ind, "\377WYou are no longer shielded by \377Rplasma.");
+			case SHIELD_FIRE:
+				msg_print(Ind, "\377WYou are no longer shielded by \377rburning fire\377W.");
 				break;
-				default:
-					msg_print(Ind, "Your mystic shield crumbles away.");
+			case SHIELD_ICE:
+				msg_print(Ind, "\377WYou are no longer shielded by \377Bice\377W.");
+				break;
+			case SHIELD_PLASMA:
+				msg_print(Ind, "\377WYou are no longer shielded by \377Rplasma\377W.");
+				break;
+			default:
+				msg_print(Ind, "\377WYour mystic shield crumbles away.");
 				break;
 			}
 			notice = TRUE;
