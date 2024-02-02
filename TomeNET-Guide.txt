@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 31. January 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 2. February 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8387,14 +8387,14 @@ The Mirror              Donate gold and pray to the gods.
                         'raw experience' will still accumulate and count for
                         obtaining the favour of the gods.
 
-                        If you are sure that you have already donated at least
-                        5 million gold pieces and are now working on killing
-                        monsters or alternatively just sitting it out, you can
-                        check back in The Mirror anytime without donating any
-                        more gold (just choose to donate 0 gold pieces) until
-                        it tells you in a bright green message that your fate
-                        has finally been changed.
-                        ("You feel your fate has been changed!")
+                        Even if you just donate 0 gold, as a fallen winner you
+                        will still see feedback messages about the remaining
+                        amount of gold to donate and experience points to gain
+                        for your fate to change.
+                        So if you are just missing XP or time, just check back
+                        regularly until it tells you in a bright green message
+                        that your fate has finally been changed:
+                        "You feel your fate has been changed!"
 
                         The conversion rates are, as mentioned above:
                         1 minute of time passed = 250 Xp = 250 Au.
