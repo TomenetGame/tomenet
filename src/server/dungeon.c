@@ -5825,8 +5825,8 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_shield(Ind, p_ptr->shield - minus_magic, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 
 	/* Timed deflection */
-	if (p_ptr->tim_deflect)
-		(void)set_tim_reflect(Ind, p_ptr->tim_deflect - minus_magic);
+	if (p_ptr->tim_reflect)
+		(void)set_tim_reflect(Ind, p_ptr->tim_reflect - minus_magic);
 
 	/* Timed Feather Falling */
 	if (p_ptr->tim_ffall)

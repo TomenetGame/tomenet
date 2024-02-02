@@ -646,16 +646,16 @@ bool set_tim_reflect(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
-	   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
-	set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
-
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v) {
-		if (!p_ptr->tim_deflect) {
+		if (!p_ptr->tim_reflect) {
+			/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
+			   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
+			if (p_ptr->shield) set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
+
 			msg_print(Ind, "Moisture starts glittering and solidifying in the air!");
 			notice = TRUE;
 		}
@@ -663,14 +663,14 @@ bool set_tim_reflect(int Ind, int v) {
 
 	/* Shut */
 	else {
-		if (p_ptr->tim_deflect) {
+		if (p_ptr->tim_reflect) {
 			msg_print(Ind, "The air around you loses its mirroring effects.");
 			notice = TRUE;
 		}
 	}
 
 	/* Use the value */
-	p_ptr->tim_deflect = v;
+	p_ptr->tim_reflect = v;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);
@@ -2277,16 +2277,16 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
-	   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
-	set_tim_reflect(Ind, 0);
-
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v) {
 		if (!p_ptr->shield) {
+			/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
+			   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
+			if (p_ptr->tim_reflect) set_tim_reflect(Ind, 0);
+
 			switch (o) {
 			case SHIELD_COUNTER:
 				msg_print(Ind, "You are shielded by floating shards of rock!");

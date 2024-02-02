@@ -1165,7 +1165,7 @@ static void wr_extra(int Ind) {
 	wr_u32b(p_ptr->guild_flags);
 
 	/* Runecraft buff */
-	wr_u16b(p_ptr->tim_deflect);
+	wr_u16b(p_ptr->tim_reflect);
 
 	/* for shuffling/dealing a deck of cards */
 	wr_u16b(p_ptr->cards_diamonds);

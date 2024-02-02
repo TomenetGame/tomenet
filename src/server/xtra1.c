@@ -4770,7 +4770,7 @@ void calc_boni(int Ind) {
 		p_ptr->invis = p_ptr->tim_invis_power2;
 
 	/* Temporary deflection */
-	if (p_ptr->tim_deflect) p_ptr->reflect = TRUE;
+	if (p_ptr->tim_reflect) p_ptr->reflect = TRUE;
 
 	/* Temporary "Hero" */
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) {

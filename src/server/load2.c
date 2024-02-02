@@ -2599,8 +2599,8 @@ if (p_ptr->updated_savegame == 0) {
 		rd_byte(&tmp8u);
 	}
 
-	if (!older_than(4, 5, 3)) rd_u16b(&p_ptr->tim_deflect);
-	else p_ptr->tim_deflect = 0;
+	if (!older_than(4, 5, 3)) rd_u16b(&p_ptr->tim_reflect);
+	else p_ptr->tim_reflect = 0;
 
 	if (!older_than(4, 5, 28)) {
 		rd_u16b(&p_ptr->cards_diamonds);

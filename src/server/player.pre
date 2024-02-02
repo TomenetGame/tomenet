@@ -842,7 +842,7 @@ struct player_type
 	int mcharming;
 	u32b turns_on_floor;
 	bool dual_mode;
-	u16b tim_deflect;
+	u16b tim_reflect;
 
 	bool panel_changed;
 
