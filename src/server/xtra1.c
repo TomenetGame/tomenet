@@ -10812,14 +10812,17 @@ void handle_request_return_num(int Ind, int id, int num) {
 			msg_print(Ind, "You do not have that much gold with you!");
 			return;
 		}
+		msg_print(Ind, " ");
 		if (num <= 0) {
-			msg_print(Ind, "You decide not to donate at this time.");
-			msg_print(Ind, "You pray to the gods.");
+			msg_print(Ind, "\377BYou decide not to donate at this time.");
+			msg_print(Ind, "\377BYou pray to the gods.");
+
 			/* Check how far we are away from rekinging actually */
 			if (p_ptr->once_winner && !p_ptr->total_winner) {
-				if (p_ptr->solo_reking_au) msg_format(Ind, "You still need to donate %d AU for your fate to change.", p_ptr->solo_reking_au);
+				msg_print(Ind, " ");
+				if (p_ptr->solo_reking_au) msg_format(Ind, "You still need to donate \377y%d\377w AU for your fate to change.", p_ptr->solo_reking_au);
 				else msg_print(Ind, "You do not require to donate any more AU for your fate to change.");
-				if (p_ptr->solo_reking) msg_format(Ind, "You still need to gain %d XP for your fate to change.", p_ptr->solo_reking);
+				if (p_ptr->solo_reking) msg_format(Ind, "You still need to gain \377B%d\377w XP for your fate to change.", p_ptr->solo_reking);
 				else msg_print(Ind, "You do not require to gain any more XP for your fate to change.");
 			}
 			return;
@@ -10827,9 +10830,9 @@ void handle_request_return_num(int Ind, int id, int num) {
 
 		p_ptr->au -= num;
 		p_ptr->redraw |= PR_GOLD;
-		if (num == 1) msg_format(Ind, "Your donation of %d gold piece is well received.", num);
-		else msg_format(Ind, "Your donation of %d gold pieces is well received.", num);
-		msg_print(Ind, "You pray to the gods.");
+		if (num == 1) msg_format(Ind, "\377BYour donation of %d gold piece is well received.", num);
+		else msg_format(Ind, "\377BYour donation of %d gold pieces is well received.", num);
+		msg_print(Ind, "\377BYou pray to the gods.");
 
 		/* no fallen winner yet or already donated enough and changed our fate? */
 		if (!p_ptr->once_winner || p_ptr->total_winner) return;
@@ -10841,11 +10844,20 @@ void handle_request_return_num(int Ind, int id, int num) {
 			p_ptr->solo_reking_au = 0;
 			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
 		}
+		/* Fate was just changed, we may reking! */
 		if (p_ptr->solo_reking + p_ptr->solo_reking_au == 0) {
-			msg_print(Ind, "\377GYou feel your fate has been changed!");
+			msg_print(Ind, "\377GYou feel your fate has changed!");
 			// .. revive Sauron too? =P .. */
 			p_ptr->once_winner = 0;
 			p_ptr->r_killed[RI_MORGOTH] = 0;
+		}
+		/* Check how far we are away from rekinging actually */
+		else {
+			msg_print(Ind, " ");
+			if (p_ptr->solo_reking_au) msg_format(Ind, "You still need to donate \377y%d\377w AU for your fate to change.", p_ptr->solo_reking_au);
+			else msg_print(Ind, "You do not require to donate any more AU for your fate to change.");
+			if (p_ptr->solo_reking) msg_format(Ind, "You still need to gain \377B%d\377w XP for your fate to change.", p_ptr->solo_reking);
+			else msg_print(Ind, "You do not require to gain any more XP for your fate to change.");
 		}
 		return;
 #endif
