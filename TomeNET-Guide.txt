@@ -20548,7 +20548,11 @@ these limitations will be lifted.
 
     Fiery Shield    Creates a shield of flames around you that damages monsters
                     that attack you in melee.
-                    (It does not reduce damage you take from attacks.)
+                    (A reactive-shield spell, these are mutually exclusive,
+                    so only one at a time can be active. The only other such
+                    spell in Wizardry is 'Mirage Mirror'. All other spells that
+                    create reactive-shields are from Runecraft.)
+                    (This spell does not reduce damage you take from attacks.)
                     Required skill level for first spell level: 16.
 
                     Tier II: Level 36.
@@ -20627,9 +20631,14 @@ these limitations will be lifted.
 
                     Tier II: Level 40.
 
-    Mirage Mirror   Grants temporary reflection, reflecting physical and
-                    magical projectiles such as bolts or arrows, same as
-                    having an item or form that grants REFLECT/REFLECTING.
+    Mirage Mirror   Grants temporary reflection, ie a high chance to reflect
+                    physical and magical projectiles such as bolts or arrows,
+                    same as having an item or form that grants REFLECT (item)
+                    or REFLECTING (form).
+                    (This is a pseudo reactive-shield spell, mutually exclusive
+                    with other (pseudo) reactive-shield spells. The only
+                    other Wizardry spell colliding with it is 'Fiery Shield',
+                    all other reactive-shield spells are from Runecraft.)
                     Required skill level for first spell level: 35.
                     Shared spell (see above): Air, Water.
 
@@ -20681,9 +20690,14 @@ these limitations will be lifted.
     Invisibility    Turns you invisible. (See (5.14) for details.)
                     Required skill level for first spell level: 30.
 
-    Mirage Mirror   Grants temporary reflection, reflecting physical and
-                    magical projectiles such as bolts or arrows, same as
-                    having an item or form that grants REFLECT/REFLECTING.
+    Mirage Mirror   Grants temporary reflection, ie a high chance to reflect
+                    physical and magical projectiles such as bolts or arrows,
+                    same as having an item or form that grants REFLECT (item)
+                    or REFLECTING (form).
+                    (This is a pseudo reactive-shield spell, mutually exclusive
+                    with other (pseudo) reactive-shield spells. The only
+                    other Wizardry spell colliding with it is 'Fiery Shield',
+                    all other reactive-shield spells are from Runecraft.)
                     Required skill level for first spell level: 35.
                     Shared spell (see above): Air, Water.
 
