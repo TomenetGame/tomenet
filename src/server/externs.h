@@ -2201,7 +2201,7 @@ extern void set_dungeon_bonus(int id, bool reset);
 extern void intshuffle(int *array, int size);
 
 /* xtra2.c */
-extern bool set_tim_deflect(int Ind, int v);
+extern bool set_tim_reflect(int Ind, int v);
 #ifdef ARCADE_SERVER
 extern void set_pushed(int Ind, int dir);
 #endif

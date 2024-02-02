@@ -241,7 +241,7 @@ VAPORMIRROR = add_spell {
 	["fail"] = 	-75,
 	["spell_power"] = 0,
 	["spell"] = 	function()
-			set_tim_deflect(Ind, randint(5) + 20 + get_level(Ind, VAPORMIRROR, 30))
+			set_tim_reflect(Ind, randint(5) + 20 + get_level(Ind, VAPORMIRROR, 30))
 	end,
 	["info"] = 	function()
 			return "dur "..(20 + get_level(Ind, VAPORMIRROR, 30)).."+d5"

@@ -7080,7 +7080,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->recharging = 15 + randint(3) - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_COBALTFOCUS:
-			set_tim_deflect(Ind, 30 + randint(10));
+			set_tim_reflect(Ind, 30 + randint(10));
 			o_ptr->recharging = randint(10) + 80 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 		case ART_FIST:
@@ -7977,7 +7977,7 @@ bool unmagic(int Ind) {
 		set_savingthrow(Ind, 0) +
 		set_spirit_shield(Ind, 0, 0) +
 #endif
-		set_tim_deflect(Ind, 0) +
+		set_tim_reflect(Ind, 0) +
 		set_tim_ffall(Ind, 0) +
 		set_tim_lev(Ind, 0) +
 		set_tim_regen(Ind, 0, 0) +

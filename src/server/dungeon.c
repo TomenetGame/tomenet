@@ -5826,7 +5826,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Timed deflection */
 	if (p_ptr->tim_deflect)
-		(void)set_tim_deflect(Ind, p_ptr->tim_deflect - minus_magic);
+		(void)set_tim_reflect(Ind, p_ptr->tim_deflect - minus_magic);
 
 	/* Timed Feather Falling */
 	if (p_ptr->tim_ffall)

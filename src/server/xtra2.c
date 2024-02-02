@@ -642,7 +642,7 @@ bool set_tim_esp(int Ind, int v) {
 }
 
 /* Magical mirror from water and air, forming a solid mirage in the air, granting REFLECTING. */
-bool set_tim_deflect(int Ind, int v) {
+bool set_tim_reflect(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -2279,7 +2279,7 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 
 	/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
 	   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
-	set_tim_deflect(Ind, 0);
+	set_tim_reflect(Ind, 0);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
