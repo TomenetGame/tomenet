@@ -1147,6 +1147,7 @@ void prt_indicators(u32b indicators) {
 	prt_indicator_regen((indicators & IND_REGEN) != 0);
 	prt_indicator_dispersion((indicators & IND_DISPERSION) != 0);
 	prt_indicator_charm((indicators & IND_CHARM) != 0);
+	prt_indicator_shield((indicators & IND_SHIELD) != 0);
 }
 
 void prt_indicator_res_fire(bool is_active) {
@@ -1320,6 +1321,22 @@ void prt_indicator_charm(bool is_active) {
 
 	if (is_active) c_put_str(TERM_L_BLUE, "Charm", ROW_CHARM, COL_CHARM);
 	else c_put_str(TERM_WHITE, "     ", ROW_CHARM, COL_CHARM);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_indicator_shield(bool is_active) {
+	int x, y;
+
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_active) c_put_str(TERM_L_UMBER, "Shl", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+	else c_put_str(TERM_WHITE, "   ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

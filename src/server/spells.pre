@@ -153,6 +153,7 @@ extern bool set_stopped(int Ind, int v);
 extern bool set_image(int Ind, int v);
 extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
+extern bool set_tim_reflect(int Ind, int v);
 extern void wizard_lock(int Ind, int dir);
 
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);

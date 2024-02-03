@@ -757,6 +757,7 @@ static void prt_indicators(int Ind) {
 	if (p_ptr->tim_regen) indicators |= IND_REGEN;
 	if (p_ptr->dispersion) indicators |= IND_DISPERSION;
 	if (p_ptr->mcharming) indicators |= IND_CHARM;
+	if (p_ptr->tim_reflect || p_ptr->shield) indicators |= IND_SHIELD;
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, indicators);
 }
 

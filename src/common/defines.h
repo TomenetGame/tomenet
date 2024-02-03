@@ -2388,6 +2388,9 @@
 #define ROW_RESIST_MANA		23
 #define COL_RESIST_MANA		6
 
+#define ROW_TEMP_SHIELD		23
+#define COL_TEMP_SHIELD		8
+
 #define ROW_TEMP_ESP		25
 #define COL_TEMP_ESP		1
 
@@ -4880,6 +4883,7 @@
 #define IND_REGEN	0x00000100U /* Active timed hp regeneration boost */
 #define IND_DISPERSION	0x00000200U /* Active dispersion (not timed, switchable!) */
 #define IND_CHARM	0x00000400U /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
+#define IND_SHIELD	0x00000800U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

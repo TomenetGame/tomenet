@@ -2350,6 +2350,9 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
