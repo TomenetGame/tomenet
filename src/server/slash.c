@@ -5891,6 +5891,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				cfg.runlevel = 2051;
 				return;
 			}
+			else if (prefix(messagelc, "/shutulow")) {
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and ultra-few (1) players are on *");
+				cfg.runlevel = 2041;
+				return;
+			}
 			else if (prefix(messagelc, "/shutrec")) { /* /shutrec [<minutes>] [T] */
 				if (!k) k = 5;
 				if (strchr(message3, 'T')) timed_shutdown(k, TRUE);//terminate server for maintenance

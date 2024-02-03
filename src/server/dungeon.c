@@ -8395,6 +8395,40 @@ static void process_world(void) {
 			}
 		}
 	}
+	/* /shutulow */
+	else if (cfg.runlevel == 2041) {
+		for (i = NumPlayers; i > 0 ;i--) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			/* Ignore admins that are loged in */
+			if (admin_p(i)) continue;
+			/* count players */
+			n++;
+
+			/* Ignore characters that are afk and not in a dungeon/tower */
+			//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+			/* Ignore chars in fixed irondeepdive towns */
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+			if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
+
+			/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+			if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
+			/* Ignore characters that are not in a dungeon/tower */
+			if (p_ptr->wpos.wz == 0) {
+				/* Don't interrupt events though */
+				if (p_ptr->wpos.wx != WPOS_SECTOR000_X || p_ptr->wpos.wy != WPOS_SECTOR000_Y || !sector000separation) continue;
+			}
+			break;
+		}
+		if (!i && (n <= 1)) {
+			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+			cfg.runlevel = 2049;
+		}
+	}
 
 	/* Hack -- Compact the object list occasionally */
 	if (o_top + 160 > MAX_O_IDX) compact_objects(320, TRUE);
