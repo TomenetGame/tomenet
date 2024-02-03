@@ -2679,8 +2679,12 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 /*
  * Add a new "quark" to the set of quarks.
  */
-s32b quark_add(cptr str) {
+s32b quark_add(cptr raw_str) {
 	s32b i;
+	char str[INSCR_LEN];
+
+	strncpy(str, raw_str, INSCR_LEN);
+	str[INSCR_LEN - 1] = 0;
 
 	/* Look for an existing quark */
 	for (i = 1; i < quark__num; i++) {

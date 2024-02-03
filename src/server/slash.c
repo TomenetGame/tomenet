@@ -861,7 +861,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		    prefix(messagelc, "/t ") || (prefix(messagelc, "/t") && !message[2])) {
 			object_type *o_ptr;
 
-			char powins[1024]; //even more than just MAX_CHARS_WIDE, let's play it safe..
+			char powins[POW_INSCR_LEN];
 			char o_name[ONAME_LEN];
 			char *pi_pos = NULL, *pir_pos;
 			bool redux = FALSE;

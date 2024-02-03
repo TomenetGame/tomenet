@@ -11674,7 +11674,7 @@ static int Receive_inscribe(int ind) {
 	char ch;
 	int n, player = -1;
 	s16b item;
-	char inscription[MAX_CHARS];
+	char inscription[INSCR_LEN];
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -11686,8 +11686,8 @@ static int Receive_inscribe(int ind) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return(n);
 	}
-	/* paranoia? */
-	inscription[MAX_CHARS - 1] = '\0';
+	/* prevent buffer overflow */
+	inscription[INSCR_LEN - 1] = '\0';
 
 	/* Sanity check - mikaelh */
 	if (!verify_inven_item(player, item)) return(1);

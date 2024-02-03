@@ -5920,8 +5920,8 @@ bool monster_death(int Ind, int m_idx) {
 
 	int	number = 0;
 
-	char buf[160], m_name[MAX_CHARS], o_name[ONAME_LEN];
-	char titlebuf[160];
+	char buf[MAX_CHARS_WIDE], m_name[MAX_CHARS], o_name[ONAME_LEN];
+	char titlebuf[MAX_CHARS_WIDE];
 
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 

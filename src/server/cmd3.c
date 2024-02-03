@@ -2172,7 +2172,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 			}
 		} else if (o_ptr->sval != SV_SPELLBOOK) { /* Predefined book (handbook or tome) */
 			int i, num = 0, spell;
-			char out_val[160];
+			char out_val[MAX_CHARS];
 
 			/* Find amount of spells in this book */
 			sprintf(out_val, "return book_spells_num2(%d, %d)", -1, o_ptr->sval);
@@ -2549,7 +2549,7 @@ bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr in
 	const char *pi_pos_src = inscription;
 
 	bool redux = FALSE;
-	char o_name[ONAME_LEN], powins[1024], *pir_pos; //even more than just MAX_CHARS_WIDE, let's play it safe..
+	char o_name[ONAME_LEN], powins[POW_INSCR_LEN], *pir_pos; //even more than just MAX_CHARS_WIDE, let's play it safe..
 	player_type *p_ptr;
 
 
@@ -2694,10 +2694,10 @@ void do_cmd_uninscribe(int Ind, int item) {
  * Inscribe an object with a comment
  */
 void do_cmd_inscribe(int Ind, int item, cptr inscription) {
-	char tmp[MSG_LEN];
+	char tmp[INSCR_LEN];
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	char o_name[ONAME_LEN], modins[MAX_CHARS];
+	char o_name[ONAME_LEN], modins[INSCR_LEN];
 	const char *qins;
 	char *c;
 
@@ -2985,7 +2985,7 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 
 	/* Repeat until done */
 	while (!done) {
-		char tmp_val[80];
+		char tmp_val[MAX_CHARS];
 		char which = ' ';
 
 		/* Build the prompt */

@@ -2578,7 +2578,7 @@ static void display_entry(int Ind, int pos) {
 	object_type	*o_ptr;
 	s64b		x;
 
-	char		o_name[ONAME_LEN], powers[MAX_CHARS_WIDE];
+	char		o_name[ONAME_LEN], powers[POW_INSCR_LEN];
 	byte		attr;
 #ifdef IDDC_DED_DISCOUNT
 	int		wgt = -1;
@@ -2825,6 +2825,7 @@ static void display_entry(int Ind, int pos) {
 		    //|| (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) -- no, because custom book spells are already all transmitted via Send_store_wide below.
 		    )
 			power_inscribe(o_ptr, o_ptr->tval == TV_BOOK ? TRUE : FALSE, powers);
+			powers[INSCR_LEN - 1] = 0;
 
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {

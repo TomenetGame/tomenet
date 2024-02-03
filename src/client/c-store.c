@@ -391,7 +391,7 @@ void store_paste_item(char *out_val, int item) {
 
 		/* Paste store_powers if available (randarts etc) or -specialty!- for books, their spells */
 		if (store.stock[item].tval == TV_BOOK) {
-			char powins[1024]; //even more than just MAX_CHARS_WIDE, let's play it safe..
+			char powins[POW_INSCR_LEN];
 
 			powins[0] = 0;
 			if (is_custom_tome(store.stock[item].sval)) {

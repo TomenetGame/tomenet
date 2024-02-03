@@ -197,10 +197,15 @@
  * Define the maximum number of characters to use in many things
  */
 #define MAX_CHARS		80	/* typically 1 line */
-#define MAX_CHARS_WIDE		160	/* typically a line with possibly colour codes */
+#define MAX_CHARS_WIDE		(MAX_CHARS * 2)	/* typically a line with possibly colour codes */
 
 /* max length + 1 of item names including inscription */
 #define ONAME_LEN		160
+/* max item inscription length + 1 */
+#define INSCR_LEN		80
+/* Reserve space for already existing inscription + 4 powins-marker bytes (2 at start, 2 at end: "@^" or "@&)
+   and 2x the legal inscription length, in case we're not called to actually inscribe an item but just to return a full list of spells in a book. */
+#define POW_INSCR_LEN		(INSCR_LEN * 3 + 4)
 
 /* max length + 1 of monster names (with pronominum etc) */
 #define MNAME_LEN		80
