@@ -680,6 +680,7 @@ static void grid_bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
  * Pass over any monsters that may be in the way
  * Affect grids, objects, monsters, and the player
  */
+#if 1
 static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	player_type *p_ptr = Players[Ind];
 
@@ -699,7 +700,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
 }
-#if 0
+#else
 static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 	player_type *p_ptr = Players[Ind];
 	//int rad;
@@ -723,7 +724,27 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
-#endif	/*0*/
+#endif
+static void breath_ff(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
+	player_type *p_ptr = Players[Ind];
+
+#ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
+	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+ #else
+	/* hack: we play it at lower volume for non-targetted players but at full volume
+	   for the one targetted, since he's in the breath's "air stream" :) - C. Blue */
+	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	sound_near_monster_atk(m_idx, Ind, "breath", NULL, SFX_TYPE_MON_SPELL);
+ #endif
+#endif
+
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_MKIL;
+
+	/* Target the player with a ball attack */
+	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
+}
+
 void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	player_type *p_ptr = Players[Ind];
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
@@ -2764,7 +2785,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (!local) disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disintegration for", m_name);
-		breath(Ind, m_idx, GF_DISINTEGRATE, ((eff_m_hp / 3) > 300 ? 300 : (eff_m_hp / 3)), y, x, srad);
+		/* Disintegration may cause friendly-fire instant wipe on weak monsters */
+		breath_ff(Ind, m_idx, GF_DISINTEGRATE, ((eff_m_hp / 3) > 300 ? 300 : (eff_m_hp / 3)), y, x, srad);
 		break;
 
 	/* RF4_XXX6X4 */

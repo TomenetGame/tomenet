@@ -20569,6 +20569,18 @@ S:1_IN_1
 S:SHRIEK
 D:For testing
 
+N:1163:Disintegrating Test Blob
+G:j:R
+I:100:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NO_CREDIT | NEVER_MOVE | NO_DEATH
+S:1_IN_1
+S:BR_DISI
+D:For testing
+
 
 # N: serial number : monster name
 # G: symbol : color

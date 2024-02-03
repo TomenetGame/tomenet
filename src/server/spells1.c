@@ -4530,6 +4530,11 @@ int divide_spell_damage(int dam, int div, int typ) {
 	case GF_DARK_WEAK:
 		/* - sorry, 8192 is the shadow spell hack :P */
 		return((dam & 0x2000) + (dam & 0x1FFF) / div);
+	case GF_OLD_HEAL:
+		/* Usually (happens as ball spell in monster traps only, basically) may get reduced,
+		   just make sure in any case that we never break the 9999 hack for heal-monster wands: */
+		if (dam == 9999) return(9999);
+		break;
 	}
 
 	/* normal magical damage spells */
@@ -6302,7 +6307,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	bool hates_heal;
 
 	int plev = 25; /* replacement dummy for when a monster isn't
-			  affected by a real player but by eg a trap */
+			  affected by a real player but by eg a trap.
+			  TODO: Make dependant of dlevel maybe?
+			  Currently only used for GF_DISI (and was also used for GF_TIME). */
 
 	cave_type **zcave, *c_ptr;
 	player_type *p_ptr = NULL;
@@ -6311,24 +6318,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 
-	//marker to handle blindness power differently
-	if (typ == GF_DARK_WEAK && (dam & 8192)) {
-		dark_spell = TRUE;
-		dam &= ~8192;
-	}
-
-	/* hack -- by trap */
-	quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx ? TRUE : FALSE));
-
-	//if (quiet) return(FALSE);
-	if (Ind <= 0 || 0 - Ind == c_ptr->m_idx) return(FALSE);
-	if (!quiet) {
-		p_ptr = Players[Ind];
-		plev = p_ptr->lev;
-	}
-
-	/* Nobody here */
+	/* No monster here? */
 	if (c_ptr->m_idx <= 0) return(FALSE);
+
+	/* Spell was cast by a monster? */
+	if (who > 0) {
+		/* Never affect the spell's projector (caster) himself */
+		if (c_ptr->m_idx == who) return(FALSE);
+		/* In general no friendly fire between monsters, except for specialty flag. */
+		if (!(flg & PROJECT_MKIL)) return(FALSE);
+	}
 
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -6351,15 +6350,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		else m_ptr->hit_proj_id = mon_hit_proj_id;
 	}
 
-	/* Acquire race pointer */
-	r_ptr = race_inf(m_ptr);
-
-	/* Acquire name */
-	name = r_name_get(m_ptr);
-
-	/* Never affect projector */
-	if ((who > 0) && (c_ptr->m_idx == who)) return(FALSE);
-
 	/* Spells cast by a player never hurt a friendly golem */
 	//if (IS_PVP)
 	if (m_ptr->owner && who < 0 && who > PROJECTOR_UNUSUAL) {
@@ -6373,17 +6363,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (i == NumPlayers) return(FALSE);
 	}
 
-	/* Set the "seen" flag */
+
+	/* hack -- by trap -- TODO: Resolve redundant checks with far-above friendly-fire check: Ind <= 0. */
+	quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx ? TRUE : FALSE));
 	if (!quiet) {
+		p_ptr = Players[Ind];
+		plev = p_ptr->lev;
+
+		/* Set the "seen" flag */
 		seen = p_ptr->mon_vis[c_ptr->m_idx];
 		/* Cannot 'hear' if too far */
 		if (!seen && distance(p_ptr->py, p_ptr->px, y, x) > MAX_SIGHT) quiet = TRUE;
-	}
-	else seen = FALSE;
+		/* Get the monster name (BEFORE polymorphing) */
+		else monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+	} else seen = FALSE;
 
+	/* Acquire race pointer */
+	r_ptr = race_inf(m_ptr);
 
-	/* Get the monster name (BEFORE polymorphing) */
-	if (!quiet) monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+	/* Acquire name */
+	name = r_name_get(m_ptr);
 
 
 	/* Handle reflection - it's back, though weaker - C. Blue */
@@ -6412,25 +6411,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 
 
+	//marker to handle blindness power differently
+	if (typ == GF_DARK_WEAK && (dam & 8192)) {
+		dark_spell = TRUE;
+		dam &= ~8192;
+	}
+
 	/* Extract radius */
 	div = r + 1;
 
 	/* Decrease damage */
 	dam = divide_spell_damage(dam, div, typ);
-
-
-	/* Mega-Hack */
-	project_m_n++;
-	project_m_x = x;
-	project_m_y = y;
-
-
-	/* Some monsters get "destroyed" */
-	if ((r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_UNDEAD) ||
-	    (r_ptr->flags2 & RF2_STUPID) || (strchr("AEvg", r_ptr->d_char))) {
-		/* Special note at death */
-		note_dies = " is destroyed";
-	}
 
 	/* Undead and those of Nurgle hate healing */
 	hates_heal = (r_ptr->flags3 & RF3_UNDEAD) || ((r_ptr->flags3 & RF3_DEMON) && (m_ptr->r_idx == RI_GUO || m_ptr->r_idx == RI_NURGLING || m_ptr->r_idx == RI_BEARER_NURGLE || m_ptr->r_idx == RI_BEAST_NURGLE));
@@ -6441,9 +6432,23 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		else typ = GF_OLD_HEAL;
 	} else if (typ == GF_OLD_HEAL && hates_heal) {
 		typ = GF_HOLY_FIRE;
-		/* Unhack wand-hack */
+		/* Unhack 'super-heal' wand-hack for heal-hating monsters */
 		if (dam == 9999) dam = damroll(20, 30);
 	}
+
+	/* Some monsters get "destroyed" */
+	if ((r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_UNDEAD) ||
+	    (r_ptr->flags2 & RF2_STUPID) || (strchr("AEvg", r_ptr->d_char))) {
+		/* Special note at death */
+		note_dies = " is destroyed";
+	}
+
+
+	/* Mega-Hack */
+	project_m_n++;
+	project_m_x = x;
+	project_m_y = y;
+
 
 	/* Analyze the damage type */
 	switch (typ) {
@@ -8452,6 +8457,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " loses some skin";
 			note_dies = " evaporates";
 			dam *= 2;
+		}
+
+		/* For PROJECT_MKIL: Wipe a lowish monster out completely!
+		   (Lowest Disi-breather being Norsa-70; highest FRIENDS troll: Scrag-37; lvl 40 also has a bunch of master-p) */
+		if (r_ptr->level < 40) {
+			delete_monster_idx(c_ptr->m_idx, TRUE);
+			return(FALSE);
 		}
 
 		if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -13502,7 +13514,7 @@ msg_format(-who, "  pg x=%d,y=%d,r=%d,dam=%d,grids=%d",x,y,rad,dam,grids);
 #endif
 
 			/* Affect the monster */
-			//if (project_m(0-who, who, y2, x2, dist, wpos, y, x, dam, typ)) notice = TRUE;
+			//if (project_m(0 - who, who, y2, x2, dist, wpos, y, x, dam, typ)) notice = TRUE;
 
 			if (zcave[y][x].m_idx <= 0) continue;
 

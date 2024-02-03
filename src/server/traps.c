@@ -4735,7 +4735,6 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 #endif
 
 	/* Actually hit the monster */
-	//(void)project_m(who, y, x, 0, y, x, dam, typ);
 	(void)project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
 	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }

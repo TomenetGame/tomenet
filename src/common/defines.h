@@ -4703,6 +4703,7 @@
 #define PROJECT_STAR	0x00100000U	/* Cast 8 rays and hit the central grid at target location. - Kurzel */
 #define PROJECT_TRAP	0x00200000U	/* Caused by a set-up incident, added for blast charges (ENABLE_DEMOLITIONIST) to allow larger GF_DETONATION radius */
 #define PROJECT_BOUN	0x00400000U	/* Attack has bounced at least once */
+#define PROJECT_MKIL	0x00800000U	/* Specialty: Cast by monsters, yet also affect other monsters! Aka friendly fire for monsters. Added to provide anti-cheeze for badass disintegration-summoners. */
 
 /* ToME expansions */
 #if 0	/* soon */
