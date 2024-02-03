@@ -5491,6 +5491,33 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, " (2) \3772lamp light\377w (3) \3773shaded lamp\377w (4) \3774menu selector\377w (5) \3775palette test\377w (6) \3776marker");
 			return;
 		}
+		/* fire up all available status tags in the display to see
+		   which space is actually occupied and which is free */
+		else if (prefix(messagelc, "/testdisplay")) {
+			struct worldpos wpos;
+
+			Send_extra_status(Ind, "ABCDEFGHIJKL");
+			//wpos.wx = 0; wpos.wy = 0; wpos.wz = 200;
+			//Send_depth(Ind, &wpos);
+			wpos.wx = p_ptr->wpos.wx; wpos.wy = p_ptr->wpos.wy; wpos.wz = p_ptr->wpos.wz;
+			Send_depth_hack(Ind, &wpos, TRUE, "TOONTOWNoO");
+			Send_food(Ind, PY_FOOD_MAX);
+			Send_blind(Ind, TRUE);
+			Send_confused(Ind, TRUE);
+			Send_fear(Ind, TRUE);
+			Send_poison(Ind, 2);
+			Send_state(Ind, TRUE, TRUE, TRUE);
+			Send_speed(Ind, 210);
+			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) Send_study(Ind, TRUE);
+			else Send_bpr_wraith(Ind, 99, TERM_L_RED, "wRaItH");
+			Send_cut(Ind, 1001);
+			Send_stun(Ind, 101);
+			Send_AFK(Ind, 1);
+			Send_encumberment(Ind, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+			Send_monster_health(Ind, 10, TERM_VIOLET);
+			if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, 0xFFFFFFFF);
+			return;
+		}
 		else if (prefix(messagelc, "/setorder")) { /* Non-admin version - Set custom list position for this character in the account overview screen on login */
 			int max_cpa = MAX_CHARS_PER_ACCOUNT;
 			int *id_list, ids, cur_order, order, max_order = 0;
@@ -10481,33 +10508,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* give msg and quit */
 				msg_format(Ind, "Set %d items to ITEM_REMOVAL_NORMAL.", j);
 				s_printf("Purged ITEM_REMOVAL_NEVER off %d items.\n", j);
-				return;
-			}
-			/* fire up all available status tags in the display to see
-			   which space is actually occupied and which is free */
-			else if (prefix(messagelc, "/testdisplay")) {
-				struct worldpos wpos;
-
-				Send_extra_status(Ind, "ABCDEFGHIJKL");
-				//wpos.wx = 0; wpos.wy = 0; wpos.wz = 200;
-				//Send_depth(Ind, &wpos);
-				wpos.wx = p_ptr->wpos.wx; wpos.wy = p_ptr->wpos.wy; wpos.wz = p_ptr->wpos.wz;
-				Send_depth_hack(Ind, &wpos, TRUE, "TOONTOWNoO");
-				Send_food(Ind, PY_FOOD_MAX);
-				Send_blind(Ind, TRUE);
-				Send_confused(Ind, TRUE);
-				Send_fear(Ind, TRUE);
-				Send_poison(Ind, 2);
-				Send_state(Ind, TRUE, TRUE, TRUE);
-				Send_speed(Ind, 210);
-				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) Send_study(Ind, TRUE);
-				else Send_bpr_wraith(Ind, 99, TERM_L_RED, "wRaItH");
-				Send_cut(Ind, 1001);
-				Send_stun(Ind, 101);
-				Send_AFK(Ind, 1);
-				Send_encumberment(Ind, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-				Send_monster_health(Ind, 10, TERM_VIOLET);
-				if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, 0xFFFFFFFF);
 				return;
 			}
 			/* test new \376, \375, \374 chat line prefixes */
