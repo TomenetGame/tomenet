@@ -654,7 +654,7 @@ extern void keymap_init(void);
 extern void macro_add(cptr pat, cptr act, bool cmd_flag);
 extern char inkey(void);
 extern cptr quark_str(s32b num);
-extern s32b quark_add(cptr str);
+extern s32b quark_add(cptr raw_str);
 extern s16b message_num(void);
 extern cptr message_str(s16b age);
 extern void message_add(cptr msg);

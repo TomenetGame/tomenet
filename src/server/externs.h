@@ -2036,7 +2036,7 @@ extern void ascii_to_text(char *buf, cptr str);
 extern void keymap_init(void);
 extern char inkey(void);
 extern cptr quark_str(s32b num);
-extern s32b quark_add(cptr str);
+extern s32b quark_add(cptr raw_str);
 extern void note_crop_pseudoid(char *s2, char *psid, cptr s);
 extern void note_toggle_cursed(object_type *o_ptr, bool cursed);
 extern void note_toggle_empty(object_type *o_ptr, bool empty);
