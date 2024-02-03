@@ -2576,7 +2576,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			if (known && artifact_p(o_ptr) && !(mode & 2048)) continue;
 
 			/* Add a plural if needed */
-			if (o_ptr->number != 1) {
+			if (o_ptr->number != 1 && t >= buf + 2) { //guard vs buffer underflow
 				char k = t[-1], k2 = t[-2];
 
 				/* XXX XXX XXX Mega-Hack */
@@ -2823,7 +2823,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* No more details wanted */
 	if ((mode & 7) < 1) {
-		if (t - buf <= 65 || mode & 8) {
+		if (t - buf <= 65 || (mode & 8)) {
 			return;
 		} else {
 			object_desc(Ind, buf, o_ptr, pref, mode | 8);
@@ -3041,7 +3041,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* No more details wanted */
 	if ((mode & 7) < 2) {
-		if (t - buf <= 65 || mode & 8) return;
+		if (t - buf <= 65 || (mode & 8)) return;
 		else {
 			object_desc(Ind, buf, o_ptr, pref, mode | 8);
 			return;
@@ -3250,7 +3250,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* No more details wanted */
 	if ((mode & 7) < 3) {
-		if (t - buf <= 65 || mode & 8) {
+		if (t - buf <= 65 || (mode & 8)) {
 			return;
 		} else {
 			object_desc(Ind, buf, o_ptr, pref, mode + 8);
@@ -3310,7 +3310,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* This should always be true, but still.. */
 	if ((mode & 7) < 4) {
-		if (t - buf <= 65 || mode >= 8) {
+		if (t - buf <= 65 || (mode >= 8)) {
 			return;
 		} else {
 			object_desc(Ind, buf, o_ptr, pref, mode + 8);
@@ -3838,9 +3838,9 @@ cptr item_activation(object_type *o_ptr) {
  * with the much more involved two_dice_cdf below.
  */
 static long one_die_cdf(int die, int bonus, int target) {
-	if (target <= bonus + 1) return 0;
-	if (target <= die + bonus) return (target - bonus - 1);
-	return die;
+	if (target <= bonus + 1) return(0);
+	if (target <= die + bonus) return((target - bonus - 1));
+	return(die);
 }
 
 /*
@@ -3851,18 +3851,17 @@ static long one_die_cdf(int die, int bonus, int target) {
 static long two_dice_cdf(int die1, int die2, int bonus, int target) {
 	if (die1 < die2) { // Swap to guarantee that die1 > die2 without requiring it of the user of the function.
 		int temp = die2;
+
 		die2 = die1;
 		die1 = temp;
 	}
-	if (target <= bonus + 2) return 0;
-	if (target <= die2 + bonus + 1) return (long)(target - bonus - 2) * (target - bonus - 1) / 2;
-	if (target <= die1 + bonus + 1) {
+	if (target <= bonus + 2) return(0);
+	if (target <= die2 + bonus + 1) return((long)(target - bonus - 2) * (target - bonus - 1) / 2);
+	if (target <= die1 + bonus + 1)
 		return ((long)(target - die2 - bonus - 1) * die2 + (long)(die2 - 1) * die2 / 2);
-	}
-	if (target <= die1 + die2 + bonus) {
-		return (long) die1 * die2 - (long) (die1 + die2 + bonus - target + 1) * (die1 + die2 + bonus - target + 2) / 2;
-	}
-	return (long) die1 * die2;
+	if (target <= die1 + die2 + bonus)
+		return((long) die1 * die2 - (long) (die1 + die2 + bonus - target + 1) * (die1 + die2 + bonus - target + 2) / 2);
+	return((long) die1 * die2);
 }
 
 /*
@@ -3884,13 +3883,15 @@ static int melee_crit_dam(int dam, int bonus, int crit_die) {
 	// Checked the math for the largest possible values of damage and crit die,
 	// and we get uncomfortably close to the 32-bit max value, so I'm playing it safe.
 	u64b crit_dam = (u64b) denominator * (4 * dam + 15);
+
+
 	crit_dam += (u64b) great_chance * (dam + 15);
 	crit_dam += (u64b) superb_chance * (dam + 15);
 	crit_dam += (u64b) greater_chance * (dam + 15);
 	crit_dam += (u64b) superber_chance * (dam + 15);
 	crit_dam /= (3 * denominator);
 
-	return ((int) crit_dam);
+	return((int) crit_dam);
 }
 
 /*
@@ -3915,6 +3916,7 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 	int crit_die_size = scaled_crit_skill ? scaled_crit_skill : 1; //randint(0)=1
 	long critical_damage;
 
+
 	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
 	dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee + bonus) * 10;
 	dam *= p_ptr->num_blow;
@@ -3925,10 +3927,8 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 	dam = (((long) critical_chance) * critical_damage + (5000L - critical_chance) * dam) / 5000;
 
 	if (dam > 0) {
-		if (dam % 10)
-			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
-		else
-			fprintf(fff, "    %d", dam / 10);
+		if (dam % 10) fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+		else fprintf(fff, "    %d", dam / 10);
 	} else fprintf(fff, "    0");
 	fprintf(fff, " against %s", against);
 
@@ -3944,10 +3944,8 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 		dam = (((long) critical_chance) * critical_damage + (5000L - critical_chance) * dam) / 5000;
 
 		if (dam > 0) {
-			if (dam % 10)
-				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
-			else
-				fprintf(fff, "    %d", dam / 10);
+			if (dam % 10) fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+			else fprintf(fff, "    %d", dam / 10);
 		} else fprintf(fff, "    0");
 		fprintf(fff, " against %s", against2);
 	}
@@ -3974,6 +3972,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 	   to get! We can just take care of forced cases which are..
 	   - unequipping a shield or secondary weapon if weapon is MUST2H here.
 	   - unequipping a secondary weapon if weapon is weapon is SHOULD2H - C. Blue */
+
 
 	/* Ok now the hackish stuff, we replace the current weapon with this one */
 	/* XXX this hack can be even worse under TomeNET, dunno :p */
@@ -4107,13 +4106,15 @@ static int ranged_crit_dam(int dam, int bonus, int crit_die) {
 	// Checked the math for the largest possible values of damage and crit die,
 	// and we get uncomfortably close to the 32-bit max value, so I'm playing it safe.
 	u64b crit_dam = (u64b) denominator * (4 * dam + 15);
+
+
 	crit_dam += (u64b) great_chance * (dam + 15);
 	crit_dam += (u64b) superb_chance * dam;
 	crit_dam += (u64b) greater_chance * dam;
 	crit_dam += (u64b) superber_chance * (dam + 15);
 	crit_dam /= (3 * denominator);
 
-	return ((int) crit_dam);
+	return((int) crit_dam);
 }
 
 static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2) {
@@ -4137,10 +4138,8 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 	dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
 
 	if (dam > 0) {
-		if (dam % 10)
-			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
-		else
-			fprintf(fff, "    %d", dam / 10);
+		if (dam % 10) fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+		else fprintf(fff, "    %d", dam / 10);
 	} else fprintf(fff, "    0");
 	fprintf(fff, " against %s", against);
 
@@ -4156,12 +4155,9 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 		dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
 
 		if (dam > 0) {
-			if (dam % 10)
-				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
-			else
-				fprintf(fff, "    %d", dam / 10);
-		} else
-			fprintf(fff, "    0");
+			if (dam % 10) fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+			else fprintf(fff, "    %d", dam / 10);
+		} else fprintf(fff, "    0");
 		fprintf(fff, " against %s", against2);
 	}
 	fprintf(fff, "\n");
@@ -4174,6 +4170,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32
 
 	/* save timed effects that might be changed on weapon switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
+
 
 	/* this stuff doesn't take into account dual-wield or shield(lessness) directly,
 	   but the player actually has to take care of unequipping/reequipping his
@@ -4261,16 +4258,15 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam += (p_ptr->to_d_ranged) * 10;
 	dam *= tmul;
 
+
 	// expected damage IF it crits
 	critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 	// expected damage factoring in crits
 	dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
 
 	if (dam > 0) {
-		if (dam % 10)
-			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
-		else
-			fprintf(fff, "    %d", dam / 10);
+		if (dam % 10) fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+		else fprintf(fff, "    %d", dam / 10);
 	} else fprintf(fff, "    0");
 	fprintf(fff, " against %s", against);
 
@@ -4290,13 +4286,9 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
 
 		if (dam > 0) {
-			if (dam % 10)
-				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
-			else
-				fprintf(fff, "    %d", dam / 10);
-		}
-		else
-			fprintf(fff, "    0");
+			if (dam % 10) fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+			else fprintf(fff, "    %d", dam / 10);
+		} else fprintf(fff, "    0");
 		fprintf(fff, " against %s", against2);
 	}
 	fprintf(fff, "\n");
@@ -4314,6 +4306,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 
 	/* save timed effects that might be changed on ammo switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
+
 
 	switch (o_ptr->tval) {
 	case TV_SHOT:
@@ -4379,10 +4372,8 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 	if (o_ptr->pval2) {
 		roff("The explosion will be ");
 		i = 0;
-		while (gf_names[i].gf != -1)
-		{
-			if (gf_names[i].gf == o_ptr->pval2)
-				break;
+		while (gf_names[i].gf != -1) {
+			if (gf_names[i].gf == o_ptr->pval2) break;
 			i++;
 		}
 		c_roff(TERM_L_GREEN, (gf_names[i].gf != -1) ? gf_names[i].name : "something weird");
@@ -4410,6 +4401,7 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 
 	/* save timed effects that might be changed on ammo switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
+
 
 	switch (o_ptr->sval) {
 	case SV_SLING:
@@ -4517,6 +4509,7 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, int 
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
+
 
 	if (!Ind_target) Ind_target = Ind;
 	slot = wield_slot(Ind, o_ptr); /* slot the item goes into */
@@ -4647,6 +4640,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, int 
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
+
 
 	if (!Ind_target) Ind_target = Ind;
 
@@ -4785,6 +4779,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, int
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
 
+
 	if (!Ind_target) Ind_target = Ind;
 
 	/* since his mana or HP might get changed or even nulled, backup player too! */
@@ -4853,6 +4848,7 @@ static void display_tool_handling(int Ind, object_type *o_ptr, FILE *fff, int In
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
+
 
 	if (!Ind_target) Ind_target = Ind;
 
