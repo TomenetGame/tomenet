@@ -9778,13 +9778,14 @@ void clear_current(int Ind) {
 	p_ptr->current_recharge = 0;
 	p_ptr->current_artifact = 0;
 	p_ptr->current_artifact_nolife = FALSE;
+	p_ptr->current_telekinesis = NULL;
 	p_ptr->current_curse = 0;
 	p_ptr->current_tome_creation = 0;
 	p_ptr->current_rune = 0;
 #ifdef ENABLE_DEMOLITIONIST
 	p_ptr->current_chemical = 0;
 #endif
-	p_ptr->current_telekinesis = NULL;
+	p_ptr->current_activation = 0;
 }
 
 void calc_techniques(int Ind) {
