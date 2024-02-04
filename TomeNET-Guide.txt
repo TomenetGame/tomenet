@@ -20569,6 +20569,8 @@ these limitations will be lifted.
 
     Fireflash       Conjures a ball of holy fire.
                     Required skill level for first spell level: 30.
+                    (As this spell's element is holy, it cannot be used by
+                    characters of vampire race.)
 
                     Tier II: Level 42.
 
@@ -20576,6 +20578,8 @@ these limitations will be lifted.
 
 
 - Water             [Spells are INT-based.]
+  (This school cannot be trained by vampire race characters, as freely flowing
+  water and natural magic in general opposes their very existance.)
 
     Vapor           Fills the air around you with toxic moisture
                     (which does pure water damage, not poison).
@@ -20742,6 +20746,8 @@ these limitations will be lifted.
 
 
 - Nature            [Spells are INT-based.]
+  (This school cannot be trained by vampire race characters, as natural magic
+  in general opposes their very existance.)
 
     Healing         Heals a percentage of your max hit points. (auto-project)
                     Caps at a certain maximum amount, depending on tier,
@@ -21284,6 +21290,7 @@ but have some spells that are intelligence-based instead.
 All Unlife spells are Wisdom-based.)
 
 - Shadow            [Spells are INT-based unless noted otherwise.]
+  (Vampire istari can train this school along the Wizardry spell schools.)
 
     Cause Fear      Scares all adjacent creatures.
                     (This spell uses WISDOM to determine fail-rates!)
@@ -21625,6 +21632,7 @@ All Unlife spells are Wisdom-based.)
                     insanity-inducing effects become less effective.
 
 - Unlife            [Spells are WIS-based.]
+  (Vampire istari can train this school along the Wizardry spell schools.)
 
     Fatigue         Slows your target down, draining power from its muscles.
                     Required skill level for first spell level: 5.
