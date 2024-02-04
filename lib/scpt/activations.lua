@@ -227,7 +227,7 @@ music_info[10].desc},
 --case ART_SEVENLEAGUE:--283
 {283, "teleportation every 5..15 turns"},
 --case ART_ANTIRIAD:--284
-{284, "fire a plasma bolt (50..65d20) every 4 turn"},
+{284, "fire a plasma bolt (50..65d20) every 4 turns"},
 }
 
 activation_info = { }
