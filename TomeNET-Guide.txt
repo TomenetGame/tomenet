@@ -20685,7 +20685,7 @@ these limitations will be lifted.
 
     Wings of Winds  Grants feather falling.
                     Lv 16: Lets you levitate.
-                    Required skill level for first spell level: 16.
+                    Required skill level for first spell level: 15.
 
     Invisibility    Turns you invisible. (See (5.14) for details.)
                     Required skill level for first spell level: 30.

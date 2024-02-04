@@ -149,7 +149,7 @@ AIRWINGS = add_spell {
 	["mana_max"] = 	30,
 	["fail"] = 	70,
 	["spell"] = 	function()
-			if get_level(Ind, AIRWINGS, 50) >= 16 then set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, AIRWINGS, 25))
+			if get_level(Ind, AIRWINGS, 50) >= 15 then set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, AIRWINGS, 25))
 			else set_tim_ffall(Ind, randint(10) + 5 + get_level(Ind, AIRWINGS, 25))
 			end
 	end,
@@ -158,7 +158,7 @@ AIRWINGS = add_spell {
 	end,
 	["desc"] = 	{
 			"Grants the power of feather falling.",
-			"At level 16 it grants the power of levitation."
+			"At level 15 it grants the power of levitation."
 	}
 }
 
