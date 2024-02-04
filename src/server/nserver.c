@@ -13551,7 +13551,7 @@ void Handle_direction(int Ind, int dir) {
 		do_cmd_bash(Ind, dir);
 	else if (p_ptr->current_throw != -1)
 		do_cmd_throw(Ind, dir, p_ptr->current_throw, 0);
-	else if (p_ptr->current_breath != 0)
+	else if (p_ptr->current_breath)
 		do_cmd_breathe_aux(Ind, dir);
 }
 
@@ -13573,7 +13573,7 @@ void Handle_item(int Ind, int item) {
 	} else if (p_ptr->current_artifact) {
 		if (!create_artifact_aux(Ind, item)) {
 			/* Restore the scroll! */
-			if (p_ptr->using_up_item &&
+			if (p_ptr->using_up_item != -1 &&
 			    p_ptr->inventory[p_ptr->using_up_item].tval == TV_SCROLL &&
 			    p_ptr->inventory[p_ptr->using_up_item].sval == SV_SCROLL_ARTIFACT_CREATION) {
 				p_ptr->inventory[p_ptr->using_up_item].number++;
@@ -13600,7 +13600,7 @@ void Handle_item(int Ind, int item) {
 			grind_chemicals(Ind, item);
 		else mix_chemicals(Ind, item); /* we activated chemicals for mixing */
 #endif
-	} else if (p_ptr->inventory[p_ptr->current_activation].tval == TV_JUNK &&
+	} else if (p_ptr->current_activation != -1 && p_ptr->inventory[p_ptr->current_activation].tval == TV_JUNK &&
 	    p_ptr->inventory[p_ptr->current_activation].tval >= SV_GIFT_WRAPPING_START &&
 	    p_ptr->inventory[p_ptr->current_activation].tval <= SV_GIFT_WRAPPING_END) {
 		wrap_gift(Ind, item);

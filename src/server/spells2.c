@@ -9093,8 +9093,9 @@ if (item >= 100) return;
 	else o_ptr = &o_list[0 - item];
 	/* Get the item (in the pack) */
 	if (p_ptr->using_up_item >= 0) o2_ptr = &p_ptr->inventory[p_ptr->using_up_item];
-	/* Get the item (on the floor) */
-	else o2_ptr = &o_list[0 - p_ptr->using_up_item];
+	/* Get the item (on the floor) -- NO: using_up_item -1 is marker for 'no item' (paranoia) */
+	//else o2_ptr = &o_list[0 - p_ptr->using_up_item];
+	else return; //paranoia, see comment above
 
 	/* severe error: custom book no longer there */
 	if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
