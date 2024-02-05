@@ -1,0 +1,1 @@
+/home/cblue/Coding/TomeNET/TomeNET/TomeNET-direct-EU.bat
