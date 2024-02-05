@@ -1145,20 +1145,20 @@ int main(int argc, char **argv) {
 		puts("                     that is read is used as default config file and any");
 		puts("                     changes that are saved will be saved to this file.");
 		puts("  -F                 Client FPS");
-		//puts("  -k                 don't disable numlock on client startup");
 		puts("  -l<nick> <passwd>  Login as");
-		puts("  -m                 Skip motd (message of the day) on login");
 		puts("  -N<name>           Character name");
 		puts("  -R<name>           Character name, auto-reincarnate");
 		puts("  -p<num>            Change game Port number");
 		puts("  -P<path>           Set the lib directory Path");
+		//puts("  -k                 don't disable numlock on client startup");
+		puts("  -m                 Skip motd (message of the day) on login");
 		puts("  -q                 Disable audio capabilities ('quiet mode')");
 		puts("  -u                 Disable client-side automatic lua updates");
 		puts("                     (you shouldn't use this option!");
+		puts("  -w                 Disable client-side weather effects");
 		puts("  -v                 Save chat log on exit, don't prompt");
 		puts("  -V                 Save complete message log on exit, don't prompt");
 		puts("  -x                 Don't save chat/message log on exit (don't prompt)");
-		puts("  -w                 Disable client-side weather effects");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

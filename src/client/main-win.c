@@ -4070,34 +4070,39 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					puts("  -R<name>           character Name, auto-reincarnate");
 					puts("  -p<num>            change game Port number");
 					puts("  -P<path>           set the lib directory Path");
-					puts("  -q                 disable audio capabilities ('quiet mode')");
-					puts("  -w                 disable client-side weather effects");
-					puts("  -u                 disable client-side automatic lua updates");
 					puts("  -k                 don't disable numlock on client startup");
 					puts("  -m                 skip motd (message of the day) on login");
+					puts("  -q                 disable audio capabilities ('quiet mode')");
+					puts("  -u                 disable client-side automatic lua updates");
+					puts("  -w                 disable client-side weather effects");
 					puts("  -v                 save chat log on exit instead of asking");
+					puts("  -V                 save complete message log on exit, don't prompt");
+					puts("  -x                 don't save chat/message log on exit (don't prompt)");
 #else
-					plog(format("%s\nRunning on %s.\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					/* Message box on Windows has a default limit of characters, we need to cut out the 4
+					   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
+					plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
 					    os_version,
-					    "Usage  : tomenet [options] [servername]",
+					    "Usage:    tomenet [options] [server]",
 					    "Example: tomenet -lMorgoth MorgyPass",
-					    "                 -p18348 europe.tomenet.eu",
-					    "  -h                 Display this help",
-					    "  -C                 Compatibility mode for very old servers",
-					    "  -F                 Client FPS",
-					    "  -k                 don't disable numlock on client startup",
-					    "  -l<nick> <passwd>  Login as",
-					    "  -m                 skip motd (message of the day) on login",
-					    "  -N<name>           character name",
-					    "  -R<name>           character name, auto-reincarnate",
-					    "  -p<num>            change game Port number",
-					    "  -P<path>           set the lib directory Path",
-					    "  -q                 disable audio capabilities ('quiet mode')",
-					    "  -u                 disable client-side automatic lua updates",
-					    "  -v                 save chat log on exit, don't prompt",
-					    "  -v                 save complete message log on exit, don't prompt",
-					    "  -w                 disable client-side weather effects"));
+					    "                              -p18348 europe.tomenet.eu",
+					    /* "  -h              Display this help",
+					    "  -C              Compatibility mode for OLD servers",
+					    "  -F              Client FPS", */
+					    "  -l<name> <pwd>       Login crecedentials",
+					    "  -N<name>       character name",
+					    "  -R<name>       char name, auto-reincarnate",
+					    "  -p<num>         change game Port number",
+					    "  -P<path>        set the lib directory Path",
+					    "  -k              don't disable numlock on startup",
+					    "  -m             skip message of the day window",
+					    "  -q              disable all audio ('quiet mode')",
+					    /* "  -u              disable automatic lua updates", */
+					    "  -w             disable client-side weather effects",
+					    "  -v              save chat log on exit",
+					    "  -V              save chat+message log on exit",
+					    "  -x              don't save chat/message log on exit"));
 #endif
 					quit(NULL);
 					break;

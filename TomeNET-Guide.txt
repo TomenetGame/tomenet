@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. February 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 5. February 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3704,19 +3704,19 @@ Windows command-line options:
 -h                      Displays this list of command-line parameters
 -C                      Compatibility mode for ancient servers (deprecated)
 -F <fps>                Set client internal engine fps (default is 100)
--k                      Don't disable numlock on client startup
 -l<Account> <Password>  For example -lGandalf geheim
--m                      Skip motd (message of the day) on login
 -N<character name>      For example -NDruidor
+-R <character name>     Character name to choose and auto-reincarnate it
 -p<Port>                For example -p19348
 -P <path to lib dir>    Sets the path to TomeNET's 'lib' folder
+-k                      Don't disable numlock on client startup
+-m                      Skip motd (message of the day) on login
 -q                      Turns off loading/initializing of audio ('quiet mode')
--R <character name>     Character name to choose and auto-reincarnate it
 -u                      Disables automatic LUA script updating
                         (You should NOT use this option!)
+-w                      Disables weather effects
 -v                      Automatically save chat log on exit (exclusive with -V)
 -V                      Automatically save complete message log on exit
--w                      Disables weather effects
 -x                      Don't save chat/message log on exit (don't prompt)
 <ip address>            for example 37.187.75.24
 
@@ -3874,17 +3874,17 @@ POSIX command-line options:
                         this file.
 -F <fps>                set client internal engine fps (default is 100)
 -l<Account> <Password>  for example -lGandalf geheim
--m                      skip motd (message of the day) on login
 -N<character name>      for example -NMagnet
+-R <character name>     character name to choose and auto-reincarnate it
 -p<Port>                for example -p19348
 -P <path to lib dir>    sets the path to TomeNET's 'lib' folder
+-m                      skip motd (message of the day) on login
 -q                      turns off loading/initializing of audio ('quiet mode')
--R <character name>     character name to choose and auto-reincarnate it
 -u                      disables automatic LUA script updating
                         (You should NOT use this option!)
+-w                      disables weather effects
 -v                      automatically save chat log on exit
 -V                      automatically save complete message log on exit
--w                      disables weather effects
 -x                      don't save chat/message log on exit (don't prompt)
 <ip address>            for example 37.187.75.24
 
