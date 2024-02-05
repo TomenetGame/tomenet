@@ -5086,6 +5086,11 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 	int i, inum = i_ptr->number, wgt = p_ptr->total_weight, Gnum;
 	char o_name[ONAME_LEN];
 
+	/* Don't stow if player cannot access stowed items due to outdated client */
+	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
+	/* Don't stow if player cannot access stowed items due to outdated client */
+	if (s_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) return(FALSE);
+
 	/* Look for free spaces or spaces to merge with */
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
@@ -5188,6 +5193,9 @@ void do_cmd_subinven_move(int Ind, int islot) {
  #endif
 	bool all = FALSE, any_bag = FALSE, eligible_bag = FALSE;
 
+	/* Don't stow if player cannot access stowed items due to outdated client */
+	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return;
+
 	/* Error checks */
 	if (islot < 0) return;
 	if (islot >= INVEN_PACK) return;
@@ -5275,6 +5283,9 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			eligible_bag = TRUE;
 			break;
 		case SV_SI_POTION_BELT:
+			/* Don't stow if player cannot access stowed items due to outdated client */
+			if (!is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) continue;
+
 			if (i_ptr->tval != TV_POTION && i_ptr->tval != TV_POTION2 && i_ptr->tval != TV_BOTTLE) continue;
 			eligible_bag = TRUE;
 			break;

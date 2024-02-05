@@ -1589,6 +1589,9 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	/* Don't auto-stow unidentified items */
 	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
 
+	/* Don't auto-stow if player cannot access stowed items due to outdated client */
+	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
+
 	/* Hack number */
 	forge_one.tval = 0;
 	if (pick_one) {
@@ -1611,6 +1614,9 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		/* Must fit the object type */
 		if (s_ptr->sval != sub_sval) continue;
+
+		/* Don't auto-stow if player cannot access stowed items due to outdated client */
+		if (s_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) continue;
 
 		/* Player disabled auto-stow via bag inscription? */
 		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) continue;
