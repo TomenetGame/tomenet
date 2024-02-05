@@ -5390,9 +5390,9 @@ void store_kick(int Ind, bool say) {
 	//store_leave(Ind);
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->sfx_store)
+	if (p_ptr->sfx_store) {
 		/* Store is full? (Happens if the same store has multiple entrances and another player occupies another one already, eg 1 and 5 in Gondolin) */
-		if (p_ptr->store_num == -1) {
+		if (p_ptr->store_num == -1)
 			sound(Ind, "open_door_stuck", NULL, SFX_TYPE_MISC, FALSE);
  #ifdef PLAYER_STORES
 		else if (p_ptr->store_num <= -2)
@@ -5410,9 +5410,7 @@ void store_kick(int Ind, bool say) {
 					sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
 					break;
 				}
- #ifdef PLAYER_STORES
 		}
- #endif
 	}
 #endif
 
