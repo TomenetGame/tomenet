@@ -10217,18 +10217,13 @@ somewhat over two hours. (See (4.14) for more information about the
 in-game time system.)
 The time will continue to run out even while you're not logged on.
 If you carry out the extermination order you received, you will be rewarded
-with a good or great item, depending on the difficulty (monster level) and
-chance.
+with a good or great item or sometimes a stack of consumables, depending on
+the difficulty (monster level) and chance.
 The item does not depend on your race, class, skills or luck in any way,
 it's completely random. It's quality is also on average lower than the items
 obtained from winning events (read further below about events).
 If you fail to carry out your order in time, the order will be cancelled and
 you can just get a new one if you want to. There is no penalty.
-
-Party members (and you) can see that you received an extermination order by
-looking at the character list ('@' key): An 'X' will appear behind your
-location information (except if they are using the super compact @-screen
-layout that shows only two lines per player).
 
 On an Ironman server or within the Ironman Deep Dive Challenge dungeon, the
 amount of monsters that need to be slain is somewhat lower (especially for low
