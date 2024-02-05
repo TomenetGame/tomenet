@@ -5291,7 +5291,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 	if (message[0] == '/') {
 		if (!strncmp(messagelc, "/me ", 4)) rp_me = TRUE;
-		else if (!strncmp(messagelc, "/me'", 3)) rp_me = rp_me_gen = TRUE;
+		else if (!strncmp(messagelc, "/me'", 4)) rp_me = rp_me_gen = TRUE;
 		else if (!strncmp(messagelc, "/broadcast ", 11)) broadcast = TRUE;
 		else {
 			slash_command = TRUE;
@@ -5930,7 +5930,7 @@ static void player_talk_aux(int Ind, char *message) {
 /* Console talk is automatically sent by 'Server Admin' which is treated as an admin */
 static void console_talk_aux(char *message) {
 	cptr sender = "Server Admin";
-	bool rp_me = FALSE, log = TRUE;
+	bool rp_me = FALSE, rp_me_gen = FALSE, log = TRUE;
 	char c_n = 'y'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
 	char c_b = 'y';
@@ -5959,6 +5959,7 @@ static void console_talk_aux(char *message) {
 
 	if (message[0] == '/') {
 		if (!strncmp(message, "/me ", 4)) rp_me = TRUE;
+		if (!strncmp(message, "/me'", 4)) rp_me = rp_me_gen = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else return;
 	}
@@ -5973,11 +5974,19 @@ static void console_talk_aux(char *message) {
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message);
  #endif
 	} else {
+		if (rp_me_gen) {
  #ifndef KURZEL_PK
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4);
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s%s]", c_n, sender, message + 3);
  #else
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4, c_b);
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s%s\377%c]", c_b, c_n, sender, message + 3, c_b);
  #endif
+		} else {
+ #ifndef KURZEL_PK
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4);
+ #else
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4, c_b);
+ #endif
+		}
 	}
 
 #else
