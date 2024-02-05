@@ -5446,7 +5446,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #endif
 
 	/* in case we just *ID* it because an admin inspected it */
-	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)
+	if (is_admin(p_ptr) && maybe_hidden_powers(0, o_ptr, FALSE)
 #ifdef NEW_ID_SCREEN
 	    && full
 #endif
