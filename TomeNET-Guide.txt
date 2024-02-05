@@ -206,6 +206,7 @@ Contents
     (8.6)   Town/dungeon related hints
 (9) Miscellanous
     (9.1)   'The Art Not To Die'
+    (9.1a)  The worst kind of help
     (9.2)   Character dumps
     (9.2a)  High Score
     (9.3)   Golem creation
@@ -24392,6 +24393,26 @@ Notes:
    "Instant Resurrection" in any temple, see (4.5a) for details and drawbacks.
  - You can use the  /page  command to get someone's attention if he seems afk
    and you need his help. This command will make his game client beep 3 times.
+
+
+(9.1a) The worst kind of help
+-----------------------------
+If you play with a newbie friend, don't spoil him by giving him powerful items
+or have him stand back in safety while you clear all monsters.
+
+This will prevent him from learning anything about the game, deprive him of any
+adrenaline-pumpking challenges that make us addicted, and you will kill his fun
+very quickly.
+
+When he finally dies at medium level, he will have no idea what is actually
+happening and also have no feeling about why is is actually playing this game
+at all or what's so fun about it.
+
+You are destroying your friend's gaming experience by babysitting him,
+it's the worst kind of "help" you could give.
+
+Instead, create a new level 1 character to team up with him, do not take any
+pre-existing items or gold with you, as if it was your first day of TomeNET.
 
 
 
