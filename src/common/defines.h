@@ -3535,6 +3535,8 @@
 #define SV_BLACK_KNIGHT			14
 #define SV_BLACK_BISHOP			15
 #define SV_SNOWBALL			16
+#define SV_WHITE_DAME			17
+#define SV_BLACK_DAME			18
 
 /*
  * Special "sval" limit -- first "aimed" rod

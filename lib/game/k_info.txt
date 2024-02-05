@@ -3856,6 +3856,10 @@ F:SHOW_MODS | NO_ENCHANT
 D:It is ammunition fit for crossbows and bolt trap kits.
 D:It magically returns to you after you fired it.
 
+
+##### SURELY DEPRECATED? -> Items 445 to 479 reserved (old "terrain" objects) #####
+
+
 N:445:& Magic Shot~
 G:{:o
 I:16:3:0
@@ -6957,7 +6961,25 @@ W:10:0:5:1250
 A:10/20:20/10
 D:Creates a golem provided you carry all required parts in your backpack.
 
-# HOLE 864-880
+# HOLE 864-878
+
+
+N:879:& White Dame~
+G:&:w
+I:13:17:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+
+N:880:& Black Dame~
+G:&:D
+I:13:18:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+
 
 N:881:House creation
 G:?:d
@@ -6965,9 +6987,6 @@ I:70:57:0
 W:127:0:5:25000
 A:127/0
 D:Multiple of these can be read at once for creating an even bigger house.
-
-
-##### Items 445 to 479 reserved (old "terrain" objects) #####
 
 
 ####
