@@ -1586,6 +1586,10 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	player_type *p_ptr = Players[Ind];
 	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE;
 
+	/* Don't auto-stow true artifacts;
+	   exception for true-art trapkits is possible, but would need to add subinvens to art-location and -erasure code first. */
+	if (true_artifact_p(o_ptr)) return(FALSE);
+
 	/* Don't auto-stow unidentified items */
 	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
 
