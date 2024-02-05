@@ -2389,10 +2389,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			if (tk) {
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
-				if ((!p || !p_ptr->play_vis[p]) && p != Ind) return;
+				if ((!p || !p_ptr->play_vis[p]) && p != Ind) {
+					msg_print(Ind, "\377yThat player is not nearby or not visible to you.");
+					return;
+				}
 
 				if (!inarea(&p_ptr->wpos, &Players[p]->wpos)) {
-					msg_print(Ind, "\377yThat player is not nearby.");
+					msg_print(Ind, "\377yThat player is far away.");
 					return;
 				}
 				if (distance(p_ptr->py, p_ptr->px, Players[p]->py, Players[p]->px) > 6) {
