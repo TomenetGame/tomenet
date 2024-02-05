@@ -7757,8 +7757,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
-		plog(format("Connection not ready for line info (%d.%d.%d)",
-			Ind, connp->state, connp->id));
+		plog(format("Connection not ready for line info (%d.%d.%d)", Ind, connp->state, connp->id));
 		return(0);
 	}
 
@@ -7791,21 +7790,9 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		/* Start with count of 1 */
 		n = 1;
 
-		/* Count repetitions of this grid */
-
-		c1 = p_ptr2->scr_info[y][x1].c;
-		a1 = p_ptr2->scr_info[y][x1].a;
-		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
-		   Maybe todo: also unmap attr? */
-		unm_c_idx = c1;
-		if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
-		else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
-
-		while (c1 == c && a1 == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
-			/* Increment count and column */
-			n++;
-			x1++;
-
+		/* Can only look ahead for RLE if we haven't arrived at the final character of a line yet */
+		if (x1 != 80) {
+			/* Count repetitions of this grid */
 			c1 = p_ptr2->scr_info[y][x1].c;
 			a1 = p_ptr2->scr_info[y][x1].a;
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
@@ -7813,98 +7800,111 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			unm_c_idx = c1;
 			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+
+			while (c1 == c && a1 == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+				/* Increment count and column */
+				n++;
+				x1++;
+
+				c1 = p_ptr2->scr_info[y][x1].c;
+				a1 = p_ptr2->scr_info[y][x1].a;
+				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+				   Maybe todo: also unmap attr? */
+				unm_c_idx = c1;
+				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+			}
 		}
 
-		/* RLE if there at least 2 similar grids in a row */
-		if (n >= 2) {
-			/* 4.8.1 and newer clients use 32bit character size. */
-			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-				/* Transfer only the relevant bytes, according to client setup.*/
-				char * pc = (char *)&c;
-				switch (connp->Client_setup.char_transfer_bytes) {
-					case 0:
-					case 1:
-						Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 2:
-						Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 3:
-						Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 4:
-					default:
-						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
-				}
-			}
-			/* 4.4.3.1 clients support new RLE */
-			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
-				/* New RLE */
-				Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
-			} else {
-				/* Old RLE */
-				Packet_printf(&connp->c, "%c%c%c", (char)c, a | 0x40, n);
-			}
-
-			/* Start again after the run */
-			x = x1 - 1;
-		} else {
-			/* Normal, single grid */
-			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+		/* Normal, single grid */
+		if (n == 1) {
+			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5))
 				/* Remove 0x40 (TERM_PVP) if the client is old */
 				Packet_printf(&connp->c, "%c%c", (char)c, a & ~0xC0);
-			} else {
+			else {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
 						char * pc = (char *)&c;
+
 						switch (connp->Client_setup.char_transfer_bytes) {
-							case 0:
-							case 1:
-								Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 2:
-								Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 4:
-							default:
-								Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 						}
-					} else {
-						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
-					}
+					} else Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 				} else {
 					/* Normal output */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
 						char * pc = (char *)&c;
+
 						switch (connp->Client_setup.char_transfer_bytes) {
-							case 0:
-							case 1:
-								Packet_printf(&connp->c, "%c%c", pc[0], a);
-								break;
-							case 2:
-								Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
-								break;
-							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
-								break;
-							case 4:
-							default:
-								Packet_printf(&connp->c, "%u%c", c, a);
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c", pc[0], a);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c", c, a);
 						}
-					} else {
-						Packet_printf(&connp->c, "%c%c", (char)c, a);
-					}
+					} else Packet_printf(&connp->c, "%c%c", (char)c, a);
 				}
 			}
+			continue;
 		}
+
+		/* RLE if there at least 2 similar grids in a row, ie n is >= 2 here */
+
+		/* 4.8.1 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
+			/* Transfer only the relevant bytes, according to client setup.*/
+			char * pc = (char *)&c;
+			switch (connp->Client_setup.char_transfer_bytes) {
+			case 0:
+			case 1:
+				Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+				break;
+			case 2:
+				Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+				break;
+			case 3:
+				Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+				break;
+			case 4:
+			default:
+				Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+			}
+		}
+		/* 4.4.3.1 clients support new RLE */
+		else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5))
+			/* New RLE */
+			Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
+		else
+			/* Old RLE */
+			Packet_printf(&connp->c, "%c%c%c", (char)c, a | 0x40, n);
+
+		/* Start again after the run */
+		x = x1 - 1;
 	}
 
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
