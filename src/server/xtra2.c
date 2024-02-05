@@ -11567,6 +11567,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	/* Some monsters are immune to death */
 	if (r_ptr->flags7 & RF7_NO_DEATH) return(FALSE);
 
+	/* record the data for use in C_BLUE_AI */
+	p_ptr->dam_turn[0] += (m_ptr->hp < dam) ? m_ptr->hp : dam;
+
 	/* for when a quest giver turned non-invincible */
 #if 0
 	if (m_ptr->questor) {
@@ -11589,9 +11592,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* Hurt it */
 	m_ptr->hp -= dam;
-
-	/* record the data for use in C_BLUE_AI */
-	p_ptr->dam_turn[0] += (m_ptr->hp < dam) ? m_ptr->hp : dam;
 
 	/* It is dead now */
 	if (m_ptr->hp < 0) {
