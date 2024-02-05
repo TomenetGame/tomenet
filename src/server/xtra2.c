@@ -11132,16 +11132,94 @@ void kill_xorder(int Ind) {
 		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, resf, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add(temp);
 		o_ptr->note_utag = strlen(temp);
-		o_ptr->iron_trade = p_ptr->iron_trade;
-		o_ptr->iron_turn = turn;
-		inven_carry(Ind, o_ptr);
 #else
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
 		//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
+#endif
+
+#if 1
+		/* New: Sometimes generate consumables instead */
+		//if (!great && !rand_int(2)) { /* instead of basic (non-ego) enchanted armour/weapon */
+		if (object_value_real(0, o_ptr) < 1000 && rand_int(3)) {
+			/* basic consumables */
+			switch (rand_int(2)) {
+			case 0:
+				switch (rand_int(in_irondeepdive(&p_ptr->wpos) ? 11 : 12)) {
+				case 0: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR)); o_ptr->number = 5 + rand_int(4); break;
+				case 1: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TRAP_DOOR_DESTRUCTION)); o_ptr->number = 3 + rand_int(3); break;
+				case 2: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION)); o_ptr->number = 3 + rand_int(2); break;
+				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_MAPPING)); o_ptr->number = 5 + rand_int(4); break;
+				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY)); o_ptr->number = 5 + rand_int(4); break;
+
+				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR)); o_ptr->number = 2 + rand_int(3); break;
+				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 2 + rand_int(2); break;
+				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 2 + rand_int(2); break;
+
+				case 8: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 1; break;
+				case 9: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 1; break;
+				case 10: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 1; break;
+
+				case 11: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL)); o_ptr->number = 1 + rand_int(2); break;
+				}
+				break;
+			case 1:
+				switch (rand_int(4)) {
+				case 0:
+					switch (rand_int(2)) {
+					case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SLOW_POISON)); o_ptr->number = 2 + rand_int(2); break;
+					case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_POISON)); o_ptr->number = 2 + rand_int(2); break;
+					}
+					break;
+				case 1:
+					switch (rand_int(2)) {
+					case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEROISM)); o_ptr->number = 3 + rand_int(2); break;
+					case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_BERSERK_STRENGTH)); o_ptr->number = 1 + rand_int(2); break;
+					}
+					break;
+				case 2: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS)); o_ptr->number = 4 + rand_int(3); break;
+				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_CRITICAL)); o_ptr->number = 2 + rand_int(2); break;
+				}
+				break;
+			}
+			apply_magic(&o_ptr->wpos, o_ptr, avg, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
+		//} else if (great && !verygreat && !rand_int(4)) { /* verygreat: guaranteed non-trivial (resfire) ego */
+		} else if (object_value_real(0, o_ptr) < 3000 && !rand_int(3)) {
+			/* great consumables / bigger stacks of basic consumables */
+			switch (rand_int(2)) {
+			case 0:
+				switch (rand_int(8)) {
+				case 1: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR)); o_ptr->number = 6 + rand_int(3); break;
+				case 2: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 6 + rand_int(3); break;
+				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 6 + rand_int(3); break;
+
+				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 1 + rand_int(2); break;
+				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 2 + rand_int(2); break;
+				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 1 + rand_int(2); break;
+
+				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)); o_ptr->number = 1 + rand_int(2); break;
+				}
+				break;
+			case 1:
+				switch (rand_int(7)) {
+				case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_CRITICAL)); o_ptr->number = 9 + rand_int(4); break;
+
+				case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_RESTORE_MANA)); o_ptr->number = 2 + rand_int(2); break;
+				case 2: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SPEED)); o_ptr->number = 2 + rand_int(2); break;
+				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEALING)); o_ptr->number = 2 + rand_int(2); break;
+				case 4: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_RESISTANCE)); o_ptr->number = 2 + rand_int(2); break;
+
+				case 5: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_ENLIGHTENMENT)); o_ptr->number = 1; break;
+				case 6: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURING)); o_ptr->number = 1; break;
+				}
+				break;
+			}
+			apply_magic(&o_ptr->wpos, o_ptr, avg, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
+		}
+#endif
+
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
 		inven_carry(Ind, o_ptr);
-#endif
 		unique_quark = 0;
 	}
 
@@ -11198,7 +11276,8 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 	else
 		msg_print(j, "\376\377oYou have been given a extermination order\377y!");
 	//msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags & QUEST_GUILD?"":" \377obefore any other player");
-	msg_format(j, "\376\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
+	if (is_admin(p_ptr)) msg_format(j, "\376\377oFind and kill \377y%d \377g%s\377o (level %d, %d)!", num, r_name + r_info[type].name, r_info[type].level, type);
+	else msg_format(j, "\376\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
 	msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", MAX_XORDER_TURNS / (cfg.fps * 60));
 	xorders[i].active++;
 
@@ -11274,7 +11353,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 			break;
 		default:
 			msg_print(Ind, "\377yPlease visit your local town hall or seat of ruling to receive an order!");
-			return(FALSE);
+			if (!is_admin(p_ptr)) return(FALSE);
 		}
 	}
 
