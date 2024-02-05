@@ -2476,15 +2476,12 @@ static void updatebargain(s64b price, s64b minprice) {
  */
 int gettown(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int i, retval =- 1;
+	int i;
+
 	if (p_ptr->wpos.wz) return(-1);
-	for (i = 0; i < numtowns; i++) {
-		if (town[i].x == p_ptr->wpos.wx && town[i].y == p_ptr->wpos.wy) {
-			retval = i;
-			break;
-		}
-	}
-	return(retval);
+	for (i = 0; i < numtowns; i++)
+		if (town[i].x == p_ptr->wpos.wx && town[i].y == p_ptr->wpos.wy) return(i);
+	return(-1);
 }
 /* For abusing towns to provide dungeon stores - C. Blue
    (Use dlev_id and fake_town_num to bind a town's dungeon stores to a dungeon floor.) */
@@ -2823,9 +2820,10 @@ static void display_entry(int Ind, int pos) {
 #endif
 		    )
 		    //|| (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) -- no, because custom book spells are already all transmitted via Send_store_wide below.
-		    )
+		    ) {
 			power_inscribe(o_ptr, o_ptr->tval == TV_BOOK ? TRUE : FALSE, powers);
 			powers[INSCR_LEN - 1] = 0;
+		}
 
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
@@ -5379,33 +5377,39 @@ void store_init(store_type *st_ptr) {
 		invwipe(&st_ptr->stock[k]);
 }
 
-/* Assumes we ARE in a store. Get kicked out of it and teleported. */
+/* Almost assumes we ARE in a store. Get kicked out of it and teleported.
+   However, we're also called when a store is full - in which case we already stand on the store grid, but store_num is still -1,
+   so if USE_SOUND_2010 is defined we need to skip the sfx checks that try to read a particular store's info. */
 void store_kick(int Ind, bool say) {
 #if defined(PLAYER_STORES) || defined(USE_SOUND_2010)
 	int i;
+	player_type *p_ptr = Players[Ind];
 #endif
 
 	if (say) msg_print(Ind, "The shopkeeper asks you to leave the store once.");
 	//store_leave(Ind);
 
 #ifdef USE_SOUND_2010
-	if (Players[Ind]->sfx_store) {
+	if (p_ptr->sfx_store)
+		/* Store is full? (Happens if the same store has multiple entrances and another player occupies another one already, eg 1 and 5 in Gondolin) */
+		if (p_ptr->store_num == -1) {
+			sound(Ind, "open_door_stuck", NULL, SFX_TYPE_MISC, FALSE);
  #ifdef PLAYER_STORES
-		if (Players[Ind]->store_num <= -2)
+		else if (p_ptr->store_num <= -2)
 			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
-		else {
  #endif
-		store_info_type *st_ptr;
+		else {
+			store_info_type *st_ptr;
 
-		i = gettown(Ind);
-		/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-		if (i == -1) i = gettown_dun(Ind);
-		st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
-		for (i = 0; i < 6; i++)
-			if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
-				sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
-				break;
-			}
+			i = gettown(Ind);
+			/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+			if (i == -1) i = gettown_dun(Ind);
+			st_ptr = &st_info[town[i].townstore[p_ptr->store_num].st_idx];
+			for (i = 0; i < 6; i++)
+				if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
+					sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+					break;
+				}
  #ifdef PLAYER_STORES
 		}
  #endif
@@ -5416,7 +5420,7 @@ void store_kick(int Ind, bool say) {
 	Send_store_kick(Ind);
 
 #ifdef PLAYER_STORES
-	i = Players[Ind]->store_num; /* (handle_store_leave() erases p_ptr->store_num) */
+	i = p_ptr->store_num; /* (handle_store_leave() erases p_ptr->store_num) */
 	/* Player stores aren't entered such as normal stores,
 	   instead, the customer just stays in front of it. */
 	if (i > -2)
@@ -5426,12 +5430,14 @@ void store_kick(int Ind, bool say) {
 /* Just silently exits store in case we are in one.
    No teleportation needed because we're only called if player wants to move anyway. */
 void store_exit(int Ind) {
-	if (Players[Ind]->store_num == -1) return;
+	player_type *p_ptr = Players[Ind];
+
+	if (p_ptr->store_num == -1) return;
 
 #ifdef USE_SOUND_2010
-	if (Players[Ind]->sfx_store) {
+	if (p_ptr->sfx_store) {
  #ifdef PLAYER_STORES
-		if (Players[Ind]->store_num <= -2)
+		if (p_ptr->store_num <= -2)
 			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
 		else {
  #endif
@@ -5441,7 +5447,7 @@ void store_exit(int Ind) {
 		i = gettown(Ind);
 		/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
 		if (i == -1) i = gettown_dun(Ind);
-		st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
+		st_ptr = &st_info[town[i].townstore[p_ptr->store_num].st_idx];
 		for (i = 0; i < 6; i++)
 			if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
 				sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
