@@ -14249,8 +14249,10 @@ actual leeching).
 Last but not least some items might be 'Chaotic'. This means there are a few
 specific things that can happen on striking an enemy. One of them is vampiric
 life drain, which (together with 'confusion') is actually the most common one.
-When it happens it will have the same effect as if your weapon was actually
-vampiric. (For more details on the CHAOTIC flag, see (5.8).)
+When it procs (which isn't that common) it will have the same effect for that
+particular hit as if your weapon was actually vampiric. It does not stack with
+Vampirism in any way and also cannot really replace the reliable, continuous
+effect of 'real' vampirism (For more details on the CHAOTIC flag, see (5.8).)
 
 In general, vampiric flags don't stack from multiple sources! Just the source
 that fits the situation best (usually weapon/ammo) overrides the weaker ones
