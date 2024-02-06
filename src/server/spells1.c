@@ -6204,6 +6204,13 @@ static int percent_damage(int hp, int dam) {
 	else return((hp * dam) / 100);
 }
 
+#define COMPOUND_DAMAGE_NOTE(k, dam) \
+	if (!k) note = " is immune"; \
+	else if (k < dam / 4) note = " resists a lot"; \
+	else if (k < dam / 2) note = " resists"; \
+	else if (k < dam) note = " resists somewhat"; \
+	else if (k > dam) note = " is hit hard";
+
 /*
  * Helper function for "project()" below.
  *
@@ -6956,19 +6963,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) k *= 2;
 		/* 25% elec */
 		k_elec = (dam + 3) / 4;
-		if (r_ptr->flags3 & RF3_IM_ELEC) k = 0;
-		else if (r_ptr->flags9 & RF9_RES_ELEC) k = (k + 3) / 4;
-		else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k *= 2;
+		if (r_ptr->flags3 & RF3_IM_ELEC) k_elec = 0;
+		else if (r_ptr->flags9 & RF9_RES_ELEC) k_elec = (k_elec + 3) / 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k_elec *= 2;
 		/* 25% force */
 		k_sound = (dam + 3) / 4;
-		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound = (k + 1) / 2;
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound = (k_sound + 1) / 2;
 		else if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(15) / div;
 
 		k += k_elec + k_sound;
-		if (k < dam / 4) note = " resists a lot";
-		else if (k < dam / 2) note = " resists";
-		else if (k < dam) note = " resists somewhat";
-		else if (k > dam) note = " is hit hard";
+		COMPOUND_DAMAGE_NOTE(k, dam);
 		dam = k;
 		break;
 
@@ -7092,21 +7096,23 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break; }
 
 	/* Rocket: Shard resistance helps (PernA) */
-	//(Note that the sound part doesn't cause any stun effect. - intended) */
-	case GF_INFERNO:
 	case GF_DETONATION:
-	case GF_ROCKET: {
+	case GF_ROCKET:
+		//if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(15) / div; -- /* Intendedly disabled, hm */
+	case GF_INFERNO: {
 		int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
 
-		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-			res1 = 1;
-		//RF8_NO_CUT/RF3_NO_STUN don't help here
-		if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) res1 = 1;
+		//RF8_NO_CUT doesn't help here
+
+		if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND)) {
 			res2 = 1;
-		if (r_ptr->flags3 & RF3_IM_FIRE)
-			res3 = 3;
-		else if (r_ptr->flags9 & RF9_RES_FIRE)
-			res3 = 1;
+			do_stun = 0;
+		}
+		//RF3_NO_STUN doesn't help here
+
+		if (r_ptr->flags3 & RF3_IM_FIRE) res3 = 3;
+		else if (r_ptr->flags9 & RF9_RES_FIRE) res3 = 1;
 		//no SUSCEP_FIRE check
 
 		switch (res1 + res2 + res3) {
@@ -7321,27 +7327,27 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		do_stun = randint(15) / div;
 		break;
 
-	/* Ice -- Cold + Cuts + Stun */
+	/* Ice -- 40% Cold + Cuts (status) + 60% Stun */
 	case GF_ICE:
 		if (seen) obvious = TRUE;
 		//do_stun = randint(15) / div;
-		k = dam;
+		i = k = dam;
 
 		dam = (k * 2) / 5;/* 40% COLD damage */
 		if (r_ptr->flags3 & RF3_IM_COLD) {
-			note = " is immune to cold";
+			//note = " is immune to cold";
 			dam = 0;
 #ifdef OLD_MONSTER_LORE
 			if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
 #endif
 		} else if (r_ptr->flags9 & RF9_RES_COLD) {
-			note = " resists cold";
+			//note = " resists cold";
 			dam /= 4;
 #ifdef OLD_MONSTER_LORE
 			if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
 #endif
 		} else if (r_ptr->flags3 & RF3_SUSCEP_COLD) {
-			note = " is hit hard by cold";
+			//note = " is hit hard by cold";
 			dam *= 2;
 #ifdef OLD_MONSTER_LORE
 			if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
@@ -7357,7 +7363,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			k /= 2;
 		}
 
-		dam = dam + k;
+		dam += k;
+		COMPOUND_DAMAGE_NOTE(dam, i);
 		break;
 
 	/* Thunder -- Elec + Sound + Light */
@@ -7366,19 +7373,19 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		k_elec = dam / 3; /* 33% ELEC damage */
 		if (r_ptr->flags3 & RF3_IM_ELEC) {
-			note = " is immune to lightning";
+			//note = " is immune to lightning";
 			k_elec = 0;
 #ifdef OLD_MONSTER_LORE
 			if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
 #endif
 		} else if (r_ptr->flags9 & RF9_RES_ELEC) {
-			note = " resists lightning";
+			//note = " resists lightning";
 			k_elec /= 4;
 #ifdef OLD_MONSTER_LORE
 			if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
 #endif
 		} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) {
-			note = " is hit hard by lightning";
+			//note = " is hit hard by lightning";
 			k_elec *= 2;
 #ifdef OLD_MONSTER_LORE
 			if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ELEC;
@@ -7391,6 +7398,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			//note = " resists";
 			k_sound *= 3;
 			k_sound /= (randint(6) + 6);
+			do_stun = 0;
 		}
 
 		k_lite = dam / 3; /* 33% LIGHT damage */
@@ -7404,7 +7412,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 			//note = " cringes from the light";
 			//note_dies = " shrivels away in the light";
-			dam *= 2;
+			k_lite *= 2;
 			if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
 		} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
 			//note = " resists";
@@ -7413,7 +7421,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			do_blind = 0;
 		}
 
-		dam = k_elec + k_sound + k_lite;
+		k = k_elec + k_sound + k_lite;
+		COMPOUND_DAMAGE_NOTE(k, dam);
+		dam = k;
 		break;
 
 	case GF_OLD_DRAIN:
@@ -10911,15 +10921,19 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Ice -- cold plus stun plus cuts */
 	case GF_ICE:
 		k = dam;
+
 		dam = (k * 2) / 5;/* 40% COLD damage, total cold damage is saved in 'dam' */
+		dam = cold_dam(Ind, dam, killer, -who);
+
 		k = (k * 3) / 5;/* 60% SHARDS damage, total shard damage is saved in 'k' */
 		if (p_ptr->biofeedback) k = (k * 2) / 3;
 		if (p_ptr->resist_shard) { k *= 6; k /= (randint(6) + 6); }
-		dam = cold_dam(Ind, dam, killer, -who);
+
 		dam = dam + k;
 		if (fuzzy) msg_format(Ind, "You are hit by something cold and sharp for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
+
 		if ((!p_ptr->resist_shard) && (!p_ptr->no_cut))
 			(void)set_cut(Ind, p_ptr->cut + damroll(5, 8), -who);
 		/* if (!p_ptr->resist_sound)
@@ -10930,22 +10944,27 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_THUNDER:
 		k_elec = dam / 3; /* 33% ELEC damage, total elec damage is saved in 'k_elec' */
 		k_elec = elec_dam(Ind, k_elec, killer, -who);
+
 		k_sound = dam / 3; /* 33% SOUND damage, total sound damage is saved in 'k_sound' */
 		if (p_ptr->biofeedback) k_sound /= 2;
 		if (p_ptr->resist_sound) {
 			k_sound *= 5;
 			k_sound /= (randint(6) + 6);
 		}
+
 		k_lite = dam / 3; /* 33% LIGHT damage, total light damage is saved in 'k_site' */
 		if (p_ptr->resist_lite) {
 			k_lite *= 4; k_lite /= (randint(6) + 6);
 		} else if (p_ptr->suscep_lite) {
 			k_lite *= 2;
 		}
+
 		dam = k_elec + k_sound + k_lite;
+
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
+
 		if (!p_ptr->resist_sound)
 			(void)set_stun(Ind, p_ptr->stun + randint(15));
 		if (!p_ptr->resist_lite && !blind && !p_ptr->resist_blind)
@@ -13900,25 +13919,23 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 
 	case GF_PLASMA:
-		{
-			/* 50% fire */
-			k = dam / 2;
-			if (r_ptr->flags3 & RF3_IM_FIRE) k = 0;
-			else if (r_ptr->flags9 & RF9_RES_FIRE) k /= 4;
-			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) k *= 2;
-			/* 25% elec */
-			k_elec = dam / 4;
-			if (r_ptr->flags3 & RF3_IM_ELEC) k_elec = 0;
-			else if (r_ptr->flags9 & RF9_RES_ELEC) k_elec /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k_elec *= 2;
-			/* 25% force */
-			k_sound = dam / 4;
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound /= 2;
-			//else do_stun = randint(15) / div;
+		/* 50% fire */
+		k = dam / 2;
+		if (r_ptr->flags3 & RF3_IM_FIRE) k = 0;
+		else if (r_ptr->flags9 & RF9_RES_FIRE) k /= 4;
+		else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) k *= 2;
+		/* 25% elec */
+		k_elec = dam / 4;
+		if (r_ptr->flags3 & RF3_IM_ELEC) k_elec = 0;
+		else if (r_ptr->flags9 & RF9_RES_ELEC) k_elec /= 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k_elec *= 2;
+		/* 25% force */
+		k_sound = dam / 4;
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound /= 2;
+		//else do_stun = randint(15) / div;
 
-			dam = k + k_elec + k_sound;
-			break;
-		}
+		dam = k + k_elec + k_sound;
+		break;
 
 	case GF_NETHER_WEAK:
 	case GF_NETHER:
@@ -14132,7 +14149,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 			k /= 3;
 		else if (r_ptr->flags8 & RF8_NO_CUT)
 			k /= 2;
-		dam = dam + k;
+
+		dam += k;
 		break;
 
 	case GF_THUNDER:
