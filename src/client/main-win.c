@@ -2539,10 +2539,12 @@ static void init_windows(void) {
 #ifdef USE_GRAPHICS
 	/* Handle "graphics" mode */
 	if (use_graphics) {
+		BITMAP bm;
+		char filename[1024];
+
 		HDC hdc = GetDC(NULL);
-		if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
+		if (GetDeviceCaps(hdc, BITSPIXEL) < 24)
 			quit("Using graphic tiles needs a device content with at least 24 bits per pixel.");
-		}
 		ReleaseDC(NULL, hdc);
 
 		/* Load graphics file. Quit if file missing or load error. */
@@ -2562,8 +2564,6 @@ static void init_windows(void) {
 		validate_dir(ANGBAND_DIR_XTRA_GRAPHICS);
 
 		/* Build the name of the graphics file. */
-		char filename[1024];
-
 		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
 		strcat(filename, ".bmp");
 
@@ -2574,7 +2574,6 @@ static void init_windows(void) {
 		g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 		/* Calculate tiles per row. */
-		BITMAP bm;
 		GetObject(g_hbmTiles, sizeof(BITMAP), &bm);
 		graphics_image_tpr = bm.bmWidth / graphics_tile_wid;
 		if (graphics_image_tpr <= 0) { /* Paranoia. */
@@ -2585,9 +2584,7 @@ static void init_windows(void) {
 		/* Create masks. */
 		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(0, 0, 0));
 		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(255, 0, 255));
-
 	}
-
 #endif
 
 	/* Screen window */
@@ -3702,10 +3699,9 @@ static void hook_quit(cptr str) {
  * Init some stuff
  */
 void init_stuff(void) {
-	int   i;
+	int i;
 	char path[1024];
 	FILE *fp0;
-
 
 	/* Hack -- access "ANGBAND.INI" */
 	GetModuleFileName(hInstance, path, 512);
@@ -3818,12 +3814,11 @@ void init_stuff(void) {
 
 	/* Allocate the path */
 	ANGBAND_DIR_XTRA_GRAPHICS = string_make(path);
-
 #endif
 
 
 #ifdef USE_SOUND
-#ifndef USE_SOUND_2010
+ #ifndef USE_SOUND_2010
 
 	/* Build the "sound" path */
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
@@ -3833,8 +3828,7 @@ void init_stuff(void) {
 
 	/* Validate the "sound" directory */
 	validate_dir(ANGBAND_DIR_XTRA_SOUND);
-
-#endif
+ #endif
 #endif
 
 }
