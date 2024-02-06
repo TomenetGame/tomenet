@@ -2371,6 +2371,12 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp(buf, "!")) strcpy(init_search_string, "! inscription");
 		else if (!strcasecmp(buf, "@")) strcpy(init_search_string, "macro");
 		else if (!strcasecmp(buf, "slays") || !strcasecmp(buf, "brands") || !strcasecmp(buf, "brand")) strcpy(init_search_string, "slay"); //will actually invoke "Slaying vs brands"
+		else if ((my_strcasestr(buf, "wield") && my_strcasestr(buf, "book")) || (my_strcasestr(buf, "quirk") && my_strcasestr(buf, "book"))
+		    || (my_strcasestr(buf, "wield") && my_strcasestr(buf, "spell")) || (my_strcasestr(buf, "quirk") && my_strcasestr(buf, "spell")))
+			strcpy(init_search_string, "Wielding a spell book");
+		else if ((my_strcasestr(buf, "wield") && my_strcasestr(buf, "dev")) || (my_strcasestr(buf, "quirk") && my_strcasestr(buf, "dev")))
+			strcpy(init_search_string, "Wielding a magic device");
+		else if (my_strcasestr(buf, "wield") && my_strcasestr(buf, "quirk")) strcpy(init_search_string, "Quirk: Wield");
 
 		/* clean up */
 		buf[0] = 0;
