@@ -3651,9 +3651,11 @@ void client_init(char *argv1, bool skip) {
 #endif
 #ifdef RETRY_LOGIN
 	bool rl_auto_relogin = FALSE;
+	term *old;
 #endif
 	FILE *fp;
 	char buf[1024];
+
 
 #if defined(USE_X11) || defined(USE_GCU)
 	/* Force creation of fresh .tomenetrc file in case none existed yet.
@@ -3731,16 +3733,18 @@ void client_init(char *argv1, bool skip) {
 
 	/* clear all windows of previous text */
 	for (retries = 1; retries < ANGBAND_TERM_MAX; retries++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[retries]) continue;
 
+		/* Save current Term */
+		old = Term;
+
+		/* Clear a Term */
 		Term_activate(ang_term[retries]);
 		Term_clear();
 		Term_fresh();
 
-		/* Restore */
+		/* Restore current Term */
 		Term_activate(old);
 	}
 

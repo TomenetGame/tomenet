@@ -1858,16 +1858,19 @@ static errr Term_user_win(int n) {
  */
 static errr Term_xtra_win_react(void) {
 	int i;
+	term *old;
+	term_data *td;
 
 	/* Clean up windows */
 	for (i = 0; i < MAX_TERM_DATA; i++) {
-		term *old = Term;
-		term_data *td = &data[i];
-
 		/* Skip non-changes XXX XXX XXX */
 		if ((td->cols == td->t.wid) && (td->rows == td->t.hgt)) continue;
 
 		/* Check this vs WM_SIZING in AngbandWndProc - Redundant/problem? */
+
+		/* Save */
+		old = Term;
+		td = &data[i];
 
 		/* Activate */
 		Term_activate(&td->t);
@@ -4351,6 +4354,9 @@ void animate_palette(void) {
 	static bool init = FALSE;
 	static unsigned char ac = 0x00; //animatio
 
+	term *old;
+	term_data *td;
+
 
 	/* Initialise the palette once. For some reason colour_table[] is all zero'ed again at the beginning. */
 	if (!init) {
@@ -4446,8 +4452,8 @@ void animate_palette(void) {
 
 	/* Refresh aka redraw windows with new colour */
 	for (i = 0; i < MAX_TERM_DATA; i++) {
-		term *old = Term;
-		term_data *td = &data[i];
+		old = Term;
+		td = &data[i];
 
 		/* Activate */
 		Term_activate(&td->t);

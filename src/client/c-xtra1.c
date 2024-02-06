@@ -2614,16 +2614,18 @@ void show_equip(void) {
  */
 static void fix_inven(void) {
 	int j;
+	term *old;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] & PW_INVEN)) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
@@ -2656,16 +2658,18 @@ static void fix_inven(void) {
  */
 static void fix_subinven(void) {
 	int j;
+	term *old;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] & PW_SUBINVEN)) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
@@ -2693,16 +2697,18 @@ static void fix_subinven(void) {
  */
 static void fix_equip(void) {
 	int j;
+	term *old;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] & PW_EQUIP)) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
@@ -2726,16 +2732,18 @@ static void fix_equip(void) {
  */
 static void fix_player(void) {
 	int j;
+	term *old;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] & PW_PLAYER)) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
@@ -2764,19 +2772,22 @@ static void fix_message(void) {
 
 	cptr msg;
 	byte a;
+	term *old;
+
 
 	/* Display messages in different colors -Zz */
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] &
 		    (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT))) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
@@ -2848,16 +2859,18 @@ static void fix_message(void) {
 
 static void fix_lagometer(void) {
 	int j;
+	term *old;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] & PW_LAGOMETER)) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
@@ -2875,16 +2888,18 @@ static void fix_lagometer(void) {
 
 void fix_playerlist(void) {
 	int i, j, p, y = 0;
+	term *old;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] & PW_PLAYERLIST)) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
@@ -2938,16 +2953,18 @@ void check_for_playerlist(void) {
  */
 static void fix_player2(void) {
 	int j;
+	term *old;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* No window */
 		if (!ang_term[j]) continue;
 
 		/* No relevant flags */
 		if (!(window_flag[j] & PW_PLAYER2)) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
