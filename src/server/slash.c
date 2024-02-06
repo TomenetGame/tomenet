@@ -4732,7 +4732,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			guild_leave(Ind, TRUE);
 			return;
-		} else if (prefix(messagelc, "/quit") || prefix(messagelc, "/exit") || prefix(messagelc, "/leave")) {
+		} else if (prefix(messagelc, "/quit") || prefix(messagelc, "/exit") || prefix(messagelc, "/leave") || prefix(messagelc, "/logout")) {
 			do_quit(Players[Ind]->conn, 0);
 			return;
 		} else if (prefix(messagelc, "/suicide") || prefix(messagelc, "/sui") ||

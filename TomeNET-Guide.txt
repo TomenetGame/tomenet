@@ -1822,7 +1822,8 @@ They all start with a slash '/' hence they're called slash commands:
 
 /quit
 /exit
-/leave      Leaves the game, same as pressing CTRL+Q.
+/leave
+/logout     Leaves the game, same as pressing CTRL+Q.
 
 /recall
 /rec        Uses an item inscribed "@R" that provides 'Word of Recall' to
