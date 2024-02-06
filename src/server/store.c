@@ -335,6 +335,9 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = (price + 3) / 4;
+
+		/* If shop-selling prices are 2/3, so must be shop-buying prices, of course, or you could make free money */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_SELL67) price = (price * 2 + 1) / 3;
 	}
 
 	/* Shop is selling */
@@ -370,6 +373,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 #endif
 		}
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 3) / 2;
+
 		/* hack - make speed/poly rings 'affordable' (2/2) -- not speed rings here anymore! */
 		if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) &&
 		    (st_info[st_ptr->st_idx].flags1 & (SF1_PRICE4 | SF1_PRICE16))) {
@@ -377,11 +381,11 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 			if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 2) / 3;
 		}
 
+		/* CHEAPER items: Added for Hidden Library in IDDC */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_SELL67) price = (price * 2 + 1) / 3;
+
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = price * 4;
-
-		/* Added for Hidden Library in IDDC */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_SELL67) price = (price * 2) / 3;
 	}
 
 	/* Compute the final price (with rounding) */
