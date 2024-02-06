@@ -667,225 +667,79 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool t
 
 	my_fclose(fff);
 }
-const char *mon_flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", "IM_PSI", "IM_TELE", ""};
-const char *mon_flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
-//omitting SPIDER; note: DRAGON and DRAGONRIDER occur mutually exclusively, so we don't have to do extra string checks
-const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", "NONLIVING", ""};
-const char *mon_flags2highlight4[] = {"UNIQUE", "NAZGUL", "PSEUDO_UNIQUE", "NO_DEATH", ""};//no hints about dungeon/game boss status available or used
-const char *mon_flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
-const char *mon_flags2highlight6[] = {"AQUATIC", ""};
+const char mon_flags2highlight[6][12][NAME_LEN] = {
+    {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC",			"IM_POIS", "IM_WATER", "IM_PSI", "IM_TELE",	"", "", "", ""},
+    {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC",	"SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", "",	"", "", "", ""},
+    //omitting SPIDER; note: DRAGON and DRAGONRIDER occur mutually exclusively, so we don't have to do extra string checks
+    {"ANIMAL", "ORC", "TROLL", "GIANT",					"DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD",	"EVIL", "GOOD", "NONLIVING", ""},
+    {"UNIQUE", "NAZGUL", "PSEUDO_UNIQUE", "NO_DEATH",			"", "", "", ""					"", "", "", ""}, //no hints about dungeon/game boss status available or used
+    {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR",				"", "", "", ""					"", "", "", ""}, //currently unavailable
+    {"AQUATIC", "", "", "",						"", "", "", ""					"", "", "", ""}
+    };
 static int mon_highlit_flags(char *line) {
-	const char **f = mon_flags2highlight;
+	const char (*f)[NAME_LEN];
 	char *p2;
-	int i = 0, l;
+	int i = 0, l, mf;
 
-	while (*f[0]) {
-		p2 = line;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			//make sure the string is not just part of a different, longer flag string
-			if ((p2 == line || *(p2 - 1) == ' ' || *(p2 - 1) == '|' || *(p2 - 2) == '\377') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' || *(p2 + l) == '\377')) {
-				i += 4;
-				break;
+	for (mf = 0; mf < 6; mf++) {
+		f = mon_flags2highlight[mf];
+		while (*f[0]) {
+			p2 = line;
+			l = strlen(*f);
+			while ((p2 = strstr(p2, *f))) {
+				//make sure the string is not just part of a different, longer flag string
+				if ((p2 == line ||
+				    (p2 >= line + 1 && (*(p2 - 1) == ' ' || *(p2 - 1) == '|')) ||
+				    (p2 >= line + 2 && *(p2 - 2) == '\377')
+				    ) && (
+				    *p2 && (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' || *(p2 + l) == '\377')
+				    )) {
+					i += 4;
+					break;
+				}
+				p2++;
 			}
-			p2++;
+			f++;
 		}
-		f++;
-	}
-
-	f = mon_flags2highlight2;
-	while (*f[0]) {
-		p2 = line;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			//make sure the string is not just part of a different, longer flag string
-			if ((p2 == line || *(p2 - 1) == ' ' || *(p2 - 1) == '|' || *(p2 - 2) == '\377') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' || *(p2 + l) == '\377')) {
-				i += 4;
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight3;
-	while (*f[0]) {
-		p2 = line;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			//make sure the string is not just part of a different, longer flag string
-			if ((p2 == line || *(p2 - 1) == ' ' || *(p2 - 1) == '|' || *(p2 - 2) == '\377') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' || *(p2 + l) == '\377')) {
-				i += 4;
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight4;
-	while (*f[0]) {
-		p2 = line;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			//make sure the string is not just part of a different, longer flag string
-			if ((p2 == line || *(p2 - 1) == ' ' || *(p2 - 1) == '|' || *(p2 - 2) == '\377') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' || *(p2 + l) == '\377')) {
-				i += 4;
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight5;
-	while (*f[0]) {
-		p2 = line;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			//make sure the string is not just part of a different, longer flag string
-			if ((p2 == line || *(p2 - 1) == ' ' || *(p2 - 1) == '|' || *(p2 - 2) == '\377') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' || *(p2 + l) == '\377')) {
-				i += 4;
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight6;
-	while (*f[0]) {
-		p2 = line;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			//make sure the string is not just part of a different, longer flag string
-			if ((p2 == line || *(p2 - 1) == ' ' || *(p2 - 1) == '|' || *(p2 - 2) == '\377') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' || *(p2 + l) == '\377')) {
-				i += 4;
-				break;
-			}
-			p2++;
-		}
-		f++;
 	}
 
 	return i;
 }
 static void mon_highlight_flags(char *info) {
-	const char **f = mon_flags2highlight, a_flag = 's';
+	const char (*f)[NAME_LEN], a_flag = 's';
 	char info_tmp[MSG_LEN], *p2;
-	int l;
+	int l, mf;
 
-	while (*f[0]) {
-		p2 = info;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			if ((p2 == info || *(p2 - 1) == ' ' || *(p2 - 1) == '|') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|')) {
-				strcpy(info_tmp, info);
-				sprintf(info_tmp + (p2 - info), "\377w%s\377%c", *f, a_flag);
-				strcat(info_tmp, p2 + strlen(*f));
-				strcpy(info, info_tmp);
-				break;
+	for (mf = 0; mf < 6; mf++) {
+		f = mon_flags2highlight[mf];
+		while (*f[0]) {
+			p2 = info;
+			l = strlen(*f);
+			while ((p2 = strstr(p2, *f))) {
+				if ((p2 == info ||
+				    (p2 >= info + 1 && (*(p2 - 1) == ' ' || *(p2 - 1) == '|')) ||
+					(p2 >= info + 2 && *(p2 - 2) == '\377') //?
+				    ) && (
+				    *p2 && (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|' ||
+					*(p2 + l) == '\377') //?
+				    )) {
+					strcpy(info_tmp, info);
+					switch (mf) {
+					case 0: sprintf(info_tmp + (p2 - info), "\377w%s\377%c", *f, a_flag); break;
+					case 1: sprintf(info_tmp + (p2 - info), "\377y%s\377%c", *f, a_flag); break;
+					case 2: sprintf(info_tmp + (p2 - info), "\377o%s\377%c", *f, a_flag); break;
+					case 3: sprintf(info_tmp + (p2 - info), "\377U%s\377%c", *f, a_flag); break;
+					case 4: sprintf(info_tmp + (p2 - info), "\377G%s\377%c", *f, a_flag); break;
+					case 5: sprintf(info_tmp + (p2 - info), "\377B%s\377%c", *f, a_flag); break;
+					}
+					strcat(info_tmp, p2 + strlen(*f));
+					strcpy(info, info_tmp);
+					break;
+				}
+				p2++;
 			}
-			p2++;
+			f++;
 		}
-		f++;
-	}
-
-	f = mon_flags2highlight2;
-	while (*f[0]) {
-		p2 = info;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			if ((p2 == info || *(p2 - 1) == ' ' || *(p2 - 1) == '|') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|')) {
-				strcpy(info_tmp, info);
-				sprintf(info_tmp + (p2 - info), "\377y%s\377%c", *f, a_flag);
-				strcat(info_tmp, p2 + strlen(*f));
-				strcpy(info, info_tmp);
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight3;
-	while (*f[0]) {
-		p2 = info;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			if ((p2 == info || *(p2 - 1) == ' ' || *(p2 - 1) == '|') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|')) {
-				strcpy(info_tmp, info);
-				sprintf(info_tmp + (p2 - info), "\377o%s\377%c", *f, a_flag);
-				strcat(info_tmp, p2 + strlen(*f));
-				strcpy(info, info_tmp);
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight4;
-	while (*f[0]) {
-		p2 = info;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			if ((p2 == info || *(p2 - 1) == ' ' || *(p2 - 1) == '|') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|')) {
-				strcpy(info_tmp, info);
-				sprintf(info_tmp + (p2 - info), "\377U%s\377%c", *f, a_flag);
-				strcat(info_tmp, p2 + strlen(*f));
-				strcpy(info, info_tmp);
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight5;
-	while (*f[0]) {
-		p2 = info;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			if ((p2 == info || *(p2 - 1) == ' ' || *(p2 - 1) == '|') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|')) {
-				strcpy(info_tmp, info);
-				sprintf(info_tmp + (p2 - info), "\377G%s\377%c", *f, a_flag);
-				strcat(info_tmp, p2 + strlen(*f));
-				strcpy(info, info_tmp);
-				break;
-			}
-			p2++;
-		}
-		f++;
-	}
-
-	f = mon_flags2highlight6;
-	while (*f[0]) {
-		p2 = info;
-		l = strlen(*f);
-		while ((p2 = strstr(p2, *f))) {
-			if ((p2 == info || *(p2 - 1) == ' ' || *(p2 - 1) == '|') &&
-			    (*(p2 + l) == 0 || *(p2 + l) == ' ' || *(p2 + l) == '|')) {
-				strcpy(info_tmp, info);
-				sprintf(info_tmp + (p2 - info), "\377B%s\377%c", *f, a_flag);
-				strcat(info_tmp, p2 + strlen(*f));
-				strcpy(info, info_tmp);
-				break;
-			}
-			p2++;
-		}
-		f++;
 	}
 }
 void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool to_chat) {
