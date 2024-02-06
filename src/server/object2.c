@@ -1474,8 +1474,9 @@ void object_tried(int Ind, object_type *o_ptr, bool flipped) {
 
 
 /*
- * Return the "value" of an "unknown" item
- * Make a guess at the value of non-aware items
+ * Return the "value" of an "unknown" item.
+ * Make a guess at the value of non-aware items.
+ * (Does not apply any 'discounts'.)
  */
 s64b object_value_base(int Ind, object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -1485,30 +1486,30 @@ s64b object_value_base(int Ind, object_type *o_ptr) {
 
 	/* Analyze the type */
 	switch (o_ptr->tval) {
-		/* Un-aware Food */
-		case TV_FOOD: return(5L);
+	/* Un-aware Food */
+	case TV_FOOD: return(5L);
 
-		/* Un-aware Potions */
-		case TV_POTION:
-		case TV_POTION2: return(20L);
+	/* Un-aware Potions */
+	case TV_POTION:
+	case TV_POTION2: return(20L);
 
-		/* Un-aware Scrolls */
-		case TV_SCROLL: return(20L);
+	/* Un-aware Scrolls */
+	case TV_SCROLL: return(20L);
 
-		/* Un-aware Staffs */
-		case TV_STAFF: return(70L);
+	/* Un-aware Staffs */
+	case TV_STAFF: return(70L);
 
-		/* Un-aware Wands */
-		case TV_WAND: return(50L);
+	/* Un-aware Wands */
+	case TV_WAND: return(50L);
 
-		/* Un-aware Rods */
-		case TV_ROD: return(90L);
+	/* Un-aware Rods */
+	case TV_ROD: return(90L);
 
-		/* Un-aware Rings */
-		case TV_RING: return(45L);
+	/* Un-aware Rings */
+	case TV_RING: return(45L);
 
-		/* Un-aware Amulets */
-		case TV_AMULET: return(45L);
+	/* Un-aware Amulets */
+	case TV_AMULET: return(45L);
 	}
 
 	/* Paranoia -- Oops */
