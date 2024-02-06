@@ -9039,14 +9039,13 @@ static void do_cmd_options_win(void) {
 	bool go = TRUE;
 
 	u32b old_flag[ANGBAND_TERM_MAX];
+	term *old;
 
 
 	/* Memorize old flags */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 		/* Acquire current flags */
 		old_flag[j] = window_flag[j];
-	}
-
 
 	/* Clear screen */
 	Term_clear();
@@ -9127,9 +9126,19 @@ static void do_cmd_options_win(void) {
 
 		case 'T':
 		case 't':
+			old = Term;
 			/* Clear windows */
-			for (j = 1; j < ANGBAND_TERM_MAX; j++)
+			for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 				window_flag[j] &= ~(1L << y);
+
+				/* Clear window completely (ie no flags left) and window exists? */
+				if (!window_flag[j] && ang_term[j]) {
+					Term_activate(ang_term[j]);
+					Term_clear();
+					Term_fresh();
+				}
+			}
+			Term_activate(old);
 
 			/* Clear flags */
 			for (i = 1; i < NR_OPTIONS_SHOWN; i++)
@@ -9155,7 +9164,16 @@ static void do_cmd_options_win(void) {
 			/* Clear flag */
 			window_flag[x] &= ~(1L << y);
 
-			/* Update windows */
+			/* Clear window completely (ie no flags left) and window exists? */
+			if (!window_flag[x] && ang_term[x]) {
+				old = Term;
+				Term_activate(ang_term[x]);
+				Term_clear();
+				Term_fresh();
+				Term_activate(old);
+			}
+
+			/* Update windows -- doesn't do anything for clearing a window though, pointless here */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 			window_stuff();
 			break;
@@ -9163,6 +9181,15 @@ static void do_cmd_options_win(void) {
 		case '\r':
 			/* Toggle flag */
 			window_flag[x] ^= (1L << y);
+
+			/* Clear window completely (ie no flags left) and window exists? */
+			if (!window_flag[x] && ang_term[x]) {
+				old = Term;
+				Term_activate(ang_term[x]);
+				Term_clear();
+				Term_fresh();
+				Term_activate(old);
+			}
 
 			/* Update windows */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
@@ -9181,13 +9208,14 @@ static void do_cmd_options_win(void) {
 
 	/* Notice changes */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		term *old = Term;
-
 		/* Dead window */
 		if (!ang_term[j]) continue;
 
 		/* Ignore non-changes */
 		if (window_flag[j] == old_flag[j]) continue;
+
+		/* Save */
+		old = Term;
 
 		/* Activate */
 		Term_activate(ang_term[j]);
