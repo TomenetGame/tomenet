@@ -1428,8 +1428,7 @@ int Net_flush(void) {
  * Return the socket filedescriptor for use in a select(2) call.
  */
 int Net_fd(void) {
-	if (!initialized || c_quit)
-		return(-1);
+	if (!initialized || c_quit) return(-1);
 #ifdef RETRY_LOGIN
 	/* prevent inkey() from crashing/causing Sockbuf_read() errors ("no read from non-readable socket..") */
 	if (rl_connection_state != 1) return(-1);
@@ -1844,18 +1843,20 @@ int Receive_quit(void) {
 			strcpy(reason, "unknown reason");
 		errno = 0;
 
+#ifdef RETRY_LOGIN
+		rl_connection_destructible = TRUE;
+		rl_connection_state = 2;
+#endif
+
 		/* Hack -- tombstone */
 		if (strstr(reason, "Killed by") ||
 		    strstr(reason, "Committed suicide")) {
-#ifdef RETRY_LOGIN
-			rl_connection_destructible = TRUE;
-			rl_connection_state = 2;
-#endif
-			/* TERAHACK */
+			/* TERAHACK -- what does it do exactly, please? >_>" */
 			initialized = FALSE;
 
 			c_close_game(reason);
 		}
+
 		quit(format("%s", reason));
 	}
 	return(-1);

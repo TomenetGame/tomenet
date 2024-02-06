@@ -4733,7 +4733,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			guild_leave(Ind, TRUE);
 			return;
 		} else if (prefix(messagelc, "/quit") || prefix(messagelc, "/exit") || prefix(messagelc, "/leave") || prefix(messagelc, "/logout") || prefix(messagelc, "/bye")) {
-			do_quit(Players[Ind]->conn, 0);
+			/* If used with any parameter, it will perma-close the connection, making the client terminate, requiring us to start the client anew to log in again. */
+			if (tk) do_quit(Players[Ind]->conn, FALSE); //FALSE: will actually result in perma-dropping the connection
+			else do_quit(Players[Ind]->conn, TRUE); //TRUE: allows RETRY_LOGIN to work.
 			return;
 		} else if (prefix(messagelc, "/suicide") || prefix(messagelc, "/sui") ||
 		    prefix(messagelc, "/retire") || prefix(messagelc, "/ret")) {

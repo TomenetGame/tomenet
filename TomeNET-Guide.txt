@@ -1302,6 +1302,8 @@ They all start with a slash '/' hence they're called slash commands:
 /leave
 /logout
 /quit       Leaves the game, same as pressing CTRL+Q.
+            If any parameter is added (eg just a dot '.') it will terminate the
+            client, instead of throwing us just back to the account screen.
 
 /characters
 /chars      Lists all your existing characters, including their locations.
@@ -1556,6 +1558,8 @@ They all start with a slash '/' hence they're called slash commands:
 /leave
 /logout
 /quit       Leaves the game, same as pressing CTRL+Q.
+            If any parameter is added (eg just a dot '.') it will terminate the
+            client, instead of throwing us just back to the account screen.
 
 /feeling
 /fe         Repeat the level feeling. See (4.8) for more information.
@@ -1703,7 +1707,9 @@ They all start with a slash '/' hence they're called slash commands:
 /logout
 /bye
 /exit
-/quit      Leaves the game, same as pressing CTRL+Q.
+/quit       Leaves the game, same as pressing CTRL+Q.
+            If any parameter is added (eg just a dot '.') it will terminate the
+            client, instead of throwing us just back to the account screen.
 
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
@@ -1835,6 +1841,8 @@ They all start with a slash '/' hence they're called slash commands:
 /exit
 /leave
 /logout     Leaves the game, same as pressing CTRL+Q.
+            If any parameter is added (eg just a dot '.') it will terminate the
+            client, instead of throwing us just back to the account screen.
 
 /recall
 /rec        Uses an item inscribed "@R" that provides 'Word of Recall' to
