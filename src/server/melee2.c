@@ -2775,7 +2775,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy for", m_name);
-		breath(Ind, m_idx, GF_MANA, ((eff_m_hp / 3) > 250 ? 250 : (eff_m_hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_MANA, ((eff_m_hp / 3) > 350 ? 350 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_MANA);
 		break;
 
@@ -5016,7 +5016,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy for", m_name);
-		breath(Ind, m_idx, GF_MANA, ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_MANA, ((m_ptr->hp / 3) > 350 ? 350 : (m_ptr->hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_MANA);
 		break;
 

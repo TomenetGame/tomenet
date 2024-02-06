@@ -12120,7 +12120,7 @@ Gravity         These attacks have very annoying side-effects:
 Mana            Mana is pure magical energy. There are only rumours
                 about items that provide resistance against it.
                 Resisting it will cut damage to 6/7..6/12.
-                Breath damage is monster HP/3, breath caps at 250. Only very
+                Breath damage is monster HP/3, breath caps at 350. Only very
                 few monsters (mostly uniques) can breathe mana.
                 Mana bolts do 50+(1...[level*7/2]) damage.
                 Mana storms (balls) do (level*5)+(10d10) damage. Beware!

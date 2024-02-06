@@ -1033,7 +1033,7 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 27:
 	sprintf(p_ptr->attacker, " breathes mana for");
 	msg_print(Ind, "You breathe mana.");
-	fire_ball(Ind, GF_MANA, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 250) ? 250 : ((p_ptr->chp * 10) / MIMIC_DIV3) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_MANA, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 300) ? 300 : ((p_ptr->chp * 10) / MIMIC_DIV3) , rad, p_ptr->attacker);
 	break;
 /* RF4_BR_DISI */
     case 28:
