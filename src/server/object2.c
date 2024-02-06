@@ -3981,7 +3981,8 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	   Artifact paranoia check (cannot have more than 1 anyway), and prohibiting costly accidents;
 	   questor items are already exempt in object_similar() so we don't need to check for them again here. */
 	if (!(o_ptr->name1 || j_ptr->name1 || o_ptr->name2 || j_ptr->name2 || o_ptr->name2b || j_ptr->name2b) &&
-	    (i = check_guard_inscription(o_ptr->note, 'K')) > 1) {
+	    (i = check_guard_inscription(o_ptr->note, 'K'))) {
+		if (i == -1) i = 16; /* Just '!K' assumes default value of '!K15' */
 		i--; //unhack
 		/* Sanity checks, and apply! */
 		if (i >= MAX_STACK_SIZE) i = MAX_STACK_SIZE - 1;

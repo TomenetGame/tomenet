@@ -2350,8 +2350,9 @@ Any item in your inventory:
                 This inscription works with picking up items from the floor,
                 purchasing items from a store, stealing items from a store and
                 taking items from a list house (shop-style house).
-    !Kn         Inscribed on an inventory item, will auto-destroy any further
+    !K[n]       Inscribed on an inventory item, will auto-destroy any further
                 items you acquire beyond the amount of n.
+                If n is omitted, the default value of 15 will be used.
                 Use this mainly for empty bottles, especially in conjunction
                 with the 'keep_bottle' option enabled, to prevent uncontrolled
                 amassment of empty bottles. Example:  !K10
