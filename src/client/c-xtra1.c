@@ -1908,6 +1908,7 @@ static void display_subinven(void) {
 	/* No subinventories? */
 	if (!i_ptr) {
 		Term_putstr(0, 0, -1, TERM_L_DARK, "(You don't carry any special bags)");
+		Term_erase(34, 0, 255); /* Erase rest of the line */
 		k = 1;
 	}
 
