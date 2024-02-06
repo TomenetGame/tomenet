@@ -3576,11 +3576,14 @@ void client_init(char *argv1, bool skip) {
 		}
 	}
 
+ #if 0 /* this actually breaks entering 'localhost'! */
 	/* Fix "localhost" */
 	if (!strcmp(server_name, "localhost"))
-#endif
 		strcpy(server_name, host_name);
-
+ #endif
+#else
+	strcpy(server_name, host_name);
+#endif
 
 #ifdef RETRY_LOGIN
 	retry_contact:
