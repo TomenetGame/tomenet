@@ -1267,8 +1267,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 
 		/* Try to wield everything */
-		else if ((prefix(messagelc, "/dress")) ||
-		    (prefix(messagelc, "/dr") && !prefix(messagelc, "/draw"))) {
+		else if (prefix(messagelc, "/dress") || prefix(messagelc, "/dr ") || !strcmp(messagelc, "/dr")) {
+		    //&& !prefix(messagelc, "/draw") && !prefix(messagelc, "/dri"))) { /* there is no /drink command, but anyway, it might confuse people if they try to /drink! */
 			object_type *o_ptr;
 			bool gauche = FALSE;
 			bool dual = FALSE;
