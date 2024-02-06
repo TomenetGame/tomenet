@@ -2863,7 +2863,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'A' for "Allocation" (one line only) */
 		if (buf[0] == 'A') {
-			int i;
+			int i, chance;
 
 			/* XXX XXX XXX Simply read each number following a colon */
 			for (i = 0, s = buf + 1; s && (s[0] == ':') && s[1]; ++i) {
@@ -2876,7 +2876,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 				/* Default chance */
 				k_ptr->chance[i] = 1;
 
-				/* Store the attack damage index */
+				/* Store the depth where this item is native (Note: It's depth has no relation to the item's actual base kind level (W-line))  */
 				k_ptr->locale[i] = atoi(s + 1);
 
 				/* Find the slash */
@@ -2887,8 +2887,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 
 				/* If the slash is "nearby", use it */
 				if (t && (!s || t < s)) {
-					int chance = atoi(t + 1);
-
+					chance = atoi(t + 1);
 					k_ptr->chance[i] = chance;
 				}
 			}
