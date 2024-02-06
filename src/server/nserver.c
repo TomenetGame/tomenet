@@ -4052,7 +4052,7 @@ void Handle_input(int fd, int arg) {
 		// Sockbuf_read will return(0).
 		if (errno != EAGAIN) {
 			// If this happens, the the client has probably closed his TCP connection.
-			do_quit(ind, 0);
+			do_quit(ind, FALSE);
 		}
 
 		//Destroy_connection(ind, "input error");
@@ -4357,7 +4357,7 @@ static int Receive_quit(int ind) {
 		return(-1);
 	}
 
-	do_quit(ind, 0);
+	do_quit(ind, FALSE);
 
 	return(1);
 }
