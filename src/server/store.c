@@ -456,8 +456,10 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		/* We have to manually handle whether the player has IDed / knows the ring flavour or not! */
 		if (!object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
 			price = object_value_base(Ind, o_ptr);
+
 			/* Apply discount (if any) */
 			if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
+
 			return(price);
 		}
 		price = k_info[o_ptr->k_idx].cost;
@@ -467,20 +469,29 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		if (o_ptr->name2) price += e_info[o_ptr->name2b].cost; /* 'Indestructible' ego, pft */
 #if 0 /* cheapo, basically just a tip :/ */
 		if (o_ptr->pval != 0) price += r_info[o_ptr->pval].level * 100;
-#else /* can be a very serious tip. Worth selling forms you don't need, perhaps even? (1/10 of npc stores' selling price) */
+#elif 0 /* can be a very serious tip. Worth selling forms you don't need, perhaps even? (1/10 of npc stores' selling price) */
 		if (o_ptr->pval != 0) price += ((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) / 10;
+#else /* get even moar out of it! Side hustle for mimicry users! */
+		if (o_ptr->pval != 0) price += (((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) * 10) / (30 + 300 / (r_ptr->level + 5));
 #endif
+
+		/* Apply discount (if any) */
+		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
+
 		break;
 	case 1:
 		/* npc shop sells: very expensive */
 		if (o_ptr->pval != 0) price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
+
+		/* Apply discount (if any) */
+		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
 		break;
 	case 2:
 		/* player store: balanced */
 		if (Ind && !object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
 			price = object_value_base(Ind, o_ptr);
-			/* Apply discount (if any) */
-			if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
+
+			//note: o_ptr->discount doesn't apply in player stores
 			return(price);
 		}
 		price = k_info[o_ptr->k_idx].cost;

@@ -6718,11 +6718,14 @@ F:CRIT | HIDE_TYPE
 # (Pern)Mangband native items
 # Renumbering needed!		- Jir -
 
+# Greatly reduced base price and base level, to make it more worth forging low-level form rings as side hustle
 N:810:Polymorphing
 G:=:d
 I:45:60:0
-W:30:0:2:1000
-A:30/1
+#W:30:0:2:1000
+#A:30/1
+W:10:0:2:250
+A:10/2:20/2:30/1
 F:ACTIVATE | HIDE_TYPE | EASY_USE
 D:Those adept in mimicry can make use of this.
 
