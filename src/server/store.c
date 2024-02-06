@@ -4797,7 +4797,7 @@ void do_cmd_store(int Ind) {
 
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - st_ptr->last_visit) / (10L *
-	    ((((st_ptr->st_idx == STORE_BOOK || st_ptr->st_idx == STORE_BOOK_DUN || st_ptr->st_idx == STORE_LIBRARY || st_ptr->st_idx == STORE_HIDDENLIBRARY || st_ptr->st_idx == STORE_FORBIDDENLIBRARY) ? cfg.book_store_turns_perc : 100)
+	    (((is_bookstore(st_ptr->st_idx) ? cfg.book_store_turns_perc : 100)
 	    * (p_ptr->wpos.wz ? cfg.dun_store_turns : cfg.store_turns) + 99) / 100));
 
 	/* Maintain the store max. 10 times.

@@ -10159,7 +10159,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 #if 1 /* quality of life: for specific stores, no need to type the whole (always same) item name. */
 			/* assume player maybe just entered a spell name, if this is the bookstore. */
 			switch (p_ptr->store_num) {
-			case STORE_BOOK:
+			case STORE_BOOK: // aka is_bookstore() ...
 			case STORE_BOOK_DUN:
 			case STORE_LIBRARY:
 			case STORE_HIDDENLIBRARY:

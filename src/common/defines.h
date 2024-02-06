@@ -1801,6 +1801,9 @@
 #define STORE_AUCTION	106	/* deprecated (not 'new' code, would need re-integration first) */
 #define STORE_NINE	107	/* unknown, but supposed to have been a '9' and much bigger */
 
+#define is_bookstore(st_idx) \
+	(st_idx == STORE_BOOK || st_idx == STORE_BOOK_DUN || st_idx == STORE_LIBRARY || st_idx == STORE_HIDDENLIBRARY || st_idx == STORE_FORBIDDENLIBRARY ? TRUE : FALSE)
+
 
 /*
  * Misc constants
