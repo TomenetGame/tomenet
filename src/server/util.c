@@ -2730,6 +2730,7 @@ cptr quark_str(s32b i) {
  *             the inscription still within this same !-'segment', return that number + 1 (to encode a value of 0 too),
  *             just negative values aren't possible as -1 would interfere with 'FALSE'. -C. Blue
  *             Added this for !M and !G handling.
+ * Returns <-1> if TRUE, <0> if FALSE, >0 if TRUE and a number is specified, with return value being <number+1>. */
  */
 int check_guard_inscription(s16b quark, char what) {
 	const char *ax = quark_str(quark);
