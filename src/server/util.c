@@ -2722,8 +2722,7 @@ cptr quark_str(s32b i) {
 	return(q);
 }
 
-/*
- * Check to make sure they haven't inscribed an item against what
+/* Check to make sure they haven't inscribed an item against what
  * they are trying to do -Crimson
  * look for "!*Erm" type, and "!* !A !f" type.
  * New (2023): Encode TRUE directly as -1 instead, and if TRUE and there's a number behind
@@ -2731,7 +2730,6 @@ cptr quark_str(s32b i) {
  *             just negative values aren't possible as -1 would interfere with 'FALSE'. -C. Blue
  *             Added this for !M and !G handling.
  * Returns <-1> if TRUE, <0> if FALSE, >0 if TRUE and a number is specified, with return value being <number+1>. */
- */
 int check_guard_inscription(s16b quark, char what) {
 	const char *ax = quark_str(quark);
 	int n = 0; //paranoia initialization
