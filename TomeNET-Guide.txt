@@ -1297,6 +1297,12 @@ They all start with a slash '/' hence they're called slash commands:
 
 /bug        Report a bug to the admin(s).
 
+/bye
+/exit
+/leave
+/logout
+/quit       Leaves the game, same as pressing CTRL+Q.
+
 /characters
 /chars      Lists all your existing characters, including their locations.
 
@@ -1546,7 +1552,9 @@ They all start with a slash '/' hence they're called slash commands:
             status of their initiation career, see 'Maia' in (7.4).
 
 /exit
+/bye
 /leave
+/logout
 /quit       Leaves the game, same as pressing CTRL+Q.
 
 /feeling
@@ -1692,6 +1700,8 @@ They all start with a slash '/' hence they're called slash commands:
             user pressed '~' key.
 
 /leave
+/logout
+/bye
 /exit
 /quit      Leaves the game, same as pressing CTRL+Q.
 
@@ -1821,6 +1831,7 @@ They all start with a slash '/' hence they're called slash commands:
             If you specify '*' instead of a number, you will drop ALL quests.
 
 /quit
+/bye
 /exit
 /leave
 /logout     Leaves the game, same as pressing CTRL+Q.
