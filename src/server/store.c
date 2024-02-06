@@ -1147,9 +1147,9 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return(1);
 			break;
 		case TV_FOOD:
-			if ((o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) || /* all mushrooms are of a herbalist's interest! */
-			    (o_ptr->sval == SV_FOOD_WAYBREAD) || (o_ptr->sval == SV_FOOD_ATHELAS) || /* 'normal' food, but counts as herbalist stuff due to their special nature */
-			    (o_ptr->sval == SV_FOOD_PINT_OF_ALE) || (o_ptr->sval == SV_FOOD_PINT_OF_WINE)) /* owner likes booze for a change =_= */
+			if (o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX || /* all mushrooms are of a herbalist's interest! */
+			    o_ptr->sval == SV_FOOD_WAYBREAD || o_ptr->sval == SV_FOOD_ATHELAS || /* 'normal' food, but counts as herbalist stuff due to their special nature */
+			    o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD) /* owner likes booze for a change =_= */
 				 break;
 			return(1);
 		case TV_POTION:

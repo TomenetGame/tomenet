@@ -1513,7 +1513,8 @@ static bool item_tester_quaffable(object_type *o_ptr) {
 	if (o_ptr->tval == TV_POTION2) return(TRUE);
 	if ((o_ptr->tval == TV_FOOD) &&
 			(o_ptr->sval == SV_FOOD_PINT_OF_ALE ||
-			 o_ptr->sval == SV_FOOD_PINT_OF_WINE) )
+			 o_ptr->sval == SV_FOOD_PINT_OF_WINE ||
+			 o_ptr->sval == SV_FOOD_KHAZAD)) /* nice hard-coding >_< */
 			return(TRUE);
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0002)) return(TRUE);
 

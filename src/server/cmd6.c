@@ -513,7 +513,6 @@ void do_cmd_eat_food(int Ind, int item) {
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
-
 	if (!(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0001))) {
 		if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE && !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL)) {
 			//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to eat non-food!");
@@ -525,7 +524,8 @@ void do_cmd_eat_food(int Ind, int item) {
 		/* Let them drink :) */
 		if (o_ptr->tval != TV_FOOD ||
 		    (o_ptr->sval != SV_FOOD_PINT_OF_ALE &&
-		    o_ptr->sval != SV_FOOD_PINT_OF_WINE)) {
+		    o_ptr->sval != SV_FOOD_PINT_OF_WINE &&
+		    o_ptr->sval != SV_FOOD_KHAZAD)) {
 			msg_print(Ind, "You cannot eat food.");
 			return;
 		}
@@ -543,7 +543,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 #ifdef USE_SOUND_2010
-	if (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE)
+	if (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD)
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 	else
 		sound(Ind, "eat", NULL, SFX_TYPE_COMMAND, FALSE);
