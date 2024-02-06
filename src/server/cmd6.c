@@ -371,11 +371,12 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	case SV_FOOD_PINT_OF_ALE:
 	case SV_FOOD_PINT_OF_WINE:
+	case SV_FOOD_KHAZAD:
 		/* as this counts as food and not as potion, there's a hack allowing ents to 'eat' this anyway.. */
 		if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
-			if (!o_ptr) {
+			if (!o_ptr) { // ???
 				msg_format(Ind, "\377%c*HIC*", random_colour());
-				msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
+				msg_format_near(Ind, "\377w%s hiccups!", p_ptr->name);
 
 				if (magik(TRUE? 60 : 30)) set_confused(Ind, p_ptr->confused + 20 + randint(20));
 				if (magik(TRUE? 50 : 20)) set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
@@ -411,8 +412,8 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			}
 			/* Let's make this usable... - the_sandman */
 			else if (o_ptr->name1 == ART_DWARVEN_ALE) {
-				msg_print(Ind, "\377gYou drank the liquior of the gods");
-				msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
+				msg_print(Ind, "\377wYou drank the liquior of the gods");
+				msg_format_near(Ind, "\377wYou look enviously as %s took a sip of The Ale", p_ptr->name);
 				switch (randint(10)) {
 				case 1:
 				case 2:
@@ -431,9 +432,9 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 					if (!(p_ptr->resist_conf)) set_confused(Ind, randint(10));
 				}
 				p_ptr->food = PY_FOOD_FULL;	// A quaff will bring you to the norm sustenance level!
-			} else if (magik(o_ptr->name2? 50 : 20)) {
+			} else if (magik(o_ptr->name2 ? 50 : 20)) {
 				msg_format(Ind, "\377%c*HIC*", random_colour());
-				msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
+				msg_format_near(Ind, "\377w%s hiccups!", p_ptr->name);
 
 				if (magik(o_ptr->name2? 60 : 30)) set_confused(Ind, p_ptr->confused + 20 + randint(20));
 				if (magik(o_ptr->name2? 50 : 20)) set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));

@@ -2706,9 +2706,7 @@ D:have expected. In fact there is no fault to be found in balance or power.
 #todo: check/verify if level makes sense.. (with anti-ood code)
 
 N:216:of the Khazad
-#I:80:38:500 --changed to INSTA_ART:
-I:80:43:500
-#W:10:40:3:5000
+I:80:213:500
 W:15:1:3:5000
 P:0:2d3:0:0:0
 #Z:Confuse self
