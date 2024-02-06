@@ -1863,14 +1863,14 @@ static errr Term_xtra_win_react(void) {
 
 	/* Clean up windows */
 	for (i = 0; i < MAX_TERM_DATA; i++) {
+		/* Save */
+		old = Term;
+		td = &data[i];
+
 		/* Skip non-changes XXX XXX XXX */
 		if ((td->cols == td->t.wid) && (td->rows == td->t.hgt)) continue;
 
 		/* Check this vs WM_SIZING in AngbandWndProc - Redundant/problem? */
-
-		/* Save */
-		old = Term;
-		td = &data[i];
 
 		/* Activate */
 		Term_activate(&td->t);
