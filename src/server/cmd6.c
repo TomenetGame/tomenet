@@ -412,8 +412,12 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			}
 			/* Let's make this usable... - the_sandman */
 			else if (o_ptr->name1 == ART_DWARVEN_ALE) {
+				if (!rand_int(5)) {
+					msg_format(Ind, "\377%c*HIC*", random_colour());
+					msg_format_near(Ind, "\377w%s hiccups!", p_ptr->name);
+				}
 				msg_print(Ind, "\377wYou drank the liquior of the gods");
-				msg_format_near(Ind, "\377wYou look enviously as %s took a sip of The Ale", p_ptr->name);
+				if (!rand_int(3)) msg_format_near(Ind, "\377wYou look enviously as %s took a sip of The Ale", p_ptr->name);
 				switch (randint(10)) {
 				case 1:
 				case 2:
@@ -422,7 +426,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 				case 4:
 				case 5:
 				case 6:	// 3 in 10 for Speed
-					set_fast(Ind, 20 + randint(10), 10); break;
+					set_fast(Ind, 20 + randint(10), 3); break;
 				case 7:
 				case 8:
 				case 9: // 3 in 10 for Berserk
