@@ -6724,8 +6724,10 @@ G:=:d
 I:45:60:0
 #W:30:0:2:1000
 #A:30/1
-W:10:0:2:250
-A:10/2:20/2:30/1
+#W:5:0:2:250
+#A:5/2:15/2:30/1
+W:5:0:2:250
+A:5/1:15/1:30/1
 F:ACTIVATE | HIDE_TYPE | EASY_USE
 D:Those adept in mimicry can make use of this.
 
@@ -8461,7 +8463,7 @@ D:(This is a quest item)
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
-#W:(depth):(rarity[arts only] 0..255):(weight):(price)  --  depth, rarity and weight have no effect on INSTA_ARTs; price has effect while the item is not known, otherwise it gets overridden by a_ptr->price.
+#W:(level):(rarity[arts only] 0..255):(weight):(price)  --  depth, rarity and weight have no effect on INSTA_ARTs; price has effect while the item is not known, otherwise it gets overridden by a_ptr->price.
 #A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]  -- this line has no effect on INSTA_ARTs
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC)
 #F:(Flag) |...
