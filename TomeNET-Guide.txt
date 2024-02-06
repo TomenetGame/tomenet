@@ -20580,7 +20580,7 @@ these limitations will be lifted.
   (This school cannot be trained by vampire race characters, as freely flowing
   water and natural magic in general opposes their very existance.)
 
-    Vapor           Fills the air around you with toxic moisture
+    Vapor           Fills the nearby air with toxic moisture
                     (which does pure water damage, not poison).
                     Required skill level for first spell level: 2.
 
