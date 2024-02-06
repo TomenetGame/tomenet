@@ -2700,7 +2700,10 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				msg_print(Ind, "You need an up-to-date client to order an item.");
 				break;
 			}
-			Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? (Or \"cancel\") ", "");
+			if (is_bookstore(p_ptr->store_num))
+				Send_request_str(Ind, RID_ITEM_ORDER, "Which item or spell would you like to order? (Or \"cancel\") ", "");
+			else
+				Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? (Or \"cancel\") ", "");
 			break;
 #endif
 #ifdef ENABLE_MERCHANT_MAIL
