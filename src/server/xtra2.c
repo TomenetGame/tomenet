@@ -8662,14 +8662,14 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	}
 
 #ifdef SAFETY_BACKUP_PLAYER
-	int j = p_ptr->max_lev;
+	int j = p_ptr->max_plv;
 
 	if (j < SAFETY_BACKUP_PLAYER) {
 		e_printf("(%s) %s (%d, %s)\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->accountname); /* log to erasure.log file for compact overview */
-		s_printf("(Skipping safety backup (level %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
+		s_printf("(Skipping safety backup (max_plv %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
 	} else {
 		e_printf("(%s) %s (%d, %s) BACKUP\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->accountname); /* log to erasure.log file for compact overview */
-		s_printf("(Creating safety backup (level %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
+		s_printf("(Creating safety backup (max_plv %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
 
 		/* rename savefile to backup (side note: unlink() will fail to delete it then later) */
 		//sf_rename(p_ptr->name, FALSE);

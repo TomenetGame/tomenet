@@ -5260,21 +5260,21 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 
 #ifdef SAFETY_BACKUP_PLAYER
 	/* Not sure if hash table level is already updated to live player level, so double check here: */
-	j = ptr->level;
+	j = ptr->max_plv;
 	for (i = 1; i <= NumPlayers; i++) {
 		if (strcmp(Players[i]->name, ptr->name)) continue;
-		if (Players[i]->max_lev > j) {
-			s_printf("(max_lev %d > hash level %d)\n", Players[i]->max_lev, j);
-			j = Players[i]->max_lev;
+		if (Players[i]->max_plv > j) {
+			s_printf("(max_plv %d > hash max_plv %d)\n", Players[i]->max_plv, j);
+			j = Players[i]->max_plv;
 		}
 		break;
 	}
 	if (j < SAFETY_BACKUP_PLAYER) {
 		e_printf("(%s) %s (%d, %s)\n", showtime(), ptr->name, ptr->level, acc); /* log to erasure.log file for compact overview */
-		s_printf("(Skipping safety backup (level %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
+		s_printf("(Skipping safety backup (max_plv %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
 	} else {
 		e_printf("(%s) %s (%d, %s) BACKUP\n", showtime(), ptr->name, ptr->level, acc); /* log to erasure.log file for compact overview */
-		s_printf("(Creating safety backup (level %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
+		s_printf("(Creating safety backup (max_plv %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
 
 		/* rename savefile to backup (side note: unlink() will fail to delete it then later) */
 		sf_rename(ptr->name, FALSE);
