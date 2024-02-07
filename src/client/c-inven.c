@@ -394,10 +394,10 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	/* search tag in inventory before looking in equipment? (default is other way round) */
 	if (inven_first) {
 		start = inven ? 0 : INVEN_WIELD;
-		stop = equip ? INVEN_TOTAL : INVEN_PACK;
+		stop = equip ? INVEN_TOTAL : INVEN_PACK; //note: !equip will skip the overflow slot, which is INVEN_WIELD - 1 (equal to INVEN_PACK)
 		step = 1;
 	} else {
-		start = (equip ? INVEN_TOTAL : INVEN_PACK) - 1;
+		start = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; //note: !equip will skip the overflow slot, which is INVEN_WIELD - 1 (equal to INVEN_PACK)
 		stop = (inven ? 0 : INVEN_WIELD) - 1;
 		step = -1;
 	}
@@ -409,7 +409,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	for (j = start; j != stop; j += step) {
 		if (!inven_first) {
 			/* Translate, so equip and inven are processed in normal order _each_ */
-			i = INVEN_PACK + (j >= INVEN_WIELD ? INVEN_TOTAL : 0) - 1 - j;
+			i = INVEN_PACK + (j >= INVEN_WIELD ? INVEN_TOTAL : 0) - j;
 		} else {
 			i = j;
 		}
