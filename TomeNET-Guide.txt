@@ -19347,8 +19347,8 @@ Note: For some classes the power curve can depend heavily on the way you
       in terms of damage output if they can rely on a good party.
 
       Shamans can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms
-      of usability, being able to easily access all features of Istari, Priests
-      and also Mimicry features without that much expense of skill points.
+      of usability, as they may access all features of Istari, Priests and also
+      those of Mimicry and Runecraft without that much expense of skill points.
 
               Start     Early     Mid       Late      Endgame   Post-winning
               (Lv 1)    (10+)     (30+)     (40+)     (50)      (After Morgoth)
@@ -19366,7 +19366,7 @@ Hell Knight   +++       +++       +++       +++       +++       +++
 Ranger        +++       +++       +++       +++       +++       +++
 Adventurer    +         +         ++        +++       +++       +++
 Druid         +++       ++++      ++++      +++       +++       +++
-Shaman        ++        ++        +++       +++       +++       +++
+Shaman        ++        ++        +++       +++.      +++.      +++.
 Runemaster    +         +++       +++       +++       +++       +++
 Mindcrafter   +++       ++        +++       +++       +++       +++
 
