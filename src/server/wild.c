@@ -3514,47 +3514,24 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 				//if (i == 32) continue; //for 4x4 ring (-4..+4)
 				if (i >= 25) continue; //for 4x4 ring (-4..+4 including the 4,3 grids)
 
-				/* Only need the outermost ring really, rest gets overwritten anyway, further down */
-				if (i < 8) continue;
+				/* The innermost floor ring: Use a feat that prevents monster spawn/landing */
+				if (i == 1) {
+					zcave[zy][zx].feat = FEAT_DIRT;
+					zcave[zy][zx].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+				}
+				/* The mountain ring: External permanent shielding wall */
+				else if (i >= 2 && i <= 5) zcave[zy][zx].feat = FEAT_HIGH_MOUNTAIN;
+				/* The outermost ring: Cleared floor around the mountains */
+				else if (i >= 8) zcave[zy][zx].feat = FEAT_DIRT;
 
-				/* Make spacer-ring grids */
-				zcave[zy][zx].feat = FEAT_DIRT;
+				/* Apply some fire-lighting just to pique interest */
+				zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP;
 			}
 		}
-
-		/* External permanent shielding wall */
-		zcave[y - 2][x - 1].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y - 2][x].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y - 2][x + 1].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y + 2][x - 1].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y + 2][x].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y + 2][x + 1].feat = FEAT_HIGH_MOUNTAIN;
-
-		zcave[y - 1][x - 2].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y][x - 2].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y + 1][x - 2].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y - 1][x + 2].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y][x + 2].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y + 1][x + 2].feat = FEAT_HIGH_MOUNTAIN;
-
-		zcave[y - 1][x - 1].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y + 1][x - 1].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y - 1][x + 1].feat = FEAT_HIGH_MOUNTAIN;
-		zcave[y + 1][x + 1].feat = FEAT_HIGH_MOUNTAIN;
-
-		/* Internal floor - use a feat that prevents monster spawn/landing */
-		zcave[y - 1][x].feat = FEAT_DIRT;
-		zcave[y + 1][x].feat = FEAT_DIRT;
-		zcave[y][x - 1].feat = FEAT_DIRT;
-		zcave[y][x + 1].feat = FEAT_DIRT;
-		zcave[y - 1][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
-		zcave[y + 1][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
-		zcave[y][x - 1].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
-		zcave[y][x + 1].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
-
+		/* Secure the stair-case itself too */
 		zcave[y][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
 
-		/* Construction site sign(s) */
+		/* Place construction site sign */
 		c_ptr = &zcave[y][x + 1];
 		c_ptr->feat = FEAT_SIGN;
 		MAKE(sign, struct floor_insc);
