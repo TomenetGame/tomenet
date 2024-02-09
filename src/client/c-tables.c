@@ -195,7 +195,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "censor_swearing",		"Censor certain swear words in public messages" },
 
 	{ &c_cfg.hilite_chat,		TRUE,	1,	0, 3, TRUE,
-	    "hilight_chat",		"Highlight chat messages containing your name" },
+	    "highlight_chat",		"Highlight chat messages containing your name" },
 	{ &c_cfg.hibeep_chat,		TRUE,	1,	0, 4, TRUE,
 	    "highbeep_chat",		"Beep on chat messages containing your name" },
 	{ &c_cfg.page_on_privmsg,	FALSE,	1,	0, 5, TRUE,
