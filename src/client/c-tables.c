@@ -195,9 +195,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "censor_swearing",		"Censor certain swear words in public messages" },
 
 	{ &c_cfg.hilite_chat,		TRUE,	1,	0, 3, TRUE,
-	    "hilite_chat",		"Highlight chat messages containing your name" },
+	    "hilight_chat",		"Highlight chat messages containing your name" },
 	{ &c_cfg.hibeep_chat,		TRUE,	1,	0, 4, TRUE,
-	    "hibeep_chat",		"Beep on chat messages containing your name" },
+	    "highbeep_chat",		"Beep on chat messages containing your name" },
 	{ &c_cfg.page_on_privmsg,	FALSE,	1,	0, 5, TRUE,
 	    "page_on_privmsg",		"Beep when receiving a private message" },
 	{ &c_cfg.page_on_afk_privmsg,	TRUE,	1,	0, 6, TRUE,
@@ -214,7 +214,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.font_map_solid_walls,	TRUE,	1,	0, 8, TRUE,
 	    "font_map_solid_walls",	"Certain fonts only: Walls look like solid blocks" },
 	{ &c_cfg.view_animated_lite,	TRUE,	1,	0, 9, TRUE,
-	    "view_animated_lite",	"Animate lantern light, flickering in colour" },
+	    "view_animated_light",	"Animate lantern light, flickering in colour" },
 	{ &c_cfg.wall_lighting,		TRUE,	1,	0, 10, TRUE,
 	    "wall_lighting",		"Generally enable lighting/shading for wall grids" },
 	{ &c_cfg.view_lamp_walls,	TRUE,	1,	0, 11, TRUE,
@@ -228,7 +228,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.view_shade_floor,	TRUE,	1,	0, 15, TRUE,
 	    "view_shade_floor",		"Use special colors to shade floor grids" },
 	{ &c_cfg.view_lite_extra,	TRUE,	1,	9, 16, TRUE,
-	    "view_lite_extra",		"Lamp light affects more floor/wall types" },
+	    "view_light_extra",		"Lamp light affects more floor/wall types" },
 
 	{ &c_cfg.alert_hitpoint,	FALSE,	7,	0, 17, TRUE,
 	    "alert_hitpoint",		"Beep/message about critical hitpoints/sanity" },
@@ -299,7 +299,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "flash_player",		"Flash own character icon after far relocation" },
     //todo: fix/implement good cursor on *nix/osx
 	{ &c_cfg.hilite_player,		FALSE,	6,	0, 45, TRUE,
-	    "hilite_player",		"Hilite own character icon with the cursor" },
+	    "highlight_player",		"Highlight own character icon with the cursor" },
 	{ &c_cfg.consistent_players,	FALSE,	6,	0, 46, TRUE,
 	    "consistent_players",	"Use consistent symbols and colours for players" },
 
@@ -382,9 +382,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.view_torch_grids,	FALSE,	3,	0, 82, TRUE,
 	    "view_torch_grids",		"Map remembers all torch-lit grids" },
 	{ &c_cfg.view_reduce_lite,	FALSE,	3,	0, 83, FALSE, /* Doesn't make sense */
-	    "view_reduce_lite",		"Reduce lite-radius when running" },
+	    "view_reduce_light",	"Reduce light radius when running" },
 	{ &c_cfg.view_reduce_view,	FALSE,	3,	0, 84, FALSE, /* Doesn't make sense */
-	    "view_reduce_view",		"Reduce view-radius in town" },
+	    "view_reduce_view",		"Reduce view radius in town" },
 
 	{ &c_cfg.easy_open,		TRUE,	3,	0, 85, TRUE,
 	    "easy_open",		"Automatically open doors" },
@@ -533,7 +533,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.no_house_magic,	FALSE,	3,	0, 137, TRUE,
 	    "no_house_magic",		"Prevent using magic inside houses" },
 	{ &c_cfg.no_lite_fainting,	FALSE,	1,	0, 138, TRUE,
-	    "no_lite_fainting",		"Disable shading effect for fainting light source" },
+	    "no_light_fainting",	"Disable shading effect for fainting light source" },
 
 	{ &c_cfg.auto_pickup,		FALSE,	8,	0, 139, TRUE,
 	    "auto_pickup",		"Automatically pickup items (see '/apickup')" },

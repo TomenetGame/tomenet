@@ -10,25 +10,25 @@
 X:rogue_like_commands
 Y:newbie_hints
 Y:censor_swearing
-Y:hilite_chat
-Y:hibeep_chat
+Y:highlight_chat
+Y:highbeep_chat
 X:page_on_privmsg
 Y:page_on_afk_privmsg
 X:big_map
 Y:font_map_solid_walls
-Y:view_animated_lite
+Y:view_animated_light
 Y:wall_lighting
 Y:view_lamp_walls
 Y:view_shade_walls
 Y:floor_lighting
 Y:view_lamp_floor
 Y:view_shade_floor
-Y:view_lite_extra
+Y:view_light_extra
 X:no_weather
 X:permawalls_shade
 Y:palette_animation
 X:disable_lightning
-X:no_lite_fainting
+X:no_light_fainting
 
 Y:exp_bar
 X:uniques_alive
@@ -54,7 +54,7 @@ X:player_list
 X:player_list2
 
 Y:flash_player
-X:hilite_player
+X:highlight_player
 X:consistent_players
 Y:recall_flicker
 X:no_verify_sell

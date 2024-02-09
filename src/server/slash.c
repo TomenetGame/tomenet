@@ -3684,14 +3684,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 #endif
 		/* workaround - refill ligth source (outdated clients cannot use 'F' due to INVEN_ order change */
-		else if (prefix(messagelc, "/lite")) {
+		else if (prefix(messagelc, "/light")) {
 			if (tk != 1) {
-				msg_print(Ind, "Usage: /lite a...w");
+				msg_print(Ind, "Usage: /light a...w");
 				return;
 			}
 			k = message3[0] - 97;
 			if (k < 0 || k >= INVEN_PACK) {
-				msg_print(Ind, "Usage: /lite a...w");
+				msg_print(Ind, "Usage: /light a...w");
 				return;
 			}
 			do_cmd_refill(Ind, k);
@@ -7417,11 +7417,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				return;
 			}
-			else if (prefix(messagelc, "/wizlitex")) {
+			else if (prefix(messagelc, "/wizlightx")) {
 				wiz_lite_extra(Ind);
 				return;
 			}
-			else if (prefix(messagelc, "/wizlite")) {
+			else if (prefix(messagelc, "/wizlight")) {
 				wiz_lite(Ind);
 				return;
 			}
