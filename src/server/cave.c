@@ -2906,6 +2906,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	bool lite_snow, keep = FALSE;
 
 	cave_type **zcave;
+	bool viewable_light, viewable_glow, viewable_any;
+
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
@@ -2913,14 +2915,19 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	c_ptr = &zcave[y][x];
 	w_ptr = &p_ptr->cave_flag[y][x];
 
+	 /* Don't display lighting on walls (or floor tiles) that are lit up by other players but not actually in our view right now */
+	//viewable_light = (((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) || c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP));
+	viewable_light = ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW));
+	viewable_glow = ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW));
+	viewable_any = viewable_light || viewable_glow;
 
 	/* Feature code */
 	feat = c_ptr->feat;
 
 	/* In the night, lit grids are not palette-animation-shaded in any way */
-	if (night_surface && (c_ptr->info & (CAVE_GLOW | CAVE_LITE))) palanim = FALSE;
+	if (night_surface && (c_ptr->info & (CAVE_GLOW | viewable_light))) palanim = FALSE;
 	/* Also, lamp-lit grids or shops/monster-traps/etc are never palette-animation-shaded, for now.. */
-	else if ((c_ptr->info & CAVE_LITE) || c_ptr->special) palanim = FALSE;
+	else if (viewable_light || c_ptr->special) palanim = FALSE;
 
 #if 0
 	/* bad hack to display visible wall instead of clear wall in sector000 events */
@@ -2955,13 +2962,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 		/* Memorized (or visible) floor */
 		/* Hack -- space are visible to the dungeon master */
-		if (((*w_ptr & CAVE_MARK) ||
-		    ((((c_ptr->info & CAVE_LITE) &&
-			(*w_ptr & CAVE_VIEW)) ||
-		      ((c_ptr->info & CAVE_GLOW) &&
-		       (*w_ptr & CAVE_VIEW))) &&
-		     !p_ptr->blind)) || (p_ptr->admin_dm))
-		{
+		if (((*w_ptr & CAVE_MARK) || (viewable_any && !p_ptr->blind)) || p_ptr->admin_dm) {
 			struct c_special *cs_ptr;
 
 			/* FF1_FLOOR grids now can have mimicry too */
@@ -3113,8 +3114,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				/* Handle "torch-lit" grids */
 				else if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
 				    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra) ||
-				    lite_snow) &&
-				    ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW))) {
+				    lite_snow) && viewable_light) {
 					/* Torch lite */
 					if (p_ptr->view_lamp_floor) {
 #ifdef CAVE_LITE_COLOURS
@@ -3317,8 +3317,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				/* Handle "torch-lit" grids */
 				else if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
 				    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra) ||
-				    lite_snow) &&
-				    (c_ptr->info & CAVE_LITE)) {
+				    lite_snow) && viewable_light && !p_ptr->blind) {
 					/* Torch lite */
 					if (p_ptr->view_lamp_walls) {
 #ifdef CAVE_LITE_COLOURS
@@ -3467,10 +3466,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 	/**** Apply special random effects ****/
 	/*if (!avoid_other) */
-	if (((*w_ptr & CAVE_MARK) ||
-	    ((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
-	      ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
-	     !p_ptr->blind)) || (p_ptr->admin_dm)) {
+	if (((*w_ptr & CAVE_MARK) || (viewable_any && !p_ptr->blind)) || (p_ptr->admin_dm)) {
 		f_ptr = &f_info[feat];
 
 		/* Special terrain effect */
