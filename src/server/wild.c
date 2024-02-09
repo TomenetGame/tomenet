@@ -3525,7 +3525,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 				else if (i >= 8) zcave[zy][zx].feat = FEAT_DIRT;
 
 				/* Apply some fire-lighting just to pique interest */
-				zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP;
+				//zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP;
 			}
 		}
 		/* Secure the stair-case itself too */
