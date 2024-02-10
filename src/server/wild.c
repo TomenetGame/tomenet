@@ -3475,7 +3475,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 }
 
 
-/* Helper function for wilderness_gen() */
+/* Helper function for wilderness_gen(). (We're getting called after the staircase has already been placed.) */
 static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type *d_ptr, cave_type **zcave, int x, int y) {
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
@@ -3532,7 +3532,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		/* Secure the stair-case itself too */
 		zcave[y][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
 		/* .. and apply some widely-visible fire-lighting just to pique interest */
-		zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
+		zcave[y][x].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
 
 		/* Place construction site sign */
 		c_ptr = &zcave[y][x + 1];

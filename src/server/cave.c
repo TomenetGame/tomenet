@@ -2053,13 +2053,13 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	/* a = r_ptr->x_attr; */
 	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
 	else a = r_ptr->d_attr;
-	/*			else a = m_ptr->r_ptr->d_attr; */
+	/* else a = m_ptr->r_ptr->d_attr; */
 
 	/* Desired char */
 	/* c = r_ptr->x_char; */
 	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
 	else c = r_ptr->d_char;
-	/*			else c = m_ptr->r_ptr->d_char; */
+	/* else c = m_ptr->r_ptr->d_char; */
 
 	/* Hack -- mimics */
 	if (r_ptr->flags9 & RF9_MIMIC) {
@@ -2915,14 +2915,14 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	c_ptr = &zcave[y][x];
 	w_ptr = &p_ptr->cave_flag[y][x];
 
+	/* Feature code */
+	feat = c_ptr->feat;
+
 	 /* Don't display lighting on walls (or floor tiles) that are lit up by other players but not actually in our view right now */
 	//viewable_light = (((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) || c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP));
 	viewable_light = (c_ptr->info & CAVE_LITE) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info & CAVE_WIDE_LITE));
 	viewable_glow = (c_ptr->info & CAVE_GLOW) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info & CAVE_WIDE_LITE));
 	viewable_any = viewable_light || viewable_glow;
-
-	/* Feature code */
-	feat = c_ptr->feat;
 
 	/* In the night, lit grids are not palette-animation-shaded in any way */
 	if (night_surface && (c_ptr->info & (CAVE_GLOW | viewable_light))) palanim = FALSE;
@@ -2942,7 +2942,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			*cp = p_ptr->f_char_solid[sector000wall];
 			a = p_ptr->f_attr_solid[sector000wall];
 		}
-	}
+	} else
 #else
 	/* bad hack to display visible wall instead of clear wall in sector000 events */
 	if (sector000separation &&
@@ -2950,7 +2950,76 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	    && in_sector000(&p_ptr->wpos)
 	    && sector000wall)
 		feat = sector000wall;
+	else
 #endif
+
+	/* Supa-hack just for CAVE_WIDE_LITE:
+	   Replace any non-visible yet widely-lit feat by fake default floor just to show the player that there is some sort of light source.
+	   (Note that in case of CAVE_GLOW_HACK_LAMP this will even replace grids that usually don't support fire-flickering light, such as staircases, with fire-animated lighting, as floor does support it.
+	   If that is undesired, use CAVE_GLOW_LAMP flag instead for those feats that aren't supposed to show fiery lighting.)  - C. Blue */
+	if ((c_ptr->info & CAVE_WIDE_LITE) && viewable_any && !(*w_ptr & CAVE_VIEW) && !p_ptr->blind) {
+			feat = FEAT_DIRT; //FEAT_FLOOR;
+#if 0 /* All of this stuff is only needed if this whole 'if' clause is used/inserted as an 'else if' for eg the non-floor -> before the 'unknown' else branch. Here if used globally at the start, this can remain 0'ed. */
+			f_ptr = &f_info[feat];
+			if (!p_ptr->font_map_solid_walls) {
+				/* Normal char */
+				(*cp) = p_ptr->f_char[feat];
+				/* Normal attr */
+				a = p_ptr->f_attr[feat];
+			} else { /* hack */
+				(*cp) = p_ptr->f_char_solid[feat];
+				a = p_ptr->f_attr_solid[feat];
+			}
+
+			/* Special lighting effects */
+			if (p_ptr->floor_lighting &&
+			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
+			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
+			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
+			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
+			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra))) {
+				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org, palanim);
+
+				/* Handle "torch-lit" grids */
+				if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
+				    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra) ||
+				    lite_snow) && viewable_light) {
+					/* Torch lite */
+					if (p_ptr->view_lamp_floor) {
+ #ifdef CAVE_LITE_COLOURS
+						if ((c_ptr->info & CAVE_LITE_WHITE)) {
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
+							    TERM_WHITE;//normal
+						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
+							    TERM_WHITE; /* usual glowing floor grids are TERM_WHITE, so lamp light shouldn't be darker (TERM_L_WHITE).. */
+						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) {
+							if (is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) a = (a == TERM_L_DARK) ? TERM_LAMP_DARK : TERM_LAMP;//<-specialty: shaded ash
+							else a = (a == TERM_L_DARK) ? TERM_UMBER : TERM_LAMP;//<-specialty: shaded ash
+						}
+						else a = (a == TERM_L_DARK) ? TERM_UMBER : TERM_YELLOW;//<-specialty: shaded ash
+ #else
+						a = TERM_YELLOW;
+ #endif
+					}
+				}
+			}
+			/* No light on this grid, yet visible (eg via normal daylight) */
+			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+
+ #if 1
+			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
+			if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
+ #endif
+
+			/* The attr */
+			(*ap) = a;
+#endif
+	}
+
+
+	/* Proceed normally, checking for floor, non-floor, etc.. */
+
 
 	/* Access floor */
 	f_ptr = &f_info[feat];
@@ -2958,8 +3027,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	/* Floors (etc) */
 	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
 	//if (feat <= FEAT_INVIS)
-	if (f_ptr->flags1 & (FF1_FLOOR)) {
-
+	if (f_ptr->flags1 & FF1_FLOOR) {
 		/* Memorized (or visible) floor */
 		/* Hack -- space are visible to the dungeon master */
 		if (((*w_ptr & CAVE_MARK) || (viewable_any && !p_ptr->blind)) || p_ptr->admin_dm) {
@@ -3061,7 +3129,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
-/*						image_random(ap, cp); */
+						/*image_random(ap, cp); */
 						image_object(ap, cp);
 						a = randint(15);
 					} else {
@@ -3471,7 +3539,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 		/* Special terrain effect */
 		if (c_ptr->effect
-		    && !((effects[c_ptr->effect].flags & EFF_METEOR) && (c_ptr->m_idx || !(f_info[c_ptr->feat].flags1 & FF1_FLOOR)))) {
+		    && !((effects[c_ptr->effect].flags & EFF_METEOR) && (c_ptr->m_idx || !(f_info[feat].flags1 & FF1_FLOOR)))) {
 #if 0
 			(*ap) = spell_color(effects[c_ptr->effect].type);
 #else /* allow 'transparent' spells */
@@ -3500,14 +3568,14 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 		}
 #if 1
 		/* Give staircases different colours depending on dungeon flags -C. Blue :) */
-		if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE) ||
-		    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_LESS)) {
+		if ((feat == FEAT_MORE) || (feat == FEAT_WAY_MORE) ||
+		    (feat == FEAT_WAY_LESS) || (feat == FEAT_LESS)) {
 			struct dungeon_type *d_ptr;
 			worldpos tpos = p_ptr->wpos; /* copy */
 			wilderness_type *wild = &wild_info[tpos.wy][tpos.wx];
 
 			if (!tpos.wz) {
-				if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
+				if ((feat == FEAT_MORE) || (feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
 				else d_ptr = wild->tower;
 			} else if (tpos.wz < 0) d_ptr = wild->dungeon;
 			else d_ptr = wild->tower;
@@ -3526,7 +3594,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			if (in_irondeepdive(&tpos)) {
 				int i;
 
-				switch (c_ptr->feat) {
+				switch (feat) {
 				case FEAT_MORE:
 				case FEAT_WAY_MORE:
 					tpos.wz--;
@@ -3555,7 +3623,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 #endif
 
 #ifdef HOUSE_PAINTING
-		if (c_ptr->feat == FEAT_WALL_HOUSE && c_ptr->colour) {
+		if (feat == FEAT_WALL_HOUSE && c_ptr->colour) {
  #ifdef HOUSE_PAINTING_HIDE_BAD_MODE
 			if (is_admin(p_ptr)) {
 				if (c_ptr->colour > 100) (*ap) = c_ptr->colour - 100 - 1;
@@ -3844,7 +3912,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 		(*cp) = rand_int(3) ? '.' : '+';
 	}
 	/* display meteor target marker */
-	if ((effects[c_ptr->effect].flags & EFF_METEOR) && !c_ptr->m_idx && (f_info[c_ptr->feat].flags1 & FF1_FLOOR)) {
+	if ((effects[c_ptr->effect].flags & EFF_METEOR) && !c_ptr->m_idx && (f_info[feat].flags1 & FF1_FLOOR)) {
 		(*ap) = is_older_than(&p_ptr->version, 4, 7, 4, 4, 0, 0) ? TERM_SELECTOR : TERM_SEL_RED;
 		switch (c_ptr->effect_xtra) {
 		case 0: (*cp) = '+'; break;
