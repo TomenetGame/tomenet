@@ -9711,7 +9711,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		calc_boni(Ind);
 	}
 
-	if (!p_ptr->warning_secret_area && ((zcave[y][x].info & CAVE_SCRT) && (ox == -1 || !(zcave[oy][ox].info & CAVE_SCRT)))) {
+	if (!p_ptr->warning_secret_area && ((zcave[y][x].info2 & CAVE2_SCRT) && (ox == -1 || !(zcave[oy][ox].info2 & CAVE2_SCRT)))) {
 		p_ptr->warning_secret_area = TRUE;
 		msg_print(Ind, "\377yYou have discovered a secret area!");
 	}

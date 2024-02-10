@@ -2917,8 +2917,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 	 /* Don't display lighting on walls (or floor tiles) that are lit up by other players but not actually in our view right now */
 	//viewable_light = (((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) || c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP));
-	viewable_light = (c_ptr->info & CAVE_LITE) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info2 & CAVE2_WIDE_LITE));
-	viewable_glow = (c_ptr->info & CAVE_GLOW) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info2 & CAVE2_WIDE_LITE));
+	viewable_light = (c_ptr->info & CAVE_LITE) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info & CAVE_WIDE_LITE));
+	viewable_glow = (c_ptr->info & CAVE_GLOW) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info & CAVE_WIDE_LITE));
 	viewable_any = viewable_light || viewable_glow;
 
 	/* Feature code */
@@ -7513,7 +7513,7 @@ void map_area(int Ind) {
 
 			/* All non-walls are "checked" */
 			//if (c_ptr->feat >= FEAT_SECRET) continue;
-			if (is_wall(c_ptr) || (c_ptr->info & CAVE_SCRT)) continue;
+			if (is_wall(c_ptr) || (c_ptr->info2 & CAVE2_SCRT)) continue;
 
 			/* Memorize normal features */
 			//if (c_ptr->feat > FEAT_INVIS)
@@ -7607,7 +7607,7 @@ void mind_map_level(int Ind, int pow) {
 #endif
 
 #if 1		/* Disallow telepathic contact for this particular purpose of mapping even? */
-		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_SCRT) continue;
+		if (zcave[m_ptr->fy][m_ptr->fx].info2 & CAVE2_SCRT) continue;
 #endif
 
 		/* no mind */
@@ -7696,7 +7696,7 @@ void mind_map_level(int Ind, int pow) {
 		for (x = 0; x < MAX_WID; x++) {
 			if (zcave[y][x].feat != FEAT_SHOP) continue;
 #if 1			/* Disallow telepathic contact for this particular purpose of mapping even? */
-			if (zcave[y][x].info & CAVE_SCRT) continue;
+			if (zcave[y][x].info2 & CAVE2_SCRT) continue;
 #endif
 			for (i = 0; i < plist_size; i++) {
 				Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
@@ -7766,7 +7766,7 @@ void wiz_lite(int Ind) {
 			/* Access the grid */
 			c_ptr = &zcave[y][x];
 
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 
 			/* No disturbance of nightly town/surface events */
 			if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
@@ -7863,9 +7863,9 @@ void wiz_lite_extra(int Ind) {
 			   Until there is a good way to mimic solid wall/filler areas plausibly, maybe player-invoked wiz lite should always be the normal wiz_lite() instead of this function!
 			   Then again, wraithform is a thing. So might need to set floors to no-wraith additionally. Or maybe just cannot wraith into unknown walls/map any new feats while in wraithform(!). */
 #if 1
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 #else /* This needs reworking - especially, CS_MIMIC should be applied on dungeon generation (or process_dungeon_file()) time, and then using correct fill_type-s for mimicking, etc. */
-			if (c_ptr->info & CAVE_SCRT) {
+			if (c_ptr->info2 & CAVE2_SCRT) {
 				if (!GetCS(c_ptr, CS_MIMIC)) {
 					struct c_special *cs_ptr;
 

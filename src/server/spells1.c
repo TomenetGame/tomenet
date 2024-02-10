@@ -5909,7 +5909,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				do_smash_effect = TRUE;
 
 				/* no tricks to get stuff out of suspended guild halls ;> */
-				if ((c_ptr->info & CAVE_GUILD_SUS)) break;
+				if ((c_ptr->info2 & CAVE2_GUILD_SUS)) break;
 
 				note_kill = (plural ? " disappear!" : " disappears!");
 

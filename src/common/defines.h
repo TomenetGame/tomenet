@@ -4640,37 +4640,39 @@
 
 #define CAVE_NOPK	0x00000100U	/* no pkill (arena?, tavern) */
 #define CAVE_STCK	0x00000200U	/* sticky (no-tele vault), not icky (prison?) */
-#define CAVE_DARKEN	0x00000400U	/* world surface at night - change colours to darker variants */
+#define CAVE_DARKEN	0x00000400U	/* world surface at night - change colours to darker variants (NOTE: Not combined w/ any other flags1, yet not moved to flags2 as it is too close to CAVE_GLOW on day/night changes idea-wise!) */
 #define CAVE_ICKY_PERMA	0x00000800U 	/* part of a perma-walled vault */
 
 #define CAVE_PROT	0x00001000U	/* no monster spawn/teleport/summon/movement on; no players teleport/recall to; no item stacking; cannot drop true arts; no traps/charges; cannot steal; no sunburn */
 #define CAVE_NEST_PIT	0x00002000U	/* grid is part of a monster nest and target for monster placement */
-#define CAVE_MAGELOCK	0x00004000U	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
-#define CAVE_JAIL	0x00008000U	/* part of a jail: for special colour/lighting of jail walls */
+#define CAVE_NO_MONSTER	0x00004000U	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
+#define CAVE_NO_PROB	0x00008000U	/* Cannot enter this grid via Probability Travel (but can exit) */
 
 #define CAVE_LITE_VAMP	0x00010000U	/* lite flag for RACE_VAMPIRE 'light' */
 #define CAVE_LITE_WHITE	0x00020000U	/* lite flag for non-fiery light sources */
-#define CAVE_GUILD_SUS	0x00040000U	/* floor of a suspended guild hall, due to the guild's leaderlessnes */
-#define CAVE_WATERY	0x00080000U	/* For doors/stairs: Are they adjacent to water grids? */
+#define CAVE_WATERY	0x00040000U	/* For doors/stairs: Are they adjacent to water grids? (NOTE: Not combined w/ any other flags1, yet used in function that might be interested in NO_MONSTER etc flags from flags1, so kept here!) */
+#define CAVE_JAIL	0x00080000U	/* part of a jail: for special colour/lighting of jail walls */
 
-#define CAVE_SWITCH	0x00100000U	/* Players can always switch position here, like on staircase grids (for grids around stores) */
-#define CAVE_GLOW_HACK	0x00200000U	/* bad hack for hard-coded questor lights for now // self-illuminating */
+#define CAVE_LITE_TYPE_CHANGED	0x00100000U	/* Temp flag for lighting code: Required when when player with non-CAVE_LITE_WHITE light source crosses static CAVE_LITE_WHITE grids, or they won't be redrawn after re-receiving their CAVE_LITE_WHITE colour. - C. Blue */
+#define CAVE_GLOW_HACK		0x00200000U	/* bad hack for hard-coded questor lights for now // self-illuminating */
 #define CAVE_GLOW_HACK_LAMP	0x00400000U 	/* bad hack for hard-coded questor lights for now // self-illuminating, in fire-flickering style (TERM_LAMP) */
-#define CAVE_ENCASED	0x00800000U	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
+#define CAVE_WIDE_LITE		0x00800000U	/* Behaves regarding lighting as if it was always visible to the player (so a light shimmer can be seen from afar w/o LoS) */
 
-#define CAVE_NOYIELD	0x01000000U	/* Will not yield any items or treasure when tunneled */
-#define CAVE_DECAL	0x02000000U	/* Impossible to interact with anything on this grid or the grid itself except for looking at it (only implemented for monsters atm) */
-#define CAVE_MINED	0x04000000U	/* Just for warning_tunnel_hidden, set when a treasure vein was mined on this grid */
-#define CAVE_NO_PROB	0x08000000U	/* Cannot enter this grid via Probability Travel (but can exit) */
+#define CAVE_ENCASED		0x01000000U	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
 
-#define CAVE_NO_MONSTER	0x10000000U	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
-#define CAVE_SCRT	0x20000000U	/* Secret grid, cannot be uncovered by magic mapping or similar means, but only manually by looking at it directly via line of sight. */
-#define CAVE_REFUGE	0x40000000U	/* IDDC refuge grid */
-#define CAVE_LITE_TYPE_CHANGED	0x80000000U	/* Temp flag for lighting code: Required when when player with non-CAVE_LITE_WHITE light source crosses static CAVE_LITE_WHITE grids, or they won't be redrawn after re-receiving their CAVE_LITE_WHITE colour. - C. Blue */
+/*
+ * Special cave grid flags2 -- note that they must never all be set (0xFFFFFFFF) as that would collide with RLE!
+ */
+#define CAVE2_MAGELOCK	0x00000001U	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
+#define CAVE2_GUILD_SUS	0x00000002U	/* floor of a suspended guild hall, due to the guild's leaderlessnes */
+#define CAVE2_NOYIELD	0x00000004U	/* Will not yield any items or treasure when tunneled */
+#define CAVE2_MINED	0x00000008U	/* Just for warning_tunnel_hidden, set when a treasure vein was mined on this grid */
 
-/* Special cave grid flags2 -- note that they must never all be set (0xFFFFFFFF) as that would collide with RLE! */
+#define CAVE2_SWITCH	0x00000010U	/* Players can always switch position here, like on staircase grids (for grids around stores) */
+#define CAVE2_DECAL	0x00000020U	/* Impossible to interact with anything on this grid or the grid itself except for looking at it (only implemented for monsters atm, who get 'friendly' flag set from this) */
+#define CAVE2_SCRT	0x00000040U	/* Secret grid, cannot be uncovered by magic mapping or similar means, but only manually by looking at it directly via line of sight. */
+#define CAVE2_REFUGE	0x00000080U	/* IDDC refuge grid */
 
-#define CAVE2_WIDE_LITE	0x00000001U	/* Behaves regarding lighting as if it was always visible to the player (so a light shimmer can be seen from afar w/o LoS) */
 //super hypothetical: maybe add CAVE_LITE_MON in the future, for monster-lit grids.
 
 

@@ -11056,7 +11056,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			}
 
 			/* for leaderless guild halls */
-			if ((r_ptr->flags2 & RF2_TAKE_ITEM) && (zcave[ny][nx].info & CAVE_GUILD_SUS))
+			if ((r_ptr->flags2 & RF2_TAKE_ITEM) && (zcave[ny][nx].info2 & CAVE2_GUILD_SUS))
 				take_item_override = TRUE;
 
 			/* Take or Kill objects (not "gold") on the floor */

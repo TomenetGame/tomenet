@@ -858,7 +858,7 @@ static void wr_extra(int Ind) {
 		if (zcave) {
 			cave_type *c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-			if (c_ptr->info & CAVE_REFUGE) tmp8u |= 0x80;
+			if (c_ptr->info2 & CAVE2_REFUGE) tmp8u |= 0x80;
 		}
 	}
 	wr_byte(tmp8u);

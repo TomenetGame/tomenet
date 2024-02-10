@@ -1313,7 +1313,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	bool trad = !magik(MANG_HOUSE_RATE);
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
-	u32b floor_info;
+	u32b floor_info, floor_info2;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -1699,6 +1699,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 	/* set default floor info; new: CAVE_ROOM to allow lighting them like rooms */
 	floor_info = CAVE_ICKY | CAVE_ROOM;
+	floor_info2 = 0x0;
 
 	/* does house already exist (created at server start)
 	   or has it just been created for the first time? */
@@ -1708,7 +1709,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	if (tmp != -1
 	    && houses[tmp].dna->owner && houses[tmp].dna->owner_type == OT_GUILD
 	    && !guilds[houses[tmp].dna->owner].master)
-		floor_info |= CAVE_GUILD_SUS;
+		floor_info2 |= CAVE2_GUILD_SUS;
 
 	/* TODO: use coloured roof, so that they look cute :) */
 #ifndef USE_MANG_HOUSE_ONLY
@@ -1725,6 +1726,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 			/* Make it "icky" (and maybe more) */
 			c_ptr->info |= floor_info;
+			c_ptr->info2 |= floor_info2;
 		}
 	}
 
@@ -2992,7 +2994,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 #endif
 
 						/* 'suspended' guild houses ( = of leaderless guilds) */
-						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
+						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info2 |= CAVE2_GUILD_SUS;
 
 						everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 					}
@@ -3006,11 +3008,11 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 #endif
 				else if (func == FILL_GUILD_SUS) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) //obsolete check
-						c_ptr->info |= CAVE_GUILD_SUS;
+						c_ptr->info2 |= CAVE2_GUILD_SUS;
 				}
 				else if (func == FILL_GUILD_SUS_UNDO) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) //obsolete check
-						c_ptr->info &= ~CAVE_GUILD_SUS;
+						c_ptr->info2 &= ~CAVE2_GUILD_SUS;
 				}
 				else if (func == FILL_SFX_KNOCK) {
 					if (c_ptr->m_idx < 0) {
@@ -3154,7 +3156,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						}
 
 						/* 'suspended' guild houses ( = of leaderless guilds) */
-						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
+						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info2 |= CAVE2_GUILD_SUS;
 
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
@@ -3168,11 +3170,11 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 #endif
 					else if (func == FILL_GUILD_SUS) {
-						zcave[miny + (y - 1)][minx + (x - 1)].info |= CAVE_GUILD_SUS;
+						zcave[miny + (y - 1)][minx + (x - 1)].info2 |= CAVE2_GUILD_SUS;
 						break;
 					}
 					else if (func == FILL_GUILD_SUS_UNDO) {
-						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~CAVE_GUILD_SUS;
+						zcave[miny + (y - 1)][minx + (x - 1)].info2 &= ~CAVE2_GUILD_SUS;
 						break;
 					}
 					else if (func == FILL_SFX_KNOCK) {
@@ -3518,18 +3520,19 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 				if (i == 1) {
 					zcave[zy][zx].feat = FEAT_DIRT;
 					zcave[zy][zx].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+					/* .. and apply some widely-visible fire-lighting just to pique interest */
+					zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
 				}
 				/* The mountain ring: External permanent shielding wall */
 				else if (i >= 2 && i <= 5) zcave[zy][zx].feat = FEAT_HIGH_MOUNTAIN;
 				/* The outermost ring: Cleared floor around the mountains */
 				else if (i >= 8) zcave[zy][zx].feat = FEAT_DIRT;
-
-				/* Apply some fire-lighting just to pique interest */
-				//zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP;
 			}
 		}
 		/* Secure the stair-case itself too */
 		zcave[y][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+		/* .. and apply some widely-visible fire-lighting just to pique interest */
+		zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
 
 		/* Place construction site sign */
 		c_ptr = &zcave[y][x + 1];

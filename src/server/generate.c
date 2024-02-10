@@ -10635,7 +10635,7 @@ static void switchable_shop_grids(cave_type **zcave) {
 			for (x2 = x - 1; x2 <= x + 1; x2++) {
 				for (y2 = y - 1; y2 <= y + 1; y2++) {
 					if (!in_bounds(y2, x2)) continue;
-					zcave[y2][x2].info |= CAVE_SWITCH;
+					zcave[y2][x2].info2 |= CAVE2_SWITCH;
 				}
 			}
 		}

@@ -1149,7 +1149,7 @@ void wizard_lock(int Ind, int dir) {
 	if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat < (FEAT_DOOR_HEAD + 7)) {
 		if (c_ptr->feat == FEAT_DOOR_HEAD) {
 			msg_print(Ind, "The door locks!");
-			c_ptr->info |= CAVE_MAGELOCK;
+			c_ptr->info2 |= CAVE2_MAGELOCK;
 		} else msg_print(Ind, "The door appears stronger!");
 		c_ptr->feat++;
 	} else if (c_ptr->feat != (FEAT_DOOR_HEAD + 7))
@@ -1777,7 +1777,7 @@ bool detect_treasure(int Ind, int rad) {
 			if (distance(py, px, y, x) > rad) continue;
 
 			c_ptr = &zcave[y][x];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 
 			w_ptr = &p_ptr->cave_flag[y][x];
 
@@ -1863,7 +1863,7 @@ bool floor_detect_treasure(int Ind) {
 			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
 			c_ptr = &zcave[y][x];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[y][x];
 			o_ptr = &o_list[c_ptr->o_idx];
 
@@ -1960,7 +1960,7 @@ bool detect_magic(int Ind, int rad) {
 
 			/* Access the grid and object */
 			c_ptr = &zcave[i][j];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 			o_ptr = &o_list[c_ptr->o_idx];
 
 			/* Nothing there */
@@ -2043,7 +2043,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 
 		/* Detect evil monsters */
 		if (!panel_contains(y, x)) continue;
-		if (zcave[y][x].info & CAVE_SCRT) continue;
+		if (zcave[y][x].info2 & CAVE2_SCRT) continue;
 
 		/* Detect evil monsters */
 		if (!match_flag || /* hack: all */
@@ -2075,7 +2075,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 		int py = q_ptr->py;
 		int px = q_ptr->px;
 
-		if (zcave[py][px].info & CAVE_SCRT) continue;
+		if (zcave[py][px].info2 & CAVE2_SCRT) continue;
 
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -2243,7 +2243,7 @@ bool detect_invisible(int Ind) {
 		/* Skip monsters not on this depth */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
-		if (zcave[fy][fx].info & CAVE_SCRT) continue;
+		if (zcave[fy][fx].info2 & CAVE2_SCRT) continue;
 
 		/* Detect all invisible monsters */
 		if (panel_contains(fy, fx) && (r_ptr->flags2 & RF2_INVISIBLE)) {
@@ -2293,7 +2293,7 @@ bool detect_invisible(int Ind) {
 		/* Skip the dungeon master */
 		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
 
-		if (zcave[py][px].info & CAVE_SCRT) continue;
+		if (zcave[py][px].info2 & CAVE2_SCRT) continue;
 
 		/* Detect all invisible players */
 		if (panel_contains(py, px) && q_ptr->invis)  {
@@ -2382,7 +2382,7 @@ bool detect_creatures(int Ind) {
 		/* Skip monsters not on this depth */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
-		if (zcave[fy][fx].info & CAVE_SCRT) continue;
+		if (zcave[fy][fx].info2 & CAVE2_SCRT) continue;
 
 		/* Detect all non-invisible monsters */
 		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE))) {
@@ -2427,7 +2427,7 @@ bool detect_creatures(int Ind) {
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
 
-		if (zcave[py][px].info & CAVE_SCRT) continue;
+		if (zcave[py][px].info2 & CAVE2_SCRT) continue;
 
 		/* Detect all non-invisible players */
 		if (panel_contains(py, px) && !q_ptr->invis) {
@@ -2508,7 +2508,7 @@ bool detect_noise(int Ind) {
 		/* Skip monsters not on this depth */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
-		if (zcave[fy][fx].info & CAVE_SCRT) continue;
+		if (zcave[fy][fx].info2 & CAVE2_SCRT) continue;
 
 		/* Specialties for noise-detection: don't detect monsters in noiseless state */
 		if (m_ptr->csleep && r_ptr->d_char != 'E' && //elementals always give off some sort of noise ;)
@@ -2559,7 +2559,7 @@ bool detect_noise(int Ind) {
 		/* Specialties for noise-detection */
 		if (p_ptr->skill_stl >= 14 /*30*/) continue; //don't detect Heroic/Legendary stealth
 
-		if (zcave[py][px].info & CAVE_SCRT) continue;
+		if (zcave[py][px].info2 & CAVE2_SCRT) continue;
 
 		/* Detect all non-invisible players */
 		if (panel_contains(py, px) && !q_ptr->invis) {
@@ -2643,7 +2643,7 @@ bool detect_living(int Ind) {
 		   eg for vampirism application. */
 		if ((r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON)) || r_ptr->d_char == 'A') continue;
 
-		if (zcave[fy][fx].info & CAVE_SCRT) continue;
+		if (zcave[fy][fx].info2 & CAVE2_SCRT) continue;
 
 		/* Detect all monsters */
 		if (panel_contains(fy, fx)) {
@@ -2683,7 +2683,7 @@ bool detect_living(int Ind) {
 		/* Life force specialty! */
 		if (p_ptr->prace == RACE_VAMPIRE) continue;
 
-		if (zcave[py][px].info & CAVE_SCRT) continue;
+		if (zcave[py][px].info2 & CAVE2_SCRT) continue;
 
 		/* Detect all players */
 		if (panel_contains(py, px)) {
@@ -2805,7 +2805,7 @@ void detect_bounty(int Ind) {
 
 			/* Access the grid */
 			c_ptr = &zcave[i][j];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 
 			w_ptr = &p_ptr->cave_flag[i][j];
 
@@ -3003,7 +3003,7 @@ bool detect_object(int Ind, int rad) {
 			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
 
 			c_ptr = &zcave[i][j];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 			o_ptr = &o_list[c_ptr->o_idx];
 
 			/* Nothing here */
@@ -3064,7 +3064,7 @@ bool detect_treasure_object(int Ind, int rad) {
 			if (distance(py, px, y, x) > rad) continue;
 
 			c_ptr = &zcave[y][x];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* Magma/Quartz + Known Gold */
@@ -3170,7 +3170,7 @@ bool detect_trap(int Ind, int rad) {
 
 			/* Access the grid */
 			c_ptr = &zcave[i][j];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			/* Hack - traps on undetected doors cannot be found */
@@ -3298,7 +3298,7 @@ bool detect_sdoor(int Ind, int rad) {
 
 			/* Access the grid and object */
 			c_ptr = &zcave[i][j];
-			if (c_ptr->info & CAVE_SCRT) continue;
+			if (c_ptr->info2 & CAVE2_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			/* Hack -- detect secret doors */
@@ -10437,7 +10437,7 @@ void detonate_charge(int o_idx) {
 				    || c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
 					continue;
 				cave_set_feat_live(wpos, y2, x2, FEAT_RUBBLE);
-				c_ptr->info |= CAVE_NOYIELD;
+				c_ptr->info2 |= CAVE2_NOYIELD;
 			}
 		}
 		break;

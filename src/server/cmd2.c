@@ -2311,7 +2311,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			return(FALSE);
 		}
 
-		/* guild halls must be mang-style houses (technically too, for CAVE_GUILD_SUS flag to work!) */
+		/* guild halls must be mang-style houses (technically too, for CAVE2_GUILD_SUS flag to work!) */
 		if ((houses[h_idx].flags & HF_TRAD)) {
 			msg_print(Ind, "\377yGuild halls must not be list-type (store-like) houses.");
 			return(FALSE);
@@ -2998,7 +2998,7 @@ void do_cmd_open(int Ind, int dir) {
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Automatic bot detection - mikaelh */
-				if (!(c_ptr->info & CAVE_MAGELOCK)) {
+				if (!(c_ptr->info2 & CAVE2_MAGELOCK)) {
 					p_ptr->silly_door_exp++;
 					if (p_ptr->silly_door_exp >= 100) {
 						msg_print(Ind, "Botting never pays off...");
@@ -3486,7 +3486,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	object_type object_storage;
 #endif
 
-	u32b cinfo;
+	u32b cinfo, cinfo2;
 	int skill_dig = quiet_borer ? 0 : get_skill(p_ptr, SKILL_DIG), mining = skill_dig;
 	int dug_feat = FEAT_NONE, tval = 0, sval = 0, special_k_idx = 0; //chest / golem base material / rune
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -3685,6 +3685,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	c_ptr = &zcave[y][x];
 	cfeat = c_ptr->feat;
 	cinfo = c_ptr->info;
+	cinfo2 = c_ptr->info2;
 	f_ptr = &f_info[cfeat];
 
 	/* Check the floor-hood */
@@ -4014,7 +4015,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 
 			/* Hack -- place an object - Not in town (Khazad becomes l00t source), not on stale IDDC floors */
-			if (!istown(wpos) && !p_ptr->IDDC_logscum && !(cinfo & CAVE_NOYIELD)) {
+			if (!istown(wpos) && !p_ptr->IDDC_logscum && !(cinfo2 & CAVE2_NOYIELD)) {
 				/* discovered a special feature? */
 				if (dug_feat == FEAT_FOUNTAIN) {
 					place_fountain(wpos, y, x);
@@ -4447,7 +4448,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					else s_printf("DIGGING: %s (F%d,S%d,O%d) digs obvious (x%d=%dAu).\n",
 					    p_ptr->name, find_level_base, skill_dig, object_level,
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
-					c_ptr->info |= CAVE_MINED; //mark for warning_tunnel_hidden
+					c_ptr->info2 |= CAVE2_MINED; //mark for warning_tunnel_hidden
 				}
 				note_spot_depth(wpos, y, x);
 				everyone_lite_spot(wpos, y, x);
@@ -5474,7 +5475,7 @@ void do_cmd_bash(int Ind, int dir) {
 		c_ptr = &zcave[y][x];
 
 		/* for leaderless guild houses */
-		if ((zcave[y][x].info & CAVE_GUILD_SUS)) return;
+		if ((zcave[y][x].info2 & CAVE2_GUILD_SUS)) return;
 
 		if (c_ptr->feat == FEAT_DEEP_WATER ||
 		    c_ptr->feat == FEAT_SHAL_WATER) {

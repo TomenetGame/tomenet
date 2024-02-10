@@ -1764,7 +1764,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	if (check_guard_inscription(o_ptr->note, 'g') && pickup) pick_one = TRUE;
 
 	/* Cannot pick up stuff in leaderless guild halls */
-	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_GUILD_SUS) &&
+	if ((zcave[p_ptr->py][p_ptr->px].info2 & CAVE2_GUILD_SUS) &&
 	    /* exception: Guild Keys can always be picked up, since they make you the new guild master
 	       and therefore end the 'leaderless' status of a guild. */
 	    !(o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY))
@@ -1909,9 +1909,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 		inven_carried = TRUE;
 #endif
-		if ((c_ptr->info & CAVE_MINED) && !p_ptr->warning_tunnel_hidden) {
+		if ((c_ptr->info2 & CAVE2_MINED) && !p_ptr->warning_tunnel_hidden) {
 			msg_print(Ind, "\374\377yHINT: Mining hidden veins yields more than the right away spottable ones!");
-			c_ptr->info &= ~CAVE_MINED;
+			c_ptr->info2 &= ~CAVE2_MINED;
 			p_ptr->warning_tunnel_hidden = 1;
 		}
 /* #if DEBUG_LEVEL > 3 */
@@ -7514,7 +7514,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		    (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
 		    (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
 		    !p_ptr->afk && !q_ptr->afk) ||
-		    q_ptr->admin_dm || blocks_important_feat || (c_ptr->info & CAVE_SWITCH))
+		    q_ptr->admin_dm || blocks_important_feat || (c_ptr->info2 & CAVE2_SWITCH))
 		    /* don't switch someone 'out' of a shop, except for the Inn
 		       or if the player isn't actually 'visiting' the shop but just glitched onto the grid: */
 		    && !remain_in_store && !replace_in_store
@@ -7527,7 +7527,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			/* switch places only if BOTH have WRAITHFORM or NONE has it, well or if target is a DM */
 			if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
 			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
-			    || q_ptr->admin_dm || blocks_important_feat || (c_ptr->info & CAVE_SWITCH)) {
+			    || q_ptr->admin_dm || blocks_important_feat || (c_ptr->info2 & CAVE2_SWITCH)) {
 				store_exit(Ind);
 				store_exit(Ind2);
 
