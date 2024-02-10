@@ -1555,7 +1555,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
 F:NO_ARTICLE | ENTER_FROM_SPECIAL
 
 
-# NOTE: 255 is reserved for special purpose ('not done yet' indicator)
+# NOTE: 255 is reserved for special purpose (RLE in server save file / 'not done yet' indicator -- TODO: Check the latter one, can't coexist w/ RLE?)
 
 
 # generic scheme (all lines are unique except

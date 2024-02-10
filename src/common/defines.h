@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	13
+#define SF_VERSION_PATCH	14
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -4621,7 +4621,7 @@
 
 
 /*
- * Special cave grid flags
+ * Special cave grid flags -- note that they must never all be set (0xFFFFFFFF) as that would collide with RLE!
  */
 #define CAVE_MARK	0x00000001U	/* memorized feature */
 #define CAVE_GLOW	0x00000002U	/* self-illuminating */
@@ -4667,7 +4667,12 @@
 #define CAVE_SCRT	0x20000000U	/* Secret grid, cannot be uncovered by magic mapping or similar means, but only manually by looking at it directly via line of sight. */
 #define CAVE_REFUGE	0x40000000U	/* IDDC refuge grid */
 #define CAVE_LITE_TYPE_CHANGED	0x80000000U	/* Temp flag for lighting code: Required when when player with non-CAVE_LITE_WHITE light source crosses static CAVE_LITE_WHITE grids, or they won't be redrawn after re-receiving their CAVE_LITE_WHITE colour. - C. Blue */
+
+/* Special cave grid flags2 -- note that they must never all be set (0xFFFFFFFF) as that would collide with RLE! */
+
+#define CAVE2_WIDE_LITE	0x00000001U	/* Behaves regarding lighting as if it was always visible to the player (so a light shimmer can be seen from afar w/o LoS) */
 //super hypothetical: maybe add CAVE_LITE_MON in the future, for monster-lit grids.
+
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
@@ -4680,6 +4685,7 @@
 #define CAVE_PLIT	0x0    /* Player lit grid */
 #define CAVE_MLIT	0x0    /* Monster lit grid */
 #endif /* 0 */
+
 
 /*
  * Bit flags for the "project()" function

@@ -2917,8 +2917,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 	 /* Don't display lighting on walls (or floor tiles) that are lit up by other players but not actually in our view right now */
 	//viewable_light = (((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) || c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP));
-	viewable_light = ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW));
-	viewable_glow = ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW));
+	viewable_light = (c_ptr->info & CAVE_LITE) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info2 & CAVE2_WIDE_LITE));
+	viewable_glow = (c_ptr->info & CAVE_GLOW) && ((*w_ptr & CAVE_VIEW) || (c_ptr->info2 & CAVE2_WIDE_LITE));
 	viewable_any = viewable_light || viewable_glow;
 
 	/* Feature code */

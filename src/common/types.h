@@ -601,7 +601,7 @@ struct sfunc {
 };
 
 struct cave_type {
-	u32b info;		/* Hack -- cave flags */
+	u32b info, info2;	/* Hack -- cave flags */
 	byte feat;		/* Hack -- feature type */
 	byte feat_org;		/* UNUSED -- Feature type backup (TODO: for wall-created grids to revert to original feat when tunneled! Add to save/load!) */
 

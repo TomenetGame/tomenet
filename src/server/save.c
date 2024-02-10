@@ -1264,7 +1264,7 @@ static void wr_floor(struct worldpos *wpos) {
 	/* init RLE control vars to some 'reserved' value, usually the highest we can express in their type,
 	   and set as rule that it may not be used by the scripts, so it stays distinguished as init-marker. */
 	byte prev_feature = 0xff;
-	u32b prev_info = 0xffffffff;
+	u32b prev_info = 0xffffffff, prev_info2 = 0xffffffff;
 	s16b prev_custom_lua_tunnel_hand = (s16b)0xffff;
 	s16b prev_custom_lua_tunnel = (s16b)0xffff;
 	s16b prev_custom_lua_search = (s16b)0xffff;
@@ -1331,7 +1331,7 @@ static void wr_floor(struct worldpos *wpos) {
 
 			/* if we are starting a new run */
 			if (!runlength || runlength > 254 ||
-			    c_ptr->feat != prev_feature || c_ptr->info != prev_info ||
+			    c_ptr->feat != prev_feature || c_ptr->info != prev_info || c_ptr->info2 != prev_info2 ||
 			    prev_custom_lua_tunnel_hand != c_ptr->custom_lua_tunnel_hand ||
 			    prev_custom_lua_tunnel != c_ptr->custom_lua_tunnel ||
 			    prev_custom_lua_search != c_ptr->custom_lua_search ||
@@ -1343,6 +1343,7 @@ static void wr_floor(struct worldpos *wpos) {
 					wr_byte(runlength);
 					wr_byte(prev_feature);
 					wr_u32b(prev_info);
+					wr_u32b(prev_info2);
 					wr_s16b(prev_custom_lua_tunnel_hand);
 					wr_s16b(prev_custom_lua_tunnel);
 					wr_s16b(prev_custom_lua_search);
@@ -1354,6 +1355,7 @@ static void wr_floor(struct worldpos *wpos) {
 				/* start a new run */
 				prev_feature = c_ptr->feat;
 				prev_info = c_ptr->info;
+				prev_info2 = c_ptr->info2;
 				prev_custom_lua_tunnel_hand = c_ptr->custom_lua_tunnel_hand;
 				prev_custom_lua_tunnel = c_ptr->custom_lua_tunnel;
 				prev_custom_lua_search = c_ptr->custom_lua_search;
@@ -1369,6 +1371,7 @@ static void wr_floor(struct worldpos *wpos) {
 		wr_byte(runlength);
 		wr_byte(prev_feature);
 		wr_u32b(prev_info);
+		wr_u32b(prev_info2);
 		wr_s16b(prev_custom_lua_tunnel_hand);
 		wr_s16b(prev_custom_lua_tunnel);
 		wr_s16b(prev_custom_lua_search);
@@ -1582,6 +1585,7 @@ static bool wr_savefile_new(int Ind) {
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) {
 		artifact_type *a_ptr = &a_info[i];
+
 		wr_byte(a_ptr->cur_num);
 		wr_byte(0);
 		wr_byte(0);

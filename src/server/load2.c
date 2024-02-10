@@ -2825,7 +2825,7 @@ static errr rd_floor(void) {
 
 	unsigned char runlength, feature;
 	u16b tmpinfo;
-	u32b info;
+	u32b info, info2;
 	s16b custom_lua_tunnel_hand = 0;
 	s16b custom_lua_tunnel = 0;
 	s16b custom_lua_search = 0;
@@ -2907,6 +2907,7 @@ static errr rd_floor(void) {
 			rd_u16b(&tmpinfo);
 			info = (u32b)tmpinfo;
 		}
+		if (!s_older_than(4, 9, 14)) rd_u32b(&info2);
 		if (!s_older_than(4, 9, 9)) {
 			rd_s16b(&custom_lua_tunnel_hand);
 			rd_s16b(&custom_lua_tunnel);
@@ -2962,6 +2963,7 @@ static errr rd_floor(void) {
 
 			/* set flags */
 			c_ptr->info = info;
+			c_ptr->info2 = info2;
 
 			/* restore custom lua hacks */
 			c_ptr->custom_lua_tunnel_hand = custom_lua_tunnel_hand;
