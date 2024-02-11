@@ -10451,7 +10451,7 @@ Ironman Deep Dive Challenge (IDDC)
     you won't make it on the leaderboard that can be viewed at the
     mayor's office in Bree.
     (Note that 'IDDC-exclusive' characters can NOT recall out at static towns.
-    If they try, they are just 'killed by indetermnation' and erased.)
+    If they try, they are just 'killed by indetermination' and erased.)
 
     Starting after 4.9.0c, the IDDC will also spawn a refuge area every 500 ft
     on non-town floors, which offers a possibility to sell loot. If a player
