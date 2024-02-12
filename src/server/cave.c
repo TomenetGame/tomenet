@@ -2957,7 +2957,9 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	   Replace any non-visible yet widely-lit feat by fake default floor just to show the player that there is some sort of light source.
 	   (Note that in case of CAVE_GLOW_HACK_LAMP this will even replace grids that usually don't support fire-flickering light, such as staircases, with fire-animated lighting, as floor does support it.
 	   If that is undesired, use CAVE_GLOW_LAMP flag instead for those feats that aren't supposed to show fiery lighting.)  - C. Blue */
-	if ((c_ptr->info & CAVE_WIDE_LITE) && viewable_any && !(*w_ptr & CAVE_VIEW) && !p_ptr->blind && !p_ptr->admin_dm) { /* The admin-dm always sees everything, so we must not overwrite any feats with FEAT_DIRT for him. */
+	if ((c_ptr->info & CAVE_WIDE_LITE) && viewable_any && !(*w_ptr & CAVE_VIEW) && !p_ptr->blind
+	    && !(*w_ptr & CAVE_MARK) /* If we already mapped this feat, do not disguise it, it doesn't matter that it is currently not within view, if we already saw it before. */
+	    && !p_ptr->admin_dm) { /* The admin-dm always sees everything, so we must not overwrite any feats with FEAT_DIRT for him. */
 		feat = FEAT_DIRT; //FEAT_FLOOR;
 #if 0 /* All of this stuff is only needed if this whole 'if' clause is used/inserted as an 'else if' for eg the non-floor -> before the 'unknown' else branch. Here if used globally at the start, this can remain 0'ed. */
 		f_ptr = &f_info[feat];
