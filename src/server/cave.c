@@ -2957,63 +2957,63 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	   Replace any non-visible yet widely-lit feat by fake default floor just to show the player that there is some sort of light source.
 	   (Note that in case of CAVE_GLOW_HACK_LAMP this will even replace grids that usually don't support fire-flickering light, such as staircases, with fire-animated lighting, as floor does support it.
 	   If that is undesired, use CAVE_GLOW_LAMP flag instead for those feats that aren't supposed to show fiery lighting.)  - C. Blue */
-	if ((c_ptr->info & CAVE_WIDE_LITE) && viewable_any && !(*w_ptr & CAVE_VIEW) && !p_ptr->blind) {
-			feat = FEAT_DIRT; //FEAT_FLOOR;
+	if ((c_ptr->info & CAVE_WIDE_LITE) && viewable_any && !(*w_ptr & CAVE_VIEW) && !p_ptr->blind && !p_ptr->admin_dm) { /* The admin-dm always sees everything, so we must not overwrite any feats with FEAT_DIRT for him. */
+		feat = FEAT_DIRT; //FEAT_FLOOR;
 #if 0 /* All of this stuff is only needed if this whole 'if' clause is used/inserted as an 'else if' for eg the non-floor -> before the 'unknown' else branch. Here if used globally at the start, this can remain 0'ed. */
-			f_ptr = &f_info[feat];
-			if (!p_ptr->font_map_solid_walls) {
-				/* Normal char */
-				(*cp) = p_ptr->f_char[feat];
-				/* Normal attr */
-				a = p_ptr->f_attr[feat];
-			} else { /* hack */
-				(*cp) = p_ptr->f_char_solid[feat];
-				a = p_ptr->f_attr_solid[feat];
-			}
+		f_ptr = &f_info[feat];
+		if (!p_ptr->font_map_solid_walls) {
+			/* Normal char */
+			(*cp) = p_ptr->f_char[feat];
+			/* Normal attr */
+			a = p_ptr->f_attr[feat];
+		} else { /* hack */
+			(*cp) = p_ptr->f_char_solid[feat];
+			a = p_ptr->f_attr_solid[feat];
+		}
 
-			/* Special lighting effects */
-			if (p_ptr->floor_lighting &&
-			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
-			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
-			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
-			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
-			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra))) {
-				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org, palanim);
+		/* Special lighting effects */
+		if (p_ptr->floor_lighting &&
+		    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
+		    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
+		    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
+		    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
+		    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra))) {
+			a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org, palanim);
 
-				/* Handle "torch-lit" grids */
-				if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
-				    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra) ||
-				    lite_snow) && viewable_light) {
-					/* Torch lite */
-					if (p_ptr->view_lamp_floor) {
+			/* Handle "torch-lit" grids */
+			if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
+			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra) ||
+			    lite_snow) && viewable_light) {
+				/* Torch lite */
+				if (p_ptr->view_lamp_floor) {
  #ifdef CAVE_LITE_COLOURS
-						if ((c_ptr->info & CAVE_LITE_WHITE)) {
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
-							    TERM_WHITE;//normal
-						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
-							    TERM_WHITE; /* usual glowing floor grids are TERM_WHITE, so lamp light shouldn't be darker (TERM_L_WHITE).. */
-						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) {
-							if (is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) a = (a == TERM_L_DARK) ? TERM_LAMP_DARK : TERM_LAMP;//<-specialty: shaded ash
-							else a = (a == TERM_L_DARK) ? TERM_UMBER : TERM_LAMP;//<-specialty: shaded ash
-						}
-						else a = (a == TERM_L_DARK) ? TERM_UMBER : TERM_YELLOW;//<-specialty: shaded ash
- #else
-						a = TERM_YELLOW;
- #endif
+					if ((c_ptr->info & CAVE_LITE_WHITE)) {
+						if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
+						    TERM_WHITE;//normal
+					} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
+						if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
+						    TERM_WHITE; /* usual glowing floor grids are TERM_WHITE, so lamp light shouldn't be darker (TERM_L_WHITE).. */
+					} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) {
+						if (is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) a = (a == TERM_L_DARK) ? TERM_LAMP_DARK : TERM_LAMP;//<-specialty: shaded ash
+						else a = (a == TERM_L_DARK) ? TERM_UMBER : TERM_LAMP;//<-specialty: shaded ash
 					}
+					else a = (a == TERM_L_DARK) ? TERM_UMBER : TERM_YELLOW;//<-specialty: shaded ash
+ #else
+					a = TERM_YELLOW;
+ #endif
 				}
 			}
-			/* No light on this grid, yet visible (eg via normal daylight) */
-			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+		}
+		/* No light on this grid, yet visible (eg via normal daylight) */
+		else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
 
  #if 1
-			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
-			if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
+		/* Use palette-animated colours if available (even if we don't apply manipulation here) */
+		if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
  #endif
 
-			/* The attr */
-			(*ap) = a;
+		/* The attr */
+		(*ap) = a;
 #endif
 	}
 
