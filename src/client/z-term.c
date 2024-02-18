@@ -939,8 +939,14 @@ byte flick_colour(byte attr) {
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_SRCLITE: {
+//#define TERM_SRCLITE_TEMP /* only animate temporarily instead of permanently? */
 #define TERM_SRCLITE_HUE 1 /* 1 = reddish, else blueish */
 		int angle, spd;
+
+#ifdef TERM_SRCLITE_TEMP
+		/* Stop animation after some time */
+		if (ticks - flick_global_time > 82) return(TERM_WHITE);
+#endif
 
 		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
 		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
@@ -961,6 +967,17 @@ byte flick_colour(byte attr) {
 		/* Anchor coordinates (0,0) in the middle of the level */
 		flick_global_x -= SCREEN_WID / 2;
 		flick_global_y -= SCREEN_HGT / 2;
+
+#ifdef TERM_SRCLITE_TEMP
+		/* Fade out animation after some time */
+		if (ticks - flick_global_time >= 40 && distance(flick_global_y, flick_global_x / 2, 0, 0) > 21 + (flick_global_time + 40 - ticks) / 2) {
+			/* Reset search light indicator */
+			flick_global_x = 0;
+			/* Out of animation 'reach' already, ie search light beams are shrinking */
+			return(TERM_WHITE);
+		}
+#endif
+
 		/* Get angle, 0..360 deg */
 		angle = arctan[ABS(flick_global_y)][ABS(flick_global_x)];
 		/* Screen coords start at (0,0) in top left corner, not in bottom left corner, so checks are x < 0 and y > 0 */
@@ -968,8 +985,8 @@ byte flick_colour(byte attr) {
 		if (flick_global_y > 0) angle = 360 - angle;
 		/* Move them along over time, utilize ticks10 for quite a fast animation */
 		//spd = (ticks * 20 + ticks10 * 2) % 360; /* epilepsy mode */
-		//spd = (ticks * 10 + ticks10) % 360; /* fast */
-		spd = (ticks * 5 + ticks10 / 2) % 360; /* moderate, recommended */
+		spd = (ticks * 10 + ticks10) % 360; /* fast, recommended for shortish temporary animation */
+		//spd = (ticks * 5 + ticks10 / 2) % 360; /* moderate, recommended for permanent animation */
 		//spd = (ticks * 3 + ticks10 / 3) % 360; /* slowish */
 		//spd = (ticks * 2 + ticks10 / 5) % 360; /* (too) slow, animation quality starts to suffer */
 #if 0

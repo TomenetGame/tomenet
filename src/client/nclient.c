@@ -4396,6 +4396,7 @@ int Receive_music(void) {
 	if (!music(m)) { if (!music(m2)) music(m3); }
 #endif
 
+flick_global_time = ticks;
 	return(1);
 }
 int Receive_music_vol(void) {
