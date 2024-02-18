@@ -754,14 +754,14 @@ void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	if (typ == GF_ROCKET) {
 		sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
-		sound_near_monster_atk(m_idx, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
-		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_DETONATION) {
 		sound(Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
-		sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
-		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
 	else if (p_ptr->sfx_monsterattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
@@ -769,28 +769,32 @@ void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	if (typ == GF_ROCKET) {
 		sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
-		sound_near_monster_atk(m_idx, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
-		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_DETONATION) {
 		sound(Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
-		sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
-		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
-	}
-	else if (typ == GF_STONE_WALL) {
-		sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
-		sound_near_monster_atk(m_idx, Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL);
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_METEOR) {
 		sound(Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
-		sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
-		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+	else if (typ == GF_STONE_WALL) {
+		sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (p_ptr->sfx_monsterattack) {
 		sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
-		sound_near_monster_atk(m_idx, Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL);
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
  #endif
 #endif
