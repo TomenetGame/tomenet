@@ -939,13 +939,19 @@ byte flick_colour(byte attr) {
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_SRCLITE: {
+#define TERM_SRCLITE_HUE 1 /* 1 = reddish, else blueish */
 		int angle, spd;
 
 		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
 		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
 
 		/* Catch use in chat (or elsewhere, paranoia) instead of as feat attr in the main screen map, or we will crash :-s */
-		if (!flick_global_x) return(flick_colour(TERM_FIRE));
+		if (!flick_global_x)
+#if TERM_SRCLITE_HUE == 1 /* reddish */
+			return(flick_colour(TERM_FIRE));
+#else /* blueish */
+			return(flick_colour(TERM_ELEC));
+#endif
 
 		/* Assume we're only called on a dungeon floor with dimensions SCREEN_WID x SCREEN_HGT (66x22): */
 		flick_global_x -= SCREEN_PAD_LEFT;
@@ -985,7 +991,7 @@ byte flick_colour(byte attr) {
 
 		/* Display search light (or just normal wall colour as default when not in the beam atm: 'default') */
 		switch (angle) {
-#if 1 /* reddish */
+#if TERM_SRCLITE_HUE == 1 /* reddish */
 		case 0: return(TERM_RED);
 		case 1: return(TERM_ORANGE);
 		/* Recommended to insert duplicate middle colour case here for angle /= 5, leave out for angle /= 4 */
