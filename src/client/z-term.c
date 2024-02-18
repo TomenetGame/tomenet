@@ -938,19 +938,16 @@ byte flick_colour(byte attr) {
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
-	case TERM_SRCLITE:
+	case TERM_SRCLITE: {
+		int angle;
+
 		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
 		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
 
 		/* Catch use in chat (or elsewhere, paranoia) instead of as feat attr in the main screen map, or we will crash :-s */
 		if (!flick_global_x) return(flick_colour(TERM_FIRE));
 
-		/* (We abuse 'flags', as it is unused by now, to calculate the angle here.) */
-#if 0
-		/* Generic testing function */
-		flags = ((flick_global_x + ticks - flick_global_y) % MAX_WID) / (MAX_WID / 10);
-#else
-		/* Special function: assume we're only called on a dungeon floor, and it is always SCREEN_WID x SCREEN_HGT (66x22) in size: */
+		/* Assume we're only called on a dungeon floor with dimensions SCREEN_WID x SCREEN_HGT (66x22): */
 		flick_global_x -= SCREEN_PAD_LEFT;
 		flick_global_y -= SCREEN_PAD_TOP;
 		/* paranoia/safety: should the client run in big-map mode, allow for 'full-screen' dungeon floors of this size too */
@@ -959,41 +956,50 @@ byte flick_colour(byte attr) {
 		flick_global_x -= SCREEN_WID / 2;
 		flick_global_y -= SCREEN_HGT / 2;
 		/* Get angle, 0..360 deg */
-		flags = arctan[ABS(flick_global_y)][ABS(flick_global_x)];
-		if (flick_global_x < 0) flags = 180 - flags;
-		if (flick_global_y < 0) flags = 360 - flags;
+		angle = arctan[ABS(flick_global_y)][ABS(flick_global_x)];
+		/* Screen coords start at (0,0) in top left corner, not in bottom left corner, so checks are x < 0 and y > 0 */
+		if (flick_global_x < 0) angle = 180 - angle;
+		if (flick_global_y > 0) angle = 360 - angle;
 		/* Move them along over time, utilize ticks10 for quite a fast animation */
-		flags = (flags + ticks * 10 + ticks10) % 360;
-		/* Show 4 "search lights" along the full circle (ie 360 deg) */
-		flags = flags % (360 / 4);
-		/* Set beam tightness:
-		   Map the current angle state onto the 6 different colours, with the last colour lasting especially long aka
+#if 0
+		angle += (ticks * 10 + ticks10) % 360; /* clockwise */
+#else /* Reverse direction to counter-clockwise, somehow looks cooler? oO' */
+		angle -= (ticks * 10 + ticks10) % 360; /* counterclockwise */
+		angle += 360; /* Required: Modulo on negative numbers can be fickle depending on implementation, ensure positive angles to circumvent any issues */
+#endif
+		/* Show multiple "search lights" along the full circle (ie 360 deg) [3 or 4 recommended] */
+		angle %= 360 / 3;
+		/* Set beam tightness [4 or 5 recommended; problem with 4 already: too much edge flickering, check arctan[] value rounding perhaps to improve]:
+		   Map the current angle state onto different colours, with the last colour lasting especially long aka
 		   "search light beam isn't here atm", so there can be a bunch of numbers after the last colour,
 		   which is the default colour of the feat, to accomodate for this and extend that default colour's screen time. */
-		flags /= 5;
-#endif
+		angle /= 5;
 
 		/* Reset search light indicator */
 		flick_global_x = 0;
 
 		/* Display search light (or just normal wall colour as default when not in the beam atm: 'default') */
-		switch (flags) {
+		switch (angle) {
 #if 1 /* reddish */
 		case 0: return(TERM_RED);
 		case 1: return(TERM_ORANGE);
-		case 2: case 3: return(TERM_YELLOW);
+		/* Recommended to insert duplicate middle colour case here for angle /= 5, leave out for angle /= 4 */
+		case 2:
+		case 3: return(TERM_YELLOW);
 		case 4: return(TERM_ORANGE);
 		case 5: return(TERM_RED);
 		default: return(TERM_WHITE);
 #else /* blueish */
 		case 0: return(TERM_BLUE);
 		case 1: return(TERM_L_BLUE);
-		case 2: case 3: return(TERM_WHITE);
+		/* Recommended to insert duplicate middle colour case here for angle /= 5, leave out for angle /= 4 */
+		case 2:
+		case 3: return(TERM_WHITE);
 		case 4: return(TERM_L_BLUE);
 		case 5: return(TERM_BLUE);
 		default: return(TERM_SLATE);
 #endif
-		}
+		}}
 	default:
 #if 0 /* old way: xhtml_screenshot() would call us on ANY colour, even non-animated */
 		return(attr); /* basically only happens in screenshot function, where flick_colour() is used indiscriminately on ALL colours even those not animated.. pft */
