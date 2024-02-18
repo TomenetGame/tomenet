@@ -127,6 +127,7 @@ int color_char_to_attr(char c) {
 		case '5': return TERM_SMOOTHPAL;
 		case '6': return TERM_SEL_RED;
 		case '7': return TERM_SEL_BLUE;
+		case '8': return TERM_SRCLITE;
 	}
 
 	return (-1);
@@ -205,6 +206,7 @@ char color_attr_to_char(byte a) {
 		case TERM_SMOOTHPAL: return '5';
 		case TERM_SEL_RED: return '6';
 		case TERM_SEL_BLUE: return '7';
+		case TERM_SRCLITE: return '8';
 	}
 
 	return 'w';

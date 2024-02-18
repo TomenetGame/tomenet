@@ -2001,6 +2001,12 @@ static errr Term_curs_x11(int x, int y) {
  * Draw a number of characters (XXX Consider using "cpy" mode)
  */
 static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
+/* Catch use in chat instead of as feat attr, or we crash :-s
+   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
+if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	flick_global_x = x;
+	flick_global_y = y;
+}
 	a = term2attr(a);
 
 	/* Draw the text in Xor */
@@ -2047,6 +2053,12 @@ int graphics_image_tpr; /* Tiles per row. */
  * Draw some graphical characters.
  */
 static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
+/* Catch use in chat instead of as feat attr, or we crash :-s
+   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
+if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	flick_global_x = x;
+	flick_global_y = y;
+}
 	a = term2attr(a);
 
 	/* Draw the tile in Xor. */

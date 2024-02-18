@@ -2199,6 +2199,12 @@ static errr Term_curs_win(int x, int y) {
  */
 static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 #ifdef USE_GRAPHICS
+/* Catch use in chat instead of as feat attr, or we crash :-s
+   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
+if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	flick_global_x = x;
+	flick_global_y = y;
+}
 	a = term2attr(a);
 
 	COLORREF bgColor, fgColor;
@@ -2310,6 +2316,12 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	/* Acquire DC */
 	hdc = myGetDC(td->w);
 
+/* Catch use in chat instead of as feat attr, or we crash :-s
+   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
+if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	flick_global_x = x;
+	flick_global_y = y;
+}
 	a = term2attr(a);
 
 #ifdef PALANIM_SWAP

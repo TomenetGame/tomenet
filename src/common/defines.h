@@ -7744,6 +7744,7 @@ extern int PlayerUID;
  #define TERM_SMOOTHPAL	60
  #define TERM_SEL_RED	61
  #define TERM_SEL_BLUE	62
+ #define TERM_SRCLITE	63	/* Looking for the watcher in the sky */
 
  #ifdef EXTENDED_COLOURS_PALANIM
   #define TERMA_OFFSET	64

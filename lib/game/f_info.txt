@@ -1227,9 +1227,11 @@ G:#:7
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
 
-
-# HOLE 185 -------------------------------------------------------------
-
+#like 183, but special animated colour aka search lights (testing)
+N:185:permanent wall
+G:#:8
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
 
 N:186:blazing fire
 G:%:f

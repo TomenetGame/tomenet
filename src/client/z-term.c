@@ -20,6 +20,23 @@ byte flick_colour(byte attr);
 
 void (*resize_main_window)(int cols, int rows);
 
+static int arctan[12][34] = {	/* [y, x] -> arctan(y/x) in degrees, with y=0..11, x=0..33 (aka MAX_HGT/2, MAX_WID/2) - C. Blue
+				   Hack: 360 marks undefined, could be any angle; also hack: all the '90' fields define the div/0 spot for x=0.
+				   TODO: Optimize rounding maybe, as the 'beams' seem to flicker slightly along the edges? >_> */
+{ 360,	0,0,0,		0,0,0,0,0,0,0,0,0,0,		0,0,0,0,0,0,0,0,0,0,		0,0,0,0,0,0,0,0,0,0,},
+{ 90,	45,27,18,	14,11,9,8,7,6,6,5,5,4,		4,4,4,3,3,3,3,3,3,2,		2,2,2,2,2,2,2,2,2,2,},
+{ 90,	63,45,34,	27,22,18,16,14,13,11,10,9,9,	8,8,7,7,6,6,6,5,5,5,		5,5,4,4,4,4,4,4,4,3,},
+{ 90,	72,56,45,	37,31,27,23,21,18,17,15,14,13,	12,11,11,10,9,9,9,8,8,7,	7,7,7,6,6,6,6,6,5,5,},
+{ 90,	76,63,53,	45,39,34,30,27,24,22,20,18,17,	16,15,14,13,13,12,11,11,10,10,	9,9,9,8,8,8,8,7,7,7,},
+{ 90,	79,68,59,	51,45,40,36,32,29,27,24,23,21,	20,18,17,16,16,15,14,13,13,12,	12,11,11,10,10,10,9,9,9,9,},
+{ 90,	81,72,63,	56,50,45,41,37,34,31,29,27,25,	23,22,21,19,18,18,17,16,15,15,	14,13,13,13,12,12,11,11,11,10,},
+{ 90,	82,74,67,	60,54,49,45,41,38,35,32,30,28,	27,25,24,22,21,20,19,18,18,17,	16,16,15,15,14,14,13,13,12,12,},
+{ 90,	83,76,69,	63,58,53,49,45,42,39,36,34,32,	30,28,27,25,24,23,22,21,20,19,	18,18,17,17,16,15,15,14,14,14,},
+{ 90,	84,77,72,	66,61,56,52,48,45,42,39,37,35,	33,31,29,28,27,25,24,23,22,21,	21,20,19,18,18,17,17,16,16,15,},
+{ 90,	84,79,73,	68,63,59,55,51,48,45,42,40,38,	36,34,32,30,29,28,27,25,24,23,	23,22,21,20,20,19,18,18,17,17,},
+{ 90,	85,80,75,	70,66,61,58,54,51,48,45,43,40,	38,36,35,33,31,30,29,28,27,26,	25,24,23,22,21,21,20,20,19,18,},
+};
+
 /*
  * This file provides a generic, efficient, terminal window package,
  * which can be used not only on standard terminal environments such
@@ -921,7 +938,62 @@ byte flick_colour(byte attr) {
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
+	case TERM_SRCLITE:
+		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
+		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
 
+		/* Catch use in chat (or elsewhere, paranoia) instead of as feat attr in the main screen map, or we will crash :-s */
+		if (!flick_global_x) return(flick_colour(TERM_FIRE));
+
+		/* (We abuse 'flags', as it is unused by now, to calculate the angle here.) */
+#if 0
+		/* Generic testing function */
+		flags = ((flick_global_x + ticks - flick_global_y) % MAX_WID) / (MAX_WID / 10);
+#else
+		/* Special function: assume we're only called on a dungeon floor, and it is always SCREEN_WID x SCREEN_HGT (66x22) in size: */
+		flick_global_x -= SCREEN_PAD_LEFT;
+		flick_global_y -= SCREEN_PAD_TOP;
+		/* paranoia/safety: should the client run in big-map mode, allow for 'full-screen' dungeon floors of this size too */
+		if (flick_global_y > SCREEN_HGT) flick_global_y -= SCREEN_HGT; /* just duplicate the animation in the lower big-map screen half for now */
+		/* Anchor coordinates (0,0) in the middle of the level */
+		flick_global_x -= SCREEN_WID / 2;
+		flick_global_y -= SCREEN_HGT / 2;
+		/* Get angle, 0..360 deg */
+		flags = arctan[ABS(flick_global_y)][ABS(flick_global_x)];
+		if (flick_global_x < 0) flags = 180 - flags;
+		if (flick_global_y < 0) flags = 360 - flags;
+		/* Move them along over time, utilize ticks10 for quite a fast animation */
+		flags = (flags + ticks * 10 + ticks10) % 360;
+		/* Show 4 "search lights" along the full circle (ie 360 deg) */
+		flags = flags % (360 / 4);
+		/* Set beam tightness:
+		   Map the current angle state onto the 6 different colours, with the last colour lasting especially long aka
+		   "search light beam isn't here atm", so there can be a bunch of numbers after the last colour,
+		   which is the default colour of the feat, to accomodate for this and extend that default colour's screen time. */
+		flags /= 5;
+#endif
+
+		/* Reset search light indicator */
+		flick_global_x = 0;
+
+		/* Display search light (or just normal wall colour as default when not in the beam atm: 'default') */
+		switch (flags) {
+#if 1 /* reddish */
+		case 0: return(TERM_RED);
+		case 1: return(TERM_ORANGE);
+		case 2: case 3: return(TERM_YELLOW);
+		case 4: return(TERM_ORANGE);
+		case 5: return(TERM_RED);
+		default: return(TERM_WHITE);
+#else /* blueish */
+		case 0: return(TERM_BLUE);
+		case 1: return(TERM_L_BLUE);
+		case 2: case 3: return(TERM_WHITE);
+		case 4: return(TERM_L_BLUE);
+		case 5: return(TERM_BLUE);
+		default: return(TERM_SLATE);
+#endif
+		}
 	default:
 #if 0 /* old way: xhtml_screenshot() would call us on ANY colour, even non-animated */
 		return(attr); /* basically only happens in screenshot function, where flick_colour() is used indiscriminately on ALL colours even those not animated.. pft */

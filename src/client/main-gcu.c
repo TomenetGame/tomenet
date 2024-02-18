@@ -787,6 +787,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 	else
 #endif
 
+//TODO: support TERM_SRCLITE in term2attr() by setting flick_global_x/y here, via term_screen = &data[0].t or sth
 	a = term2attr(a);
 
 #ifdef A_COLOR
