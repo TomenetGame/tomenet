@@ -985,8 +985,8 @@ byte flick_colour(byte attr) {
 		if (flick_global_y > 0) angle = 360 - angle;
 		/* Move them along over time, utilize ticks10 for quite a fast animation */
 		//spd = (ticks * 20 + ticks10 * 2) % 360; /* epilepsy mode */
-		spd = (ticks * 10 + ticks10) % 360; /* fast, recommended for shortish temporary animation */
-		//spd = (ticks * 5 + ticks10 / 2) % 360; /* moderate, recommended for permanent animation */
+		//spd = (ticks * 10 + ticks10) % 360; /* fast, recommended for shortish temporary animation */
+		spd = (ticks * 5 + ticks10 / 2) % 360; /* moderate, recommended for permanent animation */
 		//spd = (ticks * 3 + ticks10 / 3) % 360; /* slowish */
 		//spd = (ticks * 2 + ticks10 / 5) % 360; /* (too) slow, animation quality starts to suffer */
 #if 0
