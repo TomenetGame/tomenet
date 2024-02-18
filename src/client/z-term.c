@@ -939,7 +939,7 @@ byte flick_colour(byte attr) {
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_SRCLITE: {
-		int angle;
+		int angle, spd;
 
 		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
 		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
@@ -961,19 +961,24 @@ byte flick_colour(byte attr) {
 		if (flick_global_x < 0) angle = 180 - angle;
 		if (flick_global_y > 0) angle = 360 - angle;
 		/* Move them along over time, utilize ticks10 for quite a fast animation */
+		//spd = (ticks * 20 + ticks10 * 2) % 360; /* epilepsy mode */
+		//spd = (ticks * 10 + ticks10) % 360; /* fast */
+		spd = (ticks * 5 + ticks10 / 2) % 360; /* moderate, recommended */
+		//spd = (ticks * 3 + ticks10 / 3) % 360; /* slowish */
+		//spd = (ticks * 2 + ticks10 / 5) % 360; /* (too) slow, animation quality starts to suffer */
 #if 0
-		angle += (ticks * 10 + ticks10) % 360; /* clockwise */
+		angle += spd; /* clockwise */
 #else /* Reverse direction to counter-clockwise, somehow looks cooler? oO' */
-		angle -= (ticks * 10 + ticks10) % 360; /* counterclockwise */
+		angle -= spd; /* counterclockwise */
 		angle += 360; /* Required: Modulo on negative numbers can be fickle depending on implementation, ensure positive angles to circumvent any issues */
 #endif
-		/* Show multiple "search lights" along the full circle (ie 360 deg) [3 or 4 recommended] */
-		angle %= 360 / 3;
+		/* Show multiple "search lights" along the full circle (ie 360 deg) [2..4 recommended] */
+		angle %= 360 / 2;
 		/* Set beam tightness [4 or 5 recommended; problem with 4 already: too much edge flickering, check arctan[] value rounding perhaps to improve]:
 		   Map the current angle state onto different colours, with the last colour lasting especially long aka
 		   "search light beam isn't here atm", so there can be a bunch of numbers after the last colour,
 		   which is the default colour of the feat, to accomodate for this and extend that default colour's screen time. */
-		angle /= 5;
+		angle /= 4;
 
 		/* Reset search light indicator */
 		flick_global_x = 0;
@@ -984,20 +989,20 @@ byte flick_colour(byte attr) {
 		case 0: return(TERM_RED);
 		case 1: return(TERM_ORANGE);
 		/* Recommended to insert duplicate middle colour case here for angle /= 5, leave out for angle /= 4 */
-		case 2:
-		case 3: return(TERM_YELLOW);
-		case 4: return(TERM_ORANGE);
-		case 5: return(TERM_RED);
+		//case 2:
+		case 2: return(TERM_YELLOW);
+		case 3: return(TERM_ORANGE);
+		case 4: return(TERM_RED);
 		default: return(TERM_WHITE);
 #else /* blueish */
 		case 0: return(TERM_BLUE);
 		case 1: return(TERM_L_BLUE);
 		/* Recommended to insert duplicate middle colour case here for angle /= 5, leave out for angle /= 4 */
-		case 2:
-		case 3: return(TERM_WHITE);
-		case 4: return(TERM_L_BLUE);
-		case 5: return(TERM_BLUE);
-		default: return(TERM_SLATE);
+		//case 2:
+		case 2: return(TERM_WHITE);
+		case 3: return(TERM_L_BLUE);
+		case 4: return(TERM_BLUE);
+		default: return(TERM_L_DARK); /* need TERM_L_DARK or TERM_SLATE to get enough contrast to dark blue */
 #endif
 		}}
 	default:
