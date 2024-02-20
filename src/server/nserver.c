@@ -498,12 +498,11 @@ void init_players() {
  */
 bool Report_to_meta(int flag) {
 	/* Abort if the user doesn't want to report */
-	if (!cfg.report_to_meta || cfg.runlevel < 4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2045))) {
+	if (!cfg.report_to_meta || cfg.runlevel <= 3 || (cfg.runlevel >= 1024 && cfg.runlevel <= 1025))
 		return(FALSE);
-	}
 
 	/* New implementation */
-//	s_printf("Reporting to meta...\n");
+	//s_printf("Reporting to meta...\n");
 	meta_report(flag);
 	return(TRUE);
 }
