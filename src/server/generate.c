@@ -8469,6 +8469,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* add the arena */
 		//keep objects that may be on the floor...... but get rid of monsters
 		x1 = y1 = 0;
+		if (p_ptr->temp_misc_1 & 0x80) {
+			pdf_hack_feat = FEAT_PERM_EXTRA_BOUND;
+			pdf_hack_feat_new = FEAT_PERM_EXTRA_BOUND_SPEC_ANICOL;
+		}
 		i = process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, SCREEN_HGT, SCREEN_WID, TRUE);
 		if (p_ptr->temp_misc_1 & 0x80) {
 			int startx, starty;
@@ -8491,6 +8495,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			new_level_down_x(wpos, startx);
 			new_level_down_y(wpos, starty);
 			s_printf("DF-way (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
+
+			pdf_hack_feat = -1;
 		} else {
 			dun->l_ptr->flags2 |= LF2_NO_MARTYR_SAC;
 			s_printf("DF-mirror (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);

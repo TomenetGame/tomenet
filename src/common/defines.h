@@ -2604,6 +2604,8 @@
 /* Feature 0xB5 -- field */
 #define FEAT_EKKAIA		0xB6 /* 182 */
 #define FEAT_PERM_EXTRA_BOUND	0xB7 /* 183 */
+#define FEAT_PERM_EXTRA_BOUND_SPEC_EXTCOL	0xB8 /* 184 -- special extended colour (testing) */
+#define FEAT_PERM_EXTRA_BOUND_SPEC_ANICOL	0xB9 /* 185 -- special animated colour (testing) */
 
 /* Features 0xB7 - 0xBA -- unused */
 

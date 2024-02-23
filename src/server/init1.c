@@ -9142,10 +9142,10 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 						letter[index].feature = atoi(zz[1]);
 					}
 				} else letter[index].feature = atoi(zz[1]);
+				if (pdf_hack_feat == letter[index].feature) letter[index].feature = pdf_hack_feat_new;
 			}
 
-			if (num > 2)
-				letter[index].cave_info = atoi(zz[2]);
+			if (num > 2) letter[index].cave_info = atoi(zz[2]);
 
 			/* Monster */
 			if (num > 3) {
@@ -9156,6 +9156,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 						letter[index].monster = atoi(zz[3]);
 					}
 				} else letter[index].monster = atoi(zz[3]);
+				if (pdf_hack_mon == letter[index].monster) letter[index].monster = pdf_hack_mon_new;
 			}
 
 			/* Object */
@@ -9740,8 +9741,10 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		int num;
 
 		/* Set a specific feature for the boundary walls instead of defaulting to FEAT_PERM_SOLID */
-		if ((num = tokenize(buf + 2, 1, zz, ':', '/')) > 0)
+		if ((num = tokenize(buf + 2, 1, zz, ':', '/')) > 0) {
 			meta_boundary = atoi(zz[0]);
+			if (pdf_hack_feat == meta_boundary) meta_boundary = pdf_hack_feat_new;
+		}
 		return(0);
 	}
 
