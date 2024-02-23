@@ -1766,7 +1766,7 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 #endif
 
 	/* Scan classes flags */
-//	for (i = 0; i < max_rp_idx && (s = race_info[i].title + rp_name); i++)
+	//for (i = 0; i < max_rp_idx && (s = race_info[i].title + rp_name); i++)
 	for (i = 0; i < MAX_RACE && (s = race_info[i].title); i++) {
 		if (streq(what, s)) {
 			(choice[i / 32]) |= (1U << i);
@@ -7160,7 +7160,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 				&cost, &max_inf, &min_inf, &haggle, &insult)) return(1);
 
 			/* Save the values */
-//			ow_ptr->max_cost = cost;
+			//ow_ptr->max_cost = cost;
 			ow_ptr->max_cost = cost * STORE_PURSE_BOOST;
 			ow_ptr->max_inflate = max_inf;
 			ow_ptr->min_inflate = min_inf;
@@ -8251,7 +8251,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* "-1" stands for 'all' */
 				if (questor < -1 || questor >= QI_QUESTORS) return(1);
 				if (stage < -1 || stage >= QI_STAGES) return(1);
-//				if (nextstage == stage) return(1); /* disallow reflexive stage changes for now */
+				//if (nextstage == stage) return(1); /* disallow reflexive stage changes for now */
 
 				lc = q_ptr->keywords;
 				if (lc >= QI_KEYWORDS) return(1);
@@ -9529,7 +9529,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 						cs_ptr->sc.omni = store;
 					}
 				}
-//				c_ptr->special = letter[idx].special;
+				//c_ptr->special = letter[idx].special;
 			}
 #endif
 		}
@@ -10034,17 +10034,17 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 	meta_boundary = 0;
 
 	/* Build the filename */
-//	path_build(buf, 1024, ANGBAND_DIR_EDIT, name);
+    //path_build(buf, 1024, ANGBAND_DIR_EDIT, name);
 	path_build(buf, 1024, ANGBAND_DIR_GAME, name);
 
 	/* Grab permission */
-//	safe_setuid_grab();
+	//safe_setuid_grab();
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 
 	/* Drop permission */
-//	safe_setuid_drop();
+	//safe_setuid_drop();
 
 	/* No such file */
 	if (!fp) {
