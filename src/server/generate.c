@@ -1962,8 +1962,8 @@ static void place_floor_respectedly(worldpos *wpos, int y, int x) {
 	if (dun->no_penetr && zcave[y][x].info & CAVE_ICKY) return;
 #else /* ..and here it is: no harming of vault walls at all */
 	if (zcave[y][x].info & CAVE_ICKY) return; /* works fine */
-//	if (zcave[y][x].info & CAVE_NEST_PIT) return; /* no effect, because the limiting walls don't have the flag actually. Also, accessibility unclear? */
-//	if (zcave[y][x].info & CAVE_ROOM) return; /* lacks door generation! Rooms won't be accessible (although otherwise fine) */
+	//if (zcave[y][x].info & CAVE_NEST_PIT) return; /* no effect, because the limiting walls don't have the flag actually. Also, accessibility unclear? */
+	//if (zcave[y][x].info & CAVE_ROOM) return; /* lacks door generation! Rooms won't be accessible (although otherwise fine) */
 #endif
 	cave_set_feat(wpos, y, x, floor_type[rand_int(1000)]);
 }
@@ -2307,7 +2307,7 @@ static void add_river(worldpos *wpos, int feat1, int feat2) {
 	    feat2 == FEAT_SHAL_LAVA || feat2 == FEAT_DEEP_LAVA) {
 		l_ptr->flags1 |= LF1_LAVA;
 s_printf("adding river (%d) %d,%d\n", (l_ptr->flags1 & LF1_DEEP_LAVA) ? 1 : 0, feat1, feat2);
-//		feat1 = feat2 = FEAT_DEEP_LAVA;
+		//feat1 = feat2 = FEAT_DEEP_LAVA;
 	}
 
 	/* Hack -- Choose starting point */
@@ -3313,7 +3313,7 @@ static bool vault_aux_lesser_chapel(int r_idx) {
 	if (r_ptr->flags2 & RF2_NO_NEST) return(FALSE);
 
 	/* Require "priest" or Angel */
-//	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
+	//if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
 	if (!((r_ptr->d_char == 'A') ||
 	    strstr((r_name + r_ptr->name), "riest") ||
 	    strstr((r_name + r_ptr->name), "aladin") ||
@@ -4364,7 +4364,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	/* artificially add random-artifact restrictions: */
 	if (lev < 55 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
 	if (lev < 75 + rand_int(6) + rand_int(6)) eff_forbid_rand = 80;
-//	if (!(v_ptr->flags1 & VF1_NO_TELE)) eff_forbid_rand = 50; /* maybe too harsh, depends on amount of '8's in deep tele-ok-vaults */
+	//if (!(v_ptr->flags1 & VF1_NO_TELE)) eff_forbid_rand = 50; /* maybe too harsh, depends on amount of '8's in deep tele-ok-vaults */
 
 	if (v_ptr->flags1 & VF1_NO_TRUEARTS) resf |= RESF_NOTRUEART;
 	if (v_ptr->flags1 & VF1_NO_RANDARTS) resf |= RESF_NORANDART;
@@ -4415,8 +4415,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 			if (magik(eff_forbid_rand)) eff_resf |= RESF_NORANDART;
 
 			/* Extract the location */
-/*			x = xval - (xmax / 2) + dx;
-			y = yval - (ymax / 2) + dy;	*/
+			/* x = xval - (xmax / 2) + dx;
+			y = yval - (ymax / 2) + dy; */
 			x = cx + (rotate ? dy : dx) * (mirrorlr ? -1 : 1);
 			y = cy + (rotate ? dx : dy) * (mirrorud ? -1 : 1);
 
@@ -4598,8 +4598,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 			if (magik(eff_forbid_rand)) eff_resf |= RESF_NORANDART;
 
 			/* Extract the location */
-/*			x = xval - (xmax / 2) + dx;
-			y = yval - (ymax / 2) + dy;	*/
+			/* x = xval - (xmax / 2) + dx;
+			y = yval - (ymax / 2) + dy; */
 			x = cx + (rotate ? dy : dx) * (mirrorlr ? -1 : 1);
 			y = cy + (rotate ? dx : dy) * (mirrorud ? -1 : 1);
 
@@ -9056,8 +9056,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 
 	/* Actual maximum number of rooms on this level */
-/*	dun->row_rooms = MAX_HGT / BLOCK_HGT;
-	dun->col_rooms = MAX_WID / BLOCK_WID;	*/
+	/* dun->row_rooms = MAX_HGT / BLOCK_HGT;
+	dun->col_rooms = MAX_WID / BLOCK_WID; */
 
 	dun->row_rooms = dun->l_ptr->hgt / BLOCK_HGT;
 	dun->col_rooms = dun->l_ptr->wid / BLOCK_WID;
@@ -9876,7 +9876,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 	/* Check for half void jump gates, resulting from partial vaults
 	   which contain void gates and were cut at the level border - C. Blue */
-/*..	*/
+/*..(already covered?) */
 
 
 	/* Log generation of low/mid-level terrifying floors just for the heck of it */
@@ -10671,7 +10671,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 
 	int y, x, k, n;
 	int max_base_stores = MAX_BASE_STORES - 1; /* All stores except for the Rune Repository (#9) */
-//	int max_rooms = (max_st_idx > 72 ? 72 : max_st_idx), base_stores = MAX_BASE_STORES; <- not working, because the amount of buildings will be too small -> repeated-stores-glitch appears.
+	//int max_rooms = (max_st_idx > 72 ? 72 : max_st_idx), base_stores = MAX_BASE_STORES; <- not working, because the amount of buildings will be too small -> repeated-stores-glitch appears.
 	int max_rooms = 72, base_stores = max_base_stores;
 #ifdef NEW_TOWNGENHACK_METHOD
 	int posx[base_stores], posy[base_stores], pos[6 * 4];
