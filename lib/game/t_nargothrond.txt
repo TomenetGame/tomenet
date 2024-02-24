@@ -11,25 +11,25 @@ F:;:206:3
 F:m:81:3
 
 # Earth-Dome
-F:e:74:3:0:0:0:0:0:31
+F:e:74:3:0:0:0:0:0:0:0:31
 
 # Sea-Dome
-F:k:74:3:0:0:0:0:0:35
+F:k:74:3:0:0:0:0:0:0:0:35
 
 # Casino
-F:c:74:3:0:0:0:0:0:15
+F:c:74:3:0:0:0:0:0:0:0:15
 
 # Potion Store #2
-F:o:74:3:0:0:0:0:0:67
+F:o:74:3:0:0:0:0:0:0:0:67
 
 # Inn (with 'noteworthy occurances')
-F:N:74:3:0:0:0:0:0:68
+F:N:74:3:0:0:0:0:0:0:0:68
 
 # Rune Repository
-F:r:74:3:0:0:0:0:0:79
+F:r:74:3:0:0:0:0:0:0:0:79
 
 # Expensive Black Market --- would need reenabling in the source code first for non-surface locations
-#F:v:74:3:0:0:0:0:0:48
+#F:v:74:3:0:0:0:0:0:0:0:48
 
 F:p:1:0:1101
 F:P:1:0:1144

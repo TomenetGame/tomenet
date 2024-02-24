@@ -9042,21 +9042,20 @@ static int i = 0;
 
 
 typedef struct dungeon_grid dungeon_grid;
-
 struct dungeon_grid {
-	int		feature;		/* Terrain feature */
-	int		monster;		/* Monster */
-	int		object;			/* Object */
-	int		ego;			/* Ego-Item */
-	int		artifact;		/* Artifact */
-	int		trap;			/* Trap */
-	int		cave_info;		/* Flags for CAVE_MARK, CAVE_GLOW, CAVE_ICKY, CAVE_ROOM */
-	int		special;		/* Reserved for special terrain info */
-	int		random;			/* Number of the random effect */
-	int	     bx, by;		 /* For between gates */
-	int	     mimic;		  /* Mimiced features */
-	bool	    ok;
-	bool	    defined;
+	int	feature;		/* Terrain feature */
+	int	monster;		/* Monster */
+	int	object;			/* Object */
+	int	ego;			/* Ego-Item */
+	int	artifact;		/* Artifact */
+	int	trap;			/* Trap */
+	u32b	cave_info, cave_info2;	/* Flags for CAVE_MARK, CAVE_GLOW, CAVE_ICKY, CAVE_ROOM */
+	int	special;		/* Reserved for special terrain info */
+	int	random;			/* Number of the random effect */
+	int	bx, by;			/* For between gates */
+	int	mimic;			/* Mimiced features */
+	bool	ok;
+	bool	defined;
 };
 static bool meta_sleep = TRUE;
 static int meta_width = 0, meta_height = 0, meta_boundary = 0;
@@ -9112,7 +9111,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		return(0);
 	}
 
-	/* Process "F:<letter>:<terrain>:<cave_info>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>" -- info for dungeon grid */
+	/* Process "F:<letter>:<terrain>:<cave_info>:<cave_info2>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>" -- info for dungeon grid */
 	if (buf[0] == 'F') {
 		int num;
 
@@ -9128,6 +9127,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			letter[index].artifact = 0;
 			letter[index].trap = 0;
 			letter[index].cave_info = 0;
+			letter[index].cave_info2 = 0;
 			letter[index].special = 0;
 			letter[index].random = 0;
 			letter[index].mimic = 0;
@@ -9146,110 +9146,111 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			}
 
 			if (num > 2) letter[index].cave_info = atoi(zz[2]);
+			if (num > 3) letter[index].cave_info2 = atoi(zz[3]);
 
 			/* Monster */
-			if (num > 3) {
-				if (zz[3][0] == '*') {
+			if (num > 4) {
+				if (zz[4][0] == '*') {
 					letter[index].random |= RANDOM_MONSTER;
-					if (zz[3][1]) {
-						zz[3]++;
-						letter[index].monster = atoi(zz[3]);
+					if (zz[4][1]) {
+						zz[4]++;
+						letter[index].monster = atoi(zz[4]);
 					}
-				} else letter[index].monster = atoi(zz[3]);
+				} else letter[index].monster = atoi(zz[4]);
 				if (pdf_hack_mon == letter[index].monster) letter[index].monster = pdf_hack_mon_new;
 			}
 
 			/* Object */
-			if (num > 4) {
-				if (zz[4][0] == '*') {
-					letter[index].random |= RANDOM_OBJECT;
-
-					if (zz[4][1]) {
-						zz[4]++;
-						letter[index].object = atoi(zz[4]);
-					}
-				} else letter[index].object = atoi(zz[4]);
-			}
-
-			/* Ego-Item */
 			if (num > 5) {
 				if (zz[5][0] == '*') {
-					letter[index].random |= RANDOM_EGO;
+					letter[index].random |= RANDOM_OBJECT;
 
 					if (zz[5][1]) {
 						zz[5]++;
-						letter[index].ego = atoi(zz[5]);
+						letter[index].object = atoi(zz[5]);
 					}
-				} else letter[index].ego = atoi(zz[5]);
+				} else letter[index].object = atoi(zz[5]);
 			}
 
-			/* Artifact */
+			/* Ego-Item */
 			if (num > 6) {
 				if (zz[6][0] == '*') {
-					letter[index].random |= RANDOM_ARTIFACT;
+					letter[index].random |= RANDOM_EGO;
 
 					if (zz[6][1]) {
 						zz[6]++;
-						letter[index].artifact = atoi(zz[6]);
+						letter[index].ego = atoi(zz[6]);
 					}
-				} else letter[index].artifact = atoi(zz[6]);
+				} else letter[index].ego = atoi(zz[6]);
 			}
 
+			/* Artifact */
 			if (num > 7) {
 				if (zz[7][0] == '*') {
-					letter[index].random |= RANDOM_TRAP;
+					letter[index].random |= RANDOM_ARTIFACT;
 
 					if (zz[7][1]) {
 						zz[7]++;
-						letter[index].trap = atoi(zz[7]);
+						letter[index].artifact = atoi(zz[7]);
 					}
-				} else letter[index].trap = atoi(zz[7]);
+				} else letter[index].artifact = atoi(zz[7]);
+			}
+
+			if (num > 8) {
+				if (zz[8][0] == '*') {
+					letter[index].random |= RANDOM_TRAP;
+
+					if (zz[8][1]) {
+						zz[8]++;
+						letter[index].trap = atoi(zz[8]);
+					}
+				} else letter[index].trap = atoi(zz[8]);
 			}
 
 #if 0
-			if (num > 8) {
+			if (num > 9) {
 				/* Quests can be defined by name only */
-				if (zz[8][0] == '"') {
+				if (zz[9][0] == '"') {
 					int i;
 
 					/* Hunt & shoot the ending " */
-					i = strlen(zz[8]) - 1;
-					if (zz[8][i] == '"') zz[8][i] = '\0';
+					i = strlen(zz[9]) - 1;
+					if (zz[9][i] == '"') zz[9][i] = '\0';
 					letter[index].special = 0;
 					for (i = 0; i < max_xo_idx; i++) {
-						if (!strcmp(&zz[8][1], quest[i].name)) {
+						if (!strcmp(&zz[9][1], quest[i].name)) {
 							letter[index].special = i;
 							break;
 						}
 					}
 				}
-				else letter[index].special = atoi(zz[8]);
+				else letter[index].special = atoi(zz[9]);
 			}
 #else	// 0
-			if (num > 8) {
+			if (num > 9) {
 				/* Quests can be defined by name only */
-				if (zz[8][0] == '"') {
+				if (zz[9][0] == '"') {
 #if 0	// later for quest
 					int i;
 
 					/* Hunt & shoot the ending " */
-					i = strlen(zz[8]) - 1;
-					if (zz[8][i] == '"') zz[8][i] = '\0';
+					i = strlen(zz[9]) - 1;
+					if (zz[9][i] == '"') zz[9][i] = '\0';
 					letter[index].special = 0;
 					for (i = 0; i < max_xo_idx; i++) {
-						if (!strcmp(&zz[8][1], quest[i].name)) {
+						if (!strcmp(&zz[9][1], quest[i].name)) {
 							letter[index].special = i;
 							break;
 						}
 					}
 #endif	// 0
 				}
-				else letter[index].special = atoi(zz[8]);
+				else letter[index].special = atoi(zz[9]);
 			}
 #endif	// 0
 
-			if (num > 9)
-				letter[index].mimic = atoi(zz[9]);
+			if (num > 10)
+				letter[index].mimic = atoi(zz[10]);
 
 			return(0);
 		}
@@ -9334,6 +9335,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 			/* Cave info */
 			c_ptr->info |= letter[idx].cave_info;
+			c_ptr->info2 |= letter[idx].cave_info2;
 
 			/* Create a monster */
 			if (random & RANDOM_MONSTER) {

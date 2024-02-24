@@ -5,16 +5,16 @@
 #
 
 %:t_pref.txt
-#F:<letter>:<terrain>:<cave_info>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>
+#F:<letter>:<terrain>:<cave_info>:<cave_info2>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>
 
 F:+:230:3
-F:.:1:4:0:0:0:0:0:0:0
+F:.:1:4:0:0:0:0:0:0:0:0
 #chests:
-#F:*:1:4:0:334:0:0:0:0:0
-#F:&:1:4:0:339:0:0:0:0:0
+#F:*:1:4:0:0:334:0:0:0:0:0
+#F:&:1:4:0:0:339:0:0:0:0:0
 #gold:
-F:*:1:4:0:455:0:0:0:1:0
-F:&:1:4:0:456:0:0:0:2:0
+F:*:1:4:0:0:455:0:0:0:1:0
+F:&:1:4:0:0:456:0:0:0:2:0
 
 ###################### Buildings ########################
 
