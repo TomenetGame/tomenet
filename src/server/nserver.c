@@ -2817,6 +2817,8 @@ static void set_player_font_definitions(int ind, int player) {
 
 		p_ptr->f_char_solid[177] = FONT_MAP_SOLID_WIN;
 		p_ptr->f_char_solid[183] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[184] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[185] = FONT_MAP_SOLID_WIN;
 		p_ptr->f_char_solid[188] = FONT_MAP_SOLID_WIN;
 		p_ptr->f_char_solid[189] = FONT_MAP_SOLID_WIN;
 		p_ptr->f_char_solid[190] = FONT_MAP_SOLID_WIN; //house roofs, 11
@@ -2857,6 +2859,8 @@ static void set_player_font_definitions(int ind, int player) {
 
 		p_ptr->f_char_solid[177] = FONT_MAP_SOLID_X11;
 		p_ptr->f_char_solid[183] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[184] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[185] = FONT_MAP_SOLID_X11;
 		p_ptr->f_char_solid[188] = FONT_MAP_SOLID_X11;
 		p_ptr->f_char_solid[189] = FONT_MAP_SOLID_X11;
 		p_ptr->f_char_solid[190] = FONT_MAP_SOLID_X11; //house roofs, 11
