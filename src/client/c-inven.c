@@ -391,14 +391,15 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	/* neither inventory nor equipment is allowed to be searched? */
 	if (!inven && !equip) return(FALSE);
 
-	/* search tag in inventory before looking in equipment? (default is other way round) */
+	/* Search tag in inventory before looking in equipment? (default is other way round).
+	   (Note: The overflow slot, which is INVEN_WIELD - 1, equal to INVEN_PACK, will also be processed.) */
 	if (inven_first) {
 		start = inven ? 0 : INVEN_WIELD;
-		stop = equip ? INVEN_TOTAL : INVEN_PACK; //note: !equip will skip the overflow slot, which is INVEN_WIELD - 1 (equal to INVEN_PACK)
+		stop = equip ? INVEN_TOTAL : INVEN_WIELD;
 		step = 1;
 	} else {
-		start = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; //note: !equip will skip the overflow slot, which is INVEN_WIELD - 1 (equal to INVEN_PACK)
-		stop = (inven ? 0 : INVEN_WIELD) - 1;
+		start = equip ? INVEN_TOTAL : INVEN_WIELD;
+		stop = inven ? 0 : INVEN_WIELD;
 		step = -1;
 	}
 
@@ -407,13 +408,12 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 
 	/* Check every object */
 	for (j = start; j != stop; j += step) {
-		if (!inven_first) {
-			/* Translate, so equip and inven are processed in normal order _each_ */
-			i = INVEN_PACK + (j >= INVEN_WIELD ? INVEN_TOTAL : 0) - j;
-		} else {
+		if (inven_first) {
 			i = j;
+		} else {
+			/* Translate, so equip and inven are processed in normal order _each_ */
+			i = INVEN_WIELD + (j > INVEN_WIELD ? INVEN_TOTAL : 0) - j;
 		}
-
 #ifdef SMART_SWAP
 		if (i_found != -1) {
 			/* Skip same-type inventory items to become our alternative replacement item for swapping.
