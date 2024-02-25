@@ -2641,6 +2641,7 @@ static void player_setup(int Ind, bool new) {
 	if (in_irondeepdive(&p_ptr->wpos) && p_ptr->IDDC_refuge && l_ptr && l_ptr->refuge_x && !(zcave[p_ptr->py][p_ptr->px].info2 & CAVE2_REFUGE)) {
 		p_ptr->px = l_ptr->refuge_x;
 		p_ptr->py = l_ptr->refuge_y;
+		s_printf("Placed player into refuge at [%d,%d]\n", p_ptr->px, p_ptr->py);
 	}
 
 	/* blink by 1 if standing on a shop grid (in town) */
