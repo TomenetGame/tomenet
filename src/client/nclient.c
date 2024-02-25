@@ -7213,6 +7213,11 @@ printf("REPLY i=%d : <%s>\n", i, buf);
 				if (!my_strcasestr(buf, "ttl")) continue;
 				no_ttl_line = FALSE;
 
+#if 0
+/* 0'ed for WINDOWS because: TheScar had a strange Windows build or settings which result in garbled encoding if the ping line was caused by ping-wrap.exe,
+while it causes normal ungarbled encoding if the ping line was entered in a terminal manually o_O.
+The garabage would include "ms", while leaving "=" symbols untouched, and interestingly "TTL" also is untouched, so we parse for the 2nd "=" instead as a workaround.
+Also, cyrillic systems seem to use other letters for 'ms' instead, so we cannot use that. "TTL" is same though for some reason. */
 				/* We found a line containing a response time. Now we look for 'ms' and go backwards till '='. */
 				c = strstr(buf, "ms");
 				if (!c) continue; //should be paranoia at this point
@@ -7222,7 +7227,21 @@ printf("REPLY i=%d : <%s>\n", i, buf);
 				}
 				if (c == buf) break; /* Paranoia - Supa safety 1/2 */
 				c++; //yuck
-
+#else /* ..so as mentioned above, we parse for "n=" */
+ #ifndef WINDOWS
+				/* Go back to '=' from end of the line, and we are at the ping time on POSIX */
+				c = &buf[strlen(buf) - 1];
+ #else
+				/* Look for the '=' before the 'TTL', which designates the ping time on Windows */
+				c = my_strcasestr(buf, "ttl"); /* we already know that this exists, or we wouldn't be here, so no further check needed.. hey, look, a black swan, neat! */
+ #endif
+				while (*c != '=') {
+					c--;
+					if (c == buf) break; /* Paranoia - Supa safety 1/2 */
+				}
+				if (c == buf) break; /* Paranoia - Supa safety 1/2 */
+				c++; //yuck
+#endif
 				/* Grab result */
 				r = atoi(c);
 				break;
