@@ -408,12 +408,12 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 
 	/* Check every object */
 	for (j = start; j != stop; j += step) {
-		if (inven_first) {
+		/* translate back so order within each - inven & equip - is alphabetically again */
+		if (inven_first)
 			i = j;
-		} else {
-			/* Translate, so equip and inven are processed in normal order _each_ */
+		else /* Translate, so equip and inven are processed in normal order _each_ */
 			i = INVEN_WIELD + (j > INVEN_WIELD ? INVEN_TOTAL : 0) - j;
-		}
+
 #ifdef SMART_SWAP
 		if (i_found != -1) {
 			/* Skip same-type inventory items to become our alternative replacement item for swapping.
@@ -470,10 +470,10 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
  */
 cptr get_item_hook_find_obj_what;
 bool get_item_hook_find_obj(int *item, int mode) {
-	int i, j, stop = INVEN_TOTAL;
+	bool inven_first = (mode & INVEN_FIRST) != 0;
+	int i, j, start = inven_first ? 0 : INVEN_TOTAL, stop = inven_first ? INVEN_TOTAL : 0, step = inven_first ? 1 : -1;
 	char buf[ONAME_LEN];
 	char buf1[ONAME_LEN], buf2[ONAME_LEN], *ptr; /* for manual strcasestr() */
-	bool inven_first = (mode & INVEN_FIRST) != 0;
 #ifdef SMART_SWAP
 	char buf3[ONAME_LEN];
 	bool chk_multi = (mode & CHECK_MULTI) != 0;
@@ -483,6 +483,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 #ifdef ENABLE_SUBINVEN
 	bool subinven = (mode & USE_SUBINVEN);
 #endif
+	object_type *o_ptr;
 
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79)) return(FALSE);
@@ -490,10 +491,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 #ifdef ENABLE_SUBINVEN
     if (using_subinven != -1) {
 	for (j = 0; j < using_subinven_size; j++) {
-		i = j;
+		i = j; /* Identity translation (too lazy to change copy-pasted code to remove this =p WOW!) */
 
-		object_type *o_ptr = &subinventory[using_subinven][i];
-
+		o_ptr = &subinventory[using_subinven][i];
 		if (!item_tester_okay(o_ptr)) continue;
 
  #if 0
@@ -571,6 +571,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 			o_ptr = &inventory[i];
 			if (!item_tester_okay(o_ptr)) continue;
+
 #if 0
 			if (my_strcasestr(inventory_name[i], buf)) {
 #else
@@ -667,7 +668,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		}
 
 		/* Later on, scan only the normal inven, not the equipment again */
-		stop = INVEN_PACK;
+		inven_first = TRUE;
+		start = 0;
+		stop = INVEN_WIELD;
+		step = 1;
 	}
 
 	for (l = 0; l < INVEN_PACK; l++) {
@@ -675,10 +679,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		if (inventory[l].tval != TV_SUBINVEN) break;
 
 		for (j = 0; j < inventory[l].bpval; j++) {
-			i = j;
+			i = j; /* Identity translation - laziness */
 
 			o_ptr = &subinventory[l][i];
-
 			if (!item_tester_okay(o_ptr)) continue;
 
  #if 0
@@ -716,7 +719,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
 
 					/* WIELD_DEVICES : Check equip first! */
-					//if (stop != INVEN_PACK) /* no need, as we just already processed equipment? */
+					//if (stop != INVEN_WIELD) /* no need, as we just already processed equipment? */
 					for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 						if (k == i) continue;
 						strcpy(buf3, inventory_name[k]);
@@ -806,17 +809,14 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	/* Fall through and scan inventory normally, after we didn't find anything in subinvens. */
     }
 #endif
-	for (j = inven_first ? 0 : stop - 1;
-	    inven_first ? (j < stop) : (j >= 0);
-	    inven_first ? j++ : j--) {
+	for (j = start; j != stop; j += step) {
 		/* translate back so order within each - inven & equip - is alphabetically again */
-		if (!inven_first) {
-			if (j < INVEN_WIELD) i = INVEN_PACK - j;
-			else i = INVEN_WIELD + INVEN_TOTAL - 1 - j;
-		} else i = j;
+		if (inven_first)
+			i = j;
+		else /* Translate, so equip and inven are processed in normal order _each_ */
+			i = INVEN_WIELD + (j > INVEN_WIELD ? INVEN_TOTAL : 0) - j;
 
-		object_type *o_ptr = &inventory[i];
-
+		o_ptr = &inventory[i];
 		if (!item_tester_okay(o_ptr)) continue;
 
 #ifdef SMART_SWAP
