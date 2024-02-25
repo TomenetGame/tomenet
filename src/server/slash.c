@@ -11041,6 +11041,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				cs_ptr = c_ptr->special;
 				msg_format(Ind, "Feature / org    : %d / %d", c_ptr->feat, c_ptr->feat_org);
 				msg_format(Ind, "Info flags       : %d", c_ptr->info);
+				msg_format(Ind, "Info flags2      : %d", c_ptr->info2);
 				if (cs_ptr) msg_format(Ind, "1st Special->Type: %d", cs_ptr->type);
 				else msg_print(Ind, "1st Special->Type: NONE");
 				return;
