@@ -1463,6 +1463,14 @@ static errr CheckEvent(bool wait) {
 
 		It was suggested that this can happen due to asynchronous vs synchronous clashes in bad X11 code and to rememdy this, XSync() can be added.
 		I don't know if this really works, and the bug is hard to reproduce (timing issues with windows being drawable or not perhaps):
+
+		Also see here:
+		https://www.ultraengine.com/community/blogs/entry/2690-the-year-of-the-linux-desktop-is-here/
+		quote:
+		"The way around this is to call XMapWindow and then wait on the event queue until a MapNotify event for that window occurs,
+		adding all other events into a list that can be evaluated on the next call to WaitEvent().
+		The time elapsed is checked inside the loop in case something weird happens and the desired event is never received"
+
 		*/
 		XSync(Metadpy->dpy, 0);
 
