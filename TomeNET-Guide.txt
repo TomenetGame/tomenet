@@ -18050,9 +18050,9 @@ create a character!):
     randarts will even get rerolled mostly, see the end of (5.12) for details,
     although some randarts may fail and remain cursed and useless.
     Vampires are good fighters and decent mages. However, they are unable to
-    conjure holy fire or utilize magic of water or nature school. Neither can
-    they make use of mimicry techniques (with the exception of vampire bat and
-    vampiric mist, see below) or holy or spirit spells.
+    conjure holy fire (Fireflash spell) or utilize magic of water or nature
+    school. Neither can they make use of mimicry techniques (with the exception
+    of vampire bat and vampiric mist, see below) or holy or spirit spells.
     As a specialty, vampire istari are able to learn the occult shadow school
     and unlife school, which are not accessible to istari of other races.
     These two schools are not affected by Sorcery though, so they have to be
