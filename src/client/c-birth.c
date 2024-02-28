@@ -2446,7 +2446,11 @@ bool get_server_name(void) {
 	else {
 		meta_pings_servers = -1;
 		while (my_fgets(fff, response, sizeof(buf)) == 0) {
-			if (!strstr(response, "Usage")) continue; /* Same for all OS :) */
+ #ifdef WINDOWS
+			if (!strstr(response, "ping [-")) continue;
+ #else
+			if (!strstr(response, "  ping [")) continue;
+ #endif
 			meta_pings_servers = 0;
 			break;
 		}
@@ -2466,7 +2470,7 @@ bool get_server_name(void) {
 			else {
 				meta_pings_servers = -1;
 				while (my_fgets(fff, response, sizeof(buf)) == 0) {
-					if (!strstr(response, "Usage")) continue; /* Same for all OS :) */
+					if (!strstr(response, "ping [-")) continue;
 					meta_pings_servers = 0;
 					sprintf(meta_pings_xpath, " %s", xpath);
 					break;
