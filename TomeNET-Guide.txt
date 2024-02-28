@@ -23209,7 +23209,7 @@ The techniques are as follows:
 
     Fighting techniques:
     --------------------
-    Sprint              7 stamina
+    Sprint              6 stamina
         Your character will be able to move faster, so you can catch up to
         runners and other monsters that avoid you. Note: This does not affect
         your SPEED stat, nor has anything to do with 'running' (shift+dir),

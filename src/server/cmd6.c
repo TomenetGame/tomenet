@@ -8741,8 +8741,8 @@ void do_cmd_melee_technique(int Ind, int technique) {
 
 	switch (technique) {
 	case 0:	if (!(p_ptr->melee_techniques & MT_SPRINT)) return; /* Sprint */
-		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
-		use_stamina(p_ptr, 7);
+		if (p_ptr->cst < 6) { msg_print(Ind, "Not enough stamina!"); return; }
+		use_stamina(p_ptr, 6);
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
