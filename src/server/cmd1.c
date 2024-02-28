@@ -6016,6 +6016,16 @@ void py_bash_py(int Ind, int y, int x) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		disturb(Ind2, 0, 0);
 
+		/* This intended act of pushing past isn't 'hostile' but also not 'nice' as you try to bash someone out of the way sort of,
+		   displacing him in the process which could even be dangerous (same is possible by just bumping into him in the opposite of
+		   his last executed movement direction though, so this is not always the only way to move someone else who might be afk),
+		   so we still do some weight check for success. - C. Blue */
+		if (adj_str_wgt[p_ptr->stat_ind[A_STR]] * 25 < q_ptr->wt + p_ptr->total_weight / 10) {
+			/* Note about wt and total_weight: Body weight (wt) is measured in lb while total item weight (inven+equip) is measured in lb * 10, as used in k_info.txt */
+			msg_format(Ind, "You are not strong enough to push past %s.", q_name);
+			return;
+		}
+
 		msg_format(Ind, "You push past %s.", q_name);
 		msg_format(Ind2, "%^s pushes past you.", p_ptr->name);
 

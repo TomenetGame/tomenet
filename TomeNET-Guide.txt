@@ -825,6 +825,12 @@ B       f       1) bash/force something (ie a stuck door).
                 strength and a stun effect (modified by Combat skill) on your
                 target. For details, see (7.12).
 
+                3) depending on server settings you can also bash a non-hostile
+                player in order to try and push past him, effectively switching
+                places with him.
+                Use it if someone is blocking a dungeon staircase by standing
+                around afk on it for example.
+
 l       x       look at a player/monster/object (use direction keys for
                 targetting). Similar to targetting, while looking you can press
                 'p' to switch to manual cursor positioning, allowing you to
