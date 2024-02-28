@@ -5988,16 +5988,6 @@ void py_bash_py(int Ind, int y, int x) {
 	/* Hack -- suppress messages */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
-	if (!(p_ptr->melee_techniques & MT_BASH)) {
-		msg_print(Ind, "You are not proficient in shield-bashing opponents.");
-		return;
-	}
-
-	if (!p_ptr->num_blow) {
-		msg_print(Ind, "You cannot attack.");
-		return;
-	}
-
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -6007,9 +5997,7 @@ void py_bash_py(int Ind, int y, int x) {
 	no_pk = ((zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK) ||
 	    (zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK));
 
-	/* Disturb the players */
 	disturb(Ind, 0, 0);
-	disturb(Ind2, 0, 0);
 
 	/* Extract name */
 	player_desc(Ind, q_name, Ind2, 0);
@@ -6021,13 +6009,15 @@ void py_bash_py(int Ind, int y, int x) {
 	/* wraithed players can attack wraithed monsters - mikaelh */
 	if (p_ptr->tim_wraith && !is_admin(p_ptr) && !q_ptr->tim_wraith) return;
 
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
-
-	if (!check_hostile(Ind, Ind2)) { /* only attack if player is hostile */
+	/* Only attack if player is hostile. Otherwise we just do a friendly place-switching here: */
+	if (cfg.use_pk_rules == PK_RULES_NEVER || !check_hostile(Ind, Ind2)) {
 		int ox = q_ptr->px, oy = q_ptr->py, nx = p_ptr->px, ny = p_ptr->py;
 
-		msg_format(Ind, "You swap positions with %s.", q_name);
-		msg_format(Ind2, "%^s swaps positions with you.", p_ptr->name);
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		disturb(Ind2, 0, 0);
+
+		msg_format(Ind, "You push past %s.", q_name);
+		msg_format(Ind2, "%^s pushes past you.", p_ptr->name);
 
 		/* Update the new location */
 		zcave[ny][nx].m_idx = -Ind2;
@@ -6063,9 +6053,22 @@ void py_bash_py(int Ind, int y, int x) {
 		/* Handle stuff XXX XXX XXX */
 		handle_stuff(Ind);
 		handle_stuff(Ind2);
-
 		return;
 	}
+
+	/* --- Hostile shield-bash fighting technique --- */
+
+	if (!(p_ptr->melee_techniques & MT_BASH)) {
+		msg_print(Ind, "You are not proficient in shield-bashing opponents.");
+		return;
+	}
+
+#if 0 /* Bashing is not a weapon-based attack! */
+	if (!p_ptr->num_blow) {
+		msg_print(Ind, "You cannot attack.");
+		return;
+	}
+#endif
 
 	/* Handle player fear */
 	if (p_ptr->afraid) {
@@ -6103,11 +6106,14 @@ void py_bash_py(int Ind, int y, int x) {
 	p_ptr->redraw |= PR_STAMINA;
 	redraw_stuff(Ind);
 
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	disturb(Ind2, 0, 0);
+
 s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 
 	/* cloaking mode stuff */
-	break_cloaking(Ind2, 0);
 	break_cloaking(Ind, 0);
+	break_cloaking(Ind2, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_precision(Ind2);

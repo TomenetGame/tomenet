@@ -43,8 +43,6 @@
 /* Boomerangs cannot be destroyed by using them (they just fall to the floor). */
 #define INDESTRUCTIBLE_BOOMERANGS
 
-
-
 /* 4.7.3a: Boomerangs may get VORPAL flag, need all the melee formulas here too now
    ---- TODO: Maybe implement some of this stuff, but maybe we just don't need it! ... */
 
@@ -73,6 +71,8 @@
  //#define R_VORPAL_LOWBRANDED  -- actually too weak for boomerangs, let's try full branding!
 #endif
 
+/* Allow bashing other players without being hostile, just for place-switching effect */
+#define FRIENDLY_BASH
 
 
 
@@ -5495,16 +5495,12 @@ void do_cmd_bash(int Ind, int dir) {
 #endif
 		}
 		/* Player in the way */
-		else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER && check_hostile(Ind, -c_ptr->m_idx)) {
-#if 0 /* normal way */
-			/* Take a turn */
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
-			/* Attack with all BpR */
-			py_attack(Ind, y, x, TRUE);
-#else /* new 2022 */
-			py_bash_py(Ind, y, x);
+		else if (c_ptr->m_idx < 0
+#ifndef FRIENDLY_BASH /* We can only bash someone when we're hostile? (In which case it will turn into the 'Bash' fighting technique.) */
+		    && cfg.use_pk_rules != PK_RULES_NEVER && check_hostile(Ind, -c_ptr->m_idx)
 #endif
-		}
+		    )
+			py_bash_py(Ind, y, x);
 		else if (c_ptr->feat == FEAT_GRAND_MIRROR) {
 			int x2, y2, i;
 
