@@ -1055,6 +1055,14 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Too long description - shorten? */
 	if (special_req && newest) spammy = TRUE;
+#if defined(ENABLE_SUBINVEN) && defined(ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN)
+	if (special_req || newest) {
+		/* If there is also "! for bag" in the prompt, it really gets too long */
+		if (inven && equip) spammy = TRUE;
+		/* Some prompt texts are too long if we have +/- functionality enabled at the same time */
+		if (strlen(pmt) > 15) spammy = TRUE;
+	}
+#endif
 
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
@@ -1304,6 +1312,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		/* Viewing inventory */
 		if (!command_wrk) {
 			/* Begin the prompt */
+			//if (spammy) sprintf(out_val, "Inv"); else  --not (yet?) needed, instead we just cut the 'ESC' part for now
 			sprintf(out_val, "Inven:");
 
 			/* Some legal items */
@@ -1317,7 +1326,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			}
 
 			/* Indicate ability to "view" */
-			if (!command_see) strcat(out_val, " * to see,");
+			if (!command_see) {
+				if (spammy) strcat(out_val, " * see,");
+				else strcat(out_val, " * to see,");
+			}
 
 			/* Append */
 			if (equip) {
@@ -1369,14 +1381,22 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		}
 #endif
 
-		if (spammy) strcat(out_val, " - switch, + new,");
 		/* Special request toggle? */
-		else if (special_req) strcat(out_val, " - to switch,");
+		if (special_req) {
+			if (spammy) strcat(out_val, " - switch,");
+			else strcat(out_val, " - to switch,");
+		}
 		/* Re-use 'newest' item? */
-		else if (newest) strcat(out_val, " + for newest,");
+		if (newest) {
+			if (spammy) strcat(out_val, " + newest,");
+			else strcat(out_val, " + for newest,");
+		}
 
 		/* Finish the prompt */
-		strcat(out_val, " ESC");
+		//if (spammy)
+		if (strlen(out_val) + strlen(pmt) >= MAX_CHARS - 7)
+			out_val[strlen(out_val) - 1] = 0; //erase the comma
+		else strcat(out_val, " ESC");
 
 		/* Build the prompt */
 		sprintf(tmp_val, "(%s) %s", out_val, pmt);
