@@ -1053,17 +1053,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	}
 #endif
 
-	/* Too long description - shorten? */
-	if (special_req && newest) spammy = TRUE;
-#if defined(ENABLE_SUBINVEN) && defined(ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN)
-	if (special_req || newest) {
-		/* If there is also "! for bag" in the prompt, it really gets too long */
-		if (inven && equip) spammy = TRUE;
-		/* Some prompt texts are too long if we have +/- functionality enabled at the same time */
-		if (strlen(pmt) > 15) spammy = TRUE;
-	}
-#endif
-
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
 		inven = equip = FALSE; /* If we are inside a specific subinventory already, disallow normal inventory */
@@ -1278,6 +1267,17 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* safe_macros avoids getting stuck in an unfulfilled (item-)prompt */
 	if (parse_macro && c_cfg.safe_macros) safe_input = TRUE;
 
+	/* Too long description - shorten? */
+	if (special_req + newest
+#if defined(ENABLE_SUBINVEN) && defined(ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN)
+	    + found_subinven
+#endif
+	    + inven + equip
+	    /* Some prompt texts are too long if we have +/- functionality enabled at the same time */
+	    + (strlen(pmt) > 15)
+	    >= 4)
+		spammy = TRUE;
+
 	/* Repeat while done */
 	while (!done) {
 		/* hack - cancel prompt if we're in a failed macro execution */
@@ -1376,8 +1376,11 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 #ifdef ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
 		if (use_subinven) {
-			if (spammy) strcat(out_val, " ! bag,");
-			else strcat(out_val, " ! for bag,");
+			/* No need to show '! for bag' prompt if we don't have any eligible items inside any bags */
+			if (found_subinven) {
+				if (spammy) strcat(out_val, " ! bag,");
+				else strcat(out_val, " ! for bag,");
+			}
 		}
 #endif
 
