@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 28. February 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 1. March 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1376,6 +1376,7 @@ They all start with a slash '/' hence they're called slash commands:
             player already shuffled a deck of his own, that one will be erased
             aka overwritten by the one he receives from you.
 
+/roll       Same as /dice.
 /dice       Roll some dice, you must at least specify a number of dice or a
             number of sides, each from 1 to 100.
             The result is random and can be seen by other players who stand
@@ -1384,11 +1385,13 @@ They all start with a slash '/' hence they're called slash commands:
               /dice 2     - rolls two 6-sided dice
               /dice d20   - rolls a 20-sided die
               /dice 3d6   - rolls three 6-sided dice
-/die        Rolls one die, shortcut for "/dice 1".
+/die        Rolls one die, shortcut for "/dice 1" or "/dice 1d".
             Examples of possible usage variants:
               /die 20     - rolls a 20-sided die
               /die d12    - rolls a 12-sided die
+/r          Same as /d.
 /d          Rolls two 6-sided dice, shortcut for "/dice 2".
+/dN         Shortcut to roll one N-sided die. Eg: "/d20".
 
 /dispose
 /dis        DESTROYS every item in your inventory that has one of these

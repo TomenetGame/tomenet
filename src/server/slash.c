@@ -2010,9 +2010,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			do_cmd_empty_potion(Ind, slot);
 			return;
 		}
-		else if ((prefix(messagelc, "/dice") || !strcmp(message, "/d") ||
-		    prefix(messagelc, "/roll") || !strcmp(message, "/r")
-		    || prefix(messagelc, "/die"))
+		else if ((prefix(messagelc, "/dice") ||
+		    !strcmp(messagelc, "/d") || (prefix(messagelc, "/d") && isdigit(messagelc[2])) ||
+		    prefix(messagelc, "/roll") || !strcmp(message, "/r") ||
+		    prefix(messagelc, "/die"))
 		    && !prefix(messagelc, "/rollchar")) {
 			int rn = 0, first_digit, s = 6;
 			char *d;
@@ -2040,6 +2041,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 				k = 1;
+			} else if (prefix(messagelc, "/d") && isdigit(messagelc[2])) {
+				k = 1;
+				s = atoi(messagelc + 2);
+				if ((s < 1) || (s > 100)) {
+					msg_print(Ind, "\377oNumber of sides must be between 1 and 100!");
+					return;
+				}
 			} else {
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage:     /dice <number of dice>");
