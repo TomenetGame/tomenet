@@ -470,9 +470,15 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	HBITMAP hbmOldMemResBgMask = SelectObject(hdcMemResBgMask, hbmResBgMask);
 	HBITMAP hbmOldMemResFgMask = SelectObject(hdcMemResFgMask, hbmResFgMask);
 
-	//StretchBlt(hdcMemResTiles, 0, 0, width2, height2, hdcMemTiles, 0, 0, width1, height1, SRCCOPY);
-	//StretchBlt(hdcMemResBgMask, 0, 0, width2, height2, hdcMemBgMask, 0, 0, width1, height1, SRCCOPY);
-	//StretchBlt(hdcMemResFgMask, 0, 0, width2, height2, hdcMemFgMask, 0, 0, width1, height1, SRCCOPY);
+#if 1
+	/* StretchBlt is much faster on native Windows - mikaelh */
+	SetStretchBltMode(hdcMemResTiles, COLORONCOLOR);
+	SetStretchBltMode(hdcMemResBgMask, COLORONCOLOR);
+	SetStretchBltMode(hdcMemResFgMask, COLORONCOLOR);
+	StretchBlt(hdcMemResTiles, 0, 0, width2, height2, hdcMemTiles, 0, 0, width1, height1, SRCCOPY);
+	StretchBlt(hdcMemResBgMask, 0, 0, width2, height2, hdcMemBgMask, 0, 0, width1, height1, SRCCOPY);
+	StretchBlt(hdcMemResFgMask, 0, 0, width2, height2, hdcMemFgMask, 0, 0, width1, height1, SRCCOPY);
+#else
 
 	/* I like more this classical and slower approach, as the commented StretchBlt code above. In my opinion, it makes nicer resized pictures.*/
 	int x1, x2, y1, y2, Tx, Ty;
@@ -530,6 +536,7 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 			(*py2)++;
 		}
 	}
+#endif
 
 	/* Restore the stored default bitmap into the memory DC. */
 	SelectObject(hdcMemTiles, hbmOldMemTiles);
