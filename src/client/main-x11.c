@@ -1162,6 +1162,16 @@ void resize_main_window_x11(int cols, int rows);
 void resize_window_x11(int term_idx, int cols, int rows);
 static term_data* term_idx_to_term_data(int term_idx);
 
+/* Cache for prepared graphical tiles */
+#define TILE_CACHE_SIZE	256
+
+struct tile_cache_entry {
+    Pixmap tilePreparation;
+    char32_t c;
+    byte a;
+    bool is_valid;
+};
+
 /*
  * A structure for each "term"
  */
@@ -1180,6 +1190,11 @@ struct term_data {
 	Pixmap bgmask;
 	Pixmap fgmask;
 	Pixmap tilePreparation;
+
+#ifdef TILE_CACHE_SIZE
+	int cache_position;
+	struct tile_cache_entry tile_cache[TILE_CACHE_SIZE];
+#endif
 
 #endif
 };
@@ -1800,6 +1815,17 @@ static void free_graphics(term_data *td) {
 		XFreePixmap(Metadpy->dpy, td->tilePreparation);
 		td->tilePreparation = None;
 	}
+#ifdef TILE_CACHE_SIZE
+	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+		if (td->tile_cache[i].tilePreparation) {
+			XFreePixmap(Metadpy->dpy, td->tile_cache[i].tilePreparation);
+			td->tile_cache[i].tilePreparation = None;
+			td->tile_cache[i].c = 0xffffffff;
+			td->tile_cache[i].a = 0xff;
+			td->tile_cache[i].is_valid = 0;
+		}
+	}
+#endif
 }
 #endif
 
@@ -2092,20 +2118,49 @@ if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP
 	}
 
 	term_data *td = (term_data*)(Term->data);
-
-	/* Prepare tile to preparation pixmap. */
 	x *= Infofnt->wid;
 	y *= Infofnt->hgt;
+
+#ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry = NULL;
+	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+		entry = &td->tile_cache[i];
+		if (entry->c == c && entry->a == a && entry->is_valid) {
+			/* Copy cached tile to window. */
+			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
+				0, 0,
+				td->fnt->wid, td->fnt->hgt,
+				x, y);
+
+			/* Success */
+			return(0);
+		}
+	}
+
+	// Replace cache entries in FIFO order
+	entry = &td->tile_cache[td->cache_position++];
+	if (td->cache_position >= TILE_CACHE_SIZE) {
+		td->cache_position = 0;
+	}
+	Pixmap tilePreparation = entry->tilePreparation;
+	entry->c = c;
+	entry->a = a;
+	entry->is_valid = 1;
+#else
+	Pixmap tilePreparation = td->tilePreparation;
+#endif
+
+	/* Prepare tile to preparation pixmap. */
 	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	XCopyPlane(Metadpy->dpy, td->fgmask, td->tilePreparation, Infoclr->gc,
+	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
 			x1, y1,
 			td->fnt->wid, td->fnt->hgt,
 			0, 0,
 			1);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
-	XPutImage(Metadpy->dpy, td->tilePreparation,
+	XPutImage(Metadpy->dpy, tilePreparation,
 			Infoclr->gc,
 			td->tiles,
 		  x1, y1,
@@ -2114,7 +2169,7 @@ if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
 
 	/* Copy prepared tile to window. */
-	XCopyArea(Metadpy->dpy, td->tilePreparation, td->inner->win, Infoclr->gc,
+	XCopyArea(Metadpy->dpy, tilePreparation, td->inner->win, Infoclr->gc,
 		  0, 0,
 		  td->fnt->wid, td->fnt->hgt,
 		  x, y);
@@ -2574,6 +2629,14 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	td->bgmask = None;
 	td->fgmask = None;
 	td->tilePreparation = None;
+#ifdef TILE_CACHE_SIZE
+	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+		td->tile_cache[i].tilePreparation = None;
+		td->tile_cache[i].c = 0xffffffff;
+		td->tile_cache[i].a = 0xff;
+		td->tile_cache[i].is_valid = 0;
+	}
+#endif
 #endif /* USE_GRAPHICS */
 
 	/* Initialize the term (full size) */
@@ -2607,6 +2670,14 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		td->tilePreparation = XCreatePixmap(
 				Metadpy->dpy, Metadpy->root,
 				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+
+#ifdef TILE_CACHE_SIZE
+		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+			td->tile_cache[i].tilePreparation = XCreatePixmap(
+				Metadpy->dpy, Metadpy->root,
+				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+		}
+#endif
 
 		if (td->tiles != NULL && td->tilePreparation != None) {
 			/* Graphics hook */
@@ -3137,6 +3208,14 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 			td->tilePreparation = XCreatePixmap(
 					Metadpy->dpy, Metadpy->root,
 					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+
+#ifdef TILE_CACHE_SIZE
+			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+				td->tile_cache[i].tilePreparation = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+			}
+#endif
 
 			if (td->tiles == NULL || td->tilePreparation == None) {
 				quit_fmt("Couldn't prepare images after font resize in terminal %d\n", term_idx);
