@@ -5985,6 +5985,9 @@ void py_bash_py(int Ind, int y, int x) {
 #endif
 
 
+	/* Skip bashing our own grid */
+	if (p_ptr->px == x && p_ptr->py == y) return;
+
 	/* Hack -- suppress messages */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
