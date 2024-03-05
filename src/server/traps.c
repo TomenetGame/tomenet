@@ -3288,7 +3288,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 
 	if (!verify_inven_item(Ind, item_load)) return;
 #ifdef ENABLE_SUBINVEN
-	if (item_load >= 100) {
+	if (item_load >= 100 && p_ptr->inventory[item_load / 100 - 1].sval != SV_SI_POTION_BELT) { /* Allow using potions from potion belt for fumes traps */
 		msg_print(Ind, "\377yTrap Kit payload must be readily held in normal inventory, not in a container.");
 		return;
 	}
