@@ -5651,9 +5651,10 @@ teleport back to town right away (via a scroll of Word of Recall).
 
 Subinventory:
 -------------
-Starting in game version 4.8.0, there are 'container' items that provide a
-small inventory in themselves, thereby extending your total inventory space.
-However, you can only ever use one of each category at the same time.
+Starting in game version 4.8.0, there are 'container' items, bags and chests,
+that provide a small inventory in themselves, thereby extending your total
+inventory space.
+However, you can only ever use one of each bag type at the same time.
 
 To stow items from your inventory into a subinventory, press 'i' first to
 invoke your inventory, then 's' to stow an item or stack of items.
