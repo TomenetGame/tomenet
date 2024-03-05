@@ -10575,11 +10575,11 @@ void set_runlevel(int val) {
 	switch (val) {
 		case -1:
 			/* terminate: return a value that lets a script know that
-			   it must not restart us. */
-			cfg.runlevel = -1;
+			   it must not restart us, in this case that is cfg.runlevel = -1, set below... */
 			s_printf("***SERVER MAINTENANCE TERMINATION***\n");
 			/* Fall through */
 		case 0:
+			cfg.runlevel = val;
 			shutdown_server();
 		case 1:
 			/* Logout all remaining players except admins */

@@ -5245,6 +5245,7 @@ static void player_talk_aux(int Ind, char *message) {
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin) {
 		/*world_reboot();*/
+		cfg.runlevel = 0;
 		shutdown_server();
 		return;
 	}
@@ -5952,6 +5953,7 @@ static void console_talk_aux(char *message) {
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown")) {
 		/*world_reboot();*/
+		cfg.runlevel = 0;
 		shutdown_server();
 		return;
 	}

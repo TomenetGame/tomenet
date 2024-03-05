@@ -1105,7 +1105,10 @@ static void Console(int fd, int arg) {
 
 	/* Process our input */
 	if (!strncmp(buf, "HELLO", 5)) s_printf("Hello.  How are you?\n");
-	if (!strncmp(buf, "SHUTDOWN", 8)) shutdown_server();
+	if (!strncmp(buf, "SHUTDOWN", 8)) {
+		cfg.runlevel = 0;
+		shutdown_server();
+	}
 	if (!strncmp(buf, "STATUS", 6)) {
 		s_printf("There %s %d %s.\n", (NumPlayers != 1 ? "are" : "is"), NumPlayers, (NumPlayers != 1 ? "players" : "player"));
 		if (NumPlayers > 0) {

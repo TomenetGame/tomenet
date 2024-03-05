@@ -2887,6 +2887,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER old_handler;
  */
 BOOL ctrl_handler(DWORD fdwCtrlType) {
 	/* Save everything and quit the game */
+	cfg.runlevel = 0;
 	shutdown_server();
 
 	return(TRUE);
@@ -2996,7 +2997,8 @@ static void handle_signal_simple(int sig) {
 		Report_to_meta(META_DIE);
 
 		/* Save everything and quit the game */
-//              exit_game_panic();
+		//exit_game_panic();
+		cfg.runlevel = 0;
 		shutdown_server();
 	}
 

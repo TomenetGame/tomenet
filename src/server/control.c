@@ -742,6 +742,7 @@ static void console_shutdown(void)
 	DgramReply(console_buf.sock, console_buf.ptr, console_buf.len);
 
 	/* Shutdown */
+	cfg.runlevel = 0;
 	shutdown_server();
 }
 
