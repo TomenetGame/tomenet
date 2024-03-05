@@ -10829,7 +10829,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				    //(cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
 				    (cave_floor_bold(zcave, oy, ox)) &&
 				    magik(10) && !q_ptr->martyr &&
-				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5))) {
+				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5))) { //TODO: add q_ptr->total_weight
 					char m_name[MNAME_LEN];
 					monster_desc(0, m_name, m_idx, 0);
 
@@ -10948,7 +10948,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			}
 			/* Push past weaker monsters (unless leaving a wall) */
 			else if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
-			    (r_ptr->mexp > z_ptr->mexp) &&
+			    (r_ptr->mexp > z_ptr->mexp) && //TODO: check monster body weight too?
 			    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx))) {
 				/* Allow movement */
 				do_move = TRUE;
