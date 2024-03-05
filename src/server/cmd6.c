@@ -5632,7 +5632,13 @@ static bool brand_bolts(int Ind) {
 /* hard-coded same as the 2 functions below, do_cmd_activate() and do_cmd_activate_dir().
    Returns TRUE if item is activatable, for sending the client proper targetting info. - C. Blue */
 bool activation_requires_direction(object_type *o_ptr) {
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT) return(o_ptr->xtra3 & 0x00C0);
+	if (o_ptr->tval == TV_SPECIAL) {
+		if (o_ptr->sval == SV_CUSTOM_OBJECT) return(o_ptr->xtra3 & 0x00C0);
+		/* Ensure directionally activatable true arts wrapped as gifts can be unwrapped still: */
+		//if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
+		//...simply FALSE for all non-custom TV_SPECIAL objects for now:
+		return(FALSE);
+	}
 
 	/* Art DSMs are handled below */
 	if (o_ptr->tval == TV_DRAG_ARMOR && !o_ptr->name1)
@@ -5914,8 +5920,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	/* Roll for usage */
 	if (o_ptr->tval == TV_BOOK /* hack: blank books can always be 'activated' */
-#ifdef ENABLE_DEMOLITIONIST
 	    || ((o_ptr->tval == TV_JUNK || o_ptr->tval == TV_SPECIAL) && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
+#ifdef ENABLE_DEMOLITIONIST
 	    /* Alchemy has nothing to do with magic device skills, and especially shouldn't set command_rep or we may run into weirdness!: */
 	    || o_ptr->tval == TV_CHEMICAL
 	    || o_ptr->tval == TV_CHARGE
