@@ -3287,6 +3287,12 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	if (!verify_inven_item(Ind, item_load)) return;
+#ifdef ENABLE_SUBINVEN
+	if (item_load >= 100) {
+		msg_print(Ind, "\377yTrap Kit payload must be readily held in normal inventory, not in a container.");
+		return;
+	}
+#endif
 	if (!get_inven_item(Ind, item_load, &j_ptr)) return;
 	if (!can_use_verbose(Ind, j_ptr)) return;
 

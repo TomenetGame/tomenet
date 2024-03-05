@@ -5844,7 +5844,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
-	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
+	if ((item < INVEN_WIELD
+#ifdef ENABLE_SUBINVEN
+	    || item >= 100
+#endif
+	    ) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
@@ -7385,7 +7389,11 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	}
 
 	/* (paranoia?) If the item can be equipped, it MUST be equipped to be activated */
-	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
+	if ((item < INVEN_WIELD
+#ifdef ENABLE_SUBINVEN
+	    || item >= 100
+#endif
+	    ) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");
 		return;
 	}

@@ -9085,6 +9085,7 @@ void tome_creation_aux(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
 if (item >= 100) return;
+if (p_ptr->using_up_item >= 100) return;
 #endif
 
 	/* Get the item (in the pack) */

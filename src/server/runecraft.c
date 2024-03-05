@@ -29,7 +29,7 @@ bool rune_enchant(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
 if (item >= 100) return(FALSE);
-if (p_ptr->current_activation >= 100) return;
+if (p_ptr->current_activation >= 100) return(FALSE);
 #endif
 
 	/* Not worn? */
