@@ -9044,6 +9044,7 @@ bool heal_insanity(int Ind, int val) {
 
 bool do_vermin_control(int Ind) {
 	dun_level *l_ptr = getfloor(&Players[Ind]->wpos);
+
 	if (l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY)) {
 		l_ptr->flags1 |= LF1_NO_MULTIPLY;
 		msg_print(Ind, "You feel less itchy.");
@@ -9054,6 +9055,7 @@ bool do_vermin_control(int Ind) {
 
 void activate_rune(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
 	clear_current(Ind);
 	p_ptr->current_rune = TRUE;
 	get_item(Ind, ITH_RUNE_ENCHANT);
