@@ -5191,7 +5191,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
  #ifdef SUBINVEN_LIMIT_GROUP
 	int prev_type = -1;
  #endif
-	bool all = FALSE, any_bag = FALSE, eligible_bag = FALSE;
+	bool all = FALSE, any_bag = FALSE, eligible_bag = FALSE, client_outdated = FALSE;
 
 	/* Don't stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return;
@@ -5283,10 +5283,14 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			eligible_bag = TRUE;
 			break;
 		case SV_SI_POTION_BELT:
-			/* Don't stow if player cannot access stowed items due to outdated client */
-			if (!is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) continue;
-
 			if (i_ptr->tval != TV_POTION && i_ptr->tval != TV_POTION2 && i_ptr->tval != TV_BOTTLE) continue;
+
+			/* Don't stow if player cannot access stowed items due to outdated client */
+			if (!is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) {
+				client_outdated = TRUE;
+				continue;
+			}
+
 			eligible_bag = TRUE;
 			break;
 		default:
@@ -5302,6 +5306,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		//break;  -- replaced by 'continue;' further above
  #endif
 	}
+	if (client_outdated) msg_print(Ind, "\377yYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use your Potion Belt, or it won't be accessible!");
 	if (!any_bag) {
 		msg_print(Ind, "\377yYou don't have any bags to stow items.");
 		return;
