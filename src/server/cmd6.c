@@ -5980,13 +5980,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	process_hooks(HOOK_ACTIVATE, "d", Ind);
 	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 0, o_ptr->custom_lua_usage));
 
-#ifdef ENABLE_XID_MDEV
- #ifndef XID_REPEAT
-		p_ptr->current_item = -1;
-		XID_paranoia(p_ptr);
- #endif
-#endif
-
 	switch (o_ptr->tval) {
 	case TV_RUNE: msg_print(Ind, "The rune glows with power!"); break;
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
