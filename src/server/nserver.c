@@ -13529,7 +13529,7 @@ void Handle_direction(int Ind, int dir) {
 	//Ind2 = get_esp_link(Ind, LINKF_MISC, &p_ptr2);
 
 	if (p_ptr->current_spell != -1) {
-//		if (p_ptr->current_realm == REALM_GHOST)
+		//if (p_ptr->current_realm == REALM_GHOST)
 		if (p_ptr->ghost)
 			do_cmd_ghost_power_aux(Ind, dir);
 		else if (p_ptr->current_realm == REALM_MIMIC)
