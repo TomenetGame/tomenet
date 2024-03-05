@@ -24,19 +24,20 @@
  */
 bool rune_enchant(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr;
+	object_type *o_ptr, *r_ptr;
+	byte sval;
 
 #ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
 if (item >= 100) return(FALSE);
 #endif
-
-	o_ptr = &p_ptr->inventory[item];
 
 	/* Not worn? */
 	if (INVEN_WIELD > item) {
 		msg_print(Ind, "You must be wearing that to attune the rune.");
 		return(FALSE);
 	}
+
+	o_ptr = &p_ptr->inventory[item];
 
 	/* Artifact? */
 	if (o_ptr->name1) {
@@ -45,8 +46,9 @@ if (item >= 100) return(FALSE);
 	}
 
 	/* One sigil per element! */
-	object_type *r_ptr = &p_ptr->inventory[p_ptr->current_activation];
-	byte sval = r_ptr->sval;
+	r_ptr = &p_ptr->inventory[p_ptr->current_activation];
+	sval = r_ptr->sval;
+
 	if (((p_ptr->inventory[INVEN_WIELD].sigil == sval) && item != INVEN_WIELD)
 	 || ((p_ptr->inventory[INVEN_ARM].sigil == sval) && item != INVEN_ARM)
 	 || ((p_ptr->inventory[INVEN_BODY].sigil == sval) && item != INVEN_BODY)
@@ -59,7 +61,6 @@ if (item >= 100) return(FALSE);
 	}
 
 	/* Store the SVAL and SSEED */
-	o_ptr = &p_ptr->inventory[item];
 	o_ptr->sigil = sval;
 	/* Save RNG with a fresh cycle, see LCRNG() */
 	o_ptr->sseed = Rand_value * 1103515245 + 12345 + turn;
