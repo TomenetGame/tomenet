@@ -3873,7 +3873,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "    Character level");
 					continue;
 				}
-				if (my_strcasestr(buf, "Dung") && (my_strcasestr(buf, "typ") || my_strcasestr(buf, "Col"))) { //dungeon types/colours, same as staircases below
+				if (my_strcasestr(buf, "Dun") && (my_strcasestr(buf, "typ") || my_strcasestr(buf, "Col"))) { //dungeon types/colours, same as staircases below
+					strcpy(chapter, "Dungeon types");
+					continue;
+				}
+				if (my_strcasestr(buf, "Stair") && !my_strcasestr(buf, "goi")) { //staircase types, same as 'Dungeon types'
 					strcpy(chapter, "Dungeon types");
 					continue;
 				}
@@ -3882,10 +3886,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				} else if (my_strcasestr("Dungeons", buf) && strlen(buf) >= 3) { //dungeons
 					strcpy(chapter, "Dungeon                 ");
-					continue;
-				}
-				if (my_strcasestr(buf, "Stair") && !my_strcasestr(buf, "goi")) { //staircase types, same as 'Dungeon types'
-					strcpy(chapter, "Dungeon types");
 					continue;
 				}
 				if (!strcasecmp(buf, "goi")) { //staircase types, same as 'Dungeon types'
