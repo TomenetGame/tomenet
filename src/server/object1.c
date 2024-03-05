@@ -5138,6 +5138,29 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	/* Let the player scroll through this info */
 	p_ptr->special_file_type = TRUE;
 
+	/* Admins can peek inside gifts */
+	if (is_admin(p_ptr) && o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		fprintf(fff, "%s\n", o_name);
+#ifdef KIND_DIZ
+		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
+#endif
+
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		if (f3 & TR3_ACTIVATE) {
+			/* TODO maybe: Some of the strings in item_activation() are rendered via format() and hence not constant! Might need free'ing! */
+			cptr activation = item_activation(o_ptr);
+
+			if (!activation) fprintf(fff, "It can be activated.\n");
+			else fprintf(fff, "It can be activated for...\n %s.\n", activation);
+		}
+		f1 = f2 = f3 = f4 = f5 = f6 = esp = 0x0;
+
+		fprintf(fff, "\nIt contains:\n\n");
+		/* Let o_ptr point to a new, static object that is a clone of the gift contents */
+		peek_gift(o_ptr, &o_ptr);
+		slot = -1; /* Not directly located inside our inventory/equipment */
+	}
 
 #ifdef NEW_ID_SCREEN
 	/* ---------------------------- determine degree of knowledge ------------------------------- */

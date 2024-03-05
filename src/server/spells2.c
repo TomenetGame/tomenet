@@ -10746,6 +10746,29 @@ void unwrap_gift(int Ind, int item) {
 	p_ptr->window |= PW_INVEN;
 	handle_stuff(Ind);
 }
+/* Keep in mind that gift_ptr and contents_ptr are allowed to point to the same object,
+   and it's our job to bend contents_ptr to our statically cloned object correctly. */
+void peek_gift(object_type *gift_ptr, object_type **contents_ptr) {
+	static object_type forge, *o_ptr = &forge;
+
+	forge = *gift_ptr;
+
+	o_ptr->weight = (o_ptr->weight - k_info[lookup_kind(TV_JUNK, o_ptr->sval)].weight) / o_ptr->number2; /* Gift wrapping paper is removed, stack of items may appear instead of just one item. */
+	o_ptr->tval = o_ptr->tval2;
+	o_ptr->sval = o_ptr->sval2;
+	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	o_ptr->number = o_ptr->number2;
+	o_ptr->note = o_ptr->note2;
+	o_ptr->note_utag = o_ptr->note2_utag;
+
+	o_ptr->tval2 = 0;
+	o_ptr->sval2 = 0;
+	o_ptr->number2 = 0;
+	o_ptr->note2 = 0;
+	o_ptr->note2_utag = 0;
+
+	*contents_ptr = &forge;
+}
 
 /* Returns FALSE if we notice any effect, TRUE if we don't (for UNMAGIC). */
 bool do_mstopcharm(int Ind) {

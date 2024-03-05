@@ -1860,6 +1860,7 @@ extern void detonate_charge(int o_idx);
 #endif
 extern void wrap_gift(int Ind, int item);
 extern void unwrap_gift(int Ind, int item);
+extern void peek_gift(object_type *gift_ptr, object_type **contents_ptr);
 
 extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
