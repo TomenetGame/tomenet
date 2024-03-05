@@ -1826,6 +1826,8 @@ int Receive_reply(int *replyto, int *result) {
 	return(1);
 }
 
+/* Always try to re-login, that basically means: Include server updates/terminations */
+//#define ALWAYS_RETRY_LOGIN
 int Receive_quit(void) {
 	unsigned char pkt;
 	char reason[MAX_CHARS_WIDE];
@@ -1839,13 +1841,19 @@ int Receive_quit(void) {
 		errno = 0;
 		plog("Can't read quit packet");
 	} else {
-		if (Packet_scanf(&rbuf, "%s", reason) <= 0)
-			strcpy(reason, "unknown reason");
+		if (Packet_scanf(&rbuf, "%s", reason) <= 0) strcpy(reason, "unknown reason");
 		errno = 0;
 
 #ifdef RETRY_LOGIN
-		rl_connection_destructible = TRUE;
-		rl_connection_state = 2;
+ #ifndef ALWAYS_RETRY_LOGIN
+		/* Try to relogin if we manually quit via arg-less slash command */
+		if (!strcmp(reason, "client quit")) {
+ #endif
+			rl_connection_destructible = TRUE;
+			rl_connection_state = 2;
+ #ifndef ALWAYS_RETRY_LOGIN
+		}
+ #endif
 #endif
 
 		/* Hack -- tombstone */
@@ -1853,6 +1861,11 @@ int Receive_quit(void) {
 		    strstr(reason, "Committed suicide")) {
 			/* TERAHACK -- what does it do exactly, please? >_>" */
 			initialized = FALSE;
+
+#if !defined(ALWAYS_RETRY_LOGIN) && defined(RETRY_LOGIN)
+			rl_connection_destructible = TRUE;
+			rl_connection_state = 2;
+#endif
 
 			c_close_game(reason);
 		}
