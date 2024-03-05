@@ -6026,8 +6026,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	//(could be moved down to 'base items' for less efficiency but better sort order)
 
 	if (o_ptr->tval == TV_RUNE) {
-		p_ptr->current_activation = item;
-		activate_rune(Ind);
+		activate_rune(Ind, item);
 		return;
 	}
 

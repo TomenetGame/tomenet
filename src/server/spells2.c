@@ -3804,6 +3804,7 @@ if (item >= 100) return(FALSE);
 
 bool curse_spell(int Ind) {	// could be void
 	player_type *p_ptr = Players[Ind];
+
 	clear_current(Ind);
 	get_item(Ind, ITH_NONE);
 	p_ptr->current_curse = TRUE;	/* This is awful. I intend to change it */
@@ -4360,7 +4361,6 @@ bool recharge(int Ind, int num) {
 	/* Special marker hack? */
 	if (num >= 10000) get_item(Ind, ITH_NONE);
 	else
-
 	/* Normal recharging routine */
 	get_item(Ind, ITH_RECHARGE);
 
@@ -9053,10 +9053,11 @@ bool do_vermin_control(int Ind) {
 	return(FALSE);
 }
 
-void activate_rune(int Ind) {
+void activate_rune(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
 	clear_current(Ind);
+	p_ptr->current_activation = item;
 	p_ptr->current_rune = TRUE;
 	get_item(Ind, ITH_RUNE_ENCHANT);
 	return;

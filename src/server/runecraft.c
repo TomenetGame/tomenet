@@ -66,19 +66,18 @@ if (p_ptr->current_activation >= 100) return(FALSE);
 	/* Save RNG with a fresh cycle, see LCRNG() */
 	o_ptr->sseed = Rand_value * 1103515245 + 12345 + turn;
 
-	/* Fully ID and examine immediately */
-	identify_fully_item(Ind, item);
-
 	/* Erase the rune */
 	inven_item_increase(Ind, p_ptr->current_activation, -1);
+	inven_item_describe(Ind, p_ptr->current_activation);
+	inven_item_optimize(Ind, p_ptr->current_activation);
 
 #ifdef USE_SOUND_2010
 	/* Play a sound! */
 	sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-	/* Clean up... */
-	inven_item_optimize(Ind, item);
+	/* Fully ID and examine immediately */
+	identify_fully_item(Ind, item);
 
 	return(TRUE);
 }
