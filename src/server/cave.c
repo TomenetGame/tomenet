@@ -990,6 +990,10 @@ void FreeCS(cave_type *c_ptr) {
 				/* Delete the object */
 				delete_object_idx(this_o_idx, TRUE);
 			}
+		} else if (trav->type == CS_INSCRIP) {
+			if (trav->sc.ptr) {
+				KILL(trav->sc.ptr, struct floor_insc);
+			}
 		}
 
 		prev = trav;
