@@ -227,6 +227,26 @@ void do_cmd_go_up(int Ind) {
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
+	/* Quest stairs to preserve xy position! - Kurzel */
+	if (c_ptr->feat == FEAT_QUEST_UP) {
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		if (interfere(Ind, 20)) return;
+		un_afk_idle(Ind);
+		everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
+		forget_lite(Ind);
+		forget_view(Ind);
+		p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
+		wpcopy(&old_wpos, wpos);
+		wpos->wz += 1;
+		msg_print(Ind, "You go up stairs.");
+		new_players_on_depth(&old_wpos, -1, TRUE);
+		p_ptr->new_level_flag = TRUE;
+		new_players_on_depth(wpos, 1, TRUE);
+		set_invuln_short(Ind, STAIR_GOI_LENGTH);
+		c_ptr->m_idx = 0;
+		return;
+	}
+
 	if (c_ptr->feat == FEAT_CYCLIC_LESS) {
 		/* Hack -- take a turn */
 		p_ptr->energy -= level_speed(wpos);
@@ -1161,6 +1181,26 @@ void do_cmd_go_down(int Ind) {
 
 		if (beacon_effect(Ind, c_ptr)) return;
 		/* not transported? strange.. */
+	}
+
+	/* Quest stairs to preserve xy position! - Kurzel */
+	if (c_ptr->feat == FEAT_QUEST_DOWN) {
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		if (interfere(Ind, 20)) return;
+		un_afk_idle(Ind);
+		everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
+		forget_lite(Ind);
+		forget_view(Ind);
+		p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
+		wpcopy(&old_wpos, wpos);
+		wpos->wz -= 1;
+		msg_print(Ind, "You go down stairs.");
+		new_players_on_depth(&old_wpos, -1, TRUE);
+		p_ptr->new_level_flag = TRUE;
+		new_players_on_depth(wpos, 1, TRUE);
+		set_invuln_short(Ind, STAIR_GOI_LENGTH);
+		c_ptr->m_idx = 0;
+		return;
 	}
 
 	if (c_ptr->feat == FEAT_CYCLIC_MORE) {
