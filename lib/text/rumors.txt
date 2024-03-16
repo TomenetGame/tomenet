@@ -7,7 +7,7 @@
 # You should manually write the total # of rumours (lines - 10).
 
 N:*:Default
-930
+921
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -691,11 +691,8 @@ They say that
 Peace of mind, you run away from me!
 What if God was one of us?
 SERVER ERROR: Please update your graphic driver
-must... kill.. the... king....
 I wonder what Motok will be without ales.
-Leave it. You won't need your ego here.
 You feel the dagger in your bag is {{special}
-4th Reich is rising for the last time!
 Today, I shall rule the world!
 But on this battlefield no one wins!
 You take my life, but I'll take yours too!
@@ -716,26 +713,20 @@ I better leave this level...
 Lame life awaits those who avoids Death.
 If birthday is celebrated, why not death?
 I used to remember when....
-Who likes short shorts?
-I like short shorts.
 I am the antithesarus.
 Now we wander into our final hour.
-... finding new ways to betray ...
 If the Bible is fake, why is it on the non-fiction side?
-SHUT UP AND LISTEN, f00!
 I pity the fool.
-Stand up, it's time to face your day.
 Such a bitter taste...
 Put the needle on it.
 What is the meaning of life?
 What is life without death?
 What is life with infinite ressurections?
-What is life?
+What is love?
 Ugh, what's that horrid smell? Some cheezer nearby?
 Close your eyes as we witness another... BULLET RIDE!
 This whole thing smells of death.
-Leave him in the Sunset 28.
-To remember the moments in the sun
+To remember the moments in the sun.
 To the diamond that lost her world today.
 Eat steel, beast!
 Haha, taste steel!
