@@ -7,7 +7,7 @@
 # You should manually write the total # of rumours (lines - 10).
 
 N:*:Default
-952
+930
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -220,7 +220,6 @@ They say that they say that what they say can be utterly wrong.
 They say that a Dark Sword hates magic.
 They say that a Dark Sword is just a cursed sword.
 Need a help? Just read the guide in your tomenet folder.
-Wanna have a talk? Just visit #tomenet on irc.worldirc.org
 They say that behind Morgoth lies another world of extreme danger.
 They say that wizards are subtle and quick to anger, even the kindest.
 They say that a macro can save your life hundreds of times.
@@ -685,7 +684,7 @@ They say that Hobbits have big hairy feet suitable for barefoot walking.
 They say that some skills are useful even from the elements.
 They say that Trolls can make a wizard that is not good at magic.
 They say that how can a snake fight with sword?
-You can check out any time you like, but you can never leave
+You can check out any time you like, but you can never leave.
 They say that 
 {sIRON, STEEL, {fMETAL!
 ... But the evil that man do lives on ...
@@ -693,129 +692,122 @@ Peace of mind, you run away from me!
 What if God was one of us?
 SERVER ERROR: Please update your graphic driver
 must... kill.. the... king....
-I wonder what Motok will be without ales
+I wonder what Motok will be without ales.
 Leave it. You won't need your ego here.
 You feel the dagger in your bag is {{special}
 4th Reich is rising for the last time!
 Today, I shall rule the world!
-But on this battlefield no one wins
-You take my life, but I'll take yours too
-You better stand, there's no turning back
-Without a tear, I draw my parting groan
-He pulls the trigger and I feel the blow
-I can see the light... IT {fBURNS
-A light in the black.. Oh just the fear of the dark
-Iron Maiden can't be fought
-Iron Maiden can't be sought
-Iron Maiden wants you for dead
-I have a phobia that someone's always there
+But on this battlefield no one wins!
+You take my life, but I'll take yours too!
+You better stand, there's no turning back!
+Without a tear, I draw my parting groan.
+He pulls the trigger and I feel the blow.
+I can see the light... IT {fBURNS!
+A light in the black.. Oh just the fear of the dark.
+Iron Maiden can't be fought.
+Iron Maiden can't be sought.
+Iron Maiden wants you for dead.
+I have a phobia that someone's always there.
 What is real?
 FUTUREAL!
 yodelllleeeeiiiiioooooo
-To cheez, or not to cheez- That is the question
+To cheez, or not to cheez- That is the question.
 I better leave this level...
-Lame life awaits those who avoids Death
+Lame life awaits those who avoids Death.
 If birthday is celebrated, why not death?
 I used to remember when....
 Who likes short shorts?
-I like short shorts
-I am the antithesarus
-Now we wander into our final hour
+I like short shorts.
+I am the antithesarus.
+Now we wander into our final hour.
 ... finding new ways to betray ...
 If the Bible is fake, why is it on the non-fiction side?
-SHUT UP AND LISTEN, f00
-I pity the fool
-Stand up, it's time to face your day
+SHUT UP AND LISTEN, f00!
+I pity the fool.
+Stand up, it's time to face your day.
 Such a bitter taste...
-Put the needle on it
+Put the needle on it.
 What is the meaning of life?
 What is life without death?
 What is life with infinite ressurections?
 What is life?
 Ugh, what's that horrid smell? Some cheezer nearby?
-Close your eyes as we witness another... BULLET RIDE
-This whole thing smells of death
-I smell better than the sh*t you're in
-You wanna piece o me?
-70m3|\|37 r0xx0r
-Leave him in the Sunset 28
+Close your eyes as we witness another... BULLET RIDE!
+This whole thing smells of death.
+Leave him in the Sunset 28.
 To remember the moments in the sun
-To the diamond that lost her world today
-Give her faith and a reason
+To the diamond that lost her world today.
 Eat steel, beast!
 Haha, taste steel!
-tell her that she is valuable... less than tomenet
-Carry on even if it's hard
-To remember the moments in the sun
-For the fire of a handgun.. {fBurns brighter than the sun
-I can't believe it's not buttocks
-This is it
-The kiss of Judas...
+Carry on even if it's hard.
+To remember the moments in the sun.
+For the fire of a handgun.. {fBurns brighter than the sun!
+I can't believe it's not buttocks.
+This is it.
 If there is a God, he is like me.
 I hear footsteps closing in...
 I recognize them from my early days..
-Time changes, images stay the same
+Time changes, images stay the same.
 I don't know who you are, but I'm with you.
-Undead promises... The Night awaits
+Undead promises... The Night awaits.
 I feel the lips on my cheek...
-Haunts me once again
+Haunts me once again.
 Why'd you have to go and make things so complicated?
-All man dies
-Valar Morghulis
+All man dies.
+Valar Morghulis.
 For what is life, without death?
-Poo is a funny word
-Damn, that @ has one sexy set of ass
+Damn, that @ has one sexy set of ass.
 Run, live to fly -- fly to live!
 Wake me up inside!
 Can I play with madness?
-Give me the sense to wonder -- to wonder if I'm free
-Spit back in their face
-The fires of hell raged in his eyes
+Give me the sense to wonder -- to wonder if I'm free.
+Spit back in their face.
+The fires of hell raged in his eyes.
 The prophet stared at his crystal ball...
-Your soul's gonna burn in the lake of fire
+Your soul's gonna burn in the lake of fire.
 We'll live like kings! Damn hell ass kings!
 How DARE he laugh at me...
-All immortals will face their doom soon enough
-The higher you fly, the farther you'll fall
-I don't wanna fall to pieces, I just wanna sit and stare at you
-Hit me one more time, come on
-My little sister can hit harder than that
+All immortals will face their doom soon enough.
+The higher you fly, the farther you'll fall.
+I don't wanna fall to pieces, I just wanna sit and stare at you.
+Hit me one more time, come on.
+My little sister can hit harder than that.
 BRING IT ON!!!
-I'm fading into fantasy
-I was born into a scene of angriness and greed, and dominance and persecution
-All days are lost, to conditioned zones
+I'm fading into fantasy.
+I was born into a scene of angriness and greed, and dominance and persecution.
+All days are lost, to conditioned zones.
 I'm a .. wrathchild!
-Pick up the bones and set them on fire
-ain't nothin' gonna alter the course of my destination
+Pick up the bones and set them on fire.
+ain't nothin' gonna alter the course of my destination.
 Spice up your life!
 Just a slob, like one of us?
 Put a needle on it!
 pfft
 I feel pretty!
 Seven deadly sins Seven ways to win Seven holy paths to hell...
-pfft is such an overrated word
+pfft is such an overrated word.
 The Angel on one side... The Devil the other...
 Roll the dice!
 Do I really feel lucky?
 ... I'M HIDEOUS!
-You're not gonna win- you'd better go back again
+You're not gonna win- you'd better go back again.
 Lost in this maze...
 So what does it matter?
-Don't you think God can save your life
-Rage, rage against the dying of the light
-Nothing to lose, so much to gain
-I _will_ prevail
-Ha ha, a yellow p
-Only the good die young
-If you're over 50, take some meds
-The demon in your mind will rape you in your bed at night
-If I cancel tomorrow the undead will thank me today
-Fly in the face of your prophets I mock your morality plays
-Walking on water are miracles all you can trust
+Don't you think God can save your life?
+Rage, rage against the dying of the light.
+Nothing to lose, so much to gain.
+I _will_ prevail!
+Ha ha, a yellow p!
+Only the good die young.
+If you're over 50, take some meds.
+The demon in your mind will rape you in your bed at night.
+If I cancel tomorrow the undead will thank me today.
+Fly in the face of your prophets I mock your morality plays.
+Walking on water are miracles all you can trust.
 Which path do you take?
-What if you wait? It's maybe too late
-No one can save you now from the hell you're in
-The thought fled from your mind
+What if you wait? It's maybe too late.
+No one can save you now from the hell you're in.
+The thought fled from your mind.
 What if I stab my own mind?
 Where are you, body?
 That's a lie!
@@ -824,9 +816,8 @@ Just because I'm not cute enough!!
 You meanie!
 Life is a dream in which we will all wake from...
 Stop procastinating!
-Don't you feel it's more than this if you concentrate
-Going for a ride, to meet them in the Fiction City
-No one can escape Destiny
+Going for a ride, to meet them in the Fiction City.
+No one can escape Destiny.
 What kind of man kills because of ideology?
 What kind of god justifies violence?
 There's a clone of everyone somewhere...
@@ -853,7 +844,7 @@ Don't turn around, I'm sick and I'm tired of your face.
 How does it feel?
 Uh huh, life's like this.
 Everything's chaaaaaaaaaaangin, when I turn around.
-You don't want me there, you just shut me ouuuuuuut
+You don't want me there, you just shut me ouuuuuuut!
 I'd rather be anything but ordinary please.
 These things I'll never say.
 Got fired by fried chicken ass.
@@ -897,14 +888,9 @@ He's all gross and old and eew.
 Human flesh is the big natural resource now.
 Make peace with laziness.
 End the delusion of time.
-Direct your attention inward.
-Power over others is weakness disguised as strength.
-Wherever you are, be there totally.
 Death is a stripping away of all that is not you.
-Primary reality is within, secondary reality without. 
 No matter what happens, I will create no more pain for myself.
 We must travel in the direction of our fear.
-um
 My fall will be for you.
 Corn is no place for a mighty warrior!
 Twelve sided died!
@@ -917,12 +903,7 @@ Total carnage!
 up up down down left right left right B A start
 Hear the pfft of destiny.
 If i don't make it, someone else will stand my ground.
-Deceiver of hearts, deciever of fools
-Do I believe in wonders, do I believe in dreams?
-My senses capture me
-Inside?
-Do you see why?
-I'll let others elaborate.
+Deceiver of hearts, deciever of fools.
 They say that the color of one's speech shows their tone of voice.
 There is no greater adventure than looking for a hidden staircase.
 I'm tired.
@@ -932,12 +913,11 @@ fear -> anger -> hate -> the dark side
 It is the Order of Things.
 Your dreams will lead you to aphelion!
 I guess that's really just it.
-the head plans the hands kill the heart only pumps blood
-What if Gillette had designed the guillotine?
+The head plans the hands kill the heart only pumps blood.
 I've run out of mental RAM.
 We didn't start the fire!
 I really need to figure out what the hell I'm doing.
-Dude, where's my car?
+Dude, where's my loot?
 The technological singularity is coming!
 O fortuna! Velut luna!
 Never feed a gremlin after midnight.
@@ -945,11 +925,8 @@ This l00t's not gonna l00t itself!
 He that hath no sword, let him sell his garment and buy one.
 Let him who would move the world, first move himself.
 Know ye, O seeker of the mystic wisdoms, that the ways of magic are diverse and strange.
-What it do?
 There's a little fruit bat in all of us.
-They say that !dksv is the same as !d!k!s!v
-Do not ever forget the madness.
-If you want it for yourself, please say so.
+They say that !dksv= is the same as !d!k!s!v!= is the same as !*
 I have made my decision.
 There's no hope as long as the Ring exists.
 This is what I was afraid of.
@@ -958,5 +935,6 @@ Men are more apt to believe what they least understand.
 Doubt is the midwife of curiosity, and curiosity breeds wisdom.
 The One Ring can only be destroyed in the fires of Mount Doom.
 Halls of evil, dreams of dread~
-Killed by Death
+Killed by Death.
 Secret dungeons under metal stars.
+I will turn your face to alabaster When you'll find your servant is your master.
