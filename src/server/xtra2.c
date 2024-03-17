@@ -10957,6 +10957,7 @@ void resurrect_player(int Ind, int loss_factor) {
 			}
 		}
 	}
+	s_printf("RESURRECTED: %s at (%d,%d,%d) for -%d%% -> lives=%d.\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, loss_factor, p_ptr->lives);
 
 	/* Bonus service: Also restore drained exp (for newbies, especially) */
 	restore_level(Ind);
