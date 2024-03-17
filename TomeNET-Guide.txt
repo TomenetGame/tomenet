@@ -5181,7 +5181,7 @@ Fruit bat (dubbed "batty", less limbs than normal body)
 A fruit bat is like a normal character, just not in humanoid shape but in bat
 form! Fruit bats cannot equip weapons, boots or gloves.
 These restrictions won't change even if they choose a class which can make use
-if mimicry and thereby mimic a humanoid form (druid fruit bats would in fact be
+of mimicry and thereby mimic a humanoid form (druid fruit bats would in fact be
 the most ineffective choice).
 However, fruit bats are twice as fast as normal characters at the beginning
 (they get a flat +10 speed bonus added) and their melee attacks are somewhat
