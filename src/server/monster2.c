@@ -35,6 +35,9 @@
    This avoids instant-ko in cases where the player might've been unlucky. */
 #define BLOODLETTER_SUMMON_NERF
 
+/* No Unmaker spawns at all in Ironman Deep Dive Challenge or Halls of Mandos? */
+#define IDDC_MANDOS_NO_UNMAKERS
+
 
 static cptr horror_desc[MAX_HORROR] = {
 	"abominable",
@@ -3050,6 +3053,11 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 	    || (r_ptr->flags8 & RF8_FINAL_GUARDIAN)
 	    || (r_idx == RI_UNMAKER && !clo && !clone_summoning)
 	    )) return(50);
+
+#ifdef IDDC_MANDOS_NO_UNMAKERS
+	/* No unmakers at all in IDDC/Mandos? (At all, as live-spawning is prohibited for them anyway, so only need to check at generation time here) */
+	if (level_generation_time && r_idx == RI_UNMAKER && !(summon_override_checks & SO_BOSS_MONSTERS) && (in_irondeepdive(wpos) || in_hallsofmandos(wpos))) return(58);
+#endif
 
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
