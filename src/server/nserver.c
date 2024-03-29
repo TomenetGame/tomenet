@@ -2791,9 +2791,9 @@ static void set_player_font_definitions(int ind, int player) {
 		p_ptr->f_char_solid[50] = FONT_MAP_SOLID_WIN; //magma, 8
 		p_ptr->f_char_solid[52] = FONT_MAP_SOLID_WIN;
 		p_ptr->f_char_solid[51] = FONT_MAP_SOLID_WIN; //quartz, 9
-		p_ptr->f_attr_solid[51] = 9;
+		p_ptr->f_attr_solid[51] = TERM_L_WHITE;
 		p_ptr->f_char_solid[53] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_attr_solid[53] = 9;
+		p_ptr->f_attr_solid[53] = TERM_L_WHITE;
 
 		p_ptr->f_char_solid[54] = FONT_MAP_VEIN_WIN; //specialty: magma with treasure (diamond ascii)
 		p_ptr->f_char_solid[55] = FONT_MAP_VEIN_WIN; //specialty: quartz with treasure (diamond ascii)
@@ -2833,9 +2833,9 @@ static void set_player_font_definitions(int ind, int player) {
 		p_ptr->f_char_solid[50] = FONT_MAP_SOLID_X11; //magma, 8
 		p_ptr->f_char_solid[52] = FONT_MAP_SOLID_X11;
 		p_ptr->f_char_solid[51] = FONT_MAP_SOLID_X11; //quartz, 9
-		p_ptr->f_attr_solid[51] = 9;
+		p_ptr->f_attr_solid[51] = TERM_L_WHITE;
 		p_ptr->f_char_solid[53] = FONT_MAP_SOLID_X11;
-		p_ptr->f_attr_solid[53] = 9;
+		p_ptr->f_attr_solid[53] = TERM_L_WHITE;
 
 		p_ptr->f_char_solid[54] = FONT_MAP_VEIN_X11; //specialty: magma with treasure (diamond ascii)
 		p_ptr->f_char_solid[55] = FONT_MAP_VEIN_X11; //specialty: quartz with treasure (diamond ascii)

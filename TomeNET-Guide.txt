@@ -4882,8 +4882,12 @@ r_info.txt) without changing it.
 When using a custom font you probably want to turn off the option
 'font_map_solid_walls' in = 1, as it interferes with the mapping of various
 wall tiles: It will force-remap all affected wall tiles to character 127 for
-Windows clients and to character 1 for Linux/OS X clients and all treasure
-veins ('*' symbol in the game, aka walls with treasure to mine) to character 1.
+Windows clients and to character 2 for Linux/OS X clients and all treasure
+veins ('*' symbol in the game, aka walls with treasure to mine) to character 1,
+which looks like a diamond in the standard fonts.
+It will also change the colour of quartz veins form default 'white' or whatever
+else it was mapped to, to light grey to make them visually distinguishable from
+other walls.
 
 
 Here is a list of all supported colours:
