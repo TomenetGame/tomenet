@@ -341,7 +341,8 @@ function rcraft_prt(u,w)
         else
           if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
           if xxx > c then
-            c = xxx
+            -- Buff "nova" (by not draining 100% MP), since LoS anti-cheese.
+            -- c = xxx
             d = xxx
           end
           c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d dur %d backlash 20%%",
@@ -536,7 +537,8 @@ function cast_rune_spell(I,D,u)
       b = b + d / 10 + 1
     else
       if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
-      c = xxx
+      -- Buff "nova" (by not draining 100% MP), since LoS anti-cheese.
+      -- c = xxx
       d = xxx
       b = b + d / 10 + 1
     end

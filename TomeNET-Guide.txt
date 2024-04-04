@@ -22224,11 +22224,8 @@ Enhanced spell types have fixed parameters; other spell types may be modified.
                     if the spell is failed.
                     Required skill level for first spell level: 35.
 
-    Nova            Exhausts your mana in a star-shaped cloud, causes backlash.
-    (Enhanced)      Your mana will be completely drained in one casting, and
-                    the spell damage will exactly equal the mana drained. The
-                    effect is limited to maximum range from your position, but
-                    may extend out of direct sight, as with ball spells.
+    Nova            Channels your mana in a star-shaped cloud, causes backlash.
+    (Enhanced)      The spell damage will exactly equal your current mana.
                     This spell always triggers damaging backlash, up to double
                     if the spell is failed.
                     Required skill level for first spell level: 40.
@@ -22600,7 +22597,7 @@ Cone       |  25 | Sweeps a beam across a narrow, contiguous arc.
 Surge      |  30 | Engulfs a quickly expanding area around yourself.
 + Glyph    |  35 | Traces an explosive glyph of warding onto the floor.
 Flare      |  35 | Briefly engulfs a target for high damage, causes backlash.
-+ Nova     |  40 | Exhausts your mana in a star-shaped cloud, causes backlash.
++ Nova     |  40 | Channels your mana in a star-shaped cloud, causes backlash.
 
 
 Sigil Boni
