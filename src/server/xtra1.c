@@ -8568,6 +8568,7 @@ static void process_global_event(int ge_id) {
 						if (Players[j]->id == ge->participant[i]) break;
 					if (j > NumPlayers) {
 						s_printf("EVENT_CHECK_PARTICIPANTS: ID %d no longer available.\n", ge->participant[i]);
+						ge->participant[i] = 0; // not online? unsign. - Kurzel
 						continue;
 					}
 
@@ -9646,7 +9647,7 @@ static void process_global_event(int ge_id) {
 			/* clean any static module floors from server crashes, remove idle DMs */
 			for (j = ge->extra[3]; j <= ge->extra[4]; j++) { // GE_EXTRA - adventures.lua
 				wpos.wz = j;
-				s_printf("DM_MODULES: Cleaning wpos (%d,%d,%d).\n",wpos.wx,wpos.wy,wpos.wz);
+				// s_printf("DM_MODULES: Cleaning wpos (%d,%d,%d).\n",wpos.wx,wpos.wy,wpos.wz);
 				wipe_m_list(&wpos); /* clear any (powerful) spawns */
 				wipe_o_list_safely(&wpos); /* and objects too */
 				unstatic_level(&wpos);
@@ -9655,27 +9656,43 @@ static void process_global_event(int ge_id) {
 			/* load module(s) and teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
+				// s_printf("DM_MODULES: j = %d, ge->participant[j] = %d, NumPlayers = %d.\n",j,ge->participant[j],NumPlayers);
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->id != ge->participant[j]) continue;
+					// s_printf("DM_MODULES: i = %d.\n",i);
 					if (ge->noghost) Players[i]->global_event_temp |= PEVF_NOGHOST_00;
 					exec_lua(0, format("return adventure_start(%d, \"%s\")", i, ge->title));
 				}
 			}
 
-			ge->state[0] = 1;
+			/* Immediately check for participation, remove offline participants */
+			n = 0;
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+				if (!ge->participant[j]) continue;
+				for (i = 1; i <= NumPlayers; i++) { // Count present players only!
+					if (Players[i]->id != ge->participant[j]) continue;
+					p_ptr = Players[i];
+					if (in_module(&p_ptr->wpos) && (p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
+					break;
+				}
+				if (i > NumPlayers) ge->participant[j] = 0; // not online? unsign. - Kurzel
+			}
+			if (!n) ge->state[0] = 255;
+			else ge->state[0] = 1;
+			// s_printf("DM_MODULES: wpos (%d,%d,%d) contains %d players (state = %d,%d).\n",wpos.wx,wpos.wy,wpos.wz,n,ge->state[0],ge->state[1]);
+
 			break;
-		case 1: /* monitor for participation */
+		case 1: /* ongoing modules are actually running now, not just in signup phase */
+
+			/* Monitor event participation, but allow reconnecting if disconnected */
 			n = 0;
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
 				n++; // Count participants even if offline / logged out! Dead players would be 0'd.
-				// for (i = 1; i <= NumPlayers; i++) { // OR ... count present players only! (disabled for now) - Kurzel
-					// if (Players[i]->id != ge->participant[j]) continue;
-					// p_ptr = Players[i];
-					// if (in_module(&p_ptr->wpos) && (p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
-				// }
 			}
 			if (!n) ge->state[0] = 255;
+			// s_printf("DM_MODULES: %d participants (state = %d,%d).\n",n,ge->state[0],ge->state[1]);
+
 			break;
 		case 255: /* clean-up or restart */
 			sector000separation--;
