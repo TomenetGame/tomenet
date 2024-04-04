@@ -13106,6 +13106,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 				if (dist > MAX_RANGE) break;
 				if (broke_on_terrain1) break; // allow the wall to be hit
 				if (!cave_contact(zcave, y, x)) broke_on_terrain1 = TRUE; // no DLS
+				if (!los(wpos, y1, x1, y, x)) break; // anti-exploit; only hit grids with line of effect to caster - Kurzel
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
 				if (effect != -1) zcave[y][x].effect = effect;
 				everyone_lite_spot(wpos, y, x);
