@@ -173,6 +173,8 @@ struct server_opts
 };
 
 extern s32b turn;
+extern s32b session_turn;
+extern s32b turn_overflow;
 
 #ifdef ARCADE_SERVER
 extern char tron_speed;
