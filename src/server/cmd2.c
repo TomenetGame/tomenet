@@ -3516,6 +3516,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	bool in_iddc = in_irondeepdive(wpos);
  #endif
 #endif
+	bool no_specials = in_sector00(wpos);
 
 	int cfeat, y, x;
 #ifndef EQUIPPABLE_DIGGERS
@@ -3963,7 +3964,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	/* Discover special features or objects when mining.
 	   Note: Not in monster KILL_WALL form or via magic; not on world surface: wpos->wz == 0 ! */
-	if (l_ptr && !quiet_borer) {
+	if (l_ptr && !quiet_borer && !no_specials) {
 		/* prepare to discover a special feature */
 		if ((rand_int(5000) <= mining + 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
 		else if ((rand_int(5000) <= mining + 5) && can_go_down(wpos, 0x1)) dug_feat = FEAT_WAY_MORE;
@@ -4022,12 +4023,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		}
 	}
 	/* if in monster KILL_WALL form or via magic */
-	else if (l_ptr && quiet_borer) {
+	else if (l_ptr && quiet_borer && !no_specials) {
 		/* prepare to discover a special feature */
 		if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
 		else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
 	}
-	/* Never discover special features or objects on stale floors */
+	/* Never discover special bonus features or objects on stale floors, just allow basic lava/water etc tile uncovering */
 	if (p_ptr->IDDC_logscum) {
 		if (dug_feat == FEAT_FOUNTAIN) dug_feat = FEAT_NONE;
 		special_k_idx = tval = 0;
@@ -4091,7 +4092,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 					else
 						s_printf("DIGGING: %s found a specific non-golem item.\n", p_ptr->name);
-				} else if (rand_int(120) < 10 + mining && !p_ptr->IDDC_logscum) {
+				} else if (rand_int(120) < 10 + mining && !p_ptr->IDDC_logscum) { //Basic random item finding. This is allowed atm even if 'no_specials'.
 					place_object_restrictor = RESF_NONE;
 #if 1
 					object_level = find_level_base;
@@ -4507,10 +4508,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			} else if (dug_feat != FEAT_NONE &&
 			    dug_feat != FEAT_WAY_MORE &&
 			    dug_feat != FEAT_WAY_LESS) {
-				if (magik(100)) {
+				//if (magik(100)) {
 					cave_set_feat_live(wpos, y, x, dug_feat);
 					//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
-				}
+				//}
 			} else if (!rand_int(10) && special_k_idx && tval == TV_RUNE && !p_ptr->IDDC_logscum) {
 					invcopy(&forge, special_k_idx);
 					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
