@@ -11135,7 +11135,7 @@ void kill_xorder(int Ind) {
 		o_ptr->note_utag = strlen(temp);
 #else
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
-		//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
+		//s_printf("object awarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
 #endif
 
 #if 1
@@ -11220,6 +11220,7 @@ void kill_xorder(int Ind) {
 
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
+		s_printf("object awarded %d,%d,%d (x%d)\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx, o_ptr->number);
 		inven_carry(Ind, o_ptr);
 		unique_quark = 0;
 	}
