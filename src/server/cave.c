@@ -3088,8 +3088,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 						a = randint(15);
 					} else {
 						/* If trap isn't on door display it */
-						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
-						//(*cp) = ';';
+						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = p_ptr->f_char[FEAT_TRAP]; */
+						//(*cp) = p_ptr->f_char[FEAT_TRAP];
 						a = get_monster_trap_color(Ind, cs_ptr->sc.montrap.trap_kit, feat);
 
 #if 0 /* currently this doesn't make sense because montraps are their own feature (like runes) instead of using just the cs_ptr (like normal traps)! This means they cancel the water grid! ew. */
@@ -3140,8 +3140,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 						a = randint(15);
 					} else {
 						/* If trap isn't on door display it */
-						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
-						(*cp) = '^';
+						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = p_ptr->f_char[FEAT_TRAP]; */
+						(*cp) = p_ptr->f_char[FEAT_TRAP];
 
 						a = get_trap_color(Ind, t_idx, feat);
 					}
