@@ -2953,7 +2953,7 @@ void detect_bounty(int Ind) {
 					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
 					/* Hack - Always show traps under items when detecting - mikaelh */
-					draw_spot_ovl(Ind, i, j, a, '^');
+					draw_spot_ovl(Ind, i, j, a, p_ptr->f_char[FEAT_TRAP]);
 				} else {
 					/* Normal redraw */
 					lite_spot(Ind, i, j);
@@ -3208,7 +3208,7 @@ bool detect_trap(int Ind, int rad) {
 					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
 					/* Hack - Always show traps under items when detecting - mikaelh */
-					draw_spot_ovl(Ind, i, j, a, '^');
+					draw_spot_ovl(Ind, i, j, a, p_ptr->f_char[FEAT_TRAP]);
 				} else {
 					/* Normal redraw */
 					lite_spot(Ind, i, j);

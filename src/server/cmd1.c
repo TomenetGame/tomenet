@@ -1495,7 +1495,7 @@ void search(int Ind) {
 					byte a = get_trap_color(Ind, cs_ptr->sc.trap.t_idx, c_ptr->feat);
 
 					/* Hack - Always show traps under items when detecting - mikaelh */
-					draw_spot_ovl(Ind, y, x, a, '^');
+					draw_spot_ovl(Ind, y, x, a, p_ptr->f_char[FEAT_TRAP]);
 				} else {
 					/* Normal redraw */
 					lite_spot(Ind, y, x);
