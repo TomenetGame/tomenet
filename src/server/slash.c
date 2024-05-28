@@ -3278,6 +3278,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (!global_event[k0].participant[j]) continue;
 					for (i = 1; i <= NumPlayers; i++) {
 						if (global_event[k0].participant[j] == Players[i]->id) {
+#ifdef DM_MODULES
+							// Kurzel - debug - Elmoth false starts
+							s_printf("DM_MODULES: Players[i]->name = %s, global_event[k0].participant[j] = %d, Players[i]->id = %d.\n",Players[i]->name,global_event[k0].participant[j],Players[i]->id);
+#endif
 							if (found) strcat(ppl, ", ");
 							strcat(ppl, Players[i]->name);
 							found = TRUE;

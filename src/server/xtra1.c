@@ -8695,6 +8695,10 @@ static void process_global_event(int ge_id) {
 
 						for (i = 1; i <= NumPlayers; i++) {
 							if (Players[i]->id != ge->participant[j]) continue;
+#ifdef DM_MODULES
+							// Kurzel - debug - Elmoth false starts
+							s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n",Players[i]->name,ge->participant[j],Players[i]->id);
+#endif
 							Players[i]->global_event_participated[ge->getype]++;
 							/* play warning sfx in case they were afk waiting for it to begin? ;) */
 #ifdef USE_SOUND_2010
@@ -9659,6 +9663,8 @@ static void process_global_event(int ge_id) {
 				// s_printf("DM_MODULES: j = %d, ge->participant[j] = %d, NumPlayers = %d.\n",j,ge->participant[j],NumPlayers);
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->id != ge->participant[j]) continue;
+					// Kurzel - debug - Elmoth false starts
+					s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n",Players[i]->name,ge->participant[j],Players[i]->id);
 					// s_printf("DM_MODULES: i = %d.\n",i);
 					if (ge->noghost) Players[i]->global_event_temp |= PEVF_NOGHOST_00;
 					exec_lua(0, format("return adventure_start(%d, \"%s\")", i, ge->title));
