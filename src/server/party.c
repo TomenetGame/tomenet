@@ -1169,7 +1169,8 @@ int check_account(char *accname, char *c_name, int *Ind) {
 		if (!ptr || ptr->account == a_id) {
 			/* Cannot create another character while being logged on, if not ACC_MULTI.
 			   Allow to login with the same name to 'resume connection' though. */
-			if (!(flags & ACC_MULTI)) {
+			if (!(flags & ACC_MULTI)
+			    && c_name[0]) { /* For use in slash.c, for /convertexclusive */
 				player_type *p_ptr;
 
 				/* check for login-timing exploit (currently makes subsequent 'normal' check redundant). */
@@ -1190,9 +1191,10 @@ int check_account(char *accname, char *c_name, int *Ind) {
 							*Ind = i;
 							return(-10);
 						}
-#endif
+#else
 						*Ind = i;
 						return(-2);
+#endif
 					}
 				}
 			}
