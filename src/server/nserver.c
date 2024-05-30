@@ -3381,6 +3381,9 @@ static int Handle_login(int ind) {
 		case 2051:
 			msg_print(NumPlayers, "\377y* XtremelyLow-server-shutdown command pending *");
 			break;
+		case 2052:
+			msg_print(NumPlayers, "\377y* XxtremelyLow-server-shutdown command pending *");
+			break;
 		case 2048:
 			msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
 			break;
