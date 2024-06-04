@@ -1131,6 +1131,7 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters) {
 
 /* TODO: do this job when creating allocation table, for efficiency */
 /* XXX: this function can act strange when used for non-generation checks */
+/* NOTE: This function is currently UNUSUED, instead, mon_allowed_view() (just for the uniques list in cmd.4.c) and mon_allowed_chance() (for everything else) are used. */
 bool mon_allowed(monster_race *r_ptr) {
 	int i = randint(100);
 
