@@ -378,7 +378,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 	monster_race *r_ptr;
 
-	int i, j, kk;
+	int i, j, kk, unseen = 0;
 	byte ok;
 	bool full;
 
@@ -428,8 +428,10 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 		/* Only print Uniques */
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Only display known uniques */
-			//if (r_ptr->r_sights && mon_allowed(r_ptr))
-			if (!r_ptr->r_sights || !mon_allowed_view(r_ptr)) continue;
+			//if (!r_ptr->r_sights || !mon_allowed(r_ptr))
+			//if ((!r_ptr->r_sights) || !mon_allowed_view(r_ptr)) continue;
+			if ((!r_ptr->r_sights && !admin) || !mon_allowed_view(r_ptr)) continue;
+			if (!r_ptr->r_sights) unseen++;
 
 			/* count all (known) uniques */
 			idx[total++] = k;
@@ -457,6 +459,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 		}
 	}
 
+	if (admin && unseen) fprintf(fff, "\377U%d uniques haven't been seen yet by anybody (%d have).\n", unseen, total - unseen);
 	if (!own_highest) {
 		if (!(pt_ptr->uniques_alive))
 			fprintf(fff, "\377U  (You haven't killed any unique monster so far.)\n\n");
@@ -519,15 +522,17 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 			/* different colour for uniques higher than Morgoth (the 'boss') */
 			//if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
 			if (!(pt_ptr->uniques_alive)) {
-				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (L100)\377%c was slain by", r_name + r_ptr->name, c_out);
-				else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
-				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
-				else fprintf(fff, "%s (L%d) was slain by", r_name + r_ptr->name, r_ptr->level);
+				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (L100)\377%c", r_name + r_ptr->name, c_out);
+				else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
+				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
+				else fprintf(fff, "%s (L%d)", r_name + r_ptr->name, r_ptr->level);
+				if (r_ptr->r_sights) fprintf(fff, " was slain by"); else fprintf(fff, " hasn't been seen.");
 			} else {
 				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (L100)\377%c", r_name + r_ptr->name, c_out);
 				else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else fprintf(fff, "%s (L%d)", r_name + r_ptr->name, r_ptr->level);
+				if (!r_ptr->r_sights) fprintf(fff, " hasn't been seen.");
 			}
 
 			for (i = 1; i <= NumPlayers; i++) {
@@ -581,6 +586,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 
 					/* first player name entry for this unique? add ':' and go to next line */
 					if (!ok) {
+						if (!r_ptr->r_sights) fprintf(fff, " Admin-kills:\n"); else
 						fprintf(fff, ":\n");
 						ok = TRUE;
 					}
@@ -608,6 +614,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 
 					/* first player name entry for this unique? add ':' and go to next line */
 					if (!ok) {
+						if (!r_ptr->r_sights) fprintf(fff, " Admin-kills:\n"); else
 						fprintf(fff, ":\n");
 						ok = TRUE;
 					}
@@ -629,7 +636,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 			}
 
 			/* not killed by anybody yet? */
-			if (!(pt_ptr->uniques_alive)) {
+			if (!(pt_ptr->uniques_alive) && r_ptr->r_sights) {
 				if (!ok) {
 					if (r_ptr->r_tkills) fprintf(fff, " somebody.");
 					else fprintf(fff, " \377Dnobody.");
