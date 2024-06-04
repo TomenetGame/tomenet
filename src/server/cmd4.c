@@ -526,13 +526,13 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 				else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else fprintf(fff, "%s (L%d)", r_name + r_ptr->name, r_ptr->level);
-				if (r_ptr->r_sights) fprintf(fff, " was slain by"); else fprintf(fff, " hasn't been seen.");
+				if (r_ptr->r_sights) fprintf(fff, " was slain by"); else fprintf(fff, " \377rhasn't been seen.");
 			} else {
 				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (L100)\377%c", r_name + r_ptr->name, c_out);
 				else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else fprintf(fff, "%s (L%d)", r_name + r_ptr->name, r_ptr->level);
-				if (!r_ptr->r_sights) fprintf(fff, " hasn't been seen.");
+				if (!r_ptr->r_sights) fprintf(fff, " \377rhasn't been seen.");
 			}
 
 			for (i = 1; i <= NumPlayers; i++) {
@@ -586,7 +586,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 
 					/* first player name entry for this unique? add ':' and go to next line */
 					if (!ok) {
-						if (!r_ptr->r_sights) fprintf(fff, " Admin-kills:\n"); else
+						if (!r_ptr->r_sights) fprintf(fff, " \377DAdmin-kills:\n"); else
 						fprintf(fff, ":\n");
 						ok = TRUE;
 					}
