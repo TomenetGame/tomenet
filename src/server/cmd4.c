@@ -378,7 +378,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 	monster_race *r_ptr;
 
-	int i, j, kk, unseen = 0;
+	int i, j, kk, unseen = 0, slain = 0;
 	byte ok;
 	bool full;
 
@@ -426,40 +426,42 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 		r_ptr = &r_info[k];
 
 		/* Only print Uniques */
-		if (r_ptr->flags1 & RF1_UNIQUE) {
-			/* Only display known uniques */
-			//if (!r_ptr->r_sights || !mon_allowed(r_ptr))
-			//if ((!r_ptr->r_sights) || !mon_allowed_view(r_ptr)) continue;
-			if ((!r_ptr->r_sights && !admin) || !mon_allowed_view(r_ptr)) continue;
-			if (!r_ptr->r_sights) unseen++;
+		if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 
-			/* count all (known) uniques */
-			idx[total++] = k;
+		/* Only display known uniques */
+		//if (!r_ptr->r_sights || !mon_allowed(r_ptr))
+		//if ((!r_ptr->r_sights) || !mon_allowed_view(r_ptr)) continue;
+		if ((!r_ptr->r_sights && !admin) || !mon_allowed_view(r_ptr)) continue;
+
+		if (!r_ptr->r_sights) unseen++;
+		if (r_ptr->r_tkills) slain++;
+
+		/* count all (known) uniques */
+		idx[total++] = k;
+
+		/* also count Nazgul */
+		if (r_ptr->flags7 & RF7_NAZGUL) nazgul_total++;
+
+		/* also count dungeon bosses */
+		if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) bosses_total++;
+
+		if (p_ptr->r_killed[k] == 1) {
+			killed++;
+			/* remember highest unique the viewing player actually killed */
+			if (own_highest_level <= r_ptr->level) {
+				own_highest = k;
+				own_highest_level = r_ptr->level;
+			}
 
 			/* also count Nazgul */
-			if (r_ptr->flags7 & RF7_NAZGUL) nazgul_total++;
+			if (r_ptr->flags7 & RF7_NAZGUL) nazgul_killed++;
 
 			/* also count dungeon bosses */
-			if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) bosses_total++;
-
-			if (p_ptr->r_killed[k] == 1) {
-				killed++;
-				/* remember highest unique the viewing player actually killed */
-				if (own_highest_level <= r_ptr->level) {
-					own_highest = k;
-					own_highest_level = r_ptr->level;
-				}
-
-				/* also count Nazgul */
-				if (r_ptr->flags7 & RF7_NAZGUL) nazgul_killed++;
-
-				/* also count dungeon bosses */
-				if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) bosses_killed++;
-			}
+			if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) bosses_killed++;
 		}
 	}
 
-	if (admin && unseen) fprintf(fff, "\377U%d uniques haven't been seen yet by anybody (%d have).\n", unseen, total - unseen);
+	if (admin) fprintf(fff, "\377b%d total uniques, %d seen (vs %d), %d slain (vs %d).\n", total, total - unseen, unseen, slain, total - slain);
 	if (!own_highest) {
 		if (!(pt_ptr->uniques_alive))
 			fprintf(fff, "\377U  (You haven't killed any unique monster so far.)\n\n");
