@@ -6756,6 +6756,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/fixuniques")) {
+				monster_race *r_ptr;
+				int fixed = 0;
+
+				for (i = 0; i < MAX_R_IDX - 1 ; i++) {
+					r_ptr = &r_info[i];
+					if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+					if (!r_ptr->r_sights && r_ptr->r_tkills) {
+						r_ptr->r_sights = 1;
+						fixed++;
+					}
+				}
+				msg_format(Ind, "%d uniques were fixed from being 'unseen' despite killed, now 'seen'.", fixed);
+				return;
+			}
 			else if (prefix(messagelc, "/aunique")) {
 				monster_race *r_ptr;
 
