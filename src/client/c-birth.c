@@ -1426,7 +1426,7 @@ static bool choose_stat_order(void) {
 					c_put_str(TERM_YELLOW, "   Slightly improves your swimming.             ", DIZ_ROW + 8, 30);
 					break;
 				case 4:	c_put_str(TERM_L_UMBER,"   - Constitution -", DIZ_ROW, 30);
-					c_put_str(TERM_YELLOW, "   Determines your amout of HP                  ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "   Determines your amount of HP                 ", DIZ_ROW + 1, 30);
 					c_put_str(TERM_YELLOW, "    (hit points, ie how much damage you can     ", DIZ_ROW + 2, 30);
 					c_put_str(TERM_YELLOW, "    take without dying. High constitution might ", DIZ_ROW + 3, 30);
 					c_put_str(TERM_YELLOW, "    not show much effect until your character   ", DIZ_ROW + 4, 30);
