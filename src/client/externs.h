@@ -317,6 +317,7 @@ extern player_class *class_info;
 extern player_trait *trait_info;
 
 //the +16 are just for some future-proofing, to avoid needing to update the client
+extern char attribute_diz[6][8][61];
 extern char race_diz[MAX_RACE + 16][12][61];
 extern char class_diz[MAX_CLASS + 16][12][61];
 extern char trait_diz[MAX_TRAIT + 16][12][61];
