@@ -889,6 +889,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	/* Unsign, they have left the event, in case of ongoing events - Kurzel */
 	for (k = 0; k < MAX_GE_PARTICIPANTS; k++)
 		if (ge->participant[k] == p_ptr->id) {
+			s_printf("%s EVENT_UNPARTICIPATE (beacon): '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), p_ptr->name, p_ptr->Ind, ev_idx, ge->title, ge->getype, k);
 			ge->participant[k] = 0;
 			break;
 		}

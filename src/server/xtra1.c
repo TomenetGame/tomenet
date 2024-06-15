@@ -8516,6 +8516,7 @@ static void process_global_event(int ge_id) {
 	char m_name[MNAME_LEN], buf[MSG_LEN];
 	int m_idx, tries = 0;
 	time_t now;
+	cptr pname;
 
 	time(&now);
 	/* real timer will sometimes fail when using in a function which isn't sync'ed against it but instead relies
@@ -8534,6 +8535,7 @@ static void process_global_event(int ge_id) {
 		elapsed_turns = 0;
 		ge->announcement_time = -1; /* enter the processing phase, */
 		ge->state[0] = 255; /* ..and process clean-up! */
+		s_printf("%s EVENT_STOP (turn overflow): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 	}
 
 #ifdef DM_MODULES
@@ -8566,7 +8568,7 @@ static void process_global_event(int ge_id) {
 					/* Check that the player really is here - mikaelh */
 					for (j = 1; j <= NumPlayers; j++)
 						if (Players[j]->id == ge->participant[i]) break;
-					if (j > NumPlayers) {
+					if (j == NumPlayers + 1) {
 						s_printf("EVENT_CHECK_PARTICIPANTS: ID %d no longer available.\n", ge->participant[i]);
 						ge->participant[i] = 0; // not online? unsign. - Kurzel
 						continue;
@@ -8669,10 +8671,16 @@ static void process_global_event(int ge_id) {
 						for (j = 1; j <= NumPlayers; j++) {
 							if (ge->participant[i] != j) continue;
 							Players[j]->global_event_type[ge_id] = GE_NONE;
+							s_printf("EVENT_UNPARTICIPATE (insufficient,0): '%s' (%d) -> #%d '%s'(%d) [%d]\n", Players[j]->name, j, ge_id, ge->title, ge->getype, i);
 							ge->participant[j] = 0; // wipe participant list - Kurzel
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+						}
+						if (j == NumPlayers + 1) {
+							pname = lookup_player_name(ge->participant[i]);
+							s_printf("EVENT_UNPARTICIPATE (insufficient,1): '%s' (%d) -> #%d '%s'(%d) [%d]\n", pname ? pname : "(NULL)", ge->participant[i], ge_id, ge->title, ge->getype, i);
+							ge->participant[j] = 0; // wipe offline participants too
 						}
 					}
 #ifdef DM_MODULES
@@ -8697,7 +8705,7 @@ static void process_global_event(int ge_id) {
 							if (Players[i]->id != ge->participant[j]) continue;
 #ifdef DM_MODULES
 							// Kurzel - debug - Elmoth false starts
-							s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n",Players[i]->name,ge->participant[j],Players[i]->id);
+							s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n", Players[i]->name, ge->participant[j], Players[i]->id);
 #endif
 							Players[i]->global_event_participated[ge->getype]++;
 							/* play warning sfx in case they were afk waiting for it to begin? ;) */
@@ -8879,7 +8887,10 @@ static void process_global_event(int ge_id) {
 					if (!Players[i]->wpos.wz) k++;
 				}
 
-			if (!n) ge->state[0] = 255; /* double kill by monsters or something? ew. */
+			if (!n) {
+				ge->state[0] = 255; /* double kill by monsters or something? ew. */
+				s_printf("%s EVENT_STOP (no players (0)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
+			}
 			else if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
 				ge->state[0] = 6;
 				ge->extra[3] = j;
@@ -8911,8 +8922,10 @@ static void process_global_event(int ge_id) {
 #endif
 				}
 
-			if (!n) ge->state[0] = 255; /* double kill or something? ew. */
-			else if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
+			if (!n) {
+				ge->state[0] = 255; /* double kill or something? ew. */
+				s_printf("%s EVENT_STOP (no players (1)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
+			} else if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
 				ge->state[0] = 6;
 				ge->extra[3] = j;
 			}
@@ -9026,7 +9039,10 @@ static void process_global_event(int ge_id) {
 					j = i;
 				}
 			}
-			if (!n) ge->state[0] = 255; /* double kill or something? ew. */
+			if (!n) {
+				ge->state[0] = 255; /* double kill or something? ew. */
+				s_printf("%s EVENT_STOP (no players (2)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
+			}
 			if (n == 1) { /* We have a winner! (not a total_winner but anyways..) */
 				ge->state[0] = 6;
 				ge->extra[3] = j;
@@ -9051,11 +9067,13 @@ static void process_global_event(int ge_id) {
 			j = ge->extra[3];
 			if (j > NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
 				ge->state[0] = 255; /* no winner, d'oh */
+				s_printf("%s EVENT_STOP (winner no longer existant): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 				break;
 			}
 
 			p_ptr = Players[j];
 			if (!in_sector000(&p_ptr->wpos)) { /* not ok.. */
+				s_printf("%s EVENT_STOP (winner no longer in sector): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 				ge->state[0] = 255; /* no winner, d'oh */
 				break;
 			}
@@ -9096,7 +9114,10 @@ static void process_global_event(int ge_id) {
 			ge->state[1] = elapsed;
 			break;
 		case 7: /* chill out for a few seconds (or get killed -- but now there aren't monster spawns anymore) */
-			if (elapsed - ge->state[1] >= 5) ge->state[0] = 255;
+			if (elapsed - ge->state[1] >= 5) {
+				ge->state[0] = 255;
+				s_printf("%s EVENT_STOP (success): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
+			}
 			break;
 		case 255: /* clean-up */
 			if (!ge->cleanup) {
@@ -9541,6 +9562,7 @@ static void process_global_event(int ge_id) {
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
+				s_printf("%s EVENT_STOP (no players (3)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 				break;
 			}
 
@@ -9566,6 +9588,7 @@ static void process_global_event(int ge_id) {
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
+				s_printf("%s EVENT_STOP (no players (4)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 				break;
 			}
 
@@ -9660,12 +9683,12 @@ static void process_global_event(int ge_id) {
 			/* load module(s) and teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
-				// s_printf("DM_MODULES: j = %d, ge->participant[j] = %d, NumPlayers = %d.\n",j,ge->participant[j],NumPlayers);
+				// s_printf("DM_MODULES: j = %d, ge->participant[j] = %d, NumPlayers = %d.\n", j, ge->participant[j], NumPlayers);
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->id != ge->participant[j]) continue;
 					// Kurzel - debug - Elmoth false starts
-					s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n",Players[i]->name,ge->participant[j],Players[i]->id);
-					// s_printf("DM_MODULES: i = %d.\n",i);
+					s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n", Players[i]->name, ge->participant[j], Players[i]->id);
+					// s_printf("DM_MODULES: i = %d.\n", i);
 					if (ge->noghost) Players[i]->global_event_temp |= PEVF_NOGHOST_00;
 					exec_lua(0, format("return adventure_start(%d, \"%s\")", i, ge->title));
 				}
@@ -9681,10 +9704,16 @@ static void process_global_event(int ge_id) {
 					if (in_module(&p_ptr->wpos) && (p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
 					break;
 				}
-				if (i > NumPlayers) ge->participant[j] = 0; // not online? unsign. - Kurzel
+				if (i == NumPlayers + 1) {
+					pname = lookup_player_name(ge->participant[j]);
+					s_printf("%s EVENT_UNPARTICIPATE (offline,1): '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), pname ? pname : "(NULL)", ge->participant[j], ge_id, ge->title, ge->getype, j);
+					ge->participant[j] = 0; // not online? unsign. - Kurzel
+				}
 			}
-			if (!n) ge->state[0] = 255;
-			else ge->state[0] = 1;
+			if (!n) {
+				ge->state[0] = 255;
+				s_printf("%s EVENT_STOP (no players (5)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
+			} else ge->state[0] = 1;
 			// s_printf("DM_MODULES: wpos (%d,%d,%d) contains %d players (state = %d,%d).\n",wpos.wx,wpos.wy,wpos.wz,n,ge->state[0],ge->state[1]);
 
 			break;
@@ -9696,7 +9725,10 @@ static void process_global_event(int ge_id) {
 				if (!ge->participant[j]) continue;
 				n++; // Count participants even if offline / logged out! Dead players would be 0'd.
 			}
-			if (!n) ge->state[0] = 255;
+			if (!n) {
+				ge->state[0] = 255;
+				s_printf("%s EVENT_STOP (no players (6)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
+			}
 			// s_printf("DM_MODULES: %d participants (state = %d,%d).\n",n,ge->state[0],ge->state[1]);
 
 			break;
@@ -9717,6 +9749,8 @@ static void process_global_event(int ge_id) {
 						recall_player(i, "");
 					}
 				}
+				pname = lookup_player_name(ge->participant[j]);
+				s_printf("%s EVENT_UNPARTICIPATE (success): '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), pname ? pname : "(NULL)", ge->participant[j], ge_id, ge->title, ge->getype, j);
 				ge->participant[j] = 0;
 			}
 

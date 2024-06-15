@@ -3353,6 +3353,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "\374\377s>>You have signed off from %s!<<", ge->title);
 					msg_broadcast_format(Ind, "\374\377s%s signed off from %s.", p_ptr->name, ge->title);
 					ge->participant[i] = 0;
+					s_printf("%s EVENT_SIGNOFF: '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), p_ptr->name, Ind, k0, ge->title, ge->getype, i);
 					p_ptr->global_event_type[k0] = GE_NONE;
 
 #ifdef DM_MODULES
@@ -3364,11 +3365,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							for (i = 1; i <= NumPlayers; i++) {
 								if (Players[i]->id != ge->participant[j]) continue;
 								n++;
+								break;
 							}
-							
+							if (i == NumPlayers + 1) {
+								cptr pname = lookup_player_name(ge->participant[j]);
+
+								s_printf("EVENT_UNPARTICIPATE (offline,0): '%s' (%d) -> [%d]\n", pname ? pname : "(NULL)", ge->participant[j], j);
+								ge->participant[j] = 0; // remove offline participants
+							}
 						}
 						if (!n) { // if zero participants, reset
-							for (j = 0; j < MAX_GE_PARTICIPANTS; j++) ge->participant[j] = 0; // remove offline participants
 							ge->state[1] = 1;
 							announce_global_event(k0);
 						}

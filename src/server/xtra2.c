@@ -8657,7 +8657,11 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		ge = &global_event[i];
 		if (!ge->getype) continue;
 		for (k = 0; k < MAX_GE_PARTICIPANTS; k++) {
-			if (ge->participant[k] == p_ptr->id) ge->participant[k] = 0;
+			if (ge->participant[k] == p_ptr->id) {
+				ge->participant[k] = 0;
+				s_printf("%s EVENT_UNPARTICIPATE (0): '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), p_ptr->name, Ind, i, ge->title, ge->getype, k);
+				p_ptr->global_event_type[i] = 0;
+			}
 		}
 	}
 
