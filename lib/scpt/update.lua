@@ -40,6 +40,7 @@ __update_table = {
 	"scpt/classes.lua",
 	"scpt/races.lua",
 	"scpt/traits.lua",
+	"scpt/attributes.lua",
 	"scpt/bpr.lua",
 	"scpt/mimicry.lua",
 	"scpt/runecraft.lua",

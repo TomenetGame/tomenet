@@ -1384,6 +1384,7 @@ static bool choose_stat_order(void) {
 			if (c == '2' || c == 'j') j = (j + 1) % 6;
 			if (c == '8' || c == 'k') j = (j + 5) % 6;
 			if (c == '2' || c == '8' || c == 'j' || c == 'k') {
+#if 1
 				switch (j) {
 				case 0:	c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
 					c_put_str(TERM_YELLOW, "   How quickly you can strike with weapons.     ", DIZ_ROW + 1, 30);
@@ -1446,6 +1447,15 @@ static bool choose_stat_order(void) {
 					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 8, 30);
 					break;
 				}
+#else
+				memset(attribute_diz, 0, sizeof(char) * 6 * 8 * 61);
+				for (j = 0; j < 8; j++) {
+					for (i = 0; i < 6; i++) {
+						sprintf(out_val, "return get_attribute_diz(\"%s\", %d)", attribute_info[i].title, j);
+						strcpy(attribute_diz[i][j], string_exec_lua(0, out_val));
+					}
+				}
+#endif
 			}
 			if (c == '\e' || c == '\r') {
 				if (k > 0) {
