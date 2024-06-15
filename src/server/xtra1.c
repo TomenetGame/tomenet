@@ -8706,7 +8706,7 @@ static void process_global_event(int ge_id) {
 							if (Players[i]->id != ge->participant[j]) continue;
 #ifdef DM_MODULES
 							// Kurzel - debug - Elmoth false starts
-							s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n", Players[i]->name, ge->participant[j], Players[i]->id);
+							s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[%d] = %d, Players[i]->id = %d.\n", Players[i]->name, j, ge->participant[j], Players[i]->id);
 #endif
 							Players[i]->global_event_participated[ge->getype]++;
 							/* play warning sfx in case they were afk waiting for it to begin? ;) */
@@ -8715,6 +8715,8 @@ static void process_global_event(int ge_id) {
 #endif
 							/* 'alerted'? */
 							disturb(i, 1, 0);
+
+							break;
 						}
 					}
 				}
@@ -8872,6 +8874,11 @@ static void process_global_event(int ge_id) {
 					}
 #endif
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0-dungeon! */
+					break;
+				}
+				if (i == NumPlayers + 1) {
+					pname = lookup_player_name(ge->participant[j]);
+					s_printf("EVENT_MISSING_PLAYER: '%s' (%d) -> #%d '%s'(%d) [%d]\n", pname ? pname : "(NULL)", ge->participant[j], ge_id, ge->title, ge->getype, j);
 				}
 			}
 
@@ -9687,11 +9694,13 @@ static void process_global_event(int ge_id) {
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->id != ge->participant[j]) continue;
 					// Kurzel - debug - Elmoth false starts
-					s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[j] = %d, Players[i]->id = %d.\n", Players[i]->name, ge->participant[j], Players[i]->id);
+					s_printf("DM_MODULES: Players[%d]->name = %s, ge->participant[%d] = %d, Players[i]->id = %d.\n", i, Players[i]->name, j, ge->participant[j], Players[i]->id);
 					// s_printf("DM_MODULES: i = %d.\n", i);
 					if (ge->noghost) Players[i]->global_event_temp |= PEVF_NOGHOST_00;
 					exec_lua(0, format("return adventure_start(%d, \"%s\")", i, ge->title));
+					break;
 				}
+				//note: offline participants are handled in next loop below
 			}
 
 			/* Immediately check for participation, remove offline participants */
@@ -9748,6 +9757,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->global_event_temp = 0x0; /* clear all flags */
 						recall_player(i, "");
 					}
+					break;
 				}
 				pname = lookup_player_name(ge->participant[j]);
 				s_printf("%s EVENT_UNPARTICIPATE (success): '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), pname ? pname : "(NULL)", ge->participant[j], ge_id, ge->title, ge->getype, j);

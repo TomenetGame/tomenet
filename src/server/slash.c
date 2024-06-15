@@ -3277,15 +3277,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 					if (!global_event[k0].participant[j]) continue;
 					for (i = 1; i <= NumPlayers; i++) {
-						if (global_event[k0].participant[j] == Players[i]->id) {
+						if (global_event[k0].participant[j] != Players[i]->id) continue;
 #ifdef DM_MODULES
-							// Kurzel - debug - Elmoth false starts
-							s_printf("DM_MODULES: Players[i]->name = %s, global_event[k0].participant[j] = %d, Players[i]->id = %d.\n",Players[i]->name,global_event[k0].participant[j],Players[i]->id);
+						// Kurzel - debug - Elmoth false starts
+						s_printf("DM_MODULES: Players[i]->name = %s, global_event[k0].participant[j] = %d, Players[i]->id = %d.\n",Players[i]->name,global_event[k0].participant[j],Players[i]->id);
 #endif
-							if (found) strcat(ppl, ", ");
-							strcat(ppl, Players[i]->name);
-							found = TRUE;
-						}
+						if (found) strcat(ppl, ", ");
+						strcat(ppl, Players[i]->name);
+						found = TRUE;
+
+						break;
 					}
 				}
 				if (found) msg_format(Ind, "%s", ppl);
@@ -3362,12 +3363,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						n = 0;
 						for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 							if (!ge->participant[j]) continue;
-							for (i = 1; i <= NumPlayers; i++) {
-								if (Players[i]->id != ge->participant[j]) continue;
+							for (k = 1; k <= NumPlayers; k++) {
+								if (Players[k]->id != ge->participant[j]) continue;
 								n++;
 								break;
 							}
-							if (i == NumPlayers + 1) {
+							if (k == NumPlayers + 1) {
 								cptr pname = lookup_player_name(ge->participant[j]);
 
 								s_printf("EVENT_UNPARTICIPATE (offline,0): '%s' (%d) -> [%d]\n", pname ? pname : "(NULL)", ge->participant[j], j);
