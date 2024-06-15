@@ -8672,15 +8672,16 @@ static void process_global_event(int ge_id) {
 							if (ge->participant[i] != j) continue;
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 							s_printf("EVENT_UNPARTICIPATE (insufficient,0): '%s' (%d) -> #%d '%s'(%d) [%d]\n", Players[j]->name, j, ge_id, ge->title, ge->getype, i);
-							ge->participant[j] = 0; // wipe participant list - Kurzel
+							ge->participant[i] = 0; // wipe participant list - Kurzel
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+							break;
 						}
 						if (j == NumPlayers + 1) {
 							pname = lookup_player_name(ge->participant[i]);
 							s_printf("EVENT_UNPARTICIPATE (insufficient,1): '%s' (%d) -> #%d '%s'(%d) [%d]\n", pname ? pname : "(NULL)", ge->participant[i], ge_id, ge->title, ge->getype, i);
-							ge->participant[j] = 0; // wipe offline participants too
+							ge->participant[i] = 0; // wipe offline participants too
 						}
 					}
 #ifdef DM_MODULES
@@ -9270,9 +9271,8 @@ static void process_global_event(int ge_id) {
 						sound(i, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 					}
-				if (getcave(&wpos)) { /* check that the level is allocated - mikaelh */
+				if (getcave(&wpos)) /* check that the level is allocated - mikaelh */
 					dealloc_dungeon_level(&wpos);
-				}
 #endif /* so if if0'ed, we just have to wait for normal unstaticing routine to take care of stale level :/ */
 			}
 			ge->getype = GE_NONE; /* end of event */
