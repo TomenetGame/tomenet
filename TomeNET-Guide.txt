@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. March 2024 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 16. June 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23504,6 +23504,8 @@ by an opponent! The special rules that apply are as follows:
  more and more. over time, it returns to normal. entering a town will reset it
  too.
 -temporary speed buffs (potions, mimic powers, spells) have no effect.
+-HP and melee damage gain from Mimicry transformations is reduced.
+-Any speed gain is reduced, except for speed gain from Sneakiness skill.
 -teleportation will be suppressed during combat, phase door is allowed though.
 -while in a fight with another pvp-char, you cannot teleport away easily
  (takes about 30 seconds to wear off, or just enter a town to reset).
