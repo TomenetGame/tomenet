@@ -3211,10 +3211,28 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 					if ((d_ptr = wild->tower) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
 						msg_print(Ind, "\377sYou learn that there is a tower at or next to that location, called:");
 						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
+						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
+ #if 0 /* learn about dungeon existance as character? */
+							d_ptr->known |= 0x1;
+							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
+							msg_format(Ind, "\377yYou discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far!", get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+ #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
+							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
+ #endif
+						}
 					}
 					if ((d_ptr = wild->dungeon) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
 						msg_print(Ind, "\377sYou learn that there is a dungeon at or next to that location, called:");
 						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
+ #if 0 /* learn about dungeon existance as character? */
+							d_ptr->known |= 0x1;
+							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
+							msg_format(Ind, "\377yYou discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far!", get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+ #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
+							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
+ #endif
+						}
 					}
 				}
 			}
