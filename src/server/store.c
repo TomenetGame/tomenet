@@ -7063,8 +7063,9 @@ void view_exploration_history(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff, "\377U  ~ List of all known dungeons which adventurers have discovered in the past ~\n\n");
-	fprintf(fff, "\377U     (To discover a dungeon, somebody has to locate its entrance staircase)   \n\n");
+	fprintf(fff, "\377U  ~ List of all known dungeons which adventurers have discovered in the past ~  \n");
+	fprintf(fff, "\377U      To discover a dungeon, somebody has to spot its entrance staircase.       \n");
+	fprintf(fff, "\377U        Dungeon bosses you have slain are listed in light umber colour.         \n\n");
 
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
@@ -7127,7 +7128,7 @@ void view_exploration_history(int Ind) {
 
 		/* Prefix colour code to the boss name if we already killed the boss aka conquered the dungeon */
 		if (d_info[d_ptr->type].final_guardian && Players[Ind]->r_killed[d_info[d_ptr->type].final_guardian] == 1) {
-			strcpy(tmp_name, "\377s");
+			strcpy(tmp_name, "\377U");
 			strcat(tmp_name, bn);
 			strcpy(bn, tmp_name);
 		}
