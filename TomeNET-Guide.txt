@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 16. June 2024 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 17. June 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14685,8 +14685,18 @@ magic spell level there is still a very slim chance for a failure to occur.
 While a failed recharge may drain rods even further, wands and staves may
 either just get their charges depletes or they may even blow up completely,
 depending on your (bad) luck.
-So only recharge those when they are already fully depleted to minimize that
-risk.
+If a wand or staff still has charges when you try to recharge it, the risk of
+failure increases for every charge it still has.
+So if you want to minimize failure chance, only recharge thosse when they are
+already fully depleted.
+
+You can inscribe wands and staves "!D", a quality of life feature which will
+automatically deplete the device for you first when you try to recharge it,
+so you don't have to activate it manually to get rid of any remaining charges.
+The (small) drawback is that you cannot use this inscription if you actually
+aim at overcharging a device, ie recharge it further while it is not yet
+depleted, to gain even more total amount of charges on it - a very risky
+process, obviously.
 
 Means of recharging:
 -Scrolls            (60 power)
@@ -14696,7 +14706,8 @@ Means of recharging:
 
 The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.
-Some lesser means of recharging might not be powerful enough to recharge rods.
+Some lesser means of recharging might not be powerful enough to recharge rods,
+these require over 60 power, so for example scrolls won't work.
 
 Staves and wands 'of plenty' will receive about twice as many charges from
 recharging (with the risk of breaking remaining unchanged) so look out for
@@ -14707,7 +14718,11 @@ fail is actually the same as if you recharged just a single item.
 You will get the amount of charges replenished to every single magic device in
 the stack, at a slight rate of diminishing returns.
 In other words: Recharging stacks is okay, it can save you a lot of scrolls of
-recharging, just don't go too crazy with the stacks size.
+recharging, just don't go too crazy with the stacks size to keep diminishing
+returns low and if it ever fails you might lose a lot of wands/staves at once.
+
+Note that inside the Ironman Deep Dive Challenge (IDDC) it is not possible to
+recharge Staves of Summoning or Wands of Polymorph.
 
 
 
