@@ -7305,7 +7305,7 @@ F:EASY_KNOW
 D:Read this to reveal a random world map sector and notify of dungeons there.
 # Compare cmd6.c:
 D:To add a dungeon to the list of discovered ones, however, one must
-D:travel there in person and spot the entrance with his own eyes.
+D:travel there in person and spot the entrance with one's own eyes.
 
 # from RFEs
 N:915:& Scourge~
