@@ -1007,6 +1007,7 @@ void sound(int Ind, int val) {
    'type' is used client-side, for efficiency options concerning near-simultaneous sounds
    'nearby' means if other players nearby would be able to also hear the sound. - C. Blue */
 void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
+	bool dm = Players[Ind]->admin_dm;
 #if 0 /* non-optimized way (causes LUA errors if sound() is called in fire_ball() which is in turn called from LUA - C. Blue */
 	int val, val2;
 
@@ -1069,6 +1070,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
+			if (dm && !player_sees_dm(i)) continue;
 			if (Ind == i) continue;
 
 			/* backward compatibility */
@@ -1099,6 +1101,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int vol) {
 	player_type *p_ptr = Players[Ind];
 	int val = -1, val2 = -1, i, d;
+	bool dm = p_ptr->admin_dm;
 
 	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
 		if (!audio_sfx[i][0]) break;
@@ -1134,6 +1137,7 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
+			if (dm && !player_sees_dm(i)) continue;
 			if (Ind == i) continue;
 
 			d = distance(p_ptr->py, p_ptr->px, Players[i]->py, Players[i]->px);
