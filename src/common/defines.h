@@ -1553,6 +1553,7 @@
 #define MIRROR_REDUCE_DAM_TAKEN_RANGED 20
 #define MIRROR_REDUCE_DAM_TAKEN_SPELL 20
 #define MIRROR_REDUCE_DAM_TAKEN_AURA 20
+#define MIRROR_REDUCE_DAM_TAKEN_RUNECRAFT 12	/* experimental, needs more testing */
 
 /* Reduced % of damage dealt by the mirror */
 #define MIRROR_REDUCE_DAM_DEALT_MELEE 20
@@ -4724,6 +4725,8 @@
 #define PROJECT_TRAP	0x00200000U	/* Caused by a set-up incident, added for blast charges (ENABLE_DEMOLITIONIST) to allow larger GF_DETONATION radius */
 #define PROJECT_BOUN	0x00400000U	/* Attack has bounced at least once */
 #define PROJECT_MKIL	0x00800000U	/* Specialty: Cast by monsters, yet also affect other monsters! Aka friendly fire for monsters. Added to provide anti-cheeze for badass disintegration-summoners. */
+
+#define PROJECT_XDAM	0x01000000U	/* Designate extremly high damage output, for special handling in very specific situations */
 
 /* ToME expansions */
 #if 0	/* soon */

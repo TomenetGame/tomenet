@@ -1812,6 +1812,7 @@ extern bool cast_lightning(worldpos *wpos, int x, int y);
 extern bool cast_falling_star(worldpos *wpos, int x, int y, int dur);
 extern bool thunderstorm_visual(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
+extern bool fire_bolt_x(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);

@@ -9059,7 +9059,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 	}
 
-	if (m_ptr->r_idx == RI_MIRROR) dam = (dam * MIRROR_REDUCE_DAM_TAKEN_SPELL + 99) / 100;
+	if (m_ptr->r_idx == RI_MIRROR) {
+		/* Runecraft shots are over the top powerful that runemasters require an extra damage reduction for this fight. */
+		if (flg & PROJECT_XDAM) dam = (dam * MIRROR_REDUCE_DAM_TAKEN_RUNECRAFT + 99) / 100;
+		/* Generic spell damage reduction */
+		else dam = (dam * MIRROR_REDUCE_DAM_TAKEN_SPELL + 99) / 100;
+	}
 
 	if (no_dam) {
 		dam = 0;

@@ -7497,6 +7497,33 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 
 	return(project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
+/* Especially added for runecraft shots, just to distinguish the extreme damage output, via flag, for certain special situations */
+bool fire_bolt_x(int Ind, int typ, int dir, int dam, char *attacker) {
+	char pattacker[80];
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG | PROJECT_XDAM;
+	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+
+#ifdef USE_SOUND_2010
+	switch (typ) {
+	case GF_SHOT: //hmm, magic or combat sfx for these mimic powers?..
+		if (Players[Ind]->sfx_combat) sound(Ind, "fire_shot", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	case GF_ARROW:
+		if (Players[Ind]->sfx_combat) sound(Ind, "fire_arrow", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	case GF_BOLT:
+		if (Players[Ind]->sfx_combat) sound(Ind, "fire_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	case GF_BOULDER:
+		if (Players[Ind]->sfx_combat) sound(Ind, "throw_boulder", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	default:
+		if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+	}
+#endif
+
+	return(project_hook(Ind, typ, dir, dam, flg, pattacker));
+}
 
 /*
  * Cast a beam spell
@@ -7515,7 +7542,9 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 }
 
 /*
- * Cast a shot spell
+ * Cast a shot spell -- currently this is only used by runecraft, and constitutes over the top damage output.
+ *                      To convey this to specific special situations, we utilize fire_bolt_x()
+ *                      which differs from normal fire_bolt() simply in applying the PROJECT_XDAM notifier flag,
  * Stop if we hit a monster, as a "bolt"
  * Fire N bolts at up to N clustered monsters, approximate "cone" - Kurzel
  */
@@ -7597,7 +7626,7 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 					if (++d > g) break;
 					else continue;
 				}
-				if (fire_bolt(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
+				if (fire_bolt_x(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
 			}
 			p_ptr->target_who = tw;
 			p_ptr->target_col = gx[0];
@@ -7609,7 +7638,7 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 		}
 	} else {
 		for (i = 0; i < num; i++) {
-			if (fire_bolt(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
+			if (fire_bolt_x(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
 		}
 	}
 
