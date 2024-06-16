@@ -7302,7 +7302,10 @@ A:15/2:30/1
 #D:Might sometimes also carry an inscription revealing a dungeon location.
 #NEW_WILDERNESS_MAP_SCROLLS:
 F:EASY_KNOW
-D:Read this to reveal a random world map sector and any dungeons there.
+D:Read this to reveal a random world map sector and notify of dungeons there.
+# Compare cmd6.c:
+D:To add a dungeon to the list of discovered ones, however, one must
+D:travel there in person and spot the entrance with his own eyes.
 
 # from RFEs
 N:915:& Scourge~
