@@ -6041,6 +6041,9 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->sh_cold_tim) (void)set_sh_cold_tim(Ind, p_ptr->sh_cold_tim - minus_magic);
 	if (p_ptr->sh_elec_tim) (void)set_sh_elec_tim(Ind, p_ptr->sh_elec_tim - minus_magic);
 
+	if (p_ptr->tim_lcage) set_tim_lcage(Ind, p_ptr->tim_lcage - 1);
+
+
 	/* Still possible effects from another player's support spell on this player? */
 	if (p_ptr->support_timer) {
 		p_ptr->support_timer--;

@@ -1167,6 +1167,9 @@ static void wr_extra(int Ind) {
 	/* Runecraft buff */
 	wr_u16b(p_ptr->tim_reflect);
 
+	wr_byte(p_ptr->tim_lcage);
+	for (i = 0; i < 8; i++) wr_byte(0); //future use
+
 	/* for shuffling/dealing a deck of cards */
 	wr_u16b(p_ptr->cards_diamonds);
 	wr_u16b(p_ptr->cards_hearts);

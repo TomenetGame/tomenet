@@ -2267,6 +2267,8 @@ extern bool set_kinetic_shield(int Ind, int v);
 extern bool set_savingthrow(int Ind, int v);
 extern bool set_spirit_shield(int Ind, int power, int v);
 extern bool set_food(int Ind, int v);
+extern bool set_tim_lcage(int Ind, int v);
+
 extern int get_player(int Ind, object_type *o_ptr);
 extern int get_monster(int Ind, object_type *o_ptr);
 extern void blood_bond(int Ind, object_type * o_ptr);

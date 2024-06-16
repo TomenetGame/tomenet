@@ -757,7 +757,17 @@ static void prt_indicators(int Ind) {
 	if (p_ptr->tim_regen) indicators |= IND_REGEN;
 	if (p_ptr->dispersion) indicators |= IND_DISPERSION;
 	if (p_ptr->mcharming) indicators |= IND_CHARM;
-	if (p_ptr->tim_reflect || p_ptr->shield) indicators |= IND_SHIELD;
+
+	if (p_ptr->tim_reflect) indicators |= IND_SHIELD1;
+	if (p_ptr->tim_lcage) indicators |= IND_SHIELD2;
+	if (p_ptr->shield) switch(p_ptr->shield_opt) {
+		case SHIELD_COUNTER: indicators |= IND_SHIELD3; break;
+		case SHIELD_FIRE: indicators |= IND_SHIELD4; break;
+		case SHIELD_ICE: indicators |= IND_SHIELD5; break;
+		case SHIELD_PLASMA: indicators |= IND_SHIELD6; break;
+		default: indicators |= IND_SHIELD7; break;
+	}
+
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, indicators);
 }
 
@@ -4863,6 +4873,12 @@ void calc_boni(int Ind) {
 	if (p_ptr->sh_fire_tim) p_ptr->sh_fire = TRUE;
 	if (p_ptr->sh_cold_tim) p_ptr->sh_cold = TRUE;
 	if (p_ptr->sh_elec_tim) p_ptr->sh_elec = TRUE;
+
+	if (p_ptr->tim_lcage) {
+		p_ptr->slay |= TR1_BRAND_ELEC; csheet_boni[14].cb[10] |= CB11_BELEC;
+		p_ptr->sh_elec = TRUE; csheet_boni[14].cb[10] |= CB11_AELEC;
+		p_ptr->immune_elec = TRUE; csheet_boni[14].cb[1] |= CB2_IELEC;
+	}
 
 	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
 	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */

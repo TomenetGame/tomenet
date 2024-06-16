@@ -317,6 +317,7 @@ extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
 extern bool do_xtra_stats(int Ind, int s, int p, int v, bool demonic);
 extern bool do_focus(int Ind, int p, int v);
+extern bool set_tim_lcage(int Ind, int v);
 
 #ifdef ENABLE_MAIA
 extern void divine_vengeance(int Ind, int power);

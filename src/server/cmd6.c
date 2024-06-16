@@ -8000,7 +8000,8 @@ bool unmagic(int Ind) {
 		do_divine_xtra_res(Ind, 0) +
 		do_divine_hp(Ind, 0, 0) +
 		do_divine_crit(Ind, 0, 0) +
-		set_shroud(Ind, 0, 0)
+		set_shroud(Ind, 0, 0) +
+		set_tim_lcage(Ind, 0)
 	) ident = TRUE;
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);

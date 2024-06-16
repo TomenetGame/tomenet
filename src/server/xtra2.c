@@ -655,6 +655,7 @@ bool set_tim_reflect(int Ind, int v) {
 			/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
 			   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
 			if (p_ptr->shield) set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
+			if (p_ptr->tim_lcage) set_tim_lcage(Ind, 0);
 
 			msg_print(Ind, "Moisture starts glittering and solidifying in the air!");
 			notice = TRUE;
@@ -671,6 +672,57 @@ bool set_tim_reflect(int Ind, int v) {
 
 	/* Use the value */
 	p_ptr->tim_reflect = v;
+
+	/* Nothing to notice */
+	if (!notice) return(FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return(TRUE);
+}
+
+/* Rerouting cage of lightning (Arcane Lore addition?) */
+bool set_tim_lcage(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_lcage) {
+			/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
+			   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
+			if (p_ptr->shield) set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
+			if (p_ptr->tim_reflect) set_tim_reflect(Ind, 0);
+
+			msg_print(Ind, "Lightning sparks and bends around you, forming a cage!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_lcage) {
+			msg_print(Ind, "The lightning around you dissipates.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_lcage = v;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);
@@ -2286,6 +2338,7 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 			/* Mutually exclusive - we're not an elemental backlash reactive shield spell,
 			   but our shield is still using the same 'area' as these and works reactively in a very similar way! */
 			if (p_ptr->tim_reflect) set_tim_reflect(Ind, 0);
+			if (p_ptr->tim_lcage) set_tim_lcage(Ind, 0);
 
 			switch (o) {
 			case SHIELD_COUNTER:

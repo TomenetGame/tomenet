@@ -4028,6 +4028,7 @@ struct player_type {
 	u16b FTK_energy;
 
 	u16b tim_reflect;
+	byte tim_lcage;
 
 	struct worldpos wpos_old;	/* used for dungeon-visit-boni, nether-realm cross-mode and ironman deep dive challenge stuff */
 

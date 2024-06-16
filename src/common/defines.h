@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	14
+#define SF_VERSION_PATCH	15
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -4904,7 +4904,13 @@
 #define IND_REGEN	0x00000100U /* Active timed hp regeneration boost */
 #define IND_DISPERSION	0x00000200U /* Active dispersion (not timed, switchable!) */
 #define IND_CHARM	0x00000400U /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
-#define IND_SHIELD	0x00000800U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD1	0x00000800U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD2	0x00001000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD3	0x00002000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD4	0x00004000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD5	0x00008000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD6	0x00010000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD7	0x00020000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

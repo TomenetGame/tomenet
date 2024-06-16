@@ -1147,7 +1147,8 @@ void prt_indicators(u32b indicators) {
 	prt_indicator_regen((indicators & IND_REGEN) != 0);
 	prt_indicator_dispersion((indicators & IND_DISPERSION) != 0);
 	prt_indicator_charm((indicators & IND_CHARM) != 0);
-	prt_indicator_shield((indicators & IND_SHIELD) != 0);
+	if ((indicators & (IND_SHIELD1 | IND_SHIELD2 | IND_SHIELD3 | IND_SHIELD4 | IND_SHIELD5 | IND_SHIELD6 | IND_SHIELD7)) != 0) prt_indicator_shield(indicators);
+	else prt_indicator_shield(0);
 }
 
 void prt_indicator_res_fire(bool is_active) {
@@ -1326,8 +1327,9 @@ void prt_indicator_charm(bool is_active) {
 	Term_gotoxy(x, y);
 }
 
-void prt_indicator_shield(bool is_active) {
+void prt_indicator_shield(u32b flags) {
 	int x, y;
+	byte a;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
 	if (screen_hgt != MAX_SCREEN_HGT) return;
@@ -1335,8 +1337,20 @@ void prt_indicator_shield(bool is_active) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (is_active) c_put_str(TERM_L_UMBER, "Shl", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
-	else c_put_str(TERM_WHITE, "   ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+	if (!flags) c_put_str(TERM_WHITE, "   ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+	else {
+		/* Colour based on shield type? */
+		if (flags & IND_SHIELD1) /*p_ptr->tim_reflect*/ a = TERM_L_UMBER;
+		else if (flags & IND_SHIELD2) /*p_ptr->tim_lcage*/ a = TERM_L_BLUE;
+		else { // p_ptr->shield
+			if (flags & IND_SHIELD3) /*SHIELD_COUNTER*/ a = TERM_UMBER;
+			else if (flags & IND_SHIELD4) /*SHIELD_FIRE*/ a = TERM_RED;
+			else if (flags & IND_SHIELD5) /*SHIELD_ICE*/ a = TERM_WHITE;
+			else if (flags & IND_SHIELD6) /*SHIELD_PLASMA*/ a = TERM_L_RED;
+			else /*IND_SHIELD7*/ a = TERM_VIOLET; //'mystic shield'
+		}
+		 c_put_str(a, "Shl", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

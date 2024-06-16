@@ -2602,6 +2602,11 @@ if (p_ptr->updated_savegame == 0) {
 	if (!older_than(4, 5, 3)) rd_u16b(&p_ptr->tim_reflect);
 	else p_ptr->tim_reflect = 0;
 
+	if (!older_than(4, 9, 15)) {
+		rd_byte(&p_ptr->tim_lcage);
+		strip_bytes(8); //future use
+	} else p_ptr->tim_lcage = 0;
+
 	if (!older_than(4, 5, 28)) {
 		rd_u16b(&p_ptr->cards_diamonds);
 		rd_u16b(&p_ptr->cards_hearts);
