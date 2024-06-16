@@ -7057,7 +7057,7 @@ void view_exploration_history(int Ind) {
 #endif
 	byte known;
 	struct dungeon_type *d_ptr;
-	char boss_name[MNAME_LEN], *bn = boss_name, *bnc, *bn1, *bn2, *bn3;
+	char boss_name[MNAME_LEN + 2], *bn = boss_name, *bnc, *bn1, *bn2, *bn3, tmp_name[MNAME_LEN + 2]; //+2 for prefixed colour code
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -7123,6 +7123,13 @@ void view_exploration_history(int Ind) {
 				/* Hack - it seems otherwise the DF is never fully known. (This is the flag  to display the 'boss' state.) */
 				known |= 0x8;
 			} else strcpy(bn, "- no guardian -");
+		}
+
+		/* Prefix colour code to the boss name if we already killed the boss aka conquered the dungeon */
+		if (d_info[d_ptr->type].final_guardian && Players[Ind]->r_killed[d_info[d_ptr->type].final_guardian] == 1) {
+			strcpy(tmp_name, "\377s");
+			strcat(tmp_name, bn);
+			strcpy(bn, tmp_name);
 		}
 
 		fprintf(fff, " \377u%-31s  (%2d,%2d) %s%s  %s\n",
