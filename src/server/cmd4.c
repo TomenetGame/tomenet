@@ -4200,6 +4200,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 			else
 				msg_format(Ind, "\374\377I*** \377RServer termination in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
 			break;
+		case 2041: msg_print(Ind, "\377y* UltraLow-server-shutdown command pending *"); break;
 		}
 	}
 
