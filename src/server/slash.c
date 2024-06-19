@@ -3481,10 +3481,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* actually create temporary Arena tower at reserved wilderness sector 0,0! */
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 #ifdef DM_MODULES
-			verify_dungeon(&apos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, n floors for modules - Kurzel
+			verify_dungeon(&apos, 1, 1 + DM_MODULES_DUNGEON_SIZE, // 1 pvp arena, n floors for modules - Kurzel
 #else
-			verify_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
+			verify_dungeon(&apos, 1, 1,
 #endif
+			    DF1_UNLISTED | DF1_NO_RECALL | DF1_SMALLEST,
 			    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 
 			apos.wz = 1;

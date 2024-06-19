@@ -2529,7 +2529,7 @@ static void quest_add_dungeon(int q_idx, int stage) {
 	case 1: flags1 |= DF1_FORCE_DOWN; break;
 	case 2: flags2 |= DF2_IRON; break;
 	}
-	add_dungeon(&q_stage->dun_wpos, q_stage->dun_base, q_stage->dun_max, flags1, flags2 | DF2_RANDOM, flags3, q_stage->dun_tower, 0, q_stage->dun_theme, q_idx + 1, stage);
+	add_dungeon(&q_stage->dun_wpos, q_stage->dun_base, q_stage->dun_max, flags1 | DF1_UNLISTED, flags2 | DF2_RANDOM, flags3, q_stage->dun_tower, 0, q_stage->dun_theme, q_idx + 1, stage);
 
 	/* place staircase */
 	do {

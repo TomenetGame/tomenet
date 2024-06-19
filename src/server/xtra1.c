@@ -8818,12 +8818,12 @@ static void process_global_event(int ge_id) {
 				/* add staircase downwards into the dungeon? */
 				if (!ge->extra[5]) {
 					s_printf("EVENT_LAYOUT: Adding dungeon (no entry).\n");
-					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+					add_dungeon(&wpos, 1, 50, DF1_UNLISTED | DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 					    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, 0, 0, 0);
 				} else {
 					s_printf("EVENT_LAYOUT: Adding dungeon (entry ok).\n");
-					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+					add_dungeon(&wpos, 1, 50, DF1_UNLISTED | DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_RANDOM,
 					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, 0, 0, 0);
 
@@ -9690,7 +9690,8 @@ static void process_global_event(int ge_id) {
 			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
 
 			// slash.c PvP ARENA for reference... sharing tower for now - Kurzel
-			verify_dungeon(&wpos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST,
+			verify_dungeon(&wpos, 1, 1 + DM_MODULES_DUNGEON_SIZE,
+				DF1_UNLISTED | DF1_NO_RECALL | DF1_SMALLEST,
 				DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM,
 				DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 
