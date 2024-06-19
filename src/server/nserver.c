@@ -212,7 +212,7 @@ char *showdate(void) {
 
 	time(&now);
 	tmp = localtime(&now);
-	sprintf(buf, "%02d-%02d", tmp->tm_mon + 1, tmp->tm_mday);
+	sprintf(buf, "%04d-%02d-%02d", tmp->tm_year + 1900, tmp->tm_mon + 1, tmp->tm_mday);
 	return(buf);
 }
 
