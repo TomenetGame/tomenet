@@ -7839,11 +7839,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						type = d_ptr->type;
 
 						if (type) {
-							d_ptr->flags1 = d_info[type].flags1;
-							d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
-							d_ptr->flags3 = d_info[type].flags3;
-							d_ptr->baselevel = d_info[type].mindepth;
-							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+							if (d_ptr->flags1 != d_info[type].flags1) {
+								msg_format(Ind, " #%d (%d,%d): Updated flags1.", d_ptr->type, x, y);
+								d_ptr->flags1 = d_info[type].flags1;
+							}
+							if (d_ptr->flags2 != (d_info[type].flags2 | DF2_RANDOM)) {
+								msg_format(Ind, " #%d (%d,%d): Updated flags2.", d_ptr->type, x, y);
+								d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+							}
+							if (d_ptr->flags3 != d_info[type].flags3) {
+								msg_format(Ind, " #%d (%d,%d): Updated flags3.", d_ptr->type, x, y);
+								d_ptr->flags3 = d_info[type].flags3;
+							}
+							if (d_ptr->baselevel != d_info[type].mindepth) {
+								msg_format(Ind, " #%d (%d,%d): Updated baselevel/mindepth.", d_ptr->type, x, y);
+								d_ptr->baselevel = d_info[type].mindepth;
+							}
+							if (d_ptr->maxdepth != d_info[type].maxdepth - d_ptr->baselevel + 1) {
+								msg_format(Ind, " #%d (%d,%d): Updated maxdepth.", d_ptr->type, x, y);
+								d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+							}
 
 							/* check for TOWER flag change! */
 							if (!(d_ptr->flags1 & DF1_TOWER)) {
@@ -7862,6 +7877,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									pos_tmp = wild->surface.dn_y;
 									wild->surface.dn_y = wild->surface.up_y;
 									wild->surface.up_y = pos_tmp;
+									msg_format(Ind, " #%d (%d,%d): Tower->dungeon, switched existing to tower.", d_ptr->type, x, y);
 								} else {
 									/* change tower to dungeon */
 									wild->dungeon = wild->tower;
@@ -7873,6 +7889,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									wild->surface.dn_y = wild->surface.up_y;
 									wild->surface.up_x = 0;//superfluous
 									wild->surface.up_y = 0;//superfluous
+									msg_format(Ind, " #%d (%d,%d): Tower->dungeon.", d_ptr->type, x, y);
 								}
 							}
 						} else {
@@ -7926,11 +7943,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						type = d_ptr->type;
 
 						if (type) {
-							d_ptr->flags1 = d_info[type].flags1;
-							d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
-							d_ptr->flags3 = d_info[type].flags3;
-							d_ptr->baselevel = d_info[type].mindepth;
-							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+							if (d_ptr->flags1 != d_info[type].flags1) {
+								msg_format(Ind, " #%d (%d,%d): Updated flags1.", d_ptr->type, x, y);
+								d_ptr->flags1 = d_info[type].flags1;
+							}
+							if (d_ptr->flags2 != (d_info[type].flags2 | DF2_RANDOM)) {
+								msg_format(Ind, " #%d (%d,%d): Updated flags2.", d_ptr->type, x, y);
+								d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+							}
+							if (d_ptr->flags3 != d_info[type].flags3) {
+								msg_format(Ind, " #%d (%d,%d): Updated flags3.", d_ptr->type, x, y);
+								d_ptr->flags3 = d_info[type].flags3;
+							}
+							if (d_ptr->baselevel != d_info[type].mindepth) {
+								msg_format(Ind, " #%d (%d,%d): Updated baselevel/mindepth.", d_ptr->type, x, y);
+								d_ptr->baselevel = d_info[type].mindepth;
+							}
+							if (d_ptr->maxdepth != d_info[type].maxdepth - d_ptr->baselevel + 1) {
+								msg_format(Ind, " #%d (%d,%d): Updated maxdepth.", d_ptr->type, x, y);
+								d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+							}
 
 							/* check for TOWER flag change! */
 							if ((d_ptr->flags1 & DF1_TOWER)) {
@@ -7949,6 +7981,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									pos_tmp = wild->surface.dn_y;
 									wild->surface.dn_y = wild->surface.up_y;
 									wild->surface.up_y = pos_tmp;
+									msg_format(Ind, " #%d (%d,%d): Dungeon->tower, switched existing to dungeon.", d_ptr->type, x, y);
 								} else {
 									/* change dungeon to tower */
 									wild->tower = wild->dungeon;
@@ -7960,6 +7993,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									wild->surface.up_y = wild->surface.dn_y;
 									wild->surface.dn_x = 0;//superfluous
 									wild->surface.dn_y = 0;//superfluous
+									msg_format(Ind, " #%d (%d,%d): Dungeon->tower.", d_ptr->type, x, y);
 								}
 							}
 						} else {
