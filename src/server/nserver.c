@@ -3405,6 +3405,9 @@ static int Handle_login(int ind) {
 		case 2042:
 			msg_print(NumPlayers, "\377y* Recall-server-termination command pending *");
 			break;
+		case 2041:
+			msg_print(NumPlayers, "\377y* UltraLow-server-shutdown command pending *");
+			break;
 		}
 
 	if (cfg.runlevel == 2043 || cfg.runlevel == 2042) {
