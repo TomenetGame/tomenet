@@ -466,7 +466,7 @@ static bool do_seduce(int Ind, int m_idx) {
 		if (!magik(chance)) {
 			/* Describe the result */
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
-			msg_format(Ind, "%^s seduces you and you take off your %s...", m_name, o_name);
+			msg_format(Ind, "\376\377r%^s seduces you and you take off your %s...", m_name, o_name);
 			inven_takeoff(Ind, j, 255, FALSE, TRUE);
 			break;
 		}
