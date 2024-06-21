@@ -19353,7 +19353,7 @@ being awarded at level 99, the maximum level reachable.
 -------------------
 Classes fare differently depending on their progress in the game. Here are some
 rough approximations of 'power levels', trying to give an idea how strong each
-class is at its different game stages.
+class is at different progress stages of the game.
 
 Note: For some classes the power curve can depend heavily on the way you
       distribute skill points so this is only a hand-picked estimate of the
@@ -19378,7 +19378,7 @@ Note: For some classes the power curve can depend heavily on the way you
       in terms of damage output if they can rely on a good party.
 
       Shamans can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms
-      of usability, as they may access all features of Istari, Priests and also
+      of utility, as they may access all features of Istari, Priests and also
       those of Mimicry and Runecraft without that much expense of skill points.
 
               Start     Early     Mid       Late      Endgame   Post-winning
