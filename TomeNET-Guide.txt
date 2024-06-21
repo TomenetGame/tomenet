@@ -1380,8 +1380,8 @@ They all start with a slash '/' hence they're called slash commands:
             aka overwritten by the one he receives from you.
 
 /roll       Same as /dice.
-/dice       Roll some dice, you must at least specify a number of dice or a
-            number of sides, each from 1 to 100.
+/dice       Roll some dice (same as /roll), you must at least specify a number
+            of dice or a number of sides, each from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
             Examples of possible usage variants:
