@@ -2632,8 +2632,8 @@ By pressing 'a' you can toggle auto-pickup (green 'a') and auto-destroy (red
 own, which means that ALL items will be picked up or destroyed and subsequent
 rules will be ignored accordingly. (The sole '#' will not work for inscribing).
 The client options 'auto_pickup' and 'auto_destroy' must be enabled for these
-functions to work. This can also be done via slash commands '/apickup' (toggles
-auto_pickup option) and '/adestroy' (toggls auto_destroy option).
+functions to work. This can also be done via slash commands '/apickup' (which
+toggles auto_pickup option) and '/adestroy' (toggles auto_destroy option).
 Instead of using a "#" wildcard-rule, you can also toggle the option
 'destroy_all_unmatched' (which can also be toggled via '/daunmatched' slash
 command), this option requires 'auto_destroy' option to be enabled.
