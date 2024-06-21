@@ -9960,6 +9960,10 @@ Drain effects caused by items:
 ------------------------------
 Experience drain ('Drains your life force')
     Having 'Hold Life' does not protect against this.
+    Having 'Keep Life' (only obtainable from either having both Necromancy
+    and Unlife maxed out at 50.000, or from attaining character level 99)
+    completely prevents any XP drain, always, including drain from items.
+
     If you equip multiple items that drain experience, the total drain will
     diminish with each further item though instead of adding up, so for example
     using two rings of power will be less severe than than one might expect.
@@ -12639,6 +12643,11 @@ DRAIN_EXP ('It drains your life force')
         While in town areas (that means dungeon towns, normal towns and the
         surrounding housing area) the drain effect will be on hold!
         For more information see (4.11a).
+HOLD_LIFE ('It provides resistance to life draining attacks.')
+        Hold Life gives you a chance to resist the experience-draining effects
+        from attacks or potions, either resulting in no drain or at least
+        reduced drain if the roll is successful.
+        Does not help against DRAIN_EXP item flag.
 LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40 (and -10 downwards), having higher bonus won't help any
@@ -16697,9 +16706,9 @@ stated.
 
                                 If a character has Unlife and Necromancy both
                                 at 50.000 the character gains ultimate hold
-                                on his life force, rendering him immune to
-                                experience drain, including the permanent drain
-                                effect from DRAIN_EXP items.
+                                on his life force ('Keep Life'), rendering him
+                                immune to experience drain, including the
+                                permanent drain effect from DRAIN_EXP items.
 
                                 A natural vampire race character who has both
                                 Necromancy and Traumaturgy at 25.000 or higher
@@ -21773,9 +21782,9 @@ All Unlife spells are Wisdom-based.)
                     nether-based attacks the damage is reduced by a flat 10%
                     and you regain that part as mana points.
                     If both Unlife and Necromancy are at 50.000, it grants
-                    ultimate hold on one's own life force, rendering oneself
-                    immune to experience drain, including the permanent drain
-                    effect from DRAIN_EXP items.
+                    ultimate hold on one's own life force ('Keep Life'),
+                    rendering oneself immune to experience drain, including
+                    the permanent drain effect from DRAIN_EXP items.
 
 
 - Druidism -
