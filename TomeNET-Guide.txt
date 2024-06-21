@@ -17095,8 +17095,8 @@ stated.
                                 Backstabbing requires sword-type weapons or
                                 polearms, up to 10.0 lbs in weight.
                                 Alternatively it works if you use Martial Arts,
-                                in which case it transforms into neck-twisting.
-                                That means your target must possess a neck,
+                                in which case it transforms into neck-twisting;
+                                that means your target must possess a neck,
                                 read: A head and a torso.
 
                                 If you dual-wield, you will also dual-backstab
