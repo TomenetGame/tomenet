@@ -927,7 +927,7 @@ void prt_hunger(int food) {
 				food_warn_once_timer = 50; /* deciseconds to glow (TERM_SELECTOR colour et al), before switching to normal, static colour */
 			}
 		} else food = food_prev; /* Just redraw, for switching from blinking to static colour for warn_once. */
-	}
+	} else if (food == -1) return; /* Catch timing issue, if we feed from starved state quickly, before the blinking ends, resulting in visual glitch of redrawing us as blinking-starved mistakenly. */
 
 	if (food < PY_FOOD_FAINT)
 		c_put_str(food_warn_once_timer ? TERM_SEL_RED : TERM_L_RED, "Starved", ROW_HUNGRY, COL_HUNGRY);
