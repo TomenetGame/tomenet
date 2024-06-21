@@ -2380,6 +2380,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "wield") && my_strcasestr(buf, "quirk")) strcpy(init_search_string, "Quirk: Wield");
 		else if (!strcasecmp("autostow", buf)) strcpy(init_search_string, "auto-stow");
 		else if (!strcasecmp("stow", buf)) strcpy(init_search_string, " stow");//'hack': prevent matching 'auto-stow', which comes first in text -_-
+		else if (!strcasecmp("fill", buf)
+		    || (my_strcasestr(buf, "fill") && my_strcasestr(buf, "foun")) || (my_strcasestr(buf, "fill") && my_strcasestr(buf, "bott")))
+			strcpy(init_search_string, "/fill");
 
 		/* clean up */
 		buf[0] = 0;
