@@ -20607,7 +20607,7 @@ these limitations will be lifted.
                     blindness too.
 
     Fire Bolt       Fires a fire bolt at a target.
-                    Required skill level for first spell level: 10.
+                    Required skill level for first spell level: 4.
 
                     Tier II: Level 25.
 
@@ -20665,20 +20665,20 @@ these limitations will be lifted.
 
                     Tier III: Level 40.
 
-    Ent's Potion    Fills your stomach.
-                    Lv  5: Removes fear.
-                    Lv 12: Makes you heroic.
-                    Required skill level for first spell level: 6.
-
     Frost Bolt      Fires a frost bolt at a target.
-                    Required skill level for first spell level: 8.
+                    Required skill level for first spell level: 3.
 
                     Tier II: Level 22.
 
                     Tier III: Level 40.
 
+    Ent's Potion    Fills your stomach.
+                    Lv  5: Removes fear.
+                    Lv 12: Makes you heroic.
+                    Required skill level for first spell level: 6.
+
     Water Bolt      Fires a water bolt at a target.
-                    Required skill level for first spell level: 14.
+                    Required skill level for first spell level: 10.
 
                     Tier II: Level 24.
 
@@ -20731,6 +20731,13 @@ these limitations will be lifted.
 
 - Air               [Spells are INT-based.]
 
+    Lightning Bolt  Fires a lightning bolt at a target.
+                    Required skill level for first spell level: 2.
+
+                    Tier II: Level 21.
+
+                    Tier III: Level 40.
+
     Noxious Cloud   Fires a poison cloud at a designated target.
                     Required skill level for first spell level: 3.
 
@@ -20739,13 +20746,6 @@ these limitations will be lifted.
                     Tier III: Level 33.
                     Unbreath cloud instead of normal poison, harder to resist
                     since it prevents living creatures from actually breathing.
-
-    Lightning Bolt  Fires a lightning bolt at a target.
-                    Required skill level for first spell level: 6.
-
-                    Tier II: Level 21.
-
-                    Tier III: Level 40.
 
     Elemental Shield
                     Tier I is only shared between Fire and Water school and
@@ -20787,15 +20787,15 @@ these limitations will be lifted.
 
 - Earth             [Spells are INT-based.]
 
-    Dig             Turns walls into mud.
-                    Required skill level for first spell level: 12.
-
     Acid Bolt       Fires an acid bolt at a target.
-                    Required skill level for first spell level: 12.
+                    Required skill level for first spell level: 5.
 
                     Tier II: Level 24.
 
                     Tier III: Level 40.
+
+    Dig             Turns walls into mud.
+                    Required skill level for first spell level: 12.
 
     Elemental Shield
                     Tier I is only shared between Fire and Water school and
@@ -21385,6 +21385,13 @@ All Unlife spells are Wisdom-based.)
                     Tier II: Level 20.
                     It expands around you.
 
+    Shadow Bolt     Channels shadow into a bolt attack.
+                    Required skill level for first spell level: 6.
+
+                    Tier II: Level 25.
+
+                    Tier III: Level 40.
+
     Detect Invisible
                     Detects all invisible creatures nearby.
                     (See (5.14) for details about invisibility.)
@@ -21396,13 +21403,6 @@ All Unlife spells are Wisdom-based.)
                     floor grids, eg those inside no-teleport vaults, because
                     the still air on these will prevent your shadowy moves.
                     Required skill level for first spell level: 8.
-
-    Shadow Bolt     Channels shadow into a bolt attack.
-                    Required skill level for first spell level: 10.
-
-                    Tier II: Level 25.
-
-                    Tier III: Level 40.
 
     Aspect of Peril                                            (auto-project)
                     Temporarily brands your own and any adjacent friendly
@@ -21617,7 +21617,7 @@ All Unlife spells are Wisdom-based.)
 
     Fire Bolt       Conjures up fire into a powerful bolt.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
-                    Required skill level for first spell level: 10.
+                    Required skill level for first spell level: 6.
 
                     Tier II: Level 25.
 
