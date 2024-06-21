@@ -874,8 +874,8 @@ P       O       party screen. Form/disband/modify a party with other players
                 For winners (queens/kings/empresses/emperors) the range is 11
                 levels instead of 7.
 
-H       CTRL+G  re-apply client-side and (if 'auto_inscribe' option is enabled)
-                server-side auto-inscriptions to an item.
+H       CTRL+G  re-apply client-side and (if 'auto_inscr_server' option is
+                enabled) server-side auto-inscriptions to an item.
 
 CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
                 Note: Mixer settings are saved automatically, provided you use
@@ -2617,7 +2617,7 @@ use the  /at  command.
 
 NOTE: In addition to this user-defined client-side auto-inscription list, there
       is also a server-side auto-inscription feature that can be enabled via
-      client option 'auto_inscribe'.
+      client option 'auto_inscr_server'.
       This option will add a predefined set of auto-inscriptions that might be
       generally useful for all types of characters, see (2.3) for details.
 
@@ -4539,7 +4539,7 @@ self-explaining or that are especially important are listed in detail here:
         Alternatively if you have this option turned off, you can just use the
         '}' key to uninscribe the items you get from someone else.
 
-    Use additional predefined auto-inscriptions (auto_inscribe)
+    Also use predefined server-side auto-inscriptions (auto_insc_server)
         Will provide a predefined (on server-side) set of item-inscriptions
         that will be applied automatically to some selected items, which are
         Word of Recall items, various scrolls and a few potions.
