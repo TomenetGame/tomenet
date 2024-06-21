@@ -2069,7 +2069,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 	/* Desired char */
 	/* c = r_ptr->x_char; */
 	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx
-	    && !(p_ptr->ascii_uniques && (r_ptr->flags1 & RF1_UNIQUE)))
+	    && !(((p_ptr->ascii_uniques && (r_ptr->flags1 & RF1_UNIQUE)) || p_ptr->ascii_monsters)))
 		c = p_ptr->r_char[m_ptr->r_idx];
 	else c = r_ptr->d_char;
 	/* else c = m_ptr->r_ptr->d_char; */
@@ -2725,9 +2725,10 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
 
 /* Extracted this from map_info() so it can also be used by the character flags sheet.
    NOTE: p_ptr is actually used by object_char() and object_attr() macros! */
-void get_object_visuals(char32_t *cp, byte *ap, object_type *o_ptr, player_type *p_ptr) {
+void get_object_visual(char32_t *cp, byte *ap, object_type *o_ptr, player_type *p_ptr) {
 	/* Normal char */
 	(*cp) = object_char(o_ptr);
+	if (p_ptr->ascii_items) (*cp) = k_info[o_ptr->k_idx].d_char;
 
 	/* Normal attr */
 	(*ap) = object_attr(o_ptr);
@@ -3045,7 +3046,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			/* for FEAT_ILLUS_WALL, which aren't walls but floors! */
 			if (!p_ptr->font_map_solid_walls) {
 				/* Normal char */
-				(*cp) = p_ptr->f_char[feat];
+				if (!p_ptr->ascii_feats) (*cp) = p_ptr->f_char[feat];
+				else (*cp) = f_info[feat].f_char;
 
 				/* Normal attr */
 				a = p_ptr->f_attr[feat];
@@ -3136,7 +3138,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 					} else {
 						/* If trap isn't on door display it */
 						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = p_ptr->f_char[FEAT_TRAP]; */
-						(*cp) = p_ptr->f_char[FEAT_TRAP];
+						if (!p_ptr->ascii_feats) (*cp) = p_ptr->f_char[FEAT_TRAP];
+						else (*cp) = f_info[FEAT_TRAP].f_char;
 
 						a = get_trap_color(Ind, t_idx, feat);
 					}
@@ -3260,7 +3263,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 			/* Normal char */
 			/* (*cp) = f_ptr->f_char; */
-			(*cp) = p_ptr->f_char[FEAT_NONE];
+			if (!p_ptr->ascii_feats) (*cp) = p_ptr->f_char[FEAT_NONE];
+			else (*cp) = f_info[FEAT_NONE].f_char;
 		}
 	}
 
@@ -3289,7 +3293,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			if (!p_ptr->font_map_solid_walls) {
 				/* Normal char */
 				/* (*cp) = f_ptr->f_char; */
-				(*cp) = p_ptr->f_char[feat];
+				if (!p_ptr->ascii_feats) (*cp) = p_ptr->f_char[feat];
+				else (*cp) = f_info[feat].f_char;
 
 				/* Normal attr */
 				/* a = f_ptr->f_attr; */
@@ -3528,7 +3533,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 			/* Normal char */
 			/* (*cp) = f_ptr->f_char; */
-			(*cp) = p_ptr->f_char[FEAT_NONE];
+			if (!p_ptr->ascii_feats) (*cp) = p_ptr->f_char[FEAT_NONE];
+			else (*cp) = f_info[FEAT_NONE].f_char;
 		}
 	}
 
@@ -3674,7 +3680,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			/* Memorized objects */
 			/* Hack -- the dungeon master knows where everything is */
 			if ((p_ptr->obj_vis[c_ptr->o_idx]) || (p_ptr->admin_dm)) {
-				get_object_visuals(cp, ap, &o_list[c_ptr->o_idx], p_ptr);
+				get_object_visual(cp, ap, &o_list[c_ptr->o_idx], p_ptr);
 
 				/* Hack -- always l.blue if underwater */
 				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER) (*ap) = TERM_L_BLUE;

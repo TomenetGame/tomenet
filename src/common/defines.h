@@ -7122,15 +7122,15 @@
  * Default to the "base" char for unaware items
  */
 #if 0
-#define object_char(T) \
+ #define object_char(T) \
     ((k_info[(T)->k_idx].aware) ? \
      (k_info[(T)->k_idx].x_char) : \
      (k_info[(T)->k_idx].d_char))
 
-#define object_char(T) \
+ #define object_char(T) \
     (k_info[(T)->k_idx].x_char)
 
-#define object_char(T) \
+ #define object_char(T) \
     (p_ptr->k_char[(T)->k_idx])
 #endif
 

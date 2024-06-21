@@ -569,7 +569,13 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.auto_inscr_off,	FALSE,	8,	0, 153, TRUE,
 	    "auto_inscr_off",		"Disable all client-side auto-inscriptions" },
 
-	{ &c_cfg.ascii_uniques,		FALSE,	1,	0, 154, TRUE,
+	{ &c_cfg.ascii_feats,		FALSE,	7,	0, 154, TRUE,
+	    "ascii_feats",		"Disable font-specific mapping for all floor feats" },
+	{ &c_cfg.ascii_items,		FALSE,	7,	0, 155, TRUE,
+	    "ascii_items",		"Disable font-specific mapping for all items" },
+	{ &c_cfg.ascii_monsters,	FALSE,	7,	0, 156, TRUE,
+	    "ascii_monsters",		"Disable font-specific mapping for all monsters" },
+	{ &c_cfg.ascii_uniques,		FALSE,	7,	0, 157, TRUE,
 	    "ascii_uniques",		"Disable font-specific mapping for unique monsters" },
 };
 

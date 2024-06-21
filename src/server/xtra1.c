@@ -3906,7 +3906,7 @@ void calc_boni(int Ind) {
 		pval = o_ptr->pval;
 
 		/* Set item display info */
-		get_object_visuals(&c, &a, o_ptr, p_ptr);
+		get_object_visual(&c, &a, o_ptr, p_ptr);
 		csheet_boni[i - INVEN_WIELD].symbol = c;
 		csheet_boni[i - INVEN_WIELD].color = a; //WARNING: this is necessary because csheet_boni.color is type char instead of byte
 

@@ -8651,6 +8651,7 @@ void options_immediate(bool init) {
 	static bool changed4a, changed4b, changed4c;
 	static bool changed5, changed5a, changed6;
 	static bool changed7, changed8;
+	static bool changed9a, changed9b, changed9c, changed9d;
 
 	if (init) {
 		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
@@ -8660,6 +8661,7 @@ void options_immediate(bool init) {
 		changed6 = c_cfg.colourize_bignum;
 		changed7 = c_cfg.load_form_macros;
 		changed8 = c_cfg.auto_inscr_off;
+		changed9a = c_cfg.ascii_feats; changed9b = c_cfg.ascii_items; changed9c = c_cfg.ascii_monsters; changed9d = c_cfg.ascii_uniques;
 		return;
 	}
 
@@ -8691,6 +8693,7 @@ void options_immediate(bool init) {
 		(void)process_pref_file(tmp);
 	}
 	if (changed8 != c_cfg.auto_inscr_off && !c_cfg.auto_inscr_off) apply_auto_inscriptions(-1);
+	if (changed9a != c_cfg.ascii_feats || changed9b != c_cfg.ascii_items || changed9c != c_cfg.ascii_monsters || changed9d != c_cfg.ascii_uniques) Send_redraw(0);
 }
 
 /*

@@ -566,7 +566,7 @@ extern bool no_lite(int Ind);
 extern bool no_real_lite(int Ind);
 extern byte get_trap_color(int Ind, int t_idx, int feat);
 extern byte get_monster_trap_color(int Ind, int o_idx, int feat);
-extern void get_object_visuals(char32_t *cp, byte *ap, object_type *o_ptr, player_type *p_ptr);
+extern void get_object_visual(char32_t *cp, byte *ap, object_type *o_ptr, player_type *p_ptr);
 extern void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim);
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);

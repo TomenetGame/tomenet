@@ -4270,7 +4270,7 @@ struct player_type {
 #endif
 
 	bool player_list_window; /* Has configured one of his subwindows to be a live-updated player list window */
-	bool ascii_uniques;
+	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
 };
 
 /* For Monk martial arts */
@@ -4708,7 +4708,7 @@ struct client_opts {
 	bool mp_huge_bar, sn_huge_bar, hp_huge_bar;
 	bool load_form_macros;
 	bool auto_inscr_off;
-	bool ascii_uniques;
+	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
 };
 
 /*

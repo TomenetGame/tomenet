@@ -2700,7 +2700,17 @@ static void sync_options(int Ind, bool *options) {
 	if (is_atleast(&p_ptr->version, 4, 9, 0, 1, 0, 1)) p_ptr->flash_self2 = options[151];
 	//else p_ptr->flash_self2 = FALSE; -- leave it to load/save routine instead, so it's settable via /flash command!
 
-	if (is_atleast(&p_ptr->version, 4, 9, 1, 0, 0, 1)) p_ptr->ascii_uniques = options[154]; else p_ptr->ascii_uniques = FALSE;
+	if (is_atleast(&p_ptr->version, 4, 9, 1, 0, 0, 1)) {
+		p_ptr->ascii_feats = options[154];
+		p_ptr->ascii_items = options[155];
+		p_ptr->ascii_monsters = options[156];
+		p_ptr->ascii_uniques = options[157];
+	} else {
+		p_ptr->ascii_feats = FALSE;
+		p_ptr->ascii_items = FALSE;
+		p_ptr->ascii_monsters = FALSE;
+		p_ptr->ascii_uniques = FALSE;
+	}
 
 	/* Warn about certain options' current status */
 

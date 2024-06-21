@@ -29,6 +29,9 @@ X:permawalls_shade
 Y:palette_animation
 X:disable_lightning
 X:no_light_fainting
+X:ascii_feats
+X:ascii_items
+X:ascii_monsters
 X:ascii_uniques
 
 Y:exp_bar
