@@ -568,6 +568,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "load_form_macros",		"Automatically load form-specific macros on change" },
 	{ &c_cfg.auto_inscr_off,	FALSE,	8,	0, 153, TRUE,
 	    "auto_inscr_off",		"Disable all client-side auto-inscriptions" },
+
+	{ &c_cfg.ascii_uniques,		FALSE,	1,	0, 154, TRUE,
+	    "ascii_uniques",		"Disable font-specific mapping for unique monsters" },
 };
 
 cptr melee_techniques[16] = {

@@ -2050,8 +2050,8 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 	return(allowed_attrs[rand_int(stored_colors)]);
 }
 
-/* Despite of its name, this gets both, attr and char, for a monster race.. */
-static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char32_t *cp) {
+/* Get both, attr and char, for a monster race, to display to the player on the main screen */
+static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char32_t *cp) {
 	player_type *p_ptr = Players[Ind];
 	byte a;
 	char32_t c;
@@ -2068,14 +2068,14 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 
 	/* Desired char */
 	/* c = r_ptr->x_char; */
-	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
+	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx
+	    && !(p_ptr->ascii_uniques && (r_ptr->flags1 & RF1_UNIQUE)))
+		c = p_ptr->r_char[m_ptr->r_idx];
 	else c = r_ptr->d_char;
 	/* else c = m_ptr->r_ptr->d_char; */
 
 	/* Hack -- mimics */
-	if (r_ptr->flags9 & RF9_MIMIC) {
-		mimic_object(&a, &c, c_ptr->m_idx);
-	}
+	if (r_ptr->flags9 & RF9_MIMIC) mimic_object(&a, &c, c_ptr->m_idx);
 
 	/* Ignore weird codes */
 	if (avoid_other) {
@@ -2094,8 +2094,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	    magik(85) : magik(5)))
 	    ) &&
 	    (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
-	     !(r_ptr->flags2 & (RF2_SHAPECHANGER))))
-	{
+	     !(r_ptr->flags2 & (RF2_SHAPECHANGER)))) {
 		(*cp) = c;
 
 		if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -2125,10 +2124,9 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 #else
 	/* Hack -- Unique/Ego 'glitters' sometimes */
 	else if ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
-		(m_ptr && m_ptr->ego && magik(5)) ) &&
-		(!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
-		 !(r_ptr->flags2 & (RF2_SHAPECHANGER))))
-	{
+	    (m_ptr && m_ptr->ego && magik(5)) ) &&
+	    (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
+	    !(r_ptr->flags2 & (RF2_SHAPECHANGER)))) {
 		(*cp) = c;
 
 		/* Multi-hued attr */
@@ -2141,12 +2139,11 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	/* Multi-hued monster */
 	else if (r_ptr->flags1 & RF1_ATTR_MULTI) {
 		/* Is it a shapechanger? */
-		if (r_ptr->flags2 & RF2_SHAPECHANGER) {
+		if (r_ptr->flags2 & RF2_SHAPECHANGER)
 			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
 				 image_object_hack[randint(strlen(image_object_hack))]:
 				 image_monster_hack[randint(strlen(image_monster_hack))]);
-		} else
-			(*cp) = c;
+		else (*cp) = c;
 
 		/* Multi-hued attr */
 		if (r_ptr->flags2 & (RF2_ATTR_ANY))
@@ -2173,13 +2170,10 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	   Added this 'hack flag' to display silly Pandas - C. Blue */
 	else if (r_ptr->flags7 & RF7_ATTR_BNW) {
 		(*cp) = c;
+
 #ifdef SLOW_ATTR_BNW /* handle server-side -> slower speed flickering */
-		if ((r_ptr->flags7 & RF7_ATTR_BASE) && !rand_int(3)) {
-			/* Use base attr */
-			(*ap) = a;
-		} else {
-			(*ap) = rand_int(2) ? TERM_L_DARK : TERM_WHITE;
-		}
+		if ((r_ptr->flags7 & RF7_ATTR_BASE) && !rand_int(3)) (*ap) = a; /* Use base attr */
+		else (*ap) = rand_int(2) ? TERM_L_DARK : TERM_WHITE;
 #else /* handle client-side -> the usual fast flickering, same as dungeon wizards */
  #ifdef EXTENDED_TERM_COLOURS
 		if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) (*ap) = TERM_OLD_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
@@ -2189,8 +2183,10 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		//no longer allowed!
 		(*ap) = TERM_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
  #else
-		if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) (*ap) = TERM_OLD2_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
-		else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) (*ap) = TERM_OLD3_BNW;
+		if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0))
+			(*ap) = TERM_OLD2_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+		else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0))
+			(*ap) = TERM_OLD3_BNW;
 		/* Just discarding base attr for now. The Panda is the only monster using this so it's fine because it's B+W only anyway. */
 		else (*ap) = TERM_BNW;
  #endif
@@ -2202,11 +2198,10 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		(*cp) = c;
 
 		/* Is it a non-colourchanging shapechanger? */
-		if (r_ptr->flags2 & RF2_SHAPECHANGER) {
-			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
+		if (r_ptr->flags2 & RF2_SHAPECHANGER)
+			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1 ?
 				 image_object_hack[randint(strlen(image_object_hack))]:
 				 image_monster_hack[randint(strlen(image_monster_hack))]);
-		}
 
 		/* Use attr */
 		(*ap) = a;
@@ -2238,19 +2233,12 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 			}
 
 		}
-
 		/* Normal (non-clear attr) monster */
-		else if (!(r_ptr->flags1 & RF1_ATTR_CLEAR)) {
-			/* Normal attr */
-			(*ap) = a;
-		}
+		else if (!(r_ptr->flags1 & RF1_ATTR_CLEAR)) (*ap) = a;
 	}
 
 	/* Hack -- hallucination */
-	if (p_ptr->image) {
-		/* Hallucinatory monster */
-		image_monster(ap, cp);
-	}
+	if (p_ptr->image) image_monster(ap, cp);
 }
 
 /*
@@ -2314,11 +2302,11 @@ static byte player_color(int Ind) {
 	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
 	/* the_sandman: an attempt to actually diplay the mhd flickers on mimicking player using DS spell */
 	if (p_ptr->body_monster)
-		get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
+		get_monster_visual(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
 
 	/* Wearing a costume */
 	if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))
-		get_monster_color(Ind, NULL, &r_info[p_ptr->inventory[INVEN_BODY].bpval], c_ptr, &pcolor, &dummy);
+		get_monster_visual(Ind, NULL, &r_info[p_ptr->inventory[INVEN_BODY].bpval], c_ptr, &pcolor, &dummy);
 
 	/* See vampires burn in the sun sometimes.. */
 	if (p_ptr->sun_burn && magik(33)) return(TERM_FIRE);
@@ -3733,7 +3721,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				   in the base version.. such cases shouldn't really occur though */
 				r_ptr->flags1 &= ~((r_ptr->flags1 & RF1_CHAR_CLEAR) | (r_ptr->flags1 & RF1_ATTR_CLEAR));
 
-			get_monster_color(Ind, m_ptr, r_ptr, c_ptr, ap, cp);
+			get_monster_visual(Ind, m_ptr, r_ptr, c_ptr, ap, cp);
 		}
 	}
 
@@ -3769,7 +3757,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 		else if (p_ptr->play_vis[Ind2]) {
 			/* part 'A' now here (experimental, see below) */
 
-			/* Hack: For monster-forms, player_color() calls get_monster_color() which will
+			/* Hack: For monster-forms, player_color() calls get_monster_visual() which will
 			   result in color flickering if player is hallucinating, although this call
 			   should instead determine the colour an _outside_ player gets to see. So we
 			   have to temporarily suppress his hallucinations to get the correct value. */
@@ -3781,9 +3769,9 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 #if 0 /* player_color() should already handle all of this - C. Blue */
 			if ((p2_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p2_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
-				get_monster_color(Ind, NULL, &r_info[p2_ptr->inventory[INVEN_BODY].bpval], c_ptr, &a, &c);
+				get_monster_visual(Ind, NULL, &r_info[p2_ptr->inventory[INVEN_BODY].bpval], c_ptr, &a, &c);
 			}
-			else if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
+			else if (p2_ptr->body_monster) get_monster_visual(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
 			else if (p2_ptr->fruit_bat) c = 'b';
 			else c = '@';
 #else
