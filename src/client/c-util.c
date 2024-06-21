@@ -10480,7 +10480,7 @@ void do_cmd_options(void) {
 		else
 			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
 
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Jukebox, listen to and disable/reenable specific sound effects/music");
 #endif
 
 #if defined(WINDOWS) || defined(USE_X11)
