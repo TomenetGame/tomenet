@@ -1811,7 +1811,7 @@ I:70:11:0
 W:5:0:5:150
 A:5/1
 D:Teleports you into or out of dungeons, to specific dungeon floors,
-D:or to a certain world map sector.
+D:or to specific world map sectors.
 
 N:221:*Destruction*
 G:?:d
