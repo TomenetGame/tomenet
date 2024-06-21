@@ -212,7 +212,7 @@ I:1000:0
 
 N:30:Aura of Death
 D:Aura that surrounds you, creating waves of plasma or ice when struck in close
-D:combat. At 40.000 grants plasma and ice brand to and ice brands to your melee.
+D:combat. At 40.000 grants alternating plasma and ice brand to your melee attacks.
 A:17:Control your aura of death
 I:1000:0
 
