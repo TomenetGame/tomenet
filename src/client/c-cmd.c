@@ -2383,6 +2383,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp("fill", buf)
 		    || (my_strcasestr(buf, "fill") && my_strcasestr(buf, "foun")) || (my_strcasestr(buf, "fill") && my_strcasestr(buf, "bott")))
 			strcpy(init_search_string, "/fill");
+		else if (!strcasecmp("tea", buf)) strcpy(init_search_string, "Herbal Tea"); //prevent 'Stealth' skill result
 
 		/* clean up */
 		buf[0] = 0;
