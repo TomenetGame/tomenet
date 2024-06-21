@@ -5701,24 +5701,27 @@ There are four categories of subinventories:
   perk acquired via Digging skill (7.2), and allows you to mix chemicals right
   from within it via 'a' key, while browsing the satchel.
   Alternatively you can activate them from the outside as usual with SHIFT+A,
-  but then you have to use the '@' feature (call by item name) in the prompt,
-  or simply create a macro using the macro wizard, which does it this way too.
+  but for client versions older than 4.9.2, you must then use the '@' feature
+  (call by item name) in the prompt, or simply create a macro using the macro
+  wizard, which creates call-by-name macros.
   If you pick up chemicals or mixtures they will be auto-stowed into this bag
   unless inscribed (see further down).
 
 - Trap Kit Bag
   This bag compactly stores a surprising amount of trap kits and allows you to
   deploy them straight from within.
-  To do so, you must use the '@' feature (call by item name) in the prompt,
-  or simply create a macro using the macro wizard, which does it this way too.
+  (For client versions older than 4.9.2, you must use the '@' feature (call by
+  item name) in the prompt, or simply create a macro using the macro wizard,
+  which creates call-by-name macros.)
   If you pick up trap kits they will be auto-stowed into this bag unless
   inscribed (see further down).
 
 - Antistatic Wrapping
   This bag can hold magic devices that do not require a directional activation
   (all staves and some rods) and allows you to use them straight from within.
-  To do so, you must use the '@' feature (call by item name) in the prompt,
-  or simply create a macro using the macro wizard, which does it this way too.
+  (For client versions older than 4.9.2, you must use the '@' feature (call by
+  item name) in the prompt, or simply create a macro using the macro wizard,
+  which creates call-by-name macros.)
   Just pay attention that you use % z J (and not % z k) to create the macro.
   Unknown rods are never eligible to be placed in this bag.
   Note that !C inscription (to alert when charged) on your magic devices works
@@ -5729,16 +5732,17 @@ There are four categories of subinventories:
 - Potion Belt
   This utility belt can hold potions for you, ready to use on demand, thereby
   alleviating the load on your precious inventory space.
-  To quaff them you must use the '@' feature (call by item name) in the prompt,
-  or simply create a macro using the macro wizard, which does it this way too.
+  (For client versions older than 4.9.2, you must use the '@' feature (call by
+  item name) in the prompt, or simply create a macro using the macro wizard,
+  which creates call-by-name macros.)
   If you pick up potions, they will be auto-stowed into this bag unless
   inscribed (see further down).
 
-As you noticed, for now from outside the subinventory you cannot access any
-items inside except if you use the '@' (call by item name) feature in the item
-prompt. This might get improved in a future (maintenance) release. But since
-the macro wizard actually creates call-by-name macros anyway, you can just use
-it if you are unsure.
+For client versions older than 4.9.2:
+From outside the subinventory you cannot access any items inside except if you
+use the '@' (call by item name) feature in the item prompt.
+Since the macro wizard actually creates call-by-name macros anyway, you can
+just use it if you are unsure.
 
 A few generic commands are always available in any subinventory:
   - Chat (:).
