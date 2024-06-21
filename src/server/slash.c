@@ -3428,7 +3428,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/stime")) { /* show time / date */
+#if 1 /* Also print year, and use same format as client */
+			time_t ct = time(NULL);
+			struct tm* ctl = localtime(&ct);
+			static char day_names[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+			msg_format(Ind, "\374\376\377WCurrent server-side time: %04d/%02d/%02d (%s) - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, day_names[ctl->tm_wday], ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
+#else /* This doesn't print the year */
 			msg_format(Ind, "Current server time is %s", showtime());
+#endif
 			return;
 		}
 		else if (prefix(messagelc, "/pvp")) { /* enter pvp-arena (for MODE_PVP) */

@@ -7381,8 +7381,9 @@ void cmd_message(void) {
 		else if (!strcasecmp(buf, "/ctime")) {
 			time_t ct = time(NULL);
 			struct tm* ctl = localtime(&ct);
+			static char day_names[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
-			c_msg_format("\374\376\377yYour current local time: %04d/%02d/%02d - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
+			c_msg_format("\374\376\377yYour current local time: %04d/%02d/%02d (%s) - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, day_names[ctl->tm_wday], ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/cver") || !strcasecmp(buf, "/cversion")) {
