@@ -1578,8 +1578,9 @@ They all start with a slash '/' hence they're called slash commands:
             If you aren't eligible for receiving a floor feeling, you will
             instead get the message "You feel nothing special.".
 
-/fill       Fill an 'Empty Bottle' in your inventory with the water from a
-            fountain. You must stand on the fountain to do this.
+/fill       Fill an 'Empty Bottle' in your inventory with the liquid from a
+            fountain or water from the ground. You must stand on the fountain
+            or the water map tile to do this.
 
 /flip       Same as /coin.
 
