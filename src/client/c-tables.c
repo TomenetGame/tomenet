@@ -320,12 +320,12 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.safe_macros,		TRUE,	2,	0, 53, TRUE,
 	    "safe_macros",		"Abort macro if item is missing or an action fails" },
 
-	{ &c_cfg.auto_untag,		FALSE,	2,	0, 54, TRUE,
+	{ &c_cfg.auto_untag,		FALSE,	8,	0, 54, TRUE,
 	    "auto_untag",		"Remove unique monster inscription on pick-up" },
-	{ &c_cfg.clear_inscr,		FALSE,	2,	9, 55, TRUE,
+	{ &c_cfg.clear_inscr,		FALSE,	8,	9, 55, TRUE,
 	    "clear_inscr",		"Clear @-inscriptions on taking item ownership" },
-	{ &c_cfg.auto_inscribe,		FALSE,	2,	9, 56, TRUE,
-	    "auto_inscribe",		"Use additional predefined auto-inscriptions" },
+	{ &c_cfg.auto_inscr_server,	FALSE,	8,	9, 56, TRUE,
+	    "auto_inscr_server",	"Also use predefined server-side auto-inscriptions" },
 	{ &c_cfg.stack_force_notes,	TRUE,	2,	0, 57, TRUE,
 	    "stack_force_notes",	"Merge inscriptions when stacking" },
 	{ &c_cfg.stack_force_costs,	TRUE,	2,	0, 58, TRUE,
@@ -564,9 +564,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.flash_player2,		FALSE,	6,	0, 151, TRUE,
 	    "flash_player2",		"Flash own character icon after close relocation" },
-	{ &c_cfg.load_form_macros,	TRUE,	8,	0, 152, TRUE,
+	{ &c_cfg.load_form_macros,	TRUE,	2,	0, 152, TRUE,
 	    "load_form_macros",		"Automatically load form-specific macros on change" },
-	{ &c_cfg.auto_inscr_off,		FALSE,	3,	0, 153, TRUE,
+	{ &c_cfg.auto_inscr_off,	FALSE,	8,	0, 153, TRUE,
 	    "auto_inscr_off",		"Disable all client-side auto-inscriptions" },
 };
 

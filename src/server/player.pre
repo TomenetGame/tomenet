@@ -368,7 +368,7 @@ struct player_type
 	bool easy_disarm_montraps;
 	bool easy_tunnel;
 	bool clear_inscr;
-	bool auto_inscribe;
+	bool auto_inscr_server;
 	bool taciturn_messages;
 	bool last_words;
 	/* bool speak_unique; */

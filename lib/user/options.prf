@@ -126,7 +126,7 @@ X:safe_float
 Y:safe_macros
 X:auto_untag
 X:clear_inscr
-X:auto_inscribe
+X:auto_inscr_server
 Y:stack_force_notes
 Y:stack_force_costs
 Y:stack_allow_items
