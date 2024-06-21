@@ -486,7 +486,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.flash_insane,		FALSE,	6,	0, 116, TRUE, //page 3 (UI 3)
 	    "flash_insane",		"Flash own character icon when going badly insane" },
     /* 4.7.1: */
-	{ &c_cfg.last_words,		TRUE,	6,	0, 117, TRUE,
+	{ &c_cfg.last_words,		TRUE,	1,	0, 117, TRUE,
 	    "last_words",		"Get last words when the character dies" },
 	{ &c_cfg.disturb_see,		FALSE,	3,	0, 118, TRUE,
 	    "disturb_see",		"Disturb whenever seeing any monster" },
@@ -577,6 +577,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "ascii_monsters",		"Disable font-specific mapping for all monsters" },
 	{ &c_cfg.ascii_uniques,		FALSE,	7,	0, 157, TRUE,
 	    "ascii_uniques",		"Disable font-specific mapping for unique monsters" },
+	{ &c_cfg.no_flicker,		FALSE,	6,	0, 158, TRUE,
+	    "no_flicker",		"Disable all fast colour animations" },
 };
 
 cptr melee_techniques[16] = {

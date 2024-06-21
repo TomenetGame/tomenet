@@ -4709,6 +4709,7 @@ struct client_opts {
 	bool load_form_macros;
 	bool auto_inscr_off;
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
+	bool no_flicker;
 };
 
 /*

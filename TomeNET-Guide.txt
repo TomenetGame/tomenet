@@ -522,6 +522,9 @@ pressing the following keys in game to access the various options pages (1-7):
 = 3 flash_player (your '@' flickers brightly whenever you change location
     rapidly to make it easier spotting yourself on the screen)
 = 3 recall_flicker (show animated colours in the various game windows)
+= 3 flash_insane (your '@' flickers rapidly when your sanity is very low
+    to alert you of impending no-ghost-death by sanity)
+= 3 no_flicker (disables all fast-flickering colour animations)
 
 
 (0.1d) Readability improvements

@@ -565,6 +565,315 @@ static char get_shimmer_color() {
 }
 #endif
 
+static byte anim2static(byte attr) {
+	switch (attr) {
+	case TERM_BNW:
+	case TERM_BNWM:
+	case TERM_BNWSR:
+	case TERM_BNWKS:
+	case TERM_BNWKS2:
+	case TERM_PVPBB:
+	case TERM_PVP:
+		return(TERM_WHITE); //TERM_L_DARK
+	}
+
+	if (attr == TERM_SHIELDM) return(TERM_VIOLET); //TERM_ORANGE
+	if (attr == TERM_SHIELDI) return(TERM_VIOLET);
+
+	switch (attr) {
+	case TERM_MULTI: return(TERM_VIOLET);
+	case TERM_FIRE: return(TERM_RED);
+	case TERM_POIS: return(TERM_L_GREEN);
+	case TERM_COLD: return(TERM_L_WHITE);
+	case TERM_ELEC: return(TERM_L_BLUE);
+	case TERM_HALF: return(TERM_VIOLET);
+	case TERM_ACID: return(TERM_SLATE);
+	case TERM_CONF: return(TERM_L_UMBER);
+	case TERM_SOUN: return(TERM_YELLOW);
+	case TERM_SHAR: return(TERM_UMBER);
+	case TERM_LITE: return(TERM_YELLOW);
+	case TERM_DARKNESS: return(TERM_L_DARK);
+#ifdef EXTENDED_TERM_COLOURS /* C. Blue */
+	case TERM_CURSE:
+		return(TERM_L_DARK);
+	case TERM_ANNI:
+		return(TERM_L_DARK);
+	case TERM_PSI:
+		return(TERM_YELLOW);
+	case TERM_NEXU:
+		return(TERM_VIOLET);
+	case TERM_NETH:
+		return(TERM_L_DARK);//TERM_L_GREEN?
+	case TERM_DISE:
+		return(TERM_ORANGE);
+	case TERM_INER:
+		return(TERM_SLATE);
+	case TERM_FORC:
+		return(TERM_L_WHITE);
+	case TERM_GRAV:
+		return(TERM_SLATE);
+	case TERM_TIME:
+		return(TERM_L_GREEN);
+	case TERM_METEOR:
+		return(TERM_UMBER);
+	case TERM_MANA:
+		return(TERM_VIOLET);
+	case TERM_WATE:
+		return(TERM_BLUE);
+	case TERM_ICE:
+		return(TERM_WHITE);
+	case TERM_PLAS:
+		return(TERM_L_RED);
+	case TERM_DETO:
+		return(TERM_L_RED);
+	case TERM_DISI:
+		return(TERM_L_DARK);
+	case TERM_NUKE:
+		return(TERM_GREEN);
+	case TERM_UNBREATH:
+		return(TERM_GREEN);
+	case TERM_HOLYORB:
+		return(TERM_ORANGE);
+	case TERM_HOLYFIRE:
+		return(TERM_ORANGE);
+	case TERM_HELLFIRE:
+		return(TERM_RED);
+	case TERM_THUNDER:
+		return(TERM_L_BLUE);
+
+	case TERM_LAMP:
+		return(TERM_YELLOW);
+	case TERM_LAMP_DARK:
+		return(TERM_L_UMBER);
+
+	case TERM_EMBER:
+		return(TERM_RED);
+
+	case TERM_STARLITE:
+		return(TERM_WHITE);
+
+	case TERM_HAVOC: //inferno(deto) but fire looks better/mana/chaos ^^
+		return(TERM_L_RED);
+
+ #ifdef ATMOSPHERIC_INTRO
+	case TERM_FIRETHIN: /* for ascii-art in client login screen */
+		return(TERM_RED);
+ #endif
+#endif
+
+	case TERM_SELECTOR:
+		switch ((unsigned)ticks % 14) {
+		case 0: case 1:
+		case 14: case 15:
+			return(TERM_UMBER);
+		case 2: case 3:
+		case 12: case 13:
+			return(TERM_ORANGE);
+		case 4: case 5: case 6:
+		case 7: case 8:
+		case 9: case 10: case 11:
+			return(TERM_YELLOW);
+		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
+	case TERM_SMOOTHPAL:
+		switch ((((unsigned)ticks * 10) / 52) % 6) { //xD
+		case 0: return(TERM_L_RED);
+		case 1: return(TERM_ORANGE);
+		case 2: return(TERM_YELLOW);
+		case 3: return(TERM_L_GREEN);
+		case 4: return(TERM_L_BLUE);
+		case 5: return(TERM_VIOLET);
+		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
+	case TERM_SEL_RED:
+#if 0 /* somewhat calm still */
+		switch ((unsigned)ticks % 10) {
+		case 0: case 1:
+			return(TERM_L_RED);
+		case 2: case 3:
+		case 8: case 9:
+			return(TERM_RED);
+		case 4: case 5: case 6:
+		case 7: //case 8:
+		//case 9: //case 10: case 11:
+			return(TERM_L_DARK);
+		}
+#elif 0 /* faster */
+		switch ((unsigned)ticks % 8) {
+		case 0: case 1:
+			return(TERM_L_RED);
+		case 2: case 3:
+		case 7: case 6:
+			return(TERM_RED);
+		case 4: case 5:
+			return(TERM_L_DARK);
+		}
+#else /* more alarmy blip: 'pinging' red, then fading out */
+		switch ((unsigned)ticks % 5) {//6
+		case 0:
+			return(TERM_L_RED);
+		case 1: case 2:
+			return(TERM_RED);
+		case 3: case 4:
+		//case 5: /* slightly slower */
+			return(TERM_L_DARK);
+		}
+#endif
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
+	case TERM_SEL_BLUE: //atm for testing purpose only, see comments below...
+		/* Dual-animation! Use palette animation if available, colour-rotation otherwise */
+		if (TRUE
+#ifdef EXTENDED_BG_COLOURS
+ #ifdef TEST_CLIENT
+		    && c_cfg.palette_animation
+ #endif
+#endif
+		    ) {
+			switch ((unsigned)ticks % 14) {
+#if 0
+			case 0: case 1: case 2:
+			case 13: case 14: case 15:
+				return(TERM_BLUE);
+			case 3: case 4: case 5:
+			case 10: case 11: case 12:
+				return(TERM_SLATE);
+			case 6: case 7: case 8: case 9:
+				return(TERM_L_BLUE);
+#else
+			case 0: case 1:
+			case 14: case 15:
+				return(TERM_BLUE);
+			case 2: case 3:
+			case 12: case 13:
+				return(TERM_SLATE);
+			case 7: case 8:
+			case 4: case 5: case 6:
+			case 9: case 10: case 11:
+				return(TERM_L_BLUE);
+#endif
+			}
+		} else {
+#ifdef EXTENDED_BG_COLOURS
+			/* Use a special colour for this */
+ #if 0 /* slowish, flickers, not smooth */
+			if (ticks % 4 == 0) {
+				switch ((ticks % 32) / 4) {
+				case 0: set_palette(term2attr(TERMX_BLUE), 0, 0, 0 * 8); break;
+				case 1: set_palette(term2attr(TERMX_BLUE), 0, 0, 4 * 8); break;
+				case 2: set_palette(term2attr(TERMX_BLUE), 0, 0, 8 * 8); break;
+				case 3: set_palette(term2attr(TERMX_BLUE), 0, 0, 12 * 8); break;
+				case 4: set_palette(term2attr(TERMX_BLUE), 0, 0, 16 * 8); break;
+				case 5: set_palette(term2attr(TERMX_BLUE), 0, 0, 12 * 8); break;
+				case 6: set_palette(term2attr(TERMX_BLUE), 0, 0, 8 * 8); break;
+				case 7: set_palette(term2attr(TERMX_BLUE), 0, 0, 4 * 8); break;
+				}
+			}
+ #endif
+			return(term2attr(TERMX_BLUE)); //great for skill screen for example (maybe in green though instead of blue)
+#else /* dummy */
+			return(TERM_L_BLUE);
+#endif
+		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
+	case TERM_SRCLITE: {
+//#define TERM_SRCLITE_TEMP /* only animate temporarily instead of permanently? */
+#define TERM_SRCLITE_HUE 1 /* 1 = reddish, else blueish */
+		int angle, spd;
+
+#ifdef TERM_SRCLITE_TEMP
+		/* Stop animation after some time */
+		if (ticks - flick_global_time > 82) return(TERM_WHITE);
+#endif
+
+		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
+		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
+
+		/* Catch use in chat (or elsewhere, paranoia) instead of as feat attr in the main screen map, or we will crash :-s */
+		if (!flick_global_x)
+#if TERM_SRCLITE_HUE == 1 /* reddish */
+			return(flick_colour(TERM_FIRE));
+#else /* blueish */
+			return(flick_colour(TERM_ELEC));
+#endif
+
+		/* Assume we're only called on a dungeon floor with dimensions SCREEN_WID x SCREEN_HGT (66x22): */
+		flick_global_x -= SCREEN_PAD_LEFT;
+		flick_global_y -= SCREEN_PAD_TOP;
+		/* paranoia/safety: should the client run in big-map mode, allow for 'full-screen' dungeon floors of this size too */
+		if (flick_global_y > SCREEN_HGT) flick_global_y -= SCREEN_HGT; /* just duplicate the animation in the lower big-map screen half for now */
+		/* Anchor coordinates (0,0) in the middle of the level */
+		flick_global_x -= SCREEN_WID / 2;
+		flick_global_y -= SCREEN_HGT / 2;
+
+#ifdef TERM_SRCLITE_TEMP
+		/* Fade out animation after some time */
+		if (ticks - flick_global_time >= 40 && distance(flick_global_y, flick_global_x / 2, 0, 0) > 21 + (flick_global_time + 40 - ticks) / 2) {
+			/* Reset search light indicator */
+			flick_global_x = 0;
+			/* Out of animation 'reach' already, ie search light beams are shrinking */
+			return(TERM_WHITE);
+		}
+#endif
+
+		/* Get angle, 0..360 deg */
+		angle = arctan[ABS(flick_global_y)][ABS(flick_global_x)];
+		/* Screen coords start at (0,0) in top left corner, not in bottom left corner, so checks are x < 0 and y > 0 */
+		if (flick_global_x < 0) angle = 180 - angle;
+		if (flick_global_y > 0) angle = 360 - angle;
+		/* Move them along over time, utilize ticks10 for quite a fast animation */
+		//spd = (ticks * 20 + ticks10 * 2) % 360; /* epilepsy mode */
+		//spd = (ticks * 10 + ticks10) % 360; /* fast, recommended for shortish temporary animation */
+		spd = (ticks * 5 + ticks10 / 2) % 360; /* moderate, recommended for permanent animation */
+		//spd = (ticks * 3 + ticks10 / 3) % 360; /* slowish */
+		//spd = (ticks * 2 + ticks10 / 5) % 360; /* (too) slow, animation quality starts to suffer */
+#if 0
+		angle += spd; /* clockwise */
+#else /* Reverse direction to counter-clockwise, somehow looks cooler? oO' */
+		angle -= spd; /* counterclockwise */
+		angle += 360; /* Required: Modulo on negative numbers can be fickle depending on implementation, ensure positive angles to circumvent any issues */
+#endif
+		/* Show multiple "search lights" along the full circle (ie 360 deg) [2..4 recommended] */
+		angle %= 360 / 2;
+		/* Set beam tightness [4 or 5 recommended; problem with 4 already: too much edge flickering, check arctan[] value rounding perhaps to improve]:
+		   Map the current angle state onto different colours, with the last colour lasting especially long aka
+		   "search light beam isn't here atm", so there can be a bunch of numbers after the last colour,
+		   which is the default colour of the feat, to accomodate for this and extend that default colour's screen time. */
+		angle /= 4;
+
+		/* Reset search light indicator */
+		flick_global_x = 0;
+
+		/* Display search light (or just normal wall colour as default when not in the beam atm: 'default') */
+		switch (angle) {
+#if TERM_SRCLITE_HUE == 1 /* reddish */
+		case 0: return(TERM_RED);
+		case 1: return(TERM_ORANGE);
+		/* Recommended to insert duplicate middle colour case here for angle /= 5, leave out for angle /= 4 */
+		//case 2:
+		case 2: return(TERM_YELLOW);
+		case 3: return(TERM_ORANGE);
+		case 4: return(TERM_RED);
+		default: return(TERM_WHITE);
+#else /* blueish */
+		case 0: return(TERM_BLUE);
+		case 1: return(TERM_L_BLUE);
+		/* Recommended to insert duplicate middle colour case here for angle /= 5, leave out for angle /= 4 */
+		//case 2:
+		case 2: return(TERM_WHITE);
+		case 3: return(TERM_L_BLUE);
+		case 4: return(TERM_BLUE);
+		default: return(TERM_L_DARK); /* need TERM_L_DARK or TERM_SLATE to get enough contrast to dark blue */
+#endif
+		}}
+	default:
+		return(TERM_L_WHITE); //safe-fail, so whatever we were trying to do we won't exceed any basic colour array stuff..
+	}
+}
+
 /* Called every FL_SPEED tick, which is [1] (100ms).
    This function must return an existing palette colour index ie 0..15
    or 0..31 for extended palette (EXTENDED_COLOURS_PALANIM),
@@ -575,6 +884,14 @@ byte flick_colour(byte attr) {
 #if !defined(EXTENDED_COLOURS_PALANIM) || defined(EXTENDED_TERM_COLOURS)
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
 #endif
+
+	if (c_cfg.no_flicker) {
+#if 0
+		return(TERM_VIOLET); /* Translate ALL animated colours just to violet? */
+#else
+		return(anim2static(attr));
+#endif
+	}
 
 #ifdef EXTENDED_TERM_COLOURS
 	if (!is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) {
