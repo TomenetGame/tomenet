@@ -8117,10 +8117,10 @@ void auto_inscriptions(void) {
 				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
-				sprintf(fff, "%3d %-59s %s%s\377%c>\377%c%-19s", cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
+				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
 				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
 				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
-				    c, auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', tag_buf);
+				    c, tag_buf);
 
 #ifdef INTEGRATED_SELECTOR
  #ifdef AUTOINS_DIS_SUB_MATCH
@@ -8154,10 +8154,10 @@ void auto_inscriptions(void) {
 				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
-				sprintf(fff, "%3d %-59s %s%s\377%c>\377%c%-19s", cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
+				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
 				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
 				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
-				    c, auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', tag_buf);
+				    c, tag_buf);
 
  #ifdef AUTOINS_DIS_SUB_MATCH
 				Term_putstr(0, i + 1, -1, TERM_WHITE, fff);
