@@ -2292,7 +2292,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->easy_disarm = options[61];
 		p_ptr->easy_tunnel = options[62];
 		p_ptr->clear_inscr = options[63];
-		p_ptr->auto_inscribe = options[64];
+		p_ptr->auto_inscr_server = options[64];
 		if (!is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) {
 			p_ptr->taciturn_messages = options[65];
 			p_ptr->last_words = options[66];
@@ -2531,7 +2531,7 @@ static void sync_options(int Ind, bool *options) {
 
 		p_ptr->auto_untag = options[54];
 		p_ptr->clear_inscr = options[55];
-		p_ptr->auto_inscribe = options[56];
+		p_ptr->auto_inscr_server = options[56];
 		p_ptr->stack_force_notes = options[57];
 		p_ptr->stack_force_costs = options[58];
 		p_ptr->stack_allow_items = options[59];

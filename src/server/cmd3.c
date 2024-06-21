@@ -4976,7 +4976,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 
 			/* Auto-inscriber */
 #ifdef AUTO_INSCRIBER
-			if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);
+			if (p_ptr->auto_inscr_server) auto_inscribe(Ind, o_ptr, 0);
 #endif
 
 			object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);

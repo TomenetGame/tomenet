@@ -11599,7 +11599,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 	/* Auto-inscriber */
 #ifdef AUTO_INSCRIBER
-	if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);
+	if (p_ptr->auto_inscr_server) auto_inscribe(Ind, o_ptr, 0);
 #endif
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
