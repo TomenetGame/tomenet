@@ -10443,7 +10443,7 @@ void do_cmd_options(void) {
 		/* Give some choices */
 		l = 2;
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options 1/2");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
 #ifdef GLOBAL_BIG_MAP
