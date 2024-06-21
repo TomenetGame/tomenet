@@ -20428,8 +20428,8 @@ S:1_IN_3
 S:BO_WATE | BO_PLAS | BO_MANA | BO_CODE | HEAL |
 S:ADMINISTRATIVE_PUSH | ADMINISTRATIVE_HOLD
 D:A strange guy in blue clothes, speaking with an unknown foreign accent.
-D:He looks around with an odd mixture of annoyance, surprise and impatience
-D:and mutters unintelligibly about 'fixing' bugs of some sort..
+D:He looks around with an odd mixture of annoyance, surprise and impatience and
+D:mutters unintelligibly about 'fixing' bugs of some sort, a collector maybe..
 
 N:1153:mirror image
 G:p:c
