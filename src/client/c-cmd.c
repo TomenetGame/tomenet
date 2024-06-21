@@ -1495,7 +1495,7 @@ void cmd_apply_autoins(void) {
 	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
 	if (!apply_auto_inscriptions_aux(item, -1, TRUE)
-	    && c_cfg.auto_inscribe && !inventory_inscription_len[item])
+	    && c_cfg.auto_inscr_server && !inventory_inscription_len[item])
 		Send_autoinscribe(item);
 }
 
