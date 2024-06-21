@@ -440,31 +440,8 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 
 	w_ptr = &wild_info[wpos->wy][wpos->wx];
 #if DEBUG_LEVEL > 2
-		s_printf("new_players_on_depth.. %s  now:%ld value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc?"TRUE":"FALSE");
+		s_printf("new_players_on_depth.. %s  now:%ld value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc ? "TRUE" : "FALSE");
 #endif
-	if (in_valinor(wpos)) {
-		for (i = 1; i <= NumPlayers; i++) {
-			p_ptr = Players[i];
-			if (p_ptr->conn == NOT_CONNECTED) continue;
-			if (admin_p(i)) continue;
-			if (inarea(&p_ptr->wpos, wpos)) s_printf("%s VALINOR: Player %s is here.\n", showtime(), p_ptr->name);
-		}
-	}
-
-	/* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
-	if (value > 0) {
-		if (watch_nr && in_netherrealm(wpos)) {
-			for (i = 1; i <= NumPlayers; i++) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
-			}
-		} else if (watch_cp && wpos->wz && getdungeon(wpos)->type == DI_CLOUD_PLANES) {
-			for (i = 1; i <= NumPlayers; i++) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
-			}
-		}
-	}
 
 	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
@@ -501,6 +478,32 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		}
 	}
 
+	/* New player(s) arrive(s)? */
+	if (inc && value > 0) {
+		if (in_valinor(wpos)) {
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (admin_p(i)) continue;
+				if (inarea(&p_ptr->wpos, wpos)) s_printf("%s VALINOR: Player %s is here.\n", showtime(), p_ptr->name);
+			}
+		}
+
+		/* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
+		if (watch_nr && in_netherrealm(wpos)) {
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+			}
+		/* Same for Cloud Planes, if enabled */
+		} else if (watch_cp && wpos->wz && getdungeon(wpos)->type == DI_CLOUD_PLANES) {
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+			}
+		}
+	}
+
 	/* Hack for allowing only a single player to act at a time on this floor.
 	   IMPORTANT: For this to work, new_level_flag must always be set _before_ calling us for the target floor! */
 #ifdef DEATH_FATE_SPECIAL
@@ -510,6 +513,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		if (l_ptr) {
 			/* Only 1 player? Make sure he's unfrozen */
 			if (l_ptr->ondepth == 1) {
+				s_printf("DF: ondepth=1.\n"); //paranoia: catch possible bugs
 				for (i = 1; i <= NumPlayers; i++) {
 					p_ptr = Players[i];
 					if (p_ptr->conn == NOT_CONNECTED) continue;
@@ -534,7 +538,10 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 					if (p_ptr->admin_dm) continue;
 					if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-					if (!p_ptr->new_level_flag) continue;
+					if (!p_ptr->new_level_flag) {
+						s_printf("DF: Player lacks new_level_flag: %s\n", p_ptr->name); //paranoia: catch possible bugs
+						continue;
+					}
 					p_ptr->paralyzed = 255;
 					p_ptr->redraw |= PR_STATE;
 					msg_print(i, "You are frozen in stasis!");
