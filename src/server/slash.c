@@ -1676,7 +1676,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				c = message3;
 				while (*c) {
-					if (*c == '.') dot = TRUE;
+#if 0
+					if (*c == '.') dot = TRUE; /* Don't interpret chapter numbers as line numbers */
+#else
+					if ((*c < '0' || *c > '9') && *c != ' ') dot = TRUE; /* Don't interpret ANY number that isn't a pure number as line number (eg "100%") */
+#endif
 					if (!allcapsok && isalpha(*c)) allcapsok = TRUE;
 					if (toupper(*c) == *c) {
 						c++;
