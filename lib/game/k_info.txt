@@ -4976,6 +4976,7 @@ W:5:0:90:300
 A:5/3:45/2
 P:0:1d4:0:0:0
 F:SHOW_MODS | MUST2H | REGEN_MANA
+#(Note regarding WIELD_DEVICES: Cheapest mdev staves are 200 Au atm.)
 
 # An extra ring, out of place
 

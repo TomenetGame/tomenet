@@ -390,6 +390,7 @@
     30% reduced fail chance, flat on top,
     20% chance to retain the charge/energy at the cost of MP (depending on the device level). */
 #define WIELD_DEVICES
+//(Note: If manareg gets added to any devices, it should probably depend on charges left. However, cheapest staff is 200 au while basic mstaff is 300 au.)
 
 
 
