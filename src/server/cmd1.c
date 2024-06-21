@@ -6012,6 +6012,13 @@ void py_bash_py(int Ind, int y, int x) {
 	/* wraithed players can attack wraithed monsters - mikaelh */
 	if (p_ptr->tim_wraith && !is_admin(p_ptr) && !q_ptr->tim_wraith) return;
 
+	/* Don't allow moving AFK players around, unless they block stairs, gates, etc.
+	   (Note: This might also include not so important feats, but the PERMA+REMEMBER heuristic is quite good in general.) */
+	if (q_ptr->afk && (f_info[zcave[q_ptr->py][q_ptr->px].feat].flags1 & (FF1_PERMANENT | FF1_REMEMBER)) != (FF1_PERMANENT | FF1_REMEMBER)) {
+		msg_print(Ind, "You cannot push past AFK players who don't stand on special features.");
+		return;
+	}
+
 	/* Only attack if player is hostile. Otherwise we just do a friendly place-switching here: */
 	if (cfg.use_pk_rules == PK_RULES_NEVER || !check_hostile(Ind, Ind2)) {
 		int ox = q_ptr->px, oy = q_ptr->py, nx = p_ptr->px, ny = p_ptr->py;
