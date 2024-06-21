@@ -3657,6 +3657,18 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "Dungeon Keeper");
 					continue;
 				}
+				if ((my_strcasestr(buf, "De") && my_strcasestr(buf, "Kn"))) { //I just hope this isn't toooo short
+					strcpy(chapter, "- Death Knight");
+					continue;
+				}
+				if ((my_strcasestr(buf, "He") && my_strcasestr(buf, "Kn"))) { //^
+					strcpy(chapter, "- Hell Knight");
+					continue;
+				}
+				if ((my_strcasestr(buf, "Co") && my_strcasestr(buf, "Pr"))) { //^
+					strcpy(chapter, "- Corrupted Priest");
+					continue;
+				}
 				if (!strcasecmp(buf, "XO") || !strcasecmp(buf, "Extermination Orders")
 				    || my_strcasestr(buf, "Extermination")
 				    || (my_strcasestr(buf, "Ex") && my_strcasestr(buf, "ord"))) {

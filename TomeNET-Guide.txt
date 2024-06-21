@@ -18428,8 +18428,13 @@ create a character!):
     If you're a team player and want to support your team right from the
     beginning, get the spell 'Cure Wounds' as soon as possible and macro it.
 
+- Corrupted Priest
     There are rumours of ultimately corrupted priests which have lost all their
     holiness and align with the forces of hell instead.
+    They have the same abilities as priests in all regards but while they too
+    can make use of shadowy occultism, they are not able to utilize any kind of
+    holy prayers and are susceptible to holy effects.
+    Instead they command blood magic and heretic magic of flame and chaos.
 
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
