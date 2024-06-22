@@ -5813,8 +5813,8 @@ numbers and brackets.
 The meaning of these will be explained here:
 
 a Ration of Food {+,0}
-    Pretty straightforward, this is an item that you can consume if you get
-    hungry. To do so, use SHIFT+e to 'eat' this item.
+    Pretty straightforward, this is an item that you can consume if you
+    get hungry. To do so, use SHIFT+e to 'eat' this item.
     The {..} part means the following:
 
     The number in it is the level required to use this item. 0 means that it
@@ -6271,11 +6271,11 @@ TomeNET directory at \lib\user by choosing "(s) Save macros" and entering a
 filename, or simply confirming the shown default file name which is the same
 as your character (recommended!).
 
-Now if you press F1 you will automatically quaff the potion of Heroism, F2 for
-Cure Light Wounds and F3 to read the scroll. You are ready to enter the
+Now if you press F1 you will automatically quaff the potion of Heroism, F2
+for Cure Light Wounds and F3 to read the scroll. You are ready to enter the
 dungeon now. If you still have some spare money, buy a flask of oil to fuel
-your lantern if it runs out, as well as some rations of food in case you get
-hungry.
+your lantern if it runs out, as well as some rations of food in case you
+get hungry.
 The next time you log on, you may load your previously saved macro file by
 invoking the macro menu again ('%'), choosing "(l) Load macros" and
 entering the filename. If you saved the macros to the same name as your
