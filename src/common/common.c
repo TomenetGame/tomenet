@@ -424,7 +424,7 @@ char *my_strcasestr(const char *big, const char *little) {
 /* Same as my_strcasestr() but skips colour codes (added for guide search).
    strict:
     0 - not strict
-    1 - search for occurances only at the beginning of a line (tolerating colour codes and spaces)
+    1 - search for occurances only at the beginning of a line (tolerating colour codes and spaces (and experimentally bulletin markers, '-'))
     2 - same as (1) and it must not start on a lower-case letter (to ensure it's not just inside some random text).
     3 - same as (2) and also search only for all-caps (for item flags)
     4 - same as (3) and it must be at the beginning of the line without tolerating spaces, to rule out that we're inside some paragraph already.
@@ -458,7 +458,9 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 				if (big[cnt] != 0) cnt++; //paranoia: broken colour code
 			}
 			if (!big[cnt]) return(NULL);
-			if (big[cnt] != ' ') just_spaces = FALSE;
+			if (big[cnt] != ' '
+			    && big[cnt] != '-' /* actually, also tolerate '-' bulletin list markers! hm */
+			    ) just_spaces = FALSE;
 
 			cnt2 = cnt_offset = 0;
 			l = 0;
