@@ -11133,7 +11133,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					this_o_idx = c_ptr->o_idx;
 
  #ifdef MONSTER_ITEM_CONSUME
-					if (magik(MONSTER_ITEM_CONSUME)) {
+					if (magik(MONSTER_ITEM_CONSUME) && r_ptr->d_char != 't') { /* Bree townies are nice and never poof stuff (eg deeds!) */
 						/* the_sandman - logs monsters pick_up? :S (to track items going poof
 						 * without any explanation(s)... To reduce the amount of spammage, lets
 						 * just log the owned items... All the housed items are owned anyway */
