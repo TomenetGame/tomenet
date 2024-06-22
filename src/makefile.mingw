@@ -7,7 +7,8 @@
 # This file allows compiling TomeNET binaries for the Windows platform using the
 # MinGW cross-compiler running on Linux.
 #
-# You must install the MinGW cross compiler first.
+# You must install the MinGW cross compiler and Wine first. Wine is used for
+# running tolua.exe during compilation.
 #
 # Optionally, you need to install the headers for SDL 1.2 and SDL_mixer in your
 # cross compiling environment.
@@ -121,8 +122,7 @@ TOLUAOBJS = \
 
 CLI_LUASRCS = \
   client/c-script.c client/lua_bind.c \
-  client/w_util.c client/w_spells.c
-#  client/w_play.c client/w_util.c client/w_spells.c
+  client/w_play.c client/w_util.c client/w_spells.c
 
 #  server/lua_bind.c \
 #  server/w_util.c server/w_play.c
@@ -224,7 +224,7 @@ CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc
 
 # Native Linux gcc for compiling preproc.
 # Todo actually: Fix this to allow preproc-win.c -> preproc.exe compilation and use,
-# currently preproc.exe couldn't access the CPP from within environment.
+# currently preproc.exe couldn't access the CPP from within wine environment.
 NCC = gcc
 
 
@@ -248,7 +248,7 @@ CLI_SRCS += $(TOLUASRCS)
 CLI_OBJS += $(TOLUAOBJS)
 CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
-TOLUA = server/tolua
+TOLUA = server/tolua.exe
 
 #
 # Hack -- "install" as the base target
@@ -354,26 +354,26 @@ client/spells.pkg: client/spells.pre preproc/preproc
 	cd client; ../preproc/preproc spells.pre spells.pkg $(CPP) $(CPPFLAGS) $(PPFLAGS); cd ..
 
 server/w_util.c: server/util.pkg $(TOLUA)
-	cd server; ./tolua -n util -o w_util.c util.pkg; cd ..
+	cd server; wine ./tolua.exe -n util -o w_util.c util.pkg; cd ..
 
 server/w_play.c: server/player.pkg $(TOLUA)
-	cd server; ./tolua -n player -o w_play.c player.pkg; cd ..
+	cd server; wine ./tolua.exe -n player -o w_play.c player.pkg; cd ..
 
 server/w_spells.c: server/spells.pkg $(TOLUA)
-	cd server; ./tolua -n spells -o w_spells.c spells.pkg; cd ..
+	cd server; wine ./tolua.exe -n spells -o w_spells.c spells.pkg; cd ..
 
 client/w_play.c: client/player.pkg $(TOLUA)
-	cd client; ../server/tolua -n player -o w_play.c player.pkg; cd ..
+	cd client; wine ../server/tolua.exe -n player -o w_play.c player.pkg; cd ..
 
 client/w_util.c: client/util.pkg $(TOLUA)
-	cd client; ../server/tolua -n util -o w_util.c util.pkg; cd ..
+	cd client; wine ../server/tolua.exe -n util -o w_util.c util.pkg; cd ..
 
 client/w_spells.c: client/spells.pkg $(TOLUA)
-	cd client; ../server/tolua -n spells -o w_spells.c spells.pkg; cd ..
+	cd client; wine ../server/tolua.exe -n spells -o w_spells.c spells.pkg; cd ..
 
 
 common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
-	cd common; ../server/tolua -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
+	cd common; wine ../server/tolua.exe -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
 
 #
 # Resources

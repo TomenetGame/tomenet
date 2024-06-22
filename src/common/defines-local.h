@@ -21,7 +21,7 @@
 /* #define FUN_SERVER */
 
 /* Server running in test mode? (usually verbose debugging output) */
-#define TEST_SERVER
+/* #define TEST_SERVER */
 
 
 /* Permanent event "Ironman Deep Dive Challenge": */

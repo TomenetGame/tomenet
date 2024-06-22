@@ -11930,18 +11930,12 @@ u32b adventure_flags1(int wz) { // LOCALE_00, GE_DESCRIPTION -- adventures.lua
 	// Under Elmoth
 	case 2:
 		return (LF1_NO_GENO | LF1_NO_MAGIC_MAP | LF1_NO_DESTROY);
-	// Old Fire
+	// Isle
 	case 3:
-		return (LF1_NO_GENO | LF1_NO_MAGIC_MAP | LF1_NO_DESTROY);
-	// Desert Spire
-	case 4:
-	case 5:
-	case 6:
-		return (LF1_NO_GENO | LF1_NO_MAGIC_MAP | LF1_NO_DESTROY);
+		return (LF1_NO_GENO | LF1_NO_DESTROY);
 	// Unoccupied
 	default:
 		return (0);
-		// return (LF1_NO_GENO | LF1_NO_MAGIC_MAP | LF1_NO_DESTROY);
 	}
 }
 
@@ -11950,18 +11944,12 @@ u32b adventure_flags2(int wz) { // LOCALE_00, GE_DESCRIPTION -- adventures.lua
 	// Under Elmoth
 	case 2:
 		return (LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_LIVE_SPAWN);
-	// Old Fire
+	// Isle
 	case 3:
-		return (LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_LIVE_SPAWN | LF2_NO_TELE);
-	// Desert Spire
-	case 4:
-	case 5:
-	case 6:
-		return (LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_LIVE_SPAWN | LF2_NO_TELE);
+		return (LF2_NO_LIVE_SPAWN);
 	// Unoccupied
 	default:
 		return (0);
-		// return (LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_LIVE_SPAWN | LF2_NO_TELE);
 	}
 }
 

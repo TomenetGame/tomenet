@@ -41,13 +41,12 @@ SPEED_RAIN = 3
 LOCALE_00 = { -- dlvl loc_pre desc music ambient
 -- Under Elmoth
 [2] = {50,"under","Nan Elmoth",32,SFX_AMBIENT_NONE}, -- Mirkwood
--- Old Fire
-[3] = {25,"under","Red Halls",24,SFX_AMBIENT_NONE}, -- The Land of Rhun
--- Desert Spire
-[4] = {100,"above","Waith Sands",39,SFX_AMBIENT_NONE}, -- Maze
-[5] = {100,"inside","Glass Spire",37,SFX_AMBIENT_NONE}, -- The Illusory Castle
-[6] = {100,"from","The Pinnacle",25,SFX_AMBIENT_NONE}, -- The Sandworm Lair
+-- Stormy Isle
+[3] = {150,"at the","Stormy Isle",35,SFX_AMBIENT_SHORE}, -- Submerged Ruins
 -- Unoccupied
+[4] = {-2,"","",0,SFX_AMBIENT_NONE},
+[5] = {-2,"","",0,SFX_AMBIENT_NONE},
+[6] = {-2,"","",0,SFX_AMBIENT_NONE},
 [7] = {-2,"","",0,SFX_AMBIENT_NONE},
 [8] = {-2,"","",0,SFX_AMBIENT_NONE},
 [9] = {-2,"","",0,SFX_AMBIENT_NONE},
@@ -57,13 +56,12 @@ LOCALE_00 = { -- dlvl loc_pre desc music ambient
 WEATHER_00 = { -- weather wind season intensity speed
 -- Under Elmoth
 [2] = {0,0,0,0,0},
--- Old Fire
+-- Stormy Isle
 [3] = {WEATHER_RAIN,WIND_WINDY,SEASON_NORMAL,INTENSE_WIND,SPEED_RAIN}, -- Light Rain
--- Desert Spire
-[4] = {WEATHER_RAIN,WIND_WINDY,SEASON_NORMAL,INTENSE_WIND,SPEED_RAIN}, -- Light Rain
+-- Unoccupied
+[4] = {0,0,0,0,0},
 [5] = {0,0,0,0,0},
 [6] = {0,0,0,0,0},
--- Unoccupied
 [7] = {0,0,0,0,0},
 [8] = {0,0,0,0,0},
 [9] = {0,0,0,0,0},
@@ -72,14 +70,12 @@ WEATHER_00 = { -- weather wind season intensity speed
 
 GE_TYPE = { -- announcement_time signup_time end_turn min_participants limited noghost challenge
 ["Under Elmoth"] = {2,0,35,1,6,1,1}, -- ge->state[1] = (challenge ? 1 : 0)
-["Old Fire"] = {1,0,61,1,6,1,1}, -- 2nd "challenge" module - TEST
-["Desert Spire"] = {1,0,61,1,6,1,1}, -- 3nd "challenge" module - !lvl1 TEST
+["Stormy Isle"] = {2,0,45,1,0,0,0}
 } -- time in minutes; "sensible announcement_time" of 5m minimum avoids double announce and uninitialized ge->*
 
 GE_EXTRA = { -- INDEX level req. (min,max) 00depth (min,max,entry,exit)
 ["Under Elmoth"] = {1,0,1,2,2,2,2}, -- min 0 = newly created level 1 only
-["Old Fire"] = {2,0,1,3,3,3,3}, -- 2nd "challenge" module - TEST
-["Desert Spire"] = {3,20,25,4,4,6,6}, -- 3nd "challenge" module - !lvl1 TEST
+["Stormy Isle"] = {2,1,21,3,3,3,3}
 } -- reordering this ? find GE_EXTRA to update ge->extra[i-1] hardcode, xtra1.c
 
 GE_DESCRIPTION = { -- description (lines [0,9])
@@ -90,35 +86,23 @@ GE_DESCRIPTION = { -- description (lines [0,9])
 " chambers contain only dread! Triumph over the corruption if you can!  ",
 "                                                                       ",
 " -- Restrictions: Zero experience required. 1-6 players. 30 minutes.   ",
-" -- Prohibitions: No Mapping, Detection, ESP, Genocide, *Destruction*. ",
+" -- Prohibitions: No ESP, Mapping, Detection, Genocide, *Destruction*. ",
 "                                                                       ",
 " Hints: BEWARE! Some encounters will challenge different playstyles.   ",
 "        Try various strategies or participate in a group to succeed!   ",
 "                                                                       "},
 
-["Old Fire"] = {
-" What stirs east of Rhun, under the weathered peaks of the Orocarni?   ",
-" Create a new character and delve deep through lost caverns to restore ",
-" a kingom ruined by dragon fire in ages past. One of four lost hoards  ",
-" amassed by the dwarven kings awaits those bold enough to reclaim it!  ",
+["Stormy Isle"] = {
+" Form an expedition team of 2-6 experienced characters and explore a   ",
+" stormy islet off the southern coast of Middle-earth.                  ",
 "                                                                       ",
-" -- Restrictions: Zero experience required. 1-6 players. 60 minutes.   ",
-" -- Prohibitions: No Mapping, Detection, ESP, Teleporation, Removal.   ",
+" -- Prohibitions: Genocide, *Destruction*.                             ",
+" -- Restrictions: Levels 14-21 only. 30 minutes to explore.            ",
 "                                                                       ",
-" Hints: BEWARE! Some encounters will challenge different playstyles.   ",
-"        Try various strategies or participate in a group to succeed!   "},
-
-["Desert Spire"] = {
-" Ascend the maligned minarets of The Glass Spire! Raised from molten   ",
-" desert sand, it blisters the Harad Waith with the warped light of an  ",
-" eternal day. Yet inside, the weather is tranquil, and the spire hosts ",
-" opulent gardens, cool waters and a meanagerie dead set to entertain.  ",
-"                                                                       ",
-" -- Restrictions: Levels 20-25. 1-6 players. 60 minutes.               ",
-" -- Prohibitions: No Mapping, Detection, ESP, Teleporation, Removal.   ",
-"                                                                       ",
-" Hints: BEWARE! Some encounters will challenge different playstyles.   ",
-"        Try various strategies or participate in a group to succeed!   "}
+"",
+"",
+"",
+""}
 }
 
 -- FUNCTIONS
@@ -168,13 +152,8 @@ function adventure_start(Ind,t)
     if t=="Under Elmoth" then
       module_load(0,0,2,"elmoth",0)
     end
-    if t=="Old Fire" then
-      module_load(0,0,3,"orocarni",1) -- 1 = daytime, light out
-    end
-    if t=="Desert Throne" then
-      module_load(0,0,4,"harad",1) -- 1 = daytime, light out
-      module_load(0,0,5,"harad",1) -- 1 = daytime, light out
-      module_load(0,0,6,"harad",1) -- 1 = daytime, light out
+    if t=="Stormy Isle" then
+      module_load(0,0,3,"isle",1) -- 1 = daytime, light out
     end
   end
 

@@ -22244,7 +22244,7 @@ Enhanced spell types have fixed parameters; other spell types may be modified.
                     Increasing radius will increase the size of the arc.
                     Required skill level for first spell level: 25.
 
-    Shot            Fires three brief bolts at one or more targets in an arc.
+    Shot            Fires four brief bolts at one or more targets in an arc.
     (Enhanced)      This arc can include up to three adjacent targets, and the
                     bolts will be divided among remaining targets as they are
                     fired, until all bolts are fired or no targets remain.
