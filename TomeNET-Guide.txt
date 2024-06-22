@@ -5873,8 +5873,8 @@ a Chain Mail {+,0} (-2) [14,+0]
 
     For example a Chain Mail [14,+3] is magically enchanted 3 times, and
     therefore will provide you with 17 AC instead of just 14, ie 14+3.
-    Armour class helps for both: Reducing the chance to get hit, and reducing
-    the actual damage you suffer in case you are hit.
+    The armour class helps for both: Reducing the chance to get hit, and
+    reducing the actual damage you suffer in case you are hit.
 
     Likewise, if you fight an acidic monster for example, the acid might damage
     your Chain Mail, and turn it into for example a Chain Mail [14,-2].
@@ -9943,10 +9943,10 @@ Switch places           Monsters that have MOVE_BODY flag may switch place with
 
 An attack type ('HIT') that can do both, cut and stun, will randomly do either
 one, but never both at once. The 95% damage criterium is measured for the final
-damage ie after the damage-reduction of AC has been applied. This is why high
-armour class helps *alot* to prevent any type of cut or stun effect that comes
-from critical hits by monsters, no matter how high the actual potential damage
-of that attack might be.
+damage ie after the damage-reduction of AC has been applied. This is why
+high armour class helps *alot* to prevent any type of cut or stun effect that
+comes from critical hits by monsters, no matter how high the actual potential
+damage of that attack might be.
 However, unlike the most common damage types (like 'HURT') certain damage types
 cannot be mitigated by AC and hence their cut/stun potential is always to be
 reckoned with (see damage types in the second table in (6.5), which say so if
