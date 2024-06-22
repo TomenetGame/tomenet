@@ -203,8 +203,8 @@ CLI_LUAOBJS = \
 #
 # This is my compiler of choice, it seems to work most everywhere
 #
-#CC = gcc
-CC = clang
+CC = gcc
+#CC = clang
 
 # For allowing #if..#else..#endif constructs in LUA files - C. Blue
 # Note: The flags must contain
@@ -254,11 +254,11 @@ SERVER_EXTRA_LIBS = -lcrypt
 # "CFLAGS", if your machine places files in a weird location.
 #
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lm
 
 ##
@@ -276,17 +276,17 @@ SERVER_EXTRA_LIBS = -lcrypt
 # attempt to "guess" at many of these flags based on your system.
 #
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
 ##
 ## Without USE_SOUND_2010 (aka compile without sound support) - make sure to remove #define USE_SOUND_2010 (and possibly #define USE_SOUND) in src/config.h too.
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
 
 # With SDL2
@@ -329,11 +329,11 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 ## This is a command-line client that relies on ncurses.
 ##
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
 #LIBS = -L/usr/pkg/lib -lncurses -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L/usr/pkg/lib -lncurses -lm
 
 
@@ -356,14 +356,14 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 ## CFLAGS and -lX11 from LIBS
 ##
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm `sdl-config --libs` -lSDL_mixer
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS = -Wl,-rpath,\$$ORIGIN
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
+#CFLAGS = -O0 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
 
 #GCC on Archlinux enabled “--enable-default-pie" by default at some point, so we add this or preproc will fail to build:
@@ -415,7 +415,7 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 #LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
 
 # Normal (non-test) client uses optimizations
-tomenet: CFLAGS += -g -O2 -DSOUND_SDL `sdl2-config --cflags` -DUSE_X11 -I${X11BASE}/include
+tomenet: CFLAGS += -g -O0 -DSOUND_SDL `sdl2-config --cflags` -DUSE_X11 -I${X11BASE}/include
 tomenet: LIBS += -L${X11BASE}/lib -lX11 `sdl2-config --libs` -lSDL2_mixer
 # Compile a client with 'test client' version/tag
 #tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
@@ -424,8 +424,8 @@ tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -W
 tomenet.test: PPFLAGS = -DTEST_CLIENT -DSOUND_SDL `sdl2-config --cflags` 
 tomenet.test: LIBS += -L${X11BASE}/lib -lX11 `sdl2-config --libs` -lSDL2_mixer
 # Server is compiled with optimizations
-tomenet.server: CFLAGS += -g -O2
-accedit: CFLAGS += -g -O2
+tomenet.server: CFLAGS += -g -O0
+accedit: CFLAGS += -g -O0
 
 # Lua
 SRCS += $(LUASRCS)

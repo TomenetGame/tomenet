@@ -604,7 +604,7 @@ function cast_rune_spell(I,D,u)
     if X then
       fire_cone(I, PP[2], D, d, r, p.attacker)
     else
-      fire_shot(I, PP[2], D, x, y, r, 4, p.attacker)
+      fire_shot(I, PP[2], D, x, y, r, 3, p.attacker) -- 4->3 bolts, too OP?
     end
   elseif band(u,SURG)~=0 then
     if X then

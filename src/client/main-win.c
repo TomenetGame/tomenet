@@ -77,7 +77,7 @@
 #  endif
 #endif
 
-// #define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
+#define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
 
 #ifdef USE_LOGFONT
 # if 0 /* too small */
