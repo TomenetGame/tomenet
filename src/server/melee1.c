@@ -341,8 +341,8 @@ static bool do_eat_item(int Ind, int m_idx) {
 			    o_name, index_to_label(i));
 
 			monster_desc(Ind, m_name, m_idx, 0x1);
-			s_printf("EAT_ITEM: %s from %s : %s (%c)(%c)\n",
-			    m_name, p_ptr->name, o_name, index_to_label(l), index_to_label(j)); //may wrongly use o_name in plural but w/e
+			s_printf("EAT_ITEM: %s from %s : %s (%c)\n",
+			    m_name, p_ptr->name, o_name, index_to_label(i)); //may wrongly use o_name in plural but w/e
 		}
 
 		/* Option */
