@@ -9186,8 +9186,9 @@ While many traps have obvious effects, here are some less obvious ones:
   Ale Vendor                It doesn't hand out free ale, you're paying for it.
   Seasoned Traveller        Does not touch items of value 150 Au or more.
   Lost Labor                All non-uniques on the floor turn into 100% clones.
-  Despair                   Your stats are reduced and you gain two potions,
-                            Augmentation and Death. Quaff the correct one!
+  Despair                   Your stats are reduced and you get an Augmentation
+                            and a Death potion placed in your inventory.
+                            Make sure you quaff the correct one!
   Cleaning                  Deletes all nearby unowned loot.
   Animate Coins             The animated coins are from your own purse..
   Remittance                You share some of your money in your purse with
@@ -9899,8 +9900,8 @@ Poison   -Poisoned      The player will continuously lose Hit Points.
                         poisoned (compare (5.6)).
                         Slow Poison (potions) will reduce the speed at which
                         poison ticks and drains your HP. Best is of course to
-                        have means of Cure/Neutralize Poison, 'Curing', or some
-                        Lembas, which will all completely cure poison.
+                        have means of Cure/Neutralize Poison, 'Curing', or
+                        some Lembas, which will all completely cure poison.
 
 Disease  -Diseased      Very similar to poison, but poison resistance does not
                         help against this. Can be cured by eating some Lembas,
