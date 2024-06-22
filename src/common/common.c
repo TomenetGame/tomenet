@@ -449,7 +449,7 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 	L = strlen(little);
 
 	if (strict) { /* switch to strict mode */
-		bool just_spaces = (strict == 4 ? FALSE : TRUE), testfirstalphachar = (strict >= 2);
+		bool just_spaces = (strict == 4 ? FALSE : TRUE), testfirstalphachar = (strict >= 2), no_more_spaces = FALSE;
 
 		do {
 			/* Skip colour codes */
@@ -458,9 +458,18 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 				if (big[cnt] != 0) cnt++; //paranoia: broken colour code
 			}
 			if (!big[cnt]) return(NULL);
-			if (big[cnt] != ' '
-			    && big[cnt] != '-' /* actually, also tolerate '-' bulletin list markers! hm */
-			    ) just_spaces = FALSE;
+
+			if (just_spaces) {
+				if (no_more_spaces) just_spaces = FALSE;
+				else {
+					if (big[cnt] != ' '
+					    && big[cnt] != '-' /* actually, also tolerate '-' bulletin list markers! hm */
+					    ) just_spaces = FALSE;
+					/* ..however, after the '-' do not tolerate more spaces! This allows us to distinguish between
+					   'important' bulletin points and 'unimportant' ones in the guide :o */
+					if (big[cnt] == '-') no_more_spaces = TRUE;
+				}
+			}
 
 			cnt2 = cnt_offset = 0;
 			l = 0;
