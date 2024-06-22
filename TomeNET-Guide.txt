@@ -21094,16 +21094,16 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Radius and damage will further increase.
                     Shared spell (see above): H.Offense, H.Support.
 
-    Ray of Light    Casts a ray of powerful light that damages all monsters
-                    that aren't immune to light and may cause blindness too.
-                    Required skill level for first spell level: 18.
-
     Redemption      *Dispels undead* in your field of view.
                     Required skill level for first spell level: 10.
 
                     Tier II: Level 25.
 
                     Tier III: Level 40.
+
+    Ray of Light    Casts a ray of powerful light that damages all monsters
+                    that aren't immune to light and may cause blindness too.
+                    Required skill level for first spell level: 18.
 
     Exorcism        *Dispels demons* in your field of view.
                     Required skill level for first spell level: 20.
