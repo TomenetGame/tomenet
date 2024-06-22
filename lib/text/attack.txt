@@ -104,7 +104,7 @@ are very out of date)
      increasing his/her armour class, and protecting him/her against damage
      from fire, cold, acid, lightning, and falls.  This weapon also will
      increase your stealth, let you see invisible creatures, protect you
-     from paralyzation and some slowing attacks, and help you regenerate hit
+     from paralysis and some slowing attacks, and help you regenerate hit
      points and mana faster.  As a result of the regeneration ability, you
      will use up food somewhat faster than normal while wielding such a
      weapon.
@@ -138,7 +138,7 @@ Weapon of Flame
 Weapon of Westernesse
      A Weapon of Westernesse is one of the more powerful weapons.  It slays
      orcs while increasing your strength, dexterity, and constitution.  It
-     also lets you see invisible creatures and protects from paralyzation and
+     also lets you see invisible creatures and protects from paralysis and
      some slowing attacks.  These blades were made by the Dunedain.
 
 Weapon of Slay Dragon

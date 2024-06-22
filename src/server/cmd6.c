@@ -7977,7 +7977,7 @@ bool unmagic(int Ind) {
 		//set_confused(Ind, 0) -- neither is confusion
 		//set_blind(Ind, 0) -- nor blindness
 		//set_image(Ind, 0) -- nor hallucinations
-		set_paralyzed(Ind, 0) + //..but let paralyzation be affected, for off-chance of odd turnarounds! oO
+		set_paralyzed(Ind, 0) + //..but let paralysis be affected, for off-chance of odd turnarounds! oO
 		//set_stopped(Ind, 0) + -- no, it's a rune of protection that locks us down, not an internal effect
 		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) +
 		set_blessed(Ind, 0, FALSE) +

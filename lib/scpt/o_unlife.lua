@@ -1,7 +1,7 @@
 -- handle the occultism school ('unlife')
 -- More spell ideas: "Torment" (res fear+conf), "Rune of Styx" (glyph), "Desecration" (aoe cloud)
 
---[[ there is currently no paralyzation, it's just sleep so monster wakes up on taking damage..
+--[[ there is currently no paralysis, it's just sleep so monster wakes up on taking damage..
 OHOLD_I = add_spell {
 	["name"] = 	"Paralyze",
 	["name2"] = 	"Para",

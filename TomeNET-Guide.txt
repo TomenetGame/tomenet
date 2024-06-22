@@ -666,9 +666,9 @@ r       r       read a scroll.
 E       E       eat food. Hunger can kill you, if you don't eat for a longer
                 while, depending on your character. You will see a yellow
                 'Hungry' appear below the status bar on the left side in the
-                main window, then it will change gradually to orange/red 'Weak'
-                or 'Starved' (in game version > 4.8.0) and you will start
-                getting paralysed by the lack of food!
+                main window, then it will change gradually to 'Starved' in
+                orange/red colour (or 'Weak' in game version <= 4.8.0) and
+                you will start getting paralyzed by the lack of food!
                 Finally you will start losing hit points and eventually die
                 from starvation.
                 (Draconians can eat firestones to gain temporary special
@@ -1218,8 +1218,8 @@ They all start with a slash '/' hence they're called slash commands:
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
             Note that your character won't need to consume food while afk _IF_
-            you are not already 'hungry' or even 'weak' ('starved' in game
-            version > 4.8.0) from a lack of food!
+            you are not already 'hungry' or even 'starved' ('weak' in game
+            versions <= 4.8.0) from a lack of food!
             All other timed effects will continue to be processed (like
             magical effects such as haste/slowness/hallucination, pseudo-ID or
             wearing off of temporary stat drain from traps) and eventually
@@ -9833,18 +9833,20 @@ Hunger  -Gorged         Your speed gets reduced by 10.
 
         -Hungry
 
-        -Weak (yellow) or 'Starved' in game version > 4.8.0
+        -Starved (yellow) or 'Weak' in old game versions <= 4.8.0
+                        You will regenerate hit points slower,
 
-        -Weak (orange) or 'Starved' in game version > 4.8.0
+        -Starved (orange) or 'Weak' in old game versions <= 4.8.0
+                        You will regenerate hit points slower,
 
-        -Weak (red)    or 'Starved' in game version > 4.8.0
+        -Starved (red)    or 'Weak' in old game versions <= 4.8.0
          (starving)     You lose hit points and get paralyzed even with FA.
-                        If you hit a bowel cramps trap, you instantly enter
-                        this nutrition state. 'Slow Digestion' will help to
-                        not get insta-paralyzed!
+                        You will not regenerate hit points from resting.
 
-        You will regenerate hit points slower if you are weak (or starved),
-        and not at all if you are starving (red 'Weak' / red 'Starved').
+                        If you hit a bowel cramps trap, you instantly enter
+                        this nutrition state. 'Slow Digestion' (and of course
+                        normal 'Free Action') will prevent insta-paralysis
+                        from the trap.
 
         Note that you don't consume food in towns, in town areas, while AFK and
         not already hungry (or worse), and in the Arena Monster Challenge.
@@ -13441,9 +13443,9 @@ Ring of Lordly Protection
 Amulet of Slow Digestion
 Ring of Slow Digestion
                         will slow your food digestion so you have to eat less
-                        often. Also prevents instant paralysation if your food
-                        state hits red 'weak' (or red 'starved' in game version
-                        higher than 4.8.0).
+                        often. Also prevents instant paralysis if your food
+                        state hits red 'Starved' (or red 'Weak' in old game
+                        versions up to 4.8.0).
 Ring of Polymorphing    Can be used by adept Mimicry-users to tansform
                         themselves. See (7.7a) for details on these rings.
 
@@ -13453,7 +13455,7 @@ Misc
 Ale and wine        Will satisfy your hunger somewhat, and may have random side
                     effects:
                     Confusion, stun, hallucinations, 1 point of sanity damage,
-                    paralysation, fear, blindness (methyl? ew), vomitting if
+                    paralysis, fear, blindness (methyl? ew), vomitting if
                     your stomach isn't relatively empty, temporary stat
                     decrease (except for strength), slowness,
                     heroism, berserk, speed (compare (4.11b)).
@@ -14892,7 +14894,7 @@ variety of monsters, for example you will probably encounter a "floating eye",
 denoted by an orange 'e'. These cannot inflict any damage on you but if you get
 too close they will gaze at you which will in most cases paralyze you!
 If you're unlucky or your Saving Throw stat (Shift+C to check) isn't
-particularly great a floating eye might even lock you in paralyzation forever,
+particularly great a floating eye might even lock you in paralysis forever,
 making you easy prey for any other monster around.
 
 To check monster information you have these ways:
@@ -15231,7 +15233,7 @@ CHAR_CLEAR      The monster has no visible appearance, not even if you can see
 
 UNMAGIC         Will cancel all temporary magical effects on the player,
                 except for mimic form (from polymorph ring) and martyr.
-HOLD            Paralyses you from afar.
+HOLD            Paralyzes you from afar.
 FORGET          Blanks your mind, makes you forget the dungeon map and details
                 of your items (unidentifies items).
 TRAPS           Can place traps around you (from afar).
@@ -15825,12 +15827,12 @@ UNMAGIC         This can be extremely nasty for istari. Unmagic cancels nearly
 MIND_BLAST      A psionic attack spell that hurts your sanity and can cause
                 confusion and hallucinations.
 BRAIN_SMASH     A powerful psionic attack spell that hurts your sanity and can
-                cause blindness, confusion, paralyzation and slowness.
+                cause blindness, confusion, paralysis and slowness.
 FORGET          This mind blanking spell will create darkness around you and
                 make you forget about some or all of the items you are carrying
                 effectively un-identifying them (except for flavoured items).
 HOLD            Although not so special and already mentioned in the text above
-                this spell is listed because it's a ranged paralyzation spell.
+                this spell is listed because it's a ranged paralysis spell.
                 Ghouls can do this for example, so make sure that you get
                 Free Action as early as possible, definitely before venturing
                 into Mordor though.
@@ -15967,7 +15969,7 @@ Wisdom (WIS)
     -How well can you cast priest prayers or other spells that use WIS to
      determine failure rate?
     -Has influence on your mana pool size. (class-dependant)
-    -How well can you resist malicious influences like poison, paralyzation,
+    -How well can you resist malicious influences like poison, paralysis,
      or confusion? (Means, your Saving Throw is depending on your WIS. See
      (7.3) for details about Saving Throw.)
     -Wisdom directly increases your sanity. Be careful! If you're very low on
@@ -17706,15 +17708,15 @@ Saving Throw
      of the cause wounds spell, ie an attack where the monster points at you
      and curses: "Monster points at you and curses/incanting terribly/screaming
      the word 'DIE'", depending on the spell's power level).
-    -Fear and paralysation melee attacks
-    -Confusion, fear, blindness, slowness, paralysation spell effects
+    -Fear and paralysis melee attacks
+    -Confusion, fear, blindness, slowness, paralysis spell effects
     -Non-friendly teleportation effects
     -All nexus/morph effects (except polymorphing from bat form back to normal)
     -Unmagic effects
     -Suffering damage from dispelling effects
     -Psi attacks of all sorts (damage and effects), including mind-blanking and
      the terribly adverse effects of an encounter with an eldritch horror,
-     which can be: Confusion, hallucination, insanity, paralyzation, amnesia
+     which can be: Confusion, hallucination, insanity, paralysis, amnesia
      and (sometimes permanent) loss of intelligence and wisdom.
     -The draining effects of an ancient foul curse (TY_CURSE)
     -Seasoned traveller trap effect.
@@ -21195,7 +21197,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     -any hit point decreasing damage (except genocide strain),
                     -any sanity decreasing damage,
                     -any malicious effects such as poisoning, fear, blindness,
-                     confusion, paralyzation, slowness, stun or cuts,
+                     confusion, paralysis, slowness, stun or cuts,
                     -black breath infections,
                     -nexus, polymorph and teleportation effects.
                     Martyrdom doesn't protect your inventory from harm though.
@@ -21950,7 +21952,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
     Willpower       Boosts your willpower to unleash hidden potential,
                     improving both your performance and resilience.
                     Gives fear resistance, increases your saving throw and
-                    gives especially increased chance to resist paralyzation,
+                    gives especially increased chance to resist paralysis,
                     confusion and slowness. Also gives heroism-like +hit bonus.
                     (See (7.3) for details on Saving Throw.)
                     At level 25 gives +1 extra attack.         (auto-project)
@@ -24212,7 +24214,7 @@ The most powerful representant of each class:
 Mistakes / Carelessness:
 ------------------------
 -Further, players are often killed if they lack resistances and/or free action
- (against paralyzation) but nevertheless dive down into the dungeon very
+ (against paralysis) but nevertheless dive down into the dungeon very
  quickly.
 
 -Teleport out of trouble
