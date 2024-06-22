@@ -524,7 +524,8 @@ pressing the following keys in game to access the various options pages (1-7):
 = 3 recall_flicker (show animated colours in the various game windows)
 = 3 flash_insane (your '@' flickers rapidly when your sanity is very low
     to alert you of impending no-ghost-death by sanity)
-= 3 no_flicker (disables all fast-flickering colour animations)
+= 3 no_flicker (disables all fast-flickering colour animations. This can
+    make it quite hard to distinguish monsters though.)
 
 
 (0.1d) Readability improvements
