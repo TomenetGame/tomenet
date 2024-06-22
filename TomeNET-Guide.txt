@@ -16902,15 +16902,23 @@ stated.
                                 nearby monsters and players from casting
                                 spells (but does not prevent them from using
                                 magic devices).
-                                This effect is cumulative with the anti-magic
+
+                                *NOTE* that as soon as you invest a point into
+                                this skill you won't be able to use any spells
+                                or magic devices (wands, staves, rods, items
+                                that can be activated) anymore!
+                                Being anti-magic still allows you to use
+                                scrolls and potions though.
+
+                                The skill effect stacks with the anti-magic
                                 field of a Dark Sword and the DISBELIEVE flag
                                 of monster forms acquired by Mimicry skill.
                                 (See (5.9) for more info about dark swords and
                                 (7.7) for details about DISBELIEVE flag.)
 
-                                It's capped at 75% chance of interrupting
-                                enemy spells. Party members are not affected
-                                adversely.
+                                It's capped at 75% (after stacking) chance of
+                                interrupting enemy spells. Party members are
+                                not affected adversely.
                                 Note: While ball and bolt attacks are spells,
                                 breathing is not and is therefore not hindered.
 
@@ -16936,13 +16944,6 @@ stated.
                                 Warriors that specialize in Anti-magic are
                                 called 'Unbelievers' (The anti-magic powers
                                 result from their strong disbelief in magic).
-
-                                Note that as soon as you invest a point into
-                                this skill you won't be able to use any spells
-                                or magic devices (wands, staves, rods, items
-                                that can be activated) anymore!
-                                Being anti-magic still allows you to use
-                                scrolls and potions though.
 
                                 Training the Anti-magic skill will shorten the
                                 duration of certain magical temporary buffs
