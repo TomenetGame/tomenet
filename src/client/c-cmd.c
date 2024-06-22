@@ -2384,6 +2384,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		    || (my_strcasestr(buf, "fill") && my_strcasestr(buf, "foun")) || (my_strcasestr(buf, "fill") && my_strcasestr(buf, "bott")))
 			strcpy(init_search_string, "/fill");
 		else if (!strcasecmp("tea", buf)) strcpy(init_search_string, "Herbal Tea"); //prevent 'Stealth' skill result
+		else if (!strcasecmp("esp", buf)) {
+			strcpy(init_search_string, "ESP");
+			init_search_type = 2;
+		}
 
 		/* clean up */
 		buf[0] = 0;
@@ -3289,7 +3293,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				/* Expand 'Update' to 'Updating' */
 				if (!strcasecmp(buf, "update")) strcpy(buf, "updating");
-
 
 				if (my_strcasestr(buf, "auto") && !my_strcasestr(buf, "/auto") && my_strcasestr(buf, "ret")) strcpy(buf, "auto-ret"); //auto-retaliation, but not slash command
 
