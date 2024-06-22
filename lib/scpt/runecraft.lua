@@ -317,7 +317,7 @@ function rcraft_prt(u,w)
       elseif band(U,CONE)~=0 then
         c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d%s rad %d",
           strbyte('a')+i, XX[1], a, c, f,
-          x, y, X and "" or " (x3)", r), -- 3->4 bolts, too OP? 
+          x, y, X and "" or " (x3)", r), -- 3->4 bolts, too OP?
         row+i+1, col)
       elseif band(U,SURG)~=0 then
         if X then
