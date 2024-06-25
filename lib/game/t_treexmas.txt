@@ -1,5 +1,8 @@
 # Christmas Tree - C. Blue
 
+# Transparent
+F:&:138:3
+
 F:#:139:3
 F:*:140:3
 
