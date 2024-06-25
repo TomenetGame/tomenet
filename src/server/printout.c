@@ -105,7 +105,7 @@ extern int x_printf(const char *str, ...) {
 	}
 	/* Give same reply as client-side polling script would, if it cannot access the AI momentarily */
 	if (fail) {
-		exec_lua(0, format("eight_ball(\"<Sorry, no response available. Auxiliary brain currently offline.>\")"));
+		exec_lua(0, "eight_ball(\"<Sorry, no response available. Auxiliary brain currently offline.>\")");
 		return(FALSE);
 	}
 
