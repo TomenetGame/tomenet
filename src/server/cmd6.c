@@ -3216,6 +3216,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 							d_ptr->known |= 0x1;
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
 							msg_format(Ind, "\377yYou discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far!", get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+							/* Announce it to publicly */
+							l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+							msg_broadcast_format(Ind, "\374\377B%s discovered a dungeon: %s!", p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
  #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
 							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
  #endif
@@ -3229,6 +3232,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 							d_ptr->known |= 0x1;
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
 							msg_format(Ind, "\377yYou discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far!", get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+							/* Announce it to publicly */
+							l_printf("%s \\{B%s discovered a dungeon: \n", showdate(), p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+							msg_broadcast_format(Ind, "\374\377B%s discovered a dungeon: %s!", p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
  #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
 							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
  #endif

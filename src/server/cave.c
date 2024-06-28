@@ -3628,6 +3628,9 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				d_ptr->known |= 0x1;
 				s_printf("(%s) DUNFOUND: Player %s (%s) discovered dungeon '%s' (%d) at (%d,%d) [%d,%d].\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE), d_ptr->type, tpos.wx, tpos.wy, x, y);
 				msg_format(Ind, "\377yYou discovered the staircase to a new dungeon, '\377U%s\377y', that nobody before you has found so far!", get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
+				/* Announce it to publicly */
+				l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
+				msg_broadcast_format(Ind, "\374\377B%s discovered a dungeon: %s!", p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
 			}
  #endif
 		}
