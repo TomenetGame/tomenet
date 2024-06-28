@@ -5258,7 +5258,7 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 	if (!acc) acc = "(no account)";
 	else accok = TRUE;
 
-	s_printf("Removing player: %s (%d, %s)\n", ptr->name, ptr->level, acc);
+	s_printf("Removing player: %s (%d(%d), %s)\n", ptr->name, ptr->level, ptr->max_plv, acc);
 
 #ifdef SAFETY_BACKUP_PLAYER
 	/* Not sure if hash table level is already updated to live player level, so double check here: */
@@ -5271,6 +5271,13 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 		}
 		break;
 	}
+
+	/* Strange bug, workaround */
+	if (j < ptr->level) {
+		s_printf("(BUG: hash max_plv %d < hash level %d)\n", j, ptr->level);
+		j = ptr->level;
+	}
+
 	if (j < SAFETY_BACKUP_PLAYER) {
 		e_printf("(%s) %s (%d, %s)\n", showtime(), ptr->name, ptr->level, acc); /* log to erasure.log file for compact overview */
 		s_printf("(Skipping safety backup (max_plv %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
