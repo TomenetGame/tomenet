@@ -8708,7 +8708,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	int *id_list, ids, pid = p_ptr->id;
 	global_event_type *ge;
 
-	s_printf("Called erase_player(%d) = '%s' (%s)\n", Ind, p_ptr->name, p_ptr->accountname)'
+	s_printf("Called erase_player(%d) = '%s' (%s)\n", Ind, p_ptr->name, p_ptr->accountname);
 
 	/* Remove ID from any ongoing events in case a new/same player takes ID */
 	for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
@@ -8727,9 +8727,9 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	j = p_ptr->max_plv;
 
 	/* (Paranoia, this is just for erase_player_hash() where this bug actually occured) Strange bug, workaround */
-	if (j < p_ptr->level) {
-		s_printf("(BUG: max_plv %d < level %d)\n", j, p_ptr->level);
-		j = p_ptr->level;
+	if (j < p_ptr->max_lev) {
+		s_printf("(BUG: max_plv %d < max_lev %d)\n", j, p_ptr->max_lev);
+		j = p_ptr->max_lev;
 	}
 
 	if (j < SAFETY_BACKUP_PLAYER) {
