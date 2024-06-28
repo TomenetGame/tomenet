@@ -189,3 +189,4 @@ ap/door
 cockatrice
 geass
 w0
+sh0t
