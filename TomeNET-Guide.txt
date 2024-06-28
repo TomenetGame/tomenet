@@ -2761,7 +2761,7 @@ ESP         Extrasensory perception. ESP is a telepathic power that allows you
 FA          Free Action (immunity to paralysis).
 
 FF          1) Feather falling.
-            2) Fire Flash. A holy-fire spell, good against evil creatures.
+            2) Fireflash. A holy-fire spell, good against evil creatures.
 
 GoI         Globe of invulnerability. This only exists as 'Stair GoI', see
             further below.
