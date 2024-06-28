@@ -18408,7 +18408,7 @@ create a character!):
     A high-level istar can be very powerful, but getting there can be a
     difficult journey.
     As a specialty, vampire istari are able to learn the occult shadow school
-    and the occult unlife school, as they cannot train water or nature schools
+    and the occult unlife school, as they cannot train water or nature school
     and also don't have access to the holy-fire based Fireflash spell.
     These two schools, Shadow and Unlife, are not affected by Sorcery though,
     so they have to be trained additionally to any Sorcery skill.
