@@ -5038,9 +5038,9 @@ void check_experience(int Ind) {
 	/* Message */
 	msg_format(Ind, "\374\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
 	if (!is_admin(p_ptr)) {
-		if (p_ptr->lev == 99) l_printf("%s \\{U*** \\{g%s has attained level 99 \\{U***\n", showdate(), p_ptr->name);
-		else if (p_ptr->lev >= 90) l_printf("%s \\{g%s has attained level %d\n", showdate(), p_ptr->name, p_ptr->lev);
-		else if (old_lev < 80 && p_ptr->lev >= 80) l_printf("%s \\{g%s has attained level 80\n", showdate(), p_ptr->name);
+		if (p_ptr->lev == 99) l_printf("%s \\{U*** \\{G%s has attained level 99 \\{U***\n", showdate(), p_ptr->name);
+		else if (p_ptr->lev >= 90) l_printf("%s \\{G%s has attained level %d\n", showdate(), p_ptr->name, p_ptr->lev);
+		else if (old_lev < 80 && p_ptr->lev >= 80) l_printf("%s \\{G%s has attained level 80\n", showdate(), p_ptr->name);
 		else if (old_lev < 70 && p_ptr->lev >= 70) l_printf("%s \\{g%s has attained level 70\n", showdate(), p_ptr->name);
 		else if (old_lev < 60 && p_ptr->lev >= 60) l_printf("%s \\{g%s has attained level 60\n", showdate(), p_ptr->name);
 	}
