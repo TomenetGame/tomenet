@@ -454,7 +454,6 @@ struct monster_race {
 
 
 	s32b max_num;			/* Maximum population allowed per level */
-
 	s32b cur_num;			/* Monster population on current level */
 
 	s32b r_sights;			/* Count sightings of this monster */
