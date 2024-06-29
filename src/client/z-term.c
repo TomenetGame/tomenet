@@ -352,7 +352,7 @@ static errr term_win_init(term_win *s, int w, int h) {
 
 
 /*
- * Copy a "term_win" from another
+ * Copy a "term_win" from another (dest, src)
  */
 static errr term_win_copy(term_win *s, term_win *f, int w, int h) {
 	int y;
@@ -366,7 +366,7 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h) {
 		char32_t *s_cc = s->c[y];
 
 		memcpy(s_aa, f_aa, w);
-		memcpy(s_cc, f_cc, w*sizeof(f_cc[0]));
+		memcpy(s_cc, f_cc, w * sizeof(f_cc[0]));
 	}
 
 	/* Copy cursor */
@@ -374,6 +374,43 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h) {
 	s->cy = f->cy;
 	s->cu = f->cu;
 	s->cv = f->cv;
+
+	/* Success */
+	return(0);
+}
+/* Like term_win_copy() but apply crop (src) and positioning (dest): Copy x_start,y_start,x_end,y_end to x_dest,y_dest */
+static errr term_win_copy_part(term_win *s, term_win *f, int x_start, int y_start, int x_end, int y_end, int x_dest, int y_dest) {
+	int y;
+
+	/* Copy contents */
+	for (y = y_start; y <= y_end; y++) {
+		byte *f_aa = f->a[y];
+		char32_t *f_cc = f->c[y];
+
+		byte *s_aa = s->a[y - y_start + y_dest];
+		char32_t *s_cc = s->c[y - y_start + y_dest];
+
+		memcpy(s_aa + x_dest, f_aa + x_start, x_end - x_start + 1);
+		memcpy(s_cc + x_dest, f_cc + x_start, (x_end - x_start + 1) * sizeof(char32_t));
+	}
+
+	/* Copy cursor */
+	if (f->cx < x_start || f->cx > x_end || f->cy < y_start || f->cy > y_end) {
+		/* cursor out of dest bounds (and we assume actually that the src crop fits within the dest, so no x_dest/y_dest checks needed) */
+		s->cx = s->cy = 0;
+		/* hm, let's also hide it in that case */
+#if 0 /* not sure if this could cause problems */
+		s->cu = 1;
+#else /* safe way instead: just keep state */
+		s->cu = f->cu;
+#endif
+		s->cv = 0;
+	} else {
+		s->cx = f->cx - x_start + x_dest;
+		s->cy = f->cy - y_start + y_dest;
+		s->cu = f->cu;
+		s->cv = f->cv;
+	}
 
 	/* Success */
 	return(0);
@@ -2562,7 +2599,7 @@ errr Term_addstr(int n, byte a, cptr s) {
 	/* Copy string characters to array of char32_t. */
 	char32_t wcs[n + 1];
 	wcs[n] = 0;
-	for (int i = 0; i < n; i++) wcs[i]=(char32_t)s[i];
+	for (int i = 0; i < n; i++) wcs[i] = (char32_t)s[i];
 
 	/* Queue the first "n" characters for display */
 	QueueAttrChars(Term->scr->cx, Term->scr->cy, n, a, wcs);
@@ -3207,7 +3244,7 @@ errr Term_key_push_buf(cptr buf, int len) {
  * is always active - Lightman
  */
 errr refresh_minimap() {
-	int i,j;
+	int i, j;
 	int w;
 	int h;
 
@@ -3238,37 +3275,22 @@ errr refresh_minimap() {
 			}
 
 			//If we're not yet/anymore logged in, keep it clear
-			if (!in_game) {
-				//Clear map (copy/pasted from below)
-				c_put_str(TERM_WHITE, "                              ", 0, 0);
-				c_put_str(TERM_WHITE, "                              ", 0, 30);
-				c_put_str(TERM_WHITE, "                              ", 0, 60);
-				for (j = 1; j < h - 2; j++) c_put_str(TERM_WHITE, "             ", j, 0);
-				c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 0);
-				c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 30);
-				c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 60);
-
+			if (!in_game)
 				//Get out of the loop. We don't support more than one extra map screen.
 				break;
-			}
+
+			//Workaround to ensure each dest line is refreshed, or term_win_copy_part() won't get drawn immediately
+			for (j = 0; j < h - SCREEN_PAD_TOP - SCREEN_PAD_BOTTOM; j++) c_put_str(TERM_WHITE, " ", j, 0);
+			//scr_b->cu = 1; //?
 
 			//Update the map
 			scr_b = Term->scr;
-			term_win_copy(scr_b, scr_a, w, h);
-
-			//Remove text, which is in the wrong font.
-			c_put_str(TERM_WHITE, "                              ", 0, 0);
-			c_put_str(TERM_WHITE, "                              ", 0, 30);
-			c_put_str(TERM_WHITE, "                              ", 0, 60);
-			for (j = 1; j < h - 2; j++) c_put_str(TERM_WHITE, "             ", j, 0);
-			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 0);
-			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 30);
-			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 60);
+			term_win_copy_part(scr_b, scr_a, SCREEN_PAD_LEFT, SCREEN_PAD_TOP, w - 1 - SCREEN_PAD_RIGHT, h - 1 - SCREEN_PAD_BOTTOM, 0, 0);
 
 			//Redraw it
-			for (int i = 0; i < h; i++) {
-				Term->x1[i] = 0;
-				Term->x2[i] = w - 1;
+			for (j = 0; j < h; j++) {
+				Term->x1[j] = 0;
+				Term->x2[j] = w - 1 - SCREEN_PAD_LEFT - SCREEN_PAD_RIGHT;
 			}
 			Term_fresh();
 
