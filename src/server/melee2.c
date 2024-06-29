@@ -4291,7 +4291,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 
 	/* Always take note of monsters that kill you */
-	if (p_ptr->death) r_ptr->r_deaths++;
+	if (p_ptr->death) {
+		if (!r_ptr->r_deaths && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st death: %d by %s (%s).\n", m_ptr->r_idx, p_ptr->name, p_ptr->accountname);
+		r_ptr->r_deaths++;
+	}
 
 #ifdef COMBO_AM_IC_CAP
 	/* Reset combo-cap-checking */
@@ -6524,7 +6527,10 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 
 	/* Always take note of monsters that kill you */
-	if (p_ptr->death) r_ptr->r_deaths++;
+	if (p_ptr->death) {
+		if (!r_ptr->r_deaths && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st death: %d by %s (%s).\n", m_ptr->r_idx, p_ptr->name, p_ptr->accountname);
+		r_ptr->r_deaths++;
+	}
 
 #ifdef COMBO_AM_IC_CAP
 	/* Reset combo-cap-checking */

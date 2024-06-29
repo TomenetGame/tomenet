@@ -2505,7 +2505,10 @@ void update_mon(int m_idx, bool dist) {
 				if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 				/* Hack -- Count "fresh" sightings */
-				if (!is_admin(p_ptr)) r_ptr->r_sights++;
+				if (!is_admin(p_ptr)) {
+					if (!r_ptr->r_sights && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st sight: %d by %s (%s).\n", m_ptr->r_idx, p_ptr->name, p_ptr->accountname);
+					r_ptr->r_sights++;
+				}
 
 				/* Disturb on appearance */
 				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING) && !in_bree(&p_ptr->wpos))

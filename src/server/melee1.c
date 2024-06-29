@@ -3479,8 +3479,10 @@ bool make_attack_melee(int Ind, int m_idx) {
 	}
 
 	/* Always notice cause of death */
-	if (p_ptr->death) r_ptr->r_deaths++;
-
+	if (p_ptr->death) {
+		if (!r_ptr->r_deaths && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st death: %d by %s (%s).\n", m_ptr->r_idx, p_ptr->name, p_ptr->accountname);
+		r_ptr->r_deaths++;
+	}
 
 	/* Assume we attacked */
 	return(TRUE);
