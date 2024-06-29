@@ -740,8 +740,8 @@ int scan_navi_key(cptr buf, bool string_input_relevance) {
 	for (i = 0; (c = nks_start[i]); i++) if (*bufp++ != c) { found = FALSE; break; }
 
 	/* Strip shiftkeys - we want ANY of the navigationalkey+shiftkeys combos to get ignored as macro, as we may process them all.
-	   Also we assume that shiftkey marker are only 1 byte long.
-	   We don't need to process shiftkeys in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead. */
+	   Also we assume that shiftkey marker are only 1 byte long and occur in the order ctrl-shift-alt in the key code sequences.
+	   We actually don't really need to process shiftkeys here in general, if we use ENABLE_SHIFT_SPECIALKEYS for that instead. */
 	if (*bufp == nks_ctrl[0]) {
 		sk_ctrl = TRUE;
  #ifdef ENABLE_SHIFT_SPECIALKEYS
