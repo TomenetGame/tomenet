@@ -10596,10 +10596,10 @@ Ironman Deep Dive Challenge (IDDC)
     Shops in the IDDC offer especially powerful items, and there are additional
     special shops that are not found elsehwere.
 
-    Starting at dungeon level 8, a hidden library may appear randomly (that's
-    a bookstore with a red '9' as an entrance), allowing you to purchase
-    magic spells you might be missing. It also offers a special service to
-    identify all items you are carrying.
+    Starting at dungeon level 8 (aka -400ft), a hidden library may appear
+    randomly (that's a bookstore with a red '9' as an entrance), allowing you
+    to purchase magic spells you might be missing. It also offers a special
+    service to identify all items you are carrying.
     The chance to find at least one library on your way down is around 1/2
     up to dungeon level 10, 2/3 up to 13, 3/4 up to 15, and 4/5 up to 17.
     The Herbalist can also spawn in the IDDC (on lower/mid level floors).
