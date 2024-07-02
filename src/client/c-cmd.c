@@ -1893,6 +1893,7 @@ void cmd_look(void) {
 }
 
 
+/* Display character sheet (any page) */
 #define CS_SEL_COL TERM_SELECTOR
 void cmd_character(void) {
 	char ch = 0;
@@ -1905,7 +1906,7 @@ void cmd_character(void) {
 
 	/* Init and re-init between relogs*/
 	//if (sel == 0 && !p_ptr->fruit_bat) sel++;
-	if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
+	//if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
 	if (sel == 4 && !p_ptr->ptrait) sel++;
 
 	while (!done) {
@@ -1973,11 +1974,33 @@ void cmd_character(void) {
 			if (csheet_page == 2) break;
 			sel--;
 			if (sel < 0) sel = 22;
-			//if (sel == 0 && !p_ptr->fruit_bat) sel--;
 			if (sel == 4 && !p_ptr->ptrait) sel--;
 			//if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
+			//if (sel == 0 && !p_ptr->fruit_bat) sel--;
 			if (sel < 0) sel = 22;
 			if (csheet_page == 1 && sel >= 12) sel = 11;
+			break;
+		/* Allow some horizontal navigation too, with some visual alignment hacks */
+		case '6':
+			if (sel <= 5) sel += 6;
+			else if (sel <= 11) {
+				sel -= 6;
+				//if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
+				if (sel == 4 && !p_ptr->ptrait) sel++;
+			}
+			else if (sel <= 15) sel += 4;
+			else if (sel <= 19) { sel += 4; if (sel == 22) sel -= 8; else if (sel == 23) sel = 22; }
+			else { sel = sel - 8; if (sel == 14) sel = 15; }
+			break;
+		case '4':
+			if (sel <= 5) sel += 6;
+			else if (sel <= 11) {
+				sel -= 6;
+				//if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
+				if (sel == 4 && !p_ptr->ptrait) sel++;
+			}
+			else if (sel <= 15) { sel += 8; if (sel == 22) sel -= 4; else if (sel == 23) sel = 22; }
+			else { sel -= 4; if (sel == 18) sel = 19; }
 			break;
 		//case '\n': case '\r':
 		case '?':
@@ -2001,10 +2024,12 @@ void cmd_character(void) {
 			case 13: cmd_the_guide(3, 0, "BOWS/THROW$$"); break;
 			case 14: cmd_the_guide(3, 0, "SAVING THROW$$"); break;
 			case 15: cmd_the_guide(3, 0, "STEALTH$$"); break;
+
 			case 16: cmd_the_guide(3, 0, "PERCEPTION$$"); break;
 			case 17: cmd_the_guide(3, 0, "SEARCHING$$"); break;
 			case 18: cmd_the_guide(3, 0, "DISARMING$$"); break;
 			case 19: cmd_the_guide(3, 0, "MAGIC DEVICE$$"); break;
+
 			case 20: cmd_the_guide(3, 0, "BLOWS/ROUND$$"); break;
 			case 21: cmd_the_guide(3, 0, "SHOTS/ROUND$$"); break;
 			case 22: cmd_the_guide(3, 0, "INFRA-VISION$$"); break;
