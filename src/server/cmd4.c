@@ -2933,6 +2933,15 @@ void do_cmd_check_server_settings(int Ind) {
 	if (cfg.door_bump_open & BUMP_OPEN_HOUSE)
 		fprintf(fff, "You can 'walk through' your house door.\n");
 
+#ifdef IDDC_REFUGES
+	if (p_ptr->depth_in_feet) {
+		fprintf(fff, "\nThe Ironman Deep Dive Challenge has respite hubs every -%3dft,", 50 * IDDC_REFUGE_INTERVAL);
+		fprintf(fff, "\n within each -1000ft interval.\n");
+	} else {
+		fprintf(fff, "\nThe Ironman Deep Dive Challenge has respite hubs every %d floors,", IDDC_REFUGE_INTERVAL);
+		fprintf(fff, "\n within each 20-floor interval.\n");
+	}
+#endif
 
 	/* Administrative */
 	if (is_admin(p_ptr)) {
