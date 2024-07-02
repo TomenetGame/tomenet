@@ -11714,7 +11714,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	}
 
 	/* Some monsters are immune to death */
-	if (r_ptr->flags7 & RF7_NO_DEATH) return(FALSE);
+	if (r_ptr->flags7 & RF7_NO_DEATH) {
+		if (p_ptr->instakills == 2) monster_death(Ind, m_idx); /* override NO_DEATH! but without any credit (xp/form), just loot */
+		return(FALSE);
+	}
 
 	/* record the data for use in C_BLUE_AI */
 	p_ptr->dam_turn[0] += (m_ptr->hp < dam) ? m_ptr->hp : dam;
