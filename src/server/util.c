@@ -1070,7 +1070,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
-			if (dm && !player_sees_dm(i)) continue;
+			if (dm && !Players[i]->player_sees_dm) continue;
 			if (Ind == i) continue;
 
 			/* backward compatibility */
@@ -1137,7 +1137,7 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
-			if (dm && !player_sees_dm(i)) continue;
+			if (dm && !Players[i]->player_sees_dm) continue;
 			if (Ind == i) continue;
 
 			d = distance(p_ptr->py, p_ptr->px, Players[i]->py, Players[i]->px);

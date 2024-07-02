@@ -4023,7 +4023,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x) {
 #if 0
 		player_type *q_ptr = Players[-c_ptr->m_idx];
 
-		if ((!q_ptr->admin_dm || player_sees_dm(Ind)) &&
+		if ((!q_ptr->admin_dm || p_ptr->player_sees_dm) &&
 		    (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
 #endif
 			return(TRUE);
@@ -4262,7 +4262,7 @@ void do_cmd_look(int Ind, int dir) {
 
 	/* Another player */
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0 - c_ptr->m_idx] &&
-	    (!Players[0 - c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
+	    (!Players[0 - c_ptr->m_idx]->admin_dm || p_ptr->player_sees_dm)) {
 		char extrainfo[MAX_CHARS] = { 0 };
 		byte attr;
 

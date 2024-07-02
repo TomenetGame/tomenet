@@ -9577,7 +9577,7 @@ return;
 		return;
 	}
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
-	    && !instakills(Ind)) {
+	    && !p_ptr->instakills) {
 		msg_print(Ind, "\377yYour weapon is too large to cloak yourself effectively.");
 		return;
 	}
@@ -9737,7 +9737,7 @@ void shadow_run(int Ind) {
 		return;
 	}
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
-	    && !instakills(Ind)) {
+	    && !p_ptr->instakills) {
 		msg_print(Ind, "\377yYour weapon is too large for effective shadow running.");
 		return;
 	}

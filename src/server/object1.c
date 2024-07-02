@@ -4040,7 +4040,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 	}
 #endif
 
-	if (instakills(Ind)) {
+	if (p_ptr->instakills) {
 		/* Admin */
 
 		fprintf(fff, "    \377Uoo\377w against all monsters\n");

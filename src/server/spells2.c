@@ -2118,7 +2118,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 		/* Never detect the dungeon master! */
-		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+		if (q_ptr->admin_dm && !p_ptr->player_sees_dm) continue;
 
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
@@ -2291,7 +2291,7 @@ bool detect_invisible(int Ind) {
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 		/* Skip the dungeon master */
-		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+		if (q_ptr->admin_dm && !p_ptr->player_sees_dm) continue;
 
 		if (zcave[py][px].info2 & CAVE2_SCRT) continue;
 
@@ -2422,7 +2422,7 @@ bool detect_creatures(int Ind) {
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 		/* Never detect the dungeon master! */
-		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+		if (q_ptr->admin_dm && !p_ptr->player_sees_dm) continue;
 
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
@@ -2552,7 +2552,7 @@ bool detect_noise(int Ind) {
 		/* Skip players not on this depth */
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		/* Never detect the dungeon master! */
-		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+		if (q_ptr->admin_dm && !p_ptr->player_sees_dm) continue;
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
 
@@ -2676,7 +2676,7 @@ bool detect_living(int Ind) {
 		/* Skip players not on this depth */
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		/* Never detect the dungeon master! */
-		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+		if (q_ptr->admin_dm && !p_ptr->player_sees_dm) continue;
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
 

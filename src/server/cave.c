@@ -4083,7 +4083,7 @@ void everyone_lite_spot_move(int Ind, struct worldpos *wpos, int y, int x) {
 			continue;
 
 		/* Don't redraw grids over which a hidden DM moves */
-		if (Players[Ind]->admin_dm && Ind != i && !player_sees_dm(i) && cfg.secret_dungeon_master) {
+		if (Players[Ind]->admin_dm && Ind != i && !Players[i]->player_sees_dm && cfg.secret_dungeon_master) {
 			continue;
 		}
 

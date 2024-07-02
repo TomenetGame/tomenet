@@ -4621,7 +4621,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 		p_ptr->test_attacks++;
 		/* Test for hit */
-		if (instakills(Ind) || backstab ||
+		if (p_ptr->instakills || backstab ||
 		    test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]) ||
 		    (p_ptr->piercing && !block && !parry)) {
 			/* handle 'piercing' countdown */
@@ -4768,7 +4768,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
-				if (!instakills(Ind)) {
+				if (!p_ptr->instakills) {
 					do_nazgul(Ind, &k, r_ptr, -1);
 					if (k == 0) k2 = 0;
 				}
@@ -4781,7 +4781,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #else
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
-				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, -1);
+				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, -1);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -4967,7 +4967,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				}
 
 				/* heheheheheh */
-				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, slot);
+				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, slot);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -4996,7 +4996,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			} else {
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
-				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, -1);
+				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, -1);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul? not for now) */
@@ -5084,7 +5084,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			if (m_ptr->r_idx == RI_MIRROR) k = (k * MIRROR_REDUCE_DAM_TAKEN_MELEE + 99) / 100;
 
 			/* for admins: kill a target in one hit */
-			if (instakills(Ind)) k = m_ptr->hp + 1;
+			if (p_ptr->instakills) k = m_ptr->hp + 1;
 			else if (p_ptr->admin_godly_strike) {
 				p_ptr->admin_godly_strike--;
 				if (!(r_ptr->flags1 & RF1_UNIQUE)) k = m_ptr->hp + 1;
@@ -5806,7 +5806,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 
 	p_ptr->test_attacks++;
 	/* Test for hit */
-	if (instakills(Ind) || !block ||
+	if (p_ptr->instakills || !block ||
 	    test_hit_melee(chance, m_ptr->ac / 3, p_ptr->mon_vis[c_ptr->m_idx])) {
 #ifdef USE_SOUND_2010
 		if (p_ptr->sfx_combat) sound(Ind, "bash", "hit_blunt", SFX_TYPE_ATTACK, FALSE);
@@ -5816,7 +5816,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 		sprintf(hit_desc, "You bash %s", m_name);
 
 		i = k; /* Nazgul won't reduce our damage */
-		if (!instakills(Ind)) do_nazgul(Ind, &i, r_ptr, -1);
+		if (!p_ptr->instakills) do_nazgul(Ind, &i, r_ptr, -1);
 
 		if (stun_effect && (k < m_ptr->hp)) {
 			/* Stun the monster */
@@ -5856,7 +5856,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 		if (m_ptr->r_idx == RI_MIRROR) k = (k * MIRROR_REDUCE_DAM_TAKEN_MELEE + 99) / 100;
 
 		/* for admins: kill a target in one hit */
-		if (instakills(Ind)) k = m_ptr->hp + 1;
+		if (p_ptr->instakills) k = m_ptr->hp + 1;
 		else if (p_ptr->admin_godly_strike) {
 			p_ptr->admin_godly_strike--;
 			if (!(r_ptr->flags1 & RF1_UNIQUE)) k = m_ptr->hp + 1;
@@ -6190,7 +6190,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 
 	p_ptr->test_attacks++;
 	/* Test for hit */
-	if (instakills(Ind) || test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ? AC_CAP : q_ptr->ac + q_ptr->to_a, 1)) {
+	if (p_ptr->instakills || test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ? AC_CAP : q_ptr->ac + q_ptr->to_a, 1)) {
 #ifdef USE_SOUND_2010
 		if (p_ptr->sfx_combat) sound(Ind, "bash", "hit_blunt", SFX_TYPE_ATTACK, FALSE);
 #else
@@ -7665,7 +7665,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* Hack -- the dungeon master switches places with his monsters */
 		if (p_ptr->admin_dm &&
 		    /* except if he wields his scythe (uhoh!) */
-		    (!instakills(Ind) ||
+		    (!p_ptr->instakills ||
 		    /* except if he's not disabled auto-retaliation */
 		    (p_ptr->running && p_ptr->inventory[INVEN_WIELD].note &&
 		    strstr(quark_str(p_ptr->inventory[INVEN_WIELD].note), "@Ox")))) {
@@ -7704,7 +7704,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		else {
 			/* hack: admins who are running with their scythe won't perform a run-attack - C. Blue
 			   and hack: cloaked players who are running _while wraithed_ will stop running first, too. */
-			if ((instakills(Ind) || p_ptr->cloaked) && p_ptr->running) {
+			if ((p_ptr->instakills || p_ptr->cloaked) && p_ptr->running) {
 				disturb(Ind, 0, 0); /* stop running first */
 				return;
 			}

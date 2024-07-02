@@ -5025,11 +5025,11 @@ void calc_boni(int Ind) {
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
 	    && !suppress_boni) {
-		if (p_ptr->cloaked && !instakills(Ind)) {
+		if (p_ptr->cloaked && !p_ptr->instakills) {
 			msg_print(Ind, "\377yYour weapon is too large to remain cloaked effectively.");
 			break_cloaking(Ind, 0);
 		}
-		if (p_ptr->shadow_running && !instakills(Ind)) {
+		if (p_ptr->shadow_running && !p_ptr->instakills) {
 			msg_print(Ind, "\377yYour weapon is too large for effective shadow running.");
 			break_shadow_running(Ind);
 		}
@@ -6688,6 +6688,13 @@ void calc_boni(int Ind) {
 #endif
 	}
 
+	/* Admin-specific item powers - C. Blue */
+	/* Can a player see the secret_dungeon_master? Only if he wears the special Goggles.. */
+	o_ptr = &p_ptr->inventory[INVEN_HEAD];
+	p_ptr->player_sees_dm = (o_ptr->tval && o_ptr->name1 == ART_GOGGLES_DM);
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	p_ptr->instakills = (o_ptr->tval && o_ptr->name1 == ART_SCYTHE_DM) ? ((o_ptr->note && strstr(quark_str(o_ptr->note), "IDDQD")) ? 2 : 1) : 0; //at doom's gate...
+
 
 
 /* -------------------- Limits -------------------- */
@@ -6916,7 +6923,7 @@ void calc_boni(int Ind) {
 				bool can_have_hidden_powers = TRUE;
 #ifdef NEW_ID_SCREEN
 				can_have_hidden_powers = FALSE;
-//				bool not_identified_at_all = TRUE;
+				//bool not_identified_at_all = TRUE;
 				if (i != 14) {
 					o_ptr = &p_ptr->inventory[i + INVEN_WIELD];
 					k_ptr = &k_info[o_ptr->k_idx];

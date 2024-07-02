@@ -4089,6 +4089,9 @@ struct player_type {
 	int admin_godly_strike, admin_set_defeat;
 	bool admin_invuln, admin_invinc, admin_immort; /* Amulets of Invulnerability/Invincibility */
 	char admin_parm[MAX_CHARS];	/* optional special admin command parameter (hacky o_O) */
+	/* Admin-item specific item powers - C. Blue */
+	bool player_sees_dm;
+	byte instakills;
 
 	u32b test_count, test_dam, test_heal, test_turn, test_turn_idle;
 	u32b test_hurt; /* total damage we <should have> received, ignoring safe zones, invuln and admin_invuln. */

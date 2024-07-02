@@ -9001,14 +9001,6 @@ extern int PlayerUID;
 #define AT_VALINORX	12
 
 
-/* Admin-specific item powers - C. Blue */
-/* Can a player see the secret_dungeon_master? Only if he wears the special Goggles.. */
-#define player_sees_dm(I)	\
-	(Players[I]->inventory[INVEN_HEAD].tval && Players[I]->inventory[INVEN_HEAD].name1 == ART_GOGGLES_DM)
-#define instakills(I)	\
-	(Players[I]->inventory[INVEN_WIELD].tval && Players[I]->inventory[INVEN_WIELD].name1 == ART_SCYTHE_DM)
-
-
 /* Masks for restricted mimicry */
 /*	Shaman: Animals, Giants, Dragon(rider)s, Elementals/Spirits, Ghosts.
 	No undead/nonliving material beings; no Invisible Stalker/Unmaker/Death Orb. */
