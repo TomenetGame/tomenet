@@ -5272,7 +5272,9 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 		break;
 	}
 
-	/* Strange bug, workaround */
+	/* Strange bug, workaround.
+	   Wild susicion: Bug might stem from savegame already having been restored but the player didn't log in/clockin()
+	   the max_plv on it anew, then it got timeouted again, so now the max_plv in the database is still 1 aka default. */
 	if (j < ptr->level) {
 		s_printf("(BUG: hash max_plv %d < hash level %d)\n", j, ptr->level);
 		j = ptr->level;
