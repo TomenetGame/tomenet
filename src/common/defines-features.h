@@ -39,7 +39,7 @@
 #ifdef IDDC_REFUGES
  /* Interval, within every 1000 ft aka between town lvels, at which refuges spawn. [10]
     Sensible values: 10 (ie 500ft) or 7 (ie 350ft and 700 ft): */
- #define IDDC_REFUGE_INTERVAL 10
+ #define IDDC_REFUGE_INTERVAL 7
 #endif
 /* Do artifacts time out especially quickly in the IDDC? */
 #define IDDC_ARTIFACT_FAST_TIMEOUT
