@@ -5326,6 +5326,7 @@ void check_experience(int Ind) {
 					//msg_print(Ind, "\377RYou don't deserve to live.");
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
+					s_printf("MAIA-INITFAIL: %s killed 0+0.\n", p_ptr->name);
 					p_ptr->died_from_ridx = 0;
 					p_ptr->deathblow = 0;
 					p_ptr->death = TRUE;
@@ -5342,6 +5343,7 @@ void check_experience(int Ind) {
 				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 && p_ptr->r_killed[RI_DARKLING] != 0) {
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
+					s_printf("MAIA-INITFAIL: %s killed %d+%d.\n", p_ptr->name, p_ptr->r_killed[RI_CANDLEBEARER], p_ptr->r_killed[RI_DARKLING]);
 					p_ptr->died_from_ridx = 0;
 					p_ptr->deathblow = 0;
 					p_ptr->death = TRUE;
