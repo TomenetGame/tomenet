@@ -2667,6 +2667,9 @@ void do_cmd_uninscribe(int Ind, int item) {
 	o_ptr->note = 0;
 	o_ptr->note_utag = 0;
 
+	/* Hack */
+	if (p_ptr->instakills) p_ptr->update |= PU_BONUS;
+
 #ifdef ENABLE_SUBINVEN
 	/* Todo: PN_COMBINE aka combine_pack() for subinven */
 	if (item >= 100) {
@@ -2762,6 +2765,9 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	/* Message */
 	msg_format(Ind, "Inscribing %s.", o_name);
 	msg_print(Ind, NULL);
+
+	/* Hack */
+	if (p_ptr->instakills) p_ptr->update |= PU_BONUS;
 
 	/* hack to fix auto-inscriptions: convert empty inscription to a #-type inscription */
 	if (inscription[0] == '\0') inscription = "#";

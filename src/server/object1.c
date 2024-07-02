@@ -4042,8 +4042,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 
 	if (p_ptr->instakills) {
 		/* Admin */
-
-		fprintf(fff, "    \377Uoo\377w against all monsters\n");
+		fprintf(fff, "    \377%coo\377w against all monsters\n", p_ptr->instakills == 2 ? '6' : 'U');
 	} else {
 		/* Normal */
 
