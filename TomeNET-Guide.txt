@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 29. June 2024 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 3. July 2024 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23157,15 +23157,25 @@ which defense method it actually uses (block or parry) - for details about this
 and about all damage reduction mechanisms in general and the order/chance they
 are applied, make sure you also read (6.4).
 
-For melee fighters that use weapons or shields, two more abilities can help:
+For melee fighters that use weapons or shields, these two abilities are an
+important factor for damage reduction:
 Parrying enemy attacks with a weapon, and blocking attacks with a shield.
+
+Shields come with a base block chance that varies depending on the item type.
+Different classes are differently proficient at parrying or blocking, modifying
+the chance internally, resulting in a final, 'real' parry/block chance, which
+you can check in the 'm' skills menu, provided you have a 'Combat' skill that
+is greater than zero.:
+
 Press 'm' and choose 'Check block/parry chance' to see your actual ability
-to block or parry. In order to have this option appear in your 'm' menu, you
-need a combat skill greater than zero.
+to block or parry. If your 'Combat' skill is 0.000, you won't have the ability
+to visually confirm your own parry/block chance, and hence not see the option
+in the 'm' menu. However, your character may still parry and block attacks!
 
 Depending on the server version you might see textual descriptions instead of
 raw numbers:
-"You cannot parry at the moment."               You aren't wielding a weapon.
+"You cannot parry at the moment."               You aren't wielding a weapon,
+                                                or are knocked out/paralyzed.
 "You have almost no chance of parrying."        Below 5% chance.
 "You have a slight chance of parrying."         Below 10% chance.
 "You have a significant chance of parrying."    Below 20% chance.
@@ -23173,16 +23183,19 @@ raw numbers:
 "You have a very good chance of parrying."      Below 40% chance.
 "You have an excellent chance of parrying."     Below 50% chance.
 "You have a superb chance of parrying."         50% chance or better.
-                                                (51% is highest reachable)
-Note: Above 30% can only be reached in defensive combat stance without a
-      shield equipped. (Because if no shield is equipped, defensive combat
+
+Note: If you aim at maximizing your parry chance on a character that is
+      proficient in combat stances, you might choose defensive stance without
+      a shield equipped. Because if no shield is equipped, defensive combat
       stance which normally bolsters block chance will transfer that defensive
-      advantage to the weapon instead, increasing the parry chance.)
-      Also your class needs to be fairly skilled at parrying (see below.)
+      advantage to the weapon instead, increasing the parry chance.
+      Also your class should of course be fairly skilled at parrying,
+      see class-specific parry/block proficiency in the 'class table' in (7.5).
 
 Depending on the server version you might see textual descriptions instead of
 raw numbers:
-"You cannot block at the moment."               You aren't wielding a shield.
+"You cannot block at the moment."               You aren't wielding a shield,
+                                                or are knocked out/paralyzed.
 "You have almost no chance of blocking."        Below 5% chance.
 "You have a slight chance of blocking."         Below 14% chance.
 "You have a significant chance of blocking."    Below 23% chance
@@ -23192,10 +23205,10 @@ raw numbers:
 "You have a superb chance of blocking."         48-50% chance (the highest
                                                 reachable).
 
-Note: To achieve an extraordinarily high block chance above 30% you'll
-      have to enter a defensive combat stance, and your class should be
-      fairly skilled at blocking and/or your shield should have a high
-      block chance. See the note below.
+Note: To achieve an extraordinarily high block chance you'll have to enter a
+      defensive combat stance, and your shield should have a high base block
+      chance, and your class should be fairly skilled at blocking,
+      see class-specific parry/block proficiency in the 'class table' in (7.5).
 
 
 Additional information:
