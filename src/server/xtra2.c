@@ -5326,7 +5326,7 @@ void check_experience(int Ind) {
 					//msg_print(Ind, "\377RYou don't deserve to live.");
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
-					s_printf("MAIA-INITFAIL: %s killed 0+0.\n", p_ptr->name);
+					s_printf("MAIA-INITFAIL(init): %s killed 0+0.\n", p_ptr->name);
 					p_ptr->died_from_ridx = 0;
 					p_ptr->deathblow = 0;
 					p_ptr->death = TRUE;
@@ -5343,7 +5343,7 @@ void check_experience(int Ind) {
 				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 && p_ptr->r_killed[RI_DARKLING] != 0) {
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
-					s_printf("MAIA-INITFAIL: %s killed %d+%d.\n", p_ptr->name, p_ptr->r_killed[RI_CANDLEBEARER], p_ptr->r_killed[RI_DARKLING]);
+					s_printf("MAIA-INITFAIL(init): %s killed %d+%d.\n", p_ptr->name, p_ptr->r_killed[RI_CANDLEBEARER], p_ptr->r_killed[RI_DARKLING]);
 					p_ptr->died_from_ridx = 0;
 					p_ptr->deathblow = 0;
 					p_ptr->death = TRUE;
@@ -6890,15 +6890,17 @@ bool monster_death(int Ind, int m_idx) {
 	if (p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
 		switch (r_idx) {
 		case RI_CANDLEBEARER:
-			if (p_ptr->r_killed[RI_DARKLING] != 0)
+			if (p_ptr->r_killed[RI_DARKLING] != 0) {
 				msg_print(Ind, "\377rYour presence in the realm is forfeit!");
-			else if (p_ptr->r_killed[RI_CANDLEBEARER] == 0)
+				s_printf("MAIA-INITFAIL(kill): %s killed %d+%d.\n", p_ptr->name, p_ptr->r_killed[RI_CANDLEBEARER], p_ptr->r_killed[RI_DARKLING]);
+			} else if (p_ptr->r_killed[RI_CANDLEBEARER] == 0)
 				msg_print(Ind, "\377yYou have stepped on the path to corruption..");
 			break;
 		case RI_DARKLING:
-			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0)
+			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0) {
 				msg_print(Ind, "\377rYour presence in the realm is forfeit!");
-			else if (p_ptr->r_killed[RI_DARKLING] == 0)
+				s_printf("MAIA-INITFAIL(kill): %s killed %d+%d.\n", p_ptr->name, p_ptr->r_killed[RI_CANDLEBEARER], p_ptr->r_killed[RI_DARKLING]);
+			} else if (p_ptr->r_killed[RI_DARKLING] == 0)
 				msg_print(Ind, "\377yYou have stepped on the path to enlightenment..");
 			break;
 		}
