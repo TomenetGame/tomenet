@@ -5534,6 +5534,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, " (k) \377knuke\377w  (l) \377lplasma\377w  (P) \377Ppsi\377w    (j) \377jholy orb\377w (J) \377Jholy fire\377w      (X) \377Xhellfire");
 			msg_print(Ind, " (1) \3771havoc\377w (E) \377Emeteor\377w  (Z) \377Zember\377w  (z) \377zthunder\377w  (O) \377Odetonation\377w     (0) \3770starlight");
 			msg_print(Ind, " (2) \3772lamp light\377w (3) \3773shaded lamp\377w (4) \3774menu selector\377w (5) \3775palette test\377w (6) \3776marker");
+			msg_print(Ind, " (7) \3777blue selector (test-only)\377w  (8) \3778test light (same as fire)");
 			return;
 		}
 		/* fire up all available status tags in the display to see

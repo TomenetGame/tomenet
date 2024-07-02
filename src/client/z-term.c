@@ -821,14 +821,6 @@ static byte anim2static(byte attr) {
 #define TERM_SRCLITE_HUE 1 /* 1 = reddish, else blueish */
 		int angle, spd;
 
-#ifdef TERM_SRCLITE_TEMP
-		/* Stop animation after some time */
-		if (ticks - flick_global_time > 82) return(TERM_WHITE);
-#endif
-
-		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
-		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
-
 		/* Catch use in chat (or elsewhere, paranoia) instead of as feat attr in the main screen map, or we will crash :-s */
 		if (!flick_global_x)
 #if TERM_SRCLITE_HUE == 1 /* reddish */
@@ -836,6 +828,14 @@ static byte anim2static(byte attr) {
 #else /* blueish */
 			return(flick_colour(TERM_ELEC));
 #endif
+
+#ifdef TERM_SRCLITE_TEMP
+		/* Stop animation after some time */
+		if (ticks - flick_global_time > 82) return(TERM_WHITE);
+#endif
+
+		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
+		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
 
 		/* Assume we're only called on a dungeon floor with dimensions SCREEN_WID x SCREEN_HGT (66x22): */
 		flick_global_x -= SCREEN_PAD_LEFT;
