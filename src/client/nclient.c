@@ -1204,7 +1204,7 @@ int Net_setup(void) {
 					class_info[i].c_adj[4] = b5 - 50;
 					class_info[i].c_adj[5] = b6 - 50;
 					if (is_newer_than(&server_version, 4, 4, 3, 1, 0, 0))
-						for (j = 0; j < 6; j++) {
+						for (j = 0; j < C_ATTRIBUTES; j++) {
 							Packet_scanf(&cbuf, "%c", &b1);
 							class_info[i].min_recommend[j] = b1;
 						}
@@ -1525,7 +1525,7 @@ int Net_start(int sex, int race, int class) {
 	else Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
 
 	/* Send the desired stat order */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < C_ATTRIBUTES; i++)
 		Packet_printf(&wbuf, "%hd", stat_order[i]);
 
 	/* Send the options */

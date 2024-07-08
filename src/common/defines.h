@@ -186,6 +186,8 @@
 #define MAX_DED_IDDC_CHARS	2	/* additional iddc-only characters (needs ALLOW_DED_IDDC_MODE) */
 #define MAX_DED_PVP_CHARS	1	/* additional pvp-only characters (needs ALLOW_DED_PVP_MODE) */
 
+#define C_ATTRIBUTES	6	/* Number of base stats: str, int, wis, con, dex, chr */
+
 /* What kind of character creation method does the server use? - C. Blue
    currently (since 4.2.0):     0 = traditional random rolling (1 try)
                                 1 = player can set his stats manually */

@@ -794,13 +794,15 @@ static void wr_extra(int Ind) {
 	wr_u16b(p_ptr->align_good);
 	wr_u16b(p_ptr->align_law);
 
-	/* Dump the stats (maximum and current) */
-	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_max[i]);
-	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cur[i]);
+	/* hypothetically todo: write current C_ATTRIBUTES value */
 
 	/* Dump the stats (maximum and current) */
-	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cnt[i]);
-	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_los[i]);
+	for (i = 0; i < C_ATTRIBUTES; ++i) wr_s16b(p_ptr->stat_max[i]);
+	for (i = 0; i < C_ATTRIBUTES; ++i) wr_s16b(p_ptr->stat_cur[i]);
+
+	/* Dump the stats (maximum and current) */
+	for (i = 0; i < C_ATTRIBUTES; ++i) wr_s16b(p_ptr->stat_cnt[i]);
+	for (i = 0; i < C_ATTRIBUTES; ++i) wr_s16b(p_ptr->stat_los[i]);
 
 	/* Dump the skills */
 	wr_u16b(MAX_SKILLS);

@@ -3433,7 +3433,7 @@ void display_player(int hist) {
 		put_str(format("Social Class:\377B %6d", (int)p_ptr->sc), y_row1 + 3, SECOND_COL);
 
 		/* Display the stats */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			/* Special treatment of "injured" stats */
 			if (p_ptr->stat_use[i] < p_ptr->stat_top[i]) {
 				int value;

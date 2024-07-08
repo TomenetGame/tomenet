@@ -4752,7 +4752,7 @@ static void check_training(int Ind) {
 
 	if (train < 1) return;
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < C_ATTRIBUTES; i++) {
 		value = p_ptr->stat_cur[i];
 		value2 = p_ptr->stat_ind[i];
 		chance = train;
@@ -4912,7 +4912,7 @@ void check_experience(int Ind) {
 			if (in_irondeepdive(&p_ptr->wpos)) {
 				int s, drained_attrs = 0, drained_attr[6];
 
-				for (s = 0; s < 6; s++)
+				for (s = 0; s < C_ATTRIBUTES; s++)
 					if (p_ptr->stat_cur[s] != p_ptr->stat_max[s])
 						drained_attr[drained_attrs++] = s;
 				if (drained_attrs) res_stat(Ind, drained_attr[rand_int(drained_attrs)]);

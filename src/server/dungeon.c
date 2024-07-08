@@ -5493,7 +5493,7 @@ static bool process_player_end_aux(int Ind) {
 	/*** Timeout Various Things ***/
 
 	/* Handle temporary stat drains */
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < C_ATTRIBUTES; i++) {
 		if (p_ptr->stat_cnt[i] > 0) {
 			p_ptr->stat_cnt[i] -= (1 + minus_health);
 			if (p_ptr->stat_cnt[i] <= 0) {

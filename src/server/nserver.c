@@ -1916,9 +1916,8 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 
 static int Handle_setup(int ind) {
 	connection_t *connp = Conn[ind];
-	char *buf;
+	char *buf, b;
 	int n, len, i, j;
-	char b1, b2, b3, b4, b5, b6;
 
 	if (connp->state != CONN_SETUP) {
 		Destroy_connection(ind, "not setup");
@@ -1950,36 +1949,35 @@ static int Handle_setup(int ind) {
 
 		for (i = 0; i < Setup.max_race; i++) {
 			//Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-			b1 = race_info[i].r_adj[0]+50;
-			b2 = race_info[i].r_adj[1]+50;
-			b3 = race_info[i].r_adj[2]+50;
-			b4 = race_info[i].r_adj[3]+50;
-			b5 = race_info[i].r_adj[4]+50;
-			b6 = race_info[i].r_adj[5]+50;
+			for (j = 0; j < C_ATTRIBUTES; j++) {
+				b = race_info[i].r_adj[j] + 50;
+				Packet_printf(&connp->c, "%c", b);
+			}
+
 #ifdef ENABLE_DEATHKNIGHT /* check for outdated client (see above), don't give 'Paladin' option there for Vampires */
 			ch = race_info[i].choice;
 			if (i == RACE_VAMPIRE && !is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) ch &= ~CFL;
-			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, ch);
+			Packet_printf(&connp->c, "%s%d", race_info[i].title, ch);
 #else
-			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
+			Packet_printf(&connp->c, "%s%d", race_info[i].title, race_info[i].choice);
 #endif
 		}
 
-		for (i = 0; i < mc; i++) {
+		for (i = 0; i < mc; i++) { //todo: C_ATTRIBUTES
 			//Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-			b1 = class_info[i].c_adj[0]+50;
-			b2 = class_info[i].c_adj[1]+50;
-			b3 = class_info[i].c_adj[2]+50;
-			b4 = class_info[i].c_adj[3]+50;
-			b5 = class_info[i].c_adj[4]+50;
-			b6 = class_info[i].c_adj[5]+50;
+			for (j = 0; j < C_ATTRIBUTES; j++) {
+				b = class_info[i].c_adj[j] + 50;
+				Packet_printf(&connp->c, "%c", b);
+			}
+
 			/* for ENABLE_HELLKNIGHT/ENABLE_CPRIEST too: de-hardcode the hiding of classes */
 			if (is_newer_than(&connp->version, 4, 7, 0, 2, 0, 0))
-				Packet_printf(&connp->c, "%c%c%c%c%c%c%s", b1, b2, b3, b4, b5, b6, class_info[i].hidden ? format("%02d%s", class_info[i].base_class, class_info[i].title) : class_info[i].title);
+				Packet_printf(&connp->c, "%s", class_info[i].hidden ? format("%02d%s", class_info[i].base_class, class_info[i].title) : class_info[i].title);
 			else
-				Packet_printf(&connp->c, "%c%c%c%c%c%c%s", b1, b2, b3, b4, b5, b6, class_info[i].title);
+				Packet_printf(&connp->c, "%s", class_info[i].title);
+
 			if (is_newer_than(&connp->version, 4, 4, 3, 1, 0, 0))
-				for (j = 0; j < 6; j++)
+				for (j = 0; j < C_ATTRIBUTES; j++)
 					Packet_printf(&connp->c, "%c", class_info[i].min_recommend[j]);
 		}
 
@@ -5256,7 +5254,7 @@ static int Receive_play(int ind) {
 
 #if 1	// moved from Handle_listening
 		/* Read the stat order */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			n = Packet_scanf(&connp->r, "%hd", &connp->stat_order[i]);
 			if (n <= 0) {
 				Destroy_connection(ind, "Misread stat order");

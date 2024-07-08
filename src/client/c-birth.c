@@ -1055,11 +1055,11 @@ static bool choose_stat_order(void) {
 	char attribute_name[6][20] = { "Strength", "Intelligence", "Wisdom", "Dexterity", "Constitution", "Charisma" };
 
 
-	for (i = 0; i < 6; i++) stat_order_tmp[i] = stat_order[i];
+	for (i = 0; i < C_ATTRIBUTES; i++) stat_order_tmp[i] = stat_order[i];
 
 	/* Init the 6 attributes' diz from lua */
 	memset(attribute_diz, 0, sizeof(char) * 6 * 8 * 61);
-	for (j = 0; j < 6; j++)
+	for (j = 0; j < C_ATTRIBUTES; j++)
 		for (i = 0; i < 8; i++) {
 			sprintf(out_val, "return get_attribute_diz(\"%s\", %d)", attribute_name[j], i);
 			strcpy(attribute_diz[j][i], string_exec_lua(0, out_val));
@@ -1071,19 +1071,19 @@ static bool choose_stat_order(void) {
 		put_str("Stat order  :", 11, 1);
 
 		/* All stats are initially available */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			strncpy(stats[i], stat_names[i], 3);
 			stats[i][3] = '\0';
 			avail[i] = 1;
 		}
 
 		/* Find the ordering of all 6 stats */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			/* Clear bottom of screen */
 			clear_from(20);
 
 			/* Print available stats at bottom */
-			for (k = 0; k < 6; k++) {
+			for (k = 0; k < C_ATTRIBUTES; k++) {
 				/* Check for availability */
 				if (avail[k]) {
 					sprintf(out_val, "%c) %s", I2A(k), stats[k]);
@@ -1118,7 +1118,7 @@ static bool choose_stat_order(void) {
 					j = (islower(c) ? A2I(c) : -1);
 				}
 
-				if ((j < 6) && (j >= 0) && (avail[j])) {
+				if ((j < C_ATTRIBUTES) && (j >= 0) && (avail[j])) {
 					stat_order[i] = j;
 					c_put_str(TERM_L_BLUE, stats[j], 8, 15 + i * 5);
 					avail[j] = 0;
@@ -1227,7 +1227,7 @@ static bool choose_stat_order(void) {
 		c_put_str(TERM_L_UMBER,format("   - %s -    ", attribute_name[0]), DIZ_ROW, 30);
 		for (i = 0; i < 8; i++) c_put_str(TERM_YELLOW, attribute_diz[0][i], DIZ_ROW + 1 + i, 30);
 
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			stat_order[i] = STAT_MOD_BASE;
 			strncpy(stats[i], stat_names[i], 3);
 			stats[i][3] = '\0';
@@ -1292,7 +1292,7 @@ static bool choose_stat_order(void) {
 			}
 #endif
 
-			for (i = 0; i < 6; i++) {
+			for (i = 0; i < C_ATTRIBUTES; i++) {
 				crb = stat_order[i] + cp_ptr->c_adj[i] + rp_ptr->r_adj[i];
 				if (crb > 18) crb = 18 + (crb - 18) * 10;
 				cnv_stat(crb, buf);
@@ -1406,7 +1406,7 @@ static bool choose_stat_order(void) {
 			if (rl_connection_destroyed) return(FALSE);
 #endif
 			if (c == '\b') {
-				for (i = 0; i < 6; i++) stat_order[i] = stat_order_tmp[i];
+				for (i = 0; i < C_ATTRIBUTES; i++) stat_order[i] = stat_order_tmp[i];
 
 				for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 				clear_from(rowA);
@@ -1415,7 +1415,7 @@ static bool choose_stat_order(void) {
 			}
 			if (c == '#') {
 				if (valid_dna) {
-					for (i = 0; i < 6; i++) {
+					for (i = 0; i < C_ATTRIBUTES; i++) {
 						if (dna_stat_order[i] >= STAT_MOD_MIN && dna_stat_order[i] <= STAT_MOD_MAX) stat_order[i] = dna_stat_order[i];
 						else stat_order[i] = STAT_MOD_MIN;
 					}

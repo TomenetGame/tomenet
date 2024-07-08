@@ -2599,7 +2599,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					case 10: {
 						msg_print(Ind, "You're not as powerful as you used to be...");
 						if (safe_area(Ind)) break;
-							for (k = 0; k < 6; k++) {
+							for (k = 0; k < C_ATTRIBUTES; k++) {
 							p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
 							if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
 						}

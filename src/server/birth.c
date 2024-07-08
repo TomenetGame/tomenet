@@ -553,22 +553,20 @@ static s16b get_stats(int Ind, int stat_order[6]) {
 	int free_points = 30, maxed_stats = 0;
 
 	/* Clear "stats" array */
-	for (i = 0; i < 6; i++)
-		stats[i] = 0;
+	for (i = 0; i < C_ATTRIBUTES; i++) stats[i] = 0;
 
 	/* Traditional random stat rolling */
 	if (CHAR_CREATION_FLAGS == 0) {
-
 		/* Check over the given stat order, to prevent cheating */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			/* Check range */
-			if (stat_order[i] < 0 || stat_order[i] > 5)
+			if (stat_order[i] < 0 || stat_order[i] >= C_ATTRIBUTES)
 				stat_order[i] = 1;
 
 			/* Check for duplicated entries */
 			if (stats[stat_order[i]] == 1) {
 				/* Find a stat that hasn't been specified yet */
-				for (j = 0; j < 6; j++) {
+				for (j = 0; j < C_ATTRIBUTES; j++) {
 					if (stats[j]) continue;
 					stat_order[i] = j;
 				}
@@ -598,7 +596,7 @@ static s16b get_stats(int Ind, int stat_order[6]) {
 		}
 
 		/* Acquire the stats */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			/* Extract 5 + 1d3 + 1d4 + 1d5 */
 			j = 5 + dice[3 * i] + dice[3 * i + 1] + dice[3 * i + 2];
 
@@ -608,24 +606,22 @@ static s16b get_stats(int Ind, int stat_order[6]) {
 
 		/* Now sort the stats */
 		/* I use a bubble sort because I'm lazy at the moment */
-		for (i = 0; i < 6; i++) {
-			for (j = 0; j < 5; j++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
+			for (j = 0; j < C_ATTRIBUTES - 1; j++) {
 				if (stats[j] < stats[j + 1]) {
-					int t;
-
-					t = stats[j];
+					tries = stats[j];
 					stats[j] = stats[j + 1];
-					stats[j + 1] = t;
+					stats[j + 1] = tries;
 				}
 			}
 		}
 
 		/* Now, put them in the correct order */
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < C_ATTRIBUTES; i++)
 			p_ptr->stat_max[stat_order[i]] = stats[i];
 
 		/* Adjust the stats */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			/* Obtain a "bonus" for "race" and "class" */
 			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
 
@@ -657,7 +653,7 @@ static s16b get_stats(int Ind, int stat_order[6]) {
 
 	/* Players may modify their stats manually */
 	else {
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
 
 			/* Fix limits - all cases here cover malicious client-side cheating attempts :) */
@@ -688,7 +684,7 @@ static s16b get_stats(int Ind, int stat_order[6]) {
 		} else if (free_points) s_printf("STATPOINTS: %s allocates not all (-%d) stat points.\n", p_ptr->name, free_points);
 
 		/* Apply selected stats */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
 			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_order[i];
 			stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
@@ -1041,7 +1037,7 @@ static void get_money(int Ind, s16b free_points) {
 	int i;
 
 	/* Process the stats */
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < C_ATTRIBUTES; i++) {
 		/* Mega-Hack -- reduce gold for high stats */
 		if (stat_use[i] >= 18 + 50) gold -= 150;
 		else if (stat_use[i] >= 18 + 20) gold -= 100;
@@ -1060,7 +1056,7 @@ static void get_money(int Ind, s16b free_points) {
 	int i;
 
 	/* Process the stats */
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < C_ATTRIBUTES; i++) {
 		/* Linear increase (for fair stats) or deduction (for poor stats) */
 		gold -= (stat_use[i] - 15) * 5;
   #if 0 /* Especially great stats already cost especially many stat points during character creation, using the new (ie non-random but point-allocation) system; should not double-tax it here again. */
@@ -1952,7 +1948,7 @@ static void player_outfit(int Ind) {
 			/* stat_ind has not been set so we have to hack it for calc_blows_obj().
 			   Side-effect: We ignore Hobbits' +2 DEX bonus for not wearing shoes */
 			//abuse 'wgt'
-			for (j = 0; j < 6; j++) {
+			for (j = 0; j < C_ATTRIBUTES; j++) {
 				/* Values: 3, 4, ..., 17 */
 				if (stat_use[j] <= 18) wgt = (stat_use[j] - 3);
 				/* Ranges: 18/00-18/09, ..., 18/210-18/219 */

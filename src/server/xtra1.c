@@ -966,7 +966,7 @@ static void prt_frame_basic(int Ind) {
 	prt_exp(Ind);
 
 	/* All Stats */
-	for (i = 0; i < 6; i++) prt_stat(Ind, i);
+	for (i = 0; i < C_ATTRIBUTES; i++) prt_stat(Ind, i);
 
 	/* Armor */
 	prt_ac(Ind);
@@ -3121,7 +3121,7 @@ void calc_boni(int Ind) {
 	extra_blows_tmp = extra_shots = extra_spells = 0;
 
 	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) p_ptr->stat_tmp[i] = p_ptr->stat_add[i] = 0;
+	for (i = 0; i < C_ATTRIBUTES; i++) p_ptr->stat_tmp[i] = p_ptr->stat_add[i] = 0;
 
 #if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
 	/* Hack: Blood Sacrifice form may give double-immunity!
@@ -3826,7 +3826,7 @@ void calc_boni(int Ind) {
 	/* Hack -- apply racial/class stat maxes */
 	if (p_ptr->maximize) {
 		/* Apply the racial modifiers */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			/* Modify the stats for "race" */
 			/* yeek mimic no longer rocks too much */
 			//if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
@@ -3838,7 +3838,7 @@ void calc_boni(int Ind) {
 
 	/* Apply the racial modifiers */
 	if (p_ptr->mode & MODE_HARD) {
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < C_ATTRIBUTES; i++) {
 			/* Modify the stats for "race" */
 			p_ptr->stat_add[i]--;
 		}
@@ -4886,7 +4886,7 @@ void calc_boni(int Ind) {
 
 
 	/* Calculate stats */
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < C_ATTRIBUTES; i++) {
 		int top, use, ind;
 
 		/* Extract the new "stat_use" value for the stat */

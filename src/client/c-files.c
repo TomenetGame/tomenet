@@ -2367,7 +2367,7 @@ void save_birth_file(cptr name, bool touch) {
 		fprintf(fp, "%d\n", trait); //Trait
 
 		/* Stats */
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < C_ATTRIBUTES; i++)
 			fprintf(fp, "%d\n", stat_order[i]);
 	} else {
 		/* Info */
@@ -2377,7 +2377,7 @@ void save_birth_file(cptr name, bool touch) {
 		fprintf(fp, "%d\n", dna_trait); //Trait
 
 		/* Stats */
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < C_ATTRIBUTES; i++)
 			fprintf(fp, "%d\n", dna_stat_order[i]);
 	}
 
@@ -2488,7 +2488,7 @@ void load_birth_file(cptr name) {
 	dna_trait = (s16b)tmp;
 
 	/* Stats */
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < C_ATTRIBUTES; i++) {
 		r = fscanf(fp, "\n%d", &tmp);
 		if (r == EOF || r == 0) {
 			fclose(fp);

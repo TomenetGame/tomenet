@@ -10875,7 +10875,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case 10:
 			msg_print(Ind, "You're not as powerful as you used to be...");
-			for (k = 0; k < 6; k++) {
+			for (k = 0; k < C_ATTRIBUTES; k++) {
 				/* Sustenance slightly helps (50%) */
 				do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 50, p_ptr->resist_time ? 1 : 3, FALSE);
 			}

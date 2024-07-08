@@ -1835,13 +1835,15 @@ static bool rd_extra(int Ind) {
 	rd_u16b(&p_ptr->align_law);
 #endif	/* SAVEDATA_TRANSFER_KLUDGE */
 
-	/* Read the stat info */
-	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);
-	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_cur[i]);
+	/* hypothetically todo: read C_ATTRIBUTES value */
 
-	/* Dump the stats (maximum and current) */
-	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_cnt[i]);
-	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_los[i]);
+	/* Read the stat info */
+	for (i = 0; i < C_ATTRIBUTES; i++) rd_s16b(&p_ptr->stat_max[i]);
+	for (i = 0; i < C_ATTRIBUTES; i++) rd_s16b(&p_ptr->stat_cur[i]);
+
+	/* Read the stats (maximum and current) */
+	for (i = 0; i < C_ATTRIBUTES; ++i) rd_s16b(&p_ptr->stat_cnt[i]);
+	for (i = 0; i < C_ATTRIBUTES; ++i) rd_s16b(&p_ptr->stat_los[i]);
 
 	/* Read the skills */
 	{

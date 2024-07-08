@@ -523,7 +523,7 @@ void display_player(int Ind) {
 	Send_various(Ind, p_ptr->ht, p_ptr->wt, p_ptr->age, p_ptr->sc);
 
 	/* Send all the stats */
-	for (i = 0; i < 6; i++) Send_stat(Ind, i);
+	for (i = 0; i < C_ATTRIBUTES; i++) Send_stat(Ind, i);
 
 	/* Extra info */
 	display_player_middle(Ind);

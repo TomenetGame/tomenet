@@ -1869,7 +1869,7 @@ static void store_create(store_type *st_ptr) {
 	u32b resf = RESF_STORE;
 	obj_theme theme;
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) != 0;
-	//bool town_bm = (st_ptr->st_idx == 6);
+	//bool town_bm = (st_ptr->st_idx == STORE_BLACK);
 
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
@@ -5283,9 +5283,9 @@ void store_maint(store_type *st_ptr) {
 	st_ptr->insult_cur = 0;
 
 	/* Mega-Hack -- prune the black market */
-	//if (st_ptr->st_idx == 6)
+	//if (st_ptr->st_idx == STORE_BLACK)
 	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) {
-		//bool town_bm = (st_ptr->st_idx == 6);
+		//bool town_bm = (st_ptr->st_idx == STORE_BLACK);
 
 		/* Destroy crappy black market items */
 		for (j = st_ptr->stock_num - 1; j >= 0; j--) {
