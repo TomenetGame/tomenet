@@ -96,7 +96,7 @@ void show_building(int Ind, store_type *s_ptr) {
 	store_action_type *ba_ptr;
 	player_type *p_ptr = Players[Ind];
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 		ba_ptr = &ba_info[st_ptr->actions[i]];
 
 		/* hack: some actions are admin-only (for testing purpose) */
@@ -2930,7 +2930,7 @@ void do_cmd_bldg(void) {
 			break;
 		}
 
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 			ba_ptr = &ba_info[st_info->actions[i]];
 
 			if (ba_ptr->letter) {

@@ -19,11 +19,11 @@ void display_store_action() {
 	/* BIG_MAP leads to big shops */
 	int spacer = (screen_hgt == MAX_SCREEN_HGT) ? 14 : 0;
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 		if (!c_store.actions[i]) continue;
 
-		c_put_str(c_store.action_attr[i], c_store.action_name[i],
-				21 + spacer + (i / 2), 20 + (30 * (i % 2)));
+		if (i < 6) c_put_str(c_store.action_attr[i], c_store.action_name[i], 21 + spacer + (i / 2), 20 + (30 * (i % 2)));
+		else c_put_str(c_store.action_attr[i], c_store.action_name[i], 21 + spacer + i - 6, 0); //only enough space for short names for actions 7,8,9 (especially no space for pricings!)
 	}
 }
 
@@ -646,7 +646,7 @@ static void store_process_command(int cmd) {
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt == MAX_SCREEN_HGT) ? 26 : 12;
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 		if (!c_store.actions[i]) continue;
 
 		if (c_store.letter[i] == cmd) {
@@ -670,7 +670,7 @@ static void store_process_command(int cmd) {
 	}
 
 	/* hack: translate p/s into d/g and vice versa, for extra comfort */
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 		if (!c_store.actions[i]) continue;
 
 		switch (c_store.letter[i]) {

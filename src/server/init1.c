@@ -6795,19 +6795,20 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'O' for "Owners" (one line only) */
 		if (buf[0] == 'O') {
-			int a1, a2, a3, a4, a5, a6;
+			int a, c = 1;
+			cptr bufp = buf + 2;
 
 			/* Scan for the values */
-			if (MAX_STORE_OWNERS != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
-				&a1, &a2, &a3, &a4, &a5, &a6)) return(1);
-
-			/* Save the values */
-			st_ptr->owners[0] = a1;
-			st_ptr->owners[1] = a2;
-			st_ptr->owners[2] = a3;
-			st_ptr->owners[3] = a4;
-			st_ptr->owners[4] = a5;
-			st_ptr->owners[5] = a6; /* MAX_STORE_OWNERS */
+			if (sscanf(bufp, "%d", &a) != 1) return(1);
+			st_ptr->owners[0] = a;
+			while (c < MAX_STORE_OWNERS && sscanf(bufp, ":%d", &a) == 1) {
+				st_ptr->owners[c] = a;
+				c++;
+			}
+			if (c != MAX_STORE_OWNERS) {
+				s_printf("Error: Read only %d of %d store owners for store %d.\n", c, MAX_STORE_OWNERS, i);
+				return(1);
+			}
 
 			/* Next... */
 			continue;

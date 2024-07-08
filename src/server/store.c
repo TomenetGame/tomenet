@@ -1716,7 +1716,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 			/* Don't compare other BMs */
 			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
   #else /* using light-weight version that shouldn't pose problems */
-		/* Check the other basic normal stores */
+		/* Check the other basic normal stores (entrance '1' to '6') */
 		for (i = 0; i < 6; i++) {
   #endif
 			/* Check every item in the store */
@@ -3135,15 +3135,13 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price, bool quiet) {
  */
 static bool retire_owner_p(store_type *st_ptr) {
 	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
+	int n;
 
-	if ((sti_ptr->owners[0] == sti_ptr->owners[1]) &&
-	    (sti_ptr->owners[0] == sti_ptr->owners[2]) &&
-	    (sti_ptr->owners[0] == sti_ptr->owners[3]) &&
-	    (sti_ptr->owners[0] == sti_ptr->owners[4]) &&
-	    (sti_ptr->owners[0] == sti_ptr->owners[5])) { /* MAX_STORE_OWNERS */
-		/* there is no other owner */
-		return(FALSE);
-	}
+	for (n = 1; n < MAX_STORE_OWNERS; n++)
+		if (sti_ptr->owners[0] != sti_ptr->owners[n]) break;
+
+	/* there is no other owner? */
+	if (n == MAX_STORE_OWNERS) return(FALSE);
 
 	if (rand_int(STORE_SHUFFLE) != 0) return(FALSE);
 
@@ -5165,7 +5163,7 @@ void store_shuffle(store_type *st_ptr) {
 
 	/* Pick a new owner */
 	for (j = st_ptr->owner; j == st_ptr->owner; ) {
-//		st_ptr->owner = rand_int(MAX_STORE_OWNERS);
+		//st_ptr->owner = rand_int(MAX_STORE_OWNERS);
 		st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(MAX_STORE_OWNERS)];
 		if ((!(--tries))) break;
 	}
@@ -5358,9 +5356,8 @@ void store_maint(store_type *st_ptr) {
  * Initialize the stores
  */
 void store_init(store_type *st_ptr) {
-	int	 k;
+	int k;
 	//owner_type *ot_ptr;
-
 
 	/* Pick an owner */
 	//st_ptr->owner = rand_int(MAX_STORE_OWNERS);
@@ -5369,7 +5366,6 @@ void store_init(store_type *st_ptr) {
 	/* Activate the new owner */
 	//ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
 	//ot_ptr = &ow_info[st_ptr->owner];
-
 
 	/* Initialize the store */
 	st_ptr->store_open = 0;
@@ -5420,7 +5416,7 @@ void store_kick(int Ind, bool say) {
 			/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
 			if (i == -1) i = gettown_dun(Ind);
 			st_ptr = &st_info[town[i].townstore[p_ptr->store_num].st_idx];
-			for (i = 0; i < 6; i++)
+			for (i = 0; i < MAX_STORE_ACTIONS; i++)
 				if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
 					sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
 					break;
@@ -5461,7 +5457,7 @@ void store_exit(int Ind) {
 		/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
 		if (i == -1) i = gettown_dun(Ind);
 		st_ptr = &st_info[town[i].townstore[p_ptr->store_num].st_idx];
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < MAX_STORE_ACTIONS; i++)
 			if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
 				sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
 				break;
