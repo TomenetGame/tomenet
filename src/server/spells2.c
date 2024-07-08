@@ -8693,7 +8693,7 @@ char pet_creation(int Ind) { //put the sanity tests here and call place_pet
 	/* bleh, green dr is too powerful, lets do spiders. i'm fond of spiders. */
 	int lev = Players[Ind]->lev;
 
-	if (lev < 5) id = (randint(2)>1 ? 60 /*cave S*/ : 62 /*wild cat*/);
+	if (lev < 5) id = (randint(2) > 1 ? 60 /*cave S*/ : 62 /*wild cat*/);
 	else if (lev < 10) id = 127; //wood S
 	else if (lev < 15) id = 277; //mirkwood S
 	else if (lev < 20) id = 963; //aranea
