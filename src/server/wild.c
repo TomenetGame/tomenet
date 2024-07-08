@@ -241,10 +241,10 @@ void deltown(int Ind) {
 			}
 #endif
 
-	if (numtowns <= 5) return;
+	if (numtowns < TOWNS) return;
 
-//	wild_info[wpos->wy][wpos->wx].type = WILD_GRASSLAND;
-//	wild_info[wpos->wy][wpos->wx].type = WILD_OCEAN;
+	//wild_info[wpos->wy][wpos->wx].type = WILD_GRASSLAND;
+	//wild_info[wpos->wy][wpos->wx].type = WILD_OCEAN;
 	wild_info[wpos->wy][wpos->wx].type = WILD_UNDEFINED; /* re-generate */
 	wild_info[wpos->wy][wpos->wx].radius = towndist(wpos->wy, wpos->wx, &tlev);
 	wild_info[wpos->wy][wpos->wx].town_lev = tlev;
@@ -292,7 +292,7 @@ void wild_spawn_towns(bool TOC_near_Bree) {
 	worldpos wpos = {0, 0, 0};
 
 	/* Place towns */
-	for (i = 1 + 1; i < 6; i++) {
+	for (i = 1 + 1; i < TOWNS; i++) {
 		retry = FALSE;
 
 		/* avoid towns at the border of the world map (also: no housing space there!) */
@@ -331,7 +331,7 @@ void wild_spawn_towns(bool TOC_near_Bree) {
 		if (tries == 100) {
 			skip = FALSE;
 
-			for (j = 1; j < 6; j++) {
+			for (j = 1; j < TOWNS; j++) {
 				for (k = 0; k < 2; k++) {
 					if (town_profile[j].dungeons[k] == i) skip = TRUE;
 				}
@@ -352,7 +352,7 @@ void wild_spawn_towns(bool TOC_near_Bree) {
 
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
-		for (j = 0; j < 5; j++) {
+		for (j = 0; j < TOWNS; j++) {
 			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
 				retry = TRUE;
 				break;
@@ -4405,7 +4405,7 @@ void wild_add_new_dungeons(int Ind) {
 
 		/* Hack -- omit dungeons associated with towns */
 		skip = FALSE;
-		for (j = 1; j < 6; j++) {
+		for (j = 1; j < TOWNS; j++) {
 			for (k = 0; k < 2; k++)
 				if (town_profile[j].dungeons[k] == i) skip = TRUE;
 		}
@@ -4444,7 +4444,7 @@ void wild_add_new_dungeons(int Ind) {
 
 			/* Don't build them too near to towns
 			 * (otherwise entrance can be within a house) */
-			if (!Ind) for (j = 1; j < 6; j++) {
+			if (!Ind) for (j = 1; j < TOWNS; j++) {
 				if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
 					retry = TRUE;
 					break;
