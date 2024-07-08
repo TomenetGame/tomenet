@@ -137,7 +137,7 @@ void display_inventory(void) {
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i <= entries; i++) prt("", i + 6, 0);
+	for (i = k; i < entries; i++) prt("", i + 6, 0);
 
 	/* Assume "no current page" */
 	put_str("             ", 5, 20);
@@ -145,7 +145,7 @@ void display_inventory(void) {
 	/* Visual reminder of "more items" */
 	if (store.stock_num > entries) {
 		/* Show "more" reminder (after the last item) */
-		prt("-more (SPACE to flip page)-", k + 6, 3);
+		put_str("-more (SPACE to flip page)-", k + 6, 3);
 
 		/* Indicate the "current page" */
 		put_str(format("(Page %d of %d)%s%s",
@@ -890,24 +890,27 @@ static void store_process_command(int cmd) {
 void c_store_prt_gold(void) {
 	char out_val[64];
 	/* BIG_MAP leads to big shops */
-	int spacer = (screen_hgt == MAX_SCREEN_HGT) ? 14 : 0;
+	int spacer = (screen_hgt == MAX_SCREEN_HGT) ? 14 : 0, x = 51;
 
-	prt("Gold Remaining: ", 19 + spacer, 53);
+	/* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe */
+	spacer--;
+
+	prt("Gold Remaining: ", 19 + spacer, x);
 
 	if (c_cfg.colourize_bignum) colour_bignum(p_ptr->au, -1, out_val, 0, TRUE);
 	else sprintf(out_val, "%10d", p_ptr->au);
-	put_str(out_val, 19 + spacer, 69);
+	put_str(out_val, 19 + spacer, x + 16);
 
 	/* Hack -- show balance (if not 0) */
 	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance) {
-		prt("Your balance  : ", 20 + spacer, 53);
+		prt("Your balance  : ", 20 + spacer, x);
 
 		if (c_cfg.colourize_bignum) colour_bignum(p_ptr->balance, -1, out_val, 0, TRUE);
 		else sprintf(out_val, "%10d", p_ptr->balance);
-		put_str(out_val, 20 + spacer, 69);
+		put_str(out_val, 20 + spacer, x + 16);
 	} else {
 		/* Erase part of the screen */
-		Term_erase(0, 20 + spacer, 255);
+		Term_erase(x, 20 + spacer, 255);
 	}
 }
 
@@ -1027,11 +1030,16 @@ void display_store(void) {
 			prt("SPACE) Next page", 22 + spacer, 0);
 			prt(format("1-%d)%s  Go to page", (store.stock_num - 1) / (12 + spacer) + 1, (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " "), 23 + spacer, 0);
 		}
- #else /* display 'c' key */
+ #elif 0 /* display 'c' key */
 		prt(" ESC) Exit store", 21 + spacer, 0);
 		if (store.stock_num) prt("   c) Paste to chat", 22 + spacer, 0);
 		if (store.stock_num > 12 + spacer)
 			prt(format("%s1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " ", (store.stock_num - 1) / (12 + spacer) + 1), 23 + spacer, 0);
+ #else /* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe */
+		prt(" ESC) Exit store", 20 + spacer, 0);
+		if (store.stock_num) prt(" c) Paste to chat", 20 + spacer, 20);
+		if (store.stock_num > 12 + spacer)
+			prt(format(" 1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1), 20 + spacer, 20 + 30);
  #endif
 #endif
 
