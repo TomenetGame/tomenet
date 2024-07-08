@@ -6503,8 +6503,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Check resist/immunity */
 		if ((r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) ||
-		    (r_ptr->flags3 & RF3_NONLIVING))
-		{
+		    (r_ptr->flags3 & RF3_NONLIVING)) {
 			note = " is unaffected";
 			no_dam = TRUE;
 			break;
@@ -6521,9 +6520,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " resists somewhat";
 				dam = (dam * 3 + 1) / 4;
 			}
-		} else if (!rand_int(20)) {
-			resist = TRUE;
-		}
+		} else if (!rand_int(20)) resist = TRUE;
 
 		/* Check backlash vs caster */
 		//if (psi_backlash(Ind, c_ptr->m_idx, dam)) resist = TRUE;
@@ -6547,21 +6544,20 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam += dam / 2;
 			}
 		}
-		if (((m_ptr->confused > 0) && !rand_int(3)) ||
+		else if (((m_ptr->confused > 0) && !rand_int(3)) ||
 		    ((m_ptr->confused > 20) && !rand_int(3)) ||
 		    ((m_ptr->confused > 50) && !rand_int(3))) {
 			resist = FALSE;
-			dam = dam * (3 + randint(7)) / 4;
+			dam = dam * (4 + rand_int(3)) / 4;
 		}
 
 		/* Apply resistance, damage, and effects */
 		if (resist) {
 			note = " resists";
 			dam /= 2;
-			if (!(r_ptr->flags3 & RF3_NO_CONF) && !rand_int(10)) do_conf = randint(8);
 		} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
-			do_stun = randint(6);
-			do_conf = randint(20);
+			if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(6);
+			if (!(r_ptr->flags3 & RF3_NO_CONF)) do_conf = randint(20);
 			if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
 		}
 		break;
@@ -10298,9 +10294,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* No side effects */
 
 			/* Reduce damage */
-			for (k = 0; k < psi_resists ; k++) {
+			for (k = 0; k < psi_resists ; k++)
 				dam = dam * 4 / (4 + randint(5));
-			}
 
 			/* Telepathy reduces damage */
 			if (p_ptr->telepathy) dam = dam * (3 + randint(6)) / 9;
@@ -10308,6 +10303,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Telepathy increases damage */
 			if (p_ptr->telepathy) dam = dam * (6 + randint(6)) / 6;
 		}
+		/* Professionals */
 		if (p_ptr->pclass == CLASS_MINDCRAFTER) dam /= 2;
 
 		if (fuzzy) msg_format(Ind, "Your mind is hit by mental energy for \377%c%d \377wdamage!", damcol, dam);
@@ -13774,8 +13770,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 	case GF_PSI:
 		if ((r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) ||
-		    (r_ptr->flags3 & RF3_NONLIVING))
-		{
+		    (r_ptr->flags3 & RF3_NONLIVING)) {
 			dam = 0;
 			break;
 		} else if (r_ptr->flags9 & RF9_RES_PSI) {
@@ -13789,6 +13784,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam = (dam * 3 + 1) / 4;
 
 		if ((r_ptr->flags2 & RF2_SMART) && !resist) dam += dam / 2;
+		else if (m_ptr->confused) dam += dam / 8; //very rough approx
 
 		if (resist) dam /= 2;
 		break;

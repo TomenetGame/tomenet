@@ -22000,17 +22000,20 @@ In general, mindcraft schools are less affected by anti-magic fields.)
 
 
 - Mental Intrusion  [Spells are INT-based unless noted otherwise.]
- (Note that psi attacks don't have any effect on angels, nonliving creatures,
+ Note that 'psi' attacks don't have any effect on angels, nonliving creatures,
  or empty-minded creatures, and that undead, stupid creatures and common
  animals as well as weird-minded creatures may resist it. At the same time,
- smart creatures might be hit especially hard.
+ smart creatures might be hit especially hard (+50% damage).
+ Creatures that are already confused may also, depending on the amount of
+ their confusion, take extra damage, randomly up to the same bonus amount that
+ smart creatures take (randomly +0 up to +50% damage.)
  Targets that might resist psi attacks, but which are already confused when
  they get hit, get their chance to resist nullified by the confusion.
  As a side effect, psi attacks themselves have a chance to cause confusion to
- the target, thereby increasing their effect when the target is hit by another
- psi attack afterwards.
+ the target, thereby increasing the damage when the target is hit by more
+ psi attack afterwards while still suffering from confusion.
  if a monster does not resist a psi attack, it may suffer from additional
- effects besides confusion, such as fear, stun or sleep.)
+ effects besides confusion, such as fear, stun or sleep.
 
     Psionic Blast   Blasts the target's mind with psionic energy.
                     Psi damage can potentially cause additional status effects
