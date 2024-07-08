@@ -1669,6 +1669,7 @@
 #define MAX_BASE_STORES		10		/* default stores that appear in every town */
 /* Total number of owners per store (see "store.c", etc) */
 #define MAX_STORE_OWNERS	6	/* Max size for st_ptr->owners[] */
+#define MAX_STORE_ACTIONS	6	/* Max # of different store actions from ba_info.txt/bldg.c */
 
 #define STORE_INVEN_MAX		120		/* Max number of discrete objs in inven [48] */
 #define STORE_CHOICES		64		/* Number of items to choose stock from (defined in st_info.txt) */

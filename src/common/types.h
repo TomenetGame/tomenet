@@ -2499,9 +2499,8 @@ struct store_info_type {
 	byte table_num;			/* Number of items */
 	s16b max_obj;			/* Number of items this store can hold */
 
-	u16b owners[6];			/* List of owners(refers to ow_info) */
-
-	u16b actions[6];		/* Actions(refers to ba_info) */
+	u16b owners[MAX_STORE_OWNERS];			/* List of owners(refers to ow_info) */
+	u16b actions[MAX_STORE_ACTIONS];		/* Actions(refers to ba_info) */
 
 	byte d_attr;			/* Default building attribute */
 	char32_t d_char;			/* Default building character */
@@ -4735,14 +4734,14 @@ struct c_store_extra {
 	s32b max_cost;			/* Purse limit */
 
 	/* list of command */
-	u16b actions[6];		/* Actions(refers to ba_info) */
-	u16b bact[6];		/* ba_ptr->action */
-	char action_name[6][40];
-	byte action_attr[6];
-	u16b action_restr[6];
-	char letter[6];
-	s16b cost[6];
-	byte flags[6];
+	u16b actions[MAX_STORE_ACTIONS];		/* Actions(refers to ba_info) */
+	u16b bact[MAX_STORE_ACTIONS];		/* ba_ptr->action */
+	char action_name[MAX_STORE_ACTIONS][40];
+	byte action_attr[MAX_STORE_ACTIONS];
+	u16b action_restr[MAX_STORE_ACTIONS];
+	char letter[MAX_STORE_ACTIONS];
+	s16b cost[MAX_STORE_ACTIONS];
+	byte flags[MAX_STORE_ACTIONS];
 
 	/* Store attr and char */
 	byte store_attr;
