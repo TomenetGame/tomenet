@@ -11080,7 +11080,7 @@ static void town_gen(struct worldpos *wpos) {
 	/* XXX this will be changed very soon	- Jir -
 	 * It's no good hardcoding things like this.. */
 #if 1
-	if (type > 0 && type < 6) { /* the 5 fixed towns */
+	if (type > 0 && type < TOWNS) { /* the 5 fixed towns (aside from Bree, which is #0 and always at cfg.town_x/town_y aka (32,32)) */
 		/* Hack -- Use the "simple" RNG */
 		Rand_quick = TRUE;
 
