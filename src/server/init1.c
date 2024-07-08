@@ -6751,19 +6751,26 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'A' for "Actions" (one line only) */
 		if (buf[0] == 'A') {
-			int a1, a2, a3, a4, a5, a6;
+			int a, c = 1;
+			cptr bufp = buf + 2;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
-				&a1, &a2, &a3, &a4, &a5, &a6)) return(1);
-
-			/* Save the values */
-			st_ptr->actions[0] = a1;
-			st_ptr->actions[1] = a2;
-			st_ptr->actions[2] = a3;
-			st_ptr->actions[3] = a4;
-			st_ptr->actions[4] = a5;
-			st_ptr->actions[5] = a6;
+			if (sscanf(bufp, "%d", &a) != 1) return(1);
+			st_ptr->actions[0] = a;
+			bufp = strchr(bufp, ':');
+			if (!bufp && MAX_STORE_ACTIONS > 1) {
+				s_printf("Error: st_info.txt - Read only the first of %d store actions for store %d.\n", MAX_STORE_ACTIONS, i);
+				return(1);
+			}
+			while (c < MAX_STORE_ACTIONS && bufp && sscanf(bufp, ":%d", &a) == 1) {
+				st_ptr->actions[c] = a;
+				c++;
+				bufp = strchr(bufp + 1, ':');
+			}
+			if (c != MAX_STORE_ACTIONS) {
+				s_printf("Error: st_info.txt - Read only %d of %d store actions for store %d.\n", c, MAX_STORE_ACTIONS, i);
+				return(1);
+			}
 
 			/* Next... */
 			continue;
@@ -6809,7 +6816,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			while (c < MAX_STORE_OWNERS && bufp && sscanf(bufp, ":%d", &a) == 1) {
 				st_ptr->owners[c] = a;
 				c++;
-				bufp = strchr(bufp, ':');
+				bufp = strchr(bufp + 1, ':');
 			}
 			if (c != MAX_STORE_OWNERS) {
 				s_printf("Error: st_info.txt - Read only %d of %d store owners for store %d.\n", c, MAX_STORE_OWNERS, i);
