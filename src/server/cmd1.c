@@ -313,14 +313,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	bool apply_monster_brands = TRUE;
 	int i, monster_brands = 0;
 	u32b monster_brand[6], monster_brand_chosen;
+
+	bool melee = !o_ptr || (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
+
+
 	monster_brand[1] = 0;
 	monster_brand[2] = 0;
 	monster_brand[3] = 0;
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
-
-	bool melee = !o_ptr || (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
-
 
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
@@ -911,16 +912,16 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	bool apply_monster_brands = TRUE;
 	int i, monster_brands = 0;
 	u32b monster_brand[6], monster_brand_chosen;
+
+	bool melee = !o_ptr || (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
+	u32b q_flags3 = 0x0;
+
+
 	monster_brand[1] = 0;
 	monster_brand[2] = 0;
 	monster_brand[3] = 0;
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
-
-	bool melee = !o_ptr || (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
-
-	u32b q_flags3 = 0x0;
-
 
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
@@ -3104,13 +3105,14 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	int sfx = 0;
 #endif
 	u32b monster_effect[6], monster_effect_chosen;
+	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
+
+
 	monster_effect[1] = 0;
 	monster_effect[2] = 0;
 	monster_effect[3] = 0;
 	monster_effect[4] = 0;
 	monster_effect[5] = 0;
-	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
-
 
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
@@ -4306,12 +4308,13 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	bool apply_monster_effects = TRUE;
 	int i, monster_effects;
 	u32b monster_effect[6], monster_effect_chosen;
+
+
 	monster_effect[1] = 0;
 	monster_effect[2] = 0;
 	monster_effect[3] = 0;
 	monster_effect[4] = 0;
 	monster_effect[5] = 0;
-
 
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)

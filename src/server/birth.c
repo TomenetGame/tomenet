@@ -879,8 +879,8 @@ void get_history(int Ind) {
 		    p_ptr->prace == RACE_HUMAN // of the house of Beor, before the Dunedain
 		    ) { // Human/Dunadan -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 			/* Process predefined history using the existing charts */
-			int charts[7] = {1,2,3,50,51,52,53};
-			int rolls[7] = {100,100,80,100,90,30,90}; // nobility, Beor look like Noldor
+			int charts[7] = { 1, 2, 3, 50, 51, 52, 53 };
+			int rolls[7] = { 100, 100, 80, 100, 90, 30, 90 }; // nobility, Beor look like Noldor
 
 			for (int x = 0; x < 7; x++) {
 				i = 0;
@@ -896,8 +896,8 @@ void get_history(int Ind) {
 		    p_ptr->stat_max[5] == 17 // gotta remain true to the lore :)
 		    ) { // Elf/High-Elf  -->  7 -->  8 -->  9 --> 54 --> 55 --> 56
 			/* Process predefined history using the existing charts */
-			int charts[6] = {7,8,9,54,55,56};
-			int rolls[6] = {100,75,100,85,75,75}; // nobility, specific Teleri features
+			int charts[6] = { 7, 8, 9, 54, 55, 56 };
+			int rolls[6] = { 100, 75, 100, 85, 75, 75 }; // nobility, specific Teleri features
 
 			for (int x = 0; x < 6; x++) {
 				i = 0;
