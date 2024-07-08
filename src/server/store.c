@@ -3002,7 +3002,7 @@ static void display_store(int Ind) {
 		if (cfg.item_awareness != 0 &&
 		    p_ptr->store_num > -2) { /* Never become aware of player store items */
 			bool noticed = FALSE, default_stock;
-			bool base_store = (0 <= p_ptr->store_num) && (p_ptr->store_num <= 5);
+			bool base_store = (0 <= p_ptr->store_num) && (p_ptr->store_num <= 5); /* only the 6 basic stores, '1' to '6' */
 
 			if (base_store || cfg.item_awareness >= 2) {
 				for (i = 0; i < st_ptr->stock_num; i++) {
