@@ -6801,12 +6801,18 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			/* Scan for the values */
 			if (sscanf(bufp, "%d", &a) != 1) return(1);
 			st_ptr->owners[0] = a;
-			while (c < MAX_STORE_OWNERS && sscanf(bufp, ":%d", &a) == 1) {
+			bufp = strchr(bufp, ':');
+			if (!bufp && MAX_STORE_OWNERS > 1) {
+				s_printf("Error: st_info.txt - Read only the first of %d store owners for store %d.\n", MAX_STORE_OWNERS, i);
+				return(1);
+			}
+			while (c < MAX_STORE_OWNERS && bufp && sscanf(bufp, ":%d", &a) == 1) {
 				st_ptr->owners[c] = a;
 				c++;
+				bufp = strchr(bufp, ':');
 			}
 			if (c != MAX_STORE_OWNERS) {
-				s_printf("Error: Read only %d of %d store owners for store %d.\n", c, MAX_STORE_OWNERS, i);
+				s_printf("Error: st_info.txt - Read only %d of %d store owners for store %d.\n", c, MAX_STORE_OWNERS, i);
 				return(1);
 			}
 
