@@ -7150,9 +7150,9 @@ void view_exploration_history(int Ind) {
 #endif
 
 void view_guild_roster(int Ind) {
-	int i;
+	int i, cnt = 1;
 	FILE *fff;
-	char file_name[MAX_PATH_LENGTH], fmt[MAX_CHARS];
+	char file_name[MAX_PATH_LENGTH];
 	cptr master;
 	bool none = TRUE;
 
@@ -7160,14 +7160,16 @@ void view_guild_roster(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff, "\377y                      The List of all registered guilds\n\n");
-	sprintf(fmt, " \377y[\377U%%%ds\377y] \377wMaster: %%s, %%d members\n", NAME_LEN);
+	fprintf(fff, "\377y           The List of all registered guilds, in no particular order:\n");
+	fprintf(fff, "\377y           ==========================================================\n\n");
 
 	/* output the actual list */
 	for (i = 0; i < MAX_GUILDS; i++) {
 		if (!guilds[i].members) continue;
 		none = FALSE;
-		fprintf(fff, fmt, guilds[i].name, (master = lookup_player_name(guilds[i].master)) ? master : "\377y<LEADERLESS>\377w", guilds[i].members);
+		master = lookup_player_name(guilds[i].master);
+		master = master ? master : "\377y<LEADERLESS>\377w";
+		fprintf(fff, "  %3d.  \377y[ \377U%*s%*s \377y]     \377wmaster: %-*s   %4d member%s\n", cnt++, (int)(NAME_LEN + strlen(guilds[i].name + 1)) / 2, guilds[i].name, (int)(NAME_LEN - strlen(guilds[i].name)) / 2, "", CNAME_LEN, master, guilds[i].members, guilds[i].members == 1 ? "" : "s");
 	}
 
 	if (none) fprintf(fff, "\n\377s                   There are currently no guilds registered\n");
