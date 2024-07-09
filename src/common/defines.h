@@ -1674,7 +1674,7 @@
 #define MAX_BASE_STORES		10		/* default stores that appear in every town */
 /* Total number of owners per store (see "store.c", etc) */
 #define MAX_STORE_OWNERS	6	/* Max size for st_ptr->owners[] */
-#define MAX_STORE_ACTIONS	6	/* Max # of different store actions from ba_info.txt/bldg.c */
+#define MAX_STORE_ACTIONS	9	/* Max # of different store actions from ba_info.txt/bldg.c */
 
 #define STORE_INVEN_MAX		120		/* Max number of discrete objs in inven [48] */
 #define STORE_CHOICES		64		/* Number of items to choose stock from (defined in st_info.txt) */
@@ -1689,8 +1689,6 @@
 #define STORE_HATED		0
 #define STORE_LIKED		1
 #define STORE_NORMAL		2
-
-#define STORE_MAX_ACTION	6
 
 /* Store flags */
 #define SF1_DEPEND_LEVEL	0x00000001U	/* Item kind levels depend on dungeon level */
@@ -8882,6 +8880,7 @@ extern int PlayerUID;
 #define BACT_CONTACT_OWNER		76
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
+#define BACT_LIST_GUILDS		77
 
 
 #define BACT_F_NOTHING		0x00

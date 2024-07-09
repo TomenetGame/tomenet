@@ -6759,8 +6759,9 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			st_ptr->actions[0] = a;
 			bufp = strchr(bufp, ':');
 			if (!bufp && MAX_STORE_ACTIONS > 1) {
-				s_printf("Error: st_info.txt - Read only the first of %d store actions for store %d.\n", MAX_STORE_ACTIONS, i);
-				return(1);
+				s_printf("Warning: st_info.txt - Read only the first of %d store actions for store %d.\n", MAX_STORE_ACTIONS, i);
+				//return(1);
+				continue;
 			}
 			while (c < MAX_STORE_ACTIONS && bufp && sscanf(bufp, ":%d", &a) == 1) {
 				st_ptr->actions[c] = a;
@@ -6768,8 +6769,8 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 				bufp = strchr(bufp + 1, ':');
 			}
 			if (c != MAX_STORE_ACTIONS) {
-				s_printf("Error: st_info.txt - Read only %d of %d store actions for store %d.\n", c, MAX_STORE_ACTIONS, i);
-				return(1);
+				s_printf("Warning: st_info.txt - Read only %d of %d store actions for store %d.\n", c, MAX_STORE_ACTIONS, i);
+				//return(1);
 			}
 
 			/* Next... */

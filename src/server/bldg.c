@@ -2832,6 +2832,19 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			Send_request_str(Ind, RID_CONTACT_OWNER, "Your note: ", "");
 			break;
 #endif
+		case BACT_LIST_GUILDS: {
+			cptr master;
+			int i;
+			bool found = FALSE;
+
+			for (i = 0; i < MAX_GUILDS; i++) {
+				if (!guilds[i].members) continue;
+				msg_format(Ind, " \377y[\377U%s\377y] \377wMaster: %s, %d members", guilds[i].name, (master = lookup_player_name(guilds[i].master)) ? master : "\377y<LEADERLESS>\377w", guilds[i].members);
+				found = TRUE;
+			}
+			if (!found) msg_print(Ind, " \377sThere are currently no guilds registered");
+			break;
+			}
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {

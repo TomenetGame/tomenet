@@ -3158,7 +3158,7 @@ static bool store_attest_command(int store, int bact) {
 	if (store <= -2) store = STORE_PLAYER;
 #endif
 
-	for (i = 0; i < STORE_MAX_ACTION; i++)
+	for (i = 0; i < MAX_STORE_ACTIONS; i++)
 		if (ba_info[st_info[store].actions[i]].action == bact) return(TRUE);
 		//if (st_info[store].actions[i] == action) return(TRUE);
 	return(FALSE);
@@ -4826,7 +4826,7 @@ void do_cmd_store(int Ind) {
 #ifdef USE_SOUND_2010
 	/* Ring door bell for shops that offer either buying or selling of items */
 	if (p_ptr->sfx_store)
-		for (i = 0; i < STORE_MAX_ACTION; i++)
+		for (i = 0; i < MAX_STORE_ACTIONS; i++)
 			if (st_info[st_ptr->st_idx].actions[i] == 1 || //sell item
 			    st_info[st_ptr->st_idx].actions[i] == 2) { //purchase item
 				sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
