@@ -7162,8 +7162,8 @@ void view_guild_roster(int Ind) {
 	fff = my_fopen(file_name, "wb");
 
 	//well, members are characters, not accounts, so to 'boost' your count you can just add all your eligible account's characters to the guild...
-	fprintf(fff, "\377y         The List of all registered guilds, sorted by number of members:\n");
-	fprintf(fff, "\377y         ===============================================================\n\n");
+	fprintf(fff, "\377y        The List of all registered guilds, sorted by number of members:\n");
+	fprintf(fff, "\377y        ===============================================================\n\n");
 
 	for (i = 0; i < MAX_GUILDS; i++) {
 		idx[i] = i;
