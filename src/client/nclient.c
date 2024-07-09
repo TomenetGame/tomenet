@@ -4049,6 +4049,9 @@ int Receive_store_action(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0) return(n);
 
+	/* Newer server? (Or just incompatible?) */
+	if (pos >= MAX_STORE_ACTIONS) return(1);
+
 	c_store.bact[(int)pos] = bact;
 	c_store.actions[(int)pos] = action;
 	strncpy(c_store.action_name[(int) pos], name, 40);
