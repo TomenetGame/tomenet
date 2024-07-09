@@ -7168,8 +7168,8 @@ void view_guild_roster(int Ind) {
 		if (!guilds[i].members) continue;
 		none = FALSE;
 		master = lookup_player_name(guilds[i].master);
-		master = master ? master : "\377y<LEADERLESS>\377w";
-		fprintf(fff, "  %3d.  \377y[ \377U%*s%*s \377y]     \377wmaster: %-*s   %4d member%s\n", cnt++, (int)(NAME_LEN + strlen(guilds[i].name + 1)) / 2, guilds[i].name, (int)(NAME_LEN - strlen(guilds[i].name)) / 2, "", CNAME_LEN, master, guilds[i].members, guilds[i].members == 1 ? "" : "s");
+		master = master ? master : "\377o<LEADERLESS>\377w";
+		fprintf(fff, "  %3d.  \377y[ \377U%*s%*s \377y]     \377wmaster: %-*s    %4d member%s\n", cnt++, (int)(NAME_LEN + strlen(guilds[i].name + 1)) / 2, guilds[i].name, (int)(NAME_LEN - strlen(guilds[i].name)) / 2, "", CNAME_LEN, master, guilds[i].members, guilds[i].members == 1 ? "" : "s");
 	}
 
 	if (none) fprintf(fff, "\n\377s                   There are currently no guilds registered\n");
