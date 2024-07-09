@@ -585,6 +585,11 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 		return(FALSE);
 	}
 
+	if (strlen(pass) > ACCFILE_PASSWD_LEN) {
+		s_printf("Password length must be at most %d.\n", ACCFILE_PASSWD_LEN);
+		return(FALSE);
+	}
+
 	/* No account found. Create trial account */
 	WIPE(c_acc, struct account);
 	c_acc->id = new_accid();
@@ -594,12 +599,12 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 		else
 			c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
 
-		strncpy(c_acc->name, name, 29);
-		c_acc->name[29] = '\0';
+		strncpy(c_acc->name, name, ACCFILE_NAME_LEN - 1);
+		c_acc->name[ACCFILE_NAME_LEN - 1] = '\0';
 
 		condense_name(buf, c_acc->name);
-		strncpy(c_acc->name_normalised, buf, 29);
-		c_acc->name_normalised[29] = '\0';
+		strncpy(c_acc->name_normalised, buf, ACCFILE_NAME_LEN - 1);
+		c_acc->name_normalised[ACCFILE_NAME_LEN - 1] = '\0';
 
 		strncpy(c_acc->pass, t_crypt(pass, name), sizeof(c_acc->pass));
 		c_acc->pass[sizeof(c_acc->pass) - 1] = '\0';
@@ -697,12 +702,12 @@ bool GetcaseAccount(struct account *c_acc, cptr name, char *correct_name, bool l
 		else
 			c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
 
-		strncpy(c_acc->name, name, 29);
-		c_acc->name[29] = '\0';
+		strncpy(c_acc->name, name, ACCFILE_NAME_LEN - 1);
+		c_acc->name[ACCFILE_NAME_LEN - 1] = '\0';
 
 		condense_name(buf, c_acc->name);
-		strncpy(c_acc->name_normalised, buf, 29);
-		c_acc->name_normalised[29] = '\0';
+		strncpy(c_acc->name_normalised, buf, ACCFILE_NAME_LEN - 1);
+		c_acc->name_normalised[ACCFILE_NAME_LEN - 1] = '\0';
 
 		strncpy(c_acc->pass, t_crypt(pass, name), sizeof(c_acc->pass));
 		c_acc->pass[sizeof(c_acc->pass) - 1] = '\0';
@@ -5894,6 +5899,11 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 
 	if (strlen(new_pass) < PASSWORD_MIN_LEN) {
 		msg_format(Ind, "\377RPassword length must be at least %d.", PASSWORD_MIN_LEN);
+		return;
+	}
+
+	if (strlen(new_pass) > ACCFILE_PASSWD_LEN) {
+		msg_format(Ind, "\377RPassword length must be at most %d.", ACCFILE_PASSWD_LEN);
 		return;
 	}
 
