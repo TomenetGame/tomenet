@@ -7150,25 +7150,35 @@ void view_exploration_history(int Ind) {
 #endif
 
 void view_guild_roster(int Ind) {
-	int i, cnt = 1;
+	int i, cnt = 1, mapped;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 	cptr master;
 	bool none = TRUE;
+	s16b idx[MAX_GUILDS], mem[MAX_GUILDS];
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff, "\377y           The List of all registered guilds, in no particular order:\n");
-	fprintf(fff, "\377y           ==========================================================\n\n");
+	fprintf(fff, "\377y         The List of all registered guilds, sorted by number of members:\n");
+	fprintf(fff, "\377y         ===============================================================\n\n");
+
+	for (i = 0; i < MAX_GUILDS; i++) {
+		idx[i] = i;
+		mem[i] = guilds[i].members;
+	}
+	ang_sort_comp = ang_sort_comp_order;
+	ang_sort_swap = ang_sort_swap_order;
+	ang_sort(0, mem, idx, MAX_GUILDS);
 
 	/* output the actual list */
-	for (i = 0; i < MAX_GUILDS; i++) {
+	for (mapped = MAX_GUILDS; mapped >= 0; mapped--) {
+		i = idx[mapped];
 		if (!guilds[i].members) continue;
 		none = FALSE;
 		master = lookup_player_name(guilds[i].master);
-		master = master ? master : "\377o<LEADERLESS>\377w";
+		master = master ? master : "\377o<LEADERLESS>    \377w"; //note: the colour codes are counted by strlen() ^^' hence only 16 'real' chars
 		fprintf(fff, "  %3d.  \377y[ \377U%*s%*s \377y]     \377wmaster: %-*s    %4d member%s\n", cnt++, (int)(NAME_LEN + strlen(guilds[i].name + 1)) / 2, guilds[i].name, (int)(NAME_LEN - strlen(guilds[i].name)) / 2, "", CNAME_LEN, master, guilds[i].members, guilds[i].members == 1 ? "" : "s");
 	}
 

@@ -4383,14 +4383,31 @@ static int Receive_quit(int ind) {
 	return(1);
 }
 
-static bool ang_sort_comp_order(int Ind, vptr u, vptr v, int a, int b) {
+static bool ang_sort_comp_order_byte(int Ind, vptr u, vptr v, int a, int b) {
 	byte *o = (byte*)(u); /* Order */
 	/* v is index, which is irrelevant as sorting criterium, but keeps track of the sort */
 
 	return(o[a] <= o[b]);
 }
-static void ang_sort_swap_order(int Ind, vptr u, vptr v, int a, int b) {
+static void ang_sort_swap_order_byte(int Ind, vptr u, vptr v, int a, int b) {
 	byte temp, *o = (byte*)(u), *i = (byte*)(v);
+
+	temp = o[a];
+	o[a] = o[b];
+	o[b] = temp;
+
+	temp = i[a];
+	i[a] = i[b];
+	i[b] = temp;
+}
+bool ang_sort_comp_order(int Ind, vptr u, vptr v, int a, int b) {
+	s16b *o = (s16b*)(u); /* Order */
+	/* v is index, which is irrelevant as sorting criterium, but keeps track of the sort */
+
+	return(o[a] <= o[b]);
+}
+void ang_sort_swap_order(int Ind, vptr u, vptr v, int a, int b) {
+	s16b temp, *o = (s16b*)(u), *i = (s16b*)(v);
 
 	temp = o[a];
 	o[a] = o[b];
@@ -4457,8 +4474,8 @@ static int Receive_login(int ind) {
 					id_order[i] = lookup_player_order(id_list[i]);
 					id_index[i] = i;
 				}
-				ang_sort_comp = ang_sort_comp_order;
-				ang_sort_swap = ang_sort_swap_order;
+				ang_sort_comp = ang_sort_comp_order_byte;
+				ang_sort_swap = ang_sort_swap_order_byte;
 				ang_sort(0, id_order, id_index, ids);
 
 				id1 = id_list[id_index[swapA]];
@@ -4777,8 +4794,8 @@ static int Receive_login(int ind) {
 				id_index[i] = i;
 //s_printf("PRE: o#%d=%d, i=%d, %s\n", i, id_order[i], id_index[i], lookup_player_name(id_list[i]));
 			}
-			ang_sort_comp = ang_sort_comp_order;
-			ang_sort_swap = ang_sort_swap_order;
+			ang_sort_comp = ang_sort_comp_order_byte;
+			ang_sort_swap = ang_sort_swap_order_byte;
 			ang_sort(0, id_order, id_index, n);
 
 			/* Display all account characters here */

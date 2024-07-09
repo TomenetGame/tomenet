@@ -2316,6 +2316,8 @@ extern void ang_sort_swap_value(int Ind, vptr u, vptr v, int a, int b);
 extern bool ang_sort_comp_tval(int Ind, vptr u, vptr v, int a, int b);
 extern void ang_sort_swap_s16b(int Ind, vptr u, vptr v, int a, int b);
 extern bool ang_sort_comp_mon_lev(int Ind, vptr u, vptr v, int a, int b);
+extern bool ang_sort_comp_order(int Ind, vptr u, vptr v, int a, int b);
+extern void ang_sort_swap_order(int Ind, vptr u, vptr v, int a, int b);
 extern bool target_able(int Ind, int m_idx);
 extern bool target_okay(int Ind);
 extern s16b target_pick(int Ind, int y1, int x1, int dy, int dx);
