@@ -7149,6 +7149,37 @@ void view_exploration_history(int Ind) {
 }
 #endif
 
+void view_guild_roster(int Ind) {
+	int i;
+	FILE *fff;
+	char file_name[MAX_PATH_LENGTH], fmt[MAX_CHARS];
+	cptr master;
+	bool none = TRUE;
+
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+	fff = my_fopen(file_name, "wb");
+
+	fprintf(fff, "\377y                      The List of all registered guilds\n\n");
+	sprintf(fmt, " \377y[\377U%%%ds\377y] \377wMaster: %%s, %%d members\n", NAME_LEN);
+
+	/* output the actual list */
+	for (i = 0; i < MAX_GUILDS; i++) {
+		if (!guilds[i].members) continue;
+		none = FALSE;
+		fprintf(fff, fmt, guilds[i].name, (master = lookup_player_name(guilds[i].master)) ? master : "\377y<LEADERLESS>\377w", guilds[i].members);
+	}
+
+	if (none) fprintf(fff, "\n\377s                   There are currently no guilds registered\n");
+#ifdef USE_SOUND_2010
+	else sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
+	my_fclose(fff);
+	/* Display the file contents */
+	do_cmd_check_other_prepare(Ind, file_name, "Guild Roster");
+}
+
 void reward_deed_item(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *o_ptr = &forge;

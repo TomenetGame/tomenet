@@ -1923,6 +1923,7 @@ extern void home_extend(int Ind);
 extern void view_cheeze_list(int Ind);
 extern void view_exploration_records(int Ind);
 extern void view_exploration_history(int Ind);
+extern void view_guild_roster(int Ind);
 extern void reward_deed_item(int Ind, int item);
 extern void reward_deed_blessing(int Ind, int item);
 extern u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type);
