@@ -14,7 +14,7 @@ int store_top = 0;
  * ToME show_building, ripped for client	- Jir -
  */
 void display_store_action() {
-	int i, y = 2, y2 = 1;
+	int i, y = 2, y2 = 0;
 
 	/* BIG_MAP leads to big shops */
 	int spacer = (screen_hgt == MAX_SCREEN_HGT) ? 14 : 0;
@@ -22,8 +22,8 @@ void display_store_action() {
 	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 		if (!c_store.actions[i]) continue;
 
-		if (i < 6) c_put_str(c_store.action_attr[i], c_store.action_name[i], y + y2 + 18 + spacer + (i / 2), 20 + (30 * (i % 2)));
-		else c_put_str(c_store.action_attr[i], c_store.action_name[i], y + y2 + 18 + spacer + i - 6, 0); //only enough space for short names for actions 7,8,9 (especially no space for pricings!)
+		if (i < 8) c_put_str(c_store.action_attr[i], c_store.action_name[i], y + y2 + 18 + spacer + (i / 2), 20 + (30 * (i % 2)));
+		else c_put_str(c_store.action_attr[i], c_store.action_name[i], y + y2 + 18 + spacer + 11 - i, 2); //only enough space for short names for actions 9+ (especially no space for pricings!)
 	}
 }
 
@@ -1035,11 +1035,16 @@ void display_store(void) {
 		if (store.stock_num) prt("   c) Paste to chat", y + y2 + 19 + spacer, 0);
 		if (store.stock_num > 12 + spacer)
 			prt(format("%s1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " ", (store.stock_num - 1) / (12 + spacer) + 1), y + y2 + 20 + spacer, 0);
- #else /* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe */
+ #elif 0 /* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe */
 		prt("ESC) Exit store", y + y2 + 17 + spacer, 0);
 		if (store.stock_num) prt(" c) Paste to chat", y + y2 + 17 + spacer, 20);
 		if (store.stock_num > 12 + spacer)
 			prt(format(" 1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1), y + y2 + 17 + spacer, 20 + 30);
+ #else /* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe, with 8 of them ok for full-sized action text */
+		prt(" ESC) Exit store", y + y2 + 17 + spacer, 0);
+		if (store.stock_num) prt("   c) Paste to chat", y + y2 + 18 + spacer, 0);
+		if (store.stock_num > 12 + spacer)
+			prt(format("%s1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " ", (store.stock_num - 1) / (12 + spacer) + 1), y + y2 + 19 + spacer, 0);
  #endif
 #endif
 
