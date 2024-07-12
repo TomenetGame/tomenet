@@ -7174,7 +7174,7 @@ void view_guild_roster(int Ind) {
 	ang_sort(0, mem, idx, MAX_GUILDS);
 
 	/* output the actual list */
-	for (mapped = MAX_GUILDS; mapped >= 0; mapped--) {
+	for (mapped = MAX_GUILDS - 1; mapped >= 0; mapped--) {
 		i = idx[mapped];
 		if (!guilds[i].members) continue;
 		none = FALSE;
