@@ -822,7 +822,7 @@ int gametype;
 char priv_note[MAX_NOTES][MSG_LEN], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN], priv_note_u[MAX_NOTES][MSG_LEN];
 char party_note[MAX_PARTYNOTES][MSG_LEN], party_note_target[MAX_PARTYNOTES][NAME_LEN], party_note_u[MAX_PARTYNOTES][MSG_LEN];
 char guild_note[MAX_GUILDNOTES][MSG_LEN], guild_note_target[MAX_GUILDNOTES][NAME_LEN], guild_note_u[MAX_GUILDNOTES][MSG_LEN];
-char admin_note[MAX_ADMINNOTES][MAX_CHARS], server_warning[MSG_LEN];
+char admin_note[MAX_ADMINNOTES][MAX_CHARS_WIDE], server_warning[MSG_LEN];
 
 /* in-game bbs :) - C. Blue */
 char bbs_line[BBS_LINES][MSG_LEN], bbs_line_u[BBS_LINES][MSG_LEN];
