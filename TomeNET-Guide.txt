@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 9. July 2024 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 12. July 2024 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3356,6 +3356,40 @@ When you win the game, an automatic chardump is generated in /lib/user called
 Also, a screenshot is made automatically, displaying your situation, saved
 to '<charname>-victory-screenshot.xhtml'.
 (You can view xhtml files in most webbrowsers.)
+
+Winners (Kings, Queens, Emperors, Empresses) can still continue playing the
+game just like always, but they also gain access to additional features!
+These are...
+ - You can wear Morgoth's crown and wield Morgoth's hammer, if you choose to.
+ - You can advance beyond character level 50, up to 99, the absolute maximum.
+ - Two 'post-king' dungeons, Cloud Planes and The Nether Realm
+ - Find and use 'winner-only' items, these are super heavy armour pieces
+   and shields, especially useful for tank-style characters, including a
+   few true artifacts even. These will take especially long to time out.
+ - Depending on the server settings:
+   Purchase a 'castle', that is, a house with a moat. These are usually
+   especially big in size (and very expensive accordingly).
+   Only one castle can be owned per character.
+ - Party with other winners, requiring to be within 11 levels of each other
+   instead of the usual 7 levels for non-winners.
+   They no longer share experience with non-winners, but do share it within
+   7 levels with fallen winners (ie players who defeated Morgoth but then died
+   and thereby lost their royal title again).
+   Winners can party with other winners free of any character level difference
+   restrictions if they are all at least level 80.
+ - Suiciding the character will turn into 'retirement' instead of 'suicide',
+   effectively being the same as in the character is irreversibly erased.
+ - Unique monsters will respawn, except for Dungeon Bosses, Nazgul, and any
+   monsters of or above level 98.
+ - You can enter party houses that were set to 'winners-only' by the party
+   owner :).
+ - Martial Artists can learn royalty-exclusive fighting techniques, see (5.3a).
+ - Characters who learn stances will learn the highest rank, dubbed royal rank
+   of each stances.
+ - Rogues learn a new fighting technique, Shadow Run.
+ - Druids learn new forms at levels 55 and 60.
+ - They can create randarts with +LIFE mod on it (or suppress creation by
+   inscribing the scroll !L, also see (9.4).
 
 
 (1.3a) Sauron, Morgoth and the Nazgul
@@ -22807,8 +22841,8 @@ Parties:
     emperors).
     Winners don't share experience with non-winner characters. They do share
     experience with fallen winners though, within 7 levels.
-    Winners of level 80 or higher will not have any xp-sharing restrictions
-    imposed on them anymore and can party freely.
+    Winners of level 80 or higher can party with each other free of any xp-
+    sharing restrictions regarding their level difference.
 
     Monsters will usually remember the highest player they have met and not
     give experience nor kill credit to players who are more than the 8

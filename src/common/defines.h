@@ -845,7 +845,7 @@
 #define MAX_KING_PARTY_LEVEL_DIFF 11
 
 /* Party level diff cancellation threshold. Just comment out (ie don't define it) to disable.
-   For super high level characters: Minimum level at and above which there is no more limit to level difference of party members. [80]
+   For super high level winner characters: Minimum level at and above which there is no more limit to level difference of party members. [80]
    So as soon as all characters are of this level, they share exp even if they exceed MAX_KING_PARTY_LEVEL_DIFF. */
 #define KING_PARTY_FREE_THRESHOLD 80
 

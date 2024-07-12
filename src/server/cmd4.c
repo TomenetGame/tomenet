@@ -2615,7 +2615,7 @@ void do_cmd_check_server_settings(int Ind) {
 	fprintf(fff, "Characters share XP if their max levels (before restorable drain) differ by..\n");
 	fprintf(fff, " at most %d for non-winners.\n", MAX_PARTY_LEVEL_DIFF);
 	fprintf(fff, " at most %d for winners.\n", MAX_KING_PARTY_LEVEL_DIFF);
-	fprintf(fff, " any amount without limit, as long as they are all at least level %d.\n", KING_PARTY_FREE_THRESHOLD);
+	fprintf(fff, " any amount without limit for winners, if they are all at least level %d.\n", KING_PARTY_FREE_THRESHOLD);
 
 	if ((k = cfg.party_xp_boost))
 		fprintf(fff, "Party members get boosted exp (+%d internal modifier).\n", k);
