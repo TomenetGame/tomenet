@@ -2353,7 +2353,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "store") && my_strcasestr(buf, "player")) strcpy(init_search_string, "Player stores");
 		else if (!strcasecmp("rw", buf)) strcpy(init_search_string, "Nazgul");
 		else if (!strcasecmp(buf, "win") || !strcasecmp(buf, "winning") || !strcasecmp(buf, "winner")|| !strcasecmp(buf, "winners")) strcpy(init_search_string, "goal");
-		else if (!strcasecmp(buf, "king") || !strcasecmp(buf, "queen") || !strcasecmp(buf, "emperor")|| !strcasecmp(buf, "empress")) strcpy(init_search_string, "goal");
+		else if (!strcasecmp(buf, "king") || !strcasecmp(buf, "queen") || !strcasecmp(buf, "emperor")|| !strcasecmp(buf, "empress") ||
+		    !strcasecmp(buf, "kings") || !strcasecmp(buf, "queens") || !strcasecmp(buf, "emperors")|| !strcasecmp(buf, "empresses"))
+			strcpy(init_search_string, "goal");
 		else if (!strcasecmp("OoD", buf)) strcpy(init_search_string, "OOD  "); //uh hacky: avoid overlap with OOD_xx flag
 		else if ((cp = my_strcasestr(buf, "town")) && (cp2 = my_strcasestr(buf, "dun")) && cp < cp2) strcpy(init_search_string, "town dungeons");
 		else if ((cp = my_strcasestr(buf, "town")) && (cp2 = my_strcasestr(buf, "dun")) && cp > cp2) strcpy(init_search_string, "IDDC");// dungeon towns
