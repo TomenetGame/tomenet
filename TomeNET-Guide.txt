@@ -3379,7 +3379,8 @@ These are...
    restrictions if they are all at least level 80.
  - Suiciding the character will turn into 'retirement' instead of 'suicide',
    effectively being the same as in the character is irreversibly erased.
- - Unique monsters will respawn, except for Dungeon Bosses, Nazgul, and any
+ - Unique monsters the character has already killed will randomly and slowly
+   respawn for him over time, except for Dungeon Bosses, Nazgul, and any
    monsters of or above level 98.
  - You can enter party houses that were set to 'winners-only' by the party
    owner :).
