@@ -1252,6 +1252,8 @@ static void rd_bbs() {
 	if (!s_older_than(4, 4, 9)) {
 		/* read old parties */
 		rd_s16b(&parties);
+		if (parties < MAX_PARTIES) s_printf("Expanded party number from %d to %d.\n", parties, MAX_PARTIES);
+		else if (parties > MAX_PARTIES) s_printf("Reduced party number from %d to %d.\n", parties, MAX_PARTIES);
 		for (j = 0; j < parties; j++)
 			if (j < MAX_PARTIES) {
 				for (i = 0; i < saved_lines; i++)
@@ -1270,6 +1272,8 @@ static void rd_bbs() {
 			}
 		/* read old guilds */
 		rd_s16b(&guilds);
+		if (guilds < MAX_GUILDS) s_printf("Expanded guild number from %d to %d.\n", guilds, MAX_GUILDS);
+		else if (guilds > MAX_GUILDS) s_printf("Reduced guild number from %d to %d.\n", guilds, MAX_GUILDS);
 		for (j = 0; j < guilds; j++)
 			if (j < MAX_GUILDS) {
 				for (i = 0; i < saved_lines; i++)
