@@ -513,6 +513,9 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	/* backward compatibility */
 	bool compat_apf = FALSE;
 #endif
+#ifdef USE_X11
+	bool found_window[10] = { FALSE };
+#endif
 
 	buf[0] = 0;//valgrind warning it seems..?
 
@@ -598,26 +601,37 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 						/* Don't do this in terminal mode ('-c') */
 						if (!strcmp(ANGBAND_SYS, "x11")) {
 							/* new: save window positions/sizes/visibility (and possibly fonts) */
-							if (!strncmp(buf, "Mainwindow", 10))
+							if (!strncmp(buf, "Mainwindow", 10)) {
 								write_mangrc_aux_line(0, "Mainwindow", buf);
-							else if (!strncmp(buf, "Mirrorwindow", 12))
+								found_window[0] = TRUE;
+							} else if (!strncmp(buf, "Mirrorwindow", 12)) {
 								write_mangrc_aux_line(1, "Mirrorwindow", buf);
-							else if (!strncmp(buf, "Recallwindow", 12))
+								found_window[1] = TRUE;
+							} else if (!strncmp(buf, "Recallwindow", 12)) {
 								write_mangrc_aux_line(2, "Recallwindow", buf);
-							else if (!strncmp(buf, "Choicewindow", 12))
+								found_window[2] = TRUE;
+							} else if (!strncmp(buf, "Choicewindow", 12)) {
 								write_mangrc_aux_line(3, "Choicewindow", buf);
-							else if (!strncmp(buf, "Term-4window", 12))
+								found_window[3] = TRUE;
+							} else if (!strncmp(buf, "Term-4window", 12)) {
 								write_mangrc_aux_line(4, "Term-4window", buf);
-							else if (!strncmp(buf, "Term-5window", 12))
+								found_window[4] = TRUE;
+							} else if (!strncmp(buf, "Term-5window", 12)) {
 								write_mangrc_aux_line(5, "Term-5window", buf);
-							else if (!strncmp(buf, "Term-6window", 12))
+								found_window[5] = TRUE;
+							} else if (!strncmp(buf, "Term-6window", 12)) {
 								write_mangrc_aux_line(6, "Term-6window", buf);
-							else if (!strncmp(buf, "Term-7window", 12))
+								found_window[6] = TRUE;
+							} else if (!strncmp(buf, "Term-7window", 12)) {
 								write_mangrc_aux_line(7, "Term-7window", buf);
-							else if (!strncmp(buf, "Term-8window", 12))
+								found_window[7] = TRUE;
+							} else if (!strncmp(buf, "Term-8window", 12)) {
 								write_mangrc_aux_line(8, "Term-8window", buf);
-							else if (!strncmp(buf, "Term-9window", 12))
+								found_window[8] = TRUE;
+							} else if (!strncmp(buf, "Term-9window", 12)) {
 								write_mangrc_aux_line(9, "Term-9window", buf);
+								found_window[9] = TRUE;
+							}
 						}
 #endif /* USE_X11 */
 					}
@@ -670,9 +684,56 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #endif
 			}
 
+#ifdef USE_X11
+			/* Don't do this in terminal mode ('-c') */
+			if (!strcmp(ANGBAND_SYS, "x11")) {
+				/* Add missing windows (added for older client versions that didn't have 7-9 yet) */
+				if (!found_window[0]) {
+					write_mangrc_aux(0, "Mainwindow", config2);
+					c_message_add("Added missing Mainwindow to config file.");
+				}
+				if (!found_window[1]) {
+					write_mangrc_aux(1, "Mirrorwindow", config2);
+					c_message_add("Added missing Mirrorwindow to config file.");
+				}
+				if (!found_window[2]) {
+					write_mangrc_aux(2, "Recallwindow", config2);
+					c_message_add("Added missing Recallwindow to config file.");
+				}
+				if (!found_window[3]) {
+					write_mangrc_aux(3, "Choicewindow", config2);
+					c_message_add("Added missing Choicewindow to config file.");
+				}
+				if (!found_window[4]) {
+					write_mangrc_aux(4, "Term-4window", config2);
+					c_message_add("Added missing Term-4window to config file.");
+				}
+				if (!found_window[5]) {
+					write_mangrc_aux(5, "Term-5window", config2);
+					c_message_add("Added missing Term-5window to config file.");
+				}
+				if (!found_window[6]) {
+					write_mangrc_aux(6, "Term-6window", config2);
+					c_message_add("Added missing Term-6window to config file.");
+				}
+				if (!found_window[7]) {
+					write_mangrc_aux(7, "Term-7window", config2);
+					c_message_add("Added missing Term-7window to config file.");
+				}
+				if (!found_window[8]) {
+					write_mangrc_aux(8, "Term-8window", config2);
+					c_message_add("Added missing Term-8window to config file.");
+				}
+				if (!found_window[9]) {
+					write_mangrc_aux(9, "Term-9window", config2);
+					c_message_add("Added missing Term-9window to config file.");
+				}
+			}
+#endif
+
 			//if (!creds_only) {
-				/* hack: disable one-time hint */
-				if (bigmap_hint) fputs("\nhintBigmap\n", config2);
+			/* hack: disable one-time hint */
+			if (bigmap_hint) fputs("\nhintBigmap\n", config2);
 			//}
 
 			fclose(config);
