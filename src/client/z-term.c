@@ -618,12 +618,16 @@ static byte anim2static(byte attr) {
 	if (attr == TERM_SHIELDI) return(TERM_VIOLET);
 
 	switch (attr) {
-	case TERM_MULTI: return(TERM_VIOLET);
+	case TERM_MULTI:
+		//return(anim2static(TERM_SMOOTHPAL));
+		return(TERM_VIOLET);
 	case TERM_FIRE: return(TERM_RED);
 	case TERM_POIS: return(TERM_L_GREEN);
 	case TERM_COLD: return(TERM_L_WHITE);
 	case TERM_ELEC: return(TERM_L_BLUE);
-	case TERM_HALF: return(TERM_VIOLET);
+	case TERM_HALF:
+		return(anim2static(TERM_SMOOTHPAL));
+		//return(TERM_VIOLET);
 	case TERM_ACID: return(TERM_SLATE);
 	case TERM_CONF: return(TERM_L_UMBER);
 	case TERM_SOUN: return(TERM_YELLOW);
