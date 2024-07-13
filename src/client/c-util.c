@@ -4931,12 +4931,13 @@ static errr macro_dump(cptr fname) {
 	/* Failure */
 	if (!fff) return(-1);
 
+	c_msg_format("Macros saved to file %s", buf);
 
 	/* Skip space */
 	fprintf(fff, "\n\n");
 
 	/* Start dumping */
-	fprintf(fff, "# Automatic macro dump\n\n");
+	fprintf(fff, "# Macro dump\n\n");
 
 	/* Dump them */
 	for (i = 0; i < macro__num; i++) {
@@ -7138,28 +7139,24 @@ Chain_Macro:
 					case mw_common:
 						l = 8;
 						//Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:"); --make room for one more entry instead
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                 :+:");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "b) repeat previous chat command or message        :^P\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "c) toggle AFK state                               :/afk\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "d) word-of-recall (item must be inscribed '@R')   :/rec\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "e) cough (reduces sleep of monsters nearby)       :/cough\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "f) shout (breaks sleep of monsters nearby)        :/shout\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "g) quick-toggle option 'easy_disarm_montraps'     :/edmt\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "h) display some extra information                 :/ex\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "i) display in-game time (daylight is 6am-10pm)    :/time\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "j) prompt for a guide quick search                :/? ");
-						if (c_cfg.rogue_like_commands) {
-							Term_putstr(13, l++, -1, TERM_L_GREEN, "k) swap-item #1 (inscribe two items '@x0')        \\e)S0");
-							Term_putstr(13, l++, -1, TERM_L_GREEN, "l) swap-item #2 (inscribe two items '@x1')        \\e)S1");
-							Term_putstr(13, l++, -1, TERM_L_GREEN, "m) swap-item #3 (inscribe two items '@x2')        \\e)S2");
-						} else {
-							Term_putstr(13, l++, -1, TERM_L_GREEN, "k) swap-item #1 (inscribe two items '@x0')        \\e)x0");
-							Term_putstr(13, l++, -1, TERM_L_GREEN, "l) swap-item #2 (inscribe two items '@x1')        \\e)x1");
-							Term_putstr(13, l++, -1, TERM_L_GREEN, "m) swap-item #3 (inscribe two items '@x2')        \\e)x2");
-						}
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "n) enter/leave the PvP arena (PvP mode only)      :/pvp\\r");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "o) throw an item tagged {bad} at closest monster  \\e)*tv@{bad}\\r-");
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "p) use an item inscribed '@/1' (w/ or /wo target) \\e)*t/1-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                            :+:");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "b) repeat previous chat command or message                   :^P\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "c) toggle AFK state                                          :/afk\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "d) word-of-recall (scroll/rod/spellbook must be inscribed '@R')");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "e) cough (reduces sleep of monsters nearby)                  :/cough\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "f) shout (breaks sleep of monsters nearby)                   :/shout\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "g) quick-toggle option 'easy_disarm_montraps'                :/edmt\\r");
+						//Term_putstr(2, l++, -1, TERM_L_GREEN, "h) display some extra information                            :/ex\\r");
+						//Term_putstr(2, l++, -1, TERM_L_GREEN, "i) display in-game time (daylight is 6am-10pm)               :/time\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "h) fire equipped shooter at closest enemy                    \\e)*tf-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "i) inscribe ammo/trap payload to auto pickup+merge+load+@m0  {-!=LM@m0\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "j) throw an item inscribed '@v1' at closest enemy            \\e)*tv1-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "k) inscribe throwing weapon to auto pickup+equip+@v1         {-!=L@v1\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "l) prompt for a guide quick search                           :/? ");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "m) swap two items (eg inventory and equipment) or equip/unequip one item");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "n) enter/leave the PvP arena (PvP mode only)                 :/pvp\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "o) throw an item tagged {bad} at closest monster             \\e)*tv@{bad}\\r-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "p) use an item inscribed '@/1' (w/ or w/o target)            \\e)*t/1-");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -7196,18 +7193,16 @@ Chain_Macro:
 						case 'b': strcpy(buf2, ":^P\\r"); break;
 						case 'c': strcpy(buf2, ":/afk\\r"); break;
 						case 'd':
-#if 0
-							strcpy(buf2, ":/rec\\r"); break;
-#else
 							while (TRUE) {
-								clear_from(9);
-								l = 11;
-								Term_putstr(10, l++, -1, TERM_GREEN, "Please choose a type of word-of-recall:");
-								Term_putstr(13, l++, -1, TERM_L_GREEN, "a) just basic word-of-recall (in to max depth / back out again)");
-								Term_putstr(13, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth (or back out again)");
-								Term_putstr(13, l++, -1, TERM_L_GREEN, "c) world-travel recall, ie recall across the world surface");
-								Term_putstr(13, l++, -1, TERM_L_GREEN, "d) world-travel recall, specifically to Bree, aka (32,32)");
-								Term_putstr(13, l++, -1, TERM_L_GREEN, "e) Manual recall, will prompt you to enter destination each time");
+								clear_from(8);
+								l = 10;
+								Term_putstr(1, l++, -1, TERM_GREEN, "Please choose a type of word-of-recall:");
+								l++;
+								Term_putstr(1, l++, -1, TERM_L_GREEN, "a) just basic word-of-recall (in to max depth / back out again)  :/rec\\r");
+								Term_putstr(1, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth (or back out again)         :/rec d\\r");
+								Term_putstr(1, l++, -1, TERM_L_GREEN, "c) world-travel recall, ie recall across the world surface       :/rec x y\\r");
+								Term_putstr(1, l++, -1, TERM_L_GREEN, "d) world-travel recall, specifically to Bree, aka (32,32)        :/rec 32 32\\r");
+								Term_putstr(1, l++, -1, TERM_L_GREEN, "e) Manual recall, will prompt you for destination each time      :/rec ");
 								while (TRUE) {
 									switch (choice = inkey()) {
 									case ESCAPE:
@@ -7241,7 +7236,6 @@ Chain_Macro:
 								l++;
 								switch (choice) {
 								case 'a': strcpy(buf2, ":/rec\\r"); break;
-								case 'd': strcpy(buf2, ":/rec 32 32\\r"); break;
 								case 'b':
 									Term_putstr(5, l, -1, TERM_L_GREEN, "Enter a specific depth (eg '-500'): ");
 									strcpy(buf, "");
@@ -7258,33 +7252,96 @@ Chain_Macro:
 									strcat(buf2, buf);
 									strcat(buf2, "\\r");
 									break;
+								case 'd': strcpy(buf2, ":/rec 32 32\\r"); break;
 								case 'e': strcpy(buf2, ":/rec "); break;
 								}
 								break;
 							}
 							break;
-#endif
 						case 'e': strcpy(buf2, ":/cough\\r"); break;
 						case 'f': strcpy(buf2, ":/shout\\r"); break;
 						case 'g': strcpy(buf2, ":/edmt\\r"); break;
-						case 'h': strcpy(buf2, ":/ex\\r"); break;
-						case 'i': strcpy(buf2, ":/time\\r"); break;
-						case 'j': strcpy(buf2, ":/? "); break;
-						case 'k':
-							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S0");
-							else strcpy(buf2, "\\e)x0");
-							break;
-						case 'l':
-							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S1");
-							else strcpy(buf2, "\\e)x1");
-							break;
+						//case 'h': strcpy(buf2, ":/ex\\r"); break;
+						//case 'i': strcpy(buf2, ":/time\\r"); break;
+						case 'h': strcpy(buf2, "\\e)*tf-"); break;
+						case 'i': strcpy(buf2, "{-!=LM@m0\\r"); break;
+						case 'j': strcpy(buf2, "\\e)*tv1-"); break;
+						case 'k': strcpy(buf2, "{-!=L@v1\\r"); break; 
+						case 'l': strcpy(buf2, ":/? "); break;
 						case 'm':
-							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S2");
-							else strcpy(buf2, "\\e)x2");
+							while (TRUE) {
+								clear_from(8);
+								l = 10;
+								Term_putstr(10, l++, -1, TERM_GREEN, "Pick one item-swap inscription:");
+								l++;
+
+								if (c_cfg.rogue_like_commands) {
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "a) swap two items that you inscribed '@x0'         \\e)S0");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "b) swap two items that you inscribed '@x1'         \\e)S1");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "c) swap two items that you inscribed '@x2'         \\e)S2");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "c) swap two items that you inscribed '@x3'         \\e)S3");
+								} else {
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "k) swap two items that you inscribed '@x0'         \\e)x0");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "l) swap two items that you inscribed '@x1'         \\e)x1");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "m) swap two items that you inscribed '@x2'         \\e)x2");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "m) swap two items that you inscribed '@x3'         \\e)x3");
+								}
+
+								while (TRUE) {
+									switch (choice = inkey()) {
+									case ESCAPE:
+									case 'p':
+									case '\010': /* backspace */
+										i = -2; /* leave */
+										break;
+									case ':': /* Allow chatting */
+										cmd_message();
+										continue;
+									case KTRL('T'):
+										/* Take a screenshot */
+										xhtml_screenshot("screenshot????", 2);
+										continue;
+									default:
+										/* invalid action -> exit wizard */
+										if (choice < 'a' || choice > 'c') {
+											//i = -1;
+											continue;
+										}
+									}
+									break;
+								}
+								/* exit? */
+								if (i == -2) {
+									/* hack before we exit: remember menu choice 'common' */
+									choice = mw_common;
+									break;
+								}
+
+								l++;
+								switch (choice) {
+								case 'a':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S0");
+									else strcpy(buf2, "\\e)x0");
+									break;
+								case 'b':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S1");
+									else strcpy(buf2, "\\e)x1");
+									break;
+								case 'c':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S2");
+									else strcpy(buf2, "\\e)x2");
+									break;
+								case 'd':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S3");
+									else strcpy(buf2, "\\e)x3");
+									break;
+								}
+								break;
+							}
 							break;
 						case 'n': strcpy(buf2, ":/pvp\\r"); break;
-						case 'o': strcpy(buf2, "\e)*tv@{bad}\r-"); break;
-						case 'p': strcpy(buf2, "\e)*t/1-"); break;
+						case 'o': strcpy(buf2, "\\e)*tv@{bad}\r-"); break;
+						case 'p': strcpy(buf2, "\\e)*t/1-"); break;
 						}
 
 						/* hack before we exit: remember menu choice 'common' */
