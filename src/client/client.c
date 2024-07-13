@@ -516,6 +516,8 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #ifdef USE_X11
 	bool found_window[10] = { FALSE };
 #endif
+	bool explicit_save = !(creds_only == TRUE && update_creds == FALSE) /* Don't execute if we got called from client_init(). */
+	    && !(creds_only == TRUE && update_creds == TRUE); /* Don't execute if we got called from store_crecedentials(). */
 
 	buf[0] = 0;//valgrind warning it seems..?
 
@@ -686,54 +688,58 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 
 #ifdef USE_X11
 			/* Don't do this in terminal mode ('-c') */
-			if (!strcmp(ANGBAND_SYS, "x11")) {
+			if (!strcmp(ANGBAND_SYS, "x11")
+			    && explicit_save) { /*This code is only meant for when we deliberately save config. */
 				/* Add missing windows (added for older client versions that didn't have 7-9 yet) */
 				if (!found_window[0]) {
 					write_mangrc_aux(0, "Mainwindow", config2);
-					c_message_add("Added missing Mainwindow to config file.");
+					printf("Added missing Mainwindow to config file.\n");
 				}
 				if (!found_window[1]) {
 					write_mangrc_aux(1, "Mirrorwindow", config2);
-					c_message_add("Added missing Mirrorwindow to config file.");
+					printf("Added missing Mirrorwindow to config file.\n");
 				}
 				if (!found_window[2]) {
 					write_mangrc_aux(2, "Recallwindow", config2);
-					c_message_add("Added missing Recallwindow to config file.");
+					printf("Added missing Recallwindow to config file.\n");
 				}
 				if (!found_window[3]) {
 					write_mangrc_aux(3, "Choicewindow", config2);
-					c_message_add("Added missing Choicewindow to config file.");
+					printf("Added missing Choicewindow to config file.\n");
 				}
 				if (!found_window[4]) {
 					write_mangrc_aux(4, "Term-4window", config2);
-					c_message_add("Added missing Term-4window to config file.");
+					printf("Added missing Term-4window to config file.\n");
 				}
 				if (!found_window[5]) {
 					write_mangrc_aux(5, "Term-5window", config2);
-					c_message_add("Added missing Term-5window to config file.");
+					printf("Added missing Term-5window to config file.\n");
 				}
 				if (!found_window[6]) {
 					write_mangrc_aux(6, "Term-6window", config2);
-					c_message_add("Added missing Term-6window to config file.");
+					printf("Added missing Term-6window to config file.\n");
 				}
 				if (!found_window[7]) {
 					write_mangrc_aux(7, "Term-7window", config2);
-					c_message_add("Added missing Term-7window to config file.");
+					printf("Added missing Term-7window to config file.\n");
 				}
 				if (!found_window[8]) {
 					write_mangrc_aux(8, "Term-8window", config2);
-					c_message_add("Added missing Term-8window to config file.");
+					printf("Added missing Term-8window to config file.\n");
 				}
 				if (!found_window[9]) {
 					write_mangrc_aux(9, "Term-9window", config2);
-					c_message_add("Added missing Term-9window to config file.");
+					printf("Added missing Term-9window to config file\n.");
 				}
 			}
 #endif
 
 			//if (!creds_only) {
 			/* hack: disable one-time hint */
-			if (bigmap_hint) fputs("\nhintBigmap\n", config2);
+			if (bigmap_hint && explicit_save) {
+				fputs("\nhintBigmap\n", config2);
+				bigmap_hint = FALSE;
+			}
 			//}
 
 			fclose(config);
@@ -854,11 +860,13 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			}
 #endif
 
-			if (!creds_only) {
+#if 0
+			if (!creds_only) { //explicit_save ?
 				fputs("\n", config2);
 				fputs("hintBigmap\n", config2);
+				bigmap_hint = FALSE;
 			}
-
+#endif
 			fclose(config2);
 
 			/* rename temporary file to new ".tomenetrc" */
