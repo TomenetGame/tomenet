@@ -5064,7 +5064,7 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 
-#if 1
+#if 1 // NOTE: lookup_similar_character() is not implemented actually!
 		/* Optional: Additionally check for similar character names? */
 		if (lookup_similar_character(choice, connp->nick)
 		    /* exception! reserved character names have priority.
