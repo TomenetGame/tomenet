@@ -1506,6 +1506,7 @@ void peruse_file(void) {
  * XXX XXX XXX Allow the "full" flag to dump additional info,
  * and trigger its usage from various places in the code.
  */
+ #define DUMP_MAX_X 80
 errr file_character(cptr name, bool quiet) {
 	int		i, x, y;
 	byte		a;
@@ -1548,7 +1549,7 @@ errr file_character(cptr name, bool quiet) {
 #if 0 /* this is actually correct */
 		for (x = 0; x < Term->wid; x++) {
 #else /* bad hack actually, just to avoid spacer lines on oook.cz */
-		for (x = 0; x < 79; x++) {
+		for (x = 0; x < DUMP_MAX_X; x++) {
 #endif
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
@@ -1572,7 +1573,7 @@ errr file_character(cptr name, bool quiet) {
 #if 0 /* this is actually correct */
 		for (x = 0; x < Term->wid; x++) {
 #else /* bad hack actually, just to avoid spacer lines on oook.cz */
-		for (x = 0; x < 79; x++) {
+		for (x = 0; x < DUMP_MAX_X; x++) {
 #endif
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
@@ -1596,7 +1597,7 @@ errr file_character(cptr name, bool quiet) {
 #if 0 /* this is actually correct */
 		for (x = 0; x < Term->wid; x++) {
 #else /* bad hack actually, just to avoid spacer lines on oook.cz */
-		for (x = 0; x < 79; x++) {
+		for (x = 0; x < DUMP_MAX_X; x++) {
 #endif
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
@@ -1716,7 +1717,7 @@ errr file_character(cptr name, bool quiet) {
 	Term_load();
 
 	/* Message */
-	if (!quiet) c_msg_print("Character dump successful.");
+	if (!quiet) c_msg_format("Character dump to file '%s' successful.", name);
 	clear_topline_forced();
 
 	/* Success */
