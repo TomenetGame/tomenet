@@ -2048,8 +2048,19 @@ void cmd_character(void) {
 			/* Dump */
 			strnfmt(tmp, MAX_CHARS - 1, "%s.txt", cname);
 			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1)) {
-				if (tmp[0] && (tmp[0] != ' '))
+				if (tmp[0] && (tmp[0] != ' ')) {
+					/* add '.ins' extension if not already existing */
+					if (strlen(tmp) > 4) {
+						if (tmp[strlen(tmp) - 1] == 't' &&
+						    tmp[strlen(tmp) - 2] == 'x' &&
+						    tmp[strlen(tmp) - 3] == 't' &&
+						    tmp[strlen(tmp) - 4] == '.') {
+							/* fine */
+						} else strcat(tmp, ".txt");
+					} else strcat(tmp, ".txt");
+
 					file_character(tmp, FALSE);
+				} else c_message_add("\377yError: No valid filename. Must start not on a space.");
 			}
 			break;
 		case KTRL('T'):
