@@ -10399,7 +10399,17 @@ bool get_inven_item(int Ind, int item, object_type **o_ptr) {
 #ifdef ENABLE_SUBINVEN
 	/* This function can be used for subinventories too, if using get_subinven_item() were overkill. */
 	if (item >= 100) {
+		/* Sanity/Paranoia check that the item is actually inside a subinventory */
+		if (Players[Ind]->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
+			msg_print(Ind, "ERROR: Not a subinventory.");
+			s_printf("ERROR: Not a subinventory. (%s, %i)\n", Players[Ind]->name, item / 100 - 1);
+			return(FALSE);
+		}
+
+		/* Verify the item */
 		//if (item / 100 - 1 > INVEN_PACK || item % 100 > SUBINVEN_PACK) return(FALSE); -- already done in verify_inven_item()
+
+		/* Get the item */
 		*o_ptr = &Players[Ind]->subinventory[item / 100 - 1][item % 100];
 		return(TRUE);
 	}

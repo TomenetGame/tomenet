@@ -1278,11 +1278,6 @@ void do_cmd_quaff_potion(int Ind, int item) {
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
 		/* Sanity checks */
-		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
-			msg_print(Ind, "ERROR: Not a subinventory.");
-			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
-			return;
-		}
 		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_POTION_BELT) {
 			msg_print(Ind, "\377yPotion belts are the only eligible sub-containers for quaffing potions.");
 			return;
@@ -1962,6 +1957,7 @@ void do_cmd_fill_bottle(int Ind) {
 /*
  * Empty a potion in the backpack
  */
+ //TODO: support potions/flasks inside subinventory
 void do_cmd_empty_potion(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 	//bool ident;
@@ -3861,12 +3857,7 @@ void do_cmd_use_staff(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
-		/* Sanity checks */
-		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
-			msg_print(Ind, "ERROR: Not a subinventory.");
-			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
-			return;
-		}
+		/* Sanity check */
 		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_MDEVP_WRAPPING) {
 			msg_print(Ind, "\377yAntistatic wrappings are the only eligible sub-containers for using staves.");
 			return;
@@ -4114,7 +4105,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	if (o_ptr->tval != TV_WAND) {
-//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
+		//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
 		p_ptr->shooting_till_kill = FALSE;
 		return;
 	}
@@ -4762,12 +4753,6 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
-		/* Sanity checks */
-		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
-			msg_print(Ind, "ERROR: Not a subinventory.");
-			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
-			return;
-		}
 		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_MDEVP_WRAPPING) {
 			msg_print(Ind, "\377yAntistatic wrappings are the only eligible sub-containers for zapping rods.");
 			return;
@@ -5041,7 +5026,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	item = p_ptr->current_rod;
 
 #ifdef ENABLE_SUBINVEN
-	/* Paranoia - no directional rods from within bags */
+	/* Paranoia - zapping directional rods from within bags is not allowed! */
 	if (item >= 100) return;
 #endif
 	if (!get_inven_item(Ind, item, &o_ptr)) {
@@ -5795,12 +5780,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "In a container you can only activate demolition-related chemicals.");
 			return;
 		}
-		/* Sanity checks */
-		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
-			msg_print(Ind, "ERROR: Not a subinventory.");
-			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
-			return;
-		}
+		/* Sanity check */
 		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_SATCHEL) {
 			msg_print(Ind, "\377yAlchemy Satchels are the only eligible sub-containers for activating chemicals.");
 			return;
