@@ -4294,13 +4294,7 @@ static bool recharge_antiriad(int Ind, int item, int num) {
 
 	item_tester_hook = NULL;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		p_ptr->using_up_item = -1;
-		return(FALSE);//o_ptr = &o_list[0 - item];
-	}
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	if (o_ptr->name1 != ART_ANTIRIAD && o_ptr->name1 != ART_ANTIRIAD_DEPLETED) {
 		msg_print(Ind, "You cannot recharge that item.");
@@ -4329,8 +4323,14 @@ static bool recharge_antiriad(int Ind, int item, int num) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
+
 	/* We no longer have a recharge in progress */
 	p_ptr->current_recharge = 0;
+
 	/* Successful renenergization */
 	return(TRUE);
 }
@@ -4405,20 +4405,12 @@ bool recharge_aux(int Ind, int item, int pow) {
 	int i, t, lev, dr;
 	object_type *o_ptr;
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return(FALSE);
-#endif
-
 	/* Special hack marker */
 	if (pow >= 10000) return(recharge_antiriad(Ind, item, pow));
 
 	/* Only accept legal items */
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 	item_tester_hook = item_tester_hook_recharge;
-
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else o_ptr = &o_list[0 - item];
 
 	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "You cannot recharge that item.");
@@ -4573,6 +4565,11 @@ if (item >= 100) return(FALSE);
 
 	/* We no longer have a recharge in progress */
 	p_ptr->current_recharge = 0;
+
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
 
 	/* Something was done */
 	return(TRUE);
