@@ -915,6 +915,7 @@ void Receive_login(void) {
 	}
 	existing_characters = i;
 
+	create_character_ok_pvp = create_character_ok_iddc = FALSE;
 	ded_pvp_shown = ded_pvp;
 	ded_iddc_shown = ded_iddc;
 	for (n = max_cpa - i; n > 0; n--) {
@@ -923,11 +924,13 @@ void Receive_login(void) {
 				if (ded_pvp_shown < max_ded_pvp_chars) {
 					c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", offset + i + n - 1, COL_CHARS);
 					ded_pvp_shown++;
+					create_character_ok_pvp = TRUE;
 					continue;
 				}
 				if (ded_iddc_shown < max_ded_iddc_chars) {
 					c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", offset + i + n - 1, COL_CHARS);
 					ded_iddc_shown++;
+					create_character_ok_iddc = TRUE;
 					continue;
 				}
 			}
@@ -946,6 +949,7 @@ void Receive_login(void) {
 			}
 		}
 		c_put_str(TERM_SLATE, "<free slot>", offset + i + n - 1, COL_CHARS);
+		create_character_ok_pvp = create_character_ok_iddc = TRUE;
 	}
 
 	offset += max_cpa + 1;
@@ -963,7 +967,9 @@ void Receive_login(void) {
 			/* hack: no weird modi on first client startup!
 			   To find out whether it's 1st or not we check firstrun and # of existing characters.
 			   However, we just don't display the choice, but it's still choosable by pressing the key anyway except for firstrun! */
-			if (!firstrun || existing_characters)
+			if ((!firstrun || existing_characters)
+			    /* We have still exclusive slots left? */
+			    && (create_character_ok_pvp || create_character_ok_iddc))
 				c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", offset + 1, 2);
 		}
 	} else {

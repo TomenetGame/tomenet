@@ -1451,15 +1451,19 @@ static bool choose_mode(void) {
 
 	/* specialty: slot-exclusive-mode char? */
 	if (dedicated) {
-		put_str("i) Ironman Deep Dive Challenge", 16, 2);
-		c_put_str(TERM_SLATE, "(Unworldly - one life only.)", 16, 33);
-		put_str("s) Ironman Deep Dive Challenge Soloist", 17, 2);
-		c_put_str(TERM_SLATE, "(Cannot trade with other players)", 17, 41);
-		put_str("H) Hellish Ironman Deep Dive Challenge", 18, 2);
-		c_put_str(TERM_SLATE, "(Extra hard, sort of ridiculous)", 18, 41);
-		if (!s_RPG) {
-			put_str("p) PvP", 19, 2);
-			c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 19, 9);
+		if (create_character_ok_iddc) {
+			put_str("i) Ironman Deep Dive Challenge", 16, 2);
+			c_put_str(TERM_SLATE, "(Unworldly - one life only.)", 16, 33);
+			put_str("s) Ironman Deep Dive Challenge Soloist", 17, 2);
+			c_put_str(TERM_SLATE, "(Cannot trade with other players)", 17, 41);
+			put_str("H) Hellish Ironman Deep Dive Challenge", 18, 2);
+			c_put_str(TERM_SLATE, "(Extra hard, sort of ridiculous)", 18, 41);
+		}
+		if (create_character_ok_pvp) {
+			if (!s_RPG) {
+				put_str("p) PvP", 19, 2);
+				c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 19, 9);
+			}
 		}
 
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
@@ -1519,21 +1523,37 @@ static bool choose_mode(void) {
 				clear_from(15);
 				return(FALSE);
 			} else if (c == 'p' && !s_RPG) {
+				if (!create_character_ok_pvp) {
+					bell();
+					continue;
+				}
 				sex |= MODE_PVP | MODE_DED_PVP;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
 				break;
 			} else if (c == 'i') {
+				if (!create_character_ok_iddc) {
+					bell();
+					continue;
+				}
 				sex |= MODE_NO_GHOST | MODE_DED_IDDC;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 				break;
 			} else if (c == 'H') {
+				if (!create_character_ok_iddc) {
+					bell();
+					continue;
+				}
 				sex |= (MODE_NO_GHOST | MODE_HARD | MODE_DED_IDDC);
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
 				break;
 			} else if (c == 's') {
+				if (!create_character_ok_iddc) {
+					bell();
+					continue;
+				}
 				sex |= (MODE_NO_GHOST | MODE_SOLO | MODE_DED_IDDC);
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "Soloist", 9, CHAR_COL);
@@ -1543,15 +1563,31 @@ static bool choose_mode(void) {
 			} else if (c == '*') {
 				switch (rand_int(s_RPG ? 3 : 4)) {
 				case 0:
+					if (!create_character_ok_iddc) {
+						bell();
+						continue;
+					}
 					c = 'i';
 					break;
 				case 1:
+					if (!create_character_ok_iddc) {
+						bell();
+						continue;
+					}
 					c = 's';
 					break;
 				case 2:
+					if (!create_character_ok_iddc) {
+						bell();
+						continue;
+					}
 					c = 'H';
 					break;
 				case 3:
+					if (!create_character_ok_pvp) {
+						bell();
+						continue;
+					}
 					c = 'p';
 					break;
 				}
@@ -1565,6 +1601,20 @@ static bool choose_mode(void) {
 					else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'i';
 					else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c = 'p';
 					else c = 'i';
+					/* What dedicated slot types are even left? */
+					if (!create_character_ok_iddc &&
+					    (c == 'H' || c == 's' || c == 'i')) {
+						bell();
+						hazard = FALSE;
+						auto_reincarnation = FALSE;
+						continue;
+					}
+					if (!create_character_ok_pvp && c == 'p') {
+						bell();
+						hazard = FALSE;
+						auto_reincarnation = FALSE;
+						continue;
+					}
 					/* Fix dedicated modes */
 					if (!(dna_sex & (MODE_PVP | MODE_DED_PVP))) dna_sex |= MODE_DED_IDDC;
 					else dna_sex |= MODE_DED_PVP;

@@ -398,6 +398,7 @@ extern bool s_RPG, s_FUN, s_ARCADE, s_TEST;
 extern bool s_RPG_ADMIN, s_PARTY;
 extern bool s_DED_IDDC, s_DED_PVP;
 extern bool s_NO_PK, s_PVP_MAIA;
+extern bool create_character_ok_pvp, create_character_ok_iddc;
 
 /* Server's temporary features flags */
 extern u32b sflags_TEMP;

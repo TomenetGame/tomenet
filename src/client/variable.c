@@ -316,6 +316,7 @@ bool s_RPG = FALSE, s_FUN = FALSE, s_ARCADE = FALSE, s_TEST = FALSE;
 bool s_RPG_ADMIN = FALSE, s_PARTY = FALSE;
 bool s_DED_IDDC = FALSE, s_DED_PVP = FALSE;
 bool s_NO_PK = FALSE, s_PVP_MAIA = FALSE;
+bool create_character_ok_pvp = TRUE, create_character_ok_iddc = TRUE;
 
 /* Server temporary feature flags */
 u32b sflags_TEMP = 0x0;
