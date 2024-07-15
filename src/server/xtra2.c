@@ -14167,17 +14167,7 @@ void telekinesis_aux(int Ind, int item) {
 
 	p_ptr->current_telekinesis = NULL;
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return;
-#endif
-
-	/* Get the item (in the pack) */
-	if (item >= 0) {
-		q_ptr = &p_ptr->inventory[item];
-	} else { /* Get the item (on the floor) */
-		msg_print(Ind, "You must carry the object to teleport it.");
-		return;
-	}
+	if (!get_inven_item(Ind, item, &q_ptr)) return;
 
 	Ind2 = get_player(Ind, o_ptr);
 	if (!Ind2) return;
