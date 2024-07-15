@@ -4033,21 +4033,13 @@ bool ident_spell_aux(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return(FALSE);
-#endif
-
 	/* clean up special hack, originally for !X on ID spells
 	   but now actually used for everything (scrolls etc) */
 	p_ptr->current_item = -1;
 
 	XID_paranoia(p_ptr);
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else o_ptr = &o_list[0 - item];
-
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	/* Identify it fully */
 	object_aware(Ind, o_ptr);
@@ -4093,12 +4085,17 @@ if (item >= 100) return(FALSE);
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
-//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not when IDing */
+		//inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not when IDing */
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
 	}
 
 	p_ptr->current_identify = 0;
+
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
 
 	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
 
@@ -4547,6 +4544,8 @@ bool recharge_aux(int Ind, int item, int pow) {
 			/* Hack -- we no longer think the item is empty */
 			o_ptr->ident &= ~ID_EMPTY;
 			note_toggle_empty(o_ptr, FALSE);
+
+			apply_XID(Ind, o_ptr, item);
 		}
 	}
 
