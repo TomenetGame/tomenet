@@ -4931,7 +4931,7 @@ static errr macro_dump(cptr fname) {
 	/* Failure */
 	if (!fff) return(-1);
 
-	c_msg_format("Macros saved to file %s", buf);
+	c_msg_format("Macros saved to file %s", fname);
 
 	/* Skip space */
 	fprintf(fff, "\n\n");

@@ -2110,7 +2110,7 @@ void save_auto_inscriptions(cptr name) {
 
 	fclose(fp);
 
-	c_msg_format("Auto-inscriptions saved to file '%s'.", name);
+	c_msg_format("Auto-inscriptions saved to file '%s'.", file_name);
 }
 
 /* Load Auto-Inscription file (*.ins) - C. Blue */
