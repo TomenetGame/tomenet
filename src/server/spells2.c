@@ -4141,13 +4141,7 @@ bool identify_fully_item(int Ind, int item) {
 
 	XID_paranoia(p_ptr);
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-		o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else
-		o_ptr = &o_list[0 - item];
-
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	/* Identify it fully */
 	object_aware(Ind, o_ptr);
@@ -4164,6 +4158,10 @@ bool identify_fully_item(int Ind, int item) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -4210,14 +4208,7 @@ bool identify_fully_item_quiet(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return(FALSE);
-#endif
-
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else o_ptr = &o_list[0 - item];
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	/* Identify it fully */
 	object_aware(Ind, o_ptr);
@@ -4231,6 +4222,10 @@ if (item >= 100) return(FALSE);
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
@@ -4267,7 +4262,7 @@ bool identify_fully_object_quiet(int Ind, object_type *o_ptr) {
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
-//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
+		//inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
 
