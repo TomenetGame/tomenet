@@ -80,7 +80,7 @@ lighterDarkBlue
 ##   or from a custom graphics redefinition file lib/user/graphics-{graphic_tiles}.prf, if the file exists.
 ##
 ##   Important: The value has to be in format "{int width}x{int height}[{string}]", because tile width and height is extracted from the string.
-#graphic_tiles 8x8
+#graphic_tiles 16x22sv
 
 
 
