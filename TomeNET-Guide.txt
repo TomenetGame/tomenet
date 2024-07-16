@@ -65,7 +65,7 @@ Contents
     (2.4)   Installing voice chat
     (2.5)   Fonts
     (2.5a)  Custom fonts
-    (2.5b)  Graphical fonts
+    (2.5b)  Graphical tilesets
 (3) Creating a character & starting to play
     (3.1)   Creating a new character
     (3.1a)  Character modes
@@ -4974,10 +4974,11 @@ Linux distribution, then you can select them in TomeNET via  = f  (or enter
 them directly in your .tomenetrc config file).
 
 
-(2.5b) Graphical fonts
-----------------------
+(2.5b) Graphical tilesets
+-------------------------
 Thanks to jEzEk (https://github.com/jezek) graphics tiles are now supported
-again, now with a colour mask and autoscaling.
+again, now with a colour mask and autoscaling. The advantage over normal fonts
+is that these can have many colours and thereby look much better.
 
 Svechnik (EvgenijK) has worked on a major graphical tileset that can be found
 on his github, including instructions on how to use it:
