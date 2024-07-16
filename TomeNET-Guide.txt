@@ -4988,7 +4988,8 @@ is that these can have many colours and thereby look much better.
 
 Graphical tilesets are xyz.bmp files in 24-bit format (R8,G8,B8) that come with
 a graphics-xyz.prf mapping file. The bmp file goes to tomenet/lib/graphics and
-the prf file, as always, to tomenet/lib/user.
+the prf file, as always, to tomenet/lib/user or - on Windows OS - to the folder
+'TomeNET-user' inside your user's home folder (eg C:/Users/Tomenetplayer/).
 
 Svechnik (EvgenijK) has worked on a major graphical tileset that can be found
 on his github, including instructions on how to use it:
