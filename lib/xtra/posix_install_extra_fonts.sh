@@ -22,11 +22,11 @@ TOMENETUSER=../user
 # location of a folder that has subfolders with extra fonts inside (eg extra_fonts/coolfont/, extra_fonts/myfont/ ...)
 # It will be scanned for subfolders and from each subfolder all prf and pcf files inside it will be installed.
 # Example file structure:
-# /home/tomenetplayer/extra_fonts/mylittlefont/font-custom-7x10.prf
-# /home/tomenetplayer/extra_fonts/mylittlefont/font-custom-7x10.pcf
-# /home/tomenetplayer/extra_fonts/hugefont/font-custom-24x36.prf
-# /home/tomenetplayer/extra_fonts/hugefont/font-custom-24x36.pcf
-EXTRAFONTS_PARENTFOLDER=~/extra_fonts
+# posix_extra_fonts/mylittlefont/font-custom-7x10.prf
+# posix_extra_fonts/mylittlefont/font-custom-7x10.pcf
+# posix_extra_fonts/hugefont/font-custom-24x36.prf
+# posix_extra_fonts/hugefont/font-custom-24x36.pcf
+EXTRAFONTS_PARENTFOLDER=posix_extra_fonts
 
 # ======================================================================================
 
@@ -89,10 +89,10 @@ do
     mkdir -p $LOCALFONTPATH
 
     echo "    copying .prf files..."
-    cp $FONTDIR/prf/*.prf $TOMENETUSER/
+    cp $FONTDIR/.prf $TOMENETUSER/
 
     echo "    copying .pcf files..."
-    cp $FONTDIR/pcf/*.pcf $LOCALFONTPATH/
+    cp $FONTDIR/*.pcf $LOCALFONTPATH/
 
     echo "    building local fonts folder at '$LOCALFONTPATH'..."
     mkfontdir $LOCALFONTPATH

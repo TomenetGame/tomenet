@@ -1,0 +1,1404 @@
+font-custom-16x24tg.prf # File: font-win.prf
+
+#######################################################################
+#
+# 'Tangar's tileset' - 1 bit pseudographics font for 'TomeNET' - http://tomenet.eu - MMO-roguelike game.
+#
+# Tileset designer: Tangar Igroglaz - http://tangar.info
+#
+# Special thanks to:
+# Lightman (Monster list scripting, glyphs port)
+# Kimsoonsung (monsterID calculation formula)
+#
+# Used materials for modification from tilesets:
+# Kimsoonsung - http://tomenet.eu/phpBB3/viewtopic.php?f=15&t=880
+# David Gervais 'TomeTik tiles' - http://pousse.rapiere.free.fr/tome
+# RLTiles - http://rltiles.sourceforge.net
+#
+# LICENCE:
+# 'Tangar's tileset' project is in public domain; you are free to use it however you like; but it would be 
+# very nice if you would give a credit to TomeNET and put a link to http://tomenet.eu :) Thank you!
+#
+# Please feel free to post any comments or ideas at TomeNET forums - http://tomenet.eu/phpBB3
+#
+#######################################################################
+#
+# This file is used by Angband (when it was compiled using "main-win.c")
+# to specify simple attr/char remappings using a standard font, allowing
+# the use of special pseudo-graphic pictures for walls and such.
+#
+# Note that this file is extremely similar to the "font-ibm.prf" file,
+# but it uses different codes, since it uses the special pseudo-graphic
+# symbols defined in the "lib/xtra/font/*.FON" files, and there is only
+# one special wall type, so we have to use special "colors".
+#
+#######################################################################
+
+
+
+
+################# Terrain features #################
+### F:?:?/?
+### F : (Terrain ID number from f_info.txt) : (Changing color, if you do not want to change the color keep blank) / (Char number of font glyph)
+
+# Floors (white / centered dot)
+
+F:1:/1 # Open floor
+F:91:/1 # Sand
+F:93:/1 # Ash
+F:102:/1 # Nether mist
+
+# dirt, mud
+
+F:88:/3 # Dirt
+F:94:/3 # Mud
+F:19:/3 # Loose dirt
+
+# cobblestone road, protected floor
+
+F:109:/4 # Volcanic rock
+F:200:/4 # Cobblestone road
+F:201:/4 # Cobblestone with outlet
+F:207:/4 # Rocky ground
+
+F:210:/7 # Protected floor
+
+F:226:/132 # Highly protected floor // look like void gate
+
+F:89:/5 # Patch of grass
+
+F:18:/6 # Crops
+F:199:/6 # Grass with flowers
+
+F:83:/3 # Snow floor
+
+F:90:/7 # Ice
+
+# stream of shallow water, lava...
+
+F:84:/8 # Stream of shallow water
+F:86:/8 # Stream of shallow lava
+F:110:/8 # Puddle of water
+F:174:/8 # Tainted water
+F:211:/8 # Decorative shallow water Gondolin
+
+F:103:/138 # Glittering water
+F:187:/138 # Pool of deep water
+F:85:/138 # Pool of deep lava
+F:218:/138 # Decorative deep lava
+
+F:87:/9 # Dark pit
+F:204:/9 # Underground Tunnel
+
+# Permanent  walls
+
+F:26:/10 # Permanent wall HOUSE
+F:28:/10 # Permanent wall HOUSE upper storeys (no light)
+
+F:60:/10 # Permanent wall STORES !!!
+
+F:61:/11 # Permanent wall inner VAULTS // 
+F:62:/11 # Permanent wall outer VAULTS
+F:63:/11 # Permanent wall solid VAULTS // BORDER?
+
+F:75:1/10 # Permanent wall QUEST
+F:76:1/10 # Permanent wall QUEST
+F:77:1/10 # Permanent wall QUEST
+F:78:1/10 # Permanent wall QUEST
+F:80:/10 # Permanent wall NETHER REALM
+
+F:177:/149 # Lava wall
+
+F:188:9/142 # Glass wall now its ice.. MAKE NEW?
+
+# Destructible walls
+
+F:56:/150 # Granite wall basic // CRUDE STONE
+F:57:/150 # Granite wall inner
+F:58:/150 # Granite wall outer
+F:59:/148 # Granite wall solid
+
+F:173:/12 # Underground Tunnel FLOOR
+
+F:189:/148 # Illusion wall FLOOR
+
+F:232:/12 # Sickbay area
+
+F:98:/145 # Sandwall
+F:99:/145 # Sandwall + treasure
+F:100:/145 # Sandwall + known treasure
+
+F:95:/142 # Ice wall
+
+# Logs, bridge, house tops, secret door
+
+F:23:/12 # Logs, used for log cabin
+F:24:/12 # Bridge, used for moats
+F:191:/12 # Grass roof top
+F:190:/12 # Grass roof
+
+F:48:/12 # Secret door
+
+# Roofs chimneys
+F:192:/13 # Grass roof chimney
+F:195:/13 # Roof chimney (in Bree)
+
+# Mountains
+F:97:/14 # Mountain chain
+F:81:/14 # Steep mountain chain
+F:101:/14 # High mountain chain
+F:104:/14 # High mountain chain impassable by admins
+
+F:50:8/15 # Magma vein (slate)
+F:52:8/15 # Magma vein + treasure
+F:54:/15 # Magma vein + known treasure
+F:51:9/15 # Quartz vein (light slate)
+F:53:9/15 # Quartz vein + treasure
+F:55:/15 # Quartz vein + known treasure
+
+
+# closed door, locked door, jammed door, door
+F:25:/127 # Closed door
+F:32:/127 # Locked door (power 0)
+F:33:/127 # Locked door (power 1)
+F:34:/127 # Locked door (power 2)
+F:35:/127 # Locked door (power 3)
+F:36:/127 # Locked door (power 4)
+F:37:/127 # Locked door (power 5)
+F:38:/127 # Locked door (power 6)
+F:39:/127 # Locked door (power 7)
+F:40:/127 # Jammed door (power 0)
+F:41:/127 # Jammed door (power 1)
+F:42:/127 # Jammed door (power 2)
+F:43:/127 # Jammed door (power 3)
+F:44:/127 # Jammed door (power 4)
+F:45:/127 # Jammed door (power 5)
+F:46:/127 # Jammed door (power 6)
+F:47:/127 # Jammed door (power 7)
+F:224:/127 # Sealed door for PvP-Arena
+F:230:/127 # Sealed door
+F:231:/127 # Sickbay exit
+
+# open door, broken door
+F:4:/128 # Open door
+F:5:/128 # Broken door
+F:20:/128 # Open door to a home
+F:225:/128 # Unsealed door
+
+# up staircases '<'
+F:6:/60 # Up stairs (perm)
+F:11:/60 # Quest up level
+F:14:/60 # Shaft up
+F:180:/60 # Path to the previous area
+
+# down staircases '>'
+F:7:/62 # Down stairs (perm)
+F:8:/62 # Quest entrance
+F:10:/62 # Quest down level
+F:12:/62 # Town exit
+F:13:/62 # Shaft down
+F:176:/62 # Transport beacon
+F:179:/62 # Path to the next area
+
+F:160:/132 # Void
+F:161:/132 # Altar of being
+F:162:/132 # Altar of winds
+F:163:/132 # Altar of force
+F:164:/132 # Altar of darkness
+
+F:105:/137 # Unstable void jumpgate
+
+F:96:/133 # Tree 
+F:219:/134 # Bush
+
+F:92:/135 # Dead tree
+
+F:3:/136 # Glyph of warding
+F:202:/136 # Ivy
+
+F:16:1/137 # Webs
+F:178:/137 # Great fire
+F:205:/137 # Blazing fire
+
+F:2:/139 # Fountain
+F:15:/95 # Empty fountain
+F:27:/139 # Fountain of blood
+
+F:49:/140 # Rubble
+F:206:/140 # Pile of rubble (town, perm)
+
+F:193:/146 # Brick roof
+F:194:/146 # Brick roof top
+
+F:212:/147 # Decorative violet crystal Gondolin
+F:213:/147 # Decorative blue crystal Gondolin
+F:214:/147 # Decorative green crystal Gondolin
+F:215:/147 # Decorative yellow crystal
+F:216:/147 # Decorative orange crystal
+F:217:/147 # Decorative red crystal
+
+F:196:35/ # Window
+
+F:197:42/ # Small window
+
+F:203:7/ # Town entrance
+
+
+
+
+
+################# Monster features #################
+### R:?:?/?
+### R : (Monster ID number from r_info.txt) : (Changing color, if you do not want to change the color keep blank) / (Char number of font glyph)
+### ***IMPORTANT*** But in this monster case, the proper monster number is '[ (monster id numer) - 12 ]'
+
+
+
+R:381:/ # Level=24 NAME='It' Comments=// NO TILE invisible
+R:791:/ # Level=72 NAME='Null, the Living Void' Comments=// NO TILE protected at server
+R:519:/ # Level=35 NAME='Little Boy' Comments=// NO TILE joke
+R:615:/ # Level=40 NAME='Fat Man' Comments=// NO TILE joke
+R:960:/ # Level=0 NAME='Hurin Thalion, the Last Lord of Dor-Lomin' Comments=// NO TILE
+R:1135:/158 # Level=127 NAME='The Living Lightning' Comments=LIGHTNING
+R:194:/ # Level=25 NAME='Old Man Willow' Comments=// NO TILE protected at server
+R:702:/ # Level=47 NAME='Quickbeam, the Ent' Comments=// NO TILE protected at server
+R:749:/159 # Level=56 NAME='Ahtu, Avatar of Nyarlathotep' Comments=BIZZARE.. Tooths & tentacles
+R:922:/ # Level=52 NAME='Fangorn the Treebeard, Lord of the Ents' Comments=// NO TILE protected at server
+R:1021:/160 # Level=52 NAME='The Glass Golem' Comments=GOLEM
+R:1023:/ # Level=45 NAME='Golgarach, the Living Rock' Comments=// NO TILE protected at server
+R:686:/ # Level=45 NAME='The Stormbringer' Comments=// NO TILE protected at server
+R:505:/163 # Level=45 NAME='The Watcher in the Water' Comments=SEA MONSTER but actually it’s a bizzare... Tooths & tentacles
+R:638:/163 # Level=38 NAME='Giganto, the Gargantuan' Comments=SEA MONSTER but actually it’s a giant..
+R:657:/163 # Level=42 NAME='Charybdis' Comments=SEA MONSTER
+R:776:/163 # Level=67 NAME='Glaaki' Comments=SEA MONSTER
+R:891:/163 # Level=40 NAME='Jaws' Comments=SEA MONSTER
+R:910:/163 # Level=50 NAME='Moby Dick, the White Whale' Comments=// SEA MONSTER joke
+R:569:/164 # Level=23 NAME='The Queen Ant' Comments=GIRL HUMANOID
+R:752:/165 # Level=61 NAME='Uriel, Angel of Fire' Comments=ANGEL
+R:753:/165 # Level=62 NAME='Azriel, Angel of Death' Comments=ANGEL
+R:757:/165 # Level=64 NAME='Gabriel, the Messenger' Comments=ANGEL
+R:1062:/165 # Level=98 NAME='Michael, The Guardian Overlord' Comments=ANGEL
+R:372:/166 # Level=24 NAME='Meneldor the Swift' Comments=BIRD
+R:398:/166 # Level=24 NAME='Gwaihir the Windlord' Comments=BIRD
+R:456:/166 # Level=30 NAME='Thorondor, Lord of Eagles' Comments=BIRD
+R:731:/166 # Level=54 NAME='The Phoenix' Comments=BIRD
+R:41:/167 # Level=2 NAME='Grip, Farmer Maggot's dog' Comments=WOLF
+R:42:/167 # Level=2 NAME='Wolf, Farmer Maggot's dog' Comments=WOLF
+R:43:/167 # Level=2 NAME='Fang, Farmer Maggot's dog' Comments=WOLF
+R:158:/167 # Level=9 NAME='Bloodfang, the Wolf' Comments=WOLF
+R:705:/167 # Level=49 NAME='Garm, Guardian of Hel' Comments=WOLF
+R:828:/167 # Level=83 NAME='Draugluin, Sire of All Werewolves' Comments=WOLF
+R:834:/167 # Level=90 NAME='Fenris Wolf' Comments=WOLF
+R:838:/167 # Level=94 NAME='Carcharoth, the Jaws of Thirst' Comments=WOLF
+R:841:/167 # Level=93 NAME='Huan, Wolfhound of the Valar' Comments=WOLF
+R:604:/168 # Level=39 NAME='Kavlax the Many-Headed' Comments=HYDRA Multi-headed dragon
+R:680:/169 # Level=46 NAME='Scatha the Worm' Comments=DRAGON
+R:685:/169 # Level=70 NAME='Smaug the Golden' Comments=DRAGON
+R:698:/169 # Level=47 NAME='Itangast the Fire Drake' Comments=DRAGON
+R:700:/169 # Level=48 NAME='Fafner the Dragon' Comments=DRAGON
+R:703:/169 # Level=70 NAME='Glaurung, Father of the Dragons' Comments=DRAGON no wings ;) make separate?
+R:741:/169 # Level=55 NAME='Nidhogg, the Hel-Drake' Comments=DRAGON
+R:754:/169 # Level=90 NAME='Ancalagon the Black' Comments=DRAGON
+R:777:/170 # Level=72 NAME='T'ron, the Rebel Dragonrider' Comments=DRAGONRIDER
+R:779:/170 # Level=75 NAME='Mardra, rider of the Gold Loranth' Comments=DRAGONRIDER
+R:808:/170 # Level=78 NAME='Lessa, rider of the Gold Ramoth' Comments=DRAGONRIDER
+R:812:/170 # Level=79 NAME='F'lar, rider of the Bronze Mnementh' Comments=DRAGONRIDER
+R:846:/170 # Level=97 NAME='Sorka, rider of the Gold Faranth' Comments=DRAGONRIDER
+R:1054:/169 # Level=70 NAME='Tiamat, Celestial Dragon of Evil' Comments=DRAGON
+R:793:/171 # Level=73 NAME='Omarax the Eye Tyrant' Comments=EYE
+R:814:/171 # Level=80 NAME='Cyaegha' Comments=EYE
+R:829:/171 # Level=88 NAME='Shuma-Gorath' Comments=EYE
+R:1066:/171 # Level=127 NAME='Evil Administrator from Hell' Comments=// EYE joke
+R:1073:/171 # Level=128 NAME='Dor' Comments=EYE
+R:594:/172 # Level=43 NAME='Vargo, Tyrant of Fire' Comments=ELEMENTAL
+R:603:/172 # Level=43 NAME='Waldern, King of Water' Comments=ELEMENTAL
+R:667:/172 # Level=43 NAME='Quaker, Master of Earth' Comments=ELEMENTAL
+R:675:/172 # Level=43 NAME='Ariel, Queen of Air' Comments=ELEMENTAL
+R:811:/172 # Level=78 NAME='Cthugha, the Living Flame' Comments=ELEMENTAL
+R:830:/172 # Level=89 NAME='Tulzscha, the Green Flame' Comments=ELEMENTAL
+R:840:/172 # Level=93 NAME='Azathoth, the Daemon Sultan' Comments=ELEMENTAL
+R:45:/173 # Level=2 NAME='Freesia' Comments=CAT
+R:188:/173 # Level=10 NAME='Hobbes the Tiger' Comments=// CAT joke
+R:765:/173 # Level=66 NAME='The Cat Lord' Comments=CAT
+R:165:/160 # Level=10 NAME='The Borshin' Comments=GOLEM
+R:439:/160 # Level=28 NAME='The Ultimate Dungeon Cleaner' Comments=// GOLEM joke
+R:843:/160 # Level=94 NAME='The Destroyer' Comments=GOLEM
+R:780:/174 # Level=68 NAME='Tselakus, the Dreadlord' Comments=GHOST
+R:863:/174 # Level=80 NAME='Death' Comments=// GHOST horseman joke
+R:864:/174 # Level=77 NAME='Famine' Comments=// GHOST horseman joke
+R:865:/174 # Level=74 NAME='Pestilence' Comments=// GHOST horseman joke
+R:866:/174 # Level=71 NAME='War' Comments=// GHOST horseman joke
+R:997:/174 # Level=34 NAME='Fire Phantom' Comments=GHOST
+R:1020:/174 # Level=127 NAME='Tik'srvzllat' Comments=GHOST
+R:-4:/ # Level=0 NAME='Farmer Maggot' Comments=// NO TILE too low ID to make it HOBBIT
+R:51:/176 # Level=3 NAME='Smeagol' Comments=SMALL HUMANOID
+R:370:/177 # Level=24 NAME='Khim, Son of Mim' Comments=DWARF
+R:371:/177 # Level=24 NAME='Ibun, Son of Mim' Comments=DWARF
+R:407:/177 # Level=27 NAME='Mim, Betrayer of Turin' Comments=DWARF
+R:616:/178 # Level=44 NAME='Malekith the Accursed' Comments=ELF
+R:648:/178 # Level=49 NAME='Eol, the Dark-Elf' Comments=ELF
+R:721:/177 # Level=52 NAME='Santa Claus' Comments=// DWARF joke
+R:750:/177 # Level=56 NAME='Fundin Bluecloak' Comments=DWARF
+R:758:/178 # Level=59 NAME='Artsi, the Champion of Chaos' Comments=ELF
+R:813:/178 # Level=81 NAME='Maeglin, the Traitor of Gondolin' Comments=ELF
+R:916:/164 # Level=0 NAME='Mathilde, the Science Student' Comments=// GIRL HUMANOID joke
+R:924:/177 # Level=17 NAME='Nar, the Dwarf' Comments=DWARF
+R:958:/175 # Level=1 NAME='Merton Proudfoot, the lost hobbit' Comments=HOBBIT
+R:973:/175 # Level=5 NAME='Bullroarer the Hobbit' Comments=HOBBIT
+R:1029:/175 # Level=1 NAME='Melinda Proudfoot' Comments=HOBBIT
+R:1030:/177 # Level=60 NAME='Thrain, the King Under the Mountain' Comments=DWARF
+R:718:/179 # Level=58 NAME='Baphomet the Minotaur Lord' Comments=MINOTAUR
+R:745:/179 # Level=55 NAME='Hastur the Unspeakable' Comments=MINOTAUR ? Bizzare
+R:784:/179 # Level=70 NAME='The Norsa' Comments=MINOTAUR
+R:798:/179 # Level=75 NAME='Y'golonac' Comments=MINOTAUR
+R:1017:/179 # Level=40 NAME='The Minotaur of the Labyrinth' Comments=MINOTAUR
+R:861:/164 # Level=20 NAME='The Icky Queen' Comments=GIRL HUMANOID
+R:643:/180 # Level=41 NAME='Ubbo-Sathla, the Unbegotten Source' Comments=JELLY
+R:722:/180 # Level=53 NAME='Eihort, the Thing in the Labyrinth' Comments=JELLY
+R:748:/180 # Level=56 NAME='Nyogtha, the Thing that Should not Be' Comments=JELLY
+R:821:/180 # Level=85 NAME='Abhoth, Source of Uncleanness' Comments=JELLY
+R:833:/180 # Level=90 NAME='Yog-Sothoth, the All-in-One' Comments=JELLY
+R:801:/181 # Level=75 NAME='The Serpent of Chaos' Comments=SERPENT
+R:802:/181 # Level=76 NAME='Yig, Father of Serpents' Comments=SERPENT
+R:842:/181 # Level=94 NAME='Jormungand the Midgard Serpent' Comments=SERPENT
+R:123:/176 # Level=7 NAME='Mughash, the Kobold Lord' Comments=SMALL HUMANOID
+R:995:/164 # Level=7 NAME='Vort the Kobold Queen' Comments=GIRL HUMANOID
+R:723:/182 # Level=53 NAME='The King in Yellow' Comments=LICH
+R:792:/182 # Level=77 NAME='Feagwath, the Undead Sorcerer' Comments=LICH
+R:832:/182 # Level=92 NAME='Vecna, the Emperor Lich' Comments=LICH
+R:966:/180 # Level=1 NAME='Moldoux, the Defenceless Mold' Comments=// JELLY joke
+R:1027:/180 # Level=127 NAME='Improv, the mighty MoLD' Comments=// JELLY joke
+R:598:/168 # Level=42 NAME='Scylla' Comments=HYDRA
+R:742:/168 # Level=55 NAME='The Lernaean Hydra' Comments=HYDRA
+R:630:/183 # Level=40 NAME='Medusa, the Gorgon' Comments=MEDUSA
+R:1085:/184 # Level=128 NAME='Zu-Aon, The Cosmic Border Guard' Comments=STAR ?
+R:128:/185 # Level=8 NAME='Lagduf, the Snaga' Comments=ORC
+R:174:/185 # Level=10 NAME='Grishnakh, the Hill Orc' Comments=ORC
+R:203:/185 # Level=12 NAME='Golfimbul, the Hill Orc Chief' Comments=ORC
+R:248:/185 # Level=14 NAME='Ufthak of Cirith Ungol' Comments=ORC
+R:302:/185 # Level=19 NAME='Shagrat, the Orc Captain' Comments=ORC
+R:303:/185 # Level=19 NAME='Gorbag, the Orc Captain' Comments=ORC
+R:318:/185 # Level=20 NAME='Bolg, Son of Azog' Comments=ORC
+R:338:/185 # Level=21 NAME='Ugluk, the Uruk' Comments=ORC
+R:344:/185 # Level=21 NAME='Lugdush, the Uruk' Comments=ORC
+R:361:/185 # Level=23 NAME='Azog, King of the Uruk-Hai' Comments=ORC
+R:419:/162 # Level=32 NAME='Lokkak, the Ogre Chieftain' Comments=GIANT
+R:125:/186 # Level=9 NAME='Wormtongue, Agent of Saruman' Comments=HUMANOID MAGE
+R:126:/187 # Level=10 NAME='Robin Hood, the Outlaw' Comments=HUMANOID THIEF
+R:157:/188 # Level=9 NAME='Brodda, the Easterling' Comments=HUMANOID WARRIOR
+R:279:/188 # Level=16 NAME='Ulfast, Son of Ulfang' Comments=HUMANOID WARRIOR
+R:368:/188 # Level=24 NAME='Angamaite of Umbar' Comments=HUMANOID WARRIOR
+R:380:/188 # Level=24 NAME='Sangahyando of Umbar' Comments=HUMANOID WARRIOR
+R:401:/188 # Level=26 NAME='Ulwarth, Son of Ulfang' Comments=HUMANOID WARRIOR
+R:493:/188 # Level=35 NAME='Groo, the Wanderer' Comments=HUMANOID WARRIOR
+R:561:/188 # Level=36 NAME='Lorgan, Chief of the Easterlings' Comments=HUMANOID WARRIOR
+R:586:/186 # Level=38 NAME='Castamir the Usurper' Comments=HUMANOID MAGE
+R:658:/187 # Level=60 NAME='Jack of Shadows' Comments=HUMANOID THIEF
+R:720:/64 # Level=52 NAME='Bull Gates' Comments=// HUMANOID joke @
+R:759:/186 # Level=60 NAME='Saruman of Many Colours' Comments=HUMANOID MAGE
+R:760:/187 # Level=51 NAME='Harowen the Black Hand' Comments=HUMANOID THIEF
+R:782:/186 # Level=42 NAME='Eilinel the Entrapped' Comments=HUMANOID MAGE
+R:805:/186 # Level=74 NAME='Hela, Queen of the Dead' Comments=HUMANOID MAGE
+R:806:/186 # Level=78 NAME='The Mouth of Sauron' Comments=HUMANOID MAGE
+R:807:/186 # Level=75 NAME='The Shadow of Dol Guldur' Comments=HUMANOID MAGE
+R:848:/189 # Level=99 NAME='Sauron, the Sorcerer' Comments=! SAURON !
+R:855:/164 # Level=56 NAME='The Philosophy Teacher' Comments=// GIRL HUMANOID joke
+R:856:/64 # Level=10 NAME='The Variant Maintainer' Comments=// HUMANOID joke @
+R:923:/186 # Level=60 NAME='Gandalf the Grey' Comments=HUMANOID MAGE
+R:949:/188 # Level=41 NAME='Gorlim, Betrayer of Barahir' Comments=HUMANOID WARRIOR
+R:957:/164 # Level=0 NAME='The Princess' Comments=// GIRL HUMANOID quest?
+R:967:/64 # Level=62 NAME='The Physics Teacher' Comments=// HUMANOID joke @
+R:968:/186 # Level=55 NAME='Ar-Pharazon the Golden' Comments=HUMANOID MAGE
+R:975:/188 # Level=28 NAME='Uldor the Accursed' Comments=HUMANOID WARRIOR
+R:978:/188 # Level=44 NAME='Ulfang the Black' Comments=HUMANOID WARRIOR
+R:998:/64 # Level=36 NAME='The Insane Player' Comments=// HUMANOID joke @
+R:1010:/186 # Level=67 NAME='Hypnos, Lord of Sleep' Comments=HUMANOID MAGE
+R:1063:/188 # Level=72 NAME='Lord Jubei, The Legendary Swordsmaster' Comments=HUMANOID WARRIOR
+R:1065:/64 # Level=127 NAME='Mad Balancer' Comments=// HUMANOID joke @
+R:7:/162 # Level=0 NAME='Martti Ihrasaari' Comments=// GIANT joke
+R:494:/162 # Level=33 NAME='Fasolt the Giant' Comments=GIANT
+R:671:/162 # Level=44 NAME='Utgard-Loke' Comments=GIANT
+R:694:/162 # Level=46 NAME='Yibb-Tstll, the Patient One' Comments=GIANT
+R:822:/162 # Level=71 NAME='Ymir, the Ice Giant' Comments=GIANT
+R:823:/162 # Level=85 NAME='Loki, the Trickster' Comments=GIANT
+R:825:/162 # Level=71 NAME='Surtur, the Fire Giant' Comments=GIANT
+R:837:/162 # Level=81 NAME='Nodens, Lord of the Great Abyss' Comments=GIANT
+R:849:/162 # Level=127 NAME='DarkGod, the Mighty Coder of Hell' Comments=// GIANT joke
+R:850:/190 # Level=100 NAME='Morgoth, Lord of Darkness' Comments=! MORGOTH !
+R:970:/162 # Level=127 NAME='Marylene, Heartbreakeress of the Netherworld' Comments=// GIANT joke
+R:972:/162 # Level=78 NAME='Hrungnir, the Stone Giant' Comments=GIANT
+R:989:/162 # Level=69 NAME='Polyphemus, the Blind Cyclops' Comments=GIANT
+R:1009:/162 # Level=78 NAME='Thiazi, the Storm Giant' Comments=GIANT
+R:1024:/162 # Level=76 NAME='Atlas, the Titan' Comments=GIANT
+R:1025:/162 # Level=87 NAME='Kronos, Lord of the Titans' Comments=GIANT
+R:1051:/162 # Level=70 NAME='Zeus, the Omnipotent' Comments=// GIANT joke
+R:147:/191 # Level=12 NAME='The wounded bear' Comments=BEAR
+R:455:/191 # Level=28 NAME='Beorn, the Shape-Changer' Comments=BEAR
+R:617:/192 # Level=40 NAME='Shadowfax, steed of Gandalf' Comments=HORSE
+R:669:/192 # Level=44 NAME='Chaugnar Faugn, Horror from the Hills' Comments=HORSE actually a horse…
+R:847:/192 # Level=75 NAME='The Unicorn of Order' Comments=HORSE
+R:560:/193 # Level=36 NAME='The Greater hell magic mushroom were-quylthulg' Comments=// Q joke
+R:810:/193 # Level=79 NAME='Qlzqqlzuup, the Lord of Flesh' Comments=Q
+R:994:/194 # Level=18 NAME='The Rat King' Comments=RAT
+R:429:/196 # Level=29 NAME='Barney the Dinosaur' Comments=// DINOSAUR joke
+R:477:/196 # Level=33 NAME='Bokrug' Comments=DINOSAUR
+R:683:/196 # Level=45 NAME='Zoth-Ommog' Comments=DINOSAUR
+R:794:/196 # Level=74 NAME='Tsathoggua, the Sleeper of N'kai' Comments=DINOSAUR
+R:820:/196 # Level=84 NAME='Godzilla' Comments=// DINOSAUR joke
+R:826:/195 # Level=84 NAME='The Tarrasque' Comments=DINOSAUR
+R:642:/197 # Level=41 NAME='Judge Fire' Comments=// SKELETON joke
+R:818:/197 # Level=84 NAME='Cantoras, the Skeletal Lord' Comments=SKELETON druj like? Separate bodyparts
+R:469:/198 # Level=55 NAME='Shelob, Spider of Darkness' Comments=SPIDER
+R:785:/198 # Level=70 NAME='Rhan-Tegoth' Comments=SPIDER
+R:796:/198 # Level=75 NAME='Ungoliant, the Unlight' Comments=SPIDER
+R:797:/198 # Level=73 NAME='Atlach-Nacha, the Spider God' Comments=SPIDER
+R:950:/176 # Level=5 NAME='The Blubbering idiot, agent of black market, Simon the weak' Comments=// SMALL HUMANOID joke
+R:481:/199 # Level=34 NAME='Bert the Stone Troll' Comments=TROLL
+R:482:/199 # Level=34 NAME='Bill the Stone Troll' Comments=TROLL
+R:483:/199 # Level=34 NAME='Tom the Stone Troll' Comments=TROLL
+R:539:/199 # Level=41 NAME='Rogrog the Black Troll' Comments=TROLL
+R:717:/161 # Level=51 NAME='Ulik the Troll' Comments=TROLL
+R:583:/200 # Level=38 NAME='Draebor, the Imp' Comments=IMP
+R:584:/200 # Level=40 NAME='Mother Hydra' Comments=IMP
+R:1039:/200 # Level=10 NAME='Jan, the Minimite' Comments=// IMP joke
+R:27:/201 # Level=1 NAME='The Greater hell-beast' Comments=// DEMON joke
+R:639:/201 # Level=41 NAME='Strygalldwir' Comments=DEMON
+R:755:/201 # Level=58 NAME='Daoloth, the Render of the Veils' Comments=DEMON
+R:815:/201 # Level=82 NAME='Pazuzu, Lord of Air' Comments=DEMON
+R:819:/201 # Level=84 NAME='Mephistopheles, Lord of Hell' Comments=DEMON
+R:827:/201 # Level=88 NAME='Lungorthin, the Balrog of White Fire' Comments=DEMON
+R:831:/201 # Level=89 NAME='Oremorj, the Cyberdemon Lord' Comments=// DEMON joke
+R:836:/201 # Level=91 NAME='Shub-Niggurath, Black Goat of the Woods' Comments=DEMON
+R:839:/201 # Level=93 NAME='Nyarlathotep, the Crawling Chaos' Comments=DEMON
+R:844:/201 # Level=95 NAME='Gothmog, the High Captain of Balrogs' Comments=DEMON
+R:845:/201 # Level=97 NAME='Great Cthulhu' Comments=DEMON
+R:860:/201 # Level=50 NAME='The Balrog of Moria' Comments=DEMON
+R:971:/201 # Level=95 NAME='The Greater Lag Monster' Comments=// DEMON joke
+R:999:/202 # Level=41 NAME='Glaryssa, Succubus Queen' Comments=DEMON Succubus
+R:1022:/201 # Level=50 NAME='The White Balrog' Comments=DEMON
+R:1064:/202 # Level=82 NAME='Pirotessa, Succubus Empress' Comments=DEMON Succubus
+R:695:/159 # Level=46 NAME='Ghatanothoa' Comments=BIZZARE.. Tooths & tentacles
+R:743:/203 # Level=67 NAME='Thuringwethil, the Vampire Messenger' Comments=VAMPIRE
+R:768:/203 # Level=76 NAME='Vlad Dracula, Prince of Darkness' Comments=VAMPIRE
+R:735:/181 # Level=59 NAME='Shudde M'ell' Comments=SERPENT its actually a worm, but..
+R:1018:/164 # Level=30 NAME='The Sandworm Queen' Comments=GIRL HUMANOID
+R:662:/204 # Level=43 NAME='Judge Fear' Comments=// WRAITH joke
+R:674:/204 # Level=43 NAME='Judge Death' Comments=// WRAITH joke
+R:701:/204 # Level=47 NAME='Charon, Boatman of the Styx' Comments=WRAITH
+R:934:/205 # Level=40 NAME='Uvatha the Horseman' Comments=WRAITH NAZGUL
+R:935:/205 # Level=43 NAME='Adunaphel the Quiet' Comments=WRAITH NAZGUL
+R:936:/205 # Level=45 NAME='Akhorahil the Blind' Comments=WRAITH NAZGUL
+R:937:/205 # Level=48 NAME='Ren the Unclean' Comments=WRAITH NAZGUL
+R:938:/205 # Level=52 NAME='Ji Indur Dawndeath' Comments=WRAITH NAZGUL
+R:939:/205 # Level=56 NAME='Dwar, Dog Lord of Waw' Comments=WRAITH NAZGUL
+R:940:/205 # Level=64 NAME='Hoarmurath of Dir' Comments=WRAITH NAZGUL
+R:941:/205 # Level=72 NAME='Khamul, the Black Easterling' Comments=WRAITH NAZGUL
+R:942:/205 # Level=80 NAME='The Witch-King of Angmar' Comments=WRAITH NAZGUL
+R:959:/204 # Level=35 NAME='The Wight-King of the Barrow-downs' Comments=WRAITH
+R:1055:/160 # Level=128 NAME='The Hellraiser' Comments=GOLEM
+R:168:/176 # Level=11 NAME='Orfax, Son of Boldor' Comments=SMALL HUMANOID
+R:225:/176 # Level=15 NAME='Boldor, King of the Yeeks' Comments=SMALL HUMANOID
+R:1069:/176 # Level=40 NAME='The Kung-Fu Yeek from Hell' Comments=SMALL HUMANOID
+R:816:/206 # Level=82 NAME='Ithaqua the Windwalker' Comments=YETI
+R:100:/207 # Level=6 NAME='The disembodied hand that strangled people' Comments=HAND
+R:397:/208 # Level=26 NAME='Khufu, the Mummified King' Comments=ZOMBIE
+R:644:/208 # Level=41 NAME='Judge Mortis' Comments=// ZOMBIE joke
+R:672:/208 # Level=44 NAME='Quachil Uttaus, Treader of the Dust' Comments=ZOMBIE
+R:1028:/ # Level=40 NAME='Emperor Mimic' Comments=MIMIC… No tile?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+R:1034:/ # Level=30 NAME='Landmine' Comments=
+R:10:/ # Level=1 NAME='Grey mushroom patch' Comments=
+R:28:/ # Level=2 NAME='Shrieker mushroom patch' Comments=
+R:35:/ # Level=2 NAME='Yellow mushroom patch' Comments=
+R:60:/ # Level=3 NAME='Spotted mushroom patch' Comments=
+R:96:/ # Level=6 NAME='Purple mushroom patch' Comments=
+R:172:/ # Level=10 NAME='Clear mushroom patch' Comments=
+R:173:/ # Level=10 NAME='Quiver slot' Comments=
+R:255:/ # Level=15 NAME='Magic mushroom patch' Comments=
+R:304:/ # Level=18 NAME='Shambling mound' Comments=
+R:413:/ # Level=27 NAME='Flamer of Tzeentch' Comments=
+R:425:/ # Level=28 NAME='Corpser' Comments=
+R:474:/ # Level=32 NAME='Memory moss' Comments=
+R:948:/ # Level=50 NAME='Thread' Comments=
+R:1033:/ # Level=15 NAME='Unmagic mushroom patch' Comments=
+R:1050:/ # Level=72 NAME='Mandragora' Comments=
+R:545:/ # Level=36 NAME='Raal's Tome of Destruction' Comments=
+R:132:/ # Level=8 NAME='Space monster' Comments=
+R:235:/ # Level=14 NAME='Lurker' Comments=
+R:321:/ # Level=20 NAME='Landmine' Comments=
+R:446:/ # Level=29 NAME='Chaos tile' Comments=// NO TILE protected at server
+R:553:/ # Level=36 NAME='Trapper' Comments=
+R:555:/ # Level=36 NAME='Time bomb' Comments=
+R:666:/ # Level=43 NAME='Colour out of space' Comments=
+R:858:/ # Level=50 NAME='Rocket mine' Comments=
+R:859:/ # Level=70 NAME='Bouncing mine' Comments=
+R:1120:/ # Level=127 NAME='Invisible Dummy' Comments=
+R:231:/ # Level=13 NAME='Cloaker' Comments=// NO TILE protected at server
+R:-12:/ # Level= NAME='Player' Comments=
+R:69:/ # Level=4 NAME='Yellow light' Comments=
+R:286:/ # Level=17 NAME='Freezing sphere' Comments=
+R:287:/ # Level=17 NAME='Jumping fireball' Comments=
+R:288:/ # Level=17 NAME='Ball lightning' Comments=
+R:1053:/ # Level=30 NAME='Psychedelic ball' Comments=
+R:236:/ # Level=10 NAME='Tangleweed' Comments=// NO TILE protected at server
+R:254:/ # Level=10 NAME='Poison ivy' Comments=// NO TILE protected at server
+R:305:/ # Level=15 NAME='Giant Venus Flytrap' Comments=// NO TILE protected at server
+R:314:/ # Level=18 NAME='Stunwall' Comments=// NO TILE protected at server
+R:317:/ # Level=19 NAME='Huorn' Comments=// NO TILE protected at server
+R:324:/ # Level=20 NAME='Livingstone' Comments=// NO TILE protected at server
+R:353:/ # Level=22 NAME='Vampiric mist' Comments=
+R:384:/ # Level=25 NAME='Xiclotlan' Comments=// NO TILE protected at server
+R:414:/ # Level=27 NAME='Roper' Comments=// NO TILE protected at server
+R:436:/ # Level=28 NAME='Lesser wall monster' Comments=// NO TILE protected at server
+R:540:/ # Level=36 NAME='Mist giant' Comments=
+R:613:/ # Level=40 NAME='Weird fume' Comments=
+R:696:/ # Level=46 NAME='Ent' Comments=
+R:706:/ # Level=44 NAME='Greater wall monster' Comments=// NO TILE protected at server
+R:1052:/ # Level=22 NAME='Dark mist' Comments=
+R:299:/ # Level=18 NAME='Door Mimic' Comments=// NO TILE protected at server
+R:1070:/ # Level=26 NAME='Void Jumpgate Mimic' Comments=// NO TILE protected at server
+R:427:/ # Level=28 NAME='Stairway to Hell' Comments=
+R:95:/ # Level=6 NAME='Death sword' Comments=// NO TILE protected at server
+R:408:/ # Level=27 NAME='Hellblade' Comments=// NO TILE protected at server
+R:76:/ # Level=4 NAME='Swordfish' Comments=
+R:84:/ # Level=5 NAME='Barracuda' Comments=
+R:348:/ # Level=21 NAME='Globefish' Comments=
+R:431:/ # Level=28 NAME='Seahorse' Comments=
+R:470:/ # Level=41 NAME='Giant squid' Comments=
+R:568:/ # Level=37 NAME='Flying polyp' Comments=
+R:582:/ # Level=38 NAME='Sky whale' Comments=
+R:728:/151 # Level=54 NAME='Lesser kraken' Comments=~ I kraken
+R:763:/151 # Level=60 NAME='Greater kraken' Comments=~ I kraken
+R:770:/151 # Level=67 NAME='Leviathan' Comments=~ I kraken violet
+R:867:/ # Level=2 NAME='Pike' Comments=
+R:869:/ # Level=4 NAME='Giant crayfish' Comments=
+R:871:/ # Level=10 NAME='Box jellyfish' Comments=
+R:872:/ # Level=10 NAME='Giant piranha' Comments=
+R:873:/ # Level=3 NAME='Piranha' Comments=
+R:877:/ # Level=20 NAME='Whale' Comments=
+R:878:/ # Level=10 NAME='Sand mite' Comments=
+R:879:/ # Level=15 NAME='Octopus' Comments=
+R:880:/ # Level=30 NAME='Giant octopus' Comments=
+R:884:/ # Level=12 NAME='Tiger shark' Comments=
+R:885:/ # Level=16 NAME='Hammerhead shark' Comments=
+R:886:/ # Level=24 NAME='Great white shark' Comments=
+R:889:/ # Level=18 NAME='White shark' Comments=
+R:895:/ # Level=21 NAME='Stargazer' Comments=
+R:896:/ # Level=29 NAME='Elder stargazer' Comments=
+R:897:/ # Level=13 NAME='Flounder' Comments=
+R:904:/ # Level=25 NAME='Undead stargazer' Comments=
+R:905:/ # Level=25 NAME='Killer whale' Comments=
+R:908:/ # Level=12 NAME='Devilfish' Comments=
+R:909:/ # Level=15 NAME='Undead devilfish' Comments=
+R:913:/ # Level=12 NAME='Ixitxachitl' Comments=
+R:914:/ # Level=19 NAME='Ixitxachitl priest' Comments=
+R:915:/ # Level=26 NAME='Vampiric ixitxachitl' Comments=
+R:1042:/ # Level=0 NAME='Goldfish' Comments=
+R:1043:/ # Level=0 NAME='Carp' Comments=
+R:1044:/ # Level=13 NAME='Gunfish' Comments=
+R:73:/ # Level=4 NAME='Creeping copper coins' Comments=// NO TILE protected at server
+R:105:/ # Level=6 NAME='Creeping silver coins' Comments=// NO TILE protected at server
+R:183:/ # Level=10 NAME='Creeping gold coins' Comments=// NO TILE protected at server
+R:227:/ # Level=13 NAME='Creeping mithril coins' Comments=// NO TILE protected at server
+R:411:/ # Level=27 NAME='Creeping adamantite coins' Comments=// NO TILE protected at server
+R:24:/ # Level=1 NAME='Soldier ant' Comments=
+R:37:/ # Level=2 NAME='Giant black ant' Comments=
+R:63:/ # Level=3 NAME='Giant white ant' Comments=
+R:156:/ # Level=9 NAME='Giant red ant' Comments=
+R:374:/ # Level=23 NAME='Giant silver ant' Comments=
+R:396:/ # Level=26 NAME='Giant grey ant' Comments=
+R:457:/ # Level=30 NAME='Giant blue ant' Comments=
+R:461:/ # Level=30 NAME='Giant army ant' Comments=
+R:536:/ # Level=35 NAME='Giant fire ant' Comments=
+R:1067:/ # Level=25 NAME='Gold ant' Comments=
+R:405:/ # Level=26 NAME='Angel' Comments=
+R:444:/ # Level=34 NAME='Archangel' Comments=
+R:499:/ # Level=39 NAME='Cherub' Comments=
+R:593:/ # Level=45 NAME='Seraph' Comments=
+R:640:/ # Level=49 NAME='Fallen angel' Comments=
+R:649:/ # Level=55 NAME='Archon' Comments=
+R:1059:/152 # Level=70 NAME='Sky Blade' Comments=BLADE its angel actually, but.. :)
+R:1060:/152 # Level=80 NAME='Solar Blade' Comments=BLADE its angel actually, but.. :)
+R:1061:/152 # Level=90 NAME='Star Blade' Comments=BLADE its angel actually, but.. :)
+R:1088:/152 # Level=99 NAME='Brightlance' Comments=BLADE its angel actually, but.. :)
+R:25:/ # Level=1 NAME='Fruit bat' Comments=
+R:102:/ # Level=6 NAME='Giant brown bat' Comments=
+R:175:/ # Level=10 NAME='Giant tan bat' Comments=
+R:223:/ # Level=13 NAME='Mongbat' Comments=
+R:339:/ # Level=21 NAME='Blue dragon bat' Comments=
+R:365:/ # Level=23 NAME='Red dragon bat' Comments=
+R:379:/ # Level=24 NAME='Vampire bat' Comments=
+R:394:/ # Level=26 NAME='Disenchanter bat' Comments=
+R:472:/ # Level=32 NAME='Doombat' Comments=
+R:956:/ # Level=28 NAME='Bat of Gorgoroth' Comments=
+R:1102:/ # Level=44 NAME='Bad Luck Bat from Hell' Comments=
+R:-9:/ # Level= NAME='Sparrow' Comments=
+R:-8:/ # Level= NAME='Chaffinch' Comments=
+R:49:/ # Level=2 NAME='Crow' Comments=
+R:56:/ # Level=4 NAME='Raven' Comments=
+R:139:/ # Level=8 NAME='Hunting hawk' Comments=
+R:160:/ # Level=12 NAME='Eagle' Comments=
+R:280:/ # Level=16 NAME='Crebain' Comments=
+R:323:/ # Level=20 NAME='Great eagle' Comments=
+R:628:/ # Level=40 NAME='Giant roc' Comments=
+R:692:/ # Level=48 NAME='Winged Horror' Comments=
+R:1071:/153 # Level=98 NAME='Ironwing' Comments=STEEL BIRD
+R:1115:/ # Level=52 NAME='Firebird' Comments=
+R:1130:/ # Level=1 NAME='Robin' Comments=
+R:12:/ # Level=1 NAME='Giant white centipede' Comments=
+R:30:/ # Level=3 NAME='Metallic green centipede' Comments=
+R:55:/ # Level=4 NAME='Metallic blue centipede' Comments=
+R:58:/ # Level=2 NAME='Giant yellow centipede' Comments=
+R:65:/ # Level=5 NAME='Metallic red centipede' Comments=
+R:220:/ # Level=12 NAME='Stegocentipede' Comments=
+R:264:/ # Level=15 NAME='Giant clear centipede' Comments=
+R:383:/ # Level=25 NAME='Carrion crawler' Comments=
+R:503:/ # Level=34 NAME='Carrion crawler' Comments=
+R:1122:/ # Level=1 NAME='White wolf cub' Comments=
+R:-5:/ # Level= NAME='Scruffy little dog' Comments=
+R:23:/ # Level=1 NAME='Jackal' Comments=
+R:184:/ # Level=10 NAME='Wolf' Comments=
+R:199:/ # Level=12 NAME='White wolf' Comments=
+R:209:/ # Level=12 NAME='Mine-dog' Comments=
+R:242:/ # Level=14 NAME='Wolfhound of Flora' Comments=
+R:245:/ # Level=16 NAME='Warg' Comments=
+R:300:/ # Level=18 NAME='Blink dog' Comments=
+R:332:/ # Level=20 NAME='Weir' Comments=
+R:335:/ # Level=20 NAME='Werewolf' Comments=
+R:351:/ # Level=26 NAME='Wolf chieftain' Comments=
+R:362:/ # Level=30 NAME='Fleshhound of Khorne' Comments=
+R:601:/ # Level=35 NAME='Hellhound' Comments=
+R:817:/154 # Level=78 NAME='Black Dog' Comments=DOGGY…
+R:151:/ # Level=9 NAME='Baby blue dragon' Comments=
+R:152:/ # Level=9 NAME='Baby white dragon' Comments=
+R:153:/ # Level=9 NAME='Baby green dragon' Comments=
+R:154:/ # Level=9 NAME='Baby black dragon' Comments=
+R:155:/ # Level=9 NAME='Baby red dragon' Comments=
+R:181:/ # Level=10 NAME='Pseudo dragon' Comments=
+R:192:/ # Level=11 NAME='Baby multi-hued dragon' Comments=
+R:206:/ # Level=9 NAME='Baby bronze dragon' Comments=
+R:207:/ # Level=9 NAME='Baby gold dragon' Comments=
+R:322:/ # Level=22 NAME='Wyvern' Comments=
+R:447:/ # Level=29 NAME='Young blue dragon' Comments=
+R:448:/ # Level=29 NAME='Young white dragon' Comments=
+R:449:/ # Level=29 NAME='Young green dragon' Comments=
+R:450:/ # Level=29 NAME='Young bronze dragon' Comments=
+R:459:/ # Level=33 NAME='Shadow drake' Comments=
+R:489:/ # Level=33 NAME='Chaos drake' Comments=
+R:490:/ # Level=33 NAME='Law drake' Comments=
+R:491:/ # Level=33 NAME='Balance drake' Comments=
+R:492:/ # Level=33 NAME='Ethereal drake' Comments=
+R:534:/ # Level=31 NAME='Young black dragon' Comments=
+R:537:/ # Level=34 NAME='Mature white dragon' Comments=
+R:544:/ # Level=32 NAME='Young multi-hued dragon' Comments=
+R:547:/ # Level=31 NAME='Young gold dragon' Comments=
+R:548:/ # Level=34 NAME='Mature blue dragon' Comments=
+R:549:/ # Level=34 NAME='Mature green dragon' Comments=
+R:550:/ # Level=34 NAME='Mature bronze dragon' Comments=
+R:551:/ # Level=31 NAME='Young red dragon' Comments=
+R:577:/ # Level=36 NAME='Mature red dragon' Comments=
+R:578:/ # Level=36 NAME='Mature gold dragon' Comments=
+R:579:/ # Level=33 NAME='Crystal drake' Comments=
+R:580:/ # Level=36 NAME='Mature black dragon' Comments=
+R:581:/ # Level=38 NAME='Mature multi-hued dragon' Comments=
+R:899:/ # Level=9 NAME='Baby dragon turtle' Comments=
+R:900:/ # Level=31 NAME='Young dragon turtle' Comments=
+R:901:/ # Level=38 NAME='Mature dragon turtle' Comments=
+R:928:/ # Level=5 NAME='Blue Firelizard' Comments=
+R:929:/ # Level=7 NAME='Green Firelizard' Comments=
+R:930:/ # Level=10 NAME='Brown Firelizard' Comments=
+R:931:/ # Level=13 NAME='Bronze Firelizard' Comments=
+R:932:/ # Level=15 NAME='Gold Firelizard' Comments=
+R:1094:/ # Level=9 NAME='Baby silver dragon' Comments=
+R:1095:/ # Level=30 NAME='Young silver dragon' Comments=
+R:1096:/ # Level=35 NAME='Mature silver dragon' Comments=
+R:1100:/ # Level=44 NAME='Dragon of Bad Luck' Comments=
+R:589:/ # Level=40 NAME='Ancient blue dragon' Comments=
+R:590:/ # Level=40 NAME='Ancient bronze dragon' Comments=
+R:605:/ # Level=40 NAME='Ancient white dragon' Comments=
+R:606:/ # Level=40 NAME='Ancient green dragon' Comments=
+R:612:/ # Level=41 NAME='Ancient black dragon' Comments=
+R:631:/ # Level=45 NAME='Death drake' Comments=
+R:632:/ # Level=41 NAME='Ancient red dragon' Comments=
+R:633:/ # Level=41 NAME='Ancient gold dragon' Comments=
+R:634:/ # Level=45 NAME='Great crystal drake' Comments=
+R:663:/ # Level=43 NAME='Ancient multi-hued dragon' Comments=
+R:664:/ # Level=45 NAME='Ethereal dragon' Comments=
+R:689:/155 # Level=55 NAME='Dracolich' Comments=D I drakolich
+R:691:/155 # Level=55 NAME='Dracolisk' Comments=D I dracolisk
+R:716:/155 # Level=63 NAME='Great Storm Wyrm' Comments=D I wyrm
+R:729:/155 # Level=63 NAME='Great Ice Wyrm' Comments=D I wyrm
+R:744:/155 # Level=67 NAME='Great Hell Wyrm' Comments=D I wyrm
+R:771:/156 # Level=75 NAME='Great Wyrm of Chaos' Comments=D II wyrm
+R:772:/156 # Level=75 NAME='Great Wyrm of Law' Comments=D II wyrm
+R:773:/209 # Level=80 NAME='Great Wyrm of Balance' Comments=D III wyrm
+R:778:/209 # Level=80 NAME='Great Wyrm of Many Colours' Comments=D III wyrm
+R:781:/156 # Level=77 NAME='Sky Drake' Comments=D II dragon
+R:835:/210 # Level=85 NAME='Great Wyrm of Power' Comments=D IV wyrm
+R:902:/ # Level=41 NAME='Ancient dragon turtle' Comments=
+R:903:/155 # Level=52 NAME='Fastitocalon' Comments=D I turtle
+R:926:/155 # Level=63 NAME='Great Swamp Wyrm' Comments=D I wyrm
+R:927:/155 # Level=67 NAME='Great Bile Wyrm' Comments=D I wyrm
+R:943:/211 # Level=30 NAME='Green Dragonrider' Comments=D I SPECIAL dragonrider
+R:944:/211 # Level=40 NAME='Blue Dragonrider' Comments=D I SPECIAL dragonrider
+R:945:/211 # Level=50 NAME='Brown Dragonrider' Comments=D I SPECIAL dragonrider
+R:946:/211 # Level=60 NAME='Bronze Dragonrider' Comments=D I SPECIAL dragonrider
+R:947:/212 # Level=70 NAME='Gold Dragonrider' Comments=D II SPECIAL dragonrider
+R:990:/155 # Level=63 NAME='Great Wyrm of Perplexity' Comments=D I wyrm
+R:992:/155 # Level=67 NAME='Great Wyrm of Thunder' Comments=D I wyrm
+R:1097:/ # Level=41 NAME='Ancient silver dragon' Comments=
+R:1098:/155 # Level=65 NAME='Great Wyrm of Radiance' Comments=D I wyrm
+R:1101:/213 # Level=71 NAME='Great Dragon of Bad Luck' Comments=D SPECIAL arrow down pass_walls
+R:20:/ # Level=1 NAME='Floating eye' Comments=
+R:68:/ # Level=3 NAME='Radiation eye' Comments=
+R:92:/ # Level=5 NAME='Disenchanter eye' Comments=
+R:117:/ # Level=7 NAME='Bloodshot eye' Comments=
+R:208:/ # Level=18 NAME='Evil eye' Comments=
+R:476:/ # Level=28 NAME='Spectator' Comments=
+R:507:/ # Level=34 NAME='Gas spore' Comments=
+R:524:/ # Level=36 NAME='Gauth' Comments=
+R:562:/ # Level=38 NAME='Chaos spawn' Comments=
+R:591:/214 # Level=40 NAME='Beholder' Comments=e I
+R:652:/214 # Level=45 NAME='Undead beholder' Comments=e I
+R:769:/214 # Level=67 NAME='Beholder hive-mother' Comments=e I yellow
+R:881:/214 # Level=40 NAME='Eye of the deep' Comments=e I
+R:1087:/ # Level=12 NAME='Electric eye' Comments=
+R:215:/ # Level=12 NAME='Air spirit' Comments=
+R:291:/ # Level=17 NAME='Water spirit' Comments=
+R:293:/ # Level=17 NAME='Earth spirit' Comments=
+R:294:/ # Level=18 NAME='Fire spirit' Comments=
+R:498:/ # Level=33 NAME='Fire elemental' Comments=
+R:500:/ # Level=33 NAME='Water elemental' Comments=
+R:502:/ # Level=35 NAME='Invisible stalker' Comments=
+R:513:/ # Level=34 NAME='Earth elemental' Comments=
+R:514:/ # Level=34 NAME='Air elemental' Comments=
+R:525:/ # Level=36 NAME='Smoke elemental' Comments=
+R:533:/ # Level=36 NAME='Ooze elemental' Comments=
+R:558:/ # Level=37 NAME='Ice elemental' Comments=
+R:567:/ # Level=39 NAME='Time elemental' Comments=
+R:570:/ # Level=38 NAME='Will o' the wisp' Comments=
+R:572:/ # Level=37 NAME='Magma elemental' Comments=
+R:774:/215 # Level=67 NAME='Shambler' Comments=E I
+R:803:/ # Level=77 NAME='Unmaker' Comments=// NO TILE protected at server CHANGER
+R:963:/215 # Level=80 NAME='Death orb' Comments=E I
+R:-10:/ # Level=0 NAME='Scrawny cat' Comments=
+R:50:/ # Level=2 NAME='Wild cat' Comments=
+R:186:/ # Level=10 NAME='Panther' Comments=
+R:210:/ # Level=12 NAME='Hellcat' Comments=
+R:218:/ # Level=12 NAME='Tiger' Comments=
+R:327:/ # Level=20 NAME='Sabre-tooth tiger' Comments=
+R:400:/ # Level=26 NAME='Displacer beast' Comments=
+R:238:/ # Level=14 NAME='Giant white dragon fly' Comments=
+R:275:/ # Level=16 NAME='Giant green dragon fly' Comments=
+R:308:/ # Level=18 NAME='Giant bronze dragon fly' Comments=
+R:310:/ # Level=20 NAME='Giant black dragon fly' Comments=
+R:313:/ # Level=22 NAME='Giant gold dragon fly' Comments=
+R:244:/ # Level=14 NAME='Flesh golem' Comments=
+R:249:/ # Level=15 NAME='Clay golem' Comments=
+R:311:/ # Level=19 NAME='Stone golem' Comments=
+R:355:/ # Level=22 NAME='Iron golem' Comments=
+R:356:/ # Level=22 NAME='Auto-roller' Comments=
+R:385:/216 # Level=35 NAME='Silent watcher' Comments=GOLEM
+R:386:/ # Level=25 NAME='Pukelman' Comments=
+R:423:/ # Level=27 NAME='Colbran' Comments=
+R:452:/ # Level=30 NAME='Mithril golem' Comments=
+R:518:/ # Level=34 NAME='Eog golem' Comments=
+R:546:/ # Level=36 NAME='Colossus' Comments=
+R:660:/ # Level=43 NAME='Juggernaut of Khorne' Comments=
+R:679:/216 # Level=44 NAME='Drolem' Comments=GOLEM wanted special, but no tiles
+R:887:/ # Level=19 NAME='Aquatic golem' Comments=
+R:1001:/216 # Level=61 NAME='Bone golem' Comments=GOLEM
+R:1003:/216 # Level=65 NAME='Bronze golem' Comments=GOLEM
+R:53:/ # Level=3 NAME='Poltergeist' Comments=
+R:88:/ # Level=5 NAME='Green glutton ghost' Comments=
+R:121:/ # Level=7 NAME='Lost soul' Comments=
+R:140:/ # Level=8 NAME='Phantom warrior' Comments=
+R:219:/ # Level=12 NAME='Moaning spirit' Comments=
+R:373:/ # Level=24 NAME='Phantom beast' Comments=
+R:382:/ # Level=24 NAME='Banshee' Comments=
+R:465:/ # Level=31 NAME='Ghost' Comments=
+R:495:/ # Level=33 NAME='Shade' Comments=
+R:496:/ # Level=33 NAME='Spectre' Comments=
+R:521:/ # Level=35 NAME='Headless ghost' Comments=
+R:522:/ # Level=35 NAME='Dread' Comments=
+R:541:/ # Level=36 NAME='Phantom' Comments=
+R:618:/ # Level=40 NAME='Spirit troll' Comments=
+R:653:/ # Level=37 NAME='Shadow' Comments=
+R:655:/ # Level=42 NAME='Dread' Comments=
+R:678:/217 # Level=44 NAME='Dreadmaster' Comments=GHOST
+R:762:/217 # Level=62 NAME='Dreadlord' Comments=GHOST
+R:883:/ # Level=11 NAME='Drowned soul' Comments=
+R:917:/ # Level=5 NAME='Child spirit' Comments=
+R:918:/ # Level=10 NAME='Young spirit' Comments=
+R:919:/ # Level=40 NAME='Mature spirit' Comments=
+R:920:/ # Level=60 NAME='Experienced spirit' Comments=
+R:921:/ # Level=90 NAME='Wise spirit' Comments=
+R:955:/ # Level=10 NAME='Novice possessor (soul)' Comments=
+R:961:/ # Level=30 NAME='Experienced possessor (soul)' Comments=
+R:962:/ # Level=95 NAME='Old possessor (soul)' Comments=
+R:1074:/193 # Level=127 NAME='The Great Pumpkin' Comments=// NO SPECIFIC TILE PUMPKIN boss Q
+R:1075:/193 # Level=127 NAME='The Great Pumpkin' Comments=// NO SPECIFIC TILE PUMPKIN boss Q
+R:1076:/193 # Level=127 NAME='The Great Pumpkin' Comments=// NO SPECIFIC TILE PUMPKIN boss Q
+R:1078:/ # Level=0 NAME='Ghost (Mimic)' Comments=
+R:62:/ # Level=3 NAME='Scruffy-looking hobbit' Comments=
+R:80:/ # Level=9 NAME='Ewok' Comments=
+R:86:/ # Level=5 NAME='Zog' Comments=
+R:99:/ # Level=6 NAME='Nibelung' Comments=
+R:110:/ # Level=7 NAME='Dark-elf' Comments=
+R:166:/ # Level=10 NAME='Dark-elven mage' Comments=
+R:170:/ # Level=10 NAME='Dark-elven warrior' Comments=
+R:189:/ # Level=10 NAME='Shadow Creature of Fiona' Comments=
+R:214:/ # Level=12 NAME='Dark-elven priest' Comments=
+R:246:/ # Level=14 NAME='Cheerful leprechaun' Comments=
+R:269:/ # Level=15 NAME='Gnome mage' Comments=
+R:278:/ # Level=16 NAME='Lizard man' Comments=
+R:320:/ # Level=20 NAME='Lizard king' Comments=
+R:336:/ # Level=20 NAME='Dark-elven lord' Comments=
+R:363:/218 # Level=23 NAME='Dark-elven warlock' Comments=h I
+R:388:/ # Level=25 NAME='Dark-elven druid' Comments=
+R:438:/218 # Level=28 NAME='Mind flayer' Comments=h I
+R:517:/219 # Level=35 NAME='Malicious leprechaun' Comments=h II leprechaun
+R:527:/218 # Level=35 NAME='Halfling slinger' Comments=h I
+R:552:/ # Level=36 NAME='Nightblade' Comments=
+R:645:/218 # Level=41 NAME='Dark-elven sorcerer' Comments=h I
+R:668:/219 # Level=44 NAME='Death leprechaun' Comments=h II leprechaun
+R:688:/219 # Level=46 NAME='Leprechaun fanatic' Comments=h II leprechaun
+R:852:/ # Level=20 NAME='Elven archer' Comments=
+R:853:/ # Level=15 NAME='Dwarven warrior' Comments=
+R:870:/ # Level=4 NAME='Mermaid' Comments=
+R:874:/ # Level=7 NAME='Bullywug' Comments=
+R:875:/ # Level=8 NAME='Bullywug warrior' Comments=
+R:876:/ # Level=8 NAME='Bullywug shaman' Comments=
+R:892:/ # Level=9 NAME='Aquatic elf' Comments=
+R:893:/ # Level=10 NAME='Aquatic elven warrior' Comments=
+R:894:/ # Level=10 NAME='Aquatic elven shaman' Comments=
+R:933:/218 # Level=40 NAME='High-elven ranger' Comments=h I
+R:1004:/ # Level=29 NAME='Dimensional shambler' Comments=
+R:1045:/ # Level=22 NAME='Sirene' Comments=
+R:1081:/ # Level=0 NAME='Goblin (Mimic)' Comments=
+R:1090:/186 # Level=127 NAME='Santa Claus' Comments=// NO SPECIFIC TILE SANTA boss mage
+R:39:/ # Level=2 NAME='White harpy' Comments=
+R:133:/ # Level=8 NAME='Carnivorous flying monkey' Comments=
+R:145:/ # Level=9 NAME='Black harpy' Comments=
+R:176:/ # Level=10 NAME='Owlbear' Comments=
+R:191:/ # Level=11 NAME='Chaos shapechanger' Comments=// NO TILE protected at server CHANGER
+R:195:/ # Level=11 NAME='Hippocampus' Comments=
+R:197:/ # Level=11 NAME='Hippogriff' Comments=
+R:267:/ # Level=15 NAME='Griffon' Comments=
+R:283:/ # Level=17 NAME='Sphinx' Comments=
+R:290:/ # Level=17 NAME='Swamp thing' Comments=
+R:306:/ # Level=18 NAME='Chaos beastman' Comments=
+R:329:/ # Level=20 NAME='Chimaera' Comments=
+R:415:/ # Level=27 NAME='Headless' Comments=
+R:421:/ # Level=27 NAME='Gorgimaera' Comments=
+R:422:/ # Level=27 NAME='Shantak' Comments=
+R:460:/ # Level=30 NAME='Manticore' Comments=
+R:463:/ # Level=31 NAME='Gorgon' Comments=
+R:629:/ # Level=40 NAME='Minotaur' Comments=
+R:641:/ # Level=41 NAME='Giant headless' Comments=
+R:704:/220 # Level=49 NAME='Behemoth' Comments=H I fiery
+R:711:/220 # Level=50 NAME='Maulotaur' Comments=H I fiery
+R:734:/220 # Level=64 NAME='Keeper of Secrets' Comments=H I fiery
+R:766:/220 # Level=68 NAME='Jabberwock' Comments=H I fiery
+R:1007:/ # Level=41 NAME='Servitor of the outer gods' Comments=// NO TILE protected at server CHANGER
+R:13:/ # Level=1 NAME='White icky thing' Comments=
+R:14:/ # Level=1 NAME='Clear icky thing' Comments=
+R:29:/ # Level=2 NAME='Blubbering icky thing' Comments=
+R:91:/ # Level=5 NAME='Grey icky thing' Comments=
+R:120:/ # Level=7 NAME='Green icky thing' Comments=
+R:143:/ # Level=9 NAME='Bloodshot icky thing' Comments=
+R:240:/ # Level=14 NAME='Blue icky thing' Comments=
+R:22:/ # Level=1 NAME='Grid bug' Comments=
+R:26:/ # Level=1 NAME='Insect swarm' Comments=
+R:57:/ # Level=3 NAME='Giant white louse' Comments=
+R:162:/ # Level=9 NAME='Killer bee' Comments=
+R:185:/ # Level=10 NAME='Giant fruit fly' Comments=
+R:234:/ # Level=14 NAME='Software bug' Comments=
+R:247:/ # Level=14 NAME='Giant flea' Comments=
+R:262:/ # Level=15 NAME='Mi-Go' Comments=
+R:277:/ # Level=16 NAME='Hummerhorn' Comments=
+R:316:/ # Level=19 NAME='Neekerbreeker' Comments=
+R:349:/ # Level=24 NAME='Giant firefly' Comments=
+R:566:/ # Level=37 NAME='Chaos butterfly' Comments=
+R:571:/ # Level=37 NAME='Shan' Comments=
+R:857:/ # Level=10 NAME='Random Number Generator' Comments=
+R:996:/ # Level=14 NAME='Giant black louse' Comments=
+R:36:/ # Level=2 NAME='White jelly' Comments=
+R:52:/ # Level=3 NAME='Green ooze' Comments=
+R:54:/ # Level=3 NAME='Yellow jelly' Comments=
+R:61:/ # Level=3 NAME='Silver jelly' Comments=
+R:72:/ # Level=4 NAME='Blue jelly' Comments=
+R:87:/ # Level=5 NAME='Blue ooze' Comments=
+R:89:/ # Level=5 NAME='Green jelly' Comments=
+R:119:/ # Level=7 NAME='Red jelly' Comments=
+R:190:/ # Level=10 NAME='Undead mass' Comments=
+R:200:/ # Level=12 NAME='Grape jelly' Comments=
+R:221:/ # Level=12 NAME='Spotted jelly' Comments=
+R:233:/ # Level=13 NAME='Ochre jelly' Comments=
+R:241:/ # Level=14 NAME='Gibbering mouther' Comments=
+R:274:/ # Level=16 NAME='Gelatinous cube' Comments=
+R:359:/ # Level=23 NAME='Black ooze' Comments=
+R:390:/ # Level=25 NAME='Black' Comments=
+R:529:/ # Level=35 NAME='Acidic cytoplasm' Comments=
+R:573:/ # Level=37 NAME='Black pudding' Comments=
+R:614:/ # Level=40 NAME='Spawn of Ubbo-Sathla' Comments=
+R:673:/221 # Level=44 NAME='Shoggoth' Comments=slimy j
+R:862:/ # Level=5 NAME='Rot jelly' Comments=
+R:1000:/ # Level=44 NAME='Vermicious Knid' Comments=
+R:1103:/ # Level=99 NAME='Test Blob' Comments=
+R:1121:/ # Level=127 NAME='Star Test Blob' Comments=
+R:1129:/ # Level=1 NAME='Charged Test Blob' Comments=
+R:9:/ # Level=1 NAME='Large white snake' Comments=
+R:16:/ # Level=1 NAME='Large brown snake' Comments=
+R:47:/ # Level=2 NAME='Large yellow snake' Comments=
+R:78:/ # Level=4 NAME='Large grey snake' Comments=
+R:94:/ # Level=5 NAME='Copperhead snake' Comments=
+R:107:/ # Level=6 NAME='Rattlesnake' Comments=
+R:159:/ # Level=9 NAME='King cobra' Comments=
+R:198:/ # Level=12 NAME='Black mamba' Comments=
+R:352:/ # Level=22 NAME='Serpent man' Comments=
+R:868:/ # Level=20 NAME='Electric eel' Comments=
+R:1002:/ # Level=38 NAME='Snake of Yig' Comments=
+R:1116:/ # Level=39 NAME='Swamp Serpent' Comments=
+R:1117:/ # Level=47 NAME='Mountain Serpent' Comments=
+R:1118:/222 # Level=56 NAME='Sea Serpent' Comments=J I
+R:1119:/222 # Level=66 NAME='Horned Serpent' Comments=J I
+R:17:/ # Level=1 NAME='Small kobold' Comments=
+R:18:/ # Level=2 NAME='Kobold' Comments=
+R:90:/ # Level=5 NAME='Large kobold' Comments=
+R:888:/ # Level=5 NAME='Aquatic kobold' Comments=
+R:224:/ # Level=13 NAME='Killer brown beetle' Comments=
+R:354:/ # Level=22 NAME='Killer stag beetle' Comments=
+R:366:/ # Level=23 NAME='Killer white beetle' Comments=
+R:393:/ # Level=25 NAME='Killer red beetle' Comments=
+R:409:/ # Level=27 NAME='Killer fire beetle' Comments=
+R:462:/ # Level=30 NAME='Killer slicer beetle' Comments=
+R:466:/ # Level=31 NAME='Death watch beetle' Comments=
+R:574:/ # Level=37 NAME='Killer iridescent beetle' Comments=
+R:506:/ # Level=34 NAME='Lich' Comments=
+R:565:/ # Level=37 NAME='Crypt thing' Comments=
+R:599:/ # Level=39 NAME='Monastic lich' Comments=
+R:646:/ # Level=41 NAME='Master lich' Comments=
+R:654:/ # Level=42 NAME='Iron lich' Comments=
+R:682:/223 # Level=45 NAME='Lesser black reaver' Comments=L I
+R:730:/223 # Level=54 NAME='Demilich' Comments=L I
+R:764:/224 # Level=64 NAME='Archlich' Comments=L II
+R:786:/224 # Level=74 NAME='Black reaver' Comments=L II
+R:8:/ # Level=1 NAME='Grey mold' Comments=
+R:64:/ # Level=3 NAME='Yellow mold' Comments=
+R:101:/ # Level=6 NAME='Brown mold' Comments=
+R:134:/ # Level=8 NAME='Green mold' Comments=
+R:178:/ # Level=10 NAME='Hairy mold' Comments=
+R:180:/ # Level=10 NAME='Disenchanter mold' Comments=
+R:298:/ # Level=18 NAME='Lesser Mimic' Comments=
+R:312:/ # Level=19 NAME='Red mold' Comments=
+R:340:/ # Level=21 NAME='Mimic' Comments=
+R:341:/ # Level=35 NAME='Ultimate Mimic' Comments=
+R:445:/ # Level=29 NAME='Greater Mimic' Comments=
+R:515:/ # Level=27 NAME='Shimmering mold' Comments=
+R:699:/ # Level=47 NAME='Death mold' Comments=
+R:289:/ # Level=17 NAME='2-headed hydra' Comments=
+R:375:/ # Level=24 NAME='4-headed hydra' Comments=
+R:428:/ # Level=28 NAME='5-headed hydra' Comments=
+R:602:/ # Level=39 NAME='7-headed hydra' Comments=
+R:623:/ # Level=40 NAME='9-headed hydra' Comments=
+R:676:/ # Level=44 NAME='11-headed hydra' Comments=
+R:974:/ # Level=20 NAME='3-headed hydra' Comments=
+R:59:/ # Level=3 NAME='Black naga' Comments=
+R:82:/ # Level=5 NAME='Green naga' Comments=
+R:118:/ # Level=7 NAME='Red naga' Comments=
+R:253:/ # Level=15 NAME='Dark naga' Comments=
+R:257:/ # Level=15 NAME='Guardian naga' Comments=
+R:424:/ # Level=28 NAME='Spirit naga' Comments=
+R:907:/ # Level=24 NAME='Water naga' Comments=
+R:1056:/ # Level=98 NAME='Nether Guard' Comments=// NO TILE already unique symbol
+R:75:/ # Level=4 NAME='Snotling' Comments=
+R:106:/ # Level=6 NAME='Snaga' Comments=
+R:114:/ # Level=7 NAME='Cave orc' Comments=
+R:137:/ # Level=8 NAME='Hill orc' Comments=
+R:232:/ # Level=13 NAME='Black orc' Comments=
+R:239:/ # Level=14 NAME='Snaga sapper' Comments=
+R:252:/ # Level=15 NAME='Half-orc' Comments=
+R:301:/ # Level=16 NAME='Uruk' Comments=
+R:854:/ # Level=20 NAME='Elite uruk' Comments=
+R:226:/ # Level=13 NAME='Ogre' Comments=
+R:250:/ # Level=15 NAME='Black ogre' Comments=
+R:273:/ # Level=16 NAME='Ogrillon' Comments=
+R:403:/ # Level=26 NAME='Cave ogre' Comments=
+R:418:/ # Level=27 NAME='Half-ogre' Comments=
+R:467:/ # Level=30 NAME='Mountain ogre' Comments=
+R:906:/ # Level=28 NAME='Merrow' Comments=
+R:31:/ # Level=2 NAME='Novice warrior' Comments=
+R:32:/ # Level=2 NAME='Novice rogue' Comments=
+R:33:/ # Level=2 NAME='Novice priest' Comments=
+R:34:/ # Level=2 NAME='Novice mage' Comments=
+R:71:/ # Level=4 NAME='Novice ranger' Comments=
+R:81:/ # Level=6 NAME='Novice mage' Comments=
+R:85:/ # Level=4 NAME='Novice paladin' Comments=
+R:97:/ # Level=6 NAME='Novice priest' Comments=
+R:98:/ # Level=6 NAME='Novice warrior' Comments=
+R:104:/ # Level=6 NAME='Novice rogue' Comments=
+R:130:/ # Level=8 NAME='Novice ranger' Comments=
+R:135:/ # Level=8 NAME='Novice paladin' Comments=
+R:138:/ # Level=10 NAME='Bandit' Comments=
+R:150:/225 # Level=20 NAME='Mindcrafter' Comments=p I
+R:187:/ # Level=10 NAME='Brigand' Comments=
+R:204:/ # Level=12 NAME='Swordsman' Comments=
+R:213:/225 # Level=12 NAME='Priest' Comments=p I
+R:228:/ # Level=13 NAME='Illusionist' Comments=
+R:229:/225 # Level=13 NAME='Druid' Comments=p I
+R:281:/226 # Level=45 NAME='Berserker' Comments=p II
+R:333:/225 # Level=20 NAME='Ranger' Comments=p I
+R:334:/225 # Level=20 NAME='Paladin' Comments=p I
+R:358:/225 # Level=23 NAME='Jade monk' Comments=p I
+R:360:/225 # Level=23 NAME='Hardened warrior' Comments=p I
+R:364:/225 # Level=23 NAME='Master rogue' Comments=p I
+R:430:/225 # Level=28 NAME='Black knight' Comments=p I
+R:433:/226 # Level=28 NAME='Clairvoyant' Comments=p II
+R:437:/225 # Level=28 NAME='Mage' Comments=p I
+R:473:/225 # Level=32 NAME='Ninja' Comments=p I
+R:480:/226 # Level=33 NAME='Ivory monk' Comments=p II
+R:485:/225 # Level=33 NAME='Anti-paladin' Comments=p I
+R:486:/226 # Level=37 NAME='Chaos master' Comments=p II
+R:504:/226 # Level=34 NAME='Master thief' Comments=p II
+R:520:/225 # Level=35 NAME='Dagashi' Comments=p I
+R:559:/226 # Level=36 NAME='Necromancer' Comments=p II
+R:585:/226 # Level=38 NAME='Death knight' Comments=p II
+R:624:/226 # Level=40 NAME='Enchantress' Comments=p II
+R:625:/227 # Level=41 NAME='Ranger chieftain' Comments=p III actually p II hard
+R:626:/226 # Level=40 NAME='Sorcerer' Comments=p II
+R:635:/226 # Level=40 NAME='Wyrd sister' Comments=p II
+R:677:/226 # Level=40 NAME='Patriarch' Comments=p II
+R:681:/228 # Level=45 NAME='Warrior of the Dawn' Comments=p SPECIAL multiple warriors.. Clones? Shadow?
+R:684:/227 # Level=46 NAME='Grand master thief' Comments=p III
+R:687:/227 # Level=44 NAME='Knight Templar' Comments=p III
+R:719:/227 # Level=52 NAME='Hell knight' Comments=p III
+R:725:/ # Level=60 NAME='Lord of Chaos' Comments=// NO TILE protected at server CHANGER
+R:726:/227 # Level=54 NAME='Old Sorcerer' Comments=p III
+R:787:/227 # Level=40 NAME='Master mindcrafter' Comments=p III
+R:851:/ # Level=10 NAME='Human Warrior' Comments=
+R:925:/ # Level=8 NAME='Novice mindcrafter' Comments=
+R:954:/229 # Level=61 NAME='Dolphiner' Comments=p III SPECIAL watery
+R:976:/225 # Level=33 NAME='Mystic' Comments=p I
+R:979:/226 # Level=36 NAME='Demonologist' Comments=p II
+R:985:/226 # Level=50 NAME='Master mystic' Comments=p II
+R:986:/227 # Level=57 NAME='Grand master mystic' Comments=p III
+R:988:/ # Level=4 NAME='Novice mindcrafter' Comments=
+R:1005:/225 # Level=17 NAME='Cultist' Comments=p I
+R:1006:/227 # Level=47 NAME='Cult leader' Comments=p III
+R:1008:/ # Level=45 NAME='Avatar of Nyarlathotep' Comments=// NO TILE protected at server CHANGER
+R:1032:/ # Level=15 NAME='Positivist' Comments=
+R:1035:/230 # Level=20 NAME='Unbeliever' Comments=p I with minus under head
+R:1036:/230 # Level=30 NAME='Unbeliever' Comments=p I with minus under head
+R:1037:/231 # Level=50 NAME='Master Unbeliever' Comments=p II with minus under head
+R:1038:/231 # Level=57 NAME='True Believer' Comments=p II with minus under head
+R:1046:/226 # Level=40 NAME='Swordsmaster' Comments=p II
+R:1047:/227 # Level=60 NAME='Grand Swordsmaster' Comments=p III
+R:1068:/227 # Level=97 NAME='Minion of Doom' Comments=p III
+R:1089:/131 # Level=50 NAME='Target dummy' Comments=Dummy
+R:1114:/131 # Level=50 NAME='Snow-covered target dummy' Comments=Dummy
+R:1132:/160 # Level=50 NAME='Armoured target dummy' Comments=Dummy
+R:1133:/160 # Level=50 NAME='Snow-covered armoured target dummy' Comments=Dummy
+R:243:/ # Level=20 NAME='Hill giant' Comments=
+R:266:/ # Level=23 NAME='Frost giant' Comments=
+R:276:/ # Level=25 NAME='Fire giant' Comments=
+R:309:/ # Level=28 NAME='Stone giant' Comments=
+R:337:/ # Level=31 NAME='Cloud giant' Comments=
+R:432:/ # Level=40 NAME='Cyclops' Comments=
+R:464:/ # Level=26 NAME='Gug' Comments=
+R:475:/ # Level=35 NAME='Storm giant' Comments=
+R:478:/ # Level=43 NAME='Biclops' Comments=
+R:622:/232 # Level=50 NAME='Lesser titan' Comments=P I
+R:690:/232 # Level=58 NAME='Greater titan' Comments=P I
+R:697:/232 # Level=66 NAME='Hru' Comments=P I KILL_WALL
+R:1086:/64 # Level=200 NAME='Orome, The Hunter' Comments=// NO SPECIFIC TILE SANTA boss mage
+R:148:/ # Level=9 NAME='Cave bear' Comments=
+R:161:/ # Level=9 NAME='War bear' Comments=
+R:179:/ # Level=16 NAME='Grizzly bear' Comments=
+R:211:/ # Level=12 NAME='Moon beast' Comments=
+R:272:/ # Level=16 NAME='Rust monster' Comments=
+R:387:/ # Level=25 NAME='Disenchanter beast' Comments=
+R:395:/ # Level=26 NAME='Gnoph-Keh' Comments=
+R:402:/ # Level=24 NAME='Werebear' Comments=
+R:410:/ # Level=27 NAME='Beast of Nurgle' Comments=
+R:435:/ # Level=29 NAME='Catoblepas' Comments=
+R:535:/ # Level=35 NAME='Mumak' Comments=
+R:610:/ # Level=39 NAME='Night mare' Comments=
+R:661:/ # Level=63 NAME='Mumak' Comments=
+R:709:/233 # Level=50 NAME='Goat of Mendes' Comments=horns? black he-goat demon
+R:1123:/ # Level=5 NAME='Panda' Comments=
+R:1124:/ # Level=5 NAME='Horse' Comments=
+R:1125:/ # Level=5 NAME='Horse' Comments=
+R:1126:/ # Level=5 NAME='Horse' Comments=
+R:1127:/ # Level=5 NAME='Horse' Comments=
+R:1128:/ # Level=5 NAME='Horse' Comments=
+R:330:/ # Level=20 NAME='Quylthulg' Comments=
+R:468:/ # Level=32 NAME='Nexus quylthulg' Comments=
+R:621:/ # Level=45 NAME='Rotting quylthulg' Comments=
+R:715:/ # Level=45 NAME='Demonic quylthulg' Comments=
+R:747:/ # Level=45 NAME='Draconic quylthulg' Comments=
+R:788:/234 # Level=71 NAME='Greater demonic quylthulg' Comments=Q I
+R:789:/234 # Level=71 NAME='Greater draconic quylthulg' Comments=Q I
+R:790:/234 # Level=71 NAME='Greater rotting quylthulg' Comments=Q I
+R:809:/235 # Level=76 NAME='Master quylthulg' Comments=Q II
+R:-7:/ # Level= NAME='Wild rabbit' Comments=
+R:15:/ # Level=1 NAME='Giant white mouse' Comments=
+R:74:/ # Level=4 NAME='Giant white rat' Comments=
+R:103:/ # Level=6 NAME='Rat-thing' Comments=
+R:144:/ # Level=9 NAME='Giant grey rat' Comments=
+R:146:/ # Level=9 NAME='Skaven' Comments=
+R:149:/ # Level=9 NAME='Rock mole' Comments=
+R:193:/ # Level=11 NAME='Vorpal bunny' Comments=
+R:205:/ # Level=12 NAME='Skaven shaman' Comments=
+R:258:/ # Level=15 NAME='Wererat' Comments=
+R:993:/ # Level=4 NAME='Silver mouse' Comments=
+R:11:/ # Level=1 NAME='Newt' Comments=
+R:21:/ # Level=1 NAME='Rock lizard' Comments=
+R:38:/ # Level=2 NAME='Salamander' Comments=
+R:44:/ # Level=2 NAME='Giant green frog' Comments=
+R:70:/ # Level=4 NAME='Cave lizard' Comments=
+R:109:/ # Level=7 NAME='Giant pink frog' Comments=
+R:122:/ # Level=7 NAME='Night lizard' Comments=
+R:131:/ # Level=8 NAME='Giant salamander' Comments=
+R:237:/ # Level=14 NAME='Vlasta' Comments=
+R:377:/ # Level=24 NAME='Tyrannosaur' Comments=
+R:441:/ # Level=28 NAME='Basilisk' Comments=
+R:454:/ # Level=30 NAME='Skeletal tyrannosaur' Comments=
+R:656:/236 # Level=42 NAME='Greater basilisk' Comments=R I
+R:693:/236 # Level=46 NAME='Spectral tyrannosaur' Comments=R I
+R:898:/ # Level=7 NAME='Giant turtle' Comments=
+R:1057:/236 # Level=50 NAME='Gorm' Comments=R I
+R:1058:/236 # Level=60 NAME='Cave Gorm' Comments=R I
+R:79:/ # Level=5 NAME='Skeleton kobold' Comments=
+R:112:/ # Level=7 NAME='Crypt creep' Comments=
+R:124:/ # Level=8 NAME='Skeleton orc' Comments=
+R:216:/ # Level=12 NAME='Skeleton human' Comments=
+R:261:/ # Level=15 NAME='Flying skull' Comments=
+R:367:/ # Level=23 NAME='Ice skeleton' Comments=
+R:453:/ # Level=30 NAME='Skeleton troll' Comments=
+R:488:/ # Level=33 NAME='Skeleton ettin' Comments=
+R:736:/237 # Level=57 NAME='Hand druj' Comments=s I
+R:737:/237 # Level=58 NAME='Eye druj' Comments=s I
+R:738:/237 # Level=59 NAME='Skull druj' Comments=s I
+R:1082:/ # Level=0 NAME='Skeleton (Mimic)' Comments=
+R:48:/ # Level=2 NAME='Cave spider' Comments=
+R:115:/ # Level=7 NAME='Wood spider' Comments=
+R:163:/ # Level=10 NAME='Giant spider' Comments=
+R:164:/ # Level=10 NAME='Giant white tick' Comments=
+R:222:/ # Level=13 NAME='Drider' Comments=
+R:263:/ # Level=15 NAME='Giant tarantula' Comments=
+R:265:/ # Level=15 NAME='Mirkwood spider' Comments=
+R:292:/ # Level=17 NAME='Giant red scorpion' Comments=
+R:319:/ # Level=20 NAME='Phase spider' Comments=
+R:357:/ # Level=22 NAME='Giant yellow scorpion' Comments=
+R:399:/ # Level=26 NAME='Giant fire tick' Comments=
+R:426:/ # Level=28 NAME='Fiend of Slaanesh' Comments=
+R:512:/ # Level=34 NAME='Giant grey scorpion' Comments=
+R:523:/ # Level=35 NAME='Leng spider' Comments=
+R:882:/238 # Level=27 NAME='Murk dweller' Comments=S I
+R:951:/ # Level=30 NAME='Aranea' Comments=
+R:952:/238 # Level=40 NAME='Elder aranea' Comments=S I
+R:953:/ # Level=25 NAME='Giant brown tick' Comments=
+R:-11:/ # Level= NAME='Filthy street urchin' Comments=
+R:-6:/ # Level= NAME='Woodsman' Comments=
+R:-3:/ # Level= NAME='Blubbering idiot' Comments=
+R:-2:/ # Level= NAME='Boil-covered wretch' Comments=
+R:-1:/ # Level= NAME='Village idiot' Comments=
+R:0:/ # Level= NAME='Pitiful-looking beggar' Comments=
+R:1:/ # Level= NAME='Mangy-looking leper' Comments=
+R:2:/ # Level= NAME='Agent of the black market' Comments=
+R:3:/ # Level= NAME='Singing, happy drunk' Comments=
+R:4:/ # Level= NAME='Aimless-looking merchant' Comments=
+R:5:/ # Level= NAME='Mean-looking mercenary' Comments=
+R:6:/ # Level= NAME='Battle-scarred veteran' Comments=
+R:1031:/ # Level=0 NAME='Pitiful-looking Cheezer' Comments=
+R:285:/ # Level=17 NAME='Forest troll' Comments=
+R:389:/ # Level=25 NAME='Stone troll' Comments=
+R:391:/ # Level=21 NAME='Hill troll' Comments=
+R:412:/ # Level=27 NAME='Algroth' Comments=
+R:442:/ # Level=28 NAME='Ice troll' Comments=
+R:451:/ # Level=29 NAME='Aklash' Comments=
+R:479:/ # Level=34 NAME='Half-troll' Comments=
+R:484:/ # Level=33 NAME='Cave troll' Comments=
+R:497:/ # Level=35 NAME='Water troll' Comments=
+R:526:/ # Level=36 NAME='Olog' Comments=
+R:608:/ # Level=38 NAME='Eldrak' Comments=
+R:609:/ # Level=39 NAME='Ettin' Comments=
+R:619:/ # Level=40 NAME='War troll' Comments=
+R:890:/ # Level=37 NAME='Scrag' Comments=
+R:116:/ # Level=7 NAME='Manes' Comments=
+R:127:/ # Level=8 NAME='Nurgling' Comments=
+R:136:/ # Level=8 NAME='Lemure' Comments=
+R:141:/ # Level=8 NAME='Gremlin' Comments=
+R:171:/ # Level=10 NAME='Sand-dweller' Comments=
+R:177:/ # Level=10 NAME='Blue horror' Comments=
+R:182:/ # Level=10 NAME='Tengu' Comments=
+R:230:/ # Level=13 NAME='Pink horror' Comments=
+R:268:/ # Level=15 NAME='Homunculus' Comments=
+R:282:/ # Level=16 NAME='Quasit' Comments=
+R:284:/ # Level=17 NAME='Imp' Comments=
+R:307:/239 # Level=18 NAME='Daemonette of Slaanesh' Comments=u I
+R:345:/239 # Level=21 NAME='Arch-vile' Comments=u I
+R:440:/ # Level=28 NAME='Deep one' Comments=
+R:516:/ # Level=34 NAME='Gargoyle' Comments=
+R:554:/239 # Level=36 NAME='Bodak' Comments=u I
+R:556:/239 # Level=36 NAME='Mezzodaemon' Comments=u I
+R:557:/239 # Level=36 NAME='Elder thing' Comments=u I
+R:637:/239 # Level=40 NAME='Death quasit' Comments=u I
+R:376:/ # Level=24 NAME='Lesser hell-beast' Comments=
+R:511:/ # Level=34 NAME='Bloodletter of Khorne' Comments=
+R:596:/ # Level=38 NAME='Nightgaunt' Comments=
+R:597:/ # Level=38 NAME='Baron of hell' Comments=
+R:636:/ # Level=40 NAME='Vrock' Comments=
+R:647:/130 # Level=41 NAME='Byakhee' Comments=U 0
+R:650:/130 # Level=41 NAME='Formless spawn of Tsathoggua' Comments=U 0
+R:651:/130 # Level=42 NAME='Hunting horror' Comments=U 0
+R:665:/130 # Level=43 NAME='Dark young of Shub-Niggurath' Comments=U 0
+R:707:/240 # Level=51 NAME='Nycadaemon' Comments=U I
+R:708:/240 # Level=55 NAME='Barbazu' Comments=U I
+R:724:/240 # Level=53 NAME='Great unclean one' Comments=U I
+R:733:/240 # Level=54 NAME='Lord of Change' Comments=U I
+R:746:/240 # Level=55 NAME='Bloodthirster' Comments=U I
+R:751:/240 # Level=61 NAME='Bile Demon' Comments=U I
+R:761:/240 # Level=65 NAME='Osyluth' Comments=U I
+R:775:/241 # Level=69 NAME='Gelugon' Comments=U II
+R:783:/241 # Level=72 NAME='Horned Reaper' Comments=U II
+R:795:/242 # Level=80 NAME='Greater Balrog' Comments=U III
+R:800:/241 # Level=77 NAME='Pit Fiend' Comments=U II
+R:804:/241 # Level=77 NAME='Cyberdemon' Comments=U II
+R:824:/242 # Level=86 NAME='Star-spawn of Cthulhu' Comments=U III
+R:912:/ # Level=40 NAME='Water demon' Comments=
+R:980:/130 # Level=41 NAME='Hezrou' Comments=U 0
+R:981:/130 # Level=43 NAME='Glabrezu' Comments=U 0
+R:982:/130 # Level=45 NAME='Nalfeshnee' Comments=U 0
+R:983:/130 # Level=47 NAME='Marilith' Comments=U 0
+R:984:/240 # Level=49 NAME='Lesser Balrog' Comments=U I
+R:987:/ # Level=38 NAME='Erinyes' Comments=
+R:1048:/ # Level=35 NAME='Incubus' Comments=
+R:1049:/ # Level=35 NAME='Succubus' Comments=
+R:1083:/ # Level=0 NAME='Frankenstein's Monster (Mimic)' Comments=
+R:1134:/241 # Level=72 NAME='Horned Reaper' Comments=U II
+R:342:/ # Level=21 NAME='Fire vortex' Comments=
+R:343:/ # Level=21 NAME='Acid vortex' Comments=
+R:346:/ # Level=21 NAME='Cold vortex' Comments=
+R:347:/ # Level=21 NAME='Energy vortex' Comments=
+R:532:/ # Level=37 NAME='Shardstorm' Comments=
+R:564:/245 # Level=53 NAME='Storm of Unmagic' Comments=v with minus above
+R:575:/ # Level=37 NAME='Nexus vortex' Comments=
+R:576:/ # Level=37 NAME='Plasma vortex' Comments=
+R:587:/ # Level=38 NAME='Time vortex' Comments=
+R:588:/ # Level=38 NAME='Shimmering vortex' Comments=
+R:670:/244 # Level=44 NAME='Lloigor' Comments=v summon
+R:739:/243 # Level=53 NAME='Chaos vortex' Comments=v I
+R:740:/243 # Level=54 NAME='Aether vortex' Comments=v I
+R:1072:/243 # Level=97 NAME='Force vortex' Comments=v I
+R:1131:/243 # Level=97 NAME='Nether vortex' Comments=v I
+R:420:/ # Level=27 NAME='Vampire' Comments=
+R:508:/ # Level=36 NAME='Master vampire' Comments=
+R:509:/ # Level=40 NAME='Oriental vampire' Comments=
+R:611:/ # Level=42 NAME='Vampire lord' Comments=
+R:977:/ # Level=54 NAME='Elder vampire' Comments=waiting for more glyphs..
+R:1080:/ # Level=0 NAME='Vampire (Mimic)' Comments=
+R:19:/ # Level=1 NAME='White worm mass' Comments=
+R:46:/ # Level=2 NAME='Green worm mass' Comments=
+R:66:/ # Level=3 NAME='Yellow worm mass' Comments=
+R:67:/ # Level=3 NAME='Clear worm mass' Comments=
+R:77:/ # Level=4 NAME='Blue worm mass' Comments=
+R:83:/ # Level=5 NAME='Giant leech' Comments=
+R:93:/ # Level=5 NAME='Red worm mass' Comments=
+R:108:/ # Level=6 NAME='Giant slug' Comments=
+R:201:/ # Level=12 NAME='Nether worm mass' Comments=
+R:202:/ # Level=12 NAME='Abyss worm mass' Comments=
+R:392:/ # Level=25 NAME='Wereworm' Comments=
+R:434:/ # Level=29 NAME='Purple worm' Comments=
+R:443:/ # Level=29 NAME='Dhole' Comments=
+R:607:/246 # Level=39 NAME='Chthonian' Comments=w I duna?
+R:620:/ # Level=40 NAME='Disenchanter worm mass' Comments=
+R:964:/ # Level=20 NAME='Bronze dragon worm' Comments=
+R:965:/ # Level=20 NAME='Gold dragon worm' Comments=
+R:1011:/ # Level=20 NAME='Blue dragon worm' Comments=
+R:1012:/ # Level=20 NAME='White dragon worm' Comments=
+R:1013:/ # Level=20 NAME='Green dragon worm' Comments=
+R:1014:/ # Level=20 NAME='Black dragon worm' Comments=
+R:1015:/ # Level=20 NAME='Red dragon worm' Comments=
+R:1016:/ # Level=23 NAME='Multi-hued dragon worm' Comments=
+R:1019:/ # Level=22 NAME='Sandworm' Comments=
+R:369:/ # Level=24 NAME='Forest wight' Comments=
+R:404:/ # Level=26 NAME='White wraith' Comments=
+R:458:/ # Level=30 NAME='Grave wight' Comments=
+R:487:/ # Level=33 NAME='Barrow wight' Comments=
+R:542:/ # Level=36 NAME='Grey wraith' Comments=
+R:543:/ # Level=36 NAME='Revenant' Comments=
+R:592:/ # Level=38 NAME='Emperor wight' Comments=
+R:595:/ # Level=38 NAME='Black wraith' Comments=
+R:600:/ # Level=39 NAME='Nether wraith' Comments=
+R:659:/247 # Level=43 NAME='Zephyr Lord' Comments=W I
+R:710:/247 # Level=61 NAME='Nightwing' Comments=W I
+R:732:/248 # Level=69 NAME='Nightcrawler' Comments=W II kill wall squares
+R:756:/249 # Level=73 NAME='Nightwalker' Comments=W III
+R:271:/ # Level=16 NAME='Umber hulk' Comments=
+R:538:/ # Level=36 NAME='Xorn' Comments=
+R:627:/ # Level=40 NAME='Xaren' Comments=
+R:40:/ # Level=2 NAME='Blue yeek' Comments=
+R:129:/ # Level=8 NAME='Brown yeek' Comments=
+R:167:/ # Level=10 NAME='Kamikaze yeek' Comments=
+R:212:/ # Level=12 NAME='Master yeek' Comments=
+R:142:/ # Level=9 NAME='Yeti' Comments=
+R:251:/ # Level=15 NAME='Dweller on the threshold' Comments=
+R:331:/ # Level=20 NAME='Sasquatch' Comments=
+R:111:/ # Level=7 NAME='Zombified kobold' Comments=
+R:113:/ # Level=8 NAME='Rotting corpse' Comments=
+R:169:/ # Level=10 NAME='Servant of Glaaki' Comments=
+R:196:/ # Level=11 NAME='Zombified orc' Comments=
+R:217:/ # Level=12 NAME='Zombified human' Comments=
+R:256:/ # Level=15 NAME='Plaguebearer of Nurgle' Comments=
+R:315:/ # Level=30 NAME='Ghast' Comments=
+R:350:/ # Level=21 NAME='Mummified orc' Comments=
+R:378:/ # Level=24 NAME='Mummified human' Comments=
+R:406:/ # Level=25 NAME='Ghoul' Comments=
+R:471:/250 # Level=32 NAME='Ghoulking' Comments=z I
+R:510:/250 # Level=36 NAME='Greater mummy' Comments=z I
+R:563:/ # Level=34 NAME='Mummified troll' Comments=
+R:1077:/ # Level=0 NAME='Ghoul (Mimic)' Comments=
+R:1079:/ # Level=0 NAME='Zombie (Mimic)' Comments=
+R:1084:/ # Level=0 NAME='Freddy Krueger (Mimic)' Comments=
+R:259:/ # Level=15 NAME='Light hound' Comments=
+R:260:/ # Level=15 NAME='Dark hound' Comments=
+R:270:/ # Level=15 NAME='Clear hound' Comments=
+R:295:/ # Level=18 NAME='Fire hound' Comments=
+R:296:/ # Level=18 NAME='Cold hound' Comments=
+R:297:/ # Level=18 NAME='Energy hound' Comments=
+R:325:/ # Level=20 NAME='Earth hound' Comments=
+R:326:/ # Level=20 NAME='Air hound' Comments=
+R:328:/ # Level=20 NAME='Acid hound' Comments=
+R:416:/ # Level=27 NAME='Vibration hound' Comments=
+R:417:/ # Level=27 NAME='Nexus hound' Comments=
+R:501:/ # Level=33 NAME='Multi-hued hound' Comments=
+R:528:/251 # Level=35 NAME='Gravity hound' Comments=Z I
+R:530:/252 # Level=35 NAME='Inertia hound' Comments=Z slow arrow down
+R:531:/251 # Level=35 NAME='Impact hound' Comments=Z I
+R:712:/251 # Level=51 NAME='Nether hound' Comments=Z I
+R:713:/251 # Level=51 NAME='Time hound' Comments=Z I
+R:714:/251 # Level=51 NAME='Plasma hound' Comments=Z I
+R:727:/253 # Level=55 NAME='Ethereal hound' Comments=Z pass_wall
+R:767:/251 # Level=65 NAME='Chaos hound' Comments=Z I
+R:799:/254 # Level=74 NAME='Aether hound' Comments=Z II
+R:911:/255 # Level=20 NAME='Aquatic hound' Comments=Z aqua
+R:991:/253 # Level=59 NAME='Hound of Tindalos' Comments=Z pass_wall
+R:1026:/255 # Level=43 NAME='Water hound' Comments=Z aqua
+R:1139:/201 # Level=96 NAME='Tzeentch, the Changer of Ways' Comments=new U
