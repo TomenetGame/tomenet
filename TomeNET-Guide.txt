@@ -5033,7 +5033,7 @@ of course you can use any other font file too.
 Issues:
 -------
 As of the time of 4.9.2 release when this was written, there are still issues
-with graphical tiles, which I copy-pasted from Evgenijk's github here:
+with graphical tiles, which I copy-pasted from EvgenijK's github here:
 
 - there is no in client interface to choose or change gfx tilesets, only by
   changing tomenetrc/tomenet.ini.
