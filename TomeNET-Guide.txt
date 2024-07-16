@@ -5011,6 +5011,7 @@ or TomeNET.ini (Windows):
   GraphicTiles=16x22sv
 and then in-game make sure that the option = 1 'font_map_solid_walls' is OFF!
 
+
 Notes about an important difference to normal fonts:
 ----------------------------------------------------
 Graphical tilesets require you to still select a normal font too!
@@ -5028,6 +5029,21 @@ For EvgenijK's bmp tileset which has dimensions 16x22 px/tile, he provides
 a 16x22 font that is located in lib/fonts, as both .FON and .pcf format, but
 of course you can use any other font file too.
 
+
+Issues:
+-------
+As of the time of 4.9.2 release when this was written, there are still issues
+with graphical tiles, which I copy-pasted from Evgenijk's github here:
+
+- there is no in client interface to choose or change gfx tilesets, only by
+  changing tomenetrc/tomenet.ini.
+- Windows: bmp from github seems to be corrupted when using in windows.
+  Re-saving it in graphic editor solved the issue (like in Paint).
+- monster list shows wrong tiles TomenetGame/tomenet#50
+- interface crash and packet errors if there is only tiles for "monsters"
+  TomenetGame/tomenet#51
+- in character overview window items that have tiles are not displayed
+  correctly.
 
 
 (3) Creating a character & starting to play
