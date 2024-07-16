@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. July 2024 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 16. July 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -65,6 +65,7 @@ Contents
     (2.4)   Installing voice chat
     (2.5)   Fonts
     (2.5a)  Custom fonts
+    (2.5b)  Graphical fonts
 (3) Creating a character & starting to play
     (3.1)   Creating a new character
     (3.1a)  Character modes
@@ -4971,6 +4972,38 @@ For the Linux/OS X client you'll need to either convert FON fonts to PCF format
 Add them to your system with the usual font-adding procedures for your specific
 Linux distribution, then you can select them in TomeNET via  = f  (or enter
 them directly in your .tomenetrc config file).
+
+
+(2.5b) Graphical fonts
+----------------------
+Thanks to jEzEk (https://github.com/jezek) graphics tiles are now supported
+again, now with a colour mask and autoscaling.
+
+Svechnik (EvgenijK) has worked on a major graphical tileset that can be found
+on his github, including instructions on how to use it:
+
+  https://github.com/EvgenijK/TomeNET-Tileset
+
+At the time of 4.9.2 release, TomeNET ships with the tileset files (pcf/fon in
+the lib/xtra/graphics folder and prf in the lib/user folder) from that date.
+However, check out his site or our discord for updates maybe.
+
+Notes about an important difference to normal fonts:
+----------------------------------------------------
+Graphical tilesets require you to still select a normal font too!
+The way it works is: Whenever the graphical tileset provides a valid mapping
+for a grid, it will use the graphics, otherwise it will fall back to the text
+font and use its symbol instead.
+
+Since the tileset linked above is a work in progress and so far there are no
+known complete tilesets, that is the reason why an underlying font to work
+together with the tileset is still needed.
+
+The font should preferably have the same dimensions as the tileset, or scaling
+will happen automatically that might not look very good.
+For EvgenijK's bmp tileset which has dimensions 16x22 px/tile, he provides
+a 16x22 font that is located in lib/fonts, as both .FON and .pcf format, but
+of course you can use any other font file too.
 
 
 

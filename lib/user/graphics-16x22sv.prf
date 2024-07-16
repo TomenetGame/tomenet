@@ -1,0 +1,1364 @@
+# File: graphics-16x22sv.prf
+#
+# TomeNET graphics redefinitions for 16x22sv.bmp file.
+# This file defines special attr/char mappings for use in "graphics" mode.
+#
+# Highly inspired by Tangar's font https://tangar.info/en/t/tileset
+# And Urizen tileset https://vurmux.itch.io/urizen-onebit-tileset
+#
+
+################# Terrain features #################
+### F:?:?/?
+### F : (Terrain ID number from f_info.txt) : (Changing color, if you do not want to change the color keep blank) / (Char number of font glyph)
+
+# F:0:/ # Nothing
+
+##### Floors (white / centered dot) #####
+
+F:1:/50 # open floor
+F:137:/50 # open floor (Permanent floor, added for t_refuge.txt, just to prevent monster spawn)
+F:91:/62 # sand
+F:93:/63 # ash
+F:102:/64 # nether mist
+
+F:83:/51 # snow
+F:88:/51 # dirt
+
+# cobblestone road, protected floor
+F:109:/52 # volcanic rock
+F:200:/52 # cobblestone road
+F:201:/52 # cobblestone with outlet
+F:207:/52 # rocky ground
+
+F:89:/53 # patch of grass
+
+F:90:/55 # ice
+F:210:/55 # protected floor
+
+F:188:/252 # glass wall
+
+# No tiles in TG
+F:31:/50 # open floor
+F:133:/50 # off-grid floor
+F:134:/50 # inn floor
+F:138:/50 # alpha-transparent floor
+F:172:/50 # floor (Used as a marked for random quests)
+# F:208:/50 # team A goal
+# F:209:/50 # team B goal
+F:226:/50 # highly protected floor
+F:236:/50 # barred floor
+
+F:18:/68 # crops
+F:19:/69 # loose dirt
+
+F:199:/54 # grass with flowers
+
+F:24:/263 # drawbridge
+
+F:189:/261 # illusion wall
+
+F:202:/58 # ivy
+
+F:173:/59 # underground tunnel
+F:204:/59 # underground tunnel
+
+F:82:/60 # solidified clouds
+
+F:187:/57 # pool of deep water
+F:85:/157 # pool of deep lava
+
+F:84:/56 # stream of shallow water
+F:86:/156 # stream of shallow lava
+F:174:/56 # stream of tainted water
+F:110:/56 # puddle of water
+F:94:/56 # mud
+
+F:160:/66 # void jumpgate
+F:105:/166 # unstable void jumpgate
+F:233:/66 # Iridescent Gate
+
+F:161:/67 # altar of being
+F:162:/67 # altar of winds
+F:163:/67 # altar of force
+F:164:/67 # altar of darkness
+
+F:232:/50 # sickbay area
+
+F:235:/271 # shattered mirror
+
+# Fire
+
+F:141:/70 # embers
+
+F:143:/71 # small campfire
+F:144:/72 # campfire
+
+F:145:/73 # burning torch
+
+F:142:/74 # small fire
+F:178:/75 # great fire
+F:186:/76 # blazing fire
+F:205:/76 # blazing fire (for mount doom)
+
+
+F:208:/360 # team A goal
+F:209:/361 # team B goal
+
+F:203:/362 # town (Just to have a town entrance picture)
+
+
+
+##### Fountains #####
+
+F:2:/350 # fountain
+F:15:/358 # dried out fountain
+F:27:/350 # fountain of blood
+
+##### Glyphs #####
+
+F:3:/351 # glyph of warding
+F:64:/352 # rune of warding
+F:175:/363 # monster trap (not providing anti-summon)
+# F:17:/364 # trap (for players) (not providing anti-summon) # not used right now
+
+##### Doors #####
+
+# Open doors
+F:4:/354 # open door
+F:5:/354 # broken door
+F:20:/354 # open door
+F:225:/354 # unsealed door
+
+# Closed doors
+F:25:/353 # closed door
+F:32:/353 # door
+F:33:/353 # locked door
+F:34:/353 # locked door
+F:35:/353 # locked door
+F:36:/353 # locked door
+F:37:/353 # locked door
+F:38:/353 # locked door
+F:39:/353 # locked door
+F:40:/353 # jammed door
+F:41:/353 # jammed door
+F:42:/353 # jammed door
+F:43:/353 # jammed door
+F:44:/353 # jammed door
+F:45:/353 # jammed door
+F:46:/353 # jammed door
+F:47:/353 # jammed door
+F:224:/353 # sealed door
+F:230:/353 # sealed door
+F:231:/353 # sickbay exit
+
+F:48:/353 # secret door (is it needed?)
+
+##### Stairs #####
+
+F:6:/150 # up staircase
+F:9:/150 # quest exit
+F:11:/150 # quest up level
+F:14:/150 # shaft up
+F:135:/150 # staircase leading out
+F:180:/150 # path to the previous area
+
+F:7:/151 # down staircase
+F:8:/151 # quest entrance
+F:10:/151 # quest down level
+F:12:/151 # town exit
+F:13:/151 # shaft down
+F:136:/151 # staircase leading out
+F:176:/151 # Transport beacon
+F:179:/151 # path to the next area
+
+##### Walls #####
+
+# Destructible walls
+
+F:56:/261 # granite wall basic
+F:57:/261 # granite wall inner
+F:58:/261 # granite wall outer
+F:59:/261 # granite wall solid
+F:95:/257 # ice wall
+
+F:92:/450 # dead tree
+F:96:/451 # tree
+F:219:/452 # bush
+
+
+F:98:/258 # Sandwall
+F:99:/258 # Sandwall + treasure
+F:100:/258 # Sandwall + known treasure
+
+F:49:/357 # pile of rubble
+
+F:50:/267 # magma intrusion
+F:52:/267 # magma intrusion
+F:54:/267 # magma intrusion with treasure
+F:51:/268 # quartz vein
+F:53:/268 # quartz vein
+F:55:/268 # quartz vein with treasure
+
+F:234:/270 # grand mirror
+
+## Permanent walls
+
+F:21:/262 # signpost
+
+# F:22:/ # permanent wall
+F:23:/264 # logs
+
+F:26:/251 # permanent wall for houses
+F:28:/251 # permanent wall for upper storeys (no light)
+F:29:/251 # permanent wall (fake-wall)
+F:60:/251 # permanent wall basic/extra (perm) (for stores)
+F:61:/250 # permanent wall inner (perm) (for vaults)
+F:62:/250 # permanent wall outer (perm) (for vaults)
+F:63:/250 # permanent wall solid (perm) (for vaults)
+F:75:/250 # permanent wall (quest?)
+F:76:/250 # permanent wall (quest?)
+F:77:/250 # permanent wall (quest?)
+F:78:/250 # permanent wall (quest?)
+F:80:/250 # spirit wall (permanent wall in the Nether Realm)
+F:139:/453 # an evergreen conifer (xmas tree)
+F:177:/260 # lava wall
+F:183:/251 # permanent wall (dungeon borders)
+F:184:/251 # permanent wall (dungeon borders, but special extended colour)
+F:185:/251 # permanent wall (dungeon borders, but special animated colour aka search lights)
+F:190:/265 # Grass roof
+F:191:/265 # grass roof top
+F:192:/266 # grass roof chimney
+F:193:/253 # brick roof
+F:194:/253 # brick roof top
+F:195:/254 # brick roof chimney
+
+F:81:/255 # steep mountain chain (permanent wall in a bunch of dungeons, instead of default perma wall)
+F:97:/255 # mountain chain
+F:101:/255 # high mountain chain
+F:104:/255 # high mountain chain (impassable by admins, used in Valinor)
+
+F:103:/57 # glittering water (BOUNDARY?)
+F:218:/157 # decorative deep lava
+
+F:211:/56 # decorative shallow water (for Gondolin's fountain in town centre)
+
+F:107:/61 # bottomless, cloudy sky (Cloud Planes walls)
+
+F:159:/267 # magma intrusion (permanent magma vein)
+
+F:206:/ 357 # pile of rubble (Permanent rubble -- town use)
+
+F:212:/269 # Decorative violet crystal Gondolin
+F:213:/269 # Decorative blue crystal Gondolin
+F:214:/269 # Decorative green crystal Gondolin
+F:215:/269 # Decorative yellow crystal
+F:216:/269 # Decorative orange crystal
+F:217:/269 # Decorative red crystal
+
+F:30:/272 # wooden table
+
+F:125:/250 # marble wall
+F:126:/273 # marble balustrade '-'
+F:127:/274 # marble balustrade '|'
+F:128:/275 # marble balustrade '/'
+F:129:/276 # marble balustrade '\'
+F:130:/277 # marble balustrade 'o'
+
+F:122:/278 # star '.'
+F:123:/279 # star '+'
+F:124:/280 # star '*'
+
+F:116:/281 # bars '-'
+F:117:/282 # bars '|'
+F:118:/283 # bars '/'
+F:119:/284 # bars '\'
+F:120:/285 # bars 'o'
+
+F:111:/281 # cordon '-'
+F:112:/282 # cordon '|'
+F:113:/283 # cordon '/'
+F:114:/284 # cordon '\'
+F:115:/285 # cordon 'o'
+
+F:196:/286 # window
+F:197:/287 # small window
+
+F:198:/288 # rain barrel
+
+F:131:/289 # hearthfire
+F:132:/290 # hearthfire's embers
+
+F:140:/291 # decorative glowing sphere (for xmas tree top)
+
+# F:182:/57 # Ekkaia, the Encircling Sea
+F:182:/158 # Ekkaia, the Encircling Sea
+
+##### ??? #####
+
+F:16:1/355 # spider webs
+F:87:/356 # dark pit
+
+
+
+################# Objects #################
+
+##### Mushrooms #####
+
+U:80:/302 # Unknown mushroom
+
+K:1:/302 # Blindness
+K:2:/302 # Paranoia
+K:3:/302 # Confusion
+K:4:/302 # Hallucination
+K:5:/302 # Cure Poison
+K:6:/302 # Cure Blindness
+K:7:/302 # Cure Paranoia
+K:8:/302 # Cure Confusion
+K:9:/302 # Weakness
+K:10:/302 # Unhealth
+K:11:/302 # Restore Constitution
+K:12:/302 # Restoring
+K:13:/302 # Stupidity
+K:14:/302 # Naivety
+K:15:/302 # Poison
+K:16:/302 # Sickness
+K:17:/302 # Paralysis
+K:18:/302 # Restore Strength
+K:19:/302 # Disease
+K:20:/302 # Cure Serious Wounds
+K:514:/302 # Fast Metabolism
+K:815:/302 # Unmagic
+
+##### Scrolls #####
+
+U:70:/303 # Unknown scroll
+
+K:173:/303 # Enchant Weapon To-Hit
+K:174:/303 # Enchant Weapon To-Dam
+K:175:/303 # Enchant Armour
+K:176:/303 # Identify
+K:177:/303 # *Identify*
+K:178:/303 # Rumour
+K:179:/303 # Chaos
+K:180:/303 # Remove Curse
+K:181:/303 # Light
+K:182:/303 # Fire
+K:183:/303 # Ice
+K:184:/303 # Summon Monster
+K:185:/303 # Phase Door
+K:186:/303 # Teleportation
+K:188:/303 # Monster Confusion
+K:189:/303 # Magic Mapping
+K:190:/303 # Rune of Protection
+K:191:/303 # *Remove Curse*
+K:192:/303 # Treasure Detection
+K:194:/303 # Trap Detection
+K:197:/303 # Door/Stair Location
+K:198:/303 # Acquirement
+K:199:/303 # *Acquirement*
+K:200:/303 # Obliteration
+K:201:/303 # Detect Invisible
+K:202:/303 # Aggravate Monster
+K:203:/303 # Trap Creation
+K:204:/303 # Trap/Door Destruction
+K:205:/303 # Artifact Creation
+K:206:/303 # Recharging
+K:207:/303 # Genocide
+K:208:/303 # Darkness
+K:209:/303 # Protection from Evil
+K:210:/303 # Satisfy Hunger
+K:211:/303 # Dispel Undead
+K:212:/303 # *Enchant Weapon*
+K:213:/303 # Curse Weapon
+K:214:/303 # *Enchant Armour*
+K:215:/303 # Curse Armour
+K:216:/303 # Summon Undead
+K:217:/303 # Blessing
+K:218:/303 # Holy Chant
+K:219:/303 # Holy Prayer
+K:220:/303 # Word of Recall
+K:221:/303 # *Destruction*
+K:446:/303 # Fireworks
+K:564:/303 # Nothing
+K:812:/303 # Life
+K:814:/303 # Blood Bond
+K:863:/303 # Golem Creation
+K:881:/303 # House creation
+K:898:/303 # Lottery
+K:899:/303 # Identify Everything
+K:900:/303 # Vermin Control
+K:912:/303 # Cancellation
+K:914:/303 # Wilderness Mapping
+
+K:1031:/303 # Cheque
+
+# Spell Scroll is a Tome by kind(I:111) but has a scroll tile
+K:757:/303 # Spell Scroll
+
+# Golem scrolls are "golem materials" but look like scrolls (I:52)
+K:860:/303 # Golem Scroll of Attack
+K:861:/303 # Golem Scroll of Following
+K:862:/303 # Golem Scroll of Guard
+
+# Parchments are not scrolls objects but have a scrool tile
+K:787:/303 # Adventurer's Guide to Middle Earth
+K:907:/303 # The Book of the Dead
+K:908:/303 # The Gazette
+K:976:/303 # Highlander Victory Deed
+K:977:/303 # Highlander Contender Deed
+K:992:/303 # Master Gladiator's Deed
+K:993:/303 # Gladiator's Deed
+K:994:/303 # Vanquisher's Deed
+K:995:/303 # Gladiator's Entrance
+K:1038:/303 # Dungeon-fleeing Certificate
+K:1039:/303 # Horned Reaper's Autograph
+
+##### Tomes #####
+
+U:111:/304 # Unknown Tome
+
+K:330:/304 # Tome of Magical Energy
+K:331:/304 # Tome of the Eternal Flame
+K:332:/304 # Tome of the Blowing Wind
+K:333:/304 # Tome of the Impenetrable Earth
+K:334:/304 # Tome of the Everrunning Wave
+K:335:/304 # Tome of Translocation
+K:336:/304 # Tome of the Tree
+K:337:/304 # Tome of Knowledge
+K:379:/304 # Tome of Shadows
+K:380:/304 # Tome of Spirits
+K:384:/304 # Corrupted Tome of Chaos
+K:447:/304 # Tainted Tome of Unlife
+K:515:/304 # Handbook of Wind and Weather
+K:738:/304 # Handbook of Beginner Cantrips
+K:756:/304 # Tome of the Time
+K:763:/304 # Unholy Tome of the Hellflame
+K:848:/304 # Handbook of Manipulation
+K:849:/304 # Handbook of Alleviation
+K:922:/304 # Tome of Holy Offense
+K:923:/304 # Tome of Holy Defense
+K:924:/304 # Tome of Holy Curing
+K:925:/304 # Tome of Holy Support
+K:950:/304 # Tome of Arcane Lore
+K:951:/304 # Tome of Physical Lore
+K:956:/304 # Elementalist's Handbook
+K:957:/304 # Handbook for Treasure Hunting
+K:958:/304 # Handbook of Piety
+K:959:/304 # Naturalist's Handbook
+K:960:/304 # Destroyer's Handbook
+K:974:/304 # Astral Grimoire
+K:980:/304 # Handbook of Deception
+K:982:/304 # Handbook of Dungeon Keeping
+K:1035:/304 # Handbook of Revelation
+K:1041:/304 # Handbook of Transportation
+K:1036:/304 # Handbook of Novice Etiquette
+K:1037:/304 # Handbook of First Visions
+K:1001:/304 # Codex
+K:1002:/304 # Spellbook
+K:1003:/304 # Grimoire
+
+# mindcrafters crystals have own crystal tile
+K:996:/305 # Greater Crystal of Psycho-Power
+K:997:/305 # Greater Crystal of Attunement
+K:998:/305 # Greater Crystal of Mental Intrusion
+
+##### Wands #####
+
+U:65:/306 # Unknown Wand
+
+K:269:/306 # Light
+K:271:/306 # Frost Bolts
+K:272:/306 # Fire Bolts
+K:273:/306 # Stone to Mud
+K:274:/306 # Polymorph
+K:275:/306 # Heal Monster
+K:276:/306 # Haste Monster
+K:277:/306 # Slow Monster
+K:278:/306 # Confuse Monster
+K:279:/306 # Sleep Monster
+K:280:/306 # Drain Life
+K:281:/306 # Trap/Door Destruction
+K:282:/306 # Magic Missile
+K:283:/306 # Clone Monster
+K:284:/306 # Scare Monster
+K:285:/306 # Teleport Other
+K:286:/306 # Disarming
+K:287:/306 # Lightning Balls
+K:288:/306 # Cold Balls
+K:289:/306 # Fire Balls
+K:290:/306 # Stinking Cloud
+K:291:/306 # Acid Balls
+K:292:/306 # Wonder
+K:294:/306 # Acid Bolts
+K:295:/306 # Dragon's Flame
+K:296:/306 # Dragon's Frost
+K:297:/306 # Dragon's Breath
+K:298:/306 # Annihilation
+K:299:/306 # Rockets
+K:566:/306 # Nothing
+K:728:/306 # Wall Creation
+K:813:/306 # Lightning Bolts
+K:913:/306 # Teleport To
+
+##### Rods #####
+
+U:66:/307 # Unknown Rod
+
+K:350:/307 # Havoc
+K:351:/307 # Door/Stair Location
+K:352:/307 # Trap Location
+K:353:/307 # Probing
+K:354:/307 # Recall
+K:355:/307 # Illumination
+K:356:/307 # Light
+K:357:/307 # Lightning Bolts
+K:358:/307 # Frost Bolts
+K:359:/307 # Fire Bolts
+K:360:/307 # Polymorph
+K:361:/307 # Slow Monster
+K:362:/307 # Sleep Monster
+K:363:/307 # Drain Life
+K:364:/307 # Teleport Other
+K:365:/307 # Disarming
+K:366:/307 # Lightning Balls
+K:367:/307 # Cold Balls
+K:368:/307 # Fire Balls
+K:369:/307 # Acid Balls
+K:370:/307 # Acid Bolts
+K:371:/307 # Enlightenment
+K:372:/307 # Perception
+K:373:/307 # Curing
+K:374:/307 # Healing
+K:375:/307 # Detection
+K:376:/307 # Restoration
+K:377:/307 # Speed
+K:569:/307 # Nothing
+
+##### Staves #####
+
+U:55:/308 # Unknown Staff
+
+K:300:/308 # Trap Location
+K:301:/308 # Treasure Location
+K:303:/308 # Teleportation
+K:304:/308 # Earthquakes
+K:305:/308 # Summoning
+K:306:/308 # Light
+K:307:/308 # *Destruction*
+K:308:/308 # Starlight
+K:309:/308 # Haste Monsters
+K:310:/308 # Slow Monsters
+K:311:/308 # Sleep Monsters
+K:312:/308 # Cure Serious Wounds
+K:313:/308 # Detect Invisible
+K:314:/308 # Speed
+K:315:/308 # Slowness
+K:316:/308 # Door/Stair Location
+K:317:/308 # Remove Curse
+K:318:/308 # Detect Evil
+K:319:/308 # Curing
+K:320:/308 # Dispel Evil
+K:321:/308 # Probing
+K:322:/308 # Darkness
+K:323:/308 # Genocide
+K:324:/308 # Power
+K:325:/308 # the Magi
+K:326:/308 # Perception
+K:327:/308 # Holiness
+K:328:/308 # Enlightenment
+K:329:/308 # Healing
+K:568:/308 # Nothing
+K:902:/308 # *Perception*
+
+##### Potions #####
+
+U:71:/300 # Unknown potion
+
+K:222:/300 # Slime Mold Juice
+K:223:/300 # Apple Juice
+K:224:/300 # Water
+K:225:/300 # Strength
+K:226:/300 # Weakness
+K:227:/300 # Restore Strength
+K:228:/300 # Intelligence
+K:229:/300 # Stupidity
+K:230:/300 # Restore Intelligence
+K:231:/300 # Wisdom
+K:232:/300 # Naivety
+K:233:/300 # Restore Wisdom
+K:234:/300 # Charisma
+K:235:/300 # Ugliness
+K:236:/300 # Restore Charisma
+K:237:/300 # Curing
+K:238:/300 # Invulnerability
+K:240:/300 # Cure Serious Wounds
+K:241:/300 # Cure Critical Wounds
+K:242:/300 # Healing
+K:243:/300 # Constitution
+K:244:/300 # Experience
+K:245:/300 # Sleep
+K:246:/300 # Blindness
+K:247:/300 # Booze
+K:248:/300 # Poison
+K:249:/300 # Speed
+K:250:/300 # Slowness
+K:251:/300 # Dexterity
+K:252:/300 # Restore Dexterity
+K:253:/300 # Restore Constitution
+K:254:/300 # Lose Memories
+K:255:/300 # Salt Water
+K:256:/300 # Enlightenment
+K:257:/300 # Heroism
+K:258:/300 # Berserk Strength
+K:259:/300 # Boldness
+K:260:/300 # Restore Life Levels
+K:261:/300 # Resist Heat
+K:262:/300 # Resist Cold
+K:263:/300 # Detect Invisible
+K:264:/300 # Slow Poison
+K:265:/300 # Neutralize Poison
+K:266:/300 # Restore Mana
+K:267:/300 # Infra-vision
+K:268:/300 # Resistance
+K:348:/300 # Flask of Oil
+K:349:/301 # Empty Bottle
+K:415:/300 # Death
+K:416:/300 # Ruination
+K:417:/300 # Detonations
+K:418:/300 # Augmentation
+K:419:/300 # *Healing*
+K:420:/300 # Life
+K:421:/300 # Self-Knowledge
+K:422:/300 # *Enlightenment*
+K:437:/300 # Cure Light Wounds
+K:438:/300 # Clumsiness
+K:439:/300 # Sickliness
+K:583:/300 # Invisibility
+K:892:/300 # Cure Light Insanity
+K:893:/300 # Cure Serious Insanity
+K:894:/300 # Cure Critical Insanity
+K:895:/300 # Cure Insanity
+K:901:/300 # Chauve-Souris
+K:909:/300 # Learning
+K:921:/300 # *Restore Mana*
+K:1029:/300 # Blood
+K:717:/300 # Flask of Acid
+
+##### Runes #####
+
+K:679:/100 # Rune of Light
+K:680:/101 # Rune of Darkness (reversed rune for Light)
+K:681:/102 # Rune of Nexus (reversed rune for Inertia)
+K:682:/103 # Rune of Nether (reversed rune)
+K:683:/104 # Rune of Chaos (reversed rune)
+K:684:/105 # Rune of Mana
+K:685:/106 # Rune of Confusion
+K:686:/107 # Rune of Inertia
+K:687:/108 # Rune of Electricity
+K:688:/109 # Rune of Fire
+K:689:/110 # Rune of Water
+K:690:/111 # Rune of Gravity (reversed rune for Time)
+K:691:/112 # Rune of Frost
+K:692:/113 # Rune of Acid (reversed rune for Poison)
+K:693:/114 # Rune of Poison
+K:694:/115 # Rune of Time
+K:695:/116 # Rune of Sound
+K:696:/117 # Rune of Shards
+K:697:/118 # Rune of Hellfire (reversed rune for Fire)
+K:698:/119 # Rune of Force
+K:699:/120 # Rune of Disenchantment (reversed rune for Mana)
+
+##### Lights #####
+
+# U:39:/400 # Unknown Light
+
+K:346:/400 # Wooden Torch
+K:527:/400 # Everburning Torch
+K:347:/401 # Brass Lantern
+K:525:/402 # Dwarven Lantern
+K:530:/403 # Feanorian Lamp
+
+## Artifact Lights
+
+K:476:/404 # Palantir
+K:675:/404 # Palantir
+
+K:500:/405 # Phial
+K:661:/405 # Phial
+
+K:501:/406 # Star
+
+K:502:/407 # Arkenstone
+K:647:/407 # Stone
+K:652:/407 # Anchor
+
+##### Shovels and Picks #####
+
+# U:20:/500 # Unknown digger
+
+K:84:/500 # Shovel
+K:85:/500 # Gnomish Shovel
+K:86:/500 # Dwarven Shovel
+
+K:28:/501 # Mattock
+
+K:87:/502 # Pick
+K:88:/502 # Orcish Pick
+K:89:/502 # Dwarven Pick
+K:1032:/502 # Battered Pick
+
+##### Edged Weapons #####
+
+# U:23:/600 # Unknown sword-type weapon
+
+K:43:/600 # Dagger
+K:30:/601 # Broken Dagger
+K:35:/602 # Short Sword
+K:46:/603 # Smallsword
+K:37:/624 # Espadon
+K:42:/604 # Long Sword
+K:777:/605 # Shadow Blade
+K:778:/605 # Bluesteel Blade
+K:31:/606 # Bastard Sword
+K:47:/607 # Broken Sword
+K:41:/608 # Katana
+K:721:/609 # Dark Sword
+K:32:/610 # Scimitar
+K:33:/611 # Tulwar
+K:34:/612 # Broad Sword
+K:36:/613 # Blade of Chaos
+K:38:/614 # Main Gauche
+K:39:/615 # Cutlass
+K:40:/616 # Executioner's Sword
+K:44:/617 # Rapier
+K:45:/618 # Sabre
+K:524:/619 # Zweihander
+K:548:/619 # Greatsword
+K:545:/620 # Flamberge
+K:546:/621 # Claymore
+K:547:/622 # Kampilan
+K:554:/623 # Basillard
+
+##### Blunt Weapons #####
+
+# U:21:/700 # Unknown blunt weapon
+
+K:48:/700 # Ball-and-Chain
+K:49:/701 # Whip
+K:50:/702 # Flail
+K:51:/703 # Two-Handed Flail
+K:52:/704 # Morning Star
+K:53:/705 # Mace
+K:54:/706 # Quarterstaff
+K:55:/707 # War Maul
+K:56:/708 # Lead-Filled Mace
+K:57:/709 # Mace of Disruption
+K:58:/710 # War Hammer
+K:399:/711 # Great Hammer
+K:498:/712 # Mighty Hammer
+K:529:/713 # Three Piece Rod
+K:542:/714 # Club
+K:915:/715 # Scourge
+K:983:/716 # Demon Hammer
+K:984:/717 # Scourge of Repentance
+
+##### Axes #####
+
+# U:24:/800 # Unknown Axe
+
+K:59:/814 # Beaked Axe
+K:67:/801 # Great Axe
+K:68:/802 # Battle Axe
+K:69:/803 # Heavy War Axe
+K:70:/804 # Broad Axe
+K:385:/805 # Executioner Axe
+K:386:/806 # Hatchet
+K:387:/807 # Double-Headed War Axe
+K:533:/808 # Cleaver
+K:803:/809 # Double-Bitted Axe
+K:804:/810 # Light War Axe
+K:805:/811 # Slaughter Axe
+K:919:/812 # Thunder Axe
+K:999:/813 # Infernal Axe
+K:1033:/814 # Tomahawk
+
+##### Polearms #####
+
+# U:22:/900 # Unknown Polearm
+
+K:60:/900 # Glaive
+K:61:/901 # Halberd
+K:62:/902 # Awl-Pike
+K:63:/903 # Pike
+K:64:/904 # Spear
+K:65:/905 # Trident
+K:66:/906 # Lance
+K:71:/907 # Scythe
+K:72:/908 # Scythe of Slicing
+K:528:/909 # Great Spear
+K:537:/910 # Sickle
+K:538:/911 # Dragon Lance
+K:543:/912 # Broad Spear
+K:544:/913 # Rhomphaia
+K:551:/914 # Fauchard
+K:552:/915 # Guisarme
+K:553:/916 # Heavy Lance
+K:985:/917 # Hunting Spear
+
+##### Bows, Crossbows, Slings #####
+
+# U:19:/1000 # Unknown shooter
+
+K:73:/1000 # Short Bow
+K:74:/1001 # Long Bow
+K:75:/1002 # Light Crossbow
+K:76:/1003 # Heavy Crossbow
+K:77:/1004 # Sling
+
+##### Boomerangs #####
+
+# U:19:/100 # Unknown shooter
+
+K:450:/1005 # Small Razor Boomerang
+K:451:/1006 # Razor Boomerang
+K:648:/1007 # Small Wooden Boomerang
+K:649:/1008 # Wooden Boomerang
+K:650:/1009 # Small Metal Boomerang
+K:651:/1010 # Metal Boomerang
+
+##### Missiles #####
+
+# U:17:/1100 # Unknown Arrow
+
+K:78:/1100 # Arrow
+K:79:/1101 # Seeker Arrow
+K:465:/1100 # Silver Arrow
+K:811:/1100 # Magic Arrow
+K:990:/1102 # Charred Arrow
+
+# U:18:/1103 # Unknown Bolt
+
+K:80:/1103 # Bolt
+K:81:/1104 # Seeker Bolt
+K:444:/1103 # Magic Bolt
+K:466:/1103 # Silver Bolt
+K:991:/1105 # Charred Bolt
+
+# U:16:/1106 # Unknown Shot
+
+K:82:/1106 # Rounded Pebble
+K:83:/1107 # Iron Shot
+K:196:/1107 # Mithril Shot
+K:445:/1107 # Magic Shot
+K:989:/1108 # Charred Shot
+
+##### Mage staves #####
+
+# U:6:/1200 # Unknown Mage staff
+
+K:577:/1200 # Mage Staff
+
+##### Shields #####
+
+# U:34:/1300 # Unknown Shield
+
+K:122:/1300 # Shield of Deflection
+K:128:/1301 # Small Leather Shield
+K:129:/1302 # Large Leather Shield
+K:130:/1303 # Small Metal Shield
+K:131:/1304 # Large Metal Shield
+K:414:/1305 # Dragon Shield
+K:882:/1306 # Orcish Shield
+K:986:/1307 # Mithril Ancile
+K:987:/1308 # Adamantite Aegis
+
+##### Rings #####
+
+U:45:/1400 # Unknown Ring
+
+K:132:/1400 # Might
+K:133:/1400 # Cunningness
+K:134:/1400 # Toughness
+K:135:/1400 # Prowess
+K:136:/1400 # Speed
+K:137:/1400 # Searching
+K:138:/1400 # Teleportation
+K:139:/1400 # Slow Digestion
+K:140:/1400 # Fire Resistance
+K:141:/1400 # Cold Resistance
+K:142:/1400 # Feather Falling
+K:143:/1400 # Poison Resistance
+K:144:/1400 # Free Action
+K:145:/1400 # Weakness
+K:146:/1400 # Flames
+K:147:/1400 # Acid
+K:148:/1400 # Ice
+K:149:/1400 # Woe
+K:150:/1400 # Stupidity
+K:151:/1400 # Damage
+K:152:/1400 # Accuracy
+K:153:/1400 # Protection
+K:154:/1400 # Aggravate Monster
+K:155:/1400 # See Invisible
+K:156:/1400 # Steadiness
+K:157:/1400 # Tenacity
+K:158:/1400 # Preparedness
+K:159:/1400 # Gallantry
+K:160:/1400 # Sustain Steadiness
+K:161:/1400 # Sustain Cunningness
+K:162:/1400 # Slaying
+K:425:/1400 # Fear Resistance
+K:426:/1400 # Light and Darkness Resistance
+K:427:/1400 # Nether Resistance
+K:428:/1400 # Nexus Resistance
+K:429:/1400 # Sound Resistance
+K:430:/1400 # Confusion Resistance
+K:431:/1400 # Stone Skin
+K:432:/1400 # Disenchantment Resistance
+K:433:/1400 # Chaos Resistance
+K:434:/1400 # Blindness Resistance
+K:435:/1400 # Lordly Protection
+K:436:/1400 # Extra Attacks
+K:578:/1400 # Lightning
+K:567:/1400 # Adornment
+K:586:/1400 # Invisibility
+K:755:/1400 # Levitation
+K:809:/1400 # Critical Hits
+K:810:/1400 # Polymorphing
+K:890:/1400 # Stealth
+
+## Artifact rings
+
+K:479:/1401 # The Ring of Durin
+K:506:/1402 # The Ring of Barahir
+K:507:/1403 # The Ring of Tulkas
+K:508:/1404 # The Ring of Power 'Narya'
+K:509:/1405 # The Ring of Power 'Nenya'
+K:510:/1406 # The Ring of Power 'Vilya'
+K:511:/1407 # The Ring of Power 'The One Ring'
+K:582:/1408 # The Ring of F'lar
+K:770:/1409 # The Ring of Phasing
+K:785:/1410 # The Nine Rings of Nazgul
+
+##### Amulets #####
+
+U:40:/1500 # Unknown Amulet
+
+K:163:/1500 # Brilliance
+K:164:/1500 # Charisma
+K:165:/1500 # Searching
+K:166:/1500 # Teleportation
+K:167:/1500 # Slow Digestion
+K:168:/1500 # Acid Resistance
+K:169:/1500 # Adornment
+K:171:/1500 # the Magi
+K:172:/1500 # Doom
+K:467:/1500 # Lightning Resistance
+K:468:/1500 # Wisdom
+K:469:/1500 # Regeneration
+K:470:/1500 # Infra-vision
+K:471:/1500 # Devotion
+K:472:/1500 # Weaponmastery
+K:473:/1500 # Trickery
+K:474:/1500 # Telepathy
+K:475:/1500 # Sustenance
+K:516:/1500 # *Immortality*
+K:521:/1500 # Anti-Magic
+K:522:/1500 # Anti-Teleportation
+K:523:/1500 # Resistance
+K:572:/1500 # Nothing
+K:779:/1500 # Serpents
+K:885:/1500 # Terken
+K:887:/1500 # Speed
+K:888:/1500 # the Highlands
+K:889:/1500 # the Moon
+K:891:/1500 # Reflection
+K:896:/1500 # Rage
+K:897:/1500 # Life Saving
+K:910:/1500 # Mana-charging
+K:920:/1500 # *Invincibility*
+K:934:/1500 # Talisman~
+K:975:/1500 # *Invulnerability*
+K:979:/1500 # the Highlands
+
+## Artifact amulets
+
+K:29:/1501 # The Blue Stone 'Toris Mejistos'
+K:477:/1502 # The Elfstone 'Elessar'
+K:478:/1503 # The Jewel 'Evenstar'
+K:503:/1504 # The Amulet of Carlammas
+K:504:/1505 # The Amulet of Ingwe
+K:505:/1506 # The Necklace 'Nauglamir'
+K:927:/1507 # The Amulet of Grom, the Wyrm Hunter
+K:935:/1508 # The Amulet 'Spirit Shard'
+
+##### Cloaks #####
+
+# U:35:/1600 # Unknown Cloak
+
+K:90:/1600 # Elven Cloak
+K:123:/1601 # Cloak
+K:124:/1602 # Shadow Cloak
+K:531:/1603 # Fur Cloak
+K:883:/1604 # Kolla
+
+## Artifact Cloaks
+
+K:917:/1605 # Sea-blue Silk Cape
+
+##### Gloves #####
+
+# U:31:/1700 # Unknown Gloves
+
+K:125:/1700 # Set of Leather Gloves
+K:126:/1701 # Set of Gauntlets
+K:127:/1702 # Set of Cesti
+K:886:/1703 # Set of Elven Gloves
+
+##### Boots #####
+
+# U:30:/1800 # Unknown Boots
+
+K:91:/1800 #  Pair of Soft Leather Boots
+K:92:/1801 #  Pair of Hard Leather Boots
+K:93:/1802 #  Pair of Metal Shod Boots
+K:884:/1803 #  Pair of Witan Boots
+
+K:1030:/1804 # The Smokin' Boots of Moltor
+
+##### Helms, Crowns #####
+
+## Helms
+
+# U:32:/1900 # Unknown Helm
+
+K:972:/1900 # Cloth Hat
+K:94:/1901 # Hard Leather Cap
+K:95:/1902 # Metal Cap
+K:96:/1903 # Iron Helm
+K:97:/1904 # Steel Helm
+K:413:/1905 # Dragon Helm
+K:967:/1906 # Mithril Helm
+K:988:/1907 # Adamantite Helm
+
+## Crowns
+
+# U:33:/2000 # Unknown Crown
+
+K:98:/2000 # Iron Crown
+K:99:/2001 # Golden Crown
+K:100:/2002 # Jewel Encrusted Crown
+K:378:/2003 # Silver Crown
+
+K:499:/2004 # Massive Iron Crown
+
+K:981:/2005 # Goggles
+
+##### Chest Armor #####
+
+## Light Armor
+
+# U:36:/2100 # Unknown Light Armor
+
+K:101:/2100 # Robe
+K:102:/2101 # Filthy Rag 1
+K:103:/2102 # Soft Leather Armour 4
+K:104:/2103 # Soft Studded Leather 5
+K:105:/2104 # Hard Leather Armour 6
+K:106:/2105 # Hard Studded Leather 7
+K:107:/2106 # Leather Scale Mail 11
+K:535:/2107 # Rhino Hide Armour 8
+K:536:/2108 # Serpent Scale Mail 12
+K:557:/2109 # Cord Armour 6
+K:558:/2110 # Paper Armour 4
+K:559:/2111 # Padded Armour 4
+K:561:/2112 # Stone and Hide Armour 15
+K:646:/2113 # Dragonrider Coat 9
+K:933:/2114 # Wyvern Hide Armour 17
+K:955:/2115 # Fancy Shirt 1
+K:968:/2116 # Frock 2
+K:969:/2117 # Tunic 2
+K:970:/2118 # Gown 1
+K:971:/2119 # Leather Frock 3
+K:973:/2120 # Wire Fleece 8
+K:1004:/2121 # Costume 1
+
+## Heavy Armor
+
+# U:37:/2200 # Unknown Heavy Armor
+
+K:108:/2200 # Metal Scale Mail 13
+K:109:/2201 # Chain Mail 14
+K:110:/2202 # Rusty Chain Mail 14 -8
+K:111:/2203 # Augmented Chain Mail 17
+K:112:/2204 # Bar Chain Mail 18
+K:113:/2205 # Metal Brigandine Armour 19
+K:114:/2206 # Partial Plate Armour 22
+K:115:/2207 # Metal Lamellar Armour 23
+K:116:/2208 # Full Plate Armour 25
+K:117:/2209 # Ribbed Plate Armour 28
+K:118:/2210 # Adamantite Plate Mail 40
+K:119:/2211 # Mithril Plate Mail 35
+K:120:/2212 # Mithril Chain Mail 24
+K:121:/2213 # Double Chain Mail 16
+K:170:/2214 # Double Ring Mail 15
+K:526:/2215 # Splint Mail 19
+K:556:/2216 # Ring Mail 12
+K:961:/2217 # Heavy Mithril Scale Armour 66
+K:962:/2218 # Heavy Mithril Plate Armour 70
+K:963:/2219 # Heavy Ribbed Mithril Armour 74
+K:964:/2220 # Heavy Adamantite Scale Armour 72
+K:965:/2221 # Heavy Adamantite Plate Armour 76
+K:518:/2221 # Heavy Adamantite Plate Armour 76
+K:966:/2222 # Heavy Ribbed Adamantite Armour 80
+
+##### Dragon Scale Mail #####
+
+# U:38:/2300 # Unknown Dragon Scale Mail
+
+K:400:/2300 # Black Dragon Scale Mail
+K:401:/2300 # Blue Dragon Scale Mail
+K:402:/2300 # White Dragon Scale Mail
+K:403:/2300 # Red Dragon Scale Mail
+K:404:/2300 # Green Dragon Scale Mail
+K:405:/2300 # Multi-Hued Dragon Scale Mail
+K:918:/2300 # Pseudo Dragon Scale Mail
+K:406:/2302 # Ethereal Dragon Scale Mail
+K:407:/2300 # Law Dragon Scale Mail
+K:408:/2300 # Bronze Dragon Scale Mail
+K:409:/2300 # Gold Dragon Scale Mail
+K:410:/2300 # Chaos Dragon Scale Mail
+K:411:/2300 # Balance Dragon Scale Mail
+K:412:/2301 # Power Dragon Scale Mail
+K:929:/2300 # Crystal Dragon Scale Mail
+K:930:/2303 # Dracolich Bone Armour
+K:931:/2300 # Dracolisk Scale Mail
+K:932:/2300 # Sky Dragon Scale Mail
+K:978:/2300 # Silver Dragon Scale Mail
+K:928:/2300 # Death Dragon Scale Mail
+
+##### Food #####
+
+K:21:/2400 # Ration of Food
+K:22:/2401 # Hard Biscuit
+K:23:/2402 # Strip of Venison
+K:24:/2403 # Slime Mold
+K:25:/2404 # Lembas
+K:26:/2405 # Pint of Fine Ale
+K:27:/2405 # Pint of Fine Wine
+K:382:/2405 # Pint of Fine Ale
+K:701:/2406 # Sprig of Athelas
+K:807:/2407 # Fortune cookie
+K:841:/2408 # Potato
+K:842:/2409 # Head of Cabbage
+K:843:/2410 # Carrot
+K:844:/2411 # Beet
+K:845:/2412 # Squash
+K:846:/2413 # Ear of Corn
+
+##### Chests #####
+
+# U:7:/2500 # Unknown Chest
+
+K:338:/2500 # Small wooden chest
+K:339:/2501 # Large wooden chest
+K:340:/2502 # Small iron chest
+K:341:/2503 # Large iron chest
+K:342:/2504 # Small steel chest
+K:343:/2505 # Large steel chest
+
+# empty chests
+K:453:/2506 # Small wooden chest
+K:454:/2507 # Large wooden chest
+K:455:/2508 # Small iron chest
+K:456:/2509 # Large iron chest
+K:457:/2510 # Small steel chest
+K:458:/2511 # Large steel chest
+
+K:344:/2512 # Ruined chest
+
+##### Bags #####
+
+# U:126:/2513 # Unknown Bag
+
+K:452:/2513 # Alchemy Satchel
+K:512:/2514 # Trap Kit Bag
+K:513:/2515 # Antistatic Wrapping
+K:520:/2516 # Potion Belt
+
+##### Corpses #####
+
+# U:1:/2600 # Unknown Corpse
+
+K:391:/2600 # Broken Skull
+K:392:/2601 # Broken Bone
+K:393:/2602 # Canine Skeleton
+K:394:/2603 # Rodent Skeleton
+K:395:/2604 # Human Skeleton
+K:396:/2604 # Dwarf Skeleton
+K:397:/2604 # Elf Skeleton
+K:398:/2604 # Gnome Skeleton
+K:459:/2604 # Kobold Skeleton
+K:460:/2604 # Halfling Skeleton
+K:461:/2604 # Orc Skeleton
+K:462:/2604 # Yeek Skeleton
+K:463:/2604 # Goblin Skeleton
+K:464:/2605 # Draconian Skeleton
+
+##### Keys #####
+
+# U:51:/2700 # Unknown Key
+
+K:839:/2700 # Key
+K:840:/2701 # Guild Key
+
+##### Golem Material #####
+
+# U:52:/2800 # Unknown golem material
+
+# material pieces
+K:850:/2800 # Massive Piece of Wood
+K:851:/2801 # Massive Piece of Copper
+K:852:/2801 # Massive Piece of Iron
+K:853:/2801 # Massive Piece of Aluminium
+K:854:/2801 # Massive Piece of Silver
+K:855:/2801 # Massive Piece of Gold
+K:856:/2801 # Massive Piece of Mithril
+K:857:/2801 # Massive Piece of Adamantite
+
+# arms and legs
+K:858:/2802 # Golem Arm
+K:859:/2803 # Golem Leg
+
+##### Trapping Kits #####
+
+# U:46:/2900 # Unknown traping kit
+
+K:549:/2900 # Arrow
+K:550:/2900 # Bolt
+K:555:/2900 # Catapult
+K:560:/2900 # Fumes
+K:562:/2900 # Magic
+K:563:/2900 # Device
+
+##### Tools #####
+
+# U:12:/3000 # Unknown Tool
+
+K:448:/3000 # Grinding Tool
+K:786:/3001 # Climbing Set
+K:903:/3002 # Picklock
+K:904:/3003 # Money Belt
+K:905:/3004 # Backpack Safety Lock
+K:906:/3005 # Tarpaulin
+K:911:/3006 # Flint
+K:916:/3007 # Mummy Wrapping
+
+##### Gift Wrappings #####
+
+# U:11:/3100 # Unknown Gift Wrapping
+
+K:655:/3100 # Red Gift Wrapping
+K:656:/3100 # Orange Gift Wrapping
+K:657:/3100 # Yellow Gift Wrapping
+K:658:/3100 # Green Gift Wrapping
+K:659:/3100 # Blue Gift Wrapping
+K:660:/3100 # Purple Gift Wrapping
+
+# U:127:/3101 # Unknown Gift
+
+K:743:/3101 # Gift, Wrapped in Red Paper
+K:744:/3101 # Gift, Wrapped in Orange Paper
+K:745:/3101 # Gift, Wrapped in Yellow Paper
+K:746:/3101 # Gift, Wrapped in Green Paper
+K:747:/3101 # Gift, Wrapped in Blue Paper
+K:748:/3101 # Gift, Wrapped in Purple Paper
+
+##### Firestone #####
+
+# U:3:/3200 # Unknown Firestone
+
+K:389:/3200 Firestone
+K:390:/3201 Small Firestone
+
+##### Various Staff #####
+
+# (I:11)
+K:383:/3300 # Piece of Wood
+K:517:/3301 Energy Cell
+K:534:/3302 Shard of twinkling, silvery glass
+
+# Junk (I:11)
+K:726:/3303 # Shard of Pottery
+K:727:/3304 # Broken Stick
+
+# (I:127)
+K:1000:/3305 # Magic Seal (replacer for removed items)
+
+# (I:5)
+K:345:/3306 # Iron Spike (jam doors)
+
+# (I:13)
+K:926:/3307 # Heavy Ball (for football)
+K:381:/3309 # Snowball
+
+##### Board games pieces #####
+
+# U:13:/3400
+
+# Go/Checkers
+
+K:936:/3400 # White piece
+K:937:/3400 # Black piece
+
+K:879:/3401 # White Dame
+K:880:/3401 # Black Dame
+
+# Chess
+
+K:941:/3402 # White Rook
+K:947:/3402 # Black Rook
+K:943:/3403 # White Bishop
+K:949:/3403 # Black Bishop
+K:942:/3404 # White Knight
+K:948:/3404 # Black Knight
+K:938:/3405 # White Pawn
+K:944:/3405 # Black Pawn
+K:940:/3406 # White Queen
+K:946:/3406 # Black Queen
+K:939:/3407 # White King
+K:945:/3407 # Black King
+
+##### Demolitionist stuff #####
+
+# U:48:/3500 # Unknown ingrideint
+
+K:449:/3500 # Heap of Wood Chips
+K:718:/3500 # Smattering of Rust
+K:719:/3501 # Mixture
+K:729:/3500 # Piece of Charcoal
+K:730:/3500 # Smattering of Sulfur
+K:731:/3500 # Smattering of Saltpetre
+K:732:/3500 # Dash of Ammonia Salt
+K:733:/3500 # Smattering of Reactive Metal Powder
+K:734:/3500 # Dash of Caustic Metal Ash (\{oDISABLED\{.)
+K:735:/3500 # Dash of Caustic Metal Ash
+K:736:/3500 # Dash of Caustic Salt
+K:737:/3500 # Pinch of Vitriol
+
+# U:47:/3502 # Unknown Charge
+K:702:/3502 # Blast Charge
+K:703:/3502 # Large Blast Charge
+K:704:/3502 # Surgical Charge
+K:705:/3502 # Ground-shaking Charge
+K:706:/3502 # Destructor-Charge
+K:707:/3502 # Fire Charge
+K:708:/3502 # Firestorm Charge
+K:709:/3502 # Firewall Charge
+K:710:/3502 # Wrecking Charge
+K:711:/3502 # Cascading Charge
+K:712:/3502 # Tactical Charge
+K:713:/3502 # Flash bomb
+K:714:/3502 # Concussive Charge
+K:715:/3502 # Large Concussive Charge
+K:716:/3502 # Underground Charge
