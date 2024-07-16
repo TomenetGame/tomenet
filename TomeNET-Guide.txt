@@ -5010,7 +5010,7 @@ by putting this in your .tomenetrc (POSIX):
   graphics 1
   graphic_tiles 16x22sv
 or TomeNET.ini (Windows):
-  Graphics=0
+  Graphics=1
   GraphicTiles=16x22sv
 and then in-game make sure that the option = 1 'font_map_solid_walls' is OFF!
 
