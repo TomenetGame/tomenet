@@ -4819,8 +4819,14 @@ instead assumes that some standard fonts are provided by your system and tries
 to select those when cycling with 'c' key in the fonts menu.
 You can also set fonts manually with = f if you want to choose specific fonts
 available in your Linux/OS X installation.
-To manually install your own fonts, see the instructions for Linux two
+
+To manually install your own fonts on POSIX, see the instructions for Linux two
 paragraphs below in (2.5a), it should be in pcf format.
+
+Starting in 4.9.2 I added an 'posix_extra_fonts' folder and install script for
+more convenience to the lib/xtra folder, which attempts to install fonts in pcf
+format (with optional prf file, if they contain custom mappings) on POSIX
+systems.
 
 
 (2.5a) Custom fonts
