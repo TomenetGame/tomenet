@@ -5040,12 +5040,9 @@ with graphical tiles, which I copy-pasted from EvgenijK's github here:
 
 - there is no in client interface to choose or change gfx tilesets, only by
   changing tomenetrc/tomenet.ini.
-- Windows: bmp from github seems to be corrupted when using in windows.
-  Re-saving it in graphic editor solved the issue (like in Paint).
-  (this should've been resolved, and the current bmp should be fine.)
-- monster list shows wrong tiles TomenetGame/tomenet#50
+- monster list shows wrong tiles (issue TomenetGame/tomenet#50)
 - interface crash and packet errors if there is only tiles for "monsters"
-  TomenetGame/tomenet#51
+  (issue TomenetGame/tomenet#51)
 - in character overview window items that have tiles are not displayed
   correctly.
 
