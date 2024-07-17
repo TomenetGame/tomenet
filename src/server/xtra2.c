@@ -14158,7 +14158,7 @@ bool set_recall(int Ind, int v, object_type *o_ptr) {
 
 void telekinesis_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind], *p2_ptr;
-	object_type *q_ptr, *o_ptr = p_ptr->current_telekinesis;
+	object_type *q_ptr, *o_ptr = p_ptr->current_telekinesis; /* q_ptr is the item to transport, o_ptr the one inscribed @P<targetplayername> */
 	int Ind2;
 	char *inscription, *scan;
 #ifdef TELEKINESIS_GETITEM_SERVERSIDE
@@ -14166,7 +14166,6 @@ void telekinesis_aux(int Ind, int item) {
 #endif
 
 	p_ptr->current_telekinesis = NULL;
-
 	if (!get_inven_item(Ind, item, &q_ptr)) return;
 
 	Ind2 = get_player(Ind, o_ptr);
@@ -14224,7 +14223,7 @@ void telekinesis_aux(int Ind, int item) {
 			if (!is_admin(p_ptr)) return;
 		}
  #ifdef IDDC_NO_TRADE_CHEEZE /* new anti-cheeze hack: abuse NR_tradable for this */
-		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->NR_tradable) {
+		if (in_irondeepdive(&p_ptr->wpos) && q_ptr->NR_tradable) {
 			msg_format(Ind, "\377yYou may not send items you brought from outside this dungeon until you reach at least floor %d.", IDDC_NO_TRADE_CHEEZE);
 			if (!is_admin(p_ptr)) return;
 		}
@@ -14315,7 +14314,7 @@ void telekinesis_aux(int Ind, int item) {
 		return;
 	}
 
-	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) {
+	if (q_ptr->tval == TV_JUNK && q_ptr->sval == SV_GLASS_SHARD) {
 		msg_print(Ind, "The shard seems to be unaffected by telekinesis magic.");
 		if (!is_admin(p_ptr)) return;
 	}
