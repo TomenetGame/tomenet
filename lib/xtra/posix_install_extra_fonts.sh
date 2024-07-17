@@ -20,7 +20,7 @@ FONTCFGAVAIL=/usr/share/fontconfig/conf.avail
 TOMENETUSER=../user
 
 # location of a folder that has subfolders with extra fonts inside (eg extra_fonts/coolfont/, extra_fonts/myfont/ ...)
-# It will be scanned for subfolders and from each subfolder all prf and pcf files inside it will be installed.
+# It will be scanned for subfolders and from each subfolder all prf and bdf/pcf files inside it will be installed.
 # Example file structure:
 # posix_extra_fonts/mylittlefont/font-custom-7x10.prf
 # posix_extra_fonts/mylittlefont/font-custom-7x10.pcf
@@ -29,7 +29,6 @@ TOMENETUSER=../user
 EXTRAFONTS_PARENTFOLDER=posix_extra_fonts
 
 # ======================================================================================
-
 
 
 # Check for correct surroundings
@@ -88,12 +87,13 @@ do
     echo "   Installing $FONTDIR fonts:"
     mkdir -p $LOCALFONTPATH
 
-    echo "    copying .prf files..."
-    cp $FONTDIR/.prf $TOMENETUSER/
+    echo "    copying .prf files (if any exist)..."
+    cp -v $FONTDIR/*.prf $TOMENETUSER/ 2>/dev/null
 
-    echo "    copying .pcf files..."
-    cp $FONTDIR/*.pcf $LOCALFONTPATH/
+    echo "    copying ..bdf/.pcf files (if any exist)..."
+    cp -v $FONTDIR/*.bdf $FONTDIR/*.pcf $LOCALFONTPATH/ 2>/dev/null
 
+    echo ""
     echo "    building local fonts folder at '$LOCALFONTPATH'..."
     mkfontdir $LOCALFONTPATH
 
@@ -103,10 +103,12 @@ do
     echo "    registering fonts in the system..."
     fc-cache -f
 
+    echo ""
     echo "    These fonts from this font folder are now recognized by the system:"
     rm -f _extra_fonts_list.tmp
-    ls -1  $FONTDIR/pcf/*.pcf | grep -o "[^/][0-9a-z]*.pcf$" | grep -o "^[^.]*" > _extra_fonts_list.tmp
-    xlsfonts |grep -f _extra_fonts_list.tmp | tr '\n' ' '
+    ls -1  $FONTDIR/*.bdf 2>/dev/null | grep -o "[^/][0-9a-z]*.bdf$" | grep -o "^[^.]*" > _extra_fonts_list.tmp
+    ls -1  $FONTDIR/*.pcf 2>/dev/null | grep -o "[^/][0-9a-z]*.pcf$" | grep -o "^[^.]*" >> _extra_fonts_list.tmp
+    xlsfonts | grep -f _extra_fonts_list.tmp | tr '\n' ' '
     rm _extra_fonts_list.tmp
     echo ""
 done
