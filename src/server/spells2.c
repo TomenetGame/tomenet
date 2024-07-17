@@ -3921,7 +3921,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	    ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Enchant */
-	flags |= ((item >= INVEN_WIELD && item < 100) ? ENCH_EQUIP : 0x0); // <100: ENABLE_SUBINVEN
+	flags |= ((item >= INVEN_WIELD && item < SUBINVEN_INVEN_MUL) ? ENCH_EQUIP : 0x0);
 	if (enchant(Ind, o_ptr, num_hit, ENCH_TOHIT | flags)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_dam, ENCH_TODAM | flags)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC | flags)) okay = TRUE;
@@ -4075,7 +4075,7 @@ bool ident_spell_aux(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
 	/* Redraw subinven item */
-	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 
 	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
@@ -4141,7 +4141,7 @@ bool identify_fully_item(int Ind, int item) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
 	/* Redraw subinven item */
-	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 
 	/* Handle stuff */
@@ -4205,7 +4205,7 @@ bool identify_fully_item_quiet(int Ind, int item) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
 	/* Redraw subinven item */
-	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 
 	/* Did we use up an item? */
@@ -4298,7 +4298,7 @@ static bool recharge_antiriad(int Ind, int item, int num) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
 	/* Redraw subinven item */
-	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 
 	/* We no longer have a recharge in progress */
@@ -4543,7 +4543,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
 	/* Redraw subinven item */
-	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 
 	/* Something was done */
@@ -9457,14 +9457,14 @@ void mix_chemicals(int Ind, int item) {
 	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
 
 #ifdef ENABLE_SUBINVEN
-	if (item < 100) {
-		if (p_ptr->current_activation >= 100) return; //don't allow mixing item from satchel with item from inven
+	if (item < SUBINVEN_INVEN_MUL) {
+		if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL) return; //don't allow mixing item from satchel with item from inven
 		o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
 		o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
 	} else {
-		if (p_ptr->current_activation < 100) return; //don't allow mixing item from satchel with item from inven
-		o_ptr = &p_ptr->subinventory[p_ptr->current_activation / 100 - 1][p_ptr->current_activation % 100]; /* Ingredient #2 */
-		o2_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100]; /* Ingredient #1 */
+		if (p_ptr->current_activation < SUBINVEN_INVEN_MUL) return; //don't allow mixing item from satchel with item from inven
+		o_ptr = &p_ptr->subinventory[p_ptr->current_activation / SUBINVEN_INVEN_MUL - 1][p_ptr->current_activation % SUBINVEN_INVEN_MUL]; /* Ingredient #2 */
+		o2_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL]; /* Ingredient #1 */
 	}
 #endif
 
@@ -9853,9 +9853,9 @@ void mix_chemicals(int Ind, int item) {
 	i = inven_carry(Ind, q_ptr);
 #ifdef ENABLE_SUBINVEN
 	/* If both ingredients were from a satchel, try to place the result there too, if it's TV_CHEMICAL. */
-	if (p_ptr->current_activation >= 100 && item >= 100 && q_ptr->tval == TV_CHEMICAL) {
+	if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL && item >= SUBINVEN_INVEN_MUL && q_ptr->tval == TV_CHEMICAL) {
 		//do_cmd_subinven_move(Ind, islot);
-		if (subinven_move_aux(Ind, i, item / 100 - 1)) return; /* Includes message */
+		if (subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1)) return; /* Includes message */
 	}
 #endif
 	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
@@ -9990,7 +9990,7 @@ void grind_chemicals(int Ind, int item) {
 	sv = o_ptr->sval;
 
 	/* Safety mechanism in case we're crafing via inscriptions and make a..mistake */
-	if (item >= INVEN_WIELD && item < 100) { // <100: ENABLE_SUBINVEN
+	if (item >= INVEN_WIELD && item < SUBINVEN_INVEN_MUL) {
 		msg_print(Ind, "The item must be in your inventory in order to dismantle it.");
 		return;
 	}

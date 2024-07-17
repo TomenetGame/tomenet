@@ -28,7 +28,7 @@ bool rune_enchant(int Ind, int item) {
 	byte sval;
 
 	/* Not worn? */
-	if (item < INVEN_WIELD || item >= 100) {
+	if (item < INVEN_WIELD || item >= SUBINVEN_INVEN_MUL) {
 		msg_print(Ind, "You must be wearing that to attune the rune."); //yo
 		return(FALSE);
 	}

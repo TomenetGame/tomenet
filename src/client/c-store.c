@@ -519,10 +519,10 @@ static void store_sell(void) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-if (item >= 100) {
-		num = subinventory[item / 100 - 1][item % 100].number;
-		tval = subinventory[item / 100 - 1][item % 100].tval;
-		name = subinventory_name[item / 100 - 1][item % 100];
+	if (item >= SUBINVEN_INVEN_MUL) {
+		num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
+		tval = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
+		name = subinventory_name[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 	} else
 #endif
 	{

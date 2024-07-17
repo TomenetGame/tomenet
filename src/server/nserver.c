@@ -11013,11 +11013,11 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_SCHOOL:
 #ifdef ENABLE_SUBINVEN
 			/* Reject, as we cannot cast/etc. from within subinv, except for mix_chemicals */
-			if (book >= 100) {
+			if (book >= SUBINVEN_INVEN_MUL) {
 				msg_print(player, "You cannot cast from spell books stowed in bags.");
 				return(1);
 			}
-			/* Note: item >= 100 is allowed, this is the telekinesis target item for example */
+			/* Note: item >= SUBINVEN_INVEN_MUL is allowed, this is the telekinesis target item for example */
 #endif
 			book = replay_inven_changes(player, book);
 			if (book == 0x7FFF) {

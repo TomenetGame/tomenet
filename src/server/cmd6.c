@@ -1276,9 +1276,9 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Sanity checks */
-		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_POTION_BELT) {
+		if (p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_POTION_BELT) {
 			msg_print(Ind, "\377yPotion belts are the only eligible sub-containers for quaffing potions.");
 			return;
 		}
@@ -1421,7 +1421,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Redraw subinven item */
-//	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+//	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 }
 
@@ -3856,9 +3856,9 @@ void do_cmd_use_staff(int Ind, int item) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Sanity check */
-		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_MDEVP_WRAPPING) {
+		if (p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_MDEVP_WRAPPING) {
 			msg_print(Ind, "\377yAntistatic wrappings are the only eligible sub-containers for using staves.");
 			return;
 		}
@@ -3979,7 +3979,7 @@ void do_cmd_use_staff(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 		/* Redraw subinven item */
-		if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+		if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 
 #ifdef ENABLE_XID_MDEV
@@ -4071,7 +4071,7 @@ void do_cmd_use_staff(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Redraw subinven item */
-	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 }
 
@@ -4752,8 +4752,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
-		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_MDEVP_WRAPPING) {
+	if (item >= SUBINVEN_INVEN_MUL) {
+		if (p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_MDEVP_WRAPPING) {
 			msg_print(Ind, "\377yAntistatic wrappings are the only eligible sub-containers for zapping rods.");
 			return;
 		}
@@ -4997,7 +4997,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Redraw subinven item */
-	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 }
 
@@ -5027,7 +5027,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Paranoia - zapping directional rods from within bags is not allowed! */
-	if (item >= 100) return;
+	if (item >= SUBINVEN_INVEN_MUL) return;
 #endif
 	if (!get_inven_item(Ind, item, &o_ptr)) {
 		p_ptr->shooting_till_kill = FALSE;
@@ -5774,14 +5774,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* For now, only allow demo-alch from here */
 		if (o_ptr->tval != TV_CHEMICAL) {
 			msg_print(Ind, "In a container you can only activate demolition-related chemicals.");
 			return;
 		}
 		/* Sanity check */
-		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_SATCHEL) {
+		if (p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_SATCHEL) {
 			msg_print(Ind, "\377yAlchemy Satchels are the only eligible sub-containers for activating chemicals.");
 			return;
 		}
@@ -5790,9 +5790,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	/* dual-wield hack: cannot activate items if armour is too heavy.
 	   Spectral weapons will not drain life either ;). */
-#ifdef ENABLE_SUBINVEN
-	if (item < 100)
-#endif
 	if (item == INVEN_ARM && o_ptr->tval != TV_SHIELD && p_ptr->rogue_heavyarmor) {
 		msg_format(Ind, "\377oYour armour is too heavy for dual-wielding, preventing activation of your secondary weapon.");
 #ifdef ENABLE_XID_MDEV
@@ -5856,7 +5853,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD
 #ifdef ENABLE_SUBINVEN
-	    || item >= 100
+	    || item >= SUBINVEN_INVEN_MUL
 #endif
 	    ) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");
@@ -5903,7 +5900,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		if (o_ptr->tval == TV_BOTTLE) {
 #ifdef ENABLE_SUBINV
 			/* Cannot fill empty bottles that are stored inside a chest.. */
-			if (item >= 100) {
+			if (item >= SUBINVEN_INVEN_MUL) {
 				msg_print(Ind, "You cannot fill bottles that are stowed away.");
 				return;
 			}
@@ -6223,11 +6220,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 			/* Place charcoal into inventory */
  #ifdef ENABLE_SUBINVEN
-			if (item >= 100) {
+			if (item >= SUBINVEN_INVEN_MUL) {
 				i = inven_carry(Ind, ox_ptr);
 				/* Automatically move it into the same bag if possible */
 				//do_cmd_subinven_move(Ind, islot);
-				(void)subinven_move_aux(Ind, i, item / 100 - 1);
+				(void)subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1);
 				return;
 			}
  #endif
@@ -7393,7 +7390,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	/* (paranoia?) If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD
 #ifdef ENABLE_SUBINVEN
-	    || item >= 100
+	    || item >= SUBINVEN_INVEN_MUL
 #endif
 	    ) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");

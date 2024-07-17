@@ -4564,6 +4564,9 @@
 
 
 #ifdef ENABLE_SUBINVEN
+ /* Starter inventory index that stands for "inside subinventory" and gets multiplied by the subinventory's inventory index.
+    Only condition: It must be >= INVEN_TOTAL, so it can fully encode it. [100] */
+ #define SUBINVEN_INVEN_MUL 100
  /* Unify inventory colour of subinventories. If not defined, they will have different colours depending on their group type. */
  #define SUBINVEN_UNIFIED_COLOUR
  /* Allow chests to be used as storage containers after having opened them once? */

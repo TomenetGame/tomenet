@@ -5434,7 +5434,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 #ifdef NEW_ID_SCREEN
  #ifdef ENABLE_SUBINVEN
-	if (slot < 100)
+	if (slot < SUBINVEN_INVEN_MUL)
  #endif
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
 	if (pt_ptr->melee_brand && !pt_ptr->melee_brand_ma && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
@@ -6293,7 +6293,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
  */
 s16b index_to_label(int i) {
 #ifdef ENABLE_SUBINVEN
-	if (i >= 100) return(I2A(i % 100));
+	if (i >= SUBINVEN_INVEN_MUL) return(I2A(i % SUBINVEN_INVEN_MUL));
 #endif
 
 	/* Indexes for "inven" are easy */

@@ -749,7 +749,7 @@ void do_trap(int item_kit) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-	if (item_kit >= 100) o_ptr = &subinventory[item_kit / 100 - 1][item_kit % 100];
+	if (item_kit >= SUBINVEN_INVEN_MUL) o_ptr = &subinventory[item_kit / SUBINVEN_INVEN_MUL - 1][item_kit % SUBINVEN_INVEN_MUL];
 	else
 #endif
 	if (!o_ptr) o_ptr = &inventory[item_kit];

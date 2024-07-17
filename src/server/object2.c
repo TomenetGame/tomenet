@@ -10897,7 +10897,7 @@ void inven_item_increase(int Ind, int item, int num) {
 #ifdef ENABLE_SUBINVEN
 	object_type *o_ptr;
 
-	if (item >= 100) o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+	if (item >= SUBINVEN_INVEN_MUL) o_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 	else o_ptr = &p_ptr->inventory[item];
 #else
 	object_type *o_ptr = &p_ptr->inventory[item];
@@ -10927,13 +10927,13 @@ void inven_item_increase(int Ind, int item, int num) {
 		p_ptr->total_weight += (num * o_ptr->weight);
 
 #ifdef ENABLE_SUBINVEN
-		if (item >= 100) {
+		if (item >= SUBINVEN_INVEN_MUL) {
 			/* If we lose an item, prepare for a warning, given in subsequent inven_item_describe() call */
 			if (!(o_ptr->temp & 0x04) && num < 0 && (i = check_guard_inscription(o_ptr->note, 'W')) && o_ptr->number <= (i == -1 ? 10 : i - 1)) o_ptr->temp |= 0x02;
 			else o_ptr->temp &= ~(0x02 | 0x04);
 
 			/* Update the slot 'manually' */
-			display_subinven_aux(Ind, item / 100 - 1, item % 100);
+			display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 
 			/* If losing quest items, the quest goal might get unset again! */
 			if ((p_ptr->quest_any_r || p_ptr->quest_any_r_target) && num < 0) quest_check_ungoal_r(Ind, o_ptr, -num);
@@ -10978,11 +10978,11 @@ bool inven_item_optimize(int Ind, int item) {
 	object_type *o_ptr;
 	int s;
 
-	if (item >= 100) {
-		int i, s = item / 100 - 1;
+	if (item >= SUBINVEN_INVEN_MUL) {
+		int i, s = item / SUBINVEN_INVEN_MUL - 1;
 		object_type *s_ptr = &p_ptr->inventory[s];
 
-		o_ptr = &p_ptr->subinventory[s][item % 100];
+		o_ptr = &p_ptr->subinventory[s][item % SUBINVEN_INVEN_MUL];
 
 		/* Only optimize real items */
 		if (!o_ptr->k_idx) {
@@ -10994,7 +10994,7 @@ bool inven_item_optimize(int Ind, int item) {
 		if (o_ptr->number) return(FALSE);
 
 		/* Slide everything down */
-		for (i = item % 100; i < s_ptr->bpval; i++) {
+		for (i = item % SUBINVEN_INVEN_MUL; i < s_ptr->bpval; i++) {
 			/* Structure copy */
 			p_ptr->subinventory[s][i] = p_ptr->subinventory[s][i + 1];
 			display_subinven_aux(Ind, s, i);
@@ -12695,7 +12695,7 @@ s16b replay_inven_changes(int Ind, s16b slot) {
 
 #ifdef ENABLE_SUBINVEN
 	/* TODO: Implement for subinven, instead of just returning identity!! */
-	if (slot >= 100) return(slot);
+	if (slot >= SUBINVEN_INVEN_MUL) return(slot);
 #endif
 
 	inv_change = p_ptr->inventory_changes;

@@ -4565,7 +4565,7 @@ void paint_house(int Ind, int x, int y, int k) {
 	/* Sanity check */
 	if (!verify_inven_item(Ind, k)) return;
 #ifdef ENABLE_SUBINVEN
-	if (k >= 100) o_ptr = &p_ptr->subinventory[k / 100 - 1][k % 100];
+	if (k >= SUBINVEN_INVEN_MUL) o_ptr = &p_ptr->subinventory[k / SUBINVEN_INVEN_MUL - 1][k % SUBINVEN_INVEN_MUL];
 	else
 #endif
 	o_ptr = &p_ptr->inventory[k];

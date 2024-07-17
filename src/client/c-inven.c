@@ -84,10 +84,10 @@ static bool get_item_okay(int i) {
 
 		/* Assume okay */
 		return(TRUE);
-	} else if (i >= 100) {
-		int s = i / 100 - 1;
+	} else if (i >= SUBINVEN_INVEN_MUL) {
+		int s = i / SUBINVEN_INVEN_MUL - 1;
 
-		i = i % 100;
+		i = i % SUBINVEN_INVEN_MUL;
 
 		/* Illegal items */
 		if ((i < 0) || (i >= inventory[s].bpval)) return(FALSE);
@@ -184,9 +184,9 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 #ifdef ENABLE_SUBINVEN
 	int si = -1;
 
-	if (i >= 100) {
-		si = i / 100 - 1;
-		i = i % 100;
+	if (i >= SUBINVEN_INVEN_MUL) {
+		si = i / SUBINVEN_INVEN_MUL - 1;
+		i = i % SUBINVEN_INVEN_MUL;
 
 		buf = subinventory_name[si][i];
 		tval = subinventory[si][i].tval;
@@ -259,14 +259,14 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 			/* Now check inven/subinven */
 			if (k == -1) get_tag(&k, tag, TRUE, FALSE, mode_ready);
 			/* unnecessary check, but whatever */
-			if (k != -1 && tval != (k >= 100 ? subinventory[k / 100 - 1][k % 100].tval : inventory[k].tval)) k = -1;
+			if (k != -1 && tval != (k >= SUBINVEN_INVEN_MUL ? subinventory[k / SUBINVEN_INVEN_MUL - 1][k % SUBINVEN_INVEN_MUL].tval : inventory[k].tval)) k = -1;
 
 			/* Found a ready-to-use replacement magic device for our still-charging/empty one! */
 			if (k != -1) {
 #ifdef ENABLE_SUBINVEN
-				if (k >= 100) {
-					si = k / 100 - 1;
-					i = k % 100;
+				if (k >= SUBINVEN_INVEN_MUL) {
+					si = k / SUBINVEN_INVEN_MUL - 1;
+					i = k % SUBINVEN_INVEN_MUL;
 				} else {
 					si = -1;
 					i = k;
@@ -282,7 +282,7 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 			    )
 				return(FALSE);
 #ifdef ENABLE_SUBINVEN
-			if (si != -1) *cp = (si + 1) * 100 + i;
+			if (si != -1) *cp = (si + 1) * SUBINVEN_INVEN_MUL + i;
 			else
 #endif
 			*cp = i;
@@ -295,7 +295,7 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 		if (!chk_multi || i > INVEN_PACK || si != -1) {
 #endif
 #ifdef ENABLE_SUBINVEN
-			if (si != -1) *cp = (si + 1) * 100 + i;
+			if (si != -1) *cp = (si + 1) * SUBINVEN_INVEN_MUL + i;
 			else
 #endif
 			*cp = i;
@@ -343,7 +343,7 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 		/* Found no equipment alternative */
 		if (k == -1) {
  #ifdef ENABLE_SUBINVEN
-			if (si != -1) *cp = (si + 1) * 100 + i;
+			if (si != -1) *cp = (si + 1) * SUBINVEN_INVEN_MUL + i;
 			else
  #endif
 			*cp = i;
@@ -355,7 +355,7 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 		   Remember our original item to use it if we don't find any further, different item in inventory,
 		   which would take precedence over this equipment item.. */
  #ifdef ENABLE_SUBINVEN
-		if (si != -1) *cp = (si + 1) * 100 + i;
+		if (si != -1) *cp = (si + 1) * SUBINVEN_INVEN_MUL + i;
 		else
  #endif
 		*cp = i;
@@ -446,7 +446,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 		/* Also scan all items inside sub-bags */
 		if (inventory[i].tval == TV_SUBINVEN)
 			for (si = 0; si < inventory[i].bpval; si++) {
-				if (get_tag_aux((i + 1) * 100 + si, cp, tag, mode)) return(TRUE);
+				if (get_tag_aux((i + 1) * SUBINVEN_INVEN_MUL + si, cp, tag, mode)) return(TRUE);
 				/* (Note: Items in subinven cannot be smart-swapped, so there is no check here regarding that, unlike above for normal inventory.) */
 		}
 #endif
@@ -629,7 +629,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 								if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
 								if (subinventory[k][j].tval == inventory[i].tval && /* unnecessary check, but whatever */
 								    strstr(buf3, buf2)) {
-									i = (k + 1) * 100 + j;
+									i = (k + 1) * SUBINVEN_INVEN_MUL + j;
 									break;
 								}
 							}
@@ -801,7 +801,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 
 					if (ic == -1) continue;
 				}
-				*item = i + (l + 1) * 100;
+				*item = i + (l + 1) * SUBINVEN_INVEN_MUL;
 				return(TRUE);
 			}
 		}
@@ -1003,7 +1003,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool found_subinven = FALSE;
 	bool subinven = FALSE; /* are items inside subinventory/subinventories (possible) subject to choose from? */
 	bool use_subinven = FALSE; /* can we select subinven items to enter? */
-	int sub_i = (using_subinven + 1) * 100;
+	int sub_i = (using_subinven + 1) * SUBINVEN_INVEN_MUL;
 #endif
 	bool safe_input = FALSE;
 	int use_without_asking = -1; /* Use first item found with new "@<commandkey>%" inscription right away without prompting for item choice */
@@ -1119,13 +1119,13 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			if (inventory[k].sval >= SV_SI_CHEST_SMALL_WOODEN && inventory[k].sval <= SV_SI_CHEST_LARGE_STEEL) continue;
 
 			for (j = 0; j < inventory[k].bpval; j++) {
-				if (!get_item_okay((k + 1) * 100 + j)) continue;
+				if (!get_item_okay((k + 1) * SUBINVEN_INVEN_MUL + j)) continue;
 				found_subinven = TRUE;
  #if 0
 				break;
  #else
 				if (use_without_asking == -1 && get_tag(&s, '%', TRUE, FALSE, mode)) {
-					use_without_asking = s;//(s + 1) * 100 + j;
+					use_without_asking = s;//(s + 1) * SUBINVEN_INVEN_MUL + j;
 					break;
 				}
  #endif
@@ -1533,14 +1533,14 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 #ifdef ENABLE_SUBINVEN
 			if (using_subinven != -1) {
 				/* get_tag() is using_subinven agnostic, so we have to convert k back to a direct subinven index */
-				if (k >= 100) k = k % 100;
+				if (k >= SUBINVEN_INVEN_MUL) k = k % SUBINVEN_INVEN_MUL;
 
 				if ((k < using_subinven_size) ? !inven : !equip) {
 					if (c_cfg.item_error_beep) bell();
 					else bell_silent();
 					break;
 				}
-			} else if (k >= 100) {
+			} else if (k >= SUBINVEN_INVEN_MUL) {
 				/* Hack -- verify item (in subinventory) */
 				if (!inven) {
 					if (c_cfg.item_error_beep) bell();

@@ -10364,15 +10364,15 @@ void verify_expfact(int Ind, int p) {
 /* Based on Mikaelh's sanity check, extended to this helper function for subinventories. */
 bool verify_inven_item(int Ind, int item) {
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Verify container location, must be inside inventory */
-		if (item / 100 - 1 < 0) return(FALSE);
-		if (item / 100 - 1 >= INVEN_PACK) return(FALSE);
-		if (Players[Ind]->inventory[item / 100 - 1].tval != TV_SUBINVEN) return(FALSE);
+		if (item / SUBINVEN_INVEN_MUL - 1 < 0) return(FALSE);
+		if (item / SUBINVEN_INVEN_MUL - 1 >= INVEN_PACK) return(FALSE);
+		if (Players[Ind]->inventory[item / SUBINVEN_INVEN_MUL - 1].tval != TV_SUBINVEN) return(FALSE);
 
 		/* Verify item location inside container */
-		if (item % 100 < 0) return(FALSE); //is this even... compiler specs please
-		if ((item % 100) >= Players[Ind]->inventory[item / 100 - 1].bpval) return(FALSE);
+		if (item % SUBINVEN_INVEN_MUL < 0) return(FALSE); //is this even... compiler specs please
+		if ((item % SUBINVEN_INVEN_MUL) >= Players[Ind]->inventory[item / SUBINVEN_INVEN_MUL - 1].bpval) return(FALSE);
 
 		return(TRUE);
 	}
@@ -10398,19 +10398,19 @@ bool verify_inven_item(int Ind, int item) {
 bool get_inven_item(int Ind, int item, object_type **o_ptr) {
 #ifdef ENABLE_SUBINVEN
 	/* This function can be used for subinventories too, if using get_subinven_item() were overkill. */
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Sanity/Paranoia check that the item is actually inside a subinventory */
-		if (Players[Ind]->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
+		if (Players[Ind]->inventory[item / SUBINVEN_INVEN_MUL - 1].tval != TV_SUBINVEN) {
 			msg_print(Ind, "ERROR: Not a subinventory.");
-			s_printf("ERROR: Not a subinventory. (%s, %i)\n", Players[Ind]->name, item / 100 - 1);
+			s_printf("ERROR: Not a subinventory. (%s, %i)\n", Players[Ind]->name, item / SUBINVEN_INVEN_MUL - 1);
 			return(FALSE);
 		}
 
 		/* Verify the item */
-		//if (item / 100 - 1 > INVEN_PACK || item % 100 > SUBINVEN_PACK) return(FALSE); -- already done in verify_inven_item()
+		//if (item / SUBINVEN_INVEN_MUL - 1 > INVEN_PACK || item % SUBINVEN_INVEN_MUL > SUBINVEN_PACK) return(FALSE); -- already done in verify_inven_item()
 
 		/* Get the item */
-		*o_ptr = &Players[Ind]->subinventory[item / 100 - 1][item % 100];
+		*o_ptr = &Players[Ind]->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 		return(TRUE);
 	}
 #endif
@@ -10429,7 +10429,7 @@ bool get_inven_item(int Ind, int item, object_type **o_ptr) {
 }
 
 #ifdef ENABLE_SUBINVEN
-/* Translate encoded item (>=100) to subinventory index,
+/* Translate encoded item (>=SUBINVEN_INVEN_MUL) to subinventory index,
    or just identity if it's not a subinventory, so it includes get_inven_item() functionality.
    If both Ind and **o_ptr are not 0/NULL, o_ptr will be set to point to the indexed object.
    Ind should be non-zero, to ensure correct check of legal size for the subinventory.
@@ -10439,7 +10439,7 @@ void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *
 	int i = item; /* For memory safety, in case item and iitem are the same object */
 
 	/* Not a subinventory but just a 'direct' item? */
-	if (i < 100) {
+	if (i < SUBINVEN_INVEN_MUL) {
 		/* Normal inven/equip item */
 		if (sitem) *sitem = -1;
 		if (iitem) *iitem = i;
@@ -10451,9 +10451,9 @@ void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *
 	}
 
 	/* Determine container slot in backpack */
-	if (sitem) *sitem = i / 100 - 1;
+	if (sitem) *sitem = i / SUBINVEN_INVEN_MUL - 1;
 	/* Determine item slot inside the container */
-	if (iitem) *iitem = i % 100;
+	if (iitem) *iitem = i % SUBINVEN_INVEN_MUL;
 
 	/* Optionally set o_ptr already for convenience */
 	if (Ind && o_ptr && sitem && iitem) *o_ptr = &Players[Ind]->subinventory[*sitem][*iitem];

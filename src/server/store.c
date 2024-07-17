@@ -4140,9 +4140,9 @@ void store_sell(int Ind, int item, int amt) {
 	if (!verify_inven_item(Ind, item)) return;
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Get the item (in the pack) */
-		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+		o_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 	} else
 #endif
 	{
@@ -4199,7 +4199,7 @@ void store_sell(int Ind, int item, int amt) {
 		u32b f4, fx;
 
 		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx, &fx);
-		if ((item % 100 >= INVEN_WIELD) ) { /* ENABLE_SUBINVEN */
+		if ((item % SUBINVEN_INVEN_MUL >= INVEN_WIELD) ) { /* ENABLE_SUBINVEN */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;
 		} else if (f4 & TR4_CURSE_NO_DROP) {
@@ -4284,7 +4284,7 @@ void store_sell(int Ind, int item, int amt) {
 	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
 		/* Describe the transaction */
 #ifdef ENABLE_SUBINVEN
-		if (item >= 100) msg_format(Ind, "Selling %s (%c)(%c).", o_name, index_to_label(item / 100 - 1),  index_to_label(item % 100));
+		if (item >= SUBINVEN_INVEN_MUL) msg_format(Ind, "Selling %s (%c)(%c).", o_name, index_to_label(item / SUBINVEN_INVEN_MUL - 1),  index_to_label(item % SUBINVEN_INVEN_MUL));
 		else
 #endif
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
@@ -4344,9 +4344,9 @@ void store_confirm(int Ind) {
 	/* -------------------Repeated checks in case inven changed (rods recharging->restacking) */
 	if (!verify_inven_item(Ind, item)) return;
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Get the item (in the pack) */
-		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+		o_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 	} else
 #endif
 	/* Get the item (in the pack) */
@@ -4376,7 +4376,7 @@ void store_confirm(int Ind) {
 		u32b f4, fx;
 
 		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx, &fx);
-		if ((item % 100 >= INVEN_WIELD) ) { /* ENABLE_SUBINVEN */
+		if ((item % SUBINVEN_INVEN_MUL >= INVEN_WIELD) ) { /* ENABLE_SUBINVEN */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;
 		} else if (f4 & TR4_CURSE_NO_DROP) {
@@ -6174,9 +6174,9 @@ void home_sell(int Ind, int item, int amt) {
 	if (amt <= 0) return;
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Get the item (in the pack) */
-		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+		o_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 	} else
 #endif
 	{
@@ -6229,9 +6229,9 @@ void home_sell(int Ind, int item, int amt) {
 
 	/* Get the inventory item again */
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Get the item (in the pack) */
-		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+		o_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 	} else
 #endif
 	{

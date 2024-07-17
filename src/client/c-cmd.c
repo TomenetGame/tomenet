@@ -53,7 +53,7 @@ static void cmd_all_in_one(void) {
 		return;
 	}
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) tval = subinventory[item / 100 - 1][item % 100].tval;
+	if (item >= SUBINVEN_INVEN_MUL) tval = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
 	else
 #endif
 	if (item >= INVEN_WIELD) {
@@ -87,7 +87,7 @@ static void cmd_all_in_one(void) {
 	case TV_ROD:
 		/* Does rod require aiming? (Always does if not yet identified) */
 #ifdef ENABLE_SUBINVEN
-		if (item >= 100) Send_zap(item);
+		if (item >= SUBINVEN_INVEN_MUL) Send_zap(item);
 		else
 #endif
 		if (inventory[item].uses_dir == 0) {
@@ -106,7 +106,7 @@ static void cmd_all_in_one(void) {
 		break;
 	case TV_FLASK:
 #ifdef ENABLE_SUBINVEN
-		if (item >= 100) return;
+		if (item >= SUBINVEN_INVEN_MUL) return;
 #endif
 		if (inventory[item].sval == SV_FLASK_OIL) Send_fill(item);
 		break;
@@ -170,7 +170,7 @@ static void cmd_all_in_one(void) {
 		bool done = FALSE;
 
 #ifdef ENABLE_SUBINVEN
-		if (item >= 100) return;
+		if (item >= SUBINVEN_INVEN_MUL) return;
 #endif
 
 		for (i = 1; i < MAX_SKILLS; i++) {
@@ -1184,23 +1184,23 @@ void cmd_drop(byte flag) {
 		equipped = FALSE;
 
 		/* Get an amount */
-		if (subinventory[using_subinven][item % 100].number > 1) {
-			if (is_cheap_misc(subinventory[using_subinven][item % 100].tval) && c_cfg.whole_ammo_stack && !verified_item
-			    && (item % 100) < INVEN_WIELD) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
-				amt = subinventory[using_subinven][item % 100].number;
+		if (subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number > 1) {
+			if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item
+			    && (item % SUBINVEN_INVEN_MUL) < INVEN_WIELD) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
+				amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
 			else {
 				inkey_letter_all = TRUE;
-				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % 100].number);
+				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
 			}
 		}
 		else amt = 1;
 
 		Send_drop(item, amt);
 		return;
-	} else if (item >= 100) {
+	} else if (item >= SUBINVEN_INVEN_MUL) {
 		equipped = FALSE;
-		num = subinventory[item / 100 - 1][item % 100].number;
-		tval = subinventory[item / 100 - 1][item % 100].tval;
+		num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
+		tval = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
 	} else
 #endif
 	{
@@ -1284,7 +1284,7 @@ void cmd_take_off(void) {
 
 	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP | USE_EXTRA))) return;
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) num = subinventory[item / 100 - 1][item % 100].number;
+	if (item >= SUBINVEN_INVEN_MUL) num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
 	else
 #endif
 	num = inventory[item].number;
@@ -1381,11 +1381,11 @@ void cmd_destroy(byte flag) {
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
 		/* Get an amount */
-		if (subinventory[using_subinven][item % 100].number > 1) {
-			if (is_cheap_misc(subinventory[using_subinven][item % 100].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = subinventory[using_subinven][item % 100].number;
+		if (subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number > 1) {
+			if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
 			else {
 				inkey_letter_all = TRUE;
-				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % 100].number);
+				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
 			}
 		} else amt = 1;
 
@@ -1393,20 +1393,20 @@ void cmd_destroy(byte flag) {
 		if (!amt) return;
 
 		if (!c_cfg.no_verify_destroy) {
-			if (subinventory[using_subinven][item % 100].number == amt)
-				sprintf(out_val, "Really destroy %s?", subinventory_name[using_subinven][item % 100]);
+			if (subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number == amt)
+				sprintf(out_val, "Really destroy %s?", subinventory_name[using_subinven][item % SUBINVEN_INVEN_MUL]);
 			else
-				sprintf(out_val, "Really destroy %d of your %s?", amt, subinventory_name[using_subinven][item % 100]);
+				sprintf(out_val, "Really destroy %d of your %s?", amt, subinventory_name[using_subinven][item % SUBINVEN_INVEN_MUL]);
 			if (!get_check2(out_val, FALSE)) return;
 		}
 
 		/* Send it */
 		Send_destroy(item, amt);
 		return;
-	} else if (item >= 100) {
-		num = subinventory[item / 100 - 1][item % 100].number;
-		tval = subinventory[item / 100 - 1][item % 100].tval;
-		name = subinventory_name[item / 100 - 1][item % 100];
+	} else if (item >= SUBINVEN_INVEN_MUL) {
+		num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
+		tval = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
+		name = subinventory_name[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
 	} else
 #endif
 	{
@@ -1624,10 +1624,10 @@ void cmd_zap_rod(void) {
 		return;
 	}
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
+	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Send it */
 		/* Does item require aiming? (Always does if not yet identified) */
-		if (subinventory[item / 100 - 1][item % 100].uses_dir == 0) {
+		if (subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
 			Send_zap(item);
 		} else { /* Actually directional rods are not allowed to be used from within a subinventory, but anyway.. */
@@ -1702,7 +1702,7 @@ void cmd_activate(void) {
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven == -1) {
 		if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN))) return;
-		if (item >= 100) sub = item / 100 - 1;
+		if (item >= SUBINVEN_INVEN_MUL) sub = item / SUBINVEN_INVEN_MUL - 1;
 	} else
 #endif
 	//if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | EQUIP_FIRST | USE_EXTRA)))
@@ -1713,7 +1713,7 @@ void cmd_activate(void) {
 		if (sub == -1) sub = using_subinven;
 		/* Send it */
 		/* Does item require aiming? (Always does if not yet identified) */
-		if (subinventory[sub][item % 100].uses_dir == 0) {
+		if (subinventory[sub][item % SUBINVEN_INVEN_MUL].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
 			using_subinven_item = item; /* allow mixing chemicals directly from satchels */
 			Send_activate(item);

@@ -375,7 +375,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 
 #ifdef VAMPIRES_INV_CURSED
  #ifdef ENABLE_SUBINVEN
-	if (item < 100)
+	if (item < SUBINVEN_INVEN_MUL)
  #endif
 	if (item >= INVEN_WIELD) {
 		if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
@@ -417,7 +417,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	stop_shooting_till_kill(Ind);
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) act = "Dropped";
+	if (item >= SUBINVEN_INVEN_MUL) act = "Dropped";
 	else
 #endif
 	/* What are we "doing" with the object */
@@ -441,7 +441,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 
 #if POLY_RING_METHOD == 0
  #ifdef ENABLE_SUBINVEN
-	if (item < 100)
+	if (item < SUBINVEN_INVEN_MUL)
  #endif
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
@@ -462,7 +462,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 #endif
 
 #ifdef ENABLE_SUBINVEN
-	if (item < 100)
+	if (item < SUBINVEN_INVEN_MUL)
 #endif
 	/* Check if item gave WRAITH form */
 	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith && item >= INVEN_WIELD) {
@@ -473,7 +473,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-	if (item < 100)
+	if (item < SUBINVEN_INVEN_MUL)
 #endif
 	/* Artifacts */
 	if (o_ptr->name1) {
@@ -494,7 +494,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 
 #ifdef ENABLE_STANCES
  #ifdef ENABLE_SUBINVEN
-	if (item < 100)
+	if (item < SUBINVEN_INVEN_MUL)
  #endif
 	/* take care of combat stances */
  #ifndef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
@@ -524,7 +524,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) ;
+	if (item >= SUBINVEN_INVEN_MUL) ;
 	else
 #endif
 	/* Reset temporary brand enchantments */
@@ -1660,7 +1660,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	    )) override = 1;
 
 #ifdef ENABLE_SUBINVEN
-	if (item < 100)
+	if (item < SUBINVEN_INVEN_MUL)
 #endif
 	/* Cannot remove cursed items */
 	if (cursed_p(o_ptr)) {
@@ -2107,9 +2107,9 @@ void do_cmd_observe(int Ind, int item) {
 			}
 
 #ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
-		sub = item / 100 - 1;
-		i = item % 100;
+	if (item >= SUBINVEN_INVEN_MUL) {
+		sub = item / SUBINVEN_INVEN_MUL - 1;
+		i = item % SUBINVEN_INVEN_MUL;
 
 		o_ptr = Ind_t ? &(Players[Ind_t]->subinventory[sub][i]) : &(p_ptr->subinventory[sub][i]);
 
@@ -2672,8 +2672,8 @@ void do_cmd_uninscribe(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Todo: PN_COMBINE aka combine_pack() for subinven */
-	if (item >= 100) {
-		display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) {
+		display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);
@@ -2749,8 +2749,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 		/* Redraw the updated item */
 #ifdef ENABLE_SUBINVEN
-		if (item >= 100) {
-			display_subinven_aux(Ind, item / 100 - 1, item % 100);
+		if (item >= SUBINVEN_INVEN_MUL) {
+			display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 			return;
 		}
 #endif
@@ -2889,8 +2889,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Todo: PN_COMBINE aka combine_pack() for subinven */
-	if (item >= 100) {
-		display_subinven_aux(Ind, item / 100 - 1, item % 100);
+	if (item >= SUBINVEN_INVEN_MUL) {
+		display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);

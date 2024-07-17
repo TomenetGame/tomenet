@@ -5543,9 +5543,9 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	if (c_cfg.auto_inscr_off) return(FALSE);
 
 #ifdef ENABLE_SUBINVEN
-	if (slot >= 100) {
-		sslot = slot / 100 - 1;
-		slot %= 100;
+	if (slot >= SUBINVEN_INVEN_MUL) {
+		sslot = slot / SUBINVEN_INVEN_MUL - 1;
+		slot %= SUBINVEN_INVEN_MUL;
 
 		/* skip empty items */
 		if (!subinventory[sslot][slot].tval) return(FALSE);
@@ -5737,7 +5737,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	    strcmp(auto_inscription_tag[i], "on sale") &&
 	    strcmp(auto_inscription_tag[i], "stolen")) {
 #ifdef ENABLE_SUBINVEN
-		Send_inscribe((sslot + 1) * 100 + slot, auto_inscription_tag[i]);
+		Send_inscribe((sslot + 1) * SUBINVEN_INVEN_MUL + slot, auto_inscription_tag[i]);
 #else
 		Send_inscribe(slot, auto_inscription_tag[i]);
 #endif
@@ -6156,7 +6156,7 @@ int Send_observe(int item) {
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
 		/* Hacky encoding */
-		if ((n = Packet_printf(&wbuf, "%c%hd", PKT_OBSERVE, item + (using_subinven + 1) * 100)) <= 0) return(n);
+		if ((n = Packet_printf(&wbuf, "%c%hd", PKT_OBSERVE, item + (using_subinven + 1) * SUBINVEN_INVEN_MUL)) <= 0) return(n);
 		return(1);
 	}
 #endif
@@ -6650,10 +6650,10 @@ int Send_subinven_move(int item) {
 	return(1);
 }
 int Send_subinven_remove(int item) {
-	int n, islot = item / 100 - 1;
+	int n, islot = item / SUBINVEN_INVEN_MUL - 1;
 
 	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return(1);
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_REMOVE, (short int)islot, (short int)(item % 100))) <= 0) return(n);
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_REMOVE, (short int)islot, (short int)(item % SUBINVEN_INVEN_MUL))) <= 0) return(n);
 	return(1);
 }
 #endif

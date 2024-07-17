@@ -972,7 +972,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 						else
 							msg_format(Ind, "\376\377o%sour %s (%c)(%c) was stolen!",
 							    ((o_ptr->number > 1) ? "One of y" : "Y"),
-							    o_name, index_to_label(i / 100 - 1), index_to_label(s));
+							    o_name, index_to_label(i / SUBINVEN_INVEN_MUL - 1), index_to_label(s));
 #endif
 
 						inven_item_increase(Ind, i, -1);
@@ -3278,7 +3278,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	/* Sanity-check and get the objects */
 	if (!verify_inven_item(Ind, item_kit)) return;
 #ifdef ENABLE_SUBINVEN
-	if (item_kit >= 100 && p_ptr->inventory[item_kit / 100 - 1].sval != SV_SI_TRAPKIT_BAG) {
+	if (item_kit >= SUBINVEN_INVEN_MUL && p_ptr->inventory[item_kit / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_TRAPKIT_BAG) {
 		msg_print(Ind, "\377yTrap Kit Bags are the only eligible sub-containers for using trap kits.");
 		return;
 	}
@@ -3288,7 +3288,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 
 	if (!verify_inven_item(Ind, item_load)) return;
 #ifdef ENABLE_SUBINVEN
-	if (item_load >= 100 && p_ptr->inventory[item_load / 100 - 1].sval != SV_SI_POTION_BELT) { /* Allow using potions from potion belt for fumes traps */
+	if (item_load >= SUBINVEN_INVEN_MUL && p_ptr->inventory[item_load / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_POTION_BELT) { /* Allow using potions from potion belt for fumes traps */
 		msg_print(Ind, "\377yTrap Kit payload must be readily held in normal inventory, not in a container.");
 		return;
 	}
@@ -3406,10 +3406,10 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	inven_item_increase(Ind, item_load, -num);
 	inven_item_describe(Ind, item_load);
 #ifdef ENABLE_SUBINVEN
-	if (item_kit >= 100) inven_item_optimize(Ind, item_kit);
+	if (item_kit >= SUBINVEN_INVEN_MUL) inven_item_optimize(Ind, item_kit);
 	/* Optimize load, or a 'number = 0' staff will not get erased from subinven and its remaining charges
 	   will stack with itself when the item is placed in here again after trap went off or was disarmed! */
-	if (item_load >= 100) inven_item_optimize(Ind, item_load);
+	if (item_load >= SUBINVEN_INVEN_MUL) inven_item_optimize(Ind, item_load);
 #endif
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (inven_item_optimize(Ind, i)) break;

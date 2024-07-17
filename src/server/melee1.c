@@ -321,7 +321,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 
 		/* Message */
 #ifdef ENABLE_SUBINVEN
-		if (i >= 100) {
+		if (i >= SUBINVEN_INVEN_MUL) {
 			char m_name[MNAME_LEN];
 
 			msg_format(Ind, "\376\377o%sour %s (%c)(%c) was stolen!",
