@@ -4078,7 +4078,7 @@ bool ident_spell_aux(int Ind, int item) {
 	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
 #endif
 
-	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
+	if (item >= 0) o_ptr->auto_insc = TRUE;
 
 	/* Something happened */
 	return(TRUE);
@@ -4177,7 +4177,7 @@ bool identify_fully_item(int Ind, int item) {
 	p_ptr->current_star_identify = 0;
 
 	/* extra: in case the item wasn't normally identified yet but right away *id*ed, apply this too.. */
-	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
+	if (item >= 0) o_ptr->auto_insc = TRUE;
 
 	/* Success */
 	return(TRUE);
