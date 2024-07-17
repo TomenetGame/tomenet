@@ -106,9 +106,10 @@ do
     echo ""
     echo "    These fonts from this font folder are now recognized by the system:"
     rm -f _extra_fonts_list.tmp
-    ls -1  $FONTDIR/*.bdf 2>/dev/null | grep -o "[^/][0-9a-z]*.bdf$" | grep -o "^[^.]*" > _extra_fonts_list.tmp
-    ls -1  $FONTDIR/*.pcf 2>/dev/null | grep -o "[^/][0-9a-z]*.pcf$" | grep -o "^[^.]*" >> _extra_fonts_list.tmp
-    xlsfonts | grep -f _extra_fonts_list.tmp | tr '\n' ' '
+    ls -1  $FONTDIR/*.bdf 2>/dev/null | grep -o "[^/][0-9a-zA-Z]*.bdf$" | grep -o "^[^.]*" > _extra_fonts_list.tmp
+    ls -1  $FONTDIR/*.pcf 2>/dev/null | grep -o "[^/][0-9a-zA-Z]*.pcf$" | grep -o "^[^.]*" >> _extra_fonts_list.tmp
+    # ignore case, as a font 16X22.pcf can have "16x22" code in fonts.dir (filename isn't necessarily the same as registered font name -_-)
+    xlsfonts | grep -i -f _extra_fonts_list.tmp | tr '\n' ' '
     rm _extra_fonts_list.tmp
     echo ""
 done
