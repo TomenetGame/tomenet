@@ -3928,6 +3928,12 @@ void do_cmd_use_staff(int Ind, int item) {
 	ident = FALSE;
 
 	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
+#ifdef ENABLE_XID_SPELL
+ #ifdef XID_REPEAT
+		object_type *i_ptr;
+ #endif
+#endif
+
 		msg_format(Ind, "\377%cYou failed to use the staff properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -3935,7 +3941,7 @@ void do_cmd_use_staff(int Ind, int item) {
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
 		/* hack: repeat ID-spell attempt until item is successfully identified */
-		if (rep && !object_known_p(Ind, &p_ptr->inventory[p_ptr->current_item])) {
+		if (rep && get_inven_item(Ind, p_ptr->current_item, i_ptr) && !object_known_p(Ind, i_ptr)) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
 
 			p_ptr->command_rep = PKT_USE;
@@ -4862,6 +4868,12 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	}
 
 	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
+#ifdef ENABLE_XID_SPELL
+ #ifdef XID_REPEAT
+		object_type *i_ptr;
+ #endif
+#endif
+
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -4870,7 +4882,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
 		/* hack: repeat ID-spell attempt until item is successfully identified */
-		if (rep && !object_known_p(Ind, &p_ptr->inventory[p_ptr->current_item])) {
+		if (rep && get_inven_item(Ind, p_ptr->current_item, i_ptr) && !object_known_p(Ind, i_ptr)) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
 
 			p_ptr->command_rep = PKT_ZAP;
@@ -5941,6 +5953,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		}
 #endif
 	} else if (!activate_magic_device(Ind, o_ptr, FALSE)) {
+#ifdef ENABLE_XID_SPELL
+ #ifdef XID_REPEAT
+		object_type *i_ptr;
+ #endif
+#endif
+
 		msg_format(Ind, "\377%cYou failed to activate it properly.", COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -5949,7 +5967,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
 		/* hack: repeat ID-spell attempt until item is successfully identified */
-		if (rep && !object_known_p(Ind, &p_ptr->inventory[p_ptr->current_item])) {
+		if (rep && get_inven_item(Ind, p_ptr->current_item, i_ptr) && !object_known_p(Ind, i_ptr)) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
 
 			p_ptr->command_rep = PKT_ACTIVATE;
