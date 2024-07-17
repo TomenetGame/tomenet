@@ -4827,6 +4827,8 @@ Starting in 4.9.2 I added an 'posix_extra_fonts' folder and install script for
 more convenience to the lib/xtra folder, which attempts to install fonts in pcf
 or bdf format (with optional prf file if they contain custom mappings) on POSIX
 systems.
+It already contains a bunch of POSIX fonts in pcf/bdf format that were made by
+Virus, Svechnik and Tangar.
 
 
 (2.5a) Custom fonts
