@@ -3776,6 +3776,11 @@ bool create_artifact_aux(int Ind, int item) {
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
+#endif
+
 	/* Art creation finished */
 	p_ptr->current_artifact = 0;
 	p_ptr->current_artifact_nolife = FALSE;
@@ -3855,6 +3860,11 @@ bool curse_spell_aux(int Ind, int item) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
+#endif
 
 	return(TRUE);
 }
@@ -3977,6 +3987,11 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
+#endif
 
 	/* Something happened */
 	return(TRUE);
@@ -9230,6 +9245,11 @@ void tome_creation_aux(int Ind, int item) {
 	p_ptr->window |= (PW_INVEN);
 	p_ptr->notice |= (PN_REORDER);
 
+#ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
+#endif
+
 	/* Something happened */
 	return;
 }
@@ -10681,7 +10701,9 @@ void wrap_gift(int Ind, int item) {
 }
 void unwrap_gift(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item], forge;
+	object_type *o_ptr, forge;
+
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	s_printf("GIFTUNWRAPPING: %s: %d, %d\n", p_ptr->name, o_ptr->tval, o_ptr->sval);
 #ifdef USE_SOUND_2010
