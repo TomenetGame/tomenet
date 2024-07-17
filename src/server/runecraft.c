@@ -27,18 +27,13 @@ bool rune_enchant(int Ind, int item) {
 	object_type *o_ptr, *r_ptr;
 	byte sval;
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return(FALSE);
-if (p_ptr->current_activation >= 100) return(FALSE);
-#endif
-
 	/* Not worn? */
-	if (INVEN_WIELD > item) {
-		msg_print(Ind, "You must be wearing that to attune the rune.");
+	if (item < INVEN_WIELD || item >= 100) {
+		msg_print(Ind, "You must be wearing that to attune the rune."); //yo
 		return(FALSE);
 	}
 
-	o_ptr = &p_ptr->inventory[item];
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	/* Artifact? */
 	if (o_ptr->name1) {
@@ -47,7 +42,7 @@ if (p_ptr->current_activation >= 100) return(FALSE);
 	}
 
 	/* One sigil per element! */
-	r_ptr = &p_ptr->inventory[p_ptr->current_activation];
+	if (!get_inven_item(Ind, p_ptr->current_activation, &r_ptr)) return(FALSE);
 	sval = r_ptr->sval;
 
 	if (((p_ptr->inventory[INVEN_WIELD].sigil == sval) && item != INVEN_WIELD)
