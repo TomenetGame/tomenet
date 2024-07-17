@@ -1715,6 +1715,11 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[book];
+#ifdef ENABLE_XID_SPELL
+ #ifdef XID_REPEAT
+	object_type *i_ptr;
+ #endif
+#endif
 	int ftk_maybe;
 	int ftk_type;
 #ifdef ENABLE_XID_SPELL
@@ -1858,8 +1863,9 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #ifdef ENABLE_XID_SPELL
  #ifdef XID_REPEAT
 		/* hack: repeat ID-spell attempt until item is successfully identified */
-		if (rep && ftk_maybe && !object_known_p(Ind, &p_ptr->inventory[item])) {
+		if (rep && ftk_maybe && get_inven_item(Ind, item, i_ptr) && !object_known_p(Ind, i_ptr)) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
+
 			p_ptr->command_rep = PKT_ACTIVATE_SKILL;
 			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, book, spell, dir, item, aux);
