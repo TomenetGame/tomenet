@@ -3690,14 +3690,7 @@ bool create_artifact_aux(int Ind, int item) {
 	s32b old_owner;/* anti-cheeze :) */
 	u32b resf = make_resf(p_ptr);
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return(FALSE);
-#endif
-
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else o_ptr = &o_list[0 - item];
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	old_owner = o_ptr->owner;
 
@@ -3816,11 +3809,7 @@ bool curse_spell_aux(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return(FALSE);
-#endif
-
-	o_ptr = &p_ptr->inventory[item];
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	p_ptr->current_curse = FALSE;
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -3905,21 +3894,13 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return(FALSE);
-#endif
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	/* Assume enchant weapon */
 	item_tester_hook = item_tester_hook_weapon;
 
 	/* Enchant armor if requested */
 	if (num_ac) item_tester_hook = item_tester_hook_armour;
-
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else o_ptr = &o_list[0 - item];
-
 
 	if (!item_tester_hook(o_ptr) || !is_enchantable(o_ptr)) {
 		msg_print(Ind, "Sorry, you cannot enchant that item.");
@@ -3940,7 +3921,7 @@ if (item >= 100) return(FALSE);
 	    ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Enchant */
-	flags |= (item >= INVEN_WIELD ? ENCH_EQUIP : 0x0);
+	flags |= ((item >= INVEN_WIELD && item < 100) ? ENCH_EQUIP : 0x0); // <100: ENABLE_SUBINVEN
 	if (enchant(Ind, o_ptr, num_hit, ENCH_TOHIT | flags)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_dam, ENCH_TODAM | flags)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC | flags)) okay = TRUE;
@@ -9106,19 +9087,10 @@ void tome_creation_aux(int Ind, int item) {
 	char		o_name[ONAME_LEN];
 	s16b		*xtra;
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return;
-if (p_ptr->using_up_item >= 100) return;
-#endif
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else o_ptr = &o_list[0 - item];
-	/* Get the item (in the pack) */
-	if (p_ptr->using_up_item >= 0) o2_ptr = &p_ptr->inventory[p_ptr->using_up_item];
-	/* Get the item (on the floor) -- NO: using_up_item -1 is marker for 'no item' (paranoia) */
-	//else o2_ptr = &o_list[0 - p_ptr->using_up_item];
+	/* Get the item - in the pack ONLY, because -1 is a marker hack here for 'no item'! */
+	if (p_ptr->using_up_item >= 0 && !get_inven_item(Ind, p_ptr->using_up_item, &o2_ptr)) return;
 	else return; //paranoia, see comment above
 
 	/* severe error: custom book no longer there */
@@ -10007,23 +9979,18 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 }
 /* Grind metallic objects to poweder for use as ingredient */
 void grind_chemicals(int Ind, int item) {
-	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	object_type forge, *q_ptr = &forge; /* Resulting metal powder */
+	object_type forge, *q_ptr = &forge; /* Resulting metal powder/wood chips */
 	char o_name[ONAME_LEN];
 	int i, tv, sv;
 	bool metal, wood;
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return;
-#endif
-
-	o_ptr = &p_ptr->inventory[item]; /* Metallic object */
+	if (!get_inven_item(Ind, item, &o_ptr)) return; /* Metallic/wooden object */
 	tv = o_ptr->tval;
 	sv = o_ptr->sval;
 
 	/* Safety mechanism in case we're crafing via inscriptions and make a..mistake */
-	if (item >= INVEN_WIELD) {
+	if (item >= INVEN_WIELD && item < 100) { // <100: ENABLE_SUBINVEN
 		msg_print(Ind, "The item must be in your inventory in order to dismantle it.");
 		return;
 	}
@@ -10542,13 +10509,8 @@ void wrap_gift(int Ind, int item) {
 	object_type *o_ptr, *ow_ptr, forge;
 	bool empty = (item == p_ptr->current_activation);
 
-#ifdef ENABLE_SUBINVEN /* TODO: IMPLEMENT!!! */
-if (item >= 100) return;
-if (p_ptr->current_activation >= 100) return;
-#endif
-
-	o_ptr = &p_ptr->inventory[item];
-	ow_ptr = &p_ptr->inventory[p_ptr->current_activation];
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
+	if (!get_inven_item(Ind, p_ptr->current_activation, &ow_ptr)) return;
 
 	s_printf("GIFTWRAPPING: %d, %d", o_ptr->tval, o_ptr->sval);
 
