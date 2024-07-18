@@ -1575,6 +1575,7 @@ char inkey(void) {
 			ch = 0;
 		}
 
+//c_msg_format("key %c (%d) - %d, %d, %d, %d, %d", ch, ch, kk, after_macro, parse_slash, multi_key_macros, skipping);
 
 		/* Handle some special keys */
 		switch (ch) {
@@ -1606,10 +1607,11 @@ char inkey(void) {
 			ch = 0;
 			break;
 
-		/* Hack -- strip "control-underscore" special-macro-triggers */
+		/* Hack -- strip "control-underscore" special-macro-triggers
+		   (NOTE: CTRL+_ and CTRL+/ is also key 31, and thereby can freeze up char input for the next 15 chars if user presses it manually.) */
 		case 31: /* == nks_start[0] : Start marker of special key sequence */
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
-			/* Crazy hack: Enable use of arrow keys, added for askfor_aux() */
+			/* Crazy hack: Enable use of arrow keys, added for askfor_aux() -- TODO: Check collision with multi-key-macro-sequence (parse_under/strip_chars)! */
 			if (inkey_location_keys) {
 				inkey_location_key_active = TRUE;
 				inkey_location_key_index = -1;
