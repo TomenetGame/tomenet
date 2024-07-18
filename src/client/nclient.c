@@ -6647,7 +6647,7 @@ int Send_subinven_move(int item, int amt) {
 
 	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return(1);
 	if (is_older_than(&server_version, 4, 9, 2, 0, 0, 0)) {
-		if ((n = Packet_printf(&wbuf, "%c%hd", PKT_SI_MOVE)) <= 0) return(n); //discard amt, always move full stack
+		if ((n = Packet_printf(&wbuf, "%c%hd", PKT_SI_MOVE, item)) <= 0) return(n); //discard amt, always move full stack
 	} else {
 		if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_MOVE, item, amt)) <= 0) return(n);
 	}
