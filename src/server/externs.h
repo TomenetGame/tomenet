@@ -744,10 +744,10 @@ extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr
 #ifdef ENABLE_SUBINVEN
 extern s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot);
 extern bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought);
-extern void do_cmd_subinven_move(int Ind, int islot);
-extern bool subinven_move_aux(int Ind, int islot, int sslot);
-extern void do_cmd_subinven_remove(int Ind, int islot, int slot);
-extern void subinven_remove_aux(int Ind, int islot, int slot);
+extern void do_cmd_subinven_move(int Ind, int islot, int amt_spec);
+extern bool subinven_move_aux(int Ind, int islot, int sslot, int amt);
+extern void do_cmd_subinven_remove(int Ind, int islot, int slot, int amt);
+extern void subinven_remove_aux(int Ind, int islot, int slot, int amt);
  #ifdef SUBINVEN_LIMIT_GROUP
 extern bool subinven_group_player(int Ind, int group, int slot);
  #endif

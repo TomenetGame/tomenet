@@ -6642,18 +6642,26 @@ int Send_change_password(char *old_pass, char *new_pass) {
 }
 
 #ifdef ENABLE_SUBINVEN
-int Send_subinven_move(int item) {
+int Send_subinven_move(int item, int amt) {
 	int n;
 
 	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return(1);
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_SI_MOVE, item)) <= 0) return(n);
+	if (is_older_than(&server_version, 4, 9, 2, 0, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c%hd", PKT_SI_MOVE)) <= 0) return(n); //discard amt, always move full stack
+	} else {
+		if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_MOVE, item, amt)) <= 0) return(n);
+	}
 	return(1);
 }
-int Send_subinven_remove(int item) {
+int Send_subinven_remove(int item, int amt) {
 	int n, islot = item / SUBINVEN_INVEN_MUL - 1;
 
 	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return(1);
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_REMOVE, (short int)islot, (short int)(item % SUBINVEN_INVEN_MUL))) <= 0) return(n);
+	if (is_older_than(&server_version, 4, 9, 2, 0, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_REMOVE, (short int)islot, (short int)(item % SUBINVEN_INVEN_MUL))) <= 0) return(n); //discard amt, always move full stack
+	} else {
+		if ((n = Packet_printf(&wbuf, "%c%hd%hd%hd", PKT_SI_REMOVE, (short int)islot, (short int)(item % SUBINVEN_INVEN_MUL), amt)) <= 0) return(n);
+	}
 	return(1);
 }
 #endif

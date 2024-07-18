@@ -936,8 +936,8 @@ extern int Send_client_setup(void);
 extern int Send_audio(void);
 extern int Send_font(void);
 #ifdef ENABLE_SUBINVEN
-extern int Send_subinven_move(int item);
-extern int Send_subinven_remove(int item);
+extern int Send_subinven_move(int item, int amt);
+extern int Send_subinven_remove(int item, int amt);
 #endif
 extern int Send_version(void);
 extern int Send_plistw_notify(bool on);

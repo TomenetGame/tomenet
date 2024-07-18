@@ -813,7 +813,7 @@ void cmd_disarm(void) {
    b) automatically move the most possible amount
 */
 static void cmd_subinven_move(void) {
-	int item;
+	int item, num, amt;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
@@ -828,11 +828,23 @@ static void cmd_subinven_move(void) {
 
 	if (!c_get_item(&item, "Stow what? ", (USE_INVEN | USE_EXTRA))) return;
 
-	Send_subinven_move(item);
+	/* Get an amount */
+	num = inventory[item].number;
+	if (num > 1) {
+		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item)
+			amt = num;
+		else {
+			inkey_letter_all = TRUE;
+			amt = c_get_quantity("How many (ENTER = all)? ", -num);
+		}
+	}
+	else amt = 1;
+
+	Send_subinven_move(item, amt);
 }
 /* Note: islot can be ignored, since it's actually using_subinven, which is checked in c_get_item() anyway. */
 static void cmd_subinven_remove(int islot) {
-	int item;
+	int item, num, amt;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
@@ -840,7 +852,19 @@ static void cmd_subinven_remove(int islot) {
 
 	if (!c_get_item(&item, "Unstow what? ", (USE_SUBINVEN | USE_EXTRA))) return;
 
-	Send_subinven_remove(item);
+	/* Get an amount */
+	num = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
+	if (num > 1) {
+		if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item)
+			amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
+		else {
+			inkey_letter_all = TRUE;
+			amt = c_get_quantity("How many (ENTER = all)? ", -subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
+		}
+	}
+	else amt = 1;
+
+	Send_subinven_remove(item, amt);
 }
 #endif
 
@@ -1185,8 +1209,7 @@ void cmd_drop(byte flag) {
 
 		/* Get an amount */
 		if (subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number > 1) {
-			if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item
-			    && (item % SUBINVEN_INVEN_MUL) < INVEN_WIELD) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
+			if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item)
 				amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
 			else {
 				inkey_letter_all = TRUE;

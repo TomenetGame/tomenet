@@ -14858,24 +14858,33 @@ static int Receive_si_move(int ind) {
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;
-	short int islot;
+	short int islot, amt;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-//		use_esp_link(&player, LINKF_OBJ);
+		//use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &islot)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
-		return(n);
+	if (is_older_than(&connp->version, 4, 9, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &islot)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return(n);
+		}
+		amt = MAX_STACK_SIZE + 1; /* always move whole stack (+1: hack marker, see below)  */
+	} else {
+		if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &islot, &amt)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return(n);
+		}
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		do_cmd_subinven_move(player, (int)islot);
+		do_cmd_subinven_move(player, (int)islot, (int)amt);
 		return(2);
 	} else if (p_ptr) {
-		Packet_printf(&connp->q, "%c%hd", ch, islot);
+		if (amt == MAX_STACK_SIZE + 1) Packet_printf(&connp->q, "%c%hd", ch, islot); //hack: check for v<4.9.2
+		Packet_printf(&connp->q, "%c%hd%hd", ch, islot, amt);
 		return(0);
 	}
 	return(1);
@@ -14885,24 +14894,33 @@ static int Receive_si_remove(int ind) {
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;
-	short int islot, slot;
+	short int islot, slot, amt;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-//		use_esp_link(&player, LINKF_OBJ);
+		//use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &islot, &slot)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
-		return(n);
+	if (is_older_than(&connp->version, 4, 9, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &islot, &slot)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return(n);
+		}
+		amt = MAX_STACK_SIZE + 1; /* always move whole stack (+1: hack marker, see below) */
+	} else {
+		if ((n = Packet_scanf(&connp->r, "%c%hd%hd%hd", &ch, &islot, &slot, &amt)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return(n);
+		}
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		do_cmd_subinven_remove(player, (int)islot, (int)slot);
+		do_cmd_subinven_remove(player, (int)islot, (int)slot, (int)amt);
 		return(2);
 	} else if (p_ptr) {
-		Packet_printf(&connp->q, "%c%hd%hd", ch, islot, slot);
+		if (amt == MAX_STACK_SIZE + 1) Packet_printf(&connp->q, "%c%hd%hd", ch, islot, slot); //hack: check for v<4.9.2
+		Packet_printf(&connp->q, "%c%hd%hd%hd", ch, islot, slot, amt);
 		return(0);
 	}
 	return(1);

@@ -5084,7 +5084,7 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
    Keeps total weight constant. Deletes source inventory item on successful complete move.
    Returns TRUE if fully stowed. */
-bool subinven_move_aux(int Ind, int islot, int sslot) {
+bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr = &p_ptr->inventory[islot];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
@@ -5190,10 +5190,10 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 }
 /* Tries to move the item or item stack in one inventory slot completely into
    the first available and eligible subinventory. */
-void do_cmd_subinven_move(int Ind, int islot) {
+void do_cmd_subinven_move(int Ind, int islot, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr, *s_ptr;
-	int amt, i, t;
+	int max, i, t;
  #ifdef SUBINVEN_LIMIT_GROUP
 	int prev_type = -1;
  #endif
@@ -5241,10 +5241,12 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		return;
 	}
 
-	amt = i_ptr->number;
+	max = i_ptr->number;
+	if (amt < 1) amt = 1;
+	else if (amt > max) amt = max;
 
 	/* Message */
-	//msg_format(Ind, "You drop %d pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
+	//msg_format(Ind, "You drop %d pieces of %s.", max, k_name + k_info[tmp_obj.k_idx].name);
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		s_ptr = &p_ptr->inventory[i];
@@ -5303,7 +5305,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			continue;
 		}
 		/* Eligible subinventory found, try to move as much as possible */
-		if (subinven_move_aux(Ind, islot, i)) {
+		if (subinven_move_aux(Ind, islot, i, amt)) {
 			/* Successfully moved ALL items! We're done. */
 			all = TRUE;
 			break;
@@ -5326,7 +5328,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	   Keep in mind that on moving all the object is now something different as it has been excised!
 	   So we cannot reference to it anymore in that case and use 'all' instead. */
 	if (all) ;//kind of spammy - msg_print(Ind, "You stow all of it.");
-	else if (amt - i_ptr->number == 0) {
+	else if (max - i_ptr->number == 0) {
 		msg_print(Ind, "\377yNo free bag space to stow that item.");
 		return;
 	} else msg_print(Ind, "You have at least enough bag space to stow some of it.");
@@ -5343,7 +5345,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
 /* This function assumes that there IS inventory space to move to. */
-void subinven_remove_aux(int Ind, int islot, int slot) {
+void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, *s_ptr;
 	int i;
@@ -5396,7 +5398,7 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 
 	verify_subinven_size(Ind, islot, TRUE);
 }
-void do_cmd_subinven_remove(int Ind, int islot, int slot) {
+void do_cmd_subinven_remove(int Ind, int islot, int slot, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr, *o_ptr;
 
@@ -5408,7 +5410,9 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 	o_ptr = &p_ptr->subinventory[islot][slot];
 	if (!o_ptr->tval) return;
 
-	subinven_remove_aux(Ind, islot, slot);
+	if (amt < 1) amt = 1;
+	else if (amt > o_ptr->number) amt = o_ptr->number;
+	subinven_remove_aux(Ind, islot, slot, amt);
 
 	//break_cloaking(Ind, 5);
 	//break_shadow_running(Ind);

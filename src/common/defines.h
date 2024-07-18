@@ -2059,7 +2059,7 @@
 /*
  * A "stack" of items is limited to less than 100 items (hard-coded).
  */
-#define MAX_STACK_SIZE			100
+#define MAX_STACK_SIZE			(99+1)
 
 
 /*

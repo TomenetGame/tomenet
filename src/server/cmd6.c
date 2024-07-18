@@ -6242,7 +6242,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				i = inven_carry(Ind, ox_ptr);
 				/* Automatically move it into the same bag if possible */
 				//do_cmd_subinven_move(Ind, islot);
-				(void)subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1);
+				(void)subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, MAX_STACK_SIZE - 1);
 				return;
 			}
  #endif
