@@ -3768,7 +3768,7 @@ void display_player(int hist) {
 
 		/* Normal view (vertical columns of different stats) */
 		if (!csheet_horiz) {
-			int header_color[4][19];
+			int header_color[4][19], row;
 
 			for (i = 0; i < 4; i++)
 				for (j = 0; j < 19; j++)
@@ -3859,41 +3859,41 @@ void display_player(int hist) {
 
 				if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 1, 25 + i); header_color[1][0] = TERM_WHITE; }
 				if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 2, 25 + i); header_color[1][1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "t", 3, 25 + i); if (header_color[1][2] == TERM_L_DARK || header_color[1][2] == TERM_WHITE) header_color[1][2] = TERM_RED; } //auto-tele; overrides the resist, no items with both
-				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 3, 25 + i); if (header_color[1][2] == TERM_L_DARK) header_color[1][2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_L_RED, "N", 3, 25 + i); if (header_color[1][2] != TERM_L_RED) header_color[1][2] = TERM_L_RED; } //NO_TELE
-				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 4, 25 + i); if (header_color[1][3] == TERM_L_DARK) header_color[1][3] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 5, 25 + i); header_color[1][4] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6, 25 + i); header_color[1][5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[13] & CB14_ILIFE) { c_put_str(TERM_L_UMBER, "*", 6, 25 + i); header_color[1][5] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 7, 25 + i); header_color[1][6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_RFFAL) { c_put_str(TERM_WHITE, "+", 8, 25 + i); header_color[1][7] = TERM_WHITE; }
-				if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 9, 25 + i); if (header_color[1][8] == TERM_L_DARK) header_color[1][8] = TERM_YELLOW; }
-				if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 9, 25 + i); if (header_color[1][8] == TERM_L_DARK) header_color[1][8] = TERM_YELLOW; }
-				if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 9, 25 + i); //Almost flying~
+				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 3, 25 + i); header_color[1][2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[13] & CB14_ILIFE) { c_put_str(TERM_L_UMBER, "*", 3, 25 + i); header_color[1][2] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "t", 4, 25 + i); if (header_color[1][3] == TERM_L_DARK || header_color[1][3] == TERM_WHITE) header_color[1][3] = TERM_RED; } //auto-tele; overrides the resist, no items with both
+				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 4, 25 + i); if (header_color[1][3] == TERM_L_DARK) header_color[1][3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_L_RED, "N", 4, 25 + i); if (header_color[1][3] != TERM_L_RED) header_color[1][3] = TERM_L_RED; } //NO_TELE
+				if (csheet_boni[i].cb[5] & CB6_RFFAL) { c_put_str(TERM_WHITE, "+", 5, 25 + i); header_color[1][4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 6, 25 + i); if (header_color[1][5] == TERM_L_DARK) header_color[1][5] = TERM_YELLOW; }
+				if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 6, 25 + i); if (header_color[1][5] == TERM_L_DARK) header_color[1][5] = TERM_YELLOW; }
+				if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 6, 25 + i); //Almost flying~
 				if (csheet_boni[i].cb[5] & CB6_RLVTN) {
-					c_put_str(TERM_WHITE, "+", 9, 25 + i); header_color[1][8] = TERM_WHITE;
+					c_put_str(TERM_WHITE, "+", 6, 25 + i); header_color[1][5] = TERM_WHITE;
 					//Levitation covers feather falling, similar to chaos/confusion but plausible? - Kurzel
-					if (!(csheet_boni[i].cb[5] & CB6_RFFAL)) { c_put_str(TERM_YELLOW, "+", 8, 25 + i); if (header_color[1][7] == TERM_L_DARK) header_color[1][7] = TERM_YELLOW; }
+					if (!(csheet_boni[i].cb[5] & CB6_RFFAL)) { c_put_str(TERM_YELLOW, "+", 5, 25 + i); if (header_color[1][4] == TERM_L_DARK) header_color[1][4] = TERM_YELLOW; }
 				}
-				if (csheet_boni[i].cb[5] & CB6_RCLMB) { c_put_str(TERM_WHITE, "+", 10, 25 + i); header_color[1][9] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 11, 25 + i); if (header_color[1][10] == TERM_L_DARK) header_color[1][10] = TERM_RED; }
-				if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 11, 25 + i); if (header_color[1][10] == TERM_L_DARK) header_color[1][10] = TERM_WHITE; if (header_color[1][10] == TERM_RED || header_color[1][10] == TERM_YELLOW) header_color[1][10] = TERM_YELLOW; } //yellow if both...
-				if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 12, 25 + i); if (header_color[1][11] == TERM_L_DARK) header_color[1][11] = TERM_RED; }
-				if (csheet_boni[i].cb[6] & CB7_RRGMP) { c_put_str(TERM_WHITE, "+", 12, 25 + i); if (header_color[1][11] == TERM_L_DARK) header_color[1][11] = TERM_WHITE; if (header_color[1][11] == TERM_RED || header_color[1][11] == TERM_YELLOW) header_color[1][11] = TERM_YELLOW; } //yellow if both...
-				if (csheet_boni[i].cb[6] & CB7_RFOOD) { c_put_str(TERM_WHITE, "+", 13, 25 + i); if (header_color[1][12] == TERM_L_DARK) header_color[1][12] = TERM_WHITE; }
-				if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 13, 25 + 14); if (header_color[1][12] == TERM_L_DARK) header_color[1][12] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
-				if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 13, 25 + i); header_color[1][12] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[5] & CB6_RCLMB) { c_put_str(TERM_WHITE, "+", 7, 25 + i); header_color[1][6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 8, 25 + i); if (header_color[1][7] == TERM_L_DARK) header_color[1][7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 9, 25 + i); header_color[1][8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 10, 25 + i); header_color[1][9] = TERM_WHITE; }
+				if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 11, 25 + i); header_color[1][10] = TERM_WHITE; }
+				if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 12, 25 + i); if (header_color[1][11] == TERM_L_DARK) header_color[1][11] = TERM_RED; }
+				if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 12, 25 + i); if (header_color[1][11] == TERM_L_DARK) header_color[1][11] = TERM_WHITE; if (header_color[1][11] == TERM_RED || header_color[1][11] == TERM_YELLOW) header_color[1][11] = TERM_YELLOW; } //yellow if both...
+				if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 13, 25 + i); if (header_color[1][12] == TERM_L_DARK) header_color[1][12] = TERM_RED; }
+				if (csheet_boni[i].cb[6] & CB7_RRGMP) { c_put_str(TERM_WHITE, "+", 13, 25 + i); if (header_color[1][12] == TERM_L_DARK) header_color[1][12] = TERM_WHITE; if (header_color[1][12] == TERM_RED || header_color[1][12] == TERM_YELLOW) header_color[1][12] = TERM_YELLOW; } //yellow if both...
+				if (csheet_boni[i].cb[6] & CB7_RFOOD) { c_put_str(TERM_WHITE, "+", 14, 25 + i); if (header_color[1][13] == TERM_L_DARK) header_color[1][13] = TERM_WHITE; }
+				if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 13, 25 + 14); if (header_color[1][13] == TERM_L_DARK) header_color[1][13] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
+				if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 14, 25 + i); header_color[1][13] = TERM_L_UMBER; }
 				if (csheet_boni[i].cb[6] & CB7_RVAMP) {
 					if ((i == 0) || (i == 1) || (i == 2) || (i == 12)
 					    || ((i == 14) && (!strcasecmp(c_p_ptr->body_name, "Vampiric mist") || !strcasecmp(c_p_ptr->body_name, "Vampire bat"))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
 					    || (i == 14 && race == RACE_VAMPIRE && get_skill(SKILL_NECROMANCY) == 50 && get_skill(SKILL_TRAUMATURGY) == 50)) { //Nasty hack: Assume that having full trauma+necro gives 100% vamp actually
-						c_put_str(TERM_WHITE, "*", 14, 25 + i); header_color[1][13] = TERM_WHITE;
-					} else { c_put_str(TERM_WHITE, "+", 14, 25 + i); header_color[1][13] = TERM_WHITE; }
+						c_put_str(TERM_WHITE, "*", 15, 25 + i); header_color[1][14] = TERM_WHITE;
+					} else { c_put_str(TERM_WHITE, "+", 15, 25 + i); header_color[1][14] = TERM_WHITE; }
 				}
-				if (p_ptr->fruit_bat == 1 && !strcasecmp(c_p_ptr->body_name, "Player")) { c_put_str(TERM_WHITE, "+", 14, 25 + 14); header_color[1][13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
-				if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 15, 25 + i); header_color[1][14] = TERM_WHITE; }
-				if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 16, 25 + i); header_color[1][15] = TERM_WHITE; }
+				if (p_ptr->fruit_bat == 1 && !strcasecmp(c_p_ptr->body_name, "Player")) { c_put_str(TERM_WHITE, "+", 15, 25 + 14); header_color[1][14] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
+				if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 16, 25 + i); header_color[1][15] = TERM_WHITE; }
 				if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 17, 25 + i); header_color[1][16] = TERM_YELLOW; }
 				// AMFI (Numerical) goes here at [1][17] - Kurzel
 				if (csheet_boni[i].cb[6] & CB7_RAGGR) { c_put_str(TERM_RED, "+", 19, 25 + i); header_color[1][18] = TERM_RED; }
@@ -4242,85 +4242,89 @@ void display_player(int hist) {
 			if (p_ptr->nimbus && p_ptr->nimbus == GF_GRAVITY) { if (header_color[1][7] != TERM_L_UMBER) header_color[1][7] = TERM_WHITE; } // FFAL
 
 			/* Row Headers */
-			c_put_str(header_color[0][0], "Fire:", 1, 0); //row, col
-			c_put_str(header_color[0][1], "Cold:", 2, 0);
-			c_put_str(header_color[0][2], "Elec:", 3, 0);
-			c_put_str(header_color[0][3], "Acid:", 4, 0);
-			c_put_str(header_color[0][4], "Pois:", 5, 0);
-			c_put_str(header_color[0][5], "Blnd:", 6, 0);
-			c_put_str(header_color[0][6], "Lite:", 7, 0);
-			c_put_str(header_color[0][7], "Dark:", 8, 0);
-			c_put_str(header_color[0][8], "Soun:", 9, 0);
-			c_put_str(header_color[0][9], "Shrd:", 10, 0);
-			c_put_str(header_color[0][10], "Nexu:", 11, 0);
-			c_put_str(header_color[0][11], "Neth:", 12, 0);
-			c_put_str(header_color[0][12], "Conf:", 13, 0);
-			c_put_str(header_color[0][13], "Chao:", 14, 0);
-			c_put_str(header_color[0][14], "Dise:", 15, 0);
-			c_put_str(header_color[0][15], "Watr:", 16, 0);
-			c_put_str(header_color[0][16], "Time:", 17, 0);
-			c_put_str(header_color[0][17], "Mana:", 18, 0);
-			c_put_str(header_color[0][18], "Mind:", 19, 0);
+			row = 1;
+			c_put_str(header_color[0][0], "Fire:", row++, 0); //row, col
+			c_put_str(header_color[0][1], "Cold:", row++,  0);
+			c_put_str(header_color[0][2], "Elec:", row++,  0);
+			c_put_str(header_color[0][3], "Acid:", row++,  0);
+			c_put_str(header_color[0][4], "Pois:", row++,  0);
+			c_put_str(header_color[0][5], "Blnd:", row++,  0);
+			c_put_str(header_color[0][6], "Lite:", row++,  0);
+			c_put_str(header_color[0][7], "Dark:", row++,  0);
+			c_put_str(header_color[0][8], "Soun:", row++,  0);
+			c_put_str(header_color[0][9], "Shrd:", row++,  0);
+			c_put_str(header_color[0][10], "Nexu:", row++,  0);
+			c_put_str(header_color[0][11], "Neth:", row++,  0);
+			c_put_str(header_color[0][12], "Conf:", row++,  0);
+			c_put_str(header_color[0][13], "Chao:", row++,  0);
+			c_put_str(header_color[0][14], "Dise:", row++,  0);
+			c_put_str(header_color[0][15], "Watr:", row++,  0);
+			c_put_str(header_color[0][16], "Time:", row++,  0);
+			c_put_str(header_color[0][17], "Mana:", row++,  0);
+			c_put_str(header_color[0][18], "Mind:", row++,  0);
 
-			c_put_str(header_color[1][0], "Fear:", 1, 20);
-			c_put_str(header_color[1][1], "Para:", 2, 20);
-			c_put_str(header_color[1][2], "Tele:", 3, 20);
-			c_put_str(header_color[1][3], "SInv:", 4, 20);
-			c_put_str(header_color[1][4], "Invs:", 5, 20);
-			c_put_str(header_color[1][5], "HLif:", 6, 20);
-			c_put_str(header_color[1][6], "Wrth:", 7, 20);
-			c_put_str(header_color[1][7], "FFal:", 8, 20);
-			c_put_str(header_color[1][8], "Lvtn:", 9, 20);
-			c_put_str(header_color[1][9], "Clmb:", 10, 20);
-			c_put_str(header_color[1][10], "RgHP:", 11, 20);
-			c_put_str(header_color[1][11], "RgMP:", 12, 20);
-			c_put_str(header_color[1][12], "Food:", 13, 20);
-			c_put_str(header_color[1][13], "Vamp:", 14, 20);
-			c_put_str(header_color[1][14], "AuID:", 15, 20);
-			c_put_str(header_color[1][15], "Refl:", 16, 20);
-			c_put_str(header_color[1][16], "AMSh:", 17, 20);
-			c_put_str(header_color[1][17], "AMFi:", 18, 20);
-			c_put_str(header_color[1][18], "Aggr:", 19, 20);
+			row = 1;
+			c_put_str(header_color[1][0], "Fear:", row++,  20);
+			c_put_str(header_color[1][1], "Para:", row++,  20);
+			c_put_str(header_color[1][2], "HLif:", row++,  20);
+			c_put_str(header_color[1][3], "Tele:", row++,  20);
+			c_put_str(header_color[1][4], "FFal:", row++,  20);
+			c_put_str(header_color[1][5], "Lvtn:", row++,  20);
+			c_put_str(header_color[1][6], "Clmb:", row++,  20);
+			c_put_str(header_color[1][7], "SInv:", row++,  20);
+			c_put_str(header_color[1][8], "Invs:", row++,  20);
+			c_put_str(header_color[1][9], "Refl:", row++,  20);
+			c_put_str(header_color[1][10], "Wrth:", row++,  20);
+			c_put_str(header_color[1][11], "RgHP:", row++,  20);
+			c_put_str(header_color[1][12], "RgMP:", row++,  20);
+			c_put_str(header_color[1][13], "Food:", row++,  20);
+			c_put_str(header_color[1][14], "Vamp:", row++,  20);
+			c_put_str(header_color[1][15], "AuID:", row++,  20);
+			c_put_str(header_color[1][16], "AMSh:", row++,  20);
+			c_put_str(header_color[1][17], "AMFi:", row++,  20);
+			c_put_str(header_color[1][18], "Aggr:", row++,  20);
 
-			c_put_str(header_color[2][0], "Spd :", 1, 40);
-			c_put_str(header_color[2][1], "Slth:", 2, 40);
-			c_put_str(header_color[2][2], "Srch:", 3, 40);
-			c_put_str(header_color[2][3], "Infr:", 4, 40);
-			c_put_str(header_color[2][4], "Lite:", 5, 40);
-			c_put_str(header_color[2][5], "Tunn:", 6, 40);
-			c_put_str(header_color[2][6], "Blow:", 7, 40);
-			c_put_str(header_color[2][7], "Crit:", 8, 40);
-			c_put_str(header_color[2][8], "Shot:", 9, 40);
-			c_put_str(header_color[2][9], "Mght:", 10, 40);
-			c_put_str(header_color[2][10], "MxHP:", 11, 40);
-			c_put_str(header_color[2][11], "MxMP:", 12, 40);
-			c_put_str(header_color[2][12], "Luck:", 13, 40);
-			c_put_str(header_color[2][13], "STR :", 14, 40);
-			c_put_str(header_color[2][14], "INT :", 15, 40);
-			c_put_str(header_color[2][15], "WIS :", 16, 40);
-			c_put_str(header_color[2][16], "DEX :", 17, 40);
-			c_put_str(header_color[2][17], "CON :", 18, 40);
-			c_put_str(header_color[2][18], "CHR :", 19, 40);
+			row = 1;
+			c_put_str(header_color[2][0], "Spd :", row++,  40);
+			c_put_str(header_color[2][1], "Slth:", row++,  40);
+			c_put_str(header_color[2][2], "Srch:", row++,  40);
+			c_put_str(header_color[2][3], "Infr:", row++,  40);
+			c_put_str(header_color[2][4], "Lite:", row++,  40);
+			c_put_str(header_color[2][5], "Tunn:", row++,  40);
+			c_put_str(header_color[2][6], "Blow:", row++,  40);
+			c_put_str(header_color[2][7], "Crit:", row++,  40);
+			c_put_str(header_color[2][8], "Shot:", row++,  40);
+			c_put_str(header_color[2][9], "Mght:", row++,  40);
+			c_put_str(header_color[2][10], "MxHP:", row++,  40);
+			c_put_str(header_color[2][11], "MxMP:", row++,  40);
+			c_put_str(header_color[2][12], "Luck:", row++,  40);
+			c_put_str(header_color[2][13], "STR :", row++,  40);
+			c_put_str(header_color[2][14], "INT :", row++,  40);
+			c_put_str(header_color[2][15], "WIS :", row++,  40);
+			c_put_str(header_color[2][16], "DEX :", row++,  40);
+			c_put_str(header_color[2][17], "CON :", row++,  40);
+			c_put_str(header_color[2][18], "CHR :", row++,  40);
 
-			c_put_str(header_color[3][0], "Spid:", 1, 60);
-			c_put_str(header_color[3][1], "Anim:", 2, 60);
-			c_put_str(header_color[3][2], "Orcs:", 3, 60);
-			c_put_str(header_color[3][3], "Trol:", 4, 60);
-			c_put_str(header_color[3][4], "Gian:", 5, 60);
-			c_put_str(header_color[3][5], "Drgn:", 6, 60);
-			c_put_str(header_color[3][6], "Demn:", 7, 60);
-			c_put_str(header_color[3][7], "Undd:", 8, 60);
-			c_put_str(header_color[3][8], "Evil:", 9, 60);
-			c_put_str(header_color[3][9], "Dgri:", 10, 60);
-			c_put_str(header_color[3][10], "Good:", 11, 60);
-			c_put_str(header_color[3][11], "Nonl:", 12, 60);
-			c_put_str(header_color[3][12], "Uniq:", 13, 60);
-			c_put_str(header_color[3][13], "Fire:", 14, 60);
-			c_put_str(header_color[3][14], "Cold:", 15, 60);
-			c_put_str(header_color[3][15], "Elec:", 16, 60);
-			c_put_str(header_color[3][16], "Acid:", 17, 60);
-			c_put_str(header_color[3][17], "Pois:", 18, 60);
-			c_put_str(header_color[3][18], "Vorp:", 19, 60);
+			row = 1;
+			c_put_str(header_color[3][0], "Spid:", row++,  60);
+			c_put_str(header_color[3][1], "Anim:", row++,  60);
+			c_put_str(header_color[3][2], "Orcs:", row++,  60);
+			c_put_str(header_color[3][3], "Trol:", row++,  60);
+			c_put_str(header_color[3][4], "Gian:", row++,  60);
+			c_put_str(header_color[3][5], "Drgn:", row++,  60);
+			c_put_str(header_color[3][6], "Demn:", row++,  60);
+			c_put_str(header_color[3][7], "Undd:", row++,  60);
+			c_put_str(header_color[3][8], "Evil:", row++,  60);
+			c_put_str(header_color[3][9], "Dgri:", row++,  60);
+			c_put_str(header_color[3][10], "Good:", row++,  60);
+			c_put_str(header_color[3][11], "Nonl:", row++,  60);
+			c_put_str(header_color[3][12], "Uniq:", row++,  60);
+			c_put_str(header_color[3][13], "Fire:", row++,  60);
+			c_put_str(header_color[3][14], "Cold:", row++,  60);
+			c_put_str(header_color[3][15], "Elec:", row++,  60);
+			c_put_str(header_color[3][16], "Acid:", row++,  60);
+			c_put_str(header_color[3][17], "Pois:", row++,  60);
+			c_put_str(header_color[3][18], "Vorp:", row++,  60);
 		}
 		/* Horizontal view (Horizontal rows of different stats) */
 		else {
@@ -4416,41 +4420,41 @@ void display_player(int hist) {
 
 				if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 6 + i, 1 + 19 + x_offset); header_color[0][19 + 0] = TERM_WHITE; }
 				if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 6 + i, 2 + 19 + x_offset); header_color[0][19 + 1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "t", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] == TERM_L_DARK || header_color[0][19 + 2] == TERM_WHITE) header_color[0][19 + 2] = TERM_RED; } //auto-tele; overrides the resist, no items with both
-				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] == TERM_L_DARK) header_color[0][19 + 2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_L_RED, "N", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] != TERM_L_RED) header_color[0][19 + 2] = TERM_L_RED; } //NO_TELE
-				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19 + x_offset); if (header_color[0][19 + 3] == TERM_L_DARK) header_color[0][19 + 3] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19 + x_offset); header_color[0][19 + 4] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19 + x_offset); header_color[0][19 + 5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[13] & CB14_ILIFE) { c_put_str(TERM_L_UMBER, "*", 6 + i, 6 + 19 + x_offset); header_color[0][19 + 5] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 6 + i, 7 + 19 + x_offset); header_color[0][19 + 6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_RFFAL) { c_put_str(TERM_WHITE, "+", 6 + i, 8 + 19 + x_offset); header_color[0][19 + 7] = TERM_WHITE; }
-				if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 6 + i, 9 + 19 + x_offset); if (header_color[0][19 + 8] == TERM_L_DARK) header_color[0][19 + 8] = TERM_YELLOW; }
-				if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 6 + i, 9 + 19 + x_offset); if (header_color[0][19 + 8] == TERM_L_DARK) header_color[0][19 + 8] = TERM_YELLOW; }
-				if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 6 + i, 9 + 19 + x_offset); //Almost flying~
+				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19 + x_offset); header_color[0][19 + 2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[13] & CB14_ILIFE) { c_put_str(TERM_L_UMBER, "*", 6 + i, 3 + 19 + x_offset); header_color[0][19 + 2] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "t", 6 + i, 4 + 19 + x_offset); if (header_color[0][19 + 3] == TERM_L_DARK || header_color[0][19 + 3] == TERM_WHITE) header_color[0][19 + 3] = TERM_RED; } //auto-tele; overrides the resist, no items with both
+				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19 + x_offset); if (header_color[0][19 + 3] == TERM_L_DARK) header_color[0][19 + 3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_L_RED, "N", 6 + i, 4 + 19 + x_offset); if (header_color[0][19 + 3] != TERM_L_RED) header_color[0][19 + 3] = TERM_L_RED; } //NO_TELE
+				if (csheet_boni[i].cb[5] & CB6_RFFAL) { c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19 + x_offset); header_color[0][19 + 4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 6 + i, 6 + 19 + x_offset); if (header_color[0][19 + 5] == TERM_L_DARK) header_color[0][19 + 5] = TERM_YELLOW; }
+				if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 6 + i, 6 + 19 + x_offset); if (header_color[0][19 + 5] == TERM_L_DARK) header_color[0][19 + 5] = TERM_YELLOW; }
+				if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 6 + i, 6 + 19 + x_offset); //Almost flying~
 				if (csheet_boni[i].cb[5] & CB6_RLVTN) {
-					c_put_str(TERM_WHITE, "+", 6 + i, 9 + 19 + x_offset); header_color[0][19 + 8] = TERM_WHITE;
+					c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19 + x_offset); header_color[0][19 + 5] = TERM_WHITE;
 					//Levitation covers feather falling, similar to chaos/confusion but plausible? - Kurzel
-					if (!(csheet_boni[i].cb[5] & CB6_RFFAL)) { c_put_str(TERM_YELLOW, "+", 6 + i, 8 + 19 + x_offset); if (header_color[0][19 + 7] == TERM_L_DARK) header_color[0][19 + 7] = TERM_YELLOW; }
+					if (!(csheet_boni[i].cb[5] & CB6_RFFAL)) { c_put_str(TERM_YELLOW, "+", 5 + i, 5 + 19 + x_offset); if (header_color[0][19 + 4] == TERM_L_DARK) header_color[0][19 + 4] = TERM_YELLOW; }
 				}
-				if (csheet_boni[i].cb[5] & CB6_RCLMB) { c_put_str(TERM_WHITE, "+", 6 + i, 10 + 19 + x_offset); header_color[0][19 + 9] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 6 + i, 11 + 19 + x_offset); if (header_color[0][19 + 10] == TERM_L_DARK) header_color[0][19 + 10] = TERM_RED; }
-				if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 6 + i, 11 + 19 + x_offset); if (header_color[0][19 + 10] == TERM_L_DARK) header_color[0][19 + 10] = TERM_WHITE; if (header_color[0][19 + 10] == TERM_RED || header_color[0][19 + 10] == TERM_YELLOW) header_color[0][19 + 10] = TERM_YELLOW; } //yellow if both...
-				if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 6 + i, 12 + 19 + x_offset); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_RED; }
-				if (csheet_boni[i].cb[6] & CB7_RRGMP) { c_put_str(TERM_WHITE, "+", 6 + i, 12 + 19 + x_offset); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_WHITE; if (header_color[0][19 + 11] == TERM_RED || header_color[0][19 + 11] == TERM_YELLOW) header_color[0][19 + 11] = TERM_YELLOW; } //yellow if both...
-				if (csheet_boni[i].cb[6] & CB7_RFOOD) { c_put_str(TERM_WHITE, "+", 6 + i, 13 + 19 + x_offset); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_WHITE; }
-				if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 6 + 14, 13 + 19 + x_offset); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
-				if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 6 + i, 13 + 19 + x_offset); header_color[0][19 + 12] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[5] & CB6_RCLMB) { c_put_str(TERM_WHITE, "+", 6 + i, 7 + 19 + x_offset); header_color[0][19 + 6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 6 + i, 8 + 19 + x_offset); if (header_color[0][19 + 7] == TERM_L_DARK) header_color[0][19 + 7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 6 + i, 9 + 19 + x_offset); header_color[0][19 + 8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 6 + i, 10 + 19 + x_offset); header_color[0][19 + 9] = TERM_WHITE; }
+				if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 6 + i, 11 + 19 + x_offset); header_color[0][19 + 10] = TERM_WHITE; }
+				if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 6 + i, 12 + 19 + x_offset); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_RED; }
+				if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 6 + i, 12 + 19 + x_offset); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_WHITE; if (header_color[0][19 + 11] == TERM_RED || header_color[0][19 + 11] == TERM_YELLOW) header_color[0][19 + 11] = TERM_YELLOW; } //yellow if both...
+				if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 6 + i, 13 + 19 + x_offset); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_RED; }
+				if (csheet_boni[i].cb[6] & CB7_RRGMP) { c_put_str(TERM_WHITE, "+", 6 + i, 13 + 19 + x_offset); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_WHITE; if (header_color[0][19 + 12] == TERM_RED || header_color[0][19 + 12] == TERM_YELLOW) header_color[0][19 + 12] = TERM_YELLOW; } //yellow if both...
+				if (csheet_boni[i].cb[6] & CB7_RFOOD) { c_put_str(TERM_WHITE, "+", 6 + i, 14 + 19 + x_offset); if (header_color[0][19 + 13] == TERM_L_DARK) header_color[0][19 + 13] = TERM_WHITE; }
+				if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 6 + 14, 13 + 19 + x_offset); if (header_color[0][19 + 13] == TERM_L_DARK) header_color[0][19 + 13] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
+				if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 6 + i, 14 + 19 + x_offset); header_color[0][19 + 13] = TERM_L_UMBER; }
 				if (csheet_boni[i].cb[6] & CB7_RVAMP) {
 					if ((i == 0) || (i == 1) || (i == 2) || (i == 12)
 					    || ((i == 14) && (!strcasecmp(c_p_ptr->body_name, "Vampiric mist") || !strcasecmp(c_p_ptr->body_name, "Vampire bat"))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
 					    || (i == 14 && race == RACE_VAMPIRE && get_skill(SKILL_NECROMANCY) == 50 && get_skill(SKILL_TRAUMATURGY) == 50)) { //Nasty hack: Assume that having full trauma+necro gives 100% vamp actually
-						c_put_str(TERM_WHITE, "*", 6 + i, 14 + 19 + x_offset); header_color[0][19 + 13] = TERM_WHITE;
-					} else { c_put_str(TERM_WHITE, "+", 6 + i, 14 + 19 + x_offset); header_color[0][19 + 13] = TERM_WHITE; }
+						c_put_str(TERM_WHITE, "*", 6 + i, 15 + 19 + x_offset); header_color[0][19 + 14] = TERM_WHITE;
+					} else { c_put_str(TERM_WHITE, "+", 6 + i, 15 + 19 + x_offset); header_color[0][19 + 14] = TERM_WHITE; }
 				}
-				if (p_ptr->fruit_bat == 1 && !strcasecmp(c_p_ptr->body_name, "Player")) { c_put_str(TERM_WHITE, "+", 6 + 14, 14 + 19 + x_offset); header_color[0][19 + 13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
-				if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 6 + i, 15 + 19 + x_offset); header_color[0][19 + 14] = TERM_WHITE; }
-				if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 6 + i, 16 + 19 + x_offset); header_color[0][19 + 15] = TERM_WHITE; }
+				if (p_ptr->fruit_bat == 1 && !strcasecmp(c_p_ptr->body_name, "Player")) { c_put_str(TERM_WHITE, "+", 6 + 14, 15 + 19 + x_offset); header_color[0][19 + 14] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
+				if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 6 + i, 16 + 19 + x_offset); header_color[0][19 + 15] = TERM_WHITE; }
 				if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 6 + i, 17 + 19 + x_offset); header_color[0][19 + 16] = TERM_YELLOW; }
 				// AMFI (Numerical) goes here at [1][17] - Kurzel
 				if (csheet_boni[i].cb[6] & CB7_RAGGR) { c_put_str(TERM_RED, "+", 6 + i, 19 + 19 + x_offset); header_color[0][19 + 18] = TERM_RED; }
@@ -4821,20 +4825,20 @@ void display_player(int hist) {
 
 			c_put_str_vert(header_color[0][19 + 0], "Fear", (row = (row + 1) % 6), ++col + x_offset);
 			c_put_str_vert(header_color[0][19 + 1], "Para", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 2], "Tele", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 3], "SInv", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 4], "Invs", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 5], "HLif", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 6], "Wrth", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 7], "FFal", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 8], "Lvtn", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 9], "Clmb", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 10], "RgHP", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 11], "RgMP", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 12], "Food", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 13], "Vamp", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 14], "AuID", (row = (row + 1) % 6), ++col + x_offset);
-			c_put_str_vert(header_color[0][19 + 15], "Refl", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 2], "HLif", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 3], "Tele", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 4], "FFal", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 5], "Lvtn", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 6], "Clmb", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 7], "SInv", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 8], "Invs", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 9], "Refl", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 10], "Wrth", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 11], "RgHP", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 12], "RgMP", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 13], "Food", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 14], "Vamp", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 15], "AuID", (row = (row + 1) % 6), ++col + x_offset);
 			c_put_str_vert(header_color[0][19 + 16], "AMSh", (row = (row + 1) % 6), ++col + x_offset);
 			c_put_str_vert(header_color[0][19 + 17], "AMFi", (row = (row + 1) % 6), ++col + x_offset);
 			c_put_str_vert(header_color[0][19 + 18], "Aggr", (row = (row + 1) % 6), ++col + x_offset);
