@@ -4957,7 +4957,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 		} else {
 			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
-			o_ptr->marked = 0;
+			o_ptr->marked = 0; //why change marked/marked2?...paranoia?
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 			/* Check whether this item was requested by an item-retrieval quest
@@ -5104,7 +5104,8 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
 			/* Slot has no more stacking capacity? */
 			if (o_ptr->number == MAX_STACK_SIZE - 1) continue;
 			/* Hack 'number' to allow merging stacks partially */
-			if (i_ptr->number + o_ptr->number >= MAX_STACK_SIZE) i_ptr->number = MAX_STACK_SIZE - 1 - o_ptr->number;
+			if (amt + o_ptr->number >= MAX_STACK_SIZE) i_ptr->number = MAX_STACK_SIZE - 1 - o_ptr->number;
+			else i_ptr->number = amt; /* ..or else hack 'number' to match the full desired amount to move */
 			/* For !Gn inscription, super hack to modify xnum further if required */
 			Gnum = object_similar(Ind, o_ptr, i_ptr, 0x4 | 0x20);
 			if (Gnum > 0 && Gnum < i_ptr->number) i_ptr->number = Gnum;
@@ -5117,16 +5118,18 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
-				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
+				amt -= i_ptr->number; /* Decreate amount to still move accordingly */
+				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' (and decrease the now moved amount) */
 				/* Manually do this here for now: Update subinven slot for client. */
 				display_subinven_aux(Ind, sslot, i);
 				/* That was the rest of the stack? Done. */
-				if (!i_ptr->number) break;
+				if (!amt) break;
 				/* Continue with remaining, still unstowed partial amount */
 				inum = i_ptr->number;
 			} else /* Couldn't use this slot at all */
 				i_ptr->number = inum; /* Unhack 'number' */
 		} else {
+			i_ptr->number = amt; /* Hack 'number' to match the full desired amount to move */
 			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
 			o_ptr->marked = 0;
@@ -5137,8 +5140,7 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
  #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
-
-			i_ptr->number = 0; /* Mark for erasure */
+			i_ptr->number = inum - amt; /* Unhack 'number'; if it's 0 that marks the source item for erasure */
 			/* Manually do this here for now: Update subinven slot for client. */
 			display_subinven_aux(Ind, sslot, i);
 			break;
@@ -5347,12 +5349,19 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 /* This function assumes that there IS inventory space to move to. */
 void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr, *s_ptr;
+	object_type *i_ptr, *s_ptr, forge, *o_ptr = &forge;
 	int i;
 	char o_name[ONAME_LEN];
 
 	s_ptr = &p_ptr->inventory[islot];
-	o_ptr = &p_ptr->subinventory[islot][slot];
+	i_ptr = &p_ptr->subinventory[islot][slot];
+
+	/* Fully move to a free slot. Done. */
+	*o_ptr = *i_ptr;
+	o_ptr->number = amt; /* Hack 'number' to match the full desired amount to move */
+	o_ptr->marked = 0; //why change marked/marked2?...paranoia?
+	o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+	i_ptr->number -= amt; /* Unhack 'number'; if it's 0 that marks the source item for erasure */
 
 	p_ptr->total_weight -= o_ptr->number * o_ptr->weight;
 
@@ -5367,8 +5376,14 @@ void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
  #endif
 	}
 
+	/* Not all of the stack was moved, so the slot still exists */
+	if (i_ptr->number) {
+		display_subinven_aux(Ind, islot, slot); /* Update remaining stack size */
+		return;
+	}
+
 	/* Erase object in subinven, slide followers */
-	o_ptr->tval = o_ptr->k_idx = o_ptr->number = 0;
+	i_ptr->tval = i_ptr->k_idx = i_ptr->number = 0;
  #if 1
 	/* -- This is partial code from inven_item_optimize() -- */
 
@@ -5378,7 +5393,6 @@ void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
 		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
 		display_subinven_aux(Ind, islot, i);
 	}
-
 	/* Erase the "final" slot */
 	invwipe(&p_ptr->subinventory[islot][i]);
 	display_subinven_aux(Ind, islot, i);
