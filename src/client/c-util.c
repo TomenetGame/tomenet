@@ -5513,11 +5513,12 @@ void interact_macros(void) {
 					macro__buf[159] = '\0';
 
 					/* Message */
-					if (macro__hyb[i]) c_msg_print("A hybrid macro was found.");
-					else if (macro__cmd[i]) c_msg_print("A command macro was found.");
+					ascii_to_text(tmp, macro__buf);
+					if (macro__hyb[i]) c_msg_format("Found hybrid macro: %s", tmp);
+					else if (macro__cmd[i]) c_msg_format("Found command macro: %s", tmp);
 					else {
-						if (!macro__act[i][0]) c_msg_print("An empty macro was found.");
-						else c_msg_print("A normal macro was found.");
+						if (!macro__act[i][0]) c_msg_print("Found empty macro.");
+						else c_msg_format("Found normal macro: %s", tmp);
 					}
 
 					/* Update windows */
