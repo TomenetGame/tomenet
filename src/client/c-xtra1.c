@@ -1703,7 +1703,9 @@ static void display_inven(void) {
 		/* Is this item acceptable? */
 		if (item_tester_okay(o_ptr)) {
 			/* Display the index */
-			Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
+			if ((n = check_guard_inscription_str(inventory_name[i], 'W')) && inventory[i].number < n) Term_putstr(0, i, 3, TERM_ORANGE, tmp_val);
+			else if ((n = check_guard_inscription_str(inventory_name[i], 'G')) && inventory[i].number < n - 1) Term_putstr(0, i, 3, TERM_YELLOW, tmp_val);
+			else Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
 		} else {
 			/* Grey out the index */
 			Term_putstr(0, i, 3, TERM_L_DARK, tmp_val);
@@ -1718,6 +1720,7 @@ static void display_inven(void) {
 			wgt = o_ptr->weight * o_ptr->number;
 #ifdef ENABLE_SUBINVEN
 			subwgt = 0;
+			/* Add weight of all items contained within */
 			if (o_ptr->tval == TV_SUBINVEN) {
 				for (n = 0; n < o_ptr->bpval; n++) {
 					o2_ptr = &subinventory[i][n];
@@ -1796,7 +1799,6 @@ static void display_subinven(void) {
 
 		i_ptr = &inventory[islot];
 		subinven_size = i_ptr->bpval;
-
 
 		/* Describe the subinventory type itself in one extra line*/
 
@@ -1880,7 +1882,9 @@ static void display_subinven(void) {
 			tmp_val[3] = ')';
 
 			/* Display the index */
-			Term_putstr(0, last_k + i, 5, TERM_WHITE, tmp_val);
+			if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'W')) && subinventory[islot][i].number < n) Term_putstr(0, last_k + i, 5, TERM_ORANGE, tmp_val);
+			else if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'G')) && subinventory[islot][i].number < n - 1) Term_putstr(0, last_k + i, 5, TERM_YELLOW, tmp_val);
+			else Term_putstr(0, last_k + i, 5, TERM_WHITE, tmp_val);
 
 			/* Describe the object */
 			strcpy(o_name, subinventory_name[islot][i]);
@@ -2119,7 +2123,7 @@ void show_inven_header(void) {
  * Hack -- do not display "trailing" empty slots
  */
 void show_inven(void) {
-	int	i, j, k, l, z = 0;
+	int	i, j, k, l, z = 0, n;
 	int	col, len, lim;
 	long int wgt, totalwgt = 0;
 #ifdef ENABLE_SUBINVEN
@@ -2216,8 +2220,10 @@ void show_inven(void) {
 		/* Prepare and index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(i));
 
-		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, j + 1, col);
+		/* Display the index */
+		if ((n = check_guard_inscription_str(inventory_name[i], 'W')) && inventory[i].number < n) c_put_str(TERM_ORANGE, tmp_val, j + 1, col);
+		else if ((n = check_guard_inscription_str(inventory_name[i], 'G')) && inventory[i].number < n - 1) c_put_str(TERM_YELLOW, tmp_val, j + 1, col);
+		else put_str(tmp_val, j + 1, col);
 
 		/* Display the weight if needed */
 		wgt = 0;
@@ -2297,7 +2303,7 @@ void show_inven(void) {
 #ifdef ENABLE_SUBINVEN
 //todo: topline_icky is (wrongfully?) TRUE, so the totalwgt isn't shown!
 void show_subinven(int islot) {
-	int	i, j, k, l, z = 0;
+	int	i, j, k, l, z = 0, n;
 	int	col, len, lim;
 	long int wgt, totalwgt = 0;
 
@@ -2403,7 +2409,9 @@ void show_subinven(int islot) {
 		sprintf(tmp_val, "%c)", index_to_label(i));
 
 		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, j + 1, col);
+		if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'W')) && subinventory[islot][i].number < n) c_put_str(TERM_ORANGE, tmp_val, j + 1, col);
+		else if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'G')) && subinventory[islot][i].number < n - 1) c_put_str(TERM_YELLOW, tmp_val, j + 1, col);
+		else put_str(tmp_val, j + 1, col);
 
 		/* Display the entry itself */
 		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);

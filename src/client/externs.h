@@ -691,6 +691,7 @@ extern bool paste_from_clipboard(char *buf, bool global);
 extern void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method, bool afford);
 extern void set_bigmap(int bm, bool verbose);
 extern void apply_auto_inscriptions(int insc_idx);
+extern int check_guard_inscription_str(cptr ax, char what);
 
 /* c-store.c */
 extern bool leave_store;
