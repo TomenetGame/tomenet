@@ -5055,7 +5055,7 @@ static void get_macro_trigger(char *buf) {
    Shoudln't be needed. */
 //#define FORGET_MACRO_VISUALS
 void interact_macros(void) {
-	int i, j = 0, l;
+	int i, j = 0, l, chain_type;
 
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
 
@@ -6492,12 +6492,14 @@ void interact_macros(void) {
 #define mw_dir_bash 't'
 #define mw_dir_close 'u'
 #define mw_LAST 'u'
+#define mw_chain 'Z'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
 
 			/* initialise macro-chaining */
 			chain_macro_buf[0] = 0;
+			chain_type = 0; // 0 = command, 1 = hybrid, 2 = normal
 Chain_Macro:
 			should_wait = FALSE;
 
@@ -6551,7 +6553,7 @@ Chain_Macro:
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "k\377w/\377GK) Use any item without \377w/\377G with a target).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "l\377w/\377GL) Use a basic ability ('m') without \377w/\377G with target (Draconian breath).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "m\377w/\377GM) Common commands and functions. \377w/\377G Pick breath element (Draconians).");
-					Term_putstr(8, l++, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
+					Term_putstr(6, l++, -1, TERM_L_GREEN, "n\377w/\377GN\377w/\377GZ) Slash command. \377w/\377G Custom action ('%a'). \377w/\377G Chain existing macros.");
 					Term_putstr(6, l++, -1, TERM_L_GREEN, "o\377w/\377GO\377w/\377Gp) Load a macro file. \377w/\377G Modify an option. \377w/\377G Change equipment.");
 					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
 
@@ -6580,7 +6582,8 @@ Chain_Macro:
 							if ((choice < 'a' || choice > mw_LAST) &&
 							    choice != 'C' && choice != 'D' && choice != 'E' &&
 							    choice != 'G' && choice != 'H' && choice != 'I' && choice != 'J' &&
-							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N' && choice != 'O') {
+							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N' && choice != 'O' &&
+							    choice != 'Z') {
 								//i = -1;
 								continue;
 							}
@@ -7487,6 +7490,176 @@ Chain_Macro:
 						}
 						strcat(buf2, format("%c", target_dir));
 						break;
+					case mw_chain: {
+						char tmp[1024], buf[64];
+						bool bind = FALSE;
+
+						while (TRUE) {
+							clear_from(8);
+							Term_putstr(10, 10, -1, TERM_GREEN, "Please press the key carrying the macro you want to chain.");
+							Term_putstr(10, 11, -1, TERM_GREEN, "Pressing ESC will cancel and quit the macro-chaining process.");
+							Term_putstr(10, 13, -1, TERM_L_GREEN, "Trigger: ");
+
+							get_macro_trigger(buf);
+
+							if (buf[0] == ESCAPE && !buf[1]) {
+								c_msg_print("\377yMacro-chaining cancelled.");
+								i = -2;
+								break;
+							} else if (buf[0] == '%' && !buf[1]) {
+								c_msg_print("\377yThe '%' key cannot have any macros on it. Please try again.");
+								continue;
+							}
+
+							/* Re-using 'i' here shouldn't matter anymore */
+							for (i = 0; i < macro__num; i++) {
+								if (!streq(macro__pat[i], buf)) continue;
+
+								strncpy(macro__buf, macro__act[i], 159);
+								macro__buf[159] = '\0';
+
+								/* Message */
+								ascii_to_text(tmp, macro__buf);
+								if (macro__hyb[i]) {
+									Term_putstr(10, 15, -1, TERM_L_GREEN, "Found hybrid macro:");
+									Term_putstr(10, 16, -1, TERM_L_BLUE, format("%s", tmp));
+									if (chain_type < 1) chain_type = 1;
+									break;
+								} else if (macro__cmd[i]) {
+									Term_putstr(10, 15, -1, TERM_L_GREEN, "Found command macro:");
+									Term_putstr(10, 16, -1, TERM_L_BLUE, format("%s", tmp));
+									break;
+								} else {
+									if (!macro__act[i][0]) c_msg_print("Found empty macro.");
+									else {
+										Term_putstr(10, 15, -1, TERM_L_GREEN, "Found normal macro:");
+										Term_putstr(10, 16, -1, TERM_L_BLUE, format("%s", tmp));
+										if (chain_type < 2) chain_type = 2;
+										break;
+									}
+								}
+							}
+							if (i == macro__num) {
+								c_msg_print("\377yNo valid macro found, please try another key.");
+								continue;
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -2) continue;
+
+						/* Chain */
+						strcat(chain_macro_buf, macro__buf);
+						strcpy(macro__buf, chain_macro_buf);
+
+						/* Echo it for convenience, to check */
+						ascii_to_text(tmp, chain_macro_buf);
+						c_msg_format("\377yChain: %s", tmp);
+
+						/* max length check, rough estimate */
+						if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
+							c_msg_print("\377oDue to excess length you cannot chain any further commands to this macro.");
+							bind = TRUE;
+						}
+						/* Ask if we want to bind it to a key or continue chaining stuff */
+						Term_putstr(10, 18, -1, TERM_GREEN, "Press the key to bind the macro to. (ESC and % key cannot be used.)");
+						Term_putstr(10, 19, -1, TERM_GREEN, "Most keys can be combined with \377USHIFT\377g, \377UALT\377g or \377UCTRL\377g modifiers!");
+						if (!bind) {
+							Term_putstr(10, 20, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
+							Term_putstr(5, 21, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining: ");
+						} else Term_putstr(5, 21, -1, TERM_L_GREEN, "Press the key to bind the macro to: ");
+
+						while (TRUE) {
+							/* Get a macro trigger */
+							Term_putstr(67, 21, -1, TERM_WHITE, "  ");//45
+							Term_gotoxy(67, 21);
+							get_macro_trigger(buf);
+
+							/* choose proper macro type, and bind it to key */
+							if (!strcmp(buf, "\e")) {
+								c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+								if (!strcmp(buf, "\e")) {
+									i = -2; /* leave */
+									break;
+								}
+								continue;
+							} else if (!strcmp(buf, "%")) {
+								int delay;
+
+								/* max length check, rough estimate */
+								if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
+									c_msg_print("\377oDue to excess length you cannot chain any further commands to this macro.");
+									continue;
+								}
+
+								/* Some macros require a latency-based delay in order to update the client with
+								   necessary reply information from the server before another command based on
+								   this action might work.
+								   Example: Wield an item, then activate it. The activation part needs to wait
+								   until the server tells the client that the item has been successfully equipped.
+								   Example: Polymorph into a form that has a certain spell available to cast.
+								   The casting needs to wait until the server tells us that we successfully polymorphed. */
+								if (should_wait) {
+									clear_from(18);
+									Term_putstr(10, 19, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
+									Term_putstr(10, 20, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
+									Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+									Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+
+									/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
+									sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
+									Term_gotoxy(52, 23);
+									if (askfor_aux(tmp, 50, 0)) {
+										delay = atoi(tmp);
+										if (delay % 100) delay += 100; //QoL hack for noobs who can't read
+										delay /= 100;
+										if (delay < 0) delay = 0;
+										if (delay > 99) delay = 99;
+
+										if (delay) {
+											sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
+											text_to_ascii(macro__buf, tmp);
+											strcat(chain_macro_buf, macro__buf);
+											strcpy(macro__buf, chain_macro_buf);
+										}
+									}
+								}
+
+								/* chain another macro */
+								goto Chain_Macro;
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -2) continue;
+
+						switch (chain_type) {
+						case 0:
+							/* make it a command macro */
+							/* Link the macro */
+							macro_add(buf, macro__buf, TRUE, FALSE);
+							/* Message */
+							c_msg_print("Created a new command macro.");
+							break;
+						case 1:
+							/* make it a hybrid macro */
+							/* Link the macro */
+							macro_add(buf, macro__buf, FALSE, TRUE);
+							/* Message */
+							c_msg_print("Created a new hybrid macro.");
+							break;
+						case 2:
+							/* make it a norma macro */
+							/* Link the macro */
+							macro_add(buf, macro__buf, FALSE, FALSE);
+							/* Message */
+							c_msg_print("Created a new normal macro.");
+						}
+
+						/* this was the final step, we're done */
+						i = -2;
+						continue;
+						}
 					}
 
 
@@ -8023,7 +8196,7 @@ Chain_Macro:
 
 							/* max length check, rough estimate */
 							if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
-								c_msg_print("\377oYou cannot chain any further commands to this macro.");
+								c_msg_print("\377oDue to excess length you cannot chain any further commands to this macro.");
 								continue;
 							}
 
