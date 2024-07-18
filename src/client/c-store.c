@@ -919,6 +919,8 @@ void c_store_prt_gold(void) {
 }
 
 void do_redraw_store(void) {
+	int y = 2;
+
 	if (perusing) return; /* don't overwrite inspect-item screen when home inventory updates (due to an item timing out) */
 
 	redraw_store = FALSE;
@@ -930,7 +932,7 @@ void do_redraw_store(void) {
 			char buf[1024];
 
 			sprintf(buf, "%s (Stock: %d/%d)", c_store.store_name, store.stock_num, c_store.max_cost);
-			prt(buf, 3, 50);
+			prt(buf, y, 50);
 		}
 		display_inventory();
 	}
