@@ -191,12 +191,11 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 	Term_get_size(&wid, &hgt);
 
 	if (c_cfg.rogue_like_commands)
-		Term_putstr(0, 0, -1, TERM_WHITE, " === TomeNET Skills Screen ===  [help:\377R?\377- move:\377sj\377-,\377sk\377-,\377sg\377-,\377sG\377-,\377s#\377-,\377ss\377- fold:\377s<CR>\377-,\377sc\377-,\377so\377- train:\377sl\377-]");
+		Term_putstr(0, 0, -1, TERM_WHITE, " Character Skills   [help:\377R?\377- move:\377sj\377-,\377sk\377-,\377sg\377-,\377sG\377-,\377s#\377-,\377ss\377- fold:\377s<CR>\377-,\377sc\377-,\377so\377- train:\377sl\377-,\377sarrow-right\377-]");
 	else
-		Term_putstr(0, 0, -1, TERM_WHITE, " === TomeNET Skills Screen ===  [help:\377R?\377- move:\377s2\377-,\377s8\377-,\377sg\377-,\377sG\377-,\377s#\377-,\377ss\377- fold:\377s<CR>\377-,\377sc\377-,\377so\377- train:\377s6\377-]");
+		Term_putstr(0, 0, -1, TERM_WHITE, " Character Skills   [help:\377R?\377- move:\377s2\377-,\377s8\377-,\377sg\377-,\377sG\377-,\377s#\377-,\377ss\377- fold:\377s<CR>\377-,\377sc\377-,\377so\377- train:\377s6\377-,\377sarrow-right\377-]");
 
-	Term_putstr(0, 1, -1, (p_ptr->skill_points) ? TERM_L_BLUE : TERM_SLATE,
-	      format(" Skill points left: %-5d       \377wType \377s/undoskills\377- in chat if you made a mistake.", p_ptr->skill_points));
+	Term_putstr(0, 1, -1, TERM_WHITE, format(" Skill points left: \377%c%-5d   \377wType \377R/undoskills\377- in chat immediately after mistake.", (p_ptr->skill_points) ? 'B': 's', p_ptr->skill_points));
 	print_desc_aux((char*)s_info[table[sel][0]].desc, 2, 0);
 
 	for (j = start; j < start + (hgt - 4); j++) {
