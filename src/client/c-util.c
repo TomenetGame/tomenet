@@ -2019,6 +2019,9 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
 static void extract_url(char *buf_esc, char *buf_prev, int end_of_name) {
 	char *c, *c2, *be = NULL;
 
+//c_msg_format("1: %s", buf_esc);
+//c_msg_format("2: %s", buf_prev);
+
 #if 0
 c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
     buf_esc[0], buf_esc[1], buf_esc[2], buf_esc[3], buf_esc[4], buf_esc[5], buf_esc[6], buf_esc[7],
@@ -2050,6 +2053,9 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 			else c2 = NULL; //kill compiler warning
 
 			if (c2 && strcspn(c2, ".") < strcspn(c2, " ,/\\?*:;+}{][()!\"$%&'~|<>=")) { /* only hyphen is allowed in domain names */
+			// "/([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?/gm" // Find really all URLs, but also matches clock times, so...
+			// "[0-9]:[0-9][0-9][^0-9]" // ..exclude clock times specifically here.
+
 				int pos;
 
 				pos = strcspn(c2, " "); /* not allowed in any part of the URL, thereby terminating it */
@@ -2062,6 +2068,7 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 
 				/* 'Reset' double-tapping */
 				buf_prev[0] = 0;
+//c_msg_format("3a: %s", buf_esc);
 				return;
 			}
 		}
@@ -2098,13 +2105,17 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 		buf_prev[0] = 0;
 
 		regfree(&re);
+//c_msg_format("3b: %s", buf_esc);
 		return;
 	}
 #endif
 }
 
-/* copy a line of text to clipboard - C. Blue */
-void copy_to_clipboard(char *buf) {
+/* For copying and pasting: Don't duplicate (or reduce again) first (or any) ':'. */
+//#define NO_COLON_DUPLICATION --not implemented, no use for it atm
+/* copy a line of text to clipboard - C. Blue
+   'chat_input': We're copying from an active chat input prompt. */
+void copy_to_clipboard(char *buf, bool chat_input) {
 #ifdef WINDOWS
 	size_t len;
 	int pos = 0, end_of_name = 0;
@@ -2126,17 +2137,18 @@ void copy_to_clipboard(char *buf) {
 			}
 			break;
 		case '{':
-			switch (*(c + 1)) {
-			case '{':
-				c++;
-				break;
-			case 0: /* broken colour code (paranoia) */
-				c++;
-				continue;
-			default: /* assume colour code and discard */
-				c += 2;
-				continue;
-			}
+			if (chat_input)
+				switch (*(c + 1)) {
+				case '{':
+					c++;
+					break;
+				case 0: /* broken colour code (paranoia) */
+					c++;
+					continue;
+				default: /* assume colour code and discard */
+					c += 2;
+					continue;
+				}
 			break;
 		/* skip special markers */
 		case '\376':
@@ -2206,17 +2218,18 @@ void copy_to_clipboard(char *buf) {
 			}
 			break;
 		case '{':
-			switch (*(c + 1)) {
-			case '{':
-				c++;
-				break;
-			case 0: /* broken colour code (paranoia) */
-				c++;
-				continue;
-			default: /* assume colour code and discard */
-				c += 2;
-				continue;
-			}
+			if (chat_input)
+				switch (*(c + 1)) {
+				case '{':
+					c++;
+					break;
+				case 0: /* broken colour code (paranoia) */
+					c++;
+					continue;
+				default: /* assume colour code and discard */
+					c += 2;
+					continue;
+				}
 			break;
 		/* skip special markers */
 		case '\376':
@@ -2256,12 +2269,15 @@ void copy_to_clipboard(char *buf) {
 	else strcpy(buf_prev, buf_esc);
 #endif
 }
-/* paste current clipboard into active chat input */
+/* Paste current clipboard into active chat input.
+   'global': paste goes to global chat (including /say and /whisper)? (not private/party/guild/floor chat) -
+   For the latter four the line already started with a ':' for the chat prefix and we don't need to duplicate the first ':' anymore. */
 bool paste_from_clipboard(char *buf, bool global) {
-#ifdef WINDOWS
-	char *c, *c2, buf_esc[MSG_LEN + 15];
+	bool no_slash_command;
 	int pos = 0;
+	char *c, *c2, buf_esc[MSG_LEN + 15];
 
+#ifdef WINDOWS
 	if (OpenClipboard(NULL)) {
 		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
 		if (hClipboardData) {
@@ -2274,6 +2290,7 @@ bool paste_from_clipboard(char *buf, bool global) {
 				/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
 				c = buf_esc;
 				c2 = buf;
+				no_slash_command = buf_esc[0] != '/';
 				while (*c) {
 					if (*c < 32) {
 						c++;
@@ -2282,9 +2299,10 @@ bool paste_from_clipboard(char *buf, bool global) {
 
 					switch (*c) {
 					case ':':
-						if (pos != 0 && pos <= NAME_LEN && global) {
+						if (global && no_slash_command && pos != 0 && pos <= NAME_LEN) {
 							*c2 = ':';
 							c2++;
+							global = FALSE; /* only the first ':' needs duplication */
 						}
 						break;
 					case '{':
@@ -2309,16 +2327,12 @@ bool paste_from_clipboard(char *buf, bool global) {
 
 #ifdef USE_X11 /* relies on xclip being installed! */
 	FILE *fp;
-	int r, pos = 0;
-	char *c, *c2, buf_esc[MSG_LEN + 15], buf_line[MSG_LEN];
+	int r;
+	char buf_line[MSG_LEN];
 	bool max_length_reached = FALSE;
 
 	r = system("xclip -sel clip -o > __clipboard__");
-	if (r) {
-		c_message_add("Paste failed, make sure xclip is installed.");
-		return(FALSE);
-	}
-	if (!(fp = fopen("__clipboard__", "r"))) {
+	if (r || !(fp = fopen("__clipboard__", "r"))) {
 		c_message_add("Paste failed, make sure xclip is installed.");
 		return(FALSE);
 	}
@@ -2336,10 +2350,10 @@ bool paste_from_clipboard(char *buf, bool global) {
 		strcat(buf_esc, buf_line);
 	}
 	//else buf_esc[strlen(buf_esc) - 1] = 0; //remove trailing newline -- there is no trailing newline!
-
 	/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
 	c = buf_esc;
 	c2 = buf;
+	no_slash_command = buf_esc[0] != '/';
 	while (*c) {
 		if (*c < 32) {
 			c++;
@@ -2348,9 +2362,10 @@ bool paste_from_clipboard(char *buf, bool global) {
 
 		switch (*c) {
 		case ':':
-			if (pos != 0 && pos <= NAME_LEN && global) {
+			if (global && no_slash_command && pos != 0 && pos <= NAME_LEN) {
 				*c2 = ':';
 				c2++;
+				global = FALSE; /* only the first ':' needs duplication */
 			}
 			break;
 		case '{':
@@ -2990,7 +3005,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			continue;
 
 		case KTRL('K'): /* copy current chat line to clipboard */
-			copy_to_clipboard(buf);
+			copy_to_clipboard(buf, TRUE);
 			break;
 		case KTRL('L'): /* paste current clipboard to chat */
 			if (!paste_from_clipboard(tmpbuf, chat_mode == CHAT_MODE_NORMAL && !((tmpc = strchr(buf, ':')) && tmpc - buf < l))) { //emulate strnstr()

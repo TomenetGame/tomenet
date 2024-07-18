@@ -4468,7 +4468,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			/* Trim to legal value and send */
 			tempstr_KL[MSG_LEN - 1] = 0;
 
-			if (c == KTRL('K')) copy_to_clipboard(tempstr_KL);
+			if (c == KTRL('K')) copy_to_clipboard(tempstr_KL, FALSE);
 			else Send_msg(tempstr_KL);
 			break;
 		}
@@ -5398,7 +5398,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			/* Trim to legal value and send */
 			tempstr_KL[MSG_LEN - 1] = 0;
 
-			if (c == KTRL('K')) copy_to_clipboard(tempstr_KL);
+			if (c == KTRL('K')) copy_to_clipboard(tempstr_KL, FALSE);
 			else Send_msg(tempstr_KL);
 			break;
 		}

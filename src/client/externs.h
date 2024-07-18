@@ -686,7 +686,7 @@ extern void sync_sleep(int milliseconds);
 extern void sync_xsleep(int milliseconds);
 extern char original_commands(char command);
 extern char roguelike_commands(char command);
-extern void copy_to_clipboard(char *buf);
+extern void copy_to_clipboard(char *buf, bool chat_input);
 extern bool paste_from_clipboard(char *buf, bool global);
 extern void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method, bool afford);
 extern void set_bigmap(int bm, bool verbose);
