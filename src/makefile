@@ -312,7 +312,7 @@ CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
 LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
 # Optional: Compile with Link Time Optimization (LTO)
-#CFLAGS += -flto=8
+#CFLAGS += -flto=auto
 
 # Optional: Catch memory errors with AddressSanitizer
 #CFLAGS += -fsanitize=address -fno-omit-frame-pointer

@@ -174,11 +174,11 @@ SDL_LIB_PATH = $(shell $(SDL_CONFIG) --libs)
 ##
 ## Common flags
 ##
-CFLAGS = -O2 -flto -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable -Wno-stringop-truncation -Wno-stringop-overflow
+CFLAGS = -O2 -flto=auto -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable -Wno-stringop-truncation -Wno-stringop-overflow
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 #We don't need SDL for lua, so keep it simple..
-LUACFLAGS = -O2 -flto -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
+LUACFLAGS = -O2 -flto=auto -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
 LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 ## With SDL, using 'sdl-config':
@@ -234,7 +234,7 @@ NCC = gcc
 #tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
 # while -O3 (and maybe -O2?) seem to fix that as workaround
 # update 2024-07-01: O3 caused 13/74 virustotal false positives, changing to O2 only 3/74 ^^'
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2 -flto
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2 -flto=auto
 tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
 
 
