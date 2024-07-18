@@ -1506,7 +1506,7 @@ void peruse_file(void) {
  * XXX XXX XXX Allow the "full" flag to dump additional info,
  * and trigger its usage from various places in the code.
  */
- #define DUMP_MAX_X 80
+#define DUMP_MAX_X 80	/* Increased to 80 from originally 79, or Chh gets its last column cut off (and potentially other stuff too) */
 errr file_character(cptr name, bool quiet) {
 	int		i, x, y;
 	byte		a;
@@ -1635,7 +1635,6 @@ errr file_character(cptr name, bool quiet) {
 		/* trim lines to 80 chars */
 		sprintf(linebuf, "%c%s %s\n", index_to_label(i), paren, buf);
 		//linebuf[80] = 0; --not for now
-
 		fprintf(fff, "%s", linebuf);
 	}
 	fprintf(fff, "\n\n");
@@ -1648,10 +1647,32 @@ errr file_character(cptr name, bool quiet) {
 		/* trim lines to 80 chars */
 		sprintf(linebuf, "%c%s %s\n", index_to_label(i), paren, inventory_name[i]);
 		//linebuf[80] = 0; --not for now
-
 		fprintf(fff, "%s", linebuf);
 	}
 	fprintf(fff, "\n\n");
+
+#ifdef ENABLE_SUBINVEN
+	/* Dump the inventory */
+	fprintf(fff, "  [Character Subinventory]\n\n");
+	for (i = 0; i < INVEN_PACK; i++) {
+		if (inventory[i].tval != TV_SUBINVEN) continue;
+
+		/* trim lines to 80 chars */
+		sprintf(linebuf, "[%c] %s\n", index_to_label(i), inventory_name[i]);
+		//linebuf[80] = 0; --not for now
+		fprintf(fff, "%s", linebuf);
+
+		for (x = 0; x < SUBINVEN_PACK; x++) {
+			if (!subinventory[i][x].tval) continue;
+
+			/* trim lines to 80 chars */
+			sprintf(linebuf, "  %c%s %s\n", index_to_label(i), paren, subinventory_name[i][x]);
+			//linebuf[80] = 0; --not for now
+			fprintf(fff, "%s", linebuf);
+		}
+	}
+	fprintf(fff, "\n\n");
+#endif
 
 	/* Dump the last messages */
 	fprintf(fff, "  [Last Messages]\n\n");
