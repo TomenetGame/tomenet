@@ -4222,7 +4222,7 @@ int Receive_store_special_clr(void) {
 
 int Receive_store_info(void) {
 	int n, max_cost;
-	char ch, owner_name[MAX_CHARS] , store_name[MAX_CHARS];
+	char ch, owner_name[MAX_CHARS], store_name[MAX_CHARS];
 	s16b num_items;
 	byte store_attr = TERM_SLATE;
 	char store_char = '?';
