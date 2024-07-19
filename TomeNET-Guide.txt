@@ -10623,11 +10623,11 @@ Created by Kurzel, these events are usually permanently recruiting in the list
 of global events (use '/evinfo' chat command to check, '/evsign' to sign up).
 
 Once a player signs up, there is a short time window of a few minutes during
-which more players can sign up too, before the event begins.
-Then, nobody else may join until all players participating are dead or got out.
-Event duration is limited, if a player is still there when the time runs out
+which additional players can sign up, before the event begins.
+Then, nobody else may join until all players participating are dead or escaped.
+Event duration is limited. If a player is still there when the time runs out
 he will usually just get teleported back to Bree.
-In general, fruit bats and PvP characters and ghosts cannot participate.
+In general, fruit bats, PvP characters and ghosts cannot participate.
 
   Under Elmoth:
     Co-op, for 1 up to 6 participants.
@@ -10636,8 +10636,9 @@ In general, fruit bats and PvP characters and ghosts cannot participate.
     under sunken Nan Elmoth. Once a place of beauty, now its cavernous
     chambers contain only dread! Triumph over the corruption if you can!
 
-    Restrictions: Must have zero XP (experience). 1-6 players. 30 minutes.
-    Prohibitions: No ESP, Mapping, Detection, Genocide, *Destruction*.
+    Restrictions: Must have zero XP (experience). 30 minutes time limit.
+    Prohibitions: No ESP, Mapping, Detection, Genocide, *Destruction* or
+                  Earthquake.
 
     Hints: BEWARE! Some encounters will challenge different playstyles.
            Try various strategies or participate in a group to succeed!
