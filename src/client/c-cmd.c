@@ -57,6 +57,46 @@ static void cmd_all_in_one(void) {
 	else
 #endif
 	if (item >= INVEN_WIELD) {
+#if defined(WIELD_BOOKS) || defined(WIELD_DEVICES)
+	tval = inventory[item].tval;
+#endif
+#ifdef WIELD_BOOKS
+		if (tval == TV_BOOK) {
+			int i;
+
+			for (i = 1; i < MAX_SKILLS; i++) {
+				if (s_info[i].tval == inventory[item].tval &&
+				    s_info[i].action_mkey && p_ptr->s_info[i].value) {
+					do_activate_skill(i, item);
+					return;
+					/* Now a number of skills shares same mkey */
+				}
+			}
+		}
+#endif
+
+#ifdef WIELD_DEVICES
+		switch (tval) {
+		case TV_WAND:
+			if (!get_dir(&dir)) return;
+			Send_aim(item, dir);
+			return;
+		case TV_STAFF:
+			Send_use(item);
+			return;
+		case TV_ROD:
+			/* Does rod require aiming? (Always does if not yet identified) */
+			if (inventory[item].uses_dir == 0) {
+				/* (also called if server is outdated, since uses_dir will be 0 then) */
+				Send_zap(item);
+			} else {
+				if (!get_dir(&dir)) return;
+				Send_zap_dir(item, dir);
+			}
+			return;
+		}
+#endif
+
 		/* Does item require aiming? (Always does if not yet identified) */
 		if (inventory[item].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
