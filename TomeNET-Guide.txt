@@ -10386,11 +10386,13 @@ The following actions may reward 1 XP without you noticing:
 Killing townspeople in Bree however will not give you any experience.
 Stay clean!
 
+Before listing the events, there are the x-orders, which aren't considered
+real events but rather personal kill quests that can run concurrently (on
+a timer) to anything you are actually doing in the game:
 
-Here is a list of currently available events:
 
-Extermination orders
---------------------
+Extermination orders:
+---------------------
 These are basically 'kill quests'. You need to venture out and kill a fixed
 amount of a certain type of monster.
 To receive an order, visit the major in the town hall (one of the '+'
@@ -10417,8 +10419,9 @@ of the extermination order will depend on the floor level rather than on the
 player's level. Inside the IDDC you may only request one order per floor.
 
 
-Events (use /evinfo and /evsign commands to get information and to sign up)
----------------------------------------------------------------------------
+Events:
+-------
+use /evinfo and /evsign commands to get information and to sign up)
 Note: Item rewards depend on your character, see (9.5) for more information
       about item rewards.
 
@@ -10431,7 +10434,12 @@ Such scenarios are for exaple: Ironman dungeons, forcedown dungeons, no-recall
 dungeons, no-teleport vaults, wearing a no-teleport item.
 If an event has't started yet you can undo your sign-up again with '/evunsign'.
 
-Highlander Tournament (pvp, only one can win, 2+ participants)
+Here is a list of all available events:
+
+  Highlander Tournament:
+    PvP, there can only be one, requires at least 2 participants.
+    Can provide sort of the strongest reward items of all events.
+
     When you see a message, announcing a Highlander Tournament, type "/evinfo"
     in the chat to find out more, and use "/evsign" followed by the event's
     number to sign up for participation.
@@ -10480,7 +10488,10 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     Highlander Tournament deeds can create somewhat more valuable reward items
     than the Dungeon Keeper event.
 
-Arena Monster Challenge (no losses or gains, for testing your abilities)
+  Arena Monster Challenge:
+    No sign-up period, it's immediately active. No losses or gains, no deaths,
+    it's just for testing your abilities.
+
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
     event on the top floor of Bree's training tower, which will allow any Joe
     and Jane to experience top-notch fights against creatures that usually
@@ -10498,9 +10509,11 @@ Arena Monster Challenge (no losses or gains, for testing your abilities)
     event, and you cannot get disarmed either.
     NOTE: PvP mode characters are exempt from safety and can die for real!
 
-Dungeon Keeper (everyone can win, 1+ participants)
+  Dungeon Keeper:
+    Co-op - everyone can win, requires at least 1 participant.
     (You should enable 'easy_open' option in  = 8  for this event, which is
-    enabled by default, and lets you open doors simply be moving into them.)
+    enabled by default, and lets you open doors simply be moving into them.
+    Light radius of 2 is recommended, eg provided by a Brass Lantern.)
 
     Characters who want to participate must not be of higher level than 14.
     A character can participate only once in this event.
@@ -10552,7 +10565,9 @@ Dungeon Keeper (everyone can win, 1+ participants)
     -It is known that in a world of squares, moving diagonally has a certain
      advantage.
 
+
 Reward deeds:
+-------------
     Some events hand out deeds to winners (sometimes dubbed victory deeds) and
     maybe also to losers (sometimes dubbed contender deeds).
     If it was an event that erases losers, the contender deed is usually
@@ -10560,8 +10575,7 @@ Reward deeds:
     These deeds can be 'r'ead and turned in at the mayor's office in Bree, the
     biggest building in town, north-east area of the town center.
 
-    Winner deeds
-    -------------
+  Winner deeds:
     Winner deeds can be turned in for an item tailored to the character!
     The game checks some details like which skills you have trained and also
     your character sheet and equipment to some degree, to determine the item,
@@ -10578,8 +10592,7 @@ Reward deeds:
     The buff duration of a traded deed will still be the same as it would have
     been for the owner though.
 
-    Loser deeds
-    -----------
+  Loser deeds:
     Players who didn't win will also (depending on the event) receive a deed
     on the next character they log in with, which can be turned in for a very
     small temporary luck bonus that lasts about 30 minutes (45 on the Ironman
@@ -10587,8 +10600,7 @@ Reward deeds:
     it's the same buff power (ie same tier of deed). Contender deeds are not
     tradable so they can only be redeemed by the character that received them.
 
-    Further information
-    -------------------
+  Further information:
     The luck buffs are on hold while on the world surface, so you won't lose
     buff time from running around in the town area or travelling to dungeons.
     This also means that the buffs are not applied while on the world surface.
@@ -10602,12 +10614,119 @@ Reward deeds:
 Asides from extermination orders and events, there is another, permanently
 available challenge that waits for you to tackle it:
 
-Ironman Deep Dive Challenge (IDDC)
+
+Adventure modules:
+------------------
+These are highly challenging events on hand-crafted dungeon maps, specifically
+themed environments, and may have hidden bonus treasure and encounters.
+Created by Kurzel, these events are usually permanently recruiting in the list
+of global events (use '/evinfo' chat command to check, '/evsign' to sign up).
+
+Once a player signs up, there is a short time window of a few minutes during
+which more players can sign up too, before the event begins.
+Then, nobody else may join until all players participating are dead or got out.
+Event duration is limited, if a player is still there when the time runs out
+he will usually get ported out.
+In general, fruit bats and PvP characters and ghosts cannot participate.
+
+  Under Elmoth:
+    Co-op, for 1 up to 6 participants.
+
+    Create a new character and challenge the forbidding dark-elven halls
+    under sunken Nan Elmoth. Once a place of beauty, now its cavernous
+    chambers contain only dread! Triumph over the corruption if you can!
+
+    Restrictions: Must have zero XP (experience). 1-6 players. 30 minutes.
+    Prohibitions: No ESP, Mapping, Detection, Genocide, *Destruction*.
+
+    Hints: BEWARE! Some encounters will challenge different playstyles.
+           Try various strategies or participate in a group to succeed!
+
+
+Seasonal events:
+----------------
+At certain times of the year, some seasonal events will occur for a couple of
+days each. The exact time of the day when they start or end can vary depending
+on your time zone, even a date difference of +/-1 day is possible for that
+reason. The ending date means that somewhen after the beginning of that day,
+the event will end.
+
+These events do not use sign-up and aren't listed in the global events list
+either, they are just active 'in the background' in the game world, modifying
+certain aspects of it:
+
+  Halloween:
+    Running from 26th October till 2nd November.
+    If seasons run at 2x speed, then also from 26th April till 2nd May.
+
+    The server will recall all players (20 minutes ahead warning will be
+    displayed) and restart. After that, Halloween is live and costumes can be
+    found and stored costumes can be worn again.
+    Townspeople will actually give experience (!) but also have a fear-causing
+    'touch' attack. They can't really harm you, though.
+
+    Randomly, the Great Pumpkin will appear on dungeon levels, its hit points
+    varying from 1/3 to full strength depending on the dungeon level.
+    If you cannot beat it on deeper floors you could try leaving the floor to
+    reset it, wait a bit, and then move to a shallower floor and hope to see
+    the Pumpkin respawn there with less HP.
+    The pumpkin will despawn on its own if it doesn't get defeated before one
+    hour has passed after it appeared. It will quickly respawn on another
+    dungeon level in that case. About 5 minutes before it fades away, nearby
+    players will get a warning message, saying that the Great Pumpkin
+    "wails and seems to fade".
+
+    The Pumpkin is aiming at intermediate-level characters. It can spawn on any
+    dungeon floor from level 1 to 35 (or 40 on Ironman server),
+    except it won't show up on the first 9 floors in the Ironman Deep Dive
+    Challenge.
+    It will usually be quite tough and might require teamwork to beat.
+    Players who are too high level (above 30 on main, above 35 on Ironman*)
+    will not be able to hunt him, they will see a message:
+     "A ghostly force drives you out of this dungeon!"
+    The IDDC is the only exception: Players of any level may enter a floor that
+    already has the Great Pumpkin on it, without getting teleported away.
+
+    The Great Pumpkin does not cause any damage but still has a few annoying
+    spells at its disposal. It is level 127 and therefore can drop quite high-
+    level items and usually drops very good stuff. Please share fairly. ;)
+    When a player defeats the Great Pumpkin, everyone will get a message about
+    it. The Great Pumpkin will randomly respawn again some time later.
+
+    During Halloween, it will stay deep night on the world's surface and magic
+    that lights up the world surface won't work.
+
+  Christmas:
+    Running from 23rd December to 26th December.
+    If seasons run at 2x speed, then also from 23rd June till 26th June.
+
+    The server will recall all players (20 minutes ahead warning will be
+    displayed) and restart, after which the event is live.
+    During christmas, costumes can be worn again and you might even find Santa
+    Claus costumes. Also, Santa Claus will spawn in town and drops great stuff
+    when you uh.. kill him. :)
+
+  New year's eve:
+    Running from 31st December to 1st January.
+    If seasons run at 2x speed, then also from 31st June till 1st July.
+
+    Fireworks will be launched into the sky of the town of Bree.
+    While it's night and fireworks are being launched, magic that lights up the
+    world surface will not work.
+
+
+Ironman Deep Dive Challenge (IDDC):
+-----------------------------------
+This is a permanent, special, gigantic ironman dungeon (or tower) that you may
+attempt to conquer by reaching the final floor or killing Morgoth and then
+recalling out. It allows traversing only in one direction and if you die you
+die permanently even if you are everlasting!
+
   Structure, getting out:
-    This is a special, gigantic ironman dungeon (or tower) which is 127 levels
-    in size (-50 ft till -6350 ft, or positive if a tower) and does not allow
-    recalling in between, except for in the two 'dungeon towns' which will be
-    generated at dungeon level 40 (Menegroth) and 80 (Nargothrond).
+    The IDDC dungeon consists of 127 floors (-50 ft till -6350 ft, or positive
+    if it happens to be a tower) and does not allow recalling in between,
+    except for in the two 'dungeon towns' which will be generated at dungeon
+    level 40 (Menegroth) and 80 (Nargothrond).
     There are two additional dungeon towns at level 20 and 60 but these won't
     allow recalling.
     If you recall from a town it counts as withdrawing from the challenge and
@@ -10858,75 +10977,6 @@ Ironman Deep Dive Challenge (IDDC)
     as many monsters as you can on your current floor before logging out. That
     way you won't "waste" any experience points.
     Dungeon towns never turn stale.
-
-
-
-Seasonal events
----------------
-At certain times of the year, some seasonal events will occur for a couple of
-days each. The exact time of the day when they start or end can vary depending
-on your time zone, even a date difference of +/-1 day is possible for that
-reason. The ending date means that somewhen after the beginning of that day,
-the event will end:
-
-Halloween
-    Running from 26th October till 2nd November.
-    If seasons run at 2x speed, then also from 26th April till 2nd May.
-
-    The server will recall all players (20 minutes ahead warning will be
-    displayed) and restart. After that, Halloween is live and costumes can be
-    found and stored costumes can be worn again.
-    Townspeople will actually give experience (!) but also have a fear-causing
-    'touch' attack. They can't really harm you, though.
-
-    Randomly, the Great Pumpkin will appear on dungeon levels, its hit points
-    varying from 1/3 to full strength depending on the dungeon level.
-    If you cannot beat it on deeper floors you could try leaving the floor to
-    reset it, wait a bit, and then move to a shallower floor and hope to see
-    the Pumpkin respawn there with less HP.
-    The pumpkin will despawn on its own if it doesn't get defeated before one
-    hour has passed after it appeared. It will quickly respawn on another
-    dungeon level in that case. About 5 minutes before it fades away, nearby
-    players will get a warning message, saying that the Great Pumpkin
-    "wails and seems to fade".
-
-    The Pumpkin is aiming at intermediate-level characters. It can spawn on any
-    dungeon floor from level 1 to 35 (or 40 on Ironman server),
-    except it won't show up on the first 9 floors in the Ironman Deep Dive
-    Challenge.
-    It will usually be quite tough and might require teamwork to beat.
-    Players who are too high level (above 30 on main, above 35 on Ironman*)
-    will not be able to hunt him, they will see a message:
-     "A ghostly force drives you out of this dungeon!"
-    The IDDC is the only exception: Players of any level may enter a floor that
-    already has the Great Pumpkin on it, without getting teleported away.
-
-    The Great Pumpkin does not cause any damage but still has a few annoying
-    spells at its disposal. It is level 127 and therefore can drop quite high-
-    level items and usually drops very good stuff. Please share fairly. ;)
-    When a player defeats the Great Pumpkin, everyone will get a message about
-    it. The Great Pumpkin will randomly respawn again some time later.
-
-    During Halloween, it will stay deep night on the world's surface and magic
-    that lights up the world surface won't work.
-
-Christmas
-    Running from 23rd December to 26th December.
-    If seasons run at 2x speed, then also from 23rd June till 26th June.
-
-    The server will recall all players (20 minutes ahead warning will be
-    displayed) and restart, after which the event is live.
-    During christmas, costumes can be worn again and you might even find Santa
-    Claus costumes. Also, Santa Claus will spawn in town and drops great stuff
-    when you uh.. kill him. :)
-
-New year's eve
-    Running from 31st December to 1st January.
-    If seasons run at 2x speed, then also from 31st June till 1st July.
-
-    Fireworks will be launched into the sky of the town of Bree.
-    While it's night and fireworks are being launched, magic that lights up the
-    world surface will not work.
 
 
 
