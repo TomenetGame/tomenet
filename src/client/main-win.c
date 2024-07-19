@@ -4635,28 +4635,7 @@ void set_window_title_win(int term_idx, cptr title) {
 	if (!td->visible) return;
 	if (td->pos_x == -32000 || td->pos_y == -32000) return;
 
-#if 0
-	td->s = ang_term_name[term_idx];
-#endif
-
-#if 1
-	term *term_old = Term;
-	/* Activate */
-	Term_activate(&td->t);
-	Term_redraw();
-	/* Redraw the contents */
-	Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
-	/* Restore */
-	Term_activate(term_old);
-#endif
-
-#if 1
-	/* Require window */
-	if (!td->w) return;
-	c_msg_print("InvalidateRect");
-	/* Redraw later */
-	InvalidateRect(td->w, NULL, TRUE);
-#endif
+	SetWindowTextA(td->w, title);
 }
 
 #endif /* _Windows */
