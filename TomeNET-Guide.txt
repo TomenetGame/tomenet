@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. July 2024 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 19. July 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8980,6 +8980,7 @@ For more information, see (4.13), Ironman Challenge.
  Notes: Death in here is like in the Training Tower, but with additional random
  inventory damage like form a 'normal' death; equipment is safe though.
  Death Fate unstatices immediately after you leave.
+ (PvP mode characters die permanently, same as they do in the Training Tower.)
 
 (***) Cloud Planes details:
  To enter the Cloud Planes a player must carry the 'King'/'Queen' title,
