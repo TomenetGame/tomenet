@@ -9791,10 +9791,13 @@ static void process_global_event(int ge_id) {
 			// Don't wipe it once generated, avoiding conflicts with PVPARENA / other modules - Kurzel
 			// if (wild_info[wpos.wy][wpos.wx].tower) (void)rem_dungeon(&wpos, TRUE);
 
-			/* restart challenge announcement */
+			/* Debug why state[1] might be != 2 and therefore state[0] wouldn't be reset, if we didn't add the 'Always reset stage' safety measure below */
 			s_printf("ge->state[1] is %d\n", ge->state[1]);
+			/* Always reset stage to the beginning, to be safe */
+			ge->state[0] = 0;
+			/* restart challenge announcement */
 			if (ge->state[1] == 2) {
-				ge->state[0] = 0;
+				//ge->state[0] = 0; --safety measure: moved above
 				ge->state[1] = 1;
 				announce_global_event(ge_id);
 				break;
