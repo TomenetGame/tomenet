@@ -5001,8 +5001,8 @@ Tilesets also have a designated 'mask colour' R=255,G=0,B=255 (or hex 0xFF00FF)
 aka a strong violet, which is treated special: It will be replaced by the
 actual font colour the grid would have with a normal font, thereby representing
 the type of floor feat, item, monster etc with its correct colour.
-For example a tile depicting an orc would display the mask colour in umber if
-it was a hill orc or in light green if it was a cave orc.
+For example a tile depicting an orc would display the mask colour in umber
+(ie brown) if it was a hill orc or in light green if it was a cave orc.
 
 Svechnik (EvgenijK) has worked on a major graphical tileset that can be found
 on his github, including instructions on how to use it:
