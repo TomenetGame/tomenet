@@ -4619,4 +4619,36 @@ void refresh_palette(void) {
 
 	Term_activate(term_old);
 }
+
+void set_window_title_win(int term_idx, cptr title) {
+	term_data *td;
+
+	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
+	td = &data[term_idx];
+
+#if 0
+	td->s = ang_term_name[term_idx];
+#endif
+
+#if 1
+
+	/* Require window */
+	if (!td->w) return;
+	/* Redraw later */
+	InvalidateRect(td->w, NULL, TRUE);
+#endif
+
+#if 1
+	term *term_old = Term;
+	/* Activate */
+	Term_activate(&td->t);
+	Term_redraw();
+	/* Redraw the contents */
+	Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
+	/* Restore */
+	Term_activate(term_old);
+#endif
+}
+
 #endif /* _Windows */

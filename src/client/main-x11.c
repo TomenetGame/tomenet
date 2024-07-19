@@ -548,10 +548,12 @@ static errr Infowin_set_name(cptr name) {
 	XTextProperty tp;
 	char buf[128];
 	char *bp = buf;
+
 	strcpy(buf, name);
 	st = XStringListToTextProperty(&bp, 1, &tp);
 	if (st) XSetWMName(Metadpy->dpy, Infowin->win, &tp);
 	XFree(tp.value);
+
 	return(0);
 }
 
@@ -1426,8 +1428,9 @@ static void react_keypress(XEvent *xev) {
  */
 static void resize_window_x11_timers_handle(void) {
 	struct timeval now = {0, 0};
+	int t_idx;
 
-	for (int t_idx = 0; t_idx < ANGBAND_TERM_MAX; t_idx++) {
+	for (t_idx = 0; t_idx < ANGBAND_TERM_MAX; t_idx++) {
 		term_data *td = term_idx_to_term_data(t_idx);
 
 		if (td->resize_timer.tv_usec != 0 || td->resize_timer.tv_sec != 0) {
@@ -1463,6 +1466,7 @@ static errr CheckEvent(bool wait) {
 	//int x, y, data;
 
 	int t_idx = -1;
+
 
 	/* Handle all window resize timers. */
 	resize_window_x11_timers_handle();
@@ -1881,6 +1885,8 @@ static errr term_data_nuke(term_data *td) {
 /* Saves terminal window position, dimensions and font for term_idx to term_prefs.
  * Note: The term_prefs visibility is not handled here. */
 static void term_data_to_term_prefs(int term_idx) {
+	int cols, rows;
+
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
 	term_data *td = term_idx_to_term_data(term_idx);
 
@@ -1889,8 +1895,8 @@ static void term_data_to_term_prefs(int term_idx) {
 	term_prefs[term_idx].y = td->outer->y;
 
 	/* Update dimensions. */
-	int cols = td->inner->w / td->fnt->wid;
-	int rows = td->inner->h / td->fnt->hgt;
+	cols = td->inner->w / td->fnt->wid;
+	rows = td->inner->h / td->fnt->hgt;
 	term_prefs[term_idx].columns = cols;
 	term_prefs[term_idx].lines = rows;
 
@@ -2491,9 +2497,10 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	term *t = &td->t;
 
 	int wid, hgt, num;
-	int win_cols, win_lines;
+	int win_cols, win_lines, wid_outer, hgt_outer;
 	cptr n;
 	int topx, topy; /* 0, 0 default */
+
 
 	/* Use values from .tomenetrc;
 	   Environment variables (see further below) may override those. */
@@ -2599,8 +2606,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Hack -- Assume full size windows */
 	wid = win_cols * td->fnt->wid;
 	hgt = win_lines * td->fnt->hgt;
-	int wid_outer = wid + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
-	int hgt_outer = hgt + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
+	wid_outer = wid + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
+	hgt_outer = hgt + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
 
 	/* Create a top-window. */
 	MAKE(td->outer, infowin);
@@ -2786,16 +2793,21 @@ static char color_name[CLIENT_PALETTE_SIZE][8] = {
 #endif
 static void enable_common_colormap_x11() {
 	int i;
+	unsigned long c;
+#ifdef EXTENDED_BG_COLOURS
+	unsigned long b;
+#endif
 
 	for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
-		unsigned long c = client_color_map[i];
+		c = client_color_map[i];
 
 		sprintf(color_name[i], "#%06lx", c & 0xffffffL);
 	}
 
 #ifdef EXTENDED_BG_COLOURS
 	for (i = 0; i < TERMX_AMT; i++) {
-		unsigned long c = client_ext_color_map[i][0], b = client_ext_color_map[i][1];
+		c = client_ext_color_map[i][0];
+		b = client_ext_color_map[i][1];
 
 		sprintf(color_ext_name[i][0], "#%06lx", c & 0xffffffL);
 		sprintf(color_ext_name[i][1], "#%06lx", b & 0xffffffL);
@@ -2849,6 +2861,9 @@ static int term_data_to_term_idx(term_data *td) {
  * Initialization of i-th X11 terminal window.
  */
 static errr x11_term_init(int term_id) {
+	cptr fnt_name;
+	errr err;
+
 	if (term_id < 0 || term_id >= ANGBAND_TERM_MAX) {
 		fprintf(stderr, "Terminal index %d out of bounds\n", term_id);
 		return(1);
@@ -2861,7 +2876,7 @@ static errr x11_term_init(int term_id) {
 	}
 
 	/* Check environment for X11 terminal font. */
-	cptr fnt_name = getenv(x11_terms_font_env[term_id]);
+	fnt_name = getenv(x11_terms_font_env[term_id]);
 	/* Check environment for "base" font. */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
 	/* Use loaded (from config file) or predefined default font. */
@@ -2870,11 +2885,9 @@ static errr x11_term_init(int term_id) {
 	if (!fnt_name) fnt_name = x11_terms_font_default[term_id];
 
 	/* Initialize the terminal window, allow resizing, for font changes. */
-	errr err = term_data_init(term_id, x11_terms_term_data[term_id], FALSE, ang_term_name[term_id], fnt_name);
+	err = term_data_init(term_id, x11_terms_term_data[term_id], FALSE, ang_term_name[term_id], fnt_name);
 	/* Store created terminal with X11 term data to ang_term array, even if term_data_init failed, but only if there is one. */
-	if (Term && term_data_to_term_idx(Term->data) == term_id) {
-		ang_term[term_id] = Term;
-	}
+	if (Term && term_data_to_term_idx(Term->data) == term_id) ang_term[term_id] = Term;
 
 	if (err) {
 		fprintf(stderr, "Error initializing term_data for X11 terminal with index %d\n", term_id);
@@ -3044,6 +3057,7 @@ errr init_x11(void) {
 /* Turn off num-lock if it's on */
 void turn_off_numlock_X11(void) {
 	Display* disp = XOpenDisplay(NULL);
+
 	if (disp == NULL) return; /* Error */
 
 	XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XK_Num_Lock), True, 0);
@@ -3068,6 +3082,7 @@ static void term_force_font(int term_idx, cptr fnt_name);
 void change_font(int s) {
 	/* use main window font for measuring */
 	char tmp[128] = "";
+
 	if (screen.fnt->name) strcpy(tmp, screen.fnt->name);
 	else strcpy(tmp, DEFAULT_X11_FONT);
 
@@ -3146,18 +3161,18 @@ void change_font(int s) {
 }
 static void term_force_font(int term_idx, cptr fnt_name) {
 	term_data *td = term_idx_to_term_data(term_idx);
+	int cols, rows, wid_outer, hgt_outer;
 
 	/* non-visible window has no fnt-> .. */
 	if (!term_get_visibility(term_idx)) return;
-
 
 	/* special hack: this window was invisible, but we just toggled
 	   it to become visible on next client start. - C. Blue */
 	if (!td->fnt) return;
 
 	/* Determine "proper" number of rows/cols */
-	int cols = ((td->outer->w - (2 * td->inner->b)) / td->fnt->wid);
-	int rows = ((td->outer->h - (2 * td->inner->b)) / td->fnt->hgt);
+	cols = ((td->outer->w - (2 * td->inner->b)) / td->fnt->wid);
+	rows = ((td->outer->h - (2 * td->inner->b)) / td->fnt->hgt);
 
 	/* Create and initialize font. */
 	infofnt *new_font;
@@ -3182,8 +3197,8 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 	td->fnt = new_font;
 
 	/* Desired size of "outer" window */
-	int wid_outer = (cols * td->fnt->wid) + (2 * td->inner->b);
-	int hgt_outer = (rows * td->fnt->hgt) + (2 * td->inner->b);
+	wid_outer = (cols * td->fnt->wid) + (2 * td->inner->b);
+	hgt_outer = (rows * td->fnt->hgt) + (2 * td->inner->b);
 
 	/* Resize the windows if any "change" is needed */
 	if ((td->outer->w != wid_outer) || (td->outer->h != hgt_outer)) {
@@ -3305,10 +3320,12 @@ void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
  */
 void resize_window_x11(int term_idx, int cols, int rows) {
 	bool rounding_down;
+	term_data *td;
+	int wid_inner, hgt_inner, wid_outer, hgt_outer;
 
 	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
-	term_data *td = term_idx_to_term_data(term_idx);
+	td = term_idx_to_term_data(term_idx);
 
 	/* Clear timer. */
 	if (td->resize_timer.tv_sec > 0 || td->resize_timer.tv_usec > 0) {
@@ -3323,10 +3340,10 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 	if (td == &screen && rounding_down && screen_hgt == SCREEN_HGT) rows = MAX_SCREEN_HGT + SCREEN_PAD_Y;
 
 	/* Calculate dimensions in pixels. */
-	int wid_inner = cols * td->fnt->wid;
-	int hgt_inner = rows * td->fnt->hgt;
-	int wid_outer = wid_inner + (2 * td->inner->b);
-	int hgt_outer = hgt_inner + (2 * td->inner->b);
+	wid_inner = cols * td->fnt->wid;
+	hgt_inner = rows * td->fnt->hgt;
+	wid_outer = wid_inner + (2 * td->inner->b);
+	hgt_outer = hgt_inner + (2 * td->inner->b);
 
 	/* Save current Infowin. */
 	infowin *iwin = Infowin;
@@ -3422,12 +3439,15 @@ bool ask_for_bigmap(void) {
 
 const char* get_font_name(int term_idx) {
 	term_data *td = term_idx_to_term_data(term_idx);
+
 	if (td->fnt) return td->fnt->name;
 	if (strlen(term_prefs[term_idx].font)) return term_prefs[term_idx].font;
 	return x11_terms_font_default[term_idx];
 }
 
 void set_font_name(int term_idx, char* fnt) {
+	term_data *td;
+
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) {
 		fprintf(stderr, "Terminal index %d is out of bounds for set_font_name\n", term_idx);
 		return;
@@ -3445,7 +3465,7 @@ void set_font_name(int term_idx, char* fnt) {
 	term_force_font(term_idx, fnt);
 
 	/* Redraw the terminal for which the font was forced. */
-	term_data *td = term_idx_to_term_data(term_idx);
+	td = term_idx_to_term_data(term_idx);
 	if (&td->t != Term) {
 		/* Terminal for which the font was forced is not activated. Activate, redraw and activate the terminal before. */
 		term *old_term = Term;
@@ -3843,6 +3863,23 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 
 	/* done */
 	return fonts_match;
+}
+
+void set_window_title_x11(int term_idx, cptr title) {
+	term_data *td;
+
+	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
+	td = term_idx_to_term_data(term_idx);
+
+	/* Save current Infowin. */
+	infowin *iwin = Infowin;
+
+	Infowin_set(td->outer);
+	Infowin_set_name(ang_term_name[term_idx]);
+
+	/* Restore saved Infowin. */
+	Infowin_set(iwin);
 }
 
 #endif // USE_X11

@@ -9528,7 +9528,7 @@ static int font_name_cmp(const void *a, const void *b) {
 //  #endif
 
 static void do_cmd_options_fonts(void) {
-	int j, d, vertikal_offset = 3;
+	int j, d, vertikal_offset = 6;
 	int y = 0;
 	char ch;
 	bool go = TRUE, inkey_msg_old;
@@ -9668,8 +9668,10 @@ static void do_cmd_options_fonts(void) {
 	/* Interact */
 	while (go) {
 		/* Prompt XXX XXX XXX */
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yv\377w (visibility), \377y-\377w/\377y+\377w,\377y=\377w (smaller/bigger), \377yENTER\377w (enter font name), \377yESC\377w)");
-		Term_putstr(0, 1, -1, TERM_WHITE, format("  (%d font%s and %d graphic font%s available, \377yl\377w to list in message window)", fonts, fonts == 1 ? "" : "s", graphic_fonts, graphic_fonts == 1 ? "" : "s"));
+		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w/\377y+\377w,\377y=\377w smaller/bigger font");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  \377ySPACE\377w enter new window title - allowed for all except the main window");
+		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yESC\377w keep changes and exit");
+		Term_putstr(0, 4, -1, TERM_WHITE, format("  %d font%s and %d graphic font%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s", graphic_fonts, graphic_fonts == 1 ? "" : "s"));
 
 		/* Display the windows */
 		for (j = 0; j < ANGBAND_TERM_MAX; j++) {
@@ -9682,6 +9684,8 @@ static void do_cmd_options_fonts(void) {
 
 			/* Window name, staggered, centered */
 			Term_putstr(1, vertikal_offset + j, -1, a, (char*)s);
+			/* Titles may be up to 40 characters long, in that case, shorten */
+			if (strlen(s) > 19) Term_putstr(18, vertikal_offset + j, -1, a, "..");
 
 			/* Display the font of this window */
 			if (c_cfg.use_color && !term_get_visibility(j)) a = TERM_L_DARK;
@@ -9717,8 +9721,37 @@ static void do_cmd_options_fonts(void) {
 			break;
 
 		case 'v':
-			if (y == 0) break; /* main window cannot be invisible */
+			if (y == 0) {
+				c_msg_print("\377yThe main window must always be visible.");
+				break; /* main window cannot be invisible */
+			}
 			term_toggle_visibility(y);
+			break;
+
+		case ' ':
+			if (y == 0) {
+				c_msg_print("\377yThe main window cannot be renamed.");
+				break; /* main window is always 'TomeNET' */
+			}
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter new window title:");
+			Term_gotoxy(0, 21);
+			strcpy(tmp_name, "");
+			if (!askfor_aux(tmp_name, 39, 0)) { //the array reserves [40]
+				clear_from(20);
+				break;
+			}
+			clear_from(20);
+			if (!tmp_name[0]) break;
+
+			Term_putstr(1, vertikal_offset + y, -1, TERM_DARK, "                                       ");
+			strcpy(ang_term_name[y], tmp_name);
+
+			/* Immediately change live window title */
+#ifdef WINDOWS
+			set_window_title_win(y, ang_term_name[y]);
+#else /* assume POSIX */
+			set_window_title_x11(y, ang_term_name[y]);
+#endif
 			break;
 
 		case '=':

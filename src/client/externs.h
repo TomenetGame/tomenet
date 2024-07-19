@@ -40,6 +40,7 @@ extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
 extern void refresh_palette(void);
 extern int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length);
+extern void set_window_title_x11(int term_idx, cptr title);
 #endif
 
 #ifdef USE_XAW
@@ -1073,6 +1074,7 @@ extern void refresh_palette(void);
 extern void store_audiopackfolders(void);
 extern void save_term_data_to_term_prefs(void);
 extern void save_prefs(void);
+extern void set_window_title_win(int term_idx, cptr title);
 #endif
 extern void store_crecedentials(void);
 
