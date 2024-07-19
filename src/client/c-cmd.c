@@ -5542,7 +5542,7 @@ static void artifact_lore(void) {
 				if (n) Term_erase(5, 5, 80); //erase old beginning-of-line match that was shown here first
 				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-				if (Client_setup.k_char[artifact_list_kidx[i]])
+				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
 					Term_draw(5, 5, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
 
 				/* no beginning-of-line match yet? good. */
@@ -5557,7 +5557,7 @@ static void artifact_lore(void) {
 					/* redisplay the moved choice */
 					Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 					/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-					if (Client_setup.k_char[artifact_list_kidx[i]])
+					if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
 						Term_draw(5, 5 + n, selected_line == n ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
 				}
 
@@ -5575,7 +5575,7 @@ static void artifact_lore(void) {
 
 				Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-				if (Client_setup.k_char[artifact_list_kidx[i]])
+				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
 					Term_draw(5, 5 + n, selected_line == n ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
 
 				list_idx[n] = i;
@@ -5619,7 +5619,7 @@ static void artifact_lore(void) {
 
 				Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-				if (Client_setup.k_char[artifact_list_kidx[i]])
+				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
 					Term_draw(5, 5 + n, n == selected_line ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
 
 				list_idx[n] = i;
@@ -5634,7 +5634,7 @@ static void artifact_lore(void) {
 			else {
 				Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-				if (Client_setup.k_char[artifact_list_kidx[i]])
+				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
 					Term_draw(5, 5 + selected_line, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
 			}
 		}
@@ -5929,7 +5929,7 @@ static void monster_lore(void) {
 					}
 #if 0 //copypasta...
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-				if (Client_setup.k_char[artifact_list_kidx[i]])
+				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
 					Term_draw(5, 5 + n, n == selected_line ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
 #endif
 

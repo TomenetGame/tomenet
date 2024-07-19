@@ -599,7 +599,7 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool t
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 #if 0 //copypasta...
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-		if (Client_setup.k_char[artifact_list_kidx[alidx]])
+		if (Client_setup.k_char[artifact_list_kidx[alidx]] && !c_cfg.ascii_monsters && !c_cfg.ascii_uniques)
 			Term_draw(5, 5, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[alidx]]);
 #endif
 
@@ -1868,7 +1868,7 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		/* Display artifact name at the 'top' of the lore text/specs */
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-		if (Client_setup.k_char[artifact_list_kidx[alidx]])
+		if (Client_setup.k_char[artifact_list_kidx[alidx]] && !c_cfg.ascii_items)
 			Term_draw(5, 5, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[alidx]]);
 
 		/* fetch diz */
@@ -2245,7 +2245,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		/* Display artifact name at the 'top' of the lore text/specs */
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-		if (Client_setup.k_char[artifact_list_kidx[alidx]])
+		if (Client_setup.k_char[artifact_list_kidx[alidx]] && !c_cfg.ascii_items)
 			Term_draw(5, 5, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[alidx]]);
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
