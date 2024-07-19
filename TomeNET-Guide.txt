@@ -5004,8 +5004,8 @@ the type of floor feat, item, monster etc with its correct colour.
 For example a tile depicting an orc would display the mask colour in umber
 (ie brown) if it was a hill orc or in light green if it was a cave orc.
 
-Svechnik (EvgenijK) has worked on a major graphical tileset that can be found
-on his github, including instructions on how to use it:
+Svechnik (aka 'EvgenijK' on github) has worked on a major graphical tileset
+that can be found on his github, including instructions on how to use it:
 
   https://github.com/EvgenijK/TomeNET-Tileset
 
@@ -5026,6 +5026,10 @@ or TomeNET.ini (Windows):
   GraphicTiles=16x22sv
 and then in-game make sure that the option = 1 'font_map_solid_walls' is OFF!
 
+However, you're not done yet, as you should still select a fitting font too
+(easiest is to use the 16x22 font Svechnik provides too for this purpose),
+so read on...
+
 
 Notes about an important difference to normal fonts:
 ----------------------------------------------------
@@ -5036,10 +5040,11 @@ font and use its symbol instead.
 
 Since the tileset linked above is a work in progress and so far there are no
 known complete tilesets, that is the reason why an underlying font to work
-together with the tileset is still needed.
+together with the tileset is still needed. At least SOME font should always
+be selected just to be on the safe side, as there are no drawbacks.
 
 The font should preferably have the same dimensions as the tileset, or scaling
-will happen automatically that might not look very good.
+will be applied automatically, which might not look ideal.
 For EvgenijK's bmp tileset which has dimensions 16x22 px/tile, he provides
 a 16x22 font that is located in lib/fonts, as both .FON and .pcf format, but
 of course you can use any other font file too.
