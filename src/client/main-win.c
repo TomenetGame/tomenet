@@ -4632,14 +4632,6 @@ void set_window_title_win(int term_idx, cptr title) {
 #endif
 
 #if 1
-
-	/* Require window */
-	if (!td->w) return;
-	/* Redraw later */
-	InvalidateRect(td->w, NULL, TRUE);
-#endif
-
-#if 1
 	term *term_old = Term;
 	/* Activate */
 	Term_activate(&td->t);
@@ -4648,6 +4640,14 @@ void set_window_title_win(int term_idx, cptr title) {
 	Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
 	/* Restore */
 	Term_activate(term_old);
+#endif
+
+#if 1
+	/* Require window */
+	if (!td->w) return;
+	c_msg_print("InvalidateRect");
+	/* Redraw later */
+	InvalidateRect(td->w, NULL, TRUE);
 #endif
 }
 
