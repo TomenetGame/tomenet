@@ -1514,6 +1514,9 @@ static void init_kind_list() {
 		/* hack - skip item 0, because it doesn't have tval/sval */
 		if (atoi(p1) == 0) continue;
 
+		/* remember k_info index (N: line) as it is used for custom mappings */
+		kind_list_kidx[kind_list_idx] = atoi(p1);
+
 		/* strip '& ' and '~' */
 		strcpy(kind_list_name[kind_list_idx], "");
 		while (*p2) {
@@ -1738,6 +1741,7 @@ static void init_artifact_list() {
 				strcpy(artifact_list_name[artifact_list_idx], "The ");
 				strcat(artifact_list_name[artifact_list_idx], kind_list_name[i]);
 				strcat(artifact_list_name[artifact_list_idx], " ");
+				artifact_list_kidx[artifact_list_idx] = kind_list_kidx[i];
 				break;
 			}
 		}

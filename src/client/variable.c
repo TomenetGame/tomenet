@@ -430,17 +430,18 @@ bool request_abort = FALSE;
 
 /* For polymorphing by monster name
    and also for monster lore */
-char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2];
+char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2]; //note: [0] is the attr (just byte), [1] is the char. Todo maybe: Separate attr and char.
 int monster_list_code[MAX_R_IDX], monster_list_idx = 0, monster_list_level[MAX_R_IDX];
 bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX];
 /* For artifact lore */
-char artifact_list_name[MAX_A_IDX][80];
-int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx = 0;
+char artifact_list_name[MAX_A_IDX][80]; //note: format of this is: 1st byte \377, 2nd byte attr, 3rd byte char, then "Lnn " and the actual artifact name
+int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx = 0; // 'code' is the a_info 'N:' index
+int artifact_list_kidx[MAX_A_IDX];
 bool artifact_list_specialgene[MAX_A_IDX];
 char artifact_list_activation[MAX_A_IDX][80];
 /* For artifact lore */
 char kind_list_name[MAX_K_IDX][80];
-int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx = 0;
+int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx = 0, kind_list_kidx[MAX_K_IDX];
 char kind_list_char[MAX_K_IDX];
 byte kind_list_attr[MAX_K_IDX];
 
