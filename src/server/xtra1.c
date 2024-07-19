@@ -9792,6 +9792,7 @@ static void process_global_event(int ge_id) {
 			// if (wild_info[wpos.wy][wpos.wx].tower) (void)rem_dungeon(&wpos, TRUE);
 
 			/* restart challenge announcement */
+			s_printf("ge->state[1] is %d\n", ge->state[1]);
 			if (ge->state[1] == 2) {
 				ge->state[0] = 0;
 				ge->state[1] = 1;
