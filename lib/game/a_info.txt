@@ -3459,10 +3459,10 @@ D:resilient foes shall get incinerated by its hellfire when invoked.
 
 N:279:'End of Days'
 I:24:32:6
-W:95:40:400:0
+W:95:60:400:0
 P:0:7d10:-22:30:0
 F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | STR | IM_FIRE | BRAND_FIRE
-F:SLAY_ANIMAL | SLAY_GIANT | SLAY_UNDEAD | SLAY_DEMON | KILL_DRAGON
+F:SLAY_ANIMAL | SLAY_GIANT | KILL_UNDEAD | KILL_DEMON | KILL_DRAGON
 #F:AGGRAVATE
 D:"I had a dream, which was not all a dream. The bright sun was extinguish'd,
 D:and the stars did wander darkling in the eternal space, rayless, and pathless,
