@@ -5481,7 +5481,7 @@ static void artifact_lore(void) {
 		/* hack 1: exact match always takes top position
 		   hack 2: match at beginning of name takes precedence */
 		direct_match = FALSE;
-		if (s[0] && !pageoffset) for (i = 0; i < MAX_A_IDX; i++) {
+		if (s[0] && !pageoffset) for (i = 0; i < artifact_list_idx; i++) {
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
@@ -5530,7 +5530,7 @@ static void artifact_lore(void) {
 		}
 		presorted = n;
 
-		for (i = 0; i < MAX_A_IDX && n < ARTIFACT_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
+		for (i = 0; i < artifact_list_idx && n < ARTIFACT_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
 #if 0
 			/* direct match above already? */
 			if (i == selected_list) continue;
