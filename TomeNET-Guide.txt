@@ -10626,7 +10626,7 @@ Once a player signs up, there is a short time window of a few minutes during
 which more players can sign up too, before the event begins.
 Then, nobody else may join until all players participating are dead or got out.
 Event duration is limited, if a player is still there when the time runs out
-he will usually get ported out.
+he will usually just get teleported back to Bree.
 In general, fruit bats and PvP characters and ghosts cannot participate.
 
   Under Elmoth:
