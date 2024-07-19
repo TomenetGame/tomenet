@@ -4898,6 +4898,9 @@ can also process client mappings of objects, done in similar manner to above:
 'Attribute' is the colour, these are listed as TERM_ constants in defines.h.
 'Character' is the (possibly ASCII) index in the custom font file.
 
+Also, you can add comments with a '#'. The '#' and everything after it will
+just get ignored. Details about the mapping lines:
+
 F-lines:
 The 'F' stands for 'feature', meaning a specific terrain tile such as floors,
 walls, doors. You can see all of these in the file lib/game/f_info.txt, the
@@ -4942,6 +4945,17 @@ Maps the terrain feature 'granite wall' (#56 in f_info.txt) to the font symbol
 Maps the monster 'Morgoth, Lord of Darkness' (#862 in r_info.txt and in ~6) to
 the font symbol #255, leaving its colour at its normal value (the one given in
 r_info.txt) without changing it.
+
+  U:40:/500 # all amulets! (their tval is 40)
+Maps all unknown, flavoured items whose tval is 40 (that is, all amulets) to
+font symbol #500. So if you find a type of amulet that you don't know yet,
+instead of a K-mapping, this U-line will kick into effect, since your character
+cannot know the k_info-index ('N:') yet, but only knows that it is apparently
+an amulet, ie an item of 'tval' 40.
+
+  K:500:/400
+Maps the Phial of Galadriel (#500 in k_info.txt) to font symbol #400, leaving
+its colour at its normal value (the one specified in the G-line in k_info.txt).
 
 When using a custom font you probably want to turn off the option
 'font_map_solid_walls' in = 1, as it interferes with the mapping of various
