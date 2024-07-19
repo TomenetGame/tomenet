@@ -597,6 +597,11 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool t
 				 ridx));
 		}
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
+#if 0 //copypasta...
+		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
+		if (Client_setup.k_char[artifact_list_kidx[alidx]])
+			Term_draw(5, 5, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[alidx]]);
+#endif
 
 		/* fetch diz */
 		lpp = 1;
@@ -812,6 +817,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool 
 				 ridx));
 		}
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
+//copypasta...
 
 		/* specialty: tentacles count as finger-limbs (for rings) + hand-limbs (for weapon-wielding) + arm-limbs (shields)
 		   (but cannot wear gloves!). So we only need to mention them once (under 'hands' above) */
