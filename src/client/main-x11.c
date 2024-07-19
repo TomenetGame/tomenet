@@ -3870,6 +3870,11 @@ void set_window_title_x11(int term_idx, cptr title) {
 
 	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
+
+	/* Trying to change title in this state causes a crash */
+	if (!term_get_visibility(term_idx)) return;
+	if (term_prefs[term_idx].x == -32000 || term_prefs[term_idx].y == -32000) return;
+
 	td = term_idx_to_term_data(term_idx);
 
 	/* Save current Infowin. */

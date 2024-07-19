@@ -9669,7 +9669,7 @@ static void do_cmd_options_fonts(void) {
 	while (go) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w/\377y+\377w,\377y=\377w smaller/bigger font");
-		Term_putstr(0, 1, -1, TERM_WHITE, "  \377ySPACE\377w enter new window title - allowed for all except the main window");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  \377ySPACE\377w enter new window title, \377yr\377w reset window title to default, \377yR\377w reset all");
 		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yESC\377w keep changes and exit");
 		Term_putstr(0, 4, -1, TERM_WHITE, format("  %d font%s and %d graphic font%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s", graphic_fonts, graphic_fonts == 1 ? "" : "s"));
 
@@ -9752,6 +9752,55 @@ static void do_cmd_options_fonts(void) {
 #else /* assume POSIX */
 			set_window_title_x11(y, ang_term_name[y]);
 #endif
+			break;
+
+		case 'r':
+			Term_putstr(1, vertikal_offset + y, -1, TERM_DARK, "                                       ");
+
+			/* Keep consistent with c-tables.c! */
+			switch (y) {
+			case 0: strcpy(ang_term_name[y], "TomeNET"); break;
+			case 1: strcpy(ang_term_name[y], "Msg/Chat"); break;
+			case 2: strcpy(ang_term_name[y], "Inventory"); break;
+			case 3: strcpy(ang_term_name[y], "Character"); break;
+			case 4: strcpy(ang_term_name[y], "Chat"); break;
+			case 5: strcpy(ang_term_name[y], "Equipment"); break;
+			case 6: strcpy(ang_term_name[y], "Term-6"); break;
+			case 7: strcpy(ang_term_name[y], "Term-7"); break;
+			case 8: strcpy(ang_term_name[y], "Term-8"); break;
+			case 9: strcpy(ang_term_name[y], "Term-9"); break;
+			}
+
+			/* Immediately change live window title */
+#ifdef WINDOWS
+			set_window_title_win(y, ang_term_name[y]);
+#else /* assume POSIX */
+			set_window_title_x11(y, ang_term_name[y]);
+#endif
+			break;
+
+		case 'R':
+			/* Keep consistent with c-tables.c! */
+			strcpy(ang_term_name[0], "TomeNET");
+			strcpy(ang_term_name[1], "Msg/Chat");
+			strcpy(ang_term_name[2], "Inventory");
+			strcpy(ang_term_name[3], "Character");
+			strcpy(ang_term_name[4], "Chat");
+			strcpy(ang_term_name[5], "Equipment");
+			strcpy(ang_term_name[6], "Term-6");
+			strcpy(ang_term_name[7], "Term-7");
+			strcpy(ang_term_name[8], "Term-8");
+			strcpy(ang_term_name[9], "Term-9");
+
+			/* Immediately change live window title */
+			for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+				Term_putstr(1, vertikal_offset + j, -1, TERM_DARK, "                                       ");
+#ifdef WINDOWS
+				set_window_title_win(j, ang_term_name[j]);
+#else /* assume POSIX */
+				set_window_title_x11(j, ang_term_name[j]);
+#endif
+			}
 			break;
 
 		case '=':

@@ -4627,6 +4627,10 @@ void set_window_title_win(int term_idx, cptr title) {
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
 	td = &data[term_idx];
 
+	/* Trying to change title in this state causes a crash? */
+	if (!td->visible) return;
+	if (td->pos_x == -32000 || td->pos_y == -32000) return;
+
 #if 0
 	td->s = ang_term_name[term_idx];
 #endif
