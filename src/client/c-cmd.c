@@ -2488,6 +2488,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp("esp", buf)) {
 			strcpy(init_search_string, "ESP");
 			init_search_type = 2;
+		} else if (my_strcasestr(buf, "modu")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Adventure modules");
 		}
 
 		/* clean up */
