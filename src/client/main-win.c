@@ -1058,13 +1058,17 @@ static void term_getsize(term_data *td) {
 /*
  * Write the "preference" data for single term
  */
-static void save_prefs_aux(term_data *td, cptr sec_name) {
+static void save_prefs_aux(int term_idx, cptr sec_name) {
+	term_data *td = &data[term_idx];
 	char buf[32];
 
-	/* Visible (Sub-windows) */
 	if (td != &data[0]) {
+		/* Visible (Sub-windows) */
 		strcpy(buf, td->visible ? "1" : "0");
 		WritePrivateProfileString(sec_name, "Visible", buf, ini_file);
+
+		/* Sub-window window title */
+		WritePrivateProfileString(sec_name, "WindowTitle", ang_term_name[term_idx], ini_file);
 	}
 
 #ifdef USE_LOGFONT
@@ -1168,17 +1172,17 @@ void save_prefs(void) {
 	WritePrivateProfileString("Base", "AudioVolumeWeather", buf, ini_file);
  #endif
 #endif
-	save_prefs_aux(&data[0], "Main window");
+	save_prefs_aux(0, "Main window");
 	/* XXX XXX XXX XXX */
-	save_prefs_aux(&data[1], "Mirror window");
-	save_prefs_aux(&data[2], "Recall window");
-	save_prefs_aux(&data[3], "Choice window");
-	save_prefs_aux(&data[4], "Term-4 window");
-	save_prefs_aux(&data[5], "Term-5 window");
-	save_prefs_aux(&data[6], "Term-6 window");
-	save_prefs_aux(&data[7], "Term-7 window");
-	save_prefs_aux(&data[8], "Term-8 window");
-	save_prefs_aux(&data[9], "Term-9 window");
+	save_prefs_aux(1, "Mirror window");
+	save_prefs_aux(2, "Recall window");
+	save_prefs_aux(3, "Choice window");
+	save_prefs_aux(4, "Term-4 window");
+	save_prefs_aux(5, "Term-5 window");
+	save_prefs_aux(6, "Term-6 window");
+	save_prefs_aux(7, "Term-7 window");
+	save_prefs_aux(8, "Term-8 window");
+	save_prefs_aux(9, "Term-9 window");
 }
 
 
