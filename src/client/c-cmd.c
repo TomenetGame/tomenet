@@ -6863,7 +6863,7 @@ static void cmd_notes(void) {
 	Term_clear();
 	topline_icky = TRUE;
 
-	/* read all locally available fonts */
+	/* read all locally available note files */
 	path_build(path, 1024, ANGBAND_DIR_USER, "");
 	if (!(dir = opendir(path))) {
 		c_msg_format("Couldn't open user directory (%s).", path);
