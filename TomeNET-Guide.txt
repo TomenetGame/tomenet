@@ -5006,6 +5006,8 @@ is that these can have many colours and thereby look much better.
 Graphical tilesets are xyz.bmp files in 24-bit format (R8,G8,B8 - and make sure
 to check "Don't include colour space information" in GIMP or whatever you use,
 or it will not work on Windows) that come with a graphics-xyz.prf mapping file.
+The bmp filename must be in the format "<width>x<height><custom text>.bmp" and
+the prf filename must be "graphics-<width>x<height><custom text>.prf".
 The bmp file goes to tomenet/lib/graphics
 and the prf file, as always, to tomenet/lib/user  - or -
 on Windows OS to the folder 'TomeNET-user' inside your user's home folder
@@ -5062,7 +5064,8 @@ will be applied automatically (the graphical tiles will be scaled to the font's
 dimensions), which might not look ideal.
 For EvgenijK's bmp tileset which has dimensions 16x22 px/tile, he provides
 a 16x22 font that is located in lib/fonts, as both .FON and .pcf format, but
-of course you can use any other font file too.
+of course you can use any other font file too, for example Tangar's 16x22TG
+graphical font (a text font with additional, pseudo-graphical character set).
 
 
 Issues:
@@ -5072,11 +5075,8 @@ with graphical tiles, which I copy-pasted from EvgenijK's github here:
 
 - there is no in client interface to choose or change gfx tilesets, only by
   changing tomenetrc/tomenet.ini.
-- monster list shows wrong tiles (issue TomenetGame/tomenet#50)
 - interface crash and packet errors if there is only tiles for "monsters"
   (issue TomenetGame/tomenet#51)
-- in character overview window items that have tiles are not displayed
-  correctly.
 
 
 (3) Creating a character & starting to play
