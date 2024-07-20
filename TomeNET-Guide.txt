@@ -26507,7 +26507,7 @@ Solution:   TomeNET uses basic Linux system fonts (and allows you to switch to
             example Antergos.
             Install the necessary fonts packages on your system, using the
             system's package manager. It should usually be 'xorg-fonts-misc' or
-            'linux-fonts-misc'.
+            'linux-fonts-misc' or 'xorg-x11-fonts-misc'.
             On some distros (Archlinux too probably) you might have to install
             the 'xorg-mkfontscale' package.
             After installation, reboot your system to ensure they work.
