@@ -5058,7 +5058,8 @@ together with the tileset is still needed. At least SOME font should always
 be selected just to be on the safe side, as there are no drawbacks.
 
 The font should preferably have the same dimensions as the tileset, or scaling
-will be applied automatically, which might not look ideal.
+will be applied automatically (the graphical tiles will be scaled to the font's
+dimensions), which might not look ideal.
 For EvgenijK's bmp tileset which has dimensions 16x22 px/tile, he provides
 a 16x22 font that is located in lib/fonts, as both .FON and .pcf format, but
 of course you can use any other font file too.
