@@ -9936,6 +9936,219 @@ static void do_cmd_options_fonts(void) {
 
 	check_for_playerlist();
 }
+/* These are .bmp files in xtra/graphics, on all systems. - C. Blue
+   The global vars are use_graphics (TRUE/FALSE) and graphic_tiles (string of filename, without path, without '.bmp' extension, gets inserted to "graphics-%s.prf"). */
+//#include <dirent.h> /* for do_cmd_options_tilesets() */
+static void do_cmd_options_tilesets(void) {
+	int j;
+	char ch;
+	bool go = TRUE, inkey_msg_old;
+
+	char font_name[MAX_FONTS][256], path[1024];
+	int fonts = 0;
+	char tmp_name[256];
+
+  #ifdef WINDOWS
+	char *cp, *cpp;
+  #endif
+
+	DIR *dir;
+	struct dirent *ent;
+
+	/* read all locally available fonts */
+	memset(font_name, 0, sizeof(char) * (MAX_FONTS * 256));
+
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
+	if (!(dir = opendir(path))) {
+		c_msg_format("Couldn't open tilesets directory (%s).", path);
+		return;
+	}
+
+	while ((ent = readdir(dir))) {
+		strcpy(tmp_name, ent->d_name);
+		j = -1;
+		while (tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
+		if (strstr(tmp_name, ".bmp")) {
+			if (fonts == MAX_FONTS) continue;
+			strcpy(font_name[fonts], ent->d_name);
+			fonts++;
+			if (fonts == MAX_FONTS) c_msg_format("Warning: Number of tilesets exceeds max of %d. Ignoring the rest.", MAX_FONTS);
+		}
+	}
+	closedir(dir);
+
+	if (!fonts) {
+		c_msg_format("No .bmp tileset files found in directory (%s).", path);
+		return;
+	}
+
+//  #ifdef WINDOWS /* actually never sort fonts on X11, because they come in a sorted manner from fonts.alias and fonts.txt files already. */
+	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
+//  #endif
+
+   #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
+	for (j = 0; j < fonts; j++) {
+		strcpy(tmp_name, font_name[j]);
+		//path_build(font_name[j], 1024, path, font_name[j]);
+		//strcpy(font_name[j], ".\\");
+		font_name[j][0] = 0;
+		strcat(font_name[j], path);
+		strcat(font_name[j], "\\");
+		strcat(font_name[j], tmp_name);
+	}
+   #endif
+
+	/* suppress hybrid macros */
+	inkey_msg_old = inkey_msg;
+	inkey_msg = TRUE;
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Interact */
+	while (go) {
+		clear_from(0);
+
+		/* Prompt XXX XXX XXX */
+		Term_putstr(0, 1, -1, TERM_WHITE, "  \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  \377y-\377w/\377y+\377w,\377y=\377w select prev/next tileset, \377yENTER\377w enter a specific tileset name");
+		Term_putstr(1, 3, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s"));
+
+		Term_putstr(1, 5, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics ? "\377Genabled\377-" : "\377sdisabled\377-"));
+
+		/* Tilesets are atm a global setting, not depending on terminal window */
+		Term_putstr(1, 7, -1, TERM_WHITE, format("Currently selected tileset: '\377B%s\377-'", graphic_tiles));
+		Term_putstr(1, 8, -1, TERM_WHITE, format("Tileset filename:           '\377B%s.bmp\377-'", graphic_tiles));
+		Term_putstr(1, 9, -1, TERM_WHITE, format("Optional mapping filename:  '\377Bgraphics-%s.bmp\377-'", graphic_tiles));
+
+		/* Warning */
+		if (c_cfg.font_map_solid_walls) {
+			Term_putstr(5, 12, -1, TERM_WHITE, "\377oWarning: option '\377yfont_map_solid_walls\377-' is currently ON.");
+			Term_putstr(5, 13, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
+			Term_putstr(5, 14, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
+		}
+
+		/* Place Cursor */
+		//Term_gotoxy(20, vertikal_offset + y);
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		/* Get key */
+		ch = inkey();
+
+		/* Analyze */
+		switch (ch) {
+		case ESCAPE:
+			go = FALSE;
+			break;
+
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????", 2);
+			break;
+		case ':':
+			/* specialty: allow chatting from within here */
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
+
+		case 'v':
+			use_graphics = !use_graphics;
+			if (use_graphics) c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart.");
+			else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart.");
+			break;
+
+		case '=':
+		case '+':
+			/* find out which of the fonts in lib/xtra/fonts we're currently using */
+			for (j = 0; j < fonts - 1; j++) {
+				if (!strcasecmp(font_name[j], graphic_tiles)) {
+					/* advance to next font file in lib/xtra/font */
+					strcpy(graphic_tiles, font_name[j + 1]);
+					break;
+				}
+			}
+			break;
+
+		case '-':
+			/* find out which of the fonts in lib/xtra/fonts we're currently using */
+			for (j = 1; j < fonts; j++) {
+				if (!strcasecmp(font_name[j], graphic_tiles)) {
+					/* retreat to previous font file in lib/xtra/font */
+					strcpy(graphic_tiles, font_name[j + 1]);
+					break;
+				}
+			}
+			break;
+
+		case '\r':
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter a tileset name (without '.bmp' extension):");
+			Term_gotoxy(0, 21);
+			strcpy(tmp_name, "");
+			if (!askfor_aux(tmp_name, 159, 0)) {
+				clear_from(20);
+				break;
+			}
+			clear_from(20);
+			if (!tmp_name[0]) break;
+
+			for (j = 0; j < fonts; j++)
+				if (!strcasecmp(font_name[j], format("%s.bmp", tmp_name))) break;
+
+			if (j == fonts) {
+				c_msg_format("\377yError: No tileset '%s.bmp' in the graphics folder.", tmp_name);
+				break;
+			}
+			strcpy(graphic_tiles, tmp_name);
+			break;
+
+		case 'l':
+			if (!fonts) {
+				c_message_add("No tilesets found.");
+				break;
+			}
+			if (fonts) {
+				char tmp_name2[256];
+				int c = 0;
+
+				c_message_add(format("-- Graphical tilesets (%d): --", fonts));
+				tmp_name2[0] = 0;
+				for (j = 0; j < fonts; j++) {
+  #ifdef WINDOWS
+					/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
+					cpp = font_name[j];
+					while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
+					sprintf(tmp_name, "%-18s", cpp);
+  #else
+					sprintf(tmp_name, "%-18s", font_name[j]);
+  #endif
+
+					/* print up to 4 font names per line */
+					c++;
+					if (c % 4 == 0 || strlen(tmp_name2) + strlen(tmp_name) > 79 - 2) {
+						c_message_add(format("  %s", tmp_name2));
+						tmp_name2[0] = 0;
+						c = 0;
+					}
+
+					strcat(tmp_name2, tmp_name);
+				}
+				c_message_add(format("  %s", tmp_name2));
+			}
+			c_message_add(""); //linefeed
+			break;
+
+		default:
+			bell();
+		}
+	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
+
+	check_for_playerlist();
+}
  #endif /* WINDOWS || USE_X11 */
 #endif /* ENABLE_SUBWINDOW_MENU */
 
@@ -10824,13 +11037,13 @@ void do_cmd_options(void) {
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yf\377w/\377yg\377w) Window Fonts and Visibility / Graphical tilesets");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yF\377w)   Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yc\377w)   Colour palette and colour blindness options");
 		l++;
 
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UA\377w) Account Options");
@@ -11049,6 +11262,8 @@ void do_cmd_options(void) {
  #ifdef ENABLE_SUBWINDOW_MENU
 		/* Change fonts separately and manually */
 		else if (k == 'f') do_cmd_options_fonts();
+		/* Enable/disable and select graphical tilesets */
+		else if (k == 'g') do_cmd_options_tilesets();
  #endif
 		/* Cycle all fonts */
 		else if (k == 'F') change_font(-1);

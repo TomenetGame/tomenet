@@ -5073,8 +5073,6 @@ Issues:
 As of the time of 4.9.2 release when this was written, there are still issues
 with graphical tiles, which I copy-pasted from EvgenijK's github here:
 
-- there is no in client interface to choose or change gfx tilesets, only by
-  changing tomenetrc/tomenet.ini.
 - interface crash and packet errors if there is only tiles for "monsters"
   (issue TomenetGame/tomenet#51)
 
