@@ -250,7 +250,7 @@ static bool read_mangrc(cptr filename) {
 				p = strtok(NULL, "\t\n");
 				if (p) use_graphics = (atoi(p) != 0);
 			}
-			if (!strncmp(buf, "graphic_tiles", 5)) {
+			if (!strncmp(buf, "graphic_tiles", 13)) {
 				char *p;
 
 				p = strtok(buf, " \t\n");
