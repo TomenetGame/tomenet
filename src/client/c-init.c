@@ -608,7 +608,7 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool t
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 		if (Client_setup.r_char[monster_list_code[rlidx]] && !to_chat && !c_cfg.ascii_monsters && !(monster_list_unique[rlidx] && c_cfg.ascii_uniques))
-			Term_draw(5 + (strchr(paste_lines[pl] + 2, '(') - (paste_lines[pl] + 2)) + 3, 5, monster_list_symbol[rlidx][0], Client_setup.r_char[monster_list_code[rlidx]]);
+			Term_draw(5 + (strchr(paste_lines[pl] + 2, '(') - (paste_lines[pl] + 2)) + 3, 5, color_char_to_attr(monster_list_symbol[rlidx][0]), Client_setup.r_char[monster_list_code[rlidx]]);
 
 		/* fetch diz */
 		lpp = 1;
@@ -826,7 +826,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool 
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 		if (Client_setup.r_char[monster_list_code[rlidx]] && !to_chat && !c_cfg.ascii_monsters && !(monster_list_unique[rlidx] && c_cfg.ascii_uniques))
-			Term_draw(5 + (strchr(paste_lines[pl] + 2, '(') - (paste_lines[pl] + 2)) + 3, 5, monster_list_symbol[rlidx][0], Client_setup.r_char[monster_list_code[rlidx]]);
+			Term_draw(5 + (strchr(paste_lines[pl] + 2, '(') - (paste_lines[pl] + 2)) + 3, 5, color_char_to_attr(monster_list_symbol[rlidx][0]), Client_setup.r_char[monster_list_code[rlidx]]);
 
 		/* specialty: tentacles count as finger-limbs (for rings) + hand-limbs (for weapon-wielding) + arm-limbs (shields)
 		   (but cannot wear gloves!). So we only need to mention them once (under 'hands' above) */

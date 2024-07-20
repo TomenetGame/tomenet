@@ -5543,7 +5543,7 @@ static void artifact_lore(void) {
 				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
-					Term_draw(5, 5, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
+					Term_draw(5, 5, color_char_to_attr(artifact_list_name[i][1]), Client_setup.k_char[artifact_list_kidx[i]]);
 
 				/* no beginning-of-line match yet? good. */
 				if (!n) {
@@ -5558,7 +5558,7 @@ static void artifact_lore(void) {
 					Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 					/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 					if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
-						Term_draw(5, 5 + n, selected_line == n ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
+						Term_draw(5, 5 + n, color_char_to_attr(artifact_list_name[i][1]), Client_setup.k_char[artifact_list_kidx[i]]);
 				}
 
 				n++;
@@ -5576,7 +5576,7 @@ static void artifact_lore(void) {
 				Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
-					Term_draw(5, 5 + n, selected_line == n ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
+					Term_draw(5, 5 + n, color_char_to_attr(artifact_list_name[i][1]), Client_setup.k_char[artifact_list_kidx[i]]);
 
 				list_idx[n] = i;
 				n++;
@@ -5620,7 +5620,7 @@ static void artifact_lore(void) {
 				Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
-					Term_draw(5, 5 + n, n == selected_line ? TERM_L_UMBER : TERM_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
+					Term_draw(5, 5 + n, color_char_to_attr(artifact_list_name[i][1]), Client_setup.k_char[artifact_list_kidx[i]]);
 
 				list_idx[n] = i;
 				n++;
@@ -5635,7 +5635,7 @@ static void artifact_lore(void) {
 				Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 				if (Client_setup.k_char[artifact_list_kidx[i]] && !c_cfg.ascii_items)
-					Term_draw(5, 5 + selected_line, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[i]]);
+					Term_draw(5, 5 + selected_line, color_char_to_attr(artifact_list_name[i][1]), Client_setup.k_char[artifact_list_kidx[i]]);
 			}
 		}
 
@@ -5938,7 +5938,7 @@ static void monster_lore(void) {
 						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]);
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, buf);
 						/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-						Term_draw(5 + 15, 5, monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]]);
+						Term_draw(5 + 15, 5, color_char_to_attr(monster_list_symbol[i][0]), Client_setup.r_char[monster_list_code[i]]);
 					} else { /* Standard font mapping */
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
@@ -5976,7 +5976,7 @@ static void monster_lore(void) {
 						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]);
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, buf);
 						/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-						Term_draw(5 + 15, 5 + n, monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]]);
+						Term_draw(5 + 15, 5 + n, color_char_to_attr(monster_list_symbol[i][0]), Client_setup.r_char[monster_list_code[i]]);
 					} else {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
@@ -6011,7 +6011,7 @@ static void monster_lore(void) {
 						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]);
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, buf);
 						/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-						Term_draw(5 + 15, 5, monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]]);
+						Term_draw(5 + 15, 5, color_char_to_attr(monster_list_symbol[i][0]), Client_setup.r_char[monster_list_code[i]]);
 					} else {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
@@ -6059,7 +6059,7 @@ static void monster_lore(void) {
 						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]);
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, buf);
 						/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-						Term_draw(5 + 15, 5 + n, monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]]);
+						Term_draw(5 + 15, 5 + n, color_char_to_attr(monster_list_symbol[i][0]), Client_setup.r_char[monster_list_code[i]]);
 					} else {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
@@ -6097,7 +6097,7 @@ static void monster_lore(void) {
 						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]);
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, buf);
 						/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-						Term_draw(5 + 15, 5, monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]]);
+						Term_draw(5 + 15, 5, color_char_to_attr(monster_list_symbol[i][0]), Client_setup.r_char[monster_list_code[i]]);
 					} else {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
@@ -6120,7 +6120,7 @@ static void monster_lore(void) {
 							    monster_list_symbol[list_idx[1]][0], Client_setup.r_char[monster_list_code[list_idx[1]]], n == selected_line ? 'y' : 'u', monster_list_name[list_idx[1]]);
 							Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, buf);
 							/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-							Term_draw(5 + 15, 5 + n, monster_list_symbol[list_idx[1]][0], Client_setup.r_char[monster_list_code[list_idx[1]]]);
+							Term_draw(5 + 15, 5 + n, color_char_to_attr(monster_list_symbol[list_idx[1]][0]), Client_setup.r_char[monster_list_code[list_idx[1]]]);
 						} else {
 							Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 								monster_list_code[list_idx[1]], monster_list_level[list_idx[1]], monster_list_symbol[list_idx[1]][0], monster_list_symbol[list_idx[1]][1], selected_line == n ? 'y' : 'u', monster_list_name[list_idx[1]]));
@@ -6140,7 +6140,7 @@ static void monster_lore(void) {
 						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]);
 						Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, buf);
 						/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-						Term_draw(5 + 15, 5 + n, monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]]);
+						Term_draw(5 + 15, 5 + n, color_char_to_attr(monster_list_symbol[i][0]), Client_setup.r_char[monster_list_code[i]]);
 					} else {
 						Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == n ? 'y' : 'u', monster_list_name[i]));
@@ -6189,7 +6189,7 @@ static void monster_lore(void) {
 						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]);
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, buf);
 						/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-						Term_draw(5 + 15, 5 + n, monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]]);
+						Term_draw(5 + 15, 5 + n, color_char_to_attr(monster_list_symbol[i][0]), Client_setup.r_char[monster_list_code[i]]);
 					} else {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
@@ -6212,7 +6212,7 @@ static void monster_lore(void) {
 				    monster_list_symbol[list_idx[selected_line]][0], Client_setup.r_char[monster_list_code[list_idx[selected_line]]], n == selected_line ? 'y' : 'u', monster_list_name[list_idx[selected_line]]);
 				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, buf);
 				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-				Term_draw(5 + 15, 5 + selected_line, monster_list_symbol[list_idx[selected_line]][0], Client_setup.r_char[monster_list_code[list_idx[selected_line]]]);
+				Term_draw(5 + 15, 5 + selected_line, color_char_to_attr(monster_list_symbol[list_idx[selected_line]][0]), Client_setup.r_char[monster_list_code[list_idx[selected_line]]]);
 			} else {
 				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, L%-3d, \377%c%-3c\377y)  %s",
 				    monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
