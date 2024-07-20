@@ -2908,10 +2908,28 @@ static errr x11_term_init(int term_id) {
 errr init_x11(void) {
 	int i;
 	cptr dpy_name = "";
+	char script_path[4096] = { 0 };
+	FILE *fp = NULL;
 
 	/* Init the Metadpy if possible */
 	if (Metadpy_init_name(dpy_name)) return(-1);
 
+	/* Check if set-font-path.sh script exists and run it - mikaelh */
+	if (*path) {
+		/* Custom 'lib' directory specified via -P option */
+		snprintf(script_path, sizeof(script_path), "%s/xtra/posix_extra_fonts/set-font-path.sh", path);
+	} else {
+		snprintf(script_path, sizeof(script_path), "lib/xtra/posix_extra_fonts/set-font-path.sh");
+	}
+	//printf("script_path = %s\n", script_path);
+	fp = fopen(script_path, "r");
+	if (fp) {
+		fclose(fp);
+		//printf("Calling external script %s\n", script_path);
+		if (system(script_path) != 0) {
+			fprintf(stderr, "Failed to run external script %s\n", script_path);
+		}
+	}
 
 	/* set OS-specific resize_main_window() hook */
 	resize_main_window = resize_main_window_x11;
