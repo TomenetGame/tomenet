@@ -9946,7 +9946,7 @@ static void do_cmd_options_tilesets(void) {
 
 	char font_name[MAX_FONTS][256], path[1024];
 	int fonts = 0;
-	char tmp_name[256];
+	char tmp_name[256], tmp_name2[256];
 
   #ifdef WINDOWS
 	char *cp, *cpp;
@@ -10093,8 +10093,17 @@ static void do_cmd_options_tilesets(void) {
 			clear_from(20);
 			if (!tmp_name[0]) break;
 
-			for (j = 0; j < fonts; j++)
-				if (!strcasecmp(font_name[j], format("%s.bmp", tmp_name))) break;
+			for (j = 0; j < fonts; j++) {
+  #ifdef WINDOWS
+				/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
+				cpp = font_name[j];
+				while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
+				sprintf(tmp_name2, "%s", cpp);
+  #else
+				sprintf(tmp_name2, "%s", font_name[j]);
+  #endif
+				if (!strcasecmp(tmp_name2, format("%s.bmp", tmp_name))) break;
+			}
 
 			if (j == fonts) {
 				c_msg_format("\377yError: No tileset '%s.bmp' in the graphics folder.", tmp_name);
