@@ -1309,7 +1309,7 @@ static void load_prefs(void) {
 	GetPrivateProfileString("Base", "GraphicTiles", DEFAULT_TILENAME, graphic_tiles, 255, ini_file);
 	/* Convert to lowercase. */
 	for (int i =0; i < 256; i++) {
-		graphic_tiles[i]=tolower(graphic_tiles[i]);
+		graphic_tiles[i] = tolower(graphic_tiles[i]);
 	}
 #endif
 
