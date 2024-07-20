@@ -9490,7 +9490,7 @@ static void do_cmd_options_win(void) {
 
 #ifdef ENABLE_SUBWINDOW_MENU
  #if defined(WINDOWS) || defined(USE_X11)
-  #define MAX_FONTS 50
+  #define MAX_FONTS 100
 
 //  #ifdef WINDOWS
 static int font_name_cmp(const void *a, const void *b) {
@@ -9566,11 +9566,15 @@ static void do_cmd_options_fonts(void) {
 		while (tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
 		if (strstr(tmp_name, ".fon")) {
 			if (tmp_name[0] == 'g') {
+				if (graphic_fonts == MAX_FONTS) continue;
 				strcpy(graphic_font_name[graphic_fonts], ent->d_name);
 				graphic_fonts++;
+				if (graphic_fonts == MAX_FONTS) c_msg_format("Warning: Number of graphic fonts exceeds max of %d. Ignoring the rest.", MAX_FONTS);
 			} else {
+				if (fonts == MAX_FONTS) continue;
 				strcpy(font_name[fonts], ent->d_name);
 				fonts++;
+				if (fonts == MAX_FONTS) c_msg_format("Warning: Number of fonts exceeds max of %d. Ignoring the rest.", MAX_FONTS);
 			}
 		}
 	}
@@ -9578,20 +9582,22 @@ static void do_cmd_options_fonts(void) {
   #endif
 
   #ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
-	int misc_fonts = get_misc_fonts(font_name[fonts], MAX_FONTS - fonts, 256);
+	int misc_fonts = 0;
 
-	if (misc_fonts > 0) {
-		fonts += misc_fonts;
-	} else {
-		/* We boldly assume that these exist by default somehow! - They probably don't though,
-		   if the above command failed, but what else can we try at this point.. #despair */
-		strcpy(font_name[0], "5x8");
-		strcpy(font_name[1], "6x9");
-		strcpy(font_name[2], "8x13");
-		strcpy(font_name[3], "9x15");
-		strcpy(font_name[4], "10x20");
-		strcpy(font_name[5], "12x24");
-		fonts = 6;
+	if (fonts < MAX_FONTS) {
+		misc_fonts = get_misc_fonts(font_name[fonts], MAX_FONTS - fonts, 256, MAX_FONTS);
+		if (misc_fonts > 0) fonts += misc_fonts;
+		else if (fonts + 6 <= MAX_FONTS) {
+			/* We boldly assume that these exist by default somehow! - They probably don't though,
+			   if the above command failed, but what else can we try at this point.. #despair */
+			strcpy(font_name[0], "5x8");
+			strcpy(font_name[1], "6x9");
+			strcpy(font_name[2], "8x13");
+			strcpy(font_name[3], "9x15");
+			strcpy(font_name[4], "10x20");
+			strcpy(font_name[5], "12x24");
+			fonts += 6;
+		}
 	}
 
 	/* Additionally, read font names from a user-edited text file 'fonts.txt' to allow adding arbitrary system fonts to the cycleable list */
@@ -9621,6 +9627,7 @@ static void do_cmd_options_fonts(void) {
 
 			strcpy(font_name[fonts], tmp_name);
 			fonts++;
+			if (fonts == MAX_FONTS) c_msg_format("Warning: Number of fonts exceeds max of %d. Ignoring the rest.", MAX_FONTS);
 		}
 		fclose(fff);
 	}

@@ -3806,7 +3806,7 @@ void refresh_palette(void) {
 }
 
 /* Get list of available misc fonts, e.g. "5x8", "6x9", "6x13" or "6x13bold". */
-int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
+int get_misc_fonts(char *output_list, int max_misc_fonts, int max_font_name_length, int max_fonts) {
 	regex_t re;
 	char **list;
 	int fonts_found = 0, fonts_match = 0, i, j;
@@ -3841,7 +3841,7 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 		regfree(&re);
 		return(0);
 	}
-	for (i = 0; i < fonts_found && fonts_match < max_fonts; i++) {
+	for (i = 0; i < fonts_found && fonts_match < max_misc_fonts; i++) {
 		status = regexec(&re, list[i], 0, NULL, 0);
 		if (status) continue;
 		if (strlen(list[i]) >= max_font_name_length) continue;
@@ -3856,13 +3856,14 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 		if (!is_duplicate) {
 			strcpy(&output_list[fonts_match * max_font_name_length], list[i]);
 			fonts_match++;
+			if (fonts_match == max_misc_fonts) c_msg_format("Warning: Number of (misc) fonts exceeds max of %d. Ignoring the rest.", max_fonts);
 		}
 	}
 	regfree(&re);
 	XFreeFontNames(list);
 
 	/* done */
-	return fonts_match;
+	return(fonts_match);
 }
 
 void set_window_title_x11(int term_idx, cptr title) {
