@@ -830,7 +830,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 
 			fputs(format("graphics\t\t%s\n", use_graphics ? "1" : "0"), config2);
 #ifdef USE_GRAPHICS
-			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
+			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles[0] ? graphic_tiles : "16x22sv"), config2);
 #endif
 			fputs("\n", config2);
 //#ifdef USE_SOUND
