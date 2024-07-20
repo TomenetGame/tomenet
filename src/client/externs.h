@@ -584,8 +584,8 @@ extern void client_init(char *argv1, bool skip);
 extern s32b char_creation_flags;
 extern void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool to_chat);
 extern void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool to_chat);
-extern void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]);
-extern void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]);
+extern void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool to_chat);
+extern void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool to_chat);
 extern bool check_dir2(cptr s);
 extern void init_guide(void);
 
@@ -1136,7 +1136,7 @@ extern int weather_particles_seen;
 
 extern char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2];
 extern int monster_list_code[MAX_R_IDX], monster_list_idx, monster_list_level[MAX_R_IDX];
-extern bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX];
+extern bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX], monster_list_unique[MAX_R_IDX];
 
 extern char artifact_list_name[MAX_A_IDX][80];
 extern int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx;

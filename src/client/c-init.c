@@ -370,7 +370,7 @@ static void init_monster_list() {
 	char buf[1024], *p1, *p2;
 	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
-	bool discard = FALSE, multihued = FALSE, breathhued = FALSE, basehued = FALSE;
+	bool discard = FALSE, multihued = FALSE, breathhued = FALSE, basehued = FALSE, unique = FALSE;
 	bool halloween; /* Don't display 'level 127' for townies during Halloween */
 
 	/* actually use local r_info.txt - a novum */
@@ -435,6 +435,9 @@ static void init_monster_list() {
 		}
 
 		if (buf[0] == 'N') {
+			if (unique) monster_list_unique[monster_list_idx - 1] = TRUE;
+			unique = FALSE;
+
 			if (!basehued) {
 				if (multihued) monster_list_any[monster_list_idx - 1] = TRUE;
 				else if (breathhued) monster_list_breath[monster_list_idx - 1] = TRUE;
@@ -461,6 +464,9 @@ static void init_monster_list() {
 		if (buf[0] == 'F' && strstr(buf, "ATTR_BASE")) basehued = TRUE;
 
 		if (buf[0] == 'N' && strstr(buf, "Test Blob")) discard = TRUE;
+
+		/* for c_cfg.ascii_uniques */
+		if (buf[0] == 'F' && strstr(buf, "UNIQUE")) unique = TRUE;
 
 		p1 = buf + 2; /* monster code */
 		p2 = strchr(p1, ':'); /* 1 before monster name */
@@ -511,6 +517,9 @@ static void init_monster_list() {
 			if (buf[0] == 'F' && strstr(buf, "ATTR_BASE")) basehued = TRUE;
 
 			if (buf[0] == 'N' && strstr(buf, "Test Blob")) discard = TRUE;
+
+			/* for c_cfg.ascii_uniques */
+			if (buf[0] == 'F' && strstr(buf, "UNIQUE")) unique = TRUE;
 
 			if (strlen(buf) < 5 || buf[0] != 'G') continue;
 
@@ -597,11 +606,9 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool t
 				 ridx));
 		}
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
-#if 0 //copypasta...
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-		if (Client_setup.k_char[artifact_list_kidx[alidx]] && !c_cfg.ascii_monsters && !c_cfg.ascii_uniques)
-			Term_draw(5, 5, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[alidx]]);
-#endif
+		if (Client_setup.r_char[monster_list_code[rlidx]] && !to_chat && !c_cfg.ascii_monsters && !(monster_list_unique[rlidx] && c_cfg.ascii_uniques))
+			Term_draw(5 + (strchr(paste_lines[pl] + 2, '(') - (paste_lines[pl] + 2)) + 3, 5, monster_list_symbol[rlidx][0], Client_setup.r_char[monster_list_code[rlidx]]);
 
 		/* fetch diz */
 		lpp = 1;
@@ -817,7 +824,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool 
 				 ridx));
 		}
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
-//copypasta...
+		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
+		if (Client_setup.r_char[monster_list_code[rlidx]] && !to_chat && !c_cfg.ascii_monsters && !(monster_list_unique[rlidx] && c_cfg.ascii_uniques))
+			Term_draw(5 + (strchr(paste_lines[pl] + 2, '(') - (paste_lines[pl] + 2)) + 3, 5, monster_list_symbol[rlidx][0], Client_setup.r_char[monster_list_code[rlidx]]);
 
 		/* specialty: tentacles count as finger-limbs (for rings) + hand-limbs (for weapon-wielding) + arm-limbs (shields)
 		   (but cannot wear gloves!). So we only need to mention them once (under 'hands' above) */
@@ -1819,7 +1828,7 @@ static void init_artifact_list() {
 		strcpy(artifact_list_activation[i], string_exec_lua(0, buf));
 	}
 }
-void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
+void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool to_chat) {
 	char buf[1024], *p1, *p2, *tmpc;
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
@@ -1869,7 +1878,7 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 		if (Client_setup.k_char[artifact_list_kidx[alidx]] && !c_cfg.ascii_items)
-			Term_draw(5, 5, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[alidx]]);
+			Term_draw(5, 5, color_char_to_attr(artifact_list_name[alidx][1]), Client_setup.k_char[artifact_list_kidx[alidx]]);
 
 		/* fetch diz */
 		lpp = 1;
@@ -2183,7 +2192,7 @@ static void obj_highlight_flags(char *info, bool minus) {
 }
 /* assume/handle certain features: */
 #define USE_NEW_SHIELDS
-void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
+void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool to_chat) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN], *tmpc;
 	cptr s_rarity = NULL;
 	FILE *fff;
@@ -2246,7 +2255,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
 		if (Client_setup.k_char[artifact_list_kidx[alidx]] && !c_cfg.ascii_items)
-			Term_draw(5, 5, TERM_L_UMBER, Client_setup.k_char[artifact_list_kidx[alidx]]);
+			Term_draw(5, 5, color_char_to_attr(artifact_list_name[alidx][1]), Client_setup.k_char[artifact_list_kidx[alidx]]);
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
 		tval = 0;

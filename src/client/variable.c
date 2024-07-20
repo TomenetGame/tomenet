@@ -431,12 +431,12 @@ bool request_abort = FALSE;
 /* For polymorphing by monster name
    and also for monster lore */
 char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2]; //note: [0] is the attr (just byte), [1] is the char. Todo maybe: Separate attr and char.
-int monster_list_code[MAX_R_IDX], monster_list_idx = 0, monster_list_level[MAX_R_IDX];
-bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX];
+int monster_list_code[MAX_R_IDX], monster_list_idx = 0, monster_list_level[MAX_R_IDX]; // 'code' is the r_info 'N:' index, aka r_idx
+bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX], monster_list_unique[MAX_R_IDX];
 /* For artifact lore */
 char artifact_list_name[MAX_A_IDX][80]; //note: format of this is: 1st byte \377, 2nd byte attr, 3rd byte char, then "Lnn " and the actual artifact name
-int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx = 0; // 'code' is the a_info 'N:' index
-int artifact_list_kidx[MAX_A_IDX];
+int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx = 0; // 'code' is the a_info 'N:' index aka a_idx
+int artifact_list_kidx[MAX_A_IDX]; /* and this is the actual k_info 'N:' index aka k_idx, that constitutes the artifact's base item */
 bool artifact_list_specialgene[MAX_A_IDX];
 char artifact_list_activation[MAX_A_IDX][80];
 /* For artifact lore */
