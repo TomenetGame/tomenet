@@ -602,7 +602,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #ifdef USE_X11
 						/* Don't do this in terminal mode ('-c') */
 						if (!strcmp(ANGBAND_SYS, "x11")) {
-							/* new: save window positions/sizes/visibility (and possibly fonts) */
+							/* save window positions/sizes/visibility (and possibly fonts) */
 							if (!strncmp(buf, "Mainwindow", 10)) {
 								write_mangrc_aux_line(0, "Mainwindow", buf);
 								found_window[0] = TRUE;
@@ -634,6 +634,18 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 								write_mangrc_aux_line(9, "Term-9window", buf);
 								found_window[9] = TRUE;
 							}
+
+							/* save current graphical tileset state */
+							else if (!strncmp(buf, "graphics", 8)) {
+								strcpy(buf, "graphics\t\t");
+								strcat(buf, format("%d\n", use_graphics ? 1 : 0));
+							}
+#ifdef USE_GRAPHICS
+							else if (!strncmp(buf, "graphic_tiles", 13)) {
+								strcpy(buf, "graphic_tiles\t\t");
+								strcat(buf, format("%s\n", graphic_tiles));
+							}
+#endif
 						}
 #endif /* USE_X11 */
 					}
