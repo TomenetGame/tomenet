@@ -3895,7 +3895,7 @@ static int melee_crit_dam(int dam, int bonus, int crit_die) {
 }
 
 /*
- * Display the damage done with a multiplier
+ * Display the melee damage done with a multiplier
  */
 //void output_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
 static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2) {
@@ -4131,6 +4131,9 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 	dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus) * 10;
 	dam = dam * (10 + p_ptr->xtra_might) / 10;
 
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+	if (p_ptr->combat_stance == 1) dam /= 2;
+#endif
 	// expected damage IF it crits
 	critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 	// expected damage factoring in crits
@@ -4148,6 +4151,9 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 		dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus2) * 10;
 		dam = dam * (10 + p_ptr->xtra_might) / 10;
 
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+		if (p_ptr->combat_stance == 1) dam /= 2;
+#endif
 		// expected damage IF it crits
 		critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 		// expected damage factoring in crits
@@ -4258,6 +4264,9 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam *= tmul;
 
 
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+	if (p_ptr->combat_stance == 1) dam /= 2;
+#endif
 	// expected damage IF it crits
 	critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 	// expected damage factoring in crits
@@ -4279,6 +4288,9 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam += (p_ptr->to_d_ranged) * 10;
 		dam *= tmul;
 
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+		if (p_ptr->combat_stance == 1) dam /= 2;
+#endif
 		// expected damage IF it crits
 		critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 		// expected damage factoring in crits

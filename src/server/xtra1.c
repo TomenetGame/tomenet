@@ -609,6 +609,10 @@ static void prt_plusses(int Ind) {
 	show_tohit_m += bmh;
 	show_todam_m += bmd;
 
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+	if (p_ptr->combat_stance == 1) show_todam_r /= 2;
+#endif
+
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
 		if (p_ptr->to_h_tmp) { show_tohit_m += 10000; show_tohit_r += 10000; }
 		if (p_ptr->to_h_melee_tmp) show_tohit_m += 10000;
@@ -6150,25 +6154,33 @@ void calc_boni(int Ind) {
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		case 1: p_ptr->shield_deflect += 11;
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		case 2: p_ptr->shield_deflect += 13;
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		case 3: p_ptr->shield_deflect += 15;
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 8) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		}
  #endif
@@ -6196,25 +6208,33 @@ void calc_boni(int Ind) {
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 6) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 14) / 10;
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 15) / 10;
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+   #endif
 			break;
 		}
   #endif

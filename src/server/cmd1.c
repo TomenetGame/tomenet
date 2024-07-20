@@ -3731,6 +3731,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_name);
 
 				k += o_ptr->to_d;
+				//if (p_ptr->combat_stance == 1) dam ... ; //cut o_ptr->to_d bonus too? ie melee equivalent to DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -4935,6 +4936,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
 
 				k += o_ptr->to_d;
+				//if (p_ptr->combat_stance == 1) dam ... ; //cut o_ptr->to_d bonus too? ie melee equivalent to DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
 
 				/* Does the weapon take damage from hitting acidic/fiery/aquatic monsters? */
 				for (i = 0; i < 4; i++) {

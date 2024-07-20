@@ -7359,6 +7359,10 @@ void do_cmd_fire(int Ind, int dir) {
 
 									/* Boost the damage */
 									tdam *= tmul;
+
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+									if (p_ptr->combat_stance == 1) tdam /= 2;
+#endif
 								} else {
 									 /* Base damage from thrown object */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
@@ -7380,6 +7384,10 @@ void do_cmd_fire(int Ind, int dir) {
 
 									/* Boost the damage */
 									tdam = (tdam * tmul) / 10;
+
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+									if (p_ptr->combat_stance == 1) tdam /= 2;
+#endif
 								}
 								ranged_flare_body = TRUE;
 
@@ -7591,6 +7599,10 @@ void do_cmd_fire(int Ind, int dir) {
 
 						/* Boost the damage */
 						tdam *= tmul;
+
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+						if (p_ptr->combat_stance == 1) tdam /= 2;
+#endif
 					} else {
 						 /* Base damage from thrown object */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
@@ -7612,6 +7624,10 @@ void do_cmd_fire(int Ind, int dir) {
 
 						/* Boost the damage */
 						tdam = (tdam * tmul) / 10;
+
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+						if (p_ptr->combat_stance == 1) tdam /= 2;
+#endif
 					}
 					ranged_flare_body = TRUE;
 
@@ -8715,6 +8731,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 					}
+
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+					if (p_ptr->combat_stance == 1) tdam /= 2;
+#endif
 					/* Apply special damage XXX XXX XXX */
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 
@@ -8858,6 +8878,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 				}
+
+#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+				if (p_ptr->combat_stance == 1) tdam /= 2;
+#endif
 				/* Apply special damage XXX XXX XXX */
 				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 

@@ -16508,13 +16508,16 @@ stated.
                                 D2 -45%  5/6   +11%/70%         +30%/70%
                                 D3 -40%  3/4   +13%/70%         +40%/70%
                                 DR -35%  2/3   +15%/70%         +50%/70%
+
                                 Melee damage you inflict is reduced depending
-                                on stance level. Ranged damage you inflict is
+                                on stance level. Ranged physical damage you
+                                inflict (everything except for spells) is
                                 always reduced by 50% in any defensive stance.
 
                                                  O1    O2    O3    OR
                                 Intercept        +4%   +7%  +10%  +15%
                                 Parry/Dodge    -100%  -90%  -80%  -70%
+
                                 All offensive stances reduce AC by 30.
                                 Offensive stance rank increases chance of
                                 applying a stun.
