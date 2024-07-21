@@ -213,7 +213,7 @@ cptr ANGBAND_DIR_GAME;
 bool disable_numlock = FALSE;
 bool use_graphics = FALSE;
 #ifdef USE_GRAPHICS
-char graphic_tiles[256] = "\0";
+char graphic_tiles[256] = "16x22sv";
 #endif
 #ifdef USE_SOUND_2010
 bool use_sound = TRUE, use_sound_org = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue
