@@ -436,6 +436,10 @@ static bool read_mangrc(cptr filename) {
 #else
 			enable_readability_blue_gcu();
 #endif
+	} else {
+		/* .tomenetrc not found. Try to copy the default one over.
+		   If this also fails, our last chance will be the auto-generated minimal .tomenetrc from write_mangrc() later. */
+		system(format("cp .tomenetrc %s", mangrc_filename));
 	}
 	return(skip);
 }
