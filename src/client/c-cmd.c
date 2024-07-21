@@ -29,11 +29,32 @@ static bool item_tester_edible(object_type *o_ptr) {
 
 	return(FALSE);
 }
+/* Compare cmd3.c */
+static bool item_tester_torch_fuel(object_type *o_ptr) {
+	if (o_ptr->name1) return(FALSE);
 
-/* XXX not fully functional */
-static bool item_tester_oils(object_type *o_ptr) {
-	if (o_ptr->tval == TV_LITE) return(TRUE);
+	if ((o_ptr->tval == TV_LITE) &&
+	    (o_ptr->sval == SV_LITE_TORCH)
+	    //These checks for 'fuel-draining' light type actually seem unnecessary, as we already checked for artifact and omitted SV_LITE_TORCH_EVER:
+	    //&& o_ptr->timeout /* we don't have this info client-side, could just try to hack the name instead: */
+	    //&& strstr(inventory_name[inven_slot], "turns")
+	    ) return(TRUE);
+
+	return(FALSE);
+}
+static bool item_tester_lantern_fuel(object_type *o_ptr) {
+	if (o_ptr->name1) return(FALSE);
+
+	/* Fuel */
 	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return(TRUE);
+
+	/* Other lanterns are okay */
+	if ((o_ptr->tval == TV_LITE) &&
+	    (o_ptr->sval == SV_LITE_LANTERN)
+	    //These checks for 'fuel-draining' light type actually seem unnecessary, as we already checked for artifact and omitted SV_LITE_DWARVEN and SV_LITE_FEANORIAN:
+	    //&& o_ptr->timeout /* we don't have this info client-side, could just try to hack the name instead: */
+	    //&& strstr(inventory_name[inven_slot], "turns")
+	    ) return(TRUE);
 
 	return(FALSE);
 }
@@ -1714,17 +1735,22 @@ void cmd_zap_rod(void) {
 /* FIXME: filter doesn't work nicely */
 void cmd_refill(void) {
 	int item;
-	cptr p;
 
 	if (!inventory[INVEN_LITE].tval) {
 		c_msg_print("You are not wielding a light source.");
 		return;
 	}
 
-	item_tester_hook = item_tester_oils;
-	p = "Refill with which light? ";
-
-	if (!c_get_item(&item, p, (USE_INVEN))) return;
+	get_item_extra_hook = get_item_hook_find_obj;
+	if (inventory[INVEN_LITE].sval == SV_LITE_TORCH || inventory[INVEN_LITE].sval == SV_LITE_TORCH_EVER) { /* @Everburning: Might be ego 'of Fading' */
+		item_tester_hook = item_tester_torch_fuel;
+		get_item_hook_find_obj_what = "Torch? ";
+		if (!c_get_item(&item, "Refill with which torch? ", (USE_INVEN | USE_EXTRA))) return;
+	} else { /* Assume lantern */
+		item_tester_hook = item_tester_lantern_fuel;
+		get_item_hook_find_obj_what = "Light source/oil? ";
+		if (!c_get_item(&item, "Refill with which oil/lantern? ", (USE_INVEN | USE_EXTRA))) return;
+	}
 
 	/* Send it */
 	Send_fill(item);
