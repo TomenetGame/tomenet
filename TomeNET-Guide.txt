@@ -10761,10 +10761,10 @@ die permanently even if you are everlasting!
     (Note that 'IDDC-exclusive' characters can NOT recall out at static towns.
     If they try, they are just 'killed by indetermination' and erased.)
 
-    Starting after 4.9.0c, the IDDC will also spawn a refuge area - depending
-    on the server settings either at 500 ft or at 350 ft and 700 ft - within
-    every 1000 ft interval in the IDDC, which offers a possibility to sell loot
-    albeit at not so great prices.
+    Starting after 4.9.0c, the IDDC will also spawn refuge areas - depending
+    on the server settings (you can check by pressing ~ i) either at 500 ft,
+    or at 350 and 700 ft, within every 1000 ft interval in the IDDC - which
+    offers a possibility to sell loot albeit at not so great prices.
     If a player logs out within this refuge, next time he logs back in he will
     spawn inside the refuge again, no matter its location on the dungeon floor.
 
