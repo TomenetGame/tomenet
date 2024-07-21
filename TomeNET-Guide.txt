@@ -22217,8 +22217,8 @@ In general, mindcraft schools are less affected by anti-magic fields.)
  they get hit, get their chance to resist nullified by the confusion.
  As a side effect, psi attacks themselves have a chance to cause confusion to
  the target, thereby increasing the damage when the target is hit by more
- psi attack afterwards while still suffering from confusion.
- if a monster does not resist a psi attack, it may suffer from additional
+ psi attacks afterwards while still suffering from confusion.
+ If a monster does not resist a psi attack, it may suffer from additional
  effects besides confusion, such as fear, stun or sleep.
 
     Psionic Blast   Blasts the target's mind with psionic energy.
@@ -22248,7 +22248,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Tier II: Level 18.
                     Affects all monsters in LoS.
 
-    Apathy          Slows your target down, draining power from its muscles.
+    Apathy          Slows your target down by weakening its will to act.
                     Required skill level for first spell level: 7.
 
                     Tier II: Level 22.

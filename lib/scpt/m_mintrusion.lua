@@ -153,7 +153,7 @@ MSLOWMONSTER_I = add_spell {
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-				fire_grid_bolt(Ind, GF_MIND_SLOW, args.dir, 5 + get_level(Ind, MSLOWMONSTER_I, 100), "drains power from your muscles")
+				fire_grid_bolt(Ind, GF_MIND_SLOW, args.dir, 5 + get_level(Ind, MSLOWMONSTER_I, 100), "weakens your will to act")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLOWMONSTER_I, 100))
@@ -172,7 +172,7 @@ MSLOWMONSTER_II = add_spell {
 	["fail"] = 	-20,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-				project_los(Ind, GF_MIND_SLOW, 5 + get_level(Ind, MSLOWMONSTER_I, 100), "drains power from your muscles")
+				project_los(Ind, GF_MIND_SLOW, 5 + get_level(Ind, MSLOWMONSTER_I, 100), "weakens your will to act")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLOWMONSTER_I, 100))
