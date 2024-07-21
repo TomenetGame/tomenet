@@ -7,13 +7,13 @@
 
 ## Automatic login settings
 
-## - Account name
+## - Account name - can be left empty
 #nick		Gandalf
 
-## - Account password
+## - Account password - can be left empty
 #pass		mithrandir
 
-## - Character name for fully automatic login
+## - Character name (this is only for the 'fullauto' feature further below)
 #name		Gandalf
 
 ## - Meta server providing a list of game servers

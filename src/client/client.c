@@ -127,7 +127,7 @@ static bool read_mangrc(cptr filename) {
 				name = strtok(NULL, "\t\n");
 
 				/* Default nickname */
-				strcpy(nick, name);
+				if (name) strcpy(nick, name);
 			}
 
 			/* Password line */
@@ -139,7 +139,7 @@ static bool read_mangrc(cptr filename) {
 				p = strtok(NULL, "\t\n");
 
 				/* Default password */
-				strcpy(pass, p);
+				if (p) strcpy(pass, p);
 			}
 
 			if (!strncmp(buf, "name", 4)) {
