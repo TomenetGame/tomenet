@@ -9105,8 +9105,7 @@ void tome_creation_aux(int Ind, int item) {
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	/* Get the item - in the pack ONLY, because -1 is a marker hack here for 'no item'! */
-	if (p_ptr->using_up_item >= 0 && !get_inven_item(Ind, p_ptr->using_up_item, &o2_ptr)) return;
-	else return; //paranoia, see comment above
+	if (p_ptr->using_up_item < 0 || !get_inven_item(Ind, p_ptr->using_up_item, &o2_ptr)) return;
 
 	/* severe error: custom book no longer there */
 	if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
