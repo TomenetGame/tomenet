@@ -4118,9 +4118,9 @@ bool ask_for_bigmap_generic(void) {
 
 	Term_clear();
 	Term_putstr(8, 3, -1, TERM_ORANGE, "Do you want \377Gdouble window size\377o aka 'big_map' option?");
-	Term_putstr(8, 5, -1, TERM_YELLOW, "  It is recommended to do this on desktops and normal laptops");
-	Term_putstr(8, 6, -1, TERM_YELLOW, "  but it may not fit on small netbook screens. You can change");
-	Term_putstr(8, 7, -1, TERM_YELLOW, "  this later in-game, in the options menu by pressing \377o= b\377y .");
+	Term_putstr(8, 5, -1, TERM_YELLOW, "It is recommended to do this on desktops and normal laptops");
+	Term_putstr(8, 6, -1, TERM_YELLOW, "but it may not fit on small netbook screens. You can change");
+	Term_putstr(8, 7, -1, TERM_YELLOW, "this later in-game, in the options menu by pressing \377o= b\377y .");
 	Term_putstr(8, 9, -1, TERM_ORANGE, "Press '\377Gy\377o' to double the screen size now, '\377Rn\377o' to not enable.");
 
 	while (TRUE) {
@@ -4143,9 +4143,8 @@ bool ask_for_bigmap_generic(void) {
 	Term_clear();
 	Term_putstr(8, 4, -1, TERM_YELLOW, "And one last thing:");
 	Term_putstr(8, 6, -1, TERM_YELLOW, "This game uses letters, numbers and symbols for 'graphics'.");
-	Term_putstr(8, 8, -1, TERM_YELLOW, "But if you prefer a more graphical representation,");
-	Term_putstr(8, 9, -1, TERM_YELLOW, "in the game press  \377o=  f\377y  and then look through the fonts");
-	Term_putstr(8,10, -1, TERM_YELLOW, "by pressing  \377o+\377y  repeatedly. Graphical fonts will come up!");
+	Term_putstr(8, 8, -1, TERM_YELLOW, "But if you prefer a true graphical representation, after logging");
+	Term_putstr(8, 9, -1, TERM_YELLOW, "in, press  \377o=  g\377y  and then  \377ov\377y  to enable a graphical tileset!");
 	ch = inkey();
 
 	Term_clear();
