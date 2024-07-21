@@ -7635,7 +7635,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		case ART_ANTIRIAD:
 			sprintf(p_ptr->attacker, " fires a plasma bolt for");
 			fire_bolt(Ind, GF_PLASMA, dir, damroll(50 + get_skill_scale(p_ptr, SKILL_DEVICE, 15), 20), p_ptr->attacker);
-			o_ptr->recharging = 4;
+			o_ptr->recharging = 2;
 			break;
 		default: done = FALSE;
 		}

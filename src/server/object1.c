@@ -3623,7 +3623,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_SEVENLEAGUE:
 		return("teleportation every 5..15 turns");
 	case ART_ANTIRIAD:
-		return("fire a plasma bolt (50..65d20) every 4 turns");
+		return("fire a plasma bolt (50..65d20) every 2 turns");
 
 #if 0 /* no, eg randart serpent amulet should retain basic activation! */
 	/* For the moment ignore (non-ego) randarts */
