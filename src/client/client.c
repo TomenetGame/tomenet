@@ -73,7 +73,7 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 static bool read_mangrc(cptr filename) {
 	FILE *config;
 	char buf[1024];
-	bool skip = FALSE;
+	bool skip = FALSE, fail = FALSE;
 
 	lighterdarkblue = FALSE;
 
@@ -107,6 +107,7 @@ static bool read_mangrc(cptr filename) {
 		strcpy(mangrc_filename, filename);
 	}
 
+retry_mangrc:
 	/* Attempt to open file */
 	if ((config = fopen(mangrc_filename, "r"))) {
 		/* Read until end */
@@ -437,9 +438,14 @@ static bool read_mangrc(cptr filename) {
 			enable_readability_blue_gcu();
 #endif
 	} else {
-		/* .tomenetrc not found. Try to copy the default one over.
-		   If this also fails, our last chance will be the auto-generated minimal .tomenetrc from write_mangrc() later. */
-		system(format("cp .tomenetrc %s", mangrc_filename));
+		if (!fail) { /* guard against infinite loop, in case we don't have write access to the target location or something */
+			fail = TRUE;
+
+			/* .tomenetrc not found. Try to copy the default one over.
+			   If this also fails, our last chance will be the auto-generated minimal .tomenetrc from write_mangrc() later. */
+			system(format("cp .tomenetrc %s", mangrc_filename));
+			goto retry_mangrc;
+		} else fprintf(stderr, "Warning: Cannot read stock .tomenetrc in CWD or cannot write to target '%s'\n", mangrc_filename);
 	}
 	return(skip);
 }
