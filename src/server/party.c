@@ -1194,7 +1194,11 @@ int check_account(char *accname, char *c_name, int *Ind) {
 							break;
 						} else {
 							*Ind = i;
+ #if 0 /* this is not thought out correctly: in nserver.c 'still has an alive connection' is sth we cannot really know, it might just be timing out instead! So, ... */
 							return(-10);
+ #else /* ...prefer -2, as it used to be before ALLOW_LOGIN_REPLACE_IN_TOWN: */
+							return(-2);
+ #endif
 						}
 #else
 						*Ind = i;
