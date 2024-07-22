@@ -669,7 +669,7 @@
 #define MAX_GUILDNOTES MAX_GUILDS
 #define MAX_ADMINNOTES 20
 /* Max # of notes a player may have pending at a time [6] */
-#define MAX_NOTES_PLAYER 6
+#define MAX_NOTES_PLAYER 10
 
 /* Number of text lines for the in-game BBS */
 #define BBS_LINES 15
