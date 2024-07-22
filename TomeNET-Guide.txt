@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. July 2024 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 22. July 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -302,7 +302,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
   shouldn't have any ;)) into CHR. (Paladins use WIS for casting spells.)
   If for some reason you can't even reach STR 18/20, at least go for STR 18/10,
   again DEX not below 10, then right after spawning in town discard the war
-  hammer you start with and instead go buy a whip from store '3' (weapon store)
+  hammer you start with and instead go buy a whip from store '3' (weaponsmith)
   or '4' (temple). This should give you a solid 2 attacks per round.
  If you decided to create a rogue, ensure that you have at least a STR of 15,
   and a pretty high DEX (the rogue's main stat) of 18/10. This will give you
@@ -5856,6 +5856,7 @@ There are four categories of subinventories:
   wizard, which creates call-by-name macros.
   If you pick up chemicals or mixtures they will be auto-stowed into this bag
   unless inscribed (see further down).
+  Satchels are sometimes sold by the Alchemy Shop in town.
 
 - Trap Kit Bag
   This bag compactly stores a surprising amount of trap kits and allows you to
@@ -5865,6 +5866,7 @@ There are four categories of subinventories:
   which creates call-by-name macros.)
   If you pick up trap kits they will be auto-stowed into this bag unless
   inscribed (see further down).
+  Trap kit bags are sometimes sold by the General Store in town.
 
 - Antistatic Wrapping
   This bag can hold magic devices that do not require a directional activation
@@ -5878,6 +5880,7 @@ There are four categories of subinventories:
   just fine when they are inside bags, just as usual.
   If you pick up fitting magical devices they will be auto-stowed into this bag
   unless inscribed (see further down).
+  Wrappings are sometimes sold by the Magic Shop in town.
 
 - Potion Belt
   This utility belt can hold potions for you, ready to use on demand, thereby
@@ -5887,6 +5890,7 @@ There are four categories of subinventories:
   which creates call-by-name macros.)
   If you pick up potions, they will be auto-stowed into this bag unless
   inscribed (see further down).
+  Potion belts are sometimes sold by the Alchemy Shop in town.
 
 For client versions older than 4.9.2:
 From outside the subinventory you cannot access any items inside except if you
@@ -8323,7 +8327,7 @@ Armoury         2       Offers various basic armour. Rarely excellent pieces.
                         Also offers to repair damaged armour (which is cheaper
                         than enchanting it, except for rather expensive items).
 
-Weapon Shop     3       Offers various basic weapons. Rarely excellent pieces.
+Weaponsmith     3       Offers various basic weapons. Rarely excellent pieces.
                         Also offers to repair damaged weapons (which is cheaper
                         than enchanting it, except for rather expensive items).
 
@@ -8373,7 +8377,7 @@ Temple          4       Player ghosts will be revived here, and receive some
                         Nether Realm -50 ft     275570 Au
                         Nether Realm bottom     384170 Au
 
-Alchemist       5       Sells various scrolls and potions.
+Alchemy Shop    5       Sells various scrolls and potions.
 
 Magic Shop      6       Sells wands, staves, rings and amulets.
 
@@ -10234,8 +10238,8 @@ Stat drain
     green on your character sheet (SHIFT+C) and in your 'XP' bar on the main
     screen.
     The game remembers your original stats though and you can restore any stat
-    by purchasing a potion of 'Restore <stat name>' from the alchemist in town
-    or by corresponding restoration magic of various sorts.
+    by purchasing a potion of 'Restore <stat name>' from the alchemy shop in
+    town or by corresponding restoration magic of various sorts.
 
     Note however that there are three tiers of stat drain:
     I:   Temporary drain. Low-level traps will often do this. Also this might
@@ -10246,8 +10250,8 @@ Stat drain
     II:  Persistent drain. Medium level traps, monster attacks and certain
          elemental damage you suffer can cause this.
          Again the drained stat will be displayed in yellow, but unlike tier I
-         drain it will not self-restore. Instead you will need to purchase
-         a potion from the alchemist or use other means of restoration magic.
+         drain it will not self-restore. Instead you will need to purchase a
+         potion from the alchemy shop or use other means of restoration magic.
     III: Permanent drain. High level traps are the only way to suffer this.
          Your stat will actually not turn yellow, but remain light green and
          its reduction cannot be undone by restoration magic!
@@ -10883,8 +10887,8 @@ die permanently even if you are everlasting!
     Rogues should be aware that it's not possible to steal from general store,
     weaponsmith, armoury, temple, magic shop, black market and the special
     potion store in the dungeon towns.
-    This leaves only the hidden Library, herbalist, alchemist and the library
-    to steal from.
+    This leaves only the hidden Library, herbalist, alchemy shop and the
+    library to steal from.
 
     If you use stolen enchant scrolls on an item while you are in a town,
     then the item will get a 100% off discount. If you want to use stolen
@@ -12531,7 +12535,7 @@ but actually undo it. That means you will not take more damage on a character
 that has both, susceptibility and resistance to an element than on a character
 that has just the resistance but is not actually susceptible.
 
-So one of the first things to do as an Ent is to visit the magic store and buy
+So one of the first things to do as an Ent is to visit the magic shop and buy
 a ring of fire resistance, or any druid ego monster or later on arch-vile will
 give you a hard time.
 
@@ -14978,8 +14982,8 @@ Enchanting restrictions:
     - Normal items that have the NO_ENCHANT flag, which are Dark Swords and all
       three types of "Magic" ammo.
 
-To enchant an item, you can either use scrolls (available at the alchemist or
-the black market) or enchantment shop services (see (4.5a)).
+To enchant an item, you can either use scrolls (available at the alchemy shop
+or the black market) or enchantment shop services (see (4.5a)).
 There are big differences between the effects:
  - Shop services always enchant one of your equipped items (which is eligible
    for enchanting) to 5 + (yourlevel / 5), capping at 20. So you reach that
@@ -17588,12 +17592,12 @@ stated.
                                 Some ingredients are acquired by digging, some
                                 by actually killing monsters or by other means,
                                 and then there is the 'grinding tool' that you
-                                can buy in town in the alchemist's store for
-                                little money that allows you to grind items
-                                containing a significant amount of rather
-                                reactive metal types to reactive metal powder
-                                or to grind items made of significant amounts
-                                of wood into wood chips.
+                                can buy in town in the alchemy shop for little
+                                money that allows you to grind items containing
+                                a significant amount of rather reactive metal
+                                types to reactive metal powder or to grind
+                                items made of significant amounts of wood into
+                                wood chips.
                                 Some recipes might even use basic lamp oil
                                 which you could just by from the general store.
                                 Note that some ingredients might need higher
@@ -17612,8 +17616,8 @@ stated.
                                 loot clutter, You can turn them off (and on
                                 again) with the /ing command.
 
-                                To reduce inventory space usage, go to the town
-                                alchemist and buy an Alchemy Satchel.
+                                To reduce inventory space usage, go to the
+                                town's alchemy shop and buy an Alchemy Satchel.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
@@ -17747,8 +17751,8 @@ that allows finding certain chemicals and crafting explosive charges from them.
 See 'Digging' skill in (7.2) for details about acquiring chemicals, note that
 you can use the "/ing" command to turn off/on ingredients drop if you ever feel
 it's spammy. To store ingredients more efficiently, buy an Alchemy Satchel at
-any town's alchemist store.
-Use a grinding tool (also available at the alchemist store) to grind items that
+any town's alchemy shop.
+Use a grinding tool (also available at the alchemy shop) to grind items that
 you don't need anymore to easily obtain wood chips or reactive metal powder.
 
 By pressing 'A' to activate ingredients or mixtures you can combine them to
@@ -18809,7 +18813,7 @@ create a character!):
     Hints:
     Enchanting your ranged weapon to-damage is especially effective because
     the damage bonus will be multiplied by the weapons multiplier, eg (x3) for
-    a long bow. So buy enchant to-dam scrolls from the alchemy store as soon as
+    a long bow. So buy enchant to-dam scrolls from the alchemy shop as soon as
     you can afford them.
 
     Also make sure to have an ample supply of 'Scrolls of Phase Door' to stay
@@ -19073,7 +19077,7 @@ create a character!):
     Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
     against which you can easily acquire the required resistance, for example
-    by buying a ring or amulet from the magic store or maybe even by choosing
+    by buying a ring or amulet from the magic shop or maybe even by choosing
     a race that has intrinsic resistance to the element you are planning to use
     mainly. If you want to test rune combinations that pose a risk of going
     wrong badly, do so in the arena of the 'Arena Monster Challenge' event so
