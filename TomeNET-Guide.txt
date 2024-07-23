@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. July 2024 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 23. July 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5000,8 +5000,11 @@ them directly in your .tomenetrc config file).
 (2.5b) Graphical tilesets
 -------------------------
 Thanks to jEzEk (https://github.com/jezek) graphics tiles are now supported
-again, now with a colour mask and autoscaling. The advantage over normal fonts
-is that these can have many colours and thereby look much better.
+again, now with two colour masks (a foreground and a background mask, of which
+the background mask has currently no meaning, since all grids in TomeNET are
+always drawn with black background) and auto-scaling to font size.
+The advantage over normal fonts is that these can have many colours and thereby
+look much better.
 
 Graphical tilesets are xyz.bmp files in 24-bit format (R8,G8,B8 - and make sure
 to check "Don't include colour space information" in GIMP or whatever you use,
@@ -5013,12 +5016,24 @@ and the prf file, as always, to tomenet/lib/user  - or -
 on Windows OS to the folder 'TomeNET-user' inside your user's home folder
 (eg C:/Users/Tomenetplayer/TomeNET-user).
 
-Tilesets also have a designated 'mask colour' R=255,G=0,B=255 (or hex 0xFF00FF)
-aka a strong magenta, which is treated special: It will be replaced by the
-actual font colour the grid would have with a normal font, thereby representing
-the type of floor feat, item, monster etc with its correct colour.
-For example a tile depicting an orc would display the mask colour in umber
-(ie brown) if it was a hill orc or in light green if it was a cave orc.
+Tilesets also have two designated 'mask colours':
+- a 'foreground mask' defined by colour R=255,G=0,B=255 (or hex 0xFF00FF)
+  aka a strong magenta, which is treated special: It will be replaced by the
+  actual font colour the grid would have with a normal font, thereby
+  representing the type of floor feat, item, monster etc with its correct
+  colour.
+  For example a tile depicting an orc would display the mask colour in umber
+  (ie brown) if it was a hill orc or in light green if it was a cave orc.
+- (Currently no effect, as all grids in TomeNET always have black background:)
+  A 'background mask' defined by colour R=0,G=0,B=0 (hex 0x000000) aka black.
+  Currently, TomeNET always uses black background colour for any grid it draws.
+  However, should this change, then anything that is painted in 0x000000 in the
+  graphical tile will also change its colour to the grid's background colour.
+  (Example: A fountain in ASCII is currently a white '_' on black background.
+  If background colours were enabled in the future, it could be a white '_' on
+  blue background. In that case, if you switched from ASCII to a graphical
+  tileset that maps fountains to a picture, all black pixels in that fountain
+  tile would also change to appear in blue.)
 
 Svechnik (aka 'EvgenijK' on github) has worked on a major graphical tileset
 that can be found on his github, including instructions on how to use it:
