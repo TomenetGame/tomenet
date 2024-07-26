@@ -2017,6 +2017,7 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
 	Term_putstr(x, y, -1, attr, tmp);
 }
 
+#if defined(WINDOWS) || defined(USE_X11)
 /* Helper function for copy_to_clipboard */
 static void extract_url(char *buf_esc, char *buf_prev, int end_of_name) {
 	char *c, *c2, *be = NULL;
@@ -2024,11 +2025,11 @@ static void extract_url(char *buf_esc, char *buf_prev, int end_of_name) {
 //c_msg_format("1: %s", buf_esc);
 //c_msg_format("2: %s", buf_prev);
 
-#if 0
+ #if 0
 c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
     buf_esc[0], buf_esc[1], buf_esc[2], buf_esc[3], buf_esc[4], buf_esc[5], buf_esc[6], buf_esc[7],
     buf_esc[8], buf_esc[9], buf_esc[10], buf_esc[11], buf_esc[12], buf_esc[13], buf_esc[14], buf_esc[15]);
-#endif
+ #endif
 
 	/* Catch chat messages (the usual case) because the player's name might have sort of "url form" :-p
 	   Problem: /me messages don't have a closing ']' after the name, so we use a hack by marking the end of the name with a '{-' neutral colour code,
@@ -2075,7 +2076,7 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 			}
 		}
 	}
-#ifdef REGEX_URL
+ #ifdef REGEX_URL
 	/* Also try to catch less clear URLs */
 	else {
 		regmatch_t pmatch[REGEX_ARRAY_SIZE + 1]; /* take out the heavy calibre (´ `) */
@@ -2110,8 +2111,9 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 //c_msg_format("3b: %s", buf_esc);
 		return;
 	}
-#endif
+ #endif
 }
+#endif
 
 /* For copying and pasting: Don't duplicate (or reduce again) first (or any) ':'. */
 //#define NO_COLON_DUPLICATION --not implemented, no use for it atm
@@ -2275,9 +2277,13 @@ void copy_to_clipboard(char *buf, bool chat_input) {
    'global': paste goes to global chat (including /say and /whisper)? (not private/party/guild/floor chat) -
    For the latter four the line already started with a ':' for the chat prefix and we don't need to duplicate the first ':' anymore. */
 bool paste_from_clipboard(char *buf, bool global) {
+#if defined(WINDOWS) || defined(USE_X11)
 	bool no_slash_command;
 	int pos = 0;
 	char *c, *c2, buf_esc[MSG_LEN + 15];
+#else
+	c_msg_print("\377yClipboard operations not available in GCU client.");
+#endif
 
 #ifdef WINDOWS
 	if (OpenClipboard(NULL)) {
