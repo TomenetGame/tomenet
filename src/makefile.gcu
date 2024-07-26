@@ -10,8 +10,8 @@
 #
 #  -DUSE_GCU for a linux ncurses command-line client
 #
-# Additionally, -DSOUND_SDL and the according sdl-config call for both compiler
-# and linker flags and linking against -lSDL_mixer should be added so the
+# Additionally, -DSOUND_SDL and the according sdl2-config call for both compiler
+# and linker flags and linking against -lSDL2_mixer should be added so the
 # client provides SDL sound/music support.
 #
 # Note that you may have to make modifications below according
@@ -196,7 +196,12 @@ CPP = cpp
 #So, -nostdinc will prevent the whole own comment blob of cpp to get generated
 #in the first place, as we never asked for it:
 #CPPFLAGS = -C -P -nostdinc
-CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc,-Wno-format-overflow
+#CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc,-Wno-format-overflow
+# ...for some reason, on GCU-only client on Qualcomm SM8550-AB Snapdragon 8 Gen 2,
+#    compiling with CC=clang and cpp version "cpp (Ubuntu 13.2.0-23ubuntu4) 13.2.0",
+#    using -nostinc causes a cpp error and will _prevent_ LUA from working! Removing it works:
+CPPFLAGS = -x c -E -Wp,-C,-P,-Wno-format-overflow
+# Note: Omitting -nostdinc also works fine, but is not required, on Thinkpad X13s (ARM64).
 
 # gcc variant:
 #CPP = gcc
@@ -216,8 +221,8 @@ SERVER_EXTRA_LIBS = -lcrypt
 ## This is a command-line client that relies on ncurses.
 ##
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -fsigned-char
-#LIBS = -L/usr/pkg/lib -lncurses -lm `sdl-config --libs` -lSDL_mixer
+#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char
+#LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 ##
 ## Without SDL
 CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -fsigned-char
@@ -244,15 +249,15 @@ LIBS = -L/usr/pkg/lib -lncurses -lm
 ## CFLAGS and -lX11 from LIBS
 ##
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm `sdl-config --libs` -lSDL_mixer
+#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags`
+#LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS = -Wl,-rpath,\$$ORIGIN
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
+#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99
+#LIBS = -L/usr/pkg/lib -lncurses -lm
 
 #GCC on Archlinux enabled “--enable-default-pie" by default at some point, so we add this or preproc will fail to build:
 #LDFLAGS += -no-pie
@@ -278,15 +283,15 @@ LIBS = -L/usr/pkg/lib -lncurses -lm
 ## Variation -- FreeBSD 4.3R
 ##
 #PREFIX = /usr/local
-#CFLAGS = -Wall -g -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/tomenet\""
-#LIBS = -L${X11BASE}/lib -lX11 -lcurses
+#CFLAGS = -Wall -g -DUSE_GCU -DDEFAULT_PATH="\"${PREFIX}/lib/tomenet\""
+#LIBS = -lcurses
 
 
 ##
 ## Variation -- compile for Solaris
 ##
-#CFLAGS = -Wall -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
-#LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
+#CFLAGS = -Wall -pipe -g -DUSE_GCU -DSOLARIS
+#LIBS = -lsocket -lnsl -lcurses
 
 
 # Some Linux distributions have a separate libtinfo, attempt to detect it
@@ -301,28 +306,11 @@ CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
 LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
 
-# Normal (non-test) client uses optimizations
-
-# For SDL2 audio
-#tomenet: CFLAGS += -g -O2 -DSOUND_SDL `sdl2-config --cflags`
-#tomenet: LIBS += `sdl2-config --libs` -lSDL2_mixer
-
-# Without SDL2 (no audio)
-tomenet: CFLAGS += -g -O2
-
-
 # Compile a client with 'test client' version/tag
-#tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
-#disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
-
-# With SDL2 (audio)
-#tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow -DSOUND_SDL `sdl2-config --cflags`
-#tomenet.test: PPFLAGS = -DTEST_CLIENT -DSOUND_SDL `sdl2-config --cflags`
-#tomenet.test: LIBS += `sdl2-config --libs` -lSDL2_mixer
-
-# Without SDL2 (no audio)
 tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
+#disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
 tomenet.test: PPFLAGS = -DTEST_CLIENT
+
 
 # Server is compiled with optimizations
 tomenet.server: CFLAGS += -g -O2
