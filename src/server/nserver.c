@@ -2725,6 +2725,14 @@ static void sync_options(int Ind, bool *options) {
 		if ((p_ptr->melee_techniques & MT_POISON))
 			msg_print(Ind, "Ingredient drops for your 'Apply Poison' technique are currently suppressed.");
 	}
+
+#if 0
+	/* font_map_solid_walls will cause "^B" glitches in raw GCU client */
+	if (p_ptr->version.os == OS_GCU && p_ptr->font_map_solid_walls) {
+		msg_print(Ind, "\377yOption 'font_map_solid_walls' is not supported on GCU-only client.");
+		p_ptr->font_map_solid_walls = FALSE;
+	}
+#endif
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,
