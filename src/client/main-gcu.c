@@ -1111,6 +1111,14 @@ errr init_gcu(void) {
 	return(0);
 }
 
+/* Returns true if terminal window specified by term_idx is currently visible. */
+bool term_get_visibility(int term_idx) {
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return(false);
+
+	/* Only windows initialized in ang_term array are currently visible. */
+	return((bool)ang_term[term_idx]);
+}
+
 void enable_readability_blue_gcu(void) {
 	/* New colour code */
 	client_color_map[6] = 0x0033ff;
@@ -1123,6 +1131,14 @@ void gcu_restore_colours(void) {
 	int i;
 
 	for (i = 0; i < BASE_PALETTE_SIZE; i++) init_color(i, cor[i], cog[i], cob[i]);
+}
+
+//TODO: Implement, if possible
+void set_palette(byte c, byte r, byte g, byte b) {
+}
+void get_palette(byte c, byte *r, byte *g, byte *b) {
+}
+void refresh_palette(void) {
 }
 
 /* for big_map mode */

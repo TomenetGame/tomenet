@@ -41,6 +41,8 @@ extern void get_palette(byte c, byte *r, byte *g, byte *b);
 extern void refresh_palette(void);
 extern int get_misc_fonts(char *output_list, int max_misc_fonts, int max_font_name_length, int max_fonts);
 extern void set_window_title_x11(int term_idx, cptr title);
+#elif defined(USE_GCU)
+extern bool term_get_visibility(int term_idx);
 #endif
 
 #ifdef USE_XAW
@@ -1187,12 +1189,15 @@ extern u32b client_ext_color_map[TERMX_AMT][2];
 extern const char colour_name[BASE_PALETTE_SIZE][9];
 extern bool lighterdarkblue;
 #ifdef WINDOWS
-void enable_readability_blue_win(void);
+extern void enable_readability_blue_win(void);
 #else
  #ifdef USE_X11
-void enable_readability_blue_x11(void);
+extern void enable_readability_blue_x11(void);
  #else
-void enable_readability_blue_gcu(void);
+extern void enable_readability_blue_gcu(void);
+extern void set_palette(byte c, byte r, byte g, byte b);
+extern void get_palette(byte c, byte *r, byte *g, byte *b);
+extern void refresh_palette(void);
  #endif
 #endif
 

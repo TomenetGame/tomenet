@@ -12717,7 +12717,7 @@ static void handle_process_graphics_file(void) {
 void handle_process_font_file(void) {
 	char buf[1024 + 17];
 #ifdef CUSTOM_FONT_PRF
-	char fname[1024];
+	char fname[1024] = { 0 }; //init for GCU-only mode: there is no font name available
 	int i;
 
  #if 1
@@ -12750,7 +12750,9 @@ void handle_process_font_file(void) {
 	char_map_offset = 0; //paranoia
 
 	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
+#if defined(WINDOWS) || defined(USE_X11)
 	get_screen_font_name(fname);
+#endif
 	if (fname[0]) {
 		FILE *fff;
 		/* Linux: fname has this format: '5x8' */

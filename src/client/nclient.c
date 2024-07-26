@@ -1510,15 +1510,15 @@ unsigned char Net_login() {
  */
 int Net_start(int sex, int race, int class) {
 	int i;
-	//int n;
 	int type, result;
-	char fname[1024];
+	char fname[1024] = { 0 }; //init for GCU-only mode: there is no font name available
 
 	Sockbuf_clear(&wbuf);
-	//n =
 	Packet_printf(&wbuf, "%c", PKT_PLAY);
 
+#if defined(WINDOWS) || defined(USE_X11)
 	get_screen_font_name(fname);
+#endif
 
 	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0))
 #ifdef USE_GRAPHICS
@@ -7579,14 +7579,16 @@ int Send_audio(void) {
 
 int Send_font(void) {
 	int n;
-	char fname[1024];
+	char fname[1024] = { 0 }; //init for GCU-only mode: there is no font name available
 
 	if (is_older_than(&server_version, 4, 8, 1, 2, 0, 0)) return(-1);
 
 	//&graphics_tile_wid, &graphics_tile_hgt)) {
 	//td->font_wid; td->font_hgt;
 
+#if defined(WINDOWS) || defined(USE_X11)
 	get_screen_font_name(fname);
+#endif
 #ifdef USE_GRAPHICS
 	if ((n = Packet_printf(&wbuf, "%c%hd%s%s", PKT_FONT, use_graphics, graphic_tiles, fname)) <= 0) return(n);
 #else
