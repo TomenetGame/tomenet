@@ -8,19 +8,11 @@
 #
 # Currently, only 4 target builds are supported for building the client:
 #
-#  -DWIN32 for Windows
-#  -DUSE_X11 (optionally with USE_GCU) for X11 client
-#  -DUSE_X11 )optionally with USE_GCU) with -DOSX for a Mac OSX client
 #  -DUSE_GCU for a linux ncurses command-line client
-#
-# The below paragraph that mentions a bunch of other targets such as
-# Mac/IBM/LSL/ACN/XAW is long outdated.
 #
 # Additionally, -DSOUND_SDL and the according sdl-config call for both compiler
 # and linker flags and linking against -lSDL_mixer should be added so the
 # client provides SDL sound/music support.
-
-
 #
 # Note that you may have to make modifications below according
 # to your machine, available libraries, compilation options,
@@ -29,26 +21,8 @@
 # or possibly for "Atari" or "Amiga" computers with "Curses" ports,
 # see below for more information.
 #
-# Note that "main-mac.c", the visual module for the Macintosh,
-# must be compiled in a special way, see elsewhere.
-#
 # Note that "main-win.c", the visual module for Windows,
 # must be compiled in a special way, see elsewhere.
-#
-# Note that "main-ibm.c", "main-emx.c", and "main-286.c",
-# the visual modules for various types of IBM-PC computers,
-# must be compiled with special Makefiles, see elsewhere.
-#
-# Note that "main-lsl.c", the visual module for ???,
-# must be compiled with "Makefile.lsl", see elsewhere.
-#
-# Note that "main-acn.c", the visual module for Risc Acorn,
-# must be compiled with "Makefile.acn", see elsewhere.
-#
-# Note that "Makefile.w31" and "Makefile.wat" are slight variations
-# on "Makefile.win" and "Makefile.ibm", respectively, which allow
-# the use of the "main-win.c" and "main-ibm.c" files, respectively,
-# with special compilers.
 #
 # If you are able to construct "main-xxx.c" and/or "Makefile.xxx"
 # files for a currently unsupported system, please send them to me
@@ -181,10 +155,6 @@ CLI_LUAOBJS = \
 ##
 ## Following are some "system" definitions
 ##
-## No changes are needed to compile a version that will run on both
-## X11 and Curses, in debugging mode, with maximal warnings, on many
-## normal Unix machines of the Sun OS variety (non-solaris).
-##
 ## To use an "alternative" definition, simply "modify" (or "replace")
 ## the definition below with one that you like.  For example, you can
 ## change the compiler to "cc", or remove the "debugging" options, or
@@ -233,11 +203,6 @@ CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc,-Wno-format-overflow
 #CPPFLAGS = -x c -E -Wp,-C,-P
 
 
-
-# For variations with X11
-#X11BASE = /usr/X11R6
-
-
 # Account editor
 ACCEDIT_LIBS = -lncurses -lcrypt
 
@@ -247,58 +212,16 @@ SERVER_EXTRA_LIBS = -lcrypt
 
 
 ##
-## Standard version -- supports X11 (main-x11.c)
-## Standard client for X11 usage.
+## Only support "main-gcu.c" (not "main-x11.c")
+## This is a command-line client that relies on ncurses.
 ##
-# You may have to add various X11 include/library directories to the
-# "CFLAGS", if your machine places files in a weird location.
-#
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lm `sdl-config --libs` -lSDL_mixer
+#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -fsigned-char
+#LIBS = -L/usr/pkg/lib -lncurses -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lm
-
-##
-## Variation: main-x11.c and main-gcu.c
-## This version supports both "X11" and "curses" in a single executable.
-##
-# You may be able to remove "-ltermcap" on some machines (ex: Solaris).
-#
-# You may have to replace "-lcurses" with "-lncurses" to use the
-# "new curses" library instead of the "old curses" library, and
-# you may have to add "-l/usr/include/ncurses" to the "CFLAGS".
-#
-# See "main-gcu.c" and "config.h" for some optional "curses" defines,
-# including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
-# attempt to "guess" at many of these flags based on your system.
-#
-## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
-#CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm `sdl-config --libs` -lSDL_mixer
-##
-## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
-##
-## Without USE_SOUND_2010 (aka compile without sound support) - make sure to remove #define USE_SOUND_2010 (and possibly #define USE_SOUND) in src/config.h too.
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
-
-# With SDL2
-#  With sdl2-config
-#CFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char
-# Note: -fsigned-char is important for ARM64, as there 'char' is by default unsigned, while on x86/AM64 it is by default signed!
-#  With manually set prefix
-#CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
-#  With sdl2-config
-#LIBS = -L/usr/pkg/lib -lncurses -lm
-#  With manually set prefix
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm -L/usr/local/lib -L/usr/lib -pthread -lSDL2 -lSDL2_mixer
+CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -fsigned-char
+LIBS = -L/usr/pkg/lib -lncurses -lm
 
 # Optional: Compile with Link Time Optimization (LTO)
 #CFLAGS += -flto=auto
@@ -313,30 +236,6 @@ SERVER_EXTRA_LIBS = -lcrypt
 #CFLAGS += -Wno-format-overflow
 
 
-##
-## Variation -- Only support "main-gcu.c" (not "main-x11.c")
-## This is a command-line client that relies on ncurses.
-##
-## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -L/usr/pkg/lib -lncurses -lm `sdl-config --libs` -lSDL_mixer
-##
-## Without SDL
-CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99
-LIBS = -L/usr/pkg/lib -lncurses -lm
-
-
-##
-## Variation -- OS X : See makefile.osx
-##
-
-
-##
-## Variation -- Windows : See makefile.mingw (MinGW32) or makefile.win (Cygwin)
-##
-
-
-##
 ## Variation -- Linux / FreeBSD
 ##
 ## Add -msse2 to CFLAGS to enable SSE2 support in SFMT (not needed for x86_64).
@@ -367,20 +266,6 @@ LIBS = -L/usr/pkg/lib -lncurses -lm
 ##
 #CFLAGS = -Wall -pipe -g -DUSE_GCU -DUNIX_SOCKETS
 #LIBS = -lncurses -ltermcap
-
-
-##
-## Variation -- Use "main-xaw.c" instead of "main-x11.c"
-##
-#CFLAGS = -Wall -pipe -g -DUSE_XAW -DUSE_GCU
-#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
-
-
-##
-## Variation -- Use "main-cap.c" instead of "main-gcu.c"
-##
-#CFLAGS = -Wall -pipe -g -DUSE_X11 -DUSE_CAP
-#LIBS = -lX11 -ltermcap
 
 
 ##
