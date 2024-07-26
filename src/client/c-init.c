@@ -3428,7 +3428,10 @@ static void init_sound() {
    Purpose: Avoid need for client restart on switching audio packs live. */
 #ifdef USE_SOUND_2010
 int re_init_sound() {
-	int i, err;
+	int i;
+ #ifdef SOUND_SDL
+	int err;
+ #endif
 
 	/* Initialise this even if we don't use sound, just for its visual effect */
 	thunder_sound_idx = exec_lua(0, "return get_sound_index(\"thunder\")");
