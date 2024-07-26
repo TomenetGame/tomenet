@@ -443,7 +443,7 @@ retry_mangrc:
 
 			/* .tomenetrc not found. Try to copy the default one over.
 			   If this also fails, our last chance will be the auto-generated minimal .tomenetrc from write_mangrc() later. */
-			system(format("cp .tomenetrc %s", mangrc_filename));
+			(void)system(format("cp .tomenetrc %s", mangrc_filename));
 			goto retry_mangrc;
 		} else fprintf(stderr, "Warning: Cannot read stock .tomenetrc in CWD or cannot write to target '%s'\n", mangrc_filename);
 	}
