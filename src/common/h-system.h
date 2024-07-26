@@ -36,7 +36,7 @@
 # endif
 
 # if !defined(sgi) && !defined(ultrix)
-#  include <sys/timeb.h>
+//#  include <sys/timeb.h>
 # endif
 
 #endif
