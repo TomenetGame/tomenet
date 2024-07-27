@@ -8907,6 +8907,16 @@ void options_immediate(bool init) {
 	static bool changed7, changed8;
 	static bool changed9a, changed9b, changed9c, changed9d;
 
+#if !defined(WINDOWS) && !defined(USE_X11)
+	/* Assume GCU-only client - terminal will break with "^B" visuals if font_map_solid_walls is on, so disable it always: */
+	if (c_cfg.font_map_solid_walls) {
+		c_msg_print("\377yOption 'font_map_solid_walls' is not supported on GCU-only client.");
+		c_cfg.font_map_solid_walls = FALSE;
+		(*option_info[CO_FONT_MAP_SOLID_WALLS].o_var) = FALSE;
+		Client_setup.options[CO_FONT_MAP_SOLID_WALLS] = FALSE;
+	}
+#endif
+
 	if (init) {
 		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
 		changed4a = c_cfg.hp_bar; changed4b = c_cfg.mp_bar; changed4c = c_cfg.st_bar;
@@ -8998,6 +9008,8 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 			/* Color disabled options */
 			if (!option_info[opt[i]].o_enabled)
 				a = (a == TERM_L_BLUE) ? TERM_SLATE : TERM_L_DARK;
+
+			if (option_info[opt[i]].o_var == &c_cfg.font_map_solid_walls && !strcmp(ANGBAND_SYS, "gcu")) a = TERM_L_DARK;
 
 			/* Display the option text */
 			sprintf(buf, "%-49s: %s  (%s)",
@@ -12518,6 +12530,13 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		}
 		if (option_info[i].o_var == &c_cfg.disable_lightning) {
 			c_cfg.disable_lightning = FALSE;
+			(*option_info[i].o_var) = FALSE;
+			Client_setup.options[i] = FALSE;
+		}
+		/* terminal will break with "^B" visuals if font_map_solid_walls is on, so disable it always: */
+		if (option_info[i].o_var == &c_cfg.font_map_solid_walls) {
+			c_msg_print("\377yOption 'font_map_solid_walls' is not supported on GCU client.");
+			c_cfg.font_map_solid_walls = FALSE;
 			(*option_info[i].o_var) = FALSE;
 			Client_setup.options[i] = FALSE;
 		}

@@ -612,8 +612,9 @@
  #define DISTINCT_DARK
 
  /* Remove some hard-coding in the client options */
- #define CO_BIGMAP		7
- #define CO_PALETTE_ANIMATION	124
+ #define CO_BIGMAP			7
+ #define CO_FONT_MAP_SOLID_WALLS	8
+ #define CO_PALETTE_ANIMATION		124
 
  /* Blacken lower part of screen if we're mindlinked to a non-bigmap-target but
     are actually using bigmap-screen. */
