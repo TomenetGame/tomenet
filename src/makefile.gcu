@@ -204,6 +204,11 @@ CPP = cpp
 CPPFLAGS = -x c -E -Wp,-C,-P,-Wno-format-overflow
 # Note: Omitting -nostdinc also works fine, but is not required, on Thinkpad X13s (ARM64).
 
+# Note about compiling tomenet on mobile phone with SDL2 (audio) support:
+# In Termux, install the x11 repo with "pkg in x11-repo", and then SDL2 with "pkg in sdl2-mixer"
+# and then uncomment the 2 lines below at "With SDL" and comment out the 2 lines below at "Without SDL",
+# do "make clean" and "make tomenet -f makefile.gcu" and it might compile (it does on my phone).
+
 # gcc variant:
 #CPP = gcc
 #CPPFLAGS = -x c -E -Wp,-C,-P
