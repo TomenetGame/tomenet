@@ -9170,7 +9170,7 @@ void player_death(int Ind) {
 	//int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
 	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity"), penalty = FALSE;
-	char titlebuf[160];
+	char titlebuf[MAX_CHARS], logtitlebuf[MAX_CHARS];
 	int death_type = DEATH_NONE; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 #ifdef TOMENET_WORLDS
 	bool world_broadcast = TRUE;
@@ -9225,6 +9225,11 @@ void player_death(int Ind) {
 		strcat(titlebuf, get_ptitle2(p_ptr, FALSE));
 	}
 #endif
+
+	/* For the log file and therefore also for the "recent deaths" list:
+	   Actually add th class title before the player's name. */
+	strcpy(logtitlebuf, titlebuf);
+	strcat(logtitlebuf, " ");
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
@@ -9600,7 +9605,7 @@ void player_death(int Ind) {
 	}
 	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && p_ptr->csane >= 0 && in_sector000_dun(&p_ptr->wpos) && !p_ptr->suicided) {
 		s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
-		s_printf("%s (%d%s) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("%s - %s%s (%d%s) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
@@ -9691,7 +9696,7 @@ void player_death(int Ind) {
  #endif
 
 			/* Log it */
-			s_printf("%s%s - %s (%d%s) was defeated by %s for %d damage at %d, %d, %d. (INSTARES)\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s%s (%d%s) was defeated by %s for %d damage at %d, %d, %d. (INSTARES)\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || insanity || p_ptr->image)
 				s_printf("(%s was really defeated by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -10106,7 +10111,7 @@ void player_death(int Ind) {
 			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			else
 			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-			s_printf("%s%s - %s (%d%s) was destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s%s (%d%s) was destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -10151,7 +10156,7 @@ void player_death(int Ind) {
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s's (%d) ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 				}
 			}
-			s_printf("%s%s - %s's (%d%s) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s%s's (%d%s) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -10239,7 +10244,7 @@ void player_death(int Ind) {
 #ifdef MORGOTH_FUNKY_KILL_MSGS
 			}
 #endif
-			s_printf("%s%s - %s (%d%s) was killed and destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s%s (%d%s) was killed and destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really killed and destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -10457,7 +10462,7 @@ void player_death(int Ind) {
 				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 			}
 		}
-		s_printf("%s%s - %s (%d%s) was killed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("%s%s - %s%s (%d%s) was killed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 			s_printf("(%s was really killed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -10471,7 +10476,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 			snprintf(buf, sizeof(buf), "\374\377sThe Iron Champion %s (%d) has retired to a warm, sunny climate.", p_ptr->name, p_ptr->lev);
 			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an Iron Champion\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
-		s_printf("%s%s - %s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+		s_printf("%s%s - %s%s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
 		death_type = DEATH_QUIT_RET;
 		s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	}
@@ -10485,9 +10490,9 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 		snprintf(buf, sizeof(buf), "\374\377D%s (%d) committed suicide.", p_ptr->name, p_ptr->lev);
 		/* Avoid death log spam with pvp min lev suicides */
 		if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL)
-			s_printf("%s - %s (%d%s) committed pvp-suicide.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : "")); /* just so the death-log script won't trigger on 'committed suicide' */
+			s_printf("%s - %s%s (%d%s) committed pvp-suicide.\n", showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : "")); /* just so the death-log script won't trigger on 'committed suicide' */
 		else
-			s_printf("%s - %s (%d%s) committed suicide.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+			s_printf("%s - %s%s (%d%s) committed suicide.\n", showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
 		death_type = DEATH_QUIT_SUI;
 		s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	} else {
@@ -10498,7 +10503,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s (%d) has retired to a warm, sunny climate.", p_ptr->name, p_ptr->lev);
 			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
-		s_printf("%s%s - %s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+		s_printf("%s%s - %s%s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
 		death_type = DEATH_QUIT_RET;
 		s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	}
