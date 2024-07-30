@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 23. July 2024 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 31. July 2024 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3736,7 +3736,7 @@ latest stable version number, be aware that it might stop working correctly
 unexpectedly because it's undergoing development, possibly forcing you to
 redownload it.
 
-Covered in the following are Windows, Linux, OS X, FreeBSD:
+Covered in the following are Windows, Linux, OS X, FreeBSD and Android:
 
 
 Windows:
@@ -4092,13 +4092,45 @@ Mac OS X also uses the ".tomenetrc" configuration file which should be in your
 home folder, same as Linux.
 
 
-TomeNET on FreeBSD:
--------------------
+FreeBSD:
+--------
 Should be same as on Linux, except that the "8x13" standard font might not get
 found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
   root% cd /usr/ports/x11-fonts/xorg-fonts
   root% make install clean
   root% # restart X server, if in doubt, just reboot PC.
+
+
+Android:
+--------
+Compilation is straight-forward and similar to Linux.
+- Install "termux" from F-Droid repository. Do NOT install the version from
+  Google Play store!
+- In termux, issue these commands to install the SDL2 audio mixer library:
+   pkg in x11-repo
+   pkg in sdl2-mixer
+- Get the latest github TomeNET source, as the most recent release at the time
+  of writing this was 4.9.2 and it doesn't have the required code yet:
+   git clone https://www.github.com/TomeNETGame/tomenet
+- Enter the cloned repository, go straight into the source folder:
+   cd tomenet/src
+- Issue the build command, specifically using the GCU-makefile:
+   make tomenet -f makefile.gcu
+- After compilation finished, move the resulting 'tomenet' binary up one level
+  and return to the main level, in order to run the game binary:
+   mv tomenet ..
+   cd ..
+- Optionally, grab a sound pack and/or music pack, eg the official ones from
+  the forum here:
+   https://tomenet.eu/phpBB3/viewtopic.php?f=4&t=120
+  and extract them to the tomenet/lib/xtra/ folder, so you end up with the
+  folders tomenet/lib/xtra/sound and tomenet/lib/xtra/music respectively.
+- Run the game:
+   ./tomenet
+  Most of the usual linux command-line options are available, such as "-q".
+- In the game, note that you might need to switch the keymap to "rogue-like" in
+  order to move. This can be done directly by (in-game) pressing   = 1 A   to
+  toggle the option. (See (0.2) for keymap details.)
 
 
 (2.1a) Installing sound and music packs
