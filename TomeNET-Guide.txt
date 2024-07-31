@@ -54,18 +54,23 @@ Contents
     (1.3b)  How to encounter the final boss: Morgoth, Lord of Darkness
     (1.4)   History of TomeNET development
 (2) Installation & setup
-    (2.1)   Installing/updating TomeNET
-    (2.1a)  Installing sound and music packs
-    (2.1b)  Audio controls and config options
-    (2.1c)  Editing sound and music configuration
-    (2.1d)  "Promoting" TomeNET on Steam ;)
-    (2.2)   Starting TomeNET and getting to play on an internet server
-    (2.3)   Client options
-    (2.3a)  Client options configuration files
-    (2.4)   Installing voice chat
-    (2.5)   Fonts
-    (2.5a)  Custom fonts
-    (2.5b)  Graphical tilesets
+    (2.1)   Installing/updating TomeNET (Windows/Linux/OSX)
+    (2.1a)  Windows (custom/compilation)
+    (2.1b)  Linux (custom/compilation)
+    (2.1c)  Mac OS X (custom/compilation)
+    (2.1d)  FreeBSD (custom/compilation)
+    (2.1e)  Android (custom/compilation)
+    (2.2)  Installing sound and music packs
+    (2.2a)  Audio controls and config options
+    (2.2b)  Editing sound and music configuration
+    (2.3)  "Promoting" TomeNET on Steam ;)
+    (2.4)   Starting TomeNET and getting to play on an internet server
+    (2.5)   Client options
+    (2.5a)  Client options configuration files
+    (2.6)   Installing voice chat
+    (2.7)   Fonts
+    (2.7a)  Custom fonts
+    (2.7b)  Graphical tilesets
 (3) Creating a character & starting to play
     (3.1)   Creating a new character
     (3.1a)  Character modes
@@ -239,7 +244,7 @@ restoration of deleted characters and their house contents to some extent.
 More information about character and account timeout at (3.12).
 
 If you are using Linux, you will find additional information about how to
-compile the game under '(2.1) Installing/updating TomeNET'.
+compile the game under '(2.1) Installing/updating TomeNET (Windows/Linux/OSX)'.
 
 -Get the latest client from the project's main official site www.tomenet.eu.
  or from  https://muuttuja.org/tomenet/ (Mikael's site, which features a
@@ -882,7 +887,7 @@ P       O       party screen. Form/disband/modify a party with other players
 H       CTRL+G  re-apply client-side and (if 'auto_inscr_server' option is
                 enabled) server-side auto-inscriptions to an item.
 
-CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
+CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.2).)
                 Note: Mixer settings are saved automatically, provided you use
                 CTRL+Q to quit.
                 (Compare troubleshooting section (9.8), PROBLEM 22.)
@@ -2638,7 +2643,7 @@ NOTE: In addition to this user-defined client-side auto-inscription list, there
       is also a server-side auto-inscription feature that can be enabled via
       client option 'auto_inscr_server'.
       This option will add a predefined set of auto-inscriptions that might be
-      generally useful for all types of characters, see (2.3) for details.
+      generally useful for all types of characters, see (2.5) for details.
 
 By pressing 'a' you can toggle auto-pickup (green 'a') and auto-destroy (red
 'A') features. These two will actually allow specifying a "#" wildcard on its
@@ -3156,7 +3161,7 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  Alternatively, use the forum at www.tomenet.eu.
 
 -Starting at version 4.4.5, TomeNET supports audio, that is, sound effects and
- background music. To find out more, read (2.1a).
+ background music. To find out more, read (2.2).
 
 -Usually characters expire (that means they are automatically deleted!)
  after 366 days of inactivity. Empty accounts (ie accounts that don't hold any
@@ -3250,7 +3255,7 @@ with other players and developers via the following media:
       See (0.2c) for commands you can send to the TomeNET IRC bot.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
       IP is 'europe.tomenet.eu', port is '23348', password is 'tomenet'.
-      For details see "(2.4) Installing voice chat".
+      For details see "(2.6) Installing voice chat".
 -Discord (Text and voice channels, https://discord.com/ ).
       Server is "tomenet". Aside from the general channel there is a dedicated
       one for russian language chat and one for korean language chat.
@@ -3634,8 +3639,8 @@ server hosted by OVH in France, with the servers being provided by Mikael.
 (2) Installation & setup
 ========================
 
-(2.1) Installing/updating TomeNET
----------------------------------
+(2.1) Installing/updating TomeNET (Windows/Linux/OSX)
+-----------------------------------------------------
 
 Basic installation:
 -------------------
@@ -3693,7 +3698,7 @@ Note for LINUX:
 The Linux version of the TomeNET-Updater no longer requires 7zG (the graphical
 user interface of 7-zip), so you do not need to compile it yourself if your
 repository packages don't provide it. If you want to compile it anyway then
-see (2.1a) and there "a) Automatic audio pack installation - LINUX". That
+see (2.2) and there "a) Automatic audio pack installation - LINUX". That
 paragraph has short instructions on how to compile 7-zip from source in Linux.
 
 If you didn't have a sound or music pack installed yet, by "updating" it from
@@ -3739,8 +3744,8 @@ redownload it.
 Covered in the following are Windows, Linux, OS X, FreeBSD and Android:
 
 
-Windows:
---------
+(2.1a) Windows (custom/compilation)
+-----------------------------------
 It is recommended to get the installer package instead of the zip archives.
 You can safely install TomeNET over an already existing installation (just
 make sure to quit the game first!), the installer will not reset/delete your
@@ -3772,10 +3777,10 @@ If you're tech savvy, you could decide to edit the game configuration manually,
 but that is not really required. Continue reading below if you want to do that.
 
 If you are using Valve's Steam and are interested on how to integrate TomeNET
-into it, check out (2.1d) :D.
+into it, check out (2.3) :D.
 
 On how to run the game, connect to the game server and start playing, continue
-reading at (2.2)!
+reading at (2.4)!
 
 
 Windows - Manually editing the configuration file (if you're tech savvy):
@@ -3807,7 +3812,7 @@ Windows command-line options:
 -x                      Don't save chat/message log on exit (don't prompt)
 <ip address>            for example 37.187.75.24
 
-(Skip down to (2.2) to continue reading.)
+(Skip down to (2.4) to continue reading.)
 
 
 Windows (cross-compiling from Linux):
@@ -3843,6 +3848,9 @@ make clean
 make tomenet.exe
 (Or for the server: make tomenet.server.exe)
 
+
+(2.1b) Linux (custom/compilation)
+---------------------------------
 
 Linux (using pre-compiled client):
 ----------------------------------
@@ -3983,8 +3991,11 @@ Example:
         ./tomenet -p18348 -lIron\ Man geheimer 37.187.75.24
 ..if your account name is 'Iron Man'.
 
-(Skip down to (2.2) to continue reading.)
+(Skip down to (2.4) to continue reading.)
 
+
+(2.1c) Mac OS X (custom/compilation)
+------------------------------------
 
 Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
 ----------------------------------------------------------------------
@@ -3999,7 +4010,7 @@ should now launch correctly with a GUI, ie various game windows.
 If you're tech savvy and want to manually edit the TomeNET configuration file,
 see "Configure TomeNET on Linux" further above.
 
-Otherwise skip down to (2.2) to continue reading.
+Otherwise skip down to (2.4) to continue reading.
 
 
 Mac OS X (compiling from source; tested with Snow Leopard 10.6.6):
@@ -4092,8 +4103,8 @@ Mac OS X also uses the ".tomenetrc" configuration file which should be in your
 home folder, same as Linux.
 
 
-FreeBSD:
---------
+(2.1d) FreeBSD (custom/compilation)
+-----------------------------------
 Should be same as on Linux, except that the "8x13" standard font might not get
 found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
   root% cd /usr/ports/x11-fonts/xorg-fonts
@@ -4101,8 +4112,8 @@ found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
   root% # restart X server, if in doubt, just reboot PC.
 
 
-Android:
---------
+(2.1e) Android (custom/compilation)
+-----------------------------------
 Compilation is straight-forward and similar to Linux.
 - Install "termux" from F-Droid repository. Do NOT install the version from
   Google Play store!
@@ -4133,7 +4144,7 @@ Compilation is straight-forward and similar to Linux.
   toggle the option. (See (0.2) for keymap details.)
 
 
-(2.1a) Installing sound and music packs
+(2.2) Installing sound and music packs
 ---------------------------------------
 Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
 which provides sound effects and background music.
@@ -4221,7 +4232,7 @@ read on.
 
 b) Manual audio pack installation
 ---------------------------------
-(See first paragraph of (2.1a) above for where to download audio packs.)
+(See first paragraph of (2.2) above for where to download audio packs.)
 Instead of automatic installation explained above you can also just manually
 unpack audio packs to your TomeNET/lib/xtra/ folder. Make sure the game isn't
 running while you do.
@@ -4284,7 +4295,7 @@ Also verify  that your config file ("TomeNET.ini" on MS Windows, ".tomenetrc"
 in your home folder on Linux or Mac OS X) has 'Sound' set to '1'.
 
 
-(2.1b) Audio controls and config options
+(2.2a) Audio controls and config options
 ----------------------------------------
 You can control mixer settings with CTRL+U key on normal keymap and CTRL+F on
 rogue-like key map (or use CTRL+C to toggle music and CTRL+N to toggle the
@@ -4300,10 +4311,10 @@ instead of editing the config file's 'Sound' entry you can just use the '-q'
 command-line option.
 
 If you want to use your own sound and music, and create audio packs for other
-players, read (2.1c) below.
+players, read (2.2b) below.
 
 
-(2.1c) Manually editing sound and music configuration
+(2.2b) Manually editing sound and music configuration
 -----------------------------------------------------
 You can easily replace or disable certain sound effects or music, or even
 create your own sound and music packs.
@@ -4402,7 +4413,7 @@ Note: Do not MODIFY the file audio.lua, it has nothing to do with editing your
       be automatically restored next time you log on to the server.
 
 
-(2.1d) "Promoting" TomeNET on Steam ;)
+(2.3) "Promoting" TomeNET on Steam ;)
 --------------------------------------
 In Steam's "Games" menu choose "Add a non-Steam game to my library".
 Browse for the TomeNET.exe file and check it.
@@ -4413,7 +4424,7 @@ and if you do so then your Steam status will show that you are playing TomeNET!
 
 
 
-(2.2) Starting TomeNET and getting to play on an internet server
+(2.4) Starting TomeNET and getting to play on an internet server
 ----------------------------------------------------------------
 If you used the installer you will have a TomeNET icon on your desktop to
 start the game (and another icon for the TomeNET Updater).
@@ -4489,7 +4500,7 @@ creation progress.
 
 
 
-(2.3) Client options
+(2.5) Client options
 --------------------
 By pressing the '=' key in game, you can access the options menu where you can
 tweak your client in some ways. Some of these options that aren't
@@ -4579,7 +4590,7 @@ self-explaining or that are especially important are listed in detail here:
         himself.
 
  (5, 6) Audio Options
-    (See (2.1a) for more information about sound and music.)
+    (See (2.2) for more information about sound and music.)
 
     A bunch of stuff here, mostly you might want to look at attack-sound effect
     frequency. Some people don't like to have those be played on each single
@@ -4747,7 +4758,7 @@ self-explaining or that are especially important are listed in detail here:
     Also, you can change your password here!
 
 
-(2.3a) Client options configuration files
+(2.5a) Client options configuration files
 -----------------------------------------
 Don't forget to save options to a file after you changed them, so the change
 becomes persistent and will be remembered next time you log on.
@@ -4768,7 +4779,7 @@ global-<operating system>.opt   client options for specific OS, can be used to
 
 
 
-(2.4) Installing voice chat
+(2.6) Installing voice chat
 ---------------------------
 While chatting in TomeNET is usually fine to communicate with other players and
 party members in particular, using a real voice chat via headset (headphones +
@@ -4829,7 +4840,7 @@ Solution:   Can be caused by some firewalls interacting with mumble's quality
 
 
 
-(2.5) Fonts
+(2.7) Fonts
 -----------
 The Windows client comes with a few default fonts of different size, located
 in folder lib/xtra/font.
@@ -4853,7 +4864,7 @@ You can also set fonts manually with = f if you want to choose specific fonts
 available in your Linux/OS X installation.
 
 To manually install your own fonts on POSIX, see the instructions for Linux two
-paragraphs below in (2.5a), it should be in bdf or pcf format.
+paragraphs below in (2.7a), it should be in bdf or pcf format.
 
 Starting in 4.9.2 I added an 'posix_extra_fonts' folder and install script for
 more convenience to the lib/xtra folder, which attempts to install fonts in pcf
@@ -4863,7 +4874,7 @@ It already contains a bunch of POSIX fonts in pcf/bdf format that were made by
 Virus, Svechnik and Tangar.
 
 
-(2.5a) Custom fonts
+(2.7a) Custom fonts
 -------------------
 It is possible to create your own custom fonts for the game.
 For the Windows client which uses .FON files you can use "Fony" for example:
@@ -5029,7 +5040,7 @@ Linux distribution, then you can select them in TomeNET via  = f  (or enter
 them directly in your .tomenetrc config file).
 
 
-(2.5b) Graphical tilesets
+(2.7b) Graphical tilesets
 -------------------------
 Thanks to jEzEk (https://github.com/jezek) graphics tiles are now supported
 again, now with two colour masks (a foreground and a background mask, of which
@@ -26204,7 +26215,7 @@ Solution B: If you are using X11, this problem may occur depending on your
             'Use audio system for paging sounds'. This will result in paging
             sounds being played via your sound card, instead of the operating
             system's beep (requires TomeNET v4.4.5 or higher).
-            (See (2.1a) for more information about the audio system.)
+            (See (2.2) for more information about the audio system.)
 
 PROBLEM 21: Are 'ToME' and 'TomeNET' similar?
 Solution:   Despite similar name, the only thing these two games have in common
@@ -26300,7 +26311,7 @@ PROBLEM 29: If I or other players nearby fire a lot of arrows or cast a lot
             monsters on the screen.
 Solution:   Try to reduce or even disable flush-waits, by toggling the client
             options 'thin_down_flush' and if that's not enough also
-            'disable_flush'. For details about these, see (2.3).
+            'disable_flush'. For details about these, see (2.5).
 
 PROBLEM 30: I accidenally closed one of the sub-windows and now it's gone.
             How do I get it back?
@@ -26354,7 +26365,7 @@ Solution:   Just log out and back in, and your sound should be fine again.
 PROBLEM 33: When trying to extract a music or sound pack to my xtra folder in
             order to install it, I get an error message or it doesn't seem to
             work correctly.
-Solution:   See (2.1a) for details on how to install audio packs. Also note
+Solution:   See (2.2) for details on how to install audio packs. Also note
             that some people have reported that the program 'WinRAR' seems to
             cause problems in some cases, giving them "file corrupted" errors.
             A powerful free and open source program that is guaranteed to work
