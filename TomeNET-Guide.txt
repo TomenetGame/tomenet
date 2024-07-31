@@ -4139,6 +4139,9 @@ Compilation is straight-forward and similar to Linux.
 - Run the game:
    ./tomenet
   Most of the usual linux command-line options are available, such as "-q".
+  If you get the error message "TomeNET needs an 80x24 'curses' screen", make
+  sure that termux has at least a visible text area of 80x24, bigger is ok too.
+  You can just pinch-zoom out the display, which will shrink the termux font!
 - In the game, note that you might need to switch the keymap to "rogue-like" in
   order to move. This can be done directly by (in-game) pressing   = 1 A   to
   toggle the option. (See (0.2) for keymap details.)
