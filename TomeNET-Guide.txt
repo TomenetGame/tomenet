@@ -4414,7 +4414,7 @@ Note: Do not MODIFY the file audio.lua, it has nothing to do with editing your
 
 
 (2.3) "Promoting" TomeNET on Steam ;)
---------------------------------------
+-------------------------------------
 In Steam's "Games" menu choose "Add a non-Steam game to my library".
 Browse for the TomeNET.exe file and check it.
 Click on "Add selected programs".
