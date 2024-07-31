@@ -60,10 +60,10 @@ Contents
     (2.1c)  Mac OS X (custom/compilation)
     (2.1d)  FreeBSD (custom/compilation)
     (2.1e)  Android (custom/compilation)
-    (2.2)  Installing sound and music packs
+    (2.2)   Installing sound and music packs
     (2.2a)  Audio controls and config options
     (2.2b)  Editing sound and music configuration
-    (2.3)  "Promoting" TomeNET on Steam ;)
+    (2.3)   "Promoting" TomeNET on Steam ;)
     (2.4)   Starting TomeNET and getting to play on an internet server
     (2.5)   Client options
     (2.5a)  Client options configuration files
