@@ -12325,7 +12325,7 @@ Water           Water resistance is rare (an *ID*ed item will say
                 Resistance will cut damage to 1/3. (For players in aquatic
                 form this gets overridden by its cut down to 1/4 instead.)
                 Resistance will also reduce the chance of harm to items in
-                inventory or equipment and completely prevent stun and 
+                inventory or equipment and completely prevent stun and
                 confusion effects from water-based attacks.
                 If you don't wear a 'tarpaulin' items in your inventory might
                 be destroyed by the water (if they don't resist water).
@@ -17076,7 +17076,7 @@ stated.
                                 your melee attacks (weapon as well as martial
                                 arts will be branded by it (cold brand) and
                                 you are granted resistance to cold.
-                                Additionally at 30, cold magic or breaths you 
+                                Additionally at 30, cold magic or breaths you
                                 generate will solidify into cutting ice shards
                                 while your aura is active, dealing ice damage.
                                 This element conversion reduces damage to 2/3.
@@ -17097,7 +17097,7 @@ stated.
                                 your melee attacks (weapon as well as martial
                                 arts) will be branded by it (alternating plasma
                                 or ice brand). (See (5.3) for brand details.)
-                                Additionally at 40, cold magic or breaths you 
+                                Additionally at 40, cold magic or breaths you
                                 generate will solidify into cutting ice shards
                                 while your aura is active, dealing ice damage.
                                 Fire produced will likewise ionize into plasma!
@@ -22719,12 +22719,13 @@ Physical runes are items found occasionally from tunneling deep in the earth,
 or in the collection of monsters fascinated by their magic. Certain secretive
 markets are also known to trade these rare embodiments of elemental power...
 
-Physical runes may be activated (after achieving skill level 40) to emblazon
-non-artifact armour, shields and melee weapons with an elemental sigil. This
-sigil confers a generally positive effect as long as the item remains wielded.
-Sigils vanish from the equipment when sold, dropped, taken off, disarmed, etc.
-Applying an additional physical rune to an item dispels any previous sigils,
-consuming a new rune to power the new effect (even if the result is identical).
+Physical runes may be activated (after achieving skill level 40 with the
+appropriate elements) to emblazon a non-artifact armour, shield or melee weapon
+with an elemental sigil. This sigil confers a generally positive boni effect as
+long as the equipment remains wielded. Sigils vanish from equipment when sold,
+dropped, taken off, disarmed, etc. Applying an additional physical rune dispels
+any previous sigil, consuming a new rune to power the new effect (even if the
+resulting boni is identical to that which was previously conferred).
 
 The process for determining success and which boni is applied depends on both a
 pool of available effects, listed in (7.8c) Runespell Tables, Sigil Boni, and
@@ -22733,6 +22734,8 @@ enchantments may synergize with or couteract some sigil boni (eg. PVAL) and are
 limited in effect by the same restrictions that constrain artifact creation.
 Duplicate effects are never applied, and boni only increase in potency (eg.
 fire resistance will be replaced with immunity, never the other way around).
+Sigil boni may always result in resistance to the element of the physical rune,
+if such a resistance exists (that is, not inertia/gravity/hellfire/force).
 
 Runemasters are limited to one sigil per element, but can maintain 7 in total.
 
@@ -22928,7 +22931,13 @@ restricted as with artifact creation regarding PVAL modifiers. Stat enhancing
 boni have a chance to include a sustain, and boni occuring both generally and
 on the item type specifically are more likely to occur. Some weapon/helm boni
 are specific to staves, boomerangs, and crowns (see (9.4) Artifact creation).
+
 All elements associated with a specific resistance may confer that resistance.
+
+The 'Any' column indicates boni which are not restricted to a specific type of
+equipment, and can thus appear on any type of item. If a boni is listed both in
+this column and the column for a specific equipment type, it is more likely to
+be conferred to that type of equipment (at twice the probability).
 
 Abbreviations (in alphabetical order):
 AM - Anti-magic shell (see (5.8) under NO_MAGIC)
