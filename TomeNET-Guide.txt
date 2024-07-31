@@ -10720,18 +10720,14 @@ he will usually just get teleported back to Bree.
 In general, fruit bats, PvP characters and ghosts cannot participate.
 
   Under Elmoth:
-    Co-op, for 1 up to 6 participants.
-
     Create a new character and challenge the forbidding dark-elven halls
     under sunken Nan Elmoth. Once a place of beauty, now its cavernous
     chambers contain only dread! Triumph over the corruption if you can!
 
-    Restrictions: Must have zero XP (experience). 30 minutes time limit.
-    Prohibitions: No ESP, Mapping, Detection, Genocide, *Destruction* or
-                  Earthquake.
+    -- Restrictions: Zero experience required. 1-6 players. 30 minutes.
 
-    Hints: BEWARE! Some encounters will challenge different playstyles.
-           Try various strategies or participate in a group to succeed!
+    -- Prohibitions: No Mapping, Detection, ESP.
+    -- Prohibitions: No Summoning, Genocide, Earthquake, *Destruction*.
 
 
 Seasonal events:
