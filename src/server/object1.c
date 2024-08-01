@@ -3882,13 +3882,13 @@ static int melee_crit_dam(int dam, int bonus, int crit_die) {
 
 	// Checked the math for the largest possible values of damage and crit die,
 	// and we get uncomfortably close to the 32-bit max value, so I'm playing it safe.
-	u64b crit_dam = (u64b) denominator * (4 * dam + 15);
+	int64_t crit_dam = (int64_t) denominator * (4 * dam + 15);
 
 
-	crit_dam += (u64b) great_chance * (dam + 15);
-	crit_dam += (u64b) superb_chance * (dam + 15);
-	crit_dam += (u64b) greater_chance * (dam + 15);
-	crit_dam += (u64b) superber_chance * (dam + 15);
+	crit_dam += (int64_t) great_chance * (dam + 15);
+	crit_dam += (int64_t) superb_chance * (dam + 15);
+	crit_dam += (int64_t) greater_chance * (dam + 15);
+	crit_dam += (int64_t) superber_chance * (dam + 15);
 	crit_dam /= (3 * denominator);
 
 	return((int) crit_dam);
@@ -4105,13 +4105,13 @@ static int ranged_crit_dam(int dam, int bonus, int crit_die) {
 
 	// Checked the math for the largest possible values of damage and crit die,
 	// and we get uncomfortably close to the 32-bit max value, so I'm playing it safe.
-	u64b crit_dam = (u64b) denominator * (4 * dam + 15);
+	int64_t crit_dam = (int64_t) denominator * (4 * dam + 15);
 
 
-	crit_dam += (u64b) great_chance * (dam + 15);
-	crit_dam += (u64b) superb_chance * dam;
-	crit_dam += (u64b) greater_chance * dam;
-	crit_dam += (u64b) superber_chance * (dam + 15);
+	crit_dam += (int64_t) great_chance * (dam + 15);
+	crit_dam += (int64_t) superb_chance * dam;
+	crit_dam += (int64_t) greater_chance * dam;
+	crit_dam += (int64_t) superber_chance * (dam + 15);
 	crit_dam /= (3 * denominator);
 
 	return((int) crit_dam);
