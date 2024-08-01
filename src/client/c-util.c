@@ -1722,7 +1722,7 @@ char roguelike_commands(char command) {
 	/* Oops, audio mixer */
 	case KTRL('F'): return(KTRL('U'));
 	case KTRL('V'): return(KTRL('N'));
-	//case KTRL('X'): return(KTRL('C')); --we use ctrl+x for ghost powers and are out of keys, so this just doesn't exist in rogue-like key set :/
+	//case KTRL('X'): return(KTRL('C')); --we use ctrl+x for ghost powers and are out of keys, so this just doesn't exist in rogue-like keyset :/
 
 	/* Hack -- Commit suicide */
 	/* ..instead display fps */
@@ -7089,7 +7089,7 @@ Chain_Macro:
 						Term_putstr(5, 15, -1, TERM_L_GREEN, "    d\377g) invoke '/dress' command (optionally with a tag)");
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "    b\377g) invoke '/bed' command (optionally with a tag)");
 						Term_putstr(5, 18, -1, TERM_GREEN, "Note: This macro depends on your current 'rogue_like_commands' option");
-						Term_putstr(5, 19, -1, TERM_GREEN, "      setting and will not work anymore if you change the keymap.");
+						Term_putstr(5, 19, -1, TERM_GREEN, "      setting and will not work anymore if you change the keyset.");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -11926,7 +11926,7 @@ void interact_audio(void) {
 			Term_putstr(item_x[1], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_music ? "\377GX\377w" : " "));
 			if (c_cfg.rogue_like_commands)
 				//Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+X"); out of keys, we need this for ghost powers -_-
-				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C"); //just display the normal-map key, as it actually works inside the mixer in rl-keymap mode too
+				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C"); //just display the normal-set key, as it actually works inside the mixer in rl-keyset mode too
 			else
 				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C");
 			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
@@ -11991,7 +11991,7 @@ void interact_audio(void) {
 			redraw = FALSE;
 			break;
 		case KTRL('U'):
-		case KTRL('F'): /* <- rogue-like keymap */
+		case KTRL('F'): /* <- rogue-like keyset */
 		case ESCAPE:
 			quit = TRUE; /* hack to leave loop */
 			break;

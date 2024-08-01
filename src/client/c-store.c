@@ -855,7 +855,7 @@ static void store_process_command(int cmd) {
 			break;
 
 		/* special feat for some stores: allow wear/wield and take-off..
-		   'emulating' rogue-like key mapping option for now, sigh */
+		   'emulating' rogue-like keyset option for now, sigh */
 		case 'w':
 			if (allow_w_t) cmd_wield();
 			else cmd_raw_key(cmd);

@@ -36,7 +36,7 @@ movemenet, so you can actually move diagonally too.
 
 If your keyboard doesn't have a numpad, you can consider pressing '=' and then
 '1' and turning on the first option called "rogue_like_commands", which provide
-an alternative key map that maps movement keys to y/k/u, h/l, b/j/n.
+an alternative keyset that maps movement keys to y/k/u, h/l, b/j/n.
 
 Make sure you read up in the guide, about the race and class you chose. For
 example if you're a half-troll warrior, search the guide for "- half-troll" and

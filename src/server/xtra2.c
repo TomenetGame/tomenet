@@ -5072,7 +5072,7 @@ void check_experience(int Ind) {
 	/* Tell player to use numpad to move diagonally */
 	if (old_lev < 2 && p_ptr->lev >= 2 && p_ptr->warning_numpadmove == 0) {
 		msg_print(Ind, "\374\377yHINT: Use the number pad keys to move, that way you can move \377odiagonally\377y too!");
-		msg_print(Ind, "\374\377y      (Or try using the \377orogue-like\377y key set, press \377o= 1 y\377y to enable it.)");
+		msg_print(Ind, "\374\377y      (Or try using the \377orogue-like\377y keyset, press \377o= 1 y\377y to enable it.)");
 		s_printf("warning_numpadmove: %s\n", p_ptr->name);
 		p_ptr->warning_numpadmove = 1;
 	}
