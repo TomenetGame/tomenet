@@ -4164,7 +4164,7 @@ Compilation is straight-forward and similar to Linux:
    wget https://www.mediafire.com/file/3j87kp3fgzpqrqn/TomeNET-musicpack.7z
   However, these might not work if mediafire is currently under heavy load, in
   which case you'll have to download the packs in your webbrowser instead and
-  move them to your termux tomenet folder by using some file manager on your
+  move them to your termux home folder by using some file manager on your
   device which is able to access the termux home folder as well as the device's
   download folder, so you can move the downloaded zip or 7z files into termux.
 
@@ -4176,6 +4176,8 @@ Compilation is straight-forward and similar to Linux:
    7z x TomeNET-Musicpack.7z
   Verify by issuing the 'ls' command, it should show the 'sound' and 'music'
   folder (among other things) respectively.
+  Finally, navigate back from tomenet/lib/xtra/ to tomenet/ by ascending twice:
+   cd ../..
 
 - Run the game:
    ./tomenet
