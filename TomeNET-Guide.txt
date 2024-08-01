@@ -10139,9 +10139,16 @@ Stun    -Stun           Reduces to-hit and to-dam.
                         Beware!
 
                         High AC helps to avoid melee-based stuns (see (6.4))
-                        (most famous monster is probably "The Stormbringer"),
                         while stun from sound attacks can only be prevented
                         by having sound resistance.
+
+                        Most infamous monster is probably "The Stormbringer",
+                        which can k.o. you in the blink of an eye. But also the
+                        rather weak Bloodletters of Khorne can apply very nasty
+                        stun effects quickly and it's vital to avoid getting
+                        surrounded by them. Always fight them one by one.
+                        Fortunately their specialty is that they cannot get
+                        summoned or spawn live as a group, only one by one.
 
                         Melee-based stun can be caused by monsters critically
                         hitting you, also see (*) below.
