@@ -7360,7 +7360,7 @@ void do_cmd_fire(int Ind, int dir) {
 									/* Boost the damage */
 									tdam *= tmul;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 									if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
 								} else {
@@ -7385,7 +7385,7 @@ void do_cmd_fire(int Ind, int dir) {
 									/* Boost the damage */
 									tdam = (tdam * tmul) / 10;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 									if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
 								}
@@ -7600,7 +7600,7 @@ void do_cmd_fire(int Ind, int dir) {
 						/* Boost the damage */
 						tdam *= tmul;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 						if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
 					} else {
@@ -7625,7 +7625,7 @@ void do_cmd_fire(int Ind, int dir) {
 						/* Boost the damage */
 						tdam = (tdam * tmul) / 10;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 						if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
 					}
@@ -8732,7 +8732,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 					}
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 					if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
 					/* Apply special damage XXX XXX XXX */
@@ -8879,7 +8879,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 				}
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 				if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
 				/* Apply special damage XXX XXX XXX */

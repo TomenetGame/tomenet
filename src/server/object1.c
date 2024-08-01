@@ -3921,6 +3921,25 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 	dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee + bonus) * 10;
 	dam *= p_ptr->num_blow;
 
+#ifdef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+	if (p_ptr->combat_stance == 1) {
+		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
+			switch (p_ptr->combat_stance_power) {
+			case 0: dam = (dam * 7 + 9) / 10; break;
+			case 1: dam = (dam * 7 + 9) / 10; break;
+			case 2: dam = (dam * 7 + 9) / 10; break;
+			case 3: dam = (dam * 7 + 9) / 10; break;
+			}
+		else
+			switch (p_ptr->combat_stance_power) {
+			case 0: dam = (dam * 6 + 9) / 10; break;
+			case 1: dam = (dam * 7 + 9) / 10; break;
+			case 2: dam = (dam * 7 + 9) / 10; break;
+			case 3: dam = (dam * 7 + 9) / 10; break;
+			}
+	}
+#endif
+
 	// expected damage IF it crits
 	critical_damage = melee_crit_dam(dam, crit_flat_bonus, allow_skill_crit ? crit_die_size : 0);
 	// expected damage factoring in crits
@@ -4131,9 +4150,10 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 	dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus) * 10;
 	dam = dam * (10 + p_ptr->xtra_might) / 10;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 	if (p_ptr->combat_stance == 1) dam /= 2;
 #endif
+
 	// expected damage IF it crits
 	critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 	// expected damage factoring in crits
@@ -4151,9 +4171,10 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 		dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus2) * 10;
 		dam = dam * (10 + p_ptr->xtra_might) / 10;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 		if (p_ptr->combat_stance == 1) dam /= 2;
 #endif
+
 		// expected damage IF it crits
 		critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 		// expected damage factoring in crits
@@ -4195,8 +4216,8 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32
 	calc_boni(Ind);
 
 	fprintf(fff, "\n");
-//	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
-//	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
+	///* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
+	//if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
 	fprintf(fff, "\377sUsing it you would have %d throw%s and do an average damage per throw of:\n", p_ptr->num_fire, (p_ptr->num_fire > 1) ? "s" : "");
 
 #ifdef DISPLAY_DAMAGE_INTRINSIC_SLAYS
@@ -4263,10 +4284,10 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam += (p_ptr->to_d_ranged) * 10;
 	dam *= tmul;
 
-
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 	if (p_ptr->combat_stance == 1) dam /= 2;
 #endif
+
 	// expected damage IF it crits
 	critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 	// expected damage factoring in crits
@@ -4288,9 +4309,10 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam += (p_ptr->to_d_ranged) * 10;
 		dam *= tmul;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 		if (p_ptr->combat_stance == 1) dam /= 2;
 #endif
+
 		// expected damage IF it crits
 		critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
 		// expected damage factoring in crits

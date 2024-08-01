@@ -609,16 +609,34 @@ static void prt_plusses(int Ind) {
 	show_tohit_m += bmh;
 	show_todam_m += bmd;
 
-#ifdef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+#ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 	if (p_ptr->combat_stance == 1) show_todam_r /= 2;
+#endif
+#ifdef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+	if (p_ptr->combat_stance == 1) {
+		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
+			switch (p_ptr->combat_stance_power) {
+			case 0: show_todam_m = (show_todam_m * 7 + 9) / 10; break;
+			case 1: show_todam_m = (show_todam_m * 7 + 9) / 10; break;
+			case 2: show_todam_m = (show_todam_m * 7 + 9) / 10; break;
+			case 3: show_todam_m = (show_todam_m * 7 + 9) / 10; break;
+			}
+		else
+			switch (p_ptr->combat_stance_power) {
+			case 0: show_todam_m = (show_todam_m * 6 + 9) / 10; break;
+			case 1: show_todam_m = (show_todam_m * 7 + 9) / 10; break;
+			case 2: show_todam_m = (show_todam_m * 7 + 9) / 10; break;
+			case 3: show_todam_m = (show_todam_m * 7 + 9) / 10; break;
+			}
+	}
 #endif
 
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
 		if (p_ptr->to_h_tmp) { show_tohit_m += 10000; show_tohit_r += 10000; }
-		if (p_ptr->to_h_melee_tmp) show_tohit_m += 10000;
-		if (p_ptr->to_h_ranged_tmp) show_tohit_r += 10000;
+		if (p_ptr->to_h_melee_tmp && show_tohit_m < 10000) show_tohit_m += 10000;
+		if (p_ptr->to_h_ranged_tmp && show_tohit_r < 10000) show_tohit_r += 10000;
 		if (p_ptr->to_d_tmp) { show_todam_m += 10000; } //generic +dam never affects ranged +dam (note: remove redundant to_d_ranged_tmp)
-		if (p_ptr->to_d_melee_tmp) show_todam_m += 10000;
+		if (p_ptr->to_d_melee_tmp && show_todam_m < 10000) show_todam_m += 10000;
 		if (p_ptr->to_d_ranged_tmp) show_todam_r += 10000;
 	}
 
@@ -6151,34 +6169,42 @@ void calc_boni(int Ind) {
 		switch (p_ptr->combat_stance_power) {
 		/* note that defensive stance also increases chance to actually prefer shield over parrying in melee.c */
 		case 0: p_ptr->shield_deflect += 9;
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
 		case 1: p_ptr->shield_deflect += 11;
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
 		case 2: p_ptr->shield_deflect += 13;
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
 		case 3: p_ptr->shield_deflect += 15;
-			p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
-			p_ptr->to_d = (p_ptr->to_d * 8) / 10;
-			p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
@@ -6205,34 +6231,42 @@ void calc_boni(int Ind) {
 	    (p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
 		switch (p_ptr->combat_stance_power) {
 		case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 6) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
 		case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
 		case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 14) / 10;
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
 		case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 15) / 10;
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
 			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-   #ifndef DEFENSIVE_STANCE_GLOBAL_RANGED_REDUCTION
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
    #endif
 			break;
@@ -6240,7 +6274,6 @@ void calc_boni(int Ind) {
   #endif
  #endif
 #endif
-
 
 
 	/* mali for blocking/parrying */
@@ -6255,7 +6288,6 @@ void calc_boni(int Ind) {
 		p_ptr->shield_deflect /= 2;
 		p_ptr->weapon_parry /= 2;
 	}
-
 
 
 	/* Redraw plusses to hit/damage if necessary */
