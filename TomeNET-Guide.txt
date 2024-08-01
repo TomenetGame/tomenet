@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 31. July 2024 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 1. August 2024 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4114,28 +4114,69 @@ found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
 
 (2.1e) Android (custom/compilation)
 -----------------------------------
-Compilation is straight-forward and similar to Linux.
+Compilation is straight-forward and similar to Linux:
+
 - Install "termux" from F-Droid repository. Do NOT install the version from
-  Google Play store!
+  Google Play store! (Or you might not be able to download all packages.)
+  F-Droid is an open source repository that is available at:
+   https://f-droid.org/
+
+- In termux, issue this command to ensure that the repository is up to date:
+   pkg up
+
 - In termux, issue these commands to install the SDL2 audio mixer library:
    pkg in x11-repo
    pkg in sdl2-mixer
+
+- You might also need to install these tools:
+   pkg in mc         -> the midnight commander ('mc') just for quality of life.
+   pkg in git        -> this is required to download the tomenet repository.
+   pkg in make       -> this is required for client compilation.
+   pkg in clang      -> this is required for client compilation.
+   pkg in wget       -> you can use the 'wget' command to download audio packs,
+                        but it might not work and you'll have to download them
+                        in your webbrowser instead if mediafire is under load.
+   pkg in p7zip      -> the '7z' command is needed to extract audio packs.
+
 - Get the latest github TomeNET source, as the most recent release at the time
   of writing this was 4.9.2 and it doesn't have the required code yet:
    git clone https://www.github.com/TomeNETGame/tomenet
+
 - Enter the cloned repository, go straight into the source folder:
    cd tomenet/src
+
 - Issue the build command, specifically using the GCU-makefile:
    make tomenet -f makefile.gcu
+
 - After compilation finished, move the resulting 'tomenet' binary up one level
   and return to the main level, in order to run the game binary:
    mv tomenet ..
    cd ..
+
 - Optionally, grab a sound pack and/or music pack, eg the official ones from
   the forum here:
    https://tomenet.eu/phpBB3/viewtopic.php?f=4&t=120
   and extract them to the tomenet/lib/xtra/ folder, so you end up with the
   folders tomenet/lib/xtra/sound and tomenet/lib/xtra/music respectively.
+
+  Example command to download some music/audio packs from mediafire via 'wget':
+   wget https://www.mediafire.com/file/issv5sdv7kv3odq/TomeNET-soundpack.7z
+   wget https://www.mediafire.com/file/3j87kp3fgzpqrqn/TomeNET-musicpack.7z
+  However, these might not work if mediafire is currently under heavy load, in
+  which case you'll have to download the packs in your webbrowser instead and
+  move them to your termux tomenet folder by using some file manager on your
+  device which is able to access the termux home folder as well as the device's
+  download folder, so you can move the downloaded zip or 7z files into termux.
+
+  After you acquired the audio pack zip files and moved them into the
+  tomenet/lib/xtra/ folder, navigate into it with 'cd' command, eg:
+   cd ~/tomenet/lib/xtra/
+  and there use the '7z' command to extract them, eg:
+   7z x TomeNET-Soundpack.7z
+   7z x TomeNET-Musicpack.7z
+  Verify by issuing the 'ls' command, it should show the 'sound' and 'music'
+  folder (among other things) respectively.
+
 - Run the game:
    ./tomenet
   Most of the usual linux command-line options are available, such as "-q".
