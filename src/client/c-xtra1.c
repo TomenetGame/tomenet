@@ -1433,10 +1433,19 @@ void prt_stun(int stun) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (stun > 100) c_put_str(TERM_RED, "Knocked out ", ROW_STUN, COL_STUN);
-	else if (stun > 50) c_put_str(TERM_ORANGE, "Heavy stun  ", ROW_STUN, COL_STUN);
-	else if (stun) c_put_str(TERM_ORANGE, "Stun        ", ROW_STUN, COL_STUN);
-	else put_str("            ", ROW_STUN, COL_STUN);
+	if (stun > 100) {
+		c_put_str(TERM_RED, "Knocked out ", ROW_STUN, COL_STUN);
+		if (c_cfg.huge_stun) draw_huge_stun_bar(TERM_RED);
+	} else if (stun > 50) {
+		c_put_str(TERM_ORANGE, "Heavy stun  ", ROW_STUN, COL_STUN);
+		if (c_cfg.huge_stun) draw_huge_stun_bar(TERM_ORANGE);
+	} else if (stun) {
+		c_put_str(TERM_ORANGE, "Stun        ", ROW_STUN, COL_STUN);
+		if (c_cfg.huge_stun) draw_huge_stun_bar(TERM_YELLOW); //diverge from text colours, as 'heavy' vs 'normal' isn't visible here, so we differentiate visually instead
+	} else {
+		put_str("            ", ROW_STUN, COL_STUN);
+		if (c_cfg.huge_stun) draw_huge_stun_bar(TERM_DARK);
+	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

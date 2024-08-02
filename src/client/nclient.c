@@ -102,7 +102,7 @@ void clear_huge_bars(void) {
 	for (n = MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n <= MAX_SCREEN_HGT - 2; n++)
 		Term_putstr(1 , n, -1, TERM_DARK, "           ");
 }
-/* Typ: 0 : mp, 1 : sanity, 2 : hp */
+/* Typ: 0 : mp, 1 : sanity, 2 : hp --- max width of everything depends on SCREEN_PAD_LEFT (hardcoded here though) */
 void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	int n, c, p;
 	bool gain, redraw;
@@ -206,6 +206,44 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		Term_putstr(x, n, -1, col, marker);
 
 	*prev = cur;
+}
+
+/* More stuff inspired by Virus and his death '+_+ */
+void draw_huge_stun_bar(byte attr) {
+	char c;
+	int x, y;
+	//char32_t *scr_cc;
+
+	/* Huge bars are only available in big_map mode */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
+#if defined(WINDOWS) || defined(USE_X11)
+	if (!force_cui && c_cfg.font_map_solid_walls)
+ #ifdef WINDOWS
+		c = FONT_MAP_SOLID_WIN;
+ #elif defined(USE_X11)
+		c = FONT_MAP_SOLID_X11;
+ #endif
+	else
+#endif
+	c = '#';
+
+	/* Just clear the bar? */
+	if (attr == TERM_DARK) c = ' ';
+
+	for (y = MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; y <= MAX_SCREEN_HGT - 2 + 1; y++) {
+		//scr_cc = Term->scr->c[y];
+		for (x = 0; x < SCREEN_PAD_LEFT - 1; x++)
+			//if (scr_cc[x] == ' ')
+				Term_putch(x , y, attr, c);
+	}
+
+	/* Restore the other huge bars over the stun "background bar" */
+	prev_huge_cmp = prev_huge_csn = prev_huge_chp = -1; // force redrawing
+	if (p_ptr->mmp) draw_huge_bar(0, &prev_huge_cmp, p_ptr->cmp, &prev_huge_mmp, p_ptr->mmp);
+	if (p_ptr->msane) draw_huge_bar(1, &prev_huge_csn, p_ptr->csane, &prev_huge_msn, p_ptr->msane);
+	if (p_ptr->mhp) draw_huge_bar(2, &prev_huge_chp, p_ptr->chp, &prev_huge_mhp, p_ptr->mhp);
+
 }
 
 
@@ -3451,6 +3489,7 @@ int Receive_stun(void) {
 	s16b stun;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &stun)) <= 0) return(n);
+	p_ptr->stun = stun;
 
 	if (screen_icky) Term_switch(0);
 	prt_stun(stun);

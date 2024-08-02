@@ -820,6 +820,7 @@ extern int animate_screenflash;
 extern short animate_screenflash_icky;
 extern void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max);
 extern void clear_huge_bars(void);
+extern void draw_huge_stun_bar(byte attr);
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);

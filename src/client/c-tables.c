@@ -300,7 +300,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     //todo: fix/implement good cursor on *nix/osx
 	{ &c_cfg.hilite_player,		FALSE,	6,	0, 45, TRUE,
 	    "highlight_player",		"Highlight own character icon with the cursor" },
-	{ &c_cfg.consistent_players,	FALSE,	6,	0, 46, TRUE,
+	{ &c_cfg.consistent_players,	FALSE,	7,	0, 46, TRUE,
 	    "consistent_players",	"Use consistent symbols and colours for players" },
 
 	{ &c_cfg.recall_flicker,	TRUE,	6,	0, 47, TRUE,
@@ -579,6 +579,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "ascii_uniques",		"Disable font-specific mapping for unique monsters" },
 	{ &c_cfg.no_flicker,		FALSE,	6,	0, 158, TRUE,
 	    "no_flicker",		"Disable all fast colour animations" },
+
+	{ &c_cfg.huge_stun,		FALSE,	6,	0, 159, TRUE,
+	    "huge_stun",		"Show stun status as huge bar (big_map only)" },
 };
 
 cptr melee_techniques[16] = {
