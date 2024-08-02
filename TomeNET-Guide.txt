@@ -18801,7 +18801,7 @@ create a character!):
     up in combat prowess for what their strength might be lacking.
     Rogues have very high stealth allowing them to sneak around many creatures
     without having to fight, or to sneak up and get the first blow,
-    backstabbing his opponent. They also have access to exclusive fighting
+    backstabbing their opponents. They also have access to exclusive fighting
     techniques.
     Rogues are especially fond of dual-wielding two light one-handed weapons at
     once (see (7.2). They prefer light armour, since dual-wielding and many of
