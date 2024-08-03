@@ -3,7 +3,6 @@
 
 #include "angband.h"
 
-#define REGEX_SEARCH
 #ifdef REGEX_SEARCH
  #include <regex.h>
  #define REGEX_ARRAY_SIZE 1
@@ -252,6 +251,7 @@ void do_cmd_messages(void) {
 						marked = TRUE;
 					}
 				} else {
+#ifdef REGEX_SEARCH
 					regex_t re_src;
 					regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 
@@ -278,6 +278,7 @@ void do_cmd_messages(void) {
 						marked = TRUE;
 					}
 					regfree(&re_src);
+#endif
 				}
 			}
 			if (!marked) { /* Normal line processing (ie no shower set) */
@@ -660,6 +661,7 @@ void do_cmd_messages_important(void) {
 						marked = TRUE;
 					}
 				} else {
+#ifdef REGEX_SEARCH
 					regex_t re_src;
 					regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 
@@ -686,6 +688,7 @@ void do_cmd_messages_important(void) {
 						marked = TRUE;
 					}
 					regfree(&re_src);
+#endif
 				}
 			}
 			if (!marked) { /* Normal line processing (ie no shower set) */
@@ -699,7 +702,11 @@ void do_cmd_messages_important(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
+#ifdef REGEX_SEARCH
 		prt("[p/n/g/G/# navi, f file, CTRL+K copy last line, / search, r regexp, = mark, ESC]", 23 + HGT_PLUS, 0);
+#else
+		prt("[p/n/g/G/# navi, f file, CTRL+K copy last line, / search, = mark, ESC]", 23 + HGT_PLUS, 0);
+#endif
 
 		/* Get a command */
 		k = inkey();

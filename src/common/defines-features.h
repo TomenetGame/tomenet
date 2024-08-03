@@ -639,7 +639,8 @@
   #define LOCAL_FILE_LINES_MAX 35000 //actually, r_info.txt is already 20640 lines long :o
  #endif
 
- /* Use regex.h to offer regexp in-game guide searching; and now also auto-inscription regexp matching */
+ /* Use regex.h to offer regexp in-game guide searching; and now also auto-inscription regexp matching.
+    (Turning this off will also prevent REGEX_URL, in c-util.c.) */
  #define REGEX_SEARCH
 
  /* Enable bookmarking feature? */

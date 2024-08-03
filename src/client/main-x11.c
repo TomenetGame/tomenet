@@ -27,7 +27,9 @@
 #endif /* __MAKEDEPEND__ */
 
 #include <sys/types.h>
-#include <regex.h>
+#ifdef REGEX_SEARCH
+ #include <regex.h>
+#endif
 #include <time.h>
 
 // gettimeofday() requires <sys/time.h>
@@ -3825,6 +3827,7 @@ void refresh_palette(void) {
 
 /* Get list of available misc fonts, e.g. "5x8", "6x9", "6x13" or "6x13bold". */
 int get_misc_fonts(char *output_list, int max_misc_fonts, int max_font_name_length, int max_fonts) {
+#ifdef REGEX_SEARCH
 	regex_t re;
 	char **list;
 	int fonts_found = 0, fonts_match = 0, i, j;
@@ -3882,6 +3885,77 @@ int get_misc_fonts(char *output_list, int max_misc_fonts, int max_font_name_leng
 
 	/* done */
 	return(fonts_match);
+
+#else /* We try to utilize 'grep' instead! */
+
+	char regex[MAX_CHARS_WIDE] = { 0 };
+	char **list;
+	int fonts_found = 0, fonts_match = 0, i, j;
+	bool is_duplicate;
+
+	char tmp[1024];
+	FILE *fff;
+
+
+	if (system("which grep")) {
+		c_msg_print("\377yCannot parse system fonts as neither REGEX_SEARCH is defined nor 'grep' command");
+		c_msg_print("\377y is available. You can install package 'grep' (scanning is very slow though).");
+		return(0); /* not found */
+	} else c_msg_print("\377yREGEX_SEARCH not defined, falling back to 'grep' usage. Please wait, it's slow.");
+	Term_fresh();
+
+	path_build(tmp, 1024, ANGBAND_DIR_XTRA, "fonts-x11-menuscan.txt");
+	fff = fopen(tmp, "r");
+	if (fff) {
+		while (fgets(tmp, 256, fff)) {
+			if (strncmp(tmp, "REGEXP=", 7)) continue;
+			tmp[strlen(tmp) - 1] = 0; //remove trailing \n
+			strcpy(regex, tmp + 7);
+			break;
+		}
+		fclose(fff);
+	}
+	if (!regex[0]) strcpy(regex, "^[0-9]+x[0-9]+[a-z]?[a-z]?(bold)?$");
+
+	/* Get list of all fonts with 'x' in the name */
+	list = XListFonts(Metadpy->dpy, "*x*", 16 * 1024, &fonts_found);
+	if (!list) return(0);
+	for (i = 0; i < fonts_found && fonts_match < max_misc_fonts; i++) {
+		system(format("echo '%s' | grep -E '%s' > /tmp/tomenet-grep.tmp", list[i], regex)); // -E: REG_EXTENDED; -P (perl) would also work
+		fff = fopen("/tmp/tomenet-grep.tmp", "r");
+		if (fff) {
+			if (!fgets(tmp, 256, fff)) {
+				fclose(fff);
+				continue;
+			}
+			if (!tmp[0] || tmp[0] == '\n') {
+				fclose(fff);
+				continue;
+			}
+			fclose(fff);
+			// font name is accepted
+		} else return(0);
+
+		if (strlen(list[i]) >= max_font_name_length) continue;
+
+		is_duplicate = FALSE;
+		for (j = i - 1; j >= 0; j--) {
+			if (strcmp(list[i], list[j]) == 0) {
+				is_duplicate = TRUE;
+				break;
+			}
+		}
+		if (!is_duplicate) {
+			strcpy(&output_list[fonts_match * max_font_name_length], list[i]);
+			fonts_match++;
+			if (fonts_match == max_misc_fonts) c_msg_format("Warning: Number of (misc) fonts exceeds max of %d. Ignoring the rest.", max_fonts);
+		}
+	}
+	XFreeFontNames(list);
+
+	/* done */
+	return(fonts_match);
+#endif
 }
 
 void set_window_title_x11(int term_idx, cptr title) {

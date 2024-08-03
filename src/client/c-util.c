@@ -11,8 +11,10 @@
  #include <dirent.h> /* we now need it for scanning for audio packs too */
 //#endif
 
+#ifdef REGEX_SEARCH
 /* For extract_url(): able to utilize regexps? */
-#define REGEX_URL
+ #define REGEX_URL
+#endif
 
 #if defined(REGEX_SEARCH) || defined(REGEX_URL)
  #include <regex.h>
@@ -8368,12 +8370,18 @@ void auto_inscriptions(void) {
 #else
 				strcpy(match_buf, format("\377%c>\377w", c));
 #endif
+#ifdef REGEX_SEARCH
 				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
+#endif
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
 				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
 				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
+#ifdef REGEX_SEARCH
 				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
+#else
+				    "",
+#endif
 				    c, tag_buf);
 
 #ifdef INTEGRATED_SELECTOR
@@ -8405,12 +8413,18 @@ void auto_inscriptions(void) {
  #else
 				strcpy(match_buf, format("\377%c>\377w", c));
  #endif
+ #ifdef REGEX_SEARCH
 				if (auto_inscription_invalid[cur_idx]) strcat(match_buf, "\377R");
+ #endif
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
 				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
 				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
+ #ifdef REGEX_SEARCH
 				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
+ #else
+				    "",
+ #endif
 				    c, tag_buf);
 
  #ifdef AUTOINS_DIS_SUB_MATCH

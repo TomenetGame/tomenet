@@ -7,7 +7,6 @@
  * (z-virt.h, z-util.h, z-form.h, term.h, random.h)
  */
 
-#define REGEX_SEARCH
 #ifdef REGEX_SEARCH
  /* Just for regex_t type in function parameters */
  #include <regex.h>
