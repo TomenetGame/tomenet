@@ -3951,6 +3951,7 @@ int get_misc_fonts(char *output_list, int max_misc_fonts, int max_font_name_leng
 			if (fonts_match == max_misc_fonts) c_msg_format("Warning: Number of (misc) fonts exceeds max of %d. Ignoring the rest.", max_fonts);
 		}
 	}
+	remove("/tmp/tomenet-grep.tmp");
 	XFreeFontNames(list);
 
 	/* done */
