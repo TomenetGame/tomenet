@@ -125,58 +125,45 @@ CLI_LUAOBJS = \
 #
 # MinGW toolchain target name
 #
-# You many need to change this depending on your setup.
-#
+
 # mikaelh's system (Gentoo Linux)
 #MINGW_TARGET = i686-pc-mingw32
 
 # Ubuntu
 #MINGW_TARGET = i586-mingw32msvc
 
-# C. Blue's system (Intel x64 laptop, Arch Linux)
-#MINGW_TARGET = i686-w64-mingw32
-
-# C. Blue's other system (ARM64 laptop, linux host)
+# C. Blue's ARM64 laptop, linux host,
+# aiming at 64-bit Windows only, as 32-bit Wine is currently not available on Ubuntu-ARM64:
 MINGW_TARGET = x86_64-w64-mingw32
-
+MINGW_FOLDER = /usr/local
 
 #
 # Path to sdl-config
 #
-# You may need to replace /usr/mingw32 by whatever prefix your
-# cross-compiling tools use.
 
-#SDL_CONFIG = /usr/$(MINGW_TARGET)/usr/bin/sdl-config
-#SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl-config
-
-# C. Blue's system (Intel x64 laptop, Arch Linux)
-SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl2-config
-
-# C. Blue's other system (ARM64 laptop, linux host)
-SDL_CONFIG = /usr/local/$(MINGW_TARGET)/bin/sdl2-config
+# C. Blue's ARM64 laptop, linux host
+SDL_CONFIG = $(MINGW_FOLDER)/$(MINGW_TARGET)/bin/sdl2-config
 
 
 #
 # Alternatively, specify include and lib paths for SDL
 #
 # mikaelh's system
-#SDL_INCLUDE_PATH = /usr/$(MINGW_TARGET)/usr/include/SDL
+#SDL_INCLUDE_PATH = /usr/$(MINGW_TARGET)/usr/include/SDL2
 #SDL_LIB_PATH = /usr/$(MINGW_TARGET)/usr/lib
 
 # C. Blue's system
-#SDL_INCLUDE_PATH = /usr/$(MINGW_TARGET)/include/SDL
-#SDL_INCLUDE_PATH = `sdl-config --cflags` -I/usr/include
 SDL_INCLUDE_PATH = $(shell $(SDL_CONFIG) --cflags)
 SDL_LIB_PATH = $(shell $(SDL_CONFIG) --libs)
 
 
-##
-## Variation -- MinGW on Linux
-##
-## Common flags
-##
-CFLAGS = -O2 -flto -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable -Wno-stringop-truncation -Wno-stringop-overflow
+#
+# Common flags (ensure 64-bit)
+#
+CFLAGS = -m64 -O2 -flto -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable -Wno-stringop-truncation -Wno-stringop-overflow
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
+CFLAGS += -I$(MINGW_FOLDER)/$(MINGW_TARGET)/include
+LIBS += -L$(MINGW_FOLDER)/$(MINGW_TARGET)/lib
 
 #We don't need SDL for lua, so keep it simple..
 LUACFLAGS = -O2 -flto -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
@@ -184,12 +171,10 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 ## With SDL, using 'sdl-config':
 #CFLAGS += -DSOUND_SDL `$(SDL_CONFIG) --cflags`
-#LIBS += -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
-##
+#LIBS += -lSDL2_mixer `$(SDL_CONFIG) --libs`
+
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually above:
 #CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
-##LIBS += -lSDL -lSDL_mixer $(SDL_LIB_PATH)
-##LIBS += $(SDL_LIB_PATH) -lSDL_mixer
 #LIBS += $(SDL_LIB_PATH) -lSDL2_mixer
 
 
@@ -200,17 +185,14 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 # C. Blue's other system (ARM64 laptop, linux host) - add include path for libgnurx' "regex.h":
 # However, currently cross-compiling is impossible, as wine64 still requires wine32:i386 to run, and wine32 is not available on arm64!
-CFLAGS += -I/usr/local/x86_64-w64-mingw32/include -m64
-#LIBS += -L/usr/local/lib -lregex
-LIBS += -L/usr/local/x86_64-w64-mingw32/lib
-# -lregex
-# -Wl,-Bstatic -l:libregex.a
-# -l:libregex.a
-# -lregex
-#CFLAGS += -I/usr/local/include -m64 `pcre2-config --cflags`
-#LIBS += -L/usr/local/lib `pcre2-config --libs8`
+LIBS += -lregex
+
+# Regex via pcre2 instead of libgnurx/other:
+#CFLAGS += -I$(MINGW_FOLDER)/include -m64 `pcre2-config --cflags`
+#LIBS += -L$(MINGW_FOLDER)/lib `pcre2-config --libs8`
 
 
+# Ensure Wine-64, as 32-bit Wine isn't available on ARM64 Ubuntu at this time.
 WINE = WINEARCH=win64 WINEPREFIX=~/.wine wine
 
 
