@@ -29,10 +29,6 @@ X:permawalls_shade
 Y:palette_animation
 X:disable_lightning
 X:no_light_fainting
-X:ascii_feats
-X:ascii_items
-X:ascii_monsters
-X:ascii_uniques
 
 Y:exp_bar
 X:uniques_alive
@@ -80,6 +76,8 @@ X:mp_huge_bar
 X:sn_huge_bar
 X:hp_huge_bar
 X:flash_player2
+X:no_flicker
+X:stun_huge_bar
 
 X:alert_hitpoint
 X:alert_mana
@@ -92,6 +90,10 @@ X:clone_to_file
 X:equip_text_colour
 Y:equip_set_colour
 X:colourize_bignum
+X:ascii_feats
+X:ascii_items
+X:ascii_monsters
+X:ascii_uniques
 
 
 # Audio options:
@@ -116,6 +118,7 @@ X:mute_when_idle
 X:shuffle_music
 X:play_all
 X:first_song
+
 Y:audio_paging
 X:paging_master_vol
 X:paging_max_vol
@@ -128,9 +131,6 @@ Y:auto_afk
 Y:idle_starve_kick
 X:safe_float
 Y:safe_macros
-X:auto_untag
-X:clear_inscr
-X:auto_inscr_server
 Y:stack_force_notes
 Y:stack_force_costs
 Y:stack_allow_items
@@ -146,6 +146,7 @@ X:auto_target
 Y:thin_down_flush
 X:disable_flush
 X:macros_in_stores
+Y:load_form_macros
 
 X:find_ignore_stairs
 Y:find_ignore_doors
@@ -169,6 +170,9 @@ X:keep_bottle
 X:easy_disarm_montraps
 X:no_house_magic
 
+X:auto_untag
+X:clear_inscr
+X:auto_inscr_server
 X:auto_pickup
 X:auto_destroy
 X:destroy_all_unmatched

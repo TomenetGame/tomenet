@@ -577,11 +577,11 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "ascii_monsters",		"Disable font-specific mapping for all monsters" },
 	{ &c_cfg.ascii_uniques,		FALSE,	7,	0, 157, TRUE,
 	    "ascii_uniques",		"Disable font-specific mapping for unique monsters" },
+
 	{ &c_cfg.no_flicker,		FALSE,	6,	0, 158, TRUE,
 	    "no_flicker",		"Disable all fast colour animations" },
-
-	{ &c_cfg.huge_stun,		FALSE,	6,	0, 159, TRUE,
-	    "huge_stun",		"Show stun status as huge bar (big_map only)" },
+	{ &c_cfg.stun_huge_bar,		FALSE,	6,	0, 159, TRUE,
+	    "stun_huge_bar",		"Show stun status as huge bar (big_map only)" },
 };
 
 cptr melee_techniques[16] = {
