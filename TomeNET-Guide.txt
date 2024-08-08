@@ -12254,6 +12254,7 @@ Fire/Heat               These attacks can burn items in your inventory.
                         Potions of resist heat are a cheap way to attain
                         double-resistance for a short time in order to pass
                         lava streams without your inventory taking damage.
+
 Frost/Cold              These attacks can shatter potions.
                         Without resistance it can reduce your strength.
                         Frost bolts do (level/3)+(6d8) damage.
@@ -12261,6 +12262,7 @@ Frost/Cold              These attacks can shatter potions.
                         Cold breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance helps protecting items
                         in your inventory from getting harmed (5.10), (5.15).
+
 Lightning/Electricity   These attacks can destroy rings, damage amulets
                         (reducing their (+X) bonus pval) and discharge magic
                         devices, draining their charges (or energy in case of
@@ -12271,6 +12273,7 @@ Lightning/Electricity   These attacks can destroy rings, damage amulets
                         Lightning breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance helps protecting items
                         in your inventory from getting harmed (5.10), (5.15).
+
 Acid                    These attacks can destroy items in your inventory.
                         They can also damage your equipment.
                         Without resistance it can reduce your charisma.
@@ -12324,6 +12327,7 @@ Poison          Poison resistance doesn't belong to the basic resistances but
                 caps at 800.
                 Stinking clouds, which are small poison balls, inflict 12d2
                 damage.
+
 Unbreath        A special type of poison, castable by mages.
                 This one will deprive the air of all oxygen, thereby also deal
                 damage to otherwise poison-immune monsters.
@@ -12341,12 +12345,14 @@ There are also five minor resistances:
 --------------------------------------
 Fear            While you're afraid you won't be able to attack a target in
                 close combat.
+
 Blindness       You cannot read scrolls or books while you're blind.
                 Blindness can be caused directly by a blindness attack or
                 indirectly by light or darkness attacks if you don't resist
                 those. You still can use magic staves, rods or wands and
                 quaff potions. Quaffing a potion of Healing, Curing or
                 Cure Critical Wounds will remove the blindness.
+
 Confusion       While confused you cannot move, shoot or fight straight.
                 Further, you're unable to read scrolls or books.
                 However, you still can use staves, wands and rods.
@@ -12359,11 +12365,13 @@ Confusion       While confused you cannot move, shoot or fight straight.
                 give confusion resistance.
                 (Monsters that have the NO_CONF flag will resist somewhat and
                 suffer less damage.)
+
 Free Action, aka...
 Paralysis       Paralysis can be caused by bashing doors, lack of food, by
                 traps and by monsters. Against the latter two effects you can
                 become immune by equipping a 'Free Action' item. You should
                 become immune to paralysis before descending below 1000 ft.
+
 Hold Life       This will provide some protection against experience drain;
                 it won't help against experience drain inflicted by items you
                 equipped though.
@@ -12377,6 +12385,7 @@ feather falling. (Same as chaos resistance also gives confusion resistance.)
 Further, there are several high resistances:
 --------------------------------------------
 (Poison         was described above, at the end of the basic resistances.)
+
 Water           Water resistance is rare (an *ID*ed item will say
                 'it provides resistance to unleashed water').
                 Water attacks can stun and confuse you if you don't resist
@@ -12392,6 +12401,7 @@ Water           Water resistance is rare (an *ID*ed item will say
                 Water balls do 50+(1...[level*5/2]) damage.
                 Note: The confusion effect can be prevented by confusion
                 resistance, and the stun effect by sound resistance.
+
 Sound           Sound attacks do less damage but can stun you or even knock
                 you out so you will die as if you were paralyzed. Free Action
                 won't help you then.
@@ -12404,6 +12414,7 @@ Sound           Sound attacks do less damage but can stun you or even knock
                 Breath damage is monster HP/6. Sound breath caps at 400.
                 (Monsters that have the NO_STUN flag will resist somewhat and
                 suffer less damage.)
+
 Shards          Resistance will cut damage to 6/7..6/12.
                 Damage is reduced by further 50% if bio-feedback is active.
                 (Bio-feedback is activated if a Draconian eats a firestone and
@@ -12412,6 +12423,7 @@ Shards          Resistance will cut damage to 6/7..6/12.
                 Shard resistance will protect you from cuts. If you don't have
                 it you might get nasty cuts that make you bleed over time.
                 Breath damage is monster HP/6. Shard breath caps at 400.
+
 Nexus           Nexus attacks can have extremely nasty side-effects if you
                 don't resist them. Those are
                 -Teleport you randomly.
@@ -12438,6 +12450,7 @@ Nexus           Nexus attacks can have extremely nasty side-effects if you
                  ("Your backpack starts to scramble")
                 Resistance will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3. Nexus breath caps at 250.
+
 Chaos           Chaos attacks can also have nasty side-effects if you don't
                 resist. These are:
                 -Confuse you.
@@ -12451,15 +12464,18 @@ Chaos           Chaos attacks can also have nasty side-effects if you don't
                 Resistance will cut down damage to 6/7..6/12.
                 Breath damage is monster HP/6. Chaos breath caps at 600.
                 Raw chaos invocation (chaos ball) does (level*4)+(10d10) dam.
+
 Light           Light effects can blind you if you don't resist it.
                 Resistance will cut damage to 4/7..4/12.
                 If you are mimicking a monster that is susceptible to light
                 you will suffer double damage from attacks.
                 Breath damage is monster HP/6. Light breath caps at 400.
+
 Darkness        Darkness effects can blind you if you don't resist it.
                 Resistance will cut damage to 4/7..4/12.
                 Breath damage is monster HP/6. Darkness breath caps at 400.
                 Darkness Storms (balls) do (level*5)+(10d10) damage.
+
 Nether          Nether is kind of 'the element of undead' - most higher level
                 undead creatures will have a nether attack of some sort.
                 Resistance will cut damage to 6/7..6/12 and prevent all life
@@ -12469,6 +12485,7 @@ Nether          Nether is kind of 'the element of undead' - most higher level
                 Nether balls do 50+(level*4)+(10d10) damage.
                 If you lack nether resistance, having 'Hold Life' ability can
                 at least offers some protection from experience loss.
+
 Disenchantment  This attack does massive damage and can also disenchant your
                 equipped items, lowering their to-hit/to-dam/to-ac bonus!
                 It can also destroy ethereal ammunition.
@@ -12487,10 +12504,12 @@ Irresistible/extremely powerful damage types:
 Force           Pure force impact (BR_WALL). Raw damage is monster HP/6.
                 Force impact (breath only) is capped at 200 and irresistible.
                 If you lack sound resistance you will get stunned.
+
 Inertia         Inertia attacks will slow you down a lot. There is no 'Inertia
                 resistance' but 'Free Action' will slightly reduce the
                 slowdown duration.
                 Damage (breath only) is monster HP/6 and caps at 200.
+
 Gravity         These attacks have very annoying side-effects:
                 -Teleport you randomly.
                 -Slow you down.
@@ -12500,6 +12519,7 @@ Gravity         These attacks have very annoying side-effects:
                 being thrown around by the shockwave and hence cut the damage
                 to 6/7..6/12.
                 Damage (breath only) is monster HP/3 and caps at 150.
+
 Mana            Mana is pure magical energy. There are only rumours
                 about items that provide resistance against it.
                 Resisting it will cut damage to 6/7..6/12.
@@ -12507,6 +12527,7 @@ Mana            Mana is pure magical energy. There are only rumours
                 few monsters (mostly uniques) can breathe mana.
                 Mana bolts do 50+(1...[level*7/2]) damage.
                 Mana storms (balls) do (level*5)+(10d10) damage. Beware!
+
 Time            Time is pure temporary distortion. There are only rumours
                 about items that provide resistance against it.
                 Time attacks can have very nasty side effects:
@@ -12517,8 +12538,10 @@ Time            Time is pure temporary distortion. There are only rumours
                 -Drain all your stats (resistance will prevent this).
                 Resistance will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3. Time breath caps at 150.
+
 Meteor          This is an irresistible attack of pure impact.
                 Sound resistance will prevent stun effect.
+
 Disintegration  This is an irresistible attack of raw destruction.
                 Damage (breath only) is monster HP/3, capping at 300.
 
@@ -12528,6 +12551,7 @@ Combined damage types:
 Ice             Ice attacks combine shard and cold damage.
                 Ice damage (bolt only) is (6d6)+monsterlevel.
                 Ice damage consists of 60% cold damage and 40% shards damage.
+
 Plasma          Plasma attacks combine raw force, electricity and, mostly of
                 all, immense heat. The usual resistances, susceptibilities
                 and immunities for fire, electricity and sound apply as
@@ -12535,8 +12559,11 @@ Plasma          Plasma attacks combine raw force, electricity and, mostly of
                 Plasma also has stun effect if sound resistance is missing.
                 Breath damage is monster HP/6. Plasma breath caps at 150.
                 Plasma bolts do 10+level+(8d7) damage.
-Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
- Toxic Waste    that may have acidic effect on your inventory (inventory may
+
+Radiation
+Nuke
+Toxic Waste     This is a poisonous attack (player suffers pure poison damage)3
+                that may have acidic effect on your inventory (inventory may
                 get destroyed as if you were hit by acidic attacks).
                 If you resist poison
                 - you will just take 2/5 of the damage
@@ -12544,6 +12571,7 @@ Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
                 - your equipment will be safe from acidic damage.
                 Breath damage is monster HP/3 and caps at 800.
                 Nuke balls (radiation balls) do (level*3)+(10d6) damage.
+
 Rocket          Rockets combine fire, shard & sound effects and can also damage
                 your inventory. Rockets do insane damage if unresisted:
                 Rocket damage is monster MaxHP/4, it caps at 800.
@@ -12554,10 +12582,16 @@ Rocket          Rockets combine fire, shard & sound effects and can also damage
                 Shard resistance will prevent cuts, sound resistance will
                 prevent getting stunned.
                 (Technically, rockets are similar to breath attacks.)
-Detonation      Same as rocket.
-Inferno         Same as detonation, except it does not destroy walls.
-Havoc           A terrible mixture of wrecking Inferno, blasts of uncontrolled
+
+Detonation      Same as rocket, usually caused by potions of detonations.
+
+Inferno         Same as rocket/detonation, except it does not destroy walls,
+                usually comes as 'cloud' type effect, aka lasting for a while.
+
+Havoc           A terrible mixture of wrecking inferno, blasts of uncontrolled
                 mana and waves of raw chaos.
+                It usually consists of two phases, an initial blast of high
+                damage and a lingering cloud effect of lesser damage.
 
 There is also a special 'Teleportation Resistance', giving the self-knowledge
 line: "You resist incoming teleportation effects.".
@@ -12599,27 +12633,35 @@ those. Here is a table of all susceptibilities players can get affected by:
  -Evil          Enlightened trait of Maiar
  -Good          Vampires, Corrupted trait of Maiar
  -Life          Vampires
+
 Most of these are self-explaining, but some seem obscure, here is what you get
 hurt from when susceptible to one of the three obscure ones:
-Evil:   Double damage from holy based attacks (holy orb, holy fire)
-Good:   Double damage from hellfire attacks;
-        eating Lembas;
-        reading blessing or PfE scroll;
-        using dispel evil staff;
-        hostile dispel evil effects;
-        activating the true arts of Ingwe, Carlammas, Fundin Bluecloak, Himring
-Life:   Eating Lembas or sprigs of Athelas; quaffing potion of life;
-        reading blessing or PfE scroll;
-        using holiness staff;
-        cleansing cloud spell, soul curing spell;
-        hostile dispel undead effects;
-        activating the true art Soul Grip;
-        equipping non-cursed items with strong anti-undead powers will apply a
-        hit point drain effect.
-Lastly there is an implicit susceptibility of demonic forms (mimicry) and
-especially the class Hell Knight (similar to life-susceptibility):
-        equipping non-cursed items with strong anti-demon powers will apply a
-        hit point drain effect.
+
+ Evil:  -Double damage from holy based attacks (holy orb, holy fire)
+
+ Good:  -Double damage from hellfire attacks;
+        -eating Lembas;
+        -reading blessing or PfE scroll;
+        -using dispel evil staff;
+        -hostile dispel evil effects;
+        -activating the true arts of Ingwe, Carlammas, Fundin Bluecloak, Himring
+
+ Life:  -Eating Lembas or sprigs of Athelas; quaffing potion of life;
+        -reading blessing or PfE scroll;
+        -using holiness staff;
+        -cleansing cloud spell, soul curing spell;
+        -hostile dispel undead effects;
+        -activating the true art Soul Grip;
+        -equipping non-cursed items with strong anti-undead powers will apply a
+         mana point drain effect if it's head gear or gloves, otherwise a it
+         will apply a hit point drain effect.
+
+Lastly there is an implicit anti-demonic susceptibility (similar to the anti-
+unded life-susceptibility described above) of demonic forms (mimicry) and
+the class 'Hell Knight' which counts as demonic:
+        -Equipping non-cursed items with strong anti-demon powers will apply a
+         mana point drain effect if it's head gear or gloves, otherwise a it
+         will apply a hit point drain effect.
 
 Branded physical attacks vs monsters:
 Susceptibility of a monster will result in a doubled multiplier for
@@ -12911,6 +12953,7 @@ FEATHER ('It makes you fall down gently like a feather.')
         Enables you to cross 'dark pits' terrain type (see (4.4)) which is a
         very common feature in the dungeon 'Paths of the Dead'.
         Lets you resist gravitation damage somewhat.
+
 LEVITATE
         ('It allows you to levitate.')
         Levitation implicitely grants Feather Falling too, so you get all of
@@ -12919,6 +12962,7 @@ LEVITATE
         or your inventory or equipment taking damage.
         Lets you cross over rubble.
         Enables you to hover high enough to pass trees and bushes easily.
+
 XTRA_SHOTS
         ('It fires missiles excessively fast.')
         This ranged weapon can fire an extra shot per round, see your number of
@@ -12926,6 +12970,7 @@ XTRA_SHOTS
         For trap kits, the number of shots they fire can actually increase by
         more than one, depending on their pval (the number in parentheses, for
         example '(+2)' would fire 2 extra shots).
+
 XTRA_MIGHT
         ('It fires missiles with extra might.')
         This ranged weapon fires more damaging shots: Its damage multiplier is
@@ -12933,6 +12978,7 @@ XTRA_MIGHT
         For example a Long Bow of Extra might would show a (x4) multiplier,
         although Long Bows usually have a (x3) multiplier.
         Note that the multiplier may also affect the maximum shooting range.
+
 MANA ('It affects your mana capacity.')
         For istari and runemasters, this Will increase your total mana points
         by +x0%. Example: Gloves of the magi (+3) increase your mana by 30%.
@@ -12941,6 +12987,7 @@ MANA ('It affects your mana capacity.')
         MANA affects your complete mana pool, including the additional MP
         (mana points) a character gained from 'Magic' skill, except for the
         mana added by training the Mimicry skill above 35.
+
 LIFE ('It affects your hit points.')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
@@ -12954,24 +13001,30 @@ LIFE ('It affects your hit points.')
         +LIFE on randarts will (depending on server options, see ~i in-game)
         usually only affect player characters who are royalty ie winners who
         have beaten Morgoth and hence have a violet coloured name in chat.
+
 AGGRAVATE ('It aggravates nearby creatures.')
         Wakes up all monsters in whose radius of awareness you are, but at
         least all monsters in radius 50. It also increases any monster's radius
         of awareness to 50 if it was actually smaller than that.
         (Does not haste them unlike scrolls, shriek ability, traps or /scream
         command do, compare (5.9)).
+
 REGEN   ('It speeds your hit point regeneration.')
         Your base HP regeneration speed will double.
+
 REGEN_MANA ('It speeds your mana recharging.')
         Your base MP regeneration speed will double.
+
 DRAIN_MANA ('It drains your magic')
         Slowly drains your MP over time down to zero.
         Warriors and archers are not affected as they don't have any MP.
+
 DRAIN_HP ('It drains your health')
         Slowly drains your HP over time down to zero, but you cannot actually
         die from this as it will stop at zero, and a character is still alive
         at that point, as death occurs when your HP drop _below_ zero.
         For more information see (4.11a).
+
 DRAIN_EXP ('It drains your life force')
         Your experience points are drained in random intervals. This effect
         actually drains your maximum XP too, so it cannot be restored!
@@ -12984,11 +13037,13 @@ DRAIN_EXP ('It drains your life force')
         While in town areas (that means dungeon towns, normal towns and the
         surrounding housing area) the drain effect will be on hold!
         For more information see (4.11a).
+
 HOLD_LIFE ('It provides resistance to life draining attacks.')
         Hold Life gives you a chance to resist the experience-draining effects
         from attacks or potions, either resulting in no drain or at least
         reduced drain if the roll is successful.
         Does not help against DRAIN_EXP item flag.
+
 LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40 (and -10 downwards), having higher bonus won't help any
@@ -13007,6 +13062,7 @@ LUCK ('It affects your luck.')
         you obtain from chests.
         Also luck does NOT affect which base item type drops, ie whether it is
         a dragon scale mail or a cloth hat.
+
 NO_MAGIC ('Anti-magic shell')
         Raises your saving throw to 95%, making you nearly immune to malicious
         magical status effects that depend on your character doing a saving
@@ -13019,6 +13075,7 @@ NO_MAGIC ('Anti-magic shell')
         It also prevents you from using any magic device or casting spells.
         You can still use scrolls and potions though. For more information
         about Saving Throw see (7.3).
+
 ANTIMAGIC ('Anti-magic field')
         Prevents you from using any magic device or casting spells, also
         prevents nearby monsters and other players from casting spells (but
@@ -13032,6 +13089,7 @@ ANTIMAGIC ('Anti-magic field')
         The anti-magic field's radius caps at range 9.
         Your party members are not affected by your anti-magic field.
         Also see "Dark Sword" details in (5.9).
+
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed melee weapons
         without penalties, even if they are not blunt. They will get their
@@ -13043,9 +13101,11 @@ BLESSED ('It has been blessed by the gods')
         they are melee weapons they will increase spell casting failure chance.
         Everyone else can use blessed weapons just the same way as any other
         weapons.
+
 VAMPIRIC ('It drains life from your foes')
         Drains life from your victim, which heals you slightly.
         For details see '(5.13) Vampirism'.
+
 VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         Has a chance that the weapon damage dice result is multiplied on
         hitting, you'll see 'Your weapon cuts deep into your enemy'.
@@ -13056,8 +13116,10 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         eligible for obtaining the VORPAL mod from randart ability creation.
         Note that Scythes of Slicing always come with VORPAL mod, be it as base
         item, ego item or even as randart.
+
 SLAY_WEAP (No message, can spawn other mods/increase dice randomly.)
         A special mod for "Weapons of Slaying", see further down in (5.9).
+
 CRIT    ('It affects your ability to score critical hits.')
         This item adds to your chance to score critical hits.
         If the item is a weapon then it will only affect hits done with this
@@ -13071,6 +13133,7 @@ CRIT    ('It affects your ability to score critical hits.')
         ego power, but can also spawn on random artifact gloves and all types
         of random artifact weapons -including boomerangs- regardless of their
         weight.
+
 CHAOTIC ('It produces chaotic effects.')
         On hitting, you have a 50% chance to do one of the following:
         a) drain life (VAMPIRIC, see (5.13)) (very likely).
@@ -13087,45 +13150,56 @@ CHAOTIC ('It produces chaotic effects.')
         Note that most of these have an *extremely* low chance to occur.
         Most of the time the vampirism or confusion effect is chosen.
         'Chaotic' effects can only happen on melee attacks.
+
 CLONE ('It can clone monsters.')
         Has a 1 in 1000 chance to clone the monster it hits.
+
 IMPACT ('It can cause earthquakes.')
         Causes earthquakes randomly, the higher the damage dealt the higher the
         chance. See (5.11) for details about earthquakes.
         (If enabled in the server settings, it can be suppressed with
         the !Q inscription. See (0.3) for !Q settings or press ~i in game.
         Usually, !Q _only_ works on the Mighty Hammer 'Grond'.)
+
 FUEL_LITE ('It provides light when fueled.')
         A light source that needs to be fueled, otherwise it runs out.
         WARNING:
         If this item provides other abilities besides emitting light, be aware
         that you need to keep it fueled for it to do so! If it runs out of fuel
         your character will lose all abilities it provided until you refuel it.
+
 CURSED, HEAVY_CURSE, PERMA_CURSE, AUTO_CURSE,
 CURSE_NO_DROP, TY_CURSE, DG_CURSE
         See (5.12) Curses.
+
 INVIS   ('It makes you invisible.')
         Turns you invisible. Items 'of invisibility' often have a +mod,
         which gives you additional stealth. Note that this +mod does not
         qualify or affect your y in any way, but is purely for an
         extra stealth bonus. See '(5.14) Invisibility' for details.
+
 BLOWS   ('It affects your attack speed.')
         This item adds EA (extra attacks) to your number of blows per round.
+
 SH_ELEC ('It produces an electric aura.')
         Surrounds you with a lightning aura, damaging monsters each time they
         hit you in close combat.
+
 SH_COLD ('It produces an icy aura.')
         Surrounds you with a frost aura, damaging monsters each time they
         hit you in close combat.
+
 SH_FIRE ('It produces a fiery aura.')
         Surrounds you with a fire aura, damaging monsters each time they
         hit you in close combat.
+
 REFLECT ('It reflects bolts and arrows.')
         Gives you a 75% chance to reflect shots, arrows, bolts and missiles
         fired at you, 45% chance to reflect magical bolt-type spells and 60%
         to deflect any physical projectile from traps you triggered.
         Reflected attacks will hit grids closely around their origin, possibly
         damaging/killing the monster who shot at you.
+
 RETURNING ('It returns to you when thrown.')
         Will automatically return to you when you throw it (via 'v') while you
         have it equipped.
@@ -13137,11 +13211,14 @@ Weapons of Spinning
 EASY_USE (of Simplicity, 'It is especially easy to activate.')
         You have a much higher chance of succeeding to use the magic device.
         Also see (7.10) for more information about the 'Magic Device' skill.
+
 CHARGING (of Charging) ('It regenerates its mana faster.')
         This magic device (rod) will take only 1/2 of the usual time to
         fully recharge.
+
 'of the Istari' rods.
         Combination of EASY_USE and CHARGING.
+
 'of Plenty' wands and staves.
         These have more charges than usual, and will also gain more charges
         from recharging than their normal counterparts. (See (5.18) about
@@ -13154,21 +13231,23 @@ WINNERS_ONLY
         This item can only be found by certain characters, see server options
         in-game via ~i for details.
 
-(NO_SEED
+NO_SEED
         An ego item that is never created randomly (in terms of abilities
         or power) and that is a lesser type and therefore allowed to stack with
         other similar ego items. These types are currently:
-        Cursed/indestructible rings,
-        Fireproof/waterproof scrolls and books,
-        Any type of ammunition.)
+        -Cursed/indestructible rings,
+        -Fireproof/waterproof scrolls and books,
+        -Any type of ammunition.
         Items with other (more powerful) ego powers than these listed above
         will not stack in your inventory even if the items are identical.
+
 INSTA_ART
         This item always is an artifact; it has no base-class that can spawn
         non-art items. Example: Long Sword base class can spawn regular long
         swords, but also 'Elvagil'. A Phial however will instantly be
         'artified' and turn into Phial of Galadriel or Undeath. There are no
         base-type non-art phials in the game.
+
 SPECIAL_GENE
         These artifacts are 'special artifacts' that cannot be dropped by
         regular monsters but require a certain key monster to be killed.
@@ -13217,10 +13296,14 @@ Dark Sword      Dark Swords have a so-called 'anti-magic field', which
 
                 Dark swords cannot be enchanted nor disenchanted and do not
                 take damage from water or fire.
+
 Shadow Blade    Resists darkness and provides a fixed stealth bonus of +2.
                 Does not get damaged by acid, water or fire.
-Bluesteel Blade Especially sharp (see 'VORPAL' under (5.8)).
+
+Bluesteel Blade
+                Especially sharp (see 'VORPAL' under (5.8)).
                 Does not get damaged by water or fire.
+
 Blade of Chaos  Grants chaos resistance and produces chaotic effects on hits,
                 which in most cases means either life drain or confuse target,
                 with other (in turn detrimental to the wielder) effects being
@@ -13229,25 +13312,35 @@ Blade of Chaos  Grants chaos resistance and produces chaotic effects on hits,
                 artifact powers that harm (aka hit point drain) an undead or
                 demonic wielder.
                 Does not get damaged by fire, acid and water.
+
 Scourge of Repentance
                 Slays undead and demons.
                 Does not get damaged by water, acid, or fire.
+
 Demon Hammer    *Slays* demons. Does not get damaged by water, acid or fire.
+
 Mace of Disruption
                 *Slays* undead. Not damaged by water, acid or fire.
+
 Hunting Spear   Slays animals.
+
 Dragon Lance    *Slays* dragons.
                 Does not get damaged by water, acid, or fire.
+
 Scythe of Slicing
                 Especially sharp (see 'VORPAL' under (5.8)).
                 Does not get damaged by water, acid, or fire.
+
 Slaughter Axe   Slays animals.
+
 Infernal Axe    Fire-branded. As a specialty, this weapon will never gain ego
                 powers or artifact powers that harm (aka hit point drain) an
                 undead or demonic wielder.
                 Does not get damaged by water, acid or fire.
+
 Thunder Axe     Slays giants, is lightning-branded. Is not damaged by fire.
                 Does not get damaged by water, acid or fire.
+
 Weapons of Morgul
                 These are terribly cursed weapons. They are no good in any
                 way and you should just never pick them up, and if you made
@@ -13274,6 +13367,7 @@ Weapons of Morgul
                 Wielded against Nazgul however, Morgul weapons will greatly
                 resist destruction on touching them, same as artifacts and
                 the Stormbringer do!
+
 Weapons of Nothingness
                 Similarly terribly cursed as weapons of Morgul. You are unable
                 to strike while wielding this weapon. There is noone who can
@@ -13290,12 +13384,14 @@ Weapons of Nothingness
                 it, do NOT take it off as that will make it recurse itself, but
                 instead 'd'rop it straight to the ground or simply destroy it
                 with 'k' right away!
+
 Shattered weapons
                 Weapons that have the prefix "shattered" deal less damage than
                 usual, in most cases the +hit and +dam values are in negative
                 numbers.
                 However, other than bad damage, the weapon is not cursed or
                 impared in any way.
+
 Weapons of Slaying
  (SLAY_WEAP)    These weapons can have greatly boosted damage dice and
                 sometimes poison brand.
@@ -13309,8 +13405,10 @@ Magic ammunition
                 elemental attack..
                 Artifact ammunition of any type auto-returns too, same as magic
                 ammunition.
+
 Silver ammunition
                 *Slays* undead.
+
 Ethereal ammunition
                 Magically returns after being fired, has a small chance to fade
                 away instead though. Cannot be enchanted.
@@ -13320,6 +13418,7 @@ Blasted armour  Armour that has the prefix "blasted" has much less +AC bonus
                 negative numbers.
                 However, other than bad +AC the armour is not cursed or impared
                 in any way.
+
 Dragon Scale Mail
 Dracolich Bone Armour
                 Legendary piece of armour that often grants some elemental
@@ -13328,17 +13427,22 @@ Dracolich Bone Armour
                 help) your ability to swim in terms of weight it puts on you.
                 Usually When mentioning DSM, the Dracolich version is included,
                 it also works the same as DSM, so it's just different in name.
+
 Dragonrider Coat
                 Resists heat & cold.
+
 Elven Cloak     Increases your stealth and luck.
                 For details about luck see LUCK flag in (5.8).
+
 Elven Gloves    Regenerate hit points and mana points.
+
 Multi-hued Dragon Scale Mail
                 Gives base + poison resistance ('base' resistance means
                 fire/cold/lightning/acid) and two random immunities out of
                 those five.
                 For example one MHDSM might give fire and cold immunity,
                 while another MHDSM gives poison and lightning immunity.
+
 Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
                 'winner' meaning queens, kings, empresses and emperors.
                 (These armour pieces usually have a level requirement of 51 or
@@ -13348,8 +13452,10 @@ Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
                 or shields that will display
                 "It is to be used by royalties exclusively."
                 in violet colour when inspected/examined.
+
 Serpent Scale Mail
                 Resists acid.
+
 Shadow Cloak    Makes you hard to spot for other players, regarding..
                 a) them seeing you
                 b) them being able to look at your current equipment.
@@ -13361,11 +13467,13 @@ Shadow Cloak    Makes you hard to spot for other players, regarding..
 Potions
 -------
 Augmentation    Raises all your stats.
+
 Berserk Strength
                 Temporary effects: Heals you for 30, increases CHP and MHP by
                 20, become fearless, -10 malus to ac and +10 to strength,
                 compare (4.11b). Does not stack with 'Berserk' technique.
                 ("You feel like a killing machine!")
+
 Blood           Cannot be found or bought, but only gathered from fountains of
                 blood which are found in the Paths of the Dead. These feed true
                 vampires, but they expire after some time. This process can be
@@ -13379,26 +13487,34 @@ Blood           Cannot be found or bought, but only gathered from fountains of
                 Not all of these effects actually stack, but carrying more snow
                 is always effective, especially if the ratio of snow to blood
                 potions is higher.
+
 Boldness        Removes fear and keeps your heart boldened for a while.
+
 Chauve-Souris   Turns you into a fruit bat. Quaff another one to be restored
                 to your original form. A wand/rod of polymorph might help too.
                 Make sure you don't resist nexus if someone tries to polymorph
                 you back. Or just use 'Morph Restoration' service.
                 Characters with 'Fruit Bat' body modification are immune.
                 Mimicry users can simply polymorph out to any form they like.
+
 Cure Light Wounds
                 Cures blindness and heals cuts somewhat; heals 3d8 HP.
+
 Cure Serious Wounds
                 Cures blindness, some cuts, confusion; heals 6d8 HP.
+
 Cure Critical Wounds
                 Cures blindness, most cuts, confusion, stun; heals 14d8 HP.
+
 Curing          Heals 9d10 HP, removes blindness/confusion/stun, cures
                 poison/disease/cuts/hallucinations, heals some insanity,
                 cures being gorged, restores all your stats (except exp).
+
 Detect Invisible
                 Temporarily grants you the ability to see invisible.
                 ("Your eyes feel very sensitive!")
                 (See (5.14) for details about invisibility.)
+
 Detonations / Death
                 Better not drink it (or you deserve it).
                 Also, handle with caution! Make sure those won't shatter in
@@ -13409,11 +13525,15 @@ Detonations / Death
                 Accordingly useful to be used in fumes traps.
                 Death potions can be consumed by undead without taking damage
                 and they will even restore their stamina.
+
 Enlightenment   Illuminates and maps the whole level and reveals all objects.
                 It also identifies all of the user's items.
-*Enlightenment* Raises your intelligence and wisdom, detect treasures,
+
+*Enlightenment*
+                Raises your intelligence and wisdom, detect treasures,
                 objects, secret doors, stairs, traps. Identifies all items.
                 Tells you about yourself like a potion of Self-Knowledge.
+
 Experience      Gives you additionally half your current experience plus 10,
                 but only up to a maximum of +100,000 points. So you'll get the
                 most out of it if you quaff it when you reached 200,000 exp.
@@ -13423,39 +13543,55 @@ Experience      Gives you additionally half your current experience plus 10,
                 reason, maybe harder than if they were at 200,000 exp already.
                 The XP gain from this potion is not affected by the experience
                 gain penalties (exp ratio) of your class or race.
+
 Heroism         Temporary effects: Increases CHP and MHP by 10. Removes fear.
                 +12 bonus to-hit, compare (4.11b). ("You feel like a hero!")
+
 Infra-vision    Temporarily grants you 100..200 ft of infra-vision randomly,
                 ie the ability to see warm-blooded creatures from afar, even
                 in complete darkness or if they are invisible to normal sight.
                 If you already have fixed infra-vision, this potion will add
                 to your fixed infra-vision radius, further increasing it.
                 ("Your eyes begin to tingle!")
-Invulnerability Will turn you partially invulnerable (40% chance to fully
+
+Invulnerability
+                Will turn you partially invulnerable (40% chance to fully
                 deflect any attack, 50% damage reduction if it still hits)
                 and increases armour class by 100 temporarily.
                 ("A powerful iridescent shield forms around your body!")
+
 Learning        Gives you 1..3 (random) additional skill points to spend.
+
 Life            Heals 700 HP, removes blindness/confusion/stun, cures
                 poison/disease/cuts/hallucinations, cures Black Breath,
                 restores all your stats and experience and your stamina.
+
 Lose Memories   Lose 25% experience (if Hold Life is missing).
+
 Resistance      Gives you temporary resistance against heat, cold, acid,
                 electricity and poison. (Stacks with permanent resistance
                 to lower the damage to 1/9 (1/3 temp * 1/3 perm)).
+
 Speed           Temporary speed increase by +10.
+
 Healing         Cures blindness, most cuts, confusion, stun; heals 300 HP.
+
 *Healing*       Cures blindness, cuts, confusion, stun, poison, disease and
                 heals 700 HP.
+
 Restore Life Levels
                 Restores your experience, if it has been drained. You can see
                 that your experience has been drained by it being displayed in
                 yellow colour instead of the usual light green.
                 Note that this potion does not restore experience you lost by
                 dying (there is no way to restore experience loss from death).
+
 Restore Mana    Restores 500 MP. ('You feel your head clearing')
+
 *Restore Mana*  Restores 1000 MP. ('You feel your head clearing')
+
 Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
+
 Self-Knowledge  Tells you everything about yourself and identifies your items.
 
 
@@ -13473,7 +13609,9 @@ Acquirement     Gives you a great item, generated randomly (may sometimes be
                 out of there. Or sell it to a town store for good cash.
                 Acquirement is not affected by 'luck'.
                 Acquirement does have a chance to produce artifacts.
+
 *Acquirement*   Same as Acquirement, but gives you two or three great items.
+
 Aggravate Monsters
                 Wakes up all monsters within about twice the maximum sight
                 range (a constant defaulting to 20, so aggrav. radius is ~40).
@@ -13482,9 +13620,13 @@ Aggravate Monsters
                 of aggravation or the "/scream" command).
                 The haste effect is permanent, but most non-unique monsters can
                 be slowed down again by using any slowing magic.
-Blessing/Holy Chant/Holy Prayer
-                Temporarily increases your AC by 8/14/20 and also increases
-                your to-hit bonus by half that amount ("You feel righteous!").
+
+Blessing
+Holy Chant
+Holy Prayer     Temporarily increases your AC by 8 (blessing), 14 (holy chant)
+                or 20 (holy prayer) and also increases your to-hit bonus by
+                half that amount ("You feel righteous!").
+
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
@@ -13501,24 +13643,29 @@ Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 cancelled when the blood bond ends or when a player logs out.
                 Everyone on the server will be informed about the result:
                 "<A> wins the blood bond against <B>".
+
 Cancellation    Don't use it! It will heavily disenchant and blast all sorts of
                 magic items in your inventory and render them worthless,
                 including magic devices.
                 Artifacts (and Stormbringer) are unaffected.
                 Your equipment is unaffected.
+
 Curse Weapon    Will remove all special powers and enchantments of your primary
                 or (in case you don't wield a primary weapon) your secondary
                 weapon and turn it into a 'shattered' weapon without any useful
                 abilities. Artifacts have a chance to resist the effect.
+
 Curse Armour    Will remove all special powers and enchantments of your body
                 armour (if you wear any) and turn it into a 'blasted' armour
                 without any useful abilities. Artifacts have a chance to resist
                 the effect.
-Cheques         These are automatically generated in player stores when someone
+
+Cheque          These are automatically generated in player stores when someone
                 buys an item. They can be 'I'nspected to check their value or
                 'r'ead to cash in the money.
                 For more information see (4.10a).
-Deeds           Some of the parchments are deeds, which are used as rewards
+
+Deed            Some of the parchments are deeds, which are used as rewards
                 for various purpose, such as events (see (4.13)) and
                 pvp fights of PvP mode-characters (see (7.13)).
                 Press 'r' to read a deed, which will usually tell you what to
@@ -13539,6 +13686,7 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 The luck buffs are on hold while on the world surface, so you
                 won't lose buff time from running around. (Of course this also
                 means that the luck effect is not being applied.)
+
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects (see (5.11) about earthquakes).
                 Extremely powerful magic which causes a searing blast of light
@@ -13554,28 +13702,33 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 experience points, loot or monster-form for mimics.
                 *Destruction* actually erases objects completely, so potions
                 caught up in it will not cause any shatter-effects.
-Enchant
-  Sub-types: weapon to-dam, weapon to-hit, armour.
-                Will attempt to enchant weapon/ammunition or armour.
+
+Enchant weapon to-dam
+Enchant weapon to-hit
+Enchant armour
+                Will attempt to enchant a selectable item of appropriate type.
                 The higher the item is already enchanted the more unlikely it
                 will succeed another time.
                 The chance to succeed will also drop if the scroll is used on a
                 stack of items, instead of a single item, depending on the
                 stack size. It is easier to enchant a stack of ammunition than
                 enchanting a same-size stack of regular weapons/armour though.
-*Enchant*
-  Sub-types: weapon, armour.
-                Much more likely to enchant up to +15, and likely to enchant
-                by several points at once.
+
+*Enchant* weapon
+*Enchant armour
+                Much more likely to enchant up to +15 than normal 'Enchant'
+                scroll types, and likely to enchant by several points at once.
                 The chance to succeed will drop if the scroll is used on a
                 stack of items, instead of a single item, depending on the
                 stack size. It is easier to enchant a stack of ammunition than
                 enchanting a same-size stack of regular weapons/armour though.
+
 Fire
 Ice
 Chaos
                 Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
+
 Genocide        Removes all monsters of a certain kind from the current level.
                 Drains your HP for each one removed.
                 The race will be determined by the monster which stands
@@ -13591,14 +13744,17 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 immune to teleportation attacks cannot be genocided.
                 (Genocide-type spells do not yield any kind of credit such as
                 experience points, loot or monster-form for mimics.)
+
 Golem Creation  Allows you to create a golem which follows you and which you
                 can control to some extent, see (9.3) for more information.
+
 Life            Resurrects another player's ghost if standing on a directly
                 adjacent field to you when you read it. Does not work inside
                 vaults, and only over solid ground.
                 Also restores your experience points if they were drained.
                 Since it was often asked: Non-everlasting and everlasting
                 players can revive each other without problems.
+
 Lottery         This might be your chance today to win the Jackpot!
                 Just read it, if you win any money, it will appear under/around
                 your character on the floor. You will always get a message that
@@ -13607,6 +13763,7 @@ Lottery         This might be your chance today to win the Jackpot!
                 how much it is:
                 Yes, several people have won it, although it happens extremely
                 rarely. The prize at the time of writing this is about 1.5M Au.
+
 Obliteration    Removes all monsters that are close to you.
                 Drains your HP.
                 All monsters within a radius (equal to your sight range)
@@ -13621,13 +13778,17 @@ Obliteration    Removes all monsters that are close to you.
                 immune to teleportation attacks cannot be genocided.
                 (Genocide-type spells do not yield any kind of credit such as
                 experience points, loot or monster-form for mimics.)
+
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
+
 Protection from evil
                 Repels evil creatures that try to attack you in melee.
                 See the prayer 'Protection from evil' in (7.8)!
                 ("You feel safe from evil!")
+
 Recharging      Recharges a magical device (rod, wand or staff, see (5.18)).
+
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
                 as soon as they are uncursed!
@@ -13636,22 +13797,27 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 (0.3 Important Inscriptions).
                 (Scrolls give you the message:
                 'You feel as if someone is watching over you.'.)
+
 *Remove Curse*  Breaks heavy curses. Note that curses (including heavy ones)
                 on weapons or armours can also be broken by enchanting one of
                 their boni some points above +0 manually. (The enchant service
                 of shops won't help!)
+
 Rune of Protection
                 Creates a rune on the ground that monsters cannot cross nor
                 summon on. Monsters have a chance to break it on each turn.
                 Weak monsters will rarely succeed while powerful monsters may
                 break it quickly. Monsters of level 98+ can instantly break it.
+
 Rumour          Makes a random rumour come to your character's (and everyone
                 else's characters') mind. Has no further effect and is not
                 necessarily true even.
+
 Wilderness Mapping
                 Maps the wilderness area around the worldmap sector you
                 are currently within. These scrolls also sometimes carry
                 an inscription telling the location of a hidden dungeon.
+
 Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 dungeon or tower within your current sector.
                 It can also be used to travel between towns or on the worldmap
@@ -13659,6 +13825,7 @@ Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 for more info about Word of Recall! ("Word of Recall", "WoR")
                 Word of Recall scrolls can be exchanged between an everlasting
                 and a non-everlasting player!
+
 Vermin Control  Stops breeders on the whole floor from multiplying. Doesn't
                 have effect on certain non-natural breeders such as Unmakers.
                 This scroll affects all currently existing breeders on the
@@ -13671,51 +13838,73 @@ Wands/Rods/Staves
 -----------------
 Annihilation    Wand only: Drains 10..20% life from your target.
                 Unique monsters can resist. The damage drained caps at 1200.
+
 Clone Monster   Duplicates a monster. The duplicate, aka 'clone', does not give
                 experience, drop items, or count as form credit for mimicry
                 users.
+
 Curing          Cures being gorged, poison, diseases and cuts,
                 removes blindness/confusion/stun/hallucinations.
-*Destruction*   See 'Scrolls'.
+
+*Destruction*   See scroll of *Destruction* further above.
+
 Detection       Detects treasures, objects, traps, secret doors, stairs and
                 non-invisible creatures.
-Dragon's Breath These wands fire a ball of dragon odem (more powerful than
+
+Dragon's Breath
+                These wands fire a ball of dragon odem (more powerful than
                 normal ball spell wands.) - randomly on each cast one of:
                 Fire, frost, lightning, acid or poison.
+
 Drain Life      Wand/rod: Drains 10..20% life from your target, giving you 25%
                 of the drained life force.
                 Undead and nonliving monsters are unaffected, unique monsters
                 can resist. The damage drained caps at 900.
+
 Enlightenment   Magically maps your surroundings.
+
 Genocide        See 'Scrolls'.
+
 Havoc           Fires a strong initial havoc ball that leaves a lingering
                 havoc cloud behind, dealing additional damage over time.
                 Note: Rods of Havoc do not stack! That means each rod you carry
                 will occupy one inventory slot.
+
 Healing         Staves:
                 Heals 250 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
                 Rods:
                 Heals 100 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
+
 Holiness        Dispels nearby undead. Also protects you from evil for a while.
                 Cures poison/disease/cuts, removes fear/stun, heals somewhat.
+
 Magi            Restores your intelligence and 500 mana points.
                 ('You feel your head clearing')
+
 Perception      Identifies a specific item.
+
 *Perception*    *Identifies* a specific item, you guessed it..
+
 Polymorph       Polymorphs your target randomly into another form.
                 Doesn't works on players who resist nexus.
+
 Power           Dispels nearby monsters.
+
 Probing         Tells you hit points, melee attacks, speed and armour class of
                 monsters in your line of sight.
+
 Restoration     Restores experience points (aka live levels) and drained stats,
                 ie STR/INT/WIS/DEX/CON/CHR.
+
 Starlight       Casts 8 beams of light in a star-shaped pattern.
+
 Teleport To     Attempts to teleport your target towards you, placing it on an
                 adjacant grid next to you. Some monsters are immune and will
                 give an 'unaffected' message, all monsters have a chance to
                 resist in which case it'll give you a 'resists' message.
+
 Wonder          Wands of wonder cast random magic spells.
 
 
@@ -13723,20 +13912,27 @@ Jewelry
 -------
 Talisman (Amulet)       Increases your luck, helping you finding better loot.
                         (See LUCK flag in (5.8) for details about luck.)
+
 Amulet of Adornment     They might be looking fancy, but they don't do
                         anything and have no effect on your character.
+
 Amulet of Anti-Magic    See (5.8), 'NO_MAGIC'
+
 Amulet of Anti-Teleportation
                         If worn it will suppress all attemps to teleport, phase
                         or recall the wearer, regardless whether initiated by a
                         monster or by himself. It will also prevent certain
                         effects of unresisted nexus attacks.
+
 Amulet of Brilliance    increase intelligence and wisdom, provide light.
+
 Amulet of the Moon      Gives infra-vision, the power to see invisible, and it
                         can be activated to sleep monsters nearby.
                         It also improves your +hit and +dam boni.
+
 Amulet of Terken        Gives the power to see invisible, free action, and
                         improves your searching (usually by quite a lot).
+
 Amulet of Sustenance    sustain all six attributes, provide 'Hold Life'
                         resistance to experience-draining attacks,
                         and provide slow digestion.
@@ -13750,36 +13946,51 @@ Amulet of Sustenance    sustain all six attributes, provide 'Hold Life'
                         Ability can be helpful for melee fighters, especially
                         if they enter an ironman dungeon which they cannot
                         leave early in case they need to restore drained stats.
+
 Ring of Prowess         increase and sustain strength and intelligence.
+
 Ring of Tenacity        increase and sustain strength and wisdom.
+
 Ring of Might           increase and sustain strength and constitution.
+
 Ring of Cunningness     increase and sustain dexterity and intelligence.
+
 Ring of Gallantry       increase and sustain dexterity and wisdom.
+
 Ring of Toughness       increase and sustain dexterity and constitution.
+
 Ring of Preparedness    increase and sustain constitution and intelligence.
+
 Ring of Steadiness      increase and sustain constitution and wisdom.
-Ring of Flames, Ring of Ice, Ring of Acid, Ring of Lightning
-                        Provide the according resistance and can be activated
+
+Ring of Flames
+Ring of Ice
+Ring of Acid
+Ring of Lightning       Provide the according resistance and can be activated
                         for temporary resistance too, thereby temporarily
                         giving you "double resistance" (see (5.15) for
                         details). They also brand your physical attacks with
                         the according element.
+
 Ring of Lordly Protection
                         Resist poison, disenchantment, life drain and give
                         free action (immunity to paralysis).
+
 Amulet of Slow Digestion
 Ring of Slow Digestion
                         will slow your food digestion so you have to eat less
                         often. Also prevents instant paralysis if your food
                         state hits red 'Starved' (or red 'Weak' in old game
                         versions up to 4.8.0).
+
 Ring of Polymorphing    Can be used by adept Mimicry-users to tansform
                         themselves. See (7.7a) for details on these rings.
 
 
 Misc
 --
-Ale and wine        Will satisfy your hunger somewhat, and may have random side
+Ale
+Wine                Will satisfy your hunger somewhat, and may have random side
                     effects:
                     Confusion, stun, hallucinations, 1 point of sanity damage,
                     paralysis, fear, blindness (methyl? ew), vomitting if
@@ -13790,7 +14001,8 @@ Ale and wine        Will satisfy your hunger somewhat, and may have random side
                     superiour to normal ale or wine, and will mostly affect the
                     drinker positively, not ever causing negative side effects
                     besides possible confusion.
-Chests              Chests may contain treasures or items. Usually, chests
+
+Chest               Chests may contain treasures or items. Usually, chests
                     you find will have hidden traps on them. So what you do
                     is to hit 's' to search for traps while standing next to
                     the chest, or use any trap detection magic.
@@ -13809,18 +14021,22 @@ Chests              Chests may contain treasures or items. Usually, chests
                     Also see (6.3) for more information.
                     Since client 4.8.0, emptied chests can be used for storing
                     items to extend your inventory slightly, see (3.4).
+
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers. (Equip it!)
+
 Backpack safety lock
                     When equipped it has a very high chance to prevent thieves
                     from stealing items from your backpack or money from your
                     purse.
                     Also somewhat protects against traps that cause your items
                     to drop or that somehow try to steal your items (thirst).
-Empty bottles       You can /fill these at fountains to turn them into
+
+Empty bottle        You can /fill these at fountains to turn them into
                     potions. (See (0.2b) for more details.)
-Firestones          These can be eaten by Draconians and players in dragon
+
+Firestone           These can be eaten by Draconians and players in dragon
                     forms and have various random effects (small firestones
                     just have reduced duration):
                     - If the player isn't a Draconian but he is currently in
@@ -13858,14 +14074,22 @@ Flint               Prevents your light from going out by automatically
                     light goes out.
                     The flint will ignore all inventory items that carry '!F'
                     inscription or are ego- or artifact-class items.
+
 Fortune Cookie      Gives you a line of wisdom.
+
 Guild key           See (7.9).
-Dwarven lanterns    Make you resist fear. Don't need to be fueled.
-Feanorian lamps     Make you resist fear and see the invisible. Don't need to
+
+Dwarven lantern     Make you resist fear. Don't need to be fueled.
+
+Feanorian lamp      Make you resist fear and see the invisible. Don't need to
                     be fueled.
+
 Lembas (elvish waybread)
                     Satisifies hunger, cures poison, disease and hallucination.
-Mattock/Pick/Shovel Diggers, improving your digging capabilities.
+
+Shovel
+Pick
+Mattock             Digging tools, improving your digging capabilities.
                     (+to-hit, +to-dam) on digging tools as well as a high
                     weight help to further increase their effectiveness.
                     Main factor is the (+diggingpower) mod though. (Equip it!)
@@ -13881,16 +14105,25 @@ Mattock/Pick/Shovel Diggers, improving your digging capabilities.
                     the weapon slot and another one in the tool slot, the
                     better one of the two will be used automatically.
 
-Mushrooms of Hallucination
+Mushroom of Hallucination
                     Deals some chaos damage to your sanity which will cause
                     hallucinations. Also restores a little mana.
-Mushrooms of Paranoia/Cure Paranoia
-                    Cause/remove fear, cause/remove hallucinations.
+
+Mushroom of Paranoia
+                    Causes fear and hallucinations.
+
+Mushroom of Cure Paranoia
+                    Removes fear and hallucinations.
+
 Mushroom of Unmagic
                     Removes all magical effects from your body if eaten.
+
 Mushroom of Restoring
                     Restores your stats and your experience if drained.
-Mushrooms with bad effects are also often poisonous.
+
+Mushrooms with bad effects in general are also often poisonous when eaten.
+Also, try throwing bad mushrooms at enemies to apply bad status effects.
+
 Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     from seeing your equipment except for your melee and/or
                     ranged weapon. Also makes you look dark like being
@@ -13902,14 +14135,19 @@ Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     wear a mummy wrapping.
                     Hint: Polymorphing into a vampire bat may improve hit
                     point regeneration rate.
+
 Picklock            When equipped, improves your trap-disarming (and therefore
                     also your lockpicking) ability.
-Rubble ':' on the floor
+
+Rubble (':' on the floor)
                     You can create sling ammo from this. You cannot pick up
                     rubble, just stand next to it (see (7.12)).
-Skeletons/Bones/Skulls
-                    You can craft ammunition from these if your Archery skill
+
+Skeleton
+Bone
+Skull               You can craft ammunition from these if your Archery skill
                     is sufficient (see (7.12)).
+
 Snowball            Can be thrown at other people or target dummies.
                     Can also be used to cool potions of blood.
                     The more snowballs you carry, the slower they tend to melt.
@@ -13918,17 +14156,21 @@ Snowball            Can be thrown at other people or target dummies.
                     Other than that, basically everything about cooling that is
                     written further above about potions of blood does also
                     apply to snowballs.
+
 Spell scroll        Although called "scrolls" they actually persist and can be
                     used infinite times. They may however get destroyed by
                     certain damage effects (most notably fire and acid)
                     same as regular scrolls. Spell scrolls ignore water damage
                     though, which can harm regular scrolls.
+
 Spell crystal       They are like "spell scrolls", except they are used for
                     mindcrafter spells. A specialty of spell crystals is that
                     they ignore fire damage (and water damage, same as spell
                     scrolls), but are susceptible to electricity!
-Codex, Spellbook, Grimoire
-                    These are magic books that may contain magic spells of any
+
+Codex
+Spellbook
+Grimoire            These are magic books that may contain magic spells of any
                     type and school.
                     However, these books start out empty, devoid of any spells
                     and it's up to the player to add spells of his choice to
@@ -13949,14 +14191,17 @@ Codex, Spellbook, Grimoire
                     exact same spells in the exact same sequence in them.
                     (Note that you cannot use these books if your game client
                     version is below 4.4.2!)
+
 Sprig of Athelas    Eat this one to cure Black Breath (see (1.3a) for more
                     information about Black Breath),
                     also cures poison/disease/stun/cuts.
+
 Tarpaulin           When equipped a tarp prevents your inventory and equipment
                     from taking water damage when crossing water fields or when
                     you are attacked with water-based effects.
                     Note that your weapon is not included in this protection
                     when you for example attack a water-based monster with it.
+
 Grinding Tool       Used by demolitionists (see "Digging" skill in (7.2)) to
                     grind items containing wood or metal, which they don't have
                     any other use for, to wood chips or reactive metal powder.
@@ -13980,21 +14225,26 @@ there are also some base item types that provide an activation effect.
 
 Base and ego types that can be activated and aren't described elsewhere:
 
-Cloaks of immolation: Temporary fire resistance.
-Cloaks of frostweaving: Temporary frost resistance.
-Cloaks of Lordly Resistanc: Temporary base+poison resistance.
-Dragon Scale Mails: According breath attack.
-Weapons of the Thunderlords: Teleportation.
-Weapons of Spinning: Spin attack.
-Fury weapons: Fury, compare (4.11b).
-Noldor caps: Treasure detection.
-Spectral weapons: Wraithform (see (5.20)).
+Cloak of immolation:          Temporary fire resistance.
+Cloak of frostweaving:        Temporary frost resistance.
+Cloak of Lordly Resistance:   Temporary base+poison resistance.
+Dragon Scale Mail:            According breath attack.
+Weapon of the Thunderlords:   Teleportation.
+Weapon of Spinning:           Spin attack.
+Weapon of Fury:               Temporary fury, compare (4.11b).
+Cap of the Nolor:             Treasure detection.
+Spectral weapon:              Temporary wraithform (see (5.20)).
 
-Serpent amulets: Poison breath.
-Moon amulets: Sleep monsters.
-Rage amulets: Fury, compare (4.11b).
-Elemental rings: Breath the ring element and temporary resistance to it.
-Teleportation rings: Explode for teleportation.
+Amulet of the Serpents:       Poison breath.
+Amulet of the Moon:           Sleep monsters.
+Amulet of Rage:               Temporary fury, compare (4.11b).
+
+Ring of Flames:
+Ring of Ice:
+Ring of Acid:
+Ring of Lightning:            Breathe the ring's element and gain temporary
+                              resistance to it.
+Ring of Teleportation:        Explode and instantly teleport its wearer.
 
 
 (5.9b) Artifacts and artifact resets
