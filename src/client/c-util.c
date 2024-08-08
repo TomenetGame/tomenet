@@ -2272,7 +2272,7 @@ void copy_to_clipboard(char *buf, bool chat_input) {
 
 	extract_url(buf_esc, buf_prev, end_of_name);
 
-	r = system(format("echo -n $'%s' | xclip -sel clip", buf_esc));
+	r = system(format("echo -n '%s' | xclip -sel clip", buf_esc));
 	if (r) c_message_add("Copy failed, make sure xclip is installed.");
 	else strcpy(buf_prev, buf_esc);
 #endif
