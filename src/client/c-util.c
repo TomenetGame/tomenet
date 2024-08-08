@@ -2024,6 +2024,10 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
 static void extract_url(char *buf_esc, char *buf_prev, int end_of_name) {
 	char *c, *c2, *be = NULL;
 
+	/* Hack: Double-tapping 'copy_to_clipboard' tries to extract an URL.
+	   So ignore the first tap here. */
+	if (strcmp(buf_prev, buf_esc)) return;
+
 //c_msg_format("1: %s", buf_esc);
 //c_msg_format("2: %s", buf_prev);
 
@@ -2043,9 +2047,7 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 		if (be == buf_esc + strlen(buf_esc) - 1) be = NULL; //catch '/me' messages where the ']' is at the very end of the message
 		if (!be) be = buf_esc; else be++;
 	}
-
-	/* Hack: Double-tapping 'copy2clipboard' tries to extract an URL */
-	if (!be[0] || strcmp(buf_prev, buf_esc)) return;
+	if (!be[0]) return;
 
 	/* First try a simple method for easy to recognize ULRs */
 	if ((c = strstr(be, "http")) || (c2 = strstr(be, "www."))) {
