@@ -1908,10 +1908,10 @@ They all start with a slash '/' hence they're called slash commands:
             Example: /sme's supplies are running low!
 
 /shout <text>
-            Shout <text> loudly, will wake up monsters. (Same as "/yell".)
+/sho        Shout <text> loudly, will wake up monsters. (Same as "/yell".)
 
 /scream <text>
-            Same as /shout, but also aggravates monsters in your current
+/scr        Same as /shout, but also aggravates monsters in your current
             line of sight. (Same effect as scroll of aggravate monsters,
             see (5.9)).
 
