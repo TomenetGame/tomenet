@@ -9585,7 +9585,10 @@ return;
 	/* Don't allow cloaking while inside a store */
 	if (p_ptr->store_num != -1) return;
 
-	if (p_ptr->pclass != CLASS_ROGUE) return;
+	if (p_ptr->pclass != CLASS_ROGUE) {
+		msg_format(Ind, "\377yOnly rogues can use cloaking.");
+		return;
+	}
 
     if (!p_ptr->cloaked) {
 	if (p_ptr->lev < LEARN_CLOAKING_LEVEL) {
