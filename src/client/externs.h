@@ -601,6 +601,7 @@ extern bool verified_item;
 extern int hack_force_spell_level;
 
 /* c-util.c */
+extern bool my_fexists(const char *fname);
 extern void move_cursor(int row, int col);
 extern void flush(void);
 extern void flush_now(void);
@@ -1129,9 +1130,6 @@ extern int re_init_sound();
  #endif
 
 extern bool skip_received_music;
-
-//z-files.h:
-//extern bool my_fexists(const char *fname);
 #endif
 extern bool wind_noticable;
 extern int weather_particles_seen;

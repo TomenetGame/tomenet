@@ -99,7 +99,6 @@ SDL_mutex *load_sample_mutex, *load_song_mutex;
 /* declare */
 static void fadein_next_music(void);
 static void clear_channel(int c);
-static bool my_fexists(const char *fname);
 
 static int thread_load_audio(void *dummy);
 static Mix_Chunk* load_sample(int idx, int subidx);
@@ -3033,20 +3032,6 @@ void mixer_fadeall(void) {
 }
 
 //extra code I moved here for USE_SOUND_2010, for porting
-//this stuff from angband into here. it's part of angband's z-files.c..- C. Blue
-
-//z-files.c:
-static bool my_fexists(const char *fname) {
-	FILE *fd;
-
-	/* Try to open it */
-	fd = fopen(fname, "rb");
-	/* It worked */
-	if (fd != NULL) {
-		fclose(fd);
-		return(TRUE);
-	} else return(FALSE);
-}
 
 /* if audioCached is TRUE, load those audio files in a separate
    thread, to avoid startup delay of client - C. Blue */

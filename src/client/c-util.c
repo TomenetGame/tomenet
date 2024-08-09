@@ -11251,11 +11251,19 @@ void do_cmd_options(void) {
 #ifdef WINDOWS
 			char _latest_install[1024];
 
-			strcpy(_latest_install, "https://www.tomenet.eu/TomeNET-Guide.txt"); //argh, note that wget.exe doesn't support https protocol! need to use http
 			rename("TomeNET-Guide.txt", "TomeNET-Guide.txt.old");
+			/* Check if renaming failed -> we don't have write access! */
+			if (my_fexists("TomeNET-Guide.txt")) {
+				c_msg_print("\377oFailed to backup current Guide. Maybe file is write-protected.");
+				c_msg_print("\377o Although bad practice, you could try running TomeNET as administrator.");
+				continue;
+			}
+
+			strcpy(_latest_install, "https://www.tomenet.eu/TomeNET-Guide.txt"); //argh, note that wget.exe doesn't support https protocol! need to use http
 			res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", _latest_install, NULL);
 			if (res != 0) {
 				c_msg_print("\377oFailed to download the Guide.");
+				c_msg_print("\377o Although bad practice, you could try running TomeNET as administrator.");
 				/* Reinstantiate our version */
 				rename("TomeNET-Guide.txt.old", "TomeNET-Guide.txt");
 			} else {
@@ -11268,6 +11276,12 @@ void do_cmd_options(void) {
 			char out_val[3];
 
 			rename("TomeNET-Guide.txt", "TomeNET-Guide.txt.old");
+			/* Check if renaming failed -> we don't have write access! */
+			if (my_fexists("TomeNET-Guide.txt")) {
+				c_msg_print("\377oFailed to backup current Guide. Maybe file is write-protected.");
+				continue;
+			}
+
 			(void)system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
 
 			fp = fopen("TomeNET-Guide.txt", "r");
@@ -13351,4 +13365,16 @@ int check_guard_inscription_str(cptr ax, char what) {
 		}
 	}
 	return(FALSE);
+}
+
+bool my_fexists(const char *fname) {
+	FILE *fd;
+
+	/* Try to open it */
+	fd = fopen(fname, "rb");
+	/* It worked */
+	if (fd != NULL) {
+		fclose(fd);
+		return(TRUE);
+	} else return(FALSE);
 }
