@@ -11252,10 +11252,13 @@ void do_cmd_options(void) {
 			char _latest_install[1024];
 
 			strcpy(_latest_install, "https://www.tomenet.eu/TomeNET-Guide.txt"); //argh, note that wget.exe doesn't support https protocol! need to use http
-			remove("TomeNET-Guide.txt");
+			rename("TomeNET-Guide.txt", "TomeNET-Guide.txt.old");
 			res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", _latest_install, NULL);
-			if (res != 0) c_msg_print("\377oFailed to download the Guide.");
-			else {
+			if (res != 0) {
+				c_msg_print("\377oFailed to download the Guide.");
+				/* Reinstantiate our version */
+				rename("TomeNET-Guide.txt.old", "TomeNET-Guide.txt");
+			} else {
 				c_msg_print("\377gSuccessfully updated the Guide.");
 				init_guide();
 				//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
@@ -11264,7 +11267,7 @@ void do_cmd_options(void) {
 			FILE *fp;
 			char out_val[3];
 
-			remove("TomeNET-Guide.txt");
+			rename("TomeNET-Guide.txt", "TomeNET-Guide.txt.old");
 			(void)system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
 
 			fp = fopen("TomeNET-Guide.txt", "r");
@@ -11277,13 +11280,20 @@ void do_cmd_options(void) {
 				}
 				fclose(fp);
 				res = (out_val[0] < 32);
-				if (res != 0) c_msg_print("\377oFailed to update the Guide.");
-				else {
+				if (res != 0) {
+					c_msg_print("\377oFailed to update the Guide.");
+					/* Reinstantiate our version */
+					rename("TomeNET-Guide.txt.old", "TomeNET-Guide.txt");
+				} else {
 					c_msg_print("\377gSuccessfully updated the Guide.");
 					init_guide();
 					//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 				}
-			} else c_msg_print("\377oFailed to download the Guide.");
+			} else {
+				c_msg_print("\377oFailed to download the Guide.");
+				/* Reinstantiate our version */
+				rename("TomeNET-Guide.txt.old", "TomeNET-Guide.txt");
+			}
 #endif
 		}
 
