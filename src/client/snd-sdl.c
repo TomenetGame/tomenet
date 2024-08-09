@@ -3038,6 +3038,7 @@ void mixer_fadeall(void) {
 //z-files.c:
 static bool my_fexists(const char *fname) {
 	FILE *fd;
+
 	/* Try to open it */
 	fd = fopen(fname, "rb");
 	/* It worked */
