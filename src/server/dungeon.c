@@ -1820,14 +1820,14 @@ static void regen_monsters(void) {
 			/* Hack -- Minimal regeneration rate */
 			if (!frac) frac = 1;
 
+#ifdef HYDRA_REGENERATION
+			if (r_ptr->d_char == 'M' || (r_ptr->flags2 & RF2_REGENERATE_TH)) frac *= 4;
+			else
+#endif
 #ifdef TROLL_REGENERATION
 			/* Experimental - Trolls are super-regenerators (hard-coded) */
 			if (m_ptr->r_idx == RI_HALF_TROLL || (r_ptr->flags2 & RF2_REGENERATE_T2)) frac *= 3;
 			else if (r_ptr->d_char == 'T' || (r_ptr->flags2 & RF2_REGENERATE_TH)) frac *= 4;
-			else
-#endif
-#ifdef HYDRA_REGENERATION
-			if (r_ptr->d_char == 'M' || (r_ptr->flags2 & RF2_REGENERATE_TH)) frac *= 4;
 			else
 #endif
 			/* Hack -- Some monsters regenerate quickly */
@@ -5488,6 +5488,13 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Regeneration ability - in pvp, damage taken is greatly reduced, so regen must not nullify the remaining damage easily */
+#ifdef HYDRA_REGENERATION
+	/* Experimental - Hydras are super-regenerators aka regrowing heads */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') {
+		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
+		intrinsic_regen = TRUE;
+	} else
+#endif
 #ifdef TROLL_REGENERATION
 	/* Experimental - Trolls are super-regenerators (hard-coded) */
 	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) {
@@ -5495,13 +5502,6 @@ static bool process_player_end_aux(int Ind) {
 		intrinsic_regen = TRUE;
 	} else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) {
 		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 3;
-		intrinsic_regen = TRUE;
-	} else
-#endif
-#ifdef HYDRA_REGENERATION
-	/* Experimental - Hydras are super-regenerators aka regrowing heads */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') {
-		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
 		intrinsic_regen = TRUE;
 	} else
 #endif

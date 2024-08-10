@@ -7193,15 +7193,15 @@ else s_printf("\n");
 		/* not restricting for now */
 	}
 
+#ifdef HYDRA_REGENERATION
+	/* Experimental - Hydras are super-regenerators aka regrowing heads */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') r_ptr->flags2 |= RF2_REGENERATE_TH;
+	else
+#endif
 #ifdef TROLL_REGENERATION
 	/* Experimental - Trolls are super-regenerators (hard-coded) */
 	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) r_ptr->flags2 |= RF2_REGENERATE_T2;
 	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) r_ptr->flags2 |= RF2_REGENERATE_TH;
-	else
-#endif
-#ifdef HYDRA_REGENERATION
-	/* Experimental - Hydras are super-regenerators aka regrowing heads */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') r_ptr->flags2 |= RF2_REGENERATE_TH;
 	else
 #endif
 	;
