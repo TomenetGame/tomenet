@@ -13529,7 +13529,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				msg_format(Ind, "Rate of player '%s' is %d.", Players[j]->name, food_consumption(j));
+				msg_format(Ind, "Rate of player '%s' is %d (old system: %d).", Players[j]->name, food_consumption(j), food_consumption_legacy(j));
 				return;
 			}
 		}

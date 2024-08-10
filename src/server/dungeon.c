@@ -4800,6 +4800,64 @@ int has_ball (player_type *p_ptr) {
 	return(i);
 }
 
+int food_consumption_legacy(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i, j;
+
+	i = (10 + (extract_energy[p_ptr->pspeed] / 10) * 3) / 2;
+
+	/* Adrenaline takes more food */
+	if (p_ptr->adrenaline) i *= 5;
+
+	/* Biofeedback takes more food */
+	if (p_ptr->biofeedback) i *= 2;
+
+	/* Regeneration and extra-growth takes more food */
+	if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
+
+	/* Regeneration (but not Nether Sap) takes more food */
+	if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow / 10;
+
+	j = 0;
+
+	/* Mimics need more food if sustaining heavy forms */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].weight > 180)
+		j = 15 - 7500 / (r_info[p_ptr->body_monster].weight + 320);//180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15
+
+	/* Draconian and Half-Troll take more food */
+	if (p_ptr->prace == RACE_DRACONIAN
+	    || p_ptr->prace == RACE_HALF_TROLL) j = 15;
+
+	/* Use either mimic form induced food consumption increase,
+	   or intrinsic one, depending on which is higher. */
+	i += j;
+
+	/* Vampires consume food very quickly,
+	   but old vampires don't need food frequently */
+	if (p_ptr->prace == RACE_VAMPIRE) {
+		if (p_ptr->lev >= 40) i += 60 / (p_ptr->lev - 37);
+		else i += 20;
+	}
+
+	/* Invisibility consume a lot of food */
+	i += p_ptr->invis / 2;
+
+	/* Invulnerability consume a lot of food */
+	if (p_ptr->invuln) i += 40;
+
+	/* Wraith Form consume a lot of food */
+	if (p_ptr->tim_wraith) i += 30;
+
+	/* Hitpoints multiplier consume a lot of food */
+	if (p_ptr->to_l) i += p_ptr->to_l * 5;
+
+	/* Slow digestion takes less food */
+	//if (p_ptr->slow_digest) i -= 10;
+	if (p_ptr->slow_digest) i -= (i > 40) ? i / 4 : 10;
+
+	return(i);
+}
+
 int food_consumption(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
@@ -4846,7 +4904,28 @@ int food_consumption(int Ind) {
 	/* Biofeedback takes more food */
 	if (p_ptr->biofeedback) i += 30;
 
+#ifdef ENABLE_DRACONIAN_TRAITS
+	/* Draconians' breath/element effects take extra food */
+	if (p_ptr->prace == RACE_DRACONIAN) i += 5;
+#endif
+
 	/* Regeneration and extra-growth takes more food */
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+ #ifdef HYDRA_REGENERATION
+	/* Experimental - Hydras are super-regenerators aka regrowing heads */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M')
+		i += 25;
+	else
+ #endif
+ #ifdef TROLL_REGENERATION
+	/* Experimental - Trolls are super-regenerators (hard-coded) */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL)
+		i += 25;
+	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL)
+		i += 20;
+	else
+ #endif
+#endif
 	if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 15;
 
 	/* Non-magical regeneration takes more food: Fast metabolism! */
@@ -4855,25 +4934,29 @@ int food_consumption(int Ind) {
 	    p_ptr->tim_regen_cost) /* non-magical only */
 		i += 40;
 
-	/* Invisibility consume a lot of food (+0..20, +40 for potion of invis) */
-	i += p_ptr->invis / 2;
-
-	/* Invulnerability consume a lot of food */
-	if (p_ptr->invuln) i += 40;
-
 	/* Hitpoints multiplier consume a lot of food (+0..15) */
 	if (p_ptr->to_l) i += p_ptr->to_l * 5;
 
+	/* Invisibility consume a lot of food (+0..20, +40 for potion of invis) */
+	i += p_ptr->invis / 2;
+
 	/* Wraith Form consumes a lot of food */
 	if (p_ptr->tim_wraith) i += 30;
+
+	/* Invulnerability consume a lot of food */
+	if (p_ptr->invuln) i += 40;
 
 
 	/* ---------- Time scaling based on speed ---------- */
 
 	/* Modify digestion rate based on speed */
-	if (p_ptr->pspeed >= 100) i = (i * (15 + extract_energy[p_ptr->pspeed] / 10)) / 25; // 'fast': 1 (normal) .. x2.5~3 (end-game fast) .. x3.8 (fastest)
+#if 1 /* was too far away from previous rate? */
+	if (p_ptr->pspeed >= 110) i = (i * (15 + extract_energy[p_ptr->pspeed] / 10)) / 25; // 'fast': 1 (normal) .. x2.5~3 (end-game fast) .. x3.8 (fastest)
 	else i = (i * (3 + extract_energy[p_ptr->pspeed] / 10)) / 13; // 'slow': 1/3 (slowest) .. 1 (normal)
-
+#else //WIP
+	if (p_ptr->pspeed >= 110) i = (i * (10 + ((extract_energy[p_ptr->pspeed] * 3) / 10))) / 40; // 'fast': 1 (normal) .. x4.6 (end-game fast) .. x6.25 (fastest)
+	else i = (i * (3 + extract_energy[p_ptr->pspeed] / 10)) / 13; // 'slow': 1/3 (slowest) .. 1 (normal)
+#endif
 
 	/* ---------- Reductions ---------- */
 
