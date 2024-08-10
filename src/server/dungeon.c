@@ -5245,23 +5245,18 @@ static bool process_player_end_aux(int Ind) {
 		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
 			if (!(turn % ((level_speed(&p_ptr->wpos) / 120) * 10))) {
-				/* Basic digestion rate based on speed */
-				//i = (extract_energy[p_ptr->pspeed] / 10) * 2;	// 1.3 (let them starve)
-				i = (10 + (extract_energy[p_ptr->pspeed] / 10) * 3) / 2; // = 6 (slowest) .. 20 (normal) .. 92 (end-game fast) .. 125 (fastest)
+				/* Basic digestion, assuming normal speed (+0) */
+				i = 20;
 
-
-				/* ---------- Baseline multiplicatives ---------- */
+				/* ---------- Additives ---------- */
 
 				/* Note: adrenaline and biofeedback are mutually exclusive, gaining one will terminate the other. */
 
 				/* Adrenaline takes more food */
-				if (p_ptr->adrenaline) i *= 5; // might need balancing at very high character speed - C. Blue
+				if (p_ptr->adrenaline) i += 80; // might need balancing at very high character speed - C. Blue
 
 				/* Biofeedback takes more food */
-				if (p_ptr->biofeedback) i *= 2;
-
-
-				/* ---------- Additives ---------- */
+				if (p_ptr->biofeedback) i += 30;
 
 				/* Regeneration and extra-growth takes more food */
 				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
@@ -5285,14 +5280,14 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->tim_wraith) i += 30;
 
 
-				/* ---------- Maximum() additives ---------- */
+				/* ---------- Exclusive additives ---------- */
 
 				/* Form vs race-intrinsic malus, stronger one overrides */
 				j = k = 0;
 
 				/* Mimics need more food if sustaining heavy forms */
 				if (p_ptr->body_monster && r_info[p_ptr->body_monster].weight > 180)
-					j = 15 - 7500 / (r_info[p_ptr->body_monster].weight + 320); //180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15
+					j = 3 * (15 - 7500 / (r_info[p_ptr->body_monster].weight + 320)); //180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15  -> *3 !
 
 				/* Draconian and Half-Troll take more food:
 				   Use either mimic form induced food consumption increase,
@@ -5310,6 +5305,13 @@ static bool process_player_end_aux(int Ind) {
 				else i += k;
 
 
+				/* ---------- Time scaling based on speed ---------- */
+
+				/* Modify digestion rate based on speed */
+				if (p_ptr->pspeed >= 100) i = (i * (15 + extract_energy[p_ptr->pspeed] / 10)) / 25; // 'fast': 1 (normal) .. x2.5~3 (end-game fast) .. x3.8 (fastest)
+				else i = (i * (3 + extract_energy[p_ptr->pspeed] / 10)) / 13; // 'slow': 1/3 (slowest) .. 1 (normal)
+
+
 				/* ---------- Limits/reductions ---------- */
 
 				/* Cut vampires some slack for Nether Realm:
@@ -5317,7 +5319,6 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->prace == RACE_VAMPIRE && p_ptr->total_winner) i = 1;
 
 				/* Slow digestion takes less food */
-				//if (p_ptr->slow_digest) i -= 10;
 				else if (p_ptr->slow_digest) i -= (i > 40) ? i / 4 : 10;
 
 				/* Never negative */
