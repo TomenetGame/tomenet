@@ -4855,7 +4855,7 @@ int food_consumption(int Ind) {
 	    p_ptr->tim_regen_cost) /* non-magical only */
 		i += 40;
 
-	/* Invisibility consume a lot of food (+0..20) */
+	/* Invisibility consume a lot of food (+0..20, +40 for potion of invis) */
 	i += p_ptr->invis / 2;
 
 	/* Invulnerability consume a lot of food */
