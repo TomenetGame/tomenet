@@ -1452,8 +1452,8 @@ player_race race_info[MAX_RACE] = {
 		2,  5,  3,  1, 6,  11, -1,  5,
 		10,  110,
 		24, 16,
-		71,  6, 160, 15,
-		62,  6, 125, 10,
+		71,  6, 160, 20,
+		62,  6, 125, 15,
 		2,
 		CF_ALL,
 		110,
@@ -1491,8 +1491,8 @@ player_race race_info[MAX_RACE] = {
 		5,  9,  6,  2, 8,  12, -5, 15,
 		9,  120,
 		75, 75,
-		71,  4, 145,  6,
-		58,  4, 100,  6,
+		71,  4, 145,  15,
+		58,  4, 100,  10,
 		3,
 		CF_ALL,
 		120,
@@ -1645,8 +1645,8 @@ player_race race_info[MAX_RACE] = {
 		-3, -3, -3,  -1,  0, 7, 12, -5,
 		11,  115, // lowered from 110 to 100
 		11,  4,
-		75,  1, 185,  5,
-		69,  1, 155,  5,
+		75,  1, 185,  10,
+		69,  1, 155,  6,
 		3,
 		CF_ALL,
 		50,
@@ -1765,8 +1765,8 @@ player_race race_info[MAX_RACE] = {
 		4,  20, 20,  3,  3, 14, 10, 25,
 		10,  200,//230
 		100, 30,
-		75, 10, 160, 20,
-		67, 10, 120, 15,
+		75, 10, 160, 15,
+		67, 10, 120, 10,
 		4,
 		CF_ALL,
 		125,
@@ -1895,8 +1895,8 @@ player_race race_info[MAX_RACE] = {
 		-4, 0, 20, -6, 5, 4, 5, -20,
 		14, 280,//320
 		255, 70,
-		240,  6, 255, 25, //dnd Treant: 30ft, 4500 lbs, luls. But can also be 15-25 ft. Wgt still silyl, even 5-digits.
-		180,  4, 255, 20, //...also: byte limits -_-
+		240,  6, 255, 30, //dnd Treant: 30ft, 4500 lbs, luls. But can also be 15-25 ft. Wgt still silyl, even 5-digits.
+		180,  4, 255, 25, //...also: byte limits -_-
 		0,
 		//No archer, rogue
 		CF_ALL & ~CFR & ~CFA,
@@ -2016,8 +2016,8 @@ player_race race_info[MAX_RACE] = {
 		10,  5,  0,  4, 15,  15, -5, 10,
 		8,  115,
 		11,  4,
-		35,  1, 45,  5,
-		25,  1, 35,  5,
+		35,  1, 45,  3,
+		25,  1, 35,  2,
 		5,
 		CF_ALL,
 		120,
@@ -2048,8 +2048,8 @@ player_race race_info[MAX_RACE] = {
 		7,  3, 6,  4, 10, 6, 15, 15,
 		10,  140,//150
 		100, 30,
-		64, 10, 140, 20,
-		54, 10, 100, 15,
+		64, 10, 140, 15,
+		54, 10, 100, 10,
 		8,
 		// no Paladins
 		CF_ALL & ~CFL,
