@@ -5209,27 +5209,27 @@ static bool process_player_end_aux(int Ind) {
 	/* Ent's natural food while in 'Resting Mode' - C. Blue
 	   Water helps much, natural floor helps some. */
 	if (!p_ptr->ghost && p_ptr->prace == RACE_ENT && p_ptr->resting) {
-		if (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_MUD) {
+		if (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_MUD)
 			autofood = 200; //Delicious!
-		} else if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_DIRT) {
+		else if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_DIRT)
 			autofood = 100;
-		} else if (c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE) {
+		else if (c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE)
 			autofood = 70;
-		} else {
+		else
 			autofood = 0;
-		}
+
 		if (autofood > 0 && set_food(Ind, p_ptr->food + autofood)) {
 			msg_print(Ind, "You gain some nourishment from around you.");
 #if 0 /* spammy in town */
 			switch (autofood) {
-				case 70:
-					msg_format_near(Ind, "\374\377wYou hear strange sounds coming from the direction of %s.", p_ptr->name);
-					break;
-				case 100:
-					msg_format_near(Ind, "\374\377w%s digs %s roots deep into the ground.", p_ptr->name, (p_ptr->male ? "his" : "her"));
-					break;
-				case 200:
-					msg_format_near(Ind, "\374\377w%s absorbs all the water around %s.", p_ptr->name, (p_ptr->male ? "him" : "her"));
+			case 70:
+				msg_format_near(Ind, "\374\377wYou hear strange sounds coming from the direction of %s.", p_ptr->name);
+				break;
+			case 100:
+				msg_format_near(Ind, "\374\377w%s digs %s roots deep into the ground.", p_ptr->name, (p_ptr->male ? "his" : "her"));
+				break;
+			case 200:
+				msg_format_near(Ind, "\374\377w%s absorbs all the water around %s.", p_ptr->name, (p_ptr->male ? "him" : "her"));
 			}
 #endif
 		}
@@ -5239,74 +5239,90 @@ static bool process_player_end_aux(int Ind) {
 	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    p_ptr->paralyzed != 255 && /* Hack for forced stasis - also prevents damage from starving badly */
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
-	    //(!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
 	    (!(istownarea(&p_ptr->wpos, MAX_TOWNAREA) || isdungeontown(&p_ptr->wpos) || safe_area(Ind)) //not in AMC either @ safe_area()
-	    || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest even some in town etc to not get gorged in upcoming fights quickly - C. Blue */
-	{
+	    || p_ptr->food >= PY_FOOD_FULL)) { /* allow to digest even some in town etc to not get gorged in upcoming fights quickly - C. Blue */
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
-			//if (!(turn % ((level_speed((&p_ptr->wpos)) * 10) / 12)))
-			if (!(turn % ((level_speed((&p_ptr->wpos)) / 120) * 10))) {
+			if (!(turn % ((level_speed(&p_ptr->wpos) / 120) * 10))) {
 				/* Basic digestion rate based on speed */
 				//i = (extract_energy[p_ptr->pspeed] / 10) * 2;	// 1.3 (let them starve)
-				i = (10 + (extract_energy[p_ptr->pspeed] / 10) * 3) / 2;
+				i = (10 + (extract_energy[p_ptr->pspeed] / 10) * 3) / 2; // = 6 (slowest) .. 20 (normal) .. 92 (end-game fast) .. 125 (fastest)
+
+
+				/* ---------- Baseline multiplicatives ---------- */
+
+				/* Note: adrenaline and biofeedback are mutually exclusive, gaining one will terminate the other. */
 
 				/* Adrenaline takes more food */
-				if (p_ptr->adrenaline) i *= 5;
+				if (p_ptr->adrenaline) i *= 5; // might need balancing at very high character speed - C. Blue
 
 				/* Biofeedback takes more food */
 				if (p_ptr->biofeedback) i *= 2;
 
+
+				/* ---------- Additives ---------- */
+
 				/* Regeneration and extra-growth takes more food */
 				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
 
-				/* Regeneration (but not Nether Sap) takes more food */
-				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow / 10;
+				/* Non-magical regeneration takes more food: Fast metabolism! */
+				if (p_ptr->tim_regen &&
+				    p_ptr->tim_regen_pow > 0 && /* (and definitely not Nether Sap, anyway) */
+				    p_ptr->tim_regen_cost) /* non-magical only */
+					i += 50;
 
-				j = 0;
-
-				/* Mimics need more food if sustaining heavy forms */
-				if (p_ptr->body_monster && r_info[p_ptr->body_monster].weight > 180)
-					j = 15 - 7500 / (r_info[p_ptr->body_monster].weight + 320);//180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15
-
-				/* Draconian and Half-Troll take more food */
-				if (p_ptr->prace == RACE_DRACONIAN
-				    || p_ptr->prace == RACE_HALF_TROLL) j = 15;
-
-				/* Use either mimic form induced food consumption increase,
-				   or intrinsic one, depending on which is higher. */
-				i += j;
-
-				/* Vampires consume food very quickly,
-				   but old vampires don't need food frequently */
-				if (p_ptr->prace == RACE_VAMPIRE) {
-					if (p_ptr->lev >= 40) i += 60 / (p_ptr->lev - 37);
-					else i += 20;
-				}
-
-				/* Invisibility consume a lot of food */
+				/* Invisibility consume a lot of food (+0..20) */
 				i += p_ptr->invis / 2;
 
 				/* Invulnerability consume a lot of food */
 				if (p_ptr->invuln) i += 40;
 
-				/* Wraith Form consume a lot of food */
-				if (p_ptr->tim_wraith) i += 30;
-
-				/* Hitpoints multiplier consume a lot of food */
+				/* Hitpoints multiplier consume a lot of food (+0..15) */
 				if (p_ptr->to_l) i += p_ptr->to_l * 5;
 
-				/* Slow digestion takes less food */
-				//if (p_ptr->slow_digest) i -= 10;
-				if (p_ptr->slow_digest) i -= (i > 40) ? i / 4 : 10;
+				/* Wraith Form consumes a lot of food */
+				if (p_ptr->tim_wraith) i += 30;
 
-				/* Never negative */
-				if (i < 1) i = 1;
+
+				/* ---------- Maximum() additives ---------- */
+
+				/* Form vs race-intrinsic malus, stronger one overrides */
+				j = k = 0;
+
+				/* Mimics need more food if sustaining heavy forms */
+				if (p_ptr->body_monster && r_info[p_ptr->body_monster].weight > 180)
+					j = 15 - 7500 / (r_info[p_ptr->body_monster].weight + 320); //180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15
+
+				/* Draconian and Half-Troll take more food:
+				   Use either mimic form induced food consumption increase,
+				   or this intrinsic one, depending on which is higher. */
+				if ((p_ptr->prace == RACE_DRACONIAN || p_ptr->prace == RACE_HALF_TROLL) && j < 15) j = 15;
+
+				/* Vampires consume food very quickly,
+				   but old vampires don't need food frequently (4...20) */
+				if (p_ptr->prace == RACE_VAMPIRE) {
+					if (p_ptr->lev >= 40) k = 60 / (p_ptr->lev - 37);
+					else k = 20;
+				}
+
+				if (j > k) i += j;
+				else i += k;
+
+
+				/* ---------- Limits/reductions ---------- */
 
 				/* Cut vampires some slack for Nether Realm:
 				   Ancient vampire lords almost don't need any food at all */
 				if (p_ptr->prace == RACE_VAMPIRE && p_ptr->total_winner) i = 1;
+
+				/* Slow digestion takes less food */
+				//if (p_ptr->slow_digest) i -= 10;
+				else if (p_ptr->slow_digest) i -= (i > 40) ? i / 4 : 10;
+
+				/* Never negative */
+				if (i < 1) i = 1;
+
 
 				/* Digest some food */
 				(void)set_food(Ind, p_ptr->food - i);
@@ -5836,7 +5852,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Timed regen */
 	if (p_ptr->tim_regen) {
-		if (p_ptr->tim_regen_pow > 0) (void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow); /* Regeneration */
+		if (p_ptr->tim_regen_pow > 0) (void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow, p_ptr->tim_regen_cost); /* Regeneration */
 		else if (p_ptr->tim_regen_pow < 0) (void)set_tim_mp2hp(Ind, p_ptr->tim_regen - 1, -p_ptr->tim_regen_pow, p_ptr->tim_regen_cost); /* Nether Sap */
 	}
 

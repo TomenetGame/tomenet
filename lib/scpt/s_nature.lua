@@ -184,7 +184,7 @@ REGENERATION = add_spell {
 	["mana_max"] = 	40,
 	["fail"] = 	0,
 	["spell"] = 	function()
-			set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 10 + get_level(Ind, REGENERATION, 200))
+			set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 10 + get_level(Ind, REGENERATION, 200), 0)
 	end,
 	["info"] = 	function()
 			local p = 10 + get_level(Ind, REGENERATION, 200)

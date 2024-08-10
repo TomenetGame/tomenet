@@ -275,8 +275,9 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
  * Set "p_ptr->tim_regen", notice observable changes.
  * 2022 - C. Blue: Changed to provide a flat +HP heal add per tick, which is (fine-grainedly via rand_int())
  * 1/10 of the 'p' value specified, ie p=10 -> +1 HP per tick healed, p=1 -> 10% chance to heal +1 HP per tick.
+ * c: 'cost' is rather used as 'food consumption malus' here, for mushroom-induced regen vs spell-induced regen.
  */
-bool set_tim_regen(int Ind, int v, int p) {
+bool set_tim_regen(int Ind, int v, int p, int c) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -305,6 +306,7 @@ bool set_tim_regen(int Ind, int v, int p) {
 	/* Use the value */
 	p_ptr->tim_regen = v;
 	p_ptr->tim_regen_pow = p;
+	p_ptr->tim_regen_cost = c;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

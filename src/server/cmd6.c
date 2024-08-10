@@ -298,7 +298,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_REGEN:
-		if (set_tim_regen(Ind, 20 + rand_int(10), 10 + (p_ptr->max_lev < 20 ? p_ptr->max_lev / 2 : 10))) ident = TRUE;
+		if (set_tim_regen(Ind, 20 + rand_int(10), 10 + (p_ptr->max_lev < 20 ? p_ptr->max_lev / 2 : 10), 1)) ident = TRUE;
 		break;
 
 	case SV_FOOD_FORTUNE_COOKIE:
@@ -8010,7 +8010,7 @@ bool unmagic(int Ind) {
 		set_tim_reflect(Ind, 0) +
 		set_tim_ffall(Ind, 0) +
 		set_tim_lev(Ind, 0) +
-		set_tim_regen(Ind, 0, 0) +
+		set_tim_regen(Ind, 0, 0, 0) +
 		set_tim_mp2hp(Ind, 0, 0, 0) +
 		set_tim_thunder(Ind, 0, 0, 0) +
 		set_res_fear(Ind, 0) +
