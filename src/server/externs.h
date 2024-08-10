@@ -896,6 +896,7 @@ extern bool stale_level(struct worldpos *wpos, int grace);
 extern int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr);
 extern int get_recall_depth(struct worldpos *wpos, player_type *p_ptr);
 extern void erase_effects(int effect);
+extern int food_consumption(int Ind);
 
 #ifdef CLIENT_SIDE_WEATHER
  #ifndef CLIENT_WEATHER_GLOBAL

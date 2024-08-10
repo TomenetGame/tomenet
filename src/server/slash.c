@@ -13516,6 +13516,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "...done!");
 				return;
 			}
+			/* Check player's food consumption rate */
+			else if (prefix(messagelc, "/food")) {
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /food <character name>");
+					return;
+				}
+
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (!j) {
+					msg_print(Ind, "\377yCharacter not online.");
+					return;
+				}
+
+				msg_format(Ind, "Rate of player '%s' is %d.", Players[j]->name, food_consumption(j));
+				return;
+			}
 		}
 	}
 
