@@ -5249,6 +5249,7 @@ static bool process_player_end_aux(int Ind) {
 				i = 20;
 
 				/* ---------- Weight vs form weight scaling of the base value ---------- */
+				/* Could consider making this multiplicative same as speed-scaling, but might be too harsh in regards to player race choice. */
 
 				/* Form vs race-intrinsic malus, stronger one overrides */
 
