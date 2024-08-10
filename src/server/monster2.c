@@ -5824,7 +5824,7 @@ void monster_drop_carried_objects(int m_idx, monster_type *m_ptr) {
 		res = drop_near(TRUE, 0, q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 		/* the_sandman - Perhaps we can filter out the nothings here? */
 		//if (!strcmp(o_name, "(nothing)")) {
-		s_printf("MDCO: %s (%d) %s\n", m_name, res, o_name);
+		s_printf("MDCO: %s (%d, (%d,%d,%d)) %s\n", m_name, res, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, o_name);
 	}
 
 	/* Forget objects */
