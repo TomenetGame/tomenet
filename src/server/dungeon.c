@@ -8124,7 +8124,7 @@ static void process_world(void) {
 			cfg.runlevel = 2049;
 		}
 	/* /shutxxlow */
-	} else if (cfg.runlevel == 2052) {
+	} else if (cfg.runlevel == 2053) {
 		for (i = NumPlayers; i > 0 ;i--) {
 			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
@@ -10676,10 +10676,10 @@ void set_runlevel(int val) {
 		case 2047:
 		case 2048:
 		case 2051:
-		case 2052:
+		case 2053:
 			/* Shutdown as soon as server is empty (admins don't count) */
 			break;
-		case 2049:
+		case 2049: //neither is 2052
 			/* Usually not called here - just a temporary hack value (see dungeon.c) */
 			shutdown_server();
 			break;
