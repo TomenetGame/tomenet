@@ -4880,8 +4880,8 @@ int food_consumption(int Ind) {
 	   Special exception for Ents, who consume just a moderate baseline amount, allowing them a 'feeding rate' similar to humans.
 	   We use the male baseline value from tables.c to not force players to create&reroll female chars to minimize food consumption -_-. - C. Blue */
 	else if (!p_ptr->body_monster && p_ptr->prace != RACE_ENT) {
-		if (p_ptr->rp_ptr->m_b_wt > 180) i += (p_ptr->rp_ptr->m_b_wt - 180) / 5; //255 (Draconian) or 250 (Half-Troll) +15
-		else if (p_ptr->rp_ptr->m_b_wt < 180) i -= (180 - p_ptr->rp_ptr->m_b_wt) / 10;// 145 (Elf) -2, 130 (Yeek) -3, 90 (Gnome) -6, 60 (Hobbit) -8, 45 (Kobold) -9!
+		if (p_ptr->rp_ptr->m_b_wt > 180) i += (p_ptr->rp_ptr->m_b_wt - 180) / 10; //255 (Draconian) or 250 (Half-Troll) +7, (note: both get extra penalized later: for breath/regen)
+		else if (p_ptr->rp_ptr->m_b_wt < 180) i -= (180 - p_ptr->rp_ptr->m_b_wt) / 15;// 145 (Elf) -2, 130 (Yeek) -3, 90 (Gnome) -6, 60 (Hobbit) -8, 45 (Kobold) -9!
 	}
 
 
@@ -4906,10 +4906,13 @@ int food_consumption(int Ind) {
 
 #ifdef ENABLE_DRACONIAN_TRAITS
 	/* Draconians' breath/element effects take extra food */
-	if (p_ptr->prace == RACE_DRACONIAN) i += 5;
+	if (p_ptr->prace == RACE_DRACONIAN) {
+		if (p_ptr->ptrait == TRAIT_RED) i += 5; /* Don't double-penalise this lineage for their intrinsic 'regenerate', which gets +15 further down. */
+		else i += 10;
+	}
 #endif
 
-	/* Regeneration and extra-growth takes more food */
+	/* Regeneration and extra-growth takes more food. (Intrinsic) super-regen takes a large amount of food. */
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
  #ifdef HYDRA_REGENERATION
 	/* Experimental - Hydras are super-regenerators aka regrowing heads */
@@ -4928,13 +4931,13 @@ int food_consumption(int Ind) {
 #endif
 	if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 15;
 
-	/* Non-magical regeneration takes more food: Fast metabolism! */
+	/* Non-magical regeneration burns enormously more food temporarily: Fast metabolism! */
 	if (p_ptr->tim_regen &&
 	    p_ptr->tim_regen_pow > 0 && /* (and definitely not Nether Sap, anyway) */
 	    p_ptr->tim_regen_cost) /* non-magical only */
-		i += 40;
+		i += 30;
 
-	/* Hitpoints multiplier consume a lot of food (+0..15) */
+	/* Hitpoints multiplier consume significantly much food (+0..15) */
 	if (p_ptr->to_l) i += p_ptr->to_l * 5;
 
 	/* Invisibility consume a lot of food (+0..20, +40 for potion of invis) */
@@ -4960,8 +4963,8 @@ int food_consumption(int Ind) {
 
 	/* ---------- Reductions ---------- */
 
-	/* Slow digestion takes less food */
-	if (p_ptr->slow_digest) i -= (i > 40) ? i / 4 : 10;
+	/* Slow digestion takes 1/4 less food (required nutrition gets rounded up) */
+	if (p_ptr->slow_digest) i = (i * 3 + 3) / 4;
 
 	return(i);
 }
@@ -5418,7 +5421,7 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->prace == RACE_VAMPIRE && p_ptr->total_winner) i = 1;
 
 				/* Never negative or zero. We always consume some nutrition. */
-				else if (i < 1) i = 1;
+				else if (i < 1) i = 1; //actually should never happen, with the new method (food_consumption())
 
 				/* Digest some food */
 				(void)set_food(Ind, p_ptr->food - i);
