@@ -5248,24 +5248,53 @@ static bool process_player_end_aux(int Ind) {
 				/* Basic digestion, assuming normal speed (+0) */
 				i = 20;
 
+				/* ---------- Weight vs form weight scaling of the base value ---------- */
+
+				/* Form vs race-intrinsic malus, stronger one overrides */
+
+				/* Mimics need more food if sustaining heavy forms.
+				   Note: No 'bonus' for light forms, as it might even be wraiths that weigh zero, wouldn't make sense.
+				   However! Hidden food relief bonus for player races that weigh > 180 lbs using a monster form that weighs up to 180 lbs,
+				    this way the player may still save some food by polymorphing into a 'non-heavy' form! */
+				if (p_ptr->body_monster && r_info[p_ptr->body_monster].weight > 180)
+					i += 3 * (15 - 7500 / (r_info[p_ptr->body_monster].weight + 320)); //180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15  -> *3 = +0..+45 */
+
+				/* If not in monster form, use own weight to determine food consumption.
+				   Special exception for Ents, who consume just a moderate baseline amount, allowing them a 'feeding rate' similar to humans.
+				   We use the male baseline value from tables.c to not force players to create&reroll female chars to minimize food consumption -_-. - C. Blue */
+				else if (!p_ptr->body_monster && p_ptr->prace != RACE_ENT) {
+					if (p_ptr->rp_ptr->m_b_wt > 180) i += (p_ptr->rp_ptr->m_b_wt - 180) / 5; //255 (Draconian) or 250 (Half-Troll) +15
+					else if (p_ptr->rp_ptr->m_b_wt < 180) i -= (180 - p_ptr->rp_ptr->m_b_wt) / 10;// 145 (Elf) -2, 130 (Yeek) -3, 90 (Gnome) -6, 60 (Hobbit) -8, 45 (Kobold) -9!
+				}
+
+
 				/* ---------- Additives ---------- */
+
+				/* Vampires consume food very quickly, unless in bat/mist form (+2..10),
+				   but old vampires don't need food frequently (+4...20) */
+				if (p_ptr->prace == RACE_VAMPIRE) {
+					if (p_ptr->lev >= 40) j = 60 / (p_ptr->lev - 37);
+					else j = 20;
+					if (p_ptr->body_monster) j /= 2;
+					i += j;
+				}
 
 				/* Note: adrenaline and biofeedback are mutually exclusive, gaining one will terminate the other. */
 
 				/* Adrenaline takes more food */
-				if (p_ptr->adrenaline) i += 80; // might need balancing at very high character speed - C. Blue
+				if (p_ptr->adrenaline) i += 60; // might need balancing at very high character speed - C. Blue
 
 				/* Biofeedback takes more food */
 				if (p_ptr->biofeedback) i += 30;
 
 				/* Regeneration and extra-growth takes more food */
-				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
+				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 15;
 
 				/* Non-magical regeneration takes more food: Fast metabolism! */
 				if (p_ptr->tim_regen &&
 				    p_ptr->tim_regen_pow > 0 && /* (and definitely not Nether Sap, anyway) */
 				    p_ptr->tim_regen_cost) /* non-magical only */
-					i += 50;
+					i += 40;
 
 				/* Invisibility consume a lot of food (+0..20) */
 				i += p_ptr->invis / 2;
@@ -5278,31 +5307,6 @@ static bool process_player_end_aux(int Ind) {
 
 				/* Wraith Form consumes a lot of food */
 				if (p_ptr->tim_wraith) i += 30;
-
-
-				/* ---------- Exclusive additives ---------- */
-
-				/* Form vs race-intrinsic malus, stronger one overrides */
-				j = k = 0;
-
-				/* Mimics need more food if sustaining heavy forms */
-				if (p_ptr->body_monster && r_info[p_ptr->body_monster].weight > 180)
-					j = 3 * (15 - 7500 / (r_info[p_ptr->body_monster].weight + 320)); //180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15  -> *3 !
-
-				/* Draconian and Half-Troll take more food:
-				   Use either mimic form induced food consumption increase,
-				   or this intrinsic one, depending on which is higher. */
-				if ((p_ptr->prace == RACE_DRACONIAN || p_ptr->prace == RACE_HALF_TROLL) && j < 15) j = 15;
-
-				/* Vampires consume food very quickly,
-				   but old vampires don't need food frequently (4...20) */
-				if (p_ptr->prace == RACE_VAMPIRE) {
-					if (p_ptr->lev >= 40) k = 60 / (p_ptr->lev - 37);
-					else k = 20;
-				}
-
-				if (j > k) i += j;
-				else i += k;
 
 
 				/* ---------- Time scaling based on speed ---------- */
