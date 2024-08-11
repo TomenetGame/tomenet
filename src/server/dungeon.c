@@ -4930,6 +4930,9 @@ int food_consumption(int Ind) {
  #endif
 #endif
 	if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 15;
+	/* Other stat-boosting effects: */
+	if (p_ptr->shero || p_ptr->fury) i += 20;
+	else if (p_ptr->hero) i += 10;
 
 	/* Non-magical regeneration burns enormously more food temporarily: Fast metabolism! */
 	if (p_ptr->tim_regen &&
