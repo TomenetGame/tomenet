@@ -24234,9 +24234,9 @@ s (gold)        Immunity to Cuts (shards row)
 
 (7.16) Food consumption
 -----------------------
-All characters constantly burn food and need to replenish it or suffer from the
-effects of starvation, see (4.11) for details about this potentially deadly
-status effect: "Hunger".
+Almost all characters constantly burn food and need to replenish it or suffer
+from the effects of starvation, see (4.11) for details about this weakening and
+eventually deadly status effect: "Hunger".
 
 The only time you don't have to worry about food is when you are within a town
 area or while you are AFK (use "/afk" command to toggle your AFK state).
