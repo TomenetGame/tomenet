@@ -202,6 +202,7 @@ Contents
     (7.13)  PvP mode
     (7.14)  Miscellaneous character properties
     (7.15)  Character sheet boni page
+    (7.16)  Food consumption
 (8) Tactics & strategy
     (8.1)   Preparing the inventory for diving into the dungeon
     (8.2)   Preparing the equipment for diving into the dungeon
@@ -10122,6 +10123,7 @@ Hunger  -Gorged         Your speed gets reduced by 10.
 
         Note that you don't consume food in towns, in town areas, while AFK and
         not already hungry (or worse), and in the Arena Monster Challenge.
+        Also see (7.16) for details about food consumption.
 
 Slowdown        Monsters can cast spells or breathe (inertia, gravity) to slow
                 the player down. This effect is temporary. 'Free Action' helps
@@ -12647,7 +12649,7 @@ hurt from when susceptible to one of the three obscure ones:
         -reading blessing or PfE scroll;
         -using dispel evil staff;
         -hostile dispel evil effects;
-        -activating the true arts of Ingwe, Carlammas, Fundin Bluecloak, Himring
+        -activating true artifacts Ingwe, Carlammas, Fundin Bluecloak, Himring
 
  Life:  -Eating Lembas or sprigs of Athelas; quaffing potion of life;
         -reading blessing or PfE scroll;
@@ -24227,6 +24229,66 @@ Some row specific glyphs:
 s (gold)        Immunity to Cuts (shards row)
 ~ (blue)        Swimming (levitation row)
 # (green)       Pass Forests (levitation row)
+
+
+
+(7.16) Food consumption
+-----------------------
+All characters constantly burn food and need to replenish it or suffer from the
+effects of starvation, see (4.11) for details about this potentially deadly
+status effect: "Hunger".
+
+The only time you don't have to worry about food is when you are within a town
+area or while you are AFK (use "/afk" command to toggle your AFK state).
+However, AFK'ing to pause food consumption only works if you were not already
+hungry when you went AFK, beware.
+Also, if you die and turn into a ghost you won't require food. Last but not
+least, if you are in a safe area (special event sector/Arena Monster Challenge)
+you also don't burn food.
+
+Some characters, such as Vampires and Ents, have specific ways of feeding, see
+their race information in (7.4) for details.
+
+If you eat too much, you will eventually become 'gorged', a status effect that
+reduces your speed by 10. While 'gorged', characters burn food especially fast,
+so you will return to normal quickly.
+Some characters cannot get gorged: Dead player ghosts, true vampires, ents,
+initiated maiar and characters who have trained Holy Support school to 50.000.
+
+Maiar who have been initiated ie reached level 20 will not require any food at
+all, neither will any character who has trained Holy Support school to 50.000.
+
+For all other characters, that do require food:
+-----------------------------------------------
+The amount of nutrition that your character consumes over time, which means how
+fast your character will get hungry again, roughly depends on:
+
+- Your speed and your weight. These are main factors that determine your base
+  amount of required food over time. Especially high speed can be 'expensive'.
+  If you use mimicry, heavy forms can put an great toll on your metabolism.
+
+- Some races such draconians or young vampires require especially much food.
+  High level vampires return to normal levels. Vampire royalties even require
+  almost no food at all, no matter which or how many nutrition-consuming
+  effects act on their body (ie everything else listed in this chapter)!
+
+- Gaining adrenaline effect (from firestones) will increase food consumption
+  enormously.
+
+- Gaining biofeedback (from firestones), fast metabolism regeneration, troll
+  or hydra regeneration, wraithform or invulnerability will each add greatly
+  to your food consumption.
+  (So any kind of half-trolls and trolls always require a large amount of food,
+  even more than draconians and young vampires, as they have intrinsic troll
+  regeneration.)
+
+- Gaining regeneration, temporary stat-boosting effects, invisibility,
+  or +LIFE (from item or spell) will each significantly increase your food
+  consumption.
+
+- Having 'slow digestion' will cut your total food consumption rate to 3/4.
+  This will have no effect on vampire race royalties, as they already consume
+  the minimum possible amount of food over time.
 
 
 
