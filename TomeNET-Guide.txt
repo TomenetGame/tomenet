@@ -24269,7 +24269,7 @@ fast your character will get hungry again, roughly depends on:
 
 - Your speed and your weight. These are main factors that determine your base
   amount of required food over time. Especially high speed can be 'expensive'.
-  If you use mimicry, heavy forms can put an great toll on your metabolism.
+  If you use mimicry, heavy forms can put a great toll on your metabolism.
 
 - Some races such draconians or young vampires require especially much food.
   High level vampires return to normal levels. Vampire royalties even require
