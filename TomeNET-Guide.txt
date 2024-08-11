@@ -12868,7 +12868,8 @@ Items display the following pseudo-ID tags:
 powerful, rings of power dropped by Nazgul especially. Also, heavily cursed
 items, including artifacts (and excluding weapons of nothingness) will flip
 their negative values into positive ones when equipped by a true vampire (ie
-excluding mimicked ones) or hell knight (again excluding mimicry forms).
+excluding mimicked ones) or hell knight (again excluding mimicry forms), or
+by a corrupted priest who has Blood Sacrifice active.
 Note that this flipping can sometimes fail for random artifacts though!
 
 Again - if you want to look up what certain special items can/cannot do, see
@@ -14816,7 +14817,8 @@ If the item you want to enchant is among your equipment instead of your
 inventory, press '/' key at the "enchant what?" prompt, which will switch to
 equipment (and back to inventory if pressed again).
 
-Vampires and Hell Knights have a special take on heavy curses:
+Vampires, Hell Knights, and Corrupted Priests while Blood Sacrifice is active
+have a special take on heavy curses:
 If an item is heavily cursed and it is NOT the "of nothingness" type (weapons)
 then if a vampire or Hell Knight (true one, not mimicked) equips it its
 negative boni will flip to positive numbers. Also vampires tend to greatly
@@ -19044,6 +19046,13 @@ create a character!):
     can make use of shadowy occultism, they are not able to utilize any kind of
     holy prayers and are susceptible to holy effects.
     Instead they command blood magic and heretic magic of flame and chaos.
+
+    While under the effect of Blood Sacrifice, Corrupted Priests can flip
+    heavily cursed items same as Hell Knights and Vampires can. When the spell
+    effect ends they will flip back though, so it might be a good idea to
+    just 't'ake them off while still in Bloodthirster form, as due to its
+    demonic might it can just do that without need for *Remove Curse*.
+    See the end of (5.12) for details on item-flipping.
 
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
