@@ -6732,7 +6732,11 @@ int Send_version(void) {
 		if (cnt) avg = sum / cnt;
 		else avg = -1;
 
-		if ((n = Packet_printf(&wbuf, "%c%s%s%d", PKT_VERSION, longVersion, os_version, avg)) <= 0) return(n);
+		if (!is_newer_than(&server_version, 4, 9, 2, 0, 0, 0)) {
+			if ((n = Packet_printf(&wbuf, "%c%s%s%d", PKT_VERSION, longVersion, os_version, avg)) <= 0) return(n);
+		} else {
+			if ((n = Packet_printf(&wbuf, "%c%s%s%d%d%d%d%s", PKT_VERSION, longVersion, os_version, avg, guide_lastline, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG)) <= 0) return(n);
+		}
 	}
 	return(1);
 }

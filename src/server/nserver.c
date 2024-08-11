@@ -14939,12 +14939,17 @@ static int Receive_version(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
-	int n, avg;
-	char version[MAX_CHARS], os_version[MAX_CHARS];
+	int n, avg, guide_lastline = -1, v_branch = -1, v_build = -1;
+	char version[MAX_CHARS], os_version[MAX_CHARS], v_tag[MAX_CHARS] = { 0 };
 
 	if (connp->id != -1) p_ptr = Players[GetInd[connp->id]];
 
-	if (is_atleast(&connp->version, 4, 9, 1, 0, 0, 1)) {
+	if (is_atleast(&connp->version, 4, 9, 2, 0, 0, 1)) {
+		if ((n = Packet_scanf(&connp->r, "%c%s%s%d%d%d%d%s", &ch, version, os_version, &avg, &guide_lastline, &v_branch, &v_build, v_tag)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return(n);
+		}
+	} else if (is_atleast(&connp->version, 4, 9, 1, 0, 0, 1)) {
 		if ((n = Packet_scanf(&connp->r, "%c%s%s%d", &ch, version, os_version, &avg)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return(n);
@@ -14960,7 +14965,7 @@ static int Receive_version(int ind) {
 	version[MAX_CHARS - 1] = '\0';
 
 	if (p_ptr) {
-		s_printf("PKT_VERSION <%s> (%s) %d ms: %s // %s\n", p_ptr->name, p_ptr->accountname, avg, version, os_version);
+		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>] // %s\n", p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version);
 		if (fake_waitpid_clver) {
 			player_type *pa_ptr;
 
@@ -14973,8 +14978,8 @@ static int Receive_version(int ind) {
 			}
 			/* Found him */
 			if (n <= NumPlayers) {
-				msg_format(n, "Client version <%s> (%s) %d ms:", p_ptr->name, p_ptr->accountname, avg);
-				msg_format(n, " %s", version);
+				msg_format(n, "Client version <%s> (%s) %d ms, gll %d:", p_ptr->name, p_ptr->accountname, avg, guide_lastline);
+				msg_format(n, " %s [%d,%d<%s>]", version, v_branch, v_build, v_tag);
 				msg_format(n, " %s", os_version);
 			}
 
