@@ -24271,8 +24271,8 @@ fast your character will get hungry again, roughly depends on:
   amount of required food over time. Especially high speed can be 'expensive'.
   If you use mimicry, heavy forms can put a great toll on your metabolism.
 
-- Some races such draconians or young vampires require especially much food.
-  High level vampires return to normal levels. Vampire royalties even require
+- Some races such as draconians or young vampires require especially much food.
+  High level vampires return to normal rate. Vampire royalties even require
   almost no food at all, no matter which or how many nutrition-consuming
   effects act on their body (ie everything else listed in this chapter)!
 
@@ -24282,17 +24282,17 @@ fast your character will get hungry again, roughly depends on:
 - Gaining biofeedback (from firestones), fast metabolism regeneration, troll
   or hydra regeneration, wraithform or invulnerability will each add greatly
   to your food consumption.
-  (So any kind of half-trolls and trolls always require a large amount of food,
-  even more than draconians and young vampires, as they have intrinsic troll
-  regeneration.)
+  (So any kind of half-trolls (including the character class) and trolls always
+  require a large amount of food, even more than draconians and young vampires,
+  as they have intrinsic troll regeneration.)
 
 - Gaining regeneration, temporary stat-boosting effects, invisibility,
   or +LIFE (from item or spell) will each significantly increase your food
   consumption.
 
 - Having 'slow digestion' will cut your total food consumption rate to 3/4.
-  This will have no effect on vampire race royalties, as they already consume
-  the minimum possible amount of food over time.
+  This will have no effect on true vampire royalties (race), as they already
+  consume the minimum possible amount of food over time.
 
 Aside from obvious food items and saturation spells, some potions can also feed
 the player, depending on the character's race, for example potions of healing.
