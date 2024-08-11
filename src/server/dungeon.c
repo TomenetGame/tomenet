@@ -4956,10 +4956,10 @@ int food_consumption(int Ind) {
 	/* ---------- Time scaling based on speed ---------- */
 
 	/* Modify digestion rate based on speed */
-#if 1 /* was too far away from previous rate? */
+#if 1 /* Actually this seems fine! */
 	if (p_ptr->pspeed >= 110) i = (i * (15 + extract_energy[p_ptr->pspeed] / 10)) / 25; // 'fast': 1 (normal) .. x2.5~3 (end-game fast) .. x3.8 (fastest)
 	else i = (i * (3 + extract_energy[p_ptr->pspeed] / 10)) / 13; // 'slow': 1/3 (slowest) .. 1 (normal)
-#else //WIP
+#else // require more food at higher speed? (WiP)
 	if (p_ptr->pspeed >= 110) i = (i * (10 + ((extract_energy[p_ptr->pspeed] * 3) / 10))) / 40; // 'fast': 1 (normal) .. x4.6 (end-game fast) .. x6.25 (fastest)
 	else i = (i * (3 + extract_energy[p_ptr->pspeed] / 10)) / 13; // 'slow': 1/3 (slowest) .. 1 (normal)
 #endif
