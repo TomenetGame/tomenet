@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. August 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 11. August 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -24249,17 +24249,21 @@ you also don't burn food.
 Some characters, such as Vampires and Ents, have specific ways of feeding, see
 their race information in (7.4) for details.
 
-If you eat too much, you will eventually become 'gorged', a status effect that
-reduces your speed by 10. While 'gorged', characters burn food especially fast,
-so you will return to normal quickly.
-Some characters cannot get gorged: Dead player ghosts, true vampires, ents,
-initiated maiar and characters who have trained Holy Support school to 50.000.
-
 Maiar who have been initiated ie reached level 20 will not require any food at
 all, neither will any character who has trained Holy Support school to 50.000.
 
-For all other characters, that do require food:
------------------------------------------------
+If you eat too much, you will eventually become 'gorged', a status effect that
+reduces your speed by 10. While 'gorged', characters burn food especially fast,
+so you will return to normal quickly.
+Some characters cannot get gorged:
+- Dead player ghosts,
+- true Vampires (ie the character class),
+- Ents,
+- initiated Maiar,
+- Characters who have trained Holy Support school to 50.000.
+
+For all characters which do require food:
+-----------------------------------------
 The amount of nutrition that your character consumes over time, which means how
 fast your character will get hungry again, roughly depends on:
 
@@ -24289,6 +24293,16 @@ fast your character will get hungry again, roughly depends on:
 - Having 'slow digestion' will cut your total food consumption rate to 3/4.
   This will have no effect on vampire race royalties, as they already consume
   the minimum possible amount of food over time.
+
+Aside from obvious food items and saturation spells, some potions can also feed
+the player, depending on the character's race, for example potions of healing.
+The 'nutrition value' of a potion is specified as it's 'pval' in k_info.txt,
+you can review it in the spoiler files menu ie ~ l k.
+However, potion nutrition works differently on some characters:
+- Vampires only get fed from potions of blood.
+- Ents do get fed more from potions of water than other races.
+- Mimicry users using undead forms receive reduced feeding effect from potions
+  in general.
 
 
 
