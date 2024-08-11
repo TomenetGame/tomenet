@@ -14817,22 +14817,30 @@ If the item you want to enchant is among your equipment instead of your
 inventory, press '/' key at the "enchant what?" prompt, which will switch to
 equipment (and back to inventory if pressed again).
 
+Flipping of heavily cursed items:
+---------------------------------
 Vampires, Hell Knights, and Corrupted Priests while Blood Sacrifice is active
 have a special take on heavy curses:
+
 If an item is heavily cursed and it is NOT the "of nothingness" type (weapons)
-then if a vampire or Hell Knight (true one, not mimicked) equips it its
-negative boni will flip to positive numbers. Also vampires tend to greatly
-resist certain bad effects that heavily cursed items may exert, making for
-example Morgul weapons and some heavily cursed true artifacts quite useful.
+and also not a Nazgul's ring of power, then if a vampire or Hell Knight (true
+one, not mimicked) or a Corrupted Priest in Blood Sacrifice form equips it, its
+negative boni will flip to positive numbers.
+
+Also vampires tend to greatly resist certain bad effects that heavily cursed
+items may exert, making for example Morgul weapons and some heavily cursed
+true artifacts quite useful.
+Look up the Vampire race description in (7.4) for more information.
+
 Randarts however will not get 'flipped' but rather rerolled completely! This
 follows three rules:
 a) the resulting randart won't be cursed,
 b) the resulting randart won't drain hitpoints of undead or demon users,
 c) the resulting randart keeps all 'good' abilities it might have had.
-In rare cases rerolling the randart might fail and it will stay cursed, oops!
-Note that the curse must be heavy, not normal, for all of this bonus-flipping
-and rerolling to work.
-Look up the Vampire race description in (7.4) for more information.
+In very rare cases rerolling the item might fail and it will stay cursed, oops!
+
+Note that the curse on an item must be heavy, not normal, for all of this
+bonus-flipping and rerolling to work.
 
 
 
