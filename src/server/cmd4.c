@@ -1598,7 +1598,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
+						    , connp->use_graphics ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 						    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 						    );
@@ -1695,7 +1695,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
+						    , connp->use_graphics ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 						    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 						    );
@@ -1753,7 +1753,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
+						    , connp->use_graphics ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 						    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 				    );
@@ -1849,7 +1849,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 					    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-					    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
+					    , connp->use_graphics ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 					    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 					    );
