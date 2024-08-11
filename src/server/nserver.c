@@ -2911,7 +2911,7 @@ static void set_player_font_definitions(int ind, int player) {
 	}
 
 	/* Hack -- acquire a flag for ego-monsters	- Jir - */
-	p_ptr->use_r_gfx = FALSE;
+	p_ptr->custom_mapping = FALSE;
 
 #ifdef FONTMAP_R_FIRST
 	p_ptr->r_char_mod = u32b_char_dict_set(p_ptr->r_char_mod, 64, '@'); /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
@@ -2931,18 +2931,18 @@ static void set_player_font_definitions(int ind, int player) {
 		}
 
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
-		else p_ptr->use_r_gfx = TRUE;
+		else p_ptr->custom_mapping = TRUE;
 
 #if 0 /* old: allow remapping of attr too */
 		p_ptr->r_attr[i] = connp->Client_setup.r_attr[i];
 		if (!p_ptr->r_attr[i]) p_ptr->r_attr[i] = r_info[i].x_attr;
-		else p_ptr->use_r_gfx = TRUE;
+		else p_ptr->custom_mapping = TRUE;
 #else /* new: keep attr */
-		if (connp->Client_setup.r_attr[i]) p_ptr->use_r_gfx = TRUE;
+		if (connp->Client_setup.r_attr[i]) p_ptr->custom_mapping = TRUE;
 		p_ptr->r_attr[i] = r_info[i].x_attr;
 #endif
 	}
-	if (p_ptr->use_r_gfx) custom_font = TRUE;
+	if (p_ptr->custom_mapping) custom_font = TRUE;
 #ifndef FONTMAP_R_FIRST
 	p_ptr->r_char_mod = u32b_char_dict_set(p_ptr->r_char_mod, 64, '@'); /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
 #endif

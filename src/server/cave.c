@@ -2038,7 +2038,7 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 	 * (otherwise, Dragonriders are all red)
 	 */
 #if 0
-	if (!m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
+	if (!m_ptr->special && !m_ptr->questor && p_ptr->custom_mapping) a = p_ptr->r_attr[m_ptr->r_idx];
 	else a = r_ptr->d_attr;
 #endif	/* 0 */
 	a = r_ptr->d_attr;
@@ -2062,13 +2062,13 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 	 */
 	/* Desired attr */
 	/* a = r_ptr->x_attr; */
-	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
+	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->custom_mapping) a = p_ptr->r_attr[m_ptr->r_idx];
 	else a = r_ptr->d_attr;
 	/* else a = m_ptr->r_ptr->d_attr; */
 
 	/* Desired char */
 	/* c = r_ptr->x_char; */
-	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx
+	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->custom_mapping
 	    && !(((p_ptr->ascii_uniques && (r_ptr->flags1 & RF1_UNIQUE)) || p_ptr->ascii_monsters)))
 		c = p_ptr->r_char[m_ptr->r_idx];
 	else c = r_ptr->d_char;

@@ -1504,6 +1504,9 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 	bool iddc;
 	bool big_map = (p_ptr->screen_hgt != SCREEN_HGT); //BIG_MAP is currently turned on for this player?
 
+	connection_t *connp;
+
+
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
@@ -1519,6 +1522,8 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 
 		/* Only print connected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
+
+		connp = Conn[q_ptr->conn];
 
 		/* don't display the dungeon master if the secret_dungeon_master
 		 * option is set
@@ -1593,7 +1598,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , q_ptr->custom_font ? "\377w" : "\377D"
+						    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 						    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 						    );
@@ -1690,7 +1695,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , q_ptr->custom_font ? "\377w" : "\377D"
+						    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 						    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 						    );
@@ -1748,7 +1753,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , q_ptr->custom_font ? "\377w" : "\377D"
+						    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 						    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 				    );
@@ -1844,7 +1849,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 					    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-					    , q_ptr->custom_font ? "\377w" : "\377D"
+					    , (connp && connp->use_graphics) ? "\377y" : (q_ptr->custom_font ? "\377w" : "\377D")
 					    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
  #endif
 					    );
@@ -2041,8 +2046,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 		bool hidden = FALSE, hidden_diz = FALSE;
 
 		/* Only print connected players */
-		if (q_ptr->conn == NOT_CONNECTED)
-			continue;
+		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* don't display the dungeon master if the secret_dungeon_master
 		 * option is set

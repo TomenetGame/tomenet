@@ -50,7 +50,7 @@ typedef struct {
 	//char		q_static[MAX_RELIABLE_DATA_PACKET_SIZE]; /* for paralysation */
 
 	short int	audio_sfx, audio_mus;
-	short int	use_graphics;
+	short int	use_graphics; /* Client explicitely uses graphical tileset */
 	char graphic_tiles[512], fname[512];
 } connection_t;
 
