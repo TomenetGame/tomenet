@@ -18,23 +18,23 @@
 
 # Walking:
 A:8
-H:\e[A
+P:\e[A
 A:2
-H:\e[B
+P:\e[B
 A:4
-H:\e[D
+P:\e[D
 A:6
-H:\e[C
+P:\e[C
 
 # Runing:
 A:.8
-H:\e[1;2A
+P:\e[1;2A
 A:.2
-H:\e[1;2B
+P:\e[1;2B
 A:.4
-H:\e[1;2D
+P:\e[1;2D
 A:.6
-H:\e[1;2C
+P:\e[1;2C
 
 # X11 keypad (four possible names on most keys)
 

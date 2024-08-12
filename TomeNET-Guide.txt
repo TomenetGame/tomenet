@@ -4196,6 +4196,8 @@ Compilation is straight-forward and similar to Linux:
   If you get the error message "TomeNET needs an 80x24 'curses' screen", make
   sure that termux has at least a visible text area of 80x24, bigger is ok too.
   You can just pinch-zoom out the display, which will shrink the termux font!
+  Or you can switch the on-screen keyboard to 'floating' mode, which means it
+  no longer takes up screen estate at all, but hovers 'over' any content.
 
 - In the game, note that you might need to switch the keyset to "rogue-like" in
   order to move. This can be done directly by (in-game) pressing   = 1 A   to
@@ -27117,6 +27119,11 @@ Solution:   Even though you might not be running the client in command-line
             mode, it still requires a terminal size of at least 80x24 on start
             up. Enlarge the terminal window so that it is at least 80 colums
             wide and 24 rows high.
+            On mobile devices you can usually just pinch-zoom out to decrease
+            the font size and thereby gain more screen estate, or you can
+            switch the on-screen keyboard to 'floating' mode, which means it
+            no longer takes up screen estate at all, but hovers 'over' any
+            content.
 
 PROBLEM 74: GCU client doesn't allow switching big_map in = menu or via /opt.
 Solution:   Currently, live-resizing is not available in the GCU client.
@@ -27129,7 +27136,9 @@ Solution:   Currently, live-resizing is not available in the GCU client.
             not large enough (ie has less than 46 lines), on devices that have
             touch input such as mobile phones you can just pinch-zoom out to
             decrease the font size until it is small enough that you get at
-            least 46 lines.
+            least 46 lines. Or you can switch the on-screen keyboard to
+            'floating' mode, which means it no longer takes up screen estate at
+            all, but hovers 'over' any content.
 
 PROBLEM 75: GCU client doesn't allow movement via arrow keys.
 Solution:   Terminals encode arrow keys as special 'escape sequences' ie one
@@ -27140,14 +27149,17 @@ Solution:   Terminals encode arrow keys as special 'escape sequences' ie one
             works out of the box in theory. However:
             You need to ensure that these macros are either loaded, or create
             them yourself in the macro menu, by specifying a direction, eg '2'
-            for southward movement as the macro action and create a hybrid
-            macro via 'h' and then pressing the arrow-down key.
-            It should be hybrid so it will work if you hit '.' to run followed
-            by that key. Otherwise a command macro would do just fine.
-            Alternatively you could also enter all running actions too and
-            macro them to shift+arrowkeys, eg enter action '.2' for southward
-            running and create a command (or whatever you prefer) macro where
-            you press shift+arrowdown key as trigger.
+            for southward movement as the macro action and create a normal
+            macro via 'n' and then pressing the arrow-down key.
+            It should be normal so it will work for menu-navigation too.
+            If you don't need that, you could at least make it a hybrid macro
+            if you want to run via '.' followed by that arrow key. On the off
+            chance that you need neither menu navigation nor running via '.'
+            then a command macro would do just fine.
+            However, it is recommended to just macro all running actions too
+            and simply macro them to shift+arrowkeys, eg enter action '.2' for
+            southward running and create a command (or whatever you prefer)
+            macro where you press shift+arrowdown key as trigger.
             In case some or all shift+arrowkey combinations have no effect,
             make sure that the settings of the terminal you are currently using
             don't reserve these as hotkeys for themselves. For example in Xfce4
@@ -27158,5 +27170,6 @@ Solution:   Terminals encode arrow keys as special 'escape sequences' ie one
             In clients after 4.9.2 there is a pre-defined set of GCU macros for
             movement in the file lib/user/pref-gcu.prf which is automatically
             loaded on startup so you don't have to create the macros yourself.
+            These macro are all 'normal' macros ('P:' prefix in the file).
 
 ===============================================================================
