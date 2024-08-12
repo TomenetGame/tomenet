@@ -112,6 +112,9 @@
 #define OS_X11		3
 #define OS_GCU_X11	4
 #define OS_OSX		5
+#define OS_ANDROID	6
+#define OS_IPHONE	7
+#define OS_IPAD		8
 
 /* Set new VERSION_OS (after 4.4.8.1.0.0) for client - C. Blue */
 #ifdef CLIENT_SIDE
@@ -119,6 +122,12 @@
   #define VERSION_OS		OS_WIN32
  #elif defined(OSX)
   #define VERSION_OS		OS_OSX
+ #elif defined(ANDROID)
+  #define VERSION_OS		OS_ANDROID	/* (practically implies OS_GCU atm and therefore specializes it) */
+ #elif defined(IPHONE)
+  #define VERSION_OS		OS_IPHONE
+ #elif defined(IPAD)
+  #define VERSION_OS		OS_IPAD
  #elif defined(USE_X11) && defined(USE_GCU)
   #define VERSION_OS		OS_GCU_X11
  #elif defined(USE_GCU)

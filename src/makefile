@@ -51,8 +51,8 @@
 # with special compilers.
 #
 # If you are able to construct "main-xxx.c" and/or "Makefile.xxx"
-# files for a currently unsupported system, please send them to me
-# (benh@voicenet.com) for inclusion in future versions.
+# files for a currently unsupported system, please send them to
+# c_blue@gmx.net for inclusion in future versions.
 #
 # This Makefile comes with "default" dependancies that may be obsolete.
 #

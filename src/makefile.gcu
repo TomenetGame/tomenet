@@ -6,9 +6,8 @@
 
 # --------------------------------- READ THIS ---------------------------------
 #
-# Currently, only 4 target builds are supported for building the client:
-#
-#  -DUSE_GCU for a linux ncurses command-line client
+#  -DUSE_GCU for a linux ncurses command-line client,
+#  specifially allows building on Android devices.
 #
 # Additionally, -DSOUND_SDL and the according sdl2-config call for both compiler
 # and linker flags and linking against -lSDL2_mixer should be added so the
@@ -21,17 +20,9 @@
 # or possibly for "Atari" or "Amiga" computers with "Curses" ports,
 # see below for more information.
 #
-# Note that "main-win.c", the visual module for Windows,
-# must be compiled in a special way, see elsewhere.
-#
 # If you are able to construct "main-xxx.c" and/or "Makefile.xxx"
-# files for a currently unsupported system, please send them to me
-# (benh@voicenet.com) for inclusion in future versions.
-#
-# This Makefile comes with "default" dependancies that may be obsolete.
-#
-# You may want to run "make depend" if you are planning on changing
-# anything.
+# files for a currently unsupported system, please send them to
+# c_blue@gmx.net for inclusion in future versions.
 #
 
 
@@ -245,6 +236,10 @@ LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 
 # Reduce warnings
 #CFLAGS += -Wno-format-overflow
+
+
+## Scan for Android (or other, add eg iOS?) environment
+CFLAGS += $(shell ./os-check.sh)
 
 
 ## Variation -- Linux / FreeBSD
