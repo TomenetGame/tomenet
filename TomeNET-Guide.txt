@@ -4199,9 +4199,25 @@ Compilation is straight-forward and similar to Linux:
   Or you can switch the on-screen keyboard to 'floating' mode, which means it
   no longer takes up screen estate at all, but hovers 'over' any content.
 
+- Optionally enable big_map mode (double-size main screen):
+  The GCU TomeNET client newer than 4.9.2 (get the latest github code if your
+  client is 4.9.2 or older) actually supports big_map mode. However, it does
+  not support live-switching as of the time writing this. Instead you manually
+  have to edit .tomenetrc in your home folder (or whatever config file you
+  specify via command-line) and set "Mainwindow_Lines 46". This will enable
+  big_map mode next time you start the client with this config file.
+  This info and more details are also found in PROBLEM 74 in 'Troubleshooting'
+  (chapter (9.8)).
+
 - In the game, note that you might need to switch the keyset to "rogue-like" in
   order to move. This can be done directly by (in-game) pressing   = 1 A   to
   toggle the option. (See (0.2) for keyset details.)
+
+- Optionally enable arrow keys for movement:
+  If you want to move using the arrow keys and your client version is not newer
+  than 4.9.2, please see PROBLEM 75 in 'Troubleshooting' (9.8) and consider
+  downloading the pref-gcu.prf file form github, put it into lib/user folder.
+
 
 
 (2.2) Installing sound and music packs
