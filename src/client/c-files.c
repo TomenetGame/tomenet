@@ -1107,7 +1107,7 @@ errr process_pref_file(cptr name) {
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 
-printf("processing prf file %s\n", name);
+	if (strcmp(ANGBAND_SYS, "gcu")) printf("processing prf file %s\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 

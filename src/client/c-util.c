@@ -12575,7 +12575,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		}
 		/* terminal will break with "^B" visuals if font_map_solid_walls is on, so disable it always: */
 		if (option_info[i].o_var == &c_cfg.font_map_solid_walls) {
-			c_msg_print("\377yOption 'font_map_solid_walls' is not supported on GCU client.");
+			if (playing) c_msg_print("\377yOption 'font_map_solid_walls' is not supported on GCU client."); //playing: otherwise 4x spam on login, like this only 1x
 			c_cfg.font_map_solid_walls = FALSE;
 			(*option_info[i].o_var) = FALSE;
 			Client_setup.options[i] = FALSE;
