@@ -5166,7 +5166,7 @@ void interact_macros(void) {
 			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			(void)process_pref_file(tmp);
+			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read pref file '%s'!\n", tmp);
 
 			/* Pref files may change settings, so reload the keymap - mikaelh */
 			keymap_init();
@@ -5186,7 +5186,7 @@ void interact_macros(void) {
 			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			(void)process_pref_file(tmp);
+			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read pref file '%s'!\n", tmp);
 
 			/* Pref files may change settings, so reload the keymap - mikaelh */
 			keymap_init();
@@ -11235,11 +11235,10 @@ void do_cmd_options(void) {
 			sprintf(tmp, "%s.opt", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0))
-				continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			(void)process_pref_file(tmp);
+			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read options file '%s'!\n", tmp);
 		}
 
 		/* Account options */
@@ -12777,7 +12776,7 @@ static void handle_process_graphics_file(void) {
 	 * The grafics redefinition can use tile indexing from 0 and
 	 * there is no need to update graphics files after MAX_FONT_CHAR is changed. */
 	char_map_offset = MAX_FONT_CHAR + 1;
-	if (process_pref_file(fname) == -1) printf("Can't read graphics preferences file: %s\n", fname);
+	if (process_pref_file(fname) == -1) printf("ERROR: Can't read graphics preferences file: %s\n", fname);
 	char_map_offset = 0;
 }
 #endif

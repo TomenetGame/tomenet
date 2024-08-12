@@ -1107,7 +1107,7 @@ errr process_pref_file(cptr name) {
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 
-	if (strcmp(ANGBAND_SYS, "gcu")) printf("processing prf file %s\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
+	if (strcmp(ANGBAND_SYS, "gcu")) printf("Processing prf file '%s'.\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 
@@ -1119,14 +1119,17 @@ errr process_pref_file(cptr name) {
 		/* Process the line */
 		if (process_pref_file_aux(buf2, fmt)) {
 			/* Useful error message */
-			printf("Error in '%s' parsing '%s'.\n", buf2, name);
+			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.\n", buf2, name);
+			if (strcmp(ANGBAND_SYS, "gcu")) printf("Error in '%s' parsing '%s'.\n", buf2, name);
+			//else if (rl_connection_state != 1) plog(format("Error in '%s' parsing '%s'.\n", buf2, name)); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
 		}
 
 		mem_free(buf2);
 	}
 	if (err == 2) {
-		printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
-		plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name));
+		if (strcmp(ANGBAND_SYS, "gcu")) printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
+		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:
+		c_msg_format("\377R!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name);
 	}
 
 	/* Close the file */
