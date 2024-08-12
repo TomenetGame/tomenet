@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 11. August 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 12. August 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -27117,5 +27117,33 @@ Solution:   Even though you might not be running the client in command-line
             mode, it still requires a terminal size of at least 80x24 on start
             up. Enlarge the terminal window so that it is at least 80 colums
             wide and 24 rows high.
+
+PROBLEM 74: GCU client doesn't allow movement via arrow keys.
+Solution:   Terminals encode arrow keys as special 'escape sequences' ie one
+            arrow key would register as multiple key presses starting on 'ESC'
+            instead of just a single keypress. These sequences can actually be
+            macroed by TomeNET just fine in 'multi_key_macros' mode. This mode
+            is activated automatically and only by a GCU client, so everything
+            works out of the box in theory. However:
+            You need to ensure that these macros are either loaded, or create
+            them yourself in the macro menu, by specifying a direction, eg '2'
+            for southward movement as the macro action and create a hybrid
+            macro via 'h' and then pressing the arrow-down key.
+            It should be hybrid so it will work if you hit '.' to run followed
+            by that key. Otherwise a command macro would do just fine.
+            Alternatively you could also enter all running actions too and
+            macro them to shift+arrowkeys, eg enter action '.2' for southward
+            running and create a command (or whatever you prefer) macro where
+            you press shift+arrowdown key as trigger.
+            In case some or all shift+arrowkey combinations have no effect,
+            make sure that the settings of the terminal you are currently using
+            don't reserve these as hotkeys for themselves. For example in Xfce4
+            the xfce4-terminal by default sets hotkeys shift+up and shift+down
+            for scrolling by one line up or down respectively, which will hide
+            these keypresses from TomeNET. Go to the terminal preferences and
+            delete these shortcuts, then they will work in the game.
+            In clients after 4.9.2 there is a pre-defined set of GCU macros for
+            movement in the file lib/user/pref-gcu.prf which is automatically
+            loaded on startup so you don't have to create the macros yourself.
 
 ===============================================================================
