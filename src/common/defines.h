@@ -320,7 +320,7 @@
  //#define MAX_SCREEN_WID		(SCREEN_WID * 3)	/* For experimental screen-size code testing in the future */
  #define MAX_SCREEN_WID		SCREEN_WID
 #endif
-#define MAX_SCREEN_HGT		(SCREEN_HGT * 2)
+#define MAX_SCREEN_HGT		(SCREEN_HGT * 2)	/* This is BIG_MAP mode aka double main window map size. */
 
 /* (BIG_MAP) Padding of on-screen map, because of chat line, status bars, etc */
 #define SCREEN_PAD_LEFT		13
@@ -330,18 +330,22 @@
 #define SCREEN_PAD_X		(SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define SCREEN_PAD_Y		(SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 
+/* Traditional non-bigmap size of main window (term 0) */
+#define WINDOW_WID	(SCREEN_WID + SCREEN_PAD_X)
+#define WINDOW_HGT	(SCREEN_HGT + SCREEN_PAD_Y)
+
 /* (BIG_MAP) Maximum possible main window size */
-#define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
-#define MAX_WINDOW_HGT	(MAX_SCREEN_HGT + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+#define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_X)
+#define MAX_WINDOW_HGT	(MAX_SCREEN_HGT + SCREEN_PAD_Y)
 
 #ifdef CLIENT_SIDE
  /* For resizing the main window while client runs */
- #define CL_WINDOW_WID	(screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
- #define CL_WINDOW_HGT	(screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+ #define CL_WINDOW_WID	(screen_wid + SCREEN_PAD_X)
+ #define CL_WINDOW_HGT	(screen_hgt + SCREEN_PAD_Y)
 #else
  /* For handling client functions depending on BIG_MAP */
- #define CL_WINDOW_WID	(Players[Ind]->screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
- #define CL_WINDOW_HGT	(Players[Ind]->screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+ #define CL_WINDOW_WID	(Players[Ind]->screen_wid + SCREEN_PAD_X)
+ #define CL_WINDOW_HGT	(Players[Ind]->screen_hgt + SCREEN_PAD_Y)
 #endif
 
 /*

@@ -215,8 +215,10 @@ void initialize_main_pref_files(void) {
 		(*option_info[CO_BIGMAP].o_var) = FALSE;
 		Client_setup.options[CO_BIGMAP] = FALSE;
 #else
+ #if 0 /* 0'ed: New (2024): support BIG_MAP on GCU! */
 		/* And new way (no longer a toggleable option): */
 		global_c_cfg_big_map = FALSE;
+ #endif
 #endif
 
 		/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
@@ -3940,12 +3942,14 @@ void client_init(char *argv1, bool skip) {
 		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
 	}
  #endif
+ #if 0 /* 0'ed: New (2024): support BIG_MAP on GCU! */
 	/* If command-line client reads from same config file as X11 one it might
 	   read a big-map-enabled screen_hgt, so reset it: */
 	if (!strcmp(ANGBAND_SYS, "gcu")) {
 		screen_hgt = SCREEN_HGT;
 		global_c_cfg_big_map = FALSE;
 	}
+ #endif
 #endif
 
 	/* Initiate character creation? */

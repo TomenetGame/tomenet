@@ -66,8 +66,7 @@
 #endif
 
 typedef struct term_data term_data;
-struct term_data
-{
+struct term_data {
 	term t;
 
 	int rows;
@@ -76,7 +75,7 @@ struct term_data
 	WINDOW *win;
 };
 
-static term_data data[MAX_TERM_DATA_GCU];
+static term_data data[MAX_TERM_DATA_GCU]; // [4], defines.h
 
 
 /*
@@ -812,8 +811,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 
 
 
-static errr term_data_init(term_data *td, int rows, int cols, int y, int x)
-{
+static errr term_data_init(term_data *td, int rows, int cols, int y, int x) {
 	term *t = &td->t;
 
 	/* Make sure the window has a positive size */
@@ -821,8 +819,7 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x)
 
 	td->win = newwin(rows, cols, y, x);
 
-	if (!td->win)
-	{
+	if (!td->win) {
 		plog("Failed to setup curses window.");
 		return(-1);
 	}
@@ -871,35 +868,20 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x)
  * Someone should really check the semantics of "initscr()"
  */
 errr init_gcu(void) {
-	int i;
+	int i, window_wid, window_hgt;
 	/*term *t = &term_screen_body;*/
-	int num_term = 4, next_win = 0;
+
+	int next_win = 0;
+	int rows[MAX_TERM_DATA_GCU], cols[MAX_TERM_DATA_GCU], y[MAX_TERM_DATA_GCU], x[MAX_TERM_DATA_GCU];
+
+	char cols_an[6];
+
 
 	/* hack -- work on Xfce4's 'Terminal' without requiring the user to set this */
 	if (!getenv("TERM") ||
 	    (!strcmp(getenv("TERM"), "xterm") &&
 	    !getenv("XTERM_VERSION")))
 		setenv("TERM", "xterm-16color", -1);
-
-	/* Graphic tiles are not supported in GCU client */
-	use_graphics = FALSE;
-
-#ifndef GLOBAL_BIG_MAP
-	/* BIG_MAP is currently not supported in GCU client */
-	c_cfg.big_map = FALSE;
-	Client_setup.options[CO_BIGMAP] = FALSE;
-	(*option_info[CO_BIGMAP].o_var) = FALSE;
-	screen_hgt = SCREEN_HGT;
-#else
-	global_c_cfg_big_map = FALSE;
-	screen_hgt = SCREEN_HGT;
-#endif
-
-	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
-	//no effect here, as it gets reset by check_immediate_options()
-	c_cfg.palette_animation = FALSE;
-	(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
-	Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
 
 	/* Extract the normal keymap */
 	keymap_norm_prepare();
@@ -913,14 +895,70 @@ errr init_gcu(void) {
 	if (initscr() == (WINDOW*)ERR) return(-1);
 #endif
 
+	sprintf(cols_an, "%d", COLS & 0xffff); //ultra paranoia hack because we can: limit string size against insane terminal sizes (max width 65535)
+	if (cols_an[0] == '8' || COLS == 11 || COLS == 18) strcpy(cols_an, "an");
+	else strcpy(cols_an, "a");
+
+	/* Graphic tiles are not supported in GCU client */
+	use_graphics = FALSE;
+
+#if 0 /* 0'ed: New (2024): support BIG_MAP on GCU! */
+ #ifndef GLOBAL_BIG_MAP
+	/* BIG_MAP is currently not supported in GCU client */
+	c_cfg.big_map = FALSE;
+	Client_setup.options[CO_BIGMAP] = FALSE;
+	(*option_info[CO_BIGMAP].o_var) = FALSE;
+ #else
+	global_c_cfg_big_map = FALSE;
+ #endif
+
+	window_wid = WINDOW_WID;
+	window_hgt = WINDOW_HGT;
+#else
+ #ifndef GLOBAL_BIG_MAP /* Not having this defined is no longer supported, so just keep disabling all */
+	if (c_cfg.big_map = FALSE;
+	Client_setup.options[CO_BIGMAP] = FALSE;
+	(*option_info[CO_BIGMAP].o_var) = FALSE;
+
+	window_wid = WINDOW_WID;
+	window_hgt = WINDOW_HGT;
+ #else
+	/* Config file asks for bigmap? Check if terminal is big enough that we can comply. */
+	if (global_c_cfg_big_map) {
+		if (COLS < MAX_WINDOW_WID || LINES < MAX_WINDOW_HGT) {
+			fprintf(stderr, "WARNING: Configuration has BIG_MAP enabled, but this requires at least an %dx%d 'curses' screen and current dimensions are only %dx%d. Falling back to non-BIG_MAP mode.\n", MAX_WINDOW_WID, MAX_WINDOW_HGT, COLS, LINES);
+			/* Terminal is too small - fallback to non-bigmap. */
+			global_c_cfg_big_map = FALSE;
+
+			window_wid = WINDOW_WID;
+			window_hgt = WINDOW_HGT;
+		} else {
+			/* Terminal is big enough, accept bigmap. */
+			window_wid = MAX_WINDOW_WID;
+			window_hgt = MAX_WINDOW_HGT;
+		}
+	} else {
+		window_wid = WINDOW_WID;
+		window_hgt = WINDOW_HGT;
+	}
+ #endif
+#endif
+
+	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
+	//no effect here, as it gets reset by check_immediate_options()
+	c_cfg.palette_animation = FALSE;
+	(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
+	Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
+
+
 	/* Require large screen, or fail with a message. */
-	if ((LINES < 24) || (COLS < 80)) {
-		fprintf(stderr, "TomeNET needs at least an 80x24 'curses' screen\n");
+	if (COLS < WINDOW_WID || LINES < WINDOW_HGT) {
+		fprintf(stderr, "ERROR: TomeNET needs at least an %dx%d 'curses' screen (current dimensions are %dx%d).\n", WINDOW_WID, WINDOW_HGT, COLS, LINES); //assume WINDOW_WID is 80
 		/* Restore terminal first, then fail. */
 		endwin();
 		return(-2);
 	}
-
+	printf("Found %s %dx%d 'curses' screen.\n", cols_an, COLS, LINES);
 
 	/* set OS-specific resize_main_window() hook */
 	resize_main_window = resize_main_window_gcu;
@@ -1064,42 +1102,97 @@ errr init_gcu(void) {
 	keymap_game_prepare();
 
 
+	if (window_hgt == MAX_WINDOW_HGT) printf("\rRunning in BIG_MAP mode.\n"); /* For some reason, the cursor isn't at the beginning of the line */
+
 	/*** Now prepare the term(s) ***/
-
-	for (i = 0; i < num_term; i++) {
-		int rows, cols;
-		int y, x;
-
-		switch (i) {
-		case 0: rows = 24;
-			cols = 80;
-			y = x = 0;
-			break;
-		case 1: rows = LINES - 25;
-			cols = 80;
-			y = 25;
-			x = 0;
-			break;
-		case 2: rows = 24;
-			cols = COLS - 81;
-			y = 0;
-			x = 81;
-			break;
-		case 3: rows = LINES - 25;
-			cols = COLS - 81;
-			y = 25;
-			x = 81;
-			break;
-		default: rows = cols = 0;
-			 y = x = 0;
-			 break;
+	/* TODO: Create the term layout from the term info we read from .tomenetrc instead, like for X11 clients.
+		 Allow increasing MAX_TERM_DATA_GCU up to 10 like for ANGBAND_TERM_MAX,
+		 see occurances of "if (strcmp(ANGBAND_SYS, "gcu"))". */
+	for (i = 0; i < MAX_TERM_DATA_GCU; i++) {
+		if (window_hgt == WINDOW_HGT) { /* normal (non-BIG_MAP) layout: Divide screen area into 4 equally sized rectangles */
+			switch (i) { /* Hard-coded: Only MAX_TERM_DATA_GCU [4] pseudo-'terminals' in any case, the main screen + 3 others. */
+			case 0:  /* Hard-coded: 'screen' (Main Window) */
+				rows[i] = window_hgt;
+				cols[i] = window_wid;
+				y[i] = x[i] = 0;
+				break;
+			case 1:  /* Hard-coded: 'mirror' */
+				rows[i] = LINES - window_hgt - 1;
+				cols[i] = window_wid;
+				y[i] = window_hgt + 1;
+				x[i] = 0;
+				break;
+			case 2:  /* Hard-coded: 'recall' */
+				rows[i] = window_hgt;
+				cols[i] = COLS - window_wid - 1;
+				y[i] = 0;
+				x[i] = window_wid + 1;
+				break;
+			case 3:  /* Hard-coded: 'choice' */
+				rows[i] = LINES - window_hgt - 1;
+				cols[i] = COLS - window_wid - 1;
+				y[i] = window_hgt + 1;
+				x[i] = window_wid + 1;
+				break;
+			default:
+				rows[i] = cols[i] = 0;
+				y[i] = x[i] = 0;
+				break;
+			}
+		} else { /* big-map mode: Main Screen takes full height, other windows get split up to its right */
+			switch (i) { /* Hard-coded: Only MAX_TERM_DATA_GCU [4] pseudo-'terminals' in any case, the main screen + 3 others. */
+			case 0:  /* Hard-coded: 'screen' (Main Window) */
+				rows[i] = window_hgt;
+				cols[i] = window_wid;
+				y[i] = x[i] = 0;
+				break;
+			case 1:  /* Hard-coded: 'mirror' */
+				rows[i] = LINES / 3 - 1;
+				cols[i] = COLS - window_wid - 1;
+				y[i] = 0;
+				x[i] = window_wid + 1;
+				break;
+			case 2:  /* Hard-coded: 'recall' */
+				rows[i] = LINES / 3 - 1;
+				cols[i] = COLS - window_wid - 1;
+				y[i] = LINES / 3;
+				x[i] = window_wid + 1;
+				break;
+			case 3:  /* Hard-coded: 'choice' */
+				rows[i] = LINES / 3;
+				cols[i] = COLS - window_wid - 1;
+				y[i] = (LINES / 3) * 2;
+				x[i] = window_wid + 1;
+				break;
+			default:
+				rows[i] = cols[i] = 0;
+				y[i] = x[i] = 0;
+				break;
+			}
 		}
 
-		if (rows <= 0 || cols <= 0) continue;
+		/* Term doesn't fit on the screen anymore? Discard it. */
+		if (rows[i] <= 0 || cols[i] <= 0) {
+			fprintf(stderr, "\rWARNING: Discarding term #%d at %d,%d with dimensions %d,%d\n", next_win, x[i], y[i], cols[i], rows[i]);
+			continue;
+		}
 
-		term_data_init(&data[next_win], rows, cols, y, x);
-		ang_term[next_win] = Term;
+		printf("\rInitializing term #%d at %d,%d with dimensions %d,%d\n", next_win, x[i], y[i], cols[i], rows[i]);
 		next_win++;
+	}
+	/* Paranoia, can't happen */
+	if (!next_win) {
+		printf("\rERROR: No window layout.\n");
+		return(-3);
+	}
+	/* Actually init the terms.
+	   I separated this from the above loop just because I wanted to printf() some log info about the term preparation,
+	   and this will cease to get added to the underlying console terminal as soon as the first term (main screen) is initialized,
+	   because curses will then redirect it to the first active curses screen (ie the main screen) instead,
+	   so only the init-term printf for term #0 aka the main screen will actually be printed to the console. */
+	for (i = 0; i < next_win; i++) {
+		term_data_init(&data[i], rows[i], cols[i], y[i], x[i]);
+		ang_term[i] = Term;
 	}
 
 	/* Activate the "Angband" window screen */
