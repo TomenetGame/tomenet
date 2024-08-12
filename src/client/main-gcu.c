@@ -1146,22 +1146,22 @@ errr init_gcu(void) {
 				cols[i] = window_wid;
 				y[i] = x[i] = 0;
 				break;
-			case 1:  /* Hard-coded: 'mirror' */
-				rows[i] = LINES / 3 - 1;
+			case 1:  /* Hard-coded: 'mirror' - inventory but now dubbed 'Msg/Chat', guarantee 23 lines for displaying the inventory */
+				rows[i] = 23;
 				cols[i] = COLS - window_wid - 1;
 				y[i] = 0;
 				x[i] = window_wid + 1;
 				break;
-			case 2:  /* Hard-coded: 'recall' */
-				rows[i] = LINES / 3 - 1;
+			case 2:  /* Hard-coded: 'recall' - messages but now dubbed 'Inventory', make it 14 lines in case we choose to display equipment. */
+				rows[i] = 14;
 				cols[i] = COLS - window_wid - 1;
-				y[i] = LINES / 3;
+				y[i] = 23 + 1;
 				x[i] = window_wid + 1;
 				break;
-			case 3:  /* Hard-coded: 'choice' */
-				rows[i] = LINES / 3;
+			case 3:  /* Hard-coded: 'choice' - size is remaining amount of lines (so it will be at least 46-23-1-14-1 = 7 lines, enough for some messages or player list or whatever) */
+				rows[i] = LINES - 23 - 1 - 14 - 1;
 				cols[i] = COLS - window_wid - 1;
-				y[i] = (LINES / 3) * 2;
+				y[i] = 23 + 1 + 14 + 1;
 				x[i] = window_wid + 1;
 				break;
 			default:
