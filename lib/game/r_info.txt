@@ -13527,7 +13527,7 @@ D:upstart troublemaker without the wisdom to control your actions.
 N:786:Shambler
 G:E:W
 I:130:50d100:40:150:50
-W:67:4:9000:22500
+W:67:4:9000:7000
 #E:0:0:0:0:0:0
 E:0:1:2:0:0:2
 O:20:20:60:0
