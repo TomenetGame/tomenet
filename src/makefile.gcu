@@ -238,10 +238,6 @@ LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 #CFLAGS += -Wno-format-overflow
 
 
-## Scan for Android (or other, add eg iOS?) environment
-CFLAGS += $(shell ./os-check.sh)
-
-
 ## Variation -- Linux / FreeBSD
 ##
 ## Add -msse2 to CFLAGS to enable SSE2 support in SFMT (not needed for x86_64).
@@ -307,11 +303,14 @@ CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
 LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
 
+
+## Test for OS type
+CFLAGS += $(shell ./os-check.sh)
+
 # Compile a client with 'test client' version/tag
 tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
 #disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
 tomenet.test: PPFLAGS = -DTEST_CLIENT
-
 
 # Server is compiled with optimizations
 tomenet.server: CFLAGS += -g -O2

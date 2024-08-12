@@ -414,6 +414,11 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 #CFLAGS = -Wall -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
 #LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
 
+
+
+## Test for OS type
+CFLAGS += $(shell ./os-check.sh)
+
 # Normal (non-test) client uses optimizations
 tomenet: CFLAGS += -g -O2 -DSOUND_SDL `sdl2-config --cflags` -DUSE_X11 -I${X11BASE}/include
 tomenet: LIBS += -L${X11BASE}/lib -lX11 `sdl2-config --libs` -lSDL2_mixer

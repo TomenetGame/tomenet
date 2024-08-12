@@ -243,10 +243,13 @@ LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixe
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 
+
+## Test for OS type -- not for Windows targets
+#CFLAGS += $(shell ./os-check.sh)
+
 # Compile a client with 'test client' version/tag
 tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
 tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
-
 
 # Lua
 SRCS += $(LUASRCS)

@@ -211,10 +211,13 @@ LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl2-config --libs`
 #LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
 
 
+
+## Test for OS type
+CFLAGS += $(shell ./os-check.sh)
+
 # Compile a client with 'test client' version/tag
 tomenet.test: CFLAGS += -DTEST_CLIENT -O0
 tomenet.test: PPFLAGS = -DTEST_CLIENT
-
 
 # Lua
 SRCS += $(LUASRCS)

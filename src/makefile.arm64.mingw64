@@ -226,6 +226,9 @@ CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc
 NCC = gcc
 
 
+## Test for OS type -- not for Windows targets
+#CFLAGS += $(shell ./os-check.sh)
+
 # Compile a client with 'test client' version/tag
 #tomenet.test.exe: CFLAGS += -DTEST_CLIENT -Og
 # -O0 produced false positives in Windows Defender and others since some 2020 mingw-gcc update..
