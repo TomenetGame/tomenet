@@ -27118,7 +27118,15 @@ Solution:   Even though you might not be running the client in command-line
             up. Enlarge the terminal window so that it is at least 80 colums
             wide and 24 rows high.
 
-PROBLEM 74: GCU client doesn't allow movement via arrow keys.
+PROBLEM 74: GCU client doesn't allow switching big_map in = menu or via /opt.
+Solution:   Currently, live-resizing is not available in the GCU client.
+            However, big_map is still supported, but it must be set in the
+            config file (usually "~/.tomenetrc") before starting the client.
+            This is done by editing the config file and setting the size of the
+            main window to 46 lines via this config file line:
+            Mainwindow_Lines 46
+
+PROBLEM 75: GCU client doesn't allow movement via arrow keys.
 Solution:   Terminals encode arrow keys as special 'escape sequences' ie one
             arrow key would register as multiple key presses starting on 'ESC'
             instead of just a single keypress. These sequences can actually be
