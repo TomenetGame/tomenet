@@ -895,6 +895,14 @@ errr init_gcu(void) {
 	if (initscr() == (WINDOW*)ERR) return(-1);
 #endif
 
+	/* Require large enough screen (80x24 as minimum), or fail with a message. */
+	if (COLS < WINDOW_WID || LINES < WINDOW_HGT) {
+		fprintf(stderr, "ERROR: TomeNET needs at least an %dx%d 'curses' screen (current dimensions are %dx%d).\n", WINDOW_WID, WINDOW_HGT, COLS, LINES); //assume WINDOW_WID is 80
+		/* Restore terminal first, then fail. */
+		endwin();
+		return(-2);
+	}
+
 	sprintf(cols_an, "%d", COLS & 0xffff); //ultra paranoia hack because we can: limit string size against insane terminal sizes (max width 65535)
 	if (cols_an[0] == '8' || COLS == 11 || COLS == 18) strcpy(cols_an, "an");
 	else strcpy(cols_an, "a");
@@ -944,21 +952,13 @@ errr init_gcu(void) {
  #endif
 #endif
 
+	printf("\rFound %s %dx%d 'curses' screen.\n", cols_an, COLS, LINES);
+
 	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
 	//no effect here, as it gets reset by check_immediate_options()
 	c_cfg.palette_animation = FALSE;
 	(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
 	Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
-
-
-	/* Require large screen, or fail with a message. */
-	if (COLS < WINDOW_WID || LINES < WINDOW_HGT) {
-		fprintf(stderr, "ERROR: TomeNET needs at least an %dx%d 'curses' screen (current dimensions are %dx%d).\n", WINDOW_WID, WINDOW_HGT, COLS, LINES); //assume WINDOW_WID is 80
-		/* Restore terminal first, then fail. */
-		endwin();
-		return(-2);
-	}
-	printf("Found %s %dx%d 'curses' screen.\n", cols_an, COLS, LINES);
 
 	/* set OS-specific resize_main_window() hook */
 	resize_main_window = resize_main_window_gcu;
