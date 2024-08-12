@@ -27125,6 +27125,10 @@ Solution:   Currently, live-resizing is not available in the GCU client.
             This is done by editing the config file and setting the size of the
             main window to 46 lines via this config file line:
             Mainwindow_Lines 46
+            Note that if the client on startup complains that the display is
+            not large enough (ie has less than 46 lines), in termux you can
+            just pinch-zoom out to decrease the font size until it is small
+            enough that you get at least 46 lines.
 
 PROBLEM 75: GCU client doesn't allow movement via arrow keys.
 Solution:   Terminals encode arrow keys as special 'escape sequences' ie one
