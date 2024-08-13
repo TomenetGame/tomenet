@@ -261,7 +261,7 @@ void world_comm(int fd, int arg) {
 			    || (p && (p = strchr(p + 1, ']')) && *(p += 2) == '?')
  #endif
 			    ) {
-				if (!strncmp(p, "?help", 5)) {
+				if (!strncasecmp(p, "?help", 5)) {
  //#ifdef NOCLUTTER_IRC_COMMANDS
 					if (wpk->d.sid == 1) /* Only the first authenticated server (ie with servers list index '1') gets to reply */
  //#endif
@@ -269,7 +269,7 @@ void world_comm(int fd, int arg) {
 					break;
 				}
 				/* list number + character names of players online */
-				else if (!strncmp(p, "?players", 8)) {
+				else if (!strncasecmp(p, "?players", 8)) {
 					char buf[MSG_LEN + MAX_CHARS], bufp[MSG_LEN + MAX_CHARS]; //overspill, will get cut off at MSG_LEN and indicated by '..' chars
 
 					x = 0;
@@ -304,7 +304,7 @@ void world_comm(int fd, int arg) {
 					msg_to_irc(buf);
 					break;
 				}
-				else if (!strncmp(p, "?seen", 5)) {
+				else if (!strncasecmp(p, "?seen", 5)) {
 					char buf[MSG_LEN];
 
 					get_laston(p + 5 + 1, buf, FALSE, FALSE);
@@ -314,7 +314,7 @@ void world_comm(int fd, int arg) {
 					msg_to_irc(format("\373%s", buf));
 					break;
 				}
-				else if (!strncmp(p, "?who", 4)) {
+				else if (!strncasecmp(p, "?who", 4)) {
 					u32b p_id;
 					cptr acc;
 
