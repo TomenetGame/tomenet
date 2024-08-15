@@ -8269,14 +8269,14 @@ void cmd_load_pref(void) {
 	while (0 == (err = my_fgets2(fp, &buf2, &n, &fmt))) {
 		/* Process the line */
 		if (process_pref_file_aux(buf2, fmt)) //printf("Error in '%s' parsing '%s'.\n", buf2, buf);
-			c_message_add(format("\377yError in '%s' parsing '%s'.\n", buf2, buf));
+			c_message_add(format("\377yError in '%s' parsing '%s'.", buf2, buf));
 		mem_free(buf2);
 	}
 	if (err == 2) {
 		printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", buf);
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name));
 		/* Maybe this is safer than plog(), if the player is in the dungeon and in a dire situation when this happens.. */
-		c_message_add(format("\377y!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", buf));
+		c_message_add(format("\377y!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!", buf));
 	}
 	my_fclose(fp);
 

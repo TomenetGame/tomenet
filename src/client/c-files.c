@@ -1119,7 +1119,7 @@ errr process_pref_file(cptr name) {
 		/* Process the line */
 		if (process_pref_file_aux(buf2, fmt)) {
 			/* Useful error message */
-			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.\n", buf2, name);
+			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
 			if (strcmp(ANGBAND_SYS, "gcu")) printf("Error in '%s' parsing '%s'.\n", buf2, name);
 			//else if (rl_connection_state != 1) plog(format("Error in '%s' parsing '%s'.\n", buf2, name)); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
 		}
@@ -1129,7 +1129,7 @@ errr process_pref_file(cptr name) {
 	if (err == 2) {
 		if (strcmp(ANGBAND_SYS, "gcu")) printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:
-		c_msg_format("\377R!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name);
+		c_msg_format("\377R!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!", name);
 	}
 
 	/* Close the file */
