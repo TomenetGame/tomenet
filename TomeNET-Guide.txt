@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 12. August 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 15. August 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -27187,5 +27187,20 @@ Solution:   Terminals encode arrow keys as special 'escape sequences' ie one
             movement in the file lib/user/pref-gcu.prf which is automatically
             loaded on startup so you don't have to create the macros yourself.
             These macro are all 'normal' macros ('P:' prefix in the file).
+
+PROBLEM 76: On logging in with a character I receive one or more messages in
+            yellow colour saying "Error in ... parsing ...".
+Solution:   Usually caused by an outdated config file, such as .opt (options)
+            or .prf (preferences). This happens for example if the name of an
+            option has changed since an older game version.
+            To fix this, go to your TomeNET user folder (eg by pressing ~U) and
+            edit the file of the specified name:
+            Find and either delete the line that has the error in it or correct
+            the option name if you know its new name (in the game press = for
+            the options menu and look for a similar option that might be the
+            same as the old one just with a new name).
+            For example all options that were starting on "hi..." as short form
+            of "high..." were at some point changed to actually read "high..."
+            instead. For example "hilite_player" -> "highlite_player" etc.
 
 ===============================================================================
