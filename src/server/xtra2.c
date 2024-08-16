@@ -11139,7 +11139,6 @@ void kill_xorder(int Ind) {
 			break;
 		}
 	}
-	//if (pos == -1) return;	/* it's UNsigned :) */
 	if (pos == 9999) return;
 
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
@@ -11181,46 +11180,18 @@ void kill_xorder(int Ind) {
 		/* grant verygreat rerolls for better value? */
 		avg = ((rlev * 2) + (plev * 4)) / 2;
 		avg = avg > 100 ? 100 : avg;
-		//if (great && p_ptr->lev >= 25) verygreat = magik(r_info[xorders[pos].type].level - (5 - (p_ptr->lev / 5)));
-		//if (great) verygreat = magik(((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
-		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. (14..75) */
+		avg /= 2;
+		avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. (14..75) */
 
-#if 0
-		/* boost quest rewards for the iron price */
- #ifndef RPG_SERVER
-		if (in_irondeepdive(&p_ptr->wpos)) {
- #endif
-			great = TRUE;
-			verygreat = magik(avg);
-			resf = RESF_LOW2;
- #ifndef RPG_SERVER
-		} else {
-			great = magik(50 + (plev > rlev ? rlev : plev) * 2);
-			if (great) verygreat = magik(avg);
-			resf = RESF_LOW;
-		}
- #endif
-#else
 		/* extermination orders have been buffed for IDDC by being based on floor level instead of player level,
 		   buffing the quality on top of this would be too much. */
 		great = magik(50 + (plev > rlev ? rlev : plev) * 2);
 		if (great) verygreat = magik(avg);
 		resf = RESF_LOW;
-#endif
 
-#if 0 /* needs more care, otherwise acquirement could even be BETTER than create_reward, depending on RESF.. */
-		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, resf, 3000);
-		if (!o_ptr->note) o_ptr->note = quark_add(temp);
-		o_ptr->note_utag = strlen(temp);
-#else
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
-		//s_printf("object awarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
-#endif
-
-#if 1
 		/* New: Sometimes generate consumables instead */
-		//if (!great && !rand_int(2)) { /* instead of basic (non-ego) enchanted armour/weapon */
-		if (object_value_real(0, o_ptr) < 1000 && rand_int(3)) {
+		if (object_value_real(0, o_ptr) < 1000 && rand_int(3)) { /* eg instead of basic (non-ego) enchanted armour/weapon */
 			/* basic consumables */
 			switch (rand_int(2)) {
 			case 0:
@@ -11262,8 +11233,7 @@ void kill_xorder(int Ind) {
 				break;
 			}
 			apply_magic(&o_ptr->wpos, o_ptr, avg, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
-		//} else if (great && !verygreat && !rand_int(4)) { /* verygreat: guaranteed non-trivial (resfire) ego */
-		} else if (object_value_real(0, o_ptr) < 3000 && !rand_int(3)) {
+		} else if (object_value_real(0, o_ptr) < 3000 && !rand_int(3)) { /* eg instead of trivial (resfire) egos */
 			/* great consumables / bigger stacks of basic consumables */
 			switch (rand_int(2)) {
 			case 0:
@@ -11295,10 +11265,11 @@ void kill_xorder(int Ind) {
 			}
 			apply_magic(&o_ptr->wpos, o_ptr, avg, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 		}
-#endif
 
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
+		o_ptr->note = unique_quark;
+		o_ptr->note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
 		s_printf("object awarded %d,%d,%d (x%d)\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx, o_ptr->number);
 		inven_carry(Ind, o_ptr);
 		unique_quark = 0;
