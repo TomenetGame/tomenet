@@ -5766,7 +5766,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_format(Ind, "\377sUptime: %d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
 			return;
 #ifdef SERVER_PORTALS
-		} else if (prefix(messagelc, "/initportal")) { /* initialize inter-server portal */
+		} else if (prefix(messagelc, "/portal")) { /* initialize/use inter-server portal */
 			return;
 #endif
 		} else if (prefix(messagelc, "/split")) { /* split up an item stack, auto-append-inscribing the split up part !G */
