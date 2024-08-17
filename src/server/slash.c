@@ -7667,8 +7667,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
 				for (i = 0; i < MAX_LIST_INVALID; i++) {
 					if (!list_invalid_name[i][0]) break;
-					msg_format(Ind, "#%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
+					msg_format(Ind, "  #%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
 				}
+				if (!i) msg_print(Ind, "No invalid accounts recorded.");
+				return;
 			}
 			/* Respawn monsters on the floor
 			 * TODO: specify worldpos to respawn */

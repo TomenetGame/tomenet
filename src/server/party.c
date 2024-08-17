@@ -624,8 +624,28 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 	if (c_acc->id != 0L) {
 		if (c_acc->id == 1)
 			c_acc->flags = (ACC_ADMIN | ACC_NOSCORE);
-		else
+		else {
+			int i;
+
 			c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
+
+			/* Log new account creation in the log file (for auto-coloring in do_cmd_help_aux() (when invoking /log command)) */
+			s_printf("(%s) ACCOUNT_CREATED: <%s> with flags %d\n", showtime(), name, c_acc->flags);
+
+			/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
+			for (i = 0; i < MAX_LIST_INVALID; i++) {
+				if (!list_invalid_name[i][0]) {
+					/* add accountname to the list */
+					strcpy(list_invalid_name[i], name);
+					strcpy(list_invalid_date[i], showtime());
+					break;
+				}
+				if (strcmp(list_invalid_name[i], name)) continue;
+				/* accountname is already on the list */
+				break;
+			}
+			if (i == MAX_LIST_INVALID) s_printf("Warning: list-invalid is full.\n");
+		}
 
 		strncpy(c_acc->name, name, ACCFILE_NAME_LEN - 1);
 		c_acc->name[ACCFILE_NAME_LEN - 1] = '\0';

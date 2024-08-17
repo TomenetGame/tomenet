@@ -2752,6 +2752,9 @@ static bool save_server_aux(char *name) {
 	int	fd = -1;
 	int	mode = 0644;
 
+	FILE	*fil;
+	char	buf[1024];
+
 
 	/* No file yet */
 	fff = NULL;
@@ -2796,6 +2799,22 @@ static bool save_server_aux(char *name) {
 
 	/* Successful save */
 	/*server_saved = TRUE;*/
+
+
+	/* Hijacking: Also save invalid accounts list on this occasion */
+	path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "list-invalid.txt");
+	fil = fopen(buf, "w");
+	if (fil) {
+		int i;
+
+		for (i = 0; i < MAX_LIST_INVALID; i++) {
+			if (!list_invalid_name[i][0]) break;
+			fprintf(fil, "%s\n%s\n", list_invalid_date[i], list_invalid_name[i]);
+		}
+		fclose(fil);
+		//s_printf("Invalid account logins stored: %d (max %d)\n", i, MAX_LIST_INVALID); --kinda spammy, as save_server_info() is called often, eg on every login. */
+	}// else s_printf("Couldn't save list of invalid account logins.\n");
+
 
 	/* Success */
 	return(TRUE);
@@ -2875,6 +2894,8 @@ static bool load_server_info_classic(void) {
 
 	/* Okay */
 	if (!err) {
+		FILE *fil;
+
 		/* Give a conversion warning */
 		if ((version_major != sf_major) ||
 		    (version_minor != sf_minor) ||
@@ -2886,6 +2907,38 @@ static bool load_server_info_classic(void) {
 
 		/* The server state was loaded */
 		server_state_loaded = TRUE;
+
+
+		/* Hijacking: Also load invalid accounts list on this occasion.
+		   -- Warning: This list isn't synchronized with accedit actions!
+		      So any deletion/validation/invalidation there is not reflected and causes wrong information here. */
+		path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "list-invalid.txt");
+		fil = fopen(buf, "r");
+		if (fil) {
+			int i = 0;
+
+			while (fgets(buf, 24 + 1, fil) != NULL) {
+				buf[strlen(buf) - 1] = 0; //crop '\n' from fgets()
+				strcpy(list_invalid_date[i], buf);
+
+				if (fgets(buf, ACCNAME_LEN, fil) == NULL) {
+					s_printf("Warning: list-invalid.txt broken at entry %d.\n", i);
+					break;
+				}
+				buf[strlen(buf) - 1] = 0; //crop '\n' from fgets()
+				strcpy(list_invalid_name[i], buf);
+
+				i++;
+				if (i == MAX_LIST_INVALID) {
+					if (fgetc(fil) == EOF) s_printf("Warning: list-invalid.txt is full.\n");
+					else s_printf("Warning: list-invalid.txt is too large, discarded entries after %d\n", MAX_LIST_INVALID);
+					break;
+				}
+			}
+			fclose(fil);
+			s_printf("Invalid account logins recorded: %d (max %d)\n", i, MAX_LIST_INVALID);
+		} else s_printf("Couldn't open list of invalid account logins.\n");
+
 
 		/* Success */
 		return(TRUE);
@@ -2910,7 +2963,7 @@ bool load_server_info(void) {
 	/* check for existence of old huge server save file */
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
 	if (file_exist(buf)) {
-//		s_printf("Found classic 'server' savefile\n");
+		//s_printf("Found classic 'server' savefile\n");
 		return load_server_info_classic();
 	}
 

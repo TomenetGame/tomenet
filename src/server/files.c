@@ -895,7 +895,12 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 			strncpy(buf_tmp + 2, buf, 1021);
 			buf_tmp[1023] = 0;
 			strcpy(buf, buf_tmp);
-		} else if (strstr(buf, "[INVAL]")) { /* Invalid accounts */
+		} else if (strstr(buf, "[INVAL]")) { /* Invalid characters */
+			buf_tmp[1] = 'y';
+			strncpy(buf_tmp + 2, buf, 1021);
+			buf_tmp[1023] = 0;
+			strcpy(buf, buf_tmp);
+		} else if (strstr(buf, "ACCOUNT_CREATED")) { /* Invalid accounts */
 			buf_tmp[1] = 'R';
 			strncpy(buf_tmp + 2, buf, 1021);
 			buf_tmp[1023] = 0;

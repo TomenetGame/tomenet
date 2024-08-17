@@ -15,18 +15,19 @@
 
 #include "angband.h"
 
+
+#if CHAR_CREATION_FLAGS == 0 /* long deprecated, as we use '1' aka player-modifiable stats. */
 /*
  * Limit the starting stats to max. of 18/40, so that some players
  * won't keep on suiciding for better stats(esp. 18/50+).
  * This option also bottom-up the starting stats somewhat to
  * compensate it.		- Jir -
  */
-#if 0
-#define STARTING_STAT_LIMIT
+ #if 0
+  #define STARTING_STAT_LIMIT
+ #endif
 #endif
 
-/* Colourize log entries of invalid logins? (Deprecated - done in do_cmd_help_aux().) */
-//#define LOG_COLOUR_INVAL
 
 /*
  * Forward declare
@@ -3428,27 +3429,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		acc_houses = acc.houses;
-#ifdef LOG_COLOUR_INVAL
-		/* Colour invalidated accounts in the log file (for /log) */
-		if (p_ptr->inval) s_printf("\377R(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
-		else s_printf("(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
-#else
 		s_printf("(%s) ACC1:Player %s has flags %d%s and %d houses.\n", showtime(), accname, acc.flags, p_ptr->inval ? "[INVAL]" : "", acc_houses);
-#endif
-
-		/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
-		for (i = 0; i < MAX_LIST_INVALID; i++) {
-			if (!list_invalid_name[i][0]) {
-				/* add accountname to the list */
-				strcpy(list_invalid_name[i], accname);
-				strcpy(list_invalid_date[i], showtime());
-				break;
-			}
-			if (strcmp(list_invalid_name[i], accname)) continue;
-			/* accountname is already on he tlist */
-			break;
-		}
-		if (i == MAX_LIST_INVALID) s_printf("Warning: list-invalid is full.\n");
 	}
 
 	/* handle banned player 1/2 */
