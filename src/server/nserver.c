@@ -3784,6 +3784,15 @@ static int Handle_login(int ind) {
 	   We do it in Receive_plistw_notify() again, which we need anyway (every time the player toggles it). */
 	Send_playerlist(NumPlayers, 0, 1);
 
+	/* Admins receive a list of newly created player accounts */
+	if (p_ptr->admin_dm || p_ptr->admin_wiz) {
+		if (list_invalid_name[i][0]) msg_print(NumPlayers, "\377RNewly created accounts:");
+		for (i = 0; i < MAX_LIST_INVALID; i++) {
+			if (!list_invalid_name[i][0]) break;
+			msg_format(NumPlayers, "  #%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
+		}
+	}
+
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
 		/* Tell other secret dungeon masters about our new player */
