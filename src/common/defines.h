@@ -743,20 +743,18 @@
 #define MESSAGE_BUF	262143
 
 
-/*
- * Maximum value storable in a "byte" (hard-coded)
- */
+/* Maximum value storable in a "byte" (hard-coded) */
 #define MAX_UCHAR	255
 
-/*
- * Maximum value storable in a "s16b" (hard-coded)
- */
+/* Maximum value storable in a "s16b" (hard-coded) */
 #define MAX_SHORT	32767
 
-/*
- * Maximum path length
- */
+/* Maximum path length */
 #define MAX_PATH_LENGTH	128
+
+
+/* Maximum amount of invalid account names to keep in memory for admin QoL review without requiring to look through tomenet.log. */
+#define MAX_LIST_INVALID	1024
 
 
 /* The four seasons - C. Blue */

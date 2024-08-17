@@ -2791,3 +2791,5 @@ extern byte global_temp_x[TEMP_MAX];
 extern bool restart_panic, restart_unstatice_bree, restart_unstatice_towns, restart_unstatice_surface, restart_unstatice_dungeons;
 extern int pdf_hack_feat, pdf_hack_feat_new, pdf_hack_mon, pdf_hack_mon_new;
 extern u16b mushroom_field_wx[MAX_MUSHROOM_FIELDS], mushroom_field_wy[MAX_MUSHROOM_FIELDS], mushroom_field_x[MAX_MUSHROOM_FIELDS], mushroom_field_y[MAX_MUSHROOM_FIELDS], mushroom_fields;
+
+extern char list_invalid_name[MAX_LIST_INVALID][ACCNAME_LEN], list_invalid_date[MAX_LIST_INVALID][24];

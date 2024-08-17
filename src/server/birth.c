@@ -3435,6 +3435,20 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 #else
 		s_printf("(%s) ACC1:Player %s has flags %d%s and %d houses.\n", showtime(), accname, acc.flags, p_ptr->inval ? "[INVAL]" : "", acc_houses);
 #endif
+
+		/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
+		for (i = 0; i < MAX_LIST_INVALID; i++) {
+			if (!list_invalid_name[i][0]) {
+				/* add accountname to the list */
+				strcpy(list_invalid_name[i], accname);
+				strcpy(list_invalid_date[i], showtime());
+				break;
+			}
+			if (strcmp(list_invalid_name[i], accname)) continue;
+			/* accountname is already on he tlist */
+			break;
+		}
+		if (i == MAX_LIST_INVALID) s_printf("Warning: list-invalid is full.\n");
 	}
 
 	/* handle banned player 1/2 */

@@ -114,6 +114,16 @@ int validate(char *name) {
 	if (acc.flags & ACC_TRIAL) {
 		effect = TRUE;
 		acc.flags &= ~(ACC_TRIAL | ACC_NOSCORE);
+
+		/* Remove from "new players that need validation" list aka 'list-invalid.txt'. */
+		for (i = 0; i < MAX_LIST_INVALID; i++) {
+			if (!list_invalid_name[i][0]) break;
+			if (strcmp(list_invalid_name[i], name)) continue;
+			list_invalid_name[i][0] = 0;
+			break;
+		}
+
+		s_printf("VALIDATE: %s '%s'\n", showtime(), name);
 	}
 
 	/* Write account to disk */
@@ -149,16 +159,34 @@ int invalidate(char *name, bool admin) {
 	/* Read from disk */
 	if (!GetcaseAccount(&acc, name, name, TRUE)) return(0);
 
+#if 0 /* actually this is controlled in slash.c and privileged players can also invalidate */
 	/* Security check: Only admins can invalidate admin accounts */
 	if (!admin && (acc.flags & ACC_ADMIN)) {
 		WIPE(&acc, struct account);
 		return(2);
 	}
+#endif
 
 	/* Modify account flags */
 	if (!(acc.flags & ACC_TRIAL)) {
 		effect = TRUE;
 		acc.flags |= (ACC_TRIAL | ACC_NOSCORE);
+
+		/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
+		for (i = 0; i < MAX_LIST_INVALID; i++) {
+			if (!list_invalid_name[i][0]) {
+				/* add accountname to the list */
+				strcpy(list_invalid_name[i], name);
+				strcpy(list_invalid_date[i], showtime());
+				break;
+			}
+			if (strcmp(list_invalid_name[i], name)) continue;
+			/* accountname is already on the list -- should not happen here as we tested against ACC_TRIAL above. */
+			break;
+		}
+		if (i == MAX_LIST_INVALID) s_printf("Warning: list-invalid is full.\n");
+
+		s_printf("INVALIDATE: %s '%s'\n", showtime(), name);
 	}
 
 	/* Write account to disk */
