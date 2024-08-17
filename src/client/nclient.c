@@ -2912,6 +2912,7 @@ int Receive_history(void) {
 }
 
 int Receive_char(void) {
+//DYNAMIC_MINI_MAP: handle minimap-specific chars, via new PKT_ type probably instead of here (or combine PKT_CHAR and new PKT_ type into this function)
 	int n;
 	char ch;
 	char x, y;
@@ -3720,6 +3721,7 @@ int Receive_flush(void) {
 
 
 int Receive_line_info(void) {
+//DYNAMIC_MINI_MAP: handle minimap-specific lines, via new PKT_MINI_MAP type (while !screen_icky) probably
 	char	ch;
 	char32_t c;
 	int x, i, n;

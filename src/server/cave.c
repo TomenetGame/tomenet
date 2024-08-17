@@ -4277,14 +4277,14 @@ void lite_spot(int Ind, int y, int x) {
 			if (p_ptr->team) {
 				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */
 					switch (p_ptr->team) {
-						case 1:
-							a = TERM_L_RED;
-							break;
-						case 2:
-							a = TERM_L_BLUE;
-							break;
-						default:
-							break;
+					case 1:
+						a = TERM_L_RED;
+						break;
+					case 2:
+						a = TERM_L_BLUE;
+						break;
+					default:
+						break;
 					}
 				}
 				else if ((has_ball(p_ptr) != -1) && magik(25)) a = TERM_ORANGE; /* game ball carrier has orange flickering - mikaelh */
@@ -4428,6 +4428,7 @@ void lite_spot(int Ind, int y, int x) {
 
 				/* Tell client to redraw this grid */
 				Send_char(Ind, dispx, dispy, a, c);
+				// DYNAMIC_MINI_MAP (while in dungeon and not shopping): y, x, a, c - use priority-condensing code from display_map() to send a specific minimap char in addition to the normal map's Send_char() with a newly added PKT_ type
 			}
 
 			/* Clear the overlay buffer */

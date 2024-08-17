@@ -9999,6 +9999,8 @@ void process_player_change_wpos(int Ind) {
 
 	/* Display this warning at most once per floor. Once per secret area would be nice but requires some non-trivial coding... */
 	p_ptr->warning_secret_area = FALSE;
+
+	// DYNAMIC_MINI_MAP (worldmap, while not shopping): extract code from wild_display_map()
 }
 
 

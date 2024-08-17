@@ -518,6 +518,12 @@
    Note that retrieval from 'minimap_yoff' from server-side is just needed for this. - C. Blue */
 //#define WILDMAP_ALLOW_SELECTOR_SCROLLING
 
+/* Work in progress: Make the dedicated minimap subterm switch - C. Blue
+   Mirror map while shopping (status quo, ie clone of the main screen),
+   Condensed map while in dungeon (the same that is currently staticly available via shift+M while in dungeon),
+   World map while on the world surface including town and not shopping (same as ~0 displays on the main screen). */
+#define DYNAMIC_MINI_MAP
+
 /* Player login: Allow resuming from a different IP instead */
 #define ALLOW_RESUMING_FROM_NEW_IP
 /* Player login: Allow 'resuming' with a different character name, aka 'replacing',
