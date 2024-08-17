@@ -3429,7 +3429,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		acc_houses = acc.houses;
 #ifdef LOG_COLOUR_INVAL
-		/* Colour invalidated accounts in the log file (for /cheeze) */
+		/* Colour invalidated accounts in the log file (for /log) */
 		if (p_ptr->inval) s_printf("\377R(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
 		else s_printf("(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
 #else
@@ -3439,7 +3439,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* handle banned player 1/2 */
 	if (acc_banned) {
-		s_printf("\377RRefused ACC_BANNED account %s (character %s).\n", accname, name); /* Coloured for /cheeze */
+		s_printf("\377RRefused ACC_BANNED account %s (character %s).\n", accname, name); /* Coloured for /log */
 		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
 		return(FALSE);
 	}

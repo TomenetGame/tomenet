@@ -121,7 +121,7 @@
 /* Prolly no longer needed, since a player cannot gain exp from books now */
 //#define LEVEL_GAINING_LIMIT
 
-/* Add specific colour code or anything else in front of a death message in the log file? (for /cheeze) */
+/* Add specific colour code or anything else in front of a death message in the log file? (for /log) */
 #if 1
  #define FORMATDEATH ""
 #else
