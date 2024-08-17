@@ -119,6 +119,13 @@ int validate(char *name) {
 		for (i = 0; i < MAX_LIST_INVALID; i++) {
 			if (!list_invalid_name[i][0]) break;
 			if (strcmp(list_invalid_name[i], name)) continue;
+
+			/* Remove and slide everyone else down by once, to maintain the sorted-by-date state */
+			while (i < MAX_LIST_INVALID - 1) {
+				if (!list_invalid_name[i][0]) break;
+				strcpy(list_invalid_name[i], list_invalid_name[i + 1]);
+				strcpy(list_invalid_date[i], list_invalid_date[i + 1]);
+			}
 			list_invalid_name[i][0] = 0;
 			break;
 		}
