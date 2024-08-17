@@ -27193,8 +27193,11 @@ PROBLEM 76: On logging in with a character I receive one or more messages in
 Solution:   Usually caused by an outdated config file, such as .opt (options)
             or .prf (preferences). This happens for example if the name of an
             option has changed since an older game version.
-            To fix this, go to your TomeNET user folder (eg by pressing ~U) and
-            edit the file of the specified name:
+            To fix this, just save your options again by pressing:  = s
+            or if it was a prf file (usually a macro file) by pressing:  % s
+            Alternatively you can also fix it by going to your TomeNET user
+            folder (eg by pressing ~U) and editing the file of the specified
+            name:
             Find and either delete the line that has the error in it or correct
             the option name if you know its new name (in the game press = for
             the options menu and look for a similar option that might be the
