@@ -7656,7 +7656,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-			else if (prefix(messagelc, "/log")) {
+			else if (prefix(messagelc, "/log") && !prefix(messagelc, "/log_u")) {
 				char path[MAX_PATH_LENGTH];
 
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
