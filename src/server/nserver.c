@@ -13027,6 +13027,11 @@ static int Receive_special_line(int ind) {
 	char ch, type, srcstr[80];
 	s32b line;
 
+	/* Hacks for monster/item information */
+	char kludge[2] = "", minlev = 0;
+	bool uniques = FALSE;
+
+
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
@@ -13050,97 +13055,93 @@ static int Receive_special_line(int ind) {
 		line = old_line;
 	}
 
-	if (player) {
-		/* Hacks for monster/item information */
-		char kludge[2] = "", minlev = 0;
-		bool uniques = FALSE;
+	if (!player) return(1);
 
-		switch (type) {
-		case SPECIAL_FILE_NONE:
-			Players[player]->special_file_type = FALSE;
-			/* Remove the file */
-			/*if (!strcmp(Players[player]->infofile, Players[player]->cur_file)) */
-				fd_kill(Players[player]->infofile);
-			break;
-		case SPECIAL_FILE_UNIQUE:
-			/* abuse 'line' to encode 'mode' parameter */
-			do_cmd_check_uniques(player, line % 100000, srcstr, line / 100000, 0);
-			break;
-		case SPECIAL_FILE_ARTIFACT:
-			do_cmd_check_artifacts(player, line, srcstr);
-			break;
-		case SPECIAL_FILE_PLAYER:
-			do_cmd_check_players(player, line, srcstr);
-			break;
-		case SPECIAL_FILE_PLAYER_EQUIP:
-			do_cmd_check_player_equip(player, line);
-			break;
-		case SPECIAL_FILE_OTHER:
-			do_cmd_check_other(player, line, srcstr);
-			break;
-		case SPECIAL_FILE_SCORES:
-			display_scores(player, line);
-			break;
-		case SPECIAL_FILE_HELP:
-			do_cmd_help(player, line);
-			break;
-		case SPECIAL_FILE_LOG: { /* not 100% obsolete: callable from admin commands menu actually still */
-			char path[MAX_PATH_LENGTH];
+	switch (type) {
+	case SPECIAL_FILE_NONE:
+		Players[player]->special_file_type = FALSE;
+		/* Remove the file */
+		/*if (!strcmp(Players[player]->infofile, Players[player]->cur_file)) */
+			fd_kill(Players[player]->infofile);
+		break;
+	case SPECIAL_FILE_UNIQUE:
+		/* abuse 'line' to encode 'mode' parameter */
+		do_cmd_check_uniques(player, line % 100000, srcstr, line / 100000, 0);
+		break;
+	case SPECIAL_FILE_ARTIFACT:
+		do_cmd_check_artifacts(player, line, srcstr);
+		break;
+	case SPECIAL_FILE_PLAYER:
+		do_cmd_check_players(player, line, srcstr);
+		break;
+	case SPECIAL_FILE_PLAYER_EQUIP:
+		do_cmd_check_player_equip(player, line);
+		break;
+	case SPECIAL_FILE_OTHER:
+		do_cmd_check_other(player, line, srcstr);
+		break;
+	case SPECIAL_FILE_SCORES:
+		display_scores(player, line);
+		break;
+	case SPECIAL_FILE_HELP:
+		do_cmd_help(player, line);
+		break;
+	case SPECIAL_FILE_LOG: { /* not 100% obsolete: callable from admin commands menu actually still */
+		char path[MAX_PATH_LENGTH];
 
-			if (!is_admin(Players[player])) break;
-			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
-			do_cmd_check_other_prepare(player, path, "Logfile");
-			break; }
-		case SPECIAL_FILE_DEATHS: {
-			char path[MAX_PATH_LENGTH];
+		if (!is_admin(Players[player])) break;
+		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
+		do_cmd_check_other_prepare(player, path, "Logfile");
+		break; }
+	case SPECIAL_FILE_DEATHS: {
+		char path[MAX_PATH_LENGTH];
 
-			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-deaths-short.txt");
-			do_cmd_check_other_prepare(player, path, "Recent Deaths (some low ones omitted)");
-			break; }
-		case SPECIAL_FILE_MOTD2:
-			show_motd2(player);
-			break;
-		/*
-		 * Hack -- those special files actually use do_cmd_check_other
-		 * XXX redesign it
-		 */
-		case SPECIAL_FILE_SERVER_SETTING:
-			do_cmd_check_server_settings(player);
-			break;
-		case SPECIAL_FILE_MONSTER:
-			/* abused 'line' to encode both, monster type and minimum level, and now also 'uniques only' choice */
-			if (line >= 100000000) {
-				line -= 100000000;
-				uniques = TRUE;
-			}
-			minlev = line / 100000;
-			line = line % 100000;
-			kludge[0] = (char) line;
-			kludge[1] = '\0';
-			do_cmd_show_monster_killed_letter(player, kludge, minlev, uniques);
-			break;
-		case SPECIAL_FILE_OBJECT:
-			/* abused 'line' to encode item type */
-			line = line % 0xFF;
-			kludge[0] = (char) line;
-			kludge[1] = '\0';
-			do_cmd_show_known_item_letter(player, kludge);
-			break;
-		case SPECIAL_FILE_HOUSE:
-			do_cmd_show_houses(player, FALSE, FALSE, 0);
-			break;
-		case SPECIAL_FILE_TRAP:
-			do_cmd_knowledge_traps(player);
-			break;
-		case SPECIAL_FILE_RECALL:
-			do_cmd_knowledge_dungeons(player);
-			break;
-#if 0 //not implemented
-		case SPECIAL_FILE_EXTRAINFO:
-			do_cmd_check_extra_info(player);
-			break;
-#endif
+		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-deaths-short.txt");
+		do_cmd_check_other_prepare(player, path, "Recent Deaths (some low ones omitted)");
+		break; }
+	case SPECIAL_FILE_MOTD2:
+		show_motd2(player);
+		break;
+	/*
+	 * Hack -- those special files actually use do_cmd_check_other
+	 * XXX redesign it
+	 */
+	case SPECIAL_FILE_SERVER_SETTING:
+		do_cmd_check_server_settings(player);
+		break;
+	case SPECIAL_FILE_MONSTER:
+		/* abused 'line' to encode both, monster type and minimum level, and now also 'uniques only' choice */
+		if (line >= 100000000) {
+			line -= 100000000;
+			uniques = TRUE;
 		}
+		minlev = line / 100000;
+		line = line % 100000;
+		kludge[0] = (char) line;
+		kludge[1] = '\0';
+		do_cmd_show_monster_killed_letter(player, kludge, minlev, uniques);
+		break;
+	case SPECIAL_FILE_OBJECT:
+		/* abused 'line' to encode item type */
+		line = line % 0xFF;
+		kludge[0] = (char) line;
+		kludge[1] = '\0';
+		do_cmd_show_known_item_letter(player, kludge);
+		break;
+	case SPECIAL_FILE_HOUSE:
+		do_cmd_show_houses(player, FALSE, FALSE, 0);
+		break;
+	case SPECIAL_FILE_TRAP:
+		do_cmd_knowledge_traps(player);
+		break;
+	case SPECIAL_FILE_RECALL:
+		do_cmd_knowledge_dungeons(player);
+		break;
+#if 0 //not implemented
+	case SPECIAL_FILE_EXTRAINFO:
+		do_cmd_check_extra_info(player);
+		break;
+#endif
 	}
 
 	return(1);
