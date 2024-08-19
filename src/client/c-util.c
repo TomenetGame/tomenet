@@ -1063,6 +1063,8 @@ static char inkey_aux(void) {
 			/* Hack for auto-pressing spacebar while in player-list */
 			if (within_cmd_player && ticks - within_cmd_player_ticks >= 50) {
 				within_cmd_player_ticks = ticks;
+				/* hack: -- TODO: Remove/restrict it so it doesn't interfere with inkey() checks that just _wait_ for any actual keypress,
+				   as those will be auto-confirmed by this; maybe use the existing if (k == 1) check after inkey() in peruse_file(). */
 				ch = 1; //refresh our current player list view
 				break;
 			}
@@ -1073,8 +1075,9 @@ static char inkey_aux(void) {
 			/* If we received a 'max_line' value from the net,
 			   break if inkey_max_line flag was set */
 			if (inkey_max_line != inkey_max_line_set) {
-				/* hack: */
-				ch = 1;
+				/* hack: -- TODO: Remove/restrict it so it doesn't interfere with inkey() checks that just _wait_ for any actual keypress,
+				   as those will be auto-confirmed by this; maybe use the existing if (k == 1) check after inkey() in peruse_file(). */
+				ch = 1; //refresh the max line number to orange colour if we reached the end of the document perused
 				break;
 			}
 

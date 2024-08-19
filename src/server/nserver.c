@@ -13026,6 +13026,7 @@ static int Receive_special_line(int ind) {
 	int player = -1, n;
 	char ch, type, srcstr[80];
 	s32b line;
+	player_type *p_ptr;
 
 	/* Hacks for monster/item information */
 	char kludge[2] = "", minlev = 0;
@@ -13056,13 +13057,31 @@ static int Receive_special_line(int ind) {
 	}
 
 	if (!player) return(1);
+	p_ptr = Players[player];
+
+	if (p_ptr->infofile[0]) {
+		if (p_ptr->infofile[0] == '#') line = atoi(&p_ptr->infofile[1]); /* hack: interpret prefixed # as line number instead of search term */
+		else {
+#ifdef REGEX_SEARCH
+			if (p_ptr->infofile[0] == '$') {
+				line = 1000000000; /* hack: interpret prefixed $ as regexp search term */
+				strcpy(srcstr, &p_ptr->infofile[1]);
+			} else
+#endif
+			strcpy(srcstr, p_ptr->infofile);
+		}
+//s_printf("<<<<    debug: type=%d, line=%d, srcstr=%s (regexp=%d), infofile=<%s>\n", type, line, srcstr, line == 1000000000, p_ptr->infofile);
+		p_ptr->infofile[0] = 0;
+	}
+//s_printf("<<<<    NON-debug: type=%d, line=%d, srcstr=%s (regexp=%d), infofile=<%s>\n", type, line, srcstr, line == 1000000000, p_ptr->infofile);
+// TODO for p_ptr->infofile hack: peruse_file() on client-side must set cur_line to line. Also, the two ch = 1 hacks must be corrected.
 
 	switch (type) {
 	case SPECIAL_FILE_NONE:
-		Players[player]->special_file_type = FALSE;
+		p_ptr->special_file_type = FALSE;
 		/* Remove the file */
-		/*if (!strcmp(Players[player]->infofile, Players[player]->cur_file)) */
-			fd_kill(Players[player]->infofile);
+		/*if (!strcmp(p_ptr->infofile, p_ptr->cur_file)) */
+			fd_kill(p_ptr->infofile);
 		break;
 	case SPECIAL_FILE_UNIQUE:
 		/* abuse 'line' to encode 'mode' parameter */
@@ -13089,7 +13108,7 @@ static int Receive_special_line(int ind) {
 	case SPECIAL_FILE_LOG: { /* not 100% obsolete: callable from admin commands menu actually still */
 		char path[MAX_PATH_LENGTH];
 
-		if (!is_admin(Players[player])) break;
+		if (!is_admin(p_ptr)) break;
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
 		do_cmd_check_other_prepare(player, path, "Logfile");
 		break; }
