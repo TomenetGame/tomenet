@@ -183,14 +183,18 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 ## With SDL, using 'sdl-config':
 #CFLAGS += -DSOUND_SDL `$(SDL_CONFIG) --cflags`
-#LIBS += -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
+#LIBS += -lSDL2_mixer `$(SDL_CONFIG) --libs`
 ##
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually above:
 CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
-#LIBS += -lSDL -lSDL_mixer $(SDL_LIB_PATH)
+LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
+
 #added regexp capability for guide searching via mingw-libgnurx -> link against regex
-#LIBS += $(SDL_LIB_PATH) -lSDL_mixer -lregex
-LIBS += $(SDL_LIB_PATH) -lSDL2_mixer -lregex
+LIBS += -lregex
+##
+# Regex via pcre2 instead of libgnurx/other:
+#CFLAGS += `pcre2-config --cflags`
+#LIBS += `pcre2-config --libs8`
 
 # Security hardening
 # -pie seems to be broken
@@ -237,7 +241,8 @@ NCC = gcc
 #tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
 # while -O3 (and maybe -O2?) seem to fix that as workaround
 # update 2024-07-01: O3 caused 13/74 virustotal false positives, changing to O2 only 3/74 ^^'
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2 -flto=auto
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2
+# -flto=auto	--causes crash! once on leaving a menu, now on startup. Just "-flto" is working w/o crash.
 tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
 
 
