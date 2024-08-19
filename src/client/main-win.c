@@ -3982,6 +3982,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	u32b seed;
 
 
+	/* Set the system suffix */
+	ANGBAND_SYS = "win";
+
 	/* Get temp path for version-building below */
 	init_temp_path();
 	/* make version strings. */
@@ -4050,9 +4053,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	plog_aux = hook_plog;
 	quit_aux = hook_quit;
 	core_aux = hook_quit;
-
-	/* Set the system suffix */
-	ANGBAND_SYS = "win";
 
 	/* We are now initialized */
 	initialized = TRUE;
