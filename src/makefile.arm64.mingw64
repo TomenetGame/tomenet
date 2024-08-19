@@ -235,8 +235,7 @@ NCC = gcc
 #tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
 # while -O3 (and maybe -O2?) seem to fix that as workaround
 # update 2024-07-01: O3 caused 13/74 virustotal false positives, changing to O2 only 3/74 ^^'
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2
-#-flto=auto	-- at least on non-arm mingw this caused a crash, playing it safe for now
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2 -flto=auto
 tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
 
 
