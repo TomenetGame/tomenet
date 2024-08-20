@@ -2549,13 +2549,13 @@ void check_guide_checksums(bool forced) {
 
 	/* TODO: Make this a .tomenetrc / tomenet.ini switch */
 #ifdef WINDOWS
- #if 0	/* 1: Don't check guide checksums on client startup. \
+ #if 1	/* 1: Don't check guide checksums on client startup. \
 	      Disabled now as nobody has the required sha256sum.exe/bat files in their 'updater' folder anyway. Reenable on next release. */
 	/* (guide_outdated remains FALSE) */
 	if (!forced) return;
  #endif
 #else /* Assume POSIX - We assume that sha256sum is probably available on POSIX, so this could be worth using already. */
- #if 0	/* 1: Don't check guide checksums on client startup. We have = C now, so this isn't that important anymore. */
+ #if 1	/* 1: Don't check guide checksums on client startup. We have = C now, so this isn't that important anymore. */
 	/* (guide_outdated remains FALSE) */
 	if (!forced) return;
  #endif
