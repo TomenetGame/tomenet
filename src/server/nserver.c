@@ -7525,7 +7525,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
 	int x, x1, n;
-	char32_t c, c2, cu, c_back;
+	char32_t c, c2, cu; //c_back; GRAPHICS_BG_MASK
 	byte a, a2;
 #ifdef LOCATE_KEEPS_OVL
 	char32_t co;
