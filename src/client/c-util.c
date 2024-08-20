@@ -11279,7 +11279,7 @@ void do_cmd_options(void) {
 			} else {
 				c_msg_print("\377gSuccessfully updated the Guide.");
 				init_guide();
-				check_guide_checksums(FALSE);
+				check_guide_checksums(TRUE);
 				if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
 				//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 			}
@@ -11314,7 +11314,7 @@ void do_cmd_options(void) {
 				} else {
 					c_msg_print("\377gSuccessfully updated the Guide.");
 					init_guide();
-					check_guide_checksums(FALSE);
+					check_guide_checksums(TRUE);
 					if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
 					//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 				}
