@@ -125,6 +125,7 @@ int validate(char *name) {
 				if (!list_invalid_name[i][0]) break;
 				strcpy(list_invalid_name[i], list_invalid_name[i + 1]);
 				strcpy(list_invalid_date[i], list_invalid_date[i + 1]);
+				i++;
 			}
 			list_invalid_name[i][0] = 0;
 			break;
