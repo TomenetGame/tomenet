@@ -50,7 +50,9 @@ typedef struct {
 	//char		q_static[MAX_RELIABLE_DATA_PACKET_SIZE]; /* for paralysation */
 
 	short int	audio_sfx, audio_mus;
-	short int	use_graphics; /* Client explicitely uses graphical tileset */
+	short int	use_graphics; /* Client explicitely uses graphical tileset.
+					 Optional addition: GRAPHICS_BG_MASK - Client has use_graphics, and additionally wants dual-grid info
+									       that includes the background (f_info.txt) info (to merge both foreground and background visually). */
 	char graphic_tiles[512], fname[512];
 } connection_t;
 

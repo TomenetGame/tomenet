@@ -534,6 +534,12 @@
    (However note, in equipment, colour codes are already used by rune sigils.) */
 #define X_INFO_TXT_COLOURS
 
+/* When graphics are used, enable a 2nd mask colour for background masking:
+   Black (0x000000) in a non-f_info.txt-graphics will let the otherwise displayed f_info.txt graphics shine through (100% alpha transparency). - C. Blue
+   (Notes: Affected server functions: Send_char(), Send_line_info(), Send_line_info_forward().) */
+#ifdef USE_GRAPHICS
+ #define GRAPHICS_BG_MASK
+#endif
 
 
 /* ------------------------------------------------------------------------- */

@@ -7283,13 +7283,15 @@ int Send_message(int Ind, cptr msg) {
 	return Packet_printf(&connp->c, "%c%S", PKT_MESSAGE, buf);
 }
 
-int Send_char(int Ind, int x, int y, byte a, char32_t c) {
+#ifdef GRAPHICS_BG_MASK
+int Send_char(int Ind, int x, int y, byte a, char32_t c_fore, char32_t c_back) {
+#else
+int Send_char(int Ind, int x, int y, byte a, char32_t c_fore) {
+#endif
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
 
-	if (!BIT(Conn[Players[Ind]->conn]->state, CONN_PLAYING | CONN_READY))
-		return(0);
-
+	if (!BIT(Conn[Players[Ind]->conn]->state, CONN_PLAYING | CONN_READY)) return(0);
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
@@ -7297,56 +7299,104 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 		if (BIT(connp2->state, CONN_PLAYING | CONN_READY)) {
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 			   Maybe todo: also unmap attr? */
-			char32_t unm_c_idx = c;
-			char32_t c2 = c;
+			char32_t unm_c_idx = c_fore;
+			char32_t c2_fore = c_fore;
 			char *unm_c_ptr;
+#ifdef GRAPHICS_BG_MASK
+			char32_t c2_back = c_back;
+#endif
 
-			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) c2 = (char32_t)*unm_c_ptr;
-			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) c2 = (char32_t)*unm_c_ptr;
+			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) c2_fore = (char32_t)*unm_c_ptr;
+			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) c2_fore = (char32_t)*unm_c_ptr;
 
+#ifdef GRAPHICS_BG_MASK
+			if (connp2->use_graphics == 2 && is_atleast(&connp2->version, 4, 9, 3, 0, 0, 0)) {
+				/* Transfer only the relevant bytes, according to client setup.*/
+				char *pc = (char*)&c2_fore;
+
+				switch (connp2->Client_setup.char_transfer_bytes) {
+				case 0:
+				case 1:
+					Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+					break;
+				case 2:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+					break;
+				case 3:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+					break;
+				case 4:
+				default:
+					Packet_printf(&connp2->c, "%c%c%c%c%u%u", PKT_CHAR, x, y, a, c2_fore, c2_back);
+				}
+			} else
+#endif
 			/* 4.8.1 and newer clients use 32bit character size. */
 			if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 				/* Transfer only the relevant bytes, according to client setup.*/
-				char * pc = (char *)&c2;
+				char *pc = (char*)&c2_fore;
+
 				switch (connp2->Client_setup.char_transfer_bytes) {
-					case 0:
-					case 1:
-						Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
-						break;
-					case 2:
-						Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
-						break;
-					case 3:
-						Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
-						break;
-					case 4:
-					default:
-						Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2);
+				case 0:
+				case 1:
+					Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+					break;
+				case 2:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+					break;
+				case 3:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+					break;
+				case 4:
+				default:
+					Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2_fore);
 				}
-			} else {
-				Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c2);
 			}
+			else Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c2_fore);
 		}
 	}
 
+#ifdef GRAPHICS_BG_MASK
+	if (connp->use_graphics == 2 && is_atleast(&connp->version, 4, 9, 3, 0, 0, 0)) {
+		/* Transfer only the relevant bytes, according to client setup.*/
+		char *pc = (char*)&c_fore;
+
+		switch (connp->Client_setup.char_transfer_bytes) {
+		case 0:
+		case 1:
+			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+			break;
+		case 2:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+			break;
+		case 3:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+			break;
+		case 4:
+		default:
+			return Packet_printf(&connp->c, "%c%c%c%c%u%u", PKT_CHAR, x, y, a, c_fore, c_back);
+		}
+	} else
+#endif
 	/* 4.8.1 and newer clients use 32bit character size. */
 	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 		/* Transfer only the relevant bytes, according to client setup.*/
-		char * pc = (char *)&c;
+		char *pc = (char*)&c;
+
 		switch (connp->Client_setup.char_transfer_bytes) {
-			case 0:
-			case 1:
-				return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
-				break;
-			case 2:
-				return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
-				break;
-			case 3:
-				return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
-				break;
-			case 4:
-			default:
-				return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
+		case 0:
+		case 1:
+			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+			break;
+		case 2:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+			break;
+		case 3:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+			break;
+		case 4:
+		default:
+			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
 		}
 	}
 	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c);
@@ -7475,7 +7525,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
 	int x, x1, n;
-	char32_t c, c2, cu;
+	char32_t c, c2, cu, c_back;
 	byte a, a2;
 #ifdef LOCATE_KEEPS_OVL
 	char32_t co;
