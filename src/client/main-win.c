@@ -4046,6 +4046,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	paletted = ((GetDeviceCaps(hdc, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE);
 	ReleaseDC(NULL, hdc);
 
+	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
+	check_guide_checksums();
+
 	/* Prepare the windows */
 	init_windows();
 

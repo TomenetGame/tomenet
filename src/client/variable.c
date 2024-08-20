@@ -211,7 +211,7 @@ cptr ANGBAND_DIR_XTRA;
 cptr ANGBAND_DIR_GAME;
 
 bool disable_numlock = FALSE;
-bool use_graphics = FALSE;
+byte use_graphics = FALSE;
 #ifdef USE_GRAPHICS
 char graphic_tiles[256] = "16x22sv";
 #endif
@@ -678,6 +678,7 @@ bool player_pref_files_loaded = FALSE;
 
 /* For in-client guide search */
 int guide_lastline, guide_errno;
+bool guide_outdated = FALSE;
 char guide_race[64][MAX_CHARS];
 char guide_class[64][MAX_CHARS];
 char guide_skill[128][MAX_CHARS];

@@ -2537,3 +2537,62 @@ void load_birth_file(cptr name) {
 	/* Update an outdated dna file version? */
 	if (update) save_birth_file(name, TRUE);
 }
+
+/* Check if our guide is outdated -- only do this once on initial client startup, not on every relog (retry_contact).
+   Also do this when explicitely requested (eg via =U or /reinit_guide). */
+#ifdef WINDOWS
+ #include <process.h> /* for _spawnl() */
+#endif
+void check_guide_checksums(void) {
+	FILE *fp;
+	char buf[MAX_CHARS_WIDE], buf2[MAX_CHARS_WIDE], *c;
+
+#if 0	/* 1: Don't check guide checksums on client startup. */
+	/* (guide_outdated remains FALSE) */
+	return;
+#endif
+
+	/* Do we have sha256sum tool? */
+#ifdef WINDOWS
+	if (!my_fexists("updater\\sha256sum.bat"))
+	//if (access("updater\\sha256sum.bat", F_OK))
+#else /* assume POSIX */
+	if (system("sha256sum"))
+#endif
+	{
+		//printf("Warning: No sha256sum found, cannot auto-check guide for outdatedness.\n"); --could be spammy
+		guide_outdated = FALSE;
+		return;
+	}
+
+	buf2[0] = buf[0] = 0;
+#ifdef WINDOWS
+	(void)_spawnl(_P_WAIT, "updater\\sha256sum.bat", "updater\\sha256sum.bat", NULL);
+#else /* assume POSIX */
+	(void)system("sha256sum TomeNET-Guide.txt > TomeNET-Guide.sha256.local");
+#endif
+	fp = fopen("TomeNET-Guide.sha256.local", "r");
+	if (fp) {
+		fgets(buf2, MAX_CHARS_WIDE, fp);
+		fclose(fp);
+	}
+	remove("TomeNET-Guide.sha256.local");
+	if ((c = strchr(buf2, ' '))) *c = 0; //cut off file name, only keep the actual hash
+#ifdef WINDOWS
+	(void)_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", "https://www.tomenet.eu/TomeNET-Guide.sha256", NULL);
+#else /* assume POSIX */
+	(void)system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.sha256");
+#endif
+	fp = fopen("TomeNET-Guide.sha256", "r");
+	if (fp) {
+		fgets(buf, MAX_CHARS_WIDE, fp);
+		fclose(fp);
+	}
+	remove("TomeNET-Guide.sha256");
+	if ((c = strchr(buf, ' '))) *c = 0; //cut off file name, only keep the actual hash
+	//printf("old <%s>, new <%s>\n", buf2, buf);
+	guide_outdated = strcmp(buf2, buf);
+
+	//Must be disabled if we ever call check_guide_checksums() before the window system is initialized (eg early on in main()), or segfault:
+	//if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
+}

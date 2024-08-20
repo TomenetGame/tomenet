@@ -1265,6 +1265,8 @@ int main(int argc, char **argv) {
 		quit(NULL);
 	}
 
+	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
+	check_guide_checksums();
 
 	/* Attempt to initialize a visual module */
 

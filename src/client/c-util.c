@@ -11253,6 +11253,7 @@ void do_cmd_options(void) {
 #ifdef WINDOWS
 			char _latest_install[1024];
 
+			remove("TomeNET-Guide.txt.old");
 			rename("TomeNET-Guide.txt", "TomeNET-Guide.txt.old");
 			/* Check if renaming failed -> we don't have write access! */
 			if (my_fexists("TomeNET-Guide.txt")) {
@@ -11271,12 +11272,15 @@ void do_cmd_options(void) {
 			} else {
 				c_msg_print("\377gSuccessfully updated the Guide.");
 				init_guide();
+				check_guide_checksums();
+				if (guide_outdated) c_msg_print("\377yYour guide is outdated. This shouldn't happen.");
 				//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 			}
 #else
 			FILE *fp;
 			char out_val[3];
 
+			remove("TomeNET-Guide.txt.old");
 			rename("TomeNET-Guide.txt", "TomeNET-Guide.txt.old");
 			/* Check if renaming failed -> we don't have write access! */
 			if (my_fexists("TomeNET-Guide.txt")) {
@@ -11303,6 +11307,8 @@ void do_cmd_options(void) {
 				} else {
 					c_msg_print("\377gSuccessfully updated the Guide.");
 					init_guide();
+					check_guide_checksums();
+					if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
 					//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 				}
 			} else {

@@ -7113,6 +7113,13 @@ static void do_meta_pings(void) {
 
 	if (!method) {
 		if (access("ping-wrap.exe", F_OK) == 0) method = 1;
+		/* If access() doesn't work on native compilation (eg in VC), use my_fexist() instead, or try this:
+		#ifdef WIN32
+		 #include <io.h>
+		 #define F_OK 0
+		 #define access _access
+		#endif
+		*/
 		else method = 2;
 	}
 

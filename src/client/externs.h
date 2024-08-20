@@ -332,7 +332,7 @@ extern cptr ANGBAND_DIR_SCPT;
 extern cptr ANGBAND_DIR_GAME;
 
 extern bool disable_numlock;
-extern bool use_graphics;
+extern byte use_graphics;
 #ifdef USE_GRAPHICS
 extern char graphic_tiles[256];
 #endif
@@ -573,6 +573,7 @@ extern void save_birth_file(cptr name, bool touch);
 extern void load_birth_file(cptr name);
 extern bool within_cmd_player;
 extern int within_cmd_player_ticks;
+extern void check_guide_checksums(void);
 
 /* c-init.c */
 extern void init_stuff(void);
@@ -1206,6 +1207,7 @@ extern bool player_pref_files_loaded;
 #endif
 
 extern int guide_lastline, guide_errno;
+extern bool guide_outdated;
 #ifdef BUFFER_GUIDE
 extern char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1];
 #endif

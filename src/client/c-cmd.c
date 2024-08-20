@@ -7757,6 +7757,8 @@ void cmd_message(void) {
 		} else if (!strcasecmp(buf, "/reinit_guide")) { /* Undocumented: Re-init the guide (update buffered guide info if guide was changed while client is still running). */
 			init_guide();
 			c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
+			check_guide_checksums();
+			if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
 			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/reinit_audio")) { /* Undocumented: Re-init the audio system. Same as pressing CTRL+R in the mixer UI. */
