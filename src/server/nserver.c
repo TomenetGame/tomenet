@@ -7381,7 +7381,7 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c_fore) {
 	/* 4.8.1 and newer clients use 32bit character size. */
 	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 		/* Transfer only the relevant bytes, according to client setup.*/
-		char *pc = (char*)&c;
+		char *pc = (char*)&c_fore;
 
 		switch (connp->Client_setup.char_transfer_bytes) {
 		case 0:
