@@ -7396,10 +7396,10 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c_fore) {
 			break;
 		case 4:
 		default:
-			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
+			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c_fore);
 		}
 	}
-	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c);
+	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c_fore);
 }
 
 int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
