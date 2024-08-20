@@ -4047,7 +4047,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	ReleaseDC(NULL, hdc);
 
 	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
-	check_guide_checksums();
+	check_guide_checksums(FALSE);
 
 	/* Prepare the windows */
 	init_windows();

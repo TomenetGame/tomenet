@@ -11092,12 +11092,12 @@ void do_cmd_options(void) {
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yc\377w)   Colour palette and colour blindness options");
 		l++;
 
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UA\377w)   Account Options");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UI\377w)   Install sound/music pack from 7z-file you placed in your TomeNET folder");
 #ifdef WINDOWS
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UU\377w) Update the TomeNET Guide (downloads and reinits the Guide).");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (downloads and reinits the Guide)");
 #else
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UU\377w) Update the TomeNET Guide (requires 'wget' package to be installed).");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (requires 'wget' package installed)");
 #endif
 
 		/* hide cursor */
@@ -11247,6 +11247,13 @@ void do_cmd_options(void) {
 		/* Account options */
 		else if (k == 'A') do_cmd_options_acc();
 
+		/* Check the TomeNET Guide for outdatedness */
+		else if (k == 'C') {
+			check_guide_checksums(TRUE);
+			if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it right now by pressing: \377sU");
+			else c_msg_print("\377GYour guide is up to date.");
+		}
+
 		/* Update the TomeNET Guide */
 		else if (k == 'U') {
 			int res;
@@ -11272,8 +11279,8 @@ void do_cmd_options(void) {
 			} else {
 				c_msg_print("\377gSuccessfully updated the Guide.");
 				init_guide();
-				check_guide_checksums();
-				if (guide_outdated) c_msg_print("\377yYour guide is outdated. This shouldn't happen.");
+				check_guide_checksums(FALSE);
+				if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
 				//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 			}
 #else
@@ -11307,7 +11314,7 @@ void do_cmd_options(void) {
 				} else {
 					c_msg_print("\377gSuccessfully updated the Guide.");
 					init_guide();
-					check_guide_checksums();
+					check_guide_checksums(FALSE);
 					if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
 					//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 				}

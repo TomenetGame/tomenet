@@ -3052,7 +3052,7 @@ void init_guide(void) {
 		strcpy(guide_spell[i], string_exec_lua(0, format("return guide_spell[%d]", i + 1)));
 
 #if 0 /* Actually check for outdated guide via sha256sum. This costs a bit of time on Windows as we need to call wget.exe and sha256sum.exe. But it's only done on initial login or when explicitely requested, so it should be 100% fine. */
-	check_guide_checksums();
+	check_guide_checksums(FALSE);
 	if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
 #endif
 }
