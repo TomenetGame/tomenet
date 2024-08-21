@@ -5861,7 +5861,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			if (prefix(messagelc, "/inval")) {
+			else if (prefix(messagelc, "/inval")) {
 				if (!tk) {
 					msg_print(Ind, "Usage: /inval <player name>");
 					return;
@@ -5878,6 +5878,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					s_printf("ATTEMPT_INVAL_ADMIN: %s -> %s\n", p_ptr->name, message3);
 					break;
 				}
+				return;
+			}
+			else if (prefix(messagelc, "/linv")) { /* List new invalid account names that tried to log in meanwhile */
+				for (i = 0; i < MAX_LIST_INVALID; i++) {
+					if (!list_invalid_name[i][0]) break;
+					msg_format(Ind, "  #%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
+				}
+				if (!i) msg_print(Ind, "No invalid accounts recorded.");
 				return;
 			}
 		}
@@ -7665,7 +7673,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/linv")) { /* List new invalid account names that tried to log in meanwhile */
-				/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
 				for (i = 0; i < MAX_LIST_INVALID; i++) {
 					if (!list_invalid_name[i][0]) break;
 					msg_format(Ind, "  #%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
