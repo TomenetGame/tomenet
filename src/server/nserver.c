@@ -13109,6 +13109,7 @@ static int Receive_special_line(int ind) {
 	if (!player) return(1);
 	p_ptr = Players[player];
 
+#if 0 // segfaults inspecting an item for example
 	if (p_ptr->infofile[0]) {
 		if (p_ptr->infofile[0] == '#') line = atoi(&p_ptr->infofile[1]); /* hack: interpret prefixed # as line number instead of search term */
 		else {
@@ -13125,6 +13126,7 @@ static int Receive_special_line(int ind) {
 	}
 //s_printf("<<<<    NON-debug: type=%d, line=%d, srcstr=%s (regexp=%d), infofile=<%s>\n", type, line, srcstr, line == 1000000000, p_ptr->infofile);
 // TODO for p_ptr->infofile hack: peruse_file() on client-side must set cur_line to line. Also, the two ch = 1 hacks must be corrected.
+#endif
 
 	switch (type) {
 	case SPECIAL_FILE_NONE:

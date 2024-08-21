@@ -7659,7 +7659,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/log") && !prefix(messagelc, "/log_u")) {
 				char path[MAX_PATH_LENGTH];
 
-				strcpy(p_ptr->infofile, message3); //abuse this as temp storage
+				//(segfaults inspecting an item for example) -- strcpy(p_ptr->infofile, message3); //abuse this as temp storage
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
 				do_cmd_check_other_prepare(Ind, path, "Server Log File");
 				return;
