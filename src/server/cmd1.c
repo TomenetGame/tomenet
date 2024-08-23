@@ -2874,7 +2874,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 							   reduce the nonsense to 1 extra house per Account.. */
 							struct account acc;
 
-							bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+							bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
 
 							/* paranoia */
 							if (success) {

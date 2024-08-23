@@ -8309,7 +8309,7 @@ static void process_world(void) {
 			if (connp->nick) {
 				struct account acc;
 
-				if (GetAccount(&acc, connp->nick, NULL, TRUE) && (acc.flags & ACC_ADMIN)) continue;
+				if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL) && (acc.flags & ACC_ADMIN)) continue;
 			}
 
 			/* Don't trigger restart yet */
@@ -8416,7 +8416,7 @@ static void process_world(void) {
 			if (connp->nick) {
 				struct account acc;
 
-				if (GetAccount(&acc, connp->nick, NULL, TRUE) && (acc.flags & ACC_ADMIN)) continue;
+				if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL) && (acc.flags & ACC_ADMIN)) continue;
 			}
 
 			/* Don't trigger restart yet */

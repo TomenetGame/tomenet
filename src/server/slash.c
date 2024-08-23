@@ -2900,7 +2900,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* no text given */
 				if (!lookup_player_id(message2 + 6)) {
 					/* character name not found, try to match account name instead */
-					if (!GetAccount(&acc, message2 + 6, NULL, FALSE)) {
+					if (!GetAccount(&acc, message2 + 6, NULL, FALSE, NULL, NULL)) {
 						msg_print(Ind, "\377oNo character or account of that name exists.");
 						/* automatically delete old messages that we have written to this receipient which no longer exists */
 						strcpy(tname, message2 + 6);
@@ -2936,7 +2936,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				tpname[0] = 0;
 				if (!lookup_player_id(message2 + 6)) {
 					/* character name not found, try to match account name instead */
-					if (!GetAccount(&acc, message2 + 6, NULL, FALSE)) {
+					if (!GetAccount(&acc, message2 + 6, NULL, FALSE, NULL, NULL)) {
 						msg_print(Ind, "\377oNo character or account of that name exists.");
 						return;
 					}
@@ -3012,7 +3012,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Store a new note from this player to the specified player */
 
 			/* does target account exist? -- paranoia at this point! */
-			if (!GetAccount(&acc, tname, NULL, FALSE)) {
+			if (!GetAccount(&acc, tname, NULL, FALSE, NULL, NULL)) {
 				msg_print(Ind, "\377oError: Player's account not found.");
 				return;
 			}
@@ -5883,7 +5883,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/linv")) { /* List new invalid account names that tried to log in meanwhile */
 				for (i = 0; i < MAX_LIST_INVALID; i++) {
 					if (!list_invalid_name[i][0]) break;
-					msg_format(Ind, "  #%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
+					msg_format(Ind, "  #%d) %s %s@%s (%s)", i, list_invalid_date[i], list_invalid_name[i], list_invalid_host[i], list_invalid_addr[i]);
 				}
 				if (!i) msg_print(Ind, "No invalid accounts recorded.");
 				return;
@@ -7675,7 +7675,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/linv")) { /* List new invalid account names that tried to log in meanwhile */
 				for (i = 0; i < MAX_LIST_INVALID; i++) {
 					if (!list_invalid_name[i][0]) break;
-					msg_format(Ind, "  #%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
+					msg_format(Ind, "  #%d) %s %s@%s (%s)", i, list_invalid_date[i], list_invalid_name[i], list_invalid_host[i], list_invalid_addr[i]);
 				}
 				if (!i) msg_print(Ind, "No invalid accounts recorded.");
 				return;
@@ -12659,7 +12659,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				if (!GetAccount(&acc, message3, NULL, FALSE)) {
+				if (!GetAccount(&acc, message3, NULL, FALSE, NULL, NULL)) {
 					msg_print(Ind, "Couldn't find that account.");
 					return;
 				}
@@ -13167,7 +13167,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/accountorder")) { /* Initialize character ordering for the whole account database */
 				struct account acc;
 
-				if (!GetAccount(&acc, message3, NULL, FALSE)) {
+				if (!GetAccount(&acc, message3, NULL, FALSE, NULL, NULL)) {
 					msg_print(Ind, "\377oNo account of that name exists.");
 					return;
 				}
@@ -13181,7 +13181,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/showaccountorder")) { /* Initialize character ordering for the whole account database */
 				struct account acc;
 
-				if (!GetAccount(&acc, message3, NULL, FALSE)) {
+				if (!GetAccount(&acc, message3, NULL, FALSE, NULL, NULL)) {
 					msg_print(Ind, "\377oNo account of that name exists.");
 					return;
 				}

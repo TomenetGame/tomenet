@@ -3418,7 +3418,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Verify his name and create a savefile name */
 	if (!process_player_name(Ind, TRUE)) return(FALSE);
 
-	if (GetAccount(&acc, accname, NULL, FALSE)) {
+	if (GetAccount(&acc, accname, NULL, FALSE, NULL, NULL)) {
 		p_ptr->account = acc.id;
 		p_ptr->noscore = (acc.flags & ACC_NOSCORE);
 		p_ptr->inval = (acc.flags & ACC_TRIAL);
@@ -3429,7 +3429,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		acc_houses = acc.houses;
-		s_printf("(%s) ACC1:Player %s has flags %d%s and %d houses.\n", showtime(), accname, acc.flags, p_ptr->inval ? "[INVAL]" : "", acc_houses);
+		s_printf("(%s) ACC1:Player %s@%s(%s) has flags %d%s and %d houses.\n", showtime(), accname, get_conn_host(conn), get_conn_ip(conn), acc.flags, p_ptr->inval ? "[INVAL]" : "", acc_houses);
 	}
 
 	/* handle banned player 1/2 */
@@ -3452,7 +3452,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* init account-wide houses limit? // ACC_HOUSE_LIMIT */
 	if (acc_houses == 127) { //hack: "re-count me!"
-		if (GetAccount(&acc, accname, NULL, FALSE)) {
+		if (GetAccount(&acc, accname, NULL, FALSE, NULL, NULL)) {
 			/* grab sum from hash table entries */
 			acc_houses = acc_sum_houses(&acc, FALSE);
 
@@ -3516,7 +3516,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->conn = conn;
 
 	/* again ;( */
-	if (GetAccount(&acc, accname, NULL, FALSE)) {
+	if (GetAccount(&acc, accname, NULL, FALSE, NULL, NULL)) {
 		p_ptr->account = acc.id;
 		p_ptr->noscore = (acc.flags & ACC_NOSCORE);
 		p_ptr->inval = (acc.flags & ACC_TRIAL);

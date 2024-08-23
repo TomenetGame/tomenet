@@ -230,7 +230,7 @@
 #define PASSWORD_MIN_LEN	6
 /* Note: These two are [20], but in fact user_name(), real_name, getlocalhostname() all cap at 16 - TODO maybe: fix */
 #define REALNAME_LEN		20 /* realname is replaced by "PLAYER" anyway */
-#define HOSTNAME_LEN		20
+#define HOSTNAME_LEN		20 /* TODO: In the in-game @ list the hostname is currently not truncated at HOSTNAME_LEN - 1 as it is in Contact(), ensure consistency. */
 
 /* Minimum length of account and character names */
 #define ACC_CHAR_MIN_LEN	2

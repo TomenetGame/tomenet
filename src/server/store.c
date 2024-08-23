@@ -7430,7 +7430,7 @@ static bool notify_owner(const char cname[CNAME_LEN], const char msg[MSG_LEN]) {
 	strcpy(tname, lookup_accountname(lookup_player_id(cname)));
 
 	/* does target account exist? -- paranoia at this point! */
-	if (!GetAccount(&acc, tname, NULL, FALSE)) {
+	if (!GetAccount(&acc, tname, NULL, FALSE, NULL, NULL)) {
 		s_printf("Error: Player's account not found (%s).\n", tname);
 		return(FALSE);
 	}

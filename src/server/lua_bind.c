@@ -1473,7 +1473,7 @@ void lua_fix_acc_house_limit(int Ind) {
 	/* how many houses he should have */
 	i = acc_get_houses(p_ptr->accountname);
 
-	if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE)) {
+	if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL)) {
 		s_printf("lua_fix_acc_house_limit: Couldn't find that account.\n");
 		return;
 	}

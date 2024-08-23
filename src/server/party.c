@@ -124,6 +124,8 @@ int validate(char *name) {
 			while (i < MAX_LIST_INVALID - 1) {
 				if (!list_invalid_name[i][0]) break;
 				strcpy(list_invalid_name[i], list_invalid_name[i + 1]);
+				strcpy(list_invalid_host[i], list_invalid_host[i + 1]);
+				strcpy(list_invalid_addr[i], list_invalid_addr[i + 1]);
 				strcpy(list_invalid_date[i], list_invalid_date[i + 1]);
 				i++;
 			}
@@ -183,9 +185,16 @@ int invalidate(char *name, bool admin) {
 		/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
 		for (i = 0; i < MAX_LIST_INVALID; i++) {
 			if (!list_invalid_name[i][0]) {
+				time_t ct = time(NULL);
+				struct tm* ctl = localtime(&ct);
+				//static char day_names[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+				//, day_names[ctl->tm_wday]
+
 				/* add accountname to the list */
 				strcpy(list_invalid_name[i], name);
-				strcpy(list_invalid_date[i], showtime());
+				strcpy(list_invalid_host[i], acc.hostname);
+				strcpy(list_invalid_addr[i], acc.addr);
+				strcpy(list_invalid_date[i], format("%04d/%02d/%02d - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
 				break;
 			}
 			if (strcmp(list_invalid_name[i], name)) continue;
@@ -224,7 +233,7 @@ int privilege(char *name, int level) {
 	bool effect = FALSE;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(0);
 
 	/* Modify account flags */
 	switch (level) {
@@ -273,9 +282,7 @@ int makeadmin(char *name) {
 	int i;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(FALSE);
-	}
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(FALSE);
 
 	/* Modify account flags */
 	acc.flags &= ~(ACC_TRIAL);
@@ -307,9 +314,7 @@ int acc_set_flags(char *name, u32b flags, bool set) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(0);
 
 	/* Modify account flags */
 	if (set) acc.flags |= (flags);
@@ -330,10 +335,7 @@ u32b acc_get_flags(char *name) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, FALSE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, FALSE, NULL, NULL)) return(0);
 	return(acc.flags);
 }
 
@@ -349,9 +351,7 @@ int acc_set_flags_id(u32b id, u32b flags, bool set) {
 	if (acc_name[0] == '\0') return(0);
 
 	/* Read from disk */
-	if (!GetAccount(&acc, acc_name, NULL, TRUE)) {
-		return(0);
-	}
+	if (!GetAccount(&acc, acc_name, NULL, TRUE, NULL, NULL)) return(0);
 
 	/* Modify account flags */
 	if (set) acc.flags |= (flags);
@@ -372,10 +372,7 @@ int acc_set_guild(char *name, s32b id) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(0);
 	acc.guild_id = id;
 
 	/* Write account to disk */
@@ -391,10 +388,7 @@ int acc_set_guild_dna(char *name, u32b dna) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(0);
 	acc.guild_dna = dna;
 
 	/* Write account to disk */
@@ -412,20 +406,14 @@ s32b acc_get_guild(char *name) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, FALSE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, FALSE, NULL, NULL)) return(0);
 	return(acc.guild_id);
 }
 u32b acc_get_guild_dna(char *name) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, FALSE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, FALSE, NULL, NULL)) return(0);
 	return(acc.guild_dna);
 }
 
@@ -433,7 +421,7 @@ int acc_set_deed_event(char *name, byte deed_sval) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(0);
 
 	acc.deed_event = deed_sval;
 
@@ -450,9 +438,7 @@ char acc_get_deed_event(char *name) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, FALSE)) {
-		return(0);
-	}
+	if (!GetAccount(&acc, name, NULL, FALSE, NULL, NULL)) return(0);
 
 	return(acc.deed_event);
 }
@@ -460,7 +446,7 @@ int acc_set_deed_achievement(char *name, byte deed_sval) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(0);
 
 	acc.deed_achievement = deed_sval;
 
@@ -476,20 +462,14 @@ int acc_set_deed_achievement(char *name, byte deed_sval) {
 char acc_get_deed_achievement(char *name) {
 	struct account acc;
 
-	if (!GetAccount(&acc, name, NULL, FALSE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, FALSE, NULL, NULL)) return(0);
 	return(acc.deed_achievement);
 }
 /* get account houses //ACC_HOUSE_LIMIT */
 char acc_get_houses(const char *name) {
 	struct account acc;
 
-	if (!GetAccount(&acc, name, NULL, FALSE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, FALSE, NULL, NULL)) return(0);
 	return(acc.houses);
 }
 
@@ -498,10 +478,7 @@ int acc_set_houses(const char *name, char houses) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
-
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return(0);
 	acc.houses = houses;
 
 	/* Write account to disk */
@@ -517,7 +494,7 @@ int acc_set_houses(const char *name, char houses) {
 unsigned char acc_get_runtime(const char *name) {
 	struct account acc;
 
-	if (!GetAccount(&acc, name, NULL, FALSE)) return(0);
+	if (!GetAccount(&acc, name, NULL, FALSE, NULL, NULL)) return(0);
 	return(acc.runtime);
 }
 
@@ -526,7 +503,7 @@ void acc_set_runtime(const char *name, unsigned char runtime) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) return;
+	if (!GetAccount(&acc, name, NULL, TRUE, NULL, NULL)) return;
 
 	acc.runtime = runtime;
 	/* Write account to disk */
@@ -544,16 +521,12 @@ void acc_set_runtime(const char *name, unsigned char runtime) {
 //void accinfo(char *name) {
 //}
 
-/* most account type stuff was already in here.
-   a separate file should probably be made in
-   order to split party/guild from account
-   and database handling */
-/* Note. Accounts will be deleted when empty
-   They will not be subject to their own 90
-   days timeout, but will be removed upon
-   the removal of the last character. */
+/* Most account type stuff was already in here.
+   A separate file should probably be made in order to split party/guild from account and database handling. */
+/* Note. Accounts will be deleted when empty. They will not be subject to their own 90 days timeout,
+         but will be removed upon the removal of the last character. */
 /* The caller is responsible for allocating memory for 'c_acc'. */
-bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
+bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass, char *hostname, char *addr) {
 	FILE *fp;
 	char buf[1024];
 	WIPE(c_acc, struct account);
@@ -588,6 +561,10 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 
 				/* Update the timestamp if the password is successfully verified - mikaelh */
 				if (val == 0) {
+					/* and on that occasion also update last-used hostname+id to current values */
+					if (hostname) strcpy(c_acc->hostname, hostname);
+					if (addr) strcpy(c_acc->addr, addr);
+
 					c_acc->acc_laston_real = c_acc->acc_laston = time(NULL);
 					fseek(fp, -((signed int)sizeof(struct account)), SEEK_CUR);
 					if (fwrite(c_acc, sizeof(struct account), 1, fp) < 1) {
@@ -636,16 +613,25 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 			int i;
 
 			c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
+			if (hostname) strcpy(c_acc->hostname, hostname);
+			if (addr) strcpy(c_acc->addr, addr);
 
 			/* Log new account creation in the log file (for auto-coloring in do_cmd_help_aux() (when invoking /log command)) */
-			s_printf("(%s) ACCOUNT_CREATED: <%s> with flags %d\n", showtime(), name, c_acc->flags);
+			s_printf("(%s) ACCOUNT_CREATED: <%s@%s>(%s) with flags %d\n", showtime(), name, hostname ? hostname : "<NULLHOST>", addr ? addr : "<NULLADDR>", c_acc->flags);
 
 			/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
 			for (i = 0; i < MAX_LIST_INVALID; i++) {
 				if (!list_invalid_name[i][0]) {
+					time_t ct = time(NULL);
+					struct tm* ctl = localtime(&ct);
+					//static char day_names[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+					//, day_names[ctl->tm_wday]
+
 					/* add accountname to the list */
 					strcpy(list_invalid_name[i], name);
-					strcpy(list_invalid_date[i], showtime());
+					if (hostname) strcpy(list_invalid_host[i], hostname); else strcpy(list_invalid_host[i], "<NULLHOST>");
+					if (addr) strcpy(list_invalid_addr[i], addr); else strcpy(list_invalid_addr[i], "<NULLADDR>");
+					strcpy(list_invalid_date[i], format("%04d/%02d/%02d - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
 					break;
 				}
 				if (strcmp(list_invalid_name[i], name)) continue;
@@ -1111,17 +1097,17 @@ int check_account(char *accname, char *c_name, int *Ind) {
 #ifndef RPG_SERVER
 	int ded_iddc, ded_pvp;
 #endif
-
-	*Ind = 0;
-
+	bool acc1_success, acc2_success;
 	/* Make sure noone creates a character of the same name as another player's accountname!
 	   This is important for new feat of messaging to an account instead of character name. - C. Blue */
 	char c2_name[MAX_CHARS];
 
+	*Ind = 0;
+
 	strcpy(c2_name, c_name);
 	//c2_name[0] = toupper(c2_name[0]);
-	bool acc1_success = GetAccount(&acc, accname, NULL, FALSE);
-	bool acc2_success = GetAccount(&acc2, c2_name, NULL, FALSE);
+	acc1_success = GetAccount(&acc, accname, NULL, FALSE, NULL, NULL);
+	acc2_success = GetAccount(&acc2, c2_name, NULL, FALSE, NULL, NULL);
 	if (acc1_success && acc2_success && acc.id != acc2.id) {
 		/* However, since ppl might have already created such characters, only apply this
 		   rule for newly created characters, to avoid someone being unable to login on
@@ -1614,6 +1600,7 @@ int guild_create(int Ind, cptr name) {
 	char temp[160];
 	struct account acc;
 	int *id_list, ids;
+	bool success;
 
 	strcpy(temp, name);
 	if (!guild_name_legal(Ind, temp)) return(FALSE);
@@ -1631,7 +1618,7 @@ int guild_create(int Ind, cptr name) {
 	/* anti-cheeze: People could get an extra house on each character.
 	   So we allow only one guild master per player account to at least
 	   reduce the nonsense to 1 extra house per Account.. */
-	bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+	success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
 	/* paranoia */
 	if (!success) {
 		/* uhh.. */
@@ -2053,6 +2040,7 @@ int guild_add(int adder, cptr name) {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
 	int guild_id = q_ptr->guild, Ind = 0, i;
+	bool success;
 #ifdef GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
 	int *id_list, ids;
 	struct account acc;
@@ -2102,7 +2090,7 @@ int guild_add(int adder, cptr name) {
 
 #ifdef GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
 	/* check if he has a character in there already, to be eligible to self-add */
-	bool success = GetAccount(&acc, q_ptr->accountname, NULL, FALSE);
+	success = GetAccount(&acc, q_ptr->accountname, NULL, FALSE, NULL, NULL);
 	/* paranoia */
 	if (!success) {
 		/* uhh.. */
@@ -2178,7 +2166,7 @@ int guild_add_self(int Ind, cptr guild) {
 	player_type *p_ptr = Players[Ind];
 	int guild_id = guild_lookup(guild), i, *id_list, ids;
 	struct account acc;
-	bool member = FALSE;
+	bool member = FALSE, success;
 
 	/* no guild name specified? */
 	if (!guild[0]) return(FALSE);
@@ -2199,7 +2187,7 @@ int guild_add_self(int Ind, cptr guild) {
 	}
 
 	/* check if he has a character in there already, to be eligible to self-add */
-	bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+	success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
 	/* paranoia */
 	if (!success) {
 		/* uhh.. */
@@ -2422,7 +2410,7 @@ int party_add(int adder, cptr name) {
 
 
 		/* check if he has a character in there already */
-		success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+		success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
 		/* paranoia */
 		if (!success) {
 			/* uhh.. */
@@ -2565,7 +2553,7 @@ int party_add_self(int Ind, cptr party) {
 	}
 
 	/* check if he has a character in there already, to be eligible to self-add */
-	success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+	success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
 	/* paranoia */
 	if (!success) {
 		/* uhh.. */
@@ -5494,7 +5482,7 @@ void account_checkexpiry(int Ind) {
 
 	now = time(NULL);
 
-	success  = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+	success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
 	/* paranoia */
 	if (!success) {
 		/* uhh.. */
@@ -5952,7 +5940,7 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 	struct account acc;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, p_ptr->accountname, old_pass, FALSE)) {
+	if (!GetAccount(&acc, p_ptr->accountname, old_pass, FALSE, NULL, NULL)) {
 		msg_print(Ind, "\377RWrong password!");
 		return;
 	}

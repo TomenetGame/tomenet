@@ -15603,7 +15603,7 @@ bool master_player(int Ind, char *parms) {
 
 	case 'r':	/* FULL ACCOUNT SCAN + RM */
 		/* Delete a player from the database/savefile */
-		if (GetAccount(&acc, &parms[1], NULL, FALSE)) {
+		if (GetAccount(&acc, &parms[1], NULL, FALSE, NULL, NULL)) {
 			char name[80];
 
 			n = player_id_list(&id_list, acc.id);

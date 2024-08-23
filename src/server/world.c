@@ -350,7 +350,7 @@ void world_comm(int fd, int arg) {
 						msg_to_irc("\373That character name does not exist.");
  #endif
 #else /* check for account name */
-						if (!GetAccount(&acc, p + 5, NULL, FALSE))
+						if (!GetAccount(&acc, p + 5, NULL, FALSE, NULL, NULL))
  #ifndef NOCLUTTER_IRC_COMMANDS
 							msg_to_irc("\373That character or account name does not exist.");
  #else

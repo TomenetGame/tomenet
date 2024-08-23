@@ -2142,7 +2142,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			object_type *o_ptr;
 			s32b id;
 
-			if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE)) { /* paranoia */
+			if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL)) { /* paranoia */
 				/* uhh.. */
 				msg_print(Ind, "Your account is corrupted, please contact an admin.");
 				return(FALSE);

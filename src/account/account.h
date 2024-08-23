@@ -43,6 +43,9 @@ struct account{
 	char houses;	/* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
 	unsigned char runtime;	/* increments on each server (re)start simply, to track server instance */
 
+	char hostname[20];	/* last used hostname -- [HOSTNAME_LEN] */
+	char addr[80];		/* last used IP address -- [MAX_CHARS] */
+
 	/* for future use */
 	unsigned char unused1;
 	unsigned char unused2;

@@ -85,6 +85,8 @@ extern void kick_ip(int Ind_kicker, char *ip_kickee, char *reason, bool msg);
 extern void kick_char(int Ind_kicker, int Ind_kickee, char *reason);
 extern connection_t **Conn;
 extern char* get_conn_userhost(int ind);
+extern char* get_conn_host(int ind);
+extern char* get_conn_ip(int ind);
 extern char *get_player_ip(int Ind);
 extern bool get_conn_state_ok(int Ind);
 extern void do_quit(int ind, bool tellclient);
@@ -1501,7 +1503,7 @@ extern char acc_get_deed_event(char *name);
 extern int acc_set_deed_achievement(char *name, byte deed_sval);
 extern char acc_get_deed_achievement(char *name);
 extern void sf_delete(const char *name);
-extern bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass);
+extern bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass, char *hostname, char *addr);
 extern bool GetcaseAccount(struct account *c_acc, cptr name, char *correct_name, bool leavepass);
 extern bool GetAccountID(struct account *c_acc, u32b id, bool leavepass);
 extern bool Admin_GetAccount(struct account *c_acc, cptr name);
@@ -2792,4 +2794,4 @@ extern bool restart_panic, restart_unstatice_bree, restart_unstatice_towns, rest
 extern int pdf_hack_feat, pdf_hack_feat_new, pdf_hack_mon, pdf_hack_mon_new;
 extern u16b mushroom_field_wx[MAX_MUSHROOM_FIELDS], mushroom_field_wy[MAX_MUSHROOM_FIELDS], mushroom_field_x[MAX_MUSHROOM_FIELDS], mushroom_field_y[MAX_MUSHROOM_FIELDS], mushroom_fields;
 
-extern char list_invalid_name[MAX_LIST_INVALID][ACCNAME_LEN], list_invalid_date[MAX_LIST_INVALID][24];
+extern char list_invalid_name[MAX_LIST_INVALID][ACCNAME_LEN], list_invalid_host[MAX_LIST_INVALID][HOSTNAME_LEN], list_invalid_addr[MAX_LIST_INVALID][MAX_CHARS], list_invalid_date[MAX_LIST_INVALID][24];

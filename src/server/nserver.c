@@ -544,12 +544,12 @@ static bool update_acc_file_version(void) {
 		/* copy unchanged structure parts: */
 		acc.id = acc_old.id;
 		acc.flags = acc_old.flags;
-		//strcpy(acc.name, acc_old.name);
 		strcpy(acc.name, acc_old.name);
 		strcpy(acc.name_normalised, acc_old.name_normalised);
 		strcpy(acc.pass, acc_old.pass);
 		acc.acc_laston = acc_old.acc_laston;
 		acc.acc_laston_real = acc_old.acc_laston_real;
+
 		acc.cheeze = acc_old.cheeze;
 		acc.cheeze_self = acc_old.cheeze_self;
 		acc.deed_event = acc_old.deed_event;
@@ -557,11 +557,15 @@ static bool update_acc_file_version(void) {
 		acc.guild_id = acc_old.guild_id;
 		acc.guild_dna = acc_old.guild_dna;
 		acc.houses = acc_old.houses;
-		acc.runtime = 0;
-		acc.unused1 = acc.unused2 = acc.unused3 = 0;
+		acc.runtime = acc_old.runtime;
 
-		/* changes/additions */
-		acc.houses = 127; //init value, means "please count me" // ACC_HOUSE_LIMIT
+		acc.unused1 = acc_old.unused1;
+		acc.unused2 = acc_old.unused2;
+		acc.unused3 = acc_old.unused3;
+
+		/* changes/additions - just init */
+		acc.hostname[0] = 0;
+		acc.addr[0] = 0;
 
 		/* write it back */
 		if (fwrite(&acc, sizeof(struct account), 1, fp) < 1)
@@ -1660,7 +1664,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	}
 
 	/* Timestamp account for 'laston' moment */
-	if (GetAccount(&acc, connp->nick, NULL, TRUE)) {
+	if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
 		time_t now = time(&now);
 		acc.acc_laston = now;
 		acc.acc_laston_real = now;
@@ -3789,7 +3793,7 @@ static int Handle_login(int ind) {
 		if (list_invalid_name[0][0]) msg_print(NumPlayers, "\377RNewly created accounts:");
 		for (i = 0; i < MAX_LIST_INVALID; i++) {
 			if (!list_invalid_name[i][0]) break;
-			msg_format(NumPlayers, "  #%d) %s '%s'", i, list_invalid_date[i], list_invalid_name[i]);
+			msg_format(NumPlayers, "  #%d) %s %s@%s (%s)", i, list_invalid_date[i], list_invalid_name[i], list_invalid_host[i], list_invalid_addr[i]);
 		}
 	}
 
@@ -4473,7 +4477,7 @@ static int Receive_login(int ind) {
 		accfail = FALSE;
 		choice[0] = 0;
 		if (choice[3] && choice[4]
-		    && (accfail = GetAccount(&acc, connp->nick, NULL, FALSE))) {
+		    && (accfail = GetAccount(&acc, connp->nick, NULL, FALSE, NULL, NULL))) {
 			swapA = choice[3] - 'a';
 			swapB = choice[4] - 'a';
 
@@ -4662,8 +4666,9 @@ static int Receive_login(int ind) {
 
 			/* Check_names() might allow (depending on ALLOW_ defines) to resume from different IP address.
 			   Problem: The password has not yet been checked. So someone could spoof the connection and get someone kicked w/o need to know his password.
-			   So we verify it first, just for Check_names(), here: */
-			if (!GetAccount(&acc, connp->nick, connp->pass, FALSE)) {
+			   So we verify it first, just for Check_names(), here:
+			   (Note: This is also the first time we call GetAccount() for a so far non-existing account, so we need to imprint host+ip on acc struct here.) */
+			if (!GetAccount(&acc, connp->nick, connp->pass, FALSE, connp->host, connp->addr)) {
 				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
 				return(-1);
 			}
@@ -4718,7 +4723,7 @@ static int Receive_login(int ind) {
 
 		accfail = FALSE;
 		if ((connp->password_verified || /* <- for "***" reorder hack! Original connp->pass has long been free'd again. */
-		    connp->pass) && (accfail = GetAccount(&acc, connp->nick, connp->pass, FALSE))) { /* Note: Calling GetAccount() with pass = NULL is fine! */
+		    connp->pass) && (accfail = GetAccount(&acc, connp->nick, connp->pass, FALSE, NULL, NULL))) { /* Note: Calling GetAccount() with pass = NULL is fine! */
 			int *id_list;
 			u16b tmpm;
 			char colour_sequence[3];
@@ -9802,9 +9807,7 @@ int Send_account_info(int Ind) {
 		return(0);
 	}
 
-	if (GetAccount(&acc, connp->nick, NULL, FALSE)) {
-		acc_flags = acc.flags;
-	}
+	if (GetAccount(&acc, connp->nick, NULL, FALSE, NULL, NULL)) acc_flags = acc.flags;
 
 	return Packet_printf(&connp->c, "%c%hd", PKT_ACCOUNT_INFO, acc_flags);
 }
@@ -15125,7 +15128,12 @@ static int Receive_unknownpacket(int ind) {
 char *get_conn_userhost(int ind) {
 	return(format("%s@%s", Conn[ind]->real, Conn[ind]->host));
 }
-
+char *get_conn_host(int ind) {
+	return(Conn[ind]->host);
+}
+char *get_conn_ip(int ind) {
+	return(Conn[ind]->addr);
+}
 char *get_player_ip(int Ind) {
 	return(Conn[Players[Ind]->conn]->addr);
 }

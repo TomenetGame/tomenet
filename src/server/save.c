@@ -2809,7 +2809,7 @@ static bool save_server_aux(char *name) {
 
 		for (i = 0; i < MAX_LIST_INVALID; i++) {
 			if (!list_invalid_name[i][0]) break;
-			fprintf(fil, "%s\n%s\n", list_invalid_date[i], list_invalid_name[i]);
+			fprintf(fil, "%s\n%s\n%s\n%s\n\n", list_invalid_date[i], list_invalid_name[i], list_invalid_host[i], list_invalid_addr[i]);
 		}
 		fclose(fil);
 		//s_printf("Invalid account logins stored: %d (max %d)\n", i, MAX_LIST_INVALID); --kinda spammy, as save_server_info() is called often, eg on every login. */
@@ -2918,15 +2918,39 @@ static bool load_server_info_classic(void) {
 			int i = 0;
 
 			while (fgets(buf, 24 + 1, fil) != NULL) {
+				/* Read account creation date */
 				buf[strlen(buf) - 1] = 0; //crop '\n' from fgets()
 				strcpy(list_invalid_date[i], buf);
 
+				/* Read account name */
 				if (fgets(buf, ACCNAME_LEN, fil) == NULL) {
-					s_printf("Warning: list-invalid.txt broken at entry %d.\n", i);
+					s_printf("Warning: list-invalid.txt broken (name) at entry %d.\n", i);
 					break;
 				}
 				buf[strlen(buf) - 1] = 0; //crop '\n' from fgets()
 				strcpy(list_invalid_name[i], buf);
+
+				/* Read hostname */
+				if (fgets(buf, HOSTNAME_LEN, fil) == NULL) {
+					s_printf("Warning: list-invalid.txt broken (host) at entry %d.\n", i);
+					break;
+				}
+				buf[strlen(buf) - 1] = 0; //crop '\n' from fgets()
+				strcpy(list_invalid_host[i], buf);
+
+				/* Read ip address */
+				if (fgets(buf, MAX_CHARS, fil) == NULL) {
+					s_printf("Warning: list-invalid.txt broken (addr) at entry %d.\n", i);
+					break;
+				}
+				buf[strlen(buf) - 1] = 0; //crop '\n' from fgets()
+				strcpy(list_invalid_addr[i], buf);
+
+				/* Read separator linespace (which is there for QoL if looking at list-invalid.txt w/ a text editor instead */
+				if (fgets(buf, 2, fil) == NULL) {
+					s_printf("Warning: list-invalid.txt broken (separator) at entry %d.\n", i);
+					break;
+				}
 
 				i++;
 				if (i == MAX_LIST_INVALID) {
