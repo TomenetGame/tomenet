@@ -13286,6 +13286,9 @@ void hack_particular_item(void) {
 }
 
 #ifdef VAMPIRES_INV_CURSED
+/* Inverse negative boni back to something good when a vampire/HK et al equips a heavily cursed item
+   (or potentially if it gets gets cursed while already equipped for some reason),
+   counterpart function to reverse_cursed(). */
 void inverse_cursed(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -13557,7 +13560,7 @@ void inverse_cursed(object_type *o_ptr) {
 		}
 	}
 }
-/* Reverse the boni back to negative when a vampire takes off a heavily cursed item (or its curse gets broken),
+/* Reverse the boni back to negative when a vampire/HK et al takes off a heavily cursed item (or its curse gets broken while equipped),
    counterpart function to inverse_cursed(). */
 void reverse_cursed(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;

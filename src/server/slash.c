@@ -10839,6 +10839,86 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			/* curses an item */
+			else if (prefix(messagelc, "/curse")) {
+				object_type *o_ptr;
+
+				if (!tk) {
+					msg_print(Ind, "No inventory slot specified.");
+					return; /* no inventory slot specified */
+				}
+				if (k < 1 || k > INVEN_TOTAL) {
+					msg_format(Ind, "Inventory slot must be between 1 and %d", INVEN_TOTAL);
+					return; /* invalid inventory slot index */
+				}
+				k--; /* start at index 1, easier for user */
+				if (!p_ptr->inventory[k].tval) {
+					msg_print(Ind, "Specified inventory slot is empty.");
+					return; /* inventory slot empty */
+				}
+				o_ptr = &p_ptr->inventory[k];
+
+				o_ptr->ident |= (ID_CURSED);
+				/* Note: All curse-types (eg TR3_HEAVY_CURSE) are a kind-/artifact-flags, so these will remain on the item
+				   'in the background' even while it's uncursed, and if the item is now re-cursed via this command
+				   then the curse-specific flags will also automatically apply again. */
+#ifdef VAMPIRES_INV_CURSED
+				if (k >= INVEN_WIELD) {
+					if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+					else if (p_ptr->pclass == CLASS_HELLKNIGHT) inverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+					else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
+ #endif
+				}
+#endif
+				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE; /* Hack -- Assume felt */
+				note_toggle_cursed(o_ptr, TRUE);
+				p_ptr->update |= PU_BONUS;
+				p_ptr->window |= PW_INVEN | PW_EQUIP;
+				return;
+			}
+			/* uncurses an item */
+			else if (prefix(messagelc, "/uncurse")) {
+				object_type *o_ptr;
+
+				if (!tk) {
+					msg_print(Ind, "No inventory slot specified.");
+					return; /* no inventory slot specified */
+				}
+				if (k < 1 || k > INVEN_TOTAL) {
+					msg_format(Ind, "Inventory slot must be between 1 and %d", INVEN_TOTAL);
+					return; /* invalid inventory slot index */
+				}
+				k--; /* start at index 1, easier for user */
+				if (!p_ptr->inventory[k].tval) {
+					msg_print(Ind, "Specified inventory slot is empty.");
+					return; /* inventory slot empty */
+				}
+				o_ptr = &p_ptr->inventory[k];
+
+				o_ptr->ident &= ~ID_CURSED;
+				/* Note: All curse-types (eg TR3_HEAVY_CURSE) are a kind-/artifact-flags, so these will remain on the item
+				   'in the background' even while it's uncursed, and if the item is now re-cursed via "/curse" command
+				   then the curse-specific flags will also automatically apply again. */
+#ifdef VAMPIRES_INV_CURSED
+				if (k >= INVEN_WIELD) {
+					if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+					else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+					else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+ #endif
+				}
+#endif
+				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE; /* Hack -- Assume felt */
+				note_toggle_cursed(o_ptr, FALSE);
+				p_ptr->update |= PU_BONUS;
+				p_ptr->window |= PW_INVEN | PW_EQUIP;
+				return;
+			}
 			else if (prefix(messagelc, "/ai")) { /* returns/resets all AI flags and states of monster currently looked at (NOT the one targetted) - C. Blue */
 				monster_type *m_ptr;
 				int m_idx;
