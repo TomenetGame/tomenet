@@ -4488,16 +4488,29 @@ void lite_spot(int Ind, int y, int x) {
 		/* Only draw if different than buffered */
 		if (p_ptr->scr_info[dispy][dispx].c != c ||
 		    p_ptr->scr_info[dispy][dispx].a != a ||
+#ifdef GRAPHICS_BG_MASK
+		    p_ptr->scr_info_back[dispy][dispx].c != c_back ||
+		    p_ptr->scr_info_back[dispy][dispx].a != a_back ||
+#endif
 		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk) /* let's try disabling this when AFK to save bandwidth - mikaelh */
 		    /* for clearing overlay that displays auto-updating things (monsters who meanwhile moved away): clear it as soon as it comes into LOS */
 		    || ((p_ptr->cave_flag[y][x] & CAVE_AOVL) && (p_ptr->cave_flag[y][x] & CAVE_VIEW) && (p_ptr->cave_flag[y][x] & CAVE_LITE))) {
 			/* Modify screen buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
 			p_ptr->scr_info[dispy][dispx].a = a;
+#ifdef GRAPHICS_BG_MASK
+			p_ptr->scr_info_back[dispy][dispx].c = c_back;
+			p_ptr->scr_info_back[dispy][dispx].a = a_back;
+#endif
 
 			/* Compare against the overlay buffer */
 			if ((p_ptr->ovl_info[dispy][dispx].c != c) ||
-			    (p_ptr->ovl_info[dispy][dispx].a != a)) {
+			    (p_ptr->ovl_info[dispy][dispx].a != a)
+#ifdef GRAPHICS_BG_MASK
+			    || (p_ptr->ovl_info_back[dispy][dispx].c != c_back) ||
+			    (p_ptr->ovl_info_back[dispy][dispx].a != a_back)
+#endif
+			    ) {
 				/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
 #if 0
 				if (!is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) {
@@ -4519,6 +4532,10 @@ void lite_spot(int Ind, int y, int x) {
 			/* Clear the overlay buffer */
 			p_ptr->ovl_info[dispy][dispx].c = 0;
 			p_ptr->ovl_info[dispy][dispx].a = 0;
+#ifdef GRAPHICS_BG_MASK
+			p_ptr->ovl_info_back[dispy][dispx].c = 0;
+			p_ptr->ovl_info_back[dispy][dispx].a = 0;
+#endif
 			p_ptr->cave_flag[y][x] &= ~CAVE_AOVL;
 		}
 	}
@@ -4689,6 +4706,10 @@ void prt_map(int Ind, bool scr_only) {
 			/* Redraw that grid of the map */
 			p_ptr->scr_info[dispy][dispx].c = c;
 			p_ptr->scr_info[dispy][dispx].a = a;
+#ifdef GRAPHICS_BG_MASK
+			p_ptr->scr_info_back[dispy][dispx].c = c_back;
+			p_ptr->scr_info_back[dispy][dispx].a = a_back;
+#endif
 		}
 
 		/* Send that line of info */
@@ -4707,6 +4728,10 @@ void prt_map(int Ind, bool scr_only) {
 			/* Note: Clearing scr and ovl isn't required */
 			p_ptr->scr_info[y][x].c = p_ptr->ovl_info[y][x].c = ' ';
 			p_ptr->scr_info[y][x].a = p_ptr->ovl_info[y][x].a = TERM_DARK;
+  #ifdef GRAPHICS_BG_MASK
+			p_ptr->scr_info_back[y][x].c = p_ptr->ovl_info_back[y][x].c = ' ';
+			p_ptr->scr_info_back[y][x].a = p_ptr->ovl_info_back[y][x].a = TERM_DARK;
+  #endif
  #endif
 			/* Clear wrongly sent map grid - most of these will be overwritten by the status bar anyway, but some aren't. */
  #ifdef GRAPHICS_BG_MASK
