@@ -7736,17 +7736,17 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				switch (connp->Client_setup.char_transfer_bytes) {
 				case 0:
 				case 1:
-					return Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, n);
+					Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, n);
 					break;
 				case 2:
-					return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, n);
+					Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, n);
 					break;
 				case 3:
-					return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, n);
+					Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, n);
 					break;
 				case 4:
 				default:
-					return Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, n);
+					Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, n);
 				}
 			} else
 #endif
@@ -8250,17 +8250,17 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			switch (connp->Client_setup.char_transfer_bytes) {
 			case 0:
 			case 1:
-				return Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, n);
 				break;
 			case 2:
-				return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, n);
 				break;
 			case 3:
-				return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, n);
 				break;
 			case 4:
 			default:
-				return Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, n);
+				Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, n);
 			}
 		} else
 #endif
