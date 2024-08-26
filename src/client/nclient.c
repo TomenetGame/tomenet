@@ -2933,17 +2933,17 @@ int Receive_char(void) {
 		switch (Client_setup.char_transfer_bytes) {
 		case 0:
 		case 1:
-			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &pc[0], &a_back, &pc_b[0])) <= 0) return(n);
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[0], &a_back, &pc_b[0])) <= 0) return(n);
 			break;
 		case 2:
-			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[1], &pc[0], &a_back, &pc_b[1], &pc_b[0])) <= 0) return(n);
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[1], &pc[0], &a_back, &pc_b[1], &pc_b[0])) <= 0) return(n);
 			break;
 		case 3:
-			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[2], &pc[1], &pc[0], &a_back, &pc_b[2], &pc_b[1], &pc_b[0])) <= 0) return(n);
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[2], &pc[1], &pc[0], &a_back, &pc_b[2], &pc_b[1], &pc_b[0])) <= 0) return(n);
 			break;
 		case 4:
 		default:
-			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u", &ch, &x, &y, &a, &c, &a_back, &c_back)) <= 0) return(n);
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u%c%u", &ch, &x, &y, &a, &c, &a_back, &c_back)) <= 0) return(n);
 		}
 	} else
 	/* 4.8.1 and newer servers communicate using 32bit character size. */
