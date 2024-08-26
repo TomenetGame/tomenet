@@ -2070,7 +2070,11 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the monster on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, y, x, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, y, x, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2154,7 +2158,11 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 			p_ptr->play_vis[i] = FALSE;
 
 			/* Draw the player on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, py, px, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, py, px, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2289,7 +2297,11 @@ bool detect_invisible(int Ind) {
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the monster on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, fy, fx, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, fy, fx, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2342,7 +2354,11 @@ bool detect_invisible(int Ind) {
 			p_ptr->play_vis[i] = FALSE;
 
 			/* Draw the player on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, py, px, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, py, px, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2439,7 +2455,11 @@ bool detect_creatures(int Ind) {
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the monster on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, fy, fx, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, fy, fx, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2492,7 +2512,11 @@ bool detect_creatures(int Ind) {
 			p_ptr->play_vis[i] = FALSE;
 
 			/* Draw the player on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, py, px, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, py, px, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2589,7 +2613,11 @@ bool detect_noise(int Ind) {
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
 			/* Draw the monster on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, fy, fx, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, fy, fx, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2637,7 +2665,11 @@ bool detect_noise(int Ind) {
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
 			/* Draw the player on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, py, px, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, py, px, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2729,7 +2761,11 @@ bool detect_living(int Ind) {
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
 			/* Draw the monster on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, fy, fx, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, fy, fx, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -2777,7 +2813,11 @@ bool detect_living(int Ind) {
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
 			/* Draw the player on the screen */
+#ifdef GRAPHICS_BG_MASK
+			draw_spot_ovl(Ind, py, px, a, c, a_back, c_back);
+#else
 			draw_spot_ovl(Ind, py, px, a, c);
+#endif
 
 			flag = TRUE;
 		}
@@ -3033,7 +3073,11 @@ void detect_bounty(int Ind) {
 					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
 					/* Hack - Always show traps under items when detecting - mikaelh */
+#ifdef GRAPHICS_BG_MASK
+					draw_spot_ovl(Ind, i, j, a, p_ptr->f_char[FEAT_TRAP], 0, 0);
+#else
 					draw_spot_ovl(Ind, i, j, a, p_ptr->f_char[FEAT_TRAP]);
+#endif
 				} else {
 					/* Normal redraw */
 					lite_spot(Ind, i, j);
@@ -3288,7 +3332,11 @@ bool detect_trap(int Ind, int rad) {
 					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
 					/* Hack - Always show traps under items when detecting - mikaelh */
+#ifdef GRAPHICS_BG_MASK
+					draw_spot_ovl(Ind, i, j, a, p_ptr->f_char[FEAT_TRAP], 0, 0);
+#else
 					draw_spot_ovl(Ind, i, j, a, p_ptr->f_char[FEAT_TRAP]);
+#endif
 				} else {
 					/* Normal redraw */
 					lite_spot(Ind, i, j);

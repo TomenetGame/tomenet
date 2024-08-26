@@ -4545,7 +4545,11 @@ void lite_spot(int Ind, int y, int x) {
 /*
  * Draw something on the overlay layer.
  */
+#ifdef GRAPHICS_BG_MASK
+void draw_spot_ovl(int Ind, int y, int x, byte a, char32_t c, byte a_back, char32_t c_back) {
+#else
 void draw_spot_ovl(int Ind, int y, int x, byte a, char32_t c) {
+#endif
 	player_type *p_ptr = Players[Ind];
 
 	/* Redraw if on screen */
@@ -4566,16 +4570,26 @@ void draw_spot_ovl(int Ind, int y, int x, byte a, char32_t c) {
 
 		/* Only draw if different than buffered */
 		if (p_ptr->ovl_info[dispy][dispx].c != c ||
-		    p_ptr->ovl_info[dispy][dispx].a != a) {
+		    p_ptr->ovl_info[dispy][dispx].a != a
+#ifdef GRAPHICS_BG_MASK
+		    || (c_back &&
+		    (p_ptr->ovl_info_back[dispy][dispx].c != c_back ||
+		    p_ptr->ovl_info_back[dispy][dispx].a != a_back))
+#endif
+		    ) {
 			/* Modify internal buffer */
 			p_ptr->ovl_info[dispy][dispx].c = c;
 			p_ptr->ovl_info[dispy][dispx].a = a;
+#ifdef GRAPHICS_BG_MASK
+			p_ptr->ovl_info_back[dispy][dispx].c = c_back;
+			p_ptr->ovl_info_back[dispy][dispx].a = a_back;
+#endif
 
 			p_ptr->cave_flag[y][x] |= CAVE_AOVL;
 
 			/* Tell client to redraw this grid */
 #ifdef GRAPHICS_BG_MASK
-			Send_char(Ind, dispx, dispy, a, c, 0, 0);
+			Send_char(Ind, dispx, dispy, a, c, a_back, c_back);
 #else
 			Send_char(Ind, dispx, dispy, a, c);
 #endif
@@ -4600,14 +4614,27 @@ void clear_ovl_spot(int Ind, int y, int x) {
 		if (p_ptr->ovl_info[dispy][dispx].c) {
 			/* Check if the overlay buffer is different from the screen buffer */
 			if ((p_ptr->ovl_info[dispy][dispx].a != p_ptr->scr_info[dispy][dispx].a) ||
-			    (p_ptr->ovl_info[dispy][dispx].c != p_ptr->scr_info[dispy][dispx].c)) {
+			    (p_ptr->ovl_info[dispy][dispx].c != p_ptr->scr_info[dispy][dispx].c)
+#ifdef GRAPHICS_BG_MASK
+			    || (p_ptr->ovl_info_back[dispy][dispx].a != p_ptr->scr_info_back[dispy][dispx].a) ||
+			    (p_ptr->ovl_info_back[dispy][dispx].c != p_ptr->scr_info_back[dispy][dispx].c)
+#endif
+			    ) {
 				/* Clear the overlay buffer */
 				p_ptr->ovl_info[dispy][dispx].c = 0;
 				p_ptr->ovl_info[dispy][dispx].a = 0;
+#ifdef GRAPHICS_BG_MASK
+				p_ptr->ovl_info_back[dispy][dispx].c = 0;
+				p_ptr->ovl_info_back[dispy][dispx].a = 0;
+#endif
 
 				/* Clear the screen buffer to force redraw */
 				p_ptr->scr_info[dispy][dispx].c = 0;
 				p_ptr->scr_info[dispy][dispx].a = 0;
+#ifdef GRAPHICS_BG_MASK
+				p_ptr->scr_info_back[dispy][dispx].c = 0;
+				p_ptr->scr_info_back[dispy][dispx].a = 0;
+#endif
 
 				p_ptr->cave_flag[y][x] &= ~CAVE_AOVL;
 
@@ -4617,6 +4644,10 @@ void clear_ovl_spot(int Ind, int y, int x) {
 				/* Clear the overlay buffer */
 				p_ptr->ovl_info[dispy][dispx].c = 0;
 				p_ptr->ovl_info[dispy][dispx].a = 0;
+#ifdef GRAPHICS_BG_MASK
+				p_ptr->ovl_info_back[dispy][dispx].c = 0;
+				p_ptr->ovl_info_back[dispy][dispx].a = 0;
+#endif
 
 				p_ptr->cave_flag[y][x] &= ~CAVE_AOVL;
 

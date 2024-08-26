@@ -591,7 +591,11 @@ extern void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x);
 extern void everyone_forget_spot(struct worldpos *wpos, int y, int x);
 extern cave_type **getcave(struct worldpos *wpos);
 extern void lite_spot(int Ind, int y, int x);
+#ifdef GRAPHICS_BG_MASK
+extern void draw_spot_ovl(int Ind, int y, int x, byte a, char32_t c, byte a_back, char32_t c_back);
+#else
 extern void draw_spot_ovl(int Ind, int y, int x, byte a, char32_t c);
+#endif
 extern void clear_ovl_spot(int Ind, int y, int x);
 extern void clear_ovl(int Ind);
 extern void prt_map(int Ind, bool scr_only);
