@@ -7837,7 +7837,8 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				Packet_printf(&connp->c, "%c%c", (char)c, a & ~0xC0);
 			} else {
 				if (a == TERM_RESERVED_RLE) {
-					/* Use RLE format as an escape sequence for 0xFF as attr */
+					/* Use RLE format as an escape sequence, should attr actually be ever '0xFF' so we can still use it.
+					   However, since 0xff is clearly reserved for RLE, this probably won't happen anyway? But we handle it here if it does: */
 #ifdef GRAPHICS_BG_MASK
 					if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
@@ -7952,7 +7953,8 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					Packet_printf(&connp2->c, "%c%c", (char)cu, a & ~0xC0);
 				} else {
 					if (a == TERM_RESERVED_RLE) {
-						/* Use RLE format as an escape sequence for 0xFF as attr */
+						/* Use RLE format as an escape sequence, should attr actually be ever '0xFF' so we can still use it.
+						   However, since 0xff is clearly reserved for RLE, this probably won't happen anyway? But we handle it here if it does: */
 #ifdef GRAPHICS_BG_MASK
 						if (FALSE && connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
 						} else
@@ -8143,7 +8145,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 				Packet_printf(&connp->c, "%c%c", (char)c, a & ~0xC0);
 			else {
 				if (a == TERM_RESERVED_RLE) {
-					/* Use RLE format as an escape sequence for 0xFF as attr */
+					/* Use RLE format as an escape sequence, should attr actually be ever '0xFF' so we can still use it.
+					   However, since 0xff is clearly reserved for RLE, this probably won't happen anyway? But we handle it here if it does: */
 #ifdef GRAPHICS_BG_MASK
 					if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
@@ -8440,7 +8443,8 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 				Packet_printf(&connp->c, "%c%c", (char)c, a & ~0xD0);
 			} else {
 				if (a == TERM_RESERVED_RLE) {
-					/* Use RLE format as an escape sequence for 0xFF as attr */
+					/* Use RLE format as an escape sequence, should attr actually be ever '0xFF' so we can still use it.
+					   However, since 0xff is clearly reserved for RLE, this probably won't happen anyway? But we handle it here if it does: */
 #ifdef GRAPHICS_BG_MASK
 					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
 					} else
@@ -8505,7 +8509,8 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 					Packet_printf(&connp2->c, "%c%c", (char)c, a & ~0xD0);
 				} else {
 					if (a == TERM_RESERVED_RLE) {
-						/* Use RLE format as an escape sequence for 0xFF as attr */
+						/* Use RLE format as an escape sequence, should attr actually be ever '0xFF' so we can still use it.
+						   However, since 0xff is clearly reserved for RLE, this probably won't happen anyway? But we handle it here if it does: */
 #ifdef GRAPHICS_BG_MASK
 						if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
 						} else
