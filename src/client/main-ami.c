@@ -462,7 +462,7 @@ struct NewMenu newmenu[ MENUMAX ];
 ///}
 ///{ "protos"
 
-extern void map_info( int y, int x, byte *ap, char *cp );
+//extern void map_info( int y, int x, byte *ap, char *cp );
 extern void center_string( char *buf, cptr str );
 errr init_ami( void );
 static void init_term( term_data *td );
@@ -2665,7 +2665,7 @@ static void amiga_map( void )
          /* Get tile from cave table */
          else
          {
-            map_info( j, i, &ta, (char *) &tc );
+            //map_info( j, i, &ta, (char *) &tc );
          }
 
          /* Ignore non-graphics */
