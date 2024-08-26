@@ -8028,7 +8028,13 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	char32_t c, c1;
 	byte a, a1;
 	char32_t unm_c_idx;
-	char * unm_c_ptr;
+	char* unm_c_ptr;
+#ifdef GRAPHICS_BG_MASK
+	char32_t c_back, c1_back;
+	byte a_back, a1_back;
+	char32_t unm_c_idx_back;
+	char* unm_c_ptr_back;
+#endif
 #ifdef EXTENDED_TERM_COLOURS
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
 	int a_c;
@@ -8048,18 +8054,31 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		/* Obtain the char/attr pair */
 		c = p_ptr2->scr_info[y][x].c;
 		a = p_ptr2->scr_info[y][x].a;
-
+#ifdef GRAPHICS_BG_MASK
+		c_back = p_ptr2->scr_info_back[y][x].c;
+		a_back = p_ptr2->scr_info_back[y][x].a;
+#endif
 		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 		   Maybe todo: also unmap attr? */
 		unm_c_idx = c;
 		if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
 		else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
+#ifdef GRAPHICS_BG_MASK
+		unm_c_idx_back = c_back;
+		if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c_back = (char32_t)*unm_c_ptr_back;
+		else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c_back = (char32_t)*unm_c_ptr_back;
+#endif
 
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
 		    a_c = a & ~(TERM_BNW | TERM_PVP);
 		    if (a_c == TERM_CURSE || a_c == TERM_ANNI || a_c >= TERM_PSI)
 			a = TERM_WHITE; /* use white to indicate that client needs updating */
+ #ifdef GRAPHICS_BG_MASK
+		    a_c = a_back & ~(TERM_BNW | TERM_PVP);
+		    if (a_c == TERM_CURSE || a_c == TERM_ANNI || a_c >= TERM_PSI)
+			a_back = TERM_DARK; /* just visually "disable" */
+ #endif
 		}
 #endif
 
@@ -8074,24 +8093,46 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			/* Count repetitions of this grid */
 			c1 = p_ptr2->scr_info[y][x1].c;
 			a1 = p_ptr2->scr_info[y][x1].a;
+#ifdef GRAPHICS_BG_MASK
+			c1_back = p_ptr2->scr_info_back[y][x1].c;
+			a1_back = p_ptr2->scr_info_back[y][x1].a;
+#endif
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 			   Maybe todo: also unmap attr? */
 			unm_c_idx = c1;
 			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+#ifdef GRAPHICS_BG_MASK
+			unm_c_idx_back = c1_back;
+			if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+			else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+#endif
 
-			while (c1 == c && a1 == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+			while (c1 == c && a1 == a
+#ifdef GRAPHICS_BG_MASK
+			    && c1_back == c_back && a1_back == a_back
+#endif
+			    && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 				/* Increment count and column */
 				n++;
 				x1++;
 
 				c1 = p_ptr2->scr_info[y][x1].c;
 				a1 = p_ptr2->scr_info[y][x1].a;
+#ifdef GRAPHICS_BG_MASK
+				c1_back = p_ptr2->scr_info_back[y][x1].c;
+				a1_back = p_ptr2->scr_info_back[y][x1].a;
+#endif
 				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 				   Maybe todo: also unmap attr? */
 				unm_c_idx = c1;
 				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+#ifdef GRAPHICS_BG_MASK
+				unm_c_idx_back = c1_back;
+				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+#endif
 			}
 		}
 
@@ -8104,7 +8145,25 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 #ifdef GRAPHICS_BG_MASK
-					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char *pc_f = (char*)&c, *pc_b = (char*)&c_back;
+
+						switch (connp->Client_setup.char_transfer_bytes) {
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, 1);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, 1);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, 1);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, 1);
+						}
 					} else
 #endif
 					/* 4.8.1 and newer clients use 32bit character size. */
@@ -8131,7 +8190,25 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 				} else {
 					/* Normal output */
 #ifdef GRAPHICS_BG_MASK
-					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char *pc_f = (char*)&c, *pc_b = (char*)&c_back;
+
+						switch (connp->Client_setup.char_transfer_bytes) {
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c%c%c", pc_f[0], a, pc_b[0], a_back);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[1], pc_f[0], a, pc_b[1], pc_b[0], a_back);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], a, pc_b[2], pc_b[1], pc_b[0], a_back);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c%u%c", c, a, c_back, a_back);
+						}
 					} else
 #endif
 					/* 4.8.1 and newer clients use 32bit character size. */
@@ -8163,7 +8240,25 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		/* RLE if there at least 2 similar grids in a row, ie n is >= 2 here */
 
 #ifdef GRAPHICS_BG_MASK
-		if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+		if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+			/* Transfer only the relevant bytes, according to client setup.*/
+			char *pc_f = (char*)&c, *pc_b = (char*)&c_back;
+
+			switch (connp->Client_setup.char_transfer_bytes) {
+			case 0:
+			case 1:
+				return Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, n);
+				break;
+			case 2:
+				return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, n);
+				break;
+			case 3:
+				return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, n);
+				break;
+			case 4:
+			default:
+				return Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, n);
+			}
 		} else
 #endif
 		/* 4.8.1 and newer clients use 32bit character size. */

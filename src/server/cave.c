@@ -4619,7 +4619,11 @@ void clear_ovl_spot(int Ind, int y, int x) {
 		dispx = x - p_ptr->panel_col_prt;
 		dispy = y - p_ptr->panel_row_prt;
 
-		if (p_ptr->ovl_info[dispy][dispx].c) {
+		if (p_ptr->ovl_info[dispy][dispx].c
+#ifdef GRAPHICS_BG_MASK
+		//unnecessary?    || p_ptr->ovl_info_back[dispy][dispx].c
+#endif
+		    ) {
 			/* Check if the overlay buffer is different from the screen buffer */
 			if ((p_ptr->ovl_info[dispy][dispx].a != p_ptr->scr_info[dispy][dispx].a) ||
 			    (p_ptr->ovl_info[dispy][dispx].c != p_ptr->scr_info[dispy][dispx].c)
@@ -4718,10 +4722,16 @@ void prt_map(int Ind, bool scr_only) {
 
 	/* First clear the old stuff */
 	memset(p_ptr->scr_info, 0, sizeof(p_ptr->scr_info));
+#ifdef GRAPHICS_BG_MASK
+	memset(p_ptr->scr_info_back, 0, sizeof(p_ptr->scr_info_back));
+#endif
 
 	if (!scr_only) {
 		/* Clear the overlay buffer */
 		memset(p_ptr->ovl_info, 0, sizeof(p_ptr->ovl_info));
+#ifdef GRAPHICS_BG_MASK
+		memset(p_ptr->ovl_info_back, 0, sizeof(p_ptr->ovl_info_back));
+#endif
 	}
 
 	/* Dump the map */

@@ -4584,12 +4584,19 @@ void do_cmd_locate(int Ind, int dir) {
 					/* Verify that we're not exceeding our overlay buffer */
 					if (ox >= 0 && oy >= 0 && ox < MAX_WINDOW_WID && oy < MAX_WINDOW_HGT) {
 						p_ptr->ovl_info[y1][x1] = p_ptr->ovl_info[oy][ox];
-						if (p_ptr->ovl_info[y1][x1].c)
+ #ifdef GRAPHICS_BG_MASK
+						p_ptr->ovl_info_back[y1][x1] = p_ptr->ovl_info_back[oy][ox];
+ #endif
+						if (p_ptr->ovl_info[y1][x1].c) //ovl_info_back[y1][x1].c unnecessary?
 							p_ptr->cave_flag[y1 + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt] |= CAVE_AOVL;
 					} else {
 						/* Clear all the cropped parts */
 						p_ptr->ovl_info[y1][x1].c = 0;
 						p_ptr->ovl_info[y1][x1].a = 0;
+ #ifdef GRAPHICS_BG_MASK
+						p_ptr->ovl_info_back[y1][x1].c = 0;
+						p_ptr->ovl_info_back[y1][x1].a = 0;
+ #endif
 						p_ptr->cave_flag[y1 + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt] &= ~CAVE_AOVL;
 					}
 				}

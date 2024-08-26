@@ -3912,8 +3912,7 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 	}
 
 	/* Check the max line count */
-	if (y > last_line_info)
-		last_line_info = y;
+	if (y > last_line_info) last_line_info = y;
 
 #ifdef BIGMAP_MINDLINK_HACK
 	/* for big_map mind-link issues: keep track of last map line received */
@@ -3922,6 +3921,10 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 
 	for (x = 0; x < 80; x++) {
 		c = 0; /* Needs to be reset for proper packet read. */
+#ifdef GRAPHICS_BG_MASK
+		c_back = 0;
+#endif
+
 		/* Read the char/attr pair */
 
 #ifdef GRAPHICS_BG_MASK
