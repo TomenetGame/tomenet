@@ -2890,7 +2890,7 @@ void get_object_visual(char32_t *cp, byte *ap, object_type *o_ptr, player_type *
  * then a whole lot of code should be changed...  XXX XXX
  */
 #ifdef GRAPHICS_BG_MASK
-void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, byte *ap_ack, char32_t *cp_back, bool palanim) {
+void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, byte *ap_back, char32_t *cp_back, bool palanim) {
 #else
 void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 #endif
@@ -3067,6 +3067,14 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				a = TERM_CONF; /* animated colour */
 #endif
 
+#ifdef GRAPHICS_BG_MASK
+			/* Remember the background terrain */
+			*cp_back = *cp;
+			*ap_back = *ap;
+#endif
+
+			/* --- Entities/objects (players, traps, shops) --- */
+
 			/* Hack to display monster traps */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && c_ptr->feat != FEAT_ILLUS_WALL) {
@@ -3234,8 +3242,11 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 #endif
 					}
 				}
-			}
-			else {
+#ifdef GRAPHICS_BG_MASK
+				/* Update the background terrain colour */
+				*ap_back = a;
+#endif
+			} else {
 				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
 
 				/* Handle "blind" */
@@ -3244,11 +3255,18 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 					a = TERM_L_DARK;
 					palanim = FALSE;
 				}
+#ifdef GRAPHICS_BG_MASK
+				/* Update the background terrain colour */
+				*ap_back = a;
+#endif
 			}
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
 			if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
+#ifdef GRAPHICS_BG_MASK
+			if (palanim && !keep && *ap_back < BASE_PALETTE_SIZE) *ap_back += TERMA_OFFSET;
+#endif
 #endif
 
 			/* The attr */
@@ -3268,6 +3286,12 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			/* (*cp) = f_ptr->f_char; */
 			if (!p_ptr->ascii_feats) (*cp) = p_ptr->f_char[FEAT_NONE];
 			else (*cp) = f_info[FEAT_NONE].f_char;
+
+#ifdef GRAPHICS_BG_MASK
+			/* Remember the background terrain */
+			*cp_back = *cp;
+			*ap_back = *ap;
+#endif
 		}
 	}
 
@@ -3306,6 +3330,14 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				(*cp) = p_ptr->f_char_solid[feat];
 				a = p_ptr->f_attr_solid[feat];
 			}
+
+#ifdef GRAPHICS_BG_MASK
+			/* Remember the background terrain */
+			*cp_back = *cp;
+			*ap_back = *ap;
+#endif
+
+			/* --- Entities (players, traps, shops) --- */
 
 			/* Add trap color - Illusory wall masks everythink */
 			/* Hack to display detected traps */
@@ -3467,6 +3499,10 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 					}
 #endif
 				}
+#ifdef GRAPHICS_BG_MASK
+				/* Update the background terrain colour */
+				*ap_back = a;
+#endif
 			}
 			else {
 				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
@@ -3503,14 +3539,27 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 						break;
 					}
 				}
+#ifdef GRAPHICS_BG_MASK
+				/* Update the background terrain colour */
+				*ap_back = a;
+#endif
 			}
 
 			/* Display vault walls in a more distinguishable colour, if desired */
-			if (p_ptr->permawalls_shade && (feat == FEAT_PERM_INNER || feat == FEAT_PERM_OUTER)) a = TERM_L_UMBER;
+			if (p_ptr->permawalls_shade && (feat == FEAT_PERM_INNER || feat == FEAT_PERM_OUTER)) {
+				a = TERM_L_UMBER;
+#ifdef GRAPHICS_BG_MASK
+				/* Update the background terrain colour */
+				*ap_back = a;
+#endif
+			}
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
 			if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
+#ifdef GRAPHICS_BG_MASK
+			if (palanim && !keep && *ap_back < BASE_PALETTE_SIZE) *ap_back += TERMA_OFFSET;
+#endif
 #endif
 
 			/* The attr */
@@ -3554,11 +3603,16 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			(*ap) = spell_color(effects[c_ptr->effect].type);
 #else /* allow 'transparent' spells */
 			a = spell_color(effects[c_ptr->effect].type);
-			if (a != 127) (*ap) = a;
+			if (a != 127) {
+				(*ap) = a;
+ #ifdef GRAPHICS_BG_MASK
+				/* Update the background terrain colour */
+				*ap_back = a;
+ #endif
+			}
 #endif
 		}
 
-#if 1
 		/* Multi-hued attr */
 		/* TODO: this should be done in client-side too, so that
 		 * they shimmer when player isn't moving.
@@ -3575,8 +3629,12 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 #endif
 
 			(*ap) = a;
+#ifdef GRAPHICS_BG_MASK
+			/* Update the background terrain colour */
+			*ap_back = a;
+#endif
 		}
-#if 1
+
 		/* Give staircases different colours depending on dungeon flags -C. Blue :) */
 		if ((feat == FEAT_MORE) || (feat == FEAT_WAY_MORE) ||
 		    (feat == FEAT_WAY_LESS) || (feat == FEAT_LESS)) {
@@ -3598,7 +3656,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				get_staircase_colour(d_ptr, ap);
 			}
 
- #if 1 /* experimental (IDDC_OCCUPIED_FLOOR) */
+#if 1 /* experimental (IDDC_OCCUPIED_FLOOR) */
 			/* Specialty in IDDC: Colour staircase out of the ordinary to indicate that someone is currently on the upcoming floor.
 			   Idea: Allow people to wait until a floor has reset, so they don't waste an already emptied floor. */
 			if (in_irondeepdive(&tpos)) {
@@ -3623,9 +3681,14 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 					}
 				}
 			}
- #endif
+#endif
 
- #ifdef GLOBAL_DUNGEON_KNOWLEDGE
+#ifdef GRAPHICS_BG_MASK
+			/* Update the background terrain colour */
+			*ap_back = *ap;
+#endif
+
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* player has seen the entrance on the actual main screen -> add it to global exploration history knowledge */
 			if (!is_admin(p_ptr) && d_ptr && !(d_ptr->known & 0x1)) {
 				d_ptr->known |= 0x1;
@@ -3635,9 +3698,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
 				msg_broadcast_format(Ind, "\374\377B%s discovered a dungeon: %s!", p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
 			}
- #endif
-		}
 #endif
+		}
 
 #ifdef HOUSE_PAINTING
 		if (feat == FEAT_WALL_HOUSE && c_ptr->colour) {
@@ -3654,13 +3716,21 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			if (c_ptr->colour > 100) (*ap) = c_ptr->colour - 100 - 1;
 			else (*ap) = c_ptr->colour - 1;
  #endif
+ #ifdef GRAPHICS_BG_MASK
+			/* Update the background terrain colour */
+			*ap_back = *ap;
+ #endif
 		}
 #endif
 
 		/* jails */
-		if (c_ptr->info & CAVE_JAIL) (*ap) = TERM_L_DARK;
-
+		if (c_ptr->info & CAVE_JAIL) {
+			(*ap) = TERM_L_DARK;
+#ifdef GRAPHICS_BG_MASK
+			/* Update the background terrain colour */
+			*ap_back = *ap;
 #endif
+		}
 	}
 
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
