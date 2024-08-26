@@ -11637,6 +11637,10 @@ void c_close_game(cptr reason) {
 	int x, y;
 	byte *scr_aa;
 	char32_t *scr_cc;
+ #ifdef GRAPHICS_BG_MASK
+	byte *scr_aa_back;
+	char32_t *scr_cc_back;
+ #endif
 #endif
 	char tmp[MAX_CHARS];
 	bool c_cfg_tmp = c_cfg.topline_no_msg;
@@ -11688,9 +11692,17 @@ void c_close_game(cptr reason) {
 		for (y = 0; y < screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM - 1; y++) {
 			scr_aa = Term->scr->a[y + 1]; //+1 : leave first line blank for message prompts
 			scr_cc = Term->scr->c[y + 1];
+ #ifdef GRAPHICS_BG_MASK
+			scr_aa_back = Term->scr_back->a[y + 1]; //+1 : leave first line blank for message prompts
+			scr_cc_back = Term->scr_back->c[y + 1];
+ #endif
 			for (x = 0; x < screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT; x++) {
 				panel_map_a[x][y] = scr_aa[x];
 				panel_map_c[x][y] = scr_cc[x];
+ #ifdef GRAPHICS_BG_MASK
+				panel_map_a_back[x][y] = scr_aa_back[x];
+				panel_map_c_back[x][y] = scr_cc_back[x];
+ #endif
 			}
 		}
 

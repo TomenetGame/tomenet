@@ -782,7 +782,11 @@ extern bool weather_panel_changed;
 #if 1 //RAINY_TOMB
 extern byte panel_map_a[MAX_WINDOW_WID][MAX_WINDOW_HGT]; //bigger to allow fullscreen_weather for RAINY_TOMB
 extern char32_t panel_map_c[MAX_WINDOW_WID][MAX_WINDOW_HGT];
-#else
+ #ifdef GRAPHICS_BG_MASK
+extern byte panel_map_a_back[MAX_WINDOW_WID][MAX_WINDOW_HGT]; //bigger to allow fullscreen_weather for RAINY_TOMB
+extern char32_t panel_map_c_back[MAX_WINDOW_WID][MAX_WINDOW_HGT];
+ #endif
+#else /* deprecated: */
 extern byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 extern char32_t panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 #endif

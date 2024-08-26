@@ -3029,9 +3029,9 @@ int Receive_char(void) {
 	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
-#ifdef GRAPHICS_BG_MASK //todo:
-		//panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
-		//panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+#ifdef GRAPHICS_BG_MASK
+		panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+		panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
 #endif
 	}
 
@@ -4060,9 +4060,9 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 				    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
 					panel_map_c[x + i - PANEL_X][y - PANEL_Y] = c;
-#ifdef GRAPHICS_BG_MASK //todo:
-					//panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
-					//panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+#ifdef GRAPHICS_BG_MASK
+					panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+					panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
 #endif
 				}
 

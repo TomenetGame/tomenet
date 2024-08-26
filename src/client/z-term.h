@@ -5,6 +5,9 @@
 
 #include "../common/h-basic.h"
 
+/* -_- */
+#include "../config.h" /* required for GRAPHICS_BG_MASK: it sets USE_GRAPHICS */
+#include "../common/defines.h" /* required for GRAPHICS_BG_MASK: it actually sets GRAPHICS_BG_MASK if USE_GRAPHICS is set... */
 
 
 /*
@@ -24,9 +27,7 @@
  */
 
 typedef struct term_win term_win;
-
-struct term_win
-{
+struct term_win {
 	bool cu, cv;
 	int cx, cy;
 
@@ -43,9 +44,7 @@ struct term_win
  */
 
 typedef struct key_queue key_queue;
-
-struct key_queue
-{
+struct key_queue {
 	char *queue;
 
 	s32b head;
@@ -145,11 +144,8 @@ struct key_queue
  */
 
 typedef struct term term;
-
-struct term
-{
+struct term {
 	vptr user;
-
 	vptr data;
 
 	bool active_flag;
@@ -182,8 +178,12 @@ struct term
 
 	term_win *old;
 	term_win *scr;
+#ifdef GRAPHICS_BG_MASK
+	term_win *old_back;
+	term_win *scr_back;
+#endif
 
-//	term_win *tmp;
+	//term_win *tmp;
 	term_win *mem[4];
 
 	void (*init_hook)(term *t);

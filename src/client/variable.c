@@ -297,7 +297,11 @@ bool weather_panel_changed = FALSE; /* view got updated anyway by switching pane
 #if 1 /* RAINY_TOMB */
 byte panel_map_a[MAX_WINDOW_WID][MAX_WINDOW_HGT];
 char32_t panel_map_c[MAX_WINDOW_WID][MAX_WINDOW_HGT];
-#else
+ #ifdef GRAPHICS_BG_MASK
+byte panel_map_a_back[MAX_WINDOW_WID][MAX_WINDOW_HGT];
+char32_t panel_map_c_back[MAX_WINDOW_WID][MAX_WINDOW_HGT];
+ #endif
+#else /* deprecated: */
 byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 char32_t panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 #endif
