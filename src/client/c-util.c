@@ -10051,7 +10051,8 @@ static void do_cmd_options_tilesets(void) {
 		Term_putstr(0, 0, -1, TERM_WHITE, "  \377y-\377w/\377y+\377w,\377y=\377w select prev/next tileset, \377yENTER\377w enter a specific tileset name");
 		Term_putstr(1, 3, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s"));
 
-		Term_putstr(1, 5, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics ? "\377Genabled\377-" : "\377sdisabled\377-"));
+		//GRAPHICS_BG_MASK @ UG_2MASK:
+		Term_putstr(1, 5, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics == UG_2MASK ? "\377Genabled (dual)" : (use_graphics ? "\377Genabled\377-" : "\377sdisabled\377-")));
 
 		/* Tilesets are atm a global setting, not depending on terminal window */
 		Term_putstr(1, 7, -1, TERM_WHITE, format("Currently selected tileset: '\377B%s\377-'", graphic_tiles));
@@ -10091,7 +10092,13 @@ static void do_cmd_options_tilesets(void) {
 			break;
 
 		case 'v':
+#ifdef GRAPHICS_BG_MASK
+			use_graphics = (use_graphics + 1) % 3;
+			if (use_graphics == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart.");
+			else
+#else
 			use_graphics = !use_graphics;
+#endif
 			if (use_graphics) c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart.");
 			else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart.");
 			break;

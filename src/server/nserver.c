@@ -7289,9 +7289,10 @@ int Send_message(int Ind, cptr msg) {
 }
 
 #ifdef GRAPHICS_BG_MASK
-int Send_char(int Ind, int x, int y, byte a, char32_t c_fore, char32_t c_back) {
+//TODO: if c_back is 0 it should just use the already existing background (just client-side?)
+int Send_char(int Ind, int x, int y, byte a_fore, char32_t c_fore, byte a_back, char32_t c_back) {
 #else
-int Send_char(int Ind, int x, int y, byte a, char32_t c_fore) {
+int Send_char(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
 #endif
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
@@ -7304,35 +7305,41 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c_fore) {
 		if (BIT(connp2->state, CONN_PLAYING | CONN_READY)) {
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 			   Maybe todo: also unmap attr? */
-			char32_t unm_c_idx = c_fore;
+			char32_t unm_c_idx_fore = c_fore;
 			char32_t c2_fore = c_fore;
-			char *unm_c_ptr;
+			char *unm_c_ptr_fore;
 #ifdef GRAPHICS_BG_MASK
+			char32_t unm_c_idx_back = c_back;
 			char32_t c2_back = c_back;
+			char *unm_c_ptr_back;
 #endif
 
-			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) c2_fore = (char32_t)*unm_c_ptr;
-			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) c2_fore = (char32_t)*unm_c_ptr;
+			if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
+			else if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
+#ifdef GRAPHICS_BG_MASK
+			if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
+			else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
+#endif
 
 #ifdef GRAPHICS_BG_MASK
-			if (connp2->use_graphics == 2 && is_atleast(&connp2->version, 4, 9, 3, 0, 0, 0)) {
+			if (connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
 				/* Transfer only the relevant bytes, according to client setup.*/
-				char *pc = (char*)&c2_fore;
+				char *pc_f = (char*)&c2_fore, *pc_b = (char*)&c2_back;
 
 				switch (connp2->Client_setup.char_transfer_bytes) {
 				case 0:
 				case 1:
-					Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[0], a_back, pc_b[0]);
 					break;
 				case 2:
-					Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]);
 					break;
 				case 3:
-					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]);
 					break;
 				case 4:
 				default:
-					Packet_printf(&connp2->c, "%c%c%c%c%u%u", PKT_CHAR, x, y, a, c2_fore, c2_back);
+					Packet_printf(&connp2->c, "%c%c%c%c%u%c%u", PKT_CHAR, x, y, a_fore, c2_fore, a_back, c2_back);
 				}
 			} else
 #endif
@@ -7344,42 +7351,43 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c_fore) {
 				switch (connp2->Client_setup.char_transfer_bytes) {
 				case 0:
 				case 1:
-					Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+					Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[0]);
 					break;
 				case 2:
-					Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[1], pc[0]);
 					break;
 				case 3:
-					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[2], pc[1], pc[0]);
 					break;
 				case 4:
 				default:
-					Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2_fore);
+					Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a_fore, c2_fore);
 				}
 			}
-			else Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c2_fore);
+			/* old clients: each transmitted character is just normal 'char' size */
+			else Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, (char)c2_fore);
 		}
 	}
 
 #ifdef GRAPHICS_BG_MASK
-	if (connp->use_graphics == 2 && is_atleast(&connp->version, 4, 9, 3, 0, 0, 0)) {
+	if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
 		/* Transfer only the relevant bytes, according to client setup.*/
-		char *pc = (char*)&c_fore;
+		char *pc_f = (char*)&c_fore, *pc_b = (char*)&c_back;
 
 		switch (connp->Client_setup.char_transfer_bytes) {
 		case 0:
 		case 1:
-			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[0], a_back, pc_b[0]);
 			break;
 		case 2:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]);
 			break;
 		case 3:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]);
 			break;
 		case 4:
 		default:
-			return Packet_printf(&connp->c, "%c%c%c%c%u%u", PKT_CHAR, x, y, a, c_fore, c_back);
+			return Packet_printf(&connp->c, "%c%c%c%c%u%c%u", PKT_CHAR, x, y, a_fore, c_fore, a_back, c_back);
 		}
 	} else
 #endif
@@ -7391,20 +7399,21 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c_fore) {
 		switch (connp->Client_setup.char_transfer_bytes) {
 		case 0:
 		case 1:
-			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[0]);
 			break;
 		case 2:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[1], pc[0]);
 			break;
 		case 3:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[2], pc[1], pc[0]);
 			break;
 		case 4:
 		default:
-			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c_fore);
+			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a_fore, c_fore);
 		}
 	}
-	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c_fore);
+	/* old clients: each transmitted character is just normal 'char' size */
+	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, (char)c_fore);
 }
 
 int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
@@ -7530,7 +7539,10 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
 	int x, x1, n;
-	char32_t c, c2, cu; //c_back; GRAPHICS_BG_MASK
+	char32_t c, c2, cu;
+#ifdef GRAPHICS_BG_MASK
+	char32_t c_back;
+#endif
 	byte a, a2;
 #ifdef LOCATE_KEEPS_OVL
 	char32_t co;
@@ -7654,24 +7666,29 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
+#ifdef GRAPHICS_BG_MASK
+			if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+			} else
+#endif
 			/* 4.8.1 and newer clients use 32bit character size. */
 			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 				/* Transfer only the relevant bytes, according to client setup.*/
-				char * pc = (char *)&c;
+				char *pc = (char*)&c;
+
 				switch (connp->Client_setup.char_transfer_bytes) {
-					case 0:
-					case 1:
-						Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 2:
-						Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 3:
-						Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 4:
-					default:
-						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				case 0:
+				case 1:
+					Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+					break;
+				case 2:
+					Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+					break;
+				case 3:
+					Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+					break;
+				case 4:
+				default:
+					Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
 				}
 			}
 			/* 4.4.3.1 clients support new RLE */
@@ -7691,24 +7708,29 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
 				else cu = c;
 
+#ifdef GRAPHICS_BG_MASK
+				if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+				} else
+#endif
 				/* 4.8.1 and newer clients use 32bit character size. */
 				if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 					/* Transfer only the relevant bytes, according to client setup.*/
-					char * pcu = (char *)&cu;
+					char *pcu = (char*)&cu;
+
 					switch (connp2->Client_setup.char_transfer_bytes) {
-						case 0:
-						case 1:
-							Packet_printf(&connp2->c, "%c%c%c%c", pcu[0], TERM_RESERVED_RLE, a, n);
-							break;
-						case 2:
-							Packet_printf(&connp2->c, "%c%c%c%c%c", pcu[1], pcu[0], TERM_RESERVED_RLE, a, n);
-							break;
-						case 3:
-							Packet_printf(&connp2->c, "%c%c%c%c%c%c", pcu[2], pcu[1], pcu[0], TERM_RESERVED_RLE, a, n);
-							break;
-						case 4:
-						default:
-							Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, n);
+					case 0:
+					case 1:
+						Packet_printf(&connp2->c, "%c%c%c%c", pcu[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 2:
+						Packet_printf(&connp2->c, "%c%c%c%c%c", pcu[1], pcu[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 3:
+						Packet_printf(&connp2->c, "%c%c%c%c%c%c", pcu[2], pcu[1], pcu[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 4:
+					default:
+						Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, n);
 					}
 				}
 				/* 4.4.3.1 clients support new RLE */
@@ -7731,48 +7753,57 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			} else {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
+#ifdef GRAPHICS_BG_MASK
+					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					} else
+#endif
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
-						char * pc = (char *)&c;
+						char *pc = (char*)&c;
+
 						switch (connp->Client_setup.char_transfer_bytes) {
-							case 0:
-							case 1:
-								Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 2:
-								Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 4:
-							default:
-								Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 						}
 					} else {
 						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 					}
-				} else {
-					/* Normal output */
+				} else { /* Normal output */
+#ifdef GRAPHICS_BG_MASK
+					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					} else
+#endif
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
-						char * pc = (char *)&c;
+						char *pc = (char*)&c;
+
 						switch (connp->Client_setup.char_transfer_bytes) {
-							case 0:
-							case 1:
-								Packet_printf(&connp->c, "%c%c", pc[0], a);
-								break;
-							case 2:
-								Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
-								break;
-							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
-								break;
-							case 4:
-							default:
-								Packet_printf(&connp->c, "%u%c", c, a);
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c", pc[0], a);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c", c, a);
 						}
 					} else {
 						Packet_printf(&connp->c, "%c%c", (char)c, a);
@@ -7794,48 +7825,58 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				} else {
 					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
+#ifdef GRAPHICS_BG_MASK
+						if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						} else
+#endif
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 							/* Transfer only the relevant bytes, according to client setup.*/
-							char * pcu = (char *)&cu;
+							char *pcu = (char*)&cu;
+
 							switch (connp2->Client_setup.char_transfer_bytes) {
-								case 0:
-								case 1:
-									Packet_printf(&connp2->c, "%c%c%c%c", pcu[0], TERM_RESERVED_RLE, a, 1);
-									break;
-								case 2:
-									Packet_printf(&connp2->c, "%c%c%c%c%c", pcu[1], pcu[0], TERM_RESERVED_RLE, a, 1);
-									break;
-								case 3:
-									Packet_printf(&connp2->c, "%c%c%c%c%c%c", pcu[2], pcu[1], pcu[0], TERM_RESERVED_RLE, a, 1);
-									break;
-								case 4:
-								default:
-									Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
+							case 0:
+							case 1:
+								Packet_printf(&connp2->c, "%c%c%c%c", pcu[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 2:
+								Packet_printf(&connp2->c, "%c%c%c%c%c", pcu[1], pcu[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 3:
+								Packet_printf(&connp2->c, "%c%c%c%c%c%c", pcu[2], pcu[1], pcu[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
 							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, 1);
 						}
 					} else {
 						/* Normal output */
+#ifdef GRAPHICS_BG_MASK
+						if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						} else
+#endif
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 							/* Transfer only the relevant bytes, according to client setup.*/
-							char * pcu = (char *)&cu;
+							char *pcu = (char*)&cu;
+
 							switch (connp2->Client_setup.char_transfer_bytes) {
-								case 0:
-								case 1:
-									Packet_printf(&connp2->c, "%c%c", pcu[0], a);
-									break;
-								case 2:
-									Packet_printf(&connp2->c, "%c%c%c", pcu[1], pcu[0], a);
-									break;
-								case 3:
-									Packet_printf(&connp2->c, "%c%c%c%c", pcu[2], pcu[1], pcu[0], a);
-									break;
-								case 4:
-								default:
-									Packet_printf(&connp2->c, "%u%c", cu, a);
+							case 0:
+							case 1:
+								Packet_printf(&connp2->c, "%c%c", pcu[0], a);
+								break;
+							case 2:
+								Packet_printf(&connp2->c, "%c%c%c", pcu[1], pcu[0], a);
+								break;
+							case 3:
+								Packet_printf(&connp2->c, "%c%c%c%c", pcu[2], pcu[1], pcu[0], a);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp2->c, "%u%c", cu, a);
 							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c", (char)cu, a);
@@ -7934,10 +7975,14 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			else {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
+#ifdef GRAPHICS_BG_MASK
+					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					} else
+#endif
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
-						char * pc = (char *)&c;
+						char *pc = (char*)&c;
 
 						switch (connp->Client_setup.char_transfer_bytes) {
 						case 0:
@@ -7957,10 +8002,14 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 					} else Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 				} else {
 					/* Normal output */
+#ifdef GRAPHICS_BG_MASK
+					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					} else
+#endif
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
-						char * pc = (char *)&c;
+						char *pc = (char*)&c;
 
 						switch (connp->Client_setup.char_transfer_bytes) {
 						case 0:
@@ -7985,10 +8034,15 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 
 		/* RLE if there at least 2 similar grids in a row, ie n is >= 2 here */
 
+#ifdef GRAPHICS_BG_MASK
+		if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+		} else
+#endif
 		/* 4.8.1 and newer clients use 32bit character size. */
 		if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 			/* Transfer only the relevant bytes, according to client setup.*/
-			char * pc = (char *)&c;
+			char *pc = (char*)&c;
+
 			switch (connp->Client_setup.char_transfer_bytes) {
 			case 0:
 			case 1:
@@ -8026,12 +8080,20 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 /* TODO: Make a new PKT_ packet type for this to allow the client to distinguish it from
    normal line updates, so if someone enters and exits the map faster than server latency
    the map won't stay on screen forever, forcing the user to refresh via CTRL+R. */
+#ifdef GRAPHICS_BG_MASK
+int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc, byte *sa_back, char32_t *sc_back) {
+#else
 int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
+#endif
 	player_type *p_ptr = Players[Ind];//, *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
 	int x, x1, n;
 	char32_t c;
 	byte a;
+#ifdef GRAPHICS_BG_MASK
+	char32_t c_back;
+	byte a_back;
+#endif
 	int Ind2 = 0;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
@@ -8076,24 +8138,29 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
+#ifdef GRAPHICS_BG_MASK
+			if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+			} else
+#endif
 			/* 4.8.1 and newer clients use 32bit character size. */
 			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 				/* Transfer only the relevant bytes, according to client setup.*/
-				char * pc = (char *)&c;
+				char *pc = (char*)&c;
+
 				switch (connp->Client_setup.char_transfer_bytes) {
-					case 0:
-					case 1:
-						Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 2:
-						Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 3:
-						Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-						break;
-					case 4:
-					default:
-						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				case 0:
+				case 1:
+					Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+					break;
+				case 2:
+					Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+					break;
+				case 3:
+					Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+					break;
+				case 4:
+				default:
+					Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
 				}
 			}
 			/* 4.4.3.1 clients support new RLE */
@@ -8106,24 +8173,29 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 			}
 
 			if (Ind2) {
+#ifdef GRAPHICS_BG_MASK
+				if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+				} else
+#endif
 				/* 4.8.1 and newer clients use 32bit character size. */
 				if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 					/* Transfer only the relevant bytes, according to client setup.*/
-					char * pc = (char *)&c;
+					char *pc = (char*)&c;
+
 					switch (connp2->Client_setup.char_transfer_bytes) {
-						case 0:
-						case 1:
-							Packet_printf(&connp2->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
-							break;
-						case 2:
-							Packet_printf(&connp2->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-							break;
-						case 3:
-							Packet_printf(&connp2->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
-							break;
-						case 4:
-						default:
-							Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+					case 0:
+					case 1:
+						Packet_printf(&connp2->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 2:
+						Packet_printf(&connp2->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 3:
+						Packet_printf(&connp2->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 4:
+					default:
+						Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
 					}
 				}
 				/* 4.4.3.1 clients support new RLE */
@@ -8146,48 +8218,57 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 			} else {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
+#ifdef GRAPHICS_BG_MASK
+					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					} else
+#endif
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
-						char * pc = (char *)&c;
+						char *pc = (char*)&c;
+
 						switch (connp->Client_setup.char_transfer_bytes) {
-							case 0:
-							case 1:
-								Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 2:
-								Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-								break;
-							case 4:
-							default:
-								Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 						}
 					} else {
 						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 					}
-				} else {
-					/* Normal output */
+				} else { /* Normal output */
+#ifdef GRAPHICS_BG_MASK
+					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					} else
+#endif
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
 						/* Transfer only the relevant bytes, according to client setup.*/
-						char * pc = (char *)&c;
+						char *pc = (char*)&c;
+
 						switch (connp->Client_setup.char_transfer_bytes) {
-							case 0:
-							case 1:
-								Packet_printf(&connp->c, "%c%c", pc[0], a);
-								break;
-							case 2:
-								Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
-								break;
-							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
-								break;
-							case 4:
-							default:
-								Packet_printf(&connp->c, "%u%c", c, a);
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c", pc[0], a);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c", c, a);
 						}
 					} else {
 						Packet_printf(&connp->c, "%c%c", (char)c, a);
@@ -8202,48 +8283,57 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 				} else {
 					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
+#ifdef GRAPHICS_BG_MASK
+						if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						} else
+#endif
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 							/* Transfer only the relevant bytes, according to client setup.*/
-							char * pc = (char *)&c;
+							char *pc = (char*)&c;
+
 							switch (connp2->Client_setup.char_transfer_bytes) {
-								case 0:
-								case 1:
-									Packet_printf(&connp2->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
-									break;
-								case 2:
-									Packet_printf(&connp2->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-									break;
-								case 3:
-									Packet_printf(&connp2->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
-									break;
-								case 4:
-								default:
-									Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+							case 0:
+							case 1:
+								Packet_printf(&connp2->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 2:
+								Packet_printf(&connp2->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 3:
+								Packet_printf(&connp2->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 						}
-					} else {
-						/* Normal output */
+					} else { /* Normal output */
+#ifdef GRAPHICS_BG_MASK
+						if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						} else
+#endif
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 							/* Transfer only the relevant bytes, according to client setup.*/
-							char * pc = (char *)&c;
+							char *pc = (char*)&c;
+
 							switch (connp2->Client_setup.char_transfer_bytes) {
-								case 0:
-								case 1:
-									Packet_printf(&connp2->c, "%c%c", pc[0], a);
-									break;
-								case 2:
-									Packet_printf(&connp2->c, "%c%c%c", pc[1], pc[0], a);
-									break;
-								case 3:
-									Packet_printf(&connp2->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
-									break;
-								case 4:
-								default:
-									Packet_printf(&connp2->c, "%u%c", c, a);
+							case 0:
+							case 1:
+								Packet_printf(&connp2->c, "%c%c", pc[0], a);
+								break;
+							case 2:
+								Packet_printf(&connp2->c, "%c%c%c", pc[1], pc[0], a);
+								break;
+							case 3:
+								Packet_printf(&connp2->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp2->c, "%u%c", c, a);
 							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c", (char)c, a);
@@ -8288,6 +8378,10 @@ int Send_mini_map_pos(int Ind, int x, int y, int y_offset, byte a, char32_t c) {
 s_printf("wx,wy=%d,%d, tx,ty=%d,%d\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->tmp_x, p_ptr->tmp_y);
 #endif
 	/* Packet header */
+#ifdef GRAPHICS_BG_MASK
+	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+	} else
+#endif
 	/* 4.8.1 and newer clients use 32bit character size. */
 	if (is_atleast(&p_ptr->version, 4, 8, 1, 2, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%hd%c%u", PKT_MINI_MAP_POS, xs, ys, y_offset, a, c);
 	else if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%u", PKT_MINI_MAP_POS, xs, ys, a, c);

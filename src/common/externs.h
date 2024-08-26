@@ -207,7 +207,7 @@ extern int distance(int y1, int x1, int y2, int x2);
 extern bool los(int Depth, int y1, int x1, int y2, int x2);
 extern bool player_can_see_bold(int Ind, int y, int x);
 extern bool no_lite(int Ind);
-extern void map_info(int Ind, int y, int x, byte *ap, char *cp);
+//extern void map_info(int Ind, int y, int x, byte *ap, char *cp);
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
 extern void note_spot(int Ind, int y, int x);

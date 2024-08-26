@@ -2640,14 +2640,14 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	td->bgmask = None;
 	td->fgmask = None;
 	td->tilePreparation = None;
-#ifdef TILE_CACHE_SIZE
+ #ifdef TILE_CACHE_SIZE
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		td->tile_cache[i].tilePreparation = None;
 		td->tile_cache[i].c = 0xffffffff;
 		td->tile_cache[i].a = 0xff;
 		td->tile_cache[i].is_valid = 0;
 	}
-#endif
+ #endif
 #endif /* USE_GRAPHICS */
 
 	/* Initialize the term (full size) */
@@ -2682,13 +2682,15 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 				Metadpy->dpy, Metadpy->root,
 				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
 
-#ifdef TILE_CACHE_SIZE
+		/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
+		   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
+ #ifdef TILE_CACHE_SIZE
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			td->tile_cache[i].tilePreparation = XCreatePixmap(
 				Metadpy->dpy, Metadpy->root,
 				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
 		}
-#endif
+ #endif
 
 		if (td->tiles != NULL && td->tilePreparation != None) {
 			/* Graphics hook */
@@ -3246,13 +3248,13 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 					Metadpy->dpy, Metadpy->root,
 					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
 
-#ifdef TILE_CACHE_SIZE
+ #ifdef TILE_CACHE_SIZE
 			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 				td->tile_cache[i].tilePreparation = XCreatePixmap(
 					Metadpy->dpy, Metadpy->root,
 					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
 			}
-#endif
+ #endif
 
 			if (td->tiles == NULL || td->tilePreparation == None) {
 				quit_fmt("Couldn't prepare images after font resize in terminal %d\n", term_idx);

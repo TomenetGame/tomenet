@@ -249,7 +249,11 @@ retry_mangrc:
 
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
+#ifdef GRAPHICS_BG_MASK
+				if (p) use_graphics = atoi(p) % 3; //max UG_2MASK
+#else
 				if (p) use_graphics = (atoi(p) != 0);
+#endif
 			}
 			if (!strncmp(buf, "graphic_tiles", 13)) {
 				char *p;
@@ -648,7 +652,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 							/* save current graphical tileset state */
 							else if (!strncmp(buf, "graphics", 8)) {
 								strcpy(buf, "graphics\t\t");
-								strcat(buf, format("%d\n", use_graphics ? 1 : 0));
+								strcat(buf, format("%d\n", use_graphics));
 							}
 #ifdef USE_GRAPHICS
 							else if (!strncmp(buf, "graphic_tiles", 13)) {
@@ -838,7 +842,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			fputs("#colormap_15\t\t#c79d55\n", config2);
 			fputs("\n", config2);
 
-			fputs(format("graphics\t\t%s\n", use_graphics ? "1" : "0"), config2);
+			fputs(format("graphics\t\t%d\n", use_graphics), config2);
 #ifdef USE_GRAPHICS
 			/* On writing a default .tomenetrc, also default to 16x22sv tileset */
 			if (!graphic_tiles[0]) strcpy(graphic_tiles, "16x22sv");

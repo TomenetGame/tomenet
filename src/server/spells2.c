@@ -2051,12 +2051,20 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 		    (match_flag != 0x3 && (r_ptr->flags3 & (match_flag)))) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->mon_vis[i] = TRUE;
 
 			/* Get the look of the monster */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, y, x, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, y, x, &a, &c, FALSE);
+#endif
 
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
@@ -2127,12 +2135,20 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 		if (panel_contains(py, px)) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->play_vis[i] = TRUE;
 
 			/* Get the look of the player */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, y, x, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, py, px, &a, &c, FALSE);
+#endif
 
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
@@ -2249,6 +2265,10 @@ bool detect_invisible(int Ind) {
 		if (panel_contains(fy, fx) && (r_ptr->flags2 & RF2_INVISIBLE)) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 #ifdef OLD_MONSTER_LORE
 			/* Take note that they are invisible */
@@ -2259,7 +2279,11 @@ bool detect_invisible(int Ind) {
 			p_ptr->mon_vis[i] = TRUE;
 
 			/* Get the look of the monster */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, fy, fx, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, fy, fx, &a, &c, FALSE);
+#endif
 
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
@@ -2299,12 +2323,20 @@ bool detect_invisible(int Ind) {
 		if (panel_contains(py, px) && q_ptr->invis)  {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->play_vis[i] = TRUE;
 
 			/* Get the look of the player */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, py, px, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, py, px, &a, &c, FALSE);
+#endif
 
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
@@ -2388,12 +2420,20 @@ bool detect_creatures(int Ind) {
 		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE))) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->mon_vis[i] = TRUE;
 
 			/* Get the look of the monster */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, fy, fx, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, fy, fx, &a, &c, FALSE);
+#endif
 
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
@@ -2433,12 +2473,20 @@ bool detect_creatures(int Ind) {
 		if (panel_contains(py, px) && !q_ptr->invis) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->play_vis[i] = TRUE;
 
 			/* Get the look of the player */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, py, px, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, py, px, &a, &c, FALSE);
+#endif
 
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
@@ -2525,11 +2573,19 @@ bool detect_noise(int Ind) {
 		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE))) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->mon_vis[i] = TRUE;
 			/* Get the look of the monster */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, fy, fx, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, fy, fx, &a, &c, FALSE);
+#endif
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
 			/* Draw the monster on the screen */
@@ -2565,11 +2621,19 @@ bool detect_noise(int Ind) {
 		if (panel_contains(py, px) && !q_ptr->invis) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->play_vis[i] = TRUE;
 			/* Get the look of the player */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, py, px, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, py, px, &a, &c, FALSE);
+#endif
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
 			/* Draw the player on the screen */
@@ -2649,11 +2713,19 @@ bool detect_living(int Ind) {
 		if (panel_contains(fy, fx)) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->mon_vis[i] = TRUE;
 			/* Get the look of the monster */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, fy, fx, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, fy, fx, &a, &c, FALSE);
+#endif
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
 			/* Draw the monster on the screen */
@@ -2689,11 +2761,19 @@ bool detect_living(int Ind) {
 		if (panel_contains(py, px)) {
 			byte a;
 			char32_t c;
+#ifdef GRAPHICS_BG_MASK
+			byte a_back;
+			char32_t c_back;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->play_vis[i] = TRUE;
 			/* Get the look of the player */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, py, px, &a, &c, &a_back, &c_back, FALSE);
+#else
 			map_info(Ind, py, px, &a, &c, FALSE);
+#endif
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
 			/* Draw the player on the screen */

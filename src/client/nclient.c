@@ -2917,28 +2917,54 @@ int Receive_char(void) {
 	char ch;
 	char x, y;
 	byte a;
-	char32_t	c = 0; /* Needs to be initialized for proper packet read. */
+	char32_t c = 0; /* Needs to be initialized for proper packet read. */
+#ifdef GRAPHICS_BG_MASK
+	byte a_back;
+	char32_t c_back = 0;
+#endif
+
 	bool is_us = FALSE;
 
+	/* 4.8.1 and newer servers communicate using 32bit character size. */
+	if (use_graphics == UG_2MASK && is_atleast(&server_version, 4, 9, 2, 1, 0, 0)) {
+		/* Transfer only minimum number of bytes needed, according to client setup.*/
+		char *pc = (char *)&c, *pc_b = (char *)&c_back;
+
+		switch (Client_setup.char_transfer_bytes) {
+		case 0:
+		case 1:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &pc[0], &a_back, &pc_b[0])) <= 0) return(n);
+			break;
+		case 2:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[1], &pc[0], &a_back, &pc_b[1], &pc_b[0])) <= 0) return(n);
+			break;
+		case 3:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[2], &pc[1], &pc[0], &a_back, &pc_b[2], &pc_b[1], &pc_b[0])) <= 0) return(n);
+			break;
+		case 4:
+		default:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u", &ch, &x, &y, &a, &c, &a_back, &c_back)) <= 0) return(n);
+		}
+	} else
 	/* 4.8.1 and newer servers communicate using 32bit character size. */
 	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		/* Transfer only minimum number of bytes needed, according to client setup.*/
 		char *pc = (char *)&c;
 
 		switch (Client_setup.char_transfer_bytes) {
-			case 0:
-			case 1:
-				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return(n);
-				break;
-			case 2:
-				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[1], &pc[0])) <= 0) return(n);
-				break;
-			case 3:
-				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[2], &pc[1], &pc[0])) <= 0) return(n);
-				break;
-			case 4:
-			default:
-				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u", &ch, &x, &y, &a, &c)) <= 0) return(n);
+		case 0:
+		case 1:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &pc[0])) <= 0) return(n);
+			break;
+		case 2:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[1], &pc[0])) <= 0) return(n);
+			break;
+		case 3:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[2], &pc[1], &pc[0])) <= 0) return(n);
+			break;
+		case 4:
+		default:
+			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u", &ch, &x, &y, &a, &c)) <= 0) return(n);
 		}
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return(n);
@@ -2979,12 +3005,36 @@ int Receive_char(void) {
 	if (c == FONT_MAP_VEIN_X11 || c == FONT_MAP_VEIN_WIN) c = '*';
  #endif
 #endif
+#ifdef GRAPHICS_BG_MASK
+ #ifdef TEST_CLIENT
+	/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
+	/* NOTE: We need a better solution than this for custom fonts... */
+	if (force_cui) {
+		if (c_back == FONT_MAP_SOLID_X11 || c == FONT_MAP_SOLID_WIN) c_back = '#';
+		if (c_back == FONT_MAP_VEIN_X11 || c == FONT_MAP_VEIN_WIN) c_back = '*';
+	}
+  #ifdef USE_X11
+	if (c_back == FONT_MAP_SOLID_WIN) c_back = FONT_MAP_SOLID_X11;
+	if (c_back == FONT_MAP_VEIN_WIN) c_back = FONT_MAP_VEIN_X11;
+  #elif defined(WINDOWS)
+	if (c_back == FONT_MAP_SOLID_X11) c_back = FONT_MAP_SOLID_WIN;
+	if (c_back == FONT_MAP_VEIN_X11) c_back = FONT_MAP_VEIN_WIN;
+  #else /* command-line client doesn't draw either! */
+	if (c_back == FONT_MAP_SOLID_X11 || c_back == FONT_MAP_SOLID_WIN) c = '#';
+	if (c_back == FONT_MAP_VEIN_X11 || c_back == FONT_MAP_VEIN_WIN) c = '*';
+  #endif
+ #endif
+#endif
 
 	/* remember map_info in client-side buffer */
 	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
 	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
+#ifdef GRAPHICS_BG_MASK
+//		panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+//		panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+#endif
 	}
 
 	if (screen_icky) Term_switch(0);
@@ -3012,7 +3062,7 @@ int Receive_char(void) {
 		*/
 
 	}
-	Term_draw(x, y, a, c);
+	Term_draw(x, y, a, c); //todo: GRAPHICS_BG_MASK
 	if (screen_icky) Term_switch(0);
 	return(1);
 }

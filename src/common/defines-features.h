@@ -537,11 +537,17 @@
 /* When graphics are used, enable a 2nd mask colour for background masking:
    Black (0x000000) in a non-f_info.txt-graphics will let the otherwise displayed f_info.txt graphics shine through (100% alpha transparency). - C. Blue
    (Notes: Affected server functions: Send_char(), Send_line_info(), Send_line_info_forward().) */
-#ifdef TEST_SERVER
-#ifdef USE_GRAPHICS
- #define GRAPHICS_BG_MASK
+//#ifdef TEST_SERVER
+#if defined(USE_GRAPHICS) || !defined(CLIENT_SIDE) /* !clientside: The server doesn't itself use graphics, but has to provide the calculation-capabilities for graphics-enabled clients */
+ #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking */
+ #ifdef GRAPHICS_BG_MASK
+  /* Constants for use_graphics client setting */
+  #define UG_NONE	0
+  #define UG_NORMAL	1
+  #define UG_2MASK	2
+ #endif
 #endif
-#endif
+//#endif
 
 
 /* ------------------------------------------------------------------------- */

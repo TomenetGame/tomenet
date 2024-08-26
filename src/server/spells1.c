@@ -12689,7 +12689,11 @@ msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
 				p_ptr->scr_info[dispy][dispx].c = '*';
 				p_ptr->scr_info[dispy][dispx].a = attr;
 
+#ifdef GRAPHICS_BG_MASK
+				Send_char(j, dispx, dispy, attr, '*', 0, 0);
+#else
 				Send_char(j, dispx, dispy, attr, '*');
+#endif
 			}
 		}
 
@@ -12906,7 +12910,11 @@ msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
 				p_ptr->scr_info[dispy][dispx].c = ch;
 				p_ptr->scr_info[dispy][dispx].a = attr;
 
+#ifdef GRAPHICS_BG_MASK
+				Send_char(j, dispx, dispy, attr, ch, 0, 0);
+#else
 				Send_char(j, dispx, dispy, attr, ch);
+#endif
 
 				/* Hack -- Show bolt char */
 				if (dist % 2) Send_flush(j);
@@ -13161,7 +13169,11 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 			p_ptr->scr_info[dispy][dispx].c = ch;
 			p_ptr->scr_info[dispy][dispx].a = attr;
 
+#ifdef GRAPHICS_BG_MASK
+			Send_char(j, dispx, dispy, attr, ch, 0, 0);
+#else
 			Send_char(j, dispx, dispy, attr, ch);
+#endif
 
 			/* Flush once */
 			Send_flush(j);
@@ -13326,7 +13338,11 @@ msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
 					p_ptr->scr_info[dispy][dispx].c = '*';
 					p_ptr->scr_info[dispy][dispx].a = attr;
 
+#ifdef GRAPHICS_BG_MASK
+					Send_char(j, dispx, dispy, attr, '*', 0, 0);
+#else
 					Send_char(j, dispx, dispy, attr, '*');
+#endif
 
 					drawn = TRUE;
 
@@ -13664,7 +13680,11 @@ msg_format(-who, "  pg x=%d,y=%d,r=%d,dam=%d,grids=%d",x,y,rad,dam,grids);
 					p_ptr->scr_info[dispy][dispx].c = '*';
 					p_ptr->scr_info[dispy][dispx].a = attr;
 
+#ifdef GRAPHICS_BG_MASK
+					Send_char(j, dispx, dispy, attr, '*', 0, 0);
+#else
 					Send_char(j, dispx, dispy, attr, '*');
+#endif
 
 					drawn = TRUE;
 

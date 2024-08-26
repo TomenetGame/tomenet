@@ -1143,7 +1143,7 @@ void save_prefs(void) {
 #endif
 
 #ifdef USE_GRAPHICS
-	strcpy(buf, use_graphics ? "1" : "0");
+	strcpy(buf, use_graphics == UG_2MASK ? "2" : (use_graphics ? "1" : "0"));
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
 	WritePrivateProfileString("Base", "GraphicTiles", graphic_tiles, ini_file);
 #endif
@@ -1305,12 +1305,11 @@ static void load_prefs(void) {
 
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
-	use_graphics = (GetPrivateProfileInt("Base", "Graphics", 0, ini_file) != 0);
+	use_graphics = (GetPrivateProfileInt("Base", "Graphics", 0, ini_file));
 	GetPrivateProfileString("Base", "GraphicTiles", DEFAULT_TILENAME, graphic_tiles, 255, ini_file);
 	/* Convert to lowercase. */
-	for (int i =0; i < 256; i++) {
+	for (int i =0; i < 256; i++)
 		graphic_tiles[i] = tolower(graphic_tiles[i]);
-	}
 #endif
 
 #ifdef USE_SOUND
@@ -2930,7 +2929,11 @@ static void process_menus(WORD wCmd) {
 			//reset_visuals();
 
 			/* Toggle "graphics" */
+#ifdef GRAPHICS_BG_MASK
+			use_graphics = (use_graphics + 1) % 3;
+#else
 			use_graphics = !use_graphics;
+#endif
 
 			/* Access the "graphic" mappings */
 			handle_process_font_file();

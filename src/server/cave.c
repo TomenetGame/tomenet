@@ -2889,14 +2889,17 @@ void get_object_visual(char32_t *cp, byte *ap, object_type *o_ptr, player_type *
  * "x_ptr->xxx", is quicker than "x_info[x].xxx", if this is incorrect
  * then a whole lot of code should be changed...  XXX XXX
  */
+#ifdef GRAPHICS_BG_MASK
+void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, byte *ap_ack, char32_t *cp_back, bool palanim) {
+#else
 void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
+#endif
 	player_type *p_ptr = Players[Ind];
 
 	cave_type *c_ptr;
 	byte *w_ptr;
 
 	feature_type *f_ptr;
-
 	int feat;
 
 	byte a;
@@ -4145,6 +4148,10 @@ void lite_spot(int Ind, int y, int x) {
 
 		byte a;
 		char32_t c;
+#ifdef GRAPHICS_BG_MASK
+		byte a_back = 0;
+		char32_t c_back = 0;
+#endif
 
 		/* Handle "player" seeing himself/herself */
 		if ((y == p_ptr->py) && (x == p_ptr->px)) {
@@ -4395,11 +4402,15 @@ void lite_spot(int Ind, int y, int x) {
 			bool palanim = FALSE;
 #endif
 			/* Examine the grid */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, y, x, &a, &c, &a_back, &c_back, palanim);
+#else
 			map_info(Ind, y, x, &a, &c, palanim);
+#endif
 		}
 
 		/* Hack -- fake monochrome */
-		if (!use_color)  a = TERM_WHITE;
+		if (!use_color) a = TERM_WHITE;
 
 		dispx = x - p_ptr->panel_col_prt;
 		dispy = y - p_ptr->panel_row_prt;
@@ -4427,7 +4438,11 @@ void lite_spot(int Ind, int y, int x) {
 #endif
 
 				/* Tell client to redraw this grid */
+#ifdef GRAPHICS_BG_MASK
+				Send_char(Ind, dispx, dispy, a, c, a_back, c_back);
+#else
 				Send_char(Ind, dispx, dispy, a, c);
+#endif
 				// DYNAMIC_MINI_MAP (while in dungeon and not shopping): y, x, a, c - use priority-condensing code from display_map() to send a specific minimap char in addition to the normal map's Send_char() with a newly added PKT_ type
 			}
 
@@ -4472,7 +4487,11 @@ void draw_spot_ovl(int Ind, int y, int x, byte a, char32_t c) {
 			p_ptr->cave_flag[y][x] |= CAVE_AOVL;
 
 			/* Tell client to redraw this grid */
+#ifdef GRAPHICS_BG_MASK
+			Send_char(Ind, dispx, dispy, a, c, 0, 0);
+#else
 			Send_char(Ind, dispx, dispy, a, c);
+#endif
 		}
 	}
 }
@@ -4557,6 +4576,10 @@ void prt_map(int Ind, bool scr_only) {
 	int dispx, dispy;
 	byte a;
 	char32_t c;
+#ifdef GRAPHICS_BG_MASK
+	byte a_back;
+	char32_t c_back;
+#endif
 
 #ifdef EXTENDED_COLOURS_PALANIM
 	bool palanim = palette_affects(Ind);
@@ -4582,7 +4605,11 @@ void prt_map(int Ind, bool scr_only) {
 		/* Scan the columns of row "y" */
 		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++) {
 			/* Determine what is there */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, y, x, &a, &c, &a_back, &c_back, palanim);
+#else
 			map_info(Ind, y, x, &a, &c, palanim);
+#endif
 
 			/* Hack -- fake monochrome */
 			if (!use_color) a = TERM_WHITE;
@@ -4612,7 +4639,11 @@ void prt_map(int Ind, bool scr_only) {
 			p_ptr->scr_info[y][x].a = p_ptr->ovl_info[y][x].a = TERM_DARK;
  #endif
 			/* Clear wrongly sent map grid - most of these will be overwritten by the status bar anyway, but some aren't. */
+ #ifdef GRAPHICS_BG_MASK
+			Send_char(Ind, x, y, TERM_DARK, ' ', TERM_DARK, ' ');
+ #else
 			Send_char(Ind, x, y, TERM_DARK, ' ');
+ #endif
 		}
 	}
 #endif
@@ -4830,16 +4861,28 @@ void display_map(int Ind, int *cy, int *cx) {
 
 	byte ta;
 	char32_t tc;
+#ifdef GRAPHICS_BG_MASK
+	byte ta_back;
+	char32_t tc_back;
+#endif
 
 	byte tp;
 
 	byte ma[MAP_HGT + 2][MAP_WID + 2];
 	char32_t mc[MAP_HGT + 2][MAP_WID + 2];
+#ifdef GRAPHICS_BG_MASK
+	byte ma_back[MAP_HGT + 2][MAP_WID + 2];
+	char32_t mc_back[MAP_HGT + 2][MAP_WID + 2] = { 0 };
+#endif
 
 	byte mp[MAP_HGT + 2][MAP_WID + 2];
 
 	byte sa[80];
 	char32_t sc[80];
+#ifdef GRAPHICS_BG_MASK
+	byte sa_back[80];
+	char32_t sc_back[80];
+#endif
 
 	bool old_floor_lighting;
 	bool old_wall_lighting;
@@ -4858,6 +4901,9 @@ void display_map(int Ind, int *cy, int *cx) {
 	memset(ma, TERM_WHITE, sizeof(ma));
 	for (yt = 0; yt < MAP_HGT + 2; yt++)
 		for (xt = 0; xt < MAP_WID + 2; xt++)
+#ifdef GRAPHICS_BG_MASK
+			mc_back[yt][xt] =
+#endif
 			mc[yt][xt] = ' ';
 
 	/* No priority */
@@ -4871,7 +4917,11 @@ void display_map(int Ind, int *cy, int *cx) {
 			y = j / RATIO + 1;
 
 			/* Extract the current attr/char at that map location */
+#ifdef GRAPHICS_BG_MASK
+			map_info(Ind, j, i, &ta, &tc, &ta_back, &tc_back, FALSE);
+#else
 			map_info(Ind, j, i, &ta, &tc, FALSE);
+#endif
 
 			/* Extract the priority of that attr/char */
 			tp = priority(ta, tc);
@@ -4895,6 +4945,7 @@ void display_map(int Ind, int *cy, int *cx) {
 						tc = '0' + num;
 					}
 				}
+				//GRAPHICS_BG_MASK: pft, not for now, just print our "@" or "X" (selector) w/o background...
 				Send_mini_map_pos(Ind, x + (80 - MAP_WID - 2) / 2, y, 0, ta, tc);
 			}
 /* duplicate code end */
@@ -4902,9 +4953,12 @@ void display_map(int Ind, int *cy, int *cx) {
 			if (mp[y][x] < tp) {
 				/* Save the char */
 				mc[y][x] = tc;
-
 				/* Save the attr */
 				ma[y][x] = ta;
+#ifdef GRAPHICS_BG_MASK
+				mc_back[y][x] = tc_back;
+				ma_back[y][x] = ta_back;
+#endif
 
 				/* Save priority */
 				mp[y][x] = tp;
@@ -4953,14 +5007,26 @@ void display_map(int Ind, int *cy, int *cx) {
 			/* Put the character into the screen buffer */
 			sa[x] = ta;
 			sc[x] = tc;
+ #ifdef GRAPHICS_BG_MASK
+			sa_back[x] = ma_back[y][x];
+			sc_back[x] = mc_back[y][x];
+ #endif
 #else /* add a symmetrical 'border' to the left and right side of the map */
 			sa[x + (80 - MAP_WID - 2) / 2] = ta;
 			sc[x + (80 - MAP_WID - 2) / 2] = tc;
+ #ifdef GRAPHICS_BG_MASK
+			sa_back[x + (80 - MAP_WID - 2) / 2] = ma_back[y][x];
+			sc_back[x + (80 - MAP_WID - 2) / 2] = mc_back[y][x];
+ #endif
 #endif
 		}
 
 		/* Send that line of info */
+#ifdef GRAPHICS_BG_MASK
+		Send_mini_map(Ind, y, sa, sc, sa_back, sc_back);
+#else
 		Send_mini_map(Ind, y, sa, sc);
+#endif
 	}
 
 
@@ -5247,11 +5313,20 @@ static void wild_display_map(int Ind, char mode) {
 		}
 
 		/* Send that line of info */
+#ifdef GRAPHICS_BG_MASK
+		Send_mini_map(Ind, y, sa, sc, 0, 0); //the worldmap doesn't use background graphics, just simple foreground-only symbols
+#else
 		Send_mini_map(Ind, y, sa, sc);
+#endif
 	}
 
 	/* Indicate 'finished sending', so the client can add some extra info to the map */
-	if (is_atleast(&p_ptr->version, 4, 7, 1, 2, 0, 0)) Send_mini_map(Ind, -1, 0, 0);
+	if (is_atleast(&p_ptr->version, 4, 7, 1, 2, 0, 0))
+#ifdef GRAPHICS_BG_MASK
+		Send_mini_map(Ind, -1, 0, 0, 0, 0);
+#else
+		Send_mini_map(Ind, -1, 0, 0);
+#endif
 
 	/* Restore lighting effects */
 	p_ptr->floor_lighting = old_floor_lighting;

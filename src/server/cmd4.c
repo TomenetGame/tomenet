@@ -1610,7 +1610,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D")
+						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
  #endif
 						    );
@@ -1707,7 +1707,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D")
+						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
  #endif
 						    );
@@ -1765,7 +1765,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-						    , connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D")
+						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
  #endif
 				    );
@@ -1861,7 +1861,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #if 0
 					    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
-					    , connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D")
+					    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 					    , version
  #endif
 					    );
