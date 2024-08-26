@@ -469,7 +469,7 @@
 /*
  * OPTION: Allow the use of "graphics" in various places
  */
-#if defined(USE_X11) || defined(WINDOWS)
+#if defined(USE_X11) || defined(WINDOWS) || !defined(CLIENT_SIDE) /* the server must always be able to handle use-graphics clients. Why does it even work w/o this -_-? */
  #define USE_GRAPHICS
 #endif
 

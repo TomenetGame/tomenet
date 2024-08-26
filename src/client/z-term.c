@@ -450,6 +450,37 @@ static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	if (x < Term->x1[y]) Term->x1[y] = x;
 	if (x > Term->x2[y]) Term->x2[y] = x;
 }
+#ifdef GRAPHICS_BG_MASK
+static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
+	byte *scr_aa = Term->scr->a[y];
+	char32_t *scr_cc = Term->scr->c[y];
+	byte *scr_aa_back = Term->scr_back->a[y];
+	char32_t *scr_cc_back = Term->scr_back->c[y];
+
+	int oa = scr_aa[x];
+	char32_t oc = scr_cc[x];
+	int oa_back = scr_aa_back[x];
+	char32_t oc_back = scr_cc_back[x];
+
+	/* Hack -- Ignore non-changes */
+	if ((oa == a) && (oc == c)
+	    && (oa_back == a_back) && (oc_back == c_back)) return;
+
+	/* Save the "literal" information */
+	scr_aa[x] = a;
+	scr_cc[x] = c;
+	scr_aa_back[x] = a_back;
+	scr_cc_back[x] = c_back;
+
+	/* Check for new min/max row info */
+	if (y < Term->y1) Term->y1 = y;
+	if (y > Term->y2) Term->y2 = y;
+
+	/* Check for new min/max col info for this row */
+	if (x < Term->x1[y]) Term->x1[y] = x;
+	if (x > Term->x2[y]) Term->x2[y] = x;
+}
+#endif
 
 
 /*
@@ -470,7 +501,13 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 
 #ifdef DRAW_LARGER_CHUNKS
 	memset(scr_aa + x, a, n);
-	memcpy(scr_cc + x, s, n*sizeof(s[0]));
+	memcpy(scr_cc + x, s, n * sizeof(s[0]));
+ #if 0
+ #ifdef GRAPHICS_BG_MASK /* Erase any background info */
+	memset(scr_aa_back + x, 0, n);
+	memcpy(scr_cc_back + x, 0, n * sizeof(s[0]));
+ #endif
+ #endif
 
 	x1 = x;
 	x2 = x + n;
@@ -486,6 +523,12 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 		/* Save the "literal" information */
 		scr_aa[x] = a;
 		scr_cc[x] = *s;
+ #if 0
+ #ifdef GRAPHICS_BG_MASK /* Erase any background info */
+		scr_aa[x] = 0;
+		scr_cc[x] = 0;
+ #endif
+ #endif
 
 		/* Note the "range" of window updates */
 		if (x1 < 0) x1 = x;
@@ -504,7 +547,59 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 		if (x2 > Term->x2[y]) Term->x2[y] = x2;
 	}
 }
+#ifdef GRAPHICS_BG_MASK
+static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte a_back, char32_t *s_back) {
+	int x1 = -1, x2 = -1;
 
+	byte *scr_aa = Term->scr->a[y];
+	char32_t *scr_cc = Term->scr->c[y];
+	byte *scr_aa_back = Term->scr_back->a[y];
+	char32_t *scr_cc_back = Term->scr_back->c[y];
+
+ #ifdef DRAW_LARGER_CHUNKS
+	memset(scr_aa + x, a, n);
+	memcpy(scr_cc + x, s, n * sizeof(s[0]));
+	memset(scr_aa_back + x, a_back, n);
+	memcpy(scr_cc_back + x, s_back, n * sizeof(s_back[0]));
+
+	x1 = x;
+	x2 = x + n;
+ #else
+	/* Queue the attr/chars */
+	for ( ; n; x++, s++, n--) {
+		int oa = scr_aa[x];
+		int oc = scr_cc[x];
+		int oa_b = scr_aa_back[x];
+		int oc_b = scr_cc_back[x];
+
+		/* Hack -- Ignore non-changes */
+		if ((oa == a) && (oc == *s) &&
+		    (oa_b == a_back) && (oc_b == *s_back)) continue;
+
+		/* Save the "literal" information */
+		scr_aa[x] = a;
+		scr_cc[x] = *s;
+		scr_aa_back[x] = a_back;
+		scr_cc_back[x] = *s_back;
+
+		/* Note the "range" of window updates */
+		if (x1 < 0) x1 = x;
+		x2 = x;
+	}
+ #endif
+
+	/* Expand the "change area" as needed */
+	if (x1 >= 0) {
+		/* Check for new min/max row info */
+		if (y < Term->y1) Term->y1 = y;
+		if (y > Term->y2) Term->y2 = y;
+
+		/* Check for new min/max col info in this row */
+		if (x1 < Term->x1[y]) Term->x1[y] = x1;
+		if (x2 > Term->x2[y]) Term->x2[y] = x2;
+	}
+}
+#endif
 
 
 
@@ -2519,7 +2614,42 @@ errr Term_draw(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
+#ifdef GRAPHICS_BG_MASK
+errr Term_draw_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
+	int w = Term->wid;
+	int h = Term->hgt;
+	static bool semaphore = FALSE;
 
+	/* Verify location */
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
+
+	/* Paranoia -- illegal char */
+	if (!c) return(-2);
+
+	/* Duplicate to current screen if it's only 'partially icky' */
+	if (screen_icky && !semaphore && !shopping
+	    && !perusing) {
+		semaphore = TRUE;
+		if (screen_line_icky != -1 && y >= screen_line_icky) {
+			Term_switch(0);
+			Term_draw_2mask(x, y, a, c, a_back, c_back);
+			Term_switch(0);
+		} else if (screen_column_icky != -1 && x <= screen_column_icky) {
+			Term_switch(0);
+			Term_draw_2mask(x, y, a, c, a_back, c_back);
+			Term_switch(0);
+		}
+		semaphore = FALSE;
+	}
+
+	/* Queue it for later */
+	QueueAttrChar_2mask(x, y, a, c, a_back, c_back);
+
+	/* Success */
+	return(0);
+}
+#endif
 
 /*
  * Using the given attr, add the given char at the cursor.

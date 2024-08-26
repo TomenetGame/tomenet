@@ -10093,7 +10093,11 @@ static void do_cmd_options_tilesets(void) {
 
 		case 'v':
 #ifdef GRAPHICS_BG_MASK
+ #ifdef TEST_CLIENT
 			use_graphics = (use_graphics + 1) % 3;
+ #else
+			use_graphics = (use_graphics + 1) % 2;
+ #endif
 			if (use_graphics == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart.");
 			else
 #else

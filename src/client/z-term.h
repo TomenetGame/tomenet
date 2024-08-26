@@ -7,7 +7,7 @@
 
 /* -_- */
 #include "../config.h" /* required for GRAPHICS_BG_MASK: it sets USE_GRAPHICS */
-#include "../common/defines.h" /* required for GRAPHICS_BG_MASK: it actually sets GRAPHICS_BG_MASK if USE_GRAPHICS is set... */
+#include "../common/defines-features.h" /* required for GRAPHICS_BG_MASK: it actually sets GRAPHICS_BG_MASK if USE_GRAPHICS is set... */
 
 
 /*
@@ -256,6 +256,7 @@ extern errr Term_fresh(void);
 extern errr Term_set_cursor(int v);
 extern errr Term_gotoxy(int x, int y);
 extern errr Term_draw(int x, int y, byte a, char32_t c);
+extern errr Term_draw_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back);
 extern errr Term_addch(byte a, char c);
 extern errr Term_addstr(int n, byte a, cptr s);
 extern errr Term_putch(int x, int y, byte a, char c);
