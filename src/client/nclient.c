@@ -2922,10 +2922,8 @@ int Receive_char(void) {
 	byte a_back;
 	char32_t c_back = 0;
 #endif
-
 	bool is_us = FALSE;
 
-	/* 4.8.1 and newer servers communicate using 32bit character size. */
 	if (use_graphics == UG_2MASK && is_atleast(&server_version, 4, 9, 2, 1, 0, 0)) {
 		/* Transfer only minimum number of bytes needed, according to client setup.*/
 		char *pc = (char *)&c, *pc_b = (char *)&c_back;
@@ -3031,9 +3029,9 @@ int Receive_char(void) {
 	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
-#ifdef GRAPHICS_BG_MASK
-//		panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
-//		panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+#ifdef GRAPHICS_BG_MASK //todo:
+		//panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+		//panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
 #endif
 	}
 
@@ -3772,11 +3770,15 @@ int Receive_flush(void) {
 
 int Receive_line_info(void) {
 //DYNAMIC_MINI_MAP: handle minimap-specific lines, via new PKT_MINI_MAP type (while !screen_icky) probably
-	char	ch;
-	char32_t c;
+	char ch;
 	int x, i, n;
 	s16b y;
+	char32_t c;
 	byte a;
+#ifdef GRAPHICS_BG_MASK
+	char32_t c_back;
+	byte a_back;
+#endif
 	byte rep;
 	bool draw = TRUE;
 	char *stored_sbuf_ptr = rbuf.ptr;
@@ -3921,25 +3923,52 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 	for (x = 0; x < 80; x++) {
 		c = 0; /* Needs to be reset for proper packet read. */
 		/* Read the char/attr pair */
+
+#ifdef GRAPHICS_BG_MASK
+		if (use_graphics == UG_2MASK && is_atleast(&server_version, 4, 9, 2, 1, 0, 0)) {
+			/* Transfer only minimum number of bytes needed, according to client setup.*/
+			char *pc = (char*)&c, *pc_b = (char*)&c_back;
+
+			switch (Client_setup.char_transfer_bytes) {
+			case 0:
+			case 1:
+				if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &pc[0], &a, &pc_b[0], &a_back)) <= 0) return(n);
+				break;
+			case 2:
+				n = Packet_scanf(&rbuf, "%c%c%c%c%c%c", &pc[1], &pc[0], &a, &pc_b[1], &pc_b[0], &a_back);
+				break;
+			case 3:
+				n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c", &pc[2], &pc[1], &pc[0], &a, &pc_b[2], &pc_b[1], &pc_b[0], &a_back);
+				break;
+			case 4:
+			default:
+				n = Packet_scanf(&rbuf, "%u%c%u%c", &c, &a, &c_back, &a_back);
+			}
+			if (n <= 0) {
+				if (n == 0) goto rollback;
+				return(n);
+			}
+		} else
+#endif
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
 		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 			/* Transfer only minimum number of bytes needed, according to client setup.*/
-			char *pc = (char *)&c;
+			char *pc = (char*)&c;
 
 			switch (Client_setup.char_transfer_bytes) {
-				case 0:
-				case 1:
-					n = Packet_scanf(&rbuf, "%c%c", &c, &a);
-					break;
-				case 2:
-					n = Packet_scanf(&rbuf, "%c%c%c", &pc[1], &pc[0], &a);
-					break;
-				case 3:
-					n = Packet_scanf(&rbuf, "%c%c%c%c", &pc[2], &pc[1], &pc[0], &a);
-					break;
-				case 4:
-				default:
-					n = Packet_scanf(&rbuf, "%u%c", &c, &a);
+			case 0:
+			case 1:
+				n = Packet_scanf(&rbuf, "%c%c", &pc[0], &a);
+				break;
+			case 2:
+				n = Packet_scanf(&rbuf, "%c%c%c", &pc[1], &pc[0], &a);
+				break;
+			case 3:
+				n = Packet_scanf(&rbuf, "%c%c%c%c", &pc[2], &pc[1], &pc[0], &a);
+				break;
+			case 4:
+			default:
+				n = Packet_scanf(&rbuf, "%u%c", &c, &a);
 			}
 			if (n <= 0) {
 				if (n == 0) goto rollback;
@@ -3955,7 +3984,7 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 		/* 4.4.3.1 servers use a = 0xFF to signal RLE */
 		if (is_newer_than(&server_version, 4, 4, 3, 0, 0, 5)) {
 			/* New RLE */
-			if (a == 0xFF) {
+			if (a == TERM_RESERVED_RLE) {
 				/* Read the real attr and number of repetitions */
 				if ((n = Packet_scanf(&rbuf, "%c%c", &a, &rep)) <= 0) {
 					if (n == 0) goto rollback;
@@ -4001,6 +4030,25 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 			if (c == FONT_MAP_VEIN_X11 || c == FONT_MAP_VEIN_WIN) c = '*';
  #endif
 #endif
+#ifdef GRAPHICS_BG_MASK
+ #ifdef TEST_CLIENT
+			/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
+			if (force_cui) {
+				if (c_back == FONT_MAP_SOLID_X11 || c_back == FONT_MAP_SOLID_WIN) c_back = '#';
+				if (c_back == FONT_MAP_VEIN_X11 || c_back == FONT_MAP_VEIN_WIN) c_back = '*';
+			}
+  #ifdef USE_X11
+			if (c_back == FONT_MAP_SOLID_WIN) c_back = FONT_MAP_SOLID_X11;
+			if (c_back == FONT_MAP_VEIN_WIN) c_back = FONT_MAP_VEIN_X11;
+  #elif defined(WINDOWS)
+			if (c_back == FONT_MAP_SOLID_X11) c_back = FONT_MAP_SOLID_WIN;
+			if (c_back == FONT_MAP_VEIN_X11) c_back = FONT_MAP_VEIN_WIN;
+  #else /* command-line client doesn't draw either! */
+			if (c_back == FONT_MAP_SOLID_X11 || c_back == FONT_MAP_SOLID_WIN) c_back = '#';
+			if (c_back == FONT_MAP_VEIN_X11 || c_back == FONT_MAP_VEIN_WIN) c_back = '*';
+  #endif
+ #endif
+#endif
 			/* Draw a character 'rep' times */
 			for (i = 0; i < rep; i++) {
 				/* remember map_info in client-side buffer */
@@ -4009,6 +4057,10 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 				    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
 					panel_map_c[x + i - PANEL_X][y - PANEL_Y] = c;
+#ifdef GRAPHICS_BG_MASK //todo:
+					//panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+					//panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+#endif
 				}
 
 				Term_draw(x + i, y, a, c);

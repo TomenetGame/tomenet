@@ -7538,12 +7538,22 @@ int Send_flush(int Ind) {
 int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
-	int x, x1, n;
+	int x, x1, n, Ind2 = 0;
+
 	char32_t c, c2, cu;
-#ifdef GRAPHICS_BG_MASK
-	char32_t c_back;
-#endif
 	byte a, a2;
+#ifdef GRAPHICS_BG_MASK
+	char32_t c_back, c2_back, cu_back;
+	byte a_back, a2_back;
+#endif
+
+	char32_t unm_c_idx;
+	char *unm_c_ptr;
+#ifdef GRAPHICS_BG_MASK
+	char32_t unm_c_idx_back;
+	char *unm_c_ptr_back;
+#endif
+
 #ifdef LOCATE_KEEPS_OVL
 	char32_t co;
 	byte ao;
@@ -7551,13 +7561,11 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	int ovl_offset_y = scr_only ? (p_ptr->panel_row - p_ptr->panel_row_old) * (p_ptr->screen_hgt / 2) : 0;
 	int ox, oy;
 #endif
-	int Ind2 = 0;
+
 #ifdef EXTENDED_TERM_COLOURS
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
 	int a_c;
 #endif
-	char32_t unm_c_idx;
-	char *unm_c_ptr;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -7596,17 +7604,40 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					c = p_ptr->scr_info[y][x].c;
 					a = p_ptr->scr_info[y][x].a;
 				}
+ #ifdef GRAPHICS_BG_MASK
+				co = p_ptr->ovl_info_back[oy][ox].c;
+				ao = p_ptr->ovl_info_back[oy][ox].a;
+				if (co && ao) {
+					c_back = co;
+					a_back = ao;
+				} else {
+					c_back = p_ptr->scr_info_back[y][x].c;
+					a_back = p_ptr->scr_info_back[y][x].a;
+				}
+ #endif
 			} else {
 				c = p_ptr->scr_info[y][x].c;
 				a = p_ptr->scr_info[y][x].a;
+ #ifdef GRAPHICS_BG_MASK
+				c_back = p_ptr->scr_info_back[y][x].c;
+				a_back = p_ptr->scr_info_back[y][x].a;
+ #endif
 			}
 		} else {
 			c = p_ptr->scr_info[y][x].c;
 			a = p_ptr->scr_info[y][x].a;
+ #ifdef GRAPHICS_BG_MASK
+			c_back = p_ptr->scr_info_back[y][x].c;
+			a_back = p_ptr->scr_info_back[y][x].a;
+ #endif
 		}
 #else
 		c = p_ptr->scr_info[y][x].c;
 		a = p_ptr->scr_info[y][x].a;
+ #ifdef GRAPHICS_BG_MASK
+		c_back = p_ptr->scr_info_back[y][x].c;
+		a_back = p_ptr->scr_info_back[y][x].a;
+ #endif
 #endif
 
 #ifdef EXTENDED_TERM_COLOURS
@@ -7614,6 +7645,11 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		    a_c = a & ~(TERM_BNW | TERM_PVP);
 		    if (a_c == TERM_CURSE || a_c == TERM_ANNI || a_c >= TERM_PSI)
 			a = TERM_WHITE; /* use white to indicate that client needs updating */
+ #ifdef GRAPHICS_BG_MASK /* paranoia? */
+		    a_c = a_back & ~(TERM_BNW | TERM_PVP);
+		    if (a_c == TERM_CURSE || a_c == TERM_ANNI || a_c >= TERM_PSI)
+			a_back = TERM_DARK; /* just visually "disable" background */
+ #endif
 		}
 #endif
 
@@ -7643,21 +7679,47 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 						c2 = p_ptr->scr_info[y][x1].c;
 						a2 = p_ptr->scr_info[y][x1].a;
 					}
+ #ifdef GRAPHICS_BG_MASK
+					co = p_ptr->ovl_info_back[oy][ox].c;
+					ao = p_ptr->ovl_info_back[oy][ox].a;
+					if (co && ao) {
+						c2_back = co;
+						a2_back = ao;
+					} else {
+						c2_back = p_ptr->scr_info_back[y][x1].c;
+						a2_back = p_ptr->scr_info_back[y][x1].a;
+					}
+ #endif
 				} else {
 					c2 = p_ptr->scr_info[y][x1].c;
 					a2 = p_ptr->scr_info[y][x1].a;
+ #ifdef GRAPHICS_BG_MASK
+					c2_back = p_ptr->scr_info_back[y][x1].c;
+					a2_back = p_ptr->scr_info_back[y][x1].a;
+ #endif
 				}
 			} else {
 				c2 = p_ptr->scr_info[y][x1].c;
 				a2 = p_ptr->scr_info[y][x1].a;
+ #ifdef GRAPHICS_BG_MASK
+				c2_back = p_ptr->scr_info_back[y][x1].c;
+				a2_back = p_ptr->scr_info_back[y][x1].a;
+ #endif
 			}
 #else
 			c2 = p_ptr->scr_info[y][x1].c;
 			//TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old (see a_c above), but it doesn't matter.
 			a2 = p_ptr->scr_info[y][x1].a;
+ #ifdef GRAPHICS_BG_MASK
+			c2_back = p_ptr->scr_info_back[y][x1].c;
+			a2_back = p_ptr->scr_info_back[y][x1].a;
+ #endif
 #endif
 
 			if (c != c2 || a != a2) break;
+#ifdef GRAPHICS_BG_MASK
+			if (c_back != c2_back || a_back != a2_back) break;
+#endif
 
 			/* Increment count and column */
 			n++;
@@ -7667,7 +7729,25 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
 #ifdef GRAPHICS_BG_MASK
-			if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+			if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+				/* Transfer only the relevant bytes, according to client setup.*/
+				char *pc_f = (char*)&c, *pc_b = (char*)&c_back;
+
+				switch (connp->Client_setup.char_transfer_bytes) {
+				case 0:
+				case 1:
+					return Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, n);
+					break;
+				case 2:
+					return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, n);
+					break;
+				case 3:
+					return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, n);
+					break;
+				case 4:
+				default:
+					return Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, n);
+				}
 			} else
 #endif
 			/* 4.8.1 and newer clients use 32bit character size. */
@@ -7709,7 +7789,12 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				else cu = c;
 
 #ifdef GRAPHICS_BG_MASK
-				if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+				unm_c_idx_back = c_back;
+				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+				else cu_back = c_back;
+
+				if (FALSE && connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
 				} else
 #endif
 				/* 4.8.1 and newer clients use 32bit character size. */
@@ -7754,7 +7839,25 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 #ifdef GRAPHICS_BG_MASK
-					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char *pc_f = (char*)&c, *pc_b = (char*)&c_back;
+
+						switch (connp->Client_setup.char_transfer_bytes) {
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[0], TERM_RESERVED_RLE, pc_b[0], a_back, a, 1);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[1], pc_b[0], a_back, a, 1);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], TERM_RESERVED_RLE, pc_b[2], pc_b[1], pc_b[0], a_back, a, 1);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c%u%c%c%c", c, TERM_RESERVED_RLE, c_back, a_back, a, 1);
+						}
 					} else
 #endif
 					/* 4.8.1 and newer clients use 32bit character size. */
@@ -7782,7 +7885,25 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					}
 				} else { /* Normal output */
 #ifdef GRAPHICS_BG_MASK
-					if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+					if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char *pc_f = (char*)&c, *pc_b = (char*)&c_back;
+
+						switch (connp->Client_setup.char_transfer_bytes) {
+						case 0:
+						case 1:
+							Packet_printf(&connp->c, "%c%c%c%c", pc_f[0], a, pc_b[0], a_back);
+							break;
+						case 2:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[1], pc_f[0], a, pc_b[1], pc_b[0], a_back);
+							break;
+						case 3:
+							Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], a, pc_b[2], pc_b[1], pc_b[0], a_back);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp->c, "%u%c%u%c", c, a, c_back, a_back);
+						}
 					} else
 #endif
 					/* 4.8.1 and newer clients use 32bit character size. */
@@ -7819,6 +7940,13 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
 				else cu = c;
 
+#ifdef GRAPHICS_BG_MASK
+				unm_c_idx_back = c_back;
+				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+				else cu_back = c_back;
+#endif
+
 				if (!is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
 					Packet_printf(&connp2->c, "%c%c", (char)cu, a & ~0xC0);
@@ -7826,7 +7954,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
 #ifdef GRAPHICS_BG_MASK
-						if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						if (FALSE && connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
 						} else
 #endif
 						/* 4.8.1 and newer clients use 32bit character size. */
@@ -7855,7 +7983,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					} else {
 						/* Normal output */
 #ifdef GRAPHICS_BG_MASK
-						if (FALSE && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+						if (FALSE && connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
 						} else
 #endif
 						/* 4.8.1 and newer clients use 32bit character size. */

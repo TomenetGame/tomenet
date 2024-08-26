@@ -4219,8 +4219,19 @@ void lite_spot(int Ind, int y, int x) {
 		byte a;
 		char32_t c;
 #ifdef GRAPHICS_BG_MASK
-		byte a_back = 0;
-		char32_t c_back = 0;
+		byte a_back;
+		char32_t c_back;
+#endif
+
+#ifdef GRAPHICS_BG_MASK
+		/* Call map_info in advance just to initialize the background feat, to plaster the "@" on in case we're seeing ourselves */
+ #ifdef EXTENDED_COLOURS_PALANIM
+		bool palanim = palette_affects(Ind);
+ #else
+		bool palanim = FALSE;
+ #endif
+
+		map_info(Ind, y, x, &a, &c, &a_back, &c_back, palanim);
 #endif
 
 		/* Handle "player" seeing himself/herself */
@@ -4463,21 +4474,18 @@ void lite_spot(int Ind, int y, int x) {
 			/* >4.5.4: Mark that it is the player himself */
 			if (p_ptr->hilite_player) is_us = TRUE;
 		}
-
+#ifndef GRAPHICS_BG_MASK
 		/* Normal (not player coords) */
 		else {
-#ifdef EXTENDED_COLOURS_PALANIM
+ #ifdef EXTENDED_COLOURS_PALANIM
 			bool palanim = palette_affects(Ind);
-#else
+ #else
 			bool palanim = FALSE;
-#endif
+ #endif
 			/* Examine the grid */
-#ifdef GRAPHICS_BG_MASK
-			map_info(Ind, y, x, &a, &c, &a_back, &c_back, palanim);
-#else
 			map_info(Ind, y, x, &a, &c, palanim);
-#endif
 		}
+#endif
 
 		/* Hack -- fake monochrome */
 		if (!use_color) a = TERM_WHITE;
