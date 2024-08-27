@@ -1173,6 +1173,10 @@ struct tile_cache_entry {
     Pixmap tilePreparation;
     char32_t c;
     byte a;
+#ifdef GRAPHICS_BG_MASK
+    char32_t c_back;
+    byte a_back;
+#endif
     bool is_valid;
 };
 
@@ -1828,6 +1832,10 @@ static void free_graphics(term_data *td) {
 			td->tile_cache[i].tilePreparation = None;
 			td->tile_cache[i].c = 0xffffffff;
 			td->tile_cache[i].a = 0xff;
+ #ifdef GRAPHICS_BG_MASK
+			td->tile_cache[i].c_back = 0xffffffff;
+			td->tile_cache[i].a_back = 0xff;
+ #endif
 			td->tile_cache[i].is_valid = 0;
 		}
 	}
@@ -2141,7 +2149,11 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
-		if (entry->c == c && entry->a == a && entry->is_valid) {
+		if (entry->c == c && entry->a == a
+ #ifdef GRAPHICS_BG_MASK
+		    && entry->c_back == 0 && entry->a_back == 0
+ #endif
+		    && entry->is_valid) {
 			/* Copy cached tile to window. */
 			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
 				0, 0,
@@ -2159,6 +2171,10 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	Pixmap tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
+ #ifdef GRAPHICS_BG_MASK
+	entry->c_back = 0;
+	entry->a_back = 0;
+ #endif
 	entry->is_valid = 1;
 #else
 	Pixmap tilePreparation = td->tilePreparation;
@@ -2242,7 +2258,11 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
-		if (entry->c == c && entry->a == a && entry->is_valid) {
+		if (entry->c == c && entry->a == a
+ #ifdef GRAPHICS_BG_MASK
+		    && entry->c_back == c_back && entry->a_back == a_back
+ #endif
+		    && entry->is_valid) {
 			/* Copy cached tile to window. */
 			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
 				0, 0,
@@ -2260,6 +2280,10 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	Pixmap tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
+ #ifdef GRAPHICS_BG_MASK
+	entry->c_back = c_back;
+	entry->a_back = a_back;
+ #endif
 	entry->is_valid = 1;
 #else
 	Pixmap tilePreparation = td->tilePreparation;
@@ -2751,6 +2775,10 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		td->tile_cache[i].tilePreparation = None;
 		td->tile_cache[i].c = 0xffffffff;
 		td->tile_cache[i].a = 0xff;
+  #ifdef GRAPHICS_BG_MASK
+		td->tile_cache[i].c_back = 0xffffffff;
+		td->tile_cache[i].a_back = 0xff;
+  #endif
 		td->tile_cache[i].is_valid = 0;
 	}
  #endif
