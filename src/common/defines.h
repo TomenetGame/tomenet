@@ -302,6 +302,9 @@
  #define MAX_TERM_DATA_GCU 4	/* POSIX GCU version */
 
  #define NR_OPTIONS_SHOWN	11 /* # of possible sub-window types, see window_flag_desc[]) */
+
+ /* Maximum icky screens stackable (aka available to save/load on top of each other) [4] */
+ #define MAX_ICKY_SCREENS 4
 #endif
 
 
