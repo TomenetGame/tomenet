@@ -7,7 +7,7 @@
 
 /* -_- */
 #include "../config.h" /* required for GRAPHICS_BG_MASK: it sets USE_GRAPHICS */
-#include "../common/defines-features.h" /* required for GRAPHICS_BG_MASK: it actually sets GRAPHICS_BG_MASK if USE_GRAPHICS is set... */
+#include "../common/defines.h" /* required for GRAPHICS_BG_MASK: it actually sets GRAPHICS_BG_MASK if USE_GRAPHICS is set. Also sets MAX_ICKY_SCREENS. */
 
 
 /*
@@ -178,13 +178,14 @@ struct term {
 
 	term_win *old;
 	term_win *scr;
+	//term_win *tmp;
+	term_win *mem[MAX_ICKY_SCREENS];
 #ifdef GRAPHICS_BG_MASK
 	term_win *old_back;
 	term_win *scr_back;
+	//term_win *tmp_back;
+	term_win *mem_back[MAX_ICKY_SCREENS];
 #endif
-
-	//term_win *tmp;
-	term_win *mem[4];
 
 	void (*init_hook)(term *t);
 	void (*nuke_hook)(term *t);
@@ -195,6 +196,9 @@ struct term {
 	errr (*wipe_hook)(int x, int y, int n);
 	errr (*pict_hook)(int x, int y, byte a, char32_t c);
 	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
+#ifdef GRAPHICS_BG_MASK
+	errr (*pict_hook_2mask)(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back);
+#endif
 };
 
 
@@ -270,6 +274,7 @@ extern errr Term_get_cursor(int *v);
 extern errr Term_get_size(int *w, int *h);
 extern errr Term_locate(int *x, int *y);
 extern errr Term_what(int x, int y, byte *a, char32_t *c);
+//extern errr Term_what_2mask(int x, int y, byte *a, char32_t *c, byte *a_back, char32_t *c_back);
 
 extern errr Term_flush(void);
 extern errr Term_keypress_aux(key_queue *keys, int k);

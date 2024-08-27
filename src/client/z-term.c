@@ -436,7 +436,7 @@ static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	char32_t oc = scr_cc[x];
 
 	/* Hack -- Ignore non-changes */
-	if ((oa == a) && (oc == c)) return;
+	if (oa == a && oc == c) return;
 
 	/* Save the "literal" information */
 	scr_aa[x] = a;
@@ -463,8 +463,7 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	char32_t oc_back = scr_cc_back[x];
 
 	/* Hack -- Ignore non-changes */
-	if ((oa == a) && (oc == c)
-	    && (oa_back == a_back) && (oc_back == c_back)) return;
+	if (oa == a && oc == c && oa_back == a_back && oc_back == c_back) return;
 
 	/* Save the "literal" information */
 	scr_aa[x] = a;
@@ -518,7 +517,7 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 		int oc = scr_cc[x];
 
 		/* Hack -- Ignore non-changes */
-		if ((oa == a) && (oc == *s)) continue;
+		if (oa == a && oc == *s) continue;
 
 		/* Save the "literal" information */
 		scr_aa[x] = a;
@@ -547,6 +546,8 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 		if (x2 > Term->x2[y]) Term->x2[y] = x2;
 	}
 }
+
+#if 0 /* 0'ed cause only used for text printing, not for actual pict-printing (ie graphics tiles) */
 #ifdef GRAPHICS_BG_MASK
 static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte a_back, char32_t *s_back) {
 	int x1 = -1, x2 = -1;
@@ -573,8 +574,7 @@ static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte 
 		int oc_b = scr_cc_back[x];
 
 		/* Hack -- Ignore non-changes */
-		if ((oa == a) && (oc == *s) &&
-		    (oa_b == a_back) && (oc_b == *s_back)) continue;
+		if (oa == a && oc == *s && oa_b == a_back && oc_b == *s_back) continue;
 
 		/* Save the "literal" information */
 		scr_aa[x] = a;
@@ -599,6 +599,7 @@ static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte 
 		if (x2 > Term->x2[y]) Term->x2[y] = x2;
 	}
 }
+#endif
 #endif
 
 
@@ -666,6 +667,15 @@ static errr Term_pict_hack(int x, int y, byte a, char32_t c) {
 	/* Oops */
 	return(-1);
 }
+#ifdef GRAPHICS_BG_MASK
+static errr Term_pict_hack_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
+	/* XXX XXX XXX */
+	if (x || y || a || c) return(-2); // || a_back || c_back --- leaving these out: We basically assume that bg isn't drawn w/o drawing any fg together with it
+
+	/* Oops */
+	return(-1);
+}
+#endif
 
 /*
  * Hack -- fake hook for "Term_text()"
@@ -1496,6 +1506,10 @@ void flicker() {
 	int y, x, y2, x2, i;
 	char32_t ch;
 	byte attr;
+#ifdef GRAPHICS_BG_MASK
+	char32_t ch_back;
+	byte attr_back;
+#endif
 	term *tterm, *old;
 
 	old = Term;
@@ -1525,9 +1539,17 @@ void flicker() {
 			for (x = 0; x < x2; x++) {
 				attr = tterm->scr->a[y][x];
 				ch = tterm->scr->c[y][x];
+#ifdef GRAPHICS_BG_MASK
+				attr_back = tterm->scr_back->a[y][x];
+				ch_back = tterm->scr_back->c[y][x];
+#endif
 
 				/* Unanimated colour? Skip then. */
-				if (term_nanim(attr)) continue;
+				if (term_nanim(attr)
+#ifdef GRAPHICS_BG_MASK
+				    && (use_graphics != UG_2MASK || term_nanim(attr_back))
+#endif
+				    ) continue;
 
 #ifdef ATMOSPHERIC_INTRO
 				if (!in_game && (attr == TERM_FIRE || attr == TERM_FIRETHIN))
@@ -1552,13 +1574,23 @@ void flicker() {
 #endif
 
 				/* Hack -- use "Term_pict()" always */
-				if (Term->always_pict)
+				if (Term->always_pict) {
+#ifdef GRAPHICS_BG_MASK
+					if (use_graphics == UG_2MASK)
+						(void)((*Term->pict_hook_2mask)(x, y, attr, ch, attr_back, ch_back));
+					else
+#endif
 					(void)((*Term->pict_hook)(x, y, attr, ch));
 				/* Hack -- use "Term_pict()" sometimes */
-				else if (Term->higher_pict && ch > MAX_FONT_CHAR)
+				} else if (Term->higher_pict && ch > MAX_FONT_CHAR) {
+#ifdef GRAPHICS_BG_MASK
+					if (use_graphics == UG_2MASK)
+						(void)((*Term->pict_hook_2mask)(x, y, attr, ch, attr_back, ch_back));
+					else
+#endif
 					(void)((*Term->pict_hook)(x, y, attr, ch));
 				/* Hack -- restore the actual character */
-				else if (attr || Term->always_text) {
+				} else if (attr || Term->always_text) {
 					char buf[2];
 
 					buf[0] = (char)ch;
@@ -1658,6 +1690,8 @@ static void Term_fresh_row_text_wipe(int y) {
 	int na;
 #ifndef DRAW_LARGER_CHUNKS
 	char32_t nc;
+#else
+	int i;
 #endif
 
 	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
@@ -1666,7 +1700,7 @@ static void Term_fresh_row_text_wipe(int y) {
 
 #ifdef DRAW_LARGER_CHUNKS
 	memcpy(old_aa + x1, scr_aa + x1, mod_num);
-	memcpy(old_cc + x1, scr_cc + x1, mod_num*sizeof(scr_cc[0]));
+	memcpy(old_cc + x1, scr_cc + x1, mod_num * sizeof(scr_cc[0]));
 #endif
 
 	/* Scan the columns marked as "modified" */
@@ -1736,10 +1770,7 @@ static void Term_fresh_row_text_wipe(int y) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Copy the chars */
-				for (int i=0; i < n; i++) {
-					text[i]=(char)scr_cc[fx + i];
-				}
-
+				for (i = 0; i < n; i++) text[i] = (char)scr_cc[fx + i];
 				/* Terminate the thread */
 				text[n] = '\0';
 
@@ -1765,9 +1796,7 @@ static void Term_fresh_row_text_wipe(int y) {
 	if (n) {
 #ifdef DRAW_LARGER_CHUNKS
 		/* Copy the chars */
-		for (int i=0; i < n; i++) {
-			text[i]=(char)scr_cc[fx + i];
-		}
+		for (i = 0; i < n; i++) text[i] = (char)scr_cc[fx + i];
 #endif
 
 		/* Terminate the thread */
@@ -1810,6 +1839,8 @@ static void Term_fresh_row_text_text(int y) {
 	int na;
 #ifndef DRAW_LARGER_CHUNKS
 	int nc;
+#else
+	int i;
 #endif
 
 	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
@@ -1818,7 +1849,7 @@ static void Term_fresh_row_text_text(int y) {
 
 #ifdef DRAW_LARGER_CHUNKS
 	memcpy(old_aa + x1, scr_aa + x1, mod_num);
-	memcpy(old_cc + x1, scr_cc + x1, mod_num*sizeof(scr_cc[0]));
+	memcpy(old_cc + x1, scr_cc + x1, mod_num * sizeof(scr_cc[0]));
 #endif
 
 	/* Scan the columns marked as "modified" */
@@ -1884,10 +1915,7 @@ static void Term_fresh_row_text_text(int y) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Copy the chars */
-				for (int i=0; i < n; i++) {
-					text[i]=(char)scr_cc[fx + i];
-				}
-
+				for (i = 0; i < n; i++) text[i] = (char)scr_cc[fx + i];
 				/* Terminate the thread */
 				text[n] = '\0';
 
@@ -1911,11 +1939,8 @@ static void Term_fresh_row_text_text(int y) {
 	if (n) {
 #ifdef DRAW_LARGER_CHUNKS
 		/* Copy the chars */
-		for (int i=0; i < n; i++) {
-			text[i]=(char)scr_cc[fx + i];
-		}
+		for (i = 0; i < n; i++) text[i] = (char)scr_cc[fx + i];
 #endif
-
 		/* Terminate the thread */
 		text[n] = '\0';
 
@@ -1938,6 +1963,14 @@ static void Term_fresh_row_both_wipe(int y) {
 	byte *scr_aa = Term->scr->a[y];
 	char32_t *scr_cc = Term->scr->c[y];
 
+#ifdef GRAPHICS_BG_MASK
+	byte *old_back_aa = Term->old_back->a[y];
+	char32_t *old_back_cc = Term->old_back->c[y];
+
+	byte *scr_back_aa = Term->scr_back->a[y];
+	char32_t *scr_back_cc = Term->scr_back->c[y];
+#endif
+
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
 
@@ -1953,6 +1986,10 @@ static void Term_fresh_row_both_wipe(int y) {
 	/* The "new" data */
 	int na;
 	char32_t nc;
+#ifdef GRAPHICS_BG_MASK
+	int na_back;
+	char32_t nc_back;
+#endif
 
 	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
 	char text[x2 - x1 + 2];
@@ -1968,8 +2005,21 @@ static void Term_fresh_row_both_wipe(int y) {
 		na = old_aa[x] = scr_aa[x];
 		nc = old_cc[x] = scr_cc[x];
 
+#ifdef GRAPHICS_BG_MASK
+		int oa_back = old_back_aa[x];
+		char32_t oc_back = old_back_cc[x];
+
+		/* Save and remember the new contents */
+		na_back = old_back_aa[x] = scr_back_aa[x];
+		nc_back = old_back_cc[x] = scr_back_cc[x];
+#endif
+
 		/* Notice unchanged areas */
-		if ((na == oa) && (nc == oc)) {
+		if (na == oa && nc == oc
+#ifdef GRAPHICS_BG_MASK
+		    && na_back == oa_back && nc_back == oc_back
+#endif
+		    ) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Terminate the thread */
@@ -2005,6 +2055,11 @@ static void Term_fresh_row_both_wipe(int y) {
 			}
 
 			/* Display this special character */
+#ifdef GRAPHICS_BG_MASK
+			if (use_graphics == UG_2MASK)
+				(void)((*Term->pict_hook_2mask)(x, y, na, nc, na_back, nc_back));
+			else
+#endif
 			(void)((*Term->pict_hook)(x, y, na, nc));
 
 			/* Skip */
@@ -2064,6 +2119,14 @@ static void Term_fresh_row_both_text(int y) {
 	byte *scr_aa = Term->scr->a[y];
 	char32_t *scr_cc = Term->scr->c[y];
 
+#ifdef GRAPHICS_BG_MASK
+	byte *old_back_aa = Term->old_back->a[y];
+	char32_t *old_back_cc = Term->old_back->c[y];
+
+	byte *scr_back_aa = Term->scr_back->a[y];
+	char32_t *scr_back_cc = Term->scr_back->c[y];
+#endif
+
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
 
@@ -2084,6 +2147,16 @@ static void Term_fresh_row_both_text(int y) {
 	int na;
 	char32_t nc;
 
+#ifdef GRAPHICS_BG_MASK
+	/* The "old" data */
+	int oa_back;
+	char32_t oc_back;
+
+	/* The "new" data */
+	int na_back;
+	char32_t nc_back;
+#endif
+
 	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
 	char text[x2 - x1 + 2];
 
@@ -2098,8 +2171,22 @@ static void Term_fresh_row_both_text(int y) {
 		na = old_aa[x] = scr_aa[x];
 		nc = old_cc[x] = scr_cc[x];
 
+#ifdef GRAPHICS_BG_MASK
+		/* See what is currently here */
+		oa_back = old_back_aa[x];
+		oc_back = old_back_cc[x];
+
+		/* Save and remember the new contents */
+		na_back = old_back_aa[x] = scr_back_aa[x];
+		nc_back = old_back_cc[x] = scr_back_cc[x];
+#endif
+
 		/* Notice unchanged areas */
-		if ((na == oa) && (nc == oc)) {
+		if (na == oa && nc == oc
+#ifdef GRAPHICS_BG_MASK
+		    && na_back == oa_back && nc_back == oc_back
+#endif
+		    ) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Terminate the thread */
@@ -2130,6 +2217,11 @@ static void Term_fresh_row_both_text(int y) {
 				n = 0;
 			}
 
+#ifdef GRAPHICS_BG_MASK
+			if (use_graphics == UG_2MASK)
+				(void)((*Term->pict_hook_2mask)(x, y, na, nc, na_back, nc_back));
+			else
+#endif
 			/* Display this special character */
 			(void)((*Term->pict_hook)(x, y, na, nc));
 
@@ -2186,6 +2278,14 @@ static void Term_fresh_row_pict(int y) {
 	byte *scr_aa = Term->scr->a[y];
 	char32_t *scr_cc = Term->scr->c[y];
 
+#ifdef GRAPHICS_BG_MASK
+	byte *old_back_aa = Term->old_back->a[y];
+	char32_t *old_back_cc = Term->old_back->c[y];
+
+	byte *scr_back_aa = Term->scr_back->a[y];
+	char32_t *scr_back_cc = Term->scr_back->c[y];
+#endif
+
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
 
@@ -2196,6 +2296,16 @@ static void Term_fresh_row_pict(int y) {
 	/* The "new" data */
 	int na;
 	char32_t nc;
+
+#ifdef GRAPHICS_BG_MASK
+	/* The "old" data */
+	int oa_back;
+	char32_t oc_back;
+
+	/* The "new" data */
+	int na_back;
+	char32_t nc_back;
+#endif
 
 
 	/* Scan the columns marked as "modified" */
@@ -2208,10 +2318,29 @@ static void Term_fresh_row_pict(int y) {
 		na = old_aa[x] = scr_aa[x];
 		nc = old_cc[x] = scr_cc[x];
 
+#ifdef GRAPHICS_BG_MASK
+		/* See what is currently here */
+		oa_back = old_back_aa[x];
+		oc_back = old_back_cc[x];
+
+		/* Save and remember the new contents */
+		na_back = old_back_aa[x] = scr_back_aa[x];
+		nc_back = old_back_cc[x] = scr_back_cc[x];
+#endif
+
 		/* Ignore unchanged areas */
-		if ((na == oa) && (nc == oc)) continue;
+		if (na == oa && nc == oc
+#ifdef GRAPHICS_BG_MASK
+		    && (use_graphics != UG_2MASK || (na_back == oa_back && nc_back == oc_back))
+#endif
+		    ) continue;
 
 		/* Display this special character */
+#ifdef GRAPHICS_BG_MASK
+		if (use_graphics == UG_2MASK)
+			(void)((*Term->pict_hook_2mask)(x, y, na, nc, na_back, nc_back));
+		else
+#endif
 		(void)((*Term->pict_hook)(x, y, na, nc));
 	}
 }
@@ -2269,6 +2398,10 @@ errr Term_fresh(void) {
 	term_win *old = Term->old;
 	term_win *scr = Term->scr;
 
+#ifdef GRAPHICS_BG_MASK
+	term_win *old_back = Term->old_back;
+//	term_win *scr_back = Term->scr_back;
+#endif
 
 	/* Do nothing unless "mapped" */
 	if (!Term->mapped_flag) return(1);
@@ -2278,6 +2411,9 @@ errr Term_fresh(void) {
 	if (!Term->curs_hook) Term->curs_hook = Term_curs_hack;
 	if (!Term->wipe_hook) Term->wipe_hook = Term_wipe_hack;
 	if (!Term->pict_hook) Term->pict_hook = Term_pict_hack;
+#ifdef GRAPHICS_BG_MASK
+	if (!Term->pict_hook_2mask) Term->pict_hook_2mask = Term_pict_hack_2mask;
+#endif
 	if (!Term->text_hook) Term->text_hook = Term_text_hack;
 
 
@@ -2306,14 +2442,32 @@ errr Term_fresh(void) {
 			byte a = old_aa[tx];
 			char32_t c = old_cc[tx];
 
+#ifdef GRAPHICS_BG_MASK
+			byte *old_back_aa = old_back->a[ty];
+			char32_t *old_back_cc = old_back->c[ty];
+
+			byte a_back = old_back_aa[tx];
+			char32_t c_back = old_back_cc[tx];
+#endif
+
 			/* Hack -- use "Term_pict()" always */
-			if (Term->always_pict)
+			if (Term->always_pict) {
+#ifdef GRAPHICS_BG_MASK
+				if (use_graphics == UG_2MASK)
+					(void)((*Term->pict_hook_2mask)(tx, ty, a, c, a_back, c_back));
+				else
+#endif
 				(void)((*Term->pict_hook)(tx, ty, a, c));
 			/* Hack -- use "Term_pict()" sometimes */
-			else if (Term->higher_pict && c > MAX_FONT_CHAR)
+			} else if (Term->higher_pict && c > MAX_FONT_CHAR) {
+#ifdef GRAPHICS_BG_MASK
+				if (use_graphics == UG_2MASK)
+					(void)((*Term->pict_hook_2mask)(tx, ty, a, c, a_back, c_back));
+				else
+#endif
 				(void)((*Term->pict_hook)(tx, ty, a, c));
 			/* Hack -- restore the actual character */
-			else if (a || Term->always_text) {
+			} else if (a || Term->always_text) {
 				char buf[2];
 
 				buf[0] = (char)c;
@@ -2346,8 +2500,14 @@ errr Term_fresh(void) {
 		old->cx = old->cy = 0;
 
 		/* Wipe the content arrays */
+#ifdef GRAPHICS_BG_MASK
 		memset(old->va, a, w * h);
-		for (int i = 0; i < w * h; i++) old->vc[i]=c;
+		memset(old_back->va, a, w * h);
+		for (int i = 0; i < w * h; i++) old->vc[i] = old_back->vc[i] = c;
+#else
+		memset(old->va, a, w * h);
+		for (int i = 0; i < w * h; i++) old->vc[i] = c;
+#endif
 
 		/* Redraw every column */
 		for (int i = 0; i < h; i++) {
@@ -2890,12 +3050,19 @@ errr Term_erase(int x, int y, int n) {
 
 	int x1 = -1;
 	int x2 = -1;
+#ifdef DRAW_LARGER_CHUNKS
+	int i;
+#endif
 
 	int na = Term->attr_blank;
 	char32_t nc = Term->char_blank;
 
 	byte *scr_aa;
 	char32_t *scr_cc;
+#ifdef GRAPHICS_BG_MASK
+	byte *scr_back_aa;
+	char32_t *scr_back_cc;
+#endif
 
 
 	/* Place cursor */
@@ -2907,10 +3074,20 @@ errr Term_erase(int x, int y, int n) {
 	/* Fast access */
 	scr_aa = Term->scr->a[y];
 	scr_cc = Term->scr->c[y];
+#ifdef GRAPHICS_BG_MASK
+	scr_back_aa = Term->scr_back->a[y];
+	scr_back_cc = Term->scr_back->c[y];
+#endif
 
 #ifdef DRAW_LARGER_CHUNKS
+ #ifdef GRAPHICS_BG_MASK
 	memset(scr_aa + x, na, n);
-	for (int i = 0; i < n; i++) src_cc[x + i]=nc;
+	memset(scr_back_aa + x, na, n);
+	for (i = 0; i < n; i++) src_cc[x + i] = src_back_cc[x + i] = nc;
+ #else
+	memset(scr_aa + x, na, n);
+	for (i = 0; i < n; i++) src_cc[x + i] = nc;
+ #endif
 
 	x1 = x;
 	x2 = x + n;
@@ -2921,13 +3098,25 @@ errr Term_erase(int x, int y, int n) {
 	for (i = 0; i < n; i++, x++) {
 		int oa = scr_aa[x];
 		int oc = scr_cc[x];
+ #ifdef GRAPHICS_BG_MASK
+		int oa_back = scr_back_aa[x];
+		int oc_back = scr_back_cc[x];
+ #endif
 
 		/* Hack -- Ignore "non-changes" */
-		if ((oa == na) && (oc == nc)) continue;
+		if (oa == na && oc == nc
+ #ifdef GRAPHICS_BG_MASK
+		    && (use_graphics != UG_2MASK || (oa_back == na && oc_back == nc))
+ #endif
+		    ) continue;
 
 		/* Save the "literal" information */
 		scr_aa[x] = na;
 		scr_cc[x] = nc;
+ #ifdef GRAPHICS_BG_MASK
+		scr_back_aa[x] = na;
+		scr_back_cc[x] = nc;
+ #endif
 
 		/* Track minumum changed column */
 		if (x1 < 0) x1 = x;
@@ -2961,11 +3150,13 @@ errr Term_erase(int x, int y, int n) {
 errr Term_clear(void) {
 	int w = Term->wid;
 	int h = Term->hgt;
+	int i;
 
 	byte a = Term->attr_blank;
 	char32_t c = Term->char_blank;
 
 
+	/* Reset these palette animations */
 	do_animate_lightning(TRUE);
 	do_animate_screenflash(TRUE);
 
@@ -2976,8 +3167,14 @@ errr Term_clear(void) {
 	Term->scr->cx = Term->scr->cy = 0;
 
 	/* Wipe the content arrays */
+#ifdef GRAPHICS_BG_MASK
 	memset(Term->scr->va, a, w * h);
-	for (int i = 0; i < w * h; i++) Term->scr->vc[i]=c;
+	memset(Term->scr_back->va, a, w * h);
+	for (i = 0; i < w * h; i++) Term->scr->vc[i] = Term->scr_back->vc[i] = c;
+#else
+	memset(Term->scr->va, a, w * h);
+	for (i = 0; i < w * h; i++) Term->scr->vc[i] = c;
+#endif
 
 	/* Every column has changed */
 	for (int i = 0; i < h; i++) {
@@ -3016,7 +3213,7 @@ errr Term_redraw(void) {
  * Redraw part of a window. (PernA)
  */
 errr Term_redraw_section(int x1, int y1, int x2, int y2) {
-	int i;
+	int i, j;
 
 	/* Bounds checking */
 	if (y2 >= Term->hgt) y2 = Term->hgt - 1;
@@ -3037,7 +3234,11 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2) {
 		Term->x2[i] = x2;
 
 		/* Put null characters in the old screen to force a redraw of the section */
-		for (int j = x1; j < x2 + 1; j++) Term->old->c[i][j]=0;
+#ifdef GRAPHICS_BG_MASK
+		for (j = x1; j < x2 + 1; j++) Term->old->c[i][j] = Term->old_back->c[i][j] = 0; //probably unnecessary to null old_back too
+#else
+		for (j = x1; j < x2 + 1; j++) Term->old->c[i][j] = 0;
+#endif
 	}
 
 	/* Hack -- Refresh */
@@ -3115,6 +3316,27 @@ errr Term_what(int x, int y, byte *a, char32_t *c) {
 	/* Success */
 	return(0);
 }
+#if 0 /* 0'ed: Only used for screendump file generation, no actual drawning/gfx involved */
+#ifdef GRAPHICS_BG_MASK
+errr Term_what_2mask(int x, int y, byte *a, char32_t *c, byte *a_back, char32_t *c_back) {
+	int w = Term->wid;
+	int h = Term->hgt;
+
+	/* Verify location */
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
+
+	/* Direct access */
+	(*a) = Term->scr->a[y][x];
+	(*c) = Term->scr->c[y][x];
+	(*a_back) = Term->scr_back->a[y][x];
+	(*c_back) = Term->scr_back->c[y][x];
+
+	/* Success */
+	return(0);
+}
+#endif
+#endif
 
 
 
@@ -3538,12 +3760,15 @@ errr Term_save(void) {
 	int w = Term->wid;
 	int h = Term->hgt;
 
- 	if (screen_icky > 3) return(0);
+	if (screen_icky >= MAX_ICKY_SCREENS) return(0);
 
 	//do_animate_lightning(TRUE); - done in Term_clear() instead
 	//do_animate_screenflash(TRUE); - done in Term_clear() instead
 
- 	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
+#ifdef GRAPHICS_BG_MASK
+	term_win_copy(Term->mem_back[screen_icky], Term->scr_back, w, h);
+#endif
+	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
 
 	/* Success */
 	return(0);
@@ -3561,7 +3786,10 @@ errr Term_load(void) {
 
 	if (!screen_icky) return(0);	/* should really be a value */
 
- 	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
+	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
+#ifdef GRAPHICS_BG_MASK
+	term_win_copy(Term->scr_back, Term->mem_back[screen_icky], w, h);
+#endif
 
 	/* Assume change */
 	for (int i = 0; i < h; i++) {
@@ -3590,7 +3818,10 @@ errr Term_restore(void) {
 
 	if (!screen_icky) return(0);	/* should really be a value */
 
- 	term_win_copy(Term->scr, Term->mem[screen_icky - 1], w, h);
+	term_win_copy(Term->scr, Term->mem[screen_icky - 1], w, h);
+#ifdef GRAPHICS_BG_MASK
+	term_win_copy(Term->scr_back, Term->mem_back[screen_icky - 1], w, h);
+#endif
 
 	/* Assume change */
 	for (int i = 0; i < h; i++) {
@@ -3622,6 +3853,11 @@ errr Term_switch(int screen) {
 	tmp = Term->scr;
 	Term->scr = Term->mem[screen];
 	Term->mem[screen] = tmp;
+#ifdef GRAPHICS_BG_MASK
+	tmp = Term->scr_back;
+	Term->scr_back = Term->mem_back[screen];
+	Term->mem_back[screen] = tmp;
+#endif
 
 	/* Success */
 	return(0);
@@ -3642,7 +3878,13 @@ errr Term_resize(int w, int h) {
 
 	term_win *hold_old;
 	term_win *hold_scr;
-	term_win *hold_mem[4];
+	term_win *hold_mem[MAX_ICKY_SCREENS];
+#ifdef GRAPHICS_BG_MASK
+	term_win *hold_old_back;
+	term_win *hold_scr_back;
+	term_win *hold_mem_back[MAX_ICKY_SCREENS];
+#endif
+
 
 	/* Ignore illegal changes */
 	if ((w < 1) || (h < 1)) return(1);
@@ -3663,14 +3905,21 @@ errr Term_resize(int w, int h) {
 
 	/* Save old window */
 	hold_old = Term->old;
-
 	/* Save old window */
 	hold_scr = Term->scr;
+#ifdef GRAPHICS_BG_MASK
+	hold_old_back = Term->old_back;
+	hold_scr_back = Term->scr_back;
+#endif
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_ICKY_SCREENS; i++) {
 		/* Save old window */
 		hold_mem[i] = Term->mem[i];
+#ifdef GRAPHICS_BG_MASK
+		hold_mem_back[i] = Term->mem_back[i];
+#endif
 	}
+
 
 	/*** Make new ***/
 
@@ -3681,32 +3930,41 @@ errr Term_resize(int w, int h) {
 
 	/* Create new window */
 	MAKE(Term->old, term_win);
-
 	/* Initialize new window */
 	term_win_init(Term->old, w, h);
-
 	/* Save the contents */
 	term_win_copy(Term->old, hold_old, wid, hgt);
+#ifdef GRAPHICS_BG_MASK
+	MAKE(Term->old_back, term_win);
+	term_win_init(Term->old_back, w, h);
+	term_win_copy(Term->old_back, hold_old_back, wid, hgt);
+#endif
 
 
 	/* Create new window */
 	MAKE(Term->scr, term_win);
-
 	/* Initialize new window */
 	term_win_init(Term->scr, w, h);
-
 	/* Save the contents */
 	term_win_copy(Term->scr, hold_scr, wid, hgt);
+#ifdef GRAPHICS_BG_MASK
+	MAKE(Term->scr_back, term_win);
+	term_win_init(Term->scr_back, w, h);
+	term_win_copy(Term->scr_back, hold_scr_back, wid, hgt);
+#endif
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_ICKY_SCREENS; i++) {
 		/* Create new window */
 		MAKE(Term->mem[i], term_win);
-
 		/* Initialize new window */
 		term_win_init(Term->mem[i], w, h);
-
 		/* Save the contents */
 		term_win_copy(Term->mem[i], hold_mem[i], wid, hgt);
+#ifdef GRAPHICS_BG_MASK
+		MAKE(Term->mem_back[i], term_win);
+		term_win_init(Term->mem_back[i], w, h);
+		term_win_copy(Term->mem_back[i], hold_mem_back[i], wid, hgt);
+#endif
 	}
 
 	/*** Kill old ***/
@@ -3718,25 +3976,33 @@ errr Term_resize(int w, int h) {
 
 	/* Nuke */
 	term_win_nuke(hold_old, Term->wid, Term->hgt);
-
 	/* Kill */
 	KILL(hold_old, term_win);
-
+#ifdef GRAPHICS_BG_MASK
+	term_win_nuke(hold_old_back, Term->wid, Term->hgt);
+	KILL(hold_old_back, term_win);
+#endif
 
 	/* Nuke */
 	term_win_nuke(hold_scr, Term->wid, Term->hgt);
-
 	/* Kill */
 	KILL(hold_scr, term_win);
+#ifdef GRAPHICS_BG_MASK
+	term_win_nuke(hold_scr_back, Term->wid, Term->hgt);
+	KILL(hold_scr_back, term_win);
+#endif
 
-
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_ICKY_SCREENS; i++) {
 		/* Nuke */
 		term_win_nuke(hold_mem[i], Term->wid, Term->hgt);
-
 		/* Kill */
 		KILL(hold_mem[i], term_win);
+#ifdef GRAPHICS_BG_MASK
+		term_win_nuke(hold_mem_back[i], Term->wid, Term->hgt);
+		KILL(hold_mem_back[i], term_win);
+#endif
 	}
+
 
 	/* Illegal cursor */
 	if (Term->old->cx >= w) Term->old->cu = 1;
@@ -3746,10 +4012,14 @@ errr Term_resize(int w, int h) {
 	if (Term->scr->cx >= w) Term->scr->cu = 1;
 	if (Term->scr->cy >= h) Term->scr->cu = 1;
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_ICKY_SCREENS; i++) {
 		/* Illegal cursor */
 		if (Term->mem[i]->cx >= w) Term->mem[i]->cu = 1;
 		if (Term->mem[i]->cy >= h) Term->mem[i]->cu = 1;
+#ifdef GRAPHICS_BG_MASK /* unnecessary? */
+		if (Term->mem_back[i]->cx >= w) Term->mem_back[i]->cu = 1;
+		if (Term->mem_back[i]->cy >= h) Term->mem_back[i]->cu = 1;
+#endif
 	}
 
 	/* Save new size */
@@ -3841,22 +4111,28 @@ errr term_nuke(term *t) {
 
 	/* Nuke "displayed" */
 	term_win_nuke(t->old, w, h);
-
 	/* Kill "displayed" */
 	KILL(t->old, term_win);
-
 	/* Nuke "requested" */
 	term_win_nuke(t->scr, w, h);
-
 	/* Kill "requested" */
 	KILL(t->scr, term_win);
+#ifdef GRAPHICS_BG_MASK
+	term_win_nuke(t->old_back, w, h);
+	KILL(t->old_back, term_win);
+	term_win_nuke(t->scr_back, w, h);
+	KILL(t->scr_back, term_win);
+#endif
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_ICKY_SCREENS; i++) {
 		/* Nuke "memorized" */
 		term_win_nuke(t->mem[i], w, h);
-
 		/* Kill "memorized" */
 		KILL(t->mem[i], term_win);
+#ifdef GRAPHICS_BG_MASK
+		term_win_nuke(t->mem_back[i], w, h);
+		KILL(t->mem_back[i], term_win);
+#endif
 	}
 
 	/* Free some arrays */
@@ -3908,24 +4184,31 @@ errr term_init(term *t, int w, int h, int k) {
 
 	/* Allocate "displayed" */
 	MAKE(t->old, term_win);
-
 	/* Initialize "displayed" */
 	term_win_init(t->old, w, h);
-
+#ifdef GRAPHICS_BG_MASK
+	MAKE(t->old_back, term_win);
+	term_win_init(t->old_back, w, h);
+#endif
 
 	/* Allocate "requested" */
 	MAKE(t->scr, term_win);
-
 	/* Initialize "requested" */
 	term_win_init(t->scr, w, h);
+#ifdef GRAPHICS_BG_MASK
+	MAKE(t->scr_back, term_win);
+	term_win_init(t->scr_back, w, h);
+#endif
 
-
-	for (y = 0 ;y < 4; y++) {
+	for (y = 0 ;y < MAX_ICKY_SCREENS; y++) {
 		/* Allocate "memorized" */
 		MAKE(t->mem[y], term_win);
-
 		/* Initialize "memorized" */
 		term_win_init(t->mem[y], w, h);
+#ifdef GRAPHICS_BG_MASK
+		MAKE(t->mem_back[y], term_win);
+		term_win_init(t->mem_back[y], w, h);
+#endif
 	}
 
 	/* Assume change */
