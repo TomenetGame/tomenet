@@ -2189,7 +2189,100 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 }
 #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
+ #if 1 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_x11(x, y, a, c));
+ #else
+	/* Catch use in chat instead of as feat attr, or we crash :-s
+	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
+	if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+		flick_global_x = x;
+		flick_global_y = y;
+	} else flick_global_x = 0;
+
+	a = term2attr(a);
+
+	/* Draw the tile in Xor. */
+#ifndef EXTENDED_COLOURS_PALANIM
+ #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x0F]);
+ #else
+	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
+ #endif
+#else
+ #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x1F]);
+ #else
+	Infoclr_set(clr[a & 0x3F]);
+ #endif
+#endif
+
+	if (Infoclr->fg == Infoclr->bg) {
+		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
+		 * But an image tile could contain some other color pixels and could result in no solid color tile.
+		 * That's why paint a solid block as intended. */
+		return(Infofnt_text_std(x, y, " ", 1));
+	}
+
+	term_data *td = (term_data*)(Term->data);
+	x *= Infofnt->wid;
+	y *= Infofnt->hgt;
+
+#ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry = NULL;
+	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+		entry = &td->tile_cache[i];
+		if (entry->c == c && entry->a == a && entry->is_valid) {
+			/* Copy cached tile to window. */
+			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
+				0, 0,
+				td->fnt->wid, td->fnt->hgt,
+				x, y);
+
+			/* Success */
+			return(0);
+		}
+	}
+
+	// Replace cache entries in FIFO order
+	entry = &td->tile_cache[td->cache_position++];
+	if (td->cache_position >= TILE_CACHE_SIZE) {
+		td->cache_position = 0;
+	}
+	Pixmap tilePreparation = entry->tilePreparation;
+	entry->c = c;
+	entry->a = a;
+	entry->is_valid = 1;
+#else
+	Pixmap tilePreparation = td->tilePreparation;
+#endif
+
+	/* Prepare tile to preparation pixmap. */
+	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
+	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
+	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
+			x1, y1,
+			td->fnt->wid, td->fnt->hgt,
+			0, 0,
+			1);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
+	XPutImage(Metadpy->dpy, tilePreparation,
+			Infoclr->gc,
+			td->tiles,
+		  x1, y1,
+		  0, 0,
+		  td->fnt->wid, td->fnt->hgt);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+
+	/* Copy prepared tile to window. */
+	XCopyArea(Metadpy->dpy, tilePreparation, td->inner->win, Infoclr->gc,
+		  0, 0,
+		  td->fnt->wid, td->fnt->hgt,
+		  x, y);
+
+	/* Success */
+	return(0);
+ #endif
 }
 #endif
 
