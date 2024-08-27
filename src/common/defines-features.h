@@ -548,6 +548,10 @@
  #define GFXMASK_BG_R	0
  #define GFXMASK_BG_G	0
  #define GFXMASK_BG_B	0
+ /* Colours for dual-background-graphics mask - must be known even if GRAPHICS_BG_MASK is not enabled, so client remains backward compatible with 2mask-ready tilesets! */
+ #define GFXMASK_BG2_R	10
+ #define GFXMASK_BG2_G	16
+ #define GFXMASK_BG2_B	10
 
  #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking */
  #ifdef GRAPHICS_BG_MASK
@@ -555,10 +559,6 @@
   #define UG_NONE	0
   #define UG_NORMAL	1
   #define UG_2MASK	2
-  /* Colours for dual-background-graphics mask */
-  #define GFXMASK_BG2_R	10
-  #define GFXMASK_BG2_G	16
-  #define GFXMASK_BG2_B	10
  #endif
 #endif
 //#endif

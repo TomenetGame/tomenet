@@ -5162,6 +5162,11 @@ Tilesets also have two designated 'mask colours':
   Terrain graphics, which are considered 'background graphics' will be visible
   in these pixels and therefore merged with the foreground.
   So you could for example see a dagger lying in a pool of water.
+  Note that in = g the 'dual' graphics mode must be enabled for this to work
+  and the server has to support it too.
+  If you use a dual-mode tileset with normal graphics settings instead, this is
+  not a problem as it is 'backward compatible' and will interpret the dual-mask
+  colour (ie 0x0A100A) instead as pure black (0x000000) automatically.
 
 Svechnik (aka 'EvgenijK' on github) has worked on a major graphical tileset
 that can be found on his github, including instructions on how to use it:

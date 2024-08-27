@@ -2571,6 +2571,7 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
 	u32b bit;
 	byte r, g, b;
+	int x, y;
 
 	char *bgmask;
 	C_MAKE(bgmask, masks_size, char);
@@ -2580,12 +2581,19 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 	C_MAKE(fgmask, masks_size, char);
 	memset(fgmask, 0, masks_size);
 
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
+	for (y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
 			bit = y * width + x;
 			r = data[4 * (x + y * width)];
 			g = data[4 * (x + y * width) + 1];
 			b = data[4 * (x + y * width) + 2];
+
+			/* Ensure non-GRAPHICS_BG_MASK backward compatibility with 2mask-ready tilesets that use the dual-mask colour! */
+			if (r == GFXMASK_BG2_R && g == GFXMASK_BG2_G && b == GFXMASK_BG2_B) {
+				r = data[4 * (x + y * width)] = GFXMASK_BG_R;
+				g = data[4 * (x + y * width) + 1] = GFXMASK_BG_G;
+				b = data[4 * (x + y * width) + 2] = GFXMASK_BG_B;
+			}
 
 			if (r != GFXMASK_BG_R || g != GFXMASK_BG_G || b != GFXMASK_BG_B)
 				bgmask[bit / 8] |= 1 << (bit % 8);
@@ -2606,6 +2614,7 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
 	u32b bit;
 	byte r, g, b;
+	int x, y;
 
 	char *bgmask;
 	C_MAKE(bgmask, masks_size, char);
@@ -2623,12 +2632,20 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 	memset(bg2mask, 0, masks_size);
 #endif
 
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
+	for (y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
 			bit = y * width + x;
 			r = data[4 * (x + y * width)];
 			g = data[4 * (x + y * width) + 1];
 			b = data[4 * (x + y * width) + 2];
+
+			/* We're not in dual-mask mode? Translate 2mask pixels back to normal bgmask: */
+			if (use_graphics != UG_2MASK &&
+			    r == GFXMASK_BG2_R && g == GFXMASK_BG2_G && b == GFXMASK_BG2_B) {
+				r = data[4 * (x + y * width)] = GFXMASK_BG_R;
+				g = data[4 * (x + y * width) + 1] = GFXMASK_BG_G;
+				b = data[4 * (x + y * width) + 2] = GFXMASK_BG_B;
+			}
 
 			if (r != GFXMASK_BG_R || g != GFXMASK_BG_G || b != GFXMASK_BG_B)
 				bgmask[bit / 8] |= 1 << (bit % 8);
