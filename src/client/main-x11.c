@@ -1197,6 +1197,9 @@ struct term_data {
 	XImage *tiles;
 	Pixmap bgmask;
 	Pixmap fgmask;
+#ifdef GRAPHICS_BG_MASK
+	Pixmap bg2mask;
+#endif
 	Pixmap tilePreparation;
 
 #ifdef TILE_CACHE_SIZE
@@ -1821,6 +1824,12 @@ static void free_graphics(term_data *td) {
 		XFreePixmap(Metadpy->dpy, td->fgmask);
 		td->fgmask = None;
 	}
+#ifdef GRAPHICS_BG_MASK
+	if (td->bg2mask) {
+		XFreePixmap(Metadpy->dpy, td->bg2mask);
+		td->bg2mask = None;
+	}
+#endif
 	if (td->tilePreparation) {
 		XFreePixmap(Metadpy->dpy, td->tilePreparation);
 		td->tilePreparation = None;
@@ -2096,6 +2105,9 @@ static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 XImage *graphics_image = None;
 char *graphics_bgmask = NULL;
 char *graphics_fgmask = NULL;
+#ifdef GRAPHICS_BG_MASK
+char *graphics_bg2mask = NULL;
+#endif
 /* These variables are computed at image load (in 'init_x11'). */
 int graphics_tile_wid, graphics_tile_hgt;
 int graphics_image_tpr; /* Tiles per row. */
@@ -2104,6 +2116,7 @@ int graphics_image_tpr; /* Tiles per row. */
  * Draw some graphical characters.
  */
 static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
+	term_data *td;
 	Pixmap tilePreparation;
 #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
@@ -2142,7 +2155,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 		return(Infofnt_text_std(x, y, " ", 1));
 	}
 
-	term_data *td = (term_data*)(Term->data);
+	td = (term_data*)(Term->data);
 	x *= Infofnt->wid;
 	y *= Infofnt->hgt;
 
@@ -2185,15 +2198,15 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
 	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
-			x1, y1,
-			td->fnt->wid, td->fnt->hgt,
-			0, 0,
-			1);
+		   x1, y1,
+		   td->fnt->wid, td->fnt->hgt,
+		   0, 0,
+		   1);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 	XPutImage(Metadpy->dpy, tilePreparation,
-			Infoclr->gc,
-			td->tiles,
+		  Infoclr->gc,
+		  td->tiles,
 		  x1, y1,
 		  0, 0,
 		  td->fnt->wid, td->fnt->hgt);
@@ -2213,6 +2226,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  #if 0 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_x11(x, y, a, c));
  #else
+	term_data *td;
 	Pixmap tilePreparation;
 #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
@@ -2252,7 +2266,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		return(Infofnt_text_std(x, y, " ", 1));
 	}
 
-	term_data *td = (term_data*)(Term->data);
+	td = (term_data*)(Term->data);
 	x *= Infofnt->wid;
 	y *= Infofnt->hgt;
 
@@ -2291,19 +2305,74 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	tilePreparation = td->tilePreparation;
 #endif
 
-	/* Prepare tile to preparation pixmap. */
-	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
-	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
+#ifdef GRAPHICS_BG_MASK
+	/* Start with background tile to preparation pixmap,
+	   so the background mask can be reverse AND'ed (draw bg where there's 0x000000 in the foreground)
+	   onto the background image to zero out all pixels that should display the foreground instead.
+	   After that, the foreground can be OR'd onto the image. - C. Blue */
+
+	/* Switch to background-tile colour */
+ #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a_back & 0x0F]);
+  #else
+	Infoclr_set(clr[a_back & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
+  #endif
+ #else
+  #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a_back & 0x1F]);
+  #else
+	Infoclr_set(clr[a_back & 0x3F]);
+  #endif
+ #endif
+
+	/* Prepare background tile to preparation pixmap. +chopchop+ */
+	x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
+	y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
 	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
-			x1, y1,
-			td->fnt->wid, td->fnt->hgt,
-			0, 0,
-			1);
+		   x1, y1,
+		   td->fnt->wid, td->fnt->hgt,
+		   0, 0,
+		   1);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 	XPutImage(Metadpy->dpy, tilePreparation,
-			Infoclr->gc,
-			td->tiles,
+		  Infoclr->gc,
+		  td->tiles,
+		  x1, y1,
+		  0, 0,
+		  td->fnt->wid, td->fnt->hgt);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+
+	/* Revert to foreground-tile colour */
+ #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x0F]);
+  #else
+	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
+  #endif
+ #else
+  #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x1F]);
+  #else
+	Infoclr_set(clr[a & 0x3F]);
+  #endif
+ #endif
+#endif
+
+	/* Prepare foreground tile to preparation pixmap. */
+	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
+	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
+	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
+		   x1, y1,
+		   td->fnt->wid, td->fnt->hgt,
+		   0, 0,
+		   1);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
+	XPutImage(Metadpy->dpy, tilePreparation,
+		  Infoclr->gc,
+		  td->tiles,
 		  x1, y1,
 		  0, 0,
 		  td->fnt->wid, td->fnt->hgt);
@@ -2478,8 +2547,11 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
  * Pixel in bgmask_return is 1, only if image color is not black (#000000), nor magenta (#ff00ff).
  * Function will not free memory if allready allocated in bgmask_return/fgmask_return input variable.
  */
+#ifndef GRAPHICS_BG_MASK
 static void createMasksFromData(char* data, int width, int height, char **bgmask_return, char **fgmask_return) {
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
+	u32b bit;
+	byte r, g, b;
 
 	char *bgmask;
 	C_MAKE(bgmask, masks_size, char);
@@ -2491,10 +2563,10 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			u32b bit = y * width + x;
-			byte r = data[4 * (x + y * width)];
-			byte g = data[4 * (x + y * width) + 1];
-			byte b = data[4 * (x + y * width) + 2];
+			bit = y * width + x;
+			r = data[4 * (x + y * width)];
+			g = data[4 * (x + y * width) + 1];
+			b = data[4 * (x + y * width) + 2];
 
 			if (r != 0 || g != 0 || b != 0)
 				bgmask[bit / 8] |= 1 << (bit % 8);
@@ -2509,6 +2581,48 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 	(*bgmask_return) = bgmask;
 	(*fgmask_return) = fgmask;
 }
+#else
+static void createMasksFromData_2mask(char* data, int width, int height, char **bgmask_return, char **fgmask_return, char **bg2mask_return) {
+	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
+	u32b bit;
+	byte r, g, b;
+
+	char *bgmask;
+	C_MAKE(bgmask, masks_size, char);
+	memset(bgmask, 0, masks_size);
+
+	char *fgmask;
+	C_MAKE(fgmask, masks_size, char);
+	memset(fgmask, 0, masks_size);
+
+	char *bg2mask;
+	C_MAKE(bg2mask, masks_size, char);
+	memset(bg2mask, 0, masks_size);
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			bit = y * width + x;
+			r = data[4 * (x + y * width)];
+			g = data[4 * (x + y * width) + 1];
+			b = data[4 * (x + y * width) + 2];
+
+			if (r != 0 || g != 0 || b != 0) {
+				bgmask[bit / 8] |= 1 << (bit % 8);
+				bg2mask[bit / 8] |= 1 << (bit % 8);
+			}
+
+			if (r == 255 && g == 0 && b == 255) {
+				fgmask[bit / 8] |= 1 << (bit % 8);
+				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
+			}
+		}
+	}
+
+	(*bgmask_return) = bgmask;
+	(*fgmask_return) = fgmask;
+	(*bg2mask_return) = bg2mask;
+}
+#endif
 
 /*
  * Resize an image. XXX XXX XXX
@@ -2517,6 +2631,7 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
  * It's your responsibility to free returned XImage, bgmask_return and fgmask_return after usage.
  * Function will not free memory if already allocated in bgmask_return or fgmask_return input variable.
  */
+ #ifndef GRAPHICS_BG_MASK
 static XImage *ResizeImage(Display *disp, XImage *Im,
                            int ix, int iy, int ox, int oy,
                            char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return) {
@@ -2619,6 +2734,122 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
 	return(Tmp);
 }
+ #else
+static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
+                           int ix, int iy, int ox, int oy,
+                           char *bgbits, char *fgbits, char *bg2bits, Pixmap *bgmask_return, Pixmap *fgmask_return, Pixmap *bg2mask_return) {
+	int width1, height1, width2, height2;
+	int x1, x2, y1, y2, Tx, Ty;
+	int *px1, *px2, *dx1, *dx2;
+	int *py1, *py2, *dy1, *dy2;
+
+	XImage *Tmp;
+	char *Data;
+
+
+	width1 = Im->width;
+	height1 = Im->height;
+
+	width2 = ox * width1 / ix;
+	height2 = oy * height1 / iy;
+
+	Data = (char *)malloc(width2 * height2 * Im->bits_per_pixel / 8);
+
+	Tmp = XCreateImage(
+			disp, DefaultVisual(disp, DefaultScreen(disp)), Im->depth, ZPixmap, 0,
+			Data, width2, height2, Im->bits_per_pixel, 0);
+
+
+	int linePadBits = 8;
+	int paddedWidth2 = width2 + ((linePadBits - (width2 % linePadBits)) % linePadBits);
+	int new_masks_size = paddedWidth2 * height2 / 8;
+
+	char *bgmask_data;
+	C_MAKE(bgmask_data, new_masks_size, char);
+	memset(bgmask_data, 0, new_masks_size);
+
+	char *fgmask_data;
+	C_MAKE(fgmask_data, new_masks_size, char);
+	memset(fgmask_data, 0, new_masks_size);
+
+	char *bg2mask_data;
+	C_MAKE(bg2mask_data, new_masks_size, char);
+	memset(bg2mask_data, 0, new_masks_size);
+
+	if (ix >= ox) {
+		px1 = &x1;
+		px2 = &x2;
+		dx1 = &ix;
+		dx2 = &ox;
+	} else {
+		px1 = &x2;
+		px2 = &x1;
+		dx1 = &ox;
+		dx2 = &ix;
+	}
+
+	if (iy >= oy) {
+		py1 = &y1;
+		py2 = &y2;
+		dy1 = &iy;
+		dy2 = &oy;
+	} else {
+		py1 = &y2;
+		py2 = &y1;
+		dy1 = &oy;
+		dy2 = &iy;
+	}
+
+	Ty = *dy1;
+
+	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) { /* Wrong compiler warning, the loop vars _are_ modified via px/dx/py/dy */
+		Tx = *dx1;
+
+		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) { /* Wrong compiler warning, the loop vars _are_ modified via px/dx/py/dy */
+			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
+			u32b maskbitno = (x1 + (y1 * width1));
+			u32b newmaskbitno = (x2 + (y2 * paddedWidth2));
+
+			bool bgbit = bgbits[maskbitno / 8] & (1 << (maskbitno % 8));
+
+			if (bgbit) bgmask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
+			else bgmask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
+
+			bool fgbit = fgbits[maskbitno / 8] & (1 << (maskbitno % 8));
+
+			if (fgbit) fgmask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
+			else fgmask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
+
+			bool bg2bit = bg2bits[maskbitno / 8] & (1 << (maskbitno % 8));
+
+			if (bg2bit) bg2mask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
+			else bg2mask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
+
+			(*px1)++;
+
+			Tx -= *dx2;
+			if (Tx <= 0) {
+				Tx += *dx1;
+				(*px2)++;
+			}
+		}
+
+		(*py1)++;
+
+		Ty -= *dy2;
+		if (Ty <= 0) {
+			Ty += *dy1;
+			(*py2)++;
+		}
+	}
+
+	Window root_win = DefaultRootWindow(disp);
+	(*bgmask_return) = XCreateBitmapFromData(disp, root_win, bgmask_data, width2, height2);
+	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
+	(*bg2mask_return) = XCreateBitmapFromData(disp, root_win, bg2mask_data, width2, height2);
+	return(Tmp);
+}
+ #endif
 
 #endif /* USE_GRAPHICS */
 
@@ -2771,6 +3002,9 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	td->tiles = NULL;
 	td->bgmask = None;
 	td->fgmask = None;
+ #ifdef GRAPHICS_BG_MASK
+	td->bg2mask = None;
+ #endif
 	td->tilePreparation = None;
  #ifdef TILE_CACHE_SIZE
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
@@ -2809,9 +3043,15 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	if (use_graphics) {
 
 		/* Use resized tiles & masks. */
+#ifdef GRAPHICS_BG_MASK
+		td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
+				graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+				graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask));
+#else
 		td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
 				graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 				graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask));
+#endif
 
 		/* Initialize preparation pixmap. */
 		td->tilePreparation = XCreatePixmap(
@@ -3168,7 +3408,11 @@ errr init_x11(void) {
 		}
 
 		/* Create masks from loaded data */
+#ifdef GRAPHICS_BG_MASK
+		createMasksFromData_2mask(data, width, height, &graphics_bgmask, &graphics_fgmask, &graphics_bg2mask);
+#else
 		createMasksFromData(data, width, height, &graphics_bgmask, &graphics_fgmask);
+#endif
 
 		/* Store loaded image data in XImage format */
 		depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
@@ -3378,9 +3622,15 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 			free_graphics(td);
 
 			/* If window was resized, grapics tiles need to be resized too. */
+ #ifdef GRAPHICS_BG_MASK
+			td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
+					graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+					graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask));
+ #else
 			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
 					graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 					graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask));
+ #endif
 
 			/* Reinitialize preparation pixmap with new size. */
 			td->tilePreparation = XCreatePixmap(
