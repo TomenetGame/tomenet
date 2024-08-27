@@ -5143,14 +5143,25 @@ Tilesets also have two designated 'mask colours':
   colour.
   For example a tile depicting an orc would display the mask colour in umber
   (ie brown) if it was a hill orc or in light green if it was a cave orc.
-- (No effect yet in 4.9.2 - work in progress:)
-  A 'background mask' defined by colour R=0,G=0,B=0 (hex 0x000000) aka black.
-  Tiles will let the terrain graphics shine through (100% transparency) in all
-  foreground pixels that are black.
-  Entities and objects will be treated as 'foreground tile' and terrain will be
-  treated as 'background tile'. So you could for example see an orc standing on
-  a grass tile, with some green goodness being visible around him, or you could
-  see an adamantite helm that is obviously lying in some lava.
+- (Currently no effect, as all grids in TomeNET always have black background:)
+   A 'background mask' defined by colour R=0,G=0,B=0 (hex 0x000000) aka black.
+  Currently, TomeNET always uses black background colour for any grid it draws.
+  However, should this change, then anything that is painted in 0x000000 in the
+  graphical tile will also change its colour to the grid's background colour.
+  (Example: A fountain in ASCII is currently a white '_' on black background.
+  If background colours were enabled in the future, it could be a white '_' on
+  blue background. In that case, if you switched from ASCII to a graphical
+  tileset that maps fountains to a picture, all black pixels in that fountain
+  tile would also change to appear in blue.)
+- No effect in clients not newer than 4.9.2:
+  A 'dual-background mask' defined by colour R=10,G=16,B=10 (hex 0x0A100A),
+  ie a very dark green.
+  Graphical tiles that usually take precedence over terrain, such as objects,
+  any traps, monsters, players etc. can use this colour to become transparent
+  for the background terrain.
+  Terrain graphics, which are considered 'background graphics' will be visible
+  in these pixels and therefore merged with the foreground.
+  So you could for example see a dagger lying in a pool of water.
 
 Svechnik (aka 'EvgenijK' on github) has worked on a major graphical tileset
 that can be found on his github, including instructions on how to use it:

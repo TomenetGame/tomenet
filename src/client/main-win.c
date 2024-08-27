@@ -415,6 +415,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent) {
 	for (int y = 0; y < bm.bmHeight; y++) {
 		for (int x = 0; x < bm.bmWidth; x++) {
 			COLORREF p = GetPixel(hdcMem, x, y);
+
 			if (p == crTransparent) {
 				/* Set mask pixel. */
 				SetPixel(hdcMem2, x, y, RGB(255, 255, 255));
@@ -484,6 +485,8 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	int x1, x2, y1, y2, Tx, Ty;
 	int *px1, *px2, *dx1, *dx2;
 	int *py1, *py2, *dy1, *dy2;
+
+
 	if (ix >= ox) {
 		px1 = &x1;
 		px2 = &x2;
@@ -2709,8 +2712,8 @@ static void init_windows(void) {
 		}
 
 		/* Create masks. */
-		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(0, 0, 0));
-		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(255, 0, 255));
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B));
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B));
 	}
 #endif
 
