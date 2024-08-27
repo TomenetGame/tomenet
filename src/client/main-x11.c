@@ -2104,6 +2104,7 @@ int graphics_image_tpr; /* Tiles per row. */
  * Draw some graphical characters.
  */
 static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
+	Pixmap tilePreparation;
 #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i;
@@ -2168,7 +2169,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	// Replace cache entries in FIFO order
 	entry = &td->tile_cache[td->cache_position++];
 	if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
-	Pixmap tilePreparation = entry->tilePreparation;
+	tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
  #ifdef GRAPHICS_BG_MASK
@@ -2177,7 +2178,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
  #endif
 	entry->is_valid = 1;
 #else
-	Pixmap tilePreparation = td->tilePreparation;
+	tilePreparation = td->tilePreparation;
 #endif
 
 	/* Prepare tile to preparation pixmap. */
@@ -2209,9 +2210,10 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 }
 #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
- #if 1 /* use fallback hook until 2mask routines are complete? */
+ #if 0 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_x11(x, y, a, c));
  #else
+	Pixmap tilePreparation;
 #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i;
@@ -2277,7 +2279,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	// Replace cache entries in FIFO order
 	entry = &td->tile_cache[td->cache_position++];
 	if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
-	Pixmap tilePreparation = entry->tilePreparation;
+	tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
  #ifdef GRAPHICS_BG_MASK
@@ -2286,7 +2288,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  #endif
 	entry->is_valid = 1;
 #else
-	Pixmap tilePreparation = td->tilePreparation;
+	tilePreparation = td->tilePreparation;
 #endif
 
 	/* Prepare tile to preparation pixmap. */
