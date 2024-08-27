@@ -2297,6 +2297,11 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
+#ifdef GRAPHICS_BG_MASK
+static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
+	return (Term_pict_win(x, y, a, c));
+}
+#endif
 
 
 /*
@@ -2458,6 +2463,9 @@ static void term_data_link(term_data *td) {
 		recreateGraphicsObjects(td);
 
 		/* Graphics hook */
+ #ifdef GRAPHICS_BG_MASK
+		if (use_graphics == UG_2MASK) t->pict_hook_2mask = Term_pict_win_2mask;
+ #endif
 		t->pict_hook = Term_pict_win;
 
 		/* use "term_pict" for "graphic" data */

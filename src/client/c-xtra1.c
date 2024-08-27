@@ -5229,6 +5229,7 @@ void do_weather(bool no_weather) {
 					/* display raindrop */
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
+					//todo maybe: GRAPHICS_BG_MASK
 #if 0
 //#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 					    rand_int(2) ? TERMX_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
@@ -5240,11 +5241,13 @@ void do_weather(bool no_weather) {
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_snowflake, '*');
+					//todo maybe: GRAPHICS_BG_MASK
 				} else if (weather_element_type[i] == 3) {
 					/* display sand grain */
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_sandgrain, c_sandgrain);
+					//todo maybe: GRAPHICS_BG_MASK
 				}
 			}
 		}
@@ -5447,6 +5450,7 @@ void do_weather(bool no_weather) {
 				    panel_y + weather_element_y[i] - weather_panel_y,
 				    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
 				    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					//todo maybe: GRAPHICS_BG_MASK
 			}
 		}
 
@@ -5509,6 +5513,7 @@ void do_weather(bool no_weather) {
 #else
 				    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #endif
+					//todo maybe: GRAPHICS_BG_MASK
 			}
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't
@@ -5551,6 +5556,7 @@ void do_weather(bool no_weather) {
 				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 				    panel_y + weather_element_y[i] - weather_panel_y,
 				    col_snowflake, '*');
+					//todo maybe: GRAPHICS_BG_MASK
 			}
 		}
 		/* advance sand grain - weather_speed should be high always for a sand storm */
@@ -5592,6 +5598,7 @@ void do_weather(bool no_weather) {
 				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 				    panel_y + weather_element_y[i] - weather_panel_y,
 				    col_sandgrain, c_sandgrain);
+					//todo maybe: GRAPHICS_BG_MASK
 			}
 		}
 	}

@@ -11746,6 +11746,7 @@ void c_close_game(cptr reason) {
 					    1 + weather_element_y[k] - weather_panel_y,
 					    panel_map_a[weather_element_x[k] - weather_panel_x][weather_element_y[k] - weather_panel_y],
 					    panel_map_c[weather_element_x[k] - weather_panel_x][weather_element_y[k] - weather_panel_y]);
+					//todo maybe: GRAPHICS_BG_MASK
 				}
 			}
 			Term_fresh();
@@ -11755,6 +11756,7 @@ void c_close_game(cptr reason) {
 					Term_draw(x, y,
 					    panel_map_a[x][y - 1],
 					    panel_map_c[x][y - 1]);
+					//todo maybe: GRAPHICS_BG_MASK
 				}
 			}
  #ifdef USE_SOUND_2010
@@ -12680,6 +12682,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
 				    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
 				    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+				//todo maybe: GRAPHICS_BG_MASK
 			}
 		}
 		if (screen_icky) Term_switch(0);

@@ -2187,13 +2187,17 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
+#ifdef GRAPHICS_BG_MASK
+static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
+	return(Term_pict_x11(x, y, a, c));
+}
+#endif
 
 /* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
 /*
  * Hack -- Convert an RGB value to an X11 Pixel, or die.
  */
-static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
-{
+static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue) {
 	Colormap cmap = DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy));
 
 	char cname[8];
@@ -2694,6 +2698,9 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 
 		if (td->tiles != NULL && td->tilePreparation != None) {
 			/* Graphics hook */
+ #ifdef GRAPHICS_BG_MASK
+			if (use_graphics == UG_2MASK) t->pict_hook_2mask = Term_pict_x11_2mask;
+ #endif
 			t->pict_hook = Term_pict_x11;
 
 			/* Use graphics sometimes */

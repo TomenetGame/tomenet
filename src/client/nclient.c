@@ -3060,7 +3060,12 @@ int Receive_char(void) {
 		*/
 
 	}
-	Term_draw(x, y, a, c); //todo: GRAPHICS_BG_MASK
+#ifdef GRAPHICS_BG_MASK
+	if (use_graphics == UG_2MASK)
+		Term_draw_2mask(x, y, a, c, a_back, c_back);
+	else
+#endif
+	Term_draw(x, y, a, c);
 	if (screen_icky) Term_switch(0);
 	return(1);
 }
@@ -4066,6 +4071,11 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 #endif
 				}
 
+#ifdef GRAPHICS_BG_MASK
+				if (use_graphics == UG_2MASK)
+					Term_draw_2mask(x + i, y, a, c, a_back, c_back);
+				else
+#endif
 				Term_draw(x + i, y, a, c);
 			}
 		}
@@ -4138,7 +4148,7 @@ int Receive_mini_map(void) {
 		/* Don't draw anything if "char" is zero */
 		/* Only draw if the screen is "icky" */
 		if (c && screen_icky && x < 80 - 12)
-			Term_draw(x + 12, y, a, c);
+			Term_draw(x + 12, y, a, c); //todo maybe: GRAPHICS_BG_MASK
 	}
 
 	return(1);
@@ -5479,6 +5489,7 @@ int Receive_weather(void) {
 					    PANEL_Y + weather_element_y[i] - weather_panel_y,
 					    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
 					    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					//todo maybe: GRAPHICS_BG_MASK
 				}
 			}
 			if (screen_icky) Term_switch(0);
