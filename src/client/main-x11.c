@@ -2096,6 +2096,12 @@ int graphics_image_tpr; /* Tiles per row. */
  * Draw some graphical characters.
  */
 static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
+#ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry;
+	int i;
+#endif
+	int x1, y1;
+
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
 	if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
@@ -2132,8 +2138,8 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	y *= Infofnt->hgt;
 
 #ifdef TILE_CACHE_SIZE
-	struct tile_cache_entry *entry = NULL;
-	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+	entry = NULL;
+	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
 		if (entry->c == c && entry->a == a && entry->is_valid) {
 			/* Copy cached tile to window. */
@@ -2149,9 +2155,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 
 	// Replace cache entries in FIFO order
 	entry = &td->tile_cache[td->cache_position++];
-	if (td->cache_position >= TILE_CACHE_SIZE) {
-		td->cache_position = 0;
-	}
+	if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
 	Pixmap tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
@@ -2161,8 +2165,8 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 #endif
 
 	/* Prepare tile to preparation pixmap. */
-	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
-	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
+	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
+	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
 	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
 			x1, y1,
 			td->fnt->wid, td->fnt->hgt,
@@ -2192,6 +2196,12 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  #if 1 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_x11(x, y, a, c));
  #else
+#ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry;
+	int i;
+#endif
+	int x1, y1;
+
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
 	if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
@@ -2200,6 +2210,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	} else flick_global_x = 0;
 
 	a = term2attr(a);
+	a_back = term2attr(a_back);
 
 	/* Draw the tile in Xor. */
 #ifndef EXTENDED_COLOURS_PALANIM
@@ -2228,8 +2239,8 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	y *= Infofnt->hgt;
 
 #ifdef TILE_CACHE_SIZE
-	struct tile_cache_entry *entry = NULL;
-	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+	entry = NULL;
+	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
 		if (entry->c == c && entry->a == a && entry->is_valid) {
 			/* Copy cached tile to window. */
@@ -2245,9 +2256,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	// Replace cache entries in FIFO order
 	entry = &td->tile_cache[td->cache_position++];
-	if (td->cache_position >= TILE_CACHE_SIZE) {
-		td->cache_position = 0;
-	}
+	if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
 	Pixmap tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
@@ -2257,8 +2266,8 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 #endif
 
 	/* Prepare tile to preparation pixmap. */
-	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
-	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
+	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
+	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
 	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
 			x1, y1,
 			td->fnt->wid, td->fnt->hgt,
