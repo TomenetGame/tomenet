@@ -1174,6 +1174,7 @@ struct tile_cache_entry {
     char32_t c;
     byte a;
 #ifdef GRAPHICS_BG_MASK
+    Pixmap tilePreparation2; //todo: perform all operations on just 'tilePreparation' so this becomes superfluous
     char32_t c_back;
     byte a_back;
 #endif
@@ -1199,6 +1200,7 @@ struct term_data {
 	Pixmap fgmask;
 #ifdef GRAPHICS_BG_MASK
 	Pixmap bg2mask;
+	Pixmap tilePreparation2; //todo: perform all operations on just 'tilePreparation' so this becomes superfluous
 #endif
 	Pixmap tilePreparation;
 
@@ -1829,6 +1831,10 @@ static void free_graphics(term_data *td) {
 		XFreePixmap(Metadpy->dpy, td->bg2mask);
 		td->bg2mask = None;
 	}
+	if (td->tilePreparation2) {
+		XFreePixmap(Metadpy->dpy, td->tilePreparation2);
+		td->tilePreparation2 = None;
+	}
 #endif
 	if (td->tilePreparation) {
 		XFreePixmap(Metadpy->dpy, td->tilePreparation);
@@ -1842,6 +1848,8 @@ static void free_graphics(term_data *td) {
 			td->tile_cache[i].c = 0xffffffff;
 			td->tile_cache[i].a = 0xff;
  #ifdef GRAPHICS_BG_MASK
+			XFreePixmap(Metadpy->dpy, td->tile_cache[i].tilePreparation2);
+			td->tile_cache[i].tilePreparation2 = None;
 			td->tile_cache[i].c_back = 0xffffffff;
 			td->tile_cache[i].a_back = 0xff;
  #endif
@@ -2227,7 +2235,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	return(Term_pict_x11(x, y, a, c));
  #else
 	term_data *td;
-	Pixmap tilePreparation;
+	Pixmap tilePreparation, tilePreparation2;
 #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i;
@@ -2294,6 +2302,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry = &td->tile_cache[td->cache_position++];
 	if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
 	tilePreparation = entry->tilePreparation;
+	tilePreparation2 = entry->tilePreparation2;
 	entry->c = c;
 	entry->a = a;
  #ifdef GRAPHICS_BG_MASK
@@ -2303,6 +2312,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry->is_valid = 1;
 #else
 	tilePreparation = td->tilePreparation;
+	tilePreparation2 = td->tilePreparation2;
 #endif
 
 #ifdef GRAPHICS_BG_MASK
@@ -2311,7 +2321,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   onto the background image to zero out all pixels that should display the foreground instead.
 	   After that, the foreground can be OR'd onto the image. - C. Blue */
 
-	/* Switch to background-tile colour */
+	/* Switch fgmask'ing colour to background-tile colour */
  #ifndef EXTENDED_COLOURS_PALANIM
   #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a_back & 0x0F]);
@@ -2329,14 +2339,14 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
 	x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 	y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
+	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation2, Infoclr->gc,
 		   x1, y1,
 		   td->fnt->wid, td->fnt->hgt,
 		   0, 0,
 		   1);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
-	XPutImage(Metadpy->dpy, tilePreparation,
+	XPutImage(Metadpy->dpy, tilePreparation2,
 		  Infoclr->gc,
 		  td->tiles,
 		  x1, y1,
@@ -2344,7 +2354,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		  td->fnt->wid, td->fnt->hgt);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
 
-	/* Revert to foreground-tile colour */
+	/* Revert fgmask'ing colour to foreground-tile colour */
  #ifndef EXTENDED_COLOURS_PALANIM
   #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
@@ -2378,8 +2388,17 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		  td->fnt->wid, td->fnt->hgt);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
 
-	/* Copy prepared tile to window. */
-	XCopyArea(Metadpy->dpy, tilePreparation, td->inner->win, Infoclr->gc,
+#if 1
+	/* Finally copy foreground tile onto background tile, via bg2mask. */
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bg2mask);
+	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
+//	XPutImage(Metadpy->dpy, tilePreparation, Infoclr->gc, tilePreparation2, 0, 0, 0, 0, td->fnt->wid, td->fnt->hgt);
+	XCopyArea(Metadpy->dpy, tilePreparation, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt, 0, 0);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+#endif
+
+	/* Copy prepared combo-tile to window. */
+	XCopyArea(Metadpy->dpy, tilePreparation2, td->inner->win, Infoclr->gc,
 		  0, 0,
 		  td->fnt->wid, td->fnt->hgt,
 		  x, y);
@@ -2583,6 +2602,7 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 }
 #else
 static void createMasksFromData_2mask(char* data, int width, int height, char **bgmask_return, char **fgmask_return, char **bg2mask_return) {
+//#define BG2MASK_INV /* Have '1' on black foreground tile area (instead of coloured foreground tile area)? */
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
 	u32b bit;
 	byte r, g, b;
@@ -2597,7 +2617,11 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 
 	char *bg2mask;
 	C_MAKE(bg2mask, masks_size, char);
+#ifdef BG2MASK_INV
+	memset(bg2mask, 1, masks_size);
+#else
 	memset(bg2mask, 0, masks_size);
+#endif
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
@@ -2608,7 +2632,11 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 
 			if (r != 0 || g != 0 || b != 0) {
 				bgmask[bit / 8] |= 1 << (bit % 8);
+#ifdef BG2MASK_INV
+				bg2mask[bit / 8] &= ~((char)1 << (bit % 8));
+#else
 				bg2mask[bit / 8] |= 1 << (bit % 8);
+#endif
 			}
 
 			if (r == 255 && g == 0 && b == 255) {
@@ -3004,6 +3032,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	td->fgmask = None;
  #ifdef GRAPHICS_BG_MASK
 	td->bg2mask = None;
+	td->tilePreparation2 = None;
  #endif
 	td->tilePreparation = None;
  #ifdef TILE_CACHE_SIZE
@@ -3012,6 +3041,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		td->tile_cache[i].c = 0xffffffff;
 		td->tile_cache[i].a = 0xff;
   #ifdef GRAPHICS_BG_MASK
+		td->tile_cache[i].tilePreparation2 = None;
 		td->tile_cache[i].c_back = 0xffffffff;
 		td->tile_cache[i].a_back = 0xff;
   #endif
@@ -3057,6 +3087,11 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		td->tilePreparation = XCreatePixmap(
 				Metadpy->dpy, Metadpy->root,
 				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+ #ifdef GRAPHICS_BG_MASK
+		td->tilePreparation2 = XCreatePixmap(
+				Metadpy->dpy, Metadpy->root,
+				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+ #endif
 
 		/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
 		   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
@@ -3065,10 +3100,19 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 			td->tile_cache[i].tilePreparation = XCreatePixmap(
 				Metadpy->dpy, Metadpy->root,
 				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+  #ifdef GRAPHICS_BG_MASK
+			td->tile_cache[i].tilePreparation2 = XCreatePixmap(
+				Metadpy->dpy, Metadpy->root,
+				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+  #endif
 		}
  #endif
 
-		if (td->tiles != NULL && td->tilePreparation != None) {
+		if (td->tiles != NULL && td->tilePreparation != None
+ #ifdef GRAPHICS_BG_MASK
+		    && td->tilePreparation2 != None
+ #endif
+		    ) {
 			/* Graphics hook */
  #ifdef GRAPHICS_BG_MASK
 			if (use_graphics == UG_2MASK) t->pict_hook_2mask = Term_pict_x11_2mask;
@@ -3636,16 +3680,30 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 			td->tilePreparation = XCreatePixmap(
 					Metadpy->dpy, Metadpy->root,
 					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+ #ifdef GRAPHICS_BG_MASK
+			td->tilePreparation2 = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+ #endif
 
  #ifdef TILE_CACHE_SIZE
 			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 				td->tile_cache[i].tilePreparation = XCreatePixmap(
 					Metadpy->dpy, Metadpy->root,
 					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+  #ifdef GRAPHICS_BG_MASK
+				td->tile_cache[i].tilePreparation2 = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+  #endif
 			}
  #endif
 
-			if (td->tiles == NULL || td->tilePreparation == None) {
+			if (td->tiles == NULL || td->tilePreparation == None
+ #ifdef GRAPHICS_BG_MASK
+			    || td->tilePreparation2 == None
+ #endif
+			    ) {
 				quit_fmt("Couldn't prepare images after font resize in terminal %d\n", term_idx);
 			}
 		}
