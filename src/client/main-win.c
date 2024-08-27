@@ -1143,7 +1143,7 @@ void save_prefs(void) {
 #endif
 
 #ifdef USE_GRAPHICS
-	strcpy(buf, use_graphics == UG_2MASK ? "2" : (use_graphics ? "1" : "0"));
+	strcpy(buf, use_graphics_new == UG_2MASK ? "2" : (use_graphics_new ? "1" : "0"));
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
 	WritePrivateProfileString("Base", "GraphicTiles", graphic_tiles, ini_file);
 #endif
@@ -1305,7 +1305,11 @@ static void load_prefs(void) {
 
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
-	use_graphics = (GetPrivateProfileInt("Base", "Graphics", 0, ini_file));
+ #ifdef GRAPHICS_BG_MASK
+	use_graphics_new = use_graphics = GetPrivateProfileInt("Base", "Graphics", 0, ini_file) % 3; //max UG_2MASK
+ #else
+	use_graphics_new = use_graphics = (GetPrivateProfileInt("Base", "Graphics", 0, ini_file) != 0);
+ #endif
 	GetPrivateProfileString("Base", "GraphicTiles", DEFAULT_TILENAME, graphic_tiles, 255, ini_file);
 	/* Convert to lowercase. */
 	for (int i =0; i < 256; i++)
@@ -2664,8 +2668,8 @@ static void init_windows(void) {
 	if (use_graphics) {
 		BITMAP bm;
 		char filename[1024];
-
 		HDC hdc = GetDC(NULL);
+
 		if (GetDeviceCaps(hdc, BITSPIXEL) < 24)
 			quit("Using graphic tiles needs a device content with at least 24 bits per pixel.");
 		ReleaseDC(NULL, hdc);
@@ -3028,10 +3032,13 @@ static void process_menus(WORD wCmd) {
 			//reset_visuals();
 
 			/* Toggle "graphics" */
+			/* Hack: Never switch graphics settings, especially UG_2MASK, live,
+			   as it will cause instant packet corruption due to missing server-client synchronisation.
+			   So we just switch the savegame-affecting 'use_graphics_new' instead of actual 'use_graphics'. */
 #ifdef GRAPHICS_BG_MASK
-			use_graphics = (use_graphics + 1) % 3;
+			use_graphics_new = (use_graphics_new + 1) % 3;
 #else
-			use_graphics = !use_graphics;
+			use_graphics_new = !use_graphics_new;
 #endif
 
 			/* Access the "graphic" mappings */

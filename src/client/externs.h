@@ -332,7 +332,7 @@ extern cptr ANGBAND_DIR_SCPT;
 extern cptr ANGBAND_DIR_GAME;
 
 extern bool disable_numlock;
-extern byte use_graphics;
+extern byte use_graphics, use_graphics_new;
 #ifdef USE_GRAPHICS
 extern char graphic_tiles[256];
 #endif

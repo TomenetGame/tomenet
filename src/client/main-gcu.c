@@ -908,7 +908,7 @@ errr init_gcu(void) {
 	else strcpy(cols_an, "a");
 
 	/* Graphic tiles are not supported in GCU client */
-	use_graphics = FALSE;
+	use_graphics_new = use_graphics = FALSE;
 
 #if 0 /* 0'ed: New (2024): support BIG_MAP on GCU! */
  #ifndef GLOBAL_BIG_MAP

@@ -10052,7 +10052,7 @@ static void do_cmd_options_tilesets(void) {
 		Term_putstr(1, 3, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s"));
 
 		//GRAPHICS_BG_MASK @ UG_2MASK:
-		Term_putstr(1, 5, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics == UG_2MASK ? "\377Genabled (dual)" : (use_graphics ? "\377Genabled\377-" : "\377sdisabled\377-")));
+		Term_putstr(1, 5, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics_new == UG_2MASK ? "\377Genabled (dual)" : (use_graphics_new ? "\377Genabled\377-" : "\377sdisabled\377-")));
 
 		/* Tilesets are atm a global setting, not depending on terminal window */
 		Term_putstr(1, 7, -1, TERM_WHITE, format("Currently selected tileset: '\377B%s\377-'", graphic_tiles));
@@ -10092,18 +10092,21 @@ static void do_cmd_options_tilesets(void) {
 			break;
 
 		case 'v':
+			/* Hack: Never switch graphics settings, especially UG_2MASK, live,
+			   as it will cause instant packet corruption due to missing server-client synchronisation.
+			   So we just switch the savegame-affecting 'use_graphics_new' instead of actual 'use_graphics'. */
 #ifdef GRAPHICS_BG_MASK
  #ifdef TEST_CLIENT
-			use_graphics = (use_graphics + 1) % 3;
+			use_graphics_new = (use_graphics_new + 1) % 3;
  #else
-			use_graphics = (use_graphics + 1) % 2;
+			use_graphics_new = (use_graphics_new + 1) % 2;
  #endif
-			if (use_graphics == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart.");
+			if (use_graphics_new == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart.");
 			else
 #else
-			use_graphics = !use_graphics;
+			use_graphics_new = !use_graphics_new;
 #endif
-			if (use_graphics) c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart.");
+			if (use_graphics_new) c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart.");
 			else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart.");
 			break;
 
