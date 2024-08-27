@@ -14853,7 +14853,12 @@ follows three rules:
 a) the resulting randart won't be cursed,
 b) the resulting randart won't drain hitpoints of undead or demon users,
 c) the resulting randart keeps all 'good' abilities it might have had.
+
 In very rare cases rerolling the item might fail and it will stay cursed, oops!
+This happens if it already had holy flags SLAY_EVIL/SLAY_UNDEAD/SLAY_DEMON or
+even KILL_UNDEAD/KILL_DEMON, light radius and WHITE_LIGHT also affect this.
+However, if the item has the CHAOTIC flag, all of the 'good' flags mentioned
+above will no longer prevent flipping anymore!
 
 Note that the curse on an item must be heavy, not normal, for all of this
 bonus-flipping and rerolling to work.
