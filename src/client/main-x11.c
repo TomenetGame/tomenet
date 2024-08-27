@@ -2282,13 +2282,10 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
-		if (entry->c == c && entry->a == a
- #ifdef GRAPHICS_BG_MASK
-		    && entry->c_back == c_back && entry->a_back == a_back
- #endif
+		if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
 		    && entry->is_valid) {
 			/* Copy cached tile to window. */
-			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
+			XCopyArea(Metadpy->dpy, entry->tilePreparation2, td->inner->win, Infoclr->gc, // NOTE that tilePreparation2 holds the final tile, NOT tilePreparation!
 				0, 0,
 				td->fnt->wid, td->fnt->hgt,
 				x, y);
@@ -2393,7 +2390,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bg2mask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 //	XPutImage(Metadpy->dpy, tilePreparation, Infoclr->gc, tilePreparation2, 0, 0, 0, 0, td->fnt->wid, td->fnt->hgt);
-	XCopyArea(Metadpy->dpy, tilePreparation, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt, 0, 0);
+	XCopyArea(Metadpy->dpy, tilePreparation, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt, 0, 0);	// NOTE that tilePreparation2 holds the final tile, NOT tilePreparation! (Compare tile-caching!)
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
 #endif
 
