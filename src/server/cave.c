@@ -5458,7 +5458,9 @@ static void wild_display_map(int Ind, char mode) {
 
 		/* Send that line of info */
 #ifdef GRAPHICS_BG_MASK
-		Send_mini_map(Ind, y, sa, sc, 0, 0); //the worldmap doesn't use background graphics, just simple foreground-only symbols
+		Send_mini_map(Ind, y, sa, sc, sa, sc);
+		//the worldmap doesn't use background graphics, just simple foreground-only symbols;
+		//so just use sa+sc again in place of sa_back+sc_back
 #else
 		Send_mini_map(Ind, y, sa, sc);
 #endif
