@@ -340,6 +340,7 @@ struct _term_data {
 	HDC hdcTiles, hdcBgMask, hdcFgMask;
  #ifdef GRAPHICS_BG_MASK
 	HDC hdcBg2Mask;
+	HDC hdcTilePreparation2;
  #endif
 	HDC hdcTilePreparation;
 #endif
@@ -640,6 +641,10 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 		td->hdcFgMask = NULL;
 	}
  #ifdef GRAPHICS_BG_MASK
+	if (td->hdcTilePreparation2 != NULL) {
+		DeleteDC(td->hdcTilePreparation2);
+		td->hdcTilePreparation2 = NULL;
+	}
 	if (td->hdcBg2Mask != NULL) {
 		DeleteDC(td->hdcBg2Mask);
 		td->hdcBg2Mask = NULL;
@@ -653,6 +658,7 @@ static void recreateGraphicsObjects(term_data *td) {
 
 	HBITMAP hbmTilePreparation = CreateBitmap(2 * td->font_wid, td->font_hgt, 1, 32, NULL);
  #ifdef GRAPHICS_BG_MASK
+	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * td->font_wid, td->font_hgt, 1, 32, NULL);
 	HBITMAP hbmBgMask, hbmFgMask, hbmBg2Mask;
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, td->font_wid, td->font_hgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask);
  #else
@@ -662,7 +668,7 @@ static void recreateGraphicsObjects(term_data *td) {
 
 	if (hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL
  #ifdef GRAPHICS_BG_MASK
-	    || hbmBgMask == NULL
+	    || hbmBg2Mask == NULL || hbmTilePreparation2 == NULL
  #endif
 	    )
 		quit("Resizing tiles or masks failed.\n");
@@ -676,6 +682,7 @@ static void recreateGraphicsObjects(term_data *td) {
 	td->hdcBgMask = CreateCompatibleDC(hdc);
 	td->hdcFgMask = CreateCompatibleDC(hdc);
  #ifdef GRAPHICS_BG_MASK
+	td->hdcTilePreparation2 = CreateCompatibleDC(hdc);
 	td->hdcBg2Mask = CreateCompatibleDC(hdc);
  #endif
 
@@ -685,6 +692,7 @@ static void recreateGraphicsObjects(term_data *td) {
 	HBITMAP hbmOldBgMask = SelectObject(td->hdcBgMask, hbmBgMask);
 	HBITMAP hbmOldFgMask = SelectObject(td->hdcFgMask, hbmFgMask);
  #ifdef GRAPHICS_BG_MASK
+	HBITMAP hbmOldTilePreparation2 = SelectObject(td->hdcTilePreparation2, hbmTilePreparation2);
 	HBITMAP hbmOldBg2Mask = SelectObject(td->hdcBg2Mask, hbmBg2Mask);
  #endif
 
@@ -694,6 +702,7 @@ static void recreateGraphicsObjects(term_data *td) {
 	DeleteBitmap(hbmOldBgMask);
 	DeleteBitmap(hbmOldFgMask);
  #ifdef GRAPHICS_BG_MASK
+	DeleteBitmap(hbmOldTilePreparation2);
 	DeleteBitmap(hbmOldBg2Mask);
  #endif
 
@@ -702,7 +711,7 @@ static void recreateGraphicsObjects(term_data *td) {
 
 	if (td->hdcTiles == NULL || td->hdcBgMask == NULL || td->hdcFgMask == NULL || td->hdcTilePreparation == NULL
  #ifdef GRAPHICS_BG_MASK
-	    || td->hdcBg2Mask == NULL
+	    || td->hdcBg2Mask == NULL || td->hdcTilePreparation2 == NULL
  #endif
 	    )
 		quit("Creating device content handles for tiles, tile preparation or masks failed.\n");
@@ -2400,6 +2409,12 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	COLORREF bgColor, fgColor;
 	HDC hdc;
 
+	RECT rectBg;
+	RECT rectFg;
+	HBRUSH brushBg;
+	HBRUSH brushFg;
+
+
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
 	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
@@ -2423,6 +2438,8 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	hdc = myGetDC(td->w);
 
+
+	/* --- Foreground (main) graphical tile --- */
 
 	/* Background/Foreground color */
 	bgColor = RGB(0, 0, 0); //this 0-init not really needed?
@@ -2454,10 +2471,10 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
 
 	/* Paint background rectangle .*/
-	RECT rectBg = { 0, 0, td->font_wid, td->font_hgt };
-	RECT rectFg = { td->font_wid, 0, 2 * td->font_wid, td->font_hgt };
-	HBRUSH brushBg = CreateSolidBrush(bgColor);
-	HBRUSH brushFg = CreateSolidBrush(fgColor);
+	rectBg = (RECT){ 0, 0, td->font_wid, td->font_hgt }; //uhh, C99 ^^'
+	rectFg = (RECT){ td->font_wid, 0, 2 * td->font_wid, td->font_hgt };
+	brushBg = CreateSolidBrush(bgColor);
+	brushFg = CreateSolidBrush(fgColor);
 	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
 	FillRect(td->hdcTilePreparation, &rectFg, brushFg);
 	DeleteObject(brushBg);
@@ -2470,22 +2487,66 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1, y1, SRCAND);
 	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation, td->font_wid, 0, SRCPAINT);
 
-	/* Copy the picture from the tile preparation memory to the window */
+
+	/* --- Background (terrain) graphical tile --- */
+
+	/* Background/Foreground color */
+	bgColor = RGB(0, 0, 0); //this 0-init not really needed?
+	fgColor = RGB(0, 0, 0);
+
+ #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
+	fgColor = win_clr[a_back & 0x0F];
+  #else
+	fgColor = win_clr[a_back & 0x1F];
+	//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+	bgColor = win_clr_bg[a_back & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+  #endif
+ #else
+  #ifndef EXTENDED_BG_COLOURS
+	fgColor = win_clr[a_back & 0x1F];
+  #else
+	fgColor = win_clr[a_back & 0x3F];
+	//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x1F]); //verify correctness
+	bgColor = win_clr_bg[a_back & 0x3F]; //verify correctness
+  #endif
+ #endif
+
+	/* Note about the graphics tiles image (stored in hdcTiles):
+	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
+	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
+
+	x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
+	y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
+
+	/* Paint background rectangle .*/
+	rectBg = (RECT){ 0, 0, td->font_wid, td->font_hgt }; //uhh, C99 ^^'
+	rectFg = (RECT){ td->font_wid, 0, 2 * td->font_wid, td->font_hgt };
+	brushBg = CreateSolidBrush(bgColor);
+	brushFg = CreateSolidBrush(fgColor);
+	FillRect(td->hdcTilePreparation2, &rectBg, brushBg);
+	FillRect(td->hdcTilePreparation2, &rectFg, brushFg);
+	DeleteObject(brushBg);
+	DeleteObject(brushFg);
+
+
+	BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1, y1, SRCPAINT);
+
+	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation2, td->font_wid, 0, SRCPAINT);
+
+
+	/* --- Copy the picture from the tile preparation memory to the window --- */
 	BitBlt(hdc, x, y, td->font_wid, td->font_hgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
-
-
-	/* Copy the background graphical tile into preparation memory */
-
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
  #endif
 
-#else /* #ifdef USE_GRAPHICS */
-
+#else /* #ifdef USE_GRAPHICS -> no graphics available */
 	/* Just erase this grid */
 	return(Term_wipe_win(x, y, 1));
-
 #endif
 
 	/* Success */

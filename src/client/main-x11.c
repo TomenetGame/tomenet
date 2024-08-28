@@ -1174,7 +1174,7 @@ struct tile_cache_entry {
     char32_t c;
     byte a;
 #ifdef GRAPHICS_BG_MASK
-    Pixmap tilePreparation2; //todo: perform all operations on just 'tilePreparation' so this becomes superfluous
+    Pixmap tilePreparation2;
     char32_t c_back;
     byte a_back;
 #endif
@@ -1200,7 +1200,7 @@ struct term_data {
 	Pixmap fgmask;
 #ifdef GRAPHICS_BG_MASK
 	Pixmap bg2mask;
-	Pixmap tilePreparation2; //todo: perform all operations on just 'tilePreparation' so this becomes superfluous
+	Pixmap tilePreparation2;
 #endif
 	Pixmap tilePreparation;
 
