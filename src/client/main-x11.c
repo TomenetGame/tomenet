@@ -3288,14 +3288,14 @@ static term_data* term_idx_to_term_data(int term_idx) {
 static int term_data_to_term_idx(term_data *td) {
 	if (td == &screen) return(0);
 	if (td == &mirror) return(1);
-	if (td == &recall) return 2;
-	if (td == &choice) return 3;
-	if (td == &term_4) return 4;
-	if (td == &term_5) return 5;
-	if (td == &term_6) return 6;
-	if (td == &term_7) return 7;
-	if (td == &term_8) return 8;
-	if (td == &term_9) return 9;
+	if (td == &recall) return(2);
+	if (td == &choice) return(3);
+	if (td == &term_4) return(4);
+	if (td == &term_5) return(5);
+	if (td == &term_6) return(6);
+	if (td == &term_7) return(7);
+	if (td == &term_8) return(8);
+	if (td == &term_9) return(9);
 	return(-1);
 }
 
@@ -3918,15 +3918,15 @@ void resize_main_window_x11(int cols, int rows) {
 }
 
 bool ask_for_bigmap(void) {
-	return ask_for_bigmap_generic();
+	return(ask_for_bigmap_generic());
 }
 
 const char* get_font_name(int term_idx) {
 	term_data *td = term_idx_to_term_data(term_idx);
 
-	if (td->fnt) return td->fnt->name;
-	if (strlen(term_prefs[term_idx].font)) return term_prefs[term_idx].font;
-	return x11_terms_font_default[term_idx];
+	if (td->fnt) return(td->fnt->name);
+	if (strlen(term_prefs[term_idx].font)) return(term_prefs[term_idx].font);
+	return(x11_terms_font_default[term_idx]);
 }
 
 void set_font_name(int term_idx, char* fnt) {
