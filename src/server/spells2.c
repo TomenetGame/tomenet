@@ -10757,6 +10757,10 @@ void wrap_gift(int Ind, int item) {
 		o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
 		o_ptr->note = ow_ptr->note;
 		o_ptr->note_utag = ow_ptr->note_utag;
+		/* Remove silly 'on sale' inscription on gift wrapping */
+		if (o_ptr->note &&
+		    (streq(quark_str(o_ptr->note), "on sale") || streq(quark_str(o_ptr->note), "stolen")))
+			o_ptr->note = o_ptr->note_utag = 0;
 
 		/* All gift wrappings gone */
 		inven_item_increase(Ind, p_ptr->current_activation, -ow_ptr->number);
@@ -10796,11 +10800,13 @@ void wrap_gift(int Ind, int item) {
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	o_ptr->weight = o_ptr->weight * o_ptr->number + ow_ptr->weight; /* Potential stack will be shrunk to just 1 item in next line, and gift wrapping paper is added */
 	o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
-	/* Remove silly 'on sale' inscription on gift wrapping */
-	if (ow_ptr->note && streq(quark_str(ow_ptr->note), "on sale")) ow_ptr->note = 0;
 	/* Gift retains any inscription the gift wrapping originally had */
 	o_ptr->note = ow_ptr->note;
 	o_ptr->note_utag = ow_ptr->note_utag;
+	/* Remove silly 'on sale' inscription on gift wrapping */
+	if (o_ptr->note &&
+	    (streq(quark_str(o_ptr->note), "on sale") || streq(quark_str(o_ptr->note), "stolen")))
+		o_ptr->note = o_ptr->note_utag = 0;
 
 	/* One gift wrapping gone */
 	inven_item_increase(Ind, p_ptr->current_activation, -1);
