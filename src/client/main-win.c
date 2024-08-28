@@ -451,7 +451,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	DeleteDC(hdcMem);
 	DeleteDC(hdcMem2);
 
-	return hbmMask;
+	return(hbmMask);
 }
 
 /* Resize an bitmap with it's bg/fg masks.
@@ -617,7 +617,7 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 #ifdef GRAPHICS_BG_MASK
 	(*hbmBg2Mask_return) = hbmResBg2Mask;
 #endif
-	return hbmResTiles;
+	return(hbmResTiles);
 }
 
 static void releaseCreatedGraphicsObjects(term_data *td) {
@@ -1935,9 +1935,9 @@ static HDC myGetDC(HWND hWnd) {
 		/* Foreground color not set */
 		old_attr = -1;
 	}
-	return oldDC;
+	return(oldDC);
 #else
-	return GetDC(hWnd);
+	return(GetDC(hWnd));
 #endif
 }
 
@@ -2392,7 +2392,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
  #if 0 /* use fallback hook until 2mask routines are complete? */
-	return (Term_pict_win(x, y, a, c));
+	return(Term_pict_win(x, y, a, c));
  #else
 #ifdef USE_GRAPHICS
 	term_data *td;
@@ -2464,21 +2464,18 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	DeleteObject(brushFg);
 
 
-	//BitBlt(hdc, 0, 0, 2*9, 15, hdcTilePreparation, 0, 0, SRCCOPY);
-
 	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1, y1, SRCAND);
 	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1, y1, SRCPAINT);
-
-	//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
 
 	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1, y1, SRCAND);
 	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation, td->font_wid, 0, SRCPAINT);
 
-	//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
-	//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
-	//
 	/* Copy the picture from the tile preparation memory to the window */
 	BitBlt(hdc, x, y, td->font_wid, td->font_hgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+
+
+	/* Copy the background graphical tile into preparation memory */
+
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -2812,6 +2809,8 @@ static void init_windows(void) {
 		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
  #ifdef GRAPHICS_BG_MASK
 		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+ #else /* actually always create this mask, to change BG2 colours in a 2mask-ready tileset to just black, if we aren't running in 2mask mode! Ie backward compatibility. :) */
+		(void)CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
  #endif
 	}
 #endif
@@ -3492,7 +3491,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 
 	/* Oops */
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return(DefWindowProc(hWnd, uMsg, wParam, lParam));
 }
 
 
@@ -3685,7 +3684,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			break;
 	}
 
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return(DefWindowProc(hWnd, uMsg, wParam, lParam));
 }
 
 
@@ -4092,7 +4091,7 @@ static int cmd_get_number(char *str, int *number) {
 	/* Find the next space */
 	for (; str[i] != ' ' && str[i] != '\0'; i++);
 
-	return i;
+	return(i);
 }
 
 /*
@@ -4129,7 +4128,7 @@ static int cmd_get_string(char *str, char *dest, int n, bool quoted) {
 	if (len >= 0)
 		dest[len] = '\0';
 
-	return end + 1;
+	return(end + 1);
 }
 
 /* Turn off the num-lock key by toggling it if it's currently on. */
@@ -4535,13 +4534,13 @@ bool ask_for_bigmap(void) {
 		return(TRUE);
 	return(FALSE);
 #else
-	return ask_for_bigmap_generic();
+	return(ask_for_bigmap_generic());
 #endif
 }
 
 const char* get_font_name(int term_idx) {
 	if (data[term_idx].font_file) return(data[term_idx].font_file);
-	else return DEFAULT_FONTNAME;
+	else return(DEFAULT_FONTNAME);
 }
 void set_font_name(int term_idx, char* fnt) {
 	char fnt2[256], *fnt_ptr = fnt;
@@ -4554,7 +4553,7 @@ void term_toggle_visibility(int term_idx) {
 	data[term_idx].visible = !data[term_idx].visible;
 }
 bool term_get_visibility(int term_idx) {
-	return data[term_idx].visible;
+	return(data[term_idx].visible);
 }
 
 /* automatically store name+password to ini file if we're a new player? */
