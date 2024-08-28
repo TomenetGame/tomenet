@@ -10797,7 +10797,7 @@ void wrap_gift(int Ind, int item) {
 	o_ptr->weight = o_ptr->weight * o_ptr->number + ow_ptr->weight; /* Potential stack will be shrunk to just 1 item in next line, and gift wrapping paper is added */
 	o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
 	/* Remove silly 'on sale' inscription on gift wrapping */
-	if (ow_ptr->note && streq(quark_str(o_ptr->note), "on sale")) ow_ptr->note = 0;
+	if (ow_ptr->note && streq(quark_str(ow_ptr->note), "on sale")) ow_ptr->note = 0;
 	/* Gift retains any inscription the gift wrapping originally had */
 	o_ptr->note = ow_ptr->note;
 	o_ptr->note_utag = ow_ptr->note_utag;
