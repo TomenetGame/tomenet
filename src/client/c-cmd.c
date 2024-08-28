@@ -570,7 +570,7 @@ c_msg_format("cmd_map SEL - wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_off
 #endif
 
 		while (TRUE) {
-			/* Remember the grid below our grid-selection marker */
+			/* Remember the grid below our grid-selection marker -- NO! This can copy the marker itself accidentally, if done here on EVERY keypress! Todo: fix/move to correct pos. */
 			if (sel) {
 				minimap_selattr = Term->scr->a[minimap_sely][minimap_selx];
 				minimap_selchar = Term->scr->c[minimap_sely][minimap_selx];
