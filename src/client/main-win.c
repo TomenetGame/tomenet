@@ -2405,7 +2405,7 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  #else
 #ifdef USE_GRAPHICS
 	term_data *td;
-	int x1, y1;
+	int x1, y1, x1b, y1b;
 	COLORREF bgColor, fgColor;
 	HDC hdc;
 
@@ -2516,8 +2516,8 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
 	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
 
-	x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
-	y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
+	x1b = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
+	y1b = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
 
 	/* Paint background rectangle .*/
 	rectBg = (RECT){ 0, 0, td->font_wid, td->font_hgt }; //uhh, C99 ^^'
@@ -2530,15 +2530,21 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	DeleteObject(brushFg);
 
 
-	BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1, y1, SRCPAINT);
+	BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1b, y1b, SRCAND);
+	BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1b, y1b, SRCPAINT);
 
-	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1b, y1b, SRCAND);
 	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation2, td->font_wid, 0, SRCPAINT);
 
 
-	/* --- Copy the picture from the tile preparation memory to the window --- */
-	BitBlt(hdc, x, y, td->font_wid, td->font_hgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+	/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
+
+	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcBg2Mask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation, td->font_wid, 0, SRCPAINT);
+
+
+	/* --- Copy the picture from the (bg) tile preparation memory to the window --- */
+	BitBlt(hdc, x, y, td->font_wid, td->font_hgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
