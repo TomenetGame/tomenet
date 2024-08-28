@@ -7314,12 +7314,15 @@ int Send_char(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
 			char *unm_c_ptr_back;
 #endif
 
-			if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
-			else if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
+			/* Unmapping while using gfx can cause visual bg-colour glitch? todo: fix this mess */
+			if (connp2->use_graphics == UG_NONE) {
+				if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
+				else if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
 #ifdef GRAPHICS_BG_MASK
-			if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
-			else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
+				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
+				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
 #endif
+			}
 
 #ifdef GRAPHICS_BG_MASK
 			if (connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
@@ -7781,19 +7784,28 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			}
 
 			if (Ind2) {
-				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
-				   Maybe todo: also unmap attr? */
-				unm_c_idx = c;
-				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
-				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
-				else cu = c;
+				/* Unmapping while using gfx can cause visual bg-colour glitch? todo: fix this mess */
+				if (connp2->use_graphics == UG_NONE) {
+					/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+					   Maybe todo: also unmap attr? */
+					unm_c_idx = c;
+					if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
+					else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
+					else cu = c;
+#ifdef GRAPHICS_BG_MASK
+					unm_c_idx_back = c_back;
+					if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+					else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+					else cu_back = c_back;
+#endif
+				} else {
+					cu = c;
+#ifdef GRAPHICS_BG_MASK
+					cu_back = c_back;
+#endif
+				}
 
 #ifdef GRAPHICS_BG_MASK
-				unm_c_idx_back = c_back;
-				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
-				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
-				else cu_back = c_back;
-
 				if (connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
 					/* Transfer only the relevant bytes, according to client setup.*/
 					char *pcu_f = (char*)&cu, *pcu_b = (char*)&cu_back;
@@ -7952,19 +7964,26 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			}
 
 			if (Ind2) {
-				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
-				   Maybe todo: also unmap attr? */
-				unm_c_idx = c;
-				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
-				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
-				else cu = c;
-
+				/* Unmapping while using gfx can cause visual bg-colour glitch? todo: fix this mess */
+				if (connp2->use_graphics == UG_NONE) {
+					/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+					   Maybe todo: also unmap attr? */
+					unm_c_idx = c;
+					if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
+					else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
+					else cu = c;
 #ifdef GRAPHICS_BG_MASK
-				unm_c_idx_back = c_back;
-				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
-				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
-				else cu_back = c_back;
+					unm_c_idx_back = c_back;
+					if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+					else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) cu_back = (char32_t)*unm_c_ptr_back;
+					else cu_back = c_back;
 #endif
+				} else {
+					cu = c;
+#ifdef GRAPHICS_BG_MASK
+					cu_back = c_back;
+#endif
+				}
 
 				if (!is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
@@ -8114,16 +8133,19 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		c_back = p_ptr2->scr_info_back[y][x].c;
 		a_back = p_ptr2->scr_info_back[y][x].a;
 #endif
-		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
-		   Maybe todo: also unmap attr? */
-		unm_c_idx = c;
-		if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
-		else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
+		/* Unmapping while using gfx can cause visual bg-colour glitch? todo: fix this mess */
+		if (connp->use_graphics == UG_NONE) {
+			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+			   Maybe todo: also unmap attr? */
+			unm_c_idx = c;
+			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
+			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
 #ifdef GRAPHICS_BG_MASK
-		unm_c_idx_back = c_back;
-		if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c_back = (char32_t)*unm_c_ptr_back;
-		else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c_back = (char32_t)*unm_c_ptr_back;
+			unm_c_idx_back = c_back;
+			if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c_back = (char32_t)*unm_c_ptr_back;
+			else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c_back = (char32_t)*unm_c_ptr_back;
 #endif
+		}
 
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
@@ -8153,16 +8175,19 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			c1_back = p_ptr2->scr_info_back[y][x1].c;
 			a1_back = p_ptr2->scr_info_back[y][x1].a;
 #endif
-			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
-			   Maybe todo: also unmap attr? */
-			unm_c_idx = c1;
-			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
-			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+			/* Unmapping while using gfx can cause visual bg-colour glitch? todo: fix this mess */
+			if (connp->use_graphics == UG_NONE) {
+				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+				   Maybe todo: also unmap attr? */
+				unm_c_idx = c1;
+				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 #ifdef GRAPHICS_BG_MASK
-			unm_c_idx_back = c1_back;
-			if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
-			else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+				unm_c_idx_back = c1_back;
+				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
 #endif
+			}
 
 			while (c1 == c && a1 == a
 #ifdef GRAPHICS_BG_MASK
@@ -8179,16 +8204,20 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 				c1_back = p_ptr2->scr_info_back[y][x1].c;
 				a1_back = p_ptr2->scr_info_back[y][x1].a;
 #endif
-				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
-				   Maybe todo: also unmap attr? */
-				unm_c_idx = c1;
-				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
-				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+
+				/* Unmapping while using gfx can cause visual bg-colour glitch? todo: fix this mess */
+				if (connp->use_graphics == UG_NONE) {
+					/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+					   Maybe todo: also unmap attr? */
+					unm_c_idx = c1;
+					if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+					else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 #ifdef GRAPHICS_BG_MASK
-				unm_c_idx_back = c1_back;
-				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
-				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+					unm_c_idx_back = c1_back;
+					if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
+					else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx_back))) c1_back = (char32_t)*unm_c_ptr_back;
 #endif
+				}
 			}
 		}
 
