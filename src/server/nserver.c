@@ -8025,20 +8025,20 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 							/* Transfer only the relevant bytes, according to client setup.*/
 							char *pcu_f = (char*)&cu, *pcu_b = (char*)&cu_back;
 
-							switch (connp->Client_setup.char_transfer_bytes) {
+							switch (connp2->Client_setup.char_transfer_bytes) {
 							case 0:
 							case 1:
-								Packet_printf(&connp->c, "%c%c%c%c", pcu_f[0], a, pcu_b[0], a_back);
+								Packet_printf(&connp2->c, "%c%c%c%c", pcu_f[0], a, pcu_b[0], a_back);
 								break;
 							case 2:
-								Packet_printf(&connp->c, "%c%c%c%c%c%c", pcu_f[1], pcu_f[0], a, pcu_b[1], pcu_b[0], a_back);
+								Packet_printf(&connp2->c, "%c%c%c%c%c%c", pcu_f[1], pcu_f[0], a, pcu_b[1], pcu_b[0], a_back);
 								break;
 							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pcu_f[2], pcu_f[1], pcu_f[0], a, pcu_b[2], pcu_b[1], pcu_b[0], a_back);
+								Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c", pcu_f[2], pcu_f[1], pcu_f[0], a, pcu_b[2], pcu_b[1], pcu_b[0], a_back);
 								break;
 							case 4:
 							default:
-								Packet_printf(&connp->c, "%u%c%u%c", cu, a, cu_back, a_back);
+								Packet_printf(&connp2->c, "%u%c%u%c", cu, a, cu_back, a_back);
 							}
 						} else
 #endif
@@ -8696,20 +8696,20 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 							/* Transfer only the relevant bytes, according to client setup.*/
 							char *pc_f = (char*)&c, *pc_b = (char*)&c_back;
 
-							switch (connp->Client_setup.char_transfer_bytes) {
+							switch (connp2->Client_setup.char_transfer_bytes) {
 							case 0:
 							case 1:
-								Packet_printf(&connp->c, "%c%c%c%c", pc_f[0], a, pc_b[0], a_back);
+								Packet_printf(&connp2->c, "%c%c%c%c", pc_f[0], a, pc_b[0], a_back);
 								break;
 							case 2:
-								Packet_printf(&connp->c, "%c%c%c%c%c%c", pc_f[1], pc_f[0], a, pc_b[1], pc_b[0], a_back);
+								Packet_printf(&connp2->c, "%c%c%c%c%c%c", pc_f[1], pc_f[0], a, pc_b[1], pc_b[0], a_back);
 								break;
 							case 3:
-								Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], a, pc_b[2], pc_b[1], pc_b[0], a_back);
+								Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c", pc_f[2], pc_f[1], pc_f[0], a, pc_b[2], pc_b[1], pc_b[0], a_back);
 								break;
 							case 4:
 							default:
-								Packet_printf(&connp->c, "%u%c%u%c", c, a, c_back, a_back);
+								Packet_printf(&connp2->c, "%u%c%u%c", c, a, c_back, a_back);
 							}
 						} else
 #endif
