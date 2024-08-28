@@ -10696,7 +10696,7 @@ void wrap_gift(int Ind, int item) {
 	if (cursed_p(o_ptr)) {
 		msg_print(Ind, "Oops, the item accidentally ripped the gift wrapping."); //=p
 		/* One gift wrapping gone */
-		inven_item_increase(Ind, p_ptr->current_activation, -o_ptr->number);
+		inven_item_increase(Ind, p_ptr->current_activation, -1);
 		inven_item_describe(Ind, p_ptr->current_activation);
 		inven_item_optimize(Ind, p_ptr->current_activation);
 
@@ -10742,12 +10742,6 @@ void wrap_gift(int Ind, int item) {
 		s_printf("..success (EMPTY)\n");
 
 		forge = *o_ptr;
-
-		/* One gift wrapping gone */
-		inven_item_increase(Ind, p_ptr->current_activation, -o_ptr->number);
-		inven_item_describe(Ind, p_ptr->current_activation);
-		inven_item_optimize(Ind, p_ptr->current_activation);
-
 		o_ptr = &forge;
 
 		o_ptr->tval2 = o_ptr->tval;
@@ -10763,6 +10757,11 @@ void wrap_gift(int Ind, int item) {
 		o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
 		o_ptr->note = ow_ptr->note;
 		o_ptr->note_utag = ow_ptr->note_utag;
+
+		/* All gift wrappings gone */
+		inven_item_increase(Ind, p_ptr->current_activation, -ow_ptr->number);
+		inven_item_describe(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, p_ptr->current_activation);
 
 #ifdef USE_SOUND_2010
 		sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -10797,6 +10796,9 @@ void wrap_gift(int Ind, int item) {
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	o_ptr->weight = o_ptr->weight * o_ptr->number + ow_ptr->weight; /* Potential stack will be shrunk to just 1 item in next line, and gift wrapping paper is added */
 	o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+	/* Remove silly 'on sale' inscription on gift wrapping */
+	if (ow_ptr->note && streq(quark_str(o_ptr->note), "on sale")) ow_ptr->note = 0;
+	/* Gift retains any inscription the gift wrapping originally had */
 	o_ptr->note = ow_ptr->note;
 	o_ptr->note_utag = ow_ptr->note_utag;
 
