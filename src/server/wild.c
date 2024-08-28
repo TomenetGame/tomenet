@@ -3521,7 +3521,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 					zcave[zy][zx].feat = FEAT_DIRT;
 					zcave[zy][zx].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
 					/* .. and apply some widely-visible fire-lighting just to pique interest */
-					zcave[zy][zx].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
+					zcave[zy][zx].info |= CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
 				}
 				/* The mountain ring: External permanent shielding wall */
 				else if (i >= 2 && i <= 5) zcave[zy][zx].feat = FEAT_HIGH_MOUNTAIN;
@@ -3532,7 +3532,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		/* Secure the stair-case itself too */
 		zcave[y][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
 		/* .. and apply some widely-visible fire-lighting just to pique interest */
-		zcave[y][x].info = CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
+		zcave[y][x].info |= CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
 
 		/* Place construction site sign */
 		c_ptr = &zcave[y][x + 1];
