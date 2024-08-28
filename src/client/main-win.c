@@ -389,7 +389,9 @@ HBITMAP g_hbmBg2Mask = NULL;
 int graphics_tile_wid, graphics_tile_hgt;
 int graphics_image_tpr; /* Tiles per row. */
 
-/* Copied and repurposed from: http://winprog.org/tutorial/transparency.html */
+/* Copied and repurposed from: http://winprog.org/tutorial/transparency.html
+   NOTE: This function actually blackens (or whitens, if 'inverse') any recognized mask pixel in the _original_ image!
+         So while the mask is created, it is sort of 'cut out' of the original image, leaving blackness (whiteness) behind. */
 HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse) {
 	BITMAP bm;
 	COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
@@ -645,6 +647,7 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
  #endif
 }
 
+/* Called on term_data_link() (initial term creation+initialization) and on term_font_force() (any font change): */
 static void recreateGraphicsObjects(term_data *td) {
 	releaseCreatedGraphicsObjects(td);
 
@@ -2442,6 +2445,10 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	bgColor = win_clr_bg[a & 0x3F]; //verify correctness
   #endif
  #endif
+
+	/* Note about the graphics tiles image (stored in hdcTiles):
+	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
+	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
 
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
