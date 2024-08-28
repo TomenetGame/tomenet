@@ -2727,8 +2727,8 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
    NOTE: p_ptr is actually used by object_char() and object_attr() macros! */
 void get_object_visual(char32_t *cp, byte *ap, object_type *o_ptr, player_type *p_ptr) {
 	/* Normal char */
-	(*cp) = object_char(o_ptr);
 	if (p_ptr->ascii_items) (*cp) = k_info[o_ptr->k_idx].d_char;
+	else (*cp) = object_char(o_ptr);
 
 	/* Normal attr */
 	(*ap) = object_attr(o_ptr);
@@ -5031,6 +5031,8 @@ void display_map(int Ind, int *cy, int *cx) {
 	bool old_floor_lighting;
 	bool old_wall_lighting;
 
+	bool p_af = p_ptr->ascii_feats, p_ai = p_ptr->ascii_items, p_am = p_ptr->ascii_monsters, p_au = p_ptr->ascii_uniques; //map hack
+
 
 	/* Save lighting effects */
 	old_floor_lighting = p_ptr->floor_lighting;
@@ -5053,6 +5055,12 @@ void display_map(int Ind, int *cy, int *cx) {
 	/* No priority */
 	memset(mp, 0, sizeof(mp));
 
+	/* Problem with custom mappings: priority() uses basic mappings, ie f_info[feat].f_char.
+	   Custom mappings are p_ptr->f_char[feat] though, which can be completely different!
+	   So we need to fall back to standard ASCII mapping from plain f_info[] for the map for priority() to work.
+	   Alternatively, we could use a working unmap function to unmap custom mappings to original feats, the current one isn't good. */
+	p_ptr->ascii_feats = p_ptr->ascii_items = p_ptr->ascii_monsters = p_ptr->ascii_uniques = TRUE; //hax
+
 	/* Fill in the map */
 	for (i = 0; i < p_ptr->cur_wid; ++i) {
 		for (j = 0; j < p_ptr->cur_hgt; ++j) {
@@ -5066,6 +5074,7 @@ void display_map(int Ind, int *cy, int *cx) {
 #else
 			map_info(Ind, j, i, &ta, &tc, FALSE);
 #endif
+
 
 			/* Extract the priority of that attr/char */
 			tp = priority(ta, tc);
@@ -5110,6 +5119,8 @@ void display_map(int Ind, int *cy, int *cx) {
 		}
 	}
 
+	/* Unhack */
+	p_ptr->ascii_feats = p_af; p_ptr->ascii_items = p_ai; p_ptr->ascii_monsters = p_am; p_ptr->ascii_uniques = p_au;
 
 	/* Corners */
 	x = MAP_WID + 1;
