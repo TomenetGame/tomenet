@@ -929,6 +929,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				    strcmp(quark_str(o_ptr->note), "average") &&
 				    strcmp(quark_str(o_ptr->note), "good") &&
 				    strcmp(quark_str(o_ptr->note), "worthless") &&
+				    strcmp(quark_str(o_ptr->note), "stolen") &&
+				    strcmp(quark_str(o_ptr->note), "handmade") &&
 				    strcmp(quark_str(o_ptr->note), "on sale")
 				    ) {
 					if (j != h) continue; /* skip inscribed items when mass-tagging */

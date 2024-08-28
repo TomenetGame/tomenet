@@ -1969,7 +1969,7 @@ They all start with a slash '/' hence they're called slash commands:
 
             If you specify '*' for all slots, it will skip all items that
             already have an inscription except for trivial pseudo- or 'on sale'
-            inscriptions.
+            or 'stolen' or 'handmade' inscriptions.
 
             If you want to specify a custom inscription instead of using '!k'
             you have to either specify an inventory slot (a-w) or write a '*'
