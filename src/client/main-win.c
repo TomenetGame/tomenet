@@ -2306,7 +2306,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 }
 #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
- #if 1 /* use fallback hook until 2mask routines are complete? */
+ #if 0 /* use fallback hook until 2mask routines are complete? */
 	return (Term_pict_win(x, y, a, c));
  #else
 #ifdef USE_GRAPHICS
@@ -2318,6 +2318,7 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	} else flick_global_x = 0;
 
 	a = term2attr(a);
+	a_back = term2attr(a_back);
 
 	COLORREF bgColor, fgColor;
 	bgColor = RGB(0, 0, 0);
@@ -2325,6 +2326,7 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
  #ifdef PALANIM_SWAP
 	if (a < CLIENT_PALETTE_SIZE) a = (a + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
+	if (a_back < CLIENT_PALETTE_SIZE) a_back = (a_back + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
  #endif
 
 	/* Background/Foreground color */
