@@ -10851,6 +10851,15 @@ void unwrap_gift(int Ind, int item) {
 	inven_item_increase(Ind, item, -1);
 	//inven_item_describe(Ind, item); -- pft, we know it's no longer gift-wrapped
 	inven_item_optimize(Ind, item);
+
+	/* Handle empty gifts */
+	if (!forge.number2) {
+		msg_print(Ind, " it was empty.");
+		p_ptr->window |= PW_INVEN;
+		handle_stuff(Ind);
+		return;
+	}
+
 	o_ptr = &forge;
 
 	o_ptr->weight = (o_ptr->weight - k_info[lookup_kind(TV_JUNK, o_ptr->sval)].weight) / o_ptr->number2; /* Gift wrapping paper is removed, stack of items may appear instead of just one item. */
@@ -10867,13 +10876,6 @@ void unwrap_gift(int Ind, int item) {
 	o_ptr->note2 = 0;
 	o_ptr->note2_utag = 0;
 
-	/* Handle empty gifts */
-	if (!forge.number) {
-		msg_print(Ind, " it was empty.");
-		p_ptr->window |= PW_INVEN;
-		handle_stuff(Ind);
-		return;
-	}
 	/* Overwrite 'item' to reuse it, as we don't need it anymore */
 	item = inven_carry(Ind, &forge);
 	if (item >= 0) {
