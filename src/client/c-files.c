@@ -2582,7 +2582,8 @@ void check_guide_checksums(bool forced) {
 #endif
 	fp = fopen("TomeNET-Guide.sha256.local", "r");
 	if (fp) {
-		fgets(buf2, MAX_CHARS_WIDE, fp);
+		fgets(buf2, MAX_CHARS_WIDE - 1, fp);
+		buf[MAX_CHARS_WIDE - 1] = 0; //paranoia
 		fclose(fp);
 	}
 	remove("TomeNET-Guide.sha256.local");
@@ -2594,7 +2595,8 @@ void check_guide_checksums(bool forced) {
 #endif
 	fp = fopen("TomeNET-Guide.sha256", "r");
 	if (fp) {
-		fgets(buf, MAX_CHARS_WIDE, fp);
+		fgets(buf, MAX_CHARS_WIDE - 1, fp);
+		buf[MAX_CHARS_WIDE - 1] = 0; //paranoia
 		fclose(fp);
 	}
 	remove("TomeNET-Guide.sha256");
