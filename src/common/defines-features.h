@@ -553,7 +553,8 @@
  #define GFXMASK_BG2_G	16
  #define GFXMASK_BG2_B	10
 
- #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking */
+ #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
+ /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
  #ifdef GRAPHICS_BG_MASK
   /* Constants for use_graphics client setting */
   #define UG_NONE	0

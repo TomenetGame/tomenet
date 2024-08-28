@@ -5227,7 +5227,7 @@ void do_weather(bool no_weather) {
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				if (weather_element_type[i] == 1) {
 					/* display raindrop */
-#ifdef GRAPHICS_BG_MASK
+#ifdef GRAPHICS_BG_MASK /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
 					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
  #if 0
