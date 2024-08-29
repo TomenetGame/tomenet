@@ -2872,13 +2872,24 @@ static void init_windows(void) {
 		}
 
 		/* Create masks. */
-		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
-		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
  #ifdef GRAPHICS_BG_MASK
-		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
- #else /* actually always create this mask, to change BG2 colours in a 2mask-ready tileset to just black, if we aren't running in 2mask mode! Ie backward compatibility. :) */
-		(void)CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+		if (use_graphics == UG_2MASK) {
+			/* BgMask processing must be first, as it specifically recognizes all "black" pixels
+			   and all CreateBBM calls actually create "additional" black pixels. */
+			g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
+			g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
+			g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+		} else
  #endif
+		/* actually always process the bg2mask even if not running 2mask mode,
+		   just to change BG2 colours in a 2mask-ready tileset to just black. This ensures tileset "backward compatibility". */
+		{
+			/* Note the order: First, we set the unused bg2mask to black... */
+			(void)CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+			/* so it instead becomes part of the bgmask now. */
+			g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
+			g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
+		}
 	}
 #endif
 
