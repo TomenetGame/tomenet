@@ -575,6 +575,7 @@ struct player_type
 	s16b stat_top[6];	/* Maximal modified stats */
 
 	s16b stat_add[6];	/* Modifiers to stat values */
+	s16b stat_tmp[6];	/* Temporary stat buffs - added just to implement visual indicator (colourise the value in client) */
 	s16b stat_ind[6];	/* Indexes into stat tables */
 
 	char mimic_immunity;	/* Debug it resetting to zero (does it?) */
