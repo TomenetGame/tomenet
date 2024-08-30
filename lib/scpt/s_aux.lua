@@ -571,12 +571,12 @@ function print_spell_desc_chat(s)
 	local index, desc
 	local msg = ""
 
-	if type(__spell_desc[s]) == "string" then Send_msg("\255B"..__spell_desc[s])
+	if type(__spell_desc[s]) == "string" then Send_msg("\255W"..__spell_desc[s])
 	else
 		for index, desc in __spell_desc[s] do
 			msg = msg..desc.." "
 		end
-		Send_msg("\255B"..msg)
+		Send_msg("\255W"..msg)
 	end
 	if check_affect(s, "piety", FALSE) then
 		Send_msg("\255wIt uses piety to cast.")
