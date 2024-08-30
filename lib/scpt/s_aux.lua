@@ -542,6 +542,54 @@ function print_spell_desc(s, y)
 	return y
 end
 
+
+-- paste-spells-to-chat special functions (client side only) --
+-- Note: inven_slot is just needed for the wield-quirk boni calculations
+function print_spell_chat(s, inven_slot)
+	local index, desc
+	local i = 0
+
+	local lvl = get_level(i, s, 50, -50)
+	local xx = nil
+	local sch_str = ""
+
+	for index, sch in __spell_school[s] do
+		if xx then
+			sch_str = sch_str.."/"..school(sch).name
+		else
+			xx = 1
+			sch_str = sch_str..school(sch).name
+		end
+	end
+	sch_str = sch_str_lim(sch_str)
+
+	--format("   %-22s%-14s Level Cost Fail Info", "Name", "School")
+	--c_msg_print(format("\255G%-22s%-16s %3d %4s %3d%s %s", spell(s).name, sch_str, lvl, get_mana(i, s, inven_slot), spell_chance(i, s, inven_slot), "%", __spell_info[s]()))
+	Send_msg(format("\255G%-22s%-16s %3d %4s %3d%s %s", spell(s).name, sch_str, lvl, get_mana(i, s, inven_slot), spell_chance(i, s, inven_slot), "%", __spell_info[s]()))
+end
+function print_spell_desc_chat(s)
+	local index, desc
+	local msg = ""
+
+	if type(__spell_desc[s]) == "string" then Send_msg("\255B"..__spell_desc[s])
+	else
+		for index, desc in __spell_desc[s] do
+			msg = msg..desc.." "
+		end
+		Send_msg("\255B"..msg)
+	end
+	if check_affect(s, "piety", FALSE) then
+		Send_msg("\255wIt uses piety to cast.")
+	end
+	if not check_affect(s, "blind") then
+		Send_msg("\255oIt is castable even while blinded.")
+	end
+	if not check_affect(s, "confusion") then
+		Send_msg("\255oIt is castable even while confused.")
+	end
+end
+
+
 function book_spells_num2(inven_slot, sval)
 	local size, index, sch, book
 

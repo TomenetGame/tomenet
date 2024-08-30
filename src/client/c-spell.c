@@ -1312,6 +1312,16 @@ void browse_school_spell(int item, int book, int pval) {
 		/* Restore the screen */
 		/* Term_load(); */
 
+		/* Specialty: We use 'ask' aka upper-case spell letter here to paste the spell entry to chat. */
+		if (ask) {
+			/* Display a list of spells */
+			sprintf(out_val, "print_spell_chat(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, item);
+			exec_lua(0, out_val);
+			sprintf(out_val, "print_spell_desc_chat(spell_x2(%d, %d, %d, %d))", item, sval, pval, i);
+			exec_lua(0, out_val);
+			continue;
+		}
+
 		/* Display a list of spells */
 		sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
 		where = exec_lua(0, out_val);
