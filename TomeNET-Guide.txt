@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 28. August 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 30. August 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -246,6 +246,10 @@ More information about character and account timeout at (3.12).
 
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET (Windows/Linux/OSX)'.
+
+If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
+(compare problem 54 in the troubleshooting section (9.8)) or you might not be
+able to use most keys aside from arrow keys for basic movement.
 
 -Get the latest client from the project's main official site www.tomenet.eu.
  or from  https://muuttuja.org/tomenet/ (Mikael's site, which features a
@@ -553,6 +557,11 @@ page. It will colour prices and XP alternatingly in 3-digit columns.
 (0.2) Command reference & keysets
 ---------------------------------
 Can be different depending on OS / configuration.
+
+If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
+(compare problem 54 in the troubleshooting section (9.8)) or you might not be
+able to use most keys aside from arrow keys for basic movement.
+
 This chapter consists of three subsections:
 Command keys, Text editing keys, Slash commands.
 
@@ -3661,10 +3670,19 @@ your OS (especially Windows).
 If you choose an archive file instead, extract it to a new directory and make
 sure the pathnames are preserved.
 Then just run..
+
 Windows:        'TomeNET.exe' (or double-click the desktop TomeNET icon,
                                provided you used the installer download.)
+
+                If you use a foreign IME setting, eg korean or japanese, switch
+                it to US-EN IME (compare problem 54 in the troubleshooting
+                section (9.8)) or you might not be able to use most keys aside
+                from arrow keys for basic movement.
+
 Linux:          the 'tomenet' binary.
+
 OS X:           'TomeNET.command' (which prepares and runs 'tomenet'.)
+
 
 Updating via reinstallation:
 ----------------------------
@@ -3692,6 +3710,7 @@ If you install a TomeNET version that comes with sound or music pack over an
 existing installation that doesn't have one of these, you will end up with
 an audio-wise "upgraded" installation that now features sound and/or music
 as it should (depending on what you installed).
+
 
 Updating via the TomeNET-Updater:
 ---------------------------------
@@ -3775,6 +3794,10 @@ system but was created purely on Linux.
 If you used the ZIP archive instead of the installer, 7-zip is recommended for
 extracting it. It's a free and open source zip-tool of outstanding performance
 that works on all platforms. Grab it from https://www.7-zip.org/ .
+
+If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
+(compare problem 54 in the troubleshooting section (9.8)) or you might not be
+able to use most keys aside from arrow keys for basic movement.
 
 There is also a manual in your TomeNET folder, the file is called
 "TomeNET-Guide.txt". Double-click to read it. It is recommended to not open it
@@ -4502,6 +4525,10 @@ and if you do so then your Steam status will show that you are playing TomeNET!
 
 (2.4) Starting TomeNET and getting to play on an internet server
 ----------------------------------------------------------------
+If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
+(compare problem 54 in the troubleshooting section (9.8)) or you might not be
+able to use most keys aside from arrow keys for basic movement.
+
 If you used the installer you will have a TomeNET icon on your desktop to
 start the game (and another icon for the TomeNET Updater).
 
@@ -27011,6 +27038,10 @@ PROBLEM 54: I cannot select a server from the meta server list, it seems my key
             presses get ignored.
 Solution:   If you are using a non-english keyboard layout with asian or
             cyrillic letters, switch it to english layout.
+            Usually it's an IME (Microsoft Input Method Editor) setting. Eg if
+            you had set it to korean, you might only be able to use arrow keys
+            in the game, but not keys like ":" to chat or "?" for help. Switch
+            it to for example EN-US IME (US English) and you should be fine.
 
 PROBLEM 55: Editing config files of all kinds (ini/prf/opt/ins..) doesn't seem
             to have any effect.
