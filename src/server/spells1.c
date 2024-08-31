@@ -164,14 +164,16 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 			cave_type **zcave;
 
 			if (!(zcave = getcave(wpos))) return(TRUE); //paranoia
-			if (zcave[y][x].feat == FEAT_ICE_WALL) {
-				if (!rand_int(3)) {
-					if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
+			if (!(f_info[zcave[y][x].feat].flags2 & FF2_NO_TFORM) && !(zcave[y][x].info & CAVE_NO_TFORM) && allow_terraforming(wpos, FEAT_NONE)) {
+				if (zcave[y][x].feat == FEAT_ICE_WALL) {
+					if (!rand_int(3)) {
+						if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
+						cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+					}
+				} else if (zcave[y][x].feat == FEAT_ICE) {
+					if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice melts.");
 					cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 				}
-			} else if (zcave[y][x].feat == FEAT_ICE) {
-				if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice melts.");
-				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 			}
 		}
 #if 0 /* in traps they deal blind, why conf? */

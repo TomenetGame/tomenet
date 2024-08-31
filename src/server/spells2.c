@@ -10328,8 +10328,9 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 		}
 	//}
 
-	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
-	    (c_ptr->info & CAVE_PROT)) {
+	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT) ||
+	    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM) // allow_terraforming(wpos, FEAT_NONE) ||
+	    ) {
 		msg_print(Ind, "\377yYou cannot arm charges while on this special floor.");
 		return(FALSE);
 	}
@@ -10393,6 +10394,11 @@ void arm_charge(int Ind, int item, int dir) {
 	/* Take half a turn maybe? No idea */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_CALMNESS, 35))) return;
+
+	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) { // || !allow_terraforming(wpos, FEAT_NONE)) {
+		msg_print(Ind, "\377yYou cannot set a charge here.");
+		return;
+	}
 
 	/* Hack: We just abuse monster traps for charges too and place a montrap/rune-like glyph on the floor.. */
 	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) {
@@ -10575,6 +10581,7 @@ void detonate_charge(int o_idx) {
 				if (magik(40)) continue; /* Scattered rubble */
 				c_ptr = &zcave[y2][x2];
 				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
+				if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;// || !allow_terraforming(wpos, FEAT_NONE))
 				if (!cave_clean_bold(zcave, y2, x2) || c_ptr->special
 				    || c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
 					continue;
@@ -10640,6 +10647,7 @@ void detonate_charge(int o_idx) {
 				if (!rand_int(2)) continue; /* Somewhat irregular course, a 'vein' */
 				c_ptr = &zcave[y2][x2];
 				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
+				if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;// || !allow_terraforming(wpos, FEAT_NONE))
 				if (!cave_clean_bold(zcave, y2, x2) || c_ptr->special
 				    || c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
 					continue;

@@ -90,11 +90,17 @@ bool warding_rune(int Ind, byte typ, int dam, byte rad) {
 	cave_type *c_ptr = &zcave[y][x];
 	struct c_special *cs_ptr;
 
+	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) {
+		msg_print(Ind, "You cannot place a glyph here.");
+		return(FALSE);
+	}
+
 	/* Allocate memory for a new rune */
 	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE))) return(FALSE);
 
 	/* Preserve the old feature */
 	cs_ptr->sc.rune.feat = c_ptr->feat;
+
 
 	/* Try to place a rune */
 	if (!cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_RUNE)) {
@@ -129,6 +135,7 @@ bool warding_rune_break(int m_idx) {
 
 
 	if (!zcave || !cs_ptr) return(FALSE);
+	// hack for special evenst - eternal runes? ^^'	(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)
 
 	/* Restore the feature */
 	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);

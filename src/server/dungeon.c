@@ -6303,8 +6303,10 @@ static bool process_player_end_aux(int Ind) {
 
 			if (zcave) {
 				cave_type *c_ptr = &zcave[p_ptr->steamblast_y][p_ptr->steamblast_x];
+
 				/* Closed door, locked doors, jammed doors -- works 100% for now */
 				if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
+				    // && !(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)
 					cave_set_feat_live(&p_ptr->wpos, p_ptr->steamblast_y, p_ptr->steamblast_x, FEAT_BROKEN);
 				}
 			}

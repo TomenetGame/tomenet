@@ -10530,6 +10530,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			    c_ptr->feat == FEAT_BUSH)))
 			    /* only if the feat is legal to remove (ie wallish) */
 			    && cave_dig_wall_grid(c_ptr)
+			    && !(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)
 			    /* stop monsters from terraforming towns too.. */
 			    && !istownarea(wpos, MAX_TOWNAREA)) {
 #ifdef OLD_MONSTER_LORE
@@ -10572,6 +10573,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		    !((r_ptr->flags2 & RF2_KILL_WALL) &&
 		     (r_ptr->flags2 & RF2_PASS_WALL) &&
 		     !rand_int(100)))
+		    || (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)
 		    || (f_info[c_ptr->feat].flags2 & FF2_BOUNDARY)
 		    || (c_ptr->feat == FEAT_PERM_CLEAR)
 		    || (c_ptr->feat == FEAT_HOME)
