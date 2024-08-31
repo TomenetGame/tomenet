@@ -590,14 +590,15 @@ static void place_rubble(struct worldpos *wpos, int y, int x) {
 		/* place another rubble in the opposite dir */
 		x = x + ddx_cyc[ddi_cyc[dir]];
 		y = y + ddy_cyc[ddi_cyc[dir]];
+
 		/* check that potential new rubble grid also passes the hallway test,
 		   and therefore is located at the opposite wall of our hallway */
-		if (ddi_cyc[dir] == along_hallway(zcave, x, y)) {
-			/* double check that it's *clean* floor */
-			if (cave_naked_bold(zcave, y, x)) {
+		if (ddi_cyc[dir] == along_hallway(zcave, x, y) &&
+		    /* double check that it's *clean* floor */
+		    cave_naked_bold(zcave, y, x) &&
+		    !(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)) {
 				/* place a second rubble pile */
 				zcave[y][x].feat = FEAT_RUBBLE;
-			}
 		}
 	}
 }
@@ -784,10 +785,12 @@ bool place_between_targetted(struct worldpos *wpos, int y, int x, int ty, int tx
 	/* No between-gate over traps/house doors etc */
 	c_ptr = &zcave[y][x];
 	if (c_ptr->special) return(FALSE);
+	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)) return(FALSE);
 
 	/* Access the target grid */
 	c1_ptr = &zcave[ty][tx];
 	if (c1_ptr->special) return(FALSE);
+	if ((f_info[c1_ptr->feat].flags2 & FF2_NO_TFORM) && !(c1_ptr->info & CAVE_NO_TFORM)) return(FALSE);
 
 	if (!(cs_ptr = AddCS(c_ptr, CS_BETWEEN))) return(FALSE);
 	cave_set_feat(wpos, y, x, FEAT_BETWEEN);
@@ -1159,6 +1162,8 @@ sptr++;
 				/* Require "naked" floor grid */
 				if (!cave_naked_bold(zcave, y, x)) continue;
 
+				if ((f_info[zcave[y][x].feat].flags2 & FF2_NO_TFORM) || (zcave[y][x].info & CAVE_NO_TFORM)) continue;
+
 				/* No stairs that lead into nests/pits */
 				if (zcave[y][x].info & CAVE_NEST_PIT) continue;
 
@@ -1289,6 +1294,8 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 
 			/* Require "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) continue;
+
+			if ((f_info[zcave[y][x].feat].flags2 & FF2_NO_TFORM) || (zcave[y][x].info & CAVE_NO_TFORM)) continue;
 
 			/* Hack -- avoid doors */
 			if (typ != ALLOC_TYP_TRAP &&
@@ -9415,6 +9422,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 					y = 1 + rand_int(dun->l_ptr->hgt - 2);
 					x = 1 + rand_int(dun->l_ptr->wid - 2);
 
+					if ((f_info[zcave[y][x].feat].flags2 & FF2_NO_TFORM) || (zcave[y][x].info & CAVE_NO_TFORM)) continue;
 					/* Require "naked" floor grid */
 					if (!cave_naked_bold(zcave, y, x)) continue;
 

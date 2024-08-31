@@ -257,38 +257,37 @@ void do_autokinesis_to(int Ind, int dis) {
 void grow_trees(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 	int a, i, j;
+	cave_type **zcave = getcave(&p_ptr->wpos);
 
-	if (!allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
+	if (!zcave || !allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
 #ifdef USE_SOUND_2010
 	sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	for (a = 0; a < rad * rad + 11; a++) {
-		cave_type **zcave = getcave(&p_ptr->wpos);
-
 		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
 		j = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
 
 		if (!in_bounds(p_ptr->py + j, p_ptr->px + i)) continue;
 		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
 
-		if (cave_naked_bold(zcave, p_ptr->py + j, p_ptr->px + i) &&
-		    (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
-		{
-			cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50) ? FEAT_TREE : FEAT_BUSH);
-#if 1
-			/* Redraw - the trees might block view and cause wall shading etc! */
-			for (i = 1; i <= NumPlayers; i++) {
-				/* If he's not playing, skip him */
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				/* If he's not here, skip him */
-				if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+		if (!cave_naked_bold(zcave, p_ptr->py + j, p_ptr->px + i) ||
+		    (f_info[zcave[p_ptr->py + j][p_ptr->px + i].feat].flags2 & FF2_NO_TFORM) ||
+		    (zcave[p_ptr->py + j][p_ptr->px + i].info & CAVE_NO_TFORM)) continue;
 
-				Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
-			}
-#endif
+		cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50) ? FEAT_TREE : FEAT_BUSH);
+#if 1
+		/* Redraw - the trees might block view and cause wall shading etc! */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* If he's not playing, skip him */
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			/* If he's not here, skip him */
+			if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+
+			Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
 		}
+#endif
 	}
 }
 
@@ -795,9 +794,10 @@ void warding_glyph(int Ind) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
-	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH) && !is_admin(p_ptr)) return;
 
-	if (!cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH))
+	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH) && !is_admin(p_ptr)) return;
+	if ((f_info[zcave[p_ptr->py][p_ptr->px].feat].flags2 & FF2_NO_TFORM) || (zcave[p_ptr->py][p_ptr->px].info & CAVE_NO_TFORM) ||
+	    !cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH))
 		msg_print(Ind, "\377yThe glyph fails to get placed here!");
 }
 
@@ -3502,8 +3502,10 @@ void stair_creation(int Ind) {
 	/* Access the player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	/* XXX XXX XXX */
-	if (!cave_valid_bold(zcave, p_ptr->py, p_ptr->px)) {
+	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) {
+		msg_print(Ind, "The floor resists the spell.");
+		return;
+	} else if (!cave_valid_bold(zcave, p_ptr->py, p_ptr->px)) {
 		msg_print(Ind, "The object resists the spell.");
 		return;
 	}
@@ -5990,6 +5992,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			/* Delete the monster (if any) */
 			if (c_ptr->m_idx > 0) {
 				monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
+
 				if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x, TRUE);
 				else continue;
 			}
@@ -6476,7 +6479,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 			/* Access the cave grid */
 			c_ptr = &zcave[yy][xx];
 
-			/* Paranoia -- never affect player */
+			/* Paranoia -- never entomb player */
 			if (c_ptr->m_idx < 0) continue;
 
 			/* Destroy location (if valid) */
@@ -6514,7 +6517,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 	}
 }
 
-/* Wipe everything */
+/* Wipe everything -- admin terraform function, does not happen in normal gameplay. */
 void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 	int		yy, xx, dy, dx;
 	cave_type	*c_ptr;
@@ -6555,6 +6558,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 			/* Delete monsters */
 			if (c_ptr->m_idx > 0) {
 				monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
+
 				if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, yy, xx, TRUE);
 				else continue;
 			}

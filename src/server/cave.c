@@ -1729,6 +1729,8 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 	/*if (cave_perma_grid(c_ptr)) return(FALSE); */
 	if (cave_perma_bold(zcave, y, x)) return(FALSE);
 
+	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) return(FALSE);
+
 	/* Check objects */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 		object_type *o_ptr;
@@ -9614,6 +9616,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_BEACON:
 	case FEAT_CYCLIC_MORE:
 	case FEAT_CYCLIC_LESS:
+	case FEAT_HOME_OPEN: /* <- has FF1_FLOOR, hence... */
 		break;
 
 	/* forgot any? just paranoia */

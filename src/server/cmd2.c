@@ -3932,6 +3932,20 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		return;
 	}
 
+	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) {
+		msg_print(Ind, "This feature seems to be too solid.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+#ifdef EQUIPPABLE_DIGGERS
+		if (swapped) {
+			/* Unhack */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+		}
+#endif
+		return;
+	}
+
 	/* A monster is in the way */
 	if (c_ptr->m_idx > 0) {
 		/* Take a turn */

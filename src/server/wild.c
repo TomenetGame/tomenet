@@ -3519,7 +3519,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 				/* The innermost floor ring: Use a feat that prevents monster spawn/landing */
 				if (i == 1) {
 					zcave[zy][zx].feat = FEAT_DIRT;
-					zcave[zy][zx].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+					zcave[zy][zx].info |= CAVE_NO_PROB | CAVE_NO_MONSTER | CAVE_NO_TFORM;
 					/* .. and apply some widely-visible fire-lighting just to pique interest */
 					zcave[zy][zx].info |= CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
 				}
@@ -3530,7 +3530,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 			}
 		}
 		/* Secure the stair-case itself too */
-		zcave[y][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+		zcave[y][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER | CAVE_NO_TFORM;
 		/* .. and apply some widely-visible fire-lighting just to pique interest */
 		zcave[y][x].info |= CAVE_GLOW | CAVE_LITE | CAVE_GLOW_HACK_LAMP | CAVE_WIDE_LITE;
 
@@ -3628,6 +3628,8 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 			}
 
 			zcave[zy][zx].feat = feat_ambient;
+			/* Protect any non-floor we place from getting terraformed away */
+			if (!(f_info[feat_ambient].flags1 & FF1_FLOOR)) zcave[zy][zx].info |= CAVE_NO_TFORM;
 			rigged_rng++;
 		}
 	}
@@ -3664,6 +3666,8 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 				continue;
 
 			zcave[zy][zx].feat = feat_ambient;
+			/* Protect any non-floor we place from getting terraformed away */
+			if (!(f_info[feat_ambient].flags1 & FF1_FLOOR)) zcave[zy][zx].info |= CAVE_NO_TFORM;
 
 #if 1 /* additionally extend the ambient feats slightly, into the 2nd ring, at random */
  #if 1
@@ -3693,6 +3697,8 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 				continue;
 
 			zcave[zy][zx].feat = feat_ambient2;
+			/* Protect any non-floor we place from getting terraformed away */
+			if (!(f_info[feat_ambient2].flags1 & FF1_FLOOR)) zcave[zy][zx].info |= CAVE_NO_TFORM;
 #endif
 		}
 

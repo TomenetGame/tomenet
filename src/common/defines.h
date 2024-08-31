@@ -4683,6 +4683,7 @@
 #define CAVE_WIDE_LITE		0x00800000U	/* Behaves regarding lighting as if it was always visible to the player (so a light shimmer can be seen from afar w/o LoS) */
 
 #define CAVE_ENCASED		0x01000000U	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
+#define CAVE_NO_TFORM		0x02000000U	/* This grid cannot be terraformed in any way (including destruction/earthquake etc). */
 
 /*
  * Special cave grid flags2 -- note that they must never all be set (0xFFFFFFFF) as that would collide with RLE!
@@ -6709,15 +6710,17 @@
 #define	WILD_F_INHABITED	0x00000002U	/* if unset, add some monsters on day/night change (part of the (+) flag family actually, semantically) */
 #define	WILD_F_IN_MEMORY	0x00000004U
 #define	WILD_F_UP		0x00000008U	/* these are to show dungeons etc. */
+
 #define	WILD_F_DOWN		0x00000010U
 #define WILD_F_LOCKUP		0x00000020U	/* lock to prevent creation */
 #define WILD_F_LOCKDOWN		0x00000040U
-
 #define WILD_F_INVADERS		0x00000080U	/* (+) if unset, spawn some invaders */
+
 #define WILD_F_HOME_OWNERS	0x00000100U	/* (+) if unset, respawn home-owners */
 #define WILD_F_BONES		0x00000200U	/* (+) if unset, spawn some bones */
 #define WILD_F_FOOD		0x00000400U	/* (+) if unset, spawn some food (not regrowing gardens, see below for that one) */
 #define WILD_F_OBJECTS		0x00000800U	/* (+) if unset, spawn some objects */
+
 #define WILD_F_CASH		0x00001000U	/* (+) if unset, spawn some cash */
 #define WILD_F_GARDENS		0x00002000U	/* (+) if unset, regrow gardens */
 
@@ -6725,34 +6728,41 @@
 /*** Features flags -- DG ***/
 #define FF1_NO_WALK		0x00000001U
 #define FF1_NO_VISION		0x00000002U /* unused*/
-//HOLE^
+//^HOLE
 #define FF1_CAN_FEATHER		0x00000004U
 #define FF1_CAN_PASS		0x00000008U
+
 #define FF1_FLOOR		0x00000010U
 #define FF1_WALL		0x00000020U
 #define FF1_PERMANENT		0x00000040U
 #define FF1_CAN_LEVITATE	0x00000080U
+
 #define FF1_REMEMBER		0x00000100U	/* Causes cave_plain_floor_grid() to be false, ie it's not a plain, boring grid but something to remember, ie getting/keeping CAVE_MARK. */
 #define FF1_NOTICE		0x00000200U	/* Will be eligible target of 'l'ook command */
 #define FF1_DONT_NOTICE_RUNNING	0x00000400U
 #define FF1_CAN_RUN		0x00000800U
+
 #define FF1_DOOR		0x00001000U
- #define FF1_SUPPORT_LIGHT	0x00002000U	/* -- currently NO EFFECT! -- */
+#define FF1_SUPPORT_LIGHT	0x00002000U	/* -- currently NO EFFECT! -- */
 //HOLE^
 #define FF1_CAN_CLIMB		0x00004000U
 #define FF1_TUNNELABLE		0x00008000U
+
 #define FF1_WEB			0x00010000U
 #define FF1_ALLOW_TELE		0x00020000U
 #define FF1_SLOW_RUNNING_1	0x00040000U	/* half speed */
 #define FF1_SLOW_RUNNING_2	0x00080000U	/* quarter speed */
+
 #define FF1_SLOW_LEVITATING_1	0x00100000U
 #define FF1_SLOW_LEVITATING_2	0x00200000U
 #define FF1_SLOW_CLIMBING_1	0x00400000U
 #define FF1_SLOW_CLIMBING_2	0x00800000U
+
 #define FF1_SLOW_WALKING_1	0x01000000U
 #define FF1_SLOW_WALKING_2	0x02000000U
 #define FF1_SLOW_SWIMMING_1	0x04000000U
 #define FF1_SLOW_SWIMMING_2	0x08000000U
+
 #define FF1_PROTECTED		0x10000000U	/* monsters cannot teleport to nor spawn on this grid */
 #define FF1_LOS			0x20000000U	/* can shoot/cast/throw through this one, but may not be able to walk through (FEAT_DARK_PIT) */
 #define FF1_BLOCK_LOS		0x40000000U	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
@@ -6767,18 +6777,23 @@
 #define FF2_LAMP_LITE_SNOW	0x00000002U	/* Gets coloured by wall_lighting, if it's winter season, due to assumed snow-covering. Implies SPECIAL_LITE if successful. */
 #define FF2_SPECIAL_LITE	0x00000004U	/* Gets coloured slate/gets slightly darkened by special fx: no LoS/no GLOW. This is implied by LAMP_LITE and successful LAMP_LITE_SNOW. */
 #define FF2_NIGHT_DARK		0x00000008U	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
+
 #define FF2_NO_SHADE		0x00000010U	/* Don't shade to TERM_SLATE in view_shade_floor (or vault walls become indistinguishable from granite, without magic light) */
 #define FF2_NO_LITE_WHITEN	0x00000020U	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
 #define FF2_LAMP_LITE_OPTIONAL	0x00000040U	/* For more floor/wall grids: Get coloured by floor/wall_lighting, if user has toggled the according option. */
 #define FF2_NO_ARTICLE		0x00000080U	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
+
 #define FF2_GLOW		0x00000100U	/* Always visible, lit via CAVE_GLOW. */
 #define FF2_ENTER_FROM_SPECIAL	0x00000200U	/* This grid can only be entered if the player is standing on CAVE_ICKY or FF1_PROTECTED */
 #define FF2_NO_PROB		0x00000400U	/* Don't allow probability travel onto this grid */
 #define FF2_ATTR_MULTI		0x00000800U	/* Ignore feat's base colour, instead cycle through the S-line colours each time the player refreshes his view on the feat. */
+
 #define FF2_SHINE		0x00001000U	/* Shines light on surrounding grids, causing (CAVE_GLOW_HACK | CAVE_GLOW) on them and itself, for permanent lighting. */
     /* TODO: unlight shine'd upon grids upon destruction of this grid; handle live-causes of LoS-blocking between this grid and the shine'd upon grids (eg someone tree'ing, quake..)! */
 #define FF2_SHINE_FIRE		0x00002000U	/* Changes FF2_SHINE effect to fiery light (instead of neutral aka white light). */
 #define FF2_SHINE2		0x00004000U	/* rad 2. Stacks with FF2_SHINE. */
+#define FF2_NO_TFORM		0x00008000U	/* This grid cannot be terraformed in any way (including destruction/earthquake etc). */
+
 //hole
 #define FF2_BOUNDARY		0x80000000U	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 

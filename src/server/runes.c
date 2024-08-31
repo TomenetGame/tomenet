@@ -35,8 +35,7 @@ void transform_level(int Ind, byte feat, int chance) {
 
 		if (c_ptr->info & CAVE_ICKY) continue;
 		if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
-		if (cave_valid_bold(zcave, y, x))
-		{
+		if (cave_valid_bold(zcave, y, x)) {
 			if (magik(chance)) {
 				/* Delete the object (if any) */
 				delete_object(wpos, y, x, TRUE);
