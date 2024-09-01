@@ -80,10 +80,11 @@ Contents
     (3.2a)  The encumberment bar
     (3.3)   Chat, chat messages and chat modes
     (3.4)   Inventory and equipment
-    (3.4a)  Start-up equipment & how to use it
-    (3.4b)  Item basics
-    (3.4c)  Item trading rules and exceptions
-    (3.4d)  Money
+    (3.4a)  Subinventory aka Bags
+    (3.4b)  Start-up equipment & how to use it
+    (3.4c)  Item basics
+    (3.4d)  Item trading rules and exceptions
+    (3.4e)  Money
     (3.5)   Preparing the first time for fighting enemies
     (3.6)   Creating basic macros & inscribing items, predefined macros
     (3.7)   Creating macros for ranged attacks & abilities (spells)
@@ -5987,8 +5988,8 @@ weapon slot in your equipment as a +1 extension of your inventory, and then
 teleport back to town right away (via a scroll of Word of Recall).
 
 
-Subinventory:
--------------
+(3.4a) Subinventory aka Bags
+----------------------------
 Starting in game version 4.8.0, there are 'container' items, bags and chests,
 that provide a small inventory in themselves, thereby extending your total
 inventory space.
@@ -6103,7 +6104,7 @@ There are also inscriptions that can be put onto these bags (don't mix them):
   !S1 ..and only if they are at least similar to existing items.
 
 
-(3.4a) Start-up equipment
+(3.4b) Start-up equipment
 ------------------------
 Every new player has some items right from the beginning, in the past those
 came stored in the inventory but nowadays they are immediately equipped.
@@ -6138,7 +6139,7 @@ equipment. It's the "Gazette". Press 'r' to read it. It may contain some notes
 about the server or hints for newbies.
 
 
-(3.4b) Item basics
+(3.4c) Item basics
 ------------------
 When you've logged in and look at your inventory (your backpack, basically),
 ie the items your character starts with, you will see various item names that
@@ -6336,7 +6337,7 @@ powers when you find one, you will have to use *identify* on it to find out.
 For more information on item types see (5.7).
 
 
-(3.4c) Item trading rules and exceptions
+(3.4d) Item trading rules and exceptions
 ----------------------------------------
 The following item sharing rules apply to a standard server configuration.
 It is possible that a server runs certain alterations of some aspects.
@@ -6401,7 +6402,7 @@ As soon as a character leaves the worldmap sector of the Nether Realm, the
 items lose their ability to be traded between incompatible character modes.
 
 
-(3.4d) Money
+(3.4e) Money
 ------------
 Your money is displayed as pieces of gold in TomeNET, traditionally abbreviated
 to 'Au' for latin 'Aurum', meaning 'gold'. 'Au' is also the chemical symbol for
@@ -8104,7 +8105,7 @@ ask Mugash if he can buy a 'Scroll of Life' and revive you in the dungeon
 after he killed off all mobs, to avoid him touching your items and becoming
 the owner.
 
-For more information on item basics see (3.4b) and for more advanced item
+For more information on item basics see (3.4c) and for more advanced item
 details see (5.7).
 
 
@@ -9213,7 +9214,7 @@ For more information, see (4.13), Ironman Challenge.
  -Instant resurrection does not work in the Nether Realm.
  -It is possible for everlasting and non-everlasting characters who usually
   cannot form a party to actually team up in the Nether Realm! This is called a
-  cross-mode party, for more information see (3.4c).
+  cross-mode party, for more information see (3.4d).
 
 (*****) Halls of Mandos details:
  -Halls of Mandos are Ironman (no-ghost) and you cannot leave until you reach
@@ -15312,7 +15313,7 @@ Tunnelling might reveal special floor features, items or gold (walls that are
 displayed as a '*' symbol will reveal cash worth of gems or precious metal, but
 those walls might not always show it until you use 'Treasure Detection' or
 'Treasure Location' magic), see 'Digging' skill in (7.2) for details.
-Also see (3.4b) for more information on digging tool mods.
+Also see (3.4c) for more information on digging tool mods.
 
 If you haven't got a digging tool equipped, or if it's just a basic shovel (+1)
 then wielding a sword or especially an axe can work as pseudo-digger when you
@@ -18025,7 +18026,7 @@ stated.
                                 For hacking away spider webs, certain polearms
                                 used for slashing (scythes and sickles) may
                                 help too, at least as well as swords or axes.
-                                See (3.4b) for more information on digging
+                                See (3.4c) for more information on digging
                                 tools and (5.17) for technical details on
                                 digging.
 
@@ -23559,7 +23560,7 @@ Parties:
     you will be prompted to rename the party. Only the party owner can do this.
 
     Specialty: Everlasting and non-everlasting players can team up while
-               inside the Nether Realm and trade loot, see (3.4c) and (4.5c).
+               inside the Nether Realm and trade loot, see (3.4d) and (4.5c).
 
 -Create or rename an 'Iron Team' party
     Allows you to create an iron team if you aren't in one yet, or rename your
@@ -23582,7 +23583,7 @@ Parties:
     If you aren't in a party, you will see "Add yourself to party" instead!
     This will allow you to add this character to a party, provided that at
     least one of your other characters is already a member of it.
-    This does not work for cross-adding to nether realm parties (see (3.4c)
+    This does not work for cross-adding to nether realm parties (see (3.4d)
     and (4.5c)).
     It only works for cross-adding to IDDC parties if your already partied
     character is currently in the IDDC.
