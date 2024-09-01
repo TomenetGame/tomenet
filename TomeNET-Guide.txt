@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 30. August 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 1. September 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5986,6 +5986,7 @@ haul back to town to sell it, you could just equip it anyway to just use that
 weapon slot in your equipment as a +1 extension of your inventory, and then
 teleport back to town right away (via a scroll of Word of Recall).
 
+
 Subinventory:
 -------------
 Starting in game version 4.8.0, there are 'container' items, bags and chests,
@@ -6001,6 +6002,11 @@ While browsing a subinventory, you can press 's' to unstow an item or stack,
 putting it back into your (normal) inventory.
 Alternatively, just for a quick check of contents, you can inspect (SHIFT+i) a
 subinventory container. You cannot interact with the contents this way though.
+
+To make your complete subinventory (ie the contents of all your bags) visible
+at any time, you can enable a new terminal window for it via  = w  which is
+indexed as "Display subinventory". To enable more terminal windows, go to = f
+and press 'v' on a selected inactive terminal to toggle its visibility.
 
 If you drop or destroy a subinventory container item, all items will be removed
 from it and placed into your inventory. Items that don't fit in will be dropped
