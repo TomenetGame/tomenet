@@ -4830,7 +4830,7 @@
 #endif
 #define CHECK_CHARGED_READY	0x2000	/* For (Havoc) rods: Try to find non-charging ones, specifically ONLY allow readily usable items, not charging/empty ones. */
 #ifdef ENABLE_SUBINVEN
- #define EXCLUDE_SUBINVEN	0x4000	/* For selecting a subinventory - forbid selecting items INSIDE a subinventory, as there cannot be subinventories within subinventories. */
+ #define EXCLUDE_SUBINVEN	0x4000	/* For selecting a subinventory container - forbid selecting items INSIDE subinventory, as there cannot be subinventory within subinventory. */
 #endif
 
 /*

@@ -1714,7 +1714,7 @@ void cmd_zap_rod(void) {
 		if (subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
 			Send_zap(item);
-		} else { /* Actually directional rods are not allowed to be used from within a subinventory, but anyway.. */
+		} else { /* Actually directional rods are not allowed to be used from within subinventory, but anyway.. */
 			if (!get_dir(&dir)) return;
 			Send_zap_dir(item, dir);
 		}

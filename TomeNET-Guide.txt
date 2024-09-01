@@ -5995,11 +5995,11 @@ that provide a small inventory in themselves, thereby extending your total
 inventory space.
 However, you can only ever use one of each bag type at the same time.
 
-To stow items from your inventory into a subinventory, press 'i' first to
+To stow items from your inventory into subinventory, press 'i' first to
 invoke your inventory, then 's' to stow an item or stack of items.
 
-Subinventories can be browsed via 'b' (same key as used for browsing books).
-While browsing a subinventory, you can press 's' to unstow an item or stack,
+Subinventory can be browsed via 'b' (same key as used for browsing books).
+While browsing subinventory, you can press 's' to unstow an item or stack,
 putting it back into your (normal) inventory.
 Alternatively, just for a quick check of contents, you can inspect (SHIFT+i) a
 subinventory container. You cannot interact with the contents this way though.
@@ -6009,13 +6009,13 @@ at any time, you can enable a new terminal window for it via  = w  which is
 indexed as "Display subinventory". To enable more terminal windows, go to = f
 and press 'v' on a selected inactive terminal to toggle its visibility.
 
-If you drop or destroy a subinventory container item, all items will be removed
+If you drop or destroy subinventory container item, all items will be removed
 from it and placed into your inventory. Items that don't fit in will be dropped
 to the ground instead.
 If you carry two containers of the same category, you will only be able to use
 one of them.
 
-There are four categories of subinventories:
+There are four categories of subinventory containers:
 
 - Chest
   Using chests is not very feasible as their weight is usually very high and
@@ -6080,7 +6080,7 @@ use the '@' (call by item name) feature in the item prompt.
 Since the macro wizard actually creates call-by-name macros anyway, you can
 just use it if you are unsure.
 
-A few generic commands are always available in any subinventory:
+A few generic commands are always available from within subinventory:
   - Chat (:).
   - Screenshot (CTRL+T).
   - Inspect item (x).
@@ -7394,7 +7394,7 @@ based macros could be seen as more clean (these macros use the @[<KEY>]<NUMBER>
 format with the key being optional, also called a 'tag' or tag-based macros).
 
 If your client version is 4.9.1 or older, the name-based macro is also be the
-only way that works with subinventories (such as potion belt, or antistatic
+only way that works with subinventory (such as potion belt, or antistatic
 wrapping, etc), newer versions can use tag-based macros fine.
 
 The text specified can either be an item name, as it appears in your inventory,

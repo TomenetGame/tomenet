@@ -17,7 +17,7 @@
    Note: SMART_SWAP needs the 'smart handling' code in cmd_swap() to work properly. */
 #define SMART_SWAP
 
-/* In item prompts, allow switching from normal inven/equip into a subinventory? */
+/* In item prompts, allow switching from normal inven/equip into subinventory? */
 #ifdef ENABLE_SUBINVEN
  #define ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN
 #endif
