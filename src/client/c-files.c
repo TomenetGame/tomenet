@@ -853,6 +853,11 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 		default: return(0); //just discard all other lines
 		}
 
+	/* For all kinds of visual mappings (R/K/F/U/@/Z):
+	   Allow specifying animation steps and within each (or for a static step w/o animation) allow randomization, eg
+	   MAPCHAR:A-Anim1,Rchance1..m%:tile1..m,A-Anim2,Rchance1..n%:tile1..n% etc, or just
+	   MAPCHAR:Rcance1..m%:tile1..m for a non-animated mapping that still picks a random tile out of several choices. */
+
 	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
 	switch(buf[0]) {
 	case 'R':
