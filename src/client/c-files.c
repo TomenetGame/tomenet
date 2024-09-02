@@ -929,6 +929,52 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 		}
 		break;
 
+	/* Process "@:[<gender>],[<race>],[<class>],[<trait>],[<levelrange>],[<CHPrange>]:<a>/<c>" -- attr/char for player characters:
+	   All parameters are optional (which is required as we'd hit 50k+ tiles ^^");
+	   gender = m/f, race = RACE_xxx, class = CLASS_xxx, trait = TRAIT_xxx (draconian lineage or enlightened/corrupted maia),
+	   levelranges: 0: 1-9, 1: 10-19, 2: 20-29, 3: 30-39, 4: 40-49, 5: 50-59, 6: 60-69, 7: 70-79, 8: 80-89, 9: 90-98, 10: 99+ (admin characters can be 100),
+	   CHPrange: -: negative HP aka died, 0-7: same as when ascii '@' turns into a number, F: full HP aka '@' in ascii. */
+	case '@':
+#if 0 //todo: implement
+		if (tokenize(buf + 2, 3, zz) == 3) {
+			j = (huge)strtol(zz[0], NULL, 0);
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
+			if (j > 100) return(0);
+#ifdef USE_GRAPHICS
+			if (!use_graphics)
+#endif
+				if (n2 > MAX_FONT_CHAR) return(1);
+			if (n1) Client_setup.u_attr[j] = n1;
+			if (n2) Client_setup.u_char[j] = n2;
+			return(0);
+		}
+#endif
+		break;
+
+	/* Process "Z:<type>,[<subtype>]:<a>/<c>" -- attr/char for effects (both, client-side: weather, server-side: fireworks):
+	   type: 0 = rain, 1 = snow, 2 = sandstorm (all client-side),
+	         3 = fireworks launch, 4 = fireworks explosion (all server-side);
+	   subtype (optional):
+	         for types 0/1/2: 0 = no wind, 1 = west wind, 2 = east wind, 3 = strong west wind, 4 = strong east wind. */
+	case 'Z':
+#if 0 //todo: implement
+		if (tokenize(buf + 2, 3, zz) == 3) {
+			j = (huge)strtol(zz[0], NULL, 0);
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
+			if (j > 100) return(0);
+#ifdef USE_GRAPHICS
+			if (!use_graphics)
+#endif
+				if (n2 > MAX_FONT_CHAR) return(1);
+			if (n1) Client_setup.u_attr[j] = n1;
+			if (n2) Client_setup.u_char[j] = n2;
+			return(0);
+		}
+#endif
+		break;
+
 	/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
 	case 'E':
 		/* Do nothing */
