@@ -2919,7 +2919,7 @@ static void fix_lagometer(void) {
 }
 
 void fix_playerlist(void) {
-	int i, j, p, y = 0;
+	int i, j, p, y;
 	term *old;
 
 	/* Scan windows */
@@ -2945,6 +2945,7 @@ void fix_playerlist(void) {
 			c_prt(TERM_L_WHITE, format(" %d Players Online%c", NumPlayers, NumPlayers ? ':' : '.'), 0, 1);
 		p = NumPlayers;
 		if (p > MAX_PLAYERS_LISTED) p = MAX_PLAYERS_LISTED;
+		y = 0;
 		for (i = 0; i < p; i++) {
 			if (!playerlist_name[i][0]) continue;
 			c_put_str(TERM_WHITE, playerlist[i], 2 + y, 1);
