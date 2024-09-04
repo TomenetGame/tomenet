@@ -416,8 +416,8 @@ void editor() {
 		mvwprintw(mainwin,  9, 4, "May pkill:      %s", c_acc.flags & ACC_PVP ? "Yes " : c_acc.flags & ACC_ANOPVP ? "_NO_" : c_acc.flags & ACC_NOPVP ? "No  " : "std.");
 		mvwprintw(mainwin, 10, 4, "Muted chat:     %s", c_acc.flags & ACC_VQUIET ? "Very" : c_acc.flags & ACC_QUIET ? "Yes " : "No  ");
 		mvwprintw(mainwin, 11, 4, "Banned:         %s", c_acc.flags & ACC_BANNED ? "** Yes ** " : "No        ");
-		mvwprintw(mainwin, 12, 4, "Last hostname:  %s", c_acc.hostname);
-		mvwprintw(mainwin, 13, 4, "Last IP addr:   %s", c_acc.addr);
+		mvwprintw(mainwin, 12, 4, "Last hostname:  %-20s", c_acc.hostname);
+		mvwprintw(mainwin, 13, 4, "Last IP addr:   %-20s", c_acc.addr);
 		mvwprintw(mainwin, 3, 37, "%-7s", c_acc.flags & ACC_DELD ? "DELETED" : "");
 		wrefresh(mainwin);
 		do {
