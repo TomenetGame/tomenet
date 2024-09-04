@@ -129,15 +129,15 @@ int ListAccounts(int fpos) {
 			for (i = 0; i < (LINES - 10); i++) {
 				x = fread(&c_acc, sizeof(struct account), 1, fp);
 				if (x == 0) break;
-				mvwprintw(listwin, i + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%.10d%10s", c_acc.name,
+				mvwprintw(listwin, i + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c %.10d%10s", c_acc.name,
 				c_acc.flags & ACC_TRIAL ? '.' : 'Y',
 				c_acc.flags & ACC_ADMIN ? 'Y' : '.',
 				c_acc.flags & ACC_NOSCORE ? '.' : 'Y',
 				c_acc.flags & ACC_MULTI ? 'Y' : '.',
-				c_acc.flags & ACC_VRESTRICTED ? 'V' : c_acc.flags & ACC_RESTRICTED ? 'Y' : '.',
-				c_acc.flags & ACC_VPRIVILEGED ? 'V' : c_acc.flags & ACC_PRIVILEGED ? 'Y' : '.',
-				c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'N' : '.',
-				c_acc.flags & ACC_VQUIET ? 'V' : c_acc.flags & ACC_QUIET ? 'Y' : '.',
+				c_acc.flags & ACC_VRESTRICTED ? 'V' : c_acc.flags & ACC_RESTRICTED ? 'y' : '.',
+				c_acc.flags & ACC_VPRIVILEGED ? 'V' : c_acc.flags & ACC_PRIVILEGED ? 'y' : '.',
+				c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'n' : '.',
+				c_acc.flags & ACC_VQUIET ? 'V' : c_acc.flags & ACC_QUIET ? 'y' : '.',
 				c_acc.flags & ACC_BANNED ? 'Y' : '.',
 				c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
 			}
@@ -149,15 +149,15 @@ int ListAccounts(int fpos) {
 			x = fread(&c_acc, sizeof(struct account), 1, fp);
 		}
 		if (redraw) {
-			mvwprintw(listwin, (fpos - ifpos) + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%.10d%10s", c_acc.name,
+			mvwprintw(listwin, (fpos - ifpos) + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c %.10d%10s", c_acc.name,
 			c_acc.flags & ACC_TRIAL ? '.' : 'Y',
 			c_acc.flags & ACC_ADMIN ? 'Y' : '.',
 			c_acc.flags & ACC_NOSCORE ? '.' : 'Y',
 			c_acc.flags & ACC_MULTI ? 'Y' : '.',
-			c_acc.flags & ACC_VRESTRICTED ? 'V' : c_acc.flags & ACC_RESTRICTED ? 'Y' : '.',
-			c_acc.flags & ACC_VPRIVILEGED ? 'V' : c_acc.flags & ACC_PRIVILEGED ? 'Y' : '.',
-			c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'N' : '.',
-			c_acc.flags & ACC_VQUIET ? 'V' : c_acc.flags & ACC_QUIET ? 'Y' : '.',
+			c_acc.flags & ACC_VRESTRICTED ? 'V' : c_acc.flags & ACC_RESTRICTED ? 'y' : '.',
+			c_acc.flags & ACC_VPRIVILEGED ? 'V' : c_acc.flags & ACC_PRIVILEGED ? 'y' : '.',
+			c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'n' : '.',
+			c_acc.flags & ACC_VQUIET ? 'V' : c_acc.flags & ACC_QUIET ? 'y' : '.',
 			c_acc.flags & ACC_BANNED ? 'Y' : '.',
 			c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
 			redraw = 0;
@@ -405,17 +405,19 @@ void editor() {
 	setupscreen();
 
 	while (!quit) {
-		mvwprintw(mainwin, 0, 4, "%-30s   ID: %.10d", c_acc.name, c_acc.id);
-		mvwprintw(mainwin, 1, 4, "%-20s             (%-30s)", c_acc.pass, c_acc.name_normalised);
-		mvwprintw(mainwin, 3, 4, "Trial (inval): %-4s", c_acc.flags & ACC_TRIAL ? "Yes " : "No  ");
-		mvwprintw(mainwin, 4, 4, "Administrator: %-4s", c_acc.flags & ACC_ADMIN ? "*** Yes *** " : "No          ");
-		mvwprintw(mainwin, 5, 4, "Scoreboard:    %-4s", c_acc.flags & ACC_NOSCORE ? "No  " : "Yes ");
-		mvwprintw(mainwin, 6, 4, "Multi-login:   %-4s", c_acc.flags & ACC_MULTI ? "Yes " : "No  ");
-		mvwprintw(mainwin, 7, 4, "Restricted:    %-4s", c_acc.flags & ACC_VRESTRICTED ? "Very" : c_acc.flags & ACC_RESTRICTED ? "Yes " : "No  ");
-		mvwprintw(mainwin, 8, 4, "Privileged:    %-3s", c_acc.flags & ACC_VPRIVILEGED ? "Very" : c_acc.flags & ACC_PRIVILEGED ? "Yes " : "No  ");
-		mvwprintw(mainwin, 9, 4, "May pkill:     %-3s", c_acc.flags & ACC_PVP ? "Yes " : c_acc.flags & ACC_ANOPVP ? "_NO_" : c_acc.flags & ACC_NOPVP ? "No  " : "std.");
-		mvwprintw(mainwin, 10, 4, "Muted chat:    %-3s", c_acc.flags & ACC_VQUIET ? "Very" : c_acc.flags & ACC_QUIET ? "Yes " : "No  ");
-		mvwprintw(mainwin, 11, 4, "Banned:        %-3s", c_acc.flags & ACC_BANNED ? "** Yes ** " : "No        ");
+		mvwprintw(mainwin,  0, 4, "%-30s   ID: %.10d", c_acc.name, c_acc.id);
+		mvwprintw(mainwin,  1, 4, "%-20s             (%-30s)", c_acc.pass, c_acc.name_normalised);
+		mvwprintw(mainwin,  3, 4, "Trial (inval):  %s", c_acc.flags & ACC_TRIAL ? "Yes " : "No  ");
+		mvwprintw(mainwin,  4, 4, "Administrator:  %s", c_acc.flags & ACC_ADMIN ? "*** Yes *** " : "No          ");
+		mvwprintw(mainwin,  5, 4, "Scoreboard:     %s", c_acc.flags & ACC_NOSCORE ? "No  " : "Yes ");
+		mvwprintw(mainwin,  6, 4, "Multi-login:    %s", c_acc.flags & ACC_MULTI ? "Yes " : "No  ");
+		mvwprintw(mainwin,  7, 4, "Restricted:     %s", c_acc.flags & ACC_VRESTRICTED ? "Very" : c_acc.flags & ACC_RESTRICTED ? "Yes " : "No  ");
+		mvwprintw(mainwin,  8, 4, "Privileged:     %s", c_acc.flags & ACC_VPRIVILEGED ? "Very" : c_acc.flags & ACC_PRIVILEGED ? "Yes " : "No  ");
+		mvwprintw(mainwin,  9, 4, "May pkill:      %s", c_acc.flags & ACC_PVP ? "Yes " : c_acc.flags & ACC_ANOPVP ? "_NO_" : c_acc.flags & ACC_NOPVP ? "No  " : "std.");
+		mvwprintw(mainwin, 10, 4, "Muted chat:     %s", c_acc.flags & ACC_VQUIET ? "Very" : c_acc.flags & ACC_QUIET ? "Yes " : "No  ");
+		mvwprintw(mainwin, 11, 4, "Banned:         %s", c_acc.flags & ACC_BANNED ? "** Yes ** " : "No        ");
+		mvwprintw(mainwin, 12, 4, "Last hostname:  %s", c_acc.hostname);
+		mvwprintw(mainwin, 13, 4, "Last IP addr:   %s", c_acc.addr);
 		mvwprintw(mainwin, 3, 37, "%-7s", c_acc.flags & ACC_DELD ? "DELETED" : "");
 		wrefresh(mainwin);
 		do {
