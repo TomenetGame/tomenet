@@ -161,8 +161,8 @@ function rspell_failure(p,u,x,c)
     x = 15 - (x > 15 and 15 or x)
     x = x * 3 - 13 + M[band(u,MODE)][4]
   end
-  x = x - (((adj_mag_stat[p.stat_ind[1+A_INT]] * 65 + adj_mag_stat[p.stat_ind[1+A_DEX]] * 35) / 100) - 3)
-  local minfail = (adj_mag_fail[p.stat_ind[1+A_INT]] * 65 + adj_mag_fail[p.stat_ind[1+A_DEX]] * 35) / 100
+  x = x - (((adj_mag_stat[1+p.stat_ind[1+A_INT]] * 65 + adj_mag_stat[1+p.stat_ind[1+A_DEX]] * 35) / 100) - 3)
+  local minfail = (adj_mag_fail[1+p.stat_ind[1+A_INT]] * 65 + adj_mag_fail[1+p.stat_ind[1+A_DEX]] * 35) / 100
   if x < minfail then x = minfail end
   if p.blind~=0 then x = x + 10 end
   if p.stun > 50 then
