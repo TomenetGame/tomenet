@@ -853,7 +853,7 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 		default: return(0); //just discard all other lines
 		}
 
-	/* For all kinds of visual mappings (R/K/F/U/@/Z):
+	/* For all kinds of visual mappings (R/K/F/U/@/Z/r):
 	   Allow specifying animation steps and within each (or for a static step w/o animation) allow randomization, eg
 	   MAPCHAR:A-Anim1,Rchance1..m%:tile1..m,A-Anim2,Rchance1..n%:tile1..n% etc, or just
 	   MAPCHAR:Rcance1..m%:tile1..m for a non-animated mapping that still picks a random tile out of several choices. */
@@ -932,6 +932,30 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 			if (n2) Client_setup.u_char[j] = n2;
 			return(0);
 		}
+		break;
+
+	/* Process "r:<monstersymbol>:<a>/<c>" -- attr/char for all monsters whose race translates to a specific ASCII symbol in r_info.txt.
+	   Eg: 'r:o:<a>/<c>' -> all orcs, snotlings, snagas etc will translate to specific mapping <a>/<c>. */
+	case 'r':
+#if 0 //todo: implement
+		if (tokenize(buf + 2, 3, zz) == 3) {
+			i = (huge)strtol(zz[0], NULL, 0);
+			i += 12;	/* gfx-fix by Tanix */
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
+			if (i >= MAX_R_IDX) return(1);
+#ifdef USE_GRAPHICS
+			if (!use_graphics)
+#endif
+				if (n2 > MAX_FONT_CHAR) return(1);
+			if (n1) Client_setup.r_attr[i] = n1;
+			if (n2) {
+				Client_setup.r_char[i] = n2;
+				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
+			}
+			return(0);
+		}
+#endif
 		break;
 
 	/* Process "@:[<gender>],[<race>],[<class>],[<trait>],[<levelrange>],[<CHPrange>]:<a>/<c>" -- attr/char for player characters:
