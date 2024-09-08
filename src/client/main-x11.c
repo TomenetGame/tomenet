@@ -2242,9 +2242,8 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 #endif
 	int x1, y1;
 
-	/* Never print null-char as background, instead print a space.
-	   This can happen in places where we have no bg-info, such as client-lore in knowledge menu. */
-	if (!c_back) c_back = 32;
+	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
+	if (c_back == 32) a_back = TERM_DARK;
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
@@ -2338,22 +2337,27 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  #endif
 
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
-	x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
-	y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation2, Infoclr->gc,
-		   x1, y1,
-		   td->fnt->wid, td->fnt->hgt,
-		   0, 0,
-		   1);
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
-	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
-	XPutImage(Metadpy->dpy, tilePreparation2,
-		  Infoclr->gc,
-		  td->tiles,
-		  x1, y1,
-		  0, 0,
-		  td->fnt->wid, td->fnt->hgt);
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+	if (c_back == 32) {
+		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
+		XFillRectangle(Metadpy->dpy, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt);
+	} else {
+		x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
+		y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
+		XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation2, Infoclr->gc,
+			   x1, y1,
+			   td->fnt->wid, td->fnt->hgt,
+			   0, 0,
+			   1);
+		XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+		XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
+		XPutImage(Metadpy->dpy, tilePreparation2,
+			  Infoclr->gc,
+			  td->tiles,
+			  x1, y1,
+			  0, 0,
+			  td->fnt->wid, td->fnt->hgt);
+		XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+	}
 
 	/* Revert fgmask'ing colour to foreground-tile colour */
  #ifndef EXTENDED_COLOURS_PALANIM

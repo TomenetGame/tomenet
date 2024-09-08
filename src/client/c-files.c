@@ -1135,6 +1135,7 @@ errr process_pref_file(cptr name) {
 	int n, err;
 	byte fmt;
 
+
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 
