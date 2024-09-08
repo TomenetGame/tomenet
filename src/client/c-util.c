@@ -5169,7 +5169,7 @@ void interact_macros(void) {
 			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read pref file '%s'!\n", tmp);
+			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read pref file '%s'!", tmp);
 
 			/* Pref files may change settings, so reload the keymap - mikaelh */
 			keymap_init();
@@ -5189,7 +5189,7 @@ void interact_macros(void) {
 			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read pref file '%s'!\n", tmp);
+			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read pref file '%s'!", tmp);
 
 			/* Pref files may change settings, so reload the keymap - mikaelh */
 			keymap_init();
@@ -11255,7 +11255,7 @@ void do_cmd_options(void) {
 			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read options file '%s'!\n", tmp);
+			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read options file '%s'!", tmp);
 		}
 
 		/* Account options */
