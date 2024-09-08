@@ -3030,6 +3030,8 @@ int Receive_char(void) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
 #ifdef GRAPHICS_BG_MASK
+		/* Catch if the server didn't define a valid background ie sent a zero -
+		   in that case instead of bugging out the display, interpret it as 'keep our old background' */
 		if (c_back != 0) {
 			panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
 			panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
@@ -4073,6 +4075,8 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
 					panel_map_c[x + i - PANEL_X][y - PANEL_Y] = c;
 #ifdef GRAPHICS_BG_MASK
+					/* Catch if the server didn't define a valid background ie sent a zero -
+					   in that case instead of bugging out the display, interpret it as 'keep our old background' */
 					if (c_back) {
 						panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
 						panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
