@@ -5056,14 +5056,19 @@ static bool process_player_end_aux(int Ind) {
 		/* Drowning, but not ghosts */
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
 			/* Rewrote this whole routine to take into account DSMs, wood helping thanks to its relative density, subinventories etc. - C. Blue */
-			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) &&
-			    !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC))) {
-				bool huge_wood = FALSE, cold = cold_place(&p_ptr->wpos);
+			if (!p_ptr->tim_wraith && !p_ptr->levitate) { /* Wraiths and levitating players are completely unaffected by water, including their items */
+				bool huge_wood = FALSE, cold = cold_place(&p_ptr->wpos), is_ent = (p_ptr->prace == RACE_ENT && !p_ptr->body_monster);
 				int wood_weight, water_weight, required_wood_weight, drowning;
 
 				/* Calculate actual weight dragging us down and amount of wood pulling us up */
 				wood_weight = 0;
 				water_weight = (p_ptr->can_swim ? 0 : p_ptr->wt * 10) + p_ptr->total_weight;
+
+				if (is_ent) {
+					huge_wood = TRUE;
+					wood_weight += p_ptr->wt * 10;
+				}
+
 				j = -1;
 				for (i = 0; i < INVEN_PACK; i++) {
 					o_ptr = &p_ptr->inventory[i];
@@ -5119,6 +5124,10 @@ static bool process_player_end_aux(int Ind) {
 				/* Calculate required amount of wood we need to carry in order to make us float safely. */
 				required_wood_weight = water_weight * WOOD_INV_DENSITY;
 				drowning = required_wood_weight - wood_weight; /* If we're >=0 then we're not drowning as the wood we carry is enough to keep us floating */
+
+				/* Aquatic monsters and Ents never drown */
+				if ((p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC)) || is_ent) /* They might not be able to can_swim if overburdened, but they just don't drown anyway */
+					drowning = -1;
 
 				/* We're drowning because we don't have enough wood to keep us afloat? */
 				if (drowning >= 0) {
@@ -5196,10 +5205,10 @@ static bool process_player_end_aux(int Ind) {
 					}
 				}
 
-				/* If we're, after all (enough wood and/or enough swiming) not drowning... */
+				/* If we're, after all (enough wood and/or enough swiming or aquatic/Ent) not drowning... */
 				if (drowning < 0) {
 					/* Special flavour message when not drowning and carrying a huge block of wood */
-					if (huge_wood && !rand_int(5)) {
+					if (huge_wood && is_ent && !rand_int(5)) {
 						/* Give specific message for flavour, about clinging to the massive piece of wood, being our 'main relief' ;) */
 						msg_print(Ind, "You float in the water safely, clinging to the wood.");
 					}
@@ -5222,7 +5231,7 @@ static bool process_player_end_aux(int Ind) {
 				/* Harm items while in water (even if we're not drowning/taking damage, ie hit == 0).
 				   Items should get damaged even if player can_swim
 				   but this might devalue swimming too much compared to levitation. */
-				if (!p_ptr->tim_wraith && !p_ptr->levitate && !p_ptr->immune_water && !rand_int(p_ptr->resist_water ? 3 : 1)
+				if (!p_ptr->immune_water && !rand_int(p_ptr->resist_water ? 3 : 1)
 				    && TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(WATER_ITEM_DAMAGE_CHANCE)) {
 					/* Trying to keep the backpack from getting soaked too much */
 					if (!(huge_wood && drowning < 0) && !magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900))) {

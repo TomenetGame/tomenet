@@ -18645,8 +18645,7 @@ create a character!):
     land, they were summoned to guard the forests of Middle-earth.
     Being much like trees they are very slow but strong and do not have
     to feed as often. Because they consist of wood, they are quite
-    susceptible to fire and they don't drown in water (unless overloaded by
-    items).
+    susceptible to fire and they don't drown in water.
     As the Shepherds of the Trees, they can learn to sense the presence of
     others, such as animals at level 10, orcs at 15, trolls at 20, giants
     at 25, dragons at 30, demons at 40 and all evil-minded creatures at
