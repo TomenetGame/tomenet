@@ -3030,8 +3030,13 @@ int Receive_char(void) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
 #ifdef GRAPHICS_BG_MASK
-		panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
-		panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+		if (c_back != 0) {
+			panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+			panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+		} else {
+			c_back = panel_map_c_back[x - PANEL_X][y - PANEL_Y];
+			a_back = panel_map_a_back[x - PANEL_X][y - PANEL_Y];
+		}
 #endif
 	}
 
@@ -3781,7 +3786,7 @@ int Receive_line_info(void) {
 	char32_t c;
 	byte a;
 #ifdef GRAPHICS_BG_MASK
-	char32_t c_back;
+	char32_t c_back, c_back_real;
 	byte a_back;
 #endif
 	byte rep;
@@ -4056,6 +4061,8 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 			if (c_back == FONT_MAP_VEIN_X11 || c_back == FONT_MAP_VEIN_WIN) c_back = '*';
   #endif
  #endif
+
+			if (c_back) c_back_real = c_back;
 #endif
 			/* Draw a character 'rep' times */
 			for (i = 0; i < rep; i++) {
@@ -4066,14 +4073,19 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
 					panel_map_c[x + i - PANEL_X][y - PANEL_Y] = c;
 #ifdef GRAPHICS_BG_MASK
-					panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
-					panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+					if (c_back) {
+						panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+						panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+					} else {
+						a_back = panel_map_a_back[x - PANEL_X][y - PANEL_Y];
+						c_back_real = panel_map_c_back[x - PANEL_X][y - PANEL_Y];
+					}
 #endif
 				}
 
 #ifdef GRAPHICS_BG_MASK
 				if (use_graphics == UG_2MASK)
-					Term_draw_2mask(x + i, y, a, c, a_back, c_back);
+					Term_draw_2mask(x + i, y, a, c, a_back, c_back_real);
 				else
 #endif
 				Term_draw(x + i, y, a, c);

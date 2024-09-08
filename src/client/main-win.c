@@ -2415,6 +2415,10 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	HBRUSH brushFg;
 
 
+	/* Never print null-char as background, instead print a space.
+	   This can happen in places where we have no bg-info, such as client-lore in knowledge menu. */
+	if (!c_back) c_back = 32;
+
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
 	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
