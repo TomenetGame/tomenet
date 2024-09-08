@@ -1892,6 +1892,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		}
 
 		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+		    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
 		    && o_ptr->owner && o_ptr->owner != p_ptr->id) {
 			msg_print(Ind, "\377yYou cannot pick up someone else's money or your life would be forfeit.");
 			return;
@@ -1962,7 +1965,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 						amount);
  #endif
 				/* Some events don't allow transactions before they begin */
-				if (!p_ptr->max_exp && !in_irondeepdive(wpos)) {
+				if (!p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
 					msg_print(Ind, "You gain a tiny bit of experience from exchanging money.");
 					gain_exp(Ind, 1);
 				}
@@ -2188,7 +2191,11 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (!is_admin(p_ptr)) return;
 		}
 
-		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) {
+		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+		    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
+		    ) {
 			if (o_ptr->owner && o_ptr->owner != p_ptr->id) {
 				msg_print(Ind, "\377yYou cannot pick up someone else's goods or your life would be forfeit.");
 				return;
@@ -2717,12 +2724,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("%s FOUND_WINNERS_ONLY: %s (%d) %s\n", showtime(), p_ptr->name, p_ptr->wpos.wz, o_name_real);
 
 					/* Some events don't allow transactions before they begin. Extend this to no_soloist-event-drops (Santa Claus). */
-					if (o_ptr->no_soloist && !p_ptr->max_exp && !in_irondeepdive(wpos)) {
+					if (o_ptr->no_soloist && !p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
 						msg_print(Ind, "Due to the item's origin you gain a tiny bit of experience from picking it up.");
 						gain_exp(Ind, 1);
 					}
 					/* Prevent IDDC cheeze */
-					else if (wpos->wz && !p_ptr->max_exp && !in_irondeepdive(wpos)) {
+					else if (wpos->wz && !p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
 						msg_print(Ind, "You gain a tiny bit of experience from picking up your first item in a dungeon.");
 						gain_exp(Ind, 1);
 					}
@@ -2784,7 +2791,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
 					/* Some events don't allow transactions before they begins */
-					if (!p_ptr->max_exp && !in_irondeepdive(wpos)) {
+					if (!p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
 						msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
 						gain_exp(Ind, 1);
 					}

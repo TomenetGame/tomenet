@@ -3856,6 +3856,9 @@ void store_purchase(int Ind, int item, int amt) {
 	}
 
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+	    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
 	    && o_ptr->owner && o_ptr->owner != p_ptr->id) {
 		msg_print(Ind, "\377yYou cannot purchase used goods or your life would be forfeit.");
 		return;
@@ -4440,6 +4443,9 @@ void store_confirm(int Ind) {
 	/* If we are still below the limit but this gold pile would exceed it
 	   then only pick up as much of it as is allowed! - C. Blue */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos) &&
+ #ifdef DED_IDDC_MANDOS
+	    !in_hallsofmandos(&p_ptr->wpos) &&
+ #endif
 	    !p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
 	    p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && price > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up) {
 		price = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;

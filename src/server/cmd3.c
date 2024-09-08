@@ -3487,7 +3487,7 @@ void do_cmd_steal(int Ind, int dir) {
 				if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
 				/* Some events don't allow transactions before they begin */
-				if (!p_ptr->max_exp && !in_irondeepdive(&p_ptr->wpos)) {
+				if (!p_ptr->max_exp && !in_irondeepdive(&p_ptr->wpos) && !in_hallsofmandos(&p_ptr->wpos)) {
 					msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
 					gain_exp(Ind, 1);
 				}
