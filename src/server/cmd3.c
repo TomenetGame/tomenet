@@ -5090,7 +5090,8 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
 
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
    Keeps total weight constant. Deletes source inventory item on successful complete move.
-   Returns TRUE if fully stowed. */
+   Returns TRUE if fully stowed.
+   'amt' must be the correct, available amount (mostly o_ptr->number or 1). */
 bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr = &p_ptr->inventory[islot];
