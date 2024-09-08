@@ -1006,7 +1006,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	int sub_i = (using_subinven + 1) * SUBINVEN_INVEN_MUL;
 #endif
 	bool safe_input = FALSE;
-	int use_without_asking = -1; /* Use first item found with new "@<commandkey>%" inscription right away without prompting for item choice */
 
 
 	/* The top line is icky */
@@ -1079,6 +1078,44 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		return(FALSE);
 	}
 
+	/* Check for special '%' tag, based on current command_cmd:
+	   Use first item found with new "@<commandkey>%" inscription right away without prompting for item choice */
+	if (get_tag(&k, '%', inven, equip, mode)) {
+		(*cp) = k;
+
+		screen_line_icky = -1;
+		screen_column_icky = -1;
+
+		/* Fix the top line */
+		topline_icky = FALSE;
+
+		/* Flush any events */
+		Flush_queue();
+
+		/* Forget the item_tester_tval restriction */
+		item_tester_tval = 0;
+		/* Forget the item_tester_max_weight restriction */
+		item_tester_max_weight = 0;
+		/* Forget the item_tester_hook restriction */
+		item_tester_hook = 0;
+
+		/* Redraw inventory */
+		p_ptr->window |= PW_INVEN | PW_EQUIP;
+		window_stuff();
+
+		/* Clear the prompt line */
+		if (!item) clear_topline_forced(); //special case: ESCaped instead of specifying an item
+		else clear_topline();
+
+		/* Cease command macro exception */
+		//inkey_get_item = FALSE;
+
+		/* restore macro handling hack to default state */
+		abort_prompt = FALSE;
+
+		return(TRUE);
+	}
+
 	/* Command macros work as an exception here */
 	//inkey_get_item = TRUE;
 
@@ -1110,7 +1147,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 #ifdef ENABLE_SUBINVEN
 	if (subinven) {
-		int j, s;
+		int j;
 
 		/* Also scan all subinventories for at least one valid item */
 		for (k = 0; k < INVEN_PACK; k++) {
@@ -1121,53 +1158,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			for (j = 0; j < inventory[k].bpval; j++) {
 				if (!get_item_okay((k + 1) * SUBINVEN_INVEN_MUL + j)) continue;
 				found_subinven = TRUE;
- #if 0
 				break;
- #else
-				if (use_without_asking == -1 && get_tag(&s, '%', TRUE, FALSE, mode)) {
-					use_without_asking = s;//(s + 1) * SUBINVEN_INVEN_MUL + j;
-					break;
-				}
- #endif
 			}
-			if (use_without_asking != -1) break;
-		}
-
-		/* Exit prematurely via @x% inscription match in subinventory? */
-		if (use_without_asking != -1) {
-			(*cp) = use_without_asking;
-
-			screen_line_icky = -1;
-			screen_column_icky = -1;
-
-			/* Fix the top line */
-			topline_icky = FALSE;
-
-			/* Flush any events */
-			Flush_queue();
-
-			/* Forget the item_tester_tval restriction */
-			item_tester_tval = 0;
-			/* Forget the item_tester_max_weight restriction */
-			item_tester_max_weight = 0;
-			/* Forget the item_tester_hook restriction */
-			item_tester_hook = 0;
-
-			/* Redraw inventory */
-			p_ptr->window |= PW_INVEN | PW_EQUIP;
-			window_stuff();
-
-			/* Clear the prompt line */
-			if (!item) clear_topline_forced(); //special case: ESCaped instead of specifying an item
-			else clear_topline();
-
-			/* Cease command macro exception */
-			//inkey_get_item = FALSE;
-
-			/* restore macro handling hack to default state */
-			abort_prompt = FALSE;
-
-			return(TRUE);
 		}
 	}
 #endif
