@@ -10061,9 +10061,9 @@ static void do_cmd_options_tilesets(void) {
 
 		/* Warning */
 		if (c_cfg.font_map_solid_walls) {
-			Term_putstr(5, 12, -1, TERM_WHITE, "\377oWarning: option '\377yfont_map_solid_walls\377-' is currently ON.");
-			Term_putstr(5, 13, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
-			Term_putstr(5, 14, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
+				Term_putstr(5, 12, -1, TERM_WHITE, "\377oWarning: option '\377yfont_map_solid_walls\377-' is currently ON.");
+				Term_putstr(5, 13, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
+				Term_putstr(5, 14, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
 		}
 
 		/* Place Cursor */
@@ -10106,8 +10106,19 @@ static void do_cmd_options_tilesets(void) {
 #else
 			use_graphics_new = !use_graphics_new;
 #endif
-			if (use_graphics_new) c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart.");
-			else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart.");
+			if (use_graphics_new) {
+				c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart.");
+#if 0 /* not really needed here, if gfx_autooff_fmsw is enabled it will be applied on next login anyway, and the warning about fmsw breaking gfx is good to read so the player knows about it. */
+				if (c_cfg.gfx_autooff_fmsw) {
+					c_msg_print("Option 'font_map_solid_walls' was auto-disabled as graphics are enabled.");
+					c_cfg.font_map_solid_walls = FALSE;
+					(*option_info[CO_FONT_MAP_SOLID_WALLS].o_var) = FALSE;
+					Client_setup.options[CO_FONT_MAP_SOLID_WALLS] = FALSE;
+					options_immediate(FALSE);
+					Send_options();
+				}
+#endf
+			} else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart.");
 			break;
 
 		case '=':

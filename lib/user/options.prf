@@ -29,6 +29,7 @@ X:permawalls_shade
 Y:palette_animation
 X:disable_lightning
 X:no_light_fainting
+Y:gfx_autooff_fmsw
 
 Y:exp_bar
 X:uniques_alive

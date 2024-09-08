@@ -4528,7 +4528,7 @@ struct client_opts {
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;
 	bool big_map;
-	bool font_map_solid_walls;
+	bool font_map_solid_walls, gfx_autooff_fmsw;
 	bool view_animated_lite;
 	bool wall_lighting; //10
 	bool view_lamp_walls;
