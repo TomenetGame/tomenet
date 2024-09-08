@@ -2213,11 +2213,13 @@ void copy_to_clipboard(char *buf, bool chat_input) {
 	/* escape all ' (up to 10 before overflow) */
 	c = buf;
 	c2 = buf_esc;
-	while (*c) {
+	while (*c && strlen(c2) < MSG_LEN + 5) {
 		switch (*c) {
 		case '\'':
-			*c2 = '\\';
-			c2++;
+			*c2++ = '\'';
+			*c2++ = '"';
+			*c2++ = '\'';
+			*c2++ = '"';
 			break;
 		case ':':
 			if (pos != 0 && pos <= NAME_LEN) {
@@ -2276,7 +2278,10 @@ void copy_to_clipboard(char *buf, bool chat_input) {
 	extract_url(buf_esc, buf_prev, end_of_name);
 
 	r = system(format("echo -n '%s' | xclip -sel clip", buf_esc));
-	if (r) c_message_add("Copy failed, make sure xclip is installed.");
+	if (r) {
+		c_msg_format("Copy failed, make sure xclip is installed. (%d)", r);
+		c_msg_format("echo -n '%s' | xclip -sel clip", buf_esc);
+	}
 	else strcpy(buf_prev, buf_esc);
 #endif
 }
