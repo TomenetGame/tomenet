@@ -10117,7 +10117,7 @@ static void do_cmd_options_tilesets(void) {
 					options_immediate(FALSE);
 					Send_options();
 				}
-#endf
+#endif
 			} else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart.");
 			break;
 
