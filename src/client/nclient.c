@@ -2644,18 +2644,12 @@ int Receive_char_info(void) {
 		/* Pref files may change settings, so reload the keymap - mikaelh */
 		keymap_init();
 
-		if (use_graphics && c_cfg.font_map_solid_walls) {
-			if (c_cfg.gfx_autooff_fmsw) {
-				c_msg_print("Option 'font_map_solid_walls' was auto-disabled as graphics are enabled.");
-				c_cfg.font_map_solid_walls = FALSE;
-				(*option_info[CO_FONT_MAP_SOLID_WALLS].o_var) = FALSE;
-				Client_setup.options[CO_FONT_MAP_SOLID_WALLS] = FALSE;
-				options_immediate(FALSE);
-				Send_options();
-			} else {
-				c_msg_print("\377yWarning: Option 'font_map_solid_walls' is enabled while graphics are enabled.");
-				c_msg_print("\377y         This can often lead to graphics not working correctly.");
-			}
+		/* Disable font_map_solid_walls again (We already did at "Pre-initialize character-specific options",
+		   but we re-initialized the prf files here, so we need to apply it again as font_map_solid_walls possibly got reset to 'yes'). */
+		if (use_graphics && c_cfg.font_map_solid_walls && c_cfg.gfx_autooff_fmsw) {
+			c_cfg.font_map_solid_walls = FALSE;
+			(*option_info[CO_FONT_MAP_SOLID_WALLS].o_var) = FALSE;
+			Client_setup.options[CO_FONT_MAP_SOLID_WALLS] = FALSE;
 		}
 	}
 

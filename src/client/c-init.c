@@ -270,7 +270,9 @@ void initialize_player_pref_files(void) {
 	process_pref_file(buf);
 	keymap_init();
 	prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
+#if 0 /* Already sent at "Pre-initialize character-specific options", no need to spam the network a second time as it might provoke 'read error' on weak networks. */
 	Send_options();
+#endif
 
 #if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
 	/* Access the "account" pref file */
@@ -3914,6 +3916,19 @@ void client_init(char *argv1, bool skip) {
 	   so we can receive private/party/guild notes in the desired format. */
 	sprintf(buf, "%s.opt", cname);
 	process_pref_file(buf);
+	/* ..and while we're on it, apply this fix earliest usable here, for graphics mode */
+	if (use_graphics && c_cfg.font_map_solid_walls) {
+		if (c_cfg.gfx_autooff_fmsw) {
+			c_msg_print("Option 'font_map_solid_walls' was auto-disabled as graphics are enabled.");
+			c_cfg.font_map_solid_walls = FALSE;
+			(*option_info[CO_FONT_MAP_SOLID_WALLS].o_var) = FALSE;
+			Client_setup.options[CO_FONT_MAP_SOLID_WALLS] = FALSE;
+			options_immediate(FALSE);
+		} else {
+			c_msg_print("\377yWarning: Option 'font_map_solid_walls' is enabled while graphics are enabled.");
+			c_msg_print("\377y         This can often lead to graphics not working correctly.");
+		}
+	}
 	Send_options();
 
 	/* Handle asking for big_map mode on first time startup */
