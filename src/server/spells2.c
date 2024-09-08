@@ -5132,6 +5132,10 @@ static void throw_dirt_aux(int Ind, int m_idx) {
 		msg_format(Ind, "You throw dirt, but %s is unaffected.", m_name);
 		msg_format_near(Ind, "%s throws dirt, but %s is unaffected.", p_ptr->name, m_name);
 		return;
+	} else if (!blindable_monster_chance(r_ptr)) {
+		msg_format(Ind, "You throw dirt, but %s resists the effect.", m_name);
+		msg_format_near(Ind, "%s throws dirt, but %s resists the effect.", p_ptr->name, m_name);
+		return;
 	}
 
 	msg_format(Ind, "You throw dirt at the face of %s.", m_name);

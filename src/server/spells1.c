@@ -9268,26 +9268,30 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Blindness (confusion): Not for uniques or powerful monsters */
 	if (do_blind && blindable_monster(r_ptr)) {
-		/* Obvious */
-		if (seen) obvious = TRUE;
+		if (!blindable_monster_chance(r_ptr)) {
+			if (note == NULL) {
+			/* No obvious effect */
+				note = " resists the effect";
+				obvious = FALSE;
+			}
+		} else {
+			/* Obvious */
+			if (seen) obvious = TRUE;
 
-		/* Not too confused yet? */
-		if (m_ptr->confused < do_blind) {
-			i = do_blind;
-			if (!do_sleep && !m_ptr->csleep) {
-				/* Already confused */
-				if (m_ptr->confused) {
-					note = " looks more confused";
-				}
-				/* Was not confused */
-				else {
-					note = " gropes around blindly";
+			/* Not too confused yet? */
+			if (m_ptr->confused < do_blind) {
+				i = do_blind;
+				if (!do_sleep && !m_ptr->csleep) {
+				    /* Already confused */
+					if (m_ptr->confused) note = " looks more confused";
+					/* Was not confused */
+					else note = " gropes around blindly";
 				}
 			}
-		}
 
-		/* Apply confusion */
-		m_ptr->confused = (i < 200) ? i : 200;
+			/* Apply confusion */
+			m_ptr->confused = (i < 200) ? i : 200;
+		}
 	} else if (do_blind) {
 		if (note == NULL) {
 		/* No obvious effect */
@@ -9548,12 +9552,14 @@ bool blindable_monster(monster_race *r_ptr) {
 	    !(r_ptr->flags4 & RF4_BR_LITE) && !(r_ptr->flags9 & RF9_RES_LITE) && !(r_ptr->flags2 & RF2_REFLECTING) &&
 	    !(r_ptr->flags3 & RF3_UNDEAD) &&
 	    !(r_ptr->flags3 & RF3_NONLIVING) &&
-	    magik(100 - (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) - r_ptr->level))
+	    (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) + r_ptr->level < 100)
 	    //RES_OLD(r_ptr->level, dam))  <- this line would require a " resists." note btw. */
 		return(TRUE);
 	return(FALSE);
 }
-
+bool blindable_monster_chance(monster_race *r_ptr) {
+	return(magik(100 - (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) - r_ptr->level));
+}
 
 
 
