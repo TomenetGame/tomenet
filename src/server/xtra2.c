@@ -5506,7 +5506,7 @@ void check_experience(int Ind) {
 		/* Update the client */
 		Send_skill_info(Ind, SKILL_STANCE, TRUE);
 		/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
-		msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE);
+		msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE, 0);
 	}
 #endif
 

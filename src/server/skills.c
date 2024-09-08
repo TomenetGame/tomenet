@@ -189,9 +189,9 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i) {
 
 /* Display messages to the player, telling him about newly gained abilities
    from increasing a skill */
-void msg_gained_abilities(int Ind, int old_value, int i) {
+void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 	player_type *p_ptr = Players[Ind];
-	int new_value = get_skill_scale(p_ptr, i, 500), n;
+	int new_value = get_skill_scale(p_ptr, i, 500), n, new_value_fine = p_ptr->s_info[i].value;
 
 	//int as = get_archery_skill(p_ptr);
 	//int ws = get_weaponmastery_skill(p_ptr);
@@ -211,6 +211,16 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value == 0 && new_value > 0 &&
 		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
 			msg_print(Ind, "\377oYou cannot dodge attacks while wielding a shield!");
+		break;
+	case SKILL_SNEAKINESS: //7143,14286,21429,28572,35715,42858,50000 -- it's (int(50000/7)+1) per +1 speed, except for step 7 where it's 50000 (instead of 50001)
+		if ((old_value_fine < 7143 && new_value_fine >= 7143) ||
+		    (old_value_fine < 14286 && new_value_fine >= 14286) ||
+		    (old_value_fine < 21429 && new_value_fine >= 21429) ||
+		    (old_value_fine < 28572 && new_value_fine >= 28572) ||
+		    (old_value_fine < 35715 && new_value_fine >= 35715) ||
+		    (old_value_fine < 42858 && new_value_fine >= 42858) ||
+		    (old_value_fine < 50000 && new_value_fine == 50000))
+			msg_print(Ind, "\374\377GYour sneakiness allows you to move faster!");
 		break;
 	case SKILL_MARTIAL_ARTS:
 		if (old_value == 0 && new_value > 0) {
@@ -825,7 +835,7 @@ static void increase_related_skills(int Ind, int i, bool quiet) {
 		/* Non-exclusive skills */
 		else {
 			/* Save previous value */
-			int old_value = get_skill_scale(p_ptr, j, 500);
+			int old_value = get_skill_scale(p_ptr, j, 500), old_value_fine = p_ptr->s_info[i].value;
 
 			/* Increase / decrease with a % */
 			s32b val = p_ptr->s_info[j].value +
@@ -851,7 +861,7 @@ static void increase_related_skills(int Ind, int i, bool quiet) {
 			}
 
 			/* Take care of gained abilities */
-			if (!quiet) msg_gained_abilities(Ind, old_value, j);
+			if (!quiet) msg_gained_abilities(Ind, old_value, j, old_value_fine);
 		}
 	}
 }
@@ -864,7 +874,7 @@ static void increase_related_skills(int Ind, int i, bool quiet) {
  */
 void increase_skill(int Ind, int i, bool quiet) {
 	player_type *p_ptr = Players[Ind];
-	int old_value;
+	int old_value, old_value_fine;
 	//int as, ws, new_value;
 	//int can_regain;
 
@@ -914,6 +924,7 @@ void increase_skill(int Ind, int i, bool quiet) {
 	//old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
 	/*multiply by 10, so we get +1 digit*/
 	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % (SKILL_STEP / 10))) / (SKILL_STEP / 10);
+	old_value_fine = p_ptr->s_info[i].value;
 
 	/* Increase the skill */
 	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
@@ -950,7 +961,7 @@ void increase_skill(int Ind, int i, bool quiet) {
 	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES | PR_SANITY);
 
 	/* Take care of gained abilities */
-	if (!quiet) msg_gained_abilities(Ind, old_value, i);
+	if (!quiet) msg_gained_abilities(Ind, old_value, i, old_value_fine);
 }
 /*
  * Given the name of a skill, returns skill index or -1 if no

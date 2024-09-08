@@ -2466,7 +2466,7 @@ extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
 extern s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 extern s16b find_skill(cptr name);
-extern void msg_gained_abilities(int Ind, int old_value, int i);
+extern void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine);
 extern void respec_skill(int Ind, int i, bool update_skill, bool polymorph);
 #ifdef ENABLE_SUBCLASS
 extern void subclass_skills(int Ind, int class);
