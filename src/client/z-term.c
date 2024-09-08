@@ -3606,11 +3606,19 @@ errr refresh_minimap() {
 
 	term_win *scr_a;
 	term_win *scr_b;
+#ifdef GRAPHICS_BG_MASK
+	term_win *scr_a_back;
+	term_win *scr_b_back;
+#endif
 
 	//Find the map in memory.
 	Term_activate(ang_term[0]);
 	if (screen_icky > 0) scr_a = Term->mem[0];
 	else scr_a = Term->scr;
+#ifdef GRAPHICS_BG_MASK
+	if (screen_icky > 0) scr_a_back = Term->mem_back[0];
+	else scr_a_back = Term->scr_back;
+#endif
 
 	//Find the dimensions of the map
 	w = Term->wid;
@@ -3642,6 +3650,10 @@ errr refresh_minimap() {
 			//Update the map
 			scr_b = Term->scr;
 			term_win_copy_part(scr_b, scr_a, SCREEN_PAD_LEFT, SCREEN_PAD_TOP, w - 1 - SCREEN_PAD_RIGHT, h - 1 - SCREEN_PAD_BOTTOM, 0, 0);
+#ifdef GRAPHICS_BG_MASK
+			scr_b_back = Term->scr_back;
+			term_win_copy_part(scr_b_back, scr_a_back, SCREEN_PAD_LEFT, SCREEN_PAD_TOP, w - 1 - SCREEN_PAD_RIGHT, h - 1 - SCREEN_PAD_BOTTOM, 0, 0);
+#endif
 
 			//Redraw it
 			for (j = 0; j < h; j++) {
