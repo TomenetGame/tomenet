@@ -3763,14 +3763,14 @@ void client_init(char *argv1, bool skip) {
 #ifdef USE_GRAPHICS
 	/* If server is older than 4.8.1, then it doesn't support 32bit characters, so turn off graphics if turned on. */
 	if (use_graphics && is_older_than(&server_version, 4, 8, 1, 0, 0, 0)) {
-		plog_fmt("Server doesn't support graphics. Graphics turned off.");
+		plog("Server doesn't support graphics. Graphics turned off.");
 		use_graphics_new = use_graphics = FALSE;
 		/* TODO Turn off higher_pict for every terminal and free graphics data? */
 		/* Currently not needed, cause if graphics is off, no picture redefinitions are allowed. */
 	}
  #ifdef GRAPHICS_BG_MASK
 	else if (use_graphics == UG_2MASK && is_older_than(&server_version, 4, 9, 2, 1, 0, 0)) {
-		plog_fmt("Server doesn't support 2-mask graphics. Switching to standard graphics.");
+		plog("Server doesn't support 2-mask graphics. Switching to standard graphics.");
 		use_graphics_new = use_graphics = UG_NORMAL;
 	}
  #endif
