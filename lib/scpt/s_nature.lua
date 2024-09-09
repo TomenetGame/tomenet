@@ -60,8 +60,8 @@ HEALING_I = add_spell {
 	["name2"] = 	"Heal I",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	1,
-	["mana"] = 	13,
-	["mana_max"] = 	13,
+	["mana"] = 	6,
+	["mana_max"] = 	6,
 	["fail"] = 	10,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(1), 1, "")
@@ -81,8 +81,8 @@ HEALING_II = add_spell {
 	["name2"] = 	"Heal II",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	20,
-	["mana"] = 	28,
-	["mana_max"] = 	28,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
 	["fail"] = 	-30,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(15), 1, "")
@@ -101,8 +101,8 @@ HEALING_III = add_spell {
 	["name2"] = 	"Heal III",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	40,
-	["mana"] = 	80,
-	["mana_max"] = 	80,
+	["mana"] = 	67,
+	["mana_max"] = 	67,
 	["fail"] = 	-70,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(0), 1, "")
