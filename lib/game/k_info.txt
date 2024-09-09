@@ -237,8 +237,8 @@ G:,:B
 I:80:207:0
 W:5:0:3:50
 A:5/1:10/1:20/1
-D:This blessed food perfectly satisfies your hunger,
-D:cures poison, disease and removes hallucinations.
+D:This blessed food perfectly satisfies your hunger, heals 5d8 hit points,
+D:cures poison and disease and removes hallucinations.
 
 N:26:& Pint~ of Fine Ale
 G:,:y
