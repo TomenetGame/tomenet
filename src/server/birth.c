@@ -1269,337 +1269,272 @@ static void player_wipe(int Ind) {
  * If { 0, 0} or other 'illigal' item, one random item from bard_init
  * will be given instead.	- Jir -
  */
-static byte player_init[2][MAX_CLASS][5][3] = {
-	/* Format: { tval, sval, pval } */
+#define STARTER_ITEMS 6
+static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
+	/* Format: { amount, tval, sval, bpval, pval }.
+	   tval 255, sval 255 -> unused slot (no item).
 
-    { /* Normal body */
-	{
-		/* Warrior */
-		{ TV_SWORD, SV_BROAD_SWORD, 0 },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL, 0 },
-		{ TV_POTION, SV_POTION_BERSERK_STRENGTH, 0 },
-		{ 255, 255, 0 },
-		{ 255, 255, 0 },
-	},
+	   TV_SWORD is a placeholder for 'race-flavoured melee weapon',
+	    the actual SV_SWORD_xxx values then are also placeholders and used to distinguish the classes. - C. Blue */
 
-	{
-		/* Mage */
-		{ TV_MSTAFF, SV_MSTAFF, 0 },
-		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
-		{ TV_BOOK, 50, 0 },
-		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 10 },
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Priest */
-		{ TV_BLUNT, SV_MACE, 0 },
-		{ TV_POTION, SV_POTION_HEALING, 0 },
-		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
-		{ TV_BOOK, 56, 0 },
-		//{ TV_SOFT_ARMOR, SV_ROBE, 0},
-		{ TV_SOFT_ARMOR, SV_FROCK, 0},
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Rogue */
-		{ TV_SWORD, SV_MAIN_GAUCHE, 0 },
-		{ TV_SWORD, SV_DAGGER, 0 },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
-		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
-		{ TV_SHOT, SV_AMMO_LIGHT, 0 },//trapkit ammo in this case
-		//{ TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0 },
-		//{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
-		//{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
-		//{ TV_BOOK, 66, 0 },
-	},
-
-	{
-		/* Mimic */
-		{ TV_SWORD, SV_TULWAR, 0 },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL, 0 },
-		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
-		{ TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0},
-		{ 255, 255, 0 },
-		//{ TV_RING, SV_RING_POLYMORPH, 0 },
-	},
-
-	{
-		/* Archer */
-		{ TV_BOW, SV_LONG_BOW, 0 },
-		{ TV_ARROW, SV_AMMO_NORMAL, 0 },
-		//{ TV_ARROW, SV_AMMO_MAGIC, 0 },
-		//{ TV_SHOT, SV_AMMO_MAGIC, 0 },
-		//{ TV_BOLT, SV_AMMO_MAGIC, 0 },
-		{ 255, 255, 0 },
-		{ 255, 255, 0 },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
-	},
-
-	{
-		/* Paladin */
-		{ TV_BLUNT, SV_WAR_HAMMER, 0 },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
-		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING -> __lua_HDELFEAR */
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Ranger */
-		{ TV_SWORD, SV_LONG_SWORD, 0 },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
-		{ TV_BOW, SV_LONG_BOW, 0 },
-		{ TV_ARROW, SV_AMMO_NORMAL, 0 },
-		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
-		//{ TV_BOOK, 50, 0 },
-		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
-	},
-
-	{
-		/* Adventurer */
-		{ TV_SWORD, SV_SHORT_SWORD, 0 },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
-		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
-		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
-		{ TV_BOW, SV_SLING, 0 },
-	},
-
-	{
-		/* Druid */
-		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
-		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
-		{ TV_POTION, SV_POTION_INVIS, 0 },
-		//{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_FOCUS */
-		{ TV_SOFT_ARMOR, SV_GOWN, 0 },
-	},
-
-	{
-		/* Shaman */
-		{ TV_BOOK, 61, 0 },
-		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
-		{ TV_AMULET, SV_AMULET_INFRA, 3 },
-		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
-		{ TV_SWORD, SV_SHADOW_BLADE, 0 }, /* just a placeholder! */
-	},
-	{
-		/* Runemaster */
-		{ TV_SWORD, SV_DAGGER, 0 },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
-		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 18 },
-		{ TV_DIGGING, SV_PICK, 0 },
-		{ TV_BOOMERANG, SV_BOOM_S_WOOD, 0 },
-	},
-	{
-		/* Mindcrafter */
-		//{ TV_BOOK, 50, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 },/* __lua_MSCARE */
-		//{ TV_SWORD, SV_SHORT_SWORD, 0 },
-		{ TV_SWORD, SV_RAPIER, 0 },//TV_SABRE didn't give 2 bpr w/ min recomm stats, and they are so similar, so what gives
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
-		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
-		{ 255, 255, 0 },
-		//{ TV_BOOK, 65, 0 },
-	},
-
+	{ /* Normal body */
+		{ /* Warrior */
+			{ 1, TV_SWORD, SV_BROAD_SWORD, 0, 0 },
+			{ 1, TV_HARD_ARMOR, SV_CHAIN_MAIL, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_BERSERK_STRENGTH, 0, 0},
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Mage */
+			{ 1, TV_BOOK, 50, 0, 0},
+			{ 1, TV_MSTAFF, SV_MSTAFF, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_ROBE, 0, 0 },
+			{ 1, TV_WAND, SV_WAND_MAGIC_MISSILE, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Priest */
+			//{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_HHEALING */
+			{ 1, TV_BOOK, 56, 0, 0 },
+			{ 1, TV_BLUNT, SV_MACE, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_HEALING, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_FROCK, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Rogue */
+			//{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* Spellbook of Phase Door */
+			{ 1, TV_SWORD, SV_MAIN_GAUCHE, 0, 0 },
+			{ 1, TV_SWORD, SV_DAGGER, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0, 0 },
+			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+			{ 30, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },//trapkit ammo in this case
+			{ 3, TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0, 0 },
+		}, { /* Mimic */
+			{ 1, TV_SWORD, SV_TULWAR, 0, 0 },
+			{ 1, TV_HARD_ARMOR, SV_CHAIN_MAIL, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_CURE_SERIOUS, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0, 0 },
+			{ 1, TV_RING, SV_RING_POLYMORPH, 0, 0 }, /* to forge it and sell a form^^ */
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Archer */
+			{ 1, TV_BOW, SV_LONG_BOW, 0, 0 },
+			{ 35, TV_ARROW, SV_AMMO_NORMAL, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Paladin */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_HBLESSING -> __lua_HDELFEAR */
+			{ 1, TV_BLUNT, SV_WAR_HAMMER, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0, 0 },
+			{ 1, TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Ranger */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_HEALING_I */
+			{ 1, TV_SWORD, SV_LONG_SWORD, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0, 0 },
+			{ 1, TV_BOW, SV_LONG_BOW, 0, 0 },
+			{ 35, TV_ARROW, SV_AMMO_NORMAL, 0, 0 },
+			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+		}, { /* Adventurer */
+			{ 1, TV_SWORD, SV_SHORT_SWORD, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0, 0 },
+			{ 3, TV_SCROLL, SV_SCROLL_MAPPING, 0, 0 },
+			{ 1, TV_BOW, SV_SLING, 0, 0 },
+			{ 25, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Druid */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_FOCUS */
+			{ 1, TV_POTION, SV_POTION_CURE_POISON, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_CURE_CRITICAL, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_INVIS, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_GOWN, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Shaman */
+			{ 1, TV_SOFT_ARMOR, SV_ROBE, 0, 0 },
+			{ 1, TV_BOOK, 61, 0, 0 },
+			{ 1, TV_AMULET, SV_AMULET_INFRA, 3, 0 },
+			{ 1, TV_POTION, SV_POTION_CURE_POISON, 0, 0 },
+			{ 1, TV_SWORD, SV_SHADOW_BLADE, 0, 0 }, /* just a placeholder! */
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Runemaster */
+			{ 1, TV_SWORD, SV_DAGGER, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0, 0 },
+			{ 1, TV_STAFF, SV_STAFF_DETECT_GOLD, 0, 0 },
+			{ 1, TV_DIGGING, SV_PICK, 0, 0 },
+			{ 1, TV_BOOMERANG, SV_BOOM_S_WOOD, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Mindcrafter */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 },/* __lua_MSCARE */
+			{ 1, TV_SWORD, SV_RAPIER, 0, 0 },//TV_SABRE didn't give 2 bpr w/ min recomm stats, and they are so similar, so what gives
+			{ 1, TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0, 0 },
+			{ 1, TV_SCROLL, SV_SCROLL_TELEPORT, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #ifdef ENABLE_DEATHKNIGHT
-	{
-		/* Death Knight (Vampire Paladin) */
-		{ TV_SWORD, SV_LONG_SWORD, 0 },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
-		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
-		{ TV_SCROLL, SV_SCROLL_DARKNESS, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_OFEAR */
-		{ 255, 255, 0 },
-	},
+		{ /* Death Knight (Vampire Paladin) */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_OFEAR */
+			{ 1, TV_SWORD, SV_LONG_SWORD, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0, 0 },
+			{ 1, TV_SCROLL, SV_SCROLL_DARKNESS, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
-		/* Hell Knight (Corrupted Paladin) */
-		{ TV_SWORD, SV_LONG_SWORD, 0 },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
-		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
-		{ TV_AMULET, SV_AMULET_DOOM, -1 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR */
-		{ 255, 255, 0 },
-	},
+		{ /* Hell Knight (Corrupted Paladin) */
+			/* -- Note: This item set is never going to be applied, as this class starts at initiation, not at birth! -- */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_TERROR */
+			{ 1, TV_SWORD, SV_LONG_SWORD, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0, 0 },
+			{ 1, TV_AMULET, SV_AMULET_DOOM, -1, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #endif
 #ifdef ENABLE_CPRIEST
-	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
-		/* Corrupted Priest */
-		{ TV_BLUNT, SV_MACE, 0 },
-		{ TV_POTION, SV_POTION_HEALING, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR?.. */
-		{ TV_SOFT_ARMOR, SV_FROCK, 0},
-		{ 255, 255, 0 },
-	},
+		{ /* Corrupted Priest */
+			/* -- Note: This item set is never going to be applied, as this class starts at initiation, not at birth! -- */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_TERROR?.. */
+			{ 1, TV_BLUNT, SV_MACE, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_HEALING, 0, 0 },
+			{ 1, TV_SOFT_ARMOR, SV_FROCK, 0},
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #endif
-    },
-    { /* Fruit bat body */
-	{
-		/* Warrior */
-		{ TV_HELM, SV_METAL_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_POTION, SV_POTION_BERSERK_STRENGTH, 0 },
-		{ 255, 255, 0 },
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Mage */
-		//{ TV_HELM, SV_CLOTH_CAP, 0 },
-		{ TV_AMULET, SV_AMULET_MANA_CHARGING, 0 }, //pft.. how nice
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_BOOK, 50, 0 },
-		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 10 },
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Priest */
-		{ TV_HELM, SV_CLOTH_CAP, 0 },
-		{ TV_POTION, SV_POTION_HEALING, 0 },
-		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
-		{ TV_BOOK, 56, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Rogue */
-		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
-		//{ 255, 255, 0 },
-		{ TV_SHOT, SV_AMMO_LIGHT, 0 },//trapkit ammo in this case
-		//{ TV_BOOK, 66, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
-		//{ TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0 },
-		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
-		//{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
-	},
-
-	{
-		/* Mimic */
-		{ TV_HELM, SV_METAL_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
-		{ TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0},
-		{ 255, 255, 0 },
-		//{ TV_RING, SV_RING_POLYMORPH, 0 },
-	},
-
-	{
-		/* Archer */
-		{ TV_BOW, SV_LONG_BOW, 0 },//just doesn't work as fruit bat
-		{ TV_ARROW, SV_AMMO_NORMAL, 0 },
-		//{ TV_ARROW, SV_AMMO_MAGIC, 0 },
-		//{ TV_SHOT, SV_AMMO_MAGIC, 0 },
-		//{ TV_BOLT, SV_AMMO_MAGIC, 0 },
-		{ 255, 255, 0 },
-		{ 255, 255, 0 },
-		{ TV_HELM, SV_METAL_CAP, 0 },
-	},
-
-	{
-		/* Paladin */
-		{ TV_HELM, SV_METAL_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING -> __lua_HDELFEAR */
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Ranger */
-		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		//{ TV_BOOK, 50, 0 },
-		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL, 0 },//instead of unusable bow. alternatives: invis-pot, id-all-scroll?, mapping, rll, csw/ccw?
-		{ TV_TRAPKIT, SV_TRAPKIT_BOW, 0 },
-		{ TV_ARROW, SV_AMMO_NORMAL, 0 },//trapkit ammo in this case
-	},
-
-	{
-		/* Adventurer */
-		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
-		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Druid */
-		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
-		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
-		{ TV_POTION, SV_POTION_INVIS, 0 },
-		//{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_FOCUS */
-		{ 255, 255, 0 },
-	},
-
-	{
-		/* Shaman */
-		{ TV_BOOK, 61, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_AMULET, SV_AMULET_INFRA, 3 },
-		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
-		{ TV_HELM, SV_CLOTH_CAP, 0 }, /* just a placeholder! */
-	},
-	{
-		/* Runemaster */
-		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 18 },
-		{ TV_DIGGING, SV_PICK, 0 },
-		{ 255, 255, 0 },
-	},
-	{
-		/* Mindcrafter */
-		//{ TV_BOOK, 50, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 },/* __lua_MSCARE */
-		{ TV_HELM, SV_METAL_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
-		{ 255, 255, 0 },
-		//{ TV_BOOK, 65, 0 },
-	},
+	}, { /* Fruit bat body */
+		{ /* Warrior */
+			{ 1, TV_HELM, SV_METAL_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_BERSERK_STRENGTH, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Mage */
+			//{ 1, TV_HELM, SV_CLOTH_CAP, 0, 0 },
+			{ 1, TV_AMULET, SV_AMULET_MANA_CHARGING, 0, 0 }, //pft.. how nice
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_WAND, SV_WAND_MAGIC_MISSILE, 0, 0 },
+			{ 1, TV_BOOK, 50, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Priest */
+			//{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_HHEALING */
+			{ 1, TV_HELM, SV_CLOTH_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_HEALING, 0, 0 },
+			{ 1, TV_BOOK, 56, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Rogue */
+			//{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* Spellbook of Phase Door */
+			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_TRAPKIT, SV_TRAPKIT_POTION, 0, 0 },
+			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+			{ 30, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },//trapkit ammo in this case
+			{ 3, TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0, 0 },
+		}, { /* Mimic */
+			{ 1, TV_HELM, SV_METAL_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_CURE_SERIOUS, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0, 0 },
+			{ 1, TV_RING, SV_RING_POLYMORPH, 0, 0 }, /* to forge it and sell a form^^ */
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Archer */
+			{ 1, TV_BOW, SV_LONG_BOW, 0, 0 },//just doesn't work as fruit bat
+			{ 35, TV_ARROW, SV_AMMO_NORMAL, 0, 0 },
+			{ 1, TV_HELM, SV_METAL_CAP, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Paladin */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_HBLESSING -> __lua_HDELFEAR */
+			{ 1, TV_HELM, SV_METAL_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Ranger */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_HEALING_I */
+			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_SCROLL, SV_SCROLL_WORD_OF_RECALL, 0, 0 },//instead of unusable bow. alternatives: invis-pot, id-all-scroll?, mapping, rll, csw/ccw?
+			{ 3, TV_TRAPKIT, SV_TRAPKIT_BOW, 0, 0 },
+			{ 35, TV_ARROW, SV_AMMO_NORMAL, 0, 0 },//trapkit ammo in this case
+		}, { /* Adventurer */
+			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 3, TV_SCROLL, SV_SCROLL_MAPPING, 0, 0 },
+			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+			{ 25, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Druid */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_FOCUS */
+			{ 1, TV_POTION, SV_POTION_CURE_POISON, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_CURE_CRITICAL, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_INVIS, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, { /* Shaman */
+			{ 1, TV_BOOK, 61, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_AMULET, SV_AMULET_INFRA, 3, 0 },
+			{ 1, TV_POTION, SV_POTION_CURE_POISON, 0, 0 },
+			{ 1, TV_HELM, SV_CLOTH_CAP, 0, 0 }, /* just a placeholder! */
+			{ 1, 255, 255, 0, 0 },
+		}, {
+			/* Runemaster */
+			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_STAFF, SV_STAFF_DETECT_GOLD, 0, 0 },
+			{ 1, TV_DIGGING, SV_PICK, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		}, {
+			/* Mindcrafter */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 },/* __lua_MSCARE */
+			{ 1, TV_HELM, SV_METAL_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_SCROLL, SV_SCROLL_TELEPORT, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #ifdef ENABLE_DEATHKNIGHT
-	{
-		/* Death Knight (Vampire Paladin) */
-		{ TV_HELM, SV_METAL_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
-		{ TV_SCROLL, SV_SCROLL_DARKNESS, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_OFEAR */
-		{ 255, 255, 0 },
-	},
+		{ /* Death Knight (Vampire Paladin) */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_OFEAR */
+			{ 1, TV_HELM, SV_METAL_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_SCROLL, SV_SCROLL_DARKNESS, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
-		/* Hell Knight (Corrupted Paladin) */
-		{ TV_HELM, SV_METAL_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
-		{ TV_AMULET, SV_AMULET_DOOM, -1 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR */
-		{ 255, 255, 0 },
-	},
+		{ /* Hell Knight (Corrupted Paladin) */
+			/* -- Note: This item set is never going to be applied, as this class starts at initiation, not at birth! -- */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_TERROR */
+			{ 1, TV_HELM, SV_METAL_CAP, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, TV_AMULET, SV_AMULET_DOOM, -1, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #endif
 #ifdef ENABLE_CPRIEST
-	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
-		/* Corrupted Priest */
-		{ TV_HELM, SV_CLOTH_CAP, 0 },
-		{ TV_POTION, SV_POTION_HEALING, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR?.. */
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ 255, 255, 0 },
-	},
+		{ /* Corrupted Priest */
+			/* -- Note: This item set is never going to be applied, as this class starts at initiation, not at birth! -- */
+			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_TERROR?.. */
+			{ 1, TV_HELM, SV_CLOTH_CAP, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_HEALING, 0, 0 },
+			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
+		},
 #endif
-    }
+	}
 };
 
 /* hack: make sure spellbook constants are correct.
@@ -1607,24 +1542,38 @@ static byte player_init[2][MAX_CLASS][5][3] = {
    but since the array player_init is static, we
    just do it here. - C. Blue */
 void init_player_outfits(void) {
-	int s;
+	int s, i;
 
 	for (s = 0; s <= 1; s++) {
-		//player_init[s][CLASS_PRIEST][2][2] = __lua_HHEALING;
-		//player_init[s][CLASS_PALADIN][3][2] = __lua_HBLESSING;
-		player_init[s][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
+		for (i = 0; i < STARTER_ITEMS; i++) {
+			if (player_init[s][CLASS_PRIEST][i][1] == TV_BOOK && player_init[s][CLASS_PRIEST][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_PRIEST][i][4] = __lua_HHEALING;
+			if (player_init[s][CLASS_PALADIN][i][1] == TV_BOOK && player_init[s][CLASS_PALADIN][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_PALADIN][i][4] = __lua_HDELFEAR;
+				//player_init[s][CLASS_PALADIN][i][4] = __lua_HBLESSING;
 #ifdef ENABLE_DEATHKNIGHT
-		player_init[s][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
+			if (player_init[s][CLASS_DEATHKNIGHT][i][1] == TV_BOOK && player_init[s][CLASS_DEATHKNIGHT][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_DEATHKNIGHT][i][4] = __lua_OFEAR;
 #endif
 #ifdef ENABLE_HELLKNIGHT
-		player_init[s][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+			//just pointless placeholder, since class can't be "created" (but gets initiated at level 20):
+			if (player_init[s][CLASS_HELLKNIGHT][i][1] == TV_BOOK && player_init[s][CLASS_HELLKNIGHT][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_HELLKNIGHT][i][4] = __lua_OFEAR;
 #endif
 #ifdef ENABLE_CPRIEST
-		player_init[s][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+			//just pointless placeholder, since class can't be "created" (but gets initiated at level 20):
+			if (player_init[s][CLASS_CPRIEST][i][1] == TV_BOOK && player_init[s][CLASS_CPRIEST][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_CPRIEST][i][4] = __lua_OFEAR;
 #endif
-		player_init[s][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
-		player_init[s][CLASS_DRUID][3][2] = __lua_FOCUS;
-		//player_init[s][CLASS_RANGER][2][2] = __lua_HEALING_I;
+			if (player_init[s][CLASS_MINDCRAFTER][i][1] == TV_BOOK && player_init[s][CLASS_MINDCRAFTER][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_MINDCRAFTER][i][4] = __lua_MSCARE;
+			if (player_init[s][CLASS_DRUID][i][1] == TV_BOOK && player_init[s][CLASS_DRUID][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_DRUID][i][4] = __lua_FOCUS;
+			if (player_init[s][CLASS_RANGER][i][1] == TV_BOOK && player_init[s][CLASS_RANGER][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_RANGER][i][4] = __lua_HEALING_I;
+			if (player_init[s][CLASS_ROGUE][i][1] == TV_BOOK && player_init[s][CLASS_ROGUE][i][2] == SV_SPELLBOOK)
+				player_init[s][CLASS_ROGUE][i][4] = __lua_BLINK;
+		}
 	}
 }
 
@@ -1780,7 +1729,7 @@ void admin_outfit(int Ind, int realm) {
  */
 static void player_outfit(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int i, j, tv, sv, pv, k_idx, body;
+	int i, j, tv, sv, pv, bpv, num, k_idx, body;
 
 	object_type forge;
 	object_type *o_ptr = &forge;
@@ -1788,10 +1737,12 @@ static void player_outfit(int Ind) {
 	body = (p_ptr->fruit_bat == 1) ? 1 : 0;
 
 	/* Hack -- Give the player useful objects */
-	for (i = 0; i < 5; i++) {
-		tv = player_init[body][p_ptr->pclass][i][0];
-		sv = player_init[body][p_ptr->pclass][i][1];
-		pv = player_init[body][p_ptr->pclass][i][2];
+	for (i = 0; i < STARTER_ITEMS; i++) {
+		num = player_init[body][p_ptr->pclass][i][0];
+		tv = player_init[body][p_ptr->pclass][i][1];
+		sv = player_init[body][p_ptr->pclass][i][2];
+		bpv = player_init[body][p_ptr->pclass][i][3];
+		pv = player_init[body][p_ptr->pclass][i][4];
 
 		/* nothing */
 		if (tv == 255 && sv == 255) continue;
@@ -1971,37 +1922,39 @@ static void player_outfit(int Ind) {
 		/* Generate base item */
 		k_idx = lookup_kind(tv, sv);
 		invcopy(o_ptr, k_idx);
+		o_ptr->bpval = bpv;
 		o_ptr->pval = pv;
-		o_ptr->number = 1;
+		/* Mass-produce ammo etc */
+		o_ptr->number = num + rand_int(1 + (num + 15) * (num + 15) / 420);
+		if (o_ptr->number >= MAX_STACK_SIZE) o_ptr->number = MAX_STACK_SIZE - 1;
 
-		/* Mass-produce/pre-inscribe ammo */
+		/* Pre-inscribe ammo and trapkits */
 		if (is_ammo(tv)) {
 			/* hack: prevent newbie archers from wasting their only arrow by a flare missile technique */
 			if (o_ptr->sval == SV_AMMO_MAGIC) o_ptr->note = quark_add("!k");
-			/* Ensure a decent base amount of ammo */
-			else {
-				o_ptr->number = rand_range(35, 40);
-				o_ptr->note = quark_add("!="); //QoL: Auto-pickup
-			}
+			else o_ptr->note = quark_add("!="); //QoL: Auto-pickup
 		}
-
-		/* Let's not be stingy with projectile trapkits */
-		if (tv == TV_TRAPKIT &&
-		    (sv == SV_TRAPKIT_SLING || sv == SV_TRAPKIT_BOW || sv == SV_TRAPKIT_XBOW))
-			o_ptr->number = 3;
-
+		else if (tv == TV_TRAPKIT) o_ptr->note = quark_add("!="); //QoL: Auto-pickup
 #ifdef ENABLE_HELLKNIGHT
-		/* Gotta switch pval and bpval */
-		if (tv == TV_AMULET && sv == SV_AMULET_DOOM) {
-			o_ptr->pval = 0;
-			o_ptr->bpval = pv;
+		/* Hack Doom amulet sorta */
+		else if (tv == TV_AMULET && sv == SV_AMULET_DOOM) {
 			o_ptr->to_a = pv;
 			o_ptr->ident |= (ID_CURSED);
 		}
 #endif
-
-		/* Pre-charge staves - atm these are always Treasure Detection, for Runmaster class */
-		if (tv == TV_STAFF) o_ptr->pval = 17 + rand_int(4); /* average is same as in charge_staff() */
+		/* Pre-charge staves and wands - with reduced randomness: rnd mustn't be more than 1/4 of total average amount of charges! */
+		else switch (o_ptr->tval) {
+		case TV_WAND:
+			i = charge_wand_fix[sv] + (charge_wand_rnd[sv] + 1) / 2;
+			if (charge_wand_rnd[sv] <= i / 4) o_ptr->pval = charge_wand_fix[sv] + randint(charge_wand_rnd[sv]);
+			else o_ptr->pval = i + rand_int(i / 4 + 1) - i / 8;
+			break;
+		case TV_STAFF:
+			i = charge_staff_fix[sv] + (charge_staff_rnd[sv] + 1) / 2;
+			if (charge_staff_rnd[sv] <= i / 4) o_ptr->pval = charge_staff_fix[sv] + randint(charge_staff_rnd[sv]);
+			else o_ptr->pval = i + rand_int(i / 4 + 1) - i / 8;
+			break;
+		}
 
 		/* Add the item to the player's inventory/equipment */
 		do_player_outfit();

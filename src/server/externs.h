@@ -1352,6 +1352,8 @@ extern int Send_playerlist(int Ind, int i, int mode);
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);
 extern cptr wand_adj[MAX_METALS], rod_adj[MAX_METALS];
 /* object2.c */
+extern int charge_wand_fix[256], charge_wand_rnd[256], charge_staff_fix[256], charge_staff_rnd[256];
+extern void init_charge_wand(void), init_charge_staff(void);
 extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt);
 extern void discharge_rod(object_type *o_ptr, int c);
 extern s32b unique_quark;
@@ -2635,6 +2637,7 @@ extern bool watch_cp, watch_nr, watch_df;
 
 /* lua-dependant 'constants' */
 extern int __lua_HHEALING, __lua_HBLESSING, __lua_HDELFEAR;
+extern int __lua_BLINK;
 extern int __lua_MSCARE, __lua_M_FIRST, __lua_M_LAST;
 extern int __lua_P_FIRST, __lua_P_LAST;
 extern int __lua_OFEAR, __lua_FOCUS, __lua_POWERBOLT, __lua_HEALING_I;

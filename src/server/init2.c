@@ -3662,11 +3662,13 @@ void init_some_arrays(void) {
 	if (init_iddc()) quit("Cannot initialize iddc stuff");
 #endif
 
-	init_swearing();
-
 	/* Initialize randart names */
 	s_printf("[Initializing arrays... (randart)]\n");
 	if (init_randart()) quit("Cannot initialize randart stuff");
+
+	init_swearing();
+	init_charge_wand();
+	init_charge_staff();
 
 	/* Hack -- all done */
 	s_printf("[Initializing arrays... done]\n");

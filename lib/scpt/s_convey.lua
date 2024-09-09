@@ -18,6 +18,7 @@ BLINK = add_spell {
 	end,
 	["desc"] = 	{ "Teleports you on a small scale range.", },
 }
+__lua_BLINK = BLINK
 
 DISARM = add_spell {
 	["name"] = 	"Disarm",

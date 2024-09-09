@@ -4953,83 +4953,85 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 /*
  * Charge a new wand. -- Note: Currently only used for item generation, not for actual recharging.
  */
-static void charge_wand(object_type *o_ptr) {
-	switch (o_ptr->sval) {
-	case SV_WAND_HEAL_MONSTER:		o_ptr->pval = randint(20) + 8; break;
-	case SV_WAND_HASTE_MONSTER:		o_ptr->pval = randint(20) + 8; break;
-	case SV_WAND_CLONE_MONSTER:		o_ptr->pval = randint(5)  + 3; break;
-	case SV_WAND_TELEPORT_AWAY:		o_ptr->pval = randint(5)  + 6; break;
-	case SV_WAND_DISARMING:			o_ptr->pval = randint(5)  + 4; break;
-	case SV_WAND_TRAP_DOOR_DEST:		o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_STONE_TO_MUD:		o_ptr->pval = randint(8)  + 3; break;
-	case SV_WAND_LITE:			o_ptr->pval = randint(10) + 6; break;
-	case SV_WAND_SLEEP_MONSTER:		o_ptr->pval = randint(15) + 8; break;
-	case SV_WAND_SLOW_MONSTER:		o_ptr->pval = randint(10) + 6; break;
-	case SV_WAND_CONFUSE_MONSTER:		o_ptr->pval = randint(12) + 6; break;
-	case SV_WAND_FEAR_MONSTER:		o_ptr->pval = randint(5)  + 3; break;
-	case SV_WAND_DRAIN_LIFE:		o_ptr->pval = randint(3)  + 3; break;
-	case SV_WAND_WALL_CREATION:		o_ptr->pval = randint(4)  + 3; break;
-	case SV_WAND_POLYMORPH:			o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_STINKING_CLOUD:		o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_MAGIC_MISSILE:		o_ptr->pval = randint(10) + 6; break;
-	case SV_WAND_ACID_BOLT:			o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_CHARM_MONSTER:		o_ptr->pval = randint(6)  + 2; break;
-	case SV_WAND_FIRE_BOLT:			o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_COLD_BOLT:			o_ptr->pval = randint(5)  + 6; break;
-	case SV_WAND_ACID_BALL:			o_ptr->pval = randint(5)  + 2; break;
-	case SV_WAND_ELEC_BALL:			o_ptr->pval = randint(8)  + 4; break;
-	case SV_WAND_FIRE_BALL:			o_ptr->pval = randint(4)  + 2; break;
-	case SV_WAND_COLD_BALL:			o_ptr->pval = randint(6)  + 2; break;
-	case SV_WAND_WONDER:			o_ptr->pval = randint(15) + 8; break;
-	case SV_WAND_ANNIHILATION:		o_ptr->pval = randint(2)  + 1; break;
-	case SV_WAND_DRAGON_FIRE:		o_ptr->pval = randint(3)  + 1; break;
-	case SV_WAND_DRAGON_COLD:		o_ptr->pval = randint(3)  + 1; break;
-	case SV_WAND_DRAGON_BREATH:		o_ptr->pval = randint(3)  + 1; break;
-	case SV_WAND_ROCKETS:			o_ptr->pval = randint(2)  + 1; break;
-	case SV_WAND_ELEC_BOLT:			o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_TELEPORT_TO:		o_ptr->pval = randint(3)  + 3; break;
-	}
+int charge_wand_fix[256], charge_wand_rnd[256];
+void init_charge_wand(void) {
+	charge_wand_rnd[SV_WAND_HEAL_MONSTER] = 20;	charge_wand_fix[SV_WAND_HEAL_MONSTER] = 8;
+	charge_wand_rnd[SV_WAND_HASTE_MONSTER] = 20;	charge_wand_fix[SV_WAND_HASTE_MONSTER] = 8;
+	charge_wand_rnd[SV_WAND_CLONE_MONSTER] = 5;	charge_wand_fix[SV_WAND_CLONE_MONSTER] = 3;
+	charge_wand_rnd[SV_WAND_TELEPORT_AWAY] = 5;	charge_wand_fix[SV_WAND_TELEPORT_AWAY] = 6;
+	charge_wand_rnd[SV_WAND_DISARMING] = 5;		charge_wand_fix[SV_WAND_DISARMING] = 4;
+	charge_wand_rnd[SV_WAND_TRAP_DOOR_DEST] = 8;	charge_wand_fix[SV_WAND_TRAP_DOOR_DEST] = 6;
+	charge_wand_rnd[SV_WAND_STONE_TO_MUD] = 8;	charge_wand_fix[SV_WAND_STONE_TO_MUD] = 3;
+	charge_wand_rnd[SV_WAND_LITE] = 10;		charge_wand_fix[SV_WAND_LITE] = 6;
+	charge_wand_rnd[SV_WAND_SLEEP_MONSTER] = 15;	charge_wand_fix[SV_WAND_SLEEP_MONSTER] = 8;
+	charge_wand_rnd[SV_WAND_SLOW_MONSTER] = 10;	charge_wand_fix[SV_WAND_SLOW_MONSTER] = 6;
+	charge_wand_rnd[SV_WAND_CONFUSE_MONSTER] = 12;	charge_wand_fix[SV_WAND_CONFUSE_MONSTER] = 6;
+	charge_wand_rnd[SV_WAND_FEAR_MONSTER] = 5;	charge_wand_fix[SV_WAND_FEAR_MONSTER] = 3;
+	charge_wand_rnd[SV_WAND_DRAIN_LIFE] = 3;	charge_wand_fix[SV_WAND_DRAIN_LIFE] = 3;
+	charge_wand_rnd[SV_WAND_POLYMORPH] = 8;		charge_wand_fix[SV_WAND_POLYMORPH] = 6;
+	charge_wand_rnd[SV_WAND_STINKING_CLOUD] = 8;	charge_wand_fix[SV_WAND_STINKING_CLOUD] = 6;
+	charge_wand_rnd[SV_WAND_MAGIC_MISSILE] = 10;	charge_wand_fix[SV_WAND_MAGIC_MISSILE] = 6;
+	charge_wand_rnd[SV_WAND_ACID_BOLT] = 6;		charge_wand_fix[SV_WAND_ACID_BOLT] = 5;
+	charge_wand_rnd[SV_WAND_CHARM_MONSTER] = 6;	charge_wand_fix[SV_WAND_CHARM_MONSTER] = 2;
+	charge_wand_rnd[SV_WAND_FIRE_BOLT] = 6;		charge_wand_fix[SV_WAND_FIRE_BOLT] = 5;
+	charge_wand_rnd[SV_WAND_COLD_BOLT] = 7;		charge_wand_fix[SV_WAND_COLD_BOLT] = 6;
+	charge_wand_rnd[SV_WAND_ACID_BALL] = 6;		charge_wand_fix[SV_WAND_ACID_BALL] = 3;
+	charge_wand_rnd[SV_WAND_ELEC_BALL] = 8;		charge_wand_fix[SV_WAND_ELEC_BALL] = 4;
+	charge_wand_rnd[SV_WAND_FIRE_BALL] = 6;		charge_wand_fix[SV_WAND_FIRE_BALL] = 3;
+	charge_wand_rnd[SV_WAND_COLD_BALL] = 7;		charge_wand_fix[SV_WAND_COLD_BALL] = 4;
+	charge_wand_rnd[SV_WAND_WONDER] = 15;		charge_wand_fix[SV_WAND_WONDER] = 8;
+	charge_wand_rnd[SV_WAND_ANNIHILATION] = 2;	charge_wand_fix[SV_WAND_ANNIHILATION] = 1;
+	charge_wand_rnd[SV_WAND_DRAGON_FIRE] = 3;	charge_wand_fix[SV_WAND_DRAGON_FIRE] = 1;
+	charge_wand_rnd[SV_WAND_DRAGON_COLD] = 3;	charge_wand_fix[SV_WAND_DRAGON_COLD] = 1;
+	charge_wand_rnd[SV_WAND_DRAGON_BREATH] = 3;	charge_wand_fix[SV_WAND_DRAGON_BREATH] = 1;
+	charge_wand_rnd[SV_WAND_ROCKETS] = 2;		charge_wand_fix[SV_WAND_ROCKETS] = 1;
+	charge_wand_rnd[SV_WAND_WALL_CREATION] = 4;	charge_wand_fix[SV_WAND_WALL_CREATION] = 3;
+	charge_wand_rnd[SV_WAND_ELEC_BOLT] = 8;		charge_wand_fix[SV_WAND_ELEC_BOLT] = 6;
+	charge_wand_rnd[SV_WAND_TELEPORT_TO] = 3;	charge_wand_fix[SV_WAND_TELEPORT_TO] = 3;
 }
-
-
+static void charge_wand(object_type *o_ptr) {
+	o_ptr->pval = randint(charge_wand_rnd[o_ptr->sval]) + charge_wand_fix[o_ptr->sval];
+}
 
 /*
  * Charge a new staff. -- Note: Currently only used for item generation, not for actual recharging.
  */
+int charge_staff_fix[256], charge_staff_rnd[256];
+void init_charge_staff(void) {
+	charge_staff_rnd[SV_STAFF_DARKNESS] = 8;	charge_staff_fix[SV_STAFF_DARKNESS] = 8;
+	charge_staff_rnd[SV_STAFF_SLOWNESS] = 8;	charge_staff_fix[SV_STAFF_SLOWNESS] = 8;
+	charge_staff_rnd[SV_STAFF_HASTE_MONSTERS] = 8;	charge_staff_fix[SV_STAFF_HASTE_MONSTERS] = 8;
+	charge_staff_rnd[SV_STAFF_SUMMONING] = 3;	charge_staff_fix[SV_STAFF_SUMMONING] = 1;
+	charge_staff_rnd[SV_STAFF_TELEPORTATION] = 4;	charge_staff_fix[SV_STAFF_TELEPORTATION] = 5;
+	charge_staff_rnd[SV_STAFF_IDENTIFY] = 15;	charge_staff_fix[SV_STAFF_IDENTIFY] = 5;
+	charge_staff_rnd[SV_STAFF_REMOVE_CURSE] = 3;	charge_staff_fix[SV_STAFF_REMOVE_CURSE] = 4;
+	charge_staff_rnd[SV_STAFF_STARLITE] = 5;	charge_staff_fix[SV_STAFF_STARLITE] = 6;
+	charge_staff_rnd[SV_STAFF_LITE] = 20;		charge_staff_fix[SV_STAFF_LITE] = 8;
+	charge_staff_rnd[SV_STAFF_MAPPING] = 5;		charge_staff_fix[SV_STAFF_MAPPING] = 5;
+	charge_staff_rnd[SV_STAFF_DETECT_GOLD] = 20;	charge_staff_fix[SV_STAFF_DETECT_GOLD] = 8;
+	charge_staff_rnd[SV_STAFF_DETECT_ITEM] = 15;	charge_staff_fix[SV_STAFF_DETECT_ITEM] = 6;
+	charge_staff_rnd[SV_STAFF_DETECT_TRAP] = 5;	charge_staff_fix[SV_STAFF_DETECT_TRAP] = 6;
+	charge_staff_rnd[SV_STAFF_DETECT_DOOR] = 8;	charge_staff_fix[SV_STAFF_DETECT_DOOR] = 6;
+	charge_staff_rnd[SV_STAFF_DETECT_INVIS] = 15;	charge_staff_fix[SV_STAFF_DETECT_INVIS] = 8;
+	charge_staff_rnd[SV_STAFF_DETECT_EVIL] = 15;	charge_staff_fix[SV_STAFF_DETECT_EVIL] = 8;
+	charge_staff_rnd[SV_STAFF_CURE_SERIOUS] = 5;	charge_staff_fix[SV_STAFF_CURE_SERIOUS] = 6;
+	charge_staff_rnd[SV_STAFF_CURING] = 3;		charge_staff_fix[SV_STAFF_CURING] = 4;
+	charge_staff_rnd[SV_STAFF_HEALING] = 2;		charge_staff_fix[SV_STAFF_HEALING] = 1;
+	charge_staff_rnd[SV_STAFF_THE_MAGI] = 2;	charge_staff_fix[SV_STAFF_THE_MAGI] = 2;
+	charge_staff_rnd[SV_STAFF_SLEEP_MONSTERS] = 5;	charge_staff_fix[SV_STAFF_SLEEP_MONSTERS] = 6;
+	charge_staff_rnd[SV_STAFF_SLOW_MONSTERS] = 5;	charge_staff_fix[SV_STAFF_SLOW_MONSTERS] = 6;
+	charge_staff_rnd[SV_STAFF_SPEED] = 3;		charge_staff_fix[SV_STAFF_SPEED] = 4;
+	charge_staff_rnd[SV_STAFF_PROBING] = 6;		charge_staff_fix[SV_STAFF_PROBING] = 2;
+	charge_staff_rnd[SV_STAFF_DISPEL_EVIL] = 3;	charge_staff_fix[SV_STAFF_DISPEL_EVIL] = 4;
+	charge_staff_rnd[SV_STAFF_POWER] = 3;		charge_staff_fix[SV_STAFF_POWER] = 1;
+	charge_staff_rnd[SV_STAFF_HOLINESS] = 2;	charge_staff_fix[SV_STAFF_HOLINESS] = 2;
+	charge_staff_rnd[SV_STAFF_GENOCIDE] = 2;	charge_staff_fix[SV_STAFF_GENOCIDE] = 1;
+	charge_staff_rnd[SV_STAFF_EARTHQUAKES] = 5;	charge_staff_fix[SV_STAFF_EARTHQUAKES] = 3;
+	charge_staff_rnd[SV_STAFF_DESTRUCTION] = 3;	charge_staff_fix[SV_STAFF_DESTRUCTION] = 1;
+	charge_staff_rnd[SV_STAFF_STAR_IDENTIFY] = 5;	charge_staff_fix[SV_STAFF_STAR_IDENTIFY] = 3;
+}
 static void charge_staff(object_type *o_ptr) {
-	switch (o_ptr->sval) {
-	case SV_STAFF_DARKNESS:			o_ptr->pval = randint(8)  + 8; break;
-	case SV_STAFF_SLOWNESS:			o_ptr->pval = randint(8)  + 8; break;
-	case SV_STAFF_HASTE_MONSTERS:		o_ptr->pval = randint(8)  + 8; break;
-	case SV_STAFF_SUMMONING:		o_ptr->pval = randint(3)  + 1; break;
-	case SV_STAFF_TELEPORTATION:		o_ptr->pval = randint(4)  + 5; break;
-	case SV_STAFF_IDENTIFY:			o_ptr->pval = randint(15) + 5; break;
-	case SV_STAFF_REMOVE_CURSE:		o_ptr->pval = randint(3)  + 4; break;
-	case SV_STAFF_STARLITE:			o_ptr->pval = randint(5)  + 6; break;
-	case SV_STAFF_LITE:			o_ptr->pval = randint(20) + 8; break;
-	case SV_STAFF_MAPPING:			o_ptr->pval = randint(5)  + 5; break;
-	case SV_STAFF_DETECT_GOLD:		o_ptr->pval = randint(20) + 8; break;
-	case SV_STAFF_DETECT_ITEM:		o_ptr->pval = randint(15) + 6; break;
-	case SV_STAFF_DETECT_TRAP:		o_ptr->pval = randint(5)  + 6; break;
-	case SV_STAFF_DETECT_DOOR:		o_ptr->pval = randint(8)  + 6; break;
-	case SV_STAFF_DETECT_INVIS:		o_ptr->pval = randint(15) + 8; break;
-	case SV_STAFF_DETECT_EVIL:		o_ptr->pval = randint(15) + 8; break;
-	case SV_STAFF_CURE_SERIOUS:		o_ptr->pval = randint(5)  + 6; break;
-	case SV_STAFF_CURING:			o_ptr->pval = randint(3)  + 4; break;
-	case SV_STAFF_HEALING:			o_ptr->pval = randint(2)  + 1; break;
-	case SV_STAFF_THE_MAGI:			o_ptr->pval = randint(2)  + 2; break;
-	case SV_STAFF_SLEEP_MONSTERS:		o_ptr->pval = randint(5)  + 6; break;
-	case SV_STAFF_SLOW_MONSTERS:		o_ptr->pval = randint(5)  + 6; break;
-	case SV_STAFF_SPEED:			o_ptr->pval = randint(3)  + 4; break;
-	case SV_STAFF_PROBING:			o_ptr->pval = randint(6)  + 2; break;
-	case SV_STAFF_DISPEL_EVIL:		o_ptr->pval = randint(3)  + 4; break;
-	case SV_STAFF_POWER:			o_ptr->pval = randint(3)  + 1; break;
-	case SV_STAFF_HOLINESS:			o_ptr->pval = randint(2)  + 2; break;
-	case SV_STAFF_GENOCIDE:			o_ptr->pval = randint(2)  + 1; break;
-	case SV_STAFF_EARTHQUAKES:		o_ptr->pval = randint(5)  + 3; break;
-	case SV_STAFF_DESTRUCTION:		o_ptr->pval = randint(3)  + 1; break;
-	case SV_STAFF_STAR_IDENTIFY:		o_ptr->pval = randint(5)  + 3; break;
-	}
+	o_ptr->pval = randint(charge_staff_rnd[o_ptr->sval]) + charge_staff_fix[o_ptr->sval];
 }
 
 
@@ -11686,16 +11688,19 @@ void inven_carry_equip(int Ind, object_type *o_ptr) {
 		/* make the torch somewhat 'used' */
 		if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) Players[Ind]->inventory[INVEN_LITE].timeout -= rand_int(FUEL_TORCH / 10);
 	} else {
-		switch (o_ptr->tval) { /* No need to check INVEN_BOW for tval actually */
-		case TV_SHOT:
-			if (Players[Ind]->inventory[INVEN_BOW].sval != SV_SLING) return;
-			break;
-		case TV_ARROW:
-			if (Players[Ind]->inventory[INVEN_BOW].sval != SV_SHORT_BOW && Players[Ind]->inventory[INVEN_BOW].sval != SV_LONG_BOW) return;
-			break;
-		case TV_BOLT:
-			if (Players[Ind]->inventory[INVEN_BOW].sval != SV_LIGHT_XBOW && Players[Ind]->inventory[INVEN_BOW].sval != SV_HEAVY_XBOW) return;
-			break;
+		/* Don't put ammo into the quiver if it does't match an already equipped ranged weapon! */
+		if (Players[Ind]->inventory[INVEN_BOW].tval) {
+			switch (o_ptr->tval) { /* No need to check INVEN_BOW for tval actually */
+			case TV_SHOT:
+				if (Players[Ind]->inventory[INVEN_BOW].sval != SV_SLING) return;
+				break;
+			case TV_ARROW:
+				if (Players[Ind]->inventory[INVEN_BOW].sval != SV_SHORT_BOW && Players[Ind]->inventory[INVEN_BOW].sval != SV_LONG_BOW) return;
+				break;
+			case TV_BOLT:
+				if (Players[Ind]->inventory[INVEN_BOW].sval != SV_LIGHT_XBOW && Players[Ind]->inventory[INVEN_BOW].sval != SV_HEAVY_XBOW) return;
+				break;
+			}
 		}
 		suppress_message = TRUE;
 		(void)do_cmd_wield(Ind, item, 0x0);

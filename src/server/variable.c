@@ -861,6 +861,7 @@ bool first_player_joined = TRUE;
 
 /* lua-dependant 'constants' */
 int __lua_HHEALING, __lua_HBLESSING, __lua_HDELFEAR;
+int __lua_BLINK;
 int __lua_MSCARE, __lua_M_FIRST, __lua_M_LAST;
 int __lua_P_FIRST, __lua_P_LAST, __lua_POWERBOLT, __lua_HEALING_I;
 #ifndef ENABLE_OCCULT
