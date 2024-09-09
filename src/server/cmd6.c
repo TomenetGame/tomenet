@@ -314,18 +314,31 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_ATHELAS:
-		msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
-		ident = set_poisoned(Ind, 0, 0) +
-			set_diseased(Ind, 0, 0) +
-			set_stun(Ind, 0) +
-			set_cut(Ind, 0, 0);
-		if (p_ptr->black_breath) {
-			msg_print(Ind, "The hold of the Black Breath on you is broken!");
-			p_ptr->black_breath = FALSE;
-		}
-		if (p_ptr->suscep_life) {
+		/* https://tolkiengateway.net/wiki/Athelas
+		   "It clears and calms[2] the minds of those who smell it. Athelas also strengthens[5] those smelling the scent." */
+		if (!p_ptr->suscep_life) { // && !p_ptr->suscep_good
+			msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
+			(void)hp_player(Ind, damroll(8, 8), FALSE, FALSE); // like Lembas, but stronger
+			(void)set_cut(Ind, 0, 0);	// like Lembas, but stronger
+			(void)set_stun(Ind, 0);		// "strengthens"
+			(void)set_poisoned(Ind, 0, 0);	// if it removes BB it can surely remove this
+			(void)set_diseased(Ind, 0, 0);	// if it removes BB it can surely remove this
+			//(void)set_blind(Ind, 0); //(csw potion does this)
+			(void)set_confused(Ind, 0); //(csw potion does this) -- "calms the minds"
+			(void)set_image(Ind, 0); // "clears the minds"
+			//(void)do_res_stat(Ind, A_STR);
+			//(void)do_res_stat(Ind, A_CON);
+			if (p_ptr->black_breath) {
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				p_ptr->black_breath = FALSE;
+			}
+		} else {
 			dam = 250;
 			msg_format(Ind, "You are hit by cleansing powers for \377o%d \377wdamage!", dam);
+			if (p_ptr->black_breath) {
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				p_ptr->black_breath = FALSE;
+			}
 			take_hit(Ind, dam, "a sprig of athelas", 0);
 		}
 		ident = TRUE;
@@ -354,19 +367,28 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_WAYBREAD:
+		/* http://www.thetolkienwiki.org/wiki.cgi?Lembas
+		   One will keep a traveller on his feet for a day of long labour;
+		   hurt or sick [...] were quickly healed;
+		   if mortals eat often of this bread, they become weary of their mortality;
+		   It fed the will, and it gave strength to endure */
 		if (!p_ptr->suscep_life && !p_ptr->suscep_good) {
 			msg_print(Ind, "That tastes very good.");
-			(void)set_poisoned(Ind, 0, 0);
-			(void)set_diseased(Ind, 0, 0);
-			(void)set_image(Ind, 0);	// ok?
 			(void)hp_player(Ind, damroll(5, 8), FALSE, FALSE);
-			set_food(Ind, PY_FOOD_MAX - 1);
-			ident = TRUE;
+			if (p_ptr->cut < CUT_MORTAL_WOUND) (void)set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker); //(csw potion does this) -- "hurt .. quickly healed"
+			//(void)set_stun(Ind, 0);
+			(void)set_poisoned(Ind, 0, 0); // "sick .. quickly healed"
+			(void)set_diseased(Ind, 0, 0); // "sick .. quickly healed"
+			//(void)set_blind(Ind, 0); //(csw potion does this)
+			(void)set_confused(Ind, 0); //(csw potion does this) --- "fed the will"
+			//(void)set_image(Ind, 0);
+			set_food(Ind, PY_FOOD_MAX - 1); // "strength to endure?" pft
 		} else {
 			dam = damroll(5, 2);
 			msg_format(Ind, "A surge of cleansing disrupts your body for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "lembas", 0);
 		}
+		ident = TRUE;
 		break;
 
 	case SV_FOOD_PINT_OF_ALE:

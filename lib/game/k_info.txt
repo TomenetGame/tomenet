@@ -235,10 +235,10 @@ A:1/1
 N:25:& Lembas~
 G:,:B
 I:80:207:0
-W:5:0:3:50
+W:5:0:3:250
 A:5/1:10/1:20/1
-D:This blessed food perfectly satisfies your hunger, heals 5d8 hit points,
-D:cures poison and disease and removes hallucinations.
+D:This blessed elven waybread satisfies your hunger, heals 5d8 hit points,
+D:cures poison, disease, confusion and can lessen non-lethal cuts.
 
 N:26:& Pint~ of Fine Ale
 G:,:y
@@ -1958,8 +1958,8 @@ F:FOUNTAIN
 
 N:237:Curing
 G:!:d
-I:71:61:500
-W:18:0:4:5000
+I:71:61:100
+W:18:0:4:2000
 A:18/10:40/3
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -5891,9 +5891,10 @@ F:IGNORE_MANA | ACTIVATE
 N:701:& Sprig~ of Athelas
 G:,:g
 I:80:210:0
-W:25:5:2:450
+W:25:5:2:850
 A:25/20:55/10:85/10
-D:Food that also cures poison, disease, stun, cuts and even Black Breath.
+D:Also known as Asea Aranion and Kingsfoil, heals for 8d8, cures poison,
+D:disease, stun, cuts, confusion, hallucination, and even Black Breath.
 
 
 # for new 'Excavation' skill that replaces 'Digging' - C. Blue
