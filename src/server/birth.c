@@ -1308,8 +1308,9 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+		{ TV_SHOT, SV_AMMO_LIGHT, 0 },//trapkit ammo in this case
 		//{ TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0 },
-		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
+		//{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
 		//{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
 		//{ TV_BOOK, 66, 0 },
 	},
@@ -1327,9 +1328,12 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	{
 		/* Archer */
 		{ TV_BOW, SV_LONG_BOW, 0 },
-		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
-		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
-		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
+		{ TV_ARROW, SV_AMMO_NORMAL, 0 },
+		//{ TV_ARROW, SV_AMMO_MAGIC, 0 },
+		//{ TV_SHOT, SV_AMMO_MAGIC, 0 },
+		//{ TV_BOLT, SV_AMMO_MAGIC, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 	},
 
@@ -1346,10 +1350,11 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Ranger */
 		{ TV_SWORD, SV_LONG_SWORD, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
-		//{ TV_BOOK, 50, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
 		{ TV_BOW, SV_LONG_BOW, 0 },
+		{ TV_ARROW, SV_AMMO_NORMAL, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+		//{ TV_BOOK, 50, 0 },
+		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
 	},
 
 	{
@@ -1465,7 +1470,8 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	{
 		/* Rogue */
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
-		{ 255, 255, 0 },
+		//{ 255, 255, 0 },
+		{ TV_SHOT, SV_AMMO_LIGHT, 0 },//trapkit ammo in this case
 		//{ TV_BOOK, 66, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
@@ -1487,9 +1493,12 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	{
 		/* Archer */
 		{ TV_BOW, SV_LONG_BOW, 0 },//just doesn't work as fruit bat
-		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
-		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
-		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
+		{ TV_ARROW, SV_AMMO_NORMAL, 0 },
+		//{ TV_ARROW, SV_AMMO_MAGIC, 0 },
+		//{ TV_SHOT, SV_AMMO_MAGIC, 0 },
+		//{ TV_BOLT, SV_AMMO_MAGIC, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
 		{ TV_HELM, SV_METAL_CAP, 0 },
 	},
 
@@ -1507,9 +1516,10 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		//{ TV_BOOK, 50, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
+		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HEALING_I */
 		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL, 0 },//instead of unusable bow. alternatives: invis-pot, id-all-scroll?, mapping, rll, csw/ccw?
-		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+		{ TV_TRAPKIT, SV_TRAPKIT_BOW, 0 },
+		{ TV_ARROW, SV_AMMO_NORMAL, 0 },//trapkit ammo in this case
 	},
 
 	{
@@ -1614,30 +1624,9 @@ void init_player_outfits(void) {
 #endif
 		player_init[s][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 		player_init[s][CLASS_DRUID][3][2] = __lua_FOCUS;
-		player_init[s][CLASS_RANGER][2][2] = __lua_HEALING_I;
+		//player_init[s][CLASS_RANGER][2][2] = __lua_HEALING_I;
 	}
 }
-
-#define BARD_INIT_NUM	15
-static byte bard_init[BARD_INIT_NUM][2] = {
-	{ TV_RING, SV_RING_SEE_INVIS },
-	{ TV_BOOK, 50 },
-	{ TV_BOW, SV_LONG_BOW },
-	{ TV_TRAPKIT, SV_TRAPKIT_SLING },
-	{ TV_POTION, SV_POTION_BERSERK_STRENGTH },
-
-	{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
-	{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-	{ TV_BLUNT, SV_MACE },
-	{ TV_POTION, SV_POTION_HEALING },
-	{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
-
-	{ TV_SWORD, SV_LONG_SWORD },
-	{ TV_ARROW, SV_AMMO_MAGIC },
-	{ TV_BLUNT, SV_WHIP },
-	{ TV_LITE, SV_LITE_LANTERN },
-	{ TV_TOOL, SV_TOOL_FLINT },
-};
 
 #define do_admin_outfit()	\
 	object_aware(Ind, o_ptr); \
@@ -1798,85 +1787,14 @@ static void player_outfit(int Ind) {
 
 	body = (p_ptr->fruit_bat == 1) ? 1 : 0;
 
-	/* Hack -- Give the player some water */
-	if (p_ptr->prace == RACE_ENT) {
-		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_WATER));
-		o_ptr->number = rand_range(4, 6);
-		do_player_outfit();
-	}
-	/* XXX problem is that Lembas sell dear.. */
-	else if (p_ptr->prace == RACE_HALF_ELF ||
-	    p_ptr->prace == RACE_ELF || p_ptr->prace == RACE_HIGH_ELF) {
-		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
-		o_ptr->number = rand_range(3, 4);
-		do_player_outfit();
-	}
-	/* Firestones for Dragonriders */
-	else if (p_ptr->prace == RACE_DRACONIAN) {
-		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-		o_ptr->number = rand_range(3, 4);
-		do_player_outfit();
-	}
-	/* Dwarves like to collect treasures */
-	else if (p_ptr->prace == RACE_DWARF) {
-		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DETECT_GOLD));
-		o_ptr->number = rand_range(2, 3);
-		do_player_outfit();
-	}
-
-	/* vampires feed off living prey, using their vampiric life leech exclusively. Elves prefer Lembas. Ents drink water. */
-	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF
-	    && p_ptr->prace != RACE_ENT) {
-		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
-		o_ptr->number = rand_range(4, 6);
-		do_player_outfit();
-	}
-
-	/* Hack -- Give the player some torches */
-	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ENT &&
-	    p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RUNEMASTER) {
-		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
-		o_ptr->number = rand_range(4, 6);
-		o_ptr->timeout = FUEL_TORCH / 2;
-		do_player_outfit();
-	}
-
-	if (!strcmp(p_ptr->name, "Moltor")) {
-		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
-		o_ptr->name2 = 188;	// Bud ;)
-		o_ptr->number = 9;
-		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-		o_ptr->discount = 72;
-		o_ptr->owner = p_ptr->id;
-		o_ptr->mode = p_ptr->mode;
-		o_ptr->level = 1;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->ident |= ID_MENTAL;
-		(void)inven_carry(Ind, o_ptr);
-	}
-
-#if 0
-#ifdef TEST_SERVER
-	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
-	o_ptr->discount = 100;
-	o_ptr->owner = p_ptr->id;
-	o_ptr->mode = p_ptr->mode;
-	o_ptr->level = 0;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->ident |= ID_MENTAL;
-	(void)inven_carry(Ind, o_ptr);
-#endif
-#endif
-
-	//admin_outfit(Ind);
-
 	/* Hack -- Give the player useful objects */
 	for (i = 0; i < 5; i++) {
 		tv = player_init[body][p_ptr->pclass][i][0];
 		sv = player_init[body][p_ptr->pclass][i][1];
 		pv = player_init[body][p_ptr->pclass][i][2];
+
+		/* nothing */
+		if (tv == 255 && sv == 255) continue;
 
 		/* Give players some racially flavoured starter weapon */
 		if (tv == TV_SWORD) {
@@ -1937,7 +1855,6 @@ static void player_outfit(int Ind) {
 				} break;
 			}
 		}
-		if (tv == TV_BOW && p_ptr->prace == RACE_HOBBIT) sv = SV_SLING;
 
 		/* If someone uses too low STR/DEX values, "downgrade"
 		   his starter weapon to a lighter version to ensure at least 2 bpr. */
@@ -2041,95 +1958,102 @@ static void player_outfit(int Ind) {
 			}
 		}
 
-#if 0
-		if (tv == TV_BOOK && sv == SV_SPELLBOOK) { /* hack - correct book orders */
-			//if (pv == 60) pv = __lua_HBLESSING;
-			if (pv == 60) pv = __lua_HDELFEAR;
-//			if (pv != 255) pv = 60;
+		/* Hobbits use slings instead of bows mostly */
+		if (p_ptr->prace == RACE_HOBBIT) {
+			if (tv == TV_BOW) sv = SV_SLING;
+			if (tv == TV_ARROW) {
+				tv = TV_SHOT;
+				sv = SV_AMMO_LIGHT;
+			}
+			if (tv == TV_TRAPKIT && sv == SV_TRAPKIT_BOW) sv = SV_TRAPKIT_SLING;
 		}
-#endif
 
-		if (tv == 255 && sv == 255) {
-			/* nothing */
-		} else {
-			k_idx = lookup_kind(tv, sv);
-			if (k_idx < 2) { /* '1' is 'something' */
-				j = rand_int(BARD_INIT_NUM);
-				k_idx = lookup_kind(bard_init[j][0], bard_init[j][1]);
-			} else {
-				invcopy(o_ptr, k_idx);
-				o_ptr->pval = pv;
-				o_ptr->number = 1;
+		/* Generate base item */
+		k_idx = lookup_kind(tv, sv);
+		invcopy(o_ptr, k_idx);
+		o_ptr->pval = pv;
+		o_ptr->number = 1;
 
-#if 1 /* use check in do_cmd_ranged_technique() instead? */
-				/* hack: prevent newbie archers from wasting their
-				   only arrow by a flare missile technique */
-				if (is_ammo(tv)) o_ptr->note = quark_add("!k");
-#endif
-
-#ifdef ENABLE_HELLKNIGHT
-				if (tv == TV_AMULET && sv == SV_AMULET_DOOM) {
-					o_ptr->pval = 0;
-					o_ptr->bpval = pv;
-					o_ptr->to_a = pv;
-					o_ptr->ident |= (ID_CURSED);
-				}
-#endif
-
-				if (tv == TV_STAFF) /* Treasure Detection */
-					o_ptr->pval = 17 + rand_int(4); /* average is same as in charge_staff() */
-
-				do_player_outfit();
+		/* Mass-produce/pre-inscribe ammo */
+		if (is_ammo(tv)) {
+			/* hack: prevent newbie archers from wasting their only arrow by a flare missile technique */
+			if (o_ptr->sval == SV_AMMO_MAGIC) o_ptr->note = quark_add("!k");
+			/* Ensure a decent base amount of ammo */
+			else {
+				o_ptr->number = rand_range(35, 40);
+				o_ptr->note = quark_add("!="); //QoL: Auto-pickup
 			}
 		}
+
+		/* Let's not be stingy with projectile trapkits */
+		if (tv == TV_TRAPKIT &&
+		    (sv == SV_TRAPKIT_SLING || sv == SV_TRAPKIT_BOW || sv == SV_TRAPKIT_XBOW))
+			o_ptr->number = 3;
+
+#ifdef ENABLE_HELLKNIGHT
+		/* Gotta switch pval and bpval */
+		if (tv == TV_AMULET && sv == SV_AMULET_DOOM) {
+			o_ptr->pval = 0;
+			o_ptr->bpval = pv;
+			o_ptr->to_a = pv;
+			o_ptr->ident |= (ID_CURSED);
+		}
+#endif
+
+		/* Pre-charge staves - atm these are always Treasure Detection, for Runmaster class */
+		if (tv == TV_STAFF) o_ptr->pval = 17 + rand_int(4); /* average is same as in charge_staff() */
+
+		/* Add the item to the player's inventory/equipment */
+		do_player_outfit();
 	}
 
-	/* Lantern of Brightness for Archers */
-	if (p_ptr->pclass == CLASS_ARCHER && p_ptr->prace != RACE_VAMPIRE) {
-		u32b f1, f2, f3, f4, f5, f6, esp;
+	/* ---------- Add some race specific items ---------- */
 
-		do {
-			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
-			o_ptr->number = 1;
-			o_ptr->discount = 100;
-			o_ptr->name2 = EGO_LBRIGHTNESS;
-			apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-		} while (f2 & TR2_RES_DARK); /* Don't give a high resistance, too much */
-		o_ptr->timeout = FUEL_LAMP / 2 - rand_int(FUEL_LAMP / 10);
-		do_player_outfit();
-
-		invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
-		o_ptr->number = 5;
-		do_player_outfit();
-	}
-
-	/* Normal Lantern for Runemasters and for Ents */
-	if ((p_ptr->pclass == CLASS_RUNEMASTER && p_ptr->prace != RACE_VAMPIRE) || p_ptr->prace == RACE_ENT) {
-		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
-		o_ptr->number = 1;
-		o_ptr->timeout = FUEL_LAMP / 2 - rand_int(FUEL_LAMP / 10);
-		do_player_outfit();
-
-		invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
+	switch (p_ptr->prace) {
+	case RACE_ENT: //food
+		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_WATER));
 		o_ptr->number = rand_range(4, 6);
 		do_player_outfit();
-	}
-
-	/* vampires get mummy wrapping against the burning sunlight */
-	if (p_ptr->prace == RACE_VAMPIRE) {
+		break;
+	case RACE_HALF_ELF:
+	case RACE_ELF:
+	case RACE_HIGH_ELF: //food
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
+		o_ptr->number = rand_range(3, 4);
+		do_player_outfit();
+		break;
+	case RACE_DRACONIAN:
+		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
+		o_ptr->number = rand_range(3, 4);
+		do_player_outfit();
+		break;
+	case RACE_DWARF: /* Dwarves like to collect treasures */
+		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DETECT_GOLD));
+		o_ptr->number = rand_range(2, 3);
+		do_player_outfit();
+		break;
+	case RACE_VAMPIRE: /* vampires get mummy wrapping against the burning sunlight */
 		invcopy(o_ptr, lookup_kind(TV_TOOL, SV_TOOL_WRAPPING));
 		o_ptr->number = 1;
 		do_player_outfit();
-	}
-
-	/* Maiar all start with 1.000 in Astral, so maybe we just give them that Power Bolt I spell :| */
-	if (p_ptr->prace == RACE_MAIA) {
+		break;
+	case RACE_MAIA: /* Maiar all start with 1.000 in Astral, so maybe we just give them that Power Bolt I spell :| */
 		invcopy(o_ptr, lookup_kind(TV_BOOK, SV_SPELLBOOK));
 		o_ptr->pval = __lua_POWERBOLT;
 		o_ptr->number = 1;
 		do_player_outfit();
+		break;
 	}
+
+	/* Add food for all others (vampires feed off living prey, using their vampiric life leech exclusively. Elves prefer Lembas. Ents drink water.) */
+	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ENT &&
+	    p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF) {
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+		o_ptr->number = rand_range(4, 6);
+		do_player_outfit();
+	}
+
+	/* ---------- Add some class specific items ---------- */
 
 	/* hack for mimics: pick a type of poly ring - C. Blue */
 #if 0 /* disabled for now */
@@ -2160,6 +2084,78 @@ static void player_outfit(int Ind) {
  #endif
 		do_player_outfit();
 	}
+#endif
+
+	/* ---------- Add some other items ---------- */
+
+	/* Some light source */
+	if (p_ptr->prace != RACE_VAMPIRE)  {
+		/* Lantern of Brightness for Archers */
+		if (p_ptr->pclass == CLASS_ARCHER) {
+			u32b f1, f2, f3, f4, f5, f6, esp;
+
+			do {
+				invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
+				o_ptr->number = 1;
+				o_ptr->discount = 100;
+				o_ptr->name2 = EGO_LBRIGHTNESS;
+				apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
+				object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+			} while (f2 & TR2_RES_DARK); /* Don't give a high resistance, too much */
+			o_ptr->timeout = FUEL_LAMP / 2 - rand_int(FUEL_LAMP / 10);
+			do_player_outfit();
+
+			invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
+			o_ptr->number = 5;
+			do_player_outfit();
+		}
+		/* Normal Lantern for Runemasters and for Ents */
+		else if (p_ptr->pclass == CLASS_RUNEMASTER || p_ptr->prace == RACE_ENT) {
+			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
+			o_ptr->number = 1;
+			o_ptr->timeout = FUEL_LAMP / 2 - rand_int(FUEL_LAMP / 10);
+			do_player_outfit();
+
+			invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
+			o_ptr->number = rand_range(4, 6);
+			do_player_outfit();
+		}
+		/* Give the player some torches */
+		else {
+			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
+			o_ptr->number = rand_range(4, 6);
+			o_ptr->timeout = FUEL_TORCH / 2;
+			do_player_outfit();
+		}
+	}
+
+	if (!strcmp(p_ptr->name, "Moltor")) {
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
+		o_ptr->name2 = 188;	// Bud ;)
+		o_ptr->number = 9;
+		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+		o_ptr->discount = 72;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->mode = p_ptr->mode;
+		o_ptr->level = 1;
+		object_known(o_ptr);
+		object_aware(Ind, o_ptr);
+		o_ptr->ident |= ID_MENTAL;
+		(void)inven_carry(Ind, o_ptr);
+	}
+
+#if 0
+ #ifdef TEST_SERVER
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
+	o_ptr->discount = 100;
+	o_ptr->owner = p_ptr->id;
+	o_ptr->mode = p_ptr->mode;
+	o_ptr->level = 0;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->ident |= ID_MENTAL;
+	(void)inven_carry(Ind, o_ptr);
+ #endif
 #endif
 
 #ifdef RPG_SERVER /* give extra startup survival kit - so unaffected by very low CHR! */
