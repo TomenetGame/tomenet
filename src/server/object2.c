@@ -8062,13 +8062,10 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
-			/* luck has influence on ammo stack size, heh */
-			if (luck >= 0)
-				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
-			else
-				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+			forge.number = (forge.sval == SV_AMMO_MAGIC) ? 1 : damroll(6, 7);
 			/* Stacks of ethereal ammo are smaller */
 			if (forge.name2 == EGO_ETHEREAL || forge.name2b == EGO_ETHEREAL) forge.number /= ETHEREAL_AMMO_REDUCTION;
+			if (!forge.number) forge.number = 1;
 			/* Ammo from acquirement scrolls comes in more generous numbers :) */
 			if (verygreat) forge.number *= 2;
 			if (forge.sval == SV_AMMO_CHARRED) forge.number = randint(6);
@@ -8370,13 +8367,10 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
-			/* luck has influence on ammo stack size, heh */
-			if (luck >= 0)
-				o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
-			else
-				o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+			o_ptr->number = (o_ptr->sval == SV_AMMO_MAGIC) ? 1 : damroll(6, 7);
 			/* Stacks of ethereal ammo are smaller */
 			if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) o_ptr->number /= ETHEREAL_AMMO_REDUCTION;
+			if (!o_ptr->number) o_ptr->number = 1;
 			/* Ammo from acquirement scrolls comes in more generous numbers :) */
 			if (verygreat) o_ptr->number *= 2;
 			if (o_ptr->sval == SV_AMMO_CHARRED) o_ptr->number = randint(6);

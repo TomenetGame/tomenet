@@ -3849,8 +3849,8 @@ F:FOUNTAIN
 N:444:& Magic Bolt~
 G:{:b
 I:18:3:0
-W:10:0:4:200
-A:15/2:30/2
+W:10:0:4:500
+A:20/6:35/4
 P:0:1d5:0:0:0
 F:SHOW_MODS | NO_ENCHANT
 D:It is ammunition fit for crossbows and bolt trap kits.
@@ -3863,8 +3863,8 @@ D:It magically returns to you after you fired it.
 N:445:& Magic Shot~
 G:{:o
 I:16:3:0
-W:10:0:2:200
-A:15/2:30/2
+W:10:0:2:500
+A:20/6:35/4
 P:0:1d3:0:0:0
 F:SHOW_MODS | NO_ENCHANT
 D:It is ammunition fit for slings and catapult trap kits.
@@ -6736,8 +6736,8 @@ D:Those adept in mimicry can make use of this.
 N:811:& Magic Arrow~
 G:{:v
 I:17:3:0
-W:10:0:2:200
-A:15/2:30/2
+W:10:0:2:500
+A:20/6:35/4
 P:0:1d4:0:0:0
 F:SHOW_MODS | NO_ENCHANT
 D:It is ammunition fit for bows and arrow trap kits.
