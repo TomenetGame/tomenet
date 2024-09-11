@@ -1,6 +1,13 @@
 ## TomeNET configuration file for clients running on *NIX platforms:
+##
+##                   *** !!!     NOTE:     !!! ***
+##   TomeNET will read .tomenetrc IN YOUR HOME FOLDER, not in the
+##   TomeNET folder (can be changed via -f<cfgfile> cmdline option)!
+##
 ## You should copy this file to your home directory. The client will read the
 ## settings in this file and update some of them after you quit.
+## If you start TomeNET without a .tomenetrc file in your home folder, it will
+## automatically create a basic one there.
 ##
 ## Lines that start with '#' will ignored. Please make sure that each line
 ## includes the expected number of parameters or your client may crash.
