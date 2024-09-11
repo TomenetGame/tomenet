@@ -4944,7 +4944,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 	int j;
 
 	/* item not already *id*ed or well known (flavoured item)? */
-	if ((!ignore_id && (o_ptr->ident & ID_MENTAL)) ||
+	if ((!ignore_id && (o_ptr->ident & ID_MENTAL)) ||  // todo maybe: check ID_NO_HIDDEN?
 	    (k_info[o_ptr->k_idx].easy_know && aware && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->name2b)) return(FALSE);
 
 	/* Un-*id*-ed artifacts can (and will) always have hidden powers.. */
