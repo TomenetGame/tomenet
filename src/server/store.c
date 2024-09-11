@@ -448,6 +448,14 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		y = ((100 + xp) * (100 + xp)) / 10000;
 		z = (3 * (120 + (r_ptr->speed - 90) * 3) * (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside)) + 20))) / 3; /* mimic-like HP calc sort of */
 		r_val = x * y + z;
+
+		/* Lower price for lower level (starts already at rlev<60, but effect is small yet) + FRIENDS forms,
+		   but reduce reduction for very low forms <= level 10 and reach normal reduction at level 20+. */
+		if ((r_ptr->flags1 & RF1_FRIENDS) && (r_ptr->level < 60)) {
+			x = (r_ptr->level > 20 ? 20 : r_ptr->level) - 10;
+			z = r_val - (r_val * (10 + (r_ptr->level > 10 ? r_ptr->level : 10))) / 70;
+			r_val = r_val - (z * x) / 10;
+		}
 	}
 
 	switch (shop_type) {
