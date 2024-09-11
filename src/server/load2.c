@@ -973,7 +973,7 @@ static void rd_item(object_type *o_ptr) {
 		(void)price_item_player_store(0, o_ptr); /* re-appraise */
 		/* value increased? Increase minimum appraisal accordingly */
 		if (o_ptr->appraised_value > tmp32s) {
-			object_desc(0, note, o_ptr, FALSE, 0);
+			object_desc(0, note, o_ptr, TRUE, 3);
 			s_printf("APPRAISED_VALUE_FIX: %d -> %ld: %s\n", tmp32s - 1, o_ptr->appraised_value - 1, note);
 		} else o_ptr->appraised_value = (s64b)tmp32s; /* Value dropped or stayed even? Keep old value */
 	}
