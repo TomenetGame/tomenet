@@ -462,7 +462,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	case 0:
 		/* npc shop buys: very cheap */
 		/* We have to manually handle whether the player has IDed / knows the ring flavour or not! */
-		if (!object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
+		if (Ind && !object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
 			price = object_value_base(Ind, o_ptr);
 
 			/* Apply discount (if any) */
@@ -472,16 +472,16 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		}
 		price = k_info[o_ptr->k_idx].cost;
 		if (!price) return(0);
-		if (!object_known_p(Ind, o_ptr)) return(price);
+		if (Ind && !object_known_p(Ind, o_ptr)) return(price);
 
 		if (o_ptr->name2) price += e_info[o_ptr->name2b].cost; /* 'Indestructible' ego, pft */
-#if 0 /* cheapo, basically just a tip :/ */
+ #if 0 /* cheapo, basically just a tip :/ */
 		if (o_ptr->pval != 0) price += r_info[o_ptr->pval].level * 100;
-#elif 0 /* can be a very serious tip. Worth selling forms you don't need, perhaps even? (1/10 of npc stores' selling price) */
+ #elif 0 /* can be a very serious tip. Worth selling forms you don't need, perhaps even? (1/10 of npc stores' selling price) */
 		if (o_ptr->pval != 0) price += ((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) / 10;
-#else /* get even moar out of it! Side hustle for mimicry users! */
+ #else /* get even moar out of it! Side hustle for mimicry users! */
 		if (o_ptr->pval != 0) price += (((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) * 10) / (30 + 300 / (r_ptr->level + 5));
-#endif
+ #endif
 
 		/* Apply discount (if any) */
 		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
@@ -520,35 +520,16 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	return (price);
 }
 
-/* new hack: specify Ind to set the item's value; Ind == 0 -> retrieve it!
+/* new hack: specify Ind to set the item's value (Ind == 0 for 'assume known item'); Ind == -1 -> retrieve it!
    Inherited from player_store_inscribed():
     Returns price or -2 if not for sale. Return -1 if not for display/not available.
-    May return -3 in the future for 'SOLD OUT' items from @SB inscription. */
+    May return -3 in the future for 'SOLD OUT' items from @SB inscription.
+   NOTE: 'appraised_value - 1' is always the base pstore price, before any user extra bonus (mult/add). */
 s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	s64b price, final_price;
 
-#if 0 /* without 'int Ind' parm, old cheezy way that could reveal true item price w/o *id* */
- #if 0 /* exempt speed rings? might make everything too easy though */
-	/* Player stores have an increased minimum price */
-	if (!o_ptr->name1 && o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval >= 0) {
-		/* hack: grab ego power cost */
-		int tmp_bpval = o_ptr->bpval;
-
-		o_ptr->bpval = 0;
-		price = object_value_real(0, o_ptr);
-		o_ptr->bpval = tmp_bpval;
-
-		/* exception for RoS -
-		   (Note: at +6 and higher, pstores are always better since it's > 300k) */
-		//price = 15000 + o_ptr->bpval * o_ptr->bpval * 9850; /* good, but not worse than town stores with the 10% cut for pstores */
-		price = price + price / 3 + o_ptr->bpval * o_ptr->bpval * 10800; /* good, maybe *slightly* expensive, but can't be helped */
-	} else
- #endif
-	/* Get the value of one of the items */
-	price = object_value_real(0, o_ptr) * 2; /* default: 2x base price */
-#else
 	/* Appraise an item */
-	if (Ind) {
+	if (Ind >= 0) {
 		/* hack: npc shop discount plays no role in player stores.
 		   (object_value() takes discount into calculation.) */
 		int discount = o_ptr->discount;
@@ -567,10 +548,9 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	}
 	/* Retrieve stored value: */
 	else price = o_ptr->appraised_value - 1;
-#endif
 
 	/* Add to this any extra price the player inscribed */
-	final_price = player_store_inscribed(o_ptr, price, Ind ? TRUE : FALSE);
+	final_price = player_store_inscribed(o_ptr, price, Ind >= 0 ? TRUE : FALSE);
 
 	/* Return the price */
 	return(final_price);
@@ -2807,7 +2787,7 @@ static void display_entry(int Ind, int pos) {
 					x = -1;
 					wgt = -1;
 				} else {
-					x = price_item_player_store(0, o_ptr);
+					x = price_item_player_store(-1, o_ptr);
 
  #if 0 /* currently, items of psb < 0 wouldn't get added to the store's stock in the first place, so this is dead code */
 					/* 'B' flag: Keep the last items of the pile, which are unsellable, but indicates that it might get restocked soonish by the player maybe */
@@ -3097,7 +3077,7 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price, bool quiet) {
 	/* Obtain the starting offer and the final offer */
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2)
-		final_ask = price_item_player_store(0, o_ptr);
+		final_ask = price_item_player_store(-1, o_ptr);
 		//cur_ask = final_ask;
 	else
 #endif
@@ -3897,7 +3877,7 @@ void store_purchase(int Ind, int item, int amt) {
 	/* Determine the "best" price (per item) */
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2)
-		best = price_item_player_store(0, &sell_obj);
+		best = price_item_player_store(-1, &sell_obj);
 	else
 #endif
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
@@ -8479,7 +8459,7 @@ void export_player_store_offers(int *export_turns) {
   #endif
  #endif
 
-				price = price_item_player_store(0, o_ptr);
+				price = price_item_player_store(-1, o_ptr);
 				/* Cut out the @S pricing information from the inscription. */
 				player_stores_cut_inscription(o_name);
 
@@ -8652,7 +8632,7 @@ void export_player_store_offers(int *export_turns) {
  #endif
 #endif
 
-		price = price_item_player_store(0, o_ptr);
+		price = price_item_player_store(-1, o_ptr);
 		/* Cut out the @S pricing information from the inscription. */
 		player_stores_cut_inscription(o_name);
 

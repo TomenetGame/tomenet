@@ -960,6 +960,24 @@ static void rd_item(object_type *o_ptr) {
 		if (o_ptr->bpval < k_info[o_ptr->k_idx].pval) o_ptr->bpval = k_info[o_ptr->k_idx].pval;
 	}
 #endif
+
+#ifdef PLAYER_STORES
+	/* In case base item price has changed upwards, make sure the item isn't appraised below minimum enforced value now.
+	   Since we don't have an 'Ind' here, we use 0. However, since this always gives the 'true price', we only apply this
+	   fix if the item is actually fully identified aka ID_KNOWN. */
+	if (o_ptr->appraised_value && o_ptr->note
+	    && ((o_ptr->ident & ID_KNOWN) || ((f3 & TR3_EASY_KNOW) && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->name2b))
+	    && (o_ptr->ident & (ID_MENTAL | ID_NO_HIDDEN))) {
+		/* save old value first, as we'll re-appraise it now */
+		tmp32s = (s32b)o_ptr->appraised_value;
+		(void)price_item_player_store(0, o_ptr); /* re-appraise */
+		/* value increased? Increase minimum appraisal accordingly */
+		if (o_ptr->appraised_value > tmp32s) {
+			object_desc(0, note, o_ptr, FALSE, 0);
+			s_printf("APPRAISED_VALUE_FIX: %d -> %ld: %s\n", tmp32s - 1, o_ptr->appraised_value - 1, note);
+		} else o_ptr->appraised_value = (s64b)tmp32s; /* Value dropped or stayed even? Keep old value */
+	}
+#endif
 }
 
 
