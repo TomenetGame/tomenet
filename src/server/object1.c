@@ -2193,6 +2193,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* "Amulets of Luck" are just called "Talismans" -C. Blue */
 		if ((o_ptr->sval == SV_AMULET_LUCK) && aware) {
 			if (mode & 512) { /* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
+				if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 				modstr = amulet_adj[indexx];
 				basenm = "& # Talisman~";
 				break;
@@ -2209,6 +2210,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = amulet_adj[indexx];
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
@@ -2218,6 +2220,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Rings (including a few "Specials") */
 	case TV_RING:
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = ring_adj[indexx];
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
@@ -2226,6 +2229,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	case TV_STAFF:
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = staff_adj[indexx];
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Staff~" : "& # Staff~";
@@ -2234,6 +2238,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	case TV_WAND:
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = wand_adj[indexx];
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Wand~" : "& # Wand~";
@@ -2242,14 +2247,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	case TV_ROD:
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = rod_adj[indexx];
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Rod~" : "& # Rod~";
 		else basenm = "& # Rod~";
 		break;
 
-	case TV_ROD_MAIN:
-	{
+	case TV_ROD_MAIN: {
 		object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
 
 		modstr = k_name + tip_ptr->name;
@@ -2261,6 +2266,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
 		if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
 			if (mode & 512) { /* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
+				if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 				modstr = scroll_adj[indexx];
 				basenm = "& Wilderness Map Piece~ titled \"#\"";
 				break;
@@ -2281,6 +2287,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = scroll_adj[indexx];
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
@@ -2290,6 +2297,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	case TV_POTION:
 	case TV_POTION2:
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? STATIC_COLORS : 0)]; /* the first n potions have static flavours */
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Potion~" : "& # Potion~";
@@ -2301,6 +2309,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		if (o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) break;
 
 		/* Color the object */
+		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 		modstr = food_adj[indexx];
 
 		if (aware) append_name = TRUE;
@@ -2360,6 +2369,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		strcpy(buf, "(nothing)");
 		return;
 	}
+
+	/* Emergency hack for startup logging stuff: Prevent crashes if we're called from load2.c or anywhere else before flavor_init() was actually called:
+	    It crashes, as flavor_init() isn't called yet (and cannot be called yet because seed_flavor is loaded _after_ items),
+	    and object_desc() will refer to modstr which is NULL pointer for flavoured items w/o flavours.
+	   This shouldn't be necessary though as we've already set modstr to "" in flavour-related tvals above: */
+	if (modstr == NULL) modstr = "<nf>";
 
 	/* Handle flavoured randart names: Keep our special randart naming ;) 'the slow digestion of..' */
 	if (o_ptr->name1 == ART_RANDART && known && !special_rop) {
