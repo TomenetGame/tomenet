@@ -858,7 +858,8 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 	   MAPCHAR:A-Anim1,Rchance1..m%:tile1..m,A-Anim2,Rchance1..n%:tile1..n% etc, or just
 	   MAPCHAR:Rcance1..m%:tile1..m for a non-animated mapping that still picks a random tile out of several choices. */
 
-	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
+	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races,
+	   todo for questors: "R:Q<qidx>C<cnt>:<a>/<c>" syntax based on rmapcnt and rcharidx, requires change to network protocol too. */
 	switch(buf[0]) {
 	case 'R':
 		if (tokenize(buf + 2, 3, zz) == 3) {
