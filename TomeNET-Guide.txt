@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. September 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 12. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -27055,7 +27055,8 @@ PROBLEM 53: Windows OS: Using the 'Alt' modifier key in macros doesn't work.
 Solution:   None. Install Linux in addition to Windows (dual-boot).
 
 PROBLEM 54: I cannot select a server from the meta server list, it seems my key
-            presses get ignored.
+            presses get ignored. Or in general, letters and numbers seem to get
+            ignored, but arrow keys and other non-alphanumerical keys work.
 Solution:   If you are using a non-english keyboard layout with asian or
             cyrillic letters, switch it to english layout.
             Usually it's an IME (Microsoft Input Method Editor) setting. Eg if
