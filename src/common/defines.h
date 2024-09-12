@@ -1471,11 +1471,14 @@
 #define RI_PINK_HORROR		242	/* DROP_CHOSEN */
 #define RI_SOFTWARE_BUG		246
 #define RI_UFTHAK		260
+#define RI_GOLEM_CLAY		261	/* For translating to custom golem_creation visuals */
 #define RI_BEARER_NURGLE	268
 #define RI_DOOR_MIMIC		311
 #define RI_VAMPIRIC_MIST	365
+#define RI_GOLEM_IRON		367	/* For translating to custom golem_creation visuals */
 #define RI_VAMPIRE_BAT		391
 #define RI_BEAST_NURGLE		422
+#define RI_GOLEM_MITHRIL	464	/* For translating to custom golem_creation visuals */
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
 #define RI_BLOODLETTER		523
 #define RI_RAALS_TOME		557	/* DROP_CHOSEN */
@@ -1512,6 +1515,7 @@
 #define RI_WITCHKING		954
 
 #define RI_GORLIM		961	/* DROP_CHOSEN */
+#define RI_GOLEM_BRONZE		1015	/* For translating to custom golem_creation visuals */
 #define RI_TIK_SRVZLLAT		1032
 #define RI_KRONOS		1037	/* DROP_CHOSEN */
 #define RI_LIVING_LIGHTNING	1147

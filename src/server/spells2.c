@@ -9116,7 +9116,7 @@ void golem_creation(int Ind, int max) {
 	}
 
 	m_ptr->owner = p_ptr->id;
-	m_ptr->r_idx = 1 + golem_type;
+	m_ptr->r_idx = 1 + golem_type; // 1 + 0..7 (SV_GOLEM_MATERIAL_MAX) -> 1..8
 
 	m_ptr->level = p_ptr->lev;
 	m_ptr->exp = MONSTER_EXP(m_ptr->level);

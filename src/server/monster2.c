@@ -5430,7 +5430,7 @@ int race_index(char * name) {
 }
 
 monster_race* r_info_get(monster_type *m_ptr) {
-	/* golem or new questor? */
+	/* player golem or questor? */
 	if (m_ptr->special || m_ptr->questor) return(m_ptr->r_ptr);
 #ifdef RANDUNIS
 	else if (m_ptr->ego) return(race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3));
@@ -5490,6 +5490,9 @@ cptr r_name_get(monster_type *m_ptr) {
 				break;
 			case SV_GOLEM_ADAM:
 				snprintf(buf, sizeof(buf), "%s'%s Adamantite Golem", p, bgen);
+				break;
+			default: //paranoia
+				snprintf(buf, sizeof(buf), "%s'%s Unknown Golem", p, bgen);
 				break;
 		}
 		return(buf);
