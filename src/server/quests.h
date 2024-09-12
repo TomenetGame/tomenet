@@ -91,7 +91,8 @@ typedef struct qi_questor {
 	/* QI_QUESTOR_NPC */
 	s16b ridx;
 	s16b reidx;
-	unsigned char rchar;
+	s16b rmapcnt; //counter for custom mappings (fonts/tilesets)
+	s16b rcharidx; //r_info idx for visuals
 	byte rattr;
 	byte rlevmin, rlevmax;
 
@@ -154,7 +155,8 @@ typedef struct qi_questor_morph {
 	cptr name;					/* questor changes optional pseudo-unique name during this stage? */
 	s16b ridx; 					/* questor changes to this base monster type */
 	s16b reidx; 					/* questor changes to this ego monster type */
-	unsigned char rchar;
+	s16b rmapcnt; //counter for custom mappings (fonts/tilesets)
+	s16b rcharidx; //r_info idx for visuals
 	byte rattr;
 	byte rlev;
 } qi_questor_morph;

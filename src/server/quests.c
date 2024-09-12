@@ -975,9 +975,9 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	m_ptr->fy = y;
 
 	r_ptr->d_attr = q_questor->rattr;
-	r_ptr->d_char = q_questor->rchar;
+	r_ptr->d_char = r_info[q_questor->rcharidx].d_char;
 	r_ptr->x_attr = q_questor->rattr;
-	r_ptr->x_char = q_questor->rchar;
+	r_ptr->x_char = r_info[q_questor->rcharidx].x_char;
 
 	r_ptr->aaf = rbase_ptr->aaf;
 	r_ptr->mexp = rbase_ptr->mexp;
@@ -2308,7 +2308,7 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
 	if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
 	if (q_qmorph->reidx != -1) q_questor->reidx = q_qmorph->reidx;
-	if (q_qmorph->rchar != 127) q_questor->rchar = q_qmorph->rchar;
+	if (q_qmorph->rcharidx != -1) q_questor->rcharidx = q_qmorph->rcharidx;
 	if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
 	if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
 #if 0

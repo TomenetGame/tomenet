@@ -7550,8 +7550,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		//--------------------------------------------------------------------------------------------
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
-			int q, lite, ridx, reidx, minlv, maxlv, tval, sval;
-			char ch;
+			int q, lite, ridx, reidx, rcharidx, rmapcnt, minlv, maxlv, tval, sval;
 			byte attr;
 			int good, great, vgreat;
 			int pval, bpval, name1, name2, name2b;
@@ -7566,14 +7565,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			switch (q) {
 			case QI_QUESTOR_NPC:
-				if (9 != sscanf(s, "%d:%d:%d:%d:%c:%c:%d:%d:%[^:]",
-				    &q, &lite, &ridx, &reidx, &ch, &attr, &minlv, &maxlv,
+				if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%c:%d:%d:%[^:]",
+				    &q, &lite, &ridx, &reidx, &rmapcnt, &rcharidx, &attr, &minlv, &maxlv,
 				    tmpbuf)) return(1);
 				q_questor->type = q;
 				q_questor->lite = (unsigned char)lite;
 				q_questor->ridx = ridx;
 				q_questor->reidx = reidx;
-				q_questor->rchar = ch;
+				q_questor->rcharidx = rcharidx;
+				q_questor->rmapcnt = rmapcnt;
 				q_questor->rattr = color_char_to_attr(attr);
 				if (minlv == -1) minlv = 0; /* (hack) Fix wrong q_info.txt data instead of throwing sanitizer-warnings. Todo: Instead, correct the wrong -1 values in q_info.txt. */
 				q_questor->rlevmin = minlv;
@@ -8011,13 +8011,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'S' for questor changes/polymorphing/hostility */
 		if (buf[0] == 'S') {
-			int q, talk, despawn, invinc, dfail, ridx, reidx, lev;
-			char rchar;
+			int q, talk, despawn, invinc, dfail, ridx, reidx, rmapcnt, rcharidx, lev;
 			byte rattr;
 
 			s = buf + 2;
-			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%c:%c:%d",
-			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &reidx, &rchar, &rattr, &lev)) return(1);
+			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%d:%d:%c:%d",
+			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &reidx, &rmapcnt, &rcharidx, &rattr, &lev)) return(1);
 
 			if (stage < 0 || stage >= QI_STAGES) return(1);
 			if (q < 0 || q > q_ptr->questors) return(1);
@@ -8033,8 +8032,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			if (ridx) q_qmorph->ridx = ridx;
 			q_qmorph->reidx = reidx;
-			if (rchar == '-') q_qmorph->rchar = 127; /* keep */
-			else q_qmorph->rchar = rchar;
+			q_qmorph->rcharidx = rcharidx; /* (-1 to keep) */
 			if (rattr == '-') q_qmorph->rattr = 255; /* keep */
 			else q_qmorph->rattr = color_char_to_attr(rattr);
 			q_qmorph->rlev = lev;
