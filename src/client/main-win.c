@@ -4297,7 +4297,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	resize_main_window = resize_main_window_win;
 
 	if (hPrevInst == NULL) {
-		wc.style         = CS_CLASSDC;
+		wc.style         = CS_CLASSDC | CS_IME;
 		wc.lpfnWndProc   = AngbandWndProc;
 		wc.cbClsExtra    = 0;
 		wc.cbWndExtra    = 4; /* one long pointer to term_data */
