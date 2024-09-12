@@ -203,6 +203,11 @@
 #define NOKANJI           /* Kanji support stuff. */
 #define NOMCX             /* Modem Configuration Extensions */
 
+
+/* Not required, just a paranoia note, it's pretty undocumented */
+//#define CS_IME 0x00010000
+
+
 /*
  * Include the "windows" support file
  */
