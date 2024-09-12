@@ -1305,7 +1305,7 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, TV_SWORD, SV_MAIN_GAUCHE, 0, 0 },
 			{ 1, TV_SWORD, SV_DAGGER, 0, 0 },
 			{ 1, TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0, 0 },
-			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+			{ 2, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
 			{ 30, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },//trapkit ammo in this case
 			{ 3, TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0, 0 },
 		}, { /* Mimic */
@@ -1335,14 +1335,15 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0, 0 },
 			{ 1, TV_BOW, SV_LONG_BOW, 0, 0 },
 			{ 35, TV_ARROW, SV_AMMO_NORMAL, 0, 0 },
-			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+			{ 2, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
 		}, { /* Adventurer */
 			{ 1, TV_SWORD, SV_SHORT_SWORD, 0, 0 },
 			{ 1, TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0, 0 },
 			{ 3, TV_SCROLL, SV_SCROLL_MAPPING, 0, 0 },
 			{ 1, TV_BOW, SV_SLING, 0, 0 },
+			{ 2, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
 			{ 25, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },
-			{ 1, 255, 255, 0, 0 },
+			//{ 1, TV_POTION, SV_POTION_SLOW_POISON, 0, 0 },
 		}, { /* Druid */
 			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_FOCUS */
 			{ 1, TV_POTION, SV_POTION_CURE_POISON, 0, 0 },
@@ -1433,7 +1434,7 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
 			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
 			{ 1, TV_TRAPKIT, SV_TRAPKIT_POTION, 0, 0 },
-			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+			{ 2, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
 			{ 30, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },//trapkit ammo in this case
 			{ 3, TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0, 0 },
 		}, { /* Mimic */
@@ -1462,15 +1463,15 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
 			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
 			{ 1, TV_SCROLL, SV_SCROLL_WORD_OF_RECALL, 0, 0 },//instead of unusable bow. alternatives: invis-pot, id-all-scroll?, mapping, rll, csw/ccw?
-			{ 3, TV_TRAPKIT, SV_TRAPKIT_BOW, 0, 0 },
+			{ 2, TV_TRAPKIT, SV_TRAPKIT_BOW, 0, 0 },
 			{ 35, TV_ARROW, SV_AMMO_NORMAL, 0, 0 },//trapkit ammo in this case
 		}, { /* Adventurer */
 			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
 			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
 			{ 3, TV_SCROLL, SV_SCROLL_MAPPING, 0, 0 },
-			{ 3, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
+			{ 2, TV_TRAPKIT, SV_TRAPKIT_SLING, 0, 0 },
 			{ 25, TV_SHOT, SV_AMMO_LIGHT, 0, 0 },
-			{ 1, 255, 255, 0, 0 },
+			{ 1, TV_POTION, SV_POTION_SLOW_POISON, 0, 0 },
 		}, { /* Druid */
 			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 }, /* __lua_FOCUS */
 			{ 1, TV_POTION, SV_POTION_CURE_POISON, 0, 0 },
