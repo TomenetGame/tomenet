@@ -1,23 +1,23 @@
-R:1038:5/216 # True Believer, O with a / thru middle
-R:800:/220 # pit fiend, U with a hat
-R:824:/220 # pit fiend, U with a hat
-R:746:/220 # Bloodthirster. U with two dots above.
-R:835:/208 # Great Wyrm of Power. D with a - to the heart.
+R:1050:5/216 # True Believer, O with a / thru middle
+R:812:/220 # pit fiend, U with a hat
+R:836:/220 # pit fiend, U with a hat
+R:758:/220 # Bloodthirster. U with two dots above.
+R:847:/208 # Great Wyrm of Power. D with a - to the heart.
 #R:778:/208 # Great Wyrm of MC. D with a - to the heart.
-R:844:/220 # Gothy, with a ascend mark on top of U
-R:795:/220 # Greater Balrog. U with a decend on top.
-R:724:/220 # Great Unclean One
-R:751:/220 # Bile Demons
-R:1047:/254 # GSM. p with a little extra on the | toward to the top.
-R:684:/254 # GMT. same as GSM
-R:625:/254 # ranger chief. same as GSM
-R:726:/254 # Old Sorcerer
-R:786:/163 # Black Reaver. Pound Sterling symbol
-R:1132:/216 # Armored target dummy, so you can tell remap is working in Bree
-R:1089:/254 # Target dummy, so you can tell remap is working in Bree
-R:1133:/254 # Armored target dummy, so you can tell remap is working in Bree
-R:1114:/254 # Target dummy, so you can tell remap is working in Bree
-R:756:/175 # Nightwalker, new special character.
+R:856:/220 # Gothy, with a ascend mark on top of U
+R:807:/220 # Greater Balrog. U with a decend on top.
+R:736:/220 # Great Unclean One
+R:763:/220 # Bile Demons
+R:1059:/254 # GSM. p with a little extra on the | toward to the top.
+R:696:/254 # GMT. same as GSM
+R:637:/254 # ranger chief. same as GSM
+R:738:/254 # Old Sorcerer
+R:798:/163 # Black Reaver. Pound Sterling symbol
+R:1144:/216 # Armored target dummy, so you can tell remap is working in Bree
+R:1101:/254 # Target dummy, so you can tell remap is working in Bree
+R:1145:/254 # Armored target dummy, so you can tell remap is working in Bree
+R:1126:/254 # Target dummy, so you can tell remap is working in Bree
+R:768:/175 # Nightwalker, new special character.
 
 
 
