@@ -5081,11 +5081,6 @@ display it in the colour 'attribute' which may range from 0 to 55 (up to 4.6.1a
 client) or 57 (in later clients), with colours 0 to 15 being static colours and
 the higher ones being animated.
 
-Problems have been reported for mapping certain characters:
-0, 2, 16..27 (unclear), 21..31, 129, 141, 143, 144, 157, 195.
-There is currently no further information available regarding this issue.
-If those don't work for you, just pick different ones.
-
 Examples:
 
   F:56:2/127
