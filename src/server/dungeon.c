@@ -23,7 +23,7 @@
 /* if defined, player ghost loses exp slowly. [10000]
  * see GHOST_XP_CASHBACK in xtra2.c also.
  */
-#define GHOST_FADING	10000
+#define GHOST_FADING	(cfg.fps * 150)
 
 /* How fast HP/MP regenerate when 'resting'. [3] */
 #define RESTING_RATE	(cfg.resting_rate)
@@ -2839,7 +2839,7 @@ static void process_world_player(int Ind) {
 	 * object, and stop any resting. -LM-
 	 */
 	/* Probably better done in process_player_end?	- Jir - */
-	if (!(turn % 3000) && (p_ptr->black_breath)) {
+	if (!(turn % (cfg.fps * 50)) && (p_ptr->black_breath)) {
 		msg_print(Ind, "\377WThe Black Breath saps your soul!");
 
 		/* alert to the neighbors also */
@@ -2850,7 +2850,7 @@ static void process_world_player(int Ind) {
 
 	/* Cold Turkey  */
 	i = (p_ptr->csane << 7) / p_ptr->msane;
-	if (!(turn % 4200) && !magik(i)) {
+	if (!(turn % (cfg.fps * 70)) && !magik(i)) {
 		msg_print(Ind, "\377rA flashback storms your head!");
 
 		/* alert to the neighbors also */
@@ -2871,9 +2871,9 @@ static void process_world_player(int Ind) {
 #ifdef GHOST_FADING
 	if (p_ptr->ghost && !p_ptr->admin_dm &&
 	    //!(turn % GHOST_FADING))
-	    //!(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
-	    !(turn % (GHOST_FADING / p_ptr->lev * 50)))
-		//(rand_int(10000) < p_ptr->lev * p_ptr->lev))
+	    //!(turn % ((5100L - p_ptr->lev * 50) * GHOST_FADING)))
+	    !(turn % ((GHOST_FADING * 50) / p_ptr->lev)))
+		//(rand_int(GHOST_FADING) < p_ptr->lev * p_ptr->lev))
 		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE, FALSE, 0);
 #endif	// GHOST_FADING
 
@@ -4111,9 +4111,6 @@ static void apply_terrain_effect(int Ind) {
 		for (i = 0; i < 4; i++) {
 			/* Check the frequency */
 			if (f_ptr->d_frequency[i] == 0) continue;
-
-			/* XXX it's no good to use 'turn' here */
-			//if (((turn % f_ptr->d_frequency[i]) == 0) &&
 
 			if ((!rand_int(f_ptr->d_frequency[i])) &&
 			    ((f_ptr->d_side[i] != 0) || (f_ptr->d_dice[i] != 0))) {
@@ -8128,7 +8125,7 @@ static void process_various(void) {
 
 #if 0
 	/* Grow trees very occasionally */
-	if (!(turn % (10L * GROW_TREE))) {
+	if (!(turn % GROW_TREE)) {
 		/* Find a suitable location */
 		for (i = 1; i < 1000; i++) {
 			cave_type *c_ptr;
@@ -10706,7 +10703,7 @@ void dungeon(void) {
 #ifdef ARCADE_SERVER
 	/* Process special Arcade Server things */
 	if (turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
-	if (turn % tron_speed == 1) exec_lua(1, "tron()");
+	if (!tron_speed || !(turn % tron_speed)) exec_lua(1, "tron()");
 #endif
 
 #ifdef ENABLE_GO_GAME

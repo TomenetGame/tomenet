@@ -265,12 +265,17 @@
 
 /*
  * This is very important...
+ * This is the number of "frames" to produce per second.  It determines the speed of the game.
  *
- * This is the number of "frames" to produce per second.  It determines
- * the speed of the game.
+ * C. Blue:
+ *  It does not determine the 'speed' of the game anymore,
+ *  as I changed it so it now just defines the resolution of the server processing aka
+ *  'fine-grained accuracy', while all game actions are coupled only to real-time.
+ *  CONSTRAINTS: cfg.fps default value is 60, which works flawlessly.
+ *               cfg.fps MUST be divisible by 2,5,6,10 (which means 30 is the lowest valid value) or things will take a bad turn, literally.
+ *               (Ideally cfg.fps would even be divisible by 2,3,4,5,6,8,10,12,15 which could be fulfilled by setting cfg.fps to 120.)
  */
-/*#define FPS 60 */
-#define FPS (cfg.fps)
+#define FPS (cfg.fps) /* default is [60] */
 
 
 /* Characters and accounts do never expire? (Enable this in your LAN for example) */
@@ -1836,7 +1841,7 @@
  #define TOWN_DAWN	10000		/* Number of turns from dawn to dawn XXX */
  #define TOWN_DAWN	(DAY / 2)	/* Number of turns from dawn to dawn XXX */
 #endif /* 0 */
-#define GROW_TREE	5000		/* How often to grow a new tree in town */
+#define GROW_TREE	(cfg.fps * 800)	/* How often to grow a new tree in town */
 #define BREAK_GLYPH	350		/* Rune of protection resistance */
 #define BTH_PLUS_ADJ	3		/* Adjust BTH per plus-to-hit */
 #define MON_MULT_ADJ	8		/* High value slows multiplication */

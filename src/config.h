@@ -756,13 +756,13 @@
  * If the value is 6 and FPS is 60, monsters are processed 10 times/second.
  * This should be of *great* help for slow servers :)
  */
-#define MONSTER_TURNS	6
+#define MONSTER_TURNS	(cfg.fps / 10)
 
 /* Smoother load distribution:
    Handle monsters actually once per turn but only 1/MONSTER_TURNS of them: */
 #define PROCESS_MONSTERS_DISTRIBUTE
 
-#define NPC_TURNS	6	/* Programmable NPC Turns */
+#define NPC_TURNS	(cfg.fps / 10)	/* Turns for 'Programmable NPCs' (not implemented) */
 
 /*
  * OPTION: allow sanity display.

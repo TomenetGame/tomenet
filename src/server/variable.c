@@ -100,7 +100,7 @@ s32b turn, session_turn;	/* Current game turn; session_turn is the turn this ser
 s32b turn_overflow = 2000000000;/* Limit when to reset 'turn' to 1 to prevent overflow symptoms */
 
 #ifdef ARCADE_SERVER
-char tron_speed = 9;
+char tron_speed = ((cfg.fps + 3) / 7);
 char tron_dark = 0;
 char tron_forget = 0;
 worldpos arcpos[100];
