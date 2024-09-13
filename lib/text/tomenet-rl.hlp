@@ -17,7 +17,7 @@ But, as you get more experienced you will become better at surviving. Have fun!
 z   Zap wand    A  Activate      ! Show BBS        |   Uniques slain list
 P   Peruse book f  Bash (force) door/object/enemy  =   Options menu
 c   Close door  C  Character     $ Drop gold       "   Load prf file (abs path)
-d   Drop        D  Disarm        % Macro menu      \   Bypass the keymap (raw)
+\{Bd   Drop item\{w   D  Disarm        % Macro menu      \   Bypass the keymap (raw)
 e   Equip       \{BE  Eat\{w           & Auto inscribe   ^Z  Pick up one item
 t   Fire        F  Refill light  ( Friendly target ^X  Toggle music
 \{Bg/5 Take item\{w   G  Skills        ) Clear buffer    ^V  Toggle all audio
