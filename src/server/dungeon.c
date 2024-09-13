@@ -451,7 +451,7 @@ static void sense_inventory(int Ind) {
 	bool ok_curse = FALSE, force_curse = FALSE;
 
 	cptr feel;
-	bool felt_heavy, fail;
+	bool felt_heavy, fail_light;
 
 	object_type *o_ptr;
 	char o_name[ONAME_LEN + 10];
@@ -514,28 +514,31 @@ static void sense_inventory(int Ind) {
 	/* Check everything */
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		fail = FALSE;
+		fail_light = FALSE;
 
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
 		/* It is fully known, no information needed */
 		if (object_known_p(Ind, o_ptr)) continue;
-		/* We know about it already, do not tell us again */
+		/* We have pseudo-id'ed it heavily before, do not tell us again */
 		if (o_ptr->ident & ID_SENSE_HEAVY) continue;
-		else if (o_ptr->ident & ID_SENSE) fail = TRUE;
+		/* If already pseudo-id'ed normally, fail for non-heavy pseudo-id, but allow heavy one as an upgrade if we meanwhile trained the responsible skill */
+		else if (o_ptr->ident & ID_SENSE) fail_light = TRUE;
 		/* Occasional failure on inventory items */
-		if ((i < INVEN_WIELD) &&
-		    (magik(80) || UNAWARENESS(p_ptr))) {
+		if ((i < INVEN_WIELD) && (magik(80) || UNAWARENESS(p_ptr))) {
 			/* usually fail, except if we're forced to insta-sense a curse */
-			if (!force_curse || fail) continue;
-			/* if we're forced to insta-sense a curse, do just that */
-			ok_magic = ok_combat = ok_archery = ok_traps = FALSE;
+			if (!force_curse) continue;
+			/* if we're forced to insta-sense a curse, do just that, as we'd have failed for all other actions */
+			fail_light = ok_magic = ok_combat = ok_archery = ok_traps = FALSE;
 		}
 
 		feel = NULL;
 		felt_heavy = FALSE;
 
-		if (ok_curse && !fail && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
+		/* Maybe change: ok_curse isn't 'heavy' priority ie it can fail on inventory (unless forced) as can all other non-heavy pseudo-id,
+		   but if it triggers then it always gives 'heavy' result values (from _aux1()), revealing that a cursed item is an artifact, via 'terrible' feeling.
+		   This cheeze perhaps isn't terrible though, as we'd have found out if we tried to 'k' the item in question anyway >_>. */
+		if (ok_curse && !fail_light && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
 
 		/* Valid "tval" codes */
 		switch (o_ptr->tval) {
@@ -554,14 +557,14 @@ static void sense_inventory(int Ind) {
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		case TV_BOOMERANG:
-			if (fail && !heavy) continue; //finally fail
+			if (fail_light && !heavy) continue; //finally fail
 			if (ok_combat) {
 				feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy) felt_heavy = TRUE;
 			}
 			break;
 		case TV_MSTAFF:
-			if (fail && !heavy_magic) continue; //finally fail
+			if (fail_light && !heavy_magic) continue; //finally fail
 			if (ok_magic) {
 				feel = (heavy_magic ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy_magic) felt_heavy = TRUE;
@@ -578,7 +581,7 @@ static void sense_inventory(int Ind) {
 		case TV_ROD:
 		case TV_RING: /* finally these two, in 2023 */
 		case TV_AMULET:
-			if (fail && !heavy_magic) continue; //finally fail
+			if (fail_light && !heavy_magic) continue; //finally fail
 			if (ok_magic && !object_aware_p(Ind, o_ptr)) {
 				feel = (heavy_magic ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
 				if (heavy_magic) felt_heavy = TRUE;
@@ -588,21 +591,21 @@ static void sense_inventory(int Ind) {
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BOW:
-			if (fail && !heavy_archery) continue; //finally fail
+			if (fail_light && !heavy_archery) continue; //finally fail
 			if (ok_archery || (ok_combat && magik(25))) {
 				feel = (heavy_archery ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy_archery) felt_heavy = TRUE;
 			}
 			break;
 		case TV_TRAPKIT:
-			if (fail && !heavy_traps) continue; //finally fail
+			if (fail_light && !heavy_traps) continue; //finally fail
 			if (ok_traps) {
 				feel = (heavy_traps ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy_traps) felt_heavy = TRUE;
 			}
 			break;
 		case TV_FOOD: /* dual! Uses auxX_magic, which contains the food-specific values. Since potions are 'magic' too, food seems not misplaced.. */
-			if (fail && !heavy_magic && !heavy) continue; //finally fail
+			if (fail_light && !heavy_magic && !heavy) continue; //finally fail
 			if ((ok_combat || ok_magic) && !object_aware_p(Ind, o_ptr)) {
 				feel = ((heavy || heavy_magic) ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
 				if (heavy || heavy_magic) felt_heavy = TRUE;
@@ -670,7 +673,7 @@ static void sense_inventory(int Ind) {
 
 #if 1
 		/* new: remove previous pseudo-id tag completely, since we've bumped our p-id tier meanwhile */
-		if (fail) {
+		if (fail_light) {
 			char note2[80], noteid[10];
 
 			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
