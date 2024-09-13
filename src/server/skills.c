@@ -432,10 +432,10 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare Missile'! (press '\377gm\377G')");
 		if (old_value < 80 && new_value >= 80)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Precision Shot'!");
-		if (old_value < 100 && new_value >= 100)
+		if (old_value < 100 && new_value >= 100) {
 			msg_print(Ind, "\374\377GYou learn how to craft ammunition from bones and rubble!");
-		if (old_value < 110 && new_value >= 110)
-			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown ranged weapons and ammo!");
+			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown ranged weapons and ammunition.");
+		}
 		if (old_value < 160 && new_value >= 160)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Double Shot'!");
 		if (old_value < 200 && new_value >= 200)
@@ -446,26 +446,22 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 			//msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
 		break;
 	case SKILL_COMBAT:
-		if (old_value < 110 && new_value >= 110)
-			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown weapons.");
-#if 0
-		if (old_value < 310 && new_value >= 310)
-			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown ranged weapons and ammo.");
-		if (old_value < 410 && new_value >= 410)
-			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown magical items.");
-#else /* more true messages: */
-		if (old_value < 310 && new_value >= 310)
-			if (get_skill(p_ptr, SKILL_ARCHERY) < 11)
-				msg_print(Ind, "\374\377GYou somewhat recognize the usefulness of unknown ranged weapons and ammo.");
-		if (old_value < 410 && new_value >= 410)
-			/* message somewhat redudant with classes/other skills which also give
-			   ok_curse, but seems impractical to sort out really */
-			msg_print(Ind, "\374\377GYou feel able to sense curses on all types of items.");
+		if (old_value < 100 && new_value >= 100)
+			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown melee weapons and armour.");
+		if (old_value < 300 && new_value >= 300
+		    && get_skill(p_ptr, SKILL_ARCHERY) < 10)
+			msg_print(Ind, "\374\377GYou recognize the usefulness of unknown ranged weapons and ammunition faster.");
+		if (old_value < 400 && new_value >= 400
+		    && get_skill(p_ptr, SKILL_MAGIC) < 10
+		    && p_ptr->pclass != CLASS_PRIEST
+#ifdef ENABLE_CPRIEST
+		    && p_ptr->pclass != CLASS_CPRIEST
 #endif
+		    && p_ptr->ptrait != TRAIT_ENLIGHTENED)
+			msg_print(Ind, "\374\377GYou feel able to sense curses on all types of items.");
 		break;
 	case SKILL_MAGIC:
-		if (old_value < 110 && new_value >= 110
-		    && get_skill(p_ptr, SKILL_DIVINATION) < 50) //auto-id
+		if (old_value < 100 && new_value >= 100)
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown magical items.");
 		break;
 
@@ -757,11 +753,10 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 #ifdef ENABLE_DEMOLITIONIST
 		if (get_skill(p_ptr, SKILL_DIG) < 10)
 #endif
-		if (old_value < 100 && new_value >= 100)
+		if (old_value < 100 && new_value >= 100) {
 			msg_print(Ind, "\374\377GYou learn how to use the fighting technique 'Steam Blast'!");
-		if (old_value < 110 && new_value >= 110
-		    && get_skill(p_ptr, SKILL_DIVINATION) < 50) //auto-id
-			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown traps.");
+			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown traps and ammunition.");
+		}
 		break;
 	case SKILL_DEVICE:
 		if (old_value < 20 && new_value >= 20 && p_ptr->newbie_hints)
