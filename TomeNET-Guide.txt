@@ -12936,6 +12936,10 @@ not already inscribed, in which case it will not gain a pseudo-id inscription:
 
 A Whip {+,?} (1d6) {good}
 
+Since actively handling an item will make it more likely for you to discover
+its qualities, equipped items actually have a much higher chance to get pseudo-
+identified than items in your inventory.
+
 In general, training any of these four skills will make pseudo-id in that
 particular field happen faster ie more frequently, and at certain skill levels
 also make the results more distinguished so you receive additional, more
