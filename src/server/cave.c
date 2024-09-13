@@ -2053,47 +2053,55 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 }
 
 /* Get both, attr and char, for a monster race, to display to the player on the main screen.
-   Note that for special/questor we already receive r_ptr as m_ptr->r_ptr, so we can use it straight away. */
-static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr, int mimic_m_idx, byte *ap, char32_t *cp) {
+   Note that for special/questor we already receive r_ptr as m_ptr->r_ptr, so we can use it straight away.
+   'm_ptr' is NULL when getting a player's mimicry form visuals instead of a real monster. */
+static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr, int m_idx, byte *ap, char32_t *cp) {
 	player_type *p_ptr = Players[Ind];
 	byte a;
 	char32_t c;
 
-	/* Desired attr */
-	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->custom_mapping)
-		a = p_ptr->r_attr[m_ptr->r_idx]; /* normal monster, custom mapping */
-	else if (m_ptr->special) /* player golem: r_ptr is actually already m_ptr->r_ptr */
-		a = r_ptr->d_attr;
-	else if (m_ptr->questor) /* questor: r_ptr is actually already m_ptr->r_ptr */
-		a = r_ptr->d_attr;
-	else a = r_ptr->d_attr; /* no custom mapping, or out-of-the-ordinary monster we cannot currently handle in custom mappings */
+	if (m_ptr) {
+		/* normal monster, potentially custom 'attr' mapping: */
+		if (!m_ptr->special && !m_ptr->questor && p_ptr->custom_mapping)
+			a = p_ptr->r_attr[m_ptr->r_idx];
+		/* 1) player golem/questor: r_ptr is actually already m_ptr->r_ptr;
+		   2) no custom mapping, or out-of-the-ordinary monster we cannot currently handle in custom mappings: */
+		else a = r_ptr->d_attr;
 
-	/* Desired char */
-	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->custom_mapping
-	    && !(((p_ptr->ascii_uniques && (r_ptr->flags1 & RF1_UNIQUE)) || p_ptr->ascii_monsters)))
-		c = p_ptr->r_char[m_ptr->r_idx]; /* normal monster, custom mapping */
-	else if (m_ptr->special && r_ptr->d_char == 'g' && m_ptr->r_idx) /* player golem: r_ptr is actually already m_ptr->r_ptr */
-		/* translate monster visuals sort of to player golem visuals,
-		   from cheapo to coolest, via material's sval that became r_idx-1 on golem creation: */
-		switch (m_ptr->r_idx - 1) {
-		case SV_GOLEM_WOOD: c = p_ptr->r_char[RI_GOLEM_CLAY]; break;
-		case SV_GOLEM_COPPER: c = p_ptr->r_char[RI_GOLEM_IRON]; break;
-		case SV_GOLEM_IRON: c = p_ptr->r_char[RI_GOLEM_IRON]; break;
-		case SV_GOLEM_ALUM: c = p_ptr->r_char[RI_GOLEM_IRON]; break;
-		case SV_GOLEM_SILVER: c = p_ptr->r_char[RI_GOLEM_MITHRIL]; break;
-		case SV_GOLEM_GOLD: c = p_ptr->r_char[RI_GOLEM_MITHRIL]; break;
-		case SV_GOLEM_MITHRIL: c = p_ptr->r_char[RI_GOLEM_MITHRIL]; break;
-		case SV_GOLEM_ADAM: /* fall through */
-		default:
-			c = p_ptr->r_char[RI_GOLEM_BRONZE]; //ironic
-		}
-	else if (m_ptr->questor /* questor: r_ptr is actually already m_ptr->r_ptr */
-	    && q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx)
-		c = p_ptr->r_char[q_info[m_ptr->quest].questor[m_ptr->questor_idx].rcharidx];
-	else c = r_ptr->d_char; /* no custom mapping, or out-of-the-ordinary monster we cannot currently handle in custom mappings */
+		/* normal monster, potentially custom 'char' mapping: */
+		if (!m_ptr->special && !m_ptr->questor && p_ptr->custom_mapping
+		    && !(((p_ptr->ascii_uniques && (r_ptr->flags1 & RF1_UNIQUE)) || p_ptr->ascii_monsters)))
+			c = p_ptr->r_char[m_ptr->r_idx];
+		/* player golem: r_ptr is actually already m_ptr->r_ptr: */
+		else if (m_ptr->special && r_ptr->d_char == 'g' && m_ptr->r_idx)
+			/* translate monster visuals sort of to player golem visuals,
+			   from cheapo to coolest, via material's sval that became r_idx-1 on golem creation: */
+			switch (m_ptr->r_idx - 1) {
+			case SV_GOLEM_WOOD: c = p_ptr->r_char[RI_GOLEM_CLAY]; break;
+			case SV_GOLEM_COPPER: c = p_ptr->r_char[RI_GOLEM_IRON]; break;
+			case SV_GOLEM_IRON: c = p_ptr->r_char[RI_GOLEM_IRON]; break;
+			case SV_GOLEM_ALUM: c = p_ptr->r_char[RI_GOLEM_IRON]; break;
+			case SV_GOLEM_SILVER: c = p_ptr->r_char[RI_GOLEM_MITHRIL]; break;
+			case SV_GOLEM_GOLD: c = p_ptr->r_char[RI_GOLEM_MITHRIL]; break;
+			case SV_GOLEM_MITHRIL: c = p_ptr->r_char[RI_GOLEM_MITHRIL]; break;
+			case SV_GOLEM_ADAM: /* fall through */
+			default:
+				c = p_ptr->r_char[RI_GOLEM_BRONZE]; //ironic
+			}
+		/* questor: r_ptr is actually already m_ptr->r_ptr: */
+		else if (m_ptr->questor
+		    && q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx)
+			c = p_ptr->r_char[q_info[m_ptr->quest].questor[m_ptr->questor_idx].rcharidx];
+		/* no custom mapping, or out-of-the-ordinary monster we cannot currently handle in custom mappings: */
+		else c = r_ptr->d_char;
+	} else {
+		/* Default r_info.txt attr/char mapping: */
+		a = r_ptr->d_attr;
+		c = r_ptr->d_char;
+	}
 
 	/* Hack -- mimics */
-	if (r_ptr->flags9 & RF9_MIMIC) mimic_object(&a, &c, mimic_m_idx);
+	if (r_ptr->flags9 & RF9_MIMIC) mimic_object(&a, &c, m_idx);
 
 	/* Ignore weird codes */
 	if (avoid_other) {
