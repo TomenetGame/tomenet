@@ -242,7 +242,7 @@ extern void new_level_rand_y(struct worldpos *wpos, int y);
 extern s32b turn, session_turn, turn_overflow;
 
 #ifdef ARCADE_SERVER
-extern char tron_speed;
+//extern char tron_speed;
 extern char tron_dark;
 extern char tron_forget;
 extern worldpos arcpos[100];

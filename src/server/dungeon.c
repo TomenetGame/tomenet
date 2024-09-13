@@ -10703,6 +10703,7 @@ void dungeon(void) {
 #ifdef ARCADE_SERVER
 	/* Process special Arcade Server things */
 	if (turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
+ #define tron_speed ((cfg.fps + 3) / 7)
 	if (!tron_speed || !(turn % tron_speed)) exec_lua(1, "tron()");
 #endif
 

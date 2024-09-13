@@ -177,7 +177,7 @@ extern s32b session_turn;
 extern s32b turn_overflow;
 
 #ifdef ARCADE_SERVER
-extern char tron_speed;
+//extern char tron_speed;
 extern char tron_dark;
 extern char tron_forget;
 extern worldpos arcpos[100];
