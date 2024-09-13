@@ -12055,7 +12055,8 @@ void reorder_pack(int Ind) {
 /*
  * Hack -- process the objects (called every turn)
  */
-/* TODO: terrain effects (lava burns scrolls etc) -- those are done elsewhere */
+/* TODO: terrain effects (lava burns scrolls etc) -- those are done elsewhere
+  TODO: Do some work distribution over frames, this function seems most CPU-hungry, looping through all items every turn. */
 void process_objects(void) {
 	int i, k, Ind;
 	object_type *o_ptr;
