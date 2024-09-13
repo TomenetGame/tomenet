@@ -2918,47 +2918,30 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
  * you'll meet him again and again... so I stop implementing this.
  * - Jir -
  */
-void do_cmd_steal_from_monster(int Ind, int dir) {
+void do_cmd_steal_from_monster(int Ind, int m_idx) {
 #if 0
-	player_type *p_ptr = Players[Ind], *q_ptr;
+	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	int x, y, dir = 0, item = -1, k = -1;
 	cave_type *c_ptr;
-	monster_type *m_ptr;
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 	object_type *o_ptr, forge;
 	byte num = 0;
 	bool done = FALSE;
 	int monst_list[23];
- #ifdef ENABLE_OUNLIFE
-	monster_race *r_ptr;
- #endif
 
-	if (!(zcave = getcave(&p_ptr->wpos))) return;
-
-	/* Only works on adjacent monsters */
-	if (!get_rep_dir(&dir)) return;
-	y = py + ddy[dir];
-	x = px + ddx[dir];
-	c_ptr = &cave[y][x];
-
-	if (!(c_ptr->m_idx)) {
-		msg_print("There is no monster there!");
-		return;
-	}
-
-	m_ptr = &m_list[c_ptr->m_idx];
-
- #ifdef ENABLE_OUNLIFE
+	if ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
+#ifdef ENABLE_OUNLIFE
 	/* Wraithstep gets auto-cancelled on forced interaction with non-wraithed monsters */
-	r_ptr = race_inf(m_ptr);
 	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) &&
 	    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
 		set_tim_wraith(Ind, 0);
- #endif
+#endif
 
 	/* Ghosts cannot steal ; not in WRAITHFORM */
-	if (CANNOT_OPERATE_SPECTRAL) {
-		msg_print(Ind, "You cannot steal things in your immaterial form!");
+	if (CANNOT_OPERATE_SPECTRAL && ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)) && !is_admin(p_ptr)) {
+		msg_print(Ind, "You cannot steal from this monster in your immaterial form!");
 		return;
 	}
 
@@ -2969,13 +2952,6 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 	/* There were no non-gold items */
 	if (!m_ptr->hold_o_idx) {
 		msg_print("That monster has no objects!");
-		return;
-	}
-
- #if 0
-	/* not in WRAITHFORM */
-	if (p_ptr->tim_wraith) {
-		msg_print("You can't grab anything!");
 		return;
 	}
 
@@ -3036,7 +3012,6 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 			break;
 		}
 	}
- #endif	// 0
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
@@ -3115,11 +3090,9 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 #endif	// 0
 }
 
-
 /*
- * Attempt to steal from another player
+ * Attempt to steal from a monster or from another player
  */
-/* TODO: Make it possible to steal from monsters.. */
 void do_cmd_steal(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	cave_type *c_ptr;
@@ -3151,23 +3124,7 @@ void do_cmd_steal(int Ind, int dir) {
 	}
 	/* Steal from monster? */
 	else if (c_ptr->m_idx > 0) {
-		monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
-
-#ifdef ENABLE_OUNLIFE
-		/* Attacking on purpose terminates Wraithstep */
-		if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) &&
-		    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
-			set_tim_wraith(Ind, 0);
-#endif
-
-		/* Ghosts cannot steal */
-		/* not in WRAITHFORM either */
-		if (CANNOT_OPERATE_SPECTRAL) {
-			msg_print(Ind, "You cannot steal things in your immaterial form!");
-			return;
-		}
-
-		do_cmd_steal_from_monster(Ind, dir);
+		do_cmd_steal_from_monster(Ind, c_ptr->m_idx);
 		return;
 	}
 
@@ -3212,8 +3169,8 @@ void do_cmd_steal(int Ind, int dir) {
 
 	/* Ghosts cannot steal */
 	/* not in WRAITHFORM either */
-	if (!q_ptr->tim_wraith && p_ptr->tim_wraith && CANNOT_OPERATE_SPECTRAL) {
-		msg_print(Ind, "You cannot steal things in your immaterial form!");
+	if (!q_ptr->tim_wraith && CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
+		msg_print(Ind, "You cannot steal from this player in your immaterial form!");
 		return;
 	}
 
