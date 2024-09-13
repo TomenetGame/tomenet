@@ -2799,7 +2799,8 @@ void verify_day_and_night() {
 }
 
 /*
- * Handle certain things once every 50 game turns
+ * Handle certain things globally in regards to the player, called every turn:
+ * Monster respawn, black breath, flashbacks, ghost-fading.
  */
 
 static void process_world_player(int Ind) {
@@ -2815,7 +2816,8 @@ static void process_world_player(int Ind) {
 	 */
 
 	/* Check for creature generation */
-	if (((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
+	if (!(turn % ((cfg.fps * 5) / 6)) &&
+	    ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
 	    (!season_halloween && istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE) == 0)) ||
 	    (season_halloween && istown(&p_ptr->wpos) &&
 	    (rand_int(in_bree(&p_ptr->wpos) ? HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)))
@@ -5015,6 +5017,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Anything done here cannot be reduced by GoI/Manashield etc */
 	bypass_invuln = TRUE;
 
+
 	/*** Damage over Time ***/
 #define POISON_DIV 30
 #define CUT_DIV 400
@@ -5046,6 +5049,25 @@ static bool process_player_end_aux(int Ind) {
 		/* Take damage */
 		p_ptr->died_from_ridx = 0;
 		take_hit(Ind, k, "disease", p_ptr->poisoned_attacker);
+	}
+
+	/* Take damage from cuts */
+	if (p_ptr->cut) {
+		k = p_ptr->mhp / CUT_DIV;
+		k += (rand_int(CUT_DIV) < p_ptr->mhp % CUT_DIV) ? 1 : 0;
+		if (!k) k = 1;
+
+		if (p_ptr->cut >= CUT_MORTAL_WOUND) i = 7;	/* Mortal wound */
+		if (p_ptr->cut >= 200) i = 6;	/* Deep gash */
+		if (p_ptr->cut >= 100) i = 5;	/* Severe cut */
+		if (p_ptr->cut >= 50) i = 4;	/* Nasty cut */
+		if (p_ptr->cut >= 25) i = 3;	/* Bad cut */
+		if (p_ptr->cut >= 10) i = 2;	/* Light cut */
+		else i = 1;			/* Graze */
+
+		/* Take damage */
+		p_ptr->died_from_ridx = 0;
+		take_hit(Ind, i * k, "a fatal wound", p_ptr->cut_attacker);
 	}
 
 	/* Misc. terrain effects */
@@ -5366,26 +5388,6 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 
-	/* Take damage from cuts */
-	if (p_ptr->cut) {
-		k = p_ptr->mhp / CUT_DIV;
-		k += (rand_int(CUT_DIV) < p_ptr->mhp % CUT_DIV) ? 1 : 0;
-		if (!k) k = 1;
-
-		if (p_ptr->cut >= CUT_MORTAL_WOUND) i = 7;	/* Mortal wound */
-		if (p_ptr->cut >= 200) i = 6;	/* Deep gash */
-		if (p_ptr->cut >= 100) i = 5;	/* Severe cut */
-		if (p_ptr->cut >= 50) i = 4;	/* Nasty cut */
-		if (p_ptr->cut >= 25) i = 3;	/* Bad cut */
-		if (p_ptr->cut >= 10) i = 2;	/* Light cut */
-		else i = 1;			/* Graze */
-
-		/* Take damage */
-		p_ptr->died_from_ridx = 0;
-		take_hit(Ind, i * k, "a fatal wound", p_ptr->cut_attacker);
-	}
-
-
 	/*** Check the Food, and Regenerate ***/
 	/* Ent's natural food while in 'Resting Mode' - C. Blue
 	   Water helps much, natural floor helps some. */
@@ -5455,6 +5457,7 @@ static bool process_player_end_aux(int Ind) {
 			take_hit(Ind, i, "starvation", 0);
 		}
 	}
+
 
 	/* Default regeneration */
 	regen_amount = PY_REGEN_NORMAL;
@@ -5705,58 +5708,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 #endif
-	if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
-		p_ptr->tim_jail--;
-		if (!p_ptr->tim_jail) {
-			/* only release him from jail if he didn't already take the ironman jail dungeon escape route. */
-			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
-#ifdef JAILER_KILLS_WOR
-				/* eat his WoR scrolls as suggested? */
-				bool found = FALSE, one = TRUE;
 
-				for (j = 0; j < INVEN_WIELD; j++) {
-					if (!p_ptr->inventory[j].k_idx) continue;
-					o_ptr = &p_ptr->inventory[j];
-					if ((o_ptr->tval == TV_ROD) && (o_ptr->sval == SV_ROD_RECALL)) {
-						if (found) one = FALSE;
-						if (o_ptr->number > 1) one = FALSE;
-						o_ptr->pval = 300;
-						found = TRUE;
-					}
-				}
-				if (found) {
-					msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
-					p_ptr->window |= PW_INVEN;
-				}
-#endif
-
-				msg_print(Ind, "\377GYou are free to go!");
-
-				/* Get the jail door location */
-				if (!p_ptr->house_num) teleport_player_force(Ind, 1); //should no longer happen as house_num is saved now between logins
-				else {
-					zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-					everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-					p_ptr->px = houses[p_ptr->house_num - 1].dx;
-					p_ptr->py = houses[p_ptr->house_num - 1].dy;
-					p_ptr->house_num = 0;
-					teleport_player_force(Ind, 1);
-
-					/* Hack: We started on the prison door, which isn't CAVE_STCK.
-					   So we have to manually add a message and redraw the no-tele indicators. */
-					msg_print(Ind, "\377sFresh air greets you as you leave the prison.");
-					p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-					p_ptr->redraw |= PR_BPR_WRAITH;
-				}
-			}
-		}
-	}
-
-	/* Hack -- Tunnel */
-#if 0	// not used like this, it's a permanent ability gained from KILL_WALL mimicry forms
-	if (p_ptr->auto_tunnel)
-		p_ptr->auto_tunnel--;
-#endif	// 0
 	/* Hack -- Meditation */
 	if (p_ptr->tim_meditation)
 		(void)set_tim_meditation(Ind, p_ptr->tim_meditation - minus);
@@ -6880,16 +6832,6 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	if (p_ptr->tim_blacklist) // && !p_ptr->afk)
-		/* Count down towards turnout */
-		p_ptr->tim_blacklist--;
-
-#if 1 /* use turns instead of day/night cycles */
-	if (p_ptr->tim_watchlist)
-		/* Count down towards turnout */
-		p_ptr->tim_watchlist--;
-#endif
-
 	if (p_ptr->hold_hp_regen) p_ptr->hold_hp_regen--;
 
 	if (p_ptr->pstealing) {
@@ -7046,6 +6988,9 @@ static void process_player_end(int Ind) {
 
 	if (Players[Ind]->conn == NOT_CONNECTED) return;
 
+
+	/* --- Process various turn counters --- */
+
 	/* count turns online, afk, and idle */
 	p_ptr->turns_online++;
 	if (p_ptr->afk) p_ptr->turns_afk++;
@@ -7056,6 +7001,61 @@ static void process_player_end(int Ind) {
 	p_ptr->turns_on_floor++;
 	/* hack to indicate it to the player */
 	if (p_ptr->turns_on_floor == TURNS_FOR_EXTRA_FEELING) Send_depth(Ind, &p_ptr->wpos);
+
+	/* Crimes being forgotten over time */
+	if (!(turn % (cfg.fps % 10))) {
+		if (p_ptr->tim_blacklist) p_ptr->tim_blacklist--;
+		if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+		if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
+			p_ptr->tim_jail--;
+			if (!p_ptr->tim_jail) {
+				/* only release him from jail if he didn't already take the ironman jail dungeon escape route. */
+				if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
+#ifdef JAILER_KILLS_WOR
+					/* eat his WoR scrolls as suggested? */
+					bool found = FALSE, one = TRUE;
+
+					for (j = 0; j < INVEN_WIELD; j++) {
+						if (!p_ptr->inventory[j].k_idx) continue;
+						o_ptr = &p_ptr->inventory[j];
+						if ((o_ptr->tval == TV_ROD) && (o_ptr->sval == SV_ROD_RECALL)) {
+							if (found) one = FALSE;
+							if (o_ptr->number > 1) one = FALSE;
+							o_ptr->pval = 300;
+							found = TRUE;
+						}
+					}
+					if (found) {
+						msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
+						p_ptr->window |= PW_INVEN;
+					}
+#endif
+
+					msg_print(Ind, "\377GYou are free to go!");
+
+					/* Get the jail door location */
+					if (!p_ptr->house_num) teleport_player_force(Ind, 1); //should no longer happen as house_num is saved now between logins
+					else {
+						zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+						everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+						p_ptr->px = houses[p_ptr->house_num - 1].dx;
+						p_ptr->py = houses[p_ptr->house_num - 1].dy;
+						p_ptr->house_num = 0;
+						teleport_player_force(Ind, 1);
+
+						/* Hack: We started on the prison door, which isn't CAVE_STCK.
+						   So we have to manually add a message and redraw the no-tele indicators. */
+						msg_print(Ind, "\377sFresh air greets you as you leave the prison.");
+						p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+						p_ptr->redraw |= PR_BPR_WRAITH;
+					}
+				}
+			}
+		}
+	}
+
+
+	/* --- Player commands, auto-retaliation and movement --- */
 
 	/* calculate effective running speed */
 	eff_running_speed(&real_speed, p_ptr, c_ptr);
@@ -7090,130 +7090,128 @@ static void process_player_end(int Ind) {
 	}
 #endif
 
-	/* Mind Fusion/Control disable the char */
-	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
+	process_games(Ind); //todo: actually instead call this when changing grid ie moving/porting -> grid_affects_player() perhaps
 
+	/* Mind Fusion/Control disables the char's automatic 'background' behaviour: No auto-retaliation and no running. */
+	if (!(p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ))) {
+		/* Check for fire-till-kill and auto-retaliation */
+		if (!p_ptr->requires_energy && /* <- new, required for allowing actions here (fire-till-kill)
+						  at <= 100% energy to prevent character lock-up. - C. Blue */
+		    !p_ptr->confused && !p_ptr->resting &&
+		    (!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
+		     !p_ptr->invuln))//&& !p_ptr->tim_manashield)))
+		{
+			/* Prepare auto-ret/fire-till-kill mode energy requirements.
+			   (Note: auto-ret is currently nothing special but always 1 x level_speed() as usual,
+			    so for auto-ret nothing changed basically. Therefore firing with auto-ret will also
+			    still have that small delay in the beginning, if player could fire multiple shots/round.
+			    This cannot be changed easily because here we don't know yet with which methid the
+			    player might auto-ret. - C. Blue) */
+			int energy = level_speed(&p_ptr->wpos);
 
-	/* Check for fire-till-kill and auto-retaliation */
-	if (!p_ptr->requires_energy && /* <- new, required for allowing actions here (fire-till-kill)
-					  at <= 100% energy to prevent character lock-up. - C. Blue */
-	    !p_ptr->confused && !p_ptr->resting &&
-	    (!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
-	     !p_ptr->invuln))//&& !p_ptr->tim_manashield)))
-	{
-		/* Prepare auto-ret/fire-till-kill mode energy requirements.
-		   (Note: auto-ret is currently nothing special but always 1 x level_speed() as usual,
-		    so for auto-ret nothing changed basically. Therefore firing with auto-ret will also
-		    still have that small delay in the beginning, if player could fire multiple shots/round.
-		    This cannot be changed easily because here we don't know yet with which methid the
-		    player might auto-ret. - C. Blue) */
-		int energy = level_speed(&p_ptr->wpos);
+			/* is this line even required at all..? */
+			if (p_ptr->shooting_till_kill && !target_okay(Ind)) p_ptr->shooting_till_kill = FALSE;
 
-		/* is this line even required at all..? */
-		if (p_ptr->shooting_till_kill && !target_okay(Ind)) p_ptr->shooting_till_kill = FALSE;
-
-		/* Check for auto-retaliate */
-	/* The 'old way' is actually the best way, because the initial delay of the 'new way',
-	when it happens, can be very irritating. The best way to fix perceived responsiveness
-	(of the old way) would be to not add full floor speed energy all at once, but in multiple
-	parts, to (ideally) immediately cover the energy loss for a single attack performed. */
+			/* Check for auto-retaliate */
+		/* The 'old way' is actually the best way, because the initial delay of the 'new way',
+		when it happens, can be very irritating. The best way to fix perceived responsiveness
+		(of the old way) would be to not add full floor speed energy all at once, but in multiple
+		parts, to (ideally) immediately cover the energy loss for a single attack performed. */
 #if 1 /* old way - get the usual 'double initial attack' in. \
-	 Drawback: Have to wait for nearly a full turn (1-(1/attacksperround)) \
-	 for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
-		if (p_ptr->energy >= energy) {
+		 Drawback: Have to wait for nearly a full turn (1-(1/attacksperround)) \
+		 for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
+			if (p_ptr->energy >= energy) {
 #else /* new way - allows to instantly break out and perform another action (quaff/read) \
-	but doesn't give the 'double initial attack' anymore, just a normal, single attack. \
-	Main drawback: Walking into a mob will not smoothly transgress into auto-ret the next turn, \
-	but wait for an extra turn before it begins, ie taking 2 turns until first attack got in. */
-		if (p_ptr->energy >= energy * 2 - 1) {
+		but doesn't give the 'double initial attack' anymore, just a normal, single attack. \
+		Main drawback: Walking into a mob will not smoothly transgress into auto-ret the next turn, \
+		but wait for an extra turn before it begins, ie taking 2 turns until first attack got in. */
+			if (p_ptr->energy >= energy * 2 - 1) {
 #endif
-			/* assume nothing will happen here */
-			p_ptr->auto_retaliating = FALSE;
+				/* assume nothing will happen here */
+				p_ptr->auto_retaliating = FALSE;
 
-			/* New feat: @O inscription will break FTK to enter melee auto-ret instead */
-			if (auto_retaliate_test(Ind)) p_ptr->shooting_till_kill = FALSE;
+				/* New feat: @O inscription will break FTK to enter melee auto-ret instead */
+				if (auto_retaliate_test(Ind)) p_ptr->shooting_till_kill = FALSE;
 
-			if (p_ptr->shooting_till_kill) {
-				/* stop shooting till kill if target is no longer available,
-				   instead of casting a final time into thin air! */
-				if (target_okay(Ind)) {
-					p_ptr->auto_retaliating = TRUE;
+				if (p_ptr->shooting_till_kill) {
+					/* stop shooting till kill if target is no longer available,
+					   instead of casting a final time into thin air! */
+					if (target_okay(Ind)) {
+						p_ptr->auto_retaliating = TRUE;
 
-					if (p_ptr->shoot_till_kill_spell) {
-						cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
-						if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
-					} else if (p_ptr->shoot_till_kill_rcraft) {
-						cast_rune_spell(Ind, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 5);
-					} else if (p_ptr->shoot_till_kill_mimic) {
-						do_cmd_mimic(Ind, p_ptr->shoot_till_kill_mimic - 1 + 3, 5);
-					} else if (p_ptr->shoot_till_kill_wand) {
-						do_cmd_aim_wand(Ind, p_ptr->shoot_till_kill_wand, 5);
-					} else if (p_ptr->shoot_till_kill_rod) {
-						do_cmd_zap_rod(Ind, p_ptr->shoot_till_kill_rod, 5);
-					} else {
-						do_cmd_fire(Ind, 5);
+						if (p_ptr->shoot_till_kill_spell) {
+							cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
+							if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
+						} else if (p_ptr->shoot_till_kill_rcraft) {
+							cast_rune_spell(Ind, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 5);
+						} else if (p_ptr->shoot_till_kill_mimic) {
+							do_cmd_mimic(Ind, p_ptr->shoot_till_kill_mimic - 1 + 3, 5);
+						} else if (p_ptr->shoot_till_kill_wand) {
+							do_cmd_aim_wand(Ind, p_ptr->shoot_till_kill_wand, 5);
+						} else if (p_ptr->shoot_till_kill_rod) {
+							do_cmd_zap_rod(Ind, p_ptr->shoot_till_kill_rod, 5);
+						} else {
+							do_cmd_fire(Ind, 5);
 #if 1 //what was the point of this hack again?..
-						p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
+							p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
 #endif
+						}
+
+						//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
+						p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
+					} else {
+						p_ptr->shooting_till_kill = FALSE;
 					}
-
-					//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
-					p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
-				} else {
-					p_ptr->shooting_till_kill = FALSE;
 				}
-			}
 
-			/* Parania: Don't break fire-till-kill by starting to auto-retaliate when monster enters melee range!
-			   (note: that behaviour was reported, but haven't reproduced it in local testing so far) */
-			if (!p_ptr->shooting_till_kill) {
-				/* Check for nearby monsters and try to kill them */
-				/* If auto_retaliate returns nonzero than we attacked
-				 * something and so should use energy.
-				 */
-				p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
-				if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
-				    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
-				{
-					p_ptr->auto_retaliating = TRUE;
-					/* Use energy */
-					//p_ptr->energy -= level_speed(p_ptr->dun_depth);
+				/* Parania: Don't break fire-till-kill by starting to auto-retaliate when monster enters melee range!
+				   (note: that behaviour was reported, but haven't reproduced it in local testing so far) */
+				if (!p_ptr->shooting_till_kill) {
+					/* Check for nearby monsters and try to kill them */
+					/* If auto_retaliate returns nonzero than we attacked
+					 * something and so should use energy.
+					 */
+					p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
+					if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
+					    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
+					{
+						p_ptr->auto_retaliating = TRUE;
+						/* Use energy */
+						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
+					}
+					p_ptr->auto_retaliaty = FALSE;
 				}
-				p_ptr->auto_retaliaty = FALSE;
-			}
 
-			/* Reset attack sfx counter in case player enabled half_sfx_attack or cut_sfx_attack. */
-			if (!p_ptr->shooting_till_kill && !p_ptr->auto_retaliating) {
-				p_ptr->count_cut_sfx_attack = 500;
-				p_ptr->half_sfx_attack_state = FALSE;
+				/* Reset attack sfx counter in case player enabled half_sfx_attack or cut_sfx_attack. */
+				if (!p_ptr->shooting_till_kill && !p_ptr->auto_retaliating) {
+					p_ptr->count_cut_sfx_attack = 500;
+					p_ptr->half_sfx_attack_state = FALSE;
+				}
+			} else {
+				p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 			}
-		} else {
-			p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
+		}
+
+		/* ('Handle running' from above was originally at this place) */
+		/* Handle running -- 5 times the speed of walking */
+		while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
+			char consume_full_energy;
+
+			run_step(Ind, 0, &consume_full_energy);
+			if (consume_full_energy)
+				/* Consume a full turn of energy in case we have e.g. attacked a monster */
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+			else
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
 		}
 	}
 
 
-	/* ('Handle running' from above was originally at this place) */
-	/* Handle running -- 5 times the speed of walking */
-	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
-		char consume_full_energy;
-
-		run_step(Ind, 0, &consume_full_energy);
-		if (consume_full_energy)
-			/* Consume a full turn of energy in case we have e.g. attacked a monster */
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
-		else
-			p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
-	}
-
-
-	/* Notice stuff */
+	/* Notice stuff -- any reason to call it twice here in process_player_end()? Further down again, see APD's comment */
 	if (p_ptr->notice) notice_stuff(Ind);
 
 	/* XXX XXX XXX Pack Overflow */
 	pack_overflow(Ind);
-
-	process_games(Ind);
 
 	/* Added for Holy Martyr, which was previously in process_player_end_aux() */
 	if (!(turn % cfg.fps)) {
@@ -8167,9 +8165,8 @@ static void process_various(void) {
 #endif /* if 0 */
 }
 
-/* Process timed shutdowns, compacting objects/monsters and
-   call process_world_player() for each player.
-   We are called once every 50 turns. */
+/* Process things that aren't real-time dependant: Timed shutdowns, compacting objects/monsters.
+   We are called once every 50 turns, independant of actual server frame speed. */
 static void process_world(void) {
 	int i, j, n = 0;
 	player_type *p_ptr;
@@ -8604,39 +8601,6 @@ static void process_world(void) {
 	/* Hack -- Compact the trap list occasionally */
 	//if (t_top + 160 > MAX_TR_IDX) compact_traps(320, TRUE);
 
-	/* Tell a day passed */
-	//if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
-	if (!(turn % DAY)) { /* midnight */
-		char buf[20];
-
-		snprintf(buf, 20, "%s", get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
-		msg_broadcast_format(0,
-			"\377GToday it is %s of the %s year of the third age.",
-			get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
-
-#ifdef MUCHO_RUMOURS
-		/* the_sandman prints a rumour */
-		if (NumPlayers) {
-			/* Pick the 1st player arbitrarily, it's broadcast to the rest due to how fortune() works.. */
-			msg_print(1, "Suddenly a thought comes to your mind:");
-			fortune(1, 2);
-		}
-#endif
-	}
-
-	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
-		/* Process the world of that player */
-		process_world_player(i);
-	}
-
-	/* Additional townie monster spawn (t, ie specifically Bree), independant of any players present! */
-	if (!rand_int(TOWNIE_RESPAWN_CHANCE)) {
-		monster_level = 0;
-		(void)alloc_monster(BREE_WPOS_P, MAX_SIGHT + 5, FALSE);
-	}
 }
 
 #ifdef DUNGEON_VISIT_BONUS
@@ -10326,8 +10290,7 @@ void dungeon(void) {
 	/* Do some beginning of turn processing for each player */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
-		if (p_ptr->conn == NOT_CONNECTED)
-			continue;
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		if (p_ptr->test_turn_idle && p_ptr->test_turn) {
 			p_ptr->idle_attack++;
@@ -10346,6 +10309,7 @@ void dungeon(void) {
 		}
 
 #if 0
+		{
 			/* experimental water animation, trying to not be obnoxious -
 			   strategy: pick a random grid, if it's water, redraw it */
 			cave_type **zcave = getcave(&p_ptr->wpos);
@@ -10375,6 +10339,7 @@ void dungeon(void) {
 				}
  #endif
 			}
+		}
 #endif
 
 #ifdef ENABLE_SELF_FLASHING
@@ -10416,6 +10381,9 @@ void dungeon(void) {
 
 		/* Actually process that player */
 		process_player_begin(i);
+
+		/* Process the world of that player */
+		process_world_player(i);
 	}
 
 	/* Process spell effects */
@@ -10447,13 +10415,11 @@ void dungeon(void) {
 #ifdef PROCESS_MONSTERS_DISTRIBUTE
 	process_monsters();
 #else
-	if (!(turn % MONSTER_TURNS))
-		process_monsters();
+	if (!(turn % MONSTER_TURNS)) process_monsters();
 #endif
 
 	/* Process programmable NPCs */
-	if (!(turn % NPC_TURNS))
-		process_npcs();
+	if (!(turn % NPC_TURNS)) process_npcs();
 
 	/* Process all of the objects */
 	/* Currently, process_objects() only recharges rods on the floor and in trap kits.
@@ -10465,30 +10431,48 @@ void dungeon(void) {
 	/* Process the world */
 	if (!(turn % 50)) process_world();
 
-	/* Clean up Bree regularly to prevent too dangerous towns in which weaker characters cant move around */
-	//if (!(turn % 650000)) { /* 650k ~ 3hours */
-	//if (!(turn % (cfg.fps * 3600))) { /* 1 h */
-#if 0
-	if (!(turn % (cfg.fps * 600))) { /* new timing after function was changed to "thin_surface_spawns()" */
-		thin_surface_spawns();
-		//spam	s_printf("%s Surface spawns thinned.\n", showtime());
-	}
-#else
-	thin_surface_spawns(); //distributes workload now
+
+	/* Tell a day passed */
+	//if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
+	if (!(turn % DAY)) { /* midnight */
+		char buf[20];
+
+		snprintf(buf, 20, "%s", get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
+		msg_broadcast_format(0,
+			"\377GToday it is %s of the %s year of the third age.",
+			get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
+
+#ifdef MUCHO_RUMOURS
+		/* the_sandman prints a rumour */
+		if (NumPlayers) {
+			/* Pick the 1st player arbitrarily, it's broadcast to the rest due to how fortune() works.. */
+			msg_print(1, "Suddenly a thought comes to your mind:");
+			fortune(1, 2);
+		}
 #endif
+	}
+
+	/* Additional townie monster spawn (t, ie specifically Bree), independant of any players present! */
+	if (!(turn % ((cfg.fps * 5) / 6)) && !rand_int(TOWNIE_RESPAWN_CHANCE)) {
+		monster_level = 0;
+		(void)alloc_monster(BREE_WPOS_P, MAX_SIGHT + 5, FALSE);
+	}
+
+	/* Clean up Bree regularly to prevent too dangerous towns in which weaker characters cant move around */
+	thin_surface_spawns(); //distributes workload now
 
 	/* Used to be in process_various(), but changed it to distribute workload over all frames now. */
 	purge_old();
 
 	/* Process everything else */
-	if (!(turn % 10)) {
+	if (!(turn % (cfg.fps / 6))) {
 		char buf[1024];
 		FILE *fp;
 
 		process_various();
 
-		/* Hack -- Regenerate the monsters every hundred game turns */
-		if (!(turn % 100)) regen_monsters();
+		/* Hack -- Regenerate the monsters */
+		if (!(turn % ((cfg.fps * 10) / 6))) regen_monsters();
 
 		/* process delayed requests */
 		for (i = 1; i <= NumPlayers; i++) {
@@ -10688,8 +10672,7 @@ void dungeon(void) {
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
-		if (p_ptr->conn == NOT_CONNECTED)
-			continue;
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Notice stuff */
 		if (p_ptr->notice) notice_stuff(i);
