@@ -482,12 +482,12 @@ static void sense_inventory(int Ind) {
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 31 && ok_combat)
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 30 && ok_combat)
 		/* (apply 33% chance, see below) - allow basic feelings */
 		ok_archery = TRUE;
 
 	/* A very powerful warrior can even distinguish magic items */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 41 && ok_combat)
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 40 && ok_combat)
 		ok_curse = TRUE;
 
 	/* extra class-specific boni */
@@ -504,10 +504,10 @@ static void sense_inventory(int Ind) {
 	/* nothing to feel? exit */
 	if (!ok_combat && !ok_magic && !ok_archery && !ok_traps && !ok_curse) return;
 
-	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 11) ? TRUE : FALSE;
-	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 11) ? TRUE : FALSE;
-	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 11) ? TRUE : FALSE;
-	heavy_traps = (get_skill(p_ptr, SKILL_TRAPPING) >= 11) ? TRUE : FALSE;
+	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 10) ? TRUE : FALSE;
+	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 10) ? TRUE : FALSE;
+	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 10) ? TRUE : FALSE;
+	heavy_traps = (get_skill(p_ptr, SKILL_TRAPPING) >= 10) ? TRUE : FALSE;
 
 	/*** Sense everything ***/
 
@@ -563,6 +563,7 @@ static void sense_inventory(int Ind) {
 				if (heavy) felt_heavy = TRUE;
 			}
 			break;
+
 		case TV_MSTAFF:
 			if (fail_light && !heavy_magic) continue; //finally fail
 			if (ok_magic) {
@@ -570,6 +571,7 @@ static void sense_inventory(int Ind) {
 				if (heavy_magic) felt_heavy = TRUE;
 			}
 			break;
+
 		case TV_SCROLL:
 			/* hack for cheques: Don't try to pseudo-id them at all. */
 			if (o_ptr->sval == SV_SCROLL_CHEQUE) continue;
@@ -587,9 +589,18 @@ static void sense_inventory(int Ind) {
 				if (heavy_magic) felt_heavy = TRUE;
 			}
 			break;
+
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
+			/* If we can detect via archery or via trapping, choose archery (doesn't matter, but we have to pick one) */
+			if (ok_traps && !(ok_archery && (heavy_archery || !heavy_traps))) {
+				if (fail_light && !heavy_traps) continue; //finally fail
+				feel = (heavy_traps ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
+				if (heavy_traps) felt_heavy = TRUE;
+				break;
+			}
+			/* Fall through to Archery check */
 		case TV_BOW:
 			if (fail_light && !heavy_archery) continue; //finally fail
 			if (ok_archery || (ok_combat && magik(25))) {
@@ -597,6 +608,7 @@ static void sense_inventory(int Ind) {
 				if (heavy_archery) felt_heavy = TRUE;
 			}
 			break;
+
 		case TV_TRAPKIT:
 			if (fail_light && !heavy_traps) continue; //finally fail
 			if (ok_traps) {
@@ -604,6 +616,7 @@ static void sense_inventory(int Ind) {
 				if (heavy_traps) felt_heavy = TRUE;
 			}
 			break;
+
 		case TV_FOOD: /* dual! Uses auxX_magic, which contains the food-specific values. Since potions are 'magic' too, food seems not misplaced.. */
 			if (fail_light && !heavy_magic && !heavy) continue; //finally fail
 			if ((ok_combat || ok_magic) && !object_aware_p(Ind, o_ptr)) {

@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 12. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 13. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12915,21 +12915,68 @@ and your character's race.
 Sometimes an item turns out to be an artifact!
 See (5.9b) for more information about artifacts.
 
-If a player holds an unidentified item long enough he/she might get
-a 'feeling' about it. The more points in 'Combat' skill the player has
-the faster and clearer he can feel the items value. This is called
-'pseudo-identifying'. Warriors are more likely to pseudo-ID than casters.
+
+Pseudo-ID:
+----------
+If a player holds an unidentified item long enough in either inventory or
+equipment, he/she might get a 'feeling' about it, telling about its quality.
+This process is called 'pseudo-ID', short for 'pseudo-identification'.
 If a player pseudo-IDs an item, the 'feeling' will be appended in { }
 brackets to the item name.
-Note that archers or casters will also become better at pseudo-ID'ing,
-if they train the 'Archery' or 'Magic' skill respectively.
-'Archery' at level 11 helps to get more detailed ('excellent' too instead of
-just 'good') feelings about ranged weapons and ammunition.
-'Magic' at level 11 helps to get more detailed ('excellent' too, instead of
-just 'good') feelings about magic items, potions and scrolls.
 
-Items display the following pseudo-ID tags:
+Example: A typical feeling is 'good'. Let's assume you are wielding an
+unidenified whip and suddenly pseudo-id kicks in randomly. The whip is actually
+enchanted, meaning it has some kind of positive +hit,+dam bonus, which makes
+it 'good'. You will then receive this message:
 
+"The Whip {+,?} you are attacking enemies with is good.".
+
+And the item in question will be auto-inscribed accordingly, provided it was
+not already inscribed, in which case it will not gain a pseudo-id inscription:
+
+A Whip {+,?} (1d6) {good}
+
+In general, training any of these four skills will make pseudo-id in that
+particular field happen faster ie more frequently, and at certain skill levels
+also make the results more distinguished so you receive additional, more
+fine-grained feelings:
+
+- Training 'Combat' will improve pseudo-id of weapons, armour, boomerangs,
+  digging tools and food (mostly mushrooms). It also has a (much smaller)
+  chance of pseudo-id'ing ranged weapons and ammunition.
+  Training it to at least 10 will result in more detailed pseudo-ID'ing,
+  which distinguishes between 'good', 'excellent' and 'special', and also
+  between 'cursed' and 'terrible'. Also you can pseudo-id unenchanted items
+  as just 'average' now.
+  When trained to 30 you will also be able to pseudo-id ranged weapons and
+  ammunition as frequently as weapons and armour.
+  When trained to 40 you can pseudo-id curses on any items.
+
+  Combat skill is the most powerful skill regarding pseudo-identification, as
+  it encompasses the widest range of items affected.
+
+- Training 'Archery' will improve pseudo-id of ranged weapons and ammunition.
+  Training it to level 10 will allow the same distinguishment as for 'Combat':
+  Instead of just 'good', ranged weapons and ammunition are now perceived as
+  'excellent', 'special', 'cursed' or 'terrible'.
+
+- Training 'Magic' improves pseudo-id of magic devices (wands, staves, rods),
+  rings, amulets, mage staves, potions and scrolls, and also of food (mostly
+  mushrooms):
+  At level 10 you get more detailed feelings such as 'excellent' instead
+  of just 'good', and sometimes 'average' or for items with negative effects
+  outright 'bad'.
+
+- 'Trapping' improves pseudo-id of trap kits and ammunition.
+  Training it to level 10 will allow the same distinguishment as for 'Combat':
+  Instead of just 'good', ranged weapons and ammunition are now perceived as
+  'excellent', 'special', 'cursed' or 'terrible'.
+
+As a specialty, food (unknown food items are really mostly mushrooms) can be
+pseudo-identified by either, combat or magic skill.
+
+Items may display the following pseudo-ID tags:
+-----------------------------------------------
 -Basic items, non-magical:         {average}
 -Valuable / enchanted items        {good}
 -Very valuable items (often ego)   {excellent}
@@ -16744,16 +16791,16 @@ stated.
                                 if items are terrible, worthless, cursed,
                                 average, good, excellent or special.
                                 At the beginning you will only feel 'cursed'
-                                or 'good', and only for melee weapons, armour
-                                and boomerangs - and food.
-                                Raise combat skill to at least 11 to get
+                                or 'good', and only for melee weapons, armour,
+                                boomerangs, digging tools and food, and very
+                                rarely for ranged weapons and ammunition.
+                                Raise combat skill to at least 10 to get
                                 more distinctive feelings about melee weapons,
-                                armour and boomerangs.
-                                A powerful combattant (combat 31) senses the
+                                armour, boomerangs and digging tools.
+                                A powerful combattant (combat 30) senses the
                                 usefulness of shooting weapons and ammunition
-                                more distinctively, even if (s)he's not
-                                knowledgeable in archery otherwise.
-                                A very powerful one (combat 41) can also notice
+                                as quickly as for weapons armour etc.
+                                A very powerful one (combat 40) can also notice
                                 curses on all kinds of items.
                                 The further you train Combat, the faster you
                                 will pseudo-ID items.
@@ -17197,7 +17244,7 @@ stated.
 
                                 Lets you pseudo-ID shooting weapons and
                                 ammunition more often the higher the skill.
-                                If increased to at least 11, pseudo-ID will
+                                If increased to at least 10, pseudo-ID will
                                 give you much more distinctive feelings about
                                 the items. Before that, you can only
                                 distinguish between cursed and good.
@@ -17281,15 +17328,14 @@ stated.
 
 +Magic                          Increases your base mana by +4 per point.
  (0.250)
-                                Lets you pseudo-ID magic items faster the
-                                higher your skill is. Magic items are:
-                                Mage staves, potions, scrolls, food (!),
-                                rings, amulets and magic devices (wands,
-                                rods, staves).
+                                Lets you pseudo-ID magic items and food faster
+                                the higher your skill is. Magic items are:
+                                Mage staves, potions, scrolls, rings, amulets
+                                and magic devices (wands, rods, staves).
 
                                 You can also sense curses on any kind of item.
 
-                                If 'Magic' is at least at 11 points, you will
+                                If 'Magic' is at least at 10 points, you will
                                 get more distinctive feelings from pseudo-ID,
                                 before that you only sense 'good' or 'cursed'.
 
@@ -17904,10 +17950,11 @@ stated.
                                 it is loaded with a device or a rune.)
                                 See (4.7) for details about monster traps.
 
-                                Improves your ability to recognize traps:
-                                Lets you pseudo-ID trap kits, the more often
-                                the higher your skill.
-                                If increased to at least 11, pseudo-ID will
+                                Improves your ability to recognize traps and
+                                ammunition (pebbles, shots, arrows, bolts):
+                                Lets you pseudo-ID trap kits and ammo more
+                                frequently the higher your skill.
+                                If increased to at least 10, pseudo-ID will
                                 give you more distinctive feelings instead of
                                 just 'good' or 'cursed'.
 
