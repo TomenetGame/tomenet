@@ -7780,12 +7780,10 @@ void store_turnover() {
 /* Added the japanese unique respawn patch -APD-
    It appears that each moment of time is equal to 10 minutes?
 */
-/* called only every 10 turns
+/* called only every cfg.fps/6 turns
 */
-/* WARNING: Every if-check in here that tests for turns % cfg.fps
-   should instead check for turns % cfg.fps*10, because this function
-   is only called every 10 turns as stated above, otherwise
-   depending on cfg.fps it might be skipped sometimes, which may or
+/* WARNING: Every if-check in here should test at a resolution compatible to 'turn % (cfg.fps/6)'
+   accordingly, otherwise depending on cfg.fps it might be skipped sometimes, which may or
    may not be critical depending on what it does! - C. Blue */
 static void process_various(void) {
 	int i, j, k;
@@ -7802,11 +7800,7 @@ static void process_various(void) {
 	/* this TomeCron stuff could be merged at some point
 	   to improve efficiency. ;) */
 
-	if (!(turn % 2)) {
-		do_xfers();	/* handle filetransfers per second
-				 * FOR NOW!!! DO NOT TOUCH/CHANGE!!!
-				 */
-	}
+	do_xfers(); /* handle filetransfers per second */
 
 	/* Save the server state occasionally */
 	if (!(turn % ((NumPlayers ? 10L : 1000L) * SERVER_SAVE))) {
