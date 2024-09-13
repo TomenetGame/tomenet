@@ -3556,6 +3556,7 @@ s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->
 
 		/* Put him on the blacklist or increase it if already on */
 		p_ptr->tim_blacklist += i;
+		s_printf("TIM_BLACKLIST: %s +%d (%dm,%ds)\n", p_ptr->name, i, (i / 120), (i % 120) / 2);
 
 		/* watchlist - the more known a character is, the longer he remains on it */
 
