@@ -17716,12 +17716,14 @@ stated.
                                 you will eventually see an improvement ;).
 
     .Stealing                   Ability to steal items from stores.
-     (0.100, at least 1.000)    If you get caught, you will be on the
-                                'blacklist of merchants' for at least 1 and up
-                                to 80 minutes, depending on the item you tried
-                                to steal from a shop. During this time it's
-                                impossible to steal, and you will get BAD
-                                prices (blackmarket-like) in shops.
+     (0.100, at least 1.000)    If you get caught you will be on the
+                                'blacklist of merchants' for a while, which is
+                                at least 100 seconds and up to 80 minutes,
+                                depending on the (possibly discounted) value of
+                                the item you tried to steal from the shop.
+                                During this time it's impossible to steal from
+                                shops, and you will get BAD prices (quadruple,
+                                like in the blackmarket usually) in all shops.
 
                                 You'll also be on the 'watchlist', meaning
                                 that you can shop normally, but are unable to
