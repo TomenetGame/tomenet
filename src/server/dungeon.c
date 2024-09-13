@@ -7003,7 +7003,7 @@ static void process_player_end(int Ind) {
 	if (p_ptr->turns_on_floor == TURNS_FOR_EXTRA_FEELING) Send_depth(Ind, &p_ptr->wpos);
 
 	/* Crimes being forgotten over time */
-	if (!(turn % (cfg.fps % 10))) {
+	if (!(turn % (cfg.fps / 2))) {
 		if (p_ptr->tim_blacklist) p_ptr->tim_blacklist--;
 		if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
 		if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
@@ -7240,12 +7240,11 @@ static void process_player_end(int Ind) {
 	}
 
 	/* Process things such as regeneration. */
-	/* This used to be processed every 10 turns, but I am changing it to be
-	 * processed once every 5/6 of a "dungeon turn". This will make healing
-	 * and poison faster with respect to real time < 1750 feet and slower >
-	 * 1750 feet. - C. Blue
+	/* This used to be processed every 10 turns (check: this can't be right, too fast, must've been every 2 turns?),
+	 * but I am changing it to be processed once every 5/6 of a "dungeon turn".
+	 * This will make healing and poison faster with respect to real time < 1750 feet and slower > 1750 feet. - C. Blue
 	 */
-	if (!(turn % (level_speed(&p_ptr->wpos) / 120)))
+	if (!(turn % (level_speed(&p_ptr->wpos) / 120))) // level_speed is 750*5 at Bree town aka level 0 -> turn % 31.25, which is ~1/2s at cfg.fps 60
 		if (!process_player_end_aux(Ind)) return;
 
 	/* HACK -- redraw stuff a lot, this should reduce perceived latency. */
