@@ -439,7 +439,8 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 }
 
 /*
- * Sense the inventory
+ * Sense the inventory aka Pseudo-ID.
+ * We're called every 5/6 of a player's dungeon turn from process_player_end_aux().
  */
 static void sense_inventory(int Ind) {
 	player_type *p_ptr = Players[Ind];
