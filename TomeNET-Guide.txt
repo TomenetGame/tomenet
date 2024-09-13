@@ -17717,16 +17717,18 @@ stated.
 
     .Stealing                   Ability to steal items from stores.
      (0.100, at least 1.000)    If you get caught, you will be on the
-                                'blacklist of merchants' for a minute up
-                                to 2 hours, depending on the item you tried to
-                                steal from a shop. During this time it's
+                                'blacklist of merchants' for at least 1 and up
+                                to 80 minutes, depending on the item you tried
+                                to steal from a shop. During this time it's
                                 impossible to steal, and you will get BAD
                                 prices (blackmarket-like) in shops.
+
                                 You'll also be on the 'watchlist', meaning
                                 that you can shop normally, but are unable to
                                 steal until the shopkeepers stop to watch you
                                 so intensely. The watchlist runs out slower
                                 than the blacklist.
+
                                 The blacklist and watchlist will be on hold for
                                 a character that isn't logged in, so it's best
                                 to steal before going to the dungeon or AFK,
@@ -17739,12 +17741,19 @@ stated.
                                 applies though, reducing the base value and
                                 therefore the blacklist time too.
 
-                                Blacklist times, very roughly:
-                                Murderous look - 1 hour +
-                                Gazes at you angrily - 40 min +
-                                Looks at you suspiciously - 25 min +
-                                Looks at you disapprovingly - 10 min +
-                                Cool glance - less than 10 min.
+                                Messages when you enter a shop, how the
+                                shopkeeper regards you will roughly give away
+                                your remaining Blacklist time:
+                                ------------------------------
+                                gives you a murderous look - 60 - 80 minutes
+                                gazes at you angrily - 40 min +
+                                eyes you suspiciously - 25 min +
+                                looks at you disapprovingly - 10 min +
+                                gives you a cool glance - less than 10 min.
+
+                                After your blacklist ran out, if you're still
+                                on the watchlist you get this message:
+                                "The owner keeps a sharp eye on you."
 
                                 Note that usually people don't want to be seen
                                 with stolen goods, which means that very
@@ -17816,6 +17825,22 @@ stated.
                                 Trying to 'steal back' an item that was already
                                 owned by a player, ie an item that has been
                                 sold to the shop, is especially hard.
+
+                                Actually you can decrease your blacklist timer
+                                by buying items costing at least 100 Au while
+                                you are blacklisted, as buying items lessens
+                                the shopkeepers' distrust somewhat.
+                                You will gain the amount of gold spent divided
+                                by 200 in seconds subtracted from your timer.
+                                Example:
+                                If you are on the blacklist for maybe 10 more
+                                minutes and buy an item for 40000 Au (which
+                                would usually only cost 10000 Au if you weren't
+                                blacklisted) then you'd get 40000/200 = 200 s
+                                deducted and your remaining blacklist timer
+                                would now be at 6 minutes and 20 seconds.
+                                Of course the loss of 30000 Au that you paid
+                                too much here is *quite* substantial.
 
                                 Training the 'Stealing' skill will carry over
                                 strongly into its parent skill 'Sneakiness'.

@@ -4879,13 +4879,13 @@ void do_cmd_store(int Ind) {
 		}
 	}
 
-	if (p_ptr->tim_blacklist > 7000)
+	if (p_ptr->tim_blacklist >= 7200)
 		msg_print(Ind, "As you enter, the owner gives you a murderous look.");
-	else if (p_ptr->tim_blacklist > 5000)
+	else if (p_ptr->tim_blacklist >= 4800)
 		msg_print(Ind, "As you enter, the owner gazes at you angrily.");
-	else if (p_ptr->tim_blacklist > 3000)
+	else if (p_ptr->tim_blacklist >= 3000)
 		msg_print(Ind, "As you enter, the owner eyes you suspiciously.");
-	else if (p_ptr->tim_blacklist > 1000)
+	else if (p_ptr->tim_blacklist >= 1200)
 		msg_print(Ind, "As you enter, the owner looks at you disapprovingly.");
 	else if (p_ptr->tim_blacklist)
 		msg_print(Ind, "As you enter, the owner gives you a cool glance.");
