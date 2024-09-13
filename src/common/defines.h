@@ -272,8 +272,10 @@
  *  as I changed it so it now just defines the resolution of the server processing aka
  *  'fine-grained accuracy', while all game actions are coupled only to real-time.
  *  CONSTRAINTS: cfg.fps default value is 60, which works flawlessly.
- *               cfg.fps MUST be divisible by 2,5,6,10 (which means 30 is the lowest valid value) or things will take a bad turn, literally.
- *               (Ideally cfg.fps would even be divisible by 2,3,4,5,6,8,10,12,15 which could be fulfilled by setting cfg.fps to 120.)
+ *               cfg.fps MUST be divisible by 2,5,6,10 ie by 6 and 10 (which means 30 is
+ *               the lowest valid value) or things will take a bad turn, literally.
+ *               (Ideally cfg.fps would even be divisible by 2,3,4,5,6,8,10,12,15 ie
+ *               by 8,10,12,15 which could be fulfilled by setting cfg.fps to 120.)
  */
 #define FPS (cfg.fps) /* default is [60] */
 
