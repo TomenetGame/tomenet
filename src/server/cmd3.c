@@ -2919,19 +2919,17 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
  * - Jir -
  */
 void do_cmd_steal_from_monster(int Ind, int m_idx) {
-#if 0
+#ifdef TEST_SERVER
 	player_type *p_ptr = Players[Ind];
-	cave_type **zcave;
-	int x, y, dir = 0, item = -1, k = -1;
-	cave_type *c_ptr;
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
-	object_type *o_ptr, forge;
-	byte num = 0;
-	bool done = FALSE;
-	int monst_list[23];
 
-	if ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
+	//int item = -1, k = -1;
+	//object_type *o_ptr, forge;
+	//byte num = 0;
+	//bool done = FALSE;
+
+
 #ifdef ENABLE_OUNLIFE
 	/* Wraithstep gets auto-cancelled on forced interaction with non-wraithed monsters */
 	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) &&
@@ -2945,76 +2943,65 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 		return;
 	}
 
-	break_shadow_running(Ind);
+	//break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+	un_afk_idle(Ind);
 
 	/* There were no non-gold items */
 	if (!m_ptr->hold_o_idx) {
-		msg_print("That monster has no objects!");
+		msg_print(Ind, "That monster has no objects!");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		return;
 	}
 
 	/* The monster is immune */
-	if (r_info[m_ptr->r_idx].flags7 & (RF7_NO_THEFT)) {
-		msg_print("The monster is guarding the treasures.");
+	if (r_ptr->flags7 & RF7_NO_THEFT) {
+		msg_print(Ind, "The monster is guarding the treasures.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		return;
 	}
 
-	screen_save();
+#if 0
 
-	num = show_monster_inven(c_ptr->m_idx, monst_list);
 
-	/* Repeat until done */
-	while (!done) {
-		char tmp_val[MAX_CHARS];
-		char which = ' ';
-
-		/* Build the prompt */
-		strnfmt(tmp_val, MAX_CHARS, "Choose an item to steal (a-%c) or ESC:",
-				'a' - 1 + num);
-
-		/* Show the prompt */
-		prt(tmp_val, 0, 0);
-
-		/* Get a key */
-		which = inkey();
-
-		/* Parse it */
-		switch (which) {
-		case ESCAPE:
-			done = TRUE;
-			break;
-
-		default:
-			int ver;
-
-			/* Extract "query" setting */
-			ver = isupper(which);
-			which = tolower(which);
-
-			k = islower(which) ? A2I(which) : -1;
-			if (k < 0 || k >= num) {
-				bell();
-				break;
-			}
-
-			/* Verify the item */
-			if (ver && !verify("Try", 0 - monst_list[k])) {
-				done = TRUE;
-				break;
-			}
-
-			/* Accept that choice */
-			item = monst_list[k];
-			done = TRUE;
-
-			break;
+	if (p_ptr->mode & MODE_SOLO) {
+		msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+		if (!is_admin(p_ptr)) return;
+	}
+#ifdef IDDC_IRON_COOP
+	if (in_irondeepdive(&p_ptr->wpos) && (!p_ptr->party || p_ptr->party != q_ptr->party)) {
+		msg_print(Ind, "\377yYou cannot take items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+#ifdef IRON_IRON_TEAM
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && p_ptr->party != q_ptr->party) {
+		msg_print(Ind, "\377yYou cannot take items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+#ifdef IDDC_RESTRICTED_TRADING
+	if (in_irondeepdive(&p_ptr->wpos)) {
+		if (!p_ptr->party || p_ptr->party != q_ptr->party) {
+			msg_print(Ind, "\377yYou cannot take items from outsiders.");
+			if (!is_admin(p_ptr)) return;
+		}
+ #ifdef IDDC_NO_TRADE_CHEEZE
+		if (ABS(p_ptr->wpos.wz) < IDDC_NO_TRADE_CHEEZE) {
+			msg_print(Ind, "\377yYou cannot steal items on shallow floors.");
+			if (!is_admin(p_ptr)) return;
+		}
+ #endif
+		//todo: DED_IDDC_MANDOS
+		if (p_ptr->IDDC_logscum) {
+			msg_print(Ind, "\377yYou cannot steal items on stale floors.");
+			if (!is_admin(p_ptr)) return;
 		}
 	}
+#endif
 
-	/* S(he) is no longer afk */
-	un_afk_idle(Ind);
+
 
 	if (item != -1) {
 		int chance;
@@ -3047,11 +3034,6 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 
 		/* Reconnect the objects list */
 		if (num == 1) m_ptr->hold_o_idx = 0;
-		else {
-			if (k > 0) o_list[monst_list[k - 1]].next_o_idx = monst_list[k + 1];
-			if (k + 1 >= num) o_list[monst_list[k - 1]].next_o_idx = 0;
-			if (k == 0) m_ptr->hold_o_idx = monst_list[k + 1];
-		}
 
 		/* Rogues gain some xp */
 		if (PRACE_FLAGS(PR1_EASE_STEAL)) {
@@ -3062,9 +3044,6 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 
 			/* Randomise it a bit, with half a max guaranteed */
 			if (!(p_ptr->mode & MODE_PVP)) gain_exp((max_point / 2) + (randint(max_point) / 2));
-
-			/* Allow escape */
-			if (get_check("Phase door?")) teleport_player(Ind, 10, TRUE);
 		}
 
 		/* Get the item */
@@ -3083,11 +3062,312 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 		invwipe(&o_list[item]);
 	}
 
-	screen_load();
+
+
+	dal = (p_ptr->lev > q_ptr->lev ? p_ptr->lev - q_ptr->lev : 1);
+
+	/* affect alignment on attempt (after hostile check) */
+	/* evil thief! stealing from newbies */
+	if (q_ptr->lev + 5 < p_ptr->lev) {
+		if ((p_ptr->align_good) < (0xffff - dal))
+			p_ptr->align_good += dal;
+		else p_ptr->align_good = 0xffff;	/* very evil */
+	}
+	/* non lawful action in town :) */
+	if (istown(&p_ptr->wpos) && (p_ptr->align_law) < (0xffff - dal))
+		p_ptr->align_law += dal;
+	else p_ptr->align_law = 0xffff;
+
+#if 1 /* maybe rework this */
+	/* Compute chance of success */
+	success = 3 * (adj_dex_safe[p_ptr->stat_ind[A_DEX]] - adj_dex_safe[q_ptr->stat_ind[A_DEX]]);
+	success += 2 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
+
+	/* Compute base chance of being noticed */
+	notice = (5 * (adj_mag_stat[q_ptr->stat_ind[A_INT]] - p_ptr->skill_stl)) / 3;
+
+	/* Reversed this as suggested by Potter - mikaelh */
+	notice -= 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
+
+	//notice -= q_ptr->skill_fos; /* perception */
+
+	/* Hack -- Rogues get bonuses to chances */
+	if (get_skill(p_ptr, SKILL_STEALING)) {
+		/* Increase chance by level */
+		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);
+		notice -= get_skill_scale(p_ptr, SKILL_STEALING, 150);
+	}
+	/* Similar Hack -- Robber is hard to be robbed */
+	if (get_skill(q_ptr, SKILL_STEALING)) {
+		/* Increase chance by level */
+		success -= get_skill_scale(q_ptr, SKILL_STEALING, 120);
+		notice += get_skill_scale(q_ptr, SKILL_STEALING, 120);
+	}
+
+	/* Always small chance to fail */
+	if (success > 95) success = 95;
+	/* Hack -- Always small chance to succeed */
+	if (success < 2) success = 2;
+#else
+#endif
+
+	/* Check for success */
+	if (rand_int(100) < success) {
+		/* Steal gold 25% of the time */
+		if (rand_int(100) < 25) {
+			int amt = q_ptr->au / 10;
+
+#ifndef TOOL_NOTHEFT_COMBO
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik(100)) {
+#else
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE)) {
+#endif
+				/* Saving throw message */
+				msg_print(Ind, "You couldn't find any money!");
+				amt = 0;
+				s_printf("StealingPvP: %s fails to steal %d gold from %s (chance %d%%): money belt.\n", p_ptr->name, amt, q_ptr->name, success);
+			}
+
+#ifdef IDDC_RESTRICTED_TRADING
+			if (in_irondeepdive(&p_ptr->wpos)) {
+				msg_print(Ind, "\377yYou cannot steal money in the Ironman Deep Dive Challenge.");
+				if (!is_admin(p_ptr)) amt = 0;
+			}
+#endif
+
+			/* Transfer gold */
+			if (amt) {
+				/* Move from target to thief */
+				q_ptr->au -= amt;
+				gain_au(Ind, amt, FALSE, FALSE);
+				/* Redraw */
+				q_ptr->redraw |= (PR_GOLD);
+
+				/* Tell thief */
+				msg_format(Ind, "You steal %d gold.", amt);
+				s_printf("StealingPvP: %s steals %d gold from %s (chance %d%%).\n", p_ptr->name, amt, q_ptr->name, success);
+			}
+
+			/* Always small chance to be noticed */
+			if (notice < 5) notice = 5;
+
+			/* Always very small chance to not be noticed */
+			if (notice > 99) notice = 99;
+
+			/* Check for target noticing */
+			if (rand_int(100) < notice) {
+				/* Message */
+				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %d gold!", p_ptr->name, amt);
+				caught = TRUE;
+			}
+		} else {
+			int item;
+			object_type *o_ptr, forge;
+			char o_name[ONAME_LEN];
+
+			/* Steal an item */
+			item = rand_int(q_ptr->inven_cnt);
+
+			/* Get object */
+			o_ptr = &q_ptr->inventory[item];
+			forge = *o_ptr;
+
+			/* artifacts are HARD to steal. Cannot steal quest items or guild keys. */
+			if ((o_ptr->name1 && (rand_int(500) > success || etiquette)) ||
+			    o_ptr->questor || o_ptr->quest || (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY)) {
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (1).\n", p_ptr->name, q_ptr->name, success);
+			}
+			else if (((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
+#ifdef FALLEN_WINNERSONLY
+			    !p_ptr->once_winner
+#else
+			    !p_ptr->total_winner
+#endif
+			    )
+			    /* prevent winners picking up true arts accidentally */
+			    || (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+			    p_ptr->total_winner && cfg.kings_etiquette)
+#ifndef RPG_SERVER
+			    || ((o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
+			    !in_irondeepdive(&p_ptr->wpos) &&
+			    (cfg.anti_cheeze_pickup || (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)))
+#endif
+			    ) {
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (2).\n", p_ptr->name, q_ptr->name, success);
+#ifdef IDDC_RESTRICTED_TRADING
+			} else if (in_irondeepdive(&p_ptr->wpos) &&
+			    (o_ptr->iron_trade != p_ptr->iron_trade || o_ptr->iron_turn < p_ptr->iron_turn)) {
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (3).\n", p_ptr->name, q_ptr->name, success);
+#endif
+			}
+			/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
+			else if (!inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {
+				/* Give a somewhat misleading message, to not spoil him that he actually was protected */
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (4).\n", p_ptr->name, q_ptr->name, success);
+			}
+#ifdef ENABLE_SUBINVEN
+			/* Don't allow stealing subinventories, too complicated implications */
+			else if (o_ptr->tval == TV_SUBINVEN) {
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (5).\n", p_ptr->name, q_ptr->name, success);
+			}
+#endif
+			else {
+				/* Turn level 0 food into level 1 food - mikaelh */
+				if (o_ptr->level == 0 && shareable_starter_item(o_ptr)) {
+					o_ptr->level = 1;
+					o_ptr->discount = 100;
+				}
+
+				/* Give one item to thief */
+				if (is_magic_device(o_ptr->tval)) divide_charged_item(&forge, o_ptr, 1);
+				forge.number = 1;
+				inven_carry(Ind, &forge);
+
+				/* Take one from target */
+				inven_item_increase(0 - c_ptr->m_idx, item, -1);
+				inven_item_optimize(0 - c_ptr->m_idx, item);
+
+				/* Tell thief what he got */
+				object_desc(0, o_name, &forge, TRUE, 3);
+				s_printf("StealingPvP: %s steals item %s from %s (chance %d%%).\n", p_ptr->name, o_name, q_ptr->name, success);
+				object_desc(Ind, o_name, &forge, TRUE, 3);
+				msg_format(Ind, "You stole %s.", o_name);
+
+				if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
+
+				/* Some events don't allow transactions before they begin */
+				if (!p_ptr->max_exp && !in_irondeepdive(&p_ptr->wpos) && !in_hallsofmandos(&p_ptr->wpos)) {
+					msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
+					gain_exp(Ind, 1);
+				}
+
+				can_use(Ind, o_ptr);
+				/* for Ironman Deep Dive Challenge cross-trading */
+				o_ptr->mode = p_ptr->mode;
+
+				/* Check whether this item was requested by an item-retrieval quest */
+				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
+			}
+
+			/* Easier to notice heavier objects */
+			notice += (forge.weight * (10 + get_skill_scale(q_ptr, SKILL_STEALING, 10))) / (10 + get_skill_scale(p_ptr, SKILL_STEALING, 10));
+
+			/* Always small chance to be noticed */
+			if (notice < 5) notice = 5;
+
+			/* Always very small chance to not be noticed */
+			if (notice > 99) notice = 99;
+
+			/* Check for target noticing */
+			if (rand_int(100) < notice) {
+				/* Message */
+				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %s!", p_ptr->name, o_name);
+				caught = TRUE;
+			}
+		}
+	} else {
+		msg_print(Ind, "You fail to steal anything.");
+		s_printf("StealingPvP: %s fails to steal from %s.\n", p_ptr->name, q_ptr->name);
+
+		/* Always small chance to be noticed */
+		if (notice < 5) notice = 5;
+
+		/* Easier to notice a failed attempt */
+		if (rand_int(100) < notice + 30) {
+			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s trying to steal from you!", p_ptr->name);
+			caught = TRUE;
+		}
+	}
+
+	if (caught) break_cloaking(Ind, 0);
+
+#if 1 /* Send him to jail! Only if not in party maybe? :) */
+	if (caught
+ #if 0
+	    && !player_in_party(q_ptr->party, Ind)
+ #endif
+	    ) {
+		bool je = jails_enabled;
+
+		msg_print(Ind, "\377oYou have been seized by the guards!");
+		msg_format_near(Ind, "%s is seized by the guards and thrown into jail!", p_ptr->name);
+		jails_enabled = TRUE; //hack, in case it's disabled for swearing
+		imprison(Ind, JAIL_STEALING, "stealing");
+		jails_enabled = je;
+	}
+#endif
+#if 0 /* Counter blow! (now turned off) */
+	if (caught) {
+		int i, j;
+		object_type *o_ptr;
+
+		/* Purge this traitor */
+		if (player_in_party(q_ptr->party, Ind)) {
+			int party = p_ptr->party;
+
+			/* Temporary leave for the message */
+			p_ptr->party = 0;
+
+			/* Messages */
+			msg_print(Ind, "\377oYou have been purged from your party.");
+			party_msg_format(q_ptr->party, "\377R%s has betrayed your party!", p_ptr->name);
+
+			p_ptr->party = party;
+			party_leave(Ind, FALSE);
+
+		}
+
+		/* Make target hostile */
+		if (q_ptr->exp > p_ptr->exp / 2 - 200) {
+			if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
+			add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE, FALSE);
+		}
+
+		/* Message */
+		msg_format(Ind, "\377r%s gave you an unexpected blow!",
+		           q_ptr->name);
+
+		set_stun_raw(Ind, p_ptr->stun + randint(50));
+		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
+		if (cfg.use_pk_rules == PK_RULES_DECLARE)
+			p_ptr->pkill |= PKILL_KILLABLE;
+
+		/* Thief drops some items from the shock of blow */
+		if (cfg.newbies_cannot_drop <= p_ptr->lev && !p_ptr->inval) {
+			for (i = rand_int(5); i < 5 ; i++ ) {
+				j = rand_int(INVEN_TOTAL);
+				o_ptr = &(p_ptr->inventory[j]);
+
+				if (!o_ptr->tval) continue;
+
+				/* He never drops body-armour this way */
+				if (j == INVEN_BODY) continue;
+
+				/* An artifact 'resists' */
+				if (true_artifact_p(o_ptr) && rand_int(100) > 2) continue;
+
+				inven_drop(TRUE, Ind, j, randint(o_ptr->number * 2), TRUE);
+			}
+		}
+
+		/* The target gets angry */
+		set_fury(0 - c_ptr->m_idx, q_ptr->fury + 15 + randint(15));
+
+	}
+#endif
+
+	/* set timeout before attempting to pvp-steal again */
+	p_ptr->pstealing = 5; /* 5 turns aka ~3 seconds --make dependant on skill */
 
 	/* Take a turn */
-	energy_use = 100;
-#endif	// 0
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#endif
+#endif
 }
 
 /*

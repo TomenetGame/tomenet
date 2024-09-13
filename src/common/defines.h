@@ -6262,7 +6262,7 @@
 #define RF7_DROPART			0x00008000U	/* not implemented - Drops an artifact */
 #define RF7_DROPRANDART		0x00010000U	/* not implemented - Drops a random artifact */
 #define RF7_AI_PLAYER		0x00020000U	/* not implemented */
-#define RF7_NO_THEFT		0x00040000U	/* unused (stealing from monsters is disabled) */
+#define RF7_NO_THEFT		0x00040000U	/* (unused) stealing from this monster is not possible */
 #define RF7_ASTAR		0x00080000U	/* monster uses A* pathfinding (use with care, might strain CPU) */
 #define RF7_NO_ESP			0x00100000U	/* monster isn't ESPable */
 #define RF7_ATTR_BASE			0x00200000U	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
