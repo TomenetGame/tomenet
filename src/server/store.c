@@ -3587,7 +3587,7 @@ s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->
 #endif
 
 		/* watchlist - the more known a character is, the longer he remains on it */
-		p_ptr->tim_watchlist += i + 50; //300?
+		p_ptr->tim_watchlist += i + 60; // 1/2 minute
 
 #ifdef STORE_OWNER_WATCH
 		/* store owner is more careful from now on, for a while */
