@@ -18,8 +18,7 @@
 
 #if 0
 /* Initialze the s_info array at server start */
-bool init_s_info()
-{
+bool init_s_info() {
 	int i;
 	int order = 1;
 
@@ -70,8 +69,7 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i) {
 /*
  *
  */
-s16b get_skill(player_type *p_ptr, int skill)
-{
+s16b get_skill(player_type *p_ptr, int skill) {
 	if (skill < 0 || skill >= MAX_SKILLS) return(0);
 #if 0
 	/* prevent breaking the +2 limit */
@@ -88,8 +86,7 @@ s16b get_skill(player_type *p_ptr, int skill)
 /*
  *
  */
-s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
-{
+s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale) {
 #if 0
 	/* prevent breaking the +2 limit */
 	int s;
@@ -116,8 +113,7 @@ s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 
 /* Allow very rough resolution of skills into very small scaled values
    (Added this for minus_... in dungeon.c - C. Blue) */
-s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale)
-{
+s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale) {
 	return(((p_ptr->s_info[skill].value * scale) / SKILL_MAX) +
 		(magik(((p_ptr->s_info[skill].value * scale * 100) / SKILL_MAX) % 100) ? 1 : 0));
 }
@@ -197,6 +193,23 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 	//int ws = get_weaponmastery_skill(p_ptr);
 
 	/* Tell the player about new abilities that he gained from the skill increase */
+
+	/* Fine-grained checks */
+	if (old_value_fine == new_value_fine) return;
+	switch (i) {
+	case SKILL_SNEAKINESS: //7143,14286,21429,28572,35715,42858,50000 -- it's (int(50000/7)+1) per +1 speed, except for step 7 where it's 50000 (instead of 50001)
+		if ((old_value_fine < 7143 && new_value_fine >= 7143) ||
+		    (old_value_fine < 14286 && new_value_fine >= 14286) ||
+		    (old_value_fine < 21429 && new_value_fine >= 21429) ||
+		    (old_value_fine < 28572 && new_value_fine >= 28572) ||
+		    (old_value_fine < 35715 && new_value_fine >= 35715) ||
+		    (old_value_fine < 42858 && new_value_fine >= 42858) ||
+		    (old_value_fine < 50000 && new_value_fine == 50000))
+			msg_print(Ind, "\374\377GYour sneakiness allows you to move faster!");
+		break;
+	}
+
+	/* Integer checks */
 	if (old_value == new_value) return;
 	switch (i) {
 	case SKILL_CLIMB:	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to climb mountains!");
@@ -211,16 +224,6 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 		if (old_value == 0 && new_value > 0 &&
 		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
 			msg_print(Ind, "\377oYou cannot dodge attacks while wielding a shield!");
-		break;
-	case SKILL_SNEAKINESS: //7143,14286,21429,28572,35715,42858,50000 -- it's (int(50000/7)+1) per +1 speed, except for step 7 where it's 50000 (instead of 50001)
-		if ((old_value_fine < 7143 && new_value_fine >= 7143) ||
-		    (old_value_fine < 14286 && new_value_fine >= 14286) ||
-		    (old_value_fine < 21429 && new_value_fine >= 21429) ||
-		    (old_value_fine < 28572 && new_value_fine >= 28572) ||
-		    (old_value_fine < 35715 && new_value_fine >= 35715) ||
-		    (old_value_fine < 42858 && new_value_fine >= 42858) ||
-		    (old_value_fine < 50000 && new_value_fine == 50000))
-			msg_print(Ind, "\374\377GYour sneakiness allows you to move faster!");
 		break;
 	case SKILL_MARTIAL_ARTS:
 		if (old_value == 0 && new_value > 0) {
