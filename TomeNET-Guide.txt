@@ -17717,19 +17717,22 @@ stated.
 
     .Stealing                   Ability to steal items from stores.
      (0.100, at least 1.000)    If you get caught you will be on the
-                                'blacklist of merchants' for a while, which is
-                                at least 100 seconds and up to 80 minutes,
-                                depending on the (possibly discounted) value of
-                                the item you tried to steal from the shop.
+                                'blacklist of merchants' for a while, which can
+                                be from 0 up to 76 minutes, depending on the
+                                (possibly discounted) value of the item you
+                                tried to steal from the shop.
                                 During this time it's impossible to steal from
                                 shops, and you will get BAD prices (quadruple,
                                 like in the blackmarket usually) in all shops.
 
                                 You'll also be on the 'watchlist', meaning
-                                that you can shop normally, but are unable to
-                                steal until the shopkeepers stop to watch you
-                                so intensely. The watchlist runs out slower
-                                than the blacklist.
+                                that you can shop at normal prices as usual,
+                                but the shopkeepers still keep a sharp eye on
+                                you meaning you are unable to steal anything.
+                                The watchlist is always 4 1/2 minutes longer
+                                than the blacklist, but can also be lower in
+                                cases when you didn't make it on the blacklist,
+                                down to a minimum of 100 seconds.
 
                                 The blacklist and watchlist will be on hold for
                                 a character that isn't logged in, so it's best
@@ -17747,11 +17750,11 @@ stated.
                                 shopkeeper regards you will roughly give away
                                 your remaining Blacklist time:
                                 ------------------------------
-                                gives you a murderous look - 60 - 80 minutes
-                                gazes at you angrily - 40 min +
-                                eyes you suspiciously - 25 min +
-                                looks at you disapprovingly - 10 min +
-                                gives you a cool glance - less than 10 min.
+                                gives you a murderous look     40-76 min.
+                                gazes at you angrily          <40 min.
+                                eyes you suspiciously         <20 min.
+                                looks at you disapprovingly   <10 min.
+                                gives you a cool glance       < 5 min.
 
                                 After your blacklist ran out, if you're still
                                 on the watchlist you get this message:

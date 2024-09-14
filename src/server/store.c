@@ -3569,8 +3569,8 @@ s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->
 		chance = i; //abuse var
 		if (i >= EASY_LOW_BL) {
 			/* Subtract flat, low amount of time from incoming blacklist-plus and convert it to watchlist */
-			i -= EASY_LOW_BL;
 			p_ptr->tim_watchlist += EASY_LOW_BL;
+			i -= EASY_LOW_BL;
 		} else {
 			/* Blacklist-plus was so low, it just gets completely converted to watchlist */
 			p_ptr->tim_watchlist += i;
@@ -4906,13 +4906,13 @@ void do_cmd_store(int Ind) {
 		}
 	}
 
-	if (p_ptr->tim_blacklist >= 7200)
+	if (p_ptr->tim_blacklist >= 4800)//7200
 		msg_print(Ind, "As you enter, the owner gives you a murderous look.");
-	else if (p_ptr->tim_blacklist >= 4800)
+	else if (p_ptr->tim_blacklist >= 2400)//4800
 		msg_print(Ind, "As you enter, the owner gazes at you angrily.");
-	else if (p_ptr->tim_blacklist >= 3000)
+	else if (p_ptr->tim_blacklist >= 1200)//3000
 		msg_print(Ind, "As you enter, the owner eyes you suspiciously.");
-	else if (p_ptr->tim_blacklist >= 1200)
+	else if (p_ptr->tim_blacklist >= 600)//1200
 		msg_print(Ind, "As you enter, the owner looks at you disapprovingly.");
 	else if (p_ptr->tim_blacklist)
 		msg_print(Ind, "As you enter, the owner gives you a cool glance.");
