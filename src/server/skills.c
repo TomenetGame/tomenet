@@ -833,7 +833,7 @@ static void increase_related_skills(int Ind, int i, bool quiet) {
 		/* Non-exclusive skills */
 		else {
 			/* Save previous value */
-			int old_value = get_skill_scale(p_ptr, j, 500), old_value_fine = p_ptr->s_info[i].value;
+			int old_value = get_skill_scale(p_ptr, j, 500), old_value_fine = p_ptr->s_info[j].value;
 
 			/* Increase / decrease with a % */
 			s32b val = p_ptr->s_info[j].value +
