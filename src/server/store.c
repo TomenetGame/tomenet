@@ -3154,9 +3154,20 @@ static bool store_attest_command(int store, int bact) {
 
 
 /*
- * Stole an item from a store                   -DG-
+ * Try to steal an item from a store                   -DG-
  */
 /* TODO: specify 'amt' */
+
+/* Store owner is more careful after a successful steal, for a while?
+   This is not that urgent anymore after Minas' XBM was set to NO_STEAL, so disabled now.
+   (If this is ever reenabled, add the 'attentive' message to the Guide under 'Stealing' ^^.) */
+//#define STORE_OWNER_WATCH
+
+/* Alleviate low-level stealing, as the blacklist timer won't be big enough to do a dungeon dive,
+   yet not small enough to continue town business:
+   Replace the first few minutes flat with watchlist instead, to allow continue shopping most of the time. */
+#define EASY_LOW_BL 480 /* seconds x 2: 480 -> 4 minutes */
+
 void store_stole(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
@@ -3554,16 +3565,32 @@ s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->
 		/* Paranoia, currently not needed */
 		if (i < 100) i = 100;
 
+#ifdef EASY_LOW_BL
+		chance = i; //abuse var
+		if (i >= EASY_LOW_BL) {
+			/* Subtract flat, low amount of time from incoming blacklist-plus and convert it to watchlist */
+			i -= EASY_LOW_BL;
+			p_ptr->tim_watchlist += EASY_LOW_BL;
+		} else {
+			/* Blacklist-plus was so low, it just gets completely converted to watchlist */
+			p_ptr->tim_watchlist += i;
+			i = 0;
+		}
+#endif
+
 		/* Put him on the blacklist or increase it if already on */
 		p_ptr->tim_blacklist += i;
-		s_printf("TIM_BLACKLIST: %s +%d (%dm,%ds)\n", p_ptr->name, i, (i / 120), (i % 120) / 2);
+#ifdef EASY_LOW_BL
+		s_printf("TIM_BLACKLIST: %s +%d[%d] (%dm,%ds)\n", p_ptr->name, i, (int)chance, (i / 120), (i % 120) / 2);
+#else
+		s_printf("TIM_BLACKLIST: %s +%d[-] (%dm,%ds)\n", p_ptr->name, i, (i / 120), (i % 120) / 2);
+#endif
 
 		/* watchlist - the more known a character is, the longer he remains on it */
-
 		p_ptr->tim_watchlist += i + 50; //300?
 
+#ifdef STORE_OWNER_WATCH
 		/* store owner is more careful from now on, for a while */
-#if 0 /* not that urgent anymore after Minas' XBM was set to NO_STEAL */
 		i = tcadd * 8 + 1000;
 		st_ptr->tim_watch += i / 20;
 		if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
