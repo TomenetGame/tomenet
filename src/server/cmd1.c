@@ -1907,6 +1907,58 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		    p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && amount > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up)
 			amount = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
 #endif
+#ifdef IDDC_AUTOSPLIT_GOLD
+		/* Pondos suggested that an IDDC party member with Digging doesn't allow
+		   the other two to profit from its ability, here's an attempt to remedy this: */
+		if (!o_ptr->owner && in_irondeepdive(wpos) && p_ptr->party) {
+			int i, p = 0, PInd[NumPlayers], amount_dist;
+			player_type *q_ptr;
+
+			/* Paranoia-check on ourself, rough 'worst case' estimate.
+			   If we don't pass, we don't touch the gold at all and hence won't distribute it either */
+			if (PY_MAX_GOLD - amount / 2 < p_ptr->au) {
+				msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
+				return;
+			}
+
+			/* Count party members on the same floor with us */
+			for (i = 1; i <= NumPlayers; i++) {
+				q_ptr = Players[i];
+				if (q_ptr->conn == NOT_CONNECTED) continue;
+				if (is_admin(q_ptr)) continue;
+				if (!player_in_party(p_ptr->party, i)) continue;
+				if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+				/* Create map for efficiency */
+				PInd[p] = i;
+				p++;
+			}
+
+			/* Found any other party members here? Otherwise we're out of here and continue normally. */
+			if (p) {
+				/* Paranoia-check on everyone else, rough 'worst case' estimate again. */
+				for (i = 0; i < p; i++)
+					if (PY_MAX_GOLD - amount / 2 >= Players[PInd[i]]->au) {
+						/* Remove this player from the list to share with */
+						PInd[i] = PInd[p - 1];
+						PInd[p - 1] = 0;
+						p--;
+					}
+
+				/* If other eligible players are there and amount (rounded down) isn't too tiny to split, split the gold evenly */
+				if (p && amount / (p + 1) != 0) {
+					/* Try to split gold as evenly as possible */
+					amount_dist = amount / (p + 1);
+					/* Correct rounding mistakes by leaving the original player potentially with extra Au matching the correct total sum
+					   (eg 8 Au and 3 players -> +4 (us) +2 +2): */
+					amount -= amount_dist * p;
+					/* Distribute */
+					for (i = 0; i < p; i++)
+						(void)gain_au(PInd[i], amount_dist, FALSE, TRUE);
+				}
+			}
+		}
+#endif
 
 		/* Collect the gold */
 		if (!gain_au(Ind, amount, FALSE, p_ptr->id == o_ptr->owner)) return;

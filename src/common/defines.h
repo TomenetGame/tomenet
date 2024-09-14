@@ -1140,6 +1140,9 @@
 /* IDDC-only characters: Alternatively allow entering the Halls of Mandos! */
 #define DED_IDDC_MANDOS
 
+/* Unowned gold piles are auto-split between party members on the same floor */
+#define IDDC_AUTOSPLIT_GOLD
+
 
 /* Maximum amount of gold that can be farmed from townies before you get 1 XP
    from it. This is an anti-cheeze for Highlander Tournament and Ironman Deep
