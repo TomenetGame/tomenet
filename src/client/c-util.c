@@ -11373,8 +11373,10 @@ void do_cmd_options(void) {
 
 #ifdef WINDOWS
 		else if (k == 'E') {
-			disable_CS_IME != disable_CS_IME;
-			c_msg_print("\377yChanging the IME option requires a client restart.");
+			disable_CS_IME = !disable_CS_IME;
+			INI_disable_CS_IME = disable_CS_IME;
+			if (disable_CS_IME) c_msg_print("\377yIME support is now disabled. This requires a client restart.");
+			else c_msg_print("\377yIME support is now enabled. This requires a client restart.");
 		}
 #endif
 

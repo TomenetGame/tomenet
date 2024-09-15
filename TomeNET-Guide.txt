@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 15. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3829,6 +3829,15 @@ automatically, and various other things.
 
 Windows command-line options:
 -h                      Displays this list of command-line parameters
+-I                      Disable IME. Input Method Editors are for CJK languages
+                        ie chinese, japanese, korean, to allow using their
+                        keyboard layouts that use multiple keypresses to
+                        construct a character.
+                        If you don't use such a keyboard, you can safely
+                        disable IME in case you suspect it causes any problems
+                        for you. This might be the case if you like to switch
+                        your keyboard language via keyboard shortcut while
+                        TomeNET is focussed.
 -C                      Compatibility mode for ancient servers (deprecated)
 -F <fps>                Set client internal engine fps (default is 100)
 -l<Account> <Password>  For example -lGandalf geheim
@@ -5300,7 +5309,7 @@ There are two keys for reincarnation displayed on each step of the character
 creation process: '%' for auto-reincarnation and '#' for reincarnation just for
 the current step of the character creation process.
 Auto-reincarnation, ie pressing '%', is like pressing '#' in every step of the
-character creation process. (There is also a commandline option '-R' for this.)
+character creation process. (There is also a command-line option '-R' for this.)
 
 However, since this is your first character, just press 'N' to start the
 creation progress, enter a character name, and continue reading.
@@ -27365,5 +27374,17 @@ Solution:   Usually caused by an outdated config file, such as .opt (options)
             For example all options that were starting on "hi..." as short form
             of "high..." were at some point changed to actually read "high..."
             instead. For example "hilite_player" -> "highlite_player" etc.
+
+PROBLEM 77: I cannot switch languages in Windows via keyboard shortcut while
+            TomeNET is in focus.
+Solution:   As long as you don't rely on CJK IME (Input Method Editors for
+            chinese, japanese, korean languages), you can safely disable IME
+            and it should fix the problem. There are three ways:
+            1) In game, press = for options menu, then press E to toggle IME.
+               Quit the client via CTRL+Q to ensure the option is saved.
+            2) Edit your TomeNET.ini file with a text editor, find the option
+               'DisableIME' and set it to '1' instead of '0'.
+            3) Start TomeNET with the command-line option '-I', for example
+               from a terminal window or a .BAT file:  TomeNET.exe -I
 
 ===============================================================================

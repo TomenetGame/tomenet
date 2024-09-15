@@ -694,9 +694,7 @@ int guide_chapters, guide_endofcontents;
 
 #ifdef WINDOWS
 bool win_dontmoveuser = FALSE;
-/* Not required, just a paranoia note, it's pretty undocumented */
-//#define CS_IME 0x00010000
-u32b MAYBE_CS_IME = CS_IME;
+bool INI_disable_CS_IME = FALSE;
 bool disable_CS_IME = FALSE;
 #endif
 

@@ -1240,7 +1240,7 @@ void save_prefs(void) {
 	char       buf[32];
 #endif
 
-	strcpy(buf, disable_CS_IME ? "1" : "0");
+	strcpy(buf, INI_disable_CS_IME ? "1" : "0");
 	WritePrivateProfileString("Base", "DisableIME", buf, ini_file);
 #ifdef USE_GRAPHICS
 	strcpy(buf, use_graphics_new == UG_2MASK ? "2" : (use_graphics_new ? "1" : "0"));
@@ -1380,7 +1380,7 @@ static void load_prefs(void) {
 
 	/* Extract the "disable_numlock" flag */
 	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0);
-	disable_CS_IME = (GetPrivateProfileInt("Base", "DisableIME", 0, ini_file) != 0);
+	disable_CS_IME = INI_disable_CS_IME = (GetPrivateProfileInt("Base", "DisableIME", 0, ini_file) != 0);
 
 	/* Read the colormap */
 	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
@@ -2803,8 +2803,6 @@ static void init_windows(void) {
 #endif
 
 
-	/* Load .INI preferences */
-	load_prefs();
 
 
 	/* Need these before term_getsize gets called */
@@ -4300,73 +4298,14 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	/* set OS-specific resize_main_window() hook */
 	resize_main_window = resize_main_window_win;
 
-	if (hPrevInst == NULL) {
-		wc.style         = CS_CLASSDC | MAYBE_CS_IME;
-		wc.lpfnWndProc   = AngbandWndProc;
-		wc.cbClsExtra    = 0;
-		wc.cbWndExtra    = 4; /* one long pointer to term_data */
-		wc.hInstance     = hInst;
-		wc.hIcon         = hIcon = LoadIcon(hInst, AppName);
-		wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
-		wc.lpszMenuName  = AppName;
-		wc.lpszClassName = AppName;
-
-		if (!RegisterClass(&wc)) exit(1);
-
-		wc.lpfnWndProc   = AngbandListProc;
-		wc.lpszMenuName  = NULL;
-		wc.lpszClassName = AngList;
-
-		if (!RegisterClass(&wc)) exit(2);
-
-	}
-
-	/* Set hooks */
-	quit_aux = hack_quit;
-	core_aux = hack_core;
-	plog_aux = hack_plog;
-
 	/* Prepare the filepaths */
 	init_stuff();
-
-	/* Initialize WinSock */
-	WSAStartup(MAKEWORD(1, 1), &wsadata);
-
-	/* Try to set timer resolution to 1ms - mikaelh */
-	if (timeGetDevCaps(&tc, sizeof (tc)) == TIMERR_NOERROR) {
-		wTimerRes = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
-		timeBeginPeriod(wTimerRes);
-	}
-
-	/* Determine if display is 16/256/true color */
-	hdc = GetDC(NULL);
-	colors16 = (GetDeviceCaps(hdc, BITSPIXEL) == 4);
-	paletted = ((GetDeviceCaps(hdc, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE);
-	ReleaseDC(NULL, hdc);
-
-	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
-	check_guide_checksums(FALSE);
-
-	/* Prepare the windows */
-	init_windows();
-
-	/* Activate hooks */
-	plog_aux = hook_plog;
-	quit_aux = hook_quit;
-	core_aux = hook_quit;
-
-	/* We are now initialized */
-	initialized = TRUE;
-	fullscreen_weather = FALSE;
-
-#if 0 /* apparently this wasn't so good after all - mikaelh */
-	/* Check if we loaded some account name & password from the .ini file - mikaelh */
-	if (strlen(nick) && strcmp(nick, "PLAYER") && strlen(pass) && strcmp(pass, "passwd"))
-		done = TRUE;
+#if 1 /* moved here before main window initialization for CS_IME setting in INI */
+	/* Load .INI preferences */
+	load_prefs();
 #endif
 
-	/* Process the command line */
+	/* Process the command line -- now before initializing the main window because of CS_IME setting via cmdline arg 'I':*/
 	for (i = 0, n = strlen(lpCmdLine); i < n; i++) {
 		/* Check for an option */
 		if (lpCmdLine[i] == '-') {
@@ -4403,6 +4342,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					puts("  -V                 save complete message log on exit, don't prompt");
 					puts("  -x                 don't save chat/message log on exit (don't prompt)");
 #else
+				    if (initialized) /* We're called AFTER init_windows()? Then we'll appear in a graphical windows message window, with annoying formatting :p */
 					/* Message box on Windows has a default limit of characters, we need to cut out the 4
 					   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
 					plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
@@ -4428,11 +4368,36 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -v              save chat log on exit",
 					    "  -V              save chat+message log on exit",
 					    "  -x              don't save chat/message log on exit"));
+				    else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
+					/* Message box on Windows has a default limit of characters, we need to cut out the 4
+					   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
+					plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					    longVersion,
+					    os_version,
+					    "Usage:    tomenet [options] [server]",
+					    "Example:  tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu",
+					    /* "  -h              Display this help",
+					    "  -C              Compatibility mode for OLD servers",
+					    "  -F              Client FPS", */
+					    "  -I              disable IME (CJK languages)",
+					    "  -l<name> <pwd>  Login crecedentials",
+					    "  -N<name>        character name",
+					    "  -R<name>        char name, auto-reincarnate",
+					    "  -p<num>         change game Port number",
+					    "  -P<path>        set the lib directory Path",
+					    "  -k              don't disable numlock on startup",
+					    "  -m              skip message of the day window",
+					    "  -q              disable all audio ('quiet mode')",
+					    /* "  -u              disable automatic lua updates", */
+					    "  -w              disable client-side weather effects",
+					    "  -v              save chat log on exit",
+					    "  -V              save chat+message log on exit",
+					    "  -x              don't save chat/message log on exit"));
 #endif
 					quit(NULL);
 					break;
 				case 'I':
-					MAYBE_CS_IME = 0x0;
+					disable_CS_IME = TRUE;
 					break;
 				case 'l': /* account name & password */
 					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);
@@ -4487,6 +4452,70 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			quoted = FALSE;
 		}
 	}
+
+	if (hPrevInst == NULL) {
+/* Not required, just a paranoia note, it's pretty undocumented */
+//#define CS_IME 0x00010000
+		wc.style         = CS_CLASSDC | (disable_CS_IME ? 0x0 : CS_IME);
+		wc.lpfnWndProc   = AngbandWndProc;
+		wc.cbClsExtra    = 0;
+		wc.cbWndExtra    = 4; /* one long pointer to term_data */
+		wc.hInstance     = hInst;
+		wc.hIcon         = hIcon = LoadIcon(hInst, AppName);
+		wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
+		wc.lpszMenuName  = AppName;
+		wc.lpszClassName = AppName;
+
+		if (!RegisterClass(&wc)) exit(1);
+
+		wc.lpfnWndProc   = AngbandListProc;
+		wc.lpszMenuName  = NULL;
+		wc.lpszClassName = AngList;
+
+		if (!RegisterClass(&wc)) exit(2);
+	}
+
+	/* Set hooks */
+	quit_aux = hack_quit;
+	core_aux = hack_core;
+	plog_aux = hack_plog;
+
+	/* Initialize WinSock */
+	WSAStartup(MAKEWORD(1, 1), &wsadata);
+
+	/* Try to set timer resolution to 1ms - mikaelh */
+	if (timeGetDevCaps(&tc, sizeof (tc)) == TIMERR_NOERROR) {
+		wTimerRes = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
+		timeBeginPeriod(wTimerRes);
+	}
+
+	/* Determine if display is 16/256/true color */
+	hdc = GetDC(NULL);
+	colors16 = (GetDeviceCaps(hdc, BITSPIXEL) == 4);
+	paletted = ((GetDeviceCaps(hdc, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE);
+	ReleaseDC(NULL, hdc);
+
+	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
+	check_guide_checksums(FALSE);
+
+	/* Prepare the windows */
+	init_windows();
+
+	/* Activate hooks */
+	plog_aux = hook_plog;
+	quit_aux = hook_quit;
+	core_aux = hook_quit;
+
+	/* We are now initialized */
+	initialized = TRUE;
+	fullscreen_weather = FALSE;
+
+#if 0 /* apparently this wasn't so good after all - mikaelh */
+	/* Check if we loaded some account name & password from the .ini file - mikaelh */
+	if (strlen(nick) && strcmp(nick, "PLAYER") && strlen(pass) && strcmp(pass, "passwd"))
+		done = TRUE;
+#endif
 
 	/* Bam! */
 	turn_off_numlock();
