@@ -3726,7 +3726,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 #endif
 		/* workaround - refill ligth source (outdated clients cannot use 'F' due to INVEN_ order change */
-		else if (prefix(messagelc, "/light")) {
+		else if (prefix(messagelc, "/light") && !prefix(messagelc, "/lightning")) {
 			if (tk != 1) {
 				msg_print(Ind, "Usage: /light a...w");
 				return;
