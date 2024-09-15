@@ -10067,6 +10067,11 @@ static void do_cmd_options_tilesets(void) {
 				Term_putstr(5, 13, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
 				Term_putstr(5, 14, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
 		}
+		if (c_cfg.palette_animation && !c_cfg.disable_lightning) {
+				Term_putstr(2, 16, -1, TERM_WHITE, "\377oNote that with graphics enabled the overworld full-screen lightning weather");
+				Term_putstr(2, 17, -1, TERM_WHITE, "\377oanimation can cause a slowdown that can even last several seconds on slow");
+				Term_putstr(2, 18, -1, TERM_WHITE, "\377osystems. If it looks too slow, enable the option '\377ydisable_lightning\377o' in = 1.");
+		}
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
