@@ -12682,6 +12682,17 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	} else
  #endif
 #endif
+#if defined(USE_X11) && defined(X11_GRAPHICS_PALETTE_HACK)
+	if (!strcmp(ANGBAND_SYS, "x11") && use_graphics) {
+		/* Hack for now: Palette animation bugs out on graphics: First palette values received on first login will persist forever.  */
+		if (option_info[i].o_var == &c_cfg.palette_animation) {
+			if (playing) c_msg_print("\377yOption 'palette_animation' currently unusable on X11 if graphics are enabled."); //playing: otherwise 4x spam on login, like this only 1x
+			c_cfg.palette_animation = FALSE;
+			(*option_info[i].o_var) = FALSE;
+			Client_setup.options[i] = FALSE;
+		}
+	}
+#endif
 #ifndef GLOBAL_BIG_MAP
 	/* Not yet. First, process all the option files before doing this */
 	if (option_info[i].o_var == &c_cfg.big_map && global_big_map_hold) return;

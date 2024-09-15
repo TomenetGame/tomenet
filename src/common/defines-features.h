@@ -561,6 +561,12 @@
   #define UG_NORMAL	1
   #define UG_2MASK	2
  #endif
+
+ /* Workaround-hack to just disable palette animation (only for X11, works fine on Win, albeit way too slow there for lightning, so recommended to 'disable_lightning'):
+    Currently, use_graphics will cause palette animation on X11 to bug out on graphics: First palette values received on first login will persist forever. */
+ #ifdef CLIENT_SIDE
+  #define X11_GRAPHICS_PALETTE_HACK
+ #endif
 #endif
 //#endif
 
