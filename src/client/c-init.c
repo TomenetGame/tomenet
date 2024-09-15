@@ -235,6 +235,14 @@ void initialize_main_pref_files(void) {
 		Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
 	}
 #endif
+#if defined(WINDOWS) && defined(WIN_GRAPHICS_PALETTE_HACK)
+	if (use_graphics) {
+		/* Hack for now: Palette animation bugs out on graphics: Palette will not update daylightning properly until manually refreshed or a lightning-weather animation occurs.  */
+		c_cfg.palette_animation = FALSE;
+		(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
+		Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
+	}
+#endif
 
 #if 0 /* New flags were added meanwhile, this seems invalid now -- when backward compatibility goes too far, maybe.. */
 	/* Hack: Convert old window.prf or user.prf files that

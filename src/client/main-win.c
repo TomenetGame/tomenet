@@ -2906,6 +2906,13 @@ static void init_windows(void) {
 			g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
 			g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
 		}
+
+ #if defined(WINDOWS) && defined(WIN_GRAPHICS_PALETTE_HACK)
+		/* Hack for now: Palette animation bugs out on graphics: Palette will not update daylightning properly until manually refreshed or a lightning-weather animation occurs.  */
+		c_cfg.palette_animation = FALSE;
+		(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
+		Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
+ #endif
 	}
 #endif
 
