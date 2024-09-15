@@ -1515,6 +1515,9 @@ static int get_melee_technique(int *sn) {
 	/* No redraw yet */
 	redraw = FALSE;
 
+	topline_icky = TRUE;
+	//TODO: do screen_line_icky and screen_column_icky, like for inventory/spell stuff
+
 	/* Build a prompt (accept all techniques) */
 	if (num)
 		strnfmt(out_val, 78, "(Techniques %c-%c, *=List, @=Name, ESC=exit) use which technique? ",
@@ -1605,6 +1608,7 @@ static int get_melee_technique(int *sn) {
 
 	screen_line_icky = -1;
 	screen_column_icky = -1;
+	topline_icky = FALSE;
 
 	/* Restore the screen */
 	if (redraw) {
@@ -1614,6 +1618,8 @@ static int get_melee_technique(int *sn) {
 		Flush_queue();
 	}
 
+	/* Clear the prompt line */
+	clear_topline_forced();
 
 	/* Abort if needed */
 	if (!flag) return(FALSE);
@@ -1685,6 +1691,9 @@ static int get_ranged_technique(int *sn) {
 
 	/* No redraw yet */
 	redraw = FALSE;
+
+	topline_icky = TRUE;
+	//TODO: do screen_line_icky and screen_column_icky, like for inventory/spell stuff
 
 	/* Build a prompt (accept all techniques) */
 	if (num)
@@ -1775,6 +1784,7 @@ static int get_ranged_technique(int *sn) {
 		}
 	}
 
+	topline_icky = FALSE;
 	screen_line_icky = -1;
 	screen_column_icky = -1;
 
@@ -1786,6 +1796,8 @@ static int get_ranged_technique(int *sn) {
 		Flush_queue();
 	}
 
+	/* Clear the prompt line */
+	clear_topline_forced();
 
 	/* Abort if needed */
 	if (!flag) return(FALSE);
