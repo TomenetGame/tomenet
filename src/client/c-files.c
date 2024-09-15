@@ -815,7 +815,7 @@ static void key_autoconvert(char *tmp, byte fmt) {
  * value, otherwise is 0. This will be usefull, if the MAX_FONT_CHAR constant
  * changes, there will be no need to update the graphical .prf files.
  */
-errr process_pref_file_aux(char *buf, byte fmt) {
+errr process_pref_file_aux_aux(char *buf, byte fmt) {
 	int i, j, k;
 	int n1, n2;
 
@@ -1144,54 +1144,81 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 	return(1);
 }
 
-
-/*
- * Process the "user pref file" with the given name
- *
- * See the function above for a list of legal "commands".
- */
-errr process_pref_file(cptr name) {
+/* Helper function to process the "user pref file" with the given complete path+filename 'buf' and filenam 'name' */
+errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	FILE *fp;
-
-	char buf[1024];
-	char *buf2;
 	int n, err;
+	char *buf2;
 	byte fmt;
+	//bool errors = FALSE;
 
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, name);
-
-	if (strcmp(ANGBAND_SYS, "gcu")) printf("Processing prf file '%s'.\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
-	/* Open the file */
 	fp = my_fopen(buf, "r");
-
-	/* Catch errors */
-	if (!fp) return(-1);
+	if (!fp) {
+		if (!quiet) {
+			if (rl_connection_state == 1) c_message_add(format("\377yCould not open file %s", buf));
+			if (strcmp(ANGBAND_SYS, "gcu")) printf("Could not open file %s.\n", buf);
+		}
+		return(-1);
+	}
 
 	/* Process the file */
 	while (0 == (err = my_fgets2(fp, &buf2, &n, &fmt))) {
 		/* Process the line */
-		if (process_pref_file_aux(buf2, fmt)) {
+		if (process_pref_file_aux_aux(buf2, fmt)) {
 			/* Useful error message */
 			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
 			if (strcmp(ANGBAND_SYS, "gcu")) printf("Error in '%s' parsing '%s'.\n", buf2, name);
 			//else if (rl_connection_state != 1) plog(format("Error in '%s' parsing '%s'.\n", buf2, name)); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
+			//errors = TRUE;
 		}
-
 		mem_free(buf2);
 	}
 	if (err == 2) {
 		if (strcmp(ANGBAND_SYS, "gcu")) printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:
 		c_msg_format("\377R!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!", name);
+	} else err = 0;
+
+#if 0 /* actually don't do this as it would mess up separate .prf files by putting all currently loaded stuff from any of them into this one file */
+	/* Try to auto-fix errors simply by re-saving the file */
+	if (errors) {
+		char bufb[1024];
+
+		strcpy(bufb, buf);
+		strcat(bufb, ".bak");
+		rename(buf, bufb);
+		//options_dump(buf);
+		macros_dump(buf);
+		c_msg_print("\377yTried to auto-fix the errors by re-saving the file. Backup made to ");
 	}
+#endif
 
 	/* Close the file */
 	my_fclose(fp);
 
 	/* Success */
-	return(0);
+	return(err);
+}
+/*
+ * Process the "user pref file" with the given name
+ *
+ * See the function above for a list of legal "commands".
+ */
+errr process_pref_file(cptr name) {
+	char buf[1024];
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, name);
+	if (strcmp(ANGBAND_SYS, "gcu")) printf("Processing prf file '%s'.\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
+	return(process_pref_file_aux(buf, name, TRUE));
+}
+errr process_pref_file_manual(cptr name) {
+	char buf[1024];
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, name);
+	if (strcmp(ANGBAND_SYS, "gcu")) printf("Processing prf file '%s'.\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
+	return(process_pref_file_aux(buf, name, FALSE));
 }
 
 
