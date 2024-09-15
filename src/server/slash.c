@@ -9807,6 +9807,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/contbuf")) { /* List GE_CONTENDER_BUFFER queue */
+				for (i = 0; i < MAX_CONTENDER_BUFFERS; i++) {
+					if (ge_contender_buffer_ID[i]) msg_format(Ind, "%d) %d '%s'", i, ge_contender_buffer_deed[i], ge_contender_buffer_ID[i]);
+				}
+				return;
+			}
 			else if (prefix(messagelc, "/partydebug")) {
 				FILE *fp;
 
@@ -11770,7 +11776,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y ||
 				    !(c_ptr->feat == FEAT_LESS ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
-					msg_print(Ind, "Error: Not standing on IRONDEEDIVE staircase.");
+					msg_print(Ind, "Error: Not standing on IRONDEEPDIVE staircase.");
 					return;
 				}
 
