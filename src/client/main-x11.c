@@ -2113,9 +2113,9 @@ static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 XImage *graphics_image = None;
 char *graphics_bgmask = NULL;
 char *graphics_fgmask = NULL;
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 char *graphics_bg2mask = NULL;
-#endif
+ #endif
 /* These variables are computed at image load (in 'init_x11'). */
 int graphics_tile_wid, graphics_tile_hgt;
 int graphics_image_tpr; /* Tiles per row. */
@@ -2126,10 +2126,10 @@ int graphics_image_tpr; /* Tiles per row. */
 static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	term_data *td;
 	Pixmap tilePreparation;
-#ifdef TILE_CACHE_SIZE
+ #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i;
-#endif
+ #endif
 	int x1, y1;
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
@@ -2142,19 +2142,19 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	a = term2attr(a);
 
 	/* Draw the tile in Xor. */
-#ifndef EXTENDED_COLOURS_PALANIM
- #ifndef EXTENDED_BG_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
- #else
+  #else
 	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
- #endif
-#else
- #ifndef EXTENDED_BG_COLOURS
-	Infoclr_set(clr[a & 0x1F]);
+  #endif
  #else
+  #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x1F]);
+  #else
 	Infoclr_set(clr[a & 0x3F]);
+  #endif
  #endif
-#endif
 
 	if (Infoclr->fg == Infoclr->bg) {
 		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
@@ -2167,14 +2167,14 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	x *= Infofnt->wid;
 	y *= Infofnt->hgt;
 
-#ifdef TILE_CACHE_SIZE
+ #ifdef TILE_CACHE_SIZE
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
 		if (entry->c == c && entry->a == a
- #ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 		    && entry->c_back == 0 && entry->a_back == 0
- #endif
+  #endif
 		    && entry->is_valid) {
 			/* Copy cached tile to window. */
 			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
@@ -2193,14 +2193,14 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
- #ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 	entry->c_back = 0;
 	entry->a_back = 0;
- #endif
+  #endif
 	entry->is_valid = 1;
-#else
+ #else
 	tilePreparation = td->tilePreparation;
-#endif
+ #endif
 
 	/* Prepare tile to preparation pixmap. */
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
@@ -2229,17 +2229,17 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
- #if 0 /* use fallback hook until 2mask routines are complete? */
+  #if 0 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_x11(x, y, a, c));
- #else
+  #else
 	term_data *td;
 	Pixmap tilePreparation, tilePreparation2;
-#ifdef TILE_CACHE_SIZE
+   #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i;
-#endif
+   #endif
 	int x1, y1;
 
 	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
@@ -2256,19 +2256,19 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	a_back = term2attr(a_back);
 
 	/* Draw the tile in Xor. */
-#ifndef EXTENDED_COLOURS_PALANIM
- #ifndef EXTENDED_BG_COLOURS
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
- #else
+    #else
 	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
- #endif
-#else
- #ifndef EXTENDED_BG_COLOURS
+    #endif
+   #else
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
- #else
+    #else
 	Infoclr_set(clr[a & 0x3F]);
- #endif
-#endif
+    #endif
+   #endif
 
 	if (Infoclr->fg == Infoclr->bg) {
 		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
@@ -2281,7 +2281,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	x *= Infofnt->wid;
 	y *= Infofnt->hgt;
 
-#ifdef TILE_CACHE_SIZE
+   #ifdef TILE_CACHE_SIZE
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
@@ -2305,36 +2305,36 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	tilePreparation2 = entry->tilePreparation2;
 	entry->c = c;
 	entry->a = a;
- #ifdef GRAPHICS_BG_MASK
+    #ifdef GRAPHICS_BG_MASK
 	entry->c_back = c_back;
 	entry->a_back = a_back;
- #endif
+    #endif
 	entry->is_valid = 1;
-#else
+   #else
 	tilePreparation = td->tilePreparation;
 	tilePreparation2 = td->tilePreparation2;
-#endif
+  #endif
 
-#ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 	/* Start with background tile to preparation pixmap,
 	   so the background mask can be reverse AND'ed (draw bg where there's 0x000000 in the foreground)
 	   onto the background image to zero out all pixels that should display the foreground instead.
 	   After that, the foreground can be OR'd onto the image. - C. Blue */
 
 	/* Switch fgmask'ing colour to background-tile colour */
- #ifndef EXTENDED_COLOURS_PALANIM
-  #ifndef EXTENDED_BG_COLOURS
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a_back & 0x0F]);
-  #else
+    #else
 	Infoclr_set(clr[a_back & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-  #endif
- #else
-  #ifndef EXTENDED_BG_COLOURS
+    #endif
+   #else
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a_back & 0x1F]);
-  #else
+    #else
 	Infoclr_set(clr[a_back & 0x3F]);
-  #endif
- #endif
+    #endif
+   #endif
 
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
 	if (c_back == 32) {
@@ -2360,20 +2360,20 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	}
 
 	/* Revert fgmask'ing colour to foreground-tile colour */
- #ifndef EXTENDED_COLOURS_PALANIM
-  #ifndef EXTENDED_BG_COLOURS
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
-  #else
+    #else
 	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-  #endif
- #else
-  #ifndef EXTENDED_BG_COLOURS
+    #endif
+   #else
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
-  #else
+    #else
 	Infoclr_set(clr[a & 0x3F]);
+    #endif
+   #endif
   #endif
- #endif
-#endif
 
 	/* Prepare foreground tile to preparation pixmap. */
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
@@ -2393,14 +2393,14 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		  td->fnt->wid, td->fnt->hgt);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
 
-#if 1
+  #if 1
 	/* Finally copy foreground tile onto background tile, via bg2mask. */
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bg2mask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 //	XPutImage(Metadpy->dpy, tilePreparation, Infoclr->gc, tilePreparation2, 0, 0, 0, 0, td->fnt->wid, td->fnt->hgt);
 	XCopyArea(Metadpy->dpy, tilePreparation, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt, 0, 0);	// NOTE that tilePreparation2 holds the final tile, NOT tilePreparation! (Compare tile-caching!)
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
-#endif
+  #endif
 
 	/* Copy prepared combo-tile to window. */
 	XCopyArea(Metadpy->dpy, tilePreparation2, td->inner->win, Infoclr->gc,
@@ -2412,7 +2412,15 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	return(0);
  #endif
 }
-#endif
+ #ifdef TILE_CACHE_SIZE
+static void invalidate_graphics_cache_x11(term_data *td) {
+	int i;
+
+	for (i = 0; i < TILE_CACHE_SIZE; i++)
+		td->tile_cache[i].c = 0;
+}
+ #endif
+#endif /* USE_GRAPHICS */
 
 /* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
 /*
@@ -4154,53 +4162,57 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	term_data *old_td = (term_data*)(Term->data);
 
 #ifdef PALANIM_OPTIMIZED
-	/* Check for refresh market at the end of a palette data transmission */
+	/* Check for refresh marker at the end of a palette data transmission */
 	if (c == 127 || c == 128) {
  #if 0 /* todo: fix/implement live-updating of 'bg' colour (tethered to colour #0) */
- #ifdef CUSTOMIZE_COLOURS_FREELY
-	/* Handle change of colour #0, which also serves as the designated bg colour now */
-	//if (!c) {
-	if (TRUE) {
-		Pixell pixel = create_pixel(Metadpy->dpy, (client_color_map[0] & 0xFF0000) >> 16, (client_color_map[0] & 0x00FF00) >> 8, client_color_map[0] & 0x0000FF);
-		Metadpy->bg = pixel;
-		Metadpy_update(1, 1, 1);
+  #ifdef CUSTOMIZE_COLOURS_FREELY
+		/* Handle change of colour #0, which also serves as the designated bg colour now */
+		//if (!c) {
+		if (TRUE) {
+			Pixell pixel = create_pixel(Metadpy->dpy, (client_color_map[0] & 0xFF0000) >> 16, (client_color_map[0] & 0x00FF00) >> 8, client_color_map[0] & 0x0000FF);
+			Metadpy->bg = pixel;
+			Metadpy_update(1, 1, 1);
 
-	int i;
-	Infoclr_init_ccn ("fg", "bg", "xor", 0);
+			int i;
+			Infoclr_init_ccn ("fg", "bg", "xor", 0);
 
-	/* Prepare the colors (including "black") */
-	for (i = 0; i < CLIENT_PALETTE_SIZE; ++i) {
-		cptr cname = color_name[0];
+			/* Prepare the colors (including "black") */
+			for (i = 0; i < CLIENT_PALETTE_SIZE; ++i) {
+				cptr cname = color_name[0];
 
-		MAKE(clr[i], infoclr);
-		Infoclr_set(clr[i]);
-		if (Metadpy->color) cname = color_name[i];
-		else if (i) cname = color_name[1];
-		Infoclr_init_ccn (cname, "bg", "cpy", 0);
-	}
+			MAKE(clr[i], infoclr);
+				Infoclr_set(clr[i]);
+				if (Metadpy->color) cname = color_name[i];
+				else if (i) cname = color_name[1];
+				Infoclr_init_ccn (cname, "bg", "cpy", 0);
+			}
 
- #ifdef EXTENDED_BG_COLOURS
-	/* Prepare the extended background-using colors */
-	for (i = 0; i < TERMX_AMT; ++i) {
-		cptr cname = color_name[0], cname2 = color_name[0];
+   #ifdef EXTENDED_BG_COLOURS
+			/* Prepare the extended background-using colors */
+			for (i = 0; i < TERMX_AMT; ++i) {
+				cptr cname = color_name[0], cname2 = color_name[0];
 
-		MAKE(clr[CLIENT_PALETTE_SIZE + i], infoclr);
-		Infoclr_set(clr[CLIENT_PALETTE_SIZE + i]);
-		if (Metadpy->color) {
-			cname = color_ext_name[i][0];
-			cname2 = color_ext_name[i][1];
+				MAKE(clr[CLIENT_PALETTE_SIZE + i], infoclr);
+				Infoclr_set(clr[CLIENT_PALETTE_SIZE + i]);
+				if (Metadpy->color) {
+					cname = color_ext_name[i][0];
+					cname2 = color_ext_name[i][1];
+				}
+				Infoclr_init_ccn (cname, cname2, "cpy", 0);
+			}
+   #endif
 		}
-		Infoclr_init_ccn (cname, cname2, "cpy", 0);
-	}
- #endif
-	}
- #endif
+  #endif
  #endif
 
 		/* Refresh aka redraw the main window with new colour */
 		if (!term_get_visibility(0)) return;
 		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 		Term_activate(&term_idx_to_term_data(0)->t);
+ #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+		/* Ensure redrawal doesn't get cancelled by tile-caching */
+		invalidate_graphics_cache_x11(term_idx_to_term_data(0));
+ #endif
 		Term_redraw_section(0, 0, Term->wid - 1, Term->hgt - 1);
 		Term_activate(&old_td->t);
 		return;
@@ -4271,6 +4283,10 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (!term_get_visibility(0)) return;
 	if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 	Term_activate(&term_idx_to_term_data(0)->t);
+ #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+	/* Ensure redrawal doesn't get cancelled by tile-caching */
+	invalidate_graphics_cache_x11(&term_idx_to_term_data(0));
+ #endif
 	Term_xtra(TERM_XTRA_FRESH, 0);
 	Term_activate(&old_td->t);
 #endif

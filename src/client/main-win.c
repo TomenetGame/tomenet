@@ -2407,6 +2407,15 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
+#if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+static void invalidate_graphics_cache_win(term_data *td) {
+	int i;
+
+	for (i = 0; i < TILE_CACHE_SIZE; i++)
+		td->tile_cache[i].c = 0;
+}
+#endif
+
 #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
  #if 0 /* use fallback hook until 2mask routines are complete? */
@@ -4836,8 +4845,9 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	term *term_old = Term;
 
 #ifdef PALANIM_OPTIMIZED
-	/* Check for refresh market at the end of a palette data transmission */
+	/* Check for refresh marker at the end of a palette data transmission */
 	if (c == 127 || c == 128) {
+		term_data *td;
  #ifdef PALANIM_OPTIMIZED2
 		int i;
 
@@ -4865,9 +4875,13 @@ void set_palette(byte c, byte r, byte g, byte b) {
  #endif
 
 		/* Refresh aka redraw main window with new colour */
-		term_data *td = &data[0];
+		td = &data[0];
 		/* Activate */
 		Term_activate(&td->t);
+ #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+		/* Ensure redrawal doesn't get cancelled by tile-caching */
+		invalidate_graphics_cache_win(td);
+ #endif
 		/* Redraw the contents */
  #if 0 /* no flickering here when animating colours 0..15, even though set_palette() flickers. Maybe because of colours 16-31 for some reason? */
 		Term_redraw();
@@ -4930,9 +4944,13 @@ void set_palette(byte c, byte r, byte g, byte b) {
  #endif
 
 	/* Refresh aka redraw main window with new colour */
-	term_data *td = &data[0];
+	td = &data[0];
 	/* Activate */
 	Term_activate(&td->t);
+ #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+	/* Ensure redrawal doesn't get cancelled by tile-caching */
+	invalidate_graphics_cache_win(td);
+ #endif
 	/* Redraw the contents */
 	Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
 	/* Restore */
