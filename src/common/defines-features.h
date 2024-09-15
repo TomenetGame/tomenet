@@ -562,10 +562,12 @@
   #define UG_2MASK	2
  #endif
 
- /* Workaround-hack to just disable palette animation (only for X11, works fine on Win, albeit way too slow there for lightning, so recommended to 'disable_lightning'):
-    Currently, use_graphics will cause palette animation on X11 to bug out on graphics: First palette values received on first login will persist forever. */
  #ifdef CLIENT_SIDE
+  /* Workaround-hack just to disable palette animation w/ graphic. On WINE it will not update screen from daylight changes (but ctrl+r
+     and then entering+exiting a screen-icky menu, OR, alternatively just /wthunder will update the daylighting to correct values). */
   #define WIN_GRAPHICS_PALETTE_HACK
+  /* Workaround-hack to just disable palette animation (only for X11, works fine on Win, albeit way too slow there for lightning, so recommended to 'disable_lightning'):
+    Currently, use_graphics will cause palette animation on X11 to bug out on graphics: First palette values received on first login will persist forever. */
   #define X11_GRAPHICS_PALETTE_HACK
  #endif
 #endif
