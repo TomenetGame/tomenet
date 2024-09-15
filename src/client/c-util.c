@@ -11068,7 +11068,11 @@ void do_cmd_options(void) {
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options 1/2");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
+#ifdef WINDOWS
+		Term_putstr(2, l++, -1, TERM_WHITE, format("(\377yw\377w/\377yE\377w)     Window flags / %s", disable_CS_IME ? "Enable IME" : "Disable IME"));
+#else
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
+#endif
 #ifdef GLOBAL_BIG_MAP
 		if (strcmp(ANGBAND_SYS, "gcu"))
 			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w)   Toggle/enable/disable big_map option (double screen height)");
@@ -11365,6 +11369,13 @@ void do_cmd_options(void) {
 		else if (k == 'M') set_bigmap(1, FALSE);
 		/* Disable big_map */
 		else if (k == 'm') set_bigmap(0, FALSE);
+#endif
+
+#ifdef WINDOWS
+		else if (k == 'E') {
+			disable_CS_IME != disable_CS_IME;
+			c_msg_print("\377yChanging the IME option requires a client restart.");
+		}
 #endif
 
 #if defined(WINDOWS) || defined(USE_X11)
