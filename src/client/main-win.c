@@ -204,10 +204,6 @@
 #define NOMCX             /* Modem Configuration Extensions */
 
 
-/* Not required, just a paranoia note, it's pretty undocumented */
-//#define CS_IME 0x00010000
-
-
 /*
  * Include the "windows" support file
  */
@@ -1244,6 +1240,8 @@ void save_prefs(void) {
 	char       buf[32];
 #endif
 
+	strcpy(buf, disable_CS_IME ? "1" : "0");
+	WritePrivateProfileString("Base", "DisableIME", buf, ini_file);
 #ifdef USE_GRAPHICS
 	strcpy(buf, use_graphics_new == UG_2MASK ? "2" : (use_graphics_new ? "1" : "0"));
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
@@ -1382,6 +1380,7 @@ static void load_prefs(void) {
 
 	/* Extract the "disable_numlock" flag */
 	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0);
+	disable_CS_IME = (GetPrivateProfileInt("Base", "DisableIME", 0, ini_file) != 0);
 
 	/* Read the colormap */
 	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
@@ -4302,7 +4301,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	resize_main_window = resize_main_window_win;
 
 	if (hPrevInst == NULL) {
-		wc.style         = CS_CLASSDC | CS_IME;
+		wc.style         = CS_CLASSDC | MAYBE_CS_IME;
 		wc.lpfnWndProc   = AngbandWndProc;
 		wc.cbClsExtra    = 0;
 		wc.cbWndExtra    = 4; /* one long pointer to term_data */
@@ -4415,6 +4414,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    /* "  -h              Display this help",
 					    "  -C              Compatibility mode for OLD servers",
 					    "  -F              Client FPS", */
+					    "  -I              disable IME (CJK languages)",
 					    "  -l<name> <pwd>       Login crecedentials",
 					    "  -N<name>       character name",
 					    "  -R<name>       char name, auto-reincarnate",
@@ -4430,6 +4430,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -x              don't save chat/message log on exit"));
 #endif
 					quit(NULL);
+					break;
+				case 'I':
+					MAYBE_CS_IME = 0x0;
 					break;
 				case 'l': /* account name & password */
 					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);

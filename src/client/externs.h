@@ -1075,6 +1075,8 @@ extern bool ask_for_bigmap(void);
 extern bool check_dir(cptr s);
 extern void get_screen_font_name(char *buf);
 extern bool win_dontmoveuser;
+extern s32b MAYBE_CS_IME;
+bool disable_CS_IME;
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
