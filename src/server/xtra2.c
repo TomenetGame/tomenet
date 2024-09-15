@@ -162,10 +162,6 @@
 static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 	int i,j;
 
-#if 0 /* why should this be enabled, hmm */
-	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
-		if (ge_contender_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
-#endif
 	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
 		if (ge_contender_buffer_ID[i] == 0) break;
 	if (i == MAX_CONTENDER_BUFFERS) {
@@ -175,8 +171,8 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 	s_printf("GE_CONTENDER_BUFFER: Preparing to buffer...");
 	ge_contender_buffer_ID[i] = p_ptr->account;
 
-	for (j = 0; j < MAX_GLOBAL_EVENTS; j++)
-		switch (p_ptr->global_event_type[j]) {
+	for (j = 0; j < MAX_GLOBAL_EVENTS; j++) {
+		switch (p_ptr->buffer_get[j]) {
 		case GE_HIGHLANDER:
 			if (p_ptr->global_event_progress[j][0] < 5) {
 				s_printf("bad phase...");
@@ -207,6 +203,9 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 		default:
 			break;
 		}
+		/* And clear post-death cache right away */
+		p_ptr->buffer_get[j] = 0;
+	}
 
 	s_printf("Event not found!\n");
 	ge_contender_buffer_ID[i] = 0; /* didn't find any event where player participated */
@@ -8743,6 +8742,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 			if (ge->participant[k] == p_ptr->id) {
 				ge->participant[k] = 0;
 				s_printf("%s EVENT_UNPARTICIPATE (0): '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), p_ptr->name, Ind, i, ge->title, ge->getype, k);
+				p_ptr->buffer_get[i] = p_ptr->global_event_type[i]; /* Remember his event participation for buffering any potential post-death rewards */
 				p_ptr->global_event_type[i] = 0;
 			}
 		}

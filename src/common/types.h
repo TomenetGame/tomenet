@@ -3966,6 +3966,7 @@ struct player_type {
 	int global_event_participated[MAX_GLOBAL_EVENT_TYPES];
 	bool event_participated;
 	u16b event_participated_flags, event_won_flags;
+	int buffer_get[MAX_GLOBAL_EVENTS]; /* A post-death mirror cache of global_event_type to remember player's participation for any buffered deeds/post-death rewards. */
 
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
 	   THIS IS NEW STUFF: quest_info. Don't confuse it with older quest_type/quest[]/plots[] code sketches in bldg.c. */
