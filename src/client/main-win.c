@@ -1373,6 +1373,12 @@ static void load_prefs_sound(int i) {
 #endif
 
 /*
+ * Load just the IME preferences from the .INI file, as it must be done early before Windows are initialized
+ */
+static void load_prefs_IME(void) {
+	disable_CS_IME = INI_disable_CS_IME = (GetPrivateProfileInt("Base", "DisableIME", 0, ini_file) != 0);
+}
+/*
  * Load the preferences from the .INI file
  */
 static void load_prefs(void) {
@@ -1380,7 +1386,6 @@ static void load_prefs(void) {
 
 	/* Extract the "disable_numlock" flag */
 	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0);
-	disable_CS_IME = INI_disable_CS_IME = (GetPrivateProfileInt("Base", "DisableIME", 0, ini_file) != 0);
 
 	/* Read the colormap */
 	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
@@ -2803,6 +2808,8 @@ static void init_windows(void) {
 #endif
 
 
+	/* Load .INI preferences */
+	load_prefs();
 
 
 	/* Need these before term_getsize gets called */
@@ -4300,10 +4307,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
 	/* Prepare the filepaths */
 	init_stuff();
-#if 1 /* moved here before main window initialization for CS_IME setting in INI */
-	/* Load .INI preferences */
-	load_prefs();
-#endif
+	/* Load IME settings before commandline-args (to allow -I to modify it) and before window initialization (or it won't work) */
+	load_prefs_IME();
 
 	/* Process the command line -- now before initializing the main window because of CS_IME setting via cmdline arg 'I':*/
 	for (i = 0, n = strlen(lpCmdLine); i < n; i++) {
