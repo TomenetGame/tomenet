@@ -10103,13 +10103,13 @@ static void do_cmd_options_tilesets(void) {
  #else
 			use_graphics_new = (use_graphics_new + 1) % 2;
  #endif
-			if (use_graphics_new == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart.");
+			if (use_graphics_new == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart (use CTRL+Q).");
 			else
 #else
 			use_graphics_new = !use_graphics_new;
 #endif
 			if (use_graphics_new) {
-				c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart.");
+				c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart (use CTRL+Q).");
 #if 0 /* not really needed here, if gfx_autooff_fmsw is enabled it will be applied on next login anyway, and the warning about fmsw breaking gfx is good to read so the player knows about it. */
 				if (c_cfg.gfx_autooff_fmsw) {
 					c_msg_print("Option 'font_map_solid_walls' was auto-disabled as graphics are enabled.");
@@ -10120,7 +10120,7 @@ static void do_cmd_options_tilesets(void) {
 					Send_options();
 				}
 #endif
-			} else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart.");
+			} else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart (use CTRL+Q).");
 			break;
 
 		case '=':
@@ -11375,8 +11375,8 @@ void do_cmd_options(void) {
 		else if (k == 'E') {
 			disable_CS_IME = !disable_CS_IME;
 			INI_disable_CS_IME = disable_CS_IME;
-			if (disable_CS_IME) c_msg_print("\377yIME support is now disabled. This requires a client restart.");
-			else c_msg_print("\377yIME support is now enabled. This requires a client restart.");
+			if (disable_CS_IME) c_msg_print("\377yIME support is now disabled. This requires a client restart (use CTRL+Q).");
+			else c_msg_print("\377yIME support is now enabled. This requires a client restart (use CTRL+Q).");
 		}
 #endif
 
