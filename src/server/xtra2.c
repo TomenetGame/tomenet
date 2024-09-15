@@ -168,28 +168,47 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 #endif
 	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
 		if (ge_contender_buffer_ID[i] == 0) break;
-	if (i == MAX_CONTENDER_BUFFERS) return; /* no free buffer entries anymore, sorry! */
+	if (i == MAX_CONTENDER_BUFFERS) {
+		s_printf("GE_CONTENDER_BUFFER: Out of buffers!\n");
+		return; /* no free buffer entries anymore, sorry! */
+	}
+	s_printf("GE_CONTENDER_BUFFER: Preparing to buffer...");
 	ge_contender_buffer_ID[i] = p_ptr->account;
 
 	for (j = 0; j < MAX_GLOBAL_EVENTS; j++)
 		switch (p_ptr->global_event_type[j]) {
 		case GE_HIGHLANDER:
-			if (p_ptr->global_event_progress[j][0] < 5) break; /* only rewarded if already in deathmatch phase! */
-			if (death_type == DEATH_QUIT_SUI || death_type == DEATH_QUIT_RET) break; /* no reward for suiciding! */
+			if (p_ptr->global_event_progress[j][0] < 5) {
+				s_printf("bad phase...");
+				break; /* only rewarded if already in deathmatch phase! */
+			}
+			if (death_type == DEATH_QUIT_SUI || death_type == DEATH_QUIT_RET) {
+				s_printf("bad death...");
+				break; /* no reward for suiciding! */
+			}
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
+			s_printf("GE_HIGHLANDER\n");
 			return;
 		case GE_DUNGEON_KEEPER:
-			if (p_ptr->global_event_progress[j][0] < 1) break; /* only rewarded if actually already in the labyrinth! */
-			if (death_type == DEATH_QUIT_SUI || death_type == DEATH_QUIT_RET) break; /* no reward for suiciding! */
+			if (p_ptr->global_event_progress[j][0] < 1) {
+				s_printf("bad phase...");
+				break; /* only rewarded if actually already in the labyrinth! */
+			}
+			if (death_type == DEATH_QUIT_SUI || death_type == DEATH_QUIT_RET) {
+				break; /* no reward for suiciding! */
+				s_printf("bad death...");
+			}
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
+			s_printf("GE_DUNGEON_KEEPER\n");
 			return;
 		case GE_NONE:
 		default:
 			break;
 		}
 
+	s_printf("Event not found!\n");
 	ge_contender_buffer_ID[i] = 0; /* didn't find any event where player participated */
 }
 

@@ -3488,6 +3488,7 @@ static int Handle_login(int ind) {
 			o_ptr->level = 0;
 			o_ptr->ident |= ID_MENTAL;
 			inven_carry(NumPlayers, o_ptr);
+			s_printf("GE_CONTENDER_BUFFER: '%s' got %d\n", p_ptr->name, ge_contender_buffer_deed[i]);
 			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
 		}
 	}
