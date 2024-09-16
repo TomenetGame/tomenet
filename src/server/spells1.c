@@ -10446,9 +10446,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 
 	case GF_HELLFIRE:
-		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
-		if (p_ptr->suscep_good) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_evil) dam *= 2;
+		if (p_ptr->suscep_good) dam = (dam * 3) / 4;
 		if (p_ptr->immune_fire) dam /= 2;
 		else {
 			if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
@@ -10462,28 +10461,24 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Holy Orb -- Player only takes partial damage */
 	case GF_HOLY_ORB:
-		if (p_ptr->suscep_evil) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_good) dam *= 2;
-		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
-		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
-		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
+		else if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
+		else if (p_ptr->suscep_evil || p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
 	case GF_HOLY_FIRE:
-		if (p_ptr->suscep_evil) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_good) dam *= 2;
-		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
+		else if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
+		else if (p_ptr->suscep_evil || p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (p_ptr->immune_fire) dam /= 2;
 		else {
 			if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
 			if (p_ptr->oppose_fire) dam = ((dam + 2) * 3) / 4;
 			if (p_ptr->suscep_fire && !(p_ptr->resist_fire || p_ptr->oppose_fire)) dam = ((dam + 2) * 4) / 3;
 		}
-		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
-		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
