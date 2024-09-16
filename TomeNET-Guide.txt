@@ -14244,7 +14244,8 @@ Feanorian lamp      Make you resist fear and see the invisible. Don't need to
                     be fueled.
 
 Lembas (elvish waybread)
-                    Satisifies hunger, cures poison, disease and hallucination.
+                     Satisfies your hunger, heals 5d8 hit points, cures poison,
+                     disease, confusion and lessens non-lethal cuts.
 
 Shovel
 Pick
@@ -14353,7 +14354,8 @@ Grimoire            These are magic books that may contain magic spells of any
 
 Sprig of Athelas    Eat this one to cure Black Breath (see (1.3a) for more
                     information about Black Breath),
-                    also cures poison/disease/stun/cuts.
+                    also heals for 8d8, cures poison, disease, stun, cuts,
+                    confusion and hallucinations.
 
 Tarpaulin           When equipped a tarp prevents your inventory and equipment
                     from taking water damage when crossing water fields or when
