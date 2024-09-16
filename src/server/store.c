@@ -3417,7 +3417,7 @@ void store_stole(int Ind, int item) {
 	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
 		if (p_ptr->rogue_heavyarmor) {
 			if (!p_ptr->warning_stealing_rha) {
-				msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377y' skill is currently not applied to your success chance");
+				msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377o' skill is currently not applied to your success chance");
 				msg_print(Ind, "\374\377o because your armour is too heavy, straining your flexibility and awareness.");
 				p_ptr->warning_stealing_rha = 1;
 			}
