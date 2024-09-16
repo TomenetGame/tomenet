@@ -8463,14 +8463,14 @@ extern int PlayerUID;
    Was 200+..50, but increased it to +60, for wearing Morgoth's crown + DSM
    without having to omit any other equipment slot. */
 #define rogue_heavy_armor(p_ptr) \
-	((p_ptr->pclass == CLASS_ROGUE || \
-	  (get_skill(p_ptr, SKILL_DUAL) && \
+	((p_ptr->pclass == CLASS_ROGUE \
+	 || (get_skill(p_ptr, SKILL_DUAL) && \
 	   p_ptr->inventory[INVEN_WIELD].k_idx && \
-	   p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) || \
-	   (get_skill(p_ptr, SKILL_DODGE)) || \
-	   (get_skill(p_ptr, SKILL_CRITS))) && \
-	 (armour_weight(p_ptr) > \
-	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 70)))
+	   p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) \
+	 || get_skill(p_ptr, SKILL_STEALING) \
+	 || get_skill(p_ptr, SKILL_DODGE) \
+	 || get_skill(p_ptr, SKILL_CRITS) \
+	) && (armour_weight(p_ptr) > 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 70)))
 
 /* Check for rogueish melee skills eligibility, that is Critical-Strike and Backstabbing. Note that polearms are now allowed as a specialty (experimental). */
 #define rogue_armed_melee(o_ptr, p_ptr)	(((o_ptr)->tval == TV_SWORD || (o_ptr)->tval == TV_POLEARM) && (o_ptr)->weight <= 100 && !((p_ptr)->rogue_heavyarmor))

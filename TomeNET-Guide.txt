@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 16. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4997,7 +4997,9 @@ It is possible to create your own custom fonts for the game.
 For the Windows client which uses .FON files you can use "Fony" for example:
 http://hukka.ncn.fi/?fony
 (Up to client 4.6.1a it was not possible to use characters of numbers 128-255
-but this has been addressed, so the full range of characters is available now.)
+but this has been addressed, so the full range of characters is available now.
+Up to client 4.9.2 there was a glitch that required you to shift all R-indices
+downwards by a fixed offset of 12, this has been fixed.)
 
 For the Linux client you'll need to convert the font to 'pcf' format, but 'bdf'
 might work too, depending on your system.
@@ -5265,10 +5267,14 @@ graphical font (a text font with additional, pseudo-graphical character set).
 Issues:
 -------
 As of the time of 4.9.2 release when this was written, there are still issues
-with graphical tiles, which I copy-pasted from EvgenijK's github here:
+with graphical tiles (some listed on EvgenijK's github):
 
 - interface crash and packet errors if there is only tiles for "monsters"
   (issue TomenetGame/tomenet#51)
+
+- Up to client 4.9.2 there was a glitch that required you to shift all indices
+  for 'R:' mappings downwards by a fixed offset of 12, this has been fixed.
+
 
 
 (3) Creating a character & starting to play
@@ -5309,7 +5315,7 @@ There are two keys for reincarnation displayed on each step of the character
 creation process: '%' for auto-reincarnation and '#' for reincarnation just for
 the current step of the character creation process.
 Auto-reincarnation, ie pressing '%', is like pressing '#' in every step of the
-character creation process. (There is also a command-line option '-R' for this.)
+character creation process. (There is also command-line option '-R' for this.)
 
 However, since this is your first character, just press 'N' to start the
 creation progress, enter a character name, and continue reading.
@@ -12217,14 +12223,19 @@ encumbers "your movement" accordingly.)
 Armour weight (concerning flexibility boni and abilities)
 ---------------------------------------------------------
 Some special abilities depend on armour weight (including shield) too.
-Those are..
--dodge chance from 'Dodging' skill.
--critical hit bonus from 'Critical-strike' skill.
--stabbing attacks from 'Backstabbing' skill.
--extra parry bonus from dual-wielding two weapons. (Also see (7.11).)
--extra blow/round bonus from dual-wielding two weapons.
--area searching for the 'Rogue' class (exclusive ability).
--cloaking mode for the 'Rogue' class (exclusive ability).
+Those are...
+ - any improvements from your 'Stealing' skill to...
+    - your chance to steal successfully.
+    - reducing someone else's chance to steal from you.
+    - someone else not noticing you trying to steal from them.
+    - noticing someone else trying to steal from you.
+ - dodge chance from 'Dodging' skill.
+ - critical hit bonus from 'Critical-strike' skill.
+ - stabbing attacks from 'Backstabbing' skill.
+ - extra parry bonus from dual-wielding two weapons. (Also see (7.11).)
+ - extra blow/round bonus from dual-wielding two weapons.
+ - area searching for the 'Rogue' class (exclusive ability).
+ - cloaking mode for the 'Rogue' class (exclusive ability).
 
 If the armour becomes too heavy to perform those, a message will appear:
 "The weight of your armour strains your flexibility and awareness."
@@ -17726,15 +17737,25 @@ stated.
                                 doesn't help. But if you invest a lot of points
                                 you will eventually see an improvement ;).
 
-    .Stealing                   Ability to steal items from stores.
-     (0.100, at least 1.000)    If you get caught you will be on the
-                                'blacklist of merchants' for a while, which can
-                                be from 0 up to 76 minutes, depending on the
-                                (possibly discounted) value of the item you
+    .Stealing                   Ability to steal items from stores,
+     (0.100, at least 1.000)    also helps against someone else trying to steal
+                                from you.
+
+                                This skill will not give you stealing-chance or
+                                notice-stealing benefits if your armour is so
+                                heavy that you get a flexibility warning (5.5).
+
+                                If you get caught by an NPC shopkeeper you will
+                                be on the 'blacklist of merchants' for a while,
+                                which can be from 0 up to 76 minutes, depending
+                                on the (discounts matter) value of the item you
                                 tried to steal from the shop.
                                 During this time it's impossible to steal from
                                 shops, and you will get BAD prices (quadruple,
-                                like in the blackmarket usually) in all shops.
+                                like in the blackmarket usually) in this and
+                                all other NPC shops, including those that don't
+                                sell items but just offer services.
+                                (Player stores are unaffected by this.)
 
                                 You'll also be on the 'watchlist', meaning
                                 that you can shop at normal prices as usual,

@@ -3007,14 +3007,13 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 		int chance;
 
 		chance = 40 - p_ptr->stat_ind[A_DEX];
-		chance +=
-			o_list[item].weight / (get_skill_scale(SKILL_STEALING, 19) + 1);
-		chance += get_skill_scale(SKILL_STEALING, 29) + 1;
+		chance += o_list[item].weight / (p_ptr->rogue_heavyarmor ? 1 : (get_skill_scale(p_ptr, SKILL_STEALING, 19) + 1));
+		chance += (p_ptr->rogue_heavyarmor ? 1 : get_skill_scale(p_ptr, SKILL_STEALING, 29) + 1);
 		chance -= (m_ptr->csleep) ? 10 : 0;
 		chance += m_ptr->level;
 
 		/* Failure check */
-		if (rand_int(chance) > 1 + get_skill_scale(SKILL_STEALING, 25)) {
+		if (rand_int(chance) > 1 + (p_ptr->rogue_heavyarmor ? 0 : get_skill_scale(p_ptr, SKILL_STEALING, 25))) {
 			/* Take a turn */
 			energy_use = 100;
 
@@ -3092,13 +3091,13 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 	//notice -= q_ptr->skill_fos; /* perception */
 
 	/* Hack -- Rogues get bonuses to chances */
-	if (get_skill(p_ptr, SKILL_STEALING)) {
+	if (!p_ptr->rogue_heavyarmor && get_skill(p_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);
 		notice -= get_skill_scale(p_ptr, SKILL_STEALING, 150);
 	}
 	/* Similar Hack -- Robber is hard to be robbed */
-	if (get_skill(q_ptr, SKILL_STEALING)) {
+	if (!q_ptr->rogue_heavyarmor && get_skill(q_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success -= get_skill_scale(q_ptr, SKILL_STEALING, 120);
 		notice += get_skill_scale(q_ptr, SKILL_STEALING, 120);
@@ -3255,7 +3254,9 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 			}
 
 			/* Easier to notice heavier objects */
-			notice += (forge.weight * (10 + get_skill_scale(q_ptr, SKILL_STEALING, 10))) / (10 + get_skill_scale(p_ptr, SKILL_STEALING, 10));
+			notice += (forge.weight *
+			    (10 + (q_ptr->rogue_heavyarmor ? 0 : get_skill_scale(q_ptr, SKILL_STEALING, 10)))) /
+			    (10 + (p_ptr->rogue_heavyarmor ? 0 : get_skill_scale(p_ptr, SKILL_STEALING, 10)));
 
 			/* Always small chance to be noticed */
 			if (notice < 5) notice = 5;
@@ -3565,13 +3566,13 @@ void do_cmd_steal(int Ind, int dir) {
 	//notice -= q_ptr->skill_fos; /* perception */
 
 	/* Hack -- Rogues get bonuses to chances */
-	if (get_skill(p_ptr, SKILL_STEALING)) {
+	if (!p_ptr->rogue_heavyarmor && get_skill(p_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);
 		notice -= get_skill_scale(p_ptr, SKILL_STEALING, 150);
 	}
 	/* Similar Hack -- Robber is hard to be robbed */
-	if (get_skill(q_ptr, SKILL_STEALING)) {
+	if (!q_ptr->rogue_heavyarmor && get_skill(q_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success -= get_skill_scale(q_ptr, SKILL_STEALING, 120);
 		notice += get_skill_scale(q_ptr, SKILL_STEALING, 120);
@@ -3738,7 +3739,9 @@ void do_cmd_steal(int Ind, int dir) {
 			}
 
 			/* Easier to notice heavier objects */
-			notice += (forge.weight * (10 + get_skill_scale(q_ptr, SKILL_STEALING, 10))) / (10 + get_skill_scale(p_ptr, SKILL_STEALING, 10));
+			notice += (forge.weight *
+			    (10 + (q_ptr->rogue_heavyarmor ? 0 : get_skill_scale(q_ptr, SKILL_STEALING, 10)))) /
+			    (10 + (p_ptr->rogue_heavyarmor ? 0 : get_skill_scale(p_ptr, SKILL_STEALING, 10)));
 
 			/* Always small chance to be noticed */
 			if (notice < 5) notice = 5;

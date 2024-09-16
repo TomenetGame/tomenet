@@ -3398,10 +3398,14 @@ void store_stole(int Ind, int item) {
 	tcadd = 57000 / ((10000 / tcadd) + 50);
 
 	/* Player tries to steal it */
-	chance = ((50) - p_ptr->stat_ind[A_DEX]) +
-	    ((((sell_obj.weight * amt) / 2) + tcadd) /
-	    (2 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
-	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
+	if (p_ptr->rogue_heavyarmor)
+		chance = ((50) - p_ptr->stat_ind[A_DEX]) +
+		    ((((sell_obj.weight * amt) / 2) + tcadd) / 2);
+	else
+		chance = ((50) - p_ptr->stat_ind[A_DEX]) +
+		    ((((sell_obj.weight * amt) / 2) + tcadd) /
+		    (2 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
+		    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
 
 	/* Base item price in k_info, without discount */
 	tbase = object_value_real(0, &sell_obj);
@@ -3411,7 +3415,7 @@ void store_stole(int Ind, int item) {
 	   get less attention from the shopkeeper, so you don't
 	   get blacklisted all the time for snatching some basic stuff - C. Blue */
 	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
-		if (tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
+		if (!p_ptr->rogue_heavyarmor && tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
 			chance = ((chance * (long)(tbase)) / get_skill_scale(p_ptr, SKILL_STEALING, 500));
 	} else if (!p_ptr->warning_stealing) {
 		if (p_ptr->s_info[SKILL_STEALING].mod) {
@@ -3485,7 +3489,12 @@ void store_stole(int Ind, int item) {
 #if 0 /* omit logging successful stealing of trivial items? */
 		if (chance > 10)
 #endif
-		s_printf("Stealing: %s (%d) succ. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("STEAL: %s (%d) ok %d.%d%% <%s> (%s%ld) %d,%d,%d).\n",
+		    p_ptr->name, p_ptr->lev,
+		    (int)(10000 / (chance < 10 ? 10 : chance)) / 10, (int)(10000 / (chance < 10 ? 10 : chance)) % 10,
+		    o_name, p_ptr->rogue_heavyarmor ? "H-" : "", chance,
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
 		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 			s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
 
@@ -3532,8 +3541,12 @@ void store_stole(int Ind, int item) {
 			gain_exp(Ind, 1);
 		}
 	} else {
-//s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance < 10 ? 10 : chance), chance);
-s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("STEAL: %s (%d) fail %d.%d%% <%s> (%s%ld) %d,%d,%d).\n",
+		    p_ptr->name, p_ptr->lev,
+		    (int)(10000 / (chance < 10 ? 10 : chance)) / 10, (int)(10000 / (chance < 10 ? 10 : chance)) % 10,
+		    o_name, p_ptr->rogue_heavyarmor ? "H-" : "", chance,
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The angry shopkeeper throws you out!");
@@ -3552,7 +3565,8 @@ s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->
 
 		/* Kicked out for a LONG time */
 		i = tcadd * amt * 8 + 1000;
-		/* Reduce blacklist time for very cheap stuff (value <= skill * 10): */
+		/* Reduce blacklist time for very cheap stuff (value <= skill * 10)
+		   -- this mechanism doesn't depend on rogue_heavyarmor, could rather be seen as sort of 'respect for renowned thief': */
 		if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
 			if (tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500)) {
 				/* Limits for ultra-cheap items: */
