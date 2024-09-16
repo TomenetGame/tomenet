@@ -620,7 +620,11 @@ static void store_do_command(int num, bool one) {
 			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_starid;
 			get_item_hook_find_obj_what = "Which item? "; /* Seems it's not needed, but just in case */
-
+			get_item_mode |= USE_EXTRA;
+		} else if (c_store.flags[num] & BACT_F_ID) {
+			get_item_extra_hook = get_item_hook_find_obj;
+			item_tester_hook = item_tester_hook_id;
+			get_item_hook_find_obj_what = "Which item? "; /* Seems it's not needed, but just in case */
 			get_item_mode |= USE_EXTRA;
 		}
 

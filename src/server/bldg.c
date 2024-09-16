@@ -2017,6 +2017,18 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 
 			return(FALSE);//..and to complete the Send_gold() hack, return here
 			//break;
+
+		case BACT_IDENT_ONE:
+			p_ptr->au -= bcost;
+			Send_gold(Ind, p_ptr->au, p_ptr->balance);
+
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			paid = ident_spell_aux(Ind, item);
+
+			return(FALSE);//..and to complete the Send_gold() hack, return here
+			//break;
 #if 0
 		case BACT_TOWN_HISTORY:
 #ifdef USE_SOUND_2010

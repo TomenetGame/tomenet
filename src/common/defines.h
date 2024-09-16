@@ -8895,7 +8895,6 @@ extern int PlayerUID;
 #define BACT_DEPOSIT			54
 #define BACT_WITHDRAW			55
 #define BACT_EXTEND_HOUSE		56
-
 #define BACT_CHEEZE_LIST		57
 #define BACT_DEED_ITEM			58
 #define BACT_DEED_BLESSING		59
@@ -8927,6 +8926,7 @@ extern int PlayerUID;
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 #define BACT_LIST_GUILDS		77
+#define BACT_IDENT_ONE			78
 
 
 #define BACT_F_NOTHING		0x00
@@ -8934,6 +8934,7 @@ extern int PlayerUID;
 #define BACT_F_INVENTORY	0x02
 #define BACT_F_GOLD		0x04
 #define BACT_F_STAR_ID	 	0x08
+#define BACT_F_ID	 	0x10
 #define BACT_F_HARDCODE		0x80
 
 /* Reskill flags */

@@ -9644,7 +9644,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			x2 = x1;
 			y2 = y1;
 			//i = process_dungeon_file("t_refuge.txt", wpos, &y1, &x1, 17, 25, TRUE);
+ #ifdef IDDC_REFUGE_EXTRA_STORES
+			i = process_dungeon_file("t_refuge_x.txt", wpos, &y1, &x1, dun->l_ptr->hgt - 1, dun->l_ptr->wid - 1, TRUE);
+ #else
 			i = process_dungeon_file("t_refuge.txt", wpos, &y1, &x1, dun->l_ptr->hgt - 1, dun->l_ptr->wid - 1, TRUE);
+ #endif
 			dun->l_ptr->refuge_x = x2 + 15;
 			dun->l_ptr->refuge_y = y2 + 9;
 		} else i = -99;
@@ -9918,7 +9922,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* Build hidden library if desired (good for challenge dungeons actually) - very frequent store! */
 		if (//!store_failed &&
 		    (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
-			if (!rand_int(dun_lev / 2 + 1)) build_special_store = 4;
+			if (!rand_int(dun_lev / 2 + 1))
+#ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
+				if (!in_irondeepdive(wpos))
+#endif
+				build_special_store = 4;
 			//else store_failed = TRUE; /* The rand_int() we used is way too harsh to fail all other stores after this */
 		}
 
@@ -9965,6 +9973,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* Check for building low-level store (Herbalist) - frequent store if levels are explored slowly (like in IDDC)! */
 		if ((!build_special_store) &&
 		    (!dungeon_store2_timer) && (dun_lev >= 6) && (dun_lev <= 30))
+#ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
+			if (!in_irondeepdive(wpos))
+#endif
 			build_special_store = 2;
 
 		/* if failed, we're done */

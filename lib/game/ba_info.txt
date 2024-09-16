@@ -23,6 +23,8 @@
 # 1 = Specify store inventory
 # 2 = Specify player inventory/equipment
 # 4 = Specify gold
+# 8 = Only allow items that aren't *identified* yet
+# 16 = Only allow items that aren't identified yet
 # 128 = Hardcoded in client
 
 # Version stamp (required)
@@ -389,3 +391,7 @@ I:76:0:o:0
 N:83:List of Guilds
 C:0:0:0
 I:77:0:G:0
+
+N:84:Scrutinize item
+C:50:60:40
+I:78:0:r:18
