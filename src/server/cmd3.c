@@ -3012,6 +3012,12 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 		chance -= (m_ptr->csleep) ? 10 : 0;
 		chance += m_ptr->level;
 
+		if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1 && p_ptr->rogue_heavyarmor && !p_ptr->warning_stealing_rha) {
+			msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377y' skill is currently not applied to your success chance");
+			msg_print(Ind, "\374\377o because your armour is too heavy, straining your flexibility and awareness.");
+			p_ptr->warning_stealing_rha = 1;
+		}
+
 		/* Failure check */
 		if (rand_int(chance) > 1 + (p_ptr->rogue_heavyarmor ? 0 : get_skill_scale(p_ptr, SKILL_STEALING, 25))) {
 			/* Take a turn */
@@ -3564,6 +3570,12 @@ void do_cmd_steal(int Ind, int dir) {
 	notice -= 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
 
 	//notice -= q_ptr->skill_fos; /* perception */
+
+	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1 && p_ptr->rogue_heavyarmor && !p_ptr->warning_stealing_rha) {
+		msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377y' skill is currently not applied to your success chance");
+		msg_print(Ind, "\374\377o because your armour is too heavy, straining your flexibility and awareness.");
+		p_ptr->warning_stealing_rha = 1;
+	}
 
 	/* Hack -- Rogues get bonuses to chances */
 	if (!p_ptr->rogue_heavyarmor && get_skill(p_ptr, SKILL_STEALING)) {

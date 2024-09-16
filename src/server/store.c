@@ -3415,7 +3415,13 @@ void store_stole(int Ind, int item) {
 	   get less attention from the shopkeeper, so you don't
 	   get blacklisted all the time for snatching some basic stuff - C. Blue */
 	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
-		if (!p_ptr->rogue_heavyarmor && tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
+		if (p_ptr->rogue_heavyarmor) {
+			if (!p_ptr->warning_stealing_rha) {
+				msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377y' skill is currently not applied to your success chance");
+				msg_print(Ind, "\374\377o because your armour is too heavy, straining your flexibility and awareness.");
+				p_ptr->warning_stealing_rha = 1;
+			}
+		} else if (tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
 			chance = ((chance * (long)(tbase)) / get_skill_scale(p_ptr, SKILL_STEALING, 500));
 	} else if (!p_ptr->warning_stealing) {
 		if (p_ptr->s_info[SKILL_STEALING].mod) {

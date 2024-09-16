@@ -4138,7 +4138,7 @@ struct player_type {
 	char warning_repair, warning_partyexp, warning_wor2, warning_depth; //repair weapon/armour, no xp sharing, wor INTO dun (display at -50 BD when char is hilev), low/no exp on grey/yellow
 	char warning_blastcharge, warning_status_blindness, warning_status_confusion, warning_status_stun;
 	//not for now, unnecessary spam: , warning_xpdrained, 10% gain while drained
-	char warning_sellunid, warning_edmt, warning_stealing;
+	char warning_sellunid, warning_edmt, warning_stealing, warning_stealing_rha;
 	char warning_powins, warning_drop_town, warning_subinven, warning_limitbottles, warning_ingredients, warning_id;
 	char warning_sanity;
 	char warning_secret_area;

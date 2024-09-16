@@ -3004,7 +3004,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_status_blindness = p_ptr->warning_status_confusion = p_ptr->warning_status_stun = 1;
 		p_ptr->warning_sellunid = 1;
 		p_ptr->warning_edmt = 1;
-		p_ptr->warning_stealing = 1;
+		p_ptr->warning_stealing = p_ptr->warning_stealing_rha = 1;
 		p_ptr->warning_powins = 1;
 		p_ptr->warning_drop_town = 1;
 		p_ptr->warning_subinven = 1;
@@ -3222,7 +3222,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	if (p_ptr->max_plv > 40) {
 		p_ptr->warning_status_stun = 1;
 		//p_ptr->warning_sellunid = 1;
-		p_ptr->warning_stealing = 1;
+		p_ptr->warning_stealing = p_ptr->warning_stealing_rha = 1;
 		p_ptr->warning_limitbottles = 1;
 	}
 }
