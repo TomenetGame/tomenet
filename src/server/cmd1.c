@@ -1923,22 +1923,22 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 			/* Count party members on the same floor with us */
 			for (i = 1; i <= NumPlayers; i++) {
+				if (i == Ind) continue; /* skip ourself */
 				q_ptr = Players[i];
 				if (q_ptr->conn == NOT_CONNECTED) continue;
-				if (is_admin(q_ptr)) continue;
-				if (!player_in_party(p_ptr->party, i)) continue;
+				if (is_admin(p_ptr) != is_admin(q_ptr)) continue;
+				if (!player_in_party(q_ptr->party, i)) continue;
 				if (!inarea(&q_ptr->wpos, wpos)) continue;
 
 				/* Create map for efficiency */
 				PInd[p] = i;
 				p++;
 			}
-
 			/* Found any other party members here? Otherwise we're out of here and continue normally. */
 			if (p) {
 				/* Paranoia-check on everyone else, rough 'worst case' estimate again. */
 				for (i = 0; i < p; i++)
-					if (PY_MAX_GOLD - amount / 2 >= Players[PInd[i]]->au) {
+					if (PY_MAX_GOLD - amount / 2 < Players[PInd[i]]->au) {
 						/* Remove this player from the list to share with */
 						PInd[i] = PInd[p - 1];
 						PInd[p - 1] = 0;
@@ -1953,13 +1953,22 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					   (eg 8 Au and 3 players -> +4 (us) +2 +2): */
 					amount -= amount_dist * p;
 					/* Distribute */
-					for (i = 0; i < p; i++)
+					for (i = 0; i < p; i++) {
 						(void)gain_au(PInd[i], amount_dist, FALSE, TRUE);
+ #if 1 /* hm, spammy? */
+						msg_format(PInd[i], "You have gained a share of %d gold pieces worth of %s.", amount_dist, o_name);
+ #endif
+ #ifdef USE_SOUND_2010
+						sound(PInd[i], "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
+						Players[PInd[i]]->window |= (PW_PLAYER);
+						/* Reduce the gold object accordingly! */
+						o_ptr->pval -= amount_dist;
+					}
 				}
 			}
 		}
 #endif
-
 		/* Collect the gold */
 		if (!gain_au(Ind, amount, FALSE, p_ptr->id == o_ptr->owner)) return;
 
