@@ -2203,7 +2203,11 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	}
 
 	/* -- stats -- */
+#if 1 /* Show stats in 'redux' mode too? */
+	if (TRUE) {
+#else
 	if (!redux) {
+#endif
 		int amt = o_ptr->bpval + o_ptr->pval;
 
 		tmpf1 = f1 & TR1_ATTR_MASK;
