@@ -341,10 +341,10 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 	object_type *o_ptr;
 	//cave_type *c_ptr;
 
-	s16b  x1;
-	s16b  y1;
+	s16b x1, y1;
 
 	int tries = 1000;
+
 
 	/* Paranoia */
 	cave_type **zcave;
@@ -411,13 +411,14 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, s16b dd, s16b ds, s16b pdam, cptr name) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, forge;
-	s16b        i, dam, k_idx = lookup_kind(tval, sval);
-	char        i_name[ONAME_LEN];
+	s16b i, dam, k_idx = lookup_kind(tval, sval);
+	char i_name[ONAME_LEN];
 #ifndef NEW_DODGING
-	int	dodge = p_ptr->dodge_level - (dd * ds) / 2;
+	int dodge = p_ptr->dodge_level - (dd * ds) / 2;
 #else
-	int	dodge = apply_dodge_chance(Ind, 1 + dd * ds / 3 + 1000); /* dd,ds currently goes up to 12,16. 1000 is a hack. */
+	int dodge = apply_dodge_chance(Ind, 1 + dd * ds / 3 + 1000); /* dd,ds currently goes up to 12,16. 1000 is a hack. */
 #endif
+
 	o_ptr = &forge;
 	invcopy(o_ptr, k_idx);
 	o_ptr->number = num;
@@ -531,7 +532,7 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	my_ds = t_ptr->ds;
 
 	/* these traps gets nastier as levels progress */
-	if (getlevel(&p_ptr->wpos)> (2* t_ptr->minlevel)) {
+	if (getlevel(&p_ptr->wpos) > (2 * t_ptr->minlevel)) {
 		my_dd += (getlevel(&p_ptr->wpos) / 15);
 		my_ds += (getlevel(&p_ptr->wpos) / 15);
 	}
@@ -577,6 +578,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 	/* Paranoia */
 	cave_type **zcave;
+
 
 	if (!in_bounds(y, x)) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
