@@ -2523,6 +2523,41 @@ errr Term_fresh(void) {
 		Term->total_erase = FALSE;
 	}
 
+	/* Handle "total redraw" -
+	   I added this for flicker-free Term_redraw() for palette daylight animation wih
+	   use_graphics, where the flickering of total_erase would be visually bad. - C. Blue */
+	if (Term->total_redraw) {
+		byte a = Term->attr_blank;
+		char32_t c = Term->char_blank;
+
+		/* Hack -- clear all "cursor" data XXX XXX XXX */
+		old->cv = old->cu = FALSE;
+		old->cx = old->cy = 0;
+
+		/* Wipe the content arrays */
+#ifdef GRAPHICS_BG_MASK
+		memset(old->va, a, w * h);
+		memset(old_back->va, a, w * h);
+		for (int i = 0; i < w * h; i++) old->vc[i] = old_back->vc[i] = c;
+#else
+		memset(old->va, a, w * h);
+		for (int i = 0; i < w * h; i++) old->vc[i] = c;
+#endif
+
+		/* Redraw every column */
+		for (int i = 0; i < h; i++) {
+			Term->x1[i] = 0;
+			Term->x2[i] = w - 1;
+		}
+
+		/* Redraw every row */
+		Term->y1 = 0;
+		Term->y2 = h - 1;
+
+		/* Forget "total erase" */
+		Term->total_redraw = FALSE;
+	}
+
 
 	/* Something to update */
 	if (Term->y1 <= Term->y2) {
@@ -3201,6 +3236,16 @@ errr Term_clear(void) {
 errr Term_redraw(void) {
 	/* Force "total erase" */
 	Term->total_erase = TRUE;
+
+	/* Hack -- Refresh */
+	Term_fresh();
+
+	/* Success */
+	return(0);
+}
+errr Term_redraw_keep(void) {
+	/* Force "total erase" */
+	Term->total_redraw = TRUE;
 
 	/* Hack -- Refresh */
 	Term_fresh();

@@ -2178,7 +2178,7 @@ static errr Term_xtra_win_delay(int v) {
 
 #ifdef OPTIMIZE_DRAWING
 /*
- * This is where we free the DC we've been using.
+ * This is where we free the DC we've been using.  -- note: 'v' is unused.
  */
 static errr Term_xtra_win_fresh(int v) {
 	term_data *td = (term_data*)(Term->data);
@@ -4888,8 +4888,12 @@ void set_palette(byte c, byte r, byte g, byte b) {
  #if 0 /* no flickering here when animating colours 0..15, even though set_palette() flickers. Maybe because of colours 16-31 for some reason? */
 		Term_redraw();
  #else /* trying this instead, should be identical ie no flickering, as it's the minimal possible version simply */
-		if (c == 128) Term_redraw(); /* Hack: We really need instant refresh (for animated_lightning effect) */
-		else Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
+		/* Problem with use_graphics:
+		   TERM_XTRA_FRESH doesn't redraw, so daylighting palette animation has no effect (animate_lightning works as it uses c128);
+		   Term_redraw() works fine, but flickers once per call.
+		   Solution: I added a new function Term_redraw_keep() which redraws without erasing first. - C. Blue
+		   This also makes the distinction between c127 and c128 for two different redraw-techniques obsolete. */
+		Term_redraw_keep();
  #endif
 		/* Restore */
 		Term_activate(term_old);

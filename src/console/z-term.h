@@ -136,6 +136,7 @@ struct term
 	bool active_flag;
 	bool mapped_flag;
 	bool total_erase;
+	bool total_redraw;
 	bool icky_corner;
 	bool soft_cursor;
 	bool always_pict;

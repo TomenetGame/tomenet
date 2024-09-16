@@ -4213,7 +4213,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		/* Ensure redrawal doesn't get cancelled by tile-caching */
 		invalidate_graphics_cache_x11(term_idx_to_term_data(0));
  #endif
-		Term_redraw_section(0, 0, Term->wid - 1, Term->hgt - 1);
+		Term_redraw_keep(); //flicker-free redraw - C. Blue
 		Term_activate(&old_td->t);
 		return;
 	}

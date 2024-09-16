@@ -151,6 +151,7 @@ struct term {
 	bool active_flag;
 	bool mapped_flag;
 	bool total_erase;
+	bool total_redraw;
 	bool icky_corner;
 	bool soft_cursor;
 	bool always_pict;
@@ -268,6 +269,7 @@ extern errr Term_putstr(int x, int y, int n, byte a, char *s);
 extern errr Term_erase(int x, int y, int n);
 extern errr Term_clear(void);
 extern errr Term_redraw(void);
+extern errr Term_redraw_keep(void);
 extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
 
 extern errr Term_get_cursor(int *v);
