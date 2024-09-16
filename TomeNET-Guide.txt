@@ -13971,6 +13971,11 @@ Wilderness Mapping
                 Maps the wilderness area around the worldmap sector you
                 are currently within. These scrolls also sometimes carry
                 an inscription telling the location of a hidden dungeon.
+                If you discover a dungeon's location this way, you must still
+                go there in person and find the entrance staircase (get it
+                into unobstructed line-of-sight of your character) for it to
+                register! Only then it will be officially 'known', to you and
+                server-wide (in the Mathom House).
 
 Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 dungeon or tower within your current sector.
