@@ -2407,6 +2407,8 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
+/* NOTE: Currently this code has no effect as Windows clients don't have/use a tile cache/TILE_CACHE_SIZE,
+   it is merely here to potentially mirror the cache-invalidation-code in main-x11.c for hypothetical future changes. */
 #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
 static void invalidate_graphics_cache_win(term_data *td) {
 	int i;
