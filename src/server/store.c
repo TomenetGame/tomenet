@@ -3553,17 +3553,6 @@ void store_stole(int Ind, int item) {
 		    o_name, p_ptr->rogue_heavyarmor ? "H-" : "", chance,
 		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
-		/* Complain */
-		// say_comment_4();
-		msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The angry shopkeeper throws you out!");
-		msg_print(Ind, "\377rNow you'll be on the black list of merchants for a while..");
-		msg_print_near(Ind, "You hear loud shouting..");
-		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the store!", p_ptr->name);
-
-#ifdef USE_SOUND_2010
-		sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND, TRUE);
-#endif
-
 		/* Reset insults */
 		st_ptr->insult_cur = 0;
 		st_ptr->good_buy = 0;
@@ -3615,6 +3604,28 @@ void store_stole(int Ind, int item) {
 		st_ptr->tim_watch += i / 20;
 		if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
 		st_ptr->last_theft = turn;
+#endif
+
+		/* Complain */
+		// say_comment_4();
+		if (p_ptr->tim_blacklist >= 4800)
+			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The shopkeeper looks at you murderously and throws you out!");
+		else if (p_ptr->tim_blacklist >= 2400)
+			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The shopkeeper gazes angrily and throws you out!");
+		else if (p_ptr->tim_blacklist >= 1200)
+			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The shopkeeper grimaces suspiciously and throws you out!");
+		else if (p_ptr->tim_blacklist >= 600)
+			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The shopkeeper regards you disapprovingly and throws you out!");
+		else if (p_ptr->tim_blacklist)
+			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The shopkeeper glances at you coldly and throws you out!");
+		else if (p_ptr->tim_watchlist)
+			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The angry shopkeeper throws you out!");
+		msg_print(Ind, "\377rNow you'll be on the black list of merchants for a while..");
+		msg_print_near(Ind, "You hear loud shouting..");
+		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the store!", p_ptr->name);
+
+#ifdef USE_SOUND_2010
+		sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 		/* Of course :) */
@@ -4926,16 +4937,16 @@ void do_cmd_store(int Ind) {
 		}
 	}
 
-	if (p_ptr->tim_blacklist >= 4800)//7200
+	if (p_ptr->tim_blacklist >= 4800)
 		msg_print(Ind, "As you enter, the owner gives you a murderous look.");
-	else if (p_ptr->tim_blacklist >= 2400)//4800
+	else if (p_ptr->tim_blacklist >= 2400)
 		msg_print(Ind, "As you enter, the owner gazes at you angrily.");
-	else if (p_ptr->tim_blacklist >= 1200)//3000
+	else if (p_ptr->tim_blacklist >= 1200)
 		msg_print(Ind, "As you enter, the owner eyes you suspiciously.");
-	else if (p_ptr->tim_blacklist >= 600)//1200
+	else if (p_ptr->tim_blacklist >= 600)
 		msg_print(Ind, "As you enter, the owner looks at you disapprovingly.");
 	else if (p_ptr->tim_blacklist)
-		msg_print(Ind, "As you enter, the owner gives you a cool glance.");
+		msg_print(Ind, "As you enter, the owner gives you a cold glance.");
 	else if (p_ptr->tim_watchlist)
 		msg_print(Ind, "The owner keeps a sharp eye on you.");
 	else if (st_ptr->tim_watch)

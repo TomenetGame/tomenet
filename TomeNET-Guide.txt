@@ -17795,7 +17795,7 @@ stated.
                                 gazes at you angrily          <40 min.
                                 eyes you suspiciously         <20 min.
                                 looks at you disapprovingly   <10 min.
-                                gives you a cool glance       < 5 min.
+                                gives you a cold glance       < 5 min.
 
                                 After your blacklist ran out, if you're still
                                 on the watchlist you get this message:
