@@ -8781,7 +8781,7 @@ static void process_global_event(int ge_id) {
 							if (Players[i]->id != ge->participant[j]) continue;
 #ifdef DM_MODULES
 							// Kurzel - debug - Elmoth false starts
-							s_printf("DM_MODULES: Players[i]->name = %s, ge->participant[%d] = %d, Players[i]->id = %d.\n", Players[i]->name, j, ge->participant[j], Players[i]->id);
+							s_printf("GE_PARTICIPANT_OK: Players[i]->name = %s, ge->participant[%d] = %d, Players[i]->id = %d.\n", Players[i]->name, j, ge->participant[j], Players[i]->id);
 #endif
 							Players[i]->global_event_participated[ge->getype]++;
 							/* play warning sfx in case they were afk waiting for it to begin? ;) */
