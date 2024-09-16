@@ -10067,11 +10067,13 @@ static void do_cmd_options_tilesets(void) {
 				Term_putstr(5, 13, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
 				Term_putstr(5, 14, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
 		}
+#if 0/* _GRAPHICS_PALETTE_HACK etc -- fixed->deprecated now? */
 		if (c_cfg.palette_animation && !c_cfg.disable_lightning) {
 				Term_putstr(2, 16, -1, TERM_WHITE, "\377oNote that with graphics enabled the overworld full-screen lightning weather");
 				Term_putstr(2, 17, -1, TERM_WHITE, "\377oanimation can cause a slowdown that can even last several seconds on slow");
 				Term_putstr(2, 18, -1, TERM_WHITE, "\377osystems. If it looks too slow, enable the option '\377ydisable_lightning\377o' in = 1.");
 		}
+#endif
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -12681,28 +12683,6 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (playing) Send_screen_dimensions();
 	} else
  #endif
-#endif
-#if defined(USE_X11) && defined(X11_GRAPHICS_PALETTE_HACK)
-	if (!strcmp(ANGBAND_SYS, "x11") && use_graphics) {
-		/* Hack for now: Palette animation bugs out on graphics: First palette values received on first login will persist forever.  */
-		if (option_info[i].o_var == &c_cfg.palette_animation) {
-			if (playing) c_msg_print("\377yOption 'palette_animation' currently unusable on X11 if graphics are enabled."); //playing: otherwise 4x spam on login, like this only 1x
-			c_cfg.palette_animation = FALSE;
-			(*option_info[i].o_var) = FALSE;
-			Client_setup.options[i] = FALSE;
-		}
-	}
-#endif
-#if defined(WINDOWS) && defined(WIN_GRAPHICS_PALETTE_HACK)
-	if (use_graphics) {
-		/* Hack for now: Palette animation bugs out on graphics: Palette will not update daylightning properly until manually refreshed or a lightning-weather animation occurs.  */
-		if (option_info[i].o_var == &c_cfg.palette_animation) {
-			if (playing) c_msg_print("\377yOption 'palette_animation' currently unusable on X11 if graphics are enabled."); //playing: otherwise 4x spam on login, like this only 1x
-			c_cfg.palette_animation = FALSE;
-			(*option_info[i].o_var) = FALSE;
-			Client_setup.options[i] = FALSE;
-		}
-	}
 #endif
 #ifndef GLOBAL_BIG_MAP
 	/* Not yet. First, process all the option files before doing this */

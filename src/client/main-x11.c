@@ -3505,13 +3505,6 @@ errr init_x11(void) {
 				}
 			}
 		}
-
- #if defined(USE_X11) && defined(X11_GRAPHICS_PALETTE_HACK)
-		/* Hack for now: Palette animation bugs out on graphics: First palette values received on first login will persist forever.  */
-		c_cfg.palette_animation = FALSE;
-		(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
-		Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
- #endif
 	}
 #endif /* USE_GRAPHICS */
 
