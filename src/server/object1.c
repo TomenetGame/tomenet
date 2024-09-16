@@ -2629,6 +2629,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 						*t++ = 'd';
 						*t++ = 'e';
 					}
+
+					/* Sindarin -- Lembas -> Lembais */
+					else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_WAYBREAD) {
+						t--;
+						*t++ = 'i';
+					}
+
 					/* Cutlass-es */
 					else *t++ = 'e';
 				}
