@@ -7114,11 +7114,22 @@ void view_exploration_history(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff, "\377U  ~ List of all known dungeons which adventurers have discovered in the past ~  \n");
+	fprintf(fff, "\377U  ~ List of all known towns and dungeons discovered by adventurers up to now ~  \n");
 	fprintf(fff, "\377U      To discover a dungeon, somebody has to spot its entrance staircase.       \n");
 	fprintf(fff, "\377U        Dungeon bosses you have slain are listed in light umber colour.         \n\n");
 
+	/* Towns. This list can never be empty as players start in Bree, the first town, and thereby auto-discover it. */
+	fprintf(fff, " \377U = Towns =\n\n");
+	for (i = 0; i < numtowns; i++) {
+		fprintf(fff, " \377u%-31s  (%2d,%2d)\n",
+		    town_profile[town[i].type].name,
+		    town[i].x, town[i].y);
+	}
+	fprintf(fff, "\n");
+
 	/* output the actual list */
+	none = TRUE;
+	fprintf(fff, " \377U = Dungeons =\n\n");
 	for (i = 1; i <= dungeon_id_max; i++) {
 		/* only show those dungeons that have been discovered */
 		if (dungeon_tower[i]) d_ptr = wild_info[dungeon_y[i]][dungeon_x[i]].tower;

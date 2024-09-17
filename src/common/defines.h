@@ -8965,6 +8965,10 @@ extern int PlayerUID;
 #define TOWN_DUNGEON	4               /* Maximun number of towns per dungeon */
 #define TOWN_CHANCE	50              /* Chance of 1 town */
 
+/* Town flags (u16b, these always existed but were unused until 2024-09-17,
+   where I added the discovery-knowledge for the exploration_history - C. Blue */
+#define TF_KNOWN	0x0001
+
 /* Limit terraforming in towns, to preserve intended layout somewhat?
  *  0 = not allowed to change
  *  32000 = no limit
@@ -8979,7 +8983,7 @@ extern int PlayerUID;
 #define TOWN_TERRAFORM_GLYPHS	100	/* provide some safety for beginners, in Bree */
 
 /*
- * Defines of the different dungeon types
+ * Defines of the different dungeon types -- UNUSED
  */
 #define DUNGEON_WILDERNESS	0
 #define DUNGEON_MIRKWOOD	1

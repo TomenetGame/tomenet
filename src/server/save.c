@@ -3052,6 +3052,7 @@ bool save_server_info() {
 
 void wr_towns() {
 	int i, j;
+
 	wr_u16b(numtowns);
 	for (i = 0; i < numtowns; i++) {
 		wr_u16b(town[i].x);

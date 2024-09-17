@@ -6826,6 +6826,8 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		for (i = 0; i < numtowns; i++) {
 			if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 				desc = town_profile[town[i].type].name;
+				/* Hack: 'Discover' the town, for Mathom's House's exploration history */
+				if (!is_admin(p_ptr)) town[i].flags |= TF_KNOWN; // we do allow p_ptr->ghost, same as for d_ptr->known stuff
 				break;
 			}
 		}
