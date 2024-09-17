@@ -8313,6 +8313,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
 				return;
 			}
+			else if (prefix(messagelc, "/forgettown")) {
+				if (tk < 1 || k < 0 || k >= numtowns) {
+					msg_print(Ind, "Usage: /forgettown <basic town index [0..4]>");
+					return;
+				}
+				town[k].flags &= ~TF_KNOWN;
+				msg_format(Ind, "\377GTown '%s' is know unknown.", town_profile[town[k].type].name);
+				return;
+			}
+			else if (prefix(messagelc, "/knowtown")) {
+				if (tk < 1 || k < 0 || k >= numtowns) {
+					msg_print(Ind, "Usage: /knowtown <basic town index [0..4]>");
+					return;
+				}
+				town[k].flags |= TF_KNOWN;
+				msg_format(Ind, "\377GTown '%s' is know known.", town_profile[town[k].type].name);
+				return;
+			}
 			/* Find a particular feat anywhere on the world surface */
 			else if (prefix(messagelc, "/wlocfeat")) {
 				int wx, wy, x, y, found = 0;
