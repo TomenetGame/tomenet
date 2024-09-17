@@ -6827,7 +6827,16 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 			if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 				desc = town_profile[town[i].type].name;
 				/* Hack: 'Discover' the town, for Mathom's House's exploration history */
-				if (!is_admin(p_ptr)) town[i].flags |= TF_KNOWN; // we do allow p_ptr->ghost, same as for d_ptr->known stuff
+				if (!(town[i].flags & TF_KNOWN) && !is_admin(p_ptr)) {
+					town[i].flags |= TF_KNOWN; // we do allow p_ptr->ghost, same as for d_ptr->known stuff
+					/* Make a fuzz */
+					s_printf("(%s) TOWNFOUND: Player %s (%s) discovered town '%s' (%d) at (%d,%d).\n",
+					    showtime(), p_ptr->name, p_ptr->accountname, town_profile[town[i].type].name, i, town[i].x, town[i].y);
+					msg_format(Ind, "\377yYou discovered a new town, '\377U%s\377y', that nobody before you has found so far!", town_profile[town[i].type].name);
+					/* Announce it to publicly */
+					l_printf("%s \\{B%s discovered a town: %s\n", showdate(), p_ptr->name, town_profile[town[i].type].name);
+					msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a town: '%s'! \377i***", p_ptr->name, town_profile[town[i].type].name);
+				}
 				break;
 			}
 		}
