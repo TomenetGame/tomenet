@@ -13277,6 +13277,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
+			else if (prefix(messagelc, "/turnspeed")) { /* Manipulate turn counter to count up in larger steps than one. Dangerous. */
+				/* For values != 1 (normal operation) consider using '3' instead of '2' so 'turn' can become both
+				   even and odd while progressing, which may be important for certain modulo-based checks. */
+				if (!tk) k = 1;
+				turn_plus = k;
+				if (k == 1) msg_print(Ind, "Turns are increasing by \377G1\377w at a time now (\377GNormal operation\377w).");
+				else if (k == 0) msg_print(Ind, "Turns are \377ofrozen\377w.");
+				else if (k < 0) msg_format(Ind, "Turns are decreasing by \377r%d\377y at a time now (\377rHazardous\377w).", -k);
+				else msg_format(Ind, "Turns are increasing by \377y%d\377y at a time now (\377yPotentially Hazardous\377w).", k);
+				return;
+			}
 			else if (prefix(messagelc, "/setaorder")) { /* Set custom list position for this character in the account overview screen on login (see /setorder)*/
 				set_player_order(p_ptr->id, k);
 				return;

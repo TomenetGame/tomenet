@@ -10064,7 +10064,7 @@ void dungeon(void) {
 
 
 	///*** BEGIN NEW TURN ***///
-	turn++;
+	turn += turn_plus;
 
 	/* Check for overflow - mikaelh */
 #if 0 /* avoid doing this last-minute, since some calcs will already be off */
