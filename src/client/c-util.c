@@ -11092,7 +11092,7 @@ void do_cmd_options(void) {
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
 		if (strcmp(ANGBAND_SYS, "gcu")) {
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377oT\377w)       Save current window positions and size to current config file");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377oT\377w)       Save current window, positions and sizes to current config file");
 
 #ifdef WINDOWS
 			Term_putstr(2, l++, -1, TERM_SLATE, format("          (Filename: %s)", ini_file));
@@ -11102,11 +11102,11 @@ void do_cmd_options(void) {
 			l++; //paranoia
 #endif
 		} else {
-			Term_putstr(2, l++, -1, TERM_L_DARK, "(\377oT\377D)       Save current window positions and size - NOT AVAILABLE ON GCU");
+			Term_putstr(2, l++, -1, TERM_L_DARK, "(\377oT\377D)       Save current windows, positions and sizes - NOT AVAILABLE ON GCU");
 			l++;
 		}
 
-		Term_putstr(2, l++, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
+		Term_putstr(2, l++, -1, TERM_L_DARK, "-----------------------------------------------------------------------------");
 
 		Term_putstr(2, l++, -1, TERM_SLATE, "The following settings are mostly saved automatically on quitting via CTRL+Q:");
 		l++;
