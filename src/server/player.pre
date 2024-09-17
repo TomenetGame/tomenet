@@ -156,8 +156,7 @@ struct inventory_change_type {
 	inventory_change_type *next;
 };
 
-struct player_type
-{
+struct player_type {
 	int conn;		/* Connection number */
 	int Ind;
 	const char *name;	/* Nickname */
@@ -173,6 +172,7 @@ struct player_type
 	bool v_test;
 	bool v_test_latest;
 	bool v_unknown;
+	bool rogue_like_commands;
 
 	s32b id;		/* Unique ID to each player */
 	u32b account;		/* account group id */
