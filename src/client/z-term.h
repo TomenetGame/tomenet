@@ -181,11 +181,13 @@ struct term {
 	term_win *scr;
 	//term_win *tmp;
 	term_win *mem[MAX_ICKY_SCREENS];
+	term_win *old_mem[MAX_ICKY_SCREENS]; //for Term_switch_fully(), dysfunctional
 #ifdef GRAPHICS_BG_MASK
 	term_win *old_back;
 	term_win *scr_back;
 	//term_win *tmp_back;
 	term_win *mem_back[MAX_ICKY_SCREENS];
+	term_win *old_mem_back[MAX_ICKY_SCREENS]; //for Term_switch_fully(), dysfunctional
 #endif
 
 	void (*init_hook)(term *t);
@@ -291,6 +293,7 @@ extern errr Term_save(void);
 extern errr Term_load(void);
 extern errr Term_restore(void);
 extern errr Term_switch(int screen);
+extern errr Term_switch_fully(int screen);
 
 extern errr Term_resize(int w, int h);
 

@@ -3920,6 +3920,49 @@ errr Term_switch(int screen) {
 	return(0);
 }
 
+/* Since we don't completely erase in Term_redraw_keep(), but actually flush a screen
+   that is switched out, we'd potentially get garbage visuals in between, because
+   scr and old no longer fit togeter (scr is being switched, but term-switching doesn't touch old,
+   instead Term_load() will simply mark everything as 'changed' to fully redraw, discarding the
+   (invalid) old to solve the issue. Clean solution: Keep track of a new old_mem/old_mem_back that
+   correctly term-switches together with its scr/scr_back, via new Term_switch_fully().
+   Or much easier workaround: Just don't refresh palette stuff while we're not in screen 0.
+   Drawback of this: If the icky window isn't fullscreen but just partial screen, you can notice
+   that in the background the palette doesn't update as it'd be supposed to do, pft. - C. Blue */
+/* For palette animation: Switch actual scr but also the old-scr! - C. Blue
+   This is required if we want to flush the result of the drawing process too, instead of just drawing to the scr.
+   Added this for Term_fresh_keep(), which is called within a term-switch, to apply palette animation to a background layer.
+   HOWEVER: Currently NOT in a working state, will crash with NULL pointer, because the current code doesn't cleanly handle
+   the scr+old connection everywhere. This is a piece of work, so instead for now we use the simple workaround to just not
+   update palette animations in set_palette() while the screen is icky. */
+errr Term_switch_fully(int screen) {
+	term_win *tmp;
+
+	/* Not in memory */
+	if (screen > screen_icky) return(1);
+
+	tmp = Term->scr;
+	Term->scr = Term->mem[screen];
+	Term->mem[screen] = tmp;
+
+	tmp = Term->old;
+	Term->old = Term->old_mem[screen];
+	Term->old_mem[screen] = tmp;
+
+#ifdef GRAPHICS_BG_MASK
+	tmp = Term->scr_back;
+	Term->scr_back = Term->mem_back[screen];
+	Term->mem_back[screen] = tmp;
+
+	tmp = Term->old_back;
+	Term->old_back = Term->old_mem_back[screen];
+	Term->old_mem_back[screen] = tmp;
+#endif
+
+	/* Success */
+	return(0);
+}
+
 
 
 /*

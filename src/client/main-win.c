@@ -4869,6 +4869,16 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		new_palette();
  #endif
 
+		/* Workaround to fix garbage visuals, see comment at Term_switch_fully(). */
+		if (screen_icky) {
+ #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+			/* After icky-screen will be left later on:
+			   Ensure redrawal doesn't get cancelled by tile-caching */
+			invalidate_graphics_cache_win(td);
+ #endif
+			return; /* not in screen 0? No need to redraw right now. */
+		}
+
 		/* Refresh aka redraw main window with new colour */
 		td = &data[0];
 		/* Activate */
@@ -4878,16 +4888,14 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		invalidate_graphics_cache_win(td);
  #endif
 		/* Redraw the contents */
- #if 0 /* no flickering here when animating colours 0..15, even though set_palette() flickers. Maybe because of colours 16-31 for some reason? */
-		Term_redraw();
- #else /* trying this instead, should be identical ie no flickering, as it's the minimal possible version simply */
 		/* Problem with use_graphics:
 		   TERM_XTRA_FRESH doesn't redraw, so daylighting palette animation has no effect (animate_lightning works as it uses c128);
 		   Term_redraw() works fine, but flickers once per call.
 		   Solution: I added a new function Term_redraw_keep() which redraws without erasing first. - C. Blue
 		   This also makes the distinction between c127 and c128 for two different redraw-techniques obsolete. */
+//WiP, not functional		if (screen_icky) Term_switch_fully(0);
 		Term_redraw_keep();
- #endif
+//WiP, not functional		if (screen_icky) Term_switch_fully(0);
 		/* Restore */
 		Term_activate(term_old);
 		return;
