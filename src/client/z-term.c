@@ -1838,7 +1838,7 @@ static void Term_fresh_row_text_text(int y) {
 	/* The "new" data */
 	int na;
 #ifndef DRAW_LARGER_CHUNKS
-	int nc;
+	char32_t nc;
 #else
 	int i;
 #endif
@@ -2345,7 +2345,158 @@ static void Term_fresh_row_pict(int y) {
 	}
 }
 
+#if 0
+/* potential helper function for Term_repaint(), if we ever want to split it up the same way
+   Term_fresh_row_xxxx() functions are currently split up. It seems to be fine like it is though,
+   just the text_hook 'buf' thingy looks kinda silyl. - C. Blue */
+static void Term_repaint_row_pict(int y, byte *aa, char32_t *cc, byte *back_aa, char32_t *back_cc) {
+	int x;
 
+	int xa;
+	char32_t xc;
+#ifdef GRAPHICS_BG_MASK
+	int xa_back;
+	char32_t xc_back;
+#endif
+
+
+	/* Scan the columns marked as "modified" */
+	for (x = 0; x < Term->wid; x++) {
+		/* See what is currently here */
+		xa = aa[x];
+		xc = cc[x];
+#ifdef GRAPHICS_BG_MASK
+		xa_back = back_aa[x];
+		xc_back = back_cc[x];
+#endif
+
+		if (!xc || xc == 32) continue;
+//if (!y) c_msg_format("x,y,oa,oc,oab,ocb=%d,%d,%d,%d,%d,%d",x,y,oa,oc,oa_back,oc_back);
+
+		/* Display this special character */
+#ifdef GRAPHICS_BG_MASK
+		if (use_graphics == UG_2MASK)
+			(void)((*Term->pict_hook_2mask)(x, y, xa, xc, xa_back, xc_back));
+		else
+#endif
+			(void)((*Term->pict_hook)(x, y, xa, xc));
+	}
+}
+#endif
+/* Added this specifically for palette animation with use_graphics: Repaint all of the term over with existing 'a'/'c',
+   even if 'a' and 'c' are seemingly the same in 'old' and 'scr', because their actual palettes might have changed! - C. Blue
+
+   Basically this function replaces Term_fresh() for that purpose, because Term_fresh() also wipes the screen,
+   which can cause flickering with text and WILL cause flickering with graphics,
+   while this function is flicker-free as it doesn't live-wipe any screen contents.
+
+   So this function doesn't change/update a/c values, but just their visuals.
+   TODO maybe: For efficiency, restrict to actual map screen area instead of full window, and also don't use a 'buf' for every single text char. */
+#define OLD_VS_SCR /* define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct... */
+void Term_repaint(void) {
+	int y;
+
+	byte *aa;
+	char32_t *cc;
+#ifdef GRAPHICS_BG_MASK
+	byte *back_aa;
+	char32_t *back_cc;
+#endif
+
+	/* For row-handling */
+
+	int x;
+
+	int xa;
+	char32_t xc;
+#ifdef GRAPHICS_BG_MASK
+	int xa_back;
+	char32_t xc_back;
+#endif
+
+	/* Silyl hack for text handling */
+	char buf[2] = { 0 };
+
+#if 0
+	/* --- For text (vs pict) handling --- */
+
+	/* No chars "pending" in "text" */
+	int n = 0;
+	/* Pending text starts in the first column */
+	int fx = x1;
+	/* Pending text color is "blank" */
+	int fa = Term->attr_blank;
+#ifdef DRAW_LARGER_CHUNKS
+	int i;
+#endif
+	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
+	int mod_num = x2 - x1 + 1;
+	char text[mod_num + 1];
+#endif
+
+	/* --- Repaint, with _text or _pict or _pict_2mask --- */
+
+	for (y = 0; y < Term->hgt; y++) {
+#ifdef OLD_VS_SCR
+		aa = Term->old->a[y];
+		cc = Term->old->c[y];
+#else
+		aa = Term->scr->a[y];
+		cc = Term->scr->c[y];
+#endif
+
+#ifdef GRAPHICS_BG_MASK
+ #ifdef OLD_VS_SCR
+		back_aa = Term->old_back->a[y];
+		back_cc = Term->old_back->c[y];
+ #else
+		back_aa = Term->scr_back->a[y];
+		back_cc = Term->scr_back->c[y];
+ #endif
+#endif
+
+		/* --- Repaint this row --- */
+
+		/* Scan the columns marked as "modified" */
+		for (x = 0; x < Term->wid; x++) {
+			/* See what is currently here */
+			xa = aa[x];
+			xc = cc[x];
+#ifdef GRAPHICS_BG_MASK
+			xa_back = back_aa[x];
+			xc_back = back_cc[x];
+#endif
+
+			if (!xc || xc == 32
+			    || !xa) /* let's also ignore black feats */
+				continue;
+
+			/* Hack -- use "Term_pict()" always */
+			if (Term->always_pict) {
+#ifdef GRAPHICS_BG_MASK
+				if (use_graphics == UG_2MASK)
+					(void)((*Term->pict_hook_2mask)(x, y, xa, xc, xa_back, xc_back));
+				else
+#endif
+				(void)((*Term->pict_hook)(x, y, xa, xc));
+			/* Hack -- use "Term_pict()" sometimes */
+			} else if (Term->higher_pict && xc > MAX_FONT_CHAR) {
+#ifdef GRAPHICS_BG_MASK
+				if (use_graphics == UG_2MASK)
+					(void)((*Term->pict_hook_2mask)(x, y, xa, xc, xa_back, xc_back));
+				else
+#endif
+				(void)((*Term->pict_hook)(x, y, xa, xc));
+			/* Hack -- restore the actual character */
+			} else if (xa || Term->always_text) {
+				buf[0] = (char)xc;
+				(void)((*Term->text_hook)(x, y, 1, xa, buf));
+			}
+			/* Hack -- erase the grid */
+			//else (void)((*Term->wipe_hook)(x, y, 1));  -- we're just repainting, if grid was already empty, even better -> we just ignore it
+		}
+	}
+}
 
 
 
@@ -3243,16 +3394,6 @@ errr Term_redraw(void) {
 	/* Success */
 	return(0);
 }
-errr Term_redraw_keep(void) {
-	/* Force "total erase" */
-	Term->total_redraw = TRUE;
-
-	/* Hack -- Refresh */
-	Term_fresh();
-
-	/* Success */
-	return(0);
-}
 
 /*
  * Redraw part of a window. (PernA)
@@ -3920,7 +4061,7 @@ errr Term_switch(int screen) {
 	return(0);
 }
 
-/* Since we don't completely erase in Term_redraw_keep(), but actually flush a screen
+/* Since we don't completely erase in Term_repaint(), but actually flush a screen
    that is switched out, we'd potentially get garbage visuals in between, because
    scr and old no longer fit togeter (scr is being switched, but term-switching doesn't touch old,
    instead Term_load() will simply mark everything as 'changed' to fully redraw, discarding the
@@ -3958,6 +4099,53 @@ errr Term_switch_fully(int screen) {
 	Term->old_back = Term->old_mem_back[screen];
 	Term->old_mem_back[screen] = tmp;
 #endif
+
+	/* Success */
+	return(0);
+}
+/* (UNUSED, replaced by Term_repaint()) Overwrite whole term with blanks - added for palette animation, as this
+   can be used in screen_icky situations with switched-out Terms (Term_switch(0)) w/o problems. - C. Blue */
+errr Term_blank(void) {
+	int i;
+
+	byte a = Term->attr_blank;
+	char32_t c = Term->char_blank;
+
+	int w = Term->wid;
+	int h = Term->hgt;
+
+	term_win *old = Term->old;
+#ifdef GRAPHICS_BG_MASK
+	term_win *old_back = Term->old_back;
+#endif
+
+
+	/* Physically erase the entire window */
+	//Term_xtra(TERM_XTRA_CLEAR, 0);
+
+	/* Hack -- clear all "cursor" data XXX XXX XXX */
+	old->cv = old->cu = FALSE;
+	old->cx = old->cy = 0;
+
+	/* Wipe the content arrays */
+#ifdef GRAPHICS_BG_MASK
+	memset(old->va, a, w * h);
+	memset(old_back->va, a, w * h);
+	for (i = 0; i < w * h; i++) old->vc[i] = old_back->vc[i] = c;
+#else
+	memset(old->va, a, w * h);
+	for (i = 0; i < w * h; i++) old->vc[i] = c;
+#endif
+
+	/* Redraw every column */
+	for (i = 0; i < h; i++) {
+		Term->x1[i] = 0;
+		Term->x2[i] = w - 1;
+	}
+
+	/* Redraw every row */
+	Term->y1 = 0;
+	Term->y2 = h - 1;
 
 	/* Success */
 	return(0);

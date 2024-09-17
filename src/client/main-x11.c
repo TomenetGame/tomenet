@@ -4198,16 +4198,6 @@ void set_palette(byte c, byte r, byte g, byte b) {
   #endif
  #endif
 
-		/* Workaround to fix garbage visuals, see comment at Term_switch_fully(). */
-		if (screen_icky) {
- #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
-			/* After icky-screen will be left later on:
-			   Ensure redrawal doesn't get cancelled by tile-caching */
-			invalidate_graphics_cache_x11(term_idx_to_term_data(0));
- #endif
-			return; /* not in screen 0? No need to redraw right now. */
-		}
-
 		/* Refresh aka redraw the main window with new colour */
 		if (!term_get_visibility(0)) return;
 		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
@@ -4217,7 +4207,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		invalidate_graphics_cache_x11(term_idx_to_term_data(0));
  #endif
 //WiP, not functional		if (screen_icky) Term_switch_fully(0);
-		Term_redraw_keep(); //flicker-free redraw - C. Blue
+		Term_repaint(); //flicker-free redraw - C. Blue
 //WiP, not functional		if (screen_icky) Term_switch_fully(0);
 		Term_activate(&old_td->t);
 		return;

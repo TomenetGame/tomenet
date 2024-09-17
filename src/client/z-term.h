@@ -271,8 +271,8 @@ extern errr Term_putstr(int x, int y, int n, byte a, char *s);
 extern errr Term_erase(int x, int y, int n);
 extern errr Term_clear(void);
 extern errr Term_redraw(void);
-extern errr Term_redraw_keep(void);
 extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
+extern void Term_repaint(void);
 
 extern errr Term_get_cursor(int *v);
 extern errr Term_get_size(int *w, int *h);
@@ -294,6 +294,7 @@ extern errr Term_load(void);
 extern errr Term_restore(void);
 extern errr Term_switch(int screen);
 extern errr Term_switch_fully(int screen);
+extern errr Term_blank(void);
 
 extern errr Term_resize(int w, int h);
 
