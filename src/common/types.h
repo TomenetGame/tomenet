@@ -2428,7 +2428,7 @@ struct town_type {
 	u16b terraformed_water;	/* keep track of and limit players modifying town layout */
 	u16b terraformed_glyphs; /* keep track of and limit players modifying town layout */
 
-	u32b dlev_id;	/* for dungeon towns, abusing fake stores from real towns */
+	u32b dlev_id;		/* for dungeon towns, abusing fake stores from real towns */
 	u16b dlev_depth;	/* know the depth of this dungeon town, for determining store items */
 };
 

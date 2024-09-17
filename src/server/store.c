@@ -7121,9 +7121,10 @@ void view_exploration_history(int Ind) {
 	/* Towns. This list can never be empty as players start in Bree, the first town, and thereby auto-discover it. */
 	fprintf(fff, " \377U = Towns =\n\n");
 	for (i = 0; i < numtowns; i++) {
-		fprintf(fff, " \377u%-31s  (%2d,%2d)\n",
+		fprintf(fff, " \377u%-31s  (%2d,%2d) Level %2d (equivalent %4d ft)\n",
 		    town_profile[town[i].type].name,
-		    town[i].x, town[i].y);
+		    town[i].x, town[i].y,
+		    town[i].baselevel, town[i].baselevel * 50);
 	}
 	fprintf(fff, "\n");
 
