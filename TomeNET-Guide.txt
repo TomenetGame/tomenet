@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 16. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 17. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10757,7 +10757,8 @@ Here is a list of all available events:
     Co-op - everyone can win, requires at least 1 participant.
     (You should enable 'easy_open' option in  = 8  for this event, which is
     enabled by default, and lets you open doors simply be moving into them.
-    Light radius of 2 is recommended, eg provided by a Brass Lantern.)
+    Light radius of 2 is recommended, eg provided by a Brass Lantern, which
+    you can buy from town store '1', the General Store.)
 
     Characters who want to participate must not be of higher level than 14.
     A character can participate only once in this event.
@@ -10768,8 +10769,7 @@ Here is a list of all available events:
     disabled in the event. Also, your speed cannot exceed +0 (Normal), and
     the lava that floods the dungeon will deal irresistible damage even if
     your character is immune to fire.
-    Except for a brass lantern which you can buy from town store '1' (general
-    store), no items are required for this event.
+    No items are required for this event.
 
     All winners will receive a deed that can be 'r'ead, and turned in at Bree's
     Mayor Office for either an item or a temporary luck bonus.
@@ -10779,10 +10779,12 @@ Here is a list of all available events:
 
     Detailed course of the event:
 
-    When the event starts, all participants are (if word-of-recall is legal at
-    their current position) are transported into a labyrinth of rooms made of
+    When the event starts, all participants are (if word-of-recall is legal
+    at their current position) transported into a labyrinth of rooms made of
     impenetrable walls but connected by doors or even void jump gates.
     The goal is to find one of four escape beacons, which are light green '>'.
+    The beacons are self-illuminated and in the center of their room, so you
+    will always be able to easily spot them.
     Everyone who steps on an escape beacon and presses the '>' key will be
     teleported to Bree and has thereby successfully escaped the maze and
     receive a winner's deed they can turn in at the mayor's office in Bree.
