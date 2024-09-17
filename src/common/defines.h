@@ -175,6 +175,7 @@
 #define SFLG1_NEW_SHIELDS_NO_AC	0x00000004U
 #define SFLG1_LIMIT_SPELLS	0x00000008U
 #define SFLG1_WEAPONS_NO_AC	0x00000010U
+#define SFLG1_SMALL_MAP		0x00000020U
 
 
 /* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
@@ -347,6 +348,19 @@
 /* (BIG_MAP) Maximum possible main window size */
 #define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_X)
 #define MAX_WINDOW_HGT	(MAX_SCREEN_HGT + SCREEN_PAD_Y)
+
+#ifdef SMALL_MAP
+/* New for SMALL_MAP feature: Minimum and maximum screen size - C. Blue */
+ #ifndef ARCADE_SERVER
+  #define SMALL_SCREEN_WID	(SCREEN_WID / 2)	/* 33 -- this is SMALL_MAP mode aka 33x22 map screen size */
+ #else
+  #define SMALL_SCREEN_WID	SCREEN_WID
+ #endif
+ #define SMALL_SCREEN_HGT	SCREEN_HGT		/* 22 */
+/* (SMALL_MAP) Minimum possible main window size */
+ #define SMALL_WINDOW_WID	(SMALL_SCREEN_WID + SCREEN_PAD_X)
+ #define SMALL_WINDOW_HGT	(SMALL_SCREEN_HGT + SCREEN_PAD_Y)
+#endif
 
 #ifdef CLIENT_SIDE
  /* For resizing the main window while client runs */

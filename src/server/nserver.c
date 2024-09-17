@@ -4771,6 +4771,9 @@ static int Receive_login(int ind) {
 #ifdef BIG_MAP
 			sflags1 |= SFLG1_BIG_MAP;
 #endif
+#ifdef SMALL_MAP
+			sflags1 |= SFLG1_SMALL_MAP;
+#endif
 #ifdef NEW_SHIELDS_NO_AC
 			sflags1 |= SFLG1_NEW_SHIELDS_NO_AC;
 #endif

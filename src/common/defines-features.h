@@ -151,6 +151,11 @@
 /* Allow a larger main window with a map bigger than 66x22 (usually 66x44) - C. Blue */
 #define BIG_MAP
 
+/* Rough idea:
+   Allow a smaller main window with a map smaller than 66x22 (usually 33x22) - C. Blue
+   This mode could also be interesting for use with huge graphical tilesets. */
+#define SMALL_MAP	/* TODO: Implement */
+
 /* Experimental and also silly ;) - reward players for wearing arts of similar name - C. Blue */
 #define EQUIPMENT_SET_BONUS
 
