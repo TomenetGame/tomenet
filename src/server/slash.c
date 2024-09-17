@@ -10307,11 +10307,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/daynight")) { /* switch between day and night - use carefully! */
 				int h = (turn % DAY) / HOUR;
+				u64b turn_old = turn, turn_diff;
 
 				turn -= (turn % DAY) % HOUR;
 				if (h < SUNRISE) turn += (SUNRISE - h) * HOUR - 1;
 				else if (h < NIGHTFALL) turn += (NIGHTFALL - h) * HOUR - 1;
 				else turn += (24 + SUNRISE - h) * HOUR - 1;
+
+				/* Correct all other player's connp times or they'd insta-time out.
+				   We're safe because issuing this slash command will fix our connp time right afterwards, actually. */
+				turn_diff = turn - turn_old;
+				for (h = 1; h <= NumPlayers; h++)
+					if (Conn[p_ptr->conn]->state == 0x08) Conn[Players[h]->conn]->start += turn_diff; // 0x08 = CONN_PLAYING
+
 				return;
 			}
 			else if (prefix(messagelc, "/season")) { /* switch through 4 seasons */
@@ -13206,6 +13214,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #if 1
 			else if (prefix(messagelc, "/settime")) {
 				int h, m, hc, mc;
+				u64b turn_old = turn, turn_diff;
 
 				if (!tk) k = 0;
 				h = (message3[0] - 48) * 10 + message3[1] - 48;
@@ -13235,6 +13244,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					else if (m > mc) turn += (24 - (hc - h)) * HOUR + (m - mc - 1) * MINUTE;
 					else turn += (24 - (hc - h) - 1) * HOUR + (60 - (mc - m) - 1) * MINUTE;
 				}
+
+				/* Correct all other player's connp times or they'd insta-time out.
+				   We're safe because issuing this slash command will fix our connp time right afterwards, actually. */
+				turn_diff = turn - turn_old;
+				for (h = 1; h <= NumPlayers; h++)
+					if (Conn[p_ptr->conn]->state == 0x08) Conn[Players[h]->conn]->start += turn_diff; // 0x08 = CONN_PLAYING
 
 				/* handle day/night changes of world surface (CAVE_GLOW..) */
 				verify_day_and_night();
