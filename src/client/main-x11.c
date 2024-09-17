@@ -2106,7 +2106,9 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
 	return(0);
 }
 
-#ifdef USE_GRAPHICS
+
+#ifdef USE_GRAPHICS /* huge block */
+
 /* Directory with graphics tiles files (should be lib/xtra/grapics). */
 static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 /* Loaded tiles image and masks. */
@@ -2128,7 +2130,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	Pixmap tilePreparation;
  #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
-	int i;
+	int i, hole = -1;
  #endif
 	int x1, y1;
 
@@ -2171,11 +2173,12 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
-		if (entry->c == c && entry->a == a
+		if (!entry->is_valid) hole = i;
+		else if (entry->c == c && entry->a == a
   #ifdef GRAPHICS_BG_MASK
 		    && entry->c_back == 0 && entry->a_back == 0
   #endif
-		    && entry->is_valid) {
+		    ) {
 			/* Copy cached tile to window. */
 			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
 				0, 0,
@@ -2187,9 +2190,14 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 		}
 	}
 
-	// Replace cache entries in FIFO order
-	entry = &td->tile_cache[td->cache_position++];
-	if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+	if (hole != -1) entry = &td->tile_cache[hole];
+	else {
+		// Replace valid cache entries in FIFO order
+		entry = &td->tile_cache[td->cache_position++];
+		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+	}
+
 	tilePreparation = entry->tilePreparation;
 	entry->c = c;
 	entry->a = a;
@@ -2198,7 +2206,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	entry->a_back = 0;
   #endif
 	entry->is_valid = 1;
- #else
+ #else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
  #endif
 
@@ -2238,7 +2246,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	Pixmap tilePreparation, tilePreparation2;
    #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
-	int i;
+	int i, hole = -1;
    #endif
 	int x1, y1;
 
@@ -2285,8 +2293,8 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
-		if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
-		    && entry->is_valid) {
+		if (!entry->is_valid) hole = i;
+		else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back) {
 			/* Copy cached tile to window. */
 			XCopyArea(Metadpy->dpy, entry->tilePreparation2, td->inner->win, Infoclr->gc, // NOTE that tilePreparation2 holds the final tile, NOT tilePreparation!
 				0, 0,
@@ -2298,9 +2306,14 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		}
 	}
 
-	// Replace cache entries in FIFO order
-	entry = &td->tile_cache[td->cache_position++];
-	if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+	if (hole != -1) entry = &td->tile_cache[hole];
+	else {
+		// Replace valid cache entries in FIFO order
+		entry = &td->tile_cache[td->cache_position++];
+		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+	}
+
 	tilePreparation = entry->tilePreparation;
 	tilePreparation2 = entry->tilePreparation2;
 	entry->c = c;
@@ -2310,12 +2323,11 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry->a_back = a_back;
     #endif
 	entry->is_valid = 1;
-   #else
+   #else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
 	tilePreparation2 = td->tilePreparation2;
-  #endif
+   #endif
 
-  #ifdef GRAPHICS_BG_MASK
 	/* Start with background tile to preparation pixmap,
 	   so the background mask can be reverse AND'ed (draw bg where there's 0x000000 in the foreground)
 	   onto the background image to zero out all pixels that should display the foreground instead.
@@ -2373,7 +2385,6 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	Infoclr_set(clr[a & 0x3F]);
     #endif
    #endif
-  #endif
 
 	/* Prepare foreground tile to preparation pixmap. */
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
@@ -2393,14 +2404,14 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		  td->fnt->wid, td->fnt->hgt);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
 
-  #if 1
+   #if 1
 	/* Finally copy foreground tile onto background tile, via bg2mask. */
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bg2mask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
-//	XPutImage(Metadpy->dpy, tilePreparation, Infoclr->gc, tilePreparation2, 0, 0, 0, 0, td->fnt->wid, td->fnt->hgt);
+	//XPutImage(Metadpy->dpy, tilePreparation, Infoclr->gc, tilePreparation2, 0, 0, 0, 0, td->fnt->wid, td->fnt->hgt);
 	XCopyArea(Metadpy->dpy, tilePreparation, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt, 0, 0);	// NOTE that tilePreparation2 holds the final tile, NOT tilePreparation! (Compare tile-caching!)
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
-  #endif
+   #endif
 
 	/* Copy prepared combo-tile to window. */
 	XCopyArea(Metadpy->dpy, tilePreparation2, td->inner->win, Infoclr->gc,
@@ -2410,17 +2421,17 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	/* Success */
 	return(0);
- #endif
+  #endif
 }
+ #endif /* GRAPHICS_BG_MASK */
  #ifdef TILE_CACHE_SIZE
 static void invalidate_graphics_cache_x11(term_data *td) {
 	int i;
 
 	for (i = 0; i < TILE_CACHE_SIZE; i++)
-		td->tile_cache[i].c = 0;
+		td->tile_cache[i].is_valid = FALSE;
 }
  #endif
-#endif /* USE_GRAPHICS */
 
 /* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
 /*
@@ -2579,7 +2590,7 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
  * Pixel in bgmask_return is 1, only if image color is not black (#000000), nor magenta (#ff00ff).
  * Function will not free memory if allready allocated in bgmask_return/fgmask_return input variable.
  */
-#ifndef GRAPHICS_BG_MASK
+ #ifndef GRAPHICS_BG_MASK
 static void createMasksFromData(char* data, int width, int height, char **bgmask_return, char **fgmask_return) {
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
 	u32b bit;
@@ -2621,7 +2632,7 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 	(*bgmask_return) = bgmask;
 	(*fgmask_return) = fgmask;
 }
-#else
+ #else
 static void createMasksFromData_2mask(char* data, int width, int height, char **bgmask_return, char **fgmask_return, char **bg2mask_return) {
 //#define BG2MASK_INV /* Have '1' on black foreground tile area (instead of coloured foreground tile area)? */
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
@@ -2639,11 +2650,11 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 
 	char *bg2mask;
 	C_MAKE(bg2mask, masks_size, char);
-#ifdef BG2MASK_INV
+  #ifdef BG2MASK_INV
 	memset(bg2mask, 1, masks_size);
-#else
+  #else
 	memset(bg2mask, 0, masks_size);
-#endif
+  #endif
 
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
@@ -2664,11 +2675,11 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 				bgmask[bit / 8] |= 1 << (bit % 8);
 
 			if (r != GFXMASK_BG2_R || g != GFXMASK_BG2_G || b != GFXMASK_BG2_B)
-#ifdef BG2MASK_INV
+  #ifdef BG2MASK_INV
 				bg2mask[bit / 8] &= ~((char)1 << (bit % 8));
-#else
+  #else
 				bg2mask[bit / 8] |= 1 << (bit % 8);
-#endif
+  #endif
 
 			if (r == GFXMASK_FG_R && g == GFXMASK_FG_G && b == GFXMASK_FG_B) {
 				fgmask[bit / 8] |= 1 << (bit % 8);
@@ -2681,7 +2692,7 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 	(*fgmask_return) = fgmask;
 	(*bg2mask_return) = bg2mask;
 }
-#endif
+ #endif
 
 /*
  * Resize an image. XXX XXX XXX

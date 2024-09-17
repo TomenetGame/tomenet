@@ -2414,7 +2414,7 @@ static void invalidate_graphics_cache_win(term_data *td) {
 	int i;
 
 	for (i = 0; i < TILE_CACHE_SIZE; i++)
-		td->tile_cache[i].c = 0;
+		td->tile_cache[i].is_valid = FALSE;
 }
 #endif
 
