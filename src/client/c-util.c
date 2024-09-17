@@ -4613,22 +4613,7 @@ void c_msg_print(cptr msg) {
 	if (was_chat_buffer || was_all_buffer || was_important_scrollback)
 		c_message_add_impscroll(t);
 
-	/* Don't display any messages in top line? */
-	if (c_cfg.topline_no_msg) return;
-
-	/* Small length limit */
-	if (n > 80) n = 80;
-
-	/* Display the tail of the message */
-	if (!topline_icky) Term_putstr(0, 0, n, TERM_WHITE, t);
-
-	/* Restore cursor */
-	Term_gotoxy(x, y);
-
-	/* Remember the message */
-	msg_flag = TRUE;
-
-	/* Dump messages to stdout? */
+	/* Extra stuff: Dump messages to stdout? */
 	if (c_cfg.clone_to_stdout) {
 		char buf2[MSG_LEN], *c = t, *c2 = buf2;
 
@@ -4658,6 +4643,7 @@ void c_msg_print(cptr msg) {
 		setvbuf(stdout, (char*)NULL, _IONBF, 0); //more flexible than setbuf()
 		*/
 	}
+	/* Extra stuff: Dump messages to file? */
 	if (c_cfg.clone_to_file) {
 		char buf2[MSG_LEN], *c = t, *c2 = buf2;
 		FILE *fp;
@@ -4692,6 +4678,22 @@ void c_msg_print(cptr msg) {
 			my_fclose(fp);
 		}
 	}
+
+	/* Don't display any messages in top line? */
+	if (c_cfg.topline_no_msg || topline_icky) return;
+
+	/* Small length limit */
+	if (n > 80) n = 80;
+
+	/* Display the tail of the message to the topline */
+	clear_topline_forced(); //extra: make sure it's completely erased so we don't overwrite stuff into each other
+	Term_putstr(0, 0, n, TERM_WHITE, t);
+
+	/* Restore cursor */
+	Term_gotoxy(x, y);
+
+	/* Remember the message */
+	msg_flag = TRUE;
 }
 
 /*
