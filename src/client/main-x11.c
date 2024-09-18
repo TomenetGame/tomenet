@@ -1168,6 +1168,13 @@ static term_data* term_idx_to_term_data(int term_idx);
 
 /* Cache for prepared graphical tiles */
 #define TILE_CACHE_SIZE	256
+#if 1 /* Choose one, 1st is more efficient */
+ /* Cache invalidates based on attr when new palette info is received? */
+ #define TILE_CACHE_NEWPAL
+#else
+ /* Cache uses foreground + background colour palette values too? */
+ #define TILE_CACHE_FGBG
+#endif
 
 struct tile_cache_entry {
     Pixmap tilePreparation;
@@ -1179,6 +1186,9 @@ struct tile_cache_entry {
     byte a_back;
 #endif
     bool is_valid;
+#ifdef TILE_CACHE_FGBG
+    s32b fg, bg; /* Optional palette_animation handling */
+#endif
 };
 
 /*
@@ -1853,7 +1863,8 @@ static void free_graphics(term_data *td) {
 			td->tile_cache[i].c_back = 0xffffffff;
 			td->tile_cache[i].a_back = 0xff;
  #endif
-			td->tile_cache[i].is_valid = 0;
+			td->tile_cache[i].is_valid = FALSE;
+			/* Optional 'bg' and 'fg' need no intialization */
 		}
 	}
 #endif
@@ -2178,6 +2189,10 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
   #ifdef GRAPHICS_BG_MASK
 		    && entry->c_back == 0 && entry->a_back == 0
   #endif
+  #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+		    && Infoclr->fg == entry->fg && Infoclr->bg == entry->bg
+  #endif
 		    ) {
 			/* Copy cached tile to window. */
 			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
@@ -2205,7 +2220,11 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	entry->c_back = 0;
 	entry->a_back = 0;
   #endif
-	entry->is_valid = 1;
+	entry->is_valid = TRUE;
+  #ifdef TILE_CACHE_FGBG
+	entry->fg = Infoclr->fg;
+	entry->bg = Infoclr->bg;
+  #endif
  #else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
  #endif
@@ -2294,7 +2313,12 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
 		if (!entry->is_valid) hole = i;
-		else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back) {
+		else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
+    #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+		    && Infoclr->fg == entry->fg && Infoclr->bg == entry->bg
+    #endif
+		    ) {
 			/* Copy cached tile to window. */
 			XCopyArea(Metadpy->dpy, entry->tilePreparation2, td->inner->win, Infoclr->gc, // NOTE that tilePreparation2 holds the final tile, NOT tilePreparation!
 				0, 0,
@@ -2322,7 +2346,11 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry->c_back = c_back;
 	entry->a_back = a_back;
     #endif
-	entry->is_valid = 1;
+	entry->is_valid = TRUE;
+    #ifdef TILE_CACHE_FGBG
+	entry->fg = Infoclr->fg;
+	entry->bg = Infoclr->bg;
+    #endif
    #else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
 	tilePreparation2 = td->tilePreparation2;
@@ -2425,11 +2453,21 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 }
  #endif /* GRAPHICS_BG_MASK */
  #ifdef TILE_CACHE_SIZE
-static void invalidate_graphics_cache_x11(term_data *td) {
+/* c_idx: -1 = invalidate all; otherwise only tiles that use this colour are invalidated. */
+static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
 	int i;
 
-	for (i = 0; i < TILE_CACHE_SIZE; i++)
-		td->tile_cache[i].is_valid = FALSE;
+	if (c_idx == -1)
+		for (i = 0; i < TILE_CACHE_SIZE; i++)
+			td->tile_cache[i].is_valid = FALSE;
+	else
+		for (i = 0; i < TILE_CACHE_SIZE; i++)
+			if (td->tile_cache[i].a == c_idx
+ #ifdef GRAPHICS_BG_MASK
+			    || td->tile_cache[i].a_back == c_idx
+ #endif
+			    )
+				td->tile_cache[i].is_valid = FALSE;
 }
  #endif
 
@@ -3087,7 +3125,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		td->tile_cache[i].c_back = 0xffffffff;
 		td->tile_cache[i].a_back = 0xff;
   #endif
-		td->tile_cache[i].is_valid = 0;
+		td->tile_cache[i].is_valid = FALSE;
 	}
  #endif
 #endif /* USE_GRAPHICS */
@@ -4213,9 +4251,12 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		if (!term_get_visibility(0)) return;
 		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 		Term_activate(&term_idx_to_term_data(0)->t);
+		/* Invalidate cache to ensure redrawal doesn't get cancelled by tile-caching */
  #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
-		/* Ensure redrawal doesn't get cancelled by tile-caching */
-		invalidate_graphics_cache_x11(term_idx_to_term_data(0));
+  #if !defined(TILE_CACHE_NEWPAL) && !defined(TILE_CACHE_FGBG)
+		/* Last resort: Invalidate whole cache as we didn't keep track of which colours' palettes have been modified. */
+		invalidate_graphics_cache_x11(term_idx_to_term_data(0), -1);
+  #endif
  #endif
 //WiP, not functional		if (screen_icky) Term_switch_fully(0);
 		Term_repaint(); //flicker-free redraw - C. Blue
@@ -4290,11 +4331,21 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 	Term_activate(&term_idx_to_term_data(0)->t);
  #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
-	/* Ensure redrawal doesn't get cancelled by tile-caching */
-	invalidate_graphics_cache_x11(&term_idx_to_term_data(0));
+  #ifdef TILE_CACHE_NEWPAL
+	/* Invalidate cache using this particular colour to ensure redrawal doesn't get cancelled by tile-caching */
+	invalidate_graphics_cache_x11(term_idx_to_term_data(0), c);
+  #elif !defined(TILE_CACHE_FGBG)
+	/* Last resort: Invalidate whole cache as we didn't keep track of which colours' palettes have been modified. */
+	invalidate_graphics_cache_x11(term_idx_to_term_data(0), -1);
+  #endif
  #endif
 	Term_xtra(TERM_XTRA_FRESH, 0);
 	Term_activate(&old_td->t);
+#else
+ #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_NEWPAL)
+	/* Invalidate cache using this particular colour to ensure redrawal doesn't get cancelled by tile-caching */
+	invalidate_graphics_cache_x11(term_idx_to_term_data(0), c);
+ #endif
 #endif
 }
 /* Gets R/G/B values from 0..255 for a specific terminal palette entry (not for a TERM_ colour). */

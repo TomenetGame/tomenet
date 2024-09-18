@@ -2408,13 +2408,23 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	return(0);
 }
 /* NOTE: Currently this code has no effect as Windows clients don't have/use a tile cache/TILE_CACHE_SIZE,
-   it is merely here to potentially mirror the cache-invalidation-code in main-x11.c for hypothetical future changes. */
+   it is merely here to potentially mirror the cache-invalidation-code in main-x11.c for hypothetical future changes.
+   c_idx: -1 = invalidate all; otherwise only tiles that use this foreground colour as 'c' are invalidated. */
 #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
-static void invalidate_graphics_cache_win(term_data *td) {
+static void invalidate_graphics_cache_win(term_data *td, int c_idx) {
 	int i;
 
-	for (i = 0; i < TILE_CACHE_SIZE; i++)
-		td->tile_cache[i].is_valid = FALSE;
+	if (c_idx == -1)
+		for (i = 0; i < TILE_CACHE_SIZE; i++)
+			td->tile_cache[i].is_valid = FALSE;
+	else
+		for (i = 0; i < TILE_CACHE_SIZE; i++)
+			if (td->tile_cache[i].a == c_idx
+ #ifdef GRAPHICS_BG_MASK
+			    || td->tile_cache[i].a_back == c_idx
+ #endif
+			    )
+				td->tile_cache[i].is_valid = FALSE;
 }
 #endif
 
@@ -4873,9 +4883,12 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		td = &data[0];
 		/* Activate */
 		Term_activate(&td->t);
+		/* Invalidate cache to ensure redrawal doesn't get cancelled by tile-caching */
  #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
-		/* Ensure redrawal doesn't get cancelled by tile-caching */
-		invalidate_graphics_cache_win(td);
+  #if !defined(TILE_CACHE_NEWPAL) && !defined(TILE_CACHE_FGBG)
+		/* Last resort: Invalidate whole cache as we didn't keep track of which colours' palettes have been modified. */
+		invalidate_graphics_cache_win(td, -1);
+  #endif
  #endif
 		/* Redraw the contents */
 //WiP, not functional		if (screen_icky) Term_switch_fully(0);
@@ -4939,14 +4952,25 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	td = &data[0];
 	/* Activate */
 	Term_activate(&td->t);
+
  #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
-	/* Ensure redrawal doesn't get cancelled by tile-caching */
-	invalidate_graphics_cache_win(td);
+  #ifdef TILE_CACHE_NEWPAL
+	/* Invalidate cache using this particular colour to ensure redrawal doesn't get cancelled by tile-caching */
+	invalidate_graphics_cache_win(td, c);
+  #elif !defined(TILE_CACHE_FGBG)
+	/* Last resort: Invalidate whole cache as we didn't keep track of which colours' palettes have been modified. */
+	invalidate_graphics_cache_win(td, -1);
+  #endif
  #endif
 	/* Redraw the contents */
 	Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
 	/* Restore */
 	Term_activate(term_old);
+#else
+ #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_NEWPAL)
+	/* Invalidate cache using this particular colour to ensure redrawal doesn't get cancelled by tile-caching */
+	invalidate_graphics_cache_win(td, c);
+ #endif
 #endif
 }
 void get_palette(byte c, byte *r, byte *g, byte *b) {
