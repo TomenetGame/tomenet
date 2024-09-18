@@ -4551,12 +4551,15 @@ void shape_Maia_skills(int Ind, bool live) {
 			if (live) {
 				respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
 				Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
+
 				respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
 				Send_skill_info(Ind, SKILL_HCURING, FALSE);
+
 				respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
-				p_ptr->s_info[SKILL_HDEFENSE].value = 0; //Paladin starts with +1000 in this skill
 				Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
+
 				respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
+				p_ptr->s_info[SKILL_HSUPPORT].value = 0; //Paladin starts with +1000 in this skill
 				Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
 			}
 
@@ -4580,21 +4583,21 @@ void shape_Maia_skills(int Ind, bool live) {
 			do_Maia_skill2(Ind, SKILL_BLUNT, 0, (600 * 11) / 10, live); //swap ratio with Axe (0.600) and gain x1.1, to not lag behind original Paladin skill too much
   #endif
  #endif
-			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10, live); //swap ratio with Blunt (0.750) and gain x1.3
-			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10, live); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
+			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 12) / 10, live); //swap ratio with Blunt (0.750) and gain x1.2
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10, live); //x1.1 arbitrary buff, sort of as a MA x1.2 buff replacement
 			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
 			do_Maia_skill2(Ind, SKILL_DUAL, 1000, 0, live);
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1500 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1300 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1400 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1400 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1500 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1300 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1400 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1400 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 2, live);
 
 			p_ptr->s_info[SKILL_SCHOOL_MAGIC].dev = TRUE; //expand Wizardry, to notice newly acquired Udun school (EXP, compare tables.c)
-			do_Maia_skill2(Ind, SKILL_UDUN, 0, 368, live); //will get x2 below
+			do_Maia_skill2(Ind, SKILL_UDUN, 0, 429, live); //will get x1.4 below
 
 			if (live) Send_reliable(p_ptr->conn);
 		}
@@ -4604,11 +4607,14 @@ void shape_Maia_skills(int Ind, bool live) {
 			if (live) {
 				respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
 				Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
+
 				respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
 				p_ptr->s_info[SKILL_HCURING].value = 0; //Priest starts with +1000 in this skill
 				Send_skill_info(Ind, SKILL_HCURING, FALSE);
+
 				respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
 				Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
+
 				respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
 				Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
 			}
@@ -4619,7 +4625,7 @@ void shape_Maia_skills(int Ind, bool live) {
 			   hereticism; axe, polearm, blunt; all bloodmagic */
  #ifdef ENABLE_OHERETICISM /* (should actually always be defined if Corrupted Priests are enabled) */
 			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((1050 * 7) / 10 * 21) / 10, live);
+			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((1050 * 7) / 10 * 17) / 10, live);
  #endif
  #if 0 /* 0ed to re-allow */
 			if (live) respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
