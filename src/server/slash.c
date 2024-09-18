@@ -7682,6 +7682,34 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!i) msg_print(Ind, "No invalid accounts recorded.");
 				return;
 			}
+			else if (prefix(messagelc, "/clinv")) { /* Clear list of new invalid account names that tried to log in meanwhile */
+				for (i = 0; i < MAX_LIST_INVALID; i++)
+					list_invalid_name[i][0] = 0;
+				msg_print(Ind, "List of invalid accounts has been cleared.");
+				return;
+			}
+			else if (prefix(messagelc, "/dinv")) { /* Delete one entry from list of new invalid account names that tried to log in meanwhile */
+				if (!tk || k < 0 || k > MAX_LIST_INVALID) {
+					msg_format(Ind, "Usage: /dinv <list entry # [0..%d]>", MAX_LIST_INVALID);
+					return;
+				}
+				if (!list_invalid_name[k][0]) {
+					msg_format(Ind, "Entry %d doesn't exist.", k);
+					return;
+				}
+				msg_format(Ind, "Deleted entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
+				/* Remove and slide everyone else down by once, to maintain the sorted-by-date state */
+				while (k < MAX_LIST_INVALID - 1) {
+					if (!list_invalid_name[k][0]) break;
+					strcpy(list_invalid_name[k], list_invalid_name[k + 1]);
+					strcpy(list_invalid_host[k], list_invalid_host[k + 1]);
+					strcpy(list_invalid_addr[k], list_invalid_addr[k + 1]);
+					strcpy(list_invalid_date[k], list_invalid_date[k + 1]);
+					i++;
+				}
+				list_invalid_name[k][0] = 0;
+				return;
+			}
 			/* Respawn monsters on the floor
 			 * TODO: specify worldpos to respawn */
 			else if (prefix(messagelc, "/respawn")) {
