@@ -137,49 +137,49 @@ static s32b modify_aux(s32b a, s32b b, char mod) {
 		return(0);
 	}
 }
-
-
+static void skill_modify(int *cur, int new, char mod, int *mod_div, int *mod_set) {
+	switch (mod) {
+	case '%': *mod_div = (*mod_div * new) / 100; break;
+	case '=': *mod_set = new; break; /* (paranoia-potentially race/class can be overriding each other here, depending on who comes last, pft) */
+	default:
+		/* Normal direct operations: + and - */
+		*cur = modify_aux(*cur, new, mod);
+	}
+}
 /*
  * Gets the base value of a skill, given a race/class/...
+ * Always call with v,m preinitialized to 0,0.
  */
 void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i) {
-	s32b value = 0, mod = 0, j;
+	s32b j, v_div, v_set, m_div, m_set;
 
 	/***** class skills *****/
 
-	/* find the skill mods for that class */
+	/* find the skill mods for that class;
+	   NOTE: We don't know if race and/or class modifier is a '%', but those have to be processed last, or they have no effect.
+	         Eg: class 120% and race +100 -> 0*120%+100 = 100, but race +100 and class 120% -> (0+100)*120% = 120!
+	         Similarly, '=' op has to be executed the very last to make the most sense - it's unused anyway though.)*/
 	for (j = 0; j < MAX_SKILLS; j++) {
-#ifdef ENABLE_UNLIFE
-		/* Hack for Vampire Istari (note that vampires cannot be shamans):
-		   Gain access to Unlife school with the multiplier that istari usually have on Nature school. */
-		if (i == SKILL_OUNLIFE && p_ptr->prace == RACE_VAMPIRE && p_ptr->pclass == CLASS_MAGE && class_info[CLASS_MAGE].skills[j].skill == SKILL_NATURE) {
-			value = p_ptr->cp_ptr->skills[j].value;
-			mod = p_ptr->cp_ptr->skills[j].mod;
+		v_div = m_div = 1000;
+		v_set = m_set = -1;
 
-			*v = modify_aux(*v, value, p_ptr->cp_ptr->skills[j].vmod);
-			*m = modify_aux(*m, mod, p_ptr->cp_ptr->skills[j].mmod);
-			continue;
-		}
-#endif
+		/* TODO maybe: handle VAMP_ISTAR_SHADOW, VAMP_ISTAR_UNLIFE, fruit_bat_skills, SKILL_PICK_BREATH here too? */
 
 		if (p_ptr->cp_ptr->skills[j].skill == i) {
-			value = p_ptr->cp_ptr->skills[j].value;
-			mod = p_ptr->cp_ptr->skills[j].mod;
-
-			*v = modify_aux(*v, value, p_ptr->cp_ptr->skills[j].vmod);
-			*m = modify_aux(*m, mod, p_ptr->cp_ptr->skills[j].mmod);
+			skill_modify(v, p_ptr->cp_ptr->skills[j].value, p_ptr->cp_ptr->skills[j].vmod, &v_div, &v_set);
+			skill_modify(m, p_ptr->cp_ptr->skills[j].mod, p_ptr->cp_ptr->skills[j].mmod, &m_div, &m_set);
 		}
-	}
 
-	/* Race later (b/c of its modificative nature) */
-	for (j = 0; j < MAX_SKILLS; j++) {
 		if (p_ptr->rp_ptr->skills[j].skill == i) {
-			value = p_ptr->rp_ptr->skills[j].value;
-			mod = p_ptr->rp_ptr->skills[j].mod;
-
-			*v = modify_aux(*v, value, p_ptr->rp_ptr->skills[j].vmod);
-			*m = modify_aux(*m, mod, p_ptr->rp_ptr->skills[j].mmod);
+			skill_modify(v, p_ptr->rp_ptr->skills[j].value, p_ptr->rp_ptr->skills[j].vmod, &v_div, &v_set);
+			skill_modify(m, p_ptr->rp_ptr->skills[j].mod, p_ptr->rp_ptr->skills[j].mmod, &m_div, &m_set);
 		}
+
+		*v = (*v * v_div) / 1000;
+		if (v_set != -1) *v = v_set;
+
+		*m = (*m * m_div) / 1000;
+		if (m_set != -1) *m = m_set;
 	}
 }
 
