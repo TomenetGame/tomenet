@@ -151,7 +151,7 @@ static void skill_modify(int *cur, int new, char mod, int *mod_div, int *mod_set
  * Always call with v,m preinitialized to 0,0.
  */
 void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i) {
-	s32b j, v_div, v_set, m_div, m_set;
+	s32b j, v_div = 1000, v_set = -1, m_div = 1000, m_set = -1;
 
 	/***** class skills *****/
 
@@ -159,28 +159,30 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i) {
 	   NOTE: We don't know if race and/or class modifier is a '%', but those have to be processed last, or they have no effect.
 	         Eg: class 120% and race +100 -> 0*120%+100 = 100, but race +100 and class 120% -> (0+100)*120% = 120!
 	         Similarly, '=' op has to be executed the very last to make the most sense - it's unused anyway though.)*/
-	for (j = 0; j < MAX_SKILLS; j++) {
-		v_div = m_div = 1000;
-		v_set = m_set = -1;
 
+	for (j = 0; j < MAX_SKILLS; j++) {
 		/* TODO maybe: handle VAMP_ISTAR_SHADOW, VAMP_ISTAR_UNLIFE, fruit_bat_skills, SKILL_PICK_BREATH here too? */
 
-		if (p_ptr->cp_ptr->skills[j].skill == i) {
-			skill_modify(v, p_ptr->cp_ptr->skills[j].value, p_ptr->cp_ptr->skills[j].vmod, &v_div, &v_set);
-			skill_modify(m, p_ptr->cp_ptr->skills[j].mod, p_ptr->cp_ptr->skills[j].mmod, &m_div, &m_set);
-		}
+		if (p_ptr->cp_ptr->skills[j].skill != i) continue;
 
-		if (p_ptr->rp_ptr->skills[j].skill == i) {
-			skill_modify(v, p_ptr->rp_ptr->skills[j].value, p_ptr->rp_ptr->skills[j].vmod, &v_div, &v_set);
-			skill_modify(m, p_ptr->rp_ptr->skills[j].mod, p_ptr->rp_ptr->skills[j].mmod, &m_div, &m_set);
-		}
-
-		*v = (*v * v_div) / 1000;
-		if (v_set != -1) *v = v_set;
-
-		*m = (*m * m_div) / 1000;
-		if (m_set != -1) *m = m_set;
+		skill_modify(v, p_ptr->cp_ptr->skills[j].value, p_ptr->cp_ptr->skills[j].vmod, &v_div, &v_set);
+		skill_modify(m, p_ptr->cp_ptr->skills[j].mod, p_ptr->cp_ptr->skills[j].mmod, &m_div, &m_set);
+		break;
 	}
+
+	for (j = 0; j < MAX_SKILLS; j++) {
+		if (p_ptr->rp_ptr->skills[j].skill != i) continue;
+
+		skill_modify(v, p_ptr->rp_ptr->skills[j].value, p_ptr->rp_ptr->skills[j].vmod, &v_div, &v_set);
+		skill_modify(m, p_ptr->rp_ptr->skills[j].mod, p_ptr->rp_ptr->skills[j].mmod, &m_div, &m_set);
+		break;
+	}
+
+	*v = (*v * v_div) / 1000;
+	if (v_set != -1) *v = v_set;
+
+	*m = (*m * m_div) / 1000;
+	if (m_set != -1) *m = m_set;
 }
 
 /* Display messages to the player, telling him about newly gained abilities
