@@ -3624,13 +3624,14 @@ void calc_boni(int Ind) {
 
 			p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV;
 			p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
-			if (p_ptr->lev >= 20) {
-				int l;
+			if (p_ptr->lev >= 20) { /* always true, or we wouldn't have a trait */
+				int l = ((p_ptr->lev > 50 ? 50 : p_ptr->lev) - 20) / 2;
 
-				l = ((p_ptr->lev > 50 ? 50 : p_ptr->lev) - 20) / 2;
+				/* Increase AC */
 				p_ptr->to_a += l;
 				p_ptr->dis_to_a += l;
 
+				/* Increase intrinsic light */
 				l = 1 + (p_ptr->lev - 20) / 6;
 				p_ptr->cur_lite += l; csheet_boni[14].lite += l; //REAL light!
 				csheet_boni[14].cb[12] |= CB13_XLITE;

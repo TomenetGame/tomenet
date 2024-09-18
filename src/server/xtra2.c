@@ -4462,7 +4462,7 @@ static void do_Maia_skill(int Ind, int s, int m, bool live) {
 	if (live) respec_skill(Ind, s, FALSE, FALSE);
 
 	/* Modify skill, avoiding overflow (mod is u16b) */
-	tmp_val = (tmp_val * m) / 10;
+	tmp_val = (tmp_val * m) / 100;
 	/* Cap at 2.000 gain */
 	if (tmp_val > 2000) tmp_val = 2000;
 	Players[Ind]->s_info[s].mod = tmp_val;
@@ -4566,7 +4566,7 @@ void shape_Maia_skills(int Ind, bool live) {
 			   hereticism; axe, polearm, blunt; all bloodmagic */
  #ifdef ENABLE_OHERETICISM
 			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((700 * 7) / 10 * 21) / 10, live);
+			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((700 * 7) / 10 * 17) / 10, live);
  #endif
  #if 0 /* 0ed to re-allow */
 			if (live) respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
@@ -4629,19 +4629,19 @@ void shape_Maia_skills(int Ind, bool live) {
 			/* Note: Corrupted trait doesn't give sword bonus but axe,
 			   but since Enlightened trait gives priests melee bonus (blunt), we need Corrupted Priests to be on par,
 			   as if their Blunt skill was just transferred to become Sword.. a bit inconsistent :/ */
-			//do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 13) / 10, live);
-			do_Maia_skill2(Ind, SKILL_SWORD, 0, (500 * 13) / 10, live); //Base x1.3, as replacement for missing Axe-Mastery.
-			//Note: Martial Arts falls through at 0.500 and becomes 0.650 (x1.3), Blunt-Mastery falls through at 0.600, as canonical.
+			//do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 12) / 10, live);
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (500 * 12) / 10, live); //Base x1.2, as replacement for missing Axe-Mastery.
+			//Note: Martial Arts falls through at 0.500 and becomes 0.600 (x1.2), Blunt-Mastery falls through at 0.600, as canonical.
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1400 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1400 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1500 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1300 * 7) / 10 * 3, live);
-			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1400 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1400 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1500 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1300 * 7) / 10 * 2, live);
+			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 2, live);
 
 			p_ptr->s_info[SKILL_SCHOOL_MAGIC].dev = TRUE; //expand Wizardry, to notice newly acquired Udun school (EXP, compare tables.c)
-			do_Maia_skill2(Ind, SKILL_UDUN, 0, 515, live); //will get x2 below
+			do_Maia_skill2(Ind, SKILL_UDUN, 0, 600, live); // '750 x 0.8' -> will get x1.4 below
 
 			if (live) Send_reliable(p_ptr->conn);
 		}
@@ -4653,9 +4653,9 @@ void shape_Maia_skills(int Ind, bool live) {
 		p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
 
 #ifdef ENABLE_OCCULT
-		do_Maia_skill(Ind, SKILL_OSHADOW, 17, live);
+		do_Maia_skill(Ind, SKILL_OSHADOW, 160, live);
  #ifdef ENABLE_OUNLIFE
-		do_Maia_skill(Ind, SKILL_OUNLIFE, 17, live);
+		do_Maia_skill(Ind, SKILL_OUNLIFE, 160, live);
  #endif
 		//if (live) respec_skill(Ind, SKILL_OSPIRIT, FALSE, FALSE);
 		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
@@ -4666,16 +4666,16 @@ void shape_Maia_skills(int Ind, bool live) {
 		    && p_ptr->pclass != CLASS_PRIEST
    #endif
 		    )
-			do_Maia_skill(Ind, SKILL_OHERETICISM, 21, live); //for Paladins/Priests it's been handled above already
+			do_Maia_skill(Ind, SKILL_OHERETICISM, 170, live); //for Paladins/Priests it's been handled above already
   #endif
  #endif
 #endif
 
 		/* Yay */
-		do_Maia_skill(Ind, SKILL_FIRE, 17, live);
-		do_Maia_skill(Ind, SKILL_AIR, 17, live);
-		do_Maia_skill(Ind, SKILL_CONVEYANCE, 17, live);
-		do_Maia_skill(Ind, SKILL_UDUN, 20, live);
+		do_Maia_skill(Ind, SKILL_FIRE, 110, live);
+		do_Maia_skill(Ind, SKILL_AIR, 110, live);
+		do_Maia_skill(Ind, SKILL_CONVEYANCE, 110, live);
+		do_Maia_skill(Ind, SKILL_UDUN, 140, live);
 #ifdef ENABLE_HELLKNIGHT /* blood magic skills were already converted above; this code here is just for 'normal' classes */
 	    if (p_ptr->pclass != CLASS_PALADIN
  #ifdef ENABLE_CPRIEST
@@ -4683,18 +4683,18 @@ void shape_Maia_skills(int Ind, bool live) {
  #endif
 	     ) {
 #endif
-		do_Maia_skill(Ind, SKILL_TRAUMATURGY, 30, live);
-		do_Maia_skill(Ind, SKILL_NECROMANCY, 30, live);
-		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30, live);
-		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30, live);
-		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30, live);
-		do_Maia_skill(Ind, SKILL_AXE, 13, live); /* was already increased in corrupted-paladin-specific checks */
+		do_Maia_skill(Ind, SKILL_TRAUMATURGY, 200, live);
+		do_Maia_skill(Ind, SKILL_NECROMANCY, 200, live);
+		do_Maia_skill(Ind, SKILL_AURA_FEAR, 200, live);
+		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 200, live);
+		do_Maia_skill(Ind, SKILL_AURA_DEATH, 200, live);
+		do_Maia_skill(Ind, SKILL_AXE, 120, live); /* was already increased in corrupted-paladin-specific checks */
 #ifdef ENABLE_HELLKNIGHT
 	    }
 #endif
-		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13, live);
-		do_Maia_skill(Ind, SKILL_R_DARK, 17, live);
-		do_Maia_skill(Ind, SKILL_R_CHAO, 17, live);
+		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 120, live);
+		do_Maia_skill(Ind, SKILL_R_DARK, 125, live);
+		do_Maia_skill(Ind, SKILL_R_CHAO, 125, live);
 
 #ifdef ENABLE_HELLKNIGHT
 		if (p_ptr->pclass == CLASS_PALADIN) {
@@ -4735,25 +4735,25 @@ void shape_Maia_skills(int Ind, bool live) {
  #ifdef ENABLE_OUNLIFE
 		p_ptr->s_info[SKILL_OUNLIFE].mod = 0;
  #endif
-		do_Maia_skill(Ind, SKILL_OSPIRIT, 21, live);
+		do_Maia_skill(Ind, SKILL_OSPIRIT, 160, live);
  #ifdef ENABLE_OHERETICISM
 		p_ptr->s_info[SKILL_OHERETICISM].mod = 0;
  #endif
 #endif
 
 		/* Yay */
-		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30, live);
-		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30, live);
-		do_Maia_skill(Ind, SKILL_HOFFENSE, 21, live);
-		do_Maia_skill(Ind, SKILL_HCURING, 21, live);
-		do_Maia_skill(Ind, SKILL_HDEFENSE, 21, live);
-		do_Maia_skill(Ind, SKILL_HSUPPORT, 21, live);
-		do_Maia_skill(Ind, SKILL_DIVINATION, 17, live);
-		do_Maia_skill(Ind, SKILL_SWORD, 13, live);
-		do_Maia_skill(Ind, SKILL_BLUNT, 13, live);
-		do_Maia_skill(Ind, SKILL_POLEARM, 13, live);
-		do_Maia_skill(Ind, SKILL_R_LITE, 17, live);
-		do_Maia_skill(Ind, SKILL_R_MANA, 17, live);
+		do_Maia_skill(Ind, SKILL_AURA_FEAR, 200, live);
+		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 200, live);
+		do_Maia_skill(Ind, SKILL_HOFFENSE, 160, live);
+		do_Maia_skill(Ind, SKILL_HCURING, 160, live);
+		do_Maia_skill(Ind, SKILL_HDEFENSE, 160, live);
+		do_Maia_skill(Ind, SKILL_HSUPPORT, 160, live);
+		do_Maia_skill(Ind, SKILL_DIVINATION, 140, live);
+		do_Maia_skill(Ind, SKILL_SWORD, 120, live);
+		do_Maia_skill(Ind, SKILL_BLUNT, 120, live);
+		do_Maia_skill(Ind, SKILL_POLEARM, 120, live);
+		do_Maia_skill(Ind, SKILL_R_LITE, 125, live);
+		do_Maia_skill(Ind, SKILL_R_MANA, 125, live);
 		break;
 	default: ;
 	}

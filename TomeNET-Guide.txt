@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 17. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 18. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18283,7 +18283,7 @@ Enlightened:
     - Able to see invisible and resisting light.
     - Intrinsic light aura that adds to any light source's radius, starting at
       +1 and growing by another +1 every 6 levels above 20.
-    - +1 bonus AC for every 2 levels above 20 (caps at 50).
+    - +1 bonus AC for every 2 levels above 20, up to level 50.
     - At level 50 they will be able to levitate, become resistant to poison,
       electricity, cold and be enveloped in an aura of frost and lightning;
     - also, their melee attacks will slay evil opponents intrinsically.
@@ -18291,9 +18291,12 @@ Enlightened:
     - Necromancy, Traumaturgy, Aura of Death, Shadow, Unlife and Hereticism
       become disabled but you will keep them at their currently trained level.
 
-    - Sword-, Blunt- and Polearm-mastery skill ratios x 1.3.
-    - The four holy school ratios x 2.1, Spirit x 2.1, Divination x 1.7.
-    - Light and Mana rune ratios x 1.7, Fear and Shivering Aura ratio x 3.0.
+    - Sword-, Blunt- and Polearm-mastery skill ratios x 1.2.
+    - The four prayer school ratios x 1.6.
+    - Wizardry Divination school x 1.4.
+    - Occult Spirit school x 1.6.
+    - Light and Mana rune ratios x 1.25.
+    - Fear and Shivering Aura ratio x 2.0.
 
 Corrupted:
     - Gain time resistance and they no longer have any need for worldly food.
@@ -18305,12 +18308,12 @@ Corrupted:
     - At level 50 they will become resistant to poison, immune to fire, and
       be enveloped in a fiery aura.
 
-    - The four holy schools and Spirit become disabled (cannot be trained
+    - The four prayer schools and Spirit become disabled (cannot be trained
       further, but you keep their current status),
       priests and paladins however get them completely reset (refunded).
 
     - Priests:  Sword-mastery is enabled and receives the same skill ratio as
-                Blunt-Mastery, then it gets boosted by x 1.3 (as replacement
+                Blunt-Mastery, then it gets boosted by x 1.2 (as replacement
                 of non-existant Axe-mastery for this class).
     - Paladins: Sword-mastery ratio x 1.1.
                 Blunt-mastery ratio receives a x 1.1 bonus; because its ratio
@@ -18318,11 +18321,11 @@ Corrupted:
                 Axe-mastery and Blunt-mastery ratios are swapped, so Axe will
                 now have the higher ratio and Blunt will have the lower ratio.
 
-    - Axe-mastery and Martial Arts skill ratios x 1.3.
-    - Fire, Air, Conveyance school ratios x 1.7, Udun x 2.0,
-    - Shadow and Unlife x 1.7, Hereticism x 2.1,
-    - Darkness and Chaos rune ratios x 1.7,
-    - all Blood Magic ratios x 3.0.
+    - Axe-mastery and Martial Arts skill ratios x 1.2.
+    - Fire, Air, Conveyance school ratios x 1.1, Udun x 1.4.
+    - Shadow and Unlife x 1.6, Hereticism x 1.7.
+    - Darkness and Chaos rune ratios x 1.25.
+    - All Blood Magic ratios x 2.0.
 
 Note: After a skill's gain ratio has been boosted as stated above, it will be
       capped against a maximum value of 2.000, which can never be exceeded.
