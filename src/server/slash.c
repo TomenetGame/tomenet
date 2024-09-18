@@ -1287,7 +1287,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!item_tester_hook_wear(Ind, i)) continue;
 
 				/* No parm given -> only use free equipment slots */
-				o_ptr = &(p_ptr->inventory[i]);
+				o_ptr = &p_ptr->inventory[i];
 				if (!tk && o_ptr->tval) {
 					/* ...but still remember if we had a 2h- or 1.5h- weapon there already, to handle dual-wielding */
 					if (i == INVEN_WIELD) {
@@ -1301,7 +1301,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				for (j = 0; j < INVEN_PACK; j++) {
-					o_ptr = &(p_ptr->inventory[j]);
+					o_ptr = &p_ptr->inventory[j];
 					if (!o_ptr->k_idx) break;
 
 					/* Limit to items with specified strings, if any */
@@ -1378,7 +1378,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							 dual = TRUE; /* We may equip another weapon into the next slot, the arm slot */
 					}
 
-					/* Equip it; for alt slots: Either into the first free slot, or strictly into specific slots.
+					/* Equip it; for alt slots: First into the free/default slot, second into a slot that is not the slot of the first one.
 					   Note that this changes o_ptr index, so this must be the last thing done in this loop. */
 					if (!tk) (void)do_cmd_wield(Ind, j, 0x0);
 					else {
@@ -1388,7 +1388,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						} else if (ws_org == INVEN_WIELD) {
 							if (slot_weapon == -1) slot_weapon = do_cmd_wield(Ind, j, 0x0);
 							else (void)do_cmd_wield(Ind, j, (ws == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval) ? 0x2 : 0x0);
-						}
+						} else do_cmd_wield(Ind, j, 0x0);
 					}
 
 					break;
