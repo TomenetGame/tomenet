@@ -2647,15 +2647,15 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
 			bit = y * width + x;
-			r = data[4 * (x + y * width)];
+			b = data[4 * (x + y * width)];
 			g = data[4 * (x + y * width) + 1];
-			b = data[4 * (x + y * width) + 2];
+			r = data[4 * (x + y * width) + 2];
 
 			/* Ensure non-GRAPHICS_BG_MASK backward compatibility with 2mask-ready tilesets that use the dual-mask colour! */
 			if (r == GFXMASK_BG2_R && g == GFXMASK_BG2_G && b == GFXMASK_BG2_B) {
-				r = data[4 * (x + y * width)] = GFXMASK_BG_R;
+				b = data[4 * (x + y * width)] = GFXMASK_BG_B;
 				g = data[4 * (x + y * width) + 1] = GFXMASK_BG_G;
-				b = data[4 * (x + y * width) + 2] = GFXMASK_BG_B;
+				r = data[4 * (x + y * width) + 2] = GFXMASK_BG_R;
 			}
 
 			if (r != GFXMASK_BG_R || g != GFXMASK_BG_G || b != GFXMASK_BG_B)
@@ -2699,16 +2699,16 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
 			bit = y * width + x;
-			r = data[4 * (x + y * width)];
+			b = data[4 * (x + y * width)];
 			g = data[4 * (x + y * width) + 1];
-			b = data[4 * (x + y * width) + 2];
+			r = data[4 * (x + y * width) + 2];
 
 			/* We're not in dual-mask mode? Translate 2mask pixels back to normal bgmask: */
 			if (use_graphics != UG_2MASK &&
 			    r == GFXMASK_BG2_R && g == GFXMASK_BG2_G && b == GFXMASK_BG2_B) {
-				r = data[4 * (x + y * width)] = GFXMASK_BG_R;
+				b = data[4 * (x + y * width)] = GFXMASK_BG_B;
 				g = data[4 * (x + y * width) + 1] = GFXMASK_BG_G;
-				b = data[4 * (x + y * width) + 2] = GFXMASK_BG_B;
+				r = data[4 * (x + y * width) + 2] = GFXMASK_BG_R;
 			}
 
 			if (r != GFXMASK_BG_R || g != GFXMASK_BG_G || b != GFXMASK_BG_B)
