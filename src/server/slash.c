@@ -1273,8 +1273,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		    //&& !prefix(messagelc, "/draw") && !prefix(messagelc, "/dri"))) { /* there is no /drink command, but anyway, it might confuse people if they try to /drink! */
 			object_type *o_ptr;
 			bool gauche = FALSE;
-			bool dual = FALSE;
-			int ws;
+			bool dual = FALSE, can_dual = get_skill(p_ptr, SKILL_DUAL) != 0;
+			bool hand15 = FALSE;
+			int ws, ws_org;
+			s16b slot_weapon = -1, slot_ring = -1;
 
 			/* Paralyzed? */
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
@@ -1284,8 +1286,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 				if (!item_tester_hook_wear(Ind, i)) continue;
 
+				/* No parm given -> only use free equipment slots */
 				o_ptr = &(p_ptr->inventory[i]);
-				if (o_ptr->tval && !tk) continue;
+				if (!tk && o_ptr->tval) {
+					/* ...but still remember if we had a 2h- or 1.5h- weapon there already, to handle dual-wielding */
+					if (i == INVEN_WIELD) {
+						if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
+							i++; /* Skip INVEN_ARM slot */
+						else if (!(k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) && can_dual)
+							dual = TRUE; /* We may equip another weapon into the next slot, the arm slot */
+					}
+					/* ...only use free equipment slots */
+					continue;
+				}
 
 				for (j = 0; j < INVEN_PACK; j++) {
 					o_ptr = &(p_ptr->inventory[j]);
@@ -1293,8 +1306,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 					/* Limit to items with specified strings, if any */
 					if (tk) {
-						if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1]))
-							continue;
+						if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1])) continue;
 					} else {
 						/* skip unsuitable inscriptions */
 						if (o_ptr->note &&
@@ -1309,25 +1321,28 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						if (cursed_p(o_ptr)) continue;
 					}
 
-					/* legal item? */
-					ws = wield_slot(Ind, o_ptr);
-					/* handle dual-wield */
-					if (ws == INVEN_WIELD && dual) ws = INVEN_ARM; /* we just equipped an item in the primary wield slot, so move this one to secondary slot */
+					/* get target base equipment slot of the item to wield */
+					ws_org = ws = wield_slot(Ind, o_ptr);
+					/* Weapons: Check for 2h/1.5h implications */
+					if (ws == INVEN_WIELD && (k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
+						/* cannot equip 2-h or 1.5-h into arm slot */
+						if (i == INVEN_ARM) continue;
+						/* Look-ahead: Unless forced to (parm 'tk') we cannot wield a 1.5h or 2-h weapon if the arm slot is already occupied with a weapon! */
+						if (!tk && p_ptr->inventory[INVEN_ARM].tval && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) continue;
+					}
+					if (ws == INVEN_WIELD && (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)) {
+						/* Look-ahead: Unless forced to (parm 'tk') we cannot wield a 2-h weapon if the arm slot is already occupied! */
+						if (!tk && p_ptr->inventory[INVEN_ARM].tval) continue;
+					}
+					/* handle dual-wield: We just previously equipped an item in the primary wield slot, so move this one to secondary (arm) slot */
+					if (ws == INVEN_WIELD && dual) ws = INVEN_ARM;
+					/* Handle 1.5-hander: Shield is ok, weapon isn't, because can't dual-wield with 1.5h equipped. */
+					if (ws == INVEN_ARM && hand15 && o_ptr->tval != TV_SHIELD) continue;
+					/* item can't be wielded in general into the equipment slot we're currently processing? */
 					if (ws != i) continue;
 
-					(void)do_cmd_wield(Ind, j, 0x0);
-
-					/* MEGAHACK -- tweak to handle rings right */
-					if (o_ptr->tval == TV_RING && !gauche) {
-						i -= 2;
-						gauche = TRUE;
-					}
-
-					/* MEGAHACK 2 -- tweak to handle dual-wielding two stacked weapons right */
-					//if (is_melee_weapon(o_ptr->tval) && o_ptr->number && !dual) dual = TRUE;
-					if (ws == INVEN_WIELD && !dual) dual = TRUE;
-
-					switch (o_ptr->tval) {
+					/* Skip wrong ammo if called without parameter */
+					if (!tk) switch (o_ptr->tval) {
 					case TV_SHOT:
 						if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW
 						    && p_ptr->inventory[INVEN_BOW].sval != SV_SLING) continue;
@@ -1342,6 +1357,38 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						    && p_ptr->inventory[INVEN_BOW].sval != SV_LIGHT_XBOW
 						    && p_ptr->inventory[INVEN_BOW].sval != SV_HEAVY_XBOW) continue;
 						break;
+					}
+
+					if (!tk) {
+						if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) i++; /* Skip INVEN_ARM slot */
+						else if (k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) hand15 = TRUE;
+					}
+
+					/* MEGAHACK -- tweak to handle rings right */
+					if (o_ptr->tval == TV_RING && !gauche) {
+						i -= 2;
+						gauche = TRUE;
+					}
+
+					/* MEGAHACK 2 -- tweak to handle dual-wielding two stacked weapons right */
+					if (ws == INVEN_WIELD) {
+						if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
+							i++; /* Skip INVEN_ARM slot */
+						else if (!(k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) && can_dual)
+							 dual = TRUE; /* We may equip another weapon into the next slot, the arm slot */
+					}
+
+					/* Equip it; for alt slots: Either into the first free slot, or strictly into specific slots.
+					   Note that this changes o_ptr index, so this must be the last thing done in this loop. */
+					if (!tk) (void)do_cmd_wield(Ind, j, 0x0);
+					else {
+						if (o_ptr->tval == TV_RING) {
+							if (slot_ring == -1) slot_ring = do_cmd_wield(Ind, j, 0x0);
+							else (void)do_cmd_wield(Ind, j, slot_ring == INVEN_RIGHT ? 0x0 : 0x2);
+						} else if (ws_org == INVEN_WIELD) {
+							if (slot_weapon == -1) slot_weapon = do_cmd_wield(Ind, j, 0x0);
+							else (void)do_cmd_wield(Ind, j, (ws == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval) ? 0x2 : 0x0);
+						}
 					}
 
 					break;

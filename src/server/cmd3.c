@@ -735,11 +735,13 @@ void do_takeoff_impossible(int Ind) {
  * Wield or wear a single item from the pack or floor
  * Added alt_slots to specify an alternative slot when an item fits in
  * two places - C. Blue
- * 0 = equip in first free slot that fits, if none is free, replace item in first slot (standard/traditional behaviour)
- * 1 = equip in first slot that fits, replacing the item if any
- * 2 = equip in second slot that fits, replacing the item if any
- * 4 = don't equip if slot is already occupied (ie don't replace by taking off an item)
- * 8 = swap the two weapon slots (4.7.3+)
+ * 0x00 = equip in first free slot that fits, if none is free, replace item in first slot (standard/traditional behaviour)
+ * 0x01 = equip in first slot that fits, replacing the item if any
+ * 0x02 = equip in second slot that fits, replacing the item if any
+ * 0x04 = don't equip if slot is already occupied (ie don't replace by taking off an item)
+ * 0x08 = swap the two weapon slots (4.7.3+)
+ * (if ever needed for /dr. not implemented: 0x10 = force 1st slot, free or not (as long as curse doesn't prevent it))
+ * (if ever needed for /dr. not implemented: 0x20 = force 2nd slot, free or not (as long as curse doesn't prevent it))
  * Note: Rings make an exception in 4: First ring always goes in second ring slot.
  * Returns -1 on failure, else the 'slot' into which the item was successfully equipped.
  */
