@@ -1698,7 +1698,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 
 	/* set default floor info; new: CAVE_ROOM to allow lighting them like rooms */
-	floor_info = CAVE_ICKY | CAVE_ROOM;
+	floor_info = CAVE_ICKY | CAVE_ROOM | CAVE_GLOW;
 	floor_info2 = 0x0;
 
 	/* does house already exist (created at server start)
