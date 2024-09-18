@@ -4577,10 +4577,10 @@ void shape_Maia_skills(int Ind, bool live) {
 			do_Maia_skill2(Ind, SKILL_BLUNT, 0, 600, live); //swap with Axe
   #else
 			if (live) respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
-			do_Maia_skill2(Ind, SKILL_BLUNT, 0, (600 * 11) / 10, live); //swap with Axe and gain x1.1, to not lag behind original Paladin skill too much
+			do_Maia_skill2(Ind, SKILL_BLUNT, 0, (600 * 11) / 10, live); //swap ratio with Axe (0.600) and gain x1.1, to not lag behind original Paladin skill too much
   #endif
  #endif
-			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10, live); //swap with Blunt (and get buffed then canonically further down)
+			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10, live); //swap ratio with Blunt (0.750) and gain x1.3
 			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10, live); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
 			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
@@ -4688,7 +4688,7 @@ void shape_Maia_skills(int Ind, bool live) {
 		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30, live);
 		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30, live);
 		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30, live);
-		do_Maia_skill(Ind, SKILL_AXE, 13, live);
+		do_Maia_skill(Ind, SKILL_AXE, 13, live); /* was already increased in corrupted-paladin-specific checks */
 #ifdef ENABLE_HELLKNIGHT
 	    }
 #endif
