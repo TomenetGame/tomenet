@@ -1166,7 +1166,8 @@ void resize_main_window_x11(int cols, int rows);
 void resize_window_x11(int term_idx, int cols, int rows);
 static term_data* term_idx_to_term_data(int term_idx);
 
-/* Cache for prepared graphical tiles */
+/* Cache for prepared graphical tiles.
+   Observations: Cache fills maybe within first 10 floors of Barrow-Downs (2mask mode), so it's very comfortable. */
 #define TILE_CACHE_SIZE	256
 #if 1 /* Choose one, 1st is more efficient */
  /* Cache invalidates based on attr when new palette info is received? */
