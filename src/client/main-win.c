@@ -394,6 +394,7 @@ int graphics_image_tpr; /* Tiles per row. */
 /* Copied and repurposed from: http://winprog.org/tutorial/transparency.html
    NOTE: This function actually blackens (or whitens, if 'inverse') any recognized mask pixel in the _original_ image!
          So while the mask is created, it is sort of 'cut out' of the original image, leaving blackness (whiteness) behind. */
+//todo: implement -> for '-1' values for the foreground colour, change crTransparent from a COLORREF value to actual R,G,B, so "-1" can be processed?
 HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse) {
 	BITMAP bm;
 	COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
