@@ -2661,6 +2661,7 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 			if (r != GFXMASK_BG_R || g != GFXMASK_BG_G || b != GFXMASK_BG_B)
 				bgmask[bit / 8] |= 1 << (bit % 8);
 
+			//todo:implement -> if ((GFXMASK_FG_R == -1 || r == GFXMASK_FG_R) && (GFXMASK_FG_G == -1 || g == GFXMASK_FG_G) && (GFXMASK_FG_B == -1 || b == GFXMASK_FG_B)) {
 			if (r == GFXMASK_FG_R && g == GFXMASK_FG_G && b == GFXMASK_FG_B) {
 				fgmask[bit / 8] |= 1 << (bit % 8);
 				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
@@ -2720,6 +2721,7 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 				bg2mask[bit / 8] |= 1 << (bit % 8);
   #endif
 
+			//todo:implement -> if ((GFXMASK_FG_R == -1 || r == GFXMASK_FG_R) && (GFXMASK_FG_G == -1 || g == GFXMASK_FG_G) && (GFXMASK_FG_B == -1 || b == GFXMASK_FG_B)) {
 			if (r == GFXMASK_FG_R && g == GFXMASK_FG_G && b == GFXMASK_FG_B) {
 				fgmask[bit / 8] |= 1 << (bit % 8);
 				bgmask[bit / 8] &= ~((char)1 << (bit % 8));

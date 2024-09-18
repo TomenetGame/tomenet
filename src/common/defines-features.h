@@ -548,17 +548,20 @@
    (Notes: Affected server functions: Send_char(), Send_line_info(), Send_line_info_forward().) */
 //#ifdef TEST_SERVER
 #if defined(USE_GRAPHICS) || !defined(CLIENT_SIDE) /* !clientside: The server doesn't itself use graphics, but has to provide the calculation-capabilities for graphics-enabled clients */
- /* Masks for USE_GRAPHICS: */
- /* Colours for foreground-colour mask */
- #define GFXMASK_FG_R	255
+ /* Masks for USE_GRAPHICS, using values that are very unlikely to collide with any desired actual colour.
+    (todo: implement -> A value of '-1' for R or G or B is ONLY allowed for the foreground mask, means 'any' and thereby will offer a range of x256 combinations for that mask.) */
+ /* Colours for foreground-colour mask (0xFCnnFB, previousy 0xFF00FF)) */
+ #define GFXMASK_FG_R	252
  #define GFXMASK_FG_G	0
- #define GFXMASK_FG_B	255
- /* Colours for background-colour mask */
+//todo: implement -> #define GFXMASK_FG_G	-1	/* (only the FG mask may use "-1" values) */
+ #define GFXMASK_FG_B	251
+ /* Colours for background-colour mask (0x000000) */
  #define GFXMASK_BG_R	0
  #define GFXMASK_BG_G	0
  #define GFXMASK_BG_B	0
- /* Colours for dual-background-graphics mask - must be known even if GRAPHICS_BG_MASK is not enabled, so client remains backward compatible with 2mask-ready tilesets! */
- #define GFXMASK_BG2_R	10
+ /* Colours for dual-background-graphics mask (0x0B100A, previously 0x0A100A) -
+    must be known even if GRAPHICS_BG_MASK is not enabled, so client remains backward compatible with 2mask-ready tilesets! */
+ #define GFXMASK_BG2_R	11
  #define GFXMASK_BG2_G	16
  #define GFXMASK_BG2_B	10
 
