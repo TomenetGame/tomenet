@@ -3553,6 +3553,9 @@ errr init_x11(void) {
 			/* Allocate color for each pixel and rewrite in image */
 			for (y = 0; y < height; y++) {
 				for (x = 0; x < width; x++) {
+					/* Utilize XAllocColor() in create_pixel() to get an 'official' X11 colour for our desired RGB value.
+					   On 24-bit(also 32-bit?)-depth visuals this will be identical,
+					   so this is mainly for super old/weird hardware that has indexed colours or <8 bits per channel. */
 					XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
 				}
 			}
