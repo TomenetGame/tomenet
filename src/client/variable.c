@@ -211,7 +211,8 @@ cptr ANGBAND_DIR_XTRA;
 cptr ANGBAND_DIR_GAME;
 
 bool disable_numlock = FALSE;
-byte use_graphics = FALSE, use_graphics_new = FALSE;
+byte use_graphics = FALSE, use_graphics_new = FALSE, use_graphics_err = 0;
+char use_graphics_errstr[MAX_CHARS_WIDE] = { 0 };
 #ifdef USE_GRAPHICS
 char graphic_tiles[256] = "16x22sv";
 #endif

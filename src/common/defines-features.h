@@ -573,6 +573,9 @@
   #define UG_NORMAL	1
   #define UG_2MASK	2
  #endif
+
+ /* Resume in text mode on client startup if graphics fail for some reason, instead of just quitting? */
+ #define GFXERR_FALLBACK
 #endif
 //#endif
 

@@ -3491,16 +3491,30 @@ errr init_x11(void) {
 
 		/* Check for tiles string & extract tiles width & height. */
 		if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
-			fprintf(stderr, "Couldn't extract tile dimensions from: %s\n", graphic_tiles);
-			quit("Graphics load error");
+			sprintf(use_graphics_errstr, "Couldn't extract tile dimensions from: %s", graphic_tiles);
+			fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+			quit("Graphics load error (X1)");
+ #else
+			use_graphics = 0;
+			use_graphics_err = 101;
+			goto gfx_skip;
+ #endif
 		}
 
 		if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
-			fprintf(stderr, "Invalid tiles dimensions: %dx%d\n", graphics_tile_wid, graphics_tile_hgt);
-			quit("Graphics load error");
+			sprintf(use_graphics_errstr, "Invalid tiles dimensions: %dx%d", graphics_tile_wid, graphics_tile_hgt);
+			fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+			quit("Graphics load error (X2)");
+ #else
+			use_graphics = 0;
+			use_graphics_err = 102;
+			goto gfx_skip;
+ #endif
 		}
 
-		/* Initialize paths, to get access to lib directories. */
+		/* Early-initialize paths, to get access to lib directories right now, we need it for loading the graphics: */
 		init_stuff();
 
 		/* Build & allocate the graphics path. */
@@ -3514,24 +3528,38 @@ errr init_x11(void) {
 		/* Load .bmp image. */
 
 		if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
-			fprintf(stderr, "Graphics file \"%s\" ", filename);
+			sprintf(use_graphics_errstr, "Graphics file \"%s\" ", filename);
 			switch (rerr) {
-				case ReadBMPNoFile:                   fprintf(stderr, "can not be read.\n"); break;
-				case ReadBMPReadErrorOrUnexpectedEOF: fprintf(stderr, "read error or unexpected end.\n"); break;
-				case ReadBMPInvalidFile:              fprintf(stderr, "has incorrect BMP file format.\n"); break;
-				case ReadBMPNoImageData:              fprintf(stderr, "contains no image data.\n"); break;
-				case ReadBMPUnexpectedEOF:            fprintf(stderr, "unexpected end.\n"); break;
-				case ReadBMPIllegalBitCount:          fprintf(stderr, "has illegal bit count, only 24bit and 32bit images are allowed.\n"); break;
-				default: fprintf(stderr, "unexpected error.\n");
+				case ReadBMPNoFile:			strcat(use_graphics_errstr, "can not be read."); break;
+				case ReadBMPReadErrorOrUnexpectedEOF:	strcat(use_graphics_errstr, "read error or unexpected end."); break;
+				case ReadBMPInvalidFile:		strcat(use_graphics_errstr, "has incorrect BMP file format."); break;
+				case ReadBMPNoImageData:		strcat(use_graphics_errstr, "contains no image data."); break;
+				case ReadBMPUnexpectedEOF:		strcat(use_graphics_errstr, "unexpected end."); break;
+				case ReadBMPIllegalBitCount:		strcat(use_graphics_errstr, "has illegal bit count, only 24bit and 32bit images are allowed."); break;
+				default: 				strcat(use_graphics_errstr, "unexpected error.");
 			}
-			quit("Graphics load error");
+			fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+			quit("Graphics load error (X3)");
+ #else
+			use_graphics = 0;
+			use_graphics_err = 103;
+			goto gfx_skip;
+ #endif
 		}
 
 		/* Calculate tiles per row. */
 		graphics_image_tpr = width / graphics_tile_wid;
 		if (graphics_image_tpr <= 0) { /* Paranoia. */
-			fprintf(stderr, "Invalid image tiles per row count: %d\n", graphics_image_tpr);
-			quit("Graphics load error");
+			sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
+			fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+			quit("Graphics load error (X4)");
+ #else
+			use_graphics = 0;
+			use_graphics_err = 104;
+			goto gfx_skip;
+ #endif
 		}
 
 		/* Create masks from loaded data */
@@ -3559,6 +3587,13 @@ errr init_x11(void) {
 					XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
 				}
 			}
+		}
+
+gfx_skip:
+		if (!use_graphics) {
+			printf("Disabling graphics and falling back to normal text mode.\n");
+			/* Actually also show it as 'off' in =g menu, as in, "desired at config-file level" */
+			use_graphics_new = FALSE;
 		}
 	}
 #endif /* USE_GRAPHICS */

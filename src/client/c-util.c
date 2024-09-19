@@ -10077,6 +10077,27 @@ static void do_cmd_options_tilesets(void) {
 		}
 #endif
 
+#ifdef GFXERR_FALLBACK
+		if (use_graphics_err) {
+			Term_putstr(2, 16, -1, TERM_WHITE, "\377RClient was unable to startup with graphics and fell back to text mode.");
+			Term_putstr(2, 17, -1, TERM_WHITE, "\377RIf you re-enable graphics, ensure tileset is valid and its file name correct!");
+			if (!use_graphics_errstr[0]) Term_putstr(2, 18, -1, TERM_WHITE, "\377RNo failure reason specified.");
+			else {
+				char line1[MAX_CHARS], line2[MAX_CHARS] = { 0 };
+
+				Term_putstr(2, 18, -1, TERM_WHITE, "\377RFailure reason on startup, also shown in terminal on startup, was:");
+				if (strlen(use_graphics_errstr) < MAX_CHARS) strcpy(line1, use_graphics_errstr);
+				else {
+					strncpy(line1, use_graphics_errstr, MAX_CHARS - 1);
+					line1[MAX_CHARS - 1] = 0;
+					strcpy(line2, use_graphics_errstr + MAX_CHARS - 1);
+				}
+				Term_putstr(0, 19, -1, TERM_RED, line1);
+				Term_putstr(0, 20, -1, TERM_RED, line2);
+			}
+		}
+#endif
+
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
 		/* hack: hide cursor */
