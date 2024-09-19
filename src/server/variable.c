@@ -99,6 +99,7 @@ s16b monster_level_min = 0;	/* Current monster creation minimum level, -1 = auto
 s32b turn, session_turn;	/* Current game turn; session_turn is the turn this server went online, ie start of current session */
 s32b turn_overflow = 2000000000;/* Limit when to reset 'turn' to 1 to prevent overflow symptoms */
 int turn_plus = 1;		/* How fast turns progress. [1 = Normal Operation, anything else is hazardous, undefined behaviour] */
+int turn_plus_extra = 0;	/* Extra dungeon() calls done in the scheduler for each normal dungeon() call. [0 = Normal operation, anything else is hazardous, undefined behaviour] */
 
 #ifdef ARCADE_SERVER
 //char tron_speed = ((cfg.fps + 3) / 7);

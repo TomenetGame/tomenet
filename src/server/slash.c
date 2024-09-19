@@ -13367,8 +13367,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				turn_plus = k;
 				if (k == 1) msg_print(Ind, "Turns are increasing by \377G1\377w at a time now (\377GNormal operation\377w).");
 				else if (k == 0) msg_print(Ind, "Turns are \377ofrozen\377w.");
-				else if (k < 0) msg_format(Ind, "Turns are decreasing by \377r%d\377y at a time now (\377rHazardous\377w).", -k);
-				else msg_format(Ind, "Turns are increasing by \377y%d\377y at a time now (\377yPotentially Hazardous\377w).", k);
+				else if (k < 0) msg_format(Ind, "Turns are decreasing by \377r%d\377w at a time now (\377rHazardous\377w).", -k);
+				else msg_format(Ind, "Turns are increasing by \377y%d\377w at a time now (\377yPotentially Hazardous\377w).", k);
+				return;
+			}
+			else if (prefix(messagelc, "/turnsextra")) { /* Manipulate scheduler to call main game loop (dungeon()) more than 1 time per timer tick, effectively multiplying passing of time. Dangerous. */
+				if (!tk) k = 0;
+				if (k < 0) k = 0;
+				turn_plus_extra = k;
+				if (k == 0) msg_print(Ind, "Turns are processed normally \377Gwithout extra turns\377w now (\377GNormal operation\377w).");
+				else msg_format(Ind, "Each turn now adds \377y%d\377w extra turn%s aka \377yx%d speed\377w (\377yPotentially Hazardous\377w).", k, k == 1 ? "" : "s", k + 1);
 				return;
 			}
 			else if (prefix(messagelc, "/setaorder")) { /* Set custom list position for this character in the account overview screen on login (see /setorder)*/

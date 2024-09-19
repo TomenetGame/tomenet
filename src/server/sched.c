@@ -270,6 +270,10 @@ void sched(void) {
 		if (timers_used < timer_ticks) {
 			if (timer_handler) {
 				(*timer_handler)();
+				/* For experimenting only - do not use turn_plus_extra for normal games or things will get messy */
+				if (turn_plus_extra)
+					for (n = 0; n < turn_plus_extra; n++)
+						(*timer_handler)();
 			}
 
 			timers_used = timer_ticks;
