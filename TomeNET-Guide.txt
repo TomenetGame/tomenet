@@ -1898,7 +1898,8 @@ They all start with a slash '/' hence they're called slash commands:
            (Undocumented developer command that reloads the guide from drive.)
 
 /rest [turns]
-/re         Rest for number of turns, or indefinitely if 'turns' is omitted.
+/re         Rest for number of turns, or indefinitely if 'turns' is omitted
+            (ie same behaviour as pressing the resting key in order to rest).
             Resting will always stop if resting conditions are no longer met,
             eg character is fully healed up, so specifying super-large amount
             of turns is pointless.
