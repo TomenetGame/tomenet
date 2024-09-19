@@ -1184,18 +1184,6 @@ extern void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr);
 /* netserver.c (nserver.c) */
 /* XXX those entries are duplicated with those in netserver.h
  * consider removing one of them */
-/*extern void Contact(int fd, void *arg);*/
-extern void world_connect(int Ind);
-extern void world_disconnect(int Ind);
-extern int Net_input(void);
-extern int Net_output(void);
-extern int Net_output1(int i);
-extern void setup_contact_socket(void);
-extern bool Report_to_meta(int flag);
-extern void Start_evilmeta(void);
-extern void Check_evilmeta(void);
-extern int Setup_net_server(void);
-extern bool Destroy_connection(int Ind, char *reason);
 extern int Send_file_check(int ind, unsigned short id, char *fname);
 extern int Send_file_init(int ind, unsigned short id, char *fname);
 extern int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len);
@@ -1304,50 +1292,58 @@ extern int Send_unique_monster(int ind, int r_idx);
 extern int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds);
 extern int Send_inventory_revision(int ind);
 extern int Send_account_info(int ind);
-
 extern int Send_request_key(int Ind, int id, char *prompt);
 extern int Send_request_num(int Ind, int id, char *prompt, int max);
 extern int Send_request_str(int Ind, int id, char *prompt, char *std);
 extern int Send_request_cfr(int Ind, int id, char *prompt, char default_choice);
 extern int Send_request_abort(int Ind);
-
 extern void Send_delayed_request_str(int Ind, int id, char *prompt, char *std);
 extern void Send_delayed_request_cfr(int Ind, int id, char *prompt, char default_choice);
-
 extern int Send_screenflash(int ind);
-
-extern void Handle_direction(int Ind, int dir);
-extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg, int cur, int max);
-extern char *compacttime(void);
-extern char *showtime(void);
-extern char *showdate(void);
-extern void get_date(int *weekday, int *day, int *month, int *year);
-extern void init_players(void);
-extern int is_inactive(int Ind);
-
 extern int Send_extra_status(int Ind, cptr status);
-extern void change_mind(int Ind, bool open_or_close);
 extern int Send_apply_auto_insc(int Ind, int slot);
-
-extern int fake_Receive_tunnel(int Ind, int dir);
-extern bool purge_acc_file(void);
-extern sockbuf_t *get_conn_q(int Ind);
-
 extern int Send_martyr(int ind);
 extern int Send_confirm(int Ind, int confirmed_command);
 extern int Send_item_newest(int Ind, int item);
-
 extern int Send_reliable(int ind);
 extern int Send_palette(int Ind, byte c, byte r, byte g, byte b);
 extern int Send_idle(int Ind, bool idle);
 extern int Send_Guide(int Ind, byte search_type, int lineno, const char* search_string);
-
 extern int Send_indicators(int Ind, u32b indicators);
 extern int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain);
 extern int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
 extern int Send_version(int Ind);
 extern int Send_playerlist(int Ind, int i, int mode);
+
+extern void Handle_direction(int Ind, int dir);
+extern void Handle_clear_buffer(int Ind);
+extern int fake_Receive_tunnel(int Ind, int dir);
+
+extern void init_players(void);
+/*extern void Contact(int fd, void *arg);*/
+extern void world_connect(int Ind);
+extern void world_disconnect(int Ind);
+extern int Net_input(void);
+extern int Net_output(void);
+extern int Net_output1(int i);
+extern void setup_contact_socket(void);
+extern bool Report_to_meta(int flag);
+extern void Start_evilmeta(void);
+extern void Check_evilmeta(void);
+extern int Setup_net_server(void);
+extern bool Destroy_connection(int Ind, char *reason);
+
+extern sockbuf_t *get_conn_q(int Ind);
+extern char *compacttime(void);
+extern char *showtime(void);
+extern char *showdate(void);
+extern void get_date(int *weekday, int *day, int *month, int *year);
+extern int is_inactive(int Ind);
+extern bool purge_acc_file(void);
+
+extern void change_mind(int Ind, bool open_or_close);
+extern int toggle_rest(int Ind, int turns);
 
 /* object1.c */
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);

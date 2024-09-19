@@ -303,7 +303,7 @@ struct player_type {
 	bool find_breakright;
 	bool find_breakleft;
 
-	bool resting;		/* Are we resting? */
+	s16b resting;		/* Are we resting? */
 
 	s16b energy_use;	/* How much energy has been used */
 

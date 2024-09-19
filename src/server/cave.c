@@ -9432,12 +9432,15 @@ void disturb(int Ind, int stop_search, int keep_resting) {
 	}
 
 	/* Cancel Resting */
-	if (!keep_resting && p_ptr->resting) {
-		/* Cancel */
-		p_ptr->resting = 0;
+	if (!keep_resting) {
+		if (p_ptr->resting) {
+			/* Cancel */
+			p_ptr->resting = 0;
 
-		/* Redraw the state (later) */
-		p_ptr->redraw |= (PR_STATE);
+			/* Redraw the state (later) */
+			p_ptr->redraw |= (PR_STATE);
+		}
+		p_ptr->wants_to_rest = 0;
 	}
 
 	/* Cancel running */

@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 19. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1896,6 +1896,12 @@ They all start with a slash '/' hence they're called slash commands:
 
 /reinit_guide
            (Undocumented developer command that reloads the guide from drive.)
+
+/rest [turns]
+/re         Rest for number of turns, or indefinitely if 'turns' is omitted.
+            Resting will always stop if resting conditions are no longer met,
+            eg character is fully healed up, so specifying super-large amount
+            of turns is pointless.
 
 /retire
 /ret        Gives a short message to use SHIFT+Q instead.

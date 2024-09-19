@@ -3407,7 +3407,8 @@ struct player_type {
 	bool find_breakleft;
 	bool running_on_floor;		/* Are we running on normal floor, or over grids that we have special abilities to actually pass */
 
-	bool resting;			/* Are we resting? */
+	s16b resting;			/* Are we resting? */
+	s16b wants_to_rest;		/* Added for '/rest' slash command handling, not required for normal Receive_rest() from client */
 	s16b energy_use;		/* How much energy has been used */
 
 	int look_index;			/* Used for looking or targeting */

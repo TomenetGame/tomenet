@@ -13428,96 +13428,105 @@ static int Receive_redraw(int ind) {
 	return(1);
 }
 
+/* turns:
+   -1 : toggle
+    0 : wake up
+   >0 : rest for 'turns' player turns until auto-wakeup */
+int toggle_rest(int Ind, int turns) {
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
+	//cave_type **zcave;
+
+	use_esp_link(&Ind, LINKF_MOV);
+	p_ptr->wants_to_rest = 0;
+
+	/* If we are already resting, cancel the rest. */
+	/* Waking up takes no energy, although we will still be drowsy... */
+	if (p_ptr->resting) {
+		if (turns > 0) {
+			p_ptr->resting = turns;
+			return(2);
+		}
+		disturb(Ind, 0, 0);
+		return(2);
+	} else if (!turns) return(2);
+
+	/* Don't rest if we are poisoned or at max hit points and max mana points
+	   and max stamina */
+	if ((p_ptr->poisoned) || (p_ptr->diseased) || (p_ptr->cut) || (p_ptr->sun_burn) ||
+	    ((p_ptr->chp == p_ptr->mhp) &&
+	    (p_ptr->cmp == p_ptr->mmp) &&
+	    (p_ptr->cst == p_ptr->mst)
+	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL)
+	    ))
+		return(2);
+
+	if (p_ptr->mcharming) {
+		msg_print(Ind, "You cannot rest while focussing intently on a charm spell!");
+		return(2);
+	}
+
+#if 0 /* why? don't see a reason atm */
+	if (!(zcave = getcave(&p_ptr->wpos))) return(2);
+
+	/* Can't rest on a Void Jumpgate -- too dangerous */
+	if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_BETWEEN) {
+		msg_print(Ind, "Resting on a Void Jumpgate is too dangerous!");
+		return(2);
+	}
+#endif
+
+	/* Resting takes a lot of energy! */
+	if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos) * 2) - 1) {
+		/* Set flag */
+		p_ptr->resting = turns;
+#if WARNING_REST_TIMES > 0
+		/* Actually don't clear warning completely =p. Keep +1 warning in reserve..uhh */
+		if (p_ptr->warning_rest < WARNING_REST_TIMES - 1) p_ptr->warning_rest = WARNING_REST_TIMES - 1;
+		else p_ptr->warning_rest = WARNING_REST_TIMES;
+#else
+		/* No more warnings about resting once we rested, for this session */
+		if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
+#endif
+
+		/* Make sure we aren't running */
+		p_ptr->running = FALSE;
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+
+		/* Take a lot of energy to enter "rest mode" */
+		p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
+
+		/* Redraw */
+		p_ptr->redraw |= (PR_STATE);
+		return(2);
+	}
+	/* If we don't have enough energy to rest, disturb us (to stop
+	 * us from running) and queue the command.
+	 */
+	else {
+		disturb(Ind, 0, 0);
+		p_ptr->wants_to_rest = turns;
+		Packet_printf(&connp->q, "%c", PKT_REST); // PKT_REST = '&ch' from Receive_rest()
+		return(0);
+	}
+
+	return(1);
+}
 static int Receive_rest(int ind) {
 	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL;
 	int player = -1, n;
 	char ch;
-
-	if (connp->id != -1) {
-		player = GetInd[connp->id];
-		use_esp_link(&player, LINKF_MOV);
-		p_ptr = Players[player];
-	}
-	else player = 0;
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return(n);
 	}
 
-	if (player) {
-		cave_type **zcave;
-
-		/* If we are already resting, cancel the rest. */
-		/* Waking up takes no energy, although we will still be drowsy... */
-		if (p_ptr->resting) {
-			disturb(player, 0, 0);
-			return(2);
-		}
-
-		/* Don't rest if we are poisoned or at max hit points and max mana points
-		   and max stamina */
-		if ((p_ptr->poisoned) || (p_ptr->diseased) || (p_ptr->cut) || (p_ptr->sun_burn) ||
-		    ((p_ptr->chp == p_ptr->mhp) &&
-		    (p_ptr->cmp == p_ptr->mmp) &&
-		    (p_ptr->cst == p_ptr->mst)
-		    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL)
-		    ))
-			return(2);
-
-		if (p_ptr->mcharming) {
-			msg_print(player, "You cannot rest while focussing intently on a charm spell!");
-			return(2);
-		}
-
-		if (!(zcave = getcave(&p_ptr->wpos))) return(2);
-
-#if 0 /* why? don't see a reason atm */
-		/* Can't rest on a Void Jumpgate -- too dangerous */
-		if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_BETWEEN) {
-			msg_print(player, "Resting on a Void Jumpgate is too dangerous!");
-			return(2);
-		}
-#endif
-
-		/* Resting takes a lot of energy! */
-		if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos) * 2) - 1) {
-			/* Set flag */
-			p_ptr->resting = TRUE;
-#if WARNING_REST_TIMES > 0
-			/* Actually don't clear warning completely =p. Keep +1 warning in reserve..uhh */
-			if (p_ptr->warning_rest < WARNING_REST_TIMES - 1) p_ptr->warning_rest = WARNING_REST_TIMES - 1;
-			else p_ptr->warning_rest = WARNING_REST_TIMES;
-#else
-			/* No more warnings about resting once we rested, for this session */
-			if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
-#endif
-
-			/* Make sure we aren't running */
-			p_ptr->running = FALSE;
-			break_shadow_running(player);
-			stop_precision(player);
-			stop_shooting_till_kill(player);
-
-			/* Take a lot of energy to enter "rest mode" */
-			p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
-
-			/* Redraw */
-			p_ptr->redraw |= (PR_STATE);
-			return(2);
-		}
-		/* If we don't have enough energy to rest, disturb us (to stop
-		 * us from running) and queue the command.
-		 */
-		else {
-			disturb(player, 0, 0);
-			Packet_printf(&connp->q, "%c", ch);
-			return(0);
-		}
-	}
-
-	return(1);
+	if (connp->id == -1) return(1);
+	player = GetInd[connp->id];
+	return(toggle_rest(player, Players[player]->wants_to_rest ? Players[player]->wants_to_rest : -1));
 }
 
 void Handle_clear_buffer(int Ind) {

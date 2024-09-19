@@ -5504,8 +5504,15 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Resting */
-	if (p_ptr->resting && !p_ptr->searching)
-		regen_amount = regen_amount * RESTING_RATE;
+	if (p_ptr->resting) {
+		if (!p_ptr->searching) regen_amount = regen_amount * RESTING_RATE;
+
+		/* Timed resting? */
+		if (p_ptr->resting > 0) {
+			p_ptr->resting--;
+			if (!p_ptr->resting) p_ptr->redraw |= (PR_STATE);
+		}
+	}
 
 	/* Regenerate the mana */
 #ifdef ARCADE_SERVER
