@@ -11214,50 +11214,59 @@ void kill_xorder(int Ind) {
 		if (great) verygreat = magik(avg);
 		resf = RESF_LOW;
 
+		/* Preliminary reward item */
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
+
 		/* New: Sometimes generate consumables instead */
 		if (object_value_real(0, o_ptr) < 1000 && rand_int(3)) { /* eg instead of basic (non-ego) enchanted armour/weapon */
 			/* basic consumables */
 			switch (rand_int(2)) {
 			case 0:
 				switch (rand_int(in_irondeepdive(&p_ptr->wpos) ? 11 : 12)) {
-				case 0: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR)); o_ptr->number = 5 + rand_int(4); break;
-				case 1: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TRAP_DOOR_DESTRUCTION)); o_ptr->number = 3 + rand_int(3); break;
+				case 0: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR)); o_ptr->number = 7 + rand_int(3); break;
+				case 1: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TRAP_DOOR_DESTRUCTION)); o_ptr->number = 5 + rand_int(3); break;
 				case 2: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION)); o_ptr->number = 3 + rand_int(2); break;
-				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_MAPPING)); o_ptr->number = 5 + rand_int(4); break;
-				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY)); o_ptr->number = 5 + rand_int(4); break;
+				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_MAPPING)); o_ptr->number = 5 + rand_int(3); break;
+				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY)); o_ptr->number = 5 + rand_int(3); break;
 
-				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR)); o_ptr->number = 2 + rand_int(3); break;
-				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 2 + rand_int(2); break;
-				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 2 + rand_int(2); break;
+				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR)); o_ptr->number = 3 + rand_int(2); break;
+				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 3 + rand_int(2); break;
+				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 3 + rand_int(2); break;
 
-				case 8: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 1; break;
+				case 8: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 2; break;
 				case 9: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 1; break;
 				case 10: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 1; break;
 
-				case 11: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL)); o_ptr->number = 1 + rand_int(2); break;
+				case 11: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL)); o_ptr->number = 2 + rand_int(2); break;
 				}
 				break;
 			case 1:
-				switch (rand_int(4)) {
+				switch ((p_ptr->resist_pois || p_ptr->immune_poison) ? randint(4) : rand_int(5)) {
 				case 0:
 					switch (rand_int(2)) {
-					case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SLOW_POISON)); o_ptr->number = 2 + rand_int(2); break;
-					case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_POISON)); o_ptr->number = 2 + rand_int(2); break;
+					case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SLOW_POISON)); o_ptr->number = 6 + rand_int(2); break;
+					case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_POISON)); o_ptr->number = 4 + rand_int(2); break;
 					}
 					break;
 				case 1:
 					switch (rand_int(2)) {
-					case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEROISM)); o_ptr->number = 3 + rand_int(2); break;
-					case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_BERSERK_STRENGTH)); o_ptr->number = 1 + rand_int(2); break;
+					case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEROISM)); o_ptr->number = 5 + rand_int(2); break;
+					case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_BERSERK_STRENGTH)); o_ptr->number = 2 + rand_int(2); break;
 					}
 					break;
-				case 2: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS)); o_ptr->number = 4 + rand_int(3); break;
-				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_CRITICAL)); o_ptr->number = 2 + rand_int(2); break;
+				case 2: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS)); o_ptr->number = 5 + rand_int(3); break;
+				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_CRITICAL)); o_ptr->number = 3 + rand_int(2); break;
+
+				case 4: invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD)); o_ptr->number = 2; break;
 				}
 				break;
 			}
+
 			apply_magic(&o_ptr->wpos, o_ptr, avg, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
+			/* We learn flavours this way~ */
+			object_aware(Ind, o_ptr);
+			object_known(o_ptr);
+			o_ptr->ident |= ID_MENTAL;
 		} else if (object_value_real(0, o_ptr) < 3000 && !rand_int(3)) { /* eg instead of trivial (resfire) egos */
 			/* great consumables / bigger stacks of basic consumables */
 			switch (rand_int(2)) {
@@ -11267,9 +11276,9 @@ void kill_xorder(int Ind) {
 				case 2: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 6 + rand_int(3); break;
 				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 6 + rand_int(3); break;
 
-				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 1 + rand_int(2); break;
+				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 3 + rand_int(2); break;
 				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 2 + rand_int(2); break;
-				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 1 + rand_int(2); break;
+				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 2 + rand_int(2); break;
 
 				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)); o_ptr->number = 1 + rand_int(2); break;
 				}
@@ -11283,18 +11292,24 @@ void kill_xorder(int Ind) {
 				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEALING)); o_ptr->number = 2 + rand_int(2); break;
 				case 4: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_RESISTANCE)); o_ptr->number = 2 + rand_int(2); break;
 
-				case 5: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_ENLIGHTENMENT)); o_ptr->number = 1; break;
-				case 6: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURING)); o_ptr->number = 1; break;
+				case 5: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_ENLIGHTENMENT)); o_ptr->number = 1 + rand_int(2); break;
+				case 6: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURING)); o_ptr->number = 1 + rand_int(2); break;
 				}
 				break;
 			}
+
 			apply_magic(&o_ptr->wpos, o_ptr, avg, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
+			/* We learn flavours this way~ */
+			object_aware(Ind, o_ptr);
+			object_known(o_ptr);
+			o_ptr->ident |= ID_MENTAL;
 		}
 
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
 		o_ptr->note = unique_quark;
 		o_ptr->note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
+
 		s_printf("object awarded %d,%d,%d (x%d)\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx, o_ptr->number);
 		inven_carry(Ind, o_ptr);
 		unique_quark = 0;
