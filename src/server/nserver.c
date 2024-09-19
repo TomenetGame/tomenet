@@ -4657,8 +4657,6 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
 				return(-1);
 			}
-			WIPE(&acc, struct account);
-
 			/* For skip-motd hack for persistent message log across relogs -
 			   we need to do this here before calling GetAccount() for password verification further below
 			   as that will actually timestamp the account anew (if the password is successfully verified). */
