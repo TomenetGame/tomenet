@@ -171,6 +171,8 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 	s_printf("GE_CONTENDER_BUFFER: Preparing to buffer...");
 	ge_contender_buffer_ID[i] = p_ptr->account;
 
+	p_ptr->buffer_get_any = FALSE;
+
 	for (j = 0; j < MAX_GLOBAL_EVENTS; j++) {
 		switch (p_ptr->buffer_get[j]) {
 		case GE_HIGHLANDER:
@@ -8749,6 +8751,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 				ge->participant[k] = 0;
 				s_printf("%s EVENT_UNPARTICIPATE (0): '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), p_ptr->name, Ind, i, ge->title, ge->getype, k);
 				p_ptr->buffer_get[i] = p_ptr->global_event_type[i]; /* Remember his event participation for buffering any potential post-death rewards */
+				p_ptr->buffer_get_any = TRUE;
 				p_ptr->global_event_type[i] = 0;
 			}
 		}
@@ -8839,7 +8842,8 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		}
 	}
 
-	buffer_account_for_event_deed(p_ptr, death_type);
+	/* If we have had any event participation when we died, buffer a potential post-death reward. */
+	if (p_ptr->buffer_get_any) buffer_account_for_event_deed(p_ptr, death_type);
 
 	/* temporarily reserve his character name in case he want's to remake that character */
 	for (i = 0; i < MAX_RESERVED_NAMES; i++) {
