@@ -9300,9 +9300,11 @@ static void cmd_master_aux_summon(void) {
 	}
 }
 
-static void cmd_master_aux_player() {
+static bool cmd_master_aux_player() {
 	char i = 0;
 	static char buf[80];
+	bool success = FALSE;
+
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Player commands");
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Editor (offline)");
@@ -9319,7 +9321,9 @@ static void cmd_master_aux_player() {
 	while (i != ESCAPE) {
 		/* Get a key */
 		i = inkey();
+
 		buf[0] = '\0';
+
 		switch (i) {
 		case ':':
 			cmd_message();
@@ -9371,11 +9375,20 @@ static void cmd_master_aux_player() {
 		default:
 			bell();
 		}
-		if (buf[0]) Send_master(MASTER_PLAYER, buf);
+		if (buf[0]) {
+			Send_master(MASTER_PLAYER, buf);
+			/* Hack: After we issued a command, completely exit this menu,
+			   as it is unlikely we want to perform another action.
+			   We rather want to instantly look at the results... =p */
+			success = TRUE;
+			/* Leave on success */
+			i = ESCAPE;
+		}
 
 		/* Flush messages */
 		clear_topline_forced();
 	}
+	return(success);
 }
 
 /*
@@ -9526,7 +9539,7 @@ static void cmd_master(void) {
 			cmd_master_aux_generate();
 			break;
 		case '5':
-			cmd_master_aux_player();
+			if (cmd_master_aux_player()) i = ESCAPE; /* Leave whole menu on successful player-command, as we want to see the results right away usually */
 			break;
 		case '6':
 			cmd_master_aux_system();

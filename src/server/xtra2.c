@@ -15604,12 +15604,52 @@ bool master_player(int Ind, char *parms) {
 		//msg_print(Ind, "That player is not in the game.");
 		break;
 
-	case 'k':	/* admin wrath (preceed name with '!' for no-ghost kill */
+	case 'k': {	/* admin wrath (preceed name with '!' for no-ghost kill */
+		int x, y;
+		cave_type **zcave, *c_ptr;
+
 		i = 1;
 		if (parms[1] == '!') i = 2;
 		Ind2 = name_lookup(Ind, &parms[i], FALSE, FALSE, TRUE);
 		if (Ind2) {
 			q_ptr = Players[Ind2];
+			zcave = getcave(&q_ptr->wpos);
+
+			/* A/V fx~ */
+			if (zcave) { /* Paranoia */
+#ifdef USE_SOUND_2010
+				/* sound fx: {lightning,thunder}, detonation (destruction) */
+ #if 0
+				sound_near_site(q_ptr->py, q_ptr->px, &q_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_AMBIENT, FALSE);
+				sound_near_site(q_ptr->py, q_ptr->px, &q_ptr->wpos, 0, "detonation", "destruction", SFX_TYPE_AMBIENT, FALSE);
+ #elif 0
+				sound_near_area(q_ptr->py, q_ptr->px, 30, &q_ptr->wpos, "lightning", "thunder", SFX_TYPE_NO_OVERLAP);
+				sound_near_area(q_ptr->py, q_ptr->px, 30, &q_ptr->wpos, "detonation", "destruction", SFX_TYPE_NO_OVERLAP);
+ #else
+				/* Best maybe ^^ */
+				sound_floor_vol(&q_ptr->wpos, "lightning", "thunder", SFX_TYPE_AMBIENT, 100);
+				sound_floor_vol(&q_ptr->wpos, "detonation", "destruction", SFX_TYPE_AMBIENT, 100);
+ #endif
+#endif
+
+				/* visual fx */
+				thunderstorm_visual(&q_ptr->wpos, q_ptr->px, q_ptr->py, 20);
+
+				/* Scorched earth aka ash */
+				c_ptr = &zcave[q_ptr->py][q_ptr->px];
+				if (!((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)))
+				cave_set_feat_live(&q_ptr->wpos, q_ptr->py, q_ptr->px, FEAT_ASH);
+				for (n = 1; n <= 9; n++) {
+					y = q_ptr->py + ddy[n];
+					x = q_ptr->px + ddx[n];
+					c_ptr = &zcave[y][x];
+					//if (!allow_terraforming(wpos, FEAT_TREE)) || ---no check, just allow this even in towns :)
+					if (cave_perma_grid(c_ptr) ||
+					    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;
+					cave_set_feat_live(&q_ptr->wpos, y, x, FEAT_ASH);
+				}
+			}
+
 			msg_print(Ind2, "\377rYou are hit by a bolt from the blue!");
 			strcpy(q_ptr->died_from, "divine wrath");
 			q_ptr->died_from_ridx = 0;
@@ -15617,9 +15657,9 @@ bool master_player(int Ind, char *parms) {
 			q_ptr->deathblow = 0;
 			player_death(Ind2);
 			return(TRUE);
-		}
-		//msg_print(Ind, "That player is not in the game.");
+		} else msg_format(Ind, "Player '%s' is not in the game.", &parms[i]);
 		break;
+		}
 
 	case 'S':	/* Static a regular */
 		stat_player(&parms[1], TRUE);
