@@ -1166,15 +1166,26 @@ void resize_main_window_x11(int cols, int rows);
 void resize_window_x11(int term_idx, int cols, int rows);
 static term_data* term_idx_to_term_data(int term_idx);
 
+
 /* Cache for prepared graphical tiles.
-   Observations: Cache fills maybe within first 10 floors of Barrow-Downs (2mask mode), so it's very comfortable. */
-#define TILE_CACHE_SIZE	256
-#if 1 /* Choose one, 1st is more efficient */
- /* Cache invalidates based on attr when new palette info is received? */
- #define TILE_CACHE_NEWPAL
-#else
+   Observations:
+    Size 256:    Cache fills maybe within first 10 floors of Barrow-Downs (2mask mode), so it's very comfortable.
+                 However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
+    Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
+*/
+#define TILE_CACHE_SIZE (256*4)
+
+/* Output cache state information in the message window? Spammy and only for debugging purpose. */
+//#define TILE_CACHE_LOG
+
+#if 1 /* Enable extra cache efficiency regarding palette animation? */
+ #if 1 /* Choose a cache behaviour aspect regarding palette animation, the 1st is more efficient */
+ /* Cache invalidates based on attr when new palette info is received? -- more efficient */
+  #define TILE_CACHE_NEWPAL
+ #else
  /* Cache uses foreground + background colour palette values too? */
- #define TILE_CACHE_FGBG
+  #define TILE_CACHE_FGBG
+ #endif
 #endif
 
 struct tile_cache_entry {
@@ -1191,6 +1202,7 @@ struct tile_cache_entry {
     s32b fg, bg; /* Optional palette_animation handling */
 #endif
 };
+
 
 /*
  * A structure for each "term"
@@ -2207,8 +2219,15 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	}
 
 	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
-	if (hole != -1) entry = &td->tile_cache[hole];
-	else {
+	if (hole != -1) {
+#ifdef TILE_CACHE_LOG
+c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+#endif
+		entry = &td->tile_cache[hole];
+	} else {
+#ifdef TILE_CACHE_LOG
+c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+#endif
 		// Replace valid cache entries in FIFO order
 		entry = &td->tile_cache[td->cache_position++];
 		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
@@ -2332,8 +2351,15 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	}
 
 	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
-	if (hole != -1) entry = &td->tile_cache[hole];
-	else {
+	if (hole != -1) {
+#ifdef TILE_CACHE_LOG
+c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+#endif
+		entry = &td->tile_cache[hole];
+	} else {
+#ifdef TILE_CACHE_LOG
+c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+#endif
 		// Replace valid cache entries in FIFO order
 		entry = &td->tile_cache[td->cache_position++];
 		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
