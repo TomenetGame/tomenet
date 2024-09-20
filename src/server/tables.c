@@ -2462,7 +2462,7 @@ player_class class_info[MAX_CLASS] = {
 		TERM_UMBER, FALSE, 0,
 		{ 5, -2, -2, 2, 2, -1},
 		{ 22 + 100, 0, 0, 10 + 100, 0, 0},
-		20, 18, 18, 1,  14, 2, 70, 55,
+		25, 18, 18, 1,  14, 2, 70, 55,
 		10, 8,  10, 0,  0,  0,  45, 40,
 		10, 0,//6,  10,//9, 10,
 		//11, 0,
@@ -2572,7 +2572,7 @@ player_class class_info[MAX_CLASS] = {
 		TERM_RED, FALSE, 0,
 		{-5, 3, 0, 1, -2, 1},
 		{0, 0 + 100, 0, 0, 0, 0},
-		30, 36, 30, 2,  16, 20, 34, 20,
+		25, 36, 30, 2,  16, 20, 34, 20,
 		7,  10, 9,  0,  0,  0,  15, 15,
 		0, 35,//0,30
 		//3, 35,
@@ -2680,7 +2680,7 @@ player_class class_info[MAX_CLASS] = {
 #else
 		{0, 0, 0 + 100, 0, 0, 0},
 #endif
-		25, 25, 32, 2,  16, 8, 48, 35,
+		20, 25, 32, 2,  16, 8, 48, 35,
 		7,   9, 12, 0,  0,  0, 20, 15,
 		5, 20, //2, 20,//4,20
 		//7, 20,
@@ -2897,7 +2897,7 @@ player_class class_info[MAX_CLASS] = {
 		// TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
 		{19 + 100, 0, 0, 10 + 100, 0, 0},//21,19
-		25, 30, 28, 1, 18, 18, 60, 46,
+		20, 30, 28, 1, 18, 18, 60, 46,
 		 9, 9, 10, 0,  0,  0, 40, 25,
 		6, 30,//3, 40,//4, 25
 		//8, 40,
@@ -3001,7 +3001,7 @@ player_class class_info[MAX_CLASS] = {
 		TERM_ORANGE, FALSE, 0,
 		{ 1, 0, 2, 3, 1, -1},
 		{0, 0, 0, 18 + 100, 0, 0},
-		30, 22, 28, 2,  24, 20, 56, 72,
+		25, 22, 28, 2,  24, 20, 56, 72,
 		8,  8, 10, 0,  0,  0,  30, 50,
 		5, 10,//3, 15,//5, 15
 		//8, 15,
@@ -3201,7 +3201,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		34, 32, 30, 5, 30, 30, 50, 60,
+		40, 32, 30, 5, 30, 30, 50, 60,
 		10, 9, 10, 0, 15,  5, 30, 45,
 		7, 35,//4, 35,//6, 35
 		//9, 35,
@@ -3570,7 +3570,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 35, 30, 4, 25, 25, 50, 44,
+		25, 35, 30, 4, 25, 25, 50, 44,
 		8, 10, 10, 0, 10,  5, 20, 25,
 		5, 35,//5, 40
 
@@ -3663,7 +3663,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 30, 30,  4, 20, 30, 45, 23,
+		15, 30, 30,  4, 20, 30, 45, 23,
 		 0, 10, 10,  0,  3,  5, 20, 12,
 		3, 40, //3, 45
 
@@ -3959,8 +3959,8 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 32, 20,  3, 30, 26, 45, 40,
-		10, 12, 10,  0,  5,  5, 25, 30,
+		35, 32, 20,  3, 30, 26, 45, 40,
+		12, 12, 10,  0,  5,  5, 25, 30,
 		 4, 40, //4 is the minimum without form/shield? XP penalty similar to shaman. - Kurzel
 
 		{{ SKILL_COMBAT,
@@ -4465,7 +4465,7 @@ player_class class_info[MAX_CLASS] = {
 #else
 		{0, 0, 0 + 100, 0, 0, 0},
 #endif
-		25, 25, 32, 2,  16, 8, 48, 35,
+		20, 25, 32, 2,  16, 8, 48, 35,
 		7,   9, 12, 0,  0,  0, 20, 15,
 		5, 20, //2, 20,//4,20
 		//7, 20,

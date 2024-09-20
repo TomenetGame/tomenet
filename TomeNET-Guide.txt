@@ -19758,27 +19758,27 @@ Class         STR  INT  WIS  DEX  CON  CHR     HP dice  Exp%  Max. base attacks
 Warrior       +5   -2   -2   +2   +2   -1        +10     +0%         6
  brown        25   18   18    1    2   14   70   55            superb   superb
 Istar         -5   +3    0   +1   -2   +1         +0    +35%         1
- red          30   36   30    2   20   16   34   20            bad      bad
+ red          25   36   30    2   20   16   34   20            bad      bad
 Priest (*)    -1   -3   +3   -1    0   +2         +5    +20%         4
- green        25   25   32    2    8   16   48   35            fair     fair
+ green        20   25   32    2    8   16   48   35            fair     fair
 Rogue         +2   +1   -2   +3   +1   -1         +5    +15%         5
  blue         45   28   28    5   32   24   60   66            superb   fair
 Mimic         +1    0    0   +1   +1   -4         +6    +30%         5
- light grey   25   30   28    1   18   18   60   46            good     good
+ light grey   20   30   28    1   18   18   60   46            good     good
 Archer        +1    0   +2   +3   +1   -1         +5    +10%         3
- orange       30   22   28    2   20   24   56   72            fair     fair
+ orange       25   22   28    2   20   24   56   72            fair     fair
 Paladin       +3   -3   +1    0   +2   +2         +8    +30%         5
  yellow       10   21   54    1   16   13   60   40            good     superb
 Ranger        +2   +2   -1   +1   +2    0         +7    +35%         5
- light brown  34   32   30    5   30   30   50   60            superb   fair
+ light brown  40   32   30    5   30   30   50   60            superb   fair
 Adventurer     0    0    0    0    0    0         +6    +25%         4
- violet       20   22   20    3   15   15   50   50            fair     fair
+ violet       30   22   20    3   15   15   50   50            fair     fair
 Druid         +1    0   +2   -2   -2   +1         +5    +35%         4
- light green  30   35   30    4   25   25   50   44            poor     poor
+ light green  25   35   30    4   25   25   50   44            poor     poor
 Shaman         0   +1   +2   -2    0    0         +3    +40%         4
- light red    10   30   30    4   30   20   45   23            poor     poor
+ light red    15   30   30    4   30   20   45   23            poor     poor
 Runemaster     0   +2   -2   +2   -2    0         +4    +40%         4
- light blue   30   32   20    3   30   26   45   40            fair     poor
+ light blue   35   32   20    3   30   26   45   40            fair     poor
 Mindcrafter   +2   +2    0    0    0   +1         +6    +25%         5
  grey         30   28   36    3   35   14   55   45            good     fair
 Death Knight  +3   -3   +1    0   +2   +2         +8    +30%         5
