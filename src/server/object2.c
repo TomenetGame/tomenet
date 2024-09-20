@@ -9843,7 +9843,8 @@ void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
 /*
  * Places a treasure (Gold or Gems) at given location
  * The location must be a valid, empty, floor grid.
- * bonus gets added to the sum (usually 0), mult is the multiplier of the total result (usually 1).
+ * mult (usually 1) is the multiplier of the preliminary result.
+ * bonus (usually 0) gets added finally, to the total sum after multiplication of the preliminary result by mult.
  */
 /*note: This function uses completely bad values for picking a gold 'colour' at first and should be rewritten.
   I added a hack that resets the colour to something feasible so not almost every high level pile is adamantite. */
@@ -9886,7 +9887,8 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 	base = k_info[k_idx].cost;
 
 	/* Determine how much the treasure is "worth" */
-	forge.pval = ((base + (8L * randint(base)) + randint(8)) + bonus) * mult + rand_int(1 + (mult + 1) % 2); //rand_int(..) at the end is just so that x2/x4/x6.. wont always become even numbers.. =P
+	forge.pval = (base + (8L * randint(base)) + randint(8)) * mult + rand_int(1 + (mult + 1) % 2); //rand_int(..) at the end is just so that x2/x4/x6.. wont always become even numbers.. =P
+	forge.pval += bonus;
 
 	/* hacking this mess of an outdated function: pick a 'colour' */
 	/* hack -- Creeping Coins only generate "themselves" */

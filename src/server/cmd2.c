@@ -3534,7 +3534,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	int old_object_level = object_level;
-	int find_level = getlevel(&p_ptr->wpos), find_level_base;
+	int find_level = getlevel(&p_ptr->wpos), find_level_base = find_level;
 
 	object_type *o2_ptr = &p_ptr->inventory[INVEN_WIELD];
 	object_type *o3_ptr = &p_ptr->inventory[INVEN_ARM];
@@ -3650,7 +3650,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if (rune_proficiency >= 5) rune_proficiency = rune_proficiency + 10;
 	else if (rune_proficiency) rune_proficiency = (rune_proficiency + 2) * (rune_proficiency + 2) / 3;
 
-	find_level_base = find_level;
+	/* find_level = floor level (0..n), mining = digging skill (0..50) or 0 for non-manual labour */
 	if (mining > find_level * 2) mining = find_level * 2;
 	find_level += mining / 2;
 
@@ -4489,21 +4489,18 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a %s.\n", p_ptr->name, tval == TV_GOLEM ? "metal piece" : "rune");
 				} else {
+					int mult = 3 + rand_int(mining / 5);
+					int bonus = nonobvious ? (15 + mining) * 6 + rand_int(10 + find_level_base) : 0;
+
 					object_level = find_level;
-					/* abuse tval: reward the special effort at lower character levels..
-					   and add a basic x3 bonus for gold from veins in general. */
-					tval = 3 + rand_int(mining / 5) + (nonobvious ? (
-					    ((rand_int(40) > object_level) ? randint(3) : 0)
-					    + rand_int(1 + mining / 25 + (rand_int(25) < (mining % 25) ? 1 : 0))
-					    ) : 0);
-					place_gold(Ind, wpos, y, x, tval, 0);
+					place_gold(Ind, wpos, y, x, mult, bonus);
+					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d,O%d) digs nonobvious (x%d+%d=%dAu).\n",
+					    p_ptr->name, find_level_base, skill_dig, object_level,
+					    mult, bonus, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
+					else s_printf("DIGGING: %s (F%d,S%d,O%d) digs obvious (x%d+%d=%dAu).\n",
+					    p_ptr->name, find_level_base, skill_dig, object_level,
+					    mult, bonus, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
 					object_level = old_object_level;
-					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d,O%d) digs nonobvious (x%d=%dAu).\n",
-					    p_ptr->name, find_level_base, skill_dig, object_level,
-					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
-					else s_printf("DIGGING: %s (F%d,S%d,O%d) digs obvious (x%d=%dAu).\n",
-					    p_ptr->name, find_level_base, skill_dig, object_level,
-					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
 					c_ptr->info2 |= CAVE2_MINED; //mark for warning_tunnel_hidden
 				}
 				note_spot_depth(wpos, y, x);
