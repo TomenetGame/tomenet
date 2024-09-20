@@ -19843,7 +19843,7 @@ Warrior         17      18/10   2               1
                 and for spears (no special treatment, just weight related):
                 18/40   18/10   3
                 18/70   10      3
-                note: there are more breakpoints, too many to include all,
+                note: there are more break points, too many to include all,
                 mainly at STR 18/10, 18/20, 18/50, 18/60 and at DEX 18/10.
 
 Istar           -
