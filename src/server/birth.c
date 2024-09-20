@@ -1362,7 +1362,7 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, TV_SWORD, SV_DAGGER, 0, 0 },
 			{ 1, TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0, 0 },
 			{ 1, TV_STAFF, SV_STAFF_DETECT_GOLD, 0, 0 },
-			{ 1, TV_DIGGING, SV_PICK, 0, 0 },
+			{ 1, TV_DIGGING, SV_SHOVEL, 1, 1 },
 			{ 1, TV_BOOMERANG, SV_BOOM_S_WOOD, 0, 0 },
 			{ 1, 255, 255, 0, 0 },
 		}, { /* Mindcrafter */
@@ -1491,7 +1491,7 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, TV_HELM, SV_HARD_LEATHER_CAP, 0, 0 },
 			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
 			{ 1, TV_STAFF, SV_STAFF_DETECT_GOLD, 0, 0 },
-			{ 1, TV_DIGGING, SV_PICK, 0, 0 },
+			{ 1, TV_DIGGING, SV_SHOVEL, 1, 1 },
 			{ 1, 255, 255, 0, 0 },
 			{ 1, 255, 255, 0, 0 },
 		}, {
@@ -1925,6 +1925,8 @@ static void player_outfit(int Ind) {
 		invcopy(o_ptr, k_idx);
 		o_ptr->bpval = bpv;
 		o_ptr->pval = pv;
+		/* Assume 'of Digging' ego for any digger that has a predefined pval */
+		if (tv == TV_DIGGING && pv) o_ptr->name2 = EGO_DIGGING;
 		/* Mass-produce ammo etc */
 		o_ptr->number = num + rand_int(1 + (num + 15) * (num + 15) / 420);
 		if (o_ptr->number >= MAX_STACK_SIZE) o_ptr->number = MAX_STACK_SIZE - 1;
