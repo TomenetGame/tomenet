@@ -1266,7 +1266,8 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 	}
 }
 /* send sound to all players nearby a certain location, and allow to specify
-   a player to exclude, same as msg_print_near_site() for messages. - C. Blue */
+   a player to exclude, same as msg_print_near_site() for messages. - C. Blue
+   'viewable': If TRUE, player must have view on x,y to hear the sound at all. */
 void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable) {
 	int i, d;
 	player_type *p_ptr;
@@ -1333,7 +1334,8 @@ void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alte
 	}
 }
 /* send sound to all players nearby a certain location, and allow to specify
-   a player to exclude, same as msg_print_near_site() for messages. - C. Blue */
+   a player to exclude, same as msg_print_near_site() for messages. - C. Blue
+   'viewable': If TRUE, player must have view on x,y to hear the sound at all. */
 void sound_near_site_vol(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable, int vol) {
 	int i, d;
 	player_type *p_ptr;
