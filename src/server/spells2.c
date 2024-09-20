@@ -7401,16 +7401,19 @@ bool cast_falling_star(worldpos *wpos, int x, int y, int dur) {
 	return(project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_RAINDROP, flg, pattacker)); //GF_RAINDROP is a dummy anyway, can just reuse it here
 }
 
-/* For reworked Thunderstorm spell */
-bool thunderstorm_visual(worldpos *wpos, int x, int y) {
+/* For reworked Thunderstorm spell. 'dur' = duration, -1 for default [5], 0 for 'no effect'. */
+bool thunderstorm_visual(worldpos *wpos, int x, int y, int dur) {
 	char pattacker[80];
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	if (!dur) return(FALSE);
+	if (dur == -1) dur = 5;
 
 	strcpy(pattacker, "");
 
 	project_time_effect = EFF_THUNDER_VISUAL;
 	// 25,1; 5,3
-	project_time = 5;
+	project_time = dur;
 	project_interval = 3;
 
 	return(project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_THUNDER_VISUAL, flg, pattacker));

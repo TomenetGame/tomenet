@@ -6015,7 +6015,7 @@ static bool process_player_end_aux(int Ind) {
 			sound_near_site_vol(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE, 50); //don't overlap, too silyl? also: no screen flashing
 #endif
 			project(0 - Ind, 0, &p_ptr->wpos, y, x, dam, GF_THUNDER, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO, "");
-			thunderstorm_visual(&p_ptr->wpos, x, y);
+			thunderstorm_visual(&p_ptr->wpos, x, y, -1);
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - minus_magic, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
