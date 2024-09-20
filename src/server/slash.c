@@ -13600,7 +13600,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				Send_version(j);
+				Send_version(Players[j]->conn);
 				fake_waitpid_clver = p_ptr->id; /* Poll result to admin */
 				fake_waitpid_clver_timer = 3; /* Set response timeout (s) */
 				return;

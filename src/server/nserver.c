@@ -3156,7 +3156,7 @@ static int Handle_login(int ind) {
 		return(-1);
 	}
 
-	Send_version(NumPlayers);
+	Send_version(ind);
 
 	/* Send party/guild information */
 	Send_party(NumPlayers, FALSE, FALSE);
@@ -10732,13 +10732,13 @@ int Send_screenflash(int Ind) {
 	return(1);
 }
 
-int Send_version(int Ind) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+int Send_version(int ind) {
+	connection_t *connp = Conn[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for version (%d.%d.%d)",
-			Ind, connp->state, connp->id));
+			ind, connp->state, connp->id));
 		return(0);
 	}
 
