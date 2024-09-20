@@ -1946,14 +1946,14 @@ static void player_outfit(int Ind) {
 		/* Pre-charge staves and wands - with reduced randomness: rnd mustn't be more than 1/4 of total average amount of charges! */
 		else switch (o_ptr->tval) {
 		case TV_WAND:
-			i = charge_wand_fix[sv] + (charge_wand_rnd[sv] + 1) / 2;
-			if (charge_wand_rnd[sv] <= i / 4) o_ptr->pval = charge_wand_fix[sv] + randint(charge_wand_rnd[sv]);
-			else o_ptr->pval = i + rand_int(i / 4 + 1) - i / 8;
+			j = charge_wand_fix[sv] + (charge_wand_rnd[sv] + 1) / 2;
+			if (charge_wand_rnd[sv] <= j / 4) o_ptr->pval = charge_wand_fix[sv] + randint(charge_wand_rnd[sv]);
+			else o_ptr->pval = j + rand_int(j / 4 + 1) - j / 8;
 			break;
 		case TV_STAFF:
-			i = charge_staff_fix[sv] + (charge_staff_rnd[sv] + 1) / 2;
-			if (charge_staff_rnd[sv] <= i / 4) o_ptr->pval = charge_staff_fix[sv] + randint(charge_staff_rnd[sv]);
-			else o_ptr->pval = i + rand_int(i / 4 + 1) - i / 8;
+			j = charge_staff_fix[sv] + (charge_staff_rnd[sv] + 1) / 2;
+			if (charge_staff_rnd[sv] <= j / 4) o_ptr->pval = charge_staff_fix[sv] + randint(charge_staff_rnd[sv]);
+			else o_ptr->pval = j + rand_int(j / 4 + 1) - j / 8;
 			break;
 		}
 
