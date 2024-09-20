@@ -13265,7 +13265,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 				    (c_ptr2->feat != FEAT_HOME_OPEN) &&
 				    (c_ptr2->feat != FEAT_HOME) &&
 				    allow_terraforming(wpos, FEAT_TREE) &&
-				    !((f_info[c2_ptr->feat].flags2 & FF2_NO_TFORM) || (c2_ptr->info & CAVE_NO_TFORM)) &&
+				    !((f_info[c_ptr2->feat].flags2 & FF2_NO_TFORM) || (c_ptr2->info & CAVE_NO_TFORM)) &&
 				    (typ == GF_DISINTEGRATE || c_ptr2->feat != FEAT_MON_TRAP)) { /* Experimental: Let monster traps survive! Idea: Allow multi-detonation-potion-traps. */
 					struct c_special *cs_ptr;
 
