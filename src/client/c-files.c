@@ -2625,7 +2625,7 @@ void load_birth_file(cptr name) {
 #ifdef WINDOWS
  #include <process.h> /* for _spawnl() */
 #endif
-void check_guide_checksums(bool forced) {
+int check_guide_checksums(bool forced) {
 	FILE *fp;
 	char buf[MAX_CHARS_WIDE], buf2[MAX_CHARS_WIDE], *c;
 
@@ -2634,12 +2634,12 @@ void check_guide_checksums(bool forced) {
  #if 1	/* 1: Don't check guide checksums on client startup. \
 	      Disabled now as nobody has the required sha256sum.exe/bat files in their 'updater' folder anyway. Reenable on next release. */
 	/* (guide_outdated remains FALSE) */
-	if (!forced) return;
+	if (!forced) return(0);
  #endif
 #else /* Assume POSIX - We assume that sha256sum is probably available on POSIX, so this could be worth using already. */
  #if 1	/* 1: Don't check guide checksums on client startup. We have = C now, so this isn't that important anymore. */
 	/* (guide_outdated remains FALSE) */
-	if (!forced) return;
+	if (!forced) return(0);
  #endif
 #endif
 
@@ -2653,7 +2653,8 @@ void check_guide_checksums(bool forced) {
 	{
 		//printf("Warning: No sha256sum found, cannot auto-check guide for outdatedness.\n"); --could be spammy
 		guide_outdated = FALSE;
-		return;
+		c_msg_print("\377yError verifying Guide version: 'sha256sum' is not installed.");
+		return(1);
 	}
 
 	buf2[0] = buf[0] = 0;
@@ -2667,6 +2668,9 @@ void check_guide_checksums(bool forced) {
 		fgets(buf2, MAX_CHARS_WIDE - 1, fp);
 		buf[MAX_CHARS_WIDE - 1] = 0; //paranoia
 		fclose(fp);
+	} else {
+		c_msg_print("\377yError verifying Guide version: Cannot read 'TomeNET-Guide.sha256.local'.");
+		return(2);
 	}
 	remove("TomeNET-Guide.sha256.local");
 	if ((c = strchr(buf2, ' '))) *c = 0; //cut off file name, only keep the actual hash
@@ -2680,6 +2684,9 @@ void check_guide_checksums(bool forced) {
 		fgets(buf, MAX_CHARS_WIDE - 1, fp);
 		buf[MAX_CHARS_WIDE - 1] = 0; //paranoia
 		fclose(fp);
+	} else {
+		c_msg_print("\377yError verifying Guide version: Cannot download 'TomeNET-Guide.sha256'.");
+		return(3);
 	}
 	remove("TomeNET-Guide.sha256");
 	if ((c = strchr(buf, ' '))) *c = 0; //cut off file name, only keep the actual hash
@@ -2688,4 +2695,6 @@ void check_guide_checksums(bool forced) {
 
 	//Must be disabled if we ever call check_guide_checksums() before the window system is initialized (eg early on in main()), or segfault:
 	//if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
+
+	return(0);
 }

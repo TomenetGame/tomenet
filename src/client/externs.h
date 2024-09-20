@@ -576,7 +576,7 @@ extern void save_birth_file(cptr name, bool touch);
 extern void load_birth_file(cptr name);
 extern bool within_cmd_player;
 extern int within_cmd_player_ticks;
-extern void check_guide_checksums(bool forced);
+extern int check_guide_checksums(bool forced);
 
 /* c-init.c */
 extern void init_stuff(void);

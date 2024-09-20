@@ -11310,9 +11310,9 @@ void do_cmd_options(void) {
 
 		/* Check the TomeNET Guide for outdatedness */
 		else if (k == 'C') {
-			check_guide_checksums(TRUE);
-			if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it right now by pressing: \377sU");
-			else c_msg_print("\377GYour guide is up to date.");
+			if (check_guide_checksums(TRUE)) c_msg_print("\377yCannot check whether Guide is outdated or not.");
+			else if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it right now by pressing: \377sU");
+			else c_msg_print("\377gYour guide is up to date!");
 		}
 
 		/* Update the TomeNET Guide */
@@ -11338,10 +11338,11 @@ void do_cmd_options(void) {
 				/* Reinstantiate our version */
 				rename("TomeNET-Guide.txt.old", "TomeNET-Guide.txt");
 			} else {
-				c_msg_print("\377gSuccessfully updated the Guide.");
+				c_msg_print("\377gSuccessfully downloaded the Guide.");
 				init_guide();
-				check_guide_checksums(TRUE);
-				if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
+				if (check_guide_checksums(TRUE)) c_msg_print("\377yCannot check whether your Guide is outdated or not.");
+				else if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
+				else c_msg_print("\377gYour Guide is now up to date!");
 				//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 			}
 #else
@@ -11373,10 +11374,11 @@ void do_cmd_options(void) {
 					/* Reinstantiate our version */
 					rename("TomeNET-Guide.txt.old", "TomeNET-Guide.txt");
 				} else {
-					c_msg_print("\377gSuccessfully updated the Guide.");
+					c_msg_print("\377gSuccessfully downloaded the Guide.");
 					init_guide();
-					check_guide_checksums(TRUE);
-					if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
+					if (check_guide_checksums(TRUE)) c_msg_print("\377yCannot check whether your Guide is outdated or not.");
+					else if (guide_outdated) c_msg_print("\377yYouy guide is still outdated. This shouldn't happen.");
+					else c_msg_print("\377gYour Guide is now up to date!");
 					//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 				}
 			} else {

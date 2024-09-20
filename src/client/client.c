@@ -1270,7 +1270,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
-	check_guide_checksums(FALSE);
+	(void)check_guide_checksums(FALSE);
 
 	/* Attempt to initialize a visual module */
 
