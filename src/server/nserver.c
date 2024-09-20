@@ -3156,19 +3156,6 @@ static int Handle_login(int ind) {
 		return(-1);
 	}
 
-	Send_version(ind);
-
-	/* Send party/guild information */
-	Send_party(NumPlayers, FALSE, FALSE);
-	/* Guild timed out meanwhile? (Leaderless for too long) */
-	if (p_ptr->guild &&
-	    (!guilds[p_ptr->guild].members || guilds[p_ptr->guild].dna != p_ptr->guild_dna)) {
-		p_ptr->guild = 0;
-		clockin(NumPlayers, 3);
-	}
-	Send_guild(NumPlayers, FALSE, FALSE);
-	Send_guild_config(p_ptr->guild);
-
 	/* Hack -- terminate the data stream sent to the client */
 	if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
 		Destroy_connection(p_ptr->conn, "write error (0)");
@@ -3183,6 +3170,19 @@ static int Handle_login(int ind) {
 	num_logins++;
 
 	save_server_info();
+
+	Send_version(ind);
+
+	/* Send party/guild information */
+	Send_party(NumPlayers, FALSE, FALSE);
+	/* Guild timed out meanwhile? (Leaderless for too long) */
+	if (p_ptr->guild &&
+	    (!guilds[p_ptr->guild].members || guilds[p_ptr->guild].dna != p_ptr->guild_dna)) {
+		p_ptr->guild = 0;
+		clockin(NumPlayers, 3);
+	}
+	Send_guild(NumPlayers, FALSE, FALSE);
+	Send_guild_config(p_ptr->guild);
 
 	/* Execute custom script if player joins the server */
 	if (first_player_joined) {
