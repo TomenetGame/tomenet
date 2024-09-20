@@ -8286,7 +8286,7 @@ static void cmd_house_chown(int dir) {
 			buf[0] = 'O';
 			buf[1] = i;
 			buf[2] = 0;
-			if (get_string("Enter new name:", &buf[2], 60))
+			if (get_string("Enter new name: ", &buf[2], 60))
 				Send_admin_house(dir, buf);
 			return;
 		case '2':
@@ -8638,21 +8638,21 @@ static void cmd_master_aux_level(void) {
 		/* Kurzel - save/load a module file (or create a blank to begin with) */
 		else if (i == '6') {
 			buf[0] = 'S';
-			get_string("Save module name (max 19 char):", &buf[1], 19);
+			get_string("Save module name (max 19 char): ", &buf[1], 19);
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '7') {
 			buf[0] = 'L';
-			get_string("Load module name (max 19 char):", &buf[1], 19);
+			get_string("Load module name (max 19 char): ", &buf[1], 19);
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '8') {
 			buf[0] = 'B';
-			get_string("WxH string (eg. 1x1-5x5):", &buf[1], 19);
+			get_string("WxH string (eg. 1x1-5x5): ", &buf[1], 19);
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '9') {
-			get_string("Set level entry (> < or +):", &buf[0], 1);
+			get_string("Set level entry (> < or +): ", &buf[0], 1);
 			Send_master(MASTER_LEVEL, buf);
 		}
 #endif
@@ -8848,18 +8848,18 @@ static void cmd_master_aux_build(void) {
 			{
 				u16b keyid;
 
-				keyid = c_get_quantity("Enter key pval:", 0xffff);
+				keyid = c_get_quantity("Enter key pval: ", 0xffff);
 				sprintf(&buf[2], "%d", keyid);
 			}
 			break;
 		/* Sign post */
 		case '9':
 			buf[0] = FEAT_SIGN;
-			get_string("Sign:", &buf[2], 77);
+			get_string("Sign: ", &buf[2], 77);
 			break;
 		/* Ask for feature */
 		case '0':
-			buf[0] = c_get_quantity("Enter feature value:",0xff);
+			buf[0] = c_get_quantity("Enter feature value: ",0xff);
 			break;
 		/* Build mode off */
 		case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
@@ -9111,7 +9111,7 @@ static void cmd_master_aux_summon(void) {
 		Term_clear();
 
 		/* Describe */
-		Term_putstr(0, 2, -1, TERM_WHITE, "Summon . . .");
+		Term_putstr(0, 2, -1, TERM_WHITE, "Summon...");
 
 		/* Selections */
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Orcs");
@@ -9236,7 +9236,7 @@ static void cmd_master_aux_summon(void) {
 			Term_clear();
 
 			/* Describe */
-			Term_putstr(0, 2, -1, TERM_WHITE, "Summon . . .");
+			Term_putstr(0, 2, -1, TERM_WHITE, "Summon...");
 
 			/* Selections */
 			Term_putstr(5, 4, -1, TERM_WHITE, "(1) X here");
@@ -9330,38 +9330,38 @@ static void cmd_master_aux_player() {
 			break;
 		case '1':
 			buf[0] = 'E';
-			get_string("Enter player name:", &buf[1], 15);
+			get_string("Enter player name: ", &buf[1], 15);
 			break;
 		case '2':
 			buf[0] = 'A';
-			get_string("Enter player name:", &buf[1], 15);
+			get_string("Enter player name: ", &buf[1], 15);
 			break;
 		case '3':
 			buf[0] = 'k';
-			get_string("Enter player name:", &buf[1], 15);
+			get_string("Enter player name (prefix with '!' for no-ghost kill): ", &buf[1], 15);
 			break;
 		case '4':
 			buf[0] = 'S';
-			get_string("Enter player name:", &buf[1], 15);
+			get_string("Enter player name: ", &buf[1], 15);
 			break;
 		case '5':
 			buf[0] = 'U';
-			get_string("Enter player name:", &buf[1], 15);
+			get_string("Enter player name: ", &buf[1], 15);
 			break;
 		case '6':
 			buf[0] = 'r';
-			get_string("Enter player name:", &buf[1], 15);
+			get_string("Enter player name: ", &buf[1], 15);
 			break;
 		case '7':
 			/* DM to player telekinesis */
 			buf[0] = 't';
-			get_string("Enter player name:", &buf[1], 15);
+			get_string("Enter player name: ", &buf[1], 15);
 			break;
 		case '8': {
 				int j;
 
 				buf[0] = 'B';
-				get_string("Message:", &buf[1], 69);
+				get_string("Message: ", &buf[1], 69);
 				for (j = 0; j < 60; j++)
 					if (buf[j] == '{') buf[j] = '\377';
 			}
