@@ -2392,7 +2392,7 @@ static void Term_repaint_row_pict(int y, byte *aa, char32_t *cc, byte *back_aa, 
 
    So this function doesn't change/update a/c values, but just their visuals.
    TODO maybe: For efficiency, restrict to actual map screen area instead of full window, and also don't use a 'buf' for every single text char. */
-#define OLD_VS_SCR /* define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct... */
+//#define OLD_VS_SCR /* define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct... */
 void Term_repaint(void) {
 	int y;
 
