@@ -11340,6 +11340,8 @@ void do_cmd_options(void) {
 			} else {
 				c_msg_print("\377gSuccessfully downloaded the Guide.");
 				init_guide();
+				/* correct way would be: First download the checksum file, then download the guide, then verify if checksum fits;
+				   or what 'shouldn't' happen could actually happen, if timing is very bad: */
 				if (check_guide_checksums(TRUE)) c_msg_print("\377yCannot check whether your Guide is outdated or not.");
 				else if (guide_outdated) c_msg_print("\377yYour guide is still outdated. This shouldn't happen.");
 				else c_msg_print("\377gYour Guide is now up to date!");
@@ -11376,6 +11378,8 @@ void do_cmd_options(void) {
 				} else {
 					c_msg_print("\377gSuccessfully downloaded the Guide.");
 					init_guide();
+					/* correct way would be: First download the checksum file, then download the guide, then verify if checksum fits;
+					   or what 'shouldn't' happen could actually happen, if timing is very bad: */
 					if (check_guide_checksums(TRUE)) c_msg_print("\377yCannot check whether your Guide is outdated or not.");
 					else if (guide_outdated) c_msg_print("\377yYouy guide is still outdated. This shouldn't happen.");
 					else c_msg_print("\377gYour Guide is now up to date!");
