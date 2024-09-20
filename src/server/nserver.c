@@ -3156,6 +3156,8 @@ static int Handle_login(int ind) {
 		return(-1);
 	}
 
+	Send_version(NumPlayers);
+
 	/* Send party/guild information */
 	Send_party(NumPlayers, FALSE, FALSE);
 	/* Guild timed out meanwhile? (Leaderless for too long) */
