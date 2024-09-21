@@ -9981,7 +9981,7 @@ static void do_cmd_options_fonts(void) {
    The global vars are use_graphics (TRUE/FALSE) and graphic_tiles (string of filename, without path, without '.bmp' extension, gets inserted to "graphics-%s.prf"). */
 //#include <dirent.h> /* for do_cmd_options_tilesets() */
 static void do_cmd_options_tilesets(void) {
-	int j;
+	int j, l;
 	char ch;
 	bool go = TRUE, inkey_msg_old;
 
@@ -10049,51 +10049,58 @@ static void do_cmd_options_tilesets(void) {
 	/* Interact */
 	while (go) {
 		clear_from(0);
+		l = 0;
 
 		/* Prompt XXX XXX XXX */
-		Term_putstr(0, 1, -1, TERM_WHITE, "  \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit");
-		Term_putstr(0, 0, -1, TERM_WHITE, "  \377y-\377w/\377y+\377w,\377y=\377w select prev/next tileset, \377yENTER\377w enter a specific tileset name");
-		Term_putstr(1, 3, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s"));
+		Term_putstr(0, l++, -1, TERM_WHITE, "  \377y-\377w/\377y+\377w,\377y=\377w select prev/next tileset, \377yENTER\377w enter a specific tileset name");
+		Term_putstr(0, l++, -1, TERM_WHITE, "  \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit");
+		Term_putstr(0, l++, -1, TERM_WHITE, "  \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s)");
+		l++;
+
+		Term_putstr(1, l++, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s"));
+		l++;
 
 		//GRAPHICS_BG_MASK @ UG_2MASK:
-		Term_putstr(1, 5, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics_new == UG_2MASK ? "\377Genabled (dual)" : (use_graphics_new ? "\377Genabled\377-" : "\377sdisabled\377-")));
+		Term_putstr(1, l++, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics_new == UG_2MASK ? "\377Genabled (dual)" : (use_graphics_new ? "\377Genabled\377-" : "\377sdisabled\377-")));
+		l++;
 
 		/* Tilesets are atm a global setting, not depending on terminal window */
-		Term_putstr(1, 7, -1, TERM_WHITE, format("Currently selected tileset: '\377B%s\377-'", graphic_tiles));
-		Term_putstr(1, 8, -1, TERM_WHITE, format("Tileset filename:           '\377B%s.bmp\377-'", graphic_tiles));
-		Term_putstr(1, 9, -1, TERM_WHITE, format("Optional mapping filename:  '\377Bgraphics-%s.bmp\377-'", graphic_tiles));
+		Term_putstr(1, l++, -1, TERM_WHITE, format("Currently selected tileset: '\377B%s\377-'", graphic_tiles));
+		Term_putstr(1, l++, -1, TERM_WHITE, format("Tileset filename:           '\377B%s.bmp\377-'", graphic_tiles));
+		Term_putstr(1, l++, -1, TERM_WHITE, format("Optional mapping filename:  '\377Bgraphics-%s.bmp\377-'", graphic_tiles));
+		l += 2;
 
 		/* Warning */
 		if (c_cfg.font_map_solid_walls) {
-				Term_putstr(5, 12, -1, TERM_WHITE, "\377oWarning: option '\377yfont_map_solid_walls\377-' is currently ON.");
-				Term_putstr(5, 13, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
-				Term_putstr(5, 14, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
+				Term_putstr(5, l + 0, -1, TERM_WHITE, "\377oWarning: option '\377yfont_map_solid_walls\377-' is currently ON.");
+				Term_putstr(5, l + 1, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
+				Term_putstr(5, l + 2, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
 		}
 #if 0/* _GRAPHICS_PALETTE_HACK etc -- fixed->deprecated now? */
 		if (c_cfg.palette_animation && !c_cfg.disable_lightning) {
-				Term_putstr(2, 16, -1, TERM_WHITE, "\377oNote that with graphics enabled the overworld full-screen lightning weather");
-				Term_putstr(2, 17, -1, TERM_WHITE, "\377oanimation can cause a slowdown that can even last several seconds on slow");
-				Term_putstr(2, 18, -1, TERM_WHITE, "\377osystems. If it looks too slow, enable the option '\377ydisable_lightning\377o' in = 1.");
+				Term_putstr(2, l + 4, -1, TERM_WHITE, "\377oNote that with graphics enabled the overworld full-screen lightning weather");
+				Term_putstr(2, l + 5, -1, TERM_WHITE, "\377oanimation can cause a slowdown that can even last several seconds on slow");
+				Term_putstr(2, l + 6, -1, TERM_WHITE, "\377osystems. If it looks too slow, enable the option '\377ydisable_lightning\377o' in = 1.");
 		}
 #endif
 
 #ifdef GFXERR_FALLBACK
 		if (use_graphics_err) {
-			Term_putstr(2, 16, -1, TERM_WHITE, "\377RClient was unable to startup with graphics and fell back to text mode.");
-			Term_putstr(2, 17, -1, TERM_WHITE, "\377RIf you re-enable graphics, ensure tileset is valid and its file name correct!");
+			Term_putstr(2, l + 4, -1, TERM_WHITE, "\377RClient was unable to startup with graphics and fell back to text mode.");
+			Term_putstr(2, l + 5, -1, TERM_WHITE, "\377RIf you re-enable graphics, ensure tileset is valid and its file name correct!");
 			if (!use_graphics_errstr[0]) Term_putstr(2, 18, -1, TERM_WHITE, "\377RNo failure reason specified.");
 			else {
 				char line1[MAX_CHARS], line2[MAX_CHARS] = { 0 };
 
-				Term_putstr(2, 18, -1, TERM_WHITE, "\377RFailure reason on startup, also shown in terminal on startup, was:");
+				Term_putstr(2, l + 6, -1, TERM_WHITE, "\377RFailure reason on startup, also shown in terminal on startup, was:");
 				if (strlen(use_graphics_errstr) < MAX_CHARS) strcpy(line1, use_graphics_errstr);
 				else {
 					strncpy(line1, use_graphics_errstr, MAX_CHARS - 1);
 					line1[MAX_CHARS - 1] = 0;
 					strcpy(line2, use_graphics_errstr + MAX_CHARS - 1);
 				}
-				Term_putstr(0, 19, -1, TERM_RED, line1);
-				Term_putstr(0, 20, -1, TERM_RED, line2);
+				Term_putstr(0, l + 7, -1, TERM_RED, line1);
+				Term_putstr(0, l + 8, -1, TERM_RED, line2);
 			}
 		}
 #endif
@@ -10121,6 +10128,11 @@ static void do_cmd_options_tilesets(void) {
 			/* specialty: allow chatting from within here */
 			cmd_message();
 			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
+
+		case 'f':
+			/* specialty: allow calling the fonts menu directly from here for QoL font-zooming */
+			do_cmd_options_fonts();
 			break;
 
 		case 'v':
