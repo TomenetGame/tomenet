@@ -9231,7 +9231,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				x = atoi(token[1]);
 				y = atoi(token[2]);
 				message3[0] = toupper(message3[0]); //qol
-				p = name_lookup_loose(Ind, token[3], FALSE, FALSE, FALSE);
+				p = name_lookup(Ind, token[3], FALSE, TRUE, FALSE); //gotta be exact for this kind of critical command
 				if (!p) return;
 
 				q_ptr = Players[p];
@@ -9289,14 +9289,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int p;
 				player_type *q_ptr;
 				cave_type **zcave;
+				bool is_tpto = prefix(messagelc, "/tpto");
 
 				if (tk < 1) {
-					msg_print(Ind, "\377oUsage: /tpXX <player name>");
+					if (is_tpto) msg_print(Ind, "\377oUsage: /tpto <exact player name>");
+					else msg_print(Ind, "\377oUsage: /tpat <player/account name>");
 					return;
 				}
 
 				message3[0] = toupper(message3[0]); //qol
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				if (is_tpto) p = name_lookup(Ind, message3, FALSE, TRUE, FALSE);//gotta be exact for this kind of critical command
+				else p = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!p) return;
 
 				q_ptr = Players[p];
@@ -9305,7 +9308,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				if (prefix(messagelc, "/tpto")) {
+				if (is_tpto) {
 					if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) {
 						q_ptr->recall_pos.wx = p_ptr->wpos.wx;
 						q_ptr->recall_pos.wy = p_ptr->wpos.wy;
