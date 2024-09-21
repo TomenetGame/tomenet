@@ -10070,12 +10070,14 @@ static void do_cmd_options_tilesets(void) {
 		Term_putstr(1, l++, -1, TERM_WHITE, format("Optional mapping filename:  '\377Bgraphics-%s.bmp\377-'", graphic_tiles));
 		l += 2;
 
+#if 0 /* Deprecated warning since server-side addition of S_GFX_AUTOOFF_FMSW */
 		/* Warning */
 		if (c_cfg.font_map_solid_walls) {
 				Term_putstr(5, l + 0, -1, TERM_WHITE, "\377oWarning: option '\377yfont_map_solid_walls\377-' is currently ON.");
 				Term_putstr(5, l + 1, -1, TERM_WHITE, "\377oThis often interferes and breaks custom font or tileset mappings!");
 				Term_putstr(5, l + 2, -1, TERM_WHITE, "\377oIt is strongly recommended to turn it off in \377y= 1 \377-(options page 1).");
 		}
+#endif
 #if 0/* _GRAPHICS_PALETTE_HACK etc -- fixed->deprecated now? */
 		if (c_cfg.palette_animation && !c_cfg.disable_lightning) {
 				Term_putstr(2, l + 4, -1, TERM_WHITE, "\377oNote that with graphics enabled the overworld full-screen lightning weather");

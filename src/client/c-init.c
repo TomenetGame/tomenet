@@ -3923,10 +3923,13 @@ void client_init(char *argv1, bool skip) {
 			(*option_info[CO_FONT_MAP_SOLID_WALLS].o_var) = FALSE;
 			Client_setup.options[CO_FONT_MAP_SOLID_WALLS] = FALSE;
 			options_immediate(FALSE);
-		} else {
+		}
+#if 0 /* Deprecated warning since server-side addition of S_GFX_AUTOOFF_FMSW */
+		else {
 			c_msg_print("\377yWarning: Option 'font_map_solid_walls' is enabled while graphics are enabled.");
 			c_msg_print("\377y         This can often lead to graphics not working correctly.");
 		}
+#endif
 	}
 	Send_options();
 
