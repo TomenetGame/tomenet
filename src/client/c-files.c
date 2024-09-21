@@ -1133,8 +1133,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 	case 'W':
 		if (tokenize(buf + 2, 2, zz) == 2) {
 			i = (byte)strtol(zz[0], NULL, 0);
-			window_flag[i] = 1L << ((byte)strtol(zz[1], NULL, 0));
-			check_for_playerlist();
+			if (i != 0) { /* Main window [0] isn't allowed to display arbitrary stuff, it always shows the main screen */
+				window_flag[i] = 1L << ((byte)strtol(zz[1], NULL, 0));
+				check_for_playerlist();
+			} else c_message_add("\377yInvalid attempt to set window_flag for main window.");
 			return(0);
 		}
 		break;

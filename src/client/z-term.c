@@ -3811,7 +3811,7 @@ errr refresh_minimap() {
 	h = Term->hgt;
 
 	//Look for the first map screen
-	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
+	for (i = 1; i < ANGBAND_TERM_MAX; i++) {
 		if (window_flag[i] & PW_MINIMAP) {
 			//Found a map screen. Activate and size it correctly.
 			Term_activate(ang_term[i]);

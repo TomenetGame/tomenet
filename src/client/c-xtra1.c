@@ -2653,7 +2653,7 @@ static void fix_inven(void) {
 	term *old;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2697,7 +2697,7 @@ static void fix_subinven(void) {
 	term *old;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2736,7 +2736,7 @@ static void fix_equip(void) {
 	term *old;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2771,7 +2771,7 @@ static void fix_player(void) {
 	term *old;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2814,7 +2814,7 @@ static void fix_message(void) {
 	/* Display messages in different colors -Zz */
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2898,7 +2898,7 @@ static void fix_lagometer(void) {
 	term *old;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2927,7 +2927,7 @@ void fix_playerlist(void) {
 	term *old;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2968,7 +2968,7 @@ void check_for_playerlist(void) {
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 
@@ -2993,7 +2993,7 @@ static void fix_player2(void) {
 	term *old;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* No window */
 		if (!ang_term[j]) continue;
 

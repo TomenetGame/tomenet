@@ -9336,7 +9336,7 @@ static void do_cmd_options_win(void) {
 
 
 	/* Memorize old flags */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++)
+	for (j = 1; j < ANGBAND_TERM_MAX; j++)
 		/* Acquire current flags */
 		old_flag[j] = window_flag[j];
 
@@ -9500,7 +9500,7 @@ static void do_cmd_options_win(void) {
 	}
 
 	/* Notice changes */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+	for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 		/* Dead window */
 		if (!ang_term[j]) continue;
 
