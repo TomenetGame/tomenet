@@ -3476,7 +3476,7 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 	/* New modification (2024-09-21) - actually reduce the DEX-'malus' we get, but only really for low item values;
 	   this enables new characters to steal more easily if they can't max DEX to 18/+++ values but are at eg 14,
 	   which would so far cause a huge discrepancy that outweighed actual Stealing skill too much. */
-	dex_vs_val = 100 - (340000000 / (((((150 + tbest) * (150 + tbest)) / 100) * (150 + tbest)) / 10)); /* close call of avoiding exceeding 64-1 bit lul */
+	dex_vs_val = 100 - (340000 / (((((150 + tbest) * (150 + tbest)) / 100) * (150 + tbest)) / 10)); /* close call of avoiding exceeding 64-1 bit lul */
 
 	/* Player tries to steal it */
 	if (p_ptr->rogue_heavyarmor)
