@@ -169,7 +169,7 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	case 1:
 		x = 3;
 #if defined(WINDOWS) || defined(USE_X11)
-		if (!force_cui && c_cfg.font_map_solid_walls) marker = smarker1;
+		if (!force_cui && c_cfg.solid_bars) marker = smarker1;
 		else
 #endif
 		marker = marker1;
@@ -177,7 +177,7 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	case 2:
 		x = 2 + (4 + 1) * pos;
 #if defined(WINDOWS) || defined(USE_X11)
-		if (!force_cui && c_cfg.font_map_solid_walls) marker = smarker2;
+		if (!force_cui && c_cfg.solid_bars) marker = smarker2;
 		else
 #endif
 		marker = marker2;
@@ -185,7 +185,7 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	case 3:
 		x = 1 + (3 + 1) * pos;
 #if defined(WINDOWS) || defined(USE_X11)
-		if (!force_cui && c_cfg.font_map_solid_walls) marker = smarker3;
+		if (!force_cui && c_cfg.solid_bars) marker = smarker3;
 		else
 #endif
 		marker = marker3;
@@ -218,7 +218,7 @@ void draw_huge_stun_bar(byte attr) {
 	if (screen_hgt != MAX_SCREEN_HGT) return;
 
 #if defined(WINDOWS) || defined(USE_X11)
-	if (!force_cui && c_cfg.font_map_solid_walls)
+	if (!force_cui && c_cfg.solid_bars)
  #ifdef WINDOWS
 		c = FONT_MAP_SOLID_WIN;
  #elif defined(USE_X11)

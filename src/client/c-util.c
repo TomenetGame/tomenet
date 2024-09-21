@@ -8941,7 +8941,7 @@ void options_immediate(bool init) {
 #endif
 
 	if (init) {
-		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
+		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.solid_bars;
 		changed4a = c_cfg.hp_bar; changed4b = c_cfg.mp_bar; changed4c = c_cfg.st_bar;
 		changed5 = c_cfg.equip_text_colour;
 		changed5a = c_cfg.equip_set_colour;
@@ -8953,11 +8953,11 @@ void options_immediate(bool init) {
 	}
 
 	/* for exp_need option changes: */
-	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.font_map_solid_walls)
+	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.solid_bars)
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
 	/* in case hp/mp/st are displayed as bars,
 	   or hp/mp/st have just been switched between number form and bar form */
-	if (changed3 != c_cfg.font_map_solid_walls ||
+	if (changed3 != c_cfg.solid_bars ||
 	    changed4a != c_cfg.hp_bar || changed4b != c_cfg.mp_bar || changed4c != c_cfg.st_bar) {
 		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
 		if (changed4b != c_cfg.mp_bar) mp_bar = c_cfg.mp_bar;
@@ -8965,6 +8965,7 @@ void options_immediate(bool init) {
 		prt_hp(hp_max, hp_cur, hp_bar, hp_boosted);
 		prt_mp(mp_max, mp_cur, mp_bar);
 		prt_stamina(st_max, st_cur, st_bar);
+		prt_stun(-1); //redraw
 	}
 	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= PW_EQUIP;
 	if (changed5a != c_cfg.equip_set_colour) p_ptr->window |= PW_EQUIP;

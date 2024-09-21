@@ -30,6 +30,7 @@ Y:palette_animation
 X:disable_lightning
 X:no_light_fainting
 X:gfx_autooff_fmsw
+Y:solid_bars
 
 Y:exp_bar
 X:uniques_alive

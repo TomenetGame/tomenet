@@ -229,10 +229,10 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		int got_org = 0;
 #endif
 #ifdef WINDOWS
-		if (!force_cui && c_cfg.font_map_solid_walls) exp_bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
+		if (!force_cui && c_cfg.solid_bars) exp_bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 		else
 #elif defined(USE_X11)
-		if (!force_cui && c_cfg.font_map_solid_walls) exp_bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+		if (!force_cui && c_cfg.solid_bars) exp_bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 		else
 ///#else /* command-line client ("-c") doesn't draw either! */
 #endif
@@ -485,10 +485,10 @@ void prt_hp(int max, int cur, bool bar, bool boosted) {
 
  #if 0 /* looks too strange with all 3 bars above each other */
   #ifdef WINDOWS
-				if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
+				if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 				else
   #elif defined(USE_X11)
-				if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+				if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 				else
   //#else /* command-line client ("-c") doesn't draw either! */
   #endif
@@ -569,10 +569,10 @@ void prt_stamina(int max, int cur, bool bar) {
 
 #if 0 /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
-		if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
+		if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 		else
  #elif defined(USE_X11)
-		if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+		if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 		else
   //#else /* command-line client ("-c") doesn't draw either! */
  #endif
@@ -754,10 +754,10 @@ void prt_mp(int max, int cur, bool bar) {
 
 #if 0 /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
-			if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
+			if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 			else
  #elif defined(USE_X11)
-			if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+			if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 			else
   //#else /* command-line client ("-c") doesn't draw either! */
  #endif
@@ -1425,10 +1425,14 @@ void prt_cut(int cut) {
 }
 
 /*
- * Prints stun status
+ * Prints stun status, -1 to just redraw current stun status
  */
 void prt_stun(int stun) {
 	int x, y;
+	static int old_stun = 0;
+
+	if (stun == -1) stun = old_stun;
+	else old_stun = stun;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);

@@ -584,6 +584,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "stun_huge_bar",		"Show stun status as huge bar (big_map only)" },
 	{ &c_cfg.gfx_autooff_fmsw,	FALSE,	1,	0, 160, FALSE,	/* superceded by S_GFX_AUTOOFF_FMSW which is superior as it allows solid status bar visuals etc still! */
 	    "gfx_autooff_fmsw",		"Auto-disable font_map_solid_walls for graphics" },
+	{ &c_cfg.solid_bars,		TRUE,	1,	0, 161, TRUE,
+	    "solid_bars",		"Display status bars in solid style, not as '#'" },
 };
 
 cptr melee_techniques[16] = {
