@@ -104,6 +104,15 @@
 //#define STARVING_AUTOKICK_MSG "starving auto-kick"
 #define STARVING_AUTOKICK_MSG format("You were STARVING and idle for %ds, so the game kicked you to prevent death!", STARVE_KICK_TIMER)
 
+/* Server-side equivalent to c_cfg.gfx_autooff_fmsw for 4.9.2 client which didn't have it yet,
+   and just because it's more convenient actually so plaers don't have to worry about it.
+   Automatically disable font_map_solid_walls mappings if player uses graphics tiles? (Recommended, as it just breaks mappings).
+   NOTE: This is NOT the same as disabling font_map_solid_walls on client-side, as the client actually "thinks" it's still on,
+   which allows displaying solid feats for client-side stuff such as solid status bars!
+   So this define really only changes the map screen mappings ie f_info game elements). */
+#define S_GFX_AUTOOFF_FMSW
+
+
 /* Sanity check of client input */
 #define bad_dir(d)	((d)<0 || (d)>9)	/* used for non-targetting actions that require a direction */
 //#define bad_dir1(d)	((d)<0 || (d)>9+1)	/* used for most targetting actions */
@@ -2231,6 +2240,7 @@ static void sync_options(int Ind, bool *options) {
 		if (!is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
 			p_ptr->font_map_solid_walls = FALSE;
 		else {
+
 			tmp = p_ptr->font_map_solid_walls;
 			if ((p_ptr->font_map_solid_walls = options[13]) != tmp) p_ptr->redraw |= PR_MAP;
 		}
@@ -2437,6 +2447,9 @@ static void sync_options(int Ind, bool *options) {
 #ifdef USE_SOUND_2010
 		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 #endif
+#ifdef S_GFX_AUTOOFF_FMSW
+		connection_t *connp = Conn[p_ptr->conn];
+#endif
 
 		//page 1
 
@@ -2452,10 +2465,14 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->page_on_afk_privmsg = options[6];
 
 		tmp = p_ptr->font_map_solid_walls;
+#ifdef S_GFX_AUTOOFF_FMSW
+		/* Hack for now: Auto-disable font_map_solid_walls while using graphics */
+		if (connp->use_graphics) options[8] = FALSE;
+#endif
 		if ((p_ptr->font_map_solid_walls = options[8]) != tmp) p_ptr->redraw |= PR_MAP;
+
 		tmp = p_ptr->view_animated_lite;
 		if ((p_ptr->view_animated_lite = options[9]) != tmp) p_ptr->redraw |= PR_MAP;
-
 		tmp = p_ptr->wall_lighting;
 		if ((p_ptr->wall_lighting = options[10]) != tmp) p_ptr->redraw |= PR_MAP;
 		tmp = p_ptr->view_lamp_walls;
