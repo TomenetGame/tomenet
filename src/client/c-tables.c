@@ -582,7 +582,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_flicker",		"Disable all fast colour animations" },
 	{ &c_cfg.stun_huge_bar,		FALSE,	6,	0, 159, TRUE,
 	    "stun_huge_bar",		"Show stun status as huge bar (big_map only)" },
-	{ &c_cfg.gfx_autooff_fmsw,		TRUE,	1,	0, 160, TRUE,
+	{ &c_cfg.gfx_autooff_fmsw,	FALSE,	1,	0, 160, FALSE,	/* superceded by S_GFX_AUTOOFF_FMSW which is superior as it allows solid status bar visuals etc still! */
 	    "gfx_autooff_fmsw",		"Auto-disable font_map_solid_walls for graphics" },
 };
 
