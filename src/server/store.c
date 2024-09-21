@@ -3395,7 +3395,13 @@ void store_stole(int Ind, int item) {
 	}
 	tcadd /= 100;
 	if (tcadd < 1) tcadd = 1;
+
 	tcadd = 57000 / ((10000 / tcadd) + 50);
+
+	// example tcadd values for item values:
+	// 10M: 1072,  300k: 835,  10k: 380,  100: 54,  30: 30,  10: 17,  1: 5,  0: 0
+	// VAL=10000000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"
+	// -> rand_int(chance) < 10 -> success
 
 	/* Player tries to steal it */
 	if (p_ptr->rogue_heavyarmor)
