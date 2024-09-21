@@ -3180,7 +3180,7 @@ void store_stole(int Ind, int item) {
 	int i, item_new, amt = 1;
 	long chance = 0;
 
-	s64b tbest, tcadd, tccompare, tbase;
+	s64b tbest, tcadd, tccompare, tbase, dex_vs_val;
 
 	object_type sell_obj, *o_ptr;
 	char o_name[ONAME_LEN];
@@ -3386,8 +3386,8 @@ void store_stole(int Ind, int item) {
 	if (tbest < 1) tbest = 1; /* shops shouldn't offer items worth less,
 				     but maybe this object_value call returns <= 0,
 				     at least we had a panic save in ../tbest somewhere below */
+	if (tbest > 10000000) tbest = 10000000; /* object value caps at 10M for all calculations */
 
-	if (tbest > 10000000) tbest = 10000000;
 	tccompare = 10;
 	while ((tccompare / 10) < tbest) { /* calculate square root - C. Blue */
 		tcadd = (tcadd * 114) / 100;
@@ -3403,12 +3403,87 @@ void store_stole(int Ind, int item) {
 	// VAL=10000000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"
 	// -> rand_int(chance) < 10 -> success
 
+	// new idea, to make stealing less terrible with "normal-good" DEX values at low level:
+	// VAL=50; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"
+/*
+  new:
+VAL=10000000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	50
+VAL=10000000; ST=50; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	84
+VAL=100000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	33
+VAL=100000; ST=50; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	54
+VAL=10000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	17	!
+VAL=1000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		7
+VAL=1000; ST=50; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		12
+VAL=10000000; ST=35; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	70
+VAL=10000000; ST=35; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	116
+VAL=100000; ST=35; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	45
+VAL=100000; ST=35; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	76
+VAL=1000; ST=35; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		10
+VAL=1000; ST=35; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		16
+VAL=10000000; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	114
+VAL=10000000; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	189
+VAL=100000; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	74
+VAL=100000; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"	123
+VAL=1000; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		16
+VAL=1000; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		26
+VAL=100; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		5
+VAL=100; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		9
+VAL=50; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		12	!
+ 100% succ threshold:
+VAL=2600; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*25) * 225 / (100 + 2 * $DEX)"		10.x
+  old:
+VAL=10000000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	50
+VAL=10000000; ST=50; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	85
+VAL=100000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	28
+VAL=100000; ST=50; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	63
+VAL=10000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	9	!
+VAL=1000; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	3
+VAL=1000; ST=50; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"		31
+VAL=10000000; ST=35; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	80
+VAL=10000000; ST=35; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	115
+VAL=100000; ST=35; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	50
+VAL=100000; ST=35; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	85
+VAL=1000; ST=35; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	6
+VAL=1000; ST=35; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"		41
+VAL=10000000; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	136
+VAL=10000000; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	171
+VAL=100000; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	89
+VAL=100000; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	124
+VAL=1000; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	21
+VAL=1000; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"		56
+VAL=100; ST=20; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"		8
+VAL=100; ST=20; DEX=3; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"		43
+VAL=50; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"		41	!
+ 100% succ threshold:
+VAL=12400; ST=50; DEX=38; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + 50 - $DEX"	10.x
+
+  old (more values):
+VAL=15; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + (50 - $DEX)"		37
+VAL=30; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + (50 - $DEX)"		39
+VAL=50; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + (50 - $DEX)"		41
+VAL=100; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + (50 - $DEX)"	45
+VAL=150; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + (50 - $DEX)"	48
+VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + (50 - $DEX)"	50
+  new2: (old with low-DEX influence reduced for low values)
+VAL=15; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + ((50 - $DEX) * (100 - 340000000/((150+$VAL)*(150+$VAL)*(150+$VAL)))) / 100"	10
+VAL=30; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + ((50 - $DEX) * (100 - 340000000/((150+$VAL)*(150+$VAL)*(150+$VAL)))) / 100"	18
+VAL=50; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + ((50 - $DEX) * (100 - 340000000/((150+$VAL)*(150+$VAL)*(150+$VAL)))) / 100"	26
+VAL=100; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + ((50 - $DEX) * (100 - 340000000/((150+$VAL)*(150+$VAL)*(150+$VAL)))) / 100"	37
+VAL=150; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + ((50 - $DEX) * (100 - 340000000/((150+$VAL)*(150+$VAL)*(150+$VAL)))) / 100"	44
+VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*15) - ($ST/50*25) + ((50 - $DEX) * (100 - 340000000/((150+$VAL)*(150+$VAL)*(150+$VAL)))) / 100"	48
+*/
+
+	/* New modification (2024-09-21) - actually reduce the DEX-'malus' we get, but only really for low item values;
+	   this enables new characters to steal more easily if they can't max DEX to 18/+++ values but are at eg 14,
+	   which would so far cause a huge discrepancy that outweighed actual Stealing skill too much. */
+	dex_vs_val = 100 - (340000000 / (((((150 + tbest) * (150 + tbest)) / 100) * (150 + tbest)) / 10)); /* close call of avoiding exceeding 64-1 bit lul */
+
 	/* Player tries to steal it */
 	if (p_ptr->rogue_heavyarmor)
-		chance = ((50) - p_ptr->stat_ind[A_DEX]) +
+		chance = ((50 - p_ptr->stat_ind[A_DEX]) * dex_vs_val) / 100 +
 		    ((((sell_obj.weight * amt) / 2) + tcadd) / 2);
 	else
-		chance = ((50) - p_ptr->stat_ind[A_DEX]) +
+		chance = ((50 - p_ptr->stat_ind[A_DEX]) * dex_vs_val) / 100 +
 		    ((((sell_obj.weight * amt) / 2) + tcadd) /
 		    (2 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 		    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
