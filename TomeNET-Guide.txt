@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 22. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3836,15 +3836,23 @@ automatically, and various other things.
 
 Windows command-line options:
 -h                      Displays this list of command-line parameters
--I                      Disable IME. Input Method Editors are for CJK languages
-                        ie chinese, japanese, korean, to allow using their
-                        keyboard layouts that use multiple keypresses to
+-I                      Force-disable IME. Input Method Editors are for CJK
+                        languages ie chinese, japanese, korean, to allow using
+                        their keyboard layouts that use multiple keypresses to
                         construct a character.
-                        If you don't use such a keyboard, you can safely
+                        If you don't use such a keyboard, but TomeNET still
+                        auto-detects your system as 'IME' you can safely
                         disable IME in case you suspect it causes any problems
                         for you. This might be the case if you like to switch
                         your keyboard language via keyboard shortcut while
-                        TomeNET is focussed.
+                        TomeNET is focussed or to ALT-TAB out of TomeNET.
+                        Another way is to permanently set this in TomeNET.ini
+                        via 'ForceIMEOff=1'.
+-i                      Force-enable IME. See '-I' explanation above. Enable
+                        this if you have an IME system (eg CJK language) and
+                        TomeNET wrongly auto-detects your system as non-IME.
+                        Another way is to permanently set this in TomeNET.ini
+                        via 'ForceIMEOn=1'.
 -C                      Compatibility mode for ancient servers (deprecated)
 -F <fps>                Set client internal engine fps (default is 100)
 -l<Account> <Password>  For example -lGandalf geheim
