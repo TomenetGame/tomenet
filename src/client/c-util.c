@@ -8967,6 +8967,11 @@ void options_immediate(bool init) {
 		prt_stamina(st_max, st_cur, st_bar);
 		prt_stun(-1); //redraw
 	}
+	if (changed3 != c_cfg.solid_bars) {
+		if (screen_icky) Term_switch(0);
+		prt_sane(c_p_ptr->sanity_attr, c_p_ptr->sanity);
+		if (screen_icky) Term_switch(0);
+	}
 	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= PW_EQUIP;
 	if (changed5a != c_cfg.equip_set_colour) p_ptr->window |= PW_EQUIP;
 	if (changed6 != c_cfg.colourize_bignum) {

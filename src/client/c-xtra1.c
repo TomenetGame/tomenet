@@ -844,18 +844,25 @@ void prt_mp(int max, int cur, bool bar) {
  */
 void prt_sane(byte attr, cptr buf) {
 	int x, y;
+	char tmpsn[12];
 
-	if (client_mode == CLIENT_PARTY)
-		return;
+	if (client_mode == CLIENT_PARTY) return;
 
 #ifdef SHOW_SANITY	/* NO SANITY DISPLAY!!! */
+	strcpy(tmpsn, buf);
+	if (c_cfg.solid_bars)
+		for (x = 0; x < strlen(tmpsn); x++)
+ #ifdef WINDOWS
+			if (tmpsn[x] == '*') tmpsn[x] = FONT_MAP_SOLID_WIN;
+ #elif defined(USE_X11)
+			if (tmpsn[x] == '*') tmpsn[x] = FONT_MAP_SOLID_X11;
+ #endif
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	put_str("SN:         ", ROW_SANITY, COL_SANITY);
-
-	c_put_str(attr, buf, ROW_SANITY, COL_SANITY + 3);
+	c_put_str(attr, tmpsn, ROW_SANITY, COL_SANITY + 3);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
