@@ -305,6 +305,7 @@ extern errr term_init(term *t, int w, int h, int k);
 
 extern byte flick_colour(byte attr);
 extern void flicker(void);
+extern errr refresh_clone_map(void);
 
 extern bool validate_term_screen_dimensions(int *cols, int *rows);
 extern bool validate_term_dimensions(int term_idx, int *cols, int *rows);

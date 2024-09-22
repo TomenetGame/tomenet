@@ -7227,6 +7227,12 @@ void do_ping(void) {
 			time_stamp_min = ctl->tm_min;
 		}
 	}
+
+	/* Update the clone-map;
+	   * not sure where this best belongs to - Lightman
+	   -- moved it from Term_inkey() to here - C. Blue
+	 */
+	refresh_clone_map();
 }
 
 #ifdef META_PINGS

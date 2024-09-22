@@ -3884,10 +3884,6 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 
 	/* Hack -- get bored */
 	if (!Term->never_bored) {
-		/* Update the clone-map;
-		 * not sure where this best belongs to - Lightman */
-		refresh_clone_map();
-
 		/* Process random events */
 		Term_xtra(TERM_XTRA_BORED, 0);
 	}
