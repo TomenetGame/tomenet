@@ -4160,7 +4160,7 @@ void animate_palette(void) {
 
 	static bool init = FALSE;
 	static unsigned char ac = 0x00; //animatio
-
+	term_data *old_td;
 
 	/* Initialise the palette once. For some reason colour_table[] is all zero'ed again at the beginning. */
 	tmp[2] = 0;
@@ -4249,8 +4249,8 @@ void animate_palette(void) {
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
 
-	term_data *old_td = (term_data*)(Term->data);
 	/* Refresh aka redraw windows with new colour */
+	old_td = (term_data*)(Term->data);
 	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
 		if (!term_get_visibility(i)) continue;
 		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
