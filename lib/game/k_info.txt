@@ -4446,7 +4446,7 @@ N:514:Fast Metabolism
 G:,:r
 I:80:21:500
 W:1:0:1:50
-A:1/1:5/1
+A:1/2:5/2
 D:Adds a small, flat amount to your natural health regeneration temporarily.
 
 N:515:& Handbook~ of Wind and Weather
