@@ -524,11 +524,10 @@ static void sense_inventory(int Ind) {
 		/* We have pseudo-id'ed it heavily before, do not tell us again */
 		if (o_ptr->ident & ID_SENSE_HEAVY) continue;
 		/* If already pseudo-id'ed normally, fail for non-heavy pseudo-id, but allow heavy one as an upgrade if we meanwhile trained the responsible skill */
-		else if (o_ptr->ident & ID_SENSE) fail_light = TRUE;
+		if (o_ptr->ident & ID_SENSE) fail_light = TRUE; /* Note for force_curse handling: This also means we already know if the item is cursed! */
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) && (magik(80) || UNAWARENESS(p_ptr))) {
-			/* usually fail, except if we're forced to insta-sense a curse */
-			if (!force_curse) continue;
+			if (!force_curse || fail_light) continue; /* Either we don't need to process force_curse, or we already know the item is cursed */
 			/* if we're forced to insta-sense a curse, do just that, as we'd have failed for all other actions */
 			fail_light = ok_magic = ok_combat = ok_archery = ok_traps = FALSE;
 		}
