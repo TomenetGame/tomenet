@@ -15613,7 +15613,7 @@ static int Receive_version(int ind) {
 	version[MAX_CHARS - 1] = '\0';
 
 	if (p_ptr) {
-		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%d}\n", p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang);
+		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n", p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang);
 		if (fake_waitpid_clver) {
 			player_type *pa_ptr;
 
@@ -15626,7 +15626,7 @@ static int Receive_version(int ind) {
 			}
 			/* Found him */
 			if (n <= NumPlayers) {
-				msg_format(n, "Client version <%s> (%s) %d ms, gll %d, lang %d:", p_ptr->name, p_ptr->accountname, avg, guide_lastline, sys_lang);
+				msg_format(n, "Client version <%s> (%s) %d ms, gll %d, lang %02x:", p_ptr->name, p_ptr->accountname, avg, guide_lastline, sys_lang);
 				msg_format(n, " %s [%d,%d<%s>]", version, v_branch, v_build, v_tag);
 				msg_format(n, " %s", os_version);
 			}
@@ -15634,7 +15634,7 @@ static int Receive_version(int ind) {
 			fake_waitpid_clver = 0;
 			fake_waitpid_clver_timer = 0;
 		}
-	} else s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%d}\n", connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang);
+	} else s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n", connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang);
 
 	return(1);
 }
