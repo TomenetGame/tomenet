@@ -4976,7 +4976,7 @@
 #define PW_MSGNOCHAT	0x00000008U	/* Display messages except chat */
 #define PW_MESSAGE	0x00000010U	/* Display messages */
 #define PW_CHAT		0x00000020U	/* Display chat messages */
-#define PW_MINIMAP	0x00000040U	/* Display minimap */
+#define PW_CLONEMAP	0x00000040U	/* Display clone of the main screen map in a terminal window */
 #define PW_LAGOMETER	0x00000080U	/* Display the lag-o-meter */
 #define PW_PLAYERLIST	0x00000100U	/* Display player list */
 #define PW_PLAYER2	0x00000200U	/* Display boni & resistances page of the character sheet ("Chh") */

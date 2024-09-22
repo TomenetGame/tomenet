@@ -602,7 +602,7 @@ extern void clear_ovl_spot(int Ind, int y, int x);
 extern void clear_ovl(int Ind);
 extern void prt_map(int Ind, bool scr_only);
 extern void prt_map_forward(int Ind);
-extern void display_map(int Ind, int *cy, int *cx);
+extern void display_mini_map(int Ind, int *cy, int *cx);
 extern void do_cmd_view_map(int Ind, char mode);
 extern void forget_lite(int Ind);
 extern void update_lite(int Ind);

@@ -521,17 +521,17 @@
 //#define CRAFTING_2023
 
 /* Work in progress // debug code - do not enable this!
-   cmd_map(): Support initiating '2'/'8' map scrolling  while in 's'elector mode,
+   cmd_mini_map(1) (1 = in world-map mode): Support initiating '2'/'8' map scrolling  while in 's'elector mode,
    by moving the X vertically out of the map
    (ie onto screen line 0 or 45 in 46-lines mode, aka big_map)?
    Note that retrieval from 'minimap_yoff' from server-side is just needed for this. - C. Blue */
 //#define WILDMAP_ALLOW_SELECTOR_SCROLLING
 
-/* Work in progress: Make the dedicated minimap subterm switch - C. Blue
+/* Work in progress: Make the dedicated clone-map subterm auto-switch to 3 different map types. - C. Blue
    Mirror map while shopping (status quo, ie clone of the main screen),
-   Condensed map while in dungeon (the same that is currently staticly available via shift+M while in dungeon),
-   World map while on the world surface including town and not shopping (same as ~0 displays on the main screen). */
-#define DYNAMIC_MINI_MAP
+   Condensed map while in dungeon (the same that is currently staticly available as 'mini-map' via shift+M while in dungeon),
+   World map while on the world surface including town and not shopping (same as ~0 'mini-map' displays on the main screen). */
+#define DYNAMIC_CLONE_MAP
 
 /* Player login: Allow resuming from a different IP instead */
 #define ALLOW_RESUMING_FROM_NEW_IP

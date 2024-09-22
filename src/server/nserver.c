@@ -8439,7 +8439,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
-		plog(format("Connection not ready for minimap (%d.%d.%d)",
+		plog(format("Connection not ready for mini_map (%d.%d.%d)",
 			Ind, connp->state, connp->id));
 		return(0);
 	}
@@ -8820,7 +8820,7 @@ int Send_mini_map_pos(int Ind, int x, int y, int y_offset, byte a, char32_t c) {
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
-		plog(format("Connection not ready for minimap_pos (%d.%d.%d)",
+		plog(format("Connection not ready for mini_map_pos (%d.%d.%d)",
 			Ind, connp->state, connp->id));
 		return(0);
 	}

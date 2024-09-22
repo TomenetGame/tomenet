@@ -483,7 +483,7 @@ extern void cmd_king(void);
 extern void cmd_run(void);
 extern void cmd_stay(void);
 extern void cmd_stay_one(void);
-extern void cmd_map(char mode);
+extern void cmd_mini_map(char mode);
 extern void cmd_locate(void);
 extern void cmd_search(void);
 extern void cmd_toggle_search(void);

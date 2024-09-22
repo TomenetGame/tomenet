@@ -291,7 +291,7 @@ void process_command() {
 	case KTRL('G'): cmd_stay_one(); break;
 
 	/* Get the mini-map */
-	case 'M': cmd_map(0); break;
+	case 'M': cmd_mini_map(0); break;
 	/* Recenter map */
 	case 'L': cmd_locate(); break;
 	/* Search */
@@ -534,7 +534,7 @@ void cmd_stay_one(void) {
    0 = current floor or worldmap
    1 = force worldmap
 */
-void cmd_map(char mode) {
+void cmd_mini_map(char mode) {
 	char ch, dir = 0x00;
 	bool sel = FALSE, worldmap = ((mode == 1) || !map_town);
 
@@ -559,9 +559,9 @@ void cmd_map(char mode) {
 		last_line_info = 0;
 
 #ifdef WILDMAP_ALLOW_SELECTOR_SCROLLING
-c_msg_format("cmd_map - wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
+c_msg_format("cmd_mini_map - wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
 		if (sel) {
-c_msg_format("cmd_map SEL - wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
+c_msg_format("cmd_mini_map SEL - wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
 			//minimap_selx = minimap_posx;
 			//minimap_sely = minimap_posy;
 			//minimap_selattr = minimap_attr;
@@ -7217,7 +7217,7 @@ void cmd_check_misc(void) {
 			Send_special_line(SPECIAL_FILE_RECALL, 0, "");
 			break;
 		case '0':
-			cmd_map(1);
+			cmd_mini_map(1);
 			break;
 		case '6':
 			artifact_lore();

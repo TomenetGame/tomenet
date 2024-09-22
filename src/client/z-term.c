@@ -3782,10 +3782,10 @@ errr Term_key_push_buf(cptr buf, int len) {
 }
 
 /*
- * Add support for minimap: copy of main window that
+ * Add support for clone-map: copy of main window that
  * is always active - Lightman
  */
-errr refresh_minimap() {
+errr refresh_clone_map() {
 	int i, j;
 	int w;
 	int h;
@@ -3812,7 +3812,7 @@ errr refresh_minimap() {
 
 	//Look for the first map screen
 	for (i = 1; i < ANGBAND_TERM_MAX; i++) {
-		if (window_flag[i] & PW_MINIMAP) {
+		if (window_flag[i] & PW_CLONEMAP) {
 			//Found a map screen. Activate and size it correctly.
 			Term_activate(ang_term[i]);
 
@@ -3883,9 +3883,9 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 
 	/* Hack -- get bored */
 	if (!Term->never_bored) {
-		/* Update the minimap;
+		/* Update the clone-map;
 		 * not sure where this best belongs to - Lightman */
-		refresh_minimap();
+		refresh_clone_map();
 
 		/* Process random events */
 		Term_xtra(TERM_XTRA_BORED, 0);

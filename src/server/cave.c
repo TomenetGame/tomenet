@@ -4560,7 +4560,7 @@ void lite_spot(int Ind, int y, int x) {
 #else
 				Send_char(Ind, dispx, dispy, a, c);
 #endif
-				// DYNAMIC_MINI_MAP (while in dungeon and not shopping): y, x, a, c - use priority-condensing code from display_map() to send a specific minimap char in addition to the normal map's Send_char() with a newly added PKT_ type
+				// DYNAMIC_CLONE_MAP (while in dungeon and not shopping): y, x, a, c - use priority-condensing code from display_mini_map() to send a specific minimap char in addition to the normal map's Send_char() with a newly added PKT_ type
 			}
 
 			/* Clear the overlay buffer */
@@ -5023,7 +5023,7 @@ static byte priority(byte a, char32_t c) {
  */
 
 
-void display_map(int Ind, int *cy, int *cx) {
+void display_mini_map(int Ind, int *cy, int *cx) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j, x, y;
@@ -5229,7 +5229,7 @@ void display_map(int Ind, int *cy, int *cx) {
    |0x04: x+9
    |0x08: y+9
    |0x10: x-9 */
-static void wild_display_map(int Ind, char mode) {
+static void wild_display_mini_map(int Ind, char mode) {
 	player_type *p_ptr = Players[Ind];
 
 	int x, y, type;
@@ -5535,12 +5535,12 @@ void do_cmd_view_map(int Ind, char mode) {
 	/* only off floor ATM */
 	if ((Players[Ind]->wpos.wz != 0 || (istown(&Players[Ind]->wpos)))
 	    && !(mode & 0x1))
-		display_map(Ind, &cy, &cx);
+		display_mini_map(Ind, &cy, &cx);
 	/* do wilderness map */
 	/* pfft, fix me pls, Evileye ;) */
 	/* pfft. fixed */
-	else wild_display_map(Ind, mode);
-	/*else display_map(Ind, &cy, &cx); */
+	else wild_display_mini_map(Ind, mode);
+	/*else display_mini_map(Ind, &cy, &cx); */
 }
 
 

@@ -2920,7 +2920,7 @@ int Receive_history(void) {
 }
 
 int Receive_char(void) {
-//DYNAMIC_MINI_MAP: handle minimap-specific chars, via new PKT_ type probably instead of here (or combine PKT_CHAR and new PKT_ type into this function)
+//DYNAMIC_CLONE_MAP: handle minimap-specific chars, via new PKT_ type probably instead of here (or combine PKT_CHAR and new PKT_ type into this function)
 	int n;
 	char ch;
 	char x, y;
@@ -3417,7 +3417,7 @@ int Receive_depth(void) {
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
-	/* For minimap visual hacky fix.. -_- */
+	/* For mini-map visual hacky fix.. -_- */
 	map_town = town;
 
 	return(1);
@@ -3789,7 +3789,7 @@ int Receive_flush(void) {
 
 
 int Receive_line_info(void) {
-//DYNAMIC_MINI_MAP: handle minimap-specific lines, via new PKT_MINI_MAP type (while !screen_icky) probably
+//DYNAMIC_CLONE_MAP: handle minimap-specific lines, via new PKT_MINI_MAP type (while !screen_icky) probably
 	char ch;
 	int x, i, n;
 	s16b y;
@@ -3835,7 +3835,7 @@ int Receive_line_info(void) {
 			Term_putstr(0, n++, -1, TERM_WHITE, format("(%2d,%2d)", p_ptr->wpos.wx, p_ptr->wpos.wy));
 			n++;
 
-#if 0 /* Note: We draw all this stuff instead in cmd_map(). minimap_selx is -1 here initially, unlike in cmd_map() (!) */
+#if 0 /* Note: We draw all this stuff instead in cmd_mini_map(). minimap_selx is -1 here initially, unlike in cmd_mini_map() (!) */
 			if (minimap_selx != -1) {
 				int wx, wy;
 				int dis;

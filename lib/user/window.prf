@@ -6,7 +6,7 @@
 #
 # Valid usage numbers:
 #  0 -Inventory     1 -Equipment   2 -Character sheet   3 -Non-chat messages
-#  4 -Messages      5 -Chat only   6 -Mini-map          7 -Lag-o-meter
+#  4 -Messages      5 -Chat only   6 -Clone-map         7 -Lag-o-meter
 #  8 -Player list   9 -Character sheet, boni page
 
 # Window 'Mirror', Flag 'Display all messages'
@@ -19,7 +19,7 @@ W:3:2
 W:4:5
 # Window 'Term-5', Flag 'Display equip/inven'
 W:5:1
-# Window 'Term-6', Flag 'Display mini-map'
+# Window 'Term-6', Flag 'Display clone-map'
 W:6:6
 # Window 'Term-7', Flag 'Display lag-o-meter'
 W:7:7

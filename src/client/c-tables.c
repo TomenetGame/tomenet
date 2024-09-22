@@ -148,7 +148,7 @@ cptr window_flag_desc[NR_OPTIONS_SHOWN] = {
 	"Display non-chat messages",
 	"Display all messages",
 	"Display chat messages",
-	"Display mini-map",
+	"Display clone-map",
 	"Display lag-o-meter",
 	"Display player list",
 	"Display character boni",

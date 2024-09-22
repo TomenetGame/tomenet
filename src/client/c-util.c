@@ -9448,7 +9448,7 @@ static void do_cmd_options_win(void) {
 			window_flag[x] |= (1L << y);
 
 			/* Update windows */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_CLONEMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 			window_stuff();
 			break;
 
@@ -9467,7 +9467,7 @@ static void do_cmd_options_win(void) {
 			}
 
 			/* Update windows -- doesn't do anything for clearing a window though, pointless here */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_CLONEMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 			window_stuff();
 			break;
 
@@ -9485,7 +9485,7 @@ static void do_cmd_options_win(void) {
 			}
 
 			/* Update windows */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_CLONEMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 			window_stuff();
 			break;
 
@@ -9524,7 +9524,7 @@ static void do_cmd_options_win(void) {
 	}
 
 	/* Update windows */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_CLONEMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 	window_stuff();
 
 	check_for_playerlist();
@@ -9682,7 +9682,7 @@ static void do_cmd_options_fonts(void) {
 
 //  #ifdef WINDOWS /* actually never sort fonts on X11, because they come in a sorted manner from fonts.alias and fonts.txt files already. */
 	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
-   #ifdef WINDOWS /* Windows supports graphic fonts for the mini map */
+   #ifdef WINDOWS /* Windows supports graphic fonts for the clone-map */
 	qsort(graphic_font_name, graphic_fonts, sizeof(char[256]), font_name_cmp);
    #endif
 //  #endif
@@ -9855,8 +9855,8 @@ static void do_cmd_options_fonts(void) {
 		case '=':
 		case '+':
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0) {
-				//Include the graphic fonts, because we are cycling the mini-map
+			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
+				//Include the graphic fonts, because we are cycling the clone-map
 				for (j = 0; j < graphic_fonts - 1; j++) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
@@ -9883,8 +9883,8 @@ static void do_cmd_options_fonts(void) {
 
 		case '-':
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0) {
-				//Include the graphic fonts, because we are cycling the mini-map
+			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
+				//Include the graphic fonts, because we are cycling the clone-map
 				for (j = 1; j < graphic_fonts; j++) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */

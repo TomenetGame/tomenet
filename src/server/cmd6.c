@@ -3196,7 +3196,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				break;
 			}
 			ident = reveal_wilderness_around_player(Ind, p_ptr->wpos.wy, p_ptr->wpos.wx, 0, 3);
-			//if (ident) wild_display_map(Ind);
+			//if (ident) wild_display_mini_map(Ind);
 			if (ident) msg_print(Ind, "You seem to get a feel for the place.");
 
 #else /* new scrolls */
