@@ -3815,43 +3815,44 @@ errr refresh_clone_map() {
 
 	//Look for the first map screen
 	for (i = 1; i < ANGBAND_TERM_MAX; i++) {
-		if (window_flag[i] & PW_CLONEMAP) {
-			//Found a map screen. Activate and size it correctly.
-			Term_activate(ang_term[i]);
+		if (!ang_term[i]) continue;
+		if (!(window_flag[i] & PW_CLONEMAP)) continue;
 
-			//Sometimes NULL on start up
-			if (Term == NULL) break;
+		//Found a map screen. Activate and size it correctly.
+		Term_activate(ang_term[i]);
 
-			if (Term->wid != w || Term->hgt != h) {
-				Term_resize(w, h);
-				Term_redraw();
-			}
+		//Sometimes NULL on start up
+		if (Term == NULL) break;
 
-			//If we're not yet/anymore logged in, keep it clear
-			if (!in_game) break;
+		if (Term->wid != w || Term->hgt != h) {
+			Term_resize(w, h);
+			Term_redraw();
+		}
 
-			//Workaround to ensure each dest line is refreshed, or term_win_copy_part() won't get drawn immediately
-			for (j = 0; j < h - SCREEN_PAD_TOP - SCREEN_PAD_BOTTOM; j++) c_put_str(TERM_WHITE, " ", j, 0);
-			//scr_b->cu = 1; //?
+		//If we're not yet/anymore logged in, keep it clear
+		if (!in_game) break;
 
-			//Update the map
-			scr_b = Term->scr;
-			term_win_copy_part(scr_b, scr_a, SCREEN_PAD_LEFT, SCREEN_PAD_TOP, w - 1 - SCREEN_PAD_RIGHT, h - 1 - SCREEN_PAD_BOTTOM, 0, 0);
+		//Workaround to ensure each dest line is refreshed, or term_win_copy_part() won't get drawn immediately
+		for (j = 0; j < h - SCREEN_PAD_TOP - SCREEN_PAD_BOTTOM; j++) c_put_str(TERM_WHITE, " ", j, 0);
+		//scr_b->cu = 1; //?
+
+		//Update the map
+		scr_b = Term->scr;
+		term_win_copy_part(scr_b, scr_a, SCREEN_PAD_LEFT, SCREEN_PAD_TOP, w - 1 - SCREEN_PAD_RIGHT, h - 1 - SCREEN_PAD_BOTTOM, 0, 0);
 #ifdef GRAPHICS_BG_MASK
-			scr_b_back = Term->scr_back;
-			term_win_copy_part(scr_b_back, scr_a_back, SCREEN_PAD_LEFT, SCREEN_PAD_TOP, w - 1 - SCREEN_PAD_RIGHT, h - 1 - SCREEN_PAD_BOTTOM, 0, 0);
+		scr_b_back = Term->scr_back;
+		term_win_copy_part(scr_b_back, scr_a_back, SCREEN_PAD_LEFT, SCREEN_PAD_TOP, w - 1 - SCREEN_PAD_RIGHT, h - 1 - SCREEN_PAD_BOTTOM, 0, 0);
 #endif
 
-			//Redraw it
-			for (j = 0; j < h; j++) {
-				Term->x1[j] = 0;
-				Term->x2[j] = w - 1 - SCREEN_PAD_LEFT - SCREEN_PAD_RIGHT;
-			}
-			Term_fresh();
-
-			//Get out of the loop. We don't support more than one extra map screen.
-			break;
+		//Redraw it
+		for (j = 0; j < h; j++) {
+			Term->x1[j] = 0;
+			Term->x2[j] = w - 1 - SCREEN_PAD_LEFT - SCREEN_PAD_RIGHT;
 		}
+		Term_fresh();
+
+		//Get out of the loop. We don't support more than one extra map screen.
+		break;
 	}
 
 	//Reactivate the main window

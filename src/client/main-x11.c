@@ -4252,7 +4252,6 @@ void animate_palette(void) {
 	term_data *old_td = (term_data*)(Term->data);
 	/* Refresh aka redraw windows with new colour */
 	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
-
 		if (!term_get_visibility(i)) continue;
 		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
 
