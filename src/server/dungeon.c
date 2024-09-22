@@ -535,11 +535,6 @@ static void sense_inventory(int Ind) {
 		feel = NULL;
 		felt_heavy = FALSE;
 
-		/* Maybe change: ok_curse isn't 'heavy' priority ie it can fail on inventory (unless forced) as can all other non-heavy pseudo-id,
-		   but if it triggers then it always gives 'heavy' result values (from _aux1()), revealing that a cursed item is an artifact, via 'terrible' feeling.
-		   This cheeze perhaps isn't terrible though, as we'd have found out if we tried to 'k' the item in question anyway >_>. */
-		if (ok_curse && !fail_light && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
-
 		/* Valid "tval" codes */
 		switch (o_ptr->tval) {
 		case TV_DIGGING:
@@ -625,6 +620,12 @@ static void sense_inventory(int Ind) {
 			}
 			break;
 		}
+
+		/* Maybe change: ok_curse isn't 'heavy' priority ie it can fail on inventory (unless forced) as can all other non-heavy pseudo-id,
+		   but if it triggers then it always gives 'heavy' result values (from _aux1()), revealing that a cursed item is an artifact, via 'terrible' feeling.
+		   This cheeze perhaps isn't terrible though, as we'd have found out if we tried to 'k' the item in question anyway >_>. */
+		if (!feel && ok_curse && cursed_p(o_ptr)) /* Avoid double-pseudo-ID, giving priority to any feelings gained above */
+			feel = value_check_aux1(o_ptr);
 
 		/* Skip non-feelings */
 		if (!feel) continue;
