@@ -66,7 +66,7 @@
 extern void flicker(void);
 
 int	ticks = 0; /* Keeps track of time in 100ms "ticks" */
-int	ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
+int	ticks10 = 0; /* 'deci-ticks', counting just 0..9, but in 10ms intervals */
 int	existing_characters = 0;
 
 int	command_confirmed = -1;
@@ -6924,7 +6924,9 @@ int Send_unknownpacket(int type, int prev_type) {
  * timeGetTime should provide a 1 ms resolution.
  *  - mikaelh
  *
- * (Notes: ticks will count up continuously until overflowing int, while ticks10 just run from 0 to 9.)
+ * Notes: ticks will count up continuously until overflowing int in 100ms intervals.
+ *        ticks10 just run from 0 to 9 in 10ms intervals.
+ *        newticks will update from oldticks every 1 second (aka 10 ticks).
  */
 void update_ticks(void) {
 	struct timeval cur_time;
@@ -7066,11 +7068,25 @@ void do_mail(void) {
 }
 
 /* Ping the server once a second when enabled - mikaelh
-   do_ping is called every frame. */
+   do_ping is at least called every frame (1/cfg_client_fps) in the main loop,
+   but may also get called more frequently as it is additionally called from other locations too, eg sync_sleep() which has a 1/1000 ms frequency.
+   So for timed actions called in here, make sure to depend on ticks etc instead of just this function call. */
 void do_ping(void) {
-	static int last_ping = 0;
+	static int last_ping = 0, last_ticks10 = 0;
 	static int time_stamp_hour = -1, time_stamp_min = -1;
 
+
+	/* ------------------------------------------------------------------------------------------------------------- */
+	/* Filter for everything else done in this function:
+	   As this function may be called more often than 1/cfg_client_fps (10 ms),
+	   quit here unless a true 10ms interval has passed.
+	   (10 ms independantly of actual cfg_client_fps value, but just dependant on system clock!) */
+	if (ticks10 == last_ticks10) return;
+	last_ticks10 = ticks10;
+	/* ------------------------------------------------------------------------------------------------------------- */
+
+
+	/* Every 10 ticks = 1 second update interval */
 	if (lagometer_enabled && (ticks - last_ping >= 10)) {
 		last_ping = ticks;
 
