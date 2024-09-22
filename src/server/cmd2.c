@@ -232,6 +232,7 @@ void do_cmd_go_up(int Ind) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		if (interfere(Ind, 20)) return;
 		un_afk_idle(Ind);
+		if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
 		everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
 		forget_lite(Ind);
 		forget_view(Ind);
@@ -259,6 +260,7 @@ void do_cmd_go_up(int Ind) {
 		forget_view(Ind);
 		p_ptr->energy -= level_speed(wpos);
 		p_ptr->new_level_method = LEVEL_GHOST;
+		if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
 		wpcopy(&old_wpos, wpos);
 		wpos->wz = 0;
 		new_players_on_depth(&old_wpos, -1, TRUE);
@@ -739,6 +741,8 @@ void do_cmd_go_up(int Ind) {
 #endif
 	}
 
+	if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
+
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
 
@@ -1131,6 +1135,7 @@ void do_cmd_go_down(int Ind) {
 			return;
 		}
 
+		if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
 		p_ptr->warning_voidjumpgate = 1;
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
@@ -1180,6 +1185,7 @@ void do_cmd_go_down(int Ind) {
 		/* Check interference */
 		if (interfere(Ind, 20)) return; /* beacon interference chance */
 
+		if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
 		if (beacon_effect(Ind, c_ptr)) return;
 		/* not transported? strange.. */
 	}
@@ -1189,6 +1195,7 @@ void do_cmd_go_down(int Ind) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		if (interfere(Ind, 20)) return;
 		un_afk_idle(Ind);
+		if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
 		everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
 		forget_lite(Ind);
 		forget_view(Ind);
@@ -1216,6 +1223,7 @@ void do_cmd_go_down(int Ind) {
 		forget_view(Ind);
 		p_ptr->energy -= level_speed(wpos);
 		p_ptr->new_level_method = LEVEL_GHOST;
+		if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
 		wpcopy(&old_wpos, wpos);
 		wpos->wz = 0;
 		new_players_on_depth(&old_wpos, -1, TRUE);
@@ -1239,7 +1247,7 @@ void do_cmd_go_down(int Ind) {
 	}
 
 	/* Verify stairs */
-//      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
+	//if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	if (!is_admin(p_ptr) &&
 	    c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE &&
 	    (!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
@@ -1702,6 +1710,8 @@ void do_cmd_go_down(int Ind) {
 		}
 #endif
 	}
+
+	if (c_ptr->custom_lua_way) exec_lua(0, format("custom_way(%d,%d)", Ind, c_ptr->custom_lua_way));
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;

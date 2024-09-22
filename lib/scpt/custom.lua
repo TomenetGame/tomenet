@@ -265,6 +265,8 @@ function custom_search(Ind, index)
 end
 function custom_newlivefeat(old_feat, new_feat, index)
 end
+function custom_way(Ind, index)
+end
 
 -- Custom objects:
 -- Ind can be negative if the item is carried/dropped by a monster instead of a player.

@@ -642,6 +642,7 @@ struct cave_type {
 	byte custom_lua_search_diff_minus;	/* search difficulty, 0..100 subtracted from chance */
 	byte custom_lua_search_diff_chance;	/* search difficulty, 0..100% multiplied by chance */
 	s16b custom_lua_newlivefeat;		/* when cave's feat is terraformed/changed */
+	s16b custom_lua_way;			/* when taking a staircase, void gate or beacon */
 };
 
 /* ToME parts, arranged */

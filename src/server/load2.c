@@ -2861,6 +2861,7 @@ static errr rd_floor(void) {
 	byte custom_lua_search_diff_minus = 0;
 	byte custom_lua_search_diff_chance = 0;
 	s16b custom_lua_newlivefeat = 0;
+	s16b custom_lua_way = 0;
 
 
 	/*** Depth info ***/
@@ -2944,6 +2945,7 @@ static errr rd_floor(void) {
 			rd_byte(&custom_lua_search_diff_minus);
 			rd_byte(&custom_lua_search_diff_chance);
 			rd_s16b(&custom_lua_newlivefeat);
+			if (!s_older_than(4, 9, 16)) rd_s16b(&custom_lua_way);
 		}
 
 		/* Apply the RLE info */
@@ -3001,6 +3003,7 @@ static errr rd_floor(void) {
 			c_ptr->custom_lua_search_diff_minus = custom_lua_search_diff_minus;
 			c_ptr->custom_lua_search_diff_chance = custom_lua_search_diff_chance;
 			c_ptr->custom_lua_newlivefeat = custom_lua_newlivefeat;
+			c_ptr->custom_lua_way = custom_lua_way;
 
 			/* increment our position */
 			x++;

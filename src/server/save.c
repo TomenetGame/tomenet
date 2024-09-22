@@ -1276,6 +1276,7 @@ static void wr_floor(struct worldpos *wpos) {
 	byte prev_custom_lua_search_diff_minus = 0xff;
 	byte prev_custom_lua_search_diff_chance = 0xff;
 	s16b prev_custom_lua_newlivefeat = (s16b)0xffff;
+	s16b prev_custom_lua_way = (s16b)0xffff;
 
 	struct c_special *cs_ptr;
 	cave_type *c_ptr, **zcave;
@@ -1342,7 +1343,8 @@ static void wr_floor(struct worldpos *wpos) {
 			    prev_custom_lua_search != c_ptr->custom_lua_search ||
 			    prev_custom_lua_search_diff_minus != c_ptr->custom_lua_search_diff_minus ||
 			    prev_custom_lua_search_diff_chance != c_ptr->custom_lua_search_diff_chance ||
-			    prev_custom_lua_newlivefeat != c_ptr->custom_lua_newlivefeat) {
+			    prev_custom_lua_newlivefeat != c_ptr->custom_lua_newlivefeat ||
+			    prev_custom_lua_way != c_ptr->custom_lua_way) {
 				if (runlength) {
 					/* if we just finished a run, write it */
 					wr_byte(runlength);
@@ -1355,6 +1357,7 @@ static void wr_floor(struct worldpos *wpos) {
 					wr_byte(prev_custom_lua_search_diff_minus);
 					wr_byte(prev_custom_lua_search_diff_chance);
 					wr_s16b(prev_custom_lua_newlivefeat);
+					wr_s16b(prev_custom_lua_way);
 				}
 
 				/* start a new run */
@@ -1367,6 +1370,7 @@ static void wr_floor(struct worldpos *wpos) {
 				prev_custom_lua_search_diff_minus = c_ptr->custom_lua_search_diff_minus;
 				prev_custom_lua_search_diff_chance = c_ptr->custom_lua_search_diff_chance;
 				prev_custom_lua_newlivefeat = c_ptr->custom_lua_newlivefeat;
+				prev_custom_lua_way = c_ptr->custom_lua_way;
 				runlength = 1;
 			}
 			/* otherwise continue our current run */
@@ -1383,6 +1387,7 @@ static void wr_floor(struct worldpos *wpos) {
 		wr_byte(prev_custom_lua_search_diff_minus);
 		wr_byte(prev_custom_lua_search_diff_chance);
 		wr_s16b(prev_custom_lua_newlivefeat);
+		wr_s16b(prev_custom_lua_way);
 	}
 
 	/*** another scan for c_special ***/
