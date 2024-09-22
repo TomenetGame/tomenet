@@ -15587,13 +15587,13 @@ static int Receive_version(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
-	int n, avg, guide_lastline = -1, v_branch = -1, v_build = -1;
+	int n, avg, guide_lastline = -1, v_branch = -1, v_build = -1, sys_lang = -1;
 	char version[MAX_CHARS], os_version[MAX_CHARS], v_tag[MAX_CHARS] = { 0 };
 
 	if (connp->id != -1) p_ptr = Players[GetInd[connp->id]];
 
 	if (is_atleast(&connp->version, 4, 9, 2, 0, 0, 1)) {
-		if ((n = Packet_scanf(&connp->r, "%c%s%s%d%d%d%d%s", &ch, version, os_version, &avg, &guide_lastline, &v_branch, &v_build, v_tag)) <= 0) {
+		if ((n = Packet_scanf(&connp->r, "%c%s%s%d%d%d%d%s%d", &ch, version, os_version, &avg, &guide_lastline, &v_branch, &v_build, v_tag, &sys_lang)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return(n);
 		}
@@ -15613,7 +15613,7 @@ static int Receive_version(int ind) {
 	version[MAX_CHARS - 1] = '\0';
 
 	if (p_ptr) {
-		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s\n", p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version);
+		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%d}\n", p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang);
 		if (fake_waitpid_clver) {
 			player_type *pa_ptr;
 
@@ -15626,7 +15626,7 @@ static int Receive_version(int ind) {
 			}
 			/* Found him */
 			if (n <= NumPlayers) {
-				msg_format(n, "Client version <%s> (%s) %d ms, gll %d:", p_ptr->name, p_ptr->accountname, avg, guide_lastline);
+				msg_format(n, "Client version <%s> (%s) %d ms, gll %d, lang %d:", p_ptr->name, p_ptr->accountname, avg, guide_lastline, sys_lang);
 				msg_format(n, " %s [%d,%d<%s>]", version, v_branch, v_build, v_tag);
 				msg_format(n, " %s", os_version);
 			}
@@ -15634,7 +15634,7 @@ static int Receive_version(int ind) {
 			fake_waitpid_clver = 0;
 			fake_waitpid_clver_timer = 0;
 		}
-	} else s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s\n", connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_branch, v_build, v_tag, os_version);
+	} else s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%d}\n", connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang);
 
 	return(1);
 }

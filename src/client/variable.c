@@ -695,9 +695,11 @@ int guide_chapters, guide_endofcontents;
 
 #ifdef WINDOWS
 bool win_dontmoveuser = FALSE;
-bool INI_disable_CS_IME = FALSE;
-bool disable_CS_IME = FALSE;
+bool INI_disable_CS_IME = FALSE, INI_enable_CS_IME = FALSE, suggest_IME = FALSE;
+bool disable_CS_IME = FALSE, enable_CS_IME = FALSE;
 #endif
+/* System language, for CS_IME default choice */
+int sys_lang = -1;
 
 byte showing_inven = FALSE, showing_equip = FALSE;
 

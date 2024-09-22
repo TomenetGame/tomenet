@@ -11114,7 +11114,9 @@ void do_cmd_options(void) {
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options 1/2");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
 #ifdef WINDOWS
-		Term_putstr(2, l++, -1, TERM_WHITE, format("(\377yw\377w/\377yE\377w)     Window flags / %s", disable_CS_IME ? "Enable IME" : "Disable IME"));
+		Term_putstr(2, l++, -1, TERM_WHITE, format("(\377yw\377w/\377yE\377w)     Window flags / %s%s",
+		    disable_CS_IME ? "Force IME on" : (enable_CS_IME ? "Auto-IME" : "Force IME off"),
+		    (disable_CS_IME || enable_CS_IME) ? "" : (suggest_IME ? " (Currently Auto-ON)" : " (Currently Auto-OFF)")));
 #else
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
 #endif
@@ -11424,10 +11426,22 @@ void do_cmd_options(void) {
 
 #ifdef WINDOWS
 		else if (k == 'E') {
-			disable_CS_IME = !disable_CS_IME;
+			/* Cycle 3 steps in order: */
+			if (disable_CS_IME) { // force off? -> force on
+				disable_CS_IME = FALSE;
+				enable_CS_IME = TRUE;
+				c_msg_print("\377yIME support is now forced-on. Requires a client restart (use CTRL+Q).");
+			} else if (enable_CS_IME) { // force on? -> force nothing (accept auto-choice based on OS language)
+				enable_CS_IME = FALSE;
+				disable_CS_IME = FALSE;
+				c_msg_print("\377yIME support is now automatic (standard). Requires a client restart (use CTRL+Q).");
+			} else { // force nothing? -> force on
+				disable_CS_IME = TRUE;
+				enable_CS_IME = FALSE;
+				c_msg_print("\377yIME support is now forced-off. Requires a client restart (use CTRL+Q).");
+			}
 			INI_disable_CS_IME = disable_CS_IME;
-			if (disable_CS_IME) c_msg_print("\377yIME support is now disabled. This requires a client restart (use CTRL+Q).");
-			else c_msg_print("\377yIME support is now enabled. This requires a client restart (use CTRL+Q).");
+			INI_enable_CS_IME = enable_CS_IME;
 		}
 #endif
 

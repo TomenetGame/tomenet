@@ -1078,8 +1078,8 @@ extern bool ask_for_bigmap(void);
 extern bool check_dir(cptr s);
 extern void get_screen_font_name(char *buf);
 extern bool win_dontmoveuser;
-extern bool INI_disable_CS_IME;
-extern bool disable_CS_IME;
+extern bool INI_disable_CS_IME, INI_enable_CS_IME, suggest_IME;
+extern bool disable_CS_IME, enable_CS_IME;
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
@@ -1090,6 +1090,7 @@ extern void save_prefs(void);
 extern void set_window_title_win(int term_idx, cptr title);
 #endif
 extern void store_crecedentials(void);
+extern int sys_lang;
 
 extern const cptr angband_sound_name[SOUND_MAX];
 extern int audio_sfx, audio_music;

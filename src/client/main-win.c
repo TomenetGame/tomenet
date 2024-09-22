@@ -66,6 +66,9 @@
 /* for SendInput() */
 #include <winuser.h>
 
+/* For GetSystemDefaultUILanguage() for auto-CS_IME-choice */
+#include <winnls.h>
+
 #define MNU_SUPPORT
 /* but do we actually create a menu? */
 //#define MNU_USE
@@ -313,8 +316,8 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 //#define PALANIM_SWAP
 
 
-void resize_main_window_win(int cols, int rows);
 
+void resize_main_window_win(int cols, int rows);
 
 /*
  * Forward declare
@@ -1242,7 +1245,9 @@ void save_prefs(void) {
 #endif
 
 	strcpy(buf, INI_disable_CS_IME ? "1" : "0");
-	WritePrivateProfileString("Base", "DisableIME", buf, ini_file);
+	WritePrivateProfileString("Base", "ForceIMEOff", buf, ini_file);
+	strcpy(buf, INI_enable_CS_IME ? "1" : "0");
+	WritePrivateProfileString("Base", "ForceIMEOn", buf, ini_file);
 #ifdef USE_GRAPHICS
 	strcpy(buf, use_graphics_new == UG_2MASK ? "2" : (use_graphics_new ? "1" : "0"));
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
@@ -1377,7 +1382,8 @@ static void load_prefs_sound(int i) {
  * Load just the IME preferences from the .INI file, as it must be done early before Windows are initialized
  */
 static void load_prefs_IME(void) {
-	disable_CS_IME = INI_disable_CS_IME = (GetPrivateProfileInt("Base", "DisableIME", 0, ini_file) != 0);
+	disable_CS_IME = INI_disable_CS_IME = (GetPrivateProfileInt("Base", "ForceIMEOff", 0, ini_file) != 0);
+	enable_CS_IME = INI_enable_CS_IME = (GetPrivateProfileInt("Base", "ForceIMEOn", 0, ini_file) != 0);
 }
 /*
  * Load the preferences from the .INI file
@@ -4344,6 +4350,23 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	bool done = FALSE, quoted = FALSE;
 	u32b seed;
 
+	char sys_lang_str[5] = { 0 };
+
+
+	/* Get system UI default language group (last 2 hex digits, the first 2 are actually dialect) to determine whether or not we want CS_IME - C. Blue
+	   The reason why we don't want it if it isn't necessary is that it apparently inhibits some hot keys:
+	   One player reported he cannot change system language between cyrillic and english anymore via hotkey while TomeNET is focused (only via mouse in that case),
+	   another (western) player reported he cannot use ALT+TAB to tab out of TomeNET anymore (!). */
+	strcpy(sys_lang_str, format("%04x", GetSystemDefaultUILanguage()));
+	sys_lang = strtol(&sys_lang_str[2], NULL, 16);
+	/* Automatically suggest enabling IME for CJK systems: */
+	switch (sys_lang) {
+	case 0x04: // Chinese
+	case 0x11: // Japanese
+	case 0x12: // Korean
+		suggest_IME = TRUE;
+		break;
+	}
 
 	/* Set the system suffix */
 	ANGBAND_SYS = "win";
@@ -4369,7 +4392,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	/* Load IME settings before commandline-args (to allow -I to modify it) and before window initialization (or it won't work) */
 	load_prefs_IME();
 
-	/* Process the command line -- now before initializing the main window because of CS_IME setting via cmdline arg 'I':*/
+	/* Process the command line -- now before initializing the main window because of CS_IME setting via cmdline arg 'I'/'i':*/
 	for (i = 0, n = strlen(lpCmdLine); i < n; i++) {
 		/* Check for an option */
 		if (lpCmdLine[i] == '-') {
@@ -4418,7 +4441,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    /* "  -h              Display this help",
 					    "  -C              Compatibility mode for OLD servers",
 					    "  -F              Client FPS", */
-					    "  -I              disable IME (CJK languages)",
+					    "  -I              force IME off (for CJK languages)",
+					    "  -i              force IME on (for CJK languages)",
 					    "  -l<name> <pwd>       Login crecedentials",
 					    "  -N<name>       character name",
 					    "  -R<name>       char name, auto-reincarnate",
@@ -4443,7 +4467,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    /* "  -h              Display this help",
 					    "  -C              Compatibility mode for OLD servers",
 					    "  -F              Client FPS", */
-					    "  -I              disable IME (CJK languages)",
+					    "  -I              force IME off (for CJK languages)",
+					    "  -i              force IME on (for CJK languages)",
 					    "  -l<name> <pwd>  Login crecedentials",
 					    "  -N<name>        character name",
 					    "  -R<name>        char name, auto-reincarnate",
@@ -4462,6 +4487,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					break;
 				case 'I':
 					disable_CS_IME = TRUE;
+					break;
+				case 'i':
+					enable_CS_IME = TRUE;
 					break;
 				case 'l': /* account name & password */
 					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);
@@ -4520,7 +4548,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	if (hPrevInst == NULL) {
 /* Not required, just a paranoia note, it's pretty undocumented */
 //#define CS_IME 0x00010000
-		wc.style         = CS_CLASSDC | (disable_CS_IME ? 0x0 : CS_IME);
+		// Apply CS_IME perhaps: force-off has highest priority, followed by force-on, last is auto-suggest via detected system language
+		wc.style         = CS_CLASSDC | (disable_CS_IME ? 0x0 : (enable_CS_IME ? CS_IME : (suggest_IME ? CS_IME : 0x0)));
 		wc.lpfnWndProc   = AngbandWndProc;
 		wc.cbClsExtra    = 0;
 		wc.cbWndExtra    = 4; /* one long pointer to term_data */
