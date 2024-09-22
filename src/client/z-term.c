@@ -3797,6 +3797,9 @@ errr refresh_clone_map() {
 	term_win *scr_b_back;
 #endif
 
+	term *old_term = Term;
+
+
 	//Find the map in memory.
 	Term_activate(ang_term[0]);
 	if (screen_icky > 0) scr_a = Term->mem[0];
@@ -3825,9 +3828,7 @@ errr refresh_clone_map() {
 			}
 
 			//If we're not yet/anymore logged in, keep it clear
-			if (!in_game)
-				//Get out of the loop. We don't support more than one extra map screen.
-				break;
+			if (!in_game) break;
 
 			//Workaround to ensure each dest line is refreshed, or term_win_copy_part() won't get drawn immediately
 			for (j = 0; j < h - SCREEN_PAD_TOP - SCREEN_PAD_BOTTOM; j++) c_put_str(TERM_WHITE, " ", j, 0);
@@ -3854,7 +3855,7 @@ errr refresh_clone_map() {
 	}
 
 	//Reactivate the main window
-	Term_activate(ang_term[0]);
+	Term_activate(old_term);
 
 	return(0);
 }
