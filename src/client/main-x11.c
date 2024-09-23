@@ -3438,6 +3438,127 @@ static errr x11_term_init(int term_id) {
 	return(0);
 }
 
+int init_graphics_x11(void) {
+	char path[1024];
+	char filename[1024];
+	int width = 0, height = 0;
+	char *data = NULL;
+	errr rerr = 0;
+	int depth, x, y;
+	Visual *visual;
+
+	/* Load graphics file. Quit if file missing or load error. */
+
+	/* Check for tiles string & extract tiles width & height. */
+	if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
+		sprintf(use_graphics_errstr, "Couldn't extract tile dimensions from: %s", graphic_tiles);
+		fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (X1)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 101;
+		goto gfx_skip;
+ #endif
+	}
+
+	if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
+		sprintf(use_graphics_errstr, "Invalid tiles dimensions: %dx%d", graphics_tile_wid, graphics_tile_hgt);
+		fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (X2)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 102;
+		goto gfx_skip;
+ #endif
+	}
+
+	/* Early-initialize paths, to get access to lib directories right now, we need it for loading the graphics: */
+	init_stuff();
+
+	/* Build & allocate the graphics path. */
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
+	ANGBAND_DIR_XTRA_GRAPHICS = string_make(path);
+
+	/* Build the name of the graphics file. */
+	path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
+	strcat(filename, ".bmp");
+
+	/* Load .bmp image. */
+
+	if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
+		sprintf(use_graphics_errstr, "Graphics file \"%s\" ", filename);
+		switch (rerr) {
+		case ReadBMPNoFile:			strcat(use_graphics_errstr, "can not be read."); break;
+		case ReadBMPReadErrorOrUnexpectedEOF:	strcat(use_graphics_errstr, "read error or unexpected end."); break;
+		case ReadBMPInvalidFile:		strcat(use_graphics_errstr, "has incorrect BMP file format."); break;
+		case ReadBMPNoImageData:		strcat(use_graphics_errstr, "contains no image data."); break;
+		case ReadBMPUnexpectedEOF:		strcat(use_graphics_errstr, "unexpected end."); break;
+		case ReadBMPIllegalBitCount:		strcat(use_graphics_errstr, "has illegal bit count, only 24bit and 32bit images are allowed."); break;
+		default: 				strcat(use_graphics_errstr, "unexpected error.");
+		}
+		fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (X3)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 103;
+		goto gfx_skip;
+ #endif
+	}
+
+	/* Calculate tiles per row. */
+	graphics_image_tpr = width / graphics_tile_wid;
+	if (graphics_image_tpr <= 0) { /* Paranoia. */
+		sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
+		fprintf(stderr, "%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (X4)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 104;
+		goto gfx_skip;
+ #endif
+	}
+
+	/* Create masks from loaded data */
+#ifdef GRAPHICS_BG_MASK
+	createMasksFromData_2mask(data, width, height, &graphics_bgmask, &graphics_fgmask, &graphics_bg2mask);
+#else
+	createMasksFromData(data, width, height, &graphics_bgmask, &graphics_fgmask);
+#endif
+
+	/* Store loaded image data in XImage format */
+	depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+	visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+	graphics_image = XCreateImage(
+		Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+		data, width, height, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+
+	/* Speedup Hack. Don't create and allocate pixel if default depth is 24bit. Is this kosher? */
+	if (depth != 24) {
+		/* Allocate color for each pixel and rewrite in image */
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x++) {
+				/* Utilize XAllocColor() in create_pixel() to get an 'official' X11 colour for our desired RGB value.
+				   On 24-bit(also 32-bit?)-depth visuals this will be identical,
+				   so this is mainly for super old/weird hardware that has indexed colours or <8 bits per channel. */
+				XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
+			}
+		}
+	}
+
+gfx_skip:
+	if (!use_graphics) {
+		printf("Disabling graphics and falling back to normal text mode.\n");
+		/* Actually also show it as 'off' in =g menu, as in, "desired at config-file level" */
+		use_graphics_new = FALSE;
+	}
+
+	return(use_graphics);
+}
+
 /*
  * Initialization function for an "X11" module to Angband
  */
@@ -3505,122 +3626,7 @@ errr init_x11(void) {
 
 #ifdef USE_GRAPHICS
 	if (use_graphics) {
-		char path[1024];
-		char filename[1024];
-		int width = 0, height = 0;
-		char *data = NULL;
-		errr rerr = 0;
-		int depth, x, y;
-		Visual *visual;
-
-		/* Load graphics file. Quit if file missing or load error. */
-
-		/* Check for tiles string & extract tiles width & height. */
-		if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
-			sprintf(use_graphics_errstr, "Couldn't extract tile dimensions from: %s", graphic_tiles);
-			fprintf(stderr, "%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (X1)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 101;
-			goto gfx_skip;
- #endif
-		}
-
-		if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
-			sprintf(use_graphics_errstr, "Invalid tiles dimensions: %dx%d", graphics_tile_wid, graphics_tile_hgt);
-			fprintf(stderr, "%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (X2)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 102;
-			goto gfx_skip;
- #endif
-		}
-
-		/* Early-initialize paths, to get access to lib directories right now, we need it for loading the graphics: */
-		init_stuff();
-
-		/* Build & allocate the graphics path. */
-		path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
-		ANGBAND_DIR_XTRA_GRAPHICS = string_make(path);
-
-		/* Build the name of the graphics file. */
-		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
-		strcat(filename, ".bmp");
-
-		/* Load .bmp image. */
-
-		if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
-			sprintf(use_graphics_errstr, "Graphics file \"%s\" ", filename);
-			switch (rerr) {
-				case ReadBMPNoFile:			strcat(use_graphics_errstr, "can not be read."); break;
-				case ReadBMPReadErrorOrUnexpectedEOF:	strcat(use_graphics_errstr, "read error or unexpected end."); break;
-				case ReadBMPInvalidFile:		strcat(use_graphics_errstr, "has incorrect BMP file format."); break;
-				case ReadBMPNoImageData:		strcat(use_graphics_errstr, "contains no image data."); break;
-				case ReadBMPUnexpectedEOF:		strcat(use_graphics_errstr, "unexpected end."); break;
-				case ReadBMPIllegalBitCount:		strcat(use_graphics_errstr, "has illegal bit count, only 24bit and 32bit images are allowed."); break;
-				default: 				strcat(use_graphics_errstr, "unexpected error.");
-			}
-			fprintf(stderr, "%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (X3)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 103;
-			goto gfx_skip;
- #endif
-		}
-
-		/* Calculate tiles per row. */
-		graphics_image_tpr = width / graphics_tile_wid;
-		if (graphics_image_tpr <= 0) { /* Paranoia. */
-			sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
-			fprintf(stderr, "%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (X4)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 104;
-			goto gfx_skip;
- #endif
-		}
-
-		/* Create masks from loaded data */
-#ifdef GRAPHICS_BG_MASK
-		createMasksFromData_2mask(data, width, height, &graphics_bgmask, &graphics_fgmask, &graphics_bg2mask);
-#else
-		createMasksFromData(data, width, height, &graphics_bgmask, &graphics_fgmask);
-#endif
-
-		/* Store loaded image data in XImage format */
-		depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
-		visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
-		graphics_image = XCreateImage(
-				Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
-				data, width, height, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
-
-		/* Speedup Hack. Don't create and allocate pixel if default depth is 24bit. Is this kosher? */
-		if (depth != 24) {
-			/* Allocate color for each pixel and rewrite in image */
-			for (y = 0; y < height; y++) {
-				for (x = 0; x < width; x++) {
-					/* Utilize XAllocColor() in create_pixel() to get an 'official' X11 colour for our desired RGB value.
-					   On 24-bit(also 32-bit?)-depth visuals this will be identical,
-					   so this is mainly for super old/weird hardware that has indexed colours or <8 bits per channel. */
-					XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
-				}
-			}
-		}
-
-gfx_skip:
-		if (!use_graphics) {
-			printf("Disabling graphics and falling back to normal text mode.\n");
-			/* Actually also show it as 'off' in =g menu, as in, "desired at config-file level" */
-			use_graphics_new = FALSE;
-		}
+		(void)init_graphics_x11();
 	}
 #endif /* USE_GRAPHICS */
 

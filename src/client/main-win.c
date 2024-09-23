@@ -2776,6 +2776,110 @@ static void term_data_link(term_data *td) {
 #endif
 }
 
+/* Assumes 'use_graphics' is enabled, but may disable it if init fails. */
+int init_graphics_win(void) {
+	BITMAP bm;
+	char filename[1024];
+	HDC hdc = GetDC(NULL);
+
+	if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
+		sprintf(use_graphics_errstr, "Using graphic tiles needs a device content with at least 24 bits per pixel.");
+		printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics device error (W1)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 1;
+		goto gfx_skip;
+ #endif
+	}
+	ReleaseDC(NULL, hdc);
+
+	/* Load graphics file. Quit if file missing or load error. */
+
+	/* Check for tiles string & extract tiles width & height. */
+	if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
+		sprintf(use_graphics_errstr, "Couldn't extract tile dimensions from: %s", graphic_tiles);
+		printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (W2)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 2;
+		goto gfx_skip;
+ #endif
+	}
+
+	if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
+		sprintf(use_graphics_errstr, "Invalid tiles dimensions: %dx%d", graphics_tile_wid, graphics_tile_hgt);
+		printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (W3)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 3;
+		goto gfx_skip;
+ #endif
+	}
+
+	/* Validate the "graphics" directory */
+	validate_dir(ANGBAND_DIR_XTRA_GRAPHICS);
+
+	/* Build the name of the graphics file. */
+	path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
+	strcat(filename, ".bmp");
+
+	/* Validate the bitmap filename */
+	validate_file(filename);
+
+	/* Load .bmp image into memory */
+	g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	/* Calculate tiles per row. */
+	GetObject(g_hbmTiles, sizeof(BITMAP), &bm);
+	graphics_image_tpr = bm.bmWidth / graphics_tile_wid;
+	if (graphics_image_tpr <= 0) { /* Paranoia. */
+		sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
+		printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (W4)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 4;
+		goto gfx_skip;
+ #endif
+	}
+
+		/* Create masks. */
+ #ifdef GRAPHICS_BG_MASK
+	if (use_graphics == UG_2MASK) {
+		/* BgMask processing must be first, as it specifically recognizes all "black" pixels
+		   and all CreateBBM calls actually create "additional" black pixels. */
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
+		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+	} else
+ #endif
+	/* actually always process the bg2mask even if not running 2mask mode,
+	   just to change BG2 colours in a 2mask-ready tileset to just black. This ensures tileset "backward compatibility". */
+	{
+		/* Note the order: First, we set the unused bg2mask to black... */
+		(void)CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+		/* so it instead becomes part of the bgmask now. */
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
+	}
+
+gfx_skip:
+	if (!use_graphics) {
+		printf("Disabling graphics and falling back to normal text mode.\n");
+		/* Actually also show it as 'off' in =g menu, as in, "desired at config-file level" */
+		use_graphics_new = FALSE;
+	}
+
+	return(use_graphics);
+}
+
 /*
  * Create the windows
  *
@@ -2873,104 +2977,7 @@ static void init_windows(void) {
 #ifdef USE_GRAPHICS
 	/* Handle "graphics" mode */
 	if (use_graphics) {
-		BITMAP bm;
-		char filename[1024];
-		HDC hdc = GetDC(NULL);
-
-		if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
-			sprintf(use_graphics_errstr, "Using graphic tiles needs a device content with at least 24 bits per pixel.");
-			printf("%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics device error (W1)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 1;
-			goto gfx_skip;
- #endif
-		}
-		ReleaseDC(NULL, hdc);
-
-		/* Load graphics file. Quit if file missing or load error. */
-
-		/* Check for tiles string & extract tiles width & height. */
-		if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
-			sprintf(use_graphics_errstr, "Couldn't extract tile dimensions from: %s", graphic_tiles);
-			printf("%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (W2)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 2;
-			goto gfx_skip;
- #endif
-		}
-
-		if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
-			sprintf(use_graphics_errstr, "Invalid tiles dimensions: %dx%d", graphics_tile_wid, graphics_tile_hgt);
-			printf("%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (W3)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 3;
-			goto gfx_skip;
- #endif
-		}
-
-		/* Validate the "graphics" directory */
-		validate_dir(ANGBAND_DIR_XTRA_GRAPHICS);
-
-		/* Build the name of the graphics file. */
-		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
-		strcat(filename, ".bmp");
-
-		/* Validate the bitmap filename */
-		validate_file(filename);
-
-		/* Load .bmp image into memory */
-		g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-
-		/* Calculate tiles per row. */
-		GetObject(g_hbmTiles, sizeof(BITMAP), &bm);
-		graphics_image_tpr = bm.bmWidth / graphics_tile_wid;
-		if (graphics_image_tpr <= 0) { /* Paranoia. */
-			sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
-			printf("%s\n", use_graphics_errstr);
- #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (W4)");
- #else
-			use_graphics = 0;
-			use_graphics_err = 4;
-			goto gfx_skip;
- #endif
-		}
-
-		/* Create masks. */
- #ifdef GRAPHICS_BG_MASK
-		if (use_graphics == UG_2MASK) {
-			/* BgMask processing must be first, as it specifically recognizes all "black" pixels
-			   and all CreateBBM calls actually create "additional" black pixels. */
-			g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
-			g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
-			g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
-		} else
- #endif
-		/* actually always process the bg2mask even if not running 2mask mode,
-		   just to change BG2 colours in a 2mask-ready tileset to just black. This ensures tileset "backward compatibility". */
-		{
-			/* Note the order: First, we set the unused bg2mask to black... */
-			(void)CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
-			/* so it instead becomes part of the bgmask now. */
-			g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
-			g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
-		}
-
-gfx_skip:
-		if (!use_graphics) {
-			printf("Disabling graphics and falling back to normal text mode.\n");
-			/* Actually also show it as 'off' in =g menu, as in, "desired at config-file level" */
-			use_graphics_new = FALSE;
-		}
+		(void)init_graphics_win();
 	}
 #endif
 
