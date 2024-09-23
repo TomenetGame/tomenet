@@ -3766,12 +3766,14 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
    since stats <= 18 will always increase by a full point, even though they'd usually
    only increase by a fraction of a point if the stat_cur was really already above 18. */
 #define FIX_STATLOWMAX
+/* Fix glitch when value is below 18, but top stat is > 18, preventing insane stat increases such as +5 points */
+#define FIX_STAT_INC_18
 bool inc_stat(int Ind, int stat) {
 	player_type *p_ptr = Players[Ind];
 	int value, gain;
 
 	/* Then augment the current/max stat */
-	value = p_ptr->stat_cur[stat];
+	value = p_ptr->stat_cur[stat]; /* 'natural' stat */
 
 	/* Cannot go above 18/100 */
 	if (value < 18 + 100) {
@@ -3779,8 +3781,8 @@ bool inc_stat(int Ind, int stat) {
 #ifndef FIX_STATLOWMAX
 		if (value < 18) {
 #else
-		if (p_ptr->stat_top[stat] < 18) {
-			if (value >= 18) gain = 10;
+		if (p_ptr->stat_top[stat] < 18) { /* 'modified' stat */
+			if (value >= 18) {gain = 10; msg_format(Ind, " A: %d +%d", value,gain);}
 			else
 #endif
 			gain = ((rand_int(100) < 75) ? 1 : 2);
@@ -3790,7 +3792,7 @@ bool inc_stat(int Ind, int stat) {
 			if (value > 18) value = 18 + ((value - 18) / 10) * 10;
 #endif
 		}
-		/* Gain 1/6 to 1/3 of distance to 18/100 */
+		/* Gain 1/6 to 1/3 of distance to 18/100 - but the last two 1/100 points are hard to get! */
 		else if (value < 18 + 98) {
 			/* Approximate gain value */
 			gain = (((18 + 100) - value) / 2 + 3) / 2;
@@ -3801,13 +3803,16 @@ bool inc_stat(int Ind, int stat) {
 			/* 4 points at once is too much */
 			if (gain > 17) gain = 17;
 
+#ifdef FIX_STAT_INC_18
+			/* Gain +1 point from every +10 (ie gain 1/10 = reduce gain by 9/10, per point below 18) increase while below 18, then add the rest of the increase to 18 */
+			if (value < 18) gain -= (18 - value) * 9;
+#endif
 			/* Apply the bonus */
 			value += randint(gain) + gain / 2;
 
 			/* Maximal value */
 			if (value > 18 + 99) value = 18 + 99;
 		}
-
 		/* Gain one point at a time */
 		else value++;
 
@@ -3815,8 +3820,7 @@ bool inc_stat(int Ind, int stat) {
 		p_ptr->stat_cur[stat] = value;
 
 		/* Bring up the maximum too */
-		if (value > p_ptr->stat_max[stat])
-			p_ptr->stat_max[stat] = value;
+		if (value > p_ptr->stat_max[stat]) p_ptr->stat_max[stat] = value;
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
