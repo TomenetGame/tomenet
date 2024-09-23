@@ -7349,11 +7349,13 @@ static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 	int j;
 	struct dun_level *l_ptr = getfloor(wpos);
 
+#if 1 /* this LF2_STATIC check isn't really needed here, the one in stale_level() is sufficient */
 	/* For events or admin intervention: Floor flag 'STATIC' keeps floor artificially static until floor is deallocated or flag is cleared. */
 	if (l_ptr && (l_ptr->flags2 & LF2_STATIC)) {
 //s_printf("do_unstat LF2_STATIC %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	}
+#endif
 
 	/* Highlander Tournament sector000 is static while players are in dungeon! */
 	if (in_sector000(wpos) && sector000separation) return;
