@@ -5658,21 +5658,26 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 #ifdef ENABLE_SUBINVEN
 	/* Display special bag contents */
-	if (o_ptr->tval == TV_SUBINVEN && slot != -1) {
-		object_type *o2_ptr = &pt_ptr->subinventory[slot][0];
+	if (o_ptr->tval == TV_SUBINVEN) {
+		/* Inspected in player inventory? */
+		if (slot != -1) {
+			object_type *o2_ptr = &pt_ptr->subinventory[slot][0];
 
-		if (!o2_ptr->k_idx) fprintf(fff, "\377WIt can hold up to %d items or stacks and is currently empty.\n", o_ptr->bpval);
-		else {
-			char o2_name[ONAME_LEN];
+			if (!o2_ptr->k_idx) fprintf(fff, "\377WIt can hold up to %d items or stacks and is currently empty.\n", o_ptr->bpval);
+			else {
+				char o2_name[ONAME_LEN];
 
-			fprintf(fff, "\377WIt can hold up to %d items or stacks and currently contains:\n", o_ptr->bpval);
-			for (j = 0; j < o_ptr->bpval; j++) {
-				o2_ptr = &pt_ptr->subinventory[slot][j];
-				if (!o2_ptr->k_idx) break;
-				object_desc(Ind, o2_name, o2_ptr, TRUE, 3);
-				fprintf(fff, "\377W %c) %s.\n", index_to_label(j), o2_name);
+				fprintf(fff, "\377WIt can hold up to %d items or stacks and currently contains:\n", o_ptr->bpval);
+				for (j = 0; j < o_ptr->bpval; j++) {
+					o2_ptr = &pt_ptr->subinventory[slot][j];
+					if (!o2_ptr->k_idx) break;
+					object_desc(Ind, o2_name, o2_ptr, TRUE, 3);
+					fprintf(fff, "\377W %c) %s.\n", index_to_label(j), o2_name);
+				}
 			}
 		}
+		/* Examined in a shop? */
+		else fprintf(fff, "\377WIt can hold up to %d items or stacks.\n", o_ptr->bpval);
 	}
 #endif
 
@@ -7150,11 +7155,12 @@ byte get_attr_from_tval(object_type *o_ptr) {
 #ifdef ENABLE_SUBINVEN
  #ifndef SUBINVEN_UNIFIED_COLOUR
 	if (o_ptr->tval == TV_SUBINVEN) switch (get_subinven_group(o_ptr->sval)) {
-		case SV_SI_GROUP_CHEST_MIN: return(tval_to_attr[TV_CHEST]);
-		case SV_SI_SATCHEL: return(tval_to_attr[TV_CHEMICAL]);
+		case SV_SI_GROUP_CHEST_MIN: return(tval_to_attr[TV_CHEST]);//TERM_SLATE
+		case SV_SI_SATCHEL: return(tval_to_attr[TV_CHEMICAL]);//TERM_YELLOW
 		case SV_SI_TRAPKIT_BAG: return(TERM_BLUE); //rogueish
 		case SV_SI_MDEVP_WRAPPING: return(TERM_L_WHITE);
-		case SV_SI_POTION_BELT: return(tval_to_attr[TV_POTION]);
+		case SV_SI_POTION_BELT: return(tval_to_attr[TV_POTION]);//TERM_L_BLUE
+		case SV_SI_FOOD_BAG: return(tval_to_attr[TV_FOOD]);//TERM_L_UMBER
 	}
  #endif
 #endif

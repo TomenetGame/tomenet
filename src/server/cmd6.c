@@ -528,6 +528,16 @@ void do_cmd_eat_food(int Ind, int item) {
 
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
+#ifdef ENABLE_SUBINVEN
+	if (item >= SUBINVEN_INVEN_MUL) {
+		/* Sanity checks */
+		if (p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_FOOD_BAG) {
+			msg_print(Ind, "\377yFood bags are the only eligible sub-containers for eating food.");
+			return;
+		}
+	}
+#endif
+
 	if (check_guard_inscription(o_ptr->note, 'E')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
@@ -695,6 +705,10 @@ void do_cmd_eat_food(int Ind, int item) {
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
 	}
+#ifdef ENABLE_SUBINVEN
+	/* Redraw subinven item */
+//	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
+#endif
 }
 
 
@@ -1301,8 +1315,12 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Sanity checks */
 		if (p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1].sval != SV_SI_POTION_BELT) {
-			msg_print(Ind, "\377yPotion belts are the only eligible sub-containers for quaffing potions.");
-			return;
+			/* Exception for wine/ale! */
+			if (!(p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1].sval == SV_SI_FOOD_BAG && o_ptr->tval == TV_FOOD &&
+			    (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD))) {
+				msg_print(Ind, "\377yPotion belts are the only eligible sub-containers for quaffing potions.");
+				return;
+			}
 		}
 	}
 #endif

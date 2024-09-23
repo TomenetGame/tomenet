@@ -5569,6 +5569,10 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 
 			eligible_bag = TRUE;
 			break;
+		case SV_SI_FOOD_BAG:
+			if (i_ptr->tval != TV_FOOD) continue;
+			eligible_bag = TRUE;
+			break;
 		default:
 			continue;
 		}

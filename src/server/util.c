@@ -2640,6 +2640,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			case SV_SI_TRAPKIT_BAG:
 			case SV_SI_MDEVP_WRAPPING:
 			case SV_SI_POTION_BELT:
+			case SV_SI_FOOD_BAG:
 				item = "armour_light"; //a textile bag, basically
 				break;
 			case SV_SI_CHEST_SMALL_WOODEN:
@@ -10574,6 +10575,7 @@ int get_subinven_group(int sval) {
 	case SV_SI_TRAPKIT_BAG:
 	case SV_SI_MDEVP_WRAPPING:
 	case SV_SI_POTION_BELT:
+	case SV_SI_FOOD_BAG:
 		return(sval); //identity
 	default:
 		//combine multiple choices to a single group, using the first element as its identifier

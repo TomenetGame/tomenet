@@ -4631,6 +4631,7 @@
 #define SV_SI_TRAPKIT_BAG		1
 #define SV_SI_MDEVP_WRAPPING		2
 #define SV_SI_POTION_BELT		3
+#define SV_SI_FOOD_BAG			4
 #define SV_SI_CHEST_CONVERSION		100	/* marker for converting looted chests to subinven-chests. Chests should be the last items in the inventory sorting order, so items get stowed into their specific bags first. */
 #define SV_SI_CHEST_SMALL_WOODEN	101	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
 #define SV_SI_CHEST_SMALL_IRON		102

@@ -857,6 +857,7 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr) {
 /*
  * Determine if the current store will purchase the given item.
  * Note that a shop-keeper must refuse to buy "worthless" items.
+ * RETURNS: 0 = okay, 1..7 = won't buy.
  */
 static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
@@ -904,8 +905,9 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 			break;
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN: /* Chest clones */
-			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) return(0);
-			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) return(0);
+			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) break;
+			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) break;
+			if (o_ptr->sval != SV_SI_FOOD_BAG) break;
 			return(1);
 #endif
 		default:
@@ -1134,6 +1136,11 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 			    (o_ptr->sval != SV_RING_FLAMES) &&
 			    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(1);
 			break;
+#ifdef ENABLE_SUBINVEN
+		case TV_SUBINVEN:
+			if (o_ptr->sval != SV_SI_FOOD_BAG) return(1);
+			break;
+#endif
 		default:
 			return(1);
 		}
@@ -1156,6 +1163,11 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 			if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
 			    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(1);
 			break;
+#ifdef ENABLE_SUBINVEN
+		case TV_SUBINVEN:
+			if (o_ptr->sval != SV_SI_FOOD_BAG) return(1);
+			break;
+#endif
 		default:
 			return(1);
 		}
@@ -1240,11 +1252,6 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 		break;
 
 	case STORE_STRADER: /* For ironman dungeons */
-#ifdef ENABLE_SUBINVEN
-		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_TRAPKIT_BAG) return(1);
-			break;
-#endif
 		/* doesn't like very cheap items */
 		if (object_value(Ind, o_ptr) < 10) return(1);
 		break;
@@ -4144,6 +4151,9 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				case TV_POTION: case TV_POTION2:
 					(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE);
 					break;
+				case TV_FOOD:
+					(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE);
+					break;
 				}
 
 				/* If we couldn't stow everything, pick up the rest normally */
@@ -6743,6 +6753,9 @@ void home_purchase(int Ind, int item, int amt) {
 		break;
 	case TV_POTION: case TV_POTION2:
 		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE);
+		break;
+	case TV_FOOD:
+		(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE);
 		break;
 	}
 
