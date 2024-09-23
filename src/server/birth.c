@@ -1363,7 +1363,7 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0, 0 },
 			{ 1, TV_STAFF, SV_STAFF_DETECT_GOLD, 0, 0 },
 			{ 1, TV_DIGGING, SV_SHOVEL, 1, 1 },
-			{ 1, TV_BOOMERANG, SV_BOOM_S_WOOD, 0, 0 },
+			{ 1, 255, 255, 0, 0 },
 			{ 1, 255, 255, 0, 0 },
 		}, { /* Mindcrafter */
 			{ 1, TV_BOOK, SV_SPELLBOOK, 0, -1 },/* __lua_MSCARE */
