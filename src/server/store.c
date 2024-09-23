@@ -3692,6 +3692,8 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		    o_name, p_ptr->rogue_heavyarmor ? "H-" : "", chance,
 		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
+		msg_format(Ind, "You fail to steal %s.", o_name);
+
 		/* Reset insults */
 		st_ptr->insult_cur = 0;
 		st_ptr->good_buy = 0;
