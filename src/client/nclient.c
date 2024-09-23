@@ -1906,7 +1906,7 @@ int Receive_quit(void) {
 			/* TERAHACK -- assume our network state is 'not connected' again, as it was initially on client startup. */
 			cl_initialized = FALSE;
 
-#if defined(RETRY_LOGIN) && !defined(ALWAYS_RETRY_LOGIN)
+#if defined(RETRY_LOGIN) //&& !defined(ALWAYS_RETRY_LOGIN)
 			rl_connection_destructible = TRUE;
 			rl_connection_state = 2;
 #endif
