@@ -17879,8 +17879,8 @@ stated.
                                 !Neutralize Poison: 55 Au.
                                 !Cure Critical Wounds: 100 Au.
                                 ?Enchant Weapon/Armour: 125 Au.
-                                !Speed, ?Recharging, ?Holy Chant,
-                                 _Treasure Location: 200 Au.
+                                ?Recharging: 150 Au.
+                                !Speed, ?Holy Chant, _Treasure Location:200 Au.
                                 !Restore stat, -Stone to Mud: 300 Au.
                                 !Healing, ?Teleportation: 400 Au.
                                 !Resistance, !Restore Mana, Athelas: 450 Au.
