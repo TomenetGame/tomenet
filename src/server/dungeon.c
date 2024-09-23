@@ -7290,11 +7290,17 @@ static void process_player_end(int Ind) {
 
 bool stale_level(struct worldpos *wpos, int grace) {
 	time_t now;
+	struct dun_level *l_ptr;
 
 	/* Hack -- towns are static for good? too spammy */
 	//if (istown(wpos)) return(FALSE);
 	/* Hack -- make dungeon towns static though? too cheezy */
 	//if (isdungeontown(wpos)) return(FALSE);
+
+	if ((l_ptr = getfloor(wpos)) && (l_ptr->flags2 & LF2_STATIC)) {
+//s_printf("stale_level LF2_STATIC %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+		return(FALSE);
+	}
 
 #if 0 /* instead done in calling function! */
 	/* Hack: In IDDC, all floors are stale for 2 minutes to allow logging back in if
@@ -7341,10 +7347,13 @@ bool stale_level(struct worldpos *wpos, int grace) {
 
 static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 	int j;
-	dun_level *l_ptr = getfloor(wpos);
+	struct dun_level *l_ptr = getfloor(wpos);
 
 	/* For events or admin intervention: Floor flag 'STATIC' keeps floor artificially static until floor is deallocated or flag is cleared. */
-	if (l_ptr && (l_ptr->flags2 & LF2_STATIC)) return;
+	if (l_ptr && (l_ptr->flags2 & LF2_STATIC)) {
+//s_printf("do_unstat LF2_STATIC %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	}
 
 	/* Highlander Tournament sector000 is static while players are in dungeon! */
 	if (in_sector000(wpos) && sector000separation) return;
