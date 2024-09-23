@@ -13775,7 +13775,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Rate of player '%s' is %d (old system: %d).", Players[j]->name, food_consumption(j), food_consumption_legacy(j));
 				return;
 			}
-			/* Toggle perma-staticness of a floor via LF2_STATIC 'perma-static' flag that holds a floor static until the flag is cleared again. */
+			/* Toggle perma-staticness of a floor via LF2_STATIC 'perma-static' flag that holds a floor static until the flag is cleared again.
+			   Usage: /pstat [0|1]   - 0 = unstatic, 1 = static, no parm = toggle. */
 			else if (prefix(messagelc, "/pstat")) {
 				struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 				u32b *lflags2;
@@ -13789,12 +13790,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//if (in_sector000(&p_ptr->wpos)) lflags2 = &sector000flags2; else
 				lflags2 = &l_ptr->flags2;
 
-				if ((*lflags2) & LF2_STATIC) {
-					msg_print(Ind, "\377WYour floor is no longer permanently static (LF2_STATIC).");
-					(*lflags2) &= ~LF2_STATIC;
+				if (tk) {
+					if (k) {
+						msg_print(Ind, "\377WYour floor is \377ypermanently\377- static (LF2_STATIC).");
+						(*lflags2) |= LF2_STATIC;
+					} else {
+						msg_print(Ind, "\377WYour floor is not permanently static (LF2_STATIC).");
+						(*lflags2) &= ~LF2_STATIC;
+					}
 				} else {
-					msg_print(Ind, "\377WYour floor is now \377ypermanently\377- static (LF2_STATIC).");
-					(*lflags2) |= LF2_STATIC;
+					if ((*lflags2) & LF2_STATIC) {
+						msg_print(Ind, "\377WYour floor is no longer permanently static (LF2_STATIC).");
+						(*lflags2) &= ~LF2_STATIC;
+					} else {
+						msg_print(Ind, "\377WYour floor is now \377ypermanently\377- static (LF2_STATIC).");
+						(*lflags2) |= LF2_STATIC;
+					}
 				}
 				return;
 			}

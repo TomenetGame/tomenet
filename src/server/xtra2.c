@@ -14967,6 +14967,34 @@ bool master_level(int Ind, char * parms) {
 
 		break; }
 
+	/* perma-(un)static the level */
+	case 'p': case 'P': {
+		struct worldpos twpos;
+		struct dun_level *l_ptr;
+		u32b *lflags2;
+
+		wpcopy(&twpos, &p_ptr->wpos);
+		l_ptr = getfloor(&p_ptr->wpos);
+
+		/* Paranoia */
+		if (!l_ptr) {
+			msg_print(Ind, "\377oError: Your wpos has no l_ptr.");
+			return(FALSE);
+		}
+
+		//if (in_sector000(&p_ptr->wpos)) lflags2 = &sector000flags2; else
+		lflags2 = &l_ptr->flags2;
+
+		if (parms[0] == 'p') {
+			msg_print(Ind, "\377WYour floor is \377ypermanently\377- static (LF2_STATIC).");
+			(*lflags2) |= LF2_STATIC;
+		} else {
+			msg_print(Ind, "\377WYour floor is not permanently static (LF2_STATIC).");
+			(*lflags2) &= ~LF2_STATIC;
+		}
+		break;
+		}
+
 #ifdef DM_MODULES
 	/* Kurzel - save/load a module file (or create a blank to begin with) */
 	case 'S': {

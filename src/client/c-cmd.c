@@ -8481,7 +8481,7 @@ void cmd_suicide(void) {
 }
 
 static void cmd_master_aux_level(void) {
-	char i;
+	char i, l;
 	char buf[80];
 
 	/* Process requests until done */
@@ -8496,21 +8496,24 @@ static void cmd_master_aux_level(void) {
 		Term_putstr(0, 2, -1, TERM_WHITE, "Level commands");
 
 		/* Selections */
-		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Static your current level");
-		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Unstatic your current level");
-		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add dungeon");
-		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Remove dungeon");
-		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Town generation");
+		l = 4;
+		Term_putstr(5, l++, -1, TERM_WHITE, "(1) Static your current level");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(2) Unstatic your current level");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(3) Add dungeon");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(4) Remove dungeon");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(5) Town generation");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(6) Perma-static your current level");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(7) Un-perma-static your current level");
 #ifdef DM_MODULES
-		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Save level to module file");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Load level from module file");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Generate a blank level");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Set entry position");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(a) Save level to module file");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(b) Load level from module file");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(c) Generate a blank level");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(d) Set entry position");
 
 		/* Prompt */
-		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, l + 2, -1, TERM_WHITE, "Command: ");
 #else
-		Term_putstr(0, 10, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, l + 2, -1, TERM_WHITE, "Command: ");
 #endif
 
 		/* Get a key */
@@ -8637,25 +8640,29 @@ static void cmd_master_aux_level(void) {
 			buf[1] = c_get_quantity("Base level: ", 127);
 			Send_master(MASTER_LEVEL, buf);
 		}
+		/* perma-static the current level */
+		else if (i == '6') Send_master(MASTER_LEVEL, "p");
+		/* perma-unstatic the current level */
+		else if (i == '7') Send_master(MASTER_LEVEL, "P");
 
 #ifdef DM_MODULES
 		/* Kurzel - save/load a module file (or create a blank to begin with) */
-		else if (i == '6') {
+		else if (i == 'a') {
 			buf[0] = 'S';
 			get_string("Save module name (max 19 char): ", &buf[1], 19);
 			Send_master(MASTER_LEVEL, buf);
 		}
-		else if (i == '7') {
+		else if (i == 'b') {
 			buf[0] = 'L';
 			get_string("Load module name (max 19 char): ", &buf[1], 19);
 			Send_master(MASTER_LEVEL, buf);
 		}
-		else if (i == '8') {
+		else if (i == 'c') {
 			buf[0] = 'B';
 			get_string("WxH string (eg. 1x1-5x5): ", &buf[1], 19);
 			Send_master(MASTER_LEVEL, buf);
 		}
-		else if (i == '9') {
+		else if (i == 'd') {
 			get_string("Set level entry (> < or +): ", &buf[0], 1);
 			Send_master(MASTER_LEVEL, buf);
 		}
