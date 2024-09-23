@@ -9545,6 +9545,7 @@ static int font_name_cmp(const void *a, const void *b) {
 	return strcmp((const char*)a, (const char*)b);
    #elif 0 /* sort in single-digit numbers before double-digit ones */
 	char at[256], bt[256];
+
 	at[0] = '0';
 	bt[0] = '0';
 	if (atoi((char*)a) < 10) strcpy(at + 1, (char *)a);
@@ -9991,8 +9992,8 @@ static void do_cmd_options_tilesets(void) {
 	char ch;
 	bool go = TRUE, inkey_msg_old;
 
-	char font_name[MAX_FONTS][256], path[1024];
-	int fonts = 0;
+	char tileset_name[MAX_FONTS][256], path[1024];
+	int tilesets = 0;
 	char tmp_name[256], tmp_name2[256];
 
   #ifdef WINDOWS
@@ -10002,8 +10003,8 @@ static void do_cmd_options_tilesets(void) {
 	DIR *dir;
 	struct dirent *ent;
 
-	/* read all locally available fonts */
-	memset(font_name, 0, sizeof(char) * (MAX_FONTS * 256));
+	/* read all locally available tilesets */
+	memset(tileset_name, 0, sizeof(char) * (MAX_FONTS * 256));
 
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
 	if (!(dir = opendir(path))) {
@@ -10016,32 +10017,30 @@ static void do_cmd_options_tilesets(void) {
 		j = -1;
 		while (tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
 		if (strstr(tmp_name, ".bmp")) {
-			if (fonts == MAX_FONTS) continue;
-			strcpy(font_name[fonts], ent->d_name);
-			fonts++;
-			if (fonts == MAX_FONTS) c_msg_format("Warning: Number of tilesets exceeds max of %d. Ignoring the rest.", MAX_FONTS);
+			if (tilesets == MAX_FONTS) continue;
+			strcpy(tileset_name[tilesets], ent->d_name);
+			tilesets++;
+			if (tilesets == MAX_FONTS) c_msg_format("Warning: Number of tilesets exceeds max of %d. Ignoring the rest.", MAX_FONTS);
 		}
 	}
 	closedir(dir);
 
-	if (!fonts) {
+	if (!tilesets) {
 		c_msg_format("No .bmp tileset files found in directory (%s).", path);
 		return;
 	}
 
-//  #ifdef WINDOWS /* actually never sort fonts on X11, because they come in a sorted manner from fonts.alias and fonts.txt files already. */
-	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
-//  #endif
+	qsort(tileset_name, tilesets, sizeof(char[256]), font_name_cmp);
 
    #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
-	for (j = 0; j < fonts; j++) {
-		strcpy(tmp_name, font_name[j]);
-		//path_build(font_name[j], 1024, path, font_name[j]);
-		//strcpy(font_name[j], ".\\");
-		font_name[j][0] = 0;
-		strcat(font_name[j], path);
-		strcat(font_name[j], "\\");
-		strcat(font_name[j], tmp_name);
+	for (j = 0; j < tilesets; j++) {
+		strcpy(tmp_name, tileset_name[j]);
+		//path_build(tileset_name[j], 1024, path, tileset_name[j]);
+		//strcpy(tileset_name[j], ".\\");
+		tileset_name[j][0] = 0;
+		strcat(tileset_name[j], path);
+		strcat(tileset_name[j], "\\");
+		strcat(tileset_name[j], tmp_name);
 	}
    #endif
 
@@ -10063,7 +10062,7 @@ static void do_cmd_options_tilesets(void) {
 		Term_putstr(0, l++, -1, TERM_WHITE, "  \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s)");
 		l++;
 
-		Term_putstr(1, l++, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s"));
+		Term_putstr(1, l++, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", tilesets, tilesets == 1 ? "" : "s"));
 		l++;
 
 		//GRAPHICS_BG_MASK @ UG_2MASK:
@@ -10175,22 +10174,22 @@ static void do_cmd_options_tilesets(void) {
 
 		case '=':
 		case '+':
-			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			for (j = 0; j < fonts - 1; j++) {
-				if (!strcasecmp(font_name[j], graphic_tiles)) {
-					/* advance to next font file in lib/xtra/font */
-					strcpy(graphic_tiles, font_name[j + 1]);
+			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
+			for (j = 0; j < tilesets - 1; j++) {
+				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
+					/* advance to next tileset file in lib/xtra/graphics */
+					strcpy(graphic_tiles, tileset_name[j + 1]);
 					break;
 				}
 			}
 			break;
 
 		case '-':
-			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			for (j = 1; j < fonts; j++) {
-				if (!strcasecmp(font_name[j], graphic_tiles)) {
-					/* retreat to previous font file in lib/xtra/font */
-					strcpy(graphic_tiles, font_name[j + 1]);
+			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
+			for (j = 1; j < tilesets; j++) {
+				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
+					/* retreat to previous tileset file in lib/xtra/graphics */
+					strcpy(graphic_tiles, tileset_name[j + 1]);
 					break;
 				}
 			}
@@ -10207,19 +10206,19 @@ static void do_cmd_options_tilesets(void) {
 			clear_from(20);
 			if (!tmp_name[0]) break;
 
-			for (j = 0; j < fonts; j++) {
+			for (j = 0; j < tilesets; j++) {
   #ifdef WINDOWS
-				/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
-				cpp = font_name[j];
+				/* Windows tileset names contain the whole .\lib\xtra\graphics\xxx, crop that */
+				cpp = tileset_name[j];
 				while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
 				sprintf(tmp_name2, "%s", cpp);
   #else
-				sprintf(tmp_name2, "%s", font_name[j]);
+				sprintf(tmp_name2, "%s", tileset_name[j]);
   #endif
 				if (!strcasecmp(tmp_name2, format("%s.bmp", tmp_name))) break;
 			}
 
-			if (j == fonts) {
+			if (j == tilesets) {
 				c_msg_format("\377yError: No tileset '%s.bmp' in the graphics folder.", tmp_name);
 				break;
 			}
@@ -10227,27 +10226,27 @@ static void do_cmd_options_tilesets(void) {
 			break;
 
 		case 'l':
-			if (!fonts) {
+			if (!tilesets) {
 				c_message_add("No tilesets found.");
 				break;
 			}
-			if (fonts) {
+			if (tilesets) {
 				char tmp_name2[256];
 				int c = 0;
 
-				c_message_add(format("-- Graphical tilesets (%d): --", fonts));
+				c_message_add(format("-- Graphical tilesets (%d): --", tilesets));
 				tmp_name2[0] = 0;
-				for (j = 0; j < fonts; j++) {
+				for (j = 0; j < tilesets; j++) {
   #ifdef WINDOWS
-					/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
-					cpp = font_name[j];
+					/* Windows tileset names contain the whole .\lib\xtra\graphics\xxx, crop that */
+					cpp = tileset_name[j];
 					while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
 					sprintf(tmp_name, "%-18s", cpp);
   #else
-					sprintf(tmp_name, "%-18s", font_name[j]);
+					sprintf(tmp_name, "%-18s", tileset_name[j]);
   #endif
 
-					/* print up to 4 font names per line */
+					/* print up to 4 tileset names per line */
 					c++;
 					if (c % 4 == 0 || strlen(tmp_name2) + strlen(tmp_name) > 79 - 2) {
 						c_message_add(format("  %s", tmp_name2));
