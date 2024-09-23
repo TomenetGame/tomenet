@@ -27,6 +27,7 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 		char xmsg[MSG_LEN], xmsg_reverse[MSG_LEN];
 		const char *c;
 		bool end = FALSE;
+		char formatted_and_not_chat;
 
 		c = msg_raw;
 		if (*c == '\377') c += 2;
@@ -45,9 +46,13 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 				/* End at the initial line of the multiline message */
 				if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
 
+				formatted_and_not_chat = 0;
 				if (!end) {
 					if (*c == '\377') c += 2;
-					while (*c == ' ') c++;
+					while (*c == ' ') {
+						formatted_and_not_chat++;
+						c++;
+					}
 					/* Inserting this space could break an URL, so we'll check for it later again and possibly remove it */
 					strcpy(xmsg_reverse, " ");
 				} else xmsg_reverse[0] = 0;
@@ -55,6 +60,9 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 				strcat(xmsg_reverse, c);
 				/* avoid duplicate ' ' */
 				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+
+				/* For multi-line messages that aren't chat, but some sort of - probably formatted - server info output (/tym!) */
+				if (formatted_and_not_chat >= 2) strcat(xmsg_reverse, " ");
 
 				/* Multiline chat messages will fix into MSG_LEN.
 				   But this could also be a multiline status output message from the server, eg from the /tym command,
@@ -84,15 +92,22 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 				/* End at the initial line of the multiline message */
 				if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
 
+				formatted_and_not_chat = 0;
 				if (!end) {
 					if (*c == '\377') c += 2;
-					while (*c == ' ') c++;
+					while (*c == ' ') {
+						formatted_and_not_chat++;
+						c++;
+					}
 					strcpy(xmsg_reverse, " ");
 				} else xmsg_reverse[0] = 0;
 
 				strcat(xmsg_reverse, c);
 				/* avoid duplicate ' ' */
 				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+
+				/* For multi-line messages that aren't chat, but some sort of - probably formatted - server info output (/tym!) */
+				if (formatted_and_not_chat >= 2) strcat(xmsg_reverse, " ");
 
 				/* Multiline chat messages will fix into MSG_LEN.
 				   But this could also be a multiline status output message from the server, eg from the /tym command,
