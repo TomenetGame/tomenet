@@ -3442,7 +3442,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 			}
 			//if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
 			/* also important for SEASON_WINTER, to turn lake border into ice */
-			if (found_more_water < 8) c_ptr->feat = FEAT_SHAL_WATER;
+			if (found_more_water < 6) c_ptr->feat = FEAT_SHAL_WATER;
 		}
 		/* turn single non-<deep water> fields to deep water */
 		else if (c_ptr->feat != FEAT_DEEP_WATER) {
@@ -3461,7 +3461,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 					found_more_water++;
 				}
 			}
-			if (found_more_water >= 7) c_ptr->feat = FEAT_SHAL_WATER;
+			if (found_more_water >= 7) c_ptr->feat = FEAT_DEEP_WATER;
 		}
 	}
 
