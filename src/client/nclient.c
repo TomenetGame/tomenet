@@ -1903,7 +1903,7 @@ int Receive_quit(void) {
 		/* Hack -- tombstone */
 		if (strstr(reason, "Killed by") ||
 		    strstr(reason, "Committed suicide")) {
-			/* TERAHACK -- what does it do exactly, please? >_>" */
+			/* TERAHACK -- assume our network state is 'not connected' again, as it was initially on client startup. */
 			cl_initialized = FALSE;
 
 #if !defined(ALWAYS_RETRY_LOGIN) && defined(RETRY_LOGIN)
