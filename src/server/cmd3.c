@@ -4030,6 +4030,33 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	/* If multiple lanterns are now 0 turns, they can be combined */
 	p_ptr->notice |= (PN_COMBINE);
+
+	/* Keep the empty bottle? */
+	if (p_ptr->keep_bottle) {
+		object_type forge;
+
+		o_ptr = &forge;
+		object_wipe(o_ptr);
+		o_ptr->number = 1;
+		invcopy(o_ptr, lookup_kind(TV_BOTTLE, SV_EMPTY_BOTTLE));
+		o_ptr->level = 1;
+		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = turn;
+		/* If we have no space, drop it to the ground instead of overflowing inventory */
+		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
+#ifdef ENABLE_SUBINVEN
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE)) return;
+#endif
+			item = inven_carry(Ind, o_ptr);
+			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
+				msg_print(Ind, "\374\377yHINT: You can inscribe your stack of empty bottles \377o!Mn\377y to limit their amount");
+				msg_print(Ind, "\374\377y      to at most n, eg \"!M20\". Useful if the bottles start weighing you down.");
+				s_printf("warning_limitbottles: %s\n", p_ptr->name);
+				p_ptr->warning_limitbottles = 1;
+			}
+		} else drop_near(TRUE, 0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		//if (item >= 0) inven_item_describe(Ind, item);
+	}
 }
 
 
