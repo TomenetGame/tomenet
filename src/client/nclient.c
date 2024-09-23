@@ -6846,7 +6846,8 @@ int Send_change_password(char *old_pass, char *new_pass) {
 }
 
 #ifdef ENABLE_SUBINVEN
-int Send_subinven_move(int item, int amt) {
+/* Stow item */
+int Send_si_move(int item, int amt) {
 	int n;
 
 	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return(1);
@@ -6857,7 +6858,8 @@ int Send_subinven_move(int item, int amt) {
 	}
 	return(1);
 }
-int Send_subinven_remove(int item, int amt) {
+/* Unstow item */
+int Send_si_remove(int item, int amt) {
 	int n, islot = item / SUBINVEN_INVEN_MUL - 1;
 
 	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return(1);

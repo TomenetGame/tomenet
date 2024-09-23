@@ -901,7 +901,7 @@ static void cmd_subinven_move(void) {
 	}
 	else amt = 1;
 
-	Send_subinven_move(item, amt);
+	Send_si_move(item, amt);
 }
 /* Note: islot can be ignored, since it's actually using_subinven, which is checked in c_get_item() anyway. */
 static void cmd_subinven_remove(int islot) {
@@ -925,7 +925,7 @@ static void cmd_subinven_remove(int islot) {
 	}
 	else amt = 1;
 
-	Send_subinven_remove(item, amt);
+	Send_si_remove(item, amt);
 }
 #endif
 
