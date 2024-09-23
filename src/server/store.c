@@ -3708,7 +3708,7 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The shopkeeper glances at you coldly and throws you out!");
 		else if (p_ptr->tim_watchlist)
 			msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The angry shopkeeper throws you out!");
-		msg_print(Ind, "\377rNow you'll be on the black list of merchants for a while..");
+		if (p_ptr->tim_blacklist) msg_print(Ind, "\377rNow you'll be on the black list of merchants for a while..");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the store!", p_ptr->name);
 
