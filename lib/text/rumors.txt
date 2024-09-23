@@ -1,10 +1,11 @@
 # $Id$
 
 # ToME-NET rumours file, based on ToME rumours.txt (first 200, they are).
-# You can colour the rumours with '{' tag. Use '{{' to write literal '{'.
-# Any lines above 'N:' will be ignored.
 
-# You should manually write the total # of rumours (lines - 10).
+# Lines may not be longer than 78 characters.
+# Any lines above 'N:' will be ignored.
+# You should manually write the total # of rumours (lines - 11).
+# You can colour the rumours with '{' tag. Use '{{' to write literal '{'.
 
 N:*:Default
 923
@@ -102,14 +103,14 @@ Always look out for trapdoors on "special" feeling levels!
 There is a way to max out your stats with Potions of Charisma & Nexus.
 Unique opponents will recover their health faster than other creatures.
 They say that only one sword, Nothung, can slay Fafner the Dragon.
-"So when I die, the first thing I will see in heaven is a score list?"
+So when I die, the first thing I will see in heaven is a score list?
 You're going into the morgue at midnight?
 How dare you! I will not buy that!
 A Potion of Detonations is also known as nitroglycerin...
 Operation OVERKILL has started now.
 There is a trap on this level!
 A weapon of Undead Slaying has all you need to kill a ghost.
-A weapon of Dragon Slaying may give you resistance to a dragon's breath attack.
+A weapon of Dragon Slaying may give resistance to a dragon's breath attack.
 They say that only a Warrior will want to wear the Terror Mask.
 All that is shall come to an end - a dark day dawns for the gods.
 The One Ring is powerful, but will eventually destroy its owner.
@@ -205,7 +206,7 @@ The opinion you had were salt expresses.
 They say that you there is a Nether spell to control the three Elven Rings.
 They say that the dark mists of morgoth can both bestow and remove the curse.
 Save the game in dungeon and you'll be buried there.
-They say that in this world {RThe Lady {wrules us all.
+They say that in this world {RThe Lady {-rules us all.
 They say that a sorceror never waits for a feeling to come.
 They say that a genuine artifact hates to remain unused.
 They say that you should find a way to use mimic rings.
@@ -235,12 +236,12 @@ They say that a star is a badge for sheriffs.
 Ever seen a broken stick of *slay* lag?
 They say that you should be good to the poor farmer.
 Never forget to lock the door when you leave your house!
-They say that {RThe Lady {whates to have her *real* name called.
+They say that {RThe Lady {-hates to have her *real* name called.
 They say that some cookies were imported from overseas.
 They say that a Dark Sword can be great if enchanted neatly.
 They say that a pair of leather boots 'Ringil' won't always grant speed.
 They say that some supreme spells won't concern worldly matters.
-You can do away with notorious {RThe Lady {wby doing the following:
+You can do away with notorious {RThe Lady {-by doing the following:
 They say that a clever thief never does her job with her pack full.
 They say that a Demigod should leave his worldly treasures.
 They say that Morgoth never forgets to inscribe his hammer with {{!E}.
@@ -341,7 +342,7 @@ They say that you don't have to save the world.
 They say that you still don't need an amulet to save the world.
 They say that no hell below us, above us only sky so no use praying to Gods.
 They say that quick dive, quick die.
-"So when I die, the first thing I will see is #@# ?"
+So when I die, the first thing I will see is #@# ?
 They say that an average dungeoneer carries 20 books all the way.
 I wonder why some priests would cast Orb onto a messy floor.
 Dig your own grave and you'll survive longer.
@@ -351,7 +352,7 @@ They say that archers never care for damage rings.
 Try inscribing #'Ringil' on your Long Sword.
 Try inscribing #of Feanor on your Hard Leather Boots.
 Ever tried to eat a ring?
-Ever asked {RThe Lady {wfor a date?
+Ever asked {RThe Lady {-for a date?
 Darn, that rogue casted the spell of Summon Lag!
 They say that you should learn to dive, though it's not in the water.
 They say that when you have Chaos resistance, why bother Confusion one?
@@ -406,17 +407,17 @@ Ever seen your tombstone?
 Got tired of cunning players? Quaff a potion of naivety!
 They say that a poor player created adamantium golem that never follows him.
 They say that a poor player created Pinnocio that is doomed to be burnt.
-{vAdamantium {wso precious, ever wondered why its massive piece is that cheap?
-They say that have you seen another {yQ {wstanding in the shadow?
+{vAdamantium {-so precious, ever wondered why its massive piece is that cheap?
+They say that have you seen another {yQ {-standing in the shadow?
 They say that have you seen another rogue standing in the shadow?
 They say that no one can be stealthy enough to sneak up on a Quylthulg.
 What's that Quylthulg creature anyway?
 Ever relished a dragon steak?
-Ever seen a {rcoloured {bcookie{w?
-Yikes! This cookie was {rp{Ga{vi{on{Bt{Re{yd{w!!
-They say that {yP {wis terrible and {oP {wis horrible.
-Ever seen a {DP{w?
-You know you played TomeNET too much when you wonder why you don't auto-attack.
+Ever seen a {rcoloured {bcookie{-?
+Yikes! This cookie was {rp{Ga{vi{on{Bt{Re{yd{-!!
+They say that {yP {-is terrible and {oP {-is horrible.
+Ever seen a {DP{-?
+You know you play TomeNET too much when you wonder why you don't auto-attack.
 Ever macroed \eQy@ ?
 They say that it's no good digging with a dagger.
 {rYou die.
@@ -448,9 +449,9 @@ They say that mage staff helps mages of ages to walk.
 They say that without mage staff a mage should crawl to move around.
 They say that shadow cloak envelops a rogue in the shade.
 They say that a cloak of shock resistance is made of ebonite.
-Shrink asks you: what do you imagine with {BZZZZZZZ{op{w@{GZZZZZZZ{w# ?
+Shrink asks you: what do you imagine with {BZZZZZZZ{op{w@{GZZZZZZZ{w#{- ?
 Lamps won't stack? Try identifying them!
-You see a sign: Never steal the {ocarrots{w, damned dungeoneers!
+You see a sign: Never steal the {ocarrots{-, damned dungeoneers!
 They say that you should inscribe on ?acq the name of what you want.
 Ever found a potion of augmentation while your stats are not max-ed yet?
 They say that casting spells trains your intelligence.
@@ -534,7 +535,7 @@ They say that levitation never allows you to leave the ground.
 They say that not all the anti-magic devices have the same effect.
 They say that you should never ask 'What does ... do?'
 They say that a weakest being often has a toughest friend.
-Ever dropped a piece of {vadamantite{w?
+Ever dropped a piece of {vadamantite{-?
 They say that DarkGod has hired some body-guards.
 They say that 'Moldoux' is French word that means 'protected like hell'.
 They say that not all the men on a dragon's back are DragonRiders.
@@ -564,7 +565,7 @@ They say that anti-magic shell is something other than anti-magic shield.
 They say that amulet of anti-magic doesn't give anti-magic shield.
 Behold the eyes! Eye the Beholders!
 They say that you should bring some fine wine when invited to an elven dinner.
-They say that if you see a {vm {won the top of dungeon, just don't touch it.
+They say that if you see a {vm {-on the top of dungeon, just don't touch it.
 They say that an archer generally is coward but that doesn't matter him.
 They say that there's fifteen ways to leave your Morgul weapon.
 Doorway too broad? Jam some!
@@ -573,12 +574,12 @@ They say that shopkeepers crafty, they beat prices down if your lore is poor.
 They say that every shopkeeper is racist.
 A failed alpinist said; that peak was way too high!
 They say that do not meddle in the affairs of wizards, because they are...
-They say that you should always think of why '{DStormbringer{w' is named so.
+They say that you should always think of why '{DStormbringer{-' is named so.
 Can you swim with ENIAC on your shoulder?
 Wanna be the Guild master? Just get rid of the current one!
 They say that some traps are unidentifiable b/c you cannot see the effect.
 You saw a signpost: {yKeep the law and happy murdering!
-Foudinni said: just don't kill a hen that lays {ygolden {weggs.
+Foudinni said: just don't kill a hen that lays {ygolden {-eggs.
 Never forget to knock the door!
 They say that not all the swords are obedient. Don't cut yourself!
 They say that you should learn why people would shout in the midst of dungeon.
@@ -588,7 +589,7 @@ Wanna retreat? Retrace your steps!
 When there's a open door, why one would dig a hole next to it??
 They say that from disadvantage you can learn a lot.
 They say that some intellectuals take armours as cramps.
-They say that {DStormbringer {wbrings you storms, good or bad.
+They say that {DStormbringer {-brings you storms, good or bad.
 They say that Always prepare one more easy way out.
 They say that a monk will never get given the slip.
 They say that one can still learn to swim.
@@ -601,12 +602,12 @@ They say that be kind enough to give thirsty marker some paper.
 Afraid of dropping your weapon? Grasp it tight with both hands!
 Ever laid a carpet of potions?
 They say that never genocide the thieves.
-Ever wondered why you can see a {rj {w from afar while you cannot see a {bj{w?
+Ever wondered why you can see a {rj {- from afar while you cannot see a {bj{-?
 Wanna buy a sweet home? Doll yourself up!
-They say that without flintstone you cannot light a {ytorch{w.
+They say that without flintstone you cannot light a {ytorch{-.
 Don't you know that it's a fool who digs with sword?
-Ever tried to hit your comrade with {Ba Potion of Healing{w?
-Ever tried to hit your comrade sorc with {Ba Potion of Restore Mana{w?
+Ever tried to hit your comrade with {Ba Potion of Healing{-?
+Ever tried to hit your comrade sorc with {Ba Potion of Restore Mana{-?
 Why a wand of plenty contains plenty of charges? Because it's easy to charge.
 They say that a crazy monster can drive you crazy too.
 They say that a tanker can explode and sink with one single smallest torpedo.
@@ -616,7 +617,7 @@ They say that for sure Sasha the Slender knows how to uncurse Morgul weps.
 They say that you don't need Free-Action at all to feed carrion crawlers.
 They say that carrying Teleportation scrolls, staves and rings isn't paranoia.
 They say that never try to pick things up when you're wounded.
-They say that Ent is tree and tree can {rburn{W.
+They say that Ent is tree and tree can {rburn{-.
 They say that learn about your merchandise.
 I still cannot see why that naked barbalian isn't afraid of traps at all.
 They say that hobbits are great slingers, in general.
@@ -627,13 +628,13 @@ They say that you cannot master martial arts really without learning to dodge.
 Purchase the Gazette and you'll never miss the trend!
 They say that you can't teach an old dog new tricks.
 Lifelong study is nice thing, but start training when lv50 isn't so cool idea.
-Ever cursed a {DMorgul {wdagger?
-Ever blessed a {DMorgul {wwhip?
+Ever cursed a {DMorgul {-dagger?
+Ever blessed a {DMorgul {-whip?
 They say that cheezing is nice and sweet, till a bolt from the blue kills you.
 They say that the lazy warrior jumped over the doors.
 They say that carrying dozens of Mana pots without immunities is mere suicide.
 They say that carrying dozens of Heal pots without immunities is not so bad.
-They say that it's comedie when a {GT{wroll decides to be a wizard.
+They say that it's comedie when a {GT{-roll decides to be a wizard.
 Started to learn a new skill? Time to revise your macros!
 A broken dagger and a filthy rag can be the best suits for a wizard.
 They say that exploding arrows can be lethal, can be comedical.
@@ -662,9 +663,9 @@ They say that a mortal had better just avoid touching Nazgul rings.
 How comes those priests avoid to visit chapels nowadays?
 They say that generally a snake doesn't have arms.
 Ever tried to cancel your engagement rings?
-They say that a {rfirestone {wis not for you.
+They say that a {rfirestone {-is not for you.
 They say that a tripe is to a dog as a firestone is to a dragon.
-You cannot pick things up from the bottom of {bwater {wwithout getting wet.
+You cannot pick things up from the bottom of {bwater {-without getting wet.
 They say that martial artists often are sensual.
 They say that a monk has splendid night life.
 Catch the Disembodied Hand That Strangled People for extra ring fingers.
@@ -676,7 +677,7 @@ Foudinni said: cutting throad under daylight? You bonehead!!
 They say that an invisible man carrying lantern is suitable role for Chaplin.
 Ever activated the Book of the Deads?
 They say that Smeagol can help you to get rid of *cursed* Ring.
-They say that Polymorph Ring of {rGoldfish {wworthes while creating.
+They say that Polymorph Ring of {rGoldfish {-worthes while creating.
 Ever fired arrows made of your own bones?
 They say that never drink from a fountain.
 They say that never drink from a fountain beneath 2000'.
@@ -816,9 +817,9 @@ Too much cheeze makes you fat and smelly!
 Why don't you take me there?
 {rNow you're on the black list of merchants...
 {rNow you're on the black list of admins...
-{y'Bastard{L!!!{w - The angry shopkeeper throws you out!
+{y'Bastard{L!!!{- - The angry shopkeeper throws you out!
 {yMorgoth, the Lord of Darkness dies from {e754{y damage.
-Moldoux, the Defenceless Mold breathes fire for {f800 {wdamage!
+Moldoux, the Defenceless Mold breathes fire for {f800 {-damage!
 {GMoltor has attained level 99.
 Gotta pee!
 {b**{cFarmet Maggot was slain by Captain America.{b**
@@ -915,7 +916,7 @@ Never feed a gremlin after midnight.
 This l00t's not gonna l00t itself!
 He that hath no sword, let him sell his garment and buy one.
 Let him who would move the world, first move himself.
-Know ye, O seeker of the mystic wisdoms, that the ways of magic are diverse and strange.
+Know ye O seeker of mystic wisdoms, ways of magic are diverse and strange.
 There's a little fruit bat in all of us.
 They say that !dksv= is the same as !d!k!s!v!= is the same as !*
 I have made my decision.
@@ -928,6 +929,6 @@ The One Ring can only be destroyed in the fires of Mount Doom.
 Halls of evil, dreams of dread~
 Killed by Death.
 Secret dungeons under metal stars.
-I will turn your face to alabaster When you'll find your servant is your master.
+Your face will turn to alabaster when you find your servant is your master.
 It's a secret to everybody.
 You are.. the navigator

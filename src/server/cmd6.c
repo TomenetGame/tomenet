@@ -8099,13 +8099,12 @@ void fortune(int Ind, byte mode) {
 	}
 
 	bracer_ff(Rumor);
-	//msg_format(Ind, "%s", Rumor);
-	msg_print(Ind, Rumor);
+	msg_format(Ind, "~\377s%s~", Rumor);
 	msg_print(Ind, NULL);
 
 	if (broadcast) {
 		msg_broadcast(Ind, Broadcast);
-		msg_broadcast(Ind, Rumor);
+		msg_broadcast_format(Ind, "\377s %s", Rumor);
 	}
 
 }
