@@ -5649,23 +5649,24 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 }
 /* Tries to all items or item stacks in inventory completely into
    a specific subinventory.
-   Returns FALSE if there was just no eligible item, TRUE in any other case (including errors). */
+   Returns TRUE if there was some item stowed, else FALSE. */
 bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr, *s_ptr;
-	int i, t;
+	int i, t, amt;
 	//bool all = FALSE;
+	bool nothing = TRUE;
 	bool eligible_item = FALSE, client_outdated = FALSE;
 
 	/* Don't stow if player cannot access stowed items due to outdated client */
-	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(TRUE);
+	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
 
 	/* Error checks */
-	if (slot < 0) return(TRUE);
-	if (slot >= INVEN_PACK) return(TRUE);
+	if (slot < 0) return(FALSE);
+	if (slot >= INVEN_PACK) return(FALSE);
 
 	s_ptr = &p_ptr->inventory[slot];
-	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return(TRUE);
+	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return(FALSE);
 	t = get_subinven_group(s_ptr->sval);
 
 	for (i = INVEN_PACK - 1; i >= 0; i--) {
@@ -5734,9 +5735,12 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 		}
 
 		/* Eligible subinventory found, try to move as much as possible */
-		if (subinven_move_aux(Ind, i, slot, i_ptr->number, quiet))
+		amt = i_ptr->number;
+		if (subinven_move_aux(Ind, i, slot, amt, quiet))
 			/* Successfully moved ALL items even, lucky! */
 			;//all = TRUE;
+		/* We managed to stow something at least */
+		if (amt != i_ptr->number) nothing = FALSE;
 	}
 	if (client_outdated) msg_print(Ind, "\377yYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use your Potion Belt, or it won't be accessible!");
 	if (!eligible_item) {
@@ -5749,10 +5753,12 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 	   Keep in mind that on moving all the object is now something different as it has been excised!
 	   So we cannot reference to it anymore in that case and use 'all' instead. */
 	if (all) ;//kind of spammy - msg_print(Ind, "You stow all of it.");
-	else if (max - i_ptr->number == 0) {
+	else if (nothing) {
 		msg_print(Ind, "\377yNo free bag space to stow that item.");
-		return(TRUE);
+		return(FALSE);
 	} else msg_print(Ind, "You have at least enough bag space to stow some of it.");
+#else
+	if (nothing) return(FALSE); /* without message this time */
 #endif
 
 	//break_cloaking(Ind, 5);

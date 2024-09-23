@@ -5883,6 +5883,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			(void)toggle_rest(Ind, k);
 			return;
 		} else if (prefix(messagelc, "/stow")) { /* Stow all items from inventory that can be stowed into bags that are available, optionally only into a specific bag. */
+			#define STOW_QUIET FALSE
 			object_type *o_ptr;
 			int start, stop, bags = 0;
 			bool any = FALSE, free_space = FALSE;
@@ -5922,19 +5923,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (o_ptr->tval != TV_SUBINVEN) break;
 				bags++;
 				if (!p_ptr->subinventory[i][o_ptr->bpval - 1].tval) free_space = TRUE;
-				any = any || do_cmd_subinven_fill(Ind, i, FALSE); /* FALSE for "You have..." item messages, TRUE for quiet op */
+				any = any || do_cmd_subinven_fill(Ind, i, STOW_QUIET); /* FALSE for "You have..." item messages, TRUE for quiet op */
 			}
-			if (!bags) msg_print(Ind, "\377yYou possess no container items.");
+			if (!bags) msg_print(Ind, "You possess no container items.");
 			else if (!free_space) {
-				if (start == stop || bags == 1) msg_print(Ind, "\377yYour container has no free space.");
-				else msg_print(Ind, "\377yYour containers have no free space.");
+				if (start == stop || bags == 1) msg_print(Ind, "Your container has no free space.");
+				else msg_print(Ind, "Your containers have no free space.");
 			} else if (!any) {
-				if (start == stop) msg_print(Ind, "\377yNo eligible item found to stow into that container.");
-				else msg_print(Ind, "\377yNo eligible item found to stow into your containers.");
-			}
-
+				if (start == stop) msg_print(Ind, "No eligible item found to stow into that container.");
+				else msg_print(Ind, "No items could be stowed into your containers.");
+			} else if (STOW_QUIET)
+				msg_print(Ind, "You stowed something.");
 			return;
 		} else if (prefix(messagelc, "/unstow")) { /* Unstow all items from specific subinventory, into inventory (drops to floor if out of space); same as 'A'ctivating. */
+			#define UNSTOW_QUIET FALSE
 			object_type *o_ptr;
 
 			/* need to specify one parm: the potion used for colouring */
@@ -5959,7 +5961,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			empty_subinven(Ind, k, FALSE, FALSE); /* FALSE for "You have..." item messages, TRUE for quiet op */
+			empty_subinven(Ind, k, FALSE, UNSTOW_QUIET); /* FALSE for "You have..." item messages, TRUE for quiet op */
 			return;
 		}
 
