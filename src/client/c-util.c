@@ -11508,7 +11508,7 @@ void do_cmd_options(void) {
 
 
 /*
- * Centers a string within a 31 character string		-JWT-
+ * For print_tomb() only - Centers a string within a 31 character string		-JWT-
  */
 static void center_string(char *buf, cptr str) {
 	int i, j;
@@ -11517,7 +11517,7 @@ static void center_string(char *buf, cptr str) {
 	i = strlen(str);
 
 	/* Necessary border */
-	j = 16 - (i + 1) / 2;
+	j = 15 - (i - 1) / 2;
 
 	/* Mega-Hack */
 	(void)sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
