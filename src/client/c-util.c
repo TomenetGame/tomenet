@@ -11715,9 +11715,22 @@ static void print_tomb(cptr reason) {
 			c_put_str(TERM_L_UMBER, buf, 18 - 3, STONE_COL);
 			center_string(buf, reason2 + 10);
 			c_put_str(TERM_L_UMBER, buf, 21 - 5, STONE_COL);
-		} else if (strstr(reason2, "Committed suicide")) {
+		} else if (strcasestr(reason2, "Committed suicide") || strcasestr(reason2, "Retired")) {
 			if (p_ptr->total_winner) {
-				center_string(buf, "Died from ripe old age");
+				switch (p_ptr->prace) {
+				case RACE_VAMPIRE:
+				case RACE_MAIA:
+				case RACE_HIGH_ELF:
+				case RACE_ELF:
+					center_string(buf, "Unexplained Disappearance");
+					break;
+				case RACE_HALF_ELF:
+					if (magik(75)) center_string(buf, "Unexplained Disappearance");
+					else center_string(buf, "Died from ripe old age");
+					break;
+				default:
+					center_string(buf, "Died from ripe old age");
+				}
 				c_put_str(TERM_L_UMBER, buf, 19 - 3, STONE_COL);
 			} else {
 				center_string(buf, "Committed suicide");

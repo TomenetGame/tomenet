@@ -1901,12 +1901,12 @@ int Receive_quit(void) {
 #endif
 
 		/* Hack -- tombstone */
-		if (strstr(reason, "Killed by") ||
-		    strstr(reason, "Committed suicide")) {
+		if (strcasestr(reason, "Killed by") ||
+		    strcasestr(reason, "Committed suicide") || strcasestr(reason, "Retired")) {
 			/* TERAHACK -- assume our network state is 'not connected' again, as it was initially on client startup. */
 			cl_initialized = FALSE;
 
-#if !defined(ALWAYS_RETRY_LOGIN) && defined(RETRY_LOGIN)
+#if defined(RETRY_LOGIN) && !defined(ALWAYS_RETRY_LOGIN)
 			rl_connection_destructible = TRUE;
 			rl_connection_state = 2;
 #endif
