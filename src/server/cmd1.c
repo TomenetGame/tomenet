@@ -1628,7 +1628,13 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		if (s_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) continue;
 
 		/* Player disabled auto-stow via bag inscription? */
-		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) continue;
+		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) {
+ #ifdef SUBINVEN_LIMIT_GROUP
+			break;
+ #else
+			continue;
+ #endif
+		}
 
 		/* Eligible subinventory found, try to move as much as possible */
 		stowed_some = TRUE;
