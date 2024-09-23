@@ -11716,7 +11716,7 @@ static void print_tomb(cptr reason) {
 			c_put_str(TERM_L_UMBER, buf, 18 - 3, STONE_COL);
 			center_string(buf, reason2 + 10);
 			c_put_str(TERM_L_UMBER, buf, 21 - 5, STONE_COL);
-		} else if (strcasestr(reason2, "Committed suicide") || strcasestr(reason2, "Retired")) {
+		} else if (strstr(reason2, "Committed suicide") || strstr(reason2, "Retired")) {
 			if (p_ptr->total_winner) {
 				switch (p_ptr->prace) {
 				case RACE_VAMPIRE:
