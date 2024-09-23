@@ -10176,9 +10176,10 @@ static void do_cmd_options_tilesets(void) {
 		case '+':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
 			for (j = 0; j < tilesets - 1; j++) {
-				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
+				if (!strcasecmp(tileset_name[j], format("%s.bmp", graphic_tiles))) {
 					/* advance to next tileset file in lib/xtra/graphics */
 					strcpy(graphic_tiles, tileset_name[j + 1]);
+					graphic_tiles[strlen(graphic_tiles) - 4] = 0; /* cut off ".bmp" */
 					break;
 				}
 			}
@@ -10187,9 +10188,10 @@ static void do_cmd_options_tilesets(void) {
 		case '-':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
 			for (j = 1; j < tilesets; j++) {
-				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
+				if (!strcasecmp(tileset_name[j], format("%s.bmp", graphic_tiles))) {
 					/* retreat to previous tileset file in lib/xtra/graphics */
-					strcpy(graphic_tiles, tileset_name[j + 1]);
+					strcpy(graphic_tiles, tileset_name[j - 1]);
+					graphic_tiles[strlen(graphic_tiles) - 4] = 0; /* cut off ".bmp" */
 					break;
 				}
 			}
