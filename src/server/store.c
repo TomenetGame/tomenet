@@ -3159,6 +3159,54 @@ static bool store_attest_command(int store, int bact) {
 	return(FALSE);
 }
 
+#ifdef ENABLE_SUBINVEN
+static int autostow_or_carry(int Ind, object_type *o_ptr) {
+	char o_name[ONAME_LEN];
+	player_type *p_ptr = Players[Ind];
+	int item_new = -1; /* todo maybe: make auto_stow() set item_new on the used subinven slot correctly */
+
+	/* Try to put into a specialized bag automatically */
+	switch (o_ptr->tval) {
+	/* ..And actually give an outdated-client warning for the bag purchase itself.. */
+	case TV_SUBINVEN:
+		if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0))
+			msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag! Your current client won't work!");
+		if (o_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0))
+			msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
+		break;
+	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
+		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE);
+		break;
+	case TV_TRAPKIT:
+		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE);
+		break;
+	case TV_ROD:
+		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
+		if (rod_requires_direction(Ind, o_ptr)) break;
+		/* fall through */
+	case TV_STAFF:
+		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE);
+		break;
+	case TV_POTION: case TV_POTION2:
+		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE);
+		break;
+	case TV_FOOD:
+		(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE);
+		break;
+	}
+
+	/* If we couldn't stow everything, pick up the rest normally */
+	if (o_ptr->number) {
+		item_new = inven_carry(Ind, o_ptr);
+		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+	}
+
+	return(item_new);
+}
+#endif
+
+
 
 /*
  * Try to steal an item from a store                   -DG-
@@ -3573,10 +3621,16 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		can_use(Ind, &sell_obj);//##UNH
 		sell_obj.iron_trade = p_ptr->iron_trade;
 		sell_obj.iron_turn = -1;
-		item_new = inven_carry(Ind, &sell_obj);
 
+#ifdef ENABLE_SUBINVEN
+		item_new = autostow_or_carry(Ind, &sell_obj);
+		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+#else
+		item_new = inven_carry(Ind, &sell_obj);
 		/* Describe the final result */
 		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+#endif
 
 		//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance < 10 ? 10 : chance), chance);
 		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
@@ -3591,9 +3645,6 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 
 		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 			s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
-
-		/* Message */
-		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
 
 		/* Handle stuff */
 		handle_stuff(Ind);
@@ -4122,52 +4173,13 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				sell_obj.iron_trade = p_ptr->iron_trade;
 				sell_obj.iron_turn = -1;
 
-#ifdef ENABLE_SUBINVEN
 				/* Describe the final result */
-				o_ptr = &sell_obj;
-
-				/* Try to put into a specialized bag automatically */
-				switch (o_ptr->tval) {
-				/* ..And actually give an outdated-client warning for the bag purchase itself.. */
-				case TV_SUBINVEN:
-					if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0))
-						msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag! Your current client won't work!");
-					if (o_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0))
-						msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
-					break;
-				case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-					(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE);
-					break;
-				case TV_TRAPKIT:
-					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE);
-					break;
-				case TV_ROD:
-					/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
-					if (rod_requires_direction(Ind, o_ptr)) break;
-					/* fall through */
-				case TV_STAFF:
-					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE);
-					break;
-				case TV_POTION: case TV_POTION2:
-					(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE);
-					break;
-				case TV_FOOD:
-					(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE);
-					break;
-				}
-
-				/* If we couldn't stow everything, pick up the rest normally */
-				if (o_ptr->number) {
-					item_new = inven_carry(Ind, &sell_obj);
-					object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
-					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
-				}
+#ifdef ENABLE_SUBINVEN
+				(void)autostow_or_carry(Ind, &sell_obj);
 #else
 				item_new = inven_carry(Ind, &sell_obj);
-
 				/* Describe the final result */
 				object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
-
 				/* Message */
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
 #endif
