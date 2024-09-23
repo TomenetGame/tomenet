@@ -1709,7 +1709,7 @@ D:Creates a random artifact from a basic item that must not possess ego-powers.
 N:206:Recharging
 G:?:d
 I:70:22:0
-W:40:0:5:200
+W:40:0:5:150
 A:40/1
 D:Recharges wands, staves or rods.
 
