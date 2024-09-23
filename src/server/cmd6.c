@@ -1741,12 +1741,11 @@ void do_cmd_drink_fountain(int Ind) {
 
 /*
  * Fill an empty bottle
+ * 'force_slot': -1 = find an empty bottle in player inventory (default)
+ *               <slot> = use the empty bottle from that inventory slot (for 'A'ctivating bottles)
  */
-/* XXX this can be abusable; disable it in case */
-/* TODO: allow to fill on FEAT_DEEP_WATER (potion of water :) */
-/* Allow filling bottles with fountain blood? */
 #define ALLOW_BLOOD_BOTTLING
-void do_cmd_fill_bottle(int Ind) {
+void do_cmd_fill_bottle(int Ind, int force_slot) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -1757,10 +1756,16 @@ void do_cmd_fill_bottle(int Ind) {
 
 	//bool ident;
 	int tval, sval, k_idx, item;
-
 	object_type *q_ptr, forge;
 	//cptr q, s;
 
+
+	if (force_slot != -1) {
+		if (!get_inven_item(Ind, force_slot, &q_ptr)) return; /* abuse q_ptr for this check */
+		if (q_ptr->tval != TV_BOTTLE) return;
+		item = force_slot;
+		/* q_ptr is now no longer needed, will be overwritten later */
+	}
 
 	if (p_ptr->IDDC_logscum) {
 		msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
@@ -1789,7 +1794,8 @@ void do_cmd_fill_bottle(int Ind) {
 			return;
 		}
 
-		if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
+		/* Find some empty bottle in the player inventory? */
+		if (force_slot == -1 && !get_something_tval(Ind, TV_BOTTLE, &item)) {
 			msg_print(Ind, "You have no bottles to fill.");
 			return;
 		}
@@ -5825,6 +5831,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
+	/* Hack -- activating bottles */
+	if (o_ptr->tval == TV_BOTTLE) {
+		do_cmd_fill_bottle(Ind, item);
+		return;
+	}
+
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) {
 		/* For now, only allow demo-alch from here */
@@ -5947,19 +5959,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		XID_paranoia(p_ptr);
  #endif
 #endif
-
-		/* Hack -- activating bottles */
-		if (o_ptr->tval == TV_BOTTLE) {
-#ifdef ENABLE_SUBINV
-			/* Cannot fill empty bottles that are stored inside a chest.. */
-			if (item >= SUBINVEN_INVEN_MUL) {
-				msg_print(Ind, "You cannot fill bottles that are stowed away.");
-				return;
-			}
-#endif
-			do_cmd_fill_bottle(Ind);
-			return;
-		}
 
 		msg_print(Ind, "You cannot activate that item.");
 		return;

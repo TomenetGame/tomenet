@@ -2044,7 +2044,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Paralyzed? */
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 
-			do_cmd_fill_bottle(Ind);
+			do_cmd_fill_bottle(Ind, -1);
 			return;
 		}
 		else if (prefix(messagelc, "/empty") || prefix(messagelc, "/emp")) {
