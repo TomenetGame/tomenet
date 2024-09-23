@@ -10057,7 +10057,7 @@ static void do_cmd_options_tilesets(void) {
 		l = 0;
 
 		/* Prompt XXX XXX XXX */
-		Term_putstr(0, l++, -1, TERM_WHITE, "  \377y-\377w/\377y+\377w,\377y=\377w select prev/next tileset, \377yENTER\377w enter a specific tileset name");
+		Term_putstr(0, l++, -1, TERM_WHITE, "  \377y-\377w/\377y+\377w,\377y=\377w switch tileset (requires restart), \377yENTER\377w enter a specific tileset name");
 		Term_putstr(0, l++, -1, TERM_WHITE, "  \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit");
 		Term_putstr(0, l++, -1, TERM_WHITE, "  \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s)");
 		l++;
