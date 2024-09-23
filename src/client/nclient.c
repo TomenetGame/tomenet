@@ -342,6 +342,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_AUTOINSCRIBE]	= Receive_apply_auto_insc;
 
 	receive_tbl[PKT_ITEM_NEWEST]	= Receive_item_newest;
+	receive_tbl[PKT_ITEM_NEWEST_2ND]= Receive_item_newest_2nd;
 	receive_tbl[PKT_CONFIRM]	= Receive_confirm;
 	receive_tbl[PKT_KEYPRESS]	= Receive_keypress;
 
@@ -6041,6 +6042,20 @@ int Receive_item_newest(void) {
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &item_newest)) <= 0) return(n); //ENABLE_SUBINVEN
 	}
+
+	/* As long as we don't have an 'official' newest item, use fallback replacement if exists */
+	if (item_newest == -1) item_newest = item_newest_2nd;
+
+	return(1);
+}
+int Receive_item_newest_2nd(void) {
+	int	n;
+	char	ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &item_newest_2nd)) <= 0) return(n); //ENABLE_SUBINVEN
+
+	/* As long as we don't have an 'official' newest item, use fallback replacement if exists */
+	if (item_newest == -1) item_newest = item_newest_2nd;
 
 	return(1);
 }

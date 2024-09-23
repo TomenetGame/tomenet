@@ -445,7 +445,7 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 static void sense_inventory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	int i, dur;
+	int i, dur, in = -1;
 
 	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE, heavy_traps = FALSE;
 	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE, ok_traps = FALSE;
@@ -723,6 +723,7 @@ static void sense_inventory(int Ind) {
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+		in = i;
 
 		/* in case the pseudo-id inscription triggers a forced auto-inscription! :)
 		   Added to allow inscribing 'good' ammo !k or so (ethereal ammo) */
@@ -730,6 +731,8 @@ static void sense_inventory(int Ind) {
 		handle_stuff(Ind);
 		//Send_apply_auto_insc(Ind, i);
 	}
+
+	if (in != -1) Send_item_newest_2nd(Ind, in);
 }
 
 /*

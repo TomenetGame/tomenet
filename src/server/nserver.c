@@ -10541,6 +10541,22 @@ int Send_item_newest(int Ind, int item) {
 		return Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item);
 	return Packet_printf(&connp->c, "%c%d", PKT_ITEM_NEWEST, item); //ENABLE_SUBINVEN
 }
+int Send_item_newest_2nd(int Ind, int item) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 9, 2, 1, 0, 0)) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+#if 1 /* Not really important, and spams on every character creation when the default items are given to it. */
+		plog(format("Connection not ready for item_newest_2nd (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+#endif
+		return(0);
+	}
+
+	Players[Ind]->item_newest_2nd = item;
+	return Packet_printf(&connp->c, "%c%d", PKT_ITEM_NEWEST_2ND, item); //ENABLE_SUBINVEN
+}
 
 int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
 	connection_t *connp = Conn[Players[Ind]->conn];

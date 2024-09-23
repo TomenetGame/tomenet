@@ -4256,7 +4256,7 @@ struct player_type {
 	bool mail_COD;
 #endif
 
-	int item_newest;
+	int item_newest, item_newest_2nd;
 	bool keep_bottle;
 	bool no_house_magic;
 	s16b steamblast_x, steamblast_y, steamblast_timer;

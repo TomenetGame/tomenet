@@ -144,7 +144,7 @@ extern object_type inventory[INVEN_TOTAL];
 extern char inventory_name[INVEN_TOTAL][ONAME_LEN];
 extern int inventory_inscription[INVEN_TOTAL];
 extern int inventory_inscription_len[INVEN_TOTAL];
-extern int item_newest;
+extern int item_newest, item_newest_2nd;
 
 #ifdef ENABLE_SUBINVEN
 extern int using_subinven, using_subinven_size, using_subinven_item;

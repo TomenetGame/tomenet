@@ -951,6 +951,7 @@ struct player_type {
 
 	bool player_list_window;
 	int item_newest;
+	int item_newest_2nd;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

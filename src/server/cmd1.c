@@ -9159,6 +9159,7 @@ bool remember_sense(int Ind, int slot, object_type *o_ptr) {
 						o_ptr->note = quark_add(feel);
 						o_ptr->auto_insc = TRUE;
 					}
+					Send_item_newest_2nd(Ind, slot);
 				}
 			} else {
 				feel = value_check_aux1_magic(o_ptr);
@@ -9171,6 +9172,7 @@ bool remember_sense(int Ind, int slot, object_type *o_ptr) {
 						o_ptr->note = quark_add(feel);
 						o_ptr->auto_insc = TRUE;
 					}
+					Send_item_newest_2nd(Ind, slot);
 				}
 			}
 			return(TRUE);

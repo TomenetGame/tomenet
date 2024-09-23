@@ -79,6 +79,7 @@ int Receive_sound(void);
 int Receive_music(void);
 int Receive_music_vol(void);
 int Receive_item_newest(void);
+int Receive_item_newest_2nd(void);
 int Receive_confirm(void);
 int Receive_keypress(void);
 int Receive_sfx_ambient(void);

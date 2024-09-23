@@ -1179,7 +1179,7 @@ int remove_curse_aux(int Ind, int all, int pInd) {
 	char o_name[ONAME_LEN];
 #endif
 
-	int i, j, cnt = 0;
+	int i, j, cnt = 0, in = -1;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 #ifdef NEW_REMOVE_CURSE
@@ -1228,6 +1228,7 @@ int remove_curse_aux(int Ind, int all, int pInd) {
 
 		/* Uncurse it */
 		o_ptr->ident &= ~ID_CURSED;
+		in = j;
 
 		/* Hack -- Assume felt */
 		o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
@@ -1253,6 +1254,8 @@ int remove_curse_aux(int Ind, int all, int pInd) {
 		    (!(all & 0x01) && magik(50)))
 			break;
 	}
+
+	if (in != -1) Send_item_newest_2nd(Ind, in);
 
 	/* return"something uncursed" */
 	return(cnt);
@@ -4073,7 +4076,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (!okay) {
 		/* Message */
 		msg_print(Ind, "The enchantment failed.");
-	}
+	} else Send_item_newest_2nd(Ind, item);
 
 #if 0
 	/* Anti-cheeze */
@@ -4188,14 +4191,11 @@ bool ident_spell_aux(int Ind, int item) {
 
 	/* Describe */
 	if (item >= INVEN_WIELD) {
-		msg_format(Ind, "%^s: %s (%c).",
-		   describe_use(Ind, item), o_name, index_to_label(item));
+		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
 	} else if (item >= 0) {
-		msg_format(Ind, "In your pack: %s (%c).",
-		    o_name, index_to_label(item));
+		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
 	} else {
-		msg_format(Ind, "On the ground: %s.",
-		    o_name);
+		msg_format(Ind, "On the ground: %s.", o_name);
 	}
 
 #if 1
@@ -4217,6 +4217,7 @@ bool ident_spell_aux(int Ind, int item) {
 	}
 
 	p_ptr->current_identify = 0;
+	Send_item_newest_2nd(Ind, item);
 
 #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
 	/* Redraw subinven item */
@@ -4297,17 +4298,15 @@ bool identify_fully_item(int Ind, int item) {
 
 	/* Describe */
 	if (item >= INVEN_WIELD)
-		msg_format(Ind, "%^s: %s (%c).",
-			   describe_use(Ind, item), o_name, index_to_label(item));
+		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
 	else if (item >= 0)
-		msg_format(Ind, "In your pack: %s (%c).",
-			   o_name, index_to_label(item));
+		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
 	else
-		msg_format(Ind, "On the ground: %s.",
-			   o_name);
+		msg_format(Ind, "On the ground: %s.", o_name);
 
 	/* Describe it fully */
 	(void)identify_fully_aux(Ind, o_ptr, FALSE, item, 0);
+	Send_item_newest_2nd(Ind, item);
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
