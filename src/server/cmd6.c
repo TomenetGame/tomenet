@@ -5865,6 +5865,56 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
+	/* Test the item */
+	if (!item_tester_hook_activate(Ind, o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+
+		msg_print(Ind, "You cannot activate that item.");
+		return;
+	}
+
+	if (!can_use_verbose(Ind, o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return;
+	}
+
+	/* If the item can be equipped, it MUST be equipped to be activated */
+	if ((item < INVEN_WIELD
+#ifdef ENABLE_SUBINVEN
+	    || item >= SUBINVEN_INVEN_MUL
+#endif
+	    ) && wearable_p(o_ptr)) {
+		msg_print(Ind, "You must be using this item to activate it.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return;
+	}
+
+	if (check_guard_inscription(o_ptr->note, 'A')) {
+		msg_print(Ind, "The item's inscription prevents it..");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return;
+	}
+
 	/* Magic-unrelated activation: Before AM checks. */
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x00F0)) return;
 
@@ -5914,55 +5964,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		}
 	}
 
-	/* If the item can be equipped, it MUST be equipped to be activated */
-	if ((item < INVEN_WIELD
-#ifdef ENABLE_SUBINVEN
-	    || item >= SUBINVEN_INVEN_MUL
-#endif
-	    ) && wearable_p(o_ptr)) {
-		msg_print(Ind, "You must be using this item to activate it.");
-#ifdef ENABLE_XID_MDEV
- #ifndef XID_REPEAT
-		p_ptr->current_item = -1;
-		XID_paranoia(p_ptr);
- #endif
-#endif
-		return;
-	}
-
-	if (check_guard_inscription(o_ptr->note, 'A')) {
-		msg_print(Ind, "The item's inscription prevents it..");
-#ifdef ENABLE_XID_MDEV
- #ifndef XID_REPEAT
-		p_ptr->current_item = -1;
-		XID_paranoia(p_ptr);
- #endif
-#endif
-		return;
-	}
-
-	if (!can_use_verbose(Ind, o_ptr)) {
-#ifdef ENABLE_XID_MDEV
- #ifndef XID_REPEAT
-		p_ptr->current_item = -1;
-		XID_paranoia(p_ptr);
- #endif
-#endif
-		return;
-	}
-
-	/* Test the item */
-	if (!item_tester_hook_activate(Ind, o_ptr)) {
-#ifdef ENABLE_XID_MDEV
- #ifndef XID_REPEAT
-		p_ptr->current_item = -1;
-		XID_paranoia(p_ptr);
- #endif
-#endif
-
-		msg_print(Ind, "You cannot activate that item.");
-		return;
-	}
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
