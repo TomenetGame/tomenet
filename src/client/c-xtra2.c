@@ -55,6 +55,13 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 				strcat(xmsg_reverse, c);
 				/* avoid duplicate ' ' */
 				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+
+				/* Multiline chat messages will fix into MSG_LEN.
+				   But this could also be a multiline status output message from the server, eg from the /tym command,
+				   in which case it might be a lot of lines long and never fit into MSG_LEN but cause buffer overflow.
+				   Catch that here: */
+				if (strlen(xmsg) + strlen(xmsg_reverse) >= MSG_LEN) break;
+
 #if 0
 				/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
 				   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
@@ -86,6 +93,13 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 				strcat(xmsg_reverse, c);
 				/* avoid duplicate ' ' */
 				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+
+				/* Multiline chat messages will fix into MSG_LEN.
+				   But this could also be a multiline status output message from the server, eg from the /tym command,
+				   in which case it might be a lot of lines long and never fit into MSG_LEN but cause buffer overflow.
+				   Catch that here: */
+				if (strlen(xmsg) + strlen(xmsg_reverse) >= MSG_LEN) break;
+
 #if 0
 				/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
 				   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
