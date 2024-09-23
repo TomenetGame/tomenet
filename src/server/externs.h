@@ -757,12 +757,13 @@ extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr
 extern s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot);
 extern bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought);
 extern void do_cmd_subinven_move(int Ind, int islot, int amt_spec);
-extern bool subinven_move_aux(int Ind, int islot, int sslot, int amt);
+extern bool subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet);
 extern void do_cmd_subinven_remove(int Ind, int islot, int slot, int amt);
 extern void subinven_remove_aux(int Ind, int islot, int slot, int amt);
  #ifdef SUBINVEN_LIMIT_GROUP
 extern bool subinven_group_player(int Ind, int group, int slot);
  #endif
+extern bool do_cmd_subinven_fill(int Ind, int slot, bool quiet);
 #endif
 extern int bodymonster_hands(int Ind);
 
@@ -2155,7 +2156,7 @@ extern bool verify_inven_item(int Ind, int item);
 extern bool get_inven_item(int Ind, int item, object_type **o_ptr);
 #ifdef ENABLE_SUBINVEN
 extern void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *iitem);
-extern void empty_subinven(int Ind, int item, bool drop);
+extern void empty_subinven(int Ind, int item, bool drop, bool quiet);
 extern void erase_subinven(int Ind, int item);
 extern void verify_subinven_size(int Ind, int slot, bool check);
 extern int get_subinven_group(int sval);

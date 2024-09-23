@@ -15524,6 +15524,7 @@ static int Receive_font(int ind) {
 }
 
 #ifdef ENABLE_SUBINVEN
+/* Stow an item into any subinventory eligible */
 static int Receive_si_move(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
@@ -15560,6 +15561,7 @@ static int Receive_si_move(int ind) {
 	}
 	return(1);
 }
+/* Unstow an item from a specific subinventory back into inventory */
 static int Receive_si_remove(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;

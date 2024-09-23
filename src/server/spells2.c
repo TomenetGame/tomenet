@@ -10012,7 +10012,7 @@ void mix_chemicals(int Ind, int item) {
 	/* If both ingredients were from a satchel, try to place the result there too, if it's TV_CHEMICAL. */
 	if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL && item >= SUBINVEN_INVEN_MUL && q_ptr->tval == TV_CHEMICAL) {
 		//do_cmd_subinven_move(Ind, islot);
-		if (subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, q_ptr->number)) return; /* Includes message */
+		if (subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, q_ptr->number, FALSE)) return; /* Includes message */
 	}
 #endif
 	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
@@ -10188,7 +10188,7 @@ void grind_chemicals(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we grind a subinventory (chest!), remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && o_ptr->number <= 1) empty_subinven(Ind, item, FALSE);
+	if (o_ptr->tval == TV_SUBINVEN && o_ptr->number <= 1) empty_subinven(Ind, item, FALSE, FALSE);
 #endif
 
 	/* Erase the ingredient in the pack --

@@ -10721,7 +10721,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
  #ifdef ENABLE_SUBINVEN
 		/* If we send a subinventory, remove all items and place them into the player's inventory */
-		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, p_ptr->mail_item, FALSE);
+		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, p_ptr->mail_item, FALSE, FALSE);
  #endif
 
 		inven_item_increase(Ind, p_ptr->mail_item, -o_ptr->number);

@@ -11284,7 +11284,7 @@ void pack_overflow(int Ind) {
 
 #ifdef ENABLE_SUBINVEN
 		/* Paranoia? - If we drop a subinventory, remove all items and place them into the player's inventory */
-		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i, FALSE);
+		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i, FALSE, FALSE);
 #endif
 
 		/* Decrease the item, optimize. */

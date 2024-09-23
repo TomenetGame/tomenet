@@ -10109,7 +10109,7 @@ void player_death(int Ind) {
 
 #ifdef ENABLE_SUBINVEN
 		/* Drop all items from a bag directly to the floor */
-		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i, TRUE);
+		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i, TRUE, FALSE);
 #endif
 
 		death_drop_object(p_ptr, i, o_ptr);
@@ -14417,7 +14417,7 @@ void telekinesis_aux(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we send a (stack of) subinventory, remove all items and place them into the player's inventory */
-	if (q_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, item, FALSE);
+	if (q_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, item, FALSE, FALSE);
 #endif
 
 	/* Wipe it */

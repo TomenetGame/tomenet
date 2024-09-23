@@ -390,7 +390,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we drop a subinventory, remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item, FALSE);
+	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item, FALSE, FALSE);
 #endif
 
 	/* Make a "fake" object */
@@ -2060,7 +2060,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we destroy a subinventory - that was not on the floor already! - , remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && item >= 0 && quantity >= o_ptr->number) empty_subinven(Ind, item, FALSE);
+	if (o_ptr->tval == TV_SUBINVEN && item >= 0 && quantity >= o_ptr->number) empty_subinven(Ind, item, FALSE, FALSE);
 #endif
 
 	/* Mark as forcibly dropped, to suppress !W triggering */
@@ -5377,7 +5377,7 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
    Keeps total weight constant. Deletes source inventory item on successful complete move.
    Returns TRUE if fully stowed.
    'amt' must be the correct, available amount (mostly o_ptr->number or 1). */
-bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
+bool subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr = &p_ptr->inventory[islot];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
@@ -5406,8 +5406,10 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
 			if (Gnum) {
 				object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
-				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+				if (!quiet) {
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+				}
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
@@ -5428,8 +5430,10 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt) {
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 			/* Describe the object */
-			object_desc(Ind, o_name, o_ptr, TRUE, 3);
-			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+			if (!quiet) {
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+			}
  #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
@@ -5604,7 +5608,7 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 			continue;
 		}
 		/* Eligible subinventory found, try to move as much as possible */
-		if (subinven_move_aux(Ind, islot, i, amt)) {
+		if (subinven_move_aux(Ind, islot, i, amt, FALSE)) {
 			/* Successfully moved ALL items! We're done. */
 			all = TRUE;
 			break;
@@ -5642,6 +5646,126 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+}
+/* Tries to all items or item stacks in inventory completely into
+   a specific subinventory.
+   Returns FALSE if there was just no eligible item, TRUE in any other case (including errors). */
+bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
+	player_type *p_ptr = Players[Ind];
+	object_type *i_ptr, *s_ptr;
+	int i, t;
+	//bool all = FALSE;
+	bool eligible_item = FALSE, client_outdated = FALSE;
+
+	/* Don't stow if player cannot access stowed items due to outdated client */
+	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(TRUE);
+
+	/* Error checks */
+	if (slot < 0) return(TRUE);
+	if (slot >= INVEN_PACK) return(TRUE);
+
+	s_ptr = &p_ptr->inventory[slot];
+	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return(TRUE);
+	t = get_subinven_group(s_ptr->sval);
+
+	for (i = INVEN_PACK - 1; i >= 0; i--) {
+		i_ptr = &p_ptr->inventory[i];
+		if (!i_ptr->tval) continue;
+
+		/* Not eligible ever */
+		if (i_ptr->tval == TV_SUBINVEN) continue;
+		if (i_ptr->tval == TV_CHEST) continue;
+		if (i_ptr->questor) continue;
+		if (i_ptr->tval == TV_AMULET && (i_ptr->sval == SV_AMULET_HIGHLANDS || i_ptr->sval == SV_AMULET_HIGHLANDS2)) continue;
+		/* A bit annoying to handle maybe, just forbid for now */
+		if (true_artifact_p(i_ptr)) continue;
+		/* TODO: Implement mdev recharging and items melting/going bad for subinvens */
+		if (i_ptr->tval == TV_GAME && i_ptr->sval == SV_SNOWBALL) continue;
+		if (i_ptr->tval == TV_POTION && i_ptr->sval == SV_POTION_BLOOD) continue;
+
+		switch (t) {
+		/* Check item to move against valid tvals to be put into specific container (subinventory) types */
+		case SV_SI_GROUP_CHEST_MIN:
+			/* Allow all storable items in chests */
+			eligible_item = TRUE;
+			break;
+		case SV_SI_SATCHEL:
+			if (i_ptr->tval != TV_CHEMICAL) continue;
+			eligible_item = TRUE;
+			break;
+		case SV_SI_TRAPKIT_BAG:
+			if (i_ptr->tval != TV_TRAPKIT) continue;
+			eligible_item = TRUE;
+			break;
+		case SV_SI_MDEVP_WRAPPING:
+ #if 1
+			/* Extra hint for unidentified rods, instead of simply claiming that there is no bag space (as no chest is found and wrapping isn't eligible for unid'ed rods): */
+			if (i_ptr->tval == TV_ROD && !object_aware_p(Ind, i_ptr)) {
+				/* The reason is that rod_requires_direction() will always return(TRUE) for unknown rods anyway. */
+				//msg_print(Ind, "Rod types must be known in order to stow it in your antistatic wrapping!");
+				continue;
+			}
+			if (i_ptr->tval == TV_ROD && object_aware_p(Ind, i_ptr) && rod_requires_direction(Ind, i_ptr)) {
+				//msg_print(Ind, "Rods must be non-directional in order to stow it in your antistatic wrapping!");
+				continue;
+			}
+ #endif
+			/* Note that unknown/unaware rods will automatically return(TRUE) for requiring direction, even if they really don't. */
+			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
+			eligible_item = TRUE;
+			break;
+		case SV_SI_POTION_BELT:
+			if (i_ptr->tval != TV_POTION && i_ptr->tval != TV_POTION2 && i_ptr->tval != TV_BOTTLE) continue;
+
+			/* Don't stow if player cannot access stowed items due to outdated client */
+			if (!is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) {
+				client_outdated = TRUE;
+				continue;
+			}
+
+			eligible_item = TRUE;
+			break;
+		case SV_SI_FOOD_BAG:
+			if (i_ptr->tval != TV_FOOD) continue;
+			eligible_item = TRUE;
+			break;
+		default:
+			continue;
+		}
+
+		/* Eligible subinventory found, try to move as much as possible */
+		if (subinven_move_aux(Ind, i, slot, i_ptr->number, quiet))
+			/* Successfully moved ALL items even, lucky! */
+			;//all = TRUE;
+	}
+	if (client_outdated) msg_print(Ind, "\377yYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use your Potion Belt, or it won't be accessible!");
+	if (!eligible_item) {
+		//msg_print(Ind, "\377yNo eligible item found to stow into that type of container.");
+		return(FALSE);
+	}
+
+#if 0 /* no messages, too spammy perhaps for /astow command's mass processing */
+	/* Moved anything at all?
+	   Keep in mind that on moving all the object is now something different as it has been excised!
+	   So we cannot reference to it anymore in that case and use 'all' instead. */
+	if (all) ;//kind of spammy - msg_print(Ind, "You stow all of it.");
+	else if (max - i_ptr->number == 0) {
+		msg_print(Ind, "\377yNo free bag space to stow that item.");
+		return(TRUE);
+	} else msg_print(Ind, "You have at least enough bag space to stow some of it.");
+#endif
+
+	//break_cloaking(Ind, 5);
+	//break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_PLAYER);
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	return(TRUE);
 }
 /* This function assumes that there IS inventory space to move to. */
 void subinven_remove_aux(int Ind, int islot, int slot, int amt) {

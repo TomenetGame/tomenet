@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 23. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1973,6 +1973,13 @@ They all start with a slash '/' hence they're called slash commands:
 /stime      Tells you the current date and time (of the server, not of your
             local timezone). Also see /ctime and /time.
 
+/stow [<a..w>]
+            This command will try to stow all items in your inventory into
+            eligible container items you carry.
+            If a slot is specified (optional) it will only try to stow items
+            which fit into the container item that is in that slot.
+            Also see /unstow.
+
 /suicide
 /sui        Gives a short message to use SHIFT+Q instead.
 
@@ -2081,6 +2088,11 @@ They all start with a slash '/' hence they're called slash commands:
             optional parameters to refine the search results:
             /uni a    will only show uniques that are still alive for you.
             /hou b    will only show bosses.
+
+/unstow <a..w>
+            This command will unstow all items from a container and put them
+            into your normal inventory instead. If it overflows, surplus items
+            will drop to the floor. Also see /stow.
 
 /untag [<inscription>]
 /ut         If <inscription is omitted, it removes all inscriptions from items

@@ -5882,6 +5882,85 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (k > 10000) k = 10000;
 			(void)toggle_rest(Ind, k);
 			return;
+		} else if (prefix(messagelc, "/stow")) { /* Stow all items from inventory that can be stowed into bags that are available, optionally only into a specific bag. */
+			object_type *o_ptr;
+			int start, stop, bags = 0;
+			bool any = FALSE, free_space = FALSE;
+
+			/* need to specify one parm: the potion used for colouring */
+			if (strstr(message3, "help") || message3[0] == '?') {
+				msg_print(Ind, "\377oUsage:     /stow [<inventory slot>]");
+				msg_print(Ind, "\377oExample 1: /stow");
+				msg_print(Ind, "\377oExample 2: /stow a");
+				return;
+			}
+
+			/* Paralyzed? */
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
+			if (tk) {
+				if ((k = a2slot(Ind, token[1][0], TRUE, FALSE)) == -1) return;
+				o_ptr = &p_ptr->inventory[k];
+				if (!o_ptr->tval || o_ptr->tval != TV_SUBINVEN) {
+					msg_format(Ind, "Inventory item '%c)' is not a valid container.", token[1][0]);
+					return;
+				}
+
+				if (p_ptr->subinventory[k][o_ptr->bpval - 1].tval) { /* uh, ensure maybe that all tval are nulled, not just the one of the first empty bag slot... */
+					msg_format(Ind, "It is already full!");
+					return;
+				}
+
+				start = stop = k;
+			} else {
+				start = 0;
+				stop = INVEN_PACK - 1;
+			}
+
+			for (i = start; i <= stop; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				if (o_ptr->tval != TV_SUBINVEN) break;
+				bags++;
+				if (!p_ptr->subinventory[i][o_ptr->bpval - 1].tval) free_space = TRUE;
+				any = any || do_cmd_subinven_fill(Ind, i, FALSE); /* FALSE for "You have..." item messages, TRUE for quiet op */
+			}
+			if (!bags) msg_print(Ind, "\377yYou possess no container items.");
+			else if (!free_space) {
+				if (start == stop || bags == 1) msg_print(Ind, "\377yYour container has no free space.");
+				else msg_print(Ind, "\377yYour containers have no free space.");
+			} else if (!any) {
+				if (start == stop) msg_print(Ind, "\377yNo eligible item found to stow into that container.");
+				else msg_print(Ind, "\377yNo eligible item found to stow into your containers.");
+			}
+
+			return;
+		} else if (prefix(messagelc, "/unstow")) { /* Unstow all items from specific subinventory, into inventory (drops to floor if out of space); same as 'A'ctivating. */
+			object_type *o_ptr;
+
+			/* need to specify one parm: the potion used for colouring */
+			if (!tk || strstr(message3, "help") || message3[0] == '?') {
+				msg_print(Ind, "\377oUsage:     /unstow <inventory slot>");
+				msg_print(Ind, "\377oExample:   /unstow a");
+				return;
+			}
+
+			/* Paralyzed? */
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
+			if ((k = a2slot(Ind, token[1][0], TRUE, FALSE)) == -1) return;
+			o_ptr = &p_ptr->inventory[k];
+			if (!o_ptr->tval || o_ptr->tval != TV_SUBINVEN) {
+				msg_format(Ind, "Inventory item '%c)' is not a valid container.", token[1][0]);
+				return;
+			}
+
+			if (!p_ptr->subinventory[k][0].tval) {
+				msg_format(Ind, "It is already empty!");
+				return;
+			}
+
+			empty_subinven(Ind, k, FALSE, FALSE); /* FALSE for "You have..." item messages, TRUE for quiet op */
+			return;
 		}
 
 

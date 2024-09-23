@@ -10488,7 +10488,7 @@ void verify_subinven_size(int Ind, int slot, bool check) {
 }
 /* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space.
    drop: Drop items to the floor instead of unstowing them into the backpack inventory (for case of player death). */
-void empty_subinven(int Ind, int item, bool drop) {
+void empty_subinven(int Ind, int item, bool drop, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	int i, s = p_ptr->inventory[item].bpval, k;
 	object_type *o_ptr;
@@ -10522,8 +10522,10 @@ void empty_subinven(int Ind, int item, bool drop) {
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 			k = inven_carry(Ind, o_ptr);
 			if (k != -1) { /* Paranoia, as we just checked for inven_carry_okay, it must be != -1 */
-				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
+				if (!quiet) {
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
+				}
 			} else s_printf("empty_subinven(%d) PARANOIA.\n", Ind);
 		} else {
 			if (!overflow_msg) {
