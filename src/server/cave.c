@@ -887,19 +887,15 @@ s_printf("CHKMOR: tmphp=%d,org_maxhp=%d,num_on_depth=%d\n", tmphp, m_ptr->org_ma
 }
 
 int players_on_depth(struct worldpos *wpos) {
-	if (wpos->wx > MAX_WILD_X || wpos->wx < 0 || wpos->wy > MAX_WILD_Y || wpos->wy < 0) return(0);
-	if (wpos->wz == 0)
-		return(wild_info[wpos->wy][wpos->wx].surface.ondepth);
-	else {
-		struct dungeon_type *d_ptr;
+	struct dungeon_type *d_ptr;
 
-		if (wpos->wz > 0)
-			d_ptr = wild_info[wpos->wy][wpos->wx].tower;
-		else
-			d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+	if (wpos->wx >= MAX_WILD_X || wpos->wx < 0 || wpos->wy >= MAX_WILD_Y || wpos->wy < 0) return(0); //paranoia or nonsense?
+	if (wpos->wz == 0) return(wild_info[wpos->wy][wpos->wx].surface.ondepth);
 
-		return(d_ptr->level[ABS(wpos->wz) - 1].ondepth);
-	}
+	if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+	else d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+
+	return(d_ptr->level[ABS(wpos->wz) - 1].ondepth);
 }
 
 /* Don't determine wilderness level just from town radius, but also from the
