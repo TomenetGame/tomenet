@@ -3376,9 +3376,11 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 	/* to make the level more interesting, add some "hotspots" */
 	if (w_ptr->type != WILD_OCEAN || istownarea(wpos, MAX_TOWNAREA))
 		for (y = 0; y < terrain.hotspot; y++) wild_add_hotspot(wpos);
+#if 0 /* 0'ed -> oceans have pure water, no odd hot spots */
 	/* oceans really have mostly water */
 	else if (!rand_int(8)) //changing hotspot number in init_terrain() directly probably messes up world consistency?
 		for (y = 0; y < terrain.hotspot / 3; y++) wild_add_hotspot(wpos); //..so just divide here, pfft
+#endif
 
 	/* HACK -- if close to the town, make dwellings more likely */
 #ifdef DEVEL_TOWN_COMPATIBILITY
