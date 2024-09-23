@@ -3729,9 +3729,10 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		/* Put him on the blacklist or increase it if already on */
 		p_ptr->tim_blacklist += i;
 #ifdef EASY_LOW_BL
-		s_printf("TIM_BLACKLIST: %s +%d[%d] (%dm,%ds)\n", p_ptr->name, i, (int)chance, (i / 120), (i % 120) / 2);
+		s_printf("TIM_BLACKLIST: %s +%d[%d] (%d:%02d / %d:%02d)\n", p_ptr->name, i, (int)chance,
+		    (i / 120), (i % 120) / 2, (p_ptr->tim_watchlist / 120), (p_ptr->tim_watchlist % 120) / 2);
 #else
-		s_printf("TIM_BLACKLIST: %s +%d[-] (%dm,%ds)\n", p_ptr->name, i, (i / 120), (i % 120) / 2);
+		s_printf("TIM_BLACKLIST: %s +%d[-] (%d:%02d)\n", p_ptr->name, i, (i / 120), (i % 120) / 2);
 #endif
 
 		/* watchlist - the more known a character is, the longer he remains on it */
