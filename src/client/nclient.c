@@ -76,7 +76,7 @@ static void do_meta_pings(void);
 static sockbuf_t	rbuf, wbuf, qbuf;
 static int		(*receive_tbl[256])(void);
 static int		last_send_anything;
-static char		initialized = 0;
+static char		cl_initialized = 0;
 
 
 /* Based on Virus' MP bar mod */
@@ -1413,7 +1413,7 @@ int Net_init(int fd) {
 	}
 
 	/* Initialized */
-	initialized = 1;
+	cl_initialized = 1;
 	fullscreen_weather = FALSE;
 
 	return(0);
@@ -1472,7 +1472,7 @@ int Net_flush(void) {
  * Return the socket filedescriptor for use in a select(2) call.
  */
 int Net_fd(void) {
-	if (!initialized || c_quit) return(-1);
+	if (!cl_initialized || c_quit) return(-1);
 #ifdef RETRY_LOGIN
 	/* prevent inkey() from crashing/causing Sockbuf_read() errors ("no read from non-readable socket..") */
 	if (rl_connection_state != 1) return(-1);
@@ -1809,7 +1809,7 @@ int Net_input(void) {
 int Flush_queue(void) {
 	int len;
 
-	if (!initialized) return(0);
+	if (!cl_initialized) return(0);
 #ifdef RETRY_LOGIN
 	if (rl_connection_state != 1) return(0);
 #endif
@@ -1904,7 +1904,7 @@ int Receive_quit(void) {
 		if (strstr(reason, "Killed by") ||
 		    strstr(reason, "Committed suicide")) {
 			/* TERAHACK -- what does it do exactly, please? >_>" */
-			initialized = FALSE;
+			cl_initialized = FALSE;
 
 #if !defined(ALWAYS_RETRY_LOGIN) && defined(RETRY_LOGIN)
 			rl_connection_destructible = TRUE;

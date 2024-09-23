@@ -3147,7 +3147,7 @@ static void process_menus(WORD wCmd) {
 		/* New game */
 		case IDM_FILE_NEW:
  #if 0
-			if (!initialized) {
+			if (!cl_initialized) {
 				MessageBox(data[0].w, "You cannot do that yet...",
 				           "Warning", MB_ICONEXCLAMATION | MB_OK);
 			} else if (game_in_progress) {
@@ -3167,7 +3167,7 @@ static void process_menus(WORD wCmd) {
 		// Open game
 		case IDM_FILE_OPEN:
  #if 0
-			if (!initialized) {
+			if (!cl_initialized) {
 				MessageBox(data[0].w, "You cannot do that yet...",
 				           "Warning", MB_ICONEXCLAMATION | MB_OK);
 			} else if (game_in_progress) {

@@ -5161,7 +5161,7 @@ void do_animate_lightning(bool reset) {
 #define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
 #define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
 void do_weather(bool no_weather) {
-	/* For RAINY_TOMB: Two modes: Half-height fullscreen for tombstone (!initialized), Map panel for normal gameplay (initialized) */
+	/* For RAINY_TOMB: Two modes: Half-height fullscreen for tombstone (!initialized), Map panel for normal gameplay (cl_initialized) */
 	int panel_x = fullscreen_weather ? 0 : PANEL_X, panel_y = fullscreen_weather ? 1 : PANEL_Y; //leave out first line for message prompts (file character..)
 	int temp_hgt = fullscreen_weather ? SCREEN_HGT + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM - 5 : screen_hgt; //tomb stone only is half of bigmap'd window size; -5 to leave bottom lines below the actual ascii art empty
 	int temp_wid = fullscreen_weather ? MAX_WINDOW_WID : screen_wid; //tomb stone only is half of bigmap'd window size; -3 to leave bottom lines empty (looks better)
