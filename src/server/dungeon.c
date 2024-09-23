@@ -7457,7 +7457,9 @@ static void purge_old() {
 				    players_on_depth(&twpos))
 					do_unstat(&twpos, FALSE);
 
-				if (!players_on_depth(&twpos) && !istown(&twpos) &&
+				if (!players_on_depth(&twpos) &&
+				    !istown(&twpos) &&
+				    !isdungeontown(&twpos) &&
 				    getcave(&twpos) && stale_level(&twpos, cfg.anti_scum))
 					dealloc_dungeon_level(&twpos);
 
