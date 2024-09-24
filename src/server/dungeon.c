@@ -5007,12 +5007,14 @@ static bool process_player_end_aux(int Ind) {
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
 	dun_level	*l_ptr = getfloor(&p_ptr->wpos);
 	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
+	struct worldpos *wpos = &p_ptr->wpos;
 	char		o_name[ONAME_LEN];
 	bool		warm_place = TRUE;
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
 	bool		intrinsic_regen = FALSE;
 #endif
 	bool		timeout_handled;
+	bool		town = istown(wpos), townarea = istownarea(wpos, MAX_TOWNAREA), dungeontown = isdungeontown(wpos);
 
 	int minus = 1;
 	int minus_magic = 1;
@@ -5028,7 +5030,7 @@ static bool process_player_end_aux(int Ind) {
 		minus_magic += (i * j) / ANTIMAGIC_CAP + (magik(((i * j * 100) / ANTIMAGIC_CAP) % 100) ? 1 : 0);
 	} else minus_magic += get_skill_scale_fine(p_ptr, SKILL_ANTIMAGIC, 2); /* was 3 before, trying slightly less harsh 2 now */
 
-	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Anything done here cannot be reduced by GoI/Manashield etc */
@@ -5096,7 +5098,7 @@ static bool process_player_end_aux(int Ind) {
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
 			/* Rewrote this whole routine to take into account DSMs, wood helping thanks to its relative density, subinventories etc. - C. Blue */
 			if (!p_ptr->tim_wraith && !p_ptr->levitate) { /* Wraiths and levitating players are completely unaffected by water, including their items */
-				bool huge_wood = FALSE, cold = cold_place(&p_ptr->wpos), is_ent = (p_ptr->prace == RACE_ENT && !p_ptr->body_monster);
+				bool huge_wood = FALSE, cold = cold_place(wpos), is_ent = (p_ptr->prace == RACE_ENT && !p_ptr->body_monster);
 				int wood_weight, water_weight, required_wood_weight, drowning;
 
 				/* Calculate actual weight dragging us down and amount of wood pulling us up */
@@ -5379,7 +5381,7 @@ static bool process_player_end_aux(int Ind) {
 		/* specialty for Cloud Planes: continuous icy winds */
 		if (d_ptr && d_ptr->type == DI_CLOUD_PLANES) {
 #if 0 /* questionable - same as floor terrain effects? (kills potions) */
-			project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, randint(20), GF_COLD,
+			project(PROJECTOR_TERRAIN, 0, wpos, p_ptr->py, p_ptr->px, randint(20), GF_COLD,
 			    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF, "freezing winds");
 #else /* seems better/cleaner */
 			if (!p_ptr->immune_cold) {
@@ -5439,12 +5441,12 @@ static bool process_player_end_aux(int Ind) {
 	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    p_ptr->paralyzed != 255 && /* Hack for forced stasis - also prevents damage from starving badly */
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
-	    (!(istownarea(&p_ptr->wpos, MAX_TOWNAREA) || isdungeontown(&p_ptr->wpos) || safe_area(Ind)) //not in AMC either @ safe_area()
+	    (!(townarea || dungeontown || safe_area(Ind)) //not in AMC either @ safe_area()
 	    || p_ptr->food >= PY_FOOD_FULL)) { /* allow to digest even some in town etc to not get gorged in upcoming fights quickly - C. Blue */
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
-			if (!(turn % (DUN_TURN_56(&p_ptr->wpos) * 10))) {
+			if (!(turn % (DUN_TURN_56(wpos) * 10))) {
 				i = food_consumption(Ind);
 
 				/* Cut vampires some slack for Nether Realm:
@@ -5523,7 +5525,7 @@ static bool process_player_end_aux(int Ind) {
 #endif
 	/* Hack -- regenerate mana 5/3 times faster */
 	if (p_ptr->cmp < p_ptr->mmp) {
-		if (in_pvparena(&p_ptr->wpos))
+		if (in_pvparena(wpos))
 			regenmana(Ind, ((regen_amount * 5 * PVP_MANA_REGEN_BOOST) * (p_ptr->regen_mana ? 2 : 1)) / 3);
 		else
 			regenmana(Ind, ((regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1)) / 3);
@@ -5707,7 +5709,7 @@ static bool process_player_end_aux(int Ind) {
 		else
 #endif
 			/* hack - on hold while in town */
-			if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) {
+			if (!townarea && !dungeontown) {
 				/* decrease time left of being polymorphed */
 				(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
 			}
@@ -5951,7 +5953,7 @@ static bool process_player_end_aux(int Ind) {
 
 		while (--tries) {
 			/* Pick random location within thunderstorm radius and check for creature */
-			scatter(&p_ptr->wpos, &y, &x, p_ptr->py, p_ptr->px, (MAX_RANGE * 2) / 3, FALSE);
+			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, (MAX_RANGE * 2) / 3, FALSE);
 			//(max possible grids [tries recommended]: 1 ~1020, 5/6 ~710, 4/5 ~615, 3/4 ~530, 2/3 ~450 [30], 1/2 ~255 [15])
 			c_ptr = &zcave[y][x];
 
@@ -6015,10 +6017,10 @@ static bool process_player_end_aux(int Ind) {
 				msg_format(Ind, "Lightning strikes %s.", q_name);
 			}
 #ifdef USE_SOUND_2010
-			sound_near_site_vol(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE, 50); //don't overlap, too silyl? also: no screen flashing
+			sound_near_site_vol(y, x, wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE, 50); //don't overlap, too silyl? also: no screen flashing
 #endif
-			project(0 - Ind, 0, &p_ptr->wpos, y, x, dam, GF_THUNDER, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO, "");
-			thunderstorm_visual(&p_ptr->wpos, x, y, -1);
+			project(0 - Ind, 0, wpos, y, x, dam, GF_THUNDER, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO, "");
+			thunderstorm_visual(wpos, x, y, -1);
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - minus_magic, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
@@ -6284,7 +6286,7 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->steamblast_timer > 0) {
 		p_ptr->steamblast_timer--;
 		if (!p_ptr->steamblast_timer) {
-			cave_type **zcave = getcave(&p_ptr->wpos);
+			cave_type **zcave = getcave(wpos);
 
 			if (zcave) {
 				cave_type *c_ptr = &zcave[p_ptr->steamblast_y][p_ptr->steamblast_x];
@@ -6292,7 +6294,7 @@ static bool process_player_end_aux(int Ind) {
 				/* Closed door, locked doors, jammed doors -- works 100% for now */
 				if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
 				    // && !(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)
-					cave_set_feat_live(&p_ptr->wpos, p_ptr->steamblast_y, p_ptr->steamblast_x, FEAT_BROKEN);
+					cave_set_feat_live(wpos, p_ptr->steamblast_y, p_ptr->steamblast_x, FEAT_BROKEN);
 				}
 			}
 		}
@@ -6423,11 +6425,11 @@ static bool process_player_end_aux(int Ind) {
    idea: allow classes who lack a *remove curse* spell to make more use of the rings. */
 	//if (p_ptr->drain_exp && (p_ptr->wpos.wz != 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 	//if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-	//if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+	//if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (town ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 	/* changing above line to use istownarea() so you can sort your houses without drain */
 	if (p_ptr->drain_exp
-	    && magik((p_ptr->wpos.wz != 0 ? (isdungeontown(&p_ptr->wpos) ? 0 : 50) :
-	     (istownarea(&p_ptr->wpos, MAX_TOWNAREA) ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1))
+	    && magik((p_ptr->wpos.wz != 0 ? (dungeontown ? 0 : 50) :
+	     (townarea ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1))
 	    && magik(100 - p_ptr->antimagic / 2)
 	    && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 		//take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE, 0);
@@ -6467,7 +6469,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Now implemented here too ;) - C. Blue */
 	/* let's say TY_CURSE lowers stats (occurs often) */
 	if (p_ptr->ty_curse &&
-	    (rand_int(p_ptr->wpos.wz != 0 ? 200 : (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos) ? 0 : 500)) == 1) &&
+	    (rand_int(p_ptr->wpos.wz != 0 ? 200 : (town || dungeontown ? 0 : 500)) == 1) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 40)) {
 		if (magik(105 - p_ptr->skill_sav)) {
 			msg_print(Ind, "An ancient foul curse touches you but you resist!");
@@ -6484,7 +6486,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
-	if (p_ptr->dg_curse && (rand_int(300) == 0) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos) &&
+	if (p_ptr->dg_curse && (rand_int(300) == 0) && !townarea && !dungeontown &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 40)) {
 		int anti_Ind = world_check_antimagic(Ind);
 
