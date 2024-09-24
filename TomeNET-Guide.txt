@@ -1765,6 +1765,10 @@ They all start with a slash '/' hence they're called slash commands:
 /motd
 /snotes     Shows the current server notes that are displayed at login.
 
+/new        Client-side command to set an item to 'newest', which will use it
+            in various item prompts when they allow to select the 'newest item'
+            via '+' key.
+
 /news       Shows the login screen, same as ~h, but in monochrome.
 
 /naked      Same as /bed.

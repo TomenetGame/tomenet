@@ -7590,6 +7590,45 @@ void cmd_message(void) {
 			c_msg_format("Destroy-all-unmatched mode (requires auto_destroy) is %s.", c_cfg.destroy_all_unmatched ? "on" : "off");
 			inkey_msg = FALSE;
 			return;
+		} else if (!strcasecmp(buf, "/new")) {
+			inkey_msg = FALSE;
+			item_tester_hook = NULL;
+			get_item_hook_find_obj_what = "Item name? ";
+			get_item_extra_hook = get_item_hook_find_obj;
+			if (!c_get_item(&i, "Which item? ", (USE_INVEN | USE_EQUIP | USE_EXTRA | USE_SUBINVEN))) return;
+			if (i < 0 || i >= INVEN_TOTAL) return;
+			item_newest = i;
+			c_msg_format("Newest item now: %s", inventory_name[i]);
+			return;
+		} else if (prefix(buf, "/new ")) {
+			inkey_msg = FALSE;
+			if (!buf[5]) {
+				item_tester_hook = NULL;
+				get_item_hook_find_obj_what = "Item name? ";
+				get_item_extra_hook = get_item_hook_find_obj;
+				if (!c_get_item(&i, "Which item? ", (USE_INVEN | USE_EQUIP | USE_EXTRA | USE_SUBINVEN))) return;
+				if (i < 0 || i >= INVEN_TOTAL) return;
+				item_newest = i;
+				c_msg_format("Newest item now: %s", inventory_name[i]);
+				return;
+			}
+			if (strstr(buf, "help") || buf[5] == '?') {
+				c_msg_print("Usage: /new [<inventory slot>]");
+				return;
+			}
+			if (buf[5] >= 'a' + INVEN_WIELD - 1) buf[5] = 'Z';
+			i = buf[5] < 'a' ? INVEN_WIELD + buf[5] - 'A' : buf[5] - 'a';
+			if (i < 0 || i >= INVEN_TOTAL) {
+				c_msg_format("Not a valid inventory (a-%c) or equipment (A-%c) slot.", 'a' + INVEN_PACK - 1, 'A' + INVEN_EQ - 1);
+				return;
+			}
+			if (!inventory[i].tval) {
+				c_msg_format("There is no item in slot (%c).", buf[5]);
+				return;
+			}
+			item_newest = i;
+			c_msg_format("Newest item now: %s", inventory_name[i]);
+			return;
 		} else if (!strncasecmp(buf, "/opty", 5) || !strncasecmp(buf, "/optvy", 6)) {
 			bool redundant = FALSE, verbose;
 			int offset;
