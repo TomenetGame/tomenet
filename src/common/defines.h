@@ -1943,6 +1943,14 @@
 #define MIN_M_ALLOC_TN		8
 
 
+/* Special metric '5/6 of a dungeon turn', used for various processing. - C. Blue
+   I chose this odd-looking amount because it fit the timing situation best, where I needed
+   something to replace a purely turn-based check by something depending on relative speed instead,
+   resulting in some things faster, some things slower than before, but at very good balance overall. */
+#define DUN_TURN_56(wpos)	(level_speed(wpos) / 120)
+#define DUN_TURN_56_0		((level_speeds[0] * 5) / 120)
+
+
 /*
  * Misc constants ( see bst(), do_cmd_time() )
  */

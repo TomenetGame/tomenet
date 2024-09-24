@@ -4997,7 +4997,7 @@ int food_consumption(int Ind) {
  *
  * TODO: find a better way for timed spells(set_*).
  *
- * Called every 5/6 of a player's dungeon turn
+ * Called every 5/6 of a player's dungeon turn, see DUN_TURN_56() macro.
  */
 static bool process_player_end_aux(int Ind) {
 	player_type	*p_ptr = Players[Ind];
@@ -5444,7 +5444,7 @@ static bool process_player_end_aux(int Ind) {
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
-			if (!(turn % ((level_speed(&p_ptr->wpos) / 120) * 10))) {
+			if (!(turn % (DUN_TURN_56(&p_ptr->wpos) * 10))) {
 				i = food_consumption(Ind);
 
 				/* Cut vampires some slack for Nether Realm:
@@ -6504,10 +6504,10 @@ static bool process_player_end_aux(int Ind) {
 		} else {
 			msg_print(Ind, "An ancient morgothian curse calls out!");
 #ifdef USE_SOUND_2010
-			if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, (p_ptr->lev * 7) / 5, 100, SUMMON_MONSTER, 0, 0))
+			if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, -((p_ptr->lev + getlevel(&p_ptr->wpos) + 1) / 2 + 1), 100, SUMMON_MONSTER, 0, 0))
 				sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_MISC, FALSE);
 #else
-			(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, (p_ptr->lev * 7) / 5, 100, SUMMON_MONSTER, 0, 0);
+			(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, -((p_ptr->lev + getlevel(&p_ptr->wpos) + 1) / 2 + 1), 100, SUMMON_MONSTER, 0, 0);
 #endif
 		}
 	}
@@ -7268,7 +7268,7 @@ static void process_player_end(int Ind) {
 	 * but I am changing it to be processed once every 5/6 of a "dungeon turn".
 	 * This will make healing and poison faster with respect to real time < 1750 feet and slower > 1750 feet. - C. Blue
 	 */
-	if (!(turn % (level_speed(&p_ptr->wpos) / 120))) // level_speed is 750*5 at Bree town aka level 0 -> turn % 31.25, which is ~1/2s at cfg.fps 60
+	if (!(turn % DUN_TURN_56(&p_ptr->wpos))) // level_speed is 750*5 at Bree town aka level 0 -> turn % 31.25, which is ~1/2s at cfg.fps 60
 		if (!process_player_end_aux(Ind)) return;
 
 	/* HACK -- redraw stuff a lot, this should reduce perceived latency. */

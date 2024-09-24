@@ -1256,12 +1256,13 @@ bool mon_allowed_view(monster_race *r_ptr) {
  *
  * C. Blue: Added check of 'monster_level_min', for
  *          micro cell vaults (cross-shaped) actually:
- *    -1 = auto, 0 = disabled, >0 = use specific value.
+ *            -1 = auto, 0 = disabled, >0 = use specific value.
  *          Also added 'dlevel' to allow get_mon_num() to determine
- *          if 'monster_level' is already specifying an OoD request
- *          and therefore must not be boosted further by get_mon_num()'s
- *          own built-in OoD code.
+ *            if 'monster_level' is already specifying an OoD request
+ *            and therefore must not be boosted further by get_mon_num()'s
+ *            own built-in OoD code.
  *          Now also using 'dlevel' for additional OoD check for low/mid floors.
+ *          'level' can be negative which means disregarding 'dlevel' and also disabling any random increases of 'level', forcing an exact maxlev of -level.
  */
 
 //s16b get_mon_num(int level)
@@ -1271,13 +1272,14 @@ s16b get_mon_num(int level, int dlevel) {
 	long		value, total;
 	monster_race	*r_ptr;
 	alloc_entry	*restrict table = alloc_race_table;
+	bool		force_depth = FALSE;
 
 #if 0	// removed, but not disabled.. please see place_monster_one
 	/* Warp level around */
 	if (level > 100) level = level - 100;
 #endif	// 0
 
-	/* Out Of Depth modification: -- but not in town (Bree) */
+	/* Out Of Depth modification: -- but not in town (Bree) or for level<0 */
 	if (level > 0) {
 		if (rand_int(NASTY_MON) == 0) {
 			if (dlevel < 15) level += (2 + dlevel / 2 + randint(3));
@@ -1310,9 +1312,16 @@ s16b get_mon_num(int level, int dlevel) {
 		else monster_level_min_int = (level * 2) / 3;
 	}
 
-	/* Hack -- No town monsters in the dungeon */
-	if (level > 0) {
-		if (monster_level_min_int < 1) monster_level_min_int = 1;
+	if (monster_level_min_int < 1) {
+		if (level) monster_level_min_int = 1; /* Hack -- No town monsters in the dungeon */
+		else monster_level_min_int = 0;
+	}
+
+	/* Handle negative 'level' parm: Force exact maximum possible monster level. */
+	if (level < 0) {
+		level = -level;
+		dlevel = level;
+		force_depth = TRUE;
 	}
 
 	/* Cap maximum level */
@@ -1345,19 +1354,23 @@ s16b get_mon_num(int level, int dlevel) {
 		/* Access the actual race */
 		r_ptr = &r_info[r_idx];
 
-		/* Depth Monsters never appear out of depth */
-		/* This is currently only effectively used by Tik (other than dungeon bosses, which are already floor-locked anyway). */
-		if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (entry->level > dlevel)) continue;
-
 		/* Depth Monsters never appear out of their depth */
 		/* level = base_depth + depth, be careful(esp.wilderness)
 		 * Appearently only used for Moldoux atm. */
-		if ((r_ptr->flags9 & (RF9_ONLY_DEPTH)) && (entry->level != dlevel)) continue;
-
-		/* Prevent certain monsters from being generated too much OoD */
-		if ((r_ptr->flags7 & RF7_OOD_10) && (entry->level > dlevel + 10)) continue;
-		if ((r_ptr->flags7 & RF7_OOD_15) && (entry->level > dlevel + 15)) continue;
-		if ((r_ptr->flags7 & RF7_OOD_20) && (entry->level > dlevel + 20)) continue;
+		if (r_ptr->flags9 & (RF9_ONLY_DEPTH)) {
+			if (entry->level != dlevel) continue;
+		} else {
+			/* Depth Monsters never appear out of depth */
+			/* This is currently only effectively used by Tik (other than dungeon bosses, which are already floor-locked anyway). */
+			if ((r_ptr->flags1 & RF1_FORCE_DEPTH) || force_depth) {
+				if (entry->level > dlevel) continue;
+			} else {
+				/* Prevent certain monsters from being generated too much OoD */
+				if ((r_ptr->flags7 & RF7_OOD_10) && (entry->level > dlevel + 10)) continue;
+				if ((r_ptr->flags7 & RF7_OOD_15) && (entry->level > dlevel + 15)) continue;
+				if ((r_ptr->flags7 & RF7_OOD_20) && (entry->level > dlevel + 20)) continue;
+			}
+		}
 
 		/* Accept */
 		entry->prob3 = p;
@@ -4755,24 +4768,26 @@ static bool summon_specific_okay(int r_idx) {
  * monsters, making this function much faster and more reliable.
  *
  * Note that this function may not succeed, though this is very rare.
+ *
+ * 'lev' can be negative:
+ * In that case, -lev is used as exact value for get_mon_num(), instead of getting averaged with dlev.
  */
 bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning) {
-	int i, x, y, r_idx, dlev;
+	int i, x, y, r_idx, dis;
 	dun_level *l_ptr;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	l_ptr = getfloor(wpos);
-	dlev = getlevel(wpos);
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i) {
 		/* Pick a distance */
-		int d = (i / 15) + 1;
+		dis = (i / 15) + 1;
 
 		/* Pick a location */
-		scatter(wpos, &y, &x, y1, x1, d, 0);
+		scatter(wpos, &y, &x, y1, x1, dis, 0);
 
 		/* Require "empty" floor grid */
 		/* Changed for summoning on mountains */
@@ -4788,10 +4803,8 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	/* Failure */
 	if (i == 20) return(FALSE);
 
-
 	/* Save the "summon" type */
 	summon_specific_type = type;
-
 
 	/* Require "okay" monsters */
 	get_mon_num_hook = summon_specific_okay;
@@ -4804,10 +4817,20 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	/* XXX: Exception for Morgoth (so that he won't summon townies)
 	 * This fix presumes Morgie and Morgie only has level 100 */
 
-	for (i = 0; i < 10; i++) { /* try a couple of times */
-		/* Ok, now let them summon what they can */
-		r_idx = get_mon_num((dlev + lev) / 2 + 5, dlev);
-		break;
+	if (lev < 0) {
+		for (i = 0; i < 10; i++) { /* try a couple of times */
+			/* Ok, now let them summon what they can */
+			r_idx = get_mon_num(lev, 0);
+			break;
+		}
+	} else {
+		int dlev = getlevel(wpos);
+
+		for (i = 0; i < 10; i++) { /* try a couple of times */
+			/* Ok, now let them summon what they can */
+			r_idx = get_mon_num((dlev + lev) / 2 + 5, dlev);
+			break;
+		}
 	}
 
 	/* Don't allow uniques if escorts/friends (sidekicks) weren't allowed */

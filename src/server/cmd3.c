@@ -26,8 +26,9 @@
  * Note that taking off an item when "full" will cause that item
  * to fall to the ground.
  * force: Ignore !t inscription.
+ * Returns the inventory slot where the item was moved to from equipment.
  */
-void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool force) {
+s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool force) {
 	player_type	*p_ptr = Players[Ind];
 	int		posn; //, j;
 	object_type	*o_ptr;
@@ -40,23 +41,23 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	o_ptr = &(p_ptr->inventory[item]);
 
 	/* Paranoia */
-	if (amt <= 0) return;
+	if (amt <= 0) return(-1);
 
 	if (!force && check_guard_inscription(o_ptr->note, 't')) {
 		msg_print(Ind, "The item's inscription prevents it.");
-		return;
+		return(-1);
 	}
 
 	/* Prevent true arts poofing in house or for winners or in case of anti-hoard, if inventory overflows */
-	if (p_ptr->inven_cnt >= INVEN_PACK) {
+	if (!force && p_ptr->inven_cnt >= INVEN_PACK) {
 		/* The last item in the backpack is the one that would overflow to the floor */
 		object_type *o2_ptr = &p_ptr->inventory[INVEN_PACK - 1];
 
-		if (true_artifact_p(o2_ptr) && 
+		if (true_artifact_p(o2_ptr) &&
 		    ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) && undepositable_artifact_p(o2_ptr) && cfg.anti_arts_house) ||
 		    (!is_admin(p_ptr) && ((cfg.anti_arts_hoard && undepositable_artifact_p(o2_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o2_ptr) && cfg.kings_etiquette))))) {
 			msg_print(Ind, "\374\377yYour inventory is full and a true artifact would overflow and disappear here!");
-			return;
+			return(-1);
 		}
 	}
 
@@ -194,6 +195,8 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	p_ptr->redraw |= (PR_PLUSSES);
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	return(posn);
 }
 
 /* Handle an equipped item _after_ it was thrown away! - C. Blue
@@ -1510,7 +1513,6 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	object_type *o_ptr;
 	u32b f3, dummy;
 
-
 	/* Catch items that we have already unequipped -
 	   this can happen when entering items by name (@ key)
 	   and it looks kinda bad to get repeated 'You are ...' messages for something already in place. */
@@ -1583,7 +1585,8 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Take off the item */
-	inven_takeoff(Ind, item, amt, FALSE, FALSE);
+	item = inven_takeoff(Ind, item, amt, FALSE, FALSE);
+	if (item != -1) Send_item_newest_2nd(Ind, item);
 }
 
 

@@ -12107,7 +12107,7 @@ void process_objects(void) {
 #endif
 
 		/* timing fix - see description in dungeon() */
-		if (turn % (level_speed(&o_ptr->wpos) / 120)) continue;
+		if (turn % DUN_TURN_56(&o_ptr->wpos)) continue;
 
 		/* Handle Timeouts */
 		if (o_ptr->timeout) {
@@ -12167,7 +12167,7 @@ void process_objects(void) {
 	/* timing fix - see description in dungeon():
 	   Since all we do here for now is handling recharging/timeouting,
 	   we may just as well return if it's not yet time to. */
-	if (turn % ((level_speeds[0] * 5) / 120)) return; //standard world surface speed)
+	if (turn % DUN_TURN_56_0) return; //standard world surface speed)
 
 	/* process items in list houses */
 	for (k = 0; k < num_houses; k++) {
