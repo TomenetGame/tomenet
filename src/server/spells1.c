@@ -3803,12 +3803,19 @@ bool inc_stat(int Ind, int stat) {
 			/* 4 points at once is too much */
 			if (gain > 17) gain = 17;
 
+			/* Randomize bonus */
+			gain = randint(gain) + gain / 2;
+
 #ifdef FIX_STAT_INC_18
 			/* Gain +1 point from every +10 (ie gain 1/10 = reduce gain by 9/10, per point below 18) increase while below 18, then add the rest of the increase to 18 */
-			if (value < 18) gain -= (18 - value) * 9;
+			if (value < 18) {
+				if (gain / 10 >= 18 - value) gain -= (18 - value) * 9;
+				else gain /= 10;
+			}
 #endif
+
 			/* Apply the bonus */
-			value += randint(gain) + gain / 2;
+			value += gain;
 
 			/* Maximal value */
 			if (value > 18 + 99) value = 18 + 99;
