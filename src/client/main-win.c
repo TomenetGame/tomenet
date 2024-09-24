@@ -400,7 +400,6 @@ int graphics_image_tpr; /* Tiles per row. */
 //todo: implement -> for '-1' values for the foreground colour, change crTransparent from a COLORREF value to actual R,G,B, so "-1" can be processed?
 HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse) {
 	BITMAP bm;
-	COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
 	GetObject(hbmColour, sizeof(BITMAP), &bm);
 
 	/* Create 32bpp mask bitmap. */
@@ -426,7 +425,75 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	/* Clean up. */
 	//SetBkColor(hdcMem, clrSaveBk);
 
+#if 1 /* For top speed, operate directly on the bitmap data in memory via pointers */
+	unsigned char *data, *data2;
+	unsigned char *r, *g, *b, *r2, *g2, *b2;
+	unsigned char rt = GetRValue(crTransparent), gt = GetGValue(crTransparent), bt = GetBValue(crTransparent); /* Translate everything back xD */
+	int bytesPerPixel = bm.bmWidthBytes / bm.bmWidth;
+	int bmpWidth = bm.bmWidth;
+
+	/* Get bitmap pixel data in memory */
+ #if 0 /* Use this with LR_CREATEDIBSECTION flag in LoadImageA */
+	data = (unsigned char*)bm.bmBits;
+	data2 = (unsigned char*)bm2.bmBits;
+ #else /* Otherwise, request the bitmap data now, via GetBitmapBits() or GetDIBits() */
+	data = malloc(bm.bmWidthBytes * bm.bmHeight);
+	if (!GetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
+		printf("Graphics error: GetBitmapBits() returned zero (Image).\n");
+		return(NULL); //todo: handle in calling function
+	}
+	data2 = malloc(bm.bmWidthBytes * bm.bmHeight);
+	if (!GetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
+		printf("Graphics error: GetBitmapBits() returned zero (Mask).\n");
+		return(NULL); //todo: handle in calling function
+	}
+ #endif
+
+	const unsigned char MaskColor0 = 0, MaskColor1 = 255;
+
+	for (int y = 0; y < bm.bmHeight; y++) {
+		for (int x = 0; x < bm.bmWidth; x++) {
+			b = &data[bytesPerPixel * (x + y * bmpWidth)];
+			g = &data[bytesPerPixel * (x + y * bmpWidth) + 1];
+			r = &data[bytesPerPixel * (x + y * bmpWidth) + 2];
+			b2 = &data2[bytesPerPixel * (x + y * bmpWidth)];
+			g2 = &data2[bytesPerPixel * (x + y * bmpWidth) + 1];
+			r2 = &data2[bytesPerPixel * (x + y * bmpWidth) + 2];
+
+			//testing: turn purple fg-mask colour to pure red colour, yay
+			//if (r == GFXMASK_FG_R && g == GFXMASK_FG_G && b == GFXMASK_FG_B) b = data[bytesPerPixel * (x + y * bmpWidth)] = 0;
+
+			if (!inverse) {
+				if (*r == rt && *g == gt && *b == bt) {
+					/* Set mask pixel */
+					*b2 = *g2 = *r2 = MaskColor1;
+					/* Erase origin pixel */
+					*b = *g = *r = MaskColor0;
+				}
+			} else {
+				if (*r == rt && *g == gt && *b == bt) {
+					/* Set mask pixel */
+					*b2 = *g2 = *r2 = MaskColor0;
+					/* Erase origin pixel */
+					*b = *g = *r = MaskColor1;
+				}
+			}
+		}
+	}
+	/* Write data back via SetBitmapBits() or SetDIBits() */
+	if (!SetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
+		printf("Graphics error: SetBitmapBits() returned zero (Image).\n");
+		return(NULL); //todo: handle in calling function
+	}
+	if (!SetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
+		printf("Graphics error: SetBitmapBits() returned zero (Mask).\n");
+		return(NULL); //todo: handle in calling function
+	}
+#else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
 	/* The commented code above, which is in all tutorials on net doesn't work for mingw for unknown reasons. Let's use more classical and slower approach. */
+
+	const COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
+
 	if (!inverse) for (int y = 0; y < bm.bmHeight; y++) {
 		for (int x = 0; x < bm.bmWidth; x++) {
 			COLORREF p = GetPixel(hdcMem, x, y);
@@ -450,6 +517,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 			}
 		}
 	}
+#endif
 
 	/* Clean up. */
 	SelectBitmap(hdcMem, hbmOldMem);
@@ -2833,7 +2901,7 @@ int init_graphics_win(void) {
 	validate_file(filename);
 
 	/* Load .bmp image into memory */
-	g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // | LR_CREATEDIBSECTION); <- see CreateBitmapMask() for flag explanation
 
 	/* Calculate tiles per row. */
 	GetObject(g_hbmTiles, sizeof(BITMAP), &bm);
@@ -2858,16 +2926,38 @@ int init_graphics_win(void) {
 		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
 		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
 		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+		if (!g_hbmBgMask || !g_hbmFgMask || !g_hbmBg2Mask) {
+			sprintf(use_graphics_errstr, "Mask creation failed (2) (%d,%d,%d)", g_hbmBgMask != NULL, g_hbmFgMask != NULL, g_hbmBg2Mask != NULL);
+			printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+			quit("Graphics load error (W4)");
+ #else
+			use_graphics = 0;
+			use_graphics_err = 6;
+			goto gfx_skip;
+ #endif
+		}
 	} else
  #endif
 	/* actually always process the bg2mask even if not running 2mask mode,
 	   just to change BG2 colours in a 2mask-ready tileset to just black. This ensures tileset "backward compatibility". */
 	{
 		/* Note the order: First, we set the unused bg2mask to black... */
-		(void)CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+		void *res = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
 		/* so it instead becomes part of the bgmask now. */
 		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
 		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
+		if (!g_hbmBgMask || !g_hbmFgMask || !res) {
+			sprintf(use_graphics_errstr, "Mask creation failed (1) (%d,%d,%d)", g_hbmBgMask != NULL, g_hbmFgMask != NULL, res != NULL);
+			printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+			quit("Graphics load error (W4)");
+ #else
+			use_graphics = 0;
+			use_graphics_err = 5;
+			goto gfx_skip;
+ #endif
+		}
 	}
 
 gfx_skip:
