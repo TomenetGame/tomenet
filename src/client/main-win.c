@@ -483,10 +483,12 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 		printf("Graphics error: SetBitmapBits() returned zero (Image).\n");
 		return(NULL);
 	}
+	free(data);
 	if (!SetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
 		printf("Graphics error: SetBitmapBits() returned zero (Mask).\n");
 		return(NULL);
 	}
+	free(data2);
 #else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
 	/* The commented code above, which is in all tutorials on net doesn't work for mingw for unknown reasons. Let's use more classical and slower approach. */
 
