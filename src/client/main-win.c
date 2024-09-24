@@ -429,6 +429,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	unsigned char *data, *data2;
 	unsigned char *r, *g, *b, *r2, *g2, *b2;
 	unsigned char rt = GetRValue(crTransparent), gt = GetGValue(crTransparent), bt = GetBValue(crTransparent); /* Translate everything back xD */
+	/* Note that while hbmColour is actually in 32bbm memory, bytesPerPixel is actually 24bbp usually! (PixelFormat.Format24bppRgb/Format32bppArgb): */
 	int bytesPerPixel = bm.bmWidthBytes / bm.bmWidth;
 	int bmpWidth = bm.bmWidth;
 
@@ -459,9 +460,6 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 			b2 = &data2[bytesPerPixel * (x + y * bmpWidth)];
 			g2 = &data2[bytesPerPixel * (x + y * bmpWidth) + 1];
 			r2 = &data2[bytesPerPixel * (x + y * bmpWidth) + 2];
-
-			//testing: turn purple fg-mask colour to pure red colour, yay
-			//if (r == GFXMASK_FG_R && g == GFXMASK_FG_G && b == GFXMASK_FG_B) b = data[bytesPerPixel * (x + y * bmpWidth)] = 0;
 
 			if (!inverse) {
 				if (*r == rt && *g == gt && *b == bt) {
