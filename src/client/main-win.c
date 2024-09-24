@@ -441,12 +441,12 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	data = malloc(bm.bmWidthBytes * bm.bmHeight);
 	if (!GetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: GetBitmapBits() returned zero (Image).\n");
-		return(NULL); //todo: handle in calling function
+		return(NULL);
 	}
 	data2 = malloc(bm.bmWidthBytes * bm.bmHeight);
 	if (!GetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
 		printf("Graphics error: GetBitmapBits() returned zero (Mask).\n");
-		return(NULL); //todo: handle in calling function
+		return(NULL);
 	}
  #endif
 
@@ -481,11 +481,11 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	/* Write data back via SetBitmapBits() or SetDIBits() */
 	if (!SetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: SetBitmapBits() returned zero (Image).\n");
-		return(NULL); //todo: handle in calling function
+		return(NULL);
 	}
 	if (!SetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
 		printf("Graphics error: SetBitmapBits() returned zero (Mask).\n");
-		return(NULL); //todo: handle in calling function
+		return(NULL);
 	}
 #else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
 	/* The commented code above, which is in all tutorials on net doesn't work for mingw for unknown reasons. Let's use more classical and slower approach. */
