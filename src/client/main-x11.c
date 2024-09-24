@@ -3438,6 +3438,7 @@ static errr x11_term_init(int term_id) {
 	return(0);
 }
 
+#ifdef USE_GRAPHICS
 int init_graphics_x11(void) {
 	char path[1024];
 	char filename[1024];
@@ -3558,6 +3559,7 @@ gfx_skip:
 
 	return(use_graphics);
 }
+#endif
 
 /*
  * Initialization function for an "X11" module to Angband
@@ -3625,9 +3627,7 @@ errr init_x11(void) {
 #endif
 
 #ifdef USE_GRAPHICS
-	if (use_graphics) {
-		(void)init_graphics_x11();
-	}
+	if (use_graphics) (void)init_graphics_x11();
 #endif /* USE_GRAPHICS */
 
 	/* Initialize each term */

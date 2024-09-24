@@ -2844,6 +2844,7 @@ static void term_data_link(term_data *td) {
 #endif
 }
 
+#ifdef USE_GRAPHICS
 /* Assumes 'use_graphics' is enabled, but may disable it if init fails. */
 int init_graphics_win(void) {
 	BITMAP bm;
@@ -2969,6 +2970,7 @@ gfx_skip:
 
 	return(use_graphics);
 }
+#endif
 
 /*
  * Create the windows
@@ -3066,9 +3068,7 @@ static void init_windows(void) {
 
 #ifdef USE_GRAPHICS
 	/* Handle "graphics" mode */
-	if (use_graphics) {
-		(void)init_graphics_win();
-	}
+	if (use_graphics) (void)init_graphics_win();
 #endif
 
 	/* Screen window */
