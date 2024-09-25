@@ -669,12 +669,26 @@
 
 #endif
 #if 1 /* actually make these constants always available for now, might need sorting out/cleaning up */
-//#ifdef GRAPHICS_BG_MASK
  /* Constants for use_graphics client setting */
  #define UG_NONE	0
  #define UG_NORMAL	1
- #define UG_2MASK	2
-//#endif
+ #ifdef GRAPHICS_BG_MASK
+  #define UG_2MASK	2
+ #endif
+
+ #ifdef USE_SDL2
+  /* Maximum number of masks per tile and tiles per coordinate. */
+  #ifdef GRAPHICS_BG_MASK
+   #define GRAPHICS_MAX_MPT 3
+   #define GRAPHICS_MAX_TPC 2
+   /* Maximum radius supported when forcing SDL2 tile outlines. */
+   #define SDL2_FORCE_OUTLINE_MAX_RADIUS 6
+  #else
+   #define GRAPHICS_MAX_MPT 2
+   #define GRAPHICS_MAX_TPC 1
+  #endif
+ #endif
+
 #endif
 
 
@@ -889,6 +903,75 @@
   /* During string input (chat messages!) navigational keys will actually override any macros put on them, not even normal macros on them will work.
      Only some navigational keys will do this: Those that actually have a real function in string input.  */
   #define SOME_NAVI_KEYS_DISABLE_MACROS_IN_PROMPTS
+  /* Navigation keys/special keys sequence initializer */
+  #define NAVI_KEY_SEQ_START		{ 31, 0}
+  #ifdef WINDOWS
+   /* CTRL pressed */
+   #define NAVI_KEY_SEQ_CTRL		{ 67, 0}
+   /* SHIFT pressed */
+   #define NAVI_KEY_SEQ_SHIFT		{ 83 , 0}
+   /* ALT pressed */
+   #define NAVI_KEY_SEQ_ALT		{ 65 , 0}
+   /* Shiftkey terminator marker */
+   #define NAVI_KEY_SEQ_SHIFTKEY_TERM	{ 120, 0 }
+   /* Static middle sequence */
+   #define NAVI_KEY_SEQ_SKIP		{ 0 }
+   /* Navigation key codes */
+   #define NAVI_KEY_SEQ_UP		{ 52,  56, 0}
+   #define NAVI_KEY_SEQ_RIGHT		{ 52,  68, 0}
+   #define NAVI_KEY_SEQ_DOWN		{ 53,  48, 0}
+   #define NAVI_KEY_SEQ_LEFT		{ 52,  66, 0}
+   #define NAVI_KEY_SEQ_POS1		{ 52,  55, 0}
+   #define NAVI_KEY_SEQ_END		{ 52,  70, 0}
+   #define NAVI_KEY_SEQ_PAGEUP		{ 52,  57, 0}
+   #define NAVI_KEY_SEQ_PAGEDOWN		{ 53,  49, 0}
+   #define NAVI_KEY_SEQ_DEL		{ 53,  51, 0}
+  #elif defined(USE_SDL2)
+   /* CTRL pressed */
+   #define NAVI_KEY_SEQ_CTRL		{ 78, 0 }
+   /* SHIFT pressed */
+   #define NAVI_KEY_SEQ_SHIFT		{ 83, 0 }
+   /* ALT pressed */
+   #define NAVI_KEY_SEQ_ALT		{ 79, 0 }
+   /* Shiftkey terminator marker */
+   #define NAVI_KEY_SEQ_SHIFTKEY_TERM	{ 95, 0 }
+   /* Static middle sequence */
+   #define NAVI_KEY_SEQ_SKIP		{ 70, 70, 0 }
+   /* Navigation key codes */
+   #define NAVI_KEY_SEQ_UP		{ 53,  50, 0 }
+   #define NAVI_KEY_SEQ_RIGHT		{ 53,  51, 0 }
+   #define NAVI_KEY_SEQ_DOWN		{ 53,  52, 0 }
+   #define NAVI_KEY_SEQ_LEFT		{ 53,  49, 0 }
+   #define NAVI_KEY_SEQ_POS1		{ 53,  48, 0 }
+   #define NAVI_KEY_SEQ_END		{ 53,  55, 0 }
+   #define NAVI_KEY_SEQ_PAGEUP		{ 53,  53, 0 }
+   #define NAVI_KEY_SEQ_PAGEDOWN		{ 53,  54, 0 }
+   #define NAVI_KEY_SEQ_DEL		{ 53, 57, 0 }
+  #else /* POSIX, at least working on Linux/X11 */
+   /* CTRL pressed */
+   #define NAVI_KEY_SEQ_CTRL		{ 78, 0 }
+   /* SHIFT pressed */
+   #define NAVI_KEY_SEQ_SHIFT		{ 83, 0 }
+   /* ALT pressed */
+   #define NAVI_KEY_SEQ_ALT		{ 79, 0 }
+   /* Shiftkey terminator marker */
+   #define NAVI_KEY_SEQ_SHIFTKEY_TERM	{ 95, 0 }
+   /* Static middle sequence */
+   #define NAVI_KEY_SEQ_SKIP		{ 70, 70, 0 }
+   /* Navigation key codes */
+   #define NAVI_KEY_SEQ_UP		{ 53,  50, 0 }
+   #define NAVI_KEY_SEQ_RIGHT		{ 53,  51, 0 }
+   #define NAVI_KEY_SEQ_DOWN		{ 53,  52, 0 }
+   #define NAVI_KEY_SEQ_LEFT		{ 53,  49, 0 }
+   #define NAVI_KEY_SEQ_POS1		{ 53,  48, 0 }
+   #define NAVI_KEY_SEQ_END		{ 53,  55, 0 }
+   #define NAVI_KEY_SEQ_PAGEUP		{ 53,  53, 0 }
+   #define NAVI_KEY_SEQ_PAGEDOWN		{ 53,  54, 0 }
+   /* Depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/ */
+   #define NAVI_KEY_SEQ_DEL		{ 0 }
+  #endif
+   /* The closing marker of all special key sequences */
+  #define NAVI_KEY_SEQ_TERM		{ 13, 0 }
  #endif
 #endif
 

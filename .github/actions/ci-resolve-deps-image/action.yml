@@ -1,0 +1,154 @@
+name: CI Resolve Deps Image
+description: Resolve shared deps image by hash, refresh by TTL, and optionally push to GHCR.
+inputs:
+  image_repo:
+    description: GHCR image repository, e.g. ghcr.io/owner/tomenet-fedora41-builder.
+    required: true
+  containerfile:
+    description: Path to container file.
+    required: false
+    default: .github/docker/fedora41/Containerfile
+  install_script:
+    description: Path to dependency install script used by the container build.
+    required: false
+    default: .github/docker/fedora41/install-build-requirements.sh
+  ttl_days:
+    description: Max acceptable age before image is considered stale.
+    required: false
+    default: "30"
+  can_push:
+    description: Whether this run is allowed to push built images to GHCR.
+    required: false
+    default: "false"
+  update_latest_alias:
+    description: Whether to update image_repo:latest to the resolved deps image.
+    required: false
+    default: "false"
+outputs:
+  image_ref:
+    description: Final image reference to use.
+    value: ${{ steps.resolve.outputs.image_ref }}
+  deps_hash:
+    description: Hash derived from containerfile, install script, and base image digest.
+    value: ${{ steps.resolve.outputs.deps_hash }}
+  did_build:
+    description: Whether docker build was executed.
+    value: ${{ steps.resolve.outputs.did_build }}
+  did_push:
+    description: Whether image push to GHCR succeeded.
+    value: ${{ steps.resolve.outputs.did_push }}
+  is_stale:
+    description: Whether pulled image was considered stale by TTL.
+    value: ${{ steps.resolve.outputs.is_stale }}
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        image_repo="${{ inputs.image_repo }}"
+        containerfile="${{ inputs.containerfile }}"
+        install_script="${{ inputs.install_script }}"
+        ttl_days="${{ inputs.ttl_days }}"
+        can_push="${{ inputs.can_push }}"
+        update_latest_alias="${{ inputs.update_latest_alias }}"
+
+        if [[ ! -f "$containerfile" ]]; then
+          echo "Containerfile not found: $containerfile" >&2
+          exit 1
+        fi
+
+        if [[ ! -f "$install_script" ]]; then
+          echo "Install script not found: $install_script" >&2
+          exit 1
+        fi
+
+        base_image="$(awk 'toupper($1)=="FROM" {print $2; exit}' "$containerfile")"
+        if [[ -z "$base_image" ]]; then
+          echo "Unable to resolve base image from $containerfile" >&2
+          exit 1
+        fi
+
+        if ! docker pull "$base_image" >/dev/null 2>&1; then
+          echo "Warning: failed to pull base image '$base_image'; hash falls back without digest." >&2
+        fi
+
+        base_repo_digest="$(docker image inspect --format '{{index .RepoDigests 0}}' "$base_image" 2>/dev/null || true)"
+        if [[ -n "$base_repo_digest" && "$base_repo_digest" == *"@"* ]]; then
+          base_digest="${base_repo_digest#*@}"
+        else
+          base_digest="unknown"
+        fi
+
+        containerfile_hash="$(sha256sum "$containerfile" | awk '{print $1}')"
+        install_script_hash="$(sha256sum "$install_script" | awk '{print $1}')"
+        deps_hash="$(printf '%s\n%s\n%s\n' "$containerfile_hash" "$install_script_hash" "$base_digest" | sha256sum | awk '{print $1}')"
+
+        target_ref="${image_repo}:deps-${deps_hash}"
+        did_build=false
+        did_push=false
+        is_stale=false
+
+        push_target() {
+          local ref="$1"
+          if docker push "$ref"; then
+            return 0
+          fi
+          echo "Warning: push failed for $ref" >&2
+          return 1
+        }
+
+        build_target() {
+          local ref="$1"
+          did_build=true
+          docker build \
+            --label "org.tomenet.deps-hash=${deps_hash}" \
+            --label "org.tomenet.built-at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -f "$containerfile" \
+            -t "$ref" \
+            .
+        }
+
+        image_available=false
+        if docker pull "$target_ref"; then
+          image_available=true
+
+          created="$(docker image inspect --format '{{.Created}}' "$target_ref")"
+          if [[ -n "$created" ]]; then
+            freshness="$(python3 -c "import datetime,sys; created=sys.argv[1]; ttl=int(sys.argv[2]); cdt=datetime.datetime.fromisoformat(created.replace('Z','+00:00')); now=datetime.datetime.now(datetime.timezone.utc); print('stale' if (now-cdt).days > ttl else 'fresh')" "$created" "$ttl_days")"
+            if [[ "$freshness" == "stale" ]]; then
+              is_stale=true
+            fi
+          fi
+        fi
+
+        if [[ "$image_available" != "true" ]]; then
+          build_target "$target_ref"
+          if [[ "$can_push" == "true" ]]; then
+            if push_target "$target_ref"; then
+              did_push=true
+            fi
+          fi
+        elif [[ "$is_stale" == "true" && "$can_push" == "true" ]]; then
+          build_target "$target_ref"
+          if push_target "$target_ref"; then
+            did_push=true
+          fi
+        fi
+
+        if [[ "$update_latest_alias" == "true" ]]; then
+          docker tag "$target_ref" "${image_repo}:latest"
+          if push_target "${image_repo}:latest"; then
+            did_push=true
+          fi
+        fi
+
+        {
+          echo "image_ref=${target_ref}"
+          echo "deps_hash=${deps_hash}"
+          echo "did_build=${did_build}"
+          echo "did_push=${did_push}"
+          echo "is_stale=${is_stale}"
+        } >> "$GITHUB_OUTPUT"

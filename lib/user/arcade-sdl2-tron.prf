@@ -1,0 +1,141 @@
+#Moltor's Arcade: Macro file for 'Tron'
+
+#snakes* [y], maxwins* [y], maxlenght more/less length [75..200..500], walls* [y], more/less walls [4..10..20], gates* [n], midgate* [n], more/less gate speed [8..[4]], rings* [n], more/less rings [2..4..10], city* [n],
+#powerups* [y], moveups* [n?], float* [n?], centerups* (mega powerup in the center) [n?],
+#more/less speed [7], max stuff, dark* [n], ai* [y?], race* [n??], options, prac(tice)* [n], spectating* [n] -> watch tron, reset tron, reset; command: play tron, begin, quit
+
+#(*) allow toggling/"on"/"off"
+
+#F1 help, F2 play tron, F3 begin, F4 quit, F5 walls, F6 gates, F7 midgate, F8 rings, F9 moveups(+float), F10 centerups, F11 dark, F1 snakes
+#SHIFT + F1 options, F2 maxwins, F3 race, F4 ai, F5 reset tron, F12 switch game
+
+# -----------------------------------------------------------------------------
+
+# Macro '0' - F1
+A::%:\n:%:{oHELP for currently loaded macro set 'Tron':\n:%:{GArrow keys or number pad 2/4/6/8 to change direction.{-\n:%:F1 - Display this help, {GF2 - Enter arena, F3 - Start Tron, {-F4 - Quit\n:%:F5 - Toggle walls, F6 - gates, F7 - midgate, F8 - rings\n:%:F9 - Moving powerups, F10 - Mega up, F11 - Fog of war, F12 - Toggle tails\n:%:SHIFT+F1 - Show options, F2 - Toggle size-win, F3 - race, F4 - AI enemies\n:%:SHIFT+F5/F6 - Less/more speed, F7/F8 - Less/more length\n:%:SHIFT+F9/F10 - Less/more walls, F11 - Reset Tron, {sF12 - Switch game{-\n:%:\n
+H:^__FFBE\r
+
+# Macro '1' - F2
+A::command: play tron\n
+H:^__FFBF\r
+
+# Macro '2' - F3
+A::begin\n
+H:^__FFC0\r
+
+# Macro '3' - F4
+A::quit\n
+H:^__FFC1\r
+
+# Macro '4' - F5
+A::walls\n
+H:^__FFC2\r
+
+# Macro '5' - F6
+A::gates\n
+H:^__FFC3\r
+
+# Macro '6' - F7
+A::midgate\n
+H:^__FFC4\r
+
+# Macro '7' - F8
+A::rings\n
+H:^__FFC5\r
+
+# Macro '8' - F9
+#A::moveups\n:float\n
+A::moveups\n
+H:^__FFC6\r
+
+# Macro '9' - F10
+A::centerups\n
+H:^__FFC7\r
+
+# Macro '10' - F11
+A::dark\n
+H:^__FFC8\r
+
+# Macro '11' - F12
+A::snakes\n
+H:^__FFC9\r
+
+# Macro '12' - SHIFT+F1
+A::options\n
+H:^_S_FFBE\r
+
+# Macro '13' - SHIFT+F2
+A::maxwins\n
+H:^_S_FFBF\r
+
+# Macro '14' - SHIFT+F3
+A::race\n
+H:^_S_FFC0\r
+
+# Macro '15' - SHIFT+F4
+A::ai\n
+H:^_S_FFC1\r
+
+# Macro '' - SHIFT+F5
+A::less speed\n
+H:^_S_FFC2\r
+
+# Macro '' - SHIFT+F6
+A::more speed\n
+H:^_S_FFC3\r
+
+# Macro '' - SHIFT+F7
+A::less length\n
+H:^_S_FFC4\r
+
+# Macro '' - SHIFT+F8
+A::more length\n
+H:^_S_FFC5\r
+
+# Macro '' - SHIFT+F9
+A::less walls\n
+H:^_S_FFC6\r
+
+# Macro '' - SHIFT+F10
+A::more walls\n
+H:^_S_FFC7\r
+
+# Macro '' - SHIFT+F11
+A::reset tron\n
+H:^_S_FFC8r
+
+# Macro '17' - SHIFT+F12
+A:%larcade-x11-smash.prf\n\e:%:SMASH macros loaded.\n
+H:^_S_FFC9\r
+
+# Macro '18' - Movement Number pad
+A::command:\sfire\s2\r
+H:^__FFB2\r^\2^\
+
+# Macro '19'
+A::command:\sfire\s4\r
+H:^__FFB4\r^\4^\
+
+# Macro '20'
+A::command:\sfire\s6\r
+H:^__FFB6\r^\6^\
+
+# Macro '21'
+A::command:\sfire\s8\r
+H:^__FFB8\r^\8^\
+
+# Macro '22' - Movement Arrow keys
+A::command:\sfire\s8\r
+H:^__FF52\r
+
+# Macro '23'
+A::command:\sfire\s2\r
+H:^__FF54\r
+
+# Macro '24'
+A::command:\sfire\s4\r
+H:^__FF51\r
+
+# Macro '25'
+A::command:\sfire\s6\r
+H:^__FF53\r

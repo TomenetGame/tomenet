@@ -58,6 +58,24 @@
 # endif
 #endif
 
+#if defined(USE_SDL2)
+ #include <unistd.h>
+ /* The mingw library has other mkdir definition than linux. */
+ #ifdef MINGW
+  #define MKDIR(p) mkdir(p)
+ #else
+  #include <sys/stat.h>
+  #define MKDIR(p) mkdir(p, 0775)
+ #endif
+
+ /* Create a realpath replacement macro for when compiling under mingw. */
+ /* Based upon https://stackoverflow.com/questions/45124869/cross-platform-alternative-to-this-realpath-definition */
+ #ifdef MINGW
+  #define realpath(N,R) _fullpath((R),(N),PATH_MAX)
+ #endif
+#endif
+
+
 #ifdef AMIGA
 # include <pwd.h>
 #endif
@@ -119,7 +137,7 @@
 
 
 
-#if !defined(linux) && !defined(__MWERKS__) && !defined(ACORN) && !defined(USE_GCU) && !defined(USE_X11) && !defined(__FreeBSD__)
+#if !defined(linux) && !defined(__MWERKS__) && !defined(ACORN) && !defined(USE_GCU) && !defined(USE_X11) && !defined(__FreeBSD__) && !defined(USE_SDL2)
 extern long atol();
 #endif
 

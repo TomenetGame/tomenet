@@ -220,7 +220,7 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 		if (p_ptr->s_info[i].flags1 & SKF1_DUMMY) color = TERM_SLATE;
 
 		if (j == sel) {
-#if defined(USE_X11) || defined(WINDOWS)
+#if defined(USE_X11) || defined(WINDOWS) || defined(USE_SDL2)
  #if defined(TEST_CLIENT) && defined(EXTENDED_BG_COLOURS)
 			color = TERMX_BLUE;
  #else

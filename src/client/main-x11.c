@@ -1220,10 +1220,6 @@ struct tile_cache_entry {
  #endif
 };
 #endif
-#ifdef USE_GRAPHICS
-extern int gfx_resize_type;
-int gfx_resize_type = 1;
-#endif
 
 
 /*
@@ -3075,10 +3071,10 @@ Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float origi
 	color_rgb newPixelRgb;
 
 	/* Most of implementation is here because making sample and then go through it take too much time  */
-	double sum_red = 0.0;
-	double sum_green = 0.0;
-	double sum_blue = 0.0;
-	double weight_sum = 0.0;
+	float sum_red = 0.0;
+	float sum_green = 0.0;
+	float sum_blue = 0.0;
+	float weight_sum = 0.0;
 	for (int y = originalLoopY - LANCZOS_A; y <= originalLoopY + LANCZOS_A; y++)
 	{
 		for (int x = originalLoopX - LANCZOS_A; x <= originalLoopX + LANCZOS_A; x++)
@@ -3086,10 +3082,10 @@ Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float origi
 			coordinates sample_pixel_coordinates = confineCoordinatesToRectangle(x, y, tile_boundaries);
 			color_rgb sample_pixel_color = xGetPixelRgb(originalImage, sample_pixel_coordinates.x, sample_pixel_coordinates.y);
 
-			double dist_x = originalX - x;
-			double dist_y = originalY - y;
+			float dist_x = originalX - x;
+			float dist_y = originalY - y;
 
-			double weight = lanczosKernel(dist_x, LANCZOS_A) * lanczosKernel(dist_y, LANCZOS_A);
+			float weight = lanczosKernel(dist_x, LANCZOS_A) * lanczosKernel(dist_y, LANCZOS_A);
 
 			sum_red += weight * sample_pixel_color.red;
 			sum_green += weight * sample_pixel_color.green;

@@ -4,15 +4,15 @@
 #include "sockbuf.h"
 
 /* Include the socket library for the correct OS */
-#ifdef WIN32
-# include "net-win.h"
+#ifdef MSDOS
+ #include "net-ibm.h"
+#elif defined(WIN32)
+ #include "net-win.h"
+#elif defined(USE_SDL2)
+ #include "net-sdl2.h"
 #else
-# ifdef MSDOS
-#  include "net-ibm.h"
-# else
-#  include "net-unix.h"
-# endif
-#endif
+ #include "net-unix.h"
+#endif 
 
 /* Include the various packet types and error codes */
 #include "pack.h"

@@ -1,6 +1,10 @@
 /* $Id$ */
 #include "angband.h"
 
+#ifdef USE_SDL2
+ #include <SDL2/SDL.h>
+#endif
+
 #ifdef REGEX_SEARCH
  #include <regex.h>
 #endif
@@ -4876,6 +4880,11 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 	/* buffer file, for easy reverse browsing */
 	i = -1;
+#ifdef USE_SDL2
+	/* Avoid reverse fseek() in text mode (mingw/Wine); reverse in memory instead. */
+	bool invert_after = reverse;
+	reverse = FALSE;
+#endif
 	if (reverse) {
 		fseek(fff, -1, SEEK_END);
 		while (fgets_inverse(buf, MAX_CHARS_WIDE * 2 + 1, fff)) {
@@ -4926,6 +4935,18 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 		}
 		file_lastline[remembrance_index] = i;
 	}
+#ifdef USE_SDL2
+	if (invert_after && file_lastline[remembrance_index] > 0) {
+		int lo = 0, hi = file_lastline[remembrance_index];
+		while (lo < hi) {
+			char *tmp = local_file_line[lo];
+			local_file_line[lo] = local_file_line[hi];
+			local_file_line[hi] = tmp;
+			lo++;
+			hi--;
+		}
+	}
+#endif
 	my_fclose(fff);
 #endif
 
@@ -6877,15 +6898,93 @@ static void monster_lore(void) {
 	Term_load();
 }
 
+/*
+ * NOTE: the usage of Send_special_line is quite a hack;
+ * it sends a letter in place of cur_line...		- Jir -
+ */
+//(Linux file managers: Dolphin, Konqueror, Thunar, Caja, Nautilus, Nemo /// generic desktop environments: xdg-open)
+#if defined(USE_X11)
+ /* '&' for async - actually not needed on X11 though, program will still continue to execute
+    because xdg-open spawns the file manager asynchronously and returns right away */
+ #ifdef OSX
+  #define FILEMAN(p) (res = system(format("open \"%s\" &", p)));
+  #define URLMAN(p) (res = system(format("open \"%s\" &", p)));
+ #else
+  #define FILEMAN(p) (res = system(format("xdg-open \"%s\" &", p)));
+  #define URLMAN(p) (res = system(format("xdg-open \"%s\" &", p)));
+ #endif
+#elif defined(WINDOWS)
+ /* 'start' for async */
+ #define FILEMAN(p) (res = system(format("start explorer \"%s\"", p)));
+ //#define URLMAN(p) (res = system(format("cmd /c start \"\" \"%s\"", p)));
+
+ /* According to The Scar in Firefox on Win 11 this does open the website but also causes it to start in 'diagnostics mode' (and was 100% fine in Win 7): */
+ #define URLMAN(p) ShellExecute(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL);
+ /* ..and according to him this works fine - but it doesn't work in Wine actually -_- : */
+ //#define URLMAN(p) (res = system(format("start \"%s\"", p)));
+#elif defined(USE_SDL2)
+/* 
+ * Opens provided filename in OS environment using associated application.
+ * The provided path should be an absolute path. Some detection with warning and fixing is done, but I wouldn't depend on it.
+ * Returns 0 on success, or -1 on error. The error is written as a chat message.
+ */
+static int sdl2_fileman(const char *p) {
+	char url[1032], buf[1032];
+	bool is_abs = FALSE;
+
+	if (p[0] == '/' || p[0] == '\\') is_abs = TRUE;
+	else if (p[0] && p[1] == ':') is_abs = TRUE;
+	if (!is_abs) {
+		fprintf(stderr, "Warning: sdl2_fileman: File path \"%s\" is not absolute, trying to fix it, but please rewrite the code to call with absolute path.\n", p);
+		strnfmt(buf, sizeof(buf), "%s%s", SDL2_GAME_PATH, p);
+		p = buf;
+	}
+	strnfmt(url, sizeof(url), "file://%s", p);
+	int rc = SDL_OpenURL(url);
+	if (rc < 0) c_msg_format("Opening file \"%s\" failed with error: %s", p, SDL_GetError());
+	return rc;
+}
+
+/* 
+ * Opens provided url in default broser.
+ * Returns 0 on success, or -1 on error. The error is written as a chat message.
+ */
+static int sdl2_urlman(const char *p) {
+	int rc = SDL_OpenURL(p);
+	if (rc < 0) c_msg_format("Opening url \"%s\" failed with error: %s", p, SDL_GetError());
+	return rc;
+}
+ #define FILEMAN(p) (res = sdl2_fileman(p))
+ #define URLMAN(p) (res = sdl2_urlman(p))
+#endif
+
 //#define SCREENSHOT_TARGET "tomenet-screenshot.png"
 #define SCREENSHOT_TARGET (format("%s.png", screenshot_filename))
 bool png_screenshot(void) {
+#ifdef USE_SDL2
+	char buf[1024];
+	int res;
+
+	if (!screenshot_filename[0]) {
+		c_msg_print("\377yYou have not made a screenshot yet this session (CTRL+T/CTRL+SHIFT+T).");
+		return(FALSE);
+	}
+
+	path_build(buf, sizeof(buf), ANGBAND_USER_DIR_USER, screenshot_filename);
+	if (my_fexists(buf)) {
+		FILEMAN(buf);
+		return(res >= 0);
+	}
+
+	c_msg_print("\377yLast screenshot file not found.");
+	return(FALSE);
+#endif
 #ifdef WINDOWS
 	char path[1024], *c = path, *c2, tmp[1024], executable[1024];
 #endif
 #if !defined(WINDOWS) && !defined(USE_X11)
 	/* Neither WINDOWS nor USE_X11 */
-	c_msg_print("\377ySorry, creating a PNG file from a screenshot requires an X11 or Windows system.");
+	c_msg_print("\377ySorry, creating a image file from a screenshot requires an X11 or Windows system.");
 	return(FALSE);
 #else
 	char buf[1024], file_name[1024], command[1024];
@@ -7288,23 +7387,55 @@ static void cmd_notes(void) {
 	Term_clear();
 	topline_icky = TRUE;
 
+#ifdef USE_SDL2
+	/* Read all locally available note files from user storage. */
+	path_build(path, 1024, ANGBAND_USER_DIR_USER, "");
+	if (!(dir = opendir(path))) {
+		c_msg_format("Couldn't open user directory (%s).", path);
+		return;
+	}
+	while ((ent = readdir(dir))) {
+		strcpy(tmp_name, ent->d_name);
+		if (strncmp(tmp_name, "notes-", 6)) continue;
+
+		strcpy(notes_fname[notes_files], tmp_name);
+		notes_files++;
+
+		if (notes_files == MAX_NOTES_FILES) {
+			c_msg_format("\377oWARNING: Amount of user 'notes-' files exceeds processable maximum (%d)!", MAX_NOTES_FILES);
+			break;
+		}
+	}
+	closedir(dir);
+#endif
+
 	/* read all locally available note files */
 	path_build(path, 1024, ANGBAND_DIR_USER, "");
 	if (!(dir = opendir(path))) {
 		c_msg_format("Couldn't open user directory (%s).", path);
 		return;
 	}
-
 	while ((ent = readdir(dir))) {
+		if (notes_files == MAX_NOTES_FILES) break;
+
 		strcpy(tmp_name, ent->d_name);
-		if (!strncmp(tmp_name, "notes-", 6)) {
-			strcpy(notes_fname[notes_files], tmp_name);
-			notes_files++;
-			if (notes_files == MAX_NOTES_FILES) {
-				c_msg_format("\377oWARNING: Amount of 'notes-' files exceeds processable maximum (%d)!", MAX_NOTES_FILES);
-				break;
-			}
+		if (strncmp(tmp_name, "notes-", 6)) continue;
+
+#ifdef USE_SDL2
+		int k;
+		/* Check duplicate in notes_fname. */
+		for (k = 0; k < notes_files; k++) if (!strcmp(notes_fname[k], tmp_name)) break;
+		if (k < notes_files) continue; /* duplicate */
+#endif
+
+		strcpy(notes_fname[notes_files], tmp_name);
+		notes_files++;
+
+		if (notes_files == MAX_NOTES_FILES) {
+			c_msg_format("\377oWARNING: Amount of 'notes-' files exceeds processable maximum (%d)!", MAX_NOTES_FILES);
+			break;
 		}
+
 	}
 	closedir(dir);
 
@@ -7428,37 +7559,12 @@ static void cmd_notes(void) {
 	Term_clear();
 }
 
-/*
- * NOTE: the usage of Send_special_line is quite a hack;
- * it sends a letter in place of cur_line...		- Jir -
- */
-//(Linux file managers: Dolphin, Konqueror, Thunar, Caja, Nautilus, Nemo /// generic desktop environments: xdg-open)
-#if defined(USE_X11)
- /* '&' for async - actually not needed on X11 though, program will still continue to execute
-    because xdg-open spawns the file manager asynchronously and returns right away */
- #ifdef OSX
-  #define FILEMAN(p) (res = system(format("open \"%s\" &", p)));
-  #define URLMAN(p) (res = system(format("open \"%s\" &", p)));
- #else
-  #define FILEMAN(p) (res = system(format("xdg-open \"%s\" &", p)));
-  #define URLMAN(p) (res = system(format("xdg-open \"%s\" &", p)));
- #endif
-#elif defined(WINDOWS)
- /* 'start' for async */
- #define FILEMAN(p) (res = system(format("start explorer \"%s\"", p)));
- //#define URLMAN(p) (res = system(format("cmd /c start \"\" \"%s\"", p)));
-
- /* According to The Scar in Firefox on Win 11 this does open the website but also causes it to start in 'diagnostics mode' (and was 100% fine in Win 7): */
- #define URLMAN(p) ShellExecute(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL);
- /* ..and according to him this works fine - but it doesn't work in Wine actually -_- : */
- //#define URLMAN(p) (res = system(format("start \"%s\"", p)));
-#endif
 void cmd_check_misc(void) {
 	char i = 0, choice;
 	int row, res;
 	/* suppress hybrid macros in some submenus */
 	bool inkey_msg_old, uniques, redraw = TRUE;
-#if defined(USE_X11) || defined(WINDOWS)
+#if defined(USE_X11) || defined(WINDOWS) || defined(USE_SDL2)
 	char path[1024];
 #endif
 #ifdef USE_X11
@@ -7507,17 +7613,29 @@ void cmd_check_misc(void) {
 
 			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377y?\377w) Help");
 			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yg\377w) The Guide (also use \377y/?\377w)");
+#ifdef USE_SDL2
+			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yo\377w) Extra info (same as \377y/ex\377w)");
+#else
 			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yx\377w) Extra info (same as \377y/ex\377w)");
+#endif
 			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yl\377w) Spoiler files (in lib/game)");
 			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yn\377w) Notes you received from others");
 			row += 4;
 
 			/* Folders */
+#ifdef USE_SDL2
+			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377Ut/T\377w) Open user/program folder");
+			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377Uu/U\377w) Open user/game user folder");
+			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377Us/S\377w) Open user/game sound folder");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377Um/M\377w) Open user/game music folder");
+			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377Ux/X\377w) Open user/game xtra folder");
+#else
 			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UT\377w) Open program folder");
 			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UU\377w) Open user folder");
 			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377US\377w) Open sound folder");
 			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UM\377w) Open music folder");
 			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377UX\377w) Open xtra folder (fonts/audio)");
+#endif
 			Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377UP\377w) Open Player Stores page");
 			/* URLs */
 			row += 3;
@@ -7526,15 +7644,58 @@ void cmd_check_misc(void) {
 			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
 			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
 			row += 3;
+#ifdef USE_SDL2
+			Term_putstr( 5, row, -1, TERM_WHITE, "(\377o~\377w) Open last screenshot:");
+			if (screenshot_filename[0]) {
+				if (strlen(screenshot_filename) <= 31) {
+					Term_putstr(5, row + 1,   -1, TERM_WHITE, format("    %s", screenshot_filename));
+				} else {
+					/* Try to cut line at dot */
+					i = 31;
+					while (i && screenshot_filename[(int)i] != '.') i--;
+					/* ..but don't accept unreasonable lenght */
+					if (i < 16) {
+						/* Cut without regard, ouch */
+						Term_putstr(5, row + 1,   -1, TERM_WHITE, format("    %-.31s", screenshot_filename));
+						Term_putstr(5, row + 2,   -1, TERM_WHITE, format("    %-.31s", screenshot_filename + 31));
+					} else {
+						/* Cut nicely & cleanly at dot */
+						Term_putstr(5, row + 1,   -1, TERM_WHITE, format("    %-.*s", i, screenshot_filename));
+						Term_putstr(5, row + 2,   -1, TERM_WHITE, format("    %-.31s", screenshot_filename + i));
+					}
+				}
+			} else {
+				Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    - no screenshot taken -");
+			}
+#else
 			Term_putstr( 5, row, -1, TERM_WHITE, "(\377o#\377w) Convert last screenshot to");
 			Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    a PNG and leave this menu:");
 			Term_putstr( 5, row + 2,   -1, TERM_WHITE, format("    %s", screenshot_filename[0] ? screenshot_filename : "- no screenshot taken -"));
+#endif
 			Term_putstr(40, row, -1, TERM_WHITE, "(\377oC\377w) Edit the current config file:");
-#ifdef USE_X11
+#if defined(USE_X11)
 			Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %s", mangrc_filename));
 			Term_putstr(40, row + 2, -1, TERM_WHITE, "    (Requires 'grep' to be installed.)");
-#endif
-#ifdef WINDOWS
+#elif defined(USE_SDL2)
+			if (strlen(mangrc_filename) <= 35)
+				Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %s", mangrc_filename));
+			else {
+				/* Try to cut line at backslash */
+				i = 35;
+				while (i && mangrc_filename[(int)i] != SDL2_PATH_SEP[0]) i--;
+				if (i != 35) i++;
+				/* ..but don't accept unreasonable lenght */
+				if (i < 20) {
+					/* Cut without regard, ouch */
+					Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %-.35s", mangrc_filename));
+					Term_putstr(40, row + 2,   -1, TERM_WHITE, format("    %-.35s", mangrc_filename + 35));
+				} else {
+					/* Cut nicely & cleanly at backslash */
+					Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %-.*s", i, mangrc_filename));
+					Term_putstr(40, row + 2,   -1, TERM_WHITE, format("    %-.35s", mangrc_filename + i));
+				}
+			}
+#elif defined(WINDOWS)
 			/* The ini file contains a long path (unlike mangrc_filename), so use two lines for it.. */
 			if (strlen(ini_file) <= 35)
 				Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %s", ini_file));
@@ -7678,7 +7839,11 @@ void cmd_check_misc(void) {
 			cmd_spoilers();
 			redraw = TRUE;
 			break;
+#ifdef USE_SDL2
+		case 'o':
+#else			
 		case 'x':
+#endif
 			//Send_special_line(SPECIAL_FILE_EXTRAINFO, 0, ""); --not implemented
 			Send_msg("/ex");
 			break;
@@ -7701,9 +7866,33 @@ void cmd_check_misc(void) {
 			cmd_message();
 			break;
 
-#if defined(USE_X11) || defined(WINDOWS)
-		case 'T': FILEMAN("."); break;
+#if defined(USE_X11) || defined(WINDOWS) || defined(USE_SDL2)
+ #ifdef USE_SDL2
+		case 't':
+			FILEMAN(ANGBAND_USER_DIR);
+			break;
+ #endif
+		case 'T':
+ #ifdef USE_SDL2
+			FILEMAN(SDL2_GAME_PATH);
+ #else
+			FILEMAN(".");
+ #endif
+			break;
+ #ifdef USE_SDL2
+		case 'u': FILEMAN(ANGBAND_USER_DIR_USER); break;
+ #endif
 		case 'U': FILEMAN(ANGBAND_DIR_USER); break;
+ #ifdef USE_SDL2
+		case 's':
+			path_build(path, 1024, ANGBAND_USER_DIR_XTRA, "sound");
+			if (!check_dir2(path)) {
+				c_message_add("\377yA folder 'sound' doesn't exist. Press 'x' instead to go to the 'xtra' folder or 'x' instead to go to the 'xtra' folder.");
+				break;
+			}
+			FILEMAN(path);
+			break;
+ #endif
 		case 'S':
 			path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 			if (!check_dir2(path)) {
@@ -7712,6 +7901,16 @@ void cmd_check_misc(void) {
 			}
 			FILEMAN(path);
 			break;
+ #ifdef USE_SDL2
+		case 'm':
+			path_build(path, 1024, ANGBAND_USER_DIR_XTRA, "music");
+			if (!check_dir2(path)) {
+				c_message_add("\377yA folder 'music' doesn't exist. Press 'x' instead to go to the 'xtra' folder.");
+				break;
+			}
+			FILEMAN(path);
+			break;
+ #endif
 		case 'M':
 			path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 			if (!check_dir2(path)) {
@@ -7720,6 +7919,11 @@ void cmd_check_misc(void) {
 			}
 			FILEMAN(path);
 			break;
+ #ifdef USE_SDL2
+		case 'x':
+			FILEMAN(ANGBAND_USER_DIR_XTRA);
+			break;
+ #endif
 		case 'X':
 			FILEMAN(ANGBAND_DIR_XTRA);
 			break;
@@ -7745,6 +7949,9 @@ void cmd_check_misc(void) {
 #else
 		/* USE_GCU (without USE_X11) and any other unknown OS.. */
 		case 'T': case 'U': case 'S': case 'M': case 'X':
+ #ifdef USE_SDL2
+		case 't': case 'u': case 's': case 'm': case 'x':
+ #endif
 			c_message_add("Sorry, cannot open file manager in terminal-mode.");
 			break;
 		case 'G': case 'W': case 'P': case 'R': case 'L':
@@ -7754,7 +7961,12 @@ void cmd_check_misc(void) {
 
 		//case 'I':
 		case '#':
+#ifdef USE_SDL2
+			/* Just open the last screenshot, don't quit the knowledge menu. */
+			png_screenshot();
+#else
 			if (png_screenshot()) i = ESCAPE; /* quit knowledge menu on success */
+#endif
 			break;
 		case 'C':
 #ifdef WINDOWS
@@ -7816,6 +8028,9 @@ void cmd_check_misc(void) {
 			(void)r;
 			(void)c;
 			}
+#endif
+#ifdef USE_SDL2
+			FILEMAN(mangrc_filename);
 #endif
 			break;
 

@@ -499,7 +499,14 @@ bool pern_dofile(int Ind, char *file) {
 	int oldtop = lua_gettop(L);
 
 	/* Build the filename */
+#ifdef USE_SDL2
+	path_build(buf, MAX_PATH_LENGTH, ANGBAND_USER_DIR_SCPT, file);
+	if (!my_fexists(buf) && !sdl2_paths_same(ANGBAND_USER_DIR_SCPT, ANGBAND_DIR_SCPT)) {
+		path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
+	}
+#else
 	path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
+#endif
 
 	error = lua_dofile(L, buf);
 	lua_settop(L, oldtop);

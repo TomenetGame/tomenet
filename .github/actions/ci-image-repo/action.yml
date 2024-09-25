@@ -1,0 +1,23 @@
+name: CI Image Repo
+description: Resolve normalized GHCR repository for Fedora 41 builder image.
+inputs:
+  repo_owner:
+    description: Repository owner; defaults to GITHUB_REPOSITORY_OWNER when empty.
+    required: false
+outputs:
+  image_repo:
+    description: Lowercase GHCR repo path.
+    value: ${{ steps.resolve.outputs.image_repo }}
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+        owner="${{ inputs.repo_owner }}"
+        if [[ -z "$owner" ]]; then
+          owner="${GITHUB_REPOSITORY_OWNER}"
+        fi
+        owner_lc="$(echo "$owner" | tr '[:upper:]' '[:lower:]')"
+        echo "image_repo=ghcr.io/${owner_lc}/tomenet-fedora41-builder" >> "$GITHUB_OUTPUT"

@@ -7,9 +7,19 @@
  */
 
 #ifdef WIN32
-#include <winsock.h> /* For htonl and ntohl */
+ #include <winsock.h> /* For htonl and ntohl */
+#elif defined(USE_SDL2)
+ #include <SDL2/SDL.h>
+
+static inline uint32_t htonl(uint32_t hostlong) {
+    return SDL_SwapBE32(hostlong);
+}
+
+static inline uint32_t ntohl(uint32_t netlong) {
+    return SDL_SwapBE32(netlong);
+}
 #else
-#include <arpa/inet.h> /* For htonl and ntohl */
+ #include <arpa/inet.h> /* For htonl and ntohl */
 #endif
 
 #include "angband.h"
@@ -184,8 +194,8 @@ int local_file_send(int ind, char *fname, unsigned short chunksize) {
 	c_fd = getfile(ind, 0);
 	if (c_fd == (struct ft_data*)NULL) return(0);
 	if (!client_user_path(buf, fname))
-		path_build(buf, sizeof(buf), ANGBAND_DIR, fname);
-	fp = fopen(buf, "rb");
+		strnfmt(buf, sizeof(buf), "%s%s", ANGBAND_DIR, fname);
+	fp = my_fopen(buf, "rb");
 	if (!fp) return(0);
 	c_fd->fp = fp;
 	c_fd->ind = ind;
@@ -248,8 +258,9 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 		}
 
 		if (!client_user_path(buf, c_fd->fname))
-			path_build(buf, sizeof(buf), ANGBAND_DIR, c_fd->fname);
-		fp = fopen(buf, "rb");
+			strnfmt(buf, sizeof(buf), "%s%s", ANGBAND_DIR, c_fd->fname);
+
+		fp = my_fopen(buf, "rb");
 		if (!fp) {
 			remove_ft(c_fd);
 			return(0);
@@ -257,7 +268,6 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 		c_fd->fp = fp;
 		c_fd->ind = ind;
 		c_fd->state = (FS_SEND | FS_NEW);
-		//client_user_path(tmpname, c_fd->fname);
 		Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 		return(1);
 	}
@@ -279,7 +289,6 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 
 	c_fd = getfile(ind, fnum);
 	if (c_fd == (struct ft_data*)NULL) return(0);
-	//client_user_path(tmpname, c_fd->fname);
 	local_file_check_new(c_fd->fname, local_digest);
 	if (!(c_fd->state & FS_CHECK)) return(0);
 
@@ -301,8 +310,9 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 		}
 
 		if (!client_user_path(buf, c_fd->fname))
-			path_build(buf, sizeof(buf), ANGBAND_DIR, c_fd->fname);
-		fp = fopen(buf, "rb");
+			strnfmt(buf, sizeof(buf), "%s%s", ANGBAND_DIR, c_fd->fname);
+
+		fp = my_fopen(buf, "rb");
 		if (!fp) {
 			remove_ft(c_fd);
 			return(0);
@@ -310,7 +320,6 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 		c_fd->fp = fp;
 		c_fd->ind = ind;
 		c_fd->state = (FS_SEND | FS_NEW);
-		//client_user_path(tmpname, c_fd->fname);
 		Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 		return(1);
 	}
@@ -393,7 +402,7 @@ FILE *ftmpopen(char *template) {
 	rand_ext[1] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[2] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[3] = '\0';
-	strnfmt(f, sizeof(f), "%s/xfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
+	strnfmt(f, sizeof(f), "%sxfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
 	tmp_counter++;
 
 	fp = fopen(f, "wb+");
@@ -426,12 +435,11 @@ int local_file_init(int ind, unsigned short fnum, char *fname) {
 	c_fd->state = FS_READY;
 	c_fd->chunksize = OLD_TNF_SEND;	/* doesn't matter when receiving, use the old value of MAX_TNF_SEND */
 	if (c_fd->fp) {
-#ifndef __MINGW32__
+#if !defined(MINGW) && !defined(USE_SDL2)
 		unlink(tname);		/* don't fill up /tmp */
 #endif
 		c_fd->id = fnum;
 		c_fd->ind = ind;	/* not really needed for client */
-		//client_user_path(tmpname, c_fd->fname);
 		strncpy(c_fd->fname, fname, 255);
 		strncpy(c_fd->tname, tname, 255);
 		return(1);
@@ -455,8 +463,8 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len) {
 	if (fwrite(&c_fd->buffer, 1, len, c_fd->fp) < len) {
 		fprintf(stderr, "Error: fwrite failed in local_file_write\n");
 		fclose(c_fd->fp);	/* close & remove temp file */
-#ifdef __MINGW32__
-		unlink(c_fd->tname);	/* remove it on Windows OS */
+#if defined(MINGW) || defined(USE_SDL2)
+		unlink(c_fd->tname);	/* remove it on Windows OS or SDL2 client */
 #endif
 		remove_ft(c_fd);
 		return -2;
@@ -477,9 +485,9 @@ int local_file_close(int ind, unsigned short fnum) {
 	if (c_fd == (struct ft_data *) NULL) return(0);
 
 	if (!client_user_path(buf, c_fd->fname))
-		path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
+		strnfmt(buf, sizeof(buf), "%s%s", ANGBAND_DIR, c_fd->fname);
 
-	wp = fopen(buf, "wb");	/* b for windows */
+	wp = my_fopen(buf, "wb");	/* b for windows */
 	if (wp) {
 		fseek(c_fd->fp, 0, SEEK_SET);
 
@@ -495,8 +503,8 @@ int local_file_close(int ind, unsigned short fnum) {
 	} else success = 0;
 
 	fclose(c_fd->fp);	/* close & remove temp file */
-#ifdef __MINGW32__
-	unlink(c_fd->tname);	/* remove it on Windows OS */
+#if defined(MINGW) || defined(USE_SDL2)
+	unlink(c_fd->tname);	/* remove it on Windows OS or SDL2 client */
 #endif
 	remove_ft(c_fd);
 
@@ -543,9 +551,9 @@ int local_file_check(char *fname, u32b *sum) {
 	char pathbuf[256];
 
 	if (!client_user_path(pathbuf, fname))
-		path_build(pathbuf, sizeof(pathbuf), ANGBAND_DIR, fname);
+		strnfmt(pathbuf, sizeof(pathbuf), "%s%s", ANGBAND_DIR, fname);
 
-	fp = fopen(pathbuf, "rb");	/* b for windows.. */
+	fp = my_fopen(pathbuf, "rb");	/* b for windows.. */
 	if (!fp) {
 		*sum = 0;
 		return(1);
@@ -574,9 +582,9 @@ int local_file_check_new(char *fname, unsigned char digest_out[16]) {
 	MD5_CTX ctx;
 
 	if (!client_user_path(pathbuf, fname))
-		path_build(pathbuf, sizeof(pathbuf), ANGBAND_DIR, fname);
+		strnfmt(pathbuf, sizeof(pathbuf), "%s%s", ANGBAND_DIR, fname);
 
-	fp = fopen(pathbuf, "rb");	/* b for windows.. */
+	fp = my_fopen(pathbuf, "rb");	/* b for windows.. */
 	if (!fp) {
 		memset(digest_out, 0, 16);
 		return(1);
