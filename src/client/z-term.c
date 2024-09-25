@@ -2437,7 +2437,7 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 #endif
 
 	bool icky_s = (Term == ang_term[0] && screen_icky);
-	bool icky_tl = topline_icky && !icky_s;
+	bool icky_tl = topline_icky && Term == ang_term[0] && !screen_icky;
 
 
 	/* Various icky checks, these exist only for term 0 aka the main window */
