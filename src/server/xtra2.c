@@ -6684,12 +6684,36 @@ bool monster_death(int Ind, int m_idx) {
  #endif
 	{
 		bool found_chemical = FALSE;
+		unsigned char chem_sva = 0x0, chem_cnt = 0;
 
 		/* Check for all breath-related chemicals first */
 		if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 			if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && rand_int(7) < r_ptr->weight / 1000) {
-				object_type forge;
+				chem_sva |= 0x1;
+				chem_cnt++;
+			}
+		}
+		if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+			if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 10 && rand_int(7) < r_ptr->weight / 1000) {
+				chem_sva |= 0x2;
+				chem_cnt++;
+			}
+		}
+		if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+			if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && rand_int(7) < r_ptr->weight / 1000) {
+				chem_sva |= 0x4;
+				chem_cnt++;
+			}
+		}
+		/* Drop breath-related chemicals */
+		if (chem_cnt) {
+			object_type forge;
 
+			/* sometimes don't drop all of them if more than 1;
+			   rand_int(): on purpose more rand_int() chances than actual flags, so sometimes all valid flags get a pass */
+			if (chem_cnt != 1) chem_sva &= ~(1 << (rand_int(9) >> 1)); /* rand_int()>>n: finer resolution for rand_int() matches */
+
+			if (chem_sva & 0x1) {
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SULFUR));
 				s_printf("CHEMICAL: %s found sulfur (kill).\n", p_ptr->name);
 				forge.owner = p_ptr->id;
@@ -6702,19 +6726,8 @@ bool monster_death(int Ind, int m_idx) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
-				found_chemical = TRUE;
-				if (!p_ptr->warning_ingredients) {
-					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
-					p_ptr->warning_ingredients = 1;
-				}
 			}
-		}
-		if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-			if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 10 && rand_int(7) < r_ptr->weight / 1000) {
-				object_type forge;
-
+			if (chem_sva & 0x2) {
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_VITRIOL));
 				s_printf("CHEMICAL: %s found vitriol (kill).\n", p_ptr->name);
 				forge.owner = p_ptr->id;
@@ -6727,19 +6740,8 @@ bool monster_death(int Ind, int m_idx) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
-				found_chemical = TRUE;
-				if (!p_ptr->warning_ingredients) {
-					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
-					p_ptr->warning_ingredients = 1;
-				}
 			}
-		}
-		if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-			if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && rand_int(7) < r_ptr->weight / 1000) {
-				object_type forge;
-
+			if (chem_sva & 0x4) {
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));
 				s_printf("CHEMICAL: %s found ammonia salt (kill).\n", p_ptr->name);
 				forge.owner = p_ptr->id;
@@ -6752,13 +6754,14 @@ bool monster_death(int Ind, int m_idx) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
-				found_chemical = TRUE;
-				if (!p_ptr->warning_ingredients) {
-					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
-					p_ptr->warning_ingredients = 1;
-				}
+			}
+
+			found_chemical = TRUE;
+			if (!p_ptr->warning_ingredients) {
+				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+				p_ptr->warning_ingredients = 1;
 			}
 		}
 
