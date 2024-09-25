@@ -7578,6 +7578,7 @@ void do_cmd_fire(int Ind, int dir) {
 						break;
 					}
 
+//TODO: pseudo-"dodging", parrying
 #ifdef USE_BLOCKING
 					/* handle blocking (deflection) */
 					if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
@@ -8744,7 +8745,13 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					/* Get his name */
 					strcpy(p_name, q_ptr->name);
 
-					// TODO: Handle reflect/block/dodging
+// TODO: Handle USE_PARRYING (maybe)/USE_BLOCKING/dodging
+					/* Handle reflection - thrown items cannot really be deflected if they're bulky.
+					   This works well with throwing_weapon, as spears/hatchets start at 5.0, and for dagger weights it fits very nicely too! */
+					if (p_ptr->reflect && magik(50 - o_ptr->weight)) {
+						if (visible) msg_format(Ind, "The %s was deflected.", o_name);
+						break;
+					}
 
 					/* Hack -- Base damage from thrown object */
 					tdam = damroll(o_ptr->dd, o_ptr->ds);
@@ -8856,6 +8863,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					break;
 				}
 
+//TODO: USE_PARRYING (maybe); monster dodging
 #ifdef USE_BLOCKING
 				/* handle blocking (deflection) */
 				if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */

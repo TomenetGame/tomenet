@@ -6422,6 +6422,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		return(TRUE); /* notice */
 	}
 
+//todo: dodging (not USE_PARRYING probably)
 #ifdef USE_BLOCKING
 	/* handle blocking (deflection) */
 	if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */

@@ -4720,13 +4720,19 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			parry = 5 + m_ptr->ac / 10;
 #endif
 #ifdef USE_BLOCKING
-			if (r_ptr->flags8 & RF8_NO_BLOCK) parry += 5; /* assuming 2-handed weapon or otherwise greater parrying abilities */
-			else block = 10;
+			if (!(r_ptr->flags8 & RF8_NO_BLOCK)) block = 10;
+ #ifdef USE_PARRYING
+			else parry += 5; /* assuming 2-handed weapon or otherwise greater parrying abilities */
+ #endif
 #endif
 		}
 		/* Evaluate: 0 = no, other values = yes */
+#ifdef USE_BLOCKING
 		if (helpless || !magik(block)) block = 0;
+#endif
+#ifdef USE_PARRYING
 		if (helpless || !magik(parry)) parry = 0;
+#endif
 
 		p_ptr->test_attacks++;
 		/* Test for hit */
@@ -5622,6 +5628,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			backstab = stab_fleeing = FALSE;
 
 			/* Message */
+//TODO: dodges your attack? ninjas, cats!
 			if (block) {
 				sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 				hit_desc[2] = toupper(hit_desc[2]);
