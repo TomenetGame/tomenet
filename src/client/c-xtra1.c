@@ -260,7 +260,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #ifdef WINDOWS
 		if (!force_cui && c_cfg.solid_bars) exp_bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 		else
-#elif defined(USE_X11)
+#elif defined(USE_X11) || defined(USE_SDL3)
 		if (!force_cui && c_cfg.solid_bars) exp_bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 		else
 ///#else /* command-line client ("-c") doesn't draw either! */
@@ -605,7 +605,7 @@ void prt_hp(int max, int cur, bool bar, bool boosted) {
   #ifdef WINDOWS
 				if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 				else
-  #elif defined(USE_X11)
+  #elif defined(USE_X11) || defined(USE_SDL3)
 				if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 				else
   //#else /* command-line client ("-c") doesn't draw either! */
@@ -706,7 +706,7 @@ void prt_stamina(int max, int cur, bool bar) {
   #ifdef WINDOWS
 		if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 		else
-  #elif defined(USE_X11)
+  #elif defined(USE_X11) || defined(USE_SDL3)
 		if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 		else
   //#else /* command-line client ("-c") doesn't draw either! */
@@ -911,7 +911,7 @@ void prt_mp(int max, int cur, bool bar) {
   #ifdef WINDOWS
 			if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 			else
-  #elif defined(USE_X11)
+  #elif defined(USE_X11) || defined(USE_SDL3)
 			if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
 			else
   //#else /* command-line client ("-c") doesn't draw either! */

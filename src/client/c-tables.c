@@ -613,7 +613,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "auto_inscr_server_ch",	"Server-defined auto-inscriptions for chemicals" },
 
 	{ &c_cfg.screenshot_keys,	FALSE,	6,	0, 174, TRUE,
-	    "screenshot_keys",		"Swap CTRL+T and SHIFT+CTRL+T key (XHTML vs PNG)" },
+	    "screenshot_keys",		"Swap CTRL+T and SHIFT+CTRL+T key (XHTML vs image)" },
 	{ &c_cfg.wild_resume_from_any,	TRUE,	5,	0, 175, TRUE,
 	    "wild_resume_from_any",	"Resume wilderness music even after non-wild music" },
 	{ &c_cfg.tavern_town_resume,	TRUE,	5,	0, 176, TRUE,

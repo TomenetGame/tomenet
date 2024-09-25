@@ -4,19 +4,44 @@
 
 #include "angband.h"
 
-#ifdef USE_X11
-#include "graphics_common.h" // is it OK here?
+#if defined(USE_GRAPHICS)
+ #if defined(USE_X11) || defined(USE_SDL3)
+  #include "graphics_common.h"
+ #endif
 #endif
 
 #include <sys/time.h>
 #ifndef WINDOWS
- #include <glob.h>
+ #ifndef USE_SDL3
+  #include <glob.h>
+ #endif
+#endif
+
+#ifdef USE_SDL3
+ #include <SDL3/SDL.h>
+ #ifdef SDL3_ARCHIVE
+  #include <archive.h>
+  #include <archive_entry.h>
+ #endif
+ #ifdef SDL3_CURL_SSL
+  #include <curl/curl.h>
+  #define TOMENET_GUIDE_URL "https://www.tomenet.eu/TomeNET-Guide.txt"
+  #define TOMENET_GUIDE_URL_TIMEOUT 25L
+ #endif
 #endif
 
 #define ENABLE_SUBWINDOW_MENU /* allow =f menu function for setting fonts/visibility of term windows */
 //#ifdef ENABLE_SUBWINDOW_MENU
  #include <dirent.h> /* we now need it for scanning for audio packs too */
 //#endif
+
+#if defined(USE_SDL3) && defined(USE_GRAPHICS)
+/* Keep track of the currently previewed feature/item/monster tiles in the SDL3 UI */
+static int sdl3_tileset_preview_idx_feat = 0;
+static int sdl3_tileset_preview_idx_item = 0;
+static int sdl3_tileset_preview_idx_mon = 0;
+static int sdl3_gfx_resize_type_new = INTERPOLATION_LINEAR;
+#endif
 
 #ifdef REGEX_SEARCH
 /* For extract_url(): able to utilize regexps? */
@@ -53,54 +78,6 @@
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 static bool inkey_location_keys = FALSE;
-  /* Navigation keys/special keys sequence initializer */
-  #define NAVI_KEY_SEQ_START		{ 31, 0}
- #ifdef WINDOWS
-  /* CTRL pressed */
-  #define NAVI_KEY_SEQ_CTRL		{ 67, 0}
-  /* SHIFT pressed */
-  #define NAVI_KEY_SEQ_SHIFT		{ 83 , 0}
-  /* ALT pressed */
-  #define NAVI_KEY_SEQ_ALT		{ 65 , 0}
-  /* Shiftkey terminator marker */
-  #define NAVI_KEY_SEQ_SHIFTKEY_TERM	{ 120, 0 }
-  /* Static middle sequence */
-  #define NAVI_KEY_SEQ_SKIP		{ 0 }
-  /* Navigation key codes */
-  #define NAVI_KEY_SEQ_UP		{ 52,  56, 0}
-  #define NAVI_KEY_SEQ_RIGHT		{ 52,  68, 0}
-  #define NAVI_KEY_SEQ_DOWN		{ 53,  48, 0}
-  #define NAVI_KEY_SEQ_LEFT		{ 52,  66, 0}
-  #define NAVI_KEY_SEQ_POS1		{ 52,  55, 0}
-  #define NAVI_KEY_SEQ_END		{ 52,  70, 0}
-  #define NAVI_KEY_SEQ_PAGEUP		{ 52,  57, 0}
-  #define NAVI_KEY_SEQ_PAGEDOWN		{ 53,  49, 0}
-  #define NAVI_KEY_SEQ_DEL		{ 53,  51, 0}
- #else /* POSIX, at least working on Linux/X11 */
-  /* CTRL pressed */
-  #define NAVI_KEY_SEQ_CTRL		{ 78, 0 }
-  /* SHIFT pressed */
-  #define NAVI_KEY_SEQ_SHIFT		{ 83, 0 }
-  /* ALT pressed */
-  #define NAVI_KEY_SEQ_ALT		{ 79, 0 }
-  /* Shiftkey terminator marker */
-  #define NAVI_KEY_SEQ_SHIFTKEY_TERM	{ 95, 0 }
-  /* Static middle sequence */
-  #define NAVI_KEY_SEQ_SKIP		{ 70, 70, 0 }
-  /* Navigation key codes */
-  #define NAVI_KEY_SEQ_UP		{ 53,  50, 0 }
-  #define NAVI_KEY_SEQ_RIGHT		{ 53,  51, 0 }
-  #define NAVI_KEY_SEQ_DOWN		{ 53,  52, 0 }
-  #define NAVI_KEY_SEQ_LEFT		{ 53,  49, 0 }
-  #define NAVI_KEY_SEQ_POS1		{ 53,  48, 0 }
-  #define NAVI_KEY_SEQ_END		{ 53,  55, 0 }
-  #define NAVI_KEY_SEQ_PAGEUP		{ 53,  53, 0 }
-  #define NAVI_KEY_SEQ_PAGEDOWN		{ 53,  54, 0 }
-  /* Depending on system/terminal, Backspace and Delete are both ASCII 8 and cannot be distinguished by us. :/ */
-  #define NAVI_KEY_SEQ_DEL		{ 0 }
- #endif
-  /* The closing marker of all special key sequences */
- #define NAVI_KEY_SEQ_TERM		{ 13, 0 }
 
  char nks_start[] = NAVI_KEY_SEQ_START;
  char nks_term[] = NAVI_KEY_SEQ_TERM;
@@ -166,10 +143,12 @@ int usleep(huge microSeconds) {
 #endif /* SET_UID */
 
 #ifdef WIN32
+ #ifndef USE_SDL3
 int usleep(long microSeconds) {
 	Sleep(microSeconds / 1000); /* meassured in milliseconds not microseconds*/
 	return(0);
 }
+ #endif /* USE_SDL3 */
 #endif /* WIN32 */
 
 
@@ -1963,12 +1942,12 @@ void bell(void) {
 	/* Make a bell noise (if allowed) */
 	if (c_cfg.ring_bell) {
 #ifdef USE_SOUND_2010
-#ifdef SOUND_SDL
+ #if defined(SOUND_SDL) || defined(SOUND_SDL3)
 		/* Try to beep via bell sfx of the SDL audio system first */
 		if (!sound_bell()
-		    //&& !(c_cfg.audio_paging && sound_page())
-		    )
-#endif
+				//&& !(c_cfg.audio_paging && sound_page())
+			 )
+ #endif
 #endif
 		if (!c_cfg.quiet_os) Term_xtra(TERM_XTRA_NOISE, 0);
 	}
@@ -2002,10 +1981,10 @@ void bell_silent(void) {
 /* Generate a page sfx (beep) */
 int page(void) {
 #ifdef USE_SOUND_2010
-#ifdef SOUND_SDL
+ #if defined(SOUND_SDL) || defined(SOUND_SDL3)
 	/* Try to beep via page sfx of the SDL audio system first */
 	if (c_cfg.audio_paging && sound_page()) return(1);
-#endif
+ #endif
 #endif
 
 	/* Fall back on system-specific default beeps */
@@ -2018,11 +1997,11 @@ int page(void) {
 /* Generate a warning sfx (beep) or if it's missing then a page sfx */
 int warning_page(void) {
 #ifdef USE_SOUND_2010
-#ifdef SOUND_SDL
+ #if defined(SOUND_SDL) || defined(SOUND_SDL3)
 	/* Try to beep via warning sfx of the SDL audio system first */
 	if (sound_warning()) return(1);
 	//if (c_cfg.audio_paging && sound_page()) return(1);
-#endif
+ #endif
 #endif
 
 	/* Fall back on system-specific default beeps */
@@ -2091,7 +2070,7 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
 	Term_putstr(x, y, -1, attr, tmp);
 }
 
-#if defined(WINDOWS) || defined(USE_X11)
+#if defined(WINDOWS) || defined(USE_X11) || defined(USE_SDL3)
 /* Helper function for copy_to_clipboard */
 static void extract_url(char *buf_esc, char *buf_prev, int end_of_name) {
 	char *c, *c2, *be = NULL;
@@ -2352,12 +2331,59 @@ void copy_to_clipboard(char *buf, bool chat_input) {
 	if (r) c_msg_print("Copy failed, make sure xclip is installed.");
 	else strcpy(buf_prev, buf_esc);
 #endif
+
+#ifdef USE_SDL3
+	int pos = 0, end_of_name = 0;
+	char *c, *c2, buf_esc[MSG_LEN + 10];
+	static char buf_prev[MSG_LEN + 10];
+
+	c  = buf;
+	c2 = buf_esc;
+	while (*c && (size_t)(c2 - buf_esc) < MSG_LEN + 9) {
+		switch (*c) {
+			case ':':
+				if (pos != 0 && pos <= NAME_LEN) {
+					if (*(c + 1) == ':') c++;
+				} else if (pos != 0) {
+					if (*(c + 1) == ':') c++;
+				}
+				break;
+			case '{':
+				if (chat_input) {
+					switch (*(c + 1)) {
+						case '{':  c++;              break;
+						case 0:    c++;  continue;
+						default:   c += 2; continue;
+					}
+				}
+				break;
+			case '\376': case '\375': case '\374':  c++; continue;
+			case '\377':
+				switch (*(c + 1)) {
+					case 0:   c++; continue;
+					default:  c += 2; continue;
+				}
+				break;
+		}
+		*c2++ = *c++;
+		pos++;
+	}
+	*c2 = 0;
+
+	extract_url(buf_esc, buf_prev, end_of_name);
+
+	if (SDL_SetClipboardText(buf_esc)) {
+		strcpy(buf_prev, buf_esc);
+	} else {
+		c_msg_print("Copy failed, SDL clipboard error.");
+	}
+#endif
 }
 /* Paste current clipboard into active chat input.
    'global': paste goes to global chat (including /say and /whisper)? (not private/party/guild/floor chat) -
    For the latter four the line already started with a ':' for the chat prefix and we don't need to duplicate the first ':' anymore. */
 bool paste_from_clipboard(char *buf, bool global) {
-#if defined(WINDOWS) || defined(USE_X11)
+#if defined(WINDOWS) || defined(USE_X11) || defined(USE_SDL3)
 	bool no_slash_command;
 	int pos = 0;
 	char *c, *c2, buf_esc[MSG_LEN + 15];
@@ -2469,6 +2495,58 @@ bool paste_from_clipboard(char *buf, bool global) {
 	*c2 = 0;
 
 	fclose(fp);
+	return(TRUE);
+#endif
+
+#ifdef USE_SDL3
+	char *clip = SDL_GetClipboardText();
+	if (!clip) return(FALSE);
+
+	/* combine multi-line text into one line, replacing newlines by spaces */
+	buf_esc[0] = 0;
+	for (int i = 0; clip[i] && strlen(buf_esc) < MSG_LEN - NAME_LEN - 13; ++i) {
+		char ch = clip[i];
+		if (ch == '\r' || ch == '\n') {
+			if (buf_esc[0] && buf_esc[strlen(buf_esc) - 1] != ' ')
+				strcat(buf_esc, " ");
+		} else {
+			int len = strlen(buf_esc);
+			buf_esc[len] = ch;
+			buf_esc[len + 1] = '\0';
+		}
+	}
+	SDL_free(clip);
+
+	/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
+	c = buf_esc;
+	c2 = buf;
+	no_slash_command = buf_esc[0] != '/';
+	pos = 0;
+	while (*c) {
+		if (*c < 32) {
+			c++;
+			continue;
+		}
+		switch (*c) {
+			case ':':
+				if (global && no_slash_command && pos != 0 && pos <= NAME_LEN) {
+					*c2 = ':';
+					c2++;
+					global = FALSE; /* only the first ':' needs duplication */
+				}
+				break;
+			case '{':
+				*c2 = '{';
+				c2++;
+				break;
+		}
+		*c2 = *c;
+		c++;
+		c2++;
+		pos++;
+	}
+	*c2 = 0;
+
 	return(TRUE);
 #endif
 
@@ -3822,10 +3900,17 @@ byte get_3way(cptr prompt, bool default_no) {
 /* Kurzel reported that on Windows 10/11, printf() output is not shown in the terminal for unknown reason. So we need a log file, alternatively, as workaround: */
 void logprint(const char *out) {
 	static FILE *fp = NULL;
+	char path[1024];
+
+#ifdef USE_SDL3
+	path_build(path, 1024, os_temp_path, "tomenet-stdout.log");
+#else
+	strcpy(path, "tomenet-stdout.log");
+#endif
 
 	/* Atomic append, in case things go really wrong (paranoia) */
-	if (!fp) fp = fopen("tomenet-stdout.log", "w");
-	else fp = fopen("tomenet-stdout.log", "a");
+	if (!fp) fp = fopen(path, "w");
+	else fp = fopen(path, "a");
 
 	if (fp) {
 		fprintf(fp, "%s", out);
@@ -4810,7 +4895,11 @@ void c_msg_print(cptr msg) {
 		char path[1024];
 
 		/* Build the filename */
+#ifdef USE_SDL3
+		path_build(path, 1024, os_temp_path, "stdout.txt");
+#else
 		path_build(path, 1024, ANGBAND_DIR_USER, "stdout.txt");
+#endif
 
 		fp = my_fopen(path, "a");
 		/* success */
@@ -5323,7 +5412,11 @@ static errr macro_dump(cptr fname) {
 
 
 	/* Build the filename */
+#ifdef USE_SDL3
+	path_build(buf, MACRO_MAXLEN, ANGBAND_USER_DIR_USER, fname);
+#else
 	path_build(buf, MACRO_MAXLEN, ANGBAND_DIR_USER, fname);
+#endif
 
 	/* Check if the file already exists */
 	fff = my_fopen(buf, "r");
@@ -5600,6 +5693,259 @@ bool macrofileset_stage_meta_read(int k, int f) {
 	return(success);
 }
 
+#ifdef USE_SDL3
+/* Sort macroset entries in the same order as glob(). */
+static int macroset_entry_cmp(const void *a, const void *b) {
+	const char *entry_a = *(const char *const *)a;
+	const char *entry_b = *(const char *const *)b;
+
+	return strcoll(entry_a, entry_b);
+}
+
+/* Parse a macro stage filename of form "<base><SETFILEPOSTFIX><digit>.prf". */
+static bool macroset_parse_stage_name(const char *name, const char *base, char *base_out, size_t base_out_len, int *stage) {
+	size_t name_len, base_len, postfix_len, suffix_len;
+	char digit;
+
+	/* Basic argument and format checks. */
+	if (!name || !stage) return FALSE;
+
+	name_len = strlen(name);
+	postfix_len = strlen(SETFILEPOSTFIX);
+	suffix_len = postfix_len + 5; /* stage digit plus ".prf" */
+	if (name_len <= suffix_len) return FALSE;
+	if (strcmp(name + name_len - 4, ".prf")) return FALSE;
+	if (strncmp(name + name_len - suffix_len, SETFILEPOSTFIX, postfix_len)) return FALSE;
+
+	/* Parse the single digit stage number. */
+	digit = name[name_len - 5];
+	if (digit < '0' || digit > '9') return FALSE;
+
+	if (base) {
+		base_len = strlen(base);
+		if (name_len != base_len + suffix_len) return FALSE;
+		if (strncmp(name, base, base_len)) return FALSE;
+	} else {
+		base_len = name_len - suffix_len;
+		if (!base_out || base_len == 0 || base_len >= base_out_len) return FALSE;
+		strncpy(base_out, name, base_len);
+		base_out[base_len] = '\0';
+	}
+
+	*stage = (digit - '0') - 1;
+	return TRUE;
+}
+
+/* Collect matching filenames from user and game directories and sort them lexicographically. */
+static bool macroset_collect_sorted_entries(char ***entries_out, size_t *entries_count_out) {
+	char **entries = NULL;
+	size_t entries_count = 0;
+	size_t entries_cap = 0;
+	bool found = FALSE;
+	const char *dir_paths[2];
+	int dir_count;
+	int dir_idx;
+
+	if (!entries_out || !entries_count_out) return FALSE;
+
+	/* Scan user and base directories for macro stage files. */
+	dir_paths[0] = ANGBAND_USER_DIR_USER;
+	dir_paths[1] = ANGBAND_DIR_USER;
+	dir_count = sdl3_paths_same(dir_paths[0], dir_paths[1]) ? 1 : 2;
+
+	for (dir_idx = 0; dir_idx < dir_count; dir_idx++) {
+		DIR *dir;
+		struct dirent *ent;
+		const char *dir_path = dir_paths[dir_idx];
+		char buf_basename[1024];
+		int stage;
+
+		/* Open each directory and scan for stage files. */
+		if (!dir_path || !*dir_path) dir_path = ".";
+		dir = opendir(dir_path);
+		if (!dir) continue;
+
+		while ((ent = readdir(dir))) {
+			bool duplicate = FALSE;
+			size_t i;
+
+			/* Filter to stage files and skip duplicates across directories. */
+			if (!macroset_parse_stage_name(ent->d_name, NULL, buf_basename, sizeof(buf_basename), &stage)) continue;
+			for (i = 0; i < entries_count; i++) {
+				if (!strcmp(entries[i], ent->d_name)) {
+					duplicate = TRUE;
+					break;
+				}
+			}
+			if (duplicate) continue;
+
+			/* Grow the entries buffer as needed. */
+			if (entries_count == entries_cap) {
+				size_t new_cap = entries_cap ? entries_cap * 2 : 16;
+				char **new_entries;
+
+				C_MAKE(new_entries, new_cap, char *);
+				if (entries) {
+					C_COPY(new_entries, entries, entries_count, char *);
+					C_FREE(entries, entries_cap, char *);
+				}
+				entries = new_entries;
+				entries_cap = new_cap;
+			}
+
+			/* Record the entry and mark that something was found. */
+			entries[entries_count++] = string_make(ent->d_name);
+			found = TRUE;
+		}
+
+		closedir(dir);
+	}
+
+	if (!found) {
+		*entries_out = NULL;
+		*entries_count_out = 0;
+		return FALSE;
+	}
+
+	/* Sort results so callers can scan deterministically. */
+	qsort(entries, entries_count, sizeof(entries[0]), macroset_entry_cmp);
+	*entries_out = entries;
+	*entries_count_out = entries_count;
+	return TRUE;
+}
+
+/* Release a list of filenames. */
+static void macroset_free_entries(char **entries, size_t entries_count) {
+	size_t i;
+
+	for (i = 0; i < entries_count; i++) string_free(entries[i]);
+	C_FREE(entries, entries_count, char *);
+}
+
+/* Scan pre-collected entries for files belonging to a specific registered set. */
+static bool macroset_scan_for_set(int set_idx, char **entries, size_t entries_count, bool *entries_used) {
+	bool found = FALSE;
+	int stage;
+	size_t i;
+
+	if (!entries || entries_count == 0) return FALSE;
+
+	for (i = 0; i < entries_count; i++) {
+		if (entries_used && entries_used[i]) continue;
+		if (!macroset_parse_stage_name(entries[i], fileset[set_idx].basefilename, NULL, 0, &stage)) continue;
+		if (entries_used) entries_used[i] = TRUE;
+		found = TRUE;
+
+		/* Validate stage range and warn on invalid inputs. */
+		if (stage >= MACROFILESETS_STAGES_MAX) {
+			c_msg_format("\377yWarning(1): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
+			c_msg_format("\377y            for macroset '%s'.", entries[i]);
+			continue;
+		} else if (stage < 0) {
+			c_msg_format("\377yWarning(1): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
+			c_msg_format("\377y            for macroset '%s'.", entries[i]);
+			continue;
+		}
+
+		c_msg_format("(1)set (%d) <%s> registered stage %d", set_idx, fileset[set_idx].basefilename, stage);
+
+		/* Record stage and extend the known maximum if needed. */
+		fileset[set_idx].stage[stage].stage_file_exists = TRUE;
+		if (stage >= fileset[set_idx].stages) fileset[set_idx].stages = stage + 1;
+	}
+
+	return found;
+}
+
+/* Scan pre-collected entries for any macro stage files and register new sets. */
+static bool macroset_scan_for_any(char **entries, size_t entries_count, bool *entries_used, int disk_only_start) {
+	bool found = FALSE;
+	int k, stage;
+	char buf_basename[1024];
+	size_t i;
+	int start_idx;
+
+	/* Process pre-collected files. */
+	if (!entries || entries_count == 0) return FALSE;
+	found = TRUE;
+	start_idx = entries_used ? disk_only_start : 0;
+
+	for (i = 0; i < entries_count; i++) {
+		if (entries_used && entries_used[i]) continue;
+		if (!macroset_parse_stage_name(entries[i], NULL, buf_basename, sizeof(buf_basename), &stage)) continue;
+		if (entries_used) entries_used[i] = TRUE;
+
+		/* Reject out-of-range stages with warnings. */
+		c_msg_format("(2)set <%s> / stage %d found", buf_basename, stage);
+		if (stage >= MACROFILESETS_STAGES_MAX) {
+			c_msg_format("\377yWarning(2): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
+			c_msg_format("\377y            for macroset '%s'.", buf_basename);
+			continue;
+		} else if (stage < 0) {
+			c_msg_format("\377yWarning(2): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
+			c_msg_format("\377y            for macroset '%s'.", buf_basename);
+			continue;
+		}
+
+		/* Check if it's not one we already registered in here from a previous entry */
+		for (k = start_idx; k < filesets_found; k++)
+			if (!strcmp(fileset[k].basefilename, buf_basename)) break;
+
+		/* It's a set we already know? */
+		if (k != filesets_found) {
+			/* Skip sets already fully registered from loaded macros. */
+			/* If it was from (b) then we have fully checked all related files already and can continue.
+			   To determine whether it was from (b), we utilize our knowledge that any filesets scanned in (b)
+			   are those registered in (a) ie those currently referenced to by loaded macros in memory. */
+			if (fileset[k].currently_referenced) continue;
+
+			/* It's a new stage of a set we have registered already */
+			c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basefilename, stage);
+
+			/* Register that there is an existing file to back up this stage's existance */
+			fileset[k].stage[stage].stage_file_exists = TRUE;
+
+			/* New maximum stage registered? Then update # of stages. */
+			if (stage >= fileset[k].stages) fileset[k].stages = stage + 1;
+		}
+		/* It's a new set that we haven't registered yet? */
+		else {
+			c_msg_format("Found disk-only set <%s>.", buf_basename);
+
+			/* Enforce set capacity before registering. */
+			/* Register it as new set if possible (we still have space)*/
+			if (k >= MACROFILESETS_MAX) {
+				/* Too many macro sets! */
+				c_msg_format("\377yWarning(2): Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
+				continue;
+			}
+
+			fileset[k].stages = stage + 1; // We have at least this many stages, apparently
+			strcpy(fileset[k].basefilename, buf_basename);
+
+			/* Register that there is an existing file to back up this stage's existance */
+			fileset[k].stage[stage].stage_file_exists = TRUE;
+
+			/* Initialize state for disk-only sets. */
+			fileset[k].style_cyclic = FALSE;//todo:find out- style_cyclic;
+			fileset[k].style_freesw = FALSE;//todo:find out- style_freesw;
+
+			/* Init cycle keys */
+			fileset[k].macro__pat__cyclic[0] = 0;
+			fileset[k].macro__patbuf__cyclic[0] = 0;
+
+			/* Set is purely from disk, not referenced by loaded macros in memory */
+			fileset[k].currently_referenced = FALSE;
+
+			/* One more registered macroset */
+			filesets_found++;
+		}
+	}
+
+	return found;
+}
+#endif /* USE_SDL3 */
+
 /* Scan...
    (a) all currently loaded macros,
    (b) look on disk for files belonging to those scanned in (a),
@@ -5612,13 +5958,19 @@ int macrofileset_scan(void) {
 	char *cc, *cf, *cfile;
 	char buf_pat[MACROKEY_LEN], buftxt_pat[MACROKEY_LEN], buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
 	char buf_basename[1024], tmpbuf[1024];
-#ifndef WINDOWS
+#ifdef USE_SDL3
+	char **macroset_entries = NULL;
+	size_t macroset_entries_count = 0;
+	bool *macroset_entries_used = NULL;
+#else	
+ #ifndef WINDOWS
 	size_t glob_size;
-	glob_t glob_res;
+	glob_t glob_res = {0};
 	char **p;
-#else
+ #else
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind;
+ #endif
 #endif
 	char cwd[1024];
 	macro_fileset_type *fs;
@@ -5666,7 +6018,14 @@ int macrofileset_scan(void) {
 			/* If this is a cyclic macro, the number after SETFILEPOSTFIX won't give the # of cycles away! Only the %:... self-notification message can do that!
 			   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
 			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
+#ifdef USE_SDL3
+			/* SETFILEPOSTFIX is no longer the three-character "-FS" suffix. */
+			/* Reuse the length-aware parser and avoid short-name underflow. */
+			if (!macroset_parse_stage_name(buf_basename, NULL, tmpbuf, sizeof(tmpbuf), &stage)) continue;
+			strcpy(buf_basename, tmpbuf);
+#else
 			if (strncmp(buf_basename + strlen(buf_basename) - 8, SETFILEPOSTFIX, strlen(SETFILEPOSTFIX))) continue; //broken set-switching macro (not following our known scheme)
+#endif
 
 			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
 
@@ -5676,10 +6035,12 @@ int macrofileset_scan(void) {
 				continue;
 			}
 
-			/* Finalize stage index */
+			/* Finalize stage index and base name for the legacy frontends. */
+#ifndef USE_SDL3
 			stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
 			/* Finalize base filename */
 			buf_basename[strlen(buf_basename) - 8] = 0;
+#endif
 
 			/* Too many stages? */
 			if (stage >= MACROFILESETS_STAGES_MAX) {
@@ -5761,6 +6122,13 @@ int macrofileset_scan(void) {
 	}
 	filesets_found = k;
 
+#ifdef USE_SDL3
+	(void)macroset_collect_sorted_entries(&macroset_entries, &macroset_entries_count);
+	if (macroset_entries && macroset_entries_count) {
+		C_MAKE(macroset_entries_used, macroset_entries_count, bool);
+	}
+#endif
+
 
 	/* ---------- (b) Disk operations: Read macro files from TomeNET's user folder ---------- */
 
@@ -5771,10 +6139,23 @@ int macrofileset_scan(void) {
 	   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
 	   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
 	for (k = 0; k < filesets_found; k++) {
-#ifndef WINDOWS
- #ifdef TEST_CLIENT
+#ifdef TEST_CLIENT
 c_msg_format("(1)scan disk for set (%d) <%s>", k, fileset[k].basefilename);
- #endif
+#endif
+#ifdef USE_SDL3
+		if (macroset_scan_for_set(k, macroset_entries, macroset_entries_count, macroset_entries_used)) fileset[k].any_stage_file_exists = TRUE;
+		if (!fileset[k].any_stage_file_exists) {
+			/* No macro files found at all, ew. */
+			/* -- this warning is redundant with 'has no stage file(s)' warning further down ---
+			c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
+			c_msg_format("\377y         but there were no macro files \"%s%s?.prf\" found of that name!", fileset[k].basefilename, SETFILEPOSTFIX);
+			*/
+ #ifdef TEST_CLIENT
+c_msg_print("(1)nothing");
+  #endif
+		}
+#else
+ #ifndef WINDOWS
 		glob(format("%s%s?.prf", fileset[k].basefilename, SETFILEPOSTFIX), 0, 0, &glob_res);
 		glob_size = glob_res.gl_pathc;
 		if (glob_size < 1) { /* No macro files found at all, ew. */
@@ -5782,21 +6163,21 @@ c_msg_format("(1)scan disk for set (%d) <%s>", k, fileset[k].basefilename);
 			c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
 			c_msg_format("\377y         but there were no macro files \"%s%s?.prf\" found of that name!", fileset[k].basefilename, SETFILEPOSTFIX);
 			*/
- #ifdef TEST_CLIENT
+  #ifdef TEST_CLIENT
 c_msg_print("(1)nothing");
- #endif
+  #endif
 		} else { /* Found 'n' macro files */
 			fileset[k].any_stage_file_exists = TRUE;
 
 			for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 				/* Acquire base name and stage */
 				strcpy(buf_basename, *p);
-#else
+ #else
 		hFind = FindFirstFile(format("*%s?.prf", SETFILEPOSTFIX), &FindFileData);
 		if (hFind == INVALID_HANDLE_VALUE) {
- #ifdef TEST_CLIENT
+  #ifdef TEST_CLIENT
 c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
- #endif
+  #endif
 		} else {
 			strcpy(buf_basename, FindFileData.cFileName);
 			n = 0;
@@ -5805,7 +6186,7 @@ c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
 					if (FindNextFile(hFind, &FindFileData)) strcpy(buf_basename, FindFileData.cFileName);
 					else break;
 				}
-#endif
+ #endif
 				/* Extract stage number */
 				stage = atoi(buf_basename + strlen(fileset[k].basefilename) + 3) - 1;
 				if (stage >= MACROFILESETS_STAGES_MAX) {
@@ -5827,28 +6208,46 @@ c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename,
 				if (stage >= fileset[k].stages) fileset[k].stages = stage + 1;
 			}
 		}
-#ifndef WINDOWS
+ #ifndef WINDOWS
 		globfree(&glob_res);
-#else
+ #else
 		if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
+ #endif
 #endif
 	}
 
 
 	/* ---------- (c) Now also scan user folder for any macro sets that aren't referenced by our currently loaded macros: ---------- */
 
-#ifndef WINDOWS
-	glob(format("*%s?.prf", SETFILEPOSTFIX), 0, 0, &glob_res);
-	glob_size = glob_res.gl_pathc;
-	if (glob_size < 1) { /* No macro files found at all */
+#ifdef USE_SDL3
+	if (!macroset_scan_for_any(macroset_entries, macroset_entries_count, macroset_entries_used, filesets_found)) {
  #ifdef TEST_CLIENT
 c_msg_print("(2)nothing");
  #endif
+	}
+
+	/* Free all collected entries and usage info. */
+	if (macroset_entries_used) {
+		C_FREE(macroset_entries_used, macroset_entries_count, bool);
+		macroset_entries_used = NULL;
+	}
+	if (macroset_entries) {
+		macroset_free_entries(macroset_entries, macroset_entries_count);
+		macroset_entries = NULL;
+	}
+#else
+ #ifndef WINDOWS
+	glob(format("*%s?.prf", SETFILEPOSTFIX), 0, 0, &glob_res);
+	glob_size = glob_res.gl_pathc;
+	if (glob_size < 1) { /* No macro files found at all */
+  #ifdef TEST_CLIENT
+c_msg_print("(2)nothing");
+  #endif
 	} else { /* Found 'n' macro files */
 		for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 			/* Acquire base name and stage */
 			strcpy(buf_basename, *p);
-#else
+ #else
 	hFind = FindFirstFile(format("*%s?.prf", SETFILEPOSTFIX), &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE) { //;
 		c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
@@ -5860,7 +6259,7 @@ c_msg_print("(2)nothing");
 				if (FindNextFile(hFind, &FindFileData)) strcpy(buf_basename, FindFileData.cFileName);
 				else break;
 			}
-#endif
+ #endif
 			/* Extract stage index */
 			stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
 			/* Extract base name */
@@ -5946,10 +6345,11 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 			}
 		}
 	}
-#ifndef WINDOWS
+ #ifndef WINDOWS
 	globfree(&glob_res);
-#else
+ #else
 	if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
+ #endif
 #endif
 	/* End of 'user' folder disk operations */
 	(void)chdir(cwd); //Return to TomeNET working directory
@@ -6133,6 +6533,10 @@ int macrofileset_mempurge(int f) {
 	//scan all macros
 	while (TRUE) {
 		while (++m < macro__num) {
+#ifdef USE_SDL3
+			/* These flags describe this macro only; never inherit a match from the preceding entry in the macro table. */
+			style_cyclic = style_freesw = FALSE;
+#endif
 			/* Get macro in parsable format */
 			strncpy(buf_act, macro__act[m], MACRO_MAXLEN);
 			buf_act[MACRO_MAXLEN - 1] = '\0';
@@ -6160,12 +6564,21 @@ int macrofileset_mempurge(int f) {
 			   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
 			   -- actually, store 'comment' in a separate '<macrosetname-stage>.meta' file instead! Hard to handle otherwise. --
 			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
+#ifdef USE_SDL3
+			{
+				char parsed_base[sizeof(buf_basename)];
+				int parsed_stage;
+
+				if (!macroset_parse_stage_name(buf_basename, NULL, parsed_base, sizeof(parsed_base), &parsed_stage)) continue;
+				strcpy(buf_basename, parsed_base);
+			}
+#else
 			if (strncmp(buf_basename + strlen(buf_basename) - 8, SETFILEPOSTFIX, strlen(SETFILEPOSTFIX))) continue; //broken set-switching macro (not following our known scheme)
-
-			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
-
 			/* Finalize base filename */
 			buf_basename[strlen(buf_basename) - 8] = 0;
+#endif
+
+			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
 
 			/* Compare to set we want to delete */
 			if (strcmp(fileset[f].basefilename, buf_basename)) continue;
@@ -6229,12 +6642,16 @@ int macrofileset_stage_meminsert(int f) {
    Returns amount of found macros that were removed. */
 int macrofileset_stage_mempurge(int f) {
 	int m = -1, found = 0;
+#ifndef USE_SDL3
 	int searchstr_freesw_len;
+#endif
 
 	char *cfile;
 	char buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
 	char buf_basename[1024];
+#ifndef USE_SDL3
 	char searchstr_freesw[10];
+#endif
 
 
 	/* This function is weird, we first compare the cyclic/freesw marker strings, then the stage string, and lastly the basefilename string -_-' */
@@ -6242,8 +6659,10 @@ int macrofileset_stage_mempurge(int f) {
 	/* Note: The cyclic key is still valid, since if this stage gets removed from memory,
 	   the previous stage would instead cycle to the same target that this stage currently has!
 	   So we only need to remove this stage's free-switch key, which targets this stage (_from_ any stage). */
+#ifndef USE_SDL3
 	sprintf(searchstr_freesw, "%s%d", SETFILEPOSTFIX, f + 1);
 	searchstr_freesw_len = strlen(searchstr_freesw);
+#endif
 
 	//scan all macros
 	while (TRUE) {
@@ -6272,12 +6691,22 @@ int macrofileset_stage_mempurge(int f) {
 			   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
 			   -- actually, store 'comment' in a separate '<macrosetname-stage>.meta' file instead! Hard to handle otherwise. --
 			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
+#ifdef USE_SDL3
+			{
+				char parsed_base[sizeof(buf_basename)];
+				int parsed_stage;
+
+				if (!macroset_parse_stage_name(buf_basename, NULL, parsed_base, sizeof(parsed_base), &parsed_stage)) continue;
+				if (parsed_stage != f) continue;
+				strcpy(buf_basename, parsed_base);
+			}
+#else
 			if (strncmp(buf_basename + strlen(buf_basename) - 8, searchstr_freesw, searchstr_freesw_len)) continue; //broken set-switching macro (not following our known scheme)
-
-			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
-
 			/* Finalize base filename */
 			buf_basename[strlen(buf_basename) - 8] = 0;
+#endif
+
+			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
 
 			/* Compare to set we want to delete */
 			if (strcmp(fileset[fileset_selected].basefilename, buf_basename)) continue;
@@ -12285,7 +12714,7 @@ void options_immediate(bool init) {
 	static bool changed7, changed8;
 	static bool changed9a, changed9b, changed9c, changed9d;
 
-#if !defined(WINDOWS) && !defined(USE_X11)
+#if !defined(WINDOWS) && !defined(USE_X11) && !defined(USE_SDL3)
 	/* Assume GCU-only client - terminal will break with "^B" visuals if font_map_solid_walls is on, so disable it always: */
 	if (c_cfg.font_map_solid_walls) {
 		c_msg_print("\377yOption 'font_map_solid_walls' is not supported on GCU-only client.");
@@ -12412,9 +12841,9 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 
 			/* Display the option text */
 			sprintf(buf, "%-49s: %s  (%s)",
-			        option_info[opt[i]].o_desc,
-			        (*option_info[opt[i]].o_var ? "yes" : "no "),
-			        option_info[opt[i]].o_text);
+					option_info[opt[i]].o_desc,
+					(*option_info[opt[i]].o_var ? "yes" : "no "),
+					option_info[opt[i]].o_text);
 			c_prt(a, buf, i + 2, 0);
 		}
 
@@ -12707,7 +13136,7 @@ static void do_cmd_options_acc(void) {
  * Modify the "window" options
  */
 static void do_cmd_options_win(void) {
-	int i, j, d, vertikal_offset = 4;
+	int i, j, d, vertical_offset = 4;
 
 	int y = 0;
 	int x = 1;
@@ -12732,7 +13161,13 @@ static void do_cmd_options_win(void) {
 	while (go) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, 0, -1, TERM_WHITE, "Window flags (<\377ydir\377w>, \377yt\377w (take), \377yy\377w (set), \377yn\377w (clear), \377yENTER\377w (toggle), \377yESC\377w) ");
+#ifdef USE_SDL3
+		Term_putstr(0, 1, -1, TERM_WHITE, format("\377yd\377w toggle window decorations (%s)   ", sdl3_window_decorations ? "on" : "off"));
+		Term_putstr(0, 3, -1, TERM_SLATE, "-Contents to be displayed-                      -Window names-");
+		vertical_offset = 5;
+#else
 		Term_putstr(0, 2, -1, TERM_SLATE, "-Contents to be displayed-                      -Window names-");
+#endif
 
 		/* Display the windows */
 		for (j = 1; j < ANGBAND_TERM_MAX; j++) {
@@ -12743,7 +13178,7 @@ static void do_cmd_options_win(void) {
 			if (c_cfg.use_color && (j == x)) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
-			Term_putstr(30 + j * 5 - strlen(s) / 2, vertikal_offset + j % 2, -1, a, (char*)s);
+			Term_putstr(30 + j * 5 - strlen(s) / 2, vertical_offset + j % 2, -1, a, (char*)s);
 		}
 
 		/* Display the options */
@@ -12758,7 +13193,7 @@ static void do_cmd_options_win(void) {
 			if (!str) str = "\377D(Unused option)\377w";
 
 			/* Flag name */
-			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
+			Term_putstr(0, i + vertical_offset + 2, -1, a, (char*)str);
 
 			/* Display the windows */
 			for (j = 1; j < ANGBAND_TERM_MAX; j++) {
@@ -12775,12 +13210,12 @@ static void do_cmd_options_win(void) {
 				}
 
 				/* Flag value */
-				Term_putch(30 + j * 5, i + vertikal_offset + 2, a, c);
+				Term_putch(30 + j * 5, i + vertical_offset + 2, a, c);
 			}
 		}
 
 		/* Place Cursor */
-		Term_gotoxy(30 + x * 5, y + vertikal_offset + 2);
+		Term_gotoxy(30 + x * 5, y + vertical_offset + 2);
 
 		/* Get key */
 		ch = inkey();
@@ -12795,6 +13230,14 @@ static void do_cmd_options_win(void) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????", 2);
 			break;
+
+#ifdef USE_SDL3
+		case 'd':
+			sdl3_window_decorations = !sdl3_window_decorations;
+			apply_window_decorations();
+			Term_putstr(0, 1, -1, TERM_WHITE, format("  d toggle window decorations (%s)", sdl3_window_decorations ? "on" : "off"));
+			break;
+#endif
 
 		/* specialty: allow chatting from within here */
 		case ':': {
@@ -12919,11 +13362,11 @@ static void do_cmd_options_win(void) {
 }
 
 #ifdef ENABLE_SUBWINDOW_MENU
- #if defined(WINDOWS) || defined(USE_X11)
+ #if defined(WINDOWS) || defined(USE_X11) || defined(USE_SDL3)
 static int font_name_cmp(const void *a, const void *b) {
-   #if 0 /* simple way */
+  #if 0 /* simple way */
 	return(strcmp((const char*)a, (const char*)b));
-   #elif 0 /* sort in single-digit numbers before double-digit ones */
+  #elif 0 /* sort in single-digit numbers before double-digit ones */
 	char at[256], bt[256];
 
 	at[0] = '0';
@@ -12933,7 +13376,7 @@ static int font_name_cmp(const void *a, const void *b) {
 	if (atoi((char*)b) < 10) strcpy(bt + 1, (char *)b);
 	else strcpy(bt, (char *)b);
 	return(strcmp(at, bt));
-   #else /* Sort by width, then height */
+  #else /* Sort by width, then height */
 	/* Let's sort the array by font size actually */
 	int fwid1, fhgt1, fwid2, fhgt2;
 	char *fmatch;
@@ -12951,12 +13394,33 @@ static int font_name_cmp(const void *a, const void *b) {
 	if (fwid1 != fwid2) return(fwid1 > fwid2) ? 1 : -1;
 	else if (fhgt1 != fhgt2) return(fhgt1 > fhgt2) ? 1 : -1;
 	else return(0);
-   #endif
+  #endif
 }
-//  #endif
+
+static int graphics_name_cmp(const void *a, const void *b) {
+	int fwid1, fhgt1, fwid2, fhgt2;
+	char *fmatch, *fsuffix1, *fsuffix2;
+
+	fwid1 = atoi(a);
+	fmatch = my_strcasestr(a, "x");
+	fhgt1 = atoi(fmatch + 1);
+	fsuffix1 = fmatch + 1;
+	while (*fsuffix1 && isdigit((unsigned char)*fsuffix1)) fsuffix1++;
+
+	fwid2 = atoi(b);
+	fmatch = my_strcasestr(b, "x");
+	fhgt2 = atoi(fmatch + 1);
+	fsuffix2 = fmatch + 1;
+	while (*fsuffix2 && isdigit((unsigned char)*fsuffix2)) fsuffix2++;
+
+	if (fwid1 != fwid2) return(fwid1 > fwid2) ? 1 : -1;
+	else if (fhgt1 != fhgt2) return(fhgt1 > fhgt2) ? 1 : -1;
+
+	return strcasecmp(fsuffix1, fsuffix2);
+}
 
 static void do_cmd_options_fonts(void) {
-	int j, d, vertikal_offset = 6;
+	int j, d, vertical_offset = 6;
 	int y = 0;
 	char ch;
 	bool go = TRUE, inkey_msg_old;
@@ -12967,10 +13431,19 @@ static void do_cmd_options_fonts(void) {
 	char graphic_font_name[MAX_FONTS][256];
 	int graphic_fonts = 0;
 
-  #ifndef WINDOWS
+  #ifdef USE_X11
 	int x11_refresh = 50;
 	FILE *fff;
-  #else
+  #elif defined(USE_SDL3)
+	DIR *dir;
+	struct dirent *ent;
+	char base_name[256];
+	int k;
+	const char *cur;
+	char font_base[256];
+	int8_t size = 0;
+	char new_fnt[256];
+  #elif defined(WINDOWS)
 	char *cp, *cpp;
   #endif
 
@@ -13007,9 +13480,82 @@ static void do_cmd_options_fonts(void) {
 		}
 	}
 	closedir(dir);
-  #endif
+  #elif defined(USE_SDL3) /* SDL3 uses .pcf or .ttf fonts */
 
-  #ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
+	/* Prepare font arrays. */
+	memset(font_name, 0, sizeof(char) * (MAX_FONTS * 256));
+	memset(graphic_font_name, 0, sizeof(char) * (MAX_FONTS * 256));
+
+	/* Read all locally available fonts, first from user storage, then from game storage. */
+	/* First user-specific fonts. */
+	path_build(path, 1024, ANGBAND_USER_DIR_XTRA, "font");
+	if ((dir = opendir(path))) {
+		while ((ent = readdir(dir))) {
+			strcpy(tmp_name, ent->d_name);
+			j = -1;
+			while (tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
+			if (strstr(tmp_name, ".pcf")) {
+				if (graphic_fonts == MAX_FONTS) continue;
+
+				/* PCF font is stored without extenstion. */
+				strcpy(graphic_font_name[graphic_fonts], ent->d_name);
+				graphic_font_name[graphic_fonts][strlen(tmp_name) - 4] = '\0';
+				graphic_fonts++;
+
+				if (graphic_fonts == MAX_FONTS) c_msg_format("Warning: Number of graphic fonts exceeds max of %d. Ignoring the rest.", MAX_FONTS);
+			} else if (strstr(tmp_name, ".ttf")) {
+				if (fonts == MAX_FONTS) continue;
+
+				/* Just store the font. */
+				strcpy(font_name[fonts], ent->d_name);
+				fonts++;
+
+				if (fonts == MAX_FONTS) c_msg_format("Warning: Number of fonts exceeds max of %d. Ignoring the rest.", MAX_FONTS);
+			}
+		}
+		closedir(dir);
+	}
+
+	/* Then game fonts (fallback), skipping duplicates. */
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "font");
+	if (!sdl3_paths_same(ANGBAND_USER_DIR_XTRA, ANGBAND_DIR_XTRA) && (dir = opendir(path))) {
+		while ((ent = readdir(dir))) {
+			strcpy(tmp_name, ent->d_name);
+			j = -1;
+			while (tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
+			if (strstr(tmp_name, ".pcf")) {
+				if (graphic_fonts == MAX_FONTS) continue;
+
+				/* Get PCF font file name without extension. */
+				strncpy(base_name, ent->d_name, sizeof(base_name) - 1);
+				base_name[sizeof(base_name) - 1] = '\0';
+				if (strlen(base_name) >= 4) base_name[strlen(base_name) - 4] = '\0';
+
+				/* Check duplicate in graphic_font_name */
+				for (k = 0; k < graphic_fonts; k++) if (!strcmp(graphic_font_name[k], base_name)) break;
+				if (k < graphic_fonts) continue; /* duplicate */
+
+				/* Not duplicate, store font. */
+				strcpy(graphic_font_name[graphic_fonts], base_name);
+				graphic_fonts++;
+				if (graphic_fonts == MAX_FONTS) c_msg_format("Warning: Number of graphic fonts exceeds max of %d. Ignoring the rest.", MAX_FONTS);
+			} else if (strstr(tmp_name, ".ttf")) {
+				if (fonts == MAX_FONTS) continue;
+
+				/* Check duplicate in font_name */
+				for (k = 0; k < fonts; k++) if (!strcmp(font_name[k], ent->d_name)) break;
+				if (k < fonts) continue; /* duplicate */
+
+				/* Not a duplicate, store. */
+				strcpy(font_name[fonts], ent->d_name);
+				fonts++;
+
+				if (fonts == MAX_FONTS) c_msg_format("Warning: Number of fonts exceeds max of %d. Ignoring the rest.", MAX_FONTS);
+			}
+		}
+		closedir(dir);
+	}
+  #elif defined(USE_X11) /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
 	int misc_fonts = 0;
 
 	if (fonts < MAX_FONTS) {
@@ -13061,19 +13607,21 @@ static void do_cmd_options_fonts(void) {
 	}
   #endif
 
-	if (!fonts) {
-		c_msg_format("No .fon font files found in directory (%s).", path);
+	if (!fonts && !graphic_fonts) {
+  #ifdef USE_SDL3
+		c_msg_format("No .pcf or .ttf font files found in user (%s%sfont) nor in game (%s%sfont) font directory.", ANGBAND_USER_DIR_XTRA, SDL3_PATH_SEP, ANGBAND_DIR_XTRA, SDL3_PATH_SEP);
+  #else
+		c_msg_format("No font files found in directory (%s).", path);
+  #endif
 		return;
 	}
 
-//  #ifdef WINDOWS /* actually never sort fonts on X11, because they come in a sorted manner from fonts.alias and fonts.txt files already. */
 	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
-   #ifdef WINDOWS /* Windows supports graphic fonts for the clone-map */
+  #if defined(WINDOWS) || defined(USE_SDL3)
 	qsort(graphic_font_name, graphic_fonts, sizeof(char[256]), font_name_cmp);
-   #endif
-//  #endif
+  #endif
 
-   #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
+  #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
 	for (j = 0; j < fonts; j++) {
 		strcpy(tmp_name, font_name[j]);
 		//path_build(font_name[j], 1024, path, font_name[j]);
@@ -13130,9 +13678,9 @@ static void do_cmd_options_fonts(void) {
 			if (c_cfg.use_color && (j == y)) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
-			Term_putstr(1, vertikal_offset + j, -1, a, (char*)s);
+			Term_putstr(1, vertical_offset + j, -1, a, (char*)s);
 			/* Titles may be up to 40 characters long, in that case, shorten */
-			if (strlen(s) > 19) Term_putstr(18, vertikal_offset + j, -1, a, "..");
+			if (strlen(s) > 19) Term_putstr(18, vertical_offset + j, -1, a, "..");
 
 			/* Display the font of this window */
 			if (c_cfg.use_color && !term_get_visibility(j)) a = TERM_L_DARK;
@@ -13143,11 +13691,11 @@ static void do_cmd_options_fonts(void) {
 			strcpy(buf, get_font_name(j));
 			buf[59] = 0;
 			while (strlen(buf) < 59) strcat(buf, " ");
-			Term_putstr(20, vertikal_offset + j, -1, a, buf);
+			Term_putstr(20, vertical_offset + j, -1, a, buf);
 		}
 
 		/* Place Cursor */
-		//Term_gotoxy(20, vertikal_offset + y);
+		//Term_gotoxy(20, vertical_offset + y);
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -13194,19 +13742,21 @@ static void do_cmd_options_fonts(void) {
 			clear_from(20);
 			if (!tmp_name[0]) break;
 
-			Term_putstr(1, vertikal_offset + y, -1, TERM_DARK, "                                       ");
+			Term_putstr(1, vertical_offset + y, -1, TERM_DARK, "                                       ");
 			strcpy(ang_term_name[y], tmp_name);
 
 			/* Immediately change live window title */
   #ifdef WINDOWS
 			set_window_title_win(y, ang_term_name[y]);
+  #elif defined(USE_SDL3)
+			set_window_title_sdl3(y, ang_term_name[y]);
   #else /* assume POSIX */
 			set_window_title_x11(y, ang_term_name[y]);
   #endif
 			break;
 
 		case 'r':
-			Term_putstr(1, vertikal_offset + y, -1, TERM_DARK, "                                       ");
+			Term_putstr(1, vertical_offset + y, -1, TERM_DARK, "                                       ");
 
 			/* Keep consistent with c-tables.c! */
 			switch (y) {
@@ -13225,6 +13775,8 @@ static void do_cmd_options_fonts(void) {
 			/* Immediately change live window title */
   #ifdef WINDOWS
 			set_window_title_win(y, ang_term_name[y]);
+  #elif defined(USE_SDL3)
+			set_window_title_sdl3(y, ang_term_name[y]);
   #else /* assume POSIX */
 			set_window_title_x11(y, ang_term_name[y]);
   #endif
@@ -13245,9 +13797,11 @@ static void do_cmd_options_fonts(void) {
 
 			/* Immediately change live window title */
 			for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-				Term_putstr(1, vertikal_offset + j, -1, TERM_DARK, "                                       ");
+				Term_putstr(1, vertical_offset + j, -1, TERM_DARK, "                                       ");
   #ifdef WINDOWS
 				set_window_title_win(j, ang_term_name[j]);
+  #elif defined(USE_SDL3)
+				set_window_title_sdl3(j, ang_term_name[j]);
   #else /* assume POSIX */
 				set_window_title_x11(j, ang_term_name[j]);
   #endif
@@ -13262,6 +13816,26 @@ static void do_cmd_options_fonts(void) {
   #endif
 		case '=':
 		case '+':
+  #ifdef USE_SDL3
+			{
+				cur = get_font_name(y);
+				if (is_ttf_font(cur, font_base, sizeof(font_base), &size)) {
+					if (size == -1) size = SDL3_DEFAULT_TTF_FONT_SIZE;
+					size++;
+					if (size > SDL3_MAX_TTF_FONT_SIZE) size = SDL3_MAX_TTF_FONT_SIZE;
+					snprintf(new_fnt, sizeof(new_fnt), "%s %d", font_base, size);
+					set_font_name(y, new_fnt);
+				} else {
+					for (j = 0; j < graphic_fonts - 1; j++) {
+						if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
+							set_font_name(y, graphic_font_name[j + 1]);
+							break;
+						}
+					}
+				}
+			}
+			break;
+  #endif
   #if defined(WINDOWS) && defined(USE_LOGFONT)
 			if (use_logfont) {
 				win_logfont_inc(y, TRUE);
@@ -13270,12 +13844,11 @@ static void do_cmd_options_fonts(void) {
   #endif
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
-				//Include the graphic fonts, because we are cycling the clone-map
+				/* Include the graphic fonts, because we are cycling the clone-map */
 				for (j = 0; j < graphic_fonts - 1; j++) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
-						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j + 1]);
-  #ifndef WINDOWS
+  #ifdef USE_X11
 						sync_sleep(x11_refresh);
   #endif
 						break;
@@ -13286,7 +13859,7 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, font_name[j + 1]);
-  #ifndef WINDOWS
+  #ifdef USE_X11
 						sync_sleep(x11_refresh);
   #endif
 						break;
@@ -13302,6 +13875,26 @@ static void do_cmd_options_fonts(void) {
 			break;
   #endif
 		case '-':
+  #ifdef USE_SDL3
+			{
+				cur = get_font_name(y);
+				if (is_ttf_font(cur, font_base, sizeof(font_base), &size)) {
+					if (size == -1) size = SDL3_DEFAULT_TTF_FONT_SIZE;
+					size--;
+					if (size < SDL3_MIN_TTF_FONT_SIZE) size = SDL3_MIN_TTF_FONT_SIZE;
+					snprintf(new_fnt, sizeof(new_fnt), "%s %d", font_base, size);
+					set_font_name(y, new_fnt);
+				} else {
+					for (j = 1; j < graphic_fonts; j++) {
+						if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
+							set_font_name(y, graphic_font_name[j - 1]);
+							break;
+						}
+					}
+				}
+			}
+			break;
+  #endif
   #if defined(WINDOWS) && defined(USE_LOGFONT)
 			if (use_logfont) {
 				win_logfont_dec(y, TRUE);
@@ -13310,12 +13903,12 @@ static void do_cmd_options_fonts(void) {
   #endif
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
-				//Include the graphic fonts, because we are cycling the clone-map
+				/* Include the graphic fonts, because we are cycling the clone-map. */
 				for (j = 1; j < graphic_fonts; j++) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j - 1]);
-  #ifndef WINDOWS
+  #ifdef USE_X11
 						sync_sleep(x11_refresh);
   #endif
 						break;
@@ -13324,9 +13917,8 @@ static void do_cmd_options_fonts(void) {
 			} else {
 				for (j = 1; j < fonts; j++) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
-						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, font_name[j - 1]);
-  #ifndef WINDOWS
+  #ifdef USE_X11
 						sync_sleep(x11_refresh);
   #endif
 						break;
@@ -13361,7 +13953,7 @@ static void do_cmd_options_fonts(void) {
 			clear_from(20);
 			if (!tmp_name[0]) break;
 			set_font_name(y, tmp_name);
-  #ifndef WINDOWS
+  #ifdef USE_X11
 			sync_sleep(x11_refresh);
   #endif
 			break;
@@ -13438,6 +14030,445 @@ static void do_cmd_options_fonts(void) {
 	check_for_playerlist();
 }
   #ifdef USE_GRAPHICS
+   #ifdef USE_SDL3
+
+static void resize_type_reset_pending(void) {
+	sdl3_gfx_resize_type_new = gfx_resize_type;
+}
+
+static bool resize_type_changes_pending(void) {
+	return (sdl3_gfx_resize_type_new != gfx_resize_type);
+}
+
+static bool apply_graphics_resize_type_change(void) {
+	if (!resize_type_changes_pending()) return(TRUE);
+
+	if (!sdl3_apply_graphics_resize_type(sdl3_gfx_resize_type_new)) {
+		c_msg_print("Failed to apply graphics resize type.");
+		return(FALSE);
+	}
+
+	resize_type_reset_pending();
+	c_msg_format("Graphics resize type updated to %s.", interpolation_list[gfx_resize_type].name);
+
+	return(TRUE);
+}
+
+static void restore_graphics_resize_type_or_quit(int original_resize_type, cptr reason) {
+	if (gfx_resize_type == original_resize_type) return;
+
+	c_msg_print("Reverting graphics resize type change due to apply failure.");
+	sdl3_gfx_resize_type_new = original_resize_type;
+	if (!apply_graphics_resize_type_change()) {
+		quit(reason);
+	}
+}
+
+    #ifdef GRAPHICS_BG_MASK
+static int sdl3_graphics_image_force_outline_new = -1;
+
+static void outline_reset_pending(void) {
+	sdl3_graphics_image_force_outline_new = sdl3_graphics_image_force_outline;
+}
+
+static bool outline_changes_pending(void) {
+	return (sdl3_graphics_image_force_outline_new != sdl3_graphics_image_force_outline);
+}
+
+static void outline_format_value(char *buf, size_t len, int value) {
+	if (value < 0) strnfmt(buf, len, "auto (tileset)");
+	else if (value == 0) strnfmt(buf, len, "disabled");
+	else strnfmt(buf, len, "%d px radius", value);
+}
+
+static bool apply_graphics_outline_change(void) {
+	if (!outline_changes_pending()) return(TRUE);
+
+	if (!sdl3_apply_graphics_image_force_outline(sdl3_graphics_image_force_outline_new)) {
+		c_msg_print("Failed to apply forced outline setting.");
+		return(FALSE);
+	}
+
+	outline_reset_pending();
+
+	char desc[64];
+	outline_format_value(desc, sizeof(desc), sdl3_graphics_image_force_outline);
+	c_msg_format("Forced outline updated to %s.", desc);
+
+	return(TRUE);
+}
+    #endif
+
+static bool graphics_changes_pending(void) {
+	return (use_graphics_new != use_graphics);
+}
+
+static bool send_graphics_mode_request(byte mode) {
+	byte previous = use_graphics;
+	int res;
+
+	Net_flush();
+	use_graphics = mode;
+	res = Send_font();
+	use_graphics = previous;
+
+	if (res <= 0) {
+		return(FALSE);
+	}
+	if (Net_flush() == -1) {
+		return(FALSE);
+	}
+
+	return(TRUE);
+}
+
+/* 
+ * Changes graphics mode to use_graphics_new.
+ *
+ * Note: This solution for graphics mode switching is not ideal.
+ * It sometimes produces invalid packet, but does not crash the game.
+ */
+static bool apply_graphics_mode_change(void) {
+	byte target = use_graphics_new;
+	byte previous = use_graphics;
+
+	if (target == previous) {
+		c_msg_print("Graphical tileset mode already active.");
+		return(TRUE);
+	}
+
+	if (target != UG_NONE) {
+		if (is_older_than(&server_version, 4, 8, 1, 0, 0, 0)) {
+			c_msg_print("Server does not support graphical tilesets.");
+			use_graphics_new = previous;
+			return(FALSE);
+		}
+    #ifdef GRAPHICS_BG_MASK
+		if (target == UG_2MASK && !is_atleast(&server_version, 4, 9, 2, 1, 0, 0)) {
+			c_msg_print("Server does not support dual-mask graphics.");
+			use_graphics_new = previous;
+			return(FALSE);
+		}
+    #endif
+	}
+
+	if (!send_graphics_mode_request(target)) {
+		c_msg_print("Failed to send graphics mode update to server.");
+		return(FALSE);
+	}
+	if (!sdl3_set_graphics_mode(target)) {
+		if (use_graphics_errstr[0]) c_msg_format("Failed to initialize graphics: %s", use_graphics_errstr);
+		else c_msg_print("Failed to initialize selected graphics mode.");
+
+		if (!send_graphics_mode_request(previous)) {
+			quit("Unable to restore previous graphics mode on server after graphics mode set failed.");
+		}
+		if (!sdl3_set_graphics_mode(previous)) {
+			quit("Unable to restore previous graphics mode on client after graphics mode set failed.");
+		}
+
+		use_graphics_new = use_graphics;
+		handle_process_font_file();
+		if (in_game) Send_redraw(0);
+		return(FALSE);
+	}
+
+	use_graphics_new = use_graphics;
+	handle_process_font_file();
+	if (in_game) Send_redraw(0);
+
+	if (use_graphics == UG_NONE) c_msg_print("Graphical tileset usage disabled.");
+    #ifdef GRAPHICS_BG_MASK
+	else if (use_graphics == UG_2MASK) c_msg_print("Graphical tileset usage enabled (dual-mask).");
+    #endif
+	else c_msg_print("Graphical tileset usage enabled.");
+
+	return(TRUE);
+}
+
+static bool tileset_settings_match(const char *tileset_a, const bool subtiles_a[], const char *tileset_b, const bool subtiles_b[]) {
+	if (strcasecmp(tileset_a, tileset_b)) return(FALSE);
+
+	for (int i = 0; i < MAX_SUBFONTS; i++) {
+		if (subtiles_a[i] != subtiles_b[i]) return(FALSE);
+	}
+
+	return(TRUE);
+}
+
+static bool tileset_changes_pending(const char *active_tileset, const bool active_subtiles[]) {
+	return(!tileset_settings_match(active_tileset, active_subtiles, graphic_tiles, graphic_subtiles));
+}
+
+static void tileset_copy_subtiles(bool dest[], const bool src[]) {
+	for (int i = 0; i < MAX_SUBFONTS; i++) {
+		dest[i] = src[i];
+	}
+}
+
+static void tileset_restore_previous(const char *previous_tileset, const bool previous_subtiles[]) {
+	strnfmt(graphic_tiles, sizeof(graphic_tiles), "%s", previous_tileset);
+	for (int i = 0; i < MAX_SUBFONTS; i++) {
+		graphic_subtiles[i] = previous_subtiles[i];
+	}
+}
+static bool apply_graphics_tileset_change(const char *previous_tileset, const bool previous_subtiles[]) {
+	bool same_tileset = (strcasecmp(previous_tileset, graphic_tiles) == 0);
+	bool same_subtiles = TRUE;
+
+	for (int i = 0; i < MAX_SUBFONTS; i++) {
+		if (previous_subtiles[i] != graphic_subtiles[i]) {
+			same_subtiles = FALSE;
+			break;
+		}
+	}
+
+	if (same_tileset && same_subtiles) {
+		c_msg_print("Graphical tileset already active.");
+		return(TRUE);
+	}
+
+	if (!send_graphics_mode_request(use_graphics)) {
+		c_msg_print("Failed to send graphics tileset update to server.");
+		return(FALSE);
+	}
+
+	if (use_graphics == UG_NONE) {
+		handle_process_font_file();
+		c_msg_print("Graphical tileset preference updated. Enable graphics to view changes.");
+		return(TRUE);
+	}
+
+	if (!sdl3_reload_graphics_tileset()) {
+		if (use_graphics_errstr[0]) c_msg_format("Failed to initialize graphics: %s", use_graphics_errstr);
+		else c_msg_print("Failed to initialize selected graphical tileset.");
+
+		tileset_restore_previous(previous_tileset, previous_subtiles);
+
+		if (!send_graphics_mode_request(use_graphics)) {
+			quit("Unable to restore previous graphics tileset on server after graphics tileset set failed.");
+		}
+		if (!sdl3_reload_graphics_tileset()) {
+			quit("Unable to restore previous graphics tileset on client after graphics tileset set failed.");
+		}
+		handle_process_font_file();
+		if (in_game) Send_redraw(0);
+		return(FALSE);
+	}
+
+	handle_process_font_file();
+	if (in_game) Send_redraw(0);
+
+	if (!same_tileset) c_msg_print("Graphical tileset applied.");
+	else c_msg_print("Graphical tileset subsets applied.");
+
+	return(TRUE);
+}
+
+static bool apply_pending_graphics_changes(char *previous_tileset, size_t previous_tileset_size, bool previous_subtiles[], int *cur_set, bool subset_enabled[][MAX_SUBFONTS], int tilesets, char tileset_name[][256]) {
+	bool refresh = FALSE;
+	bool applied_tileset = FALSE;
+	bool applied_mode = FALSE;
+	bool applied_resize_type = FALSE;
+	int applied_set = -1;
+	byte original_mode = use_graphics;
+	int original_resize_type = gfx_resize_type;
+	int original_cur_set = -1;
+	int original_set_index = -1;
+	char original_tileset[256];
+	bool original_subtiles[MAX_SUBFONTS];
+
+	strnfmt(original_tileset, sizeof(original_tileset), "%s", previous_tileset);
+	tileset_copy_subtiles(original_subtiles, previous_subtiles);
+	if (cur_set) original_cur_set = *cur_set;
+	for (int j = 0; j < tilesets; j++) {
+		if (!strcasecmp(tileset_name[j], original_tileset)) {
+			original_set_index = j;
+			break;
+		}
+	}
+
+	if (graphics_changes_pending()) {
+		if (!apply_graphics_mode_change()) return FALSE;
+		applied_mode = TRUE;
+		refresh = TRUE;
+	}
+
+	if (resize_type_changes_pending()) {
+		if (!apply_graphics_resize_type_change()) {
+			if (applied_mode && use_graphics != original_mode) {
+				c_msg_print("Reverting graphics mode change due to apply failure.");
+				use_graphics_new = original_mode;
+				if (!apply_graphics_mode_change()) {
+					quit("Unable to restore previous graphics mode after resize type apply failed.");
+				}
+			}
+			return FALSE;
+		}
+		applied_resize_type = TRUE;
+		refresh = TRUE;
+	}
+
+	if (tileset_changes_pending(previous_tileset, previous_subtiles)) {
+		if (!apply_graphics_tileset_change(previous_tileset, previous_subtiles)) {
+			int restored_set = -1;
+
+			for (int j = 0; j < tilesets; j++) {
+				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
+					restored_set = j;
+					break;
+				}
+			}
+			if (restored_set < 0) restored_set = original_set_index;
+			if (restored_set < 0 && original_cur_set >= 0 && original_cur_set < tilesets) {
+				if (!strcasecmp(tileset_name[original_cur_set], original_tileset)) {
+					restored_set = original_cur_set;
+				}
+			}
+
+			if (restored_set >= 0) {
+				for (int i = 0; i < MAX_SUBFONTS; i++) {
+					subset_enabled[restored_set][i] = graphic_subtiles[i];
+				}
+				if (cur_set) *cur_set = restored_set;
+			}
+				if (applied_mode && use_graphics != original_mode) {
+					c_msg_print("Reverting graphics mode change due to apply failure.");
+					use_graphics_new = original_mode;
+				if (!apply_graphics_mode_change()) {
+						quit("Unable to restore previous graphics mode after tileset apply failed.");
+					}
+				}
+				if (applied_resize_type) {
+					restore_graphics_resize_type_or_quit(original_resize_type, "Unable to restore previous graphics resize type after tileset apply failed.");
+				}
+				return FALSE;
+			}
+
+		applied_tileset = TRUE;
+		refresh = TRUE;
+
+		for (int j = 0; j < tilesets; j++) {
+			if (!strcasecmp(tileset_name[j], graphic_tiles)) {
+				applied_set = j;
+				break;
+			}
+		}
+	}
+
+    #ifdef GRAPHICS_BG_MASK
+	if (outline_changes_pending()) {
+		if (!apply_graphics_outline_change()) {
+			if (applied_tileset) {
+				c_msg_print("Reverting graphics tileset change due to apply failure.");
+				tileset_restore_previous(original_tileset, original_subtiles);
+				if (!send_graphics_mode_request(use_graphics)) {
+					quit("Unable to restore previous graphics tileset on server after outline apply failed.");
+				}
+				if (use_graphics != UG_NONE && !sdl3_reload_graphics_tileset()) {
+					quit("Unable to restore previous graphics tileset on client after outline apply failed.");
+				}
+				handle_process_font_file();
+				if (in_game) Send_redraw(0);
+				strnfmt(previous_tileset, previous_tileset_size, "%s", original_tileset);
+				tileset_copy_subtiles(previous_subtiles, original_subtiles);
+				int restored_set = original_set_index;
+				if (restored_set < 0 && original_cur_set >= 0 && original_cur_set < tilesets) {
+					if (!strcasecmp(tileset_name[original_cur_set], original_tileset)) {
+						restored_set = original_cur_set;
+					}
+				}
+				if (restored_set >= 0) {
+					for (int i = 0; i < MAX_SUBFONTS; i++) {
+						subset_enabled[restored_set][i] = original_subtiles[i];
+					}
+					if (cur_set) *cur_set = restored_set;
+				}
+			}
+			if (applied_mode && use_graphics != original_mode) {
+				c_msg_print("Reverting graphics mode change due to apply failure.");
+				use_graphics_new = original_mode;
+				if (!apply_graphics_mode_change()) {
+					quit("Unable to restore previous graphics mode after outline apply failed.");
+				}
+			}
+			if (applied_resize_type) {
+				restore_graphics_resize_type_or_quit(original_resize_type, "Unable to restore previous graphics resize type after outline apply failed.");
+			}
+			return FALSE;
+		}
+		refresh = TRUE;
+	}
+    #endif
+
+	if (applied_tileset) {
+		strnfmt(previous_tileset, previous_tileset_size, "%s", graphic_tiles);
+		tileset_copy_subtiles(previous_subtiles, graphic_subtiles);
+
+		if (applied_set >= 0) {
+			for (int i = 0; i < MAX_SUBFONTS; i++) {
+				subset_enabled[applied_set][i] = graphic_subtiles[i];
+			}
+			if (cur_set) *cur_set = applied_set;
+		}
+	}
+
+	return refresh;
+}
+
+static void discard_pending_graphics_changes(const char *previous_tileset, const bool previous_subtiles[], int *cur_set, bool subset_enabled[][MAX_SUBFONTS], int tilesets, char tileset_name[][256]) {
+
+	if (graphics_changes_pending()) {
+		use_graphics_new = use_graphics;
+		c_msg_print("Pending graphics mode change discarded.");
+	}
+
+	if (resize_type_changes_pending()) {
+		resize_type_reset_pending();
+		c_msg_print("Pending graphics resize type change discarded.");
+	}
+
+	if (tileset_changes_pending(previous_tileset, previous_subtiles)) {
+		tileset_restore_previous(previous_tileset, previous_subtiles);
+
+		int restored_set = -1;
+		for (int j = 0; j < tilesets; j++) {
+			if (!strcasecmp(tileset_name[j], graphic_tiles)) {
+				restored_set = j;
+				break;
+			}
+		}
+
+		if (restored_set >= 0) {
+			for (int i = 0; i < MAX_SUBFONTS; i++) {
+				subset_enabled[restored_set][i] = graphic_subtiles[i];
+			}
+			if (cur_set) *cur_set = restored_set;
+		}
+
+		c_msg_print("Pending graphics tileset change discarded.");
+	}
+    #ifdef GRAPHICS_BG_MASK
+	if (outline_changes_pending()) {
+		outline_reset_pending();
+		c_msg_print("Pending forced outline change discarded.");
+	}
+    #endif
+}
+   #endif /* USE_SDL3 */
+
+static bool tileset_name_has_size_prefix(const char *name) {
+	int i = 0;
+
+	if (!isdigit((unsigned char)name[i])) return FALSE;
+	while (isdigit((unsigned char)name[i])) i++;
+	if (tolower((unsigned char)name[i]) != 'x') return FALSE;
+	i++;
+	if (!isdigit((unsigned char)name[i])) return FALSE;
+
+	return TRUE;
+}
+
 /* These are .bmp files in xtra/graphics, on all systems. - C. Blue
    The global vars are use_graphics (TRUE/FALSE) and graphic_tiles (string of filename, without path, without '.bmp' extension, gets inserted to "graphics-%s.prf").
    Filename convention added: "graphics-<tilesetname>[#<0..9>_<subname>].bmp" */
@@ -13454,10 +14485,14 @@ static void do_cmd_options_tilesets(void) {
 
 	DIR *dir;
 	struct dirent *ent;
-#ifdef USE_X11
+   #ifdef USE_X11
 	int resize_y;
-#endif
-
+   #endif
+   #ifdef USE_SDL3
+	bool old_subtiles[MAX_SUBFONTS];
+	int k;
+	bool paths_same = sdl3_paths_same(ANGBAND_USER_DIR_XTRA, ANGBAND_DIR_XTRA);
+   #endif
 
 	/* Paranoia: 0 tileset allowed? */
 	if (!MAX_FONTS) return;
@@ -13465,32 +14500,62 @@ static void do_cmd_options_tilesets(void) {
 	/* read all locally available tilesets */
 	memset(tileset_name, 0, sizeof(char) * (MAX_FONTS * 256));
 
+	/* Read all eligible filenames (<digit(s)>x<digit(s)>*.bmp), ... */
+   #ifdef USE_SDL3
+  /* In SDL3 client, look for tilesets in user storage first. */
+	path_build(path, 1024, ANGBAND_USER_DIR_XTRA, "graphics");
+	if (!paths_same && (dir = opendir(path))) {
+		while ((ent = readdir(dir))) {
+			strcpy(tmp_name, ent->d_name);
+
+			/* file must end on '.bmp' */
+			j = strlen(tmp_name) - 4;
+			if (j < 1) continue;
+			if ((tolower(tmp_name[j++]) != '.' || tolower(tmp_name[j++] != 'b') || tolower(tmp_name[j++] != 'm') || tolower(tmp_name[j] != 'p'))) continue;
+			/* cut off extension */
+			tmp_name[j - 3] = 0;
+			if (!tileset_name_has_size_prefix(tmp_name)) continue;
+
+			strcpy(filename_tmp[filenames_tmp++], tmp_name);
+		}
+		closedir(dir);
+	}
+   #endif
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
-	if (!(dir = opendir(path))) {
-		c_msg_format("Couldn't open tilesets directory (%s).", path);
-		return;
+	if ((dir = opendir(path))) {
+		while ((ent = readdir(dir))) {
+			strcpy(tmp_name, ent->d_name);
+
+			/* file must end on '.bmp' */
+			j = strlen(tmp_name) - 4;
+			if (j < 1) continue;
+			if ((tolower(tmp_name[j++]) != '.' || tolower(tmp_name[j++] != 'b') || tolower(tmp_name[j++] != 'm') || tolower(tmp_name[j] != 'p'))) continue;
+			/* cut off extension */
+			tmp_name[j - 3] = 0;
+			if (!tileset_name_has_size_prefix(tmp_name)) continue;
+
+   #ifdef USE_SDL3
+			if (!paths_same) {
+				/* Check duplicate in filename_tmp. */
+				for (k = 0; k < filenames_tmp; k++) if (!strcmp(filename_tmp[k], tmp_name)) break;
+				if (k < filenames_tmp) continue; /* duplicate */
+			}
+   #endif
+
+			strcpy(filename_tmp[filenames_tmp++], tmp_name);
+		}
+		closedir(dir);
 	}
-
-	/* Read all eligible filenames (*.bmp), ... */
-	while ((ent = readdir(dir))) {
-		strcpy(tmp_name, ent->d_name);
-
-		/* file must end on '.bmp' */
-		j = strlen(tmp_name) - 4;
-		if (j < 1) continue;
-		if ((tolower(tmp_name[j++]) != '.' || tolower(tmp_name[j++] != 'b') || tolower(tmp_name[j++] != 'm') || tolower(tmp_name[j] != 'p'))) continue;
-		/* cut off extension */
-		tmp_name[j - 3] = 0;
-
-		strcpy(filename_tmp[filenames_tmp++], tmp_name);
-	}
-	closedir(dir);
 	if (!filenames_tmp) {
+   #ifdef USE_SDL3
+		c_msg_print("No .bmp tilesets found in the graphics directories.");
+   #else
 		c_msg_format("No .bmp files found in directory (%s).", path);
+   #endif
 		return;
 	}
 	/* ...sort them... */
-	qsort(filename_tmp, filenames_tmp, sizeof(char[256]), font_name_cmp);
+	qsort(filename_tmp, filenames_tmp, sizeof(char[256]), graphics_name_cmp);
 	/* ...and process them for tileset/subset type */
 	for (t = 0; t < filenames_tmp; t++) {
 		strcpy(tmp_name, filename_tmp[t]);
@@ -13523,11 +14588,11 @@ static void do_cmd_options_tilesets(void) {
 		for (j = 0; j < tilesets; j++)
 			if (!strcmp(tileset_name[j], tmp_name)) break;
 		if (j != tilesets) continue;
+
 		/* New tileset */
 		strcpy(tileset_name[tilesets], tmp_name);
 		/* ..also comes with a subset '#' entry? */
 		if (csub) strcpy(tileset_subname[tilesets][l], csub_end + 1);
-
 		tilesets++;
 		if (tilesets == MAX_FONTS) {
 			c_msg_format("Warning: Number of tilesets reached max of %d. Ignoring the rest.", MAX_FONTS);
@@ -13556,19 +14621,140 @@ static void do_cmd_options_tilesets(void) {
 	Term_clear();
 
 	strcpy(old_tileset, graphic_tiles);
+   #ifdef USE_SDL3
+	tileset_copy_subtiles(old_subtiles, graphic_subtiles);
+	resize_type_reset_pending();
+    #ifdef GRAPHICS_BG_MASK
+	outline_reset_pending();
+    #endif
+
+	/* SDL preview state: track candidates, selections, and drawing hints */
+	int preview_feat_indices[MAX_F_IDX];
+	int preview_item_indices[MAX_K_IDX];
+	int preview_mon_indices[MAX_R_IDX];
+	int preview_feat_count = 0;
+	int preview_item_count = 0;
+	int preview_mon_count = 0;
+	char32_t preview_feat_tile = 0;
+	char32_t preview_item_tile = 0;
+	char32_t preview_mon_tile = 0;
+	bool preview_ready = FALSE;
+	bool reload_preview_indices = TRUE;
+   #endif
 
 	/* Interact */
 	while (go) {
 		clear_from(0);
 		l = 0;
 
-		/* Prompt XXX XXX XXX */
+   #ifdef USE_SDL3
+		/* For visualising pending changes. */
+		bool mode_pending = graphics_changes_pending();
+		bool resize_type_pending = resize_type_changes_pending();
+		bool tileset_pending = tileset_changes_pending(old_tileset, old_subtiles);
+    #ifdef GRAPHICS_BG_MASK
+		bool outline_pending = outline_changes_pending();
+    #endif
+
+		byte mode_color = mode_pending ? TERM_ORANGE : TERM_WHITE;
+		byte resize_type_color = resize_type_pending ? TERM_ORANGE : TERM_WHITE;
+		byte tileset_color = tileset_pending ? TERM_ORANGE : TERM_WHITE;
+    #ifdef GRAPHICS_BG_MASK
+		byte outline_color = outline_pending ? TERM_ORANGE : TERM_WHITE;
+    #endif
+
+		bool pending_graphics_changes = mode_pending || resize_type_pending || tileset_pending;
+    #ifdef GRAPHICS_BG_MASK
+		pending_graphics_changes = pending_graphics_changes || outline_pending;
+    #endif
+
+		/* Only gather data when the SDL preview widget is visible */
+		if (screen_hgt == MAX_SCREEN_HGT && sdl3_tileset_preview_ready()) {
+			preview_ready = TRUE;
+
+			if (reload_preview_indices) {
+				/*
+				 * Flush terminal before we draw preview tiles and block on inkey().
+				 *
+				 * The first Term_fresh() after entering the menu is otherwise invoked by
+				 * inkey(), which still compares against the previous screen contents and
+				 * wipes them. Explicitly refreshing here keeps the preview visible on the
+				 * first frame.
+				 */
+				Term_fresh();
+
+				preview_feat_count = 0;
+				preview_item_count = 0;
+				preview_mon_count = 0;
+				/* Collect glyphs that are rendered via the tileset (beyond font range) */
+				for (int i = 0; i < MAX_F_IDX; i++) {
+					if (Client_setup.f_char[i] > MAX_FONT_CHAR) preview_feat_indices[preview_feat_count++] = i;
+				}
+				for (int i = 0; i < MAX_K_IDX; i++) {
+					if (Client_setup.k_char[i] > MAX_FONT_CHAR) preview_item_indices[preview_item_count++] = i;
+				}
+				for (int i = 0; i < MAX_R_IDX; i++) {
+					if (Client_setup.r_char[i] > MAX_FONT_CHAR) preview_mon_indices[preview_mon_count++] = i;
+				}
+
+				/* Keep selection indices within the collected range */
+				/* Promote the chosen indices to actual glyphs for painting */
+				if (preview_feat_count <= 0) {
+					sdl3_tileset_preview_idx_feat = 0;
+					preview_feat_tile = 0;
+				} else {
+					if (sdl3_tileset_preview_idx_feat >= preview_feat_count) sdl3_tileset_preview_idx_feat = preview_feat_count - 1;
+					preview_feat_tile = Client_setup.f_char[preview_feat_indices[sdl3_tileset_preview_idx_feat]];
+				}
+				if (preview_item_count <= 0) {
+					sdl3_tileset_preview_idx_item = 0;
+					preview_item_tile = 0;
+				} else {
+					if (sdl3_tileset_preview_idx_item >= preview_item_count) sdl3_tileset_preview_idx_item = preview_item_count - 1;
+					preview_item_tile = Client_setup.k_char[preview_item_indices[sdl3_tileset_preview_idx_item]];
+				}
+				if (preview_mon_count <= 0) {
+					sdl3_tileset_preview_idx_mon = 0;
+					preview_mon_tile = 0;
+				} else {
+					if (sdl3_tileset_preview_idx_mon >= preview_mon_count) sdl3_tileset_preview_idx_mon = preview_mon_count - 1;
+					preview_mon_tile = Client_setup.r_char[preview_mon_indices[sdl3_tileset_preview_idx_mon]];
+				}
+
+				reload_preview_indices = FALSE;
+			}
+		} else preview_ready = FALSE;
+   #else
+		byte mode_color = TERM_WHITE;
+		byte resize_type_color = TERM_WHITE;
+		byte tileset_color = TERM_WHITE;
+   #endif
+
+/* Prompt XXX XXX XXX */
+   #ifdef USE_SDL3
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377y-\377w/\377y+\377w,\377y=\377w switch tileset, \377yENTER\377w enter a specific tileset name,");
+   #else
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377y-\377w/\377y+\377w,\377y=\377w switch tileset (requires restart), \377yENTER\377w enter a specific tileset name,");
+   #endif
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377y0\377w...\377y9\377w to enable/disable subset of currently selected tileset, if available,");
    #ifdef GRAPHICS_BG_MASK
+    #ifdef USE_SDL3
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w cycle graphics mode, \377yESC\377w exit).");
+    #else
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w cycle graphics mode - requires client restart! \377yESC\377w keep changes and exit.");
+    #endif
    #else
+    #ifdef USE_SDL3
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w toggle graphics on/off, \377yESC\377w exit).");
+    #else
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit.");
+    #endif
+   #endif
+   #ifdef USE_SDL3
+		if (pending_graphics_changes)
+			Term_putstr(0, l++, -1, TERM_ORANGE, "    Pending graphics settings change. Press \377yp\377w to apply or \377yESC\377w to review.");
+		else
+			Term_putstr(0, l++, -1, TERM_L_DARK, "    No pending graphics settings changes.");
    #endif
 		l++;
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s).");
@@ -13581,29 +14767,107 @@ static void do_cmd_options_tilesets(void) {
 
 		//GRAPHICS_BG_MASK @ UG_2MASK:
    #ifdef GRAPHICS_BG_MASK
-		Term_putstr(1, l++, -1, TERM_WHITE, format("Graphical tileset mode is %s\377w ('\377yv\377w' %s).",
-		    use_graphics_new == UG_2MASK ? "\377Genabled (dual-mask mode)" : (use_graphics_new ? "\377Genabled (standard)\377-" : "\377sdisabled\377-"),
-		    use_graphics_new == UG_2MASK ? "to disable" : (use_graphics_new ? "to enable 2-mask mode" : "to enable standard graphics mode")));
+		Term_putstr(1, l++, -1, mode_color, format("Graphical tileset mode is %s\377w ('\377yv\377w' %s).",
+					use_graphics_new == UG_2MASK ? "\377Genabled (dual-mask mode)" : (use_graphics_new ? "\377Genabled (standard)\377-" : "\377sdisabled\377-"),
+					use_graphics_new == UG_2MASK ? "to disable" : (use_graphics_new ? "to enable 2-mask mode" : "to enable standard graphics mode")));
+    #ifdef USE_SDL3
+		{
+			char outline_text[64];
+			outline_format_value(outline_text, sizeof(outline_text), sdl3_graphics_image_force_outline_new);
+			Term_putstr(1, l++, -1, outline_color, format("Forced outline: %s (\377yi\377w/\377yo\377w  previous/next).", outline_text));
+		}
+    #endif
    #else
-		Term_putstr(1, l++, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics_new == UG_2MASK ? "\377Genabled (dual)" : (use_graphics_new ? "\377Genabled\377-" : "\377sdisabled\377-")));
+		Term_putstr(1, l++, -1, mode_color, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics_new == UG_2MASK ? "\377Genabled (dual)" : (use_graphics_new ? "\377Genabled\377-" : "\377sdisabled\377-")));
    #endif
 		l++;
 
-#ifdef USE_X11
+   #ifdef USE_X11
 		resize_y = l;
 		Term_putstr(1, l++, -1, TERM_WHITE, format("Resize type is: '\377y%s\377w' (%s) ('\377yr\377w' to cycle)" , interpolation_list[gfx_resize_type].name, interpolation_list[gfx_resize_type].description));
 		l++;
-#endif
+   #elif defined(USE_SDL3)
+		Term_putstr(1, l++, -1, resize_type_color, format("Resize type is: '\377y%s\377w' (%s) ('\377yr\377w' to cycle)", interpolation_list[sdl3_gfx_resize_type_new].name, interpolation_list[sdl3_gfx_resize_type_new].description));
+		l++;
+   #endif
 
 		/* Tilesets are atm a global setting, not depending on terminal window */
 		l2 = l;
-		Term_putstr(1, l++, -1, TERM_WHITE, format("Currently selected tileset: "));
-		Term_putstr(1, l++, -1, TERM_WHITE, format("  '\377B%s\377-'", graphic_tiles));
-		Term_putstr(1, l++, -1, TERM_WHITE, format("Tileset filename:           "));
-		Term_putstr(1, l++, -1, TERM_WHITE, format("  '\377B%s.bmp\377-'", graphic_tiles));
-		Term_putstr(1, l++, -1, TERM_WHITE, format("Optional mapping filename:  "));
-		Term_putstr(1, l++, -1, TERM_WHITE, format("  '\377Bgraphics-%s.bmp\377-'", graphic_tiles));
+		Term_putstr(1, l++, -1, tileset_color, format("Currently selected tileset: "));
+		Term_putstr(1, l++, -1, tileset_color, format("  '\377B%s\377-'", graphic_tiles));
+		Term_putstr(1, l++, -1, tileset_color, format("Tileset filename:           "));
+		Term_putstr(1, l++, -1, tileset_color, format("  '\377B%s.bmp\377-'", graphic_tiles));
+		Term_putstr(1, l++, -1, tileset_color, format("Optional mapping filename:  "));
+		Term_putstr(1, l++, -1, tileset_color, format("  '\377Bgraphics-%s.bmp\377-'", graphic_tiles));
 		l += 2;
+
+   #ifdef USE_SDL3
+		int preview_col = 32;
+		/* Draw preview panes and navigation hints when data is ready */
+		if (preview_ready) {
+			l = SCREEN_HGT + 1;
+			const char *preview_mode_desc = "disabled";
+			if (use_graphics == UG_NORMAL) preview_mode_desc = "enabled";
+   #ifdef GRAPHICS_BG_MASK
+			else if (use_graphics == UG_2MASK) preview_mode_desc = "enabled (dual-mask)";
+
+			char applied_outline_text[64];
+			outline_format_value(applied_outline_text, sizeof(applied_outline_text), sdl3_graphics_image_force_outline);
+   #endif
+
+			Term_putstr(1, l++, -1, TERM_L_WHITE, "Preview shows these currently applied settings:");
+			Term_putstr(1, l++, -1, TERM_L_WHITE, format("Preview mode: %s%s", preview_mode_desc, mode_pending ? " (pending change)" : ""));
+			if (old_tileset[0]) {
+				Term_putstr(1, l++, -1, TERM_L_WHITE, format("Preview tileset: '\377B%s\377-'", old_tileset));
+			} else {
+				Term_putstr(1, l++, -1, TERM_L_WHITE, "Preview tileset: (none loaded)");
+			}
+   #ifdef GRAPHICS_BG_MASK
+			Term_putstr(1, l++, -1, TERM_L_WHITE, format("Preview outline: %s", applied_outline_text));
+   #endif
+			Term_putstr(1, l++, -1, TERM_L_WHITE, format("Preview resize: %s%s", interpolation_list[gfx_resize_type].name, resize_type_pending ? " (pending change)" : ""));
+
+			l++;
+			/* Map preview slots to their UI labels and navigation keys */
+			const char *type_names[3] = {"Backgrounds", "Items", "Monsters"};
+			char prev_keys[3] = {'q', 'a', 'z'};
+			char next_keys[3] = {'w', 's', 'x'};
+			char32_t tiles[3] = {preview_feat_tile, preview_item_tile, preview_mon_tile};
+			int counts[3] = {preview_feat_count, preview_item_count, preview_mon_count};
+			int selections[3] = {sdl3_tileset_preview_idx_feat, sdl3_tileset_preview_idx_item, sdl3_tileset_preview_idx_mon};
+			int index_values[3] = {
+				preview_feat_count > 0 ? preview_feat_indices[selections[0]] : -1,
+				preview_item_count > 0 ? preview_item_indices[selections[1]] : -1,
+				preview_mon_count > 0 ? preview_mon_indices[selections[2]] : -1
+			};
+
+			/* Iterate each preview slot to paint glyph, caption, and controls */
+			for (int type = 0; type < 3; type++) {
+				int count = counts[type];
+				int selected = selections[type];
+				int index_value = index_values[type];
+				char32_t tile_char = count > 0 ? tiles[type] : 0;
+
+				if (count > 0) {
+					Term_putstr(1, l, -1, TERM_WHITE, format("%s [%d]", type_names[type], index_value));
+					Term_putstr(1, l + 1, -1, TERM_WHITE, format("<\377y%c\377w %d/%d \377y%c\377w>", prev_keys[type], selected + 1, count, next_keys[type]));
+				} else {
+					Term_putstr(1, l, -1, TERM_WHITE, format("%s [-]", type_names[type]));
+					Term_putstr(1, l + 1, -1, TERM_WHITE, format("<\377y%c\377w 0/0 \377y%c\377w>", prev_keys[type], next_keys[type]));
+				}
+
+				sdl3_tileset_preview_draw_tile(preview_col, l, type, tile_char, preview_feat_tile);
+				l += 2;
+
+			}
+		} else {
+			/* Preview isn't available; clear the remainder of the menu area. */
+			clear_from(l);
+			for (int type = 0; type < 3; type++) {
+				sdl3_tileset_preview_draw_tile(preview_col, l + (2 * type), type, 0, 0);
+			}
+		}
+   #endif
 
 		found_subset = 0;
 		l2++;
@@ -13613,7 +14877,7 @@ static void do_cmd_options_tilesets(void) {
 			found_subset++;
 		}
 		if (found_subset) Term_putstr(40, l2 - 1 - found_subset, -1, TERM_WHITE, format("Available subsets of the selected set: "));
-		else Term_putstr(40, l2 - 1, -1, TERM_WHITE, format("(No subsets availabley)"));
+		else Term_putstr(40, l2 - 1, -1, TERM_WHITE, format("(No subsets available)"));
 
    #ifdef GFXERR_FALLBACK
 		if (use_graphics_err) {
@@ -13637,7 +14901,7 @@ static void do_cmd_options_tilesets(void) {
    #endif
 
 		/* Place Cursor */
-		//Term_gotoxy(20, vertikal_offset + y);
+		//Term_gotoxy(20, vertical_offset + y);
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -13656,11 +14920,121 @@ static void do_cmd_options_tilesets(void) {
 
 				graphic_subtiles[sub] = !graphic_subtiles[sub];
 				subset_enabled[cur_set][sub] = graphic_subtiles[sub];
+    #ifdef USE_SDL3
+				if (tileset_changes_pending(old_tileset, old_subtiles)) {
+					c_msg_print("\377yGraphical tilesubset toggled. Pending apply with 'p'.");
+				} else {
+					c_msg_print("\377yGraphical tilesubset matches currently applied settings.");
+				}
+    #else
 				c_msg_print("\377yGraphical tilesubset was changed. Requires client restart (use CTRL+Q).");
+    #endif
 				break;
 			}
 		} else switch (ch) {
+   #ifdef USE_SDL3
+    #ifdef GRAPHICS_BG_MASK
+		case 'i': {
+			sdl3_graphics_image_force_outline_new--;
+			if (sdl3_graphics_image_force_outline_new < -1) sdl3_graphics_image_force_outline_new = SDL3_FORCE_OUTLINE_MAX_RADIUS;
+
+			char msg[64];
+			outline_format_value(msg, sizeof(msg), sdl3_graphics_image_force_outline_new);
+			if (outline_changes_pending()) {
+				c_msg_format("Forced outline set to %s. Pending apply with 'p'.", msg);
+			} else {
+				c_msg_format("Forced outline now %s (matches current).", msg);
+			}
+			break;
+		}
+		case 'o': {
+			sdl3_graphics_image_force_outline_new++;
+			if (sdl3_graphics_image_force_outline_new > SDL3_FORCE_OUTLINE_MAX_RADIUS) sdl3_graphics_image_force_outline_new = -1;
+
+			char msg[64];
+			outline_format_value(msg, sizeof(msg), sdl3_graphics_image_force_outline_new);
+			if (outline_changes_pending()) {
+				c_msg_format("Forced outline set to %s. Pending apply with 'p'.", msg);
+			} else {
+				c_msg_format("Forced outline now %s (matches current).", msg);
+			}
+			break;
+		}
+    #endif
+		case 'q':
+		case 'Q':
+			if (preview_ready && preview_feat_count > 0) {
+				sdl3_tileset_preview_idx_feat--;
+				if (sdl3_tileset_preview_idx_feat < 0) sdl3_tileset_preview_idx_feat = preview_feat_count - 1;
+				preview_feat_tile = Client_setup.f_char[preview_feat_indices[sdl3_tileset_preview_idx_feat]];
+			} else bell();
+			break;
+
+		case 'w':
+		case 'W':
+			if (preview_ready && preview_feat_count > 0) {
+				sdl3_tileset_preview_idx_feat++;
+				if (sdl3_tileset_preview_idx_feat >= preview_feat_count) sdl3_tileset_preview_idx_feat = 0;
+				preview_feat_tile = Client_setup.f_char[preview_feat_indices[sdl3_tileset_preview_idx_feat]];
+			} else bell();
+			break;
+
+		case 'a':
+		case 'A':
+			if (preview_ready && preview_item_count > 0) {
+				sdl3_tileset_preview_idx_item--;
+				if (sdl3_tileset_preview_idx_item < 0) sdl3_tileset_preview_idx_item = preview_item_count - 1;
+					preview_item_tile = Client_setup.k_char[preview_item_indices[sdl3_tileset_preview_idx_item]];
+			} else bell();
+			break;
+
+		case 's':
+		case 'S':
+			if (preview_ready && preview_item_count > 0) {
+				sdl3_tileset_preview_idx_item++;
+				if (sdl3_tileset_preview_idx_item >= preview_item_count) sdl3_tileset_preview_idx_item = 0;
+					preview_item_tile = Client_setup.k_char[preview_item_indices[sdl3_tileset_preview_idx_item]];
+			} else bell();
+			break;
+
+		case 'z':
+		case 'Z':
+			if (preview_ready && preview_mon_count > 0) {
+				sdl3_tileset_preview_idx_mon--;
+				if (sdl3_tileset_preview_idx_mon < 0) sdl3_tileset_preview_idx_mon = preview_mon_count - 1;
+				preview_mon_tile = Client_setup.r_char[preview_mon_indices[sdl3_tileset_preview_idx_mon]];
+			} else bell();
+			break;
+
+		case 'x':
+		case 'X':
+			if (preview_ready && preview_mon_count > 0) {
+				sdl3_tileset_preview_idx_mon++;
+				if (sdl3_tileset_preview_idx_mon >= preview_mon_count) sdl3_tileset_preview_idx_mon = 0;
+				preview_mon_tile = Client_setup.r_char[preview_mon_indices[sdl3_tileset_preview_idx_mon]];
+			} else bell();
+			break;
+   #endif
 		case ESCAPE:
+   #ifdef USE_SDL3
+			if (pending_graphics_changes) {
+				if (get_check2("Apply pending graphics settings changes?", TRUE)) {
+					if (!apply_pending_graphics_changes(old_tileset, sizeof(old_tileset), old_subtiles, &cur_set, subset_enabled, tilesets, tileset_name)) {
+						break;
+					}
+					reload_preview_indices = TRUE;
+				} else if (get_check2("Discard pending graphics mode change?", FALSE)) {
+					discard_pending_graphics_changes(old_tileset, old_subtiles, &cur_set, subset_enabled, tilesets, tileset_name);
+				} else {
+					break;
+				}
+			}
+
+			go = FALSE;
+			if (strcmp(old_tileset, graphic_tiles)) c_msg_print("\377yGraphical tileset was changed.");
+
+			break;
+   #endif
 			go = FALSE;
 
 			if (strcmp(old_tileset, graphic_tiles))
@@ -13683,7 +15057,38 @@ static void do_cmd_options_tilesets(void) {
 			do_cmd_options_fonts();
 			break;
 
+   #ifdef USE_SDL3
+		case 'p':
+		case 'P':
+			if (!pending_graphics_changes) {
+				c_msg_print("No pending graphics changes.");
+				break;
+			}
+			if (apply_pending_graphics_changes(old_tileset, sizeof(old_tileset), old_subtiles, &cur_set, subset_enabled, tilesets, tileset_name)) {
+				reload_preview_indices = TRUE;
+			}
+			break;
+   #endif
+
 		case 'v':
+   #ifdef USE_SDL3
+    #ifdef GRAPHICS_BG_MASK
+			use_graphics_new = (use_graphics_new + 1) % 3;
+    #else
+			use_graphics_new = !use_graphics_new;
+    #endif
+
+			if (graphics_changes_pending() == FALSE) c_msg_print("Graphical tileset usage matches current setting.");
+			else {
+    #ifdef GRAPHICS_BG_MASK
+				if (use_graphics_new == UG_2MASK) c_msg_print("Graphical tileset usage enabled (dual-mask). Pending apply with 'p'.");
+				else
+    #endif
+				if (use_graphics_new) c_msg_print("Graphical tileset usage enabled. Pending apply with 'p'.");
+				else c_msg_print("Graphical tileset usage disabled. Pending apply with 'p'.");
+			}
+			break;
+   #endif
 			/* Hack: Never switch graphics settings, especially UG_2MASK, live,
 			   as it will cause instant packet corruption due to missing server-client synchronisation.
 			   So we just switch the savegame-affecting 'use_graphics_new' instead of actual 'use_graphics'. */
@@ -13708,8 +15113,13 @@ static void do_cmd_options_tilesets(void) {
    #endif
 			} else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart (use CTRL+Q).");
 			break;
-#ifdef USE_X11
+   #if defined(USE_X11) || defined(USE_SDL3)
 		case 'r':
+    #ifdef USE_SDL3
+			sdl3_gfx_resize_type_new = (sdl3_gfx_resize_type_new + 1) % INTERPOLATION_TYPES_COUNT;
+			if (resize_type_changes_pending()) c_msg_format("Graphics resize type set to %s. Pending apply with 'p'.", interpolation_list[sdl3_gfx_resize_type_new].name);
+			else c_msg_format("Graphics resize type now %s (matches current).", interpolation_list[sdl3_gfx_resize_type_new].name);
+    #elif defined(USE_X11)
 			gfx_resize_type = (gfx_resize_type + 1) % INTERPOLATION_TYPES_COUNT;
 
 			/* as this may take a while, prevent user from thinking the client had frozen up for good */
@@ -13717,8 +15127,9 @@ static void do_cmd_options_tilesets(void) {
 			Term_fresh();
 
 			for (j = 0; j < ANGBAND_TERM_MAX; j++) resize_term_gfx(j);
+    #endif
 			break;
-#endif
+   #endif
 		case '=':
 		case '+':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
@@ -13805,18 +15216,18 @@ static void do_cmd_options_tilesets(void) {
 
 	check_for_playerlist();
 }
-  #endif
- #endif /* WINDOWS || USE_X11 */
+  #endif /* USE_GRAPHICS */
+ #endif /* defined(WINDOWS) || defined(USE_X11) || defined(USE_SDL3) */
 #endif /* ENABLE_SUBWINDOW_MENU */
 
 #ifdef USE_SOUND_2010
 static void do_cmd_options_sfx(bool reset) {
- #if SOUND_SDL
+ #if defined(SOUND_SDL) || defined(SOUND_SDL3)
 	do_cmd_options_sfx_sdl(reset);
  #endif
 }
 static void do_cmd_options_mus(bool reset) {
- #if SOUND_SDL
+ #if defined(SOUND_SDL) || defined(SOUND_SDL3)
 	do_cmd_options_mus_sdl(reset);
  #endif
 }
@@ -13913,6 +15324,219 @@ errr options_dump(cptr fname) {
 
 /* For installing audio packs via = I menu: */
 
+#ifdef USE_SDL3
+ #ifdef SDL3_ARCHIVE
+static int archive_copy_data(struct archive *ar, struct archive *aw) {
+	const void *buff;
+	size_t size;
+	la_int64_t offset;
+	int r;
+
+	for (;;) {
+		r = archive_read_data_block(ar, &buff, &size, &offset);
+		if (r == ARCHIVE_EOF)
+			return ARCHIVE_OK;
+		if (r < ARCHIVE_OK)
+			return r;
+		r = archive_write_data_block(aw, buff, size, offset);
+		if (r < ARCHIVE_OK)
+			return r;
+	}
+}
+
+/* Helper function to extract an archive into a target directory using
+ * libarchive. Returns TRUE on success. */
+static bool sdl3_extract_7z(cptr archive_path, cptr dest, cptr password) {
+	struct archive *ar;
+	struct archive *aw;
+	struct archive_entry *entry;
+	int r;
+	char cwd[1024];
+
+	if (!getcwd(cwd, sizeof(cwd))) return FALSE;
+
+	ar = archive_read_new();
+	archive_read_support_format_all(ar);
+	archive_read_support_filter_all(ar);
+	if (password && password[0]) archive_read_add_passphrase(ar, password);
+	if ((r = archive_read_open_filename(ar, archive_path, 10240))) {
+		archive_read_free(ar);
+		return FALSE;
+	}
+
+	if (chdir(dest)) return FALSE;
+
+	aw = archive_write_disk_new();
+	archive_write_disk_set_options(aw, ARCHIVE_EXTRACT_TIME |
+			ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_ACL |
+			ARCHIVE_EXTRACT_FFLAGS);
+	archive_write_disk_set_standard_lookup(aw);
+
+	while (archive_read_next_header(ar, &entry) == ARCHIVE_OK) {
+		r = archive_write_header(aw, entry);
+		if (r == ARCHIVE_OK)
+			r = archive_copy_data(ar, aw);
+		if (r < ARCHIVE_WARN) {
+			archive_write_free(aw);
+			archive_read_free(ar);
+			(void)chdir(cwd);
+			return FALSE;
+		}
+	}
+
+	archive_write_free(aw);
+	archive_read_free(ar);
+	(void)chdir(cwd);
+	return TRUE;
+}
+
+/* Inspect an archive and determine whether it contains a top level
+ * "sound" or "music" directory. If a password is required and not
+ * supplied this function returns -1. If the archive is a passworded
+ * 7z, it returns -2 (unsupported). On success it returns 1 and sets
+ * the appropriate flags and top folder name. */
+static int sdl3_identify_audio_pack(cptr archive_path, cptr password, char *pack_top_folder, bool *sound_pack, bool *music_pack) {
+	struct archive *ar;
+	struct archive_entry *entry;
+	int r;
+	bool tarfile = FALSE;
+	int enc_state;
+	int entry_enc;
+	int entry_data_enc;
+	int entry_meta_enc;
+	int format = 0;
+	bool format_checked = FALSE;
+	bool is_7z = FALSE;
+	bool password_verified = FALSE;
+
+	pack_top_folder[0] = 0;
+	*sound_pack = FALSE;
+	*music_pack = FALSE;
+
+	ar = archive_read_new();
+	archive_read_support_format_all(ar);
+	archive_read_support_filter_all(ar);
+	if (password && password[0])
+		archive_read_add_passphrase(ar, password);
+	if ((r = archive_read_open_filename(ar, archive_path, 10240))) {
+		archive_read_free(ar);
+		return -1;
+	}
+
+	enc_state = archive_read_has_encrypted_entries(ar);
+
+	while ((r = archive_read_next_header(ar, &entry)) == ARCHIVE_OK) {
+		const char *name = archive_entry_pathname(entry);
+		char top_folder[1024];
+		bool pack_found = (*sound_pack || *music_pack);
+		int filetype = archive_entry_filetype(entry);
+
+		if (!format_checked) {
+			format = archive_format(ar);
+			is_7z = (format == ARCHIVE_FORMAT_7ZIP);
+			format_checked = TRUE;
+		}
+		if (enc_state == ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW)
+			enc_state = archive_read_has_encrypted_entries(ar);
+		entry_enc = archive_entry_is_encrypted(entry);
+		entry_data_enc = archive_entry_is_data_encrypted(entry);
+		entry_meta_enc = archive_entry_is_metadata_encrypted(entry);
+		if (is_7z && (enc_state > 0 || entry_enc > 0 || entry_data_enc > 0 || entry_meta_enc > 0)) {
+			archive_read_free(ar);
+			return -2;
+		}
+		if ((!password || !password[0]) && (enc_state > 0 || entry_enc > 0 || entry_data_enc > 0 || entry_meta_enc > 0)) {
+			archive_read_free(ar);
+			return -1;
+		}
+
+		if (filetype == AE_IFDIR) {
+			const char *slash = strchr(name, '/');
+			size_t len = slash ? (size_t)(slash - name) : strlen(name);
+			if (len > 1023) len = 1023;
+			strncpy(top_folder, name, len);
+			top_folder[len] = '\0';
+			if (prefix_case(top_folder, "music")) {
+				*music_pack = TRUE;
+				strcpy(pack_top_folder, top_folder);
+				pack_found = TRUE;
+			}
+			if (prefix_case(top_folder, "sound")) {
+				*sound_pack = TRUE;
+				strcpy(pack_top_folder, top_folder);
+				pack_found = TRUE;
+			}
+		} else if (!tarfile && !pack_found && suffix_case(name, ".tar")) {
+			size_t size = archive_entry_size(entry);
+			char *data = malloc(size);
+			if (!data) {
+				archive_read_free(ar);
+				return 0;
+			}
+			size_t off = 0;
+			const void *buff; size_t bytes; la_int64_t o;
+			while (archive_read_data_block(ar, &buff, &bytes, &o) == ARCHIVE_OK) {
+				memcpy(data + off, buff, bytes);
+				off += bytes;
+			}
+			struct archive *tar = archive_read_new();
+			archive_read_support_format_tar(tar);
+			archive_read_support_filter_all(tar);
+			if (!archive_read_open_memory(tar, data, size)) {
+				struct archive_entry *te;
+				while (archive_read_next_header(tar, &te) == ARCHIVE_OK) {
+					const char *tname = archive_entry_pathname(te);
+					if (archive_entry_filetype(te) == AE_IFDIR) {
+						const char *tslash = strchr(tname, '/');
+						size_t tlen = tslash ? (size_t)(tslash - tname) : strlen(tname);
+						if (tlen > 1023) tlen = 1023;
+						strncpy(top_folder, tname, tlen);
+						top_folder[tlen] = '\0';
+						if (prefix_case(top_folder, "music")) {
+							*music_pack = TRUE;
+							strcpy(pack_top_folder, top_folder);
+							pack_found = TRUE;
+						}
+						if (prefix_case(top_folder, "sound")) {
+							*sound_pack = TRUE;
+							strcpy(pack_top_folder, top_folder);
+							pack_found = TRUE;
+						}
+					}
+					archive_read_data_skip(tar);
+				}
+				archive_read_free(tar);
+			}
+			free(data);
+			if (*music_pack || *sound_pack)
+				pack_found = TRUE;
+			tarfile = TRUE;
+			continue;
+		}
+
+		if (!is_7z && (password && password[0]) && !password_verified
+		    && (enc_state > 0 || entry_enc > 0 || entry_data_enc > 0 || entry_meta_enc > 0)
+		    && filetype == AE_IFREG) {
+			const void *buff; size_t bytes; la_int64_t o;
+			int rr = archive_read_data_block(ar, &buff, &bytes, &o);
+			if (rr < ARCHIVE_OK) {
+				archive_read_free(ar);
+				return 0;
+			}
+			password_verified = TRUE;
+		}
+
+		archive_read_data_skip(ar);
+	}
+
+	archive_read_free(ar);
+	if (*music_pack || *sound_pack)
+		return 1;
+	return 0;
+}
+ #endif /* SDL3_ARCHIVE */
+#endif /* USE_SDL3 */
+
 #ifdef WINDOWS
  #include <winreg.h>	/* remote control of installed 7-zip via registry approach */
  #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
@@ -13920,6 +15544,7 @@ errr options_dump(cptr fname) {
  #define MAX_VALUE_NAME 16383
 #endif
 
+#ifndef USE_SDL3
 /* Check if an audio pack is password protected. pack_class is the string part identifying the pack-specific cfg file name, ie 'sound' or 'music'.
    Sometimes 'l' command works without password, sometimes it already requires a password, depending on how the archive was created. */
 static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class) {
@@ -13927,7 +15552,7 @@ static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_cla
 	bool passworded = FALSE;
 	FILE *fff;
 
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	bool l7z = FALSE;
 
 
@@ -14019,7 +15644,7 @@ static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_cla
 		}
 	}
 	fclose(fff);
-#else /* assume POSIX */
+ #else /* assume POSIX */
 	int r;
 
 	/* First, test if 'l' command already requires a password: */
@@ -14063,7 +15688,7 @@ static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_cla
 	passworded = strlen(out_val) >= 3;
 
 	(void)r;
-#endif
+ #endif
 
 	return(passworded);
 }
@@ -14072,7 +15697,7 @@ static bool verify_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class
 	bool passworded = FALSE;
 	FILE *fff;
 
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	bool l7z = FALSE;
 
 	/* Find the first file in the archive, to save time: */
@@ -14137,7 +15762,7 @@ static bool verify_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class
 		}
 	}
 	fclose(fff);
-#else /* assume POSIX */
+ #else /* assume POSIX */
 	int r;
 
 	/* Find the first file in the archive, to save time: */
@@ -14169,19 +15794,24 @@ static bool verify_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class
 	passworded = strlen(out_val) >= 3;
 
 	(void)r;
-#endif
+ #endif
 
 	return(!passworded);
 }
+#endif /* !USE_SDL3 */
 
 /* Attempt to find sound+music pack 7z files in the client's root folder
    and to install them properly. - C. Blue */
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
-	char ins_path[1024] = { 0 }, out_val[1024 + 28], password[MAX_CHARS];
+	char ins_path[1024] = { 0 }, password[MAX_CHARS];
 	char c, ch, pack_name[1024], pack_top_folder[1024];
 	int r;
-	bool picked, tarfile, l7z;
+	bool picked;
+#ifndef USE_SDL3
+	char out_val[1024 + 28];
+	bool tarfile, l7z;
+#endif
 
 #ifdef WINDOWS /* use windows registry to locate 7-zip */
 	HKEY hTestKey;
@@ -14195,6 +15825,9 @@ static void do_cmd_options_install_audio_packs(void) {
 	bool maybe_sound_pack, maybe_music_pack, sound_pack = FALSE, music_pack = FALSE;
 	//bool sound_already = (audio_sfx > 3), music_already = (audio_music > 0);
 	bool passworded, password_ok;
+#if defined(USE_SDL3) && defined(SDL3_ARCHIVE)
+	char pack_path[1024] = { 0 };
+#endif
 
 
 #if 0 /* hmm why not? */
@@ -14286,6 +15919,16 @@ static void do_cmd_options_install_audio_packs(void) {
 		inkey();
 		return;
 	}
+	fclose(fff);
+	remove("tmp.7z");
+#elif(USE_SDL3)
+ #ifndef SDL3_ARCHIVE
+	Term_putstr(0, 1, -1, TERM_RED, "This SDL3 client was built without archive support.");
+	Term_putstr(0, 2, -1, TERM_WHITE, "Download a client with archive support or unpack packs manually.");
+	Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+	inkey();
+	return;
+ #endif
 #else /* assume posix */
 	fff = fopen("tmp", "w");
 	fclose(fff);
@@ -14303,10 +15946,10 @@ static void do_cmd_options_install_audio_packs(void) {
 		inkey();
 		return;
 	}
-#endif
-	Term_fresh();
 	fclose(fff);
 	remove("tmp.7z");
+#endif
+	Term_fresh();
 
 #ifdef WINDOWS
 	{ /* Use native Windows functions from dirent to query directory structure directly */
@@ -14457,6 +16100,115 @@ static void do_cmd_options_install_audio_packs(void) {
 	}
 	closedir(dr);
 	}
+#elif defined(USE_SDL3)
+ #ifdef SDL3_ARCHIVE
+	{
+	struct dirent *de;
+	DIR *dr;
+	const char *scan_dirs[2] = { ANGBAND_USER_DIR, SDL3_GAME_PATH };
+	bool scanned_any = FALSE, stop_scan = FALSE;
+	int scan_dir_count = sdl3_paths_same(scan_dirs[0], scan_dirs[1]) ? 1 : 2;
+	int dir_idx;
+
+	for (dir_idx = 0; dir_idx < scan_dir_count; dir_idx++) {
+		if (!(dr = opendir(scan_dirs[dir_idx]))) {
+			c_message_add(format("\377oError: Couldn't scan folder '%s'.", scan_dirs[dir_idx]));
+			continue;
+		}
+		scanned_any = TRUE;
+		while ((de = readdir(dr))) {
+			char scan_path[1024];
+
+			strcpy(pack_name, de->d_name);
+			pack_top_folder[0] = 0;
+			passworded = FALSE;
+			maybe_sound_pack = !strncmp(pack_name, "TomeNET-soundpack", 17) || prefix_case(pack_name, "sound");
+			maybe_music_pack = !strncmp(pack_name, "TomeNET-musicpack", 17) || prefix_case(pack_name, "music");
+			if (!maybe_sound_pack && !maybe_music_pack) continue;
+
+			snprintf(scan_path, sizeof(scan_path), "%s%s%s", scan_dirs[dir_idx], SDL3_PATH_SEP, pack_name);
+
+			/* Clear screen */
+			Term_clear();
+			Term_putstr(0, 0, -1, TERM_WHITE, "Install a sound or music pack from \377yarchive\377w files within your \377yTomeNET\377w folder...");
+			Term_putstr(0, 1, -1, TERM_WHITE, "Supported: .7z, .zip, .tar, .tar.gz, .tgz");
+			Term_putstr(0, 2, -1, TERM_WHITE, "Unarchiver support found.");
+			Term_putstr(0, 3, -1, TERM_WHITE, format("Scanning folder: \377y%s\377w", scan_dirs[dir_idx]));
+
+				r = sdl3_identify_audio_pack(scan_path, NULL, pack_top_folder,
+						&sound_pack, &music_pack);
+				if (r == -2) {
+					Term_putstr(0, 5, -1, TERM_L_RED, "Encrypted 7z archive is not supported by this client build.");
+					Term_putstr(0, 6, -1, TERM_L_RED, format("File: %s", pack_name));
+					Term_putstr(0, 7, -1, TERM_L_RED, "Please unpack manually into your user xtra folder:");
+					Term_putstr(0, 8, -1, TERM_L_RED, format(" %s", ANGBAND_USER_DIR_XTRA));
+					Term_putstr(0,10, -1, TERM_WHITE, "Press any key to continue scanning...");
+					inkey();
+					continue;
+				}
+				if (r < 0) passworded = TRUE;
+
+			/* If passworded, ask user for the password: */
+			if (passworded) {
+				bool retry_pw = TRUE;
+
+				Term_putstr(0, 4, -1, TERM_ORANGE, format("Found file '\377y%s\377o'", pack_name));
+				Term_putstr(0, 5, -1, TERM_ORANGE, "which is password-protected. Enter the password:   ");
+				while (retry_pw) {
+					Term_gotoxy(49, 5);
+					password[0] = 0;
+					if (!askfor_aux(password, MAX_CHARS - 1, 0) || !password[0]) {
+						c_msg_format("\377yNo password entered for '%s', skipping.", pack_name);
+						retry_pw = FALSE;
+						continue;
+					}
+					r = sdl3_identify_audio_pack(scan_path, password,
+							pack_top_folder, &sound_pack, &music_pack);
+					if (r > 0) {
+						Term_putstr(0, 6, -1, TERM_L_RED, "                                               ");
+						break;
+					}
+					Term_putstr(0, 6, -1, TERM_L_RED, "You entered a wrong password. Please try again.");
+				}
+				if (!retry_pw) continue;
+			}
+
+			if (!sound_pack && !music_pack) continue;
+
+			if (passworded) {
+				Term_putstr(0, 6, -1, TERM_ORANGE, "File is eligible. Install it? [Y/n]");
+			} else {
+				Term_erase(0, 4, 255);
+				Term_putstr(0, 4, -1, TERM_ORANGE, format("Found file '\377y%s\377o'. Install? [Y/n]", pack_name));
+			}
+
+			picked = FALSE;
+			while (!picked) {
+				c = inkey();
+				switch (c) {
+				case 'n': case 'N':
+					c = 0;
+					picked = TRUE;
+					break;
+				case 'y': case 'Y': case ' ': case '\r': case '\n':
+					picked = TRUE;
+					break;
+				}
+			}
+			if (c) {
+				strncpy(pack_path, scan_path, sizeof(pack_path) - 1);
+				pack_path[sizeof(pack_path) - 1] = '\0';
+				stop_scan = TRUE;
+				break;
+			}
+			picked = FALSE;
+		}
+		closedir(dr);
+		if (stop_scan) break;
+	}
+	if (!scanned_any) return;
+	}
+ #endif
 #else /* assume POSIX */
 	{
 	FILE *fff_ls;
@@ -14595,14 +16347,22 @@ static void do_cmd_options_install_audio_packs(void) {
 #endif
 
 	if (!sound_pack && !music_pack) {
+		Term_clear();
+#ifdef USE_SDL3
+		Term_putstr(0, 3, -1, TERM_ORANGE, "  No eligible files '\377yTomeNET-soundpack*\377o' nor '\377yTomeNET-musicpack*\377o'   ");
+		Term_putstr(0, 4, -1, TERM_ORANGE, "  (extensions: .7z/.zip/.tar/.tar.gz) nor '\377ysound*\377o'/'\377ymusic*\377o' were  ");
+		Term_putstr(0, 5, -1, TERM_ORANGE, "  found in your TomeNET folder. Aborting audio pack installation.     ");
+#else
 		Term_putstr(0, 3, -1, TERM_ORANGE, "  No eligible files '\377yTomeNET-soundpack*.7z\377o' nor '\377yTomeNET-musicpack*.7z\377o'   ");
 		Term_putstr(0, 4, -1, TERM_ORANGE, "  nor alternative 3rd party archive files '\377ysound*\377o' or '\377ymusic*\377o' were   ");
 		Term_putstr(0, 5, -1, TERM_ORANGE, "  found in your TomeNET folder. Aborting audio pack installation.     ");
+#endif
 		Term_putstr(0, 9, -1, TERM_WHITE,  "  Press any key to return to options menu...                          ");
 		inkey();
 		return;
 	}
 	if (!picked) {
+		Term_clear();
 		Term_putstr(0, 3, -1, TERM_ORANGE, "  You skipped all available audio packs, hence none were installed.   ");
 		Term_putstr(0, 4, -1, TERM_ORANGE, "  Aborting audio pack installation.                                   ");
 		Term_putstr(0, 9, -1, TERM_WHITE,  "  Press any key to return to options menu...                          ");
@@ -14615,6 +16375,8 @@ static void do_cmd_options_install_audio_packs(void) {
 	Term_putstr(0, 6, -1, TERM_ORANGE, "That pack wants to install to this target folder. Is that ok? (y/n):");
 #ifdef WINDOWS
 	Term_putstr(0, 7, -1, TERM_YELLOW, format(" '%s\\%s'", ANGBAND_DIR_XTRA, ins_path));
+#elif defined(USE_SDL3)
+	Term_putstr(0, 7, -1, TERM_YELLOW, format(" '%s%s%s'", ANGBAND_USER_DIR_XTRA, SDL3_PATH_SEP, ins_path));
 #else
 	Term_putstr(0, 7, -1, TERM_YELLOW, format(" '%s/%s'", ANGBAND_DIR_XTRA, ins_path));
 #endif
@@ -14627,7 +16389,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		if (c == 'y' || c == 'Y') break;
 	}
 
-#ifdef SOUND_SDL
+#if defined(SOUND_SDL) || defined(SOUND_SDL3)
 	/* Windows OS: Need to close all related files so they can actually be overwritten, esp. the .cfg files */
 	if (!quiet_mode) close_audio_sdl();
 #endif
@@ -14644,6 +16406,11 @@ static void do_cmd_options_install_audio_packs(void) {
 			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-p\"%s\"", password), format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
 		else
 			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
+#elif defined(USE_SDL3)
+ #ifdef SDL3_ARCHIVE
+		if (!sdl3_extract_7z(pack_path, ANGBAND_USER_DIR_XTRA, passworded ? password : NULL))
+			Term_putstr(0, 12, -1, TERM_L_RED, "Error: Extraction failed! Sound pack not correctly installed!");
+ #endif
 #else /* assume posix */
 		if (passworded) /* Note: We assume that the password does NOT contain '"' -_- */
 			r = system(format("7z -p\"%s\" x -o%s \"%s\"", password, ANGBAND_DIR_XTRA, pack_name));
@@ -14653,7 +16420,11 @@ static void do_cmd_options_install_audio_packs(void) {
 
 		/* Verify installation */
 		password_ok = TRUE;
+#ifdef USE_SDL3
+		if (!(fff = fopen(format("%s%s%s%ssound.cfg", ANGBAND_USER_DIR_XTRA, SDL3_PATH_SEP, pack_top_folder, SDL3_PATH_SEP), "r"))) password_ok = FALSE;
+#else
 		if (!(fff = fopen(format("%s/%s/sound.cfg", ANGBAND_DIR_XTRA, pack_top_folder), "r"))) password_ok = FALSE;
+#endif
 		else if (fgetc(fff) == EOF) { //paranoia
 			password_ok = FALSE;
 			fclose(fff);
@@ -14676,6 +16447,11 @@ static void do_cmd_options_install_audio_packs(void) {
 			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-p\"%s\"", password), format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
 		else
 			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
+#elif defined(USE_SDL3)
+ #ifdef SDL3_ARCHIVE
+		if (!sdl3_extract_7z(pack_path, ANGBAND_USER_DIR_XTRA, passworded ? password : NULL))
+			Term_putstr(0, 12, -1, TERM_L_RED, "Error: Extraction failed! Music pack not correctly installed!");
+ #endif
 #else /* assume posix */
 		if (passworded) /* Note: We assume that the password does NOT contain '"' -_- */
 			r = system(format("7z -p\"%s\" x -o%s \"%s\"", password, ANGBAND_DIR_XTRA, pack_name));
@@ -14685,7 +16461,11 @@ static void do_cmd_options_install_audio_packs(void) {
 
 		/* Verify installation */
 		password_ok = TRUE;
+#ifdef USE_SDL3
+		if (!(fff = fopen(format("%s%s%s%smusic.cfg", ANGBAND_USER_DIR_XTRA, SDL3_PATH_SEP, pack_top_folder, SDL3_PATH_SEP), "r"))) password_ok = FALSE;
+#else
 		if (!(fff = fopen(format("%s/%s/music.cfg", ANGBAND_DIR_XTRA, pack_top_folder), "r"))) password_ok = FALSE;
+#endif
 		else if (fgetc(fff) == EOF) { //paranoia
 			password_ok = FALSE;
 			fclose(fff);
@@ -14780,7 +16560,11 @@ static void do_cmd_options_colourblindness(void) {
 			Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current INI file");
 			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current INI file");
 			Term_putstr(0, l, -1, TERM_SLATE, format("    (Filename: %s)", ini_file));
-#elif USE_X11
+#elif defined(USE_SDL3)
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current cfg file");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current cfg file");
+			Term_putstr(0, l, -1, TERM_SLATE, format("    (Filename: %s)", mangrc_filename));
+#elif defined(USE_X11)
 			Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current rc-file");
 			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current rc-file");
 			Term_putstr(0, l, -1, TERM_SLATE, format("    (Filename: %s)", mangrc_filename));
@@ -14924,6 +16708,8 @@ static void do_cmd_options_colourblindness(void) {
 #else
  #ifdef USE_X11
 					enable_readability_blue_x11();
+ #elif defined(USE_SDL3)
+					enable_readability_blue_sdl3();
  #else
 					enable_readability_blue_gcu();
  #endif
@@ -14991,6 +16777,8 @@ static void do_cmd_options_colourblindness(void) {
 #else
  #ifdef USE_X11
 					enable_readability_blue_x11();
+ #elif defined(USE_SDL3)
+					enable_readability_blue_sdl3();
  #else
 					enable_readability_blue_gcu();
  #endif
@@ -15070,7 +16858,7 @@ void do_cmd_options(void) {
 
 #ifdef WINDOWS
 			Term_putstr(1, l++, -1, TERM_SLATE, format("        (Filename: %s)", ini_file));
-#elif USE_X11
+#elif defined(USE_X11) || defined(USE_SDL3)
 			Term_putstr(1, l++, -1, TERM_SLATE, format("        (Filename: %s)", mangrc_filename));
 #else
 			l++; //paranoia
@@ -15093,7 +16881,7 @@ void do_cmd_options(void) {
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Jukebox, listen to and disable/reenable specific sound effects/music");
 #endif
 
-#if defined(WINDOWS) || defined(USE_X11)
+#if defined(WINDOWS) || defined(USE_X11) || defined(USE_SDL3)
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
@@ -15115,7 +16903,11 @@ void do_cmd_options(void) {
 #else
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UA\377w)   Account Options");
 #endif
+#ifdef USE_SDL3
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UI\377w)   Install sound/music pack from archive file in your TomeNET folder");
+#else
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UI\377w)   Install sound/music pack from 7z-file you placed in your TomeNET folder");
+#endif
 #ifdef WINDOWS
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (downloads and reinits the Guide)");
 #else
@@ -15257,7 +17049,7 @@ void do_cmd_options(void) {
 #ifdef WINDOWS
 			save_term_data_to_term_prefs();
 			c_msg_format("\377wSaved current configuration to %s.", ini_file);
-#elif USE_X11
+#elif defined(USE_X11) || defined(USE_SDL3)
 			all_term_data_to_term_prefs();
 			write_mangrc(FALSE, FALSE, FALSE);
 			c_msg_format("\377wSaved current configuration to %s.", mangrc_filename);
@@ -15294,8 +17086,8 @@ void do_cmd_options(void) {
 
 		/* Update the TomeNET Guide */
 		else if (k == 'U') {
-			int res;
 #ifdef WINDOWS
+			int res;
 			char _latest_install[1024];
 
 			remove("TomeNET-Guide.txt.old");
@@ -15324,9 +17116,107 @@ void do_cmd_options(void) {
 				else c_msg_print("\377gYour Guide is now up to date!");
 				//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 			}
+#elif defined(USE_SDL3) && defined(SDL3_CURL_SSL)
+			CURL *curl;
+			CURLcode curl_res;
+			FILE *fp;
+			char out_val[3];
+			const char *curl_error;
+
+			curl = curl_easy_init();
+			if (!curl) {
+				c_msg_print("\377oFailed to initialize download library (libcurl).");
+				continue;
+			}
+
+			const char *guide_filename = format("%sTomeNET-Guide.txt", SDL3_GAME_PATH);
+			const char *guide_filename_old = format("%s.old", guide_filename);
+
+			/* Remove old guide backup if any. */
+			if (my_fexists(guide_filename_old)) {
+				remove(guide_filename_old);
+				if (my_fexists(guide_filename_old)) {
+					c_msg_print("\377oFailed to remove old Guide. Maybe file is write-protected.");
+					continue;
+				}
+			}
+			/* Backup guide when there is one and check if backed up. */
+			if (my_fexists(guide_filename)) {
+				my_fcopy(guide_filename, guide_filename_old);
+				/* Check if copying failed -> we don't have write access! */
+				if (!my_fexists(guide_filename_old)) {
+					c_msg_print("\377oFailed to backup current Guide. Maybe file is write-protected.");
+					continue;
+				}
+			}
+
+			/* open guide for writing, to download and write new guide into it. */
+			fp = my_fopen(guide_filename, "wb");
+			if (!fp) {
+				c_msg_print("\377oFailed to open Guide file for writing. Maybe file is write-protected.");
+				curl_easy_cleanup(curl);
+				remove(guide_filename_old);
+				continue;
+			}
+
+			curl_easy_setopt(curl, CURLOPT_URL, TOMENET_GUIDE_URL);
+			curl_easy_setopt(curl, CURLOPT_TIMEOUT, TOMENET_GUIDE_URL_TIMEOUT);
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+			curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+
+			curl_res = curl_easy_perform(curl);
+			my_fclose(fp);
+			curl_easy_cleanup(curl);
+
+			/* Curl failed to download and wite file. */
+			if (curl_res != CURLE_OK) {
+				curl_error = curl_easy_strerror(curl_res);
+				c_msg_format("\377oFailed to download the Guide (%s).", curl_error);
+				remove(guide_filename);
+				rename(guide_filename_old, guide_filename);
+				continue;
+			}
+
+			fp = my_fopen(guide_filename, "r");
+			if (fp) { //~paranoia?
+				out_val[0] = 0;
+				if (!fgets(out_val, 2, fp)) { //paranoia: guide is write-protected?
+					my_fclose(fp);
+					c_msg_print("\377oFailed to download the Guide contents. Maybe file is write-protected.");
+					remove(guide_filename);
+					rename(guide_filename_old, guide_filename);
+					continue;
+				}
+				my_fclose(fp);
+				if ((unsigned char)out_val[0] < 32) {
+					c_msg_print("\377oFailed to update the Guide.");
+					remove(guide_filename);
+					rename(guide_filename_old, guide_filename);
+					continue;
+				}
+			} else {
+				c_msg_print("\377oFailed to download the Guide contents. Maybe file is write-protected.");
+				remove(guide_filename);
+				rename(guide_filename_old, guide_filename);
+				continue;
+			}
+
+			c_msg_print("\377gSuccessfully downloaded the Guide.");
+			init_guide();
+			/* correct way would be: First download the checksum file, then download the guide, then verify if checksum fits;
+			   or what 'shouldn't' happen could actually happen, if timing is very bad: */
+			if (check_guide_checksums(TRUE)) c_msg_print("\377yCannot check whether your Guide is outdated or not.");
+			else if (guide_outdated) c_msg_print("\377yYour Guide is still outdated. This shouldn't happen.");
+			else c_msg_print("\377gYour Guide is now up to date!");
+			//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
+#elif defined(USE_SDL3)
+			c_msg_print("\377yThis SDL3 client was built without automatic Guide downloads.");
+			c_msg_print("\377yPlease download TomeNET-Guide.txt from https://www.tomenet.eu/ and place it into your TomeNET directory.");
 #else
 			FILE *fp;
 			char out_val[3];
+			int res;
 
 			remove("TomeNET-Guide.txt.old");
 			rename("TomeNET-Guide.txt", "TomeNET-Guide.txt.old");
@@ -15405,7 +17295,7 @@ void do_cmd_options(void) {
 		}
 #endif
 
-#if defined(WINDOWS) || defined(USE_X11)
+#if defined(WINDOWS) || defined(USE_X11) || defined(USE_SDL3)
  #ifdef ENABLE_SUBWINDOW_MENU
 		/* Change fonts separately and manually */
 		else if (k == 'f') do_cmd_options_fonts();
@@ -15697,20 +17587,20 @@ static void print_tomb(cptr reason) {
 
 				strcpy(buf, reason2);
 
-				/* 1st: Try to end name at a comma, skipping the additional description.
-				        "Gothmog, the High Captain of Balrogs" -> "Gothmog". */
+				/* 1st: Try to end name at a comma, skipping the additional description. */
+				/* "Gothmog, the High Captain of Balrogs" -> "Gothmog". */
 				if ((cp = strchr(buf, ','))) *cp = 0;
 
-				/* 2nd: Try to end name at a relative word such as "that", "which" etc.
-				        "The disembodied hand that strangled people" -> "The disembodied hand". */
+				/* 2nd: Try to end name at a relative word such as "that", "which" etc. */
+				/* "The disembodied hand that strangled people" -> "The disembodied hand". */
 				else if ((cp = strstr(buf, " that "))) *cp = 0;
 				else if ((cp = strstr(buf, " who "))) *cp = 0;
 				else if ((cp = strstr(buf, " which "))) *cp = 0;
 				else if ((cp = strstr(buf, " whose "))) *cp = 0;
 				else if ((cp = strstr(buf, " what "))) *cp = 0;
 
-				/* 3rd: Try to end name at lineage descriptions aka " of ".
-				        "Angamaite of Umbar" -> "Angamaite" (Note that Angamaite's name is actually not too long, just taken as example here). */
+				/* 3rd: Try to end name at lineage descriptions aka " of ". */
+				/* "Angamaite of Umbar" -> "Angamaite" (Note that Angamaite's name is actually not too long, just taken as example here). */
 				else if ((cp = strstr(buf, " of "))) *cp = 0;
 
 				strcpy(reason2, buf);
@@ -16488,9 +18378,16 @@ static int sp_offset_ev(int z, int y) { //, int x) {
 	return (z * AUDIO_EVENTS_MAX * AUDIO_EVENT_NAMELEN) + (y * AUDIO_EVENT_NAMELEN);// + x;
 }
 #endif
+#ifndef USE_SDL3
 static int mp_offset_ev(int z, int y) { //, int x) {
 	return (z * AUDIO_EVENTS_MAX * AUDIO_EVENT_NAMELEN) + (y * AUDIO_EVENT_NAMELEN);// + x;
 }
+#else
+/* SDL3 supports MUSIC_MAX events. Keep its selector stride independent from the smaller legacy AUDIO_EVENTS_MAX table used by the other frontends. */
+static int mp_offset_ev(int z, int y) {
+	return (z * MUSIC_MAX * AUDIO_EVENT_NAMELEN) + (y * AUDIO_EVENT_NAMELEN);
+}
+#endif
 
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
 #define MAX_PACKS 20
@@ -16501,29 +18398,272 @@ static int mp_offset_ev(int z, int y) { //, int x) {
  /* Skip file reference and only count true files when counting a pack's files? */
  #define SKIP_REFS
 #endif
+
+#ifdef USE_SDL3
+static bool audio_pack_dir_exists(char dirs[MAX_PACKS][MAX_CHARS], int packs, cptr dir) {
+	for (int i = 0; i < packs; i++) if (!strcmp(dirs[i], dir)) return(true);
+	return(false);
+}
+
+static int audio_pack_dir_cmp(const void *a, const void *b) {
+	return(strcmp((const char *)a, (const char *)b));
+}
+
+static bool audio_pack_cfg_exists(cptr dir, cptr config_file) {
+	char path[1024];
+	FILE *fff;
+
+	/* Use ANGBAND_DIR_XTRA so my_fopen() checks the user override first. */
+	path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s%s%s", dir, SDL3_PATH_SEP, config_file));
+	fff = my_fopen(path, "r");
+	if (!fff) return(false);
+
+	my_fclose(fff);
+	return(true);
+}
+
+/* Trim horizontal whitespace without moving the underlying config buffer. */
+static char *audio_pack_trim(char *s) {
+	char *end;
+
+	while (*s == ' ' || *s == '\t') s++;
+	end = s + strlen(s);
+	while (end > s && (end[-1] == ' ' || end[-1] == '\t')) *--end = 0;
+	return(s);
+}
+
+/* Remove comments while retaining '#' inside quoted filenames/descriptions. */
+static void audio_pack_strip_comment(char *s) {
+	char *start = s;
+	bool quoted = FALSE;
+
+	while (*s) {
+		if (*s == '"') quoted = !quoted;
+		else if (*s == '#' && !quoted) {
+			/* The legacy configs also use "-#" and "--#" as comment
+			 * markers. Remove their prefix so it cannot become a file token. */
+			if (s > start && s[-1] == '-') {
+				s--;
+				if (s > start && s[-1] == '-') s--;
+			}
+			*s = 0;
+			return;
+		}
+		s++;
+	}
+}
+
+/* Read one logical config entry, joining physical lines ending in '\'. */
+static bool audio_pack_read_line(FILE *fff, char *buf, size_t size) {
+	char line[4096], *content;
+	bool continuing = FALSE;
+
+	*buf = 0;
+	while (fgets(line, sizeof(line), fff)) {
+		size_t len;
+
+		line[strcspn(line, "\r\n")] = 0;
+		audio_pack_strip_comment(line);
+		content = audio_pack_trim(line);
+		if (!*content) continue;
+
+		len = strlen(content);
+		/* Match snd-sdl3.c: a continuation marker is a backslash
+		 * preceded by whitespace, not merely any trailing backslash. */
+		continuing = len >= 2 && content[len - 1] == '\\' &&
+		    (content[len - 2] == ' ' || content[len - 2] == '\t');
+		if (continuing) {
+			content[len - 2] = 0;
+			content = audio_pack_trim(content);
+		}
+
+		/* Reinsert a separator because trimming removed the space before '\'. */
+		if (*buf && strlen(buf) + 1 < size) strncat(buf, " ", size - strlen(buf) - 1);
+		strncat(buf, content, size - strlen(buf) - 1);
+		if (!continuing) return(TRUE);
+	}
+
+	return(*buf != 0);
+}
+
+/* Store a token in the same flat buffers consumed by the common duplicate pass. */
+static void audio_pack_store_filename(char *filenames, int pack, int file, bool music, cptr start, size_t len) {
+	char *dest;
+
+	if (music) dest = filenames + mp_offset_fn(pack, file);
+	else dest = filenames + sp_offset_fn(pack, file);
+	if (len >= MAX_CHARS_WIDE) len = MAX_CHARS_WIDE - 1;
+	memcpy(dest, start, len);
+	dest[len] = 0;
+}
+
+/* Read all selector-visible state from one redirected SDL3 pack config. */
+static bool read_audio_pack_info(cptr dir, cptr config_file, bool music, int pack,
+	char name[MAX_CHARS], char author[MAX_CHARS], char diz[MAX_CHARS * 3], char version[MAX_CHARS],
+	int *subsets, char name_set[AUDIO_SUBSETS_MAX + 1][MAX_CHARS],
+	char diz_set[AUDIO_SUBSETS_MAX + 1][MAX_CHARS * 3], int *events, int *files,
+	char *filenames, char *eventnames) {
+	char buf[4096], path[1024];
+	char *ckey, *cval;
+	FILE *fff;
+
+	strcpy(name, "No name");
+	strcpy(author, "nobody");
+	strcpy(diz, "No description");
+	strcpy(version, "");
+
+	/* Build path only for ANGBAND_DIR_XTRA, cause for opening the my_fopen() does user dir read and the fallback stuff under the hood. */
+	path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s%s%s", dir, SDL3_PATH_SEP, config_file));
+	fff = my_fopen(path, "r");
+	if (!fff) return(false);
+
+	/* Extract pack information and selector statistics. */
+	while (audio_pack_read_line(fff, buf, sizeof(buf))) {
+		int read_set = -1;
+		bool event_is_defined = FALSE;
+
+		/* Trim leading spaces/tabs */
+		ckey = audio_pack_trim(buf);
+		/* Disabled entries still count as provided events. */
+		if (*ckey == ';') ckey = audio_pack_trim(ckey + 1);
+		/* A zero read_set means an explicit "0|"; -1 means no subset prefix. */
+		if (*ckey >= '0' && *ckey <= '9' && ckey[1] == '|') {
+			read_set = *ckey - '0';
+			if (read_set > AUDIO_SUBSETS_MAX) continue;
+			if (read_set > *subsets) *subsets = read_set;
+			ckey = audio_pack_trim(ckey + 2);
+		}
+		/* snd-sdl3.c ignores malformed/non-event entries at this point. */
+		if (!isalpha((unsigned char)*ckey)) continue;
+
+		/* Search for key separator */
+		if (!(cval = strchr(ckey, '='))) continue;
+		*cval = 0;
+		ckey = audio_pack_trim(ckey);
+		cval = audio_pack_trim(cval + 1);
+		if (!*ckey || !*cval) continue;
+
+		/* Scan for pack info */
+		if (!strcmp(ckey, "packname")) {
+			if (read_set == -1) strnfmt(name, MAX_CHARS, "%s", cval);
+			else strnfmt(name_set[read_set], MAX_CHARS, "%s", cval);
+			continue;
+		}
+		if (!strcmp(ckey, "author")) {
+			strnfmt(author, MAX_CHARS, "%s", cval);
+			continue;
+		}
+		if (!strcmp(ckey, "description")) {
+			if (read_set == -1) strnfmt(diz, MAX_CHARS * 3, "%s", cval);
+			else strnfmt(diz_set[read_set], MAX_CHARS * 3, "%s", cval);
+			continue;
+		}
+		if (!strcmp(ckey, "version")) {
+			strnfmt(version, MAX_CHARS, "%s", cval);
+			continue;
+		}
+
+		/* Music may define the same event in several subsets; count it only once. */
+		if (music) {
+			for (int i = 0; i < *events; i++) {
+				if (!strcmp(ckey, eventnames + mp_offset_ev(pack, i))) {
+					event_is_defined = TRUE;
+					break;
+				}
+			}
+		}
+		/* Tokenize quoted and unquoted values. For music, decode the same
+		 * optional !initial/+reference prefix order as snd-sdl3.c. */
+		while (*cval) {
+			char *start;
+			size_t len;
+			bool reference = FALSE;
+
+			while (*cval == ' ' || *cval == '\t') cval++;
+			if (!*cval) break;
+			if (music) {
+				if (*cval == '!') cval++;
+				if (*cval == '+') {
+					reference = TRUE;
+					cval++;
+				}
+			}
+			if (*cval == '"') {
+				start = ++cval;
+				while (*cval && *cval != '"') cval++;
+				len = cval - start;
+				if (*cval == '"') cval++;
+			} else {
+				start = cval;
+				while (*cval && *cval != ' ' && *cval != '\t') cval++;
+				len = cval - start;
+			}
+			if (!len) continue;
+
+			if (!reference) {
+				int limit = music ? MUSIC_MAX : SOUND_MAX_2010;
+				/* Match the capacity used when allocating the corresponding flat table. */
+				if (*files < limit) {
+					audio_pack_store_filename(filenames, pack, *files, music, start, len);
+					(*files)++;
+				}
+			}
+			if (!event_is_defined) {
+				int event_limit = music ? MUSIC_MAX : SOUND_MAX_2010;
+
+				/* Match the per-pack capacity of the corresponding event table. */
+				if (*events < event_limit) {
+					event_is_defined = TRUE;
+					if (music) {
+						char *dest = eventnames + mp_offset_ev(pack, *events);
+						strnfmt(dest, AUDIO_EVENT_NAMELEN, "%s", ckey);
+					}
+					(*events)++;
+				}
+			}
+		}
+	}
+
+	my_fclose(fff);
+	return(true);
+}
+#endif
+
 void audio_pack_selector(void) {
 #ifdef SKIP_DUPFILES
 	int i, j;
+#ifndef USE_SDL3
 	char *cval_start;
+#endif
 	char *sp_filename, *mp_filename; /* We cannot just use 3d-char arrays here, as it would exceed Windows stack size easily, need calloc() instead. */
 	char *mp_eventname; //*sp_eventname
 #endif
 	int k, soundpacks = 0, musicpacks = 0;
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
 	static int cur_sp = 0, cur_mp = 0, cur_sp_y = 0, cur_mp_y = 0;
-	static int cur_mp_org = -1, cur_sp_org = -1;
+	static int cur_mp_org = -1;
+#ifndef USE_SDL3
+	static int cur_sp_org = -1;
+#endif
 	bool redraw = TRUE, quit = FALSE, changed_music = FALSE, changed_sfx = FALSE;
-	char buf[1024], path[1024];
+	char buf[1024];
+#ifndef USE_SDL3
+	char path[1024];
+#endif
 	char sp_dir[MAX_PACKS][MAX_CHARS], mp_dir[MAX_PACKS][MAX_CHARS];
 	char sp_name[MAX_PACKS][MAX_CHARS], mp_name[MAX_PACKS][MAX_CHARS];
 	char sp_author[MAX_PACKS][MAX_CHARS], mp_author[MAX_PACKS][MAX_CHARS];
 	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
 	char sp_version[MAX_PACKS][MAX_CHARS], mp_version[MAX_PACKS][MAX_CHARS];
+#ifndef USE_SDL3
 	char *ckey, *cval;
+#endif
 	int sp_events[MAX_PACKS] = { 0 }, mp_events[MAX_PACKS] = { 0 };
 	int sp_files[MAX_PACKS] = { 0 }, mp_files[MAX_PACKS] = { 0 };
 
+#ifndef USE_SDL3
 	int read_set;
+#endif
 	static int mp_subset_wanted[MAX_PACKS], sp_subset_wanted[MAX_PACKS];
 	static int mp_subsets[MAX_PACKS], sp_subsets[MAX_PACKS];
 	char mp_name_set[MAX_PACKS][AUDIO_SUBSETS_MAX + 1][MAX_CHARS], sp_name_set[MAX_PACKS][AUDIO_SUBSETS_MAX + 1][MAX_CHARS];
@@ -16531,8 +18671,10 @@ void audio_pack_selector(void) {
 
 	bool inkey_msg_old = inkey_msg;
 
+#ifndef USE_SDL3
 	FILE *fff, *fff2;
-#ifndef WINDOWS
+#endif
+#if !defined(WINDOWS) && !defined(USE_SDL3)
 	int r;
 #endif
 
@@ -16541,14 +18683,108 @@ void audio_pack_selector(void) {
 	for (i = 0; i < MAX_PACKS; i++) {
 		if (!mp_subset_wanted[i]) mp_subset_wanted[i] = 1;
 		if (!sp_subset_wanted[i]) sp_subset_wanted[i] = 1;
+#ifdef USE_SDL3
+		/* SDL3 reparses packs on every visit; discard subset counts from an older scan. */
+		mp_subsets[i] = sp_subsets[i] = 0;
+#endif
 		/* Also zero these. for replacing 'No name' and 'No description' with actual subset text, if available... */
 		for (j = 0; j <= AUDIO_SUBSETS_MAX; j++) {
 			*mp_name_set[i][j] = 0;
 			*mp_diz_set[i][j] = 0;
+#ifdef USE_SDL3
+			/* The SDL3 parser receives both metadata tables, so initialize the sound side as well even though its subset UI is disabled. */
+			*sp_name_set[i][j] = 0;
+			*sp_diz_set[i][j] = 0;
+#endif
 		}
 	}
 
 	/* Get list of all folders starting on 'music' or 'sound' within lib/xtra */
+#ifdef USE_SDL3
+	struct dirent *de;
+	DIR *dr;
+	const char *scan_dirs[2] = { ANGBAND_USER_DIR_XTRA, ANGBAND_DIR_XTRA };
+	bool scanned_any = false;
+	int scan_dir_count = sdl3_paths_same(scan_dirs[0], scan_dirs[1]) ? 1 : 2;
+	int dir_idx;
+
+	/* First collect unique pack directories which contain their config file. */
+	for (dir_idx = 0; dir_idx < scan_dir_count; dir_idx++) {
+		if (!(dr = opendir(scan_dirs[dir_idx]))) continue;
+		scanned_any = true;
+		while ((de = readdir(dr))) {
+			strnfmt(buf, sizeof(buf), "%s", de->d_name);
+
+			/* Found a sound pack folder? */
+			if (!strncmp(buf, "sound", 5)) {
+				if (soundpacks < MAX_PACKS && !audio_pack_dir_exists(sp_dir, soundpacks, buf) && audio_pack_cfg_exists(buf, "sound.cfg")) {
+					strnfmt(sp_dir[soundpacks], MAX_CHARS, "%s", buf);
+					soundpacks++;
+				}
+				continue;
+			}
+
+			/* Found a music pack folder? */
+			if (!strncmp(buf, "music", 5)) {
+				if (musicpacks < MAX_PACKS && !audio_pack_dir_exists(mp_dir, musicpacks, buf) && audio_pack_cfg_exists(buf, "music.cfg")) {
+					strnfmt(mp_dir[musicpacks], MAX_CHARS, "%s", buf);
+					musicpacks++;
+				}
+				continue;
+			}
+		}
+		closedir(dr);
+	}
+	if (!scanned_any) {
+		c_message_add("\377oError: Couldn't scan audio pack folders.");
+		return;
+	}
+
+	/* Sort the directory names before filling their metadata. */
+	qsort(sp_dir, soundpacks, sizeof(sp_dir[0]), audio_pack_dir_cmp);
+	qsort(mp_dir, musicpacks, sizeof(mp_dir[0]), audio_pack_dir_cmp);
+	/* The common selector dereferences both current-pack entries. Refuse an incomplete installation instead of displaying uninitialized arrays. */
+	if (!soundpacks || !musicpacks) {
+		c_message_add(format("\377oError: No eligible %s pack was found.", !soundpacks ? "sound" : "music"));
+		return;
+	}
+
+#ifdef SKIP_DUPFILES
+	/* Keep these large tables off the stack. They remain alive through the common duplicate-removal pass and are released on either selector exit path. */
+	sp_filename = calloc(MAX_PACKS * SOUND_MAX_2010 * MAX_CHARS_WIDE, 1);
+	mp_filename = calloc(MAX_PACKS * MUSIC_MAX * MAX_CHARS_WIDE, 1);
+	/* MUSIC_MAX may exceed the legacy selector's AUDIO_EVENTS_MAX. */
+	mp_eventname = calloc(MAX_PACKS * MUSIC_MAX * AUDIO_EVENT_NAMELEN, 1);
+	if (!sp_filename || !mp_filename || !mp_eventname) {
+		free(sp_filename);
+		free(mp_filename);
+		free(mp_eventname);
+		c_message_add("\377oError: Couldn't allocate audio pack selector metadata.");
+		return;
+	}
+#endif
+
+	/* Fill pack metadata and locate the currently selected packs. */
+	cur_sp = cur_mp = cur_sp_y = cur_mp_y = 0;
+	for (k = 0; k < soundpacks; k++) {
+		read_audio_pack_info(sp_dir[k], "sound.cfg", FALSE, k, sp_name[k], sp_author[k], sp_diz[k], sp_version[k], &sp_subsets[k], sp_name_set[k], sp_diz_set[k], &sp_events[k], &sp_files[k], sp_filename, NULL);
+		if (!strcmp(sp_dir[k], cfg_soundpackfolder)) {
+			cur_sp = k;
+			/* PACKS_SCREEN rows are indexed 0..PACKS_SCREEN-1. */
+			cur_sp_y = cur_sp >= PACKS_SCREEN ? PACKS_SCREEN - 1 : cur_sp;
+			sp_subset_wanted[k] = cfg_soundpack_subset;
+		}
+	}
+	for (k = 0; k < musicpacks; k++) {
+		read_audio_pack_info(mp_dir[k], "music.cfg", TRUE, k, mp_name[k], mp_author[k], mp_diz[k], mp_version[k], &mp_subsets[k], mp_name_set[k], mp_diz_set[k], &mp_events[k], &mp_files[k], mp_filename, mp_eventname);
+		if (!strcmp(mp_dir[k], cfg_musicpackfolder)) {
+			cur_mp = k;
+			/* Keep the selected pack on the last visible row when scrolled. */
+			cur_mp_y = cur_mp >= PACKS_SCREEN ? PACKS_SCREEN - 1 : cur_mp;
+			mp_subset_wanted[k] = cfg_musicpack_subset;
+		}
+	}
+#else
 	fff = fopen("__tomenet.tmp", "w"); //just make sure the file always exists, for easier file-reading handling.. pft */
 	if (!fff) {
 		c_message_add("\377oError: Couldn't write temporary file (P1).");
@@ -17238,6 +19474,7 @@ void audio_pack_selector(void) {
 #else
 	remove("__tomenethelper.bat");
 #endif
+#endif
 
 #ifdef SKIP_DUPFILES
 	/* Go through list of all files and remove duplicates from total count */
@@ -17275,13 +19512,23 @@ void audio_pack_selector(void) {
 	inkey_msg = TRUE;
 
 	/* remember the packs we loaded the client with */
+#ifdef USE_SDL3
+	/* Directory ordering may change between selector visits. The freshly discovered indices are authoritative for the currently loaded packs. */
+	cur_mp_org = cur_mp;
+#else
 	if (cur_mp_org == -1) cur_mp_org = cur_mp;
 	if (cur_sp_org == -1) cur_sp_org = cur_sp;
+#endif
 
 	/* Fail-safe, in case someone changed the packs on disk while the client was still running */
 	for (i = 0; i < MAX_PACKS; i++) {
+#ifdef USE_SDL3
+		if (mp_subset_wanted[i] < 1 || mp_subset_wanted[i] > mp_subsets[i]) mp_subset_wanted[i] = 1;
+		if (sp_subset_wanted[i] < 1 || sp_subset_wanted[i] > sp_subsets[i]) sp_subset_wanted[i] = 1;
+#else
 		if (mp_subset_wanted[i] > mp_subsets[i]) mp_subset_wanted[i] = 1;
 		if (sp_subset_wanted[i] > sp_subsets[i]) sp_subset_wanted[i] = 1;
+#endif
 	}
 
 	/* Initially apply chosen subsets to all packs */
@@ -17395,7 +19642,11 @@ void audio_pack_selector(void) {
 			mp_subset_wanted[cur_mp] = (mp_subset_wanted[cur_mp] % mp_subsets[cur_mp]) + 1;
 
 			/* Do we switch the currently playing pack's set? */
-			if (cur_mp_org == cur_mp) cfg_musicpack_subset = (cfg_musicpack_subset % musicpack_subsets) + 1;
+			if (cur_mp_org == cur_mp) {
+				/* Audio is not initialized in quiet mode, so use the selector's freshly parsed choice instead of the runtime global. */
+				/* The selector has already parsed this pack, even when quiet mode skipped snd-sdl.c. */
+				cfg_musicpack_subset = mp_subset_wanted[cur_mp];
+			}
 
 			/* Pack name and pack description meta info might depend on subset, so update them to currently selected subset here */
 			if (*mp_name_set[cur_mp][mp_subset_wanted[cur_mp]])
@@ -17412,8 +19663,9 @@ void audio_pack_selector(void) {
 
 			/* Do we switch the currently playing pack's set? */
 			if (cur_mp_org == cur_mp) {
-				cfg_musicpack_subset--;
-				if (!cfg_musicpack_subset) cfg_musicpack_subset = musicpack_subsets;
+				/* Keep quiet-mode switching independent from audio initialization. */
+				/* Use the selector's local result; musicpack_subsets may still be zero in quiet mode. */
+				cfg_musicpack_subset = mp_subset_wanted[cur_mp];
 			}
 
 			/* Pack name and pack description meta info might depend on subset, so update them to currently selected subset here */
@@ -17447,6 +19699,9 @@ void audio_pack_selector(void) {
 #ifdef SKIP_DUPFILES
 		free(sp_filename);
 		free(mp_filename);
+ #ifdef USE_SDL3
+		free(mp_eventname);
+ #endif
 #endif
 
 		return;
@@ -17474,6 +19729,13 @@ void audio_pack_selector(void) {
 		//copy diz too?
 		changed_music = TRUE;
 	}
+#ifdef USE_SDL3
+	if (old_cfg_musicpack_subset != cfg_musicpack_subset) {
+		/* In quiet mode no audio loader runs to refresh this title. Keep the persisted/UI name synchronized with the selector's chosen subset. */
+		strcpy(cfg_musicpack_name, mp_name[cur_mp]);
+		changed_music = TRUE;
+	}
+#endif
 
 #ifdef WINDOWS
 	store_audiopackfolders();
@@ -17494,7 +19756,9 @@ void audio_pack_selector(void) {
 	if (re_init_sound() == 0) c_message_add("Audio packs have been reloaded and audio been reinitialized successfully.");
 	if (changed_sfx) {
 		do_cmd_options_sfx(TRUE);
+#ifndef USE_SDL3
 		cur_sp_org = -1; /* reset, so it'll change to currently active pack */
+#endif
 	}
 	if (changed_music) {
 		do_cmd_options_mus(TRUE);
@@ -17507,6 +19771,9 @@ void audio_pack_selector(void) {
 #ifdef SKIP_DUPFILES
 	free(sp_filename);
 	free(mp_filename);
+ #ifdef USE_SDL3
+	free(mp_eventname);
+ #endif
 #endif
 }
 #endif // USE_SOUND_2010
@@ -17785,11 +20052,27 @@ u32b parse_color_code(const char *str) {
 }
 
 #ifdef USE_GRAPHICS
-/* Load the graphics pref file "graphics-{graphic_tiles}.pref" aka
-   "Access the "graphic visual" system pref file (if any)". */
-static void handle_process_graphics_file(void) {
+/* Loads the graphics pref file "graphics-{graphic_tiles}.pref" aka "Access the "graphic visual" system pref file (if any)".
+ * Also loads all the tiles subsets if the files exists and the subset is enabled.
+ * Pseudo features and objects for gameplay are initialized here too.
+ */
+void handle_process_graphics_file(void) {
 	char fname[255 + 13 + 1];
 	int i;
+	char msg[MSG_LEN];
+
+
+	/* Wipe previously loaded raw image definitions. */
+	WIPE(tiles_rawpict_org, tiles_rawpict_org);
+	WIPE(tiles_rawpict_org_sub, tiles_rawpict_org_sub);
+	for (i = 0; i <= MAX_TILES_RAWPICT; i++) {
+		tiles_rawpict_subtileset[i] = -1;
+	}
+ #ifdef USE_SDL3
+	/* Wipe previously loaded mask colors. */
+	WIPE(graphics_image_masks_colors_prefs, graphics_image_masks_colors_prefs);
+	WIPE(graphics_image_masks_colors_sub_prefs, graphics_image_masks_colors_sub_prefs);
+ #endif
 
 	/* Figure out graphics prefs file name to be loaded. */
 	sprintf(fname, "graphics-%s.prf", graphic_tiles);
@@ -17799,8 +20082,11 @@ static void handle_process_graphics_file(void) {
 	 * The grafics redefinition can use tile indexing from 0 and
 	 * there is no need to update graphics files after MAX_FONT_CHAR is changed. */
 	char_map_offset = MAX_FONT_CHAR + 1;
-	if (process_pref_file(fname) == -1) logprint(format("ERROR: Can't read graphics preferences file: %s\n", fname));
-	else {
+	if (process_pref_file(fname) == -1) {
+		strnfmt(msg, sizeof(msg), "Warning: Can't read graphics preferences file: %s", fname);
+		logprint(format("%s\n", msg));
+		if (in_game) c_msg_print_multiline(msg);
+	} else {
 		/* Also initialize (partial) subtilesets */
 		for (i = 0; i < MAX_SUBFONTS; i++) {
 			if (!graphic_subtiles[i]) continue; //subset is disabled?
@@ -17811,9 +20097,18 @@ static void handle_process_graphics_file(void) {
 			//replace extension '.bmp' by '.prf'
 			strcpy(fname + strlen(fname) - 4, ".prf");
 
-			if (process_pref_file(fname) == -1) logprint(format("ERROR: Can't read subgraphics preferences file: %s\n", fname));
+			if (process_pref_file(fname) == -1) {
+				strnfmt(msg, sizeof(msg), "Warning: Can't read graphics preferences file for subtiles: %s", fname);
+				logprint(format("%s\n", msg));
+				if (in_game) c_msg_print_multiline(msg);
+			}
 		}
 	}
+ #ifdef USE_SDL3
+		/* Always initialize after the load attempt: tilesets without a pref file use defaults.
+		 * Do not retain a retry here; changing the tileset reloads its image and flags graphics for reinitialization. */
+		sdl3_graphics_pref_file_processed();
+ #endif
 	char_map_offset = 0;
 
 	/* Initialize pseudo-features and pseudo-objects that don't exist in the game world but are just used for graphical tilesets */
@@ -17885,7 +20180,7 @@ void handle_process_font_file(void) {
 	char_map_offset = 0; //paranoia
 
 	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
- #if defined(WINDOWS) || defined(USE_X11)
+#if defined(WINDOWS) || defined(USE_X11) || defined(USE_SDL3)
 	get_term_main_font_name(fname);
  #endif
 	if (fname[0]) {
@@ -18437,3 +20732,45 @@ bool my_fexists(const char *fname) {
 	default: return(FALSE);
 	}
 }
+
+#ifdef USE_SDL3
+/**
+ * my_fcopy - Copy the contents of one file to another.
+ *
+ * This function opens the given source file for reading in binary mode
+ * and creates or overwrites the destination file for writing in binary mode.
+ * It reads the source file in 4096-byte chunks and writes them to the destination.
+ *
+ * @param source:      Path to the source file.
+ * @param destination: Path to the destination file.
+ *
+ * @return 0 on success, -1 on error (e.g., file not found or permission denied).
+ */
+int my_fcopy(const char *source, const char *destination) {
+	FILE *src;
+	FILE *dest;
+	char buffer[4096];
+	size_t bytes;
+
+	src = fopen(source, "rb");
+	if (!src) {
+		fprintf(stderr, "my_fcopy: Error opening source file: %s\n", source);
+		return -1;
+	}
+
+	dest = fopen(destination, "wb");
+	if (!dest) {
+		fprintf(stderr, "my_fcopy: Error opening destination file: %s\n", destination);
+		fclose(src);
+		return -1;
+	}
+
+	while ((bytes = fread(buffer, 1, sizeof(buffer), src)) > 0) {
+		fwrite(buffer, 1, bytes, dest);
+	}
+
+	fclose(src);
+	fclose(dest);
+	return 0;  // Success
+}
+#endif
