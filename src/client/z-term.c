@@ -2390,10 +2390,12 @@ static void Term_repaint_row_pict(int y, byte *aa, char32_t *cc, byte *back_aa, 
    which can cause flickering with text and WILL cause flickering with graphics,
    while this function is flicker-free as it doesn't live-wipe any screen contents.
 
+   xstart,ystart is the top left corner of the rectangle in the terminal, which we want to repaint.
+
    So this function doesn't change/update a/c values, but just their visuals.
    TODO maybe: For efficiency, restrict to actual map screen area instead of full window, and also don't use a 'buf' for every single text char. */
 #define OLD_VS_SCR /* define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct... */
-void Term_repaint(void) {
+void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 	int y;
 
 	byte *aa;
@@ -2434,9 +2436,20 @@ void Term_repaint(void) {
 	char text[mod_num + 1];
 #endif
 
+	bool icky_s = (Term == ang_term[0] && screen_icky);
+	bool icky_tl = topline_icky && !icky_s;
+
+
+	/* Various icky checks, these exist only for term 0 aka the main window */
+	if (icky_s) Term_switch(0);
+
 	/* --- Repaint, with _text or _pict or _pict_2mask --- */
 
-	for (y = 0; y < Term->hgt; y++) {
+	for (y = ystart; y < ystart + hgt; y++) {
+		/* Just skip the topline if it's icky, no need to Term_switch+paint+Term_switch again here really,
+		   as the topline is certainly going to get cleared later anyway. */
+		if (icky_tl && !y) continue;
+
 #ifdef OLD_VS_SCR
 		aa = Term->old->a[y];
 		cc = Term->old->c[y];
@@ -2458,7 +2471,7 @@ void Term_repaint(void) {
 		/* --- Repaint this row --- */
 
 		/* Scan the columns marked as "modified" */
-		for (x = 0; x < Term->wid; x++) {
+		for (x = xstart; x < xstart + wid; x++) {
 			/* See what is currently here */
 			xa = aa[x];
 			xc = cc[x];
@@ -2496,6 +2509,8 @@ void Term_repaint(void) {
 			//else (void)((*Term->wipe_hook)(x, y, 1));  -- we're just repainting, if grid was already empty, even better -> we just ignore it
 		}
 	}
+
+	if (icky_s) Term_switch(0);
 }
 
 

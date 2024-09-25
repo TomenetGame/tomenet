@@ -142,7 +142,7 @@ extern errr Term_putstr(int x, int y, int n, byte a, char *s);
 extern errr Term_erase(int x, int y, int n);
 extern errr Term_clear(void);
 extern errr Term_redraw(void);
-extern void Term_repaint(void);
+extern void Term_repaint(int xstart, int ystart, int wid, int hgt);
 
 /* Protocol to be used for connecting a server */
 extern s32b server_protocol;
