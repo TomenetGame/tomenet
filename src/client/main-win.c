@@ -381,8 +381,11 @@ void resize_main_window_win(int cols, int rows);
  #endif
 #endif
 
+#ifdef USE_GRAPHICS
+bool disable_tileset_caching = FALSE;
+#endif
 #ifdef TILE_CACHE_SIZE
-bool disable_tile_cache = FALSE, disable_tileset_caching = FALSE;
+bool disable_tile_cache = FALSE;
 struct tile_cache_entry {
  #ifndef TILE_CACHE_SINGLEBMP
     HBITMAP hbmTilePreparation;
@@ -6248,7 +6251,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			case 'a': override_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
 			case 'g': override_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 			case 'G': override_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+#ifdef USE_GRAPHICS
 			case 't': disable_tileset_caching = TRUE; break;
+#endif
 #ifdef TILE_CACHE_SIZE
 			case 'T': disable_tile_cache = TRUE; break;
 #endif
@@ -6266,7 +6271,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 		}
 	}
 
+#ifdef TILE_CACHE_SIZE
 	if (disable_tile_cache) logprint("Graphics tiles cache disabled.\n");
+#endif
 
 	if (hPrevInst == NULL) {
 /* Not required, just a paranoia note, it's pretty undocumented */

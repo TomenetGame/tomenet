@@ -42,8 +42,8 @@
 #define VERSION_MINOR		9
 #define VERSION_PATCH		3
 #define VERSION_EXTRA		0
-#define VERSION_BRANCH		0
-#define VERSION_BUILD		3
+#define VERSION_BRANCH		2
+#define VERSION_BUILD		0
 
 /* MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15).
    If a player is online with a version > this && <= current version (VERSION_)
@@ -53,7 +53,7 @@
 #define VERSION_MINOR_LATEST	9
 #define VERSION_PATCH_LATEST	3
 #define VERSION_EXTRA_LATEST	0
-#define VERSION_BRANCH_LATEST	0
+#define VERSION_BRANCH_LATEST	2
 #define VERSION_BUILD_LATEST	0
 
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
@@ -131,10 +131,12 @@
 #define OS_SUB_GCU	1
 #define OS_SUB_X11	2
 #define OS_SUB_GCU_X11	3
+#define OS_SUB_SDL3	4
+#define OS_SUB_GCU_SDL3	5
 
 /* Set new VERSION_OS (after 4.4.8.1.0.0) for client - C. Blue */
 #ifdef CLIENT_SIDE
- #ifdef WIN32
+ #if defined(WIN32) || defined(MINGW)	/* SDL3 mingw clients don't use WIN32 flag, just MINGW. */
   #define VERSION_OS		OS_WIN32
  #elif defined(LINUX) || defined(LINUX2) || defined(LINUX3)
   #define VERSION_OS		OS_LINUX
@@ -154,10 +156,14 @@
 
  #if defined(USE_X11) && defined(USE_GCU)
   #define VERSION_OS_SUB	OS_SUB_GCU_X11
+ #elif defined(USE_SDL3) && defined(USE_GCU)
+  #define VERSION_OS_SUB	OS_SUB_GCU_SDL3
  #elif defined(USE_GCU)
   #define VERSION_OS_SUB	OS_SUB_GCU
  #elif defined(USE_X11)
   #define VERSION_OS_SUB	OS_SUB_X11
+ #elif defined(USE_SDL3)
+  #define VERSION_OS_SUB	OS_SUB_SDL3
  #else /* Windows */
   #define VERSION_OS_SUB	OS_SUB_NONE
  #endif
@@ -655,7 +661,7 @@
   #define NAVI_KEY_PAGEDOWN	-122
   #define NAVI_KEY_POS1		-121
   #define NAVI_KEY_END		-120
-  #define NAVI_KEY_DEL		-119	/* Windows only, not available on POSIX (there DEL is same as BACKSPACE) */
+  #define NAVI_KEY_DEL		-119	/* Windows and SDL3 clients only, not available on POSIX (there DEL is same as BACKSPACE) */
 #endif
 
 
@@ -3158,9 +3164,14 @@
 #define FEAT_SHATTERED_MIRROR	235
 #define FEAT_BARRED_FLOOR	236
 
-#define FEAT_SOLID		237	/* Pseudo feature definition for graphical tilesets for 'solid_bars' UI elements and similar. Also see 165-171.*/
+#define FEAT_SOLID		237	/* Pseudo feature definition for graphical tilesets for 'solid_bars' UI elements and similar. Also see 165-171 and 250-253.*/
 #define FEAT_DRAWBRIDGE_HORIZ	238
 #define FEAT_SOLID_NC		239
+
+#define FEAT_SOLID_HALF_TOPRIGHT_SHAVED		250
+#define FEAT_SOLID_HALF_BOTTOMLEFT_SHAVED	251
+#define FEAT_SOLID_HALF_BOTTOMRIGHT_SHAVED	252
+#define FEAT_SOLID_HALF_TOPLEFT_SHAVED		253
 
 #define FEAT_OPEN_WINDOW	256
 #define FEAT_OPEN_WINDOW_SMALL	257

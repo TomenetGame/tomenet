@@ -1,4 +1,9 @@
 #include "angband.h"
+#ifdef USE_GRAPHICS
+ #if defined(USE_X11) || defined(USE_SDL3)
+  #include "graphics_common.h"
+ #endif
+#endif
 
 /* Client global variables */
 
@@ -220,6 +225,18 @@ cptr ANGBAND_DIR_USER;
 cptr ANGBAND_DIR_XTRA;
 cptr ANGBAND_DIR_GAME;
 
+#ifdef USE_SDL3
+cptr ANGBAND_USER_DIR;
+cptr ANGBAND_USER_DIR_SCPT;
+cptr ANGBAND_USER_DIR_TEXT;
+cptr ANGBAND_USER_DIR_USER;
+cptr ANGBAND_USER_DIR_XTRA;
+cptr ANGBAND_USER_DIR_GAME;
+
+bool sdl3_window_decorations = FALSE;
+int sdl3_graphics_image_force_outline = -1;
+#endif
+
 bool disable_numlock = FALSE;
 bool bad_solid_mapping = FALSE;
 #ifdef WINDOWS
@@ -229,6 +246,11 @@ byte use_graphics = FALSE, use_graphics_new = FALSE, use_graphics_err = 0;
 int override_graphics = -1; /* For '-a', '-g' and '-G' command-line parameters: These override the settings in the prf! */
 char use_graphics_errstr[MAX_CHARS_WIDE] = { 0 };
 #ifdef USE_GRAPHICS
+ #if defined(USE_X11)
+int gfx_resize_type = INTERPOLATION_LINEAR;
+ #elif defined(USE_SDL3)
+int gfx_resize_type = INTERPOLATION_NEAR;
+ #endif
 char graphic_tiles[256] = "16x24sv", graphic_subtiles_file[MAX_SUBFONTS][256] = { 0 };
 bool graphic_subtiles[MAX_SUBFONTS] = { FALSE };
 char32_t kidx_po_rain_char = 0, kidx_po_rain_e1_char = 0, kidx_po_rain_e2_char = 0, kidx_po_rain_w1_char = 0, kidx_po_rain_w2_char = 0, kidx_po_snow_char = 0, kidx_po_sand_char = 0; /* pseudo objects for graphical weather particles */
