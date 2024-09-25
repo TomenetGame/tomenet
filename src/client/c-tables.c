@@ -586,6 +586,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "gfx_autooff_fmsw",		"Auto-disable font_map_solid_walls for graphics" },
 	{ &c_cfg.solid_bars,		TRUE,	1,	0, 161, TRUE,
 	    "solid_bars",		"Display status bars in solid style, not as '#'" },
+	{ &c_cfg.autopickup_chemicals,	TRUE,	8,	9, 162, TRUE,
+	    "autopickup_chemicals",	"Automatically pick up freshly dropped chemicals" },
 };
 
 cptr melee_techniques[16] = {

@@ -369,6 +369,7 @@ struct player_type {
 	bool easy_tunnel;
 	bool clear_inscr;
 	bool auto_inscr_server;
+	bool autopickup_chemicals;
 	bool taciturn_messages;
 	bool last_words;
 	/* bool speak_unique; */

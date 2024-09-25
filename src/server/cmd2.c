@@ -4202,10 +4202,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
-				//s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
+				//s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name); --too common, spammy msg
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -4260,7 +4260,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -4338,7 +4338,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -4557,7 +4557,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//s_printf("CHEMICAL: %s found saltpetre.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -4584,7 +4584,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//s_printf("CHEMICAL: %s found %s.\n", p_ptr->name, forge.sval == SV_SULFUR ? "sulfur" : "vitriol");
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -4611,7 +4611,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//s_printf("CHEMICAL: %s found Reactive Metal Powder.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;

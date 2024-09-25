@@ -6718,7 +6718,7 @@ bool monster_death(int Ind, int m_idx) {
 				s_printf("CHEMICAL: %s found sulfur (kill).\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -6732,7 +6732,7 @@ bool monster_death(int Ind, int m_idx) {
 				s_printf("CHEMICAL: %s found vitriol (kill).\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -6746,7 +6746,7 @@ bool monster_death(int Ind, int m_idx) {
 				s_printf("CHEMICAL: %s found ammonia salt (kill).\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;
-				forge.mode = p_ptr->mode;
+				forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
 				forge.level = 0;
@@ -6757,12 +6757,6 @@ bool monster_death(int Ind, int m_idx) {
 			}
 
 			found_chemical = TRUE;
-			if (!p_ptr->warning_ingredients) {
-				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
-				p_ptr->warning_ingredients = 1;
-			}
 		}
 
 		/* If we didn't find a breath-dependant chemical yet, have another go at monster race/class-related chemicals */
@@ -6783,13 +6777,13 @@ bool monster_death(int Ind, int m_idx) {
 					if (s_chem >= SV_RUST) s_chem++;
 	#else
 					    randint(CHEMICALS_NUM);
-	#endif
 
+	#endif
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, s_chem));
 					s_printf("CHEMICAL: %s found %d (kill).\n", p_ptr->name, s_chem);
 					forge.owner = p_ptr->id;
 					forge.ident |= ID_NO_HIDDEN;
-					forge.mode = p_ptr->mode;
+					forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 					forge.iron_trade = p_ptr->iron_trade;
 					forge.iron_turn = turn;
 					forge.level = 0;
@@ -6797,15 +6791,9 @@ bool monster_death(int Ind, int m_idx) {
 					forge.weight = k_info[forge.k_idx].weight;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
-					//found_chemical = TRUE;
-						if (!p_ptr->warning_ingredients) {
-							msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-							msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-							msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
-							p_ptr->warning_ingredients = 1;
-						}
-					}
+					found_chemical = TRUE;
 				}
+			}
 
 			/* Saltpetre (guano: bats/birds) + newbie 'spell components' as per k_info diz */
 			else if (r_ptr->d_char == 'b' || r_ptr->d_char == 'B' || r_ptr->d_char == 'H'
@@ -6817,7 +6805,7 @@ bool monster_death(int Ind, int m_idx) {
 					s_printf("CHEMICAL: %s found saltpetre (kill).\n", p_ptr->name);
 					forge.owner = p_ptr->id;
 					forge.ident |= ID_NO_HIDDEN;
-					forge.mode = p_ptr->mode;
+					forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 					forge.iron_trade = p_ptr->iron_trade;
 					forge.iron_turn = turn;
 					forge.level = 0;
@@ -6825,13 +6813,7 @@ bool monster_death(int Ind, int m_idx) {
 					forge.weight = k_info[forge.k_idx].weight;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
-					//found_chemical = TRUE;
-					if (!p_ptr->warning_ingredients) {
-						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-						msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
-						p_ptr->warning_ingredients = 1;
-					}
+					found_chemical = TRUE;
 				}
 			}
 
@@ -6844,7 +6826,7 @@ bool monster_death(int Ind, int m_idx) {
 					s_printf("CHEMICAL: %s found ammonia salt (kill).\n", p_ptr->name);
 					forge.owner = p_ptr->id;
 					forge.ident |= ID_NO_HIDDEN;
-					forge.mode = p_ptr->mode;
+					forge.mode = p_ptr->mode | MODE_NEWLOOT_ITEM;
 					forge.iron_trade = p_ptr->iron_trade;
 					forge.iron_turn = turn;
 					forge.level = 0;
@@ -6852,16 +6834,16 @@ bool monster_death(int Ind, int m_idx) {
 					forge.weight = k_info[forge.k_idx].weight;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
-					//found_chemical = TRUE;
-					if (!p_ptr->warning_ingredients) {
-						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-						msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
-						p_ptr->warning_ingredients = 1;
-					}
+					found_chemical = TRUE;
 				}
 			}
+		}
 
+		if (found_chemical && !p_ptr->warning_ingredients) {
+			msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+			msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+			msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+			p_ptr->warning_ingredients = 1;
 		}
 	}
 #endif
@@ -6881,7 +6863,7 @@ bool monster_death(int Ind, int m_idx) {
 			s_printf("MT_POISON: %s found poison (kill).\n", p_ptr->name);
 			forge.owner = p_ptr->id;
 			forge.ident |= ID_NO_HIDDEN;
-			forge.mode = p_ptr->mode;
+			forge.mode = p_ptr->mode; /* No MODE_NEWLOOT_ITEM for this one */
 			forge.iron_trade = p_ptr->iron_trade;
 			forge.iron_turn = turn;
 			forge.level = 0;

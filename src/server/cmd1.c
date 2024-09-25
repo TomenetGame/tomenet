@@ -2064,6 +2064,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
 
+		/* Hack for auto-picking up chemicals */
+		if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval != SV_MIXTURE && (o_ptr->mode & MODE_NEWLOOT_ITEM) && p_ptr->autopickup_chemicals) force_pickup = TRUE;
+
 		/* Describe the object */
 		if ((!pickup && !force_pickup) || forbidden) {
 			char pseudoid[13];
@@ -2355,6 +2358,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			}
 		}
 #endif
+
+		/* Even if it's not guaranteed yet that we can pick up this item, just clear the newloot flag already anyway, it did enough... */
+		o_ptr->mode &= ~MODE_NEWLOOT_ITEM;
 
 		/* Save old inscription in case pickup fails */
 		old_note = o_ptr->note;

@@ -5963,6 +5963,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			empty_subinven(Ind, k, FALSE, UNSTOW_QUIET); /* FALSE for "You have..." item messages, TRUE for quiet op */
 			return;
+		} else if (prefix(messagelc, "/chem")) { /* Hack for older clients/testing */
+			p_ptr->autopickup_chemicals = !p_ptr->autopickup_chemicals;
+			if (p_ptr->autopickup_chemicals) msg_print(Ind, "Auto-picking up freshly dropped chemicals is now \377GEnabled\377-.");
+			else msg_print(Ind, "Auto-picking up freshly dropped chemicals is now \377sDisabled\377-.");
+			return;
 		}
 
 

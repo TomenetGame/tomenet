@@ -2731,6 +2731,10 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->ascii_uniques = FALSE;
 	}
 
+	/* defaults to 0 on older clients, aka off, so no need to set to FALSE explicitely (could optimize all other options above that way too): */
+	p_ptr->autopickup_chemicals = options[162];
+
+
 	/* Warn about certain options' current status */
 
 	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
