@@ -469,7 +469,7 @@
 /*
  * OPTION: Allow the use of "graphics" in various places
  */
-#if defined(USE_X11) || defined(WINDOWS) || !defined(CLIENT_SIDE) /* the server must always be able to handle use-graphics clients. Why does it even work w/o this -_-? */
+#if defined(USE_X11) || defined(WINDOWS) || defined(USE_SDL3) || !defined(CLIENT_SIDE) /* the server must always be able to handle use-graphics clients. Why does it even work w/o this -_-? */
  #define USE_GRAPHICS
 #endif
 
@@ -607,6 +607,8 @@
 #define DEFAULT_X11_FONT_TERM_7		DEFAULT_X11_FONT
 #define DEFAULT_X11_FONT_TERM_8		DEFAULT_X11_FONT
 #define DEFAULT_X11_FONT_TERM_9		DEFAULT_X11_FONT
+
+
 
 
 
@@ -849,4 +851,48 @@
  #endif
  /* Fix weird glitch in GCU with hacky workaround insanity */
  #define META_DISPLAYPINGS_LATER
+#endif
+
+/*
+ * SDL3 definitions.
+ */
+#ifdef USE_SDL3
+ #define SDL3_ORG_NAME "TomenetGame"
+ #define SDL3_GAME_NAME "tomenet"
+
+ #ifdef SDL3_IMAGE
+  #define SDL3_SCREENSHOT_EXT "png"
+ #else
+  #define SDL3_SCREENSHOT_EXT "bmp"
+ #endif
+
+ /* Default fonts. */
+ #define SDL3_DEFAULT_FONT		"9x15"
+ #define SDL3_DEFAULT_FONT_TERM_MAIN		SDL3_DEFAULT_FONT
+ #define SDL3_DEFAULT_FONT_TERM_1		SDL3_DEFAULT_FONT
+ #define SDL3_DEFAULT_FONT_TERM_2		SDL3_DEFAULT_FONT
+ #define SDL3_DEFAULT_FONT_TERM_3		"6x10"
+ #define SDL3_DEFAULT_FONT_TERM_4		"8x13"
+ #define SDL3_DEFAULT_FONT_TERM_5		"8x13"
+ #define SDL3_DEFAULT_FONT_TERM_6		"6x10"
+ #define SDL3_DEFAULT_FONT_TERM_7		"6x10"
+ #define SDL3_DEFAULT_FONT_TERM_8		"6x10"
+ #define SDL3_DEFAULT_FONT_TERM_9		"6x10"
+
+ /* Default TrueType font sizes. */
+ #define SDL3_DEFAULT_TTF_FONT_SIZE		10
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_MAIN		SDL3_DEFAULT_TTF_FONT_SIZE
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_1		SDL3_DEFAULT_TTF_FONT_SIZE
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_2		SDL3_DEFAULT_TTF_FONT_SIZE
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_3		SDL3_DEFAULT_TTF_FONT_SIZE - 4
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_4		SDL3_DEFAULT_TTF_FONT_SIZE - 2
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_5		SDL3_DEFAULT_TTF_FONT_SIZE - 2
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_6		SDL3_DEFAULT_TTF_FONT_SIZE - 4
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_7		SDL3_DEFAULT_TTF_FONT_SIZE - 4
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_8		SDL3_DEFAULT_TTF_FONT_SIZE - 4
+ #define SDL3_DEFAULT_TTF_FONT_SIZE_TERM_9		SDL3_DEFAULT_TTF_FONT_SIZE - 4
+
+ /* Minimal and maximal allowed TrueType font size. */
+ #define SDL3_MIN_TTF_FONT_SIZE 4
+ #define SDL3_MAX_TTF_FONT_SIZE 32
 #endif

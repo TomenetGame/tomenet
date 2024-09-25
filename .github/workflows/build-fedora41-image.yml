@@ -1,0 +1,52 @@
+name: Build Fedora 41 Builder Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/docker/fedora41/**'
+      - '.github/workflows/build-fedora41-image.yml'
+      - '.github/actions/ci-resolve-deps-image/action.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve image repo name
+        id: image_repo
+        uses: ./.github/actions/ci-image-repo
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build or refresh deps image and latest alias
+        id: deps_image
+        uses: ./.github/actions/ci-resolve-deps-image
+        with:
+          image_repo: ${{ steps.image_repo.outputs.image_repo }}
+          ttl_days: "30"
+          can_push: "true"
+          update_latest_alias: "true"
+
+      - name: Print resolved image details
+        shell: bash
+        run: |
+          echo "image_ref=${{ steps.deps_image.outputs.image_ref }}"
+          echo "deps_hash=${{ steps.deps_image.outputs.deps_hash }}"
+          echo "did_build=${{ steps.deps_image.outputs.did_build }}"
+          echo "did_push=${{ steps.deps_image.outputs.did_push }}"
+          echo "is_stale=${{ steps.deps_image.outputs.is_stale }}"

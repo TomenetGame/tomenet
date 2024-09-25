@@ -1211,9 +1211,13 @@ static term_data* term_idx_to_term_data(int term_idx);
  #endif
 #endif
 
+#ifdef USE_GRAPHICS
+extern bool disable_tileset_caching;
+bool disable_tileset_caching = FALSE;
+#endif
 #ifdef TILE_CACHE_SIZE
-extern bool disable_tile_cache, disable_tileset_caching;
-bool disable_tile_cache = FALSE, disable_tileset_caching = FALSE;
+extern bool disable_tile_cache;
+bool disable_tile_cache = FALSE;
 struct tile_cache_entry {
     Pixmap tilePreparation;
     char32_t c;
@@ -1228,10 +1232,6 @@ struct tile_cache_entry {
     s32b fg, bg; /* Optional palette_animation handling */
  #endif
 };
-#endif
-#ifdef USE_GRAPHICS
-extern int gfx_resize_type;
-int gfx_resize_type = 1;
 #endif
 
 

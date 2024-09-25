@@ -1601,6 +1601,8 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 		case OS_SUB_GCU: strcat(version, "g"); break;
 		case OS_SUB_X11: strcat(version, "x"); break;
 		case OS_SUB_GCU_X11: strcat(version, "X"); break;
+		case OS_SUB_SDL3: strcat(version, "s"); break;
+		case OS_SUB_GCU_SDL3: strcat(version, "S"); break;
 		}
 		strcat(version, "\377-");
 

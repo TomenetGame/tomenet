@@ -796,3 +796,10 @@ extern bool is_client_side;
 
 /* Needed for RETRY_LOGIN in the client */
 extern bool rl_connection_destructible, rl_connection_destroyed, rl_connection_state;
+
+#ifdef USE_SDL3
+/* Paths to SDL3 preferences and game executable directories. */
+extern char *SDL3_USER_PATH, *SDL3_GAME_PATH;
+/* Path separator used in SDL3 client. */
+extern char SDL3_PATH_SEP[2];
+#endif
