@@ -245,6 +245,15 @@ void console_init(void) {
 			if (done) ANGBAND_SYS = "x11";
 		}
 #endif
+
+#ifdef USE_SDL3
+		/* Attempt to use the "main-sdl3.c" support */
+		if (!done) {
+			extern errr init_sdl3(void);
+			if (0 == init_sdl3()) done = TRUE;
+			if (done) ANGBAND_SYS = "sdl3";
+		}
+#endif
 	}
 
 #ifdef USE_GCU

@@ -1,0 +1,36 @@
+name: CI Version From Defines
+description: Extract TOMENET version from src/common/defines.h style file.
+inputs:
+  defines_path:
+    description: Path to defines.h file.
+    required: false
+    default: src/common/defines.h
+outputs:
+  version:
+    description: Parsed version string.
+    value: ${{ steps.parse.outputs.version }}
+runs:
+  using: composite
+  steps:
+    - id: parse
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        version="$(awk '/^#define[ \t]+VERSION_MAJOR[ \t]+[0-9]+/{maj=$3}
+                       /^#define[ \t]+VERSION_MINOR[ \t]+[0-9]+/{min=$3}
+                       /^#define[ \t]+VERSION_PATCH[ \t]+[0-9]+/{pat=$3}
+                       /^#define[ \t]+VERSION_EXTRA[ \t]+[0-9]+/{ext=$3}
+                       /^#define[ \t]+VERSION_BRANCH[ \t]+[0-9]+/{br=$3}
+                       /^#define[ \t]+VERSION_BUILD[ \t]+[0-9]+/{bld=$3}
+                       END{
+                         if (ext == 0 && br == 0 && bld == 0) print maj "." min "." pat;
+                         else print maj "." min "." pat "." ext "." br "." bld
+                       }' "${{ inputs.defines_path }}")"
+
+        if [[ -z "$version" ]]; then
+          echo "Unable to parse version from '${{ inputs.defines_path }}'." >&2
+          exit 1
+        fi
+
+        echo "version=$version" >> "$GITHUB_OUTPUT"
