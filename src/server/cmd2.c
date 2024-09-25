@@ -8748,7 +8748,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 // TODO: Handle USE_PARRYING (maybe)/USE_BLOCKING/dodging
 					/* Handle reflection - thrown items cannot really be deflected if they're bulky.
 					   This works well with throwing_weapon, as spears/hatchets start at 5.0, and for dagger weights it fits very nicely too! */
-					if (p_ptr->reflect && magik(50 - o_ptr->weight)) {
+					if (q_ptr->reflect && magik(50 - o_ptr->weight)) {
 						if (visible) msg_format(Ind, "The %s was deflected.", o_name);
 						break;
 					}
