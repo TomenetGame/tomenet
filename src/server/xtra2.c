@@ -6685,6 +6685,7 @@ bool monster_death(int Ind, int m_idx) {
     {
 	bool found_chemical = FALSE;
 
+	/* Check for all breath-related chemicals first */
 	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 		if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
@@ -6760,6 +6761,8 @@ bool monster_death(int Ind, int m_idx) {
 			}
 		}
 	}
+
+	/* If we didn't find a breath-dependant chemical yet, have another go at monster race/class-related chemicals */
 	if (!found_chemical && ((r_ptr->flags3 & RF3_ANIMAL) || r_idx == RI_NOVICE_MAGE || r_idx == RI_NOVICE_MAGE_F || m_ptr->ego == RE_RUNEMASTER)
 	    && !(r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD | RF3_NONLIVING)) && !(r_ptr->flags7 & RF7_AQUATIC) && !p_ptr->IDDC_logscum) {
 		/* Avoid item flood */
