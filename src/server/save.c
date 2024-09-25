@@ -2928,7 +2928,7 @@ static bool load_server_info_classic(void) {
 				strcpy(list_invalid_date[i], buf);
 
 				/* Read account name */
-				if (fgets(buf, ACCNAME_LEN, fil) == NULL) {
+				if (fgets(buf, ACCNAME_LEN + 1, fil) == NULL) {
 					s_printf("Warning: list-invalid.txt broken (name) at entry %d.\n", i);
 					break;
 				}
@@ -2936,7 +2936,7 @@ static bool load_server_info_classic(void) {
 				strcpy(list_invalid_name[i], buf);
 
 				/* Read hostname */
-				if (fgets(buf, HOSTNAME_LEN, fil) == NULL) {
+				if (fgets(buf, HOSTNAME_LEN + 1, fil) == NULL) {
 					s_printf("Warning: list-invalid.txt broken (host) at entry %d.\n", i);
 					break;
 				}
@@ -2944,7 +2944,7 @@ static bool load_server_info_classic(void) {
 				strcpy(list_invalid_host[i], buf);
 
 				/* Read ip address */
-				if (fgets(buf, MAX_CHARS, fil) == NULL) {
+				if (fgets(buf, MAX_CHARS + 1, fil) == NULL) {
 					s_printf("Warning: list-invalid.txt broken (addr) at entry %d.\n", i);
 					break;
 				}
@@ -2952,7 +2952,7 @@ static bool load_server_info_classic(void) {
 				strcpy(list_invalid_addr[i], buf);
 
 				/* Read separator linespace (which is there for QoL if looking at list-invalid.txt w/ a text editor instead */
-				if (fgets(buf, 2, fil) == NULL) {
+				if (fgets(buf, 2 + 1, fil) == NULL) {
 					s_printf("Warning: list-invalid.txt broken (separator) at entry %d.\n", i);
 					break;
 				}
