@@ -1335,6 +1335,11 @@ They all start with a slash '/' hence they're called slash commands:
 /characters
 /chars      Lists all your existing characters, including their locations.
 
+/chem       Same as client option 'autopickup_chemicals':
+            Enable/disable automatic picking-up of freshly dropped chemicals
+            for characters with 'Demolitionist' perk from 'Digging' skill,
+            by simply walking over them with your character.
+
 /convertexclusive    Attempts to convert your current character into a
                      slot-exclusive character (either PvP mode or IDDC aka
                      Ironman Deep Dive Challenge / Halls of Mandos).
@@ -4646,8 +4651,8 @@ creation progress.
 
 (2.5) Client options
 --------------------
-By pressing the '=' key in game, you can access the options menu where you can
-tweak your client in some ways. Some of these options that aren't
+By pressing the '=' key in game, you can access the options menu where you
+cantweak your client in various ways. Some of these options that aren't
 self-explaining or that are especially important are listed in detail here:
 
  (1, 2, 3, 4) User Interface Options:
@@ -18232,6 +18237,11 @@ stated.
                                 If you don't want ingredients to drop to reduce
                                 loot clutter, You can turn them off (and on
                                 again) with the /ing command.
+
+                                The client option 'autopickup_chemicals' and
+                                the slash command '/chem' toggle automatically
+                                picking-up freshly dropped chemicals by simply
+                                walking over them.
 
                                 To reduce inventory space usage, go to the
                                 town's alchemy shop and buy an Alchemy Satchel.
