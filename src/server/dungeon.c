@@ -5005,9 +5005,9 @@ static bool process_player_end_aux(int Ind) {
 	object_type	*o_ptr;
 	int		i, j, k, autofood = 0;
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
-	dun_level	*l_ptr = getfloor(&p_ptr->wpos);
-	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
 	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level	*l_ptr = getfloor(wpos);
+	dungeon_type	*d_ptr = getdungeon(wpos);
 	char		o_name[ONAME_LEN];
 	bool		warm_place = TRUE;
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
