@@ -3624,11 +3624,13 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 
 #ifdef ENABLE_SUBINVEN
 		item_new = autostow_or_carry(Ind, &sell_obj);
-		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+		get_inven_item(Ind, item_new, &o_ptr);
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 #else
 		item_new = inven_carry(Ind, &sell_obj);
+		get_inven_item(Ind, item_new, &o_ptr);
 		/* Describe the final result */
-		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
 #endif
 
