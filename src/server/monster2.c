@@ -1321,6 +1321,7 @@ s16b get_mon_num(int level, int dlevel) {
 	if (level < 0) {
 		level = -level;
 		dlevel = level;
+		monster_level_min_int = 1;
 		force_depth = TRUE;
 	}
 
