@@ -13895,6 +13895,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/prmap")) {
+				if (!tk) p_ptr->redraw |= PR_MAP;
+				else {
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+					if (!j) {
+						msg_print(Ind, "\377yCharacter not online.");
+						return;
+					}
+					Players[j]->redraw |= PR_MAP;
+				}
+				return;
+			}
 		}
 	}
 
