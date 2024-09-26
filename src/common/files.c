@@ -466,6 +466,7 @@ int local_file_close(int ind, unsigned short fnum) {
 	int size = 4096;
 	int success = 1;
 	FILE *wp;
+
 	c_fd = getfile(ind, fnum);
 	if (c_fd == (struct ft_data *) NULL) return(0);
 

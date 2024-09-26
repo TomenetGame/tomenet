@@ -1029,9 +1029,7 @@ int	fd;
     socklen_t size;
 
     size = sizeof(error);
-    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&error, &size) == -1) {
-	return(-1);
-    }
+    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&error, &size) == -1) return(-1);
     errno = error;
     return(0);
 } /* GetSocketError */
