@@ -5500,6 +5500,7 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 	int prev_type = -1;
  #endif
 	bool all = FALSE, any_bag = FALSE, eligible_bag = FALSE, client_outdated = FALSE;
+	int last_ok_slot = -1, last_num; /* just for QoL item_newest_2nd */
 
 	/* Don't stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return;
@@ -5611,11 +5612,14 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 			continue;
 		}
 		/* Eligible subinventory found, try to move as much as possible */
+		last_num = i_ptr->number;
 		if (subinven_move_aux(Ind, islot, i, amt, FALSE)) {
 			/* Successfully moved ALL items! We're done. */
 			all = TRUE;
+			last_ok_slot = i;
 			break;
 		}
+		if (last_num - i_ptr->number) last_ok_slot = i;
  #ifdef SUBINVEN_LIMIT_GROUP
 		//break;  -- replaced by 'continue;' further above
  #endif
@@ -5649,6 +5653,9 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	/* QoL */
+	if (last_ok_slot != -1) Send_item_newest_2nd(Ind, last_ok_slot);
 }
 /* Tries to all items or item stacks in inventory completely into
    a specific subinventory.
@@ -5804,6 +5811,7 @@ void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
  #ifdef USE_SOUND_2010
 		sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
  #endif
+		Send_item_newest_2nd(Ind, i); /* QoL */
 	}
 
 	/* Not all of the stack was moved, so the slot still exists */
