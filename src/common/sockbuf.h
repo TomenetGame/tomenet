@@ -24,15 +24,16 @@
 #ifndef	NET_H
 #define	NET_H
 
+#define SOCKBUF_kB	128	/* Used to be 64, increased to 128 to be safer with 2mask-graphics transmissions */
 
-#define MIN_SOCKBUF_SIZE	1024
-#define MAX_SOCKBUF_SIZE	(64*1024)
+#define MIN_SOCKBUF_SIZE	1024	/* unused */
+#define MAX_SOCKBUF_SIZE	(SOCKBUF_kB * 1024)
 
-#define SERVER_RECV_SIZE	(64*1024)
-#define SERVER_SEND_SIZE	(64*1024)
+#define SERVER_RECV_SIZE	(SOCKBUF_kB * 1024)
+#define SERVER_SEND_SIZE	(SOCKBUF_kB * 1024)
 
-#define CLIENT_SEND_SIZE	(64*1024)
-#define CLIENT_RECV_SIZE	(64*1024)
+#define CLIENT_SEND_SIZE	(SOCKBUF_kB * 1024)
+#define CLIENT_RECV_SIZE	(SOCKBUF_kB * 1024)
 
 /*
  * Definitions for the states a socket buffer can be in.
