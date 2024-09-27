@@ -9789,6 +9789,7 @@ void mix_chemicals(int Ind, int item) {
 			if (!p_ptr->warning_blastcharge) {
 				msg_print(Ind, "Hint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
 				p_ptr->warning_blastcharge = 1;
+				s_printf("warning_blastcharge: %s\n", p_ptr->name);
 			}
 		}
 	} else {

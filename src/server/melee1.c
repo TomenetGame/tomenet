@@ -3476,6 +3476,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 	    && !get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
 		p_ptr->warning_wield_combat = 1;
 		msg_print(Ind, "\374\377RWARNING: You aren't wielding a weapon! Press \377yw\377R to equip one!");
+		s_printf("warning_wield_combat: %s\n", p_ptr->name);
 	}
 
 	/* Always notice cause of death */

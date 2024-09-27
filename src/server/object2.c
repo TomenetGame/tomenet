@@ -11661,6 +11661,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	if (excess) {
 		msg_print(Ind, "\377yYou can only use one of each subinventory type at a time.");
 		p_ptr->warning_subinven = 1;
+		s_printf("warning_subinven: %s\n", p_ptr->name);
 	}
 #endif
 

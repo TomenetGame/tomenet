@@ -3670,6 +3670,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (!p_ptr->warning_tunnel3) {
 			msg_print(Ind, "\374\377yHINT: You can tunnel more effectively if you equip a digging tool.");
 			msg_print(Ind, "\374\377y      The general store in town sells some basic shovels and picks.");
+			s_printf("warning_tunnel3: %s\n", p_ptr->name);
 			p_ptr->warning_tunnel3 = 1;
 		}
 	}
@@ -4217,6 +4218,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+					s_printf("warning_ingredients: %s\n", p_ptr->name);
 					p_ptr->warning_ingredients = 1;
 				}
 			}
@@ -4272,6 +4274,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+					s_printf("warning_ingredients: %s\n", p_ptr->name);
 					p_ptr->warning_ingredients = 1;
 				}
 			}
@@ -4350,6 +4353,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+					s_printf("warning_ingredients: %s\n", p_ptr->name);
 					p_ptr->warning_ingredients = 1;
 				}
 			}
@@ -4480,6 +4484,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			if (!p_ptr->warning_tunnel4 && o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 				/* Don't display hint if digging tool is already so highly enchanted that it was probably done manually -> player seems to know */
 				if (o_ptr->to_h < 8 || o_ptr->to_d < 8) msg_print(Ind, "\374\377yHINT: Further strengthen your digging tool by enchanting it to-hit and to-dam!");
+				s_printf("warning_tunnel4: %s\n", p_ptr->name);
 				p_ptr->warning_tunnel4 = 1;
 			}
 
@@ -4569,6 +4574,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+					s_printf("warning_ingredients: %s\n", p_ptr->name);
 					p_ptr->warning_ingredients = 1;
 				}
 			}
@@ -4596,6 +4602,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+					s_printf("warning_ingredients: %s\n", p_ptr->name);
 					p_ptr->warning_ingredients = 1;
 				}
 			}
@@ -4623,6 +4630,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+					s_printf("warning_ingredients: %s\n", p_ptr->name);
 					p_ptr->warning_ingredients = 1;
 				}
 			}
@@ -5293,6 +5301,7 @@ void do_cmd_disarm(int Ind, int dir) {
 					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y for easier mass-disarming of monster traps.");
 				else
 					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y and option \377oeasy_disarm_montraps\377y (in '=7') for easier mass-disarming of monster traps.");
+				s_printf("warning_edmt: %s\n", p_ptr->name);
 				p_ptr->warning_edmt = 1;
 			}
 

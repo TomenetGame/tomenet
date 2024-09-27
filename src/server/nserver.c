@@ -3596,6 +3596,7 @@ static int Handle_login(int ind) {
 
 			/* might find esp-weapon at non-low levels, so stop spamming this warning then */
 			if (p_ptr->lev >= 15) p_ptr->warning_ma_weapon = 1;
+			s_printf("warning_ma_weapon: %s\n", p_ptr->name);
 		}
 		if (!p_ptr->warning_ma_shield &&
 		    p_ptr->inventory[INVEN_ARM].k_idx) {
@@ -3604,6 +3605,7 @@ static int Handle_login(int ind) {
 
 			/* might find esp-shield at non-low levels, so stop spamming this warning then */
 			if (p_ptr->lev >= 15) p_ptr->warning_ma_shield = 1;
+			s_printf("warning_ma_shield: %s\n", p_ptr->name);
 		}
 		if (warn_takeoff) msg_print(NumPlayers, "\374\377R         Press 't' key to take off your weapons or shield.");
 	}

@@ -655,6 +655,7 @@ static void sense_inventory(int Ind) {
 		if (!p_ptr->warning_id && (streq(feel, "good") || streq(feel, "excellent") || streq(feel, "special"))) {
 			msg_print(Ind, "\374\377yHINT: If you sense that an unknown item you found is 'good' or even better, make");
 			msg_print(Ind, "\374\377y      sure to identify it, eg with a \377oScroll of Identify\377y from the alchemist shop!");
+			s_printf("warning_id: %s\n", p_ptr->name);
 			p_ptr->warning_id = 1;
 		}
 
@@ -6366,7 +6367,7 @@ static bool process_player_end_aux(int Ind) {
 						p_ptr->warning_lite_refill = 1;
 						msg_print(Ind, "\374\377yHINT: Press \377oSHIFT+f\377y to refill your light source. You will need a flask of");
 						msg_print(Ind, "\374\377y      oil for lanterns, or another torch to combine with an extinct torch.");
-						//s_printf("warning_lite_refill: %s\n", p_ptr->name);
+						s_printf("warning_lite_refill: %s\n", p_ptr->name);
 					}
 				}
 #if 0	/* torch of presentiment goes poof to unlight trap, taken out for now - C. Blue */

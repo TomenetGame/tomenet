@@ -1724,6 +1724,7 @@ bool set_blind(int Ind, int v) { /* bad status effect */
 			if (!p_ptr->warning_status_blindness) {
 				msg_print(Ind, "\374\377yHINT:\377w One way to cure \377yblindness\377w are potions of cure serious wounds (or better).");
 				p_ptr->warning_status_blindness = 1;
+				s_printf("warning_status_blindness: %s\n", p_ptr->name);
 			}
 		}
 
@@ -1862,6 +1863,7 @@ bool set_confused(int Ind, int v) { /* bad status effect */
 			if (!p_ptr->warning_status_confusion) {
 				msg_print(Ind, "\374\377yHINT:\377w One way to cure \377yconfusion\377w are potions of cure serious wounds (or better).");
 				p_ptr->warning_status_confusion = 1;
+				s_printf("warning_status_confusion: %s\n", p_ptr->name);
 			}
 		}
 
@@ -3400,6 +3402,7 @@ bool set_stun_raw(int Ind, int v) { /* bad status effect */
 		if (!p_ptr->warning_status_stun && !old_aux) {
 			msg_print(Ind, "\374\377yHINT:\377w One way to cure \377ystun\377w are potions of cure critical wounds (or better).");
 			p_ptr->warning_status_stun = 1;
+			s_printf("warning_status_stun: %s\n", p_ptr->name);
 		}
 	}
 
@@ -3516,6 +3519,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
 		if (!p_ptr->warning_status_stun && !old_aux) {
 			msg_print(Ind, "\374\377yHINT:\377w One way to cure \377ystun\377w are potions of cure critical wounds (or better).");
 			p_ptr->warning_status_stun = 1;
+			s_printf("warning_status_stun: %s\n", p_ptr->name);
 		}
 	}
 
@@ -5424,6 +5428,7 @@ void check_experience(int Ind) {
 		if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) {
 			msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press '\377gSHIFT+v\377G').");
 			if (!p_ptr->warning_cloak) p_ptr->warning_cloak = 2;
+			s_printf("warning_cloak=2: %s\n", p_ptr->name);
 		}
 #endif
 		break;
@@ -6847,6 +6852,7 @@ bool monster_death(int Ind, int m_idx) {
 			msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 			msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 			p_ptr->warning_ingredients = 1;
+			s_printf("warning_ingredients: %s\n", p_ptr->name);
 		}
 	}
 #endif
@@ -6880,6 +6886,7 @@ bool monster_death(int Ind, int m_idx) {
 				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 				p_ptr->warning_ingredients = 1;
+				s_printf("warning_ingredients: %s\n", p_ptr->name);
 			}
 		}
 	}
@@ -10754,7 +10761,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 
 #if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
-		msg_format(Ind, "\374\377oYou died below level %d, which means that most items didn't drop.", cfg.newbies_cannot_drop);
+		msg_format(Ind, "\374\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
 		msg_print(Ind, "\374\377oTherefore, it's recommended to press '\377RQ\377o' to suicide and start over.");
 		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R<\377o' to float back to town,");
 		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R>\377o' to float back to town,");
@@ -10764,9 +10771,10 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 	} else
 #endif
 	if (!p_ptr->warning_death) {
+		p_ptr->warning_death = 1;
+		s_printf("warning_death: %s\n", p_ptr->name);
 		/* normal warning - in dungeon */
 		if (p_ptr->wpos.wz) {
-			p_ptr->warning_death = 1;
 			msg_print(Ind, "\374\377yIf you leave this floor and nobody else stays on it, it will change and");
 			msg_print(Ind, "\374\377ytherefore all your items would be lost! You now have two choices:");
 			if (p_ptr->wpos.wz > 0)
@@ -10789,6 +10797,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 	if (p_ptr->limit_chat) {
 		msg_print(Ind, "\374\3774Warning: \377oYou have the option '\377Rlimit_chat\377o' enabled so nobody will be able to read");
 		msg_print(Ind, "\374\377o         your chat unless he is on your floor or you disable the option via \377R=2\377o !");
+		s_printf("warning_limit_chat: %s\n", p_ptr->name); //not a true warning_ flag
 	}
 
 #if 0 /* currently disabled, because replaced by warning_death */

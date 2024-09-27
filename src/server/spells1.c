@@ -2521,6 +2521,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	if (!p_ptr->warning_sanity && p_ptr->csane < p_ptr->msane / 2) { /* <50% is the 'Crazy' threshold */
 		msg_print(Ind, "\377RWARNING: If your sanity ever drops below zero, you die PERMANENTLY!");
 		p_ptr->warning_sanity = 1;
+		s_printf("warning_sanity: %s\n", p_ptr->name);
 	}
 }
 
@@ -4851,6 +4852,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 					p_ptr->warning_ingredients = 1;
+					s_printf("warning_ingredients: %s\n", p_ptr->name);
 				}
 				//spammy- s_printf("CHEMICAL: %s found charcoal (feat).\n", p_ptr->name);
 			}
@@ -6062,6 +6064,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
 						msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 						p_ptr->warning_ingredients = 1;
+						s_printf("warning_ingredients: %s\n", p_ptr->name);
 					}
 					s_printf("CHEMICAL: %s found charcoal (item).\n", p_ptr->name);
 				}

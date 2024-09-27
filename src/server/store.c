@@ -3556,6 +3556,7 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 				msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377o' skill is currently not applied to your success chance");
 				msg_print(Ind, "\374\377o because your armour is too heavy, straining your flexibility and awareness.");
 				p_ptr->warning_stealing_rha = 1;
+				s_printf("warning_stealing_rha: %s\n", p_ptr->name);
 			}
 		} else if (tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
 			chance = ((chance * (long)(tbase)) / get_skill_scale(p_ptr, SKILL_STEALING, 500));
@@ -3566,6 +3567,7 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 			msg_print(Ind, "\374\377yHINT: To steal effectively use a character that can train the 'Stealing' skill.");
 		}
 		p_ptr->warning_stealing = 1;
+		s_printf("warning_stealing: %s\n", p_ptr->name);
 	}
 
 	/* Invisibility and stealth are not unimportant */
@@ -4649,6 +4651,7 @@ void store_confirm(int Ind) {
 			msg_print(Ind, "\377\377y      they do, because if their number of charges is known it will further");
 			msg_print(Ind, "\377\377y      increase their value!");
 			p_ptr->warning_sellunid = 1;
+			s_printf("warning_sellunid: %s\n", p_ptr->name);
 		}
 	}
 

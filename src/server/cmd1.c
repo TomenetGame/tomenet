@@ -1988,6 +1988,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			msg_print(Ind, "\374\377yHINT: Mining hidden veins yields more than the right away spottable ones!");
 			c_ptr->info2 &= ~CAVE2_MINED;
 			p_ptr->warning_tunnel_hidden = 1;
+			s_printf("warning_tunnel_hidden: %s\n", p_ptr->name);
 		}
 /* #if DEBUG_LEVEL > 3 */
 		if (amount >= 10000) s_printf("Gold found threshold (%d by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);

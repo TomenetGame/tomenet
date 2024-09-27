@@ -1470,6 +1470,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 		/* might find esp-weapon at non-low levels, so stop spamming this warning then */
 		if (p_ptr->lev >= 15) p_ptr->warning_ma_weapon = 1;
+		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
 	}
 	if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
 		msg_print(Ind, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
@@ -1477,6 +1478,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 		/* might find esp-shield at non-low levels, so stop spamming this warning then */
 		if (p_ptr->lev >= 15) p_ptr->warning_ma_shield = 1;
+		s_printf("warning_ma_shield: %s\n", p_ptr->name);
 	}
 	if (warn_takeoff) msg_print(Ind, "\374\377R         Press 't' key to take off your weapons or shield.");
 
@@ -3025,6 +3027,7 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 			msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377y' skill is currently not applied to your success chance");
 			msg_print(Ind, "\374\377o because your armour is too heavy, straining your flexibility and awareness.");
 			p_ptr->warning_stealing_rha = 1;
+			s_printf("warning_stealing_rha: %s\n", p_ptr->name);
 		}
 
 		/* Failure check */
@@ -3584,6 +3587,7 @@ void do_cmd_steal(int Ind, int dir) {
 		msg_print(Ind, "\374\377oWARNING: Your '\377yStealing\377y' skill is currently not applied to your success chance");
 		msg_print(Ind, "\374\377o because your armour is too heavy, straining your flexibility and awareness.");
 		p_ptr->warning_stealing_rha = 1;
+		s_printf("warning_stealing_rha: %s\n", p_ptr->name);
 	}
 
 	/* Hack -- Rogues get bonuses to chances */
