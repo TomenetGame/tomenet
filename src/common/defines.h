@@ -1467,12 +1467,14 @@
 
 
 /* Dungeon indices (d_ptr->type) hardcoded from d_info.txt file: */
+#define DI_MIRKWOOD		1
 #define DI_MT_DOOM		5
 #define DI_NETHER_REALM		6
 #define DI_SUBMERGED_RUINS	7
 #define DI_HALLS_OF_MANDOS	8
 #define DI_PATHS_DEAD		16
 #define DI_THE_ORC_CAVE		19
+#define DI_OLD_FOREST		21
 #define DI_SMALL_WATER_CAVE	24
 #define DI_SANDWORM_LAIR	27
 #define DI_DEATH_FATE		28
@@ -6694,7 +6696,6 @@
 	HACK -- I am temporarily using these numbers to determine
 	how many monsters to generate.
 */
-
 #define		WILD_LAKE		0
 #define		WILD_GRASSLAND		1
 #define		WILD_FOREST		2
@@ -6715,6 +6716,28 @@
 #define		WILD_DESERT		17 /* new, similar to WILD_WASTELAND probably */
 #define		WILD_ICE		18 /* new, polar style */
 #define		WILD_SWAMP		20
+
+/* All wilderness types above again, now as dungeon-generation flags */
+#define DFW_WILD_LAKE		0x00000001
+#define DFW_WILD_GRASSLAND	0x00000002
+#define DFW_WILD_FOREST		0x00000004
+#define DFW_WILD_VOLCANO	0x00000008
+#define DFW_WILD_SHORE1		0x00000010
+#define DFW_WILD_SHORE2		0x00000020
+#define DFW_WILD_OCEANBED1	0x00000040
+#define DFW_WILD_WASTELAND	0x00000080
+#define DFW_WILD_UNDEFINED	0x00000100	/* of course not usable, still defined/implemented anyway */
+#define DFW_WILD_CLONE		0x00000200	/* of course not usable, still defined/implemented anyway */
+#define DFW_WILD_TOWN		0x00000400
+#define DFW_WILD_OCEAN		0x00000800
+#define DFW_WILD_RIVER		0x00001000
+#define DFW_WILD_COAST		0x00002000
+#define DFW_WILD_MOUNTAIN	0x00004000
+#define DFW_WILD_DENSEFOREST	0x00008000
+#define DFW_WILD_OCEANBED2	0x00010000
+#define DFW_WILD_DESERT		0x00020000
+#define DFW_WILD_ICE		0x00040000
+#define DFW_WILD_SWAMP		0x00080000
 
 /* different buildings */
 #define		WILD_LOG_CABIN		0

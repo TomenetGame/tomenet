@@ -10835,7 +10835,7 @@ void set_runlevel(int val) {
  * If the "new_game" parameter is true, then, after loading the
  * server-specific savefiles, we will start anew.
  */
-void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Bree, bool new_wilderness, bool new_flavours, bool new_houses) {
+void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool lowdun_near_Bree, bool new_wilderness, bool new_flavours, bool new_houses) {
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 	time_t now;
 	struct tm *tmp;
@@ -10915,7 +10915,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Br
 		genwild(all_terrains, dry_Bree);
 
 		/* Generate the towns */
-		wild_spawn_towns(TOC_near_Bree);
+		wild_spawn_towns(lowdun_near_Bree);
 
 		/* Create dungeon index info */
 		s_printf("Indexing dungeons..\n");
@@ -11023,7 +11023,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Br
 
 			/* Generate the towns */
 			s_printf("  ..spawning towns..\n");
-			wild_spawn_towns(TOC_near_Bree);
+			wild_spawn_towns(lowdun_near_Bree);
 
 			/* Discard old dungeon index info */
 			s_printf("  ..reindexing dungeons..\n");

@@ -4365,6 +4365,7 @@ struct dungeon_info_type {
 	u32b flags1;			/* Flags 1 */
 	u32b flags2;			/* Flags 2 */
 	u32b flags3;			/* Flags 3 */
+	u32b flagsw;			/* Wilderness terrain type flags */
 
 	byte rule_percents[100];	/* Flat rule percents */
 	rule_type rules[10];		/* Monster generation rules */

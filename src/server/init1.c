@@ -1290,6 +1290,44 @@ static cptr d_info_flags3[] = {
 	"CYCLIC_STAIRS",
 };
 
+static cptr d_info_flags_wild[] = {
+	"WILD_LAKE",
+	"WILD_GRASSLAND",
+	"WILD_FOREST",
+	"WILD_VOLCANO",
+	"WILD_SHORE1",
+	"WILD_SHORE2",
+	"WILD_OCEANBED1",
+	"WILD_WASTELAND",
+
+	"WILD_UNDEFINED",
+	"WILD_CLONE",
+	"WILD_TOWN",
+	"WILD_OCEAN",
+	"WILD_RIVER",
+	"WILD_COAST",
+	"WILD_MOUNTAIN",
+	"WILD_DENSEFOREST",
+
+	"WILD_OCEANBED2",
+	"WILD_DESERT",
+	"WILD_ICE",
+	"WILD_SWAMP",
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+};
+
 #endif	// 1
 
 /* Vault flags */
@@ -5830,6 +5868,13 @@ static errr grab_one_dungeon_flag(dungeon_info_type *d_ptr, cptr what) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, d_info_flags3[i])) {
 			d_ptr->flags3 |= (1U << i);
+			return(0);
+		}
+
+	/* Scan wilderness terrain type flags */
+	for (i = 0; i < 32; i++)
+		if (streq(what, d_info_flags_wild[i])) {
+			d_ptr->flagsw |= (1U << i);
 			return(0);
 		}
 

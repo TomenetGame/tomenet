@@ -284,7 +284,7 @@ void wild_bulldoze() {
  * Makeshift towns/dungeons placer for v4
  * This should be totally rewritten for v5!		- Jir -
  */
-void wild_spawn_towns(bool TOC_near_Bree) {
+void wild_spawn_towns(bool lowdun_near_Bree) {
 	int x, y, i, j, k;
 	bool retry, skip;
 
@@ -366,25 +366,81 @@ void wild_spawn_towns(bool TOC_near_Bree) {
 			 * hard dungeons around Lorien */
 		}
 
-		/* Don't put The Orc Caves too far away from Bree. - Could be extended to cover more dungeons than just OC.. */
-		if (!retry && TOC_near_Bree) {
+		/* Don't put The Orc Caves, Old Forest and Mirkwood too far away from Bree. */
+		if (!retry && lowdun_near_Bree) {
 			/* Assume (as in a few other places too) that Bree (town[usually 0].type is 1) is always at cfg.town_x/y */
 
 			/* Hack: x distance is longer than y distance, since sectors are about twice as wide as they are high! */
-			if (i == DI_THE_ORC_CAVE && distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 16) retry = TRUE;
+			switch (i) {
+			case DI_THE_ORC_CAVE:
+			case DI_OLD_FOREST:
+			case DI_MIRKWOOD:
+				if (distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 20) retry = TRUE;
+			}
 		}
 
-		/* Adhere to the TomeNET Guide's (arbitrary^^) fluff description:
-		   "nigh unsurpassable mountain chains that arose in the midst of forests"
-		   and so make sure the Death Fate is actually in forest terrain: */
-		if (!retry && i == DI_DEATH_FATE) {
-			switch (wild_info[y][x].type) {
-			case WILD_FOREST:
-			case WILD_DENSEFOREST:
-				break; /* ok */
-			default:
-				retry = TRUE; /* not ok */
-			}
+		/* Place dungeons into terrain they belong to, if any */
+		if (!retry && d_info[i].flagsw) switch(wild_info[y][x].type) {
+		case WILD_LAKE:
+			if (!(d_info[i].flagsw & DFW_WILD_LAKE)) retry = TRUE;
+			break;
+		case WILD_GRASSLAND:
+			if (!(d_info[i].flagsw & DFW_WILD_GRASSLAND)) retry = TRUE;
+			break;
+		case WILD_FOREST:
+			if (!(d_info[i].flagsw & DFW_WILD_FOREST)) retry = TRUE;
+			break;
+		case WILD_VOLCANO:
+			if (!(d_info[i].flagsw & DFW_WILD_VOLCANO)) retry = TRUE;
+			break;
+		case WILD_SHORE1:
+			if (!(d_info[i].flagsw & DFW_WILD_SHORE1)) retry = TRUE;
+			break;
+		case WILD_SHORE2:
+			if (!(d_info[i].flagsw & DFW_WILD_SHORE2)) retry = TRUE;
+			break;
+		case WILD_OCEANBED1:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED1)) retry = TRUE;
+			break;
+		case WILD_WASTELAND:
+			if (!(d_info[i].flagsw & DFW_WILD_WASTELAND)) retry = TRUE;
+			break;
+		case WILD_UNDEFINED: /* of course not usable, still defined/implemented anyway */
+			if (!(d_info[i].flagsw & DFW_WILD_UNDEFINED)) retry = TRUE;
+			break;
+		case WILD_CLONE: /* of course not usable, still defined/implemented anyway */
+			if (!(d_info[i].flagsw & DFW_WILD_CLONE)) retry = TRUE;
+			break;
+		case WILD_TOWN:
+			if (!(d_info[i].flagsw & DFW_WILD_TOWN)) retry = TRUE;
+			break;
+		case WILD_OCEAN:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEAN)) retry = TRUE;
+			break;
+		case WILD_RIVER:
+			if (!(d_info[i].flagsw & DFW_WILD_RIVER)) retry = TRUE;
+			break;
+		case WILD_COAST:
+			if (!(d_info[i].flagsw & DFW_WILD_COAST)) retry = TRUE;
+			break;
+		case WILD_MOUNTAIN:
+			if (!(d_info[i].flagsw & DFW_WILD_MOUNTAIN)) retry = TRUE;
+			break;
+		case WILD_DENSEFOREST:
+			if (!(d_info[i].flagsw & DFW_WILD_DENSEFOREST)) retry = TRUE;
+			break;
+		case WILD_OCEANBED2:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED2)) retry = TRUE;
+			break;
+		case WILD_DESERT:
+			if (!(d_info[i].flagsw & DFW_WILD_DESERT)) retry = TRUE;
+			break;
+		case WILD_ICE:
+			if (!(d_info[i].flagsw & DFW_WILD_ICE)) retry = TRUE;
+			break;
+		case WILD_SWAMP:
+			if (!(d_info[i].flagsw & DFW_WILD_SWAMP)) retry = TRUE;
+			break;
 		}
 
 		if (retry) {
@@ -426,7 +482,7 @@ void init_wild_info() {
 
 	/* Jir tests new town allocator */
 	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0, 1);	/* base town */
-	//if (new) wild_spawn_towns(TOC_near_Bree);
+	//if (new) wild_spawn_towns(lowdun_near_Bree);
 
 	//init_wild_info_aux(0,0);
 
