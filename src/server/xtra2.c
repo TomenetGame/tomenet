@@ -5788,6 +5788,13 @@ return;
 
 		/* Gain max experience (10%) */
 		p_ptr->max_exp += amount / 10;
+
+		if (!p_ptr->warning_xp_recover) {
+			msg_print(Ind, "\374\377yWARNING: Your experience is drained! Of all XP you gain now only \377o10%\377y contribute");
+			msg_print(Ind, "\374\377y         to increase your true maximum, so restore your XP as soon as possible!");
+			p_ptr->warning_xp_recover = 1;
+			s_printf("warning_xp_recover: %s\n", p_ptr->name);
+		}
 	}
 
 	/* Check Experience */
