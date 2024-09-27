@@ -336,7 +336,7 @@ int main(int argc, char *argv[]) {
 			dry_Bree = TRUE;
 			break;
 
-		case 'l': //the orc caves nearby (could be extended to manage more dungeon placements than just OC)
+		case 'l': //don't place low-level dungeons too far away from Bree
 			lowdun_near_Bree = TRUE;
 			break;
 
