@@ -3509,16 +3509,29 @@ int init_graphics_x11(void) {
  #endif
 	}
 
+	/* Ensure the BMP isn't empty or too small */
+	if (width < graphics_tile_wid || height < graphics_tile_hgt) {
+		sprintf(use_graphics_errstr, "Invalid image dimensions (width x height): %dx%d", width, height);
+		printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (X4)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 104;
+		goto gfx_skip;
+ #endif
+	}
+
 	/* Calculate tiles per row. */
 	graphics_image_tpr = width / graphics_tile_wid;
 	if (graphics_image_tpr <= 0) { /* Paranoia. */
 		sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
 		fprintf(stderr, "%s\n", use_graphics_errstr);
  #ifndef GFXERR_FALLBACK
-		quit("Graphics load error (X4)");
+		quit("Graphics load error (X5)");
  #else
 		use_graphics = 0;
-		use_graphics_err = 104;
+		use_graphics_err = 105;
 		goto gfx_skip;
  #endif
 	}

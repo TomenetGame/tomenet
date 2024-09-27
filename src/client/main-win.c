@@ -2906,15 +2906,29 @@ int init_graphics_win(void) {
 
 	/* Calculate tiles per row. */
 	GetObject(g_hbmTiles, sizeof(BITMAP), &bm);
-	graphics_image_tpr = bm.bmWidth / graphics_tile_wid;
-	if (graphics_image_tpr <= 0) { /* Paranoia. */
-		sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
+
+	/* Ensure the BMP isn't empty or too small */
+	if (bm.bmWidth < graphics_tile_wid || bm.bmHeight < graphics_tile_hgt) {
+		sprintf(use_graphics_errstr, "Invalid image dimensions (width x height): %dx%d", bm.bmWidth, bm.bmHeight);
 		printf("%s\n", use_graphics_errstr);
  #ifndef GFXERR_FALLBACK
 		quit("Graphics load error (W4)");
  #else
 		use_graphics = 0;
 		use_graphics_err = 4;
+		goto gfx_skip;
+ #endif
+	}
+
+	graphics_image_tpr = bm.bmWidth / graphics_tile_wid;
+	if (graphics_image_tpr <= 0) { /* Paranoia. */
+		sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
+		printf("%s\n", use_graphics_errstr);
+ #ifndef GFXERR_FALLBACK
+		quit("Graphics load error (W5)");
+ #else
+		use_graphics = 0;
+		use_graphics_err = 5;
 		goto gfx_skip;
  #endif
 	}
@@ -2931,7 +2945,7 @@ int init_graphics_win(void) {
 			sprintf(use_graphics_errstr, "Mask creation failed (2) (%d,%d,%d)", g_hbmBgMask != NULL, g_hbmFgMask != NULL, g_hbmBg2Mask != NULL);
 			printf("%s\n", use_graphics_errstr);
  #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (W4)");
+			quit("Graphics load error (W6)");
  #else
 			use_graphics = 0;
 			use_graphics_err = 6;
@@ -2952,10 +2966,10 @@ int init_graphics_win(void) {
 			sprintf(use_graphics_errstr, "Mask creation failed (1) (%d,%d,%d)", g_hbmBgMask != NULL, g_hbmFgMask != NULL, res != NULL);
 			printf("%s\n", use_graphics_errstr);
  #ifndef GFXERR_FALLBACK
-			quit("Graphics load error (W4)");
+			quit("Graphics load error (W7)");
  #else
 			use_graphics = 0;
-			use_graphics_err = 5;
+			use_graphics_err = 7;
 			goto gfx_skip;
  #endif
 		}
