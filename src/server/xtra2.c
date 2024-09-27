@@ -6678,9 +6678,12 @@ bool monster_death(int Ind, int m_idx) {
 	}
 
 #ifdef ENABLE_DEMOLITIONIST
-	/* Possibly drop ingredients: Saltpeter (guano), Ammonia salt (from both, dung and poison/gas breathers), Sulfur (fire dragons), Vitriol (Acid breathers) */
+	/* Possibly drop ingredients: Saltpeter (guano), Ammonia salt (from both, dung and poison/gas breathers), Sulfur (fire dragons), Vitriol (Acid breathers).
+	   Not from level 0 monsters - especially added for sparrow, also includes chaffinch */
  #ifdef DEMOLITIONIST_IDDC_ONLY
-	if (in_iddc)
+	if (in_iddc && r_ptr->level)
+ #else
+	if (r_ptr->level)
  #endif
 	{
 		bool found_chemical = FALSE;
