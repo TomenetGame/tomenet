@@ -132,18 +132,20 @@ void *luaM_growaux (lua_State *L, void *block, size_t nelems,
 ** generic allocation routine.
 */
 void *luaM_realloc (lua_State *L, void *block, lint32 size) {
+    void *bak;
   if (size == 0) {
     free(block);  /* block may be NULL; that is OK for free */
     return NULL;
   }
   else if (size >= MAX_SIZET)
     lua_error(L, "memory allocation error: block too big");
-  block = realloc(block, size);
-  if (block == NULL) {
+  bak = realloc(block, size);
+  if (bak == NULL) {
+    free(block);
     if (L)
       luaD_breakrun(L, LUA_ERRMEM);  /* break run without error message */
     else return NULL;  /* error before creating state! */
-  }
+  } else block = bak;
   return block;
 }
 

@@ -584,7 +584,7 @@
 /*
  * OPTION: Enable a method to control the server from an external program.
  */
-#define NEW_SERVER_CONSOLE
+//#define NEW_SERVER_CONSOLE
 
 /*
  * OPTION: Default font (when using X11).
