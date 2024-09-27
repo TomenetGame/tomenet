@@ -5926,10 +5926,10 @@ static void player_talk_aux(int Ind, char *message) {
 	p_ptr->warning_chat = 1;
 
 	/* go to jail as a visitor */
-	if (my_strcasestr(message, "please jail me")) imprison(Ind, JAIL_VISIT, "no reaon");
-	if (my_strcasestr(message, "i want to go to jail")) imprison(Ind, JAIL_VISIT, "no reaon");
-	if (my_strcasestr(message, "i would like to go to jail")) imprison(Ind, JAIL_VISIT, "no reaon");
-	if (my_strcasestr(message, "i'd like to go to jail")) imprison(Ind, JAIL_VISIT, "no reaon");
+	if (my_strcasestr(message, "please jail me")) imprison(Ind, JAIL_VISIT, "no reason");
+	if (my_strcasestr(message, "i want to go to jail")) imprison(Ind, JAIL_VISIT, "no reason");
+	if (my_strcasestr(message, "i would like to go to jail")) imprison(Ind, JAIL_VISIT, "no reason");
+	if (my_strcasestr(message, "i'd like to go to jail")) imprison(Ind, JAIL_VISIT, "no reason");
 
 	exec_lua(0, "chat_handler()");
 	handle_punish(Ind, censor_punish);
@@ -9723,6 +9723,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	if (!p_ptr->warning_secret_area && ((zcave[y][x].info2 & CAVE2_SCRT) && (ox == -1 || !(zcave[oy][ox].info2 & CAVE2_SCRT)))) {
 		p_ptr->warning_secret_area = TRUE;
 		msg_print(Ind, "\377yYou have discovered a secret area!");
+		s_printf("warning_secret_area: %s\n", p_ptr->name);
 	}
 
 	/* Handle entering/leaving no-teleport area */
