@@ -4815,23 +4815,11 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 
 
 	/* Pick a monster, using the level calculation */
-	/* XXX: Exception for Morgoth (so that he won't summon townies)
-	 * This fix presumes Morgie and Morgie only has level 100 */
-
-	if (lev < 0) {
-		for (i = 0; i < 10; i++) { /* try a couple of times */
-			/* Ok, now let them summon what they can */
-			r_idx = get_mon_num(lev, 0);
-			break;
-		}
-	} else {
+	if (lev < 0) r_idx = get_mon_num(lev, 0);
+	else {
 		int dlev = getlevel(wpos);
 
-		for (i = 0; i < 10; i++) { /* try a couple of times */
-			/* Ok, now let them summon what they can */
-			r_idx = get_mon_num((dlev + lev) / 2 + 5, dlev);
-			break;
-		}
+		r_idx = get_mon_num((dlev + lev) / 2 + 5, dlev);
 	}
 
 	/* Don't allow uniques if escorts/friends (sidekicks) weren't allowed */
