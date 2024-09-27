@@ -9950,7 +9950,7 @@ void process_player_change_wpos(int Ind) {
 	} else p_ptr->town_pass_trees = FALSE;
 
 	/* Give warning message to use word-of-recall, aimed at newbies */
-	if (!p_ptr->warning_wor2 && p_ptr->wpos.wx == 32 && p_ptr->wpos.wy == 32 && p_ptr->wpos.wz == -1 && p_ptr->max_plv <= 10) {
+	if (!p_ptr->warning_wor2 && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == -1 && p_ptr->max_plv <= 10) {
 		/* scan inventory for any scrolls */
 		bool found_items = FALSE;
 		int i;
