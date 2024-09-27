@@ -20581,6 +20581,18 @@ S:1_IN_1
 S:BR_DISI
 D:For testing
 
+N:1164:Summoning Test Blob
+G:j:v
+I:120:100d10:50:50:0
+W:1:0:500:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:BLUEBAND | NO_CREDIT | NEVER_MOVE | NONLIVING | EMPTY_MIND | COLD_BLOOD
+F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP | REGENERATE
+S:1_IN_1 | S_MONSTER
+D:For testing
+
 
 # N: serial number : monster name
 # G: symbol : color
