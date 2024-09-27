@@ -5448,7 +5448,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Use the stored/quick RNG */
 		Rand_quick = TRUE;
 		//using fixed seed here to make sure that repeated casting won't cover 100% of the area with water:
-		Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) + (1741 * y + 22109) * y * x + (x + 96779) * x + 42 + wpos->wz;
+		Rand_value = (3623u * wpos->wy + 29753) * (2843u * wpos->wx + 48869) + (1741u * y + 22109) * y * x + (x + 96779) * x + 42 + wpos->wz;
 
 		k = rand_int(100);
 
