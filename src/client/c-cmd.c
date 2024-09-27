@@ -223,6 +223,12 @@ static void cmd_all_in_one(void) {
 	case TV_SPECIAL:
 		/* Todo maybe - implement something */
 		break;
+	case TV_CHEMICAL:
+		Send_activate(item);
+		break;
+	case TV_BOTTLE:
+		Send_activate(item); /* Hack: Activating bottles tries to /fill them */
+		break;
 	/* Presume it's sort of spellbook */
 	case TV_BOOK:
 	default:
