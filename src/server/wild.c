@@ -374,6 +374,19 @@ void wild_spawn_towns(bool TOC_near_Bree) {
 			if (i == DI_THE_ORC_CAVE && distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 16) retry = TRUE;
 		}
 
+		/* Adhere to the TomeNET Guide's (arbitrary^^) fluff description:
+		   "nigh unsurpassable mountain chains that arose in the midst of forests"
+		   and so make sure the Death Fate is actually in forest terrain: */
+		if (!retry && i == DI_DEATH_FATE) {
+			switch (wild_info[y][x].type) {
+			case WILD_FOREST:
+			case WILD_DENSEFOREST:
+				break; /* ok */
+			default:
+				retry = TRUE; /* not ok */
+			}
+		}
+
 		if (retry) {
 			if (tries-- > 0) i--;
 			continue;

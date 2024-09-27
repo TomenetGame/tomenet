@@ -575,9 +575,9 @@ M:MULTIPLY
 #S:MULTIPLY
 
 # Used by the death fate
-# NOTE: The TomeNET Guide actually speaks of
-#       'unsurpassable mountain chains that arose in the midst of forests'
-#       so dungeon placement should be manually corrected to match this.
+# Note: The TomeNET Guide actually speaks of
+#       'nigh unsurpassable mountain chains that arose in the midst of forests'
+#       and the initial server dungeon generation will ensure this.
 N:28:The Death Fate
 D:Dth:a fated death.
 W:1:1:1:0:30:255
