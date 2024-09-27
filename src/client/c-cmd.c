@@ -2758,6 +2758,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				bool ok = FALSE;
 				char *p, *s;
 
+				/* These 2 lines are actually done directly at "case 'c':" processing,
+				   but we need them here again for when the chapter string has been replaced by one of the many substitions,
+				   for example "/? hotm" -> "hotm" becomes "Heart of the Earth", but since this was a substitution and not the actual user input,
+				   lastchapter and lastsearch will still hold "hotm" which makes it impossible to just hit 'd' key for 'find next occurance' for example. */
+				strcpy(lastchapter, chapter); //a small life hack for remembering our chapter search term for subsequent normal searching
+				strcpy(lastsearch, chapter); //further small life hack - not sure if a great idea or not..
+
 				searchline++;
 				//must be beginning of line or <only spaces before it, AND NO SPACE in the actual chapter search string>
 				p = strstr(buf2, chapter);
