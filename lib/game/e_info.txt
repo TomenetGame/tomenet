@@ -1191,17 +1191,17 @@ F:IGNORE_DISEN
 
 # They are more common now, since they can relatively 'lessen' the chance
 # for Morgul wep.
-N:104:of Nothingness
-T:15:0:255
-T:21:0:255
-T:22:0:255
-T:23:0:255
-T:24:0:255
-X:A:24:0
-W:0:1:2:0
-C:-100:-100:0:0
-R:100
-F:NEVER_BLOW | HEAVY_CURSE | CURSED | AUTO_CURSE
+#N:104:of Nothingness
+#T:15:0:255
+#T:21:0:255
+#T:22:0:255
+#T:23:0:255
+#T:24:0:255
+#X:A:24:0
+#W:0:1:2:0
+#C:-100:-100:0:0
+#R:100
+#F:NEVER_BLOW | HEAVY_CURSE | CURSED | AUTO_CURSE
 
 
 ### Missile Launchers ###
