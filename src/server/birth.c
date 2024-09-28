@@ -3014,6 +3014,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_ingredients = 1;
 		p_ptr->warning_id = 1;
 		p_ptr->warning_sanity = 1;
+		//p_ptr->warning_secret_area = 1;
+		p_ptr->warning_elder = 1;
+		p_ptr->warning_xp_recover = 1;
 		return;
 	}
 
@@ -3205,6 +3208,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_repair = 1;
 		//p_ptr->warning_blastcharge = 1; //instead, we save/load it!
 		p_ptr->warning_ingredients = 1;
+		p_ptr->warning_elder = 1;
 	}
 	if (p_ptr->max_plv >= 25) {
 		p_ptr->warning_ai_annoy = 1; /* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */

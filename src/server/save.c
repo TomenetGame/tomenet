@@ -1146,14 +1146,16 @@ static void wr_extra(int Ind) {
 	wr_u16b(p_ptr->soft_deaths);
 
 	/* array of 'warnings' and hints aimed at newbies */
-	tmp16u = 0x00;
-	if (p_ptr->warning_technique_melee == 1) tmp16u |= 0x01;
-	if (p_ptr->warning_technique_ranged == 1) tmp16u |= 0x02;
-	if (p_ptr->warning_drained == 1) tmp16u |= 0x04;
-	if (p_ptr->warning_blastcharge == 1) tmp16u |= 0x08;
+	tmp16u = 0x0000;
+	if (p_ptr->warning_technique_melee == 1) tmp16u |= 0x0001;
+	if (p_ptr->warning_technique_ranged == 1) tmp16u |= 0x0002;
+	if (p_ptr->warning_drained == 1) tmp16u |= 0x0004;
+	if (p_ptr->warning_blastcharge == 1) tmp16u |= 0x0008;
 	/* and also save warnings that we just don't want to repeat, as they overlap with actual non-warning feedback messages anyway
 	   - or because the player has to act carefully on his own responsibility */
-	if (p_ptr->warning_sanity == 1) tmp16u |= 0x10;
+	if (p_ptr->warning_sanity == 1) tmp16u |= 0x0010;
+	if (p_ptr->warning_elder == 1) tmp16u |= 0x0020;
+	if (p_ptr->warning_xp_recover == 1) tmp16u |= 0x0040;
 	wr_u16b(tmp16u);
 
 	wr_string(p_ptr->info_msg);
