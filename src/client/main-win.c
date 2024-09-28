@@ -407,13 +407,13 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 
 #if 1 /* For top speed, operate directly on the bitmap data in memory via pointers */
 	const unsigned char MaskColor0 = 0, MaskColor1 = 255;
+	int scanline, pixel;
 
 	unsigned char *data, *data2;
 	unsigned char *r, *g, *b, *r2, *g2, *b2;
 	unsigned char rt = GetRValue(crTransparent), gt = GetGValue(crTransparent), bt = GetBValue(crTransparent); /* Translate everything back xD */
 	/* Note that while hbmColour is actually in 32bbm memory, bytesPerPixel is actually 24bbp usually! (PixelFormat.Format24bppRgb/Format32bppArgb): */
-	int bytesPerPixel = bm.bmWidthBytes / bm.bmWidth;
-	int bmpWidth = bm.bmWidth;
+	int bytesPerLine = bm.bmWidthBytes, bytesPerPixel = bytesPerLine / bm.bmWidth;
 
 	/* Debug info */
 	printf("(bmWidthBytes = %ld, bmBitsPixel = %d, bmWidth = %ld, bmHeight = %ld)\n", bm.bmWidthBytes, bm.bmBitsPixel, bm.bmWidth, bm.bmHeight);
@@ -443,13 +443,15 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
  #endif
 
 	for (int y = 0; y < bm.bmHeight; y++) {
+		scanline = y * bytesPerLine;
 		for (int x = 0; x < bm.bmWidth; x++) {
-			b = &data[bytesPerPixel * (x + y * bmpWidth)];
-			g = &data[bytesPerPixel * (x + y * bmpWidth) + 1];
-			r = &data[bytesPerPixel * (x + y * bmpWidth) + 2];
-			b2 = &data2[bytesPerPixel * (x + y * bmpWidth)];
-			g2 = &data2[bytesPerPixel * (x + y * bmpWidth) + 1];
-			r2 = &data2[bytesPerPixel * (x + y * bmpWidth) + 2];
+			pixel = scanline + x * bytesPerPixel;
+			b = &data[pixel];
+			g = &data[pixel + 1];
+			r = &data[pixel + 2];
+			b2 = &data2[pixel];
+			g2 = &data2[pixel + 1];
+			r2 = &data2[pixel + 2];
 
 			if (!inverse) {
 				if (*r == rt && *g == gt && *b == bt) {
