@@ -3160,7 +3160,7 @@ static bool store_attest_command(int store, int bact) {
 }
 
 #ifdef ENABLE_SUBINVEN
-static int autostow_or_carry(int Ind, object_type *o_ptr) {
+int autostow_or_carry(int Ind, object_type *o_ptr) {
 	char o_name[ONAME_LEN];
 	player_type *p_ptr = Players[Ind];
 	int item_new = -1; /* todo maybe: make auto_stow() set item_new on the used subinven slot correctly */

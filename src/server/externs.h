@@ -1995,6 +1995,10 @@ extern bool merchant_mail_carry(int Ind, int i);
 #endif
 void ps_set_cheque_value(object_type *o_ptr, u32b value);
 
+#ifdef ENABLE_SUBINVEN
+extern int autostow_or_carry(int Ind, object_type *o_ptr);
+#endif
+
 /* util.c */
 extern bool suppress_message, suppress_boni;
 /* The next buffers are for catching the chat */
