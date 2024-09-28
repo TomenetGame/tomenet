@@ -8085,8 +8085,8 @@ void fortune(int Ind, byte mode) {
 	char Rumor[MAX_CHARS_WIDE], Broadcast[MAX_CHARS];
 	bool broadcast = (mode != 1);
 
+	/* Default rumour type is 'thought' */
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
-	msg_print(Ind, NULL);
 
 	/* Leak game info sometimes secretly to a player? (non-broadcast) */
 	if (!mode && magik(cfg.leak_info)) {
@@ -8116,13 +8116,14 @@ void fortune(int Ind, byte mode) {
 		}
 	}
 
-	bracer_ff(Rumor);
-	msg_format(Ind, "~\377s%s~", Rumor);
+	bracer_ff(Rumor); /* Convert { colour codes to \377 */
+	msg_print(Ind, NULL);
+	msg_format(Ind, "~\377s%s\377w~", Rumor);
 	msg_print(Ind, NULL);
 
 	if (broadcast) {
 		msg_broadcast(Ind, Broadcast);
-		msg_broadcast_format(Ind, "\377s %s", Rumor);
+		msg_broadcast_format(Ind, "~\377s%s\377w~", Rumor);
 	}
 
 }
