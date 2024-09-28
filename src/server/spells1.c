@@ -13305,7 +13305,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 						case FEAT_SANDWALL_H: case FEAT_SANDWALL_K:
 							object_level = getlevel(wpos);
 							place_gold(p_ptr ? -who : 0, wpos, y, x, 3, 0); /* same multiplier as for cmd_tunnel() */
-								object_level = old_object_level;
+							object_level = old_object_level;
 							break;
 						case FEAT_RUBBLE:
 							/* Place object */
