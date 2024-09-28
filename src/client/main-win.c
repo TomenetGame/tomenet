@@ -405,26 +405,6 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	/* Create 32bpp mask bitmap. */
 	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
 
-	/* Get some HDCs that are compatible with the display driver of main window. */
-	HDC hdcMem = CreateCompatibleDC(NULL);
-	HDC hdcMem2 = CreateCompatibleDC(NULL);
-
-	/* Select the image and mask bitmap handles to created memory DC and store default images. */
-	HBITMAP hbmOldMem = SelectBitmap(hdcMem, hbmColour);
-	HBITMAP hbmOldMem2 = SelectBitmap(hdcMem2, hbmMask);
-
-	/* Set the background colour of the colour image to the colour you want to be transparent. */
-	//COLORREF clrSaveBk = SetBkColor(hdcMem, crTransparent);
-
-	/* Copy the bits from the colour image to the B+W mask. Everything with the background colour ends up white while everythig else ends up black. */
-	//BitBlt(hdcMem2, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
-
-	/* Take our new mask and use it to turn the transparent colour in our original colour image to black so the transparency effect will work right. */
-	//BitBlt(hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem2, 0, 0, SRCINVERT);
-
-	/* Clean up. */
-	//SetBkColor(hdcMem, clrSaveBk);
-
 #if 1 /* For top speed, operate directly on the bitmap data in memory via pointers */
 	unsigned char *data, *data2;
 	unsigned char *r, *g, *b, *r2, *g2, *b2;
@@ -432,6 +412,9 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	/* Note that while hbmColour is actually in 32bbm memory, bytesPerPixel is actually 24bbp usually! (PixelFormat.Format24bppRgb/Format32bppArgb): */
 	int bytesPerPixel = bm.bmWidthBytes / bm.bmWidth;
 	int bmpWidth = bm.bmWidth;
+
+	/* Debug info */
+	printf("(bmWidthBytes = %ld, bmBitsPixel = %d)\n", bm.bmWidthBytes, bm.bmBitsPixel);
 
 	/* Get bitmap pixel data in memory */
  #if 0 /* Use this with LR_CREATEDIBSECTION flag in LoadImageA */
@@ -494,6 +477,26 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	}
 	free(data2);
 #else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
+	/* Get some HDCs that are compatible with the display driver of main window. */
+	HDC hdcMem = CreateCompatibleDC(NULL);
+	HDC hdcMem2 = CreateCompatibleDC(NULL);
+
+	/* Select the image and mask bitmap handles to created memory DC and store default images. */
+	HBITMAP hbmOldMem = SelectBitmap(hdcMem, hbmColour);
+	HBITMAP hbmOldMem2 = SelectBitmap(hdcMem2, hbmMask);
+
+	/* Set the background colour of the colour image to the colour you want to be transparent. */
+	//COLORREF clrSaveBk = SetBkColor(hdcMem, crTransparent);
+
+	/* Copy the bits from the colour image to the B+W mask. Everything with the background colour ends up white while everythig else ends up black. */
+	//BitBlt(hdcMem2, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
+
+	/* Take our new mask and use it to turn the transparent colour in our original colour image to black so the transparency effect will work right. */
+	//BitBlt(hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem2, 0, 0, SRCINVERT);
+
+	/* Clean up. */
+	//SetBkColor(hdcMem, clrSaveBk);
+
 	/* The commented code above, which is in all tutorials on net doesn't work for mingw for unknown reasons. Let's use more classical and slower approach. */
 
 	const COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
@@ -521,13 +524,13 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 			}
 		}
 	}
-#endif
 
 	/* Clean up. */
 	SelectBitmap(hdcMem, hbmOldMem);
 	SelectBitmap(hdcMem2, hbmOldMem2);
 	DeleteDC(hdcMem);
 	DeleteDC(hdcMem2);
+#endif
 
 	*error = 0;
 	return(hbmMask);
