@@ -398,7 +398,7 @@ int graphics_image_tpr; /* Tiles per row. */
    NOTE: This function actually blackens (or whitens, if 'inverse') any recognized mask pixel in the _original_ image!
          So while the mask is created, it is sort of 'cut out' of the original image, leaving blackness (whiteness) behind. */
 //todo: implement -> for '-1' values for the foreground colour, change crTransparent from a COLORREF value to actual R,G,B, so "-1" can be processed?
-HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse) {
+HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse, int *error) {
 	BITMAP bm;
 	GetObject(hbmColour, sizeof(BITMAP), &bm);
 
@@ -441,11 +441,13 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	data = malloc(bm.bmWidthBytes * bm.bmHeight);
 	if (!GetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: GetBitmapBits() returned zero (Image).\n");
+		*error = 1;
 		return(NULL);
 	}
 	data2 = malloc(bm.bmWidthBytes * bm.bmHeight);
 	if (!GetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
 		printf("Graphics error: GetBitmapBits() returned zero (Mask).\n");
+		*error = 2;
 		return(NULL);
 	}
  #endif
@@ -481,11 +483,13 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	/* Write data back via SetBitmapBits() or SetDIBits() */
 	if (!SetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: SetBitmapBits() returned zero (Image).\n");
+		*error = 3;
 		return(NULL);
 	}
 	free(data);
 	if (!SetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
 		printf("Graphics error: SetBitmapBits() returned zero (Mask).\n");
+		*error = 4;
 		return(NULL);
 	}
 	free(data2);
@@ -525,6 +529,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	DeleteDC(hdcMem);
 	DeleteDC(hdcMem2);
 
+	*error = 0;
 	return(hbmMask);
 }
 
@@ -2909,7 +2914,7 @@ int init_graphics_win(void) {
 
 	/* Ensure the BMP isn't empty or too small */
 	if (bm.bmWidth < graphics_tile_wid || bm.bmHeight < graphics_tile_hgt) {
-		sprintf(use_graphics_errstr, "Invalid image dimensions (width x height): %dx%d", bm.bmWidth, bm.bmHeight);
+		sprintf(use_graphics_errstr, "Invalid image dimensions (width x height): %ldx%ld", bm.bmWidth, bm.bmHeight);
 		printf("%s\n", use_graphics_errstr);
  #ifndef GFXERR_FALLBACK
 		quit("Graphics load error (W4)");
@@ -2936,13 +2941,15 @@ int init_graphics_win(void) {
 		/* Create masks. */
  #ifdef GRAPHICS_BG_MASK
 	if (use_graphics == UG_2MASK) {
+		int err1, err2, err3;
+
 		/* BgMask processing must be first, as it specifically recognizes all "black" pixels
 		   and all CreateBBM calls actually create "additional" black pixels. */
-		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
-		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
-		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE, &err1);
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE, &err2);
+		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE, &err3);
 		if (!g_hbmBgMask || !g_hbmFgMask || !g_hbmBg2Mask) {
-			sprintf(use_graphics_errstr, "Mask creation failed (2) (%d,%d,%d)", g_hbmBgMask != NULL, g_hbmFgMask != NULL, g_hbmBg2Mask != NULL);
+			sprintf(use_graphics_errstr, "Mask creation failed (2) (%d,%d,%d)", err1, err2, err3);
 			printf("%s\n", use_graphics_errstr);
  #ifndef GFXERR_FALLBACK
 			quit("Graphics load error (W6)");
@@ -2957,13 +2964,15 @@ int init_graphics_win(void) {
 	/* actually always process the bg2mask even if not running 2mask mode,
 	   just to change BG2 colours in a 2mask-ready tileset to just black. This ensures tileset "backward compatibility". */
 	{
+		int err1, err2, err3;
+
 		/* Note the order: First, we set the unused bg2mask to black... */
-		void *res = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE);
+		void *res = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE, &err1);
 		/* so it instead becomes part of the bgmask now. */
-		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE);
-		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE);
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE, &err2);
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE, &err3);
 		if (!g_hbmBgMask || !g_hbmFgMask || !res) {
-			sprintf(use_graphics_errstr, "Mask creation failed (1) (%d,%d,%d)", g_hbmBgMask != NULL, g_hbmFgMask != NULL, res != NULL);
+			sprintf(use_graphics_errstr, "Mask creation failed (1) (%d,%d,%d)", err1, err2, err3);
 			printf("%s\n", use_graphics_errstr);
  #ifndef GFXERR_FALLBACK
 			quit("Graphics load error (W7)");
