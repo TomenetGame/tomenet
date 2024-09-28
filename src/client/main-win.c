@@ -80,6 +80,9 @@
 #  endif
 #endif
 
+/* Method not implemented! Don't use. */
+//#define CBM_METHOD_DIB
+
 // #define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
 
 #ifdef USE_LOGFONT
@@ -402,10 +405,9 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	BITMAP bm;
 	GetObject(hbmColour, sizeof(BITMAP), &bm);
 
-	/* Create 32bpp mask bitmap. */
-	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
-
 #if 1 /* For top speed, operate directly on the bitmap data in memory via pointers */
+	const unsigned char MaskColor0 = 0, MaskColor1 = 255;
+
 	unsigned char *data, *data2;
 	unsigned char *r, *g, *b, *r2, *g2, *b2;
 	unsigned char rt = GetRValue(crTransparent), gt = GetGValue(crTransparent), bt = GetBValue(crTransparent); /* Translate everything back xD */
@@ -414,13 +416,18 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	int bmpWidth = bm.bmWidth;
 
 	/* Debug info */
-	printf("(bmWidthBytes = %ld, bmBitsPixel = %d)\n", bm.bmWidthBytes, bm.bmBitsPixel);
+	printf("(bmWidthBytes = %ld, bmBitsPixel = %d, bmWidth = %ld, bmHeight = %ld)\n", bm.bmWidthBytes, bm.bmBitsPixel, bm.bmWidth, bm.bmHeight);
 
 	/* Get bitmap pixel data in memory */
- #if 0 /* Use this with LR_CREATEDIBSECTION flag in LoadImageA */
+ #ifdef CBM_METHOD_DIB /* --NOT IMPLEMENTED-- Use this with LR_CREATEDIBSECTION flag in LoadImageA */
 	data = (unsigned char*)bm.bmBits;
 	data2 = (unsigned char*)bm2.bmBits;
+	/* Debug info */
+	printf("(data = %ld, data2 = %ld)\n", (long)data, (long)data2);
  #else /* Otherwise, request the bitmap data now, via GetBitmapBits() or GetDIBits() */
+	/* Create 32bpp mask bitmap. */
+	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
+
 	data = malloc(bm.bmWidthBytes * bm.bmHeight);
 	if (!GetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: GetBitmapBits() returned zero (Image).\n");
@@ -434,8 +441,6 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 		return(NULL);
 	}
  #endif
-
-	const unsigned char MaskColor0 = 0, MaskColor1 = 255;
 
 	for (int y = 0; y < bm.bmHeight; y++) {
 		for (int x = 0; x < bm.bmWidth; x++) {
@@ -463,6 +468,8 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 			}
 		}
 	}
+
+ #ifndef CBM_METHOD_DIB
 	/* Write data back via SetBitmapBits() or SetDIBits() */
 	if (!SetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: SetBitmapBits() returned zero (Image).\n");
@@ -476,7 +483,13 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 		return(NULL);
 	}
 	free(data2);
+ #endif
 #else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
+	const COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
+
+	/* Create 32bpp mask bitmap. */
+	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
+
 	/* Get some HDCs that are compatible with the display driver of main window. */
 	HDC hdcMem = CreateCompatibleDC(NULL);
 	HDC hdcMem2 = CreateCompatibleDC(NULL);
@@ -498,8 +511,6 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	//SetBkColor(hdcMem, clrSaveBk);
 
 	/* The commented code above, which is in all tutorials on net doesn't work for mingw for unknown reasons. Let's use more classical and slower approach. */
-
-	const COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
 
 	if (!inverse) for (int y = 0; y < bm.bmHeight; y++) {
 		for (int x = 0; x < bm.bmWidth; x++) {
@@ -2910,8 +2921,11 @@ int init_graphics_win(void) {
 	validate_file(filename);
 
 	/* Load .bmp image into memory */
-	g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // | LR_CREATEDIBSECTION); <- see CreateBitmapMask() for flag explanation
-
+ #ifndef CBM_METHOD_DIB
+	g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+ #else
+	g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION); // see CreateBitmapMask() for LR_CREATEDIBSECTION flag explanation
+ #endif
 	/* Calculate tiles per row. */
 	GetObject(g_hbmTiles, sizeof(BITMAP), &bm);
 
