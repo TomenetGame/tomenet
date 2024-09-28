@@ -5977,12 +5977,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			char *tagp = message3, *insc;
 			object_type *o_ptr;
 			int chem1 = -1, result = -2, sub = -1, sub_maxitems, count = 0;
+			bool satchel;
 
 			if (!tk) {
 				msg_format(Ind, "Usage:    /mix <tag numbers 'n' of chemicals inscribed '@Cn'>[<'*' activates>]");
 				msg_format(Ind, "Example:  /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.");
 				msg_format(Ind, "Example:  /mix 094*   -> mix those chemicals and self-activate the mixture.");
 				msg_format(Ind, "Example:  /mix 3      -> Self-activates a mixture inscribed '@C3'.");
+				msg_format(Ind, "Alternative syntax for chemicals inside an Alchemy Satchel:");
+				msg_format(Ind, "Usage:    /mix <slot letters>[<'*' activates>]");
+				msg_format(Ind, "Example:  /mix accd*  -> mix chemicals from slots a, c twice, d and activate.");
 				return;
 			}
 
@@ -5998,8 +6002,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					count = 1; /* hax */
 					break;
 				}
-				/* stop at any other symbol that is not a number */
-				if (*tagp < '0' || *tagp > '9') break;
+				/* stop at any other symbol that is not a valid slot symbol */
+				if (*tagp >= 'a' && *tagp <= 'z') satchel = TRUE;
+				else {
+					satchel = FALSE;
+					if (*tagp < '0' || *tagp > '9') break;
+				}
 
 				/* Look for chemical with matching inscription.
 				   (Side note: Currently further @Cn inscriptions on the same item are ignored.) */
@@ -6013,24 +6021,42 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						continue;
 					}
 					if (!o_ptr->tval) {
-						if (sub == -1) break;
+						if (sub == -1) {
+							i = INVEN_PACK; //just marker to trigger loop-failure message
+							break;
+						}
 						i = sub + 1;
 						sub = -1;
 						continue;
 					}
-					if (o_ptr->tval == TV_SUBINVEN) {
+					if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_SATCHEL) {
 						sub = i;
 						sub_maxitems = o_ptr->bpval;
 						i = 0;
 						continue;
 					}
 
-					if (!o_ptr->note ||
-					    //o_ptr->tval != TV_CHEMICAL || //actually we want to craft fireworks maybe, also we might need oil flasks
-					    !(insc = find_inscription(o_ptr->note, "@C")) ||
-					    *(insc + 2) != *tagp) {
+					/* Satchel-mode (specifying letters instead of tag-numbers) is only valid while operating within an alchemy satchel */
+					if (satchel && sub == -1) {
 						i++;
 						continue;
+					}
+
+					if (!satchel) {
+						/* Normal way - check for inscription */
+						if (!o_ptr->note ||
+						    //o_ptr->tval != TV_CHEMICAL || //actually we want to craft fireworks maybe, also we might need oil flasks
+						    !(insc = find_inscription(o_ptr->note, "@C")) ||
+						    *(insc + 2) != *tagp) {
+							i++;
+							continue;
+						}
+					} else {
+						/* Satchel-mode - just check for slot letter */
+						if (*tagp != index_to_label(i)) {
+							i++;
+							continue;
+						}
 					}
 
 					/* get first ingredient and continue, or second ingredient and mix the two */
@@ -6042,12 +6068,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 					p_ptr->current_activation = chem1;
 					result = mix_chemicals(Ind, (sub == -1) ? i : (sub + 1) * 100 + i);
+
 					/* the result of the mixing process becomes the new first ingredient,
 					   to continue processing with further ingredients, or self-activation */
 					chem1 = result;
 					break;
 				} while (i < (sub == -1 ? INVEN_PACK : SUBINVEN_PACK));
-				if (result == -1) break; /* Failure stops the process */
+
+				if (result == -1) {
+					count = 0;
+					msg_format(Ind, "\377yThe specified chemicals are not mixable.");
+					break; /* Failure stops the process */
+				}
+				if (i == (sub == -1 ? INVEN_PACK : SUBINVEN_PACK)) {
+					count = 0;
+					msg_format(Ind, "\377yNo matching item found for '(%c)'.", *tagp);
+					break; /* Failure stops the process */
+				}
+
 				tagp++;
 			}
 			/* Just self-activate a mixture */

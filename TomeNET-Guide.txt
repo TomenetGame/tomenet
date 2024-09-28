@@ -1764,6 +1764,10 @@ They all start with a slash '/' hence they're called slash commands:
             /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
             /mix 094*   -> mix those chemicals and self-activate the mixture.
             /mix 3      -> Self-activates a mixture inscribed '@C3'.
+Alternative syntax for chemicals inside an Alchemy Satchel:
+/mix <slot letters>[<'*' activates>]
+            Example:  /mix accd*  -> mix chemicals from slots a, c twice, and d
+                                     and self-activate the resulting mixture.
 
 /monsters
 /mon [<monster character>] [<+minimum level>]
@@ -18411,6 +18415,11 @@ Examples:
   /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
   /mix 094*   -> mix those chemicals and self-activate the mixture.
   /mix 3      -> Self-activates a mixture inscribed '@C3'.
+Alternative syntax, only usable on chemicals inside an Alchemy Satchel:
+  /mix <satchel slot letters>[<'*' activates>]
+Example:
+  /mix accd*  -> mix chemicals from the satchel slots (a), two units from (c),
+                 then from (d) and finally self-activate the resulting mixture.
 
 A mixture that contains no valid combination of ingredients in the correct
 amounts is ruined and you can just discard it with 'k'.
