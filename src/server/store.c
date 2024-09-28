@@ -3752,8 +3752,8 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		st_ptr->last_theft = turn;
 #endif
 
-		/* Complain */
-#define BLACKLIST_MSG "\377s\"\377yBastard\377L!!!\377s\" - "
+		/* Complain; colour possibilities: yL, oJ, r/Rl */
+#define BLACKLIST_MSG "\374\377s\"\377RBastard\377l!!!\377s\" - "
 		if (p_ptr->tim_blacklist >= 4800)
 			msg_print(Ind, BLACKLIST_MSG "The shopkeeper looks at you murderously and throws you out!");
 		else if (p_ptr->tim_blacklist >= 2400)
