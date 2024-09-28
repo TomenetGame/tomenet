@@ -9594,8 +9594,9 @@ static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_ty
 	q_ptr->xtra3 = xtra3;
 	return(TRUE);
 }
-/* Mix two chemicals to form a new chemical, a mixture, or create a finished product aka a blast charge - C. Blue */
-void mix_chemicals(int Ind, int item) {
+/* Mix two chemicals to form a new chemical, a mixture, or create a finished product aka a blast charge - C. Blue
+   Returns the inventory slot of the resulting item or -1 in case of failure. */
+s16b mix_chemicals(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 #ifdef ENABLE_SUBINVEN
 	object_type *o_ptr, *o2_ptr;
@@ -9615,35 +9616,35 @@ void mix_chemicals(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	if (item < SUBINVEN_INVEN_MUL) {
-		if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL) return; //don't allow mixing item from satchel with item from inven
+		if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL) return(-1); //don't allow mixing item from satchel with item from inven
 		o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
 		o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
 	} else {
-		if (p_ptr->current_activation < SUBINVEN_INVEN_MUL) return; //don't allow mixing item from satchel with item from inven
+		if (p_ptr->current_activation < SUBINVEN_INVEN_MUL) return(-1); //don't allow mixing item from satchel with item from inven
 		o_ptr = &p_ptr->subinventory[p_ptr->current_activation / SUBINVEN_INVEN_MUL - 1][p_ptr->current_activation % SUBINVEN_INVEN_MUL]; /* Ingredient #2 */
 		o2_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL]; /* Ingredient #1 */
 	}
 #endif
 
 	/* Cannot mix a single non-mixture chemical with itself */
-	if (item == p_ptr->current_activation && o_ptr->number < 2 && !(o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)) return;
+	if (item == p_ptr->current_activation && o_ptr->number < 2 && !(o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)) return(-1);
 
 	/* Sanity checks */
 	switch (o_ptr->tval) {
 	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break; /* Note: Actually the first item can only be TV_CHEMICAL because the others cannot be activated. */
 	case TV_SCROLL: // must be 2nd item
 	case TV_POTION2: // unused
-	default: return;
+	default: return(-1);
 	}
 	switch (o2_ptr->tval) {
 	case TV_SCROLL:
 		if (o2_ptr->sval != SV_SCROLL_LIGHT && o2_ptr->sval != SV_SCROLL_FIRE) {
 			msg_print(Ind, "Only scrolls of light or of fire can be used for ignition.");
-			return;
+			return(-1);
 		}
 	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break;
 	case TV_POTION2: // unused
-	default: return;
+	default: return(-1);
 	}
 	WIPE(q_ptr, object_type);
 
@@ -9652,7 +9653,7 @@ void mix_chemicals(int Ind, int item) {
 	if (item == p_ptr->current_activation) {
 		if (o_ptr->sval != SV_MIXTURE) {
 			msg_print(Ind, "You can only activate mixtures with themselves. It will then get finished into a blast charge, if the mixture is working.");
-			return;
+			return(-1);
 		}
  #else
 
@@ -9782,7 +9783,7 @@ void mix_chemicals(int Ind, int item) {
 
 		if (!q_ptr->sval) {
 			msg_print(Ind, "That is not an appropriate mixture for making a blast charge.");
-			return;
+			return(-1);
 		} else {
 			q_ptr->tval = TV_CHARGE;
 			msg_format(Ind, "You assemble a blast charge..");
@@ -9840,7 +9841,7 @@ void mix_chemicals(int Ind, int item) {
 				}
 				msg_print(Ind, "\377oThe scroll is soaked!");
 				msg_print(Ind, "Only flash bomb mixtures can be used to create fireworks.");
-				return;
+				return(-1);
 			}
 		}
 #endif
@@ -9862,7 +9863,7 @@ void mix_chemicals(int Ind, int item) {
 			if (o_ptr->sval == SV_MIXTURE) i = mixingred_to_ingredient(Ind, o_ptr, o2_ptr->tval, o2_ptr->sval);
 			else i = mixingred_to_ingredient(Ind, o2_ptr, o_ptr->tval, o_ptr->sval);
 			/* Catch specialty: Ingredients were correct but we were just missing a tool/circumstances: */
-			if (i == -1) return; //keep everything for next attempt!
+			if (i == -1) return(-1); //keep everything for next attempt!
 		}
 		/* Last, create ingredient from mixture + mixture */
 		else i = mixmix_to_ingredient(Ind, o_ptr, o2_ptr);
@@ -9871,7 +9872,7 @@ void mix_chemicals(int Ind, int item) {
 		if (i == -1) {
 			/* When we reach maximum amount of a specific ingredient that we can put into mixtures in general.. (atm 3) */
 			msg_print(Ind, "The mixture is already saturated of that particular ingredient.");
-			return;
+			return(-1);
 		}
 
 		/* Check for success in creating a new ingredient */
@@ -9935,7 +9936,7 @@ void mix_chemicals(int Ind, int item) {
 			if (!i) {
 				/* When we reach maximum amount of a specific ingredient that we can put into mixtures in general.. (atm 3) */
 				msg_print(Ind, "The mixture is already saturated of that particular ingredient.");
-				return;
+				return(-1);
 			}
 
 			q_ptr->tval = TV_CHEMICAL;
@@ -10012,11 +10013,13 @@ void mix_chemicals(int Ind, int item) {
 #ifdef ENABLE_SUBINVEN
 	/* If both ingredients were from a satchel, try to place the result there too, if it's TV_CHEMICAL. */
 	if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL && item >= SUBINVEN_INVEN_MUL && q_ptr->tval == TV_CHEMICAL) {
-		//do_cmd_subinven_move(Ind, islot);
-		if (subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, q_ptr->number, FALSE)) return; /* Includes message */
+		int si_slot;
+
+		if ((si_slot = subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, q_ptr->number, FALSE))) return(si_slot); /* Includes message */
 	}
 #endif
 	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	return(i);
 }
 /* Determine the sensorial properties of a chemical mixture */
 void mixture_flavour(object_type *o_ptr, char *flavour) {

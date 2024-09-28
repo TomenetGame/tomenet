@@ -5969,6 +5969,96 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else msg_print(Ind, "Auto-picking up freshly dropped chemicals is now \377sDisabled\377-.");
 			return;
 		}
+		/* Mix chemicals inscribed @C<n> easily -
+		   Regarding 'n' number, we have 10 values (0..9):
+		   There are 11 chemicals, but wood chips are only for processing them to charcoal, so it fits.
+		   And usually there are in fact only 8 mixable chemicals as NO_RUST_NO_HYDROXIDE is enabled. */
+		else if (prefix(messagelc, "/mix")) {
+			char *tagp = message3, *insc;
+			object_type *o_ptr;
+			int chem1 = -1, result = -2, sub = -1, sub_maxitems, count = 0;
+
+			if (!tk) {
+				msg_format(Ind, "Usage:    /mix <tag numbers 'n' of chemicals inscribed '@Cn'>[<'*' activates>]");
+				msg_format(Ind, "Example:  /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.");
+				msg_format(Ind, "Example:  /mix 094*   -> mix those chemicals and self-activate the mixture.");
+				msg_format(Ind, "Example:  /mix 3      -> Self-activates a mixture inscribed '@C3'.");
+				return;
+			}
+
+			while (*tagp && tagp - message3 <= 15) {
+				/* allow and ignore white spaces */
+				if (*tagp == ' ') {
+					tagp++;
+					continue;
+				}
+				/* handle self-activation symbol */
+				if (*tagp == '*') {
+					if (!chem1) break; /* no chemical at all so far, cannot activate */
+					count = 1; /* hax */
+					break;
+				}
+				/* stop at any other symbol that is not a number */
+				if (*tagp < '0' || *tagp > '9') break;
+
+				/* Look for chemical with matching inscription.
+				   (Side note: Currently further @Cn inscriptions on the same item are ignored.) */
+				i = 0;
+				do {
+					if (sub == -1) o_ptr = &p_ptr->inventory[i];
+					else if (i < sub_maxitems) o_ptr = &p_ptr->subinventory[sub][i];
+					else {
+						i = sub + 1;
+						sub = -1;
+						continue;
+					}
+					if (!o_ptr->tval) {
+						if (sub == -1) break;
+						i = sub + 1;
+						sub = -1;
+						continue;
+					}
+					if (o_ptr->tval == TV_SUBINVEN) {
+						sub = i;
+						sub_maxitems = o_ptr->bpval;
+						i = 0;
+						continue;
+					}
+
+					if (!o_ptr->note ||
+					    //o_ptr->tval != TV_CHEMICAL || //actually we want to craft fireworks maybe, also we might need oil flasks
+					    !(insc = find_inscription(o_ptr->note, "@C")) ||
+					    *(insc + 2) != *tagp) {
+						i++;
+						continue;
+					}
+
+					/* get first ingredient and continue, or second ingredient and mix the two */
+					count++;
+					if (chem1 == -1) {
+						chem1 = (sub == -1) ? i : (sub + 1) * 100 + i;
+						i++;
+						continue;
+					}
+					p_ptr->current_activation = chem1;
+					result = mix_chemicals(Ind, (sub == -1) ? i : (sub + 1) * 100 + i);
+					/* the result of the mixing process becomes the new first ingredient,
+					   to continue processing with further ingredients, or self-activation */
+					chem1 = result;
+					break;
+				} while (i < (sub == -1 ? INVEN_PACK : SUBINVEN_PACK));
+				if (result == -1) break; /* Failure stops the process */
+				tagp++;
+			}
+			/* Just self-activate a mixture */
+			if (count == 1) {
+				p_ptr->current_activation = chem1;
+				mix_chemicals(Ind, chem1);
+			}
+			/* Clean up, playing it safe */
+			p_ptr->current_activation = -1;
+			return;
+		}
 
 
 

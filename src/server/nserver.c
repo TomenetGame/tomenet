@@ -14319,7 +14319,7 @@ void Handle_item(int Ind, int item) {
 		if (p_ptr->inventory[p_ptr->current_activation].tval == TV_TOOL
 		    && p_ptr->inventory[p_ptr->current_activation].sval == SV_TOOL_GRINDER)
 			grind_chemicals(Ind, item);
-		else mix_chemicals(Ind, item); /* we activated chemicals for mixing */
+		else (void)mix_chemicals(Ind, item); /* we activated chemicals for mixing */
 #endif
 	} else if (p_ptr->current_activation != -1 && p_ptr->inventory[p_ptr->current_activation].tval == TV_JUNK &&
 	    p_ptr->inventory[p_ptr->current_activation].tval >= SV_GIFT_WRAPPING_START &&

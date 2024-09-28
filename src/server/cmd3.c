@@ -5382,14 +5382,16 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
 
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
    Keeps total weight constant. Deletes source inventory item on successful complete move.
-   Returns TRUE if fully stowed.
+   Returns (subinvenslot) if fully stowed.
+   Returns (-subinvenslot) if partially stowed.
+   Returns 0 if not stowed at all.
    'amt' must be the correct, available amount (mostly o_ptr->number or 1). */
-bool subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
+s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr = &p_ptr->inventory[islot];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr;
-	int i, inum = i_ptr->number, wgt = p_ptr->total_weight, Gnum;
+	int i, inum = i_ptr->number, orgnum = inum, wgt = p_ptr->total_weight, Gnum, final_slot = 0;
 	char o_name[ONAME_LEN];
 
 	/* Don't stow if player cannot access stowed items due to outdated client */
@@ -5416,6 +5418,7 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 				if (!quiet) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+					final_slot = (sslot + 1) * 100 + i;
 				}
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
@@ -5440,6 +5443,7 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 			if (!quiet) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+				final_slot = (sslot + 1) * 100 + i;
 			}
  #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
@@ -5485,14 +5489,14 @@ bool subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 		p_ptr->total_weight = wgt;
 
 		/* Fully moved */
-		return(TRUE);
+		return(final_slot);
 	}
 
 	/* Hack: Restore weight, since we didn't lose anything, but just moved it. */
 	p_ptr->total_weight = wgt;
 
 	/* Still not fully moved */
-	return(FALSE);
+	return(orgnum == i_ptr->number ? 0 : -final_slot); /* Nothing moved? Return 0. */
 }
 /* Tries to move the item or item stack in one inventory slot completely into
    the first available and eligible subinventory. */
@@ -5617,7 +5621,7 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 		}
 		/* Eligible subinventory found, try to move as much as possible */
 		last_num = i_ptr->number;
-		if (subinven_move_aux(Ind, islot, i, amt, FALSE)) {
+		if (subinven_move_aux(Ind, islot, i, amt, FALSE) > 0) {
 			/* Successfully moved ALL items! We're done. */
 			all = TRUE;
 			last_ok_slot = i;
@@ -5750,7 +5754,7 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 
 		/* Eligible subinventory found, try to move as much as possible */
 		amt = i_ptr->number;
-		if (subinven_move_aux(Ind, i, slot, amt, quiet))
+		if (subinven_move_aux(Ind, i, slot, amt, quiet) > 0)
 			/* Successfully moved ALL items even, lucky! */
 			;//all = TRUE;
 		/* We managed to stow something at least */

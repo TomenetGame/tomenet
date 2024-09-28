@@ -758,7 +758,7 @@ extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr
 extern s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot);
 extern bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought);
 extern void do_cmd_subinven_move(int Ind, int islot, int amt_spec);
-extern bool subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet);
+extern s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet);
 extern void do_cmd_subinven_remove(int Ind, int islot, int slot, int amt);
 extern void subinven_remove_aux(int Ind, int islot, int slot, int amt);
  #ifdef SUBINVEN_LIMIT_GROUP
@@ -1874,7 +1874,7 @@ extern bool do_vermin_control(int Ind);
 extern void tome_creation(int Ind);
 extern void tome_creation_aux(int Ind, int item);
 #ifdef ENABLE_DEMOLITIONIST
-extern void mix_chemicals(int Ind, int item);
+extern s16b mix_chemicals(int Ind, int item);
 extern void grind_chemicals(int Ind, int item);
 extern void arm_charge(int Ind, int item, int dir);
 extern bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown);

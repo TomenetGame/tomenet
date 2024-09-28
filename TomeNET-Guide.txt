@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 28. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1756,6 +1756,14 @@ They all start with a slash '/' hence they're called slash commands:
 /mar        Tells a holy-defense-user if he may use the prayer 'Martyrdom'.
 
 /me         Write an emote. Example: /me hides.
+
+/mix <tag numbers 'n' of chemicals inscribed '@Cn'> [<'*' to self-activate>]
+            Mixes chemicals and/or self-activate a mixture, which must all be
+            inscribed @C<n> where <n> is a numerical tag from 0 to 9.
+            Examples:
+            /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
+            /mix 094*   -> mix those chemicals and self-activate the mixture.
+            /mix 3      -> Self-activates a mixture inscribed '@C3'.
 
 /monsters
 /mon [<monster character>] [<+minimum level>]
@@ -18395,6 +18403,15 @@ combination. In that case you can activate the mixture and 'combine' it with
 itself (think of it as some kind of drying process maybe :-p) and if you used a
 valid combination of chemicals you will craft a type of blast charge from it!
 
+A simpler way to create mixtures is to use the slash command "/mix":
+  /mix <tag numbers 'n' of chemicals inscribed '@Cn'> [<'*' to self-activate>]
+This command mixes chemicals and/or self-activate a mixture, which must all be
+inscribed @C<n> where <n> is a numerical tag from 0 to 9.
+Examples:
+  /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
+  /mix 094*   -> mix those chemicals and self-activate the mixture.
+  /mix 3      -> Self-activates a mixture inscribed '@C3'.
+
 A mixture that contains no valid combination of ingredients in the correct
 amounts is ruined and you can just discard it with 'k'.
 
@@ -18449,8 +18466,9 @@ Crafting ingredients from raw materials:
 
 Crafting actual explosive charges:
 ----------------------------------
-Activate a mixture with itself after you added all required ingredients, to
-craft an explosive charge from it. The type will depend on the ingredients.
+Activate a mixture with itself after you added all required ingredients or use
+the "/mix" command described above, to craft an explosive charge from it.
+The type will depend on the ingredients.
 Note that you can inscribe charges !Fn where n ranges from 1 to 15 and sets
 the fuse timer in seconds until it blows up. If the inscription is omitted
 the charges use type-specific standard fuse lengths listed in this table.
