@@ -12504,6 +12504,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	byte gx[512], gy[512];
 	bool duplicate;
 	byte tx[512], ty[512];
+	bool gi_ok[512] = { FALSE };
 
 	/* Encoded "radius" info (see above) */
 	//byte gm[16];
@@ -13295,17 +13296,23 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 					if (cs_ptr) erase_mon_trap(wpos, y, x, 0);
 
 					/* Specialty: Detonation potions/blast charges are mining equipment - but miners want treasure as well! */
-					if (typ == GF_DETONATION && !istown(wpos)) {
+					if (typ == GF_DETONATION && !istown(wpos) && !c_ptr->o_idx) { /* paranoia @ o_idx (for gi_ok) */
 						player_type *p_ptr = IS_PLAYER(-who) ? Players[0 - who] : NULL;
-						int old_object_level = object_level;
+						int old_object_level = object_level, feat = c_ptr2->feat;
 
-						switch (c_ptr->feat) {
+						/* Burn floor somewhat */
+						if (randint(2) == 1) cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
+						else cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
+
+						/* Now that there is room, place treasure */
+						switch (feat) {
 						case FEAT_QUARTZ_H: case FEAT_QUARTZ_K:
 						case FEAT_MAGMA_H: case FEAT_MAGMA_K:
 						case FEAT_SANDWALL_H: case FEAT_SANDWALL_K:
 							object_level = getlevel(wpos);
 							place_gold(p_ptr ? -who : 0, wpos, y, x, 3, 0); /* same multiplier as for cmd_tunnel() */
 							object_level = old_object_level;
+							gi_ok[grids] = TRUE; /* Don't kill this object again right away further down via project_i() */
 							break;
 						case FEAT_RUBBLE:
 							/* Place object */
@@ -13314,13 +13321,10 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 								place_object_restrictor = RESF_NONE;
 								place_object(p_ptr ? -who : 0, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr ? p_ptr->luck : 0, ITEM_REMOVAL_NORMAL, FALSE);
 								object_level = old_object_level;
+								gi_ok[grids] = TRUE; /* Don't kill this object again right away further down via project_i() */
 							}
 						}
 					}
-
-					/* Burn floor somewhat */
-					if (randint(2) == 1) cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
-					else cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
 
 					/* Update some things -- similar to GF_KILL_WALL */
 					//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
@@ -13533,7 +13537,7 @@ msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
 
 			if (!in_bounds(y,x)) continue;
 			/* Affect the feature */
-			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0; /* don't reduce damage over distance (aka radius) */
 
 #ifdef DEBUG_PROJECT_GRIDS
 msg_format(-who, "  pg x=%d,y=%d,r=%d,dam=%d,grids=%d",x,y,rad,dam,grids);
@@ -13556,9 +13560,9 @@ msg_format(-who, "  pg x=%d,y=%d,r=%d,dam=%d,grids=%d",x,y,rad,dam,grids);
 			y = gy[i];
 			x = gx[i];
 
-			if (!in_bounds(y,x)) continue;
+			if (!in_bounds(y,x) || gi_ok[i]) continue;
 			/* Affect the object */
-			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0; /* don't reduce damage over distance (aka radius) */
 			if (project_i(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 		}
 	}
@@ -13615,7 +13619,7 @@ msg_format(-who, "  pg x=%d,y=%d,r=%d,dam=%d,grids=%d",x,y,rad,dam,grids);
 				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
 			}
 */
-			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0; /* don't reduce damage over distance (aka radius) */
 			if (project_m(0 - who, who, y2, x2, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 		}
 
@@ -13678,7 +13682,7 @@ msg_format(-who, "  pg x=%d,y=%d,r=%d,dam=%d,grids=%d",x,y,rad,dam,grids);
 			player_idx = 0 - zcave[y][x].m_idx;
 
 			/* Affect the player */
-			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0; /* don't reduce damage over distance (aka radius) */
 			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad, flg, pattacker)) notice = TRUE;
 			/* reset stair-goi helper flag (used by project_p()) again */
 			if (player_idx >= 1 && player_idx <= NumPlayers) Players[player_idx]->invuln_applied = FALSE;
