@@ -13297,33 +13297,22 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 
 					/* Specialty: Detonation potions/blast charges are mining equipment - but miners want treasure as well! */
 					if (typ == GF_DETONATION && !istown(wpos) && !c_ptr->o_idx) { /* paranoia @ o_idx (for gi_ok) */
-						player_type *p_ptr = IS_PLAYER(-who) ? Players[0 - who] : NULL;
-						int old_object_level = object_level, feat = c_ptr2->feat;
+						bool no_quake, more, door;
+
+						switch (c_ptr2->feat) {
+						case FEAT_QUARTZ_H: case FEAT_QUARTZ_K:
+						case FEAT_MAGMA_H: case FEAT_MAGMA_K:
+						case FEAT_SANDWALL_H: case FEAT_SANDWALL_K:
+						case FEAT_RUBBLE:
+							do_cmd_tunnel_aux(IS_PLAYER(-who) ? -who : 0, wpos, x, y, 20000, 20000, 20000, FALSE, TRUE, &no_quake, &more, &door);
+							if (!more && !door && c_ptr2->custom_lua_tunnel > 0)
+								exec_lua(0, format("custom_tunnel(%d,%d)", IS_PLAYER(-who) ? -who : 0, c_ptr->custom_lua_tunnel));
+							gi_ok[grids] = TRUE; /* Don't kill this object again right away further down via project_i() */
+						}
 
 						/* Burn floor somewhat */
 						if (randint(2) == 1) cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
 						else cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
-
-						/* Now that there is room, place treasure */
-						switch (feat) {
-						case FEAT_QUARTZ_H: case FEAT_QUARTZ_K:
-						case FEAT_MAGMA_H: case FEAT_MAGMA_K:
-						case FEAT_SANDWALL_H: case FEAT_SANDWALL_K:
-							object_level = getlevel(wpos);
-							place_gold(p_ptr ? -who : 0, wpos, y, x, 3, 0); /* same multiplier as for cmd_tunnel() */
-							object_level = old_object_level;
-							gi_ok[grids] = TRUE; /* Don't kill this object again right away further down via project_i() */
-							break;
-						case FEAT_RUBBLE:
-							/* Place object */
-							if (rand_int(100) < 10) {
-								object_level = getlevel(wpos);
-								place_object_restrictor = RESF_NONE;
-								place_object(p_ptr ? -who : 0, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr ? p_ptr->luck : 0, ITEM_REMOVAL_NORMAL, FALSE);
-								object_level = old_object_level;
-								gi_ok[grids] = TRUE; /* Don't kill this object again right away further down via project_i() */
-							}
-						}
 					}
 
 					/* Update some things -- similar to GF_KILL_WALL */
