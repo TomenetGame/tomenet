@@ -2732,7 +2732,7 @@ static void sync_options(int Ind, bool *options) {
 	}
 
 	/* defaults to 0 on older clients, aka off, so no need to set to FALSE explicitely (could optimize all other options above that way too): */
-	p_ptr->autopickup_chemicals = options[162];
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) p_ptr->autopickup_chemicals = options[162];
 
 
 	/* Warn about certain options' current status */
