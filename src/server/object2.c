@@ -12557,6 +12557,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
  */
 u32b make_resf(player_type *p_ptr) {
 	u32b f = RESF_NONE;
+
 	if (p_ptr == NULL) return(f);
 
 	/* winner handling */

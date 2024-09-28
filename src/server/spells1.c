@@ -5132,7 +5132,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Destroy walls (and doors) */
 	case GF_KILL_WALL: {
-		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
+		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR), mult = 1; /* NOTE: For cmd_tunnel() mult is actually at least 3. */
 
 		if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) break;
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
@@ -5140,6 +5140,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (cave_los(zcave, y, x)) break;
 		/* Permanent walls */
 		if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
+		    /* Sandwall indices come after perma-wall indices. The other destructible wall indices come before those. */
 		    && !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
 
 		/* the_sandman: sandwalls are stm-able too? */
@@ -5171,7 +5172,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Place some gold */
 			object_level = getlevel(&p_ptr->wpos);
-			if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
+			if (!istown(wpos)) place_gold(Ind, wpos, y, x, mult, 0);
 			object_level = old_object_level;
 		}
 		/* Granite */
@@ -5201,7 +5202,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Place some gold */
 			object_level = getlevel(&p_ptr->wpos);
-			if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
+			if (!istown(wpos)) place_gold(Ind, wpos, y, x, mult, 0);
 			object_level = old_object_level;
 		}
 
@@ -13281,7 +13282,8 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 				    (c_ptr2->feat != FEAT_HOME) &&
 				    allow_terraforming(wpos, FEAT_TREE) &&
 				    !((f_info[c_ptr2->feat].flags2 & FF2_NO_TFORM) || (c_ptr2->info & CAVE_NO_TFORM)) &&
-				    (typ == GF_DISINTEGRATE || c_ptr2->feat != FEAT_MON_TRAP)) { /* Experimental: Let monster traps survive! Idea: Allow multi-detonation-potion-traps. */
+				    /* Experimental: Let monster traps survive for non-Disintegration! Idea: Allow multi-detonation-potion-traps: */
+				    (typ == GF_DISINTEGRATE || c_ptr2->feat != FEAT_MON_TRAP)) {
 					struct c_special *cs_ptr;
 
 					/* Cleanup Runemaster Glyphs - Kurzel */
@@ -13292,11 +13294,33 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 					cs_ptr = GetCS(c_ptr2, CS_MON_TRAP);
 					if (cs_ptr) erase_mon_trap(wpos, y, x, 0);
 
+					/* Specialty: Detonation potions/blast charges are mining equipment - but miners want treasure as well! */
+					if (typ == GF_DETONATION && !istown(wpos)) {
+						player_type *p_ptr = IS_PLAYER(-who) ? Players[0 - who] : NULL;
+						int old_object_level = object_level;
+
+						switch (c_ptr->feat) {
+						case FEAT_QUARTZ_H: case FEAT_QUARTZ_K:
+						case FEAT_MAGMA_H: case FEAT_MAGMA_K:
+						case FEAT_SANDWALL_H: case FEAT_SANDWALL_K:
+							object_level = getlevel(wpos);
+							place_gold(p_ptr ? -who : 0, wpos, y, x, 3, 0); /* same multiplier as for cmd_tunnel() */
+								object_level = old_object_level;
+							break;
+						case FEAT_RUBBLE:
+							/* Place object */
+							if (rand_int(100) < 10) {
+								object_level = getlevel(wpos);
+								place_object_restrictor = RESF_NONE;
+								place_object(p_ptr ? -who : 0, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr ? p_ptr->luck : 0, ITEM_REMOVAL_NORMAL, FALSE);
+								object_level = old_object_level;
+							}
+						}
+					}
+
 					/* Burn floor somewhat */
-					if (randint(2) == 1)
-						cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
-					else
-						cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
+					if (randint(2) == 1) cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
+					else cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
 
 					/* Update some things -- similar to GF_KILL_WALL */
 					//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
