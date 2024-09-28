@@ -3489,6 +3489,7 @@ bool twall(int Ind, int y, int x, byte feat) {
  * accomplished by strong players using heavy weapons.
  *
  * quiet_borer: KILL_WALL form that instantly removes the feat.
+ * quiet_full: No messages/sound effects, for detonation-based excavation!
  *
  */
 /* XXX possibly wrong */
@@ -3518,7 +3519,7 @@ bool twall(int Ind, int y, int x, byte feat) {
 /* Actually give special message to indicate when we have zero chance to tunnel through a specific material */
 #define INDICATE_IMPOSSIBLE "You cannot seem to make a dent in the"
 /* TODO: Make shovels and picks actually rather inefficient vs plants: Increase plants' digging difficulties and in turn raise wood_power and fibre_power for proper weapons. */
-void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
+void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {//, bool quiet_full) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -3565,6 +3566,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 
 	if (!(zcave = getcave(wpos))) return;
+
+
+	/* --- Prepare player digging tools, digging power, digging direction --- */
+
 
 	/* Get a direction to tunnel, or Abort */
 	if (!dir) return; /* dir == 0 is currently possible since bad_dir() is used in nserver.c, but client doesn't send such dir usually, and it has no use for digging atm. */
@@ -3649,21 +3654,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (fp > fibre_power) fibre_power = fp;
 	}
 
-	/* find highest rune skill to determine our rune-proficiency */
-	if (p_ptr->s_info[SKILL_R_LITE].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_LITE].value;
-	if (p_ptr->s_info[SKILL_R_DARK].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_DARK].value;
-	if (p_ptr->s_info[SKILL_R_NEXU].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_NEXU].value;
-	if (p_ptr->s_info[SKILL_R_NETH].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_NETH].value;
-	if (p_ptr->s_info[SKILL_R_CHAO].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_CHAO].value;
-	if (p_ptr->s_info[SKILL_R_MANA].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_MANA].value;
-	rune_proficiency /= 1000;
-	if (rune_proficiency >= 5) rune_proficiency = rune_proficiency + 10;
-	else if (rune_proficiency) rune_proficiency = (rune_proficiency + 2) * (rune_proficiency + 2) / 3;
-
-	/* find_level = floor level (0..n), mining = digging skill (0..50) or 0 for non-manual labour */
-	if (mining > find_level * 2) mining = find_level * 2;
-	find_level += mining / 2;
-
 	/* Must be have something to dig with, or power gets halved */
 	if (!o_ptr->k_idx || o_ptr->tval != TV_DIGGING) {
 		power >>= 1;
@@ -3730,22 +3720,23 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		}
 	}
 
-	/* Get location */
+	/* Get location and grid */
 	y = p_ptr->py + ddy[dir];
 	x = p_ptr->px + ddx[dir];
-
-	/* Get grid */
 	c_ptr = &zcave[y][x];
+
+	/* Extract grid */
 	cfeat = c_ptr->feat;
 	cinfo = c_ptr->info;
 	cinfo2 = c_ptr->info2;
 	f_ptr = &f_info[cfeat];
 
-	/* Check the floor-hood */
-	old_floor = cave_floor_bold(zcave, y, x);
-
 	if (c_ptr->custom_lua_tunnel < 0 && exec_lua(0, format("custom_tunnel(%d,%d)", Ind, c_ptr->custom_lua_tunnel))) return;
 	if (c_ptr->custom_lua_tunnel_hand < 0 && !quiet_borer && exec_lua(0, format("custom_tunnel_hand(%d,%d)", Ind, c_ptr->custom_lua_tunnel_hand))) return;
+
+
+	/* --- Specialty: Strike ground beneath us to cause an earthquake --- */
+
 
 	/* No tunnelling through empty air, but allow 'tunneling' the floor we're standing on to cause quakes */
 	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
@@ -3894,6 +3885,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		return;
 	}
 
+
+	/* --- Handle secret, permanent, monster, NO_TFORM - finally if we pass, deduce energy and stop our other actions --- */
+
+
 	/* No tunnelling through doors */
 	if ((f_ptr->flags1 & FF1_DOOR) && cfeat != FEAT_SECRET) {
 		/* Try opening it instead */
@@ -3987,6 +3982,27 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+
+	/* --- Handle actual tunneling process --- */
+
+
+	/* find highest rune skill to determine our rune-proficiency */
+	if (p_ptr->s_info[SKILL_R_LITE].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_LITE].value;
+	if (p_ptr->s_info[SKILL_R_DARK].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_DARK].value;
+	if (p_ptr->s_info[SKILL_R_NEXU].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_NEXU].value;
+	if (p_ptr->s_info[SKILL_R_NETH].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_NETH].value;
+	if (p_ptr->s_info[SKILL_R_CHAO].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_CHAO].value;
+	if (p_ptr->s_info[SKILL_R_MANA].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_MANA].value;
+	rune_proficiency /= 1000;
+	if (rune_proficiency >= 5) rune_proficiency = rune_proficiency + 10;
+	else if (rune_proficiency) rune_proficiency = (rune_proficiency + 2) * (rune_proficiency + 2) / 3;
+
+	/* find_level = floor level (0..n), mining = digging skill (0..50) or 0 for non-manual labour */
+	if (mining > find_level * 2) mining = find_level * 2;
+	find_level += mining / 2;
+
+	/* Check the floor-hood */
+	old_floor = cave_floor_bold(zcave, y, x);
 
 	/* Discover special features or objects when mining.
 	   Note: Not in monster KILL_WALL form or via magic; not on world surface: wpos->wz == 0 ! */
