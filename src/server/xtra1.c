@@ -9212,7 +9212,7 @@ static void process_global_event(int ge_id) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (in_sector000(&p_ptr->wpos)) {
-					for (j = INVEN_TOTAL; j >= 0; j--) /* Erase the highlander amulets */
+					for (j = INVEN_TOTAL - 1; j >= 0; j--) /* Erase the highlander amulets */
 						if (p_ptr->inventory[j].tval == TV_AMULET &&
 						    ((p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) ||
 						    (p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS2))) {

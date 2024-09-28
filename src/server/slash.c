@@ -10596,7 +10596,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/debug1")) { /* debug an issue at hand */
-				for (j = INVEN_TOTAL; j >= 0; j--)
+				for (j = INVEN_TOTAL - 1; j >= 0; j--)
 					if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS)
 						invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
 				p_ptr->update |= (PU_BONUS | PU_VIEW);
