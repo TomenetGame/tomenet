@@ -4486,7 +4486,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	hInstance = hInst;  /* save in a global var */
 
 	int i, n;
-	bool done = FALSE, quoted = FALSE;
+	bool done = FALSE, quoted = FALSE, just_h = FALSE;
 	u32b seed;
 
 	char sys_lang_str[5] = { 0 };
@@ -4622,7 +4622,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -V              save chat+message log on exit",
 					    "  -x              don't save chat/message log on exit"));
 #endif
-					quit(NULL);
+					if (initialized) quit(NULL);
+					just_h = TRUE;
 					break;
 				case 'I':
 					disable_CS_IME = TRUE;
@@ -4712,6 +4713,35 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	quit_aux = hack_quit;
 	core_aux = hack_core;
 	plog_aux = hack_plog;
+
+	/* Show commandline options as message box too, not just in the terminal */
+	if (just_h) {
+		plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+		    longVersion,
+		    os_version,
+		    "Usage:    tomenet [options] [server]",
+		    "Example: tomenet -lMorgoth MorgyPass",
+		    "                              -p18348 europe.tomenet.eu",
+		    /* "  -h              Display this help",
+		    "  -C              Compatibility mode for OLD servers",
+		    "  -F              Client FPS", */
+		    "  -I              force IME off (for CJK languages)",
+		    "  -i              force IME on (for CJK languages)",
+		    "  -l<name> <pwd>       Login crecedentials",
+		    "  -N<name>       character name",
+		    "  -R<name>       char name, auto-reincarnate",
+		    "  -p<num>         change game Port number",
+		    "  -P<path>        set the lib directory Path",
+		    "  -k              don't disable numlock on startup",
+		    "  -m             skip message of the day window",
+		    "  -q              disable all audio ('quiet mode')",
+		    /* "  -u              disable automatic lua updates", */
+		    "  -w             disable client-side weather effects",
+		    "  -v              save chat log on exit",
+		    "  -V              save chat+message log on exit",
+		    "  -x              don't save chat/message log on exit"));
+		quit(NULL);
+	}
 
 	/* Initialize WinSock */
 	WSAStartup(MAKEWORD(1, 1), &wsadata);
