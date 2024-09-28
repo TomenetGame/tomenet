@@ -447,11 +447,11 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 		for (int x = 0; x < bm.bmWidth; x++) {
 			pixel = scanline + x * bytesPerPixel;
 			b = &data[pixel];
-			g = &data[pixel + 1];
-			r = &data[pixel + 2];
+			g = b + 1;
+			r = g + 1;
 			b2 = &data2[pixel];
-			g2 = &data2[pixel + 1];
-			r2 = &data2[pixel + 2];
+			g2 = b2 + 1;
+			r2 = g2 + 1;
 
 			if (!inverse) {
 				if (*r == rt && *g == gt && *b == bt) {

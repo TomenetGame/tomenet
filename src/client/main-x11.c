@@ -2702,7 +2702,7 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 static void createMasksFromData_2mask(char* data, int width, int height, char **bgmask_return, char **fgmask_return, char **bg2mask_return) {
 //#define BG2MASK_INV /* Have '1' on black foreground tile area (instead of coloured foreground tile area)? */
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
-	u32b bit;
+	u32b bit, pixel;
 	byte r, g, b;
 	int x, y;
 
@@ -2725,16 +2725,17 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
 			bit = y * width + x;
-			b = data[4 * (x + y * width)];
-			g = data[4 * (x + y * width) + 1];
-			r = data[4 * (x + y * width) + 2];
+			pixel = 4 * bit;
+			b = data[pixel];
+			g = data[pixel + 1];
+			r = data[pixel + 2];
 
 			/* We're not in dual-mask mode? Translate 2mask pixels back to normal bgmask: */
 			if (use_graphics != UG_2MASK &&
 			    r == GFXMASK_BG2_R && g == GFXMASK_BG2_G && b == GFXMASK_BG2_B) {
-				b = data[4 * (x + y * width)] = GFXMASK_BG_B;
-				g = data[4 * (x + y * width) + 1] = GFXMASK_BG_G;
-				r = data[4 * (x + y * width) + 2] = GFXMASK_BG_R;
+				b = data[pixel] = GFXMASK_BG_B;
+				g = data[pixel + 1] = GFXMASK_BG_G;
+				r = data[pixel + 2] = GFXMASK_BG_R;
 			}
 
 			if (r != GFXMASK_BG_R || g != GFXMASK_BG_G || b != GFXMASK_BG_B)
