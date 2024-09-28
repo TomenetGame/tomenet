@@ -3502,6 +3502,7 @@ static int Handle_login(int ind) {
 	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++) {
 		if (ge_contender_buffer_ID[i] == p_ptr->account) {
 			ge_contender_buffer_ID[i] = 0;
+			if (ge_contender_buffer_deed[i] == -1) continue; // Error
 			i = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
 			invcopy(o_ptr, i);
 			o_ptr->number = 1;
@@ -3527,6 +3528,7 @@ static int Handle_login(int ind) {
 				break;
 			}
 			achievement_buffer_ID[i] = 0;
+			if (achievement_buffer_deed[i] == -1) continue; // Error
 			i = lookup_kind(TV_PARCHMENT, achievement_buffer_deed[i]);
 			invcopy(o_ptr, i);
 			o_ptr->number = 1;

@@ -170,6 +170,7 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 	}
 	s_printf("GE_CONTENDER_BUFFER: Preparing to buffer...");
 	ge_contender_buffer_ID[i] = p_ptr->account;
+	ge_contender_buffer_deed[i] = -1; // init
 
 	p_ptr->buffer_get_any = FALSE;
 
@@ -216,14 +217,14 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievement) {
 	int i;
 
-#if 0 /* why should this be enabled, hmm */
-	for (i = 0; i < MAX_ACHIEVEMENT_BUFFERS; i++)
-		if (achievement_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
-#endif
 	for (i = 0; i < MAX_ACHIEVEMENT_BUFFERS; i++)
 		if (achievement_buffer_ID[i] == 0) break;
-	if (i == MAX_ACHIEVEMENT_BUFFERS) return; /* no free buffer entries anymore, sorry! */
+	if (i == MAX_ACHIEVEMENT_BUFFERS) {
+		s_printf("ACHIEVEMENT_BUFFER: Out of buffers!\n");
+		return; /* no free buffer entries anymore, sorry! */
+	}
 	achievement_buffer_ID[i] = p_ptr->account;
+	achievement_buffer_deed[i] = -1; // Init
 
 	switch (achievement) {
 	case ACHV_PVP_MAX:
@@ -236,6 +237,7 @@ static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievem
 		achievement_buffer_deed[i] = SV_DEED_PVP_MASS;
 		break;
 	default:
+		achievement_buffer_ID[i] = -1;
 		break;
 	}
 }
