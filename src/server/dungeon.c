@@ -9972,7 +9972,7 @@ void process_player_change_wpos(int Ind) {
 
 	if (!p_ptr->warning_elder && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 0 && p_ptr->max_plv >= 5) {
 		msg_print(Ind, "\374\377yHINT: You can ask the town elder in Bree from time to time about \"\377Uadvice\377y\"!");
-		msg_print(Ind, "\374\377y      Based on your level, skills, items he might have life-saving suggestions.");
+		msg_print(Ind, "\374\377y      Based on your level, skills, items she might have life-saving suggestions.");
 		s_printf("warning_elder: %s\n", p_ptr->name);
 		p_ptr->warning_elder = 1;
 	}
