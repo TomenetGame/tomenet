@@ -695,6 +695,7 @@ extern void do_cmd_open(int Ind, int dir);
 extern void do_cmd_close(int Ind, int dir);
 extern byte twall_erosion(worldpos *wpos, int y, int x, byte feat);
 extern void do_cmd_tunnel(int Ind, int dir, bool quiet_borer);
+extern void do_cmd_tunnel_aux(int Ind, cave_type *c_ptr, bool quiet_borer, bool quiet_full);
 extern void do_cmd_disarm(int Ind, int dir);
 extern void do_cmd_bash(int Ind, int dir);
 extern void do_cmd_spike(int Ind, int dir);

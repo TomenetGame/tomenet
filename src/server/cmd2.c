@@ -3477,7 +3477,11 @@ bool twall(int Ind, int y, int x, byte feat) {
 	return(TRUE);
 }
 
-
+/* Just terraform a feat and potentially produce treasure.
+ * quiet_full: No messages/sound effects, for detonation-based excavation!
+ * */
+void do_cmd_tunnel_aux(int Ind, cave_type *c_ptr, bool quiet_borer, bool quiet_full) {
+}
 /*
  * Tunnels through "walls" (including rubble and closed doors)
  *
@@ -3489,7 +3493,6 @@ bool twall(int Ind, int y, int x, byte feat) {
  * accomplished by strong players using heavy weapons.
  *
  * quiet_borer: KILL_WALL form that instantly removes the feat.
- * quiet_full: No messages/sound effects, for detonation-based excavation!
  *
  */
 /* XXX possibly wrong */
@@ -3519,7 +3522,7 @@ bool twall(int Ind, int y, int x, byte feat) {
 /* Actually give special message to indicate when we have zero chance to tunnel through a specific material */
 #define INDICATE_IMPOSSIBLE "You cannot seem to make a dent in the"
 /* TODO: Make shovels and picks actually rather inefficient vs plants: Increase plants' digging difficulties and in turn raise wood_power and fibre_power for proper weapons. */
-void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {//, bool quiet_full) {
+void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -5287,12 +5290,7 @@ void do_cmd_disarm(int Ind, int dir) {
  #ifdef USE_SOUND_2010
 					sound_near_site(p_ptr->py, p_ptr->px, wpos, 0, "item_rune", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-					j = cs_ptr->sc.montrap.feat;
-					delete_object_idx(cs_ptr->sc.montrap.trap_kit, TRUE);
-					cs_erase(c_ptr, cs_ptr);
-					cave_set_feat_live(wpos, y, x, j);
-					//todo maybe: get the charge back, if we still consider it functional
-
+					do_cmd_disarm_mon_trap_aux(Ind, wpos, y, x);
 					//if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
 				} else {
 					msg_print(Ind, "\377yYou fail to extinguish the fuse!");
