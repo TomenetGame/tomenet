@@ -80,6 +80,15 @@ static void choose_name(void) {
 #else
  #ifdef ATMOSPHERIC_INTRO /* ascii-art in the top area */
 	char introline[6][MAX_CHARS] = { 0 };
+  #if 0
+	char introline_col[6] = { TERM_FIRETHIN, TERM_LITE, TERM_FIRE, TERM_FIRE, TERM_FIRE , TERM_EMBER };
+  #elif 1
+	char introline_col[6] = { TERM_FIRETHIN, TERM_LITE, TERM_FIRE, TERM_FIRE, TERM_PLAS , TERM_EMBER };
+  #elif 0
+	char introline_col[6] = { TERM_FIRETHIN, TERM_LITE, TERM_FIRE, TERM_PLAS, TERM_EMBER, TERM_DETO };
+  #else
+	char introline_col[6] = { TERM_FIRETHIN, TERM_LITE, TERM_FIRE, TERM_PLAS, TERM_EMBER, TERM_HELLFIRE };
+  #endif
 	int x, y;
   #define LOGO_ROW 1
   #define LOGO_ATTR TERM_EMBER
@@ -108,12 +117,12 @@ static void choose_name(void) {
 		introline[y][x] = FONT_MAP_SOLID_X11;
    #endif
   #endif
-	c_put_str(TERM_FIRETHIN, introline[0], LOGO_ROW, 0);
-	c_put_str(TERM_LITE,     introline[1], LOGO_ROW + 1, 0);
-	c_put_str(TERM_FIRE,     introline[2], LOGO_ROW + 2, 0);
-	c_put_str(TERM_FIRE,     introline[3], LOGO_ROW + 3, 0);
-	c_put_str(TERM_FIRE,     introline[4], LOGO_ROW + 4, 0);
-	c_put_str(TERM_EMBER,    introline[5], LOGO_ROW + 5, 0);
+	c_put_str(introline_col[0], introline[0], LOGO_ROW, 0);
+	c_put_str(introline_col[1], introline[1], LOGO_ROW + 1, 0);
+	c_put_str(introline_col[2], introline[2], LOGO_ROW + 2, 0);
+	c_put_str(introline_col[3], introline[3], LOGO_ROW + 3, 0);
+	c_put_str(introline_col[4], introline[4], LOGO_ROW + 4, 0);
+	c_put_str(introline_col[5], introline[5], LOGO_ROW + 5, 0);
  #endif
 	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", LOGIN_ROW, 2);
 	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice. Remember", LOGIN_ROW + 1, 2);
