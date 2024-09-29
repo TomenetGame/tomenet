@@ -12526,9 +12526,12 @@ Paralysis       Paralysis can be caused by bashing doors, lack of food, by
                 become immune by equipping a 'Free Action' item. You should
                 become immune to paralysis before descending below 1000 ft.
 
-Hold Life       This will provide some protection against experience drain;
+Hold Life       This will provide some protection against experience drain:
+                It gives you a chance to resist experience-draining effects
+                (eg from attacks or potions), either resulting in no drain
+                or at least reduced drain if the roll is successful.
                 it won't help against experience drain inflicted by items you
-                equipped though.
+                equipped though (ie against the DRAIN_EXP item flag).
 
 Note: 'Feather Falling' reduces damage taken from gravity attacks, although it
 is technically not a resistance. 'Levitation' includes 'Feather Falling', so if
