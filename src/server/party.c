@@ -5400,6 +5400,7 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 	else pptr->next = ptr->next;
 	/* Free the memory in the player name */
 	free((char *)(ptr->name));
+	free((char *)(ptr->accountname));
 
 	dptr = ptr;	/* safe storage */
 	ptr = ptr->next;	/* advance */
@@ -5637,6 +5638,7 @@ void delete_player_id(int id) {
 
 			/* Free the memory in the player name */
 			free((char *)(ptr->name));
+			free((char *)(ptr->accountname));
 
 			/* Free the memory for this struct */
 			KILL(ptr, hash_entry);
