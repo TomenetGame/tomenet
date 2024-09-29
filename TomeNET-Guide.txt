@@ -21618,17 +21618,6 @@ these limitations will be lifted.
 
                     Tier II: Level 40.
 
-    Mirage Mirror   Grants temporary reflection, ie a high chance to reflect
-                    physical and magical projectiles such as bolts or arrows,
-                    same as having an item or form that grants REFLECT (item)
-                    or REFLECTING (form).
-                    (This is a pseudo reactive-shield spell, mutually exclusive
-                    with other (pseudo) reactive-shield spells. The only
-                    other Wizardry spell colliding with it is 'Fiery Shield',
-                    all other reactive-shield spells are from Runecraft.)
-                    Required skill level for first spell level: 35.
-                    Shared spell (see above): Air, Water.
-
     BONI:           Swim in water at 30,
                     water resistance at 40.
                     Items that go bad over time due to warmth while being
@@ -21686,7 +21675,6 @@ these limitations will be lifted.
                     other Wizardry spell colliding with it is 'Fiery Shield',
                     all other reactive-shield spells are from Runecraft.)
                     Required skill level for first spell level: 35.
-                    Shared spell (see above): Air, Water.
 
     BONI:           Feather falling at 30,
                     levitation at 45.
