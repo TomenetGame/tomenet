@@ -17549,7 +17549,10 @@ stated.
 
         .Traumaturgy            Drains mana from monsters when you inflict
          (0.500)                damage on them, replenishing your MP.
-                                Only works if you are able to see the target.
+                                Only works if you are actually able to target
+                                the opponent, eg there must not be a wall
+                                between you and the target; Traumaturgy does
+                                not require light but also works in darkness.
                                 The amount of points gained depends linearly
                                 on your skill level and also somewhat on the
                                 damage you inflicted.
