@@ -3828,7 +3828,7 @@ cptr item_activation(object_type *o_ptr) {
 	if (o_ptr->tval == TV_CHEMICAL) {
 		if (o_ptr->sval == SV_WOOD_CHIPS) return("heating up to get processed into charcoal");
 		else if (o_ptr->sval == SV_MIXTURE) return("combining with other chemicals or mixtures. Or with itself to form a product");
-		else return("combining with other chemical ingredients or mixtures");
+		else return("combining with other chemical ingredients or mixtures (also see \"/mix\")");
 	}
 	if (o_ptr->tval == TV_CHARGE) {
 		char *c;
