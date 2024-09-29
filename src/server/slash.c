@@ -5977,16 +5977,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			char *tagp = message3, *insc;
 			object_type *o_ptr;
 			int chem1 = -1, result = -2, sub = -1, sub_maxitems, count = 0;
-			bool satchel;
+			bool satchel, inven;
 
 			if (!tk) {
 				msg_format(Ind, "Usage:    /mix <tag numbers 'n' of chemicals inscribed '@Cn'>[<'*' activates>]");
 				msg_format(Ind, "Example:  /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.");
 				msg_format(Ind, "Example:  /mix 094*   -> mix those chemicals and self-activate the mixture.");
 				msg_format(Ind, "Example:  /mix 3      -> Self-activates a mixture inscribed '@C3'.");
-				msg_format(Ind, "Alternative syntax for chemicals inside an Alchemy Satchel:");
+				msg_format(Ind, "Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:");
 				msg_format(Ind, "Usage:    /mix <slot letters>[<'*' activates>]");
-				msg_format(Ind, "Example:  /mix accd*  -> mix chemicals from slots a, c twice, d and activate.");
+				msg_format(Ind, "Example:  /mix accD*  -> satchel slots: a, c twice, normal inven: d, activate.");
 				return;
 			}
 
@@ -6003,9 +6003,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					break;
 				}
 				/* stop at any other symbol that is not a valid slot symbol */
-				if (*tagp >= 'a' && *tagp <= 'z') satchel = TRUE;
-				else {
+				if (*tagp >= 'a' && *tagp <= 'z') {
+					satchel = TRUE;
+					inven = FALSE;
+				} else if (*tagp >= 'A' && *tagp <= 'Z') {
+					*tagp = tolower(*tagp);
 					satchel = FALSE;
+					inven = TRUE;
+				} else {
+					satchel = FALSE;
+					inven = FALSE;
 					if (*tagp < '0' || *tagp > '9') break;
 				}
 
@@ -6041,8 +6048,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						i++;
 						continue;
 					}
+					if (inven && sub != -1) {
+						i++;
+						continue;
+					}
 
-					if (!satchel) {
+					if (!satchel && !inven) {
 						/* Normal way - check for inscription */
 						if (!o_ptr->note ||
 						    //o_ptr->tval != TV_CHEMICAL || //actually we want to craft fireworks maybe, also we might need oil flasks
@@ -6051,8 +6062,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							i++;
 							continue;
 						}
-					} else {
+					} else if (satchel) {
 						/* Satchel-mode - just check for slot letter */
+						if (*tagp != index_to_label(i)) {
+							i++;
+							continue;
+						}
+					} else {
+						/* Inventory-mode - just check for slot letter */
 						if (*tagp != index_to_label(i)) {
 							i++;
 							continue;
@@ -6063,8 +6080,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					count++;
 					if (chem1 == -1) {
 						chem1 = (sub == -1) ? i : (sub + 1) * 100 + i;
-						i++;
-						continue;
+						/* Restart search with subsequent tag */
+						break;
 					}
 					p_ptr->current_activation = chem1;
 					result = mix_chemicals(Ind, (sub == -1) ? i : (sub + 1) * 100 + i);
