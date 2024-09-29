@@ -8029,7 +8029,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 			if ((resf & RESF_MIDVALUE) && (k_info[k_idx].cost > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
 
-			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
+			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART) &&
+			    !((resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)))
+				continue;
 
 			if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
 
@@ -8330,7 +8332,9 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 			if ((resf & RESF_MIDVALUE) && (k_info[k_idx].cost > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
 
-			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
+			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART) &&
+			    !((resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)))
+				continue;
 
 			if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
 
@@ -9231,7 +9235,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* This should have already been checked in apply_magic_depth above itself,
 		   but atm it seems not to work: */
 		if ((o_ptr->name1 == ART_RANDART) && (resf & RESF_NORANDART)) continue;
-		if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART) && (resf & RESF_NOTRUEART)) continue;
+		if ((resf & RESF_NOTRUEART) && o_ptr->name1 && (o_ptr->name1 != ART_RANDART) &&
+		    !((resf & RESF_WINNER) && (f5 & TR5_WINNERS_ONLY)))
+			continue;
 		if ((o_ptr->name2 && o_ptr->name2b) && (resf & RESF_NODOUBLEEGO)) continue;
 		if ((resf & RESF_LOWSPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
 		if ((resf & RESF_NOHISPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
