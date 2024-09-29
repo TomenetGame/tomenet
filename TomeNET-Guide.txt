@@ -18349,15 +18349,16 @@ Enlightened:
       electricity, cold and be enveloped in an aura of frost and lightning;
     - also, their melee attacks will slay evil opponents intrinsically.
 
-    - Necromancy, Traumaturgy, Aura of Death, Shadow, Unlife and Hereticism
-      become disabled but you will keep them at their currently trained level.
+    - Blood Magic/Occultism: Necromancy, Traumaturgy, Aura of Death, Shadow,
+      and Unlife and Hereticism become disabled but you will keep them at their
+      currently trained level.
 
-    - Sword-, Blunt- and Polearm-mastery skill ratios x 1.2.
-    - The four prayer school ratios x 1.6.
-    - Wizardry Divination school x 1.4.
-    - Occult Spirit school x 1.6.
-    - Light and Mana rune ratios x 1.25.
-    - Fear and Shivering Aura ratio x 2.0.
+    - Melee combat: Sword-, Blunt- and Polearm-mastery skill ratios x 1.2.
+    - All four prayer school ratios x 1.6.
+    - Wizardry: Divination school x 1.4.
+    - Occultism: Spirit school x 1.6.
+    - Runecraft: Light and Mana rune ratios x 1.25.
+    - Blood magic: Fear and Shivering Aura ratio x 2.0.
 
 Corrupted:
     - Gain time resistance and they no longer have any need for worldly food.
@@ -18369,8 +18370,8 @@ Corrupted:
     - At level 50 they will become resistant to poison, immune to fire, and
       be enveloped in a fiery aura.
 
-    - The four prayer schools and Spirit become disabled (cannot be trained
-      further, but you keep their current status),
+    - All four prayer schools and Spirit (Occultism) become disabled (cannot
+      be trained further, but you keep their current status),
       priests and paladins however get them completely reset (refunded).
 
     - Priests:  Sword-mastery is enabled and receives the same skill ratio as
@@ -18382,10 +18383,10 @@ Corrupted:
                 Axe-mastery and Blunt-mastery ratios are swapped, so Axe will
                 now have the higher ratio and Blunt will have the lower ratio.
 
-    - Axe-mastery and Martial Arts skill ratios x 1.2.
-    - Fire, Air, Conveyance school ratios x 1.1, Udun x 1.4.
-    - Shadow and Unlife x 1.6, Hereticism x 1.7.
-    - Darkness and Chaos rune ratios x 1.25.
+    - Melee combat: Axe-mastery and Martial Arts skill ratios x 1.2.
+    - Wizardry: Fire, Air, Conveyance school ratios x 1.1, Udun x 1.4.
+    - Occultism: Shadow and Unlife x 1.6, Hereticism x 1.7.
+    - Runecraft: Darkness and Chaos rune ratios x 1.25.
     - All Blood Magic ratios x 2.0.
 
 Note: After a skill's gain ratio has been boosted as stated above, it will be
