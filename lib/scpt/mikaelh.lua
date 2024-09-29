@@ -148,7 +148,8 @@ function ur_p(name)
 end
 
 -- Fix spellbooks after adding new spells
--- Usage: fix_spellbooks(<player name>, <new spell number>, 1)
+-- Usage: fix_spellbooks(<player name>, <new spell number>, mod_add)
+-- Adds mod_add to all spell indices that were at least <new spell number>.
 -- Example, after adding the Stop Wraithform spell:
 -- fix_spellbooks("Pfft", STOPWRAITH, 1)
 
