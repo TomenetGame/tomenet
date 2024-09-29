@@ -982,6 +982,18 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 						strcat(buf, ":");
 					strcat(buf, strchr(inventory_name[c], ':') + 1);
 				}
+#if defined(KIND_DIZ) && defined(CLIENT_ITEM_PASTE_DIZ)
+				int j;
+
+				/* We don't have the local k_idx, so we have to find it from tval,sval: */
+				for (j = 0; j < kind_list_idx; j++) {
+					if (kind_list_tval[j] != inventory[c].tval || kind_list_sval[j] != inventory[c].sval) continue;
+					if (kind_list_dizline[j][0]) Send_paste_msg(format("%s\377D - %s", buf, kind_list_dizline[j]));
+					else j = kind_list_idx; //hack: no-diz marker
+					break;
+				}
+				if (j == kind_list_idx)
+#endif
 				Send_paste_msg(buf);
 			}
 			break;
@@ -1093,6 +1105,18 @@ void cmd_subinven(int islot) {
 						strcat(buf, ":");
 					strcat(buf, strchr(subinventory_name[islot][c], ':') + 1);
 				}
+#if defined(KIND_DIZ) && defined(CLIENT_ITEM_PASTE_DIZ)
+				int j;
+
+				/* We don't have the local k_idx, so we have to find it from tval,sval: */
+				for (j = 0; j < kind_list_idx; j++) {
+					if (kind_list_tval[j] != subinventory[islot][c].tval || kind_list_sval[j] != subinventory[islot][c].sval) continue;
+					if (kind_list_dizline[j][0]) Send_paste_msg(format("%s\377D - %s", buf, kind_list_dizline[j]));
+					else j = kind_list_idx; //hack: no-diz marker
+					break;
+				}
+				if (j == kind_list_idx)
+#endif
 				Send_paste_msg(buf);
 			}
 			break;
@@ -1219,6 +1243,18 @@ void cmd_equip(void) {
 						strcat(buf, ":");
 					strcat(buf, strchr(inventory_name[INVEN_WIELD + c], ':') + 1);
 				}
+#if defined(KIND_DIZ) && defined(CLIENT_ITEM_PASTE_DIZ)
+				int j;
+
+				/* We don't have the local k_idx, so we have to find it from tval,sval: */
+				for (j = 0; j < kind_list_idx; j++) {
+					if (kind_list_tval[j] != inventory[INVEN_WIELD + c].tval || kind_list_sval[j] != inventory[INVEN_WIELD + c].sval) continue;
+					if (kind_list_dizline[j][0]) Send_paste_msg(format("%s\377D - %s", buf, kind_list_dizline[j]));
+					else j = kind_list_idx; //hack: no-diz marker
+					break;
+				}
+				if (j == kind_list_idx)
+#endif
 				Send_paste_msg(buf);
 			}
 			break;

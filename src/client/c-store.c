@@ -504,6 +504,19 @@ static void store_chat(void) {
 	/* Tell the server */
 	snprintf(buf, MSG_LEN - 1, "%s %s", where, out_val);
 	buf[MSG_LEN - 1] = 0;
+
+#if defined(KIND_DIZ) && defined(CLIENT_ITEM_PASTE_DIZ)
+	int j;
+
+	/* We don't have the local k_idx, so we have to find it from tval,sval: */
+	for (j = 0; j < kind_list_idx; j++) {
+		if (kind_list_tval[j] != store.stock[item].tval || kind_list_sval[j] != store.stock[item].sval) continue;
+		if (kind_list_dizline[j][0]) {
+			Send_paste_msg(format("%s\377D - %s", buf, kind_list_dizline[j]));
+			return;
+		}
+	}
+#endif
 	Send_paste_msg(buf);
 }
 

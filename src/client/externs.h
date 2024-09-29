@@ -1145,20 +1145,21 @@ extern bool skip_received_music;
 extern bool wind_noticable;
 extern int weather_particles_seen;
 
-extern char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2];
+extern char monster_list_name[MAX_R_IDX][MAX_CHARS], monster_list_symbol[MAX_R_IDX][2];
 extern int monster_list_code[MAX_R_IDX], monster_list_idx, monster_list_level[MAX_R_IDX];
 extern bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX], monster_list_unique[MAX_R_IDX];
 
-extern char artifact_list_name[MAX_A_IDX][80];
+extern char artifact_list_name[MAX_A_IDX][MAX_CHARS];
 extern int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx;
 extern int artifact_list_kidx[MAX_A_IDX];
 extern bool artifact_list_specialgene[MAX_A_IDX];
-extern char artifact_list_activation[MAX_A_IDX][80];
+extern char artifact_list_activation[MAX_A_IDX][MAX_CHARS];
 
-extern char kind_list_name[MAX_K_IDX][80];
+extern char kind_list_name[MAX_K_IDX][MAX_CHARS];
 extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx, kind_list_kidx[MAX_K_IDX];
 extern char kind_list_char[MAX_K_IDX];
 extern byte kind_list_attr[MAX_K_IDX];
+extern char kind_list_dizline[MAX_K_IDX][MSG_LEN];
 
 extern char monster_mapping_org[MAX_R_IDX + 1];
 extern struct u32b_char_dict_t *monster_mapping_mod;

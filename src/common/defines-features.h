@@ -751,6 +751,9 @@
      Only some navigational keys will do this: Those that actually have a real function in string input.  */
   #define SOME_NAVI_KEYS_DISABLE_MACROS_IN_PROMPTS
  #endif
+
+ /* Maybe spammy, maybe cool? - On pasting an item to chat, additionally paste the kind diz (atm only from the inventory window, not via \\x chat item tags) */
+ #define CLIENT_ITEM_PASTE_DIZ
 #endif
 
 

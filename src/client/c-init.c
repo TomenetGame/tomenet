@@ -1560,7 +1560,7 @@ static void init_kind_list() {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-//				strcpy(buf, p1 + 1); // overlapping strings
+				//strcpy(buf, p1 + 1); // overlapping strings
 				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
@@ -1603,6 +1603,14 @@ static void init_kind_list() {
 				kind_list_char[kind_list_idx] = *p1;
 				kind_list_attr[kind_list_idx] = *p2;
 			}
+#if defined(KIND_DIZ) && defined(CLIENT_ITEM_PASTE_DIZ)
+			/* for item-chat-pasting from inventory window */
+			else if (buf[0] == 'D') {
+				p1 = buf + 2;
+				if (!(*p1)) continue; /* paranoia (broken file) */
+				(void)strncat(kind_list_dizline[kind_list_idx], p1, MSG_LEN - 1);
+			}
+#endif
 			continue;
 		}
 
