@@ -6056,7 +6056,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (!satchel && !inven) {
 						/* Normal way - check for inscription */
 						if (!o_ptr->note ||
-						    //o_ptr->tval != TV_CHEMICAL || //actually we want to craft fireworks maybe, also we might need oil flasks
+						    //o_ptr->tval != TV_CHEMICAL || //actually need scrolls to  craft fireworks maybe, also we might need oil/acid flasks, (salt) water
 						    !(insc = find_inscription(o_ptr->note, "@C")) ||
 						    *(insc + 2) != *tagp) {
 							i++;
@@ -6094,7 +6094,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (result == -1) {
 					count = 0;
-					msg_format(Ind, "\377yThe specified chemicals are not mixable.");
+					msg_print(Ind, "\377yThe specified chemicals are not mixable.");
 					break; /* Failure stops the process */
 				}
 				if (i == (sub == -1 ? INVEN_PACK : SUBINVEN_PACK)) {
@@ -6105,10 +6105,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				tagp++;
 			}
-			/* Just self-activate a mixture */
+			/* Just A) self-activate a mixture or B) process an ingredient
+			   (atm only wood chips are processable, to grind things into metal/wood, use a grinding tool instead). */
 			if (count == 1) {
-				p_ptr->current_activation = chem1;
-				mix_chemicals(Ind, chem1);
+				(void)get_inven_item(Ind, chem1, &o_ptr);
+
+				/* A) self-activate a mixture */
+				if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE) {
+					p_ptr->current_activation = chem1;
+					mix_chemicals(Ind, chem1);
+				}
+
+				/* B) process an ingredient, same as activating */
+				else if (o_ptr->tval == TV_CHEMICAL) do_cmd_activate(Ind, chem1, 5); //any 'dir'...
+
+				/* failure - we don't allow auto-grinding items via slash command, too dangerous */
+				else msg_print(Ind, "\377yThat item cannot be activated for processing. Try using a grinding tool maybe.");
 			}
 			/* Clean up, playing it safe */
 			p_ptr->current_activation = -1;
