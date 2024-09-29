@@ -3195,11 +3195,11 @@ int autostow_or_carry(int Ind, object_type *o_ptr) {
 		break;
 	}
 
+	/* Translate return value for partial stowing under specific bag inscriptions */
+	if (item_new < 0) item_new = -item_new;
 	/* Hack: auto_stow() returns FALSE, not -1, on failure to completely stow an item,
 	   so we correct it here, as for normal inven-index ops the value '-1' is used */
 	if (!item_new) item_new = -1;
-	/* Translate return value for partial stowing under specific bag inscriptions */
-	if (item_new < 0) item_new = -item_new;
 
 	/* If we couldn't stow everything, pick up the rest normally */
 	if (o_ptr->number) {
