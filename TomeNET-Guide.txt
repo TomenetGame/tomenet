@@ -1764,12 +1764,14 @@ They all start with a slash '/' hence they're called slash commands:
             /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
             /mix 094*   -> mix those chemicals and self-activate the mixture.
             /mix 3      -> Self-activates a mixture inscribed '@C3'.
-Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:
-/mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
+ Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:
+  /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
             Example:  /mix accD*  -> mix chemicals from the satchel slot (a),
                                      two units from the satchel slot (c), one
                                      from normal inventory slot (d) and finally
                                      self-activate the resulting mixture.
+ Optional 'x<0-9>' parameter, must be first in line, repeats the whole process!
+            Example:  /mix x5 bc9E*   -> performs the crafting attempt 5 times.
 
 /monsters
 /mon [<monster character>] [<+minimum level>]
@@ -18417,15 +18419,18 @@ A simpler way to create mixtures is to use the slash command "/mix":
 This command mixes chemicals and/or self-activate a mixture, which must all be
 inscribed @C<n> where <n> is a numerical tag from 0 to 9.
 Examples:
-  /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
-  /mix 094*   -> mix those chemicals and self-activate the mixture.
-  /mix 3      -> Self-activates a mixture inscribed '@C3'.
+  /mix 094       -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
+  /mix 094*      -> mix those chemicals and self-activate the mixture.
+  /mix 3         -> Self-activates a mixture inscribed '@C3'.
 Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:
   /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
 Example:
-  /mix accD*  -> mix chemicals from the satchel slot (a), two units from the
-                 satchel slot (c), one from normal inventory slot (d), and
-                 finally self-activate the resulting mixture.
+  /mix accD*     -> mix chemicals from the satchel slot (a), two units from the
+                    satchel slot (c), one from normal inventory slot (d), and
+                    finally self-activate the resulting mixture.
+Optional 'x<0-9>' parameter, must be first in line, repeats the whole process!
+Example:
+  /mix x5 bc9E*  -> performs the crafting attempt 5 times.
 
 A mixture that contains no valid combination of ingredients in the correct
 amounts is ruined and you can just discard it with 'k'.

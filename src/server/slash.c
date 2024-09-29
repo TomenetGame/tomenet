@@ -5974,10 +5974,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		   There are 11 chemicals, but wood chips are only for processing them to charcoal, so it fits.
 		   And usually there are in fact only 8 mixable chemicals as NO_RUST_NO_HYDROXIDE is enabled. */
 		else if (prefix(messagelc, "/mix")) {
-			char *tagp = message3, *insc;
+			char *tagp, *insc, *tagp_init = message3;
 			object_type *o_ptr;
-			int chem1 = -1, result = -2, sub = -1, sub_maxitems, count = 0;
-			bool satchel, inven;
+			int chem1, result, sub, sub_maxitems, count, repeats = 0;
+			bool satchel, inven, first_symbol = TRUE;
 
 			if (!tk) {
 				msg_format(Ind, "Usage:    /mix <tag numbers 'n' of chemicals inscribed '@Cn'>[<'*' activates>]");
@@ -5987,141 +5987,188 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:");
 				msg_format(Ind, "Usage:    /mix <slot letters>[<'*' activates>]");
 				msg_format(Ind, "Example:  /mix accD*  -> satchel slots: a, c twice, normal inven: d, activate.");
+				msg_format(Ind, "Last but not least you can specify repeat if you start on \"x<number of repeats>\".");
+				msg_format(Ind, "example:  /mix x9 bccd*   -> repeat 8 times. The number must range from 0 to 9.");
 				return;
 			}
 
-			while (*tagp && tagp - message3 <= 15) {
-				/* allow and ignore white spaces */
-				if (*tagp == ' ') {
-					tagp++;
-					continue;
-				}
-				/* handle self-activation symbol */
-				if (*tagp == '*') {
-					if (!chem1) break; /* no chemical at all so far, cannot activate */
-					count = 1; /* hax */
-					break;
-				}
-				/* stop at any other symbol that is not a valid slot symbol */
-				if (*tagp >= 'a' && *tagp <= 'z') {
-					satchel = TRUE;
-					inven = FALSE;
-				} else if (*tagp >= 'A' && *tagp <= 'Z') {
-					*tagp = tolower(*tagp);
-					satchel = FALSE;
-					inven = TRUE;
-				} else {
-					satchel = FALSE;
-					inven = FALSE;
-					if (*tagp < '0' || *tagp > '9') break;
-				}
+			do {
+				tagp = tagp_init;
+				chem1 = -1;
+				result = -2;
+				count = 0;
 
-				/* Look for chemical with matching inscription.
-				   (Side note: Currently further @Cn inscriptions on the same item are ignored.) */
-				i = 0;
-				do {
-					if (sub == -1) o_ptr = &p_ptr->inventory[i];
-					else if (i < sub_maxitems) o_ptr = &p_ptr->subinventory[sub][i];
-					else {
-						i = sub + 1;
-						sub = -1;
+				while (*tagp && tagp - tagp_init <= 15) {
+					/* allow and ignore white spaces */
+					if (*tagp == ' ') {
+						tagp++;
 						continue;
 					}
-					if (!o_ptr->tval) {
-						if (sub == -1) {
-							i = INVEN_PACK; //just marker to trigger loop-failure message
-							break;
-						}
-						i = sub + 1;
-						sub = -1;
-						continue;
-					}
-					if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_SATCHEL) {
-						sub = i;
-						sub_maxitems = o_ptr->bpval;
-						i = 0;
-						continue;
-					}
-
-					/* Satchel-mode (specifying letters instead of tag-numbers) is only valid while operating within an alchemy satchel */
-					if (satchel && sub == -1) {
-						i++;
-						continue;
-					}
-					if (inven && sub != -1) {
-						i++;
-						continue;
-					}
-
-					if (!satchel && !inven) {
-						/* Normal way - check for inscription */
-						if (!o_ptr->note ||
-						    //o_ptr->tval != TV_CHEMICAL || //actually need scrolls to  craft fireworks maybe, also we might need oil/acid flasks, (salt) water
-						    !(insc = find_inscription(o_ptr->note, "@C")) ||
-						    *(insc + 2) != *tagp) {
-							i++;
-							continue;
-						}
-					} else if (satchel) {
-						/* Satchel-mode - just check for slot letter */
-						if (*tagp != index_to_label(i)) {
-							i++;
-							continue;
-						}
-					} else {
-						/* Inventory-mode - just check for slot letter */
-						if (*tagp != index_to_label(i)) {
-							i++;
+					/* allow setting # of repeats initially, via "x<number> ", eg "/mix x12 bccD*" */
+					if (first_symbol) {
+						first_symbol = FALSE;
+						if (*tagp == 'x') {
+							repeats = atoi(tagp + 1) - 1; /* "x<n>" -> n-1 repeats */
+							/* Ensure sane values, so we don't overload the server frame */
+							if (repeats < 0) repeats = 0;
+							if (repeats > 9) repeats = 9;
+							while (*tagp && *tagp != ' ') tagp++;
+							tagp_init = tagp;
 							continue;
 						}
 					}
 
-					/* get first ingredient and continue, or second ingredient and mix the two */
-					count++;
-					if (chem1 == -1) {
-						chem1 = (sub == -1) ? i : (sub + 1) * 100 + i;
-						/* Restart search with subsequent tag */
+					/* handle self-activation symbol */
+					if (*tagp == '*') {
+						if (chem1 == -1) {
+							repeats = 0;
+							count = 0; //paranoia
+							break; /* no chemical at all so far, cannot activate -> just quit */
+						}
+						count = 1; /* hax */
 						break;
 					}
-					p_ptr->current_activation = chem1;
-					result = mix_chemicals(Ind, (sub == -1) ? i : (sub + 1) * 100 + i);
 
-					/* the result of the mixing process becomes the new first ingredient,
-					   to continue processing with further ingredients, or self-activation */
-					chem1 = result;
-					break;
-				} while (i < (sub == -1 ? INVEN_PACK : SUBINVEN_PACK));
+					/* stop at any other symbol that is not a valid slot symbol */
+					if (*tagp >= 'a' && *tagp <= 'z') {
+						satchel = TRUE;
+						inven = FALSE;
+					} else if (*tagp >= 'A' && *tagp <= 'Z') {
+						satchel = FALSE;
+						inven = TRUE;
+					} else {
+						satchel = FALSE;
+						inven = FALSE;
+						if (*tagp < '0' || *tagp > '9') {
+							repeats = 0;
+							count = 0;
+							break; /* no valid symbol -> just quit */
+						}
+					}
 
-				if (result == -1) {
-					count = 0;
-					msg_print(Ind, "\377yThe specified chemicals are not mixable.");
-					break; /* Failure stops the process */
+					/* Look for chemical with matching inscription.
+					   (Side note: Currently further @Cn inscriptions on the same item are ignored.) */
+					i = 0;
+					sub = -1;
+
+					do {
+						if (sub == -1) o_ptr = &p_ptr->inventory[i];
+						else if (i < sub_maxitems) o_ptr = &p_ptr->subinventory[sub][i];
+							else {
+							i = sub + 1;
+							sub = -1;
+							continue;
+						}
+						if (!o_ptr->tval) {
+							if (sub == -1) {
+								i = INVEN_PACK; //just marker to trigger loop-failure message
+								break;
+							}
+							i = sub + 1;
+							sub = -1;
+							continue;
+						}
+						if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_SATCHEL) {
+							sub = i;
+							sub_maxitems = o_ptr->bpval;
+							i = 0;
+							continue;
+						}
+
+						/* Satchel-mode (specifying letters instead of tag-numbers) is only valid while operating within an alchemy satchel */
+						if (satchel && sub == -1) {
+							i++;
+							continue;
+						}
+						if (inven && sub != -1) {
+							i++;
+							continue;
+						}
+
+						if (!satchel && !inven) {
+							/* Normal way - check for inscription */
+							if (!o_ptr->note ||
+							    //o_ptr->tval != TV_CHEMICAL || //actually need scrolls to  craft fireworks maybe, also we might need oil/acid flasks, (salt) water
+							    !(insc = find_inscription(o_ptr->note, "@C")) ||
+							    *(insc + 2) != *tagp) {
+								i++;
+								continue;
+							}
+						} else if (satchel) {
+							/* Satchel-mode - just check for slot letter */
+							if (*tagp != index_to_label(i)) {
+								i++;
+								continue;
+							}
+						} else {
+							/* Inventory-mode - just check for slot letter */
+							if (tolower(*tagp) != index_to_label(i)) {
+								i++;
+								continue;
+							}
+						}
+
+						/* get first ingredient and continue, or second ingredient and mix the two */
+						count++; /* count total amount of chemicals we have mixed - just need to know though whether it's 1 or not, see further down */
+						if (chem1 == -1) {
+							chem1 = (sub == -1) ? i : (sub + 1) * 100 + i;
+							/* Restart search with subsequent tag */
+							break;
+						}
+						p_ptr->current_activation = chem1;
+						result = mix_chemicals(Ind, (sub == -1) ? i : (sub + 1) * 100 + i);
+
+						/* the result of the mixing process becomes the new first ingredient,
+						   to continue processing with further ingredients, or self-activation */
+						chem1 = result;
+						break;
+					} while (i < (sub == -1 ? INVEN_PACK : SUBINVEN_PACK));
+
+					if (result == -1) {
+						msg_print(Ind, "\377yThe specified chemicals are not mixable.");
+						/* Failure stops the process */
+						count = 0;
+						repeats = 0;
+						break;
+					}
+					if (i == (sub == -1 ? INVEN_PACK : SUBINVEN_PACK)) {
+						msg_format(Ind, "\377yNo matching item found for '(%c)'.", *tagp);
+						/* Failure stops the process */
+						count = 0;
+						repeats = 0;
+						break;
+					}
+
+					tagp++;
 				}
-				if (i == (sub == -1 ? INVEN_PACK : SUBINVEN_PACK)) {
-					count = 0;
-					msg_format(Ind, "\377yNo matching item found for '(%c)'.", *tagp);
-					break; /* Failure stops the process */
+
+				/* Just A) self-activate a mixture or B) process an ingredient
+				   (atm only wood chips are processable, to grind things into metal/wood, use a grinding tool instead). */
+				if (count == 1) {
+					(void)get_inven_item(Ind, chem1, &o_ptr);
+
+					/* A) self-activate a mixture */
+					if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE) {
+						p_ptr->current_activation = chem1;
+						mix_chemicals(Ind, chem1);
+					}
+
+					/* B) process an ingredient, same as activating */
+					else if (o_ptr->tval == TV_CHEMICAL) do_cmd_activate(Ind, chem1, 5); //any 'dir'...
+
+					/* failure - we don't allow auto-grinding items via slash command, too dangerous */
+					else {
+						msg_print(Ind, "\377yThat item cannot be activated for processing. Try using a grinding tool maybe.");
+						/* Failure stops the process */
+						repeats = 0;
+						break;
+					}
 				}
 
-				tagp++;
-			}
-			/* Just A) self-activate a mixture or B) process an ingredient
-			   (atm only wood chips are processable, to grind things into metal/wood, use a grinding tool instead). */
-			if (count == 1) {
-				(void)get_inven_item(Ind, chem1, &o_ptr);
+				/* Clean up, playing it safe */
+				p_ptr->current_activation = -1;
+			} while (repeats--);
 
-				/* A) self-activate a mixture */
-				if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE) {
-					p_ptr->current_activation = chem1;
-					mix_chemicals(Ind, chem1);
-				}
-
-				/* B) process an ingredient, same as activating */
-				else if (o_ptr->tval == TV_CHEMICAL) do_cmd_activate(Ind, chem1, 5); //any 'dir'...
-
-				/* failure - we don't allow auto-grinding items via slash command, too dangerous */
-				else msg_print(Ind, "\377yThat item cannot be activated for processing. Try using a grinding tool maybe.");
-			}
 			/* Clean up, playing it safe */
 			p_ptr->current_activation = -1;
 			return;
