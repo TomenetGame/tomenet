@@ -1919,6 +1919,28 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if (a_ptr->weight < c) a_ptr->weight = c;
 }
 
+bool randart_eligible(int tval) {
+	switch (tval) {
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_MSTAFF:
+	case TV_LITE:
+	case TV_RING:
+	case TV_AMULET:
+	case TV_SPECIAL:	/* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
+	//case TV_DIGGING:
+	//case TV_TOOL:
+	//case TV_INSTRUMENT:
+	//case TV_TRAPKIT:
+		return(TRUE);
+	default:
+		if (is_ammo(tval) ||
+		    is_melee_weapon(tval) ||
+		    is_armour(tval))
+			return(TRUE);
+	}
+	return(FALSE);
+}
 /*
  * Returns pointer to randart artifact_type structure.
  *
@@ -1941,25 +1963,9 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 
 	/* Screen for disallowed TVALS */
-	if ((k_ptr->tval != TV_BOW) &&
-	    (k_ptr->tval != TV_BOOMERANG) &&
-	    !is_ammo(k_ptr->tval) &&
-	    !is_melee_weapon(k_ptr->tval) &&
-	    !is_armour(k_ptr->tval) &&
-	    (k_ptr->tval != TV_MSTAFF) &&
-	    (k_ptr->tval != TV_LITE) &&
-	    (k_ptr->tval != TV_RING) &&
-	    (k_ptr->tval != TV_AMULET) &&
-	    //(k_ptr->tval != TV_DIGGING) &&	 /* better ban it? */
-	    //(k_ptr->tval != TV_TOOL) &&
-	    //(k_ptr->tval != TV_INSTRUMENT) &&
-	    (k_ptr->tval != TV_SPECIAL)) { /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
+	if (!randart_eligible(k_ptr->tval))
 		/* Not an allowed type */
 		return(NULL);
-	}
-
-	/* Randart ammo doesn't keep (exploding) from normal item */
-	if (is_ammo(k_ptr->tval)) k_ptr->pval = 0;
 
 	/* Mega Hack -- forbid randart polymorph rings(pval would be BAD) */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_POLYMORPH))
@@ -1993,6 +1999,9 @@ artifact_type *randart_make(object_type *o_ptr) {
 	 * First get basic artifact quality
 	 * 90% are good
 	 */
+
+	/* Randart ammo doesn't keep any "(exploding)" ability from normal base item */
+	if (is_ammo(k_ptr->tval)) k_ptr->pval = 0;
 
 	/* Hack - make nazgul rings of power more useful
 	   (and never 'cursed randarts' in the sense of sucking really badly): */

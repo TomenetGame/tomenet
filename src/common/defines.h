@@ -5814,7 +5814,7 @@
 #define RESF_LIFE		0x00010000U	/* allow +LIFE randarts */
 #define RESF_DEBUG_ITEM		0x00020000U	/* generate a certain item (k_idx) for debugging purpose */
 #define RESF_STOREFLAT		0x00040000U	/* generate all base item types with same probability */
-#define RESF_FORCERANDART	0x00080000U	/* generate a random artifact */
+#define RESF_FORCERANDART	0x00080000U	/* generate a random artifact -- ensure the item is eligible via randart_eligible(tval) */
 
 #define RESF_NO_ENCHANT		0x00100000U	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
 #define RESF_SAURON		0x00200000U	/* don't generate The One Ring, as player has already slain Sauron. -- This flag is abused for no_soloist drops eg from Santa Claus! */

@@ -1021,6 +1021,7 @@ errr get_obj_num_prep(u32b resf) {
 		k_idx = entry->index;
 
 		if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
+		if ((resf & RESF_FORCERANDART) && !randart_eligible(k_info[k_idx].tval)) continue;
 
 		/* Call the hook and adjust the probability */
 		if (hook) {
@@ -4472,14 +4473,14 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number != 1) return(FALSE);
 
-	/* shuffle art indices for fairness */
-	for (i = 0; i < MAX_A_IDX; i++) a_map[i] = i;
-	intshuffle(a_map, MAX_A_IDX);
-
 	/* Check if true artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
-	if (!cfg.arts_disabled &&
+	if (!cfg.arts_disabled && !(resf & RESF_FORCERANDART) &&
 	    !((resf & RESF_NOTRUEART) && !(resf & RESF_WINNER))) {
+		/* shuffle art indices for fairness */
+		for (i = 0; i < MAX_A_IDX; i++) a_map[i] = i;
+		intshuffle(a_map, MAX_A_IDX);
+
 		/* Check the artifact list (skip the "specials") */
 		for (im = 0; im < MAX_A_IDX; im++) {
 			i = a_map[im];
@@ -5990,7 +5991,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
  */
 void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf) {
 	/* usually lev = dungeonlevel (sometimes more, if in vault) */
-	object_type forge_bak, forge_highest, forge_lowest;
+	object_type forge_bak, forge_highest, forge_lowest, forge_forcerandart_bak;
 	object_type *o_ptr_bak = NULL, *o_ptr_highest = &forge_highest;
 	object_type *o_ptr_lowest = &forge_lowest;
 	bool resf_fallback = TRUE;
@@ -6079,6 +6080,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* virgin */
 	o_ptr->owner = 0;
 
+	/* RESF_FORCERANDART will zero the item if it could't be turned into a randart within n trials.
+	   We should never return a zero item, as it will become a (Nothing) if not caught outside appropriately. */
+	forge_forcerandart_bak = *o_ptr;
 
 	/* Hack for possible randarts, to be created in next for loop:
 	   Jewelry can keep +hit,+dam,+ac through artifying process!
@@ -6093,7 +6097,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	}
 	/* --------------------------------------------------------------------------------- */
 
-	if ((resf & RESF_FORCERANDART)) rolls = 2;
+	/* 'rolls' was 2.
+	   Was prone to fail, Zu-Aon would generate 1-2 (Nothing)s that way with previous invwipe() on top of this.
+	   However, the failure might not come from the # of rolls, but rather was forced by trying to force-randart
+	   objects that cannot become randarts, eg magic devices, traps. Instead, make sure the monster or whatever
+	   cause does only drop randart-eligible items, via randart_eligible(tval) check. */
+	if ((resf & RESF_FORCERANDART)) rolls = 3;
 
 	/* Roll for artifacts if allowed */
 	for (i = 0; i < rolls; i++) {
@@ -6179,7 +6188,11 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Done */
 		return;
 	} else if ((resf & RESF_FORCERANDART)) {
-		invwipe(o_ptr);
+		/* at least restore the original, un-enchanted item, not a (Nothing) if we were to invwipe() it (was previously the case).
+		   Usually this happens if the item base type was not eligible for randarting, eg magic devices. Their charges will be 0,
+		   as all other enchantments and boni, as no magic at all has been applied to it by now.
+		   Make sure to only call apply_magic() with RESF_FORCERANDART on eligible items via randart_eligible(tval) checks. */
+		*o_ptr = forge_forcerandart_bak;
 		return; /* failed to generate */
 	}
 

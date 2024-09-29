@@ -102,6 +102,7 @@ extern void random_resistance (artifact_type *a_ptr, bool is_scroll, int specifi
 extern void dragon_resist(artifact_type *a_ptr);
 extern s32b artifact_power (artifact_type *a_ptr);
 extern void apply_enchantment_limits(object_type *o_ptr);
+extern bool randart_eligible(int tval);
 
 /* tables.c */
 extern s16b ddd[9];
