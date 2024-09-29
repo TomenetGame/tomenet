@@ -7254,14 +7254,11 @@
 #define multiple_artifact_p(T) \
 	((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || admin_artifact_p(T))
 
-/* artifacts that as an exception can by used by winners -
-   note that checking for both TR5_WINNERS_ONLY and the actual artifact idx' is redundant actually */
+/* artifacts that as an exception can by used by winners */
 #define winner_artifact_p(T) \
 	(true_artifact_p(T) && \
 	((k_info[(T)->k_idx].flags5 & TR5_WINNERS_ONLY) || \
-	(T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
-	(T)->name1 == ART_PHASING || \
-	(T)->name1 == ART_MIRROROFGLORY || (T)->name1 == ART_DREADNOUGHT))
+	(T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND))
 
 /* artifacts that cannot be deposited on an empty/deallocated dun/wild floor,
    nor being dropped inside houses (if cfg.anti_arts_hoard is on.) */

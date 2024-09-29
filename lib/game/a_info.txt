@@ -2500,7 +2500,7 @@ P:0:1d1:0:0:0
 F:SPEED | SEE_INVIS |
 F:CURSED | HEAVY_CURSE | REGEN
 F:IM_NETHER | HOLD_LIFE | SPECIAL_GENE |
-F:INSTA_ART | ACTIVATE
+F:INSTA_ART | ACTIVATE | WINNERS_ONLY
 Z:teleport
 D:Imbued with the screams of the victims of undead everywhere, this
 D:ring is more a hole in reality than anything else. Strange forces
