@@ -13312,11 +13312,11 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 								exec_lua(0, format("custom_tunnel(%d,%d)", IS_PLAYER(-who) ? -who : 0, c_ptr->custom_lua_tunnel));
 							gi_ok[grids] = TRUE; /* Don't kill this object again right away further down via project_i() */
 						}
-
-						/* Burn floor somewhat */
-						if (randint(2) == 1) cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
-						else cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
 					}
+
+					/* Burn floor somewhat */
+					if (randint(2) == 1) cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
+					else cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
 
 					/* Update some things -- similar to GF_KILL_WALL */
 					//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
