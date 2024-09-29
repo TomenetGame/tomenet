@@ -215,6 +215,7 @@ VERMINCONTROL = add_spell {
 	}
 }
 
+-- NOTE: _not_  nature spell actually!
 RESISTS_I = add_spell {
 	["name"] = 	"Elemental Shield I",
 	["name2"] = 	"EleSh I",
@@ -237,6 +238,7 @@ RESISTS_I = add_spell {
 			"***Automatically projecting***",
 		}
 }
+-- NOTE: _not_  nature spell actually!
 RESISTS_II = add_spell {
 	["name"] = 	"Elemental Shield II",
 	["name2"] = 	"EleSh II",
@@ -302,4 +304,39 @@ DELCURSES_II = add_spell {
 			return ""
 	end,
 	["desc"] = 	{ "Removes all normal and heavy curses from your items.", }
+}
+
+NSLOWMONSTER_I = add_spell {
+	["name"] = 	"Grasping Vines I",
+	["name2"] = 	"Vine I",
+	["school"] = 	{SCHOOL_NATURE},
+	["level"] = 	6,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
+	["fail"] = 	10,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+				fire_grid_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, NSLOWMONSTER_I, 100), "conjures vines from the ground")
+			end,
+	["info"] = 	function()
+				return "power "..(5 + get_level(Ind, NSLOWMONSTER_I, 100))
+			end,
+	["desc"] = 	{ "Vines grasp an opponent, slowing it down.", }
+}
+NSLOWMONSTER_II = add_spell {
+	["name"] = 	"Grasping Vines II",
+	["name2"] = 	"Vine II",
+	["school"] = 	{SCHOOL_NATURE},
+	["level"] = 	23,
+	["mana"] = 	17,
+	["mana_max"] = 	17,
+	["fail"] = 	-20,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+				project_los(Ind, GF_OLD_SLOW, 5 + get_level(Ind, NSLOWMONSTER_I, 100), "conjures vines from the ground")
+			end,
+	["info"] = 	function()
+				return "power "..(5 + get_level(Ind, NSLOWMONSTER_I, 100))
+			end,
+	["desc"] = 	{ "Vines grasp all opponents in sight, slowing them down.", }
 }

@@ -21730,6 +21730,14 @@ these limitations will be lifted.
 
                     Tier III: Level 40.
 
+    Grasping Vines  Summons vines from the ground that grasp an opponent,
+                    slowing it down.
+                    Required skill level for first spell level: 6.
+
+                    Tier II: Level 23.
+                    Summons a wide array of vines, slowing down all opponents
+                    in your field of view.
+
     Vermin Control  Prevents vermin from breeding any further on your
                     current floor. Doesn't work on unnatural creatures.
                     Works on all currently existing breeders and also on all

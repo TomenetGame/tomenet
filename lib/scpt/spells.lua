@@ -201,8 +201,7 @@ school_book[4] = { ENTPOTION, RESISTS_II, VAPORMIRROR, TIDALWAVE_II, ICESTORM_II
 -- Create the book of translocation (22-27)
 school_book[5] = { BLINK, DISARM, TELEPORT, RECALL, PROBABILITY_TRAVEL, TELEKINESIS, TELEAWAY_II, }
 -- Create the book of the tree * SUMMONANIMAL requires pets first (28-32)
---school_book[6] = { VERMINCONTROL, REGENERATION, GROWTREE, RECOVERY_II, HEALING_III, }
-school_book[6] = { VERMINCONTROL, REGENERATION, GROWTREE, POISONBLOOD, RECOVERY_II, HEALING_III, DELCURSES_II, }
+school_book[6] = { VERMINCONTROL, REGENERATION, NSLOWMONSTER_II, GROWTREE, POISONBLOOD, RECOVERY_II, HEALING_III, DELCURSES_II, }
 -- Create the book of Knowledge (33-38)
 school_book[7] = { DETECTMONSTERS, REVEALWAYS, SENSEHIDDEN_II, IDENTIFY_III,  STARIDENTIFY, SENSEMONSTERS, VISION_II, }
 -- Create the book of the Time (39-42)
@@ -291,7 +290,7 @@ school_book[61] = { OCURSEDD_I, ODELFEAR, STARLIGHT_I, MEDITATION, OFEAR_I, DETE
 
 -- Create the handbook of alleviation
 school_book[62] = { ODELFEAR, HERBALTEA, MEDITATION, DISPELMAGIC, HCUREWOUNDS_II, HCURING_III, HSANITY, MSANITY, HRELSOULS_III }
--- Create the handbook of manipulation
+-- Create the handbook of manipulation  -- could add grasping vines, but these are all mc spells, kinda pointless
 school_book[63] = { MDISARM, MSILENCE, MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWMONSTER_II, MTELEAWAY, MCHARM, MSTOPCHARM, MTELEKINESIS }
 -- Create the handbook of wind and weather
 school_book[64] = { THUNDERSTORM, AIRWINGS, TIDALWAVE_I, VAPOR_II, LIGHTNINGBOLT_II, ICESTORM_I, FROSTBALL_I, FROSTBOLT_II, WATERBOLT_II, VAPORMIRROR }
