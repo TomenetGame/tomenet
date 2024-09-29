@@ -1770,6 +1770,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	if (connp->addr != NULL) free(connp->addr);
 	if (connp->host != NULL) free(connp->host);
 	if (connp->c_name != NULL) free(connp->c_name);
+	if (connp->pass != NULL) free(connp->pass);
 	Sockbuf_cleanup(&connp->w);
 	Sockbuf_cleanup(&connp->r);
 	Sockbuf_cleanup(&connp->c);
