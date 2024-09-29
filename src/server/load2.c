@@ -961,6 +961,7 @@ static void rd_item(object_type *o_ptr) {
 	}
 #endif
 
+#if 0 /* This code doesn't play well for spellbooks/scrolls if spells get added/modified via fix_spellbooks() et al? And expensive anyway. */
 #ifdef PLAYER_STORES
 	/* In case base item price has changed upwards, make sure the item isn't appraised below minimum enforced value now.
 	   Since we don't have an 'Ind' here, we use 0. However, since this always gives the 'true price', we only apply this
@@ -977,6 +978,7 @@ static void rd_item(object_type *o_ptr) {
 			s_printf("APPRAISED_VALUE_FIX: %d -> %ld: %s\n", tmp32s - 1, o_ptr->appraised_value - 1, note);
 		} else o_ptr->appraised_value = (s64b)tmp32s; /* Value dropped or stayed even? Keep old value */
 	}
+#endif
 #endif
 }
 
