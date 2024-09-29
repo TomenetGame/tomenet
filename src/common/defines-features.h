@@ -408,6 +408,13 @@
 #define WIELD_DEVICES
 //(Note: If manareg gets added to any devices, it should probably depend on charges left. However, cheapest staff is 200 au while basic mstaff is 300 au.)
 
+/* Server-side switch to allow clients to use item-diz-chat-pasting. This is defined separately for client-side too. */
+#if 1 /* on/off */
+ #ifndef CLIENT_SIDE
+  #define CLIENT_ITEM_PASTE_DIZ
+ #endif
+#endif
+
 
 
 /* ------------------------------------------------------------------------------------------------- */

@@ -1608,7 +1608,8 @@ static void init_kind_list() {
 			else if (buf[0] == 'D') {
 				p1 = buf + 2;
 				if (!(*p1)) continue; /* paranoia (broken file) */
-				(void)strncat(kind_list_dizline[kind_list_idx], p1, MSG_LEN - 1);
+				(void)strncat(kind_list_dizline[kind_list_idx], p1, MSG_LEN);
+				kind_list_dizline[kind_list_idx][MSG_LEN - 1] = 0;
 			}
 #endif
 			continue;

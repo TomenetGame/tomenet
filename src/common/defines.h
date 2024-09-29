@@ -176,6 +176,7 @@
 #define SFLG1_LIMIT_SPELLS	0x00000008U
 #define SFLG1_WEAPONS_NO_AC	0x00000010U
 #define SFLG1_SMALL_MAP		0x00000020U
+#define SFLG1_CIPD		0x00000040U	/* Server is ok with CLIENT_ITEM_PASTE_DIZ */
 
 
 /* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */

@@ -4809,6 +4809,9 @@ static int Receive_login(int ind) {
 #ifdef WEAPONS_NO_AC
 			sflags1 |= SFLG1_WEAPONS_NO_AC;
 #endif
+#ifdef CLIENT_ITEM_PASTE_DIZ
+			sflags1 |= SFLG1_CIPD;
+#endif
 
 			/* Set temporary flags */
 			sflags2 = sflags_TEMP;
