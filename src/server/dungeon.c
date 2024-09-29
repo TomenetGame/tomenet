@@ -9849,7 +9849,7 @@ void process_player_change_wpos(int Ind) {
 			if (!p_ptr->inventory[j].tval) break;
 			if (p_ptr->inventory[j].tval != TV_BOOK || !is_custom_tome(p_ptr->inventory[j].sval)) continue;
 
-			msg_print(Ind, "\374\377yHINT: Press \377y{{\377- to power-inscribe your custom books, eg a codex.");
+			msg_print(Ind, "\374\377yHINT: Press \377o{\377- to power-inscribe your custom books, eg a codex.");
 			msg_print(Ind, "\374\377y      When prompted for inscription, just enter: \377y@@@");
 			s_printf("warning_powins: %s\n", p_ptr->name);
 			p_ptr->warning_powins = 1;
