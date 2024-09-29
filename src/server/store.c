@@ -1373,8 +1373,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-	/* Hack so subinventories are placed at the very first slots even before custom objects */
-	if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
+	subinven_order_hack(&o_tv, &o_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -1469,8 +1468,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 			}
 
 #ifdef ENABLE_SUBINVEN
-			/* Hack so subinventories are placed at the very first slots even before custom objects */
-			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
+			subinven_order_hack(&j_tv, &j_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -6112,8 +6110,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	}
 
 #ifdef ENABLE_SUBINVEN
-	/* Hack so subinventories are placed at the very first slots even before custom objects */
-	if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
+	subinven_order_hack(&o_tv, &o_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -6163,8 +6160,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 			}
 
 #ifdef ENABLE_SUBINVEN
-			/* Hack so subinventories are placed at the very first slots even before custom objects */
-			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
+			subinven_order_hack(&j_tv, &j_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST

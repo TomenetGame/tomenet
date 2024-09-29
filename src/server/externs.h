@@ -1403,6 +1403,7 @@ extern void display_inven(int Ind);
 #ifdef ENABLE_SUBINVEN
 extern void display_subinven(int Ind, int islot);
 extern void display_subinven_aux(int Ind, int islot, int slot);
+extern void subinven_order_hack(s16b *tval, s16b *sval);
 #endif
 extern void display_equip(int Ind);
 extern void display_invenequip(int Ind);

@@ -11065,7 +11065,7 @@ bool inven_item_optimize(int Ind, int item) {
 					invwipe(&p_ptr->subinventory[i + 1][s]);
 				}
 				display_subinven(Ind, i);
-				display_subinven(Ind, i + 1);
+				display_subinven(Ind, i + 1); //actually replace this by a final 'erase' line for the final slot, see below...
 			}
 #endif
 			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
@@ -11270,6 +11270,39 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 #endif
 }
 
+
+#ifdef ENABLE_SUBINVEN
+void subinven_order_hack(s16b *tval, s16b *sval) {
+	if (*tval != TV_SUBINVEN) return;
+
+	/* Hack so subinventories are placed at the very first slots even before custom objects */
+	*tval = TV_MAX + 1;
+
+ #if 1
+	/* Additionally hack svals for sort order of the bags among each other, highest number at the bottom.
+	   Any positive integers are fine, but stay below 100, as that is the first sval for chests.
+	   Reason is that the subinven terminal window can grow really huge with a lot of bags,
+	   but we might want to have the least important ones (alchemy satchel) at the end,
+	   so if the terminal size isn't sufficient to see all, we still see the most important ones */
+	switch (*sval) {
+	case SV_SI_SATCHEL:
+		*sval = 99;
+		break;
+	case SV_SI_TRAPKIT_BAG:
+		*sval = 98;
+		break;
+	case SV_SI_MDEVP_WRAPPING:
+		*sval = 97;
+		break;
+	case SV_SI_POTION_BELT:
+		*sval = 95;
+		break;
+	case SV_SI_FOOD_BAG:
+		*sval = 96;
+	}
+ #endif
+}
+#endif
 
 
 /*
@@ -11483,7 +11516,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
            Note: We skip the INVEN_PACK overflow slot, so an overflow-added item is kept in the last slot and doesn't get sorted in 'properly', hm. */
 	if (i < INVEN_PACK) {
 		s64b o_value, j_value;
-		u16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
+		s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
 		if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
 			o_tv = o_ptr->tval2;
@@ -11491,8 +11524,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		}
 
 #ifdef ENABLE_SUBINVEN
-		/* Hack so subinventories are placed at the very first slots even before custom objects */
-		if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
+		subinven_order_hack(&o_tv, &o_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -11520,8 +11552,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			}
 
 #ifdef ENABLE_SUBINVEN
-			/* Hack so subinventories are placed at the very first slots even before custom objects */
-			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
+			subinven_order_hack(&j_tv, &j_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -11870,6 +11901,10 @@ void combine_pack(int Ind) {
 			/* Can we drop "o_ptr" onto "j_ptr"? */
 			/* 0x40: Handle !G inscription - prevents any partial combining aka partial stack-shifting across slots too though, atm :/ but that's maybe not really an issue. */
 			if (object_similar(Ind, j_ptr, o_ptr, (p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0) | 0x40)) {
+#ifdef ENABLE_SUBINVEN
+				int s;
+#endif
+
 				/* clear if used */
 				if (p_ptr->current_force_stack - 1 == i) p_ptr->current_force_stack = 0;
 
@@ -11886,6 +11921,15 @@ void combine_pack(int Ind) {
 				for (k = i; k < INVEN_PACK; k++) {
 					/* Structure copy */
 					p_ptr->inventory[k] = p_ptr->inventory[k + 1];
+#ifdef ENABLE_SUBINVEN
+					if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
+						/* Slide everything down */
+						for (s = 0; s < p_ptr->inventory[k].bpval; s++) {
+							/* Structure copy */
+							p_ptr->subinventory[k][s] = p_ptr->subinventory[k + 1][s];
+						}
+					}
+#endif
 				}
 
 				/* Update inventory indices - mikaelh */
@@ -11893,6 +11937,12 @@ void combine_pack(int Ind) {
 				inven_index_slide(Ind, i + 1, -1, INVEN_PACK);
 
 				/* Erase the "final" slot */
+#ifdef ENABLE_SUBINVEN
+				if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
+					for (s = 0; s < p_ptr->inventory[k].bpval; s++)
+						invwipe(&p_ptr->subinventory[k][s]);
+				}
+#endif
 				invwipe(&p_ptr->inventory[k]);
 
 				/* Window stuff */
@@ -11930,8 +11980,11 @@ void combine_pack(int Ind) {
 void reorder_pack(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, *j_ptr, temp;
-
 	int i, j, k;
+#ifdef ENABLE_SUBINVEN
+	object_type subtemp[SUBINVEN_PACK];
+	int s;
+#endif
 	s16b o_tv, o_sv, j_tv, j_sv;
 	s64b o_value, j_value;
 
@@ -11956,8 +12009,7 @@ void reorder_pack(int Ind) {
 		}
 
 #ifdef ENABLE_SUBINVEN
-		/* Hack so subinventories are placed at the very first slots even before custom objects */
-		if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
+		subinven_order_hack(&o_tv, &o_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -11986,8 +12038,7 @@ void reorder_pack(int Ind) {
 			}
 
 #ifdef ENABLE_SUBINVEN
-			/* Hack so subinventories are placed at the very first slots even before custom objects */
-			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
+			subinven_order_hack(&j_tv, &j_sv);
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -12048,15 +12099,39 @@ void reorder_pack(int Ind) {
 
 		/* Save the moving item */
 		temp = p_ptr->inventory[i];
-
+#ifdef ENABLE_SUBINVEN
+		if (temp.tval == TV_SUBINVEN) {
+			for (k = 0; k < temp.bpval; k++)
+				subtemp[k] = p_ptr->subinventory[i][k];
+		}
+#endif
 		/* Structure slide (make room) */
 		for (k = i; k > j; k--) {
 			/* Slide the item */
 			p_ptr->inventory[k] = p_ptr->inventory[k - 1];
+#ifdef ENABLE_SUBINVEN
+			if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
+				/* Slide everything down */
+				for (s = 0; s < p_ptr->inventory[k].bpval; s++) {
+					/* Structure copy */
+					p_ptr->subinventory[k][s] = p_ptr->subinventory[k - 1][s];
+					/* Redraw subinven item -- todo: Implement PW_SUBINVEN */
+					display_subinven_aux(Ind, k, s);
+				}
+			}
+#endif
 		}
-
 		/* Insert the moved item */
 		p_ptr->inventory[j] = temp;
+#ifdef ENABLE_SUBINVEN
+		if (temp.tval == TV_SUBINVEN) {
+			for (k = 0; k < temp.bpval; k++) {
+				p_ptr->subinventory[j][k] = subtemp[k];
+				/* Redraw subinven item -- todo: Implement PW_SUBINVEN */
+				display_subinven_aux(Ind, j, k);
+			}
+		}
+#endif
 
 		if (p_ptr->item_newest == i) Send_item_newest(Ind, j);
 
