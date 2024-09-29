@@ -11062,10 +11062,8 @@ bool inven_item_optimize(int Ind, int item) {
 			if (p_ptr->inventory[i].tval == TV_SUBINVEN) {
 				for (s = 0; s < p_ptr->inventory[i].bpval; s++) {
 					p_ptr->subinventory[i][s] = p_ptr->subinventory[i + 1][s];
-					invwipe(&p_ptr->subinventory[i + 1][s]);
+					display_subinven_aux(Ind, i, s);
 				}
-				display_subinven(Ind, i);
-				display_subinven(Ind, i + 1); //actually replace this by a final 'erase' line for the final slot, see below...
 			}
 #endif
 			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
@@ -11076,6 +11074,14 @@ bool inven_item_optimize(int Ind, int item) {
 		inven_index_slide(Ind, item + 1, -1, INVEN_PACK);
 
 		/* Erase the "final" slot */
+#ifdef ENABLE_SUBINVEN
+		if (p_ptr->inventory[i].tval == TV_SUBINVEN) {
+			for (s = 0; s < p_ptr->inventory[i].bpval; s++) {
+				invwipe(&p_ptr->subinventory[i][s]);
+				display_subinven_aux(Ind, i, s);
+			}
+		}
+#endif
 		invwipe(&p_ptr->inventory[i]);
 	}
 
@@ -11927,6 +11933,7 @@ void combine_pack(int Ind) {
 						for (s = 0; s < p_ptr->inventory[k].bpval; s++) {
 							/* Structure copy */
 							p_ptr->subinventory[k][s] = p_ptr->subinventory[k + 1][s];
+							display_subinven_aux(Ind, k, s);
 						}
 					}
 #endif
@@ -11939,8 +11946,10 @@ void combine_pack(int Ind) {
 				/* Erase the "final" slot */
 #ifdef ENABLE_SUBINVEN
 				if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
-					for (s = 0; s < p_ptr->inventory[k].bpval; s++)
+					for (s = 0; s < p_ptr->inventory[k].bpval; s++) {
 						invwipe(&p_ptr->subinventory[k][s]);
+						display_subinven_aux(Ind, k, s);
+					}
 				}
 #endif
 				invwipe(&p_ptr->inventory[k]);
