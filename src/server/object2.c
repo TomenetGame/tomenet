@@ -5037,6 +5037,20 @@ static void charge_staff(object_type *o_ptr) {
 
 
 
+s16b ammo_explosion[] = {
+    GF_ELEC,	GF_POIS,	GF_ACID,	GF_COLD,
+    GF_FIRE,	GF_PLASMA,	GF_LITE,	GF_DARK,
+    GF_SHARDS,	GF_SOUND,	GF_CONFUSION,	GF_FORCE,
+    GF_INERTIA,	GF_MANA,	GF_METEOR,	GF_ICE,
+    GF_CHAOS,	GF_NETHER,	GF_NEXUS,	GF_TIME,
+    GF_GRAVITY,	GF_KILL_WALL,	GF_AWAY_ALL,	GF_TURN_ALL,
+    GF_NUKE,	/*GF_STUN, */	GF_DISINTEGRATE,GF_HELLFIRE
+};
+/* Add random explosion-power to ammunition, via o_ptr or a_ptr */
+void ammo_add_explosion(s16b *pval) {
+	*pval = ammo_explosion[rand_int(sizeof(ammo_explosion) / sizeof(s16b))];
+}
+
 /*
  * Apply magic to an item known to be a "weapon"
  *
@@ -5107,27 +5121,10 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
-			if (o_ptr->sval == SV_AMMO_MAGIC) {
+			if (o_ptr->sval == SV_AMMO_MAGIC)
 				o_ptr->to_h = o_ptr->to_d = o_ptr->pval = o_ptr->name2 = o_ptr->name3 = 0;
-				break;
-			}
-
-			else if ((power == 1) && !o_ptr->name2) {
-				if (randint(500) < level + 5) {
-					/* Exploding missile */
-					int power[27] = { GF_ELEC, GF_POIS, GF_ACID,
-					    GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
-					    GF_DARK, GF_SHARDS, GF_SOUND,
-					    GF_CONFUSION, GF_FORCE, GF_INERTIA,
-					    GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
-					    GF_NETHER, GF_NEXUS, GF_TIME,
-					    GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-					    GF_TURN_ALL, GF_NUKE, //GF_STUN,
-					    GF_DISINTEGRATE, GF_HELLFIRE };
-
-					o_ptr->pval = power[rand_int(27)];
-				}
-			}
+			else if (power == 1 && !o_ptr->name2 && randint(500) < level + 5)
+				ammo_add_explosion((s16b*)&(o_ptr->pval));
 			break;
 		case TV_BOOMERANG:
 		case TV_BOW:

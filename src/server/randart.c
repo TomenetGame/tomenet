@@ -2172,19 +2172,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		else if (magik(20)) a_ptr->dd += 1;
 
 		/* exploding art ammo is very rare - note: magic ammo can't explode */
-		if (magik(10) && (a_ptr->sval != SV_AMMO_MAGIC)) {
-			int power[27]= { GF_ELEC, GF_POIS, GF_ACID,
-			    GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
-			    GF_DARK, GF_SHARDS, GF_SOUND,
-			    GF_CONFUSION, GF_FORCE, GF_INERTIA,
-			    GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
-			    GF_NETHER, GF_NEXUS, GF_TIME,
-			    GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-			    GF_TURN_ALL, GF_NUKE, //GF_STUN,
-			    GF_DISINTEGRATE, GF_HELLFIRE };
-
-			a_ptr->pval = power[rand_int(27)];
-		}
+		if (magik(10) && (a_ptr->sval != SV_AMMO_MAGIC)) ammo_add_explosion(&(a_ptr->pval));
 	}
 
 	/* First draft: add two abilities, then curse it three times. */
