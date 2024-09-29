@@ -181,6 +181,7 @@ INVISIBILITY = add_spell {
 	}
 }
 
+-- NOTE: _not_ an Air spell actually!
 POISONBLOOD = add_spell {
 	["name"] = 	"Poison Blood",
 	["name2"] = 	"PBlood",
