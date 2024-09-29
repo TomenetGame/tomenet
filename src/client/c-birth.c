@@ -79,24 +79,41 @@ static void choose_name(void) {
 	prt("If an account is not validated, it has certain restrictions to prevent abuse.", 19, 2);
 #else
  #ifdef ATMOSPHERIC_INTRO /* ascii-art in the top area */
+	char introline[6][MAX_CHARS] = { 0 };
+	int x, y;
   #define LOGO_ROW 1
   #define LOGO_ATTR TERM_EMBER
+  #define LOGO_SOLID /* use 'solid-wall' char instead of '#' */
 	/* display a title */
   #if 0
-	c_put_str(TERM_FIRETHIN, "  ^^^^^^^^^   ^^^^^^^    ^^^ ^^^      ^^^^^^^    ^^^  ^^^    ^^^^^^^   ^^^^^^^^^", LOGO_ROW, 0);
-	c_put_str(TERM_LITE,     " /########/  /######/   /##|/##|     /######/   /##| /##/   /######/  /########/", LOGO_ROW + 1, 0);
-	c_put_str(TERM_FIRE,     "   /##/     /##/ ##/   /###/###|    /##/       /###|/##/   /##/         /##/    ", LOGO_ROW + 2, 0);
-	c_put_str(TERM_FIRE,     "  /##/     /##/ ##/   /########|   /######/   /###/###/   /######/     /##/     ", LOGO_ROW + 3, 0);
-	c_put_str(TERM_FIRE,     " /##/     /##/ ##/   /##|##||##|  /##/       /##/|###/   /##/         /##/      ", LOGO_ROW + 4, 0);
-	c_put_str(TERM_EMBER,    "/##/     /######/   /##/|##||##| /######/   /##/ |##/   /######/     /##/       ", LOGO_ROW + 5, 0);
+	strcpy(introline[0], "  ^^^^^^^^^   ^^^^^^^    ^^^ ^^^      ^^^^^^^    ^^^  ^^^    ^^^^^^^   ^^^^^^^^^");
+	strcpy(introline[1], " /########/  /######/   /##|/##|     /######/   /##| /##/   /######/  /########/");
+	strcpy(introline[2], "   /##/     /##/ ##/   /###/###|    /##/       /###|/##/   /##/         /##/    ");
+	strcpy(introline[3], "  /##/     /##/ ##/   /########|   /######/   /###/###/   /######/     /##/     ");
+	strcpy(introline[4], " /##/     /##/ ##/   /##|##||##|  /##/       /##/|###/   /##/         /##/      ");
+	strcpy(introline[5], "/##/     /######/   /##/|##||##| /######/   /##/ |##/   /######/     /##/       ");
   #else
-	c_put_str(TERM_FIRETHIN, " ^^^^^^^^^^  ^^^^^^^^  ^^^^    ^^^^  ^^^^^^^^   ^^^  ^^^^  ^^^^^^^^  ^^^^^^^^^^", LOGO_ROW, 0);
-	c_put_str(TERM_LITE,     " |########|  |######|  |###\\  /###|  |######|   |##\\ |##|  |######|  |########|", LOGO_ROW + 1, 0);
-	c_put_str(TERM_FIRE,     " |########|  |##| ##|  |####\\/####|  |##|       |###\\|##|  |##|      |########|", LOGO_ROW + 2, 0);
-	c_put_str(TERM_FIRE,     "    |##|     |##| ##|  |##########|  |######|   |#######|  |######|     |##|   ", LOGO_ROW + 3, 0);
-	c_put_str(TERM_FIRE,     "    |##|     |##| ##|  |##|\\##/|##|  |##|       |##|\\###|  |##|         |##|   ", LOGO_ROW + 4, 0);
-	c_put_str(TERM_EMBER,    "    |##|     |######|  |##| \\/ |##|  |######|   |##| \\##|  |######|     |##|   ", LOGO_ROW + 5, 0);
+	strcpy(introline[0], " ^^^^^^^^^^  ^^^^^^^^  ^^^^    ^^^^  ^^^^^^^^   ^^^  ^^^^  ^^^^^^^^  ^^^^^^^^^^");
+	strcpy(introline[1], " |########|  |######|  |###\\  /###|  |######|   |##\\ |##|  |######|  |########|");
+	strcpy(introline[2], " |########|  |##| ##|  |####\\/####|  |##|       |###\\|##|  |##|      |########|");
+	strcpy(introline[3], "    |##|     |##| ##|  |##########|  |######|   |#######|  |######|     |##|   ");
+	strcpy(introline[4], "    |##|     |##| ##|  |##|\\##/|##|  |##|       |##|\\###|  |##|         |##|   ");
+	strcpy(introline[5], "    |##|     |######|  |##| \\/ |##|  |######|   |##| \\##|  |######|     |##|   ");
   #endif
+  #ifdef LOGO_SOLID
+	for (y = 0; y < 6; y++) for (x = 0; x < MAX_CHARS; x++) if (introline[y][x] == '#')
+   #ifdef WINDOWS
+		introline[y][x] = FONT_MAP_SOLID_WIN;
+   #else
+		introline[y][x] = FONT_MAP_SOLID_X11;
+   #endif
+  #endif
+	c_put_str(TERM_FIRETHIN, introline[0], LOGO_ROW, 0);
+	c_put_str(TERM_LITE,     introline[1], LOGO_ROW + 1, 0);
+	c_put_str(TERM_FIRE,     introline[2], LOGO_ROW + 2, 0);
+	c_put_str(TERM_FIRE,     introline[3], LOGO_ROW + 3, 0);
+	c_put_str(TERM_FIRE,     introline[4], LOGO_ROW + 4, 0);
+	c_put_str(TERM_EMBER,    introline[5], LOGO_ROW + 5, 0);
  #endif
 	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", LOGIN_ROW, 2);
 	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice. Remember", LOGIN_ROW + 1, 2);
