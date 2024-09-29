@@ -9216,7 +9216,7 @@ void player_death(int Ind) {
 #endif
 	bool just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
-	object_type *inventory_copy = C_NEW(INVEN_TOTAL, object_type);
+	object_type *inventory_copy;
 
 
 	p_ptr->tmp_y = p_ptr->total_winner; //was: bool was_total_winner = p_ptr->total_winner,;
@@ -10102,6 +10102,7 @@ void player_death(int Ind) {
 	ang_sort_comp = ang_sort_comp_value;
 	ang_sort_swap = ang_sort_swap_value;
 	/* Remember original position before sorting */
+	inventory_copy = C_NEW(INVEN_TOTAL, object_type);
 	for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
 	memcpy(inventory_copy, p_ptr->inventory, sizeof(object_type) * INVEN_TOTAL);
 	/* Sort the player's inventory according to value */
