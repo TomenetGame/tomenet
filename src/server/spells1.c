@@ -10195,8 +10195,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		if (blind) msg_print(Ind, "Something bounces!");
 		else {
-			if (who && who > PROJECTOR_UNUSUAL) {
+			if (IS_PVP) {
 				if (p_ptr->play_vis[0 - who]) msg_format(Ind, "%^s attack bounces!", m_name_gen);
+				else msg_print(Ind, "Its attack bounces!");
+			} else if (who >= 0) {
+				if (p_ptr->mon_vis[who]) msg_format(Ind, "%^s attack bounces!", m_name_gen);
 				else msg_print(Ind, "Its attack bounces!");
 			} else msg_print(Ind, "The attack bounces!");
 		}
