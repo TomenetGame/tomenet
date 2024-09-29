@@ -1584,9 +1584,12 @@ void whats_under_your_feet(int Ind, bool force) {
 #ifdef ENABLE_SUBINVEN
 /* Try to put a newly acquired item into a specialized bag automatically.
    If the item was from the floor, o_idx must be specified, otherwise it must be -1.
-   Returns TRUE if we have to set try_pickup = FALSE in carry() */
-bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought) {
-	int i, num, slot;
+   Returns:
+    If item was completely stowned, returns subinvenslot of the item stowed.
+    If item was partially stowed, return -subinvenslot if any of the six @<A|O|S><0|1> inscriptions is on the bag, otherwise FALSE.
+    If item was not stowed at all, returns FALSE. (Eg we have to set try_pickup = FALSE in carry() in that case). */
+s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought) {
+	int i, num, slot, globalslot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
 	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE;
@@ -1639,7 +1642,8 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		/* Eligible subinventory found, try to move as much as possible */
 		stowed_some = TRUE;
 		slot = subinven_stow_aux(Ind, o_ptr, i);
-		Send_item_newest(Ind, (i + 1) * 100 + ABS(slot) - 1);
+		globalslot = (i + 1) * 100 + ABS(slot) - 1;
+		Send_item_newest(Ind, globalslot);
 		if ((fully_stowed = (slot > 0))) break; /* If complete stack was moved, we're done */
  #ifdef SUBINVEN_LIMIT_GROUP
 		break;
@@ -1664,7 +1668,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	//p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 
 	/* If it was not an item from the floor, we'll discard/delete it manually */
-	if (o_idx == -1) return(delete_it);
+	if (o_idx == -1) return(delete_it ? globalslot : FALSE);
 
 	/* We picked up everything there was! Delete original */
 	if (delete_it) {
@@ -1676,7 +1680,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		/* Tell the client */
 		Send_floor(Ind, 0);
 
-		return(TRUE);
+		return(globalslot);
 	} else if (!pick_one) {
 		if (check_guard_inscription(s_ptr->note, 'A') >= 1 ||
 		    check_guard_inscription(s_ptr->note, 'O') >= 1 ||
@@ -1686,7 +1690,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 			   Reasoning: !An, !On, !Sn are usually used for managing restocking of the bag.
 			              Therefore it is unlikely that the player intends to pick up the
 			              remaining stack into his normal inventory. */
-			return(stowed_some);
+			return(stowed_some ? -globalslot : FALSE);
 		}
 		/* There are still items left in the stack, and we didn't try to pick up just one,
 		   so additionally try now to pick up the rest of this pile normally */
@@ -1694,7 +1698,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		return(FALSE);
 	}
 	/* We tried to pick_one and managed to stow it! So we're done. */
-	else if (fully_stowed) return(TRUE);
+	else if (fully_stowed) return(globalslot);
 	/* We tried to pick_one, but still failed to stow it! So try to pick it up normally now. */
 	else return(FALSE);
 }

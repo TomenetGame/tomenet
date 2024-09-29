@@ -679,7 +679,7 @@ extern void py_bash(int Ind, int y, int x);
 extern void py_bash_mon(int Ind, int y, int x);
 extern void py_bash_py(int Ind, int y, int x);
 #ifdef ENABLE_SUBINVEN
-extern bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought);
+extern s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought);
 #endif
 extern int search_chance(player_type *p_ptr);
 

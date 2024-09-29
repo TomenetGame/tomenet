@@ -5167,7 +5167,8 @@ void do_cmd_query_symbol(int Ind, char sym) {
 #ifdef ENABLE_SUBINVEN
 /* Attempt to stow as much as possible of an object (stack) from OUTSIDE our inventory into a specific (sslot) subinventory container.
    Increases player's total_weight. Does not delete source item if moved, just reduces its number (down to 0).
-   Returns <slot+1> if fully stowed, <-slot-1> if partially stowed, otherwise 0. (Note: There is no function subinven_stow() actually.). */
+   Returns <slot+1> if fully stowed, <-slot-1> if partially stowed, otherwise 0. (Note: There is no function subinven_stow() actually.),
+   where 'slot' is the subinven raw slot, ie 0...<bagcapacity-1>. */
 s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
