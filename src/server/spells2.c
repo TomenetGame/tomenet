@@ -9614,17 +9614,8 @@ s16b mix_chemicals(int Ind, int item) {
 	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
 	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
 
-#ifdef ENABLE_SUBINVEN
-	if (item < SUBINVEN_INVEN_MUL) {
-		if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL) return(-1); //don't allow mixing item from satchel with item from inven
-		o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
-		o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
-	} else {
-		if (p_ptr->current_activation < SUBINVEN_INVEN_MUL) return(-1); //don't allow mixing item from satchel with item from inven
-		o_ptr = &p_ptr->subinventory[p_ptr->current_activation / SUBINVEN_INVEN_MUL - 1][p_ptr->current_activation % SUBINVEN_INVEN_MUL]; /* Ingredient #2 */
-		o2_ptr = &p_ptr->subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL]; /* Ingredient #1 */
-	}
-#endif
+	if (!get_inven_item(Ind, p_ptr->current_activation, &o_ptr)) return(-1); /* Ingredient #2 */
+	if (!get_inven_item(Ind, item, &o2_ptr)) return(-1); /* Ingredient #1 */
 
 	/* Cannot mix a single non-mixture chemical with itself */
 	if (item == p_ptr->current_activation && o_ptr->number < 2 && !(o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)) return(-1);
