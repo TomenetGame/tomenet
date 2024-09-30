@@ -3347,7 +3347,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
  * This allows an item to *look* like the player is "aware" of it
  */
 void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = (Ind ? Players[Ind] : NULL);
 
 	bool hack_aware = FALSE;
 	bool hack_known = FALSE;
