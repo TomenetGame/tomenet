@@ -1731,6 +1731,7 @@ void admin_outfit(int Ind, int realm) {
 static void player_outfit(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, tv, sv, pv, bpv, num, k_idx, body;
+	bool x0 = FALSE;
 
 	object_type forge;
 	object_type *o_ptr = &forge;
@@ -1959,6 +1960,12 @@ static void player_outfit(int Ind) {
 			break;
 		}
 
+		/* If it's a tool-slot item and we're a vampire, inscribe it @x0 for easy switching with the Mummy Wrapping */
+		if (p_ptr->prace == RACE_VAMPIRE && wield_slot(Ind, o_ptr) == INVEN_TOOL) {
+			o_ptr->note = quark_add("@x0");
+			x0 = TRUE;
+		}
+
 		/* Add the item to the player's inventory/equipment */
 		do_player_outfit();
 	}
@@ -1991,6 +1998,7 @@ static void player_outfit(int Ind) {
 	case RACE_VAMPIRE: /* vampires get mummy wrapping against the burning sunlight */
 		invcopy(o_ptr, lookup_kind(TV_TOOL, SV_TOOL_WRAPPING));
 		o_ptr->number = 1;
+		if (x0) o_ptr->note = quark_add("@x0");
 		do_player_outfit();
 		break;
 	case RACE_MAIA: /* Maiar all start with 1.000 in Astral, so maybe we just give them that Power Bolt I spell :| */
