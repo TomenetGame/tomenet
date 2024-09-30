@@ -3592,7 +3592,8 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	//take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
-	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable)
+	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable
+	    && TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)
 		inven_damage(Ind, set_acid_destroy, inv);
 
 	return(dam);
@@ -11854,10 +11855,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				if (randint(6) == 1) {
 					/* Don't kill inventory in bloodbond... */
-					int breakable = 1;
-
-					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
-					if (breakable) inven_damage(Ind, set_acid_destroy, 2);
+					if (!(IS_PVP && check_blood_bond(Ind, -who))) {
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_acid_destroy, 2);
+						if (magik(50)) equip_damage(Ind, GF_ACID);
+					}
 				}
 			}
 		}

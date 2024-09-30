@@ -2315,7 +2315,7 @@ static byte player_color(int Ind) {
 	/* Black Breath carriers emit malignant aura sometimes.. */
 	if (p_ptr->black_breath && magik(50)) return(TERM_L_DARK);
 
-	/* Covered by a mummy wrapping? */
+	/* Covered by a mummy wrapping? Tarpaulin has no such effect for now. */
 	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
 	if (p_ptr->cloaked == 1) pcolor = TERM_L_DARK; /* ignore cloak_neutralized for now */
 

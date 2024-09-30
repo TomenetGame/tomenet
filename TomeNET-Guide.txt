@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 29. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 30. September 2024 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10458,7 +10458,8 @@ Hit point drain ('Drains your hit points')
      -Items that just drain your HP
      -Items that have strong good powers and you use them as a Vampire
      -The sun, when it's day and you're a Vampire and out in the open without
-      a protective mummy wrapping or something granting resistance to light.
+      a protective wrapping, such as a Mummy Wrapping, or something granting
+      resistance to light.
      -Monster forms that provide wall-passing (wraith form)
 
     HP drain can be countered by HP regeneration, which can be gained from:
@@ -11360,8 +11361,9 @@ days, so you will have about 2.5 h to carry them out.
 
 Wanderers in the wilderness in turn would rather prefer day light in order to
 locate the entrance to that dungeon they are looking for.
-Vampires burn if they move around in day light without either a mummy wrapping
-that protects them or an item that provides resistance to light.
+Vampires burn if they move around in day light without either a protective
+wrapping such as a Mummy Wrapping that protects them or an item that provides
+resistance to light.
 Even store orders and the Merchants Guild mail system work in in-game time and
 tell your character how long their deliveries will take, not you as the player,
 so when they speak of "hours" or "days", fear not, it'll be much faster in
@@ -11486,7 +11488,7 @@ Undead characters take only half as much drowning damage.
 
 During swimming, you might get other negative side effects:
 - Inventory or equipment might take some water damage. Having a tarpaulin
-  equipped or being immune to water will prevent this.
+  equipped will help your inventory, being immune to water prevents all damage.
   (Acquiring levitation is the simplest way of avoiding this, as you won't
   touch the water at all that way.)
 - If your Strength isn't sustained you might get it reduced sometimes due to
@@ -12445,7 +12447,8 @@ Lightning/Electricity   These attacks can destroy rings, damage amulets
                         Immunity or double resistance helps protecting items
                         in your inventory from getting harmed (5.10), (5.15).
 
-Acid                    These attacks can destroy items in your inventory.
+Acid                    These attacks can destroy items in your inventory if
+                        you don't wear a tarpaulin.
                         They can also damage your equipment.
                         Without resistance it can reduce your charisma.
                         Acid bolts do (level/3)+(7d8) damage.
@@ -12566,11 +12569,11 @@ Water           Water resistance is rare (an *ID*ed item will say
                 them and usually do a lot of damage.
                 Resistance will cut damage to 1/3. (For players in aquatic
                 form this gets overridden by its cut down to 1/4 instead.)
-                Resistance will also reduce the chance of harm to items in
-                inventory or equipment and completely prevent stun and
-                confusion effects from water-based attacks.
-                If you don't wear a 'tarpaulin' items in your inventory might
-                be destroyed by the water (if they don't resist water).
+                Resistance, immunity or aquatic form will also reduce or
+                prevent the chance of harm to items in inventory or
+                equipment and completely prevent stun and confusion effects
+                from water-based attacks.
+                Wearing a tarpaulin also protects items in your inventory.
                 Water bolts do (10d10)+level damage.
                 Water balls do 50+(1...[level*5/2]) damage.
                 Note: The confusion effect can be prevented by confusion
@@ -14431,11 +14434,11 @@ Sprig of Athelas    Eat this one to cure Black Breath (see (1.3a) for more
                     also heals for 8d8, cures poison, disease, stun, cuts,
                     confusion and hallucinations.
 
-Tarpaulin           When equipped a tarp prevents your inventory and equipment
-                    from taking water damage when crossing water fields or when
-                    you are attacked with water-based effects.
-                    Note that your weapon is not included in this protection
-                    when you for example attack a water-based monster with it.
+Tarpaulin           When equipped a tarp prevents your inventory from taking
+                    water or acid damage damage, for example when crossing
+                    water grids or when you are attacked with water- or acid-
+                    based effects.
+                    Note that a Tarpaulin doesn't protect your equipment.
 
 Grinding Tool       Used by demolitionists (see "Digging" skill in (7.2)) to
                     grind items containing wood or metal, which they don't have
@@ -14845,7 +14848,6 @@ Custom Books        x               x
 Armour can get damaged when an elemental monster attacks you or when you get
 hit by elemental magic. Blocking an attack with a shield may damage it in the
 same manner. Weapons may take damage if you hit an elemental monster with them.
-Armour might also rust from moving through water without a tarpaulin equipped.
 
 Armour (and shields in archaic server version) getting damage means a reduction
 of their +AC bonus by 1 point each time, while weapons getting damaged means a
@@ -18995,7 +18997,7 @@ create a character!):
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight. If they are moving on the world surface (meaning not in a dungeon
     or tower) while it's day, the sun will burn them if they don't resist light
-    or wear a mummy wrapping.
+    or wear a protective wrapping.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness thanks to an intrinsic
     trait exclusive for vampire race characters: Darkvision. This ability grows

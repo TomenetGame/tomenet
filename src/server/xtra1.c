@@ -4716,8 +4716,8 @@ void calc_boni(int Ind) {
 	    && !(in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS))) {
 		/* damage from sunlight */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
-		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
-//		    !(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
+		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) &&
+		    //!(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
 		    !(zcave[p_ptr->py][p_ptr->px].info & (CAVE_PROT | CAVE_ICKY)) && /* don't burn inside inn nor in the player's house */
 		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED) &&
 		    zcave[p_ptr->py][p_ptr->px].feat != FEAT_SHOP) {

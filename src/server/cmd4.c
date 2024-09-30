@@ -2126,7 +2126,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 
 		fprintf(fff, "\n");
 
-		/* Covered by a mummy wrapping? */
+		/* Covered by a mummy wrapping? -- Tarpaulin doesn't hide for now. */
 		if ((TOOL_EQUIPPED(q_ptr) == SV_TOOL_WRAPPING) && !admin) hidden = TRUE;
 
 		/* Print equipments */
