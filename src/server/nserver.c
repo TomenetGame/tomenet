@@ -9312,14 +9312,17 @@ int Send_music_vol(int Ind, int music, int musicalt, int musicalt2, char vol) {
 int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr, **zcave;
-
 	connection_t *connp = Conn[p_ptr->conn];
-
+	/* Mind-linked to someone? Send him our sound too! */
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
 	/* translate: ambient sfx index -> sound index */
 	int i = -1;
 	cptr name = NULL;
 
 	if (p_ptr->muted_when_idle && sfx_ambient != SFX_AMBIENT_NONE) return(1);
+	/* If we're the target, we won't hear our own sfx */
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	//-1: smooth (poor with WoR, otherwise great), -2: sudden (needed for WoR/staircases)
 	switch (sfx_ambient) {
@@ -9395,12 +9398,6 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 		if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
 	}
 
-
-	/* Mind-linked to someone? Send him our sound too! */
-	player_type *p_ptr2 = NULL;
-	connection_t *connp2 = NULL;
-	/* If we're the target, we won't hear our own sfx */
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	/* Get target player */
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
@@ -9412,8 +9409,8 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 		}
 	}
 
-	if (Players[Ind]->sound_ambient == sfx_ambient) return(-1);
-	Players[Ind]->sound_ambient = sfx_ambient;
+	if (p_ptr->sound_ambient == sfx_ambient) return(-1);
+	p_ptr->sound_ambient = sfx_ambient;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
