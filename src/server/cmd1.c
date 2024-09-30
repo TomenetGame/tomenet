@@ -3037,12 +3037,13 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 	if (!inven_carried) sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
 
-	/* splash! harm equipments */
-	if (c_ptr->feat == FEAT_DEEP_WATER &&
-	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-	    //magik(WATER_ITEM_DAMAGE_CHANCE))
-	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50))) {
-		if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900))) inven_damage(Ind, set_water_destroy, 1);
+	/* splash! harm items */
+	if (c_ptr->feat == FEAT_DEEP_WATER && magik(WATER_ITEM_DAMAGE_CHANCE)
+	    && !p_ptr->levitate && !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC)) // && !p_ptr->tim_wraith
+	    && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50))) {
+		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN
+		    && !magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
+			inven_damage(Ind, set_water_destroy, 1);
 		equip_damage(Ind, GF_WATER);
 	}
 

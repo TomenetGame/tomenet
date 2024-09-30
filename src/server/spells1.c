@@ -10628,17 +10628,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else if (p_ptr->resist_water) dam = (dam + 2) / 3;
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20) &&
-			    !(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))) {
-				if (!p_ptr->resist_water || magik(50)) {
-					/* Don't kill inventory in bloodbond... */
-					int breakable = 1;
+			if (magik(20 + dam / 20)
+			    && !(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
+			    && (!p_ptr->resist_water || magik(50))) {
+				/* Don't kill inventory in bloodbond... */
+				int breakable = 1;
 
-					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
-					if (breakable) {
-						inven_damage(Ind, set_water_destroy, 1);
-						if (magik(50)) equip_damage(Ind, GF_WATER);
-					}
+				if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
+				if (breakable) {
+					if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_water_destroy, 1);
+					if (magik(50)) equip_damage(Ind, GF_WATER);
 				}
 			}
 			take_hit(Ind, dam, killer, -who);
@@ -11042,19 +11041,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					dam = (dam + 2) / 3;
 				if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-				if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20) &&
-				    !(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))) {
-					if (!p_ptr->resist_water || magik(50)) {
-						/* Don't kill inventory in bloodbond... */
-						int breakable = 1;
+				if (magik(20 + dam / 20)
+				    && !(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
+				    && (!p_ptr->resist_water || magik(50))) {
+					/* Don't kill inventory in bloodbond... */
+					int breakable = 1;
 
-						if (IS_PVP) {
-							if (check_blood_bond(Ind, -who)) breakable = 0;
-						}
-						if (breakable) {
-							inven_damage(Ind, set_water_destroy, 1);
-							if (magik(50)) equip_damage(Ind, GF_WATER);
-						}
+					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
+					if (breakable) {
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_water_destroy, 1);
+						if (magik(50)) equip_damage(Ind, GF_WATER);
 					}
 				}
 			}
@@ -11088,17 +11084,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (p_ptr->resist_water) dam = (dam + 2) / 3;
 				if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-				if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20) &&
-				    !(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))) {
-					if (!p_ptr->resist_water || magik(50)) {
-						/* Don't kill inventory in bloodbond... */
-						int breakable = 1;
+				if (magik(20 + dam / 20)
+				    && !(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
+				    && (!p_ptr->resist_water || magik(50))) {
+					/* Don't kill inventory in bloodbond... */
+					int breakable = 1;
 
-						if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
-						if (breakable) {
-							inven_damage(Ind, set_water_destroy, 1);
-							if (magik(25)) equip_damage(Ind, GF_WATER);
-						}
+					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
+					if (breakable) {
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_water_destroy, 1);
+						if (magik(25)) equip_damage(Ind, GF_WATER);
 					}
 				}
 				take_hit(Ind, dam, killer, -who);

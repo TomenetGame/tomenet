@@ -1287,6 +1287,13 @@
 /* Tool's chance to prevent theft */
 #define TOOL_SAFETY_CHANCE 85
 
+/* Chance of items damaged when drowning, in % [3] */
+#define WATER_ITEM_DAMAGE_CHANCE 3
+
+/* Chance for weapons / digging tools / p_ptr->impact to cause an earthquake, even if all case-specific rolls already succeeded.
+   Unified value for digging and fighting here, as characters could use their weapons as digging tools just as well. */
+#define QUAKE_CHANCE 50
+
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
  */
@@ -9647,10 +9654,6 @@ extern int PlayerUID;
 #define RT_XXX2000	0x2000
 #define RT_XXX4000	0x4000
 #define RT_XXX8000	0x8000
-
-/* Chance for weapons / digging tools / p_ptr->impact to cause an earthquake, even if all case-specific rolls already succeeded.
-   Unified value for digging and fighting here, as characters could use their weapons as digging tools just as well. */
-#define QUAKE_CHANCE	50
 
 /* More readable than !is_older_than (in common/common.c) */
 #define is_atleast(vtptr, ma, mi, pa, ex, br, bu) (!is_older_than(vtptr, ma, mi, pa, ex, br, bu))

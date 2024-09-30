@@ -36,9 +36,6 @@
 /* Hydras regenerate extraordinarily quickly aka regrowing their heads (both players and monsters) */
 #define HYDRA_REGENERATION
 
-/* Chance of items damaged when drowning, in % [3] */
-#define WATER_ITEM_DAMAGE_CHANCE	3
-
 /* Maximum wilderness radius a player can travel with WoR [16]
  * TODO: Add another method to allow wilderness travels */
 #define RECALL_MAX_RANGE	24
@@ -5273,10 +5270,13 @@ static bool process_player_end_aux(int Ind) {
 				/* Harm items while in water (even if we're not drowning/taking damage, ie hit == 0).
 				   Items should get damaged even if player can_swim
 				   but this might devalue swimming too much compared to levitation. */
-				if (!p_ptr->immune_water && !rand_int(p_ptr->resist_water ? 3 : 1)
-				    && TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(WATER_ITEM_DAMAGE_CHANCE)) {
+				if (!p_ptr->immune_water && (!p_ptr->resist_water || !rand_int(3))
+				    && !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC))
+				    && magik(WATER_ITEM_DAMAGE_CHANCE)) {
 					/* Trying to keep the backpack from getting soaked too much */
-					if (!(huge_wood && drowning < 0) && !magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900))) {
+					if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN
+					    && !(huge_wood && drowning < 0)
+					    && !magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900))) {
 						/* Apply water damage to inventory. If it has no effect (so we don't harm more than 1 slot at a time here),
 						   but we're in a freezing place, apply cold damage to inventory too. */
 						if (!inven_damage(Ind, set_water_destroy, 1) && cold) inven_damage(Ind, set_cold_destroy, 1);
