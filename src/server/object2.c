@@ -10083,6 +10083,8 @@ static bool check_orome(int Ind, struct worldpos *wpos, cave_type **zcave, int x
  * handle_d: Handle artifact/questitem decrement on '-2' code 'wrong' item destruction?
  *           (It is always handled here for normal '-1' cases, independantly of handle_d.)
  * Ind can be 0 if an item is not dropped from a player's inventory or equipment.
+ * Chance can be negative: It will turn positive - 1, and true-art etiquette will be disabled. Use for bashing a true art from floor to floor position by a total_winner.
+ *
  * Returns -1 for 'legal item death' (burnt up or just broke, as in 'the correct way of dropping this is to make it poof'!)
  * Returns -2 for 'code-limits item death' (including 'no room'!, no cave paranoia)
  */
@@ -10111,12 +10113,18 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 #endif
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	bool arts = artifact_p(o_ptr), crash;
+	bool arts = artifact_p(o_ptr), crash, no_etiquette = FALSE;
 	int this_o_idx, next_o_idx = 0;
 
 	cave_type **zcave;
 	monster_race *r_ptr;
 
+
+	/* Hack for bashing an item, encoded by negative chance: Allow winners to bash true arts around on the floor */
+	if (chance < 0) {
+		chance = -chance - 1; /* allow encoding '0%' via '-1' */
+		no_etiquette = TRUE;
+	}
 
 	/* No longer embedded (if item came out of a monster trap) */
 	o_ptr->embed = 0;
@@ -10294,7 +10302,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 			int lev = lookup_player_level(o_ptr->owner);
 			char o_name[ONAME_LEN];
 
-			object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+			object_desc_store(0, o_name, o_ptr, TRUE, 3);
 
 			s_printf("%s owned true artifact failed to drop by %s(%d) at (%d,%d,%d):\n  %s\n",
 			    showtime(), name ? name : "(Dead player)", lev,
@@ -10326,7 +10334,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 			int lev = lookup_player_level(o_ptr->owner);
 			char o_name[ONAME_LEN];
 
-			object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+			object_desc_store(0, o_name, o_ptr, TRUE, 3);
 
 			s_printf("%s object failed to drop by %s(%d) at (%d,%d,%d):\n  %s\n",
 			    showtime(), name ? name : "(Dead player)", lev,
@@ -10466,27 +10474,33 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	/* True artifact may disappear, depending on tomenet.cfg flags */
 	if (wpos->wz == 0) { /* Assume houses are always on surface */
 		if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house(wpos, nx, ny)) {
-			if (Ind && (o_ptr->name1 != ART_OROME || !check_orome(Ind, wpos, zcave, x, y))) {
-				char o_name[ONAME_LEN];
+			char o_name[ONAME_LEN];
 
-				object_desc(Ind, o_name, o_ptr, TRUE, 0);
+			object_desc(Ind, o_name, o_ptr, TRUE, 0);
+			if (Ind && (o_ptr->name1 != ART_OROME || !check_orome(Ind, wpos, zcave, x, y)))
 				msg_format(Ind, "%s fades into the air!", o_name);
-			}
+			s_printf("%s true artifact (oidx=%d) fades inside_house, dropped by %s(%d) at (%d,%d,%d):\n  %s\n",
+			    showtime(), o_idx, Ind ? Players[Ind]->name : "<noone>", Ind ? Players[Ind]->lev : -1,
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
 			handle_art_d(o_ptr->name1);
 			return(-1);
 		}
 	}
 	/* hm for now we also allow ring of phasing to be traded between winners. not needed though. */
-	if (p_ptr && true_artifact_p(o_ptr) && !is_admin(p_ptr) &&
+	if (p_ptr && true_artifact_p(o_ptr) && !is_admin(p_ptr) && !no_etiquette &&
 	    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette)))
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
-		if (Ind && (o_ptr->name1 != ART_OROME || !check_orome(Ind, wpos, zcave, x, y))) {
-			char o_name[ONAME_LEN];
+		char o_name[ONAME_LEN];
 
-			object_desc(Ind, o_name, o_ptr, TRUE, 0);
+		object_desc(Ind, o_name, o_ptr, TRUE, 0);
+		if (Ind && (o_ptr->name1 != ART_OROME || !check_orome(Ind, wpos, zcave, x, y)))
 			msg_format(Ind, "%s fades into the air!", o_name);
-		}
+		s_printf("%s true artifact (oidx=%d) fades etiquette, dropped by %s(%d) at (%d,%d,%d):\n  %s\n",
+		    showtime(), o_idx, Ind ? Players[Ind]->name : "<noone>", Ind ? Players[Ind]->lev : -1,
+		    wpos->wx, wpos->wy, wpos->wz,
+		    o_name);
 		handle_art_d(o_ptr->name1);
 		return(-1);
 	}
@@ -10727,8 +10741,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 		int lev = lookup_player_level(o_ptr->owner);
 		char o_name[ONAME_LEN];
 
-		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
-
+		object_desc(0, o_name, o_ptr, TRUE, 3);
 		s_printf("%s owned true artifact (oidx=%d) dropped by %s(%d) at (%d,%d,%d):\n  %s\n",
 		    showtime(), o_idx, name ? name : "(Dead player)", lev,
 		    wpos->wx, wpos->wy, wpos->wz,

@@ -8369,7 +8369,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	if (!(zcave = getcave(wpos))) return;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
-		msg_print(Ind, "You cannot throw things in mist form.");
+		msg_print(Ind, "You cannot throw or bash things in mist form.");
 		return;
 	}
 
@@ -9221,7 +9221,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	   This is done to protect items inside houses from weird bashes that would erase them.
 	   (Funny hypothetical side effect: We could bash an item inside a house against another player
 	   who is inside the house too, he'd notice it, yet it lands in front of our own feet again.) */
-	if (drop_near(FALSE, Ind, o_ptr, j, wpos, y, x) == -2) { /* bashing went wrong aka no space in house at target location? */
+	if (drop_near(FALSE, Ind, o_ptr, -j - 1, wpos, y, x) == -2) { /* bashing went wrong aka no space in house at target location? */
 		/* Second chance? */
 		if (!wpos->wz /* world surface is condition for 'house' */
 		    && start_ix /* only if it was bashed, not if it was thrown */
