@@ -2737,6 +2737,13 @@ Art         Artifact. Those can be 'Static arfifacts' from the a_info.txt
             (See (8.4) for more info about spoiler files.)
             Winners who beat Morgoth, Lord of Darkness will usually not
             be able to use static artifacts, but rely on randarts instead.
+            On winning, you might be able to keep your true artifacts, but they
+            will time out at double speed (except for artifacts that have a
+            native level of 100: The One Ring and the Power Dragon Scale Mail
+            'Bladeturner') and if you ever drop one it will instantly vanish.
+            There are a few exceptions: Winner-artifacts! These are meant to be
+            used -only- by winners, and can be handled by them normally without
+            disappearing.
             Depending on the server settings, fallen winners might also not be
             able to use static arts.
             See (5.9b) for more information about artifacts.
@@ -3444,10 +3451,17 @@ game just like always, but they also gain access to additional features!
 These are...
  - You can wear Morgoth's crown and wield Morgoth's hammer, if you choose to.
  - You can advance beyond character level 50, up to 99, the absolute maximum.
- - Two 'post-king' dungeons, Cloud Planes and The Nether Realm
+ - Two 'post-king' dungeons, Cloud Planes and The Nether Realm.
  - Find and use 'winner-only' items, these are super heavy armour pieces
    and shields, especially useful for tank-style characters, including a
    few true artifacts even. These will take especially long to time out.
+ - Winners cannot find or pick up non-winner true artifacts anymore, although
+   they may usually continue using those they already carry, albeit they will
+   timeout at double speed, except for artifacts that have a native level
+   of 100 (only The One Ring and the Power Dragon Scale Mail 'Bladeturner').
+   Should a winner drop a true artifact, it will instantly vanish for good,
+   exception again are special winner-artifacts, these can be handled normally
+   without disappearing.
  - Depending on the server settings:
    Purchase a 'castle', that is, a house with a moat. These are usually
    especially big in size (and very expensive accordingly).
@@ -6463,9 +6477,10 @@ Special restrictions
 Items usually cannot be sent via telekinesis if the target player does not
 meet the item's level requirements.
 True artifacts usually cannot be picked up by a player who does not meet the
-item's level requirements.
-Some items can only be used by 'winners' (characters who have beaten Morgoth).
-These items cannot be sent via telekinesis to a non-winner either.
+item's level requirements, and they cannot be picked up by 'winners'
+(characters who have beaten Morgoth) either.
+Some items can only be used by 'winners', these items cannot be sent via
+telekinesis to a non-winner either.
 
 
 Dungeon-specific exceptions
@@ -14535,6 +14550,8 @@ There are a few exceptions: True artifacts specifically designed for winners!
 These have the WINNERS_ONLY flag and will actually timeout at half the normal
 speed at which artifacts time out (for non-winner players). So usually they
 should last for 10 weeks instead of the usual 5 weeks of normal true artifacts.
+These winner-artifacts can also be handled, dropped and traded between winners
+normally without disappearing.
 
 Since static artifacts are predefined and have fixed abilities, their number
 therefore is limited and only one of them can exist at a given time in the game
