@@ -5791,9 +5791,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			do_cmd_show_monster_killed_letter(Ind, &learnt, tk ? k : 0, FALSE);
 			return;
 		} else if (!strcmp(messagelc, "/ta")) { /* non-lua equivalent to ta() that toggles admin state irreversibly (as non-admins cannot invoke lua) */
-			if (admin) msg_print(Ind, "Already an admin.");
+			if (p_ptr->admin_dm) {
+				p_ptr->privileged = 4;
+				msg_print(Ind, "Relinquished admin (DM) status till next login or /ta usage.");
+				p_ptr->admin_dm = p_ptr->admin_wiz = 0;
+				return;
+			} else if (p_ptr->admin_wiz) {
+				p_ptr->privileged = 3;
+				msg_print(Ind, "Relinquished admin (Wizard) status till next login or /ta usage.");
+				p_ptr->admin_wiz = 0;
+				return;
+			}
+			/* not an admin... */
 			else if (p_ptr->privileged < 3) { /* Check for temporarily remembered admin-status */
-				/* Pseudo-invalid slash command */
+				/* Pseudo-invalid slash command for normal users */
 				do_slash_brief_help(Ind);
 				return;
 			} else {
