@@ -230,6 +230,8 @@ struct swear_info swear[MAX_SWEAR];
 char nonswear[MAX_NONSWEAR][NAME_LEN];
 int nonswear_affix[MAX_NONSWEAR];
 
+/* Server flags */
+u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;
 /* Temporary server feature flags (for LUA files) */
 u32b sflags_TEMP = 0x0;
 

@@ -277,6 +277,77 @@ void set_server_features() {
 	//sflags_TEMP |= 0x00000080;
 	lua_dostring(L, "TEMP7 = 0");
 	lua_settop(L, oldtop);
+
+
+	/* Set server type flags */
+#ifdef RPG_SERVER
+	sflags0 |= SFLG0_RPG;
+#endif
+#ifdef FUN_SERVER
+	sflags0 |= SFLG0_FUN;
+#endif
+#ifdef PARTY_SERVER
+	sflags0 |= SFLG0_PARTY;
+#endif
+#ifdef ARCADE_SERVER
+	sflags0 |= SFLG0_ARCADE;
+#endif
+#ifdef TEST_SERVER
+	sflags0 |= SFLG0_TEST;
+#endif
+#ifndef RPG_SERVER	/* not implemented for RPG SERVER atm */
+ #ifdef ALLOW_DED_IDDC_MODE
+	sflags0 |= SFLG0_DED_IDDC;
+ #endif
+ #ifdef ALLOW_DED_PVP_MODE
+	sflags0 |= SFLG0_DED_PVP;
+ #endif
+#endif
+#ifdef NO_PK
+	sflags0 |= SFLG0_NO_PK;
+#endif
+	if (MIN_PVP_LEVEL >= 20) sflags0 |= SFLG0_PVP_MAIA;
+
+
+	/* Set available-feature / client mode flags */
+#ifdef BIG_MAP
+	sflags1 |= SFLG1_BIG_MAP;
+#endif
+#ifdef SMALL_MAP
+	sflags1 |= SFLG1_SMALL_MAP;
+#endif
+#ifdef NEW_SHIELDS_NO_AC
+	sflags1 |= SFLG1_NEW_SHIELDS_NO_AC;
+#endif
+#ifdef LIMIT_SPELLS
+	sflags1 |= SFLG1_LIMIT_SPELLS;
+#endif
+#ifdef WEAPONS_NO_AC
+	sflags1 |= SFLG1_WEAPONS_NO_AC;
+#endif
+#ifdef CLIENT_ITEM_PASTE_DIZ
+	sflags1 |= SFLG1_CIPD;
+#endif
+
+
+	/* Set temporary flags */
+	sflags2 = sflags_TEMP;
+
+
+	/* Abuse flag set 3 for actual char limit, so it's no longer hardcoded in the client */
+#ifdef RPG_SERVER
+	if (sflags0 & SFLG0_RPG_ADMIN)
+		sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
+	else
+		sflags3 |= (1 & 0xFF) | ((0 & 0xFF00) << 8) | ((0 & 0xFF) << 16);
+#elif defined(ARCADE_SERVER)
+	if (sflags0 & SFLG0_RPG_ADMIN)
+		sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
+	else
+		sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((0 & 0xFF00) << 8) | ((0 & 0xFF) << 16);
+#else
+	sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
+#endif
 }
 
 

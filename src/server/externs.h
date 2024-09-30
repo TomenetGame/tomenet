@@ -352,7 +352,7 @@ extern swear_info swear[MAX_SWEAR];
 extern char nonswear[MAX_NONSWEAR][NAME_LEN];
 extern int nonswear_affix[MAX_NONSWEAR];
 extern struct combo_ban *banlist;
-extern u32b sflags_TEMP;
+extern u32b sflags3, sflags2, sflags1, sflags0, sflags_TEMP;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern guild_type guilds[MAX_GUILDS];
@@ -1320,6 +1320,7 @@ extern int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake
 extern int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
 extern int Send_version(int ind);
 extern int Send_playerlist(int Ind, int i, int mode);
+extern int Send_sflags(int Ind);
 
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);

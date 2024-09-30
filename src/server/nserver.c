@@ -4754,85 +4754,16 @@ static int Receive_login(int ind) {
 			int *id_list;
 			u16b tmpm;
 			char colour_sequence[3];
-			/* server flags to tell the client more about us - just informational purpose: */
-			u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;
-			/* flag array 0: server type flags
-			   flag array 1: features offered by server/client mode (special screen layout for showing party stats maybe (TODO//unused))
-			   flag array 2: temporary lua testing flags for experimental features
-			   flag array 3: unused
-			*/
 			byte *id_order, *id_index, j;
+			u32b sflags0_local = sflags0;
 
-			/* Set server type flags */
+			/* Client-dependant flag modification */
 #ifdef RPG_SERVER
-			sflags0 |= SFLG0_RPG;
-			if (acc.flags & ACC_ADMIN) sflags0 |= SFLG0_RPG_ADMIN; /* Allow multiple chars per account for admins! */
-#endif
-#ifdef FUN_SERVER
-			sflags0 |= SFLG0_FUN;
-#endif
-#ifdef PARTY_SERVER
-			sflags0 |= SFLG0_PARTY;
-#endif
-#ifdef ARCADE_SERVER
-			sflags0 |= SFLG0_ARCADE;
-#endif
-#ifdef TEST_SERVER
-			sflags0 |= SFLG0_TEST;
-#endif
-#ifndef RPG_SERVER	/* not implemented for RPG SERVER atm */
- #ifdef ALLOW_DED_IDDC_MODE
-			sflags0 |= SFLG0_DED_IDDC;
- #endif
- #ifdef ALLOW_DED_PVP_MODE
-			sflags0 |= SFLG0_DED_PVP;
- #endif
-#endif
-#ifdef NO_PK
-			sflags0 |= SFLG0_NO_PK;
-#endif
-			if (MIN_PVP_LEVEL >= 20) sflags0 |= SFLG0_PVP_MAIA;
-
-			/* Set available-feature / client mode flags */
-#ifdef BIG_MAP
-			sflags1 |= SFLG1_BIG_MAP;
-#endif
-#ifdef SMALL_MAP
-			sflags1 |= SFLG1_SMALL_MAP;
-#endif
-#ifdef NEW_SHIELDS_NO_AC
-			sflags1 |= SFLG1_NEW_SHIELDS_NO_AC;
-#endif
-#ifdef LIMIT_SPELLS
-			sflags1 |= SFLG1_LIMIT_SPELLS;
-#endif
-#ifdef WEAPONS_NO_AC
-			sflags1 |= SFLG1_WEAPONS_NO_AC;
-#endif
-#ifdef CLIENT_ITEM_PASTE_DIZ
-			sflags1 |= SFLG1_CIPD;
-#endif
-
-			/* Set temporary flags */
-			sflags2 = sflags_TEMP;
-
-			/* Abuse flag set 3 for actual char limit, so it's no longer hardcoded in the client */
-#ifdef RPG_SERVER
-			if (sflags0 & SFLG0_RPG_ADMIN)
-				sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
-			else
-				sflags3 |= (1 & 0xFF) | ((0 & 0xFF00) << 8) | ((0 & 0xFF) << 16);
-#elif defined(ARCADE_SERVER)
-			if (sflags0 & SFLG0_RPG_ADMIN)
-				sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
-			else
-				sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((0 & 0xFF00) << 8) | ((0 & 0xFF) << 16);
-#else
-			sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
+			if (acc.flags & ACC_ADMIN) sflags0_local |= SFLG0_RPG_ADMIN; /* Allow multiple chars per account for admins! */
 #endif
 
 			/* Send all flags! */
-			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflags3, sflags2, sflags1, sflags0);
+			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflags3, sflags2, sflags1, sflags0_local);
 
 			if (connp->pass) { /* <- This check is just needed because of "***" reorder hack ^^ */
 				free(connp->pass);
@@ -10741,9 +10672,9 @@ int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte 
 	}
 
 	if (is_atleast(&connp->version, 4, 7, 4, 6, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake, col_sandgrain, c_sandgrain);
+		return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake, col_sandgrain, c_sandgrain));
 	else
-		return Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake);
+		return(Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake));
 }
 
 int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool cant_see, bool on_pile) {
@@ -10757,9 +10688,9 @@ int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool ca
 	}
 
 	if (is_atleast(&connp->version, 4, 7, 4, 1, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%c%I", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name);
+		return(Packet_printf(&connp->c, "%c%c%c%c%I", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name));
 	else
-		return Packet_printf(&connp->c, "%c%c%c%c%s", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name);
+		return(Packet_printf(&connp->c, "%c%c%c%c%s", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name));
 }
 
 int Send_screenflash(int Ind) {
@@ -10773,7 +10704,7 @@ int Send_screenflash(int Ind) {
 	}
 
 	if (is_atleast(&connp->version, 4, 7, 4, 4, 0, 0))
-		return Packet_printf(&connp->c, "%c", PKT_SCREENFLASH);
+		return(Packet_printf(&connp->c, "%c", PKT_SCREENFLASH));
 	return(1);
 }
 
@@ -10788,9 +10719,22 @@ int Send_version(int ind) {
 	}
 
 	if (is_newer_than(&connp->version, 4, 8, 0, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c", PKT_VERSION);
+		return(Packet_printf(&connp->c, "%c", PKT_VERSION));
 	else s_printf("PKT_VERSION: Client version <= 4.8.0.0.0.0 not eligible.\n");
 	return(1);
+}
+
+int Send_sflags(int Ind) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (is_older_than(&connp->version, 4, 9, 2, 1, 0, 1)) return(1);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for sflags (%d.%d.%d)",
+			Players[Ind]->conn, connp->state, connp->id));
+		return(0);
+	}
+	return(Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SFLAGS, sflags0, sflags1, sflags2, sflags3));
 }
 
 

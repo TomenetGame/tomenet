@@ -470,3 +470,8 @@ extern bool restart_unstatice_bree;
 extern bool restart_unstatice_towns;
 extern bool restart_unstatice_surface;
 extern bool restart_unstatice_dungeons;
+extern u32b sflags0;
+extern u32b sflags1;
+extern u32b sflags2;
+extern u32b sflags3;
+extern u32b sflags_TEMP;

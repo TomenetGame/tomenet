@@ -378,6 +378,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_SPECIAL_LINE_POS]	= Receive_special_line_pos;
 	receive_tbl[PKT_VERSION]		= Receive_version;
 	receive_tbl[PKT_EQUIP_WIDE]	= Receive_equip_wide;
+	receive_tbl[PKT_SFLAGS]		= Receive_sflags;
 }
 
 
@@ -6215,6 +6216,14 @@ int Receive_version(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return(n);
 	Send_version();
+	return(1);
+}
+
+int Receive_sflags(void) {
+	int n;
+	char ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags0, &sflags1, &sflags2, &sflags3)) <= 0) return(n);
 	return(1);
 }
 

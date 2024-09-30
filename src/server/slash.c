@@ -14111,6 +14111,58 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/sflags")) { /* Print or modify server info flags */
+				u32b f;
+
+				if (messagelc[7] && (messagelc[7] < '0' || messagelc[7] > '3')) {
+					msg_print(Ind, "\377oUsage: /sflags[0-4][ <new value>]");
+					return;
+				}
+				if (!messagelc[7]) {
+					msg_format(Ind, "sflags0=%d, sflags1=%d, sflags2=%d, sflags3=%d", sflags0, sflags1, sflags2, sflags3);
+					return;
+				}
+				if (messagelc[8] != ' ') {
+					switch(messagelc[7]) {
+					case '0':
+						msg_format(Ind, "sflags0=%d", sflags0);
+						break;
+					case '1':
+						msg_format(Ind, "sflags1=%d", sflags1);
+						break;
+					case '2':
+						msg_format(Ind, "sflags2=%d", sflags2);
+						break;
+					case '3':
+						msg_format(Ind, "sflags3=%d", sflags3);
+						break;
+					default:
+						msg_print(Ind, "\377yInvalid flag queried.");
+					}
+					return;
+				}
+				f = atol(&messagelc[9]);
+				switch(messagelc[7]) {
+				case '0':
+					sflags0 = f;
+					break;
+				case '1':
+					sflags1 = f;
+					break;
+				case '2':
+					sflags2 = f;
+					break;
+				case '3':
+					sflags3 = f;
+					break;
+				default:
+					msg_print(Ind, "\377yInvalid flag set.");
+					return;
+				}
+				msg_print(Ind, "Flag set.");
+				Send_sflags(Ind);
+				return;
+			}
 		}
 	}
 
