@@ -26,6 +26,9 @@
 /* chance of equipments getting hurt from attacks, in percent [2] */
 #define HARM_EQUIP_CHANCE	0
 
+/* chance in percent of equipped Tarpaulin to protect inventory items from acid [100 aka complete protection] */
+#define TARPAULIN_ACID_PROTECTION	100
+
 /* macro to determine the way stat gets reduced by element attacks */
 #define	DAM_STAT_TYPE(inv) \
 	(magik(inv * 25) ? STAT_DEC_NORMAL : STAT_DEC_TEMPORARY)
@@ -3593,7 +3596,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable
-	    && TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)
+	    && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN || magik(100 - TARPAULIN_ACID_PROTECTION)))
 		inven_damage(Ind, set_acid_destroy, inv);
 
 	return(dam);
@@ -11856,7 +11859,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (randint(6) == 1) {
 					/* Don't kill inventory in bloodbond... */
 					if (!(IS_PVP && check_blood_bond(Ind, -who))) {
-						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_acid_destroy, 2);
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN || magik(100 - TARPAULIN_ACID_PROTECTION))
+							inven_damage(Ind, set_acid_destroy, 2);
 						if (magik(50)) equip_damage(Ind, GF_ACID);
 					}
 				}
