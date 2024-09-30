@@ -14171,7 +14171,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				msg_print(Ind, "Flag set.");
-				Send_sflags(Ind);
+				for (f = 1; f <= NumPlayers; f++) Send_sflags(f);
 				return;
 			}
 		}
