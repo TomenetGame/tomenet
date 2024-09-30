@@ -7507,10 +7507,10 @@ if (cfg.unikill_format) {
 						if (q_ptr->inventory[j].name1 &&
 						    q_ptr->inventory[j].name1 != ART_RANDART
 #ifdef L100_ARTS_LAST
-						    && q_ptr->inventory[j].name1 != ART_POWER
-						    && q_ptr->inventory[j].name1 != ART_BLADETURNER
+						    && a_info[q_ptr->inventory[j].name1].level < 100
 #endif
 						    )
+							/* Mark for double-speed timeout in get_artifact_timeout() */
 							a_info[q_ptr->inventory[j].name1].winner = TRUE;
 
 					/* Set his retire_timer if neccecary */
