@@ -1737,6 +1737,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "TOOL_NOTHEFT_COMBO") && negation) invalid = TRUE;
 #endif
+#ifndef WIELD_STAFF_RGM
+		if (streq(m, "WIELD_STAFF_RGM") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "WIELD_STAFF_RGM") && negation) invalid = TRUE;
+#endif
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
 		    strcmp(m, "RPG_SERVER") &&
@@ -1764,6 +1769,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "NO_RUST_NO_HYDROXIDE") &&
 		    strcmp(m, "ENABLE_SUBINVEN") &&
 		    strcmp(m, "TOOL_NOTHEFT_COMBO") &&
+		    strcmp(m, "WIELD_STAFF_RGM") &&
 			TRUE)
 			invalid = TRUE;
 	}
@@ -3007,6 +3013,15 @@ errr init_k_info_txt(FILE *fp, char *buf) {
  #ifdef WIELD_DEVICES
 		/* All devices acquire '2-handed' flag (staves should have this definitely, for now treat all equally) */
 		if (k_info[i].tval == TV_STAFF || k_info[i].tval == TV_WAND || k_info[i].tval == TV_ROD) k_info[i].flags4 |= TR4_MUST2H;
+  #ifdef WIELD_STAFF_RGM
+		/* Specialty: Staves can replace basic Mage Staves */
+		if (k_info[i].tval == TV_STAFF) {
+			k_info[i].flags3 |= TR3_REGEN_MANA;
+			/* Increase price, so staves aren't cheaper than mage staves?
+			   Problem: it affects non-spellcasters too who don't need the regen-mana :/ */
+			//k_info[i].cost += 100;
+		}
+  #endif
  #endif
 	}
 #endif

@@ -4725,6 +4725,11 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 		/* Hack -- mark the item as an ego */
 		o_ptr->name2 = i;
 
+#ifdef WIELD_STAFF_RGM
+		/* Superhack: Mage staves lose their base +10% MP if they turn into ego staves, or it'd stack too much */
+		if (o_ptr->tval == TV_MSTAFF) o_ptr->bpval = 0;
+#endif
+
 		/* Piece together a 32-bit random seed */
 		if (e_ptr->fego1[0] & ETR1_NO_SEED) o_ptr->name3 = 0;
 		else {
@@ -4906,6 +4911,11 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 
 			/* Hack -- mark the item as an ego */
 			o_ptr->name2b = i;
+
+#ifdef WIELD_STAFF_RGM
+			/* Superhack: Mage staves lose their base +10% MP if they turn into ego staves, or it'd stack too much */
+			if (o_ptr->tval == TV_MSTAFF) o_ptr->bpval = 0;
+#endif
 
 			/* This ego power doesn't use a seed? No need to reroll it then. (Not going to reroll oname2 seed for this.) */
 			if (e_ptr->fego1[0] & ETR1_NO_SEED) redundancy_tries = 0;

@@ -406,7 +406,12 @@
     30% reduced fail chance, flat on top,
     20% chance to retain the charge/energy at the cost of MP (depending on the device level). */
 #define WIELD_DEVICES
-//(Note: If manareg gets added to any devices, it should probably depend on charges left. However, cheapest staff is 200 au while basic mstaff is 300 au.)
+/* Wielded staves grand mana regeneration just as mage staves do. */
+#ifdef WIELD_DEVICES
+ //Note: If manareg gets added to any devices, it should probably depend on charges left. However, cheapest staff is 200 au while basic mstaff is 300 au.
+ //This feat auto-bumps staff prices a bit!
+ #define WIELD_STAFF_RGM
+#endif
 
 /* Server-side switch to allow clients to use item-diz-chat-pasting. This is defined separately for client-side too. */
 #if 0 /* on/off */

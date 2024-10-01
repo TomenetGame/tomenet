@@ -4981,11 +4981,14 @@ P:0:1d1:0:0:0
 #which is actually same weight that is currently used for a Three Piece Rod.
 N:577:& Mage Staff~
 G:\:w
-I:6:1:0
-W:5:0:90:300
+$WIELD_STAFF_RGM!I:6:1:0
+$WIELD_STAFF_RGM$I:6:1:1
+$WIELD_STAFF_RGM!W:5:0:90:300
+$WIELD_STAFF_RGM$W:5:0:90:350
 A:5/3:45/2
 P:0:1d4:0:0:0
 F:SHOW_MODS | MUST2H | REGEN_MANA
+$WIELD_STAFF_RGM$F:MANA
 #(Note regarding WIELD_DEVICES: Cheapest mdev staves are 200 Au atm.)
 
 # An extra ring, out of place
