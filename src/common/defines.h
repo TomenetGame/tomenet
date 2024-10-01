@@ -5243,9 +5243,9 @@
 #define GF_FLARE		164 /* Combination of LITE_WEAK and FIRE damage, for Flare Missile */
 #define GF_LIFE_SLOW		165 /* Same as GF_OLD_SLOW aka 'Slow Monsters', but based on fatigue, therefore doesn't affect creatures that know no fatigue. */
 #define GF_NO_REGEN		166
-
-#define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
-#define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */
+#define GF_THUNDER		167 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
+#define GF_ANNIHILATION		168 /* To differentiate drain effect from hacky non-drain effect for wands */
+#define GF_VINE_SLOW		169 /* Same as GF_OLD_SLOW but causes terrain fluff */
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200

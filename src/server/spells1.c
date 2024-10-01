@@ -4512,9 +4512,7 @@ int divide_spell_damage(int dam, int div, int typ) {
 	switch (typ) {
 	/* When these are cast as 'ball spells' they'd be gimped too much probably: */
 	case GF_TELEPORT_PLAYER: //Kurzel - This and many others (buffs) could go here (pending approval..)!
-	case GF_LIFE_SLOW:
-	case GF_MIND_SLOW:
-	case GF_OLD_SLOW:
+	case GF_LIFE_SLOW: case GF_MIND_SLOW: case GF_OLD_SLOW: case GF_VINE_SLOW:
 	case GF_OLD_CONF:
 	case GF_OLD_SLEEP:
 	case GF_TURN_ALL: //fear
@@ -5434,6 +5432,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		if ((c_ptr->feat == FEAT_FLOOR) ||
 		    (c_ptr->feat == FEAT_DIRT) ||
+		    (c_ptr->feat == FEAT_ASH) ||
 		    (c_ptr->feat == FEAT_GRASS)) {
 			/* p1 % chance to create this feat */
 			p1 = 20; f1 = FEAT_SHAL_WATER;
@@ -5475,6 +5474,66 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			//if (seen) obvious = TRUE;
 		}
 		break; }
+
+	case GF_VINE_SLOW: {
+		int p1 = 0;
+		int p2 = 0;
+		int f1 = FEAT_NONE;
+		int f2 = FEAT_NONE;
+		int f = FEAT_NONE;
+		int k;
+		bool old_rand = Rand_quick;
+		u32b tmp_seed = Rand_value;
+
+		if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)) break;
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* "Permanent" features will stay */
+		if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+
+		if ((c_ptr->feat == FEAT_FLOOR) ||
+		    (c_ptr->feat == FEAT_DIRT) ||
+		    (c_ptr->feat == FEAT_MUD) ||
+		    (c_ptr->feat == FEAT_GRASS) ||
+		    (c_ptr->feat == FEAT_ASH)) {
+			/* p1 % chance to create this feat1 */
+			p1 = 30; f1 = FEAT_GRASS;
+			/* p2 % chance to create this feat2 */
+			p2 = 10; f2 = FEAT_IVY;
+
+			if (c_ptr->feat == FEAT_GRASS) {
+				/* reduce feat1 chance */
+				p1 = 10;
+				/* increase feat2 chance */
+				p2 = 30;
+			}
+		}
+
+		/* Use the stored/quick RNG */
+		Rand_quick = TRUE;
+		//using fixed seed here to make sure that repeated casting won't cover 100% of the area with water:
+		Rand_value = (3623u * wpos->wy + 29753) * (2843u * wpos->wx + 48869) + (1741u * y + 22109) * y * x + (x + 96779) * x + 42 + wpos->wz;
+
+		k = rand_int(100);
+
+		/* Restore RNG */
+		Rand_quick = old_rand;
+		Rand_value = tmp_seed;
+
+		if (k < p1) f = f1;
+		else if (k < p1 + p2) f = f2;
+
+		if (f) {
+			//uses static array set in generate.c, fix!	if (f == FEAT_FLOOR) place_floor_live(wpos, y, x);
+			//else
+			cave_set_feat_live(wpos, y, x, f);
+			/* Notice */
+			if (!quiet) note_spot(Ind, y, x);
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+			//if (seen) obvious = TRUE;
+		}
+		break; }
+
 	}
 
 	/* Return "Anything seen?" */
@@ -7736,6 +7795,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Slow Monster (Use "dam" as "power") */
 	case GF_OLD_SLOW: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_CURSE
+	case GF_VINE_SLOW:
 		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
@@ -10081,9 +10141,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_STUN:
 		case GF_TERROR:
 		case GF_OLD_CONF:
-		case GF_MIND_SLOW:
-		case GF_LIFE_SLOW:
-		case GF_OLD_SLOW:
+		case GF_MIND_SLOW: case GF_LIFE_SLOW: case GF_VINE_SLOW: case GF_OLD_SLOW:
 		case GF_OLD_POLY:
 		case GF_BLIND:
 		case GF_TELEPORT_PLAYER:
@@ -11683,6 +11741,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* fall through */
 	case GF_MIND_SLOW: /* <- we're not IM_PSI, NONLIVING or EMPTY_MIND, so just fall through... */
 	case GF_OLD_SLOW:
+	case GF_VINE_SLOW:
 		if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
 		else msg_format(Ind, "%^s drains power from your muscles!", killer);
 
@@ -13166,7 +13225,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 
 	/* Hack: Usually, elemental bolt spells will not hurt floor/item if they already hurt a monster/player.
 	         Some bolt spells (poly) don't need this flag, since they don't hurt items/floor at all. */
-	if ((flg & PROJECT_EVSG) && zcave[y][x].m_idx != 0)
+	if ((flg & PROJECT_EVSG) && zcave[y][x].m_idx != 0 && typ != GF_VINE_SLOW) /* vine-slow has greenish floor fluff effects, and is cast via grid_bolt so it gets EVSG... */
 		flg &= ~(PROJECT_GRID | PROJECT_ITEM);
 
 	/* hack: FF1_BLOCK_CONTACT grids prevent explosions,
@@ -14314,6 +14373,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam = 0;
 		break;
 	case GF_OLD_SLOW:
+	case GF_VINE_SLOW:
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
 		    (r_ptr->flags4 & RF4_BR_INER) ||
 		    (r_ptr->flags9 & RF9_NO_REDUCE) ||

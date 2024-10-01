@@ -4838,7 +4838,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 		if (!projectable_wall(wpos, p_ptr->py, p_ptr->px, y, x, MAX_RANGE)) continue;
 
 		/* Jump directly to the target monster */
-		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg | PROJECT_GRID, pattacker)) obvious = TRUE; //grid-flag added for GF_VINE_SLOW :)
 	}
 
 #if 1	//this would require to differ between project_los calls that are meant

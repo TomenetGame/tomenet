@@ -316,7 +316,7 @@ NSLOWMONSTER_I = add_spell {
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-				fire_grid_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, NSLOWMONSTER_I, 100), "conjures vines from the ground")
+				fire_grid_bolt(Ind, GF_VINE_SLOW, args.dir, 5 + get_level(Ind, NSLOWMONSTER_I, 100), "conjures vines from the ground")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, NSLOWMONSTER_I, 100))
@@ -333,7 +333,7 @@ NSLOWMONSTER_II = add_spell {
 	["fail"] = 	-20,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-				project_los(Ind, GF_OLD_SLOW, 5 + get_level(Ind, NSLOWMONSTER_I, 100), "conjures vines from the ground")
+				project_los(Ind, GF_VINE_SLOW, 5 + get_level(Ind, NSLOWMONSTER_I, 100), "conjures vines from the ground")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, NSLOWMONSTER_I, 100))
