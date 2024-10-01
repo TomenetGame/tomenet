@@ -5395,6 +5395,13 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 	int i, inum = i_ptr->number, orgnum = inum, wgt = p_ptr->total_weight, Gnum, final_slot = 0;
 	char o_name[ONAME_LEN];
 
+	/* Never put a subinven into another subinven!
+	   Might not cause issues with sliding inventory indices as chests are the top-most bags (are they?), but anyway... */
+	if (i_ptr->tval == TV_SUBINVEN) {
+		msg_print(Ind, "You cannot stow containers in other containers.");
+		return(FALSE);
+	}
+
 	/* Don't stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
 	/* Don't stow if player cannot access stowed items due to outdated client */
