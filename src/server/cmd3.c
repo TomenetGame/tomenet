@@ -2499,36 +2499,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) {
 		if (strlen(powins) != l) strcat(powins, " ");
 		strcat(powins, "(");
-		switch (o_ptr->pval) {
-		case GF_ELEC: strcat(powins, "Lightning"); break;
-		case GF_POIS: strcat(powins, "Poison"); break;
-		case GF_ACID: strcat(powins, "Acid"); break;
-		case GF_COLD: strcat(powins, "Frost"); break;
-		case GF_FIRE: strcat(powins, "Fire"); break;
-		case GF_PLASMA: strcat(powins, "Plasma"); break;
-		case GF_LITE: strcat(powins, "Light"); break;
-		case GF_DARK: strcat(powins, "Darkness"); break;
-		case GF_SHARDS: strcat(powins, "Shards"); break;
-		case GF_SOUND: strcat(powins, "Sound"); break;
-		case GF_CONFUSION: strcat(powins, "Confusion"); break;
-		case GF_FORCE: strcat(powins, "Force"); break;
-		case GF_INERTIA: strcat(powins, "Inertia"); break;
-		case GF_MANA: strcat(powins, "Mana"); break;
-		case GF_METEOR: strcat(powins, "Mini-Meteors"); break;
-		case GF_ICE: strcat(powins, "Ice"); break;
-		case GF_CHAOS: strcat(powins, "Chaos"); break;
-		case GF_NETHER: strcat(powins, "Nether"); break;
-		case GF_NEXUS: strcat(powins, "Nexus"); break;
-		case GF_TIME: strcat(powins, "Time"); break;
-		case GF_GRAVITY: strcat(powins, "Gravity"); break;
-		case GF_KILL_WALL: strcat(powins, "Stone-to-mud"); break;
-		case GF_AWAY_ALL: strcat(powins, "Teleportation"); break;
-		case GF_TURN_ALL: strcat(powins, "Fear"); break;
-		case GF_NUKE: strcat(powins, "Toxic waste"); break;
-		case GF_STUN: strcat(powins, "Stun"); break; //disabled
-		case GF_DISINTEGRATE: strcat(powins, "Disintegration"); break;
-		case GF_HELLFIRE: strcat(powins, "Hellfire"); break;
-		}
+		strcat(powins, GF_name[o_ptr->pval]);
 		strcat(powins, ")");
 	}
 
