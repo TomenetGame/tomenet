@@ -409,10 +409,14 @@
 //(Note: If manareg gets added to any devices, it should probably depend on charges left. However, cheapest staff is 200 au while basic mstaff is 300 au.)
 
 /* Server-side switch to allow clients to use item-diz-chat-pasting. This is defined separately for client-side too. */
-#if 1 /* on/off */
+#if 0 /* on/off */
  #ifndef CLIENT_SIDE
   #define CLIENT_ITEM_PASTE_DIZ
  #endif
+#else
+ /* Item-diz-chat-pasting done via marker \372 on client-side, but actually executed by the server.
+    Better choice as it allows every player to use a client-option to choose whether or not he wants to see this. */
+ #define SERVER_ITEM_PASTE_DIZ /* todo: implement! */
 #endif
 
 
