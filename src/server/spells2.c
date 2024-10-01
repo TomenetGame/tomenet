@@ -9777,7 +9777,7 @@ s16b mix_chemicals(int Ind, int item) {
 			return(-1);
 		} else {
 			q_ptr->tval = TV_CHARGE;
-			msg_format(Ind, "You assemble a blast charge..");
+			msg_format(Ind, "You assemble a blast charge...");
 			if (!p_ptr->warning_blastcharge) {
 				msg_print(Ind, "Hint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
 				p_ptr->warning_blastcharge = 1;
@@ -9785,6 +9785,9 @@ s16b mix_chemicals(int Ind, int item) {
 			}
 		}
 	} else {
+		char o2_name[ONAME_LEN], *onp, *on2p;
+		int num_old = o_ptr->number, num2_old = o2_ptr->number;
+
 #if 1
 		/* Allow creating fireworks? */
 		if (o2_ptr->tval == TV_SCROLL) {
@@ -9815,7 +9818,7 @@ s16b mix_chemicals(int Ind, int item) {
 				else q_ptr->xtra1 = rand_int(3); //random size
 				q_ptr->xtra2 = rand_int(FIREWORK_COLOURS); //random colour for now
 				q_ptr->level = 1;
-				msg_print(Ind, "You create harmless fireworks from the flash bomb mixture..");
+				msg_print(Ind, "You create harmless fireworks from the flash bomb mixture...");
 				i = -2;
 			} else {
 				/* Lose mixture and scroll */
@@ -9890,11 +9893,24 @@ s16b mix_chemicals(int Ind, int item) {
 				q_ptr->sval = SV_POTION_SALT_WATER;
 				break;
 			}
-			msg_print(Ind, "You create a new ingredient..");
+			/* Feedback about what we're mixing, in case we accidentally use the wrong chemicals (can happen more easily with /mix command) */
+			o_ptr->number = o2_ptr->number = 1; //display hack, we're actually still operating on FULL ingredient stacks ^^'
+			object_desc(Ind, o_name, o_ptr, TRUE, 256);
+			object_desc(Ind, o2_name, o2_ptr, TRUE, 256);
+			/* Hack: Shorten the chemical names (take care if it's a mixture instead), cutting off ownership/inscription,
+			   discarding the 'amount' description (smattering etc) and just leaving the actual substance name */
+			onp = strstr(o_name, " of ") + 4;
+			if (onp == NULL + 4) onp = o_name;
+			on2p = strstr(o2_name, " of ") + 4;
+			if (on2p == NULL + 4) on2p = o_name;
+			msg_format(Ind, "You create a new ingredient from %s and %s...", onp, on2p);
+			o_ptr->number = num_old; //unhack
+			o2_ptr->number = num2_old;
+		}
 
 		/* No success creating an ingredient -
 		   so we just create a mixture instead, if the particular ingredients are not already overflowing (aka reaching amount cap per mixture).. */
-		} else if (i != -2) {
+		else if (i != -2) {
 			/* Create mixture from mixture+mixture or ingredient+mixture */
 
 			/* First, check if we want to create a most basic mixture from just two ingredients */
@@ -9930,16 +9946,32 @@ s16b mix_chemicals(int Ind, int item) {
 				return(-1);
 			}
 
+			/* Feedback about what we're mixing, in case we accidentally use the wrong chemicals (can happen more easily with /mix command) */
+			o_ptr->number = o2_ptr->number = 1; //display hack, we're actually still operating on FULL ingredient stacks ^^'
+			object_desc(Ind, o_name, o_ptr, TRUE, 256);
+			object_desc(Ind, o2_name, o2_ptr, TRUE, 256);
+			/* Hack: Shorten the chemical names (take care if it's a mixture instead), cutting off ownership/inscription,
+			   discarding the 'amount' description (smattering etc) and just leaving the actual substance name */
+			onp = strstr(o_name, " of ") + 4;
+			if (onp == NULL + 4) onp = o_name;
+			on2p = strstr(o2_name, " of ") + 4;
+			if (on2p == NULL + 4) on2p = o_name;
+			msg_format(Ind, "You mix %s and %s...", onp, on2p);
+			o_ptr->number = num_old; //unhack
+			o2_ptr->number = num2_old;
+
 			q_ptr->tval = TV_CHEMICAL;
 			q_ptr->sval = SV_MIXTURE;
-			msg_print(Ind, "You create a mixture from the ingredients..");
+			//msg_print(Ind, "You create a mixture from the ingredients.."); --already giving feedback msg above "You mix..." which implies a mixture
 		}
+
 		/* What's left: '-2' = we made fireworks! */
 	}
 
 	/* Result: Either a new ingredient, a mixture or a finished blast charge. */
 	q_ptr->k_idx = lookup_kind(q_ptr->tval, q_ptr->sval); // (using invcopy() would wipe the object)
 	q_ptr->weight = k_info[q_ptr->k_idx].weight;
+	if (k_info[q_ptr->k_idx].cost <= 0) q_ptr->ident |= ID_BROKEN; // invcopy() does this, if we forget it we run into stacking issues with existing charges until we relog once
 	//object_desc(Ind, o_name, q_ptr, FALSE, 256);
 
 	/* Recall original parameters */
@@ -9957,8 +9989,6 @@ s16b mix_chemicals(int Ind, int item) {
 		q_ptr->note = old_note;
 		q_ptr->note_utag = old_note_utag;
 	}
-	/* Fix sense_inventory-caused stacking glitch (existing characters were not yet 'obj_aware' of these items): */
-	object_aware(Ind, q_ptr);
 
  #ifdef USE_SOUND_2010
 	if (q_ptr->tval == TV_CHARGE)
@@ -10009,7 +10039,12 @@ s16b mix_chemicals(int Ind, int item) {
 		if ((si_slot = subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, q_ptr->number, FALSE))) return(si_slot); /* Includes message */
 	}
 #endif
-	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	if (i != -1) {
+		/* Reflect final inventory slot, where the charge/item may have stacked with pre-existing ones */
+		get_inven_item(Ind, i, &q_ptr);
+		object_desc(Ind, o_name, q_ptr, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	}
 	return(i);
 }
 /* Determine the sensorial properties of a chemical mixture */
