@@ -5392,7 +5392,7 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 	object_type *i_ptr = &p_ptr->inventory[islot];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr;
-	int i, inum = i_ptr->number, orgnum = inum, wgt = p_ptr->total_weight, Gnum, final_slot = 0;
+	int i, inum = i_ptr->number, orgnum = inum, wgt = p_ptr->total_weight, Gnum, final_slot = 0, inum_dci;
 	char o_name[ONAME_LEN];
 
 	/* Never put a subinven into another subinven!
@@ -5421,7 +5421,15 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 			if (Gnum > 0 && Gnum < i_ptr->number) i_ptr->number = Gnum;
 			/* Merge partially or fully */
 			if (Gnum) {
-				object_absorb(Ind, o_ptr, i_ptr);
+				if (is_magic_device(i_ptr->tval)) {
+					object_type temp_forge = *i_ptr;
+
+					inum_dci = i_ptr->number;
+					i_ptr->number = inum; //unhack number to obtain correct charge ratio
+					divide_charged_item(&temp_forge, i_ptr, inum_dci);
+					i_ptr->number = inum_dci; //rehack number
+					object_absorb(Ind, o_ptr, &temp_forge);
+				} else object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
 				if (!quiet) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -5431,7 +5439,7 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
-				amt -= i_ptr->number; /* Decreate amount to still move accordingly */
+				amt -= i_ptr->number; /* Decrease amount to still move accordingly */
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' (and decrease the now moved amount) */
 				/* Manually do this here for now: Update subinven slot for client. */
 				display_subinven_aux(Ind, sslot, i);
@@ -5445,6 +5453,12 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 			i_ptr->number = amt; /* Hack 'number' to match the full desired amount to move */
 			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
+			if (is_magic_device(i_ptr->tval)) {
+				inum_dci = i_ptr->number;
+				i_ptr->number = inum; //unhack number to obtain correct charge ratio
+				divide_charged_item(o_ptr, i_ptr, amt);
+				i_ptr->number = inum_dci; //rehack number
+			}
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 			/* Describe the object */
@@ -5812,6 +5826,7 @@ void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
 	/* Fully move to a free slot. Done. */
 	*o_ptr = *i_ptr;
 	o_ptr->number = amt; /* Hack 'number' to match the full desired amount to move */
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(o_ptr, i_ptr, amt);
 	o_ptr->marked = 0; //why change marked/marked2?...paranoia?
 	o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 	i_ptr->number -= amt; /* Unhack 'number'; if it's 0 that marks the source item for erasure */
