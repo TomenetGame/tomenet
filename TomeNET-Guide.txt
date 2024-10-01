@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 30. September 2024 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 1. October 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5249,7 +5249,7 @@ on Windows OS to the folder 'TomeNET-user' inside your user's home folder
 (eg C:/Users/Tomenetplayer/TomeNET-user).
 
 Tilesets also have two designated 'mask colours':
-- a 'foreground mask' defined by colour R=255,G=0,B=255 (or hex 0xFF00FF)
+- a 'foreground mask' defined by colour R=252,G=0,B=251 (or hex 0xFC00FB)
   aka a strong magenta, which is treated special: It will be replaced by the
   actual font colour the grid would have with a normal font, thereby
   representing the type of floor feat, item, monster etc with its correct
@@ -5257,17 +5257,16 @@ Tilesets also have two designated 'mask colours':
   For example a tile depicting an orc would display the mask colour in umber
   (ie brown) if it was a hill orc or in light green if it was a cave orc.
 - (Currently no effect, as all grids in TomeNET always have black background:)
-   A 'background mask' defined by colour R=0,G=0,B=0 (hex 0x000000) aka black.
+  A 'background mask' defined by colour R=62,G=61,B=0 (hex 0x3E3D00) aka a
+  dark, somewhat greenish ochre.
   Currently, TomeNET always uses black background colour for any grid it draws.
-  However, should this change, then anything that is painted in 0x000000 in the
-  graphical tile will also change its colour to the grid's background colour.
   (Example: A fountain in ASCII is currently a white '_' on black background.
   If background colours were enabled in the future, it could be a white '_' on
   blue background. In that case, if you switched from ASCII to a graphical
-  tileset that maps fountains to a picture, all black pixels in that fountain
-  tile would also change to appear in blue.)
+  tileset that maps fountains to a picture, all pixels that ought to show the
+  blueness around the fountain would have to be 0x3E3D00.)
 - No effect in clients not newer than 4.9.2:
-  A 'dual-background mask' defined by colour R=10,G=16,B=10 (hex 0x0A100A),
+  A 'dual-background mask' defined by colour R=11,G=16,B=10 (hex 0x0B100A),
   ie a very dark green.
   Graphical tiles that usually take precedence over terrain, such as objects,
   any traps, monsters, players etc. can use this colour to become transparent
@@ -5280,7 +5279,7 @@ Tilesets also have two designated 'mask colours':
   file (eg .tomenetrc or TomeNET.ini) and set "graphics" to "2", same thing.
   If you use a dual-mode tileset with normal graphics settings instead, this is
   not a problem as it is 'backward compatible' and will interpret the dual-mask
-  colour (ie 0x0A100A) instead as pure black (0x000000) automatically.
+  colour (ie 0x0B100A) instead as background (0x3E3D00) automatically.
 
 Svechnik (aka 'EvgenijK' on github) has worked on a major graphical tileset
 that can be found on his github, including instructions on how to use it:
