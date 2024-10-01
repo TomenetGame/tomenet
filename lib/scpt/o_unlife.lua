@@ -247,7 +247,7 @@ OIMBUE = add_spell {
 	["fail"] = 	-80,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_melee_brand(Ind, randint(5) + 14 + get_level(Ind, OIMBUE, 69), TBRAND_VAMPIRIC, 10, TRUE, FALSE)
+			set_melee_brand(Ind, randint(5) + 14 + get_level(Ind, OIMBUE, 69), TBRAND_VAMPIRIC, 0, TRUE, FALSE)
 			end,
 	["info"] = 	function()
 			return "dur "..(14 + get_level(Ind, OIMBUE, 69)).."+d5"
