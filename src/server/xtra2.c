@@ -14679,28 +14679,29 @@ bool do_scroll_life(int Ind) {
 	for (y = -1; y <= 1; y++) {
 		for (x = -1; x <= 1; x++) {
 			c_ptr = &zcave[p_ptr->py + y][p_ptr->px + x];
-			if (c_ptr->m_idx < 0) {
-				q_ptr = Players[0 - c_ptr->m_idx];
-				if (q_ptr->ghost) {
-					if (cave_floor_bold(zcave, p_ptr->py + y, p_ptr->px + x) &&
-					    !(c_ptr->info & CAVE_ICKY)) {
-						resurrect_player(0 - c_ptr->m_idx, 0);
-						/* if player is not in town and resurrected on *TRUE* death level
-						   then this is a GOOD action. Reward the player */
-						if (!istown(&p_ptr->wpos) && getlevel(&p_ptr->wpos) == q_ptr->died_from_depth) {
-							u16b dal = 1 + ((2 * q_ptr->lev) / p_ptr->lev);
+			if (c_ptr->m_idx >= 0) continue; /* must be a player */
 
-							if (p_ptr->align_good > dal) p_ptr->align_good -= dal;
-							else p_ptr->align_good = 0;
-						}
-						return(TRUE);
-					} else if (c_ptr->info & CAVE_ICKY) msg_format(Ind, "The scroll fails for %s because there is a vault!", q_ptr->name);
-					else msg_format(Ind, "The scroll fails for %s because there is no solid ground!", q_ptr->name);
+			q_ptr = Players[0 - c_ptr->m_idx];
+			if (!q_ptr->ghost) continue; /* player must be dead (aka a ghost) */
+
+			if (cave_floor_bold(zcave, p_ptr->py + y, p_ptr->px + x) && /* player ghost must be floating on 'floor' type ground (no water) */
+			    !(c_ptr->info & CAVE_ICKY)) { /* and not be within vault or house */
+				resurrect_player(0 - c_ptr->m_idx, 0);
+				/* if player is not in town and resurrected on *TRUE* death level
+				   then this is a GOOD action. Reward the player */
+				if (!istown(&p_ptr->wpos) && getlevel(&p_ptr->wpos) == q_ptr->died_from_depth) {
+					u16b dal = 1 + ((2 * q_ptr->lev) / p_ptr->lev);
+
+					if (p_ptr->align_good > dal) p_ptr->align_good -= dal;
+					else p_ptr->align_good = 0;
 				}
-			}
+				/* A scroll cannot resurrect more than 1 player at a time -> return */
+				return(TRUE);
+			} else if (c_ptr->info & CAVE_ICKY) msg_format(Ind, "The scroll fails for %s because there is a vault!", q_ptr->name);
+			else msg_format(Ind, "The scroll fails for %s because there is no solid ground!", q_ptr->name);
 		}
 	}
-	/* we did nore ressurect anyone */
+	/* we did not ressurect anyone */
 	return(FALSE);
 }
 
