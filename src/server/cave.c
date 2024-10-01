@@ -4241,8 +4241,8 @@ void lite_spot(int Ind, int y, int x) {
 		byte a;
 		char32_t c;
 #ifdef GRAPHICS_BG_MASK
-		byte a_back;
-		char32_t c_back;
+		byte a_back = 0;
+		char32_t c_back = 0;
 #endif
 
 #ifdef GRAPHICS_BG_MASK
