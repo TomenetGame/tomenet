@@ -43,6 +43,45 @@
 
 
 
+static void init_GF_names(void) {
+	strcpy(GF_name[GF_ELEC], "lightning");
+	strcpy(GF_name[GF_POIS], "poison");
+	strcpy(GF_name[GF_ACID], "acid");
+	strcpy(GF_name[GF_COLD], "frost");
+	strcpy(GF_name[GF_FIRE], "fire");
+	strcpy(GF_name[GF_PLASMA], "plasma");
+	strcpy(GF_name[GF_LITE], "light");
+	strcpy(GF_name[GF_DARK], "darkness");
+	strcpy(GF_name[GF_SHARDS], "shards");
+	strcpy(GF_name[GF_SOUND], "sound");
+	strcpy(GF_name[GF_CONFUSION], "confusion");
+	strcpy(GF_name[GF_FORCE], "force");
+	strcpy(GF_name[GF_INERTIA], "inertia");
+	strcpy(GF_name[GF_MANA], "mana");
+	strcpy(GF_name[GF_METEOR], "mini-meteors");
+	strcpy(GF_name[GF_ICE], "ice");
+	strcpy(GF_name[GF_CHAOS], "chaos");
+	strcpy(GF_name[GF_NETHER], "nether");
+	strcpy(GF_name[GF_NEXUS], "nexus");
+	//strcpy(GF_name[GF_TIME], "time");
+	strcpy(GF_name[GF_GRAVITY], "gravity");
+	strcpy(GF_name[GF_KILL_WALL], "stone-to-mud");
+	strcpy(GF_name[GF_DISP_UNDEAD], "dispelling undead");
+	strcpy(GF_name[GF_STUN], "stun");
+	strcpy(GF_name[GF_HOLY_FIRE], "holy fire");
+	//strcpy(GF_name[GF_AWAY_ALL], "teleportation");
+	//strcpy(GF_name[GF_TURN_ALL], "fear");
+	strcpy(GF_name[GF_DISINTEGRATE], "disintegration");
+	strcpy(GF_name[GF_HELLFIRE], "hellfire");
+	strcpy(GF_name[GF_DETONATION], "a detonation");
+	strcpy(GF_name[GF_NUKE], "radiation");
+	//strcpy(GF_name[GF_BLIND, "blindness");
+	strcpy(GF_name[GF_DISP_DEMON], "dispelling demons");
+	strcpy(GF_name[GF_STASIS], "stasis");
+	strcpy(GF_name[GF_STOP], "a rune of holding");
+	strcpy(GF_name[GF_FLARE], "a flare");
+	strcpy(GF_name[GF_ANNIHILATION], "annihilation");
+}
 
 #if EXTRA_FLAVORS
  #define MAX_MODIFIERS	6       /* Used with rings (see below) */
@@ -720,6 +759,11 @@ void flavor_init(void) {
 	byte	temp_col;
 	cptr	temp_adj;
 	bool	temp_cheap;
+
+
+
+	/* Abuse flavor_init() for the opportunity to call this here */
+	init_GF_names();
 
 
 	/* Hack -- Use the "simple" RNG */
@@ -6008,37 +6052,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f3 & (TR3_TELEPORT)) fprintf(fff, "It induces random teleportation.\n");
 
 	/* exploding ammo */
-	if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0))
-		switch (o_ptr->pval) {
-		case GF_ELEC: fprintf(fff, "It explodes with lightning.\n"); break;
-		case GF_POIS: fprintf(fff, "It explodes with poison.\n"); break;
-		case GF_ACID: fprintf(fff, "It explodes with acid.\n"); break;
-		case GF_COLD: fprintf(fff, "It explodes with frost.\n"); break;
-		case GF_FIRE: fprintf(fff, "It explodes with fire.\n"); break;
-		case GF_PLASMA: fprintf(fff, "It explodes with plasma.\n"); break;
-		case GF_LITE: fprintf(fff, "It explodes with bright light.\n"); break;
-		case GF_DARK: fprintf(fff, "It explodes with darkness.\n"); break;
-		case GF_SHARDS: fprintf(fff, "It explodes with shards.\n"); break;
-		case GF_SOUND: fprintf(fff, "It explodes with sound.\n"); break;
-		case GF_CONFUSION: fprintf(fff, "It explodes with confusion.\n"); break;
-		case GF_FORCE: fprintf(fff, "It explodes with force.\n"); break;
-		case GF_INERTIA: fprintf(fff, "It explodes with inertia.\n"); break;
-		case GF_MANA: fprintf(fff, "It explodes with mana.\n"); break;
-		case GF_METEOR: fprintf(fff, "It explodes with mini-meteors.\n"); break;
-		case GF_ICE: fprintf(fff, "It explodes with ice.\n"); break;
-		case GF_CHAOS: fprintf(fff, "It explodes with chaos.\n"); break;
-		case GF_NETHER: fprintf(fff, "It explodes with nether.\n"); break;
-		case GF_NEXUS: fprintf(fff, "It explodes with nexus.\n"); break;
-		case GF_TIME: fprintf(fff, "It explodes with time.\n"); break;
-		case GF_GRAVITY: fprintf(fff, "It explodes with gravity.\n"); break;
-		case GF_KILL_WALL: fprintf(fff, "It explodes with stone-to-mud.\n"); break;
-		case GF_AWAY_ALL: fprintf(fff, "It explodes with teleportation.\n"); break;
-		case GF_TURN_ALL: fprintf(fff, "It explodes with fear.\n"); break;
-		case GF_NUKE: fprintf(fff, "It explodes with radiation.\n"); break;
-		case GF_STUN: fprintf(fff, "It explodes with stun.\n"); break;
-		case GF_DISINTEGRATE: fprintf(fff, "It explodes with disintegration.\n"); break;
-		case GF_HELLFIRE: fprintf(fff, "It explodes with hellfire.\n"); break;
-	}
+	if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) fprintf(fff, "It explodes wih %s.\n", GF_name[o_ptr->pval]);
 
 	/* special artifacts hardcoded - C. Blue */
 	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER

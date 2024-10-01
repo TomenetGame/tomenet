@@ -2822,3 +2822,4 @@ extern int pdf_hack_feat, pdf_hack_feat_new, pdf_hack_mon, pdf_hack_mon_new;
 extern u16b mushroom_field_wx[MAX_MUSHROOM_FIELDS], mushroom_field_wy[MAX_MUSHROOM_FIELDS], mushroom_field_x[MAX_MUSHROOM_FIELDS], mushroom_field_y[MAX_MUSHROOM_FIELDS], mushroom_fields;
 
 extern char list_invalid_name[MAX_LIST_INVALID][ACCNAME_LEN], list_invalid_host[MAX_LIST_INVALID][HOSTNAME_LEN], list_invalid_addr[MAX_LIST_INVALID][MAX_CHARS], list_invalid_date[MAX_LIST_INVALID][24];
+extern char GF_name[MAX_GF_TYPES][20];

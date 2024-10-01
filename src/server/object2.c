@@ -5037,14 +5037,16 @@ static void charge_staff(object_type *o_ptr) {
 
 
 
-s16b ammo_explosion[] = {
-    GF_ELEC,	GF_POIS,	GF_ACID,	GF_COLD,
-    GF_FIRE,	GF_PLASMA,	GF_LITE,	GF_DARK,
-    GF_SHARDS,	GF_SOUND,	GF_CONFUSION,	GF_FORCE,
-    GF_INERTIA,	GF_MANA,	GF_METEOR,	GF_ICE,
-    GF_CHAOS,	GF_NETHER,	GF_NEXUS,	GF_TIME,
-    GF_GRAVITY,	GF_KILL_WALL,	GF_AWAY_ALL,	GF_TURN_ALL,
-    GF_NUKE,	/*GF_STUN, */	GF_DISINTEGRATE,GF_HELLFIRE
+s16b ammo_explosion[] = { /* Make sure to keep init_GF_names() consistent so it sets all the GF-names listed here! */
+    GF_ELEC,		GF_POIS,		GF_ACID,		GF_COLD,
+    GF_FIRE,		GF_PLASMA,		GF_LITE,		GF_DARK,
+    GF_SHARDS,		GF_SOUND,		GF_CONFUSION,		GF_FORCE,
+    GF_INERTIA,		GF_MANA,		GF_METEOR,		GF_ICE,
+    GF_CHAOS,		GF_NETHER,		GF_NEXUS,		GF_GRAVITY,
+    GF_KILL_WALL,	GF_DISP_UNDEAD,		GF_STUN,		GF_HOLY_FIRE,
+    GF_DISINTEGRATE,	GF_HELLFIRE,		GF_DETONATION,		GF_NUKE,
+    /*GF_BLIND,*/	GF_DISP_DEMON,		GF_STASIS,		GF_STOP,
+    GF_FLARE,		GF_ANNIHILATION
 };
 /* Add random explosion-power to ammunition, via o_ptr or a_ptr */
 void ammo_add_explosion(s16b *pval) {

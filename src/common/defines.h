@@ -5266,30 +5266,18 @@
 #define GF_SHOW_LIGHTNING	211
 #define GF_THUNDER_VISUAL	212
 
-#define GF_CROSSHAIR		250 /* what's this for? appearently unused; moved it to 250 */
+#define MAX_GF_TYPES		(212+1)
 
 
-#if 0	/* Let's implement one by one.. */
-#define GF_DISP_DEMON		70      /* New types for Zangband begin here... */
+#if 0	/* Let's implement one by one.. - New types for Zangband begin here... */
 #define GF_DISP_LIVING		71
-#define GF_NUKE			73
-#define GF_STASIS		75
-#define GF_STONE_WALL		76
 #define GF_DEATH_RAY		77
-#define GF_STUN			78
-#define GF_HOLY_FIRE		79
-#define GF_HELLFIRE		80
-#define GF_DISINTEGRATE		81
-#define GF_CHARM		82
 #define GF_CONTROL_UNDEAD	83
 #define GF_CONTROL_ANIMAL	84
-#define GF_PSI			85
 #define GF_PSI_DRAIN		86
 #define GF_TELEKINESIS		87
 #define GF_JAM_DOOR		88
-#define GF_DOMINATION		89
 #define GF_DISP_GOOD		90
-#define GF_IDENTIFY		91
 #define GF_RAISE		92
 #define GF_STAR_IDENTIFY	93
 #define GF_DESTRUCTION		94
@@ -5299,7 +5287,6 @@
 #define GF_STAR_CHARM		99
 #define GF_IMPLOSION		100
 #define GF_LAVA_FLOW		101
-#define GF_FEAR			102
 #define GF_BETWEEN_GATE		103
 #define GF_WINDS_MANA		104
 #define GF_DEATH		105
@@ -5307,9 +5294,7 @@
 #define GF_RAISE_DEMON		107
 #define GF_TRAP_DEMONSOUL	108
 #define GF_ATTACK		109
-/* Increased it (from 152) to 153 - the_sandman*/
-/* Increaing it again by ... 3-- to 156 :-) - the_sandman */
-#define MAX_GF			156	/* appearently unused, if 0'ed */
+#define GF_CROSSHAIR		250 /* what's this for? appearently unused; moved it to 250 */
 #endif	/* 0 */
 
 /*
