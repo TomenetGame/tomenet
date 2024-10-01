@@ -566,7 +566,7 @@
  #define GFXMASK_BG_R	62
  #define GFXMASK_BG_G	61
  #define GFXMASK_BG_B	0
- /* Colours for dual-background-graphics mask (0x0B100A, was previously 0x0A100A) -
+ /* Colours for dual-background-graphics mask (0x1D211C, was previously 0x0A100A and then 0x0B100A) -
     must be known even if GRAPHICS_BG_MASK is not enabled, so client remains backward compatible with 2mask-ready tilesets! */
  #define GFXMASK_BG2_R	29
  #define GFXMASK_BG2_G	33
