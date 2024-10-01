@@ -401,7 +401,7 @@ int graphics_image_tpr; /* Tiles per row. */
    NOTE: This function actually blackens (or whitens, if 'inverse') any recognized mask pixel in the _original_ image!
          So while the mask is created, it is sort of 'cut out' of the original image, leaving blackness (whiteness) behind. */
 //todo: implement -> for '-1' values for the foreground colour, change crTransparent from a COLORREF value to actual R,G,B, so "-1" can be processed?
-HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse, int *error) {
+HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) {
 	BITMAP bm;
 	GetObject(hbmColour, sizeof(BITMAP), &bm);
 
@@ -442,30 +442,48 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 	}
  #endif
 
-	for (int y = 0; y < bm.bmHeight; y++) {
-		scanline = y * bytesPerLine;
-		for (int x = 0; x < bm.bmWidth; x++) {
-			pixel = scanline + x * bytesPerPixel;
-			b = &data[pixel];
-			g = b + 1;
-			r = g + 1;
-			b2 = &data2[pixel];
-			g2 = b2 + 1;
-			r2 = g2 + 1;
+	/* Hack to transpose bg2 map into bg map when not in 2mask-mode, for compatibility wih 2mask-tilesets */
+	if (use_graphics != UG_2MASK && crTransparent == RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B)) {
+		for (int y = 0; y < bm.bmHeight; y++) {
+			scanline = y * bytesPerLine;
+			for (int x = 0; x < bm.bmWidth; x++) {
+				pixel = scanline + x * bytesPerPixel;
+				b = &data[pixel];
+				g = b + 1;
+				r = g + 1;
+				b2 = &data2[pixel];
+				g2 = b2 + 1;
+				r2 = g2 + 1;
 
-			if (!inverse) {
+				if (*r == rt && *g == gt && *b == bt) {
+					/* Set mask pixel */
+					//*b2 = *g2 = *r2 = MaskColor1;  -- we're currently creating the bg2-mask, but it's not needed as we'e in non-2mask-mode
+					/* Transpose origin pixel from bg2 to bg, so the unused bg2 mask becomes part of the usable bg mask instead, which should look better */
+					*b = GFXMASK_BG_B;
+					*g = GFXMASK_BG_G;
+					*r = GFXMASK_BG_R;
+				}
+			}
+		}
+	}
+	/* Normal operation */
+	else {
+		for (int y = 0; y < bm.bmHeight; y++) {
+			scanline = y * bytesPerLine;
+			for (int x = 0; x < bm.bmWidth; x++) {
+				pixel = scanline + x * bytesPerPixel;
+				b = &data[pixel];
+				g = b + 1;
+				r = g + 1;
+				b2 = &data2[pixel];
+				g2 = b2 + 1;
+				r2 = g2 + 1;
+
 				if (*r == rt && *g == gt && *b == bt) {
 					/* Set mask pixel */
 					*b2 = *g2 = *r2 = MaskColor1;
 					/* Erase origin pixel */
 					*b = *g = *r = MaskColor0;
-				}
-			} else {
-				if (*r == rt && *g == gt && *b == bt) {
-					/* Set mask pixel */
-					*b2 = *g2 = *r2 = MaskColor0;
-					/* Erase origin pixel */
-					*b = *g = *r = MaskColor1;
 				}
 			}
 		}
@@ -514,7 +532,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 
 	/* The commented code above, which is in all tutorials on net doesn't work for mingw for unknown reasons. Let's use more classical and slower approach. */
 
-	if (!inverse) for (int y = 0; y < bm.bmHeight; y++) {
+	for (int y = 0; y < bm.bmHeight; y++) {
 		for (int x = 0; x < bm.bmWidth; x++) {
 			COLORREF p = GetPixel(hdcMem, x, y);
 
@@ -523,17 +541,6 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, bool inverse
 				SetPixel(hdcMem2, x, y, MaskColor1);
 				/* Erase origin pixel */
 				SetPixel(hdcMem, x, y, MaskColor0);
-			}
-		}
-	} else for (int y = 0; y < bm.bmHeight; y++) {
-		for (int x = 0; x < bm.bmWidth; x++) {
-			COLORREF p = GetPixel(hdcMem, x, y);
-
-			if (p == crTransparent) {
-				/* Set mask pixel. */
-				SetPixel(hdcMem2, x, y, MaskColor0);
-				/* Erase origin pixel */
-				SetPixel(hdcMem, x, y, MaskColor1);
 			}
 		}
 	}
@@ -2962,11 +2969,9 @@ int init_graphics_win(void) {
 	if (use_graphics == UG_2MASK) {
 		int err1, err2, err3;
 
-		/* BgMask processing must be first, as it specifically recognizes all "black" pixels
-		   and all CreateBBM calls actually create "additional" black pixels. */
-		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE, &err1);
-		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE, &err2);
-		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE, &err3);
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), &err1);
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), &err2);
+		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), &err3);
 		if (!g_hbmBgMask || !g_hbmFgMask || !g_hbmBg2Mask) {
 			sprintf(use_graphics_errstr, "Mask creation failed (2) (%d,%d,%d)", err1, err2, err3);
 			printf("%s\n", use_graphics_errstr);
@@ -2985,11 +2990,12 @@ int init_graphics_win(void) {
 	{
 		int err1, err2, err3;
 
-		/* Note the order: First, we set the unused bg2mask to black... */
-		void *res = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), FALSE, &err1);
+		/* Note the order: First, we set the unused bg2mask (transparency mask), but it'll be to bg instead of zero,
+		   via hack inside CreateBitmapMask that recognizes bg2 colour in non-2mask-mode */
+		void *res = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), &err1);
 		/* so it instead becomes part of the bgmask now. */
-		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), FALSE, &err2);
-		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), FALSE, &err3);
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), &err2);
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), &err3);
 		if (!g_hbmBgMask || !g_hbmFgMask || !res) {
 			sprintf(use_graphics_errstr, "Mask creation failed (1) (%d,%d,%d)", err1, err2, err3);
 			printf("%s\n", use_graphics_errstr);
