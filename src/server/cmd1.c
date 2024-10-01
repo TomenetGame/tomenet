@@ -6159,6 +6159,10 @@ void py_bash_py(int Ind, int y, int x) {
 		msg_print(Ind, "You cannot push past AFK players who don't stand on special features.");
 		return;
 	}
+	if (q_ptr->store_num != -1) {
+		msg_print(Ind, "You cannot push past players who are currently inside a shop.");
+		return;
+	}
 
 	/* Only attack if player is hostile. Otherwise we just do a friendly place-switching here: */
 	if (cfg.use_pk_rules == PK_RULES_NEVER || !check_hostile(Ind, Ind2)) {
