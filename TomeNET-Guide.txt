@@ -5266,7 +5266,7 @@ Tilesets also have two designated 'mask colours':
   tileset that maps fountains to a picture, all pixels that ought to show the
   blueness around the fountain would have to be 0x3E3D00.)
 - No effect in clients not newer than 4.9.2:
-  A 'dual-background mask' defined by colour R=11,G=16,B=10 (hex 0x0B100A),
+  A 'dual-background mask' defined by colour R=29,G=33,B=28 (hex 0x1D211C),
   ie a very dark green.
   Graphical tiles that usually take precedence over terrain, such as objects,
   any traps, monsters, players etc. can use this colour to become transparent
@@ -5279,7 +5279,7 @@ Tilesets also have two designated 'mask colours':
   file (eg .tomenetrc or TomeNET.ini) and set "graphics" to "2", same thing.
   If you use a dual-mode tileset with normal graphics settings instead, this is
   not a problem as it is 'backward compatible' and will interpret the dual-mask
-  colour (ie 0x0B100A) instead as background (0x3E3D00) automatically.
+  colour (ie 0x1D211C) instead as background (0x3E3D00) automatically.
 
 Svechnik (aka 'EvgenijK' on github) has worked on a major graphical tileset
 that can be found on his github, including instructions on how to use it:

@@ -568,9 +568,9 @@
  #define GFXMASK_BG_B	0
  /* Colours for dual-background-graphics mask (0x0B100A, was previously 0x0A100A) -
     must be known even if GRAPHICS_BG_MASK is not enabled, so client remains backward compatible with 2mask-ready tilesets! */
- #define GFXMASK_BG2_R	11
- #define GFXMASK_BG2_G	16
- #define GFXMASK_BG2_B	10
+ #define GFXMASK_BG2_R	29
+ #define GFXMASK_BG2_G	33
+ #define GFXMASK_BG2_B	28
 
  #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
  /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
