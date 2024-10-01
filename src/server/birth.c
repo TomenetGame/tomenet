@@ -2095,7 +2095,7 @@ static void player_outfit(int Ind) {
 
 	if (!strcmp(p_ptr->name, "Moltor")) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
-		o_ptr->name2 = 188;	// Bud ;)
+		o_ptr->name2 = EGO_BUDWEISER;	// Bud ;)
 		o_ptr->number = 9;
 		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 		o_ptr->discount = 72;
