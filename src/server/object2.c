@@ -10803,6 +10803,7 @@ void discharge_rod(object_type *o_ptr, int c) {
  * Divide 'stacked' wands.	- Jir -
  * o_ptr->number is not changed here!
  * Note: onew_ptr must already have the correct number (amt), o_ptr must still have the full number (amt not yet subtracted).
+ *       The # of charges onew_ptr has doesn't matter, it will get overwritten.
  *       Our job is not to set the object amounts, but just to handle charges/charging states of the two items.
  */
 void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt) {
