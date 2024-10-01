@@ -2238,7 +2238,7 @@ extern bool set_tim_reflect(int Ind, int v);
 #ifdef ARCADE_SERVER
 extern void set_pushed(int Ind, int dir);
 #endif
-extern bool set_melee_brand(int Ind, int v, u16b t, int p, bool cast, bool weapons_only);
+extern bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, bool weapons_only);
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
 extern bool guild_build(int Ind);

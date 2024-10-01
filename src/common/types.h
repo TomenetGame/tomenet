@@ -3556,7 +3556,7 @@ struct player_type {
 	byte nimbus_d;	/* Timed -- Damage for project() */
 	s16b melee_brand;			/* Timed -- Weapon Branding, duration */
 	u16b melee_brand_t;			/* Timed -- Weapon Branding, type */
-	s16b melee_brand_d;			/* Timed -- Weapon Branding, flags? (just using '9' for hack atm) */
+	unsigned char melee_brand_flags;			/* Timed -- Weapon Branding, flags? */
 	bool melee_brand_ma;			/* Flag to indicate it's the hands getting branded instead of weapons (for martial arts) */
 	s16b prob_travel;		/* Timed -- Probability travel */
 	s16b st_anchor;			/* Timed -- Space/Time Anchor */

@@ -8022,6 +8022,7 @@ extern int PlayerUID;
 /* Kings/Queens abilities */
 #define KING_OWN	0
 
+
 /* Generic temporary weapon branding, currently only used for melee weapons */
 #define TBRAND_ELEC		0x0001
 #define TBRAND_COLD		0x0002
@@ -8044,6 +8045,10 @@ extern int PlayerUID;
 //aura of death: -- (these are not applied via set_..._brand() functions, and not implemented for arrow_brand, only melee.)
 #define TBRAND_ICE		0x4000	/* note: no cut effect! */
 #define TBRAND_PLASMA		0x8000	/* note: no stun effect! */
+
+/* Temporary weapon branding - flags */
+#define TBRAND_F_EXTERN		0x01
+
 
 /* Client modes (e) */
 #define CLIENT_NORMAL		0x0000

@@ -2035,7 +2035,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) {
 		p_ptr->melee_brand = 0;
 		p_ptr->melee_brand_t = 0;
-		p_ptr->melee_brand_d = 0;
+		p_ptr->melee_brand_flags = 0x0;
 	}
 
 #ifdef USE_SOUND_2010

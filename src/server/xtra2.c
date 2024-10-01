@@ -863,7 +863,7 @@ bool set_prob_travel(int Ind, int v) {
  * Set "p_ptr->brand", notice observable changes
  * cast: Spell was just actively/newly cast, instead of just processed in dungeon.c.
  */
-bool set_melee_brand(int Ind, int v, u16b t, int p, bool cast, bool weapons_only) {
+bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, bool weapons_only) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE, plural;
 	char weapons[20];
@@ -891,12 +891,12 @@ bool set_melee_brand(int Ind, int v, u16b t, int p, bool cast, bool weapons_only
 			break;
 #else
 			if (v) {
-				/* Hack: p == 9 is a marker that this buff wasn't applied by ourself. Prevent msg-spam in this case. */
-				if (p != 9) msg_print(Ind, "You don't have any limbs to enchant."); /* failure */
+				/* If this buff wasn't applied by ourself, prevent msg-spam */
+				if (!(flags & TBRAND_F_EXTERN)) msg_print(Ind, "You don't have any limbs to enchant."); /* failure */
 			} else { /* Shut */
 				p_ptr->melee_brand = 0;
 				p_ptr->melee_brand_t = 0;
-				p_ptr->melee_brand_d = 0;
+				p_ptr->melee_brand_flags = 0x0;
 			}
 			return(FALSE); /* don't notice anything */
 #endif
@@ -914,12 +914,12 @@ bool set_melee_brand(int Ind, int v, u16b t, int p, bool cast, bool weapons_only
 		if (cast) p_ptr->melee_brand_ma = TRUE;
 	} else {
 		if (v) {
-			/* Hack: p == 9 is a marker that this buff wasn't applied by ourself. Prevent msg-spam in this case. */
-			if (p != 9) msg_print(Ind, "You are not wielding any melee weapons to brand."); /* failure */
+			/* If this buff wasn't applied by ourself, prevent msg-spam */
+			if (!(flags & TBRAND_F_EXTERN)) msg_print(Ind, "You are not wielding any melee weapons to brand."); /* failure */
 		} else { /* Shut */
 			p_ptr->melee_brand = 0;
 			p_ptr->melee_brand_t = 0;
-			p_ptr->melee_brand_d = 0;
+			p_ptr->melee_brand_flags = 0x0;
 		}
 		return(FALSE); /* don't notice anything */
 	}
@@ -1045,14 +1045,14 @@ bool set_melee_brand(int Ind, int v, u16b t, int p, bool cast, bool weapons_only
 
 			notice = TRUE;
 			t = 0;
-			p = 0;
+			flags = 0x0;
 		}
 	}
 
 	/* Use the value */
 	p_ptr->melee_brand = v;
 	p_ptr->melee_brand_t = t;
-	p_ptr->melee_brand_d = p;
+	p_ptr->melee_brand_flags = flags;
 
 
 	/* Nothing to notice */
