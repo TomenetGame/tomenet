@@ -312,7 +312,7 @@ tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -W
 #disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
 tomenet.test: PPFLAGS = -DTEST_CLIENT
 
-tomenet: CFLAGS = -DCLIENT_SIDE
+tomenet: CFLAGS += -DCLIENT_SIDE
 
 # Server is compiled with optimizations
 tomenet.server: CFLAGS += -g -O2
