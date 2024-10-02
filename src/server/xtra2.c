@@ -973,7 +973,7 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 		notice = TRUE;
 	}
 	/* Shut */
-	else if (p_ptr->melee_brand) {
+	else if (!v && p_ptr->melee_brand) {
 		switch (t) {
 		case TBRAND_BALL_ACID: //not used
 		case TBRAND_ACID:
