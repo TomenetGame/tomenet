@@ -2934,6 +2934,7 @@ int Receive_char(void) {
 #endif
 	bool is_us = FALSE;
 
+#ifdef GRAPHICS_BG_MASK
 	if (use_graphics == UG_2MASK && is_atleast(&server_version, 4, 9, 2, 1, 0, 0)) {
 		/* Transfer only minimum number of bytes needed, according to client setup.*/
 		char *pc = (char *)&c, *pc_b = (char *)&c_back;
@@ -2954,6 +2955,7 @@ int Receive_char(void) {
 			if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u%c%u", &ch, &x, &y, &a, &c, &a_back, &c_back)) <= 0) return(n);
 		}
 	} else
+#endif
 	/* 4.8.1 and newer servers communicate using 32bit character size. */
 	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		/* Transfer only minimum number of bytes needed, according to client setup.*/
