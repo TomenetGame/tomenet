@@ -6217,8 +6217,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
 #ifdef MSTAFF_MDEV_COMBO
 	case TV_MSTAFF:
-		/* No command-repeats for this atm, no XID_REPEAT for perception-mstaff either ~~ */
-		p_ptr->command_rep = 0;
 		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) msg_print(Ind, "You activate the staff to absorb a magic device...");
 		/* else: no message, same as for triggering magic devices */
 		break;
@@ -6266,6 +6264,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	//(could be moved down to 'base items' for less efficiency but better sort order)
 
 	if (o_ptr->tval == TV_RUNE) {
+		p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 		activate_rune(Ind, item);
 		return;
 	}
@@ -6273,6 +6272,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (o_ptr->tval == TV_GOLEM) {
 		int m_idx = 0, k;
 		monster_type *m_ptr;
+
+		p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 
 		/* Process the monsters */
 		for (k = m_top - 1; k >= 0; k--) {
@@ -6416,6 +6417,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 #ifdef MSTAFF_MDEV_COMBO
 	if (o_ptr->tval == TV_MSTAFF) {
+		p_ptr->command_rep = 0; /* No command-repeats for this atm, no XID_REPEAT for perception-mstaff either ~~ */
 		/* Activate to absorb a device? */
 		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) {
 			mstaff_absorb(Ind);
@@ -7367,6 +7369,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	if (!done) {
 		if (is_ego_p(o_ptr, EGO_DRAGON)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			teleport_player(Ind, 100, FALSE);
 			o_ptr->recharging = 50 + randint(35) - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			/* Window stuff */
@@ -7374,6 +7377,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Done */
 			return;
 		} else if (is_ego_p(o_ptr, EGO_JUMP)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			teleport_player(Ind, 10, TRUE);
 			o_ptr->recharging = 13 + randint(3) - get_skill_scale(p_ptr, SKILL_DEVICE, 9);
 			/* Window stuff */
@@ -7381,6 +7385,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Done */
 			return;
 		} else if (is_ego_p(o_ptr, EGO_SPINNING)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			//do_spin(Ind);
 			spin_attack(Ind); /* this one is nicer than do_spin */
 			o_ptr->recharging = 50 + randint(25) - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
@@ -7389,6 +7394,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Done */
 			return;
 		} else if (is_ego_p(o_ptr, EGO_FURY)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			set_fury(Ind, rand_int(5) + 15); /* removed stacking */
 			o_ptr->recharging = 100 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			/* Window stuff */
@@ -7396,6 +7402,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Done */
 			return;
 		} else if (is_ego_p(o_ptr, EGO_NOLDOR)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			detect_treasure(Ind, DEFAULT_RADIUS * 2);
 			o_ptr->recharging = 20 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			/* Window stuff */
@@ -7403,6 +7411,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Done */
 			return;
 		} else if (is_ego_p(o_ptr, EGO_SPECTRAL)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			//set_shadow(Ind, 20 + randint(20));
 			set_tim_wraith(Ind, 15 + randint(10));
 			o_ptr->recharging = 50 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
@@ -7411,6 +7420,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Done */
 			return;
 		} else if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			msg_print(Ind, "Your cloak flashes many colors...");
 			(void)set_oppose_acid(Ind, randint(20) + 50); /* removed stacking */
 			(void)set_oppose_elec(Ind, randint(20) + 50);
@@ -7422,6 +7432,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		} else if (is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
 		//else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			msg_print(Ind, "Your cloak flashes in flames...");
 			(void)set_oppose_fire(Ind, randint(20) + 40);
 			o_ptr->recharging = rand_int(20) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
@@ -7429,6 +7440,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		} else if (is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
 		//else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			msg_print(Ind, "Your cloak sparkles with lightning...");
 			(void)set_oppose_elec(Ind, randint(20) + 40);
 			o_ptr->recharging = rand_int(20) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
@@ -7436,6 +7448,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		} else if (is_ego_p(o_ptr, EGO_AURA_COLD2)) {
 		//else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
+			p_ptr->command_rep = 0; /* Non magic devices don't get activation-repeats */
 			msg_print(Ind, "Your cloak shines with frost...");
 			(void)set_oppose_cold(Ind, randint(20) + 40);
 			o_ptr->recharging = rand_int(20) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
