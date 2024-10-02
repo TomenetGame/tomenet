@@ -3437,6 +3437,7 @@ struct player_type {
 #endif
 	s16b current_curse;
 	s16b current_tome_creation;	/* adding a spell scroll to a custom tome - C. Blue */
+	s16b current_mstaff_absorb;	/* absorbing a magic device by a mage staff - C. Blue */
 #ifdef ENABLE_DEMOLITIONIST
 	s16b current_chemical;
 #endif

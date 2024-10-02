@@ -1976,6 +1976,13 @@ bool detect_magic(int Ind, int rad) {
 			if (artifact_p(o_ptr) || ego_item_p(o_ptr) ||
 			    (tv == TV_AMULET) || (tv == TV_RING) ||
 			    is_magic_device(tv) ||
+#if 0
+ #ifdef MSTAFF_MDEV_COMBO
+			    (tv == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) || /* kinda odd that mage staves aren't per se 'magic' */
+ #endif
+#else
+			    tv == TV_MSTAFF || /* Mage staff is always 'magic' even when it's boring ~_~ */
+#endif
 			    (tv == TV_SCROLL) || (tv == TV_POTION) ||
 			    ((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
 				{
@@ -4466,7 +4473,12 @@ bool item_tester_hook_recharge(object_type *o_ptr) {
 	if (f4 & TR4_NO_RECHARGE) return(FALSE);
 
 	/* Recharge staffs/wands/rods */
-	if (is_magic_device(o_ptr->tval)) return(TRUE);
+	if (is_magic_device(o_ptr->tval)
+#ifdef MSTAFF_MDEV_COMBO
+	    || (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3))
+#endif
+	    )
+		return(TRUE);
 
 	/* Nope */
 	return(FALSE);
@@ -4593,18 +4605,23 @@ bool recharge_aux(int Ind, int item, int pow) {
 				o_ptr->ident |= ID_EMPTY;
 				note_toggle_empty(o_ptr, TRUE);
 			} else {
+				int amt = 3 + rand_int(o_ptr->number - 2); /* destroy at least 3 items */
+
 				/* Dangerous Hack -- Destroy the item */
 				msg_print(Ind, "There is a bright flash of light.");
 
+				if (is_magic_device(o_ptr->tval)) /* mhhh */
+					divide_charged_item(NULL, o_ptr, amt);
+
 				/* Reduce and describe inventory */
 				if (item >= 0) {
-					inven_item_increase(Ind, item, -(3 + rand_int(o_ptr->number - 2)));
+					inven_item_increase(Ind, item, -amt);
 					inven_item_describe(Ind, item);
 					inven_item_optimize(Ind, item);
 				}
 				/* Reduce and describe floor item */
 				else {
-					floor_item_increase(0 - item, -(3 + rand_int(o_ptr->number - 2)));
+					floor_item_increase(0 - item, -amt);
 					floor_item_describe(0 - item);
 					floor_item_optimize(0 - item);
 				}
@@ -9248,7 +9265,7 @@ void tome_creation_aux(int Ind, int item) {
 	/* severe error: custom book no longer there */
 	if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
 		/* completely start from scratch (have to re-'activate') */
-		msg_print(Ind, "A book's inventory location was changed, please retry!");
+		msg_print(Ind, "A book's inventory location has changed, please retry!");
 		clear_current(Ind); /* <- not required actually */
 		return;
 	}
@@ -9390,6 +9407,114 @@ void tome_creation_aux(int Ind, int item) {
 	/* Something happened */
 	return;
 }
+
+#ifdef MSTAFF_MDEV_COMBO
+void mstaff_absorb(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	clear_current(Ind);
+
+	p_ptr->current_mstaff_absorb = TRUE;
+	get_item(Ind, ITH_RECHARGE); /* nice, we can abuse this ^^ it's just an mdev-tval-tester */
+
+	return;
+}
+
+/* mage staff absorbs a magic device - C. Blue
+   Note: pval must be incremented by 1, because svals may start at 0
+   and xtra1..9 are of type 'byte' so we can't use -1. */
+void mstaff_absorb_aux(int Ind, int item) {
+	player_type	*p_ptr = Players[Ind];
+	object_type	*o_ptr, *o2_ptr;
+	char		o_name[ONAME_LEN];
+
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
+
+	/* Get the item - in the pack ONLY, because -1 is a marker hack here for 'no item'! */
+	if (p_ptr->using_up_item < 0 || !get_inven_item(Ind, p_ptr->using_up_item, &o2_ptr)) return;
+
+	/* severe error: custom book no longer there */
+	if (!(o_ptr->tval == TV_MSTAFF && !o_ptr->name2 && !o_ptr->name2b && !o_ptr->name1 && !o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3)) {
+		/* completely start from scratch (have to re-'activate') */
+		msg_print(Ind, "You can only use a basic mage staff, please retry!");
+		clear_current(Ind); /* <- not required actually */
+		return;
+	}
+
+	if (!is_magic_device(o2_ptr->tval)) {
+		msg_print(Ind, "You can only absorb a magic device!");
+		/* restore silyl hack.. */
+		p_ptr->using_up_item = item;
+		/* try again */
+		get_item(Ind, ITH_RECHARGE);
+		return;
+	}
+
+	/* transcribe (add it)! */
+	switch (o2_ptr->tval) {
+	case TV_STAFF:
+		o_ptr->xtra1 = o2_ptr->sval + 1;
+		o_ptr->pval = o2_ptr->pval; //charges
+		break;
+	case TV_WAND:
+		o_ptr->xtra2 = o2_ptr->sval + 1;
+		o_ptr->pval = o2_ptr->pval; //charges
+		break;
+	case TV_ROD:
+		o_ptr->xtra3 = o2_ptr->sval + 1;
+		o_ptr->pval = o2_ptr->pval; //energy
+		break;
+	}
+
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+	/* Describe */
+	msg_format(Ind, "%s %s glow%s brightly!",
+	    ((item >= 0) ? "Your" : "The"), o_name,
+	    ((o_ptr->number > 1) ? "" : "s"));
+
+	/* Use up the magic device */
+	if (is_magic_device(o2_ptr->tval)) /* at this point it has to be */
+		divide_charged_item(NULL, o2_ptr, 1);
+	inven_item_increase(Ind, p_ptr->using_up_item, -1);
+	inven_item_describe(Ind, p_ptr->using_up_item);
+	inven_item_optimize(Ind, p_ptr->using_up_item);
+	p_ptr->using_up_item = -1;
+
+	/* unstack if our mage staff was originally in a pile of mage staves */
+	if ((item >= 0) && (o_ptr->number > 1)) {
+		/* Make a fake item */
+		object_type tmp_obj;
+		tmp_obj = *o_ptr;
+		tmp_obj.number = 1;
+
+		/* Restore remaining 'untouched' stack of mage staves */
+		o_ptr->xtra1 = o_ptr->xtra2 = o_ptr->xtra3 = o_ptr->pval = 0;
+
+		/* Message */
+		msg_print(Ind, "You unstack your mage staff.");
+
+		/* Unstack the used item */
+		o_ptr->number--;
+		p_ptr->total_weight -= tmp_obj.weight;
+		tmp_obj.iron_trade = o_ptr->iron_trade;
+		tmp_obj.iron_turn = o_ptr->iron_turn;
+		item = inven_carry(Ind, &tmp_obj);
+	}
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN);
+	p_ptr->notice |= (PN_REORDER);
+
+ #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+	/* Redraw subinven item */
+	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
+ #endif
+
+	/* Something happened */
+	return;
+}
+#endif
 
 #ifdef ENABLE_DEMOLITIONIST
 /* === Main code for the demolitionist trait feature of the 'Digging' skill - C. Blue === */

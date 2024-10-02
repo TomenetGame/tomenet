@@ -12977,7 +12977,7 @@ static int Receive_spell(int ind) {
 			return(1);
 		}
 		//Handle_item(player, item);
-		//TODO: finish tome_creation_aux() here
+		//TODO: finish tome_creation_aux() here, also mstaff_absorb_aux() (MSTAFF_MDEV_COMBO)?
 	}
 	return(1);
 }
@@ -14259,6 +14259,14 @@ void Handle_item(int Ind, int item) {
 		i = p_ptr->using_up_item;
 		p_ptr->using_up_item = item;
 		tome_creation_aux(Ind, i);
+#ifdef MSTAFF_MDEV_COMBO
+	} else if (p_ptr->current_mstaff_absorb) {
+		/* swap-hack: activating a mage staff uses up
+		   the TARGET item, not the mage staff, of course */
+		i = p_ptr->using_up_item;
+		p_ptr->using_up_item = item;
+		mstaff_absorb_aux(Ind, i);
+#endif
 	} else if (p_ptr->current_rune) {
 		rune_enchant(Ind, item);
 #ifdef ENABLE_DEMOLITIONIST

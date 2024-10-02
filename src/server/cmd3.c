@@ -2282,7 +2282,6 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) strcat(powins, "Stl");
 	if (f1 & (TR1_LIFE)) strcat(powins, "HP");
 	if (f1 & (TR1_MANA)) strcat(powins, "MP");
-	//if (f1 & (TR1_SPELL)) strcat(powins, "Sp");
 	if (f1 & (TR1_SPEED)) strcat(powins, "Spd");
 	if (f1 & (TR1_BLOWS)) strcat(powins, "Att");
 	if (f5 & (TR5_CRIT)) strcat(powins, "Crt");

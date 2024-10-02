@@ -656,7 +656,7 @@ static cptr t_info_flags[] = {
 	"CHEST",
 	"DOOR",
 	"FLOOR",
-	"CHANGE",	// "XXX4",
+	"CHANGE",
 	"SPECIAL_GENE",
 	"LEVEL_GEN",
 	"XXX7",
@@ -698,15 +698,15 @@ static cptr k_info_flags1[] = {
 	"CON",
 	"CHR",
 	"MANA",
-	"SPELL",	// "SPELL_SPEED",
+	"XXXUNUSED", //hole
 	"STEALTH",
 	"SEARCH",
 	"INFRA",
 	"TUNNEL",
 	"SPEED",
 	"BLOWS",
-	"LIFE",	// "LIFE",
-	"VAMPIRIC",	// "XXX4",
+	"LIFE",
+	"VAMPIRIC",
 	"SLAY_ANIMAL",
 	"SLAY_EVIL",
 	"SLAY_UNDEAD",
@@ -718,7 +718,7 @@ static cptr k_info_flags1[] = {
 	"KILL_DRAGON",
 	"KILL_DEMON",
 	"KILL_UNDEAD",
-	"BRAND_POIS",	//"XXX6",
+	"BRAND_POIS",
 	"BRAND_ACID",
 	"BRAND_ELEC",
 	"BRAND_FIRE",
@@ -735,14 +735,14 @@ static cptr k_info_flags2[] = {
 	"SUST_DEX",
 	"SUST_CON",
 	"SUST_CHR",
-	"RES_WATER",	//"INVIS",
-	"IM_NETHER",	//"LIFE",
+	"RES_WATER",
+	"IM_NETHER",
 	"IM_ACID",
 	"IM_ELEC",
 	"IM_FIRE",
 	"IM_COLD",
-	"IM_POISON",	//"SENS_FIRE",
-	"IM_WATER",	//"REFLECT",
+	"IM_POISON",
+	"IM_WATER",
 	"FREE_ACT",
 	"HOLD_LIFE",
 	"RES_ACID",
@@ -750,7 +750,7 @@ static cptr k_info_flags2[] = {
 	"RES_FIRE",
 	"RES_COLD",
 	"RES_POIS",
-	"RES_FEAR",		// "ANTI_MAGIC",
+	"RES_FEAR",
 	"RES_LITE",
 	"RES_DARK",
 	"RES_BLIND",
@@ -774,15 +774,15 @@ static cptr k_info_flags3[] = {
 	"NO_TELE",
 	"NO_MAGIC",
 	"WRAITH",
-	"TY_CURSE",		// ---
+	"TY_CURSE",
 	"EASY_KNOW",
 	"HIDE_TYPE",
 	"SHOW_MODS",
 	"INSTA_ART",
 	"FEATHER",
-	"LITE1",	// "LITE",
+	"LITE1",
 	"SEE_INVIS",
-	"REGEN_MANA",		// "TELEPATHY"
+	"REGEN_MANA",
 	"SLOW_DIGEST",
 	"REGEN",
 	"XTRA_MIGHT",
@@ -888,7 +888,7 @@ static cptr k_info_flags5[] = {
 	"TEMPORARY",
 	"DRAIN_MANA",
 	"DRAIN_HP",
-	"VORPAL",	//"XXX5",
+	"VORPAL",
 	"IMPACT",
 	"CRIT",
 	"ATTR_MULTI",
@@ -909,13 +909,13 @@ static cptr k_info_flags5[] = {
 	"REDUC_FIRE",
 	"REDUC_COLD",
 	"REDUC_ELEC",
-	"REDUC_ACID",	// "XXX8X24",
-	"DISARM",	// "XXX8X25",
-	"NO_ENCHANT",	// "XXX8X26",
-	"CHAOTIC",	//"XXX8X27",
-	"INVIS",	//"XXX8X28",
-	"REFLECT",	//"XXX8X29",
-	"PASS_WATER",	// "NORM_ART" is already in TR3
+	"REDUC_ACID",
+	"DISARM",
+	"NO_ENCHANT",
+	"CHAOTIC",
+	"INVIS",
+	"REFLECT",
+	"PASS_WATER",
 	"WINNERS_ONLY",
 };
 
@@ -994,8 +994,8 @@ cptr esp_flags[] = {
 	"XXX8X26",
 	"XXX8X27",
 	"R_ESP_LOW",
-	"R_ESP_HIGH", /* "XXX8X29", */
-	"R_ESP_ANY", /* "XXX8X02", */
+	"R_ESP_HIGH",
+	"R_ESP_ANY",
 	"ESP_ALL",
 };
 
@@ -1032,8 +1032,8 @@ static cptr ego_flags1[] = {
 	"XXXH5",
 	"XXXD3",
 
-	"R_ESP",	// "TD_M1",
-	"NO_SEED",	// "TD_M2",
+	"R_ESP",
+	"NO_SEED",
 	"LOW_ABILITY",
 	"R_P_ABILITY",
 
@@ -2993,7 +2993,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 	++k_head->name_size;
 	++k_head->text_size;
 
-#if defined(WIELD_BOOKS) || defined(WIELD_DEVICES)
+#if defined(WIELD_BOOKS) || defined(WIELD_DEVICES) || defined(MSTAFF_MDEV_COMBO)
 	/* Now these cases could be done via $WIELD_BOOKS tags too maybe (which currently aren't implemented) */
 	for (i = 1; i < MAX_K_IDX; i++) {
  #ifdef WIELD_BOOKS
@@ -3022,6 +3022,10 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			//k_info[i].cost += 100;
 		}
   #endif
+ #endif
+ #ifdef MSTAFF_MDEV_COMBO
+		/* Mage staves can be activated to initially absorb and then utilize the power of a magic device */
+		if (k_info[i].tval == TV_MSTAFF) k_info[i].flags3 |= TR3_ACTIVATE;
  #endif
 	}
 #endif

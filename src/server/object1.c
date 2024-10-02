@@ -1207,6 +1207,11 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	(*f6) = k_ptr->flags6;
 	(*esp) = k_ptr->esp;
 
+#ifdef MSTAFF_MDEV_COMBO /* mstaff base item has activation, but does not carry over to ego/art states! */
+	if (o_ptr->tval == TV_MSTAFF && (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b))
+		*f3 &= ~TR3_ACTIVATE;
+#endif
+
 	artifact_type *a_ptr;
 
 	/* Artifact */
@@ -5912,7 +5917,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	else if (f1 & (TR1_SLAY_DRAGON)) fprintf(fff, "It is especially deadly against dragons.\n");
 	if (f1 & (TR1_SLAY_EVIL)) fprintf(fff, "It fights against evil with holy fury.\n");
 	if (f1 & (TR1_MANA)) fprintf(fff, "It affects your mana capacity.\n");
-	if (f1 & (TR1_SPELL)) fprintf(fff, "It affects your spell power.\n");
 	if (f5 & (TR5_INVIS)) fprintf(fff, "It makes you invisible.\n");
 	if (o_ptr->tval != TV_TRAPKIT) {
 		if (f2 & (TR2_SUST_STR)) fprintf(fff, "It sustains your strength.\n");

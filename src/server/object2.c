@@ -2096,12 +2096,8 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 					if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
 				}
 
-				/* Give credit for extra casting */
-				if (f1 & TR1_SPELL) value += (PRICE_BOOST(pval, 0, 1) * 4000L);
-
 				/* Give credit for extra HP bonus */
 				if (f1 & TR1_LIFE) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
-
 
 				/* Flags moved here exclusively from flag_cost */
 				if (f1 & TR1_MANA) value += (200 * pval * (pval + 5));
@@ -3026,12 +3022,8 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
 			}
 
-			/* Give credit for extra casting */
-			if (f1 & TR1_SPELL) value += (PRICE_BOOST(pval, 0, 1) * 4000L);
-
 			/* Give credit for extra HP bonus */
 			if (f1 & TR1_LIFE) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
-
 
 			/* Flags moved here exclusively from flag_cost */
 			if (f1 & TR1_MANA) value += (700 * pval * pval);
@@ -3413,117 +3405,30 @@ s64b object_value(int Ind, object_type *o_ptr) {
 
 
 
+/* Helper function for object_similar() and store_object_similar() - C. Blue
+   Rule out similarity by an array of tval-based checks.
+   Ind can be 0, and for stores it must be -1!
+   tolerance only checks 0x1 and 0x2 here, which is ammo-enchant-merging and trapkit-enchant-merging, so it should just be 0x0 for stores. */
+bool object_similar_tval(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance, bool unknown) {
+	player_type *p_ptr;
+	bool stack_allow_devices, stack_allow_items;
 
-
-/*
- * Determine if an item can "absorb" a second item
- *
- * See "object_absorb()" for the actual "absorption" code.
- *
- * If permitted, we allow wands/staffs (if they are known to have equal
- * charges) and rods (if fully charged) to combine.
- *
- * Note that rods/staffs/wands are then unstacked when they are used.
- *
- * If permitted, we allow weapons/armor to stack, if they both known.
- *
- * Food, potions, scrolls, and "easy know" items always stack.
- *
- * Chests never stack (for various reasons).
- *
- * We do NOT allow activatable items (artifacts or dragon scale mail)
- * to stack, to keep the "activation" code clean.  Artifacts may stack,
- * but only with another identical artifact (which does not exist).
- *
- * Ego items may stack as long as they have the same ego-item type.
- * This is primarily to allow ego-missiles to stack.
- *
- * o_ptr and j_ptr no longer are simmetric;
- * j_ptr should be the new item or level-reqs gets meanless.
- *
- * 'tolerance' flag (C. Blue):
- * 0x0   - no tolerance
- * +0x1  - tolerance for ammo to_h and to_d enchantment
- * +0x2  - manual 'force stack' by the player: tolerance for level 0 items (starter items)
-           and for trapping kits with different (+h,+d) enchantments (like !M works for ammo)
- * +0x4  - tolerance for discount and inscription
- *         (added for dropping items on top of stacks inside houses)
- * +0x8  - ignore non-matching inscriptions. For player stores, which erase inscriptions on purchase anyway!
- * +0x10 - item is dropped on the floor, not in player's inventory (SUBINVEN_LIMIT_GROUP)
- * +0x20 - also perform !Gn checks with specified n amount here, in preparation for manual pickup (aka 'g' key)
- *         Changed function type to int for this to return the amount of acceptable items for an inventory stack.
- *         Instead of TRUE, now -1 is returned directly.
- * +0x40 - also for !Gn check: Treat !G as 'FALSE' as usual, but now treat too big stacks as non-working,
- *         instead of preparing for partial merging as with 0x20 tolerance.
- * +0x80 - hack for subinventory stuff (work in progress) some items can be stacked in stores but not in inventory.
- * +0x100- ignore stack sizes, so a 99 stack + another 99 stack can still be 'similar' even though they couldn't really stack.
- *         This mustn't be used without +0x20 at the same time!
- * +0x200- store_bought marker, for passing it through to subinven_can_stack() in inven_carry_okay().
- *
- * Returns 0 if not similar, -1 if whole stack can be merged (similar, normal case), or...
- * a number how many items are acceptable, specifically for !Gn inscription.
- */
-int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
-	player_type *p_ptr = NULL;
-	int total = (j_ptr == o_ptr ? o_ptr->number : o_ptr->number + j_ptr->number), i;
-	bool unknown = !((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && (k_info[j_ptr->k_idx].flags3 & TR3_EASY_KNOW))
-	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
-
-	/* In general, incompatible modes never stack.
-	   Also takes care of unowned everlasting items in shops after a now-dead
-	   everlasting player sold an item to the shop before he died :) */
-	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return(FALSE);
-
-	/* Hack -- gold always merge */
-	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) {
-		/* special exception: pile colour from coin-type monsters is immutable! */
-		if (o_ptr->sval != j_ptr->sval && (o_ptr->xtra2 || j_ptr->xtra2)) return(FALSE);
-		return(-1);
+	/* Hack for stores: There, items stack easily... */
+	if (Ind == -1) {
+		Ind = 0; //unhack, for simpler checks processing
+		stack_allow_devices = TRUE; /* for stores actually not important here, as store_object_similar() has stricter checks */
+		stack_allow_items = TRUE;
 	}
-
-#ifdef SUBINVEN_LIMIT_GROUP
-	/* Special bags never stack in someone's ivnentory, but allow stacking them on the floor (eg in houses) */
-	if (o_ptr->tval == TV_SUBINVEN && !(tolerance & 0x10)) return(FALSE);
-#endif
-	/* Don't EVER stack questors oO */
-	if (o_ptr->questor) return(FALSE);
-	/* Don't stack quest items if not from same quest AND stage! */
-	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
-
-	/* Require identical object types */
-	if (o_ptr->k_idx != j_ptr->k_idx) return(FALSE);
-
-	/* Level 0 items and other items won't merge, since level 0 can't be sold to shops */
-	if (!(tolerance & 0x2) &&
-	    (!o_ptr->level || !j_ptr->level) &&
-	    (o_ptr->level != j_ptr->level))
-		return(FALSE);
-
-	/* Require same owner or convertable to same owner */
-	/*if (o_ptr->owner != j_ptr->owner) return(FALSE); */
-	if (Ind) {
+	/* ...but for loot drops (Ind = 0) they don't... */
+	else if (!Ind) {
+		stack_allow_devices = FALSE;
+		stack_allow_items = FALSE;
+	}
+	/* ...and for player inven the player decides: */
+	else {
 		p_ptr = Players[Ind];
-		if (((o_ptr->owner != j_ptr->owner)
-		    && ((p_ptr->lev < j_ptr->level)
-		    || (j_ptr->level < 1)))
-		    && (j_ptr->owner))
-			return(FALSE);
-		if ((o_ptr->owner != p_ptr->id)
-		    && (o_ptr->owner != j_ptr->owner))
-			return(FALSE);
-
-		/* Require objects from the same modus! */
-		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
-		if (compat_pomode(Ind, j_ptr)) return(FALSE);
-	} else {
-		/* Hack: Dead owner? Allow to convert to us as owner if our level is high enough */
-		if (j_ptr->owner == 65537) {
-			if (j_ptr->level > lookup_player_level(o_ptr->owner))
-				return(FALSE);
-			/* else fall through */
-		}
-		/* Normal check */
-		else if (o_ptr->owner != j_ptr->owner) return(FALSE);
+		stack_allow_devices = p_ptr->stack_allow_devices;
+		stack_allow_items = p_ptr->stack_allow_items;
 	}
 
 	/* Analyze the items */
@@ -3613,7 +3518,7 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 
 		/* Beware artifacts should not combine with "lesser" thing */
 		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
-		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
+		if (!stack_allow_devices) return(FALSE);
 
 		/* Do not combine recharged ones with non recharged ones. */
 		//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return(FALSE);
@@ -3636,7 +3541,7 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 		    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
 
 		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
-		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
+		if (!stack_allow_devices) return(FALSE);
 
 #ifndef NEW_MDEV_STACKING
 		/* Require identical charges */
@@ -3661,7 +3566,7 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 #endif
 
 		/* Require permission */
-		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
+		if (stack_allow_devices) return(FALSE);
 		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
 
 #ifndef NEW_MDEV_STACKING
@@ -3677,6 +3582,11 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 
 	/* Weapons and Armor */
 	case TV_DRAG_ARMOR:	return(FALSE);
+	case TV_MSTAFF:
+#ifdef MSTAFF_MDEV_COMBO
+		if (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3) return(FALSE);
+		/* fall through */
+#endif
 	case TV_BOW:
 	case TV_BOOMERANG:
 	case TV_DIGGING:
@@ -3684,7 +3594,6 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_AXE:
-	case TV_MSTAFF:
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
@@ -3695,7 +3604,7 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 	case TV_HARD_ARMOR:
 	case TV_TRAPKIT: /* so they don't stack carelessly - the_sandman */
 		/* Require permission */
-		if (!Ind || !p_ptr->stack_allow_items) return(FALSE);
+		if (!stack_allow_items) return(FALSE);
 
 		/* XXX XXX XXX Require identical "sense" status */
 		/* if ((o_ptr->ident & ID_SENSE) != */
@@ -3841,6 +3750,122 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 		/* Probably okay */
 		break;
 	}
+
+	return(TRUE);
+}
+
+/*
+ * Determine if an item can "absorb" a second item
+ *
+ * See "object_absorb()" for the actual "absorption" code.
+ *
+ * If permitted, we allow wands/staffs (if they are known to have equal
+ * charges) and rods (if fully charged) to combine.
+ *
+ * Note that rods/staffs/wands are then unstacked when they are used.
+ *
+ * If permitted, we allow weapons/armor to stack, if they both known.
+ *
+ * Food, potions, scrolls, and "easy know" items always stack.
+ *
+ * Chests never stack (for various reasons).
+ *
+ * We do NOT allow activatable items (artifacts or dragon scale mail)
+ * to stack, to keep the "activation" code clean.  Artifacts may stack,
+ * but only with another identical artifact (which does not exist).
+ *
+ * Ego items may stack as long as they have the same ego-item type.
+ * This is primarily to allow ego-missiles to stack.
+ *
+ * o_ptr and j_ptr no longer are simmetric;
+ * j_ptr should be the new item or level-reqs gets meanless.
+ *
+ * 'tolerance' flag (C. Blue):
+ * 0x0   - no tolerance
+ * +0x1  - tolerance for ammo to_h and to_d enchantment
+ * +0x2  - manual 'force stack' by the player: tolerance for level 0 items (starter items)
+           and for trapping kits with different (+h,+d) enchantments (like !M works for ammo)
+ * +0x4  - tolerance for discount and inscription
+ *         (added for dropping items on top of stacks inside houses)
+ * +0x8  - ignore non-matching inscriptions. For player stores, which erase inscriptions on purchase anyway!
+ * +0x10 - item is dropped on the floor, not in player's inventory (SUBINVEN_LIMIT_GROUP)
+ * +0x20 - also perform !Gn checks with specified n amount here, in preparation for manual pickup (aka 'g' key)
+ *         Changed function type to int for this to return the amount of acceptable items for an inventory stack.
+ *         Instead of TRUE, now -1 is returned directly.
+ * +0x40 - also for !Gn check: Treat !G as 'FALSE' as usual, but now treat too big stacks as non-working,
+ *         instead of preparing for partial merging as with 0x20 tolerance.
+ * +0x80 - hack for subinventory stuff (work in progress) some items can be stacked in stores but not in inventory.
+ * +0x100- ignore stack sizes, so a 99 stack + another 99 stack can still be 'similar' even though they couldn't really stack.
+ *         This mustn't be used without +0x20 at the same time!
+ * +0x200- store_bought marker, for passing it through to subinven_can_stack() in inven_carry_okay().
+ *
+ * Returns 0 if not similar, -1 if whole stack can be merged (similar, normal case), or...
+ * a number how many items are acceptable, specifically for !Gn inscription.
+ */
+int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
+	player_type *p_ptr = NULL;
+	int total = (j_ptr == o_ptr ? o_ptr->number : o_ptr->number + j_ptr->number), i;
+	bool unknown = !((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && (k_info[j_ptr->k_idx].flags3 & TR3_EASY_KNOW))
+	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
+
+	/* In general, incompatible modes never stack.
+	   Also takes care of unowned everlasting items in shops after a now-dead
+	   everlasting player sold an item to the shop before he died :) */
+	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return(FALSE);
+
+	/* Hack -- gold always merge */
+	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) {
+		/* special exception: pile colour from coin-type monsters is immutable! */
+		if (o_ptr->sval != j_ptr->sval && (o_ptr->xtra2 || j_ptr->xtra2)) return(FALSE);
+		return(-1);
+	}
+
+#ifdef SUBINVEN_LIMIT_GROUP
+	/* Special bags never stack in someone's inventory, but allow stacking them on the floor (eg in houses) */
+	if (o_ptr->tval == TV_SUBINVEN && !(tolerance & 0x10)) return(FALSE);
+#endif
+	/* Don't EVER stack questors oO */
+	if (o_ptr->questor) return(FALSE);
+	/* Don't stack quest items if not from same quest AND stage! */
+	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
+
+	/* Require identical object types */
+	if (o_ptr->k_idx != j_ptr->k_idx) return(FALSE);
+
+	/* Level 0 items and other items won't merge, since level 0 can't be sold to shops */
+	if (!(tolerance & 0x2) &&
+	    (!o_ptr->level || !j_ptr->level) &&
+	    (o_ptr->level != j_ptr->level))
+		return(FALSE);
+
+	/* Require same owner or convertable to same owner */
+	/*if (o_ptr->owner != j_ptr->owner) return(FALSE); */
+	if (Ind) {
+		p_ptr = Players[Ind];
+		if (((o_ptr->owner != j_ptr->owner)
+		    && ((p_ptr->lev < j_ptr->level)
+		    || (j_ptr->level < 1)))
+		    && (j_ptr->owner))
+			return(FALSE);
+		if ((o_ptr->owner != p_ptr->id)
+		    && (o_ptr->owner != j_ptr->owner))
+			return(FALSE);
+
+		/* Require objects from the same modus! */
+		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
+		if (compat_pomode(Ind, j_ptr)) return(FALSE);
+	} else {
+		/* Hack: Dead owner? Allow to convert to us as owner if our level is high enough */
+		if (j_ptr->owner == 65537) {
+			if (j_ptr->level > lookup_player_level(o_ptr->owner))
+				return(FALSE);
+			/* else fall through */
+		}
+		/* Normal check */
+		else if (o_ptr->owner != j_ptr->owner) return(FALSE);
+	}
+
+	if (!object_similar_tval(Ind, o_ptr, j_ptr, tolerance, unknown)) return(FALSE);
 
 	/* Hack -- Require identical "cursed" status */
 	if ((o_ptr->ident & ID_CURSED) != (j_ptr->ident & ID_CURSED)) return(FALSE);

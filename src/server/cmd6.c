@@ -5762,6 +5762,13 @@ bool activation_requires_direction(object_type *o_ptr) {
 		return(TRUE);
 #endif
 
+#ifdef MSTAFF_MDEV_COMBO
+	/* Mage staff with either a wand or a directional rod absorbed. */
+	else if (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra2 || (o_ptr->xtra3 &&
+	    (o_ptr->xtra3 - 1 >= SV_ROD_MIN_DIRECTION && o_ptr->xtra3 - 1 != SV_ROD_DETECT_TRAP && o_ptr->xtra3 - 1 != SV_ROD_HOME))))
+		return(TRUE);
+#endif
+
 	/* All other items aren't activatable */
 	return(FALSE);
 }
@@ -6034,6 +6041,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	switch (o_ptr->tval) {
 	case TV_RUNE: msg_print(Ind, "The rune glows with power!"); break;
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
+#ifdef MSTAFF_MDEV_COMBO
+	case TV_MSTAFF:
+		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) msg_print(Ind, "You activate the staff to absorb a magic device...");
+		break;
+#endif
 	case TV_JUNK:
 		if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) msg_print(Ind, "You prepare the gift wrapping...");
 		else msg_print(Ind, "You activate it...");
@@ -6224,6 +6236,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		p_ptr->using_up_item = item; /* hack - gets swapped later */
 		return;
 	}
+
+#ifdef MSTAFF_MDEV_COMBO
+	if (o_ptr->tval == TV_MSTAFF) {
+		mstaff_absorb(Ind);
+		p_ptr->using_up_item = item; /* hack - gets swapped later :-p hi copy-pasta-tomecreation */
+		return;
+	}
+#endif
 
 #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHEMICAL) {

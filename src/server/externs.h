@@ -1370,6 +1370,7 @@ extern bool can_use_admin(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void flavor_hacks(void);
 extern void reset_visuals(void);
+extern bool object_similar_tval(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance, bool unknown);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp);
 extern void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
 extern void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
@@ -1877,6 +1878,10 @@ extern bool item_tester_hook_recharge(object_type *o_ptr);
 extern bool do_vermin_control(int Ind);
 extern void tome_creation(int Ind);
 extern void tome_creation_aux(int Ind, int item);
+#ifdef MSTAFF_MDEV_COMBO
+extern void mstaff_absorb(int Ind);
+extern void mstaff_absorb_aux(int Ind, int item);
+#endif
 #ifdef ENABLE_DEMOLITIONIST
 extern s16b mix_chemicals(int Ind, int item);
 extern void grind_chemicals(int Ind, int item);

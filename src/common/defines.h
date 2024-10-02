@@ -5407,9 +5407,8 @@
 #define TR1_CON				0x00000010U	/* CON += "pval" */
 #define TR1_CHR				0x00000020U	/* CHR += "pval" */
 #define TR1_MANA			0x00000040U	/* SP += "pval" * SP / 10 */
-/* #define TR1_SPELL_SPEED		0x00000080U */	/* Spell Speed += pval */
- #define TR1_SPELL			0x00000080U	/* Spell Speed += pval -- unused, remove me -- */
-//HOLE
+//#define TR1_xxx			0x00000080U	/* */
+// HOLE
 #define TR1_STEALTH		0x00000100U	/* Stealth += "pval" */
 #define TR1_SEARCH		0x00000200U	/* Search += "pval" */
 #define TR1_INFRA		0x00000400U	/* Infra += "pval" */
@@ -5446,14 +5445,14 @@
 /* Hack -- flag set 1 -- mask for "pval-dependant" flags. */
 #if 0
 #define TR1_PVAL_MASK	\
-	(TR1_ATTR_MASK | TR1_MANA | TR1_SPELL_SPEED | \
+	(TR1_ATTR_MASK | TR1_MANA |
 	TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
 	TR1_SPEED | TR1_BLOWS | TR1_LIFE | TR1_XXX4)
 #else
 #define TR1_PVAL_MASK   \
 	(TR1_ATTR_MASK | TR1_LIFE | \
 	TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
-	TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
+	TR1_SPEED | TR1_BLOWS | TR1_MANA)
 #endif	/* 0 */
 
 

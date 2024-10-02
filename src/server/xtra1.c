@@ -3037,7 +3037,7 @@ void calc_boni(int Ind) {
 	int old_dis_to_h, old_to_h_melee;
 	int old_dis_to_d, old_to_d_melee;
 
-	int extra_blows_tmp, extra_shots, extra_spells;
+	int extra_blows_tmp, extra_shots;
 	byte never_blow = 0x0;
 	bool never_blow_ranged = FALSE;
 
@@ -3140,7 +3140,7 @@ void calc_boni(int Ind) {
 	old_to_d_melee = p_ptr->to_d_melee;
 
 	/* Clear extra blows/shots */
-	extra_blows_tmp = extra_shots = extra_spells = 0;
+	extra_blows_tmp = extra_shots = 0;
 
 	/* Clear the stat modifiers */
 	for (i = 0; i < C_ATTRIBUTES; i++) p_ptr->stat_tmp[i] = p_ptr->stat_add[i] = 0;
@@ -4104,9 +4104,6 @@ void calc_boni(int Ind) {
 			/* There are no known weapons so far that adds bpr intrinsically. Need this only for ring of EA atm. */
 			if (k_ptr->flags1 & TR1_BLOWS) { p_ptr->extra_blows += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].blow += o_ptr->bpval; }
 
-			/* Affect spells */
-			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
-
 			/* Affect mana capacity -- currently doesn't exist as base bonus */
 			if (k_ptr->flags1 & TR1_MANA) {
 				if ((f4 & TR4_SHOULD2H) &&
@@ -4183,9 +4180,6 @@ void calc_boni(int Ind) {
 		/* Affect luck */
 		if (f5 & (TR5_LUCK)) { p_ptr->luck += pval; csheet_boni[i-INVEN_WIELD].luck += pval; }
 
-		/* Affect spell power */
-		//if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
-
 		/* Affect mana capacity */
 		if (f1 & (TR1_MANA)) {
 			if ((f4 & TR4_SHOULD2H) &&
@@ -4228,10 +4222,6 @@ void calc_boni(int Ind) {
 
 		/* Affect speed */
 		if (f1 & TR1_SPEED) { p_ptr->pspeed += pval; csheet_boni[i-INVEN_WIELD].spd += pval; }
-
-		/* Affect spellss */
-		//if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
-		if (f1 & TR1_SPELL) extra_spells += pval;
 
 		/* Affect disarming (factor of 20) */
 		if (f5 & (TR5_DISARM)) p_ptr->skill_dis += pval * 5;
@@ -5503,10 +5493,6 @@ void calc_boni(int Ind) {
 /*		if (p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RANGER && p_ptr->num_fire > 4) p_ptr->num_fire = 4;
 */
 	}
-
-	/* Add in the "bonus spells" */
-	p_ptr->num_spell += extra_spells;
-
 
 	/* Assume not heavy -- Note that we do not discern between INVEN_WIELD and INVEN_TOOL slot regarding heavy_tool for now. */
 	p_ptr->heavy_tool = FALSE;
@@ -9929,6 +9915,7 @@ void clear_current(int Ind) {
 	p_ptr->current_telekinesis = NULL;
 	p_ptr->current_curse = 0;
 	p_ptr->current_tome_creation = 0;
+	p_ptr->current_mstaff_absorb = 0;
 	p_ptr->current_rune = 0;
 #ifdef ENABLE_DEMOLITIONIST
 	p_ptr->current_chemical = 0;

@@ -668,22 +668,26 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 }
 
 /*
- * Determine if a store item can "absorb" another item
- *
- * See "object_similar()" for the same function for the "player"
+ * Determine if a store item can "absorb" another item.
+ * New item can be an item generated in the store or an item sold/donated to the store by a player.
+ * See "object_similar()" for the same function for the "player".
+ * o_ptr is one in store, j_ptr is one in new.
  */
-/* o_ptr is one in store, j_ptr is one in new. */
 static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return(0);
 
-
 	/* Don't EVER stack questors oO */
 	if (o_ptr->questor) return(FALSE);
-	/* Don't ever stack special quest items */
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return(FALSE);
-	/* Gifts can contain a stack of items, so they themselves must not be stackable, or inven space limits could be badly exploited */
-	if (o_ptr->tval == TV_SPECIAL && (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)) return(FALSE);
+
+	/* Different objects cannot be stacked */
+	if (o_ptr->k_idx != j_ptr->k_idx) return(FALSE);
+
+	/* Different modes cannot be stacked */
+	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return(FALSE);
+
+	if (!object_similar_tval(-1, o_ptr, j_ptr, 0x0, FALSE)) return(FALSE);
+
 	/* Don't stack quest items if not from same quest AND stage! */
 	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
 
@@ -693,13 +697,6 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	/* Don't stack potions of blood because of their timeout */
 	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return(FALSE);
 
-
-	/* Different objects cannot be stacked */
-	if (o_ptr->k_idx != j_ptr->k_idx) return(0);
-
-	/* Different modes cannot be stacked */
-	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return(0);
-
 	/* Different charges (etc) cannot be stacked */
 	if (o_ptr->pval != j_ptr->pval &&
 #ifdef NEW_MDEV_STACKING
@@ -707,55 +704,53 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 #else
 	    o_ptr->tval != TV_WAND
 #endif
-		) return(0);
+		) return(FALSE);
 	if (o_ptr->bpval != j_ptr->bpval
 #ifdef NEW_MDEV_STACKING
 	    && o_ptr->tval != TV_ROD
 #endif
-		) return(0);
+		) return(FALSE);
 
 	/* Require many identical values */
-	if (o_ptr->to_h  !=  j_ptr->to_h) return(0);
-	if (o_ptr->to_d  !=  j_ptr->to_d) return(0);
-	if (o_ptr->to_a  !=  j_ptr->to_a) return(0);
+	if (o_ptr->to_h  !=  j_ptr->to_h) return(FALSE);
+	if (o_ptr->to_d  !=  j_ptr->to_d) return(FALSE);
+	if (o_ptr->to_a  !=  j_ptr->to_a) return(FALSE);
 
 	/* Require identical "artifact" names */
 	/* Bad idea, randart ammo is stacked easily. (Rand)arts just
 	   shouldn't stack at all - C. Blue */
 #if 0
-	if (o_ptr->name1 != j_ptr->name1) return(0);
+	if (o_ptr->name1 != j_ptr->name1) return(FALSE);
 #else
-	if (o_ptr->name1 || j_ptr->name1) return(0);
+	if (o_ptr->name1 || j_ptr->name1) return(FALSE);
 #endif
 
 	/* Require identical "ego-item" names */
-	if (o_ptr->name2 != j_ptr->name2) return(0);
-	if (o_ptr->name2b != j_ptr->name2b) return(0);
+	if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+	if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
 
 	/* require same seed */
-	if (o_ptr->name3 != j_ptr->name3) return(0);
+	if (o_ptr->name3 != j_ptr->name3) return(FALSE);
 
 	/* Hack -- Never stack "powerful" items */
-	if (o_ptr->xtra1 || j_ptr->xtra1) return(0);
+	if (o_ptr->xtra1 || j_ptr->xtra1) return(FALSE);
 
 	/* Hack -- Never stack recharging items */
-	if (o_ptr->timeout != j_ptr->timeout) return(0);
-	if (o_ptr->timeout_magic != j_ptr->timeout_magic) return(0);
-	if (o_ptr->recharging != j_ptr->recharging) return(0);
+	if (o_ptr->timeout != j_ptr->timeout) return(FALSE);
+	if (o_ptr->timeout_magic != j_ptr->timeout_magic) return(FALSE);
+	if (o_ptr->recharging != j_ptr->recharging) return(FALSE);
 
 	/* Require many identical values */
-	if (o_ptr->ac != j_ptr->ac) return(0);
-	if (o_ptr->dd != j_ptr->dd) return(0);
-	if (o_ptr->ds != j_ptr->ds) return(0);
+	if (o_ptr->ac != j_ptr->ac) return(FALSE);
+	if (o_ptr->dd != j_ptr->dd) return(FALSE);
+	if (o_ptr->ds != j_ptr->ds) return(FALSE);
 
 	/* Hack -- Never stack chests */
-	if (o_ptr->tval == TV_CHEST) return (0);
+	if (o_ptr->tval == TV_CHEST) return (FALSE);
 
 	/* Hack -- Never stack 'used' custom tomes */
-	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) && o_ptr->xtra1)
-		return(0);
-	if (j_ptr->tval == TV_BOOK && is_custom_tome(j_ptr->sval) && j_ptr->xtra1)
-		return(0);
+	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) && o_ptr->xtra1) return(FALSE);
+	if (j_ptr->tval == TV_BOOK && is_custom_tome(j_ptr->sval) && j_ptr->xtra1) return(FALSE);
 
 	/* cheques may have different value, so they must not stack */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) return(FALSE);
@@ -764,12 +759,12 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	//if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return(FALSE);
 
 	/* Require matching discounts */
-	if (o_ptr->discount != j_ptr->discount) return(0);
+	if (o_ptr->discount != j_ptr->discount) return(FALSE);
 
 #ifdef PLAYER_STORES
 	/* Different inscriptions can be used to prevent stacking
 	   and thereby customize pile sizes :) */
-	if (o_ptr->note != j_ptr->note) return(0);
+	if (o_ptr->note != j_ptr->note) return(FALSE);
 #endif
 
 	/* They match, so they must be similar */
@@ -1348,6 +1343,7 @@ int player_store_base(object_type *o_ptr) {
 
 /*
  * Add the item "o_ptr" to a real stores inventory.
+ * Can be either an item generated in the store or an item sold/donated to the store by a player
  *
  * If the item is "worthless", it is thrown away (except in the home).
  *
@@ -5902,6 +5898,11 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 
 	/* Weapons and Armor */
 	case TV_DRAG_ARMOR:	return(FALSE);
+	case TV_MSTAFF:
+#ifdef MSTAFF_MDEV_COMBO
+		if (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3) return(FALSE);
+		/* fall through */
+#endif
 	case TV_BOW:
 	case TV_BOOMERANG:
 	case TV_DIGGING:
@@ -5909,7 +5910,6 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_AXE:
-	case TV_MSTAFF:
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:

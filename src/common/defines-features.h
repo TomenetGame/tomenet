@@ -406,12 +406,15 @@
     30% reduced fail chance, flat on top,
     20% chance to retain the charge/energy at the cost of MP (depending on the device level). */
 #define WIELD_DEVICES
-/* Wielded staves grand mana regeneration just as mage staves do. */
+//Note: If manareg gets added to any devices, it should probably depend on charges left. However, cheapest staff is 200 au while basic mstaff is 300 au.
 #ifdef WIELD_DEVICES
- //Note: If manareg gets added to any devices, it should probably depend on charges left. However, cheapest staff is 200 au while basic mstaff is 300 au.
- //This feat auto-bumps staff prices a bit!
- #define WIELD_STAFF_RGM
+ /* Wielded staves grand mana regeneration just as mage staves do? - This feat auto-bumps staff prices a bit */
+ //#define WIELD_STAFF_RGM /* Didn't turn out convincingly. Instead, look at MSTAFF_MDEV_COMBO as a replacement. */
 #endif
+/* Mage staves can be activated to absorb a staff/wand/rod and then be activated to cast that.
+   Item cannot stack anymore (important for divide_charged_item!).
+   Uses charges as the mdev would. Failure to recharge destroys not the staff but just the power. */
+#define MSTAFF_MDEV_COMBO //todo:implement
 
 /* Server-side switch to allow clients to use item-diz-chat-pasting. This is defined separately for client-side too. */
 #if 0 /* on/off */

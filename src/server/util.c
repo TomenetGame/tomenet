@@ -9959,7 +9959,11 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 #if 1
 	/* equippable magic devices are especially easy to use? (ie no wands/staves/rods)
 	   eg tele rings, serpent amulets, true artifacts */
-	if (!is_magic_device(o_ptr->tval)) {
+	if (!is_magic_device(o_ptr->tval)
+ #ifdef MSTAFF_MDEV_COMBO
+	    && !(o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3))
+ #endif
+	    ) {
 		chance += 30;
 		chance = chance - lev / 10;
 	}
@@ -9989,6 +9993,10 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille, bo
 
 	if (o_ptr->tval == TV_RUNE) return(chance); // Hack: Rune Boni - Kurzel
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (o_ptr->tval == TV_MSTAFF) bonus = TRUE; /* We wield the 'magic device' -> bonus as usual */
+#endif
+
 	/* 100% not possible to reach:
 	   For chance >= 201 this produces a rounding error that would result in displayed 100%,
 	   when in reality activate_magic_device() can never reach 100% (even though it can go over 99%!).
@@ -10014,9 +10022,14 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille, bo
 bool activate_magic_device(int Ind, object_type *o_ptr, bool bonus) {
 	player_type *p_ptr = Players[Ind];
 	byte permille;
-	int chance = activate_magic_device_chance(Ind, o_ptr, &permille, bonus);
+	int chance;
 
-	if (o_ptr->tval == TV_RUNE) return(magik(chance));
+	if (o_ptr->tval == TV_RUNE) return(magik(activate_magic_device_chance(Ind, o_ptr, &permille, FALSE)));
+
+#ifdef MSTAFF_MDEV_COMBO
+	if (o_ptr->tval == TV_MSTAFF) bonus = TRUE; /* We wield the 'magic device' -> bonus as usual */
+#endif
+	chance  = activate_magic_device_chance(Ind, o_ptr, &permille, bonus);
 
 	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
 	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {

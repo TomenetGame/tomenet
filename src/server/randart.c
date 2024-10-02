@@ -2637,11 +2637,8 @@ try_an_other_ego:
 	if (!is_ammo(a_ptr->tval) && a_ptr->pval > 15) a_ptr->pval = 15;
 	/* Mage Staves don't have NO_MAGIC */
 	if (o_ptr->tval == TV_MSTAFF) a_ptr->flags3 &= ~TR3_NO_MAGIC;
-	/* Dark Swords don't have MANA (or SPELL) flag */
-	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) {
-		a_ptr->flags1 &= ~TR1_MANA;
-		a_ptr->flags1 &= ~TR1_SPELL;
-	}
+	/* Dark Swords don't have MANA flag */
+	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;
 	/* Items of/with 'Magi'/'Istari' and BLESSED/REGEN_MANA don't have NO_MAGIC: */
 	if ((a_ptr->flags3 & TR3_NO_MAGIC) && !(k_ptr->flags3 & TR3_NO_MAGIC)) {
 		/* If an item gives BLESSED, remove NO_MAGIC property */
