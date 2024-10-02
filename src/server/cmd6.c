@@ -5899,7 +5899,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #endif
 #endif
 
-		msg_print(Ind, "You cannot activate that item.");
+		if (!object_known_p(Ind, o_ptr)) msg_print(Ind, "You cannot activate unknown items.");
+		else msg_print(Ind, "You cannot activate that item.");
 		return;
 	}
 
