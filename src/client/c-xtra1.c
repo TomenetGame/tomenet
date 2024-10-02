@@ -850,12 +850,14 @@ void prt_sane(byte attr, cptr buf) {
 
 #ifdef SHOW_SANITY	/* NO SANITY DISPLAY!!! */
 	strcpy(tmpsn, buf);
+ #if defined(WINDOWS) || defined(USE_X11)
 	if (c_cfg.solid_bars)
 		for (x = 0; x < strlen(tmpsn); x++)
- #ifdef WINDOWS
+  #ifdef WINDOWS
 			if (tmpsn[x] == '*') tmpsn[x] = FONT_MAP_SOLID_WIN;
- #elif defined(USE_X11)
+  #elif defined(USE_X11)
 			if (tmpsn[x] == '*') tmpsn[x] = FONT_MAP_SOLID_X11;
+  #endif
  #endif
 
 	/* remember cursor position */
