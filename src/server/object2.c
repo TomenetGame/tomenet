@@ -1935,6 +1935,24 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return(0L);
 		break;
 
+	case TV_MSTAFF:
+#ifdef MSTAFF_MDEV_COMBO
+		if (o_ptr->xtra1) {
+			value = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1 - 1)].cost;
+ #ifdef NEW_MDEV_STACKING
+			value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+ #else
+			value += ((value / 20) * o_ptr->pval);
+ #endif
+			value += k_ptr->cost;
+		} else if (o_ptr->xtra2) {
+			value = k_info[lookup_kind(TV_WAND, o_ptr->xtra2 - 1)].cost;
+			value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+			value += k_ptr->cost;
+		} else if (o_ptr->xtra3) {
+			value += k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].cost;
+		}
+#endif
 	case TV_DIGGING:
 	case TV_BLUNT:
 	case TV_POLEARM:
@@ -1946,7 +1964,6 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_BOW:
 	case TV_BOOMERANG:
 
-	case TV_MSTAFF:
 	case TV_LITE:
 	case TV_AMULET:
 	case TV_RING:
@@ -2879,6 +2896,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return(0L);
 		break;
 
+	case TV_MSTAFF:
 	case TV_DIGGING:
 	case TV_BLUNT:
 	case TV_POLEARM:
@@ -2890,7 +2908,6 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_BOW:
 	case TV_BOOMERANG:
 
-	case TV_MSTAFF:
 	case TV_LITE:
 	case TV_AMULET:
 	case TV_RING:

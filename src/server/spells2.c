@@ -9408,6 +9408,9 @@ void tome_creation_aux(int Ind, int item) {
 	    ((item >= 0) ? "Your" : "The"), o_name,
 	    ((o_ptr->number > 1) ? "" : "s"));
 
+	/* Use biggest discount? With leeway for starter items */
+	if (o_ptr->discount < o2_ptr->discount && !(o2_ptr->mode & MODE_STARTER_ITEM)) o_ptr->discount = o2_ptr->discount;
+
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
 		inven_item_increase(Ind, p_ptr->using_up_item, -1);
@@ -9498,6 +9501,9 @@ void mstaff_absorb_aux(int Ind, int item) {
 	msg_format(Ind, "%s %s glow%s brightly!",
 	    ((item >= 0) ? "Your" : "The"), o_name,
 	    ((o_ptr->number > 1) ? "" : "s"));
+
+	/* Use biggest discount? With leeway for starter items */
+	if (o_ptr->discount < o2_ptr->discount && !(o2_ptr->mode & MODE_STARTER_ITEM)) o_ptr->discount = o2_ptr->discount;
 
 	/* transcribe (add it)! */
 	switch (o2_ptr->tval) {
