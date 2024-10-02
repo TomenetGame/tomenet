@@ -2825,7 +2825,11 @@ int check_guard_inscription(s16b quark, char what) {
 bool suppress_message = FALSE, suppress_boni = FALSE;
 
 void msg_print(int Ind, cptr msg_raw) {
+	player_type *p_ptr = Players[Ind];
 	char msg_dup[MSG_LEN], *msg = msg_dup;
+#if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
+	char *ckt;
+#endif
 	int line_len = 80; /* maximum length of a text line to be displayed;
 		     this is client-dependant, compare c_msg_print (c-util.c) */
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
@@ -2842,7 +2846,7 @@ void msg_print(int Ind, cptr msg_raw) {
 	bool first_colour_code_set = FALSE;
 
 	/* backward msg window width hack for windows clients (non-x11 clients rather) */
-	if (!is_newer_than(&Players[Ind]->version, 4, 4, 5, 3, 0, 0) && !strcmp(Players[Ind]->realname, "PLAYER")) line_len = 72;
+	if (!is_newer_than(&p_ptr->version, 4, 4, 5, 3, 0, 0) && !strcmp(p_ptr->realname, "PLAYER")) line_len = 72;
 
 	/* Pfft, sorry to bother you.... --JIR-- */
 	if (suppress_message) return;
@@ -2855,6 +2859,14 @@ void msg_print(int Ind, cptr msg_raw) {
 	}
 
 	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
+
+#if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
+	/* Marker from client to server: kind-diz would need to begin here, if player wishes to read this kind of extra info. */
+	if ((ckt = strchr(msg_dup, '\372'))) {
+		if (p_ptr->kind_diz) *ckt = '\377';
+		else *ckt = 0;
+	}
+#endif
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -2879,7 +2891,7 @@ void msg_print(int Ind, cptr msg_raw) {
 	   add message to 'nochat buffer', but not to 'chat-only buffer' (default) */
 
 	/* neutralize markers if client version too old */
-	if (!is_newer_than(&Players[Ind]->version, 4, 4, 2, 0, 0, 0))
+	if (!is_newer_than(&p_ptr->version, 4, 4, 2, 0, 0, 0))
 		client_ctrlo = client_chat = client_all = FALSE;
 
 #if 1	/* String longer than 1 line? -> Split it up! --C. Blue-- */
@@ -5033,6 +5045,9 @@ static void player_talk_aux(int Ind, char *message) {
 	char message2[MSG_LEN], message_u[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
 	char *colon, *colon_u;
+#if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
+	char *sipd;
+#endif
 	bool rp_me = FALSE, rp_me_gen = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
@@ -5396,7 +5411,6 @@ static void player_talk_aux(int Ind, char *message) {
 	if (//is_public &&
 	    (!slash_command || slash_command_msg || slash_command_censorable)) {
 		char *c = strchr(message, ' ');
-
 #ifndef ENABLE_MULTILINE_CENSOR
 		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
 		/* Censor and get level of punishment. (Note: This if/else isn't really needed, we could just censor the complete message always..) */
@@ -5417,6 +5431,55 @@ static void player_talk_aux(int Ind, char *message) {
 		handle_punish(Ind, censor_punish);
 		return;
 	}
+
+
+#if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
+	if ((sipd = strchr(message, '\372'))) {
+		char *ckt = strchr(sipd, ',');
+		int tval = atoi(sipd + 1), sval = ckt ? atoi(ckt + 1) : -1;
+
+		if ((sflags1 & SFLG1_SIPD) && tval >= 1 && tval <= TV_MAX && sval >= 0 && sval <= 255) {
+			int k_idx = lookup_kind(tval, sval);
+
+			/* k_text is in a format not fit for here, so translate back (cut off first 3 chars, replace linefeeds with spaces) */
+			if (k_info[k_idx].text && strlen(message) < MSG_LEN - 10) {
+ #if 0 /* begin diz at former \372 */
+				char *cs = sipd;
+
+				strcpy(cs, "\377D - ");
+				cs += 5;
+ #else /* break string buffer in two: Terminate usual message as it was, after that begin the diz string */
+				char *cs;
+
+  #if 0
+				*sipd++ = 0; /* Termination marker splits the two strings, before is the normal message, after is the diz text. */
+  #else
+				sipd++; /* We leave the \372 in place as marker between the two strings, before is the normal message, after is the diz text. */
+  #endif
+				cs = sipd;
+				strcpy(cs, "D - "); // leave out '\377' on purpose: the \372 will get replaced on a by-player basis with either string-termination or \377 to contine
+				cs += 4;
+ #endif
+				ckt = k_text + k_info[k_idx].text;
+				while (*++ckt && cs - message < MSG_LEN - 1) {
+					switch (*ckt) {
+					case '\377': ckt++; /* fall through */
+					case '\n': continue;
+					}
+					*cs++ = *ckt;
+				}
+				*cs = 0;
+			} else {
+				*sipd = 0; /* No diz text availale for this item or not enough space to append a kind-diz? Discard. */
+				sipd = NULL;
+			}
+		/* Just cut off the item-diz paste for good */
+		} else {
+			*sipd = 0;
+			sipd = NULL;
+		}
+	}
+#endif
 
 
 	/* -- Finished pre-processing of the message. Now it IS a message and it is to be sent to some target user/group. -- */

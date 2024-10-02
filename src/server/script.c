@@ -328,6 +328,9 @@ void set_server_features() {
 #ifdef CLIENT_ITEM_PASTE_DIZ
 	sflags1 |= SFLG1_CIPD;
 #endif
+#ifdef SERVER_ITEM_PASTE_DIZ
+	sflags1 |= SFLG1_SIPD;
+#endif
 
 
 	/* Set temporary flags */

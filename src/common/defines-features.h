@@ -416,15 +416,15 @@
    Uses charges as the mdev would. Failure to recharge destroys not the staff but just the power. */
 #define MSTAFF_MDEV_COMBO //todo:implement
 
-/* Server-side switch to allow clients to use item-diz-chat-pasting. This is defined separately for client-side too. */
-#if 0 /* on/off */
- #ifndef CLIENT_SIDE
+#ifdef KIND_DIZ
+ /* Server-side switch to allow clients to use item-diz-chat-pasting. This is defined separately for client-side too. */
+ #if 0 /* too spammy, players should be able to toggle this with a client option */
   #define CLIENT_ITEM_PASTE_DIZ
+ #else
+  /* Item-diz-chat-pasting done via marker \372 on client-side, but actually executed by the server.
+     Better choice as it allows every player to use a client-option to choose whether or not he wants to see this. */
+  #define SERVER_ITEM_PASTE_DIZ /* todo: implement! */
  #endif
-#else
- /* Item-diz-chat-pasting done via marker \372 on client-side, but actually executed by the server.
-    Better choice as it allows every player to use a client-option to choose whether or not he wants to see this. */
- #define SERVER_ITEM_PASTE_DIZ /* todo: implement! */
 #endif
 
 
@@ -778,9 +778,6 @@
      Only some navigational keys will do this: Those that actually have a real function in string input.  */
   #define SOME_NAVI_KEYS_DISABLE_MACROS_IN_PROMPTS
  #endif
-
- /* Maybe spammy, maybe cool? - On pasting an item to chat, additionally paste the kind diz (atm only from the inventory window, not via \\x chat item tags) */
- #define CLIENT_ITEM_PASTE_DIZ
 #endif
 
 

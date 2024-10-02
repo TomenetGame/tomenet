@@ -588,6 +588,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "solid_bars",		"Display status bars in solid style, not as '#'" },
 	{ &c_cfg.autopickup_chemicals,	TRUE,	8,	9, 162, TRUE,
 	    "autopickup_chemicals",	"Automatically pick up freshly dropped chemicals" },
+	{ &c_cfg.kind_diz,		TRUE,	7,	0, 163, TRUE,
+	    "kind_diz",			"Show extra item information on item-to-chat paste" },
 };
 
 cptr melee_techniques[16] = {

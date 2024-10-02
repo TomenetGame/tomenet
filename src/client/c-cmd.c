@@ -998,6 +998,9 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 						break;
 					}
 				} else
+#elif defined(SERVER_ITEM_PASTE_DIZ)
+				if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, inventory[c].tval, inventory[c].sval));
+				else
 #endif
 				Send_paste_msg(buf);
 			}
@@ -1126,6 +1129,9 @@ void cmd_subinven(int islot) {
 						break;
 					}
 				} else
+#elif defined(SERVER_ITEM_PASTE_DIZ)
+				if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, subinventory[islot][c].tval, subinventory[islot][c].sval));
+				else
 #endif
 				Send_paste_msg(buf);
 			}
@@ -1269,6 +1275,9 @@ void cmd_equip(void) {
 						break;
 					}
 				} else
+#elif defined(SERVER_ITEM_PASTE_DIZ)
+				if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, inventory[INVEN_WIELD + c].tval, inventory[INVEN_WIELD + c].sval));
+				else
 #endif
 				Send_paste_msg(buf);
 			}

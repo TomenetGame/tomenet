@@ -521,6 +521,9 @@ static void store_chat(void) {
 			return;
 		}
 	} else
+#elif defined(SERVER_ITEM_PASTE_DIZ)
+	if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, store.stock[item].tval, store.stock[item].sval));
+	else
 #endif
 	Send_paste_msg(buf);
 }

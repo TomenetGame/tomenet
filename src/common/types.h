@@ -4292,6 +4292,7 @@ struct player_type {
 
 	bool player_list_window; /* Has configured one of his subwindows to be a live-updated player list window */
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
+	bool kind_diz;
 };
 
 /* For Monk martial arts */
@@ -4733,6 +4734,8 @@ struct client_opts {
 	bool auto_inscr_off;
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
 	bool no_flicker;
+
+	bool kind_diz;
 };
 
 /*
