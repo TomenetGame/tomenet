@@ -6708,7 +6708,11 @@ static bool process_player_end_aux(int Ind) {
 		o_ptr = &p_ptr->inventory[i];
 
 		/* Examine all charging rods */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
+		if ((o_ptr->tval == TV_ROD
+#ifdef MSTAFF_MDEV_COMBO
+		    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra3)
+#endif
+		    ) && o_ptr->pval) {
 #ifndef NEW_MDEV_STACKING
 			/* Charge it */
 			o_ptr->pval--;

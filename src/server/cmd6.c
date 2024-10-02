@@ -4070,15 +4070,16 @@ void do_cmd_use_staff(int Ind, int item) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) klev = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1 - 1)].level;
+	else
+#endif
 	klev = k_info[o_ptr->k_idx].level;
 	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
-#ifdef MSTAFF_MDEV_COMBO
-		if (!mstaff)
-#endif
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
@@ -4097,7 +4098,7 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	//WIELD_DEVICE: (re-use 'rad')
 #ifdef MSTAFF_MDEV_COMBO
-	if (mstaff) rad = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1)].level + 20;
+	if (mstaff) rad = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1 - 1)].level + 20;
 	else
 #endif
 	rad = k_info[o_ptr->k_idx].level + 20;
@@ -4602,15 +4603,16 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) klev = k_info[lookup_kind(TV_WAND, o_ptr->xtra2 - 1)].level;
+	else
+#endif
 	klev = k_info[o_ptr->k_idx].level;
 	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	/* Apply identification */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
-#ifdef MSTAFF_MDEV_COMBO
-		if (!mstaff)
-#endif
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
@@ -4645,7 +4647,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	//WIELD_DEVICE: (re-use 'klev')
 #ifdef MSTAFF_MDEV_COMBO
-	if (mstaff) klev = k_info[lookup_kind(TV_WAND, o_ptr->xtra2)].level + 20;
+	if (mstaff) klev = k_info[lookup_kind(TV_WAND, o_ptr->xtra2 - 1)].level + 20;
 	else
 #endif
 	klev = k_info[o_ptr->k_idx].level + 20;
@@ -4817,6 +4819,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #ifdef NEW_MDEV_STACKING
 	int pval_old;
 #endif
+	bool req_dir; //for MSTAFF_MDEV_COMBO
 
 #ifdef MSTAFF_MDEV_COMBO
 	bool mstaff;
@@ -4893,7 +4896,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		return;
 	};
 
-
+#ifdef MSTAFF_MDEV_COMBO
+	if (!mstaff)
+#endif
 	if (o_ptr->tval != TV_ROD) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 #ifdef ENABLE_XID_MDEV
@@ -4940,9 +4945,15 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	}
 #endif
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) req_dir = mstaff_rod_requires_direction(Ind, o_ptr);
+	else
+#endif
+	req_dir = rod_requires_direction(Ind, o_ptr);
+
 	/* Get a direction (unless KNOWN not to need it) */
 	/* Pfft, dirty, dirty, diiirrrrtie!! (FIXME) */
-	if (rod_requires_direction(Ind, o_ptr)) {
+	if (req_dir) {
 		if (dir != 0 && dir != 11) {
 		//redundant: lower versions cant have dir != 0. ---  && is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
 			p_ptr->current_rod = item;
@@ -4990,6 +5001,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
  #endif
 #endif
 
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cYou failed to use the mage staff properly." , COLOUR_MD_FAIL);
+		else
+#endif
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -5019,6 +5034,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #else
 	if (o_ptr->bpval == o_ptr->number) {
 #endif
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cThe mage staff is still charging.", COLOUR_MD_NOCHARGE);
+		else
+#endif
 		if (o_ptr->number == 1) msg_format(Ind, "\377%cThe rod is still charging.", COLOUR_MD_NOCHARGE);
 		else msg_format(Ind, "\377%cThe rods are still charging.", COLOUR_MD_NOCHARGE);
 #ifdef USE_SOUND_2010
@@ -5043,6 +5062,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #ifdef NEW_MDEV_STACKING
 	pval_old = o_ptr->pval;
 #endif
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) ident = zap_rod(Ind, o_ptr->xtra3 - 1, rad, o_ptr, &use_charge);
+	else
+#endif
 	ident = zap_rod(Ind, o_ptr->sval, rad, o_ptr, &use_charge);
 #ifdef NEW_MDEV_STACKING
 	if (f4 & TR4_CHARGING) o_ptr->pval -= (o_ptr->pval - pval_old) / 2;
@@ -5059,6 +5082,11 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 #ifdef CONTINUE_FTK
+ #ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) {
+		if (mstaff_rod_requires_direction(Ind, o_ptr)) stop_shooting_till_kill(Ind);
+	} else
+ #endif
 	if (rod_requires_direction(Ind, o_ptr))
 #endif
 	stop_shooting_till_kill(Ind);
@@ -5067,6 +5095,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) klev = k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].level;
+	else
+#endif
 	klev = k_info[o_ptr->k_idx].level;
 	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
@@ -5084,7 +5116,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	//WIELD_DEVICE: (re-use 'energy')
 #ifdef MSTAFF_MDEV_COMBO
-	if (mstaff) energy = k_info[lookup_kind(TV_ROD, o_ptr->xtra3)].level + 20;
+	if (mstaff) energy = k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].level + 20;
 	else
 #endif
 	energy = k_info[o_ptr->k_idx].level + 20;
@@ -5133,8 +5165,6 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #endif
 }
 
-
-
 /*
  * Activate (zap) a Rod that requires a direction, passed through to here from do_cmd_zap_rod()
  *  as we're never called directly here: The player only calls do_cmd_zap_rod().
@@ -5159,13 +5189,6 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	item = p_ptr->current_rod;
 
-#ifdef MSTAFF_MDEV_COMBO
-	bool mstaff;
-
-	if (item == TV_MSTAFF) mstaff = TRUE;
-	else mstaff = FALSE;
-#endif
-
 #ifdef ENABLE_SUBINVEN
 	/* Paranoia - zapping directional rods from within bags is not allowed! */
 	if (item >= SUBINVEN_INVEN_MUL) return;
@@ -5175,6 +5198,16 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		return;
 	}
 
+#ifdef MSTAFF_MDEV_COMBO
+	bool mstaff;
+
+	if (o_ptr->tval == TV_MSTAFF) mstaff = TRUE;
+	else mstaff = FALSE;
+#endif
+
+#ifdef MSTAFF_MDEV_COMBO
+	if (!mstaff)
+#endif
 	if (o_ptr->tval != TV_ROD) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 		p_ptr->shooting_till_kill = FALSE;
@@ -5202,6 +5235,10 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	}
 
 	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_print(Ind, "You decide to better not zap the mage staff inside a house.");
+		else
+#endif
 		msg_print(Ind, "You decide to better not zap rods inside a house.");
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		return;
@@ -5276,6 +5313,10 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	/* Roll for usage */
 	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cYou failed to use the mage staff properly." , COLOUR_MD_FAIL);
+		else
+#endif
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -5300,6 +5341,10 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 #else
 	if (o_ptr->bpval == o_ptr->number) {
 #endif
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cThe mage staff is still charging.", COLOUR_MD_NOCHARGE);
+		else
+#endif
 		if (o_ptr->number == 1) msg_format(Ind, "\377%cThe rod is still charging.", COLOUR_MD_NOCHARGE);
 		else msg_format(Ind, "\377%cThe rods are still charging.", COLOUR_MD_NOCHARGE);
 #ifdef USE_SOUND_2010
@@ -5321,7 +5366,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 #endif
 
 	/* Analyze the rod */
+#ifdef MSTAFF_MDEV_COMBO
+	switch (mstaff ? o_ptr->xtra3 - 1 : o_ptr->sval) {
+#else
 	switch (o_ptr->sval) {
+#endif
 	case SV_ROD_TELEPORT_AWAY:
 		if (teleport_monster(Ind, dir)) ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
@@ -5563,6 +5612,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 #ifdef CONTINUE_FTK
+ #ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) {
+		if (mstaff_rod_requires_direction(Ind, o_ptr)) stop_shooting_till_kill(Ind);
+	} else
+ #endif
 	if (rod_requires_direction(Ind, o_ptr))
 #endif
 	stop_shooting_till_kill(Ind);
@@ -5574,6 +5628,10 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) klev = k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].level;
+	else
+#endif
 	klev = k_info[o_ptr->k_idx].level;
 	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
@@ -5591,7 +5649,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	//WIELD_DEVICE: (re-use 'energy')
 #ifdef MSTAFF_MDEV_COMBO
-	if (mstaff) energy = k_info[lookup_kind(TV_ROD, o_ptr->xtra3)].level + 20;
+	if (mstaff) energy = k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].level + 20;
 	else
 #endif
 	energy = k_info[o_ptr->k_idx].level + 20;
@@ -5865,8 +5923,7 @@ bool activation_requires_direction(object_type *o_ptr) {
 
 #ifdef MSTAFF_MDEV_COMBO
 	/* Mage staff with either a wand or a directional rod absorbed. */
-	else if (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra2 || (o_ptr->xtra3 &&
-	    (o_ptr->xtra3 - 1 >= SV_ROD_MIN_DIRECTION && o_ptr->xtra3 - 1 != SV_ROD_DETECT_TRAP && o_ptr->xtra3 - 1 != SV_ROD_HOME))))
+	else if (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra2 || (o_ptr->xtra3 && mstaff_rod_requires_direction(0, o_ptr))))
 		return(TRUE);
 #endif
 
@@ -5886,6 +5943,20 @@ bool rod_requires_direction(int Ind, object_type *o_ptr) {
 
 	return(FALSE);
 }
+#ifdef MSTAFF_MDEV_COMBO
+bool mstaff_rod_requires_direction(int Ind, object_type *o_ptr) {
+	int sval = o_ptr->xtra3 - 1;
+
+	if (Ind && !object_aware_p(Ind, o_ptr)) return(TRUE);
+
+	if ((sval >= SV_ROD_MIN_DIRECTION) &&
+	    !(sval == SV_ROD_DETECT_TRAP) &&
+	    !(sval == SV_ROD_HOME))
+		return(TRUE);
+
+	return(FALSE);
+}
+#endif
 
 /*
  * Activate a wielded object.  Wielded objects never stack.
