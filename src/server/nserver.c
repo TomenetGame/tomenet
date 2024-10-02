@@ -6319,7 +6319,12 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
-		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0)
+		    | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+#ifdef MSTAFF_MDEV_COMBO
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (object_aware_p(Ind, o_ptr) && o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) wgt += 30000;
+#endif
 
 	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
 	if (in_irondeepdive(&p_ptr->wpos))
@@ -6391,7 +6396,12 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
-	uses_dir_mod = ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+	uses_dir_mod = ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0)
+	    | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+#ifdef MSTAFF_MDEV_COMBO
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (object_aware_p(Ind, o_ptr) && o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) wgt += 30000;
+#endif
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
@@ -6439,7 +6449,12 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 
 	/* Hack: Abuse ident to also store ID / *ID* status */
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
-		ident |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+		ident |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0)
+		    | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+#ifdef MSTAFF_MDEV_COMBO
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (object_aware_p(Ind, o_ptr) && o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) wgt += 30000;
+#endif
 
 	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
 	if (in_irondeepdive(&p_ptr->wpos))
@@ -6523,7 +6538,12 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
-		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0)
+		    | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+#ifdef MSTAFF_MDEV_COMBO
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (object_aware_p(Ind, o_ptr) && o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) wgt += 30000;
+#endif
 	/* Also encode equipment-set indicator to visually confirm set luck boni */
 	//-- currently not working; timing issues with setting equip_set[] in calc_boni() vs calling Send_equip, and not every slot has correct equip_set[] value..
 	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;
@@ -6630,7 +6650,12 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	    )
 		uses_dir = 1;
 
-	uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+	uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0)
+	    | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+#ifdef MSTAFF_MDEV_COMBO
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (object_aware_p(Ind, o_ptr) && o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) wgt += 30000;
+#endif
 	/* Also encode equipment-set indicator to visually confirm set luck boni */
 	//-- currently not working; timing issues with setting equip_set[] in calc_boni() vs calling Send_equip, and not every slot has correct equip_set[] value..
 	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;

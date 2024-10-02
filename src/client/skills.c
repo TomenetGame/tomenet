@@ -665,7 +665,11 @@ static int do_cmd_activate_skill_aux() {
 bool item_tester_hook_device(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_ROD) ||
 	    (o_ptr->tval == TV_STAFF) ||
-	    (o_ptr->tval == TV_WAND)) return(TRUE);
+	    (o_ptr->tval == TV_WAND)
+#ifdef MSTAFF_MDEV_COMBO
+	    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra4) //hack: marker as 'rechargable' for ITH_RECHARGE
+#endif
+	    ) return(TRUE);
 
 	/* Assume not */
 	return(FALSE);

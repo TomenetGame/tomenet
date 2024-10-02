@@ -4490,6 +4490,11 @@ bool recharge(int Ind, int num) {
 	/* Special marker hack? */
 	if (num >= 10000) get_item(Ind, ITH_NONE);
 	else
+#ifdef MSTAFF_MDEV_COMBO
+		/* Allow outdated clients to still recharge the mage staff - so we need to lift the restriction completely */
+		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1)) get_item(Ind, ITH_NONE);
+		else
+#endif
 	/* Normal recharging routine */
 	get_item(Ind, ITH_RECHARGE);
 
@@ -4543,6 +4548,11 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "You cannot recharge that item.");
+#ifdef MSTAFF_MDEV_COMBO
+		/* Allow outdated clients to still recharge the mage staff - so we need to lift the restriction completely */
+		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1)) get_item(Ind, ITH_NONE);
+		else
+#endif
 		get_item(Ind, ITH_RECHARGE);
 		return(FALSE);
 	}

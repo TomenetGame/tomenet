@@ -2163,6 +2163,12 @@ int Receive_inven(void) {
 	/* Check that the inventory slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'x') return(0);
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (tval == TV_MSTAFF && wgt >= 30000) {
+		wgt -= 30000;
+		inventory[pos - 'a'].xtra4 = 1; //mark as 'rechargable' for ITH_RECHARGE
+	}
+#endif
 	/* Hack -- The color is stored in the sval, since we don't use it for anything else */
 	/* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
@@ -2238,6 +2244,12 @@ int Receive_subinven(void) {
 	if (ipos < 0 || ipos > INVEN_PACK) return(0);
 	if (pos < 'a' || pos > 'x') return(0);
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (tval == TV_MSTAFF && wgt >= 30000) {
+		wgt -= 30000;
+		subinventory[ipos][pos - 'a'].xtra4 = 1; //mark as 'rechargable' for ITH_RECHARGE
+	}
+#endif
 	/* Hack -- The color is stored in the sval, since we don't use it for anything else */
 	/* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
@@ -2341,6 +2353,12 @@ int Receive_inven_wide(void) {
 	/* Check that the inventory slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'x') return(0);
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (tval == TV_MSTAFF && wgt >= 30000) {
+		wgt -= 30000;
+		inventory[pos - 'a'].xtra4 = 1; //mark as 'rechargable' for ITH_RECHARGE
+	}
+#endif
 	/* Hack -- The color is stored in the sval, since we don't use it for anything else */
 	/* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
@@ -2461,6 +2479,12 @@ int Receive_equip(void) {
 	/* Check that the equipment slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'n') return(0);
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (tval == TV_MSTAFF && wgt >= 30000) {
+		wgt -= 30000;
+		inventory[pos - 'a' + INVEN_WIELD].xtra4 = 1; //mark as 'rechargable' for ITH_RECHARGE
+	}
+#endif
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
 	if ((tval == TV_BOOK && is_custom_tome(sval)) || tval == TV_SUBINVEN) /* ENABLE_SUBINVEN */
@@ -2528,6 +2552,12 @@ int Receive_equip_wide(void) {
 	/* Check that the equipment slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'n') return(0);
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (tval == TV_MSTAFF && wgt >= 30000) {
+		wgt -= 30000;
+		inventory[pos - 'a' + INVEN_WIELD].xtra4 = 1; //mark as 'rechargable' for ITH_RECHARGE
+	}
+#endif
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
 	if ((tval == TV_BOOK && is_custom_tome(sval)) || tval == TV_SUBINVEN) /* ENABLE_SUBINVEN */

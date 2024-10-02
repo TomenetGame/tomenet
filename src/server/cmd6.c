@@ -3799,10 +3799,9 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 /*
  * Use a staff.			-RAK-
- *
  * One charge of one staff disappears.
- *
  * Hack -- staffs of identify can be "cancelled".
+ * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
  */
 void do_cmd_use_staff(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
@@ -4133,6 +4132,8 @@ void do_cmd_use_staff(int Ind, int item) {
  * Note that the basic "bolt" wands do slightly less damage than the
  * basic "bolt" rods, but the basic "ball" wands do the same damage
  * as the basic "ball" rods.
+ *
+ * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
  */
 void do_cmd_aim_wand(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
@@ -4728,12 +4729,11 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 
 /*
  * Activate (zap) a Rod
- *
  * Unstack fully charged rods as needed.
- *
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
- */
+  * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
+*/
 void do_cmd_zap_rod(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int klev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
@@ -5048,12 +5048,12 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 
 /*
- * Activate (zap) a Rod that requires a direction (passed through to here from do_cmd_zap_rod())
- *
+ * Activate (zap) a Rod that requires a direction, passed through to here from do_cmd_zap_rod()
+ *  as we're never called directly here: The player only calls do_cmd_zap_rod().
  * Unstack fully charged rods as needed.
- *
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
+ * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
  */
 void do_cmd_zap_rod_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
@@ -6038,12 +6038,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	process_hooks(HOOK_ACTIVATE, "d", Ind);
 	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 0, o_ptr->custom_lua_usage));
 
+	/* Custom or default activation messages... */
 	switch (o_ptr->tval) {
 	case TV_RUNE: msg_print(Ind, "The rune glows with power!"); break;
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
 #ifdef MSTAFF_MDEV_COMBO
 	case TV_MSTAFF:
 		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) msg_print(Ind, "You activate the staff to absorb a magic device...");
+		/* else: no message, same as for triggering magic devices */
 		break;
 #endif
 	case TV_JUNK:
@@ -6239,8 +6241,18 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 #ifdef MSTAFF_MDEV_COMBO
 	if (o_ptr->tval == TV_MSTAFF) {
-		mstaff_absorb(Ind);
-		p_ptr->using_up_item = item; /* hack - gets swapped later :-p hi copy-pasta-tomecreation */
+		/* Activate to absorb a device? */
+		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) {
+			mstaff_absorb(Ind);
+			p_ptr->using_up_item = item; /* hack - gets swapped later :-p hi copy-pasta-tomecreation */
+		}
+		/* Activate to invoke the absorbed device's power (staff/wand/rod) */
+		else {
+			if (o_ptr->xtra1) do_cmd_use_staff(Ind, item + 10000);
+			// o_ptr->xtra2: Wands are always directional and hence never called from here but in do_cmd_activate_dir() which we just called above. */
+			//else if (o_ptr->xtra2) do_cmd_aim_wand(Ind, item + 10000, dir);
+			else if (o_ptr->xtra3) do_cmd_zap_rod(Ind, item + 10000, dir);
+		}
 		return;
 	}
 #endif
@@ -7983,6 +7995,16 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			break;
 		}
 	}
+
+#ifdef MSTAFF_MDEV_COMBO
+	/* Activate to invoke the absorbed device's power (staff/wand/rod) */
+	if (!done && o_ptr->tval == TV_MSTAFF) {
+		// o_ptr->xtra1: Staves are always non-directional and hence never called from here but in do_cmd_activate() already. */
+		if (o_ptr->xtra2) do_cmd_aim_wand(Ind, item + 10000, dir);
+		else if (o_ptr->xtra3) do_cmd_zap_rod(Ind, item + 10000, dir);
+		return;
+	}
+#endif
 
 	/* Clear current activation */
 	p_ptr->current_activation = -1;

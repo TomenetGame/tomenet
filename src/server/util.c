@@ -9920,6 +9920,15 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	/* Base chance of success */
 	int chance = p_ptr->skill_dev;
 
+#ifdef MSTAFF_MDEV_COMBO
+	/* Don't use the mage staff's level, use the absorbed device's */
+	if (o_ptr->tval == TV_MSTAFF) {
+		if (o_ptr->xtra1) lev = k_info[lookup_kind(TV_ROD, o_ptr->xtra1 - 1)].level;
+		else if (o_ptr->xtra2) lev = k_info[lookup_kind(TV_ROD, o_ptr->xtra2 - 1)].level;
+		else if (o_ptr->xtra3) lev = k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].level;
+	}
+#endif
+
 	if (o_ptr->tval == TV_RUNE) {
 		chance = exec_lua(0, format("return rcraft_rune(%d,%d)", Ind, o_ptr->sval));
 
@@ -9994,7 +10003,7 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille, bo
 	if (o_ptr->tval == TV_RUNE) return(chance); // Hack: Rune Boni - Kurzel
 
 #ifdef MSTAFF_MDEV_COMBO
-	if (o_ptr->tval == TV_MSTAFF) bonus = TRUE; /* We wield the 'magic device' -> bonus as usual */
+	if (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) bonus = TRUE; /* We wield the 'magic device' -> bonus as usual */
 #endif
 
 	/* 100% not possible to reach:
@@ -10027,7 +10036,7 @@ bool activate_magic_device(int Ind, object_type *o_ptr, bool bonus) {
 	if (o_ptr->tval == TV_RUNE) return(magik(activate_magic_device_chance(Ind, o_ptr, &permille, FALSE)));
 
 #ifdef MSTAFF_MDEV_COMBO
-	if (o_ptr->tval == TV_MSTAFF) bonus = TRUE; /* We wield the 'magic device' -> bonus as usual */
+	if (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) bonus = TRUE; /* We wield the 'magic device' -> bonus as usual */
 #endif
 	chance  = activate_magic_device_chance(Ind, o_ptr, &permille, bonus);
 
