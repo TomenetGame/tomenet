@@ -583,12 +583,12 @@
 
  #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
  /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
- #ifdef GRAPHICS_BG_MASK
+ //#ifdef GRAPHICS_BG_MASK
   /* Constants for use_graphics client setting */
   #define UG_NONE	0
   #define UG_NORMAL	1
   #define UG_2MASK	2
- #endif
+ //#endif
 
  /* Resume in text mode on client startup if graphics fail for some reason, instead of just quitting? */
  #define GFXERR_FALLBACK
