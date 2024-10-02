@@ -3566,7 +3566,7 @@ bool object_similar_tval(int Ind, object_type *o_ptr, object_type *j_ptr, s16b t
 #endif
 
 		/* Require permission */
-		if (stack_allow_devices) return(FALSE);
+		if (!stack_allow_devices) return(FALSE);
 		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
 
 #ifndef NEW_MDEV_STACKING
