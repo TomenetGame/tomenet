@@ -3802,6 +3802,8 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
  * One charge of one staff disappears.
  * Hack -- staffs of identify can be "cancelled".
  * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
+ *         This hack cannot be sent from client-side as nserver.c already verified 'item''s sanity, so we can skip safety checks here:
+ *         We know it is a valid item and wielded.
  */
 void do_cmd_use_staff(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
@@ -3810,6 +3812,14 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	/* Hack -- let staffs of identify get aborted */
 	bool use_charge = TRUE, flipped = FALSE;
+#ifdef MSTAFF_MDEV_COMBO
+	bool mstaff;
+
+	if (item >= 10000) {
+		item -= 10000;
+		mstaff = TRUE;
+	} else mstaff = FALSE;
+#endif
 
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
@@ -3873,7 +3883,7 @@ void do_cmd_use_staff(int Ind, int item) {
 		return;
 	}
 
-	/* Restrict choices to staves */
+	/* Restrict choices to staves -- er this line does nothing here? oO */
 	item_tester_tval = TV_STAFF;
 
 	if (!get_inven_item(Ind, item, &o_ptr)) {
@@ -3907,6 +3917,9 @@ void do_cmd_use_staff(int Ind, int item) {
 		return;
 	};
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (!mstaff)
+#endif
 	if (o_ptr->tval != TV_STAFF) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
 #ifdef ENABLE_XID_MDEV
@@ -3965,6 +3978,10 @@ void do_cmd_use_staff(int Ind, int item) {
  #endif
 #endif
 
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cYou failed to use the mage staff properly." , COLOUR_MD_FAIL);
+		else
+#endif
 		msg_format(Ind, "\377%cYou failed to use the staff properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -3977,6 +3994,10 @@ void do_cmd_use_staff(int Ind, int item) {
 
 			p_ptr->command_rep = PKT_USE;
 			p_ptr->command_rep_active = TRUE;
+  #ifdef MSTAFF_MDEV_COMBO
+			if (mstaff) Packet_printf(conn_q, "%c%hd", PKT_USE, item + 10000);
+			else
+  #endif
 			Packet_printf(conn_q, "%c%hd", PKT_USE, item);
 		} else p_ptr->current_item = -1;
  #else
@@ -3989,6 +4010,10 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	/* Notice empty staffs */
 	if (o_ptr->pval <= 0) {
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cThe mage staff has no charges left.", COLOUR_MD_NOCHARGE);
+		else
+#endif
 		msg_format(Ind, "\377%cThe staff has no charges left.", COLOUR_MD_NOCHARGE);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -4030,6 +4055,10 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, 0, item, 5, o_ptr->custom_lua_usage));
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) ident = use_staff(Ind, o_ptr->xtra1 - 1, rad, TRUE, &use_charge);
+	else
+#endif
 	ident = use_staff(Ind, o_ptr->sval, rad, TRUE, &use_charge);
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
@@ -4047,6 +4076,9 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
+#ifdef MSTAFF_MDEV_COMBO
+		if (!mstaff)
+#endif
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
