@@ -9923,9 +9923,10 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 #ifdef MSTAFF_MDEV_COMBO
 	/* Don't use the mage staff's level, use the absorbed device's */
 	if (o_ptr->tval == TV_MSTAFF) {
-		if (o_ptr->xtra1) lev = k_info[lookup_kind(TV_ROD, o_ptr->xtra1 - 1)].level;
-		else if (o_ptr->xtra2) lev = k_info[lookup_kind(TV_ROD, o_ptr->xtra2 - 1)].level;
+		if (o_ptr->xtra1) lev = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1 - 1)].level;
+		else if (o_ptr->xtra2) lev = k_info[lookup_kind(TV_WAND, o_ptr->xtra2 - 1)].level;
 		else if (o_ptr->xtra3) lev = k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].level;
+		//else fall through, as it could be a legit artifact mage staff with activation
 	}
 #endif
 

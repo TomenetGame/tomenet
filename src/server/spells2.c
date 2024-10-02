@@ -4559,10 +4559,28 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 	/* Extract the object "level" */
 	lev = k_info[o_ptr->k_idx].level;
+#ifdef MSTAFF_MDEV_COMBO
+	/* Don't use the mage staff's level, use the absorbed device's */
+	if (o_ptr->tval == TV_MSTAFF) {
+		if (o_ptr->xtra1) lev = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1 - 1)].level;
+		else if (o_ptr->xtra2) lev = k_info[lookup_kind(TV_WAND, o_ptr->xtra2 - 1)].level;
+		else if (o_ptr->xtra3) lev = k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].level;
+		else lev = 200; //paranoia
+	}
+#endif
 
 	/* Recharge a rod */
-	if (o_ptr->tval == TV_ROD) {
+	if (o_ptr->tval == TV_ROD
+#ifdef MSTAFF_MDEV_COMBO
+	    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra3)
+#endif
+	    ) {
 		if (pow <= 60) { /* not possible with scrolls of recharging */
+#ifdef MSTAFF_MDEV_COMBO
+			if (o_ptr->tval == TV_MSTAFF && o_ptr->xtra3)
+				msg_print(Ind, "The flow of mana seems not powerful enough to recharge the staff.");
+			else
+#endif
 			msg_print(Ind, "The flow of mana seems not powerful enough to recharge a rod.");
 			return(TRUE);
 		}
@@ -4639,9 +4657,14 @@ bool recharge_aux(int Ind, int item, int pow) {
 		}
 
 		/* Hack: No controlled mass-summoning in ironman deep dive challenge */
-		else if (in_irondeepdive(&p_ptr->wpos) &&
-		    ((o_ptr->tval == TV_STAFF && o_ptr->sval == SV_STAFF_SUMMONING) ||
-		    (o_ptr->tval == TV_WAND && o_ptr->sval == SV_WAND_POLYMORPH))) {
+		else if (in_irondeepdive(&p_ptr->wpos) && (
+		    (o_ptr->tval == TV_STAFF && o_ptr->sval == SV_STAFF_SUMMONING) ||
+		    (o_ptr->tval == TV_WAND && o_ptr->sval == SV_WAND_POLYMORPH)
+#ifdef MSTAFF_MDEV_COMBO
+		    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra1 - 1 == SV_STAFF_SUMMONING)
+		    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra2 - 1 == SV_WAND_POLYMORPH)
+#endif
+		    )) {
 			msg_print(Ind, "There is a static discharge.");
 			o_ptr->pval = 0;
 			o_ptr->ident |= ID_EMPTY;
@@ -4654,7 +4677,12 @@ bool recharge_aux(int Ind, int item, int pow) {
 			t = (pow / (lev + 2)) + 1;
 
 			/* Hack -- ego */
-			if (o_ptr->name2 == EGO_PLENTY) t <<= 1;
+			if (o_ptr->name2 == EGO_PLENTY
+#ifdef MSTAFF_MDEV_COMBO
+			    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra5 == EGO_PLENTY)
+#endif
+			    )
+				t <<= 1;
 
 #if 0 /* old way */
 			/* Recharge based on the power */
@@ -4662,7 +4690,11 @@ bool recharge_aux(int Ind, int item, int pow) {
 #else /* new way: correct wand stacking, added stack size dr */
 			/* Wands stack, so recharging must multiply the power.
 			   Add small 'laziness' diminishing returns malus. */
-			if (o_ptr->tval == TV_WAND) {
+			if (o_ptr->tval == TV_WAND
+#ifdef MSTAFF_MDEV_COMBO
+			    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra2)
+#endif
+			    ) {
 				/* Recharge based on the power */
 				//if (t > 0) o_ptr->pval += (2 * o_ptr->number) + rand_int(t * o_ptr->number);
 
@@ -9475,6 +9507,11 @@ void mstaff_absorb_aux(int Ind, int item) {
 		o_ptr->pval = o2_ptr->pval; //energy
 		break;
 	}
+
+	/* (Note for cleanliness: xtra4 is just used on client-side as pseudo ITH_RECHARGE marker.) */
+
+	/* Save ego-power */
+	o_ptr->xtra5 = o2_ptr->name2;
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
