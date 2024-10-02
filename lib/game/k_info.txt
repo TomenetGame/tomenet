@@ -4074,12 +4074,14 @@ W:25:0:3:500
 A:25/1
 F:WIS | SUST_WIS | SUST_CHR | HIDE_TYPE
 
+#Now combined with Amulet of Mana-Charging, regen all:
 N:469:Regeneration
 G:":d
 I:40:27:0
 W:10:0:3:600
 A:10/3
 F:REGEN | EASY_KNOW
+F:REGEN_MANA
 
 N:470:Infra-vision
 G:":d
@@ -7277,12 +7279,13 @@ P:0:1d1:0:0:0
 F:IGNORE_COLD | IGNORE_FIRE
 D:Awards you with some skill points to spend.
 
-N:910:Mana-charging
-G:":d
-I:40:36:0
-W:15:0:3:600
-A:15/3
-F:REGEN_MANA | EASY_KNOW
+#Now combined with amulet of regeneration
+#N:910:Mana-charging
+#G:":d
+#I:40:36:0
+#W:15:0:3:600
+#A:15/3
+#F:REGEN_MANA | EASY_KNOW
 
 N:911:& Flint~
 G:~:r

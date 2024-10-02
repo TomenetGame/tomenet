@@ -3964,7 +3964,7 @@
 #define SV_AMULET_THE_MOON		33
 #define SV_AMULET_RAGE			34
 #define SV_AMULET_LIFE_SAVING		35
-#define SV_AMULET_MANA_CHARGING		36
+//#define SV_AMULET_MANA_CHARGING		36	/* Now combined with SV_AMULET_REGENERATION */
 #define SV_AMULET_INVINCIBILITY		37	/* for admins */
 #define SV_AMULET_GROM			38
 #define SV_AMULET_LUCK			39	/* Talisman */

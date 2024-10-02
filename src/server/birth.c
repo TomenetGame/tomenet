@@ -1415,7 +1415,7 @@ static byte player_init[2][MAX_CLASS][STARTER_ITEMS][5] = {
 			{ 1, 255, 255, 0, 0 },
 		}, { /* Mage */
 			//{ 1, TV_HELM, SV_CLOTH_CAP, 0, 0 },
-			{ 1, TV_AMULET, SV_AMULET_MANA_CHARGING, 0, 0 }, //pft.. how nice
+			{ 1, TV_AMULET, SV_AMULET_REGENERATION, 0, 0 }, //pft, nice (was SV_AMULET_MANA_CHARGING)
 			{ 1, TV_CLOAK, SV_CLOAK, 0, 0 },
 			{ 1, TV_WAND, SV_WAND_MAGIC_MISSILE, 0, 0 },
 			{ 1, TV_BOOK, 50, 0, 0 },
