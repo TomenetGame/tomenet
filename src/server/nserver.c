@@ -2737,31 +2737,6 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->autopickup_chemicals = options[162];
 		p_ptr->kind_diz = options[163];
 	}
-
-
-	/* Warn about certain options' current status */
-
-	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
-	if (p_ptr->suppress_ingredients) {
-#ifdef ENABLE_DEMOLITIONIST
-		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) {
-			if ((p_ptr->melee_techniques & MT_POISON))
-				msg_print(Ind, "Ingredient drops for your demolitionist perk and for your 'Apply Poison' technique are currently suppressed.");
-			else
-				msg_print(Ind, "Ingredient drops for your demolitionist perk are currently suppressed.");
-		} else
-#endif
-		if ((p_ptr->melee_techniques & MT_POISON))
-			msg_print(Ind, "Ingredient drops for your 'Apply Poison' technique are currently suppressed.");
-	}
-
-#if 0
-	/* font_map_solid_walls will cause "^B" glitches in raw GCU client */
-	if (p_ptr->version.os == OS_GCU && p_ptr->font_map_solid_walls) {
-		msg_print(Ind, "\377yOption 'font_map_solid_walls' is not supported on GCU-only client.");
-		p_ptr->font_map_solid_walls = FALSE;
-	}
-#endif
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,
@@ -3252,6 +3227,30 @@ static int Handle_login(int ind) {
 	/* Hack: In case no message at all is sent, client will not call fix_message() in that case to re-display the old messages, instead leaving the window blank.
 	   We prevent that by this hack that causes the (4.7.3+) clients to call fix_message() to ensure 'reinit' of all message windows after a relog. */
 	else msg_print(NumPlayers, NULL);
+
+	/* Warn about certain options' current status */
+	if (p_ptr->limit_chat) msg_print(NumPlayers, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
+#if 0
+	if (p_ptr->suppress_ingredients) {
+#ifdef ENABLE_DEMOLITIONIST
+		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) {
+			if ((p_ptr->melee_techniques & MT_POISON))
+				msg_print(NumPlayers, "Ingredient drops for your demolitionist perk and for your 'Apply Poison' technique are currently suppressed.");
+			else
+				msg_print(NumPlayers, "Ingredient drops for your demolitionist perk are currently suppressed.");
+		} else
+#endif
+		if ((p_ptr->melee_techniques & MT_POISON))
+			msg_print(NumPlayers, "Ingredient drops for your 'Apply Poison' technique are currently suppressed.");
+	}
+#endif
+#if 0
+	/* font_map_solid_walls will cause "^B" glitches in raw GCU client */
+	if (p_ptr->version.os == OS_GCU && p_ptr->font_map_solid_walls) {
+		msg_print(NumPlayers, "\377yOption 'font_map_solid_walls' is not supported on GCU-only client.");
+		p_ptr->font_map_solid_walls = FALSE;
+	}
+#endif
 
 	for (i = 0; i < MAX_NOTES; i++) {
 		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
