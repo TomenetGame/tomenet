@@ -4096,7 +4096,11 @@ void do_cmd_use_staff(int Ind, int item) {
 #endif
 
 	//WIELD_DEVICE: (re-use 'rad')
-	rad = (k_info[o_ptr->k_idx].level + 20);
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) rad = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1)].level + 20;
+	else
+#endif
+	rad = k_info[o_ptr->k_idx].level + 20;
 	rad = ((rad * rad * rad) / 9000 + 3) / 4;
 	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= rad) {
 		p_ptr->cmp -= rad;
@@ -4166,6 +4170,8 @@ void do_cmd_use_staff(int Ind, int item) {
  * as the basic "ball" rods.
  *
  * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
+ *         This hack cannot be sent from client-side as nserver.c already verified 'item''s sanity, so we can skip safety checks here:
+ *         We know it is a valid item and wielded.
  */
 void do_cmd_aim_wand(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
@@ -4173,8 +4179,20 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	object_type *o_ptr;
 	bool flipped = FALSE;
 
+#ifdef MSTAFF_MDEV_COMBO
+	bool mstaff;
+
+	if (item >= 10000) {
+		item -= 10000;
+		mstaff = TRUE;
+	} else mstaff = FALSE;
+#endif
+
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (!mstaff)
+#endif
 	if (o_ptr->tval != TV_WAND) {
 		//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
 		p_ptr->shooting_till_kill = FALSE;
@@ -4209,6 +4227,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 #endif	// 0
 
 	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_print(Ind, "You decide to better not aim the mage staff inside a house.");
+		else
+#endif
 		msg_print(Ind, "You decide to better not aim wands inside a house.");
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		return;
@@ -4293,6 +4315,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	}
 
 	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cYou failed to use the mage staff properly." , COLOUR_MD_FAIL);
+		else
+#endif
 		msg_format(Ind, "\377%cYou failed to use the wand properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -4313,6 +4339,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	/* The wand is already empty! */
 	if (o_ptr->pval <= 0) {
+#ifdef MSTAFF_MDEV_COMBO
+		if (mstaff) msg_format(Ind, "\377%cThe mage staff has no charges left.", COLOUR_MD_NOCHARGE);
+		else
+#endif
 		msg_format(Ind, "\377%cThe wand has no charges left.", COLOUR_MD_NOCHARGE);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -4345,6 +4375,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 
 	/* XXX Hack -- Extract the "sval" effect */
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) sval = o_ptr->xtra2 - 1;
+	else
+#endif
 	sval = o_ptr->sval;
 
 	/* XXX Hack -- Wand of wonder can do anything before it */
@@ -4574,6 +4608,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	/* Apply identification */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
+#ifdef MSTAFF_MDEV_COMBO
+		if (!mstaff)
+#endif
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
@@ -4607,7 +4644,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	}
 
 	//WIELD_DEVICE: (re-use 'klev')
-	klev = (k_info[o_ptr->k_idx].level + 20);
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) klev = k_info[lookup_kind(TV_WAND, o_ptr->xtra2)].level + 20;
+	else
+#endif
+	klev = k_info[o_ptr->k_idx].level + 20;
 	klev = ((klev * klev * klev) / 9000 + 3) / 4;
 	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= klev) {
 		p_ptr->cmp -= klev;
@@ -4764,8 +4805,10 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
  * Unstack fully charged rods as needed.
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
-  * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
-*/
+ * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
+ *         This hack cannot be sent from client-side as nserver.c already verified 'item''s sanity, so we can skip safety checks here:
+ *         We know it is a valid item and wielded.
+ */
 void do_cmd_zap_rod(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int klev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
@@ -4773,6 +4816,15 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	u32b f4, dummy;
 #ifdef NEW_MDEV_STACKING
 	int pval_old;
+#endif
+
+#ifdef MSTAFF_MDEV_COMBO
+	bool mstaff;
+
+	if (item >= 10000) {
+		item -= 10000;
+		mstaff = TRUE;
+	} else mstaff = FALSE;
 #endif
 
 	/* Hack -- let perception get aborted */
@@ -5031,7 +5083,11 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	//WIELD_DEVICE: (re-use 'energy')
-	energy = (k_info[o_ptr->k_idx].level + 20);
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) energy = k_info[lookup_kind(TV_ROD, o_ptr->xtra3)].level + 20;
+	else
+#endif
+	energy = k_info[o_ptr->k_idx].level + 20;
 	energy = ((energy * energy * energy) / 9000 + 3) / 4;
 	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= energy) {
 		p_ptr->cmp -= energy;
@@ -5086,6 +5142,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
  * 'item': MSTAFF_MDEV_COMBO hack -> +10000 (need to get above subinventory indices)
+ *         This hack cannot be sent from client-side as nserver.c already verified 'item''s sanity, so we can skip safety checks here:
+ *         We know it is a valid item and wielded.
  */
 void do_cmd_zap_rod_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
@@ -5100,6 +5158,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 #endif
 
 	item = p_ptr->current_rod;
+
+#ifdef MSTAFF_MDEV_COMBO
+	bool mstaff;
+
+	if (item == TV_MSTAFF) mstaff = TRUE;
+	else mstaff = FALSE;
+#endif
 
 #ifdef ENABLE_SUBINVEN
 	/* Paranoia - zapping directional rods from within bags is not allowed! */
@@ -5525,7 +5590,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	//WIELD_DEVICE: (re-use 'energy')
-	energy = (k_info[o_ptr->k_idx].level + 20);
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff) energy = k_info[lookup_kind(TV_ROD, o_ptr->xtra3)].level + 20;
+	else
+#endif
+	energy = k_info[o_ptr->k_idx].level + 20;
 	energy = ((energy * energy * energy) / 9000 + 3) / 4;
 	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= energy) {
 		p_ptr->cmp -= energy;
