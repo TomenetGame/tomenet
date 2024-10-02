@@ -562,7 +562,6 @@
 /* When graphics are used, enable a 2nd mask colour for background masking:
    Black (0x000000) in a non-f_info.txt-graphics will let the otherwise displayed f_info.txt graphics shine through (100% alpha transparency). - C. Blue
    (Notes: Affected server functions: Send_char(), Send_line_info(), Send_line_info_forward().) */
-//#ifdef TEST_SERVER
 #if defined(USE_GRAPHICS) || !defined(CLIENT_SIDE) /* !clientside: The server doesn't itself use graphics, but has to provide the calculation-capabilities for graphics-enabled clients */
  /* Masks for USE_GRAPHICS, using values that are very unlikely to collide with any desired actual colour.
     (todo: implement -> A value of '-1' for R or G or B is ONLY allowed for the foreground mask, means 'any' and thereby will offer a range of x256 combinations for that mask.) */
@@ -583,17 +582,26 @@
 
  #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
  /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
+ #if 0 /* actually make these constants always available for now, might need sorting out/cleaning up */
+  #ifdef GRAPHICS_BG_MASK
+   /* Constants for use_graphics client setting */
+   #define UG_NONE	0
+   #define UG_NORMAL	1
+   #define UG_2MASK	2
+  #endif
+ #endif
+ /* Resume in text mode on client startup if graphics fail for some reason, instead of just quitting? */
+ #define GFXERR_FALLBACK
+#endif
+#if 1 /* actually make these constants always available for now, might need sorting out/cleaning up */
  //#ifdef GRAPHICS_BG_MASK
   /* Constants for use_graphics client setting */
   #define UG_NONE	0
   #define UG_NORMAL	1
   #define UG_2MASK	2
  //#endif
-
- /* Resume in text mode on client startup if graphics fail for some reason, instead of just quitting? */
- #define GFXERR_FALLBACK
 #endif
-//#endif
+
 
 
 /* ------------------------------------------------------------------------- */
