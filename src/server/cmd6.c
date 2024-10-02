@@ -5886,7 +5886,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #ifdef ENABLE_SUBINVEN
 	    || item >= SUBINVEN_INVEN_MUL
 #endif
-	    ) && wearable_p(o_ptr)) {
+	    ) && wearable_p(o_ptr)) { // MSTAFF_MDEV_COMBO : Could maybe exempt mage staves for mdev-absorption
 		msg_print(Ind, "You must be using this item to activate it.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
@@ -7468,7 +7468,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 #ifdef ENABLE_SUBINVEN
 	    || item >= SUBINVEN_INVEN_MUL
 #endif
-	    ) && wearable_p(o_ptr)) {
+	    ) && wearable_p(o_ptr)) { // MSTAFF_MDEV_COMBO : Could maybe exempt mage staves for mdev-absorption
 		msg_print(Ind, "You must be using this item to activate it.");
 		return;
 	}

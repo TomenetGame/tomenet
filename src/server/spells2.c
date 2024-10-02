@@ -9550,7 +9550,7 @@ void mstaff_absorb_aux(int Ind, int item) {
 	}
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	p_ptr->notice |= (PN_REORDER);
 
  #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
