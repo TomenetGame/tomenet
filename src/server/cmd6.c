@@ -6077,6 +6077,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
 #ifdef MSTAFF_MDEV_COMBO
 	case TV_MSTAFF:
+		/* No command-repeats for this atm, no XID_REPEAT for perception-mstaff either ~~ */
+		p_ptr->command_rep = 0;
 		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) msg_print(Ind, "You activate the staff to absorb a magic device...");
 		/* else: no message, same as for triggering magic devices */
 		break;

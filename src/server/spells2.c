@@ -9492,6 +9492,13 @@ void mstaff_absorb_aux(int Ind, int item) {
 		return;
 	}
 
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+	/* Describe */
+	msg_format(Ind, "%s %s glow%s brightly!",
+	    ((item >= 0) ? "Your" : "The"), o_name,
+	    ((o_ptr->number > 1) ? "" : "s"));
+
 	/* transcribe (add it)! */
 	switch (o2_ptr->tval) {
 	case TV_STAFF:
@@ -9513,16 +9520,9 @@ void mstaff_absorb_aux(int Ind, int item) {
 	/* Save ego-power */
 	o_ptr->xtra5 = o2_ptr->name2;
 
-	/* Description */
-	object_desc(Ind, o_name, o_ptr, FALSE, 0);
-	/* Describe */
-	msg_format(Ind, "%s %s glow%s brightly!",
-	    ((item >= 0) ? "Your" : "The"), o_name,
-	    ((o_ptr->number > 1) ? "" : "s"));
-
 	/* Use up the magic device */
 	if (is_magic_device(o2_ptr->tval)) /* at this point it has to be */
-		divide_charged_item(NULL, o2_ptr, 1);
+		divide_charged_item(o_ptr, o2_ptr, 1);
 	inven_item_increase(Ind, p_ptr->using_up_item, -1);
 	inven_item_describe(Ind, p_ptr->using_up_item);
 	inven_item_optimize(Ind, p_ptr->using_up_item);
