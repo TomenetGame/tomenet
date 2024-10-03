@@ -6702,13 +6702,13 @@ bool monster_death(int Ind, int m_idx) {
 				chem_cnt++;
 			}
 		}
-		if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+		if ((r_ptr->flags4 & (RF4_BR_ACID | RF4_BR_NUKE)) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 			if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 10 && rand_int(7) < r_ptr->weight / 1000) {
 				chem_sva |= 0x2;
 				chem_cnt++;
 			}
 		}
-		if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+		if ((r_ptr->flags4 & (RF4_BR_POIS | RF4_BR_NUKE)) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 			if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && rand_int(7) < r_ptr->weight / 1000) {
 				chem_sva |= 0x4;
 				chem_cnt++;
