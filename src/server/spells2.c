@@ -10354,9 +10354,69 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	default: strcat(flavour, "White"); //paranoia
 	}
 }
+
+/* q_ptr is the new chemical object, o_ptr the object we grind into dust */
+static void grind_chemicals_aux(int Ind, int i, object_type *q_ptr, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
+	char o_name[ONAME_LEN];
+
+	if (!i) i = 1;
+	q_ptr->number = i;
+	q_ptr->weight = k_info[q_ptr->k_idx].weight;
+
+	/* Recall original parameters */
+	q_ptr->owner = o_ptr->owner;
+	q_ptr->mode = o_ptr->mode;
+	q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
+	q_ptr->discount = 0;
+
+	q_ptr->note = 0;
+	q_ptr->iron_trade = o_ptr->iron_trade;
+	q_ptr->iron_turn = o_ptr->iron_turn;
+
+	object_desc(Ind, o_name, q_ptr, TRUE, 3);
+	msg_format(Ind, "There is a yield of %s.", o_name);
+
+#if 0
+	/* Give us the result */
+ #ifdef ENABLE_SUBINVEN
+	if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE)) return;
+ #endif
+	i = inven_carry(Ind, q_ptr);
+	if (i != -1) {
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	}
+#else
+	i = inven_carry(Ind, q_ptr);
+ #ifdef ENABLE_SUBINVEN
+	/* If the result is a TV_CHEMICAL, try to auto-move it into an Alchemy Satchel,
+           but only if it didn't stack with existing inventory item! */
+	if (p_ptr->inventory[i].number == q_ptr->number) {
+		int j;
+
+		for (j = 0; j < INVEN_PACK; j++) {
+			if (p_ptr->inventory[j].tval != TV_SUBINVEN) break;
+			if (p_ptr->inventory[j].sval != SV_SI_SATCHEL) continue;
+			if (subinven_move_aux(Ind, i, j, q_ptr->number, FALSE)) return; /* Includes message */
+  #ifdef SUBINVEN_LIMIT_GROUP
+			/* Alchemy Satchel was full */
+			break;
+  #endif
+		}
+	}
+ #endif
+	if (i != -1) {
+		/* Reflect final inventory slot, where the charge/item may have stacked with pre-existing ones */
+		get_inven_item(Ind, i, &q_ptr);
+		object_desc(Ind, o_name, q_ptr, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	}
+#endif
+}
 /* Grind metallic objects to poweder for use as ingredient */
 void grind_chemicals(int Ind, int item) {
-	object_type *o_ptr;
+	object_type *o_ptr, limbo;
 	object_type forge, *q_ptr = &forge; /* Resulting metal powder/wood chips */
 	char o_name[ONAME_LEN];
 	int i, tv, sv;
@@ -10411,11 +10471,17 @@ void grind_chemicals(int Ind, int item) {
 	if (o_ptr->tval == TV_SUBINVEN && o_ptr->number <= 1) empty_subinven(Ind, item, FALSE, FALSE);
 #endif
 
+	/* Make a copy in limbo to refer to when creating the yield objects */
+	limbo = *o_ptr;
+	o_ptr = &limbo;
+
 	/* Erase the ingredient in the pack --
 	   we only grind 1 'piece' of an object at a time, not the whole stack */
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
+
+	/* Grind it, resulting in potential gain of both, metal power and wood chips! */
 
 	if (metal) {
  #ifndef NO_RUST_NO_HYDROXIDE
@@ -10423,42 +10489,15 @@ void grind_chemicals(int Ind, int item) {
  #else
 		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
  #endif
-		/* Recall original parameters */
-		q_ptr->owner = o_ptr->owner;
-		q_ptr->mode = o_ptr->mode;
-		q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
-		q_ptr->discount = 0;
-
 		/* Low yield? (Only consists partly of metal) */
 		if (tv == TV_BOW || tv == TV_DIGGING
 		    || wood)
 			i /= 2;
-		if (!i) i = 1;
-
-		q_ptr->number = i;
-		q_ptr->weight = k_info[q_ptr->k_idx].weight;
-		q_ptr->note = 0;
-		q_ptr->iron_trade = o_ptr->iron_trade;
-		q_ptr->iron_turn = o_ptr->iron_turn;
-
-		/* Give us the result */
-#ifdef ENABLE_SUBINVEN
-		if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE)) return;
-#endif
-		i = inven_carry(Ind, q_ptr);
-		if (i != -1) {
-			object_desc(Ind, o_name, &forge, TRUE, 3);
-			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
-		}
+		grind_chemicals_aux(Ind, i, q_ptr, o_ptr);
 	}
+
 	if (wood) {
 		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
-
-		/* Recall original parameters */
-		q_ptr->owner = o_ptr->owner;
-		q_ptr->mode = o_ptr->mode;
-		q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
-		q_ptr->discount = 0;
 
 		/* Low yield? (Only partly consists of wood) */
 		switch (tv) {
@@ -10474,25 +10513,10 @@ void grind_chemicals(int Ind, int item) {
 		default:
 			if (metal) i /= 2;
 		}
-		if (!i) i = 1;
-
-		q_ptr->number = i;
-		q_ptr->weight = k_info[q_ptr->k_idx].weight;
-		q_ptr->note = 0;
-		q_ptr->iron_trade = o_ptr->iron_trade;
-		q_ptr->iron_turn = o_ptr->iron_turn;
-
-		/* Give us the result */
-#ifdef ENABLE_SUBINVEN
-		if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE)) return;
-#endif
-		i = inven_carry(Ind, q_ptr);
-		if (i != -1) {
-			object_desc(Ind, o_name, &forge, TRUE, 3);
-			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
-		}
+		grind_chemicals_aux(Ind, i, q_ptr, o_ptr);
 	}
 }
+
 /* Check whether we may arm a charge on this grid / arm it and throw it from this grid to somewhere. */
 bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 	player_type *p_ptr = Players[Ind];
