@@ -83,7 +83,7 @@
 /* Method not implemented! Don't use. */
 //#define CBM_METHOD_DIB
 
-// #define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
+#define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
 
 #ifdef USE_LOGFONT
 # if 0 /* too small */
@@ -91,7 +91,7 @@
 # else /* fitting for full-hd */
 #  define DEFAULT_FONTNAME "9X15"
 # endif
-#  undef  USE_GRAPHICS
+# define DEFAULT_TILENAME "16x22sv.bmp"
 #else
 # if 0 /* too small */
 #  define DEFAULT_FONTNAME "8X13.FON"
@@ -755,16 +755,22 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 
 /* Called on term_data_link() (initial term creation+initialization) and on term_font_force() (any font change): */
 static void recreateGraphicsObjects(term_data *td) {
+ #ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+ #else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+ #endif
+
 	releaseCreatedGraphicsObjects(td);
 
-	HBITMAP hbmTilePreparation = CreateBitmap(2 * td->font_wid, td->font_hgt, 1, 32, NULL);
+	HBITMAP hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
  #ifdef GRAPHICS_BG_MASK
-	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * td->font_wid, td->font_hgt, 1, 32, NULL);
+	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 	HBITMAP hbmBgMask, hbmFgMask, hbmBg2Mask;
-	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, td->font_wid, td->font_hgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask);
+	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask);
  #else
 	HBITMAP hbmBgMask, hbmFgMask;
-	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, td->font_wid, td->font_hgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
+	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
  #endif
 
 	if (hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL
@@ -881,7 +887,9 @@ static cptr AngList  = "AngList";
 /*
  * Directory names
  */
+#ifndef USE_LOGFONT
 static cptr ANGBAND_DIR_XTRA_FONT;
+#endif
 #ifdef USE_GRAPHICS
 static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 #endif
@@ -1069,6 +1077,7 @@ byte old_attr = -1;
 /*
  * Hack -- given a pathname, point at the filename
  */
+#ifndef USE_LOGFONT
 static cptr extract_file_name(cptr s) {
 	cptr p;
 
@@ -1081,6 +1090,7 @@ static cptr extract_file_name(cptr s) {
 	/* Return file name */
 	return(p + 1);
 }
+#endif
 
 
 
@@ -1212,6 +1222,11 @@ static void validate_dir(cptr s) {
  */
 static void term_getsize(term_data *td) {
 	RECT        rc;
+#ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 
 	/* Paranoia */
 	if (td->cols < 1) td->cols = 1;
@@ -1222,8 +1237,8 @@ static void term_getsize(term_data *td) {
 	if (td->rows > (MAX_WINDOW_HGT)) td->rows = (MAX_WINDOW_HGT);
 
 	/* Window sizes */
-	td->client_wid = td->cols * td->font_wid + td->size_ow1 + td->size_ow2;
-	td->client_hgt = td->rows * td->font_hgt + td->size_oh1 + td->size_oh2;
+	td->client_wid = td->cols * fwid + td->size_ow1 + td->size_ow2;
+	td->client_hgt = td->rows * fhgt + td->size_oh1 + td->size_oh2;
 
 	/* Fake window size */
 	rc.left = rc.top = 0;
@@ -1795,16 +1810,15 @@ static void term_window_resize(term_data *td) {
  * This function returns zero only if everything succeeds.
  */
 static errr term_force_font(term_data *td, cptr name) {
-	int i;
 	int wid, hgt;
-	cptr s;
-	char base[16];
-	char base_font[16];
-	char buf[1024];
-	bool used;
 #ifdef USE_GRAPHICS
+ #ifdef USE_LOGFONT
+	int prev_font_wid = td->lf.lfWidth;
+	int prev_font_hgt = td->lf.lfHeight;
+ #else
 	int prev_font_wid = td->font_wid;
 	int prev_font_hgt = td->font_hgt;
+ #endif
 #endif
 
 #ifdef USE_LOGFONT
@@ -1813,6 +1827,13 @@ static errr term_force_font(term_data *td, cptr name) {
 	wid = td->lf.lfWidth;
 	hgt = td->lf.lfHeight;
 #else
+	int i;
+	cptr s;
+	char base[16];
+	char base_font[16];
+	char buf[1024];
+	bool used;
+
 	/* Forget the old font (if needed) */
 	if (td->font_id) DeleteObject(td->font_id);
 
@@ -1939,7 +1960,11 @@ static errr term_force_font(term_data *td, cptr name) {
 	if (td == &data[0]) handle_process_font_file();
 
 #ifdef USE_GRAPHICS
+ #ifdef USE_LOGFONT
+	if (use_graphics && g_hbmTiles != NULL && (prev_font_wid != td->lf.lfWidth || prev_font_hgt != td->lf.lfHeight))
+ #else
 	if (use_graphics && g_hbmTiles != NULL && (prev_font_wid != td->font_wid || prev_font_hgt != td->font_hgt))
+ #endif
 		recreateGraphicsObjects(td);
 #endif
 
@@ -2176,18 +2201,23 @@ static errr Term_xtra_win_flush(void) {
  *
  * XXX XXX XXX Make this more efficient
  */
-static errr Term_xtra_win_clear(void)
-{
+static errr Term_xtra_win_clear(void) {
 	term_data *td = (term_data*)(Term->data);
+#ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 
 	HDC  hdc;
 	RECT rc;
 
+
 	/* Rectangle to erase */
 	rc.left   = td->size_ow1;
-	rc.right  = rc.left + td->cols * td->font_wid;
+	rc.right  = rc.left + td->cols * fwid;
 	rc.top    = td->size_oh1;
-	rc.bottom = rc.top + td->rows * td->font_hgt;
+	rc.bottom = rc.top + td->rows * fhgt;
 
 	/* Erase it */
 	hdc = myGetDC(td->w);
@@ -2354,15 +2384,21 @@ static errr Term_xtra_win(int n, int v) {
  */
 static errr Term_wipe_win(int x, int y, int n) {
 	term_data *td = (term_data*)(Term->data);
+#ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 
 	HDC  hdc;
 	RECT rc;
 
+
 	/* Rectangle to erase in client coords */
-	rc.left   = x * td->font_wid + td->size_ow1;
-	rc.right  = rc.left + n * td->font_wid;
-	rc.top    = y * td->font_hgt + td->size_oh1;
-	rc.bottom = rc.top + td->font_hgt;
+	rc.left   = x * fwid + td->size_ow1;
+	rc.right  = rc.left + n * fwid;
+	rc.top    = y * fhgt + td->size_oh1;
+	rc.bottom = rc.top + fhgt;
 
 	hdc = myGetDC(td->w);
 #ifdef OPTIMIZE_DRAWING
@@ -2385,15 +2421,21 @@ static errr Term_wipe_win(int x, int y, int n) {
  */
 static errr Term_curs_win(int x, int y) {
 	term_data *td = (term_data*)(Term->data);
+#ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 
 	RECT   rc;
 	HDC    hdc;
 
+
 	/* Frame the grid */
-	rc.left   = x * td->font_wid + td->size_ow1;
-	rc.right  = rc.left + td->font_wid;
-	rc.top    = y * td->font_hgt + td->size_oh1;
-	rc.bottom = rc.top + td->font_hgt;
+	rc.left   = x * fwid + td->size_ow1;
+	rc.right  = rc.left + fwid;
+	rc.top    = y * fhgt + td->size_oh1;
+	rc.bottom = rc.top + fhgt;
 
 	/* Cursor is done as a yellow "box" */
 	hdc = myGetDC(data[0].w);
@@ -2460,18 +2502,24 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 	term_data *td = (term_data*)(Term->data);
 
-	/* Location of window cell */
-	x = x * td->font_wid + td->size_ow1;
-	y = y * td->font_hgt + td->size_oh1;
+ #ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+ #else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+ #endif
 
-	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
-	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
+	/* Location of window cell */
+	x = x * fwid + td->size_ow1;
+	y = y * fhgt + td->size_oh1;
+
+	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
+	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
 	HDC hdc = myGetDC(td->w);
 
 	/* Paint background rectangle .*/
-	RECT rectBg = { 0, 0, td->font_wid, td->font_hgt };
-	RECT rectFg = { td->font_wid, 0, 2*td->font_wid, td->font_hgt };
+	RECT rectBg = { 0, 0, fwid, fhgt };
+	RECT rectFg = { fwid, 0, 2 * fwid, fhgt };
 	HBRUSH brushBg = CreateSolidBrush(bgColor);
 	HBRUSH brushFg = CreateSolidBrush(fgColor);
 	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
@@ -2482,19 +2530,19 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 	//BitBlt(hdc, 0, 0, 2*9, 15, hdcTilePreparation, 0, 0, SRCCOPY);
 
-	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1, y1, SRCPAINT);
+	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
 
 	//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
 
-	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation, td->font_wid, 0, SRCPAINT);
+	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
 
 	//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
 	//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
 	//
 	/* Copy the picture from the tile preparation memory to the window */
-	BitBlt(hdc, x, y, td->font_wid, td->font_hgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -2568,9 +2616,15 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	td = (term_data*)(Term->data);
 
+ #ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+ #else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+ #endif
+
 	/* Location of window cell */
-	x = x * td->font_wid + td->size_ow1;
-	y = y * td->font_hgt + td->size_oh1;
+	x = x * fwid + td->size_ow1;
+	y = y * fhgt + td->size_oh1;
 
 	hdc = myGetDC(td->w);
 
@@ -2603,12 +2657,12 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
 	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
 
-	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
-	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
+	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
+	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
 	/* Paint background rectangle .*/
-	rectBg = (RECT){ 0, 0, td->font_wid, td->font_hgt }; //uhh, C99 ^^'
-	rectFg = (RECT){ td->font_wid, 0, 2 * td->font_wid, td->font_hgt };
+	rectBg = (RECT){ 0, 0, fwid, fhgt }; //uhh, C99 ^^'
+	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
 	brushBg = CreateSolidBrush(bgColor);
 	brushFg = CreateSolidBrush(fgColor);
 	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
@@ -2617,11 +2671,11 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	DeleteObject(brushFg);
 
 
-	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1, y1, SRCPAINT);
+	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
 
-	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation, td->font_wid, 0, SRCPAINT);
+	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
 
 
 	/* --- Background (terrain) graphical tile --- */
@@ -2652,12 +2706,12 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
 	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
 
-	x1b = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
-	y1b = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
+	x1b = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
+	y1b = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
 	/* Paint background rectangle .*/
-	rectBg = (RECT){ 0, 0, td->font_wid, td->font_hgt }; //uhh, C99 ^^'
-	rectFg = (RECT){ td->font_wid, 0, 2 * td->font_wid, td->font_hgt };
+	rectBg = (RECT){ 0, 0, fwid, fhgt }; //uhh, C99 ^^'
+	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
 	brushBg = CreateSolidBrush(bgColor);
 	brushFg = CreateSolidBrush(fgColor);
 	FillRect(td->hdcTilePreparation2, &rectBg, brushBg);
@@ -2669,22 +2723,22 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	if (c_back == 32) {
 		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
 	} else {
-		BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1b, y1b, SRCAND);
-		BitBlt(td->hdcTilePreparation2, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1b, y1b, SRCPAINT);
+		BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
+		BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
 
-		BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1b, y1b, SRCAND);
-		BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation2, td->font_wid, 0, SRCPAINT);
+		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
+		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation2, fwid, 0, SRCPAINT);
 	}
 
 
 	/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
 
-	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcBg2Mask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation2, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation, td->font_wid, 0, SRCPAINT);
+	BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
 
 
 	/* --- Copy the picture from the (bg) tile preparation memory to the window --- */
-	BitBlt(hdc, x, y, td->font_wid, td->font_hgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
+	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -2716,16 +2770,21 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  */
 static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	term_data *td = (term_data*)(Term->data);
+#ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 
 	RECT rc;
 	HDC  hdc;
 
 
 	/* Location */
-	rc.left   = x * td->font_wid + td->size_ow1;
-	rc.right  = rc.left + n * td->font_wid;
-	rc.top    = y * td->font_hgt + td->size_oh1;
-	rc.bottom = rc.top + td->font_hgt;
+	rc.left   = x * fwid + td->size_ow1;
+	rc.right  = rc.left + n * fwid;
+	rc.top    = y * fhgt + td->size_oh1;
+	rc.bottom = rc.top + fhgt;
 
 	/* Acquire DC */
 	hdc = myGetDC(td->w);
@@ -3103,11 +3162,15 @@ static void init_windows(void) {
 
 		strncpy(td->lf.lfFaceName, td->font_want, LF_FACESIZE);
 		// Kurzel - This was zeroing valid .INI values.
-		// td->lf.lfHeight = td->font_hgt;
-		// td->lf.lfWidth  = td->font_wid;
+		/* ..I changed it just so it ensures valid values in case USE_GRAPHICS needs those right away - C. Blue */
+		if (td->font_hgt) td->lf.lfHeight = td->font_hgt; else td->font_hgt = td->lf.lfHeight;
+		if (td->font_wid) td->lf.lfWidth  = td->font_wid; else td->font_wid = td->lf.lfWidth;
 		// pro-tip: win32 calls corrupting your .INI? flag it read-only!
 		td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
 		term_force_font(td, NULL);
+		/* Paranoia: Again ensure valid font_hgt/font_wid values for USE_GRAPHICS - C. Blue */
+		if (td->font_hgt) td->lf.lfHeight = td->font_hgt; else td->font_hgt = td->lf.lfHeight;
+		if (td->font_wid) td->lf.lfWidth  = td->font_wid; else td->font_wid = td->lf.lfWidth;
 #else
 		if (term_force_font(&data[i], data[i].font_want))
 			(void)term_force_font(&data[i], DEFAULT_FONTNAME);
@@ -3428,7 +3491,7 @@ static void process_menus(WORD wCmd) {
 			break;
 
 /*	Currently no graphics options available. -GP */
-#ifdef USE_GRAPHICS
+ #ifdef USE_GRAPHICS
 		case IDM_OPTIONS_GRAPHICS:
 			/* XXX XXX XXX  */
 			Term_activate(term_screen);
@@ -3440,18 +3503,18 @@ static void process_menus(WORD wCmd) {
 			/* Hack: Never switch graphics settings, especially UG_2MASK, live,
 			   as it will cause instant packet corruption due to missing server-client synchronisation.
 			   So we just switch the savegame-affecting 'use_graphics_new' instead of actual 'use_graphics'. */
-#ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 			use_graphics_new = (use_graphics_new + 1) % 3;
-#else
+  #else
 			use_graphics_new = !use_graphics_new;
-#endif
+  #endif
 
 			/* Access the "graphic" mappings */
 			handle_process_font_file();
 
-#endif		/* GP's USE_GRAPHICS */
+ #endif		/* GP's USE_GRAPHICS */
 
-#ifdef USE_GRAPHICS	/* no support -GP */
+ #ifdef USE_GRAPHICS	/* no support -GP */
 			/* React to changes */
 			Term_xtra_win_react();
 
@@ -3459,7 +3522,7 @@ static void process_menus(WORD wCmd) {
 			Term_key_push(KTRL('R'));
 
 			break;
-#endif
+ #endif
 		case IDM_OPTIONS_SOUND:
 			use_sound = !use_sound;
 			break;
@@ -3478,6 +3541,11 @@ static void process_menus(WORD wCmd) {
 static void handle_wm_paint(HWND hWnd, term_data *td) {
 	int x1, y1, x2, y2;
 	PAINTSTRUCT ps;
+#ifdef USE_LOGFONT
+	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+	int fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 
 	BeginPaint(hWnd, &ps);
 
@@ -3485,14 +3553,14 @@ static void handle_wm_paint(HWND hWnd, term_data *td) {
 		/* Get the area that should be updated (rounding up/down) */
 		x1 = ps.rcPaint.left - td->size_ow1;
 		if (x1 < 0) x1 = 0;
-		x1 /= td->font_wid;
+		x1 /= fwid;
 
 		y1 = ps.rcPaint.top - td->size_oh1;
 		if (y1 < 0) y1 = 0;
-		y1 /= td->font_hgt;
+		y1 /= fhgt;
 
-		x2 = ((ps.rcPaint.right - td->size_ow1) / td->font_wid) + 1;
-		y2 = ((ps.rcPaint.bottom - td->size_oh1) / td->font_hgt) + 1;
+		x2 = ((ps.rcPaint.right - td->size_ow1) / fwid) + 1;
+		y2 = ((ps.rcPaint.bottom - td->size_oh1) / fhgt) + 1;
 
 		/* Redraw */
 		term_data_redraw_section(td, x1, y1, x2, y2);
@@ -3518,6 +3586,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 	/* Acquire proper "term_data" info */
 	td = (term_data *)GetWindowLongPtr(hWnd, 0);
+	int fwid, fhgt;
+
 	/* Handle message */
 	switch (uMsg) {
 		/* XXX XXX XXX */
@@ -3535,9 +3605,14 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			if (!td) return(1);  /* this message was sent before WM_NCCREATE */
 
 			/* Minimum window size is 8x2 */
+#ifdef USE_LOGFONT
+			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+			fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 			rc.left = rc.top = 0;
-			rc.right = rc.left + 8 * td->font_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + 2 * td->font_hgt + td->size_oh1 + td->size_oh2 + 1;
+			rc.right = rc.left + 8 * fwid + td->size_ow1 + td->size_ow2;
+			rc.bottom = rc.top + 2 * fhgt + td->size_oh1 + td->size_oh2 + 1;
 
 			/* Adjust */
 #ifdef MNU_USE
@@ -3551,13 +3626,18 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			lpmmi->ptMinTrackSize.y = rc.bottom - rc.top;
 
 			/* Maximum window size */
+#ifdef USE_LOGFONT
+			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+			fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 			rc.left = rc.top = 0;
-			rc.right = rc.left + (MAX_WINDOW_WID) * td->font_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + (MAX_WINDOW_HGT) * td->font_hgt + td->size_oh1 + td->size_oh2;
+			rc.right = rc.left + (MAX_WINDOW_WID) * fwid + td->size_ow1 + td->size_ow2;
+			rc.bottom = rc.top + (MAX_WINDOW_HGT) * fhgt + td->size_oh1 + td->size_oh2;
 
 			/* Paranoia */
-			rc.right  += (td->font_wid - 1);
-			rc.bottom += (td->font_hgt - 1);
+			rc.right  += (fwid - 1);
+			rc.bottom += (fhgt - 1);
 
 			/* Adjust */
 #ifdef MNU_USE
@@ -3672,8 +3752,13 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 					td->size_hack = TRUE;
 
-					cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
-					rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
+#ifdef USE_LOGFONT
+					fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+					fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
+					cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / fwid;
+					rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / fhgt;
 
 					old_cols = cols;
 					old_rows = rows;
@@ -3809,7 +3894,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 	RECT            rc;
 	HDC             hdc;
 	int             i;
-
+	int fwid, fhgt;
 
 	/* Acquire proper "term_data" info */
 	td = (term_data *)GetWindowLongPtr(hWnd, 0);
@@ -3832,9 +3917,14 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			lpmmi = (MINMAXINFO FAR *)lParam;
 
 			/* Minimum size */
+#ifdef USE_LOGFONT
+			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+			fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 			rc.left = rc.top = 0;
-			rc.right = rc.left + 8 * td->font_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + 2 * td->font_hgt + td->size_oh1 + td->size_oh2;
+			rc.right = rc.left + 8 * fwid + td->size_ow1 + td->size_ow2;
+			rc.bottom = rc.top + 2 * fhgt + td->size_oh1 + td->size_oh2;
 
 			/* Adjust */
 #ifdef MNU_USE
@@ -3848,13 +3938,18 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			lpmmi->ptMinTrackSize.y = rc.bottom - rc.top;
 
 			/* Maximum window size */
+#ifdef USE_LOGFONT
+			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+			fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
 			rc.left = rc.top = 0;
-			rc.right = rc.left + (MAX_WINDOW_WID) * td->font_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + (MAX_WINDOW_HGT) * td->font_hgt + td->size_oh1 + td->size_oh2;
+			rc.right = rc.left + (MAX_WINDOW_WID) * fwid + td->size_ow1 + td->size_ow2;
+			rc.bottom = rc.top + (MAX_WINDOW_HGT) * fhgt + td->size_oh1 + td->size_oh2;
 
 			/* Paranoia */
-			rc.right += (td->font_wid - 1);
-			rc.bottom += (td->font_hgt - 1);
+			rc.right += (fwid - 1);
+			rc.bottom += (fhgt - 1);
 
 			/* Adjust */
 #ifdef MNU_USE
@@ -3884,8 +3979,13 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 				td->size_hack = TRUE;
 
-				cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
-				rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
+#ifdef USE_LOGFONT
+				fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
+#else
+				fwid = td->font_wid, fhgt = td->font_hgt;
+#endif
+				cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / fwid;
+				rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / fhgt;
 
 				old = Term;
 				Term_activate(&td->t);
