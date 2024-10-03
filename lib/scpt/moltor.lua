@@ -409,7 +409,7 @@ end
 
 function r(blah) -- short hand for / rumour(blah)
         msg_broadcast(0, "Suddenly a thought comes to your mind:");
-        msg_broadcast(0, blah);
+        msg_broadcast(0, "~\255s"..blah.."\255w~");
 end
 
 
