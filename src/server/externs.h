@@ -1357,6 +1357,7 @@ extern int toggle_rest(int Ind, int turns);
 /* object1.c */
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);
 extern cptr wand_adj[MAX_METALS], rod_adj[MAX_METALS];
+extern bool object_has_flavor(int k_idx);
 /* object2.c */
 extern int charge_wand_fix[256], charge_wand_rnd[256], charge_staff_fix[256], charge_staff_rnd[256];
 extern void init_charge_wand(void), init_charge_staff(void);

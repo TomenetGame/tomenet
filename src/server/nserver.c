@@ -6298,7 +6298,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
-	s16b pval = 0;
+	s16b pval = 0, sval = !object_has_flavor(o_ptr->k_idx) || object_aware_p(Ind, o_ptr) ? o_ptr->sval : 255; /* unfortunately -1 doesn't work as object_type tval is 'byte'; fortunately there are no flavoured items with sval 255 */
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6334,7 +6334,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
-		if (is_custom_tome(o_ptr->sval)) pval = o_ptr->bpval;
+		if (is_custom_tome(sval)) pval = o_ptr->bpval;
 		/* For spell scrolls: transmit the pval, as it denotes the spell */
 		else pval = o_ptr->pval;
 	}
@@ -6345,23 +6345,23 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (is_newer_than(&p_ptr2->version, 4, 5, 2, 0, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 5, 10, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, uses_dir, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 		else
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 	else if (is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, uses_dir, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name);
 	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 }
 
 #ifdef ENABLE_SUBINVEN
@@ -6370,7 +6370,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
 	char uses_dir = 0, uses_dir2, uses_dir_mod; /* flag whether a rod requires a direction for zapping or not */
-	s16b pval = 0;
+	s16b pval = 0, sval = !object_has_flavor(o_ptr->k_idx) || object_aware_p(Ind, o_ptr) ? o_ptr->sval : 255; /* unfortunately -1 doesn't work as object_type tval is 'byte'; fortunately there are no flavoured items with sval 255 */
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6407,7 +6407,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
-		if (is_custom_tome(o_ptr->sval)) pval = o_ptr->bpval;
+		if (is_custom_tome(sval)) pval = o_ptr->bpval;
 		/* For spell scrolls: transmit the pval, as it denotes the spell */
 		else pval = o_ptr->pval;
 	}
@@ -6419,11 +6419,11 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 		connp2 = Conn[p_ptr2->conn];
 		uses_dir2 = uses_dir;
 		if (is_newer_than(&p_ptr2->version, 4, 7, 1, 1, 0, 0)) uses_dir2 |= uses_dir_mod;
-		Packet_printf(&connp2->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir2, name);
+		Packet_printf(&connp2->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir2, name);
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0)) uses_dir |= uses_dir_mod;
-	return Packet_printf(&connp->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+	return Packet_printf(&connp->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 }
 #endif
 
@@ -6433,7 +6433,7 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
 	char ident = 0; // instead of 'uses_dir' like in Send_inven, Send_equip and Send_equip_wide, we abuse 'ident'
-	s16b pval = 0;
+	s16b pval = 0, sval = !object_has_flavor(o_ptr->k_idx) || object_aware_p(Ind, o_ptr) ? o_ptr->sval : 255; /* unfortunately -1 doesn't work as object_type tval is 'byte'; fortunately there are no flavoured items with sval 255 */
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
@@ -6464,7 +6464,7 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
-		if (is_custom_tome(o_ptr->sval)) pval = o_ptr->bpval;
+		if (is_custom_tome(sval)) pval = o_ptr->bpval;
 		/* For spell scrolls: transmit the pval, as it denotes the spell */
 		else pval = o_ptr->pval;
 	}
@@ -6472,42 +6472,42 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (is_newer_than(&p_ptr2->version, 4, 7, 1, 1, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 			    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name, ident);
 		else if (is_newer_than(&p_ptr2->version, 4, 7, 0, 0, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 			    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 5, 2, 0, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 			    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 			    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval,
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
 			    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 		else
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval,
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
 			    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name, ident);
 	else if (is_newer_than(&p_ptr->version, 4, 7, 0, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name);
 	else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval,
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
 		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval,
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
 		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 }
 
@@ -6519,7 +6519,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
 	int slot = INVEN_WIELD + pos - 'a';
 	bool forward = FALSE;
-	s16b pval = 0;
+	s16b pval = 0, sval = !object_has_flavor(o_ptr->k_idx) || object_aware_p(Ind, o_ptr) ? o_ptr->sval : 255; /* unfortunately -1 doesn't work as object_type tval is 'byte'; fortunately there are no flavoured items with sval 255 */
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6556,7 +6556,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
-		if (is_custom_tome(o_ptr->sval)) pval = o_ptr->bpval;
+		if (is_custom_tome(sval)) pval = o_ptr->bpval;
 		/* For spell scrolls: transmit the pval, as it denotes the spell */
 		else pval = o_ptr->pval;
 	}
@@ -6602,27 +6602,27 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (is_newer_than(&p_ptr2->version, 4, 5, 2, 0, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 			    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 5, 10, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, uses_dir, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 		else
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 	}
 
 	if (forward) return(0);
 
 	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 	else if (is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, uses_dir, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name);
 	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
 }
 
 /* Added for WIELD_BOOKS */
@@ -6633,7 +6633,7 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
 	int slot = INVEN_WIELD + pos - 'a';
 	bool forward = FALSE;
-	s16b pval = 0;
+	s16b pval = 0, sval = !object_has_flavor(o_ptr->k_idx) || object_aware_p(Ind, o_ptr) ? o_ptr->sval : 255; /* unfortunately -1 doesn't work as object_type tval is 'byte'; fortunately there are no flavoured items with sval 255 */
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6668,7 +6668,7 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
-		if (is_custom_tome(o_ptr->sval)) pval = o_ptr->bpval;
+		if (is_custom_tome(sval)) pval = o_ptr->bpval;
 		/* For spell scrolls: transmit the pval, as it denotes the spell */
 		else pval = o_ptr->pval;
 	}
@@ -6714,7 +6714,7 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (is_newer_than(&p_ptr2->version, 4, 9, 0, 5, 0, 1))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 			    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name,
 			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
 	}
@@ -6722,7 +6722,7 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	if (forward) return(0);
 
 	if (is_newer_than(&p_ptr->version, 4, 9, 0, 5, 0, 1))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name,
 		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
 	return(0);

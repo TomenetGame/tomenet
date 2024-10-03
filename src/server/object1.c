@@ -510,8 +510,8 @@ static byte scroll_col[MAX_TITLES];
  * Certain items have a flavor
  * This function is used only by "flavor_init()"
  */
-static bool object_has_flavor(int i) {
-	object_kind *k_ptr = &k_info[i];
+bool object_has_flavor(int k_idx) {
+	object_kind *k_ptr = &k_info[k_idx];
 
 	/* Check for flavor */
 	switch (k_ptr->tval) {
@@ -543,8 +543,8 @@ static bool object_has_flavor(int i) {
  *
  * XXX XXX XXX Add "EASY_KNOW" flag to "k_info.txt" file
  */
-static bool object_easy_know(int i) {
-	object_kind *k_ptr = &k_info[i];
+static bool object_easy_know(int k_idx) {
+	object_kind *k_ptr = &k_info[k_idx];
 
 	/* Analyze the "tval" */
 	switch (k_ptr->tval) {
