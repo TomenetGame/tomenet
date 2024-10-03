@@ -6472,16 +6472,20 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			inven_item_optimize(Ind, item);
 
 			/* Place charcoal into inventory */
+			i = inven_carry(Ind, ox_ptr);
  #ifdef ENABLE_SUBINVEN
-			if (item >= SUBINVEN_INVEN_MUL) {
-				i = inven_carry(Ind, ox_ptr);
-				/* Automatically move it into the same bag if possible */
-				//do_cmd_subinven_move(Ind, islot);
-				(void)subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, ox_ptr->number, FALSE);
-				return;
+			/* Automatically move it into an alchemy satchel if possible, but only if it didn't stack with an existing main-inventory item! */
+			if (p_ptr->inventory[i].number == ox_ptr->number)
+			for (k = 0; k < INVEN_PACK; k++) {
+				if (p_ptr->inventory[k].tval != TV_SUBINVEN) break;
+				if (p_ptr->inventory[k].sval != SV_SI_SATCHEL) continue;
+				if (subinven_move_aux(Ind, i, k, ox_ptr->number, FALSE)) return; /* Includes message */
+  #ifdef SUBINVEN_LIMIT_GROUP
+				/* Alchemy Satchel was full */
+				break;
+  #endif
 			}
  #endif
-			inven_carry(Ind, ox_ptr);
 			return;
 		}
 		clear_current(Ind);

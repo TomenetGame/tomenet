@@ -10210,11 +10210,23 @@ s16b mix_chemicals(int Ind, int item) {
 	if (q_ptr->tval == TV_SCROLL) s_printf("FIREWORK: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
 	i = inven_carry(Ind, q_ptr);
 #ifdef ENABLE_SUBINVEN
-	/* If both ingredients were from a satchel, try to place the result there too, if it's TV_CHEMICAL. */
-	if (p_ptr->current_activation >= SUBINVEN_INVEN_MUL && item >= SUBINVEN_INVEN_MUL && q_ptr->tval == TV_CHEMICAL) {
-		int si_slot;
+	/* If the result is a TV_CHEMICAL, try to auto-move it into an Alchemy Satchel,
+           but only if it didn't stack with existing inventory item! */
+	if (p_ptr->inventory[i].number == q_ptr->number
+	    /* Only if both ingredients were from the satche too?
+	    && p_ptr->current_activation >= SUBINVEN_INVEN_MUL && item >= SUBINVEN_INVEN_MUL && */
+	    && q_ptr->tval == TV_CHEMICAL) {
+		int si_slot, j;
 
-		if ((si_slot = subinven_move_aux(Ind, i, item / SUBINVEN_INVEN_MUL - 1, q_ptr->number, FALSE))) return(si_slot); /* Includes message */
+		for (j = 0; j < INVEN_PACK; j++) {
+			if (p_ptr->inventory[j].tval != TV_SUBINVEN) break;
+			if (p_ptr->inventory[j].sval != SV_SI_SATCHEL) continue;
+			if ((si_slot = subinven_move_aux(Ind, i, j, q_ptr->number, FALSE))) return(si_slot); /* Includes message */
+ #ifdef SUBINVEN_LIMIT_GROUP
+			/* Alchemy Satchel was full */
+			break;
+ #endif
+		}
 	}
 #endif
 	if (i != -1) {
