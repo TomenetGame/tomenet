@@ -9642,14 +9642,14 @@ static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
 /* Helper function to combine a mixture and an ingredient to form a new ingredient (not a mixture). */
 static int mixingred_to_ingredient(int Ind, object_type *o_ptr, int tval, int sval) {
 	s16b ingflag = ingredient2flag(tval, sval);
-	s16b xtra1 = 0x000, xtra2 = 0x000, xtra3 = 0x000;
+	s16b xtra1 = o_ptr->xtra1, xtra2 = o_ptr->xtra2, xtra3 = o_ptr->xtra3;
 
 	/* check whether there's still room to add that ingredient or whether the mixture is already saturated of that particular ingredient */
-	if (!(o_ptr->xtra1 & ingflag))
+	if (!(xtra1 & ingflag))
 		xtra1 |= ingflag;
-	else if (!(o_ptr->xtra2 & ingflag))
+	else if (!(xtra2 & ingflag))
 		xtra2 |= ingflag;
-	else if (!(o_ptr->xtra3 & ingflag))
+	else if (!(xtra3 & ingflag))
 		xtra3 |= ingflag;
 	else return(-1); /* failure - mixture is saturated */
 
