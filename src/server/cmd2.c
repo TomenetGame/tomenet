@@ -1878,9 +1878,9 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		for (; number > 0; --number) {
 			/* Small chests often drop gold */
 			if (small && magik(75))
-				place_gold(Ind, wpos, y, x, 1, (cash * (80 + rand_int(41))) / 100);
+				place_gold(Ind, wpos, y, x, 10, (cash * (80 + rand_int(41))) / 100);
 			else if (!small && magik(20))
-				place_gold(Ind, wpos, y, x, 1, (cash * (80 + rand_int(41))) / 100);
+				place_gold(Ind, wpos, y, x, 10, (cash * (80 + rand_int(41))) / 100);
 			/* Otherwise drop an item */
 			else
 				/* mostly DROP_GOOD */
@@ -4064,8 +4064,13 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a %s.\n", p_ptr->name, tval == TV_GOLEM ? "metal piece" : "rune");
 				} else {
-					int mult = 3 + rand_int(mining / 5);
-					int bonus = nonobvious ? (15 + mining) * 6 + rand_int(10 + find_level_base) : 0;
+					int mult = 30;
+					/* problem: level-advancement is superlinear which should probably go for rewards too,
+					   but first few skills shouldn't explosively inflate the difference between (eg take 1.000 Digging to gain +25% cash),
+					   however towards 50 it shouldn't increase exponentially into oblivion so we need a limiter term for that region probably - C. Blue */
+					int bonus = nonobvious ?
+					    (1000 * ((4 + mining) * (4 + mining)) / (3000 / (101 - mining))) / 20 + 80 + rand_int(find_level_base) + skill_dig : //lulz
+					    mining * 3 + skill_dig * 2;
 
 					object_level = find_level;
 					place_gold(Ind, wpos, y, x, mult, bonus);
@@ -5426,7 +5431,7 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* Traps of missing money can drop some of their stolen cash ;) */
 				if (t_idx == TRAP_OF_MISSING_MONEY && rand_int(4))
-					place_gold(Ind, &p_ptr->wpos, y, x, 1, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
+					place_gold(Ind, &p_ptr->wpos, y, x, 10, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
 					//NOTE: In theory this can be abused to transfer gold cross-mode/to soloists even, but the amount is negligible.
 
 				/* Reward */

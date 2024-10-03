@@ -5134,7 +5134,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Destroy walls (and doors) */
 	case GF_KILL_WALL: {
-		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR), mult = 1; /* NOTE: For cmd_tunnel() mult is actually at least 3. */
+		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR), mult = 10; /* NOTE: For cmd_tunnel() mult is actually at least 30. */
 
 		if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) break;
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;

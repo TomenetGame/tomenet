@@ -1113,7 +1113,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 
 			if (cave_clean_bold(zcave,y,x)) {
 				object_level = cash;
-				place_gold(0, wpos, y, x, 1, 0);
+				place_gold(0, wpos, y, x, 10, 0);
 				break;
 			}
 		trys++;

@@ -9939,8 +9939,7 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 	i = ((randint(object_level + 2) + 2) / 2);
 
 	/* Apply "extra" magic */
-	if (rand_int(GREAT_OBJ) == 0)
-		i += randint(object_level + 1);
+	if (rand_int(GREAT_OBJ) == 0) i += randint(object_level + 1);
 
 	/* Hack -- Creeping Coins only generate "themselves" */
 	if (coin_type) i = coin_type;
@@ -9956,8 +9955,8 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 	//base = k_info[OBJ_GOLD_LIST + i].cost;
 	base = k_info[k_idx].cost;
 
-	/* Determine how much the treasure is "worth" */
-	forge.pval = (base + (8L * randint(base)) + randint(8)) * mult + rand_int(1 + (mult + 1) % 2); //rand_int(..) at the end is just so that x2/x4/x6.. wont always become even numbers.. =P
+	/* Determine how much the treasure is "worth" - multiplicator 'mult' is x10 the intended value for more precision, so need to divide by 10 afterwards. */
+	forge.pval = (base * mult + randint(8L * base * mult) + randint(8L * mult)) / 10 + rand_int(2);
 	forge.pval += bonus;
 
 	/* hacking this mess of an outdated function: pick a 'colour' */
