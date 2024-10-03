@@ -4071,6 +4071,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					int bonus = nonobvious ?
 					    (1000 * ((4 + mining) * (4 + mining)) / (3000 / (101 - mining))) / 25 + 80 + rand_int(find_level_base) + skill_dig : //lulz
 					    mining * 3 + skill_dig * 2;
+					/* Note: For stricter dlev capping "if (mining > find_level * 1) mining = find_level;" the /25 divisor should be /20, which is still fine overall. */
 
 					object_level = find_level;
 					place_gold(Ind, wpos, y, x, mult, bonus);
