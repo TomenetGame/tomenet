@@ -3507,8 +3507,8 @@ static int Handle_login(int ind) {
 		if (ge_contender_buffer_ID[i] == p_ptr->account) {
 			ge_contender_buffer_ID[i] = 0;
 			if (ge_contender_buffer_deed[i] == -1) continue; // Error
-			i = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
-			invcopy(o_ptr, i);
+			j = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
+			invcopy(o_ptr, j);
 			o_ptr->number = 1;
 			object_aware(NumPlayers, o_ptr);
 			object_known(o_ptr);
@@ -3516,7 +3516,7 @@ static int Handle_login(int ind) {
 			o_ptr->level = 0;
 			o_ptr->ident |= ID_MENTAL;
 			inven_carry(NumPlayers, o_ptr);
-			s_printf("GE_CONTENDER_BUFFER: '%s' got sval %d.\n", p_ptr->name, ge_contender_buffer_deed[i]);
+			s_printf("GE_CONTENDER_BUFFER(%d): '%s' got sval %d.\n", i, p_ptr->name, ge_contender_buffer_deed[i]);
 			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
 		}
 	}
@@ -3533,8 +3533,8 @@ static int Handle_login(int ind) {
 			}
 			achievement_buffer_ID[i] = 0;
 			if (achievement_buffer_deed[i] == -1) continue; // Error
-			i = lookup_kind(TV_PARCHMENT, achievement_buffer_deed[i]);
-			invcopy(o_ptr, i);
+			j = lookup_kind(TV_PARCHMENT, achievement_buffer_deed[i]);
+			invcopy(o_ptr, j);
 			o_ptr->number = 1;
 			object_aware(NumPlayers, o_ptr);
 			object_known(o_ptr);
@@ -3542,6 +3542,7 @@ static int Handle_login(int ind) {
 			o_ptr->level = 0;
 			o_ptr->ident |= ID_MENTAL;
 			inven_carry(NumPlayers, o_ptr);
+			s_printf("ACHIEVEMENT_BUFFER(%d): '%s' got sval %d.\n", i, p_ptr->name, achievement_buffer_deed[i]);
 			msg_print(NumPlayers, "\377GFor your achievements, you have received a deed!");
 		}
 	}

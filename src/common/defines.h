@@ -9189,6 +9189,7 @@ extern int PlayerUID;
 #define PEVF_STCK_OK		0x00000200U /* allow wpos changes onto CAVE_STCK grid */
 
 /* for achievements (top PvP mode rank) - C. Blue */
+#define ACHV_NONE		0
 #define ACHV_PVP_MAX		1
 #define ACHV_PVP_MID		2
 #define ACHV_PVP_MASS		3

@@ -160,7 +160,7 @@
    to a different character which he chooses on next login! - C. Blue
 */
 static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
-	int i,j;
+	int i, j;
 
 	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
 		if (ge_contender_buffer_ID[i] == 0) break;
@@ -187,7 +187,7 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 			}
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
-			s_printf("GE_HIGHLANDER\n");
+			s_printf("GE_HIGHLANDER(%d)\n", i);
 			return;
 		case GE_DUNGEON_KEEPER:
 			if (p_ptr->global_event_progress[j][0] < 1) {
@@ -200,7 +200,7 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 			}
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
-			s_printf("GE_DUNGEON_KEEPER\n");
+			s_printf("GE_DUNGEON_KEEPER(%d)\n", i);
 			return;
 		case GE_NONE:
 		default:
@@ -223,23 +223,30 @@ static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievem
 		s_printf("ACHIEVEMENT_BUFFER: Out of buffers!\n");
 		return; /* no free buffer entries anymore, sorry! */
 	}
+	s_printf("ACHIEVEMENT_BUFFER: Preparing to buffer...");
 	achievement_buffer_ID[i] = p_ptr->account;
 	achievement_buffer_deed[i] = -1; // Init
 
 	switch (achievement) {
 	case ACHV_PVP_MAX:
+		s_printf("PVP_MAX(%d)\n", i);
 		achievement_buffer_deed[i] = SV_DEED_PVP_MAX;
-		break;
+		return;
 	case ACHV_PVP_MID:
 		achievement_buffer_deed[i] = SV_DEED_PVP_MID;
-		break;
+		s_printf("PVP_MID(%d)\n", i);
+		return;
 	case ACHV_PVP_MASS:
 		achievement_buffer_deed[i] = SV_DEED_PVP_MASS;
-		break;
+		s_printf("PVP_MASS(%d)\n", i);
+		return;
+	case ACHV_NONE:
 	default:
-		achievement_buffer_ID[i] = -1;
 		break;
 	}
+
+	s_printf("Achievement not found!\n");
+	achievement_buffer_ID[i] = 0;
 }
 
 /*
