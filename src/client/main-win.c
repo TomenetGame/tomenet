@@ -83,7 +83,8 @@
 /* Method not implemented! Don't use. */
 //#define CBM_METHOD_DIB
 
-#define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
+/* Uncomment this to use Windows LOGFONT instead of the fonts in lib/xtra/fonts. */
+// #define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
 
 #ifdef USE_LOGFONT
 # if 0 /* too small */
