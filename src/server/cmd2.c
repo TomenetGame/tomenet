@@ -3484,6 +3484,8 @@ bool twall(int Ind, struct worldpos *wpos, int y, int x, byte feat) {
 #define RUNE_CHANCE 1000
 /* Actually give special message to indicate when we have zero chance to tunnel through a specific material */
 #define INDICATE_IMPOSSIBLE "You cannot seem to make a dent in the"
+/* Two methods of capping Digging skill vs floor depth */
+#define DIG_SKILL_VS_DEPTH_COMPLICATED
 
 /* Just terraform a feat and potentially produce treasure.
  * Ind: Can be 0.
@@ -3543,7 +3545,11 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	}
 
 	/* find_level = floor level (0..n), mining = digging skill (0..50) or 0 for non-manual labour */
+#ifdef DIG_SKILL_VS_DEPTH_COMPLICATED
 	if (find_level < det_req_level(mining) || find_level < 20) mining = find_level <= 20 ? find_level : det_req_level_inverse(find_level);
+#else
+	if (find_level < mining) mining = find_level;
+#endif
 	find_level += mining / 3;
 	/* Above was +find_level*2 and +mining/3, but on BD-1750 you find up to 6k-piles -
 	   these lesser-boosted values seem actually to result in ~ the same profits as long as you don't chill out on low floors compared to your skills a lot. */
@@ -4069,9 +4075,13 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					   but first few skills shouldn't explosively inflate the difference between (eg take 1.000 Digging to gain +25% cash),
 					   however towards 50 it shouldn't increase exponentially into oblivion so we need a limiter term for that region probably - C. Blue */
 					int bonus = nonobvious ?
+#ifdef DIG_SKILL_VS_DEPTH_COMPLICATED
 					    (1000 * ((4 + mining) * (4 + mining)) / (3000 / (101 - mining))) / 25 + 80 + rand_int(find_level_base) + skill_dig : //lulz
+#else
+					/* For this strict dlev capping "if (mining > find_level * 1) mining = find_level;" the /25 divisor should be /20, which still gives good results. */
+					    (1000 * ((4 + mining) * (4 + mining)) / (3000 / (101 - mining))) / 20 + 80 + rand_int(find_level_base) + skill_dig :
+#endif
 					    mining * 3 + skill_dig * 2;
-					/* Note: For stricter dlev capping "if (mining > find_level * 1) mining = find_level;" the /25 divisor should be /20, which is still fine overall. */
 
 					object_level = find_level;
 					place_gold(Ind, wpos, y, x, mult, bonus);
