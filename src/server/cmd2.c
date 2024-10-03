@@ -3484,7 +3484,11 @@ bool twall(int Ind, struct worldpos *wpos, int y, int x, byte feat) {
 #define RUNE_CHANCE 1000
 /* Actually give special message to indicate when we have zero chance to tunnel through a specific material */
 #define INDICATE_IMPOSSIBLE "You cannot seem to make a dent in the"
-/* Two methods of capping Digging skill vs floor depth */
+/* Two methods of capping Digging skill vs floor depth.
+   The 'complicated' method works with the same threshold levels as for determining the minimum depth for a character to gain full XP from monsters,
+   thereby distributing the Digging skill much smoother over the range of dungeon levels with a 'natural' power curve.
+   The simple method just caps Digging skill to floor depth, which means at dungeon level 50 and deeper the full skill is always applied.
+   The 'complicated' method is therefore a depth-buff for Digging skill < 40 and a depth-nerf for Digging skill > 40. (The overall gains on optimum depths are very similar.) */
 #define DIG_SKILL_VS_DEPTH_COMPLICATED
 
 /* Just terraform a feat and potentially produce treasure.
