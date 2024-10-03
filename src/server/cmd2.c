@@ -3543,7 +3543,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	}
 
 	/* find_level = floor level (0..n), mining = digging skill (0..50) or 0 for non-manual labour */
-	if (mining > find_level * 1) mining = find_level * 1;
+	if (find_level < det_req_level(mining) || find_level < 20) mining = find_level <= 20 ? find_level : det_req_level_inverse(find_level);
 	find_level += mining / 3;
 	/* Above was +find_level*2 and +mining/3, but on BD-1750 you find up to 6k-piles -
 	   these lesser-boosted values seem actually to result in ~ the same profits as long as you don't chill out on low floors compared to your skills a lot. */
@@ -4069,7 +4069,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					   but first few skills shouldn't explosively inflate the difference between (eg take 1.000 Digging to gain +25% cash),
 					   however towards 50 it shouldn't increase exponentially into oblivion so we need a limiter term for that region probably - C. Blue */
 					int bonus = nonobvious ?
-					    (1000 * ((4 + mining) * (4 + mining)) / (3000 / (101 - mining))) / 20 + 80 + rand_int(find_level_base) + skill_dig : //lulz
+					    (1000 * ((4 + mining) * (4 + mining)) / (3000 / (101 - mining))) / 25 + 80 + rand_int(find_level_base) + skill_dig : //lulz
 					    mining * 3 + skill_dig * 2;
 
 					object_level = find_level;

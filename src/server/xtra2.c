@@ -15969,6 +15969,22 @@ int det_req_level(int plev) {
 	else if (plev < 75) return((plev - 65) * 4 + 130);
 	else return((plev - 75) + 170);
 }
+/* Added for mining: Determine maximum mining skill to be optimal for a given dungeon level */
+int det_req_level_inverse(int dlev) {
+	if (dlev <= 15) return(20 - 1);
+	if (dlev <= 25) return(45 - 375 / dlev);
+#if 0
+	/* In the next line the rounding issue becomes significant as it's the diffence between 49 and 50, so we replace it. (*)
+	   The rest is completely obsolete as skills max out at 50 (**). */
+	else if (dlev < 109) return(56 - 650 / dlev);
+	else if (dlev <= 128) return(dlev / 2);
+	else if (dlev <= 166) return((dlev - 130) / 4 + 65);
+	else return((dlev - 170) + 75);
+#else
+	else if (dlev < 100) return(56 - 650 / dlev); // (*)
+	return(50); // (**)
+#endif
+}
 /* calculate actual experience gain based on det_req_level */
 s64b det_exp_level(s64b exp, int plev, int dlev) {
 	int req_dlvl = det_req_level(plev);

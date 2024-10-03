@@ -2403,6 +2403,7 @@ extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 extern void unstatic_level(struct worldpos *wpos);
 
 extern int det_req_level(int plev);
+extern int det_req_level_inverse(int dlev);
 extern s64b det_exp_level(s64b exp, int plev, int dlev);
 extern void shape_Maia_skills(int Ind, bool live);
 
