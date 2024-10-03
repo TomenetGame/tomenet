@@ -2863,7 +2863,7 @@ void msg_print(int Ind, cptr msg_raw) {
 #if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
 	/* Marker from client to server: kind-diz would need to begin here, if player wishes to read this kind of extra info. */
 	if ((ckt = strchr(msg_dup, '\372'))) {
-		if (p_ptr->kind_diz) *ckt = '\377';
+		if (p_ptr->add_kind_diz) *ckt = '\377';
 		else *ckt = 0;
 	}
 #endif

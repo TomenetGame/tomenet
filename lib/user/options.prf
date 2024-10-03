@@ -96,7 +96,7 @@ X:ascii_feats
 X:ascii_items
 X:ascii_monsters
 X:ascii_uniques
-Y:kind_diz
+Y:add_kind_diz
 
 
 # Audio options:

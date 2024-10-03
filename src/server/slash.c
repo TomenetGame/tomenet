@@ -6183,6 +6183,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Clean up, playing it safe */
 			p_ptr->current_activation = -1;
 			return;
+		} else if (prefix(messagelc, "/kdiz")) { //for before next client release, to make this already accessible
+			if (p_ptr->add_kind_diz == FALSE) {
+				p_ptr->add_kind_diz = TRUE;
+				msg_print(Ind, "On pasting an item to chat from inven/equip window you'll see extra info.");
+			} else {
+				p_ptr->add_kind_diz = FALSE;
+				msg_print(Ind, "On pasting an item to chat from inven/equip window you'll not see extra info.");
+			}
+			return;
 		}
 
 
