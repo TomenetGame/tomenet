@@ -934,6 +934,7 @@ struct player_type {
 	s32b iron_turn;
 
 	bool font_map_solid_walls;
+	bool solid_bars;
 
 	/* TEMPORARILY EXPOSED FLAGS:
 	   Hack to experimentally beta-test upcoming features with outdated clients that don't actually support them yet: */

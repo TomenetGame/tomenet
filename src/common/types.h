@@ -4214,6 +4214,7 @@ struct player_type {
 	bool insta_res;			/* Instant resurrection */
 	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever local hack, ie not concurrently with other stuff */
 	bool font_map_solid_walls;	/* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
+	bool solid_bars;		/* Separate from font_map_solid_walls now, works fine with use_graphics */
 	bool flash_self, flash_self2;
 	s16b flashing_self;
 	bool flash_insane;
