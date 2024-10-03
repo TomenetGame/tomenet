@@ -5441,40 +5441,56 @@ static void player_talk_aux(int Ind, char *message) {
 		if ((sflags1 & SFLG1_SIPD) && tval >= 1 && tval <= TV_MAX && sval >= 0 && sval <= 255) {
 			int k_idx = lookup_kind(tval, sval);
 
-			/* k_text is in a format not fit for here, so translate back (cut off first 3 chars, replace linefeeds with spaces) */
-			if (k_info[k_idx].text && strlen(message) < MSG_LEN - 10) {
- #if 0 /* begin diz at former \372 */
-				char *cs = sipd;
-
-				strcpy(cs, "\377D - ");
-				cs += 5;
- #else /* break string buffer in two: Terminate usual message as it was, after that begin the diz string */
-				char *cs;
-
-  #if 0
-				*sipd++ = 0; /* Termination marker splits the two strings, before is the normal message, after is the diz text. */
-  #else
-				sipd++; /* We leave the \372 in place as marker between the two strings, before is the normal message, after is the diz text. */
-  #endif
-				cs = sipd;
-				strcpy(cs, "D - "); // leave out '\377' on purpose: the \372 will get replaced on a by-player basis with either string-termination or \377 to contine
-				cs += 4;
- #endif
+			if (k_info[k_idx].text) {
 				ckt = k_text + k_info[k_idx].text;
-				while (*++ckt && cs - message < MSG_LEN - 1) {
-					switch (*ckt) {
-					case '\377': ckt++; /* fall through */
-					case '\n': continue;
-					}
-					*cs++ = *ckt;
+
+				/* Skip very basic descriptions such as for ammo and ranged weapons, this is really useless in chat and hence spammy.
+				    Maybe only for flavoured items actually? Details about current (2024-10-03) k_info.txt state:
+				    - All weapons and armour have no diz except for Costume, so display these.
+				    - Launchers and trap kits just have a line about ammo type, so skip these, or just skip the 1st line in case a 2nd line ever gets added.
+				    - TV_GOLEM (52) are sort of trivial (just 'required for a golem' style), but these are rare, so why not just display them.
+				    - Ammo has the first line about launcher/trapkit type, optionally 2nd about magical return, so just skip the 1st line for ammo. */
+				if (tval == TV_BOW || tval == TV_TRAPKIT || is_ammo(tval)) {
+					/* Discard the first diz line */
+					ckt = strchr(ckt, '\n') + 1;
 				}
-				*cs = 0;
-			} else {
-				*sipd = 0; /* No diz text availale for this item or not enough space to append a kind-diz? Discard. */
+
+				/* k_text is in a format not fit for here, so translate back (cut off first 3 chars, replace linefeeds with spaces) */
+				if (*ckt && strlen(message) < MSG_LEN - 10
+				    ) {
+					char *cs;
+
+					sipd++; /* We leave the \372 in place as marker between the two strings, before is the normal message, after is the diz text. */
+					cs = sipd;
+
+					/* Don't write '\377' in front of 'D' colour attr on purpose:
+					   The \372 will get replaced on a by-player basis with either string-termination or \377 to continue */
+					strcpy(cs, "D - ");
+					cs += 4;
+
+					while (*++ckt && cs - message < MSG_LEN - 1) { /* ++ckt: skip the initial space (compare D-line processing in init1.c) */
+						switch (*ckt) {
+						case '\377': ckt++; /* fall through */
+						case '\n': continue;
+						}
+						*cs++ = *ckt;
+					}
+					*cs = 0;
+				}
+				/* No effective diz text availale for this item or not enough space to append a kind-diz? Discard. */
+				else {
+					*sipd = 0;
+					sipd = NULL;
+				}
+			}
+			/* No diz for this item, so discard the item-diz marker */
+			else {
+				*sipd = 0;
 				sipd = NULL;
 			}
-		/* Just cut off the item-diz paste for good */
-		} else {
+		}
+		/* Server doesn't allow diz-pasting or item is invalid - just discard the item-diz marker. */
+		else {
 			*sipd = 0;
 			sipd = NULL;
 		}
