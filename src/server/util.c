@@ -5441,7 +5441,7 @@ static void player_talk_aux(int Ind, char *message) {
 		if ((sflags1 & SFLG1_SIPD) && tval >= 1 && tval <= TV_MAX && sval >= 0 && sval <= 255) {
 			int k_idx = lookup_kind(tval, sval);
 
-			if (k_info[k_idx].text) {
+			if (p_ptr->obj_aware[k_idx] && k_info[k_idx].text) {
 				ckt = k_text + k_info[k_idx].text;
 
 				/* Skip very basic descriptions such as for ammo and ranged weapons, this is really useless in chat and hence spammy.
@@ -5483,7 +5483,7 @@ static void player_talk_aux(int Ind, char *message) {
 					sipd = NULL;
 				}
 			}
-			/* No diz for this item, so discard the item-diz marker */
+			/* Player isn't aware of flavoured item, or there is no diz for this item, so discard the item-diz marker */
 			else {
 				*sipd = 0;
 				sipd = NULL;
