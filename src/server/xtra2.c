@@ -6828,7 +6828,7 @@ bool monster_death(int Ind, int m_idx) {
 
 			/* Ammonia Salt (dung: whatever has hooves..) */
 			else if (r_ptr->d_char == 'q' || r_ptr->d_char == 'C' || r_ptr->d_char == 'M' || r_ptr->d_char == 'Y') {
-				if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !rand_int(3)) {
+				if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && !rand_int(3)) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));

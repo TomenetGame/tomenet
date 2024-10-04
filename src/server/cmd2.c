@@ -4135,7 +4135,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
  #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    soft && Ind && !p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    soft && Ind && !p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
@@ -4163,10 +4163,11 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
  #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    !hard && !soft && Ind && !p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    !hard && !soft && Ind && !p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
-				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
+				if (skill_dig >= ENABLE_DEMOLITIONIST + 10) invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(4) ? SV_SULFUR : SV_VITRIOL));
+				else invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SULFUR));
 				//s_printf("CHEMICAL: %s found %s.\n", p_ptr->name, forge.sval == SV_SULFUR ? "sulfur" : "vitriol");
 				forge.owner = p_ptr->id;
 				forge.ident |= ID_NO_HIDDEN;

@@ -18487,13 +18487,15 @@ Caustic metal ash     |         |                      | Crafting
 Caustic salt          |         |                      | Crafting
 Vitriol               | Magma   | Medium acidbreathers (or bigger)
 
-Note that in order to find some of these you need a minimum digging skill,
-just for reactive metal powder you can circumvent it via grinding tool usage:
-Sulfur                  at least 10.000 in 'Digging'
-Saltpetre               at least 10.000 in 'Digging'
+Note that in order to find some of these you need a minimum digging skill:
+Sulfur                  at least  5.000 in 'Digging'
+Saltpetre               at least  5.000 in 'Digging'
 Ammonia salt            at least 10.000 in 'Digging'
 Reactive metal powder   at least 10.000 in 'Digging'
 Vitriol                 at least 15.000 in 'Digging'
+For reactive metal powder you can circumvent it via grinding tool usage,
+and if you kill monsters that are 'runemaster' egos, they have a chance to
+drop any kind of chemical sustance if your Digging skill is at least 5.000.
 
 Crafting ingredients from raw materials:
 ----------------------------------------
