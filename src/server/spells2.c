@@ -10356,12 +10356,15 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 }
 
 /* q_ptr is the new chemical object, o_ptr the object we grind into dust */
-static void grind_chemicals_aux(int Ind, int i, object_type *q_ptr, object_type *o_ptr) {
+static void grind_chemicals_aux(int Ind, int amt, object_type *q_ptr, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
+	int slot;
 
-	if (!i) i = 1;
-	q_ptr->number = i;
+	if (!amt) amt = 1;
+	else if (amt >= 4) amt = amt - 1 + rand_int(3); /* Vary randomly */
+
+	q_ptr->number = amt;
 	q_ptr->weight = k_info[q_ptr->k_idx].weight;
 
 	/* Recall original parameters */
@@ -10382,23 +10385,23 @@ static void grind_chemicals_aux(int Ind, int i, object_type *q_ptr, object_type 
  #ifdef ENABLE_SUBINVEN
 	if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE)) return;
  #endif
-	i = inven_carry(Ind, q_ptr);
-	if (i != -1) {
+	slot = inven_carry(Ind, q_ptr);
+	if (slot != -1) {
 		object_desc(Ind, o_name, &forge, TRUE, 3);
-		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 	}
 #else
-	i = inven_carry(Ind, q_ptr);
+	slot = inven_carry(Ind, q_ptr);
  #ifdef ENABLE_SUBINVEN
 	/* If the result is a TV_CHEMICAL, try to auto-move it into an Alchemy Satchel,
            but only if it didn't stack with existing inventory item! */
-	if (p_ptr->inventory[i].number == q_ptr->number) {
-		int j;
+	if (p_ptr->inventory[slot].number == q_ptr->number) {
+		int i;
 
-		for (j = 0; j < INVEN_PACK; j++) {
-			if (p_ptr->inventory[j].tval != TV_SUBINVEN) break;
-			if (p_ptr->inventory[j].sval != SV_SI_SATCHEL) continue;
-			if (subinven_move_aux(Ind, i, j, q_ptr->number, FALSE)) return; /* Includes message */
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (p_ptr->inventory[i].tval != TV_SUBINVEN) break;
+			if (p_ptr->inventory[i].sval != SV_SI_SATCHEL) continue;
+			if (subinven_move_aux(Ind, slot, i, q_ptr->number, FALSE)) return; /* Includes message */
   #ifdef SUBINVEN_LIMIT_GROUP
 			/* Alchemy Satchel was full */
 			break;
@@ -10406,11 +10409,11 @@ static void grind_chemicals_aux(int Ind, int i, object_type *q_ptr, object_type 
 		}
 	}
  #endif
-	if (i != -1) {
+	if (slot != -1) {
 		/* Reflect final inventory slot, where the charge/item may have stacked with pre-existing ones */
-		get_inven_item(Ind, i, &q_ptr);
+		get_inven_item(Ind, slot, &q_ptr);
 		object_desc(Ind, o_name, q_ptr, TRUE, 3);
-		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 	}
 #endif
 }
@@ -10419,12 +10422,13 @@ void grind_chemicals(int Ind, int item) {
 	object_type *o_ptr, limbo;
 	object_type forge, *q_ptr = &forge; /* Resulting metal powder/wood chips */
 	char o_name[ONAME_LEN];
-	int i, tv, sv;
+	int amt, tv, sv, wgt, amt_dec = 1;
 	bool metal, wood;
 
 	if (!get_inven_item(Ind, item, &o_ptr)) return; /* Metallic/wooden object */
 	tv = o_ptr->tval;
 	sv = o_ptr->sval;
+	wgt = o_ptr->weight;
 
 	/* Safety mechanism in case we're crafing via inscriptions and make a..mistake */
 	if (item >= INVEN_WIELD && item < SUBINVEN_INVEN_MUL) {
@@ -10453,18 +10457,23 @@ void grind_chemicals(int Ind, int item) {
 		return;
 	}
 
+	/* Don't grind on ammo (wgt 1-6) / spikes (wgt 4) etc */
+	if (is_ammo(o_ptr->tval) || o_ptr->tval == TV_SPIKE) {
+		amt_dec = 10;
+		if (o_ptr->number < amt_dec) {
+			msg_format(Ind, "That item is too small and must be ground in chunks of %d at least.", amt_dec);
+			return;
+		}
+	}
+
 	if (!wood) msg_format(Ind, "You grind the metal off of your %s ..", o_name);
 	else if (!metal) msg_format(Ind, "You grind the wood off of your %s ..", o_name);
 	else msg_format(Ind, "You carefully grind the metal and wood off of your %s ..", o_name);
+	s_printf("GRINDING: %s : %s\n", Players[Ind]->name, o_name);
 
  #ifdef USE_SOUND_2010
 	sound_item(Ind, tv, sv, "drop_");
  #endif
-
-	/* Determine amount of ingredients we will get from this */
-	i = o_ptr->weight;
-	i = 1 + 10 - 1000 / (i + 90);
-	i = (i >> 1) + 1; //experimental: reduce a bit further..
 
 #ifdef ENABLE_SUBINVEN
 	/* If we grind a subinventory (chest!), remove all items and place them into the player's inventory */
@@ -10477,27 +10486,33 @@ void grind_chemicals(int Ind, int item) {
 
 	/* Erase the ingredient in the pack --
 	   we only grind 1 'piece' of an object at a time, not the whole stack */
-	inven_item_increase(Ind, item, -1);
+	inven_item_increase(Ind, item, -amt_dec);
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
 
 	/* Grind it, resulting in potential gain of both, metal power and wood chips! */
 
+	/* Determine amount of ingredients we will get from this */
+	amt = wgt;
+	amt = 1 + 10 - 1000 / (amt + 90);
+	amt = (amt >> 1) + 1; //experimental: reduce a bit further..
+
 	if (metal) {
+		int amt_tmp = amt;
+
+		/* Low yield? (Only consists partly of metal) */
+		if (tv == TV_BOW || tv == TV_DIGGING || wood) amt_tmp = (amt_tmp + 1) / 2;
+
  #ifndef NO_RUST_NO_HYDROXIDE
 		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, my_strcasestr(o_name, "rusty") ? SV_RUST : SV_METAL_POWDER));
  #else
 		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
  #endif
-		/* Low yield? (Only consists partly of metal) */
-		if (tv == TV_BOW || tv == TV_DIGGING
-		    || wood)
-			i /= 2;
-		grind_chemicals_aux(Ind, i, q_ptr, o_ptr);
+		grind_chemicals_aux(Ind, amt_tmp, q_ptr, o_ptr);
 	}
 
 	if (wood) {
-		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
+		int amt_tmp = amt;
 
 		/* Low yield? (Only partly consists of wood) */
 		switch (tv) {
@@ -10508,12 +10523,14 @@ void grind_chemicals(int Ind, int item) {
 		case TV_AXE:
 		case TV_POLEARM:
 		case TV_DIGGING:
-			i /= 2;
+			amt_tmp = (amt_tmp + 1) / 2;
 			break;
 		default:
-			if (metal) i /= 2;
+			if (metal) amt_tmp = (amt_tmp + 1) / 2;
 		}
-		grind_chemicals_aux(Ind, i, q_ptr, o_ptr);
+
+		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
+		grind_chemicals_aux(Ind, amt_tmp, q_ptr, o_ptr);
 	}
 }
 
