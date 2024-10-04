@@ -107,6 +107,14 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	bool	angry = FALSE;
 	int	flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
 
+#if 0 /* todo maybe: extinguish thrown (not embedded) blast charges (TV_CHARGE), or accelerate the fuse if we threw oil! */
+	cave_type **zcave;
+
+
+	if (!(zcave = getcave(wpos))) return(TRUE); //paranoia
+	if (zcave[y][x].
+#endif
+
 	/* Hack: Allow flasks too */
 	if (o_sval >= 200) {
 		switch (o_sval - 200) {

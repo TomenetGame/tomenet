@@ -12265,10 +12265,14 @@ void process_objects(void) {
 			}
 			/* specialty: process these 1/s instead of 1/dungeonturn */
 			else if (!(turn % cfg.fps) && o_ptr->timeout) {
-				o_ptr->timeout--;
-				if (!o_ptr->timeout) {
-					detonate_charge(i); //also calls delete_object_idx() on it
-					continue;
+				/* Thrown charges sometimes go out if in a cold_place()... */
+				if (!o_ptr->embed && o_ptr->xtra8 && !rand_int(3)) o_ptr->timeout = 0;
+				else {
+					o_ptr->timeout--;
+					if (!o_ptr->timeout) {
+						detonate_charge(i); //also calls delete_object_idx() on it
+						continue;
+					}
 				}
 			}
 		}

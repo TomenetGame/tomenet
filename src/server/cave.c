@@ -8678,9 +8678,14 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	dun_level *l_ptr = getfloor(wpos);
 	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if (!in_bounds_array(y, x)) return(FALSE);
 	c_ptr = &zcave[y][x];
+
+#if 0 /* todo maybe: extinguish thrown (not embedded) blast charges (TV_CHARGE) if grid gets watery, set fuse to instant if grid gets lava/fire! */
+	if (c_ptr
+#endif
 
 	/* apply town-specific restrictions, preserving the intended town layout */
 	if (istown(wpos)) {

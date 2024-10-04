@@ -9198,8 +9198,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 #ifdef ENABLE_DEMOLITIONIST
 	/* Hack: If we're throwing a demolition charge, auto-arm it if allowed! */
-	if (o_ptr->tval == TV_CHARGE) {
+	if (!bashing && o_ptr->tval == TV_CHARGE) {
 		if (arm_charge_conditions(Ind, o_ptr, TRUE)) {
+			/* If in cold environment, sometimes extinguish */
+			o_ptr->xtra8 = cold_place(wpos);
+
 			/* We use throwing direction as trap-effect direction, makes sense sort of.
 			   However, if our dir is targetted, aka '5', we have to approxmiate.. */
 			if (dir == 5) {
@@ -9224,13 +9227,16 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				}
 				arm_charge_dir_and_fuse(o_ptr, cdir);
 			} else arm_charge_dir_and_fuse(o_ptr, dir);
- #if 0
+ #if 0 /* xD no? */
 			/* throwing can affect the fuse burning sometimes */
 			if (o_ptr->timeout) {
 				o_ptr->timeout = o_ptr->timeout - rand_int(4);
 				if (!o_ptr->timeout) o_ptr->timeout = 1;
 			}
  #endif
+			/* If thrown into fire, insta-trigger */
+			if (zcave[y][x].feat == FEAT_SHAL_LAVA || zcave[y][x].feat == FEAT_DEEP_LAVA || zcave[y][x].feat == FEAT_FIRE || zcave[y][x].feat == FEAT_GREAT_FIRE)
+				o_ptr->timeout = -1;
 		}
 	}
 #endif

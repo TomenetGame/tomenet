@@ -10534,7 +10534,8 @@ void grind_chemicals(int Ind, int item) {
 	}
 }
 
-/* Check whether we may arm a charge on this grid / arm it and throw it from this grid to somewhere. */
+/* Check whether we may arm a charge on this grid / arm it and throw it from this grid to somewhere.
+   Maybe todo: Allow planting on water grids, but not throwing it into water. */
 bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr, **zcave;
@@ -10598,7 +10599,8 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT) ||
 	    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM) // allow_terraforming(wpos, FEAT_NONE) ||
 	    ) {
-		msg_print(Ind, "\377yYou cannot arm charges while on this special floor.");
+		if (!thrown) msg_print(Ind, "\377yYou cannot arm charges while on this special floor.");
+		else msg_print(Ind, "\377yThe charge cannot get armed on that special floor.");
 		return(FALSE);
 	}
 
@@ -10610,6 +10612,12 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 			msg_print(Ind, "\377yYou cannot place a charge here.");
 			return(FALSE);
 		}
+	}
+
+	/* If in water, fuse is extinguished, if in cold, sometimes extinguish */
+	if (thrown && (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_TAINTED_WATER || c_ptr->feat == FEAT_GLIT_WATER)) {
+		msg_print(Ind, "\377y*Splash!* The fuse is extinguished by the water.");
+		return(FALSE);
 	}
 
 	return(TRUE);
@@ -10740,6 +10748,8 @@ void detonate_charge(int o_idx) {
 	cave_type *c_ptr, **zcave;
 
 	int x2, y2, dir;
+	/* Throwing a charge doesn't properly plant it - it's effectiveness is reduced: */
+	bool was_thrown = !o_ptr->embed;
 
 	bool rand_old = Rand_quick;
 	u32b old_seed = Rand_value;
@@ -10779,20 +10789,20 @@ void detonate_charge(int o_idx) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void)project(who, 2, wpos, y, x, damroll(20, 15), GF_DETONATION, flg, "");
+		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(20, 15), GF_DETONATION, flg, "");
 		break;
 	case SV_CHARGE_XBLAST: //X2Megablast
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void)project(who, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
+		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
 		break;
 	case SV_CHARGE_SBLAST:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
 		dir = o_ptr->xtra9;
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < (was_thrown ? 3 : 6); i++) {
 			x2 = x + ddx[dir] * i;
 			y2 = y + ddy[dir] * i;
 			if (!cave_los_wall(zcave, y2, x2)) break; /* Stop at permanent walls */
@@ -10800,16 +10810,16 @@ void detonate_charge(int o_idx) {
 		}
 		break;
 	case SV_CHARGE_QUAKE:
-		earthquake(wpos, y, x, 10);
+		earthquake(wpos, y, x, was_thrown ? 3 : 10);
 		break;
 	case SV_CHARGE_DESTRUCTION:
-		destroy_area(wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
+		destroy_area(wpos, y, x, was_thrown ? 4 : 15, TRUE, FEAT_FLOOR, 120);
 		break;
 	case SV_CHARGE_FIRE:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void)project(who, 2, wpos, y, x, damroll(10, 10), GF_FIRE, flg & ~PROJECT_NODF, "");
+		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(10, 10), GF_FIRE, flg & ~PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_FIRESTORM: //evaporate the seas
  #ifdef USE_SOUND_2010
@@ -10820,7 +10830,7 @@ void detonate_charge(int o_idx) {
 		//project_time_effect = 0;
 		project_time = 10;
 		project_interval = 9;
-		(void)project(who, 4, wpos, y, x, 25, GF_FIRE, flg, "");
+		(void)project(who, was_thrown ? 2 : 4, wpos, y, x, 25, GF_FIRE, flg, "");
 		break;
 	case SV_CHARGE_FIREWALL:
  #ifdef USE_SOUND_2010
@@ -10828,7 +10838,7 @@ void detonate_charge(int o_idx) {
  #endif
 		flg |= PROJECT_STAY;
 		dir = o_ptr->xtra9;
-		for (i = 0; i < MAX_RANGE / 2; i++) {
+		for (i = 0; i < MAX_RANGE / (was_thrown ? 4 : 2); i++) {
 			x2 = x + ddx[dir] * i;
 			y2 = y + ddy[dir] * i;
 			if (!cave_floor_bold(zcave, y2, x2)) break; /* Stop at walls */
@@ -10845,7 +10855,7 @@ void detonate_charge(int o_idx) {
  #endif
 		for (x2 = x - 1; x2 <= x + 1; x2++) {
 			for (y2 = y - 1; y2 <= y + 1; y2++) {
-				if (magik(40)) continue; /* Scattered rubble */
+				if (magik(was_thrown ? 65 : 40)) continue; /* Scattered rubble */
 				c_ptr = &zcave[y2][x2];
 				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
 				if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;// || !allow_terraforming(wpos, FEAT_NONE))
@@ -10862,7 +10872,7 @@ void detonate_charge(int o_idx) {
 		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
  #endif
 		dir = o_ptr->xtra9;
-		for (i = 0; i < MAX_RANGE / 2; i++) {
+		for (i = 0; i < MAX_RANGE / (was_thrown ? 4 : 2); i++) {
 			x2 = x + ddx[dir] * i;
 			y2 = y + ddy[dir] * i;
 			if (!cave_floor_bold(zcave, y2, x2)) break; /* Stop at walls */
@@ -10873,24 +10883,28 @@ void detonate_charge(int o_idx) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+		/* note: no different effect if was_thrown */
 		project(who, 1, wpos, y, x, 1, GF_STONE_WALL, flg | PROJECT_GRID | PROJECT_NODF, "trap of walls");
 		break;
 	case SV_CHARGE_FLASHBOMB:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+		/* note: no different effect if was_thrown */
 		(void)project(who, 6, wpos, y, x, damroll(6, 3), GF_BLIND, flg, "");
 		break;
 	case SV_CHARGE_CONCUSSION:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+		/* note: no different effect if was_thrown */
 		(void)project(who, 3, wpos, y, x, damroll(9,3), GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_XCONCUSSION:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+		/* note: no different effect if was_thrown */
 		(void)project(who, 5, wpos, y, x, damroll(18, 3), GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_UNDERGROUND:
@@ -10911,7 +10925,7 @@ void detonate_charge(int o_idx) {
 		}
 		for (x2 = x - 1; x2 <= x + 1; x2++) {
 			for (y2 = y - 1; y2 <= y + 1; y2++) {
-				if (!rand_int(2)) continue; /* Somewhat irregular course, a 'vein' */
+				if (rand_int(was_thrown ? 4 : 2)) continue; /* Somewhat irregular course, a 'vein' */
 				c_ptr = &zcave[y2][x2];
 				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
 				if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;// || !allow_terraforming(wpos, FEAT_NONE))
