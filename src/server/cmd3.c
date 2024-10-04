@@ -146,6 +146,7 @@ s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	}
 
 	/* Carry the object, saving the slot it went in */
+	tmp_obj.mode |= MODE_NOT_NEWEST_ITEM;
 	posn = inven_carry(Ind, &tmp_obj);
 
 	/* Handles overflow */

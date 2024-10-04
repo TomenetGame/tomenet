@@ -11511,6 +11511,13 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	object_type forge;
 	object_type *j_ptr;
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
+	bool newest;
+
+	/* Evaluate and remove temporary flag for 'newest' change */
+	if (o_ptr->mode & MODE_NOT_NEWEST_ITEM) {
+		o_ptr->mode &= ~MODE_NOT_NEWEST_ITEM;
+		newest = FALSE;
+	} else newest = TRUE;
 
 	/* Check for combining */
 	for (j = 0; j < INVEN_PACK; j++) {
@@ -11553,7 +11560,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
-			Send_item_newest(Ind, j);
+			if (newest) Send_item_newest(Ind, j);
 			return(j);
 		}
 	}
@@ -11775,7 +11782,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
-	Send_item_newest(Ind, i);
+	if (newest) Send_item_newest(Ind, i);
 
 #ifdef SUBINVEN_LIMIT_GROUP
 	if (excess) {

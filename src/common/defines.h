@@ -8079,6 +8079,7 @@ extern int PlayerUID;
 
 #define MODE_STARTER_ITEM	0x1000	/* Items only: Mark as 'starter item', making it potentially unsalable, depending on server settings. */
 #define MODE_NEWLOOT_ITEM	0x2000	/* Items only: Mark as 'new loot', to be used if item is pre-owned, so ownership cannot be used to check whether it's new loot or not. */
+#define MODE_NOT_NEWEST_ITEM	0x4000	/* Items only, temporary flag, specifically for inven_carry(): This item is not to become the 'newest_item'. */
 
 #define MODE_MASK		(MODE_SOLO | MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* "real" character modes, rather than 'softer modifiers' */
 
