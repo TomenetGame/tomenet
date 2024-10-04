@@ -1418,13 +1418,8 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 	if (!(zcave = getcave(wpos))) return;
 
-#if 1 /* No streamers in TT? */
-	/* hard-coded hack: Training Tower has no streamers, only built granite walls */
-	if (in_trainingtower(wpos)) return;
-#else /* No treasure in TT streamers? */
-	/* hard-coded hack: Training Tower streamers have no treasure */
-	if (in_trainingtower(wpos)) chance = 0;
-#endif
+	/* Towns and NO_DEATH dungeons don't have treasure to mine */
+	if (istown(wpos) || isdungeontown(wpos) || (dt_ptr->flags2 & DF2_NO_DEATH)) chance = 0;
 
 	/* Hack -- Choose starting point */
 	while (TRUE) {
