@@ -1384,10 +1384,15 @@ static bool vault_aux_aquatic(int r_idx) {
  * to represent streamers.  Three each of magma and quartz, one for
  * basic vein, one with hidden gold, and one with known gold.  The
  * hidden gold types are currently unused.
+ * Correction: Sandwall types added, again basic, known-gold, hidden-gold. - C. Blue
+ * Also this function is now fine with other feats than quartz/magma/sandwall,
+ * but will not turn any other feat into treasure veins, except those three ('feat').
+ * 'chance' = 1/chance to turn into a treasure vein.
+ * 'pierce' = convert any feat except permanent ones.
  */
 static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pierce) {
-	int		i, tx, ty, tries = 1000;
-	int		y, x, dir;
+	int i, tx, ty, tries = 1000;
+	int y, x, dir;
 	cave_type *c_ptr;
 
 	dungeon_type *dt_ptr = getdungeon(wpos);
@@ -1452,11 +1457,11 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			/* Access the grid */
 			c_ptr = &zcave[ty][tx];
 
-			/* Only convert "granite" walls */
+			/* Convert any feat except for permanent ones */
 			if (pierce) {
 				if (cave_perma_bold(zcave, ty, tx)) continue;
 			} else {
-				/* Only convert "granite" walls */
+				/* Only convert "granite" walls or whatever the dungeon uses as walls */
 				if (!(c_ptr->feat == feat_wall_inner) &&
 				    !(c_ptr->feat == feat_wall_outer) &&
 				    !(c_ptr->feat == d_info[dun_type].fill_type[0]) &&
@@ -1486,11 +1491,16 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			/* Clear previous contents, add proper vein type */
 			c_ptr->feat = feat;
 
-			/* Hack -- Add some (known) treasure */
-			/* XXX seemingly it was ToME bug */
-			if (chance && rand_int(chance) == 0)
-				/* turn into FEAT_SANDWALL_K / FEAT_MAGMA_K / FEAT_QUARTZ_K: */
-				c_ptr->feat += (c_ptr->feat == FEAT_SANDWALL ? 0x2 : 0x4);
+			/* Hack -- Add some (known) treasure, turn into FEAT_SANDWALL_K / FEAT_MAGMA_K / FEAT_QUARTZ_K: */
+			switch (feat) {
+			case FEAT_QUARTZ:
+			case FEAT_MAGMA:
+				if (chance && rand_int(chance) == 0) c_ptr->feat += 0x4;
+				break;
+			case FEAT_SANDWALL:
+				if (chance && rand_int(chance) == 0) c_ptr->feat += 0x2;
+				break;
+			}
 		}
 
 #if 0
@@ -1510,9 +1520,11 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 
 /*
- * Place streams of water, lava, & trees -KMW-
+ * Place streams of water, lava, & trees, sometimes a pool instead of a streamer. -KMW-
  * This routine varies the placement based on dungeon level
- * otherwise is similar to build_streamer
+ * otherwise is similar to build_streamer.
+ * Will not convert permanent floor feats.
+ * 'killwall' : convert wall features too if in the way.
  */
 static void build_streamer2(worldpos *wpos, int feat, int killwall) {
 	int i, j, mid, tx, ty, tries = 1000;
@@ -10846,7 +10858,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 	/* Dungeon towns get some extra treatment: */
 	if (dungeon_town) {
 		/* make dungeon towns look more destroyed */
-		if (rand_int(2)) build_streamer(wpos, FEAT_TREE, 0, TRUE); //NOTE: What about build_streamer2()?
+		if (rand_int(2)) build_streamer(wpos, FEAT_TREE, 0, TRUE);
 		if (rand_int(2)) build_streamer(wpos, FEAT_IVY, 0, TRUE);
 #if 0 /* these obstruct stores a bit too much maybe */
 		if (rand_int(2)) build_streamer(wpos, FEAT_QUARTZ, 0, TRUE);
