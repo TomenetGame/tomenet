@@ -12903,7 +12903,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	if ((option_info[i].o_var == &c_cfg.mp_huge_bar ||
 	    option_info[i].o_var == &c_cfg.sn_huge_bar ||
 	    option_info[i].o_var == &c_cfg.hp_huge_bar) ||
-	    (option_info[i].o_var == &c_cfg.font_map_solid_walls &&
+	    (option_info[i].o_var == &c_cfg.solid_bars &&
 	    (c_cfg.mp_huge_bar || c_cfg.sn_huge_bar || c_cfg.hp_huge_bar))) {
 		if (screen_icky) Term_switch(0);
 
