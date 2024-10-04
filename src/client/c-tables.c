@@ -51,7 +51,6 @@ char hexsym[16] = {
  * Hack -- the "basic" sound names (see "SOUND_xxx")
  */
 //#if defined(USE_SOUND) && !defined(USE_SOUND_2010) /* It's instead defined in snd-sdl.c, different sound system */
-Paranoia Agent
 cptr sound_names[SOUND_MAX] = {
 	"",
 	"hit",

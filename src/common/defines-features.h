@@ -720,6 +720,7 @@
  #define CO_BIGMAP			7
  #define CO_FONT_MAP_SOLID_WALLS	8
  #define CO_PALETTE_ANIMATION		124
+ #define CO_SOLID_BARS			161
 
  /* Blacken lower part of screen if we're mindlinked to a non-bigmap-target but
     are actually using bigmap-screen. */

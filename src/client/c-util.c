@@ -8957,6 +8957,21 @@ void options_immediate(bool init) {
 	}
 #endif
 
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+	if (use_logfont && c_cfg.font_map_solid_walls) {
+		c_msg_print("\377yOption 'font_map_solid_walls' is not supported with logfont.");
+		c_cfg.font_map_solid_walls = FALSE;
+		(*option_info[CO_FONT_MAP_SOLID_WALLS].o_var) = FALSE;
+		Client_setup.options[CO_FONT_MAP_SOLID_WALLS] = FALSE;
+	}
+	if (use_logfont && c_cfg.solid_bars) {
+		c_msg_print("\377yOption 'solid_bars' is not supported with logfont.");
+		c_cfg.solid_bars = FALSE;
+		(*option_info[CO_SOLID_BARS].o_var) = FALSE;
+		Client_setup.options[CO_SOLID_BARS] = FALSE;
+	}
+#endif
+
 	if (init) {
 		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.solid_bars;
 		changed4a = c_cfg.hp_bar; changed4b = c_cfg.mp_bar; changed4c = c_cfg.st_bar;
@@ -9056,6 +9071,12 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 				a = (a == TERM_L_BLUE) ? TERM_SLATE : TERM_L_DARK;
 
 			if (option_info[opt[i]].o_var == &c_cfg.font_map_solid_walls && !strcmp(ANGBAND_SYS, "gcu")) a = TERM_L_DARK;
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+			if (use_logfont && (
+			    option_info[opt[i]].o_var == &c_cfg.font_map_solid_walls ||
+			    option_info[opt[i]].o_var == &c_cfg.solid_bars))
+				a = TERM_L_DARK;
+#endif
 
 			/* Display the option text */
 			sprintf(buf, "%-49s: %s  (%s)",
@@ -12777,6 +12798,20 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (playing) Send_screen_dimensions();
 	} else
  #endif
+#endif
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+	if (use_logfont && option_info[i].o_var == &c_cfg.font_map_solid_walls) {
+		if (playing) c_msg_print("\377yOption 'font_map_solid_walls' is not supported with logfont.");
+		c_cfg.font_map_solid_walls = FALSE;
+		(*option_info[i].o_var) = FALSE;
+		Client_setup.options[i] = FALSE;
+	}
+	if (use_logfont && option_info[i].o_var == &c_cfg.solid_bars) {
+		if (playing) c_msg_print("\377yOption 'solid_bars' is not supported with logfont.");
+		c_cfg.solid_bars = FALSE;
+		(*option_info[i].o_var) = FALSE;
+		Client_setup.options[i] = FALSE;
+	}
 #endif
 #ifndef GLOBAL_BIG_MAP
 	/* Not yet. First, process all the option files before doing this */

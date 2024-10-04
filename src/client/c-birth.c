@@ -110,6 +110,9 @@ static void choose_name(void) {
 	strcpy(introline[5], "    |##|     |######|  |##| \\/ |##|  |######|   |##| \\##|  |######|     |##|   ");
   #endif
   #ifdef LOGO_SOLID
+   #if defined(WINDOWS) && defined(USE_LOGFONT)
+	if (!use_logfont) /* doesn't have font_map_solid_walls style characters */
+   #endif
 	for (y = 0; y < 6; y++) for (x = 0; x < MAX_CHARS; x++) if (introline[y][x] == '#')
    #ifdef WINDOWS
 		introline[y][x] = FONT_MAP_SOLID_WIN;

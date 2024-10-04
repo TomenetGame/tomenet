@@ -473,6 +473,9 @@
  #define USE_GRAPHICS
 #endif
 
+#if defined(WINDOWS) && defined(CLIENT_SIDE)
+ #define USE_LOGFONT /* Option (via 'use_logfont') to use Windows-internal font instead of custom user fontfiles loaded from lib/xtra/font */
+#endif
 
 /*
  * OPTION: Hack -- Macintosh stuff

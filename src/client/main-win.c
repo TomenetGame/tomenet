@@ -83,8 +83,9 @@
 //#  endif
 //#endif
 
-/* Uncomment this to be able to use Windows LOGFONT instead of the fonts in lib/xtra/fonts. */
-#define USE_LOGFONT // Kurzel - Some .FON files considered security vulnerability on Windows? Ew.
+/* Uncomment this to be able to use Windows LOGFONT instead of the fonts in lib/xtra/fonts.
+   NOTE: Moved to config.h as it must be available to all other client source files too now that it's switchable. */
+//#define USE_LOGFONT // Kurzel - Some .FON files considered security vulnerability on Windows? Ew.
 
 #define DEFAULT_FONTNAME "9X15.FON"
 #define DEFAULT_TILENAME "16x22sv.bmp"
