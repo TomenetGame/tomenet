@@ -74,33 +74,22 @@
 //#define MNU_USE
 /* #define USE_GRAPHICS */
 
-#ifdef JP
-#  ifndef USE_LOGFONT
-#    define USE_LOGFONT
-#  endif
-#endif
-
 /* Method not implemented! Don't use. */
 //#define CBM_METHOD_DIB
 
-/* Uncomment this to use Windows LOGFONT instead of the fonts in lib/xtra/fonts. */
-// #define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
+//#ifdef JP
+//#  ifndef USE_LOGFONT
+//#    define USE_LOGFONT
+//#  endif
+//#endif
 
+/* Uncomment this to be able to use Windows LOGFONT instead of the fonts in lib/xtra/fonts. */
+#define USE_LOGFONT // Kurzel - Some .FON files considered security vulnerability on Windows? Ew.
+
+#define DEFAULT_FONTNAME "9X15.FON"
+#define DEFAULT_TILENAME "16x22sv.bmp"
 #ifdef USE_LOGFONT
-# if 0 /* too small */
-#  define DEFAULT_FONTNAME "8X13"
-# else /* fitting for full-hd */
-#  define DEFAULT_FONTNAME "9X15"
-# endif
-# define DEFAULT_TILENAME "16x22sv.bmp"
-#else
-# if 0 /* too small */
-#  define DEFAULT_FONTNAME "8X13.FON"
-#  define DEFAULT_TILENAME "8X13.BMP"
-# else /* fitting for full-hd */
-#  define DEFAULT_FONTNAME "9X15.FON"
-#  define DEFAULT_TILENAME "9X15.BMP"
-# endif
+ #define DEFAULT_LOGFONTNAME "9X15"
 #endif
 
 #define OPTIMIZE_DRAWING
@@ -406,7 +395,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 	BITMAP bm;
 	GetObject(hbmColour, sizeof(BITMAP), &bm);
 
-#if 1 /* For top speed, operate directly on the bitmap data in memory via pointers */
+ #if 1 /* For top speed, operate directly on the bitmap data in memory via pointers */
 	const unsigned char MaskColor0 = 0, MaskColor1 = 255;
 	int scanline, pixel;
 
@@ -420,12 +409,12 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 	printf("(bmWidthBytes = %ld, bmBitsPixel = %d, bmWidth = %ld, bmHeight = %ld)\n", bm.bmWidthBytes, bm.bmBitsPixel, bm.bmWidth, bm.bmHeight);
 
 	/* Get bitmap pixel data in memory */
- #ifdef CBM_METHOD_DIB /* --NOT IMPLEMENTED-- Use this with LR_CREATEDIBSECTION flag in LoadImageA */
+  #ifdef CBM_METHOD_DIB /* --NOT IMPLEMENTED-- Use this with LR_CREATEDIBSECTION flag in LoadImageA */
 	data = (unsigned char*)bm.bmBits;
 	data2 = (unsigned char*)bm2.bmBits;
 	/* Debug info */
 	printf("(data = %ld, data2 = %ld)\n", (long)data, (long)data2);
- #else /* Otherwise, request the bitmap data now, via GetBitmapBits() or GetDIBits() */
+  #else /* Otherwise, request the bitmap data now, via GetBitmapBits() or GetDIBits() */
 	/* Create 32bpp mask bitmap. */
 	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
 
@@ -441,7 +430,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 		*error = 2;
 		return(NULL);
 	}
- #endif
+  #endif
 
 	/* Hack to transpose bg2 map into bg map when not in 2mask-mode, for compatibility wih 2mask-tilesets */
 	if (use_graphics != UG_2MASK && crTransparent == RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B)) {
@@ -490,7 +479,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 		}
 	}
 
- #ifndef CBM_METHOD_DIB
+  #ifndef CBM_METHOD_DIB
 	/* Write data back via SetBitmapBits() or SetDIBits() */
 	if (!SetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: SetBitmapBits() returned zero (Image).\n");
@@ -504,8 +493,8 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 		return(NULL);
 	}
 	free(data2);
- #endif
-#else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
+  #endif
+ #else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
 	const COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
 
 	/* Create 32bpp mask bitmap. */
@@ -551,7 +540,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 	SelectBitmap(hdcMem2, hbmOldMem2);
 	DeleteDC(hdcMem);
 	DeleteDC(hdcMem2);
-#endif
+ #endif
 
 	*error = 0;
 	return(hbmMask);
@@ -562,11 +551,11 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
  * It's your responsibility to free returned HBITMAP, hbmBgMask_return and hbmFgMask_return after usage.
  * Function will not free resources if already allocated in hbmBgMask_return or hbmFgMask_return input variable.
  */
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP hbmBg2Mask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, HBITMAP *hbmBg2Mask_return) {
-#else
+ #else
 static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return) {
-#endif
+ #endif
 	BITMAP bm;
 	GetObject(hbm, sizeof(BITMAP), &bm);
 
@@ -589,11 +578,11 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	HDC hdcMemResBgMask = CreateCompatibleDC(NULL);
 	HDC hdcMemResFgMask = CreateCompatibleDC(NULL);
 
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmResBg2Mask = CreateBitmap(width2, height2, 1, 32, NULL);
 	HDC hdcMemBg2Mask = CreateCompatibleDC(NULL);
 	HDC hdcMemResBg2Mask = CreateCompatibleDC(NULL);
-#endif
+ #endif
 
 	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
 	HBITMAP hbmOldMemTiles = SelectObject(hdcMemTiles, g_hbmTiles);
@@ -604,12 +593,12 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	HBITMAP hbmOldMemResBgMask = SelectObject(hdcMemResBgMask, hbmResBgMask);
 	HBITMAP hbmOldMemResFgMask = SelectObject(hdcMemResFgMask, hbmResFgMask);
 
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmOldMemBg2Mask = SelectObject(hdcMemBg2Mask, g_hbmBg2Mask);
 	HBITMAP hbmOldMemResBg2Mask = SelectObject(hdcMemResBg2Mask, hbmResBg2Mask);
-#endif
+ #endif
 
-#if 1 /* use StretchBlt instead of SetPixel-loops */
+ #if 1 /* use StretchBlt instead of SetPixel-loops */
 	/* StretchBlt is much faster on native Windows - mikaelh */
 	SetStretchBltMode(hdcMemResTiles, COLORONCOLOR);
 	SetStretchBltMode(hdcMemResBgMask, COLORONCOLOR);
@@ -617,11 +606,11 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	StretchBlt(hdcMemResTiles, 0, 0, width2, height2, hdcMemTiles, 0, 0, width1, height1, SRCCOPY);
 	StretchBlt(hdcMemResBgMask, 0, 0, width2, height2, hdcMemBgMask, 0, 0, width1, height1, SRCCOPY);
 	StretchBlt(hdcMemResFgMask, 0, 0, width2, height2, hdcMemFgMask, 0, 0, width1, height1, SRCCOPY);
- #ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 	SetStretchBltMode(hdcMemResBg2Mask, COLORONCOLOR);
 	StretchBlt(hdcMemResBg2Mask, 0, 0, width2, height2, hdcMemBg2Mask, 0, 0, width1, height1, SRCCOPY);
- #endif
-#else
+  #endif
+ #else
 
 	/* I like more this classical and slower approach, as the commented StretchBlt code above. In my opinion, it makes nicer resized pictures.*/
 	int x1, x2, y1, y2, Tx, Ty;
@@ -663,9 +652,9 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 			SetPixel(hdcMemResTiles, x2, y2, GetPixel(hdcMemTiles, x1, y1));
 			SetPixel(hdcMemResBgMask, x2, y2, GetPixel(hdcMemBgMask, x1, y1));
 			SetPixel(hdcMemResFgMask, x2, y2, GetPixel(hdcMemFgMask, x1, y1));
- #ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 			SetPixel(hdcMemResBg2Mask, x2, y2, GetPixel(hdcMemBg2Mask, x1, y1));
- #endif
+  #endif
 
 			(*px1)++;
 
@@ -684,7 +673,7 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 			(*py2)++;
 		}
 	}
-#endif
+ #endif
 
 	/* Restore the stored default bitmap into the memory DC. */
 	SelectObject(hdcMemTiles, hbmOldMemTiles);
@@ -695,31 +684,31 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	SelectObject(hdcMemResBgMask, hbmOldMemResBgMask);
 	SelectObject(hdcMemResFgMask, hbmOldMemResFgMask);
 
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	SelectObject(hdcMemBg2Mask, hbmOldMemBg2Mask);
 	SelectObject(hdcMemResBg2Mask, hbmOldMemResBg2Mask);
-#endif
+ #endif
 
 	/* Release the created memory DC. */
 	DeleteDC(hdcMemTiles);
 	DeleteDC(hdcMemBgMask);
 	DeleteDC(hdcMemFgMask);
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	DeleteDC(hdcMemBg2Mask);
-#endif
+ #endif
 
 	DeleteDC(hdcMemResTiles);
 	DeleteDC(hdcMemResBgMask);
 	DeleteDC(hdcMemResFgMask);
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	DeleteDC(hdcMemResBg2Mask);
-#endif
+ #endif
 
 	(*hbmBgMask_return) = hbmResBgMask;
 	(*hbmFgMask_return) = hbmResFgMask;
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	(*hbmBg2Mask_return) = hbmResBg2Mask;
-#endif
+ #endif
 	return(hbmResTiles);
 }
 
@@ -756,11 +745,18 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 
 /* Called on term_data_link() (initial term creation+initialization) and on term_font_force() (any font change): */
 static void recreateGraphicsObjects(term_data *td) {
+	int fwid, fhgt;
+
  #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
- #else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
  #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	releaseCreatedGraphicsObjects(td);
 
@@ -824,8 +820,7 @@ static void recreateGraphicsObjects(term_data *td) {
 	    )
 		quit("Creating device content handles for tiles, tile preparation or masks failed.\n");
 }
-
-#endif
+#endif /* USE_GRAPHICS */
 
 /*
  * An array of term_data's
@@ -888,16 +883,14 @@ static cptr AngList  = "AngList";
 /*
  * Directory names
  */
-#ifndef USE_LOGFONT
+//#ifndef USE_LOGFONT
 static cptr ANGBAND_DIR_XTRA_FONT;
-#endif
+//#endif
 #ifdef USE_GRAPHICS
 static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 #endif
-#ifdef USE_SOUND
-#ifndef USE_SOUND_2010
+#if defined(USE_SOUND) && !defined(USE_SOUND_2010) /* It's instead defined in snd-sdl.c, different sound system */
 static cptr ANGBAND_DIR_XTRA_SOUND;
-#endif
 #endif
 
 /*
@@ -1078,7 +1071,7 @@ byte old_attr = -1;
 /*
  * Hack -- given a pathname, point at the filename
  */
-#ifndef USE_LOGFONT
+//#ifndef USE_LOGFONT
 static cptr extract_file_name(cptr s) {
 	cptr p;
 
@@ -1091,8 +1084,7 @@ static cptr extract_file_name(cptr s) {
 	/* Return file name */
 	return(p + 1);
 }
-#endif
-
+//#endif
 
 
 /*
@@ -1223,11 +1215,18 @@ static void validate_dir(cptr s) {
  */
 static void term_getsize(term_data *td) {
 	RECT        rc;
+	int fwid, fhgt;
+
 #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
 #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	/* Paranoia */
 	if (td->cols < 1) td->cols = 1;
@@ -1286,18 +1285,21 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
 	}
 
 #ifdef USE_LOGFONT
-	WritePrivateProfileString(sec_name, "Font", *(td->lf.lfFaceName) ? td->lf.lfFaceName : DEFAULT_FONTNAME, ini_file);
-	wsprintf(buf, "%d", td->lf.lfWidth);
-	WritePrivateProfileString(sec_name, "FontWid", buf, ini_file);
-	wsprintf(buf, "%d", td->lf.lfHeight);
-	WritePrivateProfileString(sec_name, "FontHgt", buf, ini_file);
-	wsprintf(buf, "%d", td->lf.lfWeight);
-	WritePrivateProfileString(sec_name, "FontWgt", buf, ini_file);
-#else
-	/* Desired font */
-	if (td->font_file)
-		WritePrivateProfileString(sec_name, "Font", td->font_file, ini_file);
+	if (use_logfont) {
+		WritePrivateProfileString(sec_name, "Font", *(td->lf.lfFaceName) ? td->lf.lfFaceName : DEFAULT_LOGFONTNAME, ini_file);
+		wsprintf(buf, "%d", td->lf.lfWidth);
+		WritePrivateProfileString(sec_name, "FontWid", buf, ini_file);
+		wsprintf(buf, "%d", td->lf.lfHeight);
+		WritePrivateProfileString(sec_name, "FontHgt", buf, ini_file);
+		wsprintf(buf, "%d", td->lf.lfWeight);
+		WritePrivateProfileString(sec_name, "FontWgt", buf, ini_file);
+	} else
 #endif
+	{
+		/* Desired font */
+		if (td->font_file)
+			WritePrivateProfileString(sec_name, "Font", td->font_file, ini_file);
+	}
 
 	if (td != &data[0]) {
 		/* Current size (x) */
@@ -1360,6 +1362,12 @@ void save_prefs(void) {
 	WritePrivateProfileString("Base", "ForceIMEOff", buf, ini_file);
 	strcpy(buf, INI_enable_CS_IME ? "1" : "0");
 	WritePrivateProfileString("Base", "ForceIMEOn", buf, ini_file);
+
+#ifdef USE_LOGFONT
+	strcpy(buf, use_logfont_ini ? "1" : "0");
+	WritePrivateProfileString("Base", "LogFont", buf, ini_file);
+#endif
+
 #ifdef USE_GRAPHICS
 	strcpy(buf, use_graphics_new == UG_2MASK ? "2" : (use_graphics_new ? "1" : "0"));
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
@@ -1417,16 +1425,26 @@ static void load_prefs_aux(term_data *td, cptr sec_name) {
 		td->visible = (GetPrivateProfileInt(sec_name, "Visible", td->visible, ini_file) != 0);
 	}
 
-	/* Desired font, with default */
-	GetPrivateProfileString(sec_name, "Font", DEFAULT_FONTNAME, tmp, 127, ini_file);
+#if 0 /* just do this in dedicated load_prefs_logfont() actually */
 #ifdef USE_LOGFONT
-	td->font_want = string_make(tmp);
-	td->lf.lfWidth  = GetPrivateProfileInt(sec_name, "FontWid", 0, ini_file);
-	td->lf.lfHeight = GetPrivateProfileInt(sec_name, "FontHgt", 15, ini_file);
-	td->lf.lfWeight = GetPrivateProfileInt(sec_name, "FontWgt", 0, ini_file);
-#else
-	td->font_want = string_make(extract_file_name(tmp));
+	use_logfont = use_logfont_ini = (GetPrivateProfileInt(sec_name, "LogFont", FALSE, ini_file) != 0);
 #endif
+#endif
+
+	/* Desired font, with default */
+#ifdef USE_LOGFONT
+	if (use_logfont) {
+		GetPrivateProfileString(sec_name, "Font", DEFAULT_LOGFONTNAME, tmp, 127, ini_file);
+		td->font_want = string_make(tmp);
+		td->lf.lfWidth  = GetPrivateProfileInt(sec_name, "FontWid", 0, ini_file);
+		td->lf.lfHeight = GetPrivateProfileInt(sec_name, "FontHgt", 15, ini_file);
+		td->lf.lfWeight = GetPrivateProfileInt(sec_name, "FontWgt", 0, ini_file);
+	} else
+#endif
+	{
+		GetPrivateProfileString(sec_name, "Font", DEFAULT_FONTNAME, tmp, 127, ini_file);
+		td->font_want = string_make(extract_file_name(tmp));
+	}
 
 	/* Window size */
 	td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
@@ -1462,8 +1480,7 @@ static void load_prefs_aux(term_data *td, cptr sec_name) {
 /*
  * Hack -- load a "sound" preference by index and name
  */
-#ifdef USE_SOUND
-#ifndef USE_SOUND_2010
+#if defined(USE_SOUND) && !defined(USE_SOUND_2010)
 static void load_prefs_sound(int i) {
 	char aux[128];
 	char wav[128];
@@ -1488,15 +1505,18 @@ static void load_prefs_sound(int i) {
 	if (check_file(buf)) sound_file[i] = string_make(buf);
 }
 #endif
-#endif
 
-/*
- * Load just the IME preferences from the .INI file, as it must be done early before Windows are initialized
- */
+/* Load just the IME preferences from the .INI file, as it must be done early before Windows are initialized - C. Blue */
 static void load_prefs_IME(void) {
 	disable_CS_IME = INI_disable_CS_IME = (GetPrivateProfileInt("Base", "ForceIMEOff", 0, ini_file) != 0);
 	enable_CS_IME = INI_enable_CS_IME = (GetPrivateProfileInt("Base", "ForceIMEOn", 0, ini_file) != 0);
 }
+#ifdef USE_LOGFONT
+/* Load just the logfont preferences from the .INI file, as it must be done early before Windows are initialized */
+static void load_prefs_logfont(void) {
+	use_logfont = use_logfont_ini = (GetPrivateProfileInt("Base", "LogFont", 0, ini_file) != 0);
+}
+#endif
 /*
  * Load the preferences from the .INI file
  */
@@ -1583,11 +1603,9 @@ static void load_prefs(void) {
 	if (!bigmap_hint) firstrun = FALSE;
 	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
 
-#ifdef USE_SOUND
-#ifndef USE_SOUND_2010
+#if defined(USE_SOUND) && !defined(USE_SOUND_2010)
 	/* Prepare the sounds */
 	for (i = 1; i < SOUND_MAX; i++) load_prefs_sound(i);
-#endif
 #endif
 
 	/* Metaserver address */
@@ -1811,35 +1829,100 @@ static void term_window_resize(term_data *td) {
  * This function returns zero only if everything succeeds.
  */
 static errr term_force_font(term_data *td, cptr name) {
-	int wid, hgt;
+	int wid, hgt, prev_font_wid, prev_font_hgt;
+
 #ifdef USE_GRAPHICS
  #ifdef USE_LOGFONT
-	int prev_font_wid = td->lf.lfWidth;
-	int prev_font_hgt = td->lf.lfHeight;
- #else
-	int prev_font_wid = td->font_wid;
-	int prev_font_hgt = td->font_hgt;
+	if (use_logfont) {
+		prev_font_wid = td->lf.lfWidth;
+		prev_font_hgt = td->lf.lfHeight;
+	} else
  #endif
+	{
+		prev_font_wid = td->font_wid;
+		prev_font_hgt = td->font_hgt;
+	}
 #endif
 
 #ifdef USE_LOGFONT
-	td->font_id = CreateFontIndirect(&(td->lf));
-	if (!td->font_id) return(1);
-	wid = td->lf.lfWidth;
-	hgt = td->lf.lfHeight;
-#else
-	int i;
-	cptr s;
-	char base[16];
-	char base_font[16];
-	char buf[1024];
-	bool used;
+	if (use_logfont) {
+		td->font_id = CreateFontIndirect(&(td->lf));
+		if (!td->font_id) return(1);
+		wid = td->lf.lfWidth;
+		hgt = td->lf.lfHeight;
+	} else
+#endif
+	{
+		int i;
+		cptr s;
+		char base[16];
+		char base_font[16];
+		char buf[1024];
+		bool used;
 
-	/* Forget the old font (if needed) */
-	if (td->font_id) DeleteObject(td->font_id);
+		/* Forget the old font (if needed) */
+		if (td->font_id) DeleteObject(td->font_id);
 
-	/* Forget old font */
-	if (td->font_file) {
+		/* Forget old font */
+		if (td->font_file) {
+			used = FALSE;
+
+			/* Scan windows */
+			for (i = 0; i < MAX_TERM_DATA; i++) {
+				/* Check "screen" */
+				if ((td != &data[i]) &&
+				    (data[i].font_file) &&
+				    (streq(data[i].font_file, td->font_file)))
+					used = TRUE;
+			}
+
+			/* Remove unused font resources */
+			if (!used) RemoveFontResource(td->font_file);
+
+			/* Free the old name */
+			string_free(td->font_file);
+
+			/* Forget it */
+			td->font_file = NULL;
+		}
+
+		/* No name given */
+		if (!name) return(1);
+
+		/* Extract the base name (with suffix) */
+		s = extract_file_name(name);
+
+		/* Extract font width */
+		wid = atoi(s);
+
+		/* Default font height */
+		hgt = 0;
+
+		/* Copy, capitalize, remove suffix, extract width */
+		for (i = 0; (i < 16 - 1) && s[i] && (s[i] != '.'); i++) {
+			/* Capitalize */
+			base[i] = FORCEUPPER(s[i]);
+
+			/* Extract "hgt" when found */
+			if (base[i] == 'X') hgt = atoi(s + i + 1);
+		}
+
+		/* Terminate */
+		base[i] = '\0';
+
+		/* Build base_font */
+		strcpy(base_font, base);
+		strcat(base_font, ".FON");
+
+		/* Access the font file */
+		path_build(buf, 1024, ANGBAND_DIR_XTRA_FONT, base_font);
+
+		/* Verify file */
+		if (!check_file(buf)) return(1);
+
+		/* Save new font name */
+		td->font_file = string_make(buf);
+
 		used = FALSE;
 
 		/* Scan windows */
@@ -1851,82 +1934,23 @@ static errr term_force_font(term_data *td, cptr name) {
 				used = TRUE;
 		}
 
-		/* Remove unused font resources */
-		if (!used) RemoveFontResource(td->font_file);
+		/* Only call AddFontResource once for each file or the font files
+		 * will remain locked! - mikaelh */
+		if (!used) {
+			/* Load the new font or quit */
+			if (!AddFontResource(buf))
+				quit_fmt("Font file corrupted:\n%s\nTry running TomeNET in privileged/admin mode!", buf);
+		}
 
-		/* Free the old name */
-		string_free(td->font_file);
+		/* Notify other applications that a new font is available  XXX */
+		PostMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 
-		/* Forget it */
-		td->font_file = NULL;
+		/* Create the font XXX XXX XXX Note use of "base" */
+		td->font_id = CreateFont(hgt, wid, 0, 0, FW_DONTCARE, 0, 0, 0,
+		                         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+		                         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		                         FIXED_PITCH | FF_DONTCARE, base);
 	}
-
-
-	/* No name given */
-	if (!name) return(1);
-
-	/* Extract the base name (with suffix) */
-	s = extract_file_name(name);
-
-	/* Extract font width */
-	wid = atoi(s);
-
-	/* Default font height */
-	hgt = 0;
-
-	/* Copy, capitalize, remove suffix, extract width */
-	for (i = 0; (i < 16 - 1) && s[i] && (s[i] != '.'); i++) {
-		/* Capitalize */
-		base[i] = FORCEUPPER(s[i]);
-
-		/* Extract "hgt" when found */
-		if (base[i] == 'X') hgt = atoi(s + i + 1);
-	}
-
-	/* Terminate */
-	base[i] = '\0';
-
-	/* Build base_font */
-	strcpy(base_font, base);
-	strcat(base_font, ".FON");
-
-	/* Access the font file */
-	path_build(buf, 1024, ANGBAND_DIR_XTRA_FONT, base_font);
-
-	/* Verify file */
-	if (!check_file(buf)) return(1);
-
-	/* Save new font name */
-	td->font_file = string_make(buf);
-
-	used = FALSE;
-
-	/* Scan windows */
-	for (i = 0; i < MAX_TERM_DATA; i++) {
-		/* Check "screen" */
-		if ((td != &data[i]) &&
-		    (data[i].font_file) &&
-		    (streq(data[i].font_file, td->font_file)))
-			used = TRUE;
-	}
-
-	/* Only call AddFontResource once for each file or the font files
-	 * will remain locked! - mikaelh */
-	if (!used) {
-		/* Load the new font or quit */
-		if (!AddFontResource(buf))
-			quit_fmt("Font file corrupted:\n%s\nTry running TomeNET in privileged/admin mode!", buf);
-	}
-
-	/* Notify other applications that a new font is available  XXX */
-	PostMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
-
-	/* Create the font XXX XXX XXX Note use of "base" */
-	td->font_id = CreateFont(hgt, wid, 0, 0, FW_DONTCARE, 0, 0, 0,
-	                         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
-	                         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-	                         FIXED_PITCH | FF_DONTCARE, base);
-#endif
 
 	/* Hack -- Unknown size */
 	if (!wid || !hgt) {
@@ -1962,11 +1986,15 @@ static errr term_force_font(term_data *td, cptr name) {
 
 #ifdef USE_GRAPHICS
  #ifdef USE_LOGFONT
-	if (use_graphics && g_hbmTiles != NULL && (prev_font_wid != td->lf.lfWidth || prev_font_hgt != td->lf.lfHeight))
- #else
-	if (use_graphics && g_hbmTiles != NULL && (prev_font_wid != td->font_wid || prev_font_hgt != td->font_hgt))
+	if (use_logfont) {
+		if (use_graphics && g_hbmTiles != NULL && (prev_font_wid != td->lf.lfWidth || prev_font_hgt != td->lf.lfHeight))
+			recreateGraphicsObjects(td);
+	} else
  #endif
-		recreateGraphicsObjects(td);
+	{
+		if (use_graphics && g_hbmTiles != NULL && (prev_font_wid != td->font_wid || prev_font_hgt != td->font_hgt))
+			recreateGraphicsObjects(td);
+	}
 #endif
 
 	/* Success */
@@ -1980,52 +2008,55 @@ static errr term_force_font(term_data *td, cptr name) {
  */
 static void term_change_font(term_data *td) {
 #ifdef USE_LOGFONT
-	CHOOSEFONT cf;
+	if (use_logfont) {
+		CHOOSEFONT cf;
 
-	memset(&cf, 0, sizeof(cf));
-	cf.lStructSize = sizeof(cf);
-	cf.Flags = CF_SCREENFONTS | CF_FIXEDPITCHONLY | CF_NOVERTFONTS | CF_INITTOLOGFONTSTRUCT;
-	cf.lpLogFont = &(td->lf);
+		memset(&cf, 0, sizeof(cf));
+		cf.lStructSize = sizeof(cf);
+		cf.Flags = CF_SCREENFONTS | CF_FIXEDPITCHONLY | CF_NOVERTFONTS | CF_INITTOLOGFONTSTRUCT;
+		cf.lpLogFont = &(td->lf);
 
-	if (ChooseFont(&cf)) {
-		/* Force the font */
-		term_force_font(td, NULL);
+		if (ChooseFont(&cf)) {
+			/* Force the font */
+			term_force_font(td, NULL);
 
-		/* Analyze the font */
-		term_getsize(td);
+			/* Analyze the font */
+			term_getsize(td);
 
-		/* Resize the window */
-		term_window_resize(td);
-	}
-#else
-	OPENFILENAME ofn;
+			/* Resize the window */
+			term_window_resize(td);
+		}
+	} else
+#endif
+	{
+		OPENFILENAME ofn;
 
-	char tmp[128] = "";
+		char tmp[128] = "";
 
-	/* Extract a default if possible */
-	if (td->font_file) strcpy(tmp, td->font_file);
+		/* Extract a default if possible */
+		if (td->font_file) strcpy(tmp, td->font_file);
 
-	/* Ask for a choice */
-	memset(&ofn, 0, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = data[0].w;
-	ofn.lpstrFilter = "Font Files (*.fon)\0*.fon\0";
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFile = tmp;
-	ofn.nMaxFile = 128;
-	ofn.lpstrInitialDir = ANGBAND_DIR_XTRA_FONT;
-	ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-	ofn.lpstrDefExt = "fon";
+		/* Ask for a choice */
+		memset(&ofn, 0, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = data[0].w;
+		ofn.lpstrFilter = "Font Files (*.fon)\0*.fon\0";
+		ofn.nFilterIndex = 1;
+		ofn.lpstrFile = tmp;
+		ofn.nMaxFile = 128;
+		ofn.lpstrInitialDir = ANGBAND_DIR_XTRA_FONT;
+		ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+		ofn.lpstrDefExt = "fon";
 
-	/* Force choice if legal */
-	if (GetOpenFileName(&ofn)) {
-		/* Force the font */
-		if (term_force_font(td, tmp)) {
-			/* Oops */
-			(void)term_force_font(td, DEFAULT_FONTNAME);
+		/* Force choice if legal */
+		if (GetOpenFileName(&ofn)) {
+			/* Force the font */
+			if (term_force_font(td, tmp)) {
+				/* Oops */
+				(void)term_force_font(td, DEFAULT_FONTNAME);
+			}
 		}
 	}
-#endif
 }
 
 /*
@@ -2204,11 +2235,18 @@ static errr Term_xtra_win_flush(void) {
  */
 static errr Term_xtra_win_clear(void) {
 	term_data *td = (term_data*)(Term->data);
+	int fwid, fhgt;
+
 #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
 #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	HDC  hdc;
 	RECT rc;
@@ -2385,11 +2423,18 @@ static errr Term_xtra_win(int n, int v) {
  */
 static errr Term_wipe_win(int x, int y, int n) {
 	term_data *td = (term_data*)(Term->data);
+	int fwid, fhgt;
+
 #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
 #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	HDC  hdc;
 	RECT rc;
@@ -2422,11 +2467,18 @@ static errr Term_wipe_win(int x, int y, int n) {
  */
 static errr Term_curs_win(int x, int y) {
 	term_data *td = (term_data*)(Term->data);
+	int fwid, fhgt;
+
 #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
 #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	RECT   rc;
 	HDC    hdc;
@@ -2464,6 +2516,8 @@ static errr Term_curs_win(int x, int y) {
  * "use_graphics" flag is off, we simply "wipe" the given grid.
  */
 static errr Term_pict_win(int x, int y, byte a, char32_t c) {
+	int fwid, fhgt;
+
 #ifdef USE_GRAPHICS
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
@@ -2504,10 +2558,15 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	term_data *td = (term_data*)(Term->data);
 
  #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
- #else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
  #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	/* Location of window cell */
 	x = x * fwid + td->size_ow1;
@@ -2596,6 +2655,8 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	HBRUSH brushBg;
 	HBRUSH brushFg;
 
+	int fwid, fhgt;
+
 
 	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
 	if (c_back == 32) a_back = TERM_DARK;
@@ -2618,10 +2679,15 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	td = (term_data*)(Term->data);
 
  #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
- #else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
  #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	/* Location of window cell */
 	x = x * fwid + td->size_ow1;
@@ -2771,11 +2837,18 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  */
 static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	term_data *td = (term_data*)(Term->data);
+	int fwid, fhgt;
+
 #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
 #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	RECT rc;
 	HDC  hdc;
@@ -3159,23 +3232,26 @@ static void init_windows(void) {
 	/* Windows */
 	for (i = 0; i < MAX_TERM_DATA; i++) {
 #ifdef USE_LOGFONT
-		td = &data[i];
+		if (use_logfont) {
+			td = &data[i];
 
-		strncpy(td->lf.lfFaceName, td->font_want, LF_FACESIZE);
-		// Kurzel - This was zeroing valid .INI values.
-		/* ..I changed it just so it ensures valid values in case USE_GRAPHICS needs those right away - C. Blue */
-		if (td->font_hgt) td->lf.lfHeight = td->font_hgt; else td->font_hgt = td->lf.lfHeight;
-		if (td->font_wid) td->lf.lfWidth  = td->font_wid; else td->font_wid = td->lf.lfWidth;
-		// pro-tip: win32 calls corrupting your .INI? flag it read-only!
-		td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
-		term_force_font(td, NULL);
-		/* Paranoia: Again ensure valid font_hgt/font_wid values for USE_GRAPHICS - C. Blue */
-		if (td->font_hgt) td->lf.lfHeight = td->font_hgt; else td->font_hgt = td->lf.lfHeight;
-		if (td->font_wid) td->lf.lfWidth  = td->font_wid; else td->font_wid = td->lf.lfWidth;
-#else
-		if (term_force_font(&data[i], data[i].font_want))
-			(void)term_force_font(&data[i], DEFAULT_FONTNAME);
+			strncpy(td->lf.lfFaceName, td->font_want, LF_FACESIZE);
+			// Kurzel - This was zeroing valid .INI values.
+			/* ..I changed it just so it ensures valid values in case USE_GRAPHICS needs those right away - C. Blue */
+			if (td->font_hgt) td->lf.lfHeight = td->font_hgt; else td->font_hgt = td->lf.lfHeight;
+			if (td->font_wid) td->lf.lfWidth  = td->font_wid; else td->font_wid = td->lf.lfWidth;
+			// pro-tip: win32 calls corrupting your .INI? flag it read-only!
+			td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
+			term_force_font(td, NULL);
+			/* Paranoia: Again ensure valid font_hgt/font_wid values for USE_GRAPHICS - C. Blue */
+			if (td->font_hgt) td->lf.lfHeight = td->font_hgt; else td->font_hgt = td->lf.lfHeight;
+			if (td->font_wid) td->lf.lfWidth  = td->font_wid; else td->font_wid = td->lf.lfWidth;
+		} else
 #endif
+		{
+			if (term_force_font(&data[i], data[i].font_want))
+				(void)term_force_font(&data[i], DEFAULT_FONTNAME);
+		}
 	}
 
 #ifdef USE_GRAPHICS
@@ -3542,11 +3618,18 @@ static void process_menus(WORD wCmd) {
 static void handle_wm_paint(HWND hWnd, term_data *td) {
 	int x1, y1, x2, y2;
 	PAINTSTRUCT ps;
+	int fwid, fhgt;
+
 #ifdef USE_LOGFONT
-	int fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-	int fwid = td->font_wid, fhgt = td->font_hgt;
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
 #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	BeginPaint(hWnd, &ps);
 
@@ -3607,10 +3690,15 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 			/* Minimum window size is 8x2 */
 #ifdef USE_LOGFONT
-			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-			fwid = td->font_wid, fhgt = td->font_hgt;
+			if (use_logfont) {
+				fwid = td->lf.lfWidth;
+				fhgt = td->lf.lfHeight;
+			} else
 #endif
+			{
+				fwid = td->font_wid;
+				fhgt = td->font_hgt;
+			}
 			rc.left = rc.top = 0;
 			rc.right = rc.left + 8 * fwid + td->size_ow1 + td->size_ow2;
 			rc.bottom = rc.top + 2 * fhgt + td->size_oh1 + td->size_oh2 + 1;
@@ -3628,10 +3716,15 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 			/* Maximum window size */
 #ifdef USE_LOGFONT
-			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-			fwid = td->font_wid, fhgt = td->font_hgt;
+			if (use_logfont) {
+				fwid = td->lf.lfWidth;
+				fhgt = td->lf.lfHeight;
+			} else
 #endif
+			{
+				fwid = td->font_wid;
+				fhgt = td->font_hgt;
+			}
 			rc.left = rc.top = 0;
 			rc.right = rc.left + (MAX_WINDOW_WID) * fwid + td->size_ow1 + td->size_ow2;
 			rc.bottom = rc.top + (MAX_WINDOW_HGT) * fhgt + td->size_oh1 + td->size_oh2;
@@ -3754,10 +3847,15 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 					td->size_hack = TRUE;
 
 #ifdef USE_LOGFONT
-					fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-					fwid = td->font_wid, fhgt = td->font_hgt;
+					if (use_logfont) {
+						fwid = td->lf.lfWidth;
+						fhgt = td->lf.lfHeight;
+					} else
 #endif
+					{
+						fwid = td->font_wid;
+						fhgt = td->font_hgt;
+					}
 					cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / fwid;
 					rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / fhgt;
 
@@ -3919,10 +4017,15 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 			/* Minimum size */
 #ifdef USE_LOGFONT
-			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-			fwid = td->font_wid, fhgt = td->font_hgt;
+			if (use_logfont) {
+				fwid = td->lf.lfWidth;
+				fhgt = td->lf.lfHeight;
+			} else
 #endif
+			{
+				fwid = td->font_wid;
+				fhgt = td->font_hgt;
+			}
 			rc.left = rc.top = 0;
 			rc.right = rc.left + 8 * fwid + td->size_ow1 + td->size_ow2;
 			rc.bottom = rc.top + 2 * fhgt + td->size_oh1 + td->size_oh2;
@@ -3940,10 +4043,15 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 			/* Maximum window size */
 #ifdef USE_LOGFONT
-			fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-			fwid = td->font_wid, fhgt = td->font_hgt;
+			if (use_logfont) {
+				fwid = td->lf.lfWidth;
+				fhgt = td->lf.lfHeight;
+			} else
 #endif
+			{
+				fwid = td->font_wid;
+				fhgt = td->font_hgt;
+			}
 			rc.left = rc.top = 0;
 			rc.right = rc.left + (MAX_WINDOW_WID) * fwid + td->size_ow1 + td->size_ow2;
 			rc.bottom = rc.top + (MAX_WINDOW_HGT) * fhgt + td->size_oh1 + td->size_oh2;
@@ -3981,10 +4089,15 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 				td->size_hack = TRUE;
 
 #ifdef USE_LOGFONT
-				fwid = td->lf.lfWidth, fhgt = td->lf.lfHeight;
-#else
-				fwid = td->font_wid, fhgt = td->font_hgt;
+				if (use_logfont) {
+					fwid = td->lf.lfWidth;
+					fhgt = td->lf.lfHeight;
+				} else
 #endif
+				{
+					fwid = td->font_wid;
+					fhgt = td->font_hgt;
+				}
 				cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / fwid;
 				rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / fhgt;
 
@@ -4423,12 +4536,13 @@ void init_stuff(void) {
 	validate_dir(ANGBAND_DIR_SCPT);
 	validate_dir(ANGBAND_DIR_TEXT);
 	validate_dir(ANGBAND_DIR_USER);
-#if !defined(USE_LOGFONT) || defined(USE_GRAPHICS) || defined(USE_SOUND)
+//#if !defined(USE_LOGFONT) ||
+#if defined(USE_GRAPHICS) || defined(USE_SOUND)
 	validate_dir(ANGBAND_DIR_XTRA);	/* Sounds & Graphics */
 #endif
 	validate_dir(ANGBAND_DIR_GAME);
 
-#ifndef USE_LOGFONT
+//#ifndef USE_LOGFONT
 	// Build the "font" path
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "font");
 
@@ -4438,12 +4552,15 @@ void init_stuff(void) {
 	// Validate the "font" directory
 	validate_dir(ANGBAND_DIR_XTRA_FONT);
 
-	// Build the filename
-	path_build(path, 1024, ANGBAND_DIR_XTRA_FONT, DEFAULT_FONTNAME);
+	/* If we don't use the windows internal font, ensure that our user-fontfile of choice does exist */
+	if (!use_logfont) {
+		// Build the filename
+		path_build(path, 1024, ANGBAND_DIR_XTRA_FONT, DEFAULT_FONTNAME);
 
-	// Hack -- Validate the basic font
-	validate_file(path);
-#endif
+		// Hack -- Validate the basic font
+		validate_file(path);
+	}
+//#endif
 
 
 #ifdef USE_GRAPHICS
@@ -4457,9 +4574,7 @@ void init_stuff(void) {
 #endif
 
 
-#ifdef USE_SOUND
- #ifndef USE_SOUND_2010
-
+#if defined(USE_SOUND) && !defined(USE_SOUND_2010) /* done in snd-sdl.c instead, different sound system */
 	/* Build the "sound" path */
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 
@@ -4468,9 +4583,7 @@ void init_stuff(void) {
 
 	/* Validate the "sound" directory */
 	validate_dir(ANGBAND_DIR_XTRA_SOUND);
- #endif
 #endif
-
 }
 
 
@@ -4637,6 +4750,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	init_stuff();
 	/* Load IME settings before commandline-args (to allow -I to modify it) and before window initialization (or it won't work) */
 	load_prefs_IME();
+#ifdef USE_LOGFONT
+	/* Load logfont settings before commandline-args (to allow -L to modify it) and before window initialization (or it won't work) */
+	load_prefs_logfont();
+#endif
 
 	/* Process the command line -- now before initializing the main window because of CS_IME setting via cmdline arg 'I'/'i':*/
 	for (i = 0, n = strlen(lpCmdLine); i < n; i++) {
@@ -4661,6 +4778,11 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					puts("  -h                 Display this help");
 					puts("  -C                 Compatibility mode for very old servers");
 					puts("  -F                 Client FPS");
+					puts("  -I                 force IME off (for CJK languages)",
+					puts("  -i                 force IME on (for CJK languages)",
+ #ifdef USE_LOGFONT
+					puts("  -L                 Use LOGFONT (Windows-internal font)",
+ #endif
 					puts("  -l<nick> <passwd>  Login as");
 					puts("  -N<name>           character Name");
 					puts("  -R<name>           character Name, auto-reincarnate");
@@ -4688,7 +4810,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -C              Compatibility mode for OLD servers",
 					    "  -F              Client FPS", */
 					    "  -I              force IME off (for CJK languages)",
-					    "  -i              force IME on (for CJK languages)",
+					    "  -i               force IME on (for CJK languages)",
+ #ifdef USE_LOGFONT
+					    "  -L              Use LOGFONT (Windows-internal font)",
+ #endif
 					    "  -l<name> <pwd>       Login crecedentials",
 					    "  -N<name>       character name",
 					    "  -R<name>       char name, auto-reincarnate",
@@ -4715,6 +4840,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -F              Client FPS", */
 					    "  -I              force IME off (for CJK languages)",
 					    "  -i              force IME on (for CJK languages)",
+ #ifdef USE_LOGFONT
+					    "  -L              Use LOGFONT (Windows-internal font)",
+ #endif
 					    "  -l<name> <pwd>  Login crecedentials",
 					    "  -N<name>        character name",
 					    "  -R<name>        char name, auto-reincarnate",
@@ -4738,6 +4866,11 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 				case 'i':
 					enable_CS_IME = TRUE;
 					break;
+#ifdef USE_LOGFONT
+				case 'L':
+					use_logfont = TRUE;
+					break;
+#endif
 				case 'l': /* account name & password */
 					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);
 					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS, FALSE);
@@ -4833,7 +4966,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 		    "  -C              Compatibility mode for OLD servers",
 		    "  -F              Client FPS", */
 		    "  -I              force IME off (for CJK languages)",
-		    "  -i              force IME on (for CJK languages)",
+		    "  -i               force IME on (for CJK languages)",
+ #ifdef USE_LOGFONT
+		    "  -L              Use LOGFONT (Windows-internal font)",
+ #endif
 		    "  -l<name> <pwd>       Login crecedentials",
 		    "  -N<name>       character name",
 		    "  -R<name>       char name, auto-reincarnate",

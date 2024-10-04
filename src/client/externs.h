@@ -332,6 +332,9 @@ extern cptr ANGBAND_DIR_SCPT;
 extern cptr ANGBAND_DIR_GAME;
 
 extern bool disable_numlock;
+#ifdef WINDOWS
+extern bool use_logfont, use_logfont_ini;
+#endif
 extern byte use_graphics, use_graphics_new, use_graphics_err;
 extern char use_graphics_errstr[MAX_CHARS_WIDE];
 #ifdef USE_GRAPHICS
