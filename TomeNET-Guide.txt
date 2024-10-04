@@ -18514,7 +18514,7 @@ Crafting actual explosive charges:
 Activate a mixture with itself after you added all required ingredients or use
 the "/mix" command described above, to craft an explosive charge from it.
 The type will depend on the ingredients.
-Note that you can inscribe charges !Fn where n ranges from 1 to 15 and sets
+Note that you can inscribe charges !Fn where n ranges from 0 to 15 and sets
 the fuse timer in seconds until it blows up. If the inscription is omitted
 the charges use type-specific standard fuse lengths listed in this table.
 
