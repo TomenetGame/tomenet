@@ -1809,7 +1809,7 @@ bool detect_treasure(int Ind, int rad) {
 			    (c_ptr->feat == FEAT_QUARTZ_H) ||
 			    (c_ptr->feat == FEAT_SANDWALL_H))
 			{
-				/* Expose the gold */
+				/* Expose the gold: _H -> _K feature transformation */
 				c_ptr->feat += 0x02;
 
 				/* Detect */
@@ -1889,7 +1889,7 @@ bool floor_detect_treasure(int Ind) {
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
 			    (c_ptr->feat == FEAT_QUARTZ_H) ||
 			    (c_ptr->feat == FEAT_SANDWALL_H)) {
-				/* Expose the gold */
+				/* Expose the gold: _H -> _K feature transformation */
 				c_ptr->feat += 0x02;
 				/* Detect */
 				detect = TRUE;
@@ -3222,7 +3222,7 @@ bool detect_treasure_object(int Ind, int rad) {
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
 			    (c_ptr->feat == FEAT_QUARTZ_H) ||
 			    (c_ptr->feat == FEAT_SANDWALL_H)) {
-				/* Expose the gold */
+				/* Expose the gold: _H -> _K feature transformation */
 				c_ptr->feat += 0x02;
 
 				/* Detect */

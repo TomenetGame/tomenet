@@ -9560,7 +9560,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				/* check treasure veins for being remotely encased, making them more valuable to dig up, hah! - C. Blue */
 				switch (zcave[y][x].feat) {
 				case FEAT_MAGMA_K:
-				case FEAT_MAGMA_H:
+				case FEAT_MAGMA_H: /* actually redundant for _H veins, as these will be auto-non-obvious in cmd_tunnel() anyway */
 				case FEAT_QUARTZ_K:
 				case FEAT_QUARTZ_H:
 				case FEAT_SANDWALL_K:
