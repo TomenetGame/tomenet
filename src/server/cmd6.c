@@ -3534,6 +3534,9 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 		    o_name);
 	}
 
+	/* For mass-enchanting items via multiple stacks of scrolls */
+	if (!used_up || o_ptr->number != 1) Send_item_newest_2nd(Ind, item);
+
 	/* Destroy a scroll in the pack */
 	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
