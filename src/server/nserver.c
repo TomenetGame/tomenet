@@ -3427,25 +3427,25 @@ static int Handle_login(int ind) {
 	if (p_ptr->admin_dm)
 		switch (cfg.runlevel) {
 		case 2051:
-			msg_print(NumPlayers, "\377y* XtremelyLow-server-shutdown command pending *");
+			msg_print(NumPlayers, "\377y* XtremelyLow(3)-server-shutdown command pending *");
 			break;
 		case 2053:
-			msg_print(NumPlayers, "\377y* XxtremelyLow-server-shutdown command pending *");
+			msg_print(NumPlayers, "\377y* XxtremelyLow(2)-server-shutdown command pending *");
 			break;
 		case 2048:
 			msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
 			break;
 		case 2047:
-			msg_print(NumPlayers, "\377y* Low-server-shutdown command pending *");
+			msg_print(NumPlayers, "\377y* Low-server(5)-shutdown command pending *");
 			break;
 		case 2046:
-			msg_print(NumPlayers, "\377y* VeryLow-server-shutdown command pending *");
+			msg_print(NumPlayers, "\377y* VeryLow(4)-server-shutdown command pending *");
 			break;
 		case 2045:
 			msg_print(NumPlayers, "\377y* None-server-shutdown command pending *");
 			break;
 		case 2044:
-			msg_print(NumPlayers, "\377y* ActiveVeryLow-server-shutdown command pending *");
+			msg_print(NumPlayers, "\377y* ActiveVeryLow(6)-server-shutdown command pending *");
 			break;
 		case 2043:
 			msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
@@ -3454,7 +3454,7 @@ static int Handle_login(int ind) {
 			msg_print(NumPlayers, "\377y* Recall-server-termination command pending *");
 			break;
 		case 2041:
-			msg_print(NumPlayers, "\377y* UltraLow-server-shutdown command pending *");
+			msg_print(NumPlayers, "\377y* UltraLow(1)-server-shutdown command pending *");
 			break;
 		}
 

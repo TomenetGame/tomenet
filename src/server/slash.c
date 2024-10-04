@@ -6369,7 +6369,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/shutxxlow")) {
-				msg_admins(0, "\377y* Shutting down when dungeons are empty and extremely few (2) players are on *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and *extremely* few (2) players are on *");
 				cfg.runlevel = 2053;
 				return;
 			}

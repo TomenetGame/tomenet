@@ -4204,13 +4204,13 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
 
 		switch (cfg.runlevel) {
-		case 2051: msg_print(Ind, "\377y* XtremelyLow-server-shutdown command pending *"); break;
-		case 2053: msg_print(Ind, "\377y* XXtremelyLow-server-shutdown command pending *"); break;
+		case 2053: msg_print(Ind, "\377y* XXtremelyLow(2)-server-shutdown command pending *"); break;
+		case 2051: msg_print(Ind, "\377y* XtremelyLow(3)-server-shutdown command pending *"); break;
 		case 2048: msg_print(Ind, "\377y* Empty-server-shutdown command pending *"); break;
-		case 2047: msg_print(Ind, "\377y* Low-server-shutdown command pending *"); break;
-		case 2046: msg_print(Ind, "\377y* VeryLow-server-shutdown command pending *"); break;
+		case 2047: msg_print(Ind, "\377y* Low-server(5)-shutdown command pending *"); break;
+		case 2046: msg_print(Ind, "\377y* VeryLow-server(4)-shutdown command pending *"); break;
 		case 2045: msg_print(Ind, "\377y* None-server-shutdown command pending *"); break;
-		case 2044: msg_print(Ind, "\377y* ActiveVeryLow-server-shutdown command pending *"); break;
+		case 2044: msg_print(Ind, "\377y* ActiveVeryLow(6)-server-shutdown command pending *"); break;
 		case 2043:
 		//msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
 			if (shutdown_recall_timer >= 120)
@@ -4225,7 +4225,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 			else
 				msg_format(Ind, "\374\377I*** \377RServer termination in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
 			break;
-		case 2041: msg_print(Ind, "\377y* UltraLow-server-shutdown command pending *"); break;
+		case 2041: msg_print(Ind, "\377y* UltraLow(1)-server-shutdown command pending *"); break;
 		}
 	}
 
