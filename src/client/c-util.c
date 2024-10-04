@@ -9763,7 +9763,11 @@ static void do_cmd_options_fonts(void) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w/\377y+\377w,\377y=\377w smaller/bigger font");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  \377ySPACE\377w enter new window title, \377yr\377w reset window title to default, \377yR\377w reset all");
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
+#else
 		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yESC\377w keep changes and exit");
+#endif
 		Term_putstr(0, 4, -1, TERM_WHITE, format("  %d font%s and %d graphic font%s available, \377yl\377w to list in message window", fonts, fonts == 1 ? "" : "s", graphic_fonts, graphic_fonts == 1 ? "" : "s"));
 
 		/* Display the windows */
@@ -10009,6 +10013,15 @@ static void do_cmd_options_fonts(void) {
 			}
 			c_message_add(""); //linefeed
 			break;
+
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+		case 'L':
+			/* We cannot live-change 'use_logfont' itself, as that'd render the client effectively frozen, just toggle the ini setting for next startup: */
+			use_logfont_ini = !use_logfont_ini;
+			if (!use_logfont_ini) c_msg_print("\377yUsing Windows-internal font instead of FON files. Requires restart, use CTRL+Q.");
+			else c_msg_print("\377yUsing FON files instead of Windows-internal font. Requires restart, use CTRL+Q.");
+			break;
+#endif
 
 		default:
 			d = keymap_dirs[ch & 0x7F];
