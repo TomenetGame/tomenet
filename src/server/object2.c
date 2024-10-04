@@ -11561,6 +11561,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
 			if (newest) Send_item_newest(Ind, j);
+			else Send_item_newest_2nd(Ind, j);
 			return(j);
 		}
 	}
@@ -11783,6 +11784,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
 	if (newest) Send_item_newest(Ind, i);
+	else Send_item_newest_2nd(Ind, i);
 
 #ifdef SUBINVEN_LIMIT_GROUP
 	if (excess) {
