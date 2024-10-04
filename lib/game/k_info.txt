@@ -1216,7 +1216,7 @@ F:FEATHER | EASY_KNOW
 N:143:Poison Resistance
 G:=:d
 I:45:20:0
-W:30:0:2:7000
+W:30:0:2:5000
 A:30/2
 F:RES_POIS | EASY_KNOW
 
@@ -3715,7 +3715,7 @@ F:RES_LITE | RES_DARK | EASY_KNOW
 N:427:Nether Resistance
 G:=:d
 I:45:40:0
-W:34:0:2:14500
+W:34:0:2:8000
 A:34/2
 F:RES_NETHER | HOLD_LIFE | EASY_KNOW
 
@@ -3752,21 +3752,21 @@ D:Affects your armour class.
 N:432:Disenchantment Resistance
 G:=:d
 I:45:45:0
-W:50:0:2:15000
+W:50:0:2:8000
 A:50/5
 F:RES_DISEN | EASY_KNOW
 
 N:433:Chaos Resistance
 G:=:d
 I:45:46:0
-W:50:0:2:13000
+W:50:0:2:8000
 A:50/2
 F:RES_CHAOS | RES_CONF | EASY_KNOW
 
 N:434:Blindness Resistance
 G:=:d
 I:45:47:0
-W:20:0:2:4500
+W:20:0:2:3000
 A:20/2
 F:RES_BLIND | EASY_KNOW
 
@@ -6343,7 +6343,7 @@ F:ACTIVATE
 N:755:Levitation
 G:=:d
 I:45:54:0
-W:20:0:2:5000
+W:20:0:2:3000
 A:20/3
 F:LEVITATE | EASY_KNOW
 
