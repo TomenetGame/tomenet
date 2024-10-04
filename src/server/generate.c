@@ -150,9 +150,9 @@ struct stairs_list {
 #define DUN_STR_MC	90	/* 1/chance of treasure per magma */
 #define DUN_STR_QUA	2	/* Number of quartz streamers */
 #define DUN_STR_QC	40	/* 1/chance of treasure per quartz */
-#define DUN_STR_SC  10	/* 1/chance of treasure per sandwall */
-#define DUN_STR_WLW     1	/* Width of lava & water streamers -KMW- */
-#define DUN_STR_DWLW    8	/* Density of water & lava streams -KMW- */
+#define DUN_STR_SC	10	/* 1/chance of treasure per sandwall */
+#define DUN_STR_WLW	1	/* Width of lava & water streamers -KMW- */
+#define DUN_STR_DWLW	8	/* Density of water & lava streams -KMW- */
 
 /*
  * Dungeon treausre allocation values
@@ -160,9 +160,9 @@ struct stairs_list {
 #define DUN_AMT_ROOM	9	/* Amount of objects for rooms */
 #define DUN_AMT_ITEM	3	/* Amount of objects for rooms/corridors */
 #define DUN_AMT_GOLD	3	/* Amount of treasure for rooms/corridors */
-/* #define DUN_AMT_ALTAR   1 */	/* Amount of altars */
-#define DUN_AMT_BETWEEN 2	/* Amount of between gates */
-#define DUN_AMT_FOUNTAIN 1	/* Amount of fountains */
+/*#define DUN_AMT_ALTAR	1*/	/* Amount of altars */
+#define DUN_AMT_BETWEEN	2	/* Amount of between gates */
+#define DUN_AMT_FOUNTAIN	1	/* Amount of fountains */
 
 /*
  * Hack -- Dungeon allocation "places"
@@ -239,7 +239,7 @@ struct stairs_list {
  */
 #define DUN_RIVER_CHANCE	15	/* The deeper, the less watery area. */
 #define DUN_RIVER_REDUCE	7	/* DUN_RIVER_CHANCE / 2, maximum. */
-#define DUN_STR_WAT			4
+#define DUN_STR_WAT		4
 #define DUN_LAKE_TRY		6	/* how many tries to generate lake on river */
 #define WATERY_CYCLE		45	/* defines 'watery belt' */
 #define WATERY_RANGE		4	/* (45,4,19) = '1100-1250, 3350-3500,.. ' */
@@ -274,15 +274,15 @@ struct stairs_list {
 /*
  * Borrowed stuffs from ToME
  */
-#define DUN_CAVERN     30	/* chance/depth of having a cavern level */
-#define DUN_CAVERN2    20	/* 1/chance extra check for cavern level */
-#define EMPTY_LEVEL    15	/* 1/chance of being 'empty' (15)*/
-#define DARK_EMPTY      5	/* 1/chance of arena level NOT being lit (2)*/
-#define SMALL_LEVEL     4	/* 1/chance of smaller size (3)*/
-#define DUN_WAT_RNG     2	/* Width of rivers */
-#define DUN_WAT_CHG    50	/* 1 in 50 chance of junction in river */
+#define DUN_CAVERN	30	/* chance/depth of having a cavern level */
+#define DUN_CAVERN2	20	/* 1/chance extra check for cavern level */
+#define EMPTY_LEVEL	15	/* 1/chance of being 'empty' (15)*/
+#define DARK_EMPTY	5	/* 1/chance of arena level NOT being lit (2)*/
+#define SMALL_LEVEL	4	/* 1/chance of smaller size (3)*/
+#define DUN_WAT_RNG	2	/* Width of rivers */
+#define DUN_WAT_CHG	50	/* 1 in 50 chance of junction in river */
 
-#define DUN_SANDWALL   10   /* percentage for Sandwall being generated [10] */
+#define DUN_SANDWALL	10   /* percentage for Sandwall being generated [10] */
 
 /* specify behaviour/possibility of vaults/rooms in 'maze' levels */
 #define VAULTS_OVERRIDE_MAZE	/* make vault walls override maze emptiness. otherwise, mazes can 'unwall' vaults! */
