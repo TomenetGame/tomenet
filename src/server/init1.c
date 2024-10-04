@@ -1179,7 +1179,7 @@ static cptr f_info_flags2[] = {
  * Dungeon flags
  */
 static cptr d_info_flags1[] = {
-	"PRINCIPAL",
+	"RANDOM_VEINS",
 	"MAZE",
 	"SMALLEST",
 	"SMALL",

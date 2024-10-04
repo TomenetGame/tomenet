@@ -6853,7 +6853,7 @@
 
 /*** Dungeon type flags -- DG ***/
 
-#define DF1_PRINCIPAL		0x00000001U	/* Is a principal dungeon --- These don't provide certain boni meant for incentivising visiting -- currently not impemented */
+#define DF1_RANDOM_VEINS	0x00000001U	/* Dungeon has random treasure veins, indepedant of any streamers. */
 #define DF1_MAZE		0x00000002U	/* Is a maze-type dungeon */
 #define DF1_SMALLEST		0x00000004U	/* Creates VERY small levels like The Maze */
 #define DF1_SMALL		0x00000008U	/* Creates small levels like Dol Goldor */
@@ -6869,8 +6869,8 @@
 #define DF1_CAVERN		0x00000800U	/* Allow cavern rooms */
 
 #define DF1_NO_UP		0x00001000U	/* Disallow up stairs */
-#define DF1_HOT			0x00002000U	/* Corpses on ground and in pack decay quicker through heat */
-#define DF1_COLD		0x00004000U	/* Corpses on ground and in pack decay quicker through cold */
+#define DF1_HOT			0x00002000U	/* Corpses on ground and in pack decay quicker through heat -- not implemented + unused -- todo: good idea for consumables going bad */
+#define DF1_COLD		0x00004000U	/* Corpses on ground and in pack decay quicker(?) through cold -- not implemented + unused -- todo: good idea for consumables going bad */
 #define DF1_FORCE_DOWN		0x00008000U	/* No up stairs generated */
 
 #define DF1_FORGET		0x00010000U	/* Features are forgotten, like the Maze and Illusory Castle */
@@ -6880,16 +6880,16 @@
 
 #define DF1_EMPTY		0x00100000U	/* All arena levels */
 #define DF1_UNLISTED		0x00200000U	/* This dungeon won't be listed in players' dungeon lists (~8, cmd4.c) or info stores (eg mathom house, store.c) */
-#define DF1_FLAT		0x00400000U	/* Creates paths to next areas at edge of level, like Barrowdowns -- currently no effect :/ */
+#define DF1_FLAT		0x00400000U	/* Creates paths to next areas at edge of level, like Barrowdowns -- currently no effect, but implemented? :/ todo: reenable */
 #define DF1_TOWER		0x00800000U	/* You start at bottom and go up rather than the reverse */
 
 #define DF1_RANDOM_TOWNS	0x01000000U	/* Allow random towns -- this flag is a relic and not implemented */
-#define DF1_DOUBLE		0x02000000U	/* Creates double-walled dungeon like Helcaraxe and Erebor --- UNUSED */
-#define DF1_LIFE_LEVEL		0x04000000U	/* Creates dungeon level on modified 'game of life' algorithm --- UH, CHECK */
-#define DF1_EVOLVE		0x08000000U	/* Evolving, pulsing levels like Heart of the Earth --- UNUSED */
+#define DF1_DOUBLE		0x02000000U	/* Creates double-walled dungeon like Helcaraxe and Erebor --- not implemented */
+#define DF1_LIFE_LEVEL		0x04000000U	/* Creates dungeon level on modified 'game of life' algorithm --- not implemented */
+#define DF1_EVOLVE		0x08000000U	/* Evolving, pulsing levels like Heart of the Earth --- not implemented */
 
-#define DF1_ADJUST_LEVEL_1	0x10000000U	/* Minimum monster level will be equal to dungeon level --- UNUSED */
-#define DF1_ADJUST_LEVEL_2	0x20000000U	/* Minimum monster level will be double the dungeon level --- UNUSED */
+#define DF1_ADJUST_LEVEL_1	0x10000000U	/* Minimum monster level will be equal to dungeon level --- not implemented + unsued (HOLE) */
+#define DF1_ADJUST_LEVEL_2	0x20000000U	/* Minimum monster level will be double the dungeon level --- not implented (HOLE) */
 #define DF1_NO_RECALL		0x40000000U	/* No recall allowed; also includes everything NO_RECALL_INTO does! */
 #define DF1_NO_STREAMERS	0x80000000U	/* No streamers (water, lava, trees) */
 
@@ -6951,9 +6951,9 @@
 #define DF2_TOWNS_FIX		0x04000000U /* generated towns every n levels (for HUGE ironman) */
 #define DF2_TOWNS_RND		0x08000000U /* generated towns with n% chance (for HUGE ironman) */
 
-#define DF2_ADJUST_LEVEL_1_2	0x10000000U /* Minimum monster level will be half the dungeon level --- UNUSED */
-#define DF2_NO_SHAFT		0x20000000U /* No shafts --- UNUSED (#if0'ed) -- related to DF1_FLAT (which also has no effect atm)? */
-#define DF2_ADJUST_LEVEL_PLAYER	0x40000000U /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
+#define DF2_ADJUST_LEVEL_1_2	0x10000000U /* Minimum monster level will be half the dungeon level --- not implemented (HOLE) */
+#define DF2_NO_SHAFT		0x20000000U /* No shafts --- #if0'ed, todo: check and reenable! -- related to DF1_FLAT (which also has no effect atm)? */
+#define DF2_ADJUST_LEVEL_PLAYER	0x40000000U /* Uses player level * 2 instead of dungeon level for other ADJUST_LEVEL flags -- nope, not implemented and unused (HOLE) */
 #define DF2_DELETED		0x80000000U /* Deleted, but not yet removed */
 
 #define DF2_NO_ENTRY_MASK	(DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)

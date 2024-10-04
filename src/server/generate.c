@@ -9561,6 +9561,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 	}
 
+	/* Place random treasure veins? */
+	if (d_ptr->flags1 & DF1_RANDOM_VEINS) {
+		//todo: implement
+	}
+
 	/* Do this now, after all streamers have been completed. */
 	if (!maze) {
 		for (x = 0; x < dun->l_ptr->wid; x++)

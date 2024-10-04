@@ -4358,7 +4358,7 @@ struct dungeon_info_type {
 	s16b mindepth;			/* Minimal depth */
 	s16b maxdepth;			/* Maximal depth */
 
-	bool principal;			/* If it's a part of the main dungeon */
+	bool principal;			/* If it's a part of the main dungeon -- unused (was DF1_PRINCIPAL?) */
 	byte next;			/* The next part of the main dungeon */
 	byte min_plev;			/* Minimal plev needed to enter -- it's an anti-cheating mesure */
 
