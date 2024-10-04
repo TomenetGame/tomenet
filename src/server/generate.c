@@ -1387,6 +1387,7 @@ static bool vault_aux_aquatic(int r_idx) {
  * Correction: Sandwall types added, again basic, known-gold, hidden-gold. - C. Blue
  * Also this function is now fine with other feats than quartz/magma/sandwall,
  * but will not turn any other feat into treasure veins, except those three ('feat').
+ * This function is called for 'wall_streamers', not for 'streamers' bool.
  * 'chance' = 1/chance to turn into a treasure vein.
  * 'pierce' = convert any feat except permanent ones.
  */
@@ -1521,8 +1522,8 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 /*
  * Place streams of water, lava, & trees, sometimes a pool instead of a streamer. -KMW-
- * This routine varies the placement based on dungeon level
- * otherwise is similar to build_streamer.
+ * This routine varies the placement based on dungeon level, otherwise is similar to build_streamer.
+ * This function is called for 'streamers', not for 'wall_streamers' bool.
  * Will not convert permanent floor feats.
  * 'killwall' : convert wall features too if in the way.
  */
