@@ -33,6 +33,11 @@
 #define ANIM_FULL_PALETTE_FLASH
 //#define ANIM_FULL_PALETTE_LIGHTNING
 
+/* If 'solid_bars' is on and HP, MP or ST are set to 'bar' mode, really draw them in solid char instead of '#'?
+   Might not be visually desirable, as the bars are exactly adjacent... */
+#define HP_MP_ST_BARS_ALLOWED
+
+
 #ifdef USE_SOUND_2010
 int animate_lightning_type = SFX_TYPE_AMBIENT;
 #else /* sigh - todo: decouple lightning animation from actually using sound */
@@ -483,7 +488,7 @@ void prt_hp(int max, int cur, bool bar, bool boosted) {
  #endif
 				char bar_char;
 
- #if 0 /* looks too strange with all 3 bars above each other */
+ #ifdef HP_MP_ST_BARS_ALLOWED /* looks too strange with all 3 bars above each other */
   #ifdef WINDOWS
 				if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 				else
@@ -567,7 +572,7 @@ void prt_stamina(int max, int cur, bool bar) {
 	} else {
 		char bar_char;
 
-#if 0 /* looks too strange with all 3 bars above each other */
+#ifdef HP_MP_ST_BARS_ALLOWED /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
 		if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 		else
@@ -752,7 +757,7 @@ void prt_mp(int max, int cur, bool bar) {
 		} else {
 			char bar_char;
 
-#if 0 /* looks too strange with all 3 bars above each other */
+#ifdef HP_MP_ST_BARS_ALLOWED /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
 			if (!force_cui && c_cfg.solid_bars) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 			else
