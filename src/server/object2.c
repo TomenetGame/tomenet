@@ -10915,7 +10915,12 @@ void inven_item_charges(int Ind, int item) {
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	/* Require staff/wand */
-	if ((o_ptr->tval != TV_STAFF) && (o_ptr->tval != TV_WAND)) return;
+	if (o_ptr->tval != TV_STAFF && o_ptr->tval != TV_WAND
+#ifdef MSTAFF_MDEV_COMBO
+	    && (o_ptr->tval != TV_MSTAFF || (!o_ptr->xtra1 && !o_ptr->xtra2))
+#endif
+	    )
+		return;
 
 	/* Require known item */
 	if (!object_known_p(Ind, o_ptr)) return;
