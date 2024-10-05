@@ -5169,6 +5169,9 @@ static void player_talk_aux(int Ind, char *message) {
 		colon = NULL;
 	}
 
+	/* If there's a space BEFORE the colon, it cannot be a name */
+	if (colon > message && *(colon - 1) == ' ') colon = NULL;
+
 	/* Ignore "smileys" or URL */
 	//if (colon && strchr(")(-/:", colon[1]))
 	/* (C. Blue) changing colon parsing. :: becomes
