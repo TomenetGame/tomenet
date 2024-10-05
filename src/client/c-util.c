@@ -9770,9 +9770,9 @@ static void do_cmd_options_fonts(void) {
 		Term_putstr(0, 1, -1, TERM_WHITE, "  \377ySPACE\377w enter new window title, \377yr\377w reset window title to default, \377yR\377w reset all");
 #if defined(WINDOWS) && defined(USE_LOGFONT)
 		if (use_logfont)
-			Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter new logfont size, \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
+			Term_putstr(0, 2, -1, TERM_WHITE, format("  \377yENTER\377w enter new logfont size, \377yL\377w %s logfont, \377yESC\377w keep changes and exit", use_logfont_ini ? "disable" : "enable"));
 		else
-			Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
+			Term_putstr(0, 2, -1, TERM_WHITE, format("  \377yENTER\377w enter a specific font name, \377yL\377w %s logfont, \377yESC\377w keep changes and exit", use_logfont_ini ? "disable" : "enable"));
 #else
 		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yESC\377w keep changes and exit");
 #endif
