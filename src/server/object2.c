@@ -3599,9 +3599,10 @@ bool object_similar_tval(int Ind, object_type *o_ptr, object_type *j_ptr, s16b t
 
 	/* Weapons and Armor */
 	case TV_DRAG_ARMOR:	return(FALSE);
+
 	case TV_MSTAFF:
 #ifdef MSTAFF_MDEV_COMBO
-		if (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3) return(FALSE);
+		if (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3 || j_ptr->xtra1 || j_ptr->xtra2 || j_ptr->xtra3) return(FALSE);
 		/* fall through */
 #endif
 	case TV_BOW:
