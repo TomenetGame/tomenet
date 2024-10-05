@@ -9920,7 +9920,7 @@ static void do_cmd_options_fonts(void) {
 				win_logfont_inc(y, TRUE);
 				break;
 			}
-#else
+#endif
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
 				//Include the graphic fonts, because we are cycling the clone-map
@@ -9928,9 +9928,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j + 1]);
- #ifndef WINDOWS
+#ifndef WINDOWS
 						sync_sleep(x11_refresh);
- #endif
+#endif
 						break;
 					}
 				}
@@ -9939,14 +9939,13 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, font_name[j + 1]);
- #ifndef WINDOWS
+#ifndef WINDOWS
 						sync_sleep(x11_refresh);
- #endif
+#endif
 						break;
 					}
 				}
 			}
-#endif
 			break;
 
 #if defined(WINDOWS) && defined(USE_LOGFONT)
@@ -9960,7 +9959,7 @@ static void do_cmd_options_fonts(void) {
 				win_logfont_dec(y, TRUE);
 				break;
 			}
-#else
+#endif
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
 				//Include the graphic fonts, because we are cycling the clone-map
@@ -9968,9 +9967,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j - 1]);
- #ifndef WINDOWS
+#ifndef WINDOWS
 						sync_sleep(x11_refresh);
- #endif
+#endif
 						break;
 					}
 				}
@@ -9979,14 +9978,13 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, font_name[j - 1]);
- #ifndef WINDOWS
+#ifndef WINDOWS
 						sync_sleep(x11_refresh);
- #endif
+#endif
 						break;
 					}
 				}
 			}
-#endif
 			break;
 
 		case '\r':
@@ -10032,14 +10030,14 @@ static void do_cmd_options_fonts(void) {
 				c_message_add(format("-- Fonts (%d): --", fonts));
 				tmp_name2[0] = 0;
 				for (j = 0; j < fonts; j++) {
-  #ifdef WINDOWS
+#ifdef WINDOWS
 					/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
 					cpp = font_name[j];
 					while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
 					sprintf(tmp_name, "%-18s", cpp);
-  #else
+#else
 					sprintf(tmp_name, "%-18s", font_name[j]);
-  #endif
+#endif
 
 					/* print up to 4 font names per line */
 					c++;
