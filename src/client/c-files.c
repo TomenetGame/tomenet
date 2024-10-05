@@ -912,6 +912,13 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (n2) {
 				Client_setup.f_char[i] = n2;
 				floor_mapping_mod = u32b_char_dict_set(floor_mapping_mod, n2, floor_mapping_org[i]);
+
+				/* Hacky: Try to catch if a custom font mapping puts anything besides walls on '2' or '127' ie the solid-bar/wall symbols,
+				   in which case we assume the font is broken, as these symbols are reserved as 'solid blocks' for UI elements (mainly bars)!
+				   Completely hard-coded unfortunately. */
+				if ((n2 == FONT_MAP_SOLID_X11 || n2 == FONT_MAP_SOLID_WIN) &&
+				    !(i == 26 || i == 28 || (i >= 50 && i <= 63) || (i >= 75 && i <= 78) || i == 95 || (i >= 98 && i <= 100) || i == 177 || (i >= 183 && i <= 185) || (i >= 188 && i <= 194)))
+					bad_solid_mapping = TRUE;
 			}
 			return(0);
 		}
@@ -1147,6 +1154,8 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 }
 
 /* Helper function to process the "user pref file" with the given complete path+filename 'buf' and filenam 'name' */
+/* Warn not for every bad mapping line, but once after all mapping lines were loaded: */
+#define BAD_MAPPING_BUNDLE
 errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	FILE *fp;
 	int n, err;
@@ -1170,11 +1179,33 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 			/* Useful error message */
 			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
 			if (strcmp(ANGBAND_SYS, "gcu")) printf("Error in '%s' parsing '%s'.\n", buf2, name);
-			//else if (rl_connection_state != 1) plog(format("Error in '%s' parsing '%s'.\n", buf2, name)); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
+			//else if (rl_connection_state != 1) plog_fmt("Error in '%s' parsing '%s'.\n", buf2, name); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
 			//errors = TRUE;
 		}
+#ifndef BAD_MAPPING_BUNDLE /* Warn for every bad mapping-line? */
+		if (bad_solid_mapping) {
+			if (rl_connection_state == 1) {
+				c_msg_format("\377yThe mapping '%s' in '%s' maps non-wall feat", buf2, name);
+				c_msg_print("\377y to solid wall symbols (either 2 or 127), indicating that the mapping is broken!");
+			}
+			if (strcmp(ANGBAND_SYS, "gcu")) printf("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name);
+			else if (rl_connection_state != 1) plog_fmt("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name);
+			bad_solid_mapping = FALSE;
+		}
+#endif
 		mem_free(buf2);
 	}
+#ifdef BAD_MAPPING_BUNDLE /* Warn for every bad mapping-line? */
+	if (bad_solid_mapping) {
+		if (rl_connection_state == 1) {
+			c_msg_format("\377yThe mapping in '%s' maps non-wall feats to", name);
+			c_msg_print("\377y solid wall symbols (either 2 or 127), indicating that the mapping is broken!");
+		}
+		if (strcmp(ANGBAND_SYS, "gcu")) printf("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name);
+		else if (rl_connection_state != 1) plog_fmt("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name);
+		bad_solid_mapping = FALSE;
+	}
+#endif
 	if (err == 2) {
 		if (strcmp(ANGBAND_SYS, "gcu")) printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:

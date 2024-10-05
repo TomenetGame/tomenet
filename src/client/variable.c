@@ -211,6 +211,7 @@ cptr ANGBAND_DIR_XTRA;
 cptr ANGBAND_DIR_GAME;
 
 bool disable_numlock = FALSE;
+bool bad_solid_mapping = FALSE;
 #ifdef WINDOWS
 bool use_logfont = FALSE, use_logfont_ini;
 #endif

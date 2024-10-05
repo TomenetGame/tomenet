@@ -117,6 +117,7 @@ extern magic_type innate_powers[128];
 
 
 /* variable.c */
+extern bool bad_solid_mapping;
 extern bool c_quit;
 extern char meta_address[MAX_CHARS], meta_buf[80192];
 extern int meta_socket, meta_i;
