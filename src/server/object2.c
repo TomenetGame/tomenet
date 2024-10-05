@@ -5097,8 +5097,8 @@ s16b ammo_explosion[] = { /* Make sure to keep init_GF_names() consistent so it 
     GF_CHAOS,		GF_NETHER,		GF_NEXUS,		GF_GRAVITY,
     GF_KILL_WALL,	GF_DISP_UNDEAD,		GF_STUN,		GF_HOLY_FIRE,
     GF_DISINTEGRATE,	GF_HELLFIRE,		GF_DETONATION,		GF_NUKE,
-    /*GF_BLIND,*/	GF_DISP_DEMON,		GF_STASIS,		GF_STOP,
-    /*GF_FLARE,*/	GF_ANNIHILATION		/* flare is too weak */
+    /*GF_BLIND,*/	GF_DISP_DEMON,		/*GF_STASIS,		GF_STOP,*/	/* Need to carefully test stasis and stop effects first */
+    /*GF_FLARE,*/	/*GF_ANNIHILATION*/		/* flare is too weak, annihilation doesn't use normal damage number, too odd to workaround */
 };
 /* Add random explosion-power to ammunition, via o_ptr or a_ptr */
 void ammo_add_explosion(s16b *pval) {
