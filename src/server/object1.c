@@ -5244,11 +5244,11 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int Ind_target) {
 	player_type *p_ptr = Players[Ind];
 	player_type *pt_ptr = (Ind_target ? Players[Ind_target] : p_ptr);
-	bool id = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
+	bool id_ok = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
 	bool aware = object_aware_p(Ind, o_ptr) || full;
-	bool aware_cursed = id || (o_ptr->ident & ID_SENSE);
+	bool aware_cursed = id_ok || (o_ptr->ident & ID_SENSE);
 	object_type forge;
 	bool am_unknown = FALSE;
 #endif
@@ -5256,7 +5256,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 	FILE *fff;
 	char buf[1024], o_name[ONAME_LEN];
-	char *ca_ptr = "", a = (id && artifact_p(o_ptr)) ? 'U' : 'w';
+	char *ca_ptr = "", a = (id_ok && artifact_p(o_ptr)) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
 	char timeleft[51] = { 0 };//[26]
@@ -5299,7 +5299,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	/* ---------------------------- determine degree of knowledge ------------------------------- */
 
 	/* hack: can *identifying* actually make a difference at all? */
-	if (!id || o_ptr->name1) can_have_hidden_powers = TRUE;
+	if (!id_ok || o_ptr->name1) can_have_hidden_powers = TRUE;
 
 	/* Item is *identified*? */
 	if (full) {
@@ -5307,6 +5307,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+#ifdef MSTAFF_MDEV_COMBO
+		if (o_ptr->tval == TV_MSTAFF && o_ptr->xtra5) f4 |= e_info[o_ptr->xtra5].flags4[0];
+#endif
 
 		/* hack for inspecting items in stores, which are supposed to
 		   be fully identified even though we aren't aware of them yet */
@@ -5346,7 +5349,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) can_have_hidden_powers = TRUE;
 
 		/* Just add the fixed ego flags that we know to be on the item */
-		if (id) {
+		if (id_ok) {
 			if (o_ptr->name2) {
 				e_ptr = &e_info[o_ptr->name2];
 				for (j = 0; j < 5; j++) {
@@ -5415,6 +5418,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 					esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 				}
 			}
+#ifdef MSTAFF_MDEV_COMBO
+			if (o_ptr->tval == TV_MSTAFF && o_ptr->xtra5) f4 |= e_info[o_ptr->xtra5].flags4[0];
+#endif
 		}
 
 		/* Get the item name we know */
@@ -5611,7 +5617,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	if (artifact_p(o_ptr)
 #ifdef NEW_ID_SCREEN
-	    && id
+	    && id_ok
 #endif
 	    ) {
 #ifdef NEW_ID_SCREEN
@@ -5659,7 +5665,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	default:
 		if (artifact_p(o_ptr)
 #ifdef NEW_ID_SCREEN
-		    && id
+		    && id_ok
 #endif
 		    )
 			fprintf(fff, "\377%cIt's a%s%s.\377w\n", a, ca_ptr, timeleft);
@@ -5681,7 +5687,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 #ifdef WEAPONS_NO_AC
 	/* Optional. Shields don't say block chance, weapons don't say to-hit/to-dam either. These are assumed to be understood. */
-	//if (id && is_melee_weapon(o_ptr->tval) && o_ptr->to_a) fprintf(fff, "It increases your chance to parry by %+d%%.\n", o_ptr->to_a);
+	//if (id_ok && is_melee_weapon(o_ptr->tval) && o_ptr->to_a) fprintf(fff, "It increases your chance to parry by %+d%%.\n", o_ptr->to_a);
 #endif
 
 	/* Kings/Queens only warning */
@@ -5757,6 +5763,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		/* Examined in a shop? */
 		else fprintf(fff, "\377WIt can hold up to %d items or stacks.\n", o_ptr->bpval);
 	}
+#endif
+
+#ifdef MSTAFF_MDEV_COMBO
+	/* Specialty: For EGO_PLENTY absorbed by a mage staff, actually display a note about it,
+	   as we do not append device-ego names to the already tooooo long mstaff name string */
+	if (o_ptr->tval == TV_MSTAFF && o_ptr->xtra5 == EGO_PLENTY) fprintf(fff, "It gains especially many charges.\n");
 #endif
 
 	/* Hack: Stop here if the item wasn't *ID*ed and we still were allowed to read so far (player stores maybe?) */
@@ -5891,7 +5903,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (am > 0) fprintf(fff, "It generates an anti-magic field that has %d%% chance of supressing magic.\n", am);
 	else if (am < 0) fprintf(fff, "It generates a suppressed anti-magic field.\n");
 #else
-	if (full || (!o_ptr->name1 && id)) {
+	if (full || (!o_ptr->name1 && id_ok)) {
 		if (am > 0) fprintf(fff, "It generates an anti-magic field that has %d%% chance of supressing magic.\n", am);
 		else if (am < 0) fprintf(fff, "It generates a suppressed anti-magic field.\n");
 	}
@@ -6325,7 +6337,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 #ifdef NEW_ID_SCREEN
 	if (!eff_full) {
-		if (!id) {
+		if (!id_ok) {
  #if 0 /* can be incorrect etc! disabled for now */
 			/* make message depend on pseudo-id status! */
 			if ((o_ptr->ident & ID_SENSE)) {
@@ -6363,7 +6375,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	}
  #if 1
 	/* maybe at least tell the person that this item needs ID */
-	else if (!id) {
+	else if (!id_ok) {
 		if (!(f3 & TR3_EASY_KNOW)) fprintf(fff, "\377yThis item has not been identified yet.\n");
 	}
  #endif
