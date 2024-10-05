@@ -10028,6 +10028,9 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 
 	/* Extract object flags */
 	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
+#ifdef MSTAFF_MDEV_COMBO
+	if (o_ptr->tval == TV_MSTAFF && o_ptr->xtra5) f4 |= e_info[o_ptr->xtra5].flags4[0];
+#endif
 
 	/* Is it simple to use ? */
 	if (f4 & TR4_EASY_USE) {

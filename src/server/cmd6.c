@@ -4972,6 +4972,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	/* Extract object flags */
 	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff && o_ptr->xtra5) f4 |= e_info[o_ptr->xtra5].flags4[0];
+#endif
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
@@ -5283,7 +5286,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	/* Extract object flags */
 	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
-
+#ifdef MSTAFF_MDEV_COMBO
+	if (mstaff && o_ptr->xtra5) f4 |= e_info[o_ptr->xtra5].flags4[0];
+#endif
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
