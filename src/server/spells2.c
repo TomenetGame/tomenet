@@ -4676,18 +4676,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 			/* Extract a "power" */
 			t = (pow / (lev + 2)) + 1;
 
-			/* Hack -- ego */
-			if (o_ptr->name2 == EGO_PLENTY
-#ifdef MSTAFF_MDEV_COMBO
-			    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra5 == EGO_PLENTY)
-#endif
-			    )
-				t <<= 1;
-
-#if 0 /* old way */
-			/* Recharge based on the power */
-			if (t > 0) o_ptr->pval += 2 + randint(t);
-#else /* new way: correct wand stacking, added stack size dr */
+			/* Recharge: correct wand stacking, added stack size diminishing returns (dr) */
 			/* Wands stack, so recharging must multiply the power.
 			   Add small 'laziness' diminishing returns malus. */
 			if (o_ptr->tval == TV_WAND
@@ -4702,20 +4691,29 @@ bool recharge_aux(int Ind, int item, int pow) {
 				//Diminishing returns start at number=10: ' * (1050 / (10 + 1000 / (o_ptr->number + 4)) - 4) '
 				//Diminishing returns start at number=3~: ' * (450 / (10 + 400 / (o_ptr->number + 3)) - 3) '
 				dr = 4500 / (10 + 400 / (o_ptr->number + 3)) - 30;
-				if (t > 0) o_ptr->pval += (3 * dr) / 10 + rand_int(t * dr) / 10;
+				if (t > 0) i = (3 * dr) / 10 + rand_int(t * dr) / 10;
 			} else {
 				/* Recharge based on the power */
-				//if (t > 0) o_ptr->pval += 2 + randint(t);
+				//if (t > 0) i = 2 + randint(t);
 
 				/* allow dr to factor in more: */
 				dr = 4500 / (10 + 400 / (o_ptr->number + 3)) - 30;
- #ifdef NEW_MDEV_STACKING
-				if (t > 0) o_ptr->pval += 1 + (rand_int((t + 2) * dr)) / 10;
- #else
-				if (t > 0) o_ptr->pval += 1 + (rand_int((t + 2) * dr) / o_ptr->number) / 10;
- #endif
-			}
+#ifdef NEW_MDEV_STACKING
+				if (t > 0) i = 1 + (rand_int((t + 2) * dr)) / 10;
+#else
+				if (t > 0) i = 1 + (rand_int((t + 2) * dr) / o_ptr->number) / 10;
 #endif
+			}
+
+			/* Apply plenty-charges-ego */
+			if (o_ptr->name2 == EGO_PLENTY
+#ifdef MSTAFF_MDEV_COMBO
+			    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra5 == EGO_PLENTY)
+#endif
+			    )
+				i += (i + 2) / 3 + rand_int(2);
+
+			o_ptr->pval += i;
 
 			/* Hack -- we no longer "know" the item */
 			o_ptr->ident &= ~ID_KNOWN;

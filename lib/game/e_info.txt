@@ -1705,14 +1705,7 @@ T:65:0:29
 T:65:31:255
 W:0:1:20:1000
 C:0:0:0:2
-R:100
-F:PVAL_M5 | PVAL_M3 | PVAL_M1
-R:50
-F:PVAL_M5 | PVAL_M3
-R:10
-F:PVAL_M5 | PVAL_M3
-R:1
-F:PVAL_M5 | PVAL_M3
+# no PVAL_Mx flags, but hard-coded
 
 
 ### Trapping Kits ###

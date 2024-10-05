@@ -6331,9 +6331,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		    if (o_ptr->name2b == EGO_FIREPROOF_BOOK || o_ptr->name2b == EGO_WATERPROOF_BOOK) o_ptr->name2b = 0;
 		}
 
-#if 1		// tweaked pernA ego..
-		/* Hack -- analyze ego-items */
-		//else if (o_ptr->name2)
 		if (o_ptr->name2 && !o_ptr->name1) {
 			artifact_type *a_ptr = ego_make(o_ptr);
 
@@ -6344,8 +6341,14 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 				; /* keep o_ptr->pval! */
 			else if (!is_magic_device(o_ptr->tval)) /* don't kill charges on EGO (of plenty) devices! */
 				o_ptr->pval = a_ptr->pval; /* paranoia?-> pval might've been limited in ego_make(), so set it here, instead of adding it */
-			else
-				o_ptr->pval += a_ptr->pval;
+			else { /* Apply EGO_PLENTY, the only ego power for magic devices and the only magic device ego power touching pval: */
+				// Note: fix+rnd charges sum up to max of 3..28 depending on device, for both wands and staves
+				if (o_ptr->tval == TV_WAND)
+					o_ptr->pval += (charge_wand_fix[o_ptr->sval] + charge_wand_rnd[o_ptr->sval] + 2) / 3 + 1;
+				if (o_ptr->tval == TV_STAFF)
+					o_ptr->pval += (charge_staff_fix[o_ptr->sval] + charge_staff_rnd[o_ptr->sval] + 2) / 3 + 1;
+				/* (and Rods don't use/change pval in this way) */
+			}
 
 			o_ptr->ac += a_ptr->ac;
 			o_ptr->dd += a_ptr->dd;
@@ -6371,7 +6374,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			//if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 			if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
 		}
-#endif	// 1
 
 		/* Hack: determine level-requirement - here AGAIN because ego-item
 		   routine wasnt called before we called det_l_r the first time */
