@@ -2747,7 +2747,7 @@ static void sync_options(int Ind, bool *options) {
 static void set_player_font_definitions(int ind, int player) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = Players[player];
-	int i, j;
+	int i, j, feat_solid, feat_vein;
 	char32_t unm_c_idx;
 	bool custom_font = FALSE;
 
@@ -2808,91 +2808,54 @@ static void set_player_font_definitions(int ind, int player) {
 		p_ptr->f_attr_solid[i] = f_info[i].z_attr;
 
 	}
+
 	/* modify solid walls of local copy for font_map_solid_walls */
 	if (p_ptr->version.os == OS_WIN32) {
-		p_ptr->f_char_solid[50] = FONT_MAP_SOLID_WIN; //magma, 8
-		p_ptr->f_char_solid[52] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[51] = FONT_MAP_SOLID_WIN; //quartz, 9
-		p_ptr->f_attr_solid[51] = TERM_L_WHITE;
-		p_ptr->f_char_solid[53] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_attr_solid[53] = TERM_L_WHITE;
-
-		p_ptr->f_char_solid[54] = FONT_MAP_VEIN_WIN; //specialty: magma with treasure (diamond ascii)
-		p_ptr->f_char_solid[55] = FONT_MAP_VEIN_WIN; //specialty: quartz with treasure (diamond ascii)
-
-		p_ptr->f_char_solid[56] = FONT_MAP_SOLID_WIN; //granite, 2
-		p_ptr->f_char_solid[57] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[58] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[59] = FONT_MAP_SOLID_WIN; //perma vaults, 1
-		p_ptr->f_char_solid[60] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[61] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[62] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[63] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[26] = FONT_MAP_SOLID_WIN; //perma houses, 1
-		p_ptr->f_char_solid[28] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[75] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[76] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[77] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[78] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[95] = FONT_MAP_SOLID_WIN; //ice wall
-		p_ptr->f_char_solid[98] = FONT_MAP_SOLID_WIN; //sand wall
-		p_ptr->f_char_solid[99] = FONT_MAP_SOLID_WIN;
-
-		p_ptr->f_char_solid[100] = FONT_MAP_VEIN_WIN; //specialty: sand wall with treasure (diamond ascii)
-
-		p_ptr->f_char_solid[177] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[183] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[184] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[185] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[188] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[189] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[190] = FONT_MAP_SOLID_WIN; //house roofs, 11
-		p_ptr->f_char_solid[191] = FONT_MAP_SOLID_WIN;
-		p_ptr->f_char_solid[193] = FONT_MAP_SOLID_WIN; //house roofs, 4
-		p_ptr->f_char_solid[194] = FONT_MAP_SOLID_WIN;
+		feat_solid = FONT_MAP_SOLID_WIN;
+		feat_vein = FONT_MAP_VEIN_WIN;
 	} else {
 		/* assume OS_X11 -- does this work on OSX/GCU too? -- no, it only works on OSX with XQuartz as X11 replacement actually */
-		p_ptr->f_char_solid[50] = FONT_MAP_SOLID_X11; //magma, 8
-		p_ptr->f_char_solid[52] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[51] = FONT_MAP_SOLID_X11; //quartz, 9
-		p_ptr->f_attr_solid[51] = TERM_L_WHITE;
-		p_ptr->f_char_solid[53] = FONT_MAP_SOLID_X11;
-		p_ptr->f_attr_solid[53] = TERM_L_WHITE;
-
-		p_ptr->f_char_solid[54] = FONT_MAP_VEIN_X11; //specialty: magma with treasure (diamond ascii)
-		p_ptr->f_char_solid[55] = FONT_MAP_VEIN_X11; //specialty: quartz with treasure (diamond ascii)
-
-		p_ptr->f_char_solid[56] = FONT_MAP_SOLID_X11; //granite, 2
-		p_ptr->f_char_solid[57] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[58] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[59] = FONT_MAP_SOLID_X11; //perma vaults, 1
-		p_ptr->f_char_solid[60] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[61] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[62] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[63] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[26] = FONT_MAP_SOLID_X11; //perma houses, 1
-		p_ptr->f_char_solid[28] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[75] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[76] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[77] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[78] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[95] = FONT_MAP_SOLID_X11; //ice walls
-		p_ptr->f_char_solid[98] = FONT_MAP_SOLID_X11; //sand wall
-		p_ptr->f_char_solid[99] = FONT_MAP_SOLID_X11;
-
-		p_ptr->f_char_solid[100] = FONT_MAP_VEIN_X11; //specialty: sand wall with treasure (diamond ascii)
-
-		p_ptr->f_char_solid[177] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[183] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[184] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[185] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[188] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[189] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[190] = FONT_MAP_SOLID_X11; //house roofs, 11
-		p_ptr->f_char_solid[191] = FONT_MAP_SOLID_X11;
-		p_ptr->f_char_solid[193] = FONT_MAP_SOLID_X11; //house roofs, 4
-		p_ptr->f_char_solid[194] = FONT_MAP_SOLID_X11;
+		feat_solid = FONT_MAP_SOLID_X11;
+		feat_vein = FONT_MAP_VEIN_X11;
 	}
+	p_ptr->f_char_solid[50] = feat_solid; //magma, 8
+	p_ptr->f_char_solid[51] = feat_solid; //quartz, 9
+	p_ptr->f_attr_solid[51] = TERM_L_WHITE;
+	p_ptr->f_char_solid[52] = feat_solid; //magma, hidden treasure (unused)
+	p_ptr->f_char_solid[53] = feat_solid; //quartz, hidden treasure (unused)
+	p_ptr->f_attr_solid[53] = TERM_L_WHITE;
+	p_ptr->f_char_solid[54] = feat_vein; //specialty: magma with treasure (diamond ascii)
+	p_ptr->f_char_solid[55] = feat_vein; //specialty: quartz with treasure (diamond ascii)
+
+	p_ptr->f_char_solid[56] = feat_solid; //granite, 2
+	p_ptr->f_char_solid[57] = feat_solid;
+	p_ptr->f_char_solid[58] = feat_solid;
+	p_ptr->f_char_solid[59] = feat_solid; //perma vaults, 1
+	p_ptr->f_char_solid[60] = feat_solid;
+	p_ptr->f_char_solid[61] = feat_solid;
+	p_ptr->f_char_solid[62] = feat_solid;
+	p_ptr->f_char_solid[63] = feat_solid;
+	p_ptr->f_char_solid[26] = feat_solid; //perma houses, 1
+	p_ptr->f_char_solid[28] = feat_solid;
+	p_ptr->f_char_solid[75] = feat_solid;
+	p_ptr->f_char_solid[76] = feat_solid;
+	p_ptr->f_char_solid[77] = feat_solid;
+	p_ptr->f_char_solid[78] = feat_solid;
+	p_ptr->f_char_solid[95] = feat_solid; //ice wall
+	p_ptr->f_char_solid[98] = feat_solid; //sand wall
+	p_ptr->f_char_solid[99] = feat_solid;
+	p_ptr->f_char_solid[100] = feat_vein; //specialty: sand wall with treasure (diamond ascii)
+
+	p_ptr->f_char_solid[177] = feat_solid;
+	p_ptr->f_char_solid[183] = feat_solid;
+	p_ptr->f_char_solid[184] = feat_solid;
+	p_ptr->f_char_solid[185] = feat_solid;
+	p_ptr->f_char_solid[188] = feat_solid;
+	p_ptr->f_char_solid[189] = feat_solid;
+	p_ptr->f_char_solid[190] = feat_solid; //house roofs, 11
+	p_ptr->f_char_solid[191] = feat_solid;
+	p_ptr->f_char_solid[193] = feat_solid; //house roofs, 4
+	p_ptr->f_char_solid[194] = feat_solid;
 
 	for (i = 0; i < MAX_K_IDX; i++) {
 		/* map k_info.txt static indices that are used on client side to our dynamically generated k_idx array on server side. */
