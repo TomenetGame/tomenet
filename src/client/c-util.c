@@ -9762,10 +9762,11 @@ static void do_cmd_options_fonts(void) {
 	while (go) {
 		/* Prompt XXX XXX XXX */
 #if defined(WINDOWS) && defined(USE_LOGFONT)
-		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w,\377y+\377w/\377y,\377w,\377y.\377w change height/width");
-#else
-		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w/\377y+\377w,\377y=\377w smaller/bigger font");
+		if (use_logfont)
+			Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w,\377y+\377w/\377y,\377w,\377y.\377w change height/width");
+		else
 #endif
+		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w/\377y+\377w,\377y=\377w smaller/bigger font");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  \377ySPACE\377w enter new window title, \377yr\377w reset window title to default, \377yR\377w reset all");
 #if defined(WINDOWS) && defined(USE_LOGFONT)
 		if (use_logfont)
@@ -9909,13 +9910,16 @@ static void do_cmd_options_fonts(void) {
 
 #if defined(WINDOWS) && defined(USE_LOGFONT)
 		case '.':
-			win_logfont_inc(y, FALSE);
+			if (use_logfont) win_logfont_inc(y, FALSE);
 			break;
 #endif
 		case '=':
 		case '+':
 #if defined(WINDOWS) && defined(USE_LOGFONT)
-			win_logfont_inc(y, TRUE);
+			if (use_logfont) {
+				win_logfont_inc(y, TRUE);
+				break;
+			}
 #else
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
@@ -9947,12 +9951,15 @@ static void do_cmd_options_fonts(void) {
 
 #if defined(WINDOWS) && defined(USE_LOGFONT)
 		case ',':
-			win_logfont_dec(y, FALSE);
+			if (use_logfont) win_logfont_dec(y, FALSE);
 			break;
 #endif
 		case '-':
 #if defined(WINDOWS) && defined(USE_LOGFONT)
-			win_logfont_dec(y, TRUE);
+			if (use_logfont) {
+				win_logfont_dec(y, TRUE);
+				break;
+			}
 #else
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
