@@ -11202,6 +11202,7 @@ void kill_xorder(int Ind) {
 	} else {
 		object_type forge, *o_ptr = &forge;
 		int avg, rlev = r_info[xorders[pos].type].level, plev = p_ptr->lev;
+		char o_name[ONAME_LEN];
 
 		msg_format(Ind, "\374\377yYou have carried out the %s extermination order!", r_name + r_info[xorders[pos].type].name);
 		s_printf("r_info quest: %s won the %s extermination order (%d,%d,%d)\n", p_ptr->name, r_name + r_info[xorders[pos].type].name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
@@ -11226,6 +11227,8 @@ void kill_xorder(int Ind) {
 
 		/* New: Sometimes generate consumables instead */
 		if (object_value_real(0, o_ptr) < 1000 && rand_int(3)) { /* eg instead of basic (non-ego) enchanted armour/weapon */
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("XORDER_REPLACE_REWARD: Tier 1, %s, value %ld\n", o_name, object_value_real(0, o_ptr));
 			/* basic consumables */
 			switch (rand_int(2)) {
 			case 0:
@@ -11275,6 +11278,8 @@ void kill_xorder(int Ind) {
 			object_known(o_ptr);
 			o_ptr->ident |= ID_MENTAL;
 		} else if (object_value_real(0, o_ptr) < 3000 && !rand_int(3)) { /* eg instead of trivial (resfire) egos */
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("XORDER_REPLACE_REWARD: Tier 2, %s, value %ld\n", o_name, object_value_real(0, o_ptr));
 			/* great consumables / bigger stacks of basic consumables */
 			switch (rand_int(2)) {
 			case 0:
