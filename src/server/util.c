@@ -3085,7 +3085,6 @@ void msg_print(int Ind, cptr msg_raw) {
 				    msg[msg_scan] == '(' ||
 				    msg[msg_scan] == '[' ||
 				    msg[msg_scan] == '{' ||
-				    msg[msg_scan] == '<' || //smiley :<
  #endif
  #if 1 /* don't break smileys? */
 				    msg[msg_scan] == '-' ||
@@ -3095,7 +3094,6 @@ void msg_print(int Ind, cptr msg_raw) {
 				    msg[msg_scan] == ')' ||
 				    msg[msg_scan] == ']' ||
 				    msg[msg_scan] == '}' ||
-				    msg[msg_scan] == '>' || //smiley :>
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 				    msg[msg_scan] == '+' || msg[msg_scan] == '-' ||
 				    /* interpunction at the end of a sentence */
