@@ -1558,7 +1558,7 @@ int Net_start(int sex, int race, int class) {
 
 #if defined(WINDOWS) || defined(USE_X11)
  #if defined(WINDOWS) && defined(USE_LOGFONT)
-	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(), win_get_logfont_h());
+	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(0), win_get_logfont_h(0));
 	else
  #endif
 	get_screen_font_name(fname);
@@ -7870,7 +7870,7 @@ int Send_font(void) {
 
 #if defined(WINDOWS) || defined(USE_X11)
  #if defined(WINDOWS) && defined(USE_LOGFONT)
-	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(), win_get_logfont_h());
+	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(0), win_get_logfont_h(0));
 	else
  #endif
 	get_screen_font_name(fname);

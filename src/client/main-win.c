@@ -5172,7 +5172,7 @@ const char* get_font_name(int term_idx) {
 	else if (use_logfont) {
 		static char logfont_name[MAX_CHARS];
 
-		sprintf(logfont_name, "<LOGFONT>%dx%d", win_get_logfont_w(), win_get_logfont_h());
+		sprintf(logfont_name, "<LOGFONT>%dx%d", win_get_logfont_w(term_idx), win_get_logfont_h(term_idx));
 		return(logfont_name);
 	}
 #endif
@@ -5187,11 +5187,11 @@ void set_font_name(int term_idx, char* fnt) {
 	term_force_font(&data[term_idx], fnt2);
 }
 #ifdef USE_LOGFONT
-int win_get_logfont_w(void) {
-	return(data[0].lf.lfWidth);
+int win_get_logfont_w(int term_idx) {
+	return(data[term_idx].lf.lfWidth);
 }
-int win_get_logfont_h(void) {
-	return(data[0].lf.lfHeight);
+int win_get_logfont_h(int term_idx) {
+	return(data[term_idx].lf.lfHeight);
 }
 #endif
 void term_toggle_visibility(int term_idx) {

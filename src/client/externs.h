@@ -1074,8 +1074,8 @@ void all_term_data_to_term_prefs(void);
 extern void change_font(int s);
 extern const char* get_font_name(int term_idx);
  #ifdef USE_LOGFONT
-extern int win_get_logfont_w(void);
-extern int win_get_logfont_h(void);
+extern int win_get_logfont_w(int term_idx);
+extern int win_get_logfont_h(int term_idx);
  #endif
 extern void set_font_name(int term_idx, char* fnt);
 extern void term_toggle_visibility(int term_idx);
