@@ -5613,6 +5613,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, 0xFFFFFFFF);
 			return;
 		}
+		else if (prefix(messagelc, "/testascii")) {
+			char line[MAX_CHARS + 1];
+			int cstart = 1, cend = 0372, amt = 50; //MAX_CHARS - 7;
+
+			for (i = cstart; i < cend; i++) {
+				line[(i - cstart) % amt] = i;
+				line[(i - cstart) % amt + 1] = 0;
+				if ((!(i % amt) || i == cend - 1) && (i - cstart))
+					msg_format(Ind, "\377W%3d: \377b<\377w%s\377b>",
+					    !(i % amt) ? i - amt + cstart : i - (i % amt) + cstart, line);
+			}
+			return;
+		}
 		else if (prefix(messagelc, "/setorder")) { /* Non-admin version - Set custom list position for this character in the account overview screen on login */
 			int max_cpa = MAX_CHARS_PER_ACCOUNT;
 			int *id_list, ids, cur_order, order, max_order = 0;
