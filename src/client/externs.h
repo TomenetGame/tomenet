@@ -1073,6 +1073,10 @@ void all_term_data_to_term_prefs(void);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
 extern const char* get_font_name(int term_idx);
+ #ifdef USE_LOGFONT
+extern int win_get_logfont_w(void);
+extern int win_get_logfont_h(void);
+ #endif
 extern void set_font_name(int term_idx, char* fnt);
 extern void term_toggle_visibility(int term_idx);
 extern bool term_get_visibility(int term_idx);

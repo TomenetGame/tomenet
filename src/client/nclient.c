@@ -1557,9 +1557,14 @@ int Net_start(int sex, int race, int class) {
 	Packet_printf(&wbuf, "%c", PKT_PLAY);
 
 #if defined(WINDOWS) || defined(USE_X11)
+ #if defined(WINDOWS) && defined(USE_LOGFONT)
+	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(), win_get_logfont_h());
+	else
+ #endif
 	get_screen_font_name(fname);
 #endif
-
+	//&graphics_tile_wid, &graphics_tile_hgt)) {
+	//td->font_wid; td->font_hgt;
 	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0))
 #ifdef USE_GRAPHICS
 		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd%hd%s%s", sex, race, class, trait, audio_sfx, audio_music, use_graphics, graphic_tiles, fname);
@@ -7863,12 +7868,15 @@ int Send_font(void) {
 
 	if (is_older_than(&server_version, 4, 8, 1, 2, 0, 0)) return(-1);
 
-	//&graphics_tile_wid, &graphics_tile_hgt)) {
-	//td->font_wid; td->font_hgt;
-
 #if defined(WINDOWS) || defined(USE_X11)
+ #if defined(WINDOWS) && defined(USE_LOGFONT)
+	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(), win_get_logfont_h());
+	else
+ #endif
 	get_screen_font_name(fname);
 #endif
+	//&graphics_tile_wid, &graphics_tile_hgt)) {
+	//td->font_wid; td->font_hgt;
 #ifdef USE_GRAPHICS
 	if ((n = Packet_printf(&wbuf, "%c%hd%s%s", PKT_FONT, use_graphics, graphic_tiles, fname)) <= 0) return(n);
 #else
