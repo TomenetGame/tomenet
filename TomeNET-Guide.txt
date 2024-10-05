@@ -5180,6 +5180,11 @@ an amulet, ie an item of 'tval' 40.
 Maps the Phial of Galadriel (#500 in k_info.txt) to font symbol #400, leaving
 its colour at its normal value (the one specified in the G-line in k_info.txt).
 
+--- !!! IMPORTANT !!! ---
+The font should always provide characters #2 and #127 as 'solid block' symbol!
+This is important because these two ASCII codes are used for drawing bar
+elements in the UI (especially if a player has 'solid_bars' option enabled).
+
 When using a custom font you probably want to turn off the option
 'font_map_solid_walls' in = 1, as it interferes with the mapping of various
 wall tiles: It will force-remap all affected wall tiles to character 127 for
