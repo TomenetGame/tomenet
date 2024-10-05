@@ -5206,6 +5206,7 @@ void win_logfont_inc(int term_idx, bool wh) {
 		td->lf.lfWidth++;
 	}
 	term_force_font(td, NULL);
+	recreateGraphicsObjects(td);
 }
 void win_logfont_dec(int term_idx, bool wh) {
 	term_data *td = &data[term_idx];
@@ -5220,6 +5221,7 @@ void win_logfont_dec(int term_idx, bool wh) {
 		td->lf.lfWidth--;
 	}
 	term_force_font(td, NULL);
+	recreateGraphicsObjects(td);
 }
 void win_logfont_set(int term_idx, char *sizestr) {
 	term_data *td = &data[term_idx];
@@ -5240,6 +5242,7 @@ void win_logfont_set(int term_idx, char *sizestr) {
 	td->lf.lfHeight = h;
 	td->lf.lfWidth = w;
 	term_force_font(td, NULL);
+	recreateGraphicsObjects(td);
 }
 #endif
 void term_toggle_visibility(int term_idx) {
