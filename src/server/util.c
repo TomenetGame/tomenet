@@ -3067,6 +3067,8 @@ void msg_print(int Ind, cptr msg_raw) {
  #endif
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 				    msg[msg_scan - 1] == '+' || msg[msg_scan - 1] == '-' ||
+				    /* writing a slash command to chat */
+				    msg[msg_scan - 1] == '/' ||
 				    /* Don't break colour codes */
 				    msg[msg_scan - 1] == '\377'
 
@@ -3083,6 +3085,7 @@ void msg_print(int Ind, cptr msg_raw) {
 				    msg[msg_scan] == '(' ||
 				    msg[msg_scan] == '[' ||
 				    msg[msg_scan] == '{' ||
+				    msg[msg_scan] == '<' || //smiley :<
  #endif
  #if 1 /* don't break smileys? */
 				    msg[msg_scan] == '-' ||
@@ -3092,6 +3095,7 @@ void msg_print(int Ind, cptr msg_raw) {
 				    msg[msg_scan] == ')' ||
 				    msg[msg_scan] == ']' ||
 				    msg[msg_scan] == '}' ||
+				    msg[msg_scan] == '>' || //smiley :>
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 				    msg[msg_scan] == '+' || msg[msg_scan] == '-' ||
 				    /* interpunction at the end of a sentence */
@@ -3105,9 +3109,11 @@ void msg_print(int Ind, cptr msg_raw) {
 					space_scan = msg_scan;
 					do {
 						space_scan--;
-					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
-						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
-						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
+					} while ((
+						/* Optional != '/' checks: Allow "use torch/lamp" -> to linebreak before "/lamp" */
+						(msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') || // && msg[space_scan] != '/') ||
+						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') || // && msg[space_scan] != '/') ||
+						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') || // && msg[space_scan] != '/') ||
  #if 1 /* don't break smileys? */
 						msg[space_scan - 1] == ':' || msg[space_scan - 1] == ';' ||
  #endif
@@ -3126,6 +3132,9 @@ void msg_print(int Ind, cptr msg_raw) {
 						msg[space_scan - 1] == '+' || msg[space_scan - 1] == '-' ||
 						/* pasting flags to chat ("SLAY_EVIL") */
 						msg[space_scan - 1] == '_' ||
+						/* writing a slash command to chat */
+						msg[space_scan - 1] == '/' ||
+						/* Don't break colour codes */
 						msg[space_scan - 1] == '\377'
 						) && space_scan > 0);
 
