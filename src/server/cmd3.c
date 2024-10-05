@@ -1753,9 +1753,11 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 					msg_print(Ind, "\377yThis item is a true artifact and cannot be dropped in a house!");
 					return;
 				}
-			} else //if (!istown(&p_ptr->wpos))
+			} else { //if (!istown(&p_ptr->wpos))
 			    //cfg.anti_arts_wild only?
 				msg_print(Ind, "\377RWarning! If you leave this map sector, the artifact will likely disappear!");
+				Send_warning_beep(Ind);
+			}
 		}
 	}
 
