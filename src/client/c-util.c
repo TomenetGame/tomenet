@@ -9772,7 +9772,7 @@ static void do_cmd_options_fonts(void) {
 		if (use_logfont)
 			Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter new logfont size, \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
 		else
-			Term_putstr(0, 2, -1, TERM_WHITE, "  \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
+			Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
 #else
 		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yESC\377w keep changes and exit");
 #endif
@@ -9991,17 +9991,20 @@ static void do_cmd_options_fonts(void) {
 
 		case '\r':
 #if defined(WINDOWS) && defined(USE_LOGFONT)
-			Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter new size in format '<width>x<height>' (eg \"9x15\"):");
-			Term_gotoxy(0, 21);
-			strcpy(tmp_name, "");
-			if (!askfor_aux(tmp_name, 159, 0)) {
+			if (use_logfont) {
+				Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter new size in format '<width>x<height>' (eg \"9x15\"):");
+				Term_gotoxy(0, 21);
+				strcpy(tmp_name, "");
+				if (!askfor_aux(tmp_name, 159, 0)) {
+					clear_from(20);
+					break;
+				}
 				clear_from(20);
+				if (!tmp_name[0]) break;
+				win_logfont_set(y, tmp_name);
 				break;
 			}
-			clear_from(20);
-			if (!tmp_name[0]) break;
-			win_logfont_set(y, tmp_name);
-#else
+#endif
 			Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter a font name:");
 			Term_gotoxy(0, 21);
 			strcpy(tmp_name, "");
@@ -10012,9 +10015,8 @@ static void do_cmd_options_fonts(void) {
 			clear_from(20);
 			if (!tmp_name[0]) break;
 			set_font_name(y, tmp_name);
- #ifndef WINDOWS
+#ifndef WINDOWS
 			sync_sleep(x11_refresh);
- #endif
 #endif
 			break;
 
@@ -10063,7 +10065,7 @@ static void do_cmd_options_fonts(void) {
 		case 'L':
 			/* We cannot live-change 'use_logfont' itself, as that'd render the client effectively frozen, just toggle the ini setting for next startup: */
 			use_logfont_ini = !use_logfont_ini;
-			if (!use_logfont_ini) c_msg_print("\377yUsing Windows-internal font instead of FON files. Requires restart, use CTRL+Q.");
+			if (use_logfont_ini) c_msg_print("\377yUsing Windows-internal font instead of FON files. Requires restart, use CTRL+Q.");
 			else c_msg_print("\377yUsing FON files instead of Windows-internal font. Requires restart, use CTRL+Q.");
 			break;
 #endif
