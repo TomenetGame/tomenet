@@ -3624,18 +3624,6 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		sell_obj.iron_trade = p_ptr->iron_trade;
 		sell_obj.iron_turn = -1;
 
-#ifdef ENABLE_SUBINVEN
-		item_new = autostow_or_carry(Ind, &sell_obj);
-		get_inven_item(Ind, item_new, &o_ptr);
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-#else
-		item_new = inven_carry(Ind, &sell_obj);
-		get_inven_item(Ind, item_new, &o_ptr);
-		/* Describe the final result */
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
-#endif
-
 		//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance < 10 ? 10 : chance), chance);
 		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
 #if 0 /* omit logging successful stealing of trivial items? */
@@ -3649,6 +3637,18 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 
 		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 			s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
+
+#ifdef ENABLE_SUBINVEN
+		item_new = autostow_or_carry(Ind, &sell_obj);
+		get_inven_item(Ind, item_new, &o_ptr);
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+#else
+		item_new = inven_carry(Ind, &sell_obj);
+		get_inven_item(Ind, item_new, &o_ptr);
+		/* Describe the final result */
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+#endif
 
 		/* Handle stuff */
 		handle_stuff(Ind);
