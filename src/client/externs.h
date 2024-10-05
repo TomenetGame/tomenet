@@ -1076,6 +1076,9 @@ extern const char* get_font_name(int term_idx);
  #ifdef USE_LOGFONT
 extern int win_get_logfont_w(int term_idx);
 extern int win_get_logfont_h(int term_idx);
+extern void win_logfont_inc(int term_idx, bool wh);
+extern void win_logfont_dec(int term_idx, bool wh);
+extern void win_logfont_set(int term_idx, char *sizestr);
  #endif
 extern void set_font_name(int term_idx, char* fnt);
 extern void term_toggle_visibility(int term_idx);

@@ -9761,10 +9761,17 @@ static void do_cmd_options_fonts(void) {
 	/* Interact */
 	while (go) {
 		/* Prompt XXX XXX XXX */
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w,\377y+\377w/\377y,\377w,\377y.\377w change height/width");
+#else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w/\377y+\377w,\377y=\377w smaller/bigger font");
+#endif
 		Term_putstr(0, 1, -1, TERM_WHITE, "  \377ySPACE\377w enter new window title, \377yr\377w reset window title to default, \377yR\377w reset all");
 #if defined(WINDOWS) && defined(USE_LOGFONT)
-		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
+		if (use_logfont)
+			Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter new logfont size, \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
+		else
+			Term_putstr(0, 2, -1, TERM_WHITE, "  \377yL\377w toggle logfont, \377yESC\377w keep changes and exit");
 #else
 		Term_putstr(0, 2, -1, TERM_WHITE, "  \377yENTER\377w enter a specific font name, \377yESC\377w keep changes and exit");
 #endif
@@ -9900,8 +9907,16 @@ static void do_cmd_options_fonts(void) {
 			}
 			break;
 
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+		case '.':
+			win_logfont_inc(y, FALSE);
+			break;
+#endif
 		case '=':
 		case '+':
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+			win_logfont_inc(y, TRUE);
+#else
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
 				//Include the graphic fonts, because we are cycling the clone-map
@@ -9909,9 +9924,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j + 1]);
-#ifndef WINDOWS
+ #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+ #endif
 						break;
 					}
 				}
@@ -9920,16 +9935,25 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, font_name[j + 1]);
-#ifndef WINDOWS
+ #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+ #endif
 						break;
 					}
 				}
 			}
+#endif
 			break;
 
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+		case ',':
+			win_logfont_dec(y, FALSE);
+			break;
+#endif
 		case '-':
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+			win_logfont_dec(y, TRUE);
+#else
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_CLONEMAP) && graphic_fonts > 0) {
 				//Include the graphic fonts, because we are cycling the clone-map
@@ -9937,9 +9961,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j - 1]);
-#ifndef WINDOWS
+ #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+ #endif
 						break;
 					}
 				}
@@ -9948,17 +9972,29 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, font_name[j - 1]);
-#ifndef WINDOWS
+ #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+ #endif
 						break;
 					}
 				}
 			}
+#endif
 			break;
 
-#if !defined(WINDOWS) || !defined(USE_LOGFONT)
 		case '\r':
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter new size in format '<width>x<height>' (eg \"9x15\"):");
+			Term_gotoxy(0, 21);
+			strcpy(tmp_name, "");
+			if (!askfor_aux(tmp_name, 159, 0)) {
+				clear_from(20);
+				break;
+			}
+			clear_from(20);
+			if (!tmp_name[0]) break;
+			win_logfont_set(y, tmp_name);
+#else
 			Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter a font name:");
 			Term_gotoxy(0, 21);
 			strcpy(tmp_name, "");
@@ -9972,8 +10008,8 @@ static void do_cmd_options_fonts(void) {
  #ifndef WINDOWS
 			sync_sleep(x11_refresh);
  #endif
-			break;
 #endif
+			break;
 
 		case 'l':
 			if (!fonts && !graphic_fonts) {

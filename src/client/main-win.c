@@ -5193,6 +5193,54 @@ int win_get_logfont_w(int term_idx) {
 int win_get_logfont_h(int term_idx) {
 	return(data[term_idx].lf.lfHeight);
 }
+void win_logfont_inc(int term_idx, bool wh) {
+	term_data *td = &data[term_idx];
+
+	if (wh) {
+		/* enforce sane dimensions */
+		if (td->lf.lfHeight >= 128) return;
+		td->lf.lfHeight++;
+	} else {
+		/* enforce sane dimensions */
+		if (td->lf.lfWidth >= 128) return;
+		td->lf.lfWidth++;
+	}
+	term_force_font(td, NULL);
+}
+void win_logfont_dec(int term_idx, bool wh) {
+	term_data *td = &data[term_idx];
+
+	if (wh) {
+		/* enforce sane dimensions */
+		if (td->lf.lfHeight <= 5) return;
+		td->lf.lfHeight--;
+	} else {
+		/* enforce sane dimensions */
+		if (td->lf.lfWidth <= 5) return;
+		td->lf.lfWidth--;
+	}
+	term_force_font(td, NULL);
+}
+void win_logfont_set(int term_idx, char *sizestr) {
+	term_data *td = &data[term_idx];
+	int w = 9, h = 15;
+	char *c;
+
+	w = atoi(sizestr);
+	c = strchr(sizestr, 'x');
+	if (!c) {
+		c_msg_print("\377yPlease enter two numbers for width and height, separated by an 'x' in between.");
+		return;
+	}
+	h = atoi(c + 1);
+
+	/* enforce sane dimensions */
+	if (w > 128 || h > 128 || w < 5 || h < 5) return;
+
+	td->lf.lfHeight = h;
+	td->lf.lfWidth = w;
+	term_force_font(td, NULL);
+}
 #endif
 void term_toggle_visibility(int term_idx) {
 	data[term_idx].visible = !data[term_idx].visible;
