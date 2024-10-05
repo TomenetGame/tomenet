@@ -3242,6 +3242,8 @@ static void init_windows(void) {
 			if (td->font_hgt) td->lf.lfHeight = td->font_hgt; else td->font_hgt = td->lf.lfHeight;
 			if (td->font_wid) td->lf.lfWidth  = td->font_wid; else td->font_wid = td->lf.lfWidth;
 			// pro-tip: win32 calls corrupting your .INI? flag it read-only!
+			td->lf.lfOutPrecision = OUT_DEFAULT_PRECIS; //(OUT_DEFAULT_PRECIS,) OUT_OUTLINE_PRECIS, OUT_TT_PRECIS (slow), OUT_TT_ONLY_PRECIS
+			td->lf.lfQuality = ANTIALIASED_QUALITY; //(DEFAULT_QUALITY,) ANTIALIASED_QUALITY, CLEARTYPE_QUALITY (perhaps slow)
 			td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
 			term_force_font(td, NULL);
 			/* Paranoia: Again ensure valid font_hgt/font_wid values for USE_GRAPHICS - C. Blue */
