@@ -7425,7 +7425,7 @@
 
 /* For turning feats into treasure veins */
 #define cave_non_xformable_grid(C) \
-    ((!(f_info[(C)->feat].flags1 & FF1_CAN_CLIMB) && (f_info[(C)->feat].flags1 & FF1_PERMANENT)) || (f_info[(C)->feat].flags1 & FF1_FLOOR) || ((C)->m_idx))
+    ((!(f_info[(C)->feat].flags1 & FF1_CAN_CLIMB) && (f_info[(C)->feat].flags1 & FF1_PERMANENT)) || (f_info[(C)->feat].flags1 & FF1_FLOOR)) /* || ((C)->m_idx)) -- no monsters yet at generation time */
 
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \

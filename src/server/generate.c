@@ -1455,9 +1455,13 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 			/* Convert any feat except for permanent ones */
 			if (pierce) {
-				if (cave_perma_bold(zcave, ty, tx)) continue;
+				if (cave_perma_bold(zcave, ty, tx)
+				    /* exception: can go through mountains somewhat */
+				    && (!cave_non_xformable_grid(c_ptr) || !rand_int(2)))
+					continue;
 			} else {
-				/* Only convert "granite" walls or whatever the dungeon uses as walls */
+				/* Only convert "granite" walls or whatever the dungeon uses as walls and also as filler material -
+				   this is actually more piercing than 'pierce', as it eats eg mountains in OC or lava walls in Mt Doom, which are permanent feats. */
 				if (!(c_ptr->feat == feat_wall_inner) &&
 				    !(c_ptr->feat == feat_wall_outer) &&
 				    !(c_ptr->feat == d_info[dun_type].fill_type[0]) &&
