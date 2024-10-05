@@ -13110,9 +13110,9 @@ void handle_process_font_file(void) {
 	char_map_offset = 0; //paranoia
 
 	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
-#if defined(WINDOWS) || defined(USE_X11)
+ #if defined(WINDOWS) || defined(USE_X11)
 	get_screen_font_name(fname);
-#endif
+ #endif
 	if (fname[0]) {
 		FILE *fff;
 		/* Linux: fname has this format: '5x8' */
@@ -13130,19 +13130,24 @@ void handle_process_font_file(void) {
 		   'font-custom-5X8.prf' instead of 'font-custom-5X8.FON.prf' */
 		if (!strcasecmp(&fname[strlen(fname) - 4], ".FON")) fname[strlen(fname) - 4] = 0;
  #endif
-		/* Create prf file name from font file name */
-		sprintf(buf, "font-custom-%s.prf", fname);
-		/* Abuse fname to build the file path */
-		path_build(fname, 1024, ANGBAND_DIR_USER, buf);
-		fff = my_fopen(fname, "r");
-		/* If custom file doesn't exist, fallback to normal font pref file: */
-		custom_font_warning = FALSE;
-		if (!fff) sprintf(buf, "font-%s.prf", ANGBAND_SYS);
-		else {
-			fclose(fff);
-			if (c_cfg.font_map_solid_walls) custom_font_warning = TRUE;
+ #if defined(WINDOWS) && defined(USE_LOGFONT)
+		if (!use_logfont) /* logfont has no custom mapping, don't accidentally use the one from the currently configured non-logfont-font */
+ #endif
+		{
+			/* Create prf file name from font file name */
+			sprintf(buf, "font-custom-%s.prf", fname);
+			/* Abuse fname to build the file path */
+			path_build(fname, 1024, ANGBAND_DIR_USER, buf);
+			fff = my_fopen(fname, "r");
+			/* If custom file doesn't exist, fallback to normal font pref file: */
+			custom_font_warning = FALSE;
+			if (!fff) sprintf(buf, "font-%s.prf", ANGBAND_SYS);
+			else {
+				fclose(fff);
+				if (c_cfg.font_map_solid_walls) custom_font_warning = TRUE;
+			}
+			process_pref_file(buf);
 		}
-		process_pref_file(buf);
  #ifdef USE_GRAPHICS
 		if (use_graphics) handle_process_graphics_file();
  #endif
