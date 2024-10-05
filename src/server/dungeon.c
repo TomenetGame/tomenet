@@ -12715,7 +12715,7 @@ void handle_XID(int Ind) {
 	}
 }
 
-/* Helper function to determine snowballs melting */
+/* Helper function to determine snowballs melting, blood potions going bad and other stuff */
 bool cold_place(struct worldpos *wpos) {
 	bool cold;
 	dungeon_type *d_ptr = NULL;
@@ -12729,6 +12729,7 @@ bool cold_place(struct worldpos *wpos) {
 	case WILD_ICE:
 		cold = TRUE;
 		break;
+	case WILD_VOLCANO:
 	case WILD_DESERT:
 		cold = FALSE;
 		break;
@@ -12738,26 +12739,78 @@ bool cold_place(struct worldpos *wpos) {
 	if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 	else if (wpos->wz < 0) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 	if (d_ptr) {
-		int dun_type;
+		u32b dflags1;
 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+		if (in_irondeepdive(wpos)) dflags1 = d_info[iddc[ABS(wpos->wz)].type].flags1;
 		else
 #endif
-		dun_type = d_ptr->theme ? d_ptr->theme : d_ptr->type;
-
-		switch (dun_type) {
-		case DI_HELCARAXE:
-		case DI_CLOUD_PLANES:
-			cold = TRUE;
-			break;
-		default:
-			cold = FALSE;
+		/* custom 'wilderness' (type-0) dungeon, admin-added */
+		if (d_ptr->theme) {
+			/* start with original flags of this type-0 dungeon */
+			dflags1 = d_ptr->flags1;
+			/* add 'theme' flags that don't mess up our main flags too much */
+			dflags1 |= (d_info[d_ptr->theme].flags1 & DF1_THEME_MASK);
 		}
+		/* normal dungeon from d_info.txt */
+		else dflags1 = d_ptr->flags1;
+
+		if (dflags1 & DF1_COLD_PLACE) cold = TRUE;
+		//else if (dflags1 & DF1_HOT_PLACE) cold = FALSE;
+		else cold = FALSE;
 	}
 
 	return(cold);
 }
+#if 0 /* currently unused, todo: use^^ */
+/* Helper function to determine snowballs melting, blood potions going bad and other stuff */
+bool hot_place(struct worldpos *wpos) {
+	bool hot;
+	dungeon_type *d_ptr = NULL;
+
+	/* not melting while it's hot */
+	if (season == SEASON_SUMMER) hot = TRUE;
+	else hot = FALSE;
+
+	/* not melting snowballs in always-winter regions, but melting in never-winter regions */
+	switch (wild_info[wpos->wy][wpos->wx].type) {
+	case WILD_ICE:
+		hot = FALSE;
+		break;
+	case WILD_VOLCANO:
+	case WILD_DESERT:
+		hot = TRUE;
+		break;
+	}
+
+	/* melt faster in hot dungeons */
+	if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+	else if (wpos->wz < 0) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+	if (d_ptr) {
+		u32b dflags1;
+
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		if (in_irondeepdive(wpos)) dflags1 = d_info[iddc[ABS(wpos->wz)].type].flags1;
+		else
+#endif
+		/* custom 'wilderness' (type-0) dungeon, admin-added */
+		if (d_ptr->theme) {
+			/* start with original flags of this type-0 dungeon */
+			dflags1 = d_ptr->flags1;
+			/* add 'theme' flags that don't mess up our main flags too much */
+			dflags1 |= (d_info[d_ptr->theme].flags1 & DF1_THEME_MASK);
+		}
+		/* normal dungeon from d_info.txt */
+		else dflags1 = d_ptr->flags1;
+
+		if (dflags1 & DF1_HOT_PLACE) hot = TRUE;
+		//else if (dflags1 & DF1_COLD_PLACE) hot = FALSE;
+		else hot = FALSE;
+	}
+
+	return(hot);
+}
+#endif
 
 /* Apply flags for jail dungeons aka escape tunnels */
 void apply_jail_flags(u32b *f1, u32b *f2, u32b *f3) {

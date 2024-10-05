@@ -9248,10 +9248,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif	/* 0 */
 
 	if (!(dflags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
-	    !(dflags1 & DF1_NO_STREAMERS))
+	    (dflags1 & DF1_STREAMERS))
 		streamers = TRUE;
 	if (!(dflags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
-	    !(dflags3 & DF3_NO_WALL_STREAMERS))
+	    ((dflags3 & DF3_WALL_STREAMERS) || (dflags2 & DF2_WALL_STREAMER_ADD)))
 		wall_streamers = TRUE;
 
 	if (maze) generate_maze(wpos, (dflags1 & DF1_MAZE) ? 1 : randint(3));
@@ -9306,18 +9306,22 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		if (wall_streamers) {
 			/* Hack -- Add some magma streamers */
-			for (i = 0; i < DUN_STR_MAG; i++)
+			k = ((dflags3 & DF3_WALL_STREAMERS) ? DUN_STR_MAG : 0)
+			    + ((dflags2 & DF2_WALL_STREAMER_ADD) ? 1 : 0);
+			for (i = 0; i < k ; i++)
 				build_streamer(wpos, FEAT_MAGMA, DUN_STR_MC, FALSE);
 
 			/* Hack -- Add some quartz streamers */
-			for (i = 0; i < DUN_STR_QUA; i++)
+			k = ((dflags3 & DF3_WALL_STREAMERS) ? DUN_STR_QUA : 0)
+			    + ((dflags2 & DF2_WALL_STREAMER_ADD) ? 1 : 0);
+			for (i = 0; i < k; i++)
 				build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
 
 			/* Add some sand streamers */
-			if (((dflags1 & DF1_SAND_VEIN) && !rand_int(4)) ||
-			    magik(DUN_SANDWALL)) {
+			k = ((dflags3 & DF3_WALL_STREAMERS) && (((dflags1 & DF1_SAND_VEIN) && !rand_int(4)) || magik(DUN_SANDWALL)) ? 1 : 0)
+			    + (((dflags2 & DF2_WALL_STREAMER_ADD) && (dflags1 & DF1_SAND_VEIN)) ? 1 : 0);
+			for (i = 0; i < k; i++)
 				build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
-			}
 		}
 
 		/* Hack -- Add some rivers if requested */
@@ -9563,7 +9567,23 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 	/* Place random treasure veins? */
 	if (d_ptr->flags1 & DF1_RANDOM_VEINS) {
-		//todo: implement
+		i = 10 + rand_int(6); /* Number of veins */
+		for (k = 0; k < i; k++) {
+			/* Pick a random grid */
+			y = 1 + rand_int(dun->l_ptr->hgt - 2);
+			x = 1 + rand_int(dun->l_ptr->wid - 2);
+			c_ptr = &zcave[y][x];
+
+			if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;
+
+			/* overwriting permanent feats is ok, eg mountains, as long as we're not killing staircases; don't block floors though */
+			if (cave_non_xformable_grid(c_ptr)) continue;
+
+			/* No veins inside nests/pits */
+			if (c_ptr->info & CAVE_NEST_PIT) continue;
+
+			c_ptr->feat = rand_int(2) ? FEAT_QUARTZ_K : FEAT_MAGMA_K; /* no FEAT_SANDWALL_K, not really fitting */
+		}
 	}
 
 	/* Do this now, after all streamers have been completed. */

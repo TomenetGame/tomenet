@@ -1193,8 +1193,8 @@ static cptr d_info_flags1[] = {
 	"CAVE",
 	"CAVERN",
 	"NO_UP",
-	"HOT",
-	"COLD",
+	"HOT_PLACE",
+	"COLD_PLACE",
 	"FORCE_DOWN",
 
 	"FORGET",
@@ -1213,7 +1213,7 @@ static cptr d_info_flags1[] = {
 	"ADJUST_LEVEL_1",
 	"ADJUST_LEVEL_2",
 	"NO_RECALL",
-	"NO_STREAMERS"
+	"STREAMERS"
 };
 
 static cptr d_info_flags2[] = {
@@ -1248,7 +1248,7 @@ static cptr d_info_flags2[] = {
 	"TOWNS_RND",
 	"ADJUST_LEVEL_1_2",
 	"NO_SHAFT",
-	"ADJUST_LEVEL_PLAYER",
+	"WALL_STREAMER_ADD",
 	"DELETED"	/* not likely */
 };
 
@@ -1271,7 +1271,7 @@ static cptr d_info_flags3[] = {
 	"VMANY_MONSTERS",
 	"DEEPSUPPLY",
 
-	"NO_WALL_STREAMERS",
+	"WALL_STREAMERS",
 	"NOT_EMPTY",
 	"NOT_WATERY",
 	"FEW_ROOMS",

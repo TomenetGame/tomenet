@@ -6869,8 +6869,8 @@
 #define DF1_CAVERN		0x00000800U	/* Allow cavern rooms */
 
 #define DF1_NO_UP		0x00001000U	/* Disallow up stairs */
-#define DF1_HOT			0x00002000U	/* Corpses on ground and in pack decay quicker through heat -- not implemented + unused -- todo: good idea for consumables going bad */
-#define DF1_COLD		0x00004000U	/* Corpses on ground and in pack decay quicker(?) through cold -- not implemented + unused -- todo: good idea for consumables going bad */
+#define DF1_HOT_PLACE		0x00002000U	/* Corpses on ground and in pack decay quicker through heat -- not implemented -- todo: good idea for consumables going bad */
+#define DF1_COLD_PLACE		0x00004000U	/* Corpses on ground and in pack decay slower through cold -- not implemented -- todo: good idea for consumables going bad */
 #define DF1_FORCE_DOWN		0x00008000U	/* No up stairs generated */
 
 #define DF1_FORGET		0x00010000U	/* Features are forgotten, like the Maze and Illusory Castle */
@@ -6891,15 +6891,15 @@
 #define DF1_ADJUST_LEVEL_1	0x10000000U	/* Minimum monster level will be equal to dungeon level --- not implemented + unsued (HOLE) */
 #define DF1_ADJUST_LEVEL_2	0x20000000U	/* Minimum monster level will be double the dungeon level --- not implented (HOLE) */
 #define DF1_NO_RECALL		0x40000000U	/* No recall allowed; also includes everything NO_RECALL_INTO does! */
-#define DF1_NO_STREAMERS	0x80000000U	/* No streamers (water, lava, trees) */
+#define DF1_STREAMERS		0x80000000U	/* Streamers (water, lava, trees) */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set by admin on dungeon creation) too much */
 #define DF1_THEME_MASK \
 	(DF1_MAZE | DF1_SMALL | DF1_SMALLEST | DF1_BIG | DF1_NO_DOORS | DF1_WATER_RIVER | DF1_LAVA_RIVER | \
-	DF1_WATER_RIVERS | DF1_WATER_RIVERS | DF1_CAVE | DF1_CAVERN | DF1_HOT | DF1_COLD | \
+	DF1_WATER_RIVERS | DF1_WATER_RIVERS | DF1_CAVE | DF1_CAVERN | DF1_HOT_PLACE | DF1_COLD_PLACE | \
 	DF1_FORGET | DF1_NO_DESTROY | DF1_SAND_VEIN | DF1_CIRCULAR_ROOMS | DF1_EMPTY | \
-	DF1_DOUBLE | DF1_LIFE_LEVEL | DF1_EVOLVE | DF1_NO_STREAMERS)
+	DF1_DOUBLE | DF1_LIFE_LEVEL | DF1_EVOLVE | DF1_STREAMERS | DF1_RANDOM_VEINS)
 
 
 /* dungeon flags for dungeon_type
@@ -6953,7 +6953,7 @@
 
 #define DF2_ADJUST_LEVEL_1_2	0x10000000U /* Minimum monster level will be half the dungeon level --- not implemented (HOLE) */
 #define DF2_NO_SHAFT		0x20000000U /* No shafts --- #if0'ed, todo: check and reenable! -- related to DF1_FLAT (which also has no effect atm)? */
-#define DF2_ADJUST_LEVEL_PLAYER	0x40000000U /* Uses player level * 2 instead of dungeon level for other ADJUST_LEVEL flags -- nope, not implemented and unused (HOLE) */
+#define DF2_WALL_STREAMER_ADD	0x00010000U /* More than usual wall streamers - stacks with DF3_WALL_STREAMERS but can also be used solo for generating 1 (usually) wall streamer */
 #define DF2_DELETED		0x80000000U /* Deleted, but not yet removed */
 
 #define DF2_NO_ENTRY_MASK	(DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)
@@ -6962,8 +6962,7 @@
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set by admin on dungeon creation) too much */
 #define DF2_THEME_MASK \
-	(DF2_NO_MAGIC_MAP | \
-	DF2_ADJUST_LEVEL_1_2)
+	(DF2_NO_MAGIC_MAP | DF2_ADJUST_LEVEL_1_2 | DF2_WALL_STREAMER_ADD)
 
 
 /* moar flags */
@@ -6987,7 +6986,7 @@
 #define DF3_VMANY_MONSTERS	0x00004000U	/* Spawn twice as many monsters as usual */
 #define DF3_DEEPSUPPLY		0x00008000U	/* allow generation of dungeon stores offering supplies, on deep floors (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
 
-#define DF3_NO_WALL_STREAMERS	0x00010000U	/* No streamers (any wall types) */
+#define DF3_WALL_STREAMERS	0x00010000U	/* Wall-type streamers (if of type Quartz, Magma, Sandwall, then they hold treasure veins) */
 #define DF3_NOT_EMPTY		0x00020000U	/* Disallow arena levels */
 #define DF3_NOT_WATERY		0x00040000U	/* No 'watery' dungeon -> no water rivers */
 #define DF3_FEW_ROOMS		0x00080000U	/* Less room_build() calls for any sort of struct (including vaults) */
@@ -7011,7 +7010,7 @@
    without changing its main flags (set by admin on dungeon creation) too much */
 #define DF3_THEME_MASK \
 	(DF3_DERARE_MONSTERS | DF3_MANY_MONSTERS | DF3_VMANY_MONSTERS | \
-	DF3_NO_WALL_STREAMERS | DF3_NOT_EMPTY | DF3_NOT_WATERY | DF3_FEW_ROOMS | DF3_NO_VAULTS | DF3_NO_MAZE | DF3_NO_EMPTY | DF3_NO_DARK | DF3_NO_DESTROYED)
+	DF3_WALL_STREAMERS | DF3_NOT_EMPTY | DF3_NOT_WATERY | DF3_FEW_ROOMS | DF3_NO_VAULTS | DF3_NO_MAZE | DF3_NO_EMPTY | DF3_NO_DARK | DF3_NO_DESTROYED)
 
 
 /* level flags for dun_level */
@@ -7423,6 +7422,10 @@
 #define cave_running_bold_trees(p_ptr,ZCAVE,Y,X) \
 	(((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->levitate)) || \
 	((ZCAVE[Y][X].feat == FEAT_DARK_PIT) && p_ptr->levitate))
+
+/* For turning feats into treasure veins */
+#define cave_non_xformable_grid(C) \
+    ((!(f_info[(C)->feat].flags1 & FF1_CAN_CLIMB) && (f_info[(C)->feat].flags1 & FF1_PERMANENT)) || (f_info[(C)->feat].flags1 & FF1_FLOOR) || ((C)->m_idx))
 
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \
