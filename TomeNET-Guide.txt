@@ -5047,6 +5047,9 @@ desired dimensions, the disadvantage is that .FON files can offer various font
 styles that you might visually prefer, and .FON files can contain custom font
 symbols and mappings such as pseudo-graphical font symbols, which the logfont
 cannot offer (also see (2.7a) custom fonts chapter below).
+Using logfont will disable font_map_solid_walls and solid_bars options as the
+required symbol for these aren't supported by the windows-internal font, and
+logfont can also be enabled via command-line parameter '-L'.
 
 Fonts can also be pseudo-graphical, some such fonts might come shipped with the
 client. Again press = f and then use + and - keys to switch the main window
