@@ -202,6 +202,10 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
 			s_printf("GE_DUNGEON_KEEPER(%d)\n", i);
 			return;
+		case GE_ADVENTURE:
+			s_printf("GE_ADVENTURE(%d)\n", i);
+			/* no reward deed for adventure modules */
+			return;
 		case GE_NONE:
 		default:
 			break;
