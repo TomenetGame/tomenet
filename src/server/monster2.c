@@ -1642,11 +1642,37 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 				strcpy(desc, "your ");
 				strcat(desc, name);
 				break;
-			case 3: /* party */
-				done = FALSE; //todo
+			case 2: /* party */
+				if (Ind && m_ptr->related == p_ptr->party) {
+					strcpy(desc, "your party's ");
+					strcat(desc, name);
+				} else if (m_ptr->related < MAX_PARTIES && parties[m_ptr->related].members) {
+					strcpy(desc, parties[m_ptr->related].name);
+					switch (parties[m_ptr->related].name[strlen(parties[m_ptr->related].name) - 1]) {
+					case 's': case 'x': case 'z':
+						strcat(desc, "' ");
+						break;
+					default:
+						strcat(desc, "'s ");
+					}
+					strcat(desc, name);
+				} else done = FALSE; /* fallback */
 				break;
-			case 4: /* guild */
-				done = FALSE; //todo
+			case 3: /* guild */
+				if (Ind && m_ptr->related == p_ptr->guild) {
+					strcpy(desc, "your guild's ");
+					strcat(desc, name);
+				} else if (m_ptr->related < MAX_GUILDS && guilds[m_ptr->related].members) {
+					strcpy(desc, guilds[m_ptr->related].name);
+					switch (guilds[m_ptr->related].name[strlen(guilds[m_ptr->related].name) - 1]) {
+					case 's': case 'x': case 'z':
+						strcat(desc, "' ");
+						break;
+					default:
+						strcat(desc, "'s ");
+					}
+					strcat(desc, name);
+				} else done = FALSE; /* fallback */
 				break;
 			}
 		}
