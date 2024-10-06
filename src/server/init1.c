@@ -7618,6 +7618,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			byte attr;
 			int good, great, vgreat;
 			int pval, bpval, name1, name2, name2b;
+			u16b nameflags;
 
 			/* find out questor type first */
 			s = buf + 2;
@@ -7629,9 +7630,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			switch (q) {
 			case QI_QUESTOR_NPC:
-				if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%c:%d:%d:%[^:]",
+				if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%c:%d:%d:%[^:]:%hd",
 				    &q, &lite, &ridx, &reidx, &rmapcnt, &rcharidx, &attr, &minlv, &maxlv,
-				    tmpbuf)) return(1);
+				    tmpbuf, &nameflags)) return(1);
 				q_questor->type = q;
 				q_questor->lite = (unsigned char)lite;
 				q_questor->ridx = ridx;
@@ -7644,22 +7645,24 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (maxlv == -1) maxlv = 0; /* (hack) Fix wrong q_info.txt data instead of throwing sanitizer-warnings. Todo: Instead, correct the wrong -1 values in q_info.txt. */
 				q_questor->rlevmax = maxlv;
 				strcpy(q_questor->name, tmpbuf);
+				q_questor->nameflags = nameflags;
 				break;
 			case QI_QUESTOR_PARCHMENT:
-				if (6 != sscanf(s, "%d:%d:%d:%c:%d:%[^:]",
+				if (7 != sscanf(s, "%d:%d:%d:%c:%d:%[^:]:%hd",
 				    &q, &lite, &sval, &attr,
-				    &minlv, tmpbuf)) return(1);
+				    &minlv, tmpbuf, &nameflags)) return(1);
 				q_questor->type = q;
 				q_questor->lite = (unsigned char)lite;
 				q_questor->psval = sval;
 				q_questor->rattr = color_char_to_attr(attr);
 				q_questor->plev = minlv;
 				strcpy(q_questor->name, tmpbuf);
+				q_questor->nameflags = nameflags;
 				break;
 			case QI_QUESTOR_ITEM_PICKUP:
-				if (15 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%c:%d:%[^:]",
+				if (16 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%c:%d:%[^:]:%hd",
 				    &q, &lite, &tval, &sval, &pval, &bpval, &name1, &name2, &name2b,
-				    &good, &great, &vgreat, &attr, &minlv, tmpbuf)) return(1);
+				    &good, &great, &vgreat, &attr, &minlv, tmpbuf, &nameflags)) return(1);
 				q_questor->type = q;
 				q_questor->lite = (unsigned char)lite;
 				q_questor->otval = tval;
@@ -7675,6 +7678,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_questor->oattr = color_char_to_attr(attr);
 				q_questor->olev = minlv;
 				strcpy(q_questor->name, tmpbuf);
+				q_questor->nameflags = nameflags;
 				break;
 			default:
 				return(1);
@@ -8076,11 +8080,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'S' for questor changes/polymorphing/hostility */
 		if (buf[0] == 'S') {
 			int q, talk, despawn, invinc, dfail, ridx, reidx, rmapcnt, rcharidx, lev;
+			u16b nameflags;
 			byte rattr;
 
 			s = buf + 2;
-			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%d:%d:%c:%d",
-			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &reidx, &rmapcnt, &rcharidx, &rattr, &lev)) return(1);
+			if (13 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%hd:%d:%d:%d:%d:%c:%d",
+			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &nameflags, &ridx, &reidx, &rmapcnt, &rcharidx, &rattr, &lev)) return(1);
 
 			if (stage < 0 || stage >= QI_STAGES) return(1);
 			if (q < 0 || q > q_ptr->questors) return(1);
@@ -8094,6 +8099,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				strcpy(c, tmpbuf);
 				q_qmorph->name = c;
 			}
+			q_qmorph->nameflags = nameflags;
 			if (ridx) q_qmorph->ridx = ridx;
 			q_qmorph->reidx = reidx;
 			q_qmorph->rcharidx = rcharidx; /* (-1 to keep) */

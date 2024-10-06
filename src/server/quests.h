@@ -107,6 +107,7 @@ typedef struct qi_questor {
 	byte oattr;
 
 	char name[MAX_CHARS];				/* optional pseudo-unique name that overrides the normal name */
+	u16b nameflags;
 
 	bool talkable;					/* questor initially starts accepting dialogue? (by bumping usually) */
 	bool despawned;					/* questor initially starts despawned? */
@@ -153,6 +154,7 @@ typedef struct qi_questor_morph {
 	s16b death_fail;				/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm)
 							   -1 = quest fails completely, 255 = no effect */
 	cptr name;					/* questor changes optional pseudo-unique name during this stage? */
+	u16b nameflags;					/* ^ ... and nameflags perhaps with it? */
 	s16b ridx; 					/* questor changes to this base monster type */
 	s16b reidx; 					/* questor changes to this ego monster type */
 	s16b rmapcnt; //counter for custom mappings (fonts/tilesets)

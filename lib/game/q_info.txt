@@ -23,9 +23,10 @@ V:1.0.0
 # There can be up to 30 Q-lines, for up to 30 questors
 # 'rcharidx' is the index of a monster in r_info whose visuals (except attr) we want to use. It's dfferent from 'ridx' which is responsible for its stats instead and not for the visual appearance.
 # 'rmapcounter' is for custom mappings (fonts/tilesets): a counter number from 0 to n, specifying a mapping index that can be referred in .prf mapping files via special syntax 'R:Q<questindex>N<counter>:[<attr>]/[<char>]'.
-# Q (for type=monster)  :type:lite:ridx:reidx:rmapcounter:rcharidx:rattr:minlv:maxlv:name
-# Q (for type=parchment):type:lite:sval:attr:level:name
-# Q (for type=object)   :type:lite:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
+# 'nameflags' 0x1 RF1_MALE, 0x2 RF1_FEMALE, 0x4 RF8_PSEUDO_UNIQUE, 0x8 RF8_PLURAL, 0x10 related-to-all (related_type=-1 aka name always prefixed with "your")
+# Q (for type=monster)  :type:lite:ridx:reidx:rmapcounter:rcharidx:rattr:minlv:maxlv:name:nameflags
+# Q (for type=parchment):type:lite:sval:attr:level:name:nameflags
+# Q (for type=object)   :type:lite:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name:nameflags
 
 # note: Each L/F/K-line must follow after its Q line!
 # L (up to 30x, per Q line - questor location):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
@@ -44,7 +45,7 @@ V:1.0.0
 
 # 'rchar-idx' is the index of a monster in r_info whose visuals (except attr) we want to use. It's dfferent from 'ridx' which is responsible for its stats instead and not for the visual appearance.
 # 'rmapcounter' is for custom mappings (fonts/tilesets): a counter number from 0 to n, specifying a mapping index that can be referred in .prf mapping files via special syntax 'R:Q<questindex>N<counter>:[<attr>]/[<char>]'.
-# (optional - questor morph/change) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):ridx (0 to keep):reidx (-1 to keep):rmapcounter:rcharidx (-1 to keep):attr ('-' to keep):level (0 to keep)
+# (optional - questor morph/change) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):nameflags (255 to keep):ridx (0 to keep):reidx (-1 to keep):rmapcounter:rcharidx (-1 to keep):attr ('-' to keep):level (0 to keep)
 # (optional - questor hostility) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime (-1 to disable):revert-after-realtime (0 to disable):newstage:quiet?
 # (optional - questor moves/teles) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 
@@ -163,7 +164,7 @@ N:0:testquesAR:C. Blue:Test Quest:-1:0:0
 C:0
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 T:1:1:1:1:1:1:1:1:1:-1:-1
-Q:1:0:37:0:0:37:T:-1:-1:Blind Bat
+Q:1:0:37:0:0:37:T:-1:-1:Blind Bat:0
 #L:2:0:1:-1:-1:-1:0:98:39:0:-:0:0
 L:0:0:0:63:63:0:0:98:39:0:-:0:0
 F:0:1:1:0:1:0:0
@@ -196,8 +197,8 @@ R:4:80:35:0:0:0:0:0:0:0:0:0:3:1:0
 N:1:testquestM:C. Blue:Minimal Test Quest:-1:0:0
 # note: only purpose of I-line is to restrict it to privileged users/admins
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
-#Q:1:0:37:0:0:37:n:-1:-1:-1:-1:-1:Fast Bat
-Q:3:0:22:30:0:0:0:0:0:0:0:0:P:0:Sharp..Bat..of Slicing?
+#Q:1:0:37:0:0:37:n:-1:-1:-1:-1:-1:Fast Bat:0
+Q:3:0:22:30:0:0:0:0:0:0:0:0:P:0:Sharp..Bat..of Slicing?:0
 L:0:0:0:63:63:0:0:100:39:0:-:0:0
 W:0:0:1:-:Hello, $$T! Wanna visit the General Store for me?
 Y:0:0:-:y:-:1
@@ -213,7 +214,7 @@ R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
 # for testing purpose
 N:2:testquesKR:C. Blue:Kill/Retrieve Test Quest:-1:0:0
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
-Q:1:0:37:0:0:37:N:-1:-1:Goalkeeper Bat
+Q:1:0:37:0:0:37:N:-1:-1:Goalkeeper Bat:0
 L:0:0:0:63:63:0:0:99:35:0:-:0:0
 W:0:0:0:-:'Sup, yo $$r! [[Kill]] shit or [[retrieve]] stuff for me.
 W:0:0:0:-:So what do you prefer, buddy?
@@ -264,7 +265,7 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 N:3:testCastle:C. Blue:Treasure Depository Breach:-1:0:0
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 
-Q:1:1:1059:0:0:1059:u:-1:-1:Guard
+Q:1:1:1059:0:0:1059:u:-1:-1:Guard:0
 L:0:0:0:63:63:0:0:150:30:0:tq_testcastle.txt:143:22
 W:0:0:0:-:Hold it right there! What is the password?
 Wr:0:0:$$Q That's not the right password, $$r!
@@ -276,7 +277,7 @@ y:0:-1:-:$$p1
 yR:-:You may enter!
 J:1:0:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
 
-Q:1:1:1059:0:0:1059:u:-1:-1:Guard
+Q:1:1:1059:0:0:1059:u:-1:-1:Guard:0
 L:0:0:0:63:63:0:0:152:30:0:-:0:0
 W:1:0:0:-:Hold it right there! What is the password?
 Y:1:-1:-:suxen:-:1
@@ -284,7 +285,7 @@ y:1:-1:-:suxen
 yR:-:You may enter!
 J:1:1:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
 
-$TEST_SERVER$Q:1:0:15:0:0:15:y:-1:-1:Dozing drunk
+$TEST_SERVER$Q:1:0:15:0:0:15:y:-1:-1:Dozing drunk:0
 $TEST_SERVER$L:0:0:0:63:63:0:0:149:24:0:-:0:0
 $TEST_SERVER$W:2:0:0:-:Washhup? Hic..
 
@@ -312,7 +313,7 @@ N:4:towneltalk:C. Blue:Town Elder Talk:-1:3:1
 C:0
 I:0:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 T:1:1:1:1:1:1:1:1:1:-1:-1
-Q:1:1:15:15:0:15:v:-1:-1:Town Elder
+Q:1:1:15:15:0:15:v:-1:-1:the Town Elder:4
 #L:0:0:0:32:32:0:0:95:35:0:-:0:0
 #L:0:0:0:32:32:0:0:120:39:0:-:0:0
 L:0:0:0:32:32:0:0:120:40:0:-:0:0

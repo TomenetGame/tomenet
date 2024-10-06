@@ -1943,6 +1943,8 @@ struct monster_type {
 	s16b r_idx;			/* Monster race index */
 
 	s32b owner;			/* ID of the player owning it (if it is a pet) */
+	s32b related;			/* ID of the player who is related to this monster spawn, just for visual/messaging purpose, not gameplay relevant */
+	byte related_type;		/* 0 = player/none, 1 = everyone, 2 = party, 3 = guild */
 
 	byte fy;			/* Y location on map */
 	byte fx;			/* X location on map */
@@ -2084,6 +2086,8 @@ struct monster_type {
 	s16b custom_lua_deletion;	/* Runs custom lua script on deletion */
 	s16b custom_lua_awoke;		/* Runs custom lua script on waking up (only the 1st time) */
 	s16b custom_lua_sighted;	/* Runs custom lua script on LoS to player (only the 1st time) */
+
+	s32b temp;			/* Misc/temp stuff -- unused */
 };
 
 typedef struct monster_ego monster_ego;

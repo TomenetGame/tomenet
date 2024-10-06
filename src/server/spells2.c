@@ -8901,7 +8901,7 @@ void golem_creation(int Ind, int max) {
 	int golem_type = -1;
 	int golem_arms[4], golem_m_arms = 0;
 	int golem_legs[2], golem_m_legs = 0;
-	s16b golem_flags = 0;
+	s16b golem_command_flags = 0;
 	cave_type *c_ptr;
 	int x, y, k, g_cnt = 0;
 	bool okay = FALSE;
@@ -8923,6 +8923,7 @@ void golem_creation(int Ind, int max) {
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx) continue;
 
+		/* Cannot own more than 'max' monster at a time -- todo maybe: Distinguish between golems, pets, etc. */
 		if (m_ptr->owner != p_ptr->id) continue;
 
 		if (!i) continue;
@@ -8957,7 +8958,6 @@ void golem_creation(int Ind, int max) {
 		return;
 	}
 
-
 	s_printf("GOLEM_CREATION: '%s' initiated.\n", p_ptr->name);
 
 	/* Access the location */
@@ -8967,28 +8967,10 @@ void golem_creation(int Ind, int max) {
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return;
-
-	/* Grab and allocate */
-	m_ptr = &m_list[c_ptr->m_idx];
-	MAKE(m_ptr->r_ptr, monster_race);
-	m_ptr->special = TRUE;
-	m_ptr->questor = FALSE;
-	m_ptr->fx = x;
-	m_ptr->fy = y;
-
-	r_ptr = m_ptr->r_ptr;
-
-	r_ptr->flags1 = 0;
-	r_ptr->flags2 = 0;
-	r_ptr->flags3 = 0;
-	r_ptr->flags4 = 0;
-	r_ptr->flags5 = 0;
-	r_ptr->flags6 = 0;
-	r_ptr->flags7 = 0;
-	r_ptr->flags8 = 0;
-	r_ptr->flags9 = 0;
-	r_ptr->flags0 = 0;
+	if (!c_ptr->m_idx) {
+		s_printf("GOLEM_CREATION_FAIL: No more monsters available.\n");
+		return;
+	}
 
 	msg_print(Ind, "Some of your items begins to consume in roaring flames.");
 
@@ -9002,7 +8984,7 @@ void golem_creation(int Ind, int max) {
 			if (golem_type != -1) continue;
 
 			object_desc(0, o_name, o_ptr, FALSE, 0);
-			s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+			s_printf("GOLEM_CREATION: (Body) consumed %s.\n", o_name);
 
 			golem_type = o_ptr->sval;
 			inven_item_increase(Ind, i, -1);
@@ -9015,7 +8997,7 @@ void golem_creation(int Ind, int max) {
 				if (golem_m_arms == 4) break;
 
 				object_desc(0, o_name, o_ptr, FALSE, 0);
-				s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+				s_printf("GOLEM_CREATION: (Arm) consumed %s.\n", o_name);
 
 				golem_arms[golem_m_arms++] = o_ptr->pval;
 				inven_item_increase(Ind, i, -1);
@@ -9029,7 +9011,7 @@ void golem_creation(int Ind, int max) {
 				if (golem_m_legs == 2) break;//30 is too ridiculous for SPEED..
 
 				object_desc(0, o_name, o_ptr, FALSE, 0);
-				s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+				s_printf("GOLEM_CREATION: (Leg) consumed %s.\n", o_name);
 
 				golem_legs[golem_m_legs++] = o_ptr->pval;
 				inven_item_increase(Ind, i, -1);
@@ -9039,24 +9021,42 @@ void golem_creation(int Ind, int max) {
 			continue;
 		}
 		/* golem command scrolls */
-		else golem_flags |= 1U << (o_ptr->sval - 200);
+		else golem_command_flags |= 1U << (o_ptr->sval - 200);
 	}
 
 	/* Ahah FAIL !!! */
 	if (golem_type == -1 || golem_m_legs < 2) {
-		s_printf("GOLEM_CREATION: failed! type %d, legs %d.\n", golem_type, golem_m_legs);
+		s_printf("GOLEM_CREATION_FAIL: type %d, legs %d.\n", golem_type, golem_m_legs);
 		msg_print(Ind, "The spell fails! You lose all your material.");
 		delete_monster_idx(c_ptr->m_idx, TRUE);
 		return;
 	}
+
+	/* Grab and allocate */
+	m_ptr = &m_list[c_ptr->m_idx];
+	MAKE(m_ptr->r_ptr, monster_race);
+	r_ptr = m_ptr->r_ptr;
+	r_ptr->flags1 = r_ptr->flags2 = r_ptr->flags3 = r_ptr->flags4 = r_ptr->flags5 = r_ptr->flags6 = r_ptr->flags7 = r_ptr->flags8 = r_ptr->flags9 = r_ptr->flags0 = 0;
+
+	m_ptr->special = TRUE;
+	m_ptr->questor = FALSE;
+	m_ptr->owner = m_ptr->related = p_ptr->id;
+	m_ptr->related_type = 0;
+	m_ptr->fx = x;
+	m_ptr->fy = y;
+
+	m_ptr->csleep = m_ptr->stunned = m_ptr->confused = m_ptr->monfear = 0;
+	//if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, c_ptr->m_idx, m_ptr->custom_lua_awoke)); //not really needed here?
+
+	/* No knowledge */
+	m_ptr->cdis = 0;
+	m_ptr->mind = GOLEM_NONE;
 
 	r_ptr->text = 0;
 	r_ptr->name = 0;
 	r_ptr->sleep = 0;
 	r_ptr->aaf = 20;
 	r_ptr->speed = 110;
-	for (i = 0; i < golem_m_legs; i++)
-		r_ptr->speed += golem_legs[i];
 	r_ptr->mexp = 1;
 
 	/* default colour, new: will be reset depending on base material */
@@ -9065,10 +9065,17 @@ void golem_creation(int Ind, int max) {
 
 	r_ptr->freq_innate = 0;
 	r_ptr->freq_spell = 0;
+
 	r_ptr->flags1 |= RF1_FORCE_MAXHP;
 	r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
 	r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP;
-	r_ptr->flags9 |= RF9_IM_TELE;
+	r_ptr->flags9 |= RF9_IM_TELE | RF9_NO_CREDIT;
+	/* prevent other players from killing it on accident */
+	r_ptr->flags8 |= RF8_NO_AUTORET | RF8_GENO_PERSIST | RF8_GENO_NO_THIN;
+	r_ptr->flags7 |= RF7_NO_TARGET;
+
+	r_ptr->extra = golem_command_flags;
+	for (i = 0; i < golem_m_legs; i++) r_ptr->speed += golem_legs[i];
 
 	switch (golem_type) {
 	case SV_GOLEM_WOOD:
@@ -9119,11 +9126,8 @@ void golem_creation(int Ind, int max) {
 		r_ptr->ac = 210;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_VIOLET;
 		break;
-	//default:
 	}
 
-	r_ptr->extra = golem_flags;
-#if 1
 	/* Find items used for "golemification" */
 	for (i = 0; i < INVEN_WIELD; i++) {
 		o_ptr = &p_ptr->inventory[i];
@@ -9141,7 +9145,7 @@ void golem_creation(int Ind, int max) {
 						inscription++;
 
 						object_desc(0, o_name, o_ptr, FALSE, 0);
-						s_printf("GOLEM_CREATION: extra consumed %s.\n", o_name);
+						s_printf("GOLEM_CREATION: (Extra) consumed %s.\n", o_name);
 
 						scan_golem_flags(o_ptr, r_ptr);
 						/* scan_golem_flags uses only one item */
@@ -9155,7 +9159,10 @@ void golem_creation(int Ind, int max) {
 			}
 		}
 	}
-#endif
+
+	m_ptr->r_idx = 1 + golem_type; // 1 + 0..7 (SV_GOLEM_MATERIAL_MAX) -> 1..8
+	m_ptr->level = p_ptr->lev;
+	m_ptr->exp = MONSTER_EXP(m_ptr->level);
 
 	/* extract base speed */
 	m_ptr->speed = r_ptr->speed;
@@ -9164,6 +9171,7 @@ void golem_creation(int Ind, int max) {
 	m_ptr->ac = r_ptr->ac;
 	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
 	m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
+
 	m_ptr->clone = 100;
 
 	for (i = 0; i < golem_m_arms; i++) {
@@ -9174,35 +9182,12 @@ void golem_creation(int Ind, int max) {
 		tmp_dam += (m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side;
 	}
 
-	m_ptr->owner = p_ptr->id;
-	m_ptr->r_idx = 1 + golem_type; // 1 + 0..7 (SV_GOLEM_MATERIAL_MAX) -> 1..8
-
-	m_ptr->level = p_ptr->lev;
-	m_ptr->exp = MONSTER_EXP(m_ptr->level);
-
-	/* Assume no sleeping */
-	m_ptr->csleep = 0;
-	//if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, c_ptr->m_idx, m_ptr->custom_lua_awoke)); //not really needed here?
-
 	wpcopy(&m_ptr->wpos, &p_ptr->wpos);
-
-	/* No "damage" yet */
-	m_ptr->stunned = 0;
-	m_ptr->confused = 0;
-	m_ptr->monfear = 0;
-
-	/* No knowledge */
-	m_ptr->cdis = 0;
-	m_ptr->mind = GOLEM_NONE;
-
-	/* prevent other players from killing it on accident */
-	r_ptr->flags8 |= RF8_NO_AUTORET | RF8_GENO_PERSIST | RF8_GENO_NO_THIN;
-	r_ptr->flags7 |= RF7_NO_TARGET;
 
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);
 
-	s_printf("GOLEM_CREATION: succeeded! type %d, speed %d, damage %d, commands %d\n", golem_type, m_ptr->speed, tmp_dam / 2, r_ptr->extra);
+	s_printf("GOLEM_CREATION_SUCCESS: type %d, speed %d, damage %d, commands %d\n", golem_type, m_ptr->speed, tmp_dam / 2, r_ptr->extra);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);

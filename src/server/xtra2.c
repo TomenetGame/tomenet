@@ -6912,7 +6912,7 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 
 	/* Check whether a quest requested this monster dead */
-	if (p_ptr->quest_any_k_within_target) quest_check_goal_k(Ind, m_ptr);
+	if (p_ptr->quest_any_k_within_target) quest_check_goal_k(Ind, m_idx);
 
 	/* Maia traitage */
 	if (p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {

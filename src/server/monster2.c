@@ -1452,9 +1452,8 @@ s16b get_mon_num(int level, int dlevel) {
 	return(table[i].index);
 }
 
-
-
-
+/* Return a completely random monster name and r_idx, for hallucinations.
+   Only restriction is that the monster must be allowed to be normally generated in the game. */
 static cptr r_name_garbled_get(int *r_idx) {
 	int tries = 1000;
 
@@ -1508,6 +1507,7 @@ static cptr r_name_garbled_get(int *r_idx) {
  *   0x20 --> Pronominalize visible monsters
  *   0x40 --> Assume the monster is hidden
  *   0x80 --> Assume the monster is visible
+ *   0x100 -> For hallucinating players: Don't pick a random monster name but stay with the real one.
  *
  * Useful Modes:
  *   0x00 --> Full nominative name ("the kobold") or "it"
@@ -1524,13 +1524,11 @@ static cptr r_name_garbled_get(int *r_idx) {
 /* FIXME: 'The The Borshin' when hallucinating */
 void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 	player_type *p_ptr;
-	cptr	    res;
-
-	monster_type    *m_ptr = &m_list[m_idx];
-	monster_race    *r_ptr = race_inf(m_ptr);
-
-	cptr	    name = r_name_get(m_ptr);
-	bool	    seen, pron;
+	cptr res;
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+	cptr name = r_name_get(m_ptr);
+	bool seen, pron;
 
 	/* Check for bad player number */
 	if (Ind > 0) {
@@ -1614,181 +1612,91 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 		else strcpy(desc, "itself");
 	}
 
-
 	/* Handle all other visible monster requests */
 	else {
-		/* It could be a Unique */
-		if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) {
-			/* Start with the name (thus nominative and objective) */
-			(void)strcpy(desc, name);
+		bool done = FALSE;
+
+		/* Hack: It's not 'the mirror image' but 'your mirror image' */
+		if (m_ptr->related) {
+			cptr pname;
+
+			done = TRUE;
+			switch (m_ptr->related_type) {
+			case 0: /* player */
+				if (Ind && m_ptr->related == p_ptr->id) {
+					strcpy(desc, "your ");
+					strcat(desc, name);
+				} else if ((pname = lookup_player_name(m_ptr->related))) {
+					strcpy(desc, pname);
+					switch (pname[strlen(pname) - 1]) {
+					case 's': case 'x': case 'z':
+						strcat(desc, "' ");
+						break;
+					default:
+						strcat(desc, "'s ");
+					}
+					strcat(desc, name);
+				} else done = FALSE; /* fallback */
+				break;
+			case 1: /* everyone */
+				strcpy(desc, "your ");
+				strcat(desc, name);
+				break;
+			case 3: /* party */
+				done = FALSE; //todo
+				break;
+			case 4: /* guild */
+				done = FALSE; //todo
+				break;
+			}
 		}
 
+		/* !done : 'related' article code failed because player didn't exist anymore -- fallback to normal processing below */
+		if (done) ;
+
+		/* Unique, but not if 'related' (player golem/pet) */
+		else if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE))
+			/* Start with the name (thus nominative and objective) */
+			strcpy(desc, name);
+
 		/* Omit article */
-		else if (mode & 0x01) (void)strcpy(desc, name);
+		else if (mode & 0x01) strcpy(desc, name);
 
 		/* It could be an indefinite monster */
 		else if (mode & 0x08) {
 			/* XXX Check plurality for "some" */
 			if ((r_ptr->flags8 & RF8_PLURAL))
-				(void)strcpy(desc, name);
-			else {
-				/* Hack: It's not 'the mirror image' but 'your mirror image' */
-				if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
-				else
-				/* Indefinite monsters need an indefinite article */
-				(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-				(void)strcat(desc, name);
-			}
+				strcpy(desc, name);
+			else /* Indefinite monsters need an indefinite article */
+				strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
+
+			strcat(desc, name);
 		}
 
 		/* It could be a normal, definite, monster */
 		else {
-			/* Hack: It's not 'the mirror image' but 'your mirror image' */
-			if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
-			else
 			/* Definite monsters need a definite article */
-			(void)strcpy(desc, "the ");
-			(void)strcat(desc, name);
+			strcpy(desc, "the ");
+			strcat(desc, name);
 		}
 
 		/* Handle the Possessive as a special afterthought */
 		if (mode & 0x02) {
 			/* XXX Check for trailing "s" */
-			if (name[strlen(name) - 1] == 's') (void)strcat(desc, "'");
+			if (name[strlen(name) - 1] == 's') strcat(desc, "'");
 			/* Simply append "apostrophe" and "s" */
-			else (void)strcat(desc, "'s");
+			else strcat(desc, "'s");
 		}
 	}
 }
 
-/* added for quests: takes m_ptr instead of m_idx (and no player) */
-void monster_desc2(char *desc, monster_type *m_ptr, int mode) {
-	cptr	    res;
-	monster_race    *r_ptr = race_inf(m_ptr);
-	cptr	    name = r_name_get(m_ptr);
-	bool	    seen, pron;
-
-	seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40))));
-
-	/* Sexed Pronouns (seen and allowed, or unseen and allowed) */
-	pron = (m_ptr && ((seen && (mode & 0x20)) || (!seen && (mode & 0x10))));
-
-
-	/* First, try using pronouns, or describing hidden monsters */
-	if (!seen || pron) {
-		/* an encoding of the monster "sex" */
-		int kind = 0x00;
-
-		/* Extract the gender (if applicable) */
-		if (r_ptr->flags1 & RF1_FEMALE) kind = 0x20;
-		else if (r_ptr->flags1 & RF1_MALE) kind = 0x10;
-
-		/* Ignore the gender (if desired) */
-		if (!m_ptr || !pron) kind = 0x00;
-
-
-		/* Assume simple result */
-		res = "it";
-
-		/* Brute force: split on the possibilities */
-		switch (kind + (mode & 0x07)) {
-			/* Neuter, or unknown */
-			case 0x00: res = "it"; break;
-			case 0x01: res = "it"; break;
-			case 0x02: res = "its"; break;
-			case 0x03: res = "itself"; break;
-			case 0x04: res = "something"; break;
-			case 0x05: res = "something"; break;
-			case 0x06: res = "something's"; break;
-			case 0x07: res = "itself"; break;
-
-			/* Male (assume human if vague) */
-			case 0x10: res = "he"; break;
-			case 0x11: res = "him"; break;
-			case 0x12: res = "his"; break;
-			case 0x13: res = "himself"; break;
-			case 0x14: res = "someone"; break;
-			case 0x15: res = "someone"; break;
-			case 0x16: res = "someone's"; break;
-			case 0x17: res = "himself"; break;
-
-			/* Female (assume human if vague) */
-			case 0x20: res = "she"; break;
-			case 0x21: res = "her"; break;
-			case 0x22: res = "her"; break;
-			case 0x23: res = "herself"; break;
-			case 0x24: res = "someone"; break;
-			case 0x25: res = "someone"; break;
-			case 0x26: res = "someone's"; break;
-			case 0x27: res = "herself"; break;
-		}
-
-		/* Copy the result */
-		(void)strcpy(desc, res);
-	}
-
-
-	/* Handle visible monsters, "reflexive" request */
-	else if ((mode & 0x02) && (mode & 0x01)) {
-		/* The monster is visible, so use its gender */
-		if (r_ptr->flags1 & RF1_FEMALE) strcpy(desc, "herself");
-		else if (r_ptr->flags1 & RF1_MALE) strcpy(desc, "himself");
-		else strcpy(desc, "itself");
-	}
-
-
-	/* Handle all other visible monster requests */
-	else {
-		/* It could be a Unique */
-		if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) {
-			/* Start with the name (thus nominative and objective) */
-			(void)strcpy(desc, name);
-		}
-
-		/* Omit article */
-		else if (mode & 0x01) (void)strcpy(desc, name);
-
-		/* It could be an indefinite monster */
-		else if (mode & 0x08) {
-			/* XXX Check plurality for "some" */
-			if ((r_ptr->flags8 & RF8_PLURAL))
-				(void)strcpy(desc, name);
-			else {
-				/* Hack: It's not 'the mirror image' but 'your mirror image' */
-				if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
-				else
-				/* Indefinite monsters need an indefinite article */
-				(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-				(void)strcat(desc, name);
-			}
-		}
-
-		/* It could be a normal, definite, monster */
-		else {
-			/* Hack: It's not 'the mirror image' but 'your mirror image' */
-			if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
-			else
-			/* Definite monsters need a definite article */
-			(void)strcpy(desc, "the ");
-			(void)strcat(desc, name);
-		}
-
-		/* Handle the Possessive as a special afterthought */
-		if (mode & 0x02) {
-			/* XXX Check for trailing "s" */
-			if (name[strlen(name) - 1] == 's') (void)strcat(desc, "'");
-			/* Simply append "apostrophe" and "s" */
-			else (void)strcat(desc, "'s");
-		}
-	}
-}
-
+/* needs work, make consistent with monster_desc() above */
 void monster_race_desc(int Ind, char *desc, int r_idx, int mode) {
 	player_type *p_ptr;
-	cptr	    res;
-	monster_race    *r_ptr = &r_info[r_idx];
-	cptr	    name = r_name + r_ptr->name;
-	bool	    seen = FALSE, pron = FALSE;
+	cptr res;
+	monster_race *r_ptr = &r_info[r_idx];
+	cptr name = r_name + r_ptr->name;
+	bool seen = FALSE, pron = FALSE;
 
 	/* Check for bad player number */
 	if (Ind > 0) {
@@ -1906,6 +1814,7 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode) {
 }
 
 /* Similar to monster_desc, but it handles the players instead. - Jir - */
+//---todo: check if it's correct @ monster_race_desc() call
 void player_desc(int Ind, char *desc, int Ind2, int mode) {
 	player_type *p_ptr, *q_ptr = Players[Ind2];
 	cptr	    res;
@@ -1924,7 +1833,7 @@ void player_desc(int Ind, char *desc, int Ind2, int mode) {
 			name = r_name_garbled_get();
 #else
 		{
-			monster_race_desc(Ind, desc, 0, mode);
+			monster_race_desc(Ind, desc, 0, mode);		//todo: wrong?
 			return;
 		}
 #endif
@@ -5466,6 +5375,7 @@ cptr r_name_get(monster_type *m_ptr) {
 			return(r_name + m_ptr->r_ptr->name);
 		}
 	} else if (m_ptr->special) {
+#if 0
 		cptr p = (m_ptr->owner) ? lookup_player_name(m_ptr->owner) : "**INTERNAL BUG**";
 		char bgen[2];
 
@@ -5478,33 +5388,35 @@ cptr r_name_get(monster_type *m_ptr) {
 			bgen[0] = 's';
 			bgen[1] = 0;
 		}
+	---> snprintf(buf, sizeof(buf), "%s'%s Wood Golem", p, bgen);
+#endif
 		switch (m_ptr->r_idx - 1) {
 			case SV_GOLEM_WOOD:
-				snprintf(buf, sizeof(buf), "%s'%s Wood Golem", p, bgen);
+				strcpy(buf, "Wood Golem");
 				break;
 			case SV_GOLEM_COPPER:
-				snprintf(buf, sizeof(buf), "%s'%s Copper Golem", p, bgen);
+				strcpy(buf, "Copper Golem");
 				break;
 			case SV_GOLEM_IRON:
-				snprintf(buf, sizeof(buf), "%s'%s Iron Golem", p, bgen);
+				strcpy(buf, "Iron Golem");
 				break;
 			case SV_GOLEM_ALUM:
-				snprintf(buf, sizeof(buf), "%s'%s Aluminium Golem", p, bgen);
+				strcpy(buf, "Aluminium Golem");
 				break;
 			case SV_GOLEM_SILVER:
-				snprintf(buf, sizeof(buf), "%s'%s Silver Golem", p, bgen);
+				strcpy(buf, "Silver Golem");
 				break;
 			case SV_GOLEM_GOLD:
-				snprintf(buf, sizeof(buf), "%s'%s Gold Golem", p, bgen);
+				strcpy(buf, "Gold Golem");
 				break;
 			case SV_GOLEM_MITHRIL:
-				snprintf(buf, sizeof(buf), "%s'%s Mithril Golem", p, bgen);
+				strcpy(buf, "Mithril Golem");
 				break;
 			case SV_GOLEM_ADAM:
-				snprintf(buf, sizeof(buf), "%s'%s Adamantite Golem", p, bgen);
+				strcpy(buf, "Adamantite Golem");
 				break;
 			default: //paranoia
-				snprintf(buf, sizeof(buf), "%s'%s Unknown Golem", p, bgen);
+				strcpy(buf, "Unknown Golem");
 				break;
 		}
 		return(buf);

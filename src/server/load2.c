@@ -1135,6 +1135,12 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_s16b(&m_ptr->custom_lua_awoke);
 		rd_s16b(&m_ptr->custom_lua_sighted);
 	}
+
+	if (!s_older_than(4, 9, 17)) {
+		rd_s32b(&m_ptr->related);
+		rd_byte(&m_ptr->related_type);
+		rd_s32b(&m_ptr->temp);
+	}
 }
 
 

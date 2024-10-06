@@ -5670,6 +5670,8 @@ void do_cmd_bash(int Ind, int dir) {
 					if (m_ptr->r_idx == RI_MIRROR) { /* Extra paranoia.. */
 						/* Init monster template with fixed properties: */
 						py2mon_init();
+						m_ptr->related = p_ptr->id; /* imprint player on the mirror image ;) */
+						m_ptr->related_type = 0;
 						/* Main problem: Player could init the mirror with a low profile char and then switch places with a high profile char,
 						   so even the 'immutable' stats might need adjusting, as the opponent character changes completely.
 						   Maybe 'last_target' can be utilized to detect opponents switching.

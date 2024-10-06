@@ -377,7 +377,6 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s32b(m_ptr->maxhp);
 	wr_s16b(m_ptr->csleep);
 	wr_byte(m_ptr->mspeed);
-//	wr_byte(m_ptr->energy);
 	wr_s16b(m_ptr->energy);
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
@@ -409,6 +408,10 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s16b(m_ptr->custom_lua_deletion);
 	wr_s16b(m_ptr->custom_lua_awoke);
 	wr_s16b(m_ptr->custom_lua_sighted);
+
+	wr_s32b(m_ptr->related);
+	wr_byte(m_ptr->related_type);
+	wr_s32b(m_ptr->temp);
 }
 
 /*

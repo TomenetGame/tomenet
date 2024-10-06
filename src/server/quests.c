@@ -84,7 +84,7 @@ static void quest_goal_check_reward(int pInd, int q_idx);
 static bool quest_goal_check(int pInd, int q_idx, bool interacting);
 static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire, bool force_prompt);
 static void quest_imprint_tracking_information(int Ind, int py_q_idx, bool target_flagging_only);
-static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr);
+static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, int m_idx, object_type *o_ptr);
 static void quest_remove_dungeons(int q_idx);
 
 
@@ -961,13 +961,20 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	r_ptr->flags9 = rbase_ptr->flags9;
 	r_ptr->flags0 = rbase_ptr->flags0;
 
+	//'nameflags' 0x1 RF1_MALE, 0x2 RF1_FEMALE, 0x4 RF8_PSEUDO_UNIQUE, 0x8 RF8_PLURAL, 0x10 related-to-all (related_type=-1 aka name always prefixed with "your")
+	if (q_questor->nameflags & 0x01) r_ptr->flags1 |= RF1_MALE;
+	if (q_questor->nameflags & 0x02) r_ptr->flags1 |= RF1_FEMALE;
+	if (q_questor->nameflags & 0x04) r_ptr->flags8 |= RF8_PSEUDO_UNIQUE;
+	if (q_questor->nameflags & 0x08) r_ptr->flags8 |= RF8_PLURAL;
+	if (q_questor->nameflags & 0x10) m_ptr->related_type = 1;
+
 	r_ptr->flags1 |= RF1_FORCE_MAXHP;
 	r_ptr->flags2 |= RF2_NEVER_ACT;
 	r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
 	r_ptr->flags7 |= RF7_NO_TARGET;
 	if (q_questor->invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
 	r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
-	r_ptr->flags9 |= RF9_IM_TELE;
+	r_ptr->flags9 |= RF9_IM_TELE | RF9_NO_CREDIT;
 
 	r_ptr->text = 0;
 	r_ptr->name = rbase_ptr->name;
@@ -2306,6 +2313,7 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	q_questor->invincible = q_qmorph->invincible;
 	q_questor->death_fail = q_qmorph->death_fail;
 	if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
+	if (q_qmorph->nameflags != 255) q_questor->nameflags = q_qmorph->nameflags;
 	if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
 	if (q_qmorph->reidx != -1) q_questor->reidx = q_qmorph->reidx;
 	if (q_qmorph->rcharidx != -1) q_questor->rcharidx = q_qmorph->rcharidx;
@@ -2866,7 +2874,7 @@ void quest_precheck_retrieval(int Ind, int q_idx, int py_q_idx) {
 		    p_ptr->inventory[i].sval != SV_QUEST)
 			continue;
 #endif
-		quest_check_goal_kr(Ind, q_idx, py_q_idx, NULL, &p_ptr->inventory[i]);
+		quest_check_goal_kr(Ind, q_idx, py_q_idx, 0, &p_ptr->inventory[i]);
 	}
 }
 /* Update our current target location requirements and check them right away.
@@ -3756,7 +3764,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 			if (q_stage_talk->talk_examine[questor_idx])
 				msg_format(Ind, "\374\377uYou examine <\377B%s\377u>:", q_ptr->questor[questor_idx].name);
 			else
-				msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
+				msg_format(Ind, "\374\377u<\377B%^s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
 			for (i = 0; i < q_stage_talk->talk_lines[questor_idx]; i++) {
 				if (!q_stage_talk->talk[questor_idx][i]) break;
 				if ((q_stage_talk->talk_flags[questor_idx][i] & quest_get_flags(Ind, q_idx)) != q_stage_talk->talk_flags[questor_idx][i]) continue;
@@ -3977,7 +3985,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		/* questor can actually speak? */
 		if (!q_ptr->stage[stage].talk_examine[questor_idx]) {
 			msg_print(Ind, "\374 ");
-			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
+			msg_format(Ind, "\374\377u<\377B%^s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
 			switch (rand_int(3)) {
 			case 0:
 				msg_print(Ind, "\374\377UGoodbye.");
@@ -4036,7 +4044,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 					if (q_ptr->stage[stage].talk_examine[questor_idx])
 						msg_format(Ind, "\374\377uYou examine <\377B%s\377u>:", q_ptr->questor[questor_idx].name);
 					else
-						msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
+						msg_format(Ind, "\374\377u<\377B%^s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
 					/* we can re-use j here ;) */
 					for (j = 0; j < q_kwr->lines; j++) {
 						if ((q_kwr->replyflags[j] & quest_get_flags(Ind, q_idx)) != q_kwr->replyflags[j]) continue;
@@ -4135,8 +4143,9 @@ void quest_reply(int Ind, int q_idx, char *str) {
 /* Test kill quest goal criteria vs an actually killed monster, for a match.
    Main criteria (r_idx vs char+attr+level) are OR'ed.
    (Unlike for retrieve-object matches where they are actually AND'ed.) */
-static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type *m_ptr) {
+static bool quest_goal_matches_kill(int q_idx, int stage, int goal, int m_idx) {
 	int i;
+	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 	qi_kill *q_kill = quest_qi_stage(q_idx, stage)->goal[goal].kill;
 	char mname[MNAME_LEN];
@@ -4158,7 +4167,7 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 	}
 
 	/* check for char/attr/level combination - treated in pairs (AND'ed) over the index */
-	monster_desc2(mname, m_ptr, 0);
+	monster_desc(0, mname, m_idx, 0);
 	for (i = 0; i < 5; i++) {
 		/* name specified but doesnt match? */
 		if (q_kill->name[i] && !strstr(mname, q_kill->name[i])) continue;
@@ -4310,7 +4319,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
          retrieved anywhere, ignoring the target location specification. This requires the quest
          items to be marked when they get picked up at the target location, to free those marked
          ones from same target loc restrictions for re-pickup. */
-static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr) {
+static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, int m_idx, object_type *o_ptr) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int j, k, stage;
@@ -4384,8 +4393,8 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 
 	///TODO: implement for global quests too!
 		/* check for kill goal here */
-		if (m_ptr && q_goal->kill) {
-			if (!quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
+		if (m_idx && q_goal->kill) {
+			if (!quest_goal_matches_kill(q_idx, stage, j, m_idx)) continue;
 			/* decrease the player's kill counter, if we got all, goal is completed! */
 #if QDEBUG > 2
 			s_printf("  COUNTED_k down.\n");
@@ -4464,7 +4473,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	}
 }
 /* Small intermediate function to reduce workload.. (1. for k-goals) */
-void quest_check_goal_k(int Ind, monster_type *m_ptr) {
+void quest_check_goal_k(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind], *p2_ptr;
 	int i, j, k;
 
@@ -4479,7 +4488,7 @@ void quest_check_goal_k(int Ind, monster_type *m_ptr) {
 		/* reduce workload */
 		if (!p_ptr->quest_kill[i]) continue;
 
-		quest_check_goal_kr(Ind, p_ptr->quest_idx[i], i, m_ptr, NULL);
+		quest_check_goal_kr(Ind, p_ptr->quest_idx[i], i, m_idx, NULL);
 
 		/* if it's a party-individual quest, also credit all present
 		   party mebers who are on this quest & stage too. */
@@ -4495,7 +4504,7 @@ void quest_check_goal_k(int Ind, monster_type *m_ptr) {
 				if (!p2_ptr->quest_any_k_within_target) continue;//uh, efficiency maybe? (this check is redundant with next for loop)
 				for (k = 0; k < MAX_PQUESTS; k++)
 					if (p_ptr->quest_idx[i] == p2_ptr->quest_idx[k]) {
-						quest_check_goal_kr(j, p2_ptr->quest_idx[k], k, m_ptr, NULL);
+						quest_check_goal_kr(j, p2_ptr->quest_idx[k], k, m_idx, NULL);
 						break;
 					}
 			}
@@ -4517,7 +4526,7 @@ void quest_check_goal_r(int Ind, object_type *o_ptr) {
 		/* reduce workload */
 		if (!p_ptr->quest_retrieve[i]) continue;
 
-		quest_check_goal_kr(Ind, p_ptr->quest_idx[i], i, NULL, o_ptr);
+		quest_check_goal_kr(Ind, p_ptr->quest_idx[i], i, 0, o_ptr);
 	}
 }
 /* Check if we have to un-set an item-retrieval quest goal because we lost <num> items!
