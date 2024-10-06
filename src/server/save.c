@@ -531,6 +531,7 @@ static void wr_notes() {
 		wr_string(priv_note_u[i]);
 		wr_string(priv_note_sender[i]);
 		wr_string(priv_note_target[i]);
+		wr_string(priv_note_date[i]);
 	}
 
 	wr_s16b(MAX_PARTYNOTES);

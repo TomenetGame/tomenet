@@ -10920,6 +10920,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		strcpy(priv_note_target[found_note], tpname);
 		strcpy(priv_note[found_note], str);
 		strcpy(priv_note_u[found_note], str); //uncensored to-store-owner note is same as censored for now
+		strcpy(priv_note_date[found_note], showdate());
 
 		msg_print(Ind, "\377yYour note to the store owner has been sent."); //same colour as /note in slash.c
 		return; }

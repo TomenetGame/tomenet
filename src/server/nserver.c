@@ -3218,7 +3218,7 @@ static int Handle_login(int ind) {
 
 	for (i = 0; i < MAX_NOTES; i++) {
 		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
-			msg_format(NumPlayers, "\374\377RNote from %s: %s", priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
+			msg_format(NumPlayers, "\374\377R%s Note from %s: %s", priv_note_date[i], priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
 			p_ptr->tmp_y = 1; //hack: Marker for 'we received at least one note'
 			/* Also notify sender if online right now */
 			for (j = 1; j < NumPlayers; j++) { //skip ourself (Ind is NumPlayers)
@@ -3233,10 +3233,7 @@ static int Handle_login(int ind) {
 #endif
 				break;
 			}
-
-			strcpy(priv_note_sender[i], "");
-			strcpy(priv_note_target[i], "");
-			strcpy(priv_note[i], "");
+			priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 		}
 	}
 #ifdef USE_SOUND_2010

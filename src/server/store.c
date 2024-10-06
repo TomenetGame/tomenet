@@ -7655,6 +7655,7 @@ static bool notify_owner(const char *cname, const char *msg) {
 	strcpy(priv_note_target[found_note], tname);
 	strcpy(priv_note[found_note], msg);
 	strcpy(priv_note_u[found_note], msg);
+	strcpy(priv_note_date[found_note], showdate());
 	//s_printf("System Note for account '%s' has been stored.", priv_note_target[found_note]);
 	return(TRUE);
 }

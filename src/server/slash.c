@@ -2928,9 +2928,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (!strcmp(priv_note_sender[i], p_ptr->name) ||
 					    !strcmp(priv_note_sender[i], p_ptr->accountname)) {
 						notes++;
-						strcpy(priv_note_sender[i], "");
-						strcpy(priv_note_target[i], "");
-						strcpy(priv_note[i], "");
+						priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 					}
 				}
 				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes.");
@@ -2960,9 +2958,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							    !strcmp(priv_note_target[i], tname)) {
 								/* found a matching note */
 								notes++;
-								strcpy(priv_note_sender[i], "");
-								strcpy(priv_note_target[i], "");
-								strcpy(priv_note[i], "");
+								priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 							}
 						}
 						if (notes) {
@@ -3041,9 +3037,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					    !strcmp(priv_note_target[i], tname)) {
 						/* found a matching note */
 						notes++;
-						strcpy(priv_note_sender[i], "");
-						strcpy(priv_note_target[i], "");
-						strcpy(priv_note[i], "");
+						priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 					}
 				}
 				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes to player %s.", tname);
@@ -3115,6 +3109,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			strcpy(priv_note_target[found_note], tname);
 			strcpy(priv_note[found_note], message2 + j + 1);
 			strcpy(priv_note_u[found_note], tpname ? tpname + 1 : message2 + j + 1);
+			strcpy(priv_note_date[found_note], showdate());
 			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
 #ifdef USE_SOUND_2010
 			//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);

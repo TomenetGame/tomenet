@@ -1337,6 +1337,8 @@ static void rd_notes() {
 		if (!s_older_than(4, 7, 10)) rd_string(priv_note_u[i], MSG_LEN);
 		rd_string(priv_note_sender[i], NAME_LEN);
 		rd_string(priv_note_target[i], NAME_LEN);
+		if (!s_older_than(4, 9, 18)) rd_string(priv_note_date[i], NAME_LEN);
+		else priv_note_date[i][0] = 0;
 	}
 
 	rd_s16b(&j);
