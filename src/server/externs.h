@@ -512,6 +512,10 @@ extern int project_time;
 extern s32b project_time_effect;
 extern effect_type effects[MAX_EFFECTS];
 
+extern int steamblast_timer[MAX_STEAMBLASTS], steamblast_x[MAX_STEAMBLASTS], steamblast_y[MAX_STEAMBLASTS], steamblast_disarm[MAX_STEAMBLASTS];
+extern struct worldpos steamblast_wpos[MAX_STEAMBLASTS];
+extern int steamblasts;
+
 #ifdef USE_SOUND_2010
 extern char audio_sfx[SOUND_MAX_2010][30];
 #endif
@@ -857,7 +861,7 @@ extern void do_cmd_breathe_aux(int Ind, int dir);
 extern void do_pick_breath(int Ind, int element);
 extern void create_sling_ammo_aux(int Ind);
 extern bool create_snowball(int Ind, cave_type *c_ptr);
-extern void do_steamblast(int Ind, int x, int y);
+extern void do_steamblast(int Ind, int x, int y, bool door);
 extern void use_stamina(player_type *p_ptr, byte st);
 
 /* control.c */
@@ -929,6 +933,7 @@ extern void handle_XID(int Ind);
 extern bool cold_place(struct worldpos *wpos);
 //extern bool hot_place(struct worldpos *wpos);
 extern void apply_jail_flags(u32b *f1, u32b *f2, u32b *f3);
+extern void steamblast_trigger(int idx);
 
 /* files.c */
 extern int highscore_send(char *buffer, int max);
@@ -2462,6 +2467,7 @@ extern void cat_script(int Ind, char *name);
 extern bool do_player_drop_items(int Ind, int chance, bool trap);
 extern bool do_player_scatter_items(int Ind, int chance, int rad);
 extern bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int item);
+extern void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_type *i_ptr, int item);
 extern void player_activate_door_trap(int Ind, s16b y, s16b x);
 extern void place_trap(struct worldpos *wpos, int y, int x, int modx);
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);

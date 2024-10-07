@@ -6283,24 +6283,6 @@ static bool process_player_end_aux(int Ind) {
 	}
 #endif
 
-	/* Steam blast charge - Fighting technique */
-	if (p_ptr->steamblast_timer > 0) {
-		p_ptr->steamblast_timer--;
-		if (!p_ptr->steamblast_timer) {
-			cave_type **zcave = getcave(wpos);
-
-			if (zcave) {
-				cave_type *c_ptr = &zcave[p_ptr->steamblast_y][p_ptr->steamblast_x];
-
-				/* Closed door, locked doors, jammed doors -- works 100% for now */
-				if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
-				    // && !(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)
-					cave_set_feat_live(wpos, p_ptr->steamblast_y, p_ptr->steamblast_x, FEAT_BROKEN);
-				}
-			}
-		}
-	}
-
 
 	/*** Process Light ***/
 
@@ -9016,11 +8998,9 @@ void process_player_change_wpos(int Ind) {
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
 	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible &= ~RESKILL_F_UNDO;
 
-	/* Actually cancel both: Preparations (-1) as well as any ongoing Steamblast countdown (>0)! */
-	if (p_ptr->steamblast_timer != 0) {
-		if (p_ptr->steamblast_timer == -1) msg_print(Ind, "You cancel your preparations for a steam blast charge.");
-		/* ..else fail silently */
-		p_ptr->steamblast_timer = 0;
+	if (p_ptr->steamblast) {
+		msg_print(Ind, "You cancel your preparations for a steam blast charge.");
+		p_ptr->steamblast = 0;
 	}
 
 	/* un-snow */
@@ -10021,6 +10001,90 @@ void process_player_change_wpos(int Ind) {
 	// DYNAMIC_CLONE_MAP (worldmap, while not shopping): extract code from wild_display_mini_map()
 }
 
+void steamblast_trigger(int idx) {
+	cave_type **zcave = getcave(&steamblast_wpos[idx]);
+
+	if (zcave) {
+		int x = steamblast_x[idx], y = steamblast_y[idx];
+		cave_type *c_ptr = &zcave[y][x];
+		struct worldpos *wpos = &steamblast_wpos[idx];
+
+		c_ptr->info &= ~CAVE_STEAMBLAST; /* colour back to normal */
+
+		/* Closed door, locked doors, jammed doors -- works 100% for now */
+		if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
+		    // && !(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)
+			c_ptr->info &= ~CAVE_STEAMBLAST;
+			cave_set_feat_live(wpos, y, x, FEAT_BROKEN);
+#ifdef USE_SOUND_2010
+			sound_near_site(y, x, wpos, 0, "fireworks_norm", NULL, SFX_TYPE_COMMAND, FALSE); //fireworks_small, detonation
+
+#endif
+		}
+		/* Locked chest? */
+		else if (c_ptr->o_idx) {
+			object_type *o_ptr = &o_list[c_ptr->o_idx];
+
+			if (o_ptr->tval == TV_CHEST && (o_ptr->temp & 0x08)) {
+				trap_kind *t_ptr;
+				int disarm = steamblast_disarm[idx];
+
+				o_ptr->temp &= ~0x08;
+				everyone_lite_spot(wpos, y, x);
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, wpos, 0, "fireworks_norm", NULL, SFX_TYPE_COMMAND, FALSE); //fireworks_small, detonation
+#endif
+				if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", 0, c_ptr->o_idx, -1, 10, o_ptr->custom_lua_usage));
+
+				t_ptr = &t_info[o_ptr->pval];
+				disarm = disarm - t_ptr->difficulty * 3;
+				/* Always have a small chance of success */
+				if (disarm < 2) disarm = 2;
+				if (rand_int(100) < disarm) {
+					/* Actually disarm it without setting off the trap */
+					o_ptr->pval = (0 - o_ptr->pval);
+					object_known(o_ptr);
+					if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", 0, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
+				} else {
+					/* Apply chest traps, if any */
+					/* Some traps might destroy the chest on setting off : o_ptr->sval -> SV_CHEST_RUINED */
+					/* Custom LUA hacks */
+					if (o_ptr->xtra1) exec_lua(0, format("custom_chest_trap(%d,%d)", 0, o_ptr->xtra1));
+					/* Don't skip normal trap routines? */
+					if (!(o_ptr->xtra4 & 0x8)) {
+						/* Set off trap */
+						(void)generic_activate_trap_type(wpos, y, x, o_ptr, c_ptr->o_idx);
+						if ((o_ptr->xtra3 & 0x1) || /* Erase chest whenever the trap was set off */
+						    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Erase the chest if it got ruined by the trap */
+							delete_object_idx(c_ptr->o_idx, FALSE);
+						else {
+							/* If chest is not ruined, also disarm + unlock */
+							//o_ptr->pval = 0;
+							o_ptr->pval = (0 - o_ptr->pval);
+							object_known(o_ptr);
+							if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", 0, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
+						}
+					} else {
+						/* If chest is not ruined, also disarm + unlock it */
+						//o_ptr->pval = 0;
+						o_ptr->pval = (0 - o_ptr->pval);
+						object_known(o_ptr);
+						if (o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", 0, c_ptr->o_idx, 0, 9, o_ptr->custom_lua_usage));
+					}
+				}
+			}
+		}
+	}
+
+	steamblast_timer[idx] = steamblast_timer[steamblasts - 1];
+	steamblast_x[idx] = steamblast_x[steamblasts - 1];
+	steamblast_y[idx] = steamblast_y[steamblasts - 1];
+	steamblast_disarm[idx] = steamblast_disarm[steamblasts - 1];
+	steamblast_wpos[idx] = steamblast_wpos[steamblasts - 1];
+	steamblasts--;
+}
+
+
 
 /*
  * Main loop --KLJ--
@@ -10218,6 +10282,12 @@ void dungeon(void) {
 
 		/* process timed shutdown (/shutrec) */
 		if (shutdown_recall_timer) shutdown_recall_timer--;
+
+		/* Steam blast charge - Fighting technique */
+		for (i = 0; i < steamblasts; i++) {
+			steamblast_timer[i]--;
+			if (!steamblast_timer[i]) steamblast_trigger(i);
+		}
 
 		/* process certain player-related timers */
 		k = 0; //party-colourization

@@ -8994,7 +8994,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	}
 	if (p_ptr->ghost) {
 		msg_print(Ind, "You cannot use techniques as a ghost.");
-		return;
+		if (!admin_p(Ind)) return;
 	}
 	if (p_ptr->confused) {
 		msg_print(Ind, "You cannot use techniques while confused.");
@@ -9164,10 +9164,11 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 	case 9:	{
 		int t = -1, p = -1;
 		object_type *o_ptr;
+		cave_type **zcave;
 
 		if (!(p_ptr->melee_techniques & MT_STEAMBLAST)) return; /* Steam Blast */
-		if (p_ptr->steamblast_timer > 0) {
-			msg_print(Ind, "You can only set up one steam blast charge at a time.");
+		if (p_ptr->steamblast) {
+			msg_print(Ind, "You have already prepared a steam blast charge.");
 			return;
 		}
 		//if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -9176,26 +9177,43 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 			if (!o_ptr->k_idx) break;
 			if (!o_ptr->note) continue; /* items must be inscribed to be used! */
 			switch (o_ptr->tval) {
-			case TV_TRAPKIT:
+			case TV_TRAPKIT: /* need either a fumes trap */
 				if (t != -1) continue; /* we already found a suitable trap kit */
-				if (o_ptr->sval != SV_TRAPKIT_POTION) continue; /* need 1 fumes trap */
+				if (o_ptr->sval != SV_TRAPKIT_POTION) continue;
 				if (!check_guard_inscription(o_ptr->note, 'S')) continue;
 				t = i;
 				break;
-			case TV_POTION: /* need 1 potion */
+			case TV_CHARGE: /* or need a normal blast charge */
+				if (t != -1) continue; /* we already found a suitable blast charge */
+				if (o_ptr->sval != SV_CHARGE_BLAST) continue;
+				if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+				t = i;
+				break;
+			case TV_POTION: /* and in either case need a potion */
 				if (p != -1) continue; /* we already found a suitable potion */
 				if (!check_guard_inscription(o_ptr->note, 'S')) continue;
 				p = i;
 				break;
+			default:
+				continue;
 			}
-			if (p != -1 && i != -1) break;
+			if (p != -1 && t != -1) break;
 		}
-		if (i == INVEN_WIELD) {
-			msg_print(Ind, "You need to inscribe a fumes trap kit and a potion both '!S' to be used up.");
+		if (p == -1 || t == -1) {
+			msg_print(Ind, "You need to inscribe both a fumes trap kit or blast charge and a potion '!S'.");
 			return;
 		}
-		msg_print(Ind, "Bump a door next to you to set up the steam blast charge..");
-		p_ptr->steamblast_timer = -1;
+		/* Check for chest under us first */
+		//todo
+		if ((zcave = getcave(&p_ptr->wpos))
+		    && (i = zcave[p_ptr->py][p_ptr->px].o_idx) && o_list[i].tval == TV_CHEST /* there must be a chest below us */
+		    && !(o_list[i].temp & 0x08) && o_list[i].pval > 0) /* the chest must be trapped/locked and not already have a charge on it */
+			do_steamblast(Ind, p_ptr->px, p_ptr->py, FALSE);
+		/* No chest there, go for a door */
+		else {
+			msg_print(Ind, "Bump a door next to you to set up the steam blast charge..");
+			p_ptr->steamblast = -1;
+		}
 		break;
 		}
 
@@ -9283,7 +9301,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	}
 	if (p_ptr->ghost) {
 		msg_print(Ind, "You cannot use techniques as a ghost.");
-		return;
+		if (!admin_p(Ind)) return;
 	}
 	if (p_ptr->confused) {
 		msg_print(Ind, "You cannot use techniques while confused.");
@@ -9424,10 +9442,26 @@ s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 	}
 }
 
-void do_steamblast(int Ind, int x, int y) {
+/* 'door' = TRUE -> plant it on a door, FALSE -> plant it on a chest */
+#define STEAMBLAST_FUSE_DEFAULT 8
+#define STEAMBLAST_FUSE_MAX 15
+void do_steamblast(int Ind, int x, int y, bool door) {
 	player_type *p_ptr = Players[Ind];
-	int i, t = -1, p = -1;
+	int i, t = -1, p = -1, f, fuse = STEAMBLAST_FUSE_DEFAULT + 1;
 	object_type *o_ptr;
+	cave_type **zcave = getcave(&p_ptr->wpos);
+	bool trapping = FALSE;
+
+	if (!zcave) { /* paranoia */
+		msg_print(Ind, "You cannot plant a steam blast charge on this floor.");
+		return;
+	}
+
+	if (steamblasts >= MAX_STEAMBLASTS) {
+		p_ptr->steamblast = 0;
+		msg_print(Ind, "\377ySorry, there are already too many active steam blast charges.");
+		return;
+	}
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
 		msg_print(Ind, "You cannot use techniques while transformed.");
@@ -9435,7 +9469,7 @@ void do_steamblast(int Ind, int x, int y) {
 	}
 	if (p_ptr->ghost) {
 		msg_print(Ind, "You cannot use techniques as a ghost.");
-		return;
+		if (!admin_p(Ind)) return;
 	}
 	if (p_ptr->confused) {
 		msg_print(Ind, "You cannot use techniques while confused.");
@@ -9455,36 +9489,69 @@ void do_steamblast(int Ind, int x, int y) {
 	disturb(Ind, 1, 0); /* stop resting, searching and running */
 
 	if (!(p_ptr->melee_techniques & MT_STEAMBLAST)) return; /* Steam Blast */
-	if (p_ptr->steamblast_timer > 0) {
-		msg_print(Ind, "You can only set up one steam blast charge at a time.");
-		return;
-	}
+
 	//if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
 	for (i = 0; i < INVEN_WIELD; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (!o_ptr->k_idx) {
-			i = INVEN_WIELD; //finish, we failed
-			break;
-		}
+		if (!o_ptr->k_idx) break;
 		if (!o_ptr->note) continue; /* items must be inscribed to be used! */
 		switch (o_ptr->tval) {
-		case TV_TRAPKIT:
+		case TV_TRAPKIT: /* need either a fumes trap */
 			if (t != -1) continue; /* we already found a suitable trap kit */
-			if (o_ptr->sval != SV_TRAPKIT_POTION) continue; /* need 1 fumes trap */
-			if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+			if (o_ptr->sval != SV_TRAPKIT_POTION) continue;
+			if (!(f = check_guard_inscription(o_ptr->note, 'S'))) continue;
+			if (f != -1) fuse = f;
+			trapping = TRUE;
 			t = i;
 			break;
-		case TV_POTION: /* need 1 potion */
+		case TV_CHARGE: /* or need a normal blast charge */
+			if (t != -1) continue; /* we already found a suitable blast charge */
+			if (o_ptr->sval != SV_CHARGE_BLAST) continue;
+			if (!(f = check_guard_inscription(o_ptr->note, 'S'))) continue;
+			if (f != -1) fuse = f;
+			t = i;
+			break;
+		case TV_POTION: /* and in either case need a potion */
 			if (p != -1) continue; /* we already found a suitable potion */
-			if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+			if (!(f = check_guard_inscription(o_ptr->note, 'S'))) continue;
+			if (f != -1) fuse = f;
 			p = i;
 			break;
 		}
 		if (t != -1 && p != -1) break;
 	}
-	if (i == INVEN_WIELD) {
-		msg_print(Ind, "You need to inscribe a fumes trap kit and a potion both '!S' to be used up.");
+	if (t == -1 || p == -1) {
+		msg_print(Ind, "You need to inscribe both a fumes trap kit or blast charge and a potion '!S'.");
 		return;
+	}
+
+	/* Limits: Fuse duration must be between 0s and 15s. */
+	fuse--;
+	if (fuse > STEAMBLAST_FUSE_MAX) fuse = STEAMBLAST_FUSE_MAX;
+	else if (fuse == 0) fuse = -1; /* hack: encode instant boom as '-1', as 0 stands for 'unlit'. */
+	else if (fuse < 0) STEAMBLAST_FUSE_MAX; /* paranoia */
+
+	if (!door) {
+		int o_idx = zcave[y][x].o_idx;
+
+		if (!o_idx) { /* paranoia */
+			msg_print(Ind, "There is no chest here.");
+			return;
+		}
+		o_ptr = &o_list[o_idx];
+		if (o_ptr->tval != TV_CHEST) {
+			msg_print(Ind, "You are not standing on a chest.");
+			return;
+		}
+		if ((o_ptr->temp & 0x08)) {
+			msg_print(Ind, "There is already an active steam blast charge on this chest.");
+			return;
+		}
+		if (o_ptr->pval <= 0) {
+			msg_print(Ind, "That chest is not trapped or locked.");
+			return;
+		}
+		o_ptr->temp |= 0x08;
 	}
 
 	//use_stamina(p_ptr, 3);
@@ -9497,17 +9564,33 @@ void do_steamblast(int Ind, int x, int y) {
 		inven_item_optimize(Ind, p);
 		inven_item_optimize(Ind, t);
 	}
-	p_ptr->steamblast_x = x;
-	p_ptr->steamblast_y = y;
-	p_ptr->steamblast_timer = 8;
 	//break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
-	msg_print(Ind, "You set up a steam blast charge on the door..");
 	p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
-s_printf("TECHNIQUE_MELEE: %s - steam blast\n", p_ptr->name);
 	p_ptr->warning_technique_melee = 1;
-	lite_spot(Ind, y, x);
+	p_ptr->steamblast = 0;
+
+	steamblast_timer[steamblasts] = fuse;
+	steamblast_disarm[steamblasts] = 10 + (trapping ? get_skill_scale(p_ptr, SKILL_TRAPPING, 80) : get_skill_scale(p_ptr, SKILL_DIG, 80));
+	steamblast_x[steamblasts] = x;
+	steamblast_y[steamblasts] = y;
+	steamblast_wpos[steamblasts] = p_ptr->wpos;
+	steamblasts++;
+	zcave[y][x].info |= CAVE_STEAMBLAST; /* for colouring */
+
+	if (door) {
+		msg_print(Ind, "You set up a steam blast charge on the door..");
+		s_printf("TECHNIQUE_MELEE: (Door) %s - steam blast\n", p_ptr->name);
+		lite_spot(Ind, y, x);
+	} else {
+		msg_print(Ind, "You set up a steam blast charge on the chest..");
+		s_printf("TECHNIQUE_MELEE: (Chest) %s - steam blast\n", p_ptr->name);
+		o_ptr->temp |= 0x08;
+	}
+
+	/* 0s-fsue hack: trigger immediately */
+	if (fuse == -1) steamblast_trigger(steamblasts - 1);
 }
 
 void do_pick_breath(int Ind, int element) {

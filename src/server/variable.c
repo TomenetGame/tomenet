@@ -702,6 +702,9 @@ int project_time = 0;
 s32b project_time_effect = 0;
 effect_type effects[MAX_EFFECTS];
 
+int steamblast_timer[MAX_STEAMBLASTS] = { 0 }, steamblast_x[MAX_STEAMBLASTS], steamblast_y[MAX_STEAMBLASTS], steamblast_disarm[MAX_STEAMBLASTS];
+struct worldpos steamblast_wpos[MAX_STEAMBLASTS];
+int steamblasts = 0;
 
 /*
  * Most of max_*_idx below is not used for now, but will be

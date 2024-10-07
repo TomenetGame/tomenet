@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 6. October 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 7. October 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18150,7 +18150,7 @@ stated.
 
                                 At 10.000 Trapping you will learn the fighting
                                 technique 'Steam Blast' which can blast open
-                                doors.
+                                doors and chests.
 
                                 Last but not least Trapping gives you a chance
                                 (depending on your skill) to salvage a trap kit
@@ -18293,7 +18293,8 @@ stated.
 
                                 At 10.000 Digging, if Demolitionist is enabled,
                                 you will learn the fighting technique
-                                'Steam Blast' which can blast open doors.
+                                'Steam Blast' which can blast open doors and
+                                chests.
 
                                 If you don't want ingredients to drop to reduce
                                 loot clutter, You can turn them off (and on
@@ -24347,12 +24348,23 @@ The techniques are as follows:
     Steam Blast         -
         Learnt by skilling 'Trapping' or (alternatively, if the Demolitionist
         perk is enabled) 'Digging' to at least 10.000.
-        Requires a fumes trap kit and a potion both inscribed '!S'. They will
-        be consumed and a steam blast charge is planted on the lock of the next
-        door the player bumps into. The player must not move before bumping
-        into the target door to 'set' the trap, or the skill will be cancelled.
-        The steam blast charge detonates after several seconds and will break
-        the door open.
+        Requires either a fumes trap kit or a blast charge and in any case a
+        potion of any sort (does not matter which one), both inscribed '!S'.
+        They will be consumed and a steam blast charge is planted on the lock
+        of the next door the player bumps into or the lock of a chest the
+        player is currently standing on.
+        The player must not move before bumping into the target door to 'set'
+        the trap, or the skill will be cancelled. If the charge is planted on
+        a chest, the chest must not be moved before it detonates or it will
+        get cancelled.
+        The steam blast charge will detonate after several seconds and will
+        break the door or chest open. For chests there is a chance, depending
+        on your Trapping (if you used a fumes trap) or Digging (if you used
+        a blast charge) skill, that it may or may not trigger the chest's trap
+        (which could potentially destroy the chest depending on the trap type).
+        You can add a number to the !S inscription on either item, which will
+        set the fuse duration in seconds from 0 to 15 (similar as !F does for
+        blast charges), eg: !S10 . The default value is 8 seconds.
 
     Shooting techniques:
     --------------------

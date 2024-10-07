@@ -947,9 +947,7 @@ struct player_type {
 	bool censor_swearing;
 	bool keep_bottle;
 	bool no_house_magic;
-	s16b steamblast_timer;
-	s16b steamblast_x;
-	s16b steamblast_y;
+	s16b steamblast;
 
 	bool player_list_window;
 	int item_newest;

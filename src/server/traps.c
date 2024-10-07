@@ -29,7 +29,7 @@
  */
 #define MISSILE_TRAP_FACTOR 75
 
-static void destroy_chest(object_type *o_ptr);
+static void ruin_chest(object_type *o_ptr);
 
 
 #if 0
@@ -543,6 +543,26 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	    // | PROJECT_KILL | PROJECT_JUMP
 	return(ident);
 }
+static bool generic_handle_breath_trap(struct worldpos *wpos, int x, int y, s16b rad, s16b type, u16b trap) {
+	trap_kind *t_ptr = &t_info[trap];
+	bool ident;
+	s16b my_dd, my_ds, dam;
+
+	my_dd = t_ptr->dd;
+	my_ds = t_ptr->ds;
+
+	/* these traps gets nastier as levels progress */
+	if (getlevel(wpos) > (2 * t_ptr->minlevel)) {
+		my_dd += (getlevel(wpos) / 15);
+		my_ds += (getlevel(wpos) / 15);
+	}
+	dam = damroll(my_dd, my_ds);
+
+	ident = project(PROJECTOR_TRAP, rad, wpos, y, x, dam, type,
+	    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO, t_name + t_ptr->name);
+	    // | PROJECT_KILL | PROJECT_JUMP
+	return(ident);
+}
 
 /*
  * This function damages the player by a trap
@@ -557,7 +577,8 @@ static void trap_hit(int Ind, s16b trap) {
 
 /*
  * this function activates one trap type, and returns
- * a bool indicating if this trap is now identified
+ * a bool indicating if this trap is now identified.
+ * Ind can be 0.
  */
 bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int item) {
 	player_type *p_ptr = Players[Ind];
@@ -679,7 +700,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				break;
 			}
 			ident = curse_weapon(Ind);
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Trap of Curse Armor */
@@ -689,7 +710,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				break;
 			}
 			ident = curse_armor(Ind);
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Earthquake Trap */
@@ -697,7 +718,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
 			earthquake(wpos, y, x, 10);
 			ident = TRUE;
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Poison Needle Trap */
@@ -744,7 +765,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 #ifdef USE_SOUND_2010
 			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Teleport Trap */
@@ -776,7 +797,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 #endif
 			take_hit(Ind, damroll(5, 8), "an explosion", 0);
 			ident = TRUE;
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Teleport Away Trap */
@@ -805,7 +826,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					floor_item_optimize(item);
 				}
 			}
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break; }
 
 		 /* Lose Memory Trap */
@@ -833,7 +854,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			ident |= dec_stat(Ind, A_STR, 25, STAT_DEC_NORMAL);
 			ident |= dec_stat(Ind, A_CHR, 25, STAT_DEC_NORMAL);
 			ident |= dec_stat(Ind, A_INT, 25, STAT_DEC_NORMAL);
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Bowel Cramps Trap */
@@ -1177,7 +1198,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Trap of Sliding */
 		case TRAP_OF_SLIDING:
 			/* ? */
-			destroy_chest(i_ptr); /* ah well, let's at least do this then */
+			ruin_chest(i_ptr); /* ah well, let's at least do this then */
 			break;
 
 		/* Trap of Charges Drain */
@@ -1213,7 +1234,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			else
 				msg_print(Ind, "You hear a wail of great disappointment.");
 
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break; }
 
 		/* Trap of Stair Movement */
@@ -1378,7 +1399,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 		/* Trap of Decay */
 		case TRAP_OF_DECAY:
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Trap of Wasting Wands */
@@ -1533,59 +1554,59 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 		/* it was '20,90,70'... */
 		case TRAP_OF_DROP_ITEMS:
-			ident = do_player_drop_items(Ind, 20, TRUE); destroy_chest(i_ptr); break;
+			ident = do_player_drop_items(Ind, 20, TRUE); ruin_chest(i_ptr); break;
 		case TRAP_OF_DROP_ALL_ITEMS:
-			ident = do_player_drop_items(Ind, 70, TRUE); destroy_chest(i_ptr); break;
+			ident = do_player_drop_items(Ind, 70, TRUE); ruin_chest(i_ptr); break;
 		case TRAP_OF_DROP_EVERYTHING:
-			ident = do_player_drop_items(Ind, 90, TRUE); destroy_chest(i_ptr); break;
+			ident = do_player_drop_items(Ind, 90, TRUE); ruin_chest(i_ptr); break;
 
 		/* Bolt Trap */
 		case TRAP_OF_ELEC_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
 		case TRAP_OF_POIS_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_POIS, TRAP_OF_POIS_BOLT); break;
-		case TRAP_OF_ACID_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_ACID, TRAP_OF_ACID_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_ACID_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_ACID, TRAP_OF_ACID_BOLT); ruin_chest(i_ptr); break;
 		case TRAP_OF_COLD_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_COLD, TRAP_OF_COLD_BOLT); break;
-		case TRAP_OF_FIRE_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_FIRE, TRAP_OF_FIRE_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_PLASMA_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_PLASMA, TRAP_OF_PLASMA_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_FIRE_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_FIRE, TRAP_OF_FIRE_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_PLASMA, TRAP_OF_PLASMA_BOLT); ruin_chest(i_ptr); break;
 		case TRAP_OF_WATER_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_WATER, TRAP_OF_WATER_BOLT); break;
 		case TRAP_OF_LITE_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_LITE, TRAP_OF_LITE_BOLT); break;
 		case TRAP_OF_DARK_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_DARK, TRAP_OF_DARK_BOLT); break;
-		case TRAP_OF_SHARDS_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_SHARDS, TRAP_OF_SHARDS_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_SHARDS_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_SHARDS, TRAP_OF_SHARDS_BOLT); ruin_chest(i_ptr); break;
 		case TRAP_OF_SOUND_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
 		case TRAP_OF_CONFUSION_BOLT:  ident = player_handle_breath_trap(Ind, 1, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
-		case TRAP_OF_FORCE_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_FORCE, TRAP_OF_FORCE_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_FORCE_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_FORCE, TRAP_OF_FORCE_BOLT); ruin_chest(i_ptr); break;
 		case TRAP_OF_INERTIA_BOLT:    ident = player_handle_breath_trap(Ind, 1, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
-		case TRAP_OF_MANA_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_MANA, TRAP_OF_MANA_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_MANA_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_MANA, TRAP_OF_MANA_BOLT); ruin_chest(i_ptr); break;
 		case TRAP_OF_ICE_BOLT:        ident = player_handle_breath_trap(Ind, 1, GF_ICE, TRAP_OF_ICE_BOLT); break;
-		case TRAP_OF_CHAOS_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_CHAOS, TRAP_OF_CHAOS_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_CHAOS_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_CHAOS, TRAP_OF_CHAOS_BOLT); ruin_chest(i_ptr); break;
 		case TRAP_OF_NETHER_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
-		case TRAP_OF_DISENCHANT_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_DISENCHANT_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); ruin_chest(i_ptr); break;
 		case TRAP_OF_NEXUS_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
 		case TRAP_OF_TIME_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_TIME, TRAP_OF_TIME_BOLT); break;
-		case TRAP_OF_GRAVITY_BOLT:    ident = player_handle_breath_trap(Ind, 1, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_GRAVITY_BOLT:    ident = player_handle_breath_trap(Ind, 1, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); ruin_chest(i_ptr); break;
 
 		/* Ball Trap */
 		case TRAP_OF_ELEC_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_ELEC, TRAP_OF_ELEC_BALL); break;
 		case TRAP_OF_POIS_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_POIS, TRAP_OF_POIS_BALL); break;
-		case TRAP_OF_ACID_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_ACID, TRAP_OF_ACID_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_ACID_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_ACID, TRAP_OF_ACID_BALL); ruin_chest(i_ptr); break;
 		case TRAP_OF_COLD_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_COLD, TRAP_OF_COLD_BALL); break;
-		case TRAP_OF_FIRE_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_FIRE, TRAP_OF_FIRE_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_PLASMA_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_PLASMA, TRAP_OF_PLASMA_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_FIRE_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_FIRE, TRAP_OF_FIRE_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_PLASMA, TRAP_OF_PLASMA_BALL); ruin_chest(i_ptr); break;
 		case TRAP_OF_WATER_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_WATER, TRAP_OF_WATER_BALL); break;
 		case TRAP_OF_LITE_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_LITE, TRAP_OF_LITE_BALL); break;
 		case TRAP_OF_DARK_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_DARK, TRAP_OF_DARK_BALL); break;
-		case TRAP_OF_SHARDS_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_SHARDS, TRAP_OF_SHARDS_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_SHARDS_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_SHARDS, TRAP_OF_SHARDS_BALL); ruin_chest(i_ptr); break;
 		case TRAP_OF_SOUND_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_SOUND, TRAP_OF_SOUND_BALL); break;
 		case TRAP_OF_CONFUSION_BALL:  ident = player_handle_breath_trap(Ind, 3, GF_CONFUSION, TRAP_OF_CONFUSION_BALL); break;
-		case TRAP_OF_FORCE_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_FORCE, TRAP_OF_FORCE_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_FORCE_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_FORCE, TRAP_OF_FORCE_BALL); ruin_chest(i_ptr); break;
 		case TRAP_OF_INERTIA_BALL:    ident = player_handle_breath_trap(Ind, 3, GF_INERTIA, TRAP_OF_INERTIA_BALL); break;
-		case TRAP_OF_MANA_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_MANA, TRAP_OF_MANA_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_ICE_BALL:        ident = player_handle_breath_trap(Ind, 3, GF_ICE, TRAP_OF_ICE_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_CHAOS_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_CHAOS, TRAP_OF_CHAOS_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_MANA_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_MANA, TRAP_OF_MANA_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_ICE_BALL:        ident = player_handle_breath_trap(Ind, 3, GF_ICE, TRAP_OF_ICE_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_CHAOS_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_CHAOS, TRAP_OF_CHAOS_BALL); ruin_chest(i_ptr); break;
 		case TRAP_OF_NETHER_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_NETHER, TRAP_OF_NETHER_BALL); break;
-		case TRAP_OF_DISENCHANT_BALL: ident = player_handle_breath_trap(Ind, 3, GF_DISENCHANT, TRAP_OF_DISENCHANT_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_NEXUS_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_NEXUS, TRAP_OF_NEXUS_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_TIME_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_TIME, TRAP_OF_TIME_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_GRAVITY_BALL:    ident = player_handle_breath_trap(Ind, 3, GF_GRAVITY, TRAP_OF_GRAVITY_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_DISENCHANT_BALL: ident = player_handle_breath_trap(Ind, 3, GF_DISENCHANT, TRAP_OF_DISENCHANT_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_NEXUS_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_NEXUS, TRAP_OF_NEXUS_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_TIME_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_TIME, TRAP_OF_TIME_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_GRAVITY_BALL:    ident = player_handle_breath_trap(Ind, 3, GF_GRAVITY, TRAP_OF_GRAVITY_BALL); ruin_chest(i_ptr); break;
 
 		/* -SC- */
 		case TRAP_OF_FEMINITY:
@@ -1729,18 +1750,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			break;
 
 		/* Bolt Trap */
-		case TRAP_OF_ROCKET: ident = player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); destroy_chest(i_ptr); break;
+		case TRAP_OF_ROCKET: ident = player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); ruin_chest(i_ptr); break;
 		//case TRAP_OF_DEATH_RAY
 		case TRAP_OF_NUKE_BOLT: ident =player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
 		case TRAP_OF_PSI_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
 		//case TRAP_OF_PSI_DRAIN: ident = player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
 #if 1	// coming..when it comes :) //very pow erful btw. insta-kills weaker chars.
 		case TRAP_OF_HOLY_FIRE: ident = player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
-		case TRAP_OF_HELLFIRE: ident = player_handle_breath_trap(Ind, 1, GF_HELLFIRE, trap); destroy_chest(i_ptr); break;
+		case TRAP_OF_HELLFIRE: ident = player_handle_breath_trap(Ind, 1, GF_HELLFIRE, trap); ruin_chest(i_ptr); break;
 #endif	// 0
 
 		/* Ball Trap */
-		case TRAP_OF_NUKE_BALL: ident = player_handle_breath_trap(Ind, 3, GF_NUKE, TRAP_OF_NUKE_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_NUKE_BALL: ident = player_handle_breath_trap(Ind, 3, GF_NUKE, TRAP_OF_NUKE_BALL); ruin_chest(i_ptr); break;
 		//case TRAP_OF_PSI_BALL: ident = player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
 
 		/* PernMangband additions */
@@ -1777,7 +1798,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Trap of Garbage */
 		case TRAP_OF_GARBAGE:
 			ident = do_player_trap_garbage(Ind, 300 + dlev * 3);
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break;
 
 		/* Trap of discordance */
@@ -2318,7 +2339,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			}
 			/* Compact the object list */
 			compact_objects(0, FALSE);
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			break; }
 
 		/* Preparation Trap */
@@ -2343,6 +2364,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			break;
 
 		case TRAP_OF_MOAT_I:
+			cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
 			if (p_ptr->levitate) {
 				/* dont notice it */
 				vanish = 0;
@@ -2350,23 +2372,22 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			}
 			if (!c_ptr) break;
 			if (!p_ptr->blind) msg_print(Ind, "A pool of water appears under you!");
-			cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 
 		case TRAP_OF_MOAT_II:
 			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			destroy_area(wpos, y, x, 10, TRUE, FEAT_DEEP_WATER, 30);
 			if (c_ptr) cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 
 		/* why not? :) */
-		case TRAP_OF_DISINTEGRATION_I: ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
-		case TRAP_OF_DISINTEGRATION_II: ident = player_handle_breath_trap(Ind, 3, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
+		case TRAP_OF_DISINTEGRATION_I: ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap); ruin_chest(i_ptr); break;
+		case TRAP_OF_DISINTEGRATION_II: ident = player_handle_breath_trap(Ind, 3, GF_DISINTEGRATE, trap); ruin_chest(i_ptr); break;
 		case TRAP_OF_BATTLE_FIELD:
 			if (no_summon) break;
 			ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
-			destroy_chest(i_ptr);
+			ruin_chest(i_ptr);
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_ALL_U98, 1, 0);
 			summon_override_checks = SO_NONE;
@@ -2537,7 +2558,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if (ident) {
 				msg_print(Ind, "Your purse suddenly squirms!");
 				p_ptr->redraw |= PR_GOLD;
-				destroy_chest(i_ptr);
+				ruin_chest(i_ptr);
 #ifdef USE_SOUND_2010
 				//sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
@@ -2647,13 +2668,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			//for (k = 0; k < randint(3); k++)
 				ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_BIZARRE6, 1, 0);
 			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 #if 0
 			if (ident) {
 				msg_print(Ind, "Doh!!");
 				set_stun_raw(Ind, p_ptr->stun + randint(50));
- #ifdef USE_SOUND_2010
-				sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
- #endif
 			}
 #endif	// 0
 			break;
@@ -2715,7 +2736,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			everyone_lite_spot(wpos, y, x);
 		}
 		/* Trap on a chest lying around (c_ptr->o_idx) */
-		else if (i_ptr->tval == TV_CHEST) destroy_chest(i_ptr);
+		else if (i_ptr->tval == TV_CHEST) ruin_chest(i_ptr);
 
 		ident = FALSE;
 	} else if (!p_ptr->warning_trap) {
@@ -2734,6 +2755,608 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 	    //!player_has_los_bold(Ind, y, x))
 		return(FALSE);
 	else return(ident);
+}
+
+void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_type *i_ptr, int item) {
+	bool ident = FALSE;
+	s16b trap = 0, vanish;
+	//dungeon_info_type *d_ptr = &d_info[dungeon_type];
+
+	int k, l, dlev = getlevel(wpos);
+	cave_type *c_ptr;
+	trap_kind *t_ptr;
+
+	struct dun_level *l_ptr = getfloor(wpos);
+	bool no_summon = (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON));
+	//bool no_teleport = (l_ptr && (l_ptr->flags2 & LF2_NO_TELE));
+
+	/* Paranoia */
+	cave_type **zcave;
+
+
+	if (!in_bounds(y, x)) return;
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
+
+#ifdef USE_SOUND_2010
+	sound_near_site(y, x, wpos, 0, "trap_setoff", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
+	if (item < 0) trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
+
+	if (i_ptr == NULL) {
+		if (c_ptr->o_idx == 0) i_ptr = NULL;
+		else i_ptr = &o_list[c_ptr->o_idx];
+	} else trap = i_ptr->pval;
+
+	if (trap == TRAP_OF_RANDOM_EFFECT) {
+		trap = TRAP_OF_ALE;
+		for (l = 0; l < 99 ; l++) {
+			k = rand_int(MAX_T_IDX);
+			if (!t_info[k].name || t_info[k].minlevel > dlev ||
+			    k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT)
+				continue;
+
+			trap = k;
+			break;
+		}
+	}
+
+	t_ptr = &t_info[trap];
+	vanish = t_ptr->vanish;
+
+	s_printf("Generic - Trap %d (%s) triggered.\n", trap, t_name + t_info[trap].name);
+
+	switch (trap) {
+		/* Earthquake Trap */
+		case TRAP_OF_EARTHQUAKE:
+			earthquake(wpos, y, x, 10);
+			ident = TRUE;
+			ruin_chest(i_ptr);
+			break;
+
+		/* Summon Monster Trap */
+		case TRAP_OF_SUMMON_MONSTER:
+			if (no_summon) break;
+			summon_override_checks = SO_IDDC;
+			//for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD, 1);	// max?
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 100, SUMMON_ALL_U98, 1, 0);
+			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			break;
+
+		/* Summon Undead Trap */
+		case TRAP_OF_SUMMON_UNDEAD:
+			if (no_summon) break;
+			summon_override_checks = SO_IDDC;
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_UNDEAD, 1, 0);
+			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			break;
+
+		/* Summon Greater Undead Trap */
+		case TRAP_OF_SUMMON_GREATER_UNDEAD:
+			if (no_summon) break;
+			summon_override_checks = SO_IDDC;
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_HI_UNDEAD, 1, 0);
+			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			ruin_chest(i_ptr);
+			break;
+
+		/* Explosive Device */
+		case TRAP_OF_EXPLOSIVE_DEVICE:
+			ruin_chest(i_ptr);
+			break;
+
+		/* Teleport Away Trap */
+		case TRAP_OF_TELEPORT_AWAY: {
+#if 0 //todo
+			int i, ty, tx, item, amt, rad = dlev / 20 - 1;
+			object_type *o_ptr;
+			cave_type *cc_ptr;
+
+			if (rad < 0) rad = 0;
+
+			for (i = 0; i < tdi[rad]; i++) {
+				ty = y + tdy[i];
+				tx = x + tdx[i];
+				if (!in_bounds(ty, tx)) continue;
+				cc_ptr = &zcave[ty][tx];
+
+				/* teleport away all items */
+				while (cc_ptr->o_idx != 0) {
+					item = cc_ptr->o_idx;
+					amt = o_list[item].number;
+					o_ptr = &o_list[item];
+
+					ident = do_trap_teleport_away(Ind, o_ptr, ty, tx);
+
+					floor_item_increase(item, -amt);
+					floor_item_optimize(item);
+				}
+			}
+#endif
+			ruin_chest(i_ptr);
+			break; }
+
+		 /* Bitter Regret Trap */
+		case TRAP_OF_BITTER_REGRET:
+			ruin_chest(i_ptr);
+			break;
+
+		/* Aggravation Trap */
+		case TRAP_OF_AGGRAVATION:
+#ifdef USE_SOUND_2010
+			sound_near_site(y, x, wpos, 0, "shriek", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			msg_print_near_site(y, x, wpos, 0, FALSE, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
+#else
+			/* wonder why this one was actually a hollow noise instead of the usual shriek.. */
+			msg_print_near_site(y, x, wpos, 0, FALSE, "\377RYou hear a hollow noise echoing through the dungeons.");
+#endif
+			aggravate_monsters_floorpos(wpos, x, y);
+			break;
+
+		/* Multiplication Trap */
+		case TRAP_OF_MULTIPLICATION:
+			if (istownarea(wpos, MAX_TOWNAREA)) break;
+			for (k = -1; k <= 1; k++)
+				for (l = -1; l <= 1; l++) {
+					/* let's keep its spot empty if the multiplication trap runs out? */
+					//if (k == 0 && l == 0) continue;
+
+					if (in_bounds(y + l, x + k) && (!GetCS(&zcave[y + l][x + k], CS_TRAPS)))
+						place_trap(wpos, y + l, x + k, -1);
+				}
+			ident = TRUE;
+			break;
+
+		/* Summon Fast Quylthulgs Trap */
+		case TRAP_OF_SUMMON_FAST_QUYLTHULGS:
+			if (no_summon) break;
+			summon_override_checks = SO_IDDC;
+			for (k = 0; k < randint(3); k++)
+				ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_QUYLTHULG, 1, 0);
+			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			break;
+
+		/* Trap of Walls */
+		case TRAP_OF_WALLS:
+			//ident = player_handle_trap_of_walls();
+			/* let's do a quick job ;) */
+			ident = generic_handle_breath_trap(wpos, x, y, 1 + dlev / 40, GF_STONE_WALL, TRAP_OF_WALLS);
+			break;
+
+		/* Trap of Calling Out */
+		case TRAP_OF_CALLING_OUT:
+#if 0 //todo
+			ident = do_player_trap_call_out(Ind);
+#endif
+			break;
+
+		/* Trap of Sliding */
+		case TRAP_OF_SLIDING:
+			/* ? */
+			ruin_chest(i_ptr); /* ah well, let's at least do this then */
+			break;
+
+		/* Trap of Charges Drain */
+		case TRAP_OF_CHARGES_DRAIN: {
+			ruin_chest(i_ptr);
+			break; }
+
+		/* Trap of New Trap */
+		case TRAP_OF_NEW: {
+			// maybe could become more interesting if it spawns several more traps at random locations? :)
+			struct c_special *cs_ptr;
+			cs_ptr = GetCS(c_ptr, CS_TRAPS);
+
+			if (istownarea(wpos, MAX_TOWNAREA)) {
+				break;
+			}
+			/* if we're on a floor or on a door, place a new trap */
+			if ((item == -1) || (item == -2)) {
+				cs_erase(c_ptr, cs_ptr);
+				place_trap(wpos, y , x, 0);
+#if 0 //todo
+				if (player_has_los_bold(Ind, y, x)) {
+					note_spot(Ind, y, x);
+					lite_spot(Ind, y, x);
+				}
+#endif
+			} else {
+				/* re-trap the chest */
+				//place_trap(wpos, y , x, 0);
+				place_trap_object(i_ptr);
+			}
+			break; }
+
+		/* Trap of Scatter Items */
+		case TRAP_OF_SCATTER_ITEMS:
+#if 0 //todo
+			ident = do_player_scatter_items(Ind, 70, 15);
+			break;
+#endif
+
+		/* Trap of Decay */
+		case TRAP_OF_DECAY:
+			ruin_chest(i_ptr);
+			break;
+
+		/* Trap of Filling */
+		case TRAP_OF_FILLING: {
+			s16b nx, ny;
+
+			for (nx = x - 8; nx <= x + 8; nx++) {
+				for (ny = y - 8; ny <= y + 8; ny++) {
+					if (!in_bounds (ny, nx)) continue;
+
+					if (rand_int(distance(ny, nx, y, x)) > 3)
+						place_trap(wpos, ny, nx, 0);
+				}
+			}
+			msg_print_near_site(y, x, wpos, 0, FALSE, "The floor vibrates in a strange way.");
+			break; }
+
+		/* it was '20,90,70'... */
+		case TRAP_OF_DROP_ITEMS:
+		case TRAP_OF_DROP_ALL_ITEMS:
+		case TRAP_OF_DROP_EVERYTHING:
+			ruin_chest(i_ptr); break;
+
+		/* Bolt Trap */
+		case TRAP_OF_ELEC_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
+		case TRAP_OF_POIS_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_POIS, TRAP_OF_POIS_BOLT); break;
+		case TRAP_OF_ACID_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ACID, TRAP_OF_ACID_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_COLD_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_COLD, TRAP_OF_COLD_BOLT); break;
+		case TRAP_OF_FIRE_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_FIRE, TRAP_OF_FIRE_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 1, GF_PLASMA, TRAP_OF_PLASMA_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_WATER_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_WATER, TRAP_OF_WATER_BOLT); break;
+		case TRAP_OF_LITE_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_LITE, TRAP_OF_LITE_BOLT); break;
+		case TRAP_OF_DARK_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_DARK, TRAP_OF_DARK_BOLT); break;
+		case TRAP_OF_SHARDS_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 1, GF_SHARDS, TRAP_OF_SHARDS_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_SOUND_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
+		case TRAP_OF_CONFUSION_BOLT:  ident = generic_handle_breath_trap(wpos, x, y, 1, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
+		case TRAP_OF_FORCE_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_FORCE, TRAP_OF_FORCE_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_INERTIA_BOLT:    ident = generic_handle_breath_trap(wpos, x, y, 1, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
+		case TRAP_OF_MANA_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_MANA, TRAP_OF_MANA_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_ICE_BOLT:        ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ICE, TRAP_OF_ICE_BOLT); break;
+		case TRAP_OF_CHAOS_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_CHAOS, TRAP_OF_CHAOS_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_NETHER_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 1, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
+		case TRAP_OF_DISENCHANT_BOLT: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_NEXUS_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
+		case TRAP_OF_TIME_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_TIME, TRAP_OF_TIME_BOLT); break;
+		case TRAP_OF_GRAVITY_BOLT:    ident = generic_handle_breath_trap(wpos, x, y, 1, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); ruin_chest(i_ptr); break;
+
+		/* Ball Trap */
+		case TRAP_OF_ELEC_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_ELEC, TRAP_OF_ELEC_BALL); break;
+		case TRAP_OF_POIS_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_POIS, TRAP_OF_POIS_BALL); break;
+		case TRAP_OF_ACID_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_ACID, TRAP_OF_ACID_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_COLD_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_COLD, TRAP_OF_COLD_BALL); break;
+		case TRAP_OF_FIRE_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_FIRE, TRAP_OF_FIRE_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BALL:     ident = generic_handle_breath_trap(wpos, x, y, 3, GF_PLASMA, TRAP_OF_PLASMA_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_WATER_BALL:      ident = generic_handle_breath_trap(wpos, x, y, 3, GF_WATER, TRAP_OF_WATER_BALL); break;
+		case TRAP_OF_LITE_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_LITE, TRAP_OF_LITE_BALL); break;
+		case TRAP_OF_DARK_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_DARK, TRAP_OF_DARK_BALL); break;
+		case TRAP_OF_SHARDS_BALL:     ident = generic_handle_breath_trap(wpos, x, y, 3, GF_SHARDS, TRAP_OF_SHARDS_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_SOUND_BALL:      ident = generic_handle_breath_trap(wpos, x, y, 3, GF_SOUND, TRAP_OF_SOUND_BALL); break;
+		case TRAP_OF_CONFUSION_BALL:  ident = generic_handle_breath_trap(wpos, x, y, 3, GF_CONFUSION, TRAP_OF_CONFUSION_BALL); break;
+		case TRAP_OF_FORCE_BALL:      ident = generic_handle_breath_trap(wpos, x, y, 3, GF_FORCE, TRAP_OF_FORCE_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_INERTIA_BALL:    ident = generic_handle_breath_trap(wpos, x, y, 3, GF_INERTIA, TRAP_OF_INERTIA_BALL); break;
+		case TRAP_OF_MANA_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_MANA, TRAP_OF_MANA_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_ICE_BALL:        ident = generic_handle_breath_trap(wpos, x, y, 3, GF_ICE, TRAP_OF_ICE_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_CHAOS_BALL:      ident = generic_handle_breath_trap(wpos, x, y, 3, GF_CHAOS, TRAP_OF_CHAOS_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_NETHER_BALL:     ident = generic_handle_breath_trap(wpos, x, y, 3, GF_NETHER, TRAP_OF_NETHER_BALL); break;
+		case TRAP_OF_DISENCHANT_BALL: ident = generic_handle_breath_trap(wpos, x, y, 3, GF_DISENCHANT, TRAP_OF_DISENCHANT_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_NEXUS_BALL:      ident = generic_handle_breath_trap(wpos, x, y, 3, GF_NEXUS, TRAP_OF_NEXUS_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_TIME_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_TIME, TRAP_OF_TIME_BALL); ruin_chest(i_ptr); break;
+		case TRAP_OF_GRAVITY_BALL:    ident = generic_handle_breath_trap(wpos, x, y, 3, GF_GRAVITY, TRAP_OF_GRAVITY_BALL); ruin_chest(i_ptr); break;
+
+		/* Bolt Trap */
+		case TRAP_OF_ROCKET: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ROCKET, trap); ruin_chest(i_ptr); break;
+		//case TRAP_OF_DEATH_RAY
+		case TRAP_OF_NUKE_BOLT: ident =generic_handle_breath_trap(wpos, x, y, 1, GF_NUKE, trap); break;
+		case TRAP_OF_PSI_BOLT: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_PSI, trap); break;
+		//case TRAP_OF_PSI_DRAIN: ident = generic_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
+#if 1	// coming..when it comes :) //very pow erful btw. insta-kills weaker chars.
+		case TRAP_OF_HOLY_FIRE: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_HOLY_FIRE, trap); break;
+		case TRAP_OF_HELLFIRE: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_HELLFIRE, trap); ruin_chest(i_ptr); break;
+#endif	// 0
+
+		/* Ball Trap */
+		case TRAP_OF_NUKE_BALL: ident = generic_handle_breath_trap(wpos, x, y, 3, GF_NUKE, TRAP_OF_NUKE_BALL); ruin_chest(i_ptr); break;
+		//case TRAP_OF_PSI_BALL: ident = generic_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
+
+		/* Trap of Garbage */
+		case TRAP_OF_GARBAGE:
+			ruin_chest(i_ptr);
+			break;
+
+		/* Vermin Trap */
+		case TRAP_OF_VERMIN:
+			l = randint(20 + dlev) + 30;/*let's give the player a decent chance to clean the mess
+						    over a reasonable amount of time.*/
+			for (k = 0; k < l; k++) {
+				s16b cx = x + 20 - rand_int(41);
+				s16b cy = y + 20 - rand_int(41);
+
+				if (!in_bounds(cy,cx)) {
+					cx = x;
+					cy = y;
+				}
+
+				/* paranoia */
+				if (!cave_empty_bold(zcave, cy, cx)) {
+					cx = x;
+					cy = y;
+				}
+
+				summon_override_checks = SO_IDDC;
+				ident |= summon_specific(wpos, cy, cx, dlev, 0, SUMMON_VERMIN, 1, 0);
+				summon_override_checks = SO_NONE;
+			}
+			break;
+
+		/* Lost Labor Trap */
+		case TRAP_OF_LOST_LABOR:
+			for (k = m_max - 1; k >= 1; k--) {
+				monster_type *m_ptr = &m_list[k];
+
+				if (inarea(&m_ptr->wpos,wpos)) {
+					monster_race    *r_ptr = race_inf(m_ptr);
+					if (!(r_ptr->flags1 & RF1_UNIQUE))
+						m_ptr->clone = 100;
+				}
+			}
+			break;
+
+		/* Cleaning Trap */
+		case TRAP_OF_CLEANING: {
+			int ix, iy;
+
+			if (istownarea(wpos, MAX_TOWNAREA)) break;
+
+			/* Delete the existing objects */
+			for (k = 1; k < o_max; k++) {
+				object_type *o_ptr = &o_list[k];
+
+				/* Skip dead objects */
+				if (!o_ptr->k_idx) continue;
+
+				/* Skip monster inventory/monster trap items */
+				if (o_ptr->held_m_idx || o_ptr->embed) continue;
+
+				/* Skip objects not on this depth */
+				if (!inarea(&o_ptr->wpos, wpos)) continue;
+
+				/* Skip 'owned' items, so that this won't be too harsh
+				 * in the rescue scene */
+				if (o_ptr->owner) continue;
+
+				ix = o_ptr->ix;
+				iy = o_ptr->iy;
+
+				/* Only within certain radius */
+				if (distance(y, x, iy, ix) > dlev / 5 + 5) continue;
+
+				/* Mega-Hack -- preserve artifacts */
+				if (true_artifact_p(o_ptr)) { /* && !object_known_p(o_ptr)*/
+					if (a_info[o_ptr->name1].flags4 & TR4_SPECIAL_GENE)
+						continue;
+				}
+
+#if 0 //todo
+				if (!p_ptr->blind && player_has_los_bold(Ind, iy, ix)) {
+					note_spot(Ind, iy,ix);
+					lite_spot(Ind, iy,ix);
+				}
+#endif
+
+				//if (zcave) zcave[iy][ix].o_idx = 0;
+				delete_object_idx(k, TRUE);
+
+				/* Wipe the object */
+				//WIPE(o_ptr, object_type);
+			}
+			/* Compact the object list */
+			compact_objects(0, FALSE);
+			ruin_chest(i_ptr);
+			break; }
+
+		/* Preparation Trap */
+		case TRAP_OF_PREPARE:
+			if (istownarea(wpos, MAX_TOWNAREA)) break;
+			/* Look for the existing objects */
+			for (k = 1; k < o_max; k++) {
+				object_type *o_ptr = &o_list[k];
+
+				/* Skip dead objects */
+				if (!o_ptr->k_idx) continue;
+
+				/* Skip objects not on this depth */
+				if (!inarea(&o_ptr->wpos, wpos)) continue;
+
+				/* Skip monster inventory/monster trap items */
+				if (o_ptr->held_m_idx || o_ptr->embed) continue;
+
+				if (magik(dlev)) place_trap(wpos, o_ptr->iy, o_ptr->ix, 0);
+			}
+			break;
+
+		case TRAP_OF_MOAT_I:
+			if (!c_ptr) break;
+			cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
+			break;
+
+		case TRAP_OF_MOAT_II:
+			ruin_chest(i_ptr);
+			destroy_area(wpos, y, x, 10, TRUE, FEAT_DEEP_WATER, 30);
+			if (c_ptr) cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
+			break;
+
+		/* why not? :) */
+		case TRAP_OF_DISINTEGRATION_I: ident = generic_handle_breath_trap(wpos, x, y, 5, GF_DISINTEGRATE, trap); ruin_chest(i_ptr); break;
+		case TRAP_OF_DISINTEGRATION_II: ident = generic_handle_breath_trap(wpos, x, y, 3, GF_DISINTEGRATE, trap); ruin_chest(i_ptr); break;
+		case TRAP_OF_BATTLE_FIELD:
+			if (no_summon) break;
+			ident = generic_handle_breath_trap(wpos, x, y, 5, GF_DISINTEGRATE, trap);
+			ruin_chest(i_ptr);
+			summon_override_checks = SO_IDDC;
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_ALL_U98, 1, 0);
+			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			break;
+
+		/* Death Molds Trap */
+		case TRAP_OF_DEATH_MOLDS:
+		case TRAP_OF_DEATH_SWORDS:
+			/* this is way too dangerous for parties -- disabled */
+			l = rand_range(1, 2);
+			for (k = tdi[l]; k < tdi[l + 1]; k++) {
+				s16b cx = x + tdx[k];
+				s16b cy = y + tdy[k];
+
+				if (!in_bounds(cy,cx)) continue;
+
+				/* paranoia */
+				if (!cave_empty_bold(zcave, cy, cx)) continue;
+
+#if 0 //todo
+				ident |= (place_monster_aux(wpos, cy, cx,
+				    race_index(trap == TRAP_OF_DEATH_MOLDS ?
+				    "Death mold" : "Death sword"), FALSE, FALSE, FALSE, 0) == 0 &&
+				    player_has_los_bold(Ind, cy, cx));
+#else
+				ident |= (place_monster_aux(wpos, cy, cx,
+				    race_index(trap == TRAP_OF_DEATH_MOLDS ?
+				    "Death mold" : "Death sword"), FALSE, FALSE, FALSE, 0));
+#endif
+			}
+			break;
+
+		case TRAP_OF_UNLIGHT: {
+#if 0 //todo
+			(void)unlite_area(Ind, FALSE, 0, 3);
+#endif
+			break; }
+
+		/* Trap of Hide Traps */
+		case TRAP_OF_HIDE_TRAPS: {
+			s16b nx, ny;
+			cave_type *cc_ptr;
+			struct c_special *cs_ptr;
+			int rad = 8 + dlev / 3;
+
+			for (nx = x - rad; nx <= x + rad; nx++) {
+				for (ny = y - rad; ny <= y + rad; ny++) {
+					if (!in_bounds (ny, nx)) continue;
+
+					cc_ptr = &zcave[ny][nx];
+
+					if (!(cs_ptr = GetCS(cc_ptr, CS_TRAPS))) continue;
+					if (!cs_ptr->sc.trap.found) continue;
+
+					cs_ptr->sc.trap.found = FALSE;
+					ident = TRUE;
+
+					everyone_lite_spot(wpos, ny, nx);
+				}
+			}
+			break; }
+
+		/* Trap of Respawning */
+		case TRAP_OF_RESPAWN: {
+			dun_level *l_ptr = getfloor(wpos);
+
+			if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER)) {
+				/* Set the monster generation depth */
+				monster_level = dlev;
+				for (k = 0; k < 5 + dlev / 4; k++) {
+					if (wpos->wz)
+						ident |= alloc_monster(wpos, MAX_SIGHT + 5, FALSE);
+					else wild_add_monster(wpos);
+				}
+			}
+			break; }
+
+		/* Jack-in-the-box trap */
+		case TRAP_OF_JACK:
+			summon_override_checks = SO_IDDC;
+			//for (k = 0; k < randint(3); k++)
+				ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_BIZARRE6, 1, 0);
+			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			break;
+
+		case TRAP_OF_SPOOKINESS:
+			l = randint(3) + 3;/*let's give the player a decent chance to clean the mess
+						    over a reasonable amount of time.*/
+			for (k = 0; k < l; k++) {
+				s16b cx, cy, tries = 10;
+
+				while (--tries) {
+					cy = rand_int(2) ? y + 3 + rand_int(8) : y - 3 - rand_int(8);
+					cx = rand_int(2) ? x + 3 + rand_int(8) : x - 3 - rand_int(8);
+
+					if (!in_bounds(cy, cx)) continue;
+
+					/* paranoia */
+					if (!cave_empty_bold(zcave, cy, cx)) continue;
+
+					break;
+				}
+				if (!tries) {
+					cx = x;
+					cy = y;
+					/* or maybe just
+					break; ? */
+				}
+
+				summon_override_checks = SO_IDDC;
+				ident |= summon_specific(wpos, cy, cx, dlev, 0, SUMMON_SPOOK, 1, 0);
+				summon_override_checks = SO_NONE;
+			}
+#ifdef USE_SOUND_2010
+			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			break;
+
+		default:
+			/* XXX LUA hook here maybe? */
+			s_printf("Generic - Unexecuted trap %d\n", trap);
+	}
+
+	/* some traps vanish */
+	if (magik(vanish)) {
+		struct c_special *cs_ptr = GetCS(c_ptr, CS_TRAPS);
+
+		/* Trap on the floor (-1) */
+		if (item < 0) {
+			cs_erase(c_ptr, cs_ptr);
+
+			/* Trap won't redraw while in 'S'earching mode though - fix: */
+			everyone_clear_ovl_spot(wpos, y, x);
+
+			/* since player is no longer moved onto the trap on triggering it,
+			   we have to redraw the grid (noticed this on door traps) */
+			everyone_lite_spot(wpos, y, x);
+		}
+		/* Trap on a chest lying around (c_ptr->o_idx) */
+		else if (i_ptr->tval == TV_CHEST) ruin_chest(i_ptr);
+	}
 }
 
 void player_activate_door_trap(int Ind, s16b y, s16b x) {
@@ -5265,7 +5888,7 @@ bool py_hit_trap(int Ind) {
 	return(FALSE);
 }
 
-static void destroy_chest(object_type *o_ptr) {
+static void ruin_chest(object_type *o_ptr) {
 	/* Hack to destroy chests */
 	if (o_ptr && o_ptr->tval == TV_CHEST) { /* check for o_ptr - chest might already be destroyed at this point */
 		//delete_object_idx(k, TRUE);

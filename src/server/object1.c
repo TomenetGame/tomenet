@@ -3915,14 +3915,16 @@ cptr item_activation(object_type *o_ptr) {
 		if (o_ptr->note && (c = strchr(quark_str(o_ptr->note), '!')) && (c[1] == 'F')) {
 			fuse = atoi(c + 2);
 
-			/* Limits: Fuse duration must be between 1s and 15s */
+			/* Limits: Fuse duration must be between 0s and 15s */
 			if (fuse > 15) fuse = 15;
-			if (fuse < 1) fuse = 1;
+			if (fuse < 0) fuse = 0;
 		}
 		/* Otherwise use default fuse length */
 		else fuse = o_ptr->pval;
 
-		return(format("ignition after %d seconds", fuse));
+		if (!fuse) return("instant ignition"); //boOm
+		else if (fuse == 1) return("ignition after 1 second");
+		else return(format("ignition after %d seconds", fuse));
 	}
 	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return("grinding things consisting of wood or metal to bits");
 #endif

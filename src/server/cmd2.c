@@ -6068,7 +6068,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				dir = rand_int(9) + 1;
 		}
 
-		if (p_ptr->steamblast_timer == -1 && dir != 5) {
+		if (p_ptr->steamblast && dir != 5) {
 			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 			if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
 #ifdef ENABLE_OUNLIFE
@@ -6076,7 +6076,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
 #endif
 				if (!CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) {
-					do_steamblast(Ind, p_ptr->px + ddx[dir], p_ptr->py + ddy[dir]);
+					do_steamblast(Ind, p_ptr->px + ddx[dir], p_ptr->py + ddy[dir], TRUE);
 					return;
 				}
 			}

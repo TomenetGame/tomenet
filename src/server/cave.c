@@ -3592,7 +3592,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			}
 
 			/* Highlight active steam blast charge on a door */
-			if (p_ptr->steamblast_timer > 0 && p_ptr->steamblast_x == x && p_ptr->steamblast_y == y) *ap = TERM_ORANGE;
+			if (c_ptr->info & CAVE_STEAMBLAST) *ap = TERM_ORANGE;
 		}
 
 		/* Unknown */
@@ -3787,6 +3787,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				/* Hack -- thrown aka non-planted, armed demolition charges flicker as the fuse is lit */
 				if (o_list[c_ptr->o_idx].tval == TV_CHARGE && o_list[c_ptr->o_idx].timeout) *ap = TERM_FIRE;
 #endif
+				/* Highlight active steam blast charge on a chest */
+				if (c_ptr->info & CAVE_STEAMBLAST) *ap = TERM_ORANGE;
 
 				/* Hack -- hallucination */
 				if (p_ptr->image) image_object(ap, cp);

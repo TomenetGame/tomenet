@@ -275,6 +275,23 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	}
 #endif
 
+	if ((o_ptr->temp & 0x08)) for (i = 0; i < steamblasts; i++) {
+		if (o_ptr->ix == steamblast_x[i] && o_ptr->iy == steamblast_y[i] && inarea(&o_ptr->wpos, &steamblast_wpos[i])) {
+			cave_type **zcave = getcave(wpos);
+
+			if (zcave) zcave[o_ptr->iy][o_ptr->ix].info &= ~CAVE_STEAMBLAST; /* colour back to normal */
+
+			steamblast_timer[i] = steamblast_timer[steamblasts - 1];
+			steamblast_x[i] = steamblast_x[steamblasts - 1];
+			steamblast_y[i] = steamblast_y[steamblasts - 1];
+			steamblast_disarm[i] = steamblast_disarm[steamblasts - 1];
+			steamblast_wpos[i] = steamblast_wpos[steamblasts - 1];
+			steamblasts--;
+			o_ptr->temp &= ~0x08;
+			//break; -- don't break, it might happen that more than 1 player sets steamblast on the same item
+		}
+	}
+
 	if (o_ptr->custom_lua_destruction) exec_lua(0, format("custom_object_destruction(0,%d,0,%d)", o_idx, o_ptr->custom_lua_destruction));
 
 	/* Excise */

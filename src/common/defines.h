@@ -2763,6 +2763,8 @@
 #define EFF_SNOWING		0x80000000U	/* For WINTER_SEASON */
 
 
+#define MAX_STEAMBLASTS		64
+
 
 /* Treasure classes aka 'kind themes' */
 #define TC_JUNK		0
@@ -4732,6 +4734,7 @@
 
 #define CAVE_ENCASED		0x01000000U	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
 #define CAVE_NO_TFORM		0x02000000U	/* This grid cannot be terraformed in any way (including destruction/earthquake etc). */
+#define CAVE_STEAMBLAST		0x04000000U	/* Cave has an active steamblast charge planted on it -- unused */
 
 /*
  * Special cave grid flags2 -- note that they must never all be set (0xFFFFFFFF) as that would collide with RLE!

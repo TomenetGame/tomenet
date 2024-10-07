@@ -803,7 +803,9 @@ struct object_type {
 					    0x01 is used to force-update an equipment slot (by simply causing memcmp to not match anymore due to the flipped bit!).
 					    0x02 is used for !W inscription to set the alarm for this object,
 					    0x04 too, for preventing the !W induced alarm if the object was dropped by the player.
+					    0x08 active steamblast charge (for chests)
 					*/
+
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
 	/* ..and for IDDC_RESTRICTED_TRADING : */
@@ -4265,7 +4267,7 @@ struct player_type {
 	int item_newest, item_newest_2nd;
 	bool keep_bottle;
 	bool no_house_magic;
-	s16b steamblast_x, steamblast_y, steamblast_timer;
+	s16b steamblast;
 
 	bool destroyed_floor_item;
 
