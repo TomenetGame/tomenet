@@ -11249,9 +11249,8 @@ void shutdown_server(void) {
 		player_type *p_ptr = Players[1];
 
 		/* Player gets a free IDDC anti-logscum pass, in case he was in the IDDC and not in a town, so his level got stale w/o his doing.
-		   As this pass is invalidated right after login in any case, even not applied, we don't really need to check here if player is
-		   really a) in IDDC and b) outside of a dungeon town... */
-		p_ptr->IDDC_freepass = TRUE;
+		   This pass is invalidated right after login in any case, even not applied. */
+		if (!p_ptr->IDDC_logscum) p_ptr->IDDC_freepass = TRUE;
 
 		/* Notify players who are afk and even pseudo-afk rogues */
 #if 0 /* always send a page beep? */
