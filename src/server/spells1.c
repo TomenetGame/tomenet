@@ -12700,10 +12700,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Hack for PROJECTOR_TRAP: Allow special use case without PROJECT_JUMP, for chest traps going haywire from afar:
 		   If the flag is missing, we assume that we just shoot into a random direction! */
 		if (who == PROJECTOR_TRAP) {
-			int dir = randint(9);
-
-			x = x + MAX_RANGE * ddx[dir];
-			y = y + MAX_RANGE * ddy[dir];
+			//lulstodo: use angle and sin/cos to get actually fair direction selection =-p
+			x = x - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
+			y = y - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
 		}
 	}
 
