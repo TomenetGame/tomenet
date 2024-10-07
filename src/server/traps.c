@@ -518,6 +518,60 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 
 	return(TRUE);
 }
+#if 0 //todo: shoot missiles into random direction (1..9) for chesttraps going haywire from steamblast
+static bool generic_handle_missile_trap(struct worldpos *wpos, int x, int y, s16b num, s16b tval, s16b sval, s16b dd, s16b ds, s16b pdam, cptr name) {
+	object_type *o_ptr, forge;
+	s16b i, dam, k_idx = lookup_kind(tval, sval);
+#if 0
+#ifndef NEW_DODGING
+	int dodge = p_ptr->dodge_level - (dd * ds) / 2;
+#else
+	int dodge = apply_dodge_chance(Ind, 1 + dd * ds / 3 + 1000); /* dd,ds currently goes up to 12,16. 1000 is a hack. */
+#endif
+#endif
+
+	o_ptr = &forge;
+	invcopy(o_ptr, k_idx);
+	o_ptr->number = num;
+	apply_magic(wpos, o_ptr, getlevel(wpos), FALSE, FALSE, FALSE, FALSE, RESF_NO_ENCHANT);//make_resf(p_ptr));
+
+	/* No more perfection / EA / and other nice daggers from this one -C. Blue */
+	/* If weapon has good boni, remove all ego abilities */
+	if ((o_ptr->pval > 0) || (o_ptr->to_a > 0) || (o_ptr->to_h > 0) || (o_ptr->to_d > 0)) {
+		/* if (o_ptr->name2 == EGO_SLAYING_WEAPON || o_ptr->name2b == EGO_SLAYING_WEAPON) */
+		o_ptr->dd = k_info[o_ptr->k_idx].dd;
+		o_ptr->ds = k_info[o_ptr->k_idx].ds;
+		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
+	}
+	/* Batch of Morgul daggers might also be over the top */
+	if (o_ptr->name2 == EGO_MORGUL || o_ptr->name2b == EGO_MORGUL)
+		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
+	/* Reverse good bonuses */
+	if (o_ptr->bpval > 0) o_ptr->bpval = 0;
+	if (o_ptr->pval > 0) o_ptr->pval = 0;
+	if (o_ptr->to_a > 0) o_ptr->to_a = 0;
+	if (o_ptr->to_h > 0) o_ptr->to_h = -o_ptr->to_h;
+	if (o_ptr->to_d > 0) o_ptr->to_d = -o_ptr->to_d;
+
+	dd = dd * MISSILE_TRAP_FACTOR / 100;
+
+	for (i = 0; i < num; i++) {
+		dam = damroll(dd, ds);
+#if 0
+		take_hit(Ind, dam, format("a %s", name), 0);
+		if (pdam > 0) {
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
+				(void)set_poisoned(Ind, p_ptr->poisoned + pdam, 0);
+		}
+#endif
+(void)dam;
+	}
+
+//	drop_near(TRUE, 0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	return(TRUE);
+}
+#endif
 
 /*
  * this function handles a "breath" type trap - acid bolt, lightning balls etc.
@@ -3010,6 +3064,60 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 			}
 			msg_print_near_site(y, x, wpos, 0, FALSE, "The floor vibrates in a strange way.");
 			break; }
+
+#if 0 /* todo: implement */
+		/* single missile traps */
+		case TRAP_OF_ARROW_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
+		case TRAP_OF_ARROW_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_BOLT, SV_AMMO_NORMAL, 10, 8, 0, "Bolt Trap"); break;
+		case TRAP_OF_ARROW_III:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_ARROW, SV_AMMO_HEAVY, 12, 12, 0, "Seeker Arrow Trap"); break;
+		case TRAP_OF_ARROW_IV:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_BOLT, SV_AMMO_HEAVY, 12, 16, 0, "Seeker Bolt Trap"); break;
+		case TRAP_OF_POISON_ARROW_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_ARROW, SV_AMMO_NORMAL, 4, 8, 10 + randint(20), "Poison Arrow Trap"); break;
+		case TRAP_OF_POISON_ARROW_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_BOLT, SV_AMMO_NORMAL, 10, 8, 15 + randint(30), "Poison Bolt Trap"); break;
+		case TRAP_OF_POISON_ARROW_III:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_ARROW, SV_AMMO_HEAVY, 12, 12, 30 + randint(50), "Poison Seeker Arrow Trap"); break;
+		case TRAP_OF_POISON_ARROW_IV:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_BOLT, SV_AMMO_HEAVY, 12, 16, 40 + randint(70), "Poison Seeker Bolt Trap"); break;
+		case TRAP_OF_DAGGER_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 0, "Dagger Trap"); break;
+		case TRAP_OF_DAGGER_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_SWORD, SV_DAGGER, 10, 8, 0, "Dagger Trap"); break;
+		case TRAP_OF_POISON_DAGGER_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 15 + randint(20), "Poison Dagger Trap"); break;
+		case TRAP_OF_POISON_DAGGER_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 1, TV_SWORD, SV_DAGGER, 10, 8, 20 + randint(30), "Poison Dagger Trap"); break;
+		/* * multiple missile traps
+		 * numbers range from 2 (level 0 to 14) to 10 (level 120 and up) */
+		case TRAP_OF_ARROWS_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
+		case TRAP_OF_ARROWS_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 0, "Bolt Trap"); break;
+		case TRAP_OF_ARROWS_III:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 9, 0, "Seeker Arrow Trap"); break;
+		case TRAP_OF_ARROWS_IV:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 0, "Seeker Bolt Trap"); break;
+		case TRAP_OF_POISON_ARROWS_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 10 + randint(20), "Poison Arrow Trap"); break;
+		case TRAP_OF_POISON_ARROWS_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 15 + randint(30), "Poison Bolt Trap"); break;
+		case TRAP_OF_POISON_ARROWS_III:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 8, 30 + randint(50), "Poison Seeker Arrow Trap"); break;
+		case TRAP_OF_POISON_ARROWS_IV:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 40 + randint(70), "Poison Seeker Bolt Trap"); break;
+		case TRAP_OF_DAGGERS_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 0, "Dagger Trap"); break;
+		case TRAP_OF_DAGGERS_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_SWORD, SV_DAGGER, 3, 8, 0, "Dagger Trap"); break;
+		case TRAP_OF_POISON_DAGGERS_I:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 15 + randint(20), "Poison Dagger Trap"); break;
+		case TRAP_OF_POISON_DAGGERS_II:
+			ident = generic_handle_missile_trap(wpos, x, y, 2 + (dlev / 30), TV_SWORD, SV_DAGGER, 3, 8, 20 + randint(30), "Poison Dagger Trap"); break;
+#endif
 
 		/* it was '20,90,70'... */
 		case TRAP_OF_DROP_ITEMS:
