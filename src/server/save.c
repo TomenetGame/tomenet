@@ -855,8 +855,8 @@ static void wr_extra(int Ind) {
 	tmp8u |= (p_ptr->death ? 0x4 : 0x0);
 	tmp8u |= (p_ptr->black_breath ? 0x8 : 0x0);
 	tmp8u |= (p_ptr->event_participated ? 0x10 : 0x0);
-	tmp8u |= (p_ptr->IDDC_found_rndtown ? 0x20 : 0x0); //superfluous?
-	tmp8u |= (p_ptr->IDDC_logscum ? 0x40 : 0x0); //superfluous?
+	tmp8u |= (p_ptr->IDDC_found_rndtown ? 0x20 : 0x0);
+	tmp8u |= (p_ptr->IDDC_freepass ? 0x40 : 0x0);
 	/* Save if we're currently in an IDDC refuge */
 	if (in_irondeepdive(&p_ptr->wpos)) {
 		cave_type **zcave = getcave(&p_ptr->wpos);

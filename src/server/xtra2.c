@@ -14228,6 +14228,11 @@ void telekinesis_aux(int Ind, int item) {
 		msg_print(Ind, "\377yYou cannot send items into or out of the Ironman Deep Dive Challenge.");
 		return;
 	}
+	if ((in_hallsofmandos(&p_ptr->wpos) || in_hallsofmandos(&p2_ptr->wpos)) &&
+	    !(in_hallsofmandos(&p_ptr->wpos) && in_hallsofmandos(&p2_ptr->wpos))) {
+		msg_print(Ind, "\377yYou cannot send items into or out of The Halls of Mandos.");
+		return;
+	}
 
 	if (compat_pmode(Ind, Ind2, FALSE) && !is_admin(p_ptr)) {
 		msg_format(Ind, "You cannot contact %s beings!", compat_pmode(Ind, Ind2, FALSE));
@@ -14262,11 +14267,14 @@ void telekinesis_aux(int Ind, int item) {
 			if (!is_admin(p_ptr)) return;
 		}
  #endif
-		//todo: DED_IDDC_MANDOS
 		if (p2_ptr->IDDC_logscum) {
 			msg_print(Ind, "\377yYou cannot send items to players who are on stale floors in the IDDC.");
 			if (!is_admin(p_ptr)) return;
 		}
+	} else if (in_hallsofmandos(&p2_ptr->wpos) &&
+	    p2_ptr->IDDC_logscum) {
+		msg_print(Ind, "\377yYou cannot send items to players who are on stale floors in The Halls of Mandos.");
+		if (!is_admin(p_ptr)) return;
 	}
 #endif
 

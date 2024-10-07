@@ -4208,8 +4208,10 @@ struct player_type {
 	bool max_depth_tower[MAX_D_IDX * 2];
 
 	u32b gold_picked_up;		/* for EVENT_TOWNIE_GOLD_LIMIT */
-	bool IDDC_found_rndtown;	/* prevent multiple random towns within one 'interval' */
+	bool IDDC_found_rndtown;	/* prevent multiple random towns within one 'interval' between fixed towns, ie reset again each time we find a fixed town. */
 	bool IDDC_logscum;		/* prevent log-scumming instead of proceeding downwards */
+	bool IDDC_freepass;		/* If server has to shutdown/restart for some reason, grant players in IDDC but not in towns a free
+					   one-time floor pass that cancels logscum once, and gets discarded on next login in any case. */
 	byte IDDC_flags;		/* added for IDDC special hack: Make it easier to find up to two speed rings */
 	bool IDDC_refuge;
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */

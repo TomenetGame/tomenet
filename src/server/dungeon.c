@@ -87,8 +87,9 @@ static void process_weather_control(void);
  #endif
 #endif
 
+/* To make up for this, players get an IDDC_freepass ;) */
 #define SHUTDOWN_IGNORE_IDDC(p_ptr) \
-    (in_irondeepdive(&(p_ptr)->wpos) \
+    ((in_irondeepdive(&(p_ptr)->wpos) || in_hallsofmandos(&(p_ptr)->wpos)) \
     && (p_ptr)->idle_char > 900) /* just after 15 minutes flat */
     //&& p_ptr->afk
     //&& p_ptr->idle_char > STARVE_KICK_TIMER) //reuse idle-starve-kick-timer for this
@@ -11246,6 +11247,11 @@ void shutdown_server(void) {
 	while (NumPlayers > 0) {
 		/* Note the we always save the first player */
 		player_type *p_ptr = Players[1];
+
+		/* Player gets a free IDDC anti-logscum pass, in case he was in the IDDC and not in a town, so his level got stale w/o his doing.
+		   As this pass is invalidated right after login in any case, even not applied, we don't really need to check here if player is
+		   really a) in IDDC and b) outside of a dungeon town... */
+		p_ptr->IDDC_freepass = TRUE;
 
 		/* Notify players who are afk and even pseudo-afk rogues */
 #if 0 /* always send a page beep? */

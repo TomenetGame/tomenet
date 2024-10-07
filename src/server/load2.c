@@ -1966,8 +1966,8 @@ static bool rd_extra(int Ind) {
 		p_ptr->death = tmp8u & 0x4;
 		p_ptr->black_breath = tmp8u & 0x8;
 		p_ptr->event_participated = tmp8u & 0x10;
-		p_ptr->IDDC_found_rndtown = tmp8u & 0x20; //superfluous?
-		p_ptr->IDDC_logscum = tmp8u & 0x40; //superfluous?
+		p_ptr->IDDC_found_rndtown = tmp8u & 0x20;
+		p_ptr->IDDC_freepass = tmp8u & 0x40;
 		p_ptr->IDDC_refuge = tmp8u & 0x80;
 	} else if (p_ptr->max_exp) p_ptr->event_participated = TRUE;
 	//these are zero if read from old save file < 4,9,0 :
@@ -3051,19 +3051,6 @@ static errr rd_floor(void) {
 		if (IS_DAY) world_surface_day(&wpos);
 		else world_surface_night(&wpos);
 	}
-
-#if 0 /* the glitch resulted from an ancient char being parked at that depth */
-	/* Maybe paranoia, but there was a glitch resulting in IDDC_logscum flag being set in -1k IDDC town */
-	if (in_irondeepdive(&wpos)) {
-		//int dun_lev = getlevel(wpos); -- not sure if dungeon positions have actually already been loaded at this point, so just read wz directly.
-		if (is_fixed_irondeepdive_town(&wpos, ABS(wpos.wz)) ||
-		    is_extra_fixed_irondeepdive_town(&wpos, ABS(wpos.wz))) {
-			struct dun_level *l_ptr = getfloor(&wpos);
-
-			l_ptr->flags1 |= LF1_DUNGEON_TOWN;
-		}
-	}
-#endif
 
 	/* Success */
 	return(0);

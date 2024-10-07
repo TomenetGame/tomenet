@@ -899,6 +899,7 @@ struct player_type {
 	int vampiric_ranged;
 	bool IDDC_found_rndtown;
 	bool IDDC_logscum;
+	bool IDDC_freepass;
 	byte IDDC_flags;
 	bool insta_res;
 	bool hilite_player;

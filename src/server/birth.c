@@ -2486,15 +2486,9 @@ static void player_setup(int Ind, bool new) {
 		}
 
 		/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
-		if (in_irondeepdive(&p_ptr->wpos) && !panic
-		    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+		if ((in_irondeepdive(&p_ptr->wpos) || in_hallsofmandos(&p_ptr->wpos)) && !panic && !p_ptr->IDDC_freepass
 		    && (!l_ptr || !(l_ptr->flags1 & LF1_DUNGEON_TOWN))) /* !l_ptr check just to silence the compiler.. */
-			p_ptr->IDDC_logscum = TRUE;//todo: DED_IDDC_MANDOS
-
-#if 1
-		/* fix ancient chars that had logscum flag set in their savegame, before the town was added */
-		if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;//todo: DED_IDDC_MANDOS
-#endif
+			p_ptr->IDDC_logscum = TRUE;
 	} else if (p_ptr->wpos.wz) {
 		bool unknown = FALSE;
 
@@ -2515,15 +2509,9 @@ static void player_setup(int Ind, bool new) {
 			p_ptr->dlev_id = l_ptr->id;
 
 			/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
-			if (in_irondeepdive(&p_ptr->wpos) && !panic
-			    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+			if ((in_irondeepdive(&p_ptr->wpos) || in_hallsofmandos(&p_ptr->wpos)) && !panic && !p_ptr->IDDC_freepass
 			    && !(l_ptr->flags1 & LF1_DUNGEON_TOWN))
-				p_ptr->IDDC_logscum = TRUE;//todo: DED_IDDC_MANDOS
-
-#if 1
-			/* fix ancient chars that had logscum flag set in their savegame, before the town was added */
-			if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;//todo: DED_IDDC_MANDOS
-#endif
+				p_ptr->IDDC_logscum = TRUE;
 		}
 		/* <else> It's still the same level we left [a moment ago], np.
 		   Here we just keep the IDDC_logscum that we read in load.c. */
@@ -2580,6 +2568,9 @@ static void player_setup(int Ind, bool new) {
 		/* make whole dungeon town visible like a 'normal town at night' */
 		player_dungeontown(Ind);
 	}
+
+	/* Lose free logscum one-time pass in any case, whether applied or not. */
+	p_ptr->IDDC_freepass = FALSE;
 
 	if (new) {
 #if 0
