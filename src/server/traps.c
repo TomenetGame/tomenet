@@ -592,9 +592,16 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	}
 	dam = damroll(my_dd, my_ds);
 
-	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
-	    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO, t_name + t_ptr->name);
-	    // | PROJECT_KILL | PROJECT_JUMP
+	if (rad) { /* ball spell onto the x,y aka the trapped chest's own grid */
+		u32b flg = PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NORF | PROJECT_NODO;
+
+		flg = mod_ball_spell_flags(type, flg);
+		ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type, flg, t_name + t_ptr->name);
+	} else { /* pseudo-bolt, different flags than ball or grid-bolt, as it can be deflected */
+		u32b flg = PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_JUMP;
+
+		ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type, flg, t_name + t_ptr->name);
+	}
 	return(ident);
 }
 static bool generic_handle_breath_trap(struct worldpos *wpos, int x, int y, s16b rad, s16b type, u16b trap) {
@@ -612,13 +619,16 @@ static bool generic_handle_breath_trap(struct worldpos *wpos, int x, int y, s16b
 	}
 	dam = damroll(my_dd, my_ds);
 
-	if (rad) /* ball spell onto the x,y aka the trapped chest's own grid */
-		ident = project(PROJECTOR_TRAP, rad, wpos, y, x, dam, type,
-		    PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NORF | PROJECT_NODO, t_name + t_ptr->name);
-		    // | PROJECT_KILL | PROJECT_JUMP
-	else /* actual bolt from x,y into a random direction, possibly own grid */
-		ident = project(PROJECTOR_TRAP, 0, wpos, y, x, dam, type,
-		    PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_STOP, t_name + t_ptr->name);
+	if (rad) { /* ball spell onto the x,y aka the trapped chest's own grid */
+		u32b flg = PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NORF | PROJECT_NODO;
+
+		flg = mod_ball_spell_flags(type, flg);
+		ident = project(PROJECTOR_TRAP, rad, wpos, y, x, dam, type, flg, t_name + t_ptr->name);
+	} else { /* actual bolt from x,y into a random direction, possibly own grid, via PROJECTOR_TRAP hack in project() */
+		u32b flg = PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_STOP;
+
+		ident = project(PROJECTOR_TRAP, 0, wpos, y, x, dam, type, flg, t_name + t_ptr->name);
+	}
 	return(ident);
 }
 
