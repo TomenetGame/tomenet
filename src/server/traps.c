@@ -1561,28 +1561,28 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			ident = do_player_drop_items(Ind, 90, TRUE); ruin_chest(i_ptr); break;
 
 		/* Bolt Trap */
-		case TRAP_OF_ELEC_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
-		case TRAP_OF_POIS_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_POIS, TRAP_OF_POIS_BOLT); break;
-		case TRAP_OF_ACID_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_ACID, TRAP_OF_ACID_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_COLD_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_COLD, TRAP_OF_COLD_BOLT); break;
-		case TRAP_OF_FIRE_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_FIRE, TRAP_OF_FIRE_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_PLASMA_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_PLASMA, TRAP_OF_PLASMA_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_WATER_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_WATER, TRAP_OF_WATER_BOLT); break;
-		case TRAP_OF_LITE_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_LITE, TRAP_OF_LITE_BOLT); break;
-		case TRAP_OF_DARK_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_DARK, TRAP_OF_DARK_BOLT); break;
-		case TRAP_OF_SHARDS_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_SHARDS, TRAP_OF_SHARDS_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_SOUND_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
-		case TRAP_OF_CONFUSION_BOLT:  ident = player_handle_breath_trap(Ind, 1, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
-		case TRAP_OF_FORCE_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_FORCE, TRAP_OF_FORCE_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_INERTIA_BOLT:    ident = player_handle_breath_trap(Ind, 1, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
-		case TRAP_OF_MANA_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_MANA, TRAP_OF_MANA_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_ICE_BOLT:        ident = player_handle_breath_trap(Ind, 1, GF_ICE, TRAP_OF_ICE_BOLT); break;
-		case TRAP_OF_CHAOS_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_CHAOS, TRAP_OF_CHAOS_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_NETHER_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
-		case TRAP_OF_DISENCHANT_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_NEXUS_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
-		case TRAP_OF_TIME_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_TIME, TRAP_OF_TIME_BOLT); break;
-		case TRAP_OF_GRAVITY_BOLT:    ident = player_handle_breath_trap(Ind, 1, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_ELEC_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
+		case TRAP_OF_POIS_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_POIS, TRAP_OF_POIS_BOLT); break;
+		case TRAP_OF_ACID_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_ACID, TRAP_OF_ACID_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_COLD_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_COLD, TRAP_OF_COLD_BOLT); break;
+		case TRAP_OF_FIRE_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_FIRE, TRAP_OF_FIRE_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BOLT:     ident = player_handle_breath_trap(Ind, 0, GF_PLASMA, TRAP_OF_PLASMA_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_WATER_BOLT:      ident = player_handle_breath_trap(Ind, 0, GF_WATER, TRAP_OF_WATER_BOLT); break;
+		case TRAP_OF_LITE_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_LITE, TRAP_OF_LITE_BOLT); break;
+		case TRAP_OF_DARK_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_DARK, TRAP_OF_DARK_BOLT); break;
+		case TRAP_OF_SHARDS_BOLT:     ident = player_handle_breath_trap(Ind, 0, GF_SHARDS, TRAP_OF_SHARDS_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_SOUND_BOLT:      ident = player_handle_breath_trap(Ind, 0, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
+		case TRAP_OF_CONFUSION_BOLT:  ident = player_handle_breath_trap(Ind, 0, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
+		case TRAP_OF_FORCE_BOLT:      ident = player_handle_breath_trap(Ind, 0, GF_FORCE, TRAP_OF_FORCE_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_INERTIA_BOLT:    ident = player_handle_breath_trap(Ind, 0, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
+		case TRAP_OF_MANA_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_MANA, TRAP_OF_MANA_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_ICE_BOLT:        ident = player_handle_breath_trap(Ind, 0, GF_ICE, TRAP_OF_ICE_BOLT); break;
+		case TRAP_OF_CHAOS_BOLT:      ident = player_handle_breath_trap(Ind, 0, GF_CHAOS, TRAP_OF_CHAOS_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_NETHER_BOLT:     ident = player_handle_breath_trap(Ind, 0, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
+		case TRAP_OF_DISENCHANT_BOLT: ident = player_handle_breath_trap(Ind, 0, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_NEXUS_BOLT:      ident = player_handle_breath_trap(Ind, 0, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
+		case TRAP_OF_TIME_BOLT:       ident = player_handle_breath_trap(Ind, 0, GF_TIME, TRAP_OF_TIME_BOLT); break;
+		case TRAP_OF_GRAVITY_BOLT:    ident = player_handle_breath_trap(Ind, 0, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); ruin_chest(i_ptr); break;
 
 		/* Ball Trap */
 		case TRAP_OF_ELEC_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_ELEC, TRAP_OF_ELEC_BALL); break;
@@ -1752,9 +1752,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Bolt Trap */
 		case TRAP_OF_ROCKET: ident = player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); ruin_chest(i_ptr); break;
 		//case TRAP_OF_DEATH_RAY
-		case TRAP_OF_NUKE_BOLT: ident =player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
-		case TRAP_OF_PSI_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
-		//case TRAP_OF_PSI_DRAIN: ident = player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
+		case TRAP_OF_NUKE_BOLT: ident =player_handle_breath_trap(Ind, 0, GF_NUKE, trap); break;
+		case TRAP_OF_PSI_BOLT: ident = player_handle_breath_trap(Ind, 0, GF_PSI, trap); break;
+		//case TRAP_OF_PSI_DRAIN: ident = player_handle_breath_trap(0, GF_PSI_DRAIN, trap); break;
 #if 1	// coming..when it comes :) //very pow erful btw. insta-kills weaker chars.
 		case TRAP_OF_HOLY_FIRE: ident = player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
 		case TRAP_OF_HELLFIRE: ident = player_handle_breath_trap(Ind, 1, GF_HELLFIRE, trap); ruin_chest(i_ptr); break;
@@ -3014,28 +3014,28 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 			ruin_chest(i_ptr); break;
 
 		/* Bolt Trap */
-		case TRAP_OF_ELEC_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
-		case TRAP_OF_POIS_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_POIS, TRAP_OF_POIS_BOLT); break;
-		case TRAP_OF_ACID_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ACID, TRAP_OF_ACID_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_COLD_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_COLD, TRAP_OF_COLD_BOLT); break;
-		case TRAP_OF_FIRE_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_FIRE, TRAP_OF_FIRE_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_PLASMA_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 1, GF_PLASMA, TRAP_OF_PLASMA_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_WATER_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_WATER, TRAP_OF_WATER_BOLT); break;
-		case TRAP_OF_LITE_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_LITE, TRAP_OF_LITE_BOLT); break;
-		case TRAP_OF_DARK_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_DARK, TRAP_OF_DARK_BOLT); break;
-		case TRAP_OF_SHARDS_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 1, GF_SHARDS, TRAP_OF_SHARDS_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_SOUND_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
-		case TRAP_OF_CONFUSION_BOLT:  ident = generic_handle_breath_trap(wpos, x, y, 1, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
-		case TRAP_OF_FORCE_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_FORCE, TRAP_OF_FORCE_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_INERTIA_BOLT:    ident = generic_handle_breath_trap(wpos, x, y, 1, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
-		case TRAP_OF_MANA_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_MANA, TRAP_OF_MANA_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_ICE_BOLT:        ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ICE, TRAP_OF_ICE_BOLT); break;
-		case TRAP_OF_CHAOS_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_CHAOS, TRAP_OF_CHAOS_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_NETHER_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 1, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
-		case TRAP_OF_DISENCHANT_BOLT: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); ruin_chest(i_ptr); break;
-		case TRAP_OF_NEXUS_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 1, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
-		case TRAP_OF_TIME_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 1, GF_TIME, TRAP_OF_TIME_BOLT); break;
-		case TRAP_OF_GRAVITY_BOLT:    ident = generic_handle_breath_trap(wpos, x, y, 1, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_ELEC_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
+		case TRAP_OF_POIS_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_POIS, TRAP_OF_POIS_BOLT); break;
+		case TRAP_OF_ACID_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_ACID, TRAP_OF_ACID_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_COLD_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_COLD, TRAP_OF_COLD_BOLT); break;
+		case TRAP_OF_FIRE_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_FIRE, TRAP_OF_FIRE_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 0, GF_PLASMA, TRAP_OF_PLASMA_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_WATER_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 0, GF_WATER, TRAP_OF_WATER_BOLT); break;
+		case TRAP_OF_LITE_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_LITE, TRAP_OF_LITE_BOLT); break;
+		case TRAP_OF_DARK_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_DARK, TRAP_OF_DARK_BOLT); break;
+		case TRAP_OF_SHARDS_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 0, GF_SHARDS, TRAP_OF_SHARDS_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_SOUND_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 0, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
+		case TRAP_OF_CONFUSION_BOLT:  ident = generic_handle_breath_trap(wpos, x, y, 0, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
+		case TRAP_OF_FORCE_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 0, GF_FORCE, TRAP_OF_FORCE_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_INERTIA_BOLT:    ident = generic_handle_breath_trap(wpos, x, y, 0, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
+		case TRAP_OF_MANA_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_MANA, TRAP_OF_MANA_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_ICE_BOLT:        ident = generic_handle_breath_trap(wpos, x, y, 0, GF_ICE, TRAP_OF_ICE_BOLT); break;
+		case TRAP_OF_CHAOS_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 0, GF_CHAOS, TRAP_OF_CHAOS_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_NETHER_BOLT:     ident = generic_handle_breath_trap(wpos, x, y, 0, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
+		case TRAP_OF_DISENCHANT_BOLT: ident = generic_handle_breath_trap(wpos, x, y, 0, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); ruin_chest(i_ptr); break;
+		case TRAP_OF_NEXUS_BOLT:      ident = generic_handle_breath_trap(wpos, x, y, 0, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
+		case TRAP_OF_TIME_BOLT:       ident = generic_handle_breath_trap(wpos, x, y, 0, GF_TIME, TRAP_OF_TIME_BOLT); break;
+		case TRAP_OF_GRAVITY_BOLT:    ident = generic_handle_breath_trap(wpos, x, y, 0, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); ruin_chest(i_ptr); break;
 
 		/* Ball Trap */
 		case TRAP_OF_ELEC_BALL:       ident = generic_handle_breath_trap(wpos, x, y, 3, GF_ELEC, TRAP_OF_ELEC_BALL); break;
@@ -3064,8 +3064,8 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 		/* Bolt Trap */
 		case TRAP_OF_ROCKET: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_ROCKET, trap); ruin_chest(i_ptr); break;
 		//case TRAP_OF_DEATH_RAY
-		case TRAP_OF_NUKE_BOLT: ident =generic_handle_breath_trap(wpos, x, y, 1, GF_NUKE, trap); break;
-		case TRAP_OF_PSI_BOLT: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_PSI, trap); break;
+		case TRAP_OF_NUKE_BOLT: ident =generic_handle_breath_trap(wpos, x, y, 0, GF_NUKE, trap); break;
+		case TRAP_OF_PSI_BOLT: ident = generic_handle_breath_trap(wpos, x, y, 0, GF_PSI, trap); break;
 		//case TRAP_OF_PSI_DRAIN: ident = generic_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
 #if 1	// coming..when it comes :) //very pow erful btw. insta-kills weaker chars.
 		case TRAP_OF_HOLY_FIRE: ident = generic_handle_breath_trap(wpos, x, y, 1, GF_HOLY_FIRE, trap); break;
