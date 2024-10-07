@@ -5414,34 +5414,6 @@ static void player_talk_aux(int Ind, char *message) {
 #endif
 	if (!slash_command || slash_command_msg) process_hooks(HOOK_CHAT, "d", Ind);
 
-	/* Keep uncensored message for everyone who disabled censoring */
-	strcpy(message_u, message);
-
-	/* Check for nasty language in chat/messaging */
-	if (//is_public &&
-	    (!slash_command || slash_command_msg || slash_command_censorable)) {
-		char *c = strchr(message, ' ');
-#ifndef ENABLE_MULTILINE_CENSOR
-		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
-		/* Censor and get level of punishment. (Note: This if/else isn't really needed, we could just censor the complete message always..) */
-		if (!slash_command) censor_punish = handle_censor(message); /* For chat, censor the complete message. */
-		/* For commands, we can skip the actual command, just in caaaase part of the command somehow mixes up with the message to false-positive-trigger the censor check oO (paranoia?) */
-		else censor_punish = handle_censor(rp_me ? message + 4 : (c ? c : message));
-		/* The actual handle_punish() will be called right before returning from this function, so it appears _after_
-		   the censored (or uncensored, depending on the receiving player's setting) output has been displayed,
-		   not now, as that would be the wrong visual order. */
-#else
-		if (!slash_command) censor_punish = handle_ml_censor(Ind, message); /* For chat, censor the complete message. */
-		else censor_punish = handle_ml_censor(Ind, rp_me ? message + 4 : (c ? c : message));
-#endif
-	}
-
-	if (slash_command) {
-		do_slash_cmd(Ind, message, message_u);
-		handle_punish(Ind, censor_punish);
-		return;
-	}
-
 
 #if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
 	if ((sipd = strchr(message, '\372'))) {
@@ -5506,6 +5478,35 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 	}
 #endif
+
+
+	/* Keep uncensored message for everyone who disabled censoring */
+	strcpy(message_u, message);
+
+	/* Check for nasty language in chat/messaging */
+	if (//is_public &&
+	    (!slash_command || slash_command_msg || slash_command_censorable)) {
+		char *c = strchr(message, ' ');
+#ifndef ENABLE_MULTILINE_CENSOR
+		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
+		/* Censor and get level of punishment. (Note: This if/else isn't really needed, we could just censor the complete message always..) */
+		if (!slash_command) censor_punish = handle_censor(message); /* For chat, censor the complete message. */
+		/* For commands, we can skip the actual command, just in caaaase part of the command somehow mixes up with the message to false-positive-trigger the censor check oO (paranoia?) */
+		else censor_punish = handle_censor(rp_me ? message + 4 : (c ? c : message));
+		/* The actual handle_punish() will be called right before returning from this function, so it appears _after_
+		   the censored (or uncensored, depending on the receiving player's setting) output has been displayed,
+		   not now, as that would be the wrong visual order. */
+#else
+		if (!slash_command) censor_punish = handle_ml_censor(Ind, message); /* For chat, censor the complete message. */
+		else censor_punish = handle_ml_censor(Ind, rp_me ? message + 4 : (c ? c : message));
+#endif
+	}
+
+	if (slash_command) {
+		do_slash_cmd(Ind, message, message_u);
+		handle_punish(Ind, censor_punish);
+		return;
+	}
 
 
 	/* -- Finished pre-processing of the message. Now it IS a message and it is to be sent to some target user/group. -- */
