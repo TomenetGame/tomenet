@@ -7891,9 +7891,25 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			else if (prefix(messagelc, "/trap")) { // ||	prefix(messagelc, "/tr")) conflicts with /trait maybe
+			else if (prefix(messagelc, "/trap")) { /* Place a trap in the floor */
 				if (k) wiz_place_trap(Ind, k);
 				else wiz_place_trap(Ind, TRAP_OF_FILLING);
+				return;
+			}
+			else if (prefix(messagelc, "/ctrap")) { /* Place a trap on a chest */
+				struct worldpos *wpos = &p_ptr->wpos;
+				cave_type **zcave, *c_ptr;
+				int x = p_ptr->px, y = p_ptr->py;
+				object_type *o_ptr;
+
+				if (!(zcave = getcave(wpos))) return;
+				c_ptr = &zcave[y][x];
+				if (!c_ptr->o_idx) return;
+				o_ptr = &o_list[c_ptr->o_idx];
+				if (o_ptr->tval != TV_CHEST) return;
+
+				if (k) o_ptr->pval = k;
+				else o_ptr->pval = TRAP_OF_FILLING;
 				return;
 			}
 			else if (prefix(messagelc, "/enlight") || prefix(messagelc, "/en")) {
