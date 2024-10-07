@@ -9529,7 +9529,7 @@ void do_steamblast(int Ind, int x, int y, bool door) {
 	fuse--;
 	if (fuse > STEAMBLAST_FUSE_MAX) fuse = STEAMBLAST_FUSE_MAX;
 	else if (fuse == 0) fuse = -1; /* hack: encode instant boom as '-1', as 0 stands for 'unlit'. */
-	else if (fuse < 0) STEAMBLAST_FUSE_MAX; /* paranoia */
+	else if (fuse < 0) fuse = STEAMBLAST_FUSE_MAX; /* paranoia */
 
 	if (!door) {
 		int o_idx = zcave[y][x].o_idx;
