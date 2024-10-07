@@ -777,7 +777,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 					(q_ptr->male ? "Emperor" : "Empress") :
 					(q_ptr->male ? "King" : "Queen")));
 			}
-			else if (q_ptr->iron_winner) fprintf(fff, "\377%cIron Champion ", attr);
+			else if (q_ptr->iron_winner) fprintf(fff, "\377DIron Champion ");
 			else fprintf(fff, "\377%c", attr);
 
 			fprintf(fff, "%s, %sL%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
@@ -913,7 +913,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 					(q_ptr->male ? "Emperor" : "Empress") :
 					(q_ptr->male ? "King" : "Queen")));
 			}
-			else if (q_ptr->iron_winner) fprintf(fff, "\377%cIron Champion ", attr);
+			else if (q_ptr->iron_winner) fprintf(fff, "\377DIron Champion ");
 			else fprintf(fff, "\377%c", attr);
 
   #ifdef COMPACT_GENDER
@@ -1045,7 +1045,8 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			if (is_admin(q_ptr)) fprintf(fff, "\377b");
 			else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%c", COLOUR_MODE_PVP);
 			else if (q_ptr->ghost) fprintf(fff, "\377r");
-			else if (q_ptr->total_winner) fprintf(fff, "\377v");
+			else if (q_ptr->total_winner) fprintf(fff, "\377v"); //ie same for all, winner+iron winner
+			else if (q_ptr->iron_winner) fprintf(fff, "\377D"); //iron champion
 			else fprintf(fff, "\377%c", attr);
 
   #ifdef COMPACT_GENDER
@@ -1254,15 +1255,16 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			/* Print a message */
   #if 0
 			fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
-					q_ptr->name, (q_ptr->mode & MODE_HARD) ? "hellish " : "",
-					race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
-					(q_ptr->total_winner)?
-					    ((p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?
-						((q_ptr->male)?"Emperor":"Empress"):
-						((q_ptr->male)?"King, ":"Queen, ")):
-					    ((q_ptr->male)?"Male, ":"Female, "),
-					q_ptr->fruit_bat ? "Fruit bat, " : "",
-					q_ptr->lev, parties[q_ptr->party].name);
+			    q_ptr->name, (q_ptr->mode & MODE_HARD) ? "hellish " : "",
+			    race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
+			    q_ptr->total_winner ?
+			    (q_ptr->iron_winner ? (q_ptr->male ? "Iron Emperor" : "Iron Empress") :
+			    ((p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
+			    (q_ptr->male ? "Emperor":"Empress") : (q_ptr->male ? "King, ":"Queen, "))) :
+			    (q_ptr->iron_winner ? "\377DIron Champion " : (q_ptr->male ? "Male, ":"Female, ")),
+			    q_ptr->fruit_bat ? "Fruit bat, " : "",
+			    q_ptr->lev, parties[q_ptr->party].name);
+
    #ifdef SHOW_SOLOIST_TAG
 			//---todo---if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
    #endif
@@ -1453,14 +1455,17 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 				else fprintf(fff, "\377bDungeon Wizard\377U ");
 				break; //Server Admin
 			default: fprintf(fff, "%s",
-				q_ptr->ghost ? "\377rGhost\377U " :
-				(q_ptr->total_winner ?
+				    q_ptr->ghost ? "\377rGhost\377U " :
+				    (q_ptr->total_winner ?
+				    (q_ptr->iron_winner ? (q_ptr->male ? "\377DIron Emperor" : "\377DIron Empress") :
 				    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
-					(q_ptr->male ? "\377vEmperor\377U " : "\377vEmpress\377U ") :
-				        (q_ptr->male ? "\377vKing\377U " : "\377vQueen\377U "))
-				: (q_ptr->male ? "Male " : "Female ")));
+				    (q_ptr->male ? "\377vEmperor\377U " : "\377vEmpress\377U ") :
+				    (q_ptr->male ? "\377vKing\377U " : "\377vQueen\377U "))) :
+				    (q_ptr->iron_winner ? "\377DIron Champion " :
+				    (q_ptr->male ? "Male " : "Female "))));
 				break;
 			}
+
 
 			fprintf(fff, "%sLv %d\377U", attr_p, q_ptr->lev);
 			    //q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
