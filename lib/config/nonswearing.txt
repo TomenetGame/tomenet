@@ -190,4 +190,3 @@ cockatrice
 geass
 w0
 sh0t
-yo lo
