@@ -558,9 +558,13 @@ static bool generic_handle_breath_trap(struct worldpos *wpos, int x, int y, s16b
 	}
 	dam = damroll(my_dd, my_ds);
 
-	ident = project(PROJECTOR_TRAP, rad, wpos, y, x, dam, type,
-	    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO, t_name + t_ptr->name);
-	    // | PROJECT_KILL | PROJECT_JUMP
+	if (rad) /* ball spell onto the x,y aka the trapped chest's own grid */
+		ident = project(PROJECTOR_TRAP, rad, wpos, y, x, dam, type,
+		    PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NORF | PROJECT_NODO, t_name + t_ptr->name);
+		    // | PROJECT_KILL | PROJECT_JUMP
+	else /* actual bolt from x,y into a random direction, possibly own grid */
+		ident = project(PROJECTOR_TRAP, 0, wpos, y, x, dam, type,
+		    PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_STOP, t_name + t_ptr->name);
 	return(ident);
 }
 
@@ -3752,6 +3756,8 @@ void wiz_place_trap(int Ind, int trap) {
 	cs_ptr->sc.trap.t_idx = trap;
 	cs_ptr->sc.trap.found = FALSE;
 	//c_ptr = &zcave[y][x];
+
+	//everyone_lite_spot(wpos, y, x);  -- trap has found=FALSE, so it's hidden still anyway
 
 	return;
 

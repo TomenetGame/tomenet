@@ -12548,7 +12548,7 @@ bool lua_project(int who, int rad, struct worldpos *wpos, int y, int x, int dam,
 //#define DEBUG_PROJECT_GRIDS	/* output some debug msgs */
 bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam, int typ, int flg, char *attacker) {
 	int	i, j, t;
-	int	 y1, x1, y2, x2;
+	int	y1, x1, y2, x2;
 	int	/*y0, x0,*/ y9, x9;
 	int	dist, dist_hack = 0, true_dist = 0;
 	int	who_can_see[26], num_can_see = 0;
@@ -12671,7 +12671,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	x0 = px;*/
 
 
-	/* Hack -- Jump to target */
+	/* Hack -- Jump to target (should eg be specified when using PROJECTOR_TRAP) */
 	if (flg & PROJECT_JUMP) {
 		x1 = x;
 		y1 = y;
@@ -12679,7 +12679,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Clear the flag (well, needed?) */
 		//flg &= ~(PROJECT_JUMP);
 	}
-
 	/* Hack -- Start at a player */
 	else if (who < 0 && who > PROJECTOR_UNUSUAL)
 	//else if (IS_PVP)
@@ -12693,20 +12692,27 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		x1 = m_list[who].fx;
 		y1 = m_list[who].fy;
 	}
-#if 1
-	/* Oops */
+	/* Catch any mistakes, if the project() accidentally didn't specify PROJECT_JUMP flag: Just 'start' at the actual destination aka point blank effect. */
 	else {
 		x1 = x;
 		y1 = y;
+
+		/* Hack for PROJECTOR_TRAP: Allow special use case without PROJECT_JUMP, for chest traps going haywire from afar:
+		   If the flag is missing, we assume that we just shoot into a random direction! */
+		if (who == PROJECTOR_TRAP) {
+			int dir = randint(9);
+
+			x = x + MAX_RANGE * ddx[dir];
+			y = y + MAX_RANGE * ddy[dir];
+		}
 	}
-#endif	/* 0 */
 
 	/* Default "destination" */
-	y2 = y; x2 = x;
+	x2 = x;
+	y2 = y;
 
 	/* Hack -- verify stuff */
-	if ((flg & PROJECT_THRU) && (x1 == x2) && (y1 == y2))
-		flg &= ~PROJECT_THRU;
+	if ((flg & PROJECT_THRU) && (x1 == x2) && (y1 == y2)) flg &= ~PROJECT_THRU;
 
 	/* Hack -- Assume there will be no blast (max radius 16) */
 	//for (dist = 0; dist < 16; dist++) gm[dist] = 0;
@@ -12873,11 +12879,13 @@ msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
 		/* If allowed, and we have moved at all, stop when we hit anybody */
 		/* -AD- Only stop if it isn't a party member */
 		if ((c_ptr->m_idx != 0) && dist && (flg & PROJECT_STOP)) {
+			/* Monster fired */
 			if (who > 0) {
 				/* hit first player (ignore monster) */
 				if (c_ptr->m_idx < 0) break;
 			}
-			else if (who < 0) {
+			/* Check if player fired, not PROJECTOR_TRAP */
+			else if (IS_PVP) {
 				/* always hit monsters */
 				if (c_ptr->m_idx > 0) break;
 
@@ -12897,13 +12905,13 @@ msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
 
 				/* people not in the same party hit each other ..NOT! - C. Blue */
 				if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx))
-#if FRIEND_FIRE_CHANCE
+ #if FRIEND_FIRE_CHANCE
 					if (!magik(FRIEND_FIRE_CHANCE))
-#endif
+ #endif
 						break;
 #endif
 			}
-			//else break;	// Huh? always break? XXX XXX
+			else break; // (PROJECTOR_TRAP) -> go on, hit players/monsters/anything
 		}
 
 
