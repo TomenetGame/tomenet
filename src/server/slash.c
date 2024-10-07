@@ -6360,7 +6360,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/shutactivevlow")) {
-				msg_admins(0, "\377y* Shutting down when dungeons are empty and very few (6) players are active *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and very few (4) players are active *");
 				cfg.runlevel = 2044;
 				return;
 			}

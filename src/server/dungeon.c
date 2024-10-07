@@ -8487,7 +8487,7 @@ static void process_world(void) {
 			}
 			break;
 		}
-		if (!i && (n <= 6)) {
+		if (!i && (n <= 4)) {
 			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 			cfg.runlevel = 2049;
 		}
