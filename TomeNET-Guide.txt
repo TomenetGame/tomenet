@@ -12077,13 +12077,14 @@ of several points..
  "You can't move freely due to your backpack weight."
 -using too heavy armour will cut your number of blows per round to half, and
  nullify your to-hit, to-dam, speed and stealth bonus from MA.
--using a melee or ranged weapon or carrying a very heavy backpack will nullify
- the AC bonus from Martial Arts, and greatly reduce your number of blows per
- round.
--using a melee or ranged weapon or a shield will nullify the special combat
- styles, reducing your damage.
--using a melee or ranged weapon or a shield or wearing too heavy armour will
- reduce additional interception bonus gained from Martial Arts skill to zero.
+-using a melee or ranged weapon (except for boomerangs), or carrying a very
+ heavy backpack will nullify the AC bonus from Martial Arts, and greatly
+ reduce your number of blows per round.
+-using a melee or ranged weapon (except for boomerangs) or a shield will
+ nullify the special combat styles, reducing your damage.
+-using a melee or ranged weapon (except for boomerangs) or a shield or wearing
+ too heavy armour will reduce additional interception bonus gained from Martial
+ Arts skill to zero.
 -using a heavy shield, melee or ranged weapon will nullify your speed and
  stealth bonus.
 
@@ -17220,8 +17221,8 @@ stated.
 
     .Martial Arts               Ability to fight with bare hands.
      (0.228)                    Martial Arts users do not and cannot wield any
-                                weapons or they get penalised heavily, except
-                                for boomerangs.
+                                weapons, except for boomerangs, or they get
+                                penalised heavily.
                                 Note that as a specialty MA actually works with
                                 the 'Backstabbing' skill!
 
@@ -19688,9 +19689,9 @@ create a character!):
     available to druids use intelligence for determining spell success chance.
     Druids fight using Martial Arts, which is the only melee skill they are
     able to train, as well as a variety of magic spells. Martial Arts means
-    weaponless combats, not even ranged weapons, and only light armour, if any
-    at all. (Martial artists actually get bonus armour class for each slot of
-    armour that has no item equipped in it.)
+    weaponless combats, not even ranged weapons except for boomerangs, and only
+    light armour, if any at all. (Martial artists actually get bonus armour
+    class for each slot of armour that has no item equipped in it.)
     Druids can shapechange into several forms (mostly animals) without having
     to fight or kill them in order to learn those forms. Instead they learn
     one or more new forms automatically every five character levels.
@@ -19727,7 +19728,8 @@ create a character!):
     If you find a weapon that grants you ESP (eg 'of Aman' or 'of Gondolin')
     inscribe it @x0 to be able to swap it in and out for quick monster ESP by
     pressing SHIFT+X (once to swap it in, again to swap it out again to resume
-    using martial arts, since as a martial artist you cannot use weapons).
+    using martial arts, since as a martial artist you cannot use weapons except
+    for boomerangs).
 
 - Shaman
     Shamans are able to call upon both spiritual and magical powers, whatever
@@ -21147,8 +21149,9 @@ and then polymorphs you back to your previous form, all in one macro, ie in one
 keypress!
 
 Of course some of these forms might also be useful for martial arts users.
-(Note that martial artists cannot make use of ranged weapons or weapons in
-general though, without losing their excellent bare-handed melee skills.)
+(Note that martial artists cannot make use of ranged weapons except
+for boomerangs or of any melee weapons in general though, without
+losing their excellent bare-handed melee skills.)
 
 Commonly seen advanced forms: Bloodletter of Khorne, Storm Giant, Dragonriders.
 
