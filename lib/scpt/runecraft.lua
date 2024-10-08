@@ -223,11 +223,11 @@ end
 
 function rcraft_com(u)
   if band(u,MODE)~=0 then
-    return "(Types a-g, *=List, ESC=exit) Which type? "
+    return "(Types a-g, *=List, Backspace=back, ESC=exit) Which type? "
   elseif band(u,R2)~=0 then
-    return "(Modes a-h, *=List, ESC=exit) Which mode? "
+    return "(Modes a-h, *=List, Backspace=back, ESC=exit) Which mode? "
   else
-    return "(Runes a-f, *=List, ESC=exit) Which rune? "
+    return "(Runes a-f, *=List, Backspace=back, ESC=exit) Which rune? "
   end
 end
 

@@ -6855,6 +6855,7 @@ Chain_Macro:
 						/* Ask for a runespell? */
 						while (!exec_lua(0, format("return rcraft_end(%d)", u))) {
 							clear_from(8);
+							Term_putstr(12, 22, -1, TERM_GREEN, "(Press Backspace to go back one step or Escape to quit)");
 							exec_lua(0, format("return rcraft_prt(%d, %d, %d)", u, 1));
 							/* Hack: Hide the cursor */
 							Term->scr->cx = Term->wid;
