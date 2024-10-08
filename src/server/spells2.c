@@ -10117,7 +10117,7 @@ s16b mix_chemicals(int Ind, int item) {
 			if (onp == NULL + 4) onp = o_name;
 			on2p = strstr(o2_name, " of ") + 4;
 			if (on2p == NULL + 4) on2p = o_name;
-			msg_format(Ind, "You mix %s and %s...", onp, on2p);
+			msg_format(Ind, "\377WYou mix %s and %s...", onp, on2p);
 			o_ptr->number = num_old; //unhack
 			o2_ptr->number = num2_old;
 
@@ -10361,7 +10361,7 @@ static void grind_chemicals_aux(int Ind, int amt, object_type *q_ptr, object_typ
 	q_ptr->iron_turn = o_ptr->iron_turn;
 
 	object_desc(Ind, o_name, q_ptr, TRUE, 3);
-	msg_format(Ind, "There is a yield of %s.", o_name);
+	msg_format(Ind, "\377WThere is a yield of %s.", o_name);
 
 #if 0
 	/* Give us the result */
