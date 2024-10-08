@@ -1851,8 +1851,8 @@ bool item_tester_hook_rune_enchant(object_type *o_ptr) {
 }
 
 void do_runecraft() {
-	u32b u = 0;
-	int dir = -1, i = 0;
+	u32b u = 0, u_prev[4] = { 0 };
+	int dir = -1, i = 0, step = 0;
 	bool done, redraw;
 	char prompt[160], choice;
 
@@ -1865,14 +1865,23 @@ void do_runecraft() {
 			exec_lua(0, format("return rcraft_prt(%d, %d, %d)", u, 0));
 		}
 		done = FALSE;
-		strcpy(prompt,string_exec_lua(0, format("return rcraft_com(%d)", u)));
+		strcpy(prompt, string_exec_lua(0, format("return rcraft_com(%d)", u)));
 		while (!done) {
 			if (!get_com(prompt, &choice)) {
-				if (redraw) {
-					Term_load();
-					Flush_queue();
+				if (!step) {
+					if (redraw) {
+						Term_load();
+						Flush_queue();
+					}
+					return;
 				}
-				return;
+				u = u_prev[--step];
+				if (redraw) {
+					Term_restore();
+					exec_lua(0, format("return rcraft_prt(%d, %d, %d)", u, 0));
+				}
+				strcpy(prompt, string_exec_lua(0, format("return rcraft_com(%d)", u)));
+				continue;
 			}
 			if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 				if (!redraw) {
@@ -1897,6 +1906,7 @@ void do_runecraft() {
 			Term_load();
 			Flush_queue();
 		}
+		u_prev[step++] = u;
 		u |= exec_lua(0, format("return rcraft_bit(%d, %d)", u, i));
 	}
 

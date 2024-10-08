@@ -6816,9 +6816,10 @@ Chain_Macro:
 						choice = mw_prfimm; /* hack - remember */
 						break;
 
-					case mw_rune:
+					case mw_rune: {
 						strcpy(buf, "");
-						u32b u = 0;
+						u32b u = 0, u_prev[4] = { 0 };
+						int step = 0;
 
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
@@ -6834,8 +6835,12 @@ Chain_Macro:
 							switch (choice = inkey()) {
 							case ESCAPE:
 							case '\010': /* backspace */
-								i = -2; /* flag exit */
-								break; /* exit switch */
+								if (!step) {
+									i = -2; /* flag exit */
+									break; /* exit switch */
+								}
+								u = u_prev[--step];
+								continue;
 							case ':': /* Allow chatting */
 								cmd_message();
 								break;
@@ -6845,10 +6850,8 @@ Chain_Macro:
 								break;
 							default:
 								i = (islower(choice) ? A2I(choice) : -1);
-								if (i < 0 || i > exec_lua(0, format("return rcraft_max(%d)", u))) {
-									i = -2; /* flag exit */
-									break; /* exit switch */
-								}
+								if (i < 0 || i > exec_lua(0, format("return rcraft_max(%d)", u))) continue;
+								u_prev[step++] = u;
 								u |= exec_lua(0, format("return rcraft_bit(%d,%d)", u, i));
 								strcat(buf, format("%c", choice)); /* build macro */
 								break;
@@ -6863,7 +6866,7 @@ Chain_Macro:
 
 						choice = mw_rune;
 						i = 1;
-						break;
+						break; }
 
 					case mw_trap:
 						/* ---------- Enter trap kit name ---------- */
