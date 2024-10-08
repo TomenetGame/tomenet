@@ -7582,7 +7582,44 @@ void cmd_message(void) {
 					i--;
 				}
 			}
-			/* paste store item:  \\\<slot>  */
+			/* paste subinven item:  \\\<upper-case slot><lower-case slot>  */
+			else if (buf[i] == '\\' && buf[i + 1] == '\\' && buf[i + 2] == '\\' &&
+			    buf[i + 3] >= 'A' && buf[i + 3] < 'A' + INVEN_PACK &&
+			    buf[i + 4] >= 'a' && buf[i + 4] < 'a' + SUBINVEN_PACK) {
+				strcpy(item, subinventory_name[buf[i + 3] - 'A'][buf[i + 4] - 'a']);
+
+				/* prevent buffer overflow */
+				if (strlen(buf) - 5 + strlen(item) + 2 + 1 + 1 < MSG_LEN) {
+					strcpy(tmp, &buf[i + 5]);
+					strcpy(&buf[i], "\377s");
+
+					/* if item inscriptions contains a colon we might need
+					   another colon to prevent confusing it with a private message */
+					strcat(buf, item);
+					if (strchr(item, ':')) {
+						buf[strchr(item, ':') - item + strlen(buf) - strlen(item) + 1] = '\0';
+						if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+							strcat(buf, ":");
+						strcat(buf, strchr(item, ':') + 1);
+					}
+
+					if (tmp[0]) {
+						/* if someone just spams \\ shortcuts, at least add spaces */
+						if (tmp[0] == '\\') strcat(buf, " ");
+
+						strcat(buf, "\377-");
+						strncat(buf, tmp, sizeof(buf) - strlen(buf) - 1);
+					}
+				}
+				/* just discard */
+				else {
+					strcpy(tmp, &buf[i + 3]);
+					buf[i] = '\0';
+					strcat(buf, tmp);
+					i--;
+				}
+			}
+			/* paste store item:  \\\<lower-case slot> */
 			else if (buf[i] == '\\' && buf[i + 1] == '\\' && buf[i + 2] == '\\' &&
 			    buf[i + 3] >= 'a' && buf[i + 3] <= (big_shop ? 'z' : 'l')) {
 				j = buf[i + 3] - 'a' + store_top;
