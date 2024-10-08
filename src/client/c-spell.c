@@ -1867,7 +1867,13 @@ void do_runecraft() {
 		done = FALSE;
 		strcpy(prompt, string_exec_lua(0, format("return rcraft_com(%d)", u)));
 		while (!done) {
-			if (!get_com(prompt, &choice)) {
+			if (!(i = get_com_bk(prompt, &choice))) {
+				if (redraw) {
+					Term_load();
+					Flush_queue();
+				}
+				return;
+			} else if (i == -2) {
 				if (!step) {
 					if (redraw) {
 						Term_load();

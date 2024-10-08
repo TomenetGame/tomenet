@@ -3352,6 +3352,33 @@ bool get_com(cptr prompt, char *command) {
 	/* Success */
 	return(TRUE);
 }
+/* Like get_com() but returns -2 if BACKSPACE was pressed */
+int get_com_bk(cptr prompt, char *command) {
+	/* The top line is "icky" */
+	topline_icky = TRUE;
+
+	/* Display a prompt */
+	prompt_topline(prompt);
+
+	/* Get a key */
+	*command = inkey();
+
+	/* Clear the prompt */
+	clear_topline();
+
+	/* Fix the top line */
+	topline_icky = FALSE;
+
+	/* Flush any events */
+	Flush_queue();
+
+	/* Handle "cancel" */
+	if (*command == ESCAPE) return(FALSE);
+	else if (*command == '\010') return(-2);
+
+	/* Success */
+	return(TRUE);
+}
 
 
 /*
@@ -6834,6 +6861,8 @@ Chain_Macro:
 							Term->scr->cu = 1;
 							switch (choice = inkey()) {
 							case ESCAPE:
+								i = -2; /* flag exit */
+								break; /* exit switch */
 							case '\010': /* backspace */
 								if (!step) {
 									i = -2; /* flag exit */
