@@ -4052,11 +4052,15 @@ bool remove_hostility(int Ind, cptr name, bool admin_forced) {
 }
 
 /*
- * Check if one player is hostile toward the other
+ * Check if one player is hostile toward the other.
+ * Returns FALSE if player and target are identical (ie the same player).
  */
 bool check_hostile(int attacker, int target) {
 	player_type *p_ptr = Players[attacker], *q_ptr = Players[target];
 	hostile_type *h_ptr;
+
+	/* Never be hostile to oneself */
+	if (attacker == target) return(FALSE);
 
 	/* Highlander Tournament is a fight to death */
 	if ((p_ptr->global_event_temp & PEVF_AUTOPVP_00) &&
