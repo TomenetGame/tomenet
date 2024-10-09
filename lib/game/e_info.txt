@@ -378,9 +378,7 @@ T:32:0:6
 T:32:8:99
 T:33:0:99
 R:100
-F:REGEN
-R:10
-F:REGEN_MANA
+F:REGEN | REGEN_MANA
 
 N:35:of Teleportation
 X:A:33:0
@@ -2158,14 +2156,14 @@ R:7
 F:IM_ELEC
 
 # helm
-N:192:of Concentration
-X:A:33:10
-W:0:2:32:1500
-T:32:0:6
-T:32:8:99
-T:33:0:99
-R:100
-F:REGEN_MANA
+#N:192:of Concentration
+#X:A:33:10
+#W:0:2:32:1500
+#T:32:0:6
+#T:32:8:99
+#T:33:0:99
+#R:100
+#F:REGEN_MANA
 
 N:193:of Brilliance
 X:A:33:13
