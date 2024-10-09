@@ -9938,7 +9938,7 @@ s16b mix_chemicals(int Ind, int item) {
 			return(-1);
 		} else {
 			q_ptr->tval = TV_CHARGE;
-			msg_format(Ind, "You assemble a blast charge...");
+			msg_format(Ind, "\377WYou assemble a blast charge...");
 			if (!p_ptr->warning_blastcharge) {
 				msg_print(Ind, "Hint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
 				p_ptr->warning_blastcharge = 1;
@@ -9979,7 +9979,7 @@ s16b mix_chemicals(int Ind, int item) {
 				else q_ptr->xtra1 = rand_int(3); //random size
 				q_ptr->xtra2 = rand_int(FIREWORK_COLOURS); //random colour for now
 				q_ptr->level = 1;
-				msg_print(Ind, "You create harmless fireworks from the flash bomb mixture...");
+				msg_print(Ind, "\377WYou create harmless fireworks from the flash bomb mixture...");
 				i = -2;
 			} else {
 				/* Lose mixture and scroll */
@@ -10064,7 +10064,7 @@ s16b mix_chemicals(int Ind, int item) {
 			if (onp == NULL + 4) onp = o_name;
 			on2p = strstr(o2_name, " of ") + 4;
 			if (on2p == NULL + 4) on2p = o_name;
-			msg_format(Ind, "You create a new ingredient from %s and %s...", onp, on2p);
+			msg_format(Ind, "\377WYou create a new ingredient from %s and %s...", onp, on2p);
 			o_ptr->number = num_old; //unhack
 			o2_ptr->number = num2_old;
 		}
