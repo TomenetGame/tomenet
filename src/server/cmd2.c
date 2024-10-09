@@ -6608,6 +6608,7 @@ void do_cmd_fire(int Ind, int dir) {
 	int bonus, chance, tries = 100;
 	int cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
+	bool aimed_ricochet;
 	int item = INVEN_AMMO;
 	int archery = get_archery_skill(p_ptr);
 
@@ -7054,12 +7055,14 @@ void do_cmd_fire(int Ind, int dir) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);
+			aimed_ricochet = get_skill(Ind, SKILL_SLING) >= 15;
 		}
 		/* Boomerangs can leave a trail of decimation among weaker critters */
 		else if (archery == SKILL_BOOMERANG) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_BOOMERANG, 5));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_BOOMERANG, 42);
+			aimed_ricochet = get_skill(Ind, SKILL_BOOMERANG) >= 25;
 		}
 	}
 
@@ -7647,8 +7650,11 @@ void do_cmd_fire(int Ind, int dir) {
 					/* Experimental: Boomerangs can't be deflected - C. Blue */
 					if (!boomerang && (r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
 						if (visible) msg_format(Ind, "The %s was deflected.", o_name);
-						num_ricochet = 1;
-						hit_body = 1;
+						if (!num_ricochet) { /* Gain ricochet (for bows and xbows, who don't have it natively) */
+							num_ricochet = 1;
+							hit_body = 1;
+						}
+						aimed_ricochet = FALSE; /* In any case, ricocheting off a reflector is random and not aimable anymore even with skillz */
 						if (!boomerang && !magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 						break;
 					}
@@ -7977,7 +7983,7 @@ void do_cmd_fire(int Ind, int dir) {
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 		}
 
-		/* Break or drop? */
+		/* Break ammo? (In case of boomerangs this turns into a drop.) */
 		if ((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
 		    && !magic && !ethereal && !artifact_p(o_ptr)) {
 			breakage = 100;
@@ -8022,34 +8028,32 @@ void do_cmd_fire(int Ind, int dir) {
 			}
 			break;
 		}
+		/* If no break, the ammo can ricochet */
+		if (num_ricochet && hit_body && magik(ricochet_chance) && !p_ptr->ranged_barrage) {
+			msg_format(Ind, "The %s ricochets!", o_name);
+			hit_body = FALSE;
+			num_ricochet--;
 
-		/* If no break and if Archer, the ammo can ricochet */
-		if ((num_ricochet) && (hit_body) && (magik(ricochet_chance)) && !p_ptr->ranged_barrage) {
-			byte d = 5;
-
-			/* New target location */
-			while (d == 5 && tries--)
-				d = rand_int(10);
-
-			if (d != 5) { /* extreme safety */
 #ifdef DOUBLE_LOS_SAFETY
-				/* remove dir 5, or we'll likely panic when we go through all 99 grids without blocking checks */
-				dir = d;
+			/* remove dir 5, or we'll likely panic when we go through all 99 grids without blocking checks */
+			//dir = d;
 #endif
+			/* New base location */
+			tx = by = y;
+			tx = bx = x;
 
-				num_ricochet--;
-				hit_body = FALSE;
-
-				/* New base location */
-				by = y;
-				bx = x;
-
-				tx = p_ptr->px + 99 * ddx[d];
-				ty = p_ptr->py + 99 * ddy[d];
-
-				msg_format(Ind, "The %s ricochets!", o_name);
-			} else break;
-		} else break;
+			if (aimed_ricochet) {
+				/* skillfulyl play pool or billard */
+				get_outward_target(Ind, &tx, &ty, MAX_RANGE);
+			} else {
+				/* New, random target location */
+				tx = x - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
+				ty = y - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
+			}
+			continue;
+		}
+		/* Shot has finally arrived at the target destination */
+		break;
 	}
 
 #ifndef OPTIMIZED_ANIMATIONS

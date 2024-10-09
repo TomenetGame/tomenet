@@ -13347,9 +13347,6 @@ bool target_able(int Ind, int m_idx) {
 	return(FALSE);
 }
 
-
-
-
 /*
  * Update (if necessary) and verify (if possible) the target.
  *
@@ -13394,8 +13391,6 @@ bool target_okay(int Ind) {
 	/* Assume no target */
 	return(FALSE);
 }
-
-
 
 /*
  * Hack -- help "select" a location (see below)
@@ -13443,7 +13438,6 @@ s16b target_pick(int Ind, int y1, int x1, int dy, int dx) {
 	/* Result */
 	return(b_i);
 }
-
 
 /*
  * Set a new target.  This code can be called from "get_aim_dir()"
@@ -13710,7 +13704,6 @@ bool target_set(int Ind, int dir) {
 	return(TRUE);
 }
 
-
 #if 0 /* not functional atm, replaced by target-closest strategy */
 
 /* targets the most wounded teammate. should be useful for stuff like
@@ -13950,8 +13943,6 @@ bool target_set_friendly(int Ind, int dir) {
 
 #endif
 
-
-
 /*
  * Get an "aiming direction" from the user.
  *
@@ -13988,6 +13979,38 @@ bool get_aim_dir(int Ind) {
 
 	return(TRUE);
 }
+
+/* Find closest hostile target from a center point outwards, up to max distance */
+void get_outward_target(int Ind, int *x, int *y, int maxdist) {
+	int tx, ty, d = 1, rndoffset, grid, offset_grid, ringlength;
+
+	while (d <= maxdist) {
+		/* Start at a random grid on the 'ring' we're currently checking */
+		ringlength = d * 8;
+		rndoffset = rand_int(ringlength);
+
+		/* Move along the ring, checking each grid for hostile target. */
+		for (offset_grid = rndoffset; offset_grid < ringlength + rndoffset; offset_grid++) {
+			grid = offset_grid % (ringlength);
+
+			/* Translate ring length position to x,y on the ring structure:
+			   Assume ring structure begins at bottom left corner and we move counter-clockwise. */
+			if (grid < ringlength / 4) {
+				tx = *x - d + grid;
+				ty = *y - d;
+			} else if (grid < ringlength / 2) {
+				tx = *x - d;
+				ty = *y - d;
+			}
+			tx = *x - d + grid 
+		}
+
+		/* Try next 'ring' further outwards */
+		d++;
+	}
+}
+
+
 
 
 void get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
