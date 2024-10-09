@@ -3710,6 +3710,25 @@ byte get_3way(cptr prompt, bool default_no) {
 }
 
 
+
+/* Kurzel reported that on Windows 10/11, printf() output is not shown in the terminal for unknown reason. So we need a log file, alternatively, as workaround: */
+void logprint(const char *out) {
+	static FILE *fp = NULL;
+
+	/* Atomic append, in case things go really wrong (paranoia) */
+	if (!fp) fp = fopen("tomenet-stdout.log", "w");
+	else fp = fopen("tomenet-stdout.log", "a");
+
+	if (fp) {
+		fprintf(fp, "%s", out);
+		fclose(fp);
+	}
+
+	printf("%s", out);
+}
+
+
+
 /*
  * Recall the "text" of a saved message
  */

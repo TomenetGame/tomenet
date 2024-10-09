@@ -311,21 +311,6 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 
 
 
-/* Kurzel reported that on Windows 10/11, printf() output is not shown in the terminal for unknown reason. So we need a log file, alternatively, as workaround: */
-void logprint(const char *out) {
-	static FILE *fp;
-
-	/* Atomic append, in case things go really wrong (paranoia) */
-	fp = fopen("tomenet-win.log", "a");
-	if (fp) {
-		fprintf(fp, "%s", out);
-		fclose(fp);
-	}
-
-	printf("%s", out);
-}
-
-
 void resize_main_window_win(int cols, int rows);
 
 /*
