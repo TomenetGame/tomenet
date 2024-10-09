@@ -311,6 +311,21 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 
 
 
+/* Kurzel reported that on Windows 10/11, printf() output is not shown in the terminal for unknown reason. So we need a log file, alternatively, as workaround: */
+void logprint(const char *out) {
+	static FILE *fp;
+
+	/* Atomic append, in case things go really wrong (paranoia) */
+	fp = fopen("tomenet-win.log", "a");
+	if (fp) {
+		fprintf(fp, "%s", out);
+		fclose(fp);
+	}
+
+	printf("%s", out);
+}
+
+
 void resize_main_window_win(int cols, int rows);
 
 /*
@@ -407,42 +422,42 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 	int bytesPerLine = bm.bmWidthBytes, bytesPerPixel = bytesPerLine / bm.bmWidth;
 
 	/* Debug info */
-	printf("(bmWidthBytes = %ld, bmBitsPixel = %d, bmWidth = %ld, bmHeight = %ld)\n", bm.bmWidthBytes, bm.bmBitsPixel, bm.bmWidth, bm.bmHeight);
+	logprint(format("(bmWidthBytes = %ld, bmBitsPixel = %d, bmWidth = %ld, bmHeight = %ld)\n", bm.bmWidthBytes, bm.bmBitsPixel, bm.bmWidth, bm.bmHeight));
 
 	/* Get bitmap pixel data in memory */
   #ifdef CBM_METHOD_DIB /* --NOT IMPLEMENTED-- Use this with LR_CREATEDIBSECTION flag in LoadImageA */
 	data = (unsigned char*)bm.bmBits;
 	data2 = (unsigned char*)bm2.bmBits;
 	/* Debug info */
-	printf("(data = %ld, data2 = %ld)\n", (long)data, (long)data2);
+	logprint(format("(data = %ld, data2 = %ld)\n", (long)data, (long)data2));
   #else /* Otherwise, request the bitmap data now, via GetBitmapBits() or GetDIBits() */
 	/* Create 32bpp mask bitmap. */
 	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
 
 	if (!hbmMask) {
-		printf("Graphics error: CreateBitmap() returned null.\n");
+		logprint(format("Graphics error: CreateBitmap() returned null.\n"));
 		*error = 7;
 		return(NULL);
 	}
 
 	if (!(data = malloc(bm.bmWidthBytes * bm.bmHeight))) {
-		printf("Graphics error: malloc() returned null (Image).\n");
+		logprint(format("Graphics error: malloc() returned null (Image).\n"));
 		*error = 5;
 		return(NULL);
 	}
 	if (!GetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
-		printf("Graphics error: GetBitmapBits() returned zero (Image).\n");
+		logprint(format("Graphics error: GetBitmapBits() returned zero (Image).\n"));
 		*error = 1;
 		return(NULL);
 	}
 
 	if (!(data2 = malloc(bm.bmWidthBytes * bm.bmHeight))) {
-		printf("Graphics error: malloc() returned null (Mask).\n");
+		logprint(format("Graphics error: malloc() returned null (Mask).\n"));
 		*error = 6;
 		return(NULL);
 	}
 	if (!GetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
-		printf("Graphics error: GetBitmapBits() returned zero (Mask).\n");
+		logprint(format("Graphics error: GetBitmapBits() returned zero (Mask).\n"));
 		*error = 2;
 		return(NULL);
 	}
@@ -498,13 +513,13 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
   #ifndef CBM_METHOD_DIB
 	/* Write data back via SetBitmapBits() or SetDIBits() */
 	if (!SetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
-		printf("Graphics error: SetBitmapBits() returned zero (Image).\n");
+		logprint(format("Graphics error: SetBitmapBits() returned zero (Image).\n"));
 		*error = 3;
 		return(NULL);
 	}
 	free(data);
 	if (!SetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
-		printf("Graphics error: SetBitmapBits() returned zero (Mask).\n");
+		logprint(format("Graphics error: SetBitmapBits() returned zero (Mask).\n"));
 		*error = 4;
 		return(NULL);
 	}
@@ -3032,7 +3047,7 @@ int init_graphics_win(void) {
 
 	if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
 		sprintf(use_graphics_errstr, "Using graphic tiles needs a device content with at least 24 bits per pixel.");
-		printf("%s\n", use_graphics_errstr);
+		logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 		quit("Graphics device error (W1)");
  #else
@@ -3048,7 +3063,7 @@ int init_graphics_win(void) {
 	/* Check for tiles string & extract tiles width & height. */
 	if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
 		sprintf(use_graphics_errstr, "Couldn't extract tile dimensions from: %s", graphic_tiles);
-		printf("%s\n", use_graphics_errstr);
+		logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 		quit("Graphics load error (W2)");
  #else
@@ -3060,7 +3075,7 @@ int init_graphics_win(void) {
 
 	if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
 		sprintf(use_graphics_errstr, "Invalid tiles dimensions: %dx%d", graphics_tile_wid, graphics_tile_hgt);
-		printf("%s\n", use_graphics_errstr);
+		logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 		quit("Graphics load error (W3)");
  #else
@@ -3092,7 +3107,7 @@ int init_graphics_win(void) {
 	/* Ensure the BMP isn't empty or too small */
 	if (bm.bmWidth < graphics_tile_wid || bm.bmHeight < graphics_tile_hgt) {
 		sprintf(use_graphics_errstr, "Invalid image dimensions (width x height): %ldx%ld", bm.bmWidth, bm.bmHeight);
-		printf("%s\n", use_graphics_errstr);
+		logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 		quit("Graphics load error (W4)");
  #else
@@ -3105,7 +3120,7 @@ int init_graphics_win(void) {
 	graphics_image_tpr = bm.bmWidth / graphics_tile_wid;
 	if (graphics_image_tpr <= 0) { /* Paranoia. */
 		sprintf(use_graphics_errstr, "Invalid image tiles per row count: %d", graphics_image_tpr);
-		printf("%s\n", use_graphics_errstr);
+		logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 		quit("Graphics load error (W5)");
  #else
@@ -3125,7 +3140,7 @@ int init_graphics_win(void) {
 		g_hbmBg2Mask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), &err3);
 		if (!g_hbmBgMask || !g_hbmFgMask || !g_hbmBg2Mask) {
 			sprintf(use_graphics_errstr, "Mask creation failed (2) (%d,%d,%d)", err1, err2, err3);
-			printf("%s\n", use_graphics_errstr);
+			logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 			quit("Graphics load error (W6)");
  #else
@@ -3149,7 +3164,7 @@ int init_graphics_win(void) {
 		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), &err3);
 		if (!g_hbmBgMask || !g_hbmFgMask || !res) {
 			sprintf(use_graphics_errstr, "Mask creation failed (1) (%d,%d,%d)", err1, err2, err3);
-			printf("%s\n", use_graphics_errstr);
+			logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 			quit("Graphics load error (W7)");
  #else
@@ -3162,7 +3177,7 @@ int init_graphics_win(void) {
 
 gfx_skip:
 	if (!use_graphics) {
-		printf("Disabling graphics and falling back to normal text mode.\n");
+		logprint(format("Disabling graphics and falling back to normal text mode.\n"));
 		/* Actually also show it as 'off' in =g menu, as in, "desired at config-file level" */
 		use_graphics_new = FALSE;
 	}
