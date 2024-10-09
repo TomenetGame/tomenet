@@ -419,13 +419,28 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 	/* Create 32bpp mask bitmap. */
 	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
 
-	data = malloc(bm.bmWidthBytes * bm.bmHeight);
+	if (!hbmMask) {
+		printf("Graphics error: CreateBitmap() returned null.\n");
+		*error = 7;
+		return(NULL);
+	}
+
+	if (!(data = malloc(bm.bmWidthBytes * bm.bmHeight))) {
+		printf("Graphics error: malloc() returned null (Image).\n");
+		*error = 5;
+		return(NULL);
+	}
 	if (!GetBitmapBits(hbmColour, bm.bmWidthBytes * bm.bmHeight, data)) {
 		printf("Graphics error: GetBitmapBits() returned zero (Image).\n");
 		*error = 1;
 		return(NULL);
 	}
-	data2 = malloc(bm.bmWidthBytes * bm.bmHeight);
+
+	if (!(data2 = malloc(bm.bmWidthBytes * bm.bmHeight))) {
+		printf("Graphics error: malloc() returned null (Mask).\n");
+		*error = 6;
+		return(NULL);
+	}
 	if (!GetBitmapBits(hbmMask, bm.bmWidthBytes * bm.bmHeight, data2)) {
 		printf("Graphics error: GetBitmapBits() returned zero (Mask).\n");
 		*error = 2;
@@ -1947,10 +1962,12 @@ static errr term_force_font(term_data *td, cptr name) {
 		PostMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 
 		/* Create the font XXX XXX XXX Note use of "base" */
-		td->font_id = CreateFont(hgt, wid, 0, 0, FW_DONTCARE, 0, 0, 0,
-		                         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
-		                         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-		                         FIXED_PITCH | FF_DONTCARE, base);
+		td->font_id = CreateFont(hgt, wid, 0, 0, FW_DONTCARE, 0, 0, 0, ANSI_CHARSET,
+		                         OUT_DEFAULT_PRECIS, //(OUT_DEFAULT_PRECIS,) OUT_OUTLINE_PRECIS, OUT_TT_PRECIS (slow), OUT_TT_ONLY_PRECIS
+		                         CLIP_DEFAULT_PRECIS,
+		                         (hgt >= 9 && wid >= 9 && hgt + wid >= 23) ? ANTIALIASED_QUALITY : DEFAULT_QUALITY, //(DEFAULT_QUALITY,) ANTIALIASED_QUALITY, CLEARTYPE_QUALITY (perhaps slow)
+		                         FIXED_PITCH | FF_DONTCARE,
+		                         base);
 	}
 
 	/* Hack -- Unknown size */
@@ -3249,7 +3266,7 @@ static void init_windows(void) {
 			if (!td->lf.lfHeight) td->lf.lfHeight = td->font_hgt = 15;
 			// pro-tip: win32 calls corrupting your .INI? flag it read-only!
 			td->lf.lfOutPrecision = OUT_DEFAULT_PRECIS; //(OUT_DEFAULT_PRECIS,) OUT_OUTLINE_PRECIS, OUT_TT_PRECIS (slow), OUT_TT_ONLY_PRECIS
-			td->lf.lfQuality = ANTIALIASED_QUALITY; //(DEFAULT_QUALITY,) ANTIALIASED_QUALITY, CLEARTYPE_QUALITY (perhaps slow)
+			td->lf.lfQuality = (td->lf.lfHeight >= 9 && td->lf.lfWidth >= 9 && td->lf.lfHeight + td->lf.lfWidth >= 23) ? ANTIALIASED_QUALITY : DEFAULT_QUALITY; //(DEFAULT_QUALITY,) ANTIALIASED_QUALITY, CLEARTYPE_QUALITY (perhaps slow)
 			td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
 			term_force_font(td, NULL);
 		} else
