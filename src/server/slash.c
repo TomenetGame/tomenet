@@ -14207,6 +14207,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (f = 1; f <= NumPlayers; f++) Send_sflags(f);
 				return;
 			}
+			else if (prefix(messagelc, "/mego")) { /* Modify level, rarity, mrarity of an item ego power in memory temporarily (not saved to e_info, so resets on restart) */
+				if (tk != 1 && tk != 4) {
+					msg_print(Ind, "Usage 1 (get): /mego <ego N-index>");
+					msg_print(Ind, "Usage 2 (set): /mego <ego N-index> <new level> <new rarity> <new mrarity>");
+					return;
+				}
+				if (tk == 1) {
+					msg_format(Ind, "Ego %d (%s) has currently level %d, rarity %d, mrarity %d.", k, e_name + e_info[k].name, e_info[k].level, e_info[k].rarity, e_info[k].mrarity);
+					return;
+				}
+				msg_format(Ind, "Changed ego %d (%s) to level %d, rarity %d, mrarity %d.", k, e_name + e_info[k].name, atoi(token[2]), atoi(token[3]), atoi(token[4]));
+				e_info[k].level = atoi(token[2]);
+				e_info[k].rarity = atoi(token[3]);
+				e_info[k].mrarity = atoi(token[4]);
+				return;
+			}
+
 		}
 	}
 
