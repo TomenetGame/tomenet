@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. October 2024 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 10. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17408,13 +17408,20 @@ stated.
                                 Note that the explosion of exploding ammo will
                                 still hit "reflecting" monsters.
 
-                                Slings only (does not apply to bow- or xbow-
-                                mastery):
-                                Adds chance for your shots to ricochet, even
-                                multiple times, hitting multiple enemies.
+                                Ricochetting:
+                                This happens only with slings or boomerangs.
+                                Mastery adds a chance for shots to ricochet,
+                                up to multiple times, hitting multiple enemies.
                                 Note that magic and ethereal ammo fades away
                                 the moment it hits, and never ricochets.
-                                To disablo ricocheting inscribe the ammo !R .
+                                At mastery skill 15.000 you will be skillful
+                                enough to make your shots ricochet at nearby
+                                enemies instead of completely random directions
+                                except if they hit a reflecting enemy.
+                                At mastery skill 25.000 you will be skillful
+                                enough to make your ricochets avoid any enemy
+                                that sleeps or is charmed.
+                                To disablo ricocheting inscribe the ammo: !R
 
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
@@ -17431,9 +17438,6 @@ stated.
                                 while using boomerangs and also regarding
                                 throwing any other kinds of items,
                                 which in turn further increases hit chance.
-
-                                Like sling ammo, boomerangs can ricochet.
-                                You can apply !R inscription to disable it.
 
                                 It is harder for monsters to intercept your
                                 attempt of throwing a boomerang, than it is for
@@ -17454,6 +17458,21 @@ stated.
                                 Reduces the chance of a boomerang to land on
                                 the ground instead of returning.
                                 Artifact boomerangs always return reliably.
+
+                                Ricochetting:
+                                This happens only with slings or boomerangs.
+                                Mastery adds a chance for shots to ricochet,
+                                up to multiple times, hitting multiple enemies.
+                                Note that magic and ethereal ammo fades away
+                                the moment it hits, and never ricochets.
+                                At mastery skill 20.000 you will be skillful
+                                enough to make your shots ricochet at nearby
+                                enemies instead of completely random directions
+                                except if they hit a reflecting enemy.
+                                At mastery skill 30.000 you will be skillful
+                                enough to make your ricochets avoid any enemy
+                                that sleeps or is charmed.
+                                To disablo ricocheting inscribe the ammo: !R
 
                                 (Note that your 'Combat' skill determines your
                                 ability to pseudo-ID Boomerangs.)

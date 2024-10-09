@@ -660,6 +660,10 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		break;
 	case SKILL_SLING:
+		if (old_value < 150 && new_value >= 150)
+			msg_print(Ind, "\374\377GYour sling skill allows you to aim your ricochets at enemies!");
+		if (old_value < 250 && new_value >= 250)
+			msg_print(Ind, "\374\377GYour sling skill allows you to avoid riochetting at sleeping targets!");
 		if ((old_value < 100 && new_value >= 100) || (old_value < 200 && new_value >= 200) ||
 		    (old_value < 300 && new_value >= 300) || (old_value < 400 && new_value >= 400) || (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour shooting speed with slings has become faster due to your training!");
@@ -681,10 +685,11 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYour shooting power with crossbows gains extra might due to your training!");
 		break;
-/*	case SKILL_SLING:
-	case SKILL_BOW:
-	case SKILL_XBOW:
-*/	case SKILL_BOOMERANG:
+	case SKILL_BOOMERANG:
+		if (old_value < 200 && new_value >= 200)
+			msg_print(Ind, "\374\377GYour boomerang skill allows you to aim your ricochets at enemies!");
+		if (old_value < 300 && new_value >= 300)
+			msg_print(Ind, "\374\377GYour boomerang skill allows you to avoid riochetting at sleeping targets!");
 		if ((old_value < 166 && new_value >= 166) || (old_value < 333 && new_value >= 333) ||
 		    (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour boomerang throwing speed has become faster due to your training!");

@@ -6605,10 +6605,10 @@ void do_cmd_fire(int Ind, int dir) {
 	int prev_x, prev_y; /* for flare missile being able to light up a room under projectable_wall() conditions */
 #endif
 	int tdam, tdis, thits, tmul, vorpal_cut = 0;
-	int bonus, chance, tries = 100;
+	int bonus, chance;
 	int cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
-	bool aimed_ricochet;
+	int aimed_ricochet;
 	int item = INVEN_AMMO;
 	int archery = get_archery_skill(p_ptr);
 
@@ -7055,14 +7055,14 @@ void do_cmd_fire(int Ind, int dir) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);
-			aimed_ricochet = get_skill(Ind, SKILL_SLING) >= 15;
+			aimed_ricochet = (i = get_skill(p_ptr, SKILL_SLING)) >= 15 ? i - 14 : 0;
 		}
 		/* Boomerangs can leave a trail of decimation among weaker critters */
 		else if (archery == SKILL_BOOMERANG) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_BOOMERANG, 5));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_BOOMERANG, 42);
-			aimed_ricochet = get_skill(Ind, SKILL_BOOMERANG) >= 25;
+			aimed_ricochet = (i = get_skill(p_ptr, SKILL_BOOMERANG)) >= 20 ? i - 19 : 0;
 		}
 	}
 
@@ -8044,7 +8044,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 			if (aimed_ricochet) {
 				/* skillfulyl play pool or billard */
-				get_outward_target(Ind, &tx, &ty, MAX_RANGE);
+				get_outward_target(Ind, &tx, &ty, MAX_RANGE, aimed_ricochet > 10, TRUE);
 			} else {
 				/* New, random target location */
 				tx = x - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);

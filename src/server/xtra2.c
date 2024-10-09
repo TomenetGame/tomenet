@@ -13981,12 +13981,19 @@ bool get_aim_dir(int Ind) {
 }
 
 /* Find closest hostile target from a center point outwards, up to max distance */
-void get_outward_target(int Ind, int *x, int *y, int maxdist) {
-	int tx, ty, d = 1, rndoffset, grid, offset_grid, ringlength;
+void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping, bool skip_friendly) {
+	player_type *p_ptr = Players[Ind];
+	struct cave_type **zcave = getcave(&p_ptr->wpos);
+	monster_type *m_ptr;
+	int tx, ty, d = 1, rndoffset, grid, offset_grid, sidelength, ringlength, who;
+	bool done = FALSE;
 
-	while (d <= maxdist) {
+	if (!zcave) return; /* shouldn't happen ever though - just paranoia */
+
+	while (!done && d <= maxdist) {
 		/* Start at a random grid on the 'ring' we're currently checking */
-		ringlength = d * 8;
+		sidelength = d * 2;
+		ringlength = sidelength * 4;
 		rndoffset = rand_int(ringlength);
 
 		/* Move along the ring, checking each grid for hostile target. */
@@ -13995,27 +14002,72 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist) {
 
 			/* Translate ring length position to x,y on the ring structure:
 			   Assume ring structure begins at bottom left corner and we move counter-clockwise. */
-			if (grid < ringlength / 4) {
+			if (grid < sidelength) {
 				tx = *x - d + grid;
 				ty = *y - d;
-			} else if (grid < ringlength / 2) {
+			} else if (grid < 2 * sidelength) {
+				tx = *x + d;
+				ty = *y - d + (grid - sidelength);
+			} else if (grid < 3 * sidelength) {
+				tx = *x + d - (grid - 2 * sidelength);
+				ty = *y + d;
+			} else {
 				tx = *x - d;
-				ty = *y - d;
+				ty = *y + d - (grid - 3 * sidelength);
 			}
-			tx = *x - d + grid 
+
+			/* Check if any hostile target is available */
+
+			/* No entity at all on this grid? Skip. */
+			if (!(who = zcave[ty][tx].m_idx)) continue;
+			/* Non-hostile player or special projector? Skip. */
+			if (who < 0 && (who <= PROJECTOR_UNUSUAL || (skip_friendly && !check_hostile(Ind, -who)))) continue;
+			/* Monster here, check if eligible. */
+			if (who > 0) {
+				/* Access the monster */
+				m_ptr = &m_list[who];
+
+				/* Ignore "dead" monsters */
+				if (!m_ptr->r_idx) continue;
+
+				if (skip_sleeping) {
+					/* Don't wake up sleeping monsters */
+					if (m_ptr->csleep) continue;
+					/* Don't break charm/trance */
+					if (m_ptr->charmedignore) continue;
+				}
+
+				/* Spells cast by a player never hurt a friendly golem */
+				if (m_ptr->owner && skip_friendly) {
+					int i;
+
+					//look for its owner to see if he's hostile or not
+					for (i = 1; i < NumPlayers; i++)
+						if (Players[i]->id == m_ptr->owner) {
+							if (!check_hostile(Ind, i)) continue;
+							break;
+						}
+					//if his owner is not online, assume friendly(!)
+					if (i == NumPlayers) continue;
+				}
+			}
+			/* We found an eligile target! Set it and exit. */
+			*x = tx;
+			*y = ty;
+			done = TRUE;
+			break;
 		}
 
-		/* Try next 'ring' further outwards */
+		/* Try next 'ring' further outwards (unless we're 'done'.) */
 		d++;
 	}
 }
 
 
-
-
 void get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
 	Send_item_request(Ind, tester_hook);
 }
+
 
 /*
  * Allows to travel both vertical/horizontal using Recall;
