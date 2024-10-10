@@ -5858,10 +5858,10 @@ static void artifact_lore(void) {
 
 		if (show_lore) {
 			artifact_lore_aux(selected, selected_list, paste_lines, FALSE);
-			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c/C to chat-paste --");
+			Term_putstr(4,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, t/c/C to chat-paste --");
 		} else {
 			artifact_stats_aux(selected, selected_list, paste_lines, FALSE);
-			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c/C to chat-paste --");
+			Term_putstr(4,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, t/c/C to chat-paste --");
 		}
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
@@ -5963,6 +5963,15 @@ static void artifact_lore(void) {
 					else Send_paste_msg(paste_lines[i]);
 				}
 				break;
+			}
+			if (c == 't') {
+				/* paste only the title line (monster name, level...) to chat */
+				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+				artifact_stats_aux(selected, selected_list, paste_lines, TRUE);
+				if (!paste_lines[0][0]) break;
+				if (paste_lines[0][strlen(paste_lines[0]) - 1] == ' ')
+					paste_lines[0][strlen(paste_lines[0]) - 1] = '\0';
+				Send_paste_msg(paste_lines[0]);
 			}
 		}
 		/* ESC = go back and erase search term */
@@ -6448,10 +6457,10 @@ static void monster_lore(void) {
 
 		if (show_lore) {
 			monster_lore_aux(selected, selected_list, paste_lines, FALSE);
-			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c/C to chat-paste --");
+			Term_putstr(4,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, t/c/C to chat-paste --");
 		} else {
 			monster_stats_aux(selected, selected_list, paste_lines, FALSE);
-			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c/C to chat-paste --");
+			Term_putstr(4,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, t/c/C to chat-paste --");
 		}
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
@@ -6552,6 +6561,15 @@ static void monster_lore(void) {
 					else Send_paste_msg(paste_lines[i]);
 				}
 				break;
+			}
+			if (c == 't') {
+				/* paste only the title line (monster name, level...) to chat */
+				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+				monster_lore_aux(selected, selected_list, paste_lines, TRUE);
+				if (!paste_lines[0][0]) break;
+				if (paste_lines[0][strlen(paste_lines[0]) - 1] == ' ')
+					paste_lines[0][strlen(paste_lines[0]) - 1] = '\0';
+				Send_paste_msg(paste_lines[0]);
 			}
 		}
 		/* ESC = go back and erase search term */
