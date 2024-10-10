@@ -61,9 +61,11 @@
    sometimes, provided you have beaten all the regular characters. ^^ */
 #define HIDDEN_STAGE 4 /* queue chance until hidden stage appears */
 #ifdef HIDDEN_STAGE
- #define HS_ENGINE_FUEGO /* probably requires dan level to overcome */
- //#define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
+ /* Again pick one of the engines to use (will override the 3 non-hidden-stage choices above): */
+ //#define HS_ENGINE_FUEGO /* probably requires dan level to overcome */
+ #define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
  //#define HS_ENGINE_PACHI /* ---todo: implement--- */
+
  static void set_hidden_stage(bool active);
  #define GO_BROADCAST_ALWAYS /* broadcast a win for every win, or just the first time and only on reaching the absolute top rank? */
  #define GO_LEGENDS_LOG /* log reaching the absolute top rank to noteworthy occurances */
@@ -187,6 +189,8 @@ static int handle_loading(void);
 #endif
 #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
 static int prev_level = 0;
+static void fix_sgf_ranks(void);
+static bool wait_for_sgf = FALSE;
 #endif
 static void go_engine_move_CPU(void);
 static void go_engine_move_result(int move_result);
@@ -1457,6 +1461,19 @@ void go_engine_clocks(void) {
 	char clock[6];
 
 	if (go_err(DOWN, DOWN, "go_engine_clocks")) return;
+
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+	/* Hack - game was over, but we wait for fuego to write the sgf file, so we can fix it, adding player ranks */
+	if (wait_for_sgf) {
+		if (test_for_response() >= 0) {
+			wait_for_sgf = FALSE;
+			fix_sgf_ranks();
+			/* Unhack zombie game to finally RIP, 1 tick late */
+			go_game_up = FALSE;
+		}
+		return;
+	}
+#endif
 
 	/* Hold clocks during preparation phase (ie before game really commences)
 	   or while counting the score at the end: */
@@ -2971,35 +2988,10 @@ static void go_challenge_cleanup(bool server_shutdown) {
 		sprintf(tmp, "savesgf %s", sgf_name);
 		writeToPipe(tmp); //(saves current game (and tree if some global flag was set) to sgf)
 
-		/* Fix sgf, adding the player's pseudo-rank -- fuego apparently has no go_set_info option for this */
-		{
-			char buf[1024], *ck;
-			FILE *fp;
-
-			rename(sgf_name, "tmp_sgf.sgf");
-			sgf = fopen("tmp_sgf.sgf", "r");
-			fp = fopen(sgf_name, "w");
-
-			while (!feof(sgf)) {
-				ck = fgets(buf, 1024, sgf);
-				if (!ck) break;
-				if (CPU_has_white) {
-					ck = strstr(buf, "PB[");
-					if (ck) strcat(buf, format("BR[%dp]", prev_level));
-				} else {
-					ck = strstr(buf, "PW[");
-					if (ck) strcat(buf, format("WR[%dp]", prev_level));
-				}
-				fputs(buf, fp);
-			}
-			fclose(fp);
-			fclose(sgf);
-			sgf = NULL;
-
-			remove("tmp$$$.sgf");
-		}
-
-		if (server_shutdown) wait_for_response();
+		if (server_shutdown) {
+			wait_for_response();
+			fix_sgf_ranks();
+		} else wait_for_sgf = TRUE;
 	}
 #endif
 #if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
@@ -3040,10 +3032,50 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	if (!server_shutdown) writeToPipe("clear_board");
 
 	/* Clean up everything */
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+	/* Hack - leave the game up for one more tick as we abuse one more clock tick
+	   to wait for the sgf file to have got written by fuego, so we can process it afterwards. */
+	if (!wait_for_sgf)
+#endif
 	go_game_up = FALSE;
+
 	go_engine_next_action = NACT_NONE;
 	//go_engine_processing = 0;
 }
+
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+/* Fix sgf, adding the player's pseudo-rank -- fuego apparently has no go_set_info option for this */
+void fix_sgf_ranks(void) {
+	char buf[1024], *ck, *rc;
+	FILE *fp;
+
+	rename(sgf_name, "tmp_sgf.sgf");
+	sgf = fopen("tmp_sgf.sgf", "r");
+	if (sgf) {
+		fp = fopen(sgf_name, "w");
+
+		while (!feof(sgf)) {
+			rc = fgets(buf, 1024, sgf);
+			if (!rc) break;
+			if (CPU_has_white) {
+				ck = strstr(buf, "PB[");
+				if (ck) strcat(buf, format("BR[%dp]", prev_level));
+			} else {
+				ck = strstr(buf, "PW[");
+				if (ck) strcat(buf, format("WR[%dp]", prev_level));
+			}
+			fputs(buf, fp);
+		}
+		fclose(fp);
+		fclose(sgf);
+		sgf = NULL;
+	} else {
+		s_printf("GO_ERR: failed to open temp_sgf.sgf for reading (%s).\n", sgf_name);
+		rename("tmp_sgf.sgf", sgf_name);
+	}
+	remove("tmp_sgf.sgf");
+}
+#endif
 
 /* Screen operations only: Update the board visuals for the player */
 static void go_engine_board(void) {
