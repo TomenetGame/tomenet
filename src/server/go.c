@@ -2976,8 +2976,8 @@ static void go_challenge_cleanup(bool server_shutdown) {
 			char buf[1024], *ck;
 			FILE *fp;
 
-			rename(sgf_name, "tmp$$$.sgf");
-			sgf = fopen("tmp$$$.sgf", "r");
+			rename(sgf_name, "tmp_sgf.sgf");
+			sgf = fopen("tmp_sgf.sgf", "r");
 			fp = fopen(sgf_name, "w");
 
 			while (!feof(sgf)) {
