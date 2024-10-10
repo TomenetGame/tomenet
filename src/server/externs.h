@@ -2589,7 +2589,7 @@ extern void lua_fix_acc_house_limit(int Ind);
 
 #ifdef ENABLE_GO_GAME
 /* go.c - C. Blue */
-extern bool go_game_up;//, go_engine_up;
+extern bool go_game_up, go_wait_for_sgf;
 extern int go_engine_processing;
 extern u32b go_engine_player_id;
 

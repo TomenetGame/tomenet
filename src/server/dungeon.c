@@ -11393,7 +11393,7 @@ void process_timers() {
 
 #ifdef ENABLE_GO_GAME
 	/* Process Go AI engine communication (its replies) */
-	if (go_game_up) go_engine_clocks();
+	if (go_game_up || go_wait_for_sgf) go_engine_clocks();
 #endif
 
 	/* reduce warning_rest cooldown */

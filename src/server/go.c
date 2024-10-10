@@ -190,8 +190,8 @@ static int handle_loading(void);
 #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
 static int prev_level = 0;
 static void fix_sgf_ranks(void);
-static bool wait_for_sgf = FALSE;
 #endif
+bool go_wait_for_sgf = FALSE; /* This is only for ENGINE_FUEGO/HS_ENGINE_FUEGO but it's global for dungeon.c, so must always be declared. */
 static void go_engine_move_CPU(void);
 static void go_engine_move_result(int move_result);
 static void go_challenge_cleanup(bool server_shutdown);
@@ -1460,20 +1460,23 @@ void go_engine_clocks(void) {
 	int Ind;
 	char clock[6];
 
-	if (go_err(DOWN, DOWN, "go_engine_clocks")) return;
-
 #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
 	/* Hack - game was over, but we wait for fuego to write the sgf file, so we can fix it, adding player ranks */
-	if (wait_for_sgf) {
-		if (test_for_response() >= 0) {
-			wait_for_sgf = FALSE;
+	if (go_wait_for_sgf) {
+		FILE *fp;
+
+		fp = fopen(sgf_name, "rb");
+		if (fp != NULL) {
+			fclose(fp);
 			fix_sgf_ranks();
-			/* Unhack zombie game to finally RIP, 1 tick late */
-			go_game_up = FALSE;
-		}
+			s_printf("GO: sgf file completed.\n");
+			go_wait_for_sgf = FALSE;
+		} else s_printf("GO: Waiting for sgf file to have got written...\n");
 		return;
 	}
 #endif
+
+	if (go_err(DOWN, DOWN, "go_engine_clocks")) return;
 
 	/* Hold clocks during preparation phase (ie before game really commences)
 	   or while counting the score at the end: */
@@ -2991,7 +2994,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 		if (server_shutdown) {
 			wait_for_response();
 			fix_sgf_ranks();
-		} else wait_for_sgf = TRUE;
+		} else go_wait_for_sgf = TRUE;
 	}
 #endif
 #if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
@@ -3032,13 +3035,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	if (!server_shutdown) writeToPipe("clear_board");
 
 	/* Clean up everything */
-#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
-	/* Hack - leave the game up for one more tick as we abuse one more clock tick
-	   to wait for the sgf file to have got written by fuego, so we can process it afterwards. */
-	if (!wait_for_sgf)
-#endif
 	go_game_up = FALSE;
-
 	go_engine_next_action = NACT_NONE;
 	//go_engine_processing = 0;
 }
