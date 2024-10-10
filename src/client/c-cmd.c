@@ -5967,11 +5967,12 @@ static void artifact_lore(void) {
 			if (c == 't') {
 				/* paste only the title line (monster name, level...) to chat */
 				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
-				artifact_stats_aux(selected, selected_list, paste_lines, TRUE);
+				artifact_lore_aux(selected, selected_list, paste_lines, TRUE);
 				if (!paste_lines[0][0]) break;
 				if (paste_lines[0][strlen(paste_lines[0]) - 1] == ' ')
 					paste_lines[0][strlen(paste_lines[0]) - 1] = '\0';
 				Send_paste_msg(paste_lines[0]);
+				break;
 			}
 		}
 		/* ESC = go back and erase search term */
@@ -6570,6 +6571,7 @@ static void monster_lore(void) {
 				if (paste_lines[0][strlen(paste_lines[0]) - 1] == ' ')
 					paste_lines[0][strlen(paste_lines[0]) - 1] = '\0';
 				Send_paste_msg(paste_lines[0]);
+				break;
 			}
 		}
 		/* ESC = go back and erase search term */
