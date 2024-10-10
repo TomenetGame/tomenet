@@ -14016,6 +14016,9 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 				ty = *y + d - (grid - 3 * sidelength);
 			}
 
+			/* Skip outbound */
+			if (!in_bounds_array(ty, tx)) continue;
+
 			/* Check if any hostile target is available */
 
 			/* No entity at all on this grid? Skip. */
