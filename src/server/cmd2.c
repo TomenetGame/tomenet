@@ -8051,7 +8051,7 @@ void do_cmd_fire(int Ind, int dir) {
 				/* skillfulyl play pool or billard */
 				get_outward_target(Ind, &tx, &ty, tdis, aimed_ricochet > 10, TRUE);
 			} else {
-				/* New, random target location */
+				/* New, completely random target location - note: slightly skewed towards the four diagonals each. */
 				tx = x - tdis + rand_int(tdis * 2 + 1);
 				ty = y - tdis + rand_int(tdis * 2 + 1);
 			}

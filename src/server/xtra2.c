@@ -14019,6 +14019,9 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 			/* Skip outbound */
 			if (!in_bounds_array(ty, tx)) continue;
 
+			/* No entity at all on this grid? Skip. (Note: Checking this before distance() just because it's probably cheaper processing-wise.) */
+			if (!(who = zcave[ty][tx].m_idx)) continue;
+
 			/* Skip monsters too far away to hit */
 			if (distance(*y, *x, ty, tx) > maxdist) continue;
 
@@ -14032,8 +14035,6 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 
 			/* Check if any hostile target is available */
 
-			/* No entity at all on this grid? Skip. */
-			if (!(who = zcave[ty][tx].m_idx)) continue;
 			/* Non-hostile player or special projector? Skip. */
 			if (who < 0 && (who <= PROJECTOR_UNUSUAL || (skip_friendly && !check_hostile(Ind, -who)))) continue;
 			/* Monster here, check if eligible. */
@@ -14065,6 +14066,7 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 					if (i == NumPlayers) continue;
 				}
 			}
+
 			/* We found an eligile target! Set it and exit. */
 			*x = tx;
 			*y = ty;
@@ -14074,6 +14076,13 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 
 		/* Try next 'ring' further outwards (unless we're 'done'.) */
 		d++;
+	}
+
+	/* No eligible target in range? Target a random grid. */
+	if (d > maxdist) {
+		/* New, completely random target location - note: slightly skewed towards the four diagonals each. */
+		*x = *x - maxdist + rand_int(maxdist * 2 + 1);
+		*y = *y - maxdist + rand_int(maxdist * 2 + 1);
 	}
 }
 
