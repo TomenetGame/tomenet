@@ -253,7 +253,7 @@ If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
 able to use most keys aside from arrow keys for basic movement.
 
 -Get the latest client from the project's main official site www.tomenet.eu.
- or from  https://muuttuja.org/tomenet/ (Mikael's site, which features a
+ or from https://muuttuja.org/tomenet/ (Mikael's site, which features a
  monster-search and other stuff).
  If you're on Microsoft Windows, it is recommended to get the installer package
  instead of the zip archives.
@@ -264,7 +264,7 @@ able to use most keys aside from arrow keys for basic movement.
  warnings for NSIS. In the past Avira was notorious for it but it seems they
  fixed it, nowadays it seems to be Acronis instead, at least at the time of
  writing these lines. Anyway, you can safely ignore those *ahem*.
- A fun fact: The TomeNET Winwdows version has never seen an actual Windows
+ A fun fact: The TomeNET Windows version has never seen an actual Windows
  system but was created purely on Linux.
 
 -If you used the installer you will have a TomeNET icon on your desktop to
@@ -3850,7 +3850,7 @@ are a few badly maintained virus scanners that may give a wrong positive
 warnings for NSIS. In the past Avira was notorious for it but it seems they
 fixed it, nowadays it seems to be Acronis instead, at least at the time of
 writing these lines. Anyway, you can safely ignore those *ahem*.
-A fun fact: The TomeNET Winwdows version has never seen an actual Windows
+A fun fact: The TomeNET Windows version has never seen an actual Windows
 system but was created purely on Linux.
 
 If you used the ZIP archive instead of the installer, 7-zip is recommended for
@@ -4469,7 +4469,7 @@ If you don't have sound, press CTRL+U for audio mixer (or CTRL+F if you're
 using rogue-like keyset):
 It should say that sound and music pack have been detected if everything went
 alright, otherwise you see a red error message.
-Also verify  that your config file ("TomeNET.ini" on MS Windows, ".tomenetrc"
+Also verify that your config file ("TomeNET.ini" on MS Windows, ".tomenetrc"
 in your home folder on Linux or Mac OS X) has 'Sound' set to '1'.
 
 
@@ -6020,7 +6020,7 @@ $:      Sends the following text to your current guild.
 Last but not last you can use the following slash commands for chat effects:
 /me     Sends an 'emote' chat message, eg "/me frowns".
 /s      short form of "/say", will say something locally that is only "audible"
-        aka visible to other players that are close to  your current location.
+        aka visible to other players that are close to your current location.
         Eg "/s hello there, so we meet in this place!".
 
 
