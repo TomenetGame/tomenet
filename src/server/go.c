@@ -51,9 +51,9 @@
 
 /* Pick one of the engines to use: */
 /* Use 'gnugno' engine? (recommended) */
-#define ENGINE_GNUGO
+//#define ENGINE_GNUGO
 /* Use 'fuego' engine? */
-//#define ENGINE_FUEGO
+#define ENGINE_FUEGO
 /* Use 'pachi' engine? (stong) */
 //#define ENGINE_PACHI
 
@@ -170,10 +170,8 @@ int go_engine_processing = 0;	/* Go engine is expected to deliver replies to com
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
 static char avatar_name[40];
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 static FILE *sgf = NULL;
 static char sgf_name[1024];
-#endif
 
 /* Private control variable to determine what to do next
    after go_engine_processing reaches 0 again: */
@@ -1635,17 +1633,19 @@ static int verify_move_human(void) {
 		go_challenge_cleanup(FALSE);
 		return(-1);
 	}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 	/* Timing issue: See verify_move_CPU(). Putting it here too for paranoia. */
-	if (!sgf) {
+	if ((engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) && !sgf) {
 		s_printf("GO_GAME: verify_move_human() called after game was cancelled.\n");
 		return(-1);
 	}
+#endif
 
 	/* Catch timeout! Oops. */
 	if (engine_api == EAPI_FUEGO && !strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
- #ifdef GO_DEBUGLOG
+#ifdef GO_DEBUGLOG
 		s_printf("GO_GAME: timeout %s\n", Players[Ind]->name);
- #endif
+#endif
 		return(2); //time over (py)
 	}
 
@@ -1756,13 +1756,15 @@ static int verify_move_CPU(void) {
 		go_challenge_cleanup(FALSE);
 		return(-1);
 	}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 	/* Timing issue: Player left the shop right when CPU move came in.
 	   Will try to write the CPU move to sgf which has already been fclose()'d,
 	   freezing the server in panic save. */
-	if (!sgf) {
+	if ((engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) && !sgf) {
 		s_printf("GO_GAME: verify_move_CPU() called after game was cancelled.\n");
 		return(-1);
 	}
+#endif
 
 	if (go_err(DOWN, DOWN, "verify_move_CPU")) return(-2);
 
@@ -2979,8 +2981,8 @@ static void go_challenge_cleanup(bool server_shutdown) {
 			fp = fopen(sgf_name, "w");
 
 			while (!feof(sgf)) {
-				rc = fgets(buf, 1024, sgf);
-				if (!rc) break;
+				ck = fgets(buf, 1024, sgf);
+				if (!ck) break;
 				if (CPU_has_white) {
 					ck = strstr(buf, "PB[");
 					if (ck) strcat(buf, format("BR[%dp]", prev_level));
