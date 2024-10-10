@@ -405,7 +405,7 @@ extern void geno_towns(void);
 #ifdef ENABLE_GO_GAME
 //extern bool go_engine_up;
 extern bool go_game_up;
-extern bool go_wait_for_sgf;
+extern int go_wait_for_sgf;
 extern u32b go_engine_player_id;
 extern int go_engine_init(void);	/* Starts up the engine */
 extern void go_engine_terminate(void);	/* Terminates the engine */

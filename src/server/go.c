@@ -189,9 +189,9 @@ static int handle_loading(void);
 #endif
 #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
 static int prev_level = 0;
-static void fix_sgf_ranks(void);
+static void fix_sgf_ranks(int rank);
 #endif
-bool go_wait_for_sgf = FALSE; /* This is only for ENGINE_FUEGO/HS_ENGINE_FUEGO but it's global for dungeon.c, so must always be declared. */
+int go_wait_for_sgf = FALSE; /* This is only for ENGINE_FUEGO/HS_ENGINE_FUEGO but it's global for dungeon.c, so must always be declared. */
 static void go_engine_move_CPU(void);
 static void go_engine_move_result(int move_result);
 static void go_challenge_cleanup(bool server_shutdown);
@@ -1361,8 +1361,8 @@ void go_challenge_start(int Ind) {
 		if (sgf) {
 			fprintf(sgf, "(;SZ[9]RU[Chinese]KM[0]\n");
 			fprintf(sgf, "PC[TomeNET - http://www.tomenet.eu/]\n");
-			if (CPU_has_white) fprintf(sgf, "PW[%s (AI)]PB[%s]BR[%dp]\n", avatar_name, p_ptr->name, p_ptr->go_level);
-			else fprintf(sgf, "PW[%s]PB[%s (AI)]WR[%dp]\n", p_ptr->name, avatar_name, p_ptr->go_level);
+			if (CPU_has_white) fprintf(sgf, "PW[%s (AI)]PB[%s]BR[%dp]\n", avatar_name, p_ptr->name, p_ptr->go_level + 1);
+			else fprintf(sgf, "PW[%s]PB[%s (AI)]WR[%dp]\n", p_ptr->name, avatar_name, p_ptr->go_level + 1);
 		}
  #ifdef GO_DEBUGLOG
 		else s_printf("GO_SGF: Couldn't open file.\n");
@@ -1468,9 +1468,9 @@ void go_engine_clocks(void) {
 		fp = fopen(sgf_name, "rb");
 		if (fp != NULL) {
 			fclose(fp);
-			fix_sgf_ranks();
-			s_printf("GO: sgf file completed.\n");
+			fix_sgf_ranks(go_wait_for_sgf);
 			go_wait_for_sgf = FALSE;
+			s_printf("GO: sgf file completed.\n");
 		} else s_printf("GO: Waiting for sgf file to have got written...\n");
 		return;
 	}
@@ -2993,8 +2993,8 @@ static void go_challenge_cleanup(bool server_shutdown) {
 
 		if (server_shutdown) {
 			wait_for_response();
-			fix_sgf_ranks();
-		} else go_wait_for_sgf = TRUE;
+			fix_sgf_ranks(CPU_has_white ? -(prev_level + 1) : prev_level + 1);
+		} else go_wait_for_sgf = CPU_has_white ? -(prev_level + 1) : prev_level + 1;
 	}
 #endif
 #if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
@@ -3041,8 +3041,9 @@ static void go_challenge_cleanup(bool server_shutdown) {
 }
 
 #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
-/* Fix sgf, adding the player's pseudo-rank -- fuego apparently has no go_set_info option for this */
-void fix_sgf_ranks(void) {
+/* Fix sgf, adding the player's pseudo-rank -- fuego apparently has no go_set_info option for this.
+   Rank < 0: player was black, rank > 0: player was white. */
+void fix_sgf_ranks(int rank) {
 	char buf[1024], *ck, *rc;
 	FILE *fp;
 
@@ -3054,12 +3055,12 @@ void fix_sgf_ranks(void) {
 		while (!feof(sgf)) {
 			rc = fgets(buf, 1024, sgf);
 			if (!rc) break;
-			if (CPU_has_white) {
+			if (rank < 0) {
 				ck = strstr(buf, "PB[");
-				if (ck) strcat(buf, format("BR[%dp]", prev_level));
+				if (ck) strcat(buf, format("BR[%dp]", -rank));
 			} else {
 				ck = strstr(buf, "PW[");
-				if (ck) strcat(buf, format("WR[%dp]", prev_level));
+				if (ck) strcat(buf, format("WR[%dp]", rank));
 			}
 			fputs(buf, fp);
 		}
