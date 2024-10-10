@@ -8052,6 +8052,7 @@ void do_cmd_fire(int Ind, int dir) {
 				tx = x - tdis + rand_int(tdis * 2 + 1);
 				ty = y - tdis + rand_int(tdis * 2 + 1);
 				set_in_bounds_array(ty, tx); /* And this again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
+				random_ricochetting = TRUE;
 			}
 			continue;
 		}
