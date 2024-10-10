@@ -6608,7 +6608,7 @@ void do_cmd_fire(int Ind, int dir) {
 	int bonus, chance;
 	int cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
-	int aimed_ricochet;
+	int aimed_ricochet = FALSE;
 	int item = INVEN_AMMO;
 	int archery = get_archery_skill(p_ptr);
 
@@ -7048,21 +7048,26 @@ void do_cmd_fire(int Ind, int dir) {
 	 * monsters. How about we remove ricocheting shots for slingers, but
 	 * instead, adds a chance to do a double damage (than normal and/or crit)
 	 * shots (i.e., seperate than crit and stackable bonus)?  - the_sandman */
-	if (!check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'R') &&
+	if ((!check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'R') || boomerang) &&
 	    !check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'R')) {
 		/* Sling mastery yields bullet ricochets */
-		if (archery == SKILL_SLING && !boomerang && !magic && !ethereal && !p_ptr->ranged_barrage) {
+		if (archery == SKILL_SLING && !magic && !ethereal && !p_ptr->ranged_barrage) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);
-			aimed_ricochet = (i = get_skill(p_ptr, SKILL_SLING)) >= 15 ? i - 14 : 0;
+			if (!check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'S') &&
+			    !check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'S') &&
+			    (i = get_skill(p_ptr, SKILL_SLING)) >= 15)
+				aimed_ricochet = i - 14;
 		}
 		/* Boomerangs can leave a trail of decimation among weaker critters */
-		else if (archery == SKILL_BOOMERANG) {
+		else if (boomerang) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_BOOMERANG, 5));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_BOOMERANG, 42);
-			aimed_ricochet = (i = get_skill(p_ptr, SKILL_BOOMERANG)) >= 20 ? i - 19 : 0;
+			if (!check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'S') &&
+			    (i = get_skill(p_ptr, SKILL_BOOMERANG)) >= 20)
+				aimed_ricochet = i - 19;
 		}
 	}
 

@@ -2409,8 +2409,13 @@ Ammunition, boomerangs, (throwing) weapons:
                 ground. Just inscribe it !L= for auto-pickup and auto-equip.
                 Note that !L only works when picking up an item from the floor!
 
-Sling ammunition and boomerangs:
+Slings/sling ammunition and boomerangs:
     !R          Prevents ricochetting.
+    !S          Allows ricochetting against sleeping/charmed monsters.
+                Has no effect if 'Sling-mastery' is lower than 25.000 or
+                respectively if 'Boomerang-mastery' is lower than 30.000,
+                as the character is not able to control ricochetting well
+                enough at lower skill levels to actually have a choice.
 
 Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
     !X[n]       If you pick up an unidentified item, you will automatically
@@ -17421,7 +17426,10 @@ stated.
                                 At mastery skill 25.000 you will be skillful
                                 enough to make your ricochets avoid any enemy
                                 that sleeps or is charmed.
-                                To disablo ricocheting inscribe the ammo: !R
+                                To disable ricochetting completely inscribe the
+                                sling or ammunition:  !R
+                                To allow ricochetting on sleeping/charmed
+                                targets at skill 25.000+ again, inscribe:  !S
 
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
@@ -17472,7 +17480,10 @@ stated.
                                 At mastery skill 30.000 you will be skillful
                                 enough to make your ricochets avoid any enemy
                                 that sleeps or is charmed.
-                                To disablo ricocheting inscribe the ammo: !R
+                                To disable ricochetting completely inscribe
+                                the boomerang:  !R
+                                To allow ricochetting on sleeping/charmed
+                                targets at skill 30.000+ again, inscribe:  !S
 
                                 (Note that your 'Combat' skill determines your
                                 ability to pseudo-ID Boomerangs.)
