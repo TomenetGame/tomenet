@@ -3458,6 +3458,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 		i = rand_int(mfs);
 		x = mfx[i] - 5 + rand_int(11);
 		y = mfy[i] - 2 + rand_int(5);
+		set_in_bounds(y, x);
 		s_printf("PMO_DEBUG: Farmer Maggot prepared on (%2d,%2d) [%3d,%2d].\n", wpos->wx, wpos->wy, x, y);
 	}
 

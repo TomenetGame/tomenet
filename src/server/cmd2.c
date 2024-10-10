@@ -6609,6 +6609,7 @@ void do_cmd_fire(int Ind, int dir) {
 	int cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
 	int aimed_ricochet = FALSE;
+	bool random_ricochetting = FALSE;
 	int item = INVEN_AMMO;
 	int archery = get_archery_skill(p_ptr);
 
@@ -7100,11 +7101,11 @@ void do_cmd_fire(int Ind, int dir) {
 	bx = x;
 
 	/* Predict the "target" location */
-	tx = p_ptr->px + 99 * ddx[dir];
+	tx = p_ptr->px + 99 * ddx[dir]; // just use MAX_RANGE instead of 99...?
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Check for "target request" */
-	if ((dir == 5) && target_ok) {
+	if (dir == 5 && target_ok) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
@@ -7221,31 +7222,31 @@ void do_cmd_fire(int Ind, int dir) {
 			nx = x;
 
 			/* Hack -- Stop at the target */
-			if ((y == ty) && (x == tx)) break;
+			if (y == ty && x == tx) break;
 
 			/* Calculate the new location (see "project()") */
 			//mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, by, bx, ty, tx);
 
 #ifdef DOUBLE_LOS_SAFETY
-		    /* skip checks if we already used projectable..() routines to
-		       determine that it's fine, so it'd be redundant and also require
-		       additional code to comply with DOUBLE_LOS_SAFETY. */
-		    if (dir != 5) {
+			/* skip checks if we already used projectable..() routines to
+			   determine that it's fine, so it'd be redundant and also require
+			   additional code to comply with DOUBLE_LOS_SAFETY. */
+			if (dir != 5 || random_ricochetting) {
 #endif
-			/* Sanity check because server crashed here on 2012-01-10 - mikaelh */
-			if (!in_bounds_array(ny, nx)) break;
+				/* Sanity check because server crashed here on 2012-01-10 - mikaelh */
+				if (!in_bounds_array(ny, nx)) break;
 
 #ifndef PY_FIRE_ON_WALL
-			/* Stopped by walls/doors */
-			if (!cave_contact(zcave, ny, nx)) break;
+				/* Stopped by walls/doors */
+				if (!cave_contact(zcave, ny, nx)) break;
 #else
-			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
-			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+				/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+				if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 #endif
 #ifdef DOUBLE_LOS_SAFETY
-		    }
-		    /* End of skipping redundant checks for targetted shots. */
+			}
+			/* End of skipping redundant checks for targetted shots. */
 #endif
 
 			/* Advance the distance */
@@ -7841,11 +7842,11 @@ void do_cmd_fire(int Ind, int dir) {
 					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies)) {
 						/* note: if the monster we hit wasn't the one targetted, then continue shooting.
 							 It can only mean that this monster was invisible to us, hence the
-							 character couldn't have control over avoiding to target it. */
-						if ((dir == 5) && ((y == ty) && (x == tx))) {
+							 character couldn't have control over avoiding to target it.
+							 Edit: Or it was a ricochet! */
+						if (dir == 5 && y == ty && x == tx && !random_ricochetting)
 							/* Dead targetted monster */
 							p_ptr->shooting_till_kill = FALSE;
-						}
 
 #ifdef USE_SOUND_2010
 						/* hack: always play 'hit' sfx for final killing shot,
@@ -7938,7 +7939,7 @@ void do_cmd_fire(int Ind, int dir) {
 			if (in_bounds_array(ny, nx))
 #ifdef DOUBLE_LOS_SAFETY
 			/* skip checks if we already used projectable..() routines to test. */
-			if (dir != 5) {
+			if (dir != 5 || random_ricochetting) {
 #endif
 #ifdef PY_FIRE_ON_WALL
 				/* Stopped by walls/doors */
@@ -7952,7 +7953,7 @@ void do_cmd_fire(int Ind, int dir) {
 		/* Extra (exploding) hack: */
 #ifdef DOUBLE_LOS_SAFETY
 		/* skip checks if we already used projectable..() routines to test. */
-		if (dir != 5) {
+		if (dir != 5 || random_ricochetting) {
 #endif
 			/* server crashed here when ny was 66, dir was 10 but then became 3, odd stuff.. */
 			if (in_bounds_array(ny, nx) &&
@@ -8039,21 +8040,18 @@ void do_cmd_fire(int Ind, int dir) {
 			hit_body = FALSE;
 			num_ricochet--;
 
-#ifdef DOUBLE_LOS_SAFETY
-			/* remove dir 5, or we'll likely panic when we go through all 99 grids without blocking checks */
-			//dir = d;
-#endif
 			/* New base location */
 			tx = by = y;
 			tx = bx = x;
 
 			if (aimed_ricochet) {
 				/* skillfulyl play pool or billard */
-				get_outward_target(Ind, &tx, &ty, tdis, aimed_ricochet > 10, TRUE);
+				random_ricochetting = !get_outward_target(Ind, &tx, &ty, tdis, aimed_ricochet > 10, TRUE);
 			} else {
 				/* New, completely random target location - note: slightly skewed towards the four diagonals each. */
 				tx = x - tdis + rand_int(tdis * 2 + 1);
 				ty = y - tdis + rand_int(tdis * 2 + 1);
+				set_in_bounds_array(ty, tx); /* And this again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
 			}
 			continue;
 		}
@@ -8083,7 +8081,7 @@ void do_cmd_fire(int Ind, int dir) {
 
  #ifdef DOUBLE_LOS_SAFETY
 			/* skip checks if we already used projectable..() routines to test. */
-			if (dir != 5) {
+			if (dir != 5 || random_ricochetting) {
  #endif
 				/* Stopped by walls/doors */
 				if (!cave_contact(zcave, ny, nx)) break;

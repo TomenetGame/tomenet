@@ -12703,6 +12703,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			//lulstodo: use angle and sin/cos to get actually fair direction selection =-p
 			x = x - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
 			y = y - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
+			set_in_bounds_array(y, x); /* And this again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
 		}
 	}
 

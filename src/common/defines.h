@@ -7339,6 +7339,15 @@
 #define in_bounds_wild(Y,X) \
    (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_WILD_Y) && ((X) < MAX_WILD_X))
 
+/* Sets x,y to be in_bounds_array() if they aren't, otherwise don't modify them.
+   Hazard note: Macro isn't encapsulated in {}, so use it with care. */
+#define set_in_bounds_array(Y,X) \
+    (X) = (X) < 0 ? 0 : ((X) >= MAX_WID ? MAX_WID - 1 : (X)); \
+    (Y) = (Y) < 0 ? 0 : ((Y) >= MAX_HGT ? MAX_HGT - 1 : (Y));
+#define set_in_bounds(Y,X) \
+    (X) = (X) < 1 ? 1 : ((X) >= MAX_WID - 1 ? MAX_WID - 2 : (X)); \
+    (Y) = (Y) < 1 ? 1 : ((Y) >= MAX_HGT - 1 ? MAX_HGT - 2 : (Y));
+
 
 /*
  * Determines if a map location is currently "on screen" -RAK-

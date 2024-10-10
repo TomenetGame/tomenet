@@ -3162,6 +3162,7 @@ s_printf("ROOM4_BONES (%d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
 			if (rand_int(2)) {
 				x = xval - 9 + rand_int(19);
 				y = yval - 2 + rand_int(5);
+				set_in_bounds(y, x);
 				monster_level = lev + 10;
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
@@ -3179,6 +3180,7 @@ s_printf("ROOM4_TREASURE (%d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
 			if (rand_int(2)) {
 				x = xval - 9 + rand_int(19);
 				y = yval - 2 + rand_int(5);
+				set_in_bounds(y, x);
 				monster_level = lev + 10;
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;

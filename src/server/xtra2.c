@@ -13980,17 +13980,19 @@ bool get_aim_dir(int Ind) {
 	return(TRUE);
 }
 
-/* Find closest hostile target from a center point outwards, up to max distance */
-void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping, bool skip_friendly) {
+/* Find closest hostile target from a center point outwards, up to max distance
+   If it finds a target, *x,*y become the target's coordinates and it returns TRUE.
+   If it doesn't find a target, *x,*y are set to a random grid within maxdist and it returns FALSE. */
+//TODO: Don't ricochet BEHIND the target aka pierce. There should be some sensible reflection angle. */
+bool get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping, bool skip_friendly) {
 	player_type *p_ptr = Players[Ind];
 	struct cave_type **zcave = getcave(&p_ptr->wpos);
 	monster_type *m_ptr;
 	int tx, ty, d = 1, rndoffset, grid, offset_grid, sidelength, ringlength, who;
-	bool done = FALSE;
 
-	if (!zcave) return; /* shouldn't happen ever though - just paranoia */
+	if (!zcave) return(FALSE); /* shouldn't happen ever though - just paranoia */
 
-	while (!done && d <= maxdist) {
+	while (d <= maxdist) {
 		/* Start at a random grid on the 'ring' we're currently checking */
 		sidelength = d * 2;
 		ringlength = sidelength * 4;
@@ -14070,8 +14072,7 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 			/* We found an eligile target! Set it and exit. */
 			*x = tx;
 			*y = ty;
-			done = TRUE;
-			break;
+			return(TRUE);
 		}
 
 		/* Try next 'ring' further outwards (unless we're 'done'.) */
@@ -14079,11 +14080,13 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 	}
 
 	/* No eligible target in range? Target a random grid. */
-	if (d > maxdist) {
-		/* New, completely random target location - note: slightly skewed towards the four diagonals each. */
-		*x = *x - maxdist + rand_int(maxdist * 2 + 1);
-		*y = *y - maxdist + rand_int(maxdist * 2 + 1);
-	}
+
+	/* New, completely random target location - note: slightly skewed towards the four diagonals each. */
+	*x = *x - maxdist + rand_int(maxdist * 2 + 1);
+	*y = *y - maxdist + rand_int(maxdist * 2 + 1);
+	set_in_bounds_array(*y, *x); /* And this again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
+
+	return(FALSE);
 }
 
 
