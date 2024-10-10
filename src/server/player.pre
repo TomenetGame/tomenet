@@ -954,6 +954,7 @@ struct player_type {
 	int item_newest;
 	int item_newest_2nd;
 	bool add_kind_diz;
+	bool hide_lore_paste;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

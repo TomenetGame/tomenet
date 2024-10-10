@@ -6200,6 +6200,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "On pasting an item to chat from inven/equip window you'll not see extra info.");
 			}
 			return;
+		} else if (prefix(messagelc, "/hlore")) { //for before next client release, to make this already accessible
+			if (p_ptr->hide_lore_paste == FALSE) {
+				p_ptr->hide_lore_paste = TRUE;
+				msg_print(Ind, "You will no longer see true artifact/monster lore pasted to public chat.");
+			} else {
+				p_ptr->hide_lore_paste = FALSE;
+				msg_print(Ind, "You will see true artifact/monster lore pasted to public chat.");
+			}
+			return;
 		}
 
 

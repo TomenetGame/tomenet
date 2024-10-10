@@ -588,6 +588,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "autopickup_chemicals",	"Automatically pick up freshly dropped chemicals" },
 	{ &c_cfg.add_kind_diz,		TRUE,	7,	0, 163, TRUE,
 	    "add_kind_diz",		"Inv/eq window only: Item-to-chat-paste extra info" },
+	{ &c_cfg.hide_lore_paste,	FALSE,	7,	0, 164, TRUE,
+	    "hide_lore_paste",		"Hide artifact/monster lore pastes in public chat" },
 };
 
 cptr melee_techniques[16] = {

@@ -2860,13 +2860,28 @@ void msg_print(int Ind, cptr msg_raw) {
 
 	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
 
-#if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
-	/* Marker from client to server: kind-diz would need to begin here, if player wishes to read this kind of extra info. */
+	/* Marker from client to server: lore-paste (arts/monsters), or kind-diz would need to begin here, if player wishes to read this kind of extra info. */
 	if ((ckt = strchr(msg_dup, '\372'))) {
-		if (p_ptr->add_kind_diz) *ckt = '\377';
+		/* Look for the first space, it'll be after the player name */
+		char *csp = strchr(msg_dup, ' ');
+
+		/* Starts at the very beginning of the chat line? Then it is lore-paste (artifact/monster) */
+		if (csp && ckt == csp + 1) {
+			/* hide_lore_paste specifically is for global chat, not for private/party/guild chat.
+			   This is achieved automatically, as the first space in the line would be longer before the \372 marker in that case. */
+
+			/* The client replaced the \377 colour code marker by \372 marker to notice us there's a lore-paste.
+			   We revert it to a usable colour code, or discard the whole message if the receiving player doesn't want to see lore-pastes. */
+			if (p_ptr->hide_lore_paste) return; /* Discard whole message */
+			else *ckt = '\377'; /* Restore colour code, display the now normal message */
+		}
+
+#if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
+		/* Starts later in the line? Then it's a kind-description for an item-paste */
+		else if (p_ptr->add_kind_diz) *ckt = '\377';
 		else *ckt = 0;
-	}
 #endif
+	}
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -5052,9 +5067,8 @@ static void player_talk_aux(int Ind, char *message) {
 	char message2[MSG_LEN], message_u[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
 	char *colon, *colon_u;
-#if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
-	char *sipd;
-#endif
+	char *sipd, *spc;
+
 	bool rp_me = FALSE, rp_me_gen = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
@@ -5415,8 +5429,11 @@ static void player_talk_aux(int Ind, char *message) {
 	if (!slash_command || slash_command_msg) process_hooks(HOOK_CHAT, "d", Ind);
 
 
+	/* If we find a \372 marker, it can be either a kind-diz marker
+	   (occurs right after the first space) or a lore-paste marker (occurs later in the line).
+	   Process it if it's a kind-diz marker, otherwise ignore it here (handled solemnly in msg_print() then): */
 #if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
-	if ((sipd = strchr(message, '\372'))) {
+	if ((sipd = strchr(message, '\372')) && (spc = strchr(message, ' ')) && sipd > spc + 1) {
 		char *ckt = strchr(sipd, ',');
 		int tval = atoi(sipd + 1), sval = ckt ? atoi(ckt + 1) : -1;
 

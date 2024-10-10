@@ -5919,7 +5919,9 @@ static void artifact_lore(void) {
 						if (!paste_lines[i][0]) break;
 						if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 							paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-						Send_paste_msg(paste_lines[i]);
+						/* The first line (#0) is fine, not spam. */
+						if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+						else Send_paste_msg(paste_lines[i]);
 					}
 				} else {
 					for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
@@ -5928,7 +5930,9 @@ static void artifact_lore(void) {
 						if (!paste_lines[i][0]) break;
 						if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 							paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-						Send_paste_msg(paste_lines[i]);
+						/* The first line (#0) is fine, not spam. */
+						if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+						else Send_paste_msg(paste_lines[i]);
 					}
 				}
 				break;
@@ -5942,7 +5946,9 @@ static void artifact_lore(void) {
 					//if (i == 6 || i == 12) usleep(10000000);
 					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-					Send_paste_msg(paste_lines[i]);
+					/* The first line (#0) is fine, not spam. */
+					if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+					else Send_paste_msg(paste_lines[i]);
 				}
 				/* don't double-post the title: skip paste line 0 */
 				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
@@ -5952,7 +5958,9 @@ static void artifact_lore(void) {
 					//if (i == 6 || i == 12) usleep(10000000);
 					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-					Send_paste_msg(paste_lines[i]);
+					/* The first line (#0) is fine, not spam. */
+					if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+					else Send_paste_msg(paste_lines[i]);
 				}
 				break;
 			}
@@ -6500,7 +6508,9 @@ static void monster_lore(void) {
 						if (!paste_lines[i][0]) break;
 						if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 							paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-						Send_paste_msg(paste_lines[i]);
+						/* The first line (#0) is fine, not spam. */
+						if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+						else Send_paste_msg(paste_lines[i]);
 					}
 				} else {
 					for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
@@ -6509,7 +6519,9 @@ static void monster_lore(void) {
 						if (!paste_lines[i][0]) break;
 						if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 							paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-						Send_paste_msg(paste_lines[i]);
+						/* The first line (#0) is fine, not spam. */
+						if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+						else Send_paste_msg(paste_lines[i]);
 					}
 				}
 				break;
@@ -6523,7 +6535,9 @@ static void monster_lore(void) {
 					//if (i == 6 || i == 12) usleep(10000000);
 					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-					Send_paste_msg(paste_lines[i]);
+					/* The first line (#0) is fine, not spam. */
+					if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+					else Send_paste_msg(paste_lines[i]);
 				}
 				/* don't double-post the title: skip paste line 0 */
 				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
@@ -6533,7 +6547,9 @@ static void monster_lore(void) {
 					//if (i == 6 || i == 12) usleep(10000000);
 					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
 						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-					Send_paste_msg(paste_lines[i]);
+					/* The first line (#0) is fine, not spam. */
+					if (i) Send_paste_msg(format("\372%s", paste_lines[i] + 1));
+					else Send_paste_msg(paste_lines[i]);
 				}
 				break;
 			}
