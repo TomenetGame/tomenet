@@ -14005,10 +14005,10 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 		/* Move along the ring, checking each grid for hostile target.
 		   (Skews direction in favour of diagonals, as we're moving in a square, not a true circle.) */
 		for (offset_grid = rndoffset; offset_grid < ringlength + rndoffset; offset_grid++) {
-			/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
-			if (offset_grid / d == avoid_dir || (offset_grid + 1) / d == avoid_dir) continue;
-
 			grid = offset_grid % (ringlength);
+
+			/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
+			if (grid / d == avoid_dir || (grid + 1) / d == avoid_dir) continue;
 
 			/* Translate ring length position to x,y on the ring structure:
 			   Assume ring structure begins at bottom left corner and we move counter-clockwise. */
@@ -14100,10 +14100,10 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 	/* Move along the ring, checking each grid for hostile target.
 	   (Skews direction in favour of diagonals, as we're moving in a square, not a true circle.) */
 	for (offset_grid = rndoffset; offset_grid < ringlength + rndoffset; offset_grid++) {
-		/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
-		if (offset_grid / d == avoid_dir || (offset_grid + 1) / d == avoid_dir) continue;
-
 		grid = offset_grid % (ringlength);
+
+		/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
+		if (grid / d == avoid_dir || (grid + 1) / d == avoid_dir) continue;
 
 		/* Translate ring length position to x,y on the ring structure:
 		   Assume ring structure begins at bottom left corner and we move counter-clockwise. */
