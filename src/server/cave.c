@@ -9278,6 +9278,28 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 }
 #endif
 
+/* Check if our path hits a monster/player or not, return cave m_idx or 0. */
+int projectable_get_m_idx(int Ind, int y1, int x1, int y2, int x2, int range) {
+	int dist, y = y1, x = x1;
+	cave_type **zcave;
+
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return(0);
+
+	for (dist = 0; dist <= range; dist++) {
+		if (x == x2 && y == y2) return(0);
+
+		/* Never pass through walls */
+		if (dist && !cave_los(zcave, y, x)) return(0);
+
+		/* Report if we hit player/monster */
+		if (dist && zcave[y][x].m_idx) return(zcave[y][x].m_idx);
+
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+	return(0);
+}
+
+
 /*
  * Standard "find me a location" function
  *

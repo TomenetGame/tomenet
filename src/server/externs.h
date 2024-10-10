@@ -627,6 +627,7 @@ extern bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int 
 extern bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
 extern bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range);
 extern bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range);
+extern int projectable_get_m_idx(int Ind, int y1, int x1, int y2, int x2, int range);
 extern void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m);
 extern bool is_xorder(struct worldpos *wpos);
 extern void health_track(int Ind, int m_idx);

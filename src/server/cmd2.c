@@ -6609,7 +6609,7 @@ void do_cmd_fire(int Ind, int dir) {
 	int cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
 	int aimed_ricochet = FALSE;
-	bool random_ricochetting = FALSE;
+	bool random_ricochetting = FALSE; /* When TRUE it means get_outward_target() hasn't done all required projectable-los-checks, so we have to do that. */
 	int item = INVEN_AMMO;
 	int archery = get_archery_skill(p_ptr);
 
@@ -8048,20 +8048,22 @@ void do_cmd_fire(int Ind, int dir) {
 		if (num_ricochet && hit_body && magik(ricochet_chance) && !p_ptr->ranged_barrage) {
 			int avoid_dir = determine_dir(bx, by, x, y);
 
-			msg_format(Ind, "The %s ricochets!", o_name);
-			hit_body = FALSE;
-			num_ricochet--;
-
 			/* New base location */
 			tx = by = y;
 			tx = bx = x;
 
-			if (aimed_ricochet)
+			if (aimed_ricochet) {
 				/* skillfulyl play pool or billard */
 				random_ricochetting = !get_outward_target(Ind, &tx, &ty, tdis, avoid_dir, FALSE, aimed_ricochet > 10, TRUE);
-			else
+				/* if there are no eligible target grids (happens if even random grids all fail because we'd hit a sleeping/charmed monster), don't ricochet! */
+				if (random_ricochetting && tx == x && ty == y) break;
+			} else
 				/* New, completely random target location */
 				random_ricochetting = !get_outward_target(Ind, &tx, &ty, tdis, avoid_dir, TRUE, FALSE, FALSE);
+
+			msg_format(Ind, "The %s ricochets!", o_name);
+			hit_body = FALSE;
+			num_ricochet--;
 			continue;
 		}
 		/* Shot has finally arrived at the target destination */

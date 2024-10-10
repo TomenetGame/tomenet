@@ -13982,12 +13982,13 @@ bool get_aim_dir(int Ind) {
 
 /* Find closest hostile target from a center point outwards, up to max distance. - C. Blue
    If it finds a target, *x,*y become the target's coordinates and it returns TRUE.
-   If it doesn't find a target, *x,*y are set to a random grid within maxdist but it will still honour 'avoid_dir', and return FALSE.
-   'any_grid': If TRUE, will skip all checks for hostile targets and just pick a random grid within maxdist but still honour 'avoid_dir' (and return FALSE).
+   If it doesn't find a target, it will instead behave as if any_grid was TRUE, see below.
+   'any_grid': If TRUE, will skip checks for hostile targets and just pick a random grid within maxdist,
+     but still honour 'avoid_dir', 'skip_sleeping' and 'skip_friendly' (and return FALSE).
    'skip_sleeping': If TRUE, will skip all sleeping and charmed targets.
    'skip_friendyl': If TRUE, will skip all non-hostile targets.
    'avoid_dir': Can be 0..7 to designate one of the directions to NOT pick a target in, can be -1 to allow all directions;
-    the directions for avoid_dir start at the bottom left corner (ie south-west, 0) and we move counter-clockwise until we arrive at straight left (ie west, 7). */
+     the directions for avoid_dir start at the bottom left corner (ie south-west, 0) and we move counter-clockwise until we arrive at straight left (ie west, 7). */
 bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, bool any_grid, bool skip_sleeping, bool skip_friendly) {
 	player_type *p_ptr = Players[Ind];
 	struct cave_type **zcave = getcave(&p_ptr->wpos);
@@ -14090,7 +14091,7 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 	/* No eligible target in range or 'any_grid' mode? Target a random grid. */
 
 	/* We have the full range available */
-	d = maxdist;
+	d = randint(maxdist);
 
 	/* Start at a random grid on the 'ring' we're currently checking */
 	sidelength = d * 2;
@@ -14121,9 +14122,48 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 			ty = *y + d - (grid - 3 * sidelength);
 		}
 
-		/* Accept any random grid that passed 'avoid_dir' */
+		/* Check if we'd hit some entity along our path */
+		who = projectable_get_m_idx(Ind, *y, *x, ty, tx, d);
+
+		/* Non-hostile player or special projector? Skip. */
+		if (who < 0 && (who <= PROJECTOR_UNUSUAL || (skip_friendly && !check_hostile(Ind, -who)))) continue;
+
+		/* Monster here, check if eligible. */
+		if (who > 0) {
+			/* Access the monster */
+			m_ptr = &m_list[who];
+
+			/* Ignore "dead" monsters, accept grid */
+			if (!m_ptr->r_idx) break;
+
+			if (skip_sleeping) {
+				/* Don't wake up sleeping monsters */
+				if (m_ptr->csleep) continue;
+				/* Don't break charm/trance */
+				if (m_ptr->charmedignore) continue;
+			}
+
+			/* Spells cast by a player never hurt a friendly golem */
+			if (m_ptr->owner && skip_friendly) {
+				int i;
+
+				//look for its owner to see if he's hostile or not
+				for (i = 1; i < NumPlayers; i++)
+					if (Players[i]->id == m_ptr->owner) {
+						if (!check_hostile(Ind, i)) continue;
+						break;
+					}
+				//if his owner is not online, assume friendly(!)
+				if (i == NumPlayers) continue;
+			}
+		}
+
+		/* Accept any random grid that passed 'avoid_dir', 'skip_friendly' and 'skip_sleeping' */
 		break;
 	}
+
+	/* Still no eligible grid? Don't modify coordinates then. */
+	if (offset_grid == ringlength + rndoffset) return(FALSE);
 
 	/* Set target grid and exit. */
 	*x = tx;
