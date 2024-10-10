@@ -14019,6 +14019,17 @@ void get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 			/* Skip outbound */
 			if (!in_bounds_array(ty, tx)) continue;
 
+			/* Skip monsters too far away to hit */
+			if (distance(y, x, ty, tx) > maxdist) continue;
+
+			/* Skip monsters we don't have LoS to (wouldn't want to wake up a sleeping one in our path) */
+			//if (los(&p_ptr->wpos, y, x, ty, tx)) continue;
+#ifndef PY_FIRE_ON_WALL
+			if (!projectable_real(Ind, y, x, ty, ty, maxdist)) continue;
+#else
+			if (!projectable_wall_real(Ind, y, x, ty, ty, maxdist)) continue;
+#endif
+
 			/* Check if any hostile target is available */
 
 			/* No entity at all on this grid? Skip. */

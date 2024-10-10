@@ -8049,11 +8049,11 @@ void do_cmd_fire(int Ind, int dir) {
 
 			if (aimed_ricochet) {
 				/* skillfulyl play pool or billard */
-				get_outward_target(Ind, &tx, &ty, MAX_RANGE, aimed_ricochet > 10, TRUE);
+				get_outward_target(Ind, &tx, &ty, tdis, aimed_ricochet > 10, TRUE);
 			} else {
 				/* New, random target location */
-				tx = x - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
-				ty = y - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
+				tx = x - tdis + rand_int(tdis * 2 + 1);
+				ty = y - tdis + rand_int(tdis * 2 + 1);
 			}
 			continue;
 		}
