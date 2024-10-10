@@ -51,9 +51,9 @@
 
 /* Pick one of the engines to use: */
 /* Use 'gnugno' engine? (recommended) */
-//#define ENGINE_GNUGO
+#define ENGINE_GNUGO
 /* Use 'fuego' engine? */
-#define ENGINE_FUEGO
+//#define ENGINE_FUEGO
 /* Use 'pachi' engine? (stong) */
 //#define ENGINE_PACHI
 
