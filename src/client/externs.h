@@ -1082,6 +1082,8 @@ extern int win_get_logfont_h(int term_idx);
 extern void win_logfont_inc(int term_idx, bool wh);
 extern void win_logfont_dec(int term_idx, bool wh);
 extern void win_logfont_set(int term_idx, char *sizestr);
+extern void win_logfont_set_aa(int term_idx, bool antialiased);
+extern bool win_logfont_get_aa(int term_idx);
  #endif
 extern void set_font_name(int term_idx, char* fnt);
 extern void term_toggle_visibility(int term_idx);

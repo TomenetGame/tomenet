@@ -9815,7 +9815,7 @@ static void do_cmd_options_fonts(void) {
 		/* Prompt XXX XXX XXX */
 #if defined(WINDOWS) && defined(USE_LOGFONT)
 		if (use_logfont)
-			Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w,\377y+\377w/\377y,\377w,\377y.\377w change height/width");
+			Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> select window, \377yv\377w visibility, \377y-\377w,\377y+\377w/\377y,\377w,\377y.\377w height/width, \377ya\377w antialiasing");
 		else
 #endif
 		Term_putstr(0, 0, -1, TERM_WHITE, "  <\377yup\377w/\377ydown\377w> to select window, \377yv\377w toggle visibility, \377y-\377w/\377y+\377w,\377y=\377w smaller/bigger font");
@@ -9846,6 +9846,10 @@ static void do_cmd_options_fonts(void) {
 
 			/* Display the font of this window */
 			if (c_cfg.use_color && !term_get_visibility(j)) a = TERM_L_DARK;
+#if defined(WINDOWS) && defined(USE_LOGFONT)
+			if (use_logfont && win_logfont_get_aa(j)) sprintf(buf, "%-19s (antialiased)", get_font_name(j));
+			else
+#endif
 			strcpy(buf, get_font_name(j));
 			buf[59] = 0;
 			while (strlen(buf) < 59) strcat(buf, " ");
@@ -9963,6 +9967,7 @@ static void do_cmd_options_fonts(void) {
 #if defined(WINDOWS) && defined(USE_LOGFONT)
 		case '.':
 			if (use_logfont) win_logfont_inc(y, FALSE);
+			else bell();
 			break;
 #endif
 		case '=':
@@ -10003,6 +10008,7 @@ static void do_cmd_options_fonts(void) {
 #if defined(WINDOWS) && defined(USE_LOGFONT)
 		case ',':
 			if (use_logfont) win_logfont_dec(y, FALSE);
+			else bell();
 			break;
 #endif
 		case '-':
@@ -10117,6 +10123,15 @@ static void do_cmd_options_fonts(void) {
 			use_logfont_ini = !use_logfont_ini;
 			if (use_logfont_ini) c_msg_print("\377yUsing Windows-internal font instead of FON files. Requires restart, use CTRL+Q.");
 			else c_msg_print("\377yUsing FON files instead of Windows-internal font. Requires restart, use CTRL+Q.");
+			break;
+		case 'a':
+			if (!use_logfont) {
+				bell();
+				continue;
+			}
+			win_logfont_set_aa(y, !win_logfont_get_aa(y));
+			/* if (win_logfont_get_aa(y)) c_msg_format("\377yLogfont-antialiasing is now on for window #%d.", y);
+			else c_msg_format("\377yLogfont-antialiasing is now off for window #%d", y); */
 			break;
 #endif
 

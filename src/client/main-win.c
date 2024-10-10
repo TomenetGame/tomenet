@@ -1309,6 +1309,8 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
 		WritePrivateProfileString(sec_name, "FontHgt", buf, ini_file);
 		wsprintf(buf, "%d", td->lf.lfWeight);
 		WritePrivateProfileString(sec_name, "FontWgt", buf, ini_file);
+		wsprintf(buf, "%d", (td->lf.lfQuality == ANTIALIASED_QUALITY) ? 1 : 0);
+		WritePrivateProfileString(sec_name, "FontAA", buf, ini_file);
 	} else
 #endif
 	{
@@ -1455,6 +1457,7 @@ static void load_prefs_aux(term_data *td, cptr sec_name) {
 		td->lf.lfWidth  = GetPrivateProfileInt(sec_name, "FontWid", 0, ini_file);
 		td->lf.lfHeight = GetPrivateProfileInt(sec_name, "FontHgt", 15, ini_file);
 		td->lf.lfWeight = GetPrivateProfileInt(sec_name, "FontWgt", 0, ini_file);
+		td->lf.lfQuality = ((GetPrivateProfileInt(sec_name, "FontAA", 0, ini_file)) == 1) ? ANTIALIASED_QUALITY : DEFAULT_QUALITY;
 	} else
 #endif
 	{
@@ -1965,7 +1968,9 @@ static errr term_force_font(term_data *td, cptr name) {
 		td->font_id = CreateFont(hgt, wid, 0, 0, FW_DONTCARE, 0, 0, 0, ANSI_CHARSET,
 		                         OUT_DEFAULT_PRECIS, //(OUT_DEFAULT_PRECIS,) OUT_OUTLINE_PRECIS, OUT_TT_PRECIS (slow), OUT_TT_ONLY_PRECIS
 		                         CLIP_DEFAULT_PRECIS,
-		                         (hgt >= 9 && wid >= 9 && hgt + wid >= 23) ? ANTIALIASED_QUALITY : DEFAULT_QUALITY, //(DEFAULT_QUALITY,) ANTIALIASED_QUALITY, CLEARTYPE_QUALITY (perhaps slow)
+		                         /* Don't antialiase non-logfonts maybe, just go with default instead:
+		                            (hgt >= 9 && wid >= 9 && hgt + wid >= 23) ? ANTIALIASED_QUALITY : DEFAULT_QUALITY, //(DEFAULT_QUALITY,) ANTIALIASED_QUALITY, CLEARTYPE_QUALITY (perhaps slow) */
+		                         DEFAULT_QUALITY,
 		                         FIXED_PITCH | FF_DONTCARE,
 		                         base);
 	}
@@ -3266,7 +3271,9 @@ static void init_windows(void) {
 			if (!td->lf.lfHeight) td->lf.lfHeight = td->font_hgt = 15;
 			// pro-tip: win32 calls corrupting your .INI? flag it read-only!
 			td->lf.lfOutPrecision = OUT_DEFAULT_PRECIS; //(OUT_DEFAULT_PRECIS,) OUT_OUTLINE_PRECIS, OUT_TT_PRECIS (slow), OUT_TT_ONLY_PRECIS
+ #if 0 /* Now set in load_prefs_aux() instead, so it can be defined in the INI file */
 			td->lf.lfQuality = (td->lf.lfHeight >= 9 && td->lf.lfWidth >= 9 && td->lf.lfHeight + td->lf.lfWidth >= 23) ? ANTIALIASED_QUALITY : DEFAULT_QUALITY; //(DEFAULT_QUALITY,) ANTIALIASED_QUALITY, CLEARTYPE_QUALITY (perhaps slow)
+ #endif
 			td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
 			term_force_font(td, NULL);
 		} else
@@ -5267,10 +5274,23 @@ void win_logfont_set(int term_idx, char *sizestr) {
 
 	td->lf.lfHeight = h;
 	td->lf.lfWidth = w;
+
 	term_force_font(td, NULL);
  #ifdef USE_GRAPHICS
 	if (use_graphics && g_hbmTiles != NULL) recreateGraphicsObjects(td);
  #endif
+}
+bool win_logfont_get_aa(int term_idx) {
+	term_data *td = &data[term_idx];
+
+	return(td->lf.lfQuality == ANTIALIASED_QUALITY);
+}
+/* We want to change the antialiasing level (none aka default or actually antialiased). Can look blurry with small fonts. */
+void win_logfont_set_aa(int term_idx, bool antialiased) {
+	term_data *td = &data[term_idx];
+
+	td->lf.lfQuality = antialiased ? ANTIALIASED_QUALITY : DEFAULT_QUALITY;
+	term_force_font(td, NULL);
 }
 #endif
 void term_toggle_visibility(int term_idx) {
