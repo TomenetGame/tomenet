@@ -7599,8 +7599,14 @@ void do_cmd_fire(int Ind, int dir) {
 								else if (p_ptr->nimbus) do_nimbus(Ind, y, x);
 
 								/* Stop looking */
+#if 0
+								/* We hit an entity (even if we didn't pass AC test), so we MUST break,
+								   for ricochetting and all. Not sure what the next line is about, but it needs adjusting:
+								   We must always break here, or ricochetting must be disabled, or hit_body evaluation must be expanded. */
 								if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP) || boomerang) break;
-
+#else
+								break;
+#endif
 							}
 						}
 
@@ -7626,10 +7632,8 @@ void do_cmd_fire(int Ind, int dir) {
 				/* Check the visibility */
 				visible = p_ptr->mon_vis[c_ptr->m_idx];
 
-				/* Note the collision */
-				/* Note the collision */
-				if (!(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL))
-					hit_body = TRUE;
+				/* Note the -potential- collision (still have to check if we passed AC) */
+				if (!(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL)) hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
 				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible) || (p_ptr->ranged_precision && visible)) {
@@ -7787,7 +7791,7 @@ void do_cmd_fire(int Ind, int dir) {
 					/* wraithed players can attack wraithed monsters - mikaelh */
 					if (p_ptr->tim_wraith &&
 					    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
-						    tdam = 0;
+						tdam = 0;
 
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;
@@ -7930,8 +7934,14 @@ void do_cmd_fire(int Ind, int dir) {
 					else if (p_ptr->nimbus) do_nimbus(Ind, y, x);
 
 					/* Stop looking */
+#if 0
+					/* We hit an entity (even if we didn't pass AC test), so we MUST break,
+					   for ricochetting and all. Not sure what the next line is about, but it needs adjusting:
+					   We must always break here, or ricochetting must be disabled, or hit_body evaluation must be expanded. */
 					if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP) || boomerang) break;
-
+#else
+					break;
+#endif
 				}
 			}
 
