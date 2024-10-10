@@ -8036,6 +8036,8 @@ void do_cmd_fire(int Ind, int dir) {
 		}
 		/* If no break, the ammo can ricochet */
 		if (num_ricochet && hit_body && magik(ricochet_chance) && !p_ptr->ranged_barrage) {
+			int avoid_dir = determine_dir(bx, by, x, y);
+
 			msg_format(Ind, "The %s ricochets!", o_name);
 			hit_body = FALSE;
 			num_ricochet--;
@@ -8044,16 +8046,12 @@ void do_cmd_fire(int Ind, int dir) {
 			tx = by = y;
 			tx = bx = x;
 
-			if (aimed_ricochet) {
+			if (aimed_ricochet)
 				/* skillfulyl play pool or billard */
-				random_ricochetting = !get_outward_target(Ind, &tx, &ty, tdis, aimed_ricochet > 10, TRUE);
-			} else {
-				/* New, completely random target location - note: slightly skewed towards the four diagonals each. */
-				tx = x - tdis + rand_int(tdis * 2 + 1);
-				ty = y - tdis + rand_int(tdis * 2 + 1);
-				set_in_bounds_array(ty, tx); /* And this again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
-				random_ricochetting = TRUE;
-			}
+				random_ricochetting = !get_outward_target(Ind, &tx, &ty, tdis, avoid_dir, FALSE, aimed_ricochet > 10, TRUE);
+			else
+				/* New, completely random target location */
+				random_ricochetting = !get_outward_target(Ind, &tx, &ty, tdis, avoid_dir, TRUE, FALSE, FALSE);
 			continue;
 		}
 		/* Shot has finally arrived at the target destination */

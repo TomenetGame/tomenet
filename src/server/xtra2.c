@@ -13980,11 +13980,15 @@ bool get_aim_dir(int Ind) {
 	return(TRUE);
 }
 
-/* Find closest hostile target from a center point outwards, up to max distance
+/* Find closest hostile target from a center point outwards, up to max distance. - C. Blue
    If it finds a target, *x,*y become the target's coordinates and it returns TRUE.
-   If it doesn't find a target, *x,*y are set to a random grid within maxdist and it returns FALSE. */
-//TODO: Don't ricochet BEHIND the target aka pierce. There should be some sensible reflection angle. */
-bool get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping, bool skip_friendly) {
+   If it doesn't find a target, *x,*y are set to a random grid within maxdist but it will still honour 'avoid_dir', and return FALSE.
+   'any_grid': If TRUE, will skip all checks for hostile targets and just pick a random grid within maxdist but still honour 'avoid_dir' (and return FALSE).
+   'skip_sleeping': If TRUE, will skip all sleeping and charmed targets.
+   'skip_friendyl': If TRUE, will skip all non-hostile targets.
+   'avoid_dir': Can be 0..7 to designate one of the directions to NOT pick a target in, can be -1 to allow all directions;
+    the directions for avoid_dir start at the bottom left corner (ie south-west, 0) and we move counter-clockwise until we arrive at straight left (ie west, 7). */
+bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, bool any_grid, bool skip_sleeping, bool skip_friendly) {
 	player_type *p_ptr = Players[Ind];
 	struct cave_type **zcave = getcave(&p_ptr->wpos);
 	monster_type *m_ptr;
@@ -13992,14 +13996,18 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 
 	if (!zcave) return(FALSE); /* shouldn't happen ever though - just paranoia */
 
-	while (d <= maxdist) {
+	if (!any_grid) while (d <= maxdist) {
 		/* Start at a random grid on the 'ring' we're currently checking */
 		sidelength = d * 2;
 		ringlength = sidelength * 4;
 		rndoffset = rand_int(ringlength);
 
-		/* Move along the ring, checking each grid for hostile target. */
+		/* Move along the ring, checking each grid for hostile target.
+		   (Skews direction in favour of diagonals, as we're moving in a square, not a true circle.) */
 		for (offset_grid = rndoffset; offset_grid < ringlength + rndoffset; offset_grid++) {
+			/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
+			if (offset_grid / d == avoid_dir || (offset_grid + 1) / d == avoid_dir) continue;
+
 			grid = offset_grid % (ringlength);
 
 			/* Translate ring length position to x,y on the ring structure:
@@ -14018,7 +14026,7 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 				ty = *y + d - (grid - 3 * sidelength);
 			}
 
-			/* Skip outbound */
+			/* Skip outbound -- not necessarily needed? Depends on caller function, but all should handle it maybe. */
 			if (!in_bounds_array(ty, tx)) continue;
 
 			/* No entity at all on this grid? Skip. (Note: Checking this before distance() just because it's probably cheaper processing-wise.) */
@@ -14079,14 +14087,105 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping
 		d++;
 	}
 
-	/* No eligible target in range? Target a random grid. */
+	/* No eligible target in range or 'any_grid' mode? Target a random grid. */
 
-	/* New, completely random target location - note: slightly skewed towards the four diagonals each. */
-	*x = *x - maxdist + rand_int(maxdist * 2 + 1);
-	*y = *y - maxdist + rand_int(maxdist * 2 + 1);
-	set_in_bounds_array(*y, *x); /* And this again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
+	/* We have the full range available */
+	d = maxdist;
 
+	/* Start at a random grid on the 'ring' we're currently checking */
+	sidelength = d * 2;
+	ringlength = sidelength * 4;
+	rndoffset = rand_int(ringlength);
+
+	/* Move along the ring, checking each grid for hostile target.
+	   (Skews direction in favour of diagonals, as we're moving in a square, not a true circle.) */
+	for (offset_grid = rndoffset; offset_grid < ringlength + rndoffset; offset_grid++) {
+		/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
+		if (offset_grid / d == avoid_dir || (offset_grid + 1) / d == avoid_dir) continue;
+
+		grid = offset_grid % (ringlength);
+
+		/* Translate ring length position to x,y on the ring structure:
+		   Assume ring structure begins at bottom left corner and we move counter-clockwise. */
+		if (grid < sidelength) {
+			tx = *x - d + grid;
+			ty = *y - d;
+		} else if (grid < 2 * sidelength) {
+			tx = *x + d;
+			ty = *y - d + (grid - sidelength);
+		} else if (grid < 3 * sidelength) {
+			tx = *x + d - (grid - 2 * sidelength);
+			ty = *y + d;
+		} else {
+			tx = *x - d;
+			ty = *y + d - (grid - 3 * sidelength);
+		}
+
+		/* Accept any random grid that passed 'avoid_dir' */
+		break;
+	}
+
+	/* Set target grid and exit. */
+	*x = tx;
+	*y = ty;
+	set_in_bounds_array(*y, *x); /* This again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
 	return(FALSE);
+}
+
+/* Returns a direction derived from start and destination map coordinates. - C. Blue
+   Direction will be either 0..7 with 0 being bottom-left corner aka south-west, moving counter-clockwise ending at 7 for west,
+   or -1 if the start and destination are identical.
+   Added originally for sling ammo/boomerang ricochetting, hence the comments relating to it. */
+int determine_dir(int sx, int sy, int dx, int dy) {
+	int xsg, ysg;
+
+	int xax, yax, dia, angle;
+	bool dxy;
+
+
+	/* Don't ricochet 'through' the target ie piercing. There should be some sensible feel of deflection angle. */
+	xsg = dx - sx;
+	ysg = -(dy - sy); /* pft, just remap to a 'normal' coordinate system for a moment ">_> silyl me. One day I'm gonna swap ALL those y,x too!!1 */
+
+	/* If for some paranoid reason we ricochetted immediately at our original starting location w/o going anywhere, we can go into any direction */
+	if (!xsg && !ysg) return(-1);
+
+	/* Else, find specific direction to avoid ricochetting into, to create a meaningful deflection angle instead of "piercing through" sometimes.
+	   'angle' will start with 0..45deg locally but eventually be the absolute angle again
+	   and thereby hold the value for 'avoid_dir' ie 0..7, starting at bottom-left corner and moving counter-clockwise. */
+
+	/* Axiis */
+	xax = ABS(xsg);
+	yax = ABS(ysg);
+
+	/* Just hold the sign now */
+	xsg = xax ? xsg / xax : 0;
+	ysg = yax ? ysg / yax : 0;
+
+	/* Determine easiest local-angle calculation (for a sinus range of 0..45 deg) */
+	dxy = xax > yax;
+
+	/* 0..10 maps 0..45 degree (ie sinus, so ~6.69 would signify 33.75 deg, ~4.13 -> 22.5 deg, ~1.99 -> 11.5 deg) */
+	dia = dxy ? (10 * yax) / xax : (10 * xax) / yax;
+	angle = dia <= 4 ? 0 : 1; /* angle: 0 for ~0 deg, 1 for ~45 deg */
+
+	/* Map angle on the applying one of 8 possible rotations */
+
+	/* Flip angle from x to y or keep it at x (with 1 overlapping from both positions, aka 45 deg is exactly in the middle between x and y axis)? */
+	angle = dxy ? angle : 2 - angle;
+
+	/* Mirror angle to the correct x's sign */
+	angle = xsg == -1 ? 4 - angle : angle;
+
+	/* Mirror angle to the correct y's sign */
+	angle = ysg == -1 ? 8 - angle : angle;
+
+	/* Rotate angle counter-clickwise back from 0 being east (which we used for most-simplified calcs)
+	   to 0 being bottom-left corner (which we actually use for get_outward_target()): */
+	angle += 3;
+
+	/* 8 is the same as 0, and we have rotated anyway so we need to get the correct absolute angle again: */
+	return(angle % 8);
 }
 
 

@@ -2372,7 +2372,8 @@ extern bool target_set(int Ind, int dir);
  extern bool target_set_friendly(int Ind, int dir);
 #endif
 extern bool get_aim_dir(int Ind/*, int *dp*/);
-extern bool get_outward_target(int Ind, int *x, int *y, int maxdist, bool skip_sleeping, bool skip_friendly);
+extern bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, bool any_grid, bool skip_sleeping, bool skip_friendly);
+extern int determine_dir(int sx, int sy, int dx, int dy);
 extern void get_item(int Ind, signed char tester_hook); //paranoia @ 'signed' char =-p
 extern bool do_scroll_life(int Ind);
 extern bool do_restoreXP_other(int Ind);
