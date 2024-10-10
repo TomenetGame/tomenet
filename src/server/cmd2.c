@@ -6751,7 +6751,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 	/* ethereal ammo? */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) {
-		returning = TRUE;
+		returning = TRUE; /* even if cursed, if that's even possible */
 		ethereal = TRUE;
 	}
 
@@ -6803,19 +6803,16 @@ void do_cmd_fire(int Ind, int dir) {
 		returning = TRUE;
 	}
 	if (p_ptr->blind) chance >>= 2;
+
 //s_printf("R chance %d, skill_thb %d, bonus %d\n", chance, p_ptr->skill_thb, bonus); //DEBUG hit chance
+
 	/* Is this magic Arrow or magic shots or magic bolts? */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) {
 		magic = TRUE;
 		if (!cursed_p(o_ptr)) returning = TRUE;
 	}
 	/* Artifact ammo doesn't drop to floor */
-	if (artifact_p(o_ptr)) {
-		returning = TRUE;
-
-		/* making art ammo less reusable over the history of many chars, increasing demand.. */
-		//o_ptr->level = 0;
-	}
+	if (artifact_p(o_ptr)) returning = TRUE; /* even if cursed */
 
 	/* Get extra "power" from "extra might" */
 	if (!boomerang) tmul += p_ptr->xtra_might;
@@ -6975,9 +6972,9 @@ void do_cmd_fire(int Ind, int dir) {
 	if (returning) {
 		/* hack - allow use of magic ammo for flare now,
 		   but in that case make it non-returning since it burns on the floor,
-		   serving as light source, as normal ammo would */
-		/* make sure artifact magic ammo doesn't work for 'flare'
-		   because we don't want arts to get destroyed */
+		   serving as light source, as normal ammo would;
+		   make sure artifact magic ammo doesn't work for 'flare'
+		   because we don't want arts to get destroyed; ethereal doesn't work either. */
 		if (!magic || artifact_p(o_ptr)) p_ptr->ranged_flare = FALSE;
 	}
 
