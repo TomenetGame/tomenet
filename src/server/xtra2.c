@@ -14008,7 +14008,7 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 			grid = offset_grid % (ringlength);
 
 			/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
-			if (grid / d == avoid_dir || (grid + 1) / d == avoid_dir) continue;
+			if ((grid + d / 2) / d == avoid_dir) continue;
 
 			/* Translate ring length position to x,y on the ring structure:
 			   Assume ring structure begins at bottom left corner and we move counter-clockwise. */
@@ -14103,7 +14103,7 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 		grid = offset_grid % (ringlength);
 
 		/* Skip avoided direction - widen the angle a bit by checking both, rounded-up and rounded-down direction-reductions */
-		if (grid / d == avoid_dir || (grid + 1) / d == avoid_dir) continue;
+		if ((grid + d / 2) / d == avoid_dir) continue;
 
 		/* Translate ring length position to x,y on the ring structure:
 		   Assume ring structure begins at bottom left corner and we move counter-clockwise. */
