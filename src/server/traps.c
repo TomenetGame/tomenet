@@ -864,6 +864,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			sound(Ind, "fireworks_norm", NULL, SFX_TYPE_MISC, TRUE); //"detonation"
 #endif
 			take_hit(Ind, damroll(5, 8), "an explosion", 0);
+			set_stun_raw(Ind, p_ptr->stun + randint(50));
 			ident = TRUE;
 			ruin_chest(i_ptr);
 			break;
