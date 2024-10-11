@@ -14047,7 +14047,10 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 			/* Check if any hostile target is available */
 
 			/* Non-hostile player or special projector? Skip. */
-			if (who < 0 && (who <= PROJECTOR_UNUSUAL || (skip_friendly && !check_hostile(Ind, -who)))) continue;
+			if (who < 0 && (who <= PROJECTOR_UNUSUAL || !p_ptr->play_vis[-who] ||
+			    (skip_friendly && !check_hostile(Ind, -who))))
+				continue;
+
 			/* Monster here, check if eligible. */
 			if (who > 0) {
 				/* Access the monster */
@@ -14055,6 +14058,9 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 
 				/* Ignore "dead" monsters */
 				if (!m_ptr->r_idx) continue;
+
+				/* Player doesn't see this monster? */
+				if (!p_ptr->mon_vis[who]) continue;
 
 				if (skip_sleeping) {
 					/* Don't wake up sleeping monsters */
@@ -14064,7 +14070,7 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 				}
 
 				/* Spells cast by a player never hurt a friendly golem */
-				if (m_ptr->owner && skip_friendly) {
+				if (skip_friendly && m_ptr->owner) {
 					int i;
 
 					//look for its owner to see if he's hostile or not
@@ -14144,7 +14150,7 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 			}
 
 			/* Spells cast by a player never hurt a friendly golem */
-			if (m_ptr->owner && skip_friendly) {
+			if (skip_friendly && m_ptr->owner) {
 				int i;
 
 				//look for its owner to see if he's hostile or not
