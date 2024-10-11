@@ -5273,6 +5273,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	/* Let the player scroll through this info */
 	p_ptr->special_file_type = TRUE;
 
+	//polyring price debug
+	//if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) fprintf(fff,"%u - %u\n", price_poly_ring(Ind, o_ptr, 1), price_poly_ring(Ind, o_ptr, 0));
+
 	/* Admins can peek inside gifts */
 	if (is_admin(p_ptr) && o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
 		object_desc(0, o_name, o_ptr, TRUE, 3);

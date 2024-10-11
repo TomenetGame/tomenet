@@ -439,23 +439,54 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	u64b r_val = 0;
 
 	if (o_ptr->pval) {
-		u64b x, y, z, xp;
+		u64b d, x, y, z, s, xp, rspd;
 
 		r_ptr = &r_info[o_ptr->pval];
 		xp = r_ptr->mexp;
+
 		/* Supa experimental: Actually a lower level for a more powerful form is GOOD!? */
 		x = (200 - r_ptr->level) / 10; //50; //(r_ptr->level + 100) / 5;
-		y = ((100 + xp) * (100 + xp)) / 10000;
-		z = (3 * (120 + (r_ptr->speed - 90) * 3) * (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside)) + 20))) / 3; /* mimic-like HP calc sort of */
-		r_val = x * y + z;
+
+		/* XP worth is vital */
+		y = ((100 + xp) * (100 + xp)) / 1000;
+
+		/* For very low-level forms, the HP have too much of an exponential factor, while they don't practically matter at all for the mimic,
+		   as the mimic's HP won't be negatively affected. So cap the HP downwards to make the effect of the HP consistent. */
+		d = r_ptr->hdice * r_ptr->hside + r_ptr->hdice;
+		d = d < 50 ? 50 : d;
+
+		/* Speed is an important factor too, lower than normal speed is penalized less though. */
+		rspd = r_ptr->speed > 110 ? r_ptr->speed : 110 - (55 - r_ptr->speed / 2);
+
+		/* Flat addition of speed/hp mix, mimic-like HP calc sort of. */
+		z = (3 * (100 + (rspd - 90) * 3) * (50000 / ((50000 / d) + 20))) / 3;
+
+		/* Special flat +speed bonus for low-level forms, which would otherwise go unnoticed in the whole formula. */
+		s = r_ptr->speed > 110 ? (r_ptr->speed - 100) * (r_ptr->speed - 100) * 10 - 1000 : 0;
+
+		/* Final price, before factoring easiness of finding from FRIENDS flag:
+		   1st big component is easylevel*XP, 2nd big component is speed*HP, 3rd big component only for low-level forms is speed: */
+		r_val = (x * y) / 10 + z + s;
+
+		//polyring price debug
+		//if (Ind) msg_format(Ind,"x=%u, y=%u, z=%u, s=%u, z1=%u, z2=%u, rval=%u", x, y, z, s, 100 + (r_ptr->speed - 90) * 3, (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside + r_ptr->hdice)) + 20)), r_val);
 
 		/* Lower price for lower level (starts already at rlev<60, but effect is small yet) + FRIENDS forms,
 		   but reduce reduction for very low forms <= level 10 and reach normal reduction at level 20+. */
 		if ((r_ptr->flags1 & RF1_FRIENDS) && (r_ptr->level < 60)) {
-			x = (r_ptr->level > 20 ? 20 : r_ptr->level) - 10;
-			z = r_val - (r_val * (10 + (r_ptr->level > 10 ? r_ptr->level : 10))) / 70;
+			x = (r_ptr->level > 20 ? 20 : (r_ptr->level < 10 ? 10 : r_ptr->level)) - 10;
+			z = r_val - (r_val * (10 + (r_ptr->level < 10 ? 10 : r_ptr->level))) / 70;
 			r_val = r_val - (z * x) / 10;
 		}
+
+		//polyring price debug
+		//if (Ind)msg_format(Ind,"x=%u,z=%u,rval=%u",x,z,r_val);
+
+		/* Adjust slightly downwards -
+		   this is under a factor of 10 effectively, as for shop_type 0 the divisor for low-level forms will be effectively 10.
+		   So where it counts (low-level forms) this is around -300 Au.
+		   Also another -300 Au nerf for town forms, as they are practially zero-danger. */
+		r_val -= 3000 + (!r_ptr->level ? 3000 : 0);
 	}
 
 	switch (shop_type) {
