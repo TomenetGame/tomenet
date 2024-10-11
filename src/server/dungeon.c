@@ -471,23 +471,17 @@ static void sense_inventory(int Ind) {
 	otherwise huge stacks of ID scrolls will remain mandatory for maybe too long a time - C. Blue */
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 28)) ok_combat = TRUE;
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery = TRUE;
-	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) {
-		ok_magic = TRUE;
-		ok_curse = TRUE;
-	}
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) ok_magic = ok_curse = TRUE;
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_TRAPPING, 80) + 20) - 28)) ok_traps = TRUE;
 	/* note: SKILL_PRAY is currently unused */
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 30 && ok_combat)
-		/* (apply 33% chance, see below) - allow basic feelings */
-		ok_archery = TRUE;
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 30 && ok_combat) ok_archery = TRUE; /* (apply 33% chance, see below) - allow basic feelings */
 
 	/* A very powerful warrior can even distinguish magic items */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 40 && ok_combat)
-		ok_curse = TRUE;
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 40 && ok_combat) ok_curse = TRUE;
 
 	/* extra class-specific boni */
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) force_curse = ok_curse = TRUE;
@@ -497,7 +491,7 @@ static void sense_inventory(int Ind) {
  #endif
 	    ) {
 		//i = (p_ptr->lev < 35) ? (135 - (p_ptr->lev + 10) * 3) : 1;
-		if (p_ptr->lev >= 35 || !rand_int(3000 / (p_ptr->lev * 2 + 30) - 29)) force_curse = ok_curse = TRUE;
+		if (p_ptr->lev >= 35 || !rand_int(dur / (p_ptr->lev * 2 + 30) - 29)) force_curse = ok_curse = TRUE;
 	}
 
 	/* nothing to feel? exit */
@@ -622,8 +616,11 @@ static void sense_inventory(int Ind) {
 		/* Maybe change: ok_curse isn't 'heavy' priority ie it can fail on inventory (unless forced) as can all other non-heavy pseudo-id,
 		   but if it triggers then it always gives 'heavy' result values (from _aux1()), revealing that a cursed item is an artifact, via 'terrible' feeling.
 		   This cheeze perhaps isn't terrible though, as we'd have found out if we tried to 'k' the item in question anyway >_>. */
-		if (!feel && ok_curse && cursed_p(o_ptr)) /* Avoid double-pseudo-ID, giving priority to any feelings gained above */
+		if (!feel && ok_curse && cursed_p(o_ptr)) { /* Avoid double-pseudo-ID, giving priority to any feelings gained above */
 			feel = value_check_aux1(o_ptr);
+			/* We have "felt" it */
+			o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
+		}
 
 		/* Skip non-feelings */
 		if (!feel) continue;
