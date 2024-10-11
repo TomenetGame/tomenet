@@ -168,6 +168,11 @@ static bool after_macro = FALSE;
 bool parse_macro = FALSE; /* are we inside the process of executing a macro */
 bool inkey_sleep = FALSE, inkey_sleep_semaphore = FALSE;
 int macro_missing_item = 0;
+
+/* Does this 'parse_under' have any effect at all nowadays?
+   Some comment refers specifically to "control-backslash" or
+   "control+underscore sequence in main-x11.c" but there is no such a thing.
+   What's also confusing is that ctrl+\ doesn't produce 31, but ctrl+/ does aka normal slash, not backslash. */
 static bool parse_under = FALSE;
 static bool parse_slash = FALSE;
 static bool strip_chars = FALSE;
@@ -1380,6 +1385,7 @@ char inkey(void) {
 	static bool inkey_location_key_active = FALSE;
 	static int inkey_location_key_index = 0;
 	static char inkey_location_key_sequence[INKEY_LOCATION_KEY_SIZE];
+	static int inkey_location_key_tick = -1;
 #endif
 
 
@@ -1555,6 +1561,25 @@ char inkey(void) {
 		/* Get a key (see above) */
 		kk = ch = inkey_aux();//		<-(y)!! in -c (terminal) mode, this waits for keypress (META_DISPLAYPINGS_LATER)
 
+#ifdef ALLOW_NAVI_KEYS_IN_PROMPT
+		/* Crazy hack: Distinguish between actual navi-key sequence (starting on 31) and just a 31 char input via ctrl+/ or ctrl+_ */
+		if (inkey_location_keys && inkey_location_key_active
+		    /* Actually wait for 2 ticks (200ms) to be safe we weren't exactly at the tick-change threshold and paranoid... */
+		    && inkey_location_key_tick != ticks && inkey_location_key_tick + 1 != ticks
+		    /* No further key received? Cannot be an navi-key-sequence then, but was just normal input */
+		    && inkey_location_key_index == 0) {
+			/* Disable navi-key-sequence checking for this 31 */
+			inkey_location_key_active = FALSE;
+
+			/* --- Enable the control-underscore sequence status as 31 would have done normally: --- */
+
+			/* Inside a "underscore" sequence */
+			parse_under = TRUE;
+			/* Strip chars (always) */
+			strip_chars = TRUE;
+		}
+#endif
+
 		/* Finished a "control-underscore" sequence */
 		if (parse_under && (ch <= 32)) {
 			/* Found the edge */
@@ -1620,6 +1645,12 @@ char inkey(void) {
 			if (inkey_location_keys) {
 				inkey_location_key_active = TRUE;
 				inkey_location_key_index = -1;
+				/* Allow to distinguish between a location-key sequence starting on 31 and a solemn 31 that was input by the user via ctrl+/ or ctrl+_ !
+				   Oherwise this can be slightly lethal if it happens in chat input while in the dungeon.
+				   The way we distinguish is that since a navigation-key sequence is practically atomic, we just wait for one tick after receiving a 31,
+				   and if there is no further input the next tick (+100ms) we assume it was not a navigation-key sequence,
+				   and we behave as if the 31 char was processed normally, ie enabling parse_under and strip_chars as seen below. */
+				inkey_location_key_tick = ticks;
 				break;
 			}
 #endif
