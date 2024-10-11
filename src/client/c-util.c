@@ -1065,12 +1065,12 @@ static char inkey_aux(void) {
 				continue;
 			}
 
-			/* Hack for auto-pressing spacebar while in player-list */
+			/* Hack for auto-pressing spacebar while in player-list (SPECIAL_FILE_PLAYER) */
 			if (within_cmd_player && ticks - within_cmd_player_ticks >= 50) {
 				within_cmd_player_ticks = ticks;
 				/* hack: -- TODO: Remove/restrict it so it doesn't interfere with inkey() checks that just _wait_ for any actual keypress,
 				   as those will be auto-confirmed by this; maybe use the existing if (k == 1) check after inkey() in peruse_file(). */
-				ch = 1; //refresh our current player list view
+				ch = -1; //refresh our current player list view
 				break;
 			}
 

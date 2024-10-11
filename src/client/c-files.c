@@ -1392,11 +1392,11 @@ void peruse_file(void) {
 			within_cmd_player_ticks = ticks;
 			k = inkey();
 			within_cmd_player = FALSE;
+			if (k == -1) continue; //hack
 		} else
 
 		/* Enable macros, so navigation via arrow keys works. */
 		k = inkey();
-		if (k == 1) continue;
 		line_searching = FALSE;
 
 		/* Hack -- go to a specific line */
