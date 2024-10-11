@@ -19748,6 +19748,8 @@ create a character!):
     Hints:
     Druids have a powerful ranged area attack spell they can use very early
     on: Toxic Moisture, from Arcane Lore skill. Look for it in the bookstore!
+    They also have a spell that satisfies hunger, later on cures poison and
+    more: Herbal Tea, from Physical Lore skill. Could also be essential.
 
     Make sure to create a macro for your fighting technique 'Sprint' when
     you learn it, which you do pretty early on. It is great for catching
