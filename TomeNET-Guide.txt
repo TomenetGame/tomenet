@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 11. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9634,6 +9634,7 @@ Trap symbols ('^') come in different colours. Here's an overview:
   violet          summoning traps
   yellow          traps that affect your items or money or give you items
   red             character status-affecting traps
+                  (sometimes also damage, drain or stat-reduce your character)
   green           elemental bolt traps
   light blue      elemental ball traps
   light red       arrow/bolt/dagger traps
