@@ -1181,8 +1181,8 @@ bool set_nimbus(int Ind, int v, byte t, byte d) {
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
-	if (v) {
-		if (!p_ptr->nimbus) {
+	if (v) { // IMPORTANT - Always notice element changes to calc_boni() - Kurzel
+		if (!p_ptr->nimbus || !(p_ptr->nimbus_d == d)) {
 			notice = TRUE;
 		} else if (p_ptr->nimbus > 15 && v <= 15) {
 			msg_print(Ind, "\377BYour aura of power starts to flicker and fade...");
