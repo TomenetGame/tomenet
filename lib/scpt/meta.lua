@@ -193,7 +193,7 @@ function meta_display(xml_feed)
 	if nb_servers == 0 then line = line + 6
 	else line = line + 4; end
 
-	color_print(line, 0, "\255W --- Official servers: ---"); line = line + 2
+	color_print(line, 0, "\255B --- Official servers: ---"); line = line + 2
 	for k, e in categories_official do
 		color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
 		e = e.servers
@@ -211,7 +211,7 @@ function meta_display(xml_feed)
 	end
 
 	line = line + 1
-	color_print(line, 0, "\255W --- Unofficial servers: ---"); line = line + 2
+	color_print(line, 0, "\255B --- Unofficial servers: ---"); line = line + 2
 	for k, e in categories_unofficial do
 		color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
 		e = e.servers
