@@ -1872,7 +1872,7 @@ char original_commands(char command) {
 
 	//(display fps) case KTRL('C'): return('Q');
 	/* Hack -- Commit suicide */
-	case KTRL('K'): return('Q');
+	//case KTRL('K'): return('Q'); //ctrl+q surely is enough, can leave this key free
 	}
 
 	/* Default */

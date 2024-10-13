@@ -409,7 +409,7 @@ able to use most keys aside from arrow keys for basic movement.
  those, invoke the skill screen with SHIFT+G. (See (3.10), (7.2) and (8.5).)
 
 -If you don't like your character and want to delete it, you may commit suicide
- by pressing SHIFT+q or CTRL+k and double-confirming the following questions
+ by pressing SHIFT+q and double-confirming the following safety questions
  with 'y' and '@'.
 
 -Press '@' key to see a list of players who're currently online.
@@ -1138,8 +1138,7 @@ CTRL+Q  save your character & quit the game. (You should do this in town!)
         then..
 
         Suicide/Retirement:
-Q  or
-CTRL+K  lets your character commit suicide (use this to permanently delete a
+Q       lets your character commit suicide (use this to permanently delete a
         character, but remember that it cannot be restored once suicided)!
         Characters who suicide won't drop items except for (non-zero) artifacts
         (if the server has ANTI_ARTS_HOARD enabled then no item at all will be
