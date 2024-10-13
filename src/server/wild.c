@@ -1650,7 +1650,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 		MAKE(houses[num_houses].dna, struct dna_type);
 		houses[num_houses].x = h_x1;
 		houses[num_houses].y = h_y1;
-		houses[num_houses].flags = HF_RECT|HF_STOCK;
+		houses[num_houses].flags = HF_RECT | HF_STOCK;
 		if (trad) houses[num_houses].flags |= HF_TRAD;
 		if (has_moat) houses[num_houses].flags |= HF_MOAT;
 		houses[num_houses].coords.rect.width = h_x2 - h_x1 + 1;
