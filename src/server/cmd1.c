@@ -7185,7 +7185,7 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 		return(TRUE);
 #endif
 
-	default:
+	case default:
 		if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB)) return(TRUE);
 		if ((p_ptr->levitate) && ((f_info[feature].flags1 & FF1_CAN_LEVITATE) || (f_info[feature].flags1 & FF1_CAN_FEATHER))) return(TRUE);
 
