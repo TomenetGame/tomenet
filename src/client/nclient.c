@@ -766,11 +766,11 @@ void Receive_login(void) {
 		max_cpa = max_chars_per_account = 8; //backward compatibility, no need for version check ;)
 	else
 		max_cpa = max_chars_per_account = (sflags3 & 0xFF);
-	if (!(sflags3 & 0xFF00))
+	if (!(sflags3 & 0xFF00) && !(sflags3 & 0xFF))
 		max_ded_iddc_chars = 2; //backward compatibility, no need for version check ;)
 	else
 		max_ded_iddc_chars = (sflags3 & 0xFF00) >> 8;
-	if (!(sflags3 & 0xFF0000))
+	if (!(sflags3 & 0xFF0000) && !(sflags3 & 0xFF))
 		max_ded_pvp_chars = 1; //backward compatibility, no need for version check ;)
 	else
 		max_ded_pvp_chars = (sflags3 & 0xFF0000) >> 16;
@@ -796,14 +796,6 @@ void Receive_login(void) {
 
 	Term_clear();
 
-	if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 0)) {
-		if (s_DED_IDDC) max_cpa_plus += max_ded_iddc_chars;
-		if (s_DED_PVP) max_cpa_plus += max_ded_pvp_chars;
-	} else {
-		if (s_DED_IDDC) max_cpa_plus++;
-		if (s_DED_PVP) max_cpa_plus++;
-	}
-
 	if (s_ARCADE) {
 		c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
 		if (is_older_than(&server_version, 4, 9, 0, 5, 0, 0)) {
@@ -819,6 +811,15 @@ void Receive_login(void) {
 			max_ded_pvp_chars = max_ded_iddc_chars = max_cpa_plus = 0;
 		}
 	}
+
+	if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 0)) {
+		if (s_DED_IDDC) max_cpa_plus += max_ded_iddc_chars;
+		if (s_DED_PVP) max_cpa_plus += max_ded_pvp_chars;
+	} else if (!s_ARCADE && !s_RPG) { /* backward compatibility */
+		if (s_DED_IDDC) max_cpa_plus++;
+		if (s_DED_PVP) max_cpa_plus++;
+	}
+
 	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 25);
 	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 25);
 	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 25);
@@ -1001,6 +1002,7 @@ void Receive_login(void) {
 	/* Only non-exclusive-slots left? Then don't display 'E' option. */
 	if (!((ded_pvp < max_ded_pvp_chars || ded_iddc < max_ded_iddc_chars) && max_cpa_plus)) exclusive_ok = FALSE;
 
+	//plog_fmt("i %d, ded_pvp %d, ded_iddc %d, max_cpa %d, max_ded_pvp_chars %d, max_ded_iddc_chars %d, new_ok %d", i, ded_pvp, ded_iddc, max_cpa, max_ded_pvp_chars, max_ded_iddc_chars, new_ok);
 	if (i < max_cpa) {
 		if (new_ok) c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", offset, 2);
 		if (exclusive_ok) {
