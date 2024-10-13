@@ -3471,7 +3471,6 @@ static void load_server_cfg_aux(FILE * cfg) {
 				strcpy(line, buf);
 			}
 		}
-s_printf("line <%s>\n", line);
 
 		// Reset option and value
 		option = NULL;
