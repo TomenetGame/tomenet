@@ -205,16 +205,11 @@ static int meta_write(int flag) {
 		strcat(buf_meta, "<game>TomeNET Arcade</game>");
  #else
   #ifdef RPG_SERVER
-//		strcat(buf_meta, "<game>TomeNET Ironman (not for beginners)</game>");
 		strcat(buf_meta, "<game>TomeNET Ironman</game>");
   #else
    #ifdef FUN_SERVER
 		strcat(buf_meta, "<game>TomeNET Fun</game>");
    #else
-    #if 0
-		if (my_strcasestr(cfg.bind_name, "apac")) strcat(buf_meta, "<game>TomeNET APAC region</game>");
-		else
-    #endif
 		strcat(buf_meta, "<game>TomeNET</game>");
    #endif
   #endif
