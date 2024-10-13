@@ -1442,6 +1442,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		/* Now this command is opened for everyone */
 		else if (prefix(messagelc, "/recall") || prefix(messagelc, "/rec")) {
 //#define R_REQUIRES_AWARE /* Item can only be used for '@R' inscription if we're aware of its flavour? */
+			bool good_match_found = FALSE;
 			if (admin) {
 				if (!p_ptr->word_recall) set_recall_timer(Ind, 1);
 				else set_recall_timer(Ind, 0);
@@ -1624,6 +1625,36 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					break;
 					}
 				}
+			}
+
+			if (tk && !isdigit(token[1][0]) && (token[1][0] != '-')) {
+				// here we check to make sure the user didn't enter a depth or a coordinate
+				// we could use isalpha, except we'd like it to be robust against town names
+				// that start with special characters.
+				strcpy(message4, message3);
+				for (i = 0; message4[i]; ++i) {
+					message4[i] = tolower(message4[i]);
+				}
+				k = 0; h = 0;
+				// k holds length of best match, h holds index of best match
+				for (i = 0; i < numtowns; ++i) {
+					j = 0;
+					while (message4[j] && (message4[j] == tolower(town_profile[town[i].type].name[j]))) ++j;
+					if (j == k) good_match_found = FALSE;
+					else if (j > k) {
+						k = j; h = i; good_match_found = TRUE;
+					}
+				}
+				if (good_match_found) {
+					p_ptr->recall_pos.wx = town[h].x;
+					p_ptr->recall_pos.wy = town[h].y;
+					p_ptr->recall_pos.wz = 0;
+				} else {
+					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz = 0;
+				}
+				return;
 			}
 
 			switch (tk) {
