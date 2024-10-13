@@ -7411,8 +7411,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Admin wishing :) */
-#ifndef FUN_SERVER /* disabled while server is being exploited */
-			else if (prefix(messagelc, "/wish")) {
+			else if (prefix(messagelc, "/xwish")) {
 				int tval, sval, bpval = 0, pval = 0, name1 = 0, name2 = 0, name2b = 0, number = 1;
 
 				if (tk < 2 || tk > 8) {
@@ -7443,7 +7442,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, -1, NULL);
 				return;
 			}
-#endif
 			/* actually wish a (basic) item by item name - C. Blue */
 			else if (prefix(messagelc, "/nwish")) {
 				object_kind *k_ptr;
