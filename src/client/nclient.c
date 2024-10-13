@@ -7343,6 +7343,8 @@ static void do_meta_pings(void) {
 #ifdef META_DISPLAYPINGS_LATER
 	bool received_ok[META_PINGS] = { FALSE };
 #endif
+	bool refreshed_meta = FALSE;
+
 
 	if (!method) {
 		if (access("ping-wrap.exe", F_OK) == 0) method = 1;
@@ -7632,17 +7634,35 @@ printf("<%d>\n", r);
 	   keep delays after refreshing the meta list until ping times are re-displayed to a minimum. */
 
 	if (alt) return;
+
 	/* Refresh metaserver list every n*500 ms.
 	   Note that for now we don't re-read the actual servers for the cause of pinging.
 	   Rather, we assume the servers don't change and we'll just continue to ping those.
 	   We only re-read the metaserver list to update the amount/names of players on the servers. */
 	reload_metalist = (reload_metalist + 1) % 3; //3: 9s, ie the time needed for 3 ping refreshs
-	if (!reload_metalist && meta_connect() && meta_read_and_close()) { Term_clear(); display_experimental_meta(); }
+	if (!reload_metalist && meta_connect() && meta_read_and_close()) {
+		Term_clear();
+		display_experimental_meta();
+		refreshed_meta = TRUE;
+	}
  #if 0 /* No need to refresh the meta list every 3s, just need refresh_meta_once */
 	else display_experimental_meta();
  #endif
 	for (i = 0; i < meta_pings_servers; i++) {
+ #if 0
+		/* Just blank out any servers still stuck at 'pinging...' */
 		if (!received_ok[i]) continue;
+ #else
+		/* Display some kind of hint for servers who haven't responded */
+		if (!received_ok[i]) {
+  #if 1
+			/* Actually wait REALLY long (9s) Instead of just for one pinging-interval (1000ms)? */
+			if (refreshed_meta)
+  #endif
+			call_lua(0, "meta_add_ping", "(d,d)", "d", i, -1, &r);
+			continue;
+		}
+ #endif
 		call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
 	}
 	Term_fresh();
