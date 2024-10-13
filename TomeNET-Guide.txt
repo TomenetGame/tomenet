@@ -17466,8 +17466,8 @@ stated.
                                 at 50.000.
 
                                 Reduces the chance of a boomerang to land on
-                                the ground instead of returning.
-                                Artifact boomerangs always return reliably.
+                                the ground instead of returning. All artifact
+                                and ego boomerangs always return reliably.
 
                                 Ricochetting:
                                 This happens only with slings or boomerangs.

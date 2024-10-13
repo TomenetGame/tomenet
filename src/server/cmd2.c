@@ -8000,14 +8000,17 @@ void do_cmd_fire(int Ind, int dir) {
 
 		/* Break ammo? (In case of boomerangs this turns into a drop. Chance at the time of writing: 1 in 5000.) */
 		if ((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
-		    && !magic && !ethereal && !artifact_p(o_ptr)) {
+		    && !magic && !ethereal && !artifact_p(o_ptr)
+		    && !(boomerang && (o_ptr->name2 || o_ptr->name2b))) { /* <- 2024 for rune sigils - ego-boomerangs don't drop to the floor either, like arts */
+			/* Remember as broken */
 			breakage = 100;
+
 			if (boomerang) { /* change a large part of the break chance to actually
 					  result in not returning instead of real breaking - C. Blue */
 #ifdef INDESTRUCTIBLE_BOOMERANGS
 				if (TRUE) {
 #else
-				if (magik(90)) {
+				if (o_ptr->name2 || o_ptr->name2b || magik(90)) { /* Let egos not be destroyed but just drop */
 #endif
 					msg_format(Ind, "\377oYour %s drops to the ground.",o_name);
 
@@ -8025,7 +8028,7 @@ void do_cmd_fire(int Ind, int dir) {
 					inven_drop(TRUE, Ind, INVEN_BOW, 1, TRUE);
 #endif
 				} else {
-					msg_format(Ind, "\377oYour %s is destroyed.",o_name);
+					msg_format(Ind, "\377oYour %s breaks.", o_name);
 					inven_item_increase(Ind, item, -1);
 					inven_item_optimize(Ind, item);
 				}
@@ -8041,8 +8044,11 @@ void do_cmd_fire(int Ind, int dir) {
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 			}
+
+			/* Ammo or boomerang is destroyed. */
 			break;
 		}
+
 		/* If no break, the ammo can ricochet */
 		if (num_ricochet && hit_body && magik(ricochet_chance) && !p_ptr->ranged_barrage) {
 			int avoid_dir = determine_dir(bx, by, x, y);
@@ -8065,6 +8071,7 @@ void do_cmd_fire(int Ind, int dir) {
 			num_ricochet--;
 			continue;
 		}
+
 		/* Shot has finally arrived at the target destination */
 		break;
 	}
