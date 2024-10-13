@@ -2258,16 +2258,8 @@ static void player_setup(int Ind, bool new) {
 	if (wpos->wx == WPOS_SECTOR000_X && wpos->wy == WPOS_SECTOR000_Y) { //TODO: Check if an event is even running in sector00 atm, otherwise he may spawn here
 #endif
 		/* Teleport him out of the event area */
-#if 0
-		switch rand_int(3) {
-		case 0:	wpos->wx = WPOS_SECTOR000_ADJAC_X;
-		case 1:	wpos->wy = WPOS_SECTOR000_ADJAC_Y; break;
-		case 2: wpos->wx = WPOS_SECTOR000_ADJAC_X;
-		}
-#else
 		wpos->wx = cfg.town_x;
 		wpos->wy = cfg.town_y;
-#endif
 		wpos->wz = 0;
 
 		/* Remove him from the event and strip quest items off him */
@@ -2331,13 +2323,6 @@ static void player_setup(int Ind, bool new) {
 					p_ptr->inventory[i].NR_tradable = FALSE;
  #endif
 
-#if 0
-			wpos->wz = 0;
-
-			/* Avoid landing in permanent rock or trees or mountains etc.
-			   after an auto-recall, caused by a previous panic save. */
-			p_ptr->auto_transport = AT_BLINK;
-#endif
 			wpos->wz = 0;
 			/* Don't always start in top left corner */
 			p_ptr->py = rand_int(MAX_WID - 4) + 2;
@@ -2561,28 +2546,38 @@ static void player_setup(int Ind, bool new) {
 			/* house here which we are allowed to enter? */
 			if (!wraith_access(Ind)) {
 				teleport_player_force(Ind, 1);
-				s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+				s_printf("Login-blink (Out-of-House): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 			}
+		}
+		/* In case town layout has changed or something: Ensure we always login on floor (instead of inside perma walls) */
+		else if (!cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
+			s_printf("Login-blink (Surface): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+			teleport_player_force(Ind, 1);
 		}
 	} else if (isdungeontown(wpos)) {
 		/* make whole dungeon town visible like a 'normal town at night' */
 		player_dungeontown(Ind);
+		/* In case town layout has changed: Ensure we always login on floor (instead of inside perma walls) */
+		if (!cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
+			s_printf("Login-blink (Dungeon town): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+			teleport_player_force(Ind, 1);
+		}
+	} else if (in_hallsofmandos(wpos) && !cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
+		/* Extra for Halls of Mandos: Ensure we always login on floor (instead of inside perma walls) */
+		teleport_player_force(Ind, 1);
+		s_printf("Login-blink (Halls of Mandos): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 	}
+	/* Note: Could also use player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat) instead of cave_floor_bold/cave_perma_wall checks. */
 
 	/* Lose free logscum one-time pass in any case, whether applied or not. */
 	p_ptr->IDDC_freepass = FALSE;
 
 	if (new) {
-#if 0
-		p_ptr->py = level_down_y(wpos);
-		p_ptr->px = level_down_x(wpos);
-#else	// 0
 		y = level_rand_y(wpos);
 		x = level_rand_x(wpos);
 		p_ptr->py = y;
 		p_ptr->px = x;
 
-#endif	// 0
 	}
 
 	/* If player was inside an IDDC refuge, try to move him into it again if we're not already in one */
@@ -2593,8 +2588,7 @@ static void player_setup(int Ind, bool new) {
 	}
 
 	/* blink by 1 if standing on a shop grid (in town) */
-	if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP)
-		teleport_player_force(Ind, 1);
+	if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP) teleport_player_force(Ind, 1);
 
 	/* Hack be sure the player is inbounds */
 	if (p_ptr->px < 1) p_ptr->px = 1;
@@ -3434,14 +3428,6 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 		/* hack: if he's in town, get him pseudo tree-passing */
 		if (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
-
-#if 0
-		/* Don't allow players to save in houses they don't own -> teleport them */
-		if ((!p_ptr->wpos.wz) && (cave_info..  [wpos->wy][wpos->wx]. & CAVE_ICKY)) {
-			s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
-			teleport_player(Ind, 1);
-		}
-#endif
 
 		p_ptr->newbie_hints = TRUE;
 		disable_specific_warnings(p_ptr);

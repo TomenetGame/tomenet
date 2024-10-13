@@ -7532,6 +7532,9 @@
 #define cave_perma_bold2(ZCAVE,Y,X) \
 	 ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_ALLOW_TELE))
 
+#define cave_perma_wall(ZCAVE,Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && !cave_mountain_bold(ZCAVE, Y, X) && !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR))
+
 /*
  * Is a given location "valid" for placing things?
  *
