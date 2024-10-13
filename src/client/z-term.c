@@ -3,10 +3,10 @@
 
 /* Purpose: a generic, efficient, terminal window package -BEN- */
 
+#include "angband.h"
 #include "z-term.h"
 
 //#include "../common/z-virt.h"
-#include "angband.h"
 
 /* evil test */
 extern client_opts c_cfg;
