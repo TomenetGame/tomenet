@@ -7077,6 +7077,7 @@ bool wraith_access(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	bool house = FALSE;
+	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	for (i = 0; i < num_houses; i++) {
 		if (inarea(&houses[i].wpos, &p_ptr->wpos)) {
@@ -7084,7 +7085,13 @@ bool wraith_access(int Ind) {
 				house = TRUE;
 				if (access_door(Ind, houses[i].dna, TRUE)
 				    || admin_p(Ind))
+#ifdef USE_MANG_HOUSE_ONLY
+					/* Allow players access on any house grid, ie even on perma-walls of non-mangstyle houses? */
 					return(TRUE);
+#else
+					/* Allow players access on house door, and additionally on permawalls of mangstyle houses (paranoia: !zcave) */
+					return((houses[i].flags & HF_TRAD) ? ((!zcave || (zcave[p_ptr->py][p_ptr->px].feat == FEAT_WALL_HOUSE)) ? FALSE : TRUE) : TRUE);
+#endif
 				break;
 			}
 		}
@@ -7185,7 +7192,7 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 		return(TRUE);
 #endif
 
-	case default:
+	default:
 		if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB)) return(TRUE);
 		if ((p_ptr->levitate) && ((f_info[feature].flags1 & FF1_CAN_LEVITATE) || (f_info[feature].flags1 & FF1_CAN_FEATHER))) return(TRUE);
 
