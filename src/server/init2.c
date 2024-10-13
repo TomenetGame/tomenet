@@ -3431,7 +3431,7 @@ static void set_server_option(char * option, char * value) {
  * Yakina reverted this to strtok.
  */
 static void load_server_cfg_aux(FILE * cfg) {
-	char line[256], buf[256];
+	char line[256], buf[256], *cspc;
 #if 0
 	char * lineofs;
 #else
@@ -3451,6 +3451,27 @@ static void load_server_cfg_aux(FILE * cfg) {
 		/* Parse the line that has been read in */
 		// If the line begins with a # or is empty, ignore it
 		if ((line[0] == '#') || (line[0] == '\0')) continue;
+
+		/* Fix lines that don't have spaces around the (first) '=' */
+		strcpy(buf, line);
+		cspc = strchr(line, '=');
+		if (cspc) {
+			/* Fix missing space after the '=' */
+			if (*(cspc + 1) != ' ' && *(cspc + 1)) {
+				strcpy(buf, line);
+				buf[cspc - line + 1] = ' ';
+				strcpy(&buf[cspc - line + 2], cspc + 1);
+				strcpy(line, buf);
+			}
+			/* Fix missing space before the '=' */
+			if (cspc != line && *(cspc - 1) != ' ') {
+				strcpy(buf, line);
+				buf[cspc - line] = ' ';
+				strcpy(&buf[cspc - line + 1], cspc);
+				strcpy(line, buf);
+			}
+		}
+s_printf("line <%s>\n", line);
 
 		// Reset option and value
 		option = NULL;
