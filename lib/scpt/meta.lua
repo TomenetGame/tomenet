@@ -17,8 +17,21 @@ function get_server_notes(x)
 			return notes
 		end
 	end
-	--return game, version
 	return ""
+end
+
+-- check if a server is an official server aka in the static-servers list
+function get_server_static(x)
+	local static = ""
+
+	for i = 1, getn(x) do
+		if x[i].label == "static" then
+			static = x[i][1]
+			return static
+		end
+	end
+	--default to non-official if no info received
+	return "0"
 end
 
 function get_game_version(x)
@@ -69,6 +82,8 @@ function meta_display(xml_feed)
 	local x = xml:collect(xml_feed)
 	local i, nb, e, k, line, cat_slot
 	local categories = {}
+	local categories_official = {}
+	local categories_unofficial = {}
 	local meta_name = "Unknown metaserver"
 	local nb_servers = 0
 
@@ -80,7 +95,25 @@ function meta_display(xml_feed)
 			if x[i].label == "server" then
 				local game, version = get_game_version(x[i])
 				local cat_name = game .. " " .. version
-				local extra
+				local extra = ""
+				local server_notes = get_server_notes(x[i])
+				local server_static = get_server_static(x[i])
+				local maxlen = 48 - strlen(x[i].args.url)
+
+				if strlen(server_notes) >= maxlen then
+					server_notes = strsub(server_notes, 1, maxlen)
+				end
+				if server_notes ~= "" then
+					server_notes = " \255s(" .. server_notes .. ") "
+				end
+
+				if get_players_count(x[i]) == 1 then
+					extra = "\255b" .. get_players_count(x[i]) .. " player"
+				else
+					extra = "\255b" .. get_players_count(x[i]) .. " players"
+				end
+
+				-- sort server into existing category or create a new category if 1st server of a kind
 
 				cat_slot = 0
 				for k, e in categories do
@@ -89,28 +122,63 @@ function meta_display(xml_feed)
 						break
 					end
 				end
-
 				if cat_slot == 0 then
 					cat_slot = getn(categories) + 1
 					categories[cat_slot] = { name = cat_name, servers = {} }
 				end
-
---				local server_notes
---				server_notes = get_server_notes(x[i])
-
-				if get_players_count(x[i]) == 1 then
-					extra = "\255b" .. get_players_count(x[i]) .. " player"
-				else
-					extra = "\255b" .. get_players_count(x[i]) .. " players"
-				end
-
 				tinsert(categories[cat_slot].servers, {
 					name = x[i].args.url,
 					port = x[i].args.port,
 					protocol = x[i].args.protocol,
 					extra = extra,
 					players = get_players(x[i]),
+					static = server_static,
+					notes = server_notes,
 				})
+
+				if server_static == "1" then
+					cat_slot = 0
+					for k, e in categories_official do
+						if e.name == cat_name then
+							cat_slot = k
+							break
+						end
+					end
+					if cat_slot == 0 then
+						cat_slot = getn(categories_official) + 1
+						categories_official[cat_slot] = { name = cat_name, servers = {} }
+					end
+					tinsert(categories_official[cat_slot].servers, {
+						name = x[i].args.url,
+						port = x[i].args.port,
+						protocol = x[i].args.protocol,
+						extra = extra,
+						players = get_players(x[i]),
+						static = server_static,
+						notes = server_notes,
+					})
+				else
+					cat_slot = 0
+					for k, e in categories_unofficial do
+						if e.name == cat_name then
+							cat_slot = k
+							break
+						end
+					end
+					if cat_slot == 0 then
+						cat_slot = getn(categories_unofficial) + 1
+						categories_unofficial[cat_slot] = { name = cat_name, servers = {} }
+					end
+					tinsert(categories_unofficial[cat_slot].servers, {
+						name = x[i].args.url,
+						port = x[i].args.port,
+						protocol = x[i].args.protocol,
+						extra = extra,
+						players = get_players(x[i]),
+						static = server_static,
+						notes = server_notes,
+					})
+				end
 
 				nb_servers = nb_servers + 1
 			elseif x[i].label == "meta" then
@@ -125,14 +193,33 @@ function meta_display(xml_feed)
 	if nb_servers == 0 then line = line + 6
 	else line = line + 4; end
 
-	for k, e in categories do
+	color_print(line, 0, "\255W --- Official servers: ---"); line = line + 2
+	for k, e in categories_official do
 		color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
-
 		e = e.servers
+
 		for i = 1, getn(e) do
 			tmp_line = line
-			color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name)
-			color_print(line, 50, e[i].extra); line = line + 1
+			color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name .. e[i].notes)
+			color_print(line, 57, e[i].extra); line = line + 1
+			color_print(line, 4, "\255b" .. e[i].players); line = line + 1
+
+			-- Store the info for retrieval -- add <line position> and <'0'> for ping in ms (META_PINGS)
+			meta_list[nb] = { e[i].name, e[i].port, e[i].protocol, tmp_line, 0 }
+			nb = nb + 1
+		end
+	end
+
+	line = line + 1
+	color_print(line, 0, "\255W --- Unofficial servers: ---"); line = line + 2
+	for k, e in categories_unofficial do
+		color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
+		e = e.servers
+
+		for i = 1, getn(e) do
+			tmp_line = line
+			color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name .. e[i].notes)
+			color_print(line, 57, e[i].extra); line = line + 1
 			color_print(line, 4, "\255b" .. e[i].players); line = line + 1
 
 			-- Store the info for retrieval -- add <line position> and <'0'> for ping in ms (META_PINGS)
@@ -188,14 +275,14 @@ function meta_add_ping(pos, ping)
 	-- Keep this colour-coding consistent with prt_lagometer()
 	if ping == -2 then
 		attr = "w"
-		ping = "pinging..."
+		ping = "pinging.."
 		unit = ""
 		spacer = ""
 	elseif ping == -1 then
-		attr = "R"
-		ping = "---"
+		attr = "s"
+		ping = "unknown"
 		unit = ""
-		spacer = " "
+		spacer = ""
 	elseif ping >= 400 then attr = "r"
 	elseif ping >= 300 then attr = "o"
 	elseif ping >= 200 then attr = "y"
@@ -203,7 +290,7 @@ function meta_add_ping(pos, ping)
 	else attr = "G"
 	end
 
-	color_print(meta_list[pos][4], 50 + 16, "\255" .. attr .. spacer .. ping .. unit.."       ")
+	color_print(meta_list[pos][4], 50 + 20, "\255" .. attr .. spacer .. ping .. unit .. "       ")
 
 	return 0
 end
