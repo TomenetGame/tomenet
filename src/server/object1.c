@@ -5927,7 +5927,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	if (f1 & (TR1_STEALTH)) {
 		if (o_ptr->tval != TV_TRAPKIT) fprintf(fff, "It affects your stealth.\n");
-		else fprintf(fff, "It is well-hidden.\n");
+		else if (o_ptr->pval > 0) fprintf(fff, "It is well-hidden.\n");
+		else if (o_ptr->pval < 0) fprintf(fff, "It is obvious.\n");
 	}
 #ifdef ART_WITAN_STEALTH
 	else if (o_ptr->name1 && o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) fprintf(fff, "It affects your stealth.\n");
