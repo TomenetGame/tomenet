@@ -7986,7 +7986,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 		/*todo: even if not hit_body, boomerangs should have chance to drop to the ground.. */
 
-		/* Chance of breakage (during attacks) */
+		/* Chance of breakage (during attacks). (Note: break_chance for boomerangs at this point in code is breakage_chance(), which was 2.) */
 		if (archery == SKILL_BOOMERANG) {
 			/* finer resolution to match reduced break rate of boomerangs - C. Blue */
 			j = (hit_body ? break_chance : 0) * 100;
@@ -7998,7 +7998,7 @@ void do_cmd_fire(int Ind, int dir) {
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 		}
 
-		/* Break ammo? (In case of boomerangs this turns into a drop.) */
+		/* Break ammo? (In case of boomerangs this turns into a drop. Chance at the time of writing: 1 in 5000.) */
 		if ((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
 		    && !magic && !ethereal && !artifact_p(o_ptr)) {
 			breakage = 100;
