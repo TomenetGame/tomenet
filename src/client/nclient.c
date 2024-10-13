@@ -766,10 +766,12 @@ void Receive_login(void) {
 		max_cpa = max_chars_per_account = 8; //backward compatibility, no need for version check ;)
 	else
 		max_cpa = max_chars_per_account = (sflags3 & 0xFF);
+
 	if (!(sflags3 & 0xFF00) && !(sflags3 & 0xFF))
 		max_ded_iddc_chars = 2; //backward compatibility, no need for version check ;)
 	else
 		max_ded_iddc_chars = (sflags3 & 0xFF00) >> 8;
+
 	if (!(sflags3 & 0xFF0000) && !(sflags3 & 0xFF))
 		max_ded_pvp_chars = 1; //backward compatibility, no need for version check ;)
 	else
