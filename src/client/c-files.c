@@ -2698,7 +2698,10 @@ int check_guide_checksums(bool forced) {
 #endif
 	fp = fopen("TomeNET-Guide.sha256.local", "r");
 	if (fp) {
-		fgets(buf2, MAX_CHARS_WIDE - 1, fp);
+		if (fgets(buf2, MAX_CHARS_WIDE - 1, fp) == NULL) {
+			c_msg_print("\377yError verifying Guide version: 'TomeNET-Guide.sha256.local' is empty.");
+			return(4);
+		}
 		buf[MAX_CHARS_WIDE - 1] = 0; //paranoia
 		fclose(fp);
 	} else {
@@ -2714,7 +2717,10 @@ int check_guide_checksums(bool forced) {
 #endif
 	fp = fopen("TomeNET-Guide.sha256", "r");
 	if (fp) {
-		fgets(buf, MAX_CHARS_WIDE - 1, fp);
+		if (fgets(buf, MAX_CHARS_WIDE - 1, fp) == NULL) {
+			c_msg_print("\377yError verifying Guide version: 'TomeNET-Guide.sha256' is empty.");
+			return(5);
+		}
 		buf[MAX_CHARS_WIDE - 1] = 0; //paranoia
 		fclose(fp);
 	} else {
