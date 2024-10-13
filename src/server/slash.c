@@ -3171,17 +3171,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
-			switch (tval)
+			switch (tval) {
 			case TV_POTION:
 				switch (sval) {
 				case SV_POTION_INVULNERABILITY:
 				case SV_POTION_LEARNING:
+					msg_print(Ind, "Sorry, item not eligible.");
 					return;
 				}
 				break;
 			case TV_SCROLL:
 				switch (sval) {
-				case SV_SCROLL_RUMOR:
+				case SV_SCROLL_RUMOR: /* spam -_- */
+					msg_print(Ind, "Sorry, item not eligible.");
 					return;
 				}
 				break;
@@ -3192,6 +3194,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				case SV_AMULET_IMMORTALITY:
 				case SV_AMULET_HIGHLANDS:
 				case SV_AMULET_HIGHLANDS2:
+					msg_print(Ind, "Sorry, item not eligible.");
 					return;
 				}
 				break;
@@ -3203,6 +3206,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (bpval > 15) bpval = 15;
 				}
 				break;
+			case TV_SPECIAL:
+				switch (sval) {
+				case SV_SEAL:
+				case SV_CUSTOM_OBJECT:
+				case SV_QUEST:
+					msg_print(Ind, "Sorry, item not eligible.");
+					return;
+				}
 			}
 
 			/* Generic limits */
@@ -3210,17 +3221,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (bpval > 15) bpval = 15;
 
 			/* all potential +BLOWS items */
-			if ((o_ptr->name2 == EGO_HA || o_ptr->name2b == EGO_HA ||
-			    o_ptr->name2 == EGO_ATTACKS || o_ptr->name2b == EGO_ATTACKS ||
-			    o_ptr->name2 == EGO_COMBAT || o_ptr->name2b == EGO_COMBAT ||
-			    o_ptr->name2 == EGO_FURY || o_ptr->name2b == EGO_FURY ||
-			    o_ptr->name2 == EGO_STORMBRINGER || o_ptr->name2b == EGO_STORMBRINGER) {
-				if (o_ptr->pval > 3) o_ptr->pval = 3;
+			if (name2 == EGO_HA || name2b == EGO_HA ||
+			    name2 == EGO_ATTACKS || name2b == EGO_ATTACKS ||
+			    name2 == EGO_COMBAT || name2b == EGO_COMBAT ||
+			    name2 == EGO_FURY || name2b == EGO_FURY ||
+			    name2 == EGO_STORMBRINGER || name2b == EGO_STORMBRINGER) {
+				if (pval > 3) pval = 3;
 			}
 
 			/* Phasing ring, admin-only items */
 			pseudo_forge.name1 = name1;
-			if (name1 == ART_PHASING || admin_artifact_p(&pseudo_forge)) return;
+			if (name1 == ART_PHASING || admin_artifact_p(&pseudo_forge)) {
+				msg_print(Ind, "Sorry, item not eligible.");
+				return;
+			}
 
 			wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, -1, NULL);
 			return;
@@ -14415,6 +14429,7 @@ void tym_evaluate(int Ind) {
 extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level, object_type *ox_ptr) {
 	player_type *p_ptr = NULL;
 	object_type forge, *o_ptr = &forge;
+	int k_idx;
 
 	if (Ind) p_ptr = Players[Ind];
 	if (!number) {
@@ -14431,6 +14446,10 @@ extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number,
 	}
 	if (sval < 0 || sval > 255) {
 		if (Ind) msg_print(Ind, "sval out of bounds.");
+		return;
+	}
+	if (!(k_idx = lookup_kind(tval, sval))) {
+		if (Ind) msg_print(Ind, "item (tval,sval) does not exist.");
 		return;
 	}
 	if (pval < 0 || pval > 125) { //arbitrary (morgoth crown)
@@ -14455,7 +14474,7 @@ extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number,
 	}
 
 	WIPE(o_ptr, object_type);
-	invcopy(o_ptr, lookup_kind(tval, sval));
+	invcopy(o_ptr, k_idx);
 	o_ptr->number = number;
 
 	/* Wish arts out! */
