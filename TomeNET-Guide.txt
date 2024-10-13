@@ -16371,7 +16371,7 @@ The Living Lightning
 The Hellraiser
     A potion of learning and a scroll of artifact creation.
 Dor
-    A rod of havoc of the istari.
+    A rod of havoc of the istari and an energy cell.
 Zu-Aon
     A potion of learning and a scroll of artifact creation.
 
