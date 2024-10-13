@@ -3431,7 +3431,7 @@ static void set_server_option(char * option, char * value) {
  * Yakina reverted this to strtok.
  */
 static void load_server_cfg_aux(FILE * cfg) {
-	char line[256];
+	char line[256], buf[256];
 #if 0
 	char * lineofs;
 #else
@@ -3441,6 +3441,7 @@ static void load_server_cfg_aux(FILE * cfg) {
 	char * newword;
 	char * option;
 	char * value;
+	bool quotes;
 
 	/* Read in lines until we hit EOF */
 	while (fgets(line, 256, cfg) != NULL) {
@@ -3455,18 +3456,14 @@ static void load_server_cfg_aux(FILE * cfg) {
 		option = NULL;
 		value = NULL;
 
+		quotes = FALSE;
+
 		// Split the line up into words
 		// strsep is a really cool function... its neat, we don't have
 		// to dynamically allocate any memory because we apply our null
 		// terminations directly to line.
-#if 0
-		lineofs = line;
-		while ((newword = strsep(&lineofs, " ")))
-#else
 		first_token = 1;
-		while ((newword = strtok(first_token ? line : NULL, " ")))
-#endif	// 0
-		{
+		while ((newword = strtok(first_token ? line : NULL, " "))) {
 			first_token = 0;
 
 			/* Set the option or value */
@@ -3474,13 +3471,25 @@ static void load_server_cfg_aux(FILE * cfg) {
 			else if ((!value) && (newword[0] != '=')) {
 				value = newword;
 				/* Hack -- ignore "" around values */
-				if (value[0] == '"') value++;
+				if (value[0] == '"') {
+					quotes = TRUE;
+					value++;
+				}
 				if (*value && value[strlen(value) - 1] == '"') value[strlen(value) - 1] = '\0';
 			}
 
 			// If we have a completed option and value, then try to set it
 			if (option && value) {
-				set_server_option(option, value);
+				strcpy(buf, value);
+				if (quotes) {
+					while ((value = strtok(NULL, " "))) {
+						if (*value && value[strlen(value) - 1] == '"') value[strlen(value) - 1] = '\0';
+						strcat(buf, " ");
+						strcat(buf, value);
+					}
+				}
+
+				set_server_option(option, buf);
 				break;
 			}
 		}
