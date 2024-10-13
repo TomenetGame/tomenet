@@ -2550,7 +2550,7 @@ static void player_setup(int Ind, bool new) {
 			}
 		}
 		/* In case town layout has changed or something: Ensure we always login on floor (instead of inside perma walls) */
-		else if (!cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
+		else if (cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
 			s_printf("Login-blink (Surface): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 			teleport_player_force(Ind, 1);
 		}
@@ -2558,11 +2558,11 @@ static void player_setup(int Ind, bool new) {
 		/* make whole dungeon town visible like a 'normal town at night' */
 		player_dungeontown(Ind);
 		/* In case town layout has changed: Ensure we always login on floor (instead of inside perma walls) */
-		if (!cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
+		if (cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
 			s_printf("Login-blink (Dungeon town): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 			teleport_player_force(Ind, 1);
 		}
-	} else if (in_hallsofmandos(wpos) && !cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
+	} else if (in_hallsofmandos(wpos) && cave_perma_wall(zcave, p_ptr->py, p_ptr->px)) {
 		/* Extra for Halls of Mandos: Ensure we always login on floor (instead of inside perma walls) */
 		teleport_player_force(Ind, 1);
 		s_printf("Login-blink (Halls of Mandos): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
