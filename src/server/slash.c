@@ -1639,6 +1639,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				// k holds length of best match, h holds index of best match
 				for (i = 0; i < numtowns; ++i) {
 					j = 0;
+					if (!strcasecmp(message4, town_profile[town[i].type].name)) { // perfect match
+						h = i; good_match_found = TRUE;
+						break;
+					}
 					while (message4[j] && (message4[j] == tolower(town_profile[town[i].type].name[j]))) ++j;
 					if (j == k) good_match_found = FALSE;
 					else if (j > k) {
