@@ -284,12 +284,14 @@ void wild_bulldoze() {
  * Makeshift towns/dungeons placer for v4
  * This should be totally rewritten for v5!		- Jir -
  */
-void wild_spawn_towns(bool lowdun_near_Bree) {
-	int x, y, i, j, k;
-	bool retry, skip;
+bool wild_spawn_towns(bool lowdun_near_Bree) {
+	int x, y, i, j, k, try = 0;
+	bool retry;
 
-	int tries = 100;
+	//int tries = 0;
 	worldpos wpos = {0, 0, 0};
+
+	s_printf("Placing towns...\n");
 
 	/* Place towns */
 	for (i = 1 + 1; i < TOWNS; i++) {
@@ -320,25 +322,39 @@ void wild_spawn_towns(bool lowdun_near_Bree) {
 		addtown(y, x, town_profile[i].dun_base, 0, i);	/* base town */
 	}
 
-	/* Place dungeons */
-	for (i = 1; i < max_d_idx; i++) {
-		retry = FALSE;
+	s_printf("Placing dungeons...\n");
 
-		/* Skip empty entry */
-		if (!d_info[i].name) continue;
+	/* Place dungeons */
+	i = 1;
+	while (i < max_d_idx) {
+		/* Skip empty dungeon entries */
+		if (!d_info[i].name) {
+			i++;
+			continue;
+		}
 
 		/* Hack -- omit dungeons associated with towns */
-		if (tries == 100) {
-			skip = FALSE;
-
-			for (j = 1; j < TOWNS; j++) {
-				for (k = 0; k < 2; k++) {
-					if (town_profile[j].dungeons[k] == i) skip = TRUE;
-				}
-			}
-
-			if (skip) continue;
+		for (j = 1; j < TOWNS; j++)
+			for (k = 0; k < 2; k++)
+				if (town_profile[j].dungeons[k] == i) break;
+		if (j != TOWNS) {
+			i++;
+			continue;
 		}
+
+		/* If the worldmap terrain was generated with bad luck,
+		   we'll never be able to satisfy all strict dungeon dependancies,
+		   in that case try to reroll the worldmap instead.
+		   In general, around 1000 tries should usually be sufficient to generate everything at max strictness. */
+		if (try == 50000) {
+			s_printf("Dungeon placement still failed after 10000 tries,\n going back to wilderness terrain rerolling first,\n then retrying dungeons.\n");
+			return (FALSE);
+		}
+
+		/* Attempt to place the dungeon... */
+
+		try++;
+		s_printf("  Dungeon %d of %d, attempt %d...\n", i, max_d_idx, try);
 
 		y = rand_int(MAX_WILD_Y);
 		x = rand_int(MAX_WILD_X);
@@ -346,28 +362,35 @@ void wild_spawn_towns(bool lowdun_near_Bree) {
 		wpos.wy = y;
 		wpos.wx = x;
 
+		/* No dungeon in the middle of the ocean, except if intended, although submerged ruins might be good at a WILD_SHOREx */
+		switch (wild_info[y][x].type) {
+		case WILD_OCEANBED1:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED1)) continue;
+			break;
+		case WILD_OCEANBED2:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED2)) continue;
+			break;
+		case WILD_OCEAN:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEAN)) continue;
+			break;
+		}
+
 		/* reserve sector 0,0 for special occasions, such as
 		   Highlander Tournament dungeon and PvP Arena tower - C. Blue */
-		if (x == WPOS_SECTOR000_X && y == WPOS_SECTOR000_Y) retry = TRUE; /* ((sector000separation)) */
+		if (x == WPOS_SECTOR000_X && y == WPOS_SECTOR000_Y) continue; /* ((sector000separation)) */
+
+		/* Already a dungeon/tower here? */
+		if (wild_info[y][x].dungeon || wild_info[y][x].tower) continue;
 
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
-		for (j = 0; j < TOWNS; j++) {
-			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
-				retry = TRUE;
+		for (j = 0; j < TOWNS; j++)
+			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA)
 				break;
-			}
-		}
-
-		if (!retry) {
-			if (wild_info[y][x].dungeon || wild_info[y][x].tower) retry = TRUE;
-
-			/* TODO: easy dungeons around Bree,
-			 * hard dungeons around Lorien */
-		}
+		if (j != TOWNS) continue;
 
 		/* Don't put The Orc Caves, Old Forest and Mirkwood too far away from Bree. */
-		if (!retry && lowdun_near_Bree) {
+		if (lowdun_near_Bree) {
 			/* Assume (as in a few other places too) that Bree (town[usually 0].type is 1) is always at cfg.town_x/y */
 
 			/* Hack: x distance is longer than y distance, since sectors are about twice as wide as they are high! */
@@ -375,80 +398,79 @@ void wild_spawn_towns(bool lowdun_near_Bree) {
 			case DI_THE_ORC_CAVE:
 			case DI_OLD_FOREST:
 			case DI_MIRKWOOD:
-				if (distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 20) retry = TRUE;
+				if (distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 20) continue;
 			}
 		}
 
 		/* Place dungeons into terrain they belong to, if any */
-		if (!retry && d_info[i].flagsw) switch(wild_info[y][x].type) {
-		case WILD_LAKE:
-			if (!(d_info[i].flagsw & DFW_WILD_LAKE)) retry = TRUE;
-			break;
-		case WILD_GRASSLAND:
-			if (!(d_info[i].flagsw & DFW_WILD_GRASSLAND)) retry = TRUE;
-			break;
-		case WILD_FOREST:
-			if (!(d_info[i].flagsw & DFW_WILD_FOREST)) retry = TRUE;
-			break;
-		case WILD_VOLCANO:
-			if (!(d_info[i].flagsw & DFW_WILD_VOLCANO)) retry = TRUE;
-			break;
-		case WILD_SHORE1:
-			if (!(d_info[i].flagsw & DFW_WILD_SHORE1)) retry = TRUE;
-			break;
-		case WILD_SHORE2:
-			if (!(d_info[i].flagsw & DFW_WILD_SHORE2)) retry = TRUE;
-			break;
-		case WILD_OCEANBED1:
-			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED1)) retry = TRUE;
-			break;
-		case WILD_WASTELAND:
-			if (!(d_info[i].flagsw & DFW_WILD_WASTELAND)) retry = TRUE;
-			break;
+		if (d_info[i].flagsw) switch (wild_info[y][x].type) {
 		case WILD_UNDEFINED: /* of course not usable, still defined/implemented anyway */
-			if (!(d_info[i].flagsw & DFW_WILD_UNDEFINED)) retry = TRUE;
+			if (!(d_info[i].flagsw & DFW_WILD_UNDEFINED)) continue;
 			break;
 		case WILD_CLONE: /* of course not usable, still defined/implemented anyway */
-			if (!(d_info[i].flagsw & DFW_WILD_CLONE)) retry = TRUE;
+			if (!(d_info[i].flagsw & DFW_WILD_CLONE)) continue;
 			break;
 		case WILD_TOWN:
-			if (!(d_info[i].flagsw & DFW_WILD_TOWN)) retry = TRUE;
-			break;
-		case WILD_OCEAN:
-			if (!(d_info[i].flagsw & DFW_WILD_OCEAN)) retry = TRUE;
-			break;
-		case WILD_RIVER:
-			if (!(d_info[i].flagsw & DFW_WILD_RIVER)) retry = TRUE;
-			break;
-		case WILD_COAST:
-			if (!(d_info[i].flagsw & DFW_WILD_COAST)) retry = TRUE;
+			if (!(d_info[i].flagsw & DFW_WILD_TOWN)) continue;
 			break;
 		case WILD_MOUNTAIN:
-			if (!(d_info[i].flagsw & DFW_WILD_MOUNTAIN)) retry = TRUE;
+			if (!(d_info[i].flagsw & DFW_WILD_MOUNTAIN)) continue;
+			break;
+		case WILD_VOLCANO:
+			if (!(d_info[i].flagsw & DFW_WILD_VOLCANO)) continue;
+			break;
+		case WILD_GRASSLAND:
+			if (!(d_info[i].flagsw & DFW_WILD_GRASSLAND)) continue;
+			break;
+		case WILD_FOREST:
+			if (!(d_info[i].flagsw & DFW_WILD_FOREST)) continue;
 			break;
 		case WILD_DENSEFOREST:
-			if (!(d_info[i].flagsw & DFW_WILD_DENSEFOREST)) retry = TRUE;
-			break;
-		case WILD_OCEANBED2:
-			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED2)) retry = TRUE;
-			break;
-		case WILD_DESERT:
-			if (!(d_info[i].flagsw & DFW_WILD_DESERT)) retry = TRUE;
-			break;
-		case WILD_ICE:
-			if (!(d_info[i].flagsw & DFW_WILD_ICE)) retry = TRUE;
+			if (!(d_info[i].flagsw & DFW_WILD_DENSEFOREST)) continue;
 			break;
 		case WILD_SWAMP:
-			if (!(d_info[i].flagsw & DFW_WILD_SWAMP)) retry = TRUE;
+			if (!(d_info[i].flagsw & DFW_WILD_SWAMP)) continue;
 			break;
-		}
-
-		if (retry) {
-			if (tries-- > 0) i--;
-			continue;
+		case WILD_WASTELAND:
+			if (!(d_info[i].flagsw & DFW_WILD_WASTELAND)) continue;
+			break;
+		case WILD_DESERT:
+			if (!(d_info[i].flagsw & DFW_WILD_DESERT)) continue;
+			break;
+		case WILD_ICE:
+			if (!(d_info[i].flagsw & DFW_WILD_ICE)) continue;
+			break;
+		case WILD_COAST:
+			if (!(d_info[i].flagsw & DFW_WILD_COAST)) continue;
+			break;
+		case WILD_RIVER:
+			if (!(d_info[i].flagsw & DFW_WILD_RIVER)) continue;
+			break;
+		case WILD_LAKE:
+			if (!(d_info[i].flagsw & DFW_WILD_LAKE)) continue;
+			break;
+		case WILD_SHORE1:
+			if (!(d_info[i].flagsw & DFW_WILD_SHORE1)) continue;
+			break;
+		case WILD_SHORE2:
+			if (!(d_info[i].flagsw & DFW_WILD_SHORE2)) continue;
+			break;
+		case WILD_OCEANBED1:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED1)) continue;
+			break;
+		case WILD_OCEANBED2:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED2)) continue;
+			break;
+		case WILD_OCEAN:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEAN)) continue;
+			break;
 		}
 
 		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
+		i++;
+#if DEBUG_LEVEL > 0
+		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
+#endif
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (d_info[i].flags1 & DF1_TOWER) {
@@ -458,18 +480,10 @@ void wild_spawn_towns(bool lowdun_near_Bree) {
 			new_level_up_y(&wpos, 2 + rand_int(MAX_HGT - 4));
 			new_level_up_x(&wpos, 2 + rand_int(MAX_WID - 4));
 		}
-#if 0
-		if ((zcave = getcave(&p_ptr->wpos))) {
-			zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
-		}
-#endif	// 0
-
-#if DEBUG_LEVEL > 0
-		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
-#endif	// 0
-
-		tries = 100;
 	}
+
+	s_printf("Worldmap created after %d tries.\n", try);
+	return(TRUE);
 }
 
 void init_wild_info() {

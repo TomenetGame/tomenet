@@ -1026,7 +1026,7 @@ extern void wild_add_new_dungeons(int Ind);
 
 extern void initwild(void);
 extern void genwild(bool all_terrains, bool dry_Bree);
-extern void wild_spawn_towns(bool lowdun_near_Bree);
+extern bool wild_spawn_towns(bool lowdun_near_Bree);
 extern void init_wild_info_aux(int x, int y);
 
 extern void wild_flags(int Ind, u32b flags);

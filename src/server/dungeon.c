@@ -10924,6 +10924,8 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool lowdun_near
 	struct tm *tmp;
 	//int i, n;
 
+redo_world:
+
 	/* Init the RNG */
 	// Is it a good idea ? DGDGDGD --  maybe FIXME
 	//if (Rand_quick)
@@ -10998,7 +11000,8 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool lowdun_near
 		genwild(all_terrains, dry_Bree);
 
 		/* Generate the towns */
-		wild_spawn_towns(lowdun_near_Bree);
+		if (!wild_spawn_towns(lowdun_near_Bree)) goto redo_world;
+
 
 		/* Create dungeon index info */
 		s_printf("Indexing dungeons..\n");
@@ -11106,7 +11109,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool lowdun_near
 
 			/* Generate the towns */
 			s_printf("  ..spawning towns..\n");
-			wild_spawn_towns(lowdun_near_Bree);
+			if (!wild_spawn_towns(lowdun_near_Bree)) goto redo_world;
 
 			/* Discard old dungeon index info */
 			s_printf("  ..reindexing dungeons..\n");
