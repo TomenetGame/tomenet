@@ -334,9 +334,11 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 		}
 
 		/* Hack -- omit dungeons associated with towns */
-		for (j = 1; j < TOWNS; j++)
+		for (j = 1; j < TOWNS; j++) {
 			for (k = 0; k < 2; k++)
 				if (town_profile[j].dungeons[k] == i) break;
+			if (k != 2) break;
+		}
 		if (j != TOWNS) {
 			i++;
 			continue;
