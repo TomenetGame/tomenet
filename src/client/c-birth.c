@@ -2303,11 +2303,18 @@ static bool enter_server_name(void) {
 	/* Clear screen */
 	Term_clear();
 
+	prt("Enter a server's hostname or IP address you want to connect to,", 1, 1);
+	prt(" or instead press ESCAPE to quit: ", 2, 1);
+
 	/* Message */
-	prt("Enter the server name you want to connect to (ESCAPE to quit): ", 3, 1);
+	Term_putstr(0, 6, -1, TERM_L_BLUE, "In case the meta server seems unreachable or reports no servers, you can try");
+	Term_putstr(0, 7, -1, TERM_L_BLUE, "looking in your TomeNET folder for the script files named '\377RTomeNET-direct-xxxx\377B'");
+	Term_putstr(0, 8, -1, TERM_L_BLUE, "where xxxx denote the region of each script, ie \377oEU\377B for europe, \377oNA\377B for north");
+	Term_putstr(0, 9, -1, TERM_L_BLUE, "america, \377oAPAC\377B for asia-pacific, and double-click one of them to connect directly");
+	Term_putstr(0, 10, -1, TERM_L_BLUE, "to a TomeNET server of the region of your choice, bypassing DNS and meta server.");
 
 	/* Move cursor */
-	move_cursor(5, 1);
+	move_cursor(4, 3);
 
 	/* Default */
 	strcpy(server_name, "europe.tomenet.eu");
