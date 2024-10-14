@@ -6962,7 +6962,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* erase items (prevent loot-mass-freeze) */
-			else if (prefix(messagelc, "/clear-items") || prefix(messagelc, "/cli")) {
+			else if (prefix(messagelc, "/clear-items") || (prefix(messagelc, "/cli") && !prefix(messagelc, "/clinv"))) {
 				/* Wipe even if town/wilderness */
 				wipe_o_list_safely(&wp);
 
@@ -8150,7 +8150,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					strcpy(list_invalid_host[k], list_invalid_host[k + 1]);
 					strcpy(list_invalid_addr[k], list_invalid_addr[k + 1]);
 					strcpy(list_invalid_date[k], list_invalid_date[k + 1]);
-					i++;
+					k++;
 				}
 				list_invalid_name[k][0] = 0;
 				return;
