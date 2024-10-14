@@ -290,7 +290,9 @@ cptr value_check_aux1_magic(object_type *o_ptr) {
 		/* Artifacts */
 		if (artifact_p(o_ptr)) return("special");
 
-		/* Food with magical properties */
+		/* Food with magical properties -
+		   note about mushrooms: Restoring is 2000, Restore Str/Con + Hallu are 200. */
+		if (k_ptr->cost >= 200) return("excellent"); /* Great word for 200 Au items, but w/e >_> */
 		if (k_ptr->cost > 10) return("good");
 
 		break;
@@ -447,7 +449,7 @@ static void sense_inventory(int Ind) {
 
 	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE, heavy_traps = FALSE;
 	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE, ok_traps = FALSE;
-	bool ok_curse = FALSE, force_curse = FALSE;
+	bool ok_curse = FALSE, force_curse = FALSE, force_shrooms = p_ptr->prace == RACE_HOBBIT;
 
 	cptr feel;
 	bool felt_heavy, fail_light;
@@ -495,7 +497,7 @@ static void sense_inventory(int Ind) {
 	}
 
 	/* nothing to feel? exit */
-	if (!ok_combat && !ok_magic && !ok_archery && !ok_traps && !ok_curse) return;
+	if (!ok_combat && !ok_magic && !ok_archery && !ok_traps && !ok_curse && !force_shrooms) return;
 
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 10) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 10) ? TRUE : FALSE;
@@ -519,9 +521,11 @@ static void sense_inventory(int Ind) {
 		if (o_ptr->ident & ID_SENSE) fail_light = TRUE; /* Note for force_curse handling: This also means we already know if the item is cursed! */
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) && (magik(80) || UNAWARENESS(p_ptr))) {
-			if (!force_curse || fail_light) continue; /* Either we don't need to process force_curse, or we already know the item is cursed */
-			/* if we're forced to insta-sense a curse, do just that, as we'd have failed for all other actions */
+			if ((!force_curse && !force_shrooms) || fail_light) continue; /* Either we don't need to process force_curse, or we already know the item is cursed */
+			/* if we're forced to insta-sense a curse/shroom, do just that, as we'd have failed for all other actions */
 			fail_light = ok_magic = ok_combat = ok_archery = ok_traps = FALSE;
+			/* We're just here for the shrooms, ie if force_curse is FALSE, prevent curse-detection. */
+			ok_curse = force_curse;
 		}
 
 		feel = NULL;
@@ -605,6 +609,13 @@ static void sense_inventory(int Ind) {
 			break;
 
 		case TV_FOOD: /* dual! Uses auxX_magic, which contains the food-specific values. Since potions are 'magic' too, food seems not misplaced.. */
+			/* First check for 'force_shrooms'. Note that we use 'heavy' detection (aux1 instead of aux2) for now. */
+			if (force_shrooms && o_ptr->tval == TV_FOOD && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX && !object_aware_p(Ind, o_ptr)) {
+				feel = value_check_aux1_magic(o_ptr);
+				felt_heavy = heavy = TRUE; /* Hack 'heavy' */
+				break;
+			}
+
 			if (fail_light && !heavy_magic && !heavy) continue; //finally fail
 			if ((ok_combat || ok_magic) && !object_aware_p(Ind, o_ptr)) {
 				feel = ((heavy || heavy_magic) ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
