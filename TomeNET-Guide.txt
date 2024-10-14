@@ -278,14 +278,15 @@ able to use most keys aside from arrow keys for basic movement.
 
  NOTE: The official main server's hostname is "europe.tomenet.eu".
  In 2022, an official server located in the APAC (Asia-Pacific) region was
- added, to provide playable ping times for players from that region, its
- hostname is "apac.tomenet.eu".
+ added, its hostname is "apac.tomenet.eu".
+ In 2024, another official server located in North America (NA) region was
+ added, its hostname is "na.tomenet.eu".
 
 -You should now see a list of available TomeNET servers (except if you used
  TomeNET-direct.bat, which will always connect you directly to the first main
  server).
  Pick the first official server by pressing the 'a' key (or instead choose the
- APAC region server if your latency is better for that region).
+ APAC or NA region server if your latency is better for one of these regions).
  Now you are prompted to enter your account information: Name and password.
  Since you are a new player, you don't have these yet. There is no separate
  'registration' process, just type in a name and a password of your choice!
@@ -4623,16 +4624,20 @@ server's IP address.
 
 On OSX you run the 'TomeNET.command' file, on Linux the 'tomenet' binary.
 
-(Side note: The official main server's hostname is "europe.tomenet.eu" and its
-IP address is 37.187.75.24. The official asia-pacific server's hostname is
-"apac.tomenet.eu" and its IP address is 92.38.178.77.)
+(Side note about the official servers:
+ The official main server's hostname is "europe.tomenet.eu"
+  and its IP address is 37.187.75.24.
+ The official asia-pacific server's hostname is "apac.tomenet.eu"
+  and its IP address is 92.38.178.77.
+ The official north american server's hostname is "na.tomenet.eu"
+  and its IP address is 70.39.65.2.)
 
 You should now see a list of available TomeNET servers (except if you used
 TomeNET-direct.bat, which will always connect you directly to the first main
 server) starting with the official main server under 'a)'.
 (This list of servers is called the 'meta-server'.)
 Pick the first official server by pressing the 'a' key (or instead choose the
-APAC region server if your latency is better for that region).
+APAC or NA region server if your latency is better for one of these regions).
 On some Windows configurations in the past the window would stay empty. If
 this happens or if other problems occur, see (9.8) for possible solutions.
 
@@ -26901,13 +26906,18 @@ PROBLEM 11: I'm not blocked by a firewall, but I still don't see the
 Solution:   The meta-server might be down or a DNS problem might be occuring
             right now. This can happen from time to time. You don't need the
             meta-server to play TomeNET though.
-            Just type in the hostname of the server you'd like to connect to,
+            Either run one of the 'TomeNET-direct-...' scripts in your TomeNET
+            program folder which connect directly to an official server, or
+            just type in the hostname of the server you'd like to connect to,
             for official main server:   europe.tomenet.eu
             If the hostname doesn't work you can also try entering its IP
             address 37.187.75.24.
             If you get better latency to the APAC region, you can alternatively
             pick the asia-pacific server:   apac.tomenet.eu
             or via its IP address 92.38.178.77.
+            If you get better latency to the NA region, you can alternatively
+            pick the north american server:   na.tomenet.eu
+            or via its IP address 70.39.65.2.
             Make sure your TomeNET.ini file contains the correct server port,
             usually 18348! This port isn't needed if you use the meta-list to
             choose a server to connect to, but it's important if you connect
@@ -26923,13 +26933,18 @@ Solution:   The meta-server might be down or a DNS problem might be occuring
             For official main server it would look like this:
             TomeNET.exe europe.tomenet.eu
             If the hostname doesn't work for whatever reason you may try the
-            IP adress:
+            IP adress of the european server:
             TomeNET.exe 37.187.75.24
             If you get better latency to the APAC region, you can alternatively
             pick the asia-pacific server:
             TomeNET.exe apac.tomenet.eu
             or via its IP address:
             TomeNET.exe 92.38.178.77
+            If you get better latency to the NA region, you can alternatively
+            pick the north american server:
+            TomeNET.exe na.tomenet.eu
+            or via its IP address:
+            TomeNET.exe 70.39.65.2
 PROBLEM 12: The main window doesn't display the floor dots in town and in
             certain dungeons, like the Training Tower and Angband. Further,
             fields are sometimes not redrawn correctly, resulting in fake
