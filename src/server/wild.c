@@ -468,18 +468,20 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 
 		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
 		i++;
-#if DEBUG_LEVEL > 0
-		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
-#endif
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
+		x = 4 + rand_int(MAX_WID - 8);
+		y = 4 + rand_int(MAX_HGT - 8);
 		if (d_info[i].flags1 & DF1_TOWER) {
-			new_level_down_y(&wpos, 2 + rand_int(MAX_HGT - 4));
-			new_level_down_x(&wpos, 2 + rand_int(MAX_WID - 4));
+			new_level_down_x(&wpos, x);
+			new_level_down_y(&wpos, y);
 		} else {
-			new_level_up_y(&wpos, 2 + rand_int(MAX_HGT - 4));
-			new_level_up_x(&wpos, 2 + rand_int(MAX_WID - 4));
+			new_level_up_x(&wpos, x);
+			new_level_up_y(&wpos, y);
 		}
+#if DEBUG_LEVEL > 0
+		s_printf("Dungeon %d is generated in %s [%d,%d].\n", i, wpos_format(0, &wpos), x, y);
+#endif
 	}
 
 	s_printf("Worldmap created after %d tries.\n", try);
