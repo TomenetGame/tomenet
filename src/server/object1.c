@@ -6166,7 +6166,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	}
 
 	/* magically returning ranged weapon? */
-	if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1) fprintf(fff, "\377WIt always returns to your quiver.\n");
+	if (o_ptr->tval == TV_BOOMERANG && (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b)) fprintf(fff, "\377WIt always returns to your quiver.\n");
 	else if (is_ammo(o_ptr->tval)) {
 		if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) fprintf(fff, "\377WIt magically returns to your quiver most of the time.\n");
 		else if (o_ptr->sval == SV_AMMO_MAGIC || o_ptr->name1) fprintf(fff, "\377WIt always magically returns to your quiver.\n");
