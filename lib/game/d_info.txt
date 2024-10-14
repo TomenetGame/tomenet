@@ -283,7 +283,7 @@ M:PASS_WALL | KILL_WALL | HURT_ROCK
 R:30:0
 
 
-// HOLE: 11-15
+# HOLE: 11-15
 
 
 # The Paths of the Dead
