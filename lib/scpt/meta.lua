@@ -189,64 +189,74 @@ function meta_display(xml_feed)
 
 	line = 0
 	nb = 0
-	color_print(line, 0, "\255B" .. meta_name .. "\255B, " .. nb_servers .. " live servers available.")
-	if nb_servers == 0 then line = line + 6
-	else line = line + 4; end
 
-	color_print(line, 0, "\255B --- Official servers: ---"); line = line + 2
-	for k, e in categories_official do
-		color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
-		e = e.servers
+	--color_print(line, 0, "\255B" .. meta_name .. "\255B, " .. nb_servers .. " live servers available.")
+	--if nb_servers == 0 then line = line + 6
+	--else line = line + 4; end
 
-		for i = 1, getn(e) do
-			tmp_line = line
-			color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name .. e[i].notes)
-			color_print(line, 57, e[i].extra); line = line + 1
-			color_print(line, 4, "\255b" .. e[i].players); line = line + 1
+	line = line + 3
 
-			-- Store the info for retrieval -- add <line position> and <'0'> for ping in ms (META_PINGS)
-			meta_list[nb] = { e[i].name, e[i].port, e[i].protocol, tmp_line, 0 }
-			nb = nb + 1
+	if nb_servers ~= 0 then
+		color_print(line, 0, "\255B--- Official servers ---"); line = line + 1
+		for k, e in categories_official do
+			color_print(line, 0, "\255o " .. e.name .. " :"); line = line + 1
+			e = e.servers
+
+			for i = 1, getn(e) do
+				tmp_line = line
+				color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name .. e[i].notes)
+				color_print(line, 57, e[i].extra); line = line + 1
+				color_print(line, 4, "\255b" .. e[i].players); line = line + 1
+
+				-- Store the info for retrieval -- add <line position> and <'0'> for ping in ms (META_PINGS)
+				meta_list[nb] = { e[i].name, e[i].port, e[i].protocol, tmp_line, 0 }
+				nb = nb + 1
+			end
+		end
+
+		line = line + 1
+		color_print(line, 0, "\255B--- Unofficial servers ---"); line = line + 1
+		for k, e in categories_unofficial do
+			color_print(line, 0, "\255o " .. e.name .. " :"); line = line + 1
+			e = e.servers
+
+			for i = 1, getn(e) do
+				tmp_line = line
+				color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name .. e[i].notes)
+				color_print(line, 57, e[i].extra); line = line + 1
+				color_print(line, 4, "\255b" .. e[i].players); line = line + 1
+
+				-- Store the info for retrieval -- add <line position> and <'0'> for ping in ms (META_PINGS)
+				meta_list[nb] = { e[i].name, e[i].port, e[i].protocol, tmp_line, 0 }
+					nb = nb + 1
+			end
 		end
 	end
 
-	line = line + 1
-	color_print(line, 0, "\255B --- Unofficial servers: ---"); line = line + 2
-	for k, e in categories_unofficial do
-		color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
-		e = e.servers
+--	line = 1
 
-		for i = 1, getn(e) do
-			tmp_line = line
-			color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name .. e[i].notes)
-			color_print(line, 57, e[i].extra); line = line + 1
-			color_print(line, 4, "\255b" .. e[i].players); line = line + 1
+	line = 0
 
-			-- Store the info for retrieval -- add <line position> and <'0'> for ping in ms (META_PINGS)
-			meta_list[nb] = { e[i].name, e[i].port, e[i].protocol, tmp_line, 0 }
-			nb = nb + 1
-		end
-	end
-
-	line = 1
 	if nb_servers == 0 then
-		color_print(line, 0, "\255BPress \255RQ\255B to enter a server (IP or hostname) manually or to quit."); line = line + 1
-		color_print(line, 0, "\255BSince the meta server seems unreachable, you can also try looking in your"); line = line + 1
-		color_print(line, 0, "\255BTomeNET folder for a file '\255RTomeNET-direct*.bat\255B' and double-click that to"); line = line + 1
-		color_print(line, 0, "\255Bconnect directly to a TomeNET server, bypassing meta and DNS servers!"); line = line + 1
+		color_print(line, 0, "\255B" .. meta_name .. ". Press \255RQ\255B to enter server IP or hostname manually or to quit."); line = line + 2
+		color_print(line, 0, "\255BSince the meta server seems unreachable or reports no servers, you can also try"); line = line + 1
+		color_print(line, 0, "\255Blooking in your TomeNET folder for the script files named '\255RTomeNET-direct-xxxx\255B'"); line = line + 1
+		color_print(line, 0, "\255Bwhere xxxx denote the region of each script, ie \255oEU\255B for europe, \255oNA\255B for north"); line = line + 1
+		color_print(line, 0, "\255Bamerica, \255oAPAC\255B for asia-pacific, and double-click one of them to connect directly"); line = line + 1
+		color_print(line, 0, "\255Bto a TomeNET server of the region of your choice, bypassing DNS and meta server."); line = line + 1
+		--color_print(line, 0, "\255Bbypassing meta and DNS servers!"); line = line + 1
 	elseif nb_servers == 1 then
-		--color_print(line, 0, "\255BSelect the server with \255Ra"); line = line + 1
-		--color_print(line, 0, "\255Bor press \255RQ\255B to enter an IP or hostname manually or to quit."); line = line + 1
-		color_print(line, 0, "\255BSelect the server with \255Ra\255B or press \255RQ\255B to enter a server manually or to quit."); line = line + 1
-		color_print(line, 0, "\255B(You can run \255RTomeNET-direct*.bat\255B instead of TomeNET.exe to connect directly.)"); line = line + 1
+		color_print(line, 0, "\255B" .. meta_name .. ". Select server \255Ra\255B or press \255RQ\255B for manual input or to quit."); line = line + 1
+		color_print(line, 0, "\255B(To connect directly, run a \255RTomeNET-direct-xxxx\255B script instead of TomeNET.exe.)"); line = line + 1
 	else
 		--local c = string.char(96 + nb_servers)
 		local c = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
 		--color_print(line, 0, "\255BSelect a server with \255Ra\255B-\255R" .. c[nb_servers]); line = line + 1
 		--color_print(line, 0, "\255Bor press \255RQ\255B to enter an IP or hostname manually or to quit."); line = line + 1
-		color_print(line, 0, "\255BSelect a server with \255Ra\255B-\255R" .. c[nb_servers]  .. "\255B or press \255RQ\255B to enter a server manually or to quit."); line = line + 1
-		color_print(line, 0, "\255B(You can run \255RTomeNET-direct*.bat\255B instead of TomeNET.exe to connect directly.)"); line = line + 1
+
+		color_print(line, 0, "\255B" .. meta_name .. ". Select server with \255Ra\255B-\255R" .. c[nb_servers]  .. "\255B or press \255RQ\255B for manual input/to quit."); line = line + 1
+		color_print(line, 0, "\255B(To connect directly, run a \255RTomeNET-direct-xxxx\255B script instead of TomeNET.exe.)"); line = line + 1
 	end
 
 	return nb
