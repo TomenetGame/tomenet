@@ -8155,6 +8155,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				list_invalid_name[k][0] = 0;
 				return;
 			}
+			else if (prefix(messagelc, "/vinv")) { /* Validate one entry from list of new invalid account names that tried to log in meanwhile */
+				if (!tk || k < 0 || k > MAX_LIST_INVALID) {
+					msg_format(Ind, "Usage: /vinv <list entry # [0..%d]>", MAX_LIST_INVALID);
+					return;
+				}
+				if (!list_invalid_name[k][0]) {
+					msg_format(Ind, "Entry %d doesn't exist.", k);
+					return;
+				}
+				msg_format(Ind, "\377GValidating entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
+				validate(list_invalid_name[k]);
+				return;
+			}
 			/* Respawn monsters on the floor
 			 * TODO: specify worldpos to respawn */
 			else if (prefix(messagelc, "/respawn")) {
