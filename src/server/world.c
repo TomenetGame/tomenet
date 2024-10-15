@@ -534,10 +534,19 @@ void rem_server(int16_t id) {
 	}
 }
 
+
+/* This sorting is pointless on the worldd server side, because each game server still receives remote players solo and thereby unsortedly, and has to do sorting by itself.
+   It makes sense though when this code is used by an actual game server, so players received are then locally sorted per server type, which looks better in the @ list. */
+#define SORT_BY_SERVER
+
 void add_rplayer(struct wpacket *wpk) {
 	struct list *lp;
 	struct rplist *n_pl, *c_pl;
 	unsigned char found = 0;
+#ifdef SORT_BY_SERVER
+	struct list *lp_now, *lp_scan, lp_forge, *lp_forge_next;
+	struct rplist *c_pl_sort;
+#endif
 
 	if (!wpk->d.play.silent)
 		msg_broadcast_format(0, "\374\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type == WP_NPLAYER ? "entered" : "left"));
@@ -564,6 +573,56 @@ void add_rplayer(struct wpacket *wpk) {
 	}
 	else if (wpk->type == WP_QPLAYER && found)
 		remlist(&rpmlist, lp);
+
+#ifdef SORT_BY_SERVER
+	/* Sort list of players by server */
+	lp = rpmlist;
+	c_pl_sort = NULL;
+	while (lp) {
+		c_pl = (struct rplist*)lp->data;
+
+		/* Init at first entry read */
+		if (!c_pl_sort) {
+			c_pl_sort = c_pl;
+			lp = lp->next;
+			continue;
+		}
+
+		/* Critical part - check if server type changed now that we went from previous entry to this one */
+		if (c_pl->server != c_pl_sort->server) {
+			/* Server changed.
+			   Now all subsequent entries are checked and moved down here if they still refer to the previous server instead of the current, new one. */
+			lp_now = lp;
+			lp_scan = lp_now->next;
+			while (lp_scan) {
+				c_pl = (struct rplist*)lp_scan->data;
+				/* Found one, move it down here by swapping */
+				if (c_pl->server == c_pl_sort->server) {
+					/* Hack: Swap content, but we don't want to swap the next-pointer */
+					lp_forge = *lp_scan;
+					*lp_scan = *lp_now;
+					*lp_now = lp_forge;
+					/* ..so swap back the next-pointer */
+					lp_forge_next = lp_scan->next;
+					lp_scan->next = lp_now->next;
+					lp_now->next = lp_forge_next;
+
+					/* Move on after this one server we sorted in */
+					lp_now = lp_now->next;
+					lp_scan = lp_now;
+				}
+				/* Check next server in the list */
+				lp_scan = lp_scan->next;
+			}
+			/* All done for this server type */
+		}
+
+		/* Remember current server type */
+		c_pl_sort = c_pl;
+		/* Move on to next server entry */
+		lp = lp->next;
+	}
+#endif
 }
 
 void world_pmsg_send(uint32_t id, char *name, char *pname, char *text) {
