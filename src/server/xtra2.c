@@ -14128,6 +14128,9 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 			ty = *y + d - (grid - 3 * sidelength);
 		}
 
+		/* Skip outbound -- not necessarily needed? Depends on caller function, but all should handle it maybe. */
+		if (!in_bounds_array(ty, tx)) continue;
+
 		/* Check if we'd hit some entity along our path */
 		who = projectable_get_m_idx(Ind, *y, *x, ty, tx, d);
 
