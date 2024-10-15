@@ -78,23 +78,33 @@ void rem_players(int16_t id) {
 	}
 }
 
+/* Adds or removes a player from the list */
 void add_rplayer(struct wpacket *wpk) {
 	struct list *lp;
 	struct rplist *n_pl, *c_pl;
 	unsigned char found = 0;
 
-	if (wpk->type == WP_NPLAYER && !wpk->d.play.server) return;
+	if (wpk->type == WP_NPLAYER && !wpk->d.play.server) {
+		printf("add_rplayer: invalid server, player %s\n", wpk->d.play.name);
+		return;
+	}
+
+	printf("add_rplayer (%s): server %d, player %s\n", wpk->type == WP_NPLAYER ? "ADD" : (wpk->type == WP_QPLAYER ? "REM" : "???"), wpk->d.play.server, wpk->d.play.name);
+
+	/* Scan complete list, check only entries of the same server as our player, try to find player's name among the entries */
 	lp = rpmlist;
 	while (lp) {
 		c_pl = (struct rplist*)lp->data;
 		//if (/* c_pl->id == wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))) {
 		if (c_pl->server == wpk->d.play.server && !(strcmp(c_pl->name, wpk->d.play.name))) {
 			found = 1;
+			printf(" found: server %d, player %s\n", wpk->d.play.server, wpk->d.play.name);
 			break;
 		}
 		lp = lp->next;
 	}
 
+	/* If player is not yet listed, check if we want to add him */
 	if (wpk->type == WP_NPLAYER && !found) {
 		lp = addlist(&rpmlist, sizeof(struct rplist));
 		if (lp) {
@@ -104,6 +114,16 @@ void add_rplayer(struct wpacket *wpk) {
 			strncpy(n_pl->name, wpk->d.play.name, 30);
 		}
 	}
+
+	/* If player is already listed, check if we want to remove him */
 	else if (wpk->type == WP_QPLAYER && found)
 		remlist(&rpmlist, lp);
+
+	/* List all players for debugging purpose */
+	lp = rpmlist;
+	while (lp) {
+		c_pl = (struct rplist*)lp->data;
+		printf("server %d, player %s\n", c_pl->server, c_pl->name);
+		lp = lp->next;
+	}
 }

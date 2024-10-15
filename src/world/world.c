@@ -168,6 +168,7 @@ void wproto(struct client *ccl) {
 			   use a dynamic IP, so this is made *more* necessary */
 
 			ccl->authed = pwcheck(wpk->d.auth.pass, wpk->d.auth.val); /* This is the server's static_index + 1, since 0 means unauthed. */
+			printf("WP_AUTH: ccl->authed = %d, wpk->d.auth.pass = %s, wpk->d.auth.val = %u\n", ccl->authed, wpk->d.auth.pass, wpk->d.auth.val);
 			if (ccl->authed) send_sinfo(ccl, NULL);
 			/* Send it the current players */
 			send_rplay(ccl);
@@ -235,6 +236,7 @@ void wproto(struct client *ccl) {
 #endif
 
 				//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed - 1, wpk->d.chat.ctxt);
+				//p[MSG_LEN - 12] = 0; //doesn't seem to help kill the compiler warning
 				snprintf(msg, MSG_LEN, "%s%s\377%c[%d]\377%c %s%c",
 				    client_all ? "\374" : (client_chat ? "\375" : ""),
 				    client_ctrlo ? "\376" : "",
@@ -265,6 +267,7 @@ void wproto(struct client *ccl) {
 					p++;
 				}
 				//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed - 1, wpk->d.chat.ctxt);
+				//p[MSG_LEN - 14] = 0; //doesn't seem to help kill the compiler warning
 				snprintf(msg, MSG_LEN, "%s%s\377%c(IRC)\377w %s%c",
 				    client_all ? "\374" : (client_chat ? "\375" : ""),
 				    client_ctrlo ? "\376" : "",
@@ -306,7 +309,7 @@ void wproto(struct client *ccl) {
 				wpk->d.play.server = ccl->authed - 1;
 				add_rplayer(wpk);
 				relay(wpk, ccl);
-			}
+			} else fprintf(stderr, "authed-error: ccl->authed=%d, secure.play=%d\n", ccl->authed, secure.play);
 			break;
 
 		case WP_MESSAGE:
@@ -335,6 +338,7 @@ void wproto(struct client *ccl) {
 					client_cmdreply = 1;
 					p++;
 				}
+				//p[MSG_LEN - 13] = 0; //doesn't seem to help kill the compiler warning
 				snprintf(msg, MSG_LEN, "%s%s%s\377%c[%d]\377w %s",
 				    client_all ? "\374" : (client_chat ? "\375" : ""),
 				    client_ctrlo ? "\376" : "",
