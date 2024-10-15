@@ -9990,8 +9990,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				player_change_account(Ind, id, acc.id);
 				return;
 			} else if (prefix(messagelc, "/addnewdun")) {
+				if (tk != 2) {
+					msg_print(Ind, "Usage: /addnewdon <1|0 use Ind?> <1|0 lowdun_near_Bree?>");
+					return;
+				}
 				msg_print(Ind, "Trying to add new dungeons..");
-				wild_add_new_dungeons(tk ? Ind : 0);
+				wild_add_new_dungeons(k ? Ind : 0, atoi(token[2]) ? TRUE : FALSE);
 				msg_print(Ind, "done.");
 				return;
 			}

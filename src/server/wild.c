@@ -54,6 +54,9 @@
  #define __DISABLE_HOUSEBOOST
 #endif
 
+/* Max # of attempts to place dungeons on the world map until giving up due to probably impossible terrain situation */
+#define MAX_TRIES_DUN_PLACEMENT 500000
+
 
 /* This function takes the players x,y level world coordinate and uses it to
  calculate p_ptr->dun_depth.  The levels are stored in a series of "rings"
@@ -347,9 +350,9 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 		/* If the worldmap terrain was generated with bad luck,
 		   we'll never be able to satisfy all strict dungeon dependancies,
 		   in that case try to reroll the worldmap instead.
-		   In general, around 1000 tries should usually be sufficient to generate everything at max strictness. */
-		if (try == 50000) {
-			s_printf("Dungeon placement still failed after 10000 tries,\n going back to wilderness terrain rerolling first,\n then retrying dungeons.\n");
+		   In general, around 500-5000 tries should usually be sufficient to generate everything at max strictness. */
+		if (try == MAX_TRIES_DUN_PLACEMENT) {
+			s_printf("Dungeon placement still failed after %d tries,\n going back to wilderness terrain rerolling first,\n then retrying dungeons.\n", MAX_TRIES_DUN_PLACEMENT);
 			return (FALSE);
 		}
 
@@ -4486,114 +4489,218 @@ bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w) {
 }
 
 /* Add new dungeons/towers that were added to d_info.txt after the server was already initialized - C. Blue */
-void wild_add_new_dungeons(int Ind) {
-	int i, j, k, x, y, tries, sx, sy;
-	bool retry, skip, found;
+void wild_add_new_dungeons(int Ind, bool lowdun_near_Bree) {
+	int i, j, k, x, y, try = 0;
 	dungeon_type *d_ptr;
 	worldpos wpos;
+	int last_i = -1;
 
-	for (i = 1; i < max_d_idx; i++) {
-		retry = FALSE;
+	s_printf("Placing new dungeons...\n");
 
-		/* Skip empty entry */
-		if (!d_info[i].name) continue;
+	/* Place dungeons */
+	i = 1;
+	while (i < max_d_idx) {
+		/* Skip empty dungeon entries */
+		if (!d_info[i].name) {
+			i++;
+			continue;
+		}
 
 		/* Hack -- omit dungeons associated with towns */
-		skip = FALSE;
 		for (j = 1; j < TOWNS; j++) {
 			for (k = 0; k < 2; k++)
-				if (town_profile[j].dungeons[k] == i) skip = TRUE;
+				if (town_profile[j].dungeons[k] == i) break;
+			if (k != 2) break;
 		}
-		if (skip) continue;
-
-		/* Does this dungeon exist yet? */
-		found = FALSE;
-		for (y = 0; y < MAX_WILD_Y; y++)
-		for (x = 0; x < MAX_WILD_X; x++) {
-			if ((d_ptr = wild_info[y][x].tower)) {
-				if (d_ptr->type == i) found = TRUE;
-			}
-			if ((d_ptr = wild_info[y][x].dungeon)) {
-				if (d_ptr->type == i) found = TRUE;
-				//if (!strcmp(d_ptr->name + d_name, d_info[i].name + d_name)) found = TRUE;
-				//if (d_ptr->id == i) found = TRUE;
-			}
+		if (j != TOWNS) {
+			i++;
+			continue;
 		}
-		if (found) continue;
 
-		/* Add it */
-		tries = 100;
-		while (tries) {
-			if (!Ind) {
-				y = rand_int(MAX_WILD_Y);
-				x = rand_int(MAX_WILD_X);
-			} else {
-				y = Players[Ind]->wpos.wy;
-				x = Players[Ind]->wpos.wx;
-				tries = 1;
+		/* Does this dungeon exist already? Skip then. */
+		for (y = 0; y < MAX_WILD_Y; y++) {
+			for (x = 0; x < MAX_WILD_X; x++) {
+				if ((d_ptr = wild_info[y][x].tower) && d_ptr->type == i) break;
+				if ((d_ptr = wild_info[y][x].dungeon) && d_ptr->type == i) break;
 			}
-			retry = FALSE;
+			if (x != MAX_WILD_X) break;
+		}
+		if (y != MAX_WILD_Y) {
+			i++;
+			continue;
+		}
 
-			wpos.wy = y;
-			wpos.wx = x;
-
-			/* Don't build them too near to towns
-			 * (otherwise entrance can be within a house) */
-			if (!Ind) for (j = 1; j < TOWNS; j++) {
-				if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
-					retry = TRUE;
-					break;
-				}
-			}
-			if (!retry) {
-				if (wild_info[y][x].dungeon || wild_info[y][x].tower) retry = TRUE;
-
-				/* TODO: easy dungeons around Bree,
-				 * hard dungeons around Lorien */
-			}
+		/* If the worldmap terrain was generated with bad luck,
+		   we'll never be able to satisfy all strict dungeon dependancies,
+		   in that case try to reroll the worldmap instead.
+		   In general, around 500-5000 tries should usually be sufficient to generate everything at max strictness. */
+		if (try == MAX_TRIES_DUN_PLACEMENT) {
 #if 0
-			if (retry) {
-				if (tries-- > 0) i--;
-				continue;
-			}
+			s_printf("Dungeon placement still failed after %d tries,\n going back to wilderness terrain rerolling first,\n then retrying dungeons.\n", MAX_TRIES_DUN_PLACEMENT);
+			return (FALSE);
 #else
-			tries--;
-			if (!retry) break;
+			s_printf("Dungeon %d couldn't get added (%d retries).\n", i, MAX_TRIES_DUN_PLACEMENT);
+			return;
 #endif
 		}
-		if (!tries) s_printf("Dungeon %d couldn't get added.\n", i);
+
+		/* Attempt to place the dungeon... */
+
+		/* If Ind is specified, we have only one shot, because we don't randomly pick
+		   x,y worldmap coords, but the player' wpos must work or it's a failure. */
+		if (Ind) {
+			if (last_i != i) last_i = i;
+			else {
+				s_printf("Dungeon %d couldn't get added at player sector (%d,%d).\n",
+				    i, Players[Ind]->wpos.wx, Players[Ind]->wpos.wy);
+				return;
+			}
+		}
+
+		try++;
+		s_printf("  Dungeon %d of %d, attempt %d...\n", i, max_d_idx, try);
+
+		if (!Ind) {
+			y = rand_int(MAX_WILD_Y);
+			x = rand_int(MAX_WILD_X);
+		} else {
+			y = Players[Ind]->wpos.wy;
+			x = Players[Ind]->wpos.wx;
+		}
+
+		wpos.wy = y;
+		wpos.wx = x;
+
+		/* No dungeon in the middle of the ocean, except if intended, although submerged ruins might be good at a WILD_SHOREx */
+		switch (wild_info[y][x].type) {
+		case WILD_OCEANBED1:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED1)) continue;
+			break;
+		case WILD_OCEANBED2:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED2)) continue;
+			break;
+		case WILD_OCEAN:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEAN)) continue;
+			break;
+		}
+
+		/* reserve sector 0,0 for special occasions, such as
+		   Highlander Tournament dungeon and PvP Arena tower - C. Blue */
+		if (x == WPOS_SECTOR000_X && y == WPOS_SECTOR000_Y) continue; /* ((sector000separation)) */
+
+		/* Already a dungeon/tower here? */
+		if (wild_info[y][x].dungeon || wild_info[y][x].tower) continue;
+
+		/* Don't build them too near to towns
+		 * (otherwise entrance can be within a house) */
+		for (j = 0; j < TOWNS; j++)
+			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA)
+				break;
+		if (j != TOWNS) continue;
+
+		/* Don't put The Orc Caves, Old Forest and Mirkwood too far away from Bree. */
+		if (lowdun_near_Bree) {
+			/* Assume (as in a few other places too) that Bree (town[usually 0].type is 1) is always at cfg.town_x/y */
+
+			/* Hack: x distance is longer than y distance, since sectors are about twice as wide as they are high! */
+			switch (i) {
+			case DI_THE_ORC_CAVE:
+			case DI_OLD_FOREST:
+			case DI_MIRKWOOD:
+				if (distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 20) continue;
+			}
+		}
+
+		/* Place dungeons into terrain they belong to, if any */
+		if (d_info[i].flagsw) switch (wild_info[y][x].type) {
+		case WILD_UNDEFINED: /* of course not usable, still defined/implemented anyway */
+			if (!(d_info[i].flagsw & DFW_WILD_UNDEFINED)) continue;
+			break;
+		case WILD_CLONE: /* of course not usable, still defined/implemented anyway */
+			if (!(d_info[i].flagsw & DFW_WILD_CLONE)) continue;
+			break;
+		case WILD_TOWN:
+			if (!(d_info[i].flagsw & DFW_WILD_TOWN)) continue;
+			break;
+		case WILD_MOUNTAIN:
+			if (!(d_info[i].flagsw & DFW_WILD_MOUNTAIN)) continue;
+			break;
+		case WILD_VOLCANO:
+			if (!(d_info[i].flagsw & DFW_WILD_VOLCANO)) continue;
+			break;
+		case WILD_GRASSLAND:
+			if (!(d_info[i].flagsw & DFW_WILD_GRASSLAND)) continue;
+			break;
+		case WILD_FOREST:
+			if (!(d_info[i].flagsw & DFW_WILD_FOREST)) continue;
+			break;
+		case WILD_DENSEFOREST:
+			if (!(d_info[i].flagsw & DFW_WILD_DENSEFOREST)) continue;
+			break;
+		case WILD_SWAMP:
+			if (!(d_info[i].flagsw & DFW_WILD_SWAMP)) continue;
+			break;
+		case WILD_WASTELAND:
+			if (!(d_info[i].flagsw & DFW_WILD_WASTELAND)) continue;
+			break;
+		case WILD_DESERT:
+			if (!(d_info[i].flagsw & DFW_WILD_DESERT)) continue;
+			break;
+		case WILD_ICE:
+			if (!(d_info[i].flagsw & DFW_WILD_ICE)) continue;
+			break;
+		case WILD_COAST:
+			if (!(d_info[i].flagsw & DFW_WILD_COAST)) continue;
+			break;
+		case WILD_RIVER:
+			if (!(d_info[i].flagsw & DFW_WILD_RIVER)) continue;
+			break;
+		case WILD_LAKE:
+			if (!(d_info[i].flagsw & DFW_WILD_LAKE)) continue;
+			break;
+		case WILD_SHORE1:
+			if (!(d_info[i].flagsw & DFW_WILD_SHORE1)) continue;
+			break;
+		case WILD_SHORE2:
+			if (!(d_info[i].flagsw & DFW_WILD_SHORE2)) continue;
+			break;
+		case WILD_OCEANBED1:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED1)) continue;
+			break;
+		case WILD_OCEANBED2:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEANBED2)) continue;
+			break;
+		case WILD_OCEAN:
+			if (!(d_info[i].flagsw & DFW_WILD_OCEAN)) continue;
+			break;
+		}
 
 		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
+		i++;
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (!Ind) {
-			sx = 2 + rand_int(MAX_WID - 4);
-			sy = 2 + rand_int(MAX_HGT - 4);
+			x = 4 + rand_int(MAX_WID - 8);
+			y = 4 + rand_int(MAX_HGT - 8);
 		} else {
-			sx = Players[Ind]->px;
-			sy = Players[Ind]->py;
+			x = Players[Ind]->px;
+			y = Players[Ind]->py;
 		}
+
 		if (d_info[i].flags1 & DF1_TOWER) {
-			s_printf(" (nldy %d, nldx %d)\n", sy, sx);
-			new_level_down_y(&wpos, sy);
-			new_level_down_x(&wpos, sx);
+			new_level_down_x(&wpos, x);
+			new_level_down_y(&wpos, y);
 		} else {
-			s_printf(" (nluy %d, nlux %d)\n", sy, sx);
-			new_level_up_y(&wpos, sy);
-			new_level_up_x(&wpos, sx);
+			new_level_up_x(&wpos, x);
+			new_level_up_y(&wpos, y);
 		}
-#if 0
-		if ((zcave = getcave(&p_ptr->wpos))) {
-			zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
-		}
-#endif	// 0
-
-//#if DEBUG_LEVEL > 0
-		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
-//#endif	// 0
-
-		tries = 100;
+#if DEBUG_LEVEL > 0
+		s_printf("Dungeon %d is generated in %s [%d,%d].\n", i, wpos_format(0, &wpos), x, y);
+#endif
 	}
+
+	s_printf("Dungeons placed after %d tries.\n", try);
+	return;
 }
 
 /* manipulate flag of the player's wilderness level;
