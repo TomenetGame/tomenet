@@ -18529,6 +18529,8 @@ See the table below about fuse lengths and note the hint about !F inscription.
 
 An alternative method is to just throw the charge, which will auto-arm it.
 (Basically the same conditions as for activating a charge will apply.)
+Thrown charges are inferior to carefully planted ones, and will have reduced
+effect such as smaller blast radius or lower damage.
 
 Obtaining chemicals/ingredients:
 --------------------------------
