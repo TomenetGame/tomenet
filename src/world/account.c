@@ -41,6 +41,7 @@ void l_account(struct wpacket *wpk, struct client *ccl) {
 static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 	FILE *fp;
 	long delpos = 0;
+	int r;
 
 	fp = fopen("tomenet.acc", "rb+");
 	if (fp == (FILE*)NULL) {
@@ -51,7 +52,7 @@ static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 		} else return(0);	/* failed */
 	}
 	while (!feof(fp)) {
-		fread(c_acc, sizeof(struct account), 1, fp);
+		r = fread(c_acc, sizeof(struct account), 1, fp);
 		if (c_acc->flags & ACC_DELD) {
 			if (!delpos) delpos = ftell(fp) - sizeof(struct account);
 			continue;
@@ -83,6 +84,7 @@ static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 	memset((char *)c_acc->pass, 0, 20);
 	fclose(fp);
 	if (c_acc->id) return(1);
+	(void)r;
 	return(0);
 }
 
@@ -103,13 +105,14 @@ static char *t_crypt(char *inbuf, unsigned char *salt) {
 
 int GetAccountID(struct account *c_acc, uint32_t id) {
 	FILE *fp;
+	int r;
 
 	/* we may want to store a local index for fast
 	   id/name/filepos lookups in the future */
 	fp = fopen("tomenet.acc", "rb+");
 	if (fp != (FILE*)NULL) {
 		while (!feof(fp)) {
-			fread(c_acc, sizeof(struct account), 1, fp);
+			r = fread(c_acc, sizeof(struct account), 1, fp);
 			if (id == c_acc->id && !(c_acc->flags & ACC_DELD)) {
 				memset((char *)c_acc->pass, 0, 20);
 				fclose(fp);
@@ -118,6 +121,7 @@ int GetAccountID(struct account *c_acc, uint32_t id) {
 		}
 		fclose(fp);
 	}
+	(void)r;
 	return(0);
 }
 
