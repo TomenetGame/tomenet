@@ -545,8 +545,9 @@ void add_rplayer(struct wpacket *wpk) {
 	unsigned char found = 0;
 #ifdef SORT_BY_SERVER
 	struct rplist *c_pl_scan;
-	struct list *lp_now, *lp_scan, lp_forge, *lp_forge_next;
-	int old_server = -1;
+	struct list *lp_prev, *lp_scan, *lp_scan_prev;
+	int server_prev = -1;
+	bool done;
 #endif
 
 	if (!wpk->d.play.silent)
@@ -582,46 +583,44 @@ void add_rplayer(struct wpacket *wpk) {
 		c_pl = (struct rplist*)lp->data;
 
 		/* Init at first entry read */
-		if (old_server == -1) {
-			old_server = c_pl->server;
+		if (server_prev == -1) {
+			server_prev = c_pl->server;
+			lp_prev = lp;
 			lp = lp->next;
 			continue;
 		}
 
 		/* Critical part - check if server type changed now that we went from previous entry to this one */
-		if (c_pl->server != old_server) {
+		done = FALSE;
+		if (c_pl->server != server_prev) {
 			/* Server changed.
 			   Now all subsequent entries are checked and moved down here if they still refer to the previous server instead of the current, new one. */
-			lp_now = lp;
-			lp_scan = lp_now->next;
-			while (lp_scan) {
+			lp_scan_prev = lp_scan = lp;
+			while ((lp_scan = lp_scan->next)) {
 				c_pl_scan = (struct rplist*)lp_scan->data;
 				/* Found one, move it down here by swapping */
-				if (c_pl_scan->server == old_server) {
-					/* Hack: Swap content, but we don't want to swap the next-pointer */
-					lp_forge = *lp_scan;
-					*lp_scan = *lp_now;
-					*lp_now = lp_forge;
-					/* ..so swap back the next-pointer */
-					lp_forge_next = lp_scan->next;
-					lp_scan->next = lp_now->next;
-					lp_now->next = lp_forge_next;
+				if (c_pl_scan->server == server_prev) {
+					lp_scan_prev->next = lp_scan->next;
+					lp_prev->next = lp_scan;
+					lp_scan->next = lp;
 
-					break; //this is possible, maybe cleaner?
-
-					/* Move on after this one server we sorted in */
-					lp_now = lp_now->next;
-					lp_scan = lp_now;
+					/* After moving around, advance to next entry normally */
+					lp = lp_prev->next;
+					done = TRUE;
+					break;
 				}
-				/* Check next server in the list */
-				lp_scan = lp_scan->next;
+				lp_scan_prev = lp_scan;
 			}
-			/* All done for this server type */
+			/* We did a swap? Continue looking for further hits of the old server type. */
+			if (done) continue;
 
-			/* Remember new server type */
-			old_server = c_pl->server;
+			/* No further servers to sort in, so server type no longer occurs down the list.
+			   So now remember next server type that just appeared. */
+			server_prev = c_pl->server;
 		}
+
 		/* Move on to next server entry */
+		lp_prev = lp;
 		lp = lp->next;
 	}
 #endif
