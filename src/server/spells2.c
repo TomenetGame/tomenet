@@ -4706,6 +4706,9 @@ bool recharge_aux(int Ind, int item, int pow) {
 				/* Diminishing returns for mass-recharging a stack of several devices */
 				dr = 3400 / (10 + 300 / (o_ptr->number + 3)) - 30;
 				i = (t * dr) / 10;
+
+				/* Always gain at least 1 charge */
+				if (!i) i = 1;
 #endif
 			} else { /* Staves */
 #ifndef NEW_RECHARGE_CALC
@@ -4724,6 +4727,9 @@ bool recharge_aux(int Ind, int item, int pow) {
  #else
 				i = ((t * dr) / o_ptr->number) 10;
  #endif
+
+				/* Always gain at least 1 charge */
+				if (!i) i = 1;
 #endif
 			}
 
