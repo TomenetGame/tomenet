@@ -4526,7 +4526,7 @@ F:NO_TELE
 N:523:Resistance
 G:":d
 I:40:15:0
-W:35:0:3:15000
+W:35:0:3:10000
 A:35/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | EASY_KNOW
 D:Provides resistance to fire, cold, acid and lightning.
