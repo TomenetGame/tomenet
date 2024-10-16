@@ -5051,12 +5051,12 @@ void init_charge_wand(void) {
 	charge_wand_rnd[SV_WAND_FIRE_BALL] = 6;		charge_wand_fix[SV_WAND_FIRE_BALL] = 3;
 	charge_wand_rnd[SV_WAND_COLD_BALL] = 7;		charge_wand_fix[SV_WAND_COLD_BALL] = 4;
 	charge_wand_rnd[SV_WAND_WONDER] = 15;		charge_wand_fix[SV_WAND_WONDER] = 8;
-	charge_wand_rnd[SV_WAND_ANNIHILATION] = 2;	charge_wand_fix[SV_WAND_ANNIHILATION] = 1;
-	charge_wand_rnd[SV_WAND_DRAGON_FIRE] = 3;	charge_wand_fix[SV_WAND_DRAGON_FIRE] = 1;
-	charge_wand_rnd[SV_WAND_DRAGON_COLD] = 3;	charge_wand_fix[SV_WAND_DRAGON_COLD] = 1;
-	charge_wand_rnd[SV_WAND_DRAGON_BREATH] = 3;	charge_wand_fix[SV_WAND_DRAGON_BREATH] = 1;
-	charge_wand_rnd[SV_WAND_ROCKETS] = 2;		charge_wand_fix[SV_WAND_ROCKETS] = 1;
-	charge_wand_rnd[SV_WAND_WALL_CREATION] = 4;	charge_wand_fix[SV_WAND_WALL_CREATION] = 3;
+	charge_wand_rnd[SV_WAND_ANNIHILATION] = 3;	charge_wand_fix[SV_WAND_ANNIHILATION] = 2;
+	charge_wand_rnd[SV_WAND_DRAGON_FIRE] = 5;	charge_wand_fix[SV_WAND_DRAGON_FIRE] = 3;
+	charge_wand_rnd[SV_WAND_DRAGON_COLD] = 5;	charge_wand_fix[SV_WAND_DRAGON_COLD] = 3;
+	charge_wand_rnd[SV_WAND_DRAGON_BREATH] = 5;	charge_wand_fix[SV_WAND_DRAGON_BREATH] = 3;
+	charge_wand_rnd[SV_WAND_ROCKETS] = 3;		charge_wand_fix[SV_WAND_ROCKETS] = 2;
+	charge_wand_rnd[SV_WAND_WALL_CREATION] = 4;	charge_wand_fix[SV_WAND_WALL_CREATION] = 4;
 	charge_wand_rnd[SV_WAND_ELEC_BOLT] = 8;		charge_wand_fix[SV_WAND_ELEC_BOLT] = 6;
 	charge_wand_rnd[SV_WAND_TELEPORT_TO] = 3;	charge_wand_fix[SV_WAND_TELEPORT_TO] = 3;
 }
@@ -5087,18 +5087,18 @@ void init_charge_staff(void) {
 	charge_staff_rnd[SV_STAFF_DETECT_EVIL] = 15;	charge_staff_fix[SV_STAFF_DETECT_EVIL] = 8;
 	charge_staff_rnd[SV_STAFF_CURE_SERIOUS] = 5;	charge_staff_fix[SV_STAFF_CURE_SERIOUS] = 6;
 	charge_staff_rnd[SV_STAFF_CURING] = 3;		charge_staff_fix[SV_STAFF_CURING] = 4;
-	charge_staff_rnd[SV_STAFF_HEALING] = 2;		charge_staff_fix[SV_STAFF_HEALING] = 1;
-	charge_staff_rnd[SV_STAFF_THE_MAGI] = 2;	charge_staff_fix[SV_STAFF_THE_MAGI] = 2;
+	charge_staff_rnd[SV_STAFF_HEALING] = 5;		charge_staff_fix[SV_STAFF_HEALING] = 4;
+	charge_staff_rnd[SV_STAFF_THE_MAGI] = 3;	charge_staff_fix[SV_STAFF_THE_MAGI] = 3;
 	charge_staff_rnd[SV_STAFF_SLEEP_MONSTERS] = 5;	charge_staff_fix[SV_STAFF_SLEEP_MONSTERS] = 6;
 	charge_staff_rnd[SV_STAFF_SLOW_MONSTERS] = 5;	charge_staff_fix[SV_STAFF_SLOW_MONSTERS] = 6;
 	charge_staff_rnd[SV_STAFF_SPEED] = 3;		charge_staff_fix[SV_STAFF_SPEED] = 4;
-	charge_staff_rnd[SV_STAFF_PROBING] = 6;		charge_staff_fix[SV_STAFF_PROBING] = 2;
+	charge_staff_rnd[SV_STAFF_PROBING] = 6;		charge_staff_fix[SV_STAFF_PROBING] = 3;
 	charge_staff_rnd[SV_STAFF_DISPEL_EVIL] = 3;	charge_staff_fix[SV_STAFF_DISPEL_EVIL] = 4;
-	charge_staff_rnd[SV_STAFF_POWER] = 3;		charge_staff_fix[SV_STAFF_POWER] = 1;
-	charge_staff_rnd[SV_STAFF_HOLINESS] = 2;	charge_staff_fix[SV_STAFF_HOLINESS] = 2;
-	charge_staff_rnd[SV_STAFF_GENOCIDE] = 2;	charge_staff_fix[SV_STAFF_GENOCIDE] = 1;
+	charge_staff_rnd[SV_STAFF_POWER] = 3;		charge_staff_fix[SV_STAFF_POWER] = 3;
+	charge_staff_rnd[SV_STAFF_HOLINESS] = 4;	charge_staff_fix[SV_STAFF_HOLINESS] = 3;
+	charge_staff_rnd[SV_STAFF_GENOCIDE] = 2;	charge_staff_fix[SV_STAFF_GENOCIDE] = 2;
 	charge_staff_rnd[SV_STAFF_EARTHQUAKES] = 5;	charge_staff_fix[SV_STAFF_EARTHQUAKES] = 3;
-	charge_staff_rnd[SV_STAFF_DESTRUCTION] = 3;	charge_staff_fix[SV_STAFF_DESTRUCTION] = 1;
+	charge_staff_rnd[SV_STAFF_DESTRUCTION] = 3;	charge_staff_fix[SV_STAFF_DESTRUCTION] = 2;
 	charge_staff_rnd[SV_STAFF_STAR_IDENTIFY] = 5;	charge_staff_fix[SV_STAFF_STAR_IDENTIFY] = 3;
 }
 static void charge_staff(object_type *o_ptr) {
