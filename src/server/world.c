@@ -544,8 +544,9 @@ void add_rplayer(struct wpacket *wpk) {
 	struct rplist *n_pl, *c_pl;
 	unsigned char found = 0;
 #ifdef SORT_BY_SERVER
+	struct rplist *c_pl_scan;
 	struct list *lp_now, *lp_scan, lp_forge, *lp_forge_next;
-	struct rplist *c_pl_sort;
+	int old_server = -1;
 #endif
 
 	if (!wpk->d.play.silent)
@@ -577,27 +578,26 @@ void add_rplayer(struct wpacket *wpk) {
 #ifdef SORT_BY_SERVER
 	/* Sort list of players by server */
 	lp = rpmlist;
-	c_pl_sort = NULL;
 	while (lp) {
 		c_pl = (struct rplist*)lp->data;
 
 		/* Init at first entry read */
-		if (!c_pl_sort) {
-			c_pl_sort = c_pl;
+		if (old_server == -1) {
+			old_server = c_pl->server;
 			lp = lp->next;
 			continue;
 		}
 
 		/* Critical part - check if server type changed now that we went from previous entry to this one */
-		if (c_pl->server != c_pl_sort->server) {
+		if (c_pl->server != old_server) {
 			/* Server changed.
 			   Now all subsequent entries are checked and moved down here if they still refer to the previous server instead of the current, new one. */
 			lp_now = lp;
 			lp_scan = lp_now->next;
 			while (lp_scan) {
-				c_pl = (struct rplist*)lp_scan->data;
+				c_pl_scan = (struct rplist*)lp_scan->data;
 				/* Found one, move it down here by swapping */
-				if (c_pl->server == c_pl_sort->server) {
+				if (c_pl_scan->server == old_server) {
 					/* Hack: Swap content, but we don't want to swap the next-pointer */
 					lp_forge = *lp_scan;
 					*lp_scan = *lp_now;
@@ -615,10 +615,10 @@ void add_rplayer(struct wpacket *wpk) {
 				lp_scan = lp_scan->next;
 			}
 			/* All done for this server type */
-		}
 
-		/* Remember current server type */
-		c_pl_sort = c_pl;
+			/* Remember new server type */
+			old_server = c_pl->server;
+		}
 		/* Move on to next server entry */
 		lp = lp->next;
 	}
