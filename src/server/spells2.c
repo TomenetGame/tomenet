@@ -4685,8 +4685,15 @@ bool recharge_aux(int Ind, int item, int pow) {
 			    charge_wand_fix[o_ptr->sval] + randint(charge_wand_rnd[o_ptr->sval] / 2) + charge_wand_rnd[o_ptr->sval] / 4:
 			    charge_staff_fix[o_ptr->sval] + randint(charge_staff_rnd[o_ptr->sval] / 2) + charge_staff_rnd[o_ptr->sval] / 4;
 			/* Recharging power vs k-level affects # of charges, strongly if power is low compared to item level. */
-			tfac = 10 + ((lev + 8) * 30) / (pow - 32);
-			t = (t * 15) / tfac;
+ #if 0
+			//tfac = 10 + ((lev + 8) * 30) / (pow - 32);
+			tfac = 10 + ((lev + 8) * 30) / (pow - 50);
+			t = (t * 39) / tfac;
+ #else
+			tfac = 10 + ((lev + 18) * 30) / (pow - 47);
+			tfac += pow / (lev + 10);
+			t = (t * 42) / tfac;
+ #endif
 #endif
 
 			/* Recharge: correct wand stacking, added stack size diminishing returns (dr) */
