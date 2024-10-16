@@ -8607,6 +8607,7 @@ void kill_houses(int id, byte type) {
 /* XXX maybe this function can delete the objects
  * to prevent 'house-owner char cheeze'	- Jir -
  */
+/* Called when a player is erased (via perma-death or timeout). */
 void kill_objs(int id) {
 	int i;
 
