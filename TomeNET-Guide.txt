@@ -21099,13 +21099,13 @@ Rotting corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison, decent AC.
                     Despite its lack of physical thoughness this is a very
                     underrated form considering all the beneficial abilities.
-Shadow Creature of Fiona
-                 8  Somewhat rare, gives free action and resistance to poison,
-                    darkness and confusion.
 *Phantom warrior 8  Useful only for shamans because it has no limbs!
                     This form can pass solid walls!
                     Also gives fear/sound/insanity resistance, free action,
                     poison immunity, and you won't bleed from cuts.
+Shadow Creature of Fiona
+                10  Somewhat rare, gives free action and resistance to poison,
+                    darkness and confusion.
 Tengu           10  Moves quickly, high HP, good AC, can blink/teleport and
                     more, resists fear and fire, can levitate. A secret tip
                     for form hunters! (Does not occur in packs.)
