@@ -2517,7 +2517,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 			/* Describe the town locations */
 			if (admin)
 				fprintf(fff, " \377%c(%2d,%2d)\377w %-31s  Lev: %3d",
-				    (town[i].flags & TF_KNOWN) ? 'u' : 's',
+				    (town[i].flags & TF_KNOWN) ? 'u' : 'D',
 				    x, y, town_profile[town[i].type].name, town[i].baselevel);
 			else
 				fprintf(fff, " \377u(%2d,%2d)\377w %-31s", x, y,
