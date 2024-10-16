@@ -8620,6 +8620,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 				if (!tk) msg_print(Ind, "Dungeon/tower flags updated.");
+#ifdef DUNGEON_VISIT_BONUS
+				reindex_dungeons();
+#endif
 				return;
 			}
 			else if (prefix(messagelc, "/swap-dun")) {
@@ -8743,6 +8746,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (done) break;
 				}
 				msg_print(Ind, "Done.");
+#ifdef DUNGEON_VISIT_BONUS
+				reindex_dungeons();
+#endif
 				return;
 			}
 			else if (prefix(messagelc, "/debug-pos")) {
