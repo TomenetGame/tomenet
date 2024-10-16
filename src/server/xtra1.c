@@ -1217,7 +1217,7 @@ static void calc_sanity(int Ind) {
 //static void calc_mana(int Ind)
 void calc_mana(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	player_type *p_ptr2 = NULL; /* silence the warning */
+	//player_type *p_ptr2 = NULL; /* silence the warning */
 	//int Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2);
 
 	int levels, cur_wgt, max_wgt, tmp_lev;
