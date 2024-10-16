@@ -2510,13 +2510,15 @@ void do_cmd_knowledge_dungeons(int Ind) {
 		x = town[i].x;
 
 		/* The dungeon has a valid recall depth set */
-		if ((p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
-		    (1U << ((x + y * MAX_WILD_X) % 8))) || admin)
-		{
+		if (((p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
+		    (1U << ((x + y * MAX_WILD_X) % 8)))
+		    && (town[i].flags & TF_KNOWN))
+		    || admin) {
 			/* Describe the town locations */
 			if (admin)
-				fprintf(fff, " \377u(%2d,%2d)\377w %-31s  Lev: %3d", x, y,
-				    town_profile[town[i].type].name, town[i].baselevel);
+				fprintf(fff, " \377%c(%2d,%2d)\377w %-31s  Lev: %3d",
+				    (town[i].flags & TF_KNOWN) ? 'u' : 's',
+				    x, y, town_profile[town[i].type].name, town[i].baselevel);
 			else
 				fprintf(fff, " \377u(%2d,%2d)\377w %-31s", x, y,
 				    town_profile[town[i].type].name);
