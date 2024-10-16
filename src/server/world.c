@@ -607,6 +607,8 @@ void add_rplayer(struct wpacket *wpk) {
 					lp_scan->next = lp_now->next;
 					lp_now->next = lp_forge_next;
 
+					break; //this is possible, maybe cleaner?
+
 					/* Move on after this one server we sorted in */
 					lp_now = lp_now->next;
 					lp_scan = lp_now;
