@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 16. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5610,7 +5610,8 @@ These are unworldly characters with extra penalties:
 -AC is reduced by 50%
 -ESP only works within radius of 20 squares
 -any speed changes above or below +0 are reduced by 50%
--max number of melee attacks per round is reduced by 1.
+-max mana reduced by 25%.
+-max class-based number of melee attacks per round is reduced by 1.
 Hellish characters receive 50% bonus on their high score.
 
 PvP (gameplay almost limited to killing other PvP players)
