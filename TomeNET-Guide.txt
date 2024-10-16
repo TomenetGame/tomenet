@@ -15657,9 +15657,10 @@ process, obviously.
 
 Means of recharging:
 -Scrolls            (60 power)
--Thingol artifact   (60..100 power, depending on magic device skill)
--Shop service       (80 power, see (4.5a))
+-Thingol artifact   (80..110 power, depending on magic device skill)
+-Shop service       (125 power, see (4.5a))
 -Magic spell        (10..140 power)
+ (Tier details: Recharge I 10..84, Recharge II 68..104, Recharge III 111..140)
 
 The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.

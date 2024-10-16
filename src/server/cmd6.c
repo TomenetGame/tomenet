@@ -6687,7 +6687,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_THINGOL:
 			msg_print(Ind, "You hear a low humming noise...");
-			recharge(Ind, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 40));
+			recharge(Ind, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
 			o_ptr->recharging = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 		case ART_COLANNON:

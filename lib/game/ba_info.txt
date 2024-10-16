@@ -234,7 +234,7 @@ I:26:0:D:0
 
 #for Star-Dome
 N:47:Recharge item
-C:1200:1000:750
+C:2400:2000:1600
 I:25:0:r:2
 
 #for Valarin Temple
