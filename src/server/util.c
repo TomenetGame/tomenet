@@ -4544,20 +4544,55 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 }
 
 /* Check for swear words, censor + punish */
-int handle_censor(char *line) {
+int handle_censor(char *message) {
 	int i, j, im, jm, cc[MSG_LEN], offset;
  #ifdef CENSOR_LEET
 	int j_pre = 0, cc_pre[MSG_LEN];
  #endif
-	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
+	char line[MSG_LEN], lcopy[MSG_LEN], lcopy2[MSG_LEN];
 	char tmp1[MSG_LEN], tmp2[MSG_LEN], tmp3[MSG_LEN], tmp4[MSG_LEN];
-	char *word;
+	char *word, *c_p;
 
  #ifdef SMARTER_NONSWEARING
 	/* non-swearing extra check (reduces insignificant characters) */
 	bool reduce;
 	int ccns[MSG_LEN];
  #endif
+
+	/* Create primary working copy */
+	word = message;
+	c_p = line;
+	while (*word) {
+		/* discard all special markers */
+		if (*word >= '\373' && *word <= '\376') {
+			word++;
+			continue;
+		}
+
+		/* discard _valid_ colour codes */
+		if (*word == '\377' ||
+		/* unhack: hlore uses \372 marker at the beginning as replacemen for \377, kdiz uses it later on in the line */
+		    *word == '\372') {
+			switch (word[1]) {
+			case '\377':
+				*c_p = '{';
+				c_p++;
+				/* fall through */
+			case '-':
+			case '.':
+				word++;
+				break;
+			default:
+				/* if no valid colour code symbol, treat as normal character, else skip it too */
+				if (color_char_to_attr(word[1]) != -1) word++;
+			}
+		} else {
+			*c_p = *word;
+			c_p++;
+		}
+		word++;
+	}
+	*c_p = *word; /* null-terminate */
 
 	strcpy(lcopy, line);
 
