@@ -2420,7 +2420,7 @@ void merchant_mail_death(const char pname[CNAME_LEN]);
 #endif
 
 extern byte Morgoth_x, Morgoth_y, Morgoth_z;
-extern void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr);
+extern void death_drop_object(player_type *p_ptr, int slot, object_type *o_ptr);
 extern void update_sanity_bars(player_type *p_ptr);
 
 

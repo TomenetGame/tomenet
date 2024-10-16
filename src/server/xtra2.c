@@ -10819,12 +10819,17 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 }
 
 /* Drop an item on player's death */
-void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
+void death_drop_object(player_type *p_ptr, int slot, object_type *o_ptr) {
 	bool away = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 
+
+	/* ---------- 1st: Erase the item for good? ---------- */
+
+
 	if (o_ptr->questor) { /* questor items cannot be 'dropped', only destroyed! */
 		questitem_d(o_ptr, o_ptr->number);
+		invwipe(o_ptr);
 		return;
 	}
 
@@ -10832,20 +10837,18 @@ void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
 	if ((p_ptr->mode & MODE_SOLO) && true_artifact_p(o_ptr)) {
 		handle_art_d(o_ptr->name1);
 		questitem_d(o_ptr, o_ptr->number);
+		invwipe(o_ptr);
 		return;
 	}
 
-	/* Set all his true artifacts back to normal-speed timeout */
-	if (p_ptr->tmp_y && !cfg.fallenkings_etiquette &&
-	    o_ptr->name1 &&
-	    o_ptr->name1 != ART_RANDART)
-		a_info[o_ptr->name1].winner = FALSE;
-
 	/* If we committed suicide.. */
 	if (p_ptr->suicided) {
-		/* only drop artifacts -- new 2022: don't drop level 0 (ie untradable) artifacts (Nazgul rings littering Bree) */
+		/* only drop artifacts -- new 2022: but don't drop level 0 (ie untradable) artifacts (Nazgul rings littering Bree) */
 		 if (!artifact_p(o_ptr) || !o_ptr->level) {
+			/* set the artifact as unfound */
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 			questitem_d(o_ptr, o_ptr->number);
+			invwipe(o_ptr);
 			return;
 		}
 
@@ -10856,10 +10859,11 @@ void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
 			/* set the artifact as unfound */
 			handle_art_d(o_ptr->name1);
 			/* Don't drop the artifact */
+			invwipe(o_ptr);
 			return;
 		}
 	} else if (p_ptr->tmp_x) { /* Character erased? */
-		/* If we were a total winner, don't drop any true artifacts and never drop level 0 true artifacts */
+		/* If we were a total winner, don't drop any true artifacts; and even if we weren't, never drop level 0 true artifacts */
 		if (true_artifact_p(o_ptr) &&
 		    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
 		    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette) ||
@@ -10867,17 +10871,38 @@ void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
 			/* set the artifact as unfound */
 			handle_art_d(o_ptr->name1);
 			/* Don't drop the artifact */
+			invwipe(o_ptr);
 			return;
 		}
-		/* Don't drop Nazgul rings or final-artifacts as they are level 0 and hence unsuable to anyone */
+
+		/* Don't drop Nazgul (randart) rings or final-artifacts as they are level 0 and hence unsuable to anyone */
 		if (artifact_p(o_ptr) && !o_ptr->level) {
 			/* set the artifact as unfound */
 			if (o_ptr->name1 != ART_RANDART) handle_art_d(o_ptr->name1);
 			else questitem_d(o_ptr, o_ptr->number);
 			/* Don't drop the artifact */
+			invwipe(o_ptr);
+			return;
+		}
+
+		/* Since level-0-artifacts were handled above, we can now eat all non-artifact non-transferrable items:
+		   Starter items and level 0 items that aren't rescue-exchangeable either */
+		if (((o_ptr->mode & MODE_STARTER_ITEM) || !o_ptr->level) && !exceptionally_shareable_item(o_ptr)) {
+			questitem_d(o_ptr, o_ptr->number);
+			invwipe(o_ptr);
 			return;
 		}
 	}
+
+
+	/* ---------- 2nd: Drop/scatter the item! ---------- */
+
+
+	/* Set all his true artifacts back to normal-speed timeout */
+	if (p_ptr->tmp_y && !cfg.fallenkings_etiquette &&
+	    o_ptr->name1 &&
+	    o_ptr->name1 != ART_RANDART)
+		a_info[o_ptr->name1].winner = FALSE;
 
 	/* Drop/scatter an item? */
 	if (!is_admin(p_ptr) && !p_ptr->inval &&
@@ -10890,7 +10915,7 @@ void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
 #endif
 	    ) {
 #ifdef VAMPIRES_INV_CURSED
-		if (i >= INVEN_WIELD) {
+		if (slot >= INVEN_WIELD) {
 			if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
 			else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
