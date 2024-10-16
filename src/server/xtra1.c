@@ -1465,7 +1465,6 @@ void calc_mana(int Ind) {
 		}
 	}
 
-
 #if 1 /* now not anymore done in calc_boni (which is called before calc_mana) */
 	/* Assume player not encumbered by armor */
 	p_ptr->awkward_armor = FALSE;
@@ -1516,18 +1515,22 @@ void calc_mana(int Ind) {
 	}
 #endif
 
-
-	/* --- finalize --- */
-
 	/* Istari being purely mana-based thanks to mana shield don't need @ form at all,
 	   so vampire istari could get free permanent +5 speed from vampire bat form.
 	   Prevent that here: */
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) new_mana /= 3; //for both, RI_VAMPIRE_BAT and RI_VAMPIRIC_MIST
 
+	/* Hard/Hellish mode also gives mana penalty */
+	if (p_ptr->mode & MODE_HARD) new_mana = (new_mana * 3) / 4;
+
+
+	/* --- finalize --- */
+
 	/* give at least 1 MP under normal circumstances */
 	if (new_mana <= 0) new_mana = 1;
 
-	if (Ind2) new_mana += p_ptr2->mmp / 2;
+	/* Mindlink adds target's mana to ours */
+	//if (Ind2) new_mana += p_ptr2->mmp / 2;
 
 	/* Some classes dont use mana */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
@@ -4654,8 +4657,10 @@ void calc_boni(int Ind) {
 	p_ptr->antimagic_dis += (am_bonus / 15);
 #endif
 
+#if 0 /* instead already and directly in calc_mana() */
 	/* Hard/Hellish mode also gives mana penalty */
 	if (p_ptr->mode & MODE_HARD) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
+#endif
 
 	/* Check for temporary blessings */
 	if (p_ptr->bless_temp_luck
