@@ -10741,7 +10741,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
-		o_ptr->level = 1;
+		o_ptr->level = 0;
 		(void)inven_carry(Ind, o_ptr);
 	}
 
