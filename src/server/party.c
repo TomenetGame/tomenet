@@ -1411,6 +1411,12 @@ static bool party_name_legal(int Ind, char *name) {
 		return(FALSE);
 	}
 
+	/* optional, but tired of lame names */
+	if (strlen(name) < PARTY_NAME_MIN_LEN) {
+		msg_format(Ind, "\377yParty name must have at least %d characters!", PARTY_NAME_MIN_LEN);
+		return(FALSE);
+	}
+
 	strncpy(buf2, name, NAME_LEN);
 	buf[NAME_LEN - 1] = '\0';
 	/* remove spaces at the beginning */
@@ -1486,6 +1492,12 @@ static bool guild_name_legal(int Ind, char *name) {
 
 	if (strlen(name) >= NAME_LEN) {
 		msg_format(Ind, "\377yGuild name must not exceed %d characters!", NAME_LEN - 1);
+		return(FALSE);
+	}
+
+	/* optional, but tired of lame names */
+	if (strlen(name) < GUILD_NAME_MIN_LEN) {
+		msg_format(Ind, "\377yGuild name must have at least %d characters!", GUILD_NAME_MIN_LEN);
 		return(FALSE);
 	}
 

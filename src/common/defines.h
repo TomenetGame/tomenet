@@ -226,6 +226,9 @@
 
 /* max length of party/guild names + 1 */
 #define NAME_LEN		20
+/* minimum length of party/guild names, to prevent too lame names */
+#define PARTY_NAME_MIN_LEN	3
+#define GUILD_NAME_MIN_LEN	3
 /* max length of login info + 1 */
 #define CNAME_LEN		16
 #define ACCNAME_LEN		16

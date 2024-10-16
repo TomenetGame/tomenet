@@ -1551,6 +1551,9 @@ static void rd_guilds() {
 			guilds[i].dna += rand_int(0xFFFF);
 		}
 		rd_string(guilds[i].name, 80);
+		if (strlen(guilds[i].name)) /* No need to manipulate names of non-existant parties */
+			while (strlen(guilds[i].name) < GUILD_NAME_MIN_LEN)
+				strcat(guilds[i].name, "X");
 		rd_s32b(&guilds[i].master);
 		rd_s32b(&guilds[i].members);
 		if (!s_older_than(4, 5, 2)) {
@@ -1599,6 +1602,9 @@ static void rd_party(int n) {
 
 	/* Party name */
 	rd_string(party_ptr->name, NAME_LEN);
+	if (strlen(party_ptr->name)) /* No need to manipulate names of non-existant parties */
+		while (strlen(party_ptr->name) < PARTY_NAME_MIN_LEN)
+			strcat(party_ptr->name, "X");
 
 	/* Party owner's name */
 	rd_string(party_ptr->owner, NAME_LEN);
@@ -3710,9 +3716,8 @@ errr rd_server_savefile() {
 	}
 
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++) {
-		rd_party(i);
-	}
+	for (i = 0; i < tmp16u; i++) rd_party(i);
+
 	if (s_older_than(4, 2, 4)) {
 		for (i = tmp16u; i < MAX_PARTIES; i++) {
 			/* HACK Initialize new parties just to make sure they'll work - mikaelh */
