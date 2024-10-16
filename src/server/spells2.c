@@ -10425,7 +10425,16 @@ void grind_chemicals(int Ind, int item) {
 		return;
 	}
 	if (artifact_p(o_ptr)) {
+		/* Same relevation as on attempting to cmd_destroy() an artifact: */
+		cptr feel = "special";
+
 		msg_print(Ind, "Artifacts cannot be ground.");
+
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
+		o_ptr->note = quark_add(feel);
+		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
+		Players[Ind]->notice |= (PN_COMBINE);
+		Players[Ind]->window |= (PW_INVEN | PW_EQUIP);
 		return;
 	}
 	if (o_ptr->tval == TV_CHEST && o_ptr->pval > 0) {
