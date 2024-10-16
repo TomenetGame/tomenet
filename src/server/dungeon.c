@@ -7693,6 +7693,18 @@ static void scan_objs() {
 		    o_ptr->marked2 == ITEM_REMOVAL_HOUSE)
 			continue;
 
+		/* Take care of items of an erased player, which aren't usable by anyone anymore, inside the inn too. */
+		if (o_ptr->owner == MAX_ID + 1) {
+			/* Eat all non-transferrable items:
+			   Starter items and level 0 items that aren't rescue-exchangeable either */
+			if (((o_ptr->mode & MODE_STARTER_ITEM) || !o_ptr->level) && !exceptionally_shareable_item(o_ptr)) {
+				delete_object_idx(i, TRUE);
+				cnt++;
+				dcnt++;
+				continue;
+			}
+		}
+
 		/* Make town Inns a safe place to store (read: cheeze) items,
 		   at least as long as the town level is allocated. - C. Blue */
 		if ((zcave = getcave(&o_ptr->wpos))
