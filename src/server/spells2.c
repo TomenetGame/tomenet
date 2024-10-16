@@ -4534,9 +4534,12 @@ bool recharge(int Ind, int num) {
  *
  * XXX XXX XXX Perhaps we should auto-unstack recharging stacks.
  */
+/* Use charge_wand()/charge_staff() values instead of old calculation based purely on k_level?.
+   Could also implement for rods, which still uses the old way. */
+#define NEW_RECHARGE_CALC
 bool recharge_aux(int Ind, int item, int pow) {
 	player_type *p_ptr = Players[Ind];
-	int i, t, lev, dr;
+	int i, t, tfac, lev, dr;
 	object_type *o_ptr;
 
 	/* Special hack marker */
@@ -4613,7 +4616,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 		}
 	}
 
-	/* Recharge wand/staff -- Note: Currently charge_wand()/charge_staff() are used only for item generation but not here. */
+	/* Recharge wand/staff */
 	else {
 		/* Allow !D inscription to auto-discharge an item before recharging it? */
 		if (check_guard_inscription(o_ptr->note, 'D')) o_ptr->pval = 0;
@@ -4673,8 +4676,18 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 		/* Recharge */
 		else {
-			/* Extract a "power" */
-			t = (pow / (lev + 2)) + 1;
+#ifndef NEW_RECHARGE_CALC /* old way, without using charge_wand()/charge_staff() values */
+			/* Calculate a base charges amount - (wand levels are 2..75, staff levels are 5..80; pow is 60..140) */
+			t = (pow / (lev + 2)) + 1; // -> 16..36 (lv2), 1..2 (lv75) for wands; 9..21 (lv5), 1..2 (lv80) for staves
+#else /* new way, using charge_wand()/charge_staff() values */
+			/* Calculate a base charges amount */
+			t = o_ptr->tval == TV_WAND ?
+			    charge_wand_fix[o_ptr->sval] + randint(charge_wand_rnd[o_ptr->sval] / 2) + charge_wand_rnd[o_ptr->sval] / 4:
+			    charge_staff_fix[o_ptr->sval] + randint(charge_staff_rnd[o_ptr->sval] / 2) + charge_staff_rnd[o_ptr->sval] / 4;
+			/* Recharging power vs k-level affects # of charges, strongly if power is low compared to item level. */
+			tfac = 10 + ((lev + 8) * 30) / (pow - 32);
+			t = (t * 15) / tfac;
+#endif
 
 			/* Recharge: correct wand stacking, added stack size diminishing returns (dr) */
 			/* Wands stack, so recharging must multiply the power.
@@ -4684,24 +4697,33 @@ bool recharge_aux(int Ind, int item, int pow) {
 			    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra2)
 #endif
 			    ) {
-				/* Recharge based on the power */
-				//if (t > 0) o_ptr->pval += (2 * o_ptr->number) + rand_int(t * o_ptr->number);
-
+#ifndef NEW_RECHARGE_CALC
 				/* allow dr to factor in more: */
-				//Diminishing returns start at number=10: ' * (1050 / (10 + 1000 / (o_ptr->number + 4)) - 4) '
 				//Diminishing returns start at number=3~: ' * (450 / (10 + 400 / (o_ptr->number + 3)) - 3) '
 				dr = 4500 / (10 + 400 / (o_ptr->number + 3)) - 30;
 				if (t > 0) i = (3 * dr) / 10 + rand_int(t * dr) / 10;
-			} else {
-				/* Recharge based on the power */
-				//if (t > 0) i = 2 + randint(t);
-
+#else
+				/* Diminishing returns for mass-recharging a stack of several devices */
+				dr = 3400 / (10 + 300 / (o_ptr->number + 3)) - 30;
+				i = (t * dr) / 10;
+#endif
+			} else { /* Staves */
+#ifndef NEW_RECHARGE_CALC
 				/* allow dr to factor in more: */
 				dr = 4500 / (10 + 400 / (o_ptr->number + 3)) - 30;
-#ifdef NEW_MDEV_STACKING
+ #ifdef NEW_MDEV_STACKING
 				if (t > 0) i = 1 + (rand_int((t + 2) * dr)) / 10;
-#else
+ #else
 				if (t > 0) i = 1 + (rand_int((t + 2) * dr) / o_ptr->number) / 10;
+ #endif
+#else
+				/* Diminishing returns for mass-recharging a stack of several devices */
+				dr = 3400 / (10 + 300 / (o_ptr->number + 3)) - 30;
+ #ifdef NEW_MDEV_STACKING
+				i = (t * dr) / 10;
+ #else
+				i = ((t * dr) / o_ptr->number) 10;
+ #endif
 #endif
 			}
 
