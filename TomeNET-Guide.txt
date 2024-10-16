@@ -11786,10 +11786,11 @@ especially skilled at one of the four masteries you might want to pick that one
 to save skill points (for example Half-Trolls get a bonus on Blunt-mastery).
 
 Also, priests cannot use edged weapons that aren't 'blessed' (the 'BLESSED'
-item flag, which at the time of writing appears in the 'Blessed', 'of Aman'
-and 'of Life' ego powers), so if you want to create a melee-oriented priest,
-you will usually pick blunt weapons (or 'Martial Arts' instead, for weaponless
-combat, making more for a monk-style character).
+item flag, which at the time of writing appears in the 'Blessed', 'of Aman' and
+'of Life' ego powers and also on some true artifacts and some random artifacts)
+so if you want to create a melee-oriented priest, you will usually pick blunt
+weapons (or 'Martial Arts' instead, for weaponless combat, making more for a
+monk-style character).
 However, priests can use all 'blessed' weapons as if they were blunt-type! That
 means their blunt-mastery skill will apply to them, even if they are swords,
 axes or polearms.
@@ -13378,8 +13379,9 @@ BLESSED ('It has been blessed by the gods')
         actually blunt-type but a sword, axe or polearm instead. This specialty
         about weapon skill only affects priests.
 
-        The 'BLESSED' item flag at the time of writing appears in the 'Blessed',
-        the 'of Aman' and the 'of Life' weapon ego powers.
+        The 'BLESSED' flag at the time of writing appears in the 'Blessed', the
+        'of Aman' and the 'of Life' weapon ego powers, and some true artifacts
+        and some random artifacts may also have the BLESSED flag.
 
         Blessed weapons will have adverse effects on corrupted (the Maia trait)
         characters and on characters of vampire race or hell knight class. If
