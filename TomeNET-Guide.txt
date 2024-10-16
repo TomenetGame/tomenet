@@ -2260,7 +2260,7 @@ The ! inscriptions:
     Now you cannot destroy or drop the scroll anymore (keys to destroy and
     to drop an item are 'k' respectively 'd').
     However, you can still 'r'ead the scroll, because the 'r' in the "rawr"
-    part is not parsed as it is separated by a space from the "!.." sequence.
+    part is not parsed as it is separated by a space from the "!..." sequence.
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
     !* inscription, this is a "combo" shortcut inscription.
@@ -11785,10 +11785,14 @@ You may wonder which one to choose and why. In general, if your character is
 especially skilled at one of the four masteries you might want to pick that one
 to save skill points (for example Half-Trolls get a bonus on Blunt-mastery).
 
-Also, priests cannot use edged weapons that aren't 'blessed' (a special magical
-property, ie ego-power), so if you want to create a melee-oriented priest,
+Also, priests cannot use edged weapons that aren't 'blessed' (the 'BLESSED'
+item flag, which at the time of writing appears in the 'Blessed', 'of Aman'
+and 'of Life' ego powers), so if you want to create a melee-oriented priest,
 you will usually pick blunt weapons (or 'Martial Arts' instead, for weaponless
 combat, making more for a monk-style character).
+However, priests can use all 'blessed' weapons as if they were blunt-type! That
+means their blunt-mastery skill will apply to them, even if they are swords,
+axes or polearms.
 
 However, aside from just skill point calculations there are some advantages and
 drawbacks to each weapon class, so you may want to consider the following table
@@ -13233,6 +13237,7 @@ XTRA_SHOTS
         ('It fires missiles excessively fast.')
         This ranged weapon can fire an extra shot per round, see your number of
         shots per round go up in 'C' character overview screen.
+
         For trap kits, the number of shots they fire can actually increase by
         more than one, depending on their pval (the number in parentheses, for
         example '(+2)' would fire 2 extra shots).
@@ -13241,6 +13246,7 @@ XTRA_MIGHT
         ('It fires missiles with extra might.')
         This ranged weapon fires more damaging shots: Its damage multiplier is
         increased by 1 above the usual multiplier for this weapon type.
+
         For example a Long Bow of Extra might would show a (x4) multiplier,
         although Long Bows usually have a (x3) multiplier.
         Note that the multiplier may also affect the maximum shooting range.
@@ -13249,6 +13255,7 @@ MANA ('It affects your mana capacity.')
         For istari and runemasters, this Will increase your total mana points
         by +x0%. Example: Gloves of the magi (+3) increase your mana by 30%.
         For other classes, the increase will be a bit smaller.
+
         MANA items _add_ to each other, they aren't multiplied.
         MANA affects your complete mana pool, including the additional MP
         (mana points) a character gained from 'Magic' skill, except for the
@@ -13257,6 +13264,7 @@ MANA ('It affects your mana capacity.')
 LIFE ('It affects your hit points.')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
+
         LIFE items _add_ to each other, they aren't multiplied.
         The maximum total +LIFE bonus a character can achieve is +3 (cap).
         (For mimics, the +LIFE effect might be less since their HP in
@@ -13264,6 +13272,7 @@ LIFE ('It affects your hit points.')
         to mimics' final HP but the lower base HP.)
         LIFE affects your complete hit point pool, including the additional
         HP a character gained from 'Health' skill.
+
         +LIFE on randarts will (depending on server options, see ~i in-game)
         usually only affect player characters who are royalty ie winners who
         have beaten Morgoth and hence have a violet coloured name in chat.
@@ -13298,6 +13307,7 @@ DRAIN_EXP ('It drains your life force')
         you. BUt if your XP happen to fall below the threshold (ie from some
         other attack/effect you suffer) the DRAIN_EXP effect will kick in again
         and further drain your exp down to the next level threshold.
+
         This effect stacks with diminishing returns, so eg wearing two items
         that drain exp will drain less than twice the amount one item drains.
         While in town areas (that means dungeon towns, normal towns and the
@@ -13315,6 +13325,7 @@ LUCK ('It affects your luck.')
         Luck caps at 40 (and -10 downwards), having higher bonus won't help any
         more. The higher your luck is, the more diminishing is the effect of
         increasing it even more.
+
         Find 'better items' means that you have a higher chance to get good or
         great items instead of normal (ie unenchanted) items when killing
         monsters or find an item from digging.
@@ -13326,6 +13337,7 @@ LUCK ('It affects your luck.')
         not affect how great its ego powers or artifact abilities are though.
         Luck has NO effect on 'acquirement', 'artifact creation' or on items
         you obtain from chests.
+
         Also luck does NOT affect which base item type drops, ie whether it is
         a dragon scale mail or a cloth hat.
 
@@ -13333,11 +13345,13 @@ NO_MAGIC ('Anti-magic shell')
         Raises your saving throw to 95%, making you nearly immune to malicious
         magical status effects that depend on your character doing a saving
         throw check to resist, see 'Saving Throw' under (7.3) for a list.
+
         The anti-magic shell will not prevent monsters from casting spells or
         reduce or negate any damage taken from most magic spells though -
         exceptions being monster curses ("points at you and curses/screaming
         the word DIE!"), dispelling attacks and psi-based attacks, because all
         of these are indeed affected by your saving throw.
+
         It also prevents you from using any magic device or casting spells.
         You can still use scrolls and potions though. For more information
         about Saving Throw see (7.3).
@@ -13347,12 +13361,13 @@ ANTIMAGIC ('Anti-magic field')
         prevents nearby monsters and other players from casting spells (but
         not from using magic devices). You can still use scrolls and potions
         as usual, but their effect duration might get reduced.
-        The field has no adverse effect on party members.
+
         The radius is approximately the field power / 9, and is cumulative
         to the 'Anti-magic' skill. The field power is the chance of
         suppressing a spell. It caps at 75% and is cumulative to the
         'Anti-magic' skill. Make sure to read up on anti-magic skill at (7.2).
         The anti-magic field's radius caps at range 9.
+
         Your party members are not affected by your anti-magic field.
         Also see "Dark Sword" details in (5.9).
 
@@ -13362,9 +13377,14 @@ BLESSED ('It has been blessed by the gods')
         'Blunt-mastery' skill applied to any blessed weapon, even if it isn't
         actually blunt-type but a sword, axe or polearm instead. This specialty
         about weapon skill only affects priests.
+
+        The 'BLESSED' item flag at the time of writing appears in the 'Blessed',
+        the 'of Aman' and the 'of Life' weapon ego powers.
+
         Blessed weapons will have adverse effects on corrupted (the Maia trait)
         characters and on characters of vampire race or hell knight class. If
         they are melee weapons they will increase spell casting failure chance.
+
         Everyone else can use blessed weapons just the same way as any other
         weapons.
 
@@ -13376,6 +13396,7 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         Has a chance that the weapon damage dice result is multiplied on
         hitting, you'll see 'Your weapon cuts deep into your enemy'.
         Brand/slay effects will further increase the damage, if applicable.
+
         VORPAL requires an edged weapon, so swords, axes and several polearms
         can obtain 'VORPAL' mod via "Sharp" or "Spinning" ego power.
         Regarding randarts, only sword-type weapons and razor boomerangs are
@@ -13393,12 +13414,13 @@ CRIT    ('It affects your ability to score critical hits.')
         bonus will not affect your melee attacks.
         If the item is not a weapon (eg a piece of armour or a ring) then it
         will affect all of your physical attacks, including throwing items.
+
         For more information about critical strikes and attacks, see the
         description of the "Critical-strike" skill in (7.2).
-        CRIT requires light (up to 100 lbs) swords or polearms via "Perfection"
-        ego power, but can also spawn on random artifact gloves and all types
-        of random artifact weapons -including boomerangs- regardless of their
-        weight.
+        The CRIT flag spawns on light (up to 100 lbs) swords or polearms via
+        the "Perfection" ego power, but can also spawn on random artifact
+        gloves and all types of random artifact weapons -including boomerangs-
+        regardless of their weight.
 
 CHAOTIC ('It produces chaotic effects.')
         On hitting, you have a 50% chance to do one of the following:
@@ -13413,6 +13435,7 @@ CHAOTIC ('It produces chaotic effects.')
         f) clone target aka duplicate the monster it hits. Note that the clone
            does not give experience, drop items, or give form credit for
            mimicry users.
+
         Note that most of these have an *extremely* low chance to occur.
         Most of the time the vampirism or confusion effect is chosen.
         'Chaotic' effects can only happen on melee attacks.
@@ -13537,25 +13560,27 @@ Dark Sword      Dark Swords have a so-called 'anti-magic field', which
                 who try to cast spells but doesn't affect their magic devices.
                 You can still use scrolls and potions, but their effect
                 duration might get reduced.
+
                 The chance to interrupt spellcasters is 30% minus 3/5 of the
                 to-hit and to-dam values of the dark sword. Example:
                 A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
                 interrupting spellcasters.
-                The radius of the anti-magic field is several fields (chance
-                to interrupt spells, divided by 9), getting smaller if the
-                chance is smaller than 30%.
-                Your party members are not affected by your anti-magic field.
                 Dark Swords never give more than 30% AM, even if tohit and
                 todam boni added together result in a negative number.
                 They also never give 'negative anti-magic', 0% AM is the
                 minimum, even if tohit+todam are greater than its AM.
-                AC boni on Dark Swords won't affect the anti-magic field.
+                AC boni/mali on Dark Swords won't affect the anti-magic field.
+
+                The radius of the anti-magic field is several fields (chance
+                to interrupt spells, divided by 9), getting smaller if the
+                chance is smaller than 30%.
+                Your party members are not affected by your anti-magic field.
+
                 The anti-magic chance and field radius of a dark sword stacks
                 with the 'Anti-magic' skill (see (7.2)).
 
                 Note that if you dual-wield dark swords the stronger AM field
                 will override the weaker one, so they don't stack.
-
                 Similarly, if there are multiple players around nearby who have
                 anti-magic fields affecting the same monster then only the
                 strongest AM field will work, overriding the weaker ones.
@@ -13574,6 +13599,7 @@ Blade of Chaos  Grants chaos resistance and produces chaotic effects on hits,
                 which in most cases means either life drain or confuse target,
                 with other (in turn detrimental to the wielder) effects being
                 very rare, see (5.8) for details on CHAOTIC flag.
+
                 As a specialty, this weapon will never gain ego powers or
                 artifact powers that harm (aka hit point drain) an undead or
                 demonic wielder.
@@ -13617,30 +13643,34 @@ Weapons of Morgul
                 these weapons will get their mali reversed into boni when you
                 equip them, working in your favour! That doesn't mean their
                 curse is broken, though..
+
+                Wielding a weapon of Morgul will allow you to see the invisible
+                but also infect you with Black Breath, drain your experience
+                and aggravate nearby monsters.
+
                 Since they have a heavy curse on them, if you want to get rid
                 of them you will need to either use a scroll of *remove curse*
                 or use enchant scrolls to break it. For details about the trick
                 with enchant-scrolls, which are usually much cheaper, see the
                 paragraph '(5.12) Curses'.
-                Wielding a weapon of Morgul will allow you to see the invisible
-                but also infect you with Black Breath, drain your experience
-                and aggravate nearby monsters.
                 Note that this weapon can auto-recurse itself when you move it
                 between equipment and inventory, so when you uncursed it drop
                 it to the ground right away!
+
                 If you find a weapon of morgul, inscribe it '!w' to prevent
                 wielding it accidentally.
                 Wielded against Nazgul however, Morgul weapons will greatly
                 resist destruction on touching them, same as artifacts and
                 the Stormbringer do!
 
-Weapons of Nothingness
+Weapons of Nothingness    (Currently disabled, cannot be found)
                 Similarly terribly cursed as weapons of Morgul. You are unable
                 to strike while wielding this weapon. There is noone who can
                 possibly make use of these, as they simply refuse to work.
                 Fortunately you can just drop or destroy these weapons via
                 'd' and 'k' keys just like any other items, just make sure you
                 never ever accidentally wield one.
+
                 See 'Weapons of Morgul' right above on how to break the curse
                 of this weapon to get rid of it, as these kinds both are
                 heavily cursed.
@@ -13713,6 +13743,7 @@ Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
                 'winner' meaning queens, kings, empresses and emperors.
                 (These armour pieces usually have a level requirement of 51 or
                 more and can have special boni not found on other armour.)
+
                 'Royal armour' is not a base item name itself but just
                 describes various types of adamantite and mithril heavy armour
                 or shields that will display
@@ -13742,10 +13773,12 @@ Berserk Strength
 
 Blood           Cannot be found or bought, but only gathered from fountains of
                 blood which are found in the Paths of the Dead. These feed true
-                vampires, but they expire after some time. This process can be
-                delayed by carrying snow in your backpack, obtaining an aura
-                of cold, avoiding an aura of fire, sticking to cold terrain, or
-                being proficient in Water wizardry school (at least 8.000).
+                vampires, but they expire after some time.
+
+                Their expiry process can be delayed by carrying snow in your
+                backpack, obtaining an aura of cold, avoiding an aura of fire,
+                sticking to cold terrain, or being proficient in Water wizardry
+                school (at least 8.000).
                 If the carrier is of white draconian lineage that also helps,
                 while being of red draconian lineage will accelerate going bad.
                 Since vampires don't emanate much body heat, they are also good
@@ -13786,9 +13819,11 @@ Detonations / Death
                 Also, handle with caution! Make sure those won't shatter in
                 your backpack when you're hit by potion-damaging effects, or
                 you might not see the next sunrise.
+
                 If thrown (press 'v' to throw an item) these potions show the
                 strongest effect by far of all potions - devastating!
                 Accordingly useful to be used in fumes traps.
+
                 Death potions can be consumed by undead without taking damage
                 and they will even restore their stamina.
 
@@ -13804,11 +13839,12 @@ Experience      Gives you additionally half your current experience plus 10,
                 but only up to a maximum of +100,000 points. So you'll get the
                 most out of it if you quaff it when you reached 200,000 exp.
                 (Ok, 199,980 - thanks Sav...)
-                However, some players prefer to quaff it earlier, when it's
-                especially hard for them to reach the next level for some
-                reason, maybe harder than if they were at 200,000 exp already.
                 The XP gain from this potion is not affected by the experience
                 gain penalties (exp ratio) of your class or race.
+
+                Some players prefer to quaff it earlier, when it's especially
+                hard for them to reach the next level for some reason, maybe
+                harder than if they were at 200,000 exp already.
 
 Heroism         Temporary effects: Increases CHP and MHP by 10. Removes fear.
                 +12 bonus to-hit, compare (4.11b). ("You feel like a hero!")
@@ -13867,12 +13903,15 @@ Acquirement     Gives you a great item, generated randomly (may sometimes be
                 very great and sometimes less great).
                 Reading it on deeper dungeon levels produces better results in
                 general (although the outcome is still pretty random).
+
                 Note that while some towns also have a high level, reading this
                 scroll in town won't guarantee a 'great' item, which will
                 be guaranteed if you read it in the dungeon.
+
                 What you usually do: Either try to quickly visit a really deep
                 dungeon level just to read the scroll, grab the item and get
                 out of there. Or sell it to a town store for good cash.
+
                 Acquirement is not affected by 'luck'.
                 Acquirement does have a chance to produce artifacts.
 
@@ -13881,6 +13920,7 @@ Acquirement     Gives you a great item, generated randomly (may sometimes be
 Aggravate Monsters
                 Wakes up all monsters within about twice the maximum sight
                 range (a constant defaulting to 20, so aggrav. radius is ~40).
+
                 Unlike static aggravation (from item flag) this hastes all
                 monsters in your line of sight (same as SHRIEK ability or traps
                 of aggravation or the "/scream" command).
@@ -13896,11 +13936,13 @@ Holy Prayer     Temporarily increases your AC by 8 (blessing), 14 (holy chant)
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
+
                 Everyone on the server will receive messages about that blood
                 bond been formed: "<player A> blood bonds with <player B>".
                 If you don't see this message, you did something wrong. Get
                 another scroll and repeat the blood bonding until you see the
                 correct confirmation message.
+
                 Your characters will automatically be hostile to each other,
                 so you can fight in a friendly duel. This even works in town,
                 which otherwise is a safe zone from PvP.
@@ -13934,21 +13976,26 @@ Cheque          These are automatically generated in player stores when someone
 Deed            Some of the parchments are deeds, which are used as rewards
                 for various purpose, such as events (see (4.13)) and
                 pvp fights of PvP mode-characters (see (7.13)).
+
                 Press 'r' to read a deed, which will usually tell you what to
                 do with it. In most cases, you have to turn it in at the
                 mayor's office in Bree (one of the '+' doors in town).
+
                 Some deeds can be traded to other characters, but usually they
                 will get a lesser reward (eg a luck buff instead of an item)
                 than the original owner could have gotten. Also, the luck buff
                 from a traded master deed won't be as strong as the luck buff
                 form your own master deed.
+
                 Luck buffs of lesser deeds (contender) usually last about
                 30 minutes each or 45 minutes on the Ironman server, while luck
                 buffs of master deeds (winner) usually last about 60 minutes or
                 90 on Iornman server (duration is relative to world surface.)
+
                 Note that temporary luck buffs from deeds stack in duration up
                 to ~ 1 hour as long as their buff power is the same, and also
                 will end prematurely when you log out before the buff ran out.
+
                 The luck buffs are on hold while on the world surface, so you
                 won't lose buff time from running around. (Of course this also
                 means that the luck effect is not being applied.)
@@ -13959,6 +14006,7 @@ Deed            Some of the parchments are deeds, which are used as rewards
                 and a terrible shockwave that will blind you and knock you and
                 everyone else out.
                 Use this as a last resort!
+
                 This magic will fail inside vaults and in towns or in the area
                 surrounding a town within a radius of 3 worldmap sectors.
                 It will also fail on dungeon floors that do not allow
@@ -14002,9 +14050,11 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 will suffer randomly from just 1 up to 4+(monsterlevel/8)
                 points of damage, which cannot be absorbed by any magic shield
                 or other protective effect!
+
                 Depending on the server configuration, the caster's remaining
                 hit points are usually halved (as an additional extra penalty)
                 after the spell finished.
+
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
@@ -14025,6 +14075,7 @@ Lottery         This might be your chance today to win the Jackpot!
                 Just read it, if you win any money, it will appear under/around
                 your character on the floor. You will always get a message that
                 tells you if you won or not.
+
                 A common question is if someone ever won the first prize and
                 how much it is:
                 Yes, several people have won it, although it happens extremely
@@ -14036,6 +14087,7 @@ Obliteration    Removes all monsters that are close to you.
                 around you are annihilated. For each monster you will suffer
                 between 1 and 3+(monsterlevel/8) points of damage, which cannot
                 be absorbed by any magic shield or other protective effects!
+
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
                 finished (this penalty is enabled by default).
@@ -14058,10 +14110,7 @@ Recharging      Recharges a magical device (rod, wand or staff, see (5.18)).
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
                 as soon as they are uncursed!
-                Also, non- or uncursed items that induce random teleportation
-                can be inscribed .. to have the teleportation stop (compare
-                (0.3 Important Inscriptions).
-                (Scrolls give you the message:
+                (Scrolls of remove curse give you the message on reading:
                 'You feel as if someone is watching over you.'.)
 
 *Remove Curse*  Breaks heavy curses. Note that curses (including heavy ones)
@@ -14083,6 +14132,7 @@ Wilderness Mapping
                 Maps the wilderness area around the worldmap sector you
                 are currently within. These scrolls also sometimes carry
                 an inscription telling the location of a hidden dungeon.
+
                 If you discover a dungeon's location this way, you must still
                 go there in person and find the entrance staircase (get it
                 into unobstructed line-of-sight of your character) for it to
@@ -14094,13 +14144,15 @@ Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 It can also be used to travel between towns or on the worldmap
                 in general. See "(0.3) Important Inscriptions, Word of Recall"
                 for more info about Word of Recall! ("Word of Recall", "WoR")
+
                 Word of Recall scrolls can be exchanged between an everlasting
                 and a non-everlasting player!
 
 Vermin Control  Stops breeders on the whole floor from multiplying. Doesn't
                 have effect on certain non-natural breeders such as Unmakers.
+
                 This scroll affects all currently existing breeders on the
-                dungeon level, but also all breeders that additionall may get
+                dungeon level, but also all breeders that additionally may get
                 spawned in the future, so Vermin Control doesn't need to be
                 used more than once per dungeon floor, ever.
 
@@ -14207,11 +14259,13 @@ Amulet of Terken        Gives the power to see invisible, free action, and
 Amulet of Sustenance    sustain all six attributes, provide 'Hold Life'
                         resistance to experience-draining attacks,
                         and provide slow digestion.
+
                         Sustenance of a stat will prevent it from being drained
                         by various sort of attacks, potions, or other effects.
                         For most things it works 100% of the time, but for some
                         effects it just reduces the chance of a decrease to
                         occur.
+
                         Sustaining STR and DEX for example will ensure that you
                         don't lose attacks/round, so wearing a ring of Sustain
                         Ability can be helpful for melee fighters, especially
@@ -14268,6 +14322,7 @@ Wine                Will satisfy your hunger somewhat, and may have random side
                     your stomach isn't relatively empty, temporary stat
                     decrease (except for strength), slowness,
                     heroism, berserk, speed (compare (4.11b)).
+
                     Note that the unique dwarven ale of the Khazad is vastly
                     superiour to normal ale or wine, and will mostly affect the
                     drinker positively, not ever causing negative side effects
@@ -14281,6 +14336,7 @@ Chest               Chests may contain treasures or items. Usually, chests
                     or again use any sort of disarming magic.
                     The disarmed chest is finally safe to open with 'o' key.
                     Happy looting.
+
                     Note that only the chest's level affects what kind of items
                     you may find in it. It does not matter where you actually
                     are when you open it or who opens it. A player's 'Luck'
@@ -14289,6 +14345,7 @@ Chest               Chests may contain treasures or items. Usually, chests
                     money while small chests mostly contain money.
                     Chests have an increased chance to drop good items, same as
                     monsters that have DROP_GOOD flag.
+
                     Also see (6.3) for more information.
                     Since client 4.8.0, emptied chests can be used for storing
                     items to extend your inventory slightly, see (3.4).
@@ -14335,12 +14392,14 @@ Firestone           These can be eaten by Draconians and players in dragon
                     If you eat too many of them over a short period of time you
                     might get poisoned by adrenaline overdose, with lethal
                     outcome.
+
 Flint               Prevents your light from going out by automatically
                     refilling it right when it would've reached 0 turns.
                     For this to work you'll need to carry appropriate items in
                     your inventory that will be used up in the process, eg a
                     flask of oil or another lantern for refilling a lantern or
                     another torch for refilling a torch.
+
                     The flint will fail if you are paralyzed at the time your
                     light goes out.
                     The flint will ignore all inventory items that carry '!F'
@@ -14365,12 +14424,14 @@ Mattock             Digging tools, improving your digging capabilities.
                     (+to-hit, +to-dam) on digging tools as well as a high
                     weight help to further increase their effectiveness.
                     Main factor is the (+diggingpower) mod though. (Equip it!)
+
                     If you lack any of these valuable digging tools, axes and
                     swords can help you hacking down trees or bushes. For
                     hacking away spider webs certain polearms used for slashing
                     (scythes and sickles) may help too, at least as well as
                     swords or axes. (see 'Digging' skill in (7.2) and (5.17)
                     for more information about digging).
+
                     Starting in 4.8.0 you can press SHIFT+W to wield a digging
                     tool as a weapon. You will still use it for digging too.
                     If you try to dig while having a digging tool equipped in
@@ -14398,8 +14459,9 @@ Also, try throwing bad mushrooms at enemies to apply bad status effects.
 
 Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     from seeing your equipment except for your melee and/or
-                    ranged weapon. Also makes you look dark like being
+                    ranged weapon. Also makes you look dark, almost like being
                     infected by Black Breath. (Equip it!)
+
                     Vampires start with a mummy wrapping, because it can
                     protect them from the sunlight. If they are moving on the
                     world surface (meaning not in a dungeon/tower) while it's
@@ -14453,12 +14515,15 @@ Grimoire            These are magic books that may contain magic spells of any
                     scroll he wants to transcribe into the book. The scroll
                     will vanish and the spell will be permanently and
                     irreversibly added to the book.
+
                     Condition for this to work is that the book still has free
                     space left, and that the player has actually learned the
                     spell he wants to transcribe.
+
                     Codices can carry the least amount of spells (3),
                     spellbooks being intermediate (4), while Grimoires have
                     the most space (5).
+
                     Tip: You can stack multiple of these books if they have the
                     exact same spells in the exact same sequence in them.
                     (Note that you cannot use these books if your game client
