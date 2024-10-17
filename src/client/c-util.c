@@ -12269,7 +12269,7 @@ void set_mixing(void) {
 }
 
 void interact_audio(void) {
-	int i, j, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72}, k;
+	int i, j, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72}, k, l;
 	static int cur_item = 0;
 	int y_label = 20, y_toggle = 12, y_slider = 18;
 	bool redraw = TRUE, quit = FALSE;
@@ -12280,6 +12280,11 @@ void interact_audio(void) {
 	/* suppress hybrid macros */
 	bool inkey_msg_old = inkey_msg;
 	inkey_msg = TRUE;
+#if 0 /* moved 'max' from ctrl+x to ctrl+g which should be fine */
+	/* suppress even normal macros, for the CTRL+X shortcut for example which is often set to \e\e^X to quit the game in any case.
+	   Drawback in case ALLOW_NAVI_KEYS_IN_PROMPT isn't on: Cannot use up/down while numlock is off. */
+	inkey_interact_macros = TRUE;
+#endif
 
 	/* Process requests until done */
 	while (1) {
@@ -12288,30 +12293,37 @@ void interact_audio(void) {
 			Term_clear();
 
 			/* Describe */
-			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
-			//Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
-			Term_putstr(1, 1, -1, TERM_L_UMBER, "Navigate/modify: \377yArrow keys\377U. Toggle/modify: \377yRETURN\377U/\377ySPACE\377U. Reset: \377yr\377U. Exit: \377yESC\377U.");
-			//Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
-			//Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
-			//Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
-			Term_putstr(1, 2, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U. Sliders: \377ySHIFT+shortcut\377U. Reload packs & re-init: \377yCTRL+R\377U.");
+			Term_putstr(30, (l = 0), -1, TERM_L_UMBER, "*** Audio Mixer ***");
+			//Term_putstr(3, ++l, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
+#if 0 /* enter/space on a slider increase it */
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrow keys\377U. Toggle/modify: \377yRETURN\377U/\377ySPACE\377U. Reset: \377yr\377U. Exit: \377yESC\377U.");
+#else /* enter/space on a slider toggle it */
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrows/p/n/+/-\377U. Toggle: \377yRETURN\377U/\377ySPACE\377U. Reset: \377yr\377U. Exit: \377yESC\377U.");
+#endif
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Sfx only: \377yCTRL+S\377U. Sfx+weather: \377yCTRL+W\377U. All: \377yCTRL+A\377U. Max: \377yCTRL+G\377U. Half: \377yCTRL+H\377U.");
 
-			if (quiet_mode) Term_putstr(12, 4, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
-			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
-			//else if (audio_sfx > 3 && audio_music == 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
+			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
+			//Term_putstr(7, ++l, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
+			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
+			//Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U. Sliders: \377ySHIFT+shortcut\377U. Reload packs & re-init: \377yCTRL+R\377U.");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U. Sliders: \377ySHIFT+a/m/s/w\377U.  Reload packs & re-init: \377yCTRL+R\377U.");
+
+			if (quiet_mode) Term_putstr(12, ++l, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
+			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, ++l, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
+			//else if (audio_sfx > 3 && audio_music == 0) Term_putstr(12, ++l, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
 			else if (audio_sfx > 3 && audio_music == 0) {
-				Term_putstr(12, 4, -1, TERM_L_GREEN, "Sound pack detected.");
-				Term_putstr(34, 4, -1, TERM_L_RED, "No music pack seems to be installed.");
+				Term_putstr(12, ++l, -1, TERM_L_GREEN, "Sound pack detected.");
+				Term_putstr(34, l, -1, TERM_L_RED, "No music pack seems to be installed.");
 			}
 			//else if (audio_sfx <= 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Music pack detected. No sound pack seems to be installed.");
 			else if (audio_sfx <= 3 && audio_music > 0) {
-				Term_putstr(12, 4, -1, TERM_L_GREEN, "Music pack detected.");
-				Term_putstr(34, 4, -1, TERM_L_RED, "No sound pack seems to be installed.");
+				Term_putstr(12, ++l, -1, TERM_L_GREEN, "Music pack detected.");
+				Term_putstr(34, ++l, -1, TERM_L_RED, "No sound pack seems to be installed.");
 			}
-			else Term_putstr(12, 4, -1, TERM_L_RED,                                         "Neither sound pack nor music pack seems to be installed. ");
+			else Term_putstr(12, ++l, -1, TERM_L_RED,                                         "Neither sound pack nor music pack seems to be installed. ");
 
-			if (!quiet_mode && noweather_mode) Term_putstr(2, 6, -1, TERM_L_RED, "Client is in no-weather-mode (-w).");
-			if (c_cfg.no_weather) Term_putstr(2, 7, -1, TERM_L_RED, "Weather disabled by 'no_weather' option.");
+			if (!quiet_mode && noweather_mode) Term_putstr(2, ++l, -1, TERM_L_RED, "Client is in no-weather-mode (-w).");
+			else if (c_cfg.no_weather) Term_putstr(2, ++l, -1, TERM_L_RED, "Weather disabled by 'no_weather' option.");
 
 			if (c_cfg.rogue_like_commands)
 				//Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music via CTRL+V and CTRL+X.");
@@ -12381,6 +12393,29 @@ void interact_audio(void) {
 		/* Wait for keypress */
 		k = inkey();
 		switch (k) {
+		case KTRL('A'):
+			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
+			set_mixing();
+			break;
+		case KTRL('S'):
+			cfg_audio_master = cfg_audio_sound = TRUE;
+			cfg_audio_music = cfg_audio_weather = FALSE;
+			set_mixing();
+			break;
+		case KTRL('W'):
+			cfg_audio_master = cfg_audio_sound = cfg_audio_weather = TRUE;
+			cfg_audio_music = FALSE;
+			set_mixing();
+			break;
+		case KTRL('G'): //case KTRL('X'): <- not good, as this is usually a normal-type macro.
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
+			set_mixing();
+			break;
+		case KTRL('H'):
+			cfg_audio_master_volume = 50;
+			cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 50;
+			set_mixing();
+			break;
 		/* allow chatting from within here */
 		case ':':
 			cmd_message();
@@ -12471,9 +12506,22 @@ void interact_audio(void) {
 		case 'W':
 			cur_item = 3 + 4;
 			break;
-		case 'r': /* reset all settings to default */
+		case 'r':
+#if 0
+			/* reset all settings to default */
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = AUDIO_VOLUME_DEFAULT;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
+#else
+			/* reset all settings to what we loaded from the config file on client startup originally */
+			cfg_audio_master = cfg_a;
+			cfg_audio_music = cfg_m;
+			cfg_audio_sound = cfg_s;
+			cfg_audio_weather = cfg_w;
+			cfg_audio_master_volume = cfg_va;
+			cfg_audio_music_volume = cfg_vm;
+			cfg_audio_sound_volume = cfg_vs;
+			cfg_audio_weather_volume = cfg_vw;
+#endif
 			set_mixing();
 			break;
 		case '\n':
@@ -12484,6 +12532,7 @@ void interact_audio(void) {
 			case 1: toggle_music(TRUE); break;
 			case 2: toggle_sound(); break;
 			case 3: toggle_weather(); break;
+#if 0 /* if on a volume slider, increase it */
 			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 0;
 				set_mixing();
 				break;
@@ -12496,6 +12545,12 @@ void interact_audio(void) {
 			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 0;
 				set_mixing();
 				break;
+#else /* if on a volume slider, toggle it on/off too */
+			case 4: toggle_master(TRUE); break;
+			case 5: toggle_music(TRUE); break;
+			case 6: toggle_sound(); break;
+			case 7: toggle_weather(); break;
+#endif
 			}
 			break;
 		case KTRL('R'):
@@ -12518,6 +12573,10 @@ void interact_audio(void) {
 
 	/* Re-enable hybrid macros */
 	inkey_msg = inkey_msg_old;
+#if 0
+	/* Re-enable normal macros */
+	inkey_interact_macros = FALSE;
+#endif
 }
 void toggle_master(bool gui) {
 	cfg_audio_master = !cfg_audio_master;

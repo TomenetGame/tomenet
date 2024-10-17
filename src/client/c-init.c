@@ -3600,6 +3600,18 @@ void client_init(char *argv1, bool skip) {
 	/* Set the "quit hook" */
 	if (!quit_aux) quit_aux = quit_hook;
 
+#ifdef USE_SOUND_2010
+	/* Remember initial audio settings */
+	cfg_a = cfg_audio_master;
+	cfg_m = cfg_audio_music;
+	cfg_s = cfg_audio_sound;
+	cfg_w = cfg_audio_weather;
+	cfg_va = cfg_audio_master_volume;
+	cfg_vm = cfg_audio_music_volume;
+	cfg_vs = cfg_audio_sound_volume;
+	cfg_vw = cfg_audio_weather_volume;
+#endif
+
 #ifndef UNIX_SOCKETS
 	/* Check whether we should query the metaserver */
 	if (argv1 == NULL) {
