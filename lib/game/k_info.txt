@@ -1419,7 +1419,7 @@ I:40:2:0
 W:10:0:3:20
 A:10/1
 F:EASY_KNOW
-D:It looks nice.
+d:It looks nice.
 
 
 ##### Extra armour #####
