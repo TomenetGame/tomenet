@@ -278,9 +278,9 @@ able to use most keys aside from arrow keys for basic movement.
 
  NOTE: The official main server's hostname is "europe.tomenet.eu".
  In 2022, an official server located in the APAC (Asia-Pacific) region was
- added, its hostname is "apac.tomenet.eu".
+ added, its hostname is "apac.tomenet.eu" (92.38.178.77).
  In 2024, another official server located in North America (NA) region was
- added, its hostname is "na.tomenet.eu".
+ added, its hostname is "na.tomenet.eu" (70.39.65.2).
 
 -You should now see a list of available TomeNET servers (except if you used
  TomeNET-direct.bat, which will always connect you directly to the first main
