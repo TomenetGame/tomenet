@@ -2840,6 +2840,31 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			/* Next... */
 			continue;
 		}
+		/* Process 'd' for "trivial Description" - any d-lines must come AFTER any D-lines! */
+		if (buf[0] == 'd') {
+#ifdef KIND_DIZ
+			/* Acquire the text */
+			s = buf + 2;
+
+			strcpy(tmp, " \377w\377w"); //hack - the double colour code is a marker to distinguish d from D lines
+			strcat(tmp, s);
+			strcat(tmp, "\n");
+
+			/* Hack -- Verify space */
+			if (k_head->text_size + strlen(tmp) + 8 > fake_text_size) return(7);
+
+			/* Advance and Save the text index */
+			if (!k_ptr->text) k_ptr->text = ++k_head->text_size;
+
+			/* Append chars to the name */
+			strcpy(k_text + k_head->text_size, tmp);
+
+			/* Advance the index */
+			k_head->text_size += strlen(tmp);
+#endif
+			/* Next... */
+			continue;
+		}
 
 
 

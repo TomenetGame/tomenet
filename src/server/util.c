@@ -5476,18 +5476,25 @@ static void player_talk_aux(int Ind, char *message) {
 			int k_idx = lookup_kind(tval, sval);
 
 			if (p_ptr->obj_aware[k_idx] && k_info[k_idx].text) {
-				ckt = k_text + k_info[k_idx].text;
+				char k_temp[MSG_LEN];
 
+ #if 1 /* Use the 'd'-line method (vs normal 'D'-lines) to crop information too trivial to spam the chat with it. */
+				/* Hack-marker '\377w\377w': Discard 'd:' lines here, those are only for inspection/examination */
+				strcpy(k_temp, k_text + k_info[k_idx].text);
+				if ((ckt = strstr(k_temp, "\377w\377w")))
+					*(ckt - 1) = 0; /* Cut off and discard d-lines via null-terminator, at the space _before_ the \377w\377w. */
+				ckt = k_temp;
+ #else /* Without 'd'-lines, we can at least try these basic hacks to crop unimportant info. */
 				/* Skip very basic descriptions such as for ammo and ranged weapons, this is really useless in chat and hence spammy.
 				    Maybe only for flavoured items actually? Details about current (2024-10-03) k_info.txt state:
 				    - All weapons and armour have no diz except for Costume, so display these.
 				    - Launchers and trap kits just have a line about ammo type, so skip these, or just skip the 1st line in case a 2nd line ever gets added.
 				    - TV_GOLEM (52) are sort of trivial (just 'required for a golem' style), but these are rare, so why not just display them.
 				    - Ammo has the first line about launcher/trapkit type, optionally 2nd about magical return, so just skip the 1st line for ammo. */
-				if (tval == TV_BOW || tval == TV_TRAPKIT || is_ammo(tval)) {
+				if (tval == TV_BOW || tval == TV_TRAPKIT || is_ammo(tval))
 					/* Discard the first diz line */
 					ckt = strchr(ckt, '\n') + 1;
-				}
+ #endif
 
 				/* k_text is in a format not fit for here, so translate back (cut off first 3 chars, replace linefeeds with spaces) */
 				if (*ckt && strlen(message) < MSG_LEN - 10
@@ -5510,6 +5517,7 @@ static void player_talk_aux(int Ind, char *message) {
 						*cs++ = *ckt;
 					}
 					*cs = 0;
+
 				}
 				/* No effective diz text availale for this item or not enough space to append a kind-diz? Discard. */
 				else {
