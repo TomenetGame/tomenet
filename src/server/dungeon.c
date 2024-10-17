@@ -7672,6 +7672,8 @@ void tradhouse_contents_chmod() {
  * set. This protects them from instant loss, should a player
  * drop something just at the wrong time, but it should get
  * rid of some town junk.
+ *
+ * We're called once per minute, from process_various().
  */
 static void scan_objs() {
 	int i, cnt = 0, dcnt = 0;
@@ -7727,7 +7729,7 @@ static void scan_objs() {
 						delete_object_idx(i, TRUE);
 						dcnt++;
 					}
-				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* stormy too */
+				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* ITEM_REMOVAL_NORMAL; stormy too */
 				    (o_ptr->note && !o_ptr->owner))?
 				    cfg.surface_item_removal * 3 : cfg.surface_item_removal)
 				    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
