@@ -499,7 +499,7 @@ void remclient(struct list *dlp) {
 		/* Tell other servers if an authed server goes down */
 		struct wpacket spk;
 
-		rem_players(ccl->authed);
+		rem_players(ccl->authed - 1);
 		spk.type = WP_SQUIT;
 		spk.d.sid = ccl->authed - 1;
 		relay(&spk, ccl);
