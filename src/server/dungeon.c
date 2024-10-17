@@ -7675,6 +7675,7 @@ void tradhouse_contents_chmod() {
  *
  * We're called once per minute, from process_various().
  */
+//TODO: Do some work distribution over frames, this function seems CPU-hungry, looping through all items when it's called. */
 static void scan_objs() {
 	int i, cnt = 0, dcnt = 0;
 	object_type *o_ptr;
