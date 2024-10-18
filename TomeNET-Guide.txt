@@ -7,10 +7,13 @@
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
 |
-| You should always keep this guide up to date: In game press = C or = U
-| to check or update it, or go to www.tomenet.eu to download it via web
-| browser, or run the TomeNET-Updater.exe in your TomeNET installation
-| folder (desktop shortcut should also be available).
+| You should always keep this guide up to date, three possible ways:
+| - In-game press = for options menu, then C to check or U to update.
+| - Run the TomeNET-Updater app in your TomeNET installation folder
+|   (or use the desktop shortcut if available) and click "Update Guide".
+| - Go to the www.tomenet.eu website and download it manually, place
+|   it into your TomeNET folder and overwrite the existing file
+|   'TomeNET-Guide.txt' with your downloaded one.
 |
 | If your text editor cannot display the guide properly (needs fixed-width
 | font like for example Courier), simply open it in any web browser instead.
@@ -27566,9 +27569,13 @@ PROBLEM 68: I'm using the '/?' command to search for something in the guide
             "Search term '<what I searched for>' not found."
 Solution:   If you really specified a supposedly valid search topic, check your
             spelling and make sure you have updated your Guide to the latest
-            release. You can do that with the TomeNET-Updater or just download
-            it manually and overwrite the existing 'TomeNET-Guide.txt' file in
-            your TomeNET folder with it.
+            release. You can do that in three different ways:
+            - In-game press = for options menu, then C to check or U to update.
+            - Run the TomeNET-Updater app in your TomeNET installation folder
+              (or use the desktop shortcut if available), click "Update Guide".
+            - Go to the www.tomenet.eu website and download it manually, place
+              it into your TomeNET folder and overwrite the existing file
+              'TomeNET-Guide.txt' with your downloaded one.
             If it is not a real 'topic', instead invoke the guide (press ~g or
             double-tap '?' key to do that) and then press 's' for a normal text
             search instead of a topic/chapter search.
