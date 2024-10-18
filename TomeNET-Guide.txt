@@ -7,10 +7,10 @@
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
 |
-| You should always keep this guide up to date: Either go to www.tomenet.eu
-| to obtain the latest copy or simply run the TomeNET-Updater.exe in your
-| TomeNET installation folder (desktop shortcut should also be available)
-| to update it.
+| You should always keep this guide up to date: In game press = C or = U
+| to check or update it, or go to www.tomenet.eu to download it via web
+| browser, or run the TomeNET-Updater.exe in your TomeNET installation
+| folder (desktop shortcut should also be available).
 |
 | If your text editor cannot display the guide properly (needs fixed-width
 | font like for example Courier), simply open it in any web browser instead.
