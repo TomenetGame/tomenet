@@ -65,7 +65,7 @@ G:,:d
 I:80:1:500
 W:3:0:1:0
 A:3/1
-#D:Causes temporary blindness.
+#d:Causes temporary blindness.
 
 N:2:Paranoia
 G:,:d
@@ -79,7 +79,7 @@ G:,:d
 I:80:3:500
 W:3:0:1:0
 A:3/1
-#D:Causes temporary confusion.
+#d:Causes temporary confusion.
 
 N:4:Hallucination
 G:,:d
@@ -93,14 +93,14 @@ G:,:d
 I:80:12:500
 W:5:0:1:40
 A:5/1
-#D:Cures poison.
+#d:Eat when poisoned.
 
 N:6:Cure Blindness
 G:,:d
 I:80:13:500
 W:3:0:1:8
 A:3/1
-#D:Cures Blindness.
+#d:Cures Blindness.
 
 N:7:Cure Paranoia
 G:,:d
@@ -114,7 +114,7 @@ G:,:d
 I:80:15:500
 W:3:0:1:10
 A:3/1
-#D:Cures confusion.
+#d:Cures confusion.
 
 N:9:Weakness
 G:,:d
@@ -137,7 +137,7 @@ G:,:d
 I:80:18:500
 W:10:0:1:200
 A:10/1
-#D:Restores drained constitution.
+#d:Restores drained constitution.
 
 N:12:Restoring
 G:,:d
@@ -166,7 +166,7 @@ I:80:20:500
 W:5:0:1:0
 A:5/1:5/1
 P:0:4d4:0:0:0
-#D:Causes temporary poisoning.
+#d:Causes temporary poisoning.
 
 N:16:Sickness
 G:,:d
@@ -181,14 +181,14 @@ G:,:d
 I:80:5:500
 W:8:0:1:0
 A:8/1
-#D:Causes temporary paralysation.
+#d:Causes temporary paralysation.
 
 N:18:Restore Strength
 G:,:d
 I:80:17:500
 W:10:0:1:200
 A:10/1
-#D:Restores drained strength.
+#d:Restores drained strength.
 
 N:19:Disease
 G:,:d
@@ -203,7 +203,6 @@ G:,:d
 I:80:16:500
 W:5:0:1:30
 A:5/1
-#D:Cures serious wounds.
 D:Heals 6d8 hit points and cures blindness, confusion and heals cuts somewhat.
 
 
@@ -1184,6 +1183,7 @@ I:45:4:0
 W:5:0:2:250
 A:5/1
 F:CURSED | TELEPORT | EASY_KNOW | ACTIVATE
+D:Teleports you to a random location, at random intervals.
 
 N:139:Slow Digestion
 G:=:d
@@ -1396,7 +1396,7 @@ I:40:1:0
 W:10:0:3:300
 A:10/1
 F:CURSED | TELEPORT | EASY_KNOW
-d:Teleports you randomly within a large range.
+D:Teleports you to a random location, at random intervals.
 
 N:167:Slow Digestion
 G:":d
@@ -1404,7 +1404,7 @@ I:40:3:0
 W:15:0:3:200
 A:15/1
 F:SLOW_DIGEST | EASY_KNOW
-d:Reduces your need to consume food.
+D:Reduces your need to consume food.
 
 N:168:Acid Resistance
 G:":d
@@ -1462,28 +1462,28 @@ G:?:d
 I:70:17:0
 W:15:0:5:125
 A:15/1
-D:May enchant weapons or ammunition. Higher fail chance on item stacks.
+D:Enchants weapons, trap kits, ammunition. Higher fail chance on item stacks.
 
 N:174:Enchant Weapon To-Dam
 G:?:d
 I:70:18:0
 W:15:0:5:125
 A:15/1
-D:May enchant weapons or ammunition. Higher fail chance on item stacks.
+D:Enchants weapons, trap kits, ammunition. Higher fail chance on item stacks.
 
 N:175:Enchant Armour
 G:?:d
 I:70:16:0
 W:15:0:5:125
 A:15/1
-D:May enchant armour. Higher fail chance on item stacks.
+D:Enchants armour. Higher fail chance on item stacks.
 
 N:176:Identify
 G:?:d
 I:70:12:0
 W:1:0:5:50
 A:1/1:5/1:10/1:30/1
-D:Identifies an unknown item.
+d:Identifies an unknown item.
 
 N:177:*Identify*
 G:?:d
@@ -1542,7 +1542,8 @@ G:?:d
 I:70:4:0
 W:1:0:5:0
 A:1/1
-D:Only works in dungeons and not on a staircase or on a void jump gate.
+d:Summons random, hostile monsters next to you.
+d:Only works in dungeons and not on a staircase or on a void jump gate.
 
 N:185:Phase Door
 G:?:d
@@ -1601,21 +1602,22 @@ G:?:d
 I:70:26:0
 W:0:0:5:15
 A:0/1
-D:Detects all nearby treasure.
+D:Detects all nearby objects and treasure.
+#d:Detects all nearby treasure.
 
 #N:193:Object Detection
 #G:?:d
 #I:70:27:0
 #W:0:0:5:15
 #A:0/1
-#D:Detects all nearby objects.
+#d:Detects all nearby objects.
 
 N:194:Trap Detection
 G:?:d
 I:70:28:0
 W:5:0:5:35
 A:5/1:10/1
-D:Detects all nearby traps.
+d:Detects all nearby traps.
 
 
 ##### Extra ammunition #####
@@ -1647,7 +1649,7 @@ G:?:d
 I:70:29:0
 W:5:0:5:25
 A:5/1:10/1:15/1
-D:Detects all nearby doors and stairs.
+d:Detects all nearby doors and stairs.
 
 N:198:Acquirement
 G:?:d
@@ -1782,6 +1784,7 @@ G:?:d
 I:70:5:0
 W:15:0:5:0
 A:15/1
+d:Summons random hostile, non-unique, undead monsters next to you.
 D:Only works in dungeons and not on a staircase or on a void jump gate.
 
 N:217:Blessing
@@ -1873,7 +1876,7 @@ W:25:0:4:300
 A:25/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-#D:Restores drained strength.
+#d:Restores drained strength.
 
 N:228:Intelligence
 G:!:d
@@ -1900,7 +1903,7 @@ W:25:0:4:300
 A:25/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-#D:Restores drained intelligence.
+#d:Restores drained intelligence.
 
 N:231:Wisdom
 G:!:d
@@ -1927,7 +1930,7 @@ W:25:0:4:300
 A:25/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-#D:Restores drained wisdom.
+#d:Restores drained wisdom.
 
 N:234:Charisma
 G:!:d
@@ -1954,7 +1957,7 @@ W:20:0:4:300
 A:20/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-#D:Restores drained charisma.
+#d:Restores drained charisma.
 
 N:237:Curing
 G:!:d
@@ -2094,7 +2097,7 @@ W:25:0:4:300
 A:25/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-#D:Restores drained dexterity.
+#d:Restores drained dexterity.
 
 N:253:Restore Constitution
 G:!:d
@@ -2103,7 +2106,7 @@ W:25:0:4:300
 A:25/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-#D:Restores drained constitution.
+#d:Restores drained constitution.
 
 N:254:Lose Memories
 G:!:d
@@ -2210,7 +2213,7 @@ W:5:0:4:55
 A:5/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-D:Administer when poisoned.
+d:Administer when poisoned.
 
 N:266:Restore Mana
 G:!:d
@@ -2228,7 +2231,7 @@ W:3:0:4:20
 A:3/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-D:Temporarily gives or boosts your infra-vision.
+D:Temporarily grants or boosts your infra-vision.
 
 N:268:Resistance
 G:!:d
@@ -2515,7 +2518,7 @@ I:55:12:0
 W:10:0:50:350
 A:10/1
 P:0:1d2:0:0:0
-D:Detects all nearby traps.
+d:Detects all nearby traps.
 
 N:301:Treasure Location
 G:_:d
@@ -2523,7 +2526,8 @@ I:55:10:0
 W:5:0:50:350
 A:5/1
 P:0:1d2:0:0:0
-D:Detects all nearby treasure.
+D:Detects all nearby objects and treasure.
+#d:Detects all nearby treasure.
 
 #N:302:Object Location
 #G:_:d
@@ -2531,7 +2535,7 @@ D:Detects all nearby treasure.
 #W:5:0:50:250
 #A:5/1
 #P:0:1d2:0:0:0
-#D:Detects all nearby objects.
+#d:Detects all nearby objects.
 
 N:303:Teleportation
 G:_:d
@@ -2554,7 +2558,8 @@ I:55:3:0
 W:10:0:50:0
 A:10/1:50/1
 P:0:1d2:0:0:0
-D:Only works in dungeons and not on a staircase or on a void jump gate.
+d:Summons random, hostile monsters next to you.
+d:Only works in dungeons and not on a staircase or on a void jump gate.
 
 N:306:Light
 G:_:d
@@ -2643,7 +2648,7 @@ I:55:13:0
 W:10:0:50:350
 A:10/1
 P:0:1d2:0:0:0
-D:Detects all nearby doors and stairs.
+d:Detects all nearby doors and stairs.
 
 N:317:Remove Curse
 G:_:d
@@ -2660,7 +2665,7 @@ I:55:15:0
 W:20:0:50:350
 A:20/1
 P:0:1d2:0:0:0
-D:Detects all nearby evil creatures.
+d:Detects all nearby evil creatures.
 
 N:319:Curing
 G:_:d
@@ -2908,7 +2913,7 @@ W:1:0:20:2
 A:1/1
 P:0:1d2:0:0:0
 F:EASY_KNOW | LITE1 | FUEL_LITE
-D:Torches that are running out can be combined to extend their lifespan.
+d:Torches that are running out can be combined to extend their lifespan.
 
 N:347:& Brass Lantern~
 G:~:U
@@ -2917,7 +2922,7 @@ W:3:0:35:150
 A:2/1:3/1:4/1:5/1
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE | LITE2 | FUEL_LITE
-D:A type of lantern that can usually be refilled with flasks of oil.
+d:A type of lantern that can usually be refilled with flasks of oil.
 
 N:348:& Flask~ of Oil
 G:!:y
@@ -2925,7 +2930,7 @@ I:77:0:7500
 W:1:0:7:3
 A:1/1
 P:0:2d4:0:0:0
-D:Mainly used to refill lanterns, but might have other uses as well.
+d:Mainly used to refill lanterns, but might have other uses as well.
 #D:Use it to refill lanterns, throw it,
 #D:or use it in the 'flare missile' ranged technique (requires archery skill).
 
@@ -2935,7 +2940,7 @@ I:2:1:0
 W:0:0:2:3
 A:1/1:10/1:20/1:30/1
 P:0:1d1:0:0:0
-D:It can be filled at fountains.
+D:It can be filled to create a potion, for example at fountains.
 
 
 ##### Here are the Rod Tips #####
@@ -2956,7 +2961,7 @@ I:66:1:10
 W:15:0:15:1000
 A:15/1
 P:0:1d1:0:0:0
-D:Detects all nearby doors and stairs.
+d:Detects all nearby doors and stairs.
 
 N:352:Trap Location
 G:-:d
@@ -2964,7 +2969,7 @@ I:66:29:8
 W:5:0:15:500
 A:5/1
 P:0:1d1:0:0:0
-D:Detects all nearby traps.
+d:Detects all nearby traps.
 
 N:353:Probing
 G:-:d
@@ -8372,7 +8377,7 @@ W:40:255:4:400
 A:40/0
 P:0:1d1:0:0:0
 #F:FOUNTAIN
-D:A potion of fresh blood, it will go bad quickly.
+D:A potion of fresh blood, it will go bad quickly if not cooled.
 
 # The Smokin' Boots of Moltor, the Dwarven Archer
 N:1030:Smokin' Boots
