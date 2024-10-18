@@ -2653,7 +2653,7 @@ void load_birth_file(cptr name) {
 	if (update) save_birth_file(name, TRUE);
 }
 
-/* Check if our guide is outdated -- only do this once on initial client startup, not on every relog (retry_contact).
+/* Check if our Guide is outdated -- only do this once on initial client startup, not on every relog (retry_contact).
    Also do this when explicitely requested (eg via =U or /reinit_guide). */
 #ifdef WINDOWS
  #include <process.h> /* for _spawnl() */
@@ -2733,7 +2733,7 @@ int check_guide_checksums(bool forced) {
 	guide_outdated = strcmp(buf2, buf);
 
 	//Must be disabled if we ever call check_guide_checksums() before the window system is initialized (eg early on in main()), or segfault:
-	//if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
+	//if (guide_outdated) c_msg_print("\377yYour Guide is outdated. You can update it in-game now by pressing: \377s= U");
 
 	return(0);
 }

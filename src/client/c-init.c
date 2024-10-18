@@ -3063,7 +3063,7 @@ void init_guide(void) {
 
 #if 0 /* Actually check for outdated guide via sha256sum. This costs a bit of time on Windows as we need to call wget.exe and sha256sum.exe. But it's only done on initial login or when explicitely requested, so it should be 100% fine. */
 	(void)check_guide_checksums(FALSE);
-	if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
+	if (guide_outdated) c_msg_print("\377yYour Guide is outdated. You can update it in-game now by pressing: \377s= U");
 #endif
 }
 
@@ -3645,7 +3645,7 @@ void client_init(char *argv1, bool skip) {
 #endif
 
 	/* Before 'retry_contact:' so we only see this once on login and not on every relog (character switch): */
-	if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
+	if (guide_outdated) c_msg_print("\377yYour Guide is outdated. You can update it in-game now by pressing: \377s= U");
 
 #ifdef RETRY_LOGIN
 	retry_contact:

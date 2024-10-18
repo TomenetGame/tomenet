@@ -7943,8 +7943,8 @@ void cmd_message(void) {
 			init_guide();
 			c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 			if (check_guide_checksums(TRUE)) c_msg_print("\377yCannot check whether Guide is outdated because 'sha256sum' is not installed.");
-			else if (guide_outdated) c_msg_print("\377yYour guide is outdated. You can update it in-game now by pressing: \377s= U");
-			else c_msg_print("\377GYour guide is up to date!");
+			else if (guide_outdated) c_msg_print("\377yYour Guide is outdated. You can update it in-game now by pressing: \377s= U");
+			else c_msg_print("\377GYour Guide is up to date!");
 			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/reinit_audio")) { /* Undocumented: Re-init the audio system. Same as pressing CTRL+R in the mixer UI. */
