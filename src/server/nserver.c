@@ -758,15 +758,15 @@ void setup_contact_socket(void) {
 		s_printf("Couldn't create server gateway port\n");
 		return;
 	}
-#ifdef FD_CLOEXEC
+ #ifdef FD_CLOEXEC
 	/* Make the socket close-on-exec if possible - mikaelh */
 	if (fcntl(SGWSocket, F_SETFD, FD_CLOEXEC) == -1)
 		plog("Can't make contact socket close-on-exec");
-#endif
-#if 0
+ #endif
+ #if 0
 	if (SetSocketNonBlocking(SGWSocket, 1) == -1)
 		plog("Can't make GW socket non-blocking");
-#endif
+ #endif
 
 	/* Install the new gateway socket */
 	install_input(SGWHit, SGWSocket, 0);

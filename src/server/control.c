@@ -18,7 +18,8 @@
 #endif
 
 #ifdef SERVER_GWPORT
-#if 0
+ #if 0
+
 /* Server gateway stuff */
 void SGWHit(int read_fd, int arg) {
 	int newsock = 0;
@@ -60,7 +61,9 @@ void SGWHit(int read_fd, int arg) {
 	else
 		s_printf("Web server request failed: %d\n", errno);
 }
-#else
+
+ #else
+
 /* Server gateway stuff */
 
 gw_connection_t gw_conns[MAX_GW_CONNS];
@@ -153,11 +156,11 @@ void SGWHit(int read_fd, int arg) {
 			gw_conn->state = CONN_CONNECTED;
 			gw_conn->last_activity = time(NULL);
 
-#if 0 /* prevents sending lots of data */
+  #if 0 /* prevents sending lots of data */
 			if (SetSocketNonBlocking(sock, 1) == -1) {
 				plog("Cannot make GW client socket non-blocking");
 			}
-#endif
+  #endif
 
 			/* Initialize socket buffers */
 			Sockbuf_init(&gw_conn->r, sock, 8192, SOCKBUF_READ);
@@ -356,7 +359,7 @@ void SGWHit(int read_fd, int arg) {
 		/* Player stores list */
 		else if (!strcmp(buf, "PSTORES")) {
 			//MAX_HOUSES (65536), STORE_INVEN_MAX (120)
-#if 0 /* todo: implement (this is a copy/paste of above 'HOUSES') */
+  #if 0 /* todo: implement (this is a copy/paste of above 'HOUSES') */
 			char *buf2;
 			int len, alloc = 128 * num_houses;
 			int amount, sent = 0, rval, fail = 0;
@@ -394,7 +397,7 @@ void SGWHit(int read_fd, int arg) {
 
 			Packet_println(&gw_conn->w, "PSTORES REPLY END");
 			C_KILL(buf2, alloc, char);
-#endif
+  #endif
 		}
 
 		/* Default reply */
@@ -453,7 +456,7 @@ void SGWTimeout() {
 		}
 	}
 }
-#endif
+ #endif
 #endif
 
 #ifdef NEW_SERVER_CONSOLE
