@@ -11578,6 +11578,105 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 
 
+static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool lore) {
+	player_type *p_ptr = Players[Ind];
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+	char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
+
+	/* Extract monster name */
+	monster_desc(Ind, m_name, m_idx, 0);
+	monster_desc(Ind, m_name_real, m_idx, 0x100);
+
+
+	/* Death by Missile/Spell attack */
+	/* DEG modified spell damage messages. */
+	if (note) {
+#ifdef RACE_DIZ
+		/* Tell player the monster's lore? (4.7.1b feature) */
+		if (lore) msg_format(Ind, "\374\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
+		else
+#endif
+		msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
+		msg_print_near_monvar(Ind, m_idx,
+		    format("\377y%^s%s from \377g%d \377ydamage.", m_name_real, note, dam),
+		    format("\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam),
+		    format("\377yIt%s from \377g%d \377ydamage.", note, dam));
+	}
+
+	/* Death by physical attack -- invisible monster */
+	else if (!p_ptr->mon_vis[m_idx]) {
+#ifdef RACE_DIZ
+		/* Tell player the monster's lore? (4.7.1b feature) */
+		if (lore) msg_format(Ind, "\374\377yYou have killed %s.", m_name);
+		else
+#endif
+		msg_format(Ind, "\377yYou have killed %s.", m_name);
+		/* other player(s) can maybe see it, so get at least 'killed' vs 'destroyed' right for them */
+		if ((r_ptr->flags3 & RF3_DEMON) ||
+		    (r_ptr->flags3 & RF3_UNDEAD) ||
+		    (r_ptr->flags2 & RF2_STUPID) ||
+		    (strchr("Evg", r_ptr->d_char)))
+			msg_print_near_monvar(Ind, m_idx,
+			    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+			    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+			    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
+		else
+			msg_print_near_monvar(Ind, m_idx,
+			    format("\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+			    format("\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+			    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
+		}
+
+	/* Death by Physical attack -- non-living monster */
+	else if ((r_ptr->flags3 & RF3_DEMON) ||
+	    (r_ptr->flags3 & RF3_UNDEAD) ||
+	    (r_ptr->flags2 & RF2_STUPID) ||
+	    (strchr("Evg", r_ptr->d_char))) {
+#ifdef RACE_DIZ
+		/* Tell player the monster's lore? (4.7.1b feature) */
+		if (lore) msg_format(Ind, "\374\377yYou have destroyed %s.", m_name);
+		else
+#endif
+		msg_format(Ind, "\377yYou have destroyed %s.", m_name);
+		msg_print_near_monvar(Ind, m_idx,
+		    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+		    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+		    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
+	}
+	/* Death by Physical attack -- living monster */
+	else {
+#ifdef RACE_DIZ
+		/* Tell player the monster's lore? (4.7.1b feature) */
+		if (lore) msg_format(Ind, "\374\377yYou have slain %s.", m_name);
+		else
+#endif
+		msg_format(Ind, "\377yYou have slain %s.", m_name);
+		msg_print_near_monvar(Ind, m_idx,
+		    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+		    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+		    format("\377yIt has been slain from \377g%d \377ydamage by %s.", dam, p_ptr->name));
+	}
+
+	if (lore) {
+		char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
+
+		strcpy(diz, r_text + r_info[m_ptr->r_idx].text);
+		while (strlen(dizptr) > 80 - 0) {
+			strncpy(tmp, dizptr, 80 - 0);
+			tmp[80 - 0] = 0;
+
+			tmpend = &tmp[80 - 1];
+			while (isalpha(*tmpend)) tmpend--;
+			*(tmpend + 1) = 0;
+
+			msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
+			dizptr += strlen(tmp);
+		}
+		if (*dizptr) msg_format(Ind, "\374\377u%s", dizptr);
+	}
+}
+
 /*
  * Decreases monsters hit points, handling monster death.
  *
@@ -11779,42 +11878,63 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* Some monsters are immune to death */
 	if (r_ptr->flags7 & RF7_NO_DEATH) {
-		if (p_ptr->instakills == 2) {
-			monster_death(Ind, m_idx); /* override NO_DEATH! but without any credit (xp/form), just loot */
-			delete_monster_idx(m_idx, FALSE);
+		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+		if (p_ptr->instakills != 2) return(FALSE);
+
+		/* for when a quest giver turned non-invincible */
+		if (m_ptr->questor) {
+			if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+#if 0
+				if (q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx] &&
+				    m_ptr->hp - dam <= q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx]->hostile_revert_hp)
+#else
+				if (m_ptr->hp - dam <= m_ptr->limit_hp)
+#endif
+					quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
+				/* questor died -> give xp */
+				//tmp_exp = q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp * m_ptr->level;
+			} else s_printf("QUESTOR DEPRECATED (monster_dead3x)\n");
 		}
-		return(FALSE);
+
+		/* for obtaining statistical IDDC information: */
+		if (l_ptr) l_ptr->monsters_killed++;
+
+		/* Hack -- remove possible suppress flag */
+		suppress_message = FALSE;
+		monster_death_message(Ind, m_idx, dam, note, FALSE); //no 'lore' displayed
+#ifdef USE_SOUND_2010
+#else
+		sound(Ind, SOUND_KILL);
+#endif
+		monster_death(Ind, m_idx); /* override NO_DEATH! but without any credit (xp/form), just loot */
+		suppress_message = old_tacit;
+		delete_monster_idx(m_idx, FALSE);
+		(*fear) = FALSE;
+		return(TRUE); /* Monster is dead */
 	}
 
 	/* record the data for use in C_BLUE_AI */
 	p_ptr->dam_turn[0] += (m_ptr->hp < dam) ? m_ptr->hp : dam;
 
 	/* for when a quest giver turned non-invincible */
-#if 0
 	if (m_ptr->questor) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+#if 0
 			if (q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx] &&
 			    m_ptr->hp - dam <= q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx]->hostile_revert_hp)
-				quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
-		} else {
-			s_printf("QUESTOR DEPRECATED (monster_dead3)\n");
-		}
-	}
 #else
-	if (m_ptr->questor && m_ptr->hp - dam <= m_ptr->limit_hp) {
-		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx)
-			quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
-		else
-			s_printf("QUESTOR DEPRECATED (monster_dead3)\n");
-	}
+			if (m_ptr->questor && m_ptr->hp - dam <= m_ptr->limit_hp)
 #endif
+				quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
+		} else s_printf("QUESTOR DEPRECATED (monster_dead3)\n");
+	}
 
 	/* Hurt it */
 	m_ptr->hp -= dam;
 
 	/* It is dead now */
 	if (m_ptr->hp < 0) {
-		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		int xp_factor = 100;
 		bool necro = get_skill(p_ptr, SKILL_NECROMANCY) && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
@@ -11865,14 +11985,12 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
 		else tmp_exp = r_ptr->mexp * m_ptr->level;
 
-		/* for when a quest giver turned non-invincible */
+		/* quest giver died? */
 		if (m_ptr->questor) {
 			if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
 				if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp != -1)
 					tmp_exp = q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp * m_ptr->level;
-			} else {
-				s_printf("QUESTOR DEPRECATED (monster_deatd2)\n");
-			}
+			} else s_printf("QUESTOR DEPRECATED (monster_dead2)\n");
 		}
 
 
@@ -11881,10 +11999,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
-
-		/* Extract monster name */
-		monster_desc(Ind, m_name, m_idx, 0);
-		monster_desc(Ind, m_name_real, m_idx, 0x100);
 
 #ifdef USE_SOUND_2010
 #else
@@ -11899,93 +12013,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			lore = TRUE;
 #endif
 
-		/* Death by Missile/Spell attack */
-		/* DEG modified spell damage messages. */
-		if (note) {
-#ifdef RACE_DIZ
-			/* Tell player the monster's lore? (4.7.1b feature) */
-			if (lore) msg_format(Ind, "\374\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
-			else
-#endif
-			msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
-			msg_print_near_monvar(Ind, m_idx,
-			    format("\377y%^s%s from \377g%d \377ydamage.", m_name_real, note, dam),
-			    format("\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam),
-			    format("\377yIt%s from \377g%d \377ydamage.", note, dam));
-		}
-
-		/* Death by physical attack -- invisible monster */
-		else if (!p_ptr->mon_vis[m_idx]) {
-#ifdef RACE_DIZ
-			/* Tell player the monster's lore? (4.7.1b feature) */
-			if (lore) msg_format(Ind, "\374\377yYou have killed %s.", m_name);
-			else
-#endif
-			msg_format(Ind, "\377yYou have killed %s.", m_name);
-			/* other player(s) can maybe see it, so get at least 'killed' vs 'destroyed' right for them */
-			if ((r_ptr->flags3 & RF3_DEMON) ||
-			    (r_ptr->flags3 & RF3_UNDEAD) ||
-			    (r_ptr->flags2 & RF2_STUPID) ||
-			    (strchr("Evg", r_ptr->d_char)))
-				msg_print_near_monvar(Ind, m_idx,
-				    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
-				    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
-				    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
-			else
-				msg_print_near_monvar(Ind, m_idx,
-				    format("\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
-				    format("\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
-				    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
-		}
-
-		/* Death by Physical attack -- non-living monster */
-		else if ((r_ptr->flags3 & RF3_DEMON) ||
-		    (r_ptr->flags3 & RF3_UNDEAD) ||
-		    (r_ptr->flags2 & RF2_STUPID) ||
-		    (strchr("Evg", r_ptr->d_char))) {
-#ifdef RACE_DIZ
-			/* Tell player the monster's lore? (4.7.1b feature) */
-			if (lore) msg_format(Ind, "\374\377yYou have destroyed %s.", m_name);
-			else
-#endif
-			msg_format(Ind, "\377yYou have destroyed %s.", m_name);
-			msg_print_near_monvar(Ind, m_idx,
-			    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
-			    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
-			    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
-		}
-
-		/* Death by Physical attack -- living monster */
-		else {
-#ifdef RACE_DIZ
-			/* Tell player the monster's lore? (4.7.1b feature) */
-			if (lore) msg_format(Ind, "\374\377yYou have slain %s.", m_name);
-			else
-#endif
-			msg_format(Ind, "\377yYou have slain %s.", m_name);
-			msg_print_near_monvar(Ind, m_idx,
-			    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
-			    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
-			    format("\377yIt has been slain from \377g%d \377ydamage by %s.", dam, p_ptr->name));
-		}
-
-		if (lore) {
-			char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
-
-			strcpy(diz, r_text + r_info[m_ptr->r_idx].text);
-			while (strlen(dizptr) > 80 - 0) {
-				strncpy(tmp, dizptr, 80 - 0);
-				tmp[80 - 0] = 0;
-
-				tmpend = &tmp[80 - 1];
-				while (isalpha(*tmpend)) tmpend--;
-				*(tmpend + 1) = 0;
-
-				msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
-				dizptr += strlen(tmp);
-			}
-			if (*dizptr) msg_format(Ind, "\374\377u%s", dizptr);
-		}
+		monster_death_message(Ind, m_idx, dam, note, lore);
 
 		/* Check if it's cloned unique, ie "someone else's spawn" */
 		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
