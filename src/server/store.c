@@ -7682,7 +7682,7 @@ static bool notify_owner(const char *cname, const char *msg) {
 		break;
 	}
 
-	strcpy(priv_note_sender[found_note], "system");
+	strcpy(priv_note_sender[found_note], "SYSTEM");
 	strcpy(priv_note_target[found_note], tname);
 	strcpy(priv_note[found_note], msg);
 	strcpy(priv_note_u[found_note], msg);
