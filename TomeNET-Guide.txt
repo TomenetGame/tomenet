@@ -280,7 +280,7 @@ able to use most keys aside from arrow keys for basic movement.
  In 2022, an official server located in the APAC (Asia-Pacific) region was
  added, its hostname is "apac.tomenet.eu" (92.38.178.77).
  In 2024, another official server located in North America (NA) region was
- added, its hostname is "na.tomenet.eu" (70.39.65.2).
+ added, its hostname is "na.tomenet.eu" (68.71.132.101).
 
 -You should now see a list of available TomeNET servers (except if you used
  TomeNET-direct.bat, which will always connect you directly to the first main
@@ -4630,7 +4630,7 @@ On OSX you run the 'TomeNET.command' file, on Linux the 'tomenet' binary.
  The official asia-pacific server's hostname is "apac.tomenet.eu"
   and its IP address is 92.38.178.77.
  The official north american server's hostname is "na.tomenet.eu"
-  and its IP address is 70.39.65.2.)
+  and its IP address is 68.71.132.101.)
 
 You should now see a list of available TomeNET servers (except if you used
 TomeNET-direct.bat, which will always connect you directly to the first main
@@ -26988,7 +26988,7 @@ Solution:   The meta-server might be down or a DNS problem might be occuring
             or via its IP address 92.38.178.77.
             If you get better latency to the NA region, you can alternatively
             pick the north american server:   na.tomenet.eu
-            or via its IP address 70.39.65.2.
+            or via its IP address 68.71.132.101.
             Make sure your TomeNET.ini file contains the correct server port,
             usually 18348! This port isn't needed if you use the meta-list to
             choose a server to connect to, but it's important if you connect
@@ -27015,7 +27015,7 @@ Solution:   The meta-server might be down or a DNS problem might be occuring
             pick the north american server:
             TomeNET.exe na.tomenet.eu
             or via its IP address:
-            TomeNET.exe 70.39.65.2
+            TomeNET.exe 68.71.132.101
 PROBLEM 12: The main window doesn't display the floor dots in town and in
             certain dungeons, like the Training Tower and Angband. Further,
             fields are sometimes not redrawn correctly, resulting in fake
