@@ -2932,14 +2932,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/note")) {
 			int notes = 0, found_note = MAX_NOTES;
-			bool colon = FALSE;
+			s32b p_id;
 			struct account acc;
-			/* tname: target's account name, but we also store the whole message2 in it at times..pft - this horrible mess needs a rewrite. -_-
-			   Also needs +extra name space, in case the account name was longer than the character name,
-			   as we replace a specified charname with its accountname at some point! */
-			char tname[MAX_SLASH_LINE_LEN + ACCNAME_LEN + 1], *tpname;
-
-			j = 0;
+			char *msg, *msg_u;
+			const char *taname, *tcname = NULL;
 
 			if (tk < 1) { /* Explain command usage */
 				msg_print(Ind, "Usage:    /note <character or account name>:<text>");
@@ -2949,12 +2945,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* cut off, uh, many bytes, to avoid overflow --paranoia, I haven't counted */
-			message2[MAX_SLASH_LINE_LEN - 15] = 0;
-			message3[MAX_SLASH_LINE_LEN - 15] = 0;
-
 			/* char/acc names always start on upper-case, so forgive the player if he slacked.. */
-			message2[6] = toupper(message2[6]);
+			*message3 = toupper(*message3);
 
 			/* was it just a '/note *' ? */
 			if (!strcmp(message3, "*")) { /* Delete all pending notes to all players */
@@ -2977,107 +2969,43 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* translate character name to account name */
-			if (!(tpname = strchr(message2 + 6, ':'))) {
-				/* no text given */
-				if (!lookup_player_id(message2 + 6)) {
-					/* character name not found, try to match account name instead */
-					if (!GetAccount(&acc, message2 + 6, NULL, FALSE, NULL, NULL)) {
-						msg_print(Ind, "\377oNo character or account of that name exists.");
-						/* automatically delete old messages that we have written to this receipient which no longer exists */
-						strcpy(tname, message2 + 6);
-						for (i = 0; i < MAX_NOTES; i++) {
-							/* search for pending notes of this player */
-							if ((!strcmp(priv_note_sender[i], p_ptr->name) ||
-							    !strcmp(priv_note_sender[i], p_ptr->accountname)) &&
-							    !strcmp(priv_note_target[i], tname)) {
-								/* found a matching note */
-								notes++;
-								priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
-							}
-						}
-						if (notes) {
-							msg_format(Ind, "\377oAutomatically deleted %d notes adressed to this receipient.", notes);
-#ifdef USE_SOUND_2010
-							//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
-							sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
-#endif
-						}
-						return;
-					}
-				} else {
-					strcpy(tname, "/note ");
-					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
-					strcpy(message2, tname);
-					strcpy(tname, "");
+			/* Check if a message was specified, via ':' */
+			msg = strchr(message3, ':');
+			if (msg) *msg++ = 0;
+			msg_u = strchr(message3_u, ':');
+			if (msg_u) *msg_u++ = 0;
+
+			/* Get target account name/character name */
+			if ((p_id = lookup_case_player_id(message3))) {
+				tcname = message3;
+				/* character exists, look up its account */
+				if (!(taname = lookup_accountname(p_id))) {
+					/* NOTE: This _can_ happen for outdated/inconsistent player databases where a character
+					         of the name still exists but does not belong to the account of the same name! */
+					msg_print(Ind, "***ERROR: No account found.");
+					return;
 				}
-			} else {
-				/* note text given */
-				tpname[0] = 0;
-				if (!lookup_player_id(message2 + 6)) {
-					/* character name not found, try to match account name instead */
-					if (!GetAccount(&acc, message2 + 6, NULL, FALSE, NULL, NULL)) {
-						msg_print(Ind, "\377oNo character or account of that name exists.");
-						return;
-					}
-					tpname[0] = ':';
-				} else {
-					/* replace the character name given with an account name instead! */
-					strcpy(tname, "/note ");
-					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
-					strcat(tname, ":");
-					strcat(tname, tpname + 1);
-					tname[MSG_LEN - 1] = 0; /* in case the account name was longer than the character name! */
-					strcpy(message2, tname);
-					strcpy(tname, "");
-				}
+			} else if (GetAccount(&acc, message3, NULL, FALSE, NULL, NULL)) taname = acc.name;
+			else {
+				msg_print(Ind, "\377oNo character or account of that name exists.");
+				return;
 			}
 
-			/* Does a colon appear? */
-			for (i = 0; i < (int)strlen(message2); i++)
-				if (message2[i] == ':') colon = TRUE;
-			/* Depending on colon existence, extract the target name */
-			for (i = 5; i < (int)strlen(message2); i++)
-				if (message2[i] == ' ') {
-					for (j = i; j < (int)strlen(message2); j++)
-						/* find where target name starts, save pos in j */
-						if (message2[j] != ' ') {
-							for (i = j; i < (int)strlen(message2); i++) {
-								/* find ':' which terminates target name, save pos in i */
-								if (message2[i] == ':') {
-									/* extract target name up to the ':' */
-									strncpy(tname, message2 + j, NAME_LEN);
-									if (i - j >= NAME_LEN) i = j + NAME_LEN - 1;
-									tname[i - j] = '\0';
-									/* save i in j for latter use */
-									j = i;
-									break;
-								}
-							}
-							if (i == (int)strlen(message2)) {
-								/* extract name till end of line (it's the only parm) */
-								strcpy(tname, message2 + j);
-							}
-							break;
-						}
-					break;
-				}
-
-			/* No colon found -> only a name parm give */
-			if (!colon) { /* Delete all pending notes to a specified player */
+			/* no message was given? */
+			if (!msg) { /* Delete all pending notes to a specified player */
 				for (i = 0; i < MAX_NOTES; i++) {
 					/* search for pending notes of this player to the specified player */
 					if ((!strcmp(priv_note_sender[i], p_ptr->name) ||
 					    !strcmp(priv_note_sender[i], p_ptr->accountname)) &&
-					    !strcmp(priv_note_target[i], tname)) {
+					    !strcmp(priv_note_target[i], taname)) {
 						/* found a matching note */
 						notes++;
 						priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 					}
 				}
-				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes to player %s.", tname);
+				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes to player %s.", taname);
 				else {
-					msg_format(Ind, "\377oDeleted %d notes to player %s.", notes, tname);
+					msg_format(Ind, "\377oDeleted %d notes to player %s.", notes, taname);
 #ifdef USE_SOUND_2010
 					//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 					sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -3086,11 +3014,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* Colon found, store a note to someone */
 			/* Store a new note from this player to the specified player */
 
 			/* does target account exist? -- paranoia at this point! */
-			if (!GetAccount(&acc, tname, NULL, FALSE, NULL, NULL)) {
+			if (!GetAccount(&acc, taname, NULL, FALSE, NULL, NULL)) {
 				msg_print(Ind, "\377oError: Player's account not found.");
 				return;
 			}
@@ -3110,7 +3037,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!strcmp(priv_note[i], "")) {
 					/* found a free memory spot */
 					found_note = i;
-					break;
+				break;
 				}
 			}
 			if (found_note == MAX_NOTES) {
@@ -3118,11 +3045,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* limit - paranoia as it should ofc already be limited */
-			message2[MSG_LEN - 1] = '\0';
-
 			/* Check whether target is actually online by now :) */
-			if ((i = find_player_name(tname)) // <- doesn't check for admin-dm, which this does: name_lookup(Ind, tname, FALSE, FALSE, TRUE))
+			if ((i = find_player_name(tcname)) // <- doesn't check for admin-dm, which this does: name_lookup(Ind, taname, FALSE, FALSE, TRUE))
 			    && !check_ignore(i, Ind)) {
 				player_type *q_ptr = Players[i];
 
@@ -3131,21 +3055,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				    q_ptr->paging == 0)
 					q_ptr->paging = 1;
 
-				tpname = strchr(message2_u, ':'); //abuse tpname; note that this care is paranoia, because it's certain at this point that message2_u has a ':' in it
-				msg_format(i, "\374\377RNote from %s: %s", p_ptr->name, censor ? message2 + j + 1 : (tpname ? tpname + 1: message2 + j + 1));
+				msg_format(i, "\374\377RNote from %s: %s", p_ptr->name, censor ? msg : msg_u);
 #ifdef USE_SOUND_2010
 				//sound(i, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
-				sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+				sound(i, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-				//return; //so double-msg him just to be safe he sees it
+				//return; //so double-msg him just to be safe he sees it -- if we don't return here, there's also no need to check for admin-dm status above
 			}
 
 			strcpy(priv_note_sender[found_note], p_ptr->accountname);
-			strcpy(priv_note_target[found_note], tname);
-			strcpy(priv_note[found_note], message2 + j + 1);
-			strcpy(priv_note_u[found_note], tpname ? tpname + 1 : message2 + j + 1);
+			strcpy(priv_note_target[found_note], taname);
+			strcpy(priv_note[found_note], msg);
+			strcpy(priv_note_u[found_note], msg_u);
 			strcpy(priv_note_date[found_note], showdate());
-			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
+			msg_format(Ind, "\377yNote for account '%s' has been stored.", taname);
 #ifdef USE_SOUND_2010
 			//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 			sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);

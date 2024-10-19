@@ -876,7 +876,7 @@ extern void process_player_change_wpos(int Ind);
 extern bool can_use_wordofrecall(player_type *p_ptr);
 extern void recall_player(int Ind, char *message);
 extern int find_player(s32b id);
-extern int find_player_name(char *name);
+extern int find_player_name(cptr name);
 extern void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool lowdun_near_Bree, bool new_wilderness, bool new_flavours, bool new_houses);
 extern __attribute__((noreturn)) void shutdown_server(void);
 extern void dungeon(void);

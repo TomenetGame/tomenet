@@ -8992,7 +8992,7 @@ int find_player(s32b id) {
 	return(0);
 }
 
-int find_player_name(char *name) {
+int find_player_name(cptr name) {
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++)
