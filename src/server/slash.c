@@ -5307,6 +5307,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
+			if (forbidden_name(message3)) {
+				msg_print(Ind, "That's not a usable name.");
+				return;
+			}
+
 			/* char names always start on upper-case */
 			message3[0] = toupper(message3[0]);
 
