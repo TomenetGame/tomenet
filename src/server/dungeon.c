@@ -8995,11 +8995,8 @@ int find_player(s32b id) {
 int find_player_name(char *name) {
 	int i;
 
-	for (i = 1; i <= NumPlayers; i++) {
-		player_type *p_ptr = Players[i];
-
-		if (!strcmp(p_ptr->name, name)) return(i);
-	}
+	for (i = 1; i <= NumPlayers; i++)
+		if (!strcasecmp(Players[i]->name, name)) return(i);
 
 	/* assume none */
 	return(0);
