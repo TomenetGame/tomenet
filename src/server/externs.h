@@ -1359,6 +1359,7 @@ extern bool purge_acc_file(void);
 
 extern void change_mind(int Ind, bool open_or_close);
 extern int toggle_rest(int Ind, int turns);
+extern bool forbidden_name(char *cname);
 
 /* object1.c */
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);

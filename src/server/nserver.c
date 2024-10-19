@@ -860,7 +860,7 @@ static bool player_allowed(char *name) {
 }
 
 /* blacklist of special nicknames unavailable to players (monster names, "insanity",..) - C. Blue */
-static bool forbidden_name(char *cname) {
+bool forbidden_name(char *cname) {
 	FILE *sfp;
 	char path_buf[1024];
 	char buffer[80], name[80];
@@ -3219,22 +3219,40 @@ static int Handle_login(int ind) {
 
 	for (i = 0; i < MAX_NOTES; i++) {
 		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
-			msg_format(NumPlayers, "\374\377R%s Note from %s: %s", priv_note_date[i], priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
-			p_ptr->tmp_y = 1; //hack: Marker for 'we received at least one note'
-			/* Also notify sender if online right now */
-			for (j = 1; j < NumPlayers; j++) { //skip ourself (Ind is NumPlayers)
-				if (Players[j]->tmp_x) break;
-				if (strcmp(Players[j]->name, priv_note_sender[i])) continue;
-				if (p_ptr->admin_dm && !p_ptr->admin_dm_chat && !is_admin(Players[j]) && !may_address_dm(Players[j])) continue;
-				Players[j]->tmp_x = 1; //hack: Marker for 'at least one of our notes was received'
-				msg_format(j, "\374\377yYour notes to %s have been received.", priv_note_target[i]);
+			/* A return receipt? */
+			if (!(strcmp(priv_note_sender[i], "SYSTEM") && strstr(priv_note[i], "received"))) {
+				msg_print(NumPlayers, priv_note[i]);
+				/* Clear note */
+				priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
+			} else { /* Deliver a note */
+				msg_format(NumPlayers, "\374\377R%s Note from %s: %s", priv_note_date[i], priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
+				// Hack: Delivery-marker for 'we received at least one note', for the sfx ^^
+				p_ptr->tmp_y = 1;
+				/* Also notify sender if online right now */
+				for (j = 1; j < NumPlayers; j++) { //skip ourself (Ind is NumPlayers)
+					if (Players[j]->tmp_x) break;
+					if (strcmp(Players[j]->name, priv_note_sender[i])) continue;
+					if (p_ptr->admin_dm && !p_ptr->admin_dm_chat && !is_admin(Players[j]) && !may_address_dm(Players[j])) continue;
+					Players[j]->tmp_x = 1; //hack: Marker for 'at least one of our notes was received'
+					msg_format(j, "\374\377yYour notes to %s were received.", priv_note_target[i]);
 #ifdef USE_SOUND_2010
-				//sound(j, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
-				sound(j, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+					//sound(j, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+					sound(j, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-				break;
+					break;
+				}
+#if 0 //todo: implement single receipts
+				/* If not instantly received, store receipt in the received note's index */
+				if () {
+					strcpy(priv_note_target[i], priv_note_sender[i]);
+					strcpy(priv_note_sender[i], "SYSTEM");
+					strcpy(priv_note_date[i], showdate());
+					strcpy(priv_note[i], format("\374\377yYour notes to %s were received.", connp->nick));
+				}//dont clear receipt note again
+#endif
+				/* Clear note */
+				priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 			}
-			priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 		}
 	}
 #ifdef USE_SOUND_2010
