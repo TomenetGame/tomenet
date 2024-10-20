@@ -5727,10 +5727,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		} else if (prefix(messagelc, "/ing") || prefix(messagelc, "/ingredients")) { /* toggle item-finding part of the Demolitionist perk/Apply Poison users */
 			bool pois = (p_ptr->melee_techniques & MT_POISON);
+#ifdef ENABLE_DEMOLITIONIST
+			bool demo = get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST;
 
 			/* Eligible for this command? */
-#ifdef ENABLE_DEMOLITIONIST
-			if (get_skill(p_ptr, SKILL_DIG) < ENABLE_DEMOLITIONIST && !pois) {
+			if (!demo && !pois) {
 				msg_print(Ind, "\377yThis command can only be used by demolitionists or those proficient");
 				msg_print(Ind, "\377y in the 'Apply Poison' technique.");
 				return;
@@ -5748,18 +5749,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Notify us about current toggle status */
 			if (p_ptr->suppress_ingredients) {
 #ifdef ENABLE_DEMOLITIONIST
-				if (pois) msg_print(Ind, "You won't find ingredients for demolition or your 'Apply Poison' technique.");
-				else msg_print(Ind, "You won't find ingredients for your demolitionist perk.");
-#else
-				msg_print(Ind, "You won't find ingredients for your 'Apply Poison' technique.");
+				if (demo && pois) msg_print(Ind, "You won't find ingredients for demolition and the 'Apply Poison' technique.");
+				else if (demo) msg_print(Ind, "You won't find ingredients for your demolitionist perk.");
+				else
 #endif
+				msg_print(Ind, "You won't find ingredients for the 'Apply Poison' technique.");
 			} else {
 #ifdef ENABLE_DEMOLITIONIST
-				if (pois) msg_print(Ind, "You will find ingredients for demolition or your 'Apply Poison' technique.");
-				else msg_print(Ind, "You will find ingredients for your demolitionist perk.");
-#else
-				msg_print(Ind, "You will find ingredients for your 'Apply Poison' technique.");
+				if (demo && pois) msg_print(Ind, "You will find ingredients for demolition and the 'Apply Poison' technique.");
+				else if (demo) msg_print(Ind, "You will find ingredients for your demolitionist perk.");
+				else
 #endif
+				msg_print(Ind, "You will find ingredients for the 'Apply Poison' technique.");
 			}
 			return;
 		} else if (prefix(messagelc, "/forms")) { /* [minlev] -- shortcut for mimics for ~ 2 @ ESC */
