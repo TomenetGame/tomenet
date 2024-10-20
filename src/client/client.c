@@ -12,6 +12,7 @@
 
 
 char mangrc_filename[100] = "";
+bool convert_rc = FALSE;
 
 /* linux clients: load subwindow prefs from .tomenetrc - C. Blue */
 static void read_mangrc_aux(int t, cptr sec_name) {
@@ -74,8 +75,12 @@ static bool read_mangrc(cptr filename) {
 	FILE *config;
 	char buf[1024];
 	bool skip = FALSE, fail = FALSE;
+	char *old_term_names[10] = { "Mainwindow", "Mirrorwindow", "Recallwindow", "Choicewindow", "Term-4window", "Term-5window", "Term-6window", "Term-7window", "Term-8window", "Term-9window" };
+	char *term_names[10] = { "Term-Main", "Term-1", "Term-2", "Term-3", "Term-4", "Term-5", "Term-6", "Term-7", "Term-8", "Term-9" };
+	char **use_term_names;
 
 	lighterdarkblue = FALSE;
+	use_term_names = term_names;
 
 	/* empty filename means use default */
 	if (!strlen(filename)) {
@@ -114,6 +119,14 @@ retry_mangrc:
 		while (!feof(config)) {
 			/* Get a line */
 			if (!fgets(buf, 1024, config)) break;
+
+			/* Hack for auto-conversion of 4.9.2->4.9.3 config files: Test if main window exists.
+			   If it doesn't that would be because it uses outdated names, so it must be pre 4.9.3 and we convert it. */
+			if (!convert_rc && strstr(buf, "Mainwindow")) {
+				convert_rc = TRUE;
+				use_term_names = old_term_names;
+				plog("Auto-converting old .rc file (on reading).");
+			}
 
 			/* Skip comments, empty lines */
 			if (buf[0] == '\n' || buf[0] == '#')
@@ -387,26 +400,27 @@ retry_mangrc:
 #endif
 
 ///LINUX_TERM_CFG
-			if (!strncmp(buf, "Term-Main", 9))
+			if (!strncmp(buf, use_term_names[0], strlen(use_term_names[0])))
 				read_mangrc_aux(0, buf);
-			if (!strncmp(buf, "Term-1", 6))
+			if (!strncmp(buf, use_term_names[1], strlen(use_term_names[1])))
 				read_mangrc_aux(1, buf);
-			if (!strncmp(buf, "Term-2", 6))
+			if (!strncmp(buf, use_term_names[2], strlen(use_term_names[2])))
 				read_mangrc_aux(2, buf);
-			if (!strncmp(buf, "Term-3", 6))
+			if (!strncmp(buf, use_term_names[3], strlen(use_term_names[3])))
 				read_mangrc_aux(3, buf);
-			if (!strncmp(buf, "Term-4", 6))
+			if (!strncmp(buf, use_term_names[4], strlen(use_term_names[4])))
 				read_mangrc_aux(4, buf);
-			if (!strncmp(buf, "Term-5", 6))
+			if (!strncmp(buf, use_term_names[5], strlen(use_term_names[5])))
 				read_mangrc_aux(5, buf);
-			if (!strncmp(buf, "Term-6", 6))
+			if (!strncmp(buf, use_term_names[6], strlen(use_term_names[6])))
 				read_mangrc_aux(6, buf);
-			if (!strncmp(buf, "Term-7", 6))
+			if (!strncmp(buf, use_term_names[7], strlen(use_term_names[7])))
 				read_mangrc_aux(7, buf);
-			if (!strncmp(buf, "Term-8", 6))
+			if (!strncmp(buf, use_term_names[8], strlen(use_term_names[8])))
 				read_mangrc_aux(8, buf);
-			if (!strncmp(buf, "Term-9", 6))
+			if (!strncmp(buf, use_term_names[9], strlen(use_term_names[9])))
 				read_mangrc_aux(9, buf);
+			convert_rc = FALSE; /* In case we did an automatic ini-file conversion, reset this state after all has been converted now. */
 
 			/* big_map hint */
 			if (!strncmp(buf, "hintBigmap", 10)) {
@@ -478,38 +492,38 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 }
 
 /* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
-static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
+static void write_mangrc_aux_line(int t, cptr sec_name_write, cptr sec_name, char *buf_org) {
 	char buf[1024], *ter_name = buf_org + strlen(sec_name);
  #if 0 /* we still want to save at least the new visibility state, if it was toggled via in-game menu */
 	if (!c) return; /* invisible window? */
  #endif
 
-	/* no line that gets modified? then keep original! */
+	/* Assume that line doesn't contain any of the parms we modify in here, prepare to keep the original line. */
 	strcpy(buf, buf_org);
 
 	if (!strncmp(ter_name, "_Title", 6)) {
 		if (t != 0)
-			sprintf(buf, "%s_Title\t%s\n", sec_name, ang_term_name[t]);
+			sprintf(buf, "%s_Title\t%s\n", sec_name_write, ang_term_name[t]);
 	} else if (!strncmp(ter_name, "_Visible", 8)) {
 		if (t != 0)
-			sprintf(buf, "%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0');
+			sprintf(buf, "%s_Visible\t%c\n", sec_name_write, term_prefs[t].visible ? '1' : '0');
 	} else if (!strncmp(ter_name, "_X", 2)) {
 		if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
-			sprintf(buf, "%s_X\t\t%d\n", sec_name, term_prefs[t].x);
+			sprintf(buf, "%s_X\t\t%d\n", sec_name_write, term_prefs[t].x);
 	} else if (!strncmp(ter_name, "_Y", 2)) {
 		if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
-			sprintf(buf, "%s_Y\t\t%d\n", sec_name, term_prefs[t].y);
+			sprintf(buf, "%s_Y\t\t%d\n", sec_name_write, term_prefs[t].y);
 	} else if (!strncmp(ter_name, "_Columns", 8)) {
 		if (t != 0)
-			sprintf(buf, "%s_Columns\t%d\n", sec_name, term_prefs[t].columns);
+			sprintf(buf, "%s_Columns\t%d\n", sec_name_write, term_prefs[t].columns);
 	} else if (!strncmp(ter_name, "_Lines", 6)) {
-			sprintf(buf, "%s_Lines\t%d\n", sec_name, term_prefs[t].lines);
+			sprintf(buf, "%s_Lines\t%d\n", sec_name_write, term_prefs[t].lines);
 	} else if (!strncmp(ter_name, "_Font", 5) && term_prefs[t].font[0] != '\0') {
 		if (t != 0)
-			snprintf(buf, 1024, "%s_Font\t%s\n", sec_name, term_prefs[t].font);
+			snprintf(buf, 1024, "%s_Font\t%s\n", sec_name_write, term_prefs[t].font);
 		else
 			/* one more tab, or formatting looks bad ;) */
-			snprintf(buf, 1024, "%s_Font\t\t%s\n", sec_name, term_prefs[t].font);
+			snprintf(buf, 1024, "%s_Font\t\t%s\n", sec_name_write, term_prefs[t].font);
 	}
 
 	strcpy(buf_org, buf);
@@ -532,7 +546,12 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #endif
 	bool explicit_save = !(creds_only == TRUE && update_creds == FALSE) /* Don't execute if we got called from client_init(). */
 	    && !(creds_only == TRUE && update_creds == TRUE); /* Don't execute if we got called from store_crecedentials(). */
+	char *old_term_names[10] = { "Mainwindow", "Mirrorwindow", "Recallwindow", "Choicewindow", "Term-4window", "Term-5window", "Term-6window", "Term-7window", "Term-8window", "Term-9window" };
+	char *term_names[10] = { "Term-Main", "Term-1", "Term-2", "Term-3", "Term-4", "Term-5", "Term-6", "Term-7", "Term-8", "Term-9" };
+	char **use_term_names;
+	int i;
 
+	use_term_names = term_names;
 	buf[0] = 0;//valgrind warning it seems..?
 
 	strcpy(config_name2, mangrc_filename);
@@ -548,6 +567,14 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			while (!feof(config)) {
 				/* Get a line */
 				if (!fgets(buf, 1024, config)) break;
+
+				/* Hack for auto-conversion of 4.9.2->4.9.3 config files: Test if main window exists.
+				   If it doesn't that would be because it uses outdated names, so it must be pre 4.9.3 and we convert it. */
+				if (!convert_rc && strstr(buf, "Mainwindow")) {
+					convert_rc = TRUE;
+					plog("Auto-converting old .rc file (on writing).");
+				}
+				if (convert_rc) use_term_names = old_term_names;
 
 				if (audiopacks_only) {
 					/* modify the line */
@@ -616,40 +643,18 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #ifdef USE_X11
 						/* Don't do this in terminal mode ('-c') */
 						if (!strcmp(ANGBAND_SYS, "x11")) {
+							bool win = FALSE;
+
 							/* save window positions/sizes/visibility (and possibly fonts) */
-							if (!strncmp(buf, "Term-Main", 9)) {
-								write_mangrc_aux_line(0, "Term-Main", buf);
-								found_window[0] = TRUE;
-							} else if (!strncmp(buf, "Term-1", 6)) {
-								write_mangrc_aux_line(1, "Term-1", buf);
-								found_window[1] = TRUE;
-							} else if (!strncmp(buf, "Term-2", 6)) {
-								write_mangrc_aux_line(2, "Term-2", buf);
-								found_window[2] = TRUE;
-							} else if (!strncmp(buf, "Term-3", 6)) {
-								write_mangrc_aux_line(3, "Term-3", buf);
-								found_window[3] = TRUE;
-							} else if (!strncmp(buf, "Term-4", 6)) {
-								write_mangrc_aux_line(4, "Term-4", buf);
-								found_window[4] = TRUE;
-							} else if (!strncmp(buf, "Term-5", 6)) {
-								write_mangrc_aux_line(5, "Term-5", buf);
-								found_window[5] = TRUE;
-							} else if (!strncmp(buf, "Term-6", 6)) {
-								write_mangrc_aux_line(6, "Term-6", buf);
-								found_window[6] = TRUE;
-							} else if (!strncmp(buf, "Term-7", 6)) {
-								write_mangrc_aux_line(7, "Term-7", buf);
-								found_window[7] = TRUE;
-							} else if (!strncmp(buf, "Term-8", 6)) {
-								write_mangrc_aux_line(8, "Term-8", buf);
-								found_window[8] = TRUE;
-							} else if (!strncmp(buf, "Term-9", 6)) {
-								write_mangrc_aux_line(9, "Term-9", buf);
-								found_window[9] = TRUE;
+							for (i = 0; i < ANGBAND_TERM_MAX; i++) {
+								if (!strncmp(buf, use_term_names[i], strlen(use_term_names[i]))) {
+									write_mangrc_aux_line(i, term_names[i], use_term_names[i], buf);
+									win = found_window[i] = TRUE;
+								}
 							}
 
 							/* save current graphical tileset state */
+							if (win) ;
 							else if (!strncmp(buf, "graphics", 8)) {
 								strcpy(buf, "graphics\t\t");
 								strcat(buf, format("%d\n", use_graphics_new));
