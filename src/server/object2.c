@@ -2271,7 +2271,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 
 		/* keep consistent with store.c: price_item():
 		   This price will be the store-sells price so it must be higher than the store-buys price there. */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) value += price_poly_ring(0, o_ptr, 1);
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return(price_poly_ring(0, o_ptr, 1));
 
 		/* Give credit for bonuses */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
@@ -3187,7 +3187,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		if (o_ptr->to_h < 0) return(0L);
 		if (o_ptr->to_d < 0) return(0L);
 #endif
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) value += price_poly_ring(0, o_ptr, 1);
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) value += price_poly_ring(0, o_ptr, 1); //impossible, poly rings cannot be artifacts
 
 		/* Give credit for bonuses */
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
