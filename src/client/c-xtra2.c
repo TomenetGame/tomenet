@@ -141,7 +141,7 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
  * skips line 1 and 22, and uses line 2 thru 21 for old messages.
  *
  * This command shows you which commands you are viewing, and allows
- * you to "search" for strings in the recall.
+ * you to "search" for strings in the recall (term-2).
  *
  * Note that messages may be longer than 80 characters, but they are
  * displayed using "infinite" length, with a special sub-command to

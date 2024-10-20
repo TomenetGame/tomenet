@@ -87,8 +87,8 @@ byte flick_colour(byte attr);
  * use with Angband, and then create one or more "term" structures,
  * using flags and hooks appropriate to the given platform, so that
  * the "main()" function can call one (or more) of the "init_xxx()"
- * functions, as appropriate, to prepare the required "term_screen"
- * (and the optional "term_mirror", "term_choice", "term_recall")
+ * functions, as appropriate, to prepare the required "term_term_main"
+ * (and the optional "term_term_1", "term_term_2", "term_term_3")
  * pointers to "term" structures.  Other "main-xxx.c" systems contain
  * their own "main()" function which, in addition to doing everything
  * needed to initialize the actual program, also does everything that

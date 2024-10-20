@@ -7138,10 +7138,10 @@
  /*
   * Hack -- Old-style names for X11 clients
   */
- #define term_screen	(ang_term[0])
- #define term_mirror	(ang_term[1])
- #define term_recall	(ang_term[2])
- #define term_choice	(ang_term[3])
+ #define term_term_main	(ang_term[0])
+ #define term_term_1	(ang_term[1])
+ #define term_term_2	(ang_term[2])
+ #define term_term_3	(ang_term[3])
  #define term_term_4	(ang_term[4])
  #define term_term_5	(ang_term[5])
  #define term_term_6	(ang_term[6])

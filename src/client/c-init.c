@@ -3103,7 +3103,7 @@ static void Input_loop(void) {
 	        Workaround: We just parse the fonts' custom prf files again, to re-init the fonts properly: */
 	/* Reload custom font prefs on main screen font change */
 	//WINDOWS: if (td == &data[0])
-	//POSIX: if (td == &screen)
+	//POSIX: if (td == &term_main)
 	//handle_process_font_file();
 #endif
 

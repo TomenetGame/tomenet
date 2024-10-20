@@ -208,7 +208,7 @@ static int active = 0;
 /*
  * The main screen information
  */
-/*static term term_screen_body;*/
+/*static term term_term_main_body;*/
 
 
 #ifdef A_COLOR
@@ -794,7 +794,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 	else
 #endif
 
-//TODO: support TERM_SRCLITE in term2attr() by setting flick_global_x/y here, via term_screen = &data[0].t or sth
+//TODO: support TERM_SRCLITE in term2attr() by setting flick_global_x/y here, via term_term_main = &data[0].t or sth
 	a = term2attr(a);
 
 #ifdef A_COLOR
@@ -869,7 +869,7 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x) {
  */
 errr init_gcu(void) {
 	int i, window_wid, window_hgt;
-	/*term *t = &term_screen_body;*/
+	/*term *t = &term_term_main_body;*/
 
 	int next_win = 0;
 	int rows[MAX_TERM_DATA_GCU], cols[MAX_TERM_DATA_GCU], y[MAX_TERM_DATA_GCU], x[MAX_TERM_DATA_GCU];
@@ -1111,24 +1111,24 @@ errr init_gcu(void) {
 	for (i = 0; i < MAX_TERM_DATA_GCU; i++) {
 		if (window_hgt == WINDOW_HGT) { /* normal (non-BIG_MAP) layout: Divide screen area into 4 equally sized rectangles */
 			switch (i) { /* Hard-coded: Only MAX_TERM_DATA_GCU [4] pseudo-'terminals' in any case, the main screen + 3 others. */
-			case 0:  /* Hard-coded: 'screen' (Main Window) */
+			case 0:  /* Hard-coded: 'screen/term-main' (Main Window) */
 				rows[i] = window_hgt;
 				cols[i] = window_wid;
 				y[i] = x[i] = 0;
 				break;
-			case 1:  /* Hard-coded: 'mirror' */
+			case 1:  /* Hard-coded: 'mirror/term-1' */
 				rows[i] = LINES - window_hgt - 1;
 				cols[i] = window_wid;
 				y[i] = window_hgt + 1;
 				x[i] = 0;
 				break;
-			case 2:  /* Hard-coded: 'recall' */
+			case 2:  /* Hard-coded: 'recall/term-2' */
 				rows[i] = window_hgt;
 				cols[i] = COLS - window_wid - 1;
 				y[i] = 0;
 				x[i] = window_wid + 1;
 				break;
-			case 3:  /* Hard-coded: 'choice' */
+			case 3:  /* Hard-coded: 'choice/term-3' */
 				rows[i] = LINES - window_hgt - 1;
 				cols[i] = COLS - window_wid - 1;
 				y[i] = window_hgt + 1;
@@ -1141,24 +1141,24 @@ errr init_gcu(void) {
 			}
 		} else { /* big-map mode: Main Screen takes full height, other windows get split up to its right */
 			switch (i) { /* Hard-coded: Only MAX_TERM_DATA_GCU [4] pseudo-'terminals' in any case, the main screen + 3 others. */
-			case 0:  /* Hard-coded: 'screen' (Main Window) */
+			case 0:  /* Hard-coded: 'screen/term-main' (Main Window) */
 				rows[i] = window_hgt;
 				cols[i] = window_wid;
 				y[i] = x[i] = 0;
 				break;
-			case 1:  /* Hard-coded: 'mirror' - inventory but now dubbed 'Msg/Chat', guarantee 23 lines for displaying the inventory */
+			case 1:  /* Hard-coded: 'mirror/term-1' - inventory but now dubbed 'Msg/Chat', guarantee 23 lines for displaying the inventory */
 				rows[i] = 23;
 				cols[i] = COLS - window_wid - 1;
 				y[i] = 0;
 				x[i] = window_wid + 1;
 				break;
-			case 2:  /* Hard-coded: 'recall' - messages but now dubbed 'Inventory', make it 14 lines in case we choose to display equipment. */
+			case 2:  /* Hard-coded: 'recall/term-2' - messages but now dubbed 'Inventory', make it 14 lines in case we choose to display equipment. */
 				rows[i] = 14;
 				cols[i] = COLS - window_wid - 1;
 				y[i] = 23 + 1;
 				x[i] = window_wid + 1;
 				break;
-			case 3:  /* Hard-coded: 'choice' - size is remaining amount of lines (so it will be at least 46-23-1-14-1 = 7 lines, enough for some messages or player list or whatever) */
+			case 3:  /* Hard-coded: 'choice/term-3' - size is remaining amount of lines (so it will be at least 46-23-1-14-1 = 7 lines, enough for some messages or player list or whatever) */
 				rows[i] = LINES - 23 - 1 - 14 - 1;
 				cols[i] = COLS - window_wid - 1;
 				y[i] = 23 + 1 + 14 + 1;
@@ -1198,7 +1198,7 @@ errr init_gcu(void) {
 	/* Activate the "Angband" window screen */
 	Term_activate(&data[0].t);
 
-	term_screen = &data[0].t;
+	term_term_main = &data[0].t;
 
 	/* Success */
 	return(0);
@@ -1240,7 +1240,7 @@ void resize_main_window_gcu(int cols, int rows) {
 #if 0 /* copy/pasted from USE_X11 -- todo: implement for ncurses */
 	int wid, hgt;
 	term_data *td = term_idx_to_term_data(0);
-	term *t = ang_term[0]; //&screen
+	term *t = ang_term[0]; //&term_main
 
 	term_prefs[0].columns = cols; //screen_wid + (SCREEN_PAD_X);
 	term_prefs[0].lines = rows; //screen_hgt + (SCREEN_PAD_Y);

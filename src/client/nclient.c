@@ -1565,7 +1565,7 @@ int Net_start(int sex, int race, int class) {
 	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(0), win_get_logfont_h(0));
 	else
  #endif
-	get_screen_font_name(fname);
+	get_term_main_font_name(fname);
 #endif
 	//&graphics_tile_wid, &graphics_tile_hgt)) {
 	//td->font_wid; td->font_hgt;
@@ -7897,7 +7897,7 @@ int Send_font(void) {
 	if (use_logfont) sprintf(fname, "<LOGFONT>%dx%d", win_get_logfont_w(0), win_get_logfont_h(0));
 	else
  #endif
-	get_screen_font_name(fname);
+	get_term_main_font_name(fname);
 #endif
 	//&graphics_tile_wid, &graphics_tile_hgt)) {
 	//td->font_wid; td->font_hgt;

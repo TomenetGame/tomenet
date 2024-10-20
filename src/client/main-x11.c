@@ -1238,11 +1238,6 @@ struct term_data {
 #define DEFAULT_X11_OUTER_BORDER_WIDTH 1
 #define DEFAULT_X11_INNER_BORDER_WIDTH 1
 
-/*
- * The main screen
- */
-static term_data screen;
-
 #define MICROSECONDS_IN_SECOND 1000000
 static void timeval_add_us(struct timeval *t, unsigned int us) {
 	t->tv_usec = t->tv_usec + us;
@@ -1252,24 +1247,12 @@ static void timeval_add_us(struct timeval *t, unsigned int us) {
 	}
 }
 
-/*
- * The (optional) "mirror" window
- */
-static term_data mirror;
-
-/*
- * The (optional) "recall" window
- */
-static term_data recall;
-
-/*
- * The (optional) "choice" window
- */
-static term_data choice;
-
-/*
- * Other (optional) windows.
- */
+/* The main screen */
+static term_data term_main;
+/* The optional windows */
+static term_data term_1;
+static term_data term_2;
+static term_data term_3;
 static term_data term_4;
 static term_data term_5;
 static term_data term_6;
@@ -1277,9 +1260,9 @@ static term_data term_7;
 static term_data term_8;
 static term_data term_9;
 
-static term_data *x11_terms_term_data[ANGBAND_TERM_MAX] = {&screen, &mirror, &recall, &choice, &term_4, &term_5, &term_6, &term_7, &term_8, &term_9};
-static char *x11_terms_font_env[ANGBAND_TERM_MAX] = {"TOMENET_X11_FONT_SCREEN", "TOMENET_X11_FONT_MIRROR", "TOMENET_X11_FONT_RECALL", "TOMENET_X11_FONT_CHOICE", "TOMENET_X11_FONT_TERM_4", "TOMENET_X11_FONT_TERM_5", "TOMENET_X11_FONT_TERM_6", "TOMENET_X11_FONT_TERM_7", "TOMENET_X11_FONT_TERM_8", "TOMENET_X11_FONT_TERM_9"};
-static char *x11_terms_font_default[ANGBAND_TERM_MAX] = {DEFAULT_X11_FONT_SCREEN, DEFAULT_X11_FONT_MIRROR, DEFAULT_X11_FONT_RECALL, DEFAULT_X11_FONT_CHOICE, DEFAULT_X11_FONT_TERM_4, DEFAULT_X11_FONT_TERM_5, DEFAULT_X11_FONT_TERM_6, DEFAULT_X11_FONT_TERM_7, DEFAULT_X11_FONT_TERM_8, DEFAULT_X11_FONT_TERM_9};
+static term_data *x11_terms_term_data[ANGBAND_TERM_MAX] = {&term_main, &term_1, &term_2, &term_3, &term_4, &term_5, &term_6, &term_7, &term_8, &term_9};
+static char *x11_terms_font_env[ANGBAND_TERM_MAX] = {"TOMENET_X11_FONT_TERM_MAIN", "TOMENET_X11_FONT_TERM_1", "TOMENET_X11_FONT_TERM_2", "TOMENET_X11_FONT_TERM_3", "TOMENET_X11_FONT_TERM_4", "TOMENET_X11_FONT_TERM_5", "TOMENET_X11_FONT_TERM_6", "TOMENET_X11_FONT_TERM_7", "TOMENET_X11_FONT_TERM_8", "TOMENET_X11_FONT_TERM_9"};
+static char *x11_terms_font_default[ANGBAND_TERM_MAX] = {DEFAULT_X11_FONT_TERM_MAIN, DEFAULT_X11_FONT_TERM_1, DEFAULT_X11_FONT_TERM_2, DEFAULT_X11_FONT_TERM_3, DEFAULT_X11_FONT_TERM_4, DEFAULT_X11_FONT_TERM_5, DEFAULT_X11_FONT_TERM_6, DEFAULT_X11_FONT_TERM_7, DEFAULT_X11_FONT_TERM_8, DEFAULT_X11_FONT_TERM_9};
 
 /*
  * Set the size hints of Infowin
@@ -1543,54 +1526,54 @@ static errr CheckEvent(bool wait) {
 
 
 	/* Main screen, inner window */
-	if (xev->xany.window == screen.inner->win) {
-		td = &screen;
+	if (xev->xany.window == term_main.inner->win) {
+		td = &term_main;
 		iwin = td->inner;
 		t_idx = 0;
 	}
 	/* Main screen, outer window */
-	else if (xev->xany.window == screen.outer->win) {
-		td = &screen;
+	else if (xev->xany.window == term_main.outer->win) {
+		td = &term_main;
 		iwin = td->outer;
 		t_idx = 0;
 	}
 
 	/* Mirror window, inner window */
-	else if (term_mirror && xev->xany.window == mirror.inner->win) {
-		td = &mirror;
+	else if (term_term_1 && xev->xany.window == term_1.inner->win) {
+		td = &term_1;
 		iwin = td->inner;
 		t_idx = 1;
 	}
 	/* Mirror window, outer window */
-	else if (term_mirror && xev->xany.window == mirror.outer->win)
+	else if (term_term_1 && xev->xany.window == term_1.outer->win)
 	{
-		td = &mirror;
+		td = &term_1;
 		iwin = td->outer;
 		t_idx = 1;
 	}
 
 	/* Recall window, inner window */
-	else if (term_recall && xev->xany.window == recall.inner->win) {
-		td = &recall;
+	else if (term_term_2 && xev->xany.window == term_2.inner->win) {
+		td = &term_2;
 		iwin = td->inner;
 		t_idx = 2;
 	}
 	/* Recall window, outer window */
-	else if (term_recall && xev->xany.window == recall.outer->win) {
-		td = &recall;
+	else if (term_term_2 && xev->xany.window == term_2.outer->win) {
+		td = &term_2;
 		iwin = td->outer;
 		t_idx = 2;
 	}
 
 	/* Choice window, inner window */
-	else if (term_choice && xev->xany.window == choice.inner->win) {
-		td = &choice;
+	else if (term_term_3 && xev->xany.window == term_3.inner->win) {
+		td = &term_3;
 		iwin = td->inner;
 		t_idx = 3;
 	}
 	/* Choice window, outer window */
-	else if (term_choice && xev->xany.window == choice.outer->win) {
-		td = &choice;
+	else if (term_term_3 && xev->xany.window == term_3.outer->win) {
+		td = &term_3;
 		iwin = td->outer;
 		t_idx = 3;
 	}
@@ -1781,7 +1764,7 @@ static errr CheckEvent(bool wait) {
 				Infowin_move(term_prefs[t_idx].x, term_prefs[t_idx].y);
 			}
 
-			if (td == &screen) {
+			if (td == &term_main) {
 				Infowin_set_focus();
 			}
 			break;
@@ -2094,7 +2077,7 @@ static errr Term_curs_x11(int x, int y) {
 static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
-	if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	if (Term && Term->data == &term_main && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
 		flick_global_x = x;
 		flick_global_y = y;
 	} else flick_global_x = 0;
@@ -2160,7 +2143,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
-	if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	if (Term && Term->data == &term_main && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
 		flick_global_x = x;
 		flick_global_y = y;
 	} else flick_global_x = 0;
@@ -2294,7 +2277,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
-	if (Term && Term->data == &screen && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	if (Term && Term->data == &term_main && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
 		flick_global_x = x;
 		flick_global_y = y;
 	} else flick_global_x = 0;
@@ -3042,27 +3025,27 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	num = (fixed ? 1024 : 16);
 
 	if (!strcmp(name, ang_term_name[0])) {
-		n = getenv("TOMENET_X11_WID_SCREEN");
+		n = getenv("TOMENET_X11_WID_TERM_MAIN");
 		if (n) win_cols = atoi(n);
-		n = getenv("TOMENET_X11_HGT_SCREEN");
+		n = getenv("TOMENET_X11_HGT_TERM_MAIN");
 		if (n) win_lines = atoi(n);
 	}
 	if (!strcmp(name, ang_term_name[1])) {
-		n = getenv("TOMENET_X11_WID_MIRROR");
+		n = getenv("TOMENET_X11_WID_TERM_1");
 		if (n) win_cols = atoi(n);
-		n = getenv("TOMENET_X11_HGT_MIRROR");
+		n = getenv("TOMENET_X11_HGT_TERM_1");
 		if (n) win_lines = atoi(n);
 	}
 	if (!strcmp(name, ang_term_name[2])) {
-		n = getenv("TOMENET_X11_WID_RECALL");
+		n = getenv("TOMENET_X11_WID_TERM_2");
 		if (n) win_cols = atoi(n);
-		n = getenv("TOMENET_X11_HGT_RECALL");
+		n = getenv("TOMENET_X11_HGT_TERM_2");
 		if (n) win_lines = atoi(n);
 	}
 	if (!strcmp(name, ang_term_name[3])) {
-		n = getenv("TOMENET_X11_WID_CHOICE");
+		n = getenv("TOMENET_X11_WID_TERM_3");
 		if (n) win_cols = atoi(n);
-		n = getenv("TOMENET_X11_HGT_CHOICE");
+		n = getenv("TOMENET_X11_HGT_TERM_3");
 		if (n) win_lines = atoi(n);
 	}
 	if (!strcmp(name, ang_term_name[4])) {
@@ -3362,13 +3345,13 @@ void enable_readability_blue_x11(void) {
 
 
 static term_data* term_idx_to_term_data(int term_idx) {
-	term_data *td = &screen;
+	term_data *td = &term_main;
 
 	switch (term_idx) {
-	case 0: td = &screen; break;
-	case 1: td = &mirror; break;
-	case 2: td = &recall; break;
-	case 3: td = &choice; break;
+	case 0: td = &term_main; break;
+	case 1: td = &term_1; break;
+	case 2: td = &term_2; break;
+	case 3: td = &term_3; break;
 	case 4: td = &term_4; break;
 	case 5: td = &term_5; break;
 	case 6: td = &term_6; break;
@@ -3381,10 +3364,10 @@ static term_data* term_idx_to_term_data(int term_idx) {
 }
 
 static int term_data_to_term_idx(term_data *td) {
-	if (td == &screen) return(0);
-	if (td == &mirror) return(1);
-	if (td == &recall) return(2);
-	if (td == &choice) return(3);
+	if (td == &term_main) return(0);
+	if (td == &term_1) return(1);
+	if (td == &term_2) return(2);
+	if (td == &term_3) return(3);
 	if (td == &term_4) return(4);
 	if (td == &term_5) return(5);
 	if (td == &term_6) return(6);
@@ -3657,10 +3640,10 @@ errr init_x11(void) {
 	}
 
 	/* Activate the "Angband" main window screen. */
-	Term_activate(&screen.t);
+	Term_activate(&term_main.t);
 
 	/* Raise the "Angband" main window. */
-	Infowin_set(screen.outer);
+	Infowin_set(term_main.outer);
 	Infowin_raise();
 
 	/* Success */
@@ -3698,7 +3681,7 @@ void change_font(int s) {
 	/* use main window font for measuring */
 	char tmp[128] = "";
 
-	if (screen.fnt->name) strcpy(tmp, screen.fnt->name);
+	if (term_main.fnt->name) strcpy(tmp, term_main.fnt->name);
 	else strcpy(tmp, DEFAULT_X11_FONT);
 
 	/* cycle? */
@@ -3878,7 +3861,7 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 	XFlush(Metadpy->dpy);
 
 	/* Reload custom font prefs on main screen font change */
-	if (td == &screen) handle_process_font_file();
+	if (td == &term_main) handle_process_font_file();
 }
 #endif
 
@@ -3958,7 +3941,7 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 	term_data *td;
 	int wid_inner, hgt_inner, wid_outer, hgt_outer;
 
-	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
+	/* The 'term_idx_to_term_data()' returns '&term_main' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
 	td = term_idx_to_term_data(term_idx);
 
@@ -3972,7 +3955,7 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 	/* Our 'term_data' indexes in 'term_idx' are the same as 'ang_term' indexes so it's safe to use 'validate_term_dimensions()'. */
 	rounding_down = validate_term_dimensions(term_idx, &cols, &rows);
 	/* Are we actually enlarging the window? */
-	if (td == &screen && rounding_down && screen_hgt == SCREEN_HGT) rows = MAX_SCREEN_HGT + SCREEN_PAD_Y;
+	if (td == &term_main && rounding_down && screen_hgt == SCREEN_HGT) rows = MAX_SCREEN_HGT + SCREEN_PAD_Y;
 
 	/* Calculate dimensions in pixels. */
 	wid_inner = cols * td->fnt->wid;
@@ -4007,7 +3990,7 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 	/* Restore saved term. */
 	Term_activate(t);
 
-	if (td == &screen) {
+	if (td == &term_main) {
 		/* Main screen is special. Update the screen_wid/hgt globals if needed and notify server about it if in game. */
 
 		int new_screen_cols = cols - SCREEN_PAD_X;
@@ -4136,7 +4119,7 @@ void term_toggle_visibility(int term_idx) {
 	/* Create and initialize terminal window. */
 	errr err = x11_term_init(term_idx);
 	/* After initializing the new window is active. Switch to main window. */
-	Term_activate(&screen.t);
+	Term_activate(&term_main.t);
 
 	if (err) {
 		fprintf(stderr, "Error initializing toggled X11 terminal window with index %d\n", term_idx);
@@ -4161,14 +4144,14 @@ bool term_get_visibility(int term_idx) {
 void store_crecedentials(void) {
 	write_mangrc(TRUE, TRUE, FALSE);
 }
-void get_screen_font_name(char *buf) {
+void get_term_main_font_name(char *buf) {
 	/* fonts aren't available in command-line mode */
 	if (!strcmp(ANGBAND_SYS, "gcu")) {
 		buf[0] = 0;
 		return;
 	}
 
-	if (screen.fnt->name) strcpy(buf, screen.fnt->name);
+	if (term_main.fnt->name) strcpy(buf, term_main.fnt->name);
 	else strcpy(buf, "");
 }
 /* Palette animation - 2018 *testing* */
@@ -4599,7 +4582,7 @@ int get_misc_fonts(char *output_list, int max_misc_fonts, int max_font_name_leng
 void set_window_title_x11(int term_idx, cptr title) {
 	term_data *td;
 
-	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
+	/* The 'term_idx_to_term_data()' returns '&term_main' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
 
 	/* Trying to change title in this state causes a crash */

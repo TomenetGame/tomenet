@@ -1352,9 +1352,9 @@ static char inkey_aux(void) {
  * Ascii 30 is "control caret" -- indicates "keypad" key
  * Ascii 31 is "control underscore" -- begin macro-trigger
  *
- * Hack -- Make sure to allow calls to "inkey()" even if "term_screen"
+ * Hack -- Make sure to allow calls to "inkey()" even if "term_term_main"
  * is not the active Term, this allows the various "main-xxx.c" files
- * to only handle input when "term_screen" is "active".
+ * to only handle input when "term_term_main" is "active".
  *
  * Note the nasty code used to process the "inkey_base" flag, which allows
  * various "macro triggers" to be entered as normal key-sequences, with the
@@ -1421,7 +1421,7 @@ char inkey(void) {
 	}
 
 	/* Hack -- Activate the screen */
-	Term_activate(term_screen);
+	Term_activate(term_term_main);
 
 
 	/* Get a (non-zero) keypress */
@@ -1441,7 +1441,7 @@ char inkey(void) {
 			Term_fresh();
 
 			/* Hack -- activate the screen */
-			Term_activate(term_screen);
+			Term_activate(term_term_main);
 
 			/* Only once */
 			done = TRUE;
@@ -9957,7 +9957,7 @@ static void do_cmd_options_fonts(void) {
 			case 3: strcpy(ang_term_name[y], "Character"); break;
 			case 4: strcpy(ang_term_name[y], "Chat"); break;
 			case 5: strcpy(ang_term_name[y], "Equipment"); break;
-			case 6: strcpy(ang_term_name[y], "Term-6"); break;
+			case 6: strcpy(ang_term_name[y], "Bags"); break;
 			case 7: strcpy(ang_term_name[y], "Term-7"); break;
 			case 8: strcpy(ang_term_name[y], "Term-8"); break;
 			case 9: strcpy(ang_term_name[y], "Term-9"); break;
@@ -9979,7 +9979,7 @@ static void do_cmd_options_fonts(void) {
 			strcpy(ang_term_name[3], "Character");
 			strcpy(ang_term_name[4], "Chat");
 			strcpy(ang_term_name[5], "Equipment");
-			strcpy(ang_term_name[6], "Term-6");
+			strcpy(ang_term_name[6], "Bags");
 			strcpy(ang_term_name[7], "Term-7");
 			strcpy(ang_term_name[8], "Term-8");
 			strcpy(ang_term_name[9], "Term-9");
@@ -13268,7 +13268,7 @@ void handle_process_font_file(void) {
 
 	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
  #if defined(WINDOWS) || defined(USE_X11)
-	get_screen_font_name(fname);
+	get_term_main_font_name(fname);
  #endif
 	if (fname[0]) {
 		FILE *fff;

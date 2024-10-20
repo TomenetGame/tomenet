@@ -33,7 +33,7 @@ extern errr init_x11(void);
 
 extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
-extern void get_screen_font_name(char *buf);
+extern void get_term_main_font_name(char *buf);
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
@@ -1091,7 +1091,7 @@ extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
 extern bool check_dir(cptr s);
-extern void get_screen_font_name(char *buf);
+extern void get_term_main_font_name(char *buf);
 extern bool win_dontmoveuser;
 extern bool INI_disable_CS_IME, INI_enable_CS_IME, suggest_IME;
 extern bool disable_CS_IME, enable_CS_IME;

@@ -108,9 +108,9 @@ static int arctan[12][34] = {	/* [y, x] -> arctan(y/x) in degrees, with y=0..11,
  * use with Angband, and then create one or more "term" structures,
  * using flags and hooks appropriate to the given platform, so that
  * the "main()" function can call one (or more) of the "init_xxx()"
- * functions, as appropriate, to prepare the required "term_screen"
- * (and the optional "term_mirror", "term_choice", "term_recall" and
- * term_term_4 to term_term_7) pointers to "term" structures.  Other
+ * functions, as appropriate, to prepare the required "term_term_main"
+ * (and the optional "term_1", "term_2", "term_3" and
+ * term_term_4 to term_term_9) pointers to "term" structures.  Other
  * "main-xxx.c" systems contain their own "main()" function which,
  * in addition to doing everything, needed to initialize the actual
  * program, also does everything that the normal "init_xxx()" functions
@@ -944,7 +944,7 @@ static byte anim2static(byte attr) {
 #endif
 
 		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
-		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
+		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_term_main = &data[0].t
 
 		/* Assume we're only called on a dungeon floor with dimensions SCREEN_WID x SCREEN_HGT (66x22): */
 		flick_global_x -= SCREEN_PAD_LEFT;
@@ -1412,7 +1412,7 @@ byte flick_colour(byte attr) {
 #endif
 
 		/* TODO: GCU client lazy workaround for now (not fire, as it might drive people crazy if all affected walls are on fire): */
-		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_screen = &data[0].t
+		if (!strcmp(ANGBAND_SYS, "gcu")) return(TERM_WHITE); // todo: checks for stuff like term_term_main = &data[0].t
 
 		/* Catch use in chat (or elsewhere, paranoia) instead of as feat attr in the main screen map, or we will crash :-s */
 		if (!flick_global_x)
@@ -4536,9 +4536,9 @@ errr term_init(term *t, int w, int h, int k) {
 	return(0);
 }
 
-/* Validates the screen terminal dimensions and changes them if they are not valid.
+/* Validates the term-main ('screen') terminal dimensions and changes them if they are not valid.
  * In this case the 'cols' and 'rows' is set to nearest lower valid value and if there is no such one, than to nearest higher valid value. */
-bool validate_term_screen_dimensions(int *cols, int *rows) {
+bool validate_term_term_main_dimensions(int *cols, int *rows) {
 	s16b wid = (s16b)(*cols) - SCREEN_PAD_X;
 	s16b hgt = (s16b)(*rows) - SCREEN_PAD_Y;
 	bool res = validate_screen_dimensions(&wid, &hgt);
@@ -4548,7 +4548,7 @@ bool validate_term_screen_dimensions(int *cols, int *rows) {
 	return(res);
 }
 
-/* Validates the dimensions for terminal under index 'term_idx'.
+/* Validates the dimensions for terminal of index 'term_idx'.
  * If the index is invalid, cols and rows will be set to 0.
  * If the dimensions for terminal are invalid, they will be changed to valid values.
  * In this case the 'cols' and 'rows' is set to nearest lower valid value and if there is no such one, than to nearest higher valid value. */
@@ -4560,7 +4560,7 @@ bool validate_term_dimensions(int term_idx, int *cols, int *rows) {
 		(*rows) = 0;
 		return(FALSE);
 	}
-	if (term_idx == 0) res = validate_term_screen_dimensions(cols, rows);
+	if (term_idx == 0) res = validate_term_term_main_dimensions(cols, rows);
 	else {
 		if ((*cols) < 1) (*cols) = 1;
 		if ((*rows) < 1) (*rows) = 1;

@@ -39,7 +39,7 @@
  * loaded from preferences file placed in user directory.
  *
  * XXX XXX XXX
- * The various "warning" messages assume the existence of the "screen.w"
+ * The various "warning" messages assume the existence of the "term_main.w"
  * window, I think, and only a few calls actually check for its existence,
  * this may be okay since "NULL" means "on top of all windows". (?)
  *
@@ -123,10 +123,10 @@
 #define IDM_FILE_EXIT			104
 #define IDM_FILE_QUIT			105
 
-#define IDM_TEXT_SCREEN			201
-#define IDM_TEXT_MIRROR			202
-#define IDM_TEXT_RECALL			203
-#define IDM_TEXT_CHOICE			204
+#define IDM_TEXT_TERM_MAIN		201
+#define IDM_TEXT_TERM_1			202
+#define IDM_TEXT_TERM_2			203
+#define IDM_TEXT_TERM_3			204
 #define IDM_TEXT_TERM_4			205
 #define IDM_TEXT_TERM_5			206
 #define IDM_TEXT_TERM_6			207
@@ -134,10 +134,10 @@
 #define IDM_TEXT_TERM_8			209
 #define IDM_TEXT_TERM_9			210
 
-#define IDM_WINDOWS_SCREEN		211
-#define IDM_WINDOWS_MIRROR		212
-#define IDM_WINDOWS_RECALL		213
-#define IDM_WINDOWS_CHOICE		214
+#define IDM_WINDOWS_TERM_MAIN		211
+#define IDM_WINDOWS_TERM_1		212
+#define IDM_WINDOWS_TERM_2		213
+#define IDM_WINDOWS_TERM_3		214
 #define IDM_WINDOWS_TERM_4		215
 #define IDM_WINDOWS_TERM_5		216
 #define IDM_WINDOWS_TERM_6		217
@@ -1416,17 +1416,16 @@ void save_prefs(void) {
 	WritePrivateProfileString("Base", "AudioVolumeWeather", buf, ini_file);
  #endif
 #endif
-	save_prefs_aux(0, "Main window");
-	/* XXX XXX XXX XXX */
-	save_prefs_aux(1, "Mirror window");
-	save_prefs_aux(2, "Recall window");
-	save_prefs_aux(3, "Choice window");
-	save_prefs_aux(4, "Term-4 window");
-	save_prefs_aux(5, "Term-5 window");
-	save_prefs_aux(6, "Term-6 window");
-	save_prefs_aux(7, "Term-7 window");
-	save_prefs_aux(8, "Term-8 window");
-	save_prefs_aux(9, "Term-9 window");
+	save_prefs_aux(0, "Term-Main");
+	save_prefs_aux(1, "Term-1");
+	save_prefs_aux(2, "Term-2");
+	save_prefs_aux(3, "Term-3");
+	save_prefs_aux(4, "Term-4");
+	save_prefs_aux(5, "Term-5");
+	save_prefs_aux(6, "Term-6");
+	save_prefs_aux(7, "Term-7");
+	save_prefs_aux(8, "Term-8");
+	save_prefs_aux(9, "Term-9");
 }
 
 
@@ -1606,17 +1605,16 @@ static void load_prefs(void) {
 #endif
 
 	/* Load window prefs */
-	load_prefs_aux(&data[0], "Main window");
-	/* XXX XXX XXX XXX */
-	load_prefs_aux(&data[1], "Mirror window");
-	load_prefs_aux(&data[2], "Recall window");
-	load_prefs_aux(&data[3], "Choice window");
-	load_prefs_aux(&data[4], "Term-4 window");
-	load_prefs_aux(&data[5], "Term-5 window");
-	load_prefs_aux(&data[6], "Term-6 window");
-	load_prefs_aux(&data[7], "Term-7 window");
-	load_prefs_aux(&data[8], "Term-8 window");
-	load_prefs_aux(&data[9], "Term-9 window");
+	load_prefs_aux(&data[0], "Term-Main");
+	load_prefs_aux(&data[1], "Term-1");
+	load_prefs_aux(&data[2], "Term-2");
+	load_prefs_aux(&data[3], "Term-3");
+	load_prefs_aux(&data[4], "Term-4");
+	load_prefs_aux(&data[5], "Term-5");
+	load_prefs_aux(&data[6], "Term-6");
+	load_prefs_aux(&data[7], "Term-7");
+	load_prefs_aux(&data[8], "Term-8");
+	load_prefs_aux(&data[9], "Term-9");
 
 	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
 	if (!bigmap_hint) firstrun = FALSE;
@@ -2093,7 +2091,7 @@ static void term_data_redraw(term_data *td) {
 	Term_redraw();
 
 	/* Restore the term */
-	Term_activate(term_screen);
+	Term_activate(term_term_main);
 }
 
 
@@ -2108,7 +2106,7 @@ static void term_data_redraw_section(term_data *td, int x1, int y1, int x2, int 
 	Term_redraw_section(x1, y1, x2, y2);
 
 	/* Restore the term */
-	Term_activate(term_screen);
+	Term_activate(term_term_main);
 }
 
 
@@ -3374,14 +3372,14 @@ static void setup_menus(void) {
 	/* Window font options */
 	for (i = 1; i < MAX_TERM_DATA; i++) {
 		/* Window font */
-		EnableMenuItem(hm, IDM_TEXT_SCREEN + i,
+		EnableMenuItem(hm, IDM_TEXT_TERM_MAIN + i,
 		               MF_BYCOMMAND | (data[i].visible ? MF_ENABLED : MF_DISABLED | MF_GRAYED));
 	}
 
 	/* Window options */
 	for (i = 1; i < MAX_TERM_DATA; i++) {
 		/* Window */
-		CheckMenuItem(hm, IDM_WINDOWS_SCREEN + i,
+		CheckMenuItem(hm, IDM_WINDOWS_TERM_MAIN + i,
 		              MF_BYCOMMAND | (data[i].visible ? MF_CHECKED : MF_UNCHECKED));
 	}
 #endif
@@ -3537,7 +3535,7 @@ static void process_menus(WORD wCmd) {
 			quit(NULL);
 			break;
 
-		case IDM_TEXT_SCREEN:
+		case IDM_TEXT_TERM_MAIN:
  #ifdef USE_GRAPHICS
 			/* XXX XXX XXX */
 			if (use_graphics) {
@@ -3550,16 +3548,16 @@ static void process_menus(WORD wCmd) {
 			break;
 
 		/* Window fonts */
-		case IDM_TEXT_MIRROR:
-		case IDM_TEXT_RECALL:
-		case IDM_TEXT_CHOICE:
+		case IDM_TEXT_TERM_1:
+		case IDM_TEXT_TERM_2:
+		case IDM_TEXT_TERM_3:
 		case IDM_TEXT_TERM_4:
 		case IDM_TEXT_TERM_5:
 		case IDM_TEXT_TERM_6:
 		case IDM_TEXT_TERM_7:
 		case IDM_TEXT_TERM_8:
 		case IDM_TEXT_TERM_9:
-			i = wCmd - IDM_TEXT_SCREEN;
+			i = wCmd - IDM_TEXT_TERM_MAIN;
 
 			if ((i < 0) || (i >= MAX_TERM_DATA)) break;
 
@@ -3568,16 +3566,16 @@ static void process_menus(WORD wCmd) {
 			break;
 
 		/* Window visibility */
-		case IDM_WINDOWS_MIRROR:
-		case IDM_WINDOWS_RECALL:
-		case IDM_WINDOWS_CHOICE:
+		case IDM_WINDOWS_TERM_1:
+		case IDM_WINDOWS_TERM_2:
+		case IDM_WINDOWS_TERM_3:
 		case IDM_WINDOWS_TERM_4:
 		case IDM_WINDOWS_TERM_5:
 		case IDM_WINDOWS_TERM_6:
 		case IDM_WINDOWS_TERM_7:
 		case IDM_WINDOWS_TERM_8:
 		case IDM_WINDOWS_TERM_9:
-			i = wCmd - IDM_WINDOWS_SCREEN;
+			i = wCmd - IDM_WINDOWS_TERM_MAIN;
 
 			if ((i < 0) || (i >= MAX_TERM_DATA)) break;
 
@@ -3601,7 +3599,7 @@ static void process_menus(WORD wCmd) {
  #ifdef USE_GRAPHICS
 		case IDM_OPTIONS_GRAPHICS:
 			/* XXX XXX XXX  */
-			Term_activate(term_screen);
+			Term_activate(term_term_main);
 
 			/* Reset the visuals */
 			//reset_visuals();
@@ -5316,7 +5314,7 @@ void store_audiopackfolders(void) {
 	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
 	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
 }
-void get_screen_font_name(char *buf) {
+void get_term_main_font_name(char *buf) {
 	if (data[0].font_file) strcpy(buf, data[0].font_file);
 	else strcpy(buf, "");
 }
@@ -5604,7 +5602,7 @@ void refresh_palette(void) {
 void set_window_title_win(int term_idx, cptr title) {
 	term_data *td;
 
-	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
+	/* The 'term_idx_to_term_data()' returns '&term_main' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
 	td = &data[term_idx];
 

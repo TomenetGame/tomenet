@@ -4054,16 +4054,18 @@ which is a graphical version of devilspie.
 Alternatively to using the .tomenetrc file for window configuration, you can
 also set environment variables. These settings will override .tomenetrc.
 Environment Variables:
-TOMENET_X11_FONT_SCREEN (height and width of main window cannot be changed)
-TOMENET_X11_WID_MIRROR, TOMENET_X11_HGT_MIRROR, TOMENET_X11_FONT_MIRROR
-TOMENET_X11_WID_CHOICE, TOMENET_X11_HGT_CHOICE, TOMENET_X11_FONT_CHOICE
-TOMENET_X11_WID_RECALL, TOMENET_X11_HGT_RECALL, TOMENET_X11_FONT_RECALL
+TOMENET_X11_FONT - global font setting for all windows. If set, this will be
+used for any window that doesn't have a specific font variable set:
+TOMENET_X11_FONT_TERM_MAIN (height and width of main window cannot be changed)
+TOMENET_X11_WID_TERM_1, TOMENET_X11_HGT_TERM_1, TOMENET_X11_FONT_TERM_1
+TOMENET_X11_WID_TERM_2, TOMENET_X11_HGT_TERM_2, TOMENET_X11_FONT_TERM_2
+TOMENET_X11_WID_TERM_3, TOMENET_X11_HGT_TERM_3, TOMENET_X11_FONT_TERM_3
 TOMENET_X11_WID_TERM_4, TOMENET_X11_HGT_TERM_4, TOMENET_X11_FONT_TERM_4
 TOMENET_X11_WID_TERM_5, TOMENET_X11_HGT_TERM_5, TOMENET_X11_FONT_TERM_5
 TOMENET_X11_WID_TERM_6, TOMENET_X11_HGT_TERM_6, TOMENET_X11_FONT_TERM_6
 TOMENET_X11_WID_TERM_7, TOMENET_X11_HGT_TERM_7, TOMENET_X11_FONT_TERM_7
 Use the 'export' command to set them, eg:
-        export TOMENET_X11_FONT_SCREEN=8x13
+        export TOMENET_X11_FONT_TERM_MAIN=8x13
         export TOMENET_X11_WID_TERM_4=80
         export TOMENET_X11_HGT_TERM_4=24
 TOMENET_X11_FONT sets one font globally for all windows. It's overridden by

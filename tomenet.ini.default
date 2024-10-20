@@ -108,7 +108,7 @@ AudioVolumeSound=70
 AudioVolumeWeather=70
 
 
-[Main window]
+[Term-Main]
 WindowNumber=0
 PositionX=0
 PositionY=1
@@ -117,7 +117,7 @@ Rows=24
 Font=8X13.FON
 Graf=8X13.BMP
 
-[Mirror window]
+[Term-1]
 WindowNumber=1
 WindowTitle=Game messages
 Visible=1
@@ -128,7 +128,7 @@ Rows=24
 Font=6X10.FON
 Graf=8X13.BMP
 
-[Recall window]
+[Term-2]
 WindowNumber=2
 WindowTitle=Inventory
 Visible=1
@@ -139,7 +139,7 @@ Rows=24
 Font=6X10.FON
 Graf=8X13.BMP
 
-[Choice window]
+[Term-3]
 WindowNumber=3
 WindowTitle=Character overview
 Visible=1
@@ -150,7 +150,7 @@ Rows=22
 Font=5X8.FON
 Graf=8X13.BMP
 
-[Term-4 window]
+[Term-4]
 WindowNumber=4
 WindowTitle=Chat
 Visible=1
@@ -161,7 +161,7 @@ Rows=17
 Font=6X10.FON
 Graf=8X13.BMP
 
-[Term-5 window]
+[Term-5]
 WindowNumber=5
 WindowTitle=Equipment
 Visible=1
@@ -172,9 +172,9 @@ Rows=14
 Font=6X10.FON
 Graf=8X13.BMP
 
-[Term-6 window]
+[Term-6]
 WindowNumber=6
-WindowTitle=Term-6
+WindowTitle=Bags
 Visible=0
 PositionX=184
 PositionY=549
@@ -183,9 +183,9 @@ Rows=24
 Font=5X8.FON
 Graf=8X13.BMP
 
-[Term-7 window]
+[Term-7]
 WindowNumber=7
-WindowTitle=Term-7
+WindowTitle=Character boni
 Visible=0
 PositionX=676
 PositionY=548
@@ -194,9 +194,9 @@ Rows=24
 Font=5X8.FON
 Graf=8X13.BMP
 
-[Term-8 window]
+[Term-8]
 WindowNumber=8
-WindowTitle=Term-8
+WindowTitle=Player list
 Visible=0
 PositionX=184
 PositionY=549
@@ -205,9 +205,9 @@ Rows=24
 Font=5X8.FON
 Graf=8X13.BMP
 
-[Term-9 window]
+[Term-9]
 WindowNumber=9
-WindowTitle=Term-9
+WindowTitle=Lag-o-meter
 Visible=0
 PositionX=676
 PositionY=548

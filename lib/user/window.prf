@@ -7,23 +7,23 @@
 # Valid usage numbers:
 #  0 -Inventory     1 -Equipment   2 -Character sheet   3 -Non-chat messages
 #  4 -Messages      5 -Chat only   6 -Clone-map         7 -Lag-o-meter
-#  8 -Player list   9 -Character sheet, boni page
+#  8 -Player list   9 -Character sheet, boni page      10- Bags (subinventory)
 
-# Window 'Mirror', Flag 'Display all messages'
+# Window 'Term-1', Flag 'Display all messages'
 W:1:4
-# Window 'Recall', Flag 'Display inven/equip'
+# Window 'Term-2', Flag 'Display inven/equip'
 W:2:0
-# Window 'Choice', Flag 'Display character'
+# Window 'Term-3', Flag 'Display character'
 W:3:2
 # Window 'Term-4', Flag 'Display chat messages'
 W:4:5
 # Window 'Term-5', Flag 'Display equip/inven'
 W:5:1
-# Window 'Term-6', Flag 'Display clone-map'
-W:6:6
-# Window 'Term-7', Flag 'Display lag-o-meter'
-W:7:7
-# Window 'Term-8', Flag 'Display character boni page'
-W:8:9
-# Window 'Term-9', Flag 'Display player list'
-W:9:8
+# Window 'Term-6', Flag 'Display bags'
+W:6:10
+# Window 'Term-7', Flag 'Display character boni page'
+W:7:9
+# Window 'Term-8', Flag 'Display player list'
+W:8:8
+# Window 'Term-9', Flag 'Display lag-o-meter'
+W:9:7

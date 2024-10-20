@@ -307,6 +307,6 @@ extern byte flick_colour(byte attr);
 extern void flicker(void);
 extern errr refresh_clone_map(void);
 
-extern bool validate_term_screen_dimensions(int *cols, int *rows);
+extern bool validate_term_term_main_dimensions(int *cols, int *rows);
 extern bool validate_term_dimensions(int term_idx, int *cols, int *rows);
 #endif

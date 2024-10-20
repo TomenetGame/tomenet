@@ -83,7 +83,7 @@ char ang_term_name[ANGBAND_TERM_MAX][40] = {
 	"Character",
 	"Chat",
 	"Equipment",
-	"Term-6",
+	"Bags",
 	"Term-7",
 	"Term-8",
 	"Term-9"

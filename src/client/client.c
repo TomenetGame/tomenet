@@ -387,25 +387,25 @@ retry_mangrc:
 #endif
 
 ///LINUX_TERM_CFG
-			if (!strncmp(buf, "Mainwindow", 10))
+			if (!strncmp(buf, "Term-Main", 9))
 				read_mangrc_aux(0, buf);
-			if (!strncmp(buf, "Mirrorwindow", 12))
+			if (!strncmp(buf, "Term-1", 6))
 				read_mangrc_aux(1, buf);
-			if (!strncmp(buf, "Recallwindow", 12))
+			if (!strncmp(buf, "Term-2", 6))
 				read_mangrc_aux(2, buf);
-			if (!strncmp(buf, "Choicewindow", 12))
+			if (!strncmp(buf, "Term-3", 6))
 				read_mangrc_aux(3, buf);
-			if (!strncmp(buf, "Term-4window", 12))
+			if (!strncmp(buf, "Term-4", 6))
 				read_mangrc_aux(4, buf);
-			if (!strncmp(buf, "Term-5window", 12))
+			if (!strncmp(buf, "Term-5", 6))
 				read_mangrc_aux(5, buf);
-			if (!strncmp(buf, "Term-6window", 12))
+			if (!strncmp(buf, "Term-6", 6))
 				read_mangrc_aux(6, buf);
-			if (!strncmp(buf, "Term-7window", 12))
+			if (!strncmp(buf, "Term-7", 6))
 				read_mangrc_aux(7, buf);
-			if (!strncmp(buf, "Term-8window", 12))
+			if (!strncmp(buf, "Term-8", 6))
 				read_mangrc_aux(8, buf);
-			if (!strncmp(buf, "Term-9window", 12))
+			if (!strncmp(buf, "Term-9", 6))
 				read_mangrc_aux(9, buf);
 
 			/* big_map hint */
@@ -418,7 +418,7 @@ retry_mangrc:
 		}
 		fclose(config);
 
-		(void)validate_term_screen_dimensions(&(term_prefs[0].columns), &(term_prefs[0].lines));
+		(void)validate_term_term_main_dimensions(&(term_prefs[0].columns), &(term_prefs[0].lines));
 		/* Calculate game screen dimensions from main window dimensions. */
 		screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
 		screen_hgt = term_prefs[0].lines - SCREEN_PAD_Y;
@@ -617,35 +617,35 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 						/* Don't do this in terminal mode ('-c') */
 						if (!strcmp(ANGBAND_SYS, "x11")) {
 							/* save window positions/sizes/visibility (and possibly fonts) */
-							if (!strncmp(buf, "Mainwindow", 10)) {
-								write_mangrc_aux_line(0, "Mainwindow", buf);
+							if (!strncmp(buf, "Term-Main", 9)) {
+								write_mangrc_aux_line(0, "Term-Main", buf);
 								found_window[0] = TRUE;
-							} else if (!strncmp(buf, "Mirrorwindow", 12)) {
-								write_mangrc_aux_line(1, "Mirrorwindow", buf);
+							} else if (!strncmp(buf, "Term-1", 6)) {
+								write_mangrc_aux_line(1, "Term-1", buf);
 								found_window[1] = TRUE;
-							} else if (!strncmp(buf, "Recallwindow", 12)) {
-								write_mangrc_aux_line(2, "Recallwindow", buf);
+							} else if (!strncmp(buf, "Term-2", 6)) {
+								write_mangrc_aux_line(2, "Term-2", buf);
 								found_window[2] = TRUE;
-							} else if (!strncmp(buf, "Choicewindow", 12)) {
-								write_mangrc_aux_line(3, "Choicewindow", buf);
+							} else if (!strncmp(buf, "Term-3", 6)) {
+								write_mangrc_aux_line(3, "Term-3", buf);
 								found_window[3] = TRUE;
-							} else if (!strncmp(buf, "Term-4window", 12)) {
-								write_mangrc_aux_line(4, "Term-4window", buf);
+							} else if (!strncmp(buf, "Term-4", 6)) {
+								write_mangrc_aux_line(4, "Term-4", buf);
 								found_window[4] = TRUE;
-							} else if (!strncmp(buf, "Term-5window", 12)) {
-								write_mangrc_aux_line(5, "Term-5window", buf);
+							} else if (!strncmp(buf, "Term-5", 6)) {
+								write_mangrc_aux_line(5, "Term-5", buf);
 								found_window[5] = TRUE;
-							} else if (!strncmp(buf, "Term-6window", 12)) {
-								write_mangrc_aux_line(6, "Term-6window", buf);
+							} else if (!strncmp(buf, "Term-6", 6)) {
+								write_mangrc_aux_line(6, "Term-6", buf);
 								found_window[6] = TRUE;
-							} else if (!strncmp(buf, "Term-7window", 12)) {
-								write_mangrc_aux_line(7, "Term-7window", buf);
+							} else if (!strncmp(buf, "Term-7", 6)) {
+								write_mangrc_aux_line(7, "Term-7", buf);
 								found_window[7] = TRUE;
-							} else if (!strncmp(buf, "Term-8window", 12)) {
-								write_mangrc_aux_line(8, "Term-8window", buf);
+							} else if (!strncmp(buf, "Term-8", 6)) {
+								write_mangrc_aux_line(8, "Term-8", buf);
 								found_window[8] = TRUE;
-							} else if (!strncmp(buf, "Term-9window", 12)) {
-								write_mangrc_aux_line(9, "Term-9window", buf);
+							} else if (!strncmp(buf, "Term-9", 6)) {
+								write_mangrc_aux_line(9, "Term-9", buf);
 								found_window[9] = TRUE;
 							}
 
@@ -718,44 +718,44 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			    && explicit_save) { /*This code is only meant for when we deliberately save config. */
 				/* Add missing windows (added for older client versions that didn't have 7-9 yet) */
 				if (!found_window[0]) {
-					write_mangrc_aux(0, "Mainwindow", config2);
-					printf("Added missing Mainwindow to config file.\n");
+					write_mangrc_aux(0, "Term-Main", config2);
+					printf("Added missing Term-Main window to config file.\n");
 				}
 				if (!found_window[1]) {
-					write_mangrc_aux(1, "Mirrorwindow", config2);
-					printf("Added missing Mirrorwindow to config file.\n");
+					write_mangrc_aux(1, "Term-1", config2);
+					printf("Added missing Term-1 window to config file.\n");
 				}
 				if (!found_window[2]) {
-					write_mangrc_aux(2, "Recallwindow", config2);
-					printf("Added missing Recallwindow to config file.\n");
+					write_mangrc_aux(2, "Term-2", config2);
+					printf("Added missing Term-2 window to config file.\n");
 				}
 				if (!found_window[3]) {
-					write_mangrc_aux(3, "Choicewindow", config2);
-					printf("Added missing Choicewindow to config file.\n");
+					write_mangrc_aux(3, "Term-3", config2);
+					printf("Added missing Term-3 window to config file.\n");
 				}
 				if (!found_window[4]) {
-					write_mangrc_aux(4, "Term-4window", config2);
-					printf("Added missing Term-4window to config file.\n");
+					write_mangrc_aux(4, "Term-4", config2);
+					printf("Added missing Term-4 window to config file.\n");
 				}
 				if (!found_window[5]) {
-					write_mangrc_aux(5, "Term-5window", config2);
-					printf("Added missing Term-5window to config file.\n");
+					write_mangrc_aux(5, "Term-5", config2);
+					printf("Added missing Term-5 window to config file.\n");
 				}
 				if (!found_window[6]) {
-					write_mangrc_aux(6, "Term-6window", config2);
-					printf("Added missing Term-6window to config file.\n");
+					write_mangrc_aux(6, "Term-6", config2);
+					printf("Added missing Term-6 window to config file.\n");
 				}
 				if (!found_window[7]) {
-					write_mangrc_aux(7, "Term-7window", config2);
-					printf("Added missing Term-7window to config file.\n");
+					write_mangrc_aux(7, "Term-7", config2);
+					printf("Added missing Term-7 window to config file.\n");
 				}
 				if (!found_window[8]) {
-					write_mangrc_aux(8, "Term-8window", config2);
-					printf("Added missing Term-8window to config file.\n");
+					write_mangrc_aux(8, "Term-8", config2);
+					printf("Added missing Term-8 window to config file.\n");
 				}
 				if (!found_window[9]) {
-					write_mangrc_aux(9, "Term-9window", config2);
-					printf("Added missing Term-9window to config file\n.");
+					write_mangrc_aux(9, "Term-9", config2);
+					printf("Added missing Term-9 window to config file\n.");
 				}
 			}
 #endif
@@ -875,16 +875,16 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 ///LINUX_TERM_CFG
 /* Don't do this in terminal mode ('-c') */
 			if (!strcmp(ANGBAND_SYS, "x11")) {
-				write_mangrc_aux(0, "Mainwindow", config2);
-				write_mangrc_aux(1, "Mirrorwindow", config2);
-				write_mangrc_aux(2, "Recallwindow", config2);
-				write_mangrc_aux(3, "Choicewindow", config2);
-				write_mangrc_aux(4, "Term-4window", config2);
-				write_mangrc_aux(5, "Term-5window", config2);
-				write_mangrc_aux(6, "Term-6window", config2);
-				write_mangrc_aux(7, "Term-7window", config2);
-				write_mangrc_aux(8, "Term-8window", config2);
-				write_mangrc_aux(9, "Term-9window", config2);
+				write_mangrc_aux(0, "Term-Main", config2);
+				write_mangrc_aux(1, "Term-1", config2);
+				write_mangrc_aux(2, "Term-2", config2);
+				write_mangrc_aux(3, "Term-3", config2);
+				write_mangrc_aux(4, "Term-4", config2);
+				write_mangrc_aux(5, "Term-5", config2);
+				write_mangrc_aux(6, "Term-6", config2);
+				write_mangrc_aux(7, "Term-7", config2);
+				write_mangrc_aux(8, "Term-8", config2);
+				write_mangrc_aux(9, "Term-9", config2);
 			}
 #endif
 
