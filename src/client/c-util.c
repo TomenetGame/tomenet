@@ -12298,15 +12298,15 @@ void interact_audio(void) {
 #if 0 /* enter/space on a slider increase it */
 			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrow keys\377U. Toggle/modify: \377yRETURN\377U/\377ySPACE\377U. Reset: \377yr\377U. Exit: \377yESC\377U.");
 #else /* enter/space on a slider toggle it */
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrows/p/n/+/-\377U. Toggle: \377yRETURN\377U/\377ySPACE\377U. Reset: \377yr\377U. Exit: \377yESC\377U.");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrows/p/n/+/-\377U  Toggle: \377yRETURN\377U/\377ySPACE\377U  Reset2cfg: \377yr\377U  Exit: \377yESC\377U");
 #endif
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Sfx only: \377yCTRL+S\377U. Sfx+weather: \377yCTRL+W\377U. All: \377yCTRL+A\377U. Max: \377yCTRL+G\377U. Half: \377yCTRL+H\377U.");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Sfx only: \377yCTRL+S\377U  Sfx+weather: \377yCTRL+W\377U  All: \377yCTRL+A\377U    Max/75%/Half: \377yCTRL+G\377U/\377yB\377U/\377yH\377U");
 
 			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
 			//Term_putstr(7, ++l, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
 			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
 			//Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U. Sliders: \377ySHIFT+shortcut\377U. Reload packs & re-init: \377yCTRL+R\377U.");
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U. Sliders: \377ySHIFT+a/m/s/w\377U.  Reload packs & re-init: \377yCTRL+R\377U.");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U  Sliders: \377ySHIFT+a/m/s/w\377U    Reload packs & re-init: \377yCTRL+R\377U ");
 
 			if (quiet_mode) Term_putstr(12, ++l, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
 			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, ++l, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
@@ -12412,8 +12412,11 @@ void interact_audio(void) {
 			set_mixing();
 			break;
 		case KTRL('H'):
-			cfg_audio_master_volume = 50;
-			cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 50;
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 50;
+			set_mixing();
+			break;
+		case KTRL('B'):
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 75;
 			set_mixing();
 			break;
 		/* allow chatting from within here */
