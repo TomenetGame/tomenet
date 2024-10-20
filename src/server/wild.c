@@ -353,6 +353,7 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 		   In general, around 500-5000 tries should usually be sufficient to generate everything at max strictness. */
 		if (try == MAX_TRIES_DUN_PLACEMENT) {
 			s_printf("Dungeon placement still failed after %d tries,\n going back to wilderness terrain rerolling first,\n then retrying dungeons.\n", MAX_TRIES_DUN_PLACEMENT);
+			dungeon_id_max = 0; //forgot index array, reindex from 0 again
 			return (FALSE);
 		}
 
@@ -472,7 +473,6 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 		}
 
 		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
-		i++;
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		x = 4 + rand_int(MAX_WID - 8);
@@ -487,6 +487,8 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 #if DEBUG_LEVEL > 0
 		s_printf("Dungeon %d is generated in %s [%d,%d].\n", i, wpos_format(0, &wpos), x, y);
 #endif
+
+		i++;
 	}
 
 	s_printf("Worldmap created after %d tries.\n", try);
