@@ -7807,6 +7807,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
+		/* Reduce power vs flying enmies, as the vines sprout from the ground */
+		if (r_ptr->flags7 & RF7_CAN_FLY) dam = (dam + 1) / 2;
+
 		/* Powerful monsters can resist */
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
 		    (r_ptr->flags9 & RF9_NO_REDUCE) ||
