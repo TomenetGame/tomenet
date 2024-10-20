@@ -7810,7 +7810,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Powerful monsters can resist */
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
 		    (r_ptr->flags9 & RF9_NO_REDUCE) ||
-		    (r_ptr->flags4 & RF4_BR_INER)) {
+		    (r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) || /* Ghosts and Wallkillers */
+		    r_ptr->d_char == 'I' || (r_ptr->d_char == 'W' && !r_ptr->weight)) { /* Insects, Wraiths */
 			note = " is unaffected";
 			obvious = FALSE;
 		} else if (!(m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10)) { /* Cannot slow down infinitely */
