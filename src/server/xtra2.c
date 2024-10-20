@@ -6887,9 +6887,9 @@ bool monster_death(int Ind, int m_idx) {
 			drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 			//found_chemical = TRUE;
 			if (!p_ptr->warning_ingredients) {
-				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
-				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
-				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
+				msg_print(Ind, "\374\377yHINT: You sometimes refine poison potions from monsters in addition to normal");
+				msg_print(Ind, "\374\377y      loot because you possess the 'Apply Poison' fighting technique. You can");
+				msg_print(Ind, "\374\377y      toggle these drops via the '\377o/ing\377y' command.");
 				p_ptr->warning_ingredients = 1;
 				s_printf("warning_ingredients: %s\n", p_ptr->name);
 			}
