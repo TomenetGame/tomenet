@@ -6876,7 +6876,10 @@ bool monster_death(int Ind, int m_idx) {
 			invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_POISON));
 			s_printf("MT_POISON: %s found poison (kill).\n", p_ptr->name);
 			forge.owner = p_ptr->id;
-			forge.ident |= ID_NO_HIDDEN;
+			if (!object_aware_p(Ind, &forge)) {
+				object_aware(Ind, &forge);
+				//object_known(o_ptr);
+			}
 			forge.mode = p_ptr->mode; /* No MODE_NEWLOOT_ITEM for this one */
 			forge.iron_trade = p_ptr->iron_trade;
 			forge.iron_turn = turn;
