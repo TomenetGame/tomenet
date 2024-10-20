@@ -189,7 +189,7 @@ Term-5_Font		5x8
 
 ## 'Bags', term-6
 Term-6_Title		Bags
-Term-6_Visible		0
+Term-6_Visible		1
 Term-6_X		0
 Term-6_Y		0
 Term-6_Columns		80
