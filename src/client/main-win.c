@@ -851,10 +851,11 @@ static term_data *td_ptr;
 /*
  * Various boolean flags
  */
-bool game_in_progress  = FALSE;  /* game in progress */
-bool initialized       = FALSE;  /* note when "open"/"new" become valid */
-bool paletted          = FALSE;  /* screen paletted, i.e. 256 colors */
-bool colors16          = FALSE;  /* 16 colors screen, don't use RGB() */
+bool game_in_progress	= FALSE;  /* game in progress */
+bool initialized	= FALSE;  /* note when "open"/"new" become valid */
+bool paletted		= FALSE;  /* screen paletted, i.e. 256 colors */
+bool colors16		= FALSE;  /* 16 colors screen, don't use RGB() */
+bool convert_ini	= FALSE;  /* Convert a pre 4.9.3 .ini file to current version */
 
 /*
  * Saved instance handle
@@ -1291,6 +1292,9 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
 	term_data *td = &data[term_idx];
 	char buf[32];
 
+	wsprintf(buf, "%d", term_idx);
+	WritePrivateProfileString(sec_name, "WindowNumber", buf, ini_file);
+
 	if (td != &data[0]) {
 		/* Visible (Sub-windows) */
 		strcpy(buf, td->visible ? "1" : "0");
@@ -1426,6 +1430,21 @@ void save_prefs(void) {
 	save_prefs_aux(7, "Term-7");
 	save_prefs_aux(8, "Term-8");
 	save_prefs_aux(9, "Term-9");
+
+	/* Delete deprecated entries now that they have been copy-converted. */
+	if (convert_ini) {
+		printf("Writing back window-parameter conversions to .ini file.\n");
+		WritePrivateProfileString("Main window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Mirror window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Recall window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Choice window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Term-4 window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Term-5 window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Term-6 window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Term-7 window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Term-8 window", NULL, NULL, ini_file);
+		WritePrivateProfileString("Term-9 window", NULL, NULL, ini_file);
+	}
 }
 
 
@@ -1435,6 +1454,26 @@ void save_prefs(void) {
 static void load_prefs_aux(term_data *td, cptr sec_name) {
 	char tmp[128];
 	int i = 0;
+
+	/* Hack for auto-conversion of 4.9.2->4.9.3 config files: Test if main window exists.
+	   If it doesn't that would be because it uses outdated names, so it must be pre 4.9.3 and we convert it. */
+	if (!convert_ini && td == &data[0] && GetPrivateProfileInt(sec_name, "WindowNumber", -1, ini_file) == -1) {
+		convert_ini = TRUE;
+		plog("Auto-converting old .ini file.");
+	}
+	if (convert_ini) {
+		/* Read deprecated equivalent of the name */
+		if (td == &data[0]) sec_name = "Main window";
+		else if (td == &data[1]) sec_name = "Mirror window";
+		else if (td == &data[2]) sec_name = "Recall window";
+		else if (td == &data[3]) sec_name = "Choice window";
+		else if (td == &data[4]) sec_name = "Term-4 window";
+		else if (td == &data[5]) sec_name = "Term-5 window";
+		else if (td == &data[6]) sec_name = "Term-6 window";
+		else if (td == &data[7]) sec_name = "Term-7 window";
+		else if (td == &data[8]) sec_name = "Term-8 window";
+		else if (td == &data[9]) sec_name = "Term-9 window";
+	}
 
 	/* Visibility (Sub-window) */
 	if (td != &data[0]) {
@@ -1615,6 +1654,7 @@ static void load_prefs(void) {
 	load_prefs_aux(&data[7], "Term-7");
 	load_prefs_aux(&data[8], "Term-8");
 	load_prefs_aux(&data[9], "Term-9");
+	//remember, for writing it back later. ---convert_ini = FALSE; /* In case the first load_prefs_aux(0) call started an automatic ini-file conversion, reset this state after all has been converted now. */
 
 	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
 	if (!bigmap_hint) firstrun = FALSE;
@@ -4494,6 +4534,7 @@ void init_stuff(void) {
 	if (!fp0) {
 		char path2[1024];
 
+		printf("No file '%s' found. Trying to use default template.\n", path);
 		GetModuleFileName(hInstance, path2, 512);
 		strcpy(path2 + strlen(path2) - 4, ".ini.default");
 
@@ -4520,6 +4561,7 @@ void init_stuff(void) {
 			fclose(fp2);
 			fclose(fp);
 #endif
+			printf("Successfully generated %s.\n", path);
 		} else plog(format("Error: Neither %s nor %s exists", path, path2));
 	}
 
