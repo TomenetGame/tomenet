@@ -409,7 +409,7 @@ bool redraw_store = FALSE;
 
 /* Linux window prefs - C. Blue */
 generic_term_info term_prefs[10] = {
-#if 0 /* too small */
+#if 0 /* too small -- and deprecated */
 	{ 1, -32000, -32000, 80, 24, "8x13" },//TomeNET
 	{ 1, -32000, -32000, 80, 24, "6x10" },//Mirror
 	{ 1, -32000, -32000, 80, 24, "6x10" },//Recall
@@ -422,15 +422,16 @@ generic_term_info term_prefs[10] = {
 	{ 0, -32000, -32000, 80, 24, "5x8" }
 #else /* fitting for full-hd -- note: client will start up on 1st time with all windows inaccessible until moved via "alt+space,m" if the coords are -32000 */
 	{ 1, 0, 0, 80, 24, "9x15" },//TomeNET
-	{ 1, 0, 0, 80, 24, "8x13" },//Mirror
-	{ 1, 0, 0, 80, 24, "8x13" },//Recall
-	{ 1, 0, 0, 80, 22, "8x13" },//Choice
-	{ 1, 0, 0, 80, 17, "8x13" },//Term-4 - inven
+	{ 1, 0, 0, 80, 24, "8x13" },//Term-1 (Mirror) - chat/msg
+	{ 1, 0, 0, 80, 24, "8x13" },//Term-2 (Recall) - inven
+	{ 1, 0, 0, 80, 22, "8x13" },//Term-3 (Choice) - character
+	{ 1, 0, 0, 80, 17, "8x13" },//Term-4 - chat
 	{ 1, 0, 0, 80, 14, "8x13" },//Term-5 - equip
-	{ 0, 0, 0, 80, 24, "8x13" },
-	{ 0, 0, 0, 80, 24, "8x13" },
-	{ 0, 0, 0, 80, 24, "8x13" },
-	{ 0, 0, 0, 80, 24, "8x13" }
+	{ 1, 0, 0, 80, 13, "8x13" },//Term-6 - bags
+	{ 0, 0, 0, 80, 24, "8x13" },//Term-7 - character boni
+	{ 0, 0, 0, 80, 24, "8x13" },//Term-8 - player list
+	{ 0, 0, 0, 80, 24, "8x13" } //Term-9 - lag-o-meter
+	//omitted: non-chat messages, clone-map
 #endif
 };
 
