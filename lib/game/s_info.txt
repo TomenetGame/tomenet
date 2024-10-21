@@ -34,7 +34,7 @@ V:4.0.0
 
 N:1:Combat
 D:Improves fighting and allows wearing heavier armour (Martial Arts excepted).
-D:Pseudo-ID weapon/armour/food faster. Detailed at 10, ranged at 30, curses at 40.
+D:Pseudo-ID weapons/armour faster. Detailed at 10, ranged at 30, curses at 40.
 A:14:Check parry/block chance
 I:1000:0
 
@@ -98,7 +98,7 @@ I:1000:0
 N:12:Magic
 D:Increases your max mana by +4 per point.
 #outdated (pre-lua): and spell-casting chance.
-D:Pseudo-ID magical items, curses and food faster and (at 10+) in more detail.
+D:Pseudo-ID magical items and curses faster and (at 10+) in more detail.
 #^not actually enchanted items (eg weapons), but items from treasure/magic classes mostly
 #A:4:Toggle fire-till-kill mode
 I:1000:0
@@ -289,8 +289,8 @@ A:8:Check dodge chance
 I:1000:0
 
 N:43:Health
-D:Increases base hit points by +2/point, speeds HP+ST regeneration and recovery
-D:from malicious effects. Shows more detailed SN (sanity) status at 10/20/40.
+D:Increases base hit points by +2/point, speeds HP+ST regen and status recovery.
+D:Pseudo-ID food (detailedly at 10+). More detailed sanity indicator at 10/20/40.
 I:1000:0
 
 N:44:Digging

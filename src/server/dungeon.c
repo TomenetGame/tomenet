@@ -427,8 +427,9 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 		/* Artifacts (doesn't exist) */
 		if (artifact_p(o_ptr)) return("good");
 
-		/* Mushroom of Restoring detected (spoilery, but potions/devices have a value->good check, so there should be one in food too probably, pft) */
-		if (k_ptr->cost >= 1000) return("good");
+		/* Food with magical properties -
+		   note about mushrooms: Restoring is 2000, Restore Str/Con + Hallu are 200. */
+		if (k_ptr->cost > 10) return("good");
 
 		break;
 	}
@@ -447,8 +448,8 @@ static void sense_inventory(int Ind) {
 
 	int i, dur, in = -1;
 
-	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE, heavy_traps = FALSE;
-	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE, ok_traps = FALSE;
+	bool heavy_combat = FALSE, heavy_magic = FALSE, heavy_archery = FALSE, heavy_traps = FALSE, heavy_food = FALSE;
+	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE, ok_traps = FALSE, ok_food = FALSE;
 	bool ok_curse = FALSE, force_curse = FALSE, force_shrooms = p_ptr->prace == RACE_HOBBIT;
 
 	cptr feel;
@@ -475,6 +476,7 @@ static void sense_inventory(int Ind) {
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery = TRUE;
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) ok_magic = ok_curse = TRUE;
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_TRAPPING, 80) + 20) - 28)) ok_traps = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_HEALTH, 80) + 20) - 28)) ok_food = TRUE;
 	/* note: SKILL_PRAY is currently unused */
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
 
@@ -497,12 +499,13 @@ static void sense_inventory(int Ind) {
 	}
 
 	/* nothing to feel? exit */
-	if (!ok_combat && !ok_magic && !ok_archery && !ok_traps && !ok_curse && !force_shrooms) return;
+	if (!ok_combat && !ok_magic && !ok_archery && !ok_traps && !ok_curse && !ok_food && !force_shrooms) return;
 
-	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 10) ? TRUE : FALSE;
+	heavy_combat = (get_skill(p_ptr, SKILL_COMBAT) >= 10) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 10) ? TRUE : FALSE;
 	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 10) ? TRUE : FALSE;
 	heavy_traps = (get_skill(p_ptr, SKILL_TRAPPING) >= 10) ? TRUE : FALSE;
+	heavy_food = (get_skill(p_ptr, SKILL_HEALTH) >= 10) ? TRUE : FALSE;
 
 	/*** Sense everything ***/
 
@@ -523,7 +526,7 @@ static void sense_inventory(int Ind) {
 		if ((i < INVEN_WIELD) && (magik(80) || UNAWARENESS(p_ptr))) {
 			if ((!force_curse && !force_shrooms) || fail_light) continue; /* Either we don't need to process force_curse, or we already know the item is cursed */
 			/* if we're forced to insta-sense a curse/shroom, do just that, as we'd have failed for all other actions */
-			fail_light = ok_magic = ok_combat = ok_archery = ok_traps = FALSE;
+			fail_light = ok_magic = ok_combat = ok_archery = ok_traps = ok_food = FALSE;
 			/* We're just here for the shrooms, ie if force_curse is FALSE, prevent curse-detection. */
 			ok_curse = force_curse;
 		}
@@ -548,10 +551,10 @@ static void sense_inventory(int Ind) {
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		case TV_BOOMERANG:
-			if (fail_light && !heavy) continue; //finally fail
+			if (fail_light && !heavy_combat) continue; //finally fail
 			if (ok_combat) {
-				feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
-				if (heavy) felt_heavy = TRUE;
+				feel = (heavy_combat ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
+				if (heavy_combat) felt_heavy = TRUE;
 			}
 			break;
 
@@ -610,16 +613,17 @@ static void sense_inventory(int Ind) {
 
 		case TV_FOOD: /* dual! Uses auxX_magic, which contains the food-specific values. Since potions are 'magic' too, food seems not misplaced.. */
 			/* First check for 'force_shrooms'. Note that we use 'heavy' detection (aux1 instead of aux2) for now. */
-			if (force_shrooms && o_ptr->tval == TV_FOOD && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX && !object_aware_p(Ind, o_ptr)) {
+			if (force_shrooms && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX && !object_aware_p(Ind, o_ptr)) {
 				feel = value_check_aux1_magic(o_ptr);
-				felt_heavy = heavy = TRUE; /* Hack 'heavy' */
+				felt_heavy = heavy_combat = TRUE; /* Hack 'heavy' */
 				break;
 			}
 
-			if (fail_light && !heavy_magic && !heavy) continue; //finally fail
-			if ((ok_combat || ok_magic) && !object_aware_p(Ind, o_ptr)) {
-				feel = ((heavy || heavy_magic) ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
-				if (heavy || heavy_magic) felt_heavy = TRUE;
+			/* Note: ego food powers have no influence, as these don't change the value but are just 'brand names' */
+			if (fail_light && !heavy_food) continue; //finally fail
+			if (ok_food && !object_aware_p(Ind, o_ptr)) {
+				feel = (heavy_food ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
+				if (heavy_food) felt_heavy = TRUE;
 			}
 			break;
 		}

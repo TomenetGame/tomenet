@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 21. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -13090,8 +13090,8 @@ also make the results more distinguished so you receive additional, more
 fine-grained feelings:
 
 - Training 'Combat' will improve pseudo-id of weapons, armour, boomerangs,
-  digging tools and food (mostly mushrooms). It also has a (much smaller)
-  chance of pseudo-id'ing ranged weapons and ammunition.
+  digging tools. It also has a (much smaller) chance of pseudo-id'ing
+  ranged weapons and ammunition.
   Training it to at least 10 will result in more detailed pseudo-ID'ing,
   which distinguishes between 'good', 'excellent' and 'special', and also
   between 'cursed' and 'terrible'. Also you can pseudo-id unenchanted items
@@ -13109,8 +13109,7 @@ fine-grained feelings:
   'excellent', 'special', 'cursed' or 'terrible'.
 
 - Training 'Magic' improves pseudo-id of magic devices (wands, staves, rods),
-  rings, amulets, mage staves, potions and scrolls, and also of food (mostly
-  mushrooms):
+  rings, amulets, mage staves, potions and scrolls:
   At level 10 you get more detailed feelings such as 'excellent' instead
   of just 'good', and sometimes 'average' or for items with negative effects
   outright 'bad'.
@@ -13120,8 +13119,9 @@ fine-grained feelings:
   Instead of just 'good', ranged weapons and ammunition are now perceived as
   'excellent', 'special', 'cursed' or 'terrible'.
 
-As a specialty, food (unknown food items are really mostly mushrooms) can be
-pseudo-identified by either, combat or magic skill.
+- 'Health' training will improve pseudo-id of food (mostly mushrooms).
+  Training it to at least 10 will result in more detailed pseudo-ID'ing,
+  which distinguishes between 'good', 'excellent' and 'special'.
 
 Items may display the following pseudo-ID tags:
 -----------------------------------------------
@@ -17011,10 +17011,10 @@ stated.
                                 average, good, excellent or special.
                                 At the beginning you will only feel 'cursed'
                                 or 'good', and only for melee weapons, armour,
-                                boomerangs, digging tools and food, and very
-                                rarely for ranged weapons and ammunition.
-                                Raise combat skill to at least 10 to get
-                                more distinctive feelings about melee weapons,
+                                boomerangs, digging tools, and veryrarely for
+                                ranged weapons and ammunition.
+                                Raise combat skill to at least 10 to get more
+                                distinctive feelings about melee weapons,
                                 armour, boomerangs and digging tools.
                                 A powerful combattant (combat 30) senses the
                                 usefulness of shooting weapons and ammunition
@@ -17575,8 +17575,8 @@ stated.
 
 +Magic                          Increases your base mana by +4 per point.
  (0.250)
-                                Lets you pseudo-ID magic items and food faster
-                                the higher your skill is. Magic items are:
+                                Lets you pseudo-ID magic items faster the
+                                higher your skill is. Magic items are:
                                 Mage staves, potions, scrolls, rings, amulets
                                 and magic devices (wands, rods, staves).
 
@@ -18291,6 +18291,11 @@ stated.
                                 Helps you to recover from temporary stats drain
                                 drain, hallucination, blindness, confusion,
                                 poison, disease and cuts faster.
+
+                                Lets you pseudo-ID food faster the higher your
+                                skill is. If 'Health' is at least at 10 points,
+                                you can get more distinctive feelings instead
+                                of just 'worthless' or 'good'.
 
                                 If you spend 10 points into Health, your
                                 sanity will be displayed as a bar.
