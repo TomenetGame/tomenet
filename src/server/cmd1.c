@@ -153,7 +153,7 @@ bool test_hit_melee(int chance, int ac, int vis) {
  * Factor in item weight, total plusses, and player level.
  * shot: TRUE for actual shooting, FALSE for throwing (boomerangs and items from inventory): It applies 'Archery' skill.
  */
-s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool shot) {
+s16b critical_shot(int Ind, int weight, int plus, int dam, int o_crit, bool precision, bool shot) {
 	player_type *p_ptr = NULL;
 	int i, k;
 	//int xtra_crit = p_ptr->xtra_crit + p_ptr->inventory;
@@ -163,15 +163,15 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool 
 	/* Extract "shot" power */
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
-		i = weight + (p_ptr->to_h + p_ptr->to_h_ranged + plus) * 4 + (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 150) : 0);
-		i += 50 * BOOST_CRIT(p_ptr->xtra_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
+		i = weight + (p_ptr->to_h + p_ptr->to_h_ranged + plus) * 5 + (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 150) : 0);
+		i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	}
 	else i = weight + plus * 5;
 
 	/* Critical hit */
 	if (precision || randint(3500) <= i) {
 		k = weight + randint(700);
-		if (Ind > 0) k += (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 100) : 0) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
+		if (Ind > 0) k += (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 100) : 0) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20)));
 
 		if (precision) {
 			if (k < 650) k = 650;
@@ -221,11 +221,11 @@ s16b critical_throw(int Ind, int weight, int plus, int dam, int o_crit) {
 		if (w > 100) w = 10;
 		else w = 110 - w;
 		if (w < 10) w = 10; /* shouldn't happen anyways */
-		i = w * 2 + (p_ptr->to_h + p_ptr->to_h_thrown + plus) * 4 + get_skill_scale(p_ptr, SKILL_MASTERY, 150); /* We use weapon-mastery skill, which is usually melee, for throwing */
+		i = w * 2 + (p_ptr->to_h + p_ptr->to_h_thrown + plus) * 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 150); /* We use weapon-mastery skill, which is usually melee, for throwing */
 #else /* Like for firing ranged waepons, heavier shots make it easier to land a crit? */
-		i = weight + (p_ptr->to_h + p_ptr->to_h_thrown + plus) * 4 + get_skill_scale(p_ptr, SKILL_MASTERY, 150); /* We use weapon-mastery skill, which is usually melee, for throwing */
+		i = weight + (p_ptr->to_h + p_ptr->to_h_thrown + plus) * 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 150); /* We use weapon-mastery skill, which is usually melee, for throwing */
 #endif
-		i += 50 * BOOST_CRIT(p_ptr->xtra_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
+		i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	}
 	else i = weight;
 
@@ -233,7 +233,7 @@ s16b critical_throw(int Ind, int weight, int plus, int dam, int o_crit) {
 	if (randint(3500) <= i) {
 		/* _If_ a critical hit is scored then it will deal more damage if the weapon is heavier */
 		k = weight + randint(700) + 500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20));
-		if (Ind > 0) k += get_skill_scale(p_ptr, SKILL_MASTERY, 100) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
+		if (Ind > 0) k += get_skill_scale(p_ptr, SKILL_MASTERY, 100) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20)));
 
 		if (k < 350) {
 			if (Ind > 0) msg_print(Ind, "It was a good hit!");
@@ -263,7 +263,7 @@ s16b critical_throw(int Ind, int weight, int plus, int dam, int o_crit) {
  * Factor in weapon weight, total plusses, player level.
  * Also called for martial arts, then MA skill will simulate a 'weight'.
  */
-s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit, bool weapon) {
+s16b critical_melee(int Ind, int weight, int plus, int dam, int o_crit, bool allow_skill_crit, bool weapon) {
 	player_type *p_ptr = Players[Ind];
 	int i, k, w;
 
@@ -280,7 +280,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	if (w > 100) w = 10;
 	else w = 110 - w;
 	if (w < 10) w = 10; /* shouldn't happen anyways */
-	i = w * 2 + (p_ptr->to_h + p_ptr->to_h_melee + plus) * 4 + (weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 150) : 0);
+	i = w * 2 + (p_ptr->to_h + p_ptr->to_h_melee + plus) * 5 + (weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 150) : 0);
 
 	i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
@@ -3723,7 +3723,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0, FALSE);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, 0, FALSE, FALSE);
 				k3 += k2;
 #else
 				k = brand_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
@@ -3731,7 +3731,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0, FALSE);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, 0, FALSE, FALSE);
 #endif
 
 #ifdef CRIT_VS_BACKSTAB
@@ -3879,10 +3879,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h, k - k2, calc_crit_obj(o_ptr), rogue_armed_melee(o_ptr, p_ptr), TRUE);
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h, k, calc_crit_obj(o_ptr), rogue_armed_melee(o_ptr, p_ptr), TRUE);
 #endif
 				k2 = k; /* remember damage before crit */
 #ifdef CRIT_VS_BACKSTAB
@@ -4925,7 +4925,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0, FALSE);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, 0, FALSE, FALSE);
 				k3 += k2;
 #else
 				k = brand_dam_aux(Ind, NULL, k, m_ptr, FALSE);
@@ -4935,7 +4935,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0, FALSE);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, 0, FALSE, FALSE);
 #endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
@@ -5145,10 +5145,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h, k - k2, calc_crit_obj(o_ptr), rogue_armed_melee(o_ptr, p_ptr), TRUE);
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h, k, calc_crit_obj(o_ptr), rogue_armed_melee(o_ptr, p_ptr), TRUE);
 #endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */

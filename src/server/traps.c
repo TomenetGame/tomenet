@@ -5788,7 +5788,7 @@ bool mon_hit_trap(int m_idx) {
 					dam = (dam * (trapping + 45)) / 35;/* / 35 (~330 dam) .. / 50 (~220 dam) */
 
 					/* Apply critical hits */
-					dam = critical_shot(0, load_o_ptr->weight + trapping * 10, load_o_ptr->to_h, dam, FALSE, FALSE);
+					dam = critical_shot(0, load_o_ptr->weight + trapping * 10, kit_o_ptr->to_h + load_o_ptr->to_h, dam, calc_crit_obj(kit_o_ptr) + calc_crit_obj(load_o_ptr), FALSE, FALSE);
 
 					/* No negative damage */
 					if (dam < 0) dam = 0;

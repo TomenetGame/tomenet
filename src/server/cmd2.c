@@ -7046,15 +7046,15 @@ void do_cmd_fire(int Ind, int dir) {
 	 * monsters. How about we remove ricocheting shots for slingers, but
 	 * instead, adds a chance to do a double damage (than normal and/or crit)
 	 * shots (i.e., seperate than crit and stackable bonus)?  - the_sandman */
-	if ((!check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'R') || boomerang) &&
-	    !check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'R')) {
+	if ((boomerang || !check_guard_inscription(o_ptr->note, 'R')) &&
+	    !check_guard_inscription(j_ptr->note, 'R')) {
 		/* Sling mastery yields bullet ricochets */
 		if (archery == SKILL_SLING && !magic && !ethereal && !p_ptr->ranged_barrage) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);
-			if (!check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'S') &&
-			    !check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'S') &&
+			if (!check_guard_inscription(o_ptr->note, 'S') &&
+			    !check_guard_inscription(j_ptr->note, 'S') &&
 			    !p_ptr->image && !p_ptr->confused &&
 			    (i = get_skill(p_ptr, SKILL_SLING)) >= 15)
 				aimed_ricochet = i - 14;
@@ -7064,7 +7064,7 @@ void do_cmd_fire(int Ind, int dir) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_BOOMERANG, 5));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_BOOMERANG, 42);
-			if (!check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'S') &&
+			if (!check_guard_inscription(j_ptr->note, 'S') &&
 			    !p_ptr->image && !p_ptr->confused &&
 			    (i = get_skill(p_ptr, SKILL_BOOMERANG)) >= 20)
 				aimed_ricochet = i - 19;
@@ -7499,8 +7499,12 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 								ranged_flare_body = TRUE;
 
-								/* Apply special damage XXX XXX XXX */
-								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
+								if (!p_ptr->ranged_precision)
+									tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam,
+									    calc_crit_obj(o_ptr) + (boomerang ? 0 : calc_crit_obj(j_ptr)), FALSE, !boomerang);
+								else /* Precision shot skips most AC reduction */
+									tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + 150, tdam,
+									    calc_crit_obj(o_ptr) + (boomerang ? 0 : calc_crit_obj(j_ptr)), TRUE, !boomerang); //boomerangs can't do 'precision shot' anyway, pft
 
 								/* Vorpal bonus - multi-dice!
 								   (currently +31.25% more branded dice damage on total average, just for the records) */
@@ -7516,19 +7520,16 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 								}
 
-								/* factor in AC */
-								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
+								/* Factor in AC, reducing the damage. 'Precision shot' skips AC reduction! */
+								if (!p_ptr->ranged_precision)
+									tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
+								else
+									p_ptr->ranged_precision = FALSE;
 
 								/* XXX Reduce damage by 1/3 */
 								tdam = (tdam + PVP_SHOOT_DAM_REDUCTION - 1) / PVP_SHOOT_DAM_REDUCTION;
 
 								if (ranged_double_real) tdam = (tdam * 35) / 100;
-
-								/* Precision shot skips most AC reduction (since that was applied above) */
-								if (p_ptr->ranged_precision) {
-									tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 2 + 100, tdam, TRUE, !boomerang);
-									p_ptr->ranged_precision = FALSE;
-								}
 
 								if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
@@ -7748,7 +7749,12 @@ void do_cmd_fire(int Ind, int dir) {
 					ranged_flare_body = TRUE;
 
 					/* Apply special damage XXX XXX XXX */
-					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
+					if (!p_ptr->ranged_precision)
+						tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam,
+						    calc_crit_obj(o_ptr) + (boomerang ? 0 : calc_crit_obj(j_ptr)), FALSE, !boomerang);
+					else /* Precision shot skips most AC reduction */
+						tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + 500, tdam,
+						    calc_crit_obj(o_ptr) + (boomerang ? 0 : calc_crit_obj(j_ptr)), TRUE, !boomerang);
 
 					/* Vorpal bonus - multi-dice!
 					   (currently +31.25% more branded dice damage on total average, just for the records) */
@@ -7764,17 +7770,12 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 					}
 
-
-					/* < --- TODO? Maybe in the future: apply monster AC for damage reduction here --- > */
-
+					if (p_ptr->ranged_precision)
+						; /* < --- TODO? Maybe in the future: apply monster AC for damage reduction here --- > */
+					else
+						p_ptr->ranged_precision = FALSE;
 
 					if (ranged_double_real) tdam = (tdam * 35) / 100;
-
-					/* Precision shot usually skips most AC reduction -- but AC is currently only applied in PvP anyway */
-					if (p_ptr->ranged_precision) {
-						tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 3 + 500, tdam, TRUE, !boomerang);
-						p_ptr->ranged_precision = FALSE;
-					}
 
 					if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
@@ -8926,13 +8927,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						/* 'FALSE': We don't apply Critical-strike skill to thrown weapons.
 						    So only apply the item's own CRIT flag if any. */
 #ifdef CRIT_UNBRANDED
-						//k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, tdam - k2, FALSE, calc_crit_obj(o_ptr), TRUE);
-						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam - k2, calc_crit_obj(o_ptr));
+						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam - k2, calc_crit_obj(o_ptr));
 
 						k3 += k2;
 #else
-						//k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, tdam, FALSE, calc_crit_obj(o_ptr), TRUE);
-						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, calc_crit_obj(o_ptr));
+						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, calc_crit_obj(o_ptr));
 #endif
 						k2 = tdam; /* remember damage before crit */
 
@@ -9214,10 +9213,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					with light weapons, which have low dice. So for gain
 					we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-					k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
+					k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam - k2, calc_crit_obj(o_ptr));
 					k3 += k2;
 #else
-					k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
+					k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, calc_crit_obj(o_ptr));
 #endif
 #ifdef CRIT_VS_VORPAL
 					k2 = k; /* remember damage before crit */
@@ -9266,13 +9265,16 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				} else if (is_weapon(o_ptr->tval)) {
 					tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+					/* For throwing a non-throwingweapon, we ignore CRIT flag of item instead of applying calc_crit_obj(o_ptr): */
+					tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
+				} else {
+					/* For throwing a non-throwingweapon, we ignore CRIT flag of item instead of applying calc_crit_obj(o_ptr): */
+					tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
 				}
 
 #ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 				if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
-				/* Apply special damage XXX XXX XXX */
-				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
