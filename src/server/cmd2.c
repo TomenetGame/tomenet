@@ -8874,6 +8874,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					else vorpal_cut = FALSE;
  #endif
 #endif
+					if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_name);
 
 					/* Select a chaotic effect (10% chance) */
 					if ((f5 & TR5_CHAOTIC) && !rand_int(10)) {
@@ -8900,8 +8901,6 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						}
 					}
 
-					if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_name);
-
 					tdam += o_ptr->to_d;
 
 					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
@@ -8922,13 +8921,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						/* Hack: For thowing weapons actually apply the player damage boni.
 						   The reason is that otherwise throwing weapons will quickly be outdamaged by melee weapons
 						   and not make a dent anymore in comparison, except at very low character levels. */
+	//TODO: check blessed_weapon, awkward/heavy weapon, fake-equip throwing weapon to acquire correct to_d + to_d_melee and to_h + to_h_melee(get_weaponmastery_skill)!
 						tdam += p_ptr->to_d + p_ptr->to_d_melee;
 
-						/* 'FALSE': We don't apply Critical-strike skill to thrown weapons.
-						    So only apply the item's own CRIT flag if any. */
 #ifdef CRIT_UNBRANDED
 						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam - k2, calc_crit_obj(o_ptr));
-
 						k3 += k2;
 #else
 						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, calc_crit_obj(o_ptr));
@@ -8939,6 +8936,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 						/* penalty for weapons in bat form */
 						if (p_ptr->body_monster == RI_VAMPIRE_BAT) tdam /= 2;
+
+						/* No negative damage */
+						if (tdam < 0) tdam = 0;
 
 						/* Vorpal bonus - multi-dice!
 						   (currently +31.25% more branded dice damage on total average, just for the records) */
@@ -8955,14 +8955,12 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						/* factor in AC */
 						tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
 
-						/* Note: No combat stance application */
-
 						/* Remember original damage for vampirism (less rounding trouble..) */
 						k2 = tdam;
 
 						/* Note: No rune nimbus application */
 
-						//TODO: actually apply chaos_effect and k2->vampirism */
+						//TODO: actually apply chaos_effect and k2->vampirism
 
 					} else if (is_weapon(o_ptr->tval)) {
 						tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
@@ -8974,6 +8972,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
 					}
 
+					/* Note: Combat stance isn't applied except for this: */
 #ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 					if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
@@ -9098,7 +9097,55 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				/* Hack -- Base damage from thrown object */
 				tdam = damroll(o_ptr->dd, o_ptr->ds);
 				tdam = brand_dam_aux(Ind, o_ptr, tdam, m_ptr, TRUE);
+
+#if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
+				if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(VORPAL_CHANCE)) vorpal_cut = tdam; /* save unbranded dice */
+				else vorpal_cut = FALSE;
+#endif
+#ifdef CRIT_UNBRANDED
+				k2 = tdam;
+				tdam = brand_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
+				k2 = tdam - k2; /* remember difference between branded and unbranded dice */
+#else
+				tdam = brand_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
+#endif
+#ifdef VORPAL_LOWBRANDED
+				if (vorpal_cut) vorpal_cut = (vorpal_cut + tdam) / 2;
+#else
+ #ifndef VORPAL_UNBRANDED
+				if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(VORPAL_CHANCE)) vorpal_cut = tdam; /* save branded dice */
+				else vorpal_cut = FALSE;
+ #endif
+#endif
+				if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
+
+				/* Select a chaotic effect (10% chance) */
+				if ((f5 & TR5_CHAOTIC) && !rand_int(10)) {
+					if (!rand_int(2)) {
+						/* Vampiric (50%) (50%) */
+						chaos_effect = 1;
+#if 0 /* not for throwing stuff */
+					} else if (!rand_int(1000)) {
+						/* Quake (0.050%) (49.975%) */
+						chaos_effect = 2;
+#endif
+					} else if (!rand_int(2)) {
+						/* Confusion (25%) (24.9875%) */
+						chaos_effect = 3;
+					} else if (!rand_int(30)) {
+						/* Teleport away (0.83%) (24.1545833%) */
+						chaos_effect = 4;
+					} else if (!rand_int(50)) {
+						/* Polymorph (0.48%) (23.6714917%) */
+						chaos_effect = 5;
+					} else if (!rand_int(300)) {
+						/* Clone (0.079%) */
+						chaos_effect = 6;
+					}
+				}
+
 				tdam += o_ptr->to_d;
+
 				/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 				if (throwing_weapon) {
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
@@ -9116,102 +9163,12 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam += damroll(o_ptr->dd, o_ptr->ds);
 #endif
 
+					/* Hack: For thowing weapons actually apply the player damage boni.
+					   The reason is that otherwise throwing weapons will quickly be outdamaged by melee weapons
+					   and not make a dent anymore in comparison, except at very low character levels. */
+	//TODO: check blessed_weapon, awkward/heavy weapon, fake-equip throwing weapon to acquire correct to_d + to_d_melee and to_h + to_h_melee(get_weaponmastery_skill)!
+					tdam += p_ptr->to_d + p_ptr->to_d_melee;
 
-
-
-#if 0 //todo: remove/modify copy-pasta from py_attack_mon() and implement
-#if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
-					if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
-					else vorpal_cut = FALSE;
-#endif
-#ifdef CRIT_UNBRANDED
-					k2 = k;
-					k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
-					k2 = k - k2; /* remember difference between branded and unbranded dice */
-#else
-					k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
-#endif
-#ifdef VORPAL_LOWBRANDED
-					if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
-#else
- #ifndef VORPAL_UNBRANDED
-					if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
-					else vorpal_cut = FALSE;
- #endif
-#endif
-
-					/* Select a chaotic effect (10% chance) */
-					if ((f5 & TR5_CHAOTIC) && !rand_int(10)) {
-						if (!rand_int(2)) {
-							/* Vampiric (50%) (50%) */
-							chaos_effect = 1;
-						} else if (!rand_int(1000)) {
-							/* Quake (0.050%) (49.975%) */
-							chaos_effect = 2;
-						} else if (!rand_int(2)) {
-							/* Confusion (25%) (24.9875%) */
-							chaos_effect = 3;
-						} else if (!rand_int(30)) {
-							/* Teleport away (0.83%) (24.1545833%) */
-							chaos_effect = 4;
-						} else if (!rand_int(50)) {
-							/* Polymorph (0.48%) (23.6714917%) */
-							chaos_effect = 5;
-						} else if (!rand_int(300)) {
-							/* Clone (0.079%) */
-							chaos_effect = 6;
-						}
-					}
-
-					if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
-
-					k += o_ptr->to_d;
-
-					/* Does the weapon take damage from hitting acidic/fiery/aquatic monsters? */
-					for (i = 0; i < 4; i++) {
-						if (r_ptr->blow[i].effect == RBE_ACID) mon_acid++;
-						if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire++;
-					}
-					if (r_ptr->flags4 & RF4_BR_ACID) mon_acid += 2;
-					if (r_ptr->flags4 & RF4_BR_FIRE) mon_fire += 2;
-					if (strstr(mbname, "water")) mon_aqua = 4;
-					if (strstr(mbname, "acid")) mon_acid = 4;
-					if (strstr(mbname, "fire") || strstr(mbname, "fiery")) mon_fire = 4;
-					if (p_ptr->resist_water) mon_aqua /= 2;
-					if (p_ptr->immune_water) mon_aqua = 0;
-					if (p_ptr->resist_acid || p_ptr->oppose_acid) mon_acid /= 2;
-					if (p_ptr->immune_acid) mon_acid = 0;
-					if (p_ptr->resist_fire || p_ptr->oppose_fire) mon_fire /= 2;
-					if (p_ptr->immune_fire) mon_fire = 0;
-					i = mon_aqua + mon_acid + mon_fire;
-					//if (i && magik(20 + (i > 5 ? 5 : i) * 6)) {
-					if (i && magik(i > 5 ? 5 : i)) {
-						i = rand_int(i);
-
-						if (i < mon_aqua) weapon_takes_damage(Ind, GF_WATER, slot);
-						else if (i < mon_aqua + mon_acid) weapon_takes_damage(Ind, GF_ACID, slot);
-						else weapon_takes_damage(Ind, GF_FIRE, slot);
-					}
-
-					/* May it clone the monster ? */
-					if (((f4 & TR4_CLONE) && randint(1000) == 1)
-					    || chaos_effect == 6) {
-						msg_format(Ind, "Your weapon clones %s!", m_name);
-						multiply_monster(c_ptr->m_idx);
-					}
-
-					/* heheheheheh */
-					if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, slot);
-
-					/* Apply the player damage boni */
-					/* (should this also cancelled by nazgul?(for now not)) */
-					k += p_ptr->to_d + p_ptr->to_d_melee;
-
-						/* Note: No combat stance application */
-
-					/* Critical strike moved here, since it works best
-					with light weapons, which have low dice. So for gain
-					we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
 					k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam - k2, calc_crit_obj(o_ptr));
 					k3 += k2;
@@ -9219,21 +9176,15 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, calc_crit_obj(o_ptr));
 #endif
 #ifdef CRIT_VS_VORPAL
-					k2 = k; /* remember damage before crit */
+					k2 = tdam; /* remember damage before crit */
 #endif
-#ifdef CRIT_VS_BACKSTAB
-					if (!backstab && !stab_fleeing)
-#endif
-					k = k3;
+					tdam = k3;
 
 					/* penalty for weapons in bat form */
-					if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
-
-
-
+					if (p_ptr->body_monster == RI_VAMPIRE_BAT) tdam /= 2;
 
 					/* No negative damage */
-					if (k < 0) k = 0;
+					if (tdam < 0) tdam = 0;
 
 					/* Vorpal bonus - multi-dice!
 					   (currently +31.25% more branded dice damage on total average, just for the records) */
@@ -9241,26 +9192,21 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #ifdef CRIT_VS_VORPAL
 						k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 						/* either critical hit or vorpal, not both */
-						if (k2 > k) k = k2;
+						if (k2 > tdam) tdam = k2;
 #else
-						k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+						tdam += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 #endif
 					}
 
-					if (m_ptr->r_idx == RI_MIRROR) k = (k * MIRROR_REDUCE_DAM_TAKEN_MELEE + 99) / 100;
+					/* factor in AC */
+					//tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
 
-					/* for admins: kill a target in one hit */
-					if (p_ptr->instakills) k = m_ptr->hp + 1;
-					else if (p_ptr->admin_godly_strike) {
-						p_ptr->admin_godly_strike--;
-						if (!(r_ptr->flags1 & RF1_UNIQUE)) k = m_ptr->hp + 1;
-					}
+					/* Remember original damage for vampirism (less rounding trouble..) */
+					k2 = tdam;
+
+					//TODO: apply chaos_effect and k2-vampirism later
 
 					/* Note: No rune nimbus application */
-#endif
-
-
-
 
 				} else if (is_weapon(o_ptr->tval)) {
 					tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
@@ -9272,6 +9218,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
 				}
 
+				/* Note: Combat stance isn't applied except for this: */
 #ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 				if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
@@ -9304,10 +9251,51 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 				if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam * MIRROR_REDUCE_DAM_TAKEN_THROW + 99) / 100;
 
-				if (p_ptr->admin_godly_strike) {
+				/* for admins: kill a target in one hit */
+				if (p_ptr->instakills) tdam = m_ptr->hp + 1;
+				else if (p_ptr->admin_godly_strike) {
 					p_ptr->admin_godly_strike--;
-					tdam = m_ptr->hp + 1;
+					if (!(r_ptr->flags1 & RF1_UNIQUE)) tdam = m_ptr->hp + 1;
 				}
+
+#if 0 //todo
+				//TODO: apply chaos_effect and k2-vampirism here
+
+				/* May it clone the monster ? */
+				if (((f4 & TR4_CLONE) && randint(1000) == 1)
+				    || chaos_effect == 6) {
+					msg_format(Ind, "Your weapon clones %s!", m_name);
+					multiply_monster(c_ptr->m_idx);
+				}
+
+				/* Does the weapon take damage from hitting acidic/fiery/aquatic monsters? */
+				for (i = 0; i < 4; i++) {
+					if (r_ptr->blow[i].effect == RBE_ACID) mon_acid++;
+					if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire++;
+				}
+				if (r_ptr->flags4 & RF4_BR_ACID) mon_acid += 2;
+				if (r_ptr->flags4 & RF4_BR_FIRE) mon_fire += 2;
+				if (strstr(mbname, "water")) mon_aqua = 4;
+				if (strstr(mbname, "acid")) mon_acid = 4;
+				if (strstr(mbname, "fire") || strstr(mbname, "fiery")) mon_fire = 4;
+				if (p_ptr->resist_water) mon_aqua /= 2;
+				if (p_ptr->immune_water) mon_aqua = 0;
+				if (p_ptr->resist_acid || p_ptr->oppose_acid) mon_acid /= 2;
+				if (p_ptr->immune_acid) mon_acid = 0;
+				if (p_ptr->resist_fire || p_ptr->oppose_fire) mon_fire /= 2;
+				if (p_ptr->immune_fire) mon_fire = 0;
+				i = mon_aqua + mon_acid + mon_fire;
+				//if (i && magik(20 + (i > 5 ? 5 : i) * 6)) {
+				if (i && magik(i > 5 ? 5 : i)) {
+					i = rand_int(i);
+
+					if (i < mon_aqua) weapon_takes_damage(Ind, GF_WATER, slot);
+					else if (i < mon_aqua + mon_acid) weapon_takes_damage(Ind, GF_ACID, slot);
+					else weapon_takes_damage(Ind, GF_FIRE, slot);
+				}
+
+				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, slot);
+#endif
 
 				/* Hit the monster, check for death */
 				if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies)) {
