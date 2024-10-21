@@ -3742,6 +3742,7 @@ struct player_type {
 	s16b to_h_ranged;		/* Bonus to hit */
 	s16b to_d_ranged;		/* Bonus to dam */
 	s16b to_a;			/* Bonus to ac */
+	s16b to_h_thrown;		/* Special bonus to hit for throwing stuff */
 
 	s16b to_h_tmp;			/* Just to track temporary boosts for colourising indicator on client-side */
 	s16b to_d_tmp;			/* Just to track temporary boosts for colourising indicator on client-side */

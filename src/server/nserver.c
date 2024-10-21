@@ -9984,9 +9984,10 @@ int Send_skills(int Ind) {
 
 	/* Bows/Throw skill - separate into bows for TV_BOW and boomerangs for TV_BOOMERANG */
 	o_ptr = &p_ptr->inventory[INVEN_BOW];
-	tmp = p_ptr->to_h + (o_ptr->k_idx ? o_ptr->to_h : 0) + p_ptr->to_h_ranged;
 	if (o_ptr->tval == TV_BOW) {
-		tmp = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
+		tmp = p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h;
+		tmp = p_ptr->skill_thb + tmp * BTH_PLUS_ADJ;
+
 		o2_ptr = &p_ptr->inventory[INVEN_AMMO];
 #if 1 /* Add ammo +hit to this? */
 		if (o2_ptr->k_idx) switch (o_ptr->sval) {
@@ -10003,10 +10004,13 @@ int Send_skills(int Ind) {
 			break;
 		}
 #endif
-	} else if (o_ptr->tval == TV_BOOMERANG) tmp = p_ptr->skill_tht + (tmp * BTH_PLUS_ADJ);
-	else {
+	} else if (o_ptr->tval == TV_BOOMERANG) {
+		tmp = p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h;
+		tmp = p_ptr->skill_tht + tmp * BTH_PLUS_ADJ;
+	} else {
 		/* No ranged weapon equipped? Display throw-part then, as we might want to throw items.. */
-		tmp = p_ptr->skill_tht + (tmp * BTH_PLUS_ADJ);
+		tmp = p_ptr->to_h + p_ptr->to_h_thrown + o_ptr->to_h;
+		tmp = p_ptr->skill_tht + tmp * BTH_PLUS_ADJ;
 	}
 	skills[1] = tmp;
 

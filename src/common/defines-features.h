@@ -79,6 +79,35 @@
 #define ENABLE_MCRAFT		/* 'Mindcrafter' class - C. Blue */
 #define NEW_TOMES		/* customizable spellbooks */
 
+
+/* Inverse chance to get a vorpal cut (1 in n) [4] -- keep consistent with cmd2.c */
+#define VORPAL_CHANCE 4
+
+/* Better hits of one override worse hits of the other,
+   instead of completely stacking for silly amounts. Recommended: BS [on], V [off].
+   Note: Backstab and vorpal currently always stack.
+   Note: Crit already makes Vorpal not so useful, so probably just keep CRIT_VS_VORPAL off anyway. */
+#define CRIT_VS_BACKSTAB
+//#define CRIT_VS_VORPAL
+
+/* Crit multiplier should affect unbranded dice+todam instead of branded dice+todam? [off]
+   Advantage: Reduce huge gap between not so top 2h dice and top 2h dice weapons.
+   Big disadvantage: A +10 crit weapon wouldn't get more than ~4% damage increase even from a KILL mod.
+   NOTE: Currently only applies to melee. */
+//#define CRIT_UNBRANDED
+
+/* VORPAL being affected by brands? (+15 to-d & 2xbranded:
+   +5% for crit weapons, +9% for non-crit weapons,
+   crit +21% MoD over ZH, non-crit +13% MoD over ZH;)
+   Recommended state is inverse of CRIT_VS_VORPAL (reduces vorpal efficiency in brand/kill flag scenario)
+    or off (keeps vorpal efficiency in brand/kill scenario)
+    or use VORPAL_LOWBRANDED to compromise (recommended). */
+#ifndef CRIT_VS_VORPAL
+ //#define VORPAL_UNBRANDED
+ #define VORPAL_LOWBRANDED
+#endif
+
+
 /* Server uses Send_weather() so the client draws the weather [NEW], instead of the server displaying its own weather animations for players [old]. */
 #define CLIENT_SIDE_WEATHER
 #ifdef CLIENT_SIDE_WEATHER

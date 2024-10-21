@@ -22,33 +22,6 @@
 /* Nice: minimum level of a player to be able to become infected by Black Breath by another player */
 #define BB_INFECT_MINLEV 25
 
-/* Inverse chance to get a vorpal cut (1 in n) [4] */
-#define VORPAL_CHANCE 4
-
-/* Better hits of one override worse hits of the other,
-   instead of completely stacking for silly amounts. Recommended: BS [on], V [off].
-   Note: Backstab and vorpal currently always stack.
-   Note: Crit already makes Vorpal not so useful, so probably just keep CRIT_VS_VORPAL off anyway. */
-#define CRIT_VS_BACKSTAB
-//#define CRIT_VS_VORPAL
-
-/* Crit multiplier should affect unbranded dice+todam instead of branded dice+todam? [off]
-   Advantage: Reduce huge gap between not so top 2h dice and top 2h dice weapons.
-   Big disadvantage: A +10 crit weapon wouldn't get more than ~4% damage increase even from a KILL mod.
-   NOTE: Currently only applies to melee. */
-//#define CRIT_UNBRANDED
-
-/* VORPAL being affected by brands? (+15 to-d & 2xbranded:
-   +5% for crit weapons, +9% for non-crit weapons,
-   crit +21% MoD over ZH, non-crit +13% MoD over ZH;)
-   Recommended state is inverse of CRIT_VS_VORPAL (reduces vorpal efficiency in brand/kill flag scenario)
-    or off (keeps vorpal efficiency in brand/kill scenario)
-    or use VORPAL_LOWBRANDED to compromise (recommended). */
-#ifndef CRIT_VS_VORPAL
- //#define VORPAL_UNBRANDED
- #define VORPAL_LOWBRANDED
-#endif
-
 
 static void run_init(int Ind, int dir);
 
@@ -190,11 +163,10 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool 
 	/* Extract "shot" power */
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
-		i = (weight + ((p_ptr->to_h + plus) * 5) +
-		    (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 150) : 0));
+		i = weight + (p_ptr->to_h + p_ptr->to_h_ranged + plus) * 4 + (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 150) : 0);
 		i += 50 * BOOST_CRIT(p_ptr->xtra_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	}
-	else i = weight;
+	else i = weight + plus * 5;
 
 	/* Critical hit */
 	if (precision || randint(3500) <= i) {
@@ -233,6 +205,62 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool 
  * Critical hits (by player)
  *
  * Factor in weapon weight, total plusses, player level.
+ */
+s16b critical_throw(int Ind, int weight, int plus, int dam, int o_crit) {
+	player_type *p_ptr;
+	int i, k, w;
+
+	if (Ind > 0) {
+		p_ptr = Players[Ind];
+
+#if 1 /* Like for melee weapons, heavier weapons make it harder to land a crit? */
+		/* Extract critical maneuver potential (interesting term..) */
+		/* The larger the weapon the more difficult to quickly strike
+		the critical spot. Cap weight influence at 100+ lb */
+		w = weight;
+		if (w > 100) w = 10;
+		else w = 110 - w;
+		if (w < 10) w = 10; /* shouldn't happen anyways */
+		i = w * 2 + (p_ptr->to_h + p_ptr->to_h_thrown + plus) * 4 + get_skill_scale(p_ptr, SKILL_MASTERY, 150); /* We use weapon-mastery skill, which is usually melee, for throwing */
+#else /* Like for firing ranged waepons, heavier shots make it easier to land a crit? */
+		i = weight + (p_ptr->to_h + p_ptr->to_h_thrown + plus) * 4 + get_skill_scale(p_ptr, SKILL_MASTERY, 150); /* We use weapon-mastery skill, which is usually melee, for throwing */
+#endif
+		i += 50 * BOOST_CRIT(p_ptr->xtra_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
+	}
+	else i = weight;
+
+	/* Critical hit */
+	if (randint(3500) <= i) {
+		/* _If_ a critical hit is scored then it will deal more damage if the weapon is heavier */
+		k = weight + randint(700) + 500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20));
+		if (Ind > 0) k += get_skill_scale(p_ptr, SKILL_MASTERY, 100) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
+
+		if (k < 350) {
+			if (Ind > 0) msg_print(Ind, "It was a good hit!");
+			dam = (4 * dam) / 3 + 5;
+		} else if (k < 650) {
+			if (Ind > 0) msg_print(Ind, "It was a great hit!");
+			dam = (5 * dam) / 3 + 10;
+		} else if (k < 900) {
+			if (Ind > 0) msg_print(Ind, "It was a superb hit!");
+			dam = (6 * dam) / 3 + 10;
+		} else if (k < 1100) {
+			if (Ind > 0) msg_print(Ind, "It was a *GREAT* hit!");
+			dam = (7 * dam) / 3 + 10;
+		} else {
+			if (Ind > 0) msg_print(Ind, "It was a *SUPERB* hit!");
+			dam = (8 * dam) / 3 + 15;
+		}
+	}
+
+	return(dam);
+}
+
+
+/*
+ * Critical hits (by player)
+ *
+ * Factor in weapon weight, total plusses, player level.
  * Also called for martial arts, then MA skill will simulate a 'weight'.
  */
 s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit, bool weapon) {
@@ -252,7 +280,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	if (w > 100) w = 10;
 	else w = 110 - w;
 	if (w < 10) w = 10; /* shouldn't happen anyways */
-	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + (weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 150) : 0);
+	i = w * 2 + (p_ptr->to_h + p_ptr->to_h_melee + plus) * 4 + (weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 150) : 0);
 
 	i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
@@ -3463,7 +3491,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #endif
 
 		/* Calculate the "attack quality" */
-		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
+		bonus = p_ptr->to_h + p_ptr->to_h_melee + o_ptr->to_h;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 		if (p_ptr->blind) chance >>= 1;
 
@@ -4712,7 +4740,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		else vampiric_melee = p_ptr->vampiric_melee; /* non-weapon chance from other items is applied from xtra1.c */
 
 		/* Calculate the "attack quality" */
-		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
+		bonus = p_ptr->to_h + p_ptr->to_h_melee + o_ptr->to_h;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 		if (p_ptr->blind) chance >>= 1;
 //s_printf("M chance %d, skill_thn %d, bonus %d\n", chance, p_ptr->skill_thn, bonus);//DEBUG hit chance

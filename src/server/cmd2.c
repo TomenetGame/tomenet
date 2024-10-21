@@ -8385,7 +8385,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	int i, j, y, x, ny, nx, ty, tx, wall_x, wall_y;
-	int chance, tdam, tdis;
+	int chance, tdam, tdis, k2, k3, vorpal_cut = 0, chaos_effect = 0;
 	int mul, div;
 	int cur_dis, visible, real_dis;
 	int moved_number = 1, original_number;
@@ -8642,7 +8642,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	else if (bashing == 2) tdis = 1; /* at least allow minimal item movement, especially for bashing piles */
 
 	/* Chance of hitting */
-	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
+	chance = p_ptr->skill_tht + ((p_ptr->to_h + p_ptr->to_h_thrown) * BTH_PLUS_ADJ);
 	if (p_ptr->blind) chance >>= 2;
 
 
@@ -8854,8 +8854,55 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 					/* Hack -- Base damage from thrown object */
 					tdam = damroll(o_ptr->dd, o_ptr->ds);
-					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, TRUE);
+#if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
+					if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(VORPAL_CHANCE)) vorpal_cut = tdam; /* save unbranded dice */
+					else vorpal_cut = FALSE;
+#endif
+#ifdef CRIT_UNBRANDED
+					k2 = tdam;
+					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
+					k2 = tdam - k2; /* remember difference between branded and unbranded dice */
+#else
+					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
+#endif
+#ifdef VORPAL_LOWBRANDED
+					if (vorpal_cut) vorpal_cut = (vorpal_cut + tdam) / 2;
+#else
+ #ifndef VORPAL_UNBRANDED
+					if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(VORPAL_CHANCE)) vorpal_cut = tdam; /* save branded dice */
+					else vorpal_cut = FALSE;
+ #endif
+#endif
+
+					/* Select a chaotic effect (10% chance) */
+					if ((f5 & TR5_CHAOTIC) && !rand_int(10)) {
+						if (!rand_int(2)) {
+							/* Vampiric (50%) (50%) */
+							chaos_effect = 1;
+#if 0 /* not for throwing stuff */
+						} else if (!rand_int(1000)) {
+							/* Quake (0.050%) (49.975%) */
+							chaos_effect = 2;
+#endif
+						} else if (!rand_int(2)) {
+							/* Confusion (25%) (24.9875%) */
+							chaos_effect = 3;
+						} else if (!rand_int(30)) {
+							/* Teleport away (0.83%) (24.1545833%) */
+							chaos_effect = 4;
+						} else if (!rand_int(50)) {
+							/* Polymorph (0.48%) (23.6714917%) */
+							chaos_effect = 5;
+						} else if (!rand_int(300)) {
+							/* Clone (0.079%) */
+							chaos_effect = 6;
+						}
+					}
+
+					if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_name);
+
 					tdam += o_ptr->to_d;
+
 					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 					if (throwing_weapon) {
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
@@ -8871,77 +8918,28 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						tdam += damroll(o_ptr->dd, o_ptr->ds);
 #endif
 
+						/* Hack: For thowing weapons actually apply the player damage boni.
+						   The reason is that otherwise throwing weapons will quickly be outdamaged by melee weapons
+						   and not make a dent anymore in comparison, except at very low character levels. */
+						tdam += p_ptr->to_d + p_ptr->to_d_melee;
 
-
-
-#if 0 //todo: remove/modify copy-pasta from py_attack_player() and implement
-#if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
-						if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
-						else vorpal_cut = FALSE;
-#endif
+						/* 'FALSE': We don't apply Critical-strike skill to thrown weapons.
+						    So only apply the item's own CRIT flag if any. */
 #ifdef CRIT_UNBRANDED
-						k2 = k;
-						k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
-						k2 = k - k2; /* remember difference between branded and unbranded dice */
-#else
-						k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
-#endif
-#ifdef VORPAL_LOWBRANDED
-						if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
-#else
- #ifndef VORPAL_UNBRANDED
-						if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
-						else vorpal_cut = FALSE;
- #endif
-#endif
+						//k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, tdam - k2, FALSE, calc_crit_obj(o_ptr), TRUE);
+						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam - k2, calc_crit_obj(o_ptr));
 
-						/* Select a chaotic effect (10% chance) */
-						if ((f5 & TR5_CHAOTIC) && !rand_int(10)) {
-							if (!rand_int(2)) {
-								/* Vampiric (50%) (50%) */
-								chaos_effect = 1;
-							} else if (!rand_int(1000)) {
-								/* Quake (0.050%) (49.975%) */
-								chaos_effect = 2;
-							} else if (!rand_int(2)) {
-								/* Confusion (25%) (24.9875%) */
-								chaos_effect = 3;
-							} else if (!rand_int(30)) {
-								/* Teleport away (0.83%) (24.1545833%) */
-								chaos_effect = 4;
-							} else if (!rand_int(50)) {
-								/* Polymorph (0.48%) (23.6714917%) */
-								chaos_effect = 5;
-							} else if (!rand_int(300)) {
-								/* Clone (0.079%) */
-								chaos_effect = 6;
-							}
-						}
-
-						if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_name);
-
-						k += o_ptr->to_d;
-
-						/* Apply the player damage boni */
-						k += p_ptr->to_d + p_ptr->to_d_melee;
-
-						/* Critical strike moved here, since it works best
-						with light weapons, which have low dice. So for gain
-						we need the full damage including all to-dam boni */
-#ifdef CRIT_UNBRANDED
-						k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
 						k3 += k2;
 #else
-						k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
+						//k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, tdam, FALSE, calc_crit_obj(o_ptr), TRUE);
+						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, calc_crit_obj(o_ptr));
 #endif
-						k2 = k; /* remember damage before crit */
-#ifdef CRIT_VS_BACKSTAB
-						if (!backstab && !stab_fleeing)
-#endif
-						k = k3;
+						k2 = tdam; /* remember damage before crit */
+
+						tdam = k3;
 
 						/* penalty for weapons in bat form */
-						if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
+						if (p_ptr->body_monster == RI_VAMPIRE_BAT) tdam /= 2;
 
 						/* Vorpal bonus - multi-dice!
 						   (currently +31.25% more branded dice damage on total average, just for the records) */
@@ -8949,43 +8947,37 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #ifdef CRIT_VS_VORPAL
 							k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 							/* either critical hit or vorpal, not both */
-							if (k2 > k) k = k2;
+							if (k2 > tdam) tdam = k2;
 #else
-							k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+							tdam += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 #endif
 						}
 
 						/* factor in AC */
-						if (!pierced
-#ifdef PVP_BACKSTAB_PIERCES
-						    && !backstab
-#endif
-						    )
-							k -= (k * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
+						tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
 
 						/* Note: No combat stance application */
 
 						/* Remember original damage for vampirism (less rounding trouble..) */
-						k2 = k;
-						/* Reduce damage in PvP */
-						k = (k + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
+						k2 = tdam;
 
 						/* Note: No rune nimbus application */
-#endif
 
-
-
+						//TODO: actually apply chaos_effect and k2->vampirism */
 
 					} else if (is_weapon(o_ptr->tval)) {
 						tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+						/* For throwing a non-throwingweapon, we ignore CRIT flag of item instead of applying calc_crit_obj(o_ptr): */
+						tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
+					} else {
+						/* For throwing a non-throwingweapon, we ignore CRIT flag of item instead of applying calc_crit_obj(o_ptr): */
+						tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
 					}
 
 #ifdef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
 					if (p_ptr->combat_stance == 1) tdam /= 2;
 #endif
-					/* Apply special damage XXX XXX XXX */
-					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;

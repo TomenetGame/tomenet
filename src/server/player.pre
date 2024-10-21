@@ -702,6 +702,7 @@ struct player_type {
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to dam */
 	s16b to_a;			/* Bonus to ac */
+	s16b to_h_thrown;		/* Special bonus to hit for thrown items */
 
 	s16b ac;			/* Base ac */
 

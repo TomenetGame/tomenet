@@ -3201,6 +3201,8 @@ void calc_boni(int Ind) {
 	p_ptr->dis_to_h = p_ptr->to_h = p_ptr->to_h_melee = p_ptr->to_h_ranged = p_ptr->to_h_tmp = p_ptr->to_h_melee_tmp = p_ptr->to_h_ranged_tmp = 0;
 	p_ptr->dis_to_d = p_ptr->to_d = p_ptr->to_d_melee = p_ptr->to_d_ranged = p_ptr->to_d_tmp = p_ptr->to_d_melee_tmp = p_ptr->to_d_ranged_tmp = 0;
 	p_ptr->dis_to_a = p_ptr->to_a = p_ptr->to_a_tmp = 0;
+	/* Special throwing ranged bonus */
+	p_ptr->to_h_thrown = 0;
 
 
 	/* Clear all the flags */
@@ -5256,6 +5258,8 @@ void calc_boni(int Ind) {
 	else p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * 100) / adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]));
 #endif
 
+	p_ptr->to_h_thrown = p_ptr->to_h_ranged;
+
 
 	/* Evaluate monster AC (if skin or armor etc) */
 	if (p_ptr->body_monster) {
@@ -6042,6 +6046,7 @@ void calc_boni(int Ind) {
 	i = (i * i * i) / 2000;
 	if (i > 50) i = 50; /* reached at 470.0 lb */
 	p_ptr->to_h_ranged -= i;
+	p_ptr->to_h_thrown -= i;
 
 	/* also: shield and shooting weapon (not boomerang) = less accuracy for ranged weapon! */
 	/* dual-wield currently does not affect shooting (!) */
