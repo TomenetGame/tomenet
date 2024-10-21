@@ -4734,6 +4734,7 @@ void calc_boni(int Ind) {
 
 
 	/* Apply temporary "stun" */
+	/* should this stuff be mvoed to affect _total p_ptr->to_h instead of being applied so (too) early here? */
 	if (p_ptr->stun > 50) {
 		p_ptr->to_h /= 2;
 		p_ptr->dis_to_h /= 2;
@@ -7343,6 +7344,314 @@ void calc_boni(int Ind) {
 
 	/* hack: remember temporary +EA to colourise 'BpR' display accordingly */
 	p_ptr->extra_blows = extra_blows_tmp;
+}
+
+/* Just calc and return temporary _player-specific_ hit/dam boni (not those of the actual object itself)
+   and icky/heavy state for a particular melee-weapon object. Added for throwing weapons. */
+void calc_boni_weapon(int Ind, object_type *o_ptr, int *to_hit, int *to_dam) {
+	player_type *p_ptr = Players[Ind];
+	object_type *oi_ptr;
+
+	int to_h = 0;//, to_h_melee = 0;
+	int to_d = 0, to_d_melee = 0;
+
+	int to_h_ranged = 0;
+#ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+	int to_d_ranged = 0;
+#endif
+
+	int to_h_thrown = 0; /* Special throwing ranged bonus */
+
+	bool blessed_weapon, cumber_armor;
+	//bool heavy_wield, icky_wield;
+	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	int i, j;
+	//int hold;
+	long int d;
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
+
+
+	if (!o_ptr->k_idx) return;
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+	if (f4 & TR4_NEVER_BLOW) return;
+	blessed_weapon = (f3 & TR3_BLESSED);
+
+	/* Apply the bonus from Druidism */
+#if 0 /* focus _shot_ = ranged only (old way) */
+	to_h_ranged += p_ptr->focus_val;
+#else /* focus: apply to both, melee and ranged */
+	to_h += p_ptr->focus_val;
+#endif
+
+	/* Scan the equipment */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		oi_ptr = &p_ptr->inventory[i];
+
+		if (i == INVEN_WIELD || (i == INVEN_ARM && oi_ptr->tval != TV_SHIELD) ||
+		    i == INVEN_AMMO || i == INVEN_BOW || i == INVEN_TOOL) continue;
+
+		/* Apply the bonuses to hit/damage */
+		to_h += oi_ptr->to_h;
+		to_d += oi_ptr->to_d;
+	}
+
+	/* If we have any base bonuses to add, add them */
+
+#if 0 /* should this stuff be mvoed to affect _total p_ptr->to_h instead of being applied so (too) early here? */
+	/* Apply temporary "stun" */
+	if (p_ptr->stun > 50) {
+		to_h /= 2;
+		to_d /= 2;
+	} else if (p_ptr->stun) {
+		to_h = (to_h * 2) / 3;
+		to_d = (to_d * 2) / 3;
+	}
+#endif
+
+	/* Adrenaline effects */
+	if (p_ptr->adrenaline) {
+		to_h += 12;
+		if (p_ptr->adrenaline & 1) to_d += 8;
+	}
+
+	/* Temporary "Hero" */
+	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) to_h += 12;
+
+	/* Temporary "Fury" */
+	if (p_ptr->fury) {
+		to_h -= 10;
+		to_d += 10;
+	}
+
+	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
+	to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+#if 0
+#if 1 /* addition */
+	to_h_melee += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+#else /* multiplication (percent) -- TODO FIRST!!: would need to be before all penalties but after marts/etc +hit boni! */
+	to_h_melee = ((int)((to_h_melee * adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 100));
+#endif
+#endif
+
+	/* Modify ranged weapon boni. DEX now very important for to_hit */
+#if 1 /* addition */
+	to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+#else /* multiplication (percent) -- TODO FIRST!!: would need to be before all penalties but after marts/etc +hit boni! */
+	if (to_h_ranged > 0) to_h_ranged = ((int)((to_h_ranged * adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 100));
+	else to_h_ranged = ((int)((to_h_ranged * 100) / adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]));
+#endif
+	to_h_thrown = to_h_ranged;
+
+	/* -------------------- AC mods unaffected by body_monster: -------------------- */
+
+	/* Temporary blessing */
+	if (p_ptr->blessed) to_h += p_ptr->blessed_power / 2;
+
+	cumber_armor = FALSE;
+	/* Heavy armor penalizes to-hit and sneakiness speed */
+	if (((armour_weight(p_ptr) - (100 + get_skill_scale(p_ptr, SKILL_COMBAT, 300)
+	    + adj_str_hold[p_ptr->stat_ind[A_STR]] * 6)) / 10) > 0)
+		cumber_armor = TRUE;
+
+#if 0 /* Currently unused because cmd_throw() already redundantly checks for heavy-wield in advance and we never get called in that case */
+	/* Obtain the "hold" value */
+	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
+
+	heavy_wield = FALSE;
+	/* It is hard to hold a heavy weapon */
+	if (o_ptr->k_idx && hold < o_ptr->weight / 10) {
+		/* Hard to wield a heavy weapon */
+		to_h += 2 * (hold - o_ptr->weight / 10);
+		heavy_wield = TRUE;
+	}
+
+	/* Normal weapons */
+	if (!heavy_wield && (i = get_weaponmastery_skill(p_ptr, o_ptr)) != -1) {
+		int lev = get_skill(p_ptr, i);
+
+		to_h_thrown += lev;
+		//to_h_melee += lev;
+		to_d_melee += lev / 3;
+	}
+#endif
+
+	/* make cumber_armor have effect on to-hit for non-martial artists too - C. Blue */
+	//if (cumber_armor && to_h_melee > 0) to_h_melee = (to_h_melee * 2) / 3;
+	if (cumber_armor && to_h_thrown > 0) to_h_thrown = (to_h_thrown * 2) / 3;
+
+	/* PvP mode */
+	if ((p_ptr->mode & MODE_PVP)) {
+		to_d = (to_d + 1) / 2;
+		to_h = (to_h + 1) / 2;
+	}
+
+	/* Weaponmastery bonus to hit and damage - not for MA!- C. Blue */
+	if ((i = get_skill(p_ptr, SKILL_MASTERY))) {
+		to_h_thrown += i / 3;
+		//to_h_melee += i / 3;
+		to_d_melee += i / 10;
+	}
+
+	/* Equipment weight affects shooting */
+	/* allow malus even */
+	/* examples: 10.0: 0, 20.0: -4, 30.0: -13, 40.0: -32, 47.0: -50 cap */
+	i = armour_weight(p_ptr) / 10;
+	i = (i * i * i) / 2000;
+	if (i > 50) i = 50; /* reached at 470.0 lb */
+	//to_h_ranged -= i;
+	to_h_thrown -= i;
+
+	/* Assume okay */
+	//icky_wield = FALSE;
+	/* Priest weapon penalty for non-blessed edged weapons (assumes priests cannot dual-wield) */
+	if ((p_ptr->pclass == CLASS_PRIEST && !blessed_weapon &&
+	    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_AXE))
+	    || (p_ptr->prace == RACE_VAMPIRE && blessed_weapon)
+	    || (p_ptr->ptrait == TRAIT_CORRUPTED && blessed_weapon)
+#ifdef ENABLE_CPRIEST
+	    || (p_ptr->pclass == CLASS_CPRIEST && blessed_weapon)
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	    || (p_ptr->pclass == CLASS_HELLKNIGHT && blessed_weapon)
+#endif
+	    ) {
+		to_h = to_h * 3 / 5;
+		to_d = to_d * 3 / 5;
+		//to_h_melee = to_h_melee * 3 / 5;
+		to_h_thrown = to_h_thrown * 3 / 5;
+		to_d_melee = to_d_melee * 3 / 5;
+		//icky_wield = TRUE;
+	}
+
+	if (p_ptr->body_monster) {
+		d = 0;
+		for (i = 0; i < 4; i++) {
+			j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
+			j += r_ptr->blow[i].d_dice;
+			j /= 2;
+
+			d += j; /* adding up average monster damage per round */
+		}
+
+		d /= 4; /* average monster damage per blow */
+#ifndef MIMIC_TO_D_DENTHACK /* a bit too little distinguishment for high-dam MA forms (Jabberwock vs Maulotaur for druids -> almost NO difference!) */
+		d = (2200 / ((250 / (d + 4)) + 22)) - 20;
+#else /* add a 'dent' for '08/15 forms' :-p to help Jabberwock shine moar vs Maulotaur */
+		d = (2200 / ((250 / (d + 4)) + 22)) - 20 - 950 / ((d - 25) * (d - 25) + 100);
+#endif
+
+		/* Reduce for pvp, or mimicry is too good */
+		if (p_ptr->mode & MODE_PVP) {
+			if (d > to_d_melee) d = to_d_melee + (d - to_d_melee + 1) / 2;
+		}
+
+		/* Calculate new averaged to-dam bonus */
+		if (d < to_d_melee)
+#ifndef MIMICRY_BOOST_WEAK_FORM
+			to_d_melee = (to_d_melee * 5 + d * 2) / 7;
+		else
+#else
+			d = to_d_melee;
+#endif
+			to_d_melee = (to_d_melee + d) / 2;
+	}
+
+#ifdef ENABLE_STANCES
+ #ifdef USE_BLOCKING /* need blocking to make use of defensive stance */
+	if ((p_ptr->combat_stance == 1) &&
+	    (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD))
+		switch (p_ptr->combat_stance_power) {
+		case 0:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 7) / 10;
+			to_d_melee = (to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		case 1:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 7) / 10;
+			to_d_melee = (to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		case 2:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 7) / 10;
+			to_d_melee = (to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		case 3:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 7) / 10;
+			to_d_melee = (to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		}
+ #endif
+ #ifdef USE_PARRYING /* need parrying to make use of offensive stance */
+	if (p_ptr->combat_stance == 2) ;
+  #ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
+	else if ((p_ptr->combat_stance == 1) &&
+	    (p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
+		switch (p_ptr->combat_stance_power) {
+		case 0:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 6) / 10;
+			to_d_melee = (to_d_melee * 6) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		case 1:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 7) / 10;
+			to_d_melee = (to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		case 2:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 7) / 10;
+			to_d_melee = (to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		case 3:
+   #ifndef DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION
+			to_d = (to_d * 7) / 10;
+			to_d_melee = (to_d_melee * 7) / 10;
+   #endif
+   #ifndef DEFENSIVE_STANCE_FIXED_RANGED_REDUCTION
+			to_d_ranged = (to_d_ranged * 5) / 10;
+   #endif
+			break;
+		}
+  #endif
+ #endif
+#endif
+
+	//if (heavy_wield) msg_print(Ind, "\377oYou have trouble throwing such a heavy weapon."); --never called atm, as cmd_throw() sets throwing_weapon = FALSE if it detects too heavy in advance already.
+	//if (icky_wield) msg_print(Ind, "\377oYou do not feel comfortable with that throwing weapon."); --disabled as cmd_throw() already checks this in advance.
+	*to_hit = to_h + to_h_thrown;
+	*to_dam = to_d + to_d_melee;
 }
 
 

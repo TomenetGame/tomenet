@@ -8386,7 +8386,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	int i, j, y, x, ny, nx, ty, tx, wall_x, wall_y;
-	int chance, tdam, tdis, k2, k3, vorpal_cut = 0, chaos_effect = 0;
+	int chance, tdam, tdis, k2, k3, vorpal_cut = 0, chaos_effect = 0, instakills;
 	int mul, div;
 	int cur_dis, visible, real_dis;
 	int moved_number = 1, original_number;
@@ -8397,7 +8397,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	bool hit_body = FALSE, target_ok = target_okay(Ind);
 	bool hit_wall = FALSE;
-	bool returning;
+	bool returning, blessed_weapon, old_instakills;
 
 	int missile_attr;
 	int missile_char;
@@ -8413,6 +8413,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool throwing_weapon;
 	cave_type **zcave, *c_ptr;
+
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -8493,6 +8494,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	/* Equipped items only! */
 	returning = (f6 & TR6_RETURNING) && (item >= INVEN_WIELD);
+	blessed_weapon = (f3 & TR3_BLESSED);
 
 	/* Hack - Cannot throw away 'no drop' cursed items */
 	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0 && !bashing) {
@@ -8577,13 +8579,29 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Use the local object */
 	o_ptr = &throw_obj;
+
 	throwing_weapon = is_throwing_weapon(o_ptr);
 	if (throwing_weapon) {
 		/* Check is same as for heavy_wield */
 		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) {
-			msg_print(Ind, "\377yYou have trouble throwing such a heavy weapon effectively.");
+			msg_print(Ind, "\377oYou have trouble throwing such a heavy weapon effectively.");
 			throwing_weapon = FALSE;
 		}
+
+		/* Check is same as for icky_wield, but just for message here. Actual penalties are applied in calc_boni_weapon().  */
+		/* Priest weapon penalty for non-blessed edged weapons (assumes priests cannot dual-wield) */
+		if ((p_ptr->pclass == CLASS_PRIEST && !blessed_weapon &&
+		    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_AXE))
+		    || (p_ptr->prace == RACE_VAMPIRE && blessed_weapon)
+		    || (p_ptr->ptrait == TRAIT_CORRUPTED && blessed_weapon)
+#ifdef ENABLE_CPRIEST
+		    || (p_ptr->pclass == CLASS_CPRIEST && blessed_weapon)
+#endif
+#ifdef ENABLE_HELLKNIGHT
+		    || (p_ptr->pclass == CLASS_HELLKNIGHT && blessed_weapon)
+#endif
+		    )
+			msg_print(Ind, "\377oYou do not feel comfortable with that throwing weapon.");
 	}
 
 	/* Description */
@@ -8671,6 +8689,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	if (bashing && o_ptr->custom_lua_usage) exec_lua(0, format("custom_object_usage(%d,%d,%d,%d,%d)", Ind, item < 0 ? -item : 0, item >= 0 ? item : -1, 12, o_ptr->custom_lua_usage));
 
+	/* Hack this for throwing items: "for admins: kill a target in one hit" */
+	instakills = (o_ptr->name1 == ART_SCYTHE_DM) ? ((o_ptr->note && strstr(quark_str(o_ptr->note), "IDDQD")) ? 2 : 1) : 0; //at doom's gate...
 
 	/* Travel until stopped */
 	for (cur_dis = real_dis = 0; real_dis <= tdis; ) {
@@ -8832,10 +8852,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 				/* Did we hit him (penalize range) */
 #ifndef PVP_AC_REDUCTION
-				if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)) {
+				if (instakills || test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)) {
 #else
 				//if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
-				if (test_hit_fire(chance - cur_dis,
+				if (instakills || test_hit_fire(chance - cur_dis,
 				    /* Special perks: Heavy throwing weapons are efficient vs target's AC. Another halving happens if the target is fleeing from us. */
 				    (((q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a) * 10) / (throwing_weapon ? 10 + o_ptr->weight / 30 : 10) / (q_ptr->afraid ? 2 : 1),
 				    visible)) {
@@ -8905,6 +8925,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 					if (throwing_weapon) {
+						int to_hit, to_dam, org_to_h, org_to_h_thrown;
+
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 #if 0
 						/* About adding weight-damage, we have to be a bit careful, as heavier weapons already receive greater melee damage dice anyway: */
@@ -8921,15 +8943,24 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						/* Hack: For thowing weapons actually apply the player damage boni.
 						   The reason is that otherwise throwing weapons will quickly be outdamaged by melee weapons
 						   and not make a dent anymore in comparison, except at very low character levels. */
-	//TODO: check blessed_weapon, awkward/heavy weapon, fake-equip throwing weapon to acquire correct to_d + to_d_melee and to_h + to_h_melee(get_weaponmastery_skill)!
+						org_to_h = p_ptr->to_h;
+						org_to_h_thrown = p_ptr->to_h_thrown;
+						calc_boni_weapon(Ind, o_ptr, &to_hit, &to_dam);
+						/* Hack throwing boni */
+						p_ptr->to_h = 0;
+						p_ptr->to_h_thrown = to_hit;
+						/* Apply hacked to-hit and to-dam values for the throwing weapon */
 						tdam += p_ptr->to_d + p_ptr->to_d_melee;
-
 #ifdef CRIT_UNBRANDED
 						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam - k2, calc_crit_obj(o_ptr));
 						k3 += k2;
 #else
 						k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, calc_crit_obj(o_ptr));
 #endif
+						/* Unhack throwing boni */
+						p_ptr->to_h = org_to_h;
+						p_ptr->to_h_thrown = org_to_h_thrown;
+
 						k2 = tdam; /* remember damage before crit */
 
 						tdam = k3;
@@ -9027,7 +9058,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			hit_body = TRUE;
 
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis,
+			if (instakills || test_hit_fire(chance - cur_dis,
 			    /* Special perks: Heavy throwing weapons are efficient vs target's AC. Another halving happens if the target is fleeing from us. */
 			    (m_ptr->ac * 10) / (throwing_weapon ? 10 + o_ptr->weight / 30 : 10) / (m_ptr->monfear ? 2 : 1),
 			    visible)) {
@@ -9148,6 +9179,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 				/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 				if (throwing_weapon) {
+					int to_hit = 0, to_dam = 0, org_to_h, org_to_h_thrown;
+
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 #if 0
 					/* About adding weight-damage, we have to be a bit careful, as heavier weapons already receive greater melee damage dice anyway: */
@@ -9163,18 +9196,27 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam += damroll(o_ptr->dd, o_ptr->ds);
 #endif
 
-					/* Hack: For thowing weapons actually apply the player damage boni.
+					/* Hack: For throwing weapons actually apply the player damage boni.
 					   The reason is that otherwise throwing weapons will quickly be outdamaged by melee weapons
 					   and not make a dent anymore in comparison, except at very low character levels. */
-	//TODO: check blessed_weapon, awkward/heavy weapon, fake-equip throwing weapon to acquire correct to_d + to_d_melee and to_h + to_h_melee(get_weaponmastery_skill)!
-					tdam += p_ptr->to_d + p_ptr->to_d_melee;
-
+					org_to_h = p_ptr->to_h;
+					org_to_h_thrown = p_ptr->to_h_thrown;
+					calc_boni_weapon(Ind, o_ptr, &to_hit, &to_dam);
+					/* Hack throwing boni */
+					p_ptr->to_h = 0;
+					p_ptr->to_h_thrown = to_hit;
+					/* Apply hacked to-hit and to-dam values for the throwing weapon */
+					tdam += to_dam;
 #ifdef CRIT_UNBRANDED
 					k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam - k2, calc_crit_obj(o_ptr));
 					k3 += k2;
 #else
 					k3 = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, calc_crit_obj(o_ptr));
 #endif
+					/* Unhack throwing boni */
+					p_ptr->to_h = org_to_h;
+					p_ptr->to_h_thrown = org_to_h_thrown;
+
 #ifdef CRIT_VS_VORPAL
 					k2 = tdam; /* remember damage before crit */
 #endif
@@ -9251,8 +9293,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 				if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam * MIRROR_REDUCE_DAM_TAKEN_THROW + 99) / 100;
 
-				/* for admins: kill a target in one hit */
-				if (p_ptr->instakills) tdam = m_ptr->hp + 1;
+				if (instakills) tdam = m_ptr->hp + 1;
 				else if (p_ptr->admin_godly_strike) {
 					p_ptr->admin_godly_strike--;
 					if (!(r_ptr->flags1 & RF1_UNIQUE)) tdam = m_ptr->hp + 1;
@@ -9294,14 +9335,15 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					else weapon_takes_damage(Ind, GF_FIRE, slot);
 				}
 
-				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, slot);
+				if (!instakills) do_nazgul(Ind, &tdam, r_ptr, slot);
 #endif
 
 				/* Hit the monster, check for death */
+				old_instakills = p_ptr->instakills;
+				p_ptr->instakills = instakills;
 				if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies)) {
 					/* Dead monster */
 				}
-
 				/* No death */
 				else {
 					/* Message */
@@ -9326,6 +9368,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 							msg_format(Ind, "%^s retreats!", m_name);
 					}
 				}
+				/* Unhack */
+				p_ptr->instakills = old_instakills;
 
 				/* Exploding Attack - Kurzel */
 				if (p_ptr->nimbus) do_nimbus(Ind, y, x);

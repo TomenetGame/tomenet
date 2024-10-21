@@ -2211,6 +2211,7 @@ extern void calc_mana(int Ind);
 extern void calc_hitpoints(int Ind);
 extern void calc_boni(int Ind);
 extern void calc_body_spells(int Ind);
+extern void calc_boni_weapon(int Ind, object_type *o_ptr, int *to_hit, int *to_dam);
 extern int get_archery_skill(player_type *p_ptr);
 extern int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr);
 extern int calc_blows_obj(int Ind, object_type *o_ptr);
