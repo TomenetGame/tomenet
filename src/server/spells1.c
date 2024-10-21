@@ -1312,8 +1312,8 @@ void teleport_player_to(int Ind, int ny, int nx, char forced) {
 	}
 
 	/* Log, to distinguish MOVE_BODY vs TELE_TO related kills just in case */
-	if (p_ptr->tmp_x != 255) s_printf("TELE_TO: '%s' was teleported to %d,%d", p_ptr->name, x, y);
-	else s_printf("TELE_TO_FORCE: '%s' was teleported to %d,%d", p_ptr->name, x, y);
+	if (forced) s_printf("TELE_TO_FORCE: '%s' was teleported to %d,%d", p_ptr->name, x, y);
+	else s_printf("TELE_TO: '%s' was teleported to %d,%d", p_ptr->name, x, y);
 	if ((zcave[y][x].info & CAVE_ICKY)) s_printf(" (ICKY)");
 	if ((zcave[y][x].info & CAVE_STCK)) s_printf(" (STCK)");
 	s_printf(".\n");
