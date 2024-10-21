@@ -3217,10 +3217,11 @@ static int Handle_login(int ind) {
 	}
 #endif
 
+	for (j = 1; j < NumPlayers; j++) Players[j]->tmp_x = 0; //skip ourself (Ind is NumPlayers)
 	for (i = 0; i < MAX_NOTES; i++) {
 		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
 			/* A return receipt? */
-			if (!(strcmp(priv_note_sender[i], "SYSTEM") && strstr(priv_note[i], "received"))) {
+			if (!strcmp(priv_note_sender[i], "SYSTEM") && strstr(priv_note[i], "received")) {
 				msg_print(NumPlayers, priv_note[i]);
 				/* Clear note */
 				priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
