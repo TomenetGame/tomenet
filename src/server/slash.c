@@ -14231,6 +14231,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				e_info[k].mrarity = atoi(token[4]);
 				return;
 			}
+			else if (prefix(messagelc, "/invcur")) { /* heavycurse-inverse-flip an item manually */
+				object_type *o_ptr;
+
+				if (tk != 1) {
+					msg_print(Ind, "\377oUsage: /icursed <inventory-slot>");
+					return;
+				}
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
+				o_ptr = &p_ptr->inventory[k];
+				inverse_cursed(o_ptr);
+				return;
+			}
+			else if (prefix(messagelc, "/revcur")) { /* heavycurse-reverse-flip an item manually */
+				object_type *o_ptr;
+
+				if (tk != 1) {
+					msg_print(Ind, "\377oUsage: /icursed <inventory-slot>");
+					return;
+				}
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
+				o_ptr = &p_ptr->inventory[k];
+				reverse_cursed(o_ptr);
+				return;
+			}
 
 		}
 	}

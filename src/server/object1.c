@@ -5300,6 +5300,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		slot = -1; /* Not directly located inside our inventory/equipment */
 	}
 
+	/* Admin info about flipped-state of an item */
+	if (is_admin(p_ptr)) {
+		if (o_ptr->pval2 == -1) fprintf(fff, "<Item failed reversal>\n");
+		else if (o_ptr->pval2) fprintf(fff, "<Item is currently reversed>\n");
+		else if (o_ptr->pval3) fprintf(fff, "<Item was reversed>\n");
+	}
+
 #ifdef NEW_ID_SCREEN
 	/* ---------------------------- determine degree of knowledge ------------------------------- */
 
