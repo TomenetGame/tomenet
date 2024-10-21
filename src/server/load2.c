@@ -1331,6 +1331,7 @@ static void rd_notes() {
 			if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 			rd_string(dummy, NAME_LEN);
 			rd_string(dummy, NAME_LEN);
+			if (!s_older_than(4, 9, 18)) rd_string(dummy, NAME_LEN);
 			continue;
 		}
 		rd_string(priv_note[i], MSG_LEN);
