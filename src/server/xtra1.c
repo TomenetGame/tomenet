@@ -4129,8 +4129,10 @@ void calc_boni(int Ind) {
 		if (k_ptr->flags5 & TR5_PVAL_MASK) {
 			if (k_ptr->flags5 & TR5_DISARM) p_ptr->skill_dis += (o_ptr->bpval) * 5;
 			if (k_ptr->flags5 & TR5_LUCK) { p_ptr->luck += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].luck += o_ptr->bpval; }
+#if 0 /* xtra_crit are all +crit modifiers that are NOT the weapons used (but eg rings, gloves) */
 			/* There are no known weapons so far that add to crit intrinsically. */
 			if (k_ptr->flags5 & TR5_CRIT) { p_ptr->xtra_crit += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->bpval; }
+#endif
 		}
 
 		/* Next, add our ego bonuses */
@@ -6379,7 +6381,7 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_TEMPORAL) >= 50) { p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME; }
 	if (get_skill(p_ptr, SKILL_UDUN) >= 40) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
 	if (get_skill(p_ptr, SKILL_META) >= 20) p_ptr->skill_sav += get_skill(p_ptr, SKILL_META) - 20;
-	/* - SKILL_HOFFENSE gives slay mods in brand/slay function tot_dam_aux() */
+	/* - SKILL_HOFFENSE gives slay mods in brand/slay function brand_dam_aux() */
 	/* - SKILL_HDEFENSE gives auto protection-from-evil */
 	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40) { p_ptr->resist_lite = TRUE; p_ptr->resist_dark = TRUE; }
 	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */

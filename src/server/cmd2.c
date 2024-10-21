@@ -7459,7 +7459,7 @@ void do_cmd_fire(int Ind, int dir) {
 								if (!boomerang) {
 									/* Base damage from thrown object plus launcher bonus */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
-									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
+									tdam = brand_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
 									if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 									if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 									tdam += o_ptr->to_d;
@@ -7478,7 +7478,7 @@ void do_cmd_fire(int Ind, int dir) {
 									if ((f5 & TR5_VORPAL) && !(q_ptr->no_cut) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = tdam; /* save unbranded dice */
 									else vorpal_cut = FALSE;
 #endif
-									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
+									tdam = brand_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
 									tdam += o_ptr->to_d; //moved this here, or vorpal dam-addon will be too low
 #ifdef R_VORPAL_LOWBRANDED
 									if (vorpal_cut) vorpal_cut = (vorpal_cut + tdam) / 2;
@@ -7707,7 +7707,7 @@ void do_cmd_fire(int Ind, int dir) {
 					if (!boomerang) {
 						/* Base damage from thrown object plus launcher bonus */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
-						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
+						tdam = brand_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
 						if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 						if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 						tdam += o_ptr->to_d;
@@ -7726,7 +7726,7 @@ void do_cmd_fire(int Ind, int dir) {
 						if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = tdam; /* save unbranded dice */
 						else vorpal_cut = FALSE;
 #endif
-						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
+						tdam = brand_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
 						tdam += o_ptr->to_d; //moved this here, or vorpal dam-addon will be too low
 #ifdef R_VORPAL_LOWBRANDED
 						if (vorpal_cut) vorpal_cut = (vorpal_cut + tdam) / 2;
@@ -8860,10 +8860,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #endif
 #ifdef CRIT_UNBRANDED
 					k2 = tdam;
-					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
+					tdam = brand_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
 					k2 = tdam - k2; /* remember difference between branded and unbranded dice */
 #else
-					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
+					tdam = brand_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 					if (vorpal_cut) vorpal_cut = (vorpal_cut + tdam) / 2;
@@ -9098,7 +9098,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 				/* Hack -- Base damage from thrown object */
 				tdam = damroll(o_ptr->dd, o_ptr->ds);
-				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, TRUE);
+				tdam = brand_dam_aux(Ind, o_ptr, tdam, m_ptr, TRUE);
 				tdam += o_ptr->to_d;
 				/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 				if (throwing_weapon) {
@@ -9127,10 +9127,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #endif
 #ifdef CRIT_UNBRANDED
 					k2 = k;
-					k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+					k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 					k2 = k - k2; /* remember difference between branded and unbranded dice */
 #else
-					k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+					k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 					if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;

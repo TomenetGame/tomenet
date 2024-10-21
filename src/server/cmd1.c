@@ -322,7 +322,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
  * Slay Evil (x2), and Kill dragon (x5).
  */
 /* accepts Ind <=0 */
-s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, bool thrown) {
+s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
 	u32b f1, f2, f3, f4, f5, f6, esp;
@@ -928,7 +928,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 /*
  * Brands (including slay mods) the given damage depending on object type, hitting a given player.
  */
-s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, bool thrown) {
+s16b brand_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	u16b fx = 0x0;
@@ -3717,7 +3717,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				/* Apply the player damage boni */
@@ -3726,7 +3726,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0, FALSE);
 				k3 += k2;
 #else
-				k = tot_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -3779,10 +3779,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #endif
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 #else
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
@@ -3894,7 +3894,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = tot_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -4914,7 +4914,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				if (!p_ptr->instakills) {
@@ -4928,7 +4928,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0, FALSE);
 				k3 += k2;
 #else
-				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
 				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, -1);
 
@@ -5003,10 +5003,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 #else
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
@@ -5162,7 +5162,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
 				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, -1);
 
