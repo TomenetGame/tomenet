@@ -6708,7 +6708,9 @@ void calc_boni(int Ind) {
 	   Note: martyrdom is handled inside regenmana() instead. boundless rage is zeal, which isn't affected by mp really.
 	   p_ptr->voidx should stop mp-regen, but there is currently no way to turn it off (zero it) except for leaving the floor.
 	   Also there are no stop-spells for spirit_shield, kinetic_shield (and tim_regen_pow, but that one is not important). */
-	if (p_ptr->tim_manashield || p_ptr->spirit_shield || p_ptr->kinetic_shield || p_ptr->mcharming || p_ptr->dispersion || p_ptr->tim_regen_pow < 0) p_ptr->no_regen_mp = TRUE;
+	if (p_ptr->tim_manashield || p_ptr->spirit_shield || p_ptr->kinetic_shield || p_ptr->mcharming
+	    //|| p_ptr->dispersion /* this one actually uses ST, not MP, for upkeep */
+	    || p_ptr->tim_regen_pow < 0) p_ptr->no_regen_mp = TRUE;
 #endif
 
 	/* swapping in AUTO_ID items will instantly ID inventory and equipment.
