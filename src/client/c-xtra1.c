@@ -1715,7 +1715,7 @@ static void display_inven(void) {
 
 #ifdef ENABLE_SUBINVEN
 		/* Only need to redraw bag items? */
-		if ((p_ptr->window & PW_INVEN_SUB) && o_ptr->tval != TV_SUBINVEN) continue;
+		if (((p_ptr->window & (PW_INVEN_SUB | PW_INVEN)) == PW_INVEN_SUB) && o_ptr->tval != TV_SUBINVEN) continue;
 #endif
 
 		/* Start with an empty "index" */
