@@ -7891,7 +7891,9 @@ void do_cmd_fire(int Ind, int dir) {
 									}
 
 									if (m_ptr->r_idx == RI_BLUE) drain_heal >>= 1;
+									i = p_ptr->chp;
 									hp_player(Ind, drain_heal, TRUE, TRUE);
+									p_ptr->test_drain += (p_ptr->chp - i);
 									/* We get to keep some of it! */
 								}
 							}

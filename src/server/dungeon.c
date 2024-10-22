@@ -779,6 +779,7 @@ static void regenhp(int Ind, int percent) {
 	} else p_ptr->chp_frac = new_chp_frac;
 
 	p_ptr->test_heal = freeze_test_heal;
+	p_ptr->test_regen = p_ptr->chp - old_chp;
 }
 
 /*

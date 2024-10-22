@@ -4131,7 +4131,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #endif
 						}
 
+						i = p_ptr->chp;
 						hp_player(Ind, drain_heal, TRUE, TRUE);
+						p_ptr->test_drain += (p_ptr->chp - i);
 						/* We get to keep some of it! */
 					}
 				}
@@ -5517,7 +5519,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 						}
 
 						if (m_ptr->r_idx == RI_BLUE) drain_heal >>= 1;
+						i = p_ptr->chp;
 						hp_player(Ind, drain_heal, TRUE, TRUE);
+						p_ptr->test_drain += (p_ptr->chp - i);
 						/* We get to keep some of it! */
 					}
 				}

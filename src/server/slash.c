@@ -4527,27 +4527,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			if (!strcmp(token[1], "rs")) {
-				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_hurt = 0;
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_regen = p_ptr->test_drain = p_ptr->test_hurt = 0;
 				p_ptr->test_turn = turn;
 				p_ptr->test_turn_idle = 0;
-				msg_print(Ind, "Attack count, damage and healing done have been reset to zero.");
+				msg_print(Ind, "Attack count, damage, healing, regen and life-drain have been reset to zero.");
 				p_ptr->test_attacks = 0;
 				return;
 			}
 			if (!strcmp(token[1], "rsw")) {
-				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_hurt = 0;
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_regen = p_ptr->test_drain = p_ptr->test_hurt = 0;
 				p_ptr->test_turn = 0;
 				p_ptr->test_turn_idle = 0;
-				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
+				msg_print(Ind, "Attack count, damage, healing, regen and life-drain done have been reset to zero");
 				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
 				p_ptr->test_attacks = 0;
 				return;
 			}
 			if (!strcmp(token[1], "rsx")) {
-				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_hurt = 0;
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_regen = p_ptr->test_drain = p_ptr->test_hurt = 0;
 				p_ptr->test_turn = 0;
 				p_ptr->test_turn_idle = cfg.fps * 5;
-				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
+				msg_print(Ind, "Attack count, damage, healing, regen and life-drain done have been reset to zero");
 				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
 				msg_print(Ind, " Ceasing attacks for 5 seconds will stop and auto-evaluate the result.");
 				p_ptr->test_attacks = 0;
@@ -14380,25 +14380,39 @@ void tym_evaluate(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	long tmp;
 
-	msg_print(Ind, EVALPF"Your total damage and healing done since login or last reset:");
+	msg_print(Ind, EVALPF"Your total damage, healing, regen and life-drain done since login or last reset:");
 	msg_format(Ind, EVALPF"    \377oTotal damage done   : %8d", p_ptr->test_dam);
-	msg_format(Ind, EVALPF"    \377gTotal healing done  : %8d", p_ptr->test_heal);
+	msg_format(Ind, EVALPF"    \377GTotal healing done  : %8d", p_ptr->test_heal);
+	msg_format(Ind, EVALPF"    \377bTotal regeneration  : %8d", p_ptr->test_regen);
+	msg_format(Ind, EVALPF"    \377bTotal life drained  : %8d", p_ptr->test_drain);
 	//if (is_admin(p_ptr))
 	msg_format(Ind, EVALPF"    \377RTotal damage taken  : %8d", p_ptr->test_hurt);
-	msg_print(Ind, EVALPF"  Damage and healing done over # of attacks and amount of time passed:");
+	msg_print(Ind, EVALPF"  Damage, healing, regen and life-drain over # of attacks and time passed:");
 
 	if (p_ptr->test_count == 0)
 		msg_print(Ind,  EVALPF"    \377sNo count-based result available: # of successful attacks is still zero.");
 	else {
 		msg_format(Ind, EVALPF"    \377w# of successful attacks:  %8d", p_ptr->test_count);
+
 		tmp = p_ptr->test_dam / p_ptr->test_count;
 		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld.%1d",
 		    tmp, ((p_ptr->test_dam * 10) / p_ptr->test_count) % 10);
 		else msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld", tmp);
+
 		tmp = p_ptr->test_heal / p_ptr->test_count;
-		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld.%1d",
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377G    Average healing done: %8ld.%1d",
 		    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
-		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377G    Average healing done: %8ld", tmp);
+
+		tmp = p_ptr->test_regen / p_ptr->test_count;
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377g    Average regeneration: %8ld.%1d",
+		    tmp, ((p_ptr->test_regen * 10) / p_ptr->test_count) % 10);
+		else msg_format(Ind, EVALPF"    \377g    Average regeneration: %8ld", tmp);
+
+		tmp = p_ptr->test_drain / p_ptr->test_count;
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377b    Average life drained: %8ld.%1d",
+		    tmp, ((p_ptr->test_drain * 10) / p_ptr->test_count) % 10);
+		else msg_format(Ind, EVALPF"    \377b    Average life draining done: %8ld", tmp);
 	}
 	//if (is_admin(p_ptr))
 	{ /* for now admin only - under construction? */
@@ -14417,14 +14431,26 @@ void tym_evaluate(int Ind) {
 		msg_print(Ind,  EVALPF"    \377s please reinitialize via \377y/testyourmight rs[w]");
 	} else {
 		msg_format(Ind, EVALPF"    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
+
 		tmp = (p_ptr->test_dam * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
 		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld.%1d",
 		    tmp, ((p_ptr->test_dam * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
 		else msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld", tmp);
+
 		tmp = (p_ptr->test_heal * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld.%1d",
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377G    Average healing done: %8ld.%1d",
 		    tmp, ((p_ptr->test_heal * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377G    Average healing done: %8ld", tmp);
+
+		tmp = (p_ptr->test_regen * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377g    Average regeneration: %8ld.%1d",
+		    tmp, ((p_ptr->test_regen * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
+		else msg_format(Ind, EVALPF"    \377g    Average regeneration: %8ld", tmp);
+
+		tmp = (p_ptr->test_drain * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377b    Average life draining done: %8ld.%1d",
+		    tmp, ((p_ptr->test_drain * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
+		else msg_format(Ind, EVALPF"    \377b    Average life draining done: %8ld", tmp);
 	}
 }
 

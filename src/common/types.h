@@ -4120,7 +4120,7 @@ struct player_type {
 	bool player_sees_dm;
 	byte instakills;
 
-	u32b test_count, test_dam, test_heal, test_turn, test_turn_idle;
+	u32b test_count, test_dam, test_heal, test_regen, test_drain, test_turn, test_turn_idle;
 	u32b test_hurt; /* total damage we <should have> received, ignoring safe zones, invuln and admin_invuln. */
 	u32b test_attacks; /* count # of attempted attacks. (test_count is # of successful attacks.) */
 
