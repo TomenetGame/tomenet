@@ -704,8 +704,6 @@ s16b hp_player(int Ind, int num, bool quiet, bool autoeffect) {
 	/* Hell mode is .. hard */
 	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
 
-	p_ptr->test_heal += num;
-
 	if (p_ptr->chp >= p_ptr->mhp) return(FALSE);
 
 	/* player can't be healed while burning in the holy fire of martyrium */
@@ -725,6 +723,8 @@ s16b hp_player(int Ind, int num, bool quiet, bool autoeffect) {
 
 	/* No effective healing left? */
 	if (!eff_num) return(FALSE);
+
+	p_ptr->test_heal += num;
 
 	/* Data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
 	if (!autoeffect) p_ptr->heal_effect += eff_num;
