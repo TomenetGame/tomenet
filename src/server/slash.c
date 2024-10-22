@@ -2935,7 +2935,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			s32b p_id;
 			struct account acc;
 			char *msg, *msg_u;
-			const char *taname, *tcname = NULL;
+			const char *tcname = NULL, *tname;
+			char taname[ACCNAME_LEN];
 
 			if (tk < 1) { /* Explain command usage */
 				msg_print(Ind, "Usage:    /note <character or account name>:<text>");
@@ -2979,13 +2980,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if ((p_id = lookup_case_player_id(message3))) {
 				tcname = message3;
 				/* character exists, look up its account */
-				if (!(taname = lookup_accountname(p_id))) {
+				if (!(tname = lookup_accountname(p_id))) {
 					/* NOTE: This _can_ happen for outdated/inconsistent player databases where a character
 					         of the name still exists but does not belong to the account of the same name! */
 					msg_print(Ind, "***ERROR: No account found.");
 					return;
-				}
-			} else if (GetAccount(&acc, message3, NULL, FALSE, NULL, NULL)) taname = acc.name;
+				} else strcpy(taname, tname);
+			} else if (GetAccount(&acc, message3, NULL, FALSE, NULL, NULL)) strcpy(taname, acc.name);
 			else {
 				msg_print(Ind, "\377oNo character or account of that name exists.");
 				return;
