@@ -4640,22 +4640,30 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 				/* Dangerous Hack -- Destroy the item */
 				msg_print(Ind, "There is a bright flash of light.");
-
-				if (is_magic_device(o_ptr->tval)) /* mhhh */
-					divide_charged_item(NULL, o_ptr, amt);
-
-				/* Reduce and describe inventory */
-				if (item >= 0) {
-					inven_item_increase(Ind, item, -amt);
-					inven_item_describe(Ind, item);
-					inven_item_optimize(Ind, item);
-				}
-				/* Reduce and describe floor item */
+#ifdef MSTAFF_MDEV_COMBO
+				if (o_ptr->tval == TV_MSTAFF)
+					/* Keep the mage staff, just clear out the absorbed device power */
+					o_ptr->xtra1 = o_ptr->xtra2 = o_ptr->xtra3 = 0;
 				else {
-					floor_item_increase(0 - item, -amt);
-					floor_item_describe(0 - item);
-					floor_item_optimize(0 - item);
+#endif
+					if (is_magic_device(o_ptr->tval)) /* mhhh */
+						divide_charged_item(NULL, o_ptr, amt);
+
+					/* Reduce and describe inventory */
+					if (item >= 0) {
+						inven_item_increase(Ind, item, -amt);
+						inven_item_describe(Ind, item);
+						inven_item_optimize(Ind, item);
+					}
+					/* Reduce and describe floor item */
+					else {
+						floor_item_increase(0 - item, -amt);
+						floor_item_describe(0 - item);
+						floor_item_optimize(0 - item);
+					}
+#ifdef MSTAFF_MDEV_COMBO
 				}
+#endif
 			}
 		}
 
