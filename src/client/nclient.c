@@ -2309,6 +2309,10 @@ int Receive_subinven(void) {
 
 	p_ptr->window |= (PW_SUBINVEN);
 
+	/* In case !G/!W inscriptions were removed (or added or changed),
+	   we need to potentially update the [...] colourization of the bag item: */
+	p_ptr->window |= (PW_INVEN_SUB);
+
 	return(1);
 }
 #endif

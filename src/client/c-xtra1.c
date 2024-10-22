@@ -1696,6 +1696,8 @@ static void display_inven(void) {
 #ifdef ENABLE_SUBINVEN
 	object_type *o2_ptr;
 	long int subwgt;
+	bool warn_W, warn_G;
+	int sn;
 #endif
 
 
@@ -1710,6 +1712,11 @@ static void display_inven(void) {
 	/* Display the inventory */
 	for (i = 0; i < z; i++) {
 		o_ptr = &inventory[i];
+
+#ifdef ENABLE_SUBINVEN
+		/* Only need to redraw bag items? */
+		if ((p_ptr->window & PW_INVEN_SUB) && o_ptr->tval != TV_SUBINVEN) continue;
+#endif
 
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
@@ -1746,6 +1753,7 @@ static void display_inven(void) {
 		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 #ifdef ENABLE_SUBINVEN
+			warn_W = warn_G = FALSE;
 			subwgt = 0;
 			/* Add weight of all items contained within */
 			if (o_ptr->tval == TV_SUBINVEN) {
@@ -1753,11 +1761,16 @@ static void display_inven(void) {
 					o2_ptr = &subinventory[i][n];
 					if (!o2_ptr->tval) break;
 					subwgt += o2_ptr->weight * o2_ptr->number;
+
+					if (!warn_W && (sn = check_guard_inscription_str(subinventory_name[i][n], 'W')) && subinventory[i][n].number < sn) warn_W = TRUE;
+					else if (!warn_G && (sn = check_guard_inscription_str(subinventory_name[i][n], 'G')) && subinventory[i][n].number < sn - 1) warn_G = TRUE;
 				}
 				wgt += subwgt;
 
 				/* Add fill state to subinven bag name? */
-				strcat(o_name, format(" [%d/%d]", n, o_ptr->bpval));
+				if (warn_W) strcat(o_name, format(" \377o[\377-%d/%d\377o]\377-", n, o_ptr->bpval));
+				else if (warn_G) strcat(o_name, format(" \377y[\377-%d/%d\377y]\377-", n, o_ptr->bpval));
+				else strcat(o_name, format(" [%d/%d]", n, o_ptr->bpval));
 				//o_name[MSG_LEN] = 0; /* Ensure overflow protection */
 			}
 #endif
@@ -2156,6 +2169,8 @@ void show_inven(void) {
 #ifdef ENABLE_SUBINVEN
 	object_type *o2_ptr;
 	long int subwgt;
+	bool warn_W, warn_G;
+	int sn;
 #endif
 
 	object_type *o_ptr;
@@ -2257,18 +2272,24 @@ void show_inven(void) {
 		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 #ifdef ENABLE_SUBINVEN
+			warn_W = warn_G = FALSE;
 			subwgt = 0;
 			if (o_ptr->tval == TV_SUBINVEN) {
 				for (l = 0; l < o_ptr->bpval; l++) {
 					o2_ptr = &subinventory[i][l];
 					if (!o2_ptr->tval) break;
 					subwgt += o2_ptr->weight * o2_ptr->number;
+
+					if (!warn_W && (sn = check_guard_inscription_str(subinventory_name[i][l], 'W')) && subinventory[i][l].number < sn) warn_W = TRUE;
+					else if (!warn_G && (sn = check_guard_inscription_str(subinventory_name[i][l], 'G')) && subinventory[i][l].number < sn - 1) warn_G = TRUE;
 				}
 				totalwgt += subwgt;
 				wgt += subwgt;
 
 				/* Add fill state to subinven bag name? */
-				strcat(out_desc[j], format(" [%d/%d]", l, o_ptr->bpval));
+				if (warn_W) strcat(out_desc[j], format(" \377o[\377-%d/%d\377o]\377-", l, o_ptr->bpval));
+				else if (warn_G) strcat(out_desc[j], format(" \377y[\377-%d/%d\377y]\377-", l, o_ptr->bpval));
+				else strcat(out_desc[j], format(" [%d/%d]", l, o_ptr->bpval));
 				out_desc[j][lim] = 0; /* Ensure overflow protection */
 			}
 #endif
@@ -4936,9 +4957,17 @@ void window_stuff(void) {
 	if (!p_ptr->window) return;
 
 	/* Display inventory */
-	if (p_ptr->window & PW_INVEN) {
-		p_ptr->window &= ~(PW_INVEN);
+	if (p_ptr->window & (PW_INVEN
+#ifdef ENABLE_SUBINVEN
+	     | PW_INVEN_SUB
+#endif
+	    )) {
 		fix_inven();
+		p_ptr->window &= ~(PW_INVEN
+#ifdef ENABLE_SUBINVEN
+		    | PW_INVEN_SUB
+#endif
+		    );
 	}
 
 #ifdef ENABLE_SUBINVEN

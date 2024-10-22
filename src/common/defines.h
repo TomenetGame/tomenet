@@ -5014,13 +5014,15 @@
 #define PW_ALLITEMS	0x00008000U	/* Display all inventory and equipment (all slots count as 'changed') */
 #define PW_ALLITEMS_FWD	0x00010000U	/* Display all inventory for mind-linking player */
 #if 1
- #define PW_INIT		0x00020000U	/* Various initialisations, that are too early to be done in Handle_login() or player_setup() to work. */
+ #define PW_INIT	0x00020000U	/* Various initialisations, that are too early to be done in Handle_login() or player_setup() to work. */
 #else /* Since this is just needed initially for now, we don't need to use up a flag slot for it. */
  #ifdef ENABLE_SUBINVEN
   #define PW_SUBINVEN	0x00020000U	/* (Initially) send all subinventory contents to the player */
  #endif
 #endif
-
+#ifdef ENABLE_SUBINVEN
+ #define PW_INVEN_SUB	0x00040000U	/* Client-side, for efficiency: Refresh only all subinventory item entries (bags) inside inventory (for !G/!W '[...]' colourization). */
+#endif
 
 
 /*** General index values ***/
