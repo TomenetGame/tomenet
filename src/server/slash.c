@@ -3046,7 +3046,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			/* Check whether target is actually online by now :) */
-			if ((i = find_player_name(tcname)) // <- doesn't check for admin-dm, which this does: name_lookup(Ind, taname, FALSE, FALSE, TRUE))
+			if (tcname && (i = find_player_name(tcname)) // <- doesn't check for admin-dm, which this does: name_lookup(Ind, taname, FALSE, FALSE, TRUE))
 			    && !check_ignore(i, Ind)) {
 				player_type *q_ptr = Players[i];
 
