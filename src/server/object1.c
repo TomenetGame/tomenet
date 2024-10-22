@@ -3118,8 +3118,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_str(t, " of ");
 			t = object_desc_str(t, (k_name + k_info[k_idx].name));
 		}
-	}
 #endif
+	}
 
 	/* No more details wanted */
 	if ((mode & 7) < 2) {
