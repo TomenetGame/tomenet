@@ -11769,7 +11769,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	if (!p_ptr->test_turn) p_ptr->test_turn = turn - 1; /* Start counting damage now */
 	p_ptr->test_count++;
-	p_ptr->test_dam += dam;
 	p_ptr->idle_attack = 0;
 
 	/* Break Charm/Possess */
