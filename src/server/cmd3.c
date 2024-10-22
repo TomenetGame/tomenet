@@ -2501,7 +2501,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) {
 		if (strlen(powins) != l) strcat(powins, " ");
 		strcat(powins, "(");
-		strcat(powins, GF_name[o_ptr->pval]);
+		strcat(powins, redux ? GF_name_short[o_ptr->pval] : GF_name[o_ptr->pval]);
 		strcat(powins, ")");
 	}
 

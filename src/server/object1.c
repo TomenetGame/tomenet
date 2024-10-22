@@ -44,43 +44,44 @@
 
 
 static void init_GF_names(void) {
-	strcpy(GF_name[GF_ELEC], "lightning");
-	strcpy(GF_name[GF_POIS], "poison");
-	strcpy(GF_name[GF_ACID], "acid");
-	strcpy(GF_name[GF_COLD], "frost");
-	strcpy(GF_name[GF_FIRE], "fire");
-	strcpy(GF_name[GF_PLASMA], "plasma");
-	strcpy(GF_name[GF_LITE], "light");
-	strcpy(GF_name[GF_DARK], "darkness");
-	strcpy(GF_name[GF_SHARDS], "shards");
-	strcpy(GF_name[GF_SOUND], "sound");
-	strcpy(GF_name[GF_CONFUSION], "confusion");
-	strcpy(GF_name[GF_FORCE], "force");
-	strcpy(GF_name[GF_INERTIA], "inertia");
-	strcpy(GF_name[GF_MANA], "mana");
-	strcpy(GF_name[GF_METEOR], "mini-meteors");
-	strcpy(GF_name[GF_ICE], "ice");
-	strcpy(GF_name[GF_CHAOS], "chaos");
-	strcpy(GF_name[GF_NETHER], "nether");
-	strcpy(GF_name[GF_NEXUS], "nexus");
-	//strcpy(GF_name[GF_TIME], "time");
-	strcpy(GF_name[GF_GRAVITY], "gravity");
-	strcpy(GF_name[GF_KILL_WALL], "stone-to-mud");
-	strcpy(GF_name[GF_DISP_UNDEAD], "dispelling undead");
-	strcpy(GF_name[GF_STUN], "stun");
-	strcpy(GF_name[GF_HOLY_FIRE], "holy fire");
-	//strcpy(GF_name[GF_AWAY_ALL], "teleportation");
-	//strcpy(GF_name[GF_TURN_ALL], "fear");
-	strcpy(GF_name[GF_DISINTEGRATE], "disintegration");
-	strcpy(GF_name[GF_HELLFIRE], "hellfire");
-	strcpy(GF_name[GF_DETONATION], "a detonation");
-	strcpy(GF_name[GF_NUKE], "radiation");
-	//strcpy(GF_name[GF_BLIND, "blindness");
-	strcpy(GF_name[GF_DISP_DEMON], "dispelling demons");
-	strcpy(GF_name[GF_STASIS], "stasis");
-	strcpy(GF_name[GF_STOP], "a rune of holding");
-	strcpy(GF_name[GF_FLARE], "a flare");
-	strcpy(GF_name[GF_ANNIHILATION], "annihilation");
+	/* names: length max 17, short names: length max 6 */
+	strcpy(GF_name[GF_ELEC], "lightning"); strcpy(GF_name_short[GF_ELEC], "elec");
+	strcpy(GF_name[GF_POIS], "poison"); strcpy(GF_name_short[GF_POIS], "pois");
+	strcpy(GF_name[GF_ACID], "acid"); strcpy(GF_name_short[GF_ACID], "acid");
+	strcpy(GF_name[GF_COLD], "frost"); strcpy(GF_name_short[GF_COLD], "frost");
+	strcpy(GF_name[GF_FIRE], "fire"); strcpy(GF_name_short[GF_FIRE], "fire");
+	strcpy(GF_name[GF_PLASMA], "plasma"); strcpy(GF_name_short[GF_PLASMA], "plasma");
+	strcpy(GF_name[GF_LITE], "light"); strcpy(GF_name_short[GF_LITE], "light");
+	strcpy(GF_name[GF_DARK], "darkness"); strcpy(GF_name_short[GF_DARK], "dark");
+	strcpy(GF_name[GF_SHARDS], "shards"); strcpy(GF_name_short[GF_SHARDS], "shards");
+	strcpy(GF_name[GF_SOUND], "sound"); strcpy(GF_name_short[GF_SOUND], "sound");
+	strcpy(GF_name[GF_CONFUSION], "confusion"); strcpy(GF_name_short[GF_CONFUSION], "conf");
+	strcpy(GF_name[GF_FORCE], "force"); strcpy(GF_name_short[GF_FORCE], "force");
+	strcpy(GF_name[GF_INERTIA], "inertia"); strcpy(GF_name_short[GF_INERTIA], "inert");
+	strcpy(GF_name[GF_MANA], "mana"); strcpy(GF_name_short[GF_MANA], "mana");
+	strcpy(GF_name[GF_METEOR], "mini-meteors"); strcpy(GF_name_short[GF_METEOR], "meteor");
+	strcpy(GF_name[GF_ICE], "ice"); strcpy(GF_name_short[GF_ICE], "ice");
+	strcpy(GF_name[GF_CHAOS], "chaos"); strcpy(GF_name_short[GF_CHAOS], "chaos");
+	strcpy(GF_name[GF_NETHER], "nether"); strcpy(GF_name_short[GF_NETHER], "nether");
+	strcpy(GF_name[GF_NEXUS], "nexus"); strcpy(GF_name_short[GF_NEXUS], "nexus");
+	//strcpy(GF_name[GF_TIME], "time"); strcpy(GF_name_short[GF_TIME], "time");
+	strcpy(GF_name[GF_GRAVITY], "gravity"); strcpy(GF_name_short[GF_GRAVITY], "grav");
+	strcpy(GF_name[GF_KILL_WALL], "stone-to-mud"); strcpy(GF_name_short[GF_KILL_WALL], "s2mud");
+	strcpy(GF_name[GF_DISP_UNDEAD], "dispelling undead"); strcpy(GF_name_short[GF_DISP_UNDEAD], "undead");
+	strcpy(GF_name[GF_STUN], "stun"); strcpy(GF_name_short[GF_STUN], "stun");
+	strcpy(GF_name[GF_HOLY_FIRE], "holy fire"); strcpy(GF_name_short[GF_HOLY_FIRE], "holy");
+	//strcpy(GF_name[GF_AWAY_ALL], "teleportation"); strcpy(GF_name_short[GF_AWAY_ALL], "tele");
+	//strcpy(GF_name[GF_TURN_ALL], "fear"); strcpy(GF_name_short[GF_TURN_ALL], "fear");
+	strcpy(GF_name[GF_DISINTEGRATE], "disintegration"); strcpy(GF_name_short[GF_DISINTEGRATE], "disi");
+	strcpy(GF_name[GF_HELLFIRE], "hellfire"); strcpy(GF_name_short[GF_HELLFIRE], "hell");
+	strcpy(GF_name[GF_DETONATION], "a detonation"); strcpy(GF_name_short[GF_DETONATION], "deto");
+	strcpy(GF_name[GF_NUKE], "radiation"); strcpy(GF_name_short[GF_NUKE], "rad");
+	//strcpy(GF_name[GF_BLIND, "blindness"); strcpy(GF_name_short[GF_BLIND], "blind");
+	strcpy(GF_name[GF_DISP_DEMON], "dispelling demons"); strcpy(GF_name_short[GF_DISP_DEMON], "demons");
+	strcpy(GF_name[GF_STASIS], "stasis"); strcpy(GF_name_short[GF_STASIS], "stasis");
+	strcpy(GF_name[GF_STOP], "a rune of holding"); strcpy(GF_name_short[GF_STOP], "hold");
+	strcpy(GF_name[GF_FLARE], "a flare"); strcpy(GF_name_short[GF_FLARE], "flare");
+	strcpy(GF_name[GF_ANNIHILATION], "annihilation"); strcpy(GF_name_short[GF_ANNIHILATION], "anni");
 }
 
 #if EXTRA_FLAVORS

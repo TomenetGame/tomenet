@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 23. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2537,6 +2537,7 @@ Item power inscription (added in 4.7.1):
                (disarm, digging, luck), light radius, slays and brands except
                for kill-flags, partial ESPs, trap kits' eligible enemy type.
                Can also be used on custom spell books, will shorten the names.
+               Will also shorten explosion-type names on exploding ammunition.
 
     Resulting inscription details:
     _S                sustain stat (S/I/W/D/C/H, where H is cHarisma)
