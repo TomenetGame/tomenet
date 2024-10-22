@@ -2189,8 +2189,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	}
 
 	/* Calculate this before mana shield */
-	if (q_ptr) q_ptr->test_dam += damage;
-	p_ptr->test_hurt += damage;
+	if (q_ptr) q_ptr->test_dam += (damage <= p_ptr->chp + 1 ? damage : p_ptr->chp + 1);
+	p_ptr->test_hurt += (damage <= p_ptr->chp + 1 ? damage : p_ptr->chp + 1);
 
 	/* Re allowed by evileye for power */
 #if 1

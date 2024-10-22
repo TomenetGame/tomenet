@@ -11755,7 +11755,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 						erase_effects(i);
 
 				s_printf("MIRROR2: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
-				p_ptr->test_dam += m_ptr->hp;
+				p_ptr->test_dam += m_ptr->hp; // don't count the final HP as we cannot die
 				return(FALSE);
 			}
 			m_ptr->extra = 0;
@@ -11917,13 +11917,13 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		suppress_message = old_tacit;
 		delete_monster_idx(m_idx, FALSE);
 		(*fear) = FALSE;
-		p_ptr->test_dam += m_ptr->hp; //pft, who tests damage while wielding the dm scythe?...
+		p_ptr->test_dam += m_ptr->hp + 1; //pft, who tests damage while wielding the dm scythe?...
 		return(TRUE); /* Monster is dead */
 	}
 
-	p_ptr->test_dam += (m_ptr->hp < dam) ? m_ptr->hp : dam;
+	p_ptr->test_dam += (m_ptr->hp + 1 <= dam) ? m_ptr->hp + 1 : dam;
 	/* record the data for use in C_BLUE_AI */
-	p_ptr->dam_turn[0] += (m_ptr->hp < dam) ? m_ptr->hp : dam;
+	p_ptr->dam_turn[0] += (m_ptr->hp + 1 <= dam) ? m_ptr->hp + 1 : dam;
 
 	/* for when a quest giver turned non-invincible */
 	if (m_ptr->questor) {
