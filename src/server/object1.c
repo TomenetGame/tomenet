@@ -2764,10 +2764,21 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		t = object_desc_chr(t, '\'');
 	}
 
-
 	/* Hack -- Append "Artifact" or "Special" (#-inscription) names; also handle raw-name-only */
 	if (known) {
 		if (!(mode & 2048)) {
+#ifdef MSTAFF_MDEV_COMBO
+			if (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) {
+				int k_idx = 0;
+
+				if (o_ptr->xtra1) k_idx = lookup_kind(TV_STAFF, o_ptr->xtra1 - 1);
+				else if (o_ptr->xtra2) k_idx = lookup_kind(TV_WAND, o_ptr->xtra2 - 1);
+				else if ( o_ptr->xtra3) k_idx = lookup_kind(TV_ROD, o_ptr->xtra3 - 1);
+				t = object_desc_str(t, " of ");
+				t = object_desc_str(t, (k_name + k_info[k_idx].name));
+			}
+#endif
+
 			/* Grab any ego-item name */
 			//if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 			if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
@@ -3107,18 +3118,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_per(t, o_ptr->ac);
 			t = object_desc_chr(t, b2);
 		}
-
-#ifdef MSTAFF_MDEV_COMBO
-		if (o_ptr->tval == TV_MSTAFF && (o_ptr->xtra1 || o_ptr->xtra2 || o_ptr->xtra3)) {
-			int k_idx = 0;
-
-			if (o_ptr->xtra1) k_idx = lookup_kind(TV_STAFF, o_ptr->xtra1 - 1);
-			else if (o_ptr->xtra2) k_idx = lookup_kind(TV_WAND, o_ptr->xtra2 - 1);
-			else if ( o_ptr->xtra3) k_idx = lookup_kind(TV_ROD, o_ptr->xtra3 - 1);
-			t = object_desc_str(t, " of ");
-			t = object_desc_str(t, (k_name + k_info[k_idx].name));
-		}
-#endif
 	}
 
 	/* No more details wanted */
