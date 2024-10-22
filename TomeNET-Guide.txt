@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 22. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2061,9 +2061,10 @@ They all start with a slash '/' hence they're called slash commands:
                        This is the recommended way for stress-free testing.
                        (The 5 idle seconds will be ignored in the calculation.)
 
-            Displays damage and healing stats for your character, totals and
-            averages over number of attacks and over time (# of seconds
-            passed).
+            Displays damage dealt, healing, regeneration, life-drain
+            (vampirism) and damage taken stats for your character.
+            Displays totals and averages over number of attacks and over time
+            (# of seconds passed).
 
             Note: 'Numer of attacks' only counts successful attacks, ie not
             attacks that missed, were blocked/parried/dodged or nullified by
