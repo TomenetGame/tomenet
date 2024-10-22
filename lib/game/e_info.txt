@@ -39,7 +39,7 @@ F:R_HIGH
 R:50
 F:ABILITY
 
-N:2:of Power
+N:2:of Energy
 X:A:24:30
 T:6:0:255
 W:10:5:40:20000
