@@ -14385,7 +14385,6 @@ void tym_evaluate(int Ind) {
 	msg_format(Ind, EVALPF"    \377GTotal healing done  : %8d", p_ptr->test_heal);
 	msg_format(Ind, EVALPF"    \377bTotal regeneration  : %8d", p_ptr->test_regen);
 	msg_format(Ind, EVALPF"    \377bTotal life drained  : %8d", p_ptr->test_drain);
-	//if (is_admin(p_ptr))
 	msg_format(Ind, EVALPF"    \377RTotal damage taken  : %8d", p_ptr->test_hurt);
 	msg_print(Ind, EVALPF"  Damage, healing, regen and life-drain over # of attacks and time passed:");
 
@@ -14412,15 +14411,18 @@ void tym_evaluate(int Ind) {
 		tmp = p_ptr->test_drain / p_ptr->test_count;
 		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377b    Average life drained: %8ld.%1d",
 		    tmp, ((p_ptr->test_drain * 10) / p_ptr->test_count) % 10);
-		else msg_format(Ind, EVALPF"    \377b    Average life draining done: %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377b    Average life drained: %8ld", tmp);
+
+		tmp = p_ptr->test_hurt / p_ptr->test_count;
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377R    Average damage taken: %8ld.%1d",
+		    tmp, ((p_ptr->test_hurt * 10) / p_ptr->test_count) % 10);
+		else msg_format(Ind, EVALPF"    \377R    Average damage taken: %8ld", tmp);
 	}
-	//if (is_admin(p_ptr))
-	{ /* for now admin only - under construction? */
-		if (p_ptr->test_attacks == 0)
-			msg_print(Ind, EVALPF"    \377wNo attempts to attack were made yet.");
-		else
-			msg_format(Ind, EVALPF"    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
-	}
+
+	if (p_ptr->test_attacks == 0)
+		msg_print(Ind, EVALPF"    \377wNo attempts to attack were made yet.");
+	else
+		msg_format(Ind, EVALPF"    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
 
 	if (p_ptr->test_turn == 0) {
 		msg_print(Ind, EVALPF"    \377sNo time-based result available,");
@@ -14448,9 +14450,14 @@ void tym_evaluate(int Ind) {
 		else msg_format(Ind, EVALPF"    \377g    Average regeneration: %8ld", tmp);
 
 		tmp = (p_ptr->test_drain * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377b    Average life draining done: %8ld.%1d",
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377b    Average life drained: %8ld.%1d",
 		    tmp, ((p_ptr->test_drain * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-		else msg_format(Ind, EVALPF"    \377b    Average life draining done: %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377b    Average life drained: %8ld", tmp);
+
+		tmp = (p_ptr->test_hurt * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377R    Average damage taken: %8ld.%1d",
+		    tmp, ((p_ptr->test_hurt * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
+		else msg_format(Ind, EVALPF"    \377R    Average damage taken: %8ld", tmp);
 	}
 }
 
