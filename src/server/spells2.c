@@ -9403,6 +9403,11 @@ void tome_creation_aux(int Ind, int item) {
 		return;
 	}
 
+	if (check_guard_inscription(o2_ptr->note, 'k')) {
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	}
+
 	/* - Success finally - */
 
 	/* Find the next free slot */
@@ -9510,6 +9515,11 @@ void mstaff_absorb_aux(int Ind, int item) {
 		p_ptr->using_up_item = item;
 		/* try again */
 		get_item(Ind, ITH_RECHARGE);
+		return;
+	}
+
+	if (check_guard_inscription(o2_ptr->note, 'k')) {
+		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
 
