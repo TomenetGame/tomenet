@@ -2043,7 +2043,7 @@ bool bypass_invuln = FALSE;
 bool melee_hit = FALSE;
 void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	char hit_from_real[MNAME_LEN];
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind], *q_ptr = NULL;
 	bool drain = !strcmp(hit_from, "life draining");
 
 	// The "number" that the character is displayed as before the hit
@@ -2053,14 +2053,11 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	/* Note: We ignore safe zones, admin_invuln and also invuln here.
 	   Todo: Don't count DoTs eg poisoning. */
 	if (IS_PLAYER(Ind_attacker)) {
-		player_type *q_ptr = Players[Ind_attacker];
-
+		q_ptr = Players[Ind_attacker];
 		if (!q_ptr->test_turn) q_ptr->test_turn = turn - 1; /* Start counting damage now */
 		q_ptr->test_count++;
-		q_ptr->test_dam += damage;
 		q_ptr->idle_attack = 0;
 	}
-	p_ptr->test_hurt += damage;
 
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;
@@ -2163,6 +2160,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	    -Ind_attacker != PROJECTOR_TERRAIN && !drain &&
 	    ge_special_sector &&
 	    in_arena(&p_ptr->wpos)) {
+		if (q_ptr) q_ptr->test_dam += p_ptr->chp + 1;
+		p_ptr->test_hurt += p_ptr->chp + 1;
 		p_ptr->admin_set_defeat--;
 		p_ptr->chp = -1;
 		p_ptr->deathblow = 1;
@@ -2188,6 +2187,10 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		/* Otherwise damage is reduced by the shield */
 		damage = (damage + 1) / 2;
 	}
+
+	/* Calculate this before mana shield */
+	if (q_ptr) q_ptr->test_dam += damage;
+	p_ptr->test_hurt += damage;
 
 	/* Re allowed by evileye for power */
 #if 1
