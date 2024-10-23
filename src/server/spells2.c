@@ -10683,7 +10683,13 @@ void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir) {
 		else if (fuse < 0) fuse = 15; /* catch user errors leniently */
 	}
 	/* Otherwise use default fuse length */
-	else fuse = o2_ptr->pval;
+	else {
+		fuse = o2_ptr->pval;
+		/* Hack for charges pre-generated in event maps to catch zero-pval,
+		   which may be due to simpler generation code which didn't set their pval
+		   (added as workaround for event modules): */
+		if (!fuse) fuse = k_info[o2_ptr->k_idx].pval;
+	}
 
 	o2_ptr->timeout = fuse;
 }
