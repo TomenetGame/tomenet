@@ -607,8 +607,8 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		break;
 	}
 
-	/* Charge determines price, no charge is worthless, rings can have 3000-6000 turns. */
-	price = (price * (o_ptr->timeout_magic / 10)) / 600;
+	/* For non-player rings, charge determines price, no charge is worthless, rings can have 3000-6000 turns. */
+	if (o_ptr->pval) price = (price * (o_ptr->timeout_magic / 10)) / 600;
 
 	/* Never drop to zero from rounding issues, not even at 0 turns left */
 	if (!price) price = 1;
