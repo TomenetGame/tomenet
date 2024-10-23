@@ -10779,9 +10779,6 @@ void arm_charge(int Ind, int item, int dir) {
 	/* Actually set the 'trap' */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
 
- #ifdef TEST_SERVER
-	return;
- #endif
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
