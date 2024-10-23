@@ -4295,14 +4295,13 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 		}
 	}
 
-	//cave[py][px].special = cave[py][px].special2 = 0;
 	cs_erase(c_ptr, cs_ptr);
 	/* Set previous cave feat -after- cs_erase or the grid would wrongly retain the trap/charge's colour attr. */
 	cave_set_feat_live(wpos, y, x, feat);
 }
 
 void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
-	int this_o_idx, next_o_idx;
+	int this_o_idx, next_o_idx, feat;
 	object_type *o_ptr;
 	cave_type *c_ptr;
 	cave_type **zcave;
@@ -4335,7 +4334,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 		s_printf("WARNING: erase_mon_trap() called on invalid cs_ptr at (%d,%d,%d).\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	}
-	cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
+	feat = cs_ptr->sc.montrap.feat;
 
 	/* Erase objects being carried */
 	for (this_o_idx = cs_ptr->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx) {
@@ -4358,8 +4357,8 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 		delete_object_idx(this_o_idx, TRUE);
 	}
 
-	//cave[py][px].special = cave[py][px].special2 = 0;
 	cs_erase(c_ptr, cs_ptr);
+	cave_set_feat_live(wpos, y, x, feat);
 	return;
 }
 

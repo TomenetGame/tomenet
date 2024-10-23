@@ -132,13 +132,13 @@ bool warding_rune_break(int m_idx) {
 	int mx = m_ptr->fx;
 	cave_type *c_ptr = &zcave[my][mx];
 	struct c_special *cs_ptr = GetCS(c_ptr, CS_RUNE);
+	int feat;
 
 
 	if (!zcave || !cs_ptr) return(FALSE);
 	// hack for special evenst - eternal runes? ^^'	(f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)
 
-	/* Restore the feature */
-	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);
+	feat = cs_ptr->sc.rune.feat;
 
 	/* Clear cs_ptr before project() to save some lite_spot packets */
 	s32b id = cs_ptr->sc.rune.id;
@@ -146,6 +146,8 @@ bool warding_rune_break(int m_idx) {
 	byte r = cs_ptr->sc.rune.rad;
 	byte t = cs_ptr->sc.rune.typ;
 	cs_erase(c_ptr, cs_ptr);
+	/* Restore the feature */
+	cave_set_feat_live(wpos, my, mx, feat);
 
 	/* XXX Hack -- Owner online? */
 	int i, who = PROJECTOR_MON_TRAP;

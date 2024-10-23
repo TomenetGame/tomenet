@@ -655,7 +655,7 @@ void compact_objects(int size, bool purge) {
  */
 
 void wipe_o_list(struct worldpos *wpos) {
-	int i;
+	int i, feat;
 	cave_type **zcave;
 	monster_type *m_ptr;
 	bool flag = FALSE;
@@ -717,8 +717,9 @@ void wipe_o_list(struct worldpos *wpos) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
 
 					if (cs_ptr) {
-						cave_set_feat_live(wpos, o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
+						feat = cs_ptr->sc.montrap.feat;
 						cs_erase(c_ptr, cs_ptr);
+						cave_set_feat_live(wpos, o_ptr->iy, o_ptr->ix, feat);
 					}
 					c_ptr->o_idx = 0;
 				} else zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
@@ -818,7 +819,7 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 /* Exactly like wipe_o_list() but actually makes exceptions for special dungeon floors. - C. Blue
    Special means: Static IDDC town floor. (Could maybe be used for quests too in some way.) */
 void wipe_o_list_special(struct worldpos *wpos) {
-	int i;
+	int i, feat;
 	cave_type **zcave;
 	monster_type *m_ptr;
 	bool flag = FALSE;
@@ -884,8 +885,9 @@ void wipe_o_list_special(struct worldpos *wpos) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
 
 					if (cs_ptr) {
-						cave_set_feat_live(wpos, o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
+						feat = cs_ptr->sc.montrap.feat;
 						cs_erase(c_ptr, cs_ptr);
+						cave_set_feat_live(wpos, o_ptr->iy, o_ptr->ix, feat);
 					}
 					c_ptr->o_idx = 0;
 				}
