@@ -10668,14 +10668,14 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 	return(TRUE);
 }
 /* Set direction (if applicable) and light the fuse at given length on a trap, arming it */
-void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir) {
+void arm_charge_dir_and_fuse(object_type *o_ptr, int dir) {
 	int fuse;
 
 	/* Set 'dir' if any (for fire-wall charge) */
-	o2_ptr->xtra9 = dir;
+	o_ptr->xtra9 = dir;
 
 	/* Hack: Allow setting custom fuse length via '!Fxx' inscription! */
-	if (o2_ptr->note && (fuse = check_guard_inscription(o2_ptr->note, 'F'))) {
+	if (o_ptr->note && (fuse = check_guard_inscription(o_ptr->note, 'F'))) {
 		fuse--; //unhack value
 		/* Limits: Fuse duration must be between 0s and 15s. */
 		if (fuse > 15) fuse = 15;
@@ -10684,14 +10684,14 @@ void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir) {
 	}
 	/* Otherwise use default fuse length */
 	else {
-		fuse = o2_ptr->pval;
+		fuse = o_ptr->pval;
 		/* Hack for charges pre-generated in event maps to catch zero-pval,
 		   which may be due to simpler generation code which didn't set their pval
 		   (added as workaround for event modules): */
-		if (!fuse) fuse = k_info[o2_ptr->k_idx].pval;
+		if (!fuse) fuse = k_info[o_ptr->k_idx].pval;
 	}
 
-	o2_ptr->timeout = fuse;
+	o_ptr->timeout = fuse;
 }
 /* Set a charge live --
    Note: We are generous and don't demand a fire-based light source in inven/equip to set the fuse alight =p. */
