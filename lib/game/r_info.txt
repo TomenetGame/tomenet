@@ -1309,7 +1309,7 @@ F:MORTAL | BASEANGBAND
 D:It is an armoured lizard with a powerful bite.
 
 N:83:Novice ranger
-G:p:W
+G:p:U
 I:110:6d8:20:8:5
 W:4:1:1400:18
 E:1:1:2:2:1:2
@@ -1500,7 +1500,7 @@ F:MORTAL | BASEANGBAND
 D:A predatory fish with razor-sharp teeth.
 
 N:97:Novice paladin
-G:p:w
+G:p:y
 I:110:6d8:20:16:5
 W:4:1:1700:18
 E:1:1:2:2:1:2
@@ -2139,7 +2139,7 @@ F:MORTAL | BASEANGBAND
 D:It is a strange small humanoid.
 
 N:142:Novice ranger
-G:p:W
+G:p:U
 I:110:6d8:20:8:5
 W:8:2:1500:18
 E:1:1:2:2:1:2
@@ -2207,7 +2207,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
 D:It is a strange growth on the dungeon floor.
 
 N:147:Novice paladin
-G:p:w
+G:p:y
 I:110:6d8:20:16:5
 W:8:2:1500:18
 E:1:1:2:2:1:2
@@ -2415,7 +2415,7 @@ D:Despite its unimpressive size, this mole creature has fangs powerful
 D:enough to bore through solid rock.
 
 N:162:Mindcrafter
-G:p:y
+G:p:W
 I:110:9d8:20:15:20
 W:20:2:1700:50
 E:1:1:2:2:1:2
@@ -3261,7 +3261,7 @@ F:MORTAL | BASEANGBAND | HAS_LITE
 D:A warrior of considerable skill.
 
 N:217:Skaven shaman
-G:r:g
+G:r:R
 I:110:10d8:20:15:20
 W:12:1:600:36
 E:1:1:2:2:1:2
@@ -4253,7 +4253,7 @@ F:EVIL | DEMON | IM_FIRE | NO_FEAR | BASEANGBAND | HAS_LITE
 D:It is a small demonic spirit full of malevolence.
 
 N:281:Gnome mage
-G:h:R
+G:h:r
 I:110:7d8:20:20:20
 W:15:2:900:40
 E:1:1:2:2:1:2
@@ -5279,7 +5279,7 @@ F:MORTAL | ZANGBAND
 D:It is a tracker; half human, half beast.
 
 N:345:Ranger
-G:p:W
+G:p:U
 I:110:18d11:20:40:40
 W:20:1:1700:55
 E:1:1:2:2:1:2
@@ -5296,7 +5296,7 @@ D:A warrior who is at one with nature. A master of both bow and sword, with
 D:minor spellcasting skills.
 
 N:346:Paladin
-G:p:w
+G:p:y
 I:110:25d11:20:40:40
 W:20:1:1700:55
 E:1:1:2:2:1:2
@@ -6920,7 +6920,7 @@ S:BOULDER
 D:A gigantic humanoid with but one eye.
 
 N:445:Clairvoyant
-G:p:y
+G:p:W
 I:120:25d10:100:50:10
 W:28:3:1600:250
 E:1:1:2:2:1:2
@@ -7615,7 +7615,7 @@ D:It is a fast moving creature of chaos, a gigantic black bat
 D:surrounded by flickering bright red flames.
 
 N:485:Ninja
-G:p:u
+G:p:s
 I:120:13d12:20:60:10
 W:32:2:1600:300
 E:1:1:2:2:1:2
@@ -8450,7 +8450,7 @@ F:EMPTY_MIND | NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | RES_TELE | JOKEANGBAND
 D:A shining machine of death and destruction.
 
 N:532:Dagashi
-G:p:u
+G:p:s
 I:120:13d25:20:70:10
 W:35:4:1600:500
 E:1:1:2:2:1:2
@@ -10378,7 +10378,7 @@ D:This elusive female spellcaster has a special affinity for dragons, whom
 D:she rarely fights without.
 
 N:637:Ranger chieftain
-G:p:W
+G:p:U
 I:120:50d20:20:60:10
 W:41:2:1800:1800
 E:1:1:2:2:1:2
@@ -11666,7 +11666,7 @@ D:The mightiest of hellblades, a black runesword which thirsts for
 D:your soul.
 
 N:699:Knight Templar
-G:p:w
+G:p:y
 I:120:60d20:20:140:10
 W:44:2:1800:2000
 E:1:1:2:2:1:2
@@ -11690,7 +11690,7 @@ D:Thus it is Morgoth's will that is unwittingly done, as the forces of good
 D:are set against each other.
 
 N:700:Leprechaun fanatic
-G:h:r
+G:h:R
 I:123:6d6:8:13:8
 W:46:6:800:80
 E:1:1:2:2:1:2
@@ -13826,7 +13826,7 @@ D:A humanoid form, black as night, advancing steadily and unstoppably, even
 D:the very rock of the dungeon cannot prevent it reaching you.
 
 N:799:Master mindcrafter
-G:p:y
+G:p:W
 I:120:80d10:20:60:10
 W:40:2:1700:2600
 E:1:1:2:2:1:2
@@ -15357,7 +15357,7 @@ D:They are used as the main assault force of the human kings.
 D:They will help you in some quests.
 
 N:864:Elven archer
-G:h:W
+G:h:o
 I:110:9d7:10:10:0
 #W:0:20:1400:0
 W:20:20:1400:0
@@ -15377,7 +15377,7 @@ D:They are used as the main assault force of the elven kings.
 D:They will help you in some quests.
 
 N:865:Dwarven warrior
-G:h:U
+G:h:u
 I:110:8d8:10:10:0
 #W:0:20:1500:0
 W:15:20:1500:0
@@ -15736,7 +15736,7 @@ D:A vaguely humanoid creature, it looks like a cross between a hobbit and a
 D:frog.
 
 N:887:Bullywug warrior
-G:h:g
+G:h:u
 I:110:8d10:20:15:0
 W:8:1:750:35
 E:1:1:2:2:1:2
@@ -16003,7 +16003,7 @@ D:A sleek form vaguely shaped like a dolphin, except with a humanoid
 D:head and arms. The facial features are decidedly elven.
 
 N:905:Aquatic elven warrior
-G:h:b
+G:h:u
 I:110:20d8:40:35:5
 W:10:1:1500:35
 E:1:1:1:2:1:0
@@ -16502,7 +16502,7 @@ D:and ragged clothes, he seems to have fixed on you as a convenient target
 D:to vent his anger.
 
 N:937:Novice mindcrafter
-G:p:y
+G:p:W
 I:110:6d8:20:10:5
 W:8:1:900:18
 E:1:1:2:2:1:2
@@ -16639,7 +16639,7 @@ D:The ancestors of the Dragons of the Dragonriders, these are
 D:friendly funny flying creatures with the powers of the dragons.
 
 N:945:High-elven ranger
-G:h:G
+G:h:U
 I:120:50d30:20:70:0
 W:40:3:1400:500
 E:1:1:2:2:1:2
@@ -17450,6 +17450,7 @@ D:sons of Feanor, it was Uldor's treachery that turned the tide of the Battle
 D:of Unnumbered Tears in Morgoth's favour.
 
 N:988:Mystic
+#Consider colours W (or perhaps v) if we ever add 'Novice Archer' monsters. - C. Blue
 G:p:o
 I:120:35d10:30:50:5
 W:33:3:1400:500
@@ -17706,7 +17707,7 @@ D:It is a lesser demon of female form; however, she takes little time to
 D:show her true colours.
 
 N:1000:Novice mindcrafter
-G:p:y
+G:p:W
 I:110:6d8:20:10:5
 W:4:1:900:18
 E:1:1:2:2:1:2
@@ -19479,7 +19480,7 @@ F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It's baring its teeth at you!
 
 N:1093:Lost Goblin
-G:h:W
+G:o:g
 I:110:30d5:8:2:99
 W:0:1:1300:20
 E:0:0:0:0:0:0
@@ -19507,7 +19508,7 @@ F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:With rattling noises it unsteadily moves towards you!
 
 N:1095:Frankenstein's Monster
-G:U:g
+G:U:U
 I:110:40d5:12:2:99
 W:0:1:1300:30
 E:0:0:0:0:0:0
@@ -19664,6 +19665,7 @@ D:A fat and jolly otherworldly being, hoarder of many loot. He
 D:challenges other travellers to take what he managed to pilfer
 D:throughout the Middle-earth.
 
+#Similarly to Mystique (see comment there), consider changing colour to 'W' if 'Novice Archer' gets added
 $TEST_SERVER$N:1103:Lord Ken, Fist of the North Star
 $TEST_SERVER$G:p:o
 $TEST_SERVER$I:130:52d100:30:300:5
