@@ -20609,6 +20609,7 @@ D:For testing
 
 # --- If Novice Archers get added, check "Mystic" comment for colour adjustment.
 #     Also make sure there's RESF_COND_RANGED for them.
+#     However, novice archers dont bring anything new to the table over novice rangers, so no need to enable them.
 #N:1166:Novice archer
 #G:p:o
 #I:110:7d4:20:12:5
