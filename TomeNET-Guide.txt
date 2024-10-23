@@ -1804,6 +1804,11 @@ They all start with a slash '/' hence they're called slash commands:
             player's account even if you specified a character name, so no
             matter which of his characters he chooses to logon, he always gets
             the note.
+            If you specify a character name and exactly that character (not
+            just any character of the same account) is actually online right
+            now, it will immediately see your note - in addition to it being
+            stored normally too and shown again on next login - provided the
+            target player is not ignoring you.
 /note <character/account name>
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.

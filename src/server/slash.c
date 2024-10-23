@@ -3046,7 +3046,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* Check whether target is actually online by now :) */
+			/* Check whether target _player name_ is actually online by now :)
+			   So if we send a note to this particular character name which is also online right now, it will be received live;
+			   but if we send a note to another character of that account, or directly to the account name instead, there will be no live-notification. */
 			if (tcname && (i = find_player_name(tcname)) // <- doesn't check for admin-dm, which this does: name_lookup(Ind, taname, FALSE, FALSE, TRUE))
 			    && !check_ignore(i, Ind)) {
 				player_type *q_ptr = Players[i];
@@ -3061,6 +3063,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//sound(i, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 				sound(i, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
+				msg_print(Ind, "\377yThe target character of that name is online right now and was notified directly!");
 				//return; //so double-msg him just to be safe he sees it -- if we don't return here, there's also no need to check for admin-dm status above
 			}
 
