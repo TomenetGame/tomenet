@@ -17451,6 +17451,7 @@ D:of Unnumbered Tears in Morgoth's favour.
 
 N:988:Mystic
 #Consider colours W (or perhaps v) if we ever add 'Novice Archer' monsters. - C. Blue
+#Also if colour is changed, change RESF_COND_ TERM_ORANGE check accordingly!
 G:p:o
 I:120:35d10:30:50:5
 W:33:3:1400:500
@@ -19665,7 +19666,7 @@ D:A fat and jolly otherworldly being, hoarder of many loot. He
 D:challenges other travellers to take what he managed to pilfer
 D:throughout the Middle-earth.
 
-#Similarly to Mystique (see comment there), consider changing colour to 'W' if 'Novice Archer' gets added
+#Similarly to Mystic (see comment there), consider changing colour to 'W' if 'Novice Archer' gets added
 $TEST_SERVER$N:1103:Lord Ken, Fist of the North Star
 $TEST_SERVER$G:p:o
 $TEST_SERVER$I:130:52d100:30:300:5
@@ -20606,7 +20607,7 @@ F:BLUEBAND | NO_CREDIT | NEVER_MOVE | EMPTY_MIND | COLD_BLOOD | NO_DEATH
 F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP | REGENERATE
 D:For testing
 
-# --- If Novice Archers get added, check "Mystique" comment for colour adjustment.
+# --- If Novice Archers get added, check "Mystic" comment for colour adjustment.
 #     Also make sure there's RESF_COND_RANGED for them.
 #N:1166:Novice archer
 #G:p:o

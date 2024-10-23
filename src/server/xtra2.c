@@ -6563,8 +6563,8 @@ bool monster_death(int Ind, int m_idx) {
 					if (r_ptr->d_char != 'p') break; //rogues
 					resf_drops |= RESF_COND2_LARMOUR;
 					break;
-				case TERM_UMBER: case TERM_WHITE: //warriors & paladins
-					if (r_ptr->d_char != 'p') break;//note: dark-elven warrior left out. maybe he prefers lighter armour :)
+				case TERM_UMBER: case TERM_YELLOW: //warriors & paladins
+					if (r_ptr->d_char != 'p') break;//note: bullywug/aquatic elven/dark-elven warriors left out. maybe they prefer lighter armour :)
 					resf_drops |= RESF_COND2_HARMOUR;
 					break;
 				case TERM_ORANGE:
