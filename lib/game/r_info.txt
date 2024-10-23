@@ -770,7 +770,7 @@ G:p:u
 I:110:9d4:20:16:5
 W:2:1:1600:6
 E:1:1:2:2:1:2
-O:25:50:0:20
+O:20:60:0:15
 B:HIT:HURT:1d7
 B:HIT:HURT:1d6
 F:MALE |
@@ -784,7 +784,7 @@ G:p:b
 I:110:8d4:20:12:5
 W:2:1:1400:6
 E:1:1:2:2:1:2
-O:50:25:0:20
+O:30:35:10:20
 B:HIT:HURT:1d6
 B:TOUCH:EAT_GOLD
 F:MALE |
@@ -796,9 +796,9 @@ D:A rather shifty individual.
 N:45:Novice priest
 G:p:g
 I:110:7d4:20:10:10
-W:2:1:1500:6
+W:3:1:1500:6
 E:1:1:2:2:1:2
-O:25:0:50:20
+O:25:25:40:5
 B:HIT:HURT:1d5
 F:MALE |
 F:FORCE_SLEEP | GOOD | WILD_EASY | DROP_SKELETON | DROP_CORPSE |
@@ -812,7 +812,7 @@ D:He is tripping over his priestly robes.
 N:46:Novice mage
 G:p:r
 I:110:6d4:20:6:5
-W:2:1:1400:6
+W:3:1:1400:6
 E:1:1:2:2:1:2
 O:25:0:70:0
 B:HIT:HURT:1d4
@@ -1313,7 +1313,7 @@ G:p:U
 I:110:6d8:20:8:5
 W:4:1:1400:18
 E:1:1:2:2:1:2
-O:25:45:25:0
+O:15:45:25:10
 B:HIT:HURT:1d5
 B:HIT:HURT:1d5
 F:MALE |
@@ -1448,7 +1448,7 @@ D:A cute little bear, full of merchandising potential.
 N:93:Novice mage
 G:p:r
 I:110:6d4:20:6:10
-W:6:2:1400:6
+W:7:2:1400:6
 E:1:1:2:2:1:2
 O:25:0:70:0
 B:HIT:HURT:1d4
@@ -1502,9 +1502,9 @@ D:A predatory fish with razor-sharp teeth.
 N:97:Novice paladin
 G:p:y
 I:110:6d8:20:16:5
-W:4:1:1700:18
+W:3:1:1700:18
 E:1:1:2:2:1:2
-O:0:70:25:0
+O:15:60:20:0
 B:HIT:HURT:1d7
 B:HIT:HURT:1d7
 F:MALE |
@@ -1667,9 +1667,9 @@ D:Yuk! It doesn't look so tasty.
 N:109:Novice priest
 G:p:g
 I:110:7d4:20:10:5
-W:6:2:1500:6
+W:7:2:1500:6
 E:1:1:2:2:1:2
-O:20:50:20:5
+O:25:25:40:5
 B:HIT:HURT:1d5
 F:MALE | GOOD |
 F:FORCE_SLEEP | WILD_EASY | DROP_SKELETON | DROP_CORPSE |
@@ -1685,7 +1685,7 @@ G:p:u
 I:110:9d4:20:16:5
 W:6:2:1600:6
 E:1:1:2:2:1:2
-O:0:95:0:0
+O:20:60:0:15
 B:HIT:HURT:1d7
 B:HIT:HURT:1d6
 F:MALE |
@@ -1766,7 +1766,7 @@ G:p:b
 I:110:8d4:20:12:5
 W:6:2:1400:6
 E:1:1:2:2:1:2
-O:50:25:0:20
+O:30:35:10:20
 B:HIT:HURT:1d6
 B:TOUCH:EAT_GOLD
 F:MALE | FRIENDS |
@@ -2143,7 +2143,7 @@ G:p:U
 I:110:6d8:20:8:5
 W:8:2:1500:18
 E:1:1:2:2:1:2
-O:0:80:0:15
+O:15:45:25:10
 B:HIT:HURT:1d5
 B:HIT:HURT:1d5
 F:MALE |
@@ -2209,9 +2209,9 @@ D:It is a strange growth on the dungeon floor.
 N:147:Novice paladin
 G:p:y
 I:110:6d8:20:16:5
-W:8:2:1500:18
+W:7:2:1500:18
 E:1:1:2:2:1:2
-O:30:55:10:0
+O:15:60:20:0
 B:HIT:HURT:1d7
 B:HIT:HURT:1d7
 F:MALE | GOOD | WILD_EASY | DROP_SKELETON | DROP_CORPSE
@@ -16506,7 +16506,7 @@ G:p:W
 I:110:6d8:20:10:5
 W:8:1:900:18
 E:1:1:2:2:1:2
-O:0:50:0:30
+O:20:50:20:5
 B:HIT:HURT:1d6
 F:DROP_60 | WILD_EASY | FRIENDS |
 F:OPEN_DOOR | DROP_SKELETON | DROP_CORPSE |
@@ -17711,7 +17711,7 @@ G:p:W
 I:110:6d8:20:10:5
 W:4:1:900:18
 E:1:1:2:2:1:2
-O:0:50:0:30
+O:20:50:20:5
 B:HIT:HURT:1d6
 F:DROP_60 | WILD_EASY |
 F:OPEN_DOOR | DROP_SKELETON | DROP_CORPSE |
@@ -20605,6 +20605,40 @@ B:TOUCH:*
 F:BLUEBAND | NO_CREDIT | NEVER_MOVE | EMPTY_MIND | COLD_BLOOD | NO_DEATH
 F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP | REGENERATE
 D:For testing
+
+# --- If Novice Archers get added, check "Mystique" comment for colour adjustment.
+#     Also make sure there's RESF_COND_RANGED for them.
+#N:1166:Novice archer
+#G:p:o
+#I:110:6d8:20:8:5
+#W:3:1:1400:8
+#E:1:1:2:2:1:2
+#O:20:50:5:20
+#B:HIT:HURT:1d5
+#B:HIT:HURT:1d5
+#F:MALE |
+#F:FORCE_SLEEP | DROP_60 | DROP_SKELETON | DROP_CORPSE
+#F:OPEN_DOOR | BASH_DOOR | WILD_EASY | WILD_WOOD |
+#F:MORTAL | BASEANGBAND | HAS_LITE
+#S:1_IN_9 |
+#S:ARROW_1
+#D:A novice marksman in training.
+
+#N:1167:Novice archer
+#G:p:o
+#I:110:6d8:20:8:5
+#W:7:2:1500:8
+#E:1:1:2:2:1:2
+#O:20:50:5:20
+#B:HIT:HURT:1d5
+#B:HIT:HURT:1d5
+#F:MALE |
+#F:FORCE_SLEEP | FRIENDS | DROP_60 | DROP_SKELETON | DROP_CORPSE |
+#F:OPEN_DOOR | BASH_DOOR |
+#F:MORTAL | BASEANGBAND | HAS_LITE
+#S:1_IN_9 |
+#S:ARROW_1
+#D:A novice marksman in training.
 
 
 
