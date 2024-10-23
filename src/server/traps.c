@@ -4192,7 +4192,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
  */
 void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 	player_type *p_ptr = NULL;
-	int this_o_idx, next_o_idx;
+	int this_o_idx, next_o_idx, feat;
 	object_type forge;
 	object_type *o_ptr;
 	object_type *q_ptr;
@@ -4205,7 +4205,7 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 	if (Ind) p_ptr = Players[Ind];
 	c_ptr = &zcave[y][x];
 	cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
-	cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
+	feat = cs_ptr->sc.montrap.feat;
 
 	/* Drop objects being carried */
 	for (this_o_idx = cs_ptr->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx) {
@@ -4297,6 +4297,8 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 
 	//cave[py][px].special = cave[py][px].special2 = 0;
 	cs_erase(c_ptr, cs_ptr);
+	/* Set previous cave feat -after- cs_erase or the grid would wrongly retain the trap/charge's colour attr. */
+	cave_set_feat_live(wpos, y, x, feat);
 }
 
 void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
