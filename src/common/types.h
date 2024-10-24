@@ -4303,6 +4303,8 @@ struct player_type {
 	bool player_list_window; /* Has configured one of his subwindows to be a live-updated player list window */
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
 	bool add_kind_diz, hide_lore_paste;
+
+	bool notify_notes, notify_sale;
 };
 
 /* For Monk martial arts */

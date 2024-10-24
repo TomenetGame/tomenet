@@ -8479,6 +8479,7 @@ s_printf("PLAYER_STORE_HANDLE: complete, mang, owner %s (%d), %s, value %d, buye
 #ifdef USE_SOUND_2010
 			sound(i, "pickup_gold", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+			Players[i]->notify_sale = TRUE;
 			break;
 		}
 		/* If he's not online, store account notification for later */

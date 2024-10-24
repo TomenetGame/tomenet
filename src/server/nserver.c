@@ -3236,6 +3236,7 @@ static int Handle_login(int ind) {
 					if (p_ptr->admin_dm && !p_ptr->admin_dm_chat && !is_admin(Players[j]) && !may_address_dm(Players[j])) continue;
 					Players[j]->tmp_x = 1; //hack: Marker for 'at least one of our notes was received'
 					msg_format(j, "\374\377yYour notes to %s were received.", priv_note_target[i]);
+					Players[j]->notify_notes = TRUE;
 #ifdef USE_SOUND_2010
 					//sound(j, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 					sound(j, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);

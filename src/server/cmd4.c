@@ -4174,6 +4174,15 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		    st_name + st_info[p_ptr->item_order_store - 1].name, town_profile[town[p_ptr->item_order_town].type].name);
 	}
 
+	if (p_ptr->notify_notes) {
+		msg_print(Ind, "\377yNotes you wrote were received.");
+		p_ptr->notify_notes = FALSE;
+	}
+	if (p_ptr->notify_sale) {
+		msg_print(Ind, "\377ySomething you put up in a store was sold.");
+		p_ptr->notify_sale = FALSE;
+	}
+
 
 	if (admin) {
 		cave_type **zcave, *c_ptr;
