@@ -221,17 +221,17 @@ __classes_macrowiz = {
 { "Phase Door", "Manathrust", }, --warrior
 { "Phase Door", "Manathrust", }, --istar
 { "Blessing", "Curse", }, --priest
-{ "Phase Door", "Cause Fear", }, --rogue
+{ "Phase Door", "Blindness", }, --rogue
 { "Blink", "Magic Missile", }, --mimic
 { "Phase Door", "Manathrust", }, --archer
-{ "Blessing", "Curse", }, --paladin
-{ "Phase Door", "Manathrust", }, --ranger
+{ "Remove Fear", "Curse", }, --paladin
+{ "Healing", "Frost Bolt", }, --ranger
 { "Phase Door", "Manathrust", }, --adventurer
-{ "Herbal Tea", "Toxic Moisture", }, --druid
+{ "Focus", "Toxic Moisture", }, --druid
 { "Starlight", "Cause Wounds", }, --shaman
 { "Phase Door", "Manathrust", }, --runemaster
-{ "Autokinesis I", "Psionic Blast", }, --mindcrafter
-{ "Detect Lifeforce", "Cause Fear", }, --death knight
-{ "Ignore Fear", "Terror", }, --hell knight
-{ "Ignore Fear", "Cause Fear", }, --c.priest
+{ "Scare", "Psionic Blast", }, --mindcrafter
+{ "Cause Fear", "Fatigue", }, --death knight
+{ "Ignore Fear", "Terror", }, --hell knight (not applied until initiation anyway)
+{ "Ignore Fear", "Cause Fear", }, --c.priest (not applied until initiation anyway)
 }
