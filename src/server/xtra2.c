@@ -7000,7 +7000,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (pvp && bonus < 3) bonus = 3;
 #endif
 
-			/* Shamans have a chance to learn E forms very quickly */
+			/* Shamans have a chance to learn E and X forms very quickly */
 			if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X')
 			    && bonus < 2)
 				bonus = 2;
