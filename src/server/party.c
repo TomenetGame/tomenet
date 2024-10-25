@@ -2944,6 +2944,8 @@ void del_party(int id) {
 	bool sent = FALSE;
 	player_type *p_ptr;
 
+	s_printf("DEL_PARTY: '%s' (%d)\n", parties[id].name, id);
+
 	/* Remove the party altogether */
 	kill_houses(id, OT_PARTY);
 
@@ -3058,6 +3060,7 @@ int guild_remove(int remover, cptr name) {
 			Send_guild(Ind, TRUE, TRUE);
 			p_ptr->guild = 0;
 			clockin(Ind, 3);
+			s_printf("Guild '%s' - last member removed -> deleting.\n", guilds[guild_id].name);
 			del_guild(guild_id);
 
 			/* Re-check house permissions, to display doors in correct colour */
@@ -3132,10 +3135,12 @@ int party_remove(int remover, cptr name) {
 		}
 		/* no other player online who is in the same party and could overtake leadership? Then erase party! */
 		if (i > NumPlayers) {
+			s_printf("Party owner '%s' removed '%s', no replacement -> deleting party.\n", q_ptr->name, parties[party_id].name);
 			del_party(party_id);
 			return(TRUE);
 		}
 	} else if (remover == Ind) {
+		s_printf("Party owner '%s' removed '%s' -> deleting party.\n", q_ptr->name, parties[party_id].name);
 		del_party(party_id);
 		return(TRUE);
 	}
@@ -3247,8 +3252,10 @@ void guild_leave(int Ind, bool voluntarily) {
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Last member deleted? */
-	if (guilds[guild_id].members == 0)
+	if (guilds[guild_id].members == 0) {
+		s_printf("Guild '%s' - last member left -> deleting.\n", guilds[guild_id].name);
 		del_guild(guild_id);
+	}
 }
 
 /*
