@@ -10287,7 +10287,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377rError! Couldn't open tomenet_guilds.txt");
 					return;
 				}
-				for (i = 1; i < MAX_PARTIES; i++) {
+				for (i = 1; i < MAX_GUILDS; i++) {
 					if (!guilds[i].members) continue;
 					fprintf(fp, "Guild: %s Master: %s, Members: %d, Timeout: %d\n", guilds[i].name, lookup_player_name(guilds[i].master), (int)guilds[i].members, (int)guilds[i].timeout);
 				}
