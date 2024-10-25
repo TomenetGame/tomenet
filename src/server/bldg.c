@@ -1205,7 +1205,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 
 		/* eligible item in this equipment slot? */
 		if (!o_ptr->tval) continue;
-		if (!is_enchantable(o_ptr)) continue;
+		if (!is_enchantable_kind(o_ptr)) continue;
 
 		if (ispecific > 0 && o_ptr->tval != ispecific) continue;
 
@@ -1387,7 +1387,7 @@ static bool repair_item(int Ind, int i, bool iac) {
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
-	if (!is_enchantable(o_ptr)) {
+	if (!is_enchantable_kind(o_ptr)) {
 		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
 		return(FALSE);
 	}
@@ -1536,7 +1536,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
-	if (!is_enchantable(o_ptr)) {
+	if (!is_enchantable_kind(o_ptr)) {
 		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
 		return(FALSE);
 	}

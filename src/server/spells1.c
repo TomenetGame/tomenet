@@ -4139,7 +4139,7 @@ bool apply_disenchant(int Ind, int mode) {
 
 #if 0 /* nonsense, disenchant goes down to 0, but repairing starts below 0 */
 	if (!p_ptr->warning_repair &&
-	    !((f5 & TR5_NO_ENCHANT) || o_ptr->name1) && is_enchantable(o_ptr)) {
+	    !((f5 & TR5_NO_ENCHANT) || o_ptr->name1) && is_enchantable_kind(o_ptr)) {
 		if (is_weapon(o_ptr->tval)) {
 			msg_print(Ind, "\377yYou can get it repaired at the weaponsmith in town.");
 			msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select your shield.");

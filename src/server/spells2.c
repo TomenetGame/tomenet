@@ -3641,7 +3641,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Unenchantable items always fail */
-	if (!is_enchantable(o_ptr)) return(FALSE);
+	if (!is_enchantable_kind(o_ptr)) return(FALSE);
 	if (f5 & TR5_NO_ENCHANT) return(FALSE);
 	/* Artifacts cannot be enchanted. */
 	if (a) return(FALSE);
@@ -4052,7 +4052,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	/* Enchant armor if requested */
 	if (num_ac) item_tester_hook = item_tester_hook_armour;
 
-	if (!item_tester_hook(o_ptr) || !is_enchantable(o_ptr)) {
+	if (!item_tester_hook(o_ptr) || !is_enchantable_kind(o_ptr)) {
 		msg_print(Ind, "Sorry, you cannot enchant that item.");
 #ifndef NEW_SHIELDS_NO_AC
 		get_item(Ind, num_ac ? ITH_ENCH_AC : ITH_ENCH_WEAP);

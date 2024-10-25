@@ -3521,14 +3521,14 @@
 	((sval) == SV_TRAPKIT_SLING || (sval) == SV_TRAPKIT_BOW || (sval) == SV_TRAPKIT_XBOW)
 #ifndef NEW_SHIELDS_NO_AC
 /* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
-#define is_enchantable(o_ptr) \
+#define is_enchantable_kind(o_ptr) \
 	(is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
 	(o_ptr)->tval == TV_MSTAFF || \
 	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
 	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING)
 #else
 /* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
-#define is_enchantable(o_ptr) \
+#define is_enchantable_kind(o_ptr) \
 	((is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
 	(o_ptr)->tval == TV_MSTAFF || \
 	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
