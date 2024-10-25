@@ -7948,7 +7948,7 @@ static void process_various(void) {
 	/* Things handled once per hour */
 	if (!(turn % (cfg.fps * 3600))) {
 		/* Purge leaderless guilds after a while */
-		for (i = 0; i < MAX_GUILDS; i++) {
+		for (i = 1; i < MAX_GUILDS; i++) {
 			if (!guilds[i].members) continue;
 			if (!lookup_player_name(guilds[i].master) &&
 			    guilds[i].timeout++ >= 24 * 7)

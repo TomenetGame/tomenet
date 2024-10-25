@@ -8190,7 +8190,7 @@ bool backup_estate(bool partial) {
 #if 0 /* guild info is no longer tied to map reset! */
 			/* add 2M Au if he's a guild master, since guilds will be erased if the server
 			   savefile gets deleted (which is the sole purpose of calling this function..) */
-			for (j = 0; j < MAX_GUILDS; j++)
+			for (j = 1; j < MAX_GUILDS; j++)
 				if (guilds[j].master == h_ptr->dna->owner) {
 					fprintf(fp, "AU:%d\n", GUILD_PRICE);
 					s_printf("  guild master: '%s'.\n", name);

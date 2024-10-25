@@ -1350,7 +1350,7 @@ int guild_lookup(cptr name) {
 	int i;
 
 	/* Check each guild */
-	for (i = 0; i < MAX_GUILDS; i++) { /* start from 0 or from 1? */
+	for (i = 1; i < MAX_GUILDS; i++) {
 		/* Check name */
 		if (streq(guilds[i].name, name)) return(i);
 	}
@@ -1571,7 +1571,7 @@ static bool guild_name_legal(int Ind, char *name) {
 	/* Check for already existing guild with too similar name */
 	condense_name(buf, name);
 	/* Check each guild */
-	for (index = 0; index < MAX_GUILDS; index++) {
+	for (index = 1; index < MAX_GUILDS; index++) {
 		/* for renaming a guild: skip similarity-check if it's our own guild! */
 		if (guilds[index].master == p_ptr->id) continue;
 
