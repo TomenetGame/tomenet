@@ -3090,59 +3090,90 @@ int party_remove(int remover, cptr name) {
 	player_type *q_ptr = Players[remover];
 	int party_id = q_ptr->party, Ind = 0;
 	int i, j;
+	bool admin_unown = FALSE;
 
 	/* Make sure this is the owner */
-	if (!streq(parties[party_id].owner, q_ptr->name) && !is_admin(q_ptr)) {
-		msg_print(remover, "\377yYou must be the owner to delete someone.");
-
-		/* Abort */
-		return(FALSE);
+	if (!streq(parties[party_id].owner, q_ptr->name)) {
+		if (!is_admin(q_ptr)) {
+			msg_print(remover, "\377yYou must be the owner to delete someone.");
+			/* Abort */
+			return(FALSE);
+		}
+		/* Admin removes the party owner? */
+		if (streq(parties[party_id].owner, name)) admin_unown = TRUE;
 	}
 
 	Ind = name_lookup_loose(remover, name, FALSE, TRUE, FALSE);
 	if (Ind <= 0) return(FALSE);
 	p_ptr = Players[Ind];
 
+	/* Admin can delete players from their parties without being member of their party. */
 	if ((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && is_admin(q_ptr))
 		party_id = p_ptr->party;
 
 	/* Make sure they were in the party to begin with */
 	if (!player_in_party(party_id, Ind)) {
 		msg_print(remover, "\377yYou can only delete party members.");
-
 		/* Abort */
 		return(FALSE);
 	}
 
 	/* See if this is the owner we're deleting */
-	if (remover == Ind
+	if (remover == Ind || admin_unown) {
 #ifndef RPG_SERVER
-	    && in_irondeepdive(&p_ptr->wpos)
+		int where = 0;
+
+		if (admin_unown || (where = (in_irondeepdive(&p_ptr->wpos) ? 1 : 0) + (in_hallsofmandos(&p_ptr->wpos) ? 2 : 0) + (in_sector00(&p_ptr->wpos) ? 3 : 0) + (in_module(&p_ptr->wpos) ? 4 : 0))) {
 #endif
-	    ) {
-		/* Keep the party, just lose a member */
-		for (i = 1; i <= NumPlayers; i++) {
-			if (is_admin(Players[i])) continue;
-			if (Players[i]->party == q_ptr->party && i != Ind) {
+			player_type *n_ptr;
+
+			/* Keep the party, just lose a member but auto-transfer ownership on the next player who is around */
+			for (i = 1; i <= NumPlayers; i++) {
+				if (i == Ind) continue;
+				n_ptr = Players[i];
+				if (is_admin(n_ptr)) continue;
+				if (n_ptr->party != q_ptr->party) continue;
+#ifndef RPG_SERVER
+				/* Player must be in the same dungeon to take over ownership */
+				if (!admin_unown) switch (where) {
+				case 1:
+					if (!in_irondeepdive(&n_ptr->wpos)) continue;
+					break;
+				case 2:
+					if (in_hallsofmandos(&n_ptr->wpos)) continue;
+					break;
+				case 3:
+					if (in_sector00(&n_ptr->wpos)) continue;
+					break;
+				case 4:
+					if (in_module(&n_ptr->wpos)) continue;
+					break;
+				}
+#endif
+
+				/* Found someone, transfer leadership to this player */
 				strcpy(parties[party_id].owner, Players[i]->name);
 				msg_print(i, "\374\377yYou are now the party owner!");
 
+				/* Tell everybody else in the party about leadership transfer */
 				for (j = 1; j <= NumPlayers; j++)
 					if (Players[j]->party == Players[i]->party && j != i)
 						msg_format(j, "\374\377y%s is now the party owner.", Players[i]->name);
 				break;
 			}
-		}
-		/* no other player online who is in the same party and could overtake leadership? Then erase party! */
-		if (i > NumPlayers) {
-			s_printf("Party owner '%s' removed '%s', no replacement -> deleting party.\n", q_ptr->name, parties[party_id].name);
+			/* no other player online who is in the same party and could overtake leadership? Then erase party! */
+			if (i > NumPlayers) {
+				s_printf("Party owner '%s' removed '%s', no replacement -> deleting party.\n", q_ptr->name, parties[party_id].name);
+				del_party(party_id);
+				return(TRUE);
+			}
+#ifndef RPG_SERVER
+		} else {
+			s_printf("Party owner '%s' removed '%s' -> deleting party.\n", q_ptr->name, parties[party_id].name);
 			del_party(party_id);
 			return(TRUE);
 		}
-	} else if (remover == Ind) {
-		s_printf("Party owner '%s' removed '%s' -> deleting party.\n", q_ptr->name, parties[party_id].name);
-		del_party(party_id);
-		return(TRUE);
+#endif
 	}
 
 	/* Lose a member */
