@@ -2530,7 +2530,7 @@ struct store_action_type {
 	char letter;			/* Action letter */
 	s16b action;			/* Action code */
 	s16b action_restr;		/* Action restriction */
-	byte flags;			/* Client flags */
+	u16b flags;			/* Client flags */
 };
 
 
@@ -4778,7 +4778,7 @@ struct c_store_extra {
 	u16b action_restr[MAX_STORE_ACTIONS];
 	char letter[MAX_STORE_ACTIONS];
 	s16b cost[MAX_STORE_ACTIONS];
-	byte flags[MAX_STORE_ACTIONS];
+	u16b flags[MAX_STORE_ACTIONS];
 
 	/* Store attr and char */
 	byte store_attr;

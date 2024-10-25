@@ -7104,7 +7104,7 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 			ba_ptr->action = act;
 			ba_ptr->action_restr = act_res;
 			ba_ptr->letter = letter;
-			ba_ptr->flags = (byte)flags;
+			ba_ptr->flags = (u16b)flags;
 
 			/* Next... */
 			continue;

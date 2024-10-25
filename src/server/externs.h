@@ -1273,7 +1273,7 @@ extern int Send_store_special_str(int ind, char line, char col, byte attr, char 
 extern int Send_store_special_char(int ind, char line, char col, byte attr, char c);
 extern int Send_store_special_clr(int ind, char line_start, char line_end);
 extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte attr, char c);
-extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, byte attr, char letter, s16b cost, byte flag);
+extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, byte attr, char letter, s16b cost, u16b flag);
 extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);

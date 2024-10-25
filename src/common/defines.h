@@ -8995,13 +8995,16 @@ extern int PlayerUID;
 #define BACT_IDENT_ONE			78
 
 
-#define BACT_F_NOTHING		0x00
-#define BACT_F_STORE_ITEM	0x01
-#define BACT_F_INVENTORY	0x02
-#define BACT_F_GOLD		0x04
-#define BACT_F_STAR_ID	 	0x08
-#define BACT_F_ID	 	0x10
-#define BACT_F_HARDCODE		0x80
+#define BACT_F_NOTHING		0x0000
+#define BACT_F_STORE_ITEM	0x0001
+#define BACT_F_INVENTORY	0x0002
+#define BACT_F_GOLD		0x0004
+#define BACT_F_STAR_ID	 	0x0008
+#define BACT_F_ID	 	0x0010
+#define BACT_F_HARDCODE		0x0080
+#define BACT_F_NONART_ARMOR	0x0100
+#define BACT_F_NONART_ARMOR_NS	0x0200
+#define BACT_F_NONART_WEAPON	0x0400
 
 /* Reskill flags */
 #define RESKILL_F_UNDO		0x1

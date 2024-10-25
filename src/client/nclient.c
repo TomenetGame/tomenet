@@ -4278,9 +4278,15 @@ int Receive_store_action(void) {
 	int n;
 	short bact, action, cost;
 	char ch, pos, name[MAX_CHARS], letter;
-	byte attr, flag;
+	byte attr, oldflag;
+	u16b flag;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0) return(n);
+	if (is_atleast(&server_version, 4, 9, 2, 1, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%hu", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0) return(n);
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &oldflag)) <= 0) return(n);
+		flag = (u16b)oldflag;
+	}
 
 	/* Newer server? (Or just incompatible?) */
 	if (pos >= MAX_STORE_ACTIONS) return(1);
