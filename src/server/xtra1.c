@@ -10896,7 +10896,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && o_ptr->owner != pid
 			    //&& o_ptr->iron_trade != lookup_player_iron_trade(pid) {  --currently no lookup_player_iron_trade() function :-p just use this for now:
 			    && p_ptr->party != i) {
-				msg_print(Ind, "\377yUnfortunately we cannot ship to that person.");
+				msg_print(Ind, "\377yUnfortunately we cannot ship to that person, as it's an Iron Team member.");
 				return;
 			}
  #endif
@@ -11102,7 +11102,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
  #ifdef IRON_IRON_TEAM
 			if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && p_ptr->party != i) {
-				msg_print(Ind, "\377yUnfortunately we cannot transfer to that person.");
+				msg_print(Ind, "\377yUnfortunately we cannot transfer to that person, as it's an Iron Team member.");
 				return;
 			}
  #endif
