@@ -433,6 +433,9 @@ static int player_store_factor(object_type *o_ptr, bool modified) {
  2: player store
  Ind matters only for type 0. TODO: For type 2 it should also matter, but this needs change in price_item_player_store()!
 */
+/* Form ability to wield a melee/ranged weapon doesn't affect score much, acknowledging MA - however, MA can wield boomerangs!
+   Commented out for now as losing the boomerang slot as MA seems a significant hit to cover resistances. - C. Blue */
+//#define WEAPON_LOW_SCORE
 u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	u32b price = 0;
 	monster_race *r_ptr = &r_info[0]; //slay (unfounded) compiler warning
@@ -440,6 +443,8 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 
 	if (o_ptr->pval) {
 		u64b d, x, y, z, s, xp, rspd;
+		int body = 0;
+		bool body_humanoid;
 
 		r_ptr = &r_info[o_ptr->pval];
 		xp = r_ptr->mexp;
@@ -487,6 +492,51 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		   So where it counts (low-level forms) this is around -300 Au.
 		   Also another -300 Au nerf for town forms, as they are practially zero-danger. */
 		r_val -= 3000 + (!r_ptr->level ? 3000 : 0);
+
+		/* Greatly reduce value for rings that don't have usable limbs --- keep consistent with item_tester_hook_wear() / do_cmd_mimic() */
+		body_humanoid = (mimic_shaman(o_ptr->pval) && mimic_shaman_fulleq(r_ptr->d_char)) ||
+		    (r_ptr->body_parts[BODY_HEAD] && r_ptr->body_parts[BODY_TORSO] && r_ptr->body_parts[BODY_ARMS] &&
+		    r_ptr->body_parts[BODY_LEGS] && (r_ptr->body_parts[BODY_FINGER] >= 2) && r_ptr->body_parts[BODY_WEAPON]);
+		if (!body_humanoid) {
+			body +=
+#ifndef WEAPON_LOW_SCORE
+			    (r_ptr->body_parts[BODY_WEAPON] ? 2 : 0) // wield a weapon, melee or ranged
+#else
+			    (r_ptr->body_parts[BODY_WEAPON] ? 1 : 0) // wield a weapon, melee or ranged (MA doesn't use weapons, but this also includes boomerangs)
+#endif
+			    + (r_ptr->body_parts[BODY_ARMS] ? 1 : 0) // wield a shield
+			    + (r_ptr->body_parts[BODY_FINGER] > 1 ? 3 : 0) // wear rings (left)
+			    + (r_ptr->body_parts[BODY_FINGER] ? 3 : 0) // wear a ring (right)
+			    + (r_ptr->body_parts[BODY_HEAD] ? 3 : 0) // wear an amulet or helm
+			    + (r_ptr->body_parts[BODY_WEAPON] || r_ptr->body_parts[BODY_FINGER] || r_ptr->body_parts[BODY_HEAD] || r_ptr->body_parts[BODY_ARMS] ? 4 : 0) // wield a light source
+			    + (r_ptr->body_parts[BODY_ARMS] || r_ptr->body_parts[BODY_WEAPON] ? 1 : 0) // use tools
+			    + (r_ptr->body_parts[BODY_TORSO] ? 2 : 0) // wear cloak, carry ammo quiver
+			    + (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS] && r_ptr->d_char != '~' ? 2 : 0) // wear gloves
+			    + (r_ptr->body_parts[BODY_LEGS] ? 2 : 0); // wear boots
+			// wear body armour:
+#ifdef BATS_ALLOW_BODY
+			/* note: this check is redundant, because bats actually DO have a torso atm!
+			   funnily, native fruit bat players do NOT have one without this option o_O. */
+			switch (p_ptr->body_monster) {
+			case 37: case 114: case 187: case 235: case 351:
+			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
+				body += 3;
+				break;
+			default:
+				if (r_ptr->body_parts[BODY_TORSO]) body += 3;
+			}
+#else
+			if (r_ptr->body_parts[BODY_TORSO]) body += 3;
+#endif
+
+#ifndef WEAPON_LOW_SCORE
+			/* With weapon-check: Body count goes from 0 to 26 :-p */
+			r_val = (r_val * (body + 8)) / (26 + 8);
+#else
+			/* With low-priority weapon-check, acknowledging MA, but boomerang is still missing: Body count goes from 0 to 25: */
+			r_val = (r_val * (body + 8)) / (25 + 8);
+#endif
+		}
 	}
 
 	switch (shop_type) {

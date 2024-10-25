@@ -603,7 +603,7 @@ int bodymonster_hands(int Ind) {
 }
 
 /*
- * The "wearable" tester
+ * The "wearable" tester   --- keep consistent with price_poly_ring() / do_cmd_mimic()
  */
 /* new way: 'fruit bat body' is checked first: it's restrictions will be inherited by all other forms */
 bool item_tester_hook_wear(int Ind, int slot) {

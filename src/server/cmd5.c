@@ -1484,6 +1484,7 @@ bool do_mimic_change(int Ind, int r_idx, bool force) {
 	return(TRUE);
 }
 
+// --- keep consistent with item_tester_hook_wear() / price_poly_ring()
 void do_cmd_mimic(int Ind, int spell, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int j, k, offset = 3; /* offset: 3 polymorph powers */
