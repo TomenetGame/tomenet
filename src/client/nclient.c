@@ -3649,12 +3649,12 @@ int Receive_item(void) {
 			break;
 		case ITH_ENCH_AC:
 			get_item_extra_hook = get_item_hook_find_obj;
-			item_tester_hook = item_tester_hook_armour;
+			item_tester_hook = item_tester_hook_nonart_armour;
 			get_item_hook_find_obj_what = "Armour name? ";
 			break;
 		case ITH_ENCH_WEAP:
 			get_item_extra_hook = get_item_hook_find_obj;
-			item_tester_hook = item_tester_hook_weapon;
+			item_tester_hook = item_tester_hook_nonart_weapon;
 			get_item_hook_find_obj_what = "Weapon name? ";
 			break;
 		case ITH_CUSTOM_TOME:
@@ -3673,7 +3673,7 @@ int Receive_item(void) {
 			break;
 		case ITH_ENCH_AC_NO_SHIELD:
 			get_item_extra_hook = get_item_hook_find_obj;
-			item_tester_hook = item_tester_hook_armour_no_shield;
+			item_tester_hook = item_tester_hook_nonart_armour_no_shield;
 			get_item_hook_find_obj_what = "Armour name? ";
 			break;
 		case ITH_ID:

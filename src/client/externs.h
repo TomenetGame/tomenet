@@ -214,11 +214,11 @@ extern byte item_tester_tval;
 extern s16b item_tester_max_weight;
 extern bool (*item_tester_hook)(object_type *o_ptr);
 extern bool item_tester_hook_device(object_type *o_ptr);
-extern bool item_tester_hook_armour(object_type *o_ptr);
-extern bool item_tester_hook_weapon(object_type *o_ptr);
+extern bool item_tester_hook_nonart_armour(object_type *o_ptr);
+extern bool item_tester_hook_nonart_armour_no_shield(object_type *o_ptr);
+extern bool item_tester_hook_nonart_weapon(object_type *o_ptr);
 extern bool item_tester_hook_custom_tome(object_type *o_ptr);
 extern bool item_tester_hook_rune_enchant(object_type *o_ptr);
-extern bool item_tester_hook_armour_no_shield(object_type *o_ptr);
 extern bool item_tester_hook_id(object_type *o_ptr);
 extern bool item_tester_hook_starid(object_type *o_ptr);
 extern bool item_tester_hook_chemical(object_type *o_ptr); //ENABLE_DEMOLITIONIST

@@ -695,23 +695,24 @@ static bool item_tester_hook_scroll_rune(object_type *o_ptr) {
 	return(FALSE);
 }
 
-bool item_tester_hook_armour(object_type *o_ptr) {
-	return(is_armour(o_ptr->tval));
+bool item_tester_hook_nonart_armour(object_type *o_ptr) {
+	return(is_armour(o_ptr->tval) && !o_ptr->name1);
 }
-bool item_tester_hook_weapon(object_type *o_ptr) {
-	return(is_melee_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
+bool item_tester_hook_nonart_armour_no_shield(object_type *o_ptr) {
+	return(is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD && !o_ptr->name1);
+}
+bool item_tester_hook_nonart_weapon(object_type *o_ptr) {
+	return((is_melee_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
 	    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG ||
 	    (o_ptr->tval == TV_TRAPKIT && is_firearm_trapkit(o_ptr->sval)) ||
-	    o_ptr->tval == TV_DIGGING || o_ptr->tval == TV_MSTAFF);
+	    o_ptr->tval == TV_DIGGING || o_ptr->tval == TV_MSTAFF)
+	    && !o_ptr->name1);
 }
 /* this actually tests for spell scrolls, not the custom tome itself */
 bool item_tester_hook_custom_tome(object_type *o_ptr) {
 	/* check for correct book type */
 	if (o_ptr->tval != TV_BOOK || o_ptr->sval != SV_SPELLBOOK) return(FALSE);
 	return(TRUE);
-}
-bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
-	return(is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD);
 }
 
 //ENABLE_DEMOLITIONIST
