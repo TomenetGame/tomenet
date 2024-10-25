@@ -366,11 +366,11 @@ I:70:0:a:2
 
 N:77:Repair weapon
 C:0:0:0
-I:71:0:r:2
+I:71:0:r:1026
 
 N:78:Repair armour
 C:0:0:0
-I:72:0:r:2
+I:72:0:r:514
 
 N:79:The strongest known
 C:0:0:0

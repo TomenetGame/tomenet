@@ -2799,7 +2799,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		case BACT_REPAIR_WEAPON:
 			paid = repair_item(Ind, item, FALSE);
 			break;
-		case BACT_REPAIR_ARMOR:
+		case BACT_REPAIR_ARMOUR:
 			paid = repair_item(Ind, item, TRUE);
 			break;
 		case BACT_HIGHEST_LEVELS:

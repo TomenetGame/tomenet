@@ -8982,7 +8982,7 @@ extern int PlayerUID;
 #define BACT_SEND_GOLD			69
 #define BACT_SEND_ITEM_PAY		70
 #define BACT_REPAIR_WEAPON		71
-#define BACT_REPAIR_ARMOR		72
+#define BACT_REPAIR_ARMOUR		72
 #define BACT_HIGHEST_LEVELS		73
 #ifdef RESET_SKILL
  #define BACT_LOSE_MEMORIES_I		74
@@ -9002,9 +9002,9 @@ extern int PlayerUID;
 #define BACT_F_STAR_ID	 	0x0008
 #define BACT_F_ID	 	0x0010
 #define BACT_F_HARDCODE		0x0080
-#define BACT_F_NONART_ARMOR	0x0100
-#define BACT_F_NONART_ARMOR_NS	0x0200
-#define BACT_F_NONART_WEAPON	0x0400
+#define BACT_F_ARMOUR		0x0100
+#define BACT_F_ARMOUR_NS	0x0200
+#define BACT_F_WEAPON		0x0400
 
 /* Reskill flags */
 #define RESKILL_F_UNDO		0x1
