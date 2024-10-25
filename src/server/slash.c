@@ -10266,13 +10266,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/partydebug")) {
 				FILE *fp;
 
-				fp = fopen("tomenet_parties", "wb");
+				fp = fopen("tomenet_parties.txt", "wb");
 				if (!fp) {
-					msg_print(Ind, "\377rError! Couldn't open tomenet_parties");
+					msg_print(Ind, "\377rError! Couldn't open tomenet_parties.txt");
 					return;
 				}
 				for (i = 1; i < MAX_PARTIES; i++) {
-					fprintf(fp, "Party: %s Owner: %s Members: %d Created: %d\n", parties[i].name, parties[i].owner, (int)parties[i].members, (int)parties[i].created);
+					if (!parties[i].members) continue;
+					fprintf(fp, "Party: %s, Owner: %s, Members: %d, Created: %d\n", parties[i].name, parties[i].owner, (int)parties[i].members, (int)parties[i].created);
+				}
+				fclose(fp);
+				msg_print(Ind, "Party data dumped to tomenet_parties.txt");
+				return;
+			}
+			else if (prefix(messagelc, "/guilddebug")) {
+				FILE *fp;
+
+				fp = fopen("tomenet_guilds.txt", "wb");
+				if (!fp) {
+					msg_print(Ind, "\377rError! Couldn't open tomenet_guilds.txt");
+					return;
+				}
+				for (i = 1; i < MAX_PARTIES; i++) {
+					if (!guilds[i].members) continue;
+					fprintf(fp, "Guild: %s Master: %s, Members: %d, Timeout: %d\n", guilds[i].name, lookup_player_name(guilds[i].master), (int)guilds[i].members, (int)guilds[i].timeout);
 				}
 				fclose(fp);
 				msg_print(Ind, "Party data dumped to tomenet_parties");
