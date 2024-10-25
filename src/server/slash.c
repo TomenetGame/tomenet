@@ -10292,7 +10292,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					fprintf(fp, "Guild: %s Master: %s, Members: %d, Timeout: %d\n", guilds[i].name, lookup_player_name(guilds[i].master), (int)guilds[i].members, (int)guilds[i].timeout);
 				}
 				fclose(fp);
-				msg_print(Ind, "Party data dumped to tomenet_parties");
+				msg_print(Ind, "Guild data dumped to tomenet_guilds.txt");
 				return;
 			}
 			else if (prefix(messagelc, "/partyclean")) { /* reset the creation times of empty parties - THIS MUST BE RUN WHEN THE TURN COUNTER IS RESET - mikaelh */
