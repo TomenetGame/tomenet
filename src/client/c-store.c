@@ -651,24 +651,54 @@ static void store_do_command(int num, bool one) {
 			if (!c_get_item(&item, "Which item? ", get_item_mode)) return;
 		} else if (c_store.flags[num] & BACT_F_ARMOUR) {
 			get_item_extra_hook = get_item_hook_find_obj;
-			item_tester_hook = item_tester_hook_armour;
+			if (c_store.flags[num] & BACT_F_NO_ART) item_tester_hook = item_tester_hook_nonart_armour;
+			else item_tester_hook = item_tester_hook_armour;
 			get_item_hook_find_obj_what = "Which piece of armour? "; /* Seems it's not needed, but just in case */
 			get_item_mode |= USE_EXTRA;
 			if (!c_get_item(&item, "Which armour? ", get_item_mode)) return;
 		} else if (c_store.flags[num] & BACT_F_ARMOUR_NS) {
 			get_item_extra_hook = get_item_hook_find_obj;
-			item_tester_hook = item_tester_hook_armour_no_shield;
+			if (c_store.flags[num] & BACT_F_NO_ART) item_tester_hook = item_tester_hook_nonart_armour_no_shield;
+			else item_tester_hook = item_tester_hook_armour_no_shield;
 			get_item_hook_find_obj_what = "Which armour? "; /* Seems it's not needed, but just in case */
 			get_item_mode |= USE_EXTRA;
 			if (!c_get_item(&item, "Which piece of armour? ", get_item_mode)) return;
 		} else if (c_store.flags[num] & BACT_F_WEAPON) {
 			get_item_extra_hook = get_item_hook_find_obj;
-			item_tester_hook = item_tester_hook_weapon;
+			if (c_store.flags[num] & BACT_F_NO_ART) item_tester_hook = item_tester_hook_nonart_weapon;
+			else item_tester_hook = item_tester_hook_weapon;
 			get_item_hook_find_obj_what = "Which weapon? "; /* Seems it's not needed, but just in case */
 			get_item_mode |= USE_EXTRA;
 			if (!c_get_item(&item, "Which weapon? ", get_item_mode)) return;
-		}
-		else if (!c_get_item(&item, "Which item? ", get_item_mode)) return;
+		} else if (c_store.flags[num] & BACT_F_AMMO) {
+			get_item_extra_hook = get_item_hook_find_obj;
+			if (c_store.flags[num] & BACT_F_NO_ART) item_tester_hook = item_tester_hook_nonart_ammo;
+			else item_tester_hook = item_tester_hook_ammo;
+			get_item_hook_find_obj_what = "What ammunition? "; /* Seems it's not needed, but just in case */
+			get_item_mode |= USE_EXTRA;
+			if (!c_get_item(&item, "What ammunition? ", get_item_mode)) return;
+		} else if (c_store.flags[num] & BACT_F_RANGED) {
+			get_item_extra_hook = get_item_hook_find_obj;
+			if (c_store.flags[num] & BACT_F_NO_ART) item_tester_hook = item_tester_hook_nonart_ranged;
+			else item_tester_hook = item_tester_hook_ranged;
+			get_item_hook_find_obj_what = "Which ranged weapon? "; /* Seems it's not needed, but just in case */
+			get_item_mode |= USE_EXTRA;
+			if (!c_get_item(&item, "Which ranged weapon? ", get_item_mode)) return;
+		} else if (c_store.flags[num] & BACT_F_MELEE) {
+			get_item_extra_hook = get_item_hook_find_obj;
+			if (c_store.flags[num] & BACT_F_NO_ART) item_tester_hook = item_tester_hook_nonart_melee;
+			else item_tester_hook = item_tester_hook_melee;
+			get_item_hook_find_obj_what = "Which melee weapon? "; /* Seems it's not needed, but just in case */
+			get_item_mode |= USE_EXTRA;
+			if (!c_get_item(&item, "Which melee weapon? ", get_item_mode)) return;
+		} else if (c_store.flags[num] & BACT_F_TRAPKIT_FA) {
+			get_item_extra_hook = get_item_hook_find_obj;
+			if (c_store.flags[num] & BACT_F_NO_ART) item_tester_hook = item_tester_hook_nonart_trapkit_fa;
+			else item_tester_hook = item_tester_hook_trapkit_fa;
+			get_item_hook_find_obj_what = "Which firearm-trapkit? "; /* Seems it's not needed, but just in case */
+			get_item_mode |= USE_EXTRA;
+			if (!c_get_item(&item, "Which firearm-trapkit? ", get_item_mode)) return;
+		} else if (!c_get_item(&item, "Which item? ", get_item_mode)) return;
 	}
 
 	if (c_store.flags[num] & BACT_F_GOLD) {

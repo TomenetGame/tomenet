@@ -9001,10 +9001,15 @@ extern int PlayerUID;
 #define BACT_F_GOLD		0x0004
 #define BACT_F_STAR_ID	 	0x0008
 #define BACT_F_ID	 	0x0010
+#define BACT_F_AMMO		0x0020	/* for enchanting services */
+#define BACT_F_RANGED		0x0040	/* for enchanting services */
 #define BACT_F_HARDCODE		0x0080
-#define BACT_F_ARMOUR		0x0100
-#define BACT_F_ARMOUR_NS	0x0200
-#define BACT_F_WEAPON		0x0400
+#define BACT_F_ARMOUR		0x0100	/* for enchanting services */
+#define BACT_F_ARMOUR_NS	0x0200	/* for enchanting services */
+#define BACT_F_WEAPON		0x0400	/* for enchanting services */
+#define BACT_F_NO_ART		0x0800	/* for enchanting services */
+#define BACT_F_MELEE		0x1000	/* for enchanting services */
+#define BACT_F_TRAPKIT_FA	0x2000	/* for enchanting services */
 
 /* Reskill flags */
 #define RESKILL_F_UNDO		0x1
@@ -9605,16 +9610,19 @@ extern int PlayerUID;
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz)
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
-#define ITH_NONE	0
-#define ITH_RECHARGE	1
-#define ITH_ENCH_AC	2
-#define ITH_ENCH_WEAP	3
-#define ITH_CUSTOM_TOME	4
+#define ITH_NONE		0
+#define ITH_RECHARGE		1
+#define ITH_ENCH_AC		2
+#define ITH_ENCH_WEAP		3
+#define ITH_CUSTOM_TOME		4
 #define ITH_RUNE_ENCHANT	5
-#define ITH_ENCH_AC_NO_SHIELD 6
-#define ITH_ID		7
-#define ITH_STARID	8
-#define ITH_CHEMICAL	9	/* for ENABLE_DEMOLITIONIST */
+#define ITH_ENCH_AC_NO_SHIELD	6
+#define ITH_ID			7
+#define ITH_STARID		8
+#define ITH_CHEMICAL		9	/* for ENABLE_DEMOLITIONIST */
+#define ITH_ARMOUR		10
+#define ITH_WEAPON		11
+#define ITH_ARMOUR_NO_SHIELD	12
 /* keen hack: 4.6.0+ clients use ITH_ codes >= 50 and in turn signed char overflow < 0
    for transmitting max_weight for picking items for telekinesis. - C. Blue */
 #define ITH_MAX_WEIGHT	50

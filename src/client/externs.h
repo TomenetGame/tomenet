@@ -225,6 +225,14 @@ extern bool item_tester_hook_rune_enchant(object_type *o_ptr);
 extern bool item_tester_hook_id(object_type *o_ptr);
 extern bool item_tester_hook_starid(object_type *o_ptr);
 extern bool item_tester_hook_chemical(object_type *o_ptr); //ENABLE_DEMOLITIONIST
+extern bool item_tester_hook_ammo(object_type *o_ptr);
+extern bool item_tester_hook_nonart_ammo(object_type *o_ptr);
+extern bool item_tester_hook_ranged(object_type *o_ptr);
+extern bool item_tester_hook_nonart_ranged(object_type *o_ptr);
+extern bool item_tester_hook_melee(object_type *o_ptr);
+extern bool item_tester_hook_nonart_melee(object_type *o_ptr);
+extern bool item_tester_hook_trapkit_fa(object_type *o_ptr);
+extern bool item_tester_hook_nonart_trapkit_fa(object_type *o_ptr);
 
 
 extern int special_line_type;

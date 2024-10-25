@@ -726,6 +726,30 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
 	if (o_ptr->tval != TV_BOOK || o_ptr->sval != SV_SPELLBOOK) return(FALSE);
 	return(TRUE);
 }
+bool item_tester_hook_ammo(object_type *o_ptr) {
+	return(is_ammo(o_ptr->tval));
+}
+bool item_tester_hook_nonart_ammo(object_type *o_ptr) {
+	return(is_ammo(o_ptr->tval) && !o_ptr->name1);
+}
+bool item_tester_hook_melee(object_type *o_ptr) {
+	return(is_melee_weapon(o_ptr->tval));
+}
+bool item_tester_hook_nonart_melee(object_type *o_ptr) {
+	return(is_melee_weapon(o_ptr->tval) && !o_ptr->name1);
+}
+bool item_tester_hook_ranged(object_type *o_ptr) {
+	return(o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG);
+}
+bool item_tester_hook_nonart_ranged(object_type *o_ptr) {
+	return((o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG) && !o_ptr->name1);
+}
+bool item_tester_hook_trapkit_fa(object_type *o_ptr) {
+	return(o_ptr->tval == TV_TRAPKIT && is_firearm_trapkit(o_ptr->sval));
+}
+bool item_tester_hook_nonart_trapkit_fa(object_type *o_ptr) {
+	return(o_ptr->tval == TV_TRAPKIT && is_firearm_trapkit(o_ptr->sval) && !o_ptr->name1);
+}
 
 //ENABLE_DEMOLITIONIST
 bool item_tester_hook_chemical(object_type *o_ptr) {

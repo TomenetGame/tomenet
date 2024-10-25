@@ -3691,6 +3691,21 @@ int Receive_item(void) {
 			item_tester_hook = item_tester_hook_chemical;
 			get_item_hook_find_obj_what = "Which ingredient? ";
 			break;
+		case ITH_ARMOUR:
+			get_item_extra_hook = get_item_hook_find_obj;
+			item_tester_hook = item_tester_hook_armour;
+			get_item_hook_find_obj_what = "Armour name? ";
+			break;
+		case ITH_ARMOUR_NO_SHIELD:
+			get_item_extra_hook = get_item_hook_find_obj;
+			item_tester_hook = item_tester_hook_armour_no_shield;
+			get_item_hook_find_obj_what = "Armour name? ";
+			break;
+		case ITH_WEAPON:
+			get_item_extra_hook = get_item_hook_find_obj;
+			item_tester_hook = item_tester_hook_weapon;
+			get_item_hook_find_obj_what = "Weapon name? ";
+			break;
 		}
 
 		clear_topline();
