@@ -4700,7 +4700,8 @@ bool recharge_aux(int Ind, int item, int pow) {
  #else
 			tfac = 10 + ((lev + 18) * 30) / (pow - 47);
 			tfac += pow / (lev + 10);
-			t = (t * 42) / tfac;
+			//t = (t * 42) / tfac;
+			t = (t * 42 + tfac - 1) / tfac; //round up
  #endif
 #endif
 
@@ -4755,6 +4756,8 @@ bool recharge_aux(int Ind, int item, int pow) {
 #endif
 			    )
 				i += (i + 2) / 3 + rand_int(2);
+			/* Slight general buff, for higher level devices? */
+			else i += rand_int(2);
 
 			o_ptr->pval += i;
 
