@@ -10692,6 +10692,7 @@ void empty_subinven(int Ind, int item, bool drop, bool quiet) {
 		/* Just silently drop items (on death)? */
 		if (drop) {
 			death_drop_object(p_ptr, i, o_ptr);
+			invwipe(&p_ptr->subinventory[item][i]);
 			continue;
 		}
 
