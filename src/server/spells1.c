@@ -9716,6 +9716,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	dun_level *l_ptr = getfloor(wpos);
 
 	int dark_spell = FALSE;
+	cave_type **zcave, *c_ptr;
 
 
 	/* Bad player number */
@@ -11514,8 +11515,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (IS_PVP) {
 			/* protect players in inns */
-			cave_type **zcave, *c_ptr;
-
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[p_ptr->py][p_ptr->px];
 				if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
