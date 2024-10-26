@@ -5407,8 +5407,8 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 				if (!quiet) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
-					final_slot = (sslot + 1) * 100 + i;
 				}
+				final_slot = (sslot + 1) * 100 + i;
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
@@ -5438,8 +5438,8 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 			if (!quiet) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
-				final_slot = (sslot + 1) * 100 + i;
 			}
+			final_slot = (sslot + 1) * 100 + i;
  #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
@@ -5666,7 +5666,7 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr, *s_ptr;
-	int i, t, amt;
+	int i, t, amt, res;
 	//bool all = FALSE;
 	bool nothing = TRUE;
 	bool eligible_item = FALSE, client_outdated = FALSE;
@@ -5749,17 +5749,22 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 
 		/* Eligible subinventory found, try to move as much as possible */
 		amt = i_ptr->number;
-		if (subinven_move_aux(Ind, i, slot, amt, quiet) > 0)
-			/* Successfully moved ALL items even, lucky! */
-			;//all = TRUE;
+		res = subinven_move_aux(Ind, i, slot, amt, quiet);
+#if 0
+		/* Successfully moved ALL items even? Lucky! */
+		if (res > 0) all = TRUE;
+#endif
 		/* We managed to stow something at least */
-		if (amt != i_ptr->number) nothing = FALSE;
+		if (res != 0) nothing = FALSE;
 	}
 	if (client_outdated) msg_print(Ind, "\377yYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use your Potion Belt, or it won't be accessible!");
 	if (!eligible_item) {
 		//msg_print(Ind, "\377yNo eligible item found to stow into that type of container.");
 		return(FALSE);
 	}
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_PLAYER);
 
 #if 0 /* no messages, too spammy perhaps for /astow command's mass processing */
 	/* Moved anything at all?
@@ -5778,9 +5783,6 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 	//break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_PLAYER);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
