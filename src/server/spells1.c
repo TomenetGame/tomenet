@@ -11816,6 +11816,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_OLD_POLY:
 		s_printf("PLAYER_POLY: %s -> %s ", Players[0 - who]->name, p_ptr->name);
 		if (p_ptr->afk) {
+			if (fuzzy || self) msg_print(Ind, "You feel bizzare for a moment, but being AFK you are unaffected!");
+			else msg_format(Ind, "%^s tries to polymorph you, but being AFK you are unaffected!", killer);
+			dam = 0;
+			break;
+		}
+		if ((zcave = getcave(wpos)) && (f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) {
+			if (fuzzy || self) msg_print(Ind, "You feel bizzare for a moment, but this location prevents the effect!");
+			else msg_format(Ind, "%^s polymorphs you, but this location prevents the effect!", killer);
 			dam = 0;
 			break;
 		}

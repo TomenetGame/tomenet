@@ -1488,6 +1488,7 @@ N:225:unsealed door
 G:':r
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN 
 
+# AMC arena corners - hardcoded feat to make monsters not recognize you as a target!
 N:226:highly protected floor
 G:.:U
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_PROB
