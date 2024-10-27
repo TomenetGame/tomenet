@@ -2927,6 +2927,7 @@ struct account {
 
 	char hostname[HOSTNAME_LEN];	/* last used hostname */
 	char addr[MAX_CHARS];		/* last used IP address */
+	char reply_name[20];		/* p_ptr->reply_name [NAME_LEN] */
 
 	/* for future use */
 	unsigned char unused1;
@@ -2954,6 +2955,9 @@ struct account_old {
 
 	char houses;	/* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
 	unsigned char runtime;	/* increments on each server (re)start simply, to track server instance */
+
+	char hostname[HOSTNAME_LEN];	/* last used hostname */
+	char addr[MAX_CHARS];		/* last used IP address */
 
 	/* for future use */
 	unsigned char unused1;

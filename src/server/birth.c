@@ -3379,6 +3379,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		acc_houses = acc.houses;
 		s_printf("(%s) ACC1:Player %s@%s(%s) has flags %d%s and %d houses.\n", showtime(), accname, get_conn_host(conn), get_conn_ip(conn), acc.flags, p_ptr->inval ? "[INVAL]" : "", acc_houses);
+
+		strcpy(p_ptr->reply_name, acc.reply_name);
 	}
 
 	/* handle banned player 1/2 */

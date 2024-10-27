@@ -568,13 +568,15 @@ static bool update_acc_file_version(void) {
 		acc.houses = acc_old.houses;
 		acc.runtime = acc_old.runtime;
 
+		strcpy(acc.hostname, acc_old.hostname);
+		strcpy(acc.addr, acc_old.addr);
+
 		acc.unused1 = acc_old.unused1;
 		acc.unused2 = acc_old.unused2;
 		acc.unused3 = acc_old.unused3;
 
 		/* changes/additions - just init */
-		acc.hostname[0] = 0;
-		acc.addr[0] = 0;
+		acc.reply_name[0] = 0;
 
 		/* write it back */
 		if (fwrite(&acc, sizeof(struct account), 1, fp) < 1)
@@ -1672,21 +1674,24 @@ bool Destroy_connection(int ind, char *reason_orig) {
 		return(FALSE);
 	}
 
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", player, connp->id, connp->c_name, showtime()));
+		/* in case winners CAN hold arts as long as they don't leave the floor (default): */
+		//lua_strip_true_arts_from_present_player(GetInd[connp->id], int mode)
+	} else
+		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", 0, connp->id, connp->c_name, showtime()));
+
 	/* Timestamp account for 'laston' moment */
 	if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
 		time_t now = time(&now);
 		acc.acc_laston = now;
 		acc.acc_laston_real = now;
+		if (p_ptr) strcpy(acc.reply_name, p_ptr->reply_name);
 		WriteAccount(&acc, FALSE);
 	}
-
-	if (connp->id != -1) {
-		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", GetInd[connp->id], connp->id, connp->c_name, showtime()));
-
-		/* in case winners CAN hold arts as long as they don't leave the floor (default): */
-		//lua_strip_true_arts_from_present_player(GetInd[connp->id], int mode)
-	} else
-		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", 0, connp->id, connp->c_name, showtime()));
 
 	sock = connp->w.sock;
 	if (sock != -1) remove_input(sock);
@@ -1710,10 +1715,6 @@ bool Destroy_connection(int ind, char *reason_orig) {
 #endif
 	}
 
-	if (connp->id != -1) {
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-	}
 	if (p_ptr) {
 		/* Clean up SPECIAL store's status/features if player ALT+F4's in the middle of something.. */
 #ifdef ENABLE_GO_GAME
