@@ -3379,23 +3379,18 @@ int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet) {
 
 void store_stole(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-
-	int st = p_ptr->store_num;
-	s16b tolerance = 0x0;
-
 	store_type *st_ptr;
-	//owner_type *ot_ptr;
-
-	int i, item_new, amt = 1;
-	long chance = 0;
-
-	s64b tbest, tcadd, tccompare, tbase, dex_vs_val;
-
 	object_type sell_obj, *o_ptr;
 	char o_name[ONAME_LEN];
 
+	long chance = 0;
+	int st = p_ptr->store_num, i, item_new, amt = 1, chance_percent, chance_permille;
+	s64b tbest, tcadd, tccompare, tbase, dex_vs_val;
+
+	s16b tolerance = 0x0;
 	byte old_discount;
 	u16b old_note;
+
 
 	/* Get town or dungeon the store is located within */
 	i = gettown(Ind);
@@ -3744,6 +3739,10 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 	/* limit steal-back cheeze for loot that you (or someone else) sold previously */
 	if (sell_obj.owner) chance = chance * 2 + 20;
 
+	/* Final chance - convert into human-readable form for messaging etc, format "PERCENT.PERMILLE%" */
+	chance_percent = (int)(10000 / (chance < 10 ? 10 : chance)) / 10;
+	chance_permille = (int)(10000 / (chance < 10 ? 10 : chance)) % 10;
+
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
 	if (rand_int(chance) < 10 && !magik(5)) {
@@ -3768,7 +3767,9 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 #endif
 
 		/* Message */
-		msg_format(Ind, "You stole %s.", o_name);
+		if (chance_percent >= 70) msg_format(Ind, "You easily stole %s.", o_name);
+		else if (chance_percent <= 30) msg_format(Ind, "You barely stole %s.", o_name);
+		else msg_format(Ind, "You stole %s.", o_name);
 #ifdef USE_SOUND_2010
 		sound_item(Ind, sell_obj.tval, sell_obj.sval, "pickup_");
 #endif
@@ -3784,8 +3785,7 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		if (chance > 10)
 #endif
 		s_printf("STEAL: %s (%d) ok %d.%d%% <%s> (%s%ld) %d,%d,%d).\n",
-		    p_ptr->name, p_ptr->lev,
-		    (int)(10000 / (chance < 10 ? 10 : chance)) / 10, (int)(10000 / (chance < 10 ? 10 : chance)) % 10,
+		    p_ptr->name, p_ptr->lev, chance_percent, chance_permille,
 		    o_name, p_ptr->rogue_heavyarmor ? "H-" : "", chance,
 		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
@@ -3845,8 +3845,7 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		}
 	} else {
 		s_printf("STEAL: %s (%d) fail %d.%d%% <%s> (%s%ld) %d,%d,%d).\n",
-		    p_ptr->name, p_ptr->lev,
-		    (int)(10000 / (chance < 10 ? 10 : chance)) / 10, (int)(10000 / (chance < 10 ? 10 : chance)) % 10,
+		    p_ptr->name, p_ptr->lev, chance_percent, chance_permille,
 		    o_name, p_ptr->rogue_heavyarmor ? "H-" : "", chance,
 		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 

@@ -18050,6 +18050,13 @@ stated.
                                 and at least level 10 to steal anything of
                                 somewhat higher value.
 
+                                If you succeed to steal an item, the message
+                                will vary depending on what your chance to
+                                succeed was:
+                                At least 70%:        "You easily stole ...",
+                                between 30% and 70%: "You stole ...",
+                                Up to 30%:           "You barely stole ...".
+
                                 You have a chance to successfully steal an
                                 item even if your stealing skill is 0 and your
                                 dexterity low, so everyone could give it a try.
