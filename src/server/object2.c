@@ -507,7 +507,7 @@ void compact_objects(int size, bool purge) {
 			if (o_ptr->questor) continue;
 
 			/* If 'purge', remove all unowned items on unallocated world surface sectors that aren't marked as never-remove (ie admin-dropped): */
-			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner || o_ptr->marked == ITEM_REMOVAL_NEVER)) || getcave(&o_ptr->wpos))
+			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner || o_ptr->marked2 == ITEM_REMOVAL_NEVER)) || getcave(&o_ptr->wpos))
 			    continue;
 
 			/* Delete it first */
