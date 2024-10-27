@@ -1178,7 +1178,7 @@ T:23:0:255
 T:24:0:255
 X:A:24:0
 #W:15:1:40:0 -- now that 'Nothingness' ego has been disabled, reduce chance of Morgul or they might spawn too often
-W:15:1:100:0
+W:15:1:200:0
 C:-20:-20:-10:-10
 R:100
 F:LUCK |
