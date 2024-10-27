@@ -2147,6 +2147,27 @@ static void store_create(store_type *st_ptr) {
 		/* Create the selected base object */
 		invcopy(o_ptr, i);
 
+		k_ptr = &k_info[o_ptr->k_idx];
+
+		switch (o_ptr->tval) {
+		case TV_CHEST: continue; /* Mega-Hack -- no chests in stores */
+		case TV_POTION:
+			switch (o_ptr->sval) {
+			case SV_POTION_EXPERIENCE:
+			case SV_POTION_INVULNERABILITY:
+#ifdef EXPAND_TV_POTION
+			case SV_POTION_LEARNING:
+#endif
+				continue;
+			}
+			break;
+		case TV_POTION2:
+			switch (o_ptr->sval) {
+			case SV_POTION2_LEARNING: continue;
+			}
+			break;
+		}
+
 		/* Apply some "low-level" magic (no artifacts) */
 		/* ego flags check */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_GOOD) good = TRUE;
@@ -2161,8 +2182,6 @@ static void store_create(store_type *st_ptr) {
 		    (o_ptr->to_h + o_ptr->to_d < 0))
 			continue;
 #endif
-
-		k_ptr = &k_info[o_ptr->k_idx];
 
 #ifdef NO_PSEUDO_CURSED_ITEMS
 		/* Prevent items with boni that are below their k_info boni */
@@ -2189,21 +2208,6 @@ static void store_create(store_type *st_ptr) {
 		/* The item is "known" */
 		object_known(o_ptr);
 
-		/* Mega-Hack -- no chests in stores */
-		//if (o_ptr->tval == TV_CHEST || o_ptr->tval == 8) continue;
-		if (o_ptr->tval == TV_CHEST) continue;
-
-		/* In general forbid Experience/Invulnerability/Learning potions in ANY store! */
-		if (o_ptr->tval == TV_POTION &&
-		    (o_ptr->sval == SV_POTION_EXPERIENCE || o_ptr->sval == SV_POTION_INVULNERABILITY
-#ifdef EXPAND_TV_POTION
-		    || o_ptr->sval == SV_POTION_LEARNING
-#endif
-		    ))
-			continue;
-		if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_LEARNING)
-			continue;
-
 		/* Prune the black market */
 		if (black_market) {
 			/* Hack -- No "crappy" items */
@@ -2216,11 +2220,11 @@ static void store_create(store_type *st_ptr) {
 			/* No "worthless" items */
 			/* if (object_value(o_ptr) <= 0) continue; */
 
+			switch (o_ptr->tval) {
 #ifndef EXPAND_TV_POTION
-			/* Hack -- No POTION2 items */
-			if (o_ptr->tval == TV_POTION2) continue;
+			case TV_POTION2: continue; /* Hack -- No POTION2 items */
 #else
-			if (o_ptr->tval == TV_POTION)
+			case TV_POTION:
 				switch (o_ptr->sval) {
 				case SV_POTION_CURE_LIGHT_SANITY:
 				case SV_POTION_CURE_SERIOUS_SANITY:
@@ -2229,16 +2233,16 @@ static void store_create(store_type *st_ptr) {
 				case SV_POTION_CHAUVE_SOURIS:
 					continue;
 				}
+				/* Hack -- Less POTION items */
+				if (magik(80)) continue;
+				break;
 #endif
-
-			/* Hack -- Less POTION items */
-			if ((o_ptr->tval == TV_POTION) && magik(80)) continue;
-
 #if 0 /* 0'ed: increased rarity from /1 to /10 after treasure class system rework, test if maybe fine now */
-			/* Hack -- less athelas */
-			if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_ATHELAS &&
-				magik(80)) continue;
+			case TV_FOOD: /* Hack -- less athelas */
+				if (o_ptr->sval == SV_FOOD_ATHELAS && magik(80)) continue;
+				break;
 #endif
+			}
 		}
 
 		/* Prune normal stores */
@@ -2281,8 +2285,8 @@ static void store_create(store_type *st_ptr) {
 				continue;
 		}
 
-		/* Let's not allow 'Cure * Insanity' or 'Augmentation' potions - the_sandman */
-		if (st_ptr->st_idx == STORE_SPEC_POTION) {
+		switch (st_ptr->st_idx) {
+		case STORE_SPEC_POTION: /* Let's not allow 'Cure * Insanity' or 'Augmentation' potions - the_sandman */
 			switch (o_ptr->tval) {
 			case TV_POTION:
 				switch (o_ptr->sval) {
@@ -2295,8 +2299,6 @@ static void store_create(store_type *st_ptr) {
 				case SV_POTION_CHAUVE_SOURIS:
 #endif
 					continue;
-				default:
-					break;
 				}
 				break;
 			case TV_POTION2:
@@ -2307,73 +2309,66 @@ static void store_create(store_type *st_ptr) {
 				case SV_POTION2_CURE_SANITY:
 				case SV_POTION2_CHAUVE_SOURIS:
 					continue;
-				default:
-					break;
 				}
 				break;
-			default:
-				break; //shouldn't happen anyway
-			} //o_ptr->tval switch
-		}
-
-		/* Similar to normal potion store, but maybe more lax */
-		if (st_ptr->st_idx == STORE_POTION_IDDC) {
+			}
+			break;
+		case STORE_POTION_IDDC: /* Similar to normal potion store, but maybe more lax */
 			switch (o_ptr->tval) {
 			case TV_POTION:
 				switch (o_ptr->sval) {
 				case SV_POTION_AUGMENTATION:
 #ifdef EXPAND_TV_POTION
-				//case SV_POTION_CURE_LIGHT_SANITY:
 				case SV_POTION_CURE_SERIOUS_SANITY:
 				case SV_POTION_CURE_CRITICAL_SANITY:
 				case SV_POTION_CURE_SANITY:
-				//case SV_POTION_CHAUVE_SOURIS:
-#endif
 					continue;
-				default:
-					break;
+				/* Actually allow these as IDDC supplies for oneself to avert certain doom */
+				case SV_POTION_CURE_LIGHT_SANITY:
+				case SV_POTION_CHAUVE_SOURIS:
+					o_ptr->level = 0;
+#endif
 				}
 				break;
 			case TV_POTION2:
 				switch (o_ptr->sval) {
-				//case SV_POTION2_CURE_LIGHT_SANITY:
 				case SV_POTION2_CURE_SERIOUS_SANITY:
 				case SV_POTION2_CURE_CRITICAL_SANITY:
 				case SV_POTION2_CURE_SANITY:
-				//case SV_POTION_CHAUVE_SOURIS:
 					continue;
-				default:
-					break;
+				/* Actually allow these as IDDC supplies for oneself to avert certain doom */
+				case SV_POTION2_CURE_LIGHT_SANITY:
+				case SV_POTION_CHAUVE_SOURIS:
+					o_ptr->level = 0;
 				}
 				break;
-			default:
-				break;
 			}
-		}
+			break;
 
 		/* No OP ego items from IDDC town stores, depending on their dungeon level */
-		if (st_ptr->st_idx == STORE_MAGIC_DUN &&
-		    o_ptr->tval == TV_MSTAFF) {
-			p = 6 + floor_level / 20;
-			if (o_ptr->pval > p) o_ptr->pval = p;
-		}
-		if (st_ptr->st_idx == STORE_ARMOURY_DUN &&
-		    o_ptr->tval == TV_BOOTS) {
-			if (o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) {
-				p = 2 + floor_level / 10;
+		case STORE_MAGIC_DUN:
+			if (o_ptr->tval == TV_MSTAFF) {
+				p = 6 + floor_level / 20;
 				if (o_ptr->pval > p) o_ptr->pval = p;
 			}
-			if (o_ptr->name2 == EGO_ELVENKIND2 || o_ptr->name2b == EGO_ELVENKIND2) {
-				p = 1 + floor_level / 20;
-				if (o_ptr->pval > p) o_ptr->pval = p;
+			break;
+		case STORE_ARMOURY_DUN:
+			if (o_ptr->tval == TV_BOOTS) {
+				if (o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) {
+					p = 2 + floor_level / 10;
+					if (o_ptr->pval > p) o_ptr->pval = p;
+				}
+				if (o_ptr->name2 == EGO_ELVENKIND2 || o_ptr->name2b == EGO_ELVENKIND2) {
+					p = 1 + floor_level / 20;
+					if (o_ptr->pval > p) o_ptr->pval = p;
+				}
 			}
+			break;
 		}
 
 		/* No reliably purchasable high-end speed rings - find them! */
-		if (//st_ptr->st_idx == STORE_RARE_JEWELRY &&
-		    o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval > 10)
+		if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval > 10)
 			o_ptr->bpval = 10;
-
 		/* Same for +MP staves, find anything above +10 instead of purchasing it from Minas BM */
 		if (o_ptr->tval == TV_MSTAFF && o_ptr->pval > 10) o_ptr->pval = 10;
 
@@ -2512,35 +2507,35 @@ static void store_create(store_type *st_ptr) {
 		    o_ptr->discount = 0;
 		/* hack: SF1_NO_DISCOUNT3 removed and now emulated by actually specifying both 1 & 2, saving us a valuable flag slot */
 		else if ((st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT3) == SF1_NO_DISCOUNT3)
-		    /* Reduce discount somewhat */
-		    switch (o_ptr->discount) {
-		    case 10: o_ptr->discount = 10; break;
-		    case 25: o_ptr->discount = 20; break;
-		    case 50: o_ptr->discount = 30; break;
-		    case 75: o_ptr->discount = 40; break;
-		    case 90: o_ptr->discount = 50; break;
-		    case 100: o_ptr->discount = 50; break;
-		    }
+			/* Reduce discount somewhat */
+			switch (o_ptr->discount) {
+			case 10: o_ptr->discount = 10; break;
+			case 25: o_ptr->discount = 20; break;
+			case 50: o_ptr->discount = 30; break;
+			case 75: o_ptr->discount = 40; break;
+			case 90: o_ptr->discount = 50; break;
+			case 100: o_ptr->discount = 50; break;
+			}
 		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2)
-		    /* Reduce discount */
-		    switch (o_ptr->discount) {
-		    case 10: o_ptr->discount = 0; break;
-		    case 25: o_ptr->discount = 10; break;
-		    case 50: o_ptr->discount = 15; break;
-		    case 75: o_ptr->discount = 20; break;
-		    case 90: o_ptr->discount = 25; break;
-		    case 100: o_ptr->discount = 25; break;
-		    }
+			/* Reduce discount */
+			switch (o_ptr->discount) {
+			case 10: o_ptr->discount = 0; break;
+			case 25: o_ptr->discount = 10; break;
+			case 50: o_ptr->discount = 15; break;
+			case 75: o_ptr->discount = 20; break;
+			case 90: o_ptr->discount = 25; break;
+			case 100: o_ptr->discount = 25; break;
+			}
 		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT1)
-		    /* Reduce discount greatly */
-		    switch (o_ptr->discount) {
-		    case 10: o_ptr->discount = 0; break;
-		    case 25: o_ptr->discount = 0; break;
-		    case 50: o_ptr->discount = 10; break;
-		    case 75: o_ptr->discount = 15; break;
-		    case 90: o_ptr->discount = 15; break;
-		    case 100: o_ptr->discount = 15; break;
-		    }
+			/* Reduce discount greatly */
+			switch (o_ptr->discount) {
+			case 10: o_ptr->discount = 0; break;
+			case 25: o_ptr->discount = 0; break;
+			case 50: o_ptr->discount = 10; break;
+			case 75: o_ptr->discount = 15; break;
+			case 90: o_ptr->discount = 15; break;
+			case 100: o_ptr->discount = 15; break;
+			}
 
 		if ((force_num) && !is_ammo(o_ptr->tval)) {
 			/* Only single items of these */
@@ -2562,11 +2557,8 @@ static void store_create(store_type *st_ptr) {
 				break;
 			}
 
-
 			/* Only single items of very expensive stuff */
-			if (object_value(0, o_ptr) >= 200000) {
-				force_num = 1;
-			}
+			if (object_value(0, o_ptr) >= 200000) force_num = 1;
 
 			/* No ego-stacks */
 			if (o_ptr->name2) force_num = 1;
