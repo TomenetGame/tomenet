@@ -1018,6 +1018,15 @@ errr get_obj_num_prep(u32b resf) {
 #if FORCED_DROPS != 0 /* either, way 1 or 2 */
 	int tval, sval;
 #endif
+	bool aquatic_hack;
+
+
+	/* Bad hack, as we are out of RESF_ flags: Use combo of mutually exclusive RESF_COND_SWORD + RESF_COND_BLUNT
+	   to indicate that we want to generate aquatic-monster themed weaponry... */
+	if ((resf & (RESF_COND_SWORD | RESF_COND_BLUNT)) == (RESF_COND_SWORD | RESF_COND_BLUNT)) {
+		resf &= ~(RESF_COND_SWORD | RESF_COND_BLUNT); //'aquatic_hack'
+		aquatic_hack = TRUE;
+	} else aquatic_hack = FALSE;
 
 	/* Get the entry */
 	alloc_entry *restrict table = alloc_kind_table;
@@ -1073,6 +1082,8 @@ errr get_obj_num_prep(u32b resf) {
 		if ((resf & RESF_COND_RANGED) && which_theme(tval) == TC_COMBAT && !is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
 		//force generation of a rune, if generating a magic item at all
 		if ((resf & RESF_CONDF_RUNE) && which_theme(tval) == TC_MAGIC && tval != TV_RUNE) p = 0;
+		//force generation of an aquatic weapon (polearm), if generating a combat at all
+		if ((aquatic_hack) && which_theme(tval) == TC_COMBAT && (tval != TV_POLEARM || !is_aquatic_polearm(sval))) p = 0;
 #endif
 #if FORCED_DROPS == 2 /* way 2/2 */
 		/* Check for special item types. - C. Blue
@@ -1117,6 +1128,10 @@ errr get_obj_num_prep(u32b resf) {
 			}
 			if (resf & RESF_CONDF_RUNE) { //force generation of a rune
 				if (tval != TV_RUNE) p = 0;
+				else p = 10000;
+			}
+			if (aquatic_hack) { //force generation of an aquatic weapon (polearm)
+				if (tval != TV_POLEARM || !is_aquatic_polearm(sval)) p = 0;
 				else p = 10000;
 			}
 		} else {
@@ -1164,6 +1179,11 @@ errr get_obj_num_prep(u32b resf) {
 			//force generation of a rune, absolutely
 			if (resf & RESF_CONDF_RUNE) {
 				if (tval != TV_RUNE) p = 0;
+				else p = 10000;
+			}
+			//force generation of an aquatic weapon (polearm)
+			if (aquatic_hack) {
+				if (tval != TV_POLEARM || !is_aquatic_polearm(sval)) p = 0;
 				else p = 10000;
 			}
 		}
@@ -8301,6 +8321,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	if ((resf & RESF_COND_RANGED) && (is_ranged_weapon(forge.tval) || is_ammo(forge.tval))) place_object_restrictor |= RESF_COND_RANGED; //experimental: ammo can clear the condition too
 #endif
 	if ((resf & RESF_CONDF_RUNE) && forge.tval == TV_RUNE) place_object_restrictor |= RESF_CONDF_RUNE;
+	//'aquatic_hack':
+	if (((resf & (RESF_COND_SWORD | RESF_COND_BLUNT)) == (RESF_COND_SWORD | RESF_COND_BLUNT))
+	    && forge.tval == TV_POLEARM && is_aquatic_polearm(forge.sval)) place_object_restrictor |= RESF_COND_SWORD | RESF_COND_BLUNT;
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */

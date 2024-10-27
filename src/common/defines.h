@@ -3444,6 +3444,9 @@
 	/* || (sval) == SV_THREE_PIECE_ROD) -- metal connectors, maybe enough */
 #define is_slicing_polearm(sval) \
 	((sval) == SV_SICKLE || (sval) == SV_FAUCHARD || (sval) == SV_RHOMPHAIA || (sval) == SV_GLAIVE || (sval) == SV_SCYTHE || (sval) == SV_SCYTHE_OF_SLICING)
+#define is_aquatic_polearm(sval) \
+	((sval) == SV_HUNTING_SPEAR || (sval) == SV_SPEAR || (sval) == SV_AWL_PIKE || (sval) == SV_TRIDENT || /* halberd didn't make it*/ \
+	(sval) == SV_BROAD_SPEAR || (sval) == SV_PIKE || (sval) == SV_GLAIVE || (sval) == SV_GUISARME || (sval) == SV_TRIFURCATE_SPEAR)
 #define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
 #define is_rare_magic_device(tval,sval) ( \
 	((tval) == TV_WAND && ((sval) == SV_WAND_ANNIHILATION || (sval) == SV_WAND_ROCKETS || (sval) == SV_WAND_WALL_CREATION || (sval) == SV_WAND_TELEPORT_TO)) || \
@@ -5843,6 +5846,7 @@
 #define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 #define RESF_STOREBM		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 
+/* Note: There is a bad 'aquatic_hack' for certain polearm drops as we're out of RESF_ flag space. -_- */
 #define RESF_COND_MASK		(RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | RESF_CONDF_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_CONDF_RUNE)
 
 

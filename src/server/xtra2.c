@@ -6478,8 +6478,16 @@ bool monster_death(int Ind, int m_idx) {
 	case 40: case 47: case 63: //monk, druid, ranger
 		resf_drops |= RESF_COND2_LARMOUR;
 		break;
+
 	/* switch to r_info next: */
 	default:
+#if 1
+		/* Watery/Aquatic denizens (naga, bullywugs...) - drop tridents/spears */
+		if ((r_ptr->d_char == 'n' || (r_ptr->flags7 & RF7_AQUATIC)) && rand_int(3))
+			/* Bad hack: Since we're out of flags, combine two otherwise mutually exclusive flags to indicate this -_-' */
+			resf_drops |= RESF_COND_SWORD | RESF_COND_BLUNT; //'aquatic_hack'
+#endif
+
 		switch (r_idx) {
 		case 1048: //unbeliever with FRIENDS
 			if (!rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
