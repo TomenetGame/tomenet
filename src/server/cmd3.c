@@ -4025,7 +4025,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 #ifdef ENABLE_SUBINVEN
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE)) return;
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE)) return;
 #endif
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
@@ -5142,7 +5142,7 @@ void do_cmd_query_symbol(int Ind, char sym) {
    Increases player's total_weight. Does not delete source item if moved, just reduces its number (down to 0).
    Returns <slot+1> if fully stowed, <-slot-1> if partially stowed, otherwise 0. (Note: There is no function subinven_stow() actually.),
    where 'slot' is the subinven raw slot, ie 0...<bagcapacity-1>. */
-s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
+s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr, forge_copy, forge_part, *i_ptr_tmp = i_ptr;
@@ -5188,8 +5188,10 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 
 				object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
-				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+				if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+				}
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
@@ -5271,8 +5273,10 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			}
 
 			/* Describe the object */
-			object_desc(Ind, o_name, o_ptr, TRUE, 3);
-			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+			if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+			}
  #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif

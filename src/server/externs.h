@@ -685,7 +685,7 @@ extern void py_bash(int Ind, int y, int x);
 extern void py_bash_mon(int Ind, int y, int x);
 extern void py_bash_py(int Ind, int y, int x);
 #ifdef ENABLE_SUBINVEN
-extern s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought);
+extern s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet);
 #endif
 extern int search_chance(player_type *p_ptr);
 
@@ -762,7 +762,7 @@ extern bool item_tester_hook_wear(int Ind, int slot);
 extern void power_inscribe(object_type *o_ptr, bool redux, char *powins);
 extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr inscription);
 #ifdef ENABLE_SUBINVEN
-extern s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot);
+extern s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet);
 extern bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought);
 extern void do_cmd_subinven_move(int Ind, int islot, int amt_spec);
 extern s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet);
@@ -2018,7 +2018,7 @@ extern bool merchant_mail_carry(int Ind, int i);
 void ps_set_cheque_value(object_type *o_ptr, u32b value);
 
 #ifdef ENABLE_SUBINVEN
-extern int autostow_or_carry(int Ind, object_type *o_ptr);
+extern int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet);
 #endif
 
 /* util.c */
