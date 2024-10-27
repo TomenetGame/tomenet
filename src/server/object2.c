@@ -1061,6 +1061,9 @@ errr get_obj_num_prep(u32b resf) {
 		/* Check for special item types */
 		tval = k_info[k_idx].tval;
 		sval = k_info[k_idx].sval;
+
+		//SOFT-force generation of an aquatic weapon (polearm), if generating a combat at all
+		if (aquatic_hack && is_melee_weapon(tval) && (tval != TV_POLEARM || !is_aquatic_polearm(sval))) p = 0;
 		//force generation of a sword, if generating a combat item at all
 		if ((resf & RESF_COND_SWORD) && which_theme(tval) == TC_COMBAT) {
 			if (tval != TV_SWORD) p = 0;
@@ -1082,8 +1085,6 @@ errr get_obj_num_prep(u32b resf) {
 		if ((resf & RESF_COND_RANGED) && which_theme(tval) == TC_COMBAT && !is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
 		//force generation of a rune, if generating a magic item at all
 		if ((resf & RESF_CONDF_RUNE) && which_theme(tval) == TC_MAGIC && tval != TV_RUNE) p = 0;
-		//force generation of an aquatic weapon (polearm), if generating a combat at all
-		if ((aquatic_hack) && which_theme(tval) == TC_COMBAT && (tval != TV_POLEARM || !is_aquatic_polearm(sval))) p = 0;
 #endif
 #if FORCED_DROPS == 2 /* way 2/2 */
 		/* Check for special item types. - C. Blue
@@ -1093,7 +1094,12 @@ errr get_obj_num_prep(u32b resf) {
 		   magic items in their loot table, but an ogre mage could drop a mage staff! */
 		tval = k_info[k_idx].tval;
 		sval = k_info[k_idx].sval;
+
 		if (resf & RESF_COND_FORCE) {
+			if (aquatic_hack && is_melee_weapon(tval)) { //SOFT-force generation (same as in FORCED_DROPS == 1) of an aquatic weapon (polearm)
+				if (tval != TV_POLEARM || !is_aquatic_polearm(sval)) p = 0;
+				else p = 10000;
+			}
 			if (resf & RESF_COND_SWORD) { //force generation of a sword
 				if (tval != TV_SWORD) p = 0;
 				else p = 10000;
@@ -1130,11 +1136,12 @@ errr get_obj_num_prep(u32b resf) {
 				if (tval != TV_RUNE) p = 0;
 				else p = 10000;
 			}
-			if (aquatic_hack) { //force generation of an aquatic weapon (polearm)
+		} else {
+			//SOFT-force generation (same as in FORCED_DROPS == 1) of an aquatic weapon (polearm)
+			if (aquatic_hack && is_melee_weapon(tval)) {
 				if (tval != TV_POLEARM || !is_aquatic_polearm(sval)) p = 0;
 				else p = 10000;
 			}
-		} else {
 			//force generation of a sword, if generating a weapon
 			if ((resf & RESF_COND_SWORD) && is_weapon(tval)) {
 				if (tval != TV_SWORD) p = 0;
@@ -1179,11 +1186,6 @@ errr get_obj_num_prep(u32b resf) {
 			//force generation of a rune, absolutely
 			if (resf & RESF_CONDF_RUNE) {
 				if (tval != TV_RUNE) p = 0;
-				else p = 10000;
-			}
-			//force generation of an aquatic weapon (polearm)
-			if (aquatic_hack) {
-				if (tval != TV_POLEARM || !is_aquatic_polearm(sval)) p = 0;
 				else p = 10000;
 			}
 		}
