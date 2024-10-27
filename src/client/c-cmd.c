@@ -4076,11 +4076,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			    } /* <temp_priority[] overrode these.> */
 
 				/* Additions -- can override temp_priority[] (guide chapter prefix match) again. */
-				if (my_strcasestr(buf, "Line") && !(my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd"))) { //draconian lineages
+				if (my_strcasestr(buf, "Line") && !(my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd") || my_strcasestr(buf, "oline"))) { //draconian lineages, not holiness/commandline
 					strcpy(chapter, "    Lineage");
 					continue;
 				}
-				if (my_strcasestr(buf, "Line") && (my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd"))) {
+				if (my_strcasestr(buf, "Line") && (my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd"))) { //not holiness/lineage
 #ifdef WINDOWS
 					strcpy(buf, "WINDOWS COMMAND-LINE OPTIONS");
 #else
