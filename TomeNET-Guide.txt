@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 23. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 27. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -967,6 +967,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 
         To simply append a new inscription to an existing inscription, enter
         '\\' at the beginning of the new inscription.
+
+        To learn more about functional inscriptions, see (0.3).
 
 }       remove inscription from an item.
 
@@ -2442,6 +2444,10 @@ Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
                  1: Never ID flavoured items.
                 Eg: !X0
                 See (5.7) for more information about identification.
+
+Gift wrappings:
+    !$<amount>  Wraps an amount of gold pieces instead of an item, when
+                you activate the gift wrapping. Eg: '!$100'.
 
 Bags (subinventory):
     !A[0|1]     Do not auto-stow items into this bag.

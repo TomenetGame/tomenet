@@ -6377,6 +6377,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
 		clear_current(Ind);
 		p_ptr->current_activation = item;
+
+		/* Hack: Wrap money? */
+		if (check_guard_inscription(o_ptr->note, '$')) {
+			wrap_gift(Ind, -1);
+			return;
+		}
+
 		get_item(Ind, ITH_NONE);
 		return;
 	}

@@ -8070,7 +8070,9 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 }
 
 /* Add gold to the player's gold, for easier handling. - C. Blue
-   Returns FALSE if we already own 2E9 Au. */
+   Returns FALSE if we already own 2E9 Au.
+   quiet: No message.
+   exempt: Allow picking up this money without gaining 1 XP. */
 bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	player_type *p_ptr = Players[Ind];
 

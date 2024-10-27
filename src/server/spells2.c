@@ -10994,14 +10994,35 @@ void detonate_charge(int o_idx) {
 /* Remotely similar to sealing/unsealing.
    NOTE: WINNERS_ONLY items are currently not checked.
          This isn't exploitable, as they cannot be wielded anyway, but should perhaps get added.
-         Code locs: Store buying/stealing (store.c), telekinesis (xtra2.c), picking up the gift (cmd1.c). */
+         Code locs: Store buying/stealing (store.c), telekinesis (xtra2.c), picking up the gift (cmd1.c).
+   item = -1 -> wrap money instead. */
 void wrap_gift(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr, *ow_ptr, forge;
+	object_type *o_ptr, *ow_ptr, forge, forge_money;
 	bool empty = (item == p_ptr->current_activation);
+	s32b money = 0;
 
-	if (!get_inven_item(Ind, item, &o_ptr)) return;
+
 	if (!get_inven_item(Ind, p_ptr->current_activation, &ow_ptr)) return;
+	/* Hack: Wrap money? */
+	if ((money = check_guard_inscription(ow_ptr->note, '$')) > 0) {
+		money--;
+		if (money <= 0) {
+			msg_print(Ind, "If you want to gift gold, the amount must be greater than zero.");
+			return;
+		}
+		if (money > p_ptr->au) {
+			msg_print(Ind, "You don't carry that much money in your purse.");
+			return;
+		}
+		msg_format(Ind, "You wrap an mount of \377y%ld\377w gold pieces.", money);
+		o_ptr = &forge_money;
+		invcopy(o_ptr, lookup_kind(TV_GOLD, 1));
+		o_ptr->pval = money;
+		p_ptr->au -= money;
+		p_ptr->redraw |= PR_GOLD;
+		o_ptr->level = 1; //cannot wrap zero-level item
+	} else if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	s_printf("GIFTWRAPPING: %d, %d", o_ptr->tval, o_ptr->sval);
 
@@ -11159,14 +11180,17 @@ void wrap_gift(int Ind, int item) {
 	/* Don't just unhack the tval,sval etc, but actually erase and re-insert the item newly,
 	   Because this way, we put it into the correct inventory slot. */
 	forge = *o_ptr;
-	inven_item_increase(Ind, item, -1);
-	if (p_ptr->current_activation > item) {
-		inven_item_optimize(Ind, p_ptr->current_activation);
-		inven_item_optimize(Ind, item);
-	} else {
-		inven_item_optimize(Ind, item);
-		inven_item_optimize(Ind, p_ptr->current_activation);
-	}
+	if (!money) {
+		inven_item_increase(Ind, item, -1);
+		if (p_ptr->current_activation > item) {
+			inven_item_optimize(Ind, p_ptr->current_activation);
+			inven_item_optimize(Ind, item);
+		} else {
+			inven_item_optimize(Ind, item);
+			inven_item_optimize(Ind, p_ptr->current_activation);
+		}
+	} else inven_item_optimize(Ind, p_ptr->current_activation);
+
 	/* Overwrite 'item' to reuse it, as we don't need it anymore */
 	item = inven_carry(Ind, &forge);
 	if (item >= 0) {
@@ -11219,6 +11243,11 @@ void unwrap_gift(int Ind, int item) {
 	o_ptr->number2 = 0;
 	o_ptr->note2 = 0;
 	o_ptr->note2_utag = 0;
+
+	if (o_ptr->tval == TV_GOLD) {
+		if (gain_au(Ind, o_ptr->pval, FALSE, FALSE)) msg_format(Ind, "You receive \377y%ld\377w gold pieces.", o_ptr->pval);
+		return;
+	}
 
 	/* Overwrite 'item' to reuse it, as we don't need it anymore */
 	item = inven_carry(Ind, &forge);
