@@ -1758,9 +1758,6 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	/* No Talismans in the BM (can only be found! >:) */
 	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return(TRUE);
 
-	/* No Wilderness map pieces, now that they reveal a 3x3 patch.. */
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) return(TRUE);
-
 	/* No magic ammos either =) the_sandman */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) return(TRUE);
 
@@ -2015,7 +2012,7 @@ static void store_create(store_type *st_ptr) {
 	/* Hack -- consider up to n items */
 	for (tries = 0; tries < (black_market ? 60 : 4); tries++) /* 20:4, 40:4, 60:4, 100:4 !
 	    for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
-	{
+	    {
 		/* Black Market */
 
 		if (black_market) {
@@ -2166,6 +2163,22 @@ static void store_create(store_type *st_ptr) {
 			case SV_POTION2_LEARNING: continue;
 			}
 			break;
+		case TV_SCROLL: /* Rules for scrolls, only really needed for the 'Scribe' store */
+			switch (o_ptr->sval) {
+			case SV_SCROLL_HOUSE: continue; //rarity is 127 anyway, ie disabled
+			/* notes: summoning scrolls and cheques are 0 Au so won't be generated anyway. */
+			/* Forbid completely for worldmap exploration? Or just allow in BMs... */
+			case SV_SCROLL_WILDERNESS_MAP: //continue;
+			/* Forbid these for low-cost, only available in BMs: */
+			case SV_SCROLL_GOLEM:
+			case SV_SCROLL_ACQUIREMENT:
+			case SV_SCROLL_STAR_ACQUIREMENT:
+			case SV_SCROLL_ARTIFACT_CREATION:
+			case SV_SCROLL_FIREWORK:
+			case SV_SCROLL_LOTTERY:
+				if (black_market) break;
+				continue;
+			}
 		}
 
 		/* Apply some "low-level" magic (no artifacts) */
