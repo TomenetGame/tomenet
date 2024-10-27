@@ -5298,6 +5298,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		/* Let o_ptr point to a new, static object that is a clone of the gift contents */
 		peek_gift(o_ptr, &o_ptr);
 		slot = -1; /* Not directly located inside our inventory/equipment */
+
+		/* Catch money gifts, or it'll just print "copper" */
+		if (o_ptr->tval == TV_GOLD) {
+			fprintf(fff, "An amount of \377y%d\377w gold pieces.\n", o_ptr->pval);
+			my_fclose(fff);
+			Send_special_other(Ind);
+			return(TRUE);
+		}
 	}
 
 	/* Admin info about flipped-state of an item */
