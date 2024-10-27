@@ -506,8 +506,9 @@ void compact_objects(int size, bool purge) {
 			         the dungeon floor might've gotten deallocated already. */
 			if (o_ptr->questor) continue;
 
-			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
-			    getcave(&o_ptr->wpos)) continue;
+			/* If 'purge', remove all unowned items on unallocated world surface sectors that aren't marked as never-remove (ie admin-dropped): */
+			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner || o_ptr->marked == ITEM_REMOVAL_NEVER)) || getcave(&o_ptr->wpos))
+			    continue;
 
 			/* Delete it first */
 			delete_object_idx(i, TRUE);
