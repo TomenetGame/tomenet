@@ -26860,9 +26860,6 @@ Solution:   This can have several reasons. On disconnection a message box will
                     as possible.
             "Starving to death"
                     You died to starvation.
-            "Timeout 08"
-                    This happens if you 'lag out' on a slow connection or if
-                    the server or your computer is under very heavy load.
             "Panic save failed"
                     This means the server just crashed and even failed to save
                     the characters :(. It will usually be back online after a
@@ -26883,6 +26880,13 @@ Solution:   This can have several reasons. On disconnection a message box will
                     being kicked out).
             "kicked out"
                     You were kicked out of the server.
+
+            Network related errors:
+            -----------------------
+
+            "Timeout 08"
+                    This happens if you 'lag out' on a slow connection or if
+                    the server or your computer is under very heavy load.
             "read error"
                     Can happen if you lag out or if packet loss occurs.
             "write error"
@@ -26903,6 +26907,13 @@ Solution:   This can have several reasons. On disconnection a message box will
             "No login reply received"
                     The login process couldn't be completed. Probably a network
                     problem, or really bad lag/timeout.
+
+            If you are living in a place with bad network infrastructure, for
+            example Australia, you could try a VPN service such as 'NordVPN'
+            (not affiliated, random example) or the gaming-specific service
+            'Exitlag' (again not affiliated). These are services that gamers
+            from Australia apparently use to improve their gaming experience.
+            At the time of writing, these provide free trial periods.
 
 PROBLEM 9:  I am disconnected from the server with an error message, this
             happens before I can even start playing.
