@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 27. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 28. October 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -22470,7 +22470,7 @@ All Unlife spells are Wisdom-based.)
                     Required skill level for first spell level: 1.
 
                     Tier II: Level 14.
-                    Scares all nearby creatures.
+                    Scares all creatures in LoS (line of sight).
 
     Blindness       Blinds your target.
                     Required skill level for first spell level: 3.

@@ -33,7 +33,7 @@ MSCARE_I = add_spell {
 	["mana"] = 	2,
 	["mana_max"] = 	2,
 	["fail"] = 	10,
-	["direction"] = TRUE,
+	["direction"] = FALSE,
 	["spell"] = 	function(args)
 				fire_ball(Ind, GF_TURN_ALL, 0, 5 + get_level(Ind, MSCARE_I, 80), 1, "stares deep into your eyes")
 			end,

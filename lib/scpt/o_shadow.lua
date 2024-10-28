@@ -10,7 +10,7 @@ OFEAR_I = add_spell {
 	["mana_max"] = 	2,
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
+	["direction"] = FALSE,
 	["spell"] = 	function(args)
 		fire_ball(Ind, GF_TURN_ALL, 0, 5 + get_level(Ind, OFEAR_I, 65), 1, "hisses")
 	end,
@@ -37,7 +37,7 @@ OFEAR_II = add_spell {
 	["info"] = 	function()
 		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
 	end,
-	["desc"] = { "Temporarily scares all nearby foes.", }
+	["desc"] = { "Temporarily scares all creatures in sight.", }
 }
 
 OBLIND_I = add_spell {
