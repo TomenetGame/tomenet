@@ -2800,22 +2800,23 @@ void do_cmd_open(int Ind, int dir) {
 	if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
 #endif
 
-	/* Ghosts cannot open doors ; not in WRAITHFORM */
+	/* Ghosts cannot open doors/chests; not in WRAITHFORM either, not in no OPEN_DOOR monster forms either for doors */
 	if ((cannot_spectral && !is_admin(p_ptr)) || cannot_form) {
 	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
-#ifdef PLAYER_STORES
 		struct c_special *cs_ptr;
 
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
 		c_ptr = &zcave[y][x];
 
-		/* allow entering player stores in wraithform/no-OPEN_DOOR-form */
-		if (p_ptr->ghost || c_ptr->feat != FEAT_HOME || !dir) {
+		/* Allow entering player houses (own houses, pstores, other houses we have access to) no matter in which no-OPEN_DOOR-form/wraith/ghoststate we are */
+		if (c_ptr->feat != FEAT_HOME || !(cs_ptr = GetCS(c_ptr, CS_DNADOOR)) || !access_door(Ind, cs_ptr->sc.ptr, TRUE)) {
 			if (cannot_spectral) msg_print(Ind, "Without a material body you cannot open things!");
-			else {
+			else { //ie cannot_form
 				msg_print(Ind, "In your current form you cannot open things!");
-				if (!p_ptr->warning_bash) {
+				if (!p_ptr->warning_bash
+				    /* Can never bash open inaccessible player house doors */
+				    && (c_ptr->feat != FEAT_HOME || !cs_ptr)) {
 					if (p_ptr->rogue_like_commands)
 						msg_print(Ind, "\374\377yHINT: You can press '\377of\377y' to try to force (bash) a door open.");
 					else
@@ -2826,27 +2827,6 @@ void do_cmd_open(int Ind, int dir) {
 			}
 			return;
 		}
-
-		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR)) || /* orig house failure */
-		    access_door(Ind, cs_ptr->sc.ptr, TRUE)) {
-			msg_print(Ind, "You cannot open things!");
-			return;
-		}
-#else
-		if (cannot_spectral) msg_print(Ind, "Without a material body you cannot open things!");
-		else {
-			msg_print(Ind, "In your current form you cannot open things!");
-			if (!p_ptr->warning_bash) {
-				if (p_ptr->rogue_like_commands)
-					msg_print(Ind, "\374\377yHINT: You can press '\377of\377y' to try to force (bash) a door open.");
-				else
-					msg_print(Ind, "\374\377yHINT: You can press '\377oB\377y' to try to bash a door open.");
-				s_printf("warning_bash: %s\n", p_ptr->name);
-				p_ptr->warning_bash = 1;
-			}
-		}
-		return;
-#endif
 	}
 
 	/* Get a "repeated" direction */
