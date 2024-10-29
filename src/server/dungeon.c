@@ -5652,7 +5652,7 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Disturb if we are done resting */
-	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->cmp == p_ptr->mmp) && (p_ptr->cst == p_ptr->mst)
+	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp && !p_ptr->drain_life) && (p_ptr->cmp == p_ptr->mmp) && (p_ptr->cst == p_ptr->mst)
 #if 0 /* stop resting as an Ent when we reach 'full' food state? */
 	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL))
 #else /* Ents can continue to rest indefinitely to basically be afk without toggling afk state, yet still not going hungry? */
