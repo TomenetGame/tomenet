@@ -13499,6 +13499,9 @@ int toggle_rest(int Ind, int turns) {
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
+		stop_cloaking(Ind);
+		p_ptr->ranged_flare = p_ptr->ranged_barrage = FALSE;
+		// use Handle_clear_actions(Ind) instead of all this?
 
 		/* Take a lot of energy to enter "rest mode" */
 		p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
@@ -13555,6 +13558,7 @@ static void Handle_clear_actions(int Ind) {
 
 	/* Stop ranged auto-retaliation (fire-till-kill) */
 	p_ptr->shooting_till_kill = FALSE;
+	//instead use stop_shooting_till_kill(Ind); ?
 
 #ifdef USE_SOUND_2010
 	if (p_ptr->command_rep && p_ptr->command_rep != PKT_BASH)
