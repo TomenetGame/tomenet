@@ -10172,7 +10172,7 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille, bo
 	/* 100% possible to reach: */
 	*permille = (1000 - ((USE_DEVICE - 1) * 1000) / chance + (chance * 10) / 11) % 10;
 	chance = 100 - ((USE_DEVICE - 1) * 100) / chance + chance / 11;
-	if (bonus) chance += 30; //WIELD_DEVICES flat bonus for wands/staves/rods
+	if (bonus) chance += 20; //WIELD_DEVICES flat bonus for wands/staves/rods
 	if (chance >= 100) {
 		chance = 100;
 		*permille = 0;
