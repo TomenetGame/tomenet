@@ -14276,6 +14276,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				reverse_cursed(o_ptr);
 				return;
 			}
+			else if (prefix(messagelc, "/rspumpkin")) {
+				great_pumpkin_killer1[0] = great_pumpkin_killer2[0] = 0;
+				return;
+			}
 
 		}
 	}

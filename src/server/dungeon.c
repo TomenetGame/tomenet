@@ -7937,6 +7937,11 @@ static void process_various(void) {
 			msg_format(i, "\374\377y[24-h maintenance/cron finished - %s]", showtime());
 		}
 	}
+	/* Every 6 hours */
+	if (!(turn % (cfg.fps * 21600))) {
+		/* In case season_halloween is up - allow re-farming the pumpkin, especially important if there isn't much traffic on the server */
+		great_pumpkin_killer1[0] = great_pumpkin_killer2[0] = 0;
+	}
 
 #if 0 /* disable for now - mikaelh */
 	if (!(turn % (cfg.fps * 50))) {
