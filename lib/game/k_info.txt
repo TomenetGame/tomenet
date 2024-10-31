@@ -5580,7 +5580,7 @@ I:11:10:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:656:& Orange Gift Wrapping~
 G:~:o
@@ -5588,7 +5588,7 @@ I:11:11:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:657:& Yellow Gift Wrapping~
 G:~:y
@@ -5596,7 +5596,7 @@ I:11:12:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:658:& Green Gift Wrapping~
 G:~:G
@@ -5604,7 +5604,7 @@ I:11:13:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:659:& Blue Gift Wrapping~
 G:~:B
@@ -5612,7 +5612,7 @@ I:11:14:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:660:& Purple Gift Wrapping~
 G:~:v
@@ -5620,7 +5620,7 @@ I:11:15:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 # The Phial of Undeath -- see artifact list. He he he he...
 
@@ -6268,7 +6268,7 @@ I:127:10:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:744:& Gift~, Wrapped in Orange Paper
 G:&:o
@@ -6276,7 +6276,7 @@ I:127:11:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:745:& Gift~, Wrapped in Yellow Paper
 G:&:y
@@ -6284,7 +6284,7 @@ I:127:12:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:746:& Gift~, Wrapped in Green Paper
 G:&:G
@@ -6292,7 +6292,7 @@ I:127:13:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:747:& Gift~, Wrapped in Blue Paper
 G:&:B
@@ -6300,7 +6300,7 @@ I:127:14:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 N:748:& Gift~, Wrapped in Purple Paper
 G:&:v
@@ -6308,7 +6308,7 @@ I:127:15:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 
 ## Scroll
 #N:749:Spell
