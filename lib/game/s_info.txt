@@ -324,8 +324,8 @@ A:11:Cast a spell
 I:1000:111
 
 N:49:Spell-power
-#D:Further boosts most (learned) spells of the 'Wizardry' and 'Prayers' schools.
-D:Further boosts most (learned) spells of the 'Wizardry' schools.
+D:Further boosts levels of most -learned- spell of the 'Wizardry' schools.
+D:When maximized, it increases their levels by up to 40%.
 I:1000:0
 
 N:50:Mana
