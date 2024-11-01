@@ -3170,6 +3170,12 @@ static int Handle_login(int ind) {
 	world_surface_palette_player(NumPlayers);
 #endif
 
+	/* Polymorph out of -now- impossible forms (this is important for halloween townie forms) */
+	if (p_ptr->body_monster && !is_admin(p_ptr) &&
+	    (!mon_allowed_chance(&r_info[p_ptr->body_monster]) || p_ptr->body_monster >= MAX_R_IDX - 1 || /* the mon_allowed_chance() is the important of all of these checks */
+	    (r_info[p_ptr->body_monster].flags9 & RF9_NO_CREDIT) || (r_info[p_ptr->body_monster].flags7 & RF7_NO_DEATH)))
+		do_mimic_change(NumPlayers, 0, TRUE);
+	else
 	/* Initialize his mimic spells. - C. Blue
 	   Note: This is actually done earlier in time via calc_body_bonus(),
 	   but at that point, the connection is not yet ready to receive spell info. */
