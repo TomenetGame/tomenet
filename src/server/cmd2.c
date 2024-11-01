@@ -7033,8 +7033,8 @@ void do_cmd_fire(int Ind, int dir) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);
-			if (!check_guard_inscription(o_ptr->note, 'S') &&
-			    !check_guard_inscription(j_ptr->note, 'S') &&
+			if (!check_guard_inscription(o_ptr->note, 'O') &&
+			    !check_guard_inscription(j_ptr->note, 'O') &&
 			    !p_ptr->image && !p_ptr->confused &&
 			    (i = get_skill(p_ptr, SKILL_SLING)) >= 15)
 				aimed_ricochet = i - 14;
@@ -7044,7 +7044,7 @@ void do_cmd_fire(int Ind, int dir) {
 			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_BOOMERANG, 5));
 			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_BOOMERANG, 42);
-			if (!check_guard_inscription(j_ptr->note, 'S') &&
+			if (!check_guard_inscription(j_ptr->note, 'O') &&
 			    !p_ptr->image && !p_ptr->confused &&
 			    (i = get_skill(p_ptr, SKILL_BOOMERANG)) >= 20)
 				aimed_ricochet = i - 19;

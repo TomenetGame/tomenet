@@ -2341,6 +2341,8 @@ Other ! inscriptions:
                 inventory or equipment. Can be useful for sorting loot.
                 (A warning: You cannot visually distinguish this colour for
                 items that are greyed out because they are unusable to you.)
+    !S          Prevents auto-stowing this item into any bags.
+
 Mainly for consumable items:
     !Q          will not print a message how many you have left after consuming
                 one (like if 'taciturn_messages' were enabled). For example use
@@ -2422,7 +2424,7 @@ Ammunition, boomerangs, (throwing) weapons:
 
 Slings/sling ammunition and boomerangs:
     !R          Prevents ricochetting.
-    !S          Allows ricochetting against sleeping/charmed monsters.
+    !O          Allows ricochetting against sleeping/charmed monsters.
                 Has no effect if 'Sling-mastery' is lower than 25.000 or
                 respectively if 'Boomerang-mastery' is lower than 30.000,
                 as the character is not able to control ricochetting well
@@ -2459,6 +2461,7 @@ Bags (subinventory):
     !S[0|1]     Only auto-stow items into this bag when buying from store.
                 0: And only if they stack with existing items.
                 1: And only if they are at least similar to existing items.
+    Also see !S inscription for items, which prevents auto-stowing an item.
 
 Any item in your inventory:
     !G[n]       Prevents an item from stacking with other items in any case.
@@ -17529,7 +17532,7 @@ stated.
                                 To disable ricochetting completely inscribe the
                                 sling or ammunition:  !R
                                 To allow ricochetting on sleeping/charmed
-                                targets at skill 25.000+ again, inscribe:  !S
+                                targets at skill 25.000+ again, inscribe:  !O
 
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
@@ -17584,7 +17587,7 @@ stated.
                                 To disable ricochetting completely inscribe
                                 the boomerang:  !R
                                 To allow ricochetting on sleeping/charmed
-                                targets at skill 30.000+ again, inscribe:  !S
+                                targets at skill 30.000+ again, inscribe:  !O
 
                                 (Note that your 'Combat' skill determines your
                                 ability to pseudo-ID Boomerangs.)
@@ -24504,7 +24507,7 @@ The techniques are as follows:
         Learnt by skilling 'Trapping' or (alternatively, if the Demolitionist
         perk is enabled) 'Digging' to at least 10.000.
         Requires either a fumes trap kit or a blast charge and in any case a
-        potion of any sort (does not matter which one), both inscribed '!S'.
+        potion of any sort (does not matter which one), both inscribed '!B'.
         They will be consumed and a steam blast charge is planted on the lock
         of the next door the player bumps into or the lock of a chest the
         player is currently standing on.
@@ -24517,9 +24520,9 @@ The techniques are as follows:
         on your Trapping (if you used a fumes trap) or Digging (if you used
         a blast charge) skill, that it may or may not trigger the chest's trap
         (which could potentially destroy the chest depending on the trap type).
-        You can add a number to the !S inscription on either item, which will
+        You can add a number to the !B inscription on either item, which will
         set the fuse duration in seconds from 0 to 15 (similar as !F does for
-        blast charges), eg: !S10 . The default value is 8 seconds.
+        blast charges), eg: !B10 . The default value is 8 seconds.
 
     Shooting techniques:
     --------------------

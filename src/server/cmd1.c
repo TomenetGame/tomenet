@@ -1622,6 +1622,9 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	player_type *p_ptr = Players[Ind];
 	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE;
 
+	/* Inscription to specifically prevent auto-stowing of an object. Useful for *perception* staff deposited in a house for example. */
+	if (check_guard_inscription(o_ptr->note, 'S')) return(FALSE);
+
 	/* Don't auto-stow true artifacts;
 	   exception for true-art trapkits is possible, but would need to add subinvens to art-location and -erasure code first. */
 	if (true_artifact_p(o_ptr)) return(FALSE);
