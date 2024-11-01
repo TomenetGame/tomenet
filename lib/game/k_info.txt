@@ -235,7 +235,7 @@ N:25:& Lembas~
 G:,:B
 I:80:207:0
 W:5:0:3:250
-A:5/1:10/1:20/1
+A:5/3:10/3:20/3
 D:This blessed elven waybread satisfies your hunger, heals 5d8 hit points,
 D:cures poison, disease, confusion and can lessen non-lethal cuts.
 
