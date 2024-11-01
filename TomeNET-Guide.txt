@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 30. October 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 1. November 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11042,7 +11042,12 @@ certain aspects of it:
     The Pumpkin is aiming at intermediate-level characters. It can spawn on any
     dungeon floor from level 1 to 35 (or 40 on Ironman server),
     except it won't show up on the first 9 floors in the Ironman Deep Dive
-    Challenge.
+    Challenge. It can spawn in both ways, initial level generation and live.
+    The pumpkin will not spawn for 6 hours for the last two players who killed
+    it, so ideally you are a party of at least 3 and keep creating the next
+    dungeon level with the person who did not one of the last two kills, ie
+    have that player be the first one to enter a new dungeon level.
+
     It will usually be quite tough and might require teamwork to beat.
     Players who are too high level (above 30 on main, above 35 on Ironman*)
     will not be able to hunt him, they will see a message:
