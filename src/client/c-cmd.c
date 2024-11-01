@@ -3413,6 +3413,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
  #ifdef REGEX_SEARCH
 			if (!ires) regfree(&re_src);
  #endif
+			inkey_interact_macros = FALSE;
 			return;
 #else
 			continue;
