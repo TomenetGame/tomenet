@@ -49,6 +49,13 @@
  #define PALANIM_HOUR_DIV	12
 #endif
 
+/* New auto-retaliator: Wait for almost two turns of energy stored up before we use up one for auto-retaliation/FTK.
+   ADVANTAGE is that the player has a lot of energy left for manual intervention, eg escape macros.
+   Usually melee/archers with lots of BpR/SpR had an advantage here as they'd be able to trigger macros in between their attacks, with a lot of turn energy left,
+   while casters who need full turn of energy per cast had to wait longer till their escape/manual keypresses kicked in.
+   DISADVANTAGE is that it takes longer until auto-retaliation/FTK starts, as we need to recuperate enough energy worth almost two turns before we can begin. */
+#define NEW_AUTORET_ENERGY
+
 /* Failing auto-retaliation with item or cmd (magic devices, spells, mimic powers) due to being out of mana/charges/energy
    and without melee-fallback will not cost the usual 1/3 energy it costs when attempting manually. */
 #define AUTORET_FAIL_FREE
@@ -3878,7 +3885,7 @@ static int auto_retaliate(int Ind) {
 }
 
 /*
- * Player processing that occurs at the beginning of a new turn
+ * Player processing that occurs at the beginning of a new turn (aka server frame)
  */
 static void process_player_begin(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -7127,7 +7134,7 @@ static void process_player_end(int Ind) {
 		    !p_ptr->confused && !p_ptr->resting &&
 		    (!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
 		     !p_ptr->invuln))//&& !p_ptr->tim_manashield)))
-		{
+		    {
 			/* Prepare auto-ret/fire-till-kill mode energy requirements.
 			   (Note: auto-ret is currently nothing special but always 1 x level_speed() as usual,
 			    so for auto-ret nothing changed basically. Therefore firing with auto-ret will also
@@ -7140,18 +7147,22 @@ static void process_player_end(int Ind) {
 			if (p_ptr->shooting_till_kill && !target_okay(Ind)) p_ptr->shooting_till_kill = FALSE;
 
 			/* Check for auto-retaliate */
-		/* The 'old way' is actually the best way, because the initial delay of the 'new way',
-		when it happens, can be very irritating. The best way to fix perceived responsiveness
-		(of the old way) would be to not add full floor speed energy all at once, but in multiple
-		parts, to (ideally) immediately cover the energy loss for a single attack performed. */
-#if 1 /* old way - get the usual 'double initial attack' in. \
-		 Drawback: Have to wait for nearly a full turn (1-(1/attacksperround)) \
-		 for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
+
+			/* The 'old way' is actually the best way, because the initial delay of the 'new way',
+			   when it happens, can be very irritating. The best way to fix perceived responsiveness
+			   (of the old way) would be to not add full floor speed energy all at once, but in multiple
+			   parts, to (ideally) immediately cover the energy loss for a single attack performed. */
+#ifndef NEW_AUTORET_ENERGY
+			/* old way - get the usual 'double initial attack' in.
+			   Drawback: Have to wait for nearly a full turn (1-(1/attacksperround))
+			   for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
 			if (p_ptr->energy >= energy) {
-#else /* new way - allows to instantly break out and perform another action (quaff/read) \
-		but doesn't give the 'double initial attack' anymore, just a normal, single attack. \
-		Main drawback: Walking into a mob will not smoothly transgress into auto-ret the next turn, \
-		but wait for an extra turn before it begins, ie taking 2 turns until first attack got in. */
+#else
+			/* new way - allows to instantly break out and perform another action (quaff/read)
+			   but doesn't give the 'double initial attack' anymore, just a normal, single attack.
+			   Main drawback: Walking into a mob will not smoothly transgress into auto-ret the next turn,
+			   but wait for an extra turn before it begins, ie taking 2 turns (minus '1 point of energy', to be exact) until first attack got in.
+			   (Note that this e*2-1 amount of energy is also the maximum a player can store, according to limit_energy().) */
 			if (p_ptr->energy >= energy * 2 - 1) {
 #endif
 				/* assume nothing will happen here */
@@ -7200,8 +7211,7 @@ static void process_player_end(int Ind) {
 					 */
 					p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
 					if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
-					    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
-					{
+					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! */
 						p_ptr->auto_retaliating = TRUE;
 						/* Use energy */
 						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
@@ -7214,9 +7224,7 @@ static void process_player_end(int Ind) {
 					p_ptr->count_cut_sfx_attack = 500;
 					p_ptr->half_sfx_attack_state = FALSE;
 				}
-			} else {
-				p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
-			}
+			} else p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 		}
 
 		/* ('Handle running' from above was originally at this place) */
