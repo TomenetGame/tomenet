@@ -10195,6 +10195,8 @@ a default price of only 1x their base value:
 - Rings of Speed
 - Scrolls of Artifact Creation
 - Random artifacts
+and spell scrolls even have a minimum price of only 1/2 of their regular value,
+allowing undercutting the library.
 To verify the appraised price, just inspect (Shift+I) an item inscribed '@S'
 while you are inside your house.
 

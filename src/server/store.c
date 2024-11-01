@@ -407,24 +407,23 @@ msg_format(Ind, "0: %d, 10: %d, 20: %d, 30: %d, 40: %d", (price * adjust + 0L) /
 }
 
 #ifdef PLAYER_STORES
-/* set default pstore price for '@S' inscriptions to n * base item price [2] */
- #define PSTORE_FACTOR 2
-/* set default pstore price for '@S' inscriptions for cheaper exceptions to n * base item price [1] */
- #define PSTORE_FACTOR_SPECIAL 1
-/* for price-modifiers: set minimum pstore item price factor (base item price * n) [2] */
- #define PSTORE_MIN_FACTOR 2
-/* for price-modifiers: set minimum pstore item price factor for cheaper exceptions (base item price * n) [1] */
- #define PSTORE_MIN_FACTOR_SPECIAL 1
+/* min/@S-default pstore price: n/10 * base item price [20] */
+ #define PSTORE_FACTOR 20
+/* min/@S-default pstore price: cheaper exceptions at n/10 * base item price [10] */
+ #define PSTORE_FACTOR_SPECIAL 10
+/* min/@S-default pstore price: special exceptions for spell scrolls, allowing even down to half the library price! [5] */
+ #define PSTORE_FACTOR_SPELLS 5
 
-static int player_store_factor(object_type *o_ptr, bool modified) {
+static int player_store_factor(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
-	    (o_ptr->name1 == ART_RANDART)) {
-		if (modified) return(PSTORE_MIN_FACTOR_SPECIAL);
-		else return(PSTORE_FACTOR_SPECIAL);
-	}
-	if (modified) return(PSTORE_MIN_FACTOR);
-	else return(PSTORE_FACTOR);
+	    (o_ptr->name1 == ART_RANDART))
+		return(PSTORE_FACTOR_SPECIAL);
+
+	if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK)
+		return(PSTORE_FACTOR_SPELLS);
+
+	return(PSTORE_FACTOR);
 }
 
 /* shop_type:
@@ -625,7 +624,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		}
 		price = k_info[o_ptr->k_idx].cost;
 		if (!price) return(0);
-		if (Ind && !object_known_p(Ind, o_ptr)) return(price * player_store_factor(o_ptr, FALSE));
+		if (Ind && !object_known_p(Ind, o_ptr)) return((price * player_store_factor(o_ptr)) / 10);
 
 #if 0
 		/* Add ego-power bonus (Note: Poly rings can never be artifacts) */
@@ -651,7 +650,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 			r_val /= 2; //half price of npc stores
 			price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
 		}
-		//price *= player_store_factor(o_ptr, FALSE);
+		//price = (price * player_store_factor(o_ptr)) / 10;
 
 		//note: o_ptr->discount doesn't apply in player stores
 		break;
@@ -682,14 +681,14 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 
 		o_ptr->discount = 0;
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = price_poly_ring(Ind, o_ptr, 2);
-		else price = object_value(Ind, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
+		else price = (object_value(Ind, o_ptr) * player_store_factor(o_ptr)) / 10; /* default: n * base price */
 		o_ptr->discount = discount;
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Backward compatibility - converted old, unappraised items: */
 	else if (!o_ptr->appraised_value) {
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = price_poly_ring(0, o_ptr, 2);
-		else price = object_value_real(0, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
+		else price = (object_value_real(0, o_ptr) * player_store_factor(o_ptr)) / 10; /* default: n * base price */
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Retrieve stored value: */
