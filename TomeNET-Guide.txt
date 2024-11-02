@@ -14111,6 +14111,10 @@ Lottery         This might be your chance today to win the Jackpot!
                 Yes, several people have won it, although it happens extremely
                 rarely. The prize at the time of writing this is about 1.5M Au.
 
+                Note that any discount the ticket item has will be applied to
+                the prize money too, so stolen tickets yield no prize as they
+                are 100% discounted, like all stolen items.
+
 Obliteration    Removes all monsters that are close to you.
                 Drains your HP.
                 All monsters within a radius (equal to your sight range)
@@ -22107,9 +22111,8 @@ these limitations will be lifted.
 
     Essence of Speed
                     Hastes you for a while.                    (auto-project)
-                    While istari can gain up to +19 speed from it and even up
-                    to +24 if they have maxed 'Spell-power', for all other
-                    classes the effect will cap at +10.
+                    If you train Spell-Power, the spell can exceed the usual
+                    gain of +10 speed and grant up to +14 speed when maxed out.
                     Required skill level for first spell level: 15.
 
     Mass Warp       Locks monsters in stasis for a while.
