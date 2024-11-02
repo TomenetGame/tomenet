@@ -16,6 +16,10 @@
 #include "angband.h"
 
 
+/* Mage staves count as 'blunt' weapons (instead of not using any mastery skill at all)
+   and thereby use Blunt-Mastery skill? */
+#define MSTAFF_BLUNT_MASTERY
+
 /*
  * Modifier for martial-arts AC bonus; it's needed to balance martial-arts
  * and dodging skills. in percent. [50]
@@ -2766,6 +2770,9 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 	/* known weapon types */
 	case TV_SWORD:		return(SKILL_SWORD);
 	case TV_AXE:		return(SKILL_AXE);
+#ifdef MSTAFF_BLUNT_MASTERY
+	case TV_MSTAFF:
+#endif
 	case TV_BLUNT:		return(SKILL_BLUNT);
 	case TV_POLEARM:	return(SKILL_POLEARM);
 	/* not a weapon */
