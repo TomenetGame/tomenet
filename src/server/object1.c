@@ -4847,7 +4847,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, int 
 			if (p_ptr->awkward_wield && !old_awkward_wield) msg_print(Ind, "\377s  One-handed use reduces its efficiency.");
 			if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) msg_print(Ind, "\377s  Wielding it two-handedly might make it even more effective.");
 			if (p_ptr->heavy_wield && !old_heavy_wield) msg_print(Ind, "\377s  It seems to be too heavy for you to hold it properly.");
-			if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT) msg_print(Ind, "\377s  It is an edged weapon and might not be blessed.");
+			if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT && o_ptr->tval != TV_MSTAFF) msg_print(Ind, "\377s  It is an edged weapon and might not be blessed.");
 		}
 	}
 
@@ -4878,7 +4878,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, int 
 					    )
 						fprintf(fff, "\377g    It is not blessed.\n");
 					else {
-						if (o_ptr->tval == TV_BLUNT) fprintf(fff, "\377g    It is not an edged weapon.\n");
+						if (o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_MSTAFF) fprintf(fff, "\377g    It is not an edged weapon.\n");
 						else fprintf(fff, "\377g    It is an edged weapon, but it is blessed.\n");
 					}
 				}
