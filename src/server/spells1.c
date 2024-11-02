@@ -4137,23 +4137,6 @@ bool apply_disenchant(int Ind, int mode) {
 			   o_name, index_to_label(t),
 			   ((o_ptr->number != 1) ? "were" : "was"));
 
-#if 0 /* nonsense, disenchant goes down to 0, but repairing starts below 0 */
-	if (!p_ptr->warning_repair &&
-	    !((f5 & TR5_NO_ENCHANT) || o_ptr->name1) && is_enchantable_kind(o_ptr)) {
-		if (is_weapon(o_ptr->tval)) {
-			msg_print(Ind, "\377yYou can get it repaired at the weaponsmith in town.");
-			msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select your shield.");
-			p_ptr->warning_repair = 1;
-			s_printf("warning_repair: %s\n", p_ptr->name);
-		} else if (is_armour(o_ptr->tval)) {
-			msg_print(Ind, "\377yYou can get it repaired at the armoury in town.");
-			msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select your shield.");
-			p_ptr->warning_repair = 1;
-			s_printf("warning_repair: %s\n", p_ptr->name);
-		}
-	}
-#endif
-
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
