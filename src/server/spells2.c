@@ -4694,11 +4694,18 @@ bool recharge_aux(int Ind, int item, int pow) {
 			    charge_staff_fix[o_ptr->sval] + randint(charge_staff_rnd[o_ptr->sval] / 2) + charge_staff_rnd[o_ptr->sval] / 4;
 			/* Recharging power vs k-level affects # of charges, strongly if power is low compared to item level. */
  #if 0
+			if (pow < 60) pow = 60; //lazy hack for Recharge I spell, see comment below in '#else'.
 			//tfac = 10 + ((lev + 8) * 30) / (pow - 32);
 			tfac = 10 + ((lev + 8) * 30) / (pow - 50);
 			t = (t * 39) / tfac;
  #else
+  #if 0 /* bug: underflows for Recharge I pow */
 			tfac = 10 + ((lev + 18) * 30) / (pow - 47);
+  #else /* lazy solution for now */
+			/* Recharge I goes below 60 pow (which scrolls have) which can cause underflow here;
+			   lazy way for now: just cap at min 60, so having less pow will mostly affect success chance instead of # of charges */
+			tfac = 10 + ((lev + 18) * 30) / ((pow <= 60 ? 60 : pow) - 47);
+  #endif
 			tfac += pow / (lev + 10);
 			//t = (t * 42) / tfac;
 			t = (t * 42 + tfac - 1) / tfac; //round up
