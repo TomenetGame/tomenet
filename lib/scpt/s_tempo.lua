@@ -81,35 +81,30 @@ ESSENSESPEED = add_spell {
 	["level"] = 	15,
 	["mana"] = 	35,
 	["mana_max"] = 	35,
-	["fail"] = 	10,
+	["fail"] = 	0,
 	["spell"] = 	function()
 			local s
 
-			s = 5 + get_level(Ind, ESSENSESPEED, 20)
-			if s > 24 then
-				s = 24
-			end
-			if player.pclass ~= CLASS_MAGE then
-				if s > 10 then s = 10 end
-			end
+			s = get_level(Ind, ESSENSESPEED, 17)
+			if s > 12 then s = get_level(Ind, ESSENSESPEED, 14)
+			elseif s > 10 then s = 10
+
 			fire_ball(Ind, GF_SPEED_PLAYER, 0, s, 2, "")
 			set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
 	end,
 	["info"] = 	function()
 			local s
 
-			s = 5 + get_level(Ind, ESSENSESPEED, 20)
-			if s > 24 then
-				s = 24
+			s = get_level(Ind, ESSENSESPEED, 17)
+			if s > 12 then s = get_level(Ind, ESSENSESPEED, 14)
+			elseif s > 10 then s = 10
 			end
-			if player.pclass ~= CLASS_MAGE then
-				if s > 10 then s = 10 end
-			end
+
 			return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..s
 	end,
 	["desc"] = 	{
 			"Magically increases the passing of time around you.",
-			"Non-Istari cannot gain more than +10 speed from this spell.",
+			"Under Spell-Power influence the speed gain increases up to +14.",
 			"***Automatically projecting***",
 	}
 }
