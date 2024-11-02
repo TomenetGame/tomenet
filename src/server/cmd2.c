@@ -8975,8 +8975,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 						//TODO: actually apply chaos_effect and k2->vampirism
 
-					} else if (is_weapon(o_ptr->tval)) {
-						tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
+					} else if (is_melee_item(o_ptr->tval)) {
+						tdam = (tdam * 2) / 3; /* assumption: Melee weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 						/* For throwing a non-throwingweapon, we ignore CRIT flag of item instead of applying calc_crit_obj(o_ptr): */
 						tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
@@ -9232,8 +9232,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 					/* Note: No rune nimbus application */
 
-				} else if (is_weapon(o_ptr->tval)) {
-					tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
+				} else if (is_melee_item(o_ptr->tval)) {
+					tdam = (tdam * 2) / 3; /* assumption: Melee weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 					/* For throwing a non-throwingweapon, we ignore CRIT flag of item instead of applying calc_crit_obj(o_ptr): */
 					tdam = critical_throw(Ind, o_ptr->weight, o_ptr->to_h, tdam, 0);
