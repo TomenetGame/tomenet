@@ -88,6 +88,7 @@ ESSENSESPEED = add_spell {
 			s = get_level(Ind, ESSENSESPEED, 17)
 			if s > 12 then s = get_level(Ind, ESSENSESPEED, 14)
 			elseif s > 10 then s = 10
+			end
 
 			fire_ball(Ind, GF_SPEED_PLAYER, 0, s, 2, "")
 			set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
