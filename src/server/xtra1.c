@@ -17,7 +17,12 @@
 
 
 /* Mage staves count as 'blunt' weapons (instead of not using any mastery skill at all)
-   and thereby use Blunt-Mastery skill? */
+   and thereby use Blunt-Mastery skill?
+   TODO/Problems:
+   Currently, is_melee_weapon() vs is_melee_item() are used in inconsistent ways regarding mage staves.
+   Also, is_weapon() depends on these and there is no is_weapon() atm that includes mage staves.
+   All of this would need some sorting out in theory, but if we assume that mage staves cannot gain the
+   ego/art powers that normal weapons can get, we should be mostly fine. */
 #define MSTAFF_BLUNT_MASTERY
 
 /*
