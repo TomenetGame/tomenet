@@ -3497,7 +3497,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 	switch (typ) {
 	case GF_WATER:
 		/* hack -- decrease the variety of damaging attacks a bit, mercifully */
-		if (o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_POLEARM) return(FALSE);
+		if (o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_MSTAFF) return(FALSE);
 
 		if (p_ptr->immune_water || !set_rust_destroy(o_ptr))
 			return(FALSE);
