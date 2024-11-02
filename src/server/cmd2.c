@@ -4724,7 +4724,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			if (impact_power_weapon <= 0) impact_power_weapon = 1; //if the weapon doesn't totally suck we might be able to get a lucky roll instead of the average roll - give this case least priority though of all 3.
 		}
 	}
-	if (o3_ptr->k_idx && is_weapon(o3_ptr->tval)
+	if (o3_ptr->k_idx && (is_weapon(o3_ptr->tval) || o3_ptr->tval == TV_MSTAFF)
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 	    && !check_guard_inscription(o3_ptr->note, 'Q')
 #endif
@@ -4851,7 +4851,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					}
 #endif
-				} else if (o3_ptr->k_idx && is_weapon(o3_ptr->tval)) {
+				} else if (o3_ptr->k_idx && (is_weapon(o3_ptr->tval) || o3_ptr->tval == TV_MSTAFF)) {
 					object_desc(0, o_name, o3_ptr, TRUE, 256);
 					msg_format(Ind, "You strike the ground with your %s.", o_name);
 #ifdef USE_SOUND_2010
@@ -5031,7 +5031,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 #if 0 /* no, weapons only really help with fiber and wood, which are 'soft' aka no_quake. This gets too crazy. */
 			/* We are digging with a weapon? */
-			else if (o2_ptr->k_idx || (o3_ptr->k_idx && is_weapon(o3_ptr->tval))) {
+			else if (o2_ptr->k_idx || (o3_ptr->k_idx && (is_weapon(o3_ptr->tval) || o3_ptr->tval == TV_MSTAFF))) {
 				if (impact_power_weapon2 > impact_power_weapon) impact_power_weapon = impact_power_weapon2;
 				if (magik(impact_power_weapon)) impact = TRUE;
 			}

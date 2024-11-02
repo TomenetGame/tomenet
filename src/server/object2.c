@@ -7083,7 +7083,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 	}
 
 	/* Anti-cheeze for trivially enchanted items */
-	if (is_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < 20) {
+	if ((is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < 20) {
 		if (o_ptr->to_h > o_ptr->to_d) {
 			if (o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
 		} else {
@@ -9815,7 +9815,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 		if ((f5 & TR5_CRIT) && o_ptr->pval > 5) o_ptr->pval = 5;
 		/* Limit all weapons */
-		if (is_weapon(o_ptr->tval)) {
+		if (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) {
 			if (o_ptr->to_h > 20) o_ptr->to_h = 20;
 			if (o_ptr->to_d > 15) o_ptr->to_d = 15;
 		}
@@ -12692,7 +12692,7 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 			if ((f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD)) return(1);
 			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || no_res_lite)) return(2);
 		} else {
-			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD)) return(1); /* allow undead to kill each other with *slay undead* weapons =p */
+			if (((!is_weapon(o_ptr->tval) && o_ptr->tval != TV_MSTAFF) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD)) return(1); /* allow undead to kill each other with *slay undead* weapons =p */
 		}
 		return(FALSE);
 	}
@@ -12709,7 +12709,7 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 			return(1);
 	} else {
 		if ((f3 & TR3_BLESSED) ||
-		    ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD))) /* allow undead to kill each other with *slay undead* weapons =p */
+		    (((!is_weapon(o_ptr->tval) && o_ptr->tval != TV_MSTAFF) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD))) /* allow undead to kill each other with *slay undead* weapons =p */
 			return(1);
 	}
 
@@ -12764,7 +12764,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 			if ((f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON)) return(1);
 			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || no_res_lite)) return(2);
 		} else {
-			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON)) return(2); /* allow demons to kill each other with *slay demon* weapons =p */
+			if (((!is_weapon(o_ptr->tval) && o_ptr->tval != TV_MSTAFF) || o_ptr->name1) && (f1 & TR1_KILL_DEMON)) return(2); /* allow demons to kill each other with *slay demon* weapons =p */
 		}
 		return(FALSE);
 	}
@@ -12779,7 +12779,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 			return(1);
 	} else {
 		if ((f3 & TR3_BLESSED) ||
-		    ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON))) /* allow demons to kill each other with *slay demon* weapons =p */
+		    (((!is_weapon(o_ptr->tval) && o_ptr->tval != TV_MSTAFF) || o_ptr->name1) && (f1 & TR1_KILL_DEMON))) /* allow demons to kill each other with *slay demon* weapons =p */
 			return(1);
 	}
 
