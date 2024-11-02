@@ -4211,10 +4211,6 @@ void do_cmd_options_mus_sdl(void) {
 		   ..and worst, the is no way to retrieve the current music position, so we have to track it manually: curmus_timepos.
 		*/
 		case '4':
-			if (curmus_timepos == -1) { /* No song is playing. */
-				c_message_add("\377yYou must first press ENTER to play a song explicitely, in order to use seek.");
-				break;
-			}
 			Mix_RewindMusic();
 			curmus_timepos -= MUSIC_SKIP; /* Skip backward n seconds. */
 			if (curmus_timepos < 0) curmus_timepos = 0;
@@ -4222,10 +4218,6 @@ void do_cmd_options_mus_sdl(void) {
 			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //paranoia, sync
 			break;
 		case '6':
-			if (curmus_timepos == -1) { /* No song is playing. */
-				c_message_add("\377yYou must first press ENTER to play a song explicitely, in order to use seek.");
-				break;
-			}
 			Mix_RewindMusic();
 			curmus_timepos += MUSIC_SKIP; /* Skip forward n seconds. */
 			Mix_SetMusicPosition(curmus_timepos);
@@ -4239,14 +4231,8 @@ void do_cmd_options_mus_sdl(void) {
 	}
 }
 
-/* Deprecated #if0-branch only: Assume curmus_timepos is not -1, aka a song is actually playing.
-   Otherwise: Assume jukebox_screen is TRUE aka we're currently in the jukebox UI. */
+/* Assume jukebox_screen is TRUE aka we're currently in the jukebox UI. */
 void update_jukebox_timepos(void) {
-#if 0
-	curmus_timepos++; //doesn't catch when we reach the end of the song and have to reset to 0s again, so this should be if0'ed
-	/* Update jukebox song time stamp */
-	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, format("%02d:%02d", curmus_timepos / 60, curmus_timepos % 60));
-#else
 	int i;
 
 	/* NOTE: Mix_GetMusicPosition() requires SDL2_mixer v2.6.0, which was released on 2022-07-08 and the first src package actually lacks build info for sdl2-config.
@@ -4256,10 +4242,11 @@ void update_jukebox_timepos(void) {
 	if (music_cur != -1 && music_cur_song != -1)
 		i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //catches when we reach end of song and restart playing at 0s
 	else i = 0;
-	if (curmus_timepos != -1) curmus_timepos = i;
+
+	curmus_timepos = i;
 	/* Update jukebox song time stamp */
 	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
-#endif
+
 	/* Hack: Hide the cursor */
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
