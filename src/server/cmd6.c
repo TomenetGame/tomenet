@@ -3083,7 +3083,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		/* New Zangband scrolls */
 		case SV_SCROLL_FIRE:
 			sprintf(p_ptr->attacker, " is enveloped by fire for");
-			fire_ball(Ind, GF_FIRE, 0, 200, 4, p_ptr->attacker);
+			fire_ball(Ind, GF_FIRE, 0, 500, 4, p_ptr->attacker);
 			/* Note: "Double" damage since it is centered on the player ... */
 			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire)) {
 				dam = 100 + randint(100);
@@ -3096,7 +3096,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 		case SV_SCROLL_ICE:
 			sprintf(p_ptr->attacker, " enveloped by frost for");
-			fire_ball(Ind, GF_ICE, 0, 200, 4, p_ptr->attacker);
+			fire_ball(Ind, GF_ICE, 0, 500, 4, p_ptr->attacker);
 			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold)) {
 				dam = 100 + randint(100);
 				msg_format(Ind, "You are hit by frost for \377o%d \377wdamage!", dam);
@@ -3109,7 +3109,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			sprintf(p_ptr->attacker, " is enveloped by raw chaos for");
 			fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
 			if (!p_ptr->resist_chaos) {
-				dam = 111 + randint(111);
+				dam = 100 + randint(100);
 				msg_format(Ind, "You are hit by chaos for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Chaos" : "chaos", 0);
 			}
@@ -3637,7 +3637,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	case SV_STAFF_LITE:
 		if (msg) msg_format_near(Ind, "%s calls light.", p_ptr->name);
 		else msg_print_near(Ind, "A light appears.");
-		if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
+		if (lite_area(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), 2)) ident = TRUE;
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite) {
 			dam = damroll(20, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
@@ -4720,7 +4720,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 	case SV_ROD_ILLUMINATION:
 		if (o_ptr) msg_format_near(Ind, "%s calls light.", p_ptr->name);
 		else msg_print_near(Ind, "A light appears.");
-		if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
+		if (lite_area(Ind, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 4), 2)) ident = TRUE;
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite) {
 			dam = damroll(10, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
@@ -5393,7 +5393,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	case SV_ROD_LITE:
 		msg_print(Ind, "A line of blue shimmering light appears.");
-		lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50), FALSE);
+		lite_line(Ind, dir, damroll(2, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50), FALSE);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 9 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 4);
@@ -5530,7 +5530,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	case SV_ROD_ILLUMINATION:
 		msg_format_near(Ind, "%s calls light.", p_ptr->name);
-		if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
+		if (lite_area(Ind, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 4), 2)) ident = TRUE;
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite) {
 			dam = damroll(10, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);

@@ -1504,7 +1504,7 @@ G:?:d
 I:70:50:0
 W:100:0:5:10000
 A:100/8
-D:It creates a ball of chaos that hits the reader too if he doesn't resist.
+D:Creates a ball of chaos for 500 damage. Hits the reader too if not resisting.
 
 N:180:Remove Curse
 G:?:d
@@ -1520,6 +1520,7 @@ I:70:24:0
 W:0:0:5:15
 A:0/1:3/1:10/1
 D:Lights up your close surroundings or a whole room.
+#D:Lights up your close surroundings for 2d8 power or a whole room.
 
 N:182:Fire
 G:?:d
@@ -1527,7 +1528,7 @@ I:70:48:0
 W:50:0:5:1000
 A:50/4
 F:IGNORE_FIRE
-D:It creates a ball of fire that hits the reader too if he doesn't resist.
+D:Creates a ball of fire for 500 damage. Hits the reader too if not resisting.
 
 N:183:Ice
 G:?:d
@@ -1535,7 +1536,7 @@ I:70:49:0
 W:75:0:5:1000
 A:75/6
 F:IGNORE_WATER
-D:It creates a ball of ice that hits the reader too if he doesn't resist.
+D:Creates a ball of ice for 500 damage. Hits the reader too if not resisting.
 
 N:184:Summon Monster
 G:?:d
@@ -1572,7 +1573,7 @@ G:?:d
 I:70:36:0
 W:5:0:5:30
 A:5/1
-D:Makes a few of your subsequent melee attacks apply confusion to your target.
+D:Makes 1d5 of your subsequent melee attacks apply confusion to your target.
 
 N:189:Magic Mapping
 G:?:d
@@ -1586,9 +1587,9 @@ G:?:d
 I:70:38:0
 W:50:0:5:1000
 A:50/2:90/4
-D:Creates a rune on the floor that monsters must break first to cross it.
-D:Monsters cannot attack anyone standing on this rune in melee combat
-D:and they cannot use summon spells on the runed area either.
+D:Creates a rune on the floor that monsters must break to cross it.
+D:Monsters cannot attack anyone standing on this rune in melee
+D:and they cannot summon on the runed area either.
 
 N:191:*Remove Curse*
 G:?:d
@@ -1713,7 +1714,7 @@ G:?:d
 I:70:22:0
 W:40:0:5:150
 A:40/1
-D:Recharges wands, staves or rods.
+D:Attempts to recharges wands, staves or rods.
 
 N:207:Genocide
 G:?:d
@@ -1736,6 +1737,7 @@ I:70:37:0
 W:30:0:5:250
 A:7/2:15/2:30/2
 D:Evil creatures that try to hit you in melee might get repelled temporarily.
+D:Loses effectiveness against monsters of higher level than you.
 
 N:210:Satisfy Hunger
 G:?:d
@@ -1749,7 +1751,7 @@ G:?:d
 I:70:42:0
 W:40:0:5:200
 A:40/1
-D:Damages all undead in your line of sight.
+D:Damages all undead in your line of sight by 100 + your level * 8.
 
 N:212:*Enchant Weapon*
 G:?:d
@@ -2231,7 +2233,7 @@ W:3:0:4:20
 A:3/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-D:Temporarily grants or boosts your infra-vision.
+D:Temporarily grants or extends infra-vision by 50 feet for 100+d100 turns.
 
 N:268:Resistance
 G:!:d
@@ -2256,6 +2258,7 @@ W:3:0:10:200
 A:3/1
 P:0:1d1:0:0:0
 D:Casts a line of light.
+#D:Casts a line of light for 6d8 +0..50 power.
 
 #N:270:Tame Monster
 #G:-:d
@@ -2287,7 +2290,7 @@ I:65:6:0
 W:10:0:10:300
 A:10/1:40/1:80/1
 P:0:1d1:0:0:0
-D:Turns stone and also many less resilient materials to mud.
+D:Turns stone and also many less resilient materials to mud at 20+d30 power.
 
 N:274:Polymorph
 G:-:d
@@ -2568,6 +2571,7 @@ W:5:0:50:250
 A:5/1
 P:0:1d2:0:0:0
 D:Lights up your close surroundings or a whole room.
+#D:Lights up your close surroundings for 6..26d8 power or a whole room.
 
 N:307:*Destruction*
 G:_:d
@@ -2584,7 +2588,7 @@ I:55:7:0
 W:10:0:50:500
 A:10/1
 P:0:1d2:0:0:0
-D:Fires multiple beams of light in a star-shaped pattern for 9d8+0..100 damage.
+D:Fires multiple beams of light in a star-shaped pattern for 5d8+0..100 damage.
 
 N:309:Haste Monsters
 G:_:d
@@ -2699,6 +2703,7 @@ W:5:0:50:0
 A:5/1:50/1
 P:0:1d2:0:0:0
 D:Darkens your close surroundings or a whole room.
+#D:Darkens your close surroundings for 10 power or a whole room.
 
 N:323:Genocide
 G:_:d
@@ -2707,8 +2712,7 @@ W:70:0:50:7500
 A:70/4
 P:0:1d2:0:0:0
 D:Annihilates a certain type of monster on the level, determined by which
-D:monster is standing closest to you. It drains your hit points for each
-D:monster.
+D:monster is standing closest to you. Drains your hit points for each monster.
 
 N:324:Power
 G:_:d
@@ -2995,6 +2999,7 @@ W:20:0:15:1000
 A:20/1
 P:0:1d1:0:0:0
 D:Lights up your close surroundings or a whole room.
+#D:Lights up your close surroundings for 3..23d4 power or a whole room.
 
 N:356:Light
 G:-:d
@@ -3003,6 +3008,7 @@ W:10:0:15:500
 A:10/1
 P:0:1d1:0:0:0
 D:Casts a line of light.
+#D:Casts a line of light for 2d8 +0..50 power.
 
 N:357:Lightning Bolts
 G:-:d
