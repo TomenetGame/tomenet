@@ -3601,6 +3601,10 @@ struct player_type {
 
 	s16b energy;			/* Current energy */
 	bool requires_energy;		/* Player requires energy to perform a normal action instead of shooting-till-kill (and auto-retaliating?) */
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+	s16b reserve_energy;
+	bool triggered_auto_attacking;
+#endif
 
 	s16b food;			/* Current nutrition */
 

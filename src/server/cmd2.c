@@ -6258,6 +6258,9 @@ int do_cmd_run(int Ind, int dir) {
 		}
 
 		/* Make sure we have enough energy to start running */
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+		p_ptr->energy += p_ptr->reserve_energy;
+#endif
 		if (p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed)
 		//if (p_ptr->energy >= level_speed(&p_ptr->wpos)) /* otherwise auto-retaliation will never allow running */
 		{
@@ -6269,20 +6272,35 @@ int do_cmd_run(int Ind, int dir) {
 			/* First step */
 			run_step(Ind, dir, &consume_full_energy);
 
-			if (consume_full_energy) {
+			if (consume_full_energy)
 				/* Consume the normal full amount of energy in case we have e.g. attacked a monster */
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
-			} else {
+			else
 				/* Reset the player's energy so he can't sprint several spaces
 				 * in the first round of running.  */
 				p_ptr->energy = level_speed(&p_ptr->wpos);
-			}
+
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+			if (p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
+				p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
+				p_ptr->energy -= p_ptr->reserve_energy;
+			} else p_ptr->reserve_energy = 0;
+#endif
+
 			return(2);
 		}
+
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+		if (p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
+			p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
+			p_ptr->energy -= p_ptr->reserve_energy;
+		} else p_ptr->reserve_energy = 0;
+#endif
+
 		/* If we don't have enough energy to run and monsters aren't around,
 		 * try to queue the run command.
 		 */
-		else return(0);
+		return(0);
 	}
 	return(2);
 }

@@ -1195,6 +1195,21 @@
    if this option is enabled, they will be unable to use @OM inscription for that instead. */
 #define AUTO_RET_CMD
 
+/* New auto-retaliator: Wait for almost two turns of energy stored up before we use up one for auto-retaliation/FTK.
+   ADVANTAGE is that the player has a lot of energy left for manual intervention, eg escape macros.
+   Usually melee/archers with lots of BpR/SpR had an advantage here as they'd be able to trigger macros in between their attacks, with a lot of turn energy left,
+   while casters who need full turn of energy per cast had to wait longer till their escape/manual keypresses kicked in.
+   DISADVANTAGE is that it takes longer until auto-retaliation/FTK starts, as we need to recuperate enough energy worth almost two turns before we can begin. */
+#define NEW_AUTORET_ENERGY
+
+/* If new auto-retaliator is active: Reserve ~one turn of stored up energy specifically for an after-autoret-action, so the player doesn't notice the recuperation
+   in almost all cases (except if the player never stays idle for a moment before engaging into another autoretaliation), making the overall feel much more
+   smooth and delay-free.
+   Drawback: Since ~one of the ~two turns of energy is reserved, that includes walking, so the player cannot double-tap 'jump' over hazardous terrain anymore for example (DK). */
+#ifdef NEW_AUTORET_ENERGY
+ #define NEW_AUTORET_RESERVE_ENERGY
+#endif
+
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?
    Exploding before it means that players standing in walls will only take 50%
    damage from it, while exploding on the wall grid means normal 100% damage.

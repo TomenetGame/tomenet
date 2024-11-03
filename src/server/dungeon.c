@@ -49,13 +49,6 @@
  #define PALANIM_HOUR_DIV	12
 #endif
 
-/* New auto-retaliator: Wait for almost two turns of energy stored up before we use up one for auto-retaliation/FTK.
-   ADVANTAGE is that the player has a lot of energy left for manual intervention, eg escape macros.
-   Usually melee/archers with lots of BpR/SpR had an advantage here as they'd be able to trigger macros in between their attacks, with a lot of turn energy left,
-   while casters who need full turn of energy per cast had to wait longer till their escape/manual keypresses kicked in.
-   DISADVANTAGE is that it takes longer until auto-retaliation/FTK starts, as we need to recuperate enough energy worth almost two turns before we can begin. */
-#define NEW_AUTORET_ENERGY
-
 /* Failing auto-retaliation with item or cmd (magic devices, spells, mimic powers) due to being out of mana/charges/energy
    and without melee-fallback will not cost the usual 1/3 energy it costs when attempting manually. */
 #define AUTORET_FAIL_FREE
@@ -4077,6 +4070,7 @@ static void process_player_begin(int Ind) {
 	}
 
 #if defined(TARGET_SWITCHING_COST) || defined(TARGET_SWITCHING_COST_RANGED)
+	//Verify: This code should not require additional modifications for NEW_AUTORET_ENERGY:reserve_energy feat
 	if (p_ptr->tsc_lasttarget && p_ptr->energy >= level_speed(&p_ptr->wpos) * 2 - 1) {
 		if (p_ptr->tsc_idle_energy >= level_speed(&p_ptr->wpos)) {
 			p_ptr->tsc_lasttarget = 0;
@@ -7176,6 +7170,9 @@ static void process_player_end(int Ind) {
 					   instead of casting a final time into thin air! */
 					if (target_okay(Ind)) {
 						p_ptr->auto_retaliating = TRUE;
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+						p_ptr->triggered_auto_attacking = TRUE;
+#endif
 
 						if (p_ptr->shoot_till_kill_spell) {
 							cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
@@ -7213,6 +7210,9 @@ static void process_player_end(int Ind) {
 					if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
 					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! */
 						p_ptr->auto_retaliating = TRUE;
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+						p_ptr->triggered_auto_attacking = TRUE;
+#endif
 						/* Use energy */
 						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
 					}
@@ -7229,6 +7229,7 @@ static void process_player_end(int Ind) {
 
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
+		//Verify: This code should not require additional modifications for NEW_AUTORET_ENERGY:reserve_energy feat
 		while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
 			char consume_full_energy;
 

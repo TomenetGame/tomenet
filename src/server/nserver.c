@@ -3934,11 +3934,26 @@ void process_pending_commands(int ind) {
 	// to lack of energy will be put into the queue for next turn by the
 	// respective receive function.
 
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+	/* Make only up to one turn of energy available for manual player actions,
+	   keep the rest in reserve to let the auto-retaliator/FTK kick in without an extra delay of up to a turn.
+	   Drawback: Player can no longer double-tap actions to effectively execute two actions (in just about a single turn)
+	   after building up almost 2 turns of energy, such as 'hopping' over lava in Dungeon Keeper.
+	   Also, this hack affects running so running has to handle reserve_energy properly to keep working normally. */
+	//if (!p_ptr->auto_retaliating && !p_ptr->shooting_till_kill /* For these two scenarios we saved up the extra turn of energy, to be able to act instantly (eg teleport out) */
+	if (!p_ptr->triggered_auto_attacking
+	    && p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
+		p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
+		p_ptr->energy -= p_ptr->reserve_energy;
+	} else p_ptr->reserve_energy = 0;
+#endif
+
 	//while ((p_ptr->energy >= level_speed(p_ptr->dun_depth)) &&
 	//while ((connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
 	//while ((connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
 	while ((connp->r.ptr < connp->r.buf + connp->r.len)) {
 		char *foo = connp->r.ptr;
+
 		type = (connp->r.ptr[0] & 0xFF);
 		if (type != PKT_KEEPALIVE && type != PKT_PING) {
 			connp->inactive_keepalive = 0;
@@ -3952,6 +3967,10 @@ void process_pending_commands(int ind) {
 		if (!Conn[ind]) return;
 
 		connp->r.state &= ~SOCKBUF_LOCK;
+
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+		p_ptr->triggered_auto_attacking = FALSE;
+#endif
 
 		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
@@ -3976,7 +3995,13 @@ void process_pending_commands(int ind) {
 			break;
 		}
 		if (connp->state == CONN_PLAYING) connp->start = turn;
-		if (result == -1) return;
+		if (result == -1) {
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+			/* Don't forget to reverse hack before we leave here: Restore reserved energy */
+			p_ptr->energy += p_ptr->reserve_energy;
+#endif
+			return;
+		}
 
 		// We didn't have enough energy to execute an important command.
 		if (result == 0) {
@@ -4031,6 +4056,11 @@ void process_pending_commands(int ind) {
 	 */
 	if (NumPlayers == num_players_start)
 		if (!p_ptr->energy) p_ptr->energy = old_energy;
+
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+	/* Reverse the hack: Restore reserved energy */
+	p_ptr->energy += p_ptr->reserve_energy;
+#endif
 }
 
 /*
@@ -13499,7 +13529,11 @@ int toggle_rest(int Ind, int turns) {
 #endif
 
 	/* Resting takes a lot of energy! */
-	if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos) * 2) - 1) {
+	if (p_ptr->energy
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+	    + p_ptr->reserve_energy
+#endif
+	    >= (level_speed(&p_ptr->wpos) * 2) - 1) {
 		/* Set flag */
 		p_ptr->resting = turns;
 #if WARNING_REST_TIMES > 0
@@ -13521,6 +13555,10 @@ int toggle_rest(int Ind, int turns) {
 		// use Handle_clear_actions(Ind) instead of all this?
 
 		/* Take a lot of energy to enter "rest mode" */
+#ifdef NEW_AUTORET_RESERVE_ENERGY
+		p_ptr->energy += p_ptr->reserve_energy;
+		p_ptr->reserve_energy = 0;
+#endif
 		p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
 
 		/* Redraw */
