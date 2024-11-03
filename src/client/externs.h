@@ -1080,6 +1080,7 @@ extern int stricmp(cptr a, cptr b);
 #ifdef USE_X11
 /* main-x11.c */
 void all_term_data_to_term_prefs(void);
+extern long x11_win_term_main;
 #endif
 
 #ifdef WINDOWS

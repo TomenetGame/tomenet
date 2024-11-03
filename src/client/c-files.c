@@ -1919,6 +1919,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 	char buf[1024];
 	char file_name[256];
 
+
 	x = strlen(name) - 4;
 
 	/* Replace "????" in the end */
@@ -2019,6 +2020,25 @@ void xhtml_screenshot(cptr name, byte redux) {
 			rename(buf, buf2);
 		}
 	}
+
+#ifdef USE_X11
+ #ifdef ENABLE_SHIFT_SPECIALKEYS
+	/* Hack: SHIFT+CTRL+T makes a real (PNG) screenshot instead, if imagemagick's 'import' is available. - C. Blue */
+	if (inkey_shift_special == 3 && x11_win_term_main) {
+		char buf2[1028];
+
+		strcpy(buf2, buf);
+		buf2[strlen(buf2) - 5] = 0;
+		if (!system(format("import -window %d %spng", x11_win_term_main, buf2))) {
+			strcpy(buf2, file_name);
+			buf2[strlen(buf2) - 5] = 0;
+			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
+			else silent_dump = FALSE;
+		} else c_msg_format("Error: Couldn't 'import' to screenshot '%s'.", buf2);
+		return;
+	}
+ #endif
+#endif
 
 	fp = fopen(buf, "wb");
 	if (!fp) {

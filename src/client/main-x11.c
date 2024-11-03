@@ -404,6 +404,9 @@ static infofnt *Infofnt = (infofnt*)(NULL);
 
 
 
+long x11_win_root = 0, x11_win_term_main = 0;
+
+
 
 /* OPEN: x-metadpy.c */
 
@@ -461,6 +464,8 @@ static errr Metadpy_init_2(Display *dpy, cptr name) {
 	/* Get the Screen and Virtual Root Window */
 	m->screen = DefaultScreenOfDisplay(dpy);
 	m->root = RootWindowOfScreen(m->screen);
+
+	x11_win_root = m->root;
 
 	/* Get the default colormap */
 	m->cmap = DefaultColormapOfScreen(m->screen);
@@ -596,6 +601,13 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h, unsigned i
 	/* Start out selecting No events */
 	XSelectInput(Metadpy->dpy, xid, 0L);
 
+	/* Remember main window for making screenshots later via via 'import'. - C. Blue
+	   Note that we assume that the first window initialized here is the main screen. */
+	if (x11_win_root == dad && !x11_win_term_main) {
+		/* We need this just for making screenshots later, so only set it differently
+		   from FALSE if we don't actually have the required screenshot tool: */
+		if (!system("which import")) x11_win_term_main = xid;
+	}
 
 	/* Assign stuff */
 	Infowin->win = xid;

@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 1. November 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 3. November 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1160,6 +1160,10 @@ CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
 
 CTRL+T  take a screen shot. See /screenshot command below.
+SHIFT+CTRL+T
+        X11 client only: Takes a screen shot in PNG format. This function
+        requires the package 'imagemagick' to be installed, as it utilizes
+        its 'import' command.
 
 TAB or CTRL+I
         displays lag-o-meter.
@@ -1983,6 +1987,10 @@ They all start with a slash '/' hence they're called slash commands:
             writes to 'screenshot?????.xhtml' by default, where ????? are
             increasing numbers. You may also use CTRL+T.
             You can view those xhtml files in most webbrowsers.
+            Also see /png command for how to convert screenshots to PNG format.
+
+            On X11 clients you can directly screenshot PNG files if you have
+            the package imagemagick installed, see SHIFT+CTRL+T hotkey.
 
 /shuffle    See further up, above /deal command.
 
@@ -3840,6 +3848,7 @@ packages you can install on Linux:
 - xclip: For using copy/paste capabilities.
 - coreutils (for readlink) and Firefox or Chrome or Chromium:
   For making PNG screenshots.
+- imagemagick for making PNG screenshots directly (via SHIFT+CTRL+T hotkey).
 - 7-zip: 7zG on X11, 7z on GCU. For installing or updating audio packs.
 
 
