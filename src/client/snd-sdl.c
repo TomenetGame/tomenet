@@ -3690,6 +3690,31 @@ void do_cmd_options_mus_sdl(void) {
 	}
 #endif
 
+	/* Hack: Find out song length of currently active music event song by trial and error o_O */
+	{ int lb, l;
+	double p; //ohoho -_-
+	p = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
+	//Mix_RewindMusic();
+	lb = 0;
+	l = (99 * 60 + 59) * 2; //asume 99:59 min is max duration of any song
+	while (l > 1) {
+		l >>= 1;
+		Mix_SetMusicPosition(lb + l);
+
+		/* Check for overflow beyond actual song length */
+		i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
+		/* Too far? */
+		if (!i) continue;
+
+		/* We found a minimum duration */
+		lb = i;
+	}
+	song_dur = lb;
+	/* Reset position */
+	Mix_SetMusicPosition(p);
+	}
+
+
 	/* Interact */
 	while (go) {
 #ifdef ENABLE_JUKEBOX
