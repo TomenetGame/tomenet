@@ -7720,13 +7720,24 @@ if (cfg.unikill_format) {
 			/* Drop it in the dungeon */
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
+		/* Halloween townies */
+		} else if (!r_ptr->level && m_ptr->blow[1].method == RBM_MOAN) {
+			if (magik(33)) {
+				qq_ptr = &forge;
+				invcopy(qq_ptr, lookup_kind(TV_FOOD, SV_FOOD_FORTUNE_COOKIE));
+				qq_ptr->number = 1;
+				qq_ptr->level = 1;
+				drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
+			}
+		}
+
 		/* PernAngband additions */
 		/* Mega^2-hack -- destroying the Stormbringer gives it us! But we cannot farm it for others as winner >_>. */
 #ifdef PRE_OWN_DROP_CHOSEN
  /* Stormbringer maybe not pre-owned? hm. */
  //#define STORMBRINGER_PRE_OWN
 #endif
-		} else if (r_idx == RI_STORMBRINGER
+		else if (r_idx == RI_STORMBRINGER
 #ifndef STORMBRINGER_PRE_OWN
 		    && !p_ptr->total_winner
 #endif
