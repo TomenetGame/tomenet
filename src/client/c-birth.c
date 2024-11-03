@@ -2417,6 +2417,7 @@ bool meta_connect(void) {
 bool get_server_name(void) {
 	s32b i;
 	cptr tmp;
+	bool meta_failed;
 
 #ifdef EXPERIMENTAL_META
 	int j;
@@ -2452,7 +2453,14 @@ bool get_server_name(void) {
 
 	/* Connect to meta, and then read server list and then close the connection again!
 	   If anything fails, call manual server name input request instead. */
-	if (!meta_connect() || !meta_read_and_close()) return enter_server_name();
+	meta_failed = !meta_connect() || !meta_read_and_close();
+#ifdef USE_SOUND_2010
+	if (use_sound) {
+		/* This is the first music the player can get to hear, even before title screen... */
+		music(exec_lua(0, "return get_music_index(\"meta\")") + 10000 + 20000); //hack: play instantly w/o fade-in and don't repeat
+	}
+#endif
+	if (meta_failed) return(enter_server_name());
 
 #ifdef META_PINGS
 	/* Test for 'ping' command availability (should always be there though).

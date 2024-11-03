@@ -104,6 +104,8 @@ static int thread_load_audio(void *dummy);
 static Mix_Chunk* load_sample(int idx, int subidx);
 static Mix_Music* load_song(int idx, int subidx);
 
+static bool play_music_instantly(int event);
+
 
 /* Arbitrary limit of mixer channels */
 #define MAX_CHANNELS	32
@@ -2255,9 +2257,12 @@ void ambient_handle_fading(void) {
 
 /*
  * Play a music of type "event".
+ * Hack: If 10000 is added to 'event', the music is played instantly without fade-in effect.
  */
 static bool play_music(int event) {
 	int n, initials = 0, vols = 100;
+
+	if (event > 9000) return(play_music_instantly(event - 10000)); //scouter (just in case: carry over all event-hax)
 
 	/* Paranoia */
 	if (event < -4 || event >= MUSIC_MAX) return(FALSE);
@@ -2634,11 +2639,18 @@ static void fadein_next_music(void) {
 	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000);
 }
 
-#ifdef JUKEBOX_INSTANT_PLAY
+//#ifdef JUKEBOX_INSTANT_PLAY
+/* Hack: event >= 20000 means 'no repeat'. */
 static bool play_music_instantly(int event) {
 	Mix_Music *wave = NULL;
+	bool no_repeat = FALSE;
 
 	Mix_HaltMusic();
+
+	if (event >= 19000) { //carry over any hacks just in case
+		no_repeat = TRUE;
+		event -= 20000;
+	}
 
 	/* We just wanted to top currently playing music, do nothing more and just return. */
 	if (event == -2) {
@@ -2680,10 +2692,10 @@ static bool play_music_instantly(int event) {
 
 	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music and c_cfg.play_all (and 'initial' song status) here.
 	   To get to hear other sub-songs, the user can press ENTER again to restart this music event with a different sub-song. */
-	Mix_PlayMusic(wave, -1);
+	Mix_PlayMusic(wave, no_repeat ? 0 : -1);
 	return(TRUE);
 }
-#endif
+//#endif
 
 
 #ifdef DISABLE_MUTED_AUDIO
