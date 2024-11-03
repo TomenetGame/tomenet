@@ -2041,8 +2041,9 @@ void handle_music(int Ind) {
 				}
 				/* Actual use seasonally independant town's music as replacement.
 				   If we have seasonal music, this way the tavern makes a difference.
-				   If we don't have seasonal music.. we cannot use it anyway =p. */
-				Send_music(Ind, tmus_inverse, seasonal_music ? tmus_reserve : tmus, seasonal_music ? tmus_reserve : tmus);
+				   If we don't have seasonal music.. we cannot use it anyway =p
+				   (...and fall back to the normal town music 'reserve', depending on day/night). */
+				Send_music(Ind, tmus_inverse, seasonal_music ? tmus : tmus_reserve, tmus_reserve);
 				return;
 			}
 
