@@ -3848,7 +3848,7 @@ packages you can install on Linux:
   the knowledge (~) menu.
 - xclip: For using copy/paste capabilities.
 - coreutils (for readlink) and Firefox or Chrome or Chromium:
-  For making PNG screenshots.
+  For converting XHTML to PNG screenshots.
 - imagemagick for making PNG screenshots directly (via SHIFT+CTRL+T hotkey).
 - 7-zip: 7zG on X11, 7z on GCU. For installing or updating audio packs.
 
