@@ -57,7 +57,7 @@ Contents
     (1.3b)  How to encounter the final boss: Morgoth, Lord of Darkness
     (1.4)   History of TomeNET development
 (2) Installation & setup
-    (2.1)   Installing/updating TomeNET (Windows/Linux/OSX)
+    (2.1)   Installing/updating TomeNET (Windows/Linux/Mac OS X)
     (2.1a)  Windows (custom/compilation)
     (2.1b)  Linux (custom/compilation)
     (2.1c)  Mac OS X (custom/compilation)
@@ -249,7 +249,8 @@ restoration of deleted characters and their house contents to some extent.
 More information about character and account timeout at (3.12).
 
 If you are using Linux, you will find additional information about how to
-compile the game under '(2.1) Installing/updating TomeNET (Windows/Linux/OSX)'.
+compile the game under
+ '(2.1) Installing/updating TomeNET (Windows/Linux/Mac OS X)'.
 
 If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
 (compare problem 54 in the troubleshooting section (9.8)) or you might not be
@@ -500,7 +501,7 @@ will override colours with interpolations of the 'normal' palette scheme.
 
 Alternatively you can modify the colours by editing the game's config file:
 On Windows OS that is TomeNET.ini (in your TomeNET folder) and on Linux and
-OS X that is .tomenetrc (in your user's home folder).
+Mac OS X that is .tomenetrc (in your user's home folder).
 
 The settings in these files are called 'Colormap_N=#xxxxxx' in TomeNET.ini and
 'colormap_N #xxxxxx' in .tomenetrc, where N is an index from 0 to 15 as TomeNET
@@ -548,7 +549,7 @@ pressing the following keys in game to access the various options pages (1-7):
 -------------------------------
 If the dark blue colour is not well readable on your screen, you can edit it
 like all other colours in  = c  or alternatively by editing your config file
-(TomeNET.ini on Windows, .tomenetrc on Linux and OS X) and find the line
+(TomeNET.ini on Windows, .tomenetrc on Linux and Mac OS X) and find the line
 'lighterDarkBlue'.
 In TomeNET.ini set it to 1 instead of 0, in .tomenetrc uncomment the line by
 removing the leading '#' symbol. Restart your game client.
@@ -1120,7 +1121,7 @@ CTRL+P  view previous messages.
         through lines that you previously typed (also see CTRL+N, which cycles
         forwards).
         Press CTRL+K in here to copy the bottom-most line to the OS clipboard.
-        On Linux/OSX this requires 'xclip' to be installed.
+        On Linux/Mac OS X this requires 'xclip' to be installed.
         Hint: Tapping CTRL+K twice will try to extract an URL from the bottom-
         most line and copy that to the OS clipboard instead, if it finds one.
         Note that the search function here works in reverse from bottom to top.
@@ -1128,7 +1129,7 @@ CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
         Press CTRL+K in here to copy the bottom-most line to the OS clipboard
         (or double-tap to try and extract a URL and copy that one instead).
-        On Linux/OSX this requires 'xclip' to be installed.
+        On Linux/Mac OS X this requires 'xclip' to be installed.
         Note that the search function here works in reverse from bottom to top.
 
 CTRL+Q  save your character & quit the game. (You should do this in town!)
@@ -1223,7 +1224,7 @@ CTRL+K      Copies currently typed chat line to clipboard.
             double-tapped - tries to extract a URL and copy that one instead.
 CTRL+L      Pastes current OS clipboard as chat line (erasing any existing
             text you might have been typing in).
-            On Linux/OSX this requires 'xclip' to be installed.
+            On Linux/Mac OS X this requires 'xclip' to be installed.
 
 
 (0.2b) Slash commands
@@ -3753,8 +3754,8 @@ server hosted by OVH in France, with the servers being provided by Mikael.
 (2) Installation & setup
 ========================
 
-(2.1) Installing/updating TomeNET (Windows/Linux/OSX)
------------------------------------------------------
+(2.1) Installing/updating TomeNET (Windows/Linux/Mac OS X)
+----------------------------------------------------------
 
 Basic installation:
 -------------------
@@ -3775,7 +3776,7 @@ Windows:        'TomeNET.exe' (or double-click the desktop TomeNET icon,
 
 Linux:          the 'tomenet' binary.
 
-OS X:           'TomeNET.command' (which prepares and runs 'tomenet'.)
+Mac OS X:       'TomeNET.command' (which prepares and runs 'tomenet'.)
 
 
 Updating via reinstallation:
@@ -3839,8 +3840,8 @@ programs you can install on Windows:
 - 7-zip (www.7-zip.org): For installing or updating audio packs.
 - Firefox or Chrome or Chromium: For making PNG screenshots.
 
-Optional dependencies on Linux:
--------------------------------
+Optional dependencies on Linux/Mac OS X:
+----------------------------------------
 To make use of all features of the game, there are the following optional
 packages you can install on Linux:
 - xdg-utils (for xdg-open) on X11: For opening folders and URLs from whithin
@@ -3866,7 +3867,7 @@ latest stable version number, be aware that it might stop working correctly
 unexpectedly because it's undergoing development, possibly forcing you to
 redownload it.
 
-Covered in the following are Windows, Linux, OS X, FreeBSD and Android:
+Covered in the following are Windows, Linux, Mac OS X, FreeBSD and Android:
 
 
 (2.1a) Windows (custom/compilation)
@@ -4388,12 +4389,12 @@ Starting with client version 4.4.9, there is an automatic installer for sound
 and music pack:
 
 Step 1:
- WINDOWS/OS X:
+ Windows / Mac OS X:
   Make sure you have 7zip installed. It's a free, powerful multi-platform
   archiving tool (fit to replace WinRAR, WinZip etc).
   Get it from www.7-zip.org.
 
- LINUX:
+ Linux:
   Make sure you have 7zip installed. The package name is p7zip.
   Note that some Linux distributions (Ubuntu) have another package called
   p7zip-full and the package p7zip is lacking certain parts. In that case
@@ -4541,7 +4542,7 @@ use an audio editor, for example:
 'Goldwave' is a good sound editor for Windows OS, which is free to use
   (although it asks for registration, but that's just optional.)
 Alternatively, the free open source audio editor 'Audacity' is available
-  for Linux, OS X and Windows.
+  for Linux, Mac OS X and Windows.
 
 For more specific editing, open the files 'sound.cfg' (in the sound folder) or
 'music.cfg' (in the music folder, if a music pack has been installed) in any
@@ -4652,7 +4653,7 @@ internet provider ever has DNS problems and you cannot connect to the server)
 by double-clicking 'TomeNET-direct.bat' to directly connect to official main
 server's IP address.
 
-On OSX you run the 'TomeNET.command' file, on Linux the 'tomenet' binary.
+On Mac OS X you run the 'TomeNET.command' file, on Linux the 'tomenet' binary.
 
 (Side note about the official servers:
  The official main server's hostname is "europe.tomenet.eu"
@@ -5051,12 +5052,12 @@ Solution:   Go to "Settings" -> "Certificate Wizard", create a new certificate.
 PROBLEM M2: You get a message "the remote host closed the connection".
 Solution:   Can be caused by some firewalls interacting with mumble's quality
             of service optimizations. You can disable QOS in mumble:
-            Windows/Linux:
+            Windows / Linux:
              -click "Configure" -> "Settings".
              -look down to the bottom left corner and activate "Advanced".
              -click on "Network" on the left side panel.
              -deactivate/uncheck "Use Quality of Service".
-            OS X:
+            Mac OS X:
              -in the top menu bar click "Mumble" -> "Preferences".
              -look up to the top right corner and activate "Advanced".
              -click on "Network" tab.
@@ -5098,11 +5099,11 @@ client. Again press = f and then use + and - keys to switch the main window
 font. These two keys allow you to switch through all fonts available in the
 lib/xtra/font folder.
 
-For the Linux/OS X client, the game doesn't use the lib/xtra/font folder but
-instead assumes that some standard fonts are provided by your system and tries
-to select those when cycling with 'c' key in the fonts menu.
+For the Linux/Mac OS X client, the game doesn't use the lib/xtra/font folder
+but instead assumes that some standard fonts are provided by your system and
+tries to select those when cycling with 'c' key in the fonts menu.
 You can also set fonts manually with = f if you want to choose specific fonts
-available in your Linux/OS X installation.
+available in your Linux / Mac OS X installation.
 
 To manually install your own fonts on POSIX, see the instructions for Linux two
 paragraphs below in (2.7a), it should be in bdf or pcf format.
@@ -5246,7 +5247,7 @@ elements in the UI (especially if a player has 'solid_bars' option enabled).
 When using a custom font you probably want to turn off the option
 'font_map_solid_walls' in = 1, as it interferes with the mapping of various
 wall tiles: It will force-remap all affected wall tiles to character 127 for
-Windows clients and to character 2 for Linux/OS X clients and all treasure
+Windows clients and to character 2 for Linux/Mac OS X clients and all treasure
 veins ('*' symbol in the game, aka walls with treasure to mine) to character 1,
 which looks like a diamond in the standard fonts.
 It will also change the colour of quartz veins form default 'white' or whatever
@@ -5275,9 +5276,9 @@ Animated (flickering in multiple hues) colours:
 (56 thin fire)     57  starlight
 
 
-For the Linux/OS X client you'll need to either convert FON fonts to PCF format
-(bitmap font files) or create fonts directly in PCF format. BDF format might
-work too, depending on your system.
+For the Linux/Mac OS X client you'll need to either convert FON fonts to PCF
+format (bitmap font files) or create fonts directly in PCF format. BDF format
+might work too, depending on your system.
 Add them to your system with the usual font-adding procedures for your specific
 Linux distribution, then you can select them in TomeNET via  = f  (or enter
 them directly in your .tomenetrc config file).
@@ -6069,9 +6070,9 @@ Copy/paste from and into chat:
 Similar to message scrollback (CTRL+O/P), you can copy/paste while in the chat
 prompt, too:
 CTRL+K will copy the currently written text in your active chat prompt to the
-OS clipboard (requires xclip to be installed on Linux/OSX), and CTRL+L will
-paste the current OS clipboard into your chat prompt, thereby erasing anything
-you were aleady typing in).
+OS clipboard (requires xclip to be installed on Linux/Mac OS X), and CTRL+L
+will paste the current OS clipboard into your chat prompt, thereby erasing
+anything you were aleady typing in).
 Double-tapping CTRL+K will specifically attempt to extract an URL from your
 chat input and copy that one to the clipboard.
 
@@ -26553,7 +26554,7 @@ Note: After logging in you may press '?' key for a help screen.
  If you log on to an Arcade Server, your client will automatically attempt to
  load the required macro file to play, which is
   - 'arcade-win.prf' on Windows OS
-  - 'arcade-x11.prf' on X11 (Linux/OS X)
+  - 'arcade-x11.prf' on X11 (Linux / Mac OS X)
 
  If your client is older than 4.5.3 you probably don't have these macros.
  In that case you can download them at the bottom of the downloads page on
@@ -27369,13 +27370,13 @@ Solution:   You can resize windows that hold messages (chat and/or game
             remember its new size unless you also save your client options
             after you resized it (press '=' and then 's' to save those).
             Alternatively, you can edit the TomeNET.ini file (on Windows) or
-            the .tomenetrc file (on Linux or OS X) and change the amount of
-            lines for each window manually.
+            the .tomenetrc file (on Linux or Mac OS X) and change the amount
+            of lines for each window manually.
             Other than that, you can also increase the font size (that is the
             text size) in TomeNET: Either press '=' key and then cycle through
             pre-defined font sizes by tapping 'f' key, or again you can edit
-            the TomeNET.ini file (Windows) or .tomenetrc file (Linux/OS X) to
-            set fonts manually for each game window.
+            the TomeNET.ini file (Windows) or .tomenetrc file (Linux/Mac OS X)
+            to set fonts manually for each game window.
             Well, and you could change your actual screen resolution of course.
 
 PROBLEM 38: When I join the server I get spammed with violet LUA error messages
@@ -27434,9 +27435,9 @@ Solution:   This can happen on really bad/slow internet connections such as via
 
 PROBLEM 45: The dark blue colour is too dark on my screen to be readable.
 Solution:   Edit your config file (TomeNET.ini on Windows, .tomenetrc on Linux
-            and OS X) and find the line 'lighterDarkBlue'. In TomeNET.ini set
-            it to 1 instead of 0, in .tomenetrc uncomment the line by removing
-            the leading '#' symbol. Restart your game client.
+            and Mac OS X) and find the line 'lighterDarkBlue'. In TomeNET.ini
+            set it to 1 instead of 0, in .tomenetrc uncomment the line by
+            removing the leading '#' symbol. Restart your game client.
 
 PROBLEM 46: Sound sound effects, mostly the page sound (when someone pages you
             with the /page command) sounds oddly distorted.
@@ -27564,12 +27565,12 @@ Solution:   Tell SDL to use Pulseaudio instead of ALSA, as your system is most
               export SDL_AUDIODRIVER=pulse
               ./tomenet $@
 
-PROBLEM 59: On OS X when I run TomeNET.command file, nothing happens, or when
-            I run it from within a terminal, TomeNET only starts in non-window
-            mode, ie terminal mode.
-Solution:   TomeNET requires X11 to run in windowed mode. To provide X11 on
-            OS X, install 'XQuartz' and run the 'TomeNET.command' file from
-            within it.
+PROBLEM 59: On Mac OS X when I run TomeNET.command file, nothing happens, or
+            when I run it from within a terminal, TomeNET only starts in
+            non-window mode, ie terminal mode.
+Solution:   TomeNET requires X11 to run in windowed mode. To provide X11
+            on Mac OS X, install 'XQuartz' and run the 'TomeNET.command' file
+            from within it.
 
 PROBLEM 60: Editing the Colormap_0 entry (TomeNET.ini) or colormap_0 entry
             (.tomenetrc) doesn't do anything, no matter which colour I choose.
