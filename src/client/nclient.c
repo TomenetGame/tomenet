@@ -4641,15 +4641,24 @@ int Receive_sound(void) {
 }
 
 int Receive_music(void) {
-	int n;
-	char ch, m, m2 = -1, m3 = -1;
+	char ch;
+	int n, m, m2 = -1, m3 = -1;
+	char cm, cm2, cm3;
 
-	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &m3)) <= 0) return(n);
+	if (is_atleast(&server_version, 4, 9, 2, 1, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d", &ch, &m, &m2, &m3)) <= 0) return(n);
+	} else if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &cm, &cm2, &cm3)) <= 0) return(n);
+		m = cm;
+		m2 = cm2;
+		m3 = cm3;
 	} else if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &m, &m2)) <= 0) return(n);
+		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &cm, &cm2)) <= 0) return(n);
+		m = cm;
+		m2 = cm2;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0) return(n);
+		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &cm)) <= 0) return(n);
+		m = cm;
 	}
 
 #ifdef USE_SOUND_2010
@@ -4666,17 +4675,25 @@ int Receive_music(void) {
 	if (!music(m)) { if (!music(m2)) music(m3); }
 #endif
 
-flick_global_time = ticks;
+	flick_global_time = ticks;
 	return(1);
 }
 int Receive_music_vol(void) {
-	int n;
-	char ch, m, m2 = -1, m3 = -1, v;
+	char ch, v;
+	int n, m, m2 = -1, m3 = -1;
+	char cm, cm2, cm3;
 
-	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &m, &m2, &m3, &v)) <= 0) return(n);
+	if (is_atleast(&server_version, 4, 9, 2, 1, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%c", &ch, &m, &m2, &m3, &v)) <= 0) return(n);
+	} else if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &cm, &cm2, &cm3, &v)) <= 0) return(n);
+		m = cm;
+		m2 = cm2;
+		m3 = cm3;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &v)) <= 0) return(n);
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &cm, &cm2, &v)) <= 0) return(n);
+		m = cm;
+		m2 = cm2;
 	}
 
 #ifdef USE_SOUND_2010

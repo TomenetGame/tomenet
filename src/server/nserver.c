@@ -9236,7 +9236,9 @@ int Send_music(int Ind, int music, int musicalt, int musicalt2) {
 			p_ptr2->musicalt_current = musicalt;
 			p_ptr2->musicalt2_current = musicalt2;
 			p_ptr2->music_vol = 100;
-			if (is_atleast(&connp2->version, 4, 8, 1, 2, 0, 0))
+			if (is_atleast(&connp2->version, 4, 9, 2, 1, 0, 1))
+				Packet_printf(&connp2->c, "%c%d%d%d", PKT_MUSIC, music, musicalt, musicalt2);
+			else if (is_atleast(&connp2->version, 4, 8, 1, 2, 0, 0))
 				Packet_printf(&connp2->c, "%c%c%c%c", PKT_MUSIC, music, musicalt, musicalt2);
 			else if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 1))
 				Packet_printf(&connp2->c, "%c%c%c", PKT_MUSIC, music, musicalt);
@@ -9259,7 +9261,9 @@ int Send_music(int Ind, int music, int musicalt, int musicalt2) {
 		return(0);
 	}
 
-	if (is_atleast(&connp->version, 4, 8, 1, 2, 0, 0))
+	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1))
+		return Packet_printf(&connp->c, "%c%d%d%d", PKT_MUSIC, music, musicalt, musicalt2);
+	else if (is_atleast(&connp->version, 4, 8, 1, 2, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC, music, musicalt, musicalt2);
 	else if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
 		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
@@ -9285,7 +9289,10 @@ int Send_music_vol(int Ind, int music, int musicalt, int musicalt2, char vol) {
 			p_ptr2->music_current = music;
 			p_ptr2->musicalt_current = musicalt;
 			p_ptr2->musicalt2_current = musicalt2;
-			if (is_atleast(&connp2->version, 4, 8, 1, 2, 0, 0)) {
+			if (is_atleast(&connp2->version, 4, 9, 2, 1, 0, 1)) {
+				p_ptr2->music_vol = vol;
+				Packet_printf(&connp2->c, "%c%d%d%d%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol);
+			} else if (is_atleast(&connp2->version, 4, 8, 1, 2, 0, 0)) {
 				p_ptr2->music_vol = vol;
 				Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol);
 			} else if (is_atleast(&connp2->version, 4, 7, 3, 2, 0, 0)) {
@@ -9315,7 +9322,10 @@ int Send_music_vol(int Ind, int music, int musicalt, int musicalt2, char vol) {
 	}
 
 	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, p_ptr->name, Ind);//debug
-	if (is_atleast(&connp->version, 4, 8, 1, 2, 0, 0)) {
+	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1)) {
+		p_ptr->music_vol = vol;
+		return Packet_printf(&connp->c, "%c%d%d%d%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol);
+	} else if (is_atleast(&connp->version, 4, 8, 1, 2, 0, 0)) {
 		p_ptr->music_vol = vol;
 		return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol);
 	} else if (is_atleast(&connp->version, 4, 7, 3, 2, 0, 0)) {
