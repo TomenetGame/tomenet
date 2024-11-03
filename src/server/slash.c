@@ -6191,6 +6191,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "You will see true artifact/monster lore pasted to public chat.");
 			}
 			return;
+		} else if (prefix(messagelc, "/instar")) { //for before next client release, to make this already accessible
+			if (p_ptr->instant_retaliator == FALSE) {
+				p_ptr->instant_retaliator = TRUE;
+				msg_print(Ind, "Auto-retaliator works the old way, starts instantly but saves no reserve energy.");
+			} else {
+				p_ptr->instant_retaliator = FALSE;
+				msg_print(Ind, "Auto-retaliator works the new way, wind-up delay to save reserve energy.");
+			}
+			return;
 		}
 
 

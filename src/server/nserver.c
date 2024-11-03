@@ -2739,6 +2739,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->autopickup_chemicals = options[162];
 		p_ptr->add_kind_diz = options[163];
 		p_ptr->hide_lore_paste = options[164];
+		p_ptr->instant_retaliator = options[165];
 	}
 }
 

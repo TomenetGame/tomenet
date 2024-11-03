@@ -7163,7 +7163,7 @@ static void process_player_end(int Ind) {
 			   Main drawback: Walking into a mob will not smoothly transgress into auto-ret the next turn,
 			   but wait for an extra turn before it begins, ie taking 2 turns (minus '1 point of energy', to be exact) until first attack got in.
 			   (Note that this e*2-1 amount of energy is also the maximum a player can store, according to limit_energy().) */
-			if (p_ptr->energy >= energy * 2 - 1) {
+			if (p_ptr->energy >= (p_ptr->instant_retaliator ? energy : energy * 2 - 1)) {
 #endif
 				/* assume nothing will happen here */
 				p_ptr->auto_retaliating = FALSE;
