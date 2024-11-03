@@ -860,10 +860,6 @@ int scan_navi_key(cptr buf, bool string_input_relevance) {
 char inkey_combo(bool modify_allowed, int *cursor_pos, cptr input_str) {
 	char i;
 
-#ifdef ENABLE_SHIFT_SPECIALKEYS
-	inkey_shift_special = 0x0;
-#endif
-
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 	inkey_location_keys = TRUE;
  #if 0 /* All of this isn't that cool. Instead, let's only auto-enter edit mode if user actually presses an arrow/positional key, making use of this whole feature thing. */
@@ -1386,6 +1382,10 @@ char inkey(void) {
 	static int inkey_location_key_index = 0;
 	static char inkey_location_key_sequence[INKEY_LOCATION_KEY_SIZE];
 	static int inkey_location_key_tick = -1;
+#endif
+
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+	inkey_shift_special = 0x0;
 #endif
 
 
