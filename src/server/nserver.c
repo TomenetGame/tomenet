@@ -2740,7 +2740,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->add_kind_diz = options[163];
 		p_ptr->hide_lore_paste = options[164];
 		p_ptr->instant_retaliator = options[165];
-	}
+	} else p_ptr->instant_retaliator = TRUE;
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,

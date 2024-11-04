@@ -591,8 +591,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.hide_lore_paste,	FALSE,	7,	0, 164, TRUE,
 	    "hide_lore_paste",		"Hide artifact/monster lore pastes in public chat" },
 
-	{ &c_cfg.instant_retaliator,	FALSE,	2,	0, 165, TRUE,
-	    "instant_retaliator",	"Autoretaliate instantly but forego reserve energy" },
+	{ &c_cfg.instant_retaliator,	TRUE,	2,	0, 165, TRUE,
+	    "instant_retaliator",	"Autoretaliate instantly but forego reserve energy" }, //note: includes FTK
 };
 
 cptr melee_techniques[16] = {
