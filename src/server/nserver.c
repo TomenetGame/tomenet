@@ -13556,7 +13556,7 @@ int toggle_rest(int Ind, int turns) {
 
 		/* Take a lot of energy to enter "rest mode" */
 #ifdef NEW_AUTORET_RESERVE_ENERGY
-		if (!p_ptr->instant_retaliator)
+		if (!p_ptr->instant_retaliator) {
 			p_ptr->energy += p_ptr->reserve_energy;
 			p_ptr->reserve_energy = 0;
 		}
