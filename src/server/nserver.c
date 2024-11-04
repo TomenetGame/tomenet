@@ -11247,6 +11247,9 @@ static int Receive_fire(int ind) {
 		return(n);
 	}
 
+	/* Avoid div/0 */
+	if (!p_ptr->num_fire) return(1);
+
 	/* Check confusion */
 	if (p_ptr->confused) {
 		/* Change firing direction */
