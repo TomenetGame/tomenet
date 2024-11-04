@@ -2176,13 +2176,14 @@ void handle_music(int Ind) {
 		}
 
 		/* Floor-specific music (monster/boss-independant)? */
-		if ((i != DI_NETHER_REALM) /*not in Nether Realm, really ^^*/
+		if ((i != DI_NETHER_REALM) /* not in the Nether Realm, really ^^ */
 		    && (!(d_ptr->flags2 & DF2_NO_DEATH)) /* nor in easy dungeons */
 		    && !(p_ptr->wpos.wx == WPOS_PVPARENA_X /* and not in pvp-arena */
-		    && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z))
-		{
+		    && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z)) {
 			if (p_ptr->distinct_floor_feeling || is_admin(p_ptr)) {
-				if (l_ptr->flags2 & LF2_OOD_HI) {
+				/* There are two different floor flag (combos) generating the 'terrifying' feeling: */
+				if ((l_ptr->flags2 & LF2_OOD_HI) ||
+				    ((l_ptr->flags2 & LF2_VAULT_HI) && (l_ptr->flags2 & LF2_OOD))) {
 					Send_music(Ind, 46, 14, 14); //what a terrifying place
 					return;
 				}
