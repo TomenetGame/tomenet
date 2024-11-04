@@ -7170,7 +7170,11 @@ static void process_player_end(int Ind) {
 					   instead of casting a final time into thin air! */
 					if (target_okay(Ind)) {
 						p_ptr->auto_retaliating = TRUE;
+
 #ifdef NEW_AUTORET_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+						if (!p_ptr->running)
+ #endif
 						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 
@@ -7211,6 +7215,9 @@ static void process_player_end(int Ind) {
 					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! */
 						p_ptr->auto_retaliating = TRUE;
 #ifdef NEW_AUTORET_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+						if (!p_ptr->running)
+ #endif
 						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 						/* Use energy */

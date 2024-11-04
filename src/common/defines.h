@@ -1202,12 +1202,17 @@
    DISADVANTAGE is that it takes longer until auto-retaliation/FTK starts, as we need to recuperate enough energy worth almost two turns before we can begin. */
 #define NEW_AUTORET_ENERGY
 
+#ifdef NEW_AUTORET_ENERGY
 /* If new auto-retaliator is active: Reserve ~one turn of stored up energy specifically for an after-autoret-action, so the player doesn't notice the recuperation
    in almost all cases (except if the player never stays idle for a moment before engaging into another autoretaliation), making the overall feel much more
    smooth and delay-free.
    Drawback: Since ~one of the ~two turns of energy is reserved, that includes walking, so the player cannot double-tap 'jump' over hazardous terrain anymore for example (DK). */
-#ifdef NEW_AUTORET_ENERGY
- #define NEW_AUTORET_RESERVE_ENERGY
+ //#define NEW_AUTORET_RESERVE_ENERGY
+
+ #ifdef NEW_AUTORET_RESERVE_ENERGY
+  /* See comment in dungeon.c about TODO; meanwhile this workaround just disables the reserve-energy effect while player is running, to allow using all commands normally (firing). */
+  #define NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+ #endif
 #endif
 
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?

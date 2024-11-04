@@ -3942,6 +3942,9 @@ void process_pending_commands(int ind) {
 	   Also, this hack affects running so running has to handle reserve_energy properly to keep working normally. */
 	//if (!p_ptr->auto_retaliating && !p_ptr->shooting_till_kill /* For these two scenarios we saved up the extra turn of energy, to be able to act instantly (eg teleport out) */
 	if (!p_ptr->instant_retaliator && !p_ptr->triggered_auto_attacking
+ #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+	    && !p_ptr->running
+ #endif
 	    && p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
 		p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
 		p_ptr->energy -= p_ptr->reserve_energy;
@@ -3969,6 +3972,9 @@ void process_pending_commands(int ind) {
 		connp->r.state &= ~SOCKBUF_LOCK;
 
 #ifdef NEW_AUTORET_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+		if (!p_ptr->running)
+ #endif
 		/* Reset our one-time ticket of 'use reserve energy after auto-attacking' again, for next time. */
 		if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = FALSE;
 #endif
@@ -3998,6 +4004,9 @@ void process_pending_commands(int ind) {
 		if (connp->state == CONN_PLAYING) connp->start = turn;
 		if (result == -1) {
 #ifdef NEW_AUTORET_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+			if (!p_ptr->running)
+ #endif
 			/* Don't forget to reverse hack before we leave here: Restore reserved energy */
 			if (!p_ptr->instant_retaliator) p_ptr->energy += p_ptr->reserve_energy;
 #endif
@@ -4051,6 +4060,9 @@ void process_pending_commands(int ind) {
 	if (NumPlayers == num_players_start && !p_ptr->energy) p_ptr->energy = old_energy;
 
 #ifdef NEW_AUTORET_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+	if (!p_ptr->running)
+ #endif
 	/* Reverse the hack: Restore reserved energy */
 	if (!p_ptr->instant_retaliator) p_ptr->energy += p_ptr->reserve_energy;
 #endif
