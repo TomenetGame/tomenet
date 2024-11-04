@@ -7232,6 +7232,22 @@ static void process_player_end(int Ind) {
 		//Verify: This code should not require additional modifications for NEW_AUTORET_ENERGY:reserve_energy feat
 #ifdef NEW_AUTORET_ENERGY
 		if (p_ptr->instant_retaliator || !p_ptr->shooting_till_kill) /* Required to keep allowing 'shooting on the run' */
+ #if 0
+ #ifdef NEW_AUTORET_RESERVE_ENERGY
+    /* TODO: This currently doesn't work because nserver.c command-retrieval first checks if there is a turn of energy available,
+	and THEN executes the command. However, the command might fail for different reasons than having not enough energy (or the
+	command might not require the full amount of energy allocated - but this is probably not the case currently for any command,
+	it's eg verified for do_cmd_fire() in nserver.c how much energy it really needs based on p_ptr->num_fire).
+	That means that running will be stopped until a full turn of energy has been built up - for nothing! - and then is spent all
+	at once at running, making us hop 5 grids at a time.
+	Easiest way to reproduce: Hold down firing key while running without any valid target in sight -> running stops for a full turn of
+	energy and then when receive_fire() doesn't complain into requires_energy but still cannot fire (as there is no target) and hence
+	burn the energy, we'll run for the full worth of energy (ie 5 grids).
+	The 'best' solution would be to rewrite ALL commands to report into requires_energy only if the only reason they failed to trigger
+	was actually a lack of energy and nothing else (eg for do_cmd_fire(): valid target, ammo, all fine, just needing the energy now). */
+		if (p_ptr->instant_retaliator || !p_ptr->requires_energy) /* While running, we'd have no energy left at all to start shooting */
+ #endif
+ #endif
 #endif
 		while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
 			char consume_full_energy;
