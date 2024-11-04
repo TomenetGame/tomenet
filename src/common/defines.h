@@ -1207,7 +1207,7 @@
    smooth and delay-free.
    Drawback: Since ~one of the ~two turns of energy is reserved, that includes walking, so the player cannot double-tap 'jump' over hazardous terrain anymore for example (DK). */
 #ifdef NEW_AUTORET_ENERGY
- #define NEW_AUTORET_RESERVE_ENERGY
+ //#define NEW_AUTORET_RESERVE_ENERGY
 #endif
 
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?

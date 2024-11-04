@@ -7171,7 +7171,7 @@ static void process_player_end(int Ind) {
 					if (target_okay(Ind)) {
 						p_ptr->auto_retaliating = TRUE;
 #ifdef NEW_AUTORET_RESERVE_ENERGY
-						p_ptr->triggered_auto_attacking = TRUE;
+						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 
 						if (p_ptr->shoot_till_kill_spell) {
@@ -7211,7 +7211,7 @@ static void process_player_end(int Ind) {
 					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! */
 						p_ptr->auto_retaliating = TRUE;
 #ifdef NEW_AUTORET_RESERVE_ENERGY
-						p_ptr->triggered_auto_attacking = TRUE;
+						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 						/* Use energy */
 						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
@@ -7230,6 +7230,9 @@ static void process_player_end(int Ind) {
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
 		//Verify: This code should not require additional modifications for NEW_AUTORET_ENERGY:reserve_energy feat
+#ifdef NEW_AUTORET_ENERGY
+		if (p_ptr->instant_retaliator || !p_ptr->shooting_till_kill) /* Required to keep allowing 'shooting on the run' */
+#endif
 		while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
 			char consume_full_energy;
 

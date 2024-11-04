@@ -3941,7 +3941,7 @@ void process_pending_commands(int ind) {
 	   after building up almost 2 turns of energy, such as 'hopping' over lava in Dungeon Keeper.
 	   Also, this hack affects running so running has to handle reserve_energy properly to keep working normally. */
 	//if (!p_ptr->auto_retaliating && !p_ptr->shooting_till_kill /* For these two scenarios we saved up the extra turn of energy, to be able to act instantly (eg teleport out) */
-	if (!p_ptr->triggered_auto_attacking
+	if (!p_ptr->instant_retaliator && !p_ptr->triggered_auto_attacking
 	    && p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
 		p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
 		p_ptr->energy -= p_ptr->reserve_energy;
@@ -3969,7 +3969,7 @@ void process_pending_commands(int ind) {
 		connp->r.state &= ~SOCKBUF_LOCK;
 
 #ifdef NEW_AUTORET_RESERVE_ENERGY
-		p_ptr->triggered_auto_attacking = FALSE;
+		if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = FALSE;
 #endif
 
 		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
@@ -3998,7 +3998,7 @@ void process_pending_commands(int ind) {
 		if (result == -1) {
 #ifdef NEW_AUTORET_RESERVE_ENERGY
 			/* Don't forget to reverse hack before we leave here: Restore reserved energy */
-			p_ptr->energy += p_ptr->reserve_energy;
+			if (!p_ptr->instant_retaliator) p_ptr->energy += p_ptr->reserve_energy;
 #endif
 			return;
 		}
@@ -4059,7 +4059,7 @@ void process_pending_commands(int ind) {
 
 #ifdef NEW_AUTORET_RESERVE_ENERGY
 	/* Reverse the hack: Restore reserved energy */
-	p_ptr->energy += p_ptr->reserve_energy;
+	if (!p_ptr->instant_retaliator) p_ptr->energy += p_ptr->reserve_energy;
 #endif
 }
 
@@ -13531,7 +13531,7 @@ int toggle_rest(int Ind, int turns) {
 	/* Resting takes a lot of energy! */
 	if (p_ptr->energy
 #ifdef NEW_AUTORET_RESERVE_ENERGY
-	    + p_ptr->reserve_energy
+	    + (p_ptr->instant_retaliator ? 0 : p_ptr->reserve_energy)
 #endif
 	    >= (level_speed(&p_ptr->wpos) * 2) - 1) {
 		/* Set flag */
@@ -13556,8 +13556,10 @@ int toggle_rest(int Ind, int turns) {
 
 		/* Take a lot of energy to enter "rest mode" */
 #ifdef NEW_AUTORET_RESERVE_ENERGY
-		p_ptr->energy += p_ptr->reserve_energy;
-		p_ptr->reserve_energy = 0;
+		if (!p_ptr->instant_retaliator)
+			p_ptr->energy += p_ptr->reserve_energy;
+			p_ptr->reserve_energy = 0;
+		}
 #endif
 		p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
 
