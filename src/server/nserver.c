@@ -3969,6 +3969,7 @@ void process_pending_commands(int ind) {
 		connp->r.state &= ~SOCKBUF_LOCK;
 
 #ifdef NEW_AUTORET_RESERVE_ENERGY
+		/* Reset our one-time ticket of 'use reserve energy after auto-attacking' again, for next time. */
 		if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = FALSE;
 #endif
 
