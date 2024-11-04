@@ -4019,14 +4019,7 @@ void process_pending_commands(int ind) {
 			 * commands execute in the proper order, stop
 			 * processing any commands that require energy. We
 			 * assume that any commands that don't require energy
-			 * (such as quitting, or talking) should be executed
-			 * ASAP.
-			 */
-			/* Mega-Hack -- save our old energy and set our energy
-			 * to 0.  This will allow us to execute "out of game"
-			 * actions such as talking while we wait for enough
-			 * energy to execute our next queued in game action.
-			 */
+			 * (such as quitting, or talking) should be executed ASAP. */
 			if (p_ptr->energy) {
 				old_energy = p_ptr->energy;
 				p_ptr->energy = 0;
@@ -4054,8 +4047,7 @@ void process_pending_commands(int ind) {
 	 * of players has changed while this loop has been executing.  This would be
 	 * a BAD thing to do if we ever went multithreaded.
 	 */
-	if (NumPlayers == num_players_start)
-		if (!p_ptr->energy) p_ptr->energy = old_energy;
+	if (NumPlayers == num_players_start && !p_ptr->energy) p_ptr->energy = old_energy;
 
 #ifdef NEW_AUTORET_RESERVE_ENERGY
 	/* Reverse the hack: Restore reserved energy */
