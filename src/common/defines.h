@@ -7118,7 +7118,7 @@
 
 #define LF2_FAIR_TERRAIN_DAM	0x00100000U	/* Terain damage each player takes is roughly a fixed percentage of his max HP */
 #define LF2_DUN_BOSS		0x00200000U
-#define LF2_COLLAPSING		0x00400000U	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
+#define LF2_DEAD_BOSS		0x00400000U	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue - now also used for better handling of 'winner' music. */
 #define LF2_NO_SUMMON		0x00800000U	/* disallow any summoning (to go with NO_TELE :) for new experimental dungeoneering) */
 
 #define LF2_NO_LIVE_SPAWN	0x01000000U	/* disallow any live-spawn of monsters (like in IDDC, could be used for that actually) */

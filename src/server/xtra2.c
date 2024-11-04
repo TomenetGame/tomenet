@@ -6017,6 +6017,7 @@ bool monster_death(int Ind, int m_idx) {
 	char titlebuf[MAX_CHARS_WIDE];
 
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	//Variables only for RF1_QUESTOR:
 	//int	dump_item = 0;
@@ -6374,8 +6375,6 @@ bool monster_death(int Ind, int m_idx) {
 		   If Sauron is killed in Mt Doom, allow the player to recall! */
 		if (is_Sauron) {
 			if (d_ptr->type == DI_MT_DOOM) {
-				dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
 				l_ptr->flags1 |= LF1_IRON_RECALL;
 				floor_msg_format(0, &p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 			}
@@ -7210,8 +7209,6 @@ if (cfg.unikill_format) {
 	    && cfg.strict_etiquette
 #endif
 	    ) {
-		dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
 		if (((((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & DF1_FORCE_DOWN))
 		    && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
 		    (d_ptr->flags1 & DF1_NO_RECALL))
@@ -7231,8 +7228,6 @@ if (cfg.unikill_format) {
 
 		/* If Sauron is killed in Mt Doom, allow the player to recall! */
 		if (d_ptr->type == DI_MT_DOOM) {
-			dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
 			l_ptr->flags1 |= LF1_IRON_RECALL;
 			floor_msg_format(0, &p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 		}
@@ -7455,6 +7450,9 @@ if (cfg.unikill_format) {
 			/* Hack -- an "object holder" */
 			object_type prize;
 			int num = 0;
+
+			/* Switch default floor-music for total_winners from 'Morgoth' to 'winner' music */
+			l_ptr->flags2 |= LF2_DEAD_BOSS;
 
 			/* Nothing left, game over... */
 			for (i = 1; i <= NumPlayers; i++) {
@@ -8152,9 +8150,7 @@ if (cfg.unikill_format) {
 
 		/* dungeon boss, but drops multiple items */
 		} else if (is_ZuAon) {
-			dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
-			l_ptr->flags2 |= LF2_COLLAPSING;
+			l_ptr->flags2 |= LF2_DEAD_BOSS;
 			nether_realm_collapsing = 15; /* Minutes until collapse, if implemented/enabled */
 			nrc_x = m_ptr->fx;
 			nrc_y = m_ptr->fy;

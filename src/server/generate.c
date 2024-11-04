@@ -11335,7 +11335,9 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 	   will already call dealloc_dungeon_level, so -> NULL pointer. */
 	if (!(zcave = getcave(wpos))) return;
 
-	if (l_ptr && (l_ptr->flags2 & LF2_COLLAPSING)) nether_realm_collapsing = 0;
+	if (l_ptr && (l_ptr->flags2 & LF2_DEAD_BOSS)
+	    && !(l_ptr->flags1 & LF1_NO_GHOST)) /* Don't confuse it with Morgoth's floor */
+		nether_realm_collapsing = 0;
 
 	/* for obtaining statistical IDDC information: */
 	//if (in_irondeepdive(wpos)) log_floor_coverage(l_ptr, wpos);
