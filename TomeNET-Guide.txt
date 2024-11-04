@@ -9043,6 +9043,10 @@ type "cancel". You will lose your deposited money though!
 The '/ex' slash command shows if you still have an active order and at which
 store in which town exactly.
 
+While blacklisted, your item orders will not be processed but on hold until
+your blacklist timer runs out. Even if the ordered item is in stock it will
+not be handed to you.
+
 
 Shop scumming:
 --------------
@@ -18011,12 +18015,16 @@ stated.
                                 which can be from 0 up to 76 minutes, depending
                                 on the (discounts matter) value of the item you
                                 tried to steal from the shop.
+
                                 During this time it's impossible to steal from
                                 shops, and you will get BAD prices (quadruple,
-                                like in the blackmarket usually) in this and
-                                all other NPC shops, including those that don't
-                                sell items but just offer services.
-                                (Player stores are unaffected by this.)
+                                like in the blackmarket usually) in all NPC
+                                shops. (Player stores are unaffected.)
+                                Shops will refuse you any services, eg repair.
+                                If you have an open item order it will not be
+                                processed (even if the ordered item is actually
+                                in stock) but stay on hold until your blacklist
+                                timer runs out.
 
                                 You'll also be on the 'watchlist', meaning
                                 that you can shop at normal prices as usual,
