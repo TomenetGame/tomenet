@@ -2871,7 +2871,10 @@ void msg_print(int Ind, cptr msg_raw) {
 
 		/* Look for inter-server message, denoted by '[N]' before first space,
 		   in which case the first space isn't after the player name but after the server index! */
-		if (csp && (ism = strchr(msg_dup, '[')) && ism < csp && *++ism >= '0' && *ism <= '9') csp = strchr(ism, ' ');
+		if (csp && (ism = strchr(msg_dup, '[')) && ism < csp && *++ism >= '0' && *ism <= '9') {
+			ism = strchr(csp, ']');
+			csp = strchr(ism + 1, ' ');
+		}
 
 		/* Starts at the very beginning of the chat line? Then it is lore-paste (artifact/monster) */
 		if (csp && ckt == csp + 1) {
@@ -5480,7 +5483,10 @@ static void player_talk_aux(int Ind, char *message) {
 	spc = strchr(message, ' ');
 	/* Look for inter-server message, denoted by '[N]' before first space,
 	   in which case the first space isn't after the player name but after the server index! */
-	if (spc && (ism = strchr(message, '[')) && ism < spc && *++ism >= '0' && *ism <= '9') spc = strchr(ism, ' ');
+	if (spc && (ism = strchr(message, '[')) && ism < spc && *++ism >= '0' && *ism <= '9') {
+		ism = strchr(spc, ']');
+		spc = strchr(ism + 1, ' ');
+	}
 
 #if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
 	if ((sipd = strchr(message, '\372')) && spc && sipd > spc + 1) { /* '>+1': Test if the sipd is even further away than just exactly after the first space */
