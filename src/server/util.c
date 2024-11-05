@@ -1789,11 +1789,11 @@ void handle_music(int Ind) {
 		return;
 	} else if ((i != -1) &&
 	    /* Assuming that only Morgoth's floor has LF1_NO_GHOST, so we don't confuse it with Zu-Aon's floor: */
-	    (l_ptr->flags1 & LF1_NO_GHOST) && (l_ptr->flags2 & LF2_DEAD_BOSS)) {
+	    (l_ptr->flags1 & LF1_NO_GHOST)) {
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		if (p_ptr->total_winner) Send_music(Ind, 88, 44, 44);
+		if (p_ptr->total_winner && (l_ptr->flags2 & LF2_DEAD_BOSS)) Send_music(Ind, 88, 44, 44);
 		else Send_music(Ind, 44, 14, 14);
 		return;
 	}
