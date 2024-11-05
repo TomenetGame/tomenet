@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. November 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 5. November 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -21253,8 +21253,8 @@ Tengu           10  Moves quickly, high HP, good AC, can blink/teleport and
                     big speed bonus, levitation and invisibility!
                     It also gives free action and resists fear, confusion,
                     light, dark, bleeding (cannot be cut), insanity,
-                    electricity and poison and immunity to either electricity
-                    or poison.
+                    electricity and poison and grants immunity to either
+                    electricity or poison.
 Illusionist and Druid
                 13  These two have an array of spells at their disposal, one of
                     them being 'Haste Self' which speeds themselves up
