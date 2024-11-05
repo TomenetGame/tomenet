@@ -40,6 +40,7 @@
 [title]
 
 packname = None (basic alert effects only)
+#version = 1.0
 author = C. Blue
 description = No sound effects except for basic alerts.
 

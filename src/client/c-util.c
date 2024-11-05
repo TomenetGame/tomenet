@@ -12621,6 +12621,7 @@ void audio_pack_selector(void) {
 	char sp_name[MAX_PACKS][MAX_CHARS], mp_name[MAX_PACKS][MAX_CHARS];
 	char sp_author[MAX_PACKS][MAX_CHARS], mp_author[MAX_PACKS][MAX_CHARS];
 	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
+	char sp_version[MAX_PACKS][MAX_CHARS], mp_version[MAX_PACKS][MAX_CHARS];
 	char *ckey, *cval;
 
 	FILE *fff, *fff2;
@@ -12706,6 +12707,7 @@ void audio_pack_selector(void) {
 				strcpy(sp_name[soundpacks], "No name");
 				strcpy(sp_author[soundpacks], "nobody");
 				strcpy(sp_diz[soundpacks], "No description");
+				strcpy(sp_version[soundpacks], "");
 #ifdef WINDOWS
 				path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s\\sound.cfg", buf));
 #else
@@ -12743,6 +12745,10 @@ void audio_pack_selector(void) {
 						strcpy(sp_diz[soundpacks], cval);
 						continue;
 					}
+					if (!strcmp(ckey, "version")) {
+						strcpy(sp_version[soundpacks], cval);
+						continue;
+					}
 				}
 				fclose(fff2);
 				soundpacks++;
@@ -12761,6 +12767,7 @@ void audio_pack_selector(void) {
 				strcpy(mp_name[musicpacks], "No name");
 				strcpy(mp_author[musicpacks], "nobody");
 				strcpy(mp_diz[musicpacks], "No description");
+				strcpy(mp_version[musicpacks], "");
 #ifdef WINDOWS
 				path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s\\music.cfg", buf));
 #else
@@ -12796,6 +12803,10 @@ void audio_pack_selector(void) {
 					}
 					if (!strcmp(ckey, "description")) {
 						strcpy(mp_diz[musicpacks], cval);
+						continue;
+					}
+					if (!strcmp(ckey, "version")) {
+						strcpy(mp_version[musicpacks], cval);
 						continue;
 					}
 				}
@@ -12840,12 +12851,12 @@ void audio_pack_selector(void) {
 			}
 
 			Term_putstr(0, 15, -1, TERM_L_UMBER, "Selected SP:");
-			Term_putstr(13, 15, -1, TERM_YELLOW, format("%s [by %s]", sp_name[cur_sp], sp_author[cur_sp]));
+			Term_putstr(13, 15, -1, TERM_YELLOW, format("%s [by %s%s%s]", sp_name[cur_sp], sp_author[cur_sp], *sp_version[cur_sp] ? ", v" : "", sp_version[cur_sp]));
 			Term_putstr(0, 16, -1, TERM_L_WHITE, sp_diz[cur_sp]);
 			if (strlen(sp_diz[cur_sp]) >= 80) Term_putstr(0, 17, -1, TERM_L_WHITE, &sp_diz[cur_sp][80]);
 			if (strlen(sp_diz[cur_sp]) >= 160) Term_putstr(0, 18, -1, TERM_L_WHITE, &sp_diz[cur_sp][160]);
 			Term_putstr(0, 20, -1, TERM_L_UMBER, "Selected MP:");
-			Term_putstr(13, 20, -1, TERM_YELLOW, format("%s [by %s]", mp_name[cur_mp], mp_author[cur_mp]));
+			Term_putstr(13, 20, -1, TERM_YELLOW, format("%s [by %s%s%s]", mp_name[cur_mp], mp_author[cur_mp], *mp_version[cur_mp] ? ", v" : "", mp_version[cur_mp]));
 			Term_putstr(0, 21, -1, TERM_L_WHITE, mp_diz[cur_mp]);
 			if (strlen(mp_diz[cur_mp]) >= 80) Term_putstr(0, 22, -1, TERM_L_WHITE, &mp_diz[cur_mp][80]);
 			if (strlen(mp_diz[cur_mp]) >= 160) Term_putstr(0, 23, -1, TERM_L_WHITE, &mp_diz[cur_mp][160]);

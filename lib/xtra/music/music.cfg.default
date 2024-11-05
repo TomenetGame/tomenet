@@ -49,6 +49,7 @@
 [title]
 
 packname = None
+#version = 1.0
 author = nobody
 description = No music.
 
