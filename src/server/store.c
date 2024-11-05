@@ -2514,6 +2514,9 @@ static void store_create(store_type *st_ptr) {
 		/* Mass produce and/or Apply discount */
 		mass_produce(o_ptr, st_ptr);
 
+		/* Less of these in the BM (or whereever) */
+		if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) o_ptr->number = 1;
+
 		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT)
 		    /* Reduce discount */
 		    o_ptr->discount = 0;
