@@ -478,6 +478,8 @@ void compact_objects(int size, bool purge) {
 				    (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED)) //IDDC town inns!
 					chance = 100;
 			}
+			/* Even if the housing sector (or town, for inns) is currently not allocated, still don't compact the object */
+			else if (o_ptr->marked2 == ITEM_REMOVAL_HOUSE) continue;
 
 			/* Apply the saving throw */
 			if (rand_int(100) < chance) continue;
@@ -10751,7 +10753,8 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 			   additionally check and delete objects on
 			   unallocated levels - C. Blue */
 			if (o_ptr->marked2 != ITEM_REMOVAL_NEVER) {
-				if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) && !(c_ptr->info & CAVE_JAIL)) {
+				if (wpos->wz == 0 && (((c_ptr->info & CAVE_ICKY) && !(c_ptr->info & CAVE_JAIL))
+				    || (f_info[c_ptr->feat].flags1 & FF1_PROTECTED))) { /* <- Also for inns. */
 					/* mark as 'inside a house' */
 					o_ptr->marked2 = ITEM_REMOVAL_HOUSE;
 				} else if (o_ptr->marked2 != ITEM_REMOVAL_DEATH_WILD &&
