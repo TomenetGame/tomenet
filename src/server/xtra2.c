@@ -7239,9 +7239,21 @@ if (cfg.unikill_format) {
 
 #ifdef USE_SOUND_2010
 	/* Dungeon-boss-slain music if available client-side */
-	if (is_Sauron) Send_music(Ind, 91, -1, -1);
+	if (is_Sauron) {
+		/* Unlike Dungeonboss/nazgul/allnazgul/specialunique slain, this music affects -all- players around, not just the killer */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!inarea(&p_ptr->wpos, &Players[i]->wpos) || Players[i]->ghost) continue;
+			Send_music(i, 91, -1, -1);
+		}
+	}
 	//else if (is_Morgoth) Send_music(Ind, 88, -1, -1); //handled in handle_music() already
-	else if (is_ZuAon) Send_music(Ind, 92, -1, -1);
+	else if (is_ZuAon) {
+		/* Unlike Dungeonboss/nazgul/allnazgul/specialunique slain, this music affects -all- players around, not just the killer */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!inarea(&p_ptr->wpos, &Players[i]->wpos) || Players[i]->ghost) continue;
+			Send_music(Ind, 92, -1, -1);
+		}
+	}
 #endif
 
 	if (r_idx == RI_BLUE) { /* just for now, testing */
