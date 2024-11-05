@@ -1600,17 +1600,17 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
-						fprintf(fff, "%s [%d,%d] (%s)%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname,
+						fprintf(fff, "%s [%d,%d] (%s)%s%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname,
 						    !q_ptr->exp_bar ?
   #if 0
 						    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
 						    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
   #else
 						    (q_ptr->audio_mus ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
-						    (q_ptr->audio_mus ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
+						    (q_ptr->audio_mus ? "\377aG*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
   #endif
  #else
-						fprintf(fff, "%s [%d,%d] (%s)%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname
+						fprintf(fff, "%s [%d,%d] (%s)%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname
  #endif
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
@@ -1618,6 +1618,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
  #endif
+						    , !q_ptr->instant_retaliator ? "\377Dr" : ""
 						    );
 #else
 						fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname);
@@ -1697,7 +1698,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
-						fprintf(fff, "%s [%d,%d]%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row,
+						fprintf(fff, "%s [%d,%d]%s%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row,
 						    !q_ptr->exp_bar ?
   #if 0
 						    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1707,13 +1708,14 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 						    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
   #endif
  #else
-						fprintf(fff, "%s [%d,%d]%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row
+						fprintf(fff, "%s [%d,%d]%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row
  #endif
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
 						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
+						    , !q_ptr->instant_retaliator ? "\377Dr" : ""
  #endif
 						    );
 #else
@@ -1755,7 +1757,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
-				if (admin) fprintf(fff, "%s%s%s",
+				if (admin) fprintf(fff, "%s%s%s%s",
 				    !q_ptr->exp_bar ?
   #if 0
 				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1765,13 +1767,14 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
   #endif
  #else
-				if (admin) fprintf(fff, "%s%s"
+				if (admin) fprintf(fff, "%s%s%s"
  #endif
  #if 0
 				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
 						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
+						    , !q_ptr->instant_retaliator ? "\377Dr" : ""
  #endif
 				    );
 #endif
@@ -1851,7 +1854,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					fprintf(fff, " [%d,%d]", q_ptr->panel_col, q_ptr->panel_row);
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
-					if (admin) fprintf(fff, "%s%s%s",
+					if (admin) fprintf(fff, "%s%s%s%s",
 					    !q_ptr->exp_bar ?
   #if 0
 					    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1861,13 +1864,14 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
   #endif
  #else
-					if (admin) fprintf(fff, "%s%s"
+					if (admin) fprintf(fff, "%s%s%s"
  #endif
  #if 0
 					    , q_ptr->custom_font ? "\377wf\377-" : "", ""
  #else /* combine custom font and OS type O_o */
 					    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 					    , version
+					    , !q_ptr->instant_retaliator ? "\377Dr" : ""
  #endif
 					    );
 #endif
