@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. November 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 6. November 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -38,6 +38,7 @@ Contents
     (0.1b)  Colours and colour blindness
     (0.1c)  Photosensitivity / Epilepsy issues
     (0.1d)  Readability improvements
+    (0.1e)  Sinew/joint taxation issues
     (0.2)   Command reference & keysets
     (0.2a)  Text editing keys
     (0.2b)  Slash commands
@@ -557,6 +558,19 @@ removing the leading '#' symbol. Restart your game client.
 If you have trouble deciphering long price tags or experience point amounts,
 press  = 4  and try the option 'colourize_bignum' at the bottom of that options
 page. It will colour prices and XP alternatingly in 3-digit columns.
+
+
+(0.1e) Sinew/joint taxation issues
+----------------------------------
+Should you have issues with your finger joints or sinews, eg RSI or Arthritis,
+classes least taxing to play are probably in this order:
+Warrior, Mimic, Druid, Archer, to some extent Rogue and Ranger (if you don't
+pick spells or only a few spells to manage).
+
+The reason is that these require less different macros/keys to press and/or at
+lower frequency than other classs, to manage and coordinate gameplay.
+In general, the more magic spells and abilities a class possesses, the more
+key presses in terms of both number and frequency are required.
 
 
 
