@@ -715,58 +715,58 @@ int steamblasts = 0;
  * Maximum number of skills in s_info.txt
  */
 u16b old_max_s_idx = 0;
-u16b max_s_idx;
+u16b max_s_idx = 0;
 
 /*
  * Maximum number of monsters in r_info.txt
  */
-u16b max_r_idx;
-u16b max_rur_idx; /* Unique monsters eligible for winner-respawning */
+u16b max_r_idx = 0;
+u16b max_rur_idx = 0; /* Unique monsters eligible for winner-respawning */
 
 /*
  * Maximum number of ego monsters in re_info.txt
  */
-u16b max_re_idx;
+u16b max_re_idx = 0;
 
 /*
  * Maximum number of items in k_info.txt
  */
-u16b max_k_idx;
+u16b max_k_idx = 0;
 
 /*
  * Maximum number of vaults in v_info.txt
  */
-u16b max_v_idx;
+u16b max_v_idx = 0;
 
 /*
  * Maximum number of terrain features in f_info.txt
  */
-u16b max_f_idx;
+u16b max_f_idx = 0;
 
 /*
  * Maximum number of artifacts in a_info.txt
  */
-u16b max_a_idx;
+u16b max_a_idx = 0;
 
 /*
  * Maximum number of ego-items in e_info.txt
  */
-u16b max_e_idx;
+u16b max_e_idx = 0;
 
 /*
  * Maximum number of randarts in ra_info.txt
  */
-u16b max_ra_idx;
+u16b max_ra_idx = 0;
 
 /*
  * Maximum number of dungeon types in d_info.txt
  */
-u16b max_d_idx;
+u16b max_d_idx = 0;
 
 /*
  * Maximum number of stores types in st_info.txt
  */
-u16b max_st_idx;
+u16b max_st_idx = 0;
 
 /*
  * Item sets
@@ -776,23 +776,23 @@ s16b max_set_idx = 1;
 /*
  * Maximum number of players info in p_info.txt
  */
-u16b max_rp_idx;
-u16b max_rmp_idx;
-u16b max_c_idx;
-u16b max_mc_idx;
+u16b max_rp_idx = 0;
+u16b max_rmp_idx = 0;
+u16b max_c_idx = 0;
+u16b max_mc_idx = 0;
 
 /*
  * Maximum number of actions types in ba_info.txt
  */
-u16b max_ba_idx;
+u16b max_ba_idx = 0;
 
 /*
  * Maximum number of owner types in ow_info.txt
  */
-u16b max_ow_idx;
+u16b max_ow_idx = 0;
 
 /* Maximum number of quests types in q_info.txt */
-u16b max_q_idx;
+u16b max_q_idx = 0;
 
 header *q_head;
 quest_info *q_info;
@@ -802,22 +802,22 @@ char *q_name;
 /*
  * Maximum number of objects in the level
  */
-u16b max_o_idx;
+u16b max_o_idx = 0;
 
 /*
  * Maximum number of monsters in the level
  */
-u16b max_m_idx;
+u16b max_m_idx = 0;
 
 /*
  * Maximum number of traps in tr_info.txt
  */
-u16b max_t_idx;
+u16b max_t_idx = 0;
 
 /*
  * Maximum number of wilderness features in wf_info.txt
  */
-u16b max_wf_idx;
+u16b max_wf_idx = 0;
 
 /* EVILEYE GAMES */
 int teamscore[2];
