@@ -5114,7 +5114,7 @@ static void player_talk_aux(int Ind, char *message) {
 	char message2[MSG_LEN], message_u[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
 	char *colon, *colon_u;
-	char *sipd, *spc, *ism;
+	char *sipd;
 
 	bool rp_me = FALSE, rp_me_gen = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
@@ -5476,22 +5476,11 @@ static void player_talk_aux(int Ind, char *message) {
 	if (!slash_command || slash_command_msg) process_hooks(HOOK_CHAT, "d", Ind);
 
 
-	/* If we find a \372 marker, it can be either a lore-paste marker
-	   (occurs right after the first space) or a kind-diz marker (occurs later in the line).
+	/* If we find a \372 marker, it can be either a lore-paste marker (occurs right a the start of our message to the server)
+	   or a kind-diz marker (occurs later in the line).
 	   Process it if it's a kind-diz marker, otherwise ignore it here (handled solemnly in msg_print() then): */
-
-	/* Look for the first space, it'll be after the player name */
-	spc = strchr(message, ' ');
-	/* Look for inter-server message, denoted by '[N]' before first space,
-	   in which case the first space isn't after the player name but after the server index!
-	   NOTE: This assumes that player names are not allowed to start on a number! */
-	if (spc && (ism = strchr(message, '[')) && ism < spc && *++ism >= '0' && *ism <= '9') {
-		ism = strchr(spc, ']');
-		spc = strchr(ism + 1, ' ');
-	} else if (spc && (ism = strchr(message, ']'))) spc = strchr(ism + 1, ' ');
-
 #if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
-	if ((sipd = strchr(message, '\372')) && spc && sipd > spc + 1) { /* '>+1': Test if the sipd is even further away than just exactly after the first space */
+	if ((sipd = strchr(message, '\372')) && sipd > message) { /* Test if the sipd is not at the beginning, then it's kdiz (otherwise lorepaste, which is not handled here) */
 		char *ckt = strchr(sipd, ',');
 		int tval = atoi(sipd + 1), sval = ckt ? atoi(ckt + 1) : -1;
 
