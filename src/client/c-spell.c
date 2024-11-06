@@ -680,7 +680,7 @@ void do_mimic() {
 		/* empty input? */
 		if (strlen(out_val) == 0) return;
 
-		/* did user input an index number or a name? */
+		/* did user input an index number or a name (think '7-headed-hydra') ? */
 		cptr = out_val;
 		if (*cptr == '-') cptr++; //cover minus sign for '-1' hack
 		while (*cptr) {
@@ -690,9 +690,10 @@ void do_mimic() {
 			}
 			cptr++;
 		}
+		j = atoi(out_val); //overrides is_string again
 
 		/* input is a string? */
-		if (is_string) {
+		if (is_string && j != -1) {
 			/* hack for quick'n'dirty macros */
 			if (out_val[0] == '@') {
 				for (j = 1; out_val[j]; j++) out_val[j - 1] = out_val[j];
@@ -718,7 +719,6 @@ void do_mimic() {
 
 		/* input is a number */
 		else {
-			j = atoi(out_val);
 			if (j == -1) spell = 32767; //hack-o-mat -> 32767 is marker for 'previous form'
 			else if ((j < 0) || (j > 2767)) return; //<-32767 limit intended? but we only add 20000? =P
 			else spell = 20000 + j;
