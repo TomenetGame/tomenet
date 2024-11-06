@@ -2693,7 +2693,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what) {
  * Initialize the "k_info" array, by parsing an ascii "template" file
  */
 errr init_k_info_txt(FILE *fp, char *buf) {
-	int i, idx = 0, kidx, k_error_idx = -1;
+	int i, idx = 0, kidx;//, k_error_idx = -1;
 	char *s, *t;
 #ifdef KIND_DIZ
 	char tmp[MSG_LEN];
@@ -2780,8 +2780,10 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			i = ++idx;
 
 			/* ..here is a working new variant: */
-			//if (kidx <= k_error_idx) return(4);	--actually allow ^^ (eg pseudo-dsm is sorted in way before its index)
+#if 0 /* actually allow ^^ (eg pseudo-dsm is sorted in way before its index) */
+			if (kidx <= k_error_idx) return(4);
 			k_error_idx = kidx;
+#endif
 
 			/* Verify information */
 			if (i >= (int) k_head->info_num) return(2);
