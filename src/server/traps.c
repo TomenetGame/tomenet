@@ -45,9 +45,9 @@ static bool do_trap_of_silliness(int Ind, int power) {
 		if (p_ptr->obj_aware[j]) aware = TRUE;
 		p_ptr->obj_aware[j] = 0;
 
-		j = randint(max_t_idx - 1);
-		if (p_ptr->trap_ident[tr_info_rev[j]]) aware = TRUE;
-		p_ptr->trap_ident[tr_info_rev[j]] = 0;
+		j = tr_info_rev[randint(max_t_idx)];
+		if (p_ptr->trap_ident[j]) aware = TRUE;
+		p_ptr->trap_ident[j] = 0;
 	}
 
 	return(aware);
@@ -688,7 +688,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		never_id = TRUE;
 		trap = TRAP_OF_ALE;
 		for (l = 0; l < 99 ; l++) {
-			k = randint(max_t_idx - 1);
+			k = tr_info_rev[randint(max_t_idx)];
 			if (
 			    //!t_info[k].name ||	--no longer needed, see comment in place_trap()
 			    t_info[k].minlevel > dlev ||
@@ -2863,7 +2863,7 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 	if (trap == TRAP_OF_RANDOM_EFFECT) {
 		trap = TRAP_OF_ALE;
 		for (l = 0; l < 99 ; l++) {
-			k = randint(max_t_idx - 1);
+			k = tr_info_rev[randint(max_t_idx)];
 			if (
 			    //!t_info[k].name ||	--no longer needed, see comment in place_trap()
 			    t_info[k].minlevel > dlev ||
@@ -3521,8 +3521,8 @@ void player_activate_door_trap(int Ind, s16b y, s16b x) {
 
 	/* Hit the trap */
 	ident = player_activate_trap_type(Ind, y, x, NULL, -1);
-	if (ident && !p_ptr->trap_ident[tr_info_rev[t_idx]]) {
-		p_ptr->trap_ident[tr_info_rev[t_idx]] = TRUE;
+	if (ident && !p_ptr->trap_ident[t_idx]) {
+		p_ptr->trap_ident[t_idx] = TRUE;
 		msg_format(Ind, "You identified that trap as %s.", t_name + t_info[t_idx].name);
 	}
 }
@@ -3613,8 +3613,8 @@ void place_trap(struct worldpos *wpos, int y, int x, int modx) {
 	lv = getlevel(wpos);
 
 	/* try 100 times -- TODO: rewrite this to work like object generation, with traps sorted by level and pre-filtered */
-	while ((more) && (cnt++) < 100) {
-		trap = randint(max_t_idx - 1);
+	while (more && (cnt++) < 100) {
+		trap = tr_info_rev[randint(max_t_idx)];
 		t_ptr = &t_info[trap];
 
 		/* Trap idx not defined (there are N-index gaps in tr_info.txt)?
@@ -3752,7 +3752,7 @@ void place_trap_object(object_type *o_ptr) {
 
 	/* try 100 times */
 	while ((more) && (cnt++) < 100) {
-		trap = randint(max_t_idx - 1);
+		trap = tr_info_rev[randint(max_t_idx)];
 		t_ptr = &t_info[trap];
 
 		//if (!t_ptr->name) continue;	-- no longer needed, see comment in place_trap()
@@ -3846,7 +3846,7 @@ void wiz_place_trap(int Ind, int trap) {
 	else flags = FTRAP_FLOOR;
 #endif	// 0
 	/* is this a correct trap now?   */
-	if (trap < 1 || trap >= max_t_idx) {
+	if (trap < 1 || trap >= MAX_T_IDX) {
 		msg_print(Ind, "Trap index is out of range!");
 		return;
 	}
@@ -3855,7 +3855,7 @@ void wiz_place_trap(int Ind, int trap) {
 
 	/* is this a correct trap now?   */
 	if (!t_ptr->name) {
-		msg_print(Ind, "Specified no. of trap does not exist!");
+		msg_print(Ind, "Specified index of trap does not exist in tr_info.txt!");
 		return;
 	}
 

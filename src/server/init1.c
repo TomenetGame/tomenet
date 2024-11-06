@@ -5679,7 +5679,7 @@ static errr grab_one_trap_type_flag(trap_kind *t_ptr, cptr what) {
  * Initialize the "tr_info" array, by parsing an ascii "template" file
  */
 errr init_t_info_txt(FILE *fp, char *buf) {
-	int i, idx = 0, tridx, tr_error_idx = -1;
+	int i, idx = 0;
 
 	char *s, *t;
 
@@ -5755,14 +5755,14 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			if (!*s) return(1);
 
 			/* Get the index */
-			tridx = atoi(buf + 2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (tridx <= tr_error_idx) return(4);
-			tr_error_idx = tridx;
+			if (i <= error_idx) return(4);
 
-			/* Do it like init_k_info_txt() does, so we don't have to worry about 'definition holes' in tr_info.txt resulting in empty trap entries */
-			i = ++idx;
+			/* Do somewhat similar mapping to init_k_info_txt(), albeit still using real N-indices here,
+			   just so we don't have to worry about 'definition holes' in tr_info.txt resulting in empty trap entries */
+			++idx;
 
 			/* Verify information */
 			if (i >= (int) t_head->info_num) return(2);
@@ -5789,7 +5789,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			t_ptr->flags = 0;
 
 			/* Create index-mapping for custom fonts and for quest_statuseffect() */
-			tr_info_rev[i] = tridx;
+			tr_info_rev[idx] = i;
 
 			/* Next... */
 			continue;
@@ -5891,7 +5891,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 	/* No version yet */
 	if (!okay) return(2);
 
-	max_t_idx = ++error_idx; //ends up at traps + 1
+	max_t_idx = idx;
 
 	/* Success */
 	return(0);

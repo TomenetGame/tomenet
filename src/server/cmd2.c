@@ -1959,8 +1959,8 @@ static bool chest_trap(int Ind, int y, int x, int o_idx) {
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
 
-	if (ident && !p_ptr->trap_ident[tr_info_rev[trap]]) {
-		p_ptr->trap_ident[tr_info_rev[trap]] = TRUE;
+	if (ident && !p_ptr->trap_ident[trap]) {
+		p_ptr->trap_ident[trap] = TRUE;
 		msg_format(Ind, "You identified the trap as %s.", t_name + t_info[trap].name);
 	}
 
@@ -5079,7 +5079,7 @@ static void do_id_trap(int Ind, int t_idx) {
 	int power;
 
 	/* Already known? */
-	if (p_ptr->trap_ident[tr_info_rev[t_idx]]) return;
+	if (p_ptr->trap_ident[t_idx]) return;
 
 	/* Need proper skill */
 	//if (get_skill(p_ptr, SKILL_DISARM) < 20) return;
@@ -5098,7 +5098,7 @@ static void do_id_trap(int Ind, int t_idx) {
 	if (randint(power) > get_skill(p_ptr, SKILL_TRAPPING)) return;
 
 	/* Good job */
-	p_ptr->trap_ident[tr_info_rev[t_idx]] = TRUE;
+	p_ptr->trap_ident[t_idx] = TRUE;
 	/* Some traps seem unnamed atm - looks ugly */
 	if (strlen(t_name + tr_ptr->name))
 		msg_format(Ind, "You identified that trap as %s.", t_name + tr_ptr->name);
@@ -5361,7 +5361,7 @@ void do_cmd_disarm(int Ind, int dir) {
 			stop_shooting_till_kill(Ind);
 
 			/* Access trap name */
-			if (p_ptr->trap_ident[tr_info_rev[t_idx]])
+			if (p_ptr->trap_ident[t_idx])
 				name = (t_name + t_info[t_idx].name);
 			else
 				name = "unknown trap";

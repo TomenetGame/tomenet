@@ -4689,7 +4689,7 @@ void do_cmd_look(int Ind, int dir) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
 
 			if (cs_ptr->sc.trap.found) {
-				if (p_ptr->trap_ident[tr_info_rev[t_idx]])
+				if (p_ptr->trap_ident[t_idx])
 					p1 = t_name + t_info[t_idx].name;
 				else
 					p1 = "trapped";
@@ -4718,7 +4718,7 @@ void do_cmd_look(int Ind, int dir) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
 
 			if (cs_ptr->sc.trap.found) {
-				if (p_ptr->trap_ident[tr_info_rev[t_idx]] || get_skill(p_ptr, SKILL_DIVINATION) == 50)
+				if (p_ptr->trap_ident[t_idx] || get_skill(p_ptr, SKILL_DIVINATION) == 50)
 					p1 = t_name + t_info[t_idx].name;
 				else
 					p1 = "A trap";

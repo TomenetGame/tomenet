@@ -2556,7 +2556,7 @@ static errr init_other(void) {
 	C_MAKE(m_list, MAX_M_IDX, monster_type);
 
 	/* Allocate and Wipe the traps list */
-//	C_MAKE(t_list, MAX_TR_IDX, trap_type);
+//	C_MAKE(t_list, MAX_T_IDX, trap_type);
 
 	/*** Init the wild_info array... for more information see wilderness.c ***/
 	// init_wild_info();

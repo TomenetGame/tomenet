@@ -3571,7 +3571,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
  */
 void do_cmd_knowledge_traps(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int k;
+	int k, km;
 
 	FILE *fff;
 
@@ -3593,15 +3593,14 @@ void do_cmd_knowledge_traps(int Ind) {
 	fprintf(fff, "\377s======== known traps ========\n");
 
 	/* Scan the traps */
-	for (k = 1; k < max_t_idx; k++) {
+	for (km = 1; km <= max_t_idx; km++) {
+		k = tr_info_rev[km];
+
 		/* Get the trap */
 		t_ptr = &t_info[k];
 
-		/* Skip "empty" traps */
-		if (!t_ptr->name) continue;
-
 		/* Skip unidentified traps */
-		if (!p_ptr->trap_ident[tr_info_rev[k]]) continue;
+		if (!p_ptr->trap_ident[k]) continue;
 
 		if (admin) fprintf(fff, "(%3d)", k);
 
