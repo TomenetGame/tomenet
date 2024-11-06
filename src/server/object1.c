@@ -2933,7 +2933,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			/* Describe the traps */
 			t = object_desc_str(t, " (");
 			if (Ind) {
-				if (p_ptr->trap_ident[o_ptr->pval])
+				if (p_ptr->trap_ident[tr_info_rev[o_ptr->pval]])
 					t = object_desc_str(t, t_name + t_info[o_ptr->pval].name);
 				else
 					t = object_desc_str(t, "trapped");

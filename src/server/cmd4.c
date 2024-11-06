@@ -3593,7 +3593,7 @@ void do_cmd_knowledge_traps(int Ind) {
 	fprintf(fff, "\377s======== known traps ========\n");
 
 	/* Scan the traps */
-	for (k = 0; k < MAX_T_IDX; k++) {
+	for (k = 0; k < max_t_idx; k++) {
 		/* Get the trap */
 		t_ptr = &t_info[k];
 
@@ -3601,7 +3601,7 @@ void do_cmd_knowledge_traps(int Ind) {
 		if (!t_ptr->name) continue;
 
 		/* Skip unidentified traps */
-		if (!p_ptr->trap_ident[k]) continue;
+		if (!p_ptr->trap_ident[tr_info_rev[k]]) continue;
 
 		if (admin) fprintf(fff, "(%3d)", k);
 

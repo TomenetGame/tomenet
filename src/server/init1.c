@@ -2693,7 +2693,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what) {
  * Initialize the "k_info" array, by parsing an ascii "template" file
  */
 errr init_k_info_txt(FILE *fp, char *buf) {
-	int i, idx = 0, kidx;
+	int i, idx = 0, kidx, k_error_idx = -1;
 	char *s, *t;
 #ifdef KIND_DIZ
 	char tmp[MSG_LEN];
@@ -2779,8 +2779,9 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			/* Count it up */
 			i = ++idx;
 
-			/* Verify information */
-			if (i <= error_idx) return(4);
+			/* ..here is a working new variant: */
+			if (kidx <= k_error_idx) return(4);
+			k_error_idx = kidx;
 
 			/* Verify information */
 			if (i >= (int) k_head->info_num) return(2);
@@ -5676,7 +5677,7 @@ static errr grab_one_trap_type_flag(trap_kind *t_ptr, cptr what) {
  * Initialize the "tr_info" array, by parsing an ascii "template" file
  */
 errr init_t_info_txt(FILE *fp, char *buf) {
-	int i;
+	int i, idx = 0, tridx, tr_error_idx = -1;
 
 	char *s, *t;
 
@@ -5752,10 +5753,14 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			if (!*s) return(1);
 
 			/* Get the index */
-			i = atoi(buf + 2);
+			tridx = atoi(buf + 2);
 
 			/* Verify information */
-			if (i <= error_idx) return(4);
+			if (tridx <= tr_error_idx) return(4);
+			tr_error_idx = tridx;
+
+			/* Do it like init_k_info_txt() does, so we don't have to worry about 'definition holes' in tr_info.txt resulting in empty trap entries */
+			i = ++idx;
 
 			/* Verify information */
 			if (i >= (int) t_head->info_num) return(2);
@@ -5780,6 +5785,9 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 
 			/* Init. Should be superfluous. */
 			t_ptr->flags = 0;
+
+			/* Create index-mapping for custom fonts and for quest_statuseffect() */
+			tr_info_rev[i] = tridx;
 
 			/* Next... */
 			continue;

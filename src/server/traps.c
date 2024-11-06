@@ -45,9 +45,9 @@ static bool do_trap_of_silliness(int Ind, int power) {
 		if (p_ptr->obj_aware[j]) aware = TRUE;
 		p_ptr->obj_aware[j] = 0;
 
-		j = rand_int(MAX_T_IDX);
-		if (p_ptr->trap_ident[j]) aware = TRUE;
-		p_ptr->trap_ident[j] = 0;
+		j = rand_int(max_t_idx);
+		if (p_ptr->trap_ident[tr_info_rev[j]]) aware = TRUE;
+		p_ptr->trap_ident[tr_info_rev[j]] = 0;
 	}
 
 	return(aware);
@@ -688,8 +688,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		never_id = TRUE;
 		trap = TRAP_OF_ALE;
 		for (l = 0; l < 99 ; l++) {
-			k = rand_int(MAX_T_IDX);
-			if (!t_info[k].name || t_info[k].minlevel > dlev ||
+			k = rand_int(max_t_idx);
+			if (
+			    //!t_info[k].name ||	--no longer needed, see comment in place_trap()
+			    t_info[k].minlevel > dlev ||
 			    k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT)
 				continue;
 
@@ -2861,8 +2863,10 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 	if (trap == TRAP_OF_RANDOM_EFFECT) {
 		trap = TRAP_OF_ALE;
 		for (l = 0; l < 99 ; l++) {
-			k = rand_int(MAX_T_IDX);
-			if (!t_info[k].name || t_info[k].minlevel > dlev ||
+			k = rand_int(max_t_idx);
+			if (
+			    //!t_info[k].name ||	--no longer needed, see comment in place_trap()
+			    t_info[k].minlevel > dlev ||
 			    k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT)
 				continue;
 
@@ -3517,8 +3521,8 @@ void player_activate_door_trap(int Ind, s16b y, s16b x) {
 
 	/* Hit the trap */
 	ident = player_activate_trap_type(Ind, y, x, NULL, -1);
-	if (ident && !p_ptr->trap_ident[t_idx]) {
-		p_ptr->trap_ident[t_idx] = TRUE;
+	if (ident && !p_ptr->trap_ident[tr_info_rev[t_idx]]) {
+		p_ptr->trap_ident[tr_info_rev[t_idx]] = TRUE;
 		msg_format(Ind, "You identified that trap as %s.", t_name + t_info[t_idx].name);
 	}
 }
@@ -3608,10 +3612,16 @@ void place_trap(struct worldpos *wpos, int y, int x, int modx) {
 
 	lv = getlevel(wpos);
 
-	/* try 100 times */
+	/* try 100 times -- TODO: rewrite this to work like object generation, with traps sorted by level and pre-filtered */
 	while ((more) && (cnt++) < 100) {
-		trap = rand_int(MAX_T_IDX);
+		trap = rand_int(max_t_idx);
 		t_ptr = &t_info[trap];
+
+		/* Trap idx not defined (there are N-index gaps in tr_info.txt)?
+		   This can happen if init_t_info_txt() sets i = 'N-index read from tr_info'
+		   instead of handling it like init_k_info_txt() does by just incrementing ++idx with each entry read.
+		   Will actually change init_t_info_txt to do just that and comment out this check then as it's not needed for the ++idx method. */
+		//if (!t_ptr->name) continue;
 
 		/* no 'multiplication 'trap? */
 		if (mod == -1 && trap == TRAP_OF_MULTIPLICATION) continue;
@@ -3742,8 +3752,10 @@ void place_trap_object(object_type *o_ptr) {
 
 	/* try 100 times */
 	while ((more) && (cnt++) < 100) {
-		trap = randint(MAX_T_IDX - 1);
+		trap = randint(max_t_idx - 1);
 		t_ptr = &t_info[trap];
+
+		//if (!t_ptr->name) continue;	-- no longer needed, see comment in place_trap()
 
 		/* no traps below their minlevel */
 		/* o_ptr->wpos is not set yet */
@@ -3834,7 +3846,7 @@ void wiz_place_trap(int Ind, int trap) {
 	else flags = FTRAP_FLOOR;
 #endif	// 0
 	/* is this a correct trap now?   */
-	if (trap < 0 || MAX_T_IDX < trap) {
+	if (trap < 1 || trap > max_t_idx) {
 		msg_print(Ind, "Trap index is out of range!");
 		return;
 	}
