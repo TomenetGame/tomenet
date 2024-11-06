@@ -5891,7 +5891,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 	/* No version yet */
 	if (!okay) return(2);
 
-	max_t_idx = ++error_idx;
+	max_t_idx = ++error_idx; //ends up at traps + 1
 
 	/* Success */
 	return(0);
