@@ -5116,7 +5116,7 @@ static bool process_player_end_aux(int Ind) {
 
 				/* Calculate actual weight dragging us down and amount of wood pulling us up */
 				wood_weight = 0;
-				water_weight = (p_ptr->can_swim ? 0 : p_ptr->wt * 10) + p_ptr->total_weight;
+				water_weight = (p_ptr->can_swim ? 0 : p_ptr->wt * 10) + p_ptr->total_weight; //(is_ent implies can_swim)
 
 				if (is_ent) {
 					huge_wood = TRUE;
