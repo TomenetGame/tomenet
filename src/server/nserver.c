@@ -6848,7 +6848,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 					/* Make a fuzz */
 					s_printf("(%s) TOWNFOUND: Player %s (%s) discovered town '%s' (%d) at (%d,%d).\n",
 					    showtime(), p_ptr->name, p_ptr->accountname, town_profile[town[i].type].name, i, town[i].x, town[i].y);
-					msg_format(Ind, "\377yYou discovered a new town, '\377U%s\377y', that nobody before you has found so far!", town_profile[town[i].type].name);
+					msg_format(Ind, "\374\377i***\377B You discovered a new town, '\377U%s\377y', that nobody before you has found so far! \377i***", town_profile[town[i].type].name);
 					/* Announce it to publicly */
 					l_printf("%s \\{B%s discovered a town: %s\n", showdate(), p_ptr->name, town_profile[town[i].type].name);
 					msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a town: '%s'! \377i***", p_ptr->name, town_profile[town[i].type].name);

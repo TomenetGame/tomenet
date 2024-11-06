@@ -3186,14 +3186,14 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				for (x = 0; x < MAX_WILD_X; x++) {
 					if ((d_ptr = wild_info[y][x].tower)) {
 						if (d_ptr->type == d_no) {
-							if (o_ptr) msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
+							if (o_ptr) msg_format(Ind, "\376\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
 							y = MAX_WILD_Y;
 							break;
 						}
 					}
 					if ((d_ptr = wild_info[y][x].dungeon)) {
 						if (d_ptr->type == d_no) {
-							if (o_ptr) msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
+							if (o_ptr) msg_format(Ind, "\376\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
 							y = MAX_WILD_Y;
 							break;
 						}
@@ -3218,7 +3218,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			wilderness_type *wild;
 			dungeon_type *d_ptr;
 
-			msg_format(Ind, "\377sYou learn the world map layout around sector \377u(%d,%d)\377s.", (xs + xe) / 2, (ys + ye) / 2); //for patch area revelation
+			msg_format(Ind, "\376\377sYou learn the world map layout around sector \377u(%d,%d)\377s.", (xs + xe) / 2, (ys + ye) / 2); //for patch area revelation
 
 			for (x = xs; x <= xe; x++) for (y = ys; y <= ye; y++) {
 				wild = &wild_info[y][x];
@@ -3226,7 +3226,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
  #if 0 /* this only makes sense for single (x,y) revelation, not for patch area */
 				if (p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
 				    (1U << (x + y * MAX_WILD_X) % 8)) {
-					msg_format(Ind, "\377sThis world map piece shows the layout at \377u(%d,%d)\377s which you already know.", x, y);
+					msg_format(Ind, "\376\377sThis world map piece shows the layout at \377u(%d,%d)\377s which you already know.", x, y);
 					break;
 				}
  #endif
@@ -3237,13 +3237,13 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				/* Exclude (temporary) event dungeons at (0,0), including PvP arena */
 				if (x || y) {
 					if ((d_ptr = wild->tower) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
-						msg_print(Ind, "\377sYou learn that there is a tower at or next to that location, called:");
-						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
+						msg_print(Ind, "\376\377sYou learn that there is a tower at or next to that location, called:");
+						msg_format(Ind, "\376\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
 							d_ptr->known |= 0x1;
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
-							msg_format(Ind, "\377yYou discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far!", get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far! \377i***", get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 							/* Announce it to publicly */
 							l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 							msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
@@ -3253,13 +3253,13 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						}
 					}
 					if ((d_ptr = wild->dungeon) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
-						msg_print(Ind, "\377sYou learn that there is a dungeon at or next to that location, called:");
-						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+						msg_print(Ind, "\376\377sYou learn that there is a dungeon at or next to that location, called:");
+						msg_format(Ind, "\376\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
 							d_ptr->known |= 0x1;
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
-							msg_format(Ind, "\377yYou discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far!", get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far! \377i***", get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 							/* Announce it to publicly */
 							l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 							msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
