@@ -2780,7 +2780,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			i = ++idx;
 
 			/* ..here is a working new variant: */
-			if (kidx <= k_error_idx) return(4);
+			//if (kidx <= k_error_idx) return(4);	--actually allow ^^ (eg pseudo-dsm is sorted in way before its index)
 			k_error_idx = kidx;
 
 			/* Verify information */
