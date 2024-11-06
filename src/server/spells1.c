@@ -11328,7 +11328,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_SLOWPOISON_PLAYER:
-		if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
+		if (p_ptr->poisoned && !p_ptr->slow_poison) {
+			p_ptr->slow_poison = 1;
+			p_ptr->redraw |= PR_POISONED;
+		}
 		dam = 0;
 		break;
 
@@ -11597,7 +11600,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_CURING:
 	case GF_CURE_PLAYER:
 		if (dam & 0x1) { /* Slow Poison */
-			if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
+			if (p_ptr->poisoned && !p_ptr->slow_poison) {
+				p_ptr->slow_poison = 1;
+				p_ptr->redraw |= PR_POISONED;
+			}
 		}
 		if (dam & 0x2) { /* Ungorge */
 			if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);

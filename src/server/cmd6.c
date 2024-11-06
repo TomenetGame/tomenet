@@ -894,6 +894,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (p_ptr->poisoned && !p_ptr->slow_poison) {
 				p_ptr->slow_poison = 1;
 				ident = TRUE;
+				p_ptr->redraw |= PR_POISONED;
 			}
 #endif
 			break;

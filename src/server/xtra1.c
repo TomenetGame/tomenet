@@ -436,8 +436,8 @@ static void prt_afraid(int Ind) {
 static void prt_poisoned(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->diseased) Send_poison(Ind, 2);
-	else if (p_ptr->poisoned) Send_poison(Ind, 1);
+	if (p_ptr->diseased) Send_poison(Ind, 0x2);
+	else if (p_ptr->poisoned) Send_poison(Ind, p_ptr->slow_poison ? 0x4 : 0x1);
 	else Send_poison(Ind, 0);
 }
 

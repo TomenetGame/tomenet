@@ -1028,7 +1028,7 @@ void prt_poisoned(char poisoned) {
 	if (poisoned & 0x2)
 		c_put_str(TERM_ORANGE, "Diseased", ROW_POISONED, COL_POISONED);
 	else if (poisoned)
-		c_put_str(TERM_ORANGE, "Poisoned", ROW_POISONED, COL_POISONED);
+		c_put_str((poisoned & 0x4) ? TERM_YELLOW : TERM_ORANGE, "Poisoned", ROW_POISONED, COL_POISONED);
 	else
 		put_str("        ", ROW_POISONED, COL_POISONED);
 

@@ -10428,6 +10428,8 @@ Poison   -Poisoned      The player will continuously lose Hit Points.
                         poison ticks and drains your HP. Best is of course to
                         have means of Cure/Neutralize Poison, 'Curing', or
                         some Lembas, which will all completely cure poison.
+                        While poison is slowed, the poison indicator will be
+                        displayed in yellow colour instead of orange.
 
 Disease  -Diseased      Very similar to poison, but poison resistance does not
                         help against this. Can be cured by eating some Lembas,
@@ -22363,6 +22365,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
     Curing          Slows down the effect of poison            (auto-project)
                     and cures being gorged.
+                    While poison is slowed, the poison indicator will be
+                    displayed in yellow colour instead of orange.
                     Required skill level for first spell level: 1.
 
                     Tier II: Level 11.                         (auto-project)
