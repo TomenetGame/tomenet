@@ -6431,7 +6431,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 #ifdef MSTAFF_MDEV_COMBO
-	if (o_ptr->tval == TV_MSTAFF) {
+	if (o_ptr->tval == TV_MSTAFF && !o_ptr->name2 && !o_ptr->name2b && !o_ptr->name1) {
 		/* Activate to absorb a device? */
 		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) {
 			mstaff_absorb(Ind);

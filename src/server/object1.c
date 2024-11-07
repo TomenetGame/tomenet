@@ -3894,7 +3894,7 @@ cptr item_activation(object_type *o_ptr) {
 	if (o_ptr->tval == TV_RUNE) return("tracing a sigil onto equipment");
 
 #ifdef MSTAFF_MDEV_COMBO
-	if (o_ptr->tval == TV_MSTAFF) {
+	if (o_ptr->tval == TV_MSTAFF && !o_ptr->name2 && !o_ptr->name2b && !o_ptr->name1) {
 		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) return("absorbing the power of a magic device - staff, wand or rod");
 		else if (o_ptr->xtra1) return("releasing the absorbed power of a magic staff");
 		else if (o_ptr->xtra2) return("releasing the absorbed power of a magic wand");
