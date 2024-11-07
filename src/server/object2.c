@@ -11802,6 +11802,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			o_ptr->ident |= ID_CURSED;
 			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 			note_toggle_cursed(o_ptr, TRUE);
+			s_printf("AUTO_RECURSE(6): %s : %d,%d,%d,%d (%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, i);
 		}
 	}
 

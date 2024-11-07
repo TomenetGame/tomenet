@@ -2497,7 +2497,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			/* Auto Curse */
 			if (f3 & TR3_AUTO_CURSE) {
 				/* The object recurse itself ! */
-				o_ptr->ident |= ID_CURSED;
+				if (!(o_ptr->ident & ID_CURSED)) {
+					o_ptr->ident |= ID_CURSED;
+					s_printf("AUTO_RECURSE(1): %s : %d,%d,%d,%d (%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, slot);
+				}
 			}
 
 			/* Cursed! */
@@ -2581,7 +2584,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			/* Auto Curse */
 			if (f3 & TR3_AUTO_CURSE) {
 				/* The object recurse itself ! */
-				o_ptr->ident |= ID_CURSED;
+				if (!(o_ptr->ident & ID_CURSED)) {
+					o_ptr->ident |= ID_CURSED;
+					s_printf("AUTO_RECURSE(2): %s : %d,%d,%d,%d (%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, slot);
+				}
 			}
 
 			/* Cursed! */

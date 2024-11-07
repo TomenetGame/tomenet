@@ -832,7 +832,12 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		/* Handle auto-cursing items in either slot */
 		o_ptr = &p_ptr->inventory[INVEN_WIELD];
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-		if (f3 & TR3_AUTO_CURSE) o_ptr->ident |= ID_CURSED;
+		if (f3 & TR3_AUTO_CURSE) {
+			if (!(o_ptr->ident & ID_CURSED)) {
+				o_ptr->ident |= ID_CURSED;
+				s_printf("AUTO_RECURSE(3): %s : %d,%d,%d,%d (%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, INVEN_WIELD);
+			}
+		}
 		if (cursed_p(o_ptr)) {
 #ifdef VAMPIRES_INV_CURSED
 			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
@@ -856,7 +861,12 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		}
 		o_ptr = &p_ptr->inventory[INVEN_ARM];
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-		if (f3 & TR3_AUTO_CURSE) o_ptr->ident |= ID_CURSED;
+		if (f3 & TR3_AUTO_CURSE) {
+			if (!(o_ptr->ident & ID_CURSED)) {
+				o_ptr->ident |= ID_CURSED;
+				s_printf("AUTO_RECURSE(4): %s : %d,%d,%d,%d (%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, INVEN_ARM);
+			}
+		}
 		if (cursed_p(o_ptr)) {
 #ifdef VAMPIRES_INV_CURSED
 			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
@@ -1358,7 +1368,10 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		/* Auto Curse */
 		if (f3 & TR3_AUTO_CURSE) {
 			/* The object recurse itself ! */
-			o_ptr->ident |= ID_CURSED;
+			if (!(o_ptr->ident & ID_CURSED)) {
+				o_ptr->ident |= ID_CURSED;
+				s_printf("AUTO_RECURSE(5): %s : %d,%d,%d,%d (%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, slot);
+			}
 		}
 
 #ifdef VAMPIRES_INV_CURSED
@@ -5269,6 +5282,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 					o_ptr->ident |= ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 					note_toggle_cursed(o_ptr, TRUE);
+					s_printf("AUTO_RECURSE_SUBINVEN: %s : %d,%d,%d,%d (%d)(%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, sslot, i);
 				}
 			}
 
