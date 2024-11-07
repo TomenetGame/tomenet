@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 6. November 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 7. November 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -66,7 +66,7 @@ Contents
     (2.1e)  Android (custom/compilation)
     (2.2)   Installing sound and music packs
     (2.2a)  Audio controls and config options
-    (2.2b)  Editing sound and music configuration
+    (2.2b)  Editing sound and music manually/Creating own packs
     (2.3)   "Promoting" TomeNET on Steam ;)
     (2.4)   Starting TomeNET and getting to play on an internet server
     (2.5)   Client options
@@ -4538,25 +4538,59 @@ If you want to temporarily disable all loading/initializing of audio then
 instead of editing the config file's 'Sound' entry you can just use the '-q'
 command-line option.
 
+To change volume or disable certain songs or sounds, go to the jukebox with
+either = n for sound effects or = N for music.
+There you can make changes to volume wih -/+/v keys or disable/reenable things
+with t key, these changes are persistent and saved automatically.
+
 If you want to use your own sound and music, and create audio packs for other
 players, read (2.2b) below.
 
 
-(2.2b) Manually editing sound and music configuration
------------------------------------------------------
+(2.2b) Editing sound and music manually/Creating own packs
+----------------------------------------------------------
 You can easily replace or disable certain sound effects or music, or even
 create your own sound and music packs.
 
+To download music from music sites such as youtube, soundcloud, bandcamp etc
+the recommended tool as of the time of writing this is 'yt-dlp'. The syntax
+is easy ("-x" option is to keep only the audio part, not any video):
+  yt-dlp -x <URL-of-your-music>
+For example:
+  yt-dlp -x https://soundcloud.com/elen-mylo/elen-mylo-outward-night
+
+Or eg for specifically only have title + extension in the filename:
+  yt-dlp -x -o '%(title)s.%(ext)s'
+
+To convert downloaded music to a format recognized by TomeNET (recommended are
+either ogg or mp3, preferably ogg), the tool of choice is 'ffmpeg':
+  ffmpeg -i <songname.XXX> <songname.ogg>
+For example:
+  ffmpeg -i ffmpeg -i "Outward Night.opus" "Outward Night.ogg"
+So you basically just repeat the song name, but change the extension from
+whatever it was to ".ogg", ffmpeg reconizes this and converts any format to it.
+
 All audio files are in the sub-folders 'sound' and 'music' in the folder
 TomeNET/lib/xtra/. You can just delete or replace the sound files and it'll
-apply as soon as you start/restart the game. To convert your own sound files
-to the appropriate format of already existing files, when you overwrite them,
-use an audio editor, for example:
+apply as soon as you start/restart the game.
+To create a completely new pack, create a new folder starting on either 'sound'
+or 'music' in the TomeNET/lib/xtra folder and add a custom extension of your
+choice, eg so:
+  TomeNET/lib/xtra/music.myownpack
+Make sure it contains the music.cfg file, which you can then edit to add all
+your songs that you put into this folder.
+You can either copy over the music.cfg of the official TomeNET audio packs or
+just download it from tomenet.eu/downloads -> music.cfg/sound.cfg templates.
 
-'Goldwave' is a good sound editor for Windows OS, which is free to use
-  (although it asks for registration, but that's just optional.)
-Alternatively, the free open source audio editor 'Audacity' is available
-  for Linux, Mac OS X and Windows.
+In the game you can switch between the music... or sound... folders aka packs
+with the selector menu, press = X to open it.
+
+To convert your own sound files to the appropriate format of already existing
+files, when you overwrite them, use an audio editor, for example:
+- 'Goldwave' is a good sound editor for Windows OS, which is free to use
+   (although it asks for registration, but that's just optional.)
+- The free open source audio editor 'Audacity' is available
+   for Linux, Mac OS X and Windows.
 
 For more specific editing, open the files 'sound.cfg' (in the sound folder) or
 'music.cfg' (in the music folder, if a music pack has been installed) in any
