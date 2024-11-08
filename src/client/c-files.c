@@ -2701,7 +2701,7 @@ int check_guide_checksums(bool forced) {
 	if (!my_fexists("updater\\sha256sum.bat"))
 	//if (access("updater\\sha256sum.bat", F_OK))
 #else /* assume POSIX */
-	if (system("sha256sum"))
+	if (system("sha256sum --version"))
 #endif
 	{
 		//printf("Warning: No sha256sum found, cannot auto-check guide for outdatedness.\n"); --could be spammy
