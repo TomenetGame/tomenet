@@ -3620,7 +3620,8 @@ void calc_boni(int Ind) {
 #endif
 
 		/* sense surroundings without light source! (virtual lite / dark light) */
-		p_ptr->cur_darkvision = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;
+		p_ptr->cur_darkvision = 1 + p_ptr->lev / 10;
+		csheet_boni[14].lite = 1 + p_ptr->lev / 10;
 		csheet_boni[14].cb[12] |= CB13_XLITE;
 
 		//if (p_ptr->lev >= 30) p_ptr->levitate = TRUE; can poly into bat instead
@@ -3653,7 +3654,8 @@ void calc_boni(int Ind) {
 
 				/* Increase intrinsic light */
 				l = 1 + (p_ptr->lev - 20) / 6;
-				p_ptr->cur_lite += l; csheet_boni[14].lite += l; //REAL light!
+				p_ptr->cur_lite += l;
+				csheet_boni[14].lite += l; //REAL light!
 				csheet_boni[14].cb[12] |= CB13_XLITE;
 				lite_inc_white += l;
 			}
@@ -6774,6 +6776,10 @@ void calc_boni(int Ind) {
 
 
 /* -------------------- Limits -------------------- */
+
+	/* Maximum light radius of any kind of "light" */
+	if (p_ptr->cur_darkvision > LITE_CAP) p_ptr->cur_darkvision = LITE_CAP;
+	if (p_ptr->cur_lite > LITE_CAP) p_ptr->cur_lite = LITE_CAP;
 
 #ifdef NO_REGEN_ALT
 	/* no_hp_regen special workings: Actually simulates having hp-drain and hp-regen at the same time, keeping each other in check.
