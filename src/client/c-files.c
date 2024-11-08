@@ -2734,7 +2734,7 @@ int check_guide_checksums(bool forced) {
 #ifdef WINDOWS
 	(void)_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", "https://www.tomenet.eu/TomeNET-Guide.sha256", NULL);
 #else /* assume POSIX */
-	(void)system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.sha256");
+	(void)system("wget --timeout=3 https://www.tomenet.eu/TomeNET-Guide.sha256");
 #endif
 	fp = fopen("TomeNET-Guide.sha256", "r");
 	if (fp) {

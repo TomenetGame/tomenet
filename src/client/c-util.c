@@ -11577,7 +11577,7 @@ void do_cmd_options(void) {
 				continue;
 			}
 
-			(void)system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
+			(void)system("wget --timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
 
 			fp = fopen("TomeNET-Guide.txt", "r");
 			if (fp) {//~paranoia?
