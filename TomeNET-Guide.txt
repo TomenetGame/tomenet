@@ -26995,12 +26995,26 @@ Solution:   This can have several reasons. On disconnection a message box will
                     The login process couldn't be completed. Probably a network
                     problem, or really bad lag/timeout.
 
-            If you are living in a place with bad network infrastructure, for
-            example Australia, you could try a VPN service such as 'NordVPN'
-            (not affiliated, random example) or the gaming-specific service
-            'Exitlag' (again not affiliated). These are services that gamers
-            from Australia apparently use to improve their gaming experience.
+            If you are living in a place with ISPs that utilize bad network
+            infrastructure/routing, for example Australia, you could try a VPN
+            service such as 'NordVPN' (not affiliated, random example) or the
+            gaming-specific service 'Exitlag' (again not affiliated).
+            These are services that gamers from Australia apparently use to
+            improve their gaming experience.
             At the time of writing, these provide free trial periods.
+
+            To check how your ISP routes your network traffic, you can use the
+            'traceroute' command on your PC (eg 'traceroute europe.tomenet.eu')
+            and then visualize it by using a website that provides (free)
+            visualization service such as:
+
+              https://stefansundin.github.io/traceroute-mapper/
+
+            which allows you to just copy-paste your local 'traceroute' command
+            output into the website and it will show you whether your traffic
+            goes to the destination (eg the TomeNET server of your choice) in a
+            more or less direct way or is routed to Narnia first by a sucky ISP,
+            in which case you should call it and complain :-p.
 
 PROBLEM 9:  I am disconnected from the server with an error message, this
             happens before I can even start playing.
@@ -27173,6 +27187,7 @@ Solution:   This might be caused by a misconfigured router (some D-Link models
             for example). Try to establish an SSH-tunnel from your PC behind
             the router to a machine outside of your LAN for port 18348 (TCP).
             (This might even reduce lag under certain circumstances.)
+            Please also see PROBLEM 8 for network routing problems.
 
 PROBLEM 15: I get kicked out with an error message after entering an account
             name and password.
@@ -27723,10 +27738,12 @@ PROBLEM 71: When playing the game via terminal or over SSH a lot of characters
             are rendered wrong, eg appearing as "^B" two-symbol combination
             even, making the display mostly unreadable.
 Solution:   Turn off 'font_map_solid_walls' in options page 1 (press = 1).
+
 PROBLEM 72: When using a custom font that remaps characters, some or most of
             the tiles, monsters or other visuals seem to not map correctly but
             are displayed as if it was a default font instead.
 Solution:   Turn off 'font_map_solid_walls' in options page 1 (press = 1).
+
 PROBLEM 73: When you start TomeNET in a terminal, you get an error message:
             "TomeNET needs an 80x24 'curses' screen
              Unable to initialize a display module!"
