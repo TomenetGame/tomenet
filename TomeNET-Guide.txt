@@ -100,6 +100,7 @@ Contents
     (3.9)   Macros with special keys
     (3.9a)  Creating a chat macro for your party
     (3.9b)  Alternative macros: Calling objects by their name
+    (3.9c)  Disabling or using CapsLock and NumLock as macro keys (POSIX only)
     (3.10)  Experience, level-ups and skill points
     (3.10a) Experience points table
     (3.11)  Death, ghosts and looting
@@ -7662,6 +7663,90 @@ or confused etc) to you. So if you carry for example Manathrust I but also
 the 2nd tier Manathrust II and your 'Mana' school is trained high enough to
 unlock Manathrust II then it will automatically attempt to cast II (and fail
 the attempt if you don't have enough MP for it or are blinded etc!).
+
+
+(3.9c) Disabling or using CapsLock and NumLock as macro keys (POSIX only)
+-------------------------------------------------------------------------
+There might or might not be a way to do this on Windows too, but for now,
+here is a way on POSIX (Linux/Mac OS X) to use your CapsLock and NumLock keys
+as actual keys in TomeNET instead of it just being a useless modifier keys.
+Or you could just disable CapsLock so it won't interfere if you accidentally
+fat-finger it in the heat of battle.
+
+This utilizes the command 'xmodmap' which is usually provided by either the
+package x11-server-utils or bash-completion.
+xmodmap allows remapping a key and combinations of this key getting pressed
+together with modifier keys (shift, alt, ctrl etc).
+
+You need to figure out the key code of the key to modify and the available
+modifier keys:
+
+  xmodmap -pm
+will list all the all modifier keys on your system.
+  xmodmap -pke
+will list all currently defined keybinds. Grep it to see what capslock and
+numlock are currently bound to, so you can restore them afterwards.
+
+On my system the keycode for capslock is 66 and for numlock 77. Verify this
+via 'xmodmap -pke | grep Caps_Lock' and 'xmodmap -pke | grep Num_Lock'.
+The results of these commands will also be important for restoring the keys'
+behaviour afterwards.
+They should read:
+  keycode  66 = Caps_Lock NoSymbol Caps_Lock
+  keycode  77 = Num_Lock NoSymbol Num_Lock
+but might also turn out differently, depending on your system, for example:
+  keycode  66 = Caps_Lock ISO_Next_Group Caps_Lock ISO_Next_Group Caps_Lock
+               ISO_Next_Group Caps_Lock ISO_Next_Group
+
+We see at least three 'columns', as in the first example these are 'Caps_Lock',
+'NoSymbol' and then 'Caps_Lock' again.
+The first column is the key pressed on its own, the second together with the
+Shift key, after that it can depend on your system, see further down in this
+chapter for details.
+
+Now you could disable capslock like this, simply by setting it to NoSymbol:
+  xmodmap -e "keycode  66 = NoSymbol NoSymbol NoSymbol"
+...then run TomeNET, and afterwards restore capslock with
+  xmodmap -e "keycode  66 = Caps_Lock NoSymbol Caps_Lock"
+
+Or you could reconfigure numlock to actually become a normal key, by mapping it
+to some key that you usually don't use, especially in the specific combination
+with a modifier key:
+  xmodmap -e "keycode  77 = acute grave period"
+...run TomeNET, afterwards restore numlock to normal:
+  xmodmap -e "keycode  77 = NumLock NoSymbol NumLock"
+
+Depending on your system you can specify a larger number of modifier-affected
+key definitions than just the 3 'columns' in these xmodmap-keycode-commands.
+The meaning of the columns are, quoting from the xmodmap man page:
+
+"Up to eight keysyms may be attached to a key, however the last four are not
+used in any major X server implementation. The first keysym is used when no
+modifier key is pressed in conjunction with this key, the second with Shift,
+the third when the Mode_switch key is used with this key and the fourth when
+both the Mode_switch and Shift keys are used."
+
+This usually translates to:
+  Key
+  Shift+Key
+  mode_switch+Key
+  mode_switch+Shift+Key
+  AltGr+Key
+  AltGr+Shift+Key
+but unfortunately can also turn out differently depending on your system,
+especially on laptops. Sometimes the mode_switch key is the AltGR key.
+Also, despite the man page saying "up to eigth" some systems might have
+more columns even, usually with non-western keyboard layouts.
+
+Note that CTRL is not present. Control cannot be remapped this way, if you
+want to use it, you'd have to remap the left and/or right ctrl key itself
+first to another shiftkey such as mode_switch, and then map keys to to that
+combo of mod_switch and the key you wanted to press together with CTRL.
+The obvious drawback is that this will disable ctrl being actual ctrl on your
+system while the remapping of ctrl to mode_switch (or whatever other shiftkey
+is active).
+
+(A sometimes tool useful for reading key codes is 'xev' from 'x11-utils'.)
 
 
 
@@ -27013,7 +27098,7 @@ Solution:   This can have several reasons. On disconnection a message box will
             which allows you to just copy-paste your local 'traceroute' command
             output into the website and it will show you whether your traffic
             goes to the destination (eg the TomeNET server of your choice) in a
-            more or less direct way or is routed to Narnia first by a sucky ISP,
+            more or less direct way or is routed to Narnia first by a sucky ISP
             in which case you should call it and complain :-p.
 
 PROBLEM 9:  I am disconnected from the server with an error message, this
