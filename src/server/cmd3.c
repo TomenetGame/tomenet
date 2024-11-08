@@ -4739,7 +4739,7 @@ void do_cmd_look(int Ind, int dir) {
 					p1 = "A trap";
 
 				if (f_info[c_ptr->feat].flags2 & FF2_NO_ARTICLE) p2 = " on ";
-				else if (is_a_vowel(name[0])) p1 = " on an ";
+				else if (is_a_vowel(name[0])) p2 = " on an ";
 				else p2 = " on a ";
 			}
 		}
@@ -4747,12 +4747,10 @@ void do_cmd_look(int Ind, int dir) {
 		/* Hack -- special description for store doors */
 		//if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
 		if (feat == FEAT_SHOP) {
-			p1 = "The entrance to ";
+			p1 = "The entrance to the ";
 
-			/* TODO: store name! */
-			if ((cs_ptr = GetCS(c_ptr, CS_SHOP))) {
+			if ((cs_ptr = GetCS(c_ptr, CS_SHOP)))
 				name = st_name + st_info[cs_ptr->sc.omni].name;
-			}
 
 		}
 
