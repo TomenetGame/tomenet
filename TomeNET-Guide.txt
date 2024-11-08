@@ -19329,7 +19329,7 @@ create a character!):
     Vampires fear the sunlight and any kind of items giving off powerful light
     (radius of 3 or more, artifact lights, or light sources that are blessed,
     evil-slaying or undead-slaying or give off pure white light). Asides from
-    light sources aside they fear all items that are blessed or *slay undead*.
+    strong light sources they fear all items that are blessed or *slay undead*.
     Any such item that is adverse to undead will burn them, draining their hit
     points, or draining their mana if worn on head or hands. Exceptions are
     cursed items, chaotic items and the "Stone of Lore", these are always safe.
@@ -19339,9 +19339,10 @@ create a character!):
     or wear a protective wrapping.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness thanks to an intrinsic
-    trait exclusive for vampire race characters: Darkvision. This ability grows
-    when the vampire rises in character-levels, starting at torch-wide radius
-    and growing to lantern-wide radius already when reaching level 10.
+    trait exclusive to the vampire race: Darkvision.
+    This ability grows when the vampire rises in character-levels, starting at
+    torch-wide radius and growing to lantern-wide radius already when reaching
+    level 10. At night on the world surface, darkvision increases even more.
     Regarding items, Vampires do not suffer a hit point drain from wielding a
     spectral weapon. They are even able to wear or wield heavily cursed items
     such as Morgul weapons and benefit from them, turning their negative boni
@@ -22756,6 +22757,7 @@ All Unlife spells are Wisdom-based.)
                     At 30 grants darkvision, allowing you to read, run and see
                     your surroundings without a light source. The radius starts
                     at 1 and grows by +1 every five skill points up to 5 at 50.
+                    At night on the world surface darkvision increases further.
                     This darkvision perk does not stack with intrinsic vision
                     that vampire race characters have, so it has no benefits or
                     any effect for them.
