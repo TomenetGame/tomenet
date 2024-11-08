@@ -7676,7 +7676,7 @@ fat-finger it in the heat of battle.
 This utilizes the command 'xmodmap' which is usually provided by either the
 package x11-server-utils or bash-completion.
 xmodmap allows remapping a key and combinations of this key getting pressed
-together with modifier keys (shift, alt, ctrl etc).
+together with modifier keys (shift, alt, etc).
 
 You need to figure out the key code of the key to modify and the available
 modifier keys:
