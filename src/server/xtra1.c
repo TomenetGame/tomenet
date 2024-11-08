@@ -62,6 +62,9 @@
    'Thunderlords' ego doesn't have TELEPORT flag (which was just removed). */
 //#define TOGGLE_TELE
 
+/* Lore-emphasizing QoL: Double + 1 dark vision at night on the world surface? */
+#define DARKVISION_SURFACE_BOOST
+
 
 
 /*
@@ -6760,6 +6763,13 @@ void calc_boni(int Ind) {
 	p_ptr->player_sees_dm = (o_ptr->tval && o_ptr->name1 == ART_GOGGLES_DM);
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	p_ptr->instakills = (o_ptr->tval && o_ptr->name1 == ART_SCYTHE_DM) ? ((o_ptr->note && strstr(quark_str(o_ptr->note), "IDDQD")) ? 2 : 1) : 0; //at doom's gate...
+
+#ifdef DARKVISION_SURFACE_BOOST
+	if (p_ptr->cur_darkvision && !p_ptr->wpos.wz && night_surface) {
+		p_ptr->cur_darkvision = p_ptr->cur_darkvision * 2 + 1;
+		csheet_boni[14].lite = p_ptr->cur_darkvision;
+	}
+#endif
 
 
 
