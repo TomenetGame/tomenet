@@ -62,7 +62,7 @@
    'Thunderlords' ego doesn't have TELEPORT flag (which was just removed). */
 //#define TOGGLE_TELE
 
-/* Lore-emphasizing QoL: Double + 1 dark vision at night on the world surface? */
+/* Lore-emphasizing QoL: Greatly extend dark vision at night on the world surface? */
 #define DARKVISION_SURFACE_BOOST
 
 
@@ -6768,7 +6768,8 @@ void calc_boni(int Ind) {
 
 #ifdef DARKVISION_SURFACE_BOOST
 	if (p_ptr->cur_darkvision && !p_ptr->wpos.wz && night_surface) {
-		p_ptr->cur_darkvision = p_ptr->cur_darkvision * 2 + 1;
+		//p_ptr->cur_darkvision = p_ptr->cur_darkvision * 2 + 1;
+		p_ptr->cur_darkvision += 4;
 		csheet_boni[14].lite = p_ptr->cur_darkvision;
 	}
 #endif
