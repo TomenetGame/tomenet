@@ -1047,7 +1047,7 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 		case TV_SUBINVEN: /* Chest clones */
 			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) break;
 			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) break;
-			if (o_ptr->sval != SV_SI_FOOD_BAG) break;
+			if (o_ptr->sval == SV_SI_FOOD_BAG) break;
 			return(1);
 #endif
 		default:
@@ -3319,6 +3319,10 @@ int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet) {
 			msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag! Your current client won't work!");
 		if (o_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0))
 			msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
+ #ifdef SI_WRAPPING_SKILL
+		if (o_ptr->sval == SV_SI_MDEVP_WRAPPING && p_ptr->newbie_hints && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL)
+			msg_format(Ind, "\377yYou need expertise %d in 'Magic Device' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
+ #endif
 		break;
 	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
 		item_new = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, quiet);

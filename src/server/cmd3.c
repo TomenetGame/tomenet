@@ -3902,6 +3902,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 	object_type *j_ptr;
 
 	long int used_fuel = 0, spilled_fuel = 0, available_fuel = 0, old_fuel;
+	bool flask = FALSE;
 
 
 	/* Restrict the choices */
@@ -3949,6 +3950,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 	/* Refuel */
 	used_fuel = j_ptr->timeout;
 	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) {
+		flask = TRUE;
 		j_ptr->timeout += o_ptr->pval;
 	} else {
 		spilled_fuel = (o_ptr->timeout * (randint(5) + (130 - adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 2)) / 100; /* spill some */
@@ -4025,7 +4027,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 	p_ptr->notice |= (PN_COMBINE);
 
 	/* Keep the empty bottle? */
-	if (p_ptr->keep_bottle) {
+	if (flask && p_ptr->keep_bottle) {
 		object_type forge;
 
 		o_ptr = &forge;
@@ -5598,7 +5600,6 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 			eligible_bag = TRUE;
 			break;
 		case SV_SI_MDEVP_WRAPPING:
- #if 1
 			/* Extra hint for unidentified rods, instead of simply claiming that there is no bag space (as no chest is found and wrapping isn't eligible for unid'ed rods): */
 			if (i_ptr->tval == TV_ROD && !object_aware_p(Ind, i_ptr)) {
 				/* The reason is that rod_requires_direction() will always return(TRUE) for unknown rods anyway. */
@@ -5609,9 +5610,17 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 				msg_print(Ind, "Rods must be non-directional in order to stow it in your antistatic wrapping!");
 				continue;
 			}
- #endif
+
 			/* Note that unknown/unaware rods will automatically return(TRUE) for requiring direction, even if they really don't. */
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
+
+ #ifdef SI_WRAPPING_SKILL
+			if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL) {
+				msg_format(Ind, "You need expertise %d in 'Magic Device' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
+				continue;
+			}
+ #endif
+
 			eligible_bag = TRUE;
 			break;
 		case SV_SI_POTION_BELT:
@@ -5730,7 +5739,6 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 			eligible_item = TRUE;
 			break;
 		case SV_SI_MDEVP_WRAPPING:
- #if 1
 			/* Extra hint for unidentified rods, instead of simply claiming that there is no bag space (as no chest is found and wrapping isn't eligible for unid'ed rods): */
 			if (i_ptr->tval == TV_ROD && !object_aware_p(Ind, i_ptr)) {
 				/* The reason is that rod_requires_direction() will always return(TRUE) for unknown rods anyway. */
@@ -5741,9 +5749,17 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 				//msg_print(Ind, "Rods must be non-directional in order to stow it in your antistatic wrapping!");
 				continue;
 			}
- #endif
+
 			/* Note that unknown/unaware rods will automatically return(TRUE) for requiring direction, even if they really don't. */
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
+
+ #ifdef SI_WRAPPING_SKILL
+			if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL) {
+				//msg_format(Ind, "You need expertise %d in 'Magic Device' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
+				continue;
+			}
+ #endif
+
 			eligible_item = TRUE;
 			break;
 		case SV_SI_POTION_BELT:

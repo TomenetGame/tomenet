@@ -4452,6 +4452,8 @@ $ENABLE_SUBINVEN$A:15/20:30/30
 $ENABLE_SUBINVEN$P:0:1d1:0:0:0
 $ENABLE_SUBINVEN$F:EASY_KNOW
 $ENABLE_SUBINVEN$D:A magical cloth for storing devices that don't need to be aimed actively.
+#SI_WRAPPING_SKILL:
+$ENABLE_SUBINVEN$D:Requires expertise of 10.000 or more in 'Magic Device' skill to use properly.
 
 
 # Extra mushroom(s)
