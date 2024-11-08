@@ -6920,6 +6920,7 @@ Chain_Macro:
 									break; /* exit switch */
 								}
 								u = u_prev[--step];
+								buf[strlen(buf) - 1] = 0; /* remove newest char again from macro built so far*/
 								continue;
 							case ':': /* Allow chatting */
 								cmd_message();
