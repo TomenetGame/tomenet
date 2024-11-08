@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 7. November 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 8. November 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6255,6 +6255,10 @@ There are four categories of subinventory containers:
 - Antistatic Wrapping
   This bag can hold magic devices that do not require a directional activation
   (all staves and some rods) and allows you to use them straight from within.
+  However, it actually requires decent expertise in magic-device handling,
+  so your character will need at least 10.000 in either 'Magic Device' skill
+  or in 'Trapping' skill (as trappers are proficient in magic-device-based
+  trap kit handling too).
   (For client versions older than 4.9.2, you must use the '@' feature (call by
   item name) in the prompt, or simply create a macro using the macro wizard,
   which creates call-by-name macros.)

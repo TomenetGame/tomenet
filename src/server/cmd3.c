@@ -5615,8 +5615,8 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
 
  #ifdef SI_WRAPPING_SKILL
-			if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL) {
-				msg_format(Ind, "You need expertise %d in 'Magic Device' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
+			if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) {
+				msg_format(Ind, "You need %d in 'Magic Device' or 'Trapping' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
 				continue;
 			}
  #endif
@@ -5754,8 +5754,8 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
 
  #ifdef SI_WRAPPING_SKILL
-			if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL) {
-				//msg_format(Ind, "You need expertise %d in 'Magic Device' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
+			if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) {
+				//msg_format(Ind, "You need %d in 'Magic Device' or 'Trapping' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
 				continue;
 			}
  #endif

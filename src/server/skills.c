@@ -766,15 +766,24 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 		if (old_value < 100 && new_value >= 100) {
 			msg_print(Ind, "\374\377GYou learn how to use the fighting technique 'Steam Blast'!");
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown traps and ammunition.");
+#ifdef SI_WRAPPING_SKILL
+			if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL) {
+				if (p_ptr->newbie_hints) //no p_ptr->warning_.. needed for the 'hint' part at the end of this message really
+					msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings. To save bag space, buy one at the magic store.");
+				else
+					msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings.");
+			}
+#endif
 		}
 		break;
 	case SKILL_DEVICE:
 #ifdef SI_WRAPPING_SKILL
-		if (old_value < SI_WRAPPING_SKILL * 10 && new_value >= SI_WRAPPING_SKILL * 10) {
+		if (old_value < SI_WRAPPING_SKILL * 10 && new_value >= SI_WRAPPING_SKILL * 10
+		    && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) {
 			if (p_ptr->newbie_hints) //no p_ptr->warning_.. needed for the 'hint' part at the end of this message really
-				msg_print(Ind, "\374\377GYou gained expertise in Magic Device handling to use antistatic wrappings. To save bag space, buy one at the magic store.");
+				msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings. To save bag space, buy one at the magic store.");
 			else
-				msg_print(Ind, "\374\377GYou gained expertise in Magic Device handling to use antistatic wrappings.");
+				msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings.");
 		}
 #else
 		if (old_value < 20 && new_value >= 20 && p_ptr->newbie_hints) //no p_ptr->warning_.. needed for this one really
