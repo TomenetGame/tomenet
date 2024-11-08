@@ -11782,7 +11782,42 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Feature / org    : %d / %d", c_ptr->feat, c_ptr->feat_org);
 				msg_format(Ind, "Info flags       : %d", c_ptr->info);
 				msg_format(Ind, "Info flags2      : %d", c_ptr->info2);
-				if (cs_ptr) msg_format(Ind, "1st Special->Type: %d", cs_ptr->type);
+				if (cs_ptr) {
+					msg_format(Ind, "1st Special->Type: %d", cs_ptr->type);
+					switch (cs_ptr->type) {
+					case CS_NONE:
+						break;
+					case CS_DNADOOR:
+						break;
+					case CS_KEYDOOR:
+						break;
+					case CS_TRAPS:
+						for (i = 1; i <= max_t_idx; i++) if (tr_info_rev[i] == cs_ptr->sc.trap.t_idx) break;
+						msg_format(Ind, " CS_TRAP: t_idx = %d (%d, %d), found = %d, clone = %d", cs_ptr->sc.trap.t_idx, i <= max_t_idx ? i : i + 10000, tr_info_rev[cs_ptr->sc.trap.t_idx], cs_ptr->sc.trap.found, cs_ptr->sc.trap.clone);
+						break;
+					case CS_INSCRIP:
+						break;
+					case CS_FOUNTAIN:
+						msg_format(Ind, " CS_FOUNTAIN: type = %d, rest = %d, known = %d", cs_ptr->sc.fountain.type, cs_ptr->sc.fountain.rest, cs_ptr->sc.fountain.known);
+						break;
+					case CS_BETWEEN:
+						msg_format(Ind, " CS_BETWEEN: fx = %d, fy = %d", cs_ptr->sc.between.fx, cs_ptr->sc.between.fy);
+						break;
+					case CS_BEACON:
+						//msg_format(Ind, " CS_BEACON: wx = %d, wy = %d, wz = %d", wx, wy, wz);
+						break;
+					case CS_MON_TRAP:
+						msg_format(Ind, " CS_MON_TRAP: trap_kit = %d, difficulty = %d, feat = %d, found = %d", cs_ptr->sc.montrap.trap_kit, cs_ptr->sc.montrap.difficulty, cs_ptr->sc.montrap.feat, cs_ptr->sc.montrap.found);
+						break;
+					case CS_SHOP: //sc.omni
+						break;
+					case CS_MIMIC:
+						break;
+					case CS_RUNE:
+						msg_format(Ind, " CS_MON_TRAP: id = %ld, dam = %d, rad = %d, typ = %d, feat = %d, found = %d", cs_ptr->sc.rune.id, cs_ptr->sc.rune.dam, cs_ptr->sc.rune.rad, cs_ptr->sc.rune.typ, cs_ptr->sc.rune.feat, cs_ptr->sc.rune.found);
+						break;
+					}
+				}
 				else msg_print(Ind, "1st Special->Type: NONE");
 				return;
 			}
