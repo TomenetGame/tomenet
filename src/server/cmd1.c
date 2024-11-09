@@ -2799,7 +2799,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				/* Own it */
 				if (!o_ptr->owner) {
 					int dlev = getlevel(&p_ptr->wpos); /* Just for logging 'expensive' items in relation to dlev */
-					s64b value = object_value_real(0, o_ptr);
+					s64b value = object_value_real(0, o_ptr); //add * o_ptr->number?
 					int min_value = (dlev <= 10 ? 10000 : (dlev < 30 ? dlev * 1000 : (dlev < 50 ? (dlev - 10) * 1500 : (dlev - 20) * 2000)));
 
 					o_ptr->owner = p_ptr->id;

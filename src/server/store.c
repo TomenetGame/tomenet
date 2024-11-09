@@ -6878,7 +6878,7 @@ void home_purchase(int Ind, int item, int amt) {
 		c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
-				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);	// add "* o_ptr->number"?
 		} else {
 		s_printf("%s Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
 				showtime(), name ? name : "(Dead player)", lev,
@@ -6887,7 +6887,7 @@ void home_purchase(int Ind, int item, int amt) {
 		c_printf("%s item %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
-				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);	// add "* o_ptr->number"?
 		}
  #else
 		s_printf("%s Item transaction from %s(%d) to %s(%d%s) at (%d,%d,%d):\n  %s\n",
@@ -6899,7 +6899,7 @@ void home_purchase(int Ind, int item, int amt) {
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);	// add "* o_ptr->number"?
  #endif
 
 		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
