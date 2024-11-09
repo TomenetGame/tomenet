@@ -2740,6 +2740,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->add_kind_diz = options[163];
 		p_ptr->hide_lore_paste = options[164];
 		p_ptr->instant_retaliator = options[165];
+		if (!p_ptr->instant_retaliator) p_ptr->warning_newautoret = 1;
 	} else p_ptr->instant_retaliator = TRUE;
 }
 

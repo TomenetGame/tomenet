@@ -3010,6 +3010,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		//p_ptr->warning_secret_area = 1;
 		p_ptr->warning_elder = 1;
 		p_ptr->warning_xp_recover = 1;
+		p_ptr->warning_newautoret = 1;
 		return;
 	}
 
@@ -3034,7 +3035,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_wield_combat = 1;
 
 	if (p_ptr->pclass == CLASS_MAGE ||
-//	    p_ptr->pclass == CLASS_RUNEMASTER ||
+	    //p_ptr->pclass == CLASS_RUNEMASTER ||
 	    p_ptr->pclass == CLASS_ARCHER) {
 		p_ptr->warning_bpr = 1;
 	}

@@ -5181,6 +5181,20 @@ void check_experience(int Ind) {
 		p_ptr->warning_potions = 1;
 	}
 
+#ifdef NEW_AUTORET_ENERGY
+	/* Notify [casters?] about the new auto-retaliator option */
+	if (old_lev < 13 && p_ptr->lev >= 13) {
+		p_ptr->warning_newautoret = 1;
+		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377o/instar\377y command:");
+		else
+			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377oinstant_retaliator\377y option in \377o= 7\377y:");
+		msg_print(Ind, "\374\377y      If \377ooff\377y, you will take an extra turn on initiating auto-attacking, but you");
+		msg_print(Ind, "\374\377y      will be able to perform a near-instantanous action during it, eg teleport.");
+		s_printf("warning_newautoret: %s\n", p_ptr->name);
+	}
+#endif
+
 	/* Give warning message to utilize techniques */
 	if (old_lev < 15 && p_ptr->lev >= 15) {
 		if (p_ptr->warning_technique_melee == 0 && p_ptr->warning_technique_ranged == 0) {

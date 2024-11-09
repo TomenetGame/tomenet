@@ -6192,6 +6192,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			return;
 		} else if (prefix(messagelc, "/instar")) { //for before next client release, to make this already accessible
+			p_ptr->warning_newautoret = 1;
 			if (p_ptr->instant_retaliator == FALSE) {
 				p_ptr->instant_retaliator = TRUE;
 				msg_print(Ind, "Auto-retaliator works the old way, starts instantly but saves no reserve energy.");

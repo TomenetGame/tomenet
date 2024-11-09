@@ -4142,7 +4142,7 @@ struct player_type {
 	char warning_wield_combat; /* warn if engaging into combat (attacking/taking damage) without having equipped melee/ranged weapons! (except for druids) */
 	char warning_rest, warning_rest_cooldown;/* if a char rests from <= 40% to 50% without R, or so..*/
 	char warning_mimic, warning_dual, warning_dual_mode, warning_potions, warning_wor;
-	char warning_ghost, warning_instares, warning_autoret, warning_autoret_ok;
+	char warning_ghost, warning_instares, warning_autoret, warning_autoret_ok, warning_newautoret;
 	char warning_ma_weapon, warning_ma_shield;
 	char warning_technique_melee, warning_technique_ranged;
 	char warning_hungry, warning_autopickup, warning_ranged_autoret;
