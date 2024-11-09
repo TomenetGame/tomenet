@@ -406,10 +406,12 @@ static errr term_win_copy_part(term_win *s, term_win *f, int x_start, int y_star
 #endif
 		s->cv = 0;
 	} else {
+#if 0 /* Don't clone the cursor here, which is drawn back onto the main term elsewhere in the code (a Windows-only visual glitch). - Kurzel */
 		s->cx = f->cx - x_start + x_dest;
 		s->cy = f->cy - y_start + y_dest;
 		s->cu = f->cu;
 		s->cv = f->cv;
+#endif
 	}
 
 	/* Success */
