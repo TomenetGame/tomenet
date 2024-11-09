@@ -1443,7 +1443,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/recall") || prefix(messagelc, "/rec")) {
 //#define R_REQUIRES_AWARE /* Item can only be used for '@R' inscription if we're aware of its flavour? */
 			int good_match_found = 0;
-			char candidate_destination[21];
+			char const *candidate_destination;
 			if (admin) {
 				if (!p_ptr->word_recall) set_recall_timer(Ind, 1);
 				else set_recall_timer(Ind, 0);
@@ -1633,7 +1633,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				// we could use isalpha, except we'd like it to be robust against town names
 				// that start with special characters.
 				strcpy(message4, message3);
-				candidate_destination[20] = 0;
 				for (i = 0; message4[i]; ++i) {
 					message4[i] = tolower(message4[i]);
 				}
@@ -1641,7 +1640,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				// k holds length of best match, h holds index of best match
 				for (i = 0; i < numtowns; ++i) {
 					j = 0;
-					strncpy(candidate_destination, town_profile[town[i].type].name, 20);
+					candidate_destination = town_profile[town[i].type].name;
 					while (message4[j] && (message4[j] == tolower(candidate_destination[j]))) ++j;
 					if (!message4[j] && !(candidate_destination[j])) { // perfect match
 						h = i; good_match_found = 2;
@@ -1653,27 +1652,28 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 				if (good_match_found != 2) { // as long as we haven't found a perfect match, check dungeons
-					for (i = 0; i < dungeon_id_max; ++i) {
+					for (i = 1; i <= dungeon_id_max; ++i) {
 						j = 0;
-						strncpy(candidate_destination, get_dun_name(
+						candidate_destination = get_dun_name(
 							dungeon_x[i], dungeon_y[i], dungeon_tower[i],
 							getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})),
-							0, TRUE),
-						20);
+							0, TRUE);
+						if (!strncmp(candidate_destination, "The ", 4)) candidate_destination += 4;
 						while (message4[j] && (message4[j] == tolower(candidate_destination[j]))) ++j;
 						if (!message4[j] && !(candidate_destination[j])) { // perfect match
-							h = i; good_match_found = 2;
+							h = i; good_match_found = 4;
 							break;
 						}
 						if (j == k) good_match_found = 0;
 						else if (j > k) {
-							k = j; h = i; good_match_found = 1;
+							k = j; h = i; good_match_found = 3;
 						}
 					}
 				}
+
 				if (good_match_found) {
-					p_ptr->recall_pos.wx = town[h].x;
-					p_ptr->recall_pos.wy = town[h].y;
+					p_ptr->recall_pos.wx = (good_match_found > 2) ? dungeon_x[h] : town[h].x;
+					p_ptr->recall_pos.wy = (good_match_found > 2) ? dungeon_y[h] : town[h].y;
 					p_ptr->recall_pos.wz = 0;
 				} else {
 					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
