@@ -539,6 +539,8 @@ audio_bgm = {
 
     "jail_dungeon",
     "meta",
+    "season_xmas_day",
+    "season_xmas_night",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

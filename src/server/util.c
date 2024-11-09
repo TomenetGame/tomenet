@@ -1912,6 +1912,7 @@ void handle_music(int Ind) {
 			int tmus = 1, tmus_inverse = 1; //intended town day+night music (and 1 is generic town music as first fallback)
 			int tmus_reserve = 0, tmus_inverse_reserve = 0; //bandaid replacement town day+night music (and 0 is generic game music as first fallback)
 			bool seasonal_music = FALSE; //instead of town music we use special seasonal music
+			int tmus_season = -1;
 
 			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx;
 
@@ -2002,6 +2003,9 @@ void handle_music(int Ind) {
 					tmus_reserve = night_surface ? tmus_reserve : tmus_inverse_reserve;
 					tmus = 84;
 					seasonal_music = TRUE;
+					/* Different from to halloween and new year's eve, which are both perma-night,
+					   xmas can actually have separate day- and night-music: */
+					tmus_season = night_surface ? 181 : 180;
 				}
 			}
 			else if (season_newyearseve) {
@@ -2056,9 +2060,12 @@ void handle_music(int Ind) {
 			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus
 			    /* don't switch from town area music to wild music on day/night change: */
 			    || p_ptr->music_current == tmus_inverse) {
+				/* If the seasonal music is split up even further into day/night, use the day-time-independant season-music as first fallback, towns normal nightly music as 2nd fallback */
+				if (tmus_season != -1) Send_music(Ind, tmus_season, tmus, tmus_reserve);
+				else
 				/* Season-specific town music; with season-indenpendant town music as reserve.
 				   (And both are day/night-specific, so at least basic (season-independant)
-				    day AND night music must be present for each town type, or there will be silence at some point.) */
+				    day AND night music must be present for eachs town type, or there will be silence at some point.) */
 				Send_music(Ind, tmus, tmus_reserve, tmus_reserve);
 				return;
 			}
