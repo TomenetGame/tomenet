@@ -612,7 +612,9 @@
  #define GFXMASK_BG2_G	33
  #define GFXMASK_BG2_B	28
 
+#if 0 // disabled for the time being to find and fix the (Term_)redraw glitch(es) glitches first, which surface if this is enabled...
  #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
+#endif
  /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
  #if 0 /* actually make these constants always available for now, might need sorting out/cleaning up */
   #ifdef GRAPHICS_BG_MASK
