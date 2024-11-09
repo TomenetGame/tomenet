@@ -445,6 +445,8 @@ static void close_audio(void) {
 	if (load_audio_thread) {
 		//kill_load_audio_thread = TRUE; -- not needed (see far above)
 		SDL_WaitThread(load_audio_thread, NULL);
+		/* In case the system gets re-initialized, it seems without nulling this the client may sometimes hang indefinitely in SDL_WaitThread() on client quit. */
+		load_audio_thread = NULL;
 	}
 
 	Mix_HaltMusic();
@@ -458,6 +460,9 @@ static void close_audio(void) {
 			Mix_FreeChunk(smp->wavs[j]);
 			string_free(smp->paths[j]);
 		}
+		/* In case the system gets re-initialized, make sure the sample-counter of then perhaps unused sfx is actually initialized with zero,
+		   or we'd get a double-free crash on a subsequent close_audio() call. */
+		smp->num = 0;
 	}
 
 	/* Free all the music data*/
@@ -469,6 +474,9 @@ static void close_audio(void) {
 			Mix_FreeMusic(mus->wavs[j]);
 			string_free(mus->paths[j]);
 		}
+		/* In case the system gets re-initialized, make sure the song-counter of then perhaps unused music is actually initialized with zero,
+		   or we'd get a double-free crash on a subsequent close_audio() call. */
+		mus->num = 0;
 	}
 
 #ifndef SEGFAULT_HACK
