@@ -1652,12 +1652,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 				if (good_match_found != 2) { // as long as we haven't found a perfect match, check dungeons
+					dungeon_type *d_ptr;
 					for (i = 1; i <= dungeon_id_max; ++i) {
 						j = 0;
-						candidate_destination = get_dun_name(
-							dungeon_x[i], dungeon_y[i], dungeon_tower[i],
-							getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})),
-							0, TRUE);
+						d_ptr = getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1}));
+						if (!(d_ptr->known & 0x1) && !admin) continue;
+						candidate_destination = get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i], d_ptr, 0, TRUE);
 						if (!strncmp(candidate_destination, "The ", 4)) candidate_destination += 4;
 						while (message4[j] && (message4[j] == tolower(candidate_destination[j]))) ++j;
 						if (!message4[j] && !(candidate_destination[j])) { // perfect match
