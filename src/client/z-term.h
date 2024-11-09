@@ -263,7 +263,9 @@ extern errr Term_fresh(void);
 extern errr Term_set_cursor(int v);
 extern errr Term_gotoxy(int x, int y);
 extern errr Term_draw(int x, int y, byte a, char32_t c);
+#ifdef GRAPHICS_BG_MASK
 extern errr Term_draw_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back);
+#endif
 extern errr Term_addch(byte a, char c);
 extern errr Term_addstr(int n, byte a, cptr s);
 extern errr Term_putch(int x, int y, byte a, char c);
