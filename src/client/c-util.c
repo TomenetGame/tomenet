@@ -12301,7 +12301,7 @@ void interact_audio(void) {
 #else /* enter/space on a slider toggle it */
 			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrows\377U/\377yp\377U/\377yn\377U/\377y+\377U/\377y-\377U/\377yg\377U/\377yG\377U/\377yh\377U Toggle: \377yRET\377U/\377ySPACE\377U Reset2cfg: \377yr\377U Exit: \377yESC\377U");
 #endif
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Sfx only/Sfx+weather/Sfx+music/All: \377yCTRL+S\377U/\377yW\377U/\377yE\377U/\377yA\377U      Max/75%/Half: \377yCTRL+G\377U/\377yB\377U/\377yH\377U");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Sfx only/Sfx+wea/Sfx+mus/All: \377yCTRL+S\377U/\377yW\377U/\377yE\377U/\377yA\377U Max/75%/50%/25%/Min: \377yCTRL+G\377U/\377yB\377U/\377yH\377U/\377yL\377U/\377yI");
 
 			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
 			//Term_putstr(7, ++l, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
@@ -12421,8 +12421,16 @@ void interact_audio(void) {
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 50;
 			set_mixing();
 			break;
+		case KTRL('L'):
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 25;
+			set_mixing();
+			break;
 		case KTRL('B'):
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 75;
+			set_mixing();
+			break;
+		case KTRL('I'):
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 0;
 			set_mixing();
 			break;
 		/* allow chatting from within here */
