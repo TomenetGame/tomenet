@@ -12299,15 +12299,15 @@ void interact_audio(void) {
 #if 0 /* enter/space on a slider increase it */
 			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrow keys\377U. Toggle/modify: \377yRETURN\377U/\377ySPACE\377U. Reset: \377yr\377U. Exit: \377yESC\377U.");
 #else /* enter/space on a slider toggle it */
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrows/p/n/+/-\377U  Toggle: \377yRETURN\377U/\377ySPACE\377U  Reset2cfg: \377yr\377U  Exit: \377yESC\377U");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Navigate/modify: \377yArrows\377U/\377yp\377U/\377yn\377U/\377y+\377U/\377y-\377U/\377yg\377U/\377yG\377U/\377yh\377U Toggle: \377yRET\377U/\377ySPACE\377U Reset2cfg: \377yr\377U Exit: \377yESC\377U");
 #endif
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Sfx only: \377yCTRL+S\377U  Sfx+weather: \377yCTRL+W\377U  All: \377yCTRL+A\377U    Max/75%/Half: \377yCTRL+G\377U/\377yB\377U/\377yH\377U");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Sfx only/Sfx+weather/Sfx+music/All: \377yCTRL+S\377U/\377yW\377U/\377yE\377U/\377yA\377U      Max/75%/Half: \377yCTRL+G\377U/\377yB\377U/\377yH\377U");
 
 			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
 			//Term_putstr(7, ++l, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
 			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
 			//Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U. Sliders: \377ySHIFT+shortcut\377U. Reload packs & re-init: \377yCTRL+R\377U.");
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U  Sliders: \377ySHIFT+a/m/s/w\377U    Reload packs & re-init: \377yCTRL+R\377U ");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U   Sliders: \377ySHIFT+a\377U/\377ym\377U/\377ys\377U/\377yw\377U   Reload packs & re-init: \377yCTRL+R\377U ");
 
 			if (quiet_mode) Term_putstr(12, ++l, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
 			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, ++l, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
@@ -12408,6 +12408,11 @@ void interact_audio(void) {
 			cfg_audio_music = FALSE;
 			set_mixing();
 			break;
+		case KTRL('E'):
+			cfg_audio_master = cfg_audio_music = cfg_audio_sound = TRUE;
+			cfg_audio_weather = FALSE;
+			set_mixing();
+			break;
 		case KTRL('G'): //case KTRL('X'): <- not good, as this is usually a normal-type macro.
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
 			set_mixing();
@@ -12477,6 +12482,45 @@ void interact_audio(void) {
 			case 6: if (cfg_audio_sound_volume >= 10) cfg_audio_sound_volume -= 10; else cfg_audio_sound_volume = 0; break;
 			case 3:
 			case 7: if (cfg_audio_weather_volume >= 10) cfg_audio_weather_volume -= 10; else cfg_audio_weather_volume = 0; break;
+			}
+			set_mixing();
+			break;
+		case 'g':
+			switch (cur_item) {
+			case 0:
+			case 4: cfg_audio_master_volume = 0; break;
+			case 1:
+			case 5: cfg_audio_music_volume = 0; break;
+			case 2:
+			case 6: cfg_audio_sound_volume = 0; break;
+			case 3:
+			case 7: cfg_audio_weather_volume = 0; break;
+			}
+			set_mixing();
+			break;
+		case 'G':
+			switch (cur_item) {
+			case 0:
+			case 4: cfg_audio_master_volume = 100; break;
+			case 1:
+			case 5: cfg_audio_music_volume = 100; break;
+			case 2:
+			case 6: cfg_audio_sound_volume = 100; break;
+			case 3:
+			case 7: cfg_audio_weather_volume = 100; break;
+			}
+			set_mixing();
+			break;
+		case 'h':
+			switch (cur_item) {
+			case 0:
+			case 4: cfg_audio_master_volume = 50; break;
+			case 1:
+			case 5: cfg_audio_music_volume = 50; break;
+			case 2:
+			case 6: cfg_audio_sound_volume = 50; break;
+			case 3:
+			case 7: cfg_audio_weather_volume = 50; break;
 			}
 			set_mixing();
 			break;
