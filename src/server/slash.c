@@ -1444,6 +1444,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 //#define R_REQUIRES_AWARE /* Item can only be used for '@R' inscription if we're aware of its flavour? */
 			int good_match_found = 0;
 			char const *candidate_destination;
+
 			if (admin) {
 				if (!p_ptr->word_recall) set_recall_timer(Ind, 1);
 				else set_recall_timer(Ind, 0);
@@ -1633,9 +1634,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				// we could use isalpha, except we'd like it to be robust against town names
 				// that start with special characters.
 				strcpy(message4, message3);
-				for (i = 0; message4[i]; ++i) {
-					message4[i] = tolower(message4[i]);
-				}
+				for (i = 0; message4[i]; ++i) message4[i] = tolower(message4[i]);
 				k = 0; h = 0;
 				// k holds length of best match, h holds index of best match
 				for (i = 0; i < numtowns; ++i) {
@@ -1643,16 +1642,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					candidate_destination = town_profile[town[i].type].name;
 					while (message4[j] && (message4[j] == tolower(candidate_destination[j]))) ++j;
 					if (!message4[j] && !(candidate_destination[j])) { // perfect match
-						h = i; good_match_found = 2;
+						h = i;
+						good_match_found = 2;
 						break;
 					}
 					if (j == k) good_match_found = 0;
 					else if (j > k) {
-						k = j; h = i; good_match_found = 1;
+						k = j;
+						h = i;
+						good_match_found = 1;
 					}
 				}
 				if (good_match_found != 2) { // as long as we haven't found a perfect match, check dungeons
 					dungeon_type *d_ptr;
+
 					for (i = 1; i <= dungeon_id_max; ++i) {
 						j = 0;
 						d_ptr = getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1}));
@@ -1661,12 +1664,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						if (!strncmp(candidate_destination, "The ", 4)) candidate_destination += 4;
 						while (message4[j] && (message4[j] == tolower(candidate_destination[j]))) ++j;
 						if (!message4[j] && !(candidate_destination[j])) { // perfect match
-							h = i; good_match_found = 4;
+							h = i;
+							good_match_found = 4;
 							break;
 						}
 						if (j == k) good_match_found = 0;
 						else if (j > k) {
-							k = j; h = i; good_match_found = 3;
+							k = j;
+							h = i;
+							good_match_found = 3;
 						}
 					}
 				}
