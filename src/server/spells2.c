@@ -11011,6 +11011,9 @@ void wrap_gift(int Ind, int item) {
 
 
 	if (!get_inven_item(Ind, p_ptr->current_activation, &ow_ptr)) return;
+
+	s_printf("GIFTWRAPPING: <%s> : ", p_ptr->name);
+
 	/* Hack: Wrap money? */
 	if ((money = check_guard_inscription(ow_ptr->note, '$')) > 0) {
 		money--;
@@ -11029,9 +11032,8 @@ void wrap_gift(int Ind, int item) {
 		p_ptr->au -= money;
 		p_ptr->redraw |= PR_GOLD;
 		o_ptr->level = 1; //cannot wrap zero-level item
+		s_printf(" (%d Au) ", o_ptr->pval);
 	} else if (!get_inven_item(Ind, item, &o_ptr)) return;
-
-	s_printf("GIFTWRAPPING: %d, %d", o_ptr->tval, o_ptr->sval);
 
 	if (o_ptr->questor || ow_ptr->questor) {
 		msg_print(Ind, "You cannot use questor items for gift wrapping.");
@@ -11111,7 +11113,7 @@ void wrap_gift(int Ind, int item) {
 	if (empty) {
 		if (o_ptr->number == 1) msg_print(Ind, "You make an empty gift.");
 		else msg_print(Ind, "You take one gift wrapping and wrap the remaining ones with it.");
-		s_printf("..success (EMPTY)\n");
+		s_printf("..success (empty)\n");
 
 		forge = *o_ptr;
 		o_ptr = &forge;
@@ -11150,13 +11152,18 @@ void wrap_gift(int Ind, int item) {
 
 			object_desc(Ind, o_name, &forge, TRUE, 3);
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+			s_printf("..success (%s)\n", o_name);
+		} else { //paranoia
+			char o_name[ONAME_LEN];
+
+			object_desc(Ind, o_name, &forge, TRUE, 3);
+			s_printf("..failed-paranoia1 (%s)\n", o_name);
 		}
 		p_ptr->window |= PW_INVEN;
 		handle_stuff(Ind);
 		return;
 	} else
 #endif
-	s_printf("..success\n");
 #ifdef USE_SOUND_2010
 	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
@@ -11205,6 +11212,12 @@ void wrap_gift(int Ind, int item) {
 
 		object_desc(Ind, o_name, &forge, TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+		s_printf("..success (%s)\n", o_name);
+	} else { //paranoia
+		char o_name[ONAME_LEN];
+
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		s_printf("..failed-paranoia2 (%s)\n", o_name);
 	}
 	p_ptr->window |= PW_INVEN;
 	handle_stuff(Ind);
@@ -11215,7 +11228,6 @@ void unwrap_gift(int Ind, int item) {
 
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
-	s_printf("GIFTUNWRAPPING: %s: %d, %d\n", p_ptr->name, o_ptr->tval, o_ptr->sval);
 #ifdef USE_SOUND_2010
 	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
@@ -11229,6 +11241,7 @@ void unwrap_gift(int Ind, int item) {
 
 	/* Handle empty gifts */
 	if (!forge.number2) {
+		s_printf("GIFTUNWRAPPING: %s: empty\n", p_ptr->name);
 		msg_print(Ind, " it was empty.");
 		p_ptr->window |= PW_INVEN;
 		handle_stuff(Ind);
@@ -11252,6 +11265,7 @@ void unwrap_gift(int Ind, int item) {
 	o_ptr->note2_utag = 0;
 
 	if (o_ptr->tval == TV_GOLD) {
+		s_printf("GIFTUNWRAPPING: %s: %d Au\n", p_ptr->name, o_ptr->pval);
 		if (gain_au(Ind, o_ptr->pval, FALSE, FALSE)) msg_format(Ind, "You receive \377y%ld\377w gold pieces.", o_ptr->pval);
 		return;
 	}
@@ -11263,6 +11277,12 @@ void unwrap_gift(int Ind, int item) {
 
 		object_desc(Ind, o_name, &forge, TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+		s_printf("GIFTUNWRAPPING: %s: %s\n", p_ptr->name, o_name);
+	} else { //paranoia
+		char o_name[ONAME_LEN];
+
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		s_printf("GIFTUNWRAPPING: (paranoia) %s: %s\n", p_ptr->name, o_name);
 	}
 	p_ptr->window |= PW_INVEN;
 	handle_stuff(Ind);
