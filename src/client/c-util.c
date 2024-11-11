@@ -7401,12 +7401,12 @@ Chain_Macro:
 									Term_putstr(11, l++, -1, TERM_L_GREEN, "a) swap two items that you inscribed '@x0'         \\e)S0");
 									Term_putstr(11, l++, -1, TERM_L_GREEN, "b) swap two items that you inscribed '@x1'         \\e)S1");
 									Term_putstr(11, l++, -1, TERM_L_GREEN, "c) swap two items that you inscribed '@x2'         \\e)S2");
-									Term_putstr(11, l++, -1, TERM_L_GREEN, "c) swap two items that you inscribed '@x3'         \\e)S3");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "d) swap two items that you inscribed '@x3'         \\e)S3");
 								} else {
-									Term_putstr(11, l++, -1, TERM_L_GREEN, "k) swap two items that you inscribed '@x0'         \\e)x0");
-									Term_putstr(11, l++, -1, TERM_L_GREEN, "l) swap two items that you inscribed '@x1'         \\e)x1");
-									Term_putstr(11, l++, -1, TERM_L_GREEN, "m) swap two items that you inscribed '@x2'         \\e)x2");
-									Term_putstr(11, l++, -1, TERM_L_GREEN, "m) swap two items that you inscribed '@x3'         \\e)x3");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "a) swap two items that you inscribed '@x0'         \\e)x0");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "b) swap two items that you inscribed '@x1'         \\e)x1");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "c) swap two items that you inscribed '@x2'         \\e)x2");
+									Term_putstr(11, l++, -1, TERM_L_GREEN, "d) swap two items that you inscribed '@x3'         \\e)x3");
 								}
 
 								while (TRUE) {
@@ -7425,7 +7425,7 @@ Chain_Macro:
 										continue;
 									default:
 										/* invalid action -> exit wizard */
-										if (choice < 'a' || choice > 'c') {
+										if (choice < 'a' || choice > 'd') {
 											//i = -1;
 											continue;
 										}
