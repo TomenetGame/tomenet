@@ -4567,7 +4567,7 @@ To convert downloaded music to a format recognized by TomeNET (recommended are
 either ogg or mp3, preferably ogg), the tool of choice is 'ffmpeg':
   ffmpeg -i <songname.XXX> <songname.ogg>
 For example:
-  ffmpeg -i ffmpeg -i "Outward Night.opus" "Outward Night.ogg"
+  ffmpeg -i "Outward Night.opus" "Outward Night.ogg"
 So you basically just repeat the song name, but change the extension from
 whatever it was to ".ogg", ffmpeg reconizes this and converts any format to it.
 
