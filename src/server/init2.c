@@ -3698,6 +3698,7 @@ void init_some_arrays(void) {
 	init_swearing();
 	init_charge_wand();
 	init_charge_staff();
+	init_rod_cd();
 
 	/* Hack -- all done */
 	s_printf("[Initializing arrays... done]\n");

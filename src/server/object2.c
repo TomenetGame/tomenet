@@ -5132,6 +5132,45 @@ static void charge_staff(object_type *o_ptr) {
 	o_ptr->pval = randint(charge_staff_rnd[o_ptr->sval]) + charge_staff_fix[o_ptr->sval];
 }
 
+/*
+ * Put a rod into its cooldown period.
+ */
+int rod_base_cd[256], rod_cd_reduction[256];
+void init_rod_cd(void) {
+	rod_base_cd[SV_ROD_NOTHING] =        0; rod_cd_reduction[SV_ROD_NOTHING] =        0;
+	rod_base_cd[SV_ROD_DETECT_DOOR] =   70; rod_cd_reduction[SV_ROD_DETECT_DOOR] =   35;
+	rod_base_cd[SV_ROD_IDENTIFY] =      55; rod_cd_reduction[SV_ROD_IDENTIFY] =      50;
+	rod_base_cd[SV_ROD_RECALL] =        75; rod_cd_reduction[SV_ROD_RECALL] =        30;
+	rod_base_cd[SV_ROD_ILLUMINATION] =  30; rod_cd_reduction[SV_ROD_ILLUMINATION] =  15;
+	rod_base_cd[SV_ROD_MAPPING] =       99; rod_cd_reduction[SV_ROD_MAPPING] =       49;
+	rod_base_cd[SV_ROD_DETECTION] =     99; rod_cd_reduction[SV_ROD_DETECTION] =     49;
+	rod_base_cd[SV_ROD_PROBING] =       50; rod_cd_reduction[SV_ROD_PROBING] =       25;
+	rod_base_cd[SV_ROD_CURING] =        30; rod_cd_reduction[SV_ROD_CURING] =        20;
+	rod_base_cd[SV_ROD_HEALING] =       15; rod_cd_reduction[SV_ROD_HEALING] =        5;
+	rod_base_cd[SV_ROD_RESTORATION] =   50; rod_cd_reduction[SV_ROD_RESTORATION] =   25;
+	rod_base_cd[SV_ROD_SPEED] =         99; rod_cd_reduction[SV_ROD_SPEED] =         49;
+	rod_base_cd[SV_ROD_TELEPORT_AWAY] = 25; rod_cd_reduction[SV_ROD_TELEPORT_AWAY] = 12;
+	rod_base_cd[SV_ROD_DISARMING] =     30; rod_cd_reduction[SV_ROD_DISARMING] =     15;
+	rod_base_cd[SV_ROD_LITE] =           9; rod_cd_reduction[SV_ROD_LITE] =           4;
+	rod_base_cd[SV_ROD_SLEEP_MONSTER] = 18; rod_cd_reduction[SV_ROD_SLEEP_MONSTER] =  9;
+	rod_base_cd[SV_ROD_SLOW_MONSTER] =  20; rod_cd_reduction[SV_ROD_SLOW_MONSTER] =  10;
+	rod_base_cd[SV_ROD_DRAIN_LIFE] =    23; rod_cd_reduction[SV_ROD_DRAIN_LIFE] =    12;
+	rod_base_cd[SV_ROD_POLYMORPH] =     25; rod_cd_reduction[SV_ROD_POLYMORPH] =     12;
+	rod_base_cd[SV_ROD_ACID_BOLT] =     12; rod_cd_reduction[SV_ROD_ACID_BOLT] =      6;
+	rod_base_cd[SV_ROD_ELEC_BOLT] =     11; rod_cd_reduction[SV_ROD_ELEC_BOLT] =      5;
+	rod_base_cd[SV_ROD_FIRE_BOLT] =     15; rod_cd_reduction[SV_ROD_FIRE_BOLT] =      7;
+	rod_base_cd[SV_ROD_COLD_BOLT] =     13; rod_cd_reduction[SV_ROD_COLD_BOLT] =      6;
+	rod_base_cd[SV_ROD_ACID_BALL] =     27; rod_cd_reduction[SV_ROD_ACID_BALL] =     13;
+	rod_base_cd[SV_ROD_ELEC_BALL] =     23; rod_cd_reduction[SV_ROD_ELEC_BALL] =     11;
+	rod_base_cd[SV_ROD_FIRE_BALL] =     30; rod_cd_reduction[SV_ROD_FIRE_BALL] =     15;
+	rod_base_cd[SV_ROD_COLD_BALL] =     25; rod_cd_reduction[SV_ROD_COLD_BALL] =     12;
+	rod_base_cd[SV_ROD_HAVOC] =        105; rod_cd_reduction[SV_ROD_HAVOC] =         23;
+	rod_base_cd[SV_ROD_DETECT_TRAP] =   50; rod_cd_reduction[SV_ROD_DETECT_TRAP] =   25;
+	rod_base_cd[SV_ROD_HOME] =           0; rod_cd_reduction[SV_ROD_HOME] =           0;
+}
+void set_rod_cd(object_type *o_ptr, player_type *p_ptr) {
+	o_ptr->pval += rod_base_cd[o_ptr->sval] - get_skill_scale(p_ptr, SKILL_DEVICE, rod_cd_reduction[o_ptr->sval]);
+}
 
 
 s16b ammo_explosion[] = { /* Make sure to keep init_GF_names() consistent so it sets all the GF-names listed here! */

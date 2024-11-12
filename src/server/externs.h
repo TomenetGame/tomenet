@@ -1369,6 +1369,9 @@ extern bool object_has_flavor(int k_idx);
 /* object2.c */
 extern int charge_wand_fix[256], charge_wand_rnd[256], charge_staff_fix[256], charge_staff_rnd[256];
 extern void init_charge_wand(void), init_charge_staff(void);
+extern int rod_base_cd[256], rod_cd_reduction[256];
+extern void init_rod_cd(void);
+extern void set_rod_cd(object_type *o_ptr, player_type *p_ptr);
 extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt);
 extern void discharge_rod(object_type *o_ptr, int c);
 extern s32b unique_quark;
