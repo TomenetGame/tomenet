@@ -18337,7 +18337,7 @@ stated.
                                 backstabbing a sleeping opponent to death.
 
     .Dodging                    Ability to evade attacks. In order to get any
-     (1/3, at least 1.000)      benefits from doding skill at all, your armour
+     (1/3, at least 1.000)      benefits from dodging skill at all, your armour
                                 mustn't be too heavy. If it is, you will get a
                                 flexibility warning (compare (5.5)).
                                 Also, you must not be using a shield.
