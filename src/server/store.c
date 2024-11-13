@@ -2498,8 +2498,7 @@ static void store_create(store_type *st_ptr) {
 					else if (k_ptr->tval == TV_ROD) continue;
 
 					/* keep custom books out of XBM, so they may appear more often in BM/SBM */
-					else if (k_ptr->tval == TV_BOOK && is_custom_tome(k_ptr->sval))
-						continue;
+					else if (k_ptr->tval == TV_BOOK && is_custom_tome(k_ptr->sval)) continue;
 
 					/* XBM must not make Khazad Mining Supply Store unemployed! */
 					else if (o_ptr->tval == TV_LITE) {
@@ -2513,9 +2512,6 @@ static void store_create(store_type *st_ptr) {
 
 		/* Mass produce and/or Apply discount */
 		mass_produce(o_ptr, st_ptr);
-
-		/* Less of these in the BM (or whereever) */
-		if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) o_ptr->number = 1;
 
 		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT)
 		    /* Reduce discount */
@@ -2552,7 +2548,7 @@ static void store_create(store_type *st_ptr) {
 			case 100: o_ptr->discount = 15; break;
 			}
 
-		if ((force_num) && !is_ammo(o_ptr->tval)) {
+		if (force_num && !is_ammo(o_ptr->tval)) {
 			/* Only single items of these */
 			switch (o_ptr->tval) {
 			case TV_DRAG_ARMOR:
@@ -2569,6 +2565,9 @@ static void store_create(store_type *st_ptr) {
 				break;
 			case TV_TOOL:
 				if (o_ptr->sval == SV_TOOL_WRAPPING) force_num = 1;
+				break;
+			case TV_SCROLL:
+				if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) force_num = 1;
 				break;
 			}
 
