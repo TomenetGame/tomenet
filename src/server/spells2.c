@@ -9121,8 +9121,8 @@ void golem_creation(int Ind, int max) {
 
 	r_ptr->flags1 |= RF1_FORCE_MAXHP;
 	r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
-	r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP;
-	r_ptr->flags9 |= RF9_IM_TELE | RF9_NO_CREDIT;
+	r_ptr->flags3 |= RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF3_NONLIVING;
+	r_ptr->flags9 |= RF9_IM_TELE | RF9_NO_CREDIT | RF9_RES_COLD | RF9_RES_ELEC;
 	/* prevent other players from killing it on accident */
 	r_ptr->flags8 |= RF8_NO_AUTORET | RF8_GENO_PERSIST | RF8_GENO_NO_THIN;
 	r_ptr->flags7 |= RF7_NO_TARGET;
@@ -9136,48 +9136,61 @@ void golem_creation(int Ind, int max) {
 		r_ptr->hside = 10;
 		r_ptr->ac = 20;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_UMBER;
+		r_ptr->flags3 |= RF3_SUSCEP_FIRE;
 		break;
 	case SV_GOLEM_COPPER:
 		r_ptr->hdice = 10;
 		r_ptr->hside = 20;
 		r_ptr->ac = 40;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_ORANGE;
+		r_ptr->flags3 |= RF3_IM_ELEC;
+		//r_ptr->flags9 |= RF9_SUSCEP_ACID; //mh, so-so
 		break;
 	case SV_GOLEM_IRON:
 		r_ptr->hdice = 10;
 		r_ptr->hside = 40;
 		r_ptr->ac = 70;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_L_DARK;
+		r_ptr->flags3 |= RF3_IM_ELEC;
+		r_ptr->flags9 |= RF9_SUSCEP_ACID;
 		break;
 	case SV_GOLEM_ALUM:
 		r_ptr->hdice = 10;
 		r_ptr->hside = 60;
 		r_ptr->ac = 90;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_SLATE;
+		r_ptr->flags3 |= RF3_IM_ELEC;
+		r_ptr->flags9 |= RF9_RES_ACID;
 		break;
 	case SV_GOLEM_SILVER:
 		r_ptr->hdice = 10;
 		r_ptr->hside = 70;
 		r_ptr->ac = 100;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_L_WHITE;
+		r_ptr->flags3 |= RF3_IM_ELEC;
 		break;
 	case SV_GOLEM_GOLD:
 		r_ptr->hdice = 10;
 		r_ptr->hside = 80;
 		r_ptr->ac = 130;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_YELLOW;
+		r_ptr->flags3 |= RF3_IM_ELEC | RF3_IM_ACID; //uh, mostly...
 		break;
 	case SV_GOLEM_MITHRIL:
 		r_ptr->hdice = 10;
 		r_ptr->hside = 100;
 		r_ptr->ac = 160;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_L_BLUE;
+		r_ptr->flags3 |= RF3_IM_ELEC;
+		r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_ACID;
 		break;
 	case SV_GOLEM_ADAM:
 		r_ptr->hdice = 10;
 		r_ptr->hside = 150;
 		r_ptr->ac = 210;
 		r_ptr->d_attr = r_ptr->x_attr = TERM_VIOLET;
+		r_ptr->flags3 |= RF3_IM_ELEC | RF3_IM_FIRE;
+		r_ptr->flags9 |= RF9_RES_ACID;
 		break;
 	}
 
@@ -9212,6 +9225,12 @@ void golem_creation(int Ind, int max) {
 			}
 		}
 	}
+
+	/* Fix contradicting flags */
+	if (r_ptr->flags9 & RF9_RES_FIRE) r_ptr->flags3 &= ~RF3_SUSCEP_FIRE;
+	if (r_ptr->flags9 & RF9_RES_COLD) r_ptr->flags3 &= ~RF3_SUSCEP_COLD;
+	if (r_ptr->flags9 & RF9_RES_ELEC) r_ptr->flags9 &= ~RF9_SUSCEP_ELEC;
+	if (r_ptr->flags9 & RF9_RES_ACID) r_ptr->flags9 &= ~RF9_SUSCEP_ACID;
 
 	m_ptr->r_idx = 1 + golem_type; // 1 + 0..7 (SV_GOLEM_MATERIAL_MAX) -> 1..8
 	m_ptr->level = p_ptr->lev;
