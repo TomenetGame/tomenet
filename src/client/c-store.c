@@ -965,6 +965,7 @@ static void store_process_command(int cmd) {
 	}
 }
 
+#define AU_DURING_BROWSE
 void c_store_prt_gold(void) {
 	char out_val[64];
 	/* BIG_MAP leads to big shops */
@@ -974,7 +975,11 @@ void c_store_prt_gold(void) {
 	   Now if we're also browsing an info file (eg exploration history in the mathom house), we're in screen 2 (0 being map window, 1 being the store).
 	   So we need to switch to store screen to redraw the gold properly, then switch back to browse screen.
 	   (If we instead just return, we'll see the wrong gold value listed back in the shop screen after exiting the file-browsing.) */
+#ifdef AU_DURING_BROWSE /* If player is browsing a spell scroll, this will still overwrite Au live. Should be no problem, since spell-browsing will never go that far down to get overwritten by it visually */
 	if (special_line_type) Term_switch(1);
+#else /* If player is browsing a spell scroll, this will still write Au in the background as screen_icky is 2. So Au will not update until spell-browsing view is closed. */
+	if (special_line_type || screen_icky > 1) Term_switch(1);
+#endif
 
 	/* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe -> no empty spacer line between stock and gold? */
 	//spacer--;
@@ -997,7 +1002,11 @@ void c_store_prt_gold(void) {
 		Term_erase(x, y + 17 + spacer, 255);
 	}
 
+#ifdef AU_DURING_BROWSE
 	if (special_line_type) Term_switch(1);
+#else
+	if (special_line_type || screen_icky > 1) Term_switch(1);
+#endif
 }
 
 void do_redraw_store(void) {

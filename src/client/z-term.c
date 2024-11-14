@@ -2956,7 +2956,9 @@ errr Term_draw(int x, int y, byte a, char32_t c) {
 	if (!c) return(-2);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && !semaphore && !shopping
+	/* screen_icky == 1 check instead of just screen_icky != 0: Only write stuff to screen if our partial-screen-menu is actually the only thing that's stacked.
+	   If we're in a higher screen-save-level, we're probably inside a store, so we want to keep the whole screen clear in that case. */
+	if (screen_icky == 1 && !semaphore && !shopping
 	    && !perusing) {
 		semaphore = TRUE;
 		if (screen_line_icky != -1 && y >= screen_line_icky) {
@@ -2991,7 +2993,9 @@ errr Term_draw_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_b
 	if (!c) return(-2);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && !semaphore && !shopping
+	/* screen_icky == 1 check instead of just screen_icky != 0: Only write stuff to screen if our partial-screen-menu is actually the only thing that's stacked.
+	   If we're in a higher screen-save-level, we're probably inside a store, so we want to keep the whole screen clear in that case. */
+	if (screen_icky == 1 && !semaphore && !shopping
 	    && !perusing) {
 		semaphore = TRUE;
 		if (screen_line_icky != -1 && y >= screen_line_icky) {
@@ -3149,7 +3153,9 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	if ((res = Term_gotoxy(x, y)) != 0) return(res);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && !semaphore
+	/* screen_icky == 1 check instead of just screen_icky != 0: Only write stuff to screen if our partial-screen-menu is actually the only thing that's stacked.
+	   If we're in a higher screen-save-level, we're probably inside a store, so we want to keep the whole screen clear in that case. */
+	if (screen_icky == 1 && !semaphore
 	    && !perusing) {
 		semaphore = TRUE;
 		if (screen_line_icky != -1 && y >= screen_line_icky) {
