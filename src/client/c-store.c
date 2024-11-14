@@ -970,6 +970,12 @@ void c_store_prt_gold(void) {
 	/* BIG_MAP leads to big shops */
 	int spacer = (screen_hgt == MAX_SCREEN_HGT) ? 14 : 0, x = 51, y = 2;
 
+	/* While we're inside a store, the screen is icky by default.
+	   Now if we're also browsing an info file (eg exploration history in the mathom house), we're in screen 2 (0 being map window, 1 being the store).
+	   So we need to switch to store screen to redraw the gold properly, then switch back to browse screen.
+	   (If we instead just return, we'll see the wrong gold value listed back in the shop screen after exiting the file-browsing.) */
+	if (special_line_type) Term_switch(1);
+
 	/* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe -> no empty spacer line between stock and gold? */
 	//spacer--;
 
@@ -990,6 +996,8 @@ void c_store_prt_gold(void) {
 		/* Erase part of the screen */
 		Term_erase(x, y + 17 + spacer, 255);
 	}
+
+	if (special_line_type) Term_switch(1);
 }
 
 void do_redraw_store(void) {
