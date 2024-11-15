@@ -14353,6 +14353,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				great_pumpkin_killer1[0] = great_pumpkin_killer2[0] = 0;
 				return;
 			}
+#ifdef ENABLE_SUBINVEN
+			else if (prefix(messagelc, "/dbgsi")) { //display the first 3 elements of the first n subinventory arrays each
+				player_type *p_ptr = Players[Ind];
+				object_type *o_ptr;
+				char o_name[ONAME_LEN];
+
+				for (i = 0; i < k; i++) {
+					for (j = 0; j < 3; j++) {
+						o_ptr = &p_ptr->subinventory[i][j];
+						object_desc(Ind, o_name, o_ptr, TRUE, 3);
+						msg_format(Ind, " \377%c(%c)(%c): %s.", color_attr_to_char(TERM_SLATE + i), index_to_label(i), index_to_label(j), o_name);
+					}
+				}
+				return;
+			}
+#endif
 
 		}
 	}
