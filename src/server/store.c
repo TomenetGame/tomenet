@@ -2569,6 +2569,9 @@ static void store_create(store_type *st_ptr) {
 			case TV_SCROLL:
 				if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) force_num = 1;
 				break;
+			case TV_FOOD:
+				if (o_ptr->sval == SV_FOOD_ATHELAS) force_num = 1;
+				break;
 			}
 
 			/* Only single items of very expensive stuff */
