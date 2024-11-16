@@ -12787,9 +12787,9 @@ void audio_pack_selector(void) {
 					*cval = 0;
 					cval++;
 					/* Trim spaces/tabs */
-					while (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t') ckey[strlen(ckey) - 1] = 0;
+					while (strlen(ckey) && (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t')) ckey[strlen(ckey) - 1] = 0;
 					while (*cval == ' ' || *cval == '\t') cval++;
-					while (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t') cval[strlen(cval) - 1] = 0;
+					while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
 
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
@@ -12847,9 +12847,9 @@ void audio_pack_selector(void) {
 					*cval = 0;
 					cval++;
 					/* Trim spaces/tabs */
-					while (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t') ckey[strlen(ckey) - 1] = 0;
+					while (strlen(ckey) && (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t')) ckey[strlen(ckey) - 1] = 0;
 					while (*cval == ' ' || *cval == '\t') cval++;
-					while (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t') cval[strlen(cval) - 1] = 0;
+					while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
 
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
