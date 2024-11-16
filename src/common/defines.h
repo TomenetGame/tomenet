@@ -6882,6 +6882,7 @@
 #define FF2_SHINE2		0x00004000U	/* rad 2. Stacks with FF2_SHINE. */
 #define FF2_NO_TFORM		0x00008000U	/* This grid cannot be terraformed in any way (including destruction/earthquake etc). */
 
+#define FF2_COVER		0x00010000U	/* For vampires: Grid offers protection from sun light */
 //hole
 #define FF2_BOUNDARY		0x80000000U	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 
@@ -7781,8 +7782,6 @@
    wraithform provided the required tools/abilities. */
 #define cave_passable(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_SWITCH_MASK)
-
-
 
 /*
  * Hack -- Prepare to use the "Secure" routines

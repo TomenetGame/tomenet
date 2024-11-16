@@ -4725,30 +4725,26 @@ void calc_boni(int Ind) {
 
 	old_sun_burn = p_ptr->sun_burn;
 	p_ptr->sun_burn = FALSE;
-	if ((p_ptr->prace == RACE_VAMPIRE ||
-	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
-	    && !p_ptr->ghost && !(p_ptr->global_event_temp & PEVF_INDOORS_00)
-	    && !(l_ptr && (l_ptr->flags2 & LF2_INDOORS))
-	    && !(in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS))) {
-		/* damage from sunlight */
-		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
-		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) &&
-		    //!(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
-		    !(zcave[p_ptr->py][p_ptr->px].info & (CAVE_PROT | CAVE_ICKY)) && /* don't burn inside inn nor in the player's house */
-		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED) &&
-		    zcave[p_ptr->py][p_ptr->px].feat != FEAT_SHOP) {
-			p_ptr->sun_burn = TRUE;
-			if (!old_sun_burn) msg_print(Ind, "\377RYou burn in the sunlight!");
-			/* vampire bats can stay longer under the sunlight than actual vampire form */
-			if (p_ptr->body_monster != RI_VAMPIRE_BAT) {
-				i = (turn % DAY) / HOUR;
-				i = 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn!: 2..5*/
-				if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
-				p_ptr->drain_life += i;
-			} else p_ptr->drain_life++; /* currently, vampiric mist suffers same as normal vampire form (VAMPIRIC_MIST) */
+	/* On sunlit grid, as vampire, not a ghost, without protection? -> Damage from sunlight */
+	if (p_ptr->grid_sunlit &&
+	    (p_ptr->prace == RACE_VAMPIRE || (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V')) &&
+	    !p_ptr->ghost &&
+	    //!(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
+	    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)) {
+		p_ptr->sun_burn = TRUE;
+		if (!old_sun_burn) msg_print(Ind, "\377RYou burn in the sunlight!");
+#if 0
+		/* vampire bats can stay longer under the sunlight than actual vampire form */
+		if (p_ptr->body_monster == RI_VAMPIRE_BAT) p_ptr->drain_life++;
+		else /* currently, vampiric mist suffers same as normal vampire form (VAMPIRIC_MIST) */
+#endif
+		{
+			i = (turn % DAY) / HOUR;
+			i = 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn!: 2..5*/
+			if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
+			p_ptr->drain_life += i;
 		}
-	}
-
+	} else if (old_sun_burn) msg_print(Ind, "You find respite from the sunlight.");
 
 	/* Apply temporary "stun" */
 	/* should this stuff be mvoed to affect _total p_ptr->to_h instead of being applied so (too) early here? */

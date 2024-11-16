@@ -1904,13 +1904,12 @@ bool player_day(int Ind) {
 		ret = TRUE;
 	}
 	if (p_ptr->wpos.wz) return(ret);
+
+	if (p_ptr->global_event_temp & PEVF_INDOORS_00) return(FALSE);
 	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-	if (p_ptr->prace == RACE_VAMPIRE ||
-	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
-		calc_boni(Ind); /* daylight */
 
 	/* Hack -- Scan the level */
 	for (y = 0; y < MAX_HGT; y++)
@@ -1962,13 +1961,12 @@ bool player_night(int Ind) {
 		ret = TRUE;
 	}
 	if (p_ptr->wpos.wz) return(ret);
+
+	if (p_ptr->global_event_temp & PEVF_INDOORS_00) return(FALSE);
 	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-	if (p_ptr->prace == RACE_VAMPIRE ||
-	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
-		calc_boni(Ind); /* no more daylight */
 
 	/* Hack -- Scan the level */
 	for (y = 0; y < MAX_HGT; y++)
@@ -2118,6 +2116,7 @@ void world_surface_night(struct worldpos *wpos) {
 static void sun_rises() {
 	struct worldpos wrpos;
 	int wx, wy, i;
+	player_type *p_ptr;
 
 	night_surface = FALSE;
 	wrpos.wz = 0;
@@ -2132,8 +2131,12 @@ static void sun_rises() {
 
 	/* Message all players who witness switch */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (player_day(i)) msg_print(i, "The sun has risen.");
+		p_ptr = Players[i];
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+		if (player_day(i)) {
+			msg_print(i, "The sun has risen.");
+			if (p_ptr->prace == RACE_VAMPIRE || (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V')) grid_affects_player(i, p_ptr->px, p_ptr->py); /* sunlight damage */
+		}
 	}
 }
 
@@ -2141,6 +2144,7 @@ static void sun_rises() {
 static void night_falls() {
 	struct worldpos wrpos;
 	int wx, wy, i;
+	player_type *p_ptr;
 
 	night_surface = TRUE;
 	wrpos.wz = 0;
@@ -2155,8 +2159,12 @@ static void night_falls() {
 
 	/* Message all players who witness switch */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (player_night(i)) msg_print(i, "The sun has fallen.");
+		p_ptr = Players[i];
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+		if (player_night(i)) {
+			msg_print(i, "The sun has fallen.");
+			if (p_ptr->prace == RACE_VAMPIRE || (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V')) grid_affects_player(i, p_ptr->px, p_ptr->py); /* sunlight damage */
+		}
 	}
 
 	/* If it's new year's eve, start the fireworks! */

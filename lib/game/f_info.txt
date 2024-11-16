@@ -183,7 +183,7 @@ F:PERMANENT
 # logs, used for log cabin
 N:23:logs
 G:=:u
-F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT | NO_ARTICLE
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT | NO_ARTICLE | COVER
 F:DONT_NOTICE_RUNNING | LAMP_LITE_OPTIONAL | NO_SHADE | NO_LITE_WHITEN
 
 # drawbridge, used for moats
@@ -193,7 +193,7 @@ F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 
 N:25:closed door
 G:+:U
-F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
+F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR | COVER
 #House door: Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now.
 F:NO_SHADE
 
@@ -201,7 +201,7 @@ F:NO_SHADE
 
 N:26:permanent wall
 G:#:w
-F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT | COVER
 F:DONT_NOTICE_RUNNING
 #don't shade the player houses maybe?
 #F:NO_SHADE
@@ -219,7 +219,7 @@ D:0:This is fresh blood in the fountain.
 
 N:28:permanent wall
 G:#:w
-F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT | COVER
 F:DONT_NOTICE_RUNNING | NIGHT_DARK | NO_SHADE
 #Note: For higher town houses, this must have NO_SHADE exactly when #60 has NO_SHADE too.
 
@@ -246,7 +246,7 @@ N:32:door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> locked door (power 1)
@@ -255,7 +255,7 @@ N:33:locked door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> locked door (power 2)
@@ -264,7 +264,7 @@ N:34:locked door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> locked door (power 3)
@@ -273,7 +273,7 @@ N:35:locked door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> locked door (power 4)
@@ -282,7 +282,7 @@ N:36:locked door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> locked door (power 5)
@@ -291,7 +291,7 @@ N:37:locked door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> locked door (power 6)
@@ -300,7 +300,7 @@ N:38:locked door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> locked door (power 7)
@@ -309,7 +309,7 @@ N:39:locked door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # XXX jammed doors are not DOOR ? XXX
@@ -319,7 +319,7 @@ N:40:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> jammed door (power 1)
@@ -328,7 +328,7 @@ N:41:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> jammed door (power 2)
@@ -337,7 +337,7 @@ N:42:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> jammed door (power 3)
@@ -346,7 +346,7 @@ N:43:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> jammed door (power 4)
@@ -355,7 +355,7 @@ N:44:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> jammed door (power 5)
@@ -364,7 +364,7 @@ N:45:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> jammed door (power 6)
@@ -373,7 +373,7 @@ N:46:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x2x --> jammed door (power 7)
@@ -382,7 +382,7 @@ N:47:jammed door
 G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
-F:TUNNELABLE
+F:TUNNELABLE | COVER
 D:1:You bash the door.
 
 # 0x30 --> secret door
@@ -392,7 +392,7 @@ G:#:w
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | DOOR
 F:DONT_NOTICE_RUNNING
-F:TUNNELABLE | LAMP_LITE
+F:TUNNELABLE | LAMP_LITE | COVER
 D:1:You tunnel.
 
 # 0x31 --> rubble
@@ -409,7 +409,7 @@ D:1:You dig in the rubble.
 N:50:magma intrusion
 G:%:D
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL | COVER
 D:1:You tunnel into the magma intrusion.
 
 # 0x33 --> quartz vein
@@ -417,7 +417,7 @@ D:1:You tunnel into the magma intrusion.
 N:51:quartz vein
 G:%:w
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL | COVER
 D:1:You tunnel into the quartz vein.
 
 # 0x34 --> magma vein + treasure
@@ -426,7 +426,7 @@ N:52:magma intrusion
 G:%:D
 M:50
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL | COVER
 D:1:You tunnel into the magma intrusion.
 
 # 0x35 --> quartz vein + treasure
@@ -435,7 +435,7 @@ N:53:quartz vein
 G:%:w
 M:51
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL | COVER
 D:1:You tunnel into the quartz vein.
 
 # 0x36 --> magma vein + known treasure
@@ -443,7 +443,7 @@ D:1:You tunnel into the quartz vein.
 N:54:magma intrusion with treasure
 G:*:o
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | COVER
 D:1:You tunnel into the magma intrusion.
 
 # 0x37 --> quartz vein + known treasure
@@ -451,7 +451,7 @@ D:1:You tunnel into the magma intrusion.
 N:55:quartz vein with treasure
 G:*:o
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | COVER
 D:1:You tunnel into the quartz vein.
 
 # 0x38 --> granite wall -- basic
@@ -459,7 +459,7 @@ D:1:You tunnel into the quartz vein.
 N:56:granite wall
 G:#:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE | COVER
 D:1:You tunnel into the granite wall.
 
 # 0x39 --> granite wall -- inner
@@ -468,7 +468,7 @@ N:57:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE | COVER
 D:1:You tunnel into the granite wall.
 
 # 0x3A --> granite wall -- outer
@@ -477,7 +477,7 @@ N:58:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE | COVER
 D:1:You tunnel into the granite wall.
 
 # 0x3B --> granite wall -- solid
@@ -486,7 +486,7 @@ N:59:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE | COVER
 D:1:You tunnel into the granite wall.
 
 # 0x3C --> permanent wall -- basic/extra (perm) (for stores)
@@ -494,7 +494,7 @@ D:1:You tunnel into the granite wall.
 N:60:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | COVER
 F:LAMP_LITE
 F:NO_SHADE
 #Note: For higher town houses, this must have NO_SHADE exactly when #28 has NO_SHADE too.
@@ -505,7 +505,7 @@ F:NO_SHADE
 N:61:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | COVER
 F:SPECIAL_LITE
 #Note: This one is used for vaults, and if lighting is changed so it displays
 # this in TERM_L_WHITE (ie darker than its original bright white) then
@@ -518,7 +518,7 @@ F:SPECIAL_LITE
 N:62:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | COVER
 F:SPECIAL_LITE
 # | NO_SHADE <- in case ice walls need to be distinguished
 
@@ -527,7 +527,7 @@ F:SPECIAL_LITE
 N:63:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | BOUNDARY
+F:DONT_NOTICE_RUNNING | BOUNDARY | COVER
 F:SPECIAL_LITE
 # | NO_SHADE <- in case ice walls need to be distinguished
 
@@ -576,7 +576,7 @@ F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 N:74:Building
 G:1:U
 F:FLOOR | PERMANENT | REMEMBER | NOTICE | CAN_RUN
-F:BLOCK_CONTACT | NO_PROB
+F:BLOCK_CONTACT | NO_PROB | COVER
 
 # 75 --> 78 Quests index
 #Note: If FEAT_PERM_EXTRA has NO_SHADE, so should this,
@@ -585,25 +585,25 @@ F:BLOCK_CONTACT | NO_PROB
 N:75:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING | LAMP_LITE | COVER
 F:NO_SHADE
 
 N:76:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING | LAMP_LITE | COVER
 F:NO_SHADE
 
 N:77:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING | LAMP_LITE | COVER
 F:NO_SHADE
 
 N:78:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING | LAMP_LITE | COVER
 F:NO_SHADE
 
 #added to visually "blank" unused space on floors that are smaller than possible
@@ -617,13 +617,13 @@ F:DONT_NOTICE_RUNNING | BOUNDARY | NO_ARTICLE
 N:80:spirit wall
 G:#:v
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | BOUNDARY
+F:DONT_NOTICE_RUNNING | BOUNDARY | COVER
 
 #permanent wall in a bunch of dungeons, instead of default perma wall
 N:81:steep mountain chain
 G:^:u
 F:WALL | NO_WALK | NO_VISION | PERMANENT
-F:DONT_NOTICE_RUNNING | NIGHT_DARK | BOUNDARY
+F:DONT_NOTICE_RUNNING | NIGHT_DARK | BOUNDARY | COVER
 D:1:This rock is far too hard.
 D:2:a very hard and steep stone wall block blocking your way
 
@@ -729,7 +729,7 @@ F:LAMP_LITE_SNOW | LAMP_LITE_OPTIONAL
 N:95:ice wall
 G:#:B
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | COVER
 D:1:You tunnel into the ice wall...chilly!
 D:2:an ice wall blocking your way
 
@@ -737,7 +737,7 @@ N:96:tree
 G:#:G
 F:CAN_LEVITATE | SUPPORT_LIGHT | SLOW_RUNNING_1 | SLOW_LEVITATING_1
 # SLOW_RUNNING_2 - speed can go down to 0 -> stuck - mikaelh
-F:WALL | NO_WALK | NO_VISION
+F:WALL | NO_WALK | NO_VISION | COVER
 F:DONT_NOTICE_RUNNING
 F:TUNNELABLE
 D:1:You chop away at the tree.
@@ -757,7 +757,7 @@ D:2:a hard stone block blocking your way
 N:98:sandwall
 G:#:y
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | COVER
 D:1:You dig into the sandwall.
 D:2:a sandwall blocking your way
 
@@ -767,7 +767,7 @@ N:99:sandwall
 G:%:y
 M:98
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | COVER
 D:1:You dig into the sandwall.
 D:2:a sandwall blocking your way
 
@@ -775,7 +775,7 @@ D:2:a sandwall blocking your way
 N:100:sandwall with treasure
 G:*:o
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | COVER
 D:1:You dig into the sandwall.
 D:2:a sandwall blocking your way
 
@@ -1016,7 +1016,7 @@ F:FLOOR
 N:139:an evergreen conifer
 G:#:g
 F:WALL | NO_WALK | NO_VISION | PERMANENT | GLOW
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | COVER
 D:1:This evergreen conifer is surprisingly hard.
 D:2:An evergreen conifer, blocking your way
 
@@ -1024,7 +1024,7 @@ D:2:An evergreen conifer, blocking your way
 N:140:decorative glowing sphere
 G:*:L
 F:WALL | NO_WALK | NO_VISION | PERMANENT | GLOW
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | COVER
 D:1:This spere on top of a conifer is far too hard.
 D:2:a light sphere on top of a conifer, blocking your way
 
@@ -1109,7 +1109,7 @@ N:159:magma intrusion
 G:%:D
 M:50
 F:WALL | NO_WALK | SUPPORT_LIGHT | LAMP_LITE_OPTIONAL
-F:DONT_NOTICE_RUNNING | PERMANENT | BOUNDARY
+F:DONT_NOTICE_RUNNING | PERMANENT | BOUNDARY | COVER
 D:1:This magma wall seems astonishingly solid.
 
 N:160:void jumpgate
@@ -1176,7 +1176,7 @@ D:0:A teleporter beacon.
 N:177:lava wall
 G:#:R
 S:R:R:r:r:U:u:R
-F:ATTR_MULTI
+F:ATTR_MULTI | COVER
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | GLOW
 D:1:The lava is far too hot to tunnel into it.
 D:2:a lava wall blocking your way
@@ -1219,19 +1219,19 @@ F:DONT_NOTICE_RUNNING
 N:183:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY | COVER
 
 #like 183, but special extended colour (testing)
 N:184:permanent wall
 G:#:7
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY | COVER
 
 #like 183, but special animated colour aka search lights (testing)
 N:185:permanent wall
 G:#:8
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY | COVER
 
 N:186:blazing fire
 G:%:f
@@ -1254,7 +1254,7 @@ N:188:glass wall
 G:#:B
 #F:NO_WALK | WALL | PERMANENT | NOTICE
 #F:DONT_NOTICE_RUNNING
-F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT | COVER
 #making glass transparent again? - Kurzel
 D:1:This glass seems to be totally impenetrable.
 D:2:a glass wall blocking your way
@@ -1380,7 +1380,7 @@ F:DONT_NOTICE_RUNNING
 N:210:protected floor
 G:.:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
-F:DONT_NOTICE_RUNNING | PROTECTED | NO_PROB
+F:DONT_NOTICE_RUNNING | PROTECTED | NO_PROB | COVER
 
 # Some decoration grids, made for Gondolin entrance to prevent people from getting stuck in there - C. Blue
 
@@ -1480,7 +1480,7 @@ $ARCADE_SERVER$F:DONT_NOTICE_RUNNING
 N:224:sealed door
 G:+:r
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | NOTICE
+F:DONT_NOTICE_RUNNING | NOTICE | COVER
 D:1:You bash the door but it doesn't seem to move.
 D:2:A hideous looking ornate door is blocking your way.
 
@@ -1492,7 +1492,7 @@ F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 N:226:highly protected floor
 G:.:U
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_PROB
-F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
+F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT | COVER
 
 $ARCADE_SERVER$N:227:orange wall
 $ARCADE_SERVER$G:#:o
@@ -1529,7 +1529,7 @@ D:2:You are not allowed to enter the temple's sickbay.
 
 N:232:sickbay area
 G:_:u
-F:FLOOR | CAN_RUN | SUPPORT_LIGHT | ENTER_FROM_SPECIAL
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT | ENTER_FROM_SPECIAL | COVER
 F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT | NO_PROB
 
 N:233:Iridescent Gate

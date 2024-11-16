@@ -1152,7 +1152,7 @@ static cptr f_info_flags2[] = {
 	"SHINE2",
 	"NO_TFORM",
 
-	"XXX",
+	"COVER",
 	"XXX",
 	"XXX",
 	"XXX",

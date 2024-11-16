@@ -9879,9 +9879,11 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	inn = inside_inn(p_ptr, c_ptr);
 #endif
 
-	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
-	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
-	    c_ptr->feat != FEAT_SHOP) {
+	if (outdoor_affects(&p_ptr->wpos) && !night_surface &&
+	    !(p_ptr->global_event_temp & PEVF_INDOORS_00) && /* 'A "personal" outdoor_affects()' ie player-specific, not wpos-specific. Maybe improve this somehow. */
+	    !inside_house(&p_ptr->wpos, x, y) && // || p_ptr->store_num != -1) &&  --not safe "inside" pstores, as we're still standing outside...
+	    !(f_info[c_ptr->feat].flags2 & FF2_COVER) && //special: feat-protected, trees, walls, npc shops, doors offer cover
+	    !(c_ptr->info & CAVE_PROT)) {
 		if (!p_ptr->grid_sunlit) {
 			p_ptr->grid_sunlit = TRUE;
 			calc_boni(Ind);
