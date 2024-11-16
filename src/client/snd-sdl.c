@@ -457,8 +457,14 @@ static void close_audio(void) {
 
 		/* Nuke all samples */
 		for (j = 0; j < smp->num; j++) {
-			Mix_FreeChunk(smp->wavs[j]);
-			string_free(smp->paths[j]);
+			if (smp->wavs[j]) {
+				Mix_FreeChunk(smp->wavs[j]);
+				smp->wavs[j] = NULL;
+			}
+			if (smp->paths[j]) {
+				string_free(smp->paths[j]);
+				smp->paths[j] = NULL;
+			}
 		}
 		/* In case the system gets re-initialized, make sure the sample-counter of then perhaps unused sfx is actually initialized with zero,
 		   or we'd get a double-free crash on a subsequent close_audio() call. */
@@ -471,8 +477,14 @@ static void close_audio(void) {
 
 		/* Nuke all samples */
 		for (j = 0; j < mus->num; j++) {
-			Mix_FreeMusic(mus->wavs[j]);
-			string_free(mus->paths[j]);
+			if (mus->wavs[j]) {
+				Mix_FreeMusic(mus->wavs[j]);
+				mus->wavs[j] = NULL;
+			}
+			if (mus->paths[j]) {
+				string_free(mus->paths[j]);
+				mus->paths[j] = NULL;
+			}
 		}
 		/* In case the system gets re-initialized, make sure the song-counter of then perhaps unused music is actually initialized with zero,
 		   or we'd get a double-free crash on a subsequent close_audio() call. */
