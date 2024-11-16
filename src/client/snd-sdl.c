@@ -2270,7 +2270,7 @@ void ambient_handle_fading(void) {
 static bool play_music(int event) {
 	int n, initials = 0, vols = 100;
 
-	if (event > 9000) return(play_music_instantly(event - 10000)); //scouter (just in case: carry over all event-hax)
+	if (event > 9000) return(play_music_instantly(event - 10000)); //scouter (just in case: carry over all event-hax, which might be negative numbers, so we end up <10000 even with +10000 hack specified)
 
 	/* Paranoia */
 	if (event < -4 || event >= MUSIC_MAX) return(FALSE);
@@ -2644,11 +2644,12 @@ static void fadein_next_music(void) {
 	if (!songs[music_cur].initial[music_cur_song]) {
 		//Mix_PlayMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);//-1 infinite, 0 once, or n times
 		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000);
-	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000);
+	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000); //even if play_all is off, continue with another song after an 'initial' song was played
 }
 
 //#ifdef JUKEBOX_INSTANT_PLAY
 /* Hack: event >= 20000 means 'no repeat'. */
+/* This function ignores some music-options and is only used for special stuff like meta list or jukebox. */
 static bool play_music_instantly(int event) {
 	Mix_Music *wave = NULL;
 	bool no_repeat = FALSE;
