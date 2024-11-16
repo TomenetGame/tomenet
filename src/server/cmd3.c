@@ -5471,7 +5471,9 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 	/* Managed to merge fully? Erase source object then. */
 	if (!i_ptr->number) {
  #if 1
-		/* -- This is partial code from inven_item_optimize() -- */
+		/* -- This is partial code from inven_item_optimize() --
+		   WE ASSUME that we are always at least at an inventory index that comes _after_ all subinventories
+		   (because we do not check for sliding subinventories here, just for sliding 'normal' inventory items)! */
 
 		player_type *p_ptr = Players[Ind];
 
