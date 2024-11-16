@@ -2263,6 +2263,37 @@ void ambient_handle_fading(void) {
 	}
 }
 
+#ifdef ENABLE_JUKEBOX
+/* Hack: Find out song length of currently active music event song by trial and error o_O */
+void jukebox_update_songlength(void) {
+	int i, lb, l;
+	double p; //ohoho -_-
+
+	if (music_cur == -1 || music_cur_song == -1) return; //paranoia
+
+	p = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
+	//Mix_RewindMusic();
+	lb = 0;
+	l = (99 * 60 + 59) * 2; //asume 99:59 min is max duration of any song
+	while (l > 1) {
+		l >>= 1;
+		Mix_SetMusicPosition(lb + l);
+
+		/* Check for overflow beyond actual song length */
+		i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
+		/* Too far? */
+		if (!i) continue;
+
+		/* We found a minimum duration */
+		lb = i;
+	}
+	/* Reset position */
+	Mix_SetMusicPosition(p);
+
+	curmus_song_dur = lb;
+}
+#endif
+
 /*
  * Play a music of type "event".
  * Hack: If 10000 is added to 'event', the music is played instantly without fade-in effect.
@@ -2602,6 +2633,9 @@ static void fadein_next_music(void) {
 
 		/* Actually play the thing */
 		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000); //-1 infinite, 0 once, or n times
+#ifdef ENABLE_JUKEBOX
+		if (jukebox_screen) jukebox_update_songlength();
+#endif
 		return;
 	}
 
@@ -2645,6 +2679,9 @@ static void fadein_next_music(void) {
 	if (!songs[music_cur].initial[music_cur_song]) {
 		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000); //-1 infinite, 0 once, or n times
 	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000); //even if play_all is off, continue with another song after an 'initial' song was played instead of repeating it
+#ifdef ENABLE_JUKEBOX
+	if (jukebox_screen) jukebox_update_songlength();
+#endif
 }
 
 //#ifdef JUKEBOX_INSTANT_PLAY
@@ -3643,7 +3680,7 @@ void do_cmd_options_sfx_sdl(void) {
  #define MUSIC_SKIP 10 /* Jukebox backward/forward skip interval in seconds */
 #endif
 void do_cmd_options_mus_sdl(void) {
-	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5, song_dur = 0;
+	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
 	char ch;
 	byte a, a2;
@@ -3702,30 +3739,7 @@ void do_cmd_options_mus_sdl(void) {
 	}
 #endif
 
-	/* Hack: Find out song length of currently active music event song by trial and error o_O */
-	{ int lb, l;
-	double p; //ohoho -_-
-	p = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
-	//Mix_RewindMusic();
-	lb = 0;
-	l = (99 * 60 + 59) * 2; //asume 99:59 min is max duration of any song
-	while (l > 1) {
-		l >>= 1;
-		Mix_SetMusicPosition(lb + l);
-
-		/* Check for overflow beyond actual song length */
-		i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
-		/* Too far? */
-		if (!i) continue;
-
-		/* We found a minimum duration */
-		lb = i;
-	}
-	song_dur = lb;
-	/* Reset position */
-	Mix_SetMusicPosition(p);
-	}
-
+	jukebox_update_songlength();
 
 	/* Interact */
 	while (go) {
@@ -3794,8 +3808,8 @@ void do_cmd_options_mus_sdl(void) {
 				curmus_x = horiz_offset + 12;
 				curmus_y = vertikal_offset + i + 10 - y;
 				curmus_attr = a;
-				if (!song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     )", (char*)lua_name));
-				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     /%02d:%02d)", (char*)lua_name, song_dur / 60, song_dur % 60));
+				if (!curmus_song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     )", (char*)lua_name));
+				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     /%02d:%02d)", (char*)lua_name, curmus_song_dur / 60, curmus_song_dur % 60));
 				update_jukebox_timepos();
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
@@ -4171,28 +4185,11 @@ void do_cmd_options_mus_sdl(void) {
   #endif
  #endif
 
-			/* Hack: Find out song length by trial and error o_O */
-			{ int lb, l;
-			//Mix_RewindMusic();
-			lb = 0;
-			l = (99 * 60 + 59) * 2; //asume 99:59 min is max duration of any song
-			while (l > 1) {
-				l >>= 1;
-				Mix_SetMusicPosition(lb + l);
-
-				/* Check for overflow beyond actual song length */
-				i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
-				/* Too far? */
-				if (!i) continue;
-
-				/* We found a minimum duration */
-				lb = i;
-			}
-			song_dur = lb;
+			jukebox_update_songlength();
+ #if 0 /* paranoia/not needed */
 			/* Reset position */
 			Mix_SetMusicPosition(0);
-			}
-
+ #endif
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
 #endif
@@ -4297,7 +4294,15 @@ void update_jukebox_timepos(void) {
 
 	curmus_timepos = i;
 	/* Update jukebox song time stamp */
+#if 0 /* just update song position */
 	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
+#else /* also update song duration */
+	if (curmus_y != -1) {
+		Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, 			format("%02d:%02d", i / 60, i % 60));
+		if (!curmus_song_dur) Term_putstr(curmus_x + 34 + 6, curmus_y, -1, curmus_attr,format("(--:--)"));
+		else Term_putstr(curmus_x + 34 + 12, curmus_y, -1, curmus_attr, 		     format("/%02d:%02d)", curmus_song_dur / 60, curmus_song_dur % 60));
+	}
+#endif
 
 	/* Hack: Hide the cursor */
 	Term->scr->cx = Term->wid;
