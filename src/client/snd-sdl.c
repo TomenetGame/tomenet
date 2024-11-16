@@ -2542,7 +2542,9 @@ static void fadein_next_music(void) {
 #endif
 
 	/* Catch music_next == -1, this can now happen with shuffle_music or play_all option, since songs are no longer looped if it's enabled */
-	if ((c_cfg.shuffle_music || c_cfg.play_all) && music_next == -1) {
+	if (
+	    //(c_cfg.shuffle_music || c_cfg.play_all) && //---actually 'initial'-tagged songs will still only play once, so we'd get just silence afterwards if we didn't pick another song here in those cases...
+	    music_next == -1) {
 		int tries, mcs;
 		int n, noinit_map[MAX_SONGS], ni = 0;
 
@@ -2573,7 +2575,7 @@ static void fadein_next_music(void) {
 				if (music_cur_song != mcs) break; //find some other song than then one we've just played, or it's not really 'shuffle'..
 			}
 		} else {
-			/* c_cfg.play_all: */
+			/* MAYBE c_cfg.play_all, maybe not^^ (if prev song was 'initial' type, we're here even w/o play_all): */
 			/* stick with music event, but play different song, in listed order */
 			tries = -1;
 			mcs = music_cur_song;
@@ -2599,15 +2601,14 @@ static void fadein_next_music(void) {
 		}
 
 		/* Actually play the thing */
-		//Mix_PlayMusic(wave, 0);//-1 infinite, 0 once, or n times
-		Mix_FadeInMusic(wave, 0, 1000);
+		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000); //-1 infinite, 0 once, or n times
 		return;
 	}
 
 	/* Paranoia */
 	if (music_next < 0 || music_next >= MUSIC_MAX) return;
 
-	/* Song file was disabled? (local audio options) */
+	/* Music event was disabled? (local audio options) */
 	if (songs[music_next].disabled) {
 		music_cur = music_next;
 		music_cur_song = music_next_song;
@@ -2642,9 +2643,8 @@ static void fadein_next_music(void) {
 	music_next = -1;
 	/* Actually don't repeat 'initial' songs */
 	if (!songs[music_cur].initial[music_cur_song]) {
-		//Mix_PlayMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);//-1 infinite, 0 once, or n times
-		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000);
-	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000); //even if play_all is off, continue with another song after an 'initial' song was played
+		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000); //-1 infinite, 0 once, or n times
+	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000); //even if play_all is off, continue with another song after an 'initial' song was played instead of repeating it
 }
 
 //#ifdef JUKEBOX_INSTANT_PLAY
