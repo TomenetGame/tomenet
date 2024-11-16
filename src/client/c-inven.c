@@ -1132,17 +1132,17 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	    /* Don't restrict items inside subinventories, as we don't have a function for this yet
 	       (would need to pass subinven flag+index to get_item_okay() or something).
 	       Just leave it to server-side checks for now. */
-    {
+	{
 #endif
-	i2 = INVEN_PACK - 1;
-	/* Forbid inventory */
-	if (!inven) i2 = -1;
+		i2 = INVEN_PACK - 1;
+		/* Forbid inventory */
+		if (!inven) i2 = -1;
 
-	/* Restrict inventory indices */
-	while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
-	while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
+		/* Restrict inventory indices */
+		while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
+		while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
 #ifdef ENABLE_SUBINVEN
-    }
+	}
 #endif
 
 #ifdef ENABLE_SUBINVEN

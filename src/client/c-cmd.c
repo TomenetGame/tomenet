@@ -232,36 +232,36 @@ static void cmd_all_in_one(void) {
 	/* Presume it's sort of spellbook */
 	case TV_BOOK:
 	default:
-	    {
-		int i;
-		bool done = FALSE;
+		{
+			int i;
+			bool done = FALSE;
 
 #ifdef ENABLE_SUBINVEN
-		if (item >= SUBINVEN_INVEN_MUL) return;
+			if (item >= SUBINVEN_INVEN_MUL) return;
 #endif
 
-		for (i = 1; i < MAX_SKILLS; i++) {
-			if (s_info[i].tval == inventory[item].tval &&
-			    s_info[i].action_mkey && p_ptr->s_info[i].value) {
-				do_activate_skill(i, item);
-				done = TRUE;
-				break;
-				/* Now a number of skills shares same mkey */
+			for (i = 1; i < MAX_SKILLS; i++) {
+				if (s_info[i].tval == inventory[item].tval &&
+				    s_info[i].action_mkey && p_ptr->s_info[i].value) {
+					do_activate_skill(i, item);
+					done = TRUE;
+					break;
+					/* Now a number of skills shares same mkey */
+				}
 			}
-		}
-		if (!done) {
-			/* XXX there should be more generic 'use' command */
-			/* Does item require aiming? (Always does if not yet identified) */
-			if (inventory[item].uses_dir == 0) {
-				/* (also called if server is outdated, since uses_dir will be 0 then) */
-				Send_activate(item);
-			} else {
-				if (!get_dir(&dir)) return;
-				Send_activate_dir(item, dir);
+			if (!done) {
+				/* XXX there should be more generic 'use' command */
+				/* Does item require aiming? (Always does if not yet identified) */
+				if (inventory[item].uses_dir == 0) {
+					/* (also called if server is outdated, since uses_dir will be 0 then) */
+					Send_activate(item);
+				} else {
+					if (!get_dir(&dir)) return;
+					Send_activate_dir(item, dir);
+				}
 			}
+			break;
 		}
-		break;
-	    }
 	}
 }
 
@@ -1979,80 +1979,79 @@ void cmd_look(void) {
 
 	while (TRUE) {
 		ch = inkey();
-
 		if (!ch) continue;
 
-	    if (c_cfg.rogue_like_commands) {
-		switch (ch) {
-		case ESCAPE:
-		case 'q':
-			/* Clear top line */
-			clear_topline();
-			inkey_msg = inkey_msg_old;
-			return;
-		case KTRL('T'):
-			xhtml_screenshot("screenshot????", FALSE);
-			break;
-		case ':':
-			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
-			break;
-		case 'p':
-			/* Toggle manual ground-targetting */
-			position = !position;
+		if (c_cfg.rogue_like_commands) {
+			switch (ch) {
+			case ESCAPE:
+			case 'q':
+				/* Clear top line */
+				clear_topline();
+				inkey_msg = inkey_msg_old;
+				return;
+			case KTRL('T'):
+				xhtml_screenshot("screenshot????", FALSE);
+				break;
+			case ':':
+				cmd_message();
+				inkey_msg = TRUE; /* And suppress macros again.. */
+				break;
+			case 'p':
+				/* Toggle manual ground-targetting */
+				position = !position;
 
-			/* Tell the server to reset ground-target */
-			Send_look(128 + 0);
-			break;
-		case 'x':
-			/* actually look at the ground-targetted grid */
-			if (position) Send_look(128 + 5);
-			break;
-		default:
-			d = keymap_dirs[ch & 0x7F];
-			if (!d) bell();
-			else {
-				if (position) Send_look(128 + d); /* do manual ground-targetting */
-				else Send_look(d); /* do normal looking */
+				/* Tell the server to reset ground-target */
+				Send_look(128 + 0);
+				break;
+			case 'x':
+				/* actually look at the ground-targetted grid */
+				if (position) Send_look(128 + 5);
+				break;
+			default:
+				d = keymap_dirs[ch & 0x7F];
+				if (!d) bell();
+				else {
+					if (position) Send_look(128 + d); /* do manual ground-targetting */
+					else Send_look(d); /* do normal looking */
+				}
+				break;
 			}
-			break;
-		}
-	    } else {
-		switch (ch) {
-		case ESCAPE:
-		case 'q':
-			/* Clear top line */
-			clear_topline();
-			inkey_msg = inkey_msg_old;
-			return;
-		case KTRL('T'):
-			xhtml_screenshot("screenshot????", FALSE);
-			break;
-		case ':':
-			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
-			break;
-		case 'p':
-			/* Toggle manual ground-targetting */
-			position = !position;
+		} else {
+			switch (ch) {
+			case ESCAPE:
+			case 'q':
+				/* Clear top line */
+				clear_topline();
+				inkey_msg = inkey_msg_old;
+				return;
+			case KTRL('T'):
+				xhtml_screenshot("screenshot????", FALSE);
+				break;
+			case ':':
+				cmd_message();
+				inkey_msg = TRUE; /* And suppress macros again.. */
+				break;
+			case 'p':
+				/* Toggle manual ground-targetting */
+				position = !position;
 
-			/* Tell the server to reset ground-target */
-			Send_look(128 + 0);
-			break;
-		case 'l':
-			/* actually look at the ground-targetted grid */
-			if (position) Send_look(128 + 5);
-			break;
-		default:
-			d = keymap_dirs[ch & 0x7F];
-			if (!d) bell();
-			else {
-				if (position) Send_look(128 + d); /* do manual ground-targetting */
-				else Send_look(d); /* do normal looking */
+				/* Tell the server to reset ground-target */
+				Send_look(128 + 0);
+				break;
+			case 'l':
+				/* actually look at the ground-targetted grid */
+				if (position) Send_look(128 + 5);
+				break;
+			default:
+				d = keymap_dirs[ch & 0x7F];
+				if (!d) bell();
+				else {
+					if (position) Send_look(128 + d); /* do manual ground-targetting */
+					else Send_look(d); /* do normal looking */
+				}
+				break;
 			}
-			break;
 		}
-	    }
 	}
 }
 
@@ -4018,68 +4017,68 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				/* Partial matches - Any */
 
-			    if (!temp_priority[0]) {
-				//race/class any match
-				for (i = 0; i < guide_races; i++) {
-					if (!my_strcasestr(guide_race[i], buf)) continue;
-					strcpy(chapter, "- ");
-					strcat(chapter, guide_race[i]);
-					break;
-				}
-				if (chapter[0]) continue;
-				for (i = 0; i < guide_classes; i++) {
-					if (!my_strcasestr(guide_class[i], buf)) continue;
-					strcpy(chapter, "- ");
-					strcat(chapter, guide_class[i]);
-					break;
-				}
-				if (chapter[0]) continue;
+				if (!temp_priority[0]) {
+					//race/class any match
+					for (i = 0; i < guide_races; i++) {
+						if (!my_strcasestr(guide_race[i], buf)) continue;
+						strcpy(chapter, "- ");
+						strcat(chapter, guide_race[i]);
+						break;
+					}
+					if (chapter[0]) continue;
+					for (i = 0; i < guide_classes; i++) {
+						if (!my_strcasestr(guide_class[i], buf)) continue;
+						strcpy(chapter, "- ");
+						strcat(chapter, guide_class[i]);
+						break;
+					}
+					if (chapter[0]) continue;
 
-				for (i = 0; i < guide_skills; i++) {
-					if (!my_strcasestr(guide_skill[i], buf)) continue; //any match (default)
-					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
-					break;
-				}
-				if (chapter[0]) continue;
+					for (i = 0; i < guide_skills; i++) {
+						if (!my_strcasestr(guide_skill[i], buf)) continue; //any match (default)
+						strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
+						break;
+					}
+					if (chapter[0]) continue;
 
-				for (i = 0; i < guide_schools; i++) {
-					if (!my_strcasestr(guide_school[i], buf)) continue;
-					strcpy(chapter, "- ");
-					strcat(chapter, guide_school[i]);
-					break;
-				}
-				if (chapter[0]) continue;
+					for (i = 0; i < guide_schools; i++) {
+						if (!my_strcasestr(guide_school[i], buf)) continue;
+						strcpy(chapter, "- ");
+						strcat(chapter, guide_school[i]);
+						break;
+					}
+					if (chapter[0]) continue;
 
-				/* (Note: Partial chapter check comes last, further below.) */
+					/* (Note: Partial chapter check comes last, further below.) */
 
-				if (chapter[0]) continue;
-				for (i = 0; i < guide_spells; i++) { //any match (default)
-					if (!my_strcasestr(guide_spell[i], buf)) continue;
-					strcpy(chapter, "    ");
-					strcat(chapter, guide_spell[i]);
-					break;
-				}
-				if (chapter[0]) continue;
+					if (chapter[0]) continue;
+					for (i = 0; i < guide_spells; i++) { //any match (default)
+						if (!my_strcasestr(guide_spell[i], buf)) continue;
+						strcpy(chapter, "    ");
+						strcat(chapter, guide_spell[i]);
+						break;
+					}
+					if (chapter[0]) continue;
 
-				/* Fighting/ranged techniques, hard-coded in the client */
-				for (i = 0; i < 16; i++) {
-					if (!my_strcasestr(melee_techniques[i], buf)) continue;
-					if (strstr(melee_techniques[i], "Tech") == melee_techniques[i]) continue; //skip placeholders
-					if (strstr(melee_techniques[i], "XXX") == melee_techniques[i]) continue; //skip placeholders
-					strcpy(chapter, "    ");
-					strcat(chapter, melee_techniques[i]);
-					break;
-				}
-				for (i = 0; i < 16; i++) {
-					if (!my_strcasestr(ranged_techniques[i], buf)) continue;
-					if (strstr(ranged_techniques[i], "Tech") == ranged_techniques[i]) continue; //skip placeholders
-					if (strstr(ranged_techniques[i], "XXX") == ranged_techniques[i]) continue; //skip placeholders
-					strcpy(chapter, "    ");
-					strcat(chapter, ranged_techniques[i]);
-					break;
-				}
-				if (chapter[0]) continue;
-			    } /* <temp_priority[] overrode these.> */
+					/* Fighting/ranged techniques, hard-coded in the client */
+					for (i = 0; i < 16; i++) {
+						if (!my_strcasestr(melee_techniques[i], buf)) continue;
+						if (strstr(melee_techniques[i], "Tech") == melee_techniques[i]) continue; //skip placeholders
+						if (strstr(melee_techniques[i], "XXX") == melee_techniques[i]) continue; //skip placeholders
+						strcpy(chapter, "    ");
+						strcat(chapter, melee_techniques[i]);
+						break;
+					}
+					for (i = 0; i < 16; i++) {
+						if (!my_strcasestr(ranged_techniques[i], buf)) continue;
+						if (strstr(ranged_techniques[i], "Tech") == ranged_techniques[i]) continue; //skip placeholders
+						if (strstr(ranged_techniques[i], "XXX") == ranged_techniques[i]) continue; //skip placeholders
+						strcpy(chapter, "    ");
+						strcat(chapter, ranged_techniques[i]);
+						break;
+					}
+					if (chapter[0]) continue;
+				} /* <temp_priority[] overrode these.> */
 
 				/* Additions -- can override temp_priority[] (guide chapter prefix match) again. */
 				if (my_strcasestr(buf, "Line") && !(my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd") || my_strcasestr(buf, "oline"))) { //draconian lineages, not holiness/commandline
@@ -4130,11 +4129,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 
 
-			    /* Handle temp_priority[] at this point: */
-			    if (temp_priority[0]) {
-				strcpy(chapter, temp_priority);
-				continue;
-			    }
+				/* Handle temp_priority[] at this point: */
+				if (temp_priority[0]) {
+					strcpy(chapter, temp_priority);
+					continue;
+				}
 
 				/* If not matched, lastly try to (partially) match chapter titles */
 
@@ -7465,7 +7464,7 @@ void cmd_check_misc(void) {
 		case 'C':
 #ifdef WINDOWS
 			//FILEMAN(ini_file);
-		    {
+			{
 			/* check registry for default text editor: HKEY_CLASSES_ROOT\txtfile\shell\open\command */
 			HKEY hTestKey;
 			char regentry[1024], *c;
@@ -7501,10 +7500,10 @@ void cmd_check_misc(void) {
 				c_message_add("\377w(Couldn't find default app for opening text files, falling back to notepad.)");
 				system(format("start notepad %s", ini_file));
 			}
-		    }
+			}
 #endif
 #ifdef USE_X11
-		    {
+			{
 			//system(format("xdg-open %s &", mangrc_filename));
 			//FILEMAN(mangrc_filename);
 			//system("cat /usr/share/applications/`xdg-mime query default text/plain` | grep -o 'Exec.*' | head -n 1 | grep -o '=.*' | grep -o '[0-9a-z]*' > __tmp__");
@@ -7521,7 +7520,7 @@ void cmd_check_misc(void) {
 			}
 			(void)r;
 			(void)c;
-		    }
+			}
 #endif
 			break;
 

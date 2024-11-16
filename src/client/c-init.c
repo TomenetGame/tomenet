@@ -683,13 +683,13 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool t
 	my_fclose(fff);
 }
 const char mon_flags2highlight[6][12][NAME_LEN] = {
-    {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC",			"IM_POIS", "IM_WATER", "IM_PSI", "IM_TELE",	"", "", "", ""},
-    {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC",	"SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", "",	"", "", "", ""},
+    { "IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC",			"IM_POIS", "IM_WATER", "IM_PSI", "IM_TELE",	"", "", "", "" },
+    { "SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC",	"SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", "",	"", "", "", "" },
     //omitting SPIDER; note: DRAGON and DRAGONRIDER occur mutually exclusively, so we don't have to do extra string checks
-    {"ANIMAL", "ORC", "TROLL", "GIANT",					"DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD",	"EVIL", "GOOD", "NONLIVING", ""},
-    {"UNIQUE", "NAZGUL", "PSEUDO_UNIQUE", "NO_DEATH",			"", "", "", ""					"", "", "", ""}, //no hints about dungeon/game boss status available or used
-    {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR",				"", "", "", ""					"", "", "", ""}, //currently unavailable
-    {"AQUATIC", "", "", "",						"", "", "", ""					"", "", "", ""}
+    { "ANIMAL", "ORC", "TROLL", "GIANT",					"DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD",	"EVIL", "GOOD", "NONLIVING", "" },
+    { "UNIQUE", "NAZGUL", "PSEUDO_UNIQUE", "NO_DEATH",			"", "", "", ""					"", "", "", "" }, //no hints about dungeon/game boss status available or used
+    { "NEUTRAL", "FRIENDLY", "PET", "QUESTOR",				"", "", "", ""					"", "", "", "" }, //currently unavailable
+    { "AQUATIC", "", "", "",						"", "", "", ""					"", "", "", "" }
     };
 static int mon_highlit_flags(char *line) {
 	const char (*f)[NAME_LEN];

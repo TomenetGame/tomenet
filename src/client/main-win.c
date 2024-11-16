@@ -4867,65 +4867,65 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					puts("  -V                 save complete message log on exit, don't prompt");
 					puts("  -x                 don't save chat/message log on exit (don't prompt)");
 #else
-				    if (initialized) /* We're called AFTER init_windows()? Then we'll appear in a graphical windows message window, with annoying formatting :p */
-					/* Message box on Windows has a default limit of characters, we need to cut out the 4
-					   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
-					plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
-					    longVersion,
-					    os_version,
-					    "Usage:    tomenet [options] [server]",
-					    "Example: tomenet -lMorgoth MorgyPass",
-					    "                              -p18348 europe.tomenet.eu",
-					    /* "  -h              Display this help",
-					    "  -C              Compatibility mode for OLD servers",
-					    "  -F              Client FPS", */
-					    "  -I              force IME off (for CJK languages)",
-					    "  -i               force IME on (for CJK languages)",
+					if (initialized) /* We're called AFTER init_windows()? Then we'll appear in a graphical windows message window, with annoying formatting :p */
+						/* Message box on Windows has a default limit of characters, we need to cut out the 4
+						   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
+						plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+						    longVersion,
+						    os_version,
+						    "Usage:    tomenet [options] [server]",
+						    "Example: tomenet -lMorgoth MorgyPass",
+						    "                              -p18348 europe.tomenet.eu",
+						    /* "  -h              Display this help",
+						    "  -C              Compatibility mode for OLD servers",
+						    "  -F              Client FPS", */
+						    "  -I              force IME off (for CJK languages)",
+						    "  -i               force IME on (for CJK languages)",
  #ifdef USE_LOGFONT
-					    "  -L              Use LOGFONT (Windows-internal font)",
+						    "  -L              Use LOGFONT (Windows-internal font)",
  #endif
-					    "  -l<name> <pwd>       Login crecedentials",
-					    "  -N<name>       character name",
-					    "  -R<name>       char name, auto-reincarnate",
-					    "  -p<num>         change game Port number",
-					    "  -P<path>        set the lib directory Path",
-					    "  -k              don't disable numlock on startup",
-					    "  -m             skip message of the day window",
-					    "  -q              disable all audio ('quiet mode')",
-					    /* "  -u              disable automatic lua updates", */
-					    "  -w             disable client-side weather effects",
-					    "  -v              save chat log on exit",
-					    "  -V              save chat+message log on exit",
-					    "  -x              don't save chat/message log on exit"));
-				    else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
-					/* Message box on Windows has a default limit of characters, we need to cut out the 4
-					   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
-					plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
-					    longVersion,
-					    os_version,
-					    "Usage:    tomenet [options] [server]",
-					    "Example:  tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu",
-					    /* "  -h              Display this help",
-					    "  -C              Compatibility mode for OLD servers",
-					    "  -F              Client FPS", */
-					    "  -I              force IME off (for CJK languages)",
-					    "  -i              force IME on (for CJK languages)",
+						    "  -l<name> <pwd>       Login crecedentials",
+						    "  -N<name>       character name",
+						    "  -R<name>       char name, auto-reincarnate",
+						    "  -p<num>         change game Port number",
+						    "  -P<path>        set the lib directory Path",
+						    "  -k              don't disable numlock on startup",
+						    "  -m             skip message of the day window",
+						    "  -q              disable all audio ('quiet mode')",
+						    /* "  -u              disable automatic lua updates", */
+						    "  -w             disable client-side weather effects",
+						    "  -v              save chat log on exit",
+						    "  -V              save chat+message log on exit",
+						    "  -x              don't save chat/message log on exit"));
+					else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
+						/* Message box on Windows has a default limit of characters, we need to cut out the 4
+						   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
+						plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+						    longVersion,
+						    os_version,
+						    "Usage:    tomenet [options] [server]",
+						    "Example:  tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu",
+						    /* "  -h              Display this help",
+						    "  -C              Compatibility mode for OLD servers",
+						    "  -F              Client FPS", */
+						    "  -I              force IME off (for CJK languages)",
+						    "  -i              force IME on (for CJK languages)",
  #ifdef USE_LOGFONT
-					    "  -L              Use LOGFONT (Windows-internal font)",
+						    "  -L              Use LOGFONT (Windows-internal font)",
  #endif
-					    "  -l<name> <pwd>  Login crecedentials",
-					    "  -N<name>        character name",
-					    "  -R<name>        char name, auto-reincarnate",
-					    "  -p<num>         change game Port number",
-					    "  -P<path>        set the lib directory Path",
-					    "  -k              don't disable numlock on startup",
-					    "  -m              skip message of the day window",
-					    "  -q              disable all audio ('quiet mode')",
-					    /* "  -u              disable automatic lua updates", */
-					    "  -w              disable client-side weather effects",
-					    "  -v              save chat log on exit",
-					    "  -V              save chat+message log on exit",
-					    "  -x              don't save chat/message log on exit"));
+						    "  -l<name> <pwd>  Login crecedentials",
+						    "  -N<name>        character name",
+						    "  -R<name>        char name, auto-reincarnate",
+						    "  -p<num>         change game Port number",
+						    "  -P<path>        set the lib directory Path",
+						    "  -k              don't disable numlock on startup",
+						    "  -m              skip message of the day window",
+						    "  -q              disable all audio ('quiet mode')",
+						    /* "  -u              disable automatic lua updates", */
+						    "  -w              disable client-side weather effects",
+						    "  -v              save chat log on exit",
+						    "  -V              save chat+message log on exit",
+						    "  -x              don't save chat/message log on exit"));
 #endif
 					if (initialized) quit(NULL);
 					just_h = TRUE;
