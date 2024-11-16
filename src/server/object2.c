@@ -11215,16 +11215,25 @@ bool inven_item_optimize(int Ind, int item) {
 
 		/* Slide everything down */
 		for (i = item; i < INVEN_PACK; i++) {
-			/* Structure copy */
-			p_ptr->inventory[i] = p_ptr->inventory[i + 1];
 #ifdef ENABLE_SUBINVEN
 			if (p_ptr->inventory[i].tval == TV_SUBINVEN) {
-				for (s = 0; s < p_ptr->inventory[i].bpval; s++) {
-					p_ptr->subinventory[i][s] = p_ptr->subinventory[i + 1][s];
-					display_subinven_aux(Ind, i, s);
+				s = 0;
+				/* If subsequent item is a subinventory too, transfer all contents here, overwriting our contents */
+				if (p_ptr->inventory[i + 1].tval == TV_SUBINVEN) {
+					for (; s < p_ptr->inventory[i + 1].bpval; s++) {
+						/* Structure copy */
+						p_ptr->subinventory[i][s] = p_ptr->subinventory[i + 1][s];
+						display_subinven_aux(Ind, i, s);
+					}
 				}
+				/* Fully erase the [remaining] current subinventory, if it wasn't already [completely] overwritten by a subsequent subinventory */
+				if (s < p_ptr->inventory[i].bpval)
+					for (; s < p_ptr->inventory[i].bpval; s++)
+						invwipe(&p_ptr->subinventory[i][s]);
 			}
 #endif
+			/* Structure copy */
+			p_ptr->inventory[i] = p_ptr->inventory[i + 1];
 			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
 		}
 
@@ -12094,18 +12103,25 @@ void combine_pack(int Ind) {
 
 				/* Slide everything down */
 				for (k = i; k < INVEN_PACK; k++) {
-					/* Structure copy */
-					p_ptr->inventory[k] = p_ptr->inventory[k + 1];
 #ifdef ENABLE_SUBINVEN
 					if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
-						/* Slide everything down */
-						for (s = 0; s < p_ptr->inventory[k].bpval; s++) {
-							/* Structure copy */
-							p_ptr->subinventory[k][s] = p_ptr->subinventory[k + 1][s];
-							display_subinven_aux(Ind, k, s);
+						s = 0;
+						/* If subsequent item is a subinventory too, transfer all contents here, overwriting our contents */
+						if (p_ptr->inventory[k + 1].tval == TV_SUBINVEN) {
+							for (; s < p_ptr->inventory[k + 1].bpval; s++) {
+								/* Structure copy */
+								p_ptr->subinventory[k][s] = p_ptr->subinventory[k + 1][s];
+								display_subinven_aux(Ind, k, s);
+							}
 						}
+						/* Fully erase the [remaining] current subinventory, if it wasn't already [completely] overwritten by a subsequent subinventory */
+						if (s < p_ptr->inventory[k].bpval)
+							for (; s < p_ptr->inventory[k].bpval; s++)
+								invwipe(&p_ptr->subinventory[k][s]);
 					}
 #endif
+					/* Structure copy */
+					p_ptr->inventory[k] = p_ptr->inventory[k + 1];
 				}
 
 				/* Update inventory indices - mikaelh */
@@ -12283,21 +12299,28 @@ void reorder_pack(int Ind) {
 				subtemp[k] = p_ptr->subinventory[i][k];
 		}
 #endif
-		/* Structure slide (make room) */
+		/* Structure slide (make room) - slide everything up */
 		for (k = i; k > j; k--) {
-			/* Slide the item */
-			p_ptr->inventory[k] = p_ptr->inventory[k - 1];
 #ifdef ENABLE_SUBINVEN
 			if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
-				/* Slide everything down */
-				for (s = 0; s < p_ptr->inventory[k].bpval; s++) {
-					/* Structure copy */
-					p_ptr->subinventory[k][s] = p_ptr->subinventory[k - 1][s];
-					/* Redraw subinven item -- todo: Implement PW_SUBINVEN */
-					display_subinven_aux(Ind, k, s);
+				s = 0;
+				/* If subsequent item is a subinventory too, transfer all contents here, overwriting our contents */
+				if (p_ptr->inventory[k - 1].tval == TV_SUBINVEN) {
+					for (; s < p_ptr->inventory[k - 1].bpval; s++) {
+						/* Structure copy */
+						p_ptr->subinventory[k][s] = p_ptr->subinventory[k - 1][s];
+						/* Redraw subinven item -- todo: Implement PW_SUBINVEN */
+						display_subinven_aux(Ind, k, s);
+					}
 				}
+				/* Fully erase the [remaining] current subinventory, if it wasn't already [completely] overwritten by a subsequent subinventory */
+				if (s < p_ptr->inventory[k].bpval)
+					for (; s < p_ptr->inventory[k].bpval; s++)
+						invwipe(&p_ptr->subinventory[k][s]);
 			}
 #endif
+			/* Slide the item */
+			p_ptr->inventory[k] = p_ptr->inventory[k - 1];
 		}
 		/* Insert the moved item */
 		p_ptr->inventory[j] = temp;
