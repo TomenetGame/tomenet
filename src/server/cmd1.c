@@ -2945,8 +2945,8 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				o_ptr->mode = p_ptr->mode;
 
 #ifdef ENABLE_SUBINVEN
-				/* ('empty-chest-hack') - Auto-remove 'empty' inscription if we pick it up */
-				if (o_ptr->tval == TV_SUBINVEN && o_ptr->xtra8 && o_ptr->note && streq(quark_str(o_ptr->note), "empty")) o_ptr->note = 0;
+				/* ('empty-chest-hack') - Auto-remove 'empty' marker if we pick it up */
+				if (o_ptr->tval == TV_SUBINVEN && o_ptr->xtra8) o_ptr->xtra8 = 2;
 #endif
 
 				/* Carry the item */
