@@ -1750,6 +1750,7 @@ extern bool contains_significant_wood(object_type *o_ptr);
 extern bool blindable_monster(monster_race *r_ptr);
 extern bool blindable_monster_chance(monster_race *r_ptr);
 extern int divide_spell_damage(int dam, int div, int typ);
+extern void light_oil(cave_type **zcave, struct worldpos *wpos, int x, int y, int recursion);
 
 /* spells2.c */
 extern void summon_pet(int Ind, int max);

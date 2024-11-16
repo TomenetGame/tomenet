@@ -4559,7 +4559,7 @@ int divide_spell_damage(int dam, int div, int typ) {
 }
 
 /* Note: Currently no recursion protection, against network overload when the full level goes up in a flarestorm, luls. */
-static void light_oil(cave_type **zcave, struct worldpos *wpos, int x, int y, int recursion) {
+void light_oil(cave_type **zcave, struct worldpos *wpos, int x, int y, int recursion) {
 	int effect, i, xa, ya;
 	cave_type *c_ptr = &zcave[y][x];
 	int who = (c_ptr->m_idx < 0 ? -c_ptr->m_idx : PROJECTOR_EFFECT);

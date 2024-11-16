@@ -9450,6 +9450,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	}
 #endif /* OPTIMIZED_ANIMATIONS */
 
+	/* Aside from potion-smash-effect which is handled further below, some extra items might set oil ablaze, such as torches or any fire-based light */
+	if (o_ptr->tval == TV_LITE && o_ptr->tval != SV_LITE_FEANORIAN
+	    && zcave[y][x].slippery >= 1000)
+		light_oil(zcave, wpos, x, y, 0);
+
 	/* Snowballs never survive a throw */
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return;
 
