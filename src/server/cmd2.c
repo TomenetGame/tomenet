@@ -2742,6 +2742,7 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 cptr get_house_owner(struct c_special *cs_ptr) {
 	static char string[80];
 	struct dna_type *dna = cs_ptr->sc.ptr;
+
 	strcpy(string, "nobody.");
 	if (dna->owner) {
 		//char *name;

@@ -105,6 +105,7 @@ void dnasave(c_special *cs_ptr) {
 int dnahit(c_special *cs_ptr, int y, int x, int Ind) {
 	/* we have to know from where we are called! */
 	struct dna_type *dna = cs_ptr->sc.ptr;
+
 	/* paranoia: for when the poly-house door bug occurred */
 	if (!dna) {
 		if (admin_p(Ind)) {
