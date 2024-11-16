@@ -5150,14 +5150,11 @@ static void get_macro_trigger(char *buf) {
 //#define FORGET_MACRO_VISUALS
 void interact_macros(void) {
 	int i, j = 0, l, chain_type;
-
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
-
 	char fff[1024], t_key[10], choice;
 	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
-
 	bool were_recording = FALSE;
-
+	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
 
 	/* Save screen */
 	Term_save();
@@ -6227,6 +6224,7 @@ void interact_macros(void) {
 			recording_macro = TRUE;
 
 			/* leave the macro menu */
+			inkey_msg = inkey_msg_old;
 			return;
 		}
 
@@ -8398,6 +8396,7 @@ Chain_Macro:
 	Flush_queue();
 
 	inkey_interact_macros = FALSE;
+	inkey_msg = inkey_msg_old;
 
 	/* in case we entered this menu from recording a macro,
 	   we might have to update the '*recording*' status line */
@@ -9129,7 +9128,6 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 		    option_info[i].o_enabled) opt[n++] = i;
 	}
 
-
 	/* Clear screen */
 	Term_clear();
 
@@ -9192,11 +9190,14 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 			xhtml_screenshot("screenshot????", 2);
 			break;
 
-		case ':':
+		case ':': {
+			bool inkey_msg_old = inkey_msg;
+
 			/* specialty: allow chatting from within here */
 			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
+			inkey_msg = inkey_msg_old; /* And suppress macros again.. */
 			break;
+			}
 
 		case '-':
 		case '8':
@@ -9539,10 +9540,13 @@ static void do_cmd_options_win(void) {
 			break;
 
 		/* specialty: allow chatting from within here */
-		case ':':
+		case ':': {
+			bool inkey_msg_old = inkey_msg;
+
 			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
+			inkey_msg = inkey_msg_old;
 			break;
+			}
 
 		case 'T':
 		case 't':
@@ -11079,10 +11083,13 @@ static void do_cmd_options_colourblindness(void) {
 			break;
 
 		/* specialty: allow chatting from within here */
-		case ':':
+		case ':': {
+			bool inkey_msg_old = inkey_msg;
+
 			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
+			inkey_msg = inkey_msg_old; /* And suppress macros again.. */
 			continue;
+			}
 
 		case 'c':
 			if (!c_cfg.palette_animation) continue;
@@ -12677,14 +12684,13 @@ void audio_pack_selector(void) {
 	char sp_version[MAX_PACKS][MAX_CHARS], mp_version[MAX_PACKS][MAX_CHARS];
 	char *ckey, *cval;
 
+	bool inkey_msg_old = inkey_msg;
+
 	FILE *fff, *fff2;
 #ifndef WINDOWS
 	int r;
 #endif
 
-	/* suppress hybrid macros */
-	bool inkey_msg_old = inkey_msg;
-	inkey_msg = TRUE;
 
 	/* Save screen */
 	Term_save();
@@ -12876,6 +12882,9 @@ void audio_pack_selector(void) {
 #else
 	remove("__tomenethelper.bat");
 #endif
+
+	/* suppress hybrid macros */
+	inkey_msg = TRUE;
 
 	while (1) {
 		if (redraw) {

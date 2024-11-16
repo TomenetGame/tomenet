@@ -3493,11 +3493,14 @@ void do_cmd_options_sfx_sdl(void) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????", 2);
 			break;
-		case ':':
+		case ':': {
+			bool inkey_msg_old = inkey_msg;
+
 			/* specialty: allow chatting from within here */
 			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
+			inkey_msg = inkey_msg_old;
 			break;
+			}
 
 		case 't': //case ' ':
 			samples[j_sel].disabled = !samples[j_sel].disabled;
@@ -4096,11 +4099,14 @@ void do_cmd_options_mus_sdl(void) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????", 2);
 			break;
-		case ':':
+		case ':': {
+			bool inkey_msg_old = inkey_msg;
+
 			/* specialty: allow chatting from within here */
 			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
+			inkey_msg = inkey_msg_old;
 			break;
+			}
 
 		case 't': //case ' ':
 			songs[j_sel].disabled = !songs[j_sel].disabled;

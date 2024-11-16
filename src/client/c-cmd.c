@@ -776,6 +776,7 @@ c_msg_format("wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr
 void cmd_locate(void) {
 	int dir;
 	char ch;
+	bool inkey_msg_old = inkey_msg;
 
 	/* Initialize */
 	Send_locate(5);
@@ -817,6 +818,8 @@ void cmd_locate(void) {
 
 	/* Done */
 	Send_locate(0);
+
+	inkey_msg = inkey_msg_old; /* Re-enable hybrid macros again */
 
 	/* Clear */
 	clear_topline_forced();
@@ -1966,15 +1969,15 @@ int cmd_target_friendly(void) {
 
 
 void cmd_look(void) {
-	bool done = FALSE;
 	bool position = FALSE;
 	int d;
 	char ch;
+	bool inkey_msg_old = inkey_msg;
 
 	/* Tell the server to init looking */
 	Send_look(0);
 
-	while (!done) {
+	while (TRUE) {
 		ch = inkey();
 
 		if (!ch) continue;
@@ -1985,6 +1988,7 @@ void cmd_look(void) {
 		case 'q':
 			/* Clear top line */
 			clear_topline();
+			inkey_msg = inkey_msg_old;
 			return;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", FALSE);
@@ -2019,6 +2023,7 @@ void cmd_look(void) {
 		case 'q':
 			/* Clear top line */
 			clear_topline();
+			inkey_msg = inkey_msg_old;
 			return;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", FALSE);
@@ -7970,12 +7975,15 @@ void cmd_message(void) {
 static void cmd_guild_options() {
 	int i, acnt;
 	char buf[(NAME_LEN + 1) * 5 + 1], buf0[NAME_LEN + 1];
+	bool inkey_msg_old = inkey_msg;
 
 	/* We are now in party mode */
 	guildcfg_mode = TRUE;
 
 	/* Save screen */
 	Term_save();
+
+	inkey_msg = TRUE; /* suppress hybrid macros */
 
 	/* Process requests until done */
 	while (1) {
@@ -8097,12 +8105,13 @@ static void cmd_guild_options() {
 	/* Flush any events */
 	Flush_queue();
 
-	return;
+	inkey_msg = inkey_msg_old;
 }
 
 void cmd_party(void) {
 	char i;
 	char buf[80];
+	bool inkey_msg_old = inkey_msg;
 
 	/* suppress hybrid macros */
 	inkey_msg = TRUE;
@@ -8286,7 +8295,7 @@ void cmd_party(void) {
 	party_mode = FALSE;
 
 	/* restore responsiveness to hybrid macros */
-	inkey_msg = FALSE;
+	inkey_msg = inkey_msg_old;
 
 	/* Flush any events */
 	Flush_queue();
@@ -8296,8 +8305,7 @@ void cmd_party(void) {
 void cmd_fire(void) {
 	int dir;
 
-	if (!get_dir(&dir))
-		return;
+	if (!get_dir(&dir)) return;
 
 	/* Send it */
 	Send_fire(dir);
@@ -8463,11 +8471,15 @@ void cmd_redraw(void) {
 static void cmd_house_chown(int dir) {
 	char i = 0;
 	char buf[80];
+	bool inkey_msg_old = inkey_msg;
 
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Select owner type");
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Player");
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Guild");
+
+	/* suppress hybrid macros */
+	inkey_msg = TRUE;
 
 	while (i != ESCAPE) {
 		i = inkey();
@@ -8478,12 +8490,16 @@ static void cmd_house_chown(int dir) {
 			buf[2] = 0;
 			if (get_string("Enter new name: ", &buf[2], 60))
 				Send_admin_house(dir, buf);
+			/* restore responsiveness to hybrid macros */
+			inkey_msg = inkey_msg_old;
 			return;
 		case '2':
 			buf[0] = 'O';
 			buf[1] = '2';
 			buf[2] = 0;
 			Send_admin_house(dir, buf);
+			/* restore responsiveness to hybrid macros */
+			inkey_msg = inkey_msg_old;
 			return;
 		case ESCAPE:
 		case KTRL('Q'):
@@ -8500,6 +8516,9 @@ static void cmd_house_chown(int dir) {
 		}
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
 static void cmd_house_chmod(int dir) {
@@ -8518,8 +8537,7 @@ static void cmd_house_chmod(int dir) {
 	minlev = c_get_quantity("Minimum level: ", 127);
 	if (minlev > 1) mod |= ACF_LEVEL;
 	buf[0] = 'M';
-	if ((buf[1] = mod))
-		sprintf(&buf[2], "%hd", minlev);
+	if ((buf[1] = mod)) sprintf(&buf[2], "%hd", minlev);
 	Send_admin_house(dir, buf);
 }
 
@@ -8568,8 +8586,12 @@ static void cmd_house_knock(int dir) {
 void cmd_purchase_house(void) {
 	char i = 0;
 	int dir;
+	bool inkey_msg_old = inkey_msg;
 
 	if (!get_dir(&dir)) return;
+
+	/* suppress hybrid macros */
+	inkey_msg = TRUE;
 
 	Term_save();
 	Term_clear();
@@ -8647,6 +8669,9 @@ void cmd_purchase_house(void) {
 		clear_topline_forced();
 	}
 	Term_load();
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
 void cmd_suicide(void) {
@@ -8669,6 +8694,10 @@ void cmd_suicide(void) {
 static void cmd_master_aux_level(void) {
 	char i, l;
 	char buf[80];
+	bool inkey_msg_old = inkey_msg;
+
+	/* suppress hybrid macros */
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -8740,6 +8769,8 @@ static void cmd_master_aux_level(void) {
 					buf[8] = '\0';
 					Send_master(MASTER_LEVEL, buf);
 					clear_topline_forced();
+					/* restore responsiveness to hybrid macros */
+					inkey_msg = inkey_msg_old;
 					return;
 				} else {
 					if (is_atleast(&server_version, 4, 9, 0, 5, 0, 0)) buf[7] = t + 1; //hack: avoid 0 byte
@@ -8863,11 +8894,17 @@ static void cmd_master_aux_level(void) {
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
 static void cmd_master_aux_generate_vault(void) {
 	char i, redo_hack;
 	char buf[80];
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -8929,10 +8966,16 @@ static void cmd_master_aux_generate_vault(void) {
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
 static void cmd_master_aux_generate(void) {
 	char i;
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -8971,6 +9014,9 @@ static void cmd_master_aux_generate(void) {
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
 
@@ -8978,6 +9024,9 @@ static void cmd_master_aux_generate(void) {
 static void cmd_master_aux_build(void) {
 	char i;
 	char buf[80];
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -9070,11 +9119,17 @@ static void cmd_master_aux_build(void) {
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
-static char * cmd_master_aux_summon_orcs(void) {
+static char *cmd_master_aux_summon_orcs(void) {
 	char i;
 	static char buf[80];
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -9127,19 +9182,29 @@ static char * cmd_master_aux_summon_orcs(void) {
 		}
 
 		/* if we got an orc type, return it */
-		if (buf[0]) return(buf);
+		if (buf[0]) {
+			/* restore responsiveness to hybrid macros */
+			inkey_msg = inkey_msg_old;
+			return(buf);
+		}
 
 		/* Flush messages */
 		clear_topline_forced();
 	}
 
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
+
 	/* escape was pressed, no valid orcs types specified */
 	return(NULL);
 }
 
-static char * cmd_master_aux_summon_undead_low(void) {
+static char *cmd_master_aux_summon_undead_low(void) {
 	char i;
 	static char buf[80];
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -9203,20 +9268,30 @@ static char * cmd_master_aux_summon_undead_low(void) {
 		}
 
 		/* if we got an undead type, return it */
-		if (buf[0]) return(buf);
+		if (buf[0]) {
+			/* restore responsiveness to hybrid macros */
+			inkey_msg = inkey_msg_old;
+			return(buf);
+		}
 
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 
 	/* escape was pressed, no valid types specified */
 	return(NULL);
 }
 
 
-static char * cmd_master_aux_summon_undead_high(void) {
+static char *cmd_master_aux_summon_undead_high(void) {
 	char i;
 	static char buf[80];
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -9284,21 +9359,30 @@ static char * cmd_master_aux_summon_undead_high(void) {
 		}
 
 		/* if we got an undead type, return it */
-		if (buf[0]) return(buf);
+		if (buf[0]) {
+			/* restore responsiveness to hybrid macros */
+			inkey_msg = inkey_msg_old;
+			return(buf);
+		}
 
 		/* Flush messages */
 		clear_topline_forced();
 	}
 
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
+
 	/* escape was pressed, no valid orcs types specified */
 	return(NULL);
 }
 
-
 static void cmd_master_aux_summon(void) {
 	char i, redo_hack;
 	char buf[80];
-	char * race_name;
+	char *race_name;
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1) {
@@ -9495,12 +9579,18 @@ static void cmd_master_aux_summon(void) {
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
 static bool cmd_master_aux_player() {
 	char i = 0;
 	static char buf[80];
 	bool success = FALSE;
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Player commands");
@@ -9585,6 +9675,10 @@ static bool cmd_master_aux_player() {
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
+
 	return(success);
 }
 
@@ -9634,6 +9728,9 @@ static void cmd_script_exec_local() {
 /* Dirty implementation.. FIXME		- Jir - */
 static void cmd_master_aux_system() {
 	char i = 0;
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	while (i != ESCAPE) {
 		Term_clear();
@@ -9677,11 +9774,17 @@ static void cmd_master_aux_system() {
 		/* Flush messages */
 		clear_topline_forced();
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 
 /* Dungeon Master commands */
 static void cmd_master(void) {
 	char i = 0;
+	bool inkey_msg_old = inkey_msg;
+
+	inkey_msg = TRUE;
 
 	//party_mode = TRUE;
 
@@ -9768,6 +9871,9 @@ static void cmd_master(void) {
 		clear_topline_forced();
 	}
 
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
+
 	/* Reload screen */
 	Term_load();
 
@@ -9838,7 +9944,6 @@ void cmd_lagometer(void) {
 		switch (k) {
 		case ':':
 			cmd_message();
-			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
 		/* Take a screenshot */
 		case KTRL('T'):
