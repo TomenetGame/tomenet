@@ -985,7 +985,7 @@ F:NO_ARTICLE
 
 N:134:inn floor
 G:.:u
-F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE | COVER
 F:DONT_NOTICE_RUNNING | PROTECTED | LAMP_LITE_OPTIONAL | NO_SHADE | REMEMBER
 
 #special cyclic staircase 'up' to leave a dungeon in traversal direction at the final floor
