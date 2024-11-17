@@ -2978,7 +2978,7 @@ errr re_init_sound_sdl(void) {
 		for (j = 0; j < MAX_SONGS; j++) {
 			songs[i].wavs[j] = NULL;
 			songs[i].paths[j] = NULL;
-			songs[i].is_reference[i] = FALSE;
+			songs[i].is_reference[j] = FALSE;
 		}
 	}
 
