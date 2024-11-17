@@ -301,7 +301,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 
 				o_ptr = os_ptr;
 				l = i; /* Keep i just for easy access when displaying stealing message */
-				i = (i + 1) * 100 + j; /* Encode index for global inventory (inven+subinvens) */
+				i = (i + 1) * SUBINVEN_INVEN_MUL + j; /* Encode index for global inventory (inven+subinvens) */
 				break;
 			}
 			/* Resume trying to steal from normal inventory */

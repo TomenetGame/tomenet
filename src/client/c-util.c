@@ -9015,7 +9015,7 @@ void apply_auto_inscriptions(int insc_idx) {
 #ifdef ENABLE_SUBINVEN
 		if (inventory[i].tval == TV_SUBINVEN)
 			for (s = 0; s < inventory[i].bpval; s++)
-				(void)apply_auto_inscriptions_aux((i + 1) * 100 + s, insc_idx, FALSE);
+				(void)apply_auto_inscriptions_aux((i + 1) * SUBINVEN_INVEN_MUL + s, insc_idx, FALSE);
 #endif
 	}
 }

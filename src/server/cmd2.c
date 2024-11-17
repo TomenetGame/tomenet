@@ -5902,7 +5902,7 @@ bool get_something_tval(int Ind, int tval, int *ip) {
 					if (!can_use_admin(Ind, s_ptr)) continue;
 
 					/* Save the spike index */
-					(*ip) = (i + 1) * 100 + k;
+					(*ip) = (i + 1) * SUBINVEN_INVEN_MUL + k;
 
 					/* Success */
 					return(TRUE);

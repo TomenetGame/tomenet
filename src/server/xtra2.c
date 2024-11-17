@@ -8995,7 +8995,7 @@ static void inven_death_damage(int Ind, int verbose) {
 			if (l) {
 				l = rand_int(l);
 				o_ptr = &p_ptr->subinventory[j][l];
-				j = (j + 1) * 100 + l;
+				j = (j + 1) * SUBINVEN_INVEN_MUL + l;
 			}
 			/* It was empty ('else')? Destroy the bag itself then. */
 			else o_ptr = &p_ptr->inventory[j];

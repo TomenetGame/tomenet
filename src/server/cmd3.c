@@ -5426,7 +5426,7 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 				}
-				final_slot = (sslot + 1) * 100 + i;
+				final_slot = (sslot + 1) * SUBINVEN_INVEN_MUL + i;
  #ifdef USE_SOUND_2010
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
@@ -5457,7 +5457,7 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 			}
-			final_slot = (sslot + 1) * 100 + i;
+			final_slot = (sslot + 1) * SUBINVEN_INVEN_MUL + i;
  #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif

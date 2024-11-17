@@ -2137,9 +2137,15 @@ int Receive_ac(void) {
 
 int Receive_apply_auto_insc(void) {
 	int n;
-	char ch, slot;
+	s16b slot;
+	char ch, slotc;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &slot)) <= 0) return(n);
+	if (is_older_than(&server_version, 4, 9, 2, 1, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &slotc)) <= 0) return(n);
+		slot = (s16b)slotc;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &slot)) <= 0) return(n);
+	}
 	(void)apply_auto_inscriptions_aux((int)slot, -1, FALSE);
 	return(1);
 }

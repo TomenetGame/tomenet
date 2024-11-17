@@ -7475,7 +7475,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 
 		/* activate it later, at a point where we can use p_ptr->command_rep */
  #ifdef ENABLE_SUBINVEN
-		if (k != -1) p_ptr->delayed_index = (index + 2) * 100 + j;
+		if (k != -1) p_ptr->delayed_index = (index + 2) * SUBINVEN_INVEN_MUL + j;
 		else
  #endif
 		p_ptr->delayed_index = index;

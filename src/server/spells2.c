@@ -1065,10 +1065,13 @@ void XID_paranoia(player_type *p_ptr) {
  */
 void identify_pack(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
-	int		 i;
-	object_type	*o_ptr;
+	int i;
+	object_type *o_ptr;
 	bool inven_unchanged[INVEN_TOTAL];
+#ifdef ENABLE_SUBINVEN
+	int j;
+	object_type *o2_ptr;
+#endif
 
 	XID_paranoia(p_ptr);
 
@@ -1077,13 +1080,31 @@ void identify_pack(int Ind) {
 		inven_unchanged[i] = TRUE;
 		o_ptr = &p_ptr->inventory[i];
 
-		if (o_ptr->k_idx) {
-			if (object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) continue;
+		if (!o_ptr->k_idx) continue;
 
-			object_aware(Ind, o_ptr);
-			object_known(o_ptr);
-			inven_unchanged[i] = FALSE;
+#ifdef ENABLE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN) for (j = 0; j < o_ptr->bpval; j++) {
+			o2_ptr = &p_ptr->subinventory[i][j];
+
+			if (!o2_ptr->k_idx) break;
+			if (object_known_p(Ind, o2_ptr) && object_aware_p(Ind, o2_ptr)) continue;
+
+			object_aware(Ind, o2_ptr);
+			object_known(o2_ptr);
+
+			/* TODO: PW_SUBINVEN */
+			/* Redraw subinven item */
+			display_subinven_aux(Ind, i, j);
+
+			Send_apply_auto_insc(Ind, (i + 1) * SUBINVEN_INVEN_MUL + j);
 		}
+#endif
+
+		if (object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) continue;
+
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+		inven_unchanged[i] = FALSE;
 	}
 
 	/* Recalculate bonuses */

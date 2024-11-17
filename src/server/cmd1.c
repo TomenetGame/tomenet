@@ -1677,7 +1677,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		/* Eligible subinventory found, try to move as much as possible */
 		stowed_some = TRUE;
 		slot = subinven_stow_aux(Ind, o_ptr, i, quiet);
-		globalslot = (i + 1) * 100 + ABS(slot) - 1;
+		globalslot = (i + 1) * SUBINVEN_INVEN_MUL + ABS(slot) - 1;
 		Send_item_newest(Ind, globalslot);
 		if ((fully_stowed = (slot > 0))) break; /* If complete stack was moved, we're done */
  #ifdef SUBINVEN_LIMIT_GROUP
@@ -8228,7 +8228,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				//if (p_ptr->lev > 1 && !p_ptr->admin_dm) {
 				if (!p_ptr->admin_dm) {
 					/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
-					//int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
+					//int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800 : 100;
 //					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
 #if 0 /* got exploited by chain-dying on purpose */
 					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2; /* buffed it greatly, yet still sensible */

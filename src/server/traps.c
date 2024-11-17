@@ -106,7 +106,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap) {
 			for (j = 0; j < k; j++) {
 				tmp_obj = p_ptr->subinventory[i][j];
 				if (!tmp_obj.tval) break;
-				ident |= do_player_drop_items_aux(Ind, chance, (i + 1) * 100 + j, &tmp_obj, trap, ident);
+				ident |= do_player_drop_items_aux(Ind, chance, (i + 1) * SUBINVEN_INVEN_MUL + j, &tmp_obj, trap, ident);
 			}
 			continue;
 		}
@@ -1039,7 +1039,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 						/* Don't steal artifacts  -CFT */
 						if (artifact_p(o_ptr)) continue;
 
-						i = (i + 1) * 100 + s;
+						i = (i + 1) * SUBINVEN_INVEN_MUL + s;
 					}
 #endif
 

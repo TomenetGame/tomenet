@@ -10491,7 +10491,11 @@ int Send_apply_auto_insc(int Ind, int slot) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%c", PKT_AUTOINSCRIBE, (char)slot);
+	if (is_older_than(&connp->version, 4, 9, 2, 1, 0, 1)) {
+		/* Older clients cannot handle this for subinventory items, so just drop it. */
+		if (slot >= SUBINVEN_INVEN_MUL) return(0);
+		return Packet_printf(&connp->c, "%c%c", PKT_AUTOINSCRIBE, (char)slot);
+	} else return Packet_printf(&connp->c, "%c%hd", PKT_AUTOINSCRIBE, (s16b)slot);
 }
 
 int Send_martyr(int Ind) {

@@ -1502,7 +1502,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
  #endif
 							if (!find_inscription(o2_ptr->note, "@R")) continue;
 
-							item = (i + 1) * 100 + j; /* Encode index for global inventory (inven+subinvens) */
+							item = (i + 1) * SUBINVEN_INVEN_MUL + j; /* Encode index for global inventory (inven+subinvens) */
 							o_ptr = o2_ptr;
 							break;
 						}
@@ -6140,12 +6140,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						/* get first ingredient and continue, or second ingredient and mix the two */
 						count++; /* count total amount of chemicals we have mixed - just need to know though whether it's 1 or not, see further down */
 						if (chem1 == -1) {
-							chem1 = (sub == -1) ? i : (sub + 1) * 100 + i;
+							chem1 = (sub == -1) ? i : (sub + 1) * SUBINVEN_INVEN_MUL + i;
 							/* Restart search with subsequent tag */
 							break;
 						}
 						p_ptr->current_activation = chem1;
-						result = mix_chemicals(Ind, (sub == -1) ? i : (sub + 1) * 100 + i);
+						result = mix_chemicals(Ind, (sub == -1) ? i : (sub + 1) * SUBINVEN_INVEN_MUL + i);
 
 						/* the result of the mixing process becomes the new first ingredient,
 						   to continue processing with further ingredients, or self-activation */
