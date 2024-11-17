@@ -4731,8 +4731,6 @@ void calc_boni(int Ind) {
 	    !p_ptr->ghost &&
 	    //!(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
 	    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)) {
-		p_ptr->sun_burn = TRUE;
-		if (!old_sun_burn) msg_print(Ind, "\377RYou burn in the sunlight!");
 #if 0
 		/* vampire bats can stay longer under the sunlight than actual vampire form */
 		if (p_ptr->body_monster == RI_VAMPIRE_BAT) p_ptr->drain_life++;
@@ -4744,6 +4742,8 @@ void calc_boni(int Ind) {
 			if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
 			p_ptr->drain_life += i;
 		}
+		p_ptr->sun_burn = TRUE;
+		if (!old_sun_burn) msg_format(Ind, "\377RYou %s in the sunlight!", i >= 3 ? "*burn*" : "burn");
 	} else if (old_sun_burn) msg_print(Ind, "You find respite from the sunlight.");
 
 	/* Apply temporary "stun" */
