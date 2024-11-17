@@ -1123,7 +1123,6 @@ static bool sound_sdl_init(bool no_cache) {
 				referencer[references] = event;
 				reference_initial[references] = initial;
 				strcpy(referenced_event[references], cur_token);
-printf("ref %d: <%d(%d)> (%s) -> <%s>\n", references, event, num, lua_name, cur_token);
 				references++;
 				goto next_token_mus;
 			}
