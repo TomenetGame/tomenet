@@ -2417,19 +2417,20 @@ C:0:0:5:0
 R:100
 F:RES_MANA | IGNORE_DISEN | REGEN_MANA | REFLECT | FREE_ACT
 
-# Spellbooks (scrolls see below)
-N:216:Waterproof
-X:B:0:1
-T:111:53:53
-#58: DM book, but whatever..
-T:111:57:60
-T:111:62:99
-T:111:103:255
-W:0:1:7:2000
-C:0:0:0:0
-R:100
-F:IGNORE_WATER
-F:NO_SEED
+# commented out as all spell scrolls get IGNORE_WATER atm
+## Spellbooks (scrolls see below)
+#N:216:Waterproof
+#X:B:0:1
+#T:111:53:53
+##58: DM book, but whatever..
+#T:111:57:60
+#T:111:62:99
+#T:111:103:255
+#W:0:1:7:2000
+#C:0:0:0:0
+#R:100
+#F:IGNORE_WATER
+#F:NO_SEED
 
 N:217:Corrupted
 T:15:0:255
