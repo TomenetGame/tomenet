@@ -151,8 +151,9 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER | NO_ARTICLE
 
 N:20:open door
 G:':U
-F:FLOOR | NOTICE | REMEMBER | CAN_RUN | DOOR | NO_TFORM
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN | DOOR | NO_TFORM | COVER
 #House door: Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now.
+#grant cover as there is otherwise no way to get cover from list houses
 F:NO_SHADE
 
 # 0x22 --> signpost
