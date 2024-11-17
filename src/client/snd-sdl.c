@@ -567,7 +567,6 @@ static bool open_audio(void) {
  * Read sound.cfg and map events to sounds; then load all the sounds into
  * memory to avoid I/O latency later.
  */
-#define MAX_REFERENCES 100
 static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
 	char buffer0[4096], *buffer = buffer0, bufferx[4096];
@@ -579,9 +578,9 @@ static bool sound_sdl_init(bool no_cache) {
 	bool events_loaded_semaphore;
 
 	int references = 0;
-	int referencer[MAX_REFERENCES];
-	bool reference_initial[MAX_REFERENCES];
-	char referenced_event[MAX_REFERENCES][40];
+	int referencer[REFERENCES_MAX];
+	bool reference_initial[REFERENCES_MAX];
+	char referenced_event[REFERENCES_MAX][40];
 
 
 	load_sample_mutex_entrance = SDL_CreateMutex();
@@ -1119,11 +1118,12 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Handle reference */
 			if (reference) {
 				/* Too many references already? Skip it */
-				if (references >= MAX_REFERENCES) goto next_token_mus;
+				if (references >= REFERENCES_MAX) goto next_token_mus;
 				/* Remember reference for handling them all later, to avoid cycling reference problems */
 				referencer[references] = event;
 				reference_initial[references] = initial;
 				strcpy(referenced_event[references], cur_token);
+printf("ref %d: <%d(%d)> (%s) -> <%s>\n", references, event, num, lua_name, cur_token);
 				references++;
 				goto next_token_mus;
 			}
