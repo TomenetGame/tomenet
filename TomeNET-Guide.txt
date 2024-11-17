@@ -19299,6 +19299,9 @@ create a character!):
     close combat. Their intelligence is somewhat suspect, and although they do
     not pick up careers as mages or other very elaborate professions, they can
     become shamans or druids.
+    Kobolds are omnivores but since many of them live underground, a primary
+    food source are mushrooms. Kobolds are able to determine the quality of a
+    mushroom immediately when they find one.
     They can see in the dark thanks to infra-vision, have extraordinarily sharp
     senses, and can move very silently, making them hard to spot. They are also
     good at disarming traps.

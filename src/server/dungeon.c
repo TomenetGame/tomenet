@@ -450,7 +450,7 @@ static void sense_inventory(int Ind) {
 
 	bool heavy_combat = FALSE, heavy_magic = FALSE, heavy_archery = FALSE, heavy_traps = FALSE, heavy_food = FALSE;
 	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE, ok_traps = FALSE, ok_food = FALSE;
-	bool ok_curse = FALSE, force_curse = FALSE, force_shrooms = p_ptr->prace == RACE_HOBBIT;
+	bool ok_curse = FALSE, force_curse = FALSE, force_shrooms = (p_ptr->prace == RACE_HOBBIT || p_ptr->prace == RACE_KOBOLD);
 
 	cptr feel;
 	bool felt_heavy, fail_light;
