@@ -7999,7 +7999,7 @@ extern int PlayerUID;
  #define AUDIO_VOLUME_DEFAULT 70
 
  #define SOUND_MAX_2010	500 /*for experimenting purpose - C. Blue*/
- #define MUSIC_MAX	300 /*for experimenting purpose - C. Blue*/
+ #define MUSIC_MAX	350 /*for experimenting purpose - C. Blue*/
  #define REFERENCES_MAX	MUSIC_MAX
 
  /* for ovl_sfx_.. client options */
