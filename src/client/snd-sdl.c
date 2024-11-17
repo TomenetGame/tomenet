@@ -409,6 +409,7 @@ typedef struct {
 	int num;
 	Mix_Music *wavs[MAX_SONGS];
 	const char *paths[MAX_SONGS];
+	bool is_reference[MAX_SONGS];	/* Is just a reference pointer to another event, so don't accidentally try to "free" this one. */
 	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
 	bool disabled;			/* disabled by user? */
 	bool config;
@@ -475,13 +476,14 @@ static void close_audio(void) {
 	for (i = 0; i < MUSIC_MAX; i++) {
 		song_list *mus = &songs[i];
 
-		/* Nuke all samples */
+		/* Nuke all songs */
 		for (j = 0; j < mus->num; j++) {
 			if (mus->wavs[j]) {
 				Mix_FreeMusic(mus->wavs[j]);
 				mus->wavs[j] = NULL;
 			}
-			if (mus->paths[j]) {
+			if (mus->paths[j]
+			    && !mus->is_reference[j]) { /* Just a reference pointer, not the original -> would result in "double-free" crash. */
 				string_free(mus->paths[j]);
 				mus->paths[j] = NULL;
 			}
@@ -577,6 +579,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 	bool events_loaded_semaphore;
 
+	/* Note: referencef-feature is for music only (music.cfg), not available for sounds (in sound.cfg). */
 	int references = 0;
 	int referencer[REFERENCES_MAX];
 	bool reference_initial[REFERENCES_MAX];
@@ -1243,6 +1246,7 @@ static bool sound_sdl_init(bool no_cache) {
 			songs[event].paths[num] = songs[event_ref].paths[j];
 			songs[event].wavs[num] = songs[event_ref].wavs[j];
 			songs[event].initial[num] = initial;
+			songs[event].is_reference[num] = TRUE;
 			num++;
 			songs[event].num = num;
 			/* for do_cmd_options_...(): remember that this sample was mentioned in our config file */
@@ -2974,6 +2978,7 @@ errr re_init_sound_sdl(void) {
 		for (j = 0; j < MAX_SONGS; j++) {
 			songs[i].wavs[j] = NULL;
 			songs[i].paths[j] = NULL;
+			songs[i].is_reference[i] = FALSE;
 		}
 	}
 
