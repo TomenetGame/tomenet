@@ -6543,6 +6543,14 @@ void home_sell(int Ind, int item, int amt) {
 		return;
 	}
 
+#ifdef ENABLE_SUBINVEN
+	/* Specialty: Either !s or !d will work for bags exclusively, so annoying to accidentally store a bag () that is in use */
+	if (o_ptr->tval == TV_SUBINVEN && (check_guard_inscription(o_ptr->note, 's') || check_guard_inscription(o_ptr->note, 'd'))) {
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	}
+#endif
+
 	/* Create the object to be sold (structure copy) */
 	sold_obj = *o_ptr;
 	sold_obj.number = amt;
