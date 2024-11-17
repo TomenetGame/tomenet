@@ -2034,7 +2034,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 			buf2[strlen(buf2) - 5] = 0;
 			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
 			else silent_dump = FALSE;
-		} else c_msg_format("Error: Couldn't 'import' to screenshot '%s'.", buf2);
+		} else c_msg_format("Error: Failed to call imagemagick's 'import'. ('%s')", buf2);
 		return;
 	}
  #endif
