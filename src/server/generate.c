@@ -9972,7 +9972,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		    (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
 			if (!rand_int(dun_lev / 2 + 1))
 #ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
+ #ifndef IDDC_REFUGE_EXTRA_STORES_RANDOM
 				if (!in_irondeepdive(wpos))
+ #else
+				/* Only disable it on levels where it already exists within a refuge */
+				if (!dun->l_ptr || !dun->l_ptr->refuge_x)
+ #endif
 #endif
 				build_special_store = 4;
 			//else store_failed = TRUE; /* The rand_int() we used is way too harsh to fail all other stores after this */
@@ -10022,7 +10027,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if ((!build_special_store) &&
 		    (!dungeon_store2_timer) && (dun_lev >= 6) && (dun_lev <= 30))
 #ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
+ #ifndef IDDC_REFUGE_EXTRA_STORES_RANDOM
 			if (!in_irondeepdive(wpos))
+ #else
+			/* Only disable it on levels where it already exists within a refuge */
+			if (!dun->l_ptr || !dun->l_ptr->refuge_x)
+ #endif
 #endif
 			build_special_store = 2;
 

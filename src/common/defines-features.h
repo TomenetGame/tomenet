@@ -44,6 +44,10 @@
     but also Hidden Library -with ID service!- and the mushroom vendor?
     (These stores inn turn it no longer spawn randomly in the IDDC.) */
  #define IDDC_REFUGE_EXTRA_STORES
+ #ifdef IDDC_REFUGE_EXTRA_STORES
+  /* Still spawn the refuge stores outside of it randomly as usual? */
+  #define IDDC_REFUGE_EXTRA_STORES_RANDOM
+ #endif
 #endif
 /* Do artifacts time out especially quickly in the IDDC? */
 #define IDDC_ARTIFACT_FAST_TIMEOUT
