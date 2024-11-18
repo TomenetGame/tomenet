@@ -5312,6 +5312,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			Send_special_other(Ind);
 			return(TRUE);
 		}
+		/* Empty gift */
+		if (!o_ptr->number) {
+			fprintf(fff, "Nothing\n");
+			my_fclose(fff);
+			Send_special_other(Ind);
+			return(TRUE);
+		}
 	}
 
 	/* Admin info about flipped-state of an item */
