@@ -11334,7 +11334,8 @@ void peek_gift(object_type *gift_ptr, object_type **contents_ptr) {
 
 	forge = *gift_ptr;
 
-	o_ptr->weight = (o_ptr->weight - k_info[lookup_kind(TV_JUNK, o_ptr->sval)].weight) / o_ptr->number2; /* Gift wrapping paper is removed, stack of items may appear instead of just one item. */
+	if (!o_ptr->number2) o_ptr->weight = 0; // empty gift
+	else o_ptr->weight = (o_ptr->weight - k_info[lookup_kind(TV_JUNK, o_ptr->sval)].weight) / o_ptr->number2; /* Gift wrapping paper is removed, stack of items may appear instead of just one item. */
 	o_ptr->tval = o_ptr->tval2;
 	o_ptr->sval = o_ptr->sval2;
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
@@ -11348,7 +11349,7 @@ void peek_gift(object_type *gift_ptr, object_type **contents_ptr) {
 	o_ptr->note2 = 0;
 	o_ptr->note2_utag = 0;
 
-	*contents_ptr = &forge;
+	*contents_ptr = o_ptr;
 }
 
 /* Returns FALSE if we notice any effect, TRUE if we don't (for UNMAGIC). */
