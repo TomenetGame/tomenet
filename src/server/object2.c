@@ -1828,6 +1828,17 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	s64b value = k_ptr->cost;
 	int i;
 
+
+	/* Hack: Gifts */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+		object_type *g_ptr;
+
+		peek_gift(o_ptr, &g_ptr);
+		if (g_ptr->tval == TV_GOLD) return(g_ptr->pval);
+		if (!g_ptr->number) return(0); // empty gift
+		return(object_value_real(Ind, g_ptr) * g_ptr->number);
+	}
+
 	/* Hack -- "worthless" items */
 	if (!value) return(0L);
 
@@ -3431,6 +3442,15 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
  */
 s64b object_value(int Ind, object_type *o_ptr) {
 	s64b value;
+
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+		object_type *g_ptr;
+
+		peek_gift(o_ptr, &g_ptr);
+		if (g_ptr->tval == TV_GOLD) return(g_ptr->pval);
+		if (!g_ptr->number) return(0); // empty gift
+		return(object_value(Ind, g_ptr) * g_ptr->number);
+	}
 
 	/* Known items -- acquire the actual value */
 	if (Ind == 0 || object_known_p(Ind, o_ptr)) {
