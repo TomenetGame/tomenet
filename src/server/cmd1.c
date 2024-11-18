@@ -24,6 +24,7 @@
 
 
 static void run_init(int Ind, int dir);
+static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox, int oy);
 
 
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
@@ -6229,6 +6230,7 @@ void py_bash_py(int Ind, int y, int x) {
 		if (adj_str_wgt[p_ptr->stat_ind[A_STR]] * 25 < q_ptr->wt + p_ptr->total_weight / 10) {
 			/* Note about wt and total_weight: Body weight (wt) is measured in lb while total item weight (inven+equip) is measured in lb * 10, as used in k_info.txt */
 			msg_format(Ind, "You are not strong enough to push past %s.", q_name);
+			black_breath_infection(Ind, Ind2);
 			return;
 		}
 
@@ -6249,6 +6251,16 @@ void py_bash_py(int Ind, int y, int x) {
 		p_ptr->px = ox;
 
 		cave_midx_debug(wpos, oy, ox, -Ind);
+
+		/* Disturbances */
+		black_breath_infection(Ind, Ind2);
+		stop_precision(Ind2);
+		stop_shooting_till_kill(Ind2);
+		disturb(Ind, 1, 0);
+		disturb(Ind2, 1, 0);
+		/* Grid effects/hints */
+		moved_player(Ind2, q_ptr, zcave, p_ptr->px, p_ptr->py);
+		moved_player(Ind, p_ptr, zcave, q_ptr->px, q_ptr->py);
 
 		/* Redraw the old grid */
 		everyone_lite_spot(wpos, oy, ox);
@@ -7786,7 +7798,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 					black_breath_infection(Ind, Ind2);
 					stop_precision(Ind2);
-					stop_shooting_till_kill(Ind);
+					stop_shooting_till_kill(Ind2);
 
 					/* Disturb both of them */
 					disturb(Ind, 1, 0);
