@@ -4185,6 +4185,7 @@ bool ident_spell(int Ind) {
  * This routine does *not* automatically combine objects.
  * Returns TRUE if something was identified, else FALSE.
  */
+//TODO: Currently, identifying an unidentified gift will also ID an unidentified contents-object inside the gift
 bool ident_spell_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
@@ -11043,6 +11044,7 @@ void detonate_charge(int o_idx) {
          This isn't exploitable, as they cannot be wielded anyway, but should perhaps get added.
          Code locs: Store buying/stealing (store.c), telekinesis (xtra2.c), picking up the gift (cmd1.c).
    item = -1 -> wrap money instead. */
+//TODO: Currently, wrapping an unidentified object results in an unidentified gift too
 void wrap_gift(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, *ow_ptr, forge, forge_money;
