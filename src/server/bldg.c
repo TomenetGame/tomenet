@@ -2738,6 +2738,15 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				msg_print(Ind, "\377yItems must be identified before you can send them.");
 				break;
 			}
+			if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+				object_type *g_ptr;
+
+				peek_gift(o_ptr, &g_ptr);
+				if (g_ptr->tval != TV_GOLD && g_ptr->number && !object_known_p(Ind, g_ptr)) {
+					msg_print(Ind, "\377yItems must be identified before you can send them.");
+					break;
+				}
+			}
 
 			for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
 				if (!mail_sender[i][0]) break;
