@@ -961,6 +961,7 @@ struct player_type {
 	bool add_kind_diz;
 	bool hide_lore_paste;
 	bool instant_retaliator;
+	bool sunburn_msg;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

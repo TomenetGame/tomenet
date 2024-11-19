@@ -3075,7 +3075,7 @@ void calc_boni(int Ind) {
 	bool old_dual_wield = p_ptr->dual_wield;
 	bool melee_weapon;
 
-	bool old_sun_burn;
+	char old_sun_burn;
 	bool old_black_breath = p_ptr->black_breath_tmp;
 	bool old_suscep_good = p_ptr->suscep_good, old_suscep_life = p_ptr->suscep_life, old_demon = p_ptr->demon;
 
@@ -4742,9 +4742,9 @@ void calc_boni(int Ind) {
 			if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
 			p_ptr->drain_life += i;
 		}
-		p_ptr->sun_burn = TRUE;
-		if (!old_sun_burn) msg_format(Ind, "\377RYou %s in the sunlight!", i >= 3 ? "*burn*" : "burn");
-	} else if (old_sun_burn) msg_print(Ind, "You find respite from the sunlight.");
+		p_ptr->sun_burn = i;
+		if (!old_sun_burn && p_ptr->sunburn_msg) msg_format(Ind, "\377RYou %s in the sunlight!", i >= 3 ? "*burn*" : "burn");
+	} else if (old_sun_burn && p_ptr->sunburn_msg) msg_print(Ind, "You find respite from the sunlight.");
 
 	/* Apply temporary "stun" */
 	/* should this stuff be mvoed to affect _total p_ptr->to_h instead of being applied so (too) early here? */

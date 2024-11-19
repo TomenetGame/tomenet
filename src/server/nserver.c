@@ -2741,7 +2741,8 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->hide_lore_paste = options[164];
 		p_ptr->instant_retaliator = options[165];
 		if (!p_ptr->instant_retaliator) p_ptr->warning_newautoret = 1;
-	} else p_ptr->instant_retaliator = TRUE;
+		p_ptr->sunburn_msg = options[166];
+	} else p_ptr->instant_retaliator = p_ptr->sunburn_msg = TRUE;
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,
@@ -3726,6 +3727,8 @@ static int Handle_login(int ind) {
 		p_ptr->fluent_artifact_reset = FALSE;
 	}
 #endif
+
+	if (p_ptr->sun_burn && p_ptr->sunburn_msg) msg_format(NumPlayers, "\377RYou %s in the sunlight!", p_ptr->sun_burn >= 3 ? "*burn*" : "burn");
 
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
@@ -13518,12 +13521,9 @@ int toggle_rest(int Ind, int turns) {
 
 	/* Don't rest if we are poisoned or at max hit points and max mana points
 	   and max stamina */
-	if ((p_ptr->poisoned) || (p_ptr->diseased) || (p_ptr->cut) || (p_ptr->sun_burn) ||
-	    ((p_ptr->chp == p_ptr->mhp) &&
-	    (p_ptr->cmp == p_ptr->mmp) &&
-	    (p_ptr->cst == p_ptr->mst)
-	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL)
-	    ))
+	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->cut || p_ptr->sun_burn ||
+	    (p_ptr->chp == p_ptr->mhp && p_ptr->cmp == p_ptr->mmp && p_ptr->cst == p_ptr->mst
+	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL)))
 		return(2);
 
 	if (p_ptr->mcharming) {

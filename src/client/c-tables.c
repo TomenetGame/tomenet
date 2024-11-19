@@ -593,6 +593,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.instant_retaliator,	TRUE,	2,	0, 165, TRUE,
 	    "instant_retaliator",	"Autoretaliate instantly but forego reserve energy" }, //note: includes FTK
+	{ &c_cfg.sunburn_msg,		TRUE,	7,	0, 166, TRUE,
+	    "sunburn_msg",		"Show message if you start/stop burning in the sun" },
 };
 
 cptr melee_techniques[16] = {

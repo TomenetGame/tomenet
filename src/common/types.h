@@ -4105,7 +4105,7 @@ struct player_type {
 	int mcharming;			/* for mindcrafters' charming */
 	u32b turns_on_floor;		/* number of turns spent on the current floor */
 	bool distinct_floor_feeling;	/* set depending on turns_on_floor */
-	bool sun_burn;			/* Player is vampire, currently burning in the sun? */
+	char sun_burn;			/* Player is vampire, currently burning in the sun? */
 
 	/* server-side animation timing flags */
 	int invis_phase;		/* for invisible players who flicker towards others */
@@ -4311,7 +4311,7 @@ struct player_type {
 
 	bool player_list_window; /* Has configured one of his subwindows to be a live-updated player list window */
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
-	bool add_kind_diz, hide_lore_paste;
+	bool add_kind_diz, hide_lore_paste, sunburn_msg;
 
 	bool notify_notes, notify_sale;
 };
@@ -4756,7 +4756,7 @@ struct client_opts {
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
 	bool no_flicker;
 
-	bool add_kind_diz, hide_lore_paste;
+	bool add_kind_diz, hide_lore_paste, sunburn_msg;
 	bool instant_retaliator;
 };
 
