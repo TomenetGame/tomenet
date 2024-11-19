@@ -12995,10 +12995,14 @@ void audio_pack_selector(void) {
 	if (strcmp(cfg_soundpackfolder, sp_dir[cur_sp])) {
 		c_message_add(format("Switched sound pack to '%s'.", sp_dir[cur_sp]));
 		strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
+		strcpy(cfg_soundpack_name, sp_name[cur_sp]);
+		strcpy(cfg_soundpack_version, sp_version[cur_sp]);
 	}
 	if (strcmp(cfg_musicpackfolder, mp_dir[cur_mp])) {
 		c_message_add(format("Switched music pack to '%s'.", mp_dir[cur_mp]));
 		strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
+		strcpy(cfg_musicpack_name, mp_name[cur_mp]);
+		strcpy(cfg_musicpack_version, mp_version[cur_mp]);
 	}
 
 #ifdef WINDOWS

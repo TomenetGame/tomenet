@@ -723,7 +723,24 @@ static bool sound_sdl_init(bool no_cache) {
 		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
 
 		/* Skip meta data that we don't need here -- this is for [title] tag introduced in 4.7.1b+ */
-		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11) || !strncmp(buffer, "version", 7)) continue;
+		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11) || !strncmp(buffer, "version", 7)) {
+			char *ckey = buffer, *cval;
+
+			/* Search for key separator */
+			if (!(cval = strchr(ckey, '='))) continue;
+			*cval = 0;
+			cval++;
+			/* Trim spaces/tabs */
+			while (strlen(ckey) && (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t')) ckey[strlen(ckey) - 1] = 0;
+			while (*cval == ' ' || *cval == '\t') cval++;
+			while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
+
+			if (!strncmp(buffer, "packname", 8)) strcpy(cfg_soundpack_name, cval);
+			//if (!strncmp(buffer, "author", 6)) ;
+			//if (!strncmp(buffer, "description", 11)) ;
+			if (!strncmp(buffer, "version", 7)) strcpy(cfg_soundpack_version, cval);
+			continue;
+		}
 
 		/* Split the line into two: the key, and the rest */
 
@@ -1034,7 +1051,24 @@ static bool sound_sdl_init(bool no_cache) {
 		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
 
 		/* Skip meta data that we don't need here -- this is for [title] tag introduced in 4.7.1b+ */
-		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11) || !strncmp(buffer, "version", 7)) continue;
+		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11) || !strncmp(buffer, "version", 7)) {
+			char *ckey = buffer, *cval;
+
+			/* Search for key separator */
+			if (!(cval = strchr(ckey, '='))) continue;
+			*cval = 0;
+			cval++;
+			/* Trim spaces/tabs */
+			while (strlen(ckey) && (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t')) ckey[strlen(ckey) - 1] = 0;
+			while (*cval == ' ' || *cval == '\t') cval++;
+			while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
+
+			if (!strncmp(buffer, "packname", 8)) strcpy(cfg_musicpack_name, cval);
+			//if (!strncmp(buffer, "author", 6)) ;
+			//if (!strncmp(buffer, "description", 11)) ;
+			if (!strncmp(buffer, "version", 7)) strcpy(cfg_musicpack_version, cval);
+			continue;
+		}
 
 
 		/* Split the line into two: the key, and the rest */

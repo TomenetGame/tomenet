@@ -718,8 +718,9 @@ bool mp_bar;
 int st_max, st_cur;
 bool st_bar;
 
-char cfg_soundpackfolder[1024];
-char cfg_musicpackfolder[1024];
+char cfg_soundpackfolder[1024], cfg_musicpackfolder[1024];
+char cfg_soundpack_name[MAX_CHARS], cfg_soundpack_version[MAX_CHARS];
+char cfg_musicpack_name[MAX_CHARS], cfg_musicpack_version[MAX_CHARS];
 
 bool within_cmd_player = FALSE;
 int within_cmd_player_ticks;
