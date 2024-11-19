@@ -4505,6 +4505,7 @@ static void apply_morph(int Ind, int power, char *killer, int Ind_attacker) {
 int divide_spell_damage(int dam, int div, int typ) {
 	switch (typ) {
 	/* When these are cast as 'ball spells' they'd be gimped too much probably: */
+	case GF_SPEED_PLAYER:
 	case GF_TELEPORT_PLAYER: //Kurzel - This and many others (buffs) could go here (pending approval..)!
 	case GF_LIFE_SLOW: case GF_MIND_SLOW: case GF_OLD_SLOW: case GF_VINE_SLOW:
 	case GF_OLD_CONF:
