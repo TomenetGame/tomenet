@@ -19350,7 +19350,7 @@ create a character!):
     or wear a protective wrapping.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness thanks to an intrinsic
-    trait exclusive to the vampire race: Darkvision.
+    trait of the vampire race: Darkvision.
     This ability grows when the vampire rises in character-levels, starting at
     torch-wide radius and growing to lantern-wide radius already when reaching
     level 10. At night on the world surface, darkvision increases even more.
