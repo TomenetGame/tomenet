@@ -1753,6 +1753,11 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 }
 
 
+static bool monster_okay_no_mimic(int r_idx) {
+	if (r_info[r_idx].flags9 & RF9_MIMIC) return(FALSE);
+	return(TRUE);
+}
+
 /*
  * Hack -- Legal monster codes - and '@' to hallucinate another "player" instead
  */
@@ -1764,30 +1769,18 @@ static cptr image_monster_hack = \
  * Mega-Hack -- Hallucinatory monster
  */
 static void image_monster(byte *ap, char32_t *cp, player_type *p_ptr) {
-	int n = strlen(image_monster_hack);
+	int n, image = p_ptr->image;
 
-	/* Random symbol from set above */
-	(*cp) = (image_monster_hack[rand_int(n)]);
+	get_mon_num_hook = monster_okay_no_mimic;
+	get_mon_num_prep(0, NULL);
+	n = get_mon_num(127, 127);
+	//get_mon_num_hook = dungeon_aux;
+	//set_mon_num_hook(&p_ptr->wpos);
 
-	/* Hack for custom fonts/graphics tiles:
-	   Translate the letter back to some actual object using that letter,
-	   and then get the proper player-specific mapping for that object: */
-	if (*cp != '@') {
-		for (n = 1; n < max_r_idx; n++) {
-			if (r_info[n].d_char != *cp) continue;
-			/* Just exclude all RF9_MIMIC monsters so we can just zero m_idx in get_monster_visual() call for ezness: */
-			if (r_info[n].flags9 & RF9_MIMIC) continue;
-			break;
-		}
-		if (n < max_r_idx) {
-			int image = p_ptr->image;
-
-			/* Hack: No recursion! (get_monster_visual() would call image_monster() again */
-			p_ptr->image = FALSE;
-			get_monster_visual(p_ptr->Ind, NULL, &r_info[n], 0, ap, cp);
-			p_ptr->image = image;
-		}
-	}
+	/* Hack: No recursion! (get_monster_visual() would call image_monster() again */
+	p_ptr->image = FALSE;
+	get_monster_visual(p_ptr->Ind, NULL, &r_info[n], 0, ap, cp);
+	p_ptr->image = image;
 
 	/* Random color */
 	(*ap) = randint(15);
@@ -1804,21 +1797,11 @@ static cptr image_object_hack = \
  * Mega-Hack -- Hallucinatory object
  */
 static void image_object(byte *ap, char32_t *cp, player_type *p_ptr) {
-	int n = strlen(image_object_hack);
 	object_type forge, *o_ptr = &forge;
+	int n = randint(max_k_idx - 1); //skip N:0
 
-	/* Random symbol from set above */
-	(*cp) = (char32_t)(image_object_hack[rand_int(n)]);
-
-	/* Hack for custom fonts/graphics tiles:
-	   Translate the letter back to some actual object using that letter,
-	   and then get the proper player-specific mapping for that object: */
-	for (n = 1; n < max_k_idx; n++) {
-		if (k_info[n].d_char != *cp) continue;
-		invcopy(o_ptr, n);
-		break;
-	}
-	if (n < max_k_idx) get_object_visual(cp, ap, o_ptr, p_ptr);
+	invcopy(o_ptr, n);
+	get_object_visual(cp, ap, o_ptr, p_ptr);
 
 	/* Random color */
 	(*ap) = randint(15);
@@ -1829,21 +1812,16 @@ static void image_object(byte *ap, char32_t *cp, player_type *p_ptr) {
  * (Pleaes bear with us till really implemented..)
  */
 static void mimic_object(byte *ap, char32_t *cp, int seed, player_type *p_ptr) {
-	int n = strlen(image_object_hack);
+	int n;
 	object_type forge, *o_ptr = &forge;
 
-	/* Random symbol from set above */
-	(*cp) = (image_object_hack[seed % n]);
+	Rand_quick = TRUE;
+	Rand_value = seed;
+	n = randint(max_k_idx - 1); //skip N:0
+	Rand_quick = FALSE;
 
-	/* Hack for custom fonts/graphics tiles:
-	   Translate the letter back to some actual object using that letter,
-	   and then get the proper player-specific mapping for that object: */
-	for (n = 1; n < max_k_idx; n++) {
-		if (k_info[n].d_char != *cp) continue;
-		invcopy(o_ptr, n);
-		break;
-	}
-	if (n < max_k_idx) get_object_visual(cp, ap, o_ptr, p_ptr);
+	invcopy(o_ptr, n);
+	get_object_visual(cp, ap, o_ptr, p_ptr);
 
 	/* Random color */
 	(*ap) = seed % 15 + 1;
