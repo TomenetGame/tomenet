@@ -15530,8 +15530,8 @@ static int Receive_audio(int ind) {
 	char ch;
 	int n, player = -1;
 	short int sfx = -1, mus = -1;
-	char cfg_soundpack_name[MAX_CHARS], cfg_soundpack_version[MAX_CHARS];
-	char cfg_musicpack_name[MAX_CHARS], cfg_musicpack_version[MAX_CHARS];
+	char cfg_soundpack_name[MAX_CHARS] = { 0 }, cfg_soundpack_version[MAX_CHARS] = { 0 };
+	char cfg_musicpack_name[MAX_CHARS] = { 0 }, cfg_musicpack_version[MAX_CHARS] = { 0 };
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -15672,8 +15672,8 @@ static int Receive_version(int ind) {
 	char ch;
 	int n, avg, guide_lastline = -1, v_branch = -1, v_build = -1, sys_lang = -1;
 	char version[MAX_CHARS], os_version[MAX_CHARS], v_tag[MAX_CHARS] = { 0 };
-	char cfg_soundpack_name[MAX_CHARS], cfg_soundpack_version[MAX_CHARS];
-	char cfg_musicpack_name[MAX_CHARS], cfg_musicpack_version[MAX_CHARS];
+	char cfg_soundpack_name[MAX_CHARS] = { 0 }, cfg_soundpack_version[MAX_CHARS] = { 0 };
+	char cfg_musicpack_name[MAX_CHARS] = { 0 }, cfg_musicpack_version[MAX_CHARS] = { 0 };
 
 	if (connp->id != -1) p_ptr = Players[GetInd[connp->id]];
 
@@ -15704,7 +15704,7 @@ static int Receive_version(int ind) {
 	version[MAX_CHARS - 1] = '\0';
 
 	if (p_ptr) {
-		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\nSP: %s (%s) MP: %s (%s)\n",
+		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
 		    p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang,
 		    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
 		if (fake_waitpid_clver) {
@@ -15728,7 +15728,7 @@ static int Receive_version(int ind) {
 			fake_waitpid_clver = 0;
 			fake_waitpid_clver_timer = 0;
 		}
-	} else s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\nSP: %s (%s) MP: %s (%s)\n",
+	} else s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
 	    connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang,
 	    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
 
