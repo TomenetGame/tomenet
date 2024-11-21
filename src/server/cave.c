@@ -2098,6 +2098,18 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 
 	/* Hack -- mimics */
 	if (r_ptr->flags9 & RF9_MIMIC) mimic_object(&a, &c, m_idx);
+	/* Monsters looking like specific objects */
+	else if (r_ptr->k_idx) {
+		if (p_ptr->ascii_items) c = k_info[r_ptr->k_idx].d_char;
+		else c = object_char(r_ptr);
+		// (*ap) remains the one defined in r_info.txt
+	}
+	/* Monsters looking like specific (terrain) feature */
+	else if (r_ptr->f_idx) {
+		if (!p_ptr->ascii_feats) c = p_ptr->f_char[r_ptr->f_idx];
+		else c = f_info[r_ptr->f_idx].f_char;
+		// (*ap) remains the one defined in r_info.txt
+	}
 
 	/* Ignore weird codes */
 	if (avoid_other) {

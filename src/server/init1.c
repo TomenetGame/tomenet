@@ -4648,6 +4648,25 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 					continue;
 				}
 
+				/* Hack -- Monster looks like a specific item */
+				if (2 == sscanf(s, "K_INFO_%d_%d", &i, &j)) {
+					r_ptr->k_idx = lookup_kind(i, j);
+
+					/* Start at next entry */
+					s = t;
+					/* Continue */
+					continue;
+				}
+				/* Hack -- Monster looks like a specific (terrain) feature */
+				if (1 == sscanf(s, "F_INFO_%d", &i)) {
+					r_ptr->f_idx = i;
+
+					/* Start at next entry */
+					s = t;
+					/* Continue */
+					continue;
+				}
+
 				/* Parse this entry */
 				if (0 != grab_one_basic_flag(r_ptr, s)) return(5);
 

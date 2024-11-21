@@ -444,6 +444,8 @@ struct monster_race {
 	s16b level;			/* Level of creature */
 	byte rarity;			/* Rarity of creature */
 
+	s16b k_idx;			/* For monsters looking like a specific object */
+	s16b f_idx;			/* For monsters looking like a specific (terrain) feature */
 
 	byte d_attr;			/* Default monster attribute */
 	char32_t d_char;			/* Default monster character */

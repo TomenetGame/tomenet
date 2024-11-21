@@ -3596,7 +3596,7 @@ void init_some_arrays(void) {
 	s_printf("[Initializing arrays... (ego-items)]\n");
 	if (init_e_info()) quit("Cannot initialize ego-items");
 
-	/* Initialize monster info */
+	/* Initialize monster info -- must be done after object info initialization as K_INFO_ flag can refer to it. */
 	s_printf("[Initializing arrays... (monsters)]\n");
 	if (init_r_info()) quit("Cannot initialize monsters");
 
