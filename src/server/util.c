@@ -5118,10 +5118,10 @@ bool may_address_dm(player_type *p_ptr) {
 static void player_talk_aux(int Ind, char *message) {
 	int i, len, target = 0, target_raw_len = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
-	char message2[MSG_LEN], message_u[MSG_LEN];
+	char message2[MSG_LEN], message_u_forge[MSG_LEN], *message_u = message_u_forge;
 	player_type *p_ptr = NULL, *q_ptr;
 	char *colon, *colon_u;
-	char *sipd;
+	char *sipd, *sipd_chatmode;
 
 	bool rp_me = FALSE, rp_me_gen = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
@@ -5487,8 +5487,11 @@ static void player_talk_aux(int Ind, char *message) {
 	   or a kind-diz marker (occurs later in the line).
 	   Process it if it's a kind-diz marker, otherwise ignore it here (handled solemnly in msg_print() then): */
 #if defined(KIND_DIZ) && defined(SERVER_ITEM_PASTE_DIZ)
-	if ((sipd = strchr(message, '\372')) && sipd > message) { /* Test if the sipd is not at the beginning, then it's kdiz (otherwise lorepaste, which is not handled here) */
-		char *ckt = strchr(sipd, ',');
+	sipd_chatmode = strchr(message, ':'); /* We might not be in global chat mode but in party or guild chat, which come with prefixed !: or $: */
+	if (!sipd_chatmode) sipd_chatmode = message;
+	else sipd_chatmode += 2; //skip the ':' and the space that always follows it
+	if ((sipd = strchr(message, '\372')) && sipd > sipd_chatmode) { /* Test if the sipd is not at the beginning, then it's kdiz (otherwise lorepaste, which is not handled here) */
+		char *ckt = strchr(sipd, ','); //comma is the tval,sval separator
 		int tval = atoi(sipd + 1), sval = ckt ? atoi(ckt + 1) : -1;
 
 		if ((sflags1 & SFLG1_SIPD) && tval >= 1 && tval <= TV_MAX && sval >= 0 && sval <= 255) {
@@ -5590,6 +5593,19 @@ static void player_talk_aux(int Ind, char *message) {
 
 	/* -- Finished pre-processing of the message. Now it IS a message and it is to be sent to some target user/group. -- */
 
+
+	/* For party/floor/guild chat mode:
+	   If message is a lore paste, it might have an additional space at the beginning,
+	   from client's Send_paste_msg() which adds a space between chatmode prefix and the msg.
+	   This could result in a double space, which breaks the lore-paste code. Trim it to one space. */
+	if (strlen(message) >= 2 && message[1] == ':' && colon && message[2] == ' ' && (message[3] == '\372' || message[3] == '\377')) {
+		message[2] = message[1];
+		message[1] = message[0];
+		message_u[2] = message_u[1];
+		message_u[1] = message_u[0];
+		message++;
+		message_u++;
+	}
 
 	/* Special function '!:' at beginning of message sends to own party - sorry for hack, C. Blue */
 	//if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
