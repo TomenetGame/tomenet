@@ -2197,7 +2197,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 	/* Multi-hued monster */
 	else if (r_ptr->flags1 & RF1_ATTR_MULTI) {
 		/* Is it a shapechanger? */
-		if (r_ptr->flags2 & RF2_SHAPECHANGER)
+		if (r_ptr->flags2 & RF2_SHAPECHANGER)	// TODO: Actually use real mappings (see image_monster(), image_object()) and _stick_ with a form at least for a bunch of turns!
 			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
 				 image_object_hack[randint(strlen(image_object_hack))]:
 				 image_monster_hack[randint(strlen(image_monster_hack))]);
@@ -2256,7 +2256,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 		(*cp) = c;
 
 		/* Is it a non-colourchanging shapechanger? */
-		if (r_ptr->flags2 & RF2_SHAPECHANGER)
+		if (r_ptr->flags2 & RF2_SHAPECHANGER)	// TODO: Actually use real mappings (see image_monster(), image_object()) and _stick_ with a form at least for a bunch of turns!
 			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1 ?
 				 image_object_hack[randint(strlen(image_object_hack))]:
 				 image_monster_hack[randint(strlen(image_monster_hack))]);
@@ -2284,7 +2284,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 			(*cp) = c;
 
 			/* Is it a non-colourchanging shapechanger? */
-			if (r_ptr->flags2 & RF2_SHAPECHANGER) {
+			if (r_ptr->flags2 & RF2_SHAPECHANGER) {		// TODO: Actually use real mappings (see image_monster(), image_object()) and _stick_ with a form at least for a bunch of turns!
 				(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
 					 image_object_hack[randint(strlen(image_object_hack))]:
 					 image_monster_hack[randint(strlen(image_monster_hack))]);
