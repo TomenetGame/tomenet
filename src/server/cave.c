@@ -25,6 +25,10 @@
    when player circles around them. It looked a little bit odd maybe. */
 #define DONT_SHADE_GLOW_AT_NIGHT
 
+
+
+static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr, int m_idx, byte *ap, char32_t *cp);
+
 /*
  * Scans for cave_type array pointer.
  * Returns cave array relative to the dimensions
@@ -1750,7 +1754,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 
 
 /*
- * Hack -- Legal monster codes
+ * Hack -- Legal monster codes - and '@' to hallucinate another "player" instead
  */
 static cptr image_monster_hack = \
 "@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -1758,11 +1762,31 @@ static cptr image_monster_hack = \
 /*
  * Mega-Hack -- Hallucinatory monster
  */
-static void image_monster(byte *ap, char32_t *cp) {
+static void image_monster(byte *ap, char32_t *cp, player_type *p_ptr) {
 	int n = strlen(image_monster_hack);
 
 	/* Random symbol from set above */
 	(*cp) = (image_monster_hack[rand_int(n)]);
+
+	/* Hack for custom fonts/graphics tiles:
+	   Translate the letter back to some actual object using that letter,
+	   and then get the proper player-specific mapping for that object: */
+	if (*cp != '@') {
+		for (n = 1; n < max_r_idx; n++) {
+			if (r_info[n].d_char != *cp) continue;
+			/* Just exclude all RF9_MIMIC monsters so we can just zero m_idx in get_monster_visual() call for ezness: */
+			if (r_info[n].flags9 & RF9_MIMIC) continue;
+			break;
+		}
+		if (n < max_r_idx) {
+			int image = p_ptr->image;
+
+			/* Hack: No recursion! (get_monster_visual() would call image_monster() again */
+			p_ptr->image = FALSE;
+			get_monster_visual(p_ptr->Ind, NULL, &r_info[n], 0, ap, cp);
+			p_ptr->image = image;
+		}
+	}
 
 	/* Random color */
 	(*ap) = randint(15);
@@ -1778,11 +1802,22 @@ static cptr image_object_hack = \
 /*
  * Mega-Hack -- Hallucinatory object
  */
-static void image_object(byte *ap, char32_t *cp) {
+static void image_object(byte *ap, char32_t *cp, player_type *p_ptr) {
 	int n = strlen(image_object_hack);
+	object_type forge, *o_ptr = &forge;
 
 	/* Random symbol from set above */
 	(*cp) = (char32_t)(image_object_hack[rand_int(n)]);
+
+	/* Hack for custom fonts/graphics tiles:
+	   Translate the letter back to some actual object using that letter,
+	   and then get the proper player-specific mapping for that object: */
+	for (n = 1; n < max_k_idx; n++) {
+		if (k_info[n].d_char != *cp) continue;
+		invcopy(o_ptr, n);
+		break;
+	}
+	if (n < max_k_idx) get_object_visual(cp, ap, o_ptr, p_ptr);
 
 	/* Random color */
 	(*ap) = randint(15);
@@ -1792,11 +1827,22 @@ static void image_object(byte *ap, char32_t *cp) {
  * Mega-Hack -- Mimic outlook
  * (Pleaes bear with us till really implemented..)
  */
-static void mimic_object(byte *ap, char32_t *cp, int seed) {
+static void mimic_object(byte *ap, char32_t *cp, int seed, player_type *p_ptr) {
 	int n = strlen(image_object_hack);
+	object_type forge, *o_ptr = &forge;
 
 	/* Random symbol from set above */
 	(*cp) = (image_object_hack[seed % n]);
+
+	/* Hack for custom fonts/graphics tiles:
+	   Translate the letter back to some actual object using that letter,
+	   and then get the proper player-specific mapping for that object: */
+	for (n = 1; n < max_k_idx; n++) {
+		if (k_info[n].d_char != *cp) continue;
+		invcopy(o_ptr, n);
+		break;
+	}
+	if (n < max_k_idx) get_object_visual(cp, ap, o_ptr, p_ptr);
 
 	/* Random color */
 	(*ap) = seed % 15 + 1;
@@ -1806,11 +1852,11 @@ static void mimic_object(byte *ap, char32_t *cp, int seed) {
 /*
  * Hack -- Random hallucination
  */
-static void image_random(byte *ap, char32_t *cp) {
+static void image_random(byte *ap, char32_t *cp, int Ind) {
 	/* Normally, assume monsters */
-	if (rand_int(100) < 75) image_monster(ap, cp);
+	if (rand_int(100) < 75) image_monster(ap, cp, Players[Ind]);
 	/* Otherwise, assume objects */
-	else image_object(ap, cp);
+	else image_object(ap, cp, Players[Ind]);
 }
 
 #ifndef CLIENT_SHIMMER
@@ -2097,7 +2143,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 	}
 
 	/* Hack -- mimics */
-	if (r_ptr->flags9 & RF9_MIMIC) mimic_object(&a, &c, m_idx);
+	if (r_ptr->flags9 & RF9_MIMIC) mimic_object(&a, &c, m_idx, p_ptr);
 	/* Monsters looking like specific objects */
 	else if (r_ptr->k_idx) {
 		if (p_ptr->ascii_items) c = k_info[r_ptr->k_idx].d_char;
@@ -2112,7 +2158,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 	}
 
 	/* Ignore weird codes */
-	if (avoid_other) {
+	if (avoid_other) { // (always FALSE nowadays)
 		/* Use char */
 		(*cp) = c;
 		/* Use attr */
@@ -2271,7 +2317,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 	}
 
 	/* Hack -- hallucination */
-	if (p_ptr->image) image_monster(ap, cp);
+	if (p_ptr->image) image_monster(ap, cp, p_ptr);
 }
 
 /*
@@ -3124,8 +3170,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				if (i == NumPlayers + 1 || cs_ptr->sc.montrap.found || !check_hostile(Ind, i)) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
-						/*image_random(ap, cp); */
-						image_object(ap, cp);
+						/*image_random(ap, cp, Ind); */
+						image_object(ap, cp, p_ptr);
 						a = randint(15);
 					} else {
 						/* If trap isn't on door display it */
@@ -3158,8 +3204,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				if (i == NumPlayers + 1 || cs_ptr->sc.rune.found || !check_hostile(Ind, i)) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
-						/*image_random(ap, cp); */
-						image_object(ap, cp);
+						/*image_random(ap, cp, Ind); */
+						image_object(ap, cp, p_ptr);
 						a = randint(15);
 					} else {
 						a = spell_color(cs_ptr->sc.rune.typ);
@@ -3176,8 +3222,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
-						/*image_random(ap, cp); */
-						image_object(ap, cp);
+						/*image_random(ap, cp, Ind); */
+						image_object(ap, cp, p_ptr);
 						a = randint(15);
 					} else {
 						/* If trap isn't on door display it */
@@ -3386,7 +3432,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
-						image_object(ap, cp);
+						image_object(ap, cp, p_ptr);
 						a = randint(15);
 					} else {
 						a = get_trap_color(Ind, t_idx, feat);
@@ -3770,7 +3816,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
 	if (p_ptr->image && (!rand_int(256)) && !(f_info[c_ptr->feat].flags2 & FF2_BOUNDARY)) {
 		/* Hallucinate */
-		image_random(ap, cp);
+		image_random(ap, cp, Ind);
 	}
 
 
@@ -3803,7 +3849,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				if (c_ptr->info & CAVE_STEAMBLAST) *ap = TERM_ORANGE;
 
 				/* Hack -- hallucination */
-				if (p_ptr->image) image_object(ap, cp);
+				if (p_ptr->image) image_object(ap, cp, p_ptr);
 			}
 		}
 	}
@@ -3978,7 +4024,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 			if (p_ptr->image) {
 				/* Change the other player into a hallucination */
-				image_monster(ap, cp);
+				image_monster(ap, cp, p_ptr);
 			}
 		}
 	}
