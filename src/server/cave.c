@@ -1757,7 +1757,8 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
  * Hack -- Legal monster codes - and '@' to hallucinate another "player" instead
  */
 static cptr image_monster_hack = \
-"@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//"@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+"@abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; //removed 'l', nonexistant monster letter
 
 /*
  * Mega-Hack -- Hallucinatory monster
