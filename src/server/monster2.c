@@ -1693,10 +1693,11 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 			/* XXX Check plurality for "some" */
 			if ((r_ptr->flags8 & RF8_PLURAL))
 				strcpy(desc, name);
-			else /* Indefinite monsters need an indefinite article */
+			else {
+				/* Indefinite monsters need an indefinite article */
 				strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-
-			strcat(desc, name);
+				strcat(desc, name);
+			}
 		}
 
 		/* It could be a normal, definite, monster */

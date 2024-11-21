@@ -3839,7 +3839,7 @@ cptr item_activation(object_type *o_ptr) {
 			return("teleportation and destruction of the ring");
 		case SV_RING_POLYMORPH:
 			if (o_ptr->pval) {
-				char m_name[MNAME_LEN];
+				char m_name[MNAME_LEN] = { 0 };
 
 				m_name[0] = 0;
 				if (!(r_info[o_ptr->pval].flags8 & RF8_PLURAL)) {
