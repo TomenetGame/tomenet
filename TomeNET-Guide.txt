@@ -10699,6 +10699,10 @@ Also see (5.15) for how these drain effects stack or may be cancelled out.
 Drain effects caused by monsters, traps or elemental attacks including terrain:
 -------------------------------------------------------------------------------
 Experience drain from monster attacks, traps or elemental damage you suffer
+    For elements, it's caused by unresisted Chaos or Nether or by Time.
+    For melee attacks, it's caused by EXP_xx effect attacks.
+    Drinking potions of lose memories can also drain your experience.
+
     'You feel your life draining away!' - the normal message.
     'You feel your life slipping away!' - you suffer less drain, happens if you
                                           acquired the 'Hold life' power, which
@@ -10745,14 +10749,36 @@ Stat drain
     Note however that there are three tiers of stat drain:
     I:   Temporary drain. Low-level traps will often do this. Also this might
          happen to your strength stat if you overexert yourself at swimming.
+         Suffering from anoxia while in aquatic form can temporarily drain
+         your dexterity. Coming out of an adrenaline rush can temporarily drain
+         your constitution.
          You can just sit it out and after some time it will automatically
          restore itself back to normal (colour changes from yellow to light
          green again accordingly).
-    II:  Persistent drain. Medium level traps, monster attacks and certain
-         elemental damage you suffer can cause this.
+
+    II:  Persistent drain. Medium level traps, monster attacks (those with the
+         melee effect LOSE_xxx), Black Breath, equipped items with TY_CURSE and
+         certain elemental damage you suffer without having the according
+         resistance can cause this.
+         Getting seduced can also cause constitution or wisdom to get drained.
          Again the drained stat will be displayed in yellow, but unlike tier I
          drain it will not self-restore. Instead you will need to purchase a
          potion from the alchemy shop or use other means of restoration magic.
+         Unresisted elemental attacks that cause stat drain are:
+         - Time attacks can drain all your stats at once if you don't resist.
+           Also, against time even sustenance only has a chance to help instead
+           of preventing stat drain 100% of the time.
+         - Acid: Charisma.
+         - Electricity: Dexterity.
+         - Heat: Strength.
+         - Cold: Strength.
+         - Mind blast/brain smash attacks can drain your INT and WIS.
+         Note that Plasma damage, as it consists of both fire and lightning,
+         may drain both your strength and dexterity.
+         These elements not only count for spells but also for melee attacks
+         with elemental effects (RBE_xxx) eg red worm mass that will attack
+         with RBE_FIRE could drain your strength if you lack fire resistance.
+
     III: Permanent drain. High level traps are the only way to suffer this.
          Your stat will actually not turn yellow, but remain light green and
          its reduction cannot be undone by restoration magic!
@@ -10778,6 +10804,8 @@ Stat drain
 
     Notes:
     - 'Sustenance' powers will help to prevent all three tiers of stat drain!
+      (Except for time-based attacks, where sustenance just has a certain
+      chance to help but isn't guaranteed to.)
     - Drinking a stat potion will automatically restore your stat if it was
       drained, before permanently increasing it. So you don't need to purchase
       an extra restoration potion before drinking a stat potion.
