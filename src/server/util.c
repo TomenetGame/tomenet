@@ -10043,7 +10043,9 @@ bool exceptionally_shareable_item(object_type *o_ptr) {
 	    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) ||
 	    // "Why not share ale? -Molt" <- good idea, here too!
-	    (o_ptr->tval == TV_FOOD && o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && !o_ptr->name1))
+	    (o_ptr->tval == TV_FOOD && o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && !o_ptr->name1
+	    && o_ptr->sval != SV_FOOD_WAYBREAD //hrrm @ Lembas? but an infinite Lembas starter stack could be cheezed easily this way +_+
+	    && o_ptr->sval != SV_FOOD_ATHELAS))
 		return(TRUE);
 	return(FALSE);
 }
@@ -10054,7 +10056,9 @@ bool shareable_starter_item(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
 	    // "Why not share ale? -Molt" <- good idea, here too!
-	    (o_ptr->tval == TV_FOOD && o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && !o_ptr->name1))
+	    (o_ptr->tval == TV_FOOD && o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && !o_ptr->name1
+	    && o_ptr->sval != SV_FOOD_WAYBREAD //hrrm @ Lembas? but an infinite Lembas starter stack could be cheezed easily this way +_+
+	    && o_ptr->sval != SV_FOOD_ATHELAS))
 		return(TRUE);
 	return(FALSE);
 }
