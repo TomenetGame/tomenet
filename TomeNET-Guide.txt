@@ -10732,7 +10732,7 @@ Experience drain from Black Breath
     experience permanently instead of temporarily.
 
 Stat drain
-    This type of drain will lower your atttributes, which can be:
+    This type of drain will lower your attributes, which can be:
     STR (strength), INT (intelligence), WIS (wisdom), DEX (dexterity),
     CON (constitution) and CHR (charisma).
     While drained, these will be displayed in yellow colour instead of light
