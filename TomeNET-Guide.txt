@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 17. November 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 22. November 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -39,7 +39,7 @@ Contents
     (0.1c)  Photosensitivity / Epilepsy issues
     (0.1d)  Readability improvements
     (0.1e)  Sinew/joint taxation issues
-    (0.2)   Command reference & keysets
+    (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash commands
     (0.2c)  IRC bot commands
@@ -363,7 +363,7 @@ able to use most keys aside from arrow keys for basic movement.
  Now you're in the game and should see the town of Bree.
 
  Note that all following keys mentioned assume that you use the normal
- (aka non-roguelike) keyset! If you use rogue-like keyset, refer to (0.2) for
+ (aka non-roguelike) key set! If you use rogue-like key set, refer to (0.2) for
  a full list of command keys under that setting.
 
 -To chat, press the colon key ':' . Don't hesitate to ask other players
@@ -444,12 +444,12 @@ able to use most keys aside from arrow keys for basic movement.
  SHIFT+P  form a party with your buddies. You share experience in a party and
           you can always see each other on the map and your team mates' current
           world location in the player list (accessed with '@' key).
-          (SHIFT+O if you are using rogue-like keyset.)
+          (SHIFT+O if you are using rogue-like key set.)
  SHIFT+L  look around the map. Very useful to locate team mates ;).
-          (CTRL+W if you are using rogue-like keyset.)
+          (CTRL+W if you are using rogue-like key set.)
  CTRL+U   the audio mixer menu (the hotkeys for toggling master/music work
           outside of this menu too).
-          (CTRL+F if you are using rogue-like keyset.)
+          (CTRL+F if you are using rogue-like key set.)
  CTRL+Q   quit the game. Safest way is to quit in a town, not in the dungeon!
 
 
@@ -575,8 +575,8 @@ key presses in terms of both number and frequency are required.
 
 
 
-(0.2) Command reference & keysets
----------------------------------
+(0.2) Command reference & key sets
+----------------------------------
 Can be different depending on OS / configuration.
 
 If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
@@ -592,29 +592,29 @@ Command keys
 
 Key combinations with CTRL key can be entered in the macro menu by prefixing
 the key with a '^' symbol. For example, a macro to force-stack an item in
-normal keyset could be 'K0', but in rogue-like keyset (where force-stack
+normal key set could be 'K0', but in rogue-like key set (where force-stack
 is CTRL+C instead of K) it will be '^c0' instead (or you can use a capital
 letter: '^c0', it's actually the same when using ^ codes).
 
 Keys:
-The first key is of the 'original Angband keyset', the second key is of the
-'rogue-like' keyset. Some people prefer to use that one. You can change it
+The first key is of the 'original Angband key set', the second key is of the
+'rogue-like' key set. Some people prefer to use that one. You can change it
 in the options menu, which you invoke with '=' key.
 
 
 Walk into a direction:
-    Original keyset         Rogue-like keyset       Rogue-like (running)
+    Original key set        Rogue-like key set      Rogue-like (running)
         7   8   9               y   k   u               Y   K   U
         4       6               h       l               H       L
         1   2   3               b   j   n               B   J   N
 
-In addition, the rogue-like keyset has tunneling on the movement keys if
+In addition, the rogue-like key set has tunneling on the movement keys if
 the CTRL key is pressed together with one. CTRL is expressed by prefixing
-the key with '^', so the rogue-like keyset for tunneling is:
+the key with '^', so the rogue-like key set for tunneling is:
         ^y  ^k  ^u
         ^h      ^l
         ^b  ^j  ^n
-(The normal keyset has no directional keys for tunneling, so you'd have
+(The normal key set has no directional keys for tunneling, so you'd have
 to create macros if you want that.)
 
 You can also use the arrow keys instead of the Numpad keys for movement.
@@ -691,7 +691,7 @@ x       S       swap an item. This is basically like both "wear/wield" and
                 When the item is currently in the inventory, it will be
                 equipped. If it already is equipped though, then it will be
                 taken off.
-                Note for rogue-like keyset:
+                Note for rogue-like key set:
                 Although the key is 'S', the actual item inscriptions must
                 still use 'x', eg '@x0' when the macro is 'S0'!
 
@@ -944,7 +944,7 @@ CTRL+N  CTRL+V  Toggles audio. Shortcut for master toggle in the mixer
 
 CTRL+C          Toggles music. Shortcut for toggling it in the mixer settings.
                 This hotkey works outside of the mixer screen too.
-                NOT AVAILABLE IN ROGUE-LIKE KEYSET.
+                NOT AVAILABLE IN ROGUE-LIKE KEY SET.
 
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
@@ -1150,7 +1150,7 @@ CTRL+O  view previous chat messages.
 CTRL+Q  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window layout (the
         windows' positions and sizes) and mixer settings (CTRL+U to change,
-        CTRL+F on rogue-like keyset), and you will be asked if you want to
+        CTRL+F on rogue-like key set), and you will be asked if you want to
         save the chat log to a text file.
         Note that if you exit the game just by clicking on the 'x' button in
         the game window's titlebar, these extra features will be skipped, and
@@ -2375,7 +2375,7 @@ Mainly for consumable items:
                 on ID scrolls in combination:  !XQ
 Mainly for consumable items stored in piles:
     !g          trying to pick up this pile will only grab 1 item, as if the
-                player pressed CTRL+G (or CTRL+Z with rogue-like keyset).
+                player pressed CTRL+G (or CTRL+Z with rogue-like key set).
 
 The # inscription:
     This one makes all following inscription be appended directly behind the
@@ -2894,7 +2894,7 @@ ESP         Extrasensory perception. ESP is a telepathic power that allows you
              trolls are not a major threat, the ESP can be utilized for finding
              troll pits! These usually yield major amounts of experience in the
              early gameplay. Typically, the player would enter a dungeon floor
-             and use Shift+L (CTRL+W for Roguelike keyset) to scan the whole
+             and use Shift+L (CTRL+W for Roguelike key set) to scan the whole
              floor for a possible troll pit.
 
             Note that the rogue ability 'Cloaking' overrides ESP, so a cloaked
@@ -3169,7 +3169,7 @@ RoP         Ring of Power. While these also includes the true artifact rings of
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
             depth. ('I scum 450..500 ft for Wormy'.)
-            Use 'locate' (SHIFT+L or CTRL+W depending on keyset) to quickly
+            Use 'locate' (SHIFT+L or CTRL+W depending on key set) to quickly
             'scan' the floor for your desired monsters, provided you have the
             required type of ESP to see them.
 
@@ -4364,9 +4364,9 @@ Compilation is straight-forward and similar to Linux:
   This info and more details are also found in PROBLEM 74 in 'Troubleshooting'
   (chapter (9.8)).
 
-- In the game, note that you might need to switch the keyset to "rogue-like" in
-  order to move. This can be done directly by (in-game) pressing   = 1 A   to
-  toggle the option. (See (0.2) for keyset details.)
+- In the game, note that you might need to switch the key set to "rogue-like"
+  in order to move. This can be done directly by (in-game) pressing   = 1 A
+  to toggle the option. (See (0.2) for key set details.)
 
 - Optionally enable arrow keys for movement:
   If you want to move using the arrow keys and your client version is not newer
@@ -4454,7 +4454,7 @@ Step 4:
  After it's done it should tell you to restart your client. (You might also
  get disconnected automatically, if the auto-installation takes a while. That
  is fine.) Just restart the game and press CTRL+U to look at the audio mixer
- (or CTRL+F if you're using rogue-like keyset).
+ (or CTRL+F if you're using rogue-like key set).
  It should tell you that sound and/or music pack have been installed.
 
 In case you want to install the packs manually instead of using auto-install,
@@ -4499,7 +4499,7 @@ or music zip file is to:
    If you were extracting a sound pack or if you already installed a music pack
    previously then you will be prompted to overwrite files - choose "yes".
    Wait for the extraction process to finish.
-5. Start or restart TomeNET and press CTRL+U (or CTRL+F on rogue-like keyset)
+5. Start or restart TomeNET and press CTRL+U (or CTRL+F on rogue-like key set)
    in the game to view the audio mixer screen. If everything went smoothly it
    should say that a sound or a music pack or both have been found.
    If you don't have sound, make sure that your TomeNET.ini file (it's in your
@@ -4519,7 +4519,7 @@ use '7z x ...' and not '7z e ...'! x will extract with correct path names.
 
 Now start or restart the game, and you should have sound.
 If you don't have sound, press CTRL+U for audio mixer (or CTRL+F if you're
-using rogue-like keyset):
+using rogue-like key set):
 It should say that sound and music pack have been detected if everything went
 alright, otherwise you see a red error message.
 Also verify that your config file ("TomeNET.ini" on MS Windows, ".tomenetrc"
@@ -4528,9 +4528,9 @@ in your home folder on Linux or Mac OS X) has 'Sound' set to '1'.
 
 (2.2a) Audio controls and config options
 ----------------------------------------
-You can control mixer settings with CTRL+U key on normal keyset and CTRL+F on
-rogue-like keyset (or use CTRL+C to toggle music and CTRL+N to toggle the
-master mixer on/off, CTRL+V instead of CTRL+N on rogue-like keyset).
+You can control mixer settings with CTRL+U key on normal key set and CTRL+F on
+rogue-like key set (or use CTRL+C to toggle music and CTRL+N to toggle the
+master mixer on/off, CTRL+V instead of CTRL+N on rogue-like key set).
 
 Note: Mixer settings are saved automatically, provided you use CTRL+Q to quit.
 (Compare troubleshooting section (9.8), PROBLEM 22.)
@@ -4663,7 +4663,7 @@ B) You have no packs installed. In this case, you will have pretty bare example
   that are supported by the game but currently unused by the official packs!
 
   To test your changes live while you're logged into the game, press CTRL+U
-  (or CTRL+F if you use rogue-like keyset) and then CTRL+R to reload and
+  (or CTRL+F if you use rogue-like key set) and then CTRL+R to reload and
   reset all audio pack information on the fly. Changes to the files on disk
   will be applied immediately to the live client this way.
 
@@ -4781,12 +4781,12 @@ self-explaining or that are especially important are listed in detail here:
 
  (1, 2, 3, 4) User Interface Options:
     Rogue-like commands (rogue_like_commands)
-        Toggles between normal keyset and traditional rogue-like keyset.
+        Toggles between normal key set and traditional rogue-like key set.
 
     Alert on taking damage while you are AFK (alert_afk_dam) and
     alert on taking damage while looking around the map via 'locate' command
     (alert_offpanel_dam). (The locate command is invoked with SHIFT+L on normal
-    keyset and CTRL+W on rogue-like keyset.)
+    key set and CTRL+W on rogue-like key set.)
 
     A bunch of options for special visual effects and lighting.
         These options change how lighting is applied to lamp light and walls,
@@ -6159,7 +6159,7 @@ Weapons, armour, magic rings and amulets, a lantern or a digging tool, ammo in
 your quiver - all of these must be equipped (via 'w' key to wear/wield an item)
 in order to have effect.
 If you don't want to use a certain item anymore, you can take it off again with
-'t' key (or 'T' in rogue-like keyset), putting it back into your inventory.
+'t' key (or 'T' in rogue-like key set), putting it back into your inventory.
 
 Light sources that run on fuel (torches and brass lanterns) will put the fuel
 consumption on hold while in your inventory. Their fuel will only be consumed
@@ -6956,7 +6956,7 @@ Those macros basically consist of three parts.
 3. Attacking the designated target.
 What does the macro look like? (Note: Keys could vary depending on your
 keymap definitions. Firing might be 't' instead of 'f' if you use the
-rogue-like keyset etc.)
+rogue-like key set etc.)
 For..
 a) casting a magical spell
     Press 'm' to see your choices of casting magical spells. Let's assume you
@@ -8131,7 +8131,7 @@ Ghosts have some special abilities, these are
 -they cannot carry items except for the Book Of The Dead.
 
 Ghosts can access ghost powers with 'U' (currently not available, sorry) or
-with CTRL+X if using rogue-like keyset.
+with CTRL+X if using rogue-like key set.
 Those powers drain your experience. If you use them too often you might lose
 character levels even, and if you eventually run out of experience you will
 fade away and permanently cease to exist without a chance of resurrection
@@ -11692,7 +11692,7 @@ to you are actually diagonal of you! So now it might become clear how to do
 that event in the most effective way..
 
 Note that the map coordinates you see when pressing SHIFT+L (CTRL+W with rogue
-like keyset) can differ depending on if you have 'big_map' setting enabled or
+like key set) can differ depending on if you have 'big_map' setting enabled or
 not via  = b  .
 
 
@@ -24600,7 +24600,7 @@ The techniques are as follows:
         effectively the same as being confused).
     Bash                6 stamina
         This shield-bash technique can also be used directly by pressing 'B'
-        (normal keyset) or 'f' (rogue-like keyset) to perform a shield-bash
+        (normal key set) or 'f' (rogue-like key set) to perform a shield-bash
         against an enemy. This technique obviously requires wielding a shield.
         It will inflict damage depending on shield weight and your strength and
         a stun effect (modified by Combat skill) on your target. Your chance to
@@ -27769,7 +27769,7 @@ PROBLEM 63: My audio (sound/music) should be working fine, but I don't hear
 Solution:   Aside from checking all other audio-related problems in this
             section, make sure the reason isn't simply that you have disabled
             the 'Master' or 'Sound' or 'Music' switch in the audio mixer:
-            Press CTRL+U for the mixer (CTRL+F on rogue-like keyset) and check
+            Press CTRL+U for the mixer (CTRL+F on rogue-like key set) and check
             that the 'Master' button and any other relevant audio button has
             a green 'X' symbol between the white brackets: [X] , indicating
             that it is enabled. If not, enable all four buttons and see if it

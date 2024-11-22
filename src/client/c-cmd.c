@@ -2561,7 +2561,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "pick") && !my_strcasestr(buf, "auto_pick")) strcpy(init_search_string, "auto-pick"); //auto-pickup
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "ins") && !my_strcasestr(buf, "auto_ins")) strcpy(init_search_string, "auto-inscri"); //auto-inscription
 		else if (my_strcasestr(buf, "forc") && my_strcasestr(buf, "stack")) strcpy(init_search_string, "force-stack");
-		else if (!strcasecmp("key", buf) || !strcasecmp("keys", buf)) strcpy(init_search_string, "Command keys");
+		else if (!strcasecmp("keys", buf) || (my_strcasestr(buf, "key") && (my_strcasestr(buf, "set")))) strcpy(init_search_string, "key");
 		else if (!strcasecmp("command", buf) || !strcasecmp("commands", buf)) strcpy(init_search_string, "Slash commands");
 		else if (!strcasecmp("macro", buf) || !strcasecmp("macros", buf)) strcpy(init_search_string, "basic macros"); //3.6
 		else if (!strcasecmp("UI", buf) || !strcasecmp("GUI", buf)) strcpy(init_search_string, "user interface");
