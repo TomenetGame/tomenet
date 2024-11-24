@@ -298,8 +298,7 @@ static void strip_bytes(int n) {
  */
 /* For wilderness levels, dun_depth has been changed from 1 to 4 bytes. */
 static void rd_item(object_type *o_ptr) {
-	byte old_dd;
-	byte old_ds;
+	byte old_dd, old_ds;
 	s16b old_ac;
 
 	u32b f1, f2, f3, f4, f5, f6, esp;
@@ -396,6 +395,7 @@ static void rd_item(object_type *o_ptr) {
 		} else {
 			/* Increase portability with pointers to correct type - mikaelh */
 			s16b old_timeout;
+
 			rd_s16b(&old_timeout);
 			o_ptr->timeout = old_timeout;
 		}
@@ -655,7 +655,7 @@ static void rd_item(object_type *o_ptr) {
 #endif
 
 	/* Obtain k_idx from tval/sval instead :) */
-	if (o_ptr->k_idx)	/* zero is cipher :) */
+	if (o_ptr->k_idx) /* zero is cipher :) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 
 #ifdef SEAL_INVALID_OBJECTS
@@ -675,6 +675,18 @@ static void rd_item(object_type *o_ptr) {
 		return;
 	}
 #endif
+
+	/* Hack for gifts: The 'object kind' template applied must not be the gift wrapping's but the contained object's.
+	   Otherwise this would zero out values that gift wrappings don't have eg AC, damage dice etc. and apply wrong stuff in general,
+	   requiring the player unwrapping it to relog once to restore the original object here in turn likewise. */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+		/* Currently we cannot apply SEAL_INVALID_OBJECTS to gifts, so unknown items inside gifts would need to be deleted instead of sealed. */
+		/* For now, just keep base values unchanged and return. TODO: Unwrap the gift, apply all the stuff further below, rewrap it. Sort of. */
+		o_ptr->ac = old_ac;
+		o_ptr->dd = old_dd;
+		o_ptr->ds = old_ds;
+		return;
+	}
 
 	/* Obtain the "kind" template */
 	k_ptr = &k_info[o_ptr->k_idx];
