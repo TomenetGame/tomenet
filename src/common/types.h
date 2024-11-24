@@ -4973,5 +4973,5 @@ struct hash_entry {
 	struct hash_entry *next;	/* Next entry in the chain */
 };
 
-struct ego_granted_flags { u32b flags[6]; };
+struct ego_granted_flags { u32b flags[7]; }; //0 are esp-flags (ego-only), 1-6 are k-compatible ego-flags
 typedef struct ego_granted_flags ego_granted_flags;

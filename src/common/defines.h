@@ -5558,7 +5558,7 @@
 #define TR3_SHOW_MODS		0x00000400U	/* Always show Tohit/Todam */
 #define TR3_INSTA_ART		0x00000800U	/* Item must be a (true) artifact */
 #define TR3_FEATHER			0x00001000U	/* Feather Falling */
-#define TR3_LITE1			0x00002000U	/* Permanent Light */
+#define TR3_AUTO_ID			0x00002000U     /* Id stuff on floor */
 #define TR3_SEE_INVIS			0x00004000U	/* See Invisible */
 #define TR3_REGEN_MANA			0x00008000U	/* Item induces regeneration */
 #define TR3_SLOW_DIGEST		0x00010000U	/* Item slows down digestion */
@@ -5610,7 +5610,7 @@
  #define TR4_RECHARGED			0x00400000U     /* Object has been recharged once -- unused -- */
  #define TR3_NO_NORM_ART		0x00800000U	/* ??? -- unused -- */
  #define TR4_ULTIMATE		0x01000000U     /* ULTIMATE artifact -- unused -- */
-#define TR4_AUTO_ID		0x02000000U     /* Id stuff on floor */
+#define TR4_LITE1		0x02000000U	/* Permanent Light */
 #define TR4_LITE2		0x04000000U     /* lite radius 2 */
 #define TR4_LITE3		0x08000000U     /* lite radius 3 */
 #define TR4_FUEL_LITE			0x10000000U     /* fuelable lite */

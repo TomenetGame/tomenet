@@ -4260,7 +4260,7 @@ void calc_boni(int Ind) {
 
 		/* Boost shots */
 		//if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
-		if (f4 & TR4_AUTO_ID) { p_ptr->auto_id = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAUID; }
+		if (f3 & TR3_AUTO_ID) { p_ptr->auto_id = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAUID; }
 
 		/* Boost shots */
 		if (f3 & TR3_XTRA_SHOTS) { extra_shots++; csheet_boni[i-INVEN_WIELD].shot++; }
@@ -4346,7 +4346,7 @@ void calc_boni(int Ind) {
 			}
 		}
 		//if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
-		//if (f3 & TR3_LITE1) p_ptr->lite += 1;
+		//if (f4 & TR4_LITE1) p_ptr->lite += 1;
 		if (f3 & TR3_SEE_INVIS) { p_ptr->see_inv = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RSINV; }
 		if (f3 & TR3_FEATHER) { p_ptr->feather_fall = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RFFAL; }
 		if (f2 & TR2_FREE_ACT) { p_ptr->free_act = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RPARA; }
@@ -4356,7 +4356,7 @@ void calc_boni(int Ind) {
 		//if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
 		{
 			j = 0;
-			if (f3 & TR3_LITE1) j++;
+			if (f4 & TR4_LITE1) j++;
 			if (f4 & TR4_LITE2) j += 2;
 			if (f4 & TR4_LITE3) j += 3;
 
@@ -7164,7 +7164,7 @@ void calc_boni(int Ind) {
 						if (f3 & TR3_REGEN_MANA) csheet_boni[i].cb[6] |= CB7_RRGMP;
 						if (f3 & TR3_SLOW_DIGEST) csheet_boni[i].cb[6] |= CB7_RFOOD;
 						if (f1 & TR1_VAMPIRIC) csheet_boni[i].cb[6] |= CB7_RVAMP;
-						if (f4 & TR4_AUTO_ID) csheet_boni[i].cb[6] |= CB7_RAUID;
+						if (f3 & TR3_AUTO_ID) csheet_boni[i].cb[6] |= CB7_RAUID;
 						if (f5 & TR5_REFLECT) csheet_boni[i].cb[6] |= CB7_RREFL;
 						if (f3 & TR3_NO_MAGIC) csheet_boni[i].cb[6] |= CB7_RAMSH;
 						if (f3 & TR3_AGGRAVATE) csheet_boni[i].cb[6] |= CB7_RAGGR;
@@ -7206,7 +7206,7 @@ void calc_boni(int Ind) {
 
 							{ //lite
 								j = 0;
-								if (f3 & TR3_LITE1) j++;
+								if (f4 & TR4_LITE1) j++;
 								if (f4 & TR4_LITE2) j += 2;
 								if (f4 & TR4_LITE3) j += 3;
 								csheet_boni[i].lite += j;

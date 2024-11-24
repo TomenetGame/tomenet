@@ -1628,7 +1628,7 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f3 & TR3_WRAITH) total += 250000;
 	if (f5 & TR5_INVIS) total += 30000;
 	if (!(f4 & TR4_FUEL_LITE)) {
-		if (f3 & TR3_LITE1) total += 750;
+		if (f4 & TR4_LITE1) total += 750;
 		if (f4 & TR4_LITE2) total += 1250;
 		if (f4 & TR4_LITE3) total += 2750;
 	}
@@ -2464,14 +2464,14 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		return(a_ptr->cost);
 	}
 
-	if (f4 & TR4_AUTO_ID) {
+	if (f3 & TR3_AUTO_ID) {
 		if (o_ptr->tval == TV_GLOVES) total += 350000; //100k
 		else total += 200000; //65k
 	}
 	if (f3 & TR3_WRAITH) total += 100000;
 	if (f5 & TR5_INVIS) total += 10000;
 	if (!(f4 & TR4_FUEL_LITE)) {
-		if (f3 & TR3_LITE1) total += 750;
+		if (f4 & TR4_LITE1) total += 750;
 		if (f4 & TR4_LITE2) total += 1250;
 		if (f4 & TR4_LITE3) total += 2750;
 	}
@@ -12762,7 +12762,7 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 
 	if (f5 & TR5_CHAOTIC) return(FALSE); //assume that CHAOTIC and BLESSED cannot coincide! - Can still be Chaotic of *slay undead* though, which is considered 'fine' for now?
 
-	if (f3 & TR3_LITE1) l++;
+	if (f4 & TR4_LITE1) l++;
 	if (f4 & TR4_LITE2) l += 2;
 	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
@@ -12825,7 +12825,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 
 	if (f5 & TR5_CHAOTIC) return(FALSE); //assume that CHAOTIC and BLESSED cannot coincide! - Can still be Chaotic of *slay demon* though, which is considered 'fine' for now?
 
-	if (f3 & TR3_LITE1) l++;
+	if (f4 & TR4_LITE1) l++;
 	if (f4 & TR4_LITE2) l += 2;
 	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
@@ -13664,9 +13664,8 @@ void inverse_cursed(object_type *o_ptr) {
 		anti_undead_org = anti_undead(o_ptr, &player);
 		anti_demon_org = anti_demon(o_ptr, &player);
 		/* Remove all light flags too, as we're fine with just having at least as much light, but will also accept getting more light! */
-		old_lite_rad = ((a_org.flags3 & TR3_LITE1) ? 1 : 0) + ((a_org.flags4 & TR4_LITE2) ? 2 : 0) + ((a_org.flags4 & TR4_LITE3) ? 3 : 0);
-		a_org.flags3 &= ~TR3_LITE1;
-		a_org.flags4 &= ~(TR4_LITE2 | TR4_LITE3);
+		old_lite_rad = ((a_org.flags4 & TR4_LITE1) ? 1 : 0) + ((a_org.flags4 & TR4_LITE2) ? 2 : 0) + ((a_org.flags4 & TR4_LITE3) ? 3 : 0);
+		a_org.flags4 &= ~(TR4_LITE1 | TR4_LITE2 | TR4_LITE3);
   #endif
 
 		swap = o_ptr->pval3; /* remember the flipped randart in the future */
@@ -13711,7 +13710,7 @@ void inverse_cursed(object_type *o_ptr) {
 			if ((a_ptr->flags6 & a_org.flags6) != a_org.flags6) continue;
 
 			/* Recount light, as we're fine with just having at least as much light, but will also accept getting more light! */
-			lite_rad = ((a_ptr->flags3 & TR3_LITE1) ? 1 : 0) + ((a_ptr->flags4 & TR4_LITE2) ? 2 : 0) + ((a_ptr->flags4 & TR4_LITE3) ? 3 : 0);
+			lite_rad = ((a_ptr->flags4 & TR4_LITE1) ? 1 : 0) + ((a_ptr->flags4 & TR4_LITE2) ? 2 : 0) + ((a_ptr->flags4 & TR4_LITE3) ? 3 : 0);
 			if (lite_rad < old_lite_rad) continue;
 
 			if (!anti_undead_org && anti_undead(o_ptr, &player)) continue;

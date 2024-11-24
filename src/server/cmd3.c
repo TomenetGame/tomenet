@@ -2399,13 +2399,13 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (f3 & (TR3_REGEN)) strcat(powins, "Rg");
 	if (f3 & (TR3_REGEN_MANA)) strcat(powins, "Rgm");
 	if (!redux) {
-		if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))  strcat(powins, "+Lt");
+		if (o_ptr->tval != TV_LITE && (f4 & (TR4_LITE1 | TR4_LITE2 | TR4_LITE3))) strcat(powins, "+Lt");
 	}
 	if (f5 & (TR5_REFLECT)) strcat(powins, "Refl");
 	if (f5 & (TR5_INVIS)) strcat(powins, "Inv");
 	if (f3 & (TR3_NO_MAGIC)) strcat(powins, "AM");
 	if (f3 & (TR3_BLESSED)) strcat(powins, "Bless");
-	if (f4 & (TR4_AUTO_ID)) strcat(powins, "ID");
+	if (f3 & (TR3_AUTO_ID)) strcat(powins, "ID");
 
 	/* -- movement flags -- */
 	if (f4 & (TR4_CLIMB)) strcat(powins, "Climb"); /* Can only spawn on randarts and climbing sets */

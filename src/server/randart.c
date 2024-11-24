@@ -404,7 +404,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags2 & TR2_RES_DISEN) p += 13;
 
 	if (a_ptr->flags3 & TR3_FEATHER) p += 2;
-	if (a_ptr->flags3 & TR3_LITE1) p += 2;
+	if (a_ptr->flags4 & TR4_LITE1) p += 2;
 	if (a_ptr->flags4 & TR4_LITE2) p += 4;
 	if (a_ptr->flags4 & TR4_LITE3) p += 8;
 	if (a_ptr->flags4 & TR4_FUEL_LITE) p -= 15;//10
@@ -424,7 +424,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->esp & (ESP_UNIQUE)) p += 8;
 	if (a_ptr->esp & (ESP_SPIDER)) p += 2;
 	if (a_ptr->esp & ESP_ALL) p += 40; //note: this should probably be even higher, maybe 50
-	if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;//maybe even higher, like 30
+	if (a_ptr->flags3 & TR3_AUTO_ID) p += 20;//maybe even higher, like 30
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
 	if (a_ptr->flags3 & TR3_REGEN_MANA) p += 8;
@@ -797,7 +797,7 @@ static void add_ability(artifact_type *a_ptr) {
 				if (a_ptr->pval == 0) a_ptr->pval = 5 + rand_int(6);
 				else do_pval(a_ptr);
 				if (a_ptr->pval < 0) a_ptr->pval = 2;
-			} else if (r < 26) a_ptr->flags4 |= TR4_AUTO_ID;
+			} else if (r < 26) a_ptr->flags3 |= TR3_AUTO_ID;
 			else if (r < 36) {
 				a_ptr->flags1 |= TR1_DEX;
 				do_pval(a_ptr);
@@ -876,7 +876,7 @@ static void add_ability(artifact_type *a_ptr) {
 			else if (r < 17) {
 				a_ptr->flags1 |= TR1_INFRA;
 				if (a_ptr->pval == 0) a_ptr->pval = randint(2);
-			} else if (r < 25) a_ptr->flags4 |= TR4_AUTO_ID;
+			} else if (r < 25) a_ptr->flags3 |= TR3_AUTO_ID;
 			else if (r < 30) {
 				a_ptr->flags1 |= TR1_WIS;
 				do_pval(a_ptr);
@@ -923,7 +923,7 @@ static void add_ability(artifact_type *a_ptr) {
 			else if (r < 22) {
 				a_ptr->flags1 |= TR1_MANA;
 				if (a_ptr->pval == 0) a_ptr->pval = randint(5);
-			} else if (r < 30) a_ptr->flags4 |= TR4_AUTO_ID;
+			} else if (r < 30) a_ptr->flags3 |= TR3_AUTO_ID;
 			//else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
 			//else if (r < 45) a_ptr->esp |= (ESP_ALL);
 			else if (r < 31) a_ptr->esp |= (ESP_ORC);
@@ -1095,7 +1095,7 @@ static void add_ability(artifact_type *a_ptr) {
 			}
 			break;
 		case TV_LITE:
-			if (r < 50) a_ptr->flags3 |= TR3_LITE1;
+			if (r < 50) a_ptr->flags4 |= TR4_LITE1;
 			else if (r < 80) a_ptr->flags4 |= TR4_LITE2;
 			else a_ptr->flags4 |= TR4_LITE3;
 			//if (r % 2) a_ptr->flags4 &= ~TR4_FUEL_LITE;
@@ -1260,7 +1260,7 @@ static void add_ability(artifact_type *a_ptr) {
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_RES_DISEN;
 				break;
 			case 37: a_ptr->flags3 |= TR3_FEATHER; break;
-			case 38: a_ptr->flags3 |= TR3_LITE1; break;
+			case 38: a_ptr->flags4 |= TR4_LITE1; break;
 			case 39: a_ptr->flags3 |= TR3_SEE_INVIS; break;
 		        case 40:
 #if 0
@@ -1409,7 +1409,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 	/* Unblessed removes all flags that could hurt undead/demonic wielders */
 	if ((k_ptr->flags6 & TR6_UNBLESSED)) {
-		a_ptr->flags3 &= ~TR3_LITE1;
+		a_ptr->flags4 &= ~TR4_LITE1;
 		a_ptr->flags1 &= ~TR1_KILL_DEMON;
 		a_ptr->flags1 &= ~TR1_KILL_UNDEAD;
 	}
@@ -2263,7 +2263,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 	/* Tweak light-type of light-emitting artifacts.
 	   If a base item already gives off light, its base flags already decide whether it has white light or not. */
-	if (!(k_ptr->flags3 & TR3_LITE1) && !(k_ptr->flags4 & (TR4_LITE2 | TR4_LITE3))) {
+	if (!(k_ptr->flags4 & (TR4_LITE1 | TR4_LITE2 | TR4_LITE3))) {
 		/* For all other items, ie those that only have +light because they're an artifact, decide here.. */
 		if (a_ptr->flags3 & TR3_SH_FIRE) ; //not white
 		else if (a_ptr->flags3 & (TR3_SH_COLD | TR3_SH_ELEC)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //white, assuming the light is consistent with the aura sort of
@@ -2816,7 +2816,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		/* Choose an ability */
 		switch (randint(10)) {
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
-		case 2: a_ptr->flags3 |= (TR3_LITE1);	break;
+		case 2: a_ptr->flags4 |= (TR4_LITE1);	break;
 		case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
 		//case 4: a_ptr->esp |= (ESP_ALL);   break;
 		case 4: add_random_esp(a_ptr, 5); break;
@@ -2833,7 +2833,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		/* Choose an ability */
 		switch (randint(10)) {
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
-		case 2: a_ptr->flags3 |= (TR3_LITE1);	break;
+		case 2: a_ptr->flags4 |= (TR4_LITE1);	break;
 		case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
 		//case 4: a_ptr->esp |= (ESP_ALL);   break;
 		case 4: add_random_esp(a_ptr, -4); break;
