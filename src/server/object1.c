@@ -5303,7 +5303,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot
  * (for player stores maybe.).
  */
 /* Print object flag info to file, specifically with colouring for randomized powers ie those from ego items. */
-#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & flag)) ? "" : "\377B", msg)
+#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & (flag))) ? "" : "\377B", msg)
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
