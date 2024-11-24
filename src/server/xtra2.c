@@ -7426,7 +7426,7 @@ if (cfg.unikill_format) {
 			qq_ptr->iron_turn = turn;
 			if (true_artifact_p(qq_ptr)) determine_artifact_timeout(qq_ptr->name1, wpos);
 			/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
-			if (!maybe_hidden_powers(Ind, qq_ptr, FALSE)) qq_ptr->ident |= ID_NO_HIDDEN;
+			if (!maybe_hidden_powers(Ind, qq_ptr, FALSE, NULL)) qq_ptr->ident |= ID_NO_HIDDEN;
 #endif
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");

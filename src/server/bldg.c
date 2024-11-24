@@ -1505,7 +1505,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			if (id) {
 				o_ptr->ident |= ID_KNOWN;
 				/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
-				if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+				if (!maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) o_ptr->ident |= ID_NO_HIDDEN;
 			}
 			can_use(Ind, o_ptr);
 			determine_artifact_timeout(ART_ANDURIL, &o_ptr->wpos); //reset duration, effectively, hm

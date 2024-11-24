@@ -1465,7 +1465,7 @@ void object_known(object_type *o_ptr) {
 	o_ptr->ident |= (ID_KNOWN | ID_SENSED_ONCE);
 
 	/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
-	if (!maybe_hidden_powers(0, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+	if (!maybe_hidden_powers(0, o_ptr, FALSE, NULL)) o_ptr->ident |= ID_NO_HIDDEN;
 
 	/* Artifact becomes 'found' status - omg it must already become
 	'found' if a player picks it up! That gave headaches! */
@@ -8258,7 +8258,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 			forge.iron_trade = Players[Ind]->iron_trade;
 
 			/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
-			if (!maybe_hidden_powers(Ind, &forge, FALSE)) forge.ident |= ID_NO_HIDDEN;
+			if (!maybe_hidden_powers(Ind, &forge, FALSE, NULL)) forge.ident |= ID_NO_HIDDEN;
 
 			if (opening_chest) forge.iron_turn = opening_chest;
 			else forge.iron_turn = turn;
@@ -11844,7 +11844,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 
 		/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
-		if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+		if (!maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) o_ptr->ident |= ID_NO_HIDDEN;
 	}
 
 	/* Auto id ? */

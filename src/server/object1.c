@@ -5046,10 +5046,48 @@ static void display_tool_handling(int Ind, object_type *o_ptr, FILE *fff, int In
   ignore_id: If TRUE, the function ignores the item's ID_MENTAL state (aka *identified*) and hence can still return(TRUE) in that case. Added for shop-pasting.
   Ind is allowed to be 0 for the edge case of power-reinscribing when curse-flipping. And now also for use in object_known() to check for ID_NO_HIDDEN application.
 */
-bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
+bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id, ego_granted_flags **static_e_ptr) {
 	bool aware = !Ind || object_aware_p(Ind, o_ptr);
 	ego_item_type *e_ptr;
+	static ego_granted_flags fixed_flag_forge;
 	int j;
+
+	/* fixed_flag_forge: Collect all 100% granted flags, that is from ego powers and also the base item. */
+	if (static_e_ptr && !o_ptr->name1) { /* Arts are expected to have practically all abilities as 'hidden powers', no detail needed here (would even be spammy colour-wise). */
+		*static_e_ptr = &fixed_flag_forge;
+		fixed_flag_forge.flags[0] = fixed_flag_forge.flags[1] = fixed_flag_forge.flags[2] =
+		fixed_flag_forge.flags[3] = fixed_flag_forge.flags[4] = fixed_flag_forge.flags[5] = 0;
+		if (o_ptr->name2) {
+			e_ptr = &e_info[o_ptr->name2];
+			for (j = 0; j < 5; j++) {
+				if (e_ptr->rar[j] != 100) continue;
+				fixed_flag_forge.flags[0] |= e_ptr->flags1[j];
+				fixed_flag_forge.flags[1] |= e_ptr->flags2[j];
+				fixed_flag_forge.flags[2] |= e_ptr->flags3[j];
+				fixed_flag_forge.flags[3] |= e_ptr->flags4[j];
+				fixed_flag_forge.flags[4] |= e_ptr->flags5[j];
+				fixed_flag_forge.flags[5] |= e_ptr->flags6[j];
+			}
+		}
+		if (o_ptr->name2b) {
+			e_ptr = &e_info[o_ptr->name2b];
+			for (j = 0; j < 5; j++) {
+				if (e_ptr->rar[j] != 100) continue;
+				fixed_flag_forge.flags[0] |= e_ptr->flags1[j];
+				fixed_flag_forge.flags[1] |= e_ptr->flags2[j];
+				fixed_flag_forge.flags[2] |= e_ptr->flags3[j];
+				fixed_flag_forge.flags[3] |= e_ptr->flags4[j];
+				fixed_flag_forge.flags[4] |= e_ptr->flags5[j];
+				fixed_flag_forge.flags[5] |= e_ptr->flags6[j];
+			}
+		}
+		fixed_flag_forge.flags[0] |= k_info[o_ptr->k_idx].flags1;
+		fixed_flag_forge.flags[1] |= k_info[o_ptr->k_idx].flags2;
+		fixed_flag_forge.flags[2] |= k_info[o_ptr->k_idx].flags3;
+		fixed_flag_forge.flags[3] |= k_info[o_ptr->k_idx].flags4;
+		fixed_flag_forge.flags[4] |= k_info[o_ptr->k_idx].flags5;
+		fixed_flag_forge.flags[5] |= k_info[o_ptr->k_idx].flags6;
+	}
 
 	/* item not already *id*ed or well known (flavoured item)? */
 	if ((!ignore_id && (o_ptr->ident & ID_MENTAL)) ||  // todo maybe: check ID_NO_HIDDEN?
@@ -5112,6 +5150,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 			}
 		}
 	}
+
 	return(FALSE);
 }
 
@@ -5152,7 +5191,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	}
 
 	/* Sigil */
-	if (o_ptr->sigil) msg_format(Ind, "\377B  It is emblazoned with a sigil of %s.", string_exec_lua(0, format("return rcraft_name(%d)", o_ptr->sigil)));
+	if (o_ptr->sigil) msg_format(Ind, "\377G  It is emblazoned with a sigil of %s.", string_exec_lua(0, format("return rcraft_name(%d)", o_ptr->sigil)));
 
  #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHARGE) msg_format(Ind, "\377s  Its default fuse length will burn down in %d seconds.", o_ptr->pval);
@@ -5243,6 +5282,8 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot
  * just display some basic information, a note that it isn't *ID*ed, and exit
  * (for player stores maybe.).
  */
+/* Print object flag info to file, specifically with colouring for randomized powers ie those from ego items. */
+#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot - 1] & flag)) ? "" : "\377B", msg)
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
@@ -5268,7 +5309,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
 	char timeleft[51] = { 0 };//[26]
-
+	ego_granted_flags *es_ptr = NULL; //silence compiler warning
 
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
@@ -5599,7 +5640,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (o_ptr->questor) quest_interact(Ind, o_ptr->quest - 1, o_ptr->questor_idx, fff);
 
 	/* Sigil */
-	if (o_ptr->sigil) fprintf(fff, "\377BIt is emblazoned with a sigil of %s.\n", string_exec_lua(0, format("return rcraft_name(%d)", o_ptr->sigil)));
+	if (o_ptr->sigil) fprintf(fff, "\377GIt is emblazoned with a sigil of %s.\n", string_exec_lua(0, format("return rcraft_name(%d)", o_ptr->sigil)));
 
 #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHARGE) fprintf(fff, "\377s  Its default fuse length will burn down in %d seconds.\n", o_ptr->pval);
@@ -5613,25 +5654,25 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (pt_ptr->melee_brand && !pt_ptr->melee_brand_ma && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
 		switch (pt_ptr->melee_brand_t) {
 		case TBRAND_ELEC:
-			fprintf(fff, "\377BLightning charge has been applied to it temporarily.\n");
+			fprintf(fff, "\377GLightning charge has been applied to it temporarily.\n");
 			break;
 		case TBRAND_COLD:
-			fprintf(fff, "\377BFrost brand has been applied to it temporarily.\n");
+			fprintf(fff, "\377GFrost brand has been applied to it temporarily.\n");
 			break;
 		case TBRAND_ACID:
-			fprintf(fff, "\377BAcid cover has been applied to it temporarily.\n");
+			fprintf(fff, "\377GAcid cover has been applied to it temporarily.\n");
 			break;
 		case TBRAND_FIRE:
-			fprintf(fff, "\377BFire brand has been applied to it temporarily.\n");
+			fprintf(fff, "\377GFire brand has been applied to it temporarily.\n");
 			break;
 		case TBRAND_POIS:
-			fprintf(fff, "\377BVenom has been applied to it temporarily.\n");
+			fprintf(fff, "\377GVenom has been applied to it temporarily.\n");
 			break;
 		case TBRAND_HELLFIRE:
-			fprintf(fff, "\377BHellfire brand has been applied to it temporarily.\n");
+			fprintf(fff, "\377GHellfire brand has been applied to it temporarily.\n");
 			break;
 		case TBRAND_VAMPIRIC:
-			fprintf(fff, "\377BVampirism brand has been applied to it temporarily.\n");
+			fprintf(fff, "\377GVampirism brand has been applied to it temporarily.\n");
 			break;
 		//other brands are unused atm (possibly not fully implemented even)
 		}
@@ -5640,8 +5681,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		 while temporary brands at least (usually) stop when you take off the weapon. */
 #endif
 
-	/* in case we just *ID* it because an admin inspected it */
-	if (is_admin(p_ptr) && maybe_hidden_powers(0, o_ptr, FALSE)
+	/* in case we just *ID* it because an admin inspected it.
+	   NOTE: We need the maybe_hidden_powers() call here for all players, to set es_ptr, so it's coming first before the admin check. */
+	if (maybe_hidden_powers(0, o_ptr, FALSE, &es_ptr) && is_admin(p_ptr)
 #ifdef NEW_ID_SCREEN
 	    && full
 #endif
@@ -5916,7 +5958,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (radius > LITE_CAP) radius = LITE_CAP; /* LITE_MAX ? */
 
 		//maybe todo: distinguish TR5_WHITE_LIGHT?
-		if (f4 & TR4_FUEL_LITE) fprintf(fff, "It provides %slight (radius %d) when fueled.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
+		if (f4 & TR4_FUEL_LITE) ff_print(format("It provides %slight (radius %d) when fueled.", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius), 4, TR4_FUEL_LITE);
 		else if (radius) fprintf(fff, "It provides %slight (radius %d) forever.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
 		else fprintf(fff, "It never provides light.\n");
 	}

@@ -2563,7 +2563,7 @@ bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr in
 	   Side note: If @@@ is present, an additional @@ will simply be ignored. */
 	if (!(pi_pos = strstr(inscription, "@@"))) return(FALSE);
 
-	if (maybe_hidden_powers(Ind, o_ptr, FALSE)) {
+	if (maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) {
 		if (Ind) msg_print(Ind, "\377yThis item may have hidden powers. You must *identify* it first.");
 		return(TRUE); /* Still, we found the "@@" inscription, despite being unable to complete the request. */
 	}
@@ -5259,7 +5259,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 				if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 
 				/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
-				if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+				if (!maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) o_ptr->ident |= ID_NO_HIDDEN;
 			}
 
 			/* Auto id ? */

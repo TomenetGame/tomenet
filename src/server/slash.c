@@ -940,7 +940,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
 				   Side note: If @@@ is present, an additional @@ will simply be ignored.
 				   NOTE: In case of 'tagging' this actually won't tag but rather overwrite the existing inscription. */
-				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE)) {
+				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "Power-inscribing %s.", o_name);
 					//msg_print(Ind, NULL);

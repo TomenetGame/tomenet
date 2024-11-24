@@ -2975,7 +2975,7 @@ static void display_entry(int Ind, int pos) {
 		powers[0] = 0;
 		if (((o_ptr->name1 == ART_RANDART || (!o_ptr->name1 && wearable_p(o_ptr)))
 #if 0
-		    && maybe_hidden_powers(Ind, o_ptr, TRUE)
+		    && maybe_hidden_powers(Ind, o_ptr, TRUE, NULL)
 #endif
 		    )
 		    //|| (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) -- no, because custom book spells are already all transmitted via Send_store_wide below.
