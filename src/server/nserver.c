@@ -12903,7 +12903,7 @@ static int Receive_skill_dev(int ind) {
 			for (i = 0; i < MAX_SKILLS; i++) {
 				p_ptr->s_info[i].dev = (dev == 0 ? FALSE : TRUE);
 			}
-		} else {
+		} else if (i >= 0 && i < MAX_SKILLS) { //sanity check; in case of packet errors with some other stuff we had a panic save happen here once ^^
 			/* only do it for one skill */
 			p_ptr->s_info[i].dev = (dev == 0 ? FALSE : TRUE);
 		}
