@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. November 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 25. November 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15860,16 +15860,27 @@ In general, higher recharge power and lower base item level result in...
  -lower chance for the recharge process to fail,
  -chance for gaining a higher amount of charges replenished.
 
-If unlucky, recharging may result in a failure. Even when recharging at highest
-magic spell level there is still a very slim chance for a failure to occur.
+If the device is successfully recharged and is a device using charges (ie
+a wand or a staff) it will become unidentified as you will not know how many
+charges it gained. To find out, you have to identify it again.
+
+If unlucky, recharging may result in a failure. Even when recharging at the
+highest magic spell level there is still a very slim chance for a failure to
+occur.
 While a failed recharge may drain rods even further, wands and staves may
 either just get their charges depletes or they may even blow up completely,
-depending on your (bad) luck.
+depending on your (bad) luck. The messages are:
+ - "There is a static discharge." - the device survives but is depleted.
+ - "There is a bright flash of light." - the device is destroyed.
+   (Wands or staves only, rods can only get discharged but not destroyed.)
+If the device was destroyed and it was fused with a mage staff, the mage staff
+survives and is reverted to its basic state, allowing you to fuse it again with
+a new device.
+
 If a wand or staff still has charges when you try to recharge it, the risk of
 failure increases for every charge it still has.
 So if you want to minimize failure chance, only recharge thosse when they are
 already fully depleted.
-
 You can inscribe wands and staves "!D", a quality of life feature which will
 automatically deplete the device for you first when you try to recharge it,
 so you don't have to activate it manually to get rid of any remaining charges.
