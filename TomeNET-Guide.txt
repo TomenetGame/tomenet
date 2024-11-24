@@ -24470,6 +24470,10 @@ to change, which will probably appear as a note in the message of the day (~f).
 
 You might need a client of version greater than 4.9.0c to use this quirk.
 
+If the server also has the feature of fuseable mage staves, then the quirk for
+wielding a magic device will be active accordingly while wielding a mage staff
+which was fused with the device.
+
 
 
 (7.11) Parrying and blocking
