@@ -6243,7 +6243,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f3 & (TR3_AUTO_CURSE)) fprintf(fff, "\377DIt can re-curse itself.\n");
 
 	/* Stormbringer hardcoded note to give a warning!- C. Blue */
-	if (o_ptr->name2 == EGO_STORMBRINGER) fprintf(fff, "\377RIt's possessed by mad wrath, distinguishing not between friend or foe!\n");
+	if (o_ptr->name2 == EGO_STORMBRINGER) fprintf(fff, "\377RIt is possessed by mad wrath, distinguishing not between friend or foe!\n");
 
 	/* also show anti-undead/demon life drain */
 	j = anti_undead(o_ptr, pt_ptr);
