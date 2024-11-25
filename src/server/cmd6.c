@@ -8740,7 +8740,7 @@ void do_cmd_stance(int Ind, int stance) {
 			return;
 		}
 		msg_print(Ind, "\377sYou enter a balanced stance!");
-s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
+		s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 	break;
 	case 1:
 		switch (p_ptr->pclass) {
@@ -8863,7 +8863,7 @@ s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 			}
 			break;
 		}
-s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
+		s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 		break;
 
 	case 2:
@@ -8983,7 +8983,7 @@ s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 			}
 			break;
 		}
-s_printf("SWITCH_STANCE: %s - offensive\n", p_ptr->name);
+		s_printf("SWITCH_STANCE: %s - offensive\n", p_ptr->name);
 		break;
 	}
 
@@ -9042,7 +9042,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		stop_shooting_till_kill(Ind);
 
 		set_melee_sprint(Ind, 9 + rand_int(3)); /* number of turns it lasts */
-s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 	case 1:	if (!(p_ptr->melee_techniques & MT_TAUNT)) return; /* Taunt */
@@ -9057,7 +9057,7 @@ s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		stop_precision(Ind);
 
 		taunt_monsters(Ind);
-s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9071,7 +9071,7 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		stop_precision(Ind);
 
 		throw_dirt(Ind);
-s_printf("TECHNIQUE_MELEE: %s - throw dirt\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - throw dirt\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9100,7 +9100,7 @@ s_printf("TECHNIQUE_MELEE: %s - throw dirt\n", p_ptr->name);
 		stop_precision(Ind);
 
 		distract_monsters(Ind);
-s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9133,7 +9133,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		stop_shooting_till_kill(Ind);
 		msg_print(Ind, "You apply the poisonous essence to your weapon..");
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
-s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9142,7 +9142,7 @@ s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 		use_stamina(p_ptr, 3);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		(void)detect_creatures_xxx(Ind, RF3_ANIMAL);
-s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9151,7 +9151,7 @@ s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
 		use_stamina(p_ptr, 2);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		detect_noise(Ind);
-s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9168,7 +9168,7 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 		stop_shooting_till_kill(Ind);
 
 		flash_bomb(Ind);
-s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9244,7 +9244,7 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 
 		spin_attack(Ind);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
-s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9267,7 +9267,7 @@ s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		msg_print(Ind, "You prepare an armour-piercing attack combination..");
 		p_ptr->piercing = 1000; /* [1000] : one round of piercing blows */
 		p_ptr->piercing_charged = TRUE; /* Prepared and ready - ST won't regenerate until we use it! */
-s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 #endif
@@ -9282,13 +9282,13 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 		use_stamina(p_ptr, 10);
 		un_afk_idle(Ind);
 		set_shero(Ind, randint(5) + 15);
-s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
 	case 15 :if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
 		shadow_run(Ind);
-s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
+		s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
@@ -9387,9 +9387,10 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 		msg_print(Ind, "You prepare an oil-drenched shot..");
-s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
+		s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;
+
 	case 1:	if (!(p_ptr->ranged_techniques & RT_PRECS)) return; /* Precision shot */
 		if (p_ptr->ranged_precision) {
 			msg_print(Ind, "You stop aiming overly precisely.");
@@ -9404,14 +9405,16 @@ s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 		p_ptr->ranged_precision = TRUE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* focus.. >:) (maybe even 2 turns oO) */
 		msg_print(Ind, "You aim carefully for a precise shot..");
-s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
+		s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;
+
 	case 2:	if (!(p_ptr->ranged_techniques & RT_CRAFT)) return; /* Craft some ammunition */
-s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
+		s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		do_cmd_fletchery(Ind); /* was previously MKEY_FLETCHERY (9) */
 		return;
+
 	case 3:	if (!(p_ptr->ranged_techniques & RT_DOUBLE)) return; /* Double-shot */
 		if (!p_ptr->ranged_double) {
 			//if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -9426,9 +9429,10 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		p_ptr->ranged_double = !p_ptr->ranged_double; /* toggle */
 		if (p_ptr->ranged_double) msg_print(Ind, "You switch to shooting double shots.");
 		else msg_print(Ind, "You stop using double shots.");
-s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
+		s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;
+
 	case 4:	if (!(p_ptr->ranged_techniques & RT_BARRAGE)) return; /* Barrage */
 		if (p_ptr->ranged_barrage) {
 			msg_print(Ind, "You cancel preparations for barrage.");
@@ -9446,10 +9450,15 @@ s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE;
 		p_ptr->ranged_barrage = TRUE;
 		msg_print(Ind, "You prepare a powerful multi-shot barrage...");
-s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
+		s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 //in cmd2.c!	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* You _prepare_ it.. */
 		break;
+
+	default:
+		msg_print(Ind, "Invalid technique.");
+		s_printf("TECHNIQUE_RANGED: %s used invalid code %d.\n", p_ptr->name, technique);
+		return;
 	}
 }
 
