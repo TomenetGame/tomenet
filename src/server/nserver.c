@@ -12911,8 +12911,7 @@ static int Receive_skill_dev(int ind) {
 	return(1);
 }
 
-static int Receive_go_up(int ind)
-{
+static int Receive_go_up(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
@@ -12939,8 +12938,7 @@ static int Receive_go_up(int ind)
 	return(1);
 }
 
-static int Receive_go_down(int ind)
-{
+static int Receive_go_down(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
@@ -13049,9 +13047,8 @@ static int Receive_spell(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return(1);
-	if (spell > max_spells) return(1);
+	if (item >= INVEN_TOTAL) return(1);
+	if (spell >= max_spells) return(1);
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
@@ -13066,8 +13063,7 @@ static int Receive_spell(int ind) {
 }
 
 
-static int Receive_message(int ind)
-{
+static int Receive_message(int ind) {
 	connection_t *connp = Conn[ind];
 	char ch, buf[MSG_LEN];
 	int n, player = -1;
@@ -14409,8 +14405,9 @@ static int Receive_master(int ind) {
 	 */
 
 	/* Is this necessary here? Maybe (evileye) */
-	if (!admin_p(player) &&
-	    !player_is_king(player) && !guild_build(player)) {
+	if (!admin_p(player)
+	    //&& !((player_is_king(player) || guild_build(player)) && command == MASTER_BUILD)
+	    ) {
 		/* Hack -- clear the receive and queue buffers since we won't be
 		 * reading in the dungeon master parameters that were sent.
 		 */
@@ -14424,38 +14421,38 @@ static int Receive_master(int ind) {
 		return(n);
 	}
 
-	if (player) {
-		switch (command) {
-		case MASTER_LEVEL:
-			master_level(player, buf);
-			break;
-		case MASTER_BUILD:
-			master_build(player, buf);
-			break;
-		case MASTER_SUMMON:
-			master_summon(player, buf);
-			break;
-		case MASTER_GENERATE:
-			master_generate(player, buf);
-			break;
-		case MASTER_PLAYER:
-			master_player(player, buf);
-			break;
-		case MASTER_SCRIPTS:
-			master_script_exec(player, buf);
-			break;
-		case MASTER_SCRIPTB:
-			master_script_begin(buf + 1, *buf);
-			break;
-		case MASTER_SCRIPTE:
-			master_script_end();
-			break;
-		case MASTER_SCRIPTL:
-			master_script_line(buf);
-			break;
-		}
-	}
+	if (!player) return(2);
 
+	switch (command) {
+	case MASTER_LEVEL:
+		master_level(player, buf);
+		break;
+	case MASTER_BUILD:
+		master_build(player, buf);
+		break;
+	case MASTER_SUMMON:
+		master_summon(player, buf);
+		break;
+	case MASTER_GENERATE:
+		master_generate(player, buf);
+		break;
+	case MASTER_PLAYER:
+		master_player(player, buf);
+		break;
+	case MASTER_SCRIPTS:
+		master_script_exec(player, buf);
+		break;
+	case MASTER_SCRIPTB:
+		master_script_begin(buf + 1, *buf);
+		break;
+	case MASTER_SCRIPTE:
+		master_script_end();
+		break;
+	case MASTER_SCRIPTL:
+		master_script_line(buf);
+		break;
+	}
+	/* Wrong command */
 	return(2);
 }
 
@@ -14470,28 +14467,27 @@ static int Receive_autophase(int ind) {
 	player_type *p_ptr = NULL;
 	connection_t *connp = Conn[ind];
 	object_type *o_ptr;
-	int player = -1, n;
+	int player = 0, n;
+
+	return(-1); //not a valid packet at this time
 
 	if (connp->id != -1) player = GetInd[connp->id];
-		else player = 0;
 
 	/* a valid player was found, try to do the autophase */
-	if (player) {
-		p_ptr = Players[player];
-		/* first, check the inventory for phase scrolls */
-		/* check every item of his inventory */
-		for (n = 0; n < INVEN_PACK; n++) {
-			o_ptr = &p_ptr->inventory[n];
-			if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_PHASE_DOOR)) {
-				/* found a phase scroll, read it! */
-				do_cmd_read_scroll(player, n);
-				return(1);
-			}
+	if (!player) return(-1);
+
+	p_ptr = Players[player];
+	/* first, check the inventory for phase scrolls */
+	/* check every item of his inventory */
+	for (n = 0; n < INVEN_PACK; n++) {
+		o_ptr = &p_ptr->inventory[n];
+		if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_PHASE_DOOR)) {
+			/* found a phase scroll, read it! */
+			do_cmd_read_scroll(player, n);
+			return(1);
 		}
 	}
-
 	/* Failure!  We are in trouble... */
-
 	return(-1);
 }
 
@@ -14842,8 +14838,7 @@ static int Receive_wield2(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return(1);
+	if (item >= INVEN_TOTAL) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -15036,18 +15031,12 @@ static int Receive_account_info(int ind) {
 	char ch;
 	int n, player = -1;
 
-	if (connp->id != -1) {
-		player = GetInd[connp->id];
-	}
+	if (connp->id != -1) player = GetInd[connp->id];
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return(n);
 	}
-
-	if (player > 0) {
-		Send_account_info(player);
-	}
-
+	if (player > 0) Send_account_info(player);
 	return(1);
 }
 
@@ -15092,8 +15081,7 @@ static int Receive_force_stack(int ind) {
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+		if (n == -1) Destroy_connection(ind, "read error");
 		return(n);
 	}
 
