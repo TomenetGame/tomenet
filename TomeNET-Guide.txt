@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 25. November 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 26. November 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -496,7 +496,7 @@ for certain colour blindness types (deuteranopia, protanopia, tritanopia) is to
 go to the  = C  options screen where you can set all of this.
 Don't forget to press 's' to save your changes.
 
-You probably want to turn off the option 'palette_animation' in = 1 if you use
+You probably want to turn off the option 'palette_animation' in =2 if you use
 any colourblind mode or your own customized colours, because palette animation
 will override colours with interpolations of the 'normal' palette scheme.
 (palette_animation only has effect on colours while you are outdoors though.)
@@ -533,18 +533,18 @@ Note that the colourmap entry #0 is fixed and cannot be changed, it is always
 If you are especially photosensitive, the screen-lighting effect used for
 thunderstorm weather might impact you. There are also a few minor especially
 fast-flickering effects. You can disable all of these in the game options by
-pressing the following keys in game to access the various options pages (1-7):
+pressing the following keys in game to access the various options pages (0-9):
 
-= 1 view_animated_lite (fire-based lamps will flicker in yellow/orange)
-= 1 no_weather (disables all weather particles: raindrops and snowflakes)
-= 1 disable_lightning (the aforementioned thunderstorm flash)
-= 3 flash_player (your '@' flickers brightly whenever you change location
-    rapidly to make it easier spotting yourself on the screen)
-= 3 recall_flicker (show animated colours in the various game windows)
-= 3 flash_insane (your '@' flickers rapidly when your sanity is very low
-    to alert you of impending no-ghost-death by sanity)
-= 3 no_flicker (disables all fast-flickering colour animations. This can
-    make it quite hard to distinguish monsters though.)
+ =2  view_animated_lite (fire-based lamps will flicker in yellow/orange)
+ =2  no_weather (disables all weather particles: raindrops and snowflakes)
+ =2  disable_lightning (the aforementioned thunderstorm flash)
+ =4  flash_player (your '@' flickers brightly whenever you change location
+     rapidly to make it easier spotting yourself on the screen)
+ =2  recall_flicker (show animated colours in the various game windows)
+ =4  flash_insane (your '@' flickers rapidly when your sanity is very low
+     to alert you of impending no-ghost-death by sanity)
+ =2  no_flicker (disables all fast-flickering colour animations. This can
+     make it quite hard to distinguish monsters though.)
 
 
 (0.1d) Readability improvements
@@ -557,7 +557,7 @@ In TomeNET.ini set it to 1 instead of 0, in .tomenetrc uncomment the line by
 removing the leading '#' symbol. Restart your game client.
 
 If you have trouble deciphering long price tags or experience point amounts,
-press  = 4  and try the option 'colourize_bignum' at the bottom of that options
+press  =3  and try the option 'colourize_bignum' at the bottom of that options
 page. It will colour prices and XP alternatingly in 3-digit columns.
 
 
@@ -696,7 +696,7 @@ x       S       swap an item. This is basically like both "wear/wield" and
                 still use 'x', eg '@x0' when the macro is 'S0'!
 
 q       q       quaff a potion.
-                If you enable the 'keep_bottle' option (it's in =8 at the time
+                If you enable the 'keep_bottle' option (it's in =0 at the time
                 of writing this) your character will retain an empty bottle
                 which you can fill at a fountain.
 
@@ -1534,7 +1534,7 @@ They all start with a slash '/' hence they're called slash commands:
 /dun        Displays the name of the dungeon you're currently in.
 
 /edmt       This toggles the client option 'easy_disarm_montraps' manually.
-            (Note that this will not change the option in =8, if you enter that
+            (Note that this will not change the option in =9 if you enter that
             menu, the option state will be reset to what it is in there.)
             This will toggle the characters behaviour when walking into a
             monster trap: Whether it will automatically attempt to disarm it or
@@ -4365,7 +4365,7 @@ Compilation is straight-forward and similar to Linux:
   (chapter (9.8)).
 
 - In the game, note that you might need to switch the key set to "rogue-like"
-  in order to move. This can be done directly by (in-game) pressing   = 1 A
+  in order to move. This can be done directly by (in-game) pressing  = 1 A
   to toggle the option. (See (0.2) for key set details.)
 
 - Optionally enable arrow keys for movement:
@@ -5022,7 +5022,7 @@ self-explaining or that are especially important are listed in detail here:
       for electricity, green "P" for posion, violet "M" for mana.
     - Indicator for temporary ESP: "ESP" (in white colour).
       This will be displayed below the temp elemental resistance indicators.
-    - hp/mp/sn/_huge_bar options (in = 3).
+    - hp/mp/sn/_huge_bar options (in  =1 ).
       These huge bars for easy tracking are displayed over almost half the big
       main window size, in the otherwise unused bottom part, below the temp ESP
       indicator.
@@ -5196,7 +5196,7 @@ will be applied via the (exactly one!) regular expression specified in the file
 To add other fonts that don't match these criteria, you have to add their names
 manually in the file 'lib/xtra/fonts-x11-menuscan.txt'.
 When using a custom font that has different mapping than standard fonts you
-might need to turn off the option 'font_map_solid_walls' in = 1 if you spot
+might need to turn off the option 'font_map_solid_walls' in  =2  if you spot
 any wall tiles that look not like they are supposed to in that particular font.
 Fedora 33: Tokariew wrote information about installing fonts on this OS here:
  https://github.com/TomenetGame/tomenet/issues/15
@@ -5298,7 +5298,7 @@ This is important because these two ASCII codes are used for drawing bar
 elements in the UI (especially if a player has 'solid_bars' option enabled).
 
 When using a custom font you probably want to turn off the option
-'font_map_solid_walls' in = 1, as it interferes with the mapping of various
+'font_map_solid_walls' in  =2 , as it interferes with the mapping of various
 wall tiles: It will force-remap all affected wall tiles to character 127 for
 Windows clients and to character 2 for Linux/Mac OS X clients and all treasure
 veins ('*' symbol in the game, aka walls with treasure to mine) to character 1,
@@ -5418,7 +5418,7 @@ by putting this in your .tomenetrc (POSIX):
 or TomeNET.ini (Windows):
   Graphics=1
   GraphicTiles=16x22sv
-and then in-game make sure that the option = 1 'font_map_solid_walls' is OFF!
+and then in-game make sure that the option  =2  'font_map_solid_walls' is OFF!
 
 However, you're not done yet, as you should still select a fitting font too
 (easiest is to use the 16x22 font Svechnik provides too for this purpose),
@@ -5992,7 +5992,7 @@ pressing CTRL+P, or to look only at chat/important messages by pressing CTRL+O.
 Please do not use foul language in chat. If you do, depending on the server
 settings you might end up in jail.
 Also, foul language is filtered by default. If you want to turn that off,
-press  = 1  and toggle the client option "censor_swearing". (Requires client
+press  =1  and toggle the client option "censor_swearing". (Requires client
 version newer than 4.4.8a.)
 
 All normal text you type in the chat prompt becomes a global message, visible
@@ -6034,9 +6034,9 @@ Example:
                                message is light blue (standard colour).
 
 If you cannot see coloured messages in your secondary Tomenet windows other
-than the big main window, check your client option settings by typing  =3
-and looking for 'Flicker messages in recall' (recall_flicker). Set it to
-'yes'.
+than the big main window, check your client option settings by typing  =2
+and looking for 'Show animated text colours in sub-windows' (recall_flicker).
+Set it to 'yes'.
 
 If you want to type the character '{' in a chat message, rather than using
 it for a colour code, type it twice '{{'. It will become '{'.
@@ -9725,7 +9725,7 @@ just barred by (hidden) doors and do not require special tunneling effort to
 get into, or are not even surrounded by stone walls at all.
 
 Depending on your font if you have trouble discerning permanent walls from
-granite walls, consider enabling the option  = 1 permawalls_shade  which will
+granite walls, consider enabling the option  =2  permawalls_shade  which will
 display permanent walls in a different colour.
 
 Vaults are usually filled to the brim with traps and nasty monsters. Using
@@ -11071,7 +11071,7 @@ Here is a list of all available events:
 
   Dungeon Keeper:
     Co-op - everyone can win, requires at least 1 participant.
-    (You should enable 'easy_open' option in  = 8  for this event, which is
+    (You should enable 'easy_open' option in  =9  for this event, which is
     enabled by default, and lets you open doors simply be moving into them.
     Light radius of 2 is recommended, eg provided by a Brass Lantern, which
     you can buy from town store '1', the General Store.)
@@ -14960,7 +14960,7 @@ name you equip the greater the luck bonus will be.
 
 If your client is newer than 4.8.0, it will display the indices of equipment
 slots providing set luck bonus in colours (see table below). This behaviour
-can be toggled with the 'equip_set_colour' option in =4.
+can be toggled with the 'equip_set_colour' option in  =3  .
 
 The randart rings of power dropped by Nazgul are exempt from this and won't
 give any kind of bonus nor contribute to one.
@@ -17069,7 +17069,7 @@ These depend on your race and class and the stat assignments you did during
 character creation process.
 
 Stats are displayed as values from 3 (minimum) to 18.
-(Note: This can be changed in TomeNET options, press key =2 and toggle
+(Note: This can be changed in TomeNET options, press key  =3  and toggle
 'linear_stats' option. It is recommended to keep the traditional way though,
 which represents the D&D system of throwing three 6-sided dice to determine a
 stat).
@@ -17095,7 +17095,7 @@ Examples:
 18/120 is like 30 (ie 18+12).
 18/47 is like 22. The fraction 0.7 is not factoring into actual gameplay.
 
-The way stats are displayed can be toggled in  = 2  'linear_stats'. This will
+The way stats are displayed can be toggled in  =3  'linear_stats'. This will
 change them to numbers from 3 to 40, where 40 equals 18/220 and is similarly
 displayed as asterisks instead of a number to indicate that it's the limit.
 
@@ -18891,7 +18891,7 @@ Crafting ingredients from raw materials:
 - Reactive metal powder + acid or vitriol = caustic salt.
 - To obtain water or salt water you can just fill up an empty bottle with
   sea water or freshwater at the appropriate terrain. To obtain empty bottles
-  you can make use of the "/empty" command or the "keep_bottle" option in =8 .
+  you can make use of the "/empty" command or the "keep_bottle" option in  =0 .
 
 Crafting actual explosive charges:
 ----------------------------------
@@ -27881,12 +27881,12 @@ Solution:   Probably your client failed to pre-load the TomeNET Guide.
 PROBLEM 71: When playing the game via terminal or over SSH a lot of characters
             are rendered wrong, eg appearing as "^B" two-symbol combination
             even, making the display mostly unreadable.
-Solution:   Turn off 'font_map_solid_walls' in options page 1 (press = 1).
+Solution:   Turn off 'font_map_solid_walls' in options page 2 (press =2 ).
 
 PROBLEM 72: When using a custom font that remaps characters, some or most of
             the tiles, monsters or other visuals seem to not map correctly but
             are displayed as if it was a default font instead.
-Solution:   Turn off 'font_map_solid_walls' in options page 1 (press = 1).
+Solution:   Turn off 'font_map_solid_walls' in options page 2 (press =2 ).
 
 PROBLEM 73: When you start TomeNET in a terminal, you get an error message:
             "TomeNET needs an 80x24 'curses' screen
