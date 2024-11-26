@@ -908,7 +908,7 @@ struct player_type {
 	byte IDDC_flags;
 	bool insta_res;
 	bool hilite_player;
-	bool consistent_players;
+	bool basic_players;
 #ifdef TELEPORT_SURPRISES
 	byte teleported;
 #endif

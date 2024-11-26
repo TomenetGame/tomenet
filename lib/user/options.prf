@@ -57,7 +57,7 @@ X:player_list2
 
 Y:flash_player
 X:highlight_player
-X:consistent_players
+X:basic_players
 Y:recall_flicker
 X:no_verify_sell
 X:no_verify_destroy

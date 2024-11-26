@@ -4856,14 +4856,19 @@ self-explaining or that are especially important are listed in detail here:
         Useful for example if there are many monsters around and you're a
         mimic in monster form, or just in general when you're in big_map mode.
 
-    Use consistent symbols and colours for players (consistent_players)
+    Use very basic, static symbols and colours for players (basic_players)
         Will always display party members as dark grey @ (flickering to slate
         if they have black breath) and will always display yourself as a white
-        @, yellow while a shielding spell is active, orange when the spell is
-        about to run out.
+        @, yellow while a nimbus or shielding spell is active, orange when the
+        spell is about to run out, also orange when a temporary mimic form is
+        about to run out. Also it will display yourself in light umber if the
+        spell 'Martyrdom' is active and in violet if an Invulnerability effect
+        is active.
         So it will ignore any class-based colouring for party members and both
         symbols and colours of monster forms for party members and the player
         himself.
+        The only exceptions are if the player has flash_player, flash_player2
+        or flash_insane enabled, which can override basic_players visuals.
 
  (5, 6) Audio Options
     (See (2.2) for more information about sound and music.)

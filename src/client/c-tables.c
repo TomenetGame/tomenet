@@ -298,8 +298,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     //todo: fix/implement good cursor on *nix/osx
 	{ &c_cfg.hilite_player,		FALSE,	7,	0, 45, TRUE,
 	    "highlight_player",		"Highlight own character icon with the cursor" },
-	{ &c_cfg.consistent_players,	FALSE,	1,	0, 46, TRUE,
-	    "consistent_players",	"Use very basic static symbols/colours for players" },
+	{ &c_cfg.basic_players,		FALSE,	1,	0, 46, TRUE,
+	    "basic_players",	"Use very basic static symbols/colours for players" },
 
 	{ &c_cfg.recall_flicker,	TRUE,	4,	0, 47, TRUE,
 	    "recall_flicker",		"Show animated text colours in sub-windows" },

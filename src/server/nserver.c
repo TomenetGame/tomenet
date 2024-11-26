@@ -2430,7 +2430,7 @@ static void sync_options(int Ind, bool *options) {
 			if (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER) p_ptr->alert_mana = FALSE;
 			else p_ptr->alert_mana = options[101];
 			p_ptr->exp_bar = options[103];//just for tracking this feature's popularity =P
-			p_ptr->consistent_players = options[104];
+			p_ptr->basic_players = options[104];
 			p_ptr->flash_self = options[105] ? FALSE : TRUE;
 
 			if (is_older_than(&p_ptr->version, 4, 5, 8, 2, 0, 0)) {
@@ -2538,7 +2538,7 @@ static void sync_options(int Ind, bool *options) {
 
 		p_ptr->flash_self = options[44];
 		p_ptr->hilite_player = options[45];
-		p_ptr->consistent_players = options[46];
+		p_ptr->basic_players = options[46];
 		tmp = p_ptr->permawalls_shade;
 		if ((p_ptr->permawalls_shade = options[112]) != tmp) p_ptr->redraw |= PR_MAP;
 		p_ptr->live_timeouts = options[115];
