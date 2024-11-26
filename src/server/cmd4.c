@@ -1210,7 +1210,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 					if (q_ptr->guild)
 						fprintf(fff, " \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 					if (q_ptr->party) {
-						if (!q_ptr->guild) fprintf(fff, " Party:");
+						if (!q_ptr->guild) fprintf(fff, ", Party:");
 						if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
 							char pcol[3];
 
