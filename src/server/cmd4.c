@@ -876,7 +876,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			}
 
 			fprintf(fff, "*%s\377U ", info_chars);
-			fprintf(fff, "%s", q_ptr->male ? "male" : "female");
+			fprintf(fff, "%s", q_ptr->male ? "Male" : "Female");
 			if (q_ptr->fruit_bat == 1) fprintf(fff, " bat"); /* only for true battys, not polymorphed ones */
 			//if (admin) fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname); else
 			fprintf(fff, " (%s)", q_ptr->accountname);
@@ -1198,7 +1198,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 
 			fprintf(fff, "*%s\377U", info_chars);
 			//fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
-			fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
+			fprintf(fff, " %s@%s", q_ptr->accountname, q_ptr->hostname);
 
   #ifndef COMPACT_GENDER
 			fprintf(fff, ", %s", q_ptr->male ? "Male" : "Female");
@@ -1208,9 +1208,9 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
 				if (!q_ptr->info_msg[0]) {
 					if (q_ptr->guild)
-						fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
+						fprintf(fff, " \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 					if (q_ptr->party) {
-						if (!q_ptr->guild) fprintf(fff, ", Party:");
+						if (!q_ptr->guild) fprintf(fff, " Party:");
 						if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
 							char pcol[3];
 
@@ -1313,7 +1313,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 #ifdef ENABLE_SUBCLASS_TITLE
 				if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass - 1].title);
 #endif
-        break;
+				break;
 			}
 
 			if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
@@ -1343,7 +1343,8 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			}
 			fprintf(fff, "  %s\377%c the ", q_ptr->name, attr);
     #else
-			fprintf(fff, "  %s the ", q_ptr->name);
+			//compaction = 0 here
+			fprintf(fff, "  %s, %s ", q_ptr->name, q_ptr->male ? "male" : "female");
     #endif
     #ifdef ENABLE_SUBCLASS_TITLE
 			fprintf(fff, "%s%s%s%s", get_prace2(q_ptr), p, (q_ptr->sclass) ? " " : "", p2);
