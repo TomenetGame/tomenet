@@ -11323,72 +11323,72 @@ void do_cmd_options(void) {
 
 		/* Give some choices */
 		l = 2;
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w/\377y5\377w) User interface options (Base+Vis/Visuals/Format/Notifications/Msg)");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y6\377w/\377y7\377w)     Audio options (SFX+Music/Paging+OS)");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y8\377w/\377y9\377w/\377y0\377w)   Gameplay options (Actions+Safety/Disturbances/Items)");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377y1\377w-\377y5\377w)   User interface options (Base+Vis/Visuals/Format/Notifications/Messages)");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377y6\377w-\377y7\377w)   Audio options (SFX+Music/Paging+OS)");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377y8\377w-\377y0\377w)   Gameplay options (Actions+Safety/Disturbances/Items)");
 #ifdef WINDOWS
-		Term_putstr(2, l++, -1, TERM_WHITE, format("(\377yw\377w/\377yE\377w)     Window flags / %s%s",
+		Term_putstr(1, l++, -1, TERM_WHITE, format("(\377yw\377w/\377yE\377w)  Window flags / %s%s",
 		    disable_CS_IME ? "Force IME on" : (enable_CS_IME ? "Auto-IME" : "Force IME off"),
 		    (disable_CS_IME || enable_CS_IME) ? "" : (suggest_IME ? " (Currently Auto-ON)" : " (Currently Auto-OFF)")));
 #else
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377yw\377w)     Window flags");
 #endif
 #ifdef GLOBAL_BIG_MAP
 		if (strcmp(ANGBAND_SYS, "gcu"))
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w)   Toggle/enable/disable big_map option (double screen height)");
+			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w) Toggle/enable/disable big_map option (double screen height)");
 		else
-			Term_putstr(2, l++, -1, TERM_L_DARK, "(\377sb\377D/\377sM\377D/\377sm\377D)   Toggle/enable/disable big_map (double size) - NOT AVAILABLE ON GCU");
+			Term_putstr(1, l++, -1, TERM_L_DARK, "(\377sb\377D/\377sM\377D/\377sm\377D) Toggle/enable/disable big_map (double size) - NOT AVAILABLE ON GCU");
 #endif
 		l++;
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)   Save all options & flags / Save to global.opt file (account-wide)");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377ol\377w)     Load all options & flags");
 		if (strcmp(ANGBAND_SYS, "gcu")) {
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377oT\377w)       Save current window, positions and sizes to current config file");
+			Term_putstr(1, l++, -1, TERM_WHITE, "(\377oT\377w)     Save current window, positions and sizes to current config file");
 
 #ifdef WINDOWS
-			Term_putstr(2, l++, -1, TERM_SLATE, format("          (Filename: %s)", ini_file));
+			Term_putstr(1, l++, -1, TERM_SLATE, format("        (Filename: %s)", ini_file));
 #elif USE_X11
-			Term_putstr(2, l++, -1, TERM_SLATE, format("          (Filename: %s)", mangrc_filename));
+			Term_putstr(1, l++, -1, TERM_SLATE, format("        (Filename: %s)", mangrc_filename));
 #else
 			l++; //paranoia
 #endif
 		} else {
-			Term_putstr(2, l++, -1, TERM_L_DARK, "(\377oT\377D)       Save current windows, positions and sizes - NOT AVAILABLE ON GCU");
+			Term_putstr(1, l++, -1, TERM_L_DARK, "(\377oT\377D)       Save current windows, positions and sizes - NOT AVAILABLE ON GCU");
 			l++;
 		}
 
-		Term_putstr(2, l++, -1, TERM_L_DARK, "-----------------------------------------------------------------------------");
+		Term_putstr(1, l++, -1, TERM_L_DARK, "-----------------------------------------------------------------------------");
 
-		Term_putstr(2, l++, -1, TERM_SLATE, "The following settings are mostly saved automatically on quitting via CTRL+Q:");
+		Term_putstr(1, l++, -1, TERM_SLATE, "The following settings are mostly saved automatically on quitting via CTRL+Q:");
 		l++;
 #ifdef USE_SOUND_2010
 		if (c_cfg.rogue_like_commands)
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
+			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
+			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
 
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Jukebox, listen to and disable/reenable specific sound effects/music");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Jukebox, listen to and disable/reenable specific sound effects/music");
 #endif
 
 #if defined(WINDOWS) || defined(USE_X11)
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yf\377w/\377yg\377w) Window Fonts and Visibility / Graphical tilesets");
+			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yf\377w/\377yg\377w) Window Fonts and Visibility / Graphical tilesets");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yF\377w)   Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yF\377w)   Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yc\377w)   Colour palette and colour blindness options");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377yc\377w)   Colour palette and colour blindness options");
 		l++;
 
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UA\377w)   Account Options");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UI\377w)   Install sound/music pack from 7z-file you placed in your TomeNET folder");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UA\377w)   Account Options");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UI\377w)   Install sound/music pack from 7z-file you placed in your TomeNET folder");
 #ifdef WINDOWS
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (downloads and reinits the Guide)");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (downloads and reinits the Guide)");
 #else
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (requires 'wget' package installed)");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (requires 'wget' package installed)");
 #endif
 
 		/* hide cursor */
