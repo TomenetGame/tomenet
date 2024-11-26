@@ -1051,6 +1051,9 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         User Interface Options:
             "Rogue-like commands" will change your keyboard layout to
                 the original Rogue key definitions.
+            "Scroll the screen more frequently" helps to avoid death by
+                attacks that came from off-screen. However, this option can be
+                a bit irritating.
             "Flicker messages in recall" will allow you to see animated
                 messages in the bottom left window (message history).
             "Always show lists in item/skill selection" will always show a
@@ -1069,9 +1072,6 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
                 trap just by stepping onto it.
             "Automatically tunnel walls" makes your character tunnel through a
                 wall just by moving towards it.
-            "Scroll the screen more frequently" helps to avoid death by
-                attacks that came from off-screen. However, this option can be
-                a bit irritating.
 
 :       type a chat message. To whisper privately, enter <player>:<text>
         eg:  Johnjohn:hi!  - actually the first few letters of the target
@@ -4779,7 +4779,7 @@ By pressing the '=' key in game, you can access the options menu where you
 cantweak your client in various ways. Some of these options that aren't
 self-explaining or that are especially important are listed in detail here:
 
- (1, 2, 3, 4) User Interface Options:
+ (1, 2, 3, 4, 5) User Interface Options:
     Rogue-like commands (rogue_like_commands)
         Toggles between normal key set and traditional rogue-like key set.
 
@@ -4870,7 +4870,7 @@ self-explaining or that are especially important are listed in detail here:
         The only exceptions are if the player has flash_player, flash_player2
         or flash_insane enabled, which can override basic_players visuals.
 
- (5, 6) Audio Options
+ (6, 7) Audio Options
     (See (2.2) for more information about sound and music.)
 
     A bunch of stuff here, mostly you might want to look at attack-sound effect
@@ -4879,7 +4879,7 @@ self-explaining or that are especially important are listed in detail here:
 
     positional_audio is an especially interesting option, enabled by default.
 
- (7, 8, 9) Gameplay Options
+ (8, 9, 0) Gameplay Options
     Use old target by default (use_old_target)
         If this is on, a ranged attack via *t5 or *t- will not pick a new
         (ie closer) target if the previously acquired target is still okay.
