@@ -9133,10 +9133,11 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 
 	/* Interact with the player */
 	while (TRUE) {
-		/* Prompt XXX XXX XXX */
 		if (select == -1)
-			sprintf(buf, "%s (\377yUp/Down\377w, \377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w toggle, \377yESC\377w accept)", info);
+			//sprintf(buf, "%s (\377yUp/Down\377w, \377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w toggle, \377yESC\377w accept)", info);
+			sprintf(buf, "%s (\377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w toggle, \377yESC\377w accept)", info);
 		else
+			//sprintf(buf, "%s (\377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w toggle, \377y/\377w next, \377yESC\377w accept)", info);
 			sprintf(buf, "%s (\377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w toggle, \377y/\377w next, \377yESC\377w accept)", info);
 		//prompt_topline(buf);
 		Term_putstr(0, 0, -1, TERM_WHITE, buf);
@@ -9170,6 +9171,10 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
+
+		/* Hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		/* Get a key */
 		ch = inkey();
@@ -11318,9 +11323,9 @@ void do_cmd_options(void) {
 
 		/* Give some choices */
 		l = 2;
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options 1/2");
-		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w/\377y5\377w) User interface options (Base+Vis/Visuals/Format/Notifications/Msg)");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y6\377w/\377y7\377w)     Audio options (SFX+Music/Paging+OS)");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y8\377w/\377y9\377w/\377y0\377w)   Gameplay options (Actions+Safety/Disturbances/Items)");
 #ifdef WINDOWS
 		Term_putstr(2, l++, -1, TERM_WHITE, format("(\377yw\377w/\377yE\377w)     Window flags / %s%s",
 		    disable_CS_IME ? "Force IME on" : (enable_CS_IME ? "Auto-IME" : "Force IME off"),
@@ -11405,23 +11410,25 @@ void do_cmd_options(void) {
 		}
 
 		else if (k == '1') {
-			do_cmd_options_aux(1, "User Interface Options 1", -1);
+			do_cmd_options_aux(1, "UI Opt. 1 (Base/Vis)", -1);
 		} else if (k == '2') {
-			do_cmd_options_aux(4, "User Interface Options 2", -1);
+			do_cmd_options_aux(4, "UI Opt. 2 (Visuals)", -1);
 		} else if (k == '3') {
-			do_cmd_options_aux(6, "User Interface Options 3", -1);
+			do_cmd_options_aux(6, "UI Opt. 3 (Formatting)", -1);
 		} else if (k == '4') {
-			do_cmd_options_aux(7, "User Interface Options 4", -1);
+			do_cmd_options_aux(7, "UI Opt. 4 (Notifications)", -1);
 		} else if (k == '5') {
-			do_cmd_options_aux(5, "Audio Options 1", -1);
+			do_cmd_options_aux(0, "UI Opt. 5 (Messages)", -1);
 		} else if (k == '6') {
-			do_cmd_options_aux(9, "Audio Options 2", -1);
+			do_cmd_options_aux(5, "Audio Opt. 1 (SFX+Music)", -1);
 		} else if (k == '7') {
-			do_cmd_options_aux(2, "Gameplay Options 1", -1);
+			do_cmd_options_aux(9, "Audio Opt. 2 (Paging+OS)", -1);
 		} else if (k == '8') {
-			do_cmd_options_aux(3, "Gameplay Options 2", -1);
+			do_cmd_options_aux(2, "Play Opt. 1 (Actions/Safety)", -1);
 		} else if (k == '9') {
-			do_cmd_options_aux(8, "Gameplay Options 3", -1);
+			do_cmd_options_aux(3, "Play Opt. 2 (Disturbances)", -1);
+		} else if (k == '0') {
+			do_cmd_options_aux(8, "Play Opt. 3 (Items)", -1);
 		}
 
 		/* Search for an option (by name) */
@@ -11446,15 +11453,16 @@ void do_cmd_options(void) {
 					}
 
 					switch(option_info[l].o_page) {
-					case 1:	m = do_cmd_options_aux(1, "User Interface Options 1", k); break;
-					case 4:	m = do_cmd_options_aux(4, "User Interface Options 2", k); break;
-					case 6:	m = do_cmd_options_aux(6, "User Interface Options 3", k); break;
-					case 7:	m = do_cmd_options_aux(7, "User Interface Options 4", k); break;
-					case 5:	m = do_cmd_options_aux(5, "Audio Options 1", k); break;
-					case 9:	m = do_cmd_options_aux(9, "Audio Options 2", k); break;
-					case 2:	m = do_cmd_options_aux(2, "Gameplay Options 1", k); break;
-					case 3:	m = do_cmd_options_aux(3, "Gameplay Options 2", k); break;
-					case 8: m = do_cmd_options_aux(8, "Gameplay Options 3", k); break;
+					case 1:	m = do_cmd_options_aux(1, "UI Opt. 1 (Base/Vis)", k); break;
+					case 4:	m = do_cmd_options_aux(4, "UI Opt. 2 (Visuals)", k); break;
+					case 6:	m = do_cmd_options_aux(6, "UI Opt. 3 (Formatting)", k); break;
+					case 7:	m = do_cmd_options_aux(7, "UI Opt. 4 (Notifications)", k); break;
+					case 0:	m = do_cmd_options_aux(0, "UI Opt. 5 (Messages)", k); break;
+					case 5:	m = do_cmd_options_aux(5, "Audio Opt. 1 (SFX+Music)", k); break;
+					case 9:	m = do_cmd_options_aux(9, "Audio Opt. 2 (Paging+OS)", k); break;
+					case 2:	m = do_cmd_options_aux(2, "Play Opt. 1 (Actions/Safety)", k); break;
+					case 3:	m = do_cmd_options_aux(3, "Play Opt. 2 (Disturbances)", k); break;
+					case 8: m = do_cmd_options_aux(8, "Play Opt. 3 (Items)", k); break;
 					default: m = found = FALSE; c_msg_print("Option not found.");
 					}
 
