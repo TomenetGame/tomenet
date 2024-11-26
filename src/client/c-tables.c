@@ -237,7 +237,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.alert_offpanel_dam,	TRUE,	7,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while looking elsewhere" },
 
-	{ &c_cfg.exp_bar,		TRUE,	4,	0, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation
+	{ &c_cfg.exp_bar,		TRUE,	6,	0, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation
 	    "exp_bar",			"Show experience bar instead of a number" },
 
     //page 2 - 22
@@ -479,7 +479,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "topline_no_msg",		"Don't display messages in main window top line" },
 	{ &c_cfg.targetinfo_msg,	FALSE,	6,	0, 114, TRUE, //page 3 (UI 3)
 	    "targetinfo_msg",		"Display look/target info in message window too" },
-	{ &c_cfg.live_timeouts,		TRUE,	6,	0, 115, TRUE, //page 3 (UI 3)
+	{ &c_cfg.live_timeouts,		TRUE,	4,	0, 115, TRUE, //page 3 (UI 3)
 	    "live_timeouts",		"Always update item timeout numbers on every tick" },
 	{ &c_cfg.flash_insane,		FALSE,	6,	0, 116, TRUE, //page 3 (UI 3)
 	    "flash_insane",		"Flash own character icon when going badly insane" },
@@ -576,13 +576,13 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.ascii_uniques,		FALSE,	7,	0, 157, TRUE,
 	    "ascii_uniques",		"Disable font-specific mapping for unique monsters" },
 
-	{ &c_cfg.no_flicker,		FALSE,	6,	0, 158, TRUE,
+	{ &c_cfg.no_flicker,		FALSE,	1,	0, 158, TRUE,
 	    "no_flicker",		"Disable all fast colour animations" },
 	{ &c_cfg.stun_huge_bar,		FALSE,	6,	0, 159, TRUE,
 	    "stun_huge_bar",		"Show stun status as huge bar (big_map only)" },
 	{ &c_cfg.gfx_autooff_fmsw,	FALSE,	1,	0, 160, FALSE,	/* superceded by S_GFX_AUTOOFF_FMSW which is superior as it allows solid status bar visuals etc still! */
 	    "gfx_autooff_fmsw",		"Auto-disable font_map_solid_walls for graphics" },
-	{ &c_cfg.solid_bars,		TRUE,	1,	0, 161, TRUE,
+	{ &c_cfg.solid_bars,		TRUE,	6,	0, 161, TRUE,
 	    "solid_bars",		"Display status bars in solid style, not as '#'" },
 	{ &c_cfg.autopickup_chemicals,	TRUE,	8,	9, 162, TRUE,
 	    "autopickup_chemicals",	"Automatically pick up freshly dropped chemicals" },
