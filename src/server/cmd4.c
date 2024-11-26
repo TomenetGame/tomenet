@@ -1344,7 +1344,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			fprintf(fff, "  %s\377%c the ", q_ptr->name, attr);
     #else
 			//compaction = 0 here
-			fprintf(fff, "  %s, %s ", q_ptr->name, q_ptr->male ? "male" : "female");
+			fprintf(fff, "  %s the ", q_ptr->name);
     #endif
     #ifdef ENABLE_SUBCLASS_TITLE
 			fprintf(fff, "%s%s%s%s", get_prace2(q_ptr), p, (q_ptr->sclass) ? " " : "", p2);
