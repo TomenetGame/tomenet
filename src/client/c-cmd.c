@@ -906,6 +906,7 @@ static void cmd_subinven_move(void) {
 		else {
 			inkey_letter_all = TRUE;
 			amt = c_get_quantity("How many (ENTER = all)? ", -num);
+			if (!amt) return;
 		}
 	}
 	else amt = 1;
@@ -930,6 +931,7 @@ static void cmd_subinven_remove(int islot) {
 		else {
 			inkey_letter_all = TRUE;
 			amt = c_get_quantity("How many (ENTER = all)? ", -subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
+			if (!amt) return;
 		}
 	}
 	else amt = 1;
