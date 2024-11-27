@@ -14051,7 +14051,7 @@ Detonations / Death
                 Accordingly useful to be used in fumes traps.
 
                 Death potions can be consumed by undead without taking damage
-                and they will even restore their stamina.
+                and they will restore experience and 500 MP.
 
 Enlightenment   Illuminates and maps the whole level and reveals all objects.
                 It also identifies all of the user's items.
