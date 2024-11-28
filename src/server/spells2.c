@@ -3022,8 +3022,8 @@ void detect_bounty(int Ind) {
 				msg_print(Ind, "You have discovered a trap on the chest!");
 				/* Know the trap */
 				object_known(o_ptr);
-				/* Notice it */
-				//disturb(Ind, 0, 0);
+				/* Notice it -- reenabled this disturb() call as it was annoying as a rogue when you explicitely try to handle chests */
+				disturb(Ind, 0, 0);
 				detect = TRUE;
 			}
 
