@@ -10963,7 +10963,15 @@ void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt) {
 	    || o_ptr->tval == TV_STAFF
 #endif
 	    ) {
+#if 0
+		/* Normal way: Round new stack size down, old stack size up */
 		int charge = (o_ptr->pval * amt) / o_ptr->number;
+#else
+		/* QoL: Round _up_, leaving the old stack with 1 less charge instead of the new stack.
+		   This is useful if we take a device (or more) out of a house to use it.
+		   Especially, if there is a stack of N+ devices with (N+)-1 charge, the new stack won't have 0 charges and be unusable. */
+		int charge = o_ptr->pval - (o_ptr->pval * (o_ptr->number - amt)) / o_ptr->number;
+#endif
 
 		if (amt < o_ptr->number) o_ptr->pval -= charge;
 		if (onew_ptr) onew_ptr->pval = charge;
