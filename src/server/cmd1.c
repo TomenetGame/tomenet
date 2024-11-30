@@ -7023,13 +7023,11 @@ void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 	/* Chance of getting the Black Breath */
 	if (!p_ptr->black_breath &&
 	    /* Hobbits and undead forms resist slightly, non-weapon attacks are especially susceptible */
-	    magik((p_ptr->prace == RACE_HOBBIT || p_ptr->suscep_life ? 5 : 10) + (o_ptr ? 0 : 10))) {
-		s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", p_ptr->name);
-		set_black_breath(Ind);
-	}
+	    magik((p_ptr->prace == RACE_HOBBIT || p_ptr->suscep_life ? 5 : 10) + (o_ptr ? 0 : 10)))
+		set_black_breath(Ind, MAX_PLAYERS);
 }
 
-void set_black_breath(int Ind) {
+void set_black_breath(int Ind, int cause) {
 	player_type *p_ptr = Players[Ind];
 
 	if (p_ptr->ghost) return;
@@ -7037,6 +7035,19 @@ void set_black_breath(int Ind) {
 	if (p_ptr->prace == RACE_VAMPIRE) return;
 #endif
 	if (p_ptr->martyr) return;
+
+	switch (cause) {
+	case MAX_PLAYERS: s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", p_ptr->name); break;
+	case 0: s_printf("BLACK-BREATH (Morgul): %s\n", p_ptr->name); break;
+	default:
+		if (cause > 0) s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, Players[cause]->name);
+		else {
+			char m_name[MNAME_LEN];
+
+			monster_desc(Ind, m_name, -cause, 0);
+			s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, m_name);
+		}
+	}
 
 	msg_print(Ind, "\376\377DYour foe calls upon your soul!");
 	msg_print(Ind, "\376\377DYou feel the Black Breath slowly draining you of life...");
@@ -8292,16 +8303,12 @@ void black_breath_infection(int Ind, int Ind2) {
 	/* Prevent players who are AFK from getting infected in towns - mikaelh */
 	if (p_ptr->black_breath && !q_ptr->black_breath &&
 	    magik(q_ptr->suscep_life ? 10 : 25) &&
-	    !(q_ptr->afk && istown(&q_ptr->wpos)) && q_ptr->lev > cfg.newbies_cannot_drop && q_ptr->lev >= BB_INFECT_MINLEV) {
-		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", q_ptr->name, p_ptr->name);
-		set_black_breath(Ind2);
-	}
+	    !(q_ptr->afk && istown(&q_ptr->wpos)) && q_ptr->lev > cfg.newbies_cannot_drop && q_ptr->lev >= BB_INFECT_MINLEV)
+		set_black_breath(Ind2, Ind);
 	if (q_ptr->black_breath && !p_ptr->black_breath &&
 	    magik(p_ptr->suscep_life ? 10 : 25) &&
-	    !(p_ptr->afk && istown(&p_ptr->wpos)) && p_ptr->lev > cfg.newbies_cannot_drop && p_ptr->lev >= BB_INFECT_MINLEV) {
-		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, q_ptr->name);
-		set_black_breath(Ind);
-	}
+	    !(p_ptr->afk && istown(&p_ptr->wpos)) && p_ptr->lev > cfg.newbies_cannot_drop && p_ptr->lev >= BB_INFECT_MINLEV)
+		set_black_breath(Ind, Ind2);
 }
 
 /*

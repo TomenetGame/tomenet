@@ -3076,7 +3076,6 @@ void calc_boni(int Ind) {
 	bool melee_weapon;
 
 	char old_sun_burn;
-	bool old_black_breath = p_ptr->black_breath_tmp;
 	bool old_suscep_good = p_ptr->suscep_good, old_suscep_life = p_ptr->suscep_life, old_demon = p_ptr->demon;
 
 	int lite_inc_norm = 0, lite_inc_white = 0, old_lite_type;
@@ -3297,7 +3296,6 @@ void calc_boni(int Ind) {
 	p_ptr->to_m = 0;
 	p_ptr->to_l = 0;
 	p_ptr->to_hp = 0;
-	p_ptr->black_breath_tmp = FALSE;
 
 	p_ptr->dual_wield = FALSE;
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
@@ -4478,10 +4476,8 @@ void calc_boni(int Ind) {
 #ifdef VAMPIRES_BB_IMMUNE
 		    && p_ptr->prace != RACE_VAMPIRE
 #endif
-		    ) {
-			p_ptr->black_breath_tmp = TRUE;
-			if (!old_black_breath) s_printf("BLACK-BREATH (Morgul): %s\n", p_ptr->name);
-		}
+		    )
+			set_black_breath(Ind, 0);
 
 		//if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
 

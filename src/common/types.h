@@ -3821,7 +3821,6 @@ struct player_type {
 
 	/* some new borrowed flags (saved) */
 	bool black_breath;		/* The Tolkien's Black Breath */
-	bool black_breath_tmp;		/* (NOT saved) BB induced by an item */
 	/*u32b malady;*/		/* TODO: Flags for malady */
 
 	s16b msane;			/* Max sanity */
