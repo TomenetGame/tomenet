@@ -1968,7 +1968,7 @@ W:18:0:4:2000
 A:18/10:40/3
 P:0:1d1:0:0:0
 F:FOUNTAIN
-D:Heals 9d10 hit points, some sanity, and restores all drained stats. Cures
+D:Heals 9d10 hit points, 4d4 sanity, and restores all drained stats. Cures
 D:blindness, confusion, stun, poison, disease, cuts, hallucination, gorging.
 
 # Note! Invulnerability decreases your food...

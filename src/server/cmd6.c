@@ -1133,7 +1133,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			if (set_image(Ind, 0)) ident = TRUE;
-			if (heal_insanity(Ind, 40)) ident = TRUE;
+			if (heal_insanity(Ind, damroll(4, 4))) ident = TRUE;
 			if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 				if (set_food(Ind, PY_FOOD_MAX - 1 - pval)) ident = TRUE;
 			if (do_res_stat(Ind, A_STR)) ident = TRUE;
