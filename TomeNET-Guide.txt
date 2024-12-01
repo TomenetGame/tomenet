@@ -17964,6 +17964,13 @@ stated.
                                 the higher Traumaturgy is trained. See (7.8)
                                 for details.
 
+                                If you are dual-wielding two axes, Traumaturgy
+                                will grant you blood frenzy at 17.000 or higher
+                                after a couple of attacks, the earlier the
+                                higher your Traumaturgy skill, provided your
+                                enemies can actually bleed. Blood frenzy will
+                                temporarily grant 1 extra attack while active.
+
                                 A natural vampire race character who has both
                                 Necromancy and Traumaturgy at 25.000 or higher
                                 will get his intrinsic melee vampirism drain

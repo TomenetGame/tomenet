@@ -640,6 +640,9 @@
  //#endif
 #endif
 
+/* Traumaturgy + Dual-Wield + 2x Axe equipped -> Blood frenzy possibility. (Khorne Berserkers - C. Blue) */
+#define ENABLE_BLOOD_FRENZY
+
 
 
 /* ------------------------------------------------------------------------- */

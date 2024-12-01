@@ -817,6 +817,10 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 		if (n >= 450 && old_value < 450 && new_value >= 450)
 			msg_print(Ind, "\374\377GYou become even less sensitive to sanity-draining effects");
 #endif
+#ifdef ENABLE_BLOOD_FRENZY
+		if (old_value < 170 && new_value >= 170)
+			msg_print(Ind, "\374\377GYou can enter a blood frenzy when dual-wielding axes.");
+#endif
 		break;
 #ifdef ENABLE_OHERETICISM
 	case SKILL_OHERETICISM:

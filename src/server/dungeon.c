@@ -5682,6 +5682,25 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
+#ifdef ENABLE_BLOOD_FRENZY
+	/* Blood frenzy */
+	if (p_ptr->blood_frenzy_rage) {
+		if (p_ptr->inventory[INVEN_WIELD].tval != TV_AXE || p_ptr->inventory[INVEN_ARM].tval != TV_AXE)
+			p_ptr->blood_frenzy_rage = 0; //reset completely(!)
+		else {
+			p_ptr->blood_frenzy_rage -= 20 + p_ptr->num_blow;
+			if (p_ptr->blood_frenzy_rage < 0) p_ptr->blood_frenzy_rage = 0;
+		}
+
+		if (p_ptr->blood_frenzy_active && p_ptr->blood_frenzy_rage <= 700) {
+			p_ptr->blood_frenzy_rage = 0; //reset completely(!)
+			p_ptr->blood_frenzy_active = FALSE;
+			p_ptr->update |= PU_BONUS;
+			msg_print(Ind, "\377WYour blood frenzy ceases.");
+		}
+	}
+#endif
+
 	/* Adrenaline */
 	if (p_ptr->adrenaline)
 		(void)set_adrenaline(Ind, p_ptr->adrenaline - 1);

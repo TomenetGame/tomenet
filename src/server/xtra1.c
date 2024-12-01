@@ -4795,6 +4795,14 @@ void calc_boni(int Ind) {
 
 	if (p_ptr->mindboost) p_ptr->skill_sav += p_ptr->mindboost_power / 5;
 
+#ifdef ENABLE_BLOOD_FRENZY
+	/* Blood Frenzy */
+	if (p_ptr->blood_frenzy_active) {
+		extra_blows_tmp++;
+		p_ptr->extra_blows++;
+	}
+#endif
+
 #ifdef ENABLE_OCCULT
 	if (p_ptr->temp_savingthrow) p_ptr->skill_sav = 95;
 #endif

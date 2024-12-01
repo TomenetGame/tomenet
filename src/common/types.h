@@ -3509,9 +3509,13 @@ struct player_type {
 
 	s16b protevil;			/* Timed -- Protection */
 	bool protevil_own;
-	s16b zeal;			/* timed EA bonus */
+	s16b zeal;			/* timed EA bonus -- CURRENTLY NOT SAVED! (same as blood_frenzy) */
 	s16b zeal_power;
 	byte hate_prolong;		/* For dark Zeal version 'Boundless Hate', feedback with Traumaturgy */
+#ifdef ENABLE_BLOOD_FRENZY /* Currently NOT SAVED! (same as zeal) */
+	int blood_frenzy_rage;
+	bool blood_frenzy_active;
+#endif
 	s16b martyr;
 	s16b martyr_timeout;
 	s16b martyr_dur;

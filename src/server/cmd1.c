@@ -3238,6 +3238,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #ifndef NEW_DODGING
 	int		dodge_chance;
 #endif
+#ifdef ENABLE_BLOOD_FRENZY
+	bool		blood_frenzy_ok, bleeding = TRUE;
+	int		blood_frenzy_step;
+#endif
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster], *qr_ptr;
 	bool apply_monster_effects = TRUE;
@@ -3269,7 +3273,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 	dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-
+#ifdef ENABLE_BLOOD_FRENZY
+	blood_frenzy_ok = dual_wield && p_ptr->inventory[INVEN_WIELD].tval == TV_AXE && p_ptr->inventory[INVEN_ARM].tval == TV_AXE && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 17;
+	if (blood_frenzy_ok) blood_frenzy_step = ((2 + get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 400) + p_ptr->num_blow - 1) * (15 + p_ptr->num_blow)) / (15 * p_ptr->num_blow);
+#endif
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -3279,6 +3286,25 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	//py_slept = q_ptr->afk; /* :D - unused though (also, AFK status can't be toggled for this anyway */
 	no_pk = ((zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK) ||
 	   (zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK));
+
+	if (q_ptr->body_monster) {
+		if ((qr_ptr->flags3 & RF3_UNDEAD) ||
+		    //(qr_ptr->flags3 & RF3_DEMON) ||
+		    (qr_ptr->flags3 & RF3_NONLIVING)) {
+			drainable = FALSE;
+#ifdef ENABLE_BLOOD_FRENZY
+			bleeding = (qr_ptr->d_char == 'V');
+#endif
+		} else if (strchr("EgvwlIFijmxszQX", qr_ptr->d_char)) {
+			drainable = FALSE;
+#ifdef ENABLE_BLOOD_FRENZY
+			bleeding = (qr_ptr->d_char == 'Q');
+#endif
+		}
+	}
+#ifdef ENABLE_BLOOD_FRENZY
+	bleeding &= !q_ptr->no_cut; //includes 'A' form handling
+#endif
 
 
 #if 0
@@ -3677,6 +3703,29 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			sound(Ind, SOUND_HIT);
 #endif
 			sprintf(hit_desc, "You hit %s", q_name);
+
+#ifdef ENABLE_BLOOD_FRENZY
+			/* Blood frenzy? */
+			if (blood_frenzy_ok) {
+				if (bleeding) {
+					p_ptr->blood_frenzy_rage += blood_frenzy_step;
+					/* Enter frenzy after spilling enough blood */
+					if (p_ptr->blood_frenzy_rage >= 1000) {
+						p_ptr->blood_frenzy_rage = 1000;
+						if (!p_ptr->blood_frenzy_active) {
+							p_ptr->blood_frenzy_active = TRUE;
+							p_ptr->update |= PU_BONUS;
+							msg_print(Ind, "\377BYou enter a blood frenzy!");
+						}
+					}
+				}
+			} else if (p_ptr->blood_frenzy_active) {
+				p_ptr->blood_frenzy_rage = 0; // reset completely (!)
+				p_ptr->blood_frenzy_active = FALSE;
+				p_ptr->update |= PU_BONUS;
+				msg_print(Ind, "\377WYour blood frenzy ceases.");
+			}
+#endif
 
 			/* Hack -- bare hands do one damage */
 			k = 1;
@@ -4448,6 +4497,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	bool		martial = FALSE, did_stun, did_knee, did_slow;
 	bool		weapon; //atm PvE only: Backstabbing can cause stun effect
 	int		block, parry;
+#ifdef ENABLE_BLOOD_FRENZY
+	bool		blood_frenzy_ok, bleeding = TRUE;
+	int		blood_frenzy_step;
+#endif
 
 	int		vorpal_cut = 0;
 	int		chaos_effect = 0;
@@ -4493,7 +4546,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
 	weapon = primary_wield || secondary_wield;
-
+#ifdef ENABLE_BLOOD_FRENZY
+	blood_frenzy_ok = dual_wield && p_ptr->inventory[INVEN_WIELD].tval == TV_AXE && p_ptr->inventory[INVEN_ARM].tval == TV_AXE && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 17;
+	if (blood_frenzy_ok) blood_frenzy_step = ((2 + get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 400) + p_ptr->num_blow - 1) * (15 + p_ptr->num_blow)) / (15 * p_ptr->num_blow);
+#endif
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -4506,9 +4562,20 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
 	    //(r_ptr->flags3 & RF3_DEMON) ||
-	    (r_ptr->flags3 & RF3_NONLIVING) ||
-	    (strchr("EgvwlIFijmxszQX", r_ptr->d_char)))
+	    (r_ptr->flags3 & RF3_NONLIVING)) {
 		drainable = FALSE;
+#ifdef ENABLE_BLOOD_FRENZY
+		bleeding = (r_ptr->d_char == 'V');
+#endif
+	} else if (strchr("EgvwlIFijmxszQX", r_ptr->d_char)) {
+		drainable = FALSE;
+#ifdef ENABLE_BLOOD_FRENZY
+		bleeding = (r_ptr->d_char == 'Q');
+#endif
+	}
+#ifdef ENABLE_BLOOD_FRENZY
+	else bleeding = !(r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT));
+#endif
 
 	/* is it a unique we already got kill credit for? */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
@@ -4829,6 +4896,29 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			sound(Ind, SOUND_HIT);
 #endif
 			sprintf(hit_desc, "You hit %s", m_name);
+
+#ifdef ENABLE_BLOOD_FRENZY
+			/* Blood frenzy? */
+			if (blood_frenzy_ok) {
+				if (bleeding) {
+					p_ptr->blood_frenzy_rage += blood_frenzy_step;
+					/* Enter frenzy after spilling enough blood */
+					if (p_ptr->blood_frenzy_rage >= 1000) {
+						p_ptr->blood_frenzy_rage = 1000;
+						if (!p_ptr->blood_frenzy_active) {
+							p_ptr->blood_frenzy_active = TRUE;
+							p_ptr->update |= PU_BONUS;
+							msg_print(Ind, "\377BYou enter a blood frenzy!");
+						}
+					}
+				}
+			} else if (p_ptr->blood_frenzy_active) {
+				p_ptr->blood_frenzy_rage = 0; // reset completely (!)
+				p_ptr->blood_frenzy_active = FALSE;
+				p_ptr->update |= PU_BONUS;
+				msg_print(Ind, "\377WYour blood frenzy ceases.");
+			}
+#endif
 
 			/* Hack -- bare hands do one damage */
 			k = 1;
