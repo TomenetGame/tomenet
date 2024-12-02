@@ -8998,6 +8998,12 @@ void do_cmd_stance(int Ind, int stance) {
 void do_cmd_melee_technique(int Ind, int technique) {
 	player_type *p_ptr = Players[Ind];
 	int i;
+	object_type *o_ptr;
+#ifdef ENABLE_SUBINVEN
+	int j;
+	bool found;
+	object_type *os_ptr;
+#endif
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
 		msg_print(Ind, "You cannot use techniques while transformed.");
@@ -9110,20 +9116,40 @@ void do_cmd_melee_technique(int Ind, int technique) {
 			msg_print(Ind, "You must wield a melee weapon to apply poison.");
 			return;
 		}
-		for (i = 0; i < INVEN_WIELD; i++)
-			if (//object_known_p(Ind, &p_ptr->inventory[i]) && /* skip unknown items */
-			    object_aware_p(Ind, &p_ptr->inventory[i]) && /* skip unknown items */
-			    !check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'k') &&
-			    ((p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) ||
-			    (p_ptr->inventory[i].tval == TV_FOOD &&
-			    (p_ptr->inventory[i].sval == SV_FOOD_POISON || p_ptr->inventory[i].sval == SV_FOOD_UNHEALTH)))) {
-				//use_stamina(p_ptr, 2);
+		for (i = 0; i < INVEN_WIELD; i++) {
+			o_ptr = &p_ptr->inventory[i];
+#ifdef ENABLE_SUBINVEN
+			if (o_ptr->tval == TV_SUBINVEN) {
+				found = FALSE;
+				for (j = 0; j < o_ptr->bpval; j++) {
+					os_ptr = &p_ptr->subinventory[i][j];
+					if (!os_ptr->tval) break;
+					if (//object_known_p(Ind, os_ptr) && /* skip unknown items */
+					    object_aware_p(Ind, os_ptr) && /* skip unknown items */
+					    !check_guard_inscription(os_ptr->note, 'k') &&
+					    ((os_ptr->tval == TV_POTION && os_ptr->sval == SV_POTION_POISON) ||
+					    (os_ptr->tval == TV_FOOD && (os_ptr->sval == SV_FOOD_POISON || os_ptr->sval == SV_FOOD_UNHEALTH)))) {
+						found = TRUE;
+						inven_item_increase(Ind, (i + 1) * 100 + j, -1);
+						inven_item_describe(Ind, (i + 1) * 100 + j);
+						inven_item_optimize(Ind, (i + 1) * 100 + j);
+						break;
+					}
+				}
+				if (found) break;
+			}
+#endif
+			if (//object_known_p(Ind, o_ptr) && /* skip unknown items */
+			    object_aware_p(Ind, o_ptr) && /* skip unknown items */
+			    !check_guard_inscription(o_ptr->note, 'k') &&
+			    ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
+			    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH)))) {
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
-				set_melee_brand(Ind, 110 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
 				break;
 			}
+		}
 		if (i == INVEN_WIELD) {
 			msg_print(Ind, "You are missing a poisonous ingredient.");
 			return;
@@ -9132,6 +9158,8 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
 		msg_print(Ind, "You apply the poisonous essence to your weapon..");
+		set_melee_brand(Ind, 110 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
+		//use_stamina(p_ptr, 2);
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 		s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
