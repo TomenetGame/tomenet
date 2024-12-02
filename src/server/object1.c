@@ -6196,7 +6196,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f4 & TR4_CHARGING) ff_print("It regenerates its mana faster.", 4, TR4_CHARGING);
 
 	/* exploding ammo */
-	if (is_ammo(o_ptr->tval) && o_ptr->pval) fprintf(fff, "It explodes wih %s.\n", GF_name[o_ptr->pval]);
+	if (is_ammo(o_ptr->tval) && o_ptr->pval) fprintf(fff, "It explodes with %s.\n", GF_name[o_ptr->pval]);
 
 	/* special artifacts hardcoded - C. Blue */
 	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER
