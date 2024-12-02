@@ -5952,7 +5952,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (o_ptr->tval != TV_SUBINVEN) break;
 				bags++;
 				if (!p_ptr->subinventory[i][o_ptr->bpval - 1].tval) free_space = TRUE;
-				any = any || do_cmd_subinven_fill(Ind, i, STOW_QUIET); /* FALSE for "You have..." item messages, TRUE for quiet op */
+				any = do_cmd_subinven_fill(Ind, i, STOW_QUIET) || any; /* FALSE for "You have..." item messages, TRUE for quiet op */
 			}
 			if (!bags) msg_print(Ind, "You possess no container items.");
 			else if (!free_space) {
