@@ -3980,11 +3980,14 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 
 	/* ('Gain') QoL hack for limiting stack size of specific items, mostly consumables on restocking -
 	   we only handle the generic "don't allow any stacking" cases here though! The rest is handled by carry(). */
-	if ((i = check_guard_inscription(o_ptr->note, 'G'))
+	if (((i = check_guard_inscription(o_ptr->note, 'G'))
+	    && !(tolerance & 0x2)) /* Let manual 'force-stack' command overrides !G inscription */
 	    /* For combine_pack(): The player might just as well have erased an inscription of an item that is
 	       above the !G item inside the inventory, instead of just one that is located below the !G item.
 	       So we have to check both ways for !Gn in this case, as the j_ptr vs o_ptr priority is no longer clear but they are equals in this special case. */
-	    || ((tolerance & 0x40) && (i = check_guard_inscription(j_ptr->note, 'G')))) {
+	    || ((tolerance & 0x40) && (i = check_guard_inscription(j_ptr->note, 'G'))
+	       && !(tolerance & 0x2) /* Let manual 'force-stack' command overrides !G inscription */
+	    )) {
 		/* No optional amount specified. (Also, specifying 0 doesn't make sense.) */
 		if (i == -1) return(FALSE); /* (We just ignore the number==0 aka 'no more scrolls...' feature edge case here, too much hassle) */
 
