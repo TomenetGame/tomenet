@@ -5724,6 +5724,9 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 		if (i_ptr->tval == TV_GAME && i_ptr->sval == SV_SNOWBALL) continue;
 		if (i_ptr->tval == TV_POTION && i_ptr->sval == SV_POTION_BLOOD) continue;
 
+		/* Honour anti-autostow-inscription on any item */
+		if (check_guard_inscription(i_ptr->note, 'S')) continue;
+
 		switch (t) {
 		/* Check item to move against valid tvals to be put into specific container (subinventory) types */
 		case SV_SI_GROUP_CHEST_MIN:
