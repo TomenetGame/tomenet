@@ -17399,12 +17399,21 @@ stated.
                                 trained this skill to 10.000 (+4) you'll have a
                                 total of roughly +15 critical hit bonus.
 
-        .Axe-mastery            See Sword-mastery
+        .Axe-mastery            See Sword-mastery, just substitute axes.
+         (1.000)                Additionally:
+                                If you are dual-wielding two axes, Traumaturgy
+                                will grant you blood frenzy at 17.000 or higher
+                                after a couple of attacks, the earlier the
+                                higher your Traumaturgy skill, provided your
+                                enemies can actually bleed. Blood frenzy will
+                                temporarily grant 1 extra attack while active.
+
+        .Blunt-mastery          See Sword-mastery, just substitute blunts.
          (1.000)
-        .Blunt-mastery          See Sword-mastery
+
+        .Polearm-mastery        See Sword-mastery, just substitute polearms.
          (1.000)
-        .Polearm-mastery        See Sword-mastery
-         (1.000)
+
         .Combat Stances         Allows you to switch between one of three types
                                 of combat stance. You need to wield a weapon to
                                 use stances, certain restrictions apply and are
@@ -17540,6 +17549,13 @@ stated.
                                 not dual-wielding - and this also means that if
                                 you lose your main hand weapon you will not
                                 leave main-hand mode automatically from that.
+
+                                If you are dual-wielding two axes, Traumaturgy
+                                will grant you blood frenzy at 17.000 or higher
+                                after a couple of attacks, the earlier the
+                                higher your Traumaturgy skill, provided your
+                                enemies can actually bleed. Blood frenzy will
+                                temporarily grant 1 extra attack while active.
 
     .Martial Arts               Ability to fight with bare hands.
      (0.228)                    Martial Arts users do not and cannot wield any
