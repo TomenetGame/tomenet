@@ -11095,6 +11095,41 @@ void inven_item_describe(int Ind, int item) {
 	/* Print a message */
 	msg_format(Ind, "You have %s.", o_name);
 }
+/* Like inven_item_describe() but cannot be muted and shows up in important-scrollback-messagebuffer (ctrl+o). */
+void inven_item_describe_important(int Ind, int item) {
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
+
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
+
+	/* Get a description */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+	/* Hack for running-low warning from !Wn inscription */
+	if (o_ptr->temp & 0x02) {
+		char *c = strchr(o_name, '{');
+
+		if (!c) msg_format(Ind, "\376You have \377o%s.", o_name);
+		else {
+			char tmp[ONAME_LEN];
+
+			strcpy(tmp, c);
+			*c = 0;
+			msg_format(Ind, "\376You have \377o%s\377w%s.", o_name, tmp);
+		}
+#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+ #else
+		if (!p_ptr->paging) p_ptr->paging = 1;
+ #endif
+#endif
+		o_ptr->temp &= ~(0x02 | 0x04);
+	} else
+	/* Print a message */
+	msg_format(Ind, "\376You have %s.", o_name);
+}
 
 
 /*

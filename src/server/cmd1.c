@@ -7054,6 +7054,7 @@ void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 			//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 			//inven_item_optimize(Ind, INVEN_WIELD + weap);
 			inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
+			inven_item_describe_important(Ind, slot);
 			inven_item_optimize(Ind, slot);
 		}
 	} else if (like_artifact_p(o_ptr)) {
@@ -7081,6 +7082,7 @@ void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 			//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 			//inven_item_optimize(Ind, INVEN_WIELD + weap);
 			inven_item_increase(Ind, slot, -1);
+			inven_item_describe_important(Ind, slot);
 			inven_item_optimize(Ind, slot);
 		}
 	} else if (o_ptr->name2) {
@@ -7106,6 +7108,7 @@ void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 			//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 			//inven_item_optimize(Ind, INVEN_WIELD + weap);
 			inven_item_increase(Ind, slot, -1);
+			inven_item_describe_important(Ind, slot);
 			inven_item_optimize(Ind, slot);
 		}
 	}

@@ -1404,6 +1404,7 @@ extern cptr mention_use(int Ind, int i);
 extern cptr describe_use(int Ind, int i);
 extern void inven_item_charges(int Ind, int item);
 extern void inven_item_describe(int Ind, int item);
+extern void inven_item_describe_important(int Ind, int item);
 extern void inven_item_increase(int Ind, int item, int num);
 extern bool inven_item_optimize(int Ind, int item);
 extern void floor_item_charges(int item);
