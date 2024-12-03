@@ -789,7 +789,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 					if (lose_all_info(Ind)) msg_print(Ind, "Your memories fade.");
 					else msg_print(Ind, "You resist the effect.");
 					//msg_print(Ind, "You are unaffected!");
-				else {
+				} else {
 					msg_print(Ind, "Your memories fade.");
 					lose_exp(Ind, p_ptr->exp / 6);
 					lose_all_info(Ind);
