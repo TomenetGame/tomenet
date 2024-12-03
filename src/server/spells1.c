@@ -10661,10 +10661,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "You keep hold of your life force!");
 			else if (p_ptr->hold_life) {
 				msg_print(Ind, "You feel your life slipping away!");
-				lose_exp(Ind, 200 + (p_ptr->exp/1000) * MON_DRAIN_LIFE);
+				lose_exp(Ind, 200 + (p_ptr->exp / 1000) * MON_DRAIN_LIFE);
 			} else {
 				msg_print(Ind, "You feel your life draining away!");
-				lose_exp(Ind, 200 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
+				lose_exp(Ind, 200 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 			}
 		}
 		/* 'Nether Feedback' perk */
@@ -10779,10 +10779,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "You keep hold of your life force!");
 			else if (p_ptr->hold_life) {
 				msg_print(Ind, "You feel your life slipping away!");
-				lose_exp(Ind, 500 + (p_ptr->exp/1000) * MON_DRAIN_LIFE);
+				lose_exp(Ind, 500 + (p_ptr->exp / 1000) * MON_DRAIN_LIFE);
 			} else {
 				msg_print(Ind, "You feel your life draining away!");
-				lose_exp(Ind, 5000 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
+				lose_exp(Ind, 5000 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 			}
 		}
 		break;
