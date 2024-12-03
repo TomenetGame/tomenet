@@ -487,17 +487,17 @@ function cast_rune_spell(I,D,u)
   local e = rspell_energy(I,u)
   if p.confused~=0 then
     p.energy = p.energy - e
-    msg_print(I,"You are too confused!")
+    msg_print(I,"\255oYou are too confused!")
     return 0
   end
   if p.antimagic~=0 and p.admin_dm==0 then
     p.energy = p.energy - e
-    msg_print(I,"\255wYour anti-magic field disrupts any magic attempts.")
+    msg_print(I,"\255wYour anti-magic field disrupts any magic attempts.") --COLOUR_AM_OWN
     return 0
   end
   if p.anti_magic~=0 then
     p.energy = p.energy - e
-    msg_print(I,"\255wYour anti-magic shell disrupts any magic attempts.")
+    msg_print(I,"\255wYour anti-magic shell disrupts any magic attempts.") --COLOUR_AM_OWN
     return 0
   end
   local v = rspell_sval(u)

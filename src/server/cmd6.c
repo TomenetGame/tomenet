@@ -3463,7 +3463,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
  #ifdef USE_SOUND_2010
 		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
 #endif

@@ -849,7 +849,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 		if (check_affect(s, "blind")) and ((ply.blind > 0) or (no_lite(i) == TRUE)) then
 			local energy = level_speed(ply.wpos);
 			ply.energy = ply.energy - energy
-			msg_print(i, "You cannot see!")
+			msg_print(i, "\255oYou cannot see!")
 			return 0
 		end
 
@@ -857,13 +857,13 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 		if (check_affect(s, "confusion")) and (ply.confused > 0) then
 			local energy = level_speed(ply.wpos);
 			ply.energy = ply.energy - energy
-			msg_print(i, "You are too confused!")
+			msg_print(i, "\255oYou are too confused!")
 			return 0
 		end
 
 		-- Level requirements met?
 		if (get_level(i, s, 50, -50) < 1) then
-			msg_print(i, "Your skill is not high enough!")
+			msg_print(i, "\255sYour skill is not high enough!")
 			lua_intrusion(i, "bad spell level")
 			return 0
 		end
@@ -874,7 +874,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 			--withdraw a little bit of energy just to prevent command-spam
 			ply.energy = ply.energy - energy / 3
 			--if (get_check2("You do not have enough "..get_power_name(s)..", do you want to try anyway?", FALSE) == FALSE) then return end
-			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
+			msg_print(i, "\255oYou do not have enough mana to cast "..spell(s).name..".")
 			__cur_inven_slot = -1
 			return 0
 		end
