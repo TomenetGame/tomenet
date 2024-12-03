@@ -516,7 +516,7 @@ function cast_rune_spell(I,D,u)
   if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
   if xxx < c then
     p.energy = p.energy - (e / 3)
-    msg_print(I,format("\255oYou do not have enough mana. (%s; cost: %d)",S,c))
+    msg_print(I,format("\255yYou do not have enough mana. (%s; cost: %d)",S,c))
     return 0
   end
   if check_antimagic(I,100)~=0 then
