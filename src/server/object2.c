@@ -11831,7 +11831,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 				continue;
 #endif
 
-			/* Level 0 items owned by the player come first */
+			/* Level 0 items owned by the player come first, so we use them up first when triggering consumable-macros */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
 			if (j_ptr->level == 0 && j_ptr->owner == p_ptr->id && o_ptr->level != 0) continue;
 
@@ -12479,7 +12479,7 @@ void reorder_pack(int Ind) {
 				continue;
 #endif
 
-			/* Level 0 items owned by the player come first */
+			/* Level 0 items owned by the player come first, so we use them up first when triggering consumable-macros */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
 			if (j_ptr->level == 0 && j_ptr->owner == p_ptr->id && o_ptr->level != 0) continue;
 
