@@ -86,7 +86,7 @@
 # from which they were derived. Angband 2.8.0 may require every "unique"
 # monster to be based on a "normal" monster, and may enforce color matching.
 # This may result in the addition of some new monsters, to serve as "base"
-# monsters, possibly including Ogre captains, Greater Balrogs, Black Trolls,
+# monsters, possibly including Ogre captains, Greater balrogs, Black Trolls,
 # Vampire Queens, Giant Werewolves, and others. This may be accompanied by
 # a separation of the monster list into a "normal" monster list (r_info)
 # with 512 entries, and a "unique" monster list (u_info) with 128 entries,
@@ -708,7 +708,7 @@ F:MORTAL | SUSCEP_FIRE | BASEANGBAND | NO_CUT | NO_FEAR
 D:A lone insect may be harmless, but there's a whole swarm of
 D:them here!
 
-N:39:The Greater hell-beast
+N:39:The Geater Hell-Beast
 G:U:s
 I:120:15d100:10:1:99
 W:1:16:2000:2500
@@ -3009,7 +3009,7 @@ F:ANIMAL | MALE | CAN_SPEAK | DROP_CORPSE |
 F:MORTAL | JOKEANGBAND
 D:Fast-moving, with a taste for tuna sandwiches.
 
-N:201:Shadow Creature of Fiona
+N:201:Shadow creature of Fiona
 G:h:s
 I:110:9d8:12:12:16
 W:10:2:1000:35
@@ -4708,7 +4708,7 @@ S:BR_ELEC
 D:Saint Elmo's Fire forms a ghostly halo around this hound, and sparks sting
 D:your fingers as energy builds up in the air around you.
 
-N:310:Lesser Mimic
+N:310:Lesser mimic
 G:m:y
 I:110:10d10:25:30:250
 W:18:3:100:60
@@ -4726,7 +4726,7 @@ S:BLIND | CONF | SCARE | CURSE | BO_COLD
 D:A strange creature that disguises itself as some object to lure
 D:unsuspecting adventurers within reach of its venomous claws.
 
-N:311:Door Mimic
+N:311:Door mimic
 G:+:U
 I:110:10d10:25:30:0
 W:18:6:100:70
@@ -4830,7 +4830,7 @@ S:SHRIEK
 D:A pile of rotting vegetation that slides towards you with a disgusting
 D:stench, waking all it nears.
 
-N:317:Giant Venus Flytrap
+N:317:Giant Venus flytrap
 G:#:g
 I:120:10d10:20:5:0
 W:15:5:200:30
@@ -5412,7 +5412,7 @@ S:S_MONSTER
 D:A strange creature that disguises itself as an object to lure
 D:unsuspecting adventurers within reach of its venomous claws.
 
-N:353:Ultimate Mimic
+N:353:Ultimate mimic
 G:m:y
 I:110:15d40:30:40:0
 W:35:4:100:250
@@ -7132,7 +7132,7 @@ S:HEAL | HASTE | BLIND | CONF | SCARE
 D:A lesser angel protected by an aura of holiness. Its muscular form looks
 D:extremely powerful next to your own frail body.
 
-N:457:Greater Mimic
+N:457:Greater mimic
 G:m:y
 I:120:10d35:30:60:100
 W:29:3:100:200
@@ -9169,7 +9169,7 @@ S:BO_NETH | MIND_BLAST | FORGET |
 S:S_UNDEAD | RAISE_DEAD
 D:A gaunt figure, clothed in black robes.
 
-N:572:The Greater hell magic mushroom were-quylthulg
+N:572:The Greater Hell Magic Mushroom Were-Quylthulg
 G:Q:s
 I:120:19d99:50:80:0
 W:36:3:0:2500
@@ -11076,7 +11076,7 @@ S:BLIND | HEAL | BA_DARK | HASTE | CONF |
 D:Deriving his strength from the shadows, this king of thieves
 D:steals only for the challenge.
 
-N:671:Zephyr Lord
+N:671:Zephyr lord
 G:W:v
 I:130:80d10:20:70:10
 W:43:2:600:3000
@@ -11770,7 +11770,7 @@ S:BR_FIRE | BR_NEXU
 D:A mixture of dragon and basilisk, the dracolisk stares at you with deep
 D:piercing eyes, its evil breath burning the ground where it stands.
 
-N:704:Winged Horror
+N:704:Winged horror
 G:B:D
 I:122:25d80:30:80:5
 W:48:3:4500:4000
@@ -12254,7 +12254,7 @@ S:S_DEMON
 D:A pile of pulsing flesh that glows with an inner hellish fire. The world
 D:itself seems to cry out against it.
 
-N:728:Great Storm Wyrm
+N:728:Great storm wyrm
 G:D:e
 I:130:40d100:30:150:80
 W:63:2:190000:20000
@@ -12471,7 +12471,7 @@ S:S_SPIDERS | S_HOUNDS | S_DEMON
 D:He is one of the few true masters of the art, being extremely skillful in
 D:all forms of unarmed combat and controlling the Chaos with disdainful ease.
 
-N:738:Old Sorcerer
+N:738:Old sorcerer
 G:p:r
 I:130:52d25:20:60:10
 W:54:2:1500:5000
@@ -12532,7 +12532,7 @@ S:BA_WATE | DARKNESS | BR_DARK | TELE_TO
 D:An enormously fearsome and powerful inhabitant of the depths. It
 D:resembles a gargantuan octopus and its evil is almost tangible.
 
-N:741:Great Ice Wyrm
+N:741:Great ice wyrm
 G:D:c
 I:130:40d100:30:150:80
 W:63:2:190000:20000
@@ -12849,7 +12849,7 @@ D:Chief messenger between Sauron and Morgoth, she is the most deadly of her
 D:vampire race on Middle-earth. At first she is charming to meet, but her
 D:wings and eyes give away her true form.
 
-N:756:Great Hell Wyrm
+N:756:Great hell wyrm
 #G:D:f
 #G:D:l
 #new def: ember
@@ -13004,7 +13004,7 @@ D:earned a high position in the church, and his skill with both weapon and
 D:spell only justify his position further. His combination of both dwarven
 D:strength and priestly wisdom are a true match for any adventurer.
 
-N:763:Bile Demon
+N:763:Bile demon
 G:U:R
 I:120:35d100:40:110:40
 W:61:2:30000:12000
@@ -13454,7 +13454,7 @@ S:BR_FIRE | BR_ACID | BR_DARK | BR_POIS | BA_WATE |
 S:S_DRAGON | S_HYDRAS | HEAL | CONF | DARKNESS
 D:An enormous, terrible sea-monster, the true master of the ocean.
 
-N:783:Great Wyrm of Chaos
+N:783:Great wyrm of chaos
 G:D:v
 I:130:60d100:40:190:100
 W:75:2:190000:29000
@@ -13477,7 +13477,7 @@ D:A massive dragon of changing form. As you watch, it appears first fair
 D:and then foul. Its body is twisted by chaotic forces as it strives to
 D:stay real. Its very existence distorts the universe around it.
 
-N:784:Great Wyrm of Law
+N:784:Great wyrm of law
 G:D:B
 I:130:60d100:40:190:100
 W:75:2:190000:29000
@@ -13500,7 +13500,7 @@ D:A massive dragon of powerful intellect. It seeks to dominate the universe
 D:and despises all other life. It sees all who do not obey it as mere
 D:insects to be crushed underfoot.
 
-N:785:Great Wyrm of Balance
+N:785:Great wyrm of balance
 G:D:v
 I:130:70d100:40:190:100
 W:80:2:190000:31000
@@ -13617,7 +13617,7 @@ S:BO_MANA | S_DRAGONRIDER
 D:As the Dragonriders came from Pern to help the elves, T'ron and his rebel
 D:Dragonwing came to defend Morgoth! He is an evil and powerful Dragonrider.
 
-N:790:Great Wyrm of Many Colours
+N:790:Great wyrm of many colours
 G:D:v
 I:130:70d100:40:170:255
 W:80:2:190000:31000
@@ -13685,7 +13685,7 @@ D:Darkness itself recoils from the touch of Tselakus as he leaves a trail
 D:of death and destruction. Mighty claws rend reality as he
 D:annihilates all in his path to your soul!
 
-N:793:Sky Drake
+N:793:Sky drake
 G:D:B
 I:140:60d100:40:200:255
 W:77:2:220000:40000
@@ -13730,7 +13730,7 @@ D:entrapped by Morgoth and used to trick her husband into betraying
 D:Barahir. Now she is totally entrapped by Morgoth's power, and uses
 D:her magic to do his bidding.
 
-N:795:Horned Reaper
+N:795:Horned reaper
 G:U:B
 I:130:50d100:40:140:40
 W:72:3:7500:18000
@@ -13982,7 +13982,7 @@ D:toad-shaped head. And the head opened its eyes very slowly, as if
 D:half awakened from slumber, so that they were visible as two slits
 D:of oozing phosphor in the black browless face."
 
-N:807:Greater Balrog
+N:807:Greater balrog
 G:U:v
 I:130:75d100:40:180:40
 W:80:3:16000:25000
@@ -14104,7 +14104,7 @@ D:A shifting, swirling form. It seems to be all colours and sizes and
 D:shapes, though the dominant form is that of a huge dog. You feel very
 D:uncertain all of a sudden.
 
-N:812:Pit Fiend
+N:812:Pit fiend
 G:U:o
 I:130:60d100:30:140:35
 W:77:3:14000:22000
@@ -14492,7 +14492,7 @@ D:The Wendigo, moving so fast that you can see little except two
 D:glowing eyes burning with hatred.
 
 #These were Hellhounds too, previously. Replacing this duplicate by something new..
-N:829:Black Dog
+N:829:Black dog
 G:C:D
 I:130:58d50:140:100:0
 W:78:4:1000:900
@@ -14914,7 +14914,7 @@ S:BR_DARK | BR_POIS | BR_COLD
 D:The immensely huge wolf who would swallow the sun to satisfy its
 D:hunger - and leave the gods for dessert.
 
-N:847:Great Wyrm of Power
+N:847:Great wyrm of power
 G:D:v
 I:140:111d111:40:200:70
 W:85:4:220000:47500
@@ -15338,7 +15338,7 @@ D:the Underworld, cries defiance as he strides towards you to crush you to a
 D:pulp!
 
 # Hacked so as not to come out in normal town. (FIXME)
-N:863:Human Warrior
+N:863:Human warrior
 G:p:u
 I:110:9d8:10:10:0
 #W:0:20:1700:0
@@ -15447,7 +15447,7 @@ S:1_IN_2
 S:S_BUG | S_RNG | BR_CONF
 D:A deranged programmer, scattering bizarre ideas and bad code everywhere.
 
-N:869:Random Number Generator
+N:869:Random number generator
 G:I:b
 I:130:1d6:10:50:0
 W:10:1:0:10
@@ -16513,7 +16513,7 @@ F:MORTAL | BASEANGBAND | HAS_LITE | NO_CONF | NO_SLEEP | RES_PSI
 S:1_IN_12 | BLIND | SLOW | CONF | SCARE
 D:A novice in the arts of mind over matter.
 
-N:938:Great Swamp Wyrm
+N:938:Great swamp wyrm
 #G:D:p
 G:D:K
 I:130:40d100:30:150:80
@@ -16535,7 +16535,7 @@ D:A truly enormous dragon with great powers. The foul gases issuing
 D:from the beast nearly make you vomit; and while you may try to hold
 D:your breath as you fight it, it sees no reason to do likewise.
 
-N:939:Great Bile Wyrm
+N:939:Great bile wyrm
 #G:D:a
 G:D:A
 I:130:50d100:30:150:80
@@ -16557,7 +16557,7 @@ D:A huge and very powerful dragon. Great steaming pools of acid drip from
 D:its form onto the ground. You shudder when you see the acid eating away
 D:the very stones of the dungeon - what could it do to you?
 
-N:940:Blue Firelizard
+N:940:Blue firelizard
 G:d:B
 I:120:4d5:8:15:10
 W:5:3:100:0
@@ -16573,7 +16573,7 @@ S:TELE_TO |
 D:The ancestors of the Dragons of the Dragonriders, these are
 D:friendly funny flying creatures with the powers of the dragons.
 
-N:941:Green Firelizard
+N:941:Green firelizard
 G:d:G
 I:120:4d5:10:15:10
 W:7:3:110:0
@@ -16589,7 +16589,7 @@ S:TELE_TO |
 D:The ancestors of the Dragons of the Dragonriders, these are
 D:friendly funny flying creatures with the powers of the dragons.
 
-N:942:Brown Firelizard
+N:942:Brown firelizard
 G:d:u
 I:120:5d5:10:15:10
 W:10:3:120:0
@@ -16605,7 +16605,7 @@ S:TELE_TO |
 D:The ancestors of the Dragons of the Dragonriders, these are
 D:friendly funny flying creatures with the powers of the dragons.
 
-N:943:Bronze Firelizard
+N:943:Bronze firelizard
 G:d:U
 I:120:6d5:15:15:10
 W:13:3:130:0
@@ -16621,7 +16621,7 @@ S:TELE_TO |
 D:The ancestors of the Dragons of the Dragonriders, these are
 D:friendly funny flying creatures with the powers of the dragons.
 
-N:944:Gold Firelizard
+N:944:Gold firelizard
 G:d:y
 I:120:6d5:20:15:10
 W:15:3:140:0
@@ -16857,7 +16857,7 @@ D:spells are lethal and his combat blows crushingly hard. He moves at
 D:speed, and commands legions of evil to do his bidding. It is said that he
 D:is fated never to die by the hand of mortal man.
 
-N:955:Green Dragonrider
+N:955:Green dragonrider
 G:D:g
 I:120:50d50:20:100:50
 W:30:2:30000:6000
@@ -16875,7 +16875,7 @@ S:1_IN_4 |
 S:BR_FIRE | BLINK | TELE_AWAY
 D:A Dragonrider of Pern. Among the weaker breeds, but still dangerous.
 
-N:956:Blue Dragonrider
+N:956:Blue dragonrider
 G:D:b
 I:120:60d60:20:100:50
 W:40:2:30000:8000
@@ -16894,7 +16894,7 @@ S:BR_FIRE |
 S:TPORT | BLINK
 D:A Dragonrider of Pern. Among the weaker breeds, but still dangerous.
 
-N:957:Brown Dragonrider
+N:957:Brown dragonrider
 G:D:u
 I:130:65d65:30:100:50
 W:50:2:30000:10000
@@ -16913,7 +16913,7 @@ S:BR_FIRE |
 S:TPORT | BLINK
 D:A Dragonrider of Pern. Beware its flame.
 
-N:958:Bronze Dragonrider
+N:958:Bronze dragonrider
 G:D:U
 I:130:70d70:30:100:50
 W:60:2:30000:15000
@@ -16931,7 +16931,7 @@ S:BR_FIRE | BR_TIME |
 S:TPORT | BLINK
 D:A Dragonrider of Pern, mightiest among the males.
 
-N:959:Gold Dragonrider
+N:959:Gold dragonrider
 G:D:y
 I:130:80d80:30:100:50
 W:70:2:30000:20000
@@ -17618,7 +17618,7 @@ S:BLIND | CURSE |
 S:S_DEMON
 D:She is a demon of female form with many arms, each bearing deadly weapons.
 
-N:996:Lesser Balrog
+N:996:Lesser balrog
 G:U:v
 I:120:20d100:20:140:40
 W:49:2:9000:10000
@@ -17741,7 +17741,7 @@ D:elemental water as well as the considerable strength of a cyclops. His
 D:one eye was blinded long ago by the warrior Odysseus, but he has trained
 D:himself to hear so well that it nearly makes up for his disability.
 
-N:1002:Great Wyrm of Perplexity
+N:1002:Great wyrm of perplexity
 G:D:C
 I:130:40d100:30:170:80
 W:63:2:190000:20000
@@ -17782,7 +17782,7 @@ D:"They are lean and athirst!... All the evil in the universe
 D:was concentrated in their lean, hungry bodies. Or had they
 D:bodies? I saw them only for a moment, I cannot be certain."
 
-N:1004:Great Wyrm of Thunder
+N:1004:Great wyrm of thunder
 G:D:S
 #G:D:L
 I:130:50d100:30:170:80
@@ -18624,7 +18624,7 @@ F:MALE | DROP_1D2 | DISBELIEVE | FRIENDS | MORTAL | BASEANGBAND | HAS_LITE
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE |
 D:A scarred warrior who moves with strange confidence.
 
-N:1049:Master Unbeliever
+N:1049:Master unbeliever
 G:p:u
 I:130:11d100:30:80:5
 W:50:3:1600:3800
@@ -18641,7 +18641,7 @@ F:NO_CONF | NO_SLEEP MORTAL | BASEANGBAND | HAS_LITE | DISBELIEVE | RES_TELE
 S:1_IN_8 |
 S:UNMAGIC
 
-N:1050:True Believer
+N:1050:True believer
 G:p:u
 I:130:30d100:30:120:5
 W:57:3:1800:8000
@@ -18677,7 +18677,7 @@ D:Small winged jolly annoying chatterbox, actually he is a descendant
 D:of dispersed minimite race.
 
 #We have 3x this monster now, commenting out two of them
-#N:1052:Creeping Adamantite coins
+#N:1052:Creeping adamantite coins
 #G:$:v
 #I:110:10d15:15:50:10
 #W:55:6:0:60
@@ -18777,7 +18777,7 @@ $ARCADE_SERVER!F:RES_FIRE | RES_COLD | RES_ELEC
 F:MORTAL | BASEANGBAND | HAS_LITE
 D:A warrior of considerable skill.
 
-N:1059:Grand Swordsmaster
+N:1059:Grand swordsmaster
 G:p:u
 I:130:50d50:40:160:8
 W:60:3:2000:8000
@@ -18954,7 +18954,7 @@ D:heated iron. Imbued by corrupt magic to call forth ultimate terror, its
 D:gaze will sap your life forces and make you lose all grip on sanity.
 
 #Nether Realm only
-N:1068:Nether Guard
+N:1068:Nether guard
 G:N:G
 I:140:150d150:250:175:0
 W:98:3:0:100000
@@ -18999,7 +18999,7 @@ S:BR_DARK
 D:A large reptile in black scales, tainted with corruption.
 D:It seems impossible to impede it and its sight chills you to the bone.
 
-N:1070:Cave Gorm
+N:1070:Cave gorm
 G:R:D
 I:120:40d100:25:150:50
 W:60:4:3000:18000
@@ -19018,7 +19018,7 @@ S:BR_DARK
 D:A terrifying, large reptile in black scales, burning the earth with
 D:the touch of hell where it steps. It seems impossible to impede it.
 
-N:1071:Sky Blade
+N:1071:Sky blade
 G:A:B
 I:130:200d35:100:160:255
 W:70:8:3400:25000
@@ -19041,7 +19041,7 @@ D:balance. Its aura is pure beyond expression, its eyes reflect supreme laws
 D:beyond comprehension, daring to look at it will drive you insane, let alone
 D:fighting it!
 
-N:1072:Solar Blade
+N:1072:Solar blade
 G:A:y
 I:130:300d35:150:180:255
 W:80:8:3400:30000
@@ -19064,7 +19064,7 @@ D:their balance. Its aura is pure beyond expression, its eyes reflect supreme
 D:laws beyond comprehension, daring to look at it will drive you insane, let
 D:alone fighting it!
 
-N:1073:Star Blade
+N:1073:Star blade
 G:A:v
 I:130:400d35:200:200:255
 W:90:8:3400:35000
@@ -19158,7 +19158,7 @@ S:FORGET | MIND_BLAST | DARKNESS | TELE_TO
 D:Direct descendant of Lucifer, mother of Glaryssa, all angels seeking
 D:to destroy her fell to her serpent kiss.
 
-N:1077:Mad Balancer
+N:1077:The Mad Balancer
 G:p:b
 I:160:256d256:200:150:255
 W:127:1:16000:50000
@@ -19183,7 +19183,7 @@ D:The coder who keeps balancing this game like there is no tomorrow.
 D:Make sure you have downloaded the latest scripts, or he will drive
 D:you to despair!
 
-N:1078:Evil Administrator from Hell
+N:1078:The Evil Administrator from Hell
 G:e:D
 I:110:666d66:100:60:255
 W:127:3:600:50000
@@ -19263,7 +19263,7 @@ S:1_IN_4 |
 S:BLINK | BLIND | SLOW | S_MONSTER
 D:A small humanoid that radiates hellish power.
 
-N:1082:Void Jumpgate Mimic
+N:1082:Void jumpgate mimic
 G:+:v
 I:110:50d10:25:30:0
 W:26:8:100:70
@@ -19423,7 +19423,7 @@ S:MOAN | SCARE | HOLD | TPORT
 D:On Halloween night, the Great Pumpkin rises out of its pumpkin patch
 D:and flies through the air with its bag of loot for all the adventurers!
 
-N:1089:Forest Ghoul
+N:1089:Forest ghoul
 G:z:D
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19451,7 +19451,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:Did it just float out of that wall behind you?
 
-N:1091:Rampant Zombie
+N:1091:Rampant zombie
 G:z:s
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19465,7 +19465,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:Digging itself out of the earth it is not finding any rest.
 
-N:1092:Vampire Apparition
+N:1092:Vampire apparition
 G:V:b
 I:110:30d5:8:2:99
 W:0:1:1300:25
@@ -19479,7 +19479,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It's baring its teeth at you!
 
-N:1093:Lost Goblin
+N:1093:Lost goblin
 G:o:g
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19493,7 +19493,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:This one seems oddly far away from the orc caves.
 
-N:1094:Moving Bones
+N:1094:Moving bones
 G:s:w
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19802,7 +19802,7 @@ S:BLIND | CONF | SCARE | BR_COLD | BR_INER
 D:A huge draconic form wreathed in a radiance of silver. The emanating cold air
 D:makes it unusually hard for you to move.
 
-N:1110:Great Wyrm of Radiance
+N:1110:Great wyrm of radiance
 #G:D:a
 G:D:q
 I:130:46d100:30:170:80
@@ -19865,7 +19865,7 @@ D:A huge and very powerful dragon. Great steaming pools of acid drip from
 D:its form onto the ground. You shudder when you see the acid eating away
 D:the very stones of the dungeon - what could it do to you?
 
-N:1113:Great Dragon of Bad Luck
+N:1113:Great dragon of bad luck
 G:D:a
 I:130:50d100:200:150:0
 W:71:0:100000:1
@@ -19885,7 +19885,7 @@ D:A huge and very powerful dragon. Great steaming pools of acid drip from
 D:its form onto the ground. You shudder when you see the acid eating away
 D:the very stones of the dungeon - what could it do to you?
 
-N:1114:Bad Luck Bat from Hell
+N:1114:Bad luck bat from hell
 G:b:a
 I:200:50d100:200:500:0
 W:44:0:100:1
@@ -19905,7 +19905,7 @@ D:straight at you like lightning.
 
 # Just for testing stuff - C. Blue
 
-N:1115:Test Blob
+N:1115:Test blob
 G:j:R
 I:110:100d10:0:50:0
 W:99:0:500:0
@@ -19916,7 +19916,7 @@ F:BLUEBAND | NO_CREDIT | NEVER_MOVE | NONLIVING | EMPTY_MIND | COLD_BLOOD |
 F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP
 D:For testing
 
-$ARCADE_SERVER$N:1116:Healthy Blob A
+$ARCADE_SERVER$N:1116:Healthy blob A
 $ARCADE_SERVER$G:*:U
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19926,7 +19926,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1117:Mostly Healthy Blob A
+$ARCADE_SERVER$N:1117:Mostly healthy blob A
 $ARCADE_SERVER$G:*:u
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19936,7 +19936,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1118:Wounded Blob A
+$ARCADE_SERVER$N:1118:Wounded blob A
 $ARCADE_SERVER$G:*:o
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19946,7 +19946,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1119:Badly Wounded Blob A
+$ARCADE_SERVER$N:1119:Badly wounded blob A
 $ARCADE_SERVER$G:*:R
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19956,7 +19956,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1120:Mortally Wounded Blob A
+$ARCADE_SERVER$N:1120:Mortally wounded blob A
 $ARCADE_SERVER$G:*:r
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19966,7 +19966,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1121:Healthy Blob B
+$ARCADE_SERVER$N:1121:Healthy blob B
 $ARCADE_SERVER$G:*:U
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19976,7 +19976,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1122:Mostly Healthy Blob B
+$ARCADE_SERVER$N:1122:Mostly healthy blob B
 $ARCADE_SERVER$G:*:u
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19986,7 +19986,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1123:Wounded Blob B
+$ARCADE_SERVER$N:1123:Wounded blob B
 $ARCADE_SERVER$G:*:o
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -19996,7 +19996,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1124:Badly Wounded Blob B
+$ARCADE_SERVER$N:1124:Badly wounded blob B
 $ARCADE_SERVER$G:*:R
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -20006,7 +20006,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP | FORCE_MAXHP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND | KILL_BODY
 $ARCADE_SERVER$D:For blob war game.
 
-$ARCADE_SERVER$N:1125:Mortally Wounded Blob B
+$ARCADE_SERVER$N:1125:Mortally wounded blob B
 $ARCADE_SERVER$G:*:r
 $ARCADE_SERVER$I:110:50d10:30:30:0
 $ARCADE_SERVER$W:35:2:700:500
@@ -20053,7 +20053,7 @@ S:BR_FIRE | BR_LITE
 D:A large glowing eagle bathed in flames. The searing heat chars your
 D:skin and melts your armour.
 
-N:1128:Swamp Serpent
+N:1128:Swamp serpent
 G:J:g
 I:120:22d100:20:110:40
 W:39:3:50000:1800
@@ -20069,7 +20069,7 @@ S:1_IN_5
 S:BR_POIS | BR_ACID | SCARE
 D:A huge snake-like reptile with green scales that inhabits swamps.
 
-N:1129:Mountain Serpent
+N:1129:Mountain serpent
 G:J:U
 I:120:27d100:20:140:40
 W:47:5:60000:3000
@@ -20087,7 +20087,7 @@ S:BR_SHAR | SCARE | HOLD
 D:A huge snake-like reptile with red and brown scales that inhabits
 D:mountain regions.
 
-N:1130:Sea Serpent
+N:1130:Sea serpent
 G:J:b
 I:125:55d100:50:120:40
 W:56:3:85000:4400
@@ -20104,7 +20104,7 @@ S:BA_WATE | BR_POIS | BR_ACID | SCARE
 D:A huge snake-like reptile with scales coloured like the sea in
 D:which it dwells.
 
-N:1131:Horned Serpent
+N:1131:Horned serpent
 G:J:r
 I:125:36d100:20:160:40
 W:66:5:65000:5800
@@ -20122,7 +20122,7 @@ S:BR_POIS | BR_ACID | SCARE
 D:A huge snake-like reptile with redish scales and horns,
 D:rarely encountered it inhabits swamps, mountains and caves.
 
-N:1132:Invisible Dummy
+N:1132:Invisible dummy
 G:.:w
 I:110:1d1:0:0:0
 W:127:0:0:0
@@ -20133,7 +20133,7 @@ F:NO_CREDIT | ALLOW_RUNNING | GENO_PERSIST | GENO_NO_THIN | F_INFO_1
 D:Just a dummy placeholder for making grids inaccessible
 D:to means such as teleport.
 
-N:1133:Susceptible Test Blob
+N:1133:Susceptible test blob
 G:j:Z
 I:110:100d10:0:75:0
 W:1:0:500:0
@@ -20176,7 +20176,7 @@ F:MORTAL | ANIMAL | WILD_TOO | WILD_WOOD | RAND_5 | GENO_NO_THIN | IM_TELE
 F:ATTR_BASE | ATTR_BNW | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A black and white spotted bear that doesn't seem overly agressive.
 
-N:1136:Black Horse
+N:1136:Black horse
 G:q:D
 I:110:6d6:10:35:10
 W:5:0:13000:25
@@ -20198,7 +20198,7 @@ F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL
 F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated grullo horse.
 
-N:1138:Grey Horse
+N:1138:Grey horse
 G:q:W
 I:110:6d6:10:35:10
 W:5:0:12000:25
@@ -20209,7 +20209,7 @@ F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL
 F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated grey horse.
 
-N:1139:Chestnut Horse
+N:1139:Chestnut horse
 G:q:u
 I:110:6d6:10:35:10
 W:5:0:12000:25
@@ -20232,7 +20232,7 @@ F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated palomino horse.
 
 # For testing LoS stuff - C. Blue
-N:1141:Charged Test Blob
+N:1141:Charged test blob
 G:j:M
 I:120:100d10:50:50:0
 W:1:0:500:0
@@ -20354,7 +20354,7 @@ D:is an untamed, huge, crackling ball of energy, zapping around at blinding
 D:speed, showing no signs of depletion but continuously firing powerful magical
 D:and electrical discharges into all directions.
 
-N:1148:Star Test Blob
+N:1148:Star test blob
 G:j:p
 I:110:1d1:200:0:0
 W:127:0:0:0
@@ -20366,7 +20366,7 @@ F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
 #F:AI_ANNOY
 D:For testing
 
-N:1149:Blinky Star Test Blob
+N:1149:Blinky star test blob
 G:j:k
 I:110:1d1:200:0:0
 W:127:0:0:0
@@ -20381,7 +20381,7 @@ S:BLINK
 #S:TPORT
 D:For testing
 
-N:1150:Loot Test Blob
+N:1150:Loot test blob
 G:j:y
 I:110:1d1:1:0:0
 W:127:0:0:0
@@ -20446,7 +20446,7 @@ D:life! Showing no hesitation, empathy or doubt it attacked immediately!
 
 # a low-power version for the 'Dungeon Keeper' labyrinth event - C. Blue
 # Differences: no-death, slower, awake, bashes doors, has light, no spells
-N:1154:Horned Reaper
+N:1154:Horned reaper
 G:U:B
 I:111:10d100:200:50:0
 W:72:0:7500:18000
@@ -20487,7 +20487,7 @@ D:Daughter of Shelob, the legendary Spider-Queen, Saenathra has built her own
 D:empire deep within the shadows of Mirkwood. With legions of ghastly giant
 D:spiders at her command, she has accumulated an untold fortune of treasure.
 
-N:1156:Annoying Test Blob
+N:1156:Annoying test blob
 G:j:o
 I:130:1d1:200:0:0
 W:127:0:0:0
@@ -20499,7 +20499,7 @@ F:CAN_FLY
 F:AI_ANNOY
 D:For testing
 
-N:1157:Annoying Immune Test Blob
+N:1157:Annoying immune test blob
 G:j:U
 I:130:1d1:200:0:0
 W:127:0:0:0
@@ -20511,7 +20511,7 @@ F:CAN_FLY | IM_FIRE | IM_COLD | IM_ELEC
 F:AI_ANNOY
 D:For testing
 
-N:1158:Arrowing Test Blob
+N:1158:Arrowing test blob
 G:j:o
 I:130:1d1:200:0:0
 W:127:0:0:0
@@ -20523,7 +20523,7 @@ S:1_IN_1
 S:ARROW_1
 D:For testing
 
-N:1159:Shooting Test Blob
+N:1159:Shooting test blob
 G:j:o
 I:130:1d1:200:0:0
 W:127:0:0:0
@@ -20535,7 +20535,7 @@ S:1_IN_1
 S:ARROW_2
 D:For testing
 
-N:1160:Bolting Test Blob
+N:1160:Bolting test blob
 G:j:o
 I:130:1d1:200:0:0
 W:127:0:0:0
@@ -20547,7 +20547,7 @@ S:1_IN_1
 S:ARROW_3
 D:For testing
 
-N:1161:Missiling Test Blob
+N:1161:Missiling test blob
 G:j:o
 I:130:1d1:200:0:0
 W:127:0:0:0
@@ -20559,7 +20559,7 @@ S:1_IN_1
 S:ARROW_4
 D:For testing
 
-N:1162:Shrieking Test Blob
+N:1162:Shrieking test blob
 G:j:R
 I:130:1d1:200:0:0
 W:127:0:0:0
@@ -20571,7 +20571,7 @@ S:1_IN_1
 S:SHRIEK
 D:For testing
 
-N:1163:Disintegrating Test Blob
+N:1163:Disintegrating test blob
 G:j:R
 I:100:1d1:200:0:0
 W:127:0:0:0
@@ -20583,7 +20583,7 @@ S:1_IN_1
 S:BR_DISI
 D:For testing
 
-N:1164:Summoning Test Blob
+N:1164:Summoning test blob
 G:j:v
 I:120:100d10:50:50:0
 W:1:0:500:0
@@ -20595,7 +20595,7 @@ F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP | REGENERATE
 S:1_IN_1 | S_MONSTER
 D:For testing
 
-N:1165:Everliving Test Blob
+N:1165:Everliving test blob
 G:j:g
 I:120:100d10:50:50:0
 W:1:0:500:0
