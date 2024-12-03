@@ -344,7 +344,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.fail_no_melee,		FALSE,	2,	0, 66, TRUE,
 	    "fail_no_melee",		"Don't melee if other auto-retaliation ways fail" },
 	{ &c_cfg.wide_scroll_margin,	TRUE,	1,	0, 67, TRUE,
-	    "wide_scroll_margin",	"Scroll the screen more frequently" },
+	    "wide_scroll_margin",	"Scroll the screen further away from the edges" },
 	{ &c_cfg.auto_target,		FALSE,	2,	0, 68, TRUE,
 	    "auto_target",		"Automatically set target to the nearest enemy" },
 	{ &c_cfg.thin_down_flush,	TRUE,	4,	0, 69, TRUE,
