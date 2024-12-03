@@ -1051,31 +1051,24 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 &       edit your auto-inscriptions (see (0.3a)).
 
 =       edit your preferences.
-        Most important entries here are..
-        User Interface Options:
-            "Rogue-like commands" will change your keyboard layout to
+        Some important entries here are..
+
+        User Interface Options 1:
+            "Rogue-like keyset" will change your keyboard layout to
                 the original Rogue key definitions.
-            "Scroll the screen more frequently" helps to avoid death by
-                attacks that came from off-screen. However, this option can be
-                a bit irritating.
-            "Flicker messages in recall" will allow you to see animated
-                messages in the bottom left window (message history).
-            "Always show lists in item/skill selection" will always show a
-                list of possible choices if you use commands that require you
-                to make a selection from a list of choices.
-            A lot of audio options; note that on systems where the /page
-            command won't produce a native beep sound, you can enable sound
-            system paging instead here! (Of course you can also enable it on
-            all other systems too, which might be nicer than the system beep).
-        Gameplay Options:
+            "Scroll the screen further away from the edges" helps to avoid
+                death by attacks that came from off-screen.
+
+        Audio Options 2:
+            "Use audio system for page/alert, if available"
+            On systems where the /page command won't produce a native beep
+            sound, you can enable sound system paging instead here (Of course
+            you can also enable it on all osther systems too, which might be
+            nicer than the system beep anyway).
+
+        Gameplay Options 1:
             "Set 'AFK' mode automatically" will set you afk after some
                 minutes of inactivity.
-            "Automatically open doors" makes your character try to open a door
-                just by moving towards it.
-            "Automatically disarm traps" makes your character try to disarm a
-                trap just by stepping onto it.
-            "Automatically tunnel walls" makes your character tunnel through a
-                wall just by moving towards it.
 
 :       type a chat message. To whisper privately, enter <player>:<text>
         eg:  Johnjohn:hi!  - actually the first few letters of the target
