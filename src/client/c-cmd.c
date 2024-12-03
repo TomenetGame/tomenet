@@ -7104,22 +7104,31 @@ static void cmd_notes(void) {
 			if (i < notes_files) j_sel = y = i;
 			break;
 			}
+		case NAVI_KEY_PAGEUP:
 		case '9':
 		case 'p':
 			y = (y - 10 + notes_files) % notes_files;
 			break;
+		case NAVI_KEY_PAGEDOWN:
 		case '3':
+		case 'n':
 		case ' ':
 			y = (y + 10 + notes_files) % notes_files;
 			break;
+		case NAVI_KEY_END:
 		case '1':
 			y = notes_files - 1;
 			break;
+		case NAVI_KEY_POS1:
 		case '7':
 			y = 0;
 			break;
+		case NAVI_KEY_UP:
 		case '8':
+		case NAVI_KEY_DOWN:
 		case '2':
+			if (ch == NAVI_KEY_UP) ch = '8';
+			if (ch == NAVI_KEY_DOWN) ch = '2';
 			d = keymap_dirs[ch & 0x7F];
 			y = (y + ddy[d] + notes_files) % notes_files;
 			break;

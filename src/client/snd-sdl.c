@@ -3691,26 +3691,34 @@ void do_cmd_options_sfx_sdl(void) {
 			}
 			break;
 			}
+		case NAVI_KEY_PAGEUP:
 		case '9':
 		case 'p':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y - 10 + audio_sfx) % audio_sfx;
 			break;
+		case NAVI_KEY_PAGEDOWN:
 		case '3':
 		case ' ':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y + 10 + audio_sfx) % audio_sfx;
 			break;
+		case NAVI_KEY_END:
 		case '1':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = audio_sfx - 1;
 			break;
+		case NAVI_KEY_POS1:
 		case '7':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = 0;
 			break;
+		case NAVI_KEY_UP:
 		case '8':
+		case NAVI_KEY_DOWN:
 		case '2':
+			if (ch == NAVI_KEY_UP) ch = '8';
+			if (ch == NAVI_KEY_DOWN) ch = '2';
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			d = keymap_dirs[ch & 0x7F];
 			y = (y + ddy[d] + audio_sfx) % audio_sfx;
@@ -4272,22 +4280,30 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			break;
 			}
+		case NAVI_KEY_PAGEUP:
 		case '9':
 		case 'p':
 			y = (y - 10 + audio_music) % audio_music;
 			break;
+		case NAVI_KEY_PAGEDOWN:
 		case '3':
 		case ' ':
 			y = (y + 10 + audio_music) % audio_music;
 			break;
+		case NAVI_KEY_END:
 		case '1':
 			y = audio_music - 1;
 			break;
+		case NAVI_KEY_POS1:
 		case '7':
 			y = 0;
 			break;
+		case NAVI_KEY_UP:
 		case '8':
+		case NAVI_KEY_DOWN:
 		case '2':
+			if (ch == NAVI_KEY_UP) ch = '8';
+			if (ch == NAVI_KEY_DOWN) ch = '2';
 			d = keymap_dirs[ch & 0x7F];
 			y = (y + ddy[d] + audio_music) % audio_music;
 			break;
@@ -4309,6 +4325,7 @@ void do_cmd_options_mus_sdl(void) {
 			Returns: 0 on success, or -1 if the codec doesn't support this function.
 		   ..and worst, the is no way to retrieve the current music position, so we have to track it manually: curmus_timepos.
 		*/
+		case NAVI_KEY_LEFT:
 		case '4':
 			Mix_RewindMusic();
 			curmus_timepos -= MUSIC_SKIP; /* Skip backward n seconds. */
@@ -4316,6 +4333,7 @@ void do_cmd_options_mus_sdl(void) {
 			else Mix_SetMusicPosition(curmus_timepos);
 			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //paranoia, sync
 			break;
+		case NAVI_KEY_RIGHT:
 		case '6':
 			Mix_RewindMusic();
 			curmus_timepos += MUSIC_SKIP; /* Skip forward n seconds. */
