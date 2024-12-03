@@ -752,6 +752,8 @@ K       CTRL+C  forcibly combines a level 0 item in your inventory with other
                 involved to 0 so they will become untradable.
                 Also forcibly combines items inscribed "!G" which usually
                 inhibits any stacking behaviour, overriding that inscription.
+                Force-stack will also partially transfer stacks if the
+                destination stack maxes out (ie at 99 items).
                 Note that you have to choose the 2nd (ie downmost) slot in your
                 inventory of the two slots you want to stack.
 
