@@ -295,7 +295,7 @@ function use_power(i, s, s_ptr, no_cost, other)
 		if (power_check_affect(s, "blind")) and ((player.blind > 0) or (no_lite(Ind) == TRUE)) then
 			local energy = level_speed(player.wpos);
 			player.energy = player.energy - energy
-			msg_print(i, "You cannot see!")
+			msg_print(i, "\255oYou cannot see!")
 			return 0
 		end
 
@@ -303,13 +303,13 @@ function use_power(i, s, s_ptr, no_cost, other)
 		if (power_check_affect(s, "confusion")) and (player.confused > 0) then
 			local energy = level_speed(player.wpos);
 			player.energy = player.energy - energy
-			msg_print(i, "You are too confused!")
+			msg_print(i, "\255oYou are too confused!")
 			return 0
 		end
 
 		-- Level requirements met?
 		if (power_get_level(i, s) < 1) then
-			msg_print(i, "Your skill is not high enough!")
+			msg_print(i, "\255sYour skill is not high enough!")
 			lua_intrusion(i, "bad power level")
 			return 0
 		end
@@ -319,7 +319,7 @@ function use_power(i, s, s_ptr, no_cost, other)
 			local energy = level_speed(player.wpos);
 			player.energy = player.energy - energy
 --			if (get_check2("You do not have enough "..get_power_name(s)..", do you want to try anyway?", FALSE) == FALSE) then return end
-			msg_print(i, "You do not have enough mana to use "..power(s).name..".")
+			msg_print(i, "\255oYou do not have enough mana to use "..power(s).name..".")
 				return 0
 		end
 
