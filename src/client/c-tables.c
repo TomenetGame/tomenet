@@ -298,8 +298,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     //todo: fix/implement good cursor on *nix/osx
 	{ &c_cfg.hilite_player,		FALSE,	7,	0, 45, TRUE,
 	    "highlight_player",		"Highlight own character icon with the cursor" },
-	{ &c_cfg.basic_players,		FALSE,	1,	0, 46, TRUE,
-	    "basic_players",	"Use very basic static symbols/colours for players" },
+	{ &c_cfg.basic_players_symb,	FALSE,	1,	0, 46, TRUE,
+	    "basic_players_symb",	"Use very basic static symbols for players" },
 
 	{ &c_cfg.recall_flicker,	TRUE,	4,	0, 47, TRUE,
 	    "recall_flicker",		"Show animated text colours in sub-windows" },
@@ -343,8 +343,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "autooff_retaliator",	"Stop the retaliator when protected by GoI etc" },
 	{ &c_cfg.fail_no_melee,		FALSE,	2,	0, 66, TRUE,
 	    "fail_no_melee",		"Don't melee if other auto-retaliation ways fail" },
-	{ &c_cfg.wide_scroll_margin,	TRUE,	1,	0, 67, TRUE,
-	    "wide_scroll_margin",	"Scroll the screen further away from the edges" },
+	{ &c_cfg.basic_players_col,	FALSE,	1,	0, 67, TRUE,
+	    "basic_players_col",	"Use very basic static colours for players" },
 	{ &c_cfg.auto_target,		FALSE,	2,	0, 68, TRUE,
 	    "auto_target",		"Automatically set target to the nearest enemy" },
 	{ &c_cfg.thin_down_flush,	TRUE,	4,	0, 69, TRUE,
@@ -597,6 +597,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "instant_retaliator",	"Autoretaliate instantly but forego reserve energy" }, //note: includes FTK
 	{ &c_cfg.sunburn_msg,		TRUE,	0,	0, 166, TRUE,
 	    "sunburn_msg",		"Show message if you start/stop burning in the sun" },
+	{ &c_cfg.wide_scroll_margin,	TRUE,	1,	0, 167, TRUE,
+	    "wide_scroll_margin",	"Scroll the screen further away from the edges" },
 };
 
 cptr melee_techniques[16] = {

@@ -3932,9 +3932,13 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 #endif
 			/* Always show party members as dark grey @? Allow pvp flickers still */
-			if (p_ptr->basic_players) {
-				c = '@';
+			if (p_ptr->basic_players_symb) c = '@';
+			if (p_ptr->basic_players_col) {
+#if 0 /* 0'ed for now as TERM_L_DARK is used for DK/HK nowadays, and there were requests to still show class colours in basic-visuals mode */
 				a = TERM_L_DARK;
+#else /* use class colour instead */
+				a = p2_ptr->cp_ptr->color;
+#endif
 				if (p2_ptr->black_breath && magik(50)) a = TERM_SLATE;
 			}
 
@@ -4439,8 +4443,8 @@ void lite_spot(int Ind, int y, int x) {
 				else if ((has_ball(p_ptr) != -1) && magik(25)) a = TERM_ORANGE; /* game ball carrier has orange flickering - mikaelh */
 			}
 
-
-			if (p_ptr->basic_players) {
+			/* display ourselves in basic colour? */
+			if (p_ptr->basic_players_col) {
 				a = TERM_WHITE;
 				if (p_ptr->black_breath && magik(50)) a = TERM_SLATE;
 				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster == p_ptr->tim_mimic_what) {
@@ -4489,7 +4493,7 @@ void lite_spot(int Ind, int y, int x) {
 			    !((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)))
 				c = 'b';
 
-			if (p_ptr->basic_players) c = '@';
+			if (p_ptr->basic_players_symb) c = '@';
 
 			/* Check if we see ourself turn into a number from lack of HP (or MP if disruption shield is active). */
 			if (p_ptr->chp < 0) {

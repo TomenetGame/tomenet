@@ -4242,7 +4242,7 @@ struct player_type {
 	s16b flashing_self;
 	bool flash_insane;
 	bool hilite_player;		/* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
-	bool basic_players;	/* Use consistent basic symbols and colouring for player and allies. Ignore all status/body_monster */
+	bool basic_players_symb, basic_players_col;	/* Use consistent basic symbols and colouring for player and allies. Ignore all status/body_monster */
 #ifdef TELEPORT_SURPRISES
 	byte teleported;		/* optional/experimental: in the future, a cooldown for monsters who are 'surprised' from player teleporting next to them */
 #endif
@@ -4603,7 +4603,7 @@ struct client_opts {
 	bool flash_player;
 	bool flash_player2;
 	bool hilite_player;
-	bool basic_players;
+	bool basic_players_symb, basic_players_col;
 	bool recall_flicker;
 	bool no_verify_destroy;
 	bool no_verify_sell;
