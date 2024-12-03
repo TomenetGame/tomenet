@@ -5436,25 +5436,23 @@ void do_cmd_disarm(int Ind, int dir) {
 				cs_erase(c_ptr, cs_ptr);
 				//c_ptr->feat = FEAT_FLOOR;
 
-#if 1
 				/* Forget the "field mark" */
 				everyone_forget_spot(wpos, y, x);
-
 				/* Notice */
 				note_spot_depth(wpos, y, x);
-
 				/* Redisplay the grid */
-				everyone_clear_ovl_spot(wpos, y, x);
-#endif
+				//everyone_clear_ovl_spot(wpos, y, x);
+				everyone_lite_spot(wpos, y, x);
 
 				/* move the player onto the trap grid
-				   except if it was a trap on a closed door,
+				   except if it was a trap on a closed door or mimicked feature,
 				   since we might not want to open it yet,
 				   especially while being cloaked */
-/* NOTE that the player might normally NOT be able to move onto the trap grid! (bats/forms that can't open doors) -- seems safe for now */
-				if (dir != 5 &&
-				    !(c_ptr->feat >= FEAT_DOOR_HEAD &&
-				    c_ptr->feat <= FEAT_DOOR_TAIL))
+				/* NOTE that the player might normally NOT be able to move onto the trap grid! (bats/forms that can't open doors) -- seems safe for now */
+				if (dir != 5
+				    && !(c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)
+				    && c_ptr->feat != FEAT_SECRET /* Don't move into secret doors that haven't been found out yet... TODO: Check FEAT_SECRET vs CS_MIMIC usage for granite/mountains. */
+				    && !GetCS(c_ptr, CS_MIMIC)) /* This is for secret doors in mountains, as FEAT_SECRET is specifically secret door inside granite wall? */
 					move_player(Ind, dir, FALSE, NULL);
 				else
 					everyone_lite_spot(wpos, y, x);
