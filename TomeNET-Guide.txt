@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. December 2024 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 3. December 2024 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3694,7 +3694,7 @@ See the following paragraph (1.3b) for more information on Morgoth.
 -----------------------------------------------------------------
 -Morgoth is found only at dungeon level 100 or deeper.
 -He won't show up until you defeated Sauron, the Sorceror, who is found at the
- bottom of Mt Doom (which is dungeon level 99).
+ bottom of Mount Doom (which is dungeon level 99).
 -Morgoth does not neccessarily spawn on each fitting dungeon level,
  sometimes you have to search for him, like for all other monsters/uniques.
 -If a player who hasn't defeated Sauron yet or who has already beaten Morgoth
@@ -8498,7 +8498,7 @@ staircase colours (also visible on the world map):
  Sending items via telekinesis to a player who is currently in a no-recall
  dungeon/tower will only work if both players are on the same dungeon floor.
  Ghosts of dead players can still float up/down.
- (Killing Sauron is an exception, allowing you to recall from Mt Doom!)
+ (Killing Sauron is an exception, allowing you to recall from Mount Doom!)
  No-recall dungeons/towers are marked by a red < or > symbol.
 
 -FORCE_DOWN. Same as NO_UP, but you can only recall at the bottom of the
@@ -9392,25 +9392,19 @@ Enjoy!
 (4.5b) Towns & town dungeons
 ----------------------------
 Here is a list of towns and their corresponding local dungeons:
-NOTE: Minimum level requirements for entering are usually disabled in normal
-      server settings, so you can enter any dungeon anytime, if you dare.
 
-Town        |Depth/Level|   Local dungeons    | Depth/Level      |Required
-            |of the town|                     | of the local     |player level
-            |itself     |                     | dungeon          |for entering
+Town        |Depth/Level|   Local dungeons    | Depth/Level      |Maximum Depth
+            |of the town|                     | of the local     |   (local)
+            |itself     |                     | dungeon          |
 ------------+-----------+---------------------+------------------+------------
-Bree        |   0 ft/  0|The Training Tower(*)| +50..+100/ 1..2  |    1
-            |           |Barrow-Downs         |  50..1750/ 1..35 |    1
-Gondolin    |1000 ft/ 20|Mordor               |1700..3300/34..66 |   15
-Minas Anor  |2000 ft/ 40|The Paths of the Dead|2000..3500/40..70 |   20
-Lothlorien  |3000 ft/ 60|Angband              |3350..6350/67..127|   30
-Khazad-dum  |4000 ft/ 80|Angband              |3350..6350/67..127|   30
+Bree        |   0 ft/  0|The Training Tower(*)| +50..+100/ 1..2  |    100 ft
+            |           |Barrow-Downs         |  50..1750/ 1..35 |   1750 ft
+Gondolin    |1000 ft/ 20|Mordor               |1700..3300/34..66 |   1650 ft
+Minas Anor  |2000 ft/ 40|The Paths of the Dead|2000..3500/40..70 |   1550 ft
+Lothlorien  |3000 ft/ 60|Angband              |3350..6350/67..127|   3050 ft
+Khazad-dum  |4000 ft/ 80|Angband              |3350..6350/67..127|   3050 ft
 
 (*) In the Training Tower, you cannot die for real (except for PvP mode chars).
-
-To enter a dungeon your character must have the displayed minimum level.
-Otherwise you'll get a message like this "Suddenly you're grasped by an
-uncontrollable fear".
 
 The deeper you decend into the dungeons, the more the passing of time itself
 will be slowed down to make it easier to fight very fast monsters. By the time
@@ -9445,9 +9439,6 @@ Since The Orc Cave goes from level 10 to level 23 that means it has 14 floors,
 so its final floor will be -700 ft which is of the same difficulty level as
 -1150 ft Barrow-Downs (ie level 23).
 
-NOTE: Minimum level requirements for entering are usually disabled in normal
-      server settings, so you can enter any dungeon anytime, if you dare.
-
 Dungeon                        |          Depth / Level    |   Maximum Depth
                                |        relative to Lv.1   |      (local)
 -------------------------------+---------------------------+-------------------
@@ -9479,20 +9470,16 @@ The official main server usually has one or several 'ironman' dungeons
 explorers.
 
 Such custom dungeons appear as 'Wilderness' in the "Recall depths and Towns"
-list, and usually have no minimum required character level to enter.
-There may also be certain special dungeons, related to events or jails, that
-show up under according names in the list.
-
-There is also one very special ironman dungeon with its own very distinct
-ruleset, called the 'Ironman Deep Dive Challenge'. See (4.13) for details.
+list. There may also be certain special dungeons, related to events or jails,
+that show up under according names in the list.
 
 There may or may not be further special/exotic dungeons that are not part of
 the "normal" game or gameplay.
 See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 
 (*) The Ironman Deep Dive Challenge or short IDDC is a special, independant
-dungeon, that has a special ruleset and is distinct from the rest of the game.
-For more information, see (4.13), Ironman Challenge.
+ironman dungeon, that has a special ruleset and is distinct from the rest of
+the game. For more information, see (4.13), Ironman Challenge.
 
 (**) Death Fate:
  Will this be the end of you as you cannot seem to spot a way to escape? Or is
@@ -9668,7 +9655,7 @@ teleportation from and to, and stall all Word of Recall attempts within.
 specific artifact, he is still a required kill before you are able to encounter
 Morgoth, the Lord of Darkness (compare (1.3), (1.3a) and (1.3b)).
 When you kill Sauron, you will be able to recall out from that dungeon level!
-(Usually you cannot recall into/out of Mt Doom.)
+(Usually you cannot recall into/out of Mount Doom.)
 Note: If you kill Sauron, you will automatically also get kill credit for the
 Shadow of Dol Guldur, meaning that the Shadow won't spawn for you anymore if
 you didn't kill it before killing Sauron.
@@ -11445,8 +11432,8 @@ die permanently even if you are everlasting!
     requires you to have stayed on the previous floor for about 2 minutes
     (until your depth indicator gets a light blue star attached).
 
-    Although Sauron is the final guardian of Mt Doom, he may spawn in any theme
-    in the IDDC, provided the floor depth is at least level 99.
+    Although Sauron is the final guardian of Mount Doom, he may spawn in any
+    theme in the IDDC, provided the floor depth is at least level 99.
     As in any other dungeon, Morgoth will only spawn if all players on a floor
     have already defeated Sauron. He may spawn in any theme, on floor depths of
     level 100 or deeper.
