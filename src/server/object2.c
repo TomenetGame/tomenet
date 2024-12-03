@@ -12028,6 +12028,8 @@ void combine_pack(int Ind) {
 
 	/* Combine the pack (backwards) */
 #ifdef ENABLE_SUBINVEN
+	int is;
+
 	for (i = INVEN_PACK; i >= 0; i--) {
 		/* Get the item -- the top-most item cannot be combined with anything as there is nothing above it,
 		   but we still have to process it in case it is a subinventory, and inside of it might be things that need combining. */
@@ -12066,6 +12068,8 @@ void combine_pack(int Ind) {
 					redraw = TRUE;
 				}
 
+				is = (i + 1) * SUBINVEN_INVEN_MUL + s;
+
 				/* Scan the items above that item */
 				for (j = 0; j < s; j++) {
 					/* Get the item */
@@ -12076,9 +12080,9 @@ void combine_pack(int Ind) {
 
 					/* Can we drop "o_ptr" onto "j_ptr"? */
 					/* 0x40: Handle !G inscription - prevents any partial combining aka partial stack-shifting across slots too though, atm :/ but that's maybe not really an issue. */
-					if (object_similar(Ind, j_ptr, o_ptr, (p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0) | 0x40)) {
+					if (object_similar(Ind, j_ptr, o_ptr, (p_ptr->current_force_stack - 1 == is ? 0x2 : 0x0) | 0x40)) {
 						/* clear if used */
-						if (p_ptr->current_force_stack - 1 == i) p_ptr->current_force_stack = 0;
+						if (p_ptr->current_force_stack - 1 == is) p_ptr->current_force_stack = 0;
 
 						/* Take note */
 						flag = TRUE;
@@ -12092,10 +12096,9 @@ void combine_pack(int Ind) {
  #endif
 
 						/* Slide everything down */
-						for (k = s; k < bagsize; k++) {
+						for (k = s; k < bagsize; k++)
 							/* Structure copy */
 							p_ptr->subinventory[i][k] = p_ptr->subinventory[i][k + 1];
-						}
 
  #if 0 /* not implemented for subinventories */
 						/* Update inventory indices - mikaelh */
@@ -12109,10 +12112,12 @@ void combine_pack(int Ind) {
 						//p_ptr->window |= (PW_INVEN | PW_EQUIP);
 						redraw = TRUE;
 
+ #if 0 /* wrong ([i][i] cannot be correct), and also not needed here? */
 						if (p_ptr->subinventory[i][j].auto_insc) {
 							p_ptr->subinventory[i][i].auto_insc = TRUE;
 							p_ptr->subinventory[i][j].auto_insc = FALSE;
 						}
+ #endif
 
 						/* Done */
 						break;
@@ -12205,16 +12210,119 @@ void combine_pack(int Ind) {
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+#if 0 /* verify if this makes sense? indices have all long been changed? */
 				if (p_ptr->inventory[j].auto_insc) {
 					p_ptr->inventory[i].auto_insc = TRUE;
 					p_ptr->inventory[j].auto_insc = FALSE;
 				}
+#endif
 
 				/* Done */
 				break;
 			}
 		}
 	}
+
+#ifdef ENABLE_SUBINVEN
+	/* Also try specialty: Inven + Subinven combination. This can only happen via cmd_force_stack(). */
+	if (!flag && p_ptr->current_force_stack) {
+		int item = p_ptr->current_force_stack - 1;
+
+		if (item <= INVEN_PACK) {
+			int k, s, i, j, bagsize;
+			object_type *o_ptr, *j_ptr;
+			bool redraw;
+
+			/* Already verified in Receive_force_stack() */
+			(void)get_inven_item(Ind, item, &o_ptr);
+
+			for (i = 0; i < INVEN_PACK; i++) {
+				j_ptr = &p_ptr->inventory[i];
+				if (j_ptr->tval != TV_SUBINVEN) break;
+
+				/* Combine the pack (backwards) */
+				bagsize = j_ptr->bpval;
+
+				/* Scan all items */
+				for (j = 0; j < bagsize; j++) {
+					/* Get the item */
+					j_ptr = &p_ptr->subinventory[i][j];
+
+					/* Skip empty items */
+					if (!j_ptr->k_idx) continue;
+
+					/* Can we drop "o_ptr" onto "j_ptr"? */
+					/* 0x40: Handle !G inscription - prevents any partial combining aka partial stack-shifting across slots too though, atm :/ but that's maybe not really an issue. */
+					if (object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x40)) {
+						/* Add together the item counts */
+						object_absorb(Ind, j_ptr, o_ptr);
+
+						/* --- Erase item from normal inventory (copy/paste from combine_pack()): --- */
+
+						/* One object is gone */
+						p_ptr->inven_cnt--;
+
+						/* Slide everything down */
+						for (k = item; k < INVEN_PACK; k++) {
+							if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
+								s = 0;
+								/* If subsequent item is a subinventory too, transfer all contents here, overwriting our contents */
+								if (p_ptr->inventory[k + 1].tval == TV_SUBINVEN) {
+									for (; s < p_ptr->inventory[k + 1].bpval; s++) {
+										/* Structure copy */
+										p_ptr->subinventory[k][s] = p_ptr->subinventory[k + 1][s];
+										display_subinven_aux(Ind, k, s);
+									}
+								}
+								/* Fully erase the [remaining] current subinventory, if it wasn't already [completely] overwritten by a subsequent subinventory */
+								if (s < p_ptr->inventory[k].bpval)
+									for (; s < p_ptr->inventory[k].bpval; s++)
+										invwipe(&p_ptr->subinventory[k][s]);
+							}
+							/* Structure copy */
+							p_ptr->inventory[k] = p_ptr->inventory[k + 1];
+						}
+
+						/* Update inventory indices - mikaelh */
+						inven_index_move(Ind, j, item);
+						inven_index_slide(Ind, item + 1, -1, INVEN_PACK);
+
+						/* Erase the "final" slot */
+						if (p_ptr->inventory[k].tval == TV_SUBINVEN) {
+							for (s = 0; s < p_ptr->inventory[k].bpval; s++) {
+								invwipe(&p_ptr->subinventory[k][s]);
+								display_subinven_aux(Ind, k, s);
+							}
+						}
+						invwipe(&p_ptr->inventory[k]);
+
+						/* Window stuff */
+						p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+						redraw = TRUE;
+
+ #if 0 /* wrong ([i][i] cannot be correct), and also not needed here? */
+						if (p_ptr->subinventory[i][j].auto_insc) {
+							p_ptr->subinventory[i][i].auto_insc = TRUE;
+							p_ptr->subinventory[i][j].auto_insc = FALSE;
+						}
+ #endif
+
+						/* Done */
+						break;
+					}
+				}
+
+				/* Emulate a 'PW_SUBINVEN' */
+				if (redraw) {
+					display_subinven(Ind, i);
+					flag = TRUE;
+					break;
+				}
+			}
+		}
+	}
+#endif
 
 	/* Message */
 	if (flag) msg_print(Ind, "You combine some items in your pack.");
@@ -12406,10 +12514,12 @@ void reorder_pack(int Ind) {
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+#if 0 /* verify if this makes sense? indices have all long been changed? */
 		if (p_ptr->inventory[i].auto_insc) {
 			p_ptr->inventory[j].auto_insc = TRUE;
 			p_ptr->inventory[i].auto_insc = FALSE;
 		}
+#endif
 	}
 
 	/* Message */

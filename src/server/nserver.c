@@ -15090,17 +15090,20 @@ static int Receive_force_stack(int ind) {
 		return(n);
 	}
 
-	/* Sanity check - mikaelh */
-	if (item >= INVEN_PACK)
-		return(1);
-
 	if (p_ptr) {
-		item = replay_inven_changes(player, item);
-		if (item == 0x7FFF) {
-			msg_print(player, "Command failed because item is gone.");
-			return(1);
-		}
+		object_type *o_ptr;
 
+		/* Sanity check - mikaelh */
+		if (item < 0 || !get_inven_item(p_ptr->Ind, item, &o_ptr)) return(1);
+
+		/* Currently, replay_inven_changes() isn't handling subinventory, only normal inven */
+		if (item >= 0 && item < INVEN_PACK) {
+			item = replay_inven_changes(player, item);
+			if (item == 0x7FFF) {
+				msg_print(player, "Command failed because item is gone.");
+				return(1);
+			}
+		}
 		do_cmd_force_stack(player, item);
 	}
 
