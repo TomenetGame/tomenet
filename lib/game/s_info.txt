@@ -248,7 +248,7 @@ D:such as firing ranged weapons, using void gates or setting up traps.
 I:1000:0
 
 N:36:Swimming
-D:Ability to cross water without drowning even under heavier load.
+D:Cross water without drowning depending on weight, and swiftly at 0.700+.
 D:Also reduces chance of items getting damaged by water while swimming.
 I:1000:0
 F:MAX_1

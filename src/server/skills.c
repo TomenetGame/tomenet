@@ -214,6 +214,8 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 	/* Integer checks */
 	if (old_value == new_value) return;
 	switch (i) {
+	case SKILL_SWIM:	if (old_value < 7 && new_value >= 7) msg_print(Ind, "\374\377GYour swimming has become very swift!");
+				break;
 	case SKILL_CLIMB:	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to climb mountains!");
 				break;
 	case SKILL_LEVITATE:	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to levitate!");
