@@ -1705,16 +1705,62 @@ bool lose_all_info(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	char note2[ONAME_LEN], noteid[10];
+	object_type *o_ptr;
+#ifdef ENABLE_SUBINVEN
+	int within_subinven = -1;
+#endif
 
 	if (safe_area(Ind)) return(TRUE);
-	if (p_ptr->auto_id) return(FALSE);
+	if (p_ptr->auto_id) {
+		/* Mega-Hack -- Forget the map */
+		wiz_dark(Ind);
+
+		return(TRUE); /* True, as we notice the map-darkening, except on unmappable floors, pft */
+	}
 
 	/* Forget info about objects */
-	for (i = 0; i < INVEN_TOTAL; i++) {
-		object_type *o_ptr = &p_ptr->inventory[i];
+	i = 0;
+	while (i < INVEN_TOTAL) {
+#ifdef ENABLE_SUBINVEN
+		if (within_subinven == -1) {
+			o_ptr = &p_ptr->inventory[i];
+			if (o_ptr->tval == TV_SUBINVEN) {
+				within_subinven = 0;
+				continue;
+			}
 
+			/* Skip non-items */
+			i++;
+			if (!o_ptr->k_idx) continue;
+		} else {
+			/* End of current subinventory? */
+			if (within_subinven == p_ptr->inventory[i].bpval) {
+				/* Hack: Subinventories are currently not auto-redrawn, so we have to do it manually */
+				display_subinven(Ind, i);
+
+				within_subinven = -1;
+				i++;
+				continue;
+			}
+
+			o_ptr = &p_ptr->subinventory[i][within_subinven];
+			within_subinven++;
+			/* No more items in current subinventory? */
+			if (!o_ptr->tval) {
+				/* Hack: Subinventories are currently not auto-redrawn, so we have to do it manually */
+				if (within_subinven) display_subinven(Ind, i);
+
+				within_subinven = -1;
+				i++;
+				continue;
+			}
+		}
+#else
+		o_ptr = &p_ptr->inventory[i];
+		i++;
 		/* Skip non-items */
 		if (!o_ptr->k_idx) continue;
+#endif
 
 		/* Allow "protection" by the MENTAL flag */
 		if (o_ptr->ident & ID_MENTAL) continue;
@@ -4189,6 +4235,9 @@ bool ident_spell_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
+#ifdef ENABLE_SUBINVEN
+	int i;
+#endif
 
 	/* clean up special hack, originally for !X on ID spells
 	   but now actually used for everything (scrolls etc) */
@@ -4202,6 +4251,18 @@ bool ident_spell_aux(int Ind, int item) {
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
 
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+	/* Describe */
+	if (item >= INVEN_WIELD) {
+		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
+	} else if (item >= 0) {
+		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
+	} else {
+		msg_format(Ind, "On the ground: %s.", o_name);
+	}
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -4214,17 +4275,29 @@ bool ident_spell_aux(int Ind, int item) {
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-	/* Description */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+#ifdef ENABLE_SUBINVEN
+	/* Hack: Subinventories are currently not auto-redrawn, so we have to do it manually */
+	if (object_has_flavor(o_ptr->k_idx)) {
+		int j;
+		object_type *os_ptr;
+		bool found;
 
-	/* Describe */
-	if (item >= INVEN_WIELD) {
-		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
-	} else if (item >= 0) {
-		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
-	} else {
-		msg_format(Ind, "On the ground: %s.", o_name);
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (p_ptr->inventory[i].tval != TV_SUBINVEN) break;
+			found = FALSE;
+			for (j = 0; j < p_ptr->inventory[i].bpval; j++) {
+				os_ptr = &p_ptr->subinventory[i][j];
+				if (!os_ptr->tval) break;
+				if (os_ptr->k_idx == o_ptr->k_idx) {
+					found = TRUE;
+					object_aware(Ind, os_ptr);
+					object_known(os_ptr);
+				}
+			}
+			if (found) display_subinven(Ind, i);
+		}
 	}
+#endif
 
 #if 1
 	if (!p_ptr->warning_inspect &&

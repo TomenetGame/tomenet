@@ -11307,7 +11307,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
 				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
-				//keep character's pseudo-id knowledge of the general flavour of that item type
+				/* Commented out, to keep character's pseudo-id knowledge of the general flavour of that item type: */
 				//p_ptr->obj_felt[o_ptr->k_idx] = FALSE;
 				//p_ptr->obj_felt_heavy[o_ptr->k_idx] = FALSE;
 
@@ -11351,6 +11351,34 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				p_ptr->window |= PW_INVEN;
 				o_ptr->changed = !o_ptr->changed;//touch for refresh
+
+#ifdef ENABLE_SUBINVEN
+				/* Hack: Subinventories are currently not auto-redrawn, so we have to do it manually */
+				if (object_has_flavor(o_ptr->k_idx)) {
+					object_type *os_ptr;
+					bool found;
+
+					for (i = 0; i < INVEN_PACK; i++) {
+						if (p_ptr->inventory[i].tval != TV_SUBINVEN) break;
+						found = FALSE;
+						for (j = 0; j < p_ptr->inventory[i].bpval; j++) {
+							os_ptr = &p_ptr->subinventory[i][j];
+							if (!os_ptr->tval) break;
+							if (os_ptr->k_idx == o_ptr->k_idx) {
+								found = TRUE;
+								os_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
+								os_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
+
+								p_ptr->obj_aware[os_ptr->k_idx] = FALSE;
+								p_ptr->obj_tried[os_ptr->k_idx] = FALSE;
+								p_ptr->obj_felt[os_ptr->k_idx] = FALSE;//(no effect)
+								p_ptr->obj_felt_heavy[os_ptr->k_idx] = FALSE;//(no effect)
+							}
+						}
+						if (found) display_subinven(Ind, i);
+					}
+				}
+#endif
 
 				/* remove pseudo-id tags too */
 				if (o_ptr->note) {
