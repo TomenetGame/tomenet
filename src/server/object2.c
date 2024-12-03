@@ -12122,6 +12122,21 @@ void combine_pack(int Ind) {
 						/* Done */
 						break;
 					}
+					/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
+					else if (p_ptr->current_force_stack - 1 == is && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+						int total = j_ptr->number + o_ptr->number;
+
+						j_ptr->number = MAX_STACK_SIZE - 1;
+						o_ptr->number = total - MAX_STACK_SIZE + 1;
+
+						/* clear */
+						p_ptr->current_force_stack = 0;
+
+						/* Window stuff */
+						p_ptr->window |= (PW_INVEN | PW_EQUIP);
+						flag = redraw = TRUE;
+						break; //done
+					}
 				}
 			}
 
@@ -12220,6 +12235,21 @@ void combine_pack(int Ind) {
 				/* Done */
 				break;
 			}
+			/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
+			else if (p_ptr->current_force_stack - 1 == i && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+				int total = j_ptr->number + o_ptr->number;
+
+				j_ptr->number = MAX_STACK_SIZE - 1;
+				o_ptr->number = total - MAX_STACK_SIZE + 1;
+
+				/* clear */
+				p_ptr->current_force_stack = 0;
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				flag = TRUE;
+				break; //done
+			}
 		}
 	}
 
@@ -12310,6 +12340,18 @@ void combine_pack(int Ind) {
 
 						/* Done */
 						break;
+					}
+					/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
+					else if (object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+						int total = j_ptr->number + o_ptr->number;
+
+						j_ptr->number = MAX_STACK_SIZE - 1;
+						o_ptr->number = total - MAX_STACK_SIZE + 1;
+
+						/* Window stuff */
+						p_ptr->window |= (PW_INVEN | PW_EQUIP);
+						redraw = TRUE;
+						break; //done
 					}
 				}
 
