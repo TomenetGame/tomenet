@@ -793,9 +793,9 @@
  #define GLOBAL_BIG_MAP
 
  /* experimental: Allow things like SHIFT+ENTER in menus - C. Blue */
- #ifdef TEST_CLIENT
+ //#ifdef TEST_CLIENT
   #define ENABLE_SHIFT_SPECIALKEYS
- #endif
+ //#endif
 
  /* Allow redefining black colour (#0) too, and allow redefining any colour to #000000 (aka allow redefining all colours completely and freely)? */
  #define CUSTOMIZE_COLOURS_FREELY
