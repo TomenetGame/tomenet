@@ -618,6 +618,7 @@
 
  /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
 
+ /* Note: To make use of GRAPHICS_BG_MASK, currently the TEST_CLIENT must be built. Normal client will not support it even if enabled here. */
  #if 0 /* Disabled for the time being to find and fix the (Term_)redraw glitch(es) glitches first, which surface if this is enabled... */
   #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
  #else
