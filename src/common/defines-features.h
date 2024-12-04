@@ -616,28 +616,25 @@
  #define GFXMASK_BG2_G	33
  #define GFXMASK_BG2_B	28
 
-#if 0 // disabled for the time being to find and fix the (Term_)redraw glitch(es) glitches first, which surface if this is enabled...
- #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
-#endif
  /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
- #if 0 /* actually make these constants always available for now, might need sorting out/cleaning up */
-  #ifdef GRAPHICS_BG_MASK
-   /* Constants for use_graphics client setting */
-   #define UG_NONE	0
-   #define UG_NORMAL	1
-   #define UG_2MASK	2
+
+ #if 0 /* Disabled for the time being to find and fix the (Term_)redraw glitch(es) glitches first, which surface if this is enabled... */
+  #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
+ #else
+  #ifndef CLIENT_SIDE /* For debugging purpose, enable it on the servers but not officially for the release clients */
+   #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
   #endif
  #endif
  /* Resume in text mode on client startup if graphics fail for some reason, instead of just quitting? */
  #define GFXERR_FALLBACK
 #endif
 #if 1 /* actually make these constants always available for now, might need sorting out/cleaning up */
- //#ifdef GRAPHICS_BG_MASK
-  /* Constants for use_graphics client setting */
-  #define UG_NONE	0
-  #define UG_NORMAL	1
-  #define UG_2MASK	2
- //#endif
+//#ifdef GRAPHICS_BG_MASK
+ /* Constants for use_graphics client setting */
+ #define UG_NONE	0
+ #define UG_NORMAL	1
+ #define UG_2MASK	2
+//#endif
 #endif
 
 /* Traumaturgy + Dual-Wield + 2x Axe equipped -> Blood frenzy possibility. (Khorne Berserkers - C. Blue) */
