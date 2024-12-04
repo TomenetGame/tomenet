@@ -124,10 +124,16 @@ static void display_entry(int pos, int entries) {
 	}
 }
 
-
-
+/* Similar to AU_DURING_BROWSE: Allow 'S'elling directly from browsing a subinventory,
+   but the store screen needs to refresh the displayed stock accordingly, while we're still in the icky subinventory screen. */
+#define STOCK_DURING_BROWSE
 void display_inventory(void) {
 	int i, k, entries = 12, y = 2;
+
+#ifdef STOCK_DURING_BROWSE
+	/* Display new stock in the actual shopping screen, not in our icky-subinventory screen */
+	if (screen_icky > 1) Term_switch(1);
+#endif
 
 	/* BIG_MAP leads to big shops */
 	if (screen_hgt == MAX_SCREEN_HGT) entries = 26; /* we don't have 34 letters in the alphabet =p */
@@ -157,6 +163,15 @@ void display_inventory(void) {
 		    store_top / entries + 1 >= 10 ? "" : " ", (store.stock_num + entries - 1) / entries >= 10 ? "" : " "),
 		    y + 2, 20);
 	}
+
+#ifdef STOCK_DURING_BROWSE
+	if (screen_icky > 1) {
+		/* Return from actual shopping screen to our icky-subinventory screen... */
+		Term_switch(1);
+		/* ...but also show us what has changed in the underlying shopping screen now that we potentially sold an item from our subinventory. */
+		Term_restore();
+	}
+#endif
 
 	/* Hack - Get rid of the cursor - mikaelh */
 	Term->scr->cx = Term->wid;
@@ -580,12 +595,12 @@ static void store_sell(void) {
 	Send_store_sell(item, amt);
 }
 
-static void store_do_command(int num, bool one) {
-	int                     i, amt, gold;
-	int                     item, item2;
+void store_do_command(int num, bool one) {
+	int i, amt, gold;
+	int item, item2;
 	u16b action = c_store.actions[num];
 	u16b bact = c_store.bact[num];
-	char            out_val[160];
+	char out_val[160];
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt == MAX_SCREEN_HGT) ? 26 : 12;
 	int get_item_mode = 0;
@@ -908,6 +923,10 @@ static void store_process_command(int cmd) {
 		/* Inventory list */
 		case 'i':
 			cmd_inven();
+			break;
+		/* Added rather for QoL subinventory browsing (instead of having to go 'i' -> '!') than for actual books */
+		case 'b':
+			cmd_browse(-1);
 			break;
 
 #ifdef USE_SOUND_2010

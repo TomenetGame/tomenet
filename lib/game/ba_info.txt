@@ -69,7 +69,7 @@ I:42:0:l:0
 
 N:9:In-Between
 C:0:0:0
-I:12:0:b:4
+I:12:0:n:4
 
 N:10:Play craps
 C:0:0:0
@@ -114,7 +114,7 @@ I:38:0:v:0
 
 N:20:Receive bounty money
 C:0:0:0
-I:39:0:b:0
+I:39:0:n:0
 
 N:21:Get quest monster
 C:0:0:0
@@ -164,7 +164,7 @@ I:30:0:a:0
 N:32:Enchant bow
 #double price because these don't get damaged
 C:84000:78000:72000
-I:31:0:b:0
+I:31:0:n:0
 
 N:33:Recall to dungeon
 C:300:200:100
@@ -256,7 +256,7 @@ I:30:0:a:0
 #for The Golden Flower
 N:51:Enchant bow
 C:44000:41000:38000
-I:31:0:b:0
+I:31:0:n:0
 
 #for The Fountain
 N:52:Enchant armour
@@ -315,7 +315,7 @@ I:58:0:t:2
 
 N:65:Redeem deed for a blessing
 C:0:0:0
-I:59:0:b:2
+I:59:0:r:2
 
 N:66:Go challenge
 C:0:0:0

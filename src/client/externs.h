@@ -729,6 +729,7 @@ extern void store_paste_where(char *where);
 extern void store_paste_item(char *out_val, int item);
 extern int store_top;
 extern void clear_pstore_visuals(void);
+extern void store_do_command(int num, bool one);
 
 /* c-xtra1.c */
 extern void prt_stat(int stat, bool boosted);

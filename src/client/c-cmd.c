@@ -1076,7 +1076,7 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 /* Display the subinventory inside a 'pouch' in a specific inventory slot */
 void cmd_subinven(int islot) {
 	char ch;
-	int c;
+	int c, i;
 	char buf[MSG_LEN];
 	object_type *i_ptr = &inventory[islot];
 	int subinven_size = i_ptr->bpval;
@@ -1209,6 +1209,21 @@ void cmd_subinven(int islot) {
 		case 'u': cmd_use_staff(); continue;
 		case 'z': cmd_zap_rod(); continue;
 #endif
+
+		/* Hack: While inside a store, allow shift+S to sell an item straight from a bag */
+		case 'S':
+			if (!shopping) {
+				if (c_cfg.item_error_beep) bell(); //not really an item selection error though
+				else bell_silent();
+				continue;
+			}
+			for (i = 0; i < MAX_STORE_ACTIONS; i++) {
+				if (!c_store.actions[i]) continue;
+				if (c_store.letter[i] != 's') continue;
+				store_do_command(i, FALSE);
+				break;
+			}
+			continue;
 		}
 
 		if (leave) break;
