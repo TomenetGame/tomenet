@@ -1045,6 +1045,10 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 			cmd_subinven_move();
 			continue;
 #endif
+		/* Also allow force-stacking from here, useful while inside a store where normal 'K' isn't available. */
+		case KTRL('K'):
+			cmd_force_stack();
+			continue;
 		}
 
 		/* Default, eg ESC: */
@@ -1223,6 +1227,10 @@ void cmd_subinven(int islot) {
 				store_do_command(i, FALSE);
 				break;
 			}
+			continue;
+		/* Also allow force-stacking directly from here */
+		case 'K':
+			cmd_force_stack();
 			continue;
 		}
 
