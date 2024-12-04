@@ -158,6 +158,7 @@ static const int NONE = 0, DOWN = 1, UP = 2;
 
 /* Custom/Graphical stone visuals if player has custom mappings to allow it? */
 #define CUSTOM_VISUALS
+#define CUSTOM_VISUALS_EMPTY_FEAT 122 /* Star: 122, Sandwall (ie with GRAPHICS_BG_MASK): 258 */
 
 #ifdef USE_SOUND_2010
 /* Play stone clacking sound */
@@ -1315,14 +1316,14 @@ void go_challenge_start(int Ind) {
 
 #ifdef CUSTOM_VISUALS
 	if (!c_empty) {
-		//star, feat 122: (will be a normal dot in pure ASCII)
+		//eg star, feat 122: (will be a normal dot in pure ASCII)
 		if (p_ptr->ascii_feats) {
-			c_empty = f_info[122].f_char;
-			//a_empty = f_info[122].f_attr;
+			c_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_char;
+			//a_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_attr;
 			a_empty = TERM_UMBER;
 		} else {
-			c_empty = p_ptr->f_char[122];
-			//a_empty = p_ptr->f_attr[122];
+			c_empty = p_ptr->f_char[CUSTOM_VISUALS_EMPTY_FEAT];
+			//a_empty = p_ptr->f_attr[CUSTOM_VISUALS_EMPTY_FEAT];
 			a_empty = TERM_UMBER;
 		}
 	}
@@ -3164,14 +3165,14 @@ static void go_engine_board(void) {
 		}
 	}
 	if (!c_empty) {
-		//star, feat 122: (will be a normal dot in pure ASCII)
+		//eg star, feat 122: (will be a normal dot in pure ASCII)
 		if (p_ptr->ascii_feats) {
-			c_empty = f_info[122].f_char;
-			//a_empty = f_info[122].f_attr;
+			c_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_char;
+			//a_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_attr;
 			a_empty = TERM_UMBER;
 		} else {
-			c_empty = p_ptr->f_char[122];
-			//a_empty = p_ptr->f_attr[122];
+			c_empty = p_ptr->f_char[CUSTOM_VISUALS_EMPTY_FEAT];
+			//a_empty = p_ptr->f_attr[CUSTOM_VISUALS_EMPTY_FEAT];
 			a_empty = TERM_UMBER;
 		}
 	}
