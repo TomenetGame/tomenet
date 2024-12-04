@@ -24154,8 +24154,8 @@ Parties:
 
     Similarly, a player who received a power-up spell from another player
     who is higher in levels than the allowed difference of 8 (12 for winners),
-    may cause that player to not gain any experience or kill credit until a
-    number of turns (usually 200) has passed and the buff spell has worn off.
+    may not gain any experience or kill credit until a number of turns
+    (usually 200) has passed and the buff spell has worn off.
     Kings/queens/emperors/empresses are freed from this restriction.
 
     Note that there are two exceptions to these rules:
