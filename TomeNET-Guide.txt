@@ -3118,7 +3118,7 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             to the type of item: 'Combat', 'Archery', 'Magic' or 'Trapping'.
             It does not matter whether the player is acting, afk or idle.
             The feeling does not necessarily mean that the item is "good for
-            the player's character" but simply refers to the price of the item
+            the player's character" but simply refers to the value of the item
             ie when it's sold to shops or bought from them. So some 'good'
             items might even have undesired effects on the character.
             See (5.7) for more information about identification.
@@ -13294,6 +13294,11 @@ equipment, he/she might get a 'feeling' about it, telling about its quality.
 This process is called 'pseudo-ID', short for 'pseudo-identification'.
 If a player pseudo-IDs an item, the 'feeling' will be appended in { }
 brackets to the item name.
+
+The feeling does not necessarily mean that the item is "good for the player's
+character" but simply refers to the value of the item ie when it's sold to
+shops or bought from them. So some 'good' items might even have undesired
+effects on the character.
 
 Example: A typical feeling is 'good'. Let's assume you are wielding an
 unidenified whip and suddenly pseudo-id kicks in randomly. The whip is actually
