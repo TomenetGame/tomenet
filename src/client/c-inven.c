@@ -986,7 +986,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	char which = ' ';
 
 	int k, i1, i2, e1, e2, ver;
-	bool done, spammy = FALSE;
+	bool done, spammy = FALSE, alt;
 	byte item;
 
 	char tmp_val[160];
@@ -1272,6 +1272,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Repeat while done */
 	while (!done) {
+		alt = FALSE;
+
 		/* hack - cancel prompt if we're in a failed macro execution */
 		if (safe_input && abort_prompt) {
 			command_gap = 50;
@@ -1671,6 +1673,12 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			ver = isupper(which);
 			if (ver) which = tolower(which);
 
+			/* Instead of query, switch to alternate function? */
+			if (ver && (mode & CAPS_ALT)) {
+				ver = 0;
+				alt = TRUE;
+			} else alt = FALSE;
+
 			/* Convert letter to inventory index */
 			if (!command_wrk) k = c_label_to_inven(which);
 			/* Convert letter to equipment index */
@@ -1754,5 +1762,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 #ifdef ENABLE_SUBINVEN
 	//if (using_subinven != -1) cp += sub_i;
 #endif
+
+	if (alt) *cp = -2 - *cp;
 	return(item);
 }

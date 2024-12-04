@@ -7790,6 +7790,12 @@ int Send_force_stack(int item) {
 	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_FORCE_STACK, item)) <= 0) return(n);
 	return(1);
 }
+int Send_split_stack(int item, int amt) {
+	int n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SPLIT_STACK, item, amt)) <= 0) return(n);
+	return(1);
+}
 
 int Send_request_key(int id, char key) {
 	int n;

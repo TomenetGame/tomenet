@@ -10018,6 +10018,34 @@ void cmd_force_stack() {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Forcibly stack what? ", USE_INVEN | USE_EXTRA)) return;
+	if (!c_get_item(&item, "Forcibly stack (or split) what? ", USE_INVEN | USE_EXTRA | CAPS_ALT)) return;
+
+	/* Check for CAPS_ALT mode: Instead of stacking, we split an existing stack */
+	if (item < -1) {
+		int num, amt = 1;
+
+		item = -item - 2;
+
+		/* Get an amount */
+#ifdef ENABLE_SUBINVEN
+		if (item >= SUBINVEN_INVEN_MUL) num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
+		else
+#endif
+		num = inventory[item].number;
+
+		if (num < 2) {
+			c_msg_print("Nothing to split.");
+			return;
+		}
+		if (num > 2) {
+			inkey_letter_all = TRUE;
+			amt = c_get_quantity("Split off how many (ENTER = all)? ", -num);
+			if (!amt) return;
+			if (amt >= num) amt = num - 1;
+		}
+		Send_split_stack(item, amt);
+		return;
+	}
+
 	Send_force_stack(item);
 }

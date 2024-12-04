@@ -763,6 +763,11 @@ K       CTRL+C  forcibly combines a level 0 item in your inventory with other
                 available while in inventory screen ('i') by pressing 'CTRL+K'
                 and while in a subinventory (bag) by pressing 'K'.
 
+                This command has a special alternative mode:
+                If, when selecting an item, SHIFT + item slot letter is pressed
+                it will split that item stack instead of stacking anything,
+                similar to how the "/split" command works.
+
 C       C       see a character overview.
 
 L       CTRL+W  look around your current sector/floor, using direction keys.
@@ -2035,6 +2040,9 @@ They all start with a slash '/' hence they're called slash commands:
             The split-off item (pile) is auto-inscribed !G to prevent instant
             automatic reabsorbtion into the original pile.
             The command will fail if there is no free slot in your inventory.
+
+            To split item stacks, the command key shift+K can also be used,
+            in its alternative mode: By pressing shift + inventory slot letter.
 
 /stime      Tells you the current date and time (of the server, not of your
             local timezone). Also see /ctime and /time.

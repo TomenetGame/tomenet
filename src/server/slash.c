@@ -5849,8 +5849,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 		} else if (prefix(messagelc, "/split")) { /* split up an item stack, auto-append-inscribing the split up part !G */
 			int amt;
-			object_type tmp_obj, *o_ptr;
-			char o_name[ONAME_LEN];
 
 			/* need to specify one parm: the potion used for colouring */
 			if (tk != 1 && tk != 2) {
@@ -5859,49 +5857,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->inven_cnt >= INVEN_PACK) {
-				msg_print(Ind, "\377yCannot split up items, as your inventory is already full.");
-				return;
-			}
-
 			if ((k = a2slot(Ind, token[1][0], TRUE, FALSE)) == -1) return;
 			if (tk == 1) amt = 1;
 			else amt = atoi(token[2]);
-			if (!amt) return;
 
-			o_ptr = &p_ptr->inventory[k];
-			if (!o_ptr->tval || o_ptr->number <= amt) return;
-
-#ifdef USE_SOUND_2010
-			sound_item(Ind, o_ptr->tval, o_ptr->sval, "item_");
-#endif
-			/* Make a "fake" object */
-			tmp_obj = *o_ptr;
-			tmp_obj.number = amt;
-
-			if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, amt);
-			o_ptr = &tmp_obj;
-
-			/* Decrease the item, optimize. */
-			inven_item_increase(Ind, k, -amt); /* note that this calls the required boni-updating et al */
-			inven_item_describe(Ind, k);
-			inven_item_optimize(Ind, k);
-
-			/* Append "!G" to inscription to ensure it doesn't get auto-stacked (aka absorbed) right away again */
-			if (!o_ptr->note) o_ptr->note = quark_add("!G");
-			else if (!check_guard_inscription(o_ptr->note, 'G')) o_ptr->note = quark_add(format("%s !G", quark_str(o_ptr->note)));
-
-			k = inven_carry(Ind, o_ptr);
-			if (k >= 0) {
-				o_ptr = &p_ptr->inventory[k];
-				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
-			} else { /* paranoia */
-				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_printf("ERROR: /split failed for '%s': %s\n", p_ptr->name, o_name);
-			}
-
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			do_cmd_split_stack(Ind, k, amt);
 			return;
 		} else if (prefix(messagelc, "/rest")) { /* Rest [for n turns] */
 			if (tk && (k <= 0 || k >= 10000)) {

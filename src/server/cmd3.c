@@ -5936,3 +5936,54 @@ bool subinven_group_player(int Ind, int group, int slot) {
 }
  #endif
 #endif
+
+void do_cmd_split_stack(int Ind, int item, int amt) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr, tmp_obj;
+	char o_name[ONAME_LEN];
+
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
+
+	/* Note: Split-off item always lands in normal inventory, even if we're operating on ENABLE_SUBINVEN.
+	   inven_carry() call below may then auto-stow it again. */
+	if (p_ptr->inven_cnt >= INVEN_PACK) {
+		msg_print(Ind, "\377yCannot split up items, as your inventory is already full.");
+		return;
+	}
+
+	if (!o_ptr->tval || o_ptr->number <= amt || o_ptr->number < 2 || !amt) {
+		msg_print(Ind, "Nothing to split.");
+		return;
+	}
+
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "item_");
+#endif
+	/* Make a "fake" object */
+	tmp_obj = *o_ptr;
+	tmp_obj.number = amt;
+
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, amt);
+	o_ptr = &tmp_obj;
+
+	/* Decrease the item, optimize. */
+	inven_item_increase(Ind, item, -amt); /* note that this calls the required boni-updating et al */
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
+
+	/* Append "!G" to inscription to ensure it doesn't get auto-stacked (aka absorbed) right away again */
+	if (!o_ptr->note) o_ptr->note = quark_add("!G");
+	else if (!check_guard_inscription(o_ptr->note, 'G')) o_ptr->note = quark_add(format("%s !G", quark_str(o_ptr->note)));
+
+	item = inven_carry(Ind, o_ptr);
+	if (item >= 0) {
+		o_ptr = &p_ptr->inventory[item];
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+	} else { /* paranoia */
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("ERROR: split failed for '%s': %s\n", p_ptr->name, o_name);
+	}
+
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+}

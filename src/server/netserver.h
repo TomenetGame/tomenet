@@ -160,6 +160,7 @@ static int Receive_account_info(int ind);
 static int Receive_change_password(int ind);
 
 static int Receive_force_stack(int ind);
+static int Receive_split_stack(int ind);
 
 static void Handle_item(int Ind, int item);
 

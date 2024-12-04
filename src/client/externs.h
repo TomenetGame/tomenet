@@ -941,6 +941,7 @@ extern int Send_clear_buffer(void);
 extern int Send_clear_actions(void);
 extern int Send_King(byte type);
 extern int Send_force_stack(int item);
+extern int Send_split_stack(int item, int amt);
 extern int Send_admin_house(int dir, cptr buf);
 extern int Send_spike(int dir);
 extern int Send_skill_mod(int i);

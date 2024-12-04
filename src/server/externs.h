@@ -678,6 +678,7 @@ extern int apply_dodge_chance(int Ind, int attack_level);
 extern int apply_block_chance(player_type *p_ptr, int n);
 extern int apply_parry_chance(player_type *p_ptr, int n);
 extern void do_cmd_force_stack(int Ind, int item);
+extern void do_cmd_split_stack(int Ind, int item, int amt);
 extern bool wraith_access(int Ind);
 extern void whats_under_your_feet(int Ind, bool force);
 extern bool remember_sense(int Ind, int slot, object_type *o_ptr);

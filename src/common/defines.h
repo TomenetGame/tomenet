@@ -4912,6 +4912,7 @@
 #ifdef ENABLE_SUBINVEN
  #define EXCLUDE_SUBINVEN	0x4000	/* For selecting a subinventory container - forbid selecting items INSIDE subinventory, as there cannot be subinventory within subinventory. */
 #endif
+#define CAPS_ALT		0x8000	/* Capital letters invoke alternative function instead */
 
 /*
  * Bit flags for the "p_ptr->notice" variable

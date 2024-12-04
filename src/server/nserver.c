@@ -399,6 +399,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_CHANGE_PASSWORD]	= Receive_change_password;
 
 	playing_receive[PKT_FORCE_STACK]	= Receive_force_stack;
+	playing_receive[PKT_SPLIT_STACK]	= Receive_split_stack;
 
 	playing_receive[PKT_REQUEST_KEY]	= Receive_request_key;
 	playing_receive[PKT_REQUEST_NUM]	= Receive_request_num;
@@ -15235,6 +15236,43 @@ static int Receive_force_stack(int ind) {
 			}
 		}
 		do_cmd_force_stack(player, item);
+	}
+
+	return(1);
+}
+static int Receive_split_stack(int ind) {
+	connection_t *connp = Conn[ind];
+	char ch;
+	int n, player = -1;
+	s16b item, amt;
+	player_type *p_ptr = NULL;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return(n);
+	}
+
+	if (p_ptr) {
+		object_type *o_ptr;
+
+		/* Sanity check - mikaelh */
+		if (item < 0 || !get_inven_item(p_ptr->Ind, item, &o_ptr)) return(1);
+
+		/* Currently, replay_inven_changes() isn't handling subinventory, only normal inven */
+		if (item >= 0 && item < INVEN_PACK) {
+			item = replay_inven_changes(player, item);
+			if (item == 0x7FFF) {
+				msg_print(player, "Command failed because item is gone.");
+				return(1);
+			}
+		}
+		do_cmd_split_stack(player, item, amt);
 	}
 
 	return(1);
