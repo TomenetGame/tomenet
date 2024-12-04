@@ -70,7 +70,7 @@ Graphics=0
 ;   The character redefinitions are loaded from lib\user\graphics-{os}.prf (the "{os}" is replaced by "x11", "win", "mac", ...)
 ;   or from a custom graphics redefinition file lib\user\graphics-{graphic_tiles}.prf, if the file exists.
 ;   Important: The value has to be in format "{int width}x{int height}[{string}]", because tile width and height is extracted from the string.
-GraphicTiles=16x22sv
+GraphicTiles=16x24sv
 
 ; - Enable audio in general (0 = off, 1 = on)
 Sound=1

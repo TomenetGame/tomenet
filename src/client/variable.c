@@ -218,7 +218,7 @@ bool use_logfont = FALSE, use_logfont_ini;
 byte use_graphics = FALSE, use_graphics_new = FALSE, use_graphics_err = 0;
 char use_graphics_errstr[MAX_CHARS_WIDE] = { 0 };
 #ifdef USE_GRAPHICS
-char graphic_tiles[256] = "16x22sv";
+char graphic_tiles[256] = "16x24sv";
 #endif
 #ifdef USE_SOUND_2010
 bool use_sound = TRUE, use_sound_org = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue

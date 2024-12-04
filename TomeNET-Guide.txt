@@ -5432,19 +5432,19 @@ and also a matching FON (in lib/xtra/font) and pcf file for POSIX systems
 (in lib/xtra/posix_extra_fonts) to use together with the graphical tileset.
 However, check out his site or our discord for updates maybe.
 
-After ensuring that the '16x22sv.bmp' tiles file is in tomenet/lib/graphics and
-the mapping file 'graphics-16x22sv.prf' is in tomenet/lib/user (or TomeNET-user
+After ensuring that the '16x24sv.bmp' tiles file is in tomenet/lib/graphics and
+the mapping file 'graphics-16x24sv.prf' is in tomenet/lib/user (or TomeNET-user
 in your user's home folder on Windows OS), don't forget to activate the tileset
 by putting this in your .tomenetrc (POSIX):
   graphics 1
-  graphic_tiles 16x22sv
+  graphic_tiles 16x24sv
 or TomeNET.ini (Windows):
   Graphics=1
-  GraphicTiles=16x22sv
+  GraphicTiles=16x24sv
 and then in-game make sure that the option  =2  'font_map_solid_walls' is OFF!
 
 However, you're not done yet, as you should still select a fitting font too
-(easiest is to use the 16x22 font Svechnik provides too for this purpose),
+(easiest is to use the 16x24 font Svechnik provides too for this purpose),
 so read on...
 
 
@@ -5463,10 +5463,12 @@ be selected just to be on the safe side, as there are no drawbacks.
 The font should preferably have the same dimensions as the tileset, or scaling
 will be applied automatically (the graphical tiles will be scaled to the font's
 dimensions), which might not look ideal.
-For EvgenijK's bmp tileset which has dimensions 16x22 px/tile, he provides
-a 16x22 font that is located in lib/fonts, as both .FON and .pcf format, but
-of course you can use any other font file too, for example Tangar's 16x22TG
-graphical font (a text font with additional, pseudo-graphical character set).
+For EvgenijK's bmp tileset which has dimensions 16x24 px/tile, there is also a
+16x24 font to go with it. He also provides a 16x22 px/tile set and a 16x22 font
+that is located in lib/fonts, as both .FON and .pcf format, but of course you
+can use any other font file too, for example Tangar's 16x22TG graphical font
+(a text font with additional, pseudo-graphical character set).
+EvgenjijK provides other sizes than these two too, such as 10x14 and 24x36.
 
 
 Issues:

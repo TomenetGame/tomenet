@@ -849,8 +849,8 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 
 			fputs(format("graphics\t\t%d\n", use_graphics_new), config2);
 #ifdef USE_GRAPHICS
-			/* On writing a default .tomenetrc, also default to 16x22sv tileset */
-			if (!graphic_tiles[0]) strcpy(graphic_tiles, "16x22sv");
+			/* On writing a default .tomenetrc, also default to 16x24sv tileset */
+			if (!graphic_tiles[0]) strcpy(graphic_tiles, "16x24sv");
 			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
 #endif
 			fputs("\n", config2);

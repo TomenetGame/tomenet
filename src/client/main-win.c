@@ -88,7 +88,7 @@
 //#define USE_LOGFONT // Kurzel - Some .FON files considered security vulnerability on Windows? Ew.
 
 #define DEFAULT_FONTNAME "9X15.FON"
-#define DEFAULT_TILENAME "16x22sv.bmp"
+#define DEFAULT_TILENAME "16x24sv.bmp"
 #ifdef USE_LOGFONT
  #define DEFAULT_LOGFONTNAME "9X15"
 #endif
