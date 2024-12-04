@@ -3117,6 +3117,10 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             Pseudo-ID intensity and speed depend on various skills in regards
             to the type of item: 'Combat', 'Archery', 'Magic' or 'Trapping'.
             It does not matter whether the player is acting, afk or idle.
+            The feeling does not necessarily mean that the item is "good for
+            the player's character" but simply refers to the price of the item
+            ie when it's sold to shops or bought from them. So some 'good'
+            items might even have undesired effects on the character.
             See (5.7) for more information about identification.
 
 PvE         Player vs environment. This is the main game style of TomeNET:
