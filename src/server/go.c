@@ -1096,8 +1096,8 @@ void go_challenge_start(int Ind) {
 	char path[80];
 #endif
 #ifdef CUSTOM_VISUALS
-	static char32_t c_empty = 0;
-	static byte a_empty;
+	char32_t c_empty;
+	byte a_empty;
 	//todo: graphics for corners, edges and crossings! :D we just use dots for now
 #endif
 
@@ -1315,17 +1315,15 @@ void go_challenge_start(int Ind) {
 	player_timeleft_sec = player_timelimit_sec;
 
 #ifdef CUSTOM_VISUALS
-	if (!c_empty) {
-		//eg star, feat 122: (will be a normal dot in pure ASCII)
-		if (p_ptr->ascii_feats) {
-			c_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_char;
-			//a_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_attr;
-			a_empty = TERM_UMBER;
-		} else {
-			c_empty = p_ptr->f_char[CUSTOM_VISUALS_EMPTY_FEAT];
-			//a_empty = p_ptr->f_attr[CUSTOM_VISUALS_EMPTY_FEAT];
-			a_empty = TERM_UMBER;
-		}
+	//eg star, feat 122: (will be a normal dot in pure ASCII)
+	if (p_ptr->ascii_feats) {
+		c_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_char;
+		//a_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_attr;
+		a_empty = TERM_UMBER;
+	} else {
+		c_empty = p_ptr->f_char[CUSTOM_VISUALS_EMPTY_FEAT];
+		//a_empty = p_ptr->f_attr[CUSTOM_VISUALS_EMPTY_FEAT];
+		a_empty = TERM_UMBER;
 	}
 #endif
 
@@ -3126,8 +3124,8 @@ static void go_engine_board(void) {
 	player_type *p_ptr;
 	int k_idx;
 
-	static char32_t c_black = 0, c_white = 0, c_empty = 0;
-	static byte a_black, a_white, a_empty;
+	char32_t c_black = 0, c_white = 0, c_empty = 0;
+	byte a_black, a_white, a_empty;
 	//todo: graphics for corners, edges and crossings! :D we just use dots for now
 
 	char32_t c;
@@ -3144,37 +3142,34 @@ static void go_engine_board(void) {
 
 #ifdef CUSTOM_VISUALS
 	p_ptr = Players[Ind];
-	if (!c_black) {
-		k_idx = lookup_kind(TV_GAME, SV_BLACK_PIECE);
-		if (p_ptr->ascii_items) {
-			c_black = k_info[k_idx].d_char;
-			a_black = k_info[k_idx].d_attr;
-		} else {
-			c_black = p_ptr->k_char[k_idx];
-			a_black = p_ptr->k_attr[k_idx];
-		}
+
+	k_idx = lookup_kind(TV_GAME, SV_BLACK_PIECE);
+	if (p_ptr->ascii_items) {
+		c_black = k_info[k_idx].d_char;
+		a_black = k_info[k_idx].d_attr;
+	} else {
+		c_black = p_ptr->k_char[k_idx];
+		a_black = p_ptr->k_attr[k_idx];
 	}
-	if (!c_white) {
-		k_idx = lookup_kind(TV_GAME, SV_WHITE_PIECE);
-		if (p_ptr->ascii_items) {
-			c_white = k_info[k_idx].d_char;
-			a_white = k_info[k_idx].d_attr;
-		} else {
-			c_white = p_ptr->k_char[k_idx];
-			a_white = p_ptr->k_attr[k_idx];
-		}
+
+	k_idx = lookup_kind(TV_GAME, SV_WHITE_PIECE);
+	if (p_ptr->ascii_items) {
+		c_white = k_info[k_idx].d_char;
+		a_white = k_info[k_idx].d_attr;
+	} else {
+		c_white = p_ptr->k_char[k_idx];
+		a_white = p_ptr->k_attr[k_idx];
 	}
-	if (!c_empty) {
-		//eg star, feat 122: (will be a normal dot in pure ASCII)
-		if (p_ptr->ascii_feats) {
-			c_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_char;
-			//a_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_attr;
-			a_empty = TERM_UMBER;
-		} else {
-			c_empty = p_ptr->f_char[CUSTOM_VISUALS_EMPTY_FEAT];
-			//a_empty = p_ptr->f_attr[CUSTOM_VISUALS_EMPTY_FEAT];
-			a_empty = TERM_UMBER;
-		}
+
+	//eg star, feat 122: (will be a normal dot in pure ASCII)
+	if (p_ptr->ascii_feats) {
+		c_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_char;
+		//a_empty = f_info[CUSTOM_VISUALS_EMPTY_FEAT].f_attr;
+		a_empty = TERM_UMBER;
+	} else {
+		c_empty = p_ptr->f_char[CUSTOM_VISUALS_EMPTY_FEAT];
+		//a_empty = p_ptr->f_attr[CUSTOM_VISUALS_EMPTY_FEAT];
+		a_empty = TERM_UMBER;
 	}
 #endif
 
