@@ -1794,7 +1794,11 @@ void do_cmd_fill_bottle(int Ind, int force_slot) {
 #endif
 
 	/* don't fill from fountain but from liquid of the floor feature? */
-	if (c_ptr->feat != FEAT_FOUNTAIN) {
+	if (c_ptr->feat != FEAT_FOUNTAIN
+#ifdef ALLOW_BLOOD_BOTTLING
+	    && c_ptr->feat != FEAT_FOUNTAIN_BLOOD
+#endif
+	    ) {
 		if (c_ptr->feat != FEAT_SHAL_WATER && c_ptr->feat != FEAT_DEEP_WATER) {
 			msg_print(Ind, "You see nothing here to fill bottles with.");
 			return;
