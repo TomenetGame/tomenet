@@ -379,6 +379,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_VERSION]		= Receive_version;
 	receive_tbl[PKT_EQUIP_WIDE]	= Receive_equip_wide;
 	receive_tbl[PKT_SFLAGS]		= Receive_sflags;
+	receive_tbl[PKT_CHAR_DIRECT]	= Receive_char;
 }
 
 
@@ -2973,7 +2974,7 @@ int Receive_history(void) {
 int Receive_char(void) {
 //DYNAMIC_CLONE_MAP: handle minimap-specific chars, via new PKT_ type probably instead of here (or combine PKT_CHAR and new PKT_ type into this function)
 	int n;
-	char ch;
+	unsigned char ch;
 	char x, y;
 	byte a;
 	char32_t c = 0; /* Needs to be initialized for proper packet read. */
@@ -3085,25 +3086,28 @@ int Receive_char(void) {
  #endif
 #endif
 
-	/* remember map_info in client-side buffer */
-	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
-	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
-		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
-		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
+	if (ch != PKT_CHAR_DIRECT) {
+		/* remember map_info in client-side buffer */
+		if (x >= PANEL_X && x < PANEL_X + screen_wid &&
+		    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
+			panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
+			panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
 #ifdef GRAPHICS_BG_MASK
-		/* Catch if the server didn't define a valid background ie sent a zero -
-		   in that case instead of bugging out the display, interpret it as 'keep our old background' */
-		if (c_back != 0) {
-			panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
-			panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
-		} else {
-			c_back = panel_map_c_back[x - PANEL_X][y - PANEL_Y];
-			a_back = panel_map_a_back[x - PANEL_X][y - PANEL_Y];
-		}
+			/* Catch if the server didn't define a valid background ie sent a zero -
+			   in that case instead of bugging out the display, interpret it as 'keep our old background' */
+			if (c_back != 0) {
+				panel_map_a_back[x - PANEL_X][y - PANEL_Y] = a_back;
+				panel_map_c_back[x - PANEL_X][y - PANEL_Y] = c_back;
+			} else {
+				c_back = panel_map_c_back[x - PANEL_X][y - PANEL_Y];
+				a_back = panel_map_a_back[x - PANEL_X][y - PANEL_Y];
+			}
 #endif
+		}
+
+		if (screen_icky) Term_switch(0);
 	}
 
-	if (screen_icky) Term_switch(0);
 	if (is_us && c_cfg.hilite_player) {
 		/* Mark our own position via special cursor */
 #if 0
@@ -3126,15 +3130,16 @@ int Receive_char(void) {
 		Term_curs_x11() ->
 		Infofnt_text_non() : draw cursor XRectangle
 		*/
-
 	}
+
 #ifdef GRAPHICS_BG_MASK
 	if (use_graphics == UG_2MASK)
 		Term_draw_2mask(x, y, a, c, a_back, c_back);
 	else
 #endif
 	Term_draw(x, y, a, c);
-	if (screen_icky) Term_switch(0);
+
+	if (screen_icky && ch != PKT_CHAR_DIRECT) Term_switch(0);
 	return(1);
 }
 
@@ -4434,7 +4439,8 @@ int Receive_store_special_str(void) {
 	return(1);
 }
 
-/* For new SPECIAL store flag, stores that don't have inventory - C. Blue */
+/* For new SPECIAL store flag, stores that don't have inventory - C. Blue
+   -- somewhat redundant now with PKT_CHAR_DIRECT -> Receive_char() call. */
 int Receive_store_special_char(void) {
 	int n;
 	char ch, line, col;

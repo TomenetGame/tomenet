@@ -276,6 +276,7 @@
 #define PKT_UNKNOWNPACKET	211
 #define PKT_ITEM_NEWEST_2ND	212	/* Transmit inventory index of the latest item that was involved into something, for the client to use instead if current item_newest is not valid */
 #define PKT_SFLAGS		213
+#define PKT_CHAR_DIRECT		214
 
 
 /*

@@ -113,6 +113,7 @@
 
 /* Maximum rank: At this rank you'll have to play a game as white too! */
 #define TOP_RANK	7
+
 /* Gameplay configuration */
 #if 0 /* was a good incentive, but might be a bit cheezy regarding IDDC casino */
 static int wager_lvl[10] = {
@@ -155,6 +156,8 @@ static const int NONE = 0, DOWN = 1, UP = 2;
 /* Display log entries for debugging? */
 #define GO_DEBUGLOG
 
+/* Custom/Graphical stone visuals if player has custom mappings to allow it? */
+#define CUSTOM_VISUALS
 
 #ifdef USE_SOUND_2010
 /* Play stone clacking sound */
@@ -1091,6 +1094,11 @@ void go_challenge_start(int Ind) {
 #if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 	char path[80];
 #endif
+#ifdef CUSTOM_VISUALS
+	static char32_t c_empty = 0;
+	static byte a_empty;
+	//todo: graphics for corners, edges and crossings! :D we just use dots for now
+#endif
 
 #ifdef HIDDEN_STAGE
 	/* change API? */
@@ -1305,18 +1313,51 @@ void go_challenge_start(int Ind) {
 	CPU_now_to_move = !CPU_has_white;
 	player_timeleft_sec = player_timelimit_sec;
 
+#ifdef CUSTOM_VISUALS
+	if (!c_empty) {
+		//star, feat 122: (will be a normal dot in pure ASCII)
+		if (p_ptr->ascii_feats) {
+			c_empty = f_info[122].f_char;
+			//a_empty = f_info[122].f_attr;
+			a_empty = TERM_UMBER;
+		} else {
+			c_empty = p_ptr->f_char[122];
+			//a_empty = p_ptr->f_attr[122];
+			a_empty = TERM_UMBER;
+		}
+	}
+#endif
+
 	/* Draw board */
 	Send_store_special_str(Ind, GO_BOARD_Y, GO_BOARD_X, TERM_UMBER, " ABCDEFGHJ ");
-	Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X, TERM_UMBER, "9.........9");
-	Send_store_special_str(Ind, GO_BOARD_Y + 2, GO_BOARD_X, TERM_UMBER, "8.........8");
-	Send_store_special_str(Ind, GO_BOARD_Y + 3, GO_BOARD_X, TERM_UMBER, "7.........7");
-	Send_store_special_str(Ind, GO_BOARD_Y + 4, GO_BOARD_X, TERM_UMBER, "6.........6");
-	Send_store_special_str(Ind, GO_BOARD_Y + 5, GO_BOARD_X, TERM_UMBER, "5.........5");
-	Send_store_special_str(Ind, GO_BOARD_Y + 6, GO_BOARD_X, TERM_UMBER, "4.........4");
-	Send_store_special_str(Ind, GO_BOARD_Y + 7, GO_BOARD_X, TERM_UMBER, "3.........3");
-	Send_store_special_str(Ind, GO_BOARD_Y + 8, GO_BOARD_X, TERM_UMBER, "2.........2");
-	Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X, TERM_UMBER, "1.........1");
 	Send_store_special_str(Ind, GO_BOARD_Y + 10, GO_BOARD_X, TERM_UMBER, " ABCDEFGHJ ");
+#ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) { //client must know PKT_CHAR_DIRECT
+		int x;
+
+		for (n = 0; n < 9; n++) {
+			Send_store_special_str(Ind, GO_BOARD_Y + 1 + n, GO_BOARD_X, TERM_UMBER, format("%d         %d", 9 - n, 9 - n));
+			for (x = 0; x < 9; x++) {
+ #ifdef GRAPHICS_BG_MASK
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 1 + n, a_empty, c_empty, 0, 0); //todo: board background gfx =p
+ #else
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 1 + n, a_empty, c_empty);
+ #endif
+			}
+		}
+	} else
+#endif
+	{
+		Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X, TERM_UMBER, "9.........9");
+		Send_store_special_str(Ind, GO_BOARD_Y + 2, GO_BOARD_X, TERM_UMBER, "8.........8");
+		Send_store_special_str(Ind, GO_BOARD_Y + 3, GO_BOARD_X, TERM_UMBER, "7.........7");
+		Send_store_special_str(Ind, GO_BOARD_Y + 4, GO_BOARD_X, TERM_UMBER, "6.........6");
+		Send_store_special_str(Ind, GO_BOARD_Y + 5, GO_BOARD_X, TERM_UMBER, "5.........5");
+		Send_store_special_str(Ind, GO_BOARD_Y + 6, GO_BOARD_X, TERM_UMBER, "4.........4");
+		Send_store_special_str(Ind, GO_BOARD_Y + 7, GO_BOARD_X, TERM_UMBER, "3.........3");
+		Send_store_special_str(Ind, GO_BOARD_Y + 8, GO_BOARD_X, TERM_UMBER, "2.........2");
+		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X, TERM_UMBER, "1.........1");
+	}
 
 	/* Initialize game board tracker */
 	for (n = 0; n < 9; n++) {
@@ -3078,8 +3119,19 @@ void fix_sgf_ranks(int rank) {
 /* Screen operations only: Update the board visuals for the player */
 static void go_engine_board(void) {
 	int n, x;
-	char nline[30];
 	int Ind;
+	char nline[30];
+#ifdef CUSTOM_VISUALS
+	player_type *p_ptr;
+	int k_idx;
+
+	static char32_t c_black = 0, c_white = 0, c_empty = 0;
+	static byte a_black, a_white, a_empty;
+	//todo: graphics for corners, edges and crossings! :D we just use dots for now
+
+	char32_t c;
+	byte a;
+#endif
 
 	if (go_err(DOWN, DOWN, "go_engine_board")) return;
 
@@ -3089,20 +3141,80 @@ static void go_engine_board(void) {
 		return;
 	}
 
+#ifdef CUSTOM_VISUALS
+	p_ptr = Players[Ind];
+	if (!c_black) {
+		k_idx = lookup_kind(TV_GAME, SV_BLACK_PIECE);
+		if (p_ptr->ascii_items) {
+			c_black = k_info[k_idx].d_char;
+			a_black = k_info[k_idx].d_attr;
+		} else {
+			c_black = p_ptr->k_char[k_idx];
+			a_black = p_ptr->k_attr[k_idx];
+		}
+	}
+	if (!c_white) {
+		k_idx = lookup_kind(TV_GAME, SV_WHITE_PIECE);
+		if (p_ptr->ascii_items) {
+			c_white = k_info[k_idx].d_char;
+			a_white = k_info[k_idx].d_attr;
+		} else {
+			c_white = p_ptr->k_char[k_idx];
+			a_white = p_ptr->k_attr[k_idx];
+		}
+	}
+	if (!c_empty) {
+		//star, feat 122: (will be a normal dot in pure ASCII)
+		if (p_ptr->ascii_feats) {
+			c_empty = f_info[122].f_char;
+			//a_empty = f_info[122].f_attr;
+			a_empty = TERM_UMBER;
+		} else {
+			c_empty = p_ptr->f_char[122];
+			//a_empty = p_ptr->f_attr[122];
+			a_empty = TERM_UMBER;
+		}
+	}
+#endif
+
 	for (n = 0; n < 9; n++) {
 		/* line hasn't been changed? */
 		if (!strcmp(board_line_old[n], board_line[n])) continue;
-		/* line has been changed: Update visuals */
+		/* Line has been changed. */
+		strcpy(board_line_old[n], board_line[n]);
+		/* Update visuals...: */
+
+#ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) { //client must know PKT_CHAR_DIRECT
+			for (x = 0; x < 9; x++) {
+				if (board_line[n][x] == 'X') { //black
+					c = c_black;
+					a = a_black;
+				} else if (board_line[n][x] == 'O') { //white
+					c = c_white;
+					a = a_white;
+				} else { //free
+					c = c_empty;
+					a = a_empty;
+				}
+ #ifdef GRAPHICS_BG_MASK
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 9 - n, a, c, 0, 0); //todo: board background gfx =p
+ #else
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 9 - n, a, c);
+ #endif
+			}
+			continue;
+		}
+#endif
+
 		strcpy(nline, "");
 		for (x = 0; x < 9; x++) {
 			if (board_line[n][x] == 'X') strcat(nline, "\377Do"); //black
 			else if (board_line[n][x] == 'O') strcat(nline, "\377wo"); //white
 			else strcat(nline, "\377u."); //free
 		}
-
 		/* send it */
 		Send_store_special_str(Ind, GO_BOARD_Y + 9 - n, GO_BOARD_X + 1, TERM_UMBER, nline);
-		strcpy(board_line_old[n], board_line[n]);
 	}
 	Net_output1(Ind);
 }

@@ -7455,6 +7455,136 @@ int Send_char(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
 	/* old clients: each transmitted character is just normal 'char' size */
 	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, (char)c_fore);
 }
+#ifdef GRAPHICS_BG_MASK
+//TODO: if c_back is 0 it should just use the already existing background (just client-side?)
+int Send_char_direct(int Ind, int x, int y, byte a_fore, char32_t c_fore, byte a_back, char32_t c_back) {
+#else
+int Send_char_direct(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
+#endif
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	connection_t *connp = Conn[p_ptr->conn], *connp2;
+
+	if (!BIT(Conn[Players[Ind]->conn]->state, CONN_PLAYING | CONN_READY)) return(0);
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		if (BIT(connp2->state, CONN_PLAYING | CONN_READY)) {
+			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+			   Maybe todo: also unmap attr? */
+			char32_t unm_c_idx_fore = c_fore;
+			char32_t c2_fore = c_fore;
+			char *unm_c_ptr_fore;
+#ifdef GRAPHICS_BG_MASK
+			char32_t unm_c_idx_back = c_back;
+			char32_t c2_back = c_back;
+			char *unm_c_ptr_back;
+#endif
+
+			/* Unmapping while using gfx can cause visual bg-colour glitch? todo: fix this mess */
+			if (connp2->use_graphics == UG_NONE) {
+				if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
+				else if (NULL != (unm_c_ptr_fore = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_fore))) c2_fore = (char32_t)*unm_c_ptr_fore;
+#ifdef GRAPHICS_BG_MASK
+				if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
+				else if (NULL != (unm_c_ptr_back = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx_back))) c2_back = (char32_t)*unm_c_ptr_back;
+#endif
+			}
+
+#ifdef GRAPHICS_BG_MASK
+			if (connp2->use_graphics == UG_2MASK && is_atleast(&connp2->version, 4, 9, 2, 1, 0, 0)) {
+				/* Transfer only the relevant bytes, according to client setup.*/
+				char *pc_f = (char*)&c2_fore, *pc_b = (char*)&c2_back;
+
+				switch (connp2->Client_setup.char_transfer_bytes) {
+				case 0:
+				case 1:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[0], a_back, pc_b[0]);
+					break;
+				case 2:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]);
+					break;
+				case 3:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]);
+					break;
+				case 4:
+				default:
+					Packet_printf(&connp2->c, "%c%c%c%c%u%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c2_fore, a_back, c2_back);
+				}
+			} else
+#endif
+			/* 4.8.1 and newer clients use 32bit character size. */
+			if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+				/* Transfer only the relevant bytes, according to client setup.*/
+				char *pc = (char*)&c2_fore;
+
+				switch (connp2->Client_setup.char_transfer_bytes) {
+				case 0:
+				case 1:
+					Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[0]);
+					break;
+				case 2:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[1], pc[0]);
+					break;
+				case 3:
+					Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[2], pc[1], pc[0]);
+					break;
+				case 4:
+				default:
+					Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c2_fore);
+				}
+			}
+			/* old clients: each transmitted character is just normal 'char' size */
+			else Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, (char)c2_fore);
+		}
+	}
+
+#ifdef GRAPHICS_BG_MASK
+	if (connp->use_graphics == UG_2MASK && is_atleast(&connp->version, 4, 9, 2, 1, 0, 0)) {
+		/* Transfer only the relevant bytes, according to client setup.*/
+		char *pc_f = (char*)&c_fore, *pc_b = (char*)&c_back;
+
+		switch (connp->Client_setup.char_transfer_bytes) {
+		case 0:
+		case 1:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[0], a_back, pc_b[0]);
+			break;
+		case 2:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]);
+			break;
+		case 3:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]);
+			break;
+		case 4:
+		default:
+			return Packet_printf(&connp->c, "%c%c%c%c%u%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c_fore, a_back, c_back);
+		}
+	} else
+#endif
+	/* 4.8.1 and newer clients use 32bit character size. */
+	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
+		/* Transfer only the relevant bytes, according to client setup.*/
+		char *pc = (char*)&c_fore;
+
+		switch (connp->Client_setup.char_transfer_bytes) {
+		case 0:
+		case 1:
+			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[0]);
+			break;
+		case 2:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[1], pc[0]);
+			break;
+		case 3:
+			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[2], pc[1], pc[0]);
+			break;
+		case 4:
+		default:
+			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c_fore);
+		}
+	}
+	/* old clients: each transmitted character is just normal 'char' size */
+	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, (char)c_fore);
+}
 
 int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
 	connection_t *connp = Conn[Players[Ind]->conn];

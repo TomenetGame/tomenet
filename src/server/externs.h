@@ -1250,10 +1250,12 @@ extern int Send_direction(int Ind);
 extern int Send_message(int Ind, cptr msg);
 #ifdef GRAPHICS_BG_MASK
 extern int Send_char(int Ind, int x, int y, byte a_fore, char32_t c_fore, byte a_back, char32_t c_back);
+extern int Send_char_direct(int Ind, int x, int y, byte a_fore, char32_t c_fore, byte a_back, char32_t c_back);
 extern int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc, byte *sa_back, char32_t *sc_back);
 extern int Send_mini_map_pos(int Ind, int x, int y, int y_offset, byte a, char32_t c);
 #else
 extern int Send_char(int Ind, int x, int y, byte a, char32_t c);
+extern int Send_char_direct(int Ind, int x, int y, byte a, char32_t c);
 extern int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc);
 extern int Send_mini_map_pos(int Ind, int x, int y, int y_offset, byte a, char32_t c);
 #endif
