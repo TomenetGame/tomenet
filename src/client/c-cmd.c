@@ -4221,6 +4221,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			marking_after = FALSE;//unhack
 			continue;
 		/* search for keyword */
+		case '/':
 		case 's':
 			marking = marking_after = FALSE; //clear hack
 #ifdef REGEX_SEARCH
@@ -5307,6 +5308,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			continue;
 
 		/* search for keyword */
+		case '/':
 		case 's':
 			marking = marking_after = FALSE; //clear hack
 #ifdef REGEX_SEARCH
@@ -7091,6 +7093,7 @@ static void cmd_notes(void) {
 		case ':':
 			cmd_message();
 			break;
+		case '/':
 		case 's': /* Search for receipient name */
 			{
 			char searchstr[MAX_CHARS] = { 0 };

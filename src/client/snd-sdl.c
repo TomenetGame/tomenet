@@ -3668,6 +3668,7 @@ void do_cmd_options_sfx_sdl(void) {
 			if (y < 0) y = 0;
 			if (y >= audio_sfx) y = audio_sfx - 1;
 			break;
+		case '/':
 		case 's': /* Search for event name */
 			{
 			char searchstr[MAX_CHARS] = { 0 };
@@ -4257,6 +4258,7 @@ void do_cmd_options_mus_sdl(void) {
 			y = i;
 			if (y >= audio_music) y = audio_music - 1;
 			break;
+		case '/':
 		case 's': /* Search for event name */
 			{
 			char searchstr[MAX_CHARS] = { 0 };
