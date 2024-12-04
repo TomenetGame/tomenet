@@ -1223,7 +1223,9 @@ void cmd_subinven(int islot) {
 			}
 			for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 				if (!c_store.actions[i]) continue;
-				if (c_store.letter[i] != 's') continue;
+				/* 's' is 'sell' in normal stores, 'd' is drop (aka deposit) item in player houses.
+				   Might in theory conflict with special stores that redefine these for other functions instead of selling/depositing. */
+				if (c_store.letter[i] != 's' && c_store.letter[i] != 'd') continue;
 				store_do_command(i, FALSE);
 				break;
 			}
