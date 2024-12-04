@@ -12123,7 +12123,8 @@ void combine_pack(int Ind) {
 						break;
 					}
 					/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
-					else if (p_ptr->current_force_stack - 1 == is && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+					else if (j_ptr->number < MAX_STACK_SIZE - 1 &&
+					    p_ptr->current_force_stack - 1 == is && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
 						int total = j_ptr->number + o_ptr->number;
 
 						j_ptr->number = MAX_STACK_SIZE - 1;
@@ -12236,7 +12237,8 @@ void combine_pack(int Ind) {
 				break;
 			}
 			/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
-			else if (p_ptr->current_force_stack - 1 == i && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+			else if (j_ptr->number < MAX_STACK_SIZE - 1 &&
+			    p_ptr->current_force_stack - 1 == i && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
 				int total = j_ptr->number + o_ptr->number;
 
 				j_ptr->number = MAX_STACK_SIZE - 1;
@@ -12342,7 +12344,8 @@ void combine_pack(int Ind) {
 						break;
 					}
 					/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
-					else if (object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+					else if (j_ptr->number < MAX_STACK_SIZE - 1 &&
+					    object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
 						int total = j_ptr->number + o_ptr->number;
 
 						j_ptr->number = MAX_STACK_SIZE - 1;
