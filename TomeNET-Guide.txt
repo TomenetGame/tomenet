@@ -746,7 +746,8 @@ g       g       pick up an item from the floor. You have to stand on the item
 
 CTRL+G  CTRL+Z  pick up exactly one piece from a stack of same type of items.
 
-K       CTRL+C  forcibly combines a level 0 item in your inventory with other
+K       CTRL+C  Force-stack or split-stack (alternative function):
+                Forcibly combines a level 0 item in your inventory with other
                 items of the same type that aren't level 0 ('force-stack').
                 Be warned, that this will change the level of all the items
                 involved to 0 so they will become untradable.
