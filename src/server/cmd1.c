@@ -3714,6 +3714,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 							p_ptr->blood_frenzy_active = TRUE;
 							p_ptr->update |= PU_BONUS;
 							msg_print(Ind, "\377BYou enter a blood frenzy!");
+							if (!rand_int(3)) switch (rand_int(p_ptr->ptrait == TRAIT_CORRUPTED ? 4 : 2)) {
+							//msg_format(Ind, "~\377s%s\377w~", Rumor);
+							case 0: msg_print(Ind, "'Break their backs!'"); break;
+							case 1: msg_print(Ind, "'KILL! MAIM! BURN!'"); break;
+							case 2: msg_print(Ind, "'Blood for the Blood god!'"); break;
+							case 3: msg_print(Ind, "'Skulls for the Skull Throne!'"); break;
+							}
 						}
 					}
 				}
