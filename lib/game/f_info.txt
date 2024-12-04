@@ -724,7 +724,9 @@ F:LAMP_LITE_OPTIONAL
 N:94:mud
 G:~:u
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
-F:LAMP_LITE_SNOW | LAMP_LITE_OPTIONAL
+F:LAMP_LITE
+# | LAMP_LITE_SNOW --makes it look slate while out of LoS, weird
+# | LAMP_LITE_OPTIONAL --makes it look slate while out of LoS, weird
 #F:LAMP_LITE_OPTIONAL | NO_SHADE | NO_LITE_WHITEN --maybe not so cool, confusing with ~ feats/objects?
 
 N:95:ice wall
