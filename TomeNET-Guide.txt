@@ -8288,6 +8288,26 @@ If you stand still and an enemy is on an adjacent grid (directly next to you,
 no space between you and the enemy) then your character will automatically
 attack it with the equipped melee weapon.
 
+Starting in 4.9.3 there is an option 'instant_retaliator' that toggles the
+behaviour of auto-retaliation and of fire-till-kill, in Gameplay Options 1:
+- If on, your character will instantly attack anything adjacent (or targetted
+in the case of fire-till-kill) if you have spare energy, up to two turns at
+once if your character was standing around idly before.
+- If off, your character will make sure to keep 1 turn of energy in reserve.
+If you move next to an enemy this might result in your character waiting for
+one turn to recuperate the movement energy before it starts auto-attacking or
+firing-till-kill.
+The advantage however is that the stored up energy can be used to break out
+of auto-retaliation or fire-till-kill almost instantly, for example if you
+hit your teleport macro.
+So it guarantees a fast escape without having to wait for energy recuperation
+and thereby greatly increases survival chances for classes that don't split
+their energy on attacks like melee or archer-type classes do. Istari are for
+example strongly affected by this option.
+Also, if this is on, as your character won't instantly auto-attack if you
+step next to an enemy, this allows you to easily walk past sleeping monsters
+without your character starting to attack them and thereby waking them up.
+
 Instead of melee attacks, you can also configure the auto-retaliator to use
 other items. To do so, you use '@O...' (the letter 'O', not the number zero!)
 item inscriptions:
@@ -12154,6 +12174,9 @@ for details about how wearing armour affects your ranged weapon accuracy.
 --------------------------
 Your character will fire till kill, ie keep using your current (if eligible)
 ranged attacks until the target dies or is no longer targettable.
+
+This auto-attacking, like auto-retaliation, is affected by 'instant_retaliator'
+in "Gameplay Options 1" in the options menu. Please see (4.1a) for details.
 
 Accessible via 'm' key, you can switch 'fire-till-kill' mode on or off.
 While enabled, your character will keep firing a ranged weapon (ie a weapon in
