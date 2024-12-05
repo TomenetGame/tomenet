@@ -9756,7 +9756,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			    typ == GF_SEEINVIS_PLAYER || typ == GF_DETECTDOOR_PLAYER ||
 			    typ == GF_DETECTCREATURE_PLAYER  || typ == GF_SPEED_PLAYER ||
 			    typ == GF_SATHUNGER_PLAYER || typ == GF_REMFEAR_PLAYER ||
-			    typ == GF_HERO_PLAYER ||
+			    typ == GF_HERO_PLAYER || typ == GF_PROTECT_PLAYER ||
 			    typ == GF_ZEAL_PLAYER || typ == GF_RESTORE_PLAYER ||
 			    typ == GF_SANITY_PLAYER || typ == GF_SOULCURE_PLAYER ||
 			    typ == GF_BLESS_PLAYER || typ == GF_RESPOIS_PLAYER ||
@@ -9921,7 +9921,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) ||
 		    (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
 		    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
-		    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
+		    (typ == GF_HERO_PLAYER) || (typ == GF_PROTECT_PLAYER) ||
+		    (typ == GF_SHERO_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
 		    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
 		    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 		    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
@@ -9966,7 +9967,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
 		    (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
 		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
-		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
+		    (typ != GF_HERO_PLAYER) && (typ != GF_PROTECT_PLAYER) &&
+		    (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
 		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
 		    (typ != GF_RESTORE_PLAYER) && (typ != GF_REMCURSE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
@@ -10086,7 +10088,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_DETECTTRAP_PLAYER) || /*(typ == GF_TELEPORTLVL_PLAYER) ||
 	    (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
 	    (typ == GF_RESACID_PLAYER) ||*/ (typ == GF_HPINCREASE_PLAYER) ||
-	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
+	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) || (typ == GF_PROTECT_PLAYER) ||
 	    /*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 	    (typ == GF_RESTORE_PLAYER) || (typ == GF_CURING) ||
 	    (typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
@@ -10112,7 +10114,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) ||
 	    (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
 	    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
-	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
+	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) || (typ == GF_PROTECT_PLAYER) ||
 	    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
 	    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
@@ -11236,6 +11238,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else if (dam < 33) p_ptr->blessed_power = 10;
 		else p_ptr->blessed_power = 16;
 		(void)set_blessed(Ind, dam, FALSE);
+		dam = 0;
+		break;
+
+	case GF_PROTECT_PLAYER:
+		(void)set_protevil(Ind, dam, FALSE);
 		dam = 0;
 		break;
 
@@ -12656,6 +12663,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	    (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) ||
 	    (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) ||
 	    (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) ||
+	    (typ == GF_PROTECT_PLAYER) ||
 	    (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
 	    (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
 	    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||

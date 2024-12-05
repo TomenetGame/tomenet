@@ -7230,6 +7230,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
 		    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
 		    (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+		    (typ != GF_PROTECT_PLAYER) &&
 		    (typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
 		    (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
 		    (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
@@ -7298,6 +7299,7 @@ bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
 		    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
 		    (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+		    (typ != GF_PROTECT_PLAYER) &&
 		    (typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
 		    (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
 		    (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
@@ -7395,6 +7397,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 			    (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
 			    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
 			    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
+			    (typ != GF_PROTECT_PLAYER) &&
 			    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
 			    (typ != GF_RESTORE_PLAYER) && (typ != GF_REMCURSE_PLAYER) &&
 			    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
