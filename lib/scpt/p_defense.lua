@@ -22,7 +22,7 @@ HBLESSING_I = add_spell {
 			end
 	end,
 	["info"] = 	function()
-			return "AC+8 dur 9.."..get_level(Ind, HBLESSING_I, 25) + 9
+			return "AC+8  dur 9.."..get_level(Ind, HBLESSING_I, 25) + 9
 	end,
 	["desc"] = 	{
 			"Protects you with a shield of righteousness.",
@@ -53,7 +53,7 @@ HBLESSING_II = add_spell {
 			end
 	end,
 	["info"] = 	function()
-			return "AC+14 dur 17.."..get_level(Ind, HBLESSING_I, 25) + 17
+			return "AC+14  dur 17.."..get_level(Ind, HBLESSING_I, 25) + 17
 	end,
 	["desc"] = 	{
 			"Protects you with a shield of righteousness.",
@@ -83,7 +83,7 @@ HBLESSING_III = add_spell {
 			end
 	end,
 	["info"] = 	function()
-			return "AC+20 dur 32.."..get_level(Ind, HBLESSING_I, 25) + 32
+			return "AC+20  dur 32.."..get_level(Ind, HBLESSING_I, 25) + 32
 	end,
 	["desc"] = 	{
 			"Protects you with a shield of righteousness.",
@@ -291,8 +291,8 @@ HMARTYR = add_spell {
 			end
 			end,
 	["info"] = 	function()
-			if (player.pclass == CLASS_PRIEST) then return "dur 15s	timeout 1000"
-			else return "dur 8s timeout 1000" end
+			if (player.pclass == CLASS_PRIEST) then return "dur 15s  timeout 1000"
+			else return "dur 8s  timeout 1000" end
 			end,
 	["desc"] = 	{
 			"Turns you into an holy martyr, blessed with immortality to fulfil",
