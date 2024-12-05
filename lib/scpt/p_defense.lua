@@ -202,7 +202,7 @@ HPROTEVIL = add_spell {
 			local dur
 			dur = 20 + randint(10) + get_level(Ind, HPROTEVIL, 50)
 			set_protevil(Ind, dur, TRUE)
-			fire_ball(Ind, GF_PROTECT_PLAYER, 0, dur, 2, " consecrates a ward.")
+			fire_ball(Ind, GF_PROTEVIL_PLAYER, 0, dur, 2, " consecrates a ward.")
 	end,
 	["info"] = 	function()
 			return "dur "..20 + get_level(Ind, HPROTEVIL, 50)..".."..30 + get_level(Ind, HPROTEVIL, 50)
