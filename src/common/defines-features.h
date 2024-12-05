@@ -402,6 +402,10 @@
 /* Allow 'Vampire Paladins' aka Death Knights. Requires ENABLE_OCCULT. */
 #ifdef ENABLE_OCCULT
  #define ENABLE_DEATHKNIGHT
+ #ifdef ENABLE_DEATHKNIGHT
+  #define ENABLE_RUNEKNIGHT /* Access darkness and nether runes, and thus cold (which may be upgraded to ice via blood magic). - Kurzel */
+  #define ENABLE_ROGUEKNIGHT /* Access stabbing skill and poison application technique, ala 3rd edition 'Blackguard' skills. - Kurzel */
+ #endif
 
   #define ENABLE_HELLKNIGHT	/* Allow 'Corrupted Paladins' aka Hell Knights. Requires ENABLE_OCCULT. */
   #ifdef ENABLE_HELLKNIGHT

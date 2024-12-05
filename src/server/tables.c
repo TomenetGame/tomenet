@@ -4013,7 +4013,7 @@ player_class class_info[MAX_CLASS] = {
 			/* Sneakiness tree */
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
-			'+', 600, },
+			'+', 800, },//600 (par with adventurer, lower than rogue) - Kurzel
 		{ SKILL_STEALTH,
 			'+', 1000,
 			'+', 600, },
@@ -4026,12 +4026,21 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_STEALING,
 			'+', 0,
 			'+', 700, },
+			/* Buffing rogue options, favoring offense, to emphasis spell-thief hybrid builds. - Kurzel */
+			/*
 		{ SKILL_BACKSTAB,
 			'+', 0,
 			'+', 700, },
 		{ SKILL_DODGE,
 			'+', 0,
 			'+', 700, },
+			*/
+		{ SKILL_BACKSTAB,
+			'+', 1000,
+			'+', 900, },
+		{ SKILL_DODGE,
+			'+', 1000,
+			'+', 800, },
 		{ SKILL_CALMNESS,
 			'+', 0,
 			'+', 1000, },
@@ -4276,6 +4285,16 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0, // <- should have 1.000, but it's too much to start with that in two schools at once. Shadow is picked instead for now because of Cause Fear I.
 			'+', 700, },
  #endif
+ #ifdef ENABLE_RUNEKNIGHT
+			/* Experimental access to weaker runes after much playtesting and RFE for runes outside of runemaster. Enables a more knight-like rune class option. - Kurzel */
+			/* Not too frosty! Keeping rune ratios lower than shaman here to prevent strong ice-blood caster paladins. Note vampires already get a boost to nether runes. */
+		{ SKILL_R_DARK,
+			'+', 0,
+			'+', 700, },
+		{ SKILL_R_NETH,
+			'+', 0,
+			'+', 700, },
+ #endif
  #if 0
 		{ SKILL_SPELL,
 			'+', 0,
@@ -4305,6 +4324,12 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_DISARM,
 			'+', 1000,
 			'+', 600, },
+ #ifdef ENABLE_ROGUEKNIGHT
+			/* Reasonable stab ratio but lower than rogue, runie. Inspiration from 3rd edition's 'Blackguard' and DCSS shield-stab builds. - Kurzel */
+		{ SKILL_BACKSTAB,
+			'+', 0,
+			'+', 800, },
+ #endif
 		{ SKILL_DODGE,
 			'+', 0,/*1000*/
 			'+', 600, },
@@ -5427,7 +5452,11 @@ byte mtech_lev[MAX_CLASS][16] = {
 	{4,	6,	8,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//runemaster
 	{0,	8,	0,	13,	12,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//mindcrafter
 #ifdef ENABLE_DEATHKNIGHT
+ #ifdef ENABLE_ROGUEKNIGHT
+	{5,	9,	0,	10,	0,	7,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//death knight - Experimental poison specialty of 3rd edition's 'Blackguard'; the original(?) fallen paladin class. - Kurzel
+ #else
 	{5,	9,	0,	10,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//death knight
+ #endif
 #endif
 #ifdef ENABLE_HELLKNIGHT
 	{5,	9,	0,	11,	0,	0,	0,	0,	0,	0,	20,	0,	35,	0,	0,	0},	//hell knight
