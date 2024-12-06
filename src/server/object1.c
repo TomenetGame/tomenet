@@ -3867,7 +3867,7 @@ cptr item_activation(object_type *o_ptr) {
 				strcat(m_name, r_info[o_ptr->pval].name + r_name);
 				return(format("polymorphing into %s", m_name));
 			} else
-				return("memorizing the form you are mimicing");
+				return("transferring the form you are currently mimicking into the ring");
 		}
 	}
 
