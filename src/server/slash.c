@@ -11809,8 +11809,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					case CS_KEYDOOR:
 						break;
 					case CS_TRAPS:
-						for (i = 1; i <= max_t_idx; i++) if (tr_info_rev[i] == cs_ptr->sc.trap.t_idx) break;
-						msg_format(Ind, " CS_TRAP: t_idx = %d (%d), found = %d, clone = %d ('%s)", cs_ptr->sc.trap.t_idx, i <= max_t_idx ? i : i + 10000, cs_ptr->sc.trap.found, cs_ptr->sc.trap.clone, t_name + t_info[cs_ptr->sc.trap.t_idx].name);
+						for (i = 1; i <= max_tr_idx; i++) if (tr_info_rev[i] == cs_ptr->sc.trap.t_idx) break;
+						msg_format(Ind, " CS_TRAP: t_idx = %d (%d), found = %d, clone = %d ('%s)", cs_ptr->sc.trap.t_idx, i <= max_tr_idx ? i : i + 10000, cs_ptr->sc.trap.found, cs_ptr->sc.trap.clone, t_name + t_info[cs_ptr->sc.trap.t_idx].name);
 						break;
 					case CS_INSCRIP:
 						break;

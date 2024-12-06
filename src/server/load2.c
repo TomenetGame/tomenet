@@ -3254,7 +3254,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_T_IDX) {
+	if (tmp16u > MAX_TR_IDX) {
 		s_printf("Too many (%u) trap kinds!\n", tmp16u);
 		return(22);
 	}

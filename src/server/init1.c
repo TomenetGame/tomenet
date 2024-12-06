@@ -5910,7 +5910,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 	/* No version yet */
 	if (!okay) return(2);
 
-	max_t_idx = idx;
+	max_tr_idx = idx;
 
 	/* Success */
 	return(0);
@@ -9845,7 +9845,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				max_m_idx = atoi(zz[1]);
 			/* Maximum tr_idx */
 			else if (zz[0][0] == 'U')
-				max_t_idx = atoi(zz[1]);
+				max_tr_idx = atoi(zz[1]);
 			/* Maximum wf_idx */
 			else if (zz[0][0] == 'W')
 				max_wf_idx = atoi(zz[1]);

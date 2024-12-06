@@ -45,7 +45,7 @@ static bool do_trap_of_silliness(int Ind, int power) {
 		if (p_ptr->obj_aware[j]) aware = TRUE;
 		p_ptr->obj_aware[j] = 0;
 
-		j = tr_info_rev[randint(max_t_idx)];
+		j = tr_info_rev[randint(max_tr_idx)];
 		if (p_ptr->trap_ident[j]) aware = TRUE;
 		p_ptr->trap_ident[j] = 0;
 	}
@@ -688,7 +688,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		never_id = TRUE;
 		trap = TRAP_OF_ALE;
 		for (l = 0; l < 99 ; l++) {
-			k = tr_info_rev[randint(max_t_idx)];
+			k = tr_info_rev[randint(max_tr_idx)];
 			if (
 			    //!t_info[k].name ||	--no longer needed, see comment in place_trap()
 			    t_info[k].minlevel > dlev ||
@@ -2863,7 +2863,7 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 	if (trap == TRAP_OF_RANDOM_EFFECT) {
 		trap = TRAP_OF_ALE;
 		for (l = 0; l < 99 ; l++) {
-			k = tr_info_rev[randint(max_t_idx)];
+			k = tr_info_rev[randint(max_tr_idx)];
 			if (
 			    //!t_info[k].name ||	--no longer needed, see comment in place_trap()
 			    t_info[k].minlevel > dlev ||
@@ -3614,7 +3614,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int modx) {
 
 	/* try 100 times -- TODO: rewrite this to work like object generation, with traps sorted by level and pre-filtered */
 	while (more && (cnt++) < 100) {
-		trap = tr_info_rev[randint(max_t_idx)];
+		trap = tr_info_rev[randint(max_tr_idx)];
 		t_ptr = &t_info[trap];
 
 		/* Trap idx not defined (there are N-index gaps in tr_info.txt)?
@@ -3752,7 +3752,7 @@ void place_trap_object(object_type *o_ptr) {
 
 	/* try 100 times */
 	while ((more) && (cnt++) < 100) {
-		trap = tr_info_rev[randint(max_t_idx)];
+		trap = tr_info_rev[randint(max_tr_idx)];
 		t_ptr = &t_info[trap];
 
 		//if (!t_ptr->name) continue;	-- no longer needed, see comment in place_trap()
@@ -3846,7 +3846,7 @@ void wiz_place_trap(int Ind, int trap) {
 	else flags = FTRAP_FLOOR;
 #endif	// 0
 	/* is this a correct trap now?   */
-	if (trap < 1 || trap >= MAX_T_IDX) {
+	if (trap < 1 || trap >= MAX_TR_IDX) {
 		msg_print(Ind, "Trap index is out of range!");
 		return;
 	}

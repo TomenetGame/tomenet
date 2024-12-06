@@ -246,7 +246,7 @@ extern u16b max_e_idx;
 extern u16b max_d_idx;
 extern u16b max_o_idx;
 extern u16b max_m_idx;
-extern u16b max_t_idx;
+extern u16b max_tr_idx;
 extern u16b max_st_idx;
 extern u16b max_ow_idx;
 extern u16b max_q_idx;

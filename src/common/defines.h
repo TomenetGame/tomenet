@@ -577,7 +577,7 @@
 #define MAX_R_IDX	1280	/* Max size for "r_info[]" */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
-#define MAX_T_IDX	256	/* Max size for "t_info[]" */
+#define MAX_TR_IDX	256	/* Max size for "t_info[]" */
 #define MAX_OW_IDX	128	/* Max size for "ow_info[]" */
 #define MAX_ST_IDX	128	/* Max size for "st_info[]" */
 #define MAX_BA_IDX	128	/* Max size for "ba_info[]" */
@@ -592,7 +592,7 @@
 #define MAX_R_IDX_COMPAT	1152
 #define MAX_V_IDX_COMPAT 	256
 #define MAX_RE_IDX_COMPAT	128
-#define MAX_T_IDX_COMPAT	256
+#define MAX_TR_IDX_COMPAT	256
 #define MAX_OW_IDX_COMPAT	96
 #define MAX_ST_IDX_COMPAT	96
 #define MAX_BA_IDX_COMPAT	96

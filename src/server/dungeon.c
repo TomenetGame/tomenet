@@ -8714,7 +8714,7 @@ static void process_world(void) {
 	if (m_top + 320 > MAX_M_IDX) compact_monsters(640, TRUE);
 
 	/* Hack -- Compact the trap list occasionally */
-	//if (t_top + 160 > MAX_T_IDX) compact_traps(320, TRUE);
+	//if (t_top + 160 > MAX_TR_IDX) compact_traps(320, TRUE);
 
 }
 

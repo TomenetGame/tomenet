@@ -360,7 +360,7 @@ object_type *o_list, *o_list_bak;
 monster_type *m_list;
 
 /*
- * The array of dungeon traps [MAX_T_IDX]
+ * The array of dungeon traps [MAX_TR_IDX]
  * (elsewhere)
  */
 // trap_type *t_list;
@@ -451,7 +451,7 @@ char *k_name;
 char *k_text;
 
 u16b k_info_num[MAX_K_IDX]; /* mapper from internal k_idx to the N-numbers in k_info.txt, for custom object-mapping */
-u16b tr_info_rev[MAX_T_IDX]; /* reverse mapper from internal tr_info to the N-numbers in k_info.txt, for player-trap_ident knowledge */
+u16b tr_info_rev[MAX_TR_IDX]; /* reverse mapper from internal tr_info to the N-numbers in k_info.txt, for player-trap_ident knowledge */
 
 /*
  * The artifact arrays
@@ -812,7 +812,7 @@ u16b max_m_idx = 0;
 /*
  * Maximum number of traps in tr_info.txt
  */
-u16b max_t_idx = 0;
+u16b max_tr_idx = 0;
 
 /*
  * Maximum number of wilderness features in wf_info.txt

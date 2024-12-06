@@ -216,7 +216,7 @@ struct player_type {
 
 	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
 	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
-	bool trap_ident[MAX_T_IDX];       /* do we know the name */
+	bool trap_ident[MAX_TR_IDX];       /* do we know the name */
 
 	byte d_attr[MAX_K_IDX];
 	char32_t d_char[MAX_K_IDX];

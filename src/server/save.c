@@ -1580,7 +1580,7 @@ static bool wr_savefile_new(int Ind) {
 	for (i = 0; i < tmp16u; i++) wr_xtra(Ind, i);
 
 	/* Dump the trap memory (unefficient!) */
-	tmp16u = MAX_T_IDX;
+	tmp16u = MAX_TR_IDX;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) wr_trap_memory(Ind, i);
 

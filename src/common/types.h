@@ -3244,7 +3244,7 @@ struct player_type {
 	bool obj_felt[MAX_K_IDX];	/* Has the player felt the value of this obj type via pseudo-id before? - C. Blue */
 	bool obj_felt_heavy[MAX_K_IDX];	/* Has the player had strong pseudo-id on this item? */
 
-	bool trap_ident[MAX_T_IDX];	/* do we know the name */
+	bool trap_ident[MAX_TR_IDX];	/* do we know the name */
 
 	byte d_attr[MAX_K_IDX];
 	char32_t d_char[MAX_K_IDX];
