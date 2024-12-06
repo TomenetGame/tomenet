@@ -4288,12 +4288,13 @@ player_class class_info[MAX_CLASS] = {
  #ifdef ENABLE_RUNEKNIGHT
 			/* Experimental access to weaker runes after much playtesting and RFE for runes outside of runemaster. Enables a more knight-like rune class option. - Kurzel */
 			/* Not too frosty! Keeping ratios low to limit otherwise hardy ice-blood caster paladins. Note vampires already boost nether rune ratio, compare rune-shaman. */
+			/* Use adventurer ratios, based on skill-builder experiments. */
 		{ SKILL_R_DARK,
 			'+', 0,
-			'+', 700, },
+			'+', 500, },//700
 		{ SKILL_R_NETH,
 			'+', 0,
-			'+', 700, },
+			'+', 500, },//700
  #endif
  #if 0
 		{ SKILL_SPELL,
