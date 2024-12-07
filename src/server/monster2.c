@@ -31,8 +31,16 @@
 /* Debug spawning of a particular monster */
 //#define PMO_DEBUG RI_SAURON
 
+/* Bloodletters that are level-boosted can 1-round k.o. low-AC chars. - C. Blue
+   To alleviate this, we have two ways:
+   1) Use the defines for nerfs below here.
+   2) Turn off 'instant_retaliator' option (4.9.3+) for low-AC chars to ensure almost-instant escape in case of bloodletter-spawns/summons.
+   Currently let's still enable (1) and not require players to rely on (2): */
 /* Nerf summoning for the specific case of summoning Bloodletters of Khorne?
    This avoids instant-ko in cases where the player might've been unlucky. */
+#define BLOODLETTER_SUMMON_GROUP_NERF
+/* Even more nerf: Don't even allow ANY livespawn/summon of single bloodletters, not just groups?
+   (This also implies BLOODLETTER_SUMMON_GROUP_NERF, so that one doesn't need to be defined in addition.) */
 #define BLOODLETTER_SUMMON_NERF
 
 /* No Unmaker spawns at all in Ironman Deep Dive Challenge or Halls of Mandos? */
@@ -3942,6 +3950,9 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 		/* Do not allow breeders to spawn in the wilderness - the_sandman */
 		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return(-3);
 	}
+#ifdef BLOODLETTER_SUMMON_NERF
+	if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) return(0);
+#endif
 
 	/* Place one monster, or fail */
 	if ((res = place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, dlevel), 0, slp, clo, clone_summoning)) != 0) {
@@ -3955,8 +3966,8 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 
 	/* Require the "group" flag */
 	if (!grp) return(0);
-#ifdef BLOODLETTER_SUMMON_NERF
-	if (r_idx == RI_BLOODLETTER && !level_generation_time) return(0);
+#ifdef BLOODLETTER_SUMMON_GROUP_NERF
+	if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) return(0);
 #endif
 
 	/* Friend for certain monsters */
