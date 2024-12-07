@@ -1116,8 +1116,11 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters) {
 		r_idx = entry->index;
 
 		/* Check the monster rejection array provided */
-		if (reject_monsters && reject_monsters[entry->index])
-			continue;
+		if (reject_monsters && reject_monsters[entry->index]) continue;
+
+#ifdef BLOODLETTER_SUMMON_NERF
+		if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) continue;
+#endif
 
 		/* Accept monsters which pass the restriction, if any */
 		if ((!hook || (*hook)(r_idx)) && (!hook2 || (*hook2)(r_idx))) {
