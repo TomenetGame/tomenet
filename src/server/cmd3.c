@@ -5974,6 +5974,7 @@ void do_cmd_split_stack(int Ind, int item, int amt) {
 	/* Append "!G" to inscription to ensure it doesn't get auto-stacked (aka absorbed) right away again */
 	if (!o_ptr->note) o_ptr->note = quark_add("!G");
 	else if (!check_guard_inscription(o_ptr->note, 'G')) o_ptr->note = quark_add(format("%s !G", quark_str(o_ptr->note)));
+	else o_ptr->note = quark_add(format("%s-", quark_str(o_ptr->note)));
 
 	item = inven_carry(Ind, o_ptr);
 	if (item >= 0) {
