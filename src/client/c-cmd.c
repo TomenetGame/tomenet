@@ -1373,14 +1373,20 @@ void cmd_drop(byte flag) {
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
 		equipped = FALSE;
+		num = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
 
 		/* Get an amount */
-		if (subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number > 1) {
+		if (num > 1) {
 			if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item)
-				amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
+				amt = num;
 			else {
+				int ng;
+
 				inkey_letter_all = TRUE;
-				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number, -1);
+				if ((ng = check_guard_inscription_str(subinventory_name[using_subinven][item % SUBINVEN_INVEN_MUL], 'G')) > 1 && (ng = num - ng + 1) > 0)
+					amt = c_get_quantity(format("How many (ENTER = %d, 'a' = all)? ", ng), ng, num);
+				else
+					amt = c_get_quantity("How many (ENTER/'a'/SPACE = all)? ", num, num);
 			}
 		}
 		else amt = 1;
@@ -1391,25 +1397,47 @@ void cmd_drop(byte flag) {
 		equipped = FALSE;
 		num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
 		tval = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
+
+		/* Get an amount */
+		if (num > 1) {
+			if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item
+			    && !equipped) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
+				amt = num;
+			else {
+				int ng;
+
+				inkey_letter_all = TRUE;
+				if ((ng = check_guard_inscription_str(subinventory_name[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL], 'G')) > 1 && (ng = num - ng + 1) > 0)
+					amt = c_get_quantity(format("How many (ENTER = %d, 'a' = all)? ", ng), ng, num);
+				else
+					amt = c_get_quantity("How many (ENTER/'a'/SPACE = all)? ", num, num);
+			}
+		}
+		else amt = 1;
 	} else
 #endif
 	{
 		equipped = item >= INVEN_WIELD;
 		num = inventory[item].number;
 		tval = inventory[item].tval;
-	}
 
-	/* Get an amount */
-	if (num > 1) {
-		if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item
-		    && !equipped) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
-			amt = num;
-		else {
-			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num, -1);
+		/* Get an amount */
+		if (num > 1) {
+			if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item
+			    && !equipped) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
+				amt = num;
+			else {
+				int ng;
+
+				inkey_letter_all = TRUE;
+				if ((ng = check_guard_inscription_str(inventory_name[item], 'G')) > 1 && (ng = num - ng + 1) > 0)
+					amt = c_get_quantity(format("How many (ENTER = %d, 'a' = all)? ", ng), ng, num);
+				else
+					amt = c_get_quantity("How many (ENTER/'a'/SPACE = all)? ", num, num);
+			}
 		}
+		else amt = 1;
 	}
-	else amt = 1;
 
 	/* Send it */
 	Send_drop(item, amt);

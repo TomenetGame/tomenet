@@ -544,7 +544,7 @@ static void store_chat(void) {
 }
 
 static void store_sell(void) {
-	int item, amt, num, tval;
+	int item, amt, num, tval, ng;
 	cptr name;
 
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
@@ -563,12 +563,14 @@ static void store_sell(void) {
 		num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
 		tval = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
 		name = subinventory_name[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
+		ng = check_guard_inscription_str(subinventory_name[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL], 'G');
 	} else
 #endif
 	{
 		num = inventory[item].number;
 		tval = inventory[item].tval;
 		name = inventory_name[item];
+		ng = check_guard_inscription_str(inventory_name[item], 'G');
 	}
 
 	/* Get an amount */
@@ -576,7 +578,10 @@ static void store_sell(void) {
 		if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item) amt = num;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", 1, num);
+			if (ng > 1 && (ng = num - ng + 1) > 0)
+				amt = c_get_quantity(format("How many (ENTER = %d, 'a' = all)? ", ng), ng, num);
+			else
+				amt = c_get_quantity("How many (ENTER/'a'/SPACE = all)? ", num, num);
 		}
 	} else amt = 1;
 
