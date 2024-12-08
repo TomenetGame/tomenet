@@ -3956,7 +3956,7 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 	if ((o_ptr->ident & ID_BROKEN) != (j_ptr->ident & ID_BROKEN)) return(FALSE);
 
 	/* Inscriptions matter not for player-stores (they get erased anyway!) */
-	if (!(tolerance & 0x8)) {
+	if (!(tolerance & (0x8 | 0x2))) { /* also allow force-stack to merge inscriptions */
 		/* Hack -- require semi-matching "inscriptions" */
 		/* Hack^2 -- books do merge.. it's to prevent some crashes */
 		if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
