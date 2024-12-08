@@ -3554,7 +3554,7 @@ void do_cmd_options_sfx_sdl(void) {
 
 #ifdef USER_VOLUME_SFX /* needs work @ actual mixing algo */
 		case 'v': {
-			//i = c_get_quantity("Enter volume % (1..100): ", -1);
+			//i = c_get_quantity("Enter volume % (1..100): ", -1, 100);
 			bool inkey_msg_old = inkey_msg;
 			char tmp[80];
 
@@ -3661,7 +3661,7 @@ void do_cmd_options_sfx_sdl(void) {
 			break;
 
 		case '#':
-			tmp = c_get_quantity("Enter index number: ", audio_sfx) - 1;
+			tmp = c_get_quantity(format("  Enter sfx index number (1-%d): ", audio_sfx), 1, audio_sfx) - 1;
 			if (!tmp) break;
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = tmp;
@@ -4083,7 +4083,7 @@ void do_cmd_options_mus_sdl(void) {
 
 #ifdef USER_VOLUME_MUS
 		case 'v': {
-			//i = c_get_quantity("Enter volume % (1..100): ", 50);
+			//i = c_get_quantity("Enter volume % (1..100): ", 50, 100);
 			bool inkey_msg_old = inkey_msg;
 			char tmp[80];
 
@@ -4253,7 +4253,7 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 #endif
 		case '#':
-			i = c_get_quantity("  Enter music event index number: ", audio_music) - 1;
+			i = c_get_quantity(format("  Enter music event index number (1-%d): ", audio_music), 1, audio_music) - 1;
 			if (i < 0) break;
 			y = i;
 			if (y >= audio_music) y = audio_music - 1;

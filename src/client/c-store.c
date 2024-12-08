@@ -338,18 +338,18 @@ static void store_purchase(bool one) {
 
 			/* Get a quantity */
 			if (o_ptr->number <= amt_afford)
-				amt = c_get_quantity(NULL, o_ptr->number);
+				amt = c_get_quantity(NULL, 1, o_ptr->number);
 			else if (amt_afford > 1) {
 				inkey_letter_all = TRUE;
 				sprintf(out_val, "Quantity (1-\377y%d\377w, 'a' or spacebar for all): ", amt_afford);
-				amt = c_get_quantity(out_val, amt_afford);
+				amt = c_get_quantity(out_val, 1, amt_afford);
 			} else {
 				sprintf(out_val, "Quantity (\377y1\377w): ");
-				amt = c_get_quantity(out_val, 1);
+				amt = c_get_quantity(out_val, 1, -1);
 			}
 		} else {
 			/* Get a quantity */
-			amt = c_get_quantity(NULL, o_ptr->number);
+			amt = c_get_quantity(NULL, 1, o_ptr->number);
 		}
 
 		/* Allow user abort */
@@ -576,7 +576,7 @@ static void store_sell(void) {
 		if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item) amt = num;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", 1, num);
 		}
 	} else amt = 1;
 
@@ -719,7 +719,7 @@ void store_do_command(int num, bool one) {
 	if (c_store.flags[num] & BACT_F_GOLD) {
 		/* Get how much */
 		inkey_letter_all = TRUE;
-		gold = c_get_quantity("How much gold ('a' or spacebar for all)? ", -1);
+		gold = c_get_quantity("How much gold ('a' or spacebar for all)? ", 1, -1);
 
 		/* Send it */
 		if (!gold) return;

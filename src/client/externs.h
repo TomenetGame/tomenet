@@ -666,7 +666,7 @@ extern void c_message_add_msgnochat(cptr msg);
 extern void c_message_add_impscroll(cptr msg);
 extern void c_msg_print(cptr msg);
 extern void c_msg_format(cptr fmt, ...)  __attribute__ ((format (printf, 1, 2)));
-extern s32b c_get_quantity(cptr prompt, int max);
+extern s32b c_get_quantity(cptr prompt, int predef, int max);
 extern bool askfor_aux(char *buf, int len, char mode);
 extern void clear_from(int row);
 extern void prt_num(cptr header, int num, int row, int col, byte color);

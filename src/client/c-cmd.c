@@ -904,8 +904,13 @@ static void cmd_subinven_move(void) {
 		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item)
 			amt = num;
 		else {
+			int ng;
+
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many (ENTER = all)? ", -num);
+			if ((ng = check_guard_inscription_str(inventory_name[item], 'G')) > 1 && (ng = num - ng + 1) > 0)
+				amt = c_get_quantity(format("How many (ENTER = %d, 'a' = all)? ", ng), ng, num);
+			else
+				amt = c_get_quantity("How many (ENTER = all)? ", num, num);
 			if (!amt) return;
 		}
 	}
@@ -927,10 +932,15 @@ static void cmd_subinven_remove(int islot) {
 	num = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
 	if (num > 1) {
 		if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item)
-			amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
+			amt = num;
 		else {
+			int ng;
+
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many (ENTER = all)? ", -subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
+			if ((ng = check_guard_inscription_str(subinventory_name[using_subinven][item % SUBINVEN_INVEN_MUL], 'G')) > 1 && (ng = num - ng + 1) > 0)
+				amt = c_get_quantity(format("How many (ENTER = %d, 'a' = all)? ", ng), ng, num);
+			else
+				amt = c_get_quantity("How many (ENTER = all)? ", num, num);
 			if (!amt) return;
 		}
 	}
@@ -1370,7 +1380,7 @@ void cmd_drop(byte flag) {
 				amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
 			else {
 				inkey_letter_all = TRUE;
-				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
+				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number, -1);
 			}
 		}
 		else amt = 1;
@@ -1396,7 +1406,7 @@ void cmd_drop(byte flag) {
 			amt = num;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num, -1);
 		}
 	}
 	else amt = 1;
@@ -1410,7 +1420,7 @@ void cmd_drop_gold(void) {
 
 	/* Get how much */
 	inkey_letter_all = TRUE;
-	amt = c_get_quantity("How much gold ('a' or spacebar for all)? ", -1);
+	amt = c_get_quantity("How much gold ('a' or spacebar for all)? ", 1, -1);
 
 	/* Send it */
 	if (amt) Send_drop_gold(amt);
@@ -1473,7 +1483,7 @@ void cmd_take_off(void) {
 	if (num > 1 && verified_item
 	    && is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		inkey_letter_all = TRUE;
-		amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
+		amt = c_get_quantity("How many ('a' or spacebar for all)? ", 1, num);
 		Send_take_off_amt(item, amt);
 	} else
 		Send_take_off(item);
@@ -1565,7 +1575,7 @@ void cmd_destroy(byte flag) {
 			if (is_cheap_misc(subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number;
 			else {
 				inkey_letter_all = TRUE;
-				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
+				amt = c_get_quantity("How many ('a' or spacebar for all)? ", 1, subinventory[using_subinven][item % SUBINVEN_INVEN_MUL].number);
 			}
 		} else amt = 1;
 
@@ -1600,7 +1610,7 @@ void cmd_destroy(byte flag) {
 		if (is_cheap_misc(tval) && c_cfg.whole_ammo_stack && !verified_item) amt = num;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' or spacebar for all)? ", num);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", 1, num);
 		}
 	} else amt = 1;
 
@@ -7348,7 +7358,7 @@ void cmd_check_misc(void) {
 
 			/* allow specifying minlev? */
 			if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
-				row = c_get_quantity("Specify minimum level? (ESC for none): ", 255);
+				row = c_get_quantity("Specify minimum level? (ESC for none): ", 255, -1);
 				if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
 					Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000 + (uniques ? 100000000 : 0), "");
 				else
@@ -8572,7 +8582,7 @@ static void cmd_house_chmod(int dir) {
 	if (get_check2("Restrict access to winners?", FALSE)) mod |= ACF_WINNER;
 	if (get_check2("Restrict access to fallen winners?", FALSE)) mod |= ACF_FALLENWINNER;
 	if (get_check2("Restrict access to no-ghost players?", FALSE)) mod |= ACF_NOGHOST;
-	minlev = c_get_quantity("Minimum level: ", 127);
+	minlev = c_get_quantity("Minimum level: ", 127, -1);
 	if (minlev > 1) mod |= ACF_LEVEL;
 	buf[0] = 'M';
 	if ((buf[1] = mod)) sprintf(&buf[2], "%hd", minlev);
@@ -8815,9 +8825,9 @@ static void cmd_master_aux_level(void) {
 					else buf[7] = t; //max len in this version is 8 anyway, so no info is lost even if this is 0.
 				}
 			} else buf[7] = 0;
-			buf[1] = c_get_quantity("Base level: ", 127);
+			buf[1] = c_get_quantity("Base level: ", 127, -1);
 			if (!buf[1]) buf[1] = 1; //pressed ESC? Apply a default value (or dungeon creation will fail)
-			buf[2] = c_get_quantity("Max depth (1-127): ", 127);
+			buf[2] = c_get_quantity("Max depth (1-127): ", 127, -1);
 			if (!buf[2]) buf[2] = 3; //pressed ESC? Apply a default value (or dungeon creation will fail)
 			buf[3] = (get_check2("Is it a tower?", FALSE) ? 't' : 'd');
 			/*
@@ -8836,7 +8846,7 @@ static void cmd_master_aux_level(void) {
 				i = 0;
 				if (get_check2("Recallable from, before reaching its end?", FALSE)) {
 					if (get_check2("Random recall depth intervals (y) or fixed ones (n) ?", TRUE)) buf[6] |= 0x08;
-					i = c_get_quantity("Frequency (random)? (1=often..4=rare): ", 4);
+					i = c_get_quantity("Frequency (random)? (1=often..4=rare): ", 4, 4);
 					switch (i) {
 					case 1: buf[6] |= 0x10; break;//DF2_IRONRNDn / DF2_IRONFIXn
 					case 2: buf[6] |= 0x20; break;
@@ -8892,7 +8902,7 @@ static void cmd_master_aux_level(void) {
 		}
 		else if (i == '5') {
 			buf[0] = 'T';
-			buf[1] = c_get_quantity("Base level: ", 127);
+			buf[1] = c_get_quantity("Base level: ", 127, -1);
 			Send_master(MASTER_LEVEL, buf);
 		}
 		/* perma-static the current level */
@@ -8979,7 +8989,7 @@ static void cmd_master_aux_generate_vault(void) {
 		/* Generate by number */
 		else if (i == '1') {
 			buf[1] = '#';
-			buf[2] = c_get_quantity("Vault number? ", 255) - 127;
+			buf[2] = c_get_quantity("Vault number? ", 255, -1) - 127;
 			if (!buf[2]) redo_hack = 1;
 			buf[3] = 0;
 		}
@@ -9132,7 +9142,7 @@ static void cmd_master_aux_build(void) {
 			{
 				u16b keyid;
 
-				keyid = c_get_quantity("Enter key pval: ", 0xffff);
+				keyid = c_get_quantity("Enter key pval: ", 0xffff, -1);
 				sprintf(&buf[2], "%d", keyid);
 			}
 			break;
@@ -9143,7 +9153,7 @@ static void cmd_master_aux_build(void) {
 			break;
 		/* Ask for feature */
 		case '0':
-			buf[0] = c_get_quantity("Enter feature value: ",0xff);
+			buf[0] = c_get_quantity("Enter feature value: ", 0xff, -1);
 			break;
 		/* Build mode off */
 		case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
@@ -9501,7 +9511,7 @@ static void cmd_master_aux_summon(void) {
 		/* summon from a specific depth */
 		case '4':
 			buf[2] = 'd';
-			buf[3] = c_get_quantity("Summon from which depth? ", 127);
+			buf[3] = c_get_quantity("Summon from which depth? ", 127, -1);
 			/* if (!buf[3]) redo_hack = 1; - Allow depth 0 hereby. */
 			buf[4] = 0; /* terminate the string */
 			break;
@@ -9585,12 +9595,12 @@ static void cmd_master_aux_summon(void) {
 			/* X here */
 			case '1':
 				buf[0] = 'x';
-				buf[1] = c_get_quantity("Summon how many? ", 127);
+				buf[1] = c_get_quantity("Summon how many? ", 127, -1);
 				break;
 			/* X in different places */
 			case '2':
 				buf[0] = 'X';
-				buf[1] = c_get_quantity("Summon how many? ", 127);
+				buf[1] = c_get_quantity("Summon how many? ", 127, -1);
 				break;
 			/* Group here */
 			case '3':
@@ -10040,8 +10050,13 @@ void cmd_force_stack() {
 			return;
 		}
 		if (num > 2) {
+			int ng;
+
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("Split off how many (ENTER = all)? ", -num);
+			if ((ng = check_guard_inscription_str(inventory_name[item], 'G')) > 1 && (ng = num - ng + 1) > 0)
+				amt = c_get_quantity(format("Split off how many (ENTER = %d, 'a' = all)? ", ng), ng, num);
+			else
+				amt = c_get_quantity("Split off how many ('a'/SPACE = all)? ", 1, num);
 			if (!amt) return;
 			if (amt >= num) amt = num - 1;
 		}

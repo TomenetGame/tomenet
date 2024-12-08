@@ -6066,7 +6066,7 @@ int Receive_request_num(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &max)) <= 0) return(n);
 
 	request_pending = TRUE;
-	Send_request_num(id, c_get_quantity(prompt, max));
+	Send_request_num(id, c_get_quantity(prompt, 0, max));
 	request_pending = FALSE;
 	return(1);
 }

@@ -4796,13 +4796,11 @@ void c_msg_format(cptr fmt, ...) {
 
 /*
  * Request a "quantity" from the user
- *
- * Hack -- allow "command_arg" to specify a quantity
- * Hack: if max is < -1 this changes the default amount to -max.
- *       Added for handling item stacks in one's inventory -- C. Blue
+ * 'max' -1 means 'no maximum'.
+ * Added max and predef for handling item stacks in one's inventory -- C. Blue
  */
 #define QUANTITY_WIDTH 10
-s32b c_get_quantity(cptr prompt, s32b max) {
+s32b c_get_quantity(cptr prompt, s32b predef, s32b max) {
 	s32b amt;
 	char tmp[80];
 	char buf[80];
@@ -4811,21 +4809,19 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	int n = 0, i = 0, j = 0;
 	s32b i1 = 0, i2 = 0, mul = 1;
 
-	if (max < -1) {
-		max = -max;
-		/* Default to all */
-		amt = max;
-	} else if (!max) amt = 0; /* max is 0 */
-	else amt = 1; /* Default to one */
-
 	/* Build the default */
-	sprintf(buf, "%d", amt);
+	sprintf(buf, "%d", predef);
 
 	/* Build a prompt if needed */
 	if (!prompt) {
 		/* Build a prompt */
 		inkey_letter_all = TRUE;
-		sprintf(tmp, "Quantity (1-%d, 'a' or spacebar for all): ", max);
+
+		if (max != -1) sprintf(tmp, "Quantity (1-%d, ", max);
+		else sprintf(tmp, "Quantity (");
+
+		if (predef < max) strcat(tmp, format("ENTER = %d, 'a'/SPACE = all): ", predef));
+		else strcat(tmp, "ENTER/'a'/SPACE = all): ");
 
 		/* Use that prompt */
 		prompt = tmp;
@@ -4834,56 +4830,66 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	/* Ask for a quantity */
 	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return(0);
 
-#if 1
-	/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M'/'G'/ for kilo/mega/giga: */
-	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]
-	    && (buf[1] < '0' || buf[1] > '9')) {
-		//all..
-		buf[0] = 'a';
-		buf[1] = 0;
+	if (!buf[0]) { /* ENTER = default */
+		if (predef >= 0) amt = predef;
+		/* hack for dropping gold (max is -1) */
+		else amt = PY_MAX_GOLD;
+	} else if (buf[0] == 'a' /* 'a' means "all" - C. Blue */
+	    /* allow old 'type in any letter for "all"' hack again too?: */
+	    || isalpha(buf[0])
+	    ) {
+		if (max >= 0) amt = max;
+		/* hack for dropping gold (max is -1) */
+		else amt = PY_MAX_GOLD;
 	} else
+#if 1
+	{
+		/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M'/'G'/ for kilo/mega/giga: */
+		if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]
+		    && (buf[1] < '0' || buf[1] > '9')) {
+			//all..
+			buf[0] = 'a';
+			buf[1] = 0;
+		} else
 
-	/* new method slightly extended: allow leading 'k' or 'M' or 'G' too */
-	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]) {
-		/* add leading '0' to revert it to the usual format */
-		for (i = QUANTITY_WIDTH + 1; i >= 1; i--) buf[i] = buf[i - 1];
-		buf[0] = '0';
-	}
-	/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
-	while (buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
-	bi1[i] = '\0';
-	i1 = atoi(bi1);
-	if ((buf[n] == 'k' || buf[n] == 'K') && n > 0) mul = 1000;
-	else if (buf[n] == 'm' || buf[n] == 'M') mul = 1000000;
-	else if (buf[n] == 'g' || buf[n] == 'G') mul = 1000000000;
-	if (mul > 1) {
-		n++;
-		i = 0;
-		while (buf[n] >= '0' && buf[n] <= '9' && i < 6) bi2[i++] = buf[n++];
-		bi2[i] = '\0';
-//Send_msg(format("%s-%s", bi1, bi2));
-
-		i = 0;
-		while (i < 9) {
-			if (bi2[i] == '\0') {
-				j = i;
-				while (j < 9) bi2[j++] = '0';
-				break;
-			}
-			i++;
+		/* new method slightly extended: allow leading 'k' or 'M' or 'G' too */
+		if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]) {
+			/* add leading '0' to revert it to the usual format */
+			for (i = QUANTITY_WIDTH + 1; i >= 1; i--) buf[i] = buf[i - 1];
+			buf[0] = '0';
 		}
-//Send_msg(format("%s-%d", bi2, mul));
+		/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
+		while (buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
+		bi1[i] = '\0';
+		i1 = atoi(bi1);
+		if ((buf[n] == 'k' || buf[n] == 'K') && n > 0) mul = 1000;
+		else if (buf[n] == 'm' || buf[n] == 'M') mul = 1000000;
+		else if (buf[n] == 'g' || buf[n] == 'G') mul = 1000000000;
+		if (mul > 1) {
+			n++;
+			i = 0;
+			while (buf[n] >= '0' && buf[n] <= '9' && i < 6) bi2[i++] = buf[n++];
+			bi2[i] = '\0';
 
-		if (mul == 1000) bi2[3] = '\0';
-		else if (mul == 1000000) bi2[6] = '\0';
-		else if (mul == 1000000000) bi2[9] = '\0';
+			i = 0;
+			while (i < 9) {
+				if (bi2[i] == '\0') {
+					j = i;
+					while (j < 9) bi2[j++] = '0';
+					break;
+				}
+				i++;
+			}
 
-		i2 = atoi(bi2);
-		amt = i1 * mul + i2;
-	} else amt = i1;
+			if (mul == 1000) bi2[3] = '\0';
+			else if (mul == 1000000) bi2[6] = '\0';
+			else if (mul == 1000000000) bi2[9] = '\0';
 
+			i2 = atoi(bi2);
+			amt = i1 * mul + i2;
+		} else amt = i1;
+	}
 #else
-
 	/* Extract a number */
 	amt = atoi(buf);
 
@@ -4895,17 +4901,6 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	else if (strchr(buf, 'g') || strchr(buf, 'G')
 		amt = amt * 1000000000;
 #endif
-
-
-	/* 'a' means "all" - C. Blue */
-	if (buf[0] == 'a'
-	    /* allow old 'type in any letter for "all"' hack again too?: */
-	    || isalpha(buf[0])
-	    ) {
-		if (max >= 0) amt = max;
-		/* hack for dropping gold (max is -1) */
-		else amt = PY_MAX_GOLD;
-	}
 
 	/* Enforce the maximum, if maximum is defined */
 	if ((max >= 0) && (amt > max)) amt = max;
