@@ -3413,9 +3413,12 @@
 
 #define TV_MONSTER	99	/* unused, just to get rid of the NOTHING_NOTICED */
 
-/* unused */
-#define is_realm_book(o_ptr) \
-	(89 <= (o_ptr)->tval && (o_ptr)->tval <= 95)
+#if 0 /* unused */
+ #define is_realm_book(o_ptr) \
+	(89 <= (o_ptr)->tval && (o_ptr)->tval <= 95) /* these tvals dont exist... */
+#else
+ #define is_realm_book(o_ptr) (FALSE) /* ...play it safe anyway */
+#endif
 
 #define TV_HYPNOS	99      /* unused -- To wield monsters !:) */
 #define TV_GOLD		100     /* Gold can only be picked up by players(?) */
