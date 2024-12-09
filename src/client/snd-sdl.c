@@ -3020,23 +3020,23 @@ errr re_init_sound_sdl(void) {
 
 	/* Reset variables (closing audio doesn't do this since it assumes program exit anyway) */
 	for (i = 0; i < SOUND_MAX_2010; i++) {
-		samples[i].num = 0;
-		samples[i].config = FALSE;
-		samples[i].disabled = FALSE;
-		for (j = 0; j < MAX_SAMPLES; j++) {
+		for (j = 0; j < MAX_SAMPLES; j++) { //could also just go to < samples[i].num instead, for efficiency...
 			samples[i].wavs[j] = NULL;
 			samples[i].paths[j] = NULL;
 		}
+		samples[i].num = 0;
+		samples[i].config = FALSE;
+		samples[i].disabled = FALSE;
 	}
 	for (i = 0; i < MUSIC_MAX; i++) {
-		songs[i].num = 0;
-		songs[i].config = FALSE;
-		songs[i].disabled = FALSE;
-		for (j = 0; j < MAX_SONGS; j++) {
+		for (j = 0; j < MAX_SONGS; j++) { //could also just go to < songs[i].num instead, for efficiency...
 			songs[i].wavs[j] = NULL;
 			songs[i].paths[j] = NULL;
 			songs[i].is_reference[j] = FALSE;
 		}
+		songs[i].num = 0;
+		songs[i].config = FALSE;
+		songs[i].disabled = FALSE;
 	}
 
 	for (i = 0; i < MAX_CHANNELS; i++) {
@@ -3893,11 +3893,11 @@ void do_cmd_options_mus_sdl(void) {
 			}
 
 			/* Check if 'initial' songs exist for this event */
-			for (d = 0; d < MAX_SONGS; d++) {
+			for (d = 0; d < songs[j].num; d++) {
 				if (!songs[j].initial[d]) continue;
 				break;
 			}
-			d = (d == MAX_SONGS) ? 0 : -1;
+			d = (d == songs[j].num) ? 0 : -1;
 
 			if (music_cur == j)
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c%2d\377-/\377%c%2d\377-]", i + 1, songs[j].initial[music_cur_song] ? 'o' : 'y', music_cur_song + 1, d ? 'o' : 'y', songs[j].num));
