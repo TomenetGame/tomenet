@@ -744,7 +744,7 @@ byte screenshot_height = 0;
 char whats_under_your_feet[ONAME_LEN];
 
 //#ifdef ENABLE_JUKEBOX
-int curmus_timepos = -1, oldticks = -1, curmus_x, curmus_y, curmus_attr, curmus_song_dur = 0;
+int curmus_timepos = -1, oldticks = -1, curmus_x, curmus_y = -1, curmus_attr, curmus_song_dur = 0;
 bool jukebox_screen = FALSE, jukebox_sfx_screen = FALSE;
 //#endif
 int oldticksds = -1;

@@ -3956,8 +3956,10 @@ void do_cmd_options_mus_sdl(void) {
 			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
 			   so no need for us to check here for songs[].disabled explicitely for that particular case.
 			   However, if the currently jukeboxed song is the same one as the disabled one we do need to halt it. */
-			if (jukebox_org == -1 || songs[jukebox_org].disabled) play_music_instantly(-2);//play_music(-2); -- halt song instantly instead of fading out
-			else if (jukebox_org != music_cur) play_music_instantly(jukebox_org);//play_music(jukebox_org); -- switch song instantly instead of fading out+in
+			if (jukebox_org == -1 || songs[jukebox_org].disabled)
+				play_music_instantly(-2);//play_music(-2); -- halt song instantly instead of fading out
+			else if (jukebox_org != music_cur)
+				play_music_instantly(jukebox_org);//play_music(jukebox_org); -- switch song instantly instead of fading out+in
  #else
 			if (jukebox_org == -1) play_music(-2);
 			else if (jukebox_org != music_cur) {
@@ -3965,6 +3967,9 @@ void do_cmd_options_mus_sdl(void) {
 				else play_music(jukebox_org);
 			}
  #endif
+			/* If a song was "playing silently" ie just disabled, restore its (silenced) playing state. Because the -2 call above would just set music_cur to -1. */
+			music_cur = jukebox_org;
+
 			jukebox_org = -1;
 			curmus_timepos = -1; //no more song is playing in the jukebox now
 			jukebox_screen = FALSE;
