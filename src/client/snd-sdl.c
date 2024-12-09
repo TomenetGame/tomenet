@@ -3318,6 +3318,8 @@ void do_cmd_options_sfx_sdl(void) {
 	/* Clear screen */
 	Term_clear();
 
+	jukebox_sfx_screen = TRUE;
+
 	/* Interact */
 	while (go) {
 #ifdef USER_VOLUME_SFX
@@ -3429,10 +3431,12 @@ void do_cmd_options_sfx_sdl(void) {
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
 				c_msg_print("Error: File 'sound.cfg' not found.");
+				jukebox_sfx_screen = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to disabled-sound config file.");
+				jukebox_sfx_screen = FALSE;
 				return;
 			}
 			while (TRUE) {
@@ -3523,15 +3527,18 @@ void do_cmd_options_sfx_sdl(void) {
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
 				c_msg_print("Error: File 'sound.cfg' not found.");
+				jukebox_sfx_screen = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to sound volume config file.");
+				jukebox_sfx_screen = FALSE;
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
 					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'sound.cfg'.");
+					jukebox_sfx_screen = FALSE;
 					break;
 				}
 
@@ -3746,6 +3753,8 @@ void do_cmd_options_sfx_sdl(void) {
 			bell();
 		}
 	}
+
+	jukebox_sfx_screen = FALSE;
 }
 
 /* Display options page UI that allows to comment out music easily */
@@ -3968,10 +3977,12 @@ void do_cmd_options_mus_sdl(void) {
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
 				c_msg_print("Error: File 'music.cfg' not found.");
+				jukebox_screen = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to disabled-music config file.");
+				jukebox_screen = FALSE;
 				return;
 			}
 			while (TRUE) {
@@ -4062,10 +4073,12 @@ void do_cmd_options_mus_sdl(void) {
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
 				c_msg_print("Error: File 'music.cfg' not found.");
+				jukebox_screen = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to music volume config file.");
+				jukebox_screen = FALSE;
 				return;
 			}
 			while (TRUE) {
@@ -4372,6 +4385,8 @@ void do_cmd_options_mus_sdl(void) {
 			bell();
 		}
 	}
+
+	jukebox_screen = FALSE;
 }
 
 /* Assume jukebox_screen is TRUE aka we're currently in the jukebox UI. */

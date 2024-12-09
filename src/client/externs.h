@@ -1297,7 +1297,7 @@ extern byte screenshot_height;
 
 //#ifdef ENABLE_JUKEBOX
 extern int curmus_timepos, oldticks, curmus_x, curmus_y, curmus_attr, curmus_song_dur;
-extern bool jukebox_screen;
+extern bool jukebox_screen, jukebox_sfx_screen;
 //#endif
 extern int oldticksds;
 
