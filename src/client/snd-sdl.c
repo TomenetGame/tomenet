@@ -3864,7 +3864,7 @@ void do_cmd_options_mus_sdl(void) {
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
 			if (i < 0 || i >= audio_music) {
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                              ");
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                                    ");
 				continue;
 			}
 
