@@ -1438,8 +1438,11 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick) return(TRUE);
 
 
-	/* Choose a random event */
-	s = rand_int(samples[event].num);
+	/* Choose a random event (normal gameplay), except when in the jukebox screen where we play everything sequentially  */
+	if (jukebox_sfx_screen) {
+		if (sound_cur != event) s = 0;
+		else s = (sound_cur_wav + 1) % samples[event].num;
+	} else s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
 	sound_cur_wav = s; //just for jukebox wav index display
 	sound_cur = event;
@@ -3327,6 +3330,7 @@ void do_cmd_options_sfx_sdl(void) {
 	Term_clear();
 
 	jukebox_sfx_screen = TRUE;
+	sound_cur_wav = -1;
 
 	/* Interact */
 	while (go) {
@@ -3392,7 +3396,6 @@ void do_cmd_options_sfx_sdl(void) {
 			}
 #endif
 		}
-		sound_cur_wav = -1;
 
 		/* display static selector */
 		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
