@@ -2633,6 +2633,14 @@ static void fadein_next_music(void) {
 	if (!cfg_audio_master || !cfg_audio_music) return;
 #endif
 
+	/* Not while we're using play_music_instantly() from within the jukebox, that function already calls Mix_PlayMusic().
+	   So we'd needlessly override that with a new Mix_FadeInMusic() here, and also cause two bugs in song sequence,
+	   as we'd (1) skip initial songs after first play and (2) try to randomize the song number while play_music_instantly()
+	   already set a new song number. Eg for events with 1 initial and 2 normal songs this means the randomizer would avoid
+	   the initial song, then pick the one of the other two we're currently NOT playing, but play_music_instantly() would
+	   increment that number (music_cur_song) _again_, leaving it unchanging at always the same song. - C. Blue */
+	if (jukebox_screen) return;
+
 	/* Catch music_next == -1, this can now happen with shuffle_music or play_all option, since songs are no longer looped if it's enabled */
 	if (
 	    //(c_cfg.shuffle_music || c_cfg.play_all) && //---actually 'initial'-tagged songs will still only play once, so we'd get just silence afterwards if we didn't pick another song here in those cases...
