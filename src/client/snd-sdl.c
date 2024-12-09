@@ -3773,7 +3773,7 @@ void do_cmd_options_sfx_sdl(void) {
  #define MUSIC_SKIP 10 /* Jukebox backward/forward skip interval in seconds */
 #endif
 void do_cmd_options_mus_sdl(void) {
-	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
+	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 1;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
 	char ch;
 	byte a, a2;
@@ -3903,7 +3903,7 @@ void do_cmd_options_mus_sdl(void) {
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c%2d\377-/\377%c%2d\377-]", i + 1, songs[j].initial[music_cur_song] ? 'o' : 'y', music_cur_song + 1, d ? 'o' : 'y', songs[j].num));
 			else
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c   %2d\377-]", i + 1, d ? 'o' : 'y', songs[j].num));
-			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, "                                               ");
+			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, "                                                      ");
 			if (j == music_cur) {
 				a = (jukebox_playing != -1) ? TERM_L_BLUE : (a != TERM_L_DARK ? TERM_L_GREEN : TERM_L_DARK); /* blue = user-selected jukebox song, l-green = current game music */
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
@@ -3911,8 +3911,8 @@ void do_cmd_options_mus_sdl(void) {
 				curmus_x = horiz_offset + 12 + 8;
 				curmus_y = vertikal_offset + i + 10 - y;
 				curmus_attr = a;
-				if (!curmus_song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-30s  (     )", (char*)lua_name));
-				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-30s  (     /%02d:%02d)", (char*)lua_name, curmus_song_dur / 60, curmus_song_dur % 60));
+				if (!curmus_song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-37s  (     )", (char*)lua_name));
+				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-37s  (     /%02d:%02d)", (char*)lua_name, curmus_song_dur / 60, curmus_song_dur % 60));
 				update_jukebox_timepos();
 			} else
 				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
@@ -3920,14 +3920,14 @@ void do_cmd_options_mus_sdl(void) {
 #ifdef USER_VOLUME_MUS
 			if (songs[j].volume && songs[j].volume != 100) {
 				if (songs[j].volume < 100) a = TERM_UMBER; else a = TERM_L_UMBER;
-				Term_putstr(horiz_offset + 1 + 12 + 36 + 1 - 3, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
+				Term_putstr(horiz_offset + 1 + 12 + 36 + 1 + 4, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
 			}
 #endif
 		}
 
 		/* display static selector */
 		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 50 + 3, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 10, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -4415,12 +4415,12 @@ void update_jukebox_timepos(void) {
 	curmus_timepos = i;
 	/* Update jukebox song time stamp */
 #if 0 /* just update song position */
-	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7 - 8, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
+	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7 - 1, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
 #else /* also update song duration */
 	if (curmus_y != -1) {
-		Term_putstr(curmus_x + 34 + 7 - 8, curmus_y, -1, curmus_attr, 			format("%02d:%02d", i / 60, i % 60));
-		if (!curmus_song_dur) Term_putstr(curmus_x + 34 + 6 - 8, curmus_y, -1, curmus_attr,format("(--:--)"));
-		else Term_putstr(curmus_x + 34 + 12 - 8, curmus_y, -1, curmus_attr, 		     format("/%02d:%02d)", curmus_song_dur / 60, curmus_song_dur % 60));
+		Term_putstr(curmus_x + 34 + 7 - 1, curmus_y, -1, curmus_attr, 			format("%02d:%02d", i / 60, i % 60));
+		if (!curmus_song_dur) Term_putstr(curmus_x + 34 + 6 - 1, curmus_y, -1, curmus_attr,format("(--:--)"));
+		else Term_putstr(curmus_x + 34 + 12 - 1, curmus_y, -1, curmus_attr, 		     format("/%02d:%02d)", curmus_song_dur / 60, curmus_song_dur % 60));
 	}
 #endif
 
