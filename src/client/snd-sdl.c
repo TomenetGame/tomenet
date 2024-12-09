@@ -3897,7 +3897,7 @@ void do_cmd_options_mus_sdl(void) {
 				if (!songs[j].initial[d]) continue;
 				break;
 			}
-			d = (d == songs[j].num) ? 0 : -1;
+			d = (songs[j].num && (d == songs[j].num)) ? 0 : -1;
 
 			if (music_cur == j)
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c%2d\377-/\377%c%2d\377-]", i + 1, songs[j].initial[music_cur_song] ? 'o' : 'y', music_cur_song + 1, d ? 'o' : 'y', songs[j].num));
