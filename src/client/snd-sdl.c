@@ -3385,7 +3385,7 @@ void do_cmd_options_sfx_sdl(void) {
 			if (j == weather_current || j == ambient_current) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-35s  (playing)", (char*)lua_name));
+				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, format("%-27s  (playing)", (char*)lua_name));
 			} else
 				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
