@@ -1441,6 +1441,8 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
+	sound_cur_wav = s; //just for jukebox wav index display
+	sound_cur = event;
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -1593,6 +1595,8 @@ extern bool sound_page(void) {
 	/* Choose a random event */
 	s = rand_int(samples[page_sound_idx].num);
 	wave = samples[page_sound_idx].wavs[s];
+	sound_cur_wav = s; //just for jukebox wav index display
+	sound_cur = page_sound_idx;
 
 #ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
@@ -1644,6 +1648,8 @@ extern bool sound_warning(void) {
 	/* Choose a random event */
 	s = rand_int(samples[warning_sound_idx].num);
 	wave = samples[warning_sound_idx].wavs[s];
+	sound_cur_wav = s; //just for jukebox wav index display
+	sound_cur = warning_sound_idx;
 
 #ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
@@ -1787,6 +1793,8 @@ static void play_sound_weather(int event) {
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
+	sound_cur_wav = s; //just for jukebox wav index display
+	sound_cur = event;
 
 #ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
@@ -1990,6 +1998,8 @@ static void play_sound_weather_vol(int event, int vol) {
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
+	sound_cur_wav = s; //just for jukebox wav index display
+	sound_cur = event;
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -2187,6 +2197,8 @@ static void play_sound_ambient(int event) {
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
+	sound_cur_wav = s; //just for jukebox wav index display
+	sound_cur = event;
 
 #ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
@@ -3335,7 +3347,7 @@ void do_cmd_options_sfx_sdl(void) {
 				i2++;
 				if (i2 == i) break;
 			}
-			if (j != SOUND_MAX_2010) { //paranoia, should always be false
+			if (j != SOUND_MAX_2010) { //paranoia, should always be non-equal aka true
 				/* get event name */
 				sprintf(out_val, "return get_sound_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
@@ -3352,15 +3364,16 @@ void do_cmd_options_sfx_sdl(void) {
 				a2 = TERM_YELLOW;
 			}
 
-			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d", i + 1));
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                   ");
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [   %2d]", i + 1, samples[j].num));
+			if (sound_cur == j && sound_cur_wav != -1) Term_putstr(horiz_offset + 5 + 7, vertikal_offset + i + 10 - y, -1, TERM_YELLOW, format("%2d/", sound_cur_wav + 1));
+			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, "                                            ");
+			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 			if (j == weather_current || j == ambient_current) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-35s  (playing)", (char*)lua_name));
 			} else
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME_SFX
 			if (samples[j].volume && samples[j].volume != 100) {
@@ -3369,6 +3382,7 @@ void do_cmd_options_sfx_sdl(void) {
 			}
 #endif
 		}
+		sound_cur_wav = -1;
 
 		/* display static selector */
 		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
@@ -3858,20 +3872,30 @@ void do_cmd_options_mus_sdl(void) {
 				a2 = TERM_YELLOW;
 			}
 
-			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d", i + 1));
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                       ");
+			/* Check if 'initial' songs exist for this event */
+			for (d = 0; d < MAX_SONGS; d++) {
+				if (!songs[j].initial[d]) continue;
+				break;
+			}
+			d = (d == MAX_SONGS) ? 0 : -1;
+
+			if (music_cur == j)
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c%2d\377-/\377%c%2d\377-]", i + 1, songs[j].initial[music_cur_song] ? 'o' : 'y', music_cur_song + 1, d ? 'o' : 'y', songs[j].num));
+			else
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c   %2d\377-]", i + 1, d ? 'o' : 'y', songs[j].num));
+			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, "                                               ");
 			if (j == music_cur) {
 				a = (jukebox_playing != -1) ? TERM_L_BLUE : (a != TERM_L_DARK ? TERM_L_GREEN : TERM_L_DARK); /* blue = user-selected jukebox song, l-green = current game music */
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
 				/* New via SDL2_mixer: Add the timestamp */
-				curmus_x = horiz_offset + 12;
+				curmus_x = horiz_offset + 12 + 8;
 				curmus_y = vertikal_offset + i + 10 - y;
 				curmus_attr = a;
-				if (!curmus_song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     )", (char*)lua_name));
-				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     /%02d:%02d)", (char*)lua_name, curmus_song_dur / 60, curmus_song_dur % 60));
+				if (!curmus_song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-30s  (     )", (char*)lua_name));
+				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-30s  (     /%02d:%02d)", (char*)lua_name, curmus_song_dur / 60, curmus_song_dur % 60));
 				update_jukebox_timepos();
 			} else
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME_MUS
 			if (songs[j].volume && songs[j].volume != 100) {
@@ -4365,12 +4389,12 @@ void update_jukebox_timepos(void) {
 	curmus_timepos = i;
 	/* Update jukebox song time stamp */
 #if 0 /* just update song position */
-	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
+	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7 - 8, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
 #else /* also update song duration */
 	if (curmus_y != -1) {
-		Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, 			format("%02d:%02d", i / 60, i % 60));
-		if (!curmus_song_dur) Term_putstr(curmus_x + 34 + 6, curmus_y, -1, curmus_attr,format("(--:--)"));
-		else Term_putstr(curmus_x + 34 + 12, curmus_y, -1, curmus_attr, 		     format("/%02d:%02d)", curmus_song_dur / 60, curmus_song_dur % 60));
+		Term_putstr(curmus_x + 34 + 7 - 8, curmus_y, -1, curmus_attr, 			format("%02d:%02d", i / 60, i % 60));
+		if (!curmus_song_dur) Term_putstr(curmus_x + 34 + 6 - 8, curmus_y, -1, curmus_attr,format("(--:--)"));
+		else Term_putstr(curmus_x + 34 + 12 - 8, curmus_y, -1, curmus_attr, 		     format("/%02d:%02d)", curmus_song_dur / 60, curmus_song_dur % 60));
 	}
 #endif
 
