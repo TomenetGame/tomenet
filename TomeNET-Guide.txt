@@ -2495,12 +2495,15 @@ Bags (subinventory):
     !A[0|1]     Do not auto-stow items into this bag.
                 0: Except if they stack with existing items.
                 1: Except if they are at least similar to existing items.
+
     !O[0|1]     Do not auto-stow unowned items (ie new loot) into this bag.
                 0: Except if they stack with existing items.
                 1: Except if they are at least similar to existing items.
+
     !S[0|1]     Only auto-stow items into this bag when buying from store.
                 0: And only if they stack with existing items.
                 1: And only if they are at least similar to existing items.
+
     Also see !S inscription for items, which prevents auto-stowing an item.
 
 Any item in your inventory:
@@ -2523,6 +2526,15 @@ Any item in your inventory:
                 This inscription works with picking up items from the floor,
                 purchasing items from a store, stealing items from a store and
                 taking items from a list house (shop-style house).
+
+                QoL effects:
+                You can use force-stack to combine !G stacks, overriding the
+                inscription.
+                When dropping/selling items from a !G stack which exceeds its
+                nominal capacity, the suggested default amount will be exactly
+                the difference between actual stack size and inscription-based
+                capacity.
+
     !K[n]       Inscribed on an inventory item, will auto-destroy any further
                 items you acquire beyond the amount of n.
                 If n is omitted, the default value of 15 will be used.
@@ -2530,6 +2542,7 @@ Any item in your inventory:
                 with the 'keep_bottle' option enabled, to prevent uncontrolled
                 amassment of empty bottles. Example:  !K10
                 (This inscription does not work on artifacts or ego items.)
+
     !%          This will not actually be inscribed. The item will keep
                 its current inscription (or remain uninscribed if it was).
                 Instead, the item's discount will be set to 100%, making
