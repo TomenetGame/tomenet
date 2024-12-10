@@ -3329,6 +3329,8 @@ void do_cmd_options_sfx_sdl(void) {
 	/* Clear screen */
 	Term_clear();
 
+	topline_icky = TRUE;
+
 	jukebox_sfx_screen = TRUE;
 	sound_cur_wav = -1;
 
@@ -3443,11 +3445,13 @@ void do_cmd_options_sfx_sdl(void) {
 			if (!fff) {
 				c_msg_print("Error: File 'sound.cfg' not found.");
 				jukebox_sfx_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to disabled-sound config file.");
 				jukebox_sfx_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
@@ -3539,17 +3543,20 @@ void do_cmd_options_sfx_sdl(void) {
 			if (!fff) {
 				c_msg_print("Error: File 'sound.cfg' not found.");
 				jukebox_sfx_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to sound volume config file.");
 				jukebox_sfx_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
 					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'sound.cfg'.");
 					jukebox_sfx_screen = FALSE;
+					topline_icky = FALSE;
 					break;
 				}
 
@@ -3766,6 +3773,7 @@ void do_cmd_options_sfx_sdl(void) {
 	}
 
 	jukebox_sfx_screen = FALSE;
+	topline_icky = FALSE;
 }
 
 /* Display options page UI that allows to comment out music easily */
@@ -3818,6 +3826,8 @@ void do_cmd_options_mus_sdl(void) {
 
 	/* Clear screen */
 	Term_clear();
+
+	topline_icky = TRUE;
 
 #if 0 /* instead of this, rather add a 'j' key that jumps to the currently playing song */
 	/* Initially jump selection cursor to song that is currently being played */
@@ -3983,6 +3993,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_org = -1;
 			curmus_timepos = -1; //no more song is playing in the jukebox now
 			jukebox_screen = FALSE;
+			topline_icky = FALSE;
 #endif
 
 			/* auto-save */
@@ -4004,11 +4015,13 @@ void do_cmd_options_mus_sdl(void) {
 			if (!fff) {
 				c_msg_print("Error: File 'music.cfg' not found.");
 				jukebox_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to disabled-music config file.");
 				jukebox_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
@@ -4100,11 +4113,13 @@ void do_cmd_options_mus_sdl(void) {
 			if (!fff) {
 				c_msg_print("Error: File 'music.cfg' not found.");
 				jukebox_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
 				c_msg_print("Error: Cannot write to music volume config file.");
 				jukebox_screen = FALSE;
+				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
@@ -4412,6 +4427,7 @@ void do_cmd_options_mus_sdl(void) {
 		}
 	}
 
+	topline_icky = FALSE;
 	jukebox_screen = FALSE;
 }
 
