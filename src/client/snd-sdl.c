@@ -3773,7 +3773,7 @@ void do_cmd_options_sfx_sdl(void) {
  #define MUSIC_SKIP 10 /* Jukebox backward/forward skip interval in seconds */
 #endif
 void do_cmd_options_mus_sdl(void) {
-	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 1;
+	int i, i2, j, d, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
 	char ch;
 	byte a, a2;
@@ -3787,6 +3787,7 @@ void do_cmd_options_mus_sdl(void) {
  #ifdef JUKEBOX_INSTANT_PLAY
 	bool dis;
  #endif
+	cptr path_p;
 #endif
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
@@ -3838,33 +3839,41 @@ void do_cmd_options_mus_sdl(void) {
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		//Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
-  #ifdef ENABLE_SHIFT_SPECIALKEYS
-		if (strcmp(ANGBAND_SYS, "gcu"))
-			Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w vol., \377B[SHIFT+]RETURN\377w play");
-		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
-  #endif
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w volume, \377BRETURN\377w play");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w vol., \377yESC \377wleave+autosave");
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select/search, \377yc\377w current, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yESC\377w leave, \377BRETURN\377w play");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yESC \377wleave+autosave");
  #endif
-		//Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
-		//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377wChanges auto-save on leaving this UI.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
-		Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yESC \377wleave and auto-save all changes.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
+ #ifdef ENABLE_SHIFT_SPECIALKEYS
+		if (strcmp(ANGBAND_SYS, "gcu"))
+			Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+]RETURN\377w play [at 200%% volume boost], \377yLEFT\377w/\377yRIGHT\377w Backward/Forward %d s", MUSIC_SKIP));
+		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
+ #endif
+			Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w play, \377yLEFT\377w/\377yRIGHT\377w Backward/Forward %d s", MUSIC_SKIP));
+		Term_putstr(0, 2, -1, TERM_WHITE, " Key: [current song / max songs] - orange colour means 'initial' song (exists).");
+		Term_putstr(0, 3, -1, TERM_WHITE, " File:                                                                          ");
+
+		if (music_cur != -1 && songs[music_cur].config) {
+			path_p = songs[music_cur].paths[music_cur_song];
+			if (path_p) {
+				path_p = path_p + strlen(path_p) - 1;
+				while (path_p > songs[music_cur].paths[music_cur_song] && *(path_p - 1) != '/') path_p--;
+				Term_putstr(7, 3, -1, songs[music_cur].initial[music_cur_song] ? TERM_ORANGE : TERM_YELLOW, format("%s", path_p)); //currently no different colour for songs[].disabled, consistent with 'Key' info
+			} else Term_putstr(7, 3, -1, TERM_L_DARK, "%"); //paranoia
+		} else Term_putstr(7, 3, -1, TERM_L_DARK, "-");
+
 		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w (volume), \377yESC\377w (leave))");
+		Term_putstr(0, 0, -1, TERM_WHITE, " <\377ydir\377w/\377y#\377w>, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yv\377w/\377y+\377w/\377y-\377w volume, \377yESC\377w save");
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w (leave))");
+		Term_putstr(0, 0, -1, TERM_WHITE, " <\377ydir\377w/\377y#\377w>, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yESC\377w leave+autosave");
  #endif
-		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this screen)");
 #endif
 
 		/* Display the events */
-		for (i = y - 10 ; i <= y + 10 ; i++) {
+		for (i = y - list_size ; i <= y + list_size ; i++) {
 			if (i < 0 || i >= audio_music) {
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                                    ");
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + list_size - y, -1, TERM_WHITE, "                                                                    ");
 				continue;
 			}
 
@@ -3899,35 +3908,36 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			d = (songs[j].num && (d == songs[j].num)) ? 0 : -1;
 
-			if (music_cur == j)
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c%2d\377-/\377%c%2d\377-]", i + 1, songs[j].initial[music_cur_song] ? 'o' : 'y', music_cur_song + 1, d ? 'o' : 'y', songs[j].num));
-			else
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [\377%c   %2d\377-]", i + 1, d ? 'o' : 'y', songs[j].num));
-			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, "                                                      ");
+			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, "                                                      ");
 			if (j == music_cur) {
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + list_size - y, -1, a2, format("  %3d [\377%c%2d\377-/\377%c%2d\377-]", i + 1, songs[j].initial[music_cur_song] ? 'o' : 'y', music_cur_song + 1, d ? 'o' : 'y', songs[j].num));
+
 				a = (jukebox_playing != -1) ? TERM_L_BLUE : (a != TERM_L_DARK ? TERM_L_GREEN : TERM_L_DARK); /* blue = user-selected jukebox song, l-green = current game music */
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + list_size - y, -1, a, "*");
 				/* New via SDL2_mixer: Add the timestamp */
 				curmus_x = horiz_offset + 12 + 8;
-				curmus_y = vertikal_offset + i + 10 - y;
+				curmus_y = vertikal_offset + i + list_size - y;
 				curmus_attr = a;
 				if (!curmus_song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-37s  (     )", (char*)lua_name));
 				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-37s  (     /%02d:%02d)", (char*)lua_name, curmus_song_dur / 60, curmus_song_dur % 60));
 				update_jukebox_timepos();
-			} else
-				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+			} else {
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + list_size - y, -1, a2, format("  %3d [\377%c   %2d\377-]", i + 1, d ? 'o' : 'y', songs[j].num));
+
+				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, (char*)lua_name);
+			}
 
 #ifdef USER_VOLUME_MUS
 			if (songs[j].volume && songs[j].volume != 100) {
 				if (songs[j].volume < 100) a = TERM_UMBER; else a = TERM_L_UMBER;
-				Term_putstr(horiz_offset + 1 + 12 + 36 + 1 + 4, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
+				Term_putstr(horiz_offset + 1 + 12 + 36 + 1 + 4, vertikal_offset + i + list_size - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
 			}
 #endif
 		}
 
 		/* display static selector */
-		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 50 + 10, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
+		Term_putstr(horiz_offset + 1, vertikal_offset + list_size, -1, TERM_SELECTOR, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 10, vertikal_offset + list_size, -1, TERM_SELECTOR, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -4338,12 +4348,12 @@ void do_cmd_options_mus_sdl(void) {
 		case NAVI_KEY_PAGEUP:
 		case '9':
 		case 'p':
-			y = (y - 10 + audio_music) % audio_music;
+			y = (y - list_size + audio_music) % audio_music;
 			break;
 		case NAVI_KEY_PAGEDOWN:
 		case '3':
 		case ' ':
-			y = (y + 10 + audio_music) % audio_music;
+			y = (y + list_size + audio_music) % audio_music;
 			break;
 		case NAVI_KEY_END:
 		case '1':
