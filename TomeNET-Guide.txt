@@ -8303,23 +8303,30 @@ attack it with the equipped melee weapon.
 
 Starting in 4.9.3 there is an option 'instant_retaliator' that toggles the
 behaviour of auto-retaliation and of fire-till-kill, in Gameplay Options 1:
+
 - If on, your character will instantly attack anything adjacent (or targetted
 in the case of fire-till-kill) if you have spare energy, up to two turns at
 once if your character was standing around idly before.
+This is how auto-retaliator and FTK have always worked so far.
+
 - If off, your character will make sure to keep 1 turn of energy in reserve.
 If you move next to an enemy this might result in your character waiting for
 one turn to recuperate the movement energy before it starts auto-attacking or
-firing-till-kill.
-The advantage however is that the stored up energy can be used to break out
-of auto-retaliation or fire-till-kill almost instantly, for example if you
-hit your teleport macro.
-So it guarantees a fast escape without having to wait for energy recuperation
-and thereby greatly increases survival chances for classes that don't split
-their energy on attacks like melee or archer-type classes do. Istari are for
-example strongly affected by this option.
-Also, if this is on, as your character won't instantly auto-attack if you
-step next to an enemy, this allows you to easily walk past sleeping monsters
-without your character starting to attack them and thereby waking them up.
+firing-till-kill. This is the new way, choosable starting in 4.9.3.
+
+Why you might want to choose the new way ie turn it off:
+ The advantage of having this turned off is that the stored up energy can be
+ used to break out of auto-retaliation or fire-till-kill almost instantly, for
+ example if you hit your teleport macro.
+ So it guarantees a fast escape without having to wait for energy recuperation
+ and thereby greatly increases survival chances for classes that don't split
+ their energy on attacks like melee or archer-type classes do. Istari are for
+ example strongly affected by this option.
+ Also, if this is on, as your character won't instantly auto-attack if you
+ step next to an enemy, this allows you to easily walk past sleeping monsters
+ without your character starting to attack them and thereby waking them up.
+
+-- More about auto-retaliation: --
 
 Instead of melee attacks, you can also configure the auto-retaliator to use
 other items. To do so, you use '@O...' (the letter 'O', not the number zero!)
