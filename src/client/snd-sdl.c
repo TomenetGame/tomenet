@@ -3307,11 +3307,11 @@ void do_cmd_options_sfx_sdl(void) {
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
-		c_msg_print("Client is running in quiet mode, sounds are not available.");
+		c_msg_print("\377yClient is running in quiet mode, sounds are not available.");
 		return;
 	}
 	if (!audio_sfx) {
-		c_msg_print("No sound effects available.");
+		c_msg_print("\377yNo sound effects available.");
 		return;
 	}
 
@@ -3321,7 +3321,7 @@ void do_cmd_options_sfx_sdl(void) {
 	/* Check if the file exists */
 	fff = my_fopen(buf, "r");
 	if (!fff) {
-		c_msg_print("Error: File 'sound.cfg' not found.");
+		c_msg_print("\377oError: File 'sound.cfg' not found.");
 		return;
 	}
 	fclose(fff);
@@ -3800,11 +3800,11 @@ void do_cmd_options_mus_sdl(void) {
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
-		c_msg_print("Client is running in quiet mode, music is not available.");
+		c_msg_print("\377yClient is running in quiet mode, music is not available.");
 		return;
 	}
 	if (!audio_music) {
-		c_msg_print("No music available.");
+		c_msg_print("\377yNo music available.");
 		return;
 	}
 
@@ -3814,7 +3814,7 @@ void do_cmd_options_mus_sdl(void) {
 	/* Check if the file exists */
 	fff = my_fopen(buf, "r");
 	if (!fff) {
-		c_msg_print("Error: File 'music.cfg' not found.");
+		c_msg_print("\377oError: File 'music.cfg' not found.");
 		return;
 	}
 	fclose(fff);
