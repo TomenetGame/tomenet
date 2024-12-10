@@ -3343,7 +3343,7 @@ void do_cmd_options_sfx_sdl(void) {
 		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
  #endif
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play)");
-		Term_putstr(0, 1, -1, TERM_WHITE, "  \377yESC \377wleave and auto-save all changes.");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  \377yESC \377wleave and auto-save all changes.                                          ");
 #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
@@ -4166,8 +4166,8 @@ void do_cmd_options_mus_sdl(void) {
 			char tmp[80];
 
 			inkey_msg = TRUE;
-			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                              ");
-			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..200, m to max, other values will reset to 100%): ");
+			Term_putstr(0, 3, -1, TERM_L_BLUE, "                                                                              ");
+			Term_putstr(0, 3, -1, TERM_L_BLUE, " Enter volume % (1..200, m to max, other values will reset to 100%): ");
 			strcpy(tmp, "100");
 			if (!askfor_aux(tmp, 4, 0)) {
 				inkey_msg = inkey_msg_old;
