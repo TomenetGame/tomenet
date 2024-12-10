@@ -3981,14 +3981,17 @@ void do_cmd_options_mus_sdl(void) {
 			else if (jukebox_org != music_cur)
 				play_music_instantly(jukebox_org);//play_music(jukebox_org); -- switch song instantly instead of fading out+in
  #else
-			if (jukebox_org == -1) play_music(-2);
-			else if (jukebox_org != music_cur) {
-				if (songs[jukebox_org].disabled) play_music(-2);
-				else play_music(jukebox_org);
-			}
+			if (jukebox_org == -1 || songs[jukebox_org].disabled)
+				play_music(-2);
+			else if (jukebox_org != music_cur)
+				play_music(jukebox_org);
  #endif
 			/* If a song was "playing silently" ie just disabled, restore its (silenced) playing state. Because the -2 call above would just set music_cur to -1. */
 			music_cur = jukebox_org;
+
+			/* If music was actually 'off' in the mixer, apply that - it just means volume is 0, not that music is halted!
+			   (Reason: If it gets halted, it won't be reenabled by toggling the music mixer switch anymore, if DISABLE_MUTED_AUDIO is not defined.) */
+			if  (!cfg_audio_music || !cfg_audio_master) set_mixing();
 
 			jukebox_org = -1;
 			curmus_timepos = -1; //no more song is playing in the jukebox now
@@ -4263,11 +4266,17 @@ void do_cmd_options_mus_sdl(void) {
 		case 't': //case ' ':
 			songs[j_sel].disabled = !songs[j_sel].disabled;
 			if (songs[j_sel].disabled) {
-				if (music_cur == j_sel && Mix_PlayingMusic()) Mix_HaltMusic();
+				if (music_cur == j_sel && Mix_PlayingMusic()) {
+					d = music_cur; //halting will set cur to -1
+					Mix_HaltMusic();
+					music_cur = d;
+				}
 			} else {
 				if (music_cur == j_sel) {
 					music_cur = -1; //allow restarting it
+					jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 					play_music(j_sel);
+					jukebox_screen = TRUE;
 				}
 			}
 			break;
@@ -4275,7 +4284,9 @@ void do_cmd_options_mus_sdl(void) {
 			songs[j_sel].disabled = FALSE;
 			if (music_cur == j_sel) {
 				music_cur = -1; //allow restarting it
+				jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 				play_music(j_sel);
+				jukebox_screen = TRUE;
 			}
 			break;
 		case 'n':
