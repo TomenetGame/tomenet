@@ -46,6 +46,9 @@
 /* Maybe this will be cool: Dynamic weather volume calculated from distances to registered clouds */
 #define WEATHER_VOL_CLOUDS
 
+/* Resume wilderness music in subsong's index and position, whenever switching from one wilderness music event to another? */
+#define WILDERNESS_MUSIC_RESUME
+
 /* Allow user-defined custom volume factor for each sample or song? ([].volume) */
 #define USER_VOLUME_SFX
 #define USER_VOLUME_MUS
@@ -411,13 +414,18 @@ typedef struct {
 	const char *paths[MAX_SONGS];
 	bool is_reference[MAX_SONGS];	/* Is just a reference pointer to another event, so don't accidentally try to "free" this one. */
 	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
+#ifdef WILDERNESS_MUSIC_RESUME
+	int bak_song, bak_pos;		/* Specifically for 'wilderness' music: Remember song and position of each wilderness-type event. */
+#endif
 	bool disabled;			/* disabled by user? */
 	bool config;
 	unsigned char volume;		/* volume reduced by user? */
 } song_list;
 
-/* Just need an array of SampInfos */
+/* SFX array (including weather + ambient sfx) */
 static sample_list samples[SOUND_MAX_2010];
+/* Music array */
+static song_list songs[MUSIC_MAX];
 
 /* Array of potential channels, for managing that only one
    sound of a kind is played simultaneously, for efficiency - C. Blue */
@@ -425,9 +433,6 @@ static int channel_sample[MAX_CHANNELS];
 static int channel_type[MAX_CHANNELS];
 static int channel_volume[MAX_CHANNELS];
 static s32b channel_player_id[MAX_CHANNELS];
-
-/* Music Array */
-static song_list songs[MUSIC_MAX];
 
 #ifdef ENABLE_JUKEBOX
 /* Jukebox music */
@@ -2488,10 +2493,20 @@ static bool play_music(int event) {
 		return(TRUE);
 	}
 
-	/* check if music is already running, if so, fade it out first! */
+	/* check if some other music is already running, if so, fade it out first! */
 	if (Mix_PlayingMusic()) {
-		if (Mix_FadingMusic() != MIX_FADING_OUT)
+		if (Mix_FadingMusic() != MIX_FADING_OUT) {
+#ifdef WILDERNESS_MUSIC_RESUME
+			/* Special: If current music is in category 'wilderness', remember its position to resume it instead of restarting it, next time it happens to play */
+			if (prefix(string_exec_lua(0, format("return get_music_name(%d)", music_cur)), "wilderness_")) {
+				songs[music_cur].bak_song = music_cur_song;
+				songs[music_cur].bak_pos = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]) * 1000 + 500; /* pre-add the fading-out time span (in ms) */
+			}
+			/* Special special: If we're playing a non-'wilderness' music, forget ALL wilderness-music positions */
+			else for (n = 0; n < MUSIC_MAX; n++) songs[n].bak_pos = 0;
+#endif
 			Mix_FadeOutMusic(500);
+		}
 	} else {
 		//play immediately
 		fadein_next_music();
@@ -2631,6 +2646,9 @@ static bool play_music_vol(int event, char vol) {
 
 static void fadein_next_music(void) {
 	Mix_Music *wave = NULL;
+#ifdef WILDERNESS_MUSIC_RESUME
+	bool prev_wilderness;
+#endif
 
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) return;
@@ -2725,6 +2743,14 @@ static void fadein_next_music(void) {
 	/* Check there are samples for this event */
 	if (songs[music_next].num < music_next_song + 1) return;
 
+#ifdef WILDERNESS_MUSIC_RESUME
+	/* Special: If new music is in category 'wilderness', restore its position to resume it instead of restarting it.
+	   However, only do this if the previous music was actually in 'wilderness' too!
+	   Part 1/2: Restore the song subnumber: */
+	prev_wilderness = (music_cur != -1 && prefix(string_exec_lua(0, format("return get_music_name(%d)", music_cur)), "wilderness_"));
+	if (prev_wilderness && prefix(string_exec_lua(0, format("return get_music_name(%d)", music_next)), "wilderness_"))
+		music_next_song = songs[music_next].bak_song;
+#endif
 	/* Choose the predetermined random event */
 	wave = songs[music_next].wavs[music_next_song];
 
@@ -2747,10 +2773,22 @@ static void fadein_next_music(void) {
 	music_cur_song = music_next_song;
 //#endif
 	music_next = -1;
+
 	/* Actually don't repeat 'initial' songs */
 	if (!songs[music_cur].initial[music_cur_song]) {
 		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000); //-1 infinite, 0 once, or n times
 	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000); //even if play_all is off, continue with another song after an 'initial' song was played instead of repeating it
+
+#ifdef WILDERNESS_MUSIC_RESUME
+	/* Special: If new music is in category 'wilderness', restore its position to resume it instead of restarting it.
+	   However, only do this if the previous music was actually in 'wilderness' too!
+	   Part 2/2: Restore the position: */
+	//if (prev_wilderness && prefix(songs[music_cur].paths[music_cur_song], format("%s/wilderness/", ANGBAND_DIR_XTRA_MUSIC))) {
+	if (prev_wilderness && prefix(string_exec_lua(0, format("return get_music_name(%d)", music_cur)), "wilderness_")) {
+		music_cur_song = songs[music_cur].bak_song;
+		Mix_SetMusicPosition(songs[music_cur].bak_pos / 1000);
+	}
+#endif
 #ifdef ENABLE_JUKEBOX
 	if (jukebox_screen) jukebox_update_songlength();
 #endif
@@ -3037,6 +3075,9 @@ errr re_init_sound_sdl(void) {
 		songs[i].num = 0;
 		songs[i].config = FALSE;
 		songs[i].disabled = FALSE;
+#ifdef WILDERNESS_MUSIC_RESUME
+		songs[i].bak_pos = FALSE;
+#endif
 	}
 
 	for (i = 0; i < MAX_CHANNELS; i++) {
