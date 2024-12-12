@@ -2648,6 +2648,8 @@ static void fadein_next_music(void) {
 	Mix_Music *wave = NULL;
 #ifdef WILDERNESS_MUSIC_RESUME
 	bool prev_wilderness;
+	cptr pmn, mn;
+	bool pmn_day, mn_day;
 #endif
 
 #ifdef DISABLE_MUTED_AUDIO
@@ -2747,9 +2749,21 @@ static void fadein_next_music(void) {
 	/* Special: If new music is in category 'wilderness', restore its position to resume it instead of restarting it.
 	   However, only do this if the previous music was actually in 'wilderness' too!
 	   Part 1/2: Restore the song subnumber: */
-	prev_wilderness = (music_cur != -1 && prefix(string_exec_lua(0, format("return get_music_name(%d)", music_cur)), "wilderness_"));
-	if (prev_wilderness && prefix(string_exec_lua(0, format("return get_music_name(%d)", music_next)), "wilderness_"))
-		music_next_song = songs[music_next].bak_song;
+	if (music_cur != -1) {
+		pmn = string_exec_lua(0, format("return get_music_name(%d)", music_cur));
+		prev_wilderness = prefix(pmn, "wilderness_");
+		pmn_day = suffix(pmn, "_day");
+
+		mn = string_exec_lua(0, format("return get_music_name(%d)", music_next));
+		mn_day = suffix(mn, "_day");
+		if (pmn_day != mn_day) { /* On day/night change, do not resume. Instead, reset all saved positions! */
+			int n;
+
+			for (n = 0; n < MUSIC_MAX; n++) songs[n].bak_pos = 0;
+			prev_wilderness = FALSE; //(efficient discard; not needed as we reset the pos to zero anyway)
+		} else if (prev_wilderness && prefix(mn, "wilderness_"))
+			music_next_song = songs[music_next].bak_song;
+	} else prev_wilderness = FALSE;
 #endif
 	/* Choose the predetermined random event */
 	wave = songs[music_next].wavs[music_next_song];
