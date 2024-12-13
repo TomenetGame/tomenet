@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. December 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 13. December 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11340,9 +11340,13 @@ This is a permanent, special, gigantic ironman dungeon (or tower) that you may
 attempt to conquer by reaching the final floor or killing Morgoth and then
 recalling out. It allows traversing only in one direction and if you die you
 die permanently even if you are everlasting!
-It accommodates different dungeon themes, suggested and implemented by Kurzel,
-and dungeon towns, suggested by Kurzel and implemented by C. Blue, and it comes
-with a specific ruleset, to which many IDDC goers contributed such as the IDDC
+Originally there was a specific "RPG Server" I created as a stand-alone server
+for a few years, which was then abolished and inspired this single dungeon
+instead. For those who wish to play more 'ironish' even outside of the IDDC,
+there are character modes available such as no-ghost or soloist.
+The IDDC accommodates different dungeon themes, suggested and implemented by
+Kurzel, and dungeon towns, I implemented based on Kurzel's suggestions, and it
+comes with a specific ruleset, to which IDDC goers contributed such as the IDDC
 top dog Pondos and many others.
 
   Structure, getting out:
