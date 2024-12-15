@@ -437,6 +437,7 @@ static s32b channel_player_id[MAX_CHANNELS];
 #ifdef ENABLE_JUKEBOX
 /* Jukebox music */
 static int jukebox_org = -1, jukebox_playing = -1;
+static bool jukebox_static200vol = FALSE;
 #endif
 
 
@@ -2931,18 +2932,22 @@ static void set_mixing_sdl(void) {
 	}
 #endif
 
-	/* Music channel */
+	/* Music channel (don't change volume while playing in the jukebox at 200% boosted volume via SHIFT+ENTER).
+	   This can happen if for example some ambient sound effect changes/is played and set_mixing() is called in the process house situation changes (quiet_house_sfx),
+	   which would not only mix that specific sfx but also reset music volume here from the temporary 200% boost to its actual real value. */
+	if (!jukebox_static200vol) {
 #ifdef USER_VOLUME_MUS
-	/* Apply user-defined custom volume modifier */
-	if (music_cur != -1 && songs[music_cur].volume) vols = songs[music_cur].volume;
+		/* Apply user-defined custom volume modifier */
+		if (music_cur != -1 && songs[music_cur].volume) vols = songs[music_cur].volume;
 #endif
-	//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * music_vol) / 100, vols));
+		//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
+		Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * music_vol) / 100, vols));
 #ifdef DISABLE_MUTED_AUDIO
-	if (!cfg_audio_master || !cfg_audio_music) {
-		if (Mix_PlayingMusic()) Mix_HaltMusic();
-	} else if (!Mix_PlayingMusic()) reenable_music();
+		if (!cfg_audio_master || !cfg_audio_music) {
+			if (Mix_PlayingMusic()) Mix_HaltMusic();
+		} else if (!Mix_PlayingMusic()) reenable_music();
 #endif
+	}
 
 	/* SFX channel (weather) */
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
@@ -4026,6 +4031,7 @@ void do_cmd_options_mus_sdl(void) {
 			cfg_audio_music = cfg_audio_music_org;
 			cfg_audio_weather = cfg_audio_weather_org;
 
+			jukebox_static200vol = FALSE;
 			jukebox_playing = -1;
  #ifdef JUKEBOX_INSTANT_PLAY
 			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
@@ -4223,6 +4229,7 @@ void do_cmd_options_mus_sdl(void) {
 			bool inkey_msg_old = inkey_msg;
 			char tmp[80];
 
+			jukebox_static200vol = FALSE;
 			inkey_msg = TRUE;
 			Term_putstr(0, 3, -1, TERM_L_BLUE, "                                                                              ");
 			Term_putstr(0, 3, -1, TERM_L_BLUE, " Enter volume % (1..200, m to max, other values will reset to 100%): ");
@@ -4259,6 +4266,7 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 			}
 		case '+':
+			jukebox_static200vol = FALSE;
 			i = songs[j_sel].volume;
 			if (!i) i = 100;
 			i += 10;
@@ -4274,6 +4282,7 @@ void do_cmd_options_mus_sdl(void) {
 			if (j_sel == music_cur) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i));
 			break;
 		case '-':
+			jukebox_static200vol = FALSE;
 			i = songs[j_sel].volume;
 			if (!i) i = 100;
 			i -= 10;
@@ -4366,7 +4375,10 @@ void do_cmd_options_mus_sdl(void) {
 
 			play_music_instantly(j_sel);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
-			if (inkey_shift_special == 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+			if (inkey_shift_special == 0x1) {
+				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+				jukebox_static200vol = TRUE;
+			} else jukebox_static200vol = FALSE;
   #endif
 			songs[j_sel].disabled = dis;
  #else
