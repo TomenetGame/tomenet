@@ -2935,19 +2935,20 @@ static void set_mixing_sdl(void) {
 	/* Music channel (don't change volume while playing in the jukebox at 200% boosted volume via SHIFT+ENTER).
 	   This can happen if for example some ambient sound effect changes/is played and set_mixing() is called in the process house situation changes (quiet_house_sfx),
 	   which would not only mix that specific sfx but also reset music volume here from the temporary 200% boost to its actual real value. */
-	if (!jukebox_static200vol) {
+	if (jukebox_static200vol) vols = 200;
 #ifdef USER_VOLUME_MUS
+	else {
 		/* Apply user-defined custom volume modifier */
 		if (music_cur != -1 && songs[music_cur].volume) vols = songs[music_cur].volume;
-#endif
-		//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
-		Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * music_vol) / 100, vols));
-#ifdef DISABLE_MUTED_AUDIO
-		if (!cfg_audio_master || !cfg_audio_music) {
-			if (Mix_PlayingMusic()) Mix_HaltMusic();
-		} else if (!Mix_PlayingMusic()) reenable_music();
-#endif
 	}
+#endif
+	//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * music_vol) / 100, vols));
+#ifdef DISABLE_MUTED_AUDIO
+	if (!cfg_audio_master || !cfg_audio_music) {
+		if (Mix_PlayingMusic()) Mix_HaltMusic();
+	} else if (!Mix_PlayingMusic()) reenable_music();
+#endif
 
 	/* SFX channel (weather) */
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
