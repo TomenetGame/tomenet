@@ -187,7 +187,7 @@ G:=:u
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT | NO_ARTICLE | COVER
 F:DONT_NOTICE_RUNNING | LAMP_LITE_OPTIONAL | NO_SHADE | NO_LITE_WHITEN
 
-# drawbridge, used for moats
+# drawbridge, used for moats (also see #238)
 N:24:drawbridge
 G:=:u
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
@@ -1104,7 +1104,45 @@ F:WALL | NO_WALK | LOS
 F:DONT_NOTICE_RUNNING | NOTICE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE2
 
 
-# HOLE 150..158 -------------------------------------------------------------
+# Specialty: Game board visuals, only for use with graphical tilesets,
+# as we have no representation of this in ASCII:
+
+# Game board central tile
+N:150:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board left edge
+N:151:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board right edge
+N:152:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board top edge
+N:153:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board bottom edge
+N:154:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board top left corner
+N:155:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board top right corner
+N:156:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board bottom left corner
+N:157:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Game board bottom right corner
+N:158:game board
+G:.:U
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 
 
 #permanent magma vein
@@ -1144,7 +1182,37 @@ F:FLOOR | REMEMBER | NOTICE | CAN_RUN
 D:0:Images of pain and death feels your mind.
 
 
-# HOLE 165..171 -------------------------------------------------------------
+# Specialty: Solid blocks for solid_bars, only for use with graphical tilesets, as we
+# have no representation of this in ASCII except the usual FONT_MAP_SOLID_... ones:
+
+# Solid block with border (or "outline") -- also see feat #237
+N:165:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Solid block with border, open to the right
+N:166:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Solid block with border, open to the left
+N:167:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Solid block with border, open to the right and left
+N:168:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Solid block with border, open to the top
+N:169:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Solid block with border, open to the bottom
+N:170:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+# Solid block with border, open to the top and bottom
+N:171:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 
 
 # Used as a marked for random quests
@@ -1559,6 +1627,20 @@ N:236:barred floor
 G:.:w
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
 F:NO_ARTICLE | ENTER_FROM_SPECIAL
+
+
+# Specialty: Solid blocks (maybe for solid_bars) only for use with graphical tilesets, as we
+# have no representation of this in ASCII except the usual FONT_MAP_SOLID_... ones:
+# Solid block without border, ie fully filled rectangle (also see 165-171)
+N:237:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+
+# drawbridge - vertically, used for moats (also see #24) -- only makes a difference for graphical tilesets
+N:238:drawbridge
+G:=:u
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+
 
 
 # NOTE: 255 is reserved for special purpose (RLE in server save file / 'not done yet' indicator -- TODO: Check the latter one, can't coexist w/ RLE?)

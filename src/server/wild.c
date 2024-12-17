@@ -1391,7 +1391,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	int	h_x1,h_y1,h_x2,h_y2, p_x1,p_y1,p_x2,p_y2,
 		plot_xlen, plot_ylen, house_xlen, house_ylen,
-		door_x, door_y, drawbridge_x[3], drawbridge_y[3],
+		door_x, door_y, drawbridge_x[3], drawbridge_y[3], drawbridge_feat,
 		tmp, type, area, num_door_attempts;
 	int size;
 #ifndef __DISABLE_HOUSEBOOST
@@ -1412,6 +1412,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	/* Initialize drawbridge_x and drawbridge_y to make gcc happy */
 	drawbridge_x[0] = drawbridge_x[1] = drawbridge_x[2] = 0;
 	drawbridge_y[0] = drawbridge_y[1] = drawbridge_y[2] = 0;
+	drawbridge_feat = FEAT_DRAWBRIDGE;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -1739,6 +1740,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 					drawbridge_y[2] = door_y;
 					drawbridge_x[0] = h_x2 + 1; drawbridge_x[1] = h_x2 + 2;
 					drawbridge_x[2] = h_x2 + 3;
+					drawbridge_feat = FEAT_DRAWBRIDGE_HORIZ;
 				}
 #ifndef __DISABLE_HOUSEBOOST
 				/* door directly on a corner? */
@@ -1748,7 +1750,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 #endif
 				break;
 			/* Left side */
-			default:
+			default: //ie DIR_WEST:
 				door_y = rand_range(h_y1, h_y2);
 				door_x = h_x1;
 				if (has_moat) {
@@ -1756,6 +1758,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 					drawbridge_y[2] = door_y;
 					drawbridge_x[0] = h_x1 - 1; drawbridge_x[1] = h_x1 - 2;
 					drawbridge_x[2] = h_x1 - 3;
+					drawbridge_feat = FEAT_DRAWBRIDGE_HORIZ;
 				}
 #ifndef __DISABLE_HOUSEBOOST
 				/* door directly on a corner? */
@@ -1863,11 +1866,11 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 			zcave[y][h_x2 + 2].feat = FEAT_DEEP_WATER; zcave[y][h_x2 + 2].info |= CAVE_ICKY;
 			zcave[y][h_x2 + 3].feat = FEAT_DEEP_WATER; zcave[y][h_x2 + 3].info |= CAVE_ICKY;
 		}
-		zcave[drawbridge_y[0]][drawbridge_x[0]].feat = FEAT_DRAWBRIDGE;
+		zcave[drawbridge_y[0]][drawbridge_x[0]].feat = drawbridge_feat;
 		zcave[drawbridge_y[0]][drawbridge_x[0]].info |= CAVE_ICKY;
-		zcave[drawbridge_y[1]][drawbridge_x[1]].feat = FEAT_DRAWBRIDGE;
+		zcave[drawbridge_y[1]][drawbridge_x[1]].feat = drawbridge_feat;
 		zcave[drawbridge_y[1]][drawbridge_x[1]].info |= CAVE_ICKY;
-		zcave[drawbridge_y[2]][drawbridge_x[2]].feat = FEAT_DRAWBRIDGE;
+		zcave[drawbridge_y[2]][drawbridge_x[2]].feat = drawbridge_feat;
 		zcave[drawbridge_y[2]][drawbridge_x[2]].info |= CAVE_ICKY;
 	}
 

@@ -1526,6 +1526,7 @@ void sound_house_knock(int h_idx, int dx, int dy) {
 		if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)
 		    /* however, exempt the moat! */
 		    && zcave[p_ptr->py][p_ptr->px].feat != FEAT_DRAWBRIDGE
+		    && zcave[p_ptr->py][p_ptr->px].feat != FEAT_DRAWBRIDGE_HORIZ
 		    && zcave[p_ptr->py][p_ptr->px].feat != FEAT_DEEP_WATER)
 			continue;
 

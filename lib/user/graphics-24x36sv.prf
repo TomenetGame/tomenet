@@ -298,6 +298,8 @@ F:182:/158 # Ekkaia, the Encircling Sea
 F:16:1/355 # spider webs
 F:87:/356 # dark pit
 
+F:238:/295 # Drawbridge, horizontal
+
 
 
 ################# Objects #################
@@ -1282,7 +1284,7 @@ K:748:/3101 # Gift, Wrapped in Purple Paper
 K:389:/3200 Firestone
 K:390:/3201 Small Firestone
 
-##### Various Staff #####
+##### Various Stuff #####
 
 # (I:11)
 K:383:/3300 # Piece of Wood
@@ -1363,3 +1365,24 @@ K:713:/3502 # Flash bomb
 K:714:/3502 # Concussive Charge
 K:715:/3502 # Large Concussive Charge
 K:716:/3502 # Underground Charge
+
+##### Money: TV_GOLD (100), ie piles of coins or gemstones. #####
+
+K:480:/3800 # copper (coins)
+K:481:/3800 # silver (coins)
+K:482:/3801 # citrines (gems, edged)
+K:483:/3802 # amber (gems, round)
+K:484:/3801 # peridots (gems, edged)
+K:485:/3801 # topazes (gems, edged)
+K:486:/3801 # garnets (gems, edged)
+K:487:/3801 # aquamarines (gems, edged)
+K:488:/3802 # jade (gems, round)
+K:489:/3800 # gold (coins)
+K:490:/3801 # tourmalines (coins)
+K:491:/3802 # opals (gems, could be either, edged or round^^)
+K:492:/3801 # sapphires (gems, edged)
+K:493:/3801 # rubies (gems, edged)
+K:494:/3801 # emeralds (gems edged)
+K:495:/3800 # mithril (coins)
+K:496:/3801 # diamonds (gems, edged)
+K:497:/3800 # adamantite (coins)

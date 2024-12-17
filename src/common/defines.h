@@ -2737,6 +2737,8 @@
 #define FEAT_SHATTERED_MIRROR	235
 #define FEAT_BARRED_FLOOR	236
 
+#define FEAT_DRAWBRIDGE_HORIZ	238
+
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS	2
 

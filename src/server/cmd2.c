@@ -2021,7 +2021,7 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 	c_ptr = &zcave[y][x];
 	/* assume all houses are on the world surface (and vaults aren't) */
 	if ((c_ptr->info & CAVE_ICKY) &&
-	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
+	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE && c_ptr->feat != FEAT_DRAWBRIDGE_HORIZ) /* moat and drawbridge aren't "inside" the house! */
 		return(TRUE);
 
 	return(FALSE);
@@ -2030,7 +2030,7 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 static bool inside_house_simple(cave_type *c_ptr) {
 	/* assume all houses are on the world surface (and vaults aren't) */
 	if ((c_ptr->info & CAVE_ICKY) &&
-	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
+	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE && c_ptr->feat != FEAT_DRAWBRIDGE_HORIZ) /* moat and drawbridge aren't "inside" the house! */
 		return(TRUE);
 
 	return(FALSE);
@@ -3093,7 +3093,7 @@ void do_cmd_open(int Ind, int dir) {
 				/* We cannot access this house. Special hack: Never get stuck inside a house that we don't have access to!
 				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky.
 				   Exception: The jail. */
-				} else if ((c2_ptr->info & CAVE_ICKY) && c2_ptr->feat != FEAT_DRAWBRIDGE && c2_ptr->feat != FEAT_DEEP_WATER) {
+				} else if ((c2_ptr->info & CAVE_ICKY) && c2_ptr->feat != FEAT_DRAWBRIDGE && c2_ptr->feat != FEAT_DRAWBRIDGE_HORIZ && c2_ptr->feat != FEAT_DEEP_WATER) {
 					if ((c_ptr->info & CAVE_JAIL) && p_ptr->tim_jail) msg_format(Ind, "Abide your jail sentence, lasting %d more seconds..", p_ptr->tim_jail);
 					else teleport_player_force(Ind, 1);
 
