@@ -11564,10 +11564,9 @@ static void process_monster_pet(int Ind, int m_idx) {
 			(c_ptr->feat == FEAT_HOME_HEAD) ||
 			(c_ptr->feat == FEAT_HOME_TAIL) ||
 			(c_ptr->feat == FEAT_HOME_OPEN) ||
-			(c_ptr->feat == FEAT_HOME) ||
-			(c_ptr->feat == FEAT_ALTAR_HEAD) ||
-			(c_ptr->feat == FEAT_ALTAR_TAIL))
-			&& !(
+			(c_ptr->feat == FEAT_HOME)
+			//|| (c_ptr->feat == FEAT_ALTAR_HEAD) || (c_ptr->feat == FEAT_ALTAR_TAIL)
+			) && !(
 			(c_ptr->feat == FEAT_TREE) ||
 			(c_ptr->feat == FEAT_BUSH) ||
 			(c_ptr->feat == FEAT_DEAD_TREE)))
@@ -12016,10 +12015,9 @@ static void process_monster_golem(int Ind, int m_idx) {
 		    //(c_ptr->feat == FEAT_SHOP_HEAD) ||
 		    //(c_ptr->feat == FEAT_SHOP_TAIL) ||
 		    (c_ptr->feat == FEAT_HOME_OPEN) ||
-		    (c_ptr->feat == FEAT_HOME) ||
-		    (c_ptr->feat == FEAT_ALTAR_HEAD) ||
-		    (c_ptr->feat == FEAT_ALTAR_TAIL))
-		    && !(
+		    (c_ptr->feat == FEAT_HOME)
+		    //|| (c_ptr->feat == FEAT_ALTAR_HEAD) || (c_ptr->feat == FEAT_ALTAR_TAIL)
+		    ) && !(
 		    (c_ptr->feat == FEAT_TREE) ||
 		    (c_ptr->feat == FEAT_BUSH) ||
 		    //(c_ptr->feat == FEAT_EVIL_TREE) ||
