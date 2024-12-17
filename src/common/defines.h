@@ -2674,12 +2674,30 @@
 #define FEAT_MEDIUM_SPHERE	148
 #define FEAT_LARGE_SPHERE	149
 
+#define FEAT_GAMEBOARD		150	/* Pseudo feature definition for graphical tilesets */
+#define FEAT_GAMEBOARD_LEFT	151
+#define FEAT_GAMEBOARD_RIGHT	152
+#define FEAT_GAMEBOARD_TOP	153
+#define FEAT_GAMEBOARD_BOTTOM	154
+#define FEAT_GAMEBOARD_TL	155
+#define FEAT_GAMEBOARD_TR	156
+#define FEAT_GAMEBOARD_BL	157
+#define FEAT_GAMEBOARD_BR	158
+
 #define FEAT_PERM_MAGMA		0x9F /* 159 */
 #define FEAT_BETWEEN		0xA0 /* 160 */
 
-/* Altars */
-#define FEAT_ALTAR_HEAD		0xA1 /* 161 */
-#define FEAT_ALTAR_TAIL		0xAB /* 171 */
+/* Altars -- deprecated codes */
+//#define FEAT_ALTAR_HEAD		0xA1 /* 161 */
+//#define FEAT_ALTAR_TAIL		0xAB /* 171 */
+
+#define FEAT_SOLID_OUT		165	/* Pseudo feature definition for graphical tilesets for 'solid_bars' UI elements and similar. Also see 237.*/
+#define FEAT_SOLID_OUTLEFT	166
+#define FEAT_SOLID_OUTRIGHT	167
+#define FEAT_SOLID_OUTLR	168
+#define FEAT_SOLID_OUTTOP	169
+#define FEAT_SOLID_OUTBOTTOM	170
+#define FEAT_SOLID_OUTTB	171
 
 #define FEAT_MARKER		0xAC /* 172 */
 /* Feature 0xAD -- Underground Tunnel */
@@ -2737,6 +2755,7 @@
 #define FEAT_SHATTERED_MIRROR	235
 #define FEAT_BARRED_FLOOR	236
 
+#define FEAT_SOLID		237	/* Pseudo feature definition for graphical tilesets for 'solid_bars' UI elements and similar. Also see 165-171.*/
 #define FEAT_DRAWBRIDGE_HORIZ	238
 
 /* number of connected void gates or something? */

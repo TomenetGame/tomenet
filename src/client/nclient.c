@@ -199,11 +199,29 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	/* Fill extra (non-green) part with red if we don't start out full */
 	if (redraw)
 		for (n = ye; n > MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n--)
+#if 1
 			Term_putstr(x, n, -1, ae, marker);
+#else /* testing - 24x32sv.bmp graphical UI bars */
+		{
+			int w;
+
+			for (w = x; w - x < strlen(marker); w++)
+				Term_draw(w, n, ae, 560); //'solid' UI feats: 165..171,237 -> map to BMP coords 550..557 in 24x36sv.bmp
+		}
+#endif
 
 	/* Only draw the difference to before */
 	for (n = ys; n > ye; n--)
+#if 1
 		Term_putstr(x, n, -1, col, marker);
+#else /* testing - 24x32sv.bmp graphical UI bars */
+		{
+			int w;
+
+			for (w = x; w - x < strlen(marker); w++)
+				Term_draw(w, n, col, w == x ? 807 : (w - x == strlen(marker) - 1 ? 808 : 809)); //'solid' UI feats: 165..171,237 -> map to BMP coords 550..557 in 24x36sv.bmp
+		}
+#endif
 
 	*prev = cur;
 }
