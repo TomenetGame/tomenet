@@ -1,9 +1,8 @@
 R:1050:5/216 # True Believer, O with a / thru middle
-R:812:/220 # pit fiend, U with a hat
-R:836:/220 # pit fiend, U with a hat
+R:812:/220 # Pit fiend, U with a hat
+R:836:/220 # Star-spawn, U with a hat
 R:758:/220 # Bloodthirster. U with two dots above.
 R:847:/208 # Great Wyrm of Power. D with a - to the heart.
-#R:778:/208 # Great Wyrm of MC. D with a - to the heart.
 R:856:/220 # Gothy, with a ascend mark on top of U
 R:807:/220 # Greater Balrog. U with a decend on top.
 R:736:/220 # Great Unclean One
@@ -15,9 +14,11 @@ R:738:/254 # Old Sorcerer
 R:798:/163 # Black Reaver. Pound Sterling symbol
 R:1144:/216 # Armored target dummy, so you can tell remap is working in Bree
 R:1101:/254 # Target dummy, so you can tell remap is working in Bree
-R:1145:/254 # Armored target dummy, so you can tell remap is working in Bree
+R:1145:/216 # Armored target dummy, so you can tell remap is working in Bree
 R:1126:/254 # Target dummy, so you can tell remap is working in Bree
 R:768:/175 # Nightwalker, new special character.
+R:1002:/208 # Great Wyrm of Perplexity. D with a - to the heart.
+R:938:/208 # Great Swamp Wyrm. D with a - to the heart.
 
 
 
