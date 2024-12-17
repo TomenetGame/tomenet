@@ -1,0 +1,244 @@
+#
+# This file is used by Angband (when it was compiled using "main-win.c")
+# to specify simple attr/char remappings using a standard font, allowing
+# the use of special pseudo-graphic pictures for walls and such.
+#
+# Note that this file is extremely similar to the "font-ibm.prf" file,
+# but it uses different codes, since it uses the special pseudo-graphic
+# symbols defined in the "lib/xtra/font/*.FON" files, and there is only
+# one special wall type, so we have to use special "colors".
+#
+
+
+################# Terrain features #################
+### F:?:?/?
+### F : (Terrain ID number from f_info.txt) : (Changing color, if you do not want to change the color keep blank) / (Char number of font glyph)
+
+# open floor, ash, sand floor
+F:1:/201
+F:91:/201
+F:93:/201
+F:102:/201
+
+# dirt, mud
+F:88:/202
+F:94:/202
+
+# cobblestone road, protected floor
+F:109:/203
+F:200:/203
+F:201:/203
+F:207:/203
+F:210:/203
+
+# patch of grass
+F:89:/204
+
+# grass with flowers
+F:18:/205
+F:199:/205
+
+# snow floor
+F:83:/206
+
+# stream of shallow water, stream of shallow lava
+F:84:/207
+F:86:/207
+F:174:/207
+F:211:/207
+
+# dark pit, underground tunnel (in minas anor)
+F:87:/208
+F:204:/208
+
+# granite walls, sandwalls, icewalls (destructible walls)
+F:56:/209
+F:57:/209
+F:58:/209
+F:59:/209
+F:95:/209
+F:98:/209
+F:99:/209
+F:100:/209
+F:173:/209
+F:189:/209
+
+# logs, bridge, house tops, secret door
+F:23:/210
+F:24:/210
+F:48:/210
+F:191:/210
+F:190:/210
+
+#  roof chimney (in bree)
+F:192:/211
+F:195:/211
+
+# mountains
+F:97:/212
+F:81:/212
+F:101:/212
+F:104:/212
+
+# tree
+F:96:/213
+
+# bush
+F:219:/214
+
+# dead tree
+F:92:/215
+
+# ivy, glyph of warding
+F:3:/216
+F:202:/216
+
+# webs, great fire
+F:16:/217
+F:178:/217
+
+# closed door, locked door, jammed door, door
+F:25:/218
+F:32:/218
+F:33:/218
+F:34:/218
+F:35:/218
+F:36:/218
+F:37:/218
+F:38:/218
+F:39:/218
+F:40:/218
+F:41:/218
+F:42:/218
+F:43:/218
+F:44:/218
+F:45:/218
+F:46:/218
+F:47:/218
+
+# open door, broken door
+F:4:/219
+F:5:/219
+F:20:/219
+F:225:/219
+
+# up staircases '<'
+F:6:/220
+F:11:/220
+F:14:/220
+F:180:/220
+
+# down staircases '>'
+F:7:/221
+F:8:/221
+F:10:/221
+F:12:/221
+F:13:/221
+F:179:/221
+
+# void
+F:160:/222
+
+# permanent  walls
+F:26:/127
+F:28:/127
+F:60:/127
+F:61:/127
+F:62:/127
+F:63:/127
+F:75:/127
+F:76:/127
+F:77:/127
+F:78:/127
+F:80:/127
+F:177:/127
+F:188:/127
+F:193:/127
+F:194:/127
+
+################# Monster features #################
+### R:?:?/?
+### R : (Monster ID number from r_info.txt) : (Changing color, if you do not want to change the color keep blank) / (Char number of font glyph)
+### ***IMPORTANT*** But in this monster case, the proper monster number is '[ (monster id numer) - 12 ]'
+
+# p : similar colored master humans - Hell knight(731), Old Sorcerer(738), Master mindcrafter(799), Grand master mystic(998), Grand Swordsmaster(1059), Lord Jubei(1075)
+R:731:/223
+R:738:/223
+R:799:/223
+R:998:/223
+R:1059:/223
+R:1075:/223
+
+# W : nightcrawler(744), all nazgul uniques
+R:744:/224
+R:946:/224
+R:947:/224
+R:948:/224
+R:949:/224
+R:950:/224
+R:951:/224
+R:952:/224
+R:953:/224
+R:954:/224
+
+# Z : 6 dangerous  & similar colored hounds (gravity, inertia, plasma, ethereal, time, aether), 1 unique Z (Hound of Tindalos)
+R:540:/225
+R:542:/225
+R:811:/225
+R:726:/225
+R:725:/225
+R:739:/225
+R:1003:/225
+
+# D : all dragonriders (dragonrider uniques included)
+R:955:/226
+R:956:/226
+R:957:/226
+R:958:/226
+R:959:/226
+R:789:/226
+R:791:/226
+R:820:/226
+R:824:/226
+R:858:/226
+
+# D : sky drake, all wyrms, 3 dragon uniques (Glaurung, Tiamat, Ancalagon)
+R:715:/227
+R:728:/227
+R:741:/227
+R:756:/227
+R:766:/227
+R:783:/227
+R:784:/227
+R:785:/227
+R:790:/227
+R:793:/227
+R:847:/227
+R:938:/227
+R:939:/227
+R:1002:/227
+R:1004:/227
+R:1010:/227
+R:1066:/227
+R:1110:/227
+
+# Shape changing to pseudo-graphic glyph for '#' monsters (from # to graphic wall, tree, ivy, grass, rock)
+# Tangleweed, Poison ivy, Stunwall, Huorn, Livingstone, Old Man Willow, Xiclotlan, Roper, Lesser wall monster, Greater wall monster, Golgarach, the Living Rock, The Glass Golem
+R:248:/205
+R:326:/209
+R:336:/209
+R:426:/209
+R:448:/209
+R:718:/209
+R:1035:/212
+R:206:/213
+R:329:/213
+R:396:/213
+R:708:/213
+R:266:/216
+R:1033:/127
+
+#  Shape changing to pseudo-graphic glyph for '+' monsters (from + to gate, door)
+# Door Mimic, Void Jumpgate Mimic
+R:311:/218
+R:1082:/222
