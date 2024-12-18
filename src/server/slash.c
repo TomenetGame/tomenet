@@ -8065,8 +8065,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/dinv")) { /* Delete one entry from list of new invalid account names that tried to log in meanwhile */
-				if (!tk || k < 0 || k > MAX_LIST_INVALID) {
-					msg_format(Ind, "Usage: /dinv <list entry # [0..%d]>", MAX_LIST_INVALID);
+				if (!tk || k < 0 || k >= MAX_LIST_INVALID) {
+					msg_format(Ind, "Usage: /dinv <list entry # [0..%d]>", MAX_LIST_INVALID - 1);
 					return;
 				}
 				if (!list_invalid_name[k][0]) {
@@ -8086,17 +8086,42 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				list_invalid_name[k][0] = 0;
 				return;
 			}
-			else if (prefix(messagelc, "/vinv")) { /* Validate one entry from list of new invalid account names that tried to log in meanwhile */
-				if (!tk || k < 0 || k > MAX_LIST_INVALID) {
-					msg_format(Ind, "Usage: /vinv <list entry # [0..%d]>", MAX_LIST_INVALID);
+			else if (prefix(messagelc, "/vinv")) { /* Validate one entry from list of new invalid account names that tried to log in meanwhile, or '*' for all */
+				if (!tk || k < 0 || k >= MAX_LIST_INVALID) {
+					msg_format(Ind, "Usage: /vinv <list entry # [0..%d] | '*'>", MAX_LIST_INVALID - 1);
 					return;
 				}
-				if (!list_invalid_name[k][0]) {
-					msg_format(Ind, "Entry %d doesn't exist.", k);
-					return;
+				if (message3[0] == '*') {
+					i = 0;
+					for (k = 0; k < MAX_LIST_INVALID; k++) {
+						if (!list_invalid_name[k][0]) break;
+						i++;
+						msg_format(Ind, "\377GValidating entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
+						switch (validate(list_invalid_name[k])) {
+						case -1: break; //success (validate() clears the entry, so message needed to be displayed first)
+						case 0: msg_print(Ind, "\377rAccount not found!");
+							break;
+						case 1: msg_print(Ind, "\377oAccount already completely valid.");
+							break;
+						}
+					}
+					if (!i) msg_print(Ind, "\377yThe new-invalid-list is empty.");
+					else msg_format(Ind, "Processed %d new accounts.", i);
+				} else {
+					if (!list_invalid_name[k][0]) {
+						msg_format(Ind, "\377yEntry %d doesn't exist.", k);
+						return;
+					}
+					msg_format(Ind, "\377GValidating entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
+					switch (validate(list_invalid_name[k])) {
+					case -1: break; //success (validate() clears the entry, so message needed to be displayed first)
+						break;
+					case 0: msg_print(Ind, "\377rAccount not found!");
+						break;
+					case 1: msg_print(Ind, "\377oAccount already completely valid.");
+						break;
+					}
 				}
-				msg_format(Ind, "\377GValidating entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
-				validate(list_invalid_name[k]);
 				return;
 			}
 			/* Respawn monsters on the floor

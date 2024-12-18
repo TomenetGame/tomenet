@@ -2823,7 +2823,7 @@ static bool save_server_aux(char *name) {
 			fprintf(fil, "%s\n%s\n%s\n%s\n\n", list_invalid_date[i], list_invalid_name[i], list_invalid_host[i], list_invalid_addr[i]);
 		}
 		fclose(fil);
-		//s_printf("Invalid account logins stored: %d (max %d)\n", i, MAX_LIST_INVALID); --kinda spammy, as save_server_info() is called often, eg on every login. */
+		//s_printf("Invalid account logins stored: %d (max %d)\n", i, MAX_LIST_INVALID - 1); --kinda spammy, as save_server_info() is called often, eg on every login. */
 	}// else s_printf("Couldn't save list of invalid account logins.\n");
 
 
@@ -2966,7 +2966,7 @@ static bool load_server_info_classic(void) {
 				i++;
 				if (i == MAX_LIST_INVALID) {
 					if (fgetc(fil) == EOF) s_printf("Warning: list-invalid.txt is full.\n");
-					else s_printf("Warning: list-invalid.txt is too large, discarded entries after %d\n", MAX_LIST_INVALID);
+					else s_printf("Warning: list-invalid.txt is too large, discarded entries after %d\n", MAX_LIST_INVALID - 1);
 					break;
 				}
 			}
