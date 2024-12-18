@@ -1069,6 +1069,12 @@ static char inkey_aux(void) {
 				ch = -1; //refresh our current player list view
 				break;
 			}
+			/* Also hack for auto-pressing a dummy key in jukebox screen while in automatic 'play-all' mode, in order to redraw the jukebox screen with current song selected */
+			if (jukebox_screen && jukebox_play_all &&
+			    (jukebox_play_all_prev != jukebox_playing || jukebox_play_all_prev_song != jukebox_playing_song)) {
+				ch = -1;
+				break;
+			}
 
 			/* If we got a key, break */
 			if (ch) break;
