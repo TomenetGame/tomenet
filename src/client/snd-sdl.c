@@ -3977,7 +3977,7 @@ void do_cmd_options_mus_sdl(void) {
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu")) {
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w/\377yQ\377w skip", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
 				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
 				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
@@ -3985,7 +3985,7 @@ void do_cmd_options_mus_sdl(void) {
  #endif
 		{
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w/\377yQ\377w skip", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
 				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
 				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
@@ -4077,8 +4077,8 @@ void do_cmd_options_mus_sdl(void) {
 		}
 
 		/* display static selector */
-		Term_putstr(horiz_offset + 1, vertikal_offset + list_size, -1, TERM_SELECTOR, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 50 + 10, vertikal_offset + list_size, -1, TERM_SELECTOR, "<<<");
+		Term_putstr(horiz_offset + 1, vertikal_offset + list_size, -1, jukebox_play_all ? TERM_SEL_BLUE : TERM_SELECTOR, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 10, vertikal_offset + list_size, -1, jukebox_play_all ? TERM_SEL_BLUE : TERM_SELECTOR, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
