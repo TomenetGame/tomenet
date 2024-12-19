@@ -2690,6 +2690,7 @@ static void fadein_next_music(void) {
 		}
 		/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
 		play_music_instantly(j);
+		if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 		jukebox_update_songlength();
  #if 0 /* paranoia/not needed */
@@ -4582,6 +4583,7 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
 			play_music_instantly(j);
+			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
  #if 0 /* paranoia/not needed */
@@ -4610,6 +4612,7 @@ void do_cmd_options_mus_sdl(void) {
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
 			play_music_instantly(j);
+			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
  #if 0 /* paranoia/not needed */
