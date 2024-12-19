@@ -4670,11 +4670,13 @@ void do_cmd_options_mus_sdl(void) {
 
 		case NAVI_KEY_END:
 		case '1':
+		case 'G':
 			y = audio_music - 1;
 			break;
 
 		case NAVI_KEY_POS1:
 		case '7':
+		case 'g':
 			y = 0;
 			break;
 
