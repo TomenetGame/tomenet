@@ -3964,7 +3964,9 @@ void do_cmd_options_mus_sdl(void) {
 
 	jukebox_update_songlength();
 
-	/* Interact */
+	/* -- Interact -- */
+	/* Maybe add missing navigational keys to the key list, but it's spammy and these are always the usual ones...:
+		9, p, pgup; 3, SPACE, pgdn; 1, G, end; 7, g, pos1; 8, bksp, up; 2, down */
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
