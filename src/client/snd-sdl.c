@@ -2675,8 +2675,17 @@ static void fadein_next_music(void) {
 				if (!songs[j].config) continue;
 				break;
 			}
-			if (j == MUSIC_MAX) return;
-			jukebox_playing = j;
+			if (j == MUSIC_MAX) {
+				jukebox_playing = -1;
+				jukebox_static200vol = FALSE;
+				jukebox_play_all = FALSE;
+
+				//pseudo-turn off music to indicate that our play-all 'playlist' has finished
+				cfg_audio_music = FALSE;
+				set_mixing();
+
+				j = jukebox_org;
+			} else jukebox_playing = j;
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 		}
 		/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
@@ -4132,9 +4141,13 @@ void do_cmd_options_mus_sdl(void) {
 			/* If a song was "playing silently" ie just disabled, restore its (silenced) playing state. Because the -2 call above would just set music_cur to -1. */
 			music_cur = jukebox_org;
 
+ #if 0 /* this was okay before jukebox_play_all was added... */
 			/* If music was actually 'off' in the mixer, apply that - it just means volume is 0, not that music is halted!
 			   (Reason: If it gets halted, it won't be reenabled by toggling the music mixer switch anymore, if DISABLE_MUTED_AUDIO is not defined.) */
-			if  (!cfg_audio_music || !cfg_audio_master) set_mixing();
+			if (!cfg_audio_music || !cfg_audio_master) set_mixing();
+ #else /* ...it mutes everything when the playlist ends! So we need to re-mix here, to make already enabled music audible again: */
+			set_mixing();
+ #endif
 
 			jukebox_org = -1;
 			curmus_timepos = -1; //no more song is playing in the jukebox now
@@ -4554,8 +4567,17 @@ void do_cmd_options_mus_sdl(void) {
 					if (!songs[j].config) continue;
 					break;
 				}
-				if (j == MUSIC_MAX) continue;
-				jukebox_playing = j;
+				if (j == MUSIC_MAX) {
+					jukebox_playing = -1;
+					jukebox_static200vol = FALSE;
+					jukebox_play_all = FALSE;
+
+					//pseudo-turn off music to indicate that our play-all 'playlist' has finished
+					cfg_audio_music = FALSE;
+					set_mixing();
+
+					j = jukebox_org;
+				} else jukebox_playing = j;
 				music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			}
 			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
@@ -4574,8 +4596,17 @@ void do_cmd_options_mus_sdl(void) {
 				if (!songs[j].config) continue;
 				break;
 			}
-			if (j == MUSIC_MAX) continue;
-			jukebox_playing = j;
+			if (j == MUSIC_MAX) {
+				jukebox_playing = -1;
+				jukebox_static200vol = FALSE;
+				jukebox_play_all = FALSE;
+
+				//pseudo-turn off music to indicate that our play-all 'playlist' has finished
+				cfg_audio_music = FALSE;
+				set_mixing();
+
+				j = jukebox_org;
+			} else jukebox_playing = j;
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
 			play_music_instantly(j);
