@@ -1167,6 +1167,14 @@ static bool sound_sdl_init(bool no_cache) {
 				reference_initial[references] = initial;
 				strcpy(referenced_event[references], cur_token);
 				references++;
+
+				if (!events_loaded_semaphore) {
+					events_loaded_semaphore = TRUE;
+					audio_music++;
+					/* for do_cmd_options_...(): remember that this sample was mentioned in our config file */
+					songs[event].config = TRUE;
+				}
+
 				goto next_token_mus;
 			}
 
