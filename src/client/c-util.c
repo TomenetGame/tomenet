@@ -1070,8 +1070,10 @@ static char inkey_aux(void) {
 				break;
 			}
 			/* Also hack for auto-pressing a dummy key in jukebox screen while in automatic 'play-all' mode, in order to redraw the jukebox screen with current song selected */
-			if (jukebox_screen && jukebox_play_all &&
-			    (jukebox_play_all_prev != jukebox_playing || jukebox_play_all_prev_song != jukebox_playing_song)) {
+			if (jukebox_screen &&
+			    ((jukebox_play_all && (jukebox_play_all_prev != jukebox_playing || jukebox_play_all_prev_song != jukebox_playing_song))
+			    || jukebox_play_all_done)) {
+				jukebox_play_all_done = FALSE;
 				ch = -1;
 				break;
 			}

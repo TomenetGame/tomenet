@@ -725,7 +725,7 @@ char cfg_musicpack_name[MAX_CHARS], cfg_musicpack_version[MAX_CHARS];
 
 bool within_cmd_player = FALSE;
 int within_cmd_player_ticks;
-bool jukebox_play_all = FALSE; //ENABLE_JUKEBOX
+bool jukebox_play_all = FALSE, jukebox_play_all_done = FALSE; //ENABLE_JUKEBOX
 int jukebox_playing = -1, jukebox_play_all_prev = -1, jukebox_playing_song = -1, jukebox_play_all_prev_song = -1; //ENABLE_JUKEBOX
 
 int NumPlayers = 0;

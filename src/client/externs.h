@@ -591,7 +591,7 @@ extern void save_birth_file(cptr name, bool touch);
 extern void load_birth_file(cptr name);
 extern bool within_cmd_player;
 extern int within_cmd_player_ticks;
-extern bool jukebox_play_all; //ENABLE_JUKEBOX
+extern bool jukebox_play_all, jukebox_play_all_done; //ENABLE_JUKEBOX
 extern int jukebox_playing, jukebox_play_all_prev, jukebox_playing_song, jukebox_play_all_prev_song; //ENABLE_JUKEBOX
 extern int check_guide_checksums(bool forced);
 

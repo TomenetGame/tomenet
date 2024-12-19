@@ -2676,6 +2676,8 @@ static void fadein_next_music(void) {
 				break;
 			}
 			if (j == MUSIC_MAX) {
+				jukebox_play_all_done = TRUE; //refresh the song list a last time
+
 				jukebox_playing = -1;
 				jukebox_static200vol = FALSE;
 				jukebox_play_all = FALSE;
