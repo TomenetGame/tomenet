@@ -436,8 +436,8 @@ static s32b channel_player_id[MAX_CHANNELS];
 
 #ifdef ENABLE_JUKEBOX
 /* Jukebox music */
-static int jukebox_org = -1;
-static bool jukebox_static200vol = FALSE;
+static int jukebox_org = -1, jukebox_shuffle_map[MUSIC_MAX];
+static bool jukebox_static200vol = FALSE, jukebox_shuffle = FALSE;
 #endif
 
 
@@ -2667,12 +2667,19 @@ static void fadein_next_music(void) {
 
 	/* Ultra-hack: In jukebox and 'play all' */
 	if (jukebox_screen && jukebox_play_all) {
-		int j = music_cur;
+		int j, d = music_cur;
+		bool look_for_next = TRUE; //required for handling shuffle
 
 		/* After having played all subsongs, advance to the next music event, starting at song #0 again */
 		if (music_cur_song == songs[music_cur].num - 1) {
-			for (j = music_cur + 1; j < MUSIC_MAX; j++) {
-				if (!songs[j].config) continue;
+			for (j = 0; j < MUSIC_MAX; j++) {
+				d = jukebox_shuffle_map[j];
+				if (look_for_next) {
+					if (d != music_cur) continue; //skip all songs we've heard so far
+					look_for_next = FALSE;
+					continue;
+				}
+				if (!songs[d].config) continue;
 				break;
 			}
 			if (j == MUSIC_MAX) {
@@ -2686,12 +2693,12 @@ static void fadein_next_music(void) {
 				cfg_audio_music = FALSE;
 				set_mixing();
 
-				j = jukebox_org;
-			} else jukebox_playing = j;
+				d = jukebox_org;
+			} else jukebox_playing = d;
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 		}
 		/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
-		play_music_instantly(j);
+		play_music_instantly(d);
 		if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 		jukebox_update_songlength();
@@ -3900,6 +3907,17 @@ void do_cmd_options_sfx_sdl(void) {
 /* Display options page UI that allows to comment out music easily */
 #ifdef ENABLE_JUKEBOX
  #define MUSIC_SKIP 10 /* Jukebox backward/forward skip interval in seconds */
+/* Shuffle an array of integers using the Fisher-Yates algorithm. */
+void intshuffle(int *array, int size) {
+	int i, j, tmp;
+
+	for (i = size - 1; i > 0; i--) {
+		j = rand_int(i + 1);
+		tmp = array[i];
+		array[i] = array[j];
+		array[j] = tmp;
+	}
+}
 #endif
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
@@ -3979,18 +3997,18 @@ void do_cmd_options_mus_sdl(void) {
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu")) {
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
 				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
 		} else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
  #endif
 		{
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
 				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
 		}
 		Term_putstr(0, 2, -1, TERM_WHITE, " Key: [current song / max songs] - orange colour means 'initial' song (exists).");
 		Term_putstr(0, 3, -1, TERM_WHITE, " File:                                                                          ");
@@ -4510,6 +4528,10 @@ void do_cmd_options_mus_sdl(void) {
 
 		case 'a':
 		case 'A':
+		case 'u':
+		case 'U':
+			//(Note: j_sel and y will be set by the 'ch == -1' hack above, so we don't need to take care of those here)
+
 			/* Force-enable the mixer to play music */
 			if (!cfg_audio_master) {
 				cfg_audio_master = TRUE;
@@ -4518,36 +4540,43 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			cfg_audio_music = TRUE;
 
+			jukebox_shuffle = (ch == 'u' || ch == 'U');
+			/* Prepare shuffle map in any case, and just use it as non-shuffle (ie identity) map in case we don't want to shuffle.
+			   Easier than managing two different routines in each place (ie one for shuffling, one for linear). */
+			for (j = 0; j < MUSIC_MAX; j++) jukebox_shuffle_map[j] = j;
+			/* Actually do shuffle? */
+			if (jukebox_shuffle) intshuffle(jukebox_shuffle_map, MUSIC_MAX);
+
  #ifdef JUKEBOX_INSTANT_PLAY
 			for (j = 0; j < MUSIC_MAX; j++) {
-				if (!songs[j].config) continue;
+				d = jukebox_shuffle_map[j];
+				if (!songs[d].config) continue;
 				break;
 			}
 			if (j == MUSIC_MAX) break; //edge case: a music pack without a single event defined >_>
-			j_sel = y = 0;
 
-			jukebox_playing = j;
+			jukebox_playing = d;
 			jukebox_play_all = TRUE;
 			jukebox_play_all_prev = jukebox_play_all_prev_song = -1;
 
-			play_music_instantly(j);
+			play_music_instantly(d);
 			if (ch == 'A') {
 				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
 				jukebox_static200vol = TRUE;
 			} else jukebox_static200vol = FALSE;
  #else
 			for (j = 0; j < MUSIC_MAX; j++) {
-				if (!songs[j].config || songs[j].disabled) continue;
+				d = jukebox_shuffle_map[j];
+				if (!songs[d].config || songs[d].disabled) continue;
 				break;
 			}
 			if (j == MUSIC_MAX) break; //edge case: a music pack without a single event defined >_>
-			j_sel = y = 0;
 
-			jukebox_playing = j;
+			jukebox_playing = d;
 			jukebox_play_all = TRUE;
 			jukebox_play_all_prev = jukebox_play_all_prev_song = -1;
 
-			play_music(j);
+			play_music(d);
 			if (ch == 'A') Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
  #endif
 
@@ -4565,11 +4594,19 @@ void do_cmd_options_mus_sdl(void) {
 		case 'q': /* Skip current sub-song, possibly advancing to next music event if this was the last subsong of the current music event */
 			if (jukebox_playing == -1 || !jukebox_play_all) continue;
 
-			j = music_cur;
+			d = music_cur;
 			/* After having played all subsongs, advance to the next music event, starting at song #0 again */
 			if (music_cur_song == songs[music_cur].num - 1) {
-				for (j = music_cur + 1; j < MUSIC_MAX; j++) {
-					if (!songs[j].config) continue;
+				bool look_for_next = TRUE; //required for handling shuffle
+
+				for (j = 0; j < MUSIC_MAX; j++) {
+					d = jukebox_shuffle_map[j];
+					if (look_for_next) {
+						if (d != music_cur) continue; //skip all songs we've heard so far
+						look_for_next = FALSE;
+						continue;
+					}
+					if (!songs[d].config) continue;
 					break;
 				}
 				if (j == MUSIC_MAX) {
@@ -4581,12 +4618,12 @@ void do_cmd_options_mus_sdl(void) {
 					cfg_audio_music = FALSE;
 					set_mixing();
 
-					j = jukebox_org;
-				} else jukebox_playing = j;
+					d = jukebox_org;
+				} else jukebox_playing = d;
 				music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			}
 			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
-			play_music_instantly(j);
+			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
@@ -4596,10 +4633,18 @@ void do_cmd_options_mus_sdl(void) {
  #endif
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
-		case 'Q': /* Skip to next music event */
+		case 'Q': { /* Skip to next music event */
+			bool look_for_next = TRUE; //required for handling shuffle
+
 			if (jukebox_playing == -1 || !jukebox_play_all) continue;
-			for (j = music_cur + 1; j < MUSIC_MAX; j++) {
-				if (!songs[j].config) continue;
+			for (j = 0; j < MUSIC_MAX; j++) {
+				d = jukebox_shuffle_map[j];
+				if (look_for_next) {
+					if (d != music_cur) continue; //skip all songs we've heard so far
+					look_for_next = FALSE;
+					continue;
+				}
+				if (!songs[d].config) continue;
 				break;
 			}
 			if (j == MUSIC_MAX) {
@@ -4611,11 +4656,11 @@ void do_cmd_options_mus_sdl(void) {
 				cfg_audio_music = FALSE;
 				set_mixing();
 
-				j = jukebox_org;
-			} else jukebox_playing = j;
+				d = jukebox_org;
+			} else jukebox_playing = d;
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
-			play_music_instantly(j);
+			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
@@ -4625,6 +4670,7 @@ void do_cmd_options_mus_sdl(void) {
  #endif
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
+			}
  #endif
 #endif
 
