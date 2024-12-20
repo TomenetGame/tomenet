@@ -10585,13 +10585,114 @@ errr options_dump(cptr fname) {
 	return(0);
 }
 
+/* Check if an audio pack is password protected. pack_class is the string part identifying the pack-specific cfg file name, ie 'sound' or 'music'. */
+static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class) {
+	char out_val[1024];
+	bool passworded = FALSE;
+	FILE *fff;
+
+#ifdef WINDOWS
+	bool l7z = FALSE;
+
+	/* Find the first file in the archive, to save time: */
+	fff = fopen("__tomenethelper.bat", "w");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't write temporary file.");
+		return(FALSE);
+	}
+	fprintf(fff, format("@%s l \"%s\" > __tomenet.tmp\n", path_7z_quoted, pack_name));
+	fclose(fff);
+	_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
+	remove("__tomenethelper.bat");
+	fff = fopen("__tomenet.tmp", "r");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't scan file (3).");
+		return(FALSE);
+	}
+	out_val[0] = 0;
+	while (!feof(fff)) {
+		if (!fgets(out_val, 1024, fff)) break;
+		if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+		if (!l7z) {
+			if (prefix(out_val, "-------------------")) l7z = TRUE;
+			out_val[0] = 0;
+			continue;
+		}
+		if (out_val[20] == 'D') {
+			out_val[0] = 0;
+			continue;
+		}
+		/* Found the first real file (ie not a folder) */
+		break;
+	}
+	if (strlen(out_val) < 3) {
+		c_msg_print("\377RERROR: Archive contains no files.");
+		return(FALSE); /* Paranoia: No files in this archive! */
+	}
+
+	/* Test this first file for password protection: */
+	fff = fopen("__tomenethelper.bat", "w");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't write temporary file.");
+		return(FALSE);
+	}
+	fprintf(fff, format("@%s t -pBadPassword %s \"%s\" > __tomenet.tmp\n", path_7z_quoted, pack_name, out_val + 53));
+	fclose(fff);
+	_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
+	remove("__tomenethelper.bat");
+	fff = fopen("__tomenet.tmp", "r");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't scan file (4).");
+		return(FALSE);
+	}
+	out_val[0] = 0;
+	while (!feof(fff)) {
+		if (!fgets(out_val, 1024, fff)) break;
+		if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+		if (suffix(out_val, ": 1")) {
+			passworded = TRUE;
+			break;
+		}
+	}
+#else /* assume POSIX */
+	int r;
+
+	/* Find the first file in the archive, to save time: */
+	r = system(format("7z l \"%s\" | grep -m 1 \"\\.\\.\\.\\.A\" | grep -o \" %s.*\" | grep -o \"%s.*\" > __tomenet.tmp", pack_name, pack_class, pack_class));
+	fff = fopen("__tomenet.tmp", "r");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't scan file (3).");
+		return(FALSE);
+	}
+	out_val[0] = 0;
+	if (!feof(fff)) fgets(out_val, 1024, fff);
+	if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+	fclose(fff);
+	if (strlen(out_val) < 3) {
+		c_msg_print("\377RERROR: Archive contains no files.");
+		return(FALSE); /* Paranoia: No files in this archive! */
+	}
+
+	/* Test that first file for password protection: */
+	r = system(format("7z t -pBadPassword \"%s\" \"%s\" | grep -o -m 1 \": 1$\" > __tomenet.tmp", pack_name, out_val));
+	fff = fopen("__tomenet.tmp", "r");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't scan file (4).");
+		return(FALSE);
+	}
+	out_val[0] = 0;
+	if (!feof(fff)) fgets(out_val, 1024, fff);
+	fclose(fff);
+	passworded = strlen(out_val) >= 3;
+
+	(void)r;
+#endif
+
+	return(passworded);
+}
 
 /* Attempt to find sound+music pack 7z files in the client's root folder
-   and to install them properly. - C. Blue
-   Notes: Uses the GUI version of 7z, 7zG. Reason is that a password prompt
-          might be required. That's why non-X11 (ie command-line clients)
-          are currently not supported. */
-
+   and to install them properly. - C. Blue  */
 #ifdef WINDOWS
  #include <winreg.h>	/* remote control of installed 7-zip via registry approach */
  #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
@@ -10601,10 +10702,10 @@ errr options_dump(cptr fname) {
 
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
-	char path[1024], out_val[1024 + 28];
-	char c, ch, pack_name[1024];
+	char ins_path[1024] = { 0 }, out_val[1024 + 28], password[MAX_CHARS];
+	char c, ch, pack_name[1024], pack_top_folder[1024];
 	int r;
-	bool picked = FALSE;
+	bool picked, tarfile, l7z;
 
 #ifdef WINDOWS /* use windows registry to locate 7-zip */
 	HKEY hTestKey;
@@ -10615,9 +10716,9 @@ static void do_cmd_options_install_audio_packs(void) {
 	unsigned long path_7z_type = REG_SZ;
 #endif
 
-	bool sound_pack = FALSE, music_pack = FALSE;
+	bool maybe_sound_pack, maybe_music_pack, sound_pack = FALSE, music_pack = FALSE;
 	//bool sound_already = (audio_sfx > 3), music_already = (audio_music > 0);
-	bool password_ok = TRUE;
+	bool passworded, password_ok;
 
 	/* Clear screen */
 	Term_clear();
@@ -10684,13 +10785,18 @@ static void do_cmd_options_install_audio_packs(void) {
 	/* enclose full path in quotes, to handle possible spaces */
 	strcpy(path_7z_quoted, "\"");
 	strcat(path_7z_quoted, path_7z);
-	strcat(path_7z_quoted, "\\7zG.exe\"");
-	strcat(path_7z, "\\7zG.exe");
+	strcat(path_7z_quoted, "\\7z.exe\"");
+	strcat(path_7z, "\\7z.exe");
+
+	/* 7zG doesn' support 'l' command so we also need to base '7z.exe', and we boldly assume that it is just here in the same location as 7zG.exe ... */
+	/* Unfortunately, 7zG seems to be no longer supported, especially on POSIX.
+	   To avoid any problems, I unify all 7z processing to just use the basic 7z(.exe) binary instead,
+	   and test for password via hack. - C. Blue */
 
 	/* do the same tests once more as for posix clients */
- 	fff = fopen("tmp", "w");
- 	fprintf(fff, "mh");
- 	fclose(fff);
+	fff = fopen("tmp", "w");
+	fprintf(fff, "mh");
+	fclose(fff);
 
 	_spawnl(_P_WAIT, path_7z, path_7z_quoted, "a", "tmp.7z", "tmp", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	remove("tmp");
@@ -10707,47 +10813,25 @@ static void do_cmd_options_install_audio_packs(void) {
 		inkey();
 		return;
 	}
-	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver 7-Zip (7zG.exe) found.");
+	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver 7-Zip (7z.exe) found.");
 #else /* assume posix */
-	if (!strcmp(ANGBAND_SYS, "x11")) {
- #if 0	/* command-line 7z */
-		r = system("7z > tmp.7z");
- #else	/* GUI 7z (for password prompts) */
- 		fff = fopen("tmp", "w");
- 		fclose(fff);
-		r = system("7zG a tmp.7z tmp");
-		remove("tmp");
- #endif
-		if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
-			Term_putstr(0, 1, -1, TERM_RED, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
-			Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
-			inkey();
-			return;
-		} else if (fgetc(fff) == EOF) { /* normal */
-			Term_putstr(0, 1, -1, TERM_RED, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
-			fclose(fff);
-			Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
-			inkey();
-			return;
-		}
-		Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
-	} else { /* gcu */
-		/* assume posix; ncurses commandline */
-		r = system("7z > tmp.7z");
-		if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
-			Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
-			Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
-			inkey();
-			return;
-		} else if (fgetc(fff) == EOF) { /* normal */
-			Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
-			fclose(fff);
-			Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
-			inkey();
-			return;
-		}
-		Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7z) found.");
+	fff = fopen("tmp", "w");
+	fclose(fff);
+	r = system("7z a tmp.7z tmp");
+	remove("tmp");
+	if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+	} else if (fgetc(fff) == EOF) { /* normal */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
+		fclose(fff);
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
 	}
+	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7z) found.");
 #endif
 	Term_fresh();
 	fclose(fff);
@@ -10755,154 +10839,244 @@ static void do_cmd_options_install_audio_packs(void) {
 
 #ifdef WINDOWS
 	{ /* Use native Windows functions from dirent to query directory structure directly */
-		struct dirent *de;
-		DIR *dr;
+	struct dirent *de;
+	DIR *dr;
 
-		if (!(dr = opendir("."))) {
-			c_message_add("\377oError: Couldn't scan TomeNET folder.");
-			return;
-		}
-		while ((de = readdir(dr))) {
-			strcpy(pack_name, de->d_name);
-			if (!strncmp(pack_name, "TomeNET-soundpack", 17) || !strncmp(pack_name, "TomeNET-musicpack", 17)) {
-				if (!strncmp(pack_name, "TomeNET-soundpack", 17)) sound_pack = TRUE;
-				if (!strncmp(pack_name, "TomeNET-musicpack", 17)) music_pack = TRUE;
-
-				Term_putstr(0, 3, -1, TERM_ORANGE, format("Found file '%s'. Install this one? [Y/n]", pack_name));
-				while (TRUE) {
-					c = inkey();
-					if (c == 'n' || c == 'N') break;
-					if (c == 'y' || c == 'Y' || c == ' ' || c == '\r') break;
-				}
-				if (c == 'n' || c == 'N') continue;
-
-				if (!strncmp(pack_name, "TomeNET-soundpack", 17)) music_pack = FALSE;
-				if (!strncmp(pack_name, "TomeNET-musicpack", 17)) sound_pack = FALSE;
-				picked = TRUE;
-				break;
-			}
-		}
-		closedir(dr);
-	}
-#else /* assume POSIX */
-	r = system("ls TomeNET-soundpack*.7z TomeNET-musicpack*.7z > __tomenet.tmp");
-	fff = fopen("__tomenet.tmp", "r");
-	if (!fff) {
+	if (!(dr = opendir("."))) {
 		c_message_add("\377oError: Couldn't scan TomeNET folder.");
 		return;
 	}
-	while (!feof(fff)) {
-		if (!fgets(pack_name, 1024, fff)) break;
-		pack_name[strlen(pack_name) - 1] = 0; //'ls' command outputs trailing '/' on each line
-		if (!strncmp(pack_name, "TomeNET-soundpack", 17) || !strncmp(pack_name, "TomeNET-musicpack", 17)) {
-			if (!strncmp(pack_name, "TomeNET-soundpack", 17)) sound_pack = TRUE;
-			if (!strncmp(pack_name, "TomeNET-musicpack", 17)) music_pack = TRUE;
+	while ((de = readdir(dr))) {
+		strcpy(pack_name, de->d_name);
+
+		pack_top_folder[0] = 0;
+		passworded = FALSE;
+		/* Scan for official pack file names and for any 'music*.7z' and 'sound*.7z' file names for 3rd party packs */
+		maybe_sound_pack = !strncmp(pack_name, "TomeNET-soundpack", 17) || prefix_case(pack_name, "sound");
+		maybe_music_pack = !strncmp(pack_name, "TomeNET-musicpack", 17) || prefix_case(pack_name, "music");
+		if (maybe_sound_pack || maybe_music_pack) {
+			/* Scan contents for 'tar' file */
+			fff = fopen("__tomenethelper.bat", "w");
+			if (!fff) {
+				c_message_add("\377oError: Couldn't write temporary file.");
+				return;
+			}
+			fprintf(fff, format("@%s l \"%s\" > __tomenet.tmp\n", path_7z_quoted, pack_name));
+			fclose(fff);
+			_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
+			remove("__tomenethelper.bat");
+			fff = fopen("__tomenet.tmp", "r");
+			if (!fff) {
+				c_message_add("\377oError: Couldn't scan file (1).");
+				return;
+			}
+			l7z = FALSE;
+			tarfile = FALSE;
+			//format:   '------------------- -----'
+			//and then: '2023-08-04 01:12:26 D....            0            0  music' (D=directory)
+			while (!feof(fff)) {
+				if (!fgets(out_val, 1024, fff)) break;
+				if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+				/* Skip everything until file contents info begins */
+				if (!l7z) {
+					if (prefix(out_val, "-------------------")) l7z = TRUE;
+					continue;
+				}
+
+				/* Scan for '.tar' archive */
+				if (!tarfile && suffix_case(out_val, ".tar")) {
+					fclose(fff);
+					remove("__tomenet.tmp");
+					tarfile = TRUE;
+
+					/* Test for password protection */
+					passworded = test_for_password(path_7z_quoted, pack_name, maybe_sound_pack ? "sound" : "music");
+
+					/* Relist the archive, this time correctly as tar-archive */
+					l7z = FALSE;
+					fff = fopen("__tomenethelper.bat", "w");
+					if (!fff) {
+						c_message_add("\377oError: Couldn't write temporary file.");
+						return;
+					}
+					fprintf(fff, format("@%s x -so \"%s\" | %s l -si -ttar > __tomenet.tmp\n", path_7z_quoted, pack_name, path_7z_quoted));
+					fclose(fff);
+					_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
+					remove("__tomenethelper.bat");
+					fff = fopen("__tomenet.tmp", "r");
+					if (!fff) {
+						c_message_add("\377oError: Couldn't scan file (2).");
+						return;
+					}
+					continue;
+				}
+
+				/* Scan contents for 'music' or 'sound' folder at top level to identify any kind of compatible archive formats */
+				if (out_val[20] != 'D') continue;
+				if (prefix_case(out_val + 53, "music")) {
+					music_pack = TRUE;
+					strcpy(pack_top_folder, out_val + 53);
+					break;
+				}
+				if (prefix_case(out_val + 53, "sound")) {
+					sound_pack = TRUE;
+					strcpy(pack_top_folder, out_val + 53);
+					break;
+				}
+			}
+
+			//maybe todo, but not that feasible...
+			//c_message_add("\377oError: Invalid sound pack file. Has no top folder 'sound*'.");
+			//c_message_add("\377oError: Invalid music pack file. Has no top folder 'music*'.");
+			//c_message_add("\377oError: Invalid audio pack file. Has no top folder.");
 
 			Term_putstr(0, 3, -1, TERM_ORANGE, format("Found file '%s'. Install this one? [Y/n]", pack_name));
-			while (TRUE) {
+			picked = FALSE;
+			while (!picked) {
 				c = inkey();
-				if (c == 'n' || c == 'N') break;
-				if (c == 'y' || c == 'Y' || c == ' ' || c == '\r') break;
+				switch (c) {
+				case 'n': case 'N':
+					c = 0;
+					picked = TRUE;
+					break;
+				case 'y': case 'Y': case ' ': case '\r': case '\n':
+					picked = TRUE;
+					break;
+				}
 			}
-			if (c == 'n' || c == 'N') continue;
-
-			if (!strncmp(pack_name, "TomeNET-soundpack", 17)) music_pack = FALSE;
-			if (!strncmp(pack_name, "TomeNET-musicpack", 17)) sound_pack = FALSE;
-			picked = TRUE;
-			break;
+			if (c) break;
+			picked = FALSE;
 		}
+
 	}
-	fclose(fff);
+	closedir(dr);
+	}
+#else /* assume POSIX */
+	{
+	FILE *fff_ls;
+
+	r = system("ls . > __tomenet.tmp");
+	fff_ls = fopen("__tomenet.tmp", "r");
+	if (!fff_ls) {
+		c_message_add("\377oError: Couldn't scan TomeNET folder.");
+		return;
+	}
+	while (!feof(fff_ls)) {
+		if (!fgets(pack_name, 1024, fff_ls)) break;
+		if (pack_name[0]) pack_name[strlen(pack_name) - 1] = 0; //'ls' command outputs trailing '/' on each line
+
+		pack_top_folder[0] = 0;
+		passworded = FALSE;
+		/* Scan for official pack file names and for any 'music*.7z' and 'sound*.7z' file names for 3rd party packs */
+		maybe_sound_pack = !strncmp(pack_name, "TomeNET-soundpack", 17) || prefix_case(pack_name, "sound");
+		maybe_music_pack = !strncmp(pack_name, "TomeNET-musicpack", 17) || prefix_case(pack_name, "music");
+		if (maybe_sound_pack || maybe_music_pack) {
+			/* Scan contents for 'tar' file */
+			r = system(format("7z l \"%s\" > __tomenet.tmp", pack_name));
+			fff = fopen("__tomenet.tmp", "r");
+			if (!fff) {
+				c_message_add("\377oError: Couldn't scan file (1).");
+				return;
+			}
+			l7z = FALSE;
+			tarfile = FALSE;
+			//format:   '------------------- -----'
+			//and then: '2023-08-04 01:12:26 D....            0            0  music' (D=directory)
+			while (!feof(fff)) {
+				if (!fgets(out_val, 1024, fff)) break;
+				if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+				/* Skip everything until file contents info begins */
+				if (!l7z) {
+					if (prefix(out_val, "-------------------")) l7z = TRUE;
+					continue;
+				}
+
+				/* Scan for '.tar' archive */
+				if (!tarfile && suffix_case(out_val, ".tar")) {
+					fclose(fff);
+					remove("__tomenet.tmp");
+					tarfile = TRUE;
+
+					/* Test for password protection */
+					passworded = test_for_password(NULL, pack_name, maybe_sound_pack ? "sound" : "music");
+
+					/* Relist the archive, this time correctly as tar-archive */
+					l7z = FALSE;
+					r = system(format("7z x -so \"%s\" | 7z l -si -ttar > __tomenet.tmp", pack_name));
+					fff = fopen("__tomenet.tmp", "r");
+					if (!fff) {
+						c_message_add("\377oError: Couldn't scan file (2).");
+						return;
+					}
+					continue;
+				}
+
+				/* Scan contents for 'music' or 'sound' folder at top level to identify any kind of compatible archive formats */
+				if (out_val[20] != 'D') continue;
+				if (prefix_case(out_val + 53, "music")) {
+					music_pack = TRUE;
+					strcpy(pack_top_folder, out_val + 53);
+					break;
+				}
+				if (prefix_case(out_val + 53, "sound")) {
+					sound_pack = TRUE;
+					strcpy(pack_top_folder, out_val + 53);
+					break;
+				}
+			}
+
+			//maybe todo, but not that feasible...
+			//c_message_add("\377oError: Invalid sound pack file. Has no top folder 'sound*'.");
+			//c_message_add("\377oError: Invalid music pack file. Has no top folder 'music*'.");
+			//c_message_add("\377oError: Invalid audio pack file. Has no top folder.");
+
+			Term_putstr(0, 3, -1, TERM_ORANGE, format("Found file '%s'. Install this one? [Y/n]", pack_name));
+			picked = FALSE;
+			while (!picked) {
+				c = inkey();
+				switch (c) {
+				case 'n': case 'N':
+					c = 0;
+					picked = TRUE;
+					break;
+				case 'y': case 'Y': case ' ': case '\r': case '\n':
+					picked = TRUE;
+					break;
+				}
+			}
+			if (c) break;
+			picked = FALSE;
+		}
+
+	}
+	fclose(fff_ls);
 	remove("__tomenet.tmp");
+	}
 #endif
 
 	if (!sound_pack && !music_pack) {
-		Term_putstr(0, 3, -1, TERM_ORANGE, "Neither files 'TomeNET-soundpack*.7z' nor 'TomeNET-musicpack*.7z' were");
-		Term_putstr(0, 4, -1, TERM_ORANGE, "found in your TomeNET folder. Aborting audio pack installation.       ");
-		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...                             ");
+		Term_putstr(0, 3, -1, TERM_ORANGE, "  Neither files '\377yTomeNET-soundpack*.7z\377o' nor '\377yTomeNET-musicpack*.7z\377o'   ");
+		Term_putstr(0, 4, -1, TERM_ORANGE, "  nor alternative 3rd party archive files '\377ysound*\377o' or '\377ymusic*\377o' were   ");
+		Term_putstr(0, 5, -1, TERM_ORANGE, "  found in your TomeNET folder. Aborting audio pack installation.     ");
+		Term_putstr(0, 9, -1, TERM_WHITE,  "  Press any key to return to options menu...                          ");
 		inkey();
 		return;
 	}
 	if (!picked) {
-		Term_putstr(0, 3, -1, TERM_ORANGE, "You skipped all available audio packs, hence none were installed.     ");
-		Term_putstr(0, 4, -1, TERM_ORANGE, "Aborting audio pack installation.                                     ");
-		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...                             ");
+		Term_putstr(0, 3, -1, TERM_ORANGE, "  You skipped all available audio packs, hence none were installed.   ");
+		Term_putstr(0, 4, -1, TERM_ORANGE, "  Aborting audio pack installation.                                   ");
+		Term_putstr(0, 9, -1, TERM_WHITE,  "  Press any key to return to options menu...                          ");
 		inkey();
 		return;
 	}
 
 	/* Check what folder name the pack wants to extract to, whether that folder already exists, and allow to cancel the process. */
-#ifdef WINDOWS
-	/* uhoh: 7zG actually does NOT support 'l' command, lol. Need to trust that we can run 7z in the same folder for that, I guess */
-	strcpy(out_val, path_7z);
-	out_val[strlen(out_val) - 5] = 0;
-	strcat(out_val, ".exe"); //'''>_> {cough}
- #if 0
-	_spawnl(_P_WAIT, out_val, format("\"%s\"", out_val), "l", pack_name, ">", "__tomenet.tmp", NULL);
- #else
-	fff = fopen("__tomenethelper.bat", "w");
-	if (!fff) {
-		c_message_add("\377oError: Couldn't write temporary file.");
-		return;
-	}
-	fprintf(fff, format("@\"%s\" l %s > __tomenet.tmp\n", out_val, pack_name));
-	fclose(fff);
-	_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
-	remove("__tomenethelper.bat");
- #endif
-#else /* assume POSIX */
-	if (!strcmp(ANGBAND_SYS, "x11")) {
-		r = system(format("7z l %s > __tomenet.tmp", pack_name));
-	} else { /* gcu */
-		r = system(format("7z l %s > __tomenet.tmp", pack_name));
-	}
-#endif
-	fff = fopen("__tomenet.tmp", "r");
-	if (!fff) {
-		c_message_add("\377oError: Couldn't scan 7z file.");
-		return;
-	}
-	while (!feof(fff)) {
-		if (!fgets(out_val, 1024, fff)) break;
-		/* Scan for folder names */
-		if (!strstr(out_val, "D....")) continue;
-		if (sound_pack) {
-			/* The first folder must start on 'sound' */
-			if (!strstr(out_val, " sound") || strchr(out_val, '/')) {
-				c_message_add("\377oError: Invalid sound pack file. Has no top folder 'sound*'.");
-				fclose(fff);
-				remove("__tomenet.tmp");
-				return;
-			}
-			picked = FALSE;//abuse
-			strcpy(path, strstr(out_val, "sound"));
-		}
-		if (music_pack) {
-			/* The first folder must start on 'music' */
-			if (!strstr(out_val, " music") || strchr(out_val, '/')) {
-				c_message_add("\377oError: Invalid music pack file. Has no top folder 'music*'.");
-				fclose(fff);
-				remove("__tomenet.tmp");
-				return;
-			}
-			picked = FALSE;//abuse
-			strcpy(path, strstr(out_val, "music"));
-		}
-		if (!picked) break;
-	}
-	fclose(fff);
-	remove("__tomenet.tmp");
-	if (picked) {
-		c_message_add("\377oError: Invalid audio pack file. Has no top folder.");
-		return;
-	}
+	strcpy(ins_path, pack_top_folder);
 	Term_putstr(0, 3, -1, TERM_YELLOW, "That pack wants to install to this target folder. Is that ok? (y/n):");
 #ifdef WINDOWS
-	path[strlen(path) - 1] = 0; //trailing newline
-	Term_putstr(0, 4, -1, TERM_YELLOW, format(" '%s\\%s'", ANGBAND_DIR_XTRA, path));
+	Term_putstr(0, 4, -1, TERM_YELLOW, format(" '%s\\%s'", ANGBAND_DIR_XTRA, ins_path));
 #else
-	path[strlen(path) - 1] = 0; //trailing newline
-	Term_putstr(0, 4, -1, TERM_YELLOW, format(" '%s/%s'", ANGBAND_DIR_XTRA, path));
+	Term_putstr(0, 4, -1, TERM_YELLOW, format(" '%s/%s'", ANGBAND_DIR_XTRA, ins_path));
 #endif
 	while (TRUE) {
 		c = inkey();
@@ -10912,6 +11086,20 @@ static void do_cmd_options_install_audio_packs(void) {
 		}
 		if (c == 'y' || c == 'Y') break;
 	}
+
+	/* Test for password protection, if not already done when we were looking into a tar archive */
+	if (!tarfile) passworded = test_for_password(NULL, pack_name, maybe_sound_pack ? "sound" : "music");
+	/* If passworded, ask user for the password: */
+	if (passworded) {
+		Term_putstr(0, 5, -1, TERM_ORANGE, "File is password-protected. Enter the password: ");
+		Term_gotoxy(48, 5);
+		if (!askfor_aux(password, MAX_CHARS - 1, 0) || !password[0]) {
+			c_msg_print("\377yNo password entered, installation cancelled.");
+			return;
+		}
+	}
+
+//return;//rework in progress
 
 #ifdef SOUND_SDL
 	/* Windows OS: Need to close all related files so they can actually be overwritten, esp. the .cfg files */
@@ -10924,17 +11112,30 @@ static void do_cmd_options_install_audio_packs(void) {
 		Term_putstr(0, 4, -1, TERM_WHITE, "                                                                            ");
 		Term_fresh();
 		Term_flush();
+
 #if defined(WINDOWS)
-		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), pack_name, NULL);
+		if (passworded) /* Note: We assume that the password does NOT contain '"' -_- */
+			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-p\"%s\"", password), format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
+		else
+			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
 #else /* assume posix */
-		if (!strcmp(ANGBAND_SYS, "x11")) {
-			r = system(format("7zG x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
-		} else { /* gcu */
-			r = system(format("7z x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
-		}
+		if (passworded) /* Note: We assume that the password does NOT contain '"' -_- */
+			r = system(format("7z -p\"%s\" x -o%s \"%s\"", password, ANGBAND_DIR_XTRA, pack_name));
+		else
+			r = system(format("7z x -o%s \"%s\"", ANGBAND_DIR_XTRA, pack_name));
 #endif
-		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed. You can select it via '\377gX\377G' in the '=' menu.   ");
-		Term_putstr(0, 4, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
+		/* actually check for successful password, by checking whether at least sound.cfg was extracted */
+		password_ok = TRUE;
+		if (!(fff = fopen(format("%s/%s/sound.cfg", ANGBAND_DIR_XTRA, pack_top_folder), "r"))) password_ok = FALSE;
+		else if (fgetc(fff) == EOF) { //paranoia
+			password_ok = FALSE;
+			fclose(fff);
+		} else fclose(fff);
+
+		if (password_ok) {
+			Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed. You can select it via '\377gX\377G' in the '=' menu.   ");
+			Term_putstr(0, 4, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
+		} Term_putstr(0, 6, -1, TERM_L_RED, "You entered a wrong password. Sound pack could not be installed.");
 	}
 
 	/* install music pack */
@@ -10944,36 +11145,28 @@ static void do_cmd_options_install_audio_packs(void) {
 		Term_fresh();
 		Term_flush();
 #if defined(WINDOWS)
-		//todo: custom foldernames-- remove("music/music.cfg"); //just for password_ok check below
-
-		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), pack_name, NULL);
-
-		/*todo: custom foldernames password check--
-		* actually check for successful password, by checking whether at least music.cfg was extracted *
-		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
+		if (passworded) /* Note: We assume that the password does NOT contain '"' -_- */
+			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-p\"%s\"", password), format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
+		else
+			_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), format("\"%s\"", pack_name), NULL);
+#else /* assume posix */
+		if (passworded) /* Note: We assume that the password does NOT contain '"' -_- */
+			r = system(format("7z -p\"%s\" x -o%s \"%s\"", password, ANGBAND_DIR_XTRA, pack_name));
+		else
+			r = system(format("7z x -o%s \"%s\"", ANGBAND_DIR_XTRA, pack_name));
+#endif
+		/* actually check for successful password, by checking whether at least music.cfg was extracted */
+		password_ok = TRUE;
+		if (!(fff = fopen(format("%s/%s/music.cfg", ANGBAND_DIR_XTRA, pack_top_folder), "r"))) password_ok = FALSE;
 		else if (fgetc(fff) == EOF) { //paranoia
 			password_ok = FALSE;
 			fclose(fff);
 		} else fclose(fff);
-		*/
-#else /* assume posix */
-		if (!strcmp(ANGBAND_SYS, "x11")) {
-			//todo: custom foldernames-- remove("music/music.cfg"); //just for password_ok check below
-			r = system(format("7zG x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
-			/*todo: custom foldernames password check... (see above) */
-		} else { /* gcu */
-			//todo: custom foldernames-- remove("music/music.cfg"); //just for password_ok check below
-			r = system(format("7z x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
-			/*todo: custom foldernames password check... (see above) */
-		}
-#endif
 
 		if (password_ok) {
 			Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed. You can select it via '\377gX\377G' in the '=' menu.   ");
 			Term_putstr(0, 7, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
-		} else {
-			Term_putstr(0, 6, -1, TERM_L_RED, "You entered a wrong password. Music pack could not be installed.");
-		}
+		} else Term_putstr(0, 6, -1, TERM_L_RED, "You entered a wrong password. Music pack could not be installed.");
 	}
 
 	//slay compiler warning;

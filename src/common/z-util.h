@@ -67,6 +67,8 @@ extern bool func_false(void);
 #define streq(s, t) (!strcmp((s), (t)))
 extern bool prefix(cptr s, cptr t);
 extern bool suffix(cptr s, cptr t);
+extern bool prefix_case(cptr s, cptr t);
+extern bool suffix_case(cptr s, cptr t);
 
 #ifdef ultrix
 extern char *strdup(cptr s);

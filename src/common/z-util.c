@@ -147,6 +147,16 @@ bool suffix(cptr s, cptr t) {
 	/* Compare "t" to the end of "s" */
 	return (!strcmp(s + slen - tlen, t));
 }
+bool suffix_case(cptr s, cptr t) {
+	int tlen = strlen(t);
+	int slen = strlen(s);
+
+	/* Check for incompatible lengths */
+	if (tlen > slen) return (FALSE);
+
+	/* Compare "t" to the end of "s" */
+	return (!strcasecmp(s + slen - tlen, t));
+}
 
 
 /*
@@ -157,6 +167,16 @@ bool prefix(cptr s, cptr t) {
 	while (*t) {
 		/* Compare content and length */
 		if (*t++ != *s++) return (FALSE);
+	}
+
+	/* Matched, we have a prefix */
+	return (TRUE);
+}
+bool prefix_case(cptr s, cptr t) {
+	/* Scan "t" */
+	while (*t) {
+		/* Compare content and length */
+		if (tolower(*t++) != tolower(*s++)) return (FALSE);
 	}
 
 	/* Matched, we have a prefix */
