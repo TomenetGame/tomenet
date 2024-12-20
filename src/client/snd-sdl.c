@@ -4763,8 +4763,11 @@ void do_cmd_options_mus_sdl(void) {
 		case '4':
 			Mix_RewindMusic();
 			curmus_timepos -= MUSIC_SKIP; /* Skip backward n seconds. */
-			if (curmus_timepos < 0) curmus_timepos = 0;
-			else Mix_SetMusicPosition(curmus_timepos);
+			if (curmus_timepos < 0) {
+				curmus_timepos = curmus_song_dur + curmus_timepos;
+				if (curmus_timepos < 0) curmus_timepos = 0;
+			}
+			Mix_SetMusicPosition(curmus_timepos);
 			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //paranoia, sync
 			break;
 
@@ -4772,6 +4775,10 @@ void do_cmd_options_mus_sdl(void) {
 		case '6':
 			Mix_RewindMusic();
 			curmus_timepos += MUSIC_SKIP; /* Skip forward n seconds. */
+			if (curmus_song_dur && curmus_timepos > curmus_song_dur) {
+				curmus_timepos = curmus_timepos - curmus_song_dur;
+				if (curmus_timepos > curmus_song_dur) curmus_timepos = 0;
+			}
 			Mix_SetMusicPosition(curmus_timepos);
 			/* Overflow beyond actual song length? SDL2_mixer will then restart from 0, so adjust tracking accordingly */
 			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
