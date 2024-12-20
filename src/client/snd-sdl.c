@@ -437,7 +437,7 @@ static s32b channel_player_id[MAX_CHANNELS];
 #ifdef ENABLE_JUKEBOX
 /* Jukebox music */
 static int curmus_timepos = -1, curmus_x, curmus_y = -1, curmus_attr, curmus_song_dur = 0;
-static int jukebox_org = -1, jukebox_shuffle_map[MUSIC_MAX];
+static int jukebox_org = -1, jukebox_shuffle_map[MUSIC_MAX], jukebox_paused = FALSE;
 static bool jukebox_sfx_screen = FALSE, jukebox_static200vol = FALSE, jukebox_shuffle = FALSE;
 #endif
 
@@ -3996,22 +3996,14 @@ void do_cmd_options_mus_sdl(void) {
 		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w, \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yESC \377wleave+autosave");
  #endif
  #ifdef ENABLE_SHIFT_SPECIALKEYS
-		if (strcmp(ANGBAND_SYS, "gcu")) {
-			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
-				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
-			} else
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds                    ", MUSIC_SKIP));
-		} else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
+		if (strcmp(ANGBAND_SYS, "gcu"))
+			Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+]RETURN\377w/\377ya\377w/\377yu\377w [200%% vol] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yP\377w %s",
+			    MUSIC_SKIP, jukebox_paused ? (jukebox_play_all ? "\3777resume" : "\3774resume") : "pause "));
+		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
  #endif
-		{
-			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
-				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
-			} else
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds                    ", MUSIC_SKIP));
-		}
-		Term_putstr(0, 2, -1, TERM_WHITE, " Key: [current song / max songs] - orange colour means 'initial' song (exists).");
+			Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yP\377w pause", MUSIC_SKIP));
+		Term_putstr(0, 2, -1, TERM_WHITE, " Key: [current/max song] - orange colour indicates 'initial' song.              ");
+		if (jukebox_play_all) Term_putstr(67, 2, -1, TERM_WHITE, "\377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip");
 		Term_putstr(0, 3, -1, TERM_WHITE, " File:                                                                          ");
 
 		if (music_cur != -1 && songs[music_cur].config) {
@@ -4148,6 +4140,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_static200vol = FALSE;
 			jukebox_playing = -1;
 			jukebox_play_all = FALSE;
+			jukebox_paused = FALSE;
  #ifdef JUKEBOX_INSTANT_PLAY
 			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
 			   so no need for us to check here for songs[].disabled explicitely for that particular case.
@@ -4461,6 +4454,7 @@ void do_cmd_options_mus_sdl(void) {
 				if (music_cur == j_sel) {
 					music_cur = -1; //allow restarting it
 					jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
+					jukebox_paused = FALSE;
 					play_music(j_sel);
 					jukebox_screen = TRUE;
 				}
@@ -4472,6 +4466,7 @@ void do_cmd_options_mus_sdl(void) {
 			if (music_cur == j_sel) {
 				music_cur = -1; //allow restarting it
 				jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
+				jukebox_paused = FALSE;
 				play_music(j_sel);
 				jukebox_screen = TRUE;
 			}
@@ -4499,6 +4494,7 @@ void do_cmd_options_mus_sdl(void) {
 			songs[j_sel].disabled = FALSE;
 
 			jukebox_playing = j_sel;
+			jukebox_paused = FALSE;
 			play_music_instantly(j_sel);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
 			if (inkey_shift_special == 0x1) {
@@ -4513,6 +4509,7 @@ void do_cmd_options_mus_sdl(void) {
 			if (songs[j_sel].disabled) break;
 
 			jukebox_playing = j_sel;
+			jukebox_paused = FALSE;
 			play_music(j_sel);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
 			if (inkey_shift_special == 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
@@ -4560,6 +4557,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_play_all = TRUE;
 			jukebox_play_all_prev = jukebox_play_all_prev_song = -1;
 
+			jukebox_paused = FALSE;
 			play_music_instantly(d);
 			if (ch == 'A') {
 				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
@@ -4577,6 +4575,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_play_all = TRUE;
 			jukebox_play_all_prev = jukebox_play_all_prev_song = -1;
 
+			jukebox_paused = FALSE;
 			play_music(d);
 			if (ch == 'A') Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
  #endif
@@ -4592,7 +4591,6 @@ void do_cmd_options_mus_sdl(void) {
 
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
-
 		case 'w': /* Skip current sub-song, possibly advancing to next music event if this was the last subsong of the current music event */
 			if (jukebox_playing == -1 || !jukebox_play_all) continue;
 
@@ -4627,6 +4625,7 @@ void do_cmd_options_mus_sdl(void) {
 				music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			}
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+			jukebox_paused = FALSE;
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
@@ -4666,6 +4665,7 @@ void do_cmd_options_mus_sdl(void) {
 			} else jukebox_playing = d;
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+			jukebox_paused = FALSE;
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
@@ -4720,6 +4720,7 @@ void do_cmd_options_mus_sdl(void) {
 				else music_cur_song = music_cur_song - 2;
 			}
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+			jukebox_paused = FALSE;
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
@@ -4764,6 +4765,7 @@ void do_cmd_options_mus_sdl(void) {
 				if (music_cur_song == -1) music_cur = -1; //music_cur_song = 0;
 			}
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+			jukebox_paused = FALSE;
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
@@ -4775,8 +4777,13 @@ void do_cmd_options_mus_sdl(void) {
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
 			}
-
  #endif
+
+		case 'P':
+			if (!jukebox_paused) Mix_PauseMusic();
+			else Mix_ResumeMusic();
+			jukebox_paused = !jukebox_paused;
+			break;
 #endif
 
 		case '#':
