@@ -3987,29 +3987,29 @@ void do_cmd_options_mus_sdl(void) {
 
 	/* -- Interact -- */
 	/* Maybe add missing navigational keys to the key list, but it's spammy and these are always the usual ones...:
-		9, p, pgup; 3, SPACE, pgdn; 1, G, end; 7, g, pos1; 8, bksp, up; 2, down */
+		9, pgup; 3, pgdn; 1, end; 7, pos1; 8, bksp, up; 2, down */
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w vol., \377yESC \377wleave+autosave");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w, \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yv\377w/\377y+\377w/\377y-\377w vol., \377yESC \377wleave+autosave");
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yESC \377wleave+autosave");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w, \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yESC \377wleave+autosave");
  #endif
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu")) {
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT]RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
-				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
+				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT]RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds                    ", MUSIC_SKIP));
 		} else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
  #endif
 		{
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
-				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
+				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds                    ", MUSIC_SKIP));
 		}
 		Term_putstr(0, 2, -1, TERM_WHITE, " Key: [current song / max songs] - orange colour means 'initial' song (exists).");
 		Term_putstr(0, 3, -1, TERM_WHITE, " File:                                                                          ");
@@ -4026,9 +4026,9 @@ void do_cmd_options_mus_sdl(void) {
 		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, " <\377ydir\377w/\377y#\377w>, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yv\377w/\377y+\377w/\377y-\377w volume, \377yESC\377w save");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w volume, \377yESC\377w save");
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, " <\377ydir\377w/\377y#\377w>, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yESC\377w leave+autosave");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yESC\377w leave+autosave");
  #endif
 #endif
 
