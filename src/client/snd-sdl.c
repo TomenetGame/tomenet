@@ -3998,15 +3998,15 @@ void do_cmd_options_mus_sdl(void) {
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu")) {
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT]RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
 				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w play [at 200%%] / play all, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT+] RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377y[SHIFT]RETURN\377w/\377ya\377w/\377yu\377w [200%%] play/all/shuffle, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
 		} else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
  #endif
 		{
 			if (jukebox_play_all) {
-				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B skip", MUSIC_SKIP));
+				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip", MUSIC_SKIP));
 				//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w play / play all / play all at 200%%, \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds, \377yq\377w skip 1", MUSIC_SKIP));
 			} else
 				Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw./ff %ds                    ", MUSIC_SKIP));
@@ -4592,7 +4592,8 @@ void do_cmd_options_mus_sdl(void) {
 
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
-		case 'q': /* Skip current sub-song, possibly advancing to next music event if this was the last subsong of the current music event */
+
+		case 'w': /* Skip current sub-song, possibly advancing to next music event if this was the last subsong of the current music event */
 			if (jukebox_playing == -1 || !jukebox_play_all) continue;
 
 			d = music_cur;
@@ -4623,18 +4624,18 @@ void do_cmd_options_mus_sdl(void) {
 				} else jukebox_playing = d;
 				music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			}
-			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
+			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
- #if 0 /* paranoia/not needed */
+  #if 0 /* paranoia/not needed */
 			/* Reset position */
 			Mix_SetMusicPosition(0);
- #endif
+  #endif
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
-		case 'Q': { /* Skip to next music event */
+		case 'W': { /* Skip to next music event */
 			bool look_for_next = TRUE; //required for handling shuffle
 
 			if (jukebox_playing == -1 || !jukebox_play_all) continue;
@@ -4660,18 +4661,113 @@ void do_cmd_options_mus_sdl(void) {
 				d = jukebox_org;
 			} else jukebox_playing = d;
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
-			/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
+			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
- #if 0 /* paranoia/not needed */
+  #if 0 /* paranoia/not needed */
 			/* Reset position */
 			Mix_SetMusicPosition(0);
- #endif
+  #endif
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
 			}
+
+		case 'q': /* Skip to previous sub-song, possibly regressing to previous music event if this was the first subsong of the current music event */
+			if (jukebox_playing == -1 || !jukebox_play_all) continue;
+
+			d = music_cur;
+			/* After having played all subsongs, advance to the next music event, starting at song #0 again */
+			if (music_cur_song == 0) {
+				bool look_for_next = TRUE; //required for handling shuffle
+
+				for (j = MUSIC_MAX - 1; j >= 0; j--) {
+					d = jukebox_shuffle_map[j];
+					if (look_for_next) {
+						if (d != music_cur) continue; //skip all songs we've heard so far
+						look_for_next = FALSE;
+						continue;
+					}
+					if (!songs[d].config) continue;
+					break;
+				}
+				if (j == -1) {
+					jukebox_playing = -1;
+					jukebox_static200vol = FALSE;
+					jukebox_play_all = FALSE;
+
+					//pseudo-turn off music to indicate that our play-all 'playlist' has finished
+					cfg_audio_music = FALSE;
+					set_mixing();
+
+					d = jukebox_org;
+				} else jukebox_playing = d;
+				music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
+				if (jukebox_playing != -1 && songs[d].num) {
+					music_cur = d;
+					music_cur_song = songs[d].num - 2;
+					if (music_cur_song == -1) music_cur = -1; //music_cur_song = 0;
+				}
+			} else {
+				if (music_cur_song == 1) music_cur = -1; //music_cur_song = 0;
+				else music_cur_song = music_cur_song - 2;
+			}
+			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+			play_music_instantly(d);
+			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
+
+			jukebox_update_songlength();
+  #if 0 /* paranoia/not needed */
+			/* Reset position */
+			Mix_SetMusicPosition(0);
+  #endif
+			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
+			break;
+		case 'Q': { /* Skip to previous music event */
+			bool look_for_next = TRUE; //required for handling shuffle
+
+			if (jukebox_playing == -1 || !jukebox_play_all) continue;
+			for (j = MUSIC_MAX - 1; j >= 0; j--) {
+				d = jukebox_shuffle_map[j];
+				if (look_for_next) {
+					if (d != music_cur) continue; //skip all songs we've heard so far
+					look_for_next = FALSE;
+					continue;
+				}
+				if (!songs[d].config) continue;
+				break;
+			}
+			if (j == -1) {
+				jukebox_playing = -1;
+				jukebox_static200vol = FALSE;
+				jukebox_play_all = FALSE;
+
+				//pseudo-turn off music to indicate that our play-all 'playlist' has finished
+				cfg_audio_music = FALSE;
+				set_mixing();
+
+				d = jukebox_org;
+			} else jukebox_playing = d;
+			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
+			if (jukebox_playing != -1 && songs[d].num) {
+				music_cur = d;
+				music_cur_song = songs[d].num - 2;
+				if (music_cur_song == -1) music_cur = -1; //music_cur_song = 0;
+			}
+			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+			play_music_instantly(d);
+			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
+
+			jukebox_update_songlength();
+  #if 0 /* paranoia/not needed */
+			/* Reset position */
+			Mix_SetMusicPosition(0);
+  #endif
+			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
+			break;
+			}
+
  #endif
 #endif
 
