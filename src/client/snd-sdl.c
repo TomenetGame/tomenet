@@ -4612,6 +4612,8 @@ void do_cmd_options_mus_sdl(void) {
 					break;
 				}
 				if (j == MUSIC_MAX) {
+					continue; //hm, instead of ending auto-play, just ignore the key.
+
 					jukebox_playing = -1;
 					jukebox_static200vol = FALSE;
 					jukebox_play_all = FALSE;
@@ -4650,6 +4652,8 @@ void do_cmd_options_mus_sdl(void) {
 				break;
 			}
 			if (j == MUSIC_MAX) {
+				continue; //hm, instead of ending auto-play, just ignore the key.
+
 				jukebox_playing = -1;
 				jukebox_static200vol = FALSE;
 				jukebox_play_all = FALSE;
@@ -4693,6 +4697,8 @@ void do_cmd_options_mus_sdl(void) {
 					break;
 				}
 				if (j == -1) {
+					continue; //hm, instead of ending auto-play, just ignore the key.
+
 					jukebox_playing = -1;
 					jukebox_static200vol = FALSE;
 					jukebox_play_all = FALSE;
@@ -4739,6 +4745,8 @@ void do_cmd_options_mus_sdl(void) {
 				break;
 			}
 			if (j == -1) {
+				continue; //hm, instead of ending auto-play, just ignore the key.
+
 				jukebox_playing = -1;
 				jukebox_static200vol = FALSE;
 				jukebox_play_all = FALSE;
