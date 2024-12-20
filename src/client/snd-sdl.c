@@ -436,8 +436,9 @@ static s32b channel_player_id[MAX_CHANNELS];
 
 #ifdef ENABLE_JUKEBOX
 /* Jukebox music */
+static int curmus_timepos = -1, curmus_x, curmus_y = -1, curmus_attr, curmus_song_dur = 0;
 static int jukebox_org = -1, jukebox_shuffle_map[MUSIC_MAX];
-static bool jukebox_static200vol = FALSE, jukebox_shuffle = FALSE;
+static bool jukebox_sfx_screen = FALSE, jukebox_static200vol = FALSE, jukebox_shuffle = FALSE;
 #endif
 
 

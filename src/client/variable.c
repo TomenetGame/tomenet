@@ -745,10 +745,8 @@ char screenshot_filename[1024] = { 0 };
 byte screenshot_height = 0;
 char whats_under_your_feet[ONAME_LEN];
 
-//#ifdef ENABLE_JUKEBOX
-int curmus_timepos = -1, oldticks = -1, curmus_x, curmus_y = -1, curmus_attr, curmus_song_dur = 0;
-bool jukebox_screen = FALSE, jukebox_sfx_screen = FALSE;
-//#endif
+int oldticks = -1; //SOUND_SDL
+bool jukebox_screen = FALSE;//ENABLE_JUKEBOX
 int oldticksds = -1;
 
 bool map_town = FALSE;

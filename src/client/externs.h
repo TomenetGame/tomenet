@@ -1297,10 +1297,8 @@ extern bool insanity_death;
 extern char screenshot_filename[1024];
 extern byte screenshot_height;
 
-//#ifdef ENABLE_JUKEBOX
-extern int curmus_timepos, oldticks, curmus_x, curmus_y, curmus_attr, curmus_song_dur;
-extern bool jukebox_screen, jukebox_sfx_screen;
-//#endif
+extern int oldticks; //SOUND_SDL
+extern bool jukebox_screen; //ENABLE_JUKEBOX
 extern int oldticksds;
 
 extern bool map_town;
