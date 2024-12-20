@@ -4140,7 +4140,6 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_static200vol = FALSE;
 			jukebox_playing = -1;
 			jukebox_play_all = FALSE;
-			jukebox_paused = FALSE;
  #ifdef JUKEBOX_INSTANT_PLAY
 			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
 			   so no need for us to check here for songs[].disabled explicitely for that particular case.
@@ -4155,6 +4154,10 @@ void do_cmd_options_mus_sdl(void) {
 			else if (jukebox_org != music_cur)
 				play_music(jukebox_org);
  #endif
+			/* Handle paused music if it was the currently playing game music */
+			else if (jukebox_paused) Mix_ResumeMusic();
+			jukebox_paused = FALSE;
+
 			/* If a song was "playing silently" ie just disabled, restore its (silenced) playing state. Because the -2 call above would just set music_cur to -1. */
 			music_cur = jukebox_org;
 
