@@ -10585,6 +10585,15 @@ errr options_dump(cptr fname) {
 	return(0);
 }
 
+/* For installing audio packs via = I menu: */
+
+#ifdef WINDOWS
+ #include <winreg.h>	/* remote control of installed 7-zip via registry approach */
+ #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
+ #define MAX_KEY_LENGTH 255
+ #define MAX_VALUE_NAME 16383
+#endif
+
 /* Check if an audio pack is password protected. pack_class is the string part identifying the pack-specific cfg file name, ie 'sound' or 'music'. */
 static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class) {
 	char out_val[1024];
@@ -10693,13 +10702,6 @@ static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_cla
 
 /* Attempt to find sound+music pack 7z files in the client's root folder
    and to install them properly. - C. Blue  */
-#ifdef WINDOWS
- #include <winreg.h>	/* remote control of installed 7-zip via registry approach */
- #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
- #define MAX_KEY_LENGTH 255
- #define MAX_VALUE_NAME 16383
-#endif
-
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
 	char ins_path[1024] = { 0 }, out_val[1024 + 28], password[MAX_CHARS];
