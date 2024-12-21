@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 13. December 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 21. December 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4473,9 +4473,12 @@ Step 1:
 
 Step 2:
  Download the files 'TomeNET-soundpack.7z' and/or 'TomeNET-musicpack.7z' and
- put them into your TomeNET folder. The automatic installation only recognizes
- these two file names. If you download audio packs that are named differently,
- simply rename them before attempting to auto-install them.
+ put them into your TomeNET folder.
+ Custom packs are also recognized as long as they follow this naming scheme:
+ File names must start on "music" or on "sound" for music or sound packs.
+ The automatic installation only recognizes these four file name types.
+ If you download audio packs that are named differently, you can however simply
+ rename them to match the schemes before attempting to auto-install them.
 
 Step 3:
  Launch the game, press '=' to enter the configuration menu, and press 'I' to
@@ -4487,6 +4490,8 @@ Step 4:
  is fine.) Just restart the game and press CTRL+U to look at the audio mixer
  (or CTRL+F if you're using rogue-like key set).
  It should tell you that sound and/or music pack have been installed.
+ If the packs you installed weren't the first ones, you can switch between
+ multiple installed packs via = X menu (Audio Pack Selector).
 
 In case you want to install the packs manually instead of using auto-install,
 read on.
