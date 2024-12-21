@@ -485,12 +485,13 @@ static void close_audio(void) {
 
 		/* Nuke all songs */
 		for (j = 0; j < mus->num; j++) {
+			if (mus->is_reference[j]) continue; /* Just a reference pointer, not the original -> would result in "double-free" crash. */
+
 			if (mus->wavs[j]) {
 				Mix_FreeMusic(mus->wavs[j]);
 				mus->wavs[j] = NULL;
 			}
-			if (mus->paths[j]
-			    && !mus->is_reference[j]) { /* Just a reference pointer, not the original -> would result in "double-free" crash. */
+			if (mus->paths[j]) {
 				string_free(mus->paths[j]);
 				mus->paths[j] = NULL;
 			}
@@ -580,7 +581,7 @@ static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
 	char buffer0[4096], *buffer = buffer0, bufferx[4096];
 	FILE *fff;
-	int i;
+	int i, j;
 	char out_val[160];
 	bool disabled;
 
@@ -591,6 +592,31 @@ static bool sound_sdl_init(bool no_cache) {
 	int referencer[REFERENCES_MAX];
 	bool reference_initial[REFERENCES_MAX];
 	char referenced_event[REFERENCES_MAX][40];
+
+
+	/* Paranoia? null all the pointers */
+	for (i = 0; i < SOUND_MAX_2010; i++) {
+		for (j = 0; j < MAX_SAMPLES; j++) {
+			samples[i].wavs[j] = NULL;
+			samples[i].paths[j] = NULL;
+		}
+		samples[i].num = 0;
+		samples[i].config = FALSE;
+		samples[i].disabled = FALSE;
+	}
+	for (i = 0; i < MUSIC_MAX; i++) {
+		for (j = 0; j < MAX_SONGS; j++) {
+			songs[i].wavs[j] = NULL;
+			songs[i].paths[j] = NULL;
+			songs[i].is_reference[j] = FALSE;
+		}
+		songs[i].num = 0;
+		songs[i].config = FALSE;
+		songs[i].disabled = FALSE;
+#ifdef WILDERNESS_MUSIC_RESUME
+		songs[i].bak_pos = FALSE;
+#endif
+	}
 
 
 	load_sample_mutex_entrance = SDL_CreateMutex();
