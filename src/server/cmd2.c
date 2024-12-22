@@ -9775,6 +9775,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 
 					/* sell house */
 					msg_format(Ind, "You sell your house for %d gold.", price / 2);
+					s_printf("SELL_HOUSE: %s sells %d (%d,%d) [%d,%d] for %d\n", p_ptr->name, h_idx, wpos->wx, wpos->wy, houses[h_idx].dx, houses[h_idx].dy, price / 2);
 					if (dna->owner_type != OT_GUILD) {
 						p_ptr->houses_owned--;
 						if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
