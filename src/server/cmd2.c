@@ -9809,7 +9809,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 				dna->a_flags = ACF_NONE;
 
 				/* Erase house contents */
-				kill_house_contents(&houses[h_idx]);
+				kill_house_contents(h_idx);
 
 				/* take note of door colour change */
 				c_ptr->feat = FEAT_HOME; /* make sure door is closed, in case it was open when we sold it */
@@ -9888,7 +9888,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		dna->min_level = 1;
 
 		/* Erase house contents */
-		kill_house_contents(&houses[h_idx]);
+		kill_house_contents(h_idx);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_GOLD);

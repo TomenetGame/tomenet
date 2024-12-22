@@ -13489,7 +13489,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					h_ptr->dna->owner = 0L;
 					h_ptr->dna->owner_type = 0;
 					h_ptr->dna->a_flags = ACF_NONE;
-					//kill_house_contents(&houses[]);
+					//kill_house_contents(i);
 
 					//break;
 				}

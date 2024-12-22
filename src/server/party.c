@@ -2873,7 +2873,7 @@ void del_guild(int id) {
 		dna->owner = 0L;
 		dna->creator = 0L;
 		dna->a_flags = ACF_NONE;
-		kill_house_contents(&houses[i]);
+		kill_house_contents(i);
 
 		/* and in case it was suspended due to leaderlessness,
 		   so the next guild buying this house won't get a surprise.. */

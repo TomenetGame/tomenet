@@ -8521,7 +8521,8 @@ if (cfg.unikill_format) {
 /* FIXME: this function is known to be bypassable by nominally
  * 'party-owning'.
  */
-void kill_house_contents(house_type *h_ptr) {
+void kill_house_contents(int h_idx) {
+	house_type *h_ptr = &houses[h_idx];
 	struct worldpos *wpos = &h_ptr->wpos;
 	object_type *o_ptr;
 	int i;
@@ -8530,10 +8531,13 @@ void kill_house_contents(house_type *h_ptr) {
 	   just for delete_object()->delete_object_idx() to find any offered items and log their removal. */
 	bool must_alloc = (getcave(wpos) == NULL);
 
+
 	if (must_alloc) {
 		alloc_dungeon_level(wpos);
 		generate_cave(wpos, NULL);
 	}
+
+	s_printf("KILL_HOUSE_CONTENTS: %d at (%d,%d) [%d,%d] (value %d)\n", h_idx, wpos->wx, wpos->wy, h_ptr->dx, h_ptr->dy, h_ptr->dna->price);
 
 #ifdef USE_MANG_HOUSE
 	if (h_ptr->flags & HF_RECT) {
@@ -8632,7 +8636,7 @@ void kill_houses(int id, byte type) {
 			dna->owner = 0L;
 			dna->creator = 0L;
 			dna->a_flags = ACF_NONE;
-			kill_house_contents(&houses[i]);
+			kill_house_contents(i);
 		}
 	}
 }
