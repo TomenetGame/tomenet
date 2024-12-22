@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. December 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 22. December 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11370,7 +11370,8 @@ top dog Pondos and many others.
     Starting after 4.9.0c, the IDDC will also spawn refuge areas - depending
     on the server settings (you can check by pressing ~ i) either at 500 ft,
     or at 350 and 700 ft, within every 1000 ft interval in the IDDC - which
-    offers a possibility to sell loot albeit at not so great prices.
+    offers a possibility to sell loot albeit at not so great prices, and also
+    allow for basic shopping for spells and supplies.
     If a player logs out within this refuge, next time he logs back in he will
     spawn inside the refuge again, no matter its location on the dungeon floor.
 
