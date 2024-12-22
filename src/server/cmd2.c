@@ -9874,6 +9874,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 #endif
 		p_ptr->houses_owned++;
 		if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;
+		s_printf("BUY_HOUSE: %s buys %d (%d,%d) [%d,%d] for %d\n", p_ptr->name, h_idx, wpos->wx, wpos->wy, houses[h_idx].dx, houses[h_idx].dy, price);
 
 		//ACC_HOUSE_LIMIT
 		acc_houses++;
