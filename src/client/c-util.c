@@ -14107,7 +14107,11 @@ bool my_fexists(const char *fname) {
 	FILE *fd;
 
 	/* Try to open it */
+#if 0
 	fd = fopen(fname, "rb");
+#else /* Specifically checks if fname is a file and not a folder - C. Blue */
+	fd = fopen(fname, "rb+");
+#endif
 	/* It worked */
 	if (fd != NULL) {
 		fclose(fd);
