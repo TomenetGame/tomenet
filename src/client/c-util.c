@@ -10882,7 +10882,8 @@ static void do_cmd_options_install_audio_packs(void) {
 			//and then: '2023-08-04 01:12:26 D....            0            0  music' (D=directory)
 			while (!feof(fff)) {
 				if (!fgets(out_val, 1024, fff)) break;
-				if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+				if (out_val && out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+				else continue;
 				/* Skip everything until file contents info begins */
 				if (!l7z) {
 					if (prefix(out_val, "-------------------")) l7z = TRUE;
@@ -10918,6 +10919,7 @@ static void do_cmd_options_install_audio_packs(void) {
 				}
 
 				/* Scan contents for 'music' or 'sound' folder at top level to identify any kind of compatible archive formats */
+				if (strlen(out_val) < 54) continue;
 				if (out_val[20] != 'D') continue;
 				if (prefix_case(out_val + 53, "music")) {
 					music_pack = TRUE;
@@ -10990,7 +10992,8 @@ static void do_cmd_options_install_audio_packs(void) {
 			//and then: '2023-08-04 01:12:26 D....            0            0  music' (D=directory)
 			while (!feof(fff)) {
 				if (!fgets(out_val, 1024, fff)) break;
-				if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+				if (out_val && out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
+				else continue;
 				/* Skip everything until file contents info begins */
 				if (!l7z) {
 					if (prefix(out_val, "-------------------")) l7z = TRUE;
@@ -11018,6 +11021,7 @@ static void do_cmd_options_install_audio_packs(void) {
 				}
 
 				/* Scan contents for 'music' or 'sound' folder at top level to identify any kind of compatible archive formats */
+				if (strlen(out_val) < 54) continue;
 				if (out_val[20] != 'D') continue;
 				if (prefix_case(out_val + 53, "music")) {
 					music_pack = TRUE;
