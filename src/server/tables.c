@@ -2527,12 +2527,15 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_DISARM,
 			'+', 0,
 			'+', 900, },
-		{ SKILL_TRAPPING,
-			'+', 0,
-			'+', 600, },
 		{ SKILL_DODGE,
 			'+', 0,/*1000*/
 			'+', 800, },
+		{ SKILL_CALMNESS,
+			'+', 0,
+			'+', 1000, },
+		{ SKILL_TRAPPING,
+			'+', 0,
+			'+', 600, },
 #ifdef EXP_NECRO
 		{ SKILL_NECROMANCY, /* Necromancy for this class - experimental */
 			'+', 0,
