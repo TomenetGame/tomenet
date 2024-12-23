@@ -10264,9 +10264,13 @@ static void do_cmd_options_tilesets(void) {
 		l = 0;
 
 		/* Prompt XXX XXX XXX */
-		Term_putstr(0, l++, -1, TERM_WHITE, "  \377y-\377w/\377y+\377w,\377y=\377w switch tileset (requires restart), \377yENTER\377w enter a specific tileset name");
-		Term_putstr(0, l++, -1, TERM_WHITE, "  \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit");
-		Term_putstr(0, l++, -1, TERM_WHITE, "  \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s)");
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377y-\377w/\377y+\377w,\377y=\377w switch tileset (requires restart), \377yENTER\377w enter a specific tileset name,");
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit.");
+		l++;
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s).");
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377sSo for graphics to look good, you should selected a font size that matches it");
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377sas best as possible and is not significantly smaller than the selected tileset.");
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377sFor example for a 16x22 sized tileset a 16x22 or 16x24 font works very well.");
 		l++;
 
 		Term_putstr(1, l++, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", tilesets, tilesets == 1 ? "" : "s"));
@@ -10300,21 +10304,21 @@ static void do_cmd_options_tilesets(void) {
 
 #ifdef GFXERR_FALLBACK
 		if (use_graphics_err) {
-			Term_putstr(2, l + 4, -1, TERM_WHITE, "\377RClient was unable to startup with graphics and fell back to text mode.");
-			Term_putstr(2, l + 5, -1, TERM_WHITE, "\377RIf you re-enable graphics, ensure tileset is valid and its file name correct!");
-			if (!use_graphics_errstr[0]) Term_putstr(2, 18, -1, TERM_WHITE, "\377RNo failure reason specified.");
+			Term_putstr(2, l + 0, -1, TERM_WHITE, "\377RClient was unable to startup with graphics and fell back to text mode.");
+			Term_putstr(2, l + 1, -1, TERM_WHITE, "\377RIf you re-enable graphics, ensure tileset is valid and its file name correct!");
+			if (!use_graphics_errstr[0]) Term_putstr(2, l + 2, -1, TERM_WHITE, "\377RNo failure reason specified.");
 			else {
 				char line1[MAX_CHARS], line2[MAX_CHARS] = { 0 };
 
-				Term_putstr(2, l + 6, -1, TERM_WHITE, "\377RFailure reason on startup, also shown in terminal on startup, was:");
+				Term_putstr(2, l + 2, -1, TERM_WHITE, "\377RFailure reason on startup, also shown in terminal on startup, was:");
 				if (strlen(use_graphics_errstr) < MAX_CHARS) strcpy(line1, use_graphics_errstr);
 				else {
 					strncpy(line1, use_graphics_errstr, MAX_CHARS - 1);
 					line1[MAX_CHARS - 1] = 0;
 					strcpy(line2, use_graphics_errstr + MAX_CHARS - 1);
 				}
-				Term_putstr(0, l + 7, -1, TERM_RED, line1);
-				Term_putstr(0, l + 8, -1, TERM_RED, line2);
+				Term_putstr(0, l + 3, -1, TERM_RED, line1);
+				Term_putstr(0, l + 4, -1, TERM_RED, line2);
 			}
 		}
 #endif
