@@ -110,6 +110,7 @@ static void choose_name(void) {
 	strcpy(introline[5], "    |##|     |######|  |##| \\/ |##|  |######|   |##| \\##|  |######|     |##|   ");
   #endif
   #ifdef LOGO_SOLID
+	if (strcmp(ANGBAND_SYS, "gcu")) /* No solid chars in terminal mode for now, seems to cause glitches */
    #if defined(WINDOWS) && defined(USE_LOGFONT)
 	if (!use_logfont) /* doesn't have font_map_solid_walls style characters */
    #endif
