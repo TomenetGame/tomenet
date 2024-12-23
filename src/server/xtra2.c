@@ -13048,6 +13048,44 @@ void ang_sort_extra_aux(int Ind, vptr u, vptr v, vptr w, int p, int q) {
 	ang_sort_extra_aux(Ind, u, v, w, b + 1, q);
 }
 
+void ang_sort_extra2_aux(int Ind, vptr i, vptr j, vptr k, vptr m, int p, int q) {
+	int z, a, b;
+
+	/* Done sort */
+	if (p >= q) return;
+
+	/* Pivot */
+	z = p;
+
+	/* Begin */
+	a = p;
+	b = q;
+
+	/* Partition */
+	while (TRUE) {
+		/* Slide i2 */
+		while (!(*ang_sort_extra2_comp)(Ind, i, j, k, m, b, z)) b--;
+
+		/* Slide i1 */
+		while (!(*ang_sort_extra2_comp)(Ind, i, j, k, m, z, a)) a++;
+
+		/* Done partition */
+		if (a >= b) break;
+
+		/* Swap */
+		(*ang_sort_extra2_swap)(Ind, i, j, k, m, a, b);
+
+		/* Advance */
+		a++, b--;
+	}
+
+	/* Recurse left side */
+	ang_sort_extra2_aux(Ind, i, j, k, m, p, b);
+
+	/* Recurse right side */
+	ang_sort_extra2_aux(Ind, i, j, k, m, b + 1, q);
+}
+
 
 /*
  * Angband sorting algorithm -- quick sort in place
@@ -13068,6 +13106,12 @@ void ang_sort(int Ind, vptr u, vptr v, int n) {
 void ang_sort_extra(int Ind, vptr u, vptr v, vptr w, int n) {
 	/* Sort the array */
 	ang_sort_extra_aux(Ind, u, v, w, 0, n - 1);
+}
+
+/* Sorts 4 fields even, added for target_set_friendly() - C. Blue */
+void ang_sort_extra2(int Ind, vptr i, vptr j, vptr k, vptr m, int n) {
+	/* Sort the array */
+	ang_sort_extra2_aux(Ind, i, j, k, m, 0, n - 1);
 }
 
 /* returns our max times 100 divided by our current...*/
@@ -13212,6 +13256,36 @@ bool ang_sort_extra_comp_distance(int Ind, vptr u, vptr v, vptr w, int a, int b)
 	return((da == db) ? (z[b] || !z[a]) : (da <= db));
 }
 
+bool ang_sort_extra2_comp_distance(int Ind, vptr i, vptr j, vptr k, vptr m, int a, int b) {
+	player_type *p_ptr = Players[Ind];
+
+	byte *x = (byte*)(i);
+	byte *y = (byte*)(j);
+	byte *z = (byte*)(k);
+	s16b *w = (s16b*)(m); //no effect, as this parameter isn't distance related and therefore we ignore it here
+
+	(void)w;//sshhh, no more warnings, only code now
+
+	int da, db, kx, ky;
+
+	/* Absolute distance components */
+	kx = x[a]; kx -= p_ptr->px; kx = ABS(kx);
+	ky = y[a]; ky -= p_ptr->py; ky = ABS(ky);
+
+	/* Approximate Double Distance to the first point */
+	da = ((kx > ky) ? (kx + kx + ky) : (ky + ky + kx));
+
+	/* Absolute distance components */
+	kx = x[b]; kx -= p_ptr->px; kx = ABS(kx);
+	ky = y[b]; ky -= p_ptr->py; ky = ABS(ky);
+
+	/* Approximate Double Distance to the first point */
+	db = ((kx > ky) ? (kx + kx + ky) : (ky + ky + kx));
+
+	/* Compare the distances -- if equal, prefer the target that is not asleep, default to 'a'. */
+	return((da == db) ? (z[b] || !z[a]) : (da <= db));
+}
+
 void ang_sort_extra_swap_distance(int Ind, vptr u, vptr v, vptr w, int a, int b) {
 	byte *x = (byte*)(u);
 	byte *y = (byte*)(v);
@@ -13235,6 +13309,35 @@ void ang_sort_extra_swap_distance(int Ind, vptr u, vptr v, vptr w, int a, int b)
 	z[b] = temp;
 }
 
+void ang_sort_extra2_swap_distance(int Ind, vptr i, vptr j, vptr k, vptr m, int a, int b) {
+	byte *x = (byte*)(i);
+	byte *y = (byte*)(j);
+	byte *z = (byte*)(k);
+	s16b *w = (s16b*)(m);
+
+	byte temp;
+	s16b temp_s16b;
+
+	/* Swap "x" */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+
+	/* Swap "y" */
+	temp = y[a];
+	y[a] = y[b];
+	y[b] = temp;
+
+	/* Swap "z" */
+	temp = z[a];
+	z[a] = z[b];
+	z[b] = temp;
+
+	/* Swap "z" */
+	temp_s16b = w[a];
+	w[a] = w[b];
+	w[b] = temp_s16b;
+}
 
 
 /*
@@ -13942,7 +14045,7 @@ bool target_set_friendly(int Ind, int dir, ...) {
 
 #else
 
-/* targets most wounded player */
+/* targets most wounded friendly player, otherwise the closest friendly player */
 bool target_set_friendly(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -13962,15 +14065,14 @@ bool target_set_friendly(int Ind, int dir) {
 	/* Turn off health tracking */
 	health_track(Ind, 0);
 
-
 	/* Reset "target" array */
 	p_ptr->target_n = 0;
 
 	for (i = 1; i <= NumPlayers; i++) {
-		q_ptr = Players[i];
-
 		/* Don't target yourself */
 		if (i == Ind) continue;
+
+		q_ptr = Players[i];
 
 		/* Skip unconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -13989,20 +14091,20 @@ bool target_set_friendly(int Ind, int dir) {
 		p_ptr->target_y[p_ptr->target_n] = q_ptr->py;
 		p_ptr->target_idx[p_ptr->target_n] = i;
 		p_ptr->target_n++;
+		p_ptr->target_state[p_ptr->target_n] = q_ptr->afk ? 1 : 0; /* AFK players count as 'asleep' ;) */
 	}
 
- #if 1
+	/* First, pre-sort players by distance, before sorting them by woundedness */
+	/* Set the sort hooks */
+	ang_sort_extra2_comp = ang_sort_extra2_comp_distance;
+	ang_sort_extra2_swap = ang_sort_extra2_swap_distance;
+	/* Sort the positions -- hack: We need to swap 3 fields (x,y,idx) so we abuse 'asleep/afk' state for 'idx' */
+	ang_sort_extra2(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_state, p_ptr->target_idx, p_ptr->target_n);
+
 	/* Sort the positions */
 	wounded_player_target_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_idx, p_ptr->target_n);
- #else //TODO
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_distance;
-	ang_sort_swap = ang_sort_swap_distance;
 
-	/* Sort the positions */
-	ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
- #endif
-
+	/* Pick the topmost result */
 	m = 0;
 
 	/* handle player target.... */

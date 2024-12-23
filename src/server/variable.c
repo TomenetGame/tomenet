@@ -633,6 +633,7 @@ bool (*item_tester_hook)(object_type*);
  */
 bool (*ang_sort_comp)(int Ind, vptr u, vptr v, int a, int b);
 bool (*ang_sort_extra_comp)(int Ind, vptr u, vptr v, vptr w, int a, int b);
+bool (*ang_sort_extra2_comp)(int Ind, vptr i, vptr j, vptr k, vptr m, int a, int b);
 
 
 /*
@@ -640,6 +641,7 @@ bool (*ang_sort_extra_comp)(int Ind, vptr u, vptr v, vptr w, int a, int b);
  */
 void (*ang_sort_swap)(int Ind, vptr u, vptr v, int a, int b);
 void (*ang_sort_extra_swap)(int Ind, vptr u, vptr v, vptr w, int a, int b);
+void (*ang_sort_extra2_swap)(int Ind, vptr i, vptr j, vptr k, vptr m, int a, int b);
 
 
 

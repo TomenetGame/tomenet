@@ -1206,8 +1206,8 @@ TAB or CTRL+I
         (used in macros).
 
 (       Initiates targetting a friendly player (used in macros).
-        (Currently targets the most hurt player who is in your party, or the
-        most wounded player in general if you aren't in a party.)
+        Prioritizes the most wounded player, if any, otherwise the closest
+        friendly player.
 
 [       Predefined "repeat last message/slash command" macro.
 
@@ -7375,8 +7375,8 @@ answered with..
 Friendly targetting:
 --------------------
 Sometimes you want to target a friendly player. For this you can use '('.
-That key currently targets the most hurt player who is in your party, or the
-most wounded player in general if you aren't in a party.
+That key currently prioritizes the most wounded player, if any, otherwise the
+closest friendly player.
 After this target has been set, you can refer to it with '-', '+' or '5' same
 as for hostile targets you set with '*' explained above.
 
