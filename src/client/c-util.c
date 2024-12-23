@@ -14306,18 +14306,22 @@ int check_guard_inscription_str(cptr ax, char what) {
 	return(FALSE);
 }
 
+#include <sys/stat.h>
+/* Specifically checks if a file exists and it is a file and not a folder - C. Blue */
 bool my_fexists(const char *fname) {
-	FILE *fd;
+	int fd;
+	struct stat statbuf;
 
-	/* Try to open it */
-#if 0
-	fd = fopen(fname, "rb");
-#else /* Specifically checks if fname is a file and not a folder - C. Blue */
-	fd = fopen(fname, "rb+");
-#endif
-	/* It worked */
-	if (fd != NULL) {
-		fclose(fd);
-		return(TRUE);
-	} else return(FALSE);
+	fd = open(fname, O_RDONLY);
+	if (fd == -1) return(FALSE);
+	if (fstat(fd, &statbuf)) {
+		close(fd);
+		return(FALSE);
+	}
+	close(fd);
+	switch (statbuf.st_mode & S_IFMT) {
+	case S_IFDIR: return(FALSE);
+	case S_IFREG: return(TRUE); //Note: This also works fine with symlinks
+	default: return(FALSE);
+	}
 }
