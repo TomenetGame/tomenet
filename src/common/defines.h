@@ -2775,6 +2775,7 @@
 
 #define FEAT_SOLID		237	/* Pseudo feature definition for graphical tilesets for 'solid_bars' UI elements and similar. Also see 165-171.*/
 #define FEAT_DRAWBRIDGE_HORIZ	238
+#define FEAT_SOLID_NC		239
 
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS	2

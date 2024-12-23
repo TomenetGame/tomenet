@@ -243,6 +243,9 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #endif
 			exp_bar_char = '#';
 
+		/* Graphical tileset? Use extra tile for this */
+		if (use_graphics && exp_bar_char != '#') exp_bar_char = 1;
+
 		if (level >= PY_MAX_PLAYER_LEVEL || !adv || !scale) {
 			if (cur < PY_MAX_EXP) {
 				exp_bar_char = '*';
