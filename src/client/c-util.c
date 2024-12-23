@@ -10759,7 +10759,7 @@ static bool verify_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class
 		c_message_add("\377oError: Couldn't write temporary file. (V1)");
 		return(FALSE);
 	}
-	fprintf(fff, format("@%s -p\"%s\" l \"%s\" > __tomenet.tmp\n", passord, path_7z_quoted, pack_name));
+	fprintf(fff, format("@%s -p\"%s\" l \"%s\" > __tomenet.tmp\n", path_7z_quoted, password, pack_name));
 	fclose(fff);
 	_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
 	remove("__tomenethelper.bat");
@@ -11044,7 +11044,7 @@ static void do_cmd_options_install_audio_packs(void) {
 			c_message_add("\377oError: Couldn't write temporary file.");
 			return;
 		}
-		if (passworded) fprintf(fff, format("@%s -p\"%s\" l \"%s\" > __tomenet.tmp\n", password, path_7z_quoted, pack_name));
+		if (passworded) fprintf(fff, format("@%s -p\"%s\" l \"%s\" > __tomenet.tmp\n", path_7z_quoted, password, pack_name));
 		else fprintf(fff, format("@%s l \"%s\" > __tomenet.tmp\n", path_7z_quoted, pack_name));
 		fclose(fff);
 		_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
