@@ -121,7 +121,7 @@ X:no_house_sfx
 Y:quiet_house_sfx
 X:mute_when_idle
 X:shuffle_music
-X:play_all
+Y:play_all
 X:first_song
 
 Y:audio_paging

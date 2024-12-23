@@ -500,7 +500,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "screenshot_format",	"Screenshots are timestamped instead of numbered" },
 	{ &c_cfg.palette_animation,	TRUE,	4,	0, 124, TRUE,
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
-	{ &c_cfg.play_all,		FALSE,	5,	0, 125, TRUE,
+	{ &c_cfg.play_all,		TRUE,	5,	0, 125, TRUE,
 	    "play_all",			"Loop over all available songs instead of just one" },
 	{ &c_cfg.id_selection,		TRUE,	6,	0, 126, TRUE,
 	    "id_selection",		"Show/accept only eligible items for ID/*ID*" },
