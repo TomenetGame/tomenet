@@ -184,6 +184,9 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 	char tmp[32], tmp2[32], exp_bar_char;
 	int colour, x, y;
 	int scale = adv - adv_prev;
+#ifdef USE_GRAPHICS
+	int gfx_char = FALSE, ng;
+#endif
 
 	/* (Catch bug with setlev(100) command - todo: just fix the command..) */
 	if (!cur && level > 1) return;
@@ -244,7 +247,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 			exp_bar_char = '#';
 
 		/* Graphical tileset? Use extra tile for this */
-		if (use_graphics && exp_bar_char != '#') exp_bar_char = 1;
+		if (use_graphics && exp_bar_char != '#') exp_bar_char = Client_setup.f_char[FEAT_SOLID_NC];
 
 		if (level >= PY_MAX_PLAYER_LEVEL || !adv || !scale) {
 			if (cur < PY_MAX_EXP) {
@@ -309,6 +312,12 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
  #endif
 #endif
 
+#ifdef USE_GRAPHICS
+		/* Graphical tileset? Use extra tile for this */
+		if (use_graphics && exp_bar_char != '#') gfx_char = Client_setup.f_char[FEAT_SOLID_NC];
+		else gfx_char = FALSE;
+#endif
+
 #ifdef EXP_BAR_FILLDARK
 		/* Paint dark base ;) */
 		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
@@ -319,10 +328,29 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #endif
 		if (cur >= max) {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+
 #ifndef EXP_BAR_FINESCALE
+ #ifdef USE_GRAPHICS
+			if (gfx_char) {
+				for (ng = 0; ng < strlen(tmp); ng++)
+					Term_draw(COL_EXP + 3 + ng, ROW_EXP, EXP_BAR_HI, gfx_char);
+			} else
+ #endif
 			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI, tmp);
 #else
 			/* special hack to be able to display this distinguishdly from got == 18 (we only have 9 characters available) */
+ #ifdef USE_GRAPHICS
+			if (gfx_char) {
+				if (got_org == 19) {
+					for (ng = 0; ng < strlen(tmp); ng++)
+						Term_draw(COL_EXP + 3 + ng, ROW_EXP, EXP_BAR_LO, gfx_char);
+				} else {
+					for (ng = 0; ng < strlen(tmp); ng++)
+						Term_draw(COL_EXP + 3 + ng, ROW_EXP, EXP_BAR_HI, gfx_char);
+					if (got_org % 2) Term_draw(COL_EXP + 3 + got_org / 2, ROW_EXP, EXP_BAR_LO, gfx_char);
+				}
+			} else
+ #endif
 			if (got_org == 19) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_LO, tmp);
 			else {
 				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI, tmp);
@@ -332,9 +360,27 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		} else {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
 #ifndef EXP_BAR_FINESCALE
+ #ifdef USE_GRAPHICS
+			if (gfx_char) {
+				for (ng = 0; ng < strlen(tmp); ng++)
+					Term_draw(COL_EXP + 3 + ng, ROW_EXP, EXP_BAR_HI_DRAINED, gfx_char);
+			} else
+ #endif
 			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, tmp);
 #else
 			/* special hack to be able to display this distinguishdly from got == 18 (we only have 9 characters available) */
+ #ifdef USE_GRAPHICS
+			if (gfx_char) {
+				if (got_org == 19) {
+					for (ng = 0; ng < strlen(tmp); ng++)
+						Term_draw(COL_EXP + 3 + ng, ROW_EXP, EXP_BAR_LO_DRAINED, gfx_char);
+				} else {
+					for (ng = 0; ng < strlen(tmp); ng++)
+						Term_draw(COL_EXP + 3 + ng, ROW_EXP, EXP_BAR_HI_DRAINED, gfx_char);
+					if (got_org % 2) Term_draw(COL_EXP + 3 + got_org / 2, ROW_EXP, EXP_BAR_LO_DRAINED, gfx_char);
+				}
+			} else
+ #endif
 			if (got_org == 19) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_LO_DRAINED, tmp);
 			else {
 				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, tmp);
