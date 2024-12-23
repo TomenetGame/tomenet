@@ -3124,12 +3124,22 @@ static void go_engine_board(void) {
 	player_type *p_ptr;
 	int k_idx;
 
+	// Graphics for Go stones
 	char32_t c_black = 0, c_white = 0, c_empty = 0;
 	byte a_black, a_white, a_empty;
-	//todo: graphics for corners, edges and crossings! :D we just use dots for now
+
+	// Graphics for the board: corners, edges and crossings
+	char32_t c_board_tl = 0, c_board_tr = 0, c_board_bl = 0, c_board_br = 0;
+	char32_t c_board_t = 0, c_board_l = 0, c_board_b = 0, c_board_r = 0;
+	char32_t c_board_any = 0;
+	byte a_board_tl, a_board_tr, a_board_bl, a_board_br;
+	byte a_board_t, a_board_l, a_board_b, a_board_r;
+	byte a_board_any;
 
 	char32_t c;
 	byte a;
+	char32_t c_back;
+	byte a_back;
 #endif
 
 	if (go_err(DOWN, DOWN, "go_engine_board")) return;
@@ -3171,6 +3181,22 @@ static void go_engine_board(void) {
 		//a_empty = p_ptr->f_attr[CUSTOM_VISUALS_EMPTY_FEAT];
 		a_empty = TERM_UMBER;
 	}
+
+	if (p_ptr->ascii_feats) {
+		c_board_tl = c_board_tr = c_board_bl = c_board_br = c_empty;
+		c_board_t = c_board_l = c_board_b = c_board_r = c_empty;
+		c_board_any = c_empty;
+		a_board_tl = a_board_tr = a_board_bl = a_board_br = a_empty;
+		a_board_t = a_board_l = a_board_b = a_board_r = a_empty;
+		a_board_any = a_empty;
+	} else {
+		c_board_tl = p_ptr->f_char[FEAT_GAMEBOARD_TL]; c_board_tr = p_ptr->f_char[FEAT_GAMEBOARD_TR], c_board_bl = p_ptr->f_char[FEAT_GAMEBOARD_BL], c_board_br = p_ptr->f_char[FEAT_GAMEBOARD_BR];
+		c_board_t = p_ptr->f_char[FEAT_GAMEBOARD_TOP], c_board_l = p_ptr->f_char[FEAT_GAMEBOARD_LEFT], c_board_b = p_ptr->f_char[FEAT_GAMEBOARD_BOTTOM], c_board_r = p_ptr->f_char[FEAT_GAMEBOARD_RIGHT];
+		c_board_any = p_ptr->f_char[FEAT_GAMEBOARD];
+		a_board_tl = a_board_tr = a_board_bl = a_board_br = a_empty;
+		a_board_t = a_board_l = a_board_b = a_board_r = a_empty;
+		a_board_any = a_empty;
+	}
 #endif
 
 	for (n = 0; n < 9; n++) {
@@ -3183,6 +3209,7 @@ static void go_engine_board(void) {
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) { //client must know PKT_CHAR_DIRECT
 			for (x = 0; x < 9; x++) {
+				/* Stone in the foreground, if any, otherwise 'empty board' which can get replaced by actual board visuals below*/
 				if (board_line[n][x] == 'X') { //black
 					c = c_black;
 					a = a_black;
@@ -3193,10 +3220,54 @@ static void go_engine_board(void) {
 					c = c_empty;
 					a = a_empty;
 				}
+
+				/* Board in the background */
+				if (x == 0) {
+					if (n == 0) {
+						c_back = c_board_tl;
+						a_back = a_board_tl;
+					} else if (n == 8) {
+						c_back = c_board_bl;
+						a_back = a_board_bl;
+					} else {
+						c_back = c_board_l;
+						a_back = a_board_l;
+					}
+				} else if (x == 8) {
+					if (n == 0) {
+						c_back = c_board_tr;
+						a_back = a_board_tr;
+					} else if (n == 8) {
+						c_back = c_board_br;
+						a_back = a_board_br;
+					} else {
+						c_back = c_board_r;
+						a_back = a_board_r;
+					}
+				} else if (n == 0) {
+					c_back = c_board_t;
+					a_back = a_board_t;
+				} else if (n == 8) {
+					c_back = c_board_b;
+					a_back = a_board_b;
+				} else  {
+					c_back = c_board_any;
+					a_back = a_board_any;
+				}
+
+				/* Compatibility of dual-mask mode to normal mask mode:
+				   If there is no stone on the board, the background becomes the foreground, so we can still display it to non-2mask-clients */
+				if (c == c_empty) {
+					c = c_back;
+					a = a_back;
+					c_back = 0;
+					a_back = 0;
+				}
+
  #ifdef GRAPHICS_BG_MASK
-				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 9 - n, a, c, 0, 0); //todo: board background gfx =p
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 9 - n, a, c, a_back, c_back); /* Send stone (if any) on the board, if no stone then just send the board */
  #else
-				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 9 - n, a, c);
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 9 - n, a, c); /* Send either stone or (if there is no stone) the board */
  #endif
 			}
 			continue;
