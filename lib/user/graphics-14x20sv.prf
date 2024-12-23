@@ -298,10 +298,10 @@ F:16:1/355 # spider webs
 F:87:/356 # dark pit
 
 F:150:/650 # Game board, central tiles (BMP index: 906)
-F:153:/651 # Game board, left edge
-F:154:/652 # Game board, right edge
-F:151:/653 # Game board, top edge
-F:152:/654 # Game board, bottom edge
+F:151:/651 # Game board, left edge
+F:152:/652 # Game board, right edge
+F:153:/653 # Game board, top edge
+F:154:/654 # Game board, bottom edge
 F:155:/655 # Game board, top-left corner
 F:156:/656 # Game board, top-right corner
 F:157:/657 # Game board, bottom-left corner
