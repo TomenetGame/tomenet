@@ -1526,6 +1526,7 @@
 #define RI_ROBIN_HOOD		138	/* DROP_CHOSEN */
 #define RI_NURGLING		139
 #define RI_BLUE_HORROR		189
+#define RI_OLD_MAN_WILLOW	206
 #define RI_PINK_HORROR		242	/* DROP_CHOSEN */
 #define RI_SOFTWARE_BUG		246
 #define RI_UFTHAK		260
@@ -1534,24 +1535,31 @@
 #define RI_DOOR_MIMIC		311
 #define RI_VAMPIRIC_MIST	365
 #define RI_GOLEM_IRON		367	/* For translating to custom golem_creation visuals */
+#define RI_AZOG			373
 #define RI_VAMPIRE_BAT		391
 #define RI_BEAST_NURGLE		422
 #define RI_GOLEM_MITHRIL	464	/* For translating to custom golem_creation visuals */
+#define RI_SHELOB		481
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
+#define RI_WATCHER_IN_THE_WATER	517
 #define RI_BLOODLETTER		523
 #define RI_RAALS_TOME		557	/* DROP_CHOSEN */
 #define RI_EOL			660	/* DROP_CHOSEN */
 #define RI_WARRIOR_DAWN		693
+#define RI_SMAUG		697
 #define RI_STORMBRINGER		698	/* DROP_CHOSEN */
 #define RI_SANTA1		733	/* terror santa from hell */
+#define RI_KING_IN_YELLOW	735
 #define RI_GUO			736
 #define RI_ARTSI		770	/* DROP_CHOSEN */
 #define RI_SARUMAN		771	/* DROP_CHOSEN */
 #define RI_VLAD_DRACULA		780	/* DROP_CHOSEN */
+#define RI_TRON			789
 #define RI_MARDRA		791	/* DROP_CHOSEN */
 #ifdef ENABLE_OHERETICISM
  #define RI_BLOODTHIRSTER	758
 #endif
+#define RI_FEAGWATH		804
 #define RI_UNMAKER		815	/* prevent live spawn */
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
 #define RI_MEPHISTOPHELES	831	/* DROP_CHOSEN */
@@ -1560,6 +1568,7 @@
 #define RI_SAURON		860
 #define RI_MORGOTH		862
 #define RI_RNG			869
+#define RI_BALROG_OF_MORIA	872
 
 /* The Nazgul */
 #define RI_UVATHA		946
@@ -1573,9 +1582,17 @@
 #define RI_WITCHKING		954
 
 #define RI_GORLIM		961	/* DROP_CHOSEN */
+#define RI_WIGHT_KING		971
+#define RI_AR_PHARAZON		980
+#define RI_ULFANG		990
 #define RI_GOLEM_BRONZE		1015	/* For translating to custom golem_creation visuals */
+#define RI_MINOTAUR_OTL		1029
+#define RI_SANDWORM_QUEEN	1030
 #define RI_TIK_SRVZLLAT		1032
+#define RI_WHITE_BALROG		1034
+#define RI_GOLGARACH		1035
 #define RI_KRONOS		1037	/* DROP_CHOSEN */
+#define RI_MICHAEL		1074
 #define RI_LIVING_LIGHTNING	1147
 #define RI_HELLRAISER		1067
 #define RI_NETHER_GUARD		1068
@@ -1598,6 +1615,7 @@
 #define RI_BLUE			1152
 #define RI_MIRROR		1153
 #define RI_HORNED_REAPER_GE	1154	/* low-power Horned Reaper for 'Dungeon Keeper' event */
+#define RI_SAENATHRA		1155
 #define RI_BLOB_SHRIEK		1162
 
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */

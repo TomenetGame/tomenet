@@ -12791,6 +12791,8 @@ void process_monsters(void) {
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42 && p_ptr->music_monster != 55) {
 						//Dungeon boss?
 						if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
+							int bm = 41; //default generic 'boss_dungeon' theme
+
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 							/* we now 'learned' who is the boss of this dungeon */
 							if (!is_admin(p_ptr)) {
@@ -12798,11 +12800,40 @@ void process_monsters(void) {
 								else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
 							}
  #endif
-							Send_music(pl, (p_ptr->music_monster = 41), -1, -1);
+							switch (m_ptr->r_idx) {
+							case RI_WIGHT_KING: bm = 182; break;
+							case RI_FEAGWATH: bm = 183; break;
+							case RI_AZOG: bm = 184; break;
+							case RI_WHITE_BALROG: bm = 185; break;
+							case RI_ULFANG: bm = 186; break;
+							case RI_SANDWORM_QUEEN: bm = 187; break;
+							case RI_OLD_MAN_WILLOW: bm = 188; break;
+							case RI_GOLGARACH: bm = 189; break;
+							case RI_BALROG_OF_MORIA: bm = 190; break;
+							case RI_SHELOB: bm = 191; break;
+							case RI_WATCHER_IN_THE_WATER: bm = 192; break;
+							case RI_SAENATHRA: bm = 193; break;
+							case RI_DOL_GULDUR: bm = 194; break;
+							case RI_AR_PHARAZON: bm = 195; break;
+							case RI_SMAUG: bm = 196; break;
+							case RI_KING_IN_YELLOW: bm = 197; break;
+							case RI_TRON: bm = 198; break;
+							case RI_MINOTAUR_OTL: bm = 199; break;
+							}
+							Send_music(pl, (p_ptr->music_monster = bm), 41, -1);
 						//Special Unique (non-respawning)? Can't override dungeon boss..
-						} else if (r_ptr->level >= 98 && p_ptr->music_monster != 41) {
-							//Any of em
-							Send_music(pl, (p_ptr->music_monster = 40), -1, -1);
+						} else if (r_ptr->level >= 98
+						    && p_ptr->music_monster != 41 && (p_ptr->music_monster <= 182 || p_ptr->music_monster >= 199)) {
+							int bm = 40; //default generic 'boss_specialunique' theme
+
+							switch (m_ptr->r_idx) {
+							case RI_MICHAEL: bm = 200; break;
+							case RI_TIK_SRVZLLAT: bm = 201; break;
+							case RI_BAHAMUT: bm = 202; break;
+							case RI_HELLRAISER: bm = 203; break;
+							case RI_DOR: bm = 204; break;
+							}
+							Send_music(pl, (p_ptr->music_monster = bm), 40, -1);
 						}
 					}
 				} else if (m_ptr->r_idx == RI_PUMPKIN && p_ptr->music_monster != 43) {

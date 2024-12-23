@@ -535,12 +535,37 @@ audio_bgm = {
     "Lothlorien_winter_day",
     "Lothlorien_winter_night",
     "Khazaddum_winter_day",
-    "Khazaddum_winter_night",--(177)
+    "Khazaddum_winter_night",
 
     "jail_dungeon",
     "meta",
     "season_xmas_day",
     "season_xmas_night",
+
+    "boss_BarrowDowns",--182
+    "boss_ThePathsoftheDead",
+    "boss_TheOrcCave",
+    "boss_TheHelcaraxe",
+    "boss_TheLandofRhun",
+    "boss_TheSandwormLair",
+    "boss_TheOldForest",
+    "boss_TheHeartoftheEarth",
+    "boss_TheMinesofMoria",--190
+    "boss_CirithUngol",
+    "boss_TheSmallWaterCave",
+    "boss_Mirkwood",
+    "boss_DolGuldur",
+    "boss_SubmergedRuins",
+    "boss_Erebor",
+    "boss_TheIllusoryCastle",
+    "boss_TheSacredLandofMountains",
+    "boss_TheMaze",
+
+    "specialunique_Michael", --200
+    "specialunique_TikSrvzllat",
+    "specialunique_Bahamut",
+    "specialunique_Hellraiser",
+    "specialunique_Dor",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
