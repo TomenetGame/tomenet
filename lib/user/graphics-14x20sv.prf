@@ -297,6 +297,28 @@ F:182:/158 # Ekkaia, the Encircling Sea
 F:16:1/355 # spider webs
 F:87:/356 # dark pit
 
+F:150:/650 # Game board, central tiles (BMP index: 906)
+F:153:/651 # Game board, left edge
+F:154:/652 # Game board, right edge
+F:151:/653 # Game board, top edge
+F:152:/654 # Game board, bottom edge
+F:155:/655 # Game board, top-left corner
+F:156:/656 # Game board, top-right corner
+F:157:/657 # Game board, bottom-left corner
+F:158:/658 # Game board, bottom-right corner
+
+F:165:/550 # Solid block (UI), outlined (BMP index: 806)
+F:166:/551 # Solid block (UI), right side open
+F:167:/552 # Solid block (UI), left side open
+F:168:/553 # Solid block (UI), right+left sides open
+F:169:/554 # Solid block (UI), top side open
+F:170:/555 # Solid block (UI), bottom side open
+F:171:/556 # Solid block (UI), top+bottom sides open
+F:237:/557 # Solid block (UI)
+
+F:238:/295 # Drawbridge, horizontal
+
+#todo: weather particles: rain drops, snow flakes, sand grains (for direct use in c-xtra1.c)
 
 
 ################# Objects #################
@@ -1281,7 +1303,7 @@ K:748:/3101 # Gift, Wrapped in Purple Paper
 K:389:/3200 Firestone
 K:390:/3201 Small Firestone
 
-##### Various Staff #####
+##### Various Stuff #####
 
 # (I:11)
 K:383:/3300 # Piece of Wood
@@ -1362,3 +1384,25 @@ K:713:/3502 # Flash bomb
 K:714:/3502 # Concussive Charge
 K:715:/3502 # Large Concussive Charge
 K:716:/3502 # Underground Charge
+
+##### Money: TV_GOLD (100), ie piles of coins or gemstones. #####
+
+#...todo: draw in the BMP:
+#K:480:/3800 # copper (coins)
+#K:481:/3800 # silver (coins)
+#K:482:/3801 # citrines (gems, edged)
+#K:483:/3802 # amber (gems, round)
+#K:484:/3801 # peridots (gems, edged)
+#K:485:/3801 # topazes (gems, edged)
+#K:486:/3801 # garnets (gems, edged)
+#K:487:/3801 # aquamarines (gems, edged)
+#K:488:/3802 # jade (gems, round)
+#K:489:/3800 # gold (coins)
+#K:490:/3801 # tourmalines (coins)
+#K:491:/3802 # opals (gems, could be either, edged or round^^)
+#K:492:/3801 # sapphires (gems, edged)
+#K:493:/3801 # rubies (gems, edged)
+#K:494:/3801 # emeralds (gems edged)
+#K:495:/3800 # mithril (coins)
+#K:496:/3801 # diamonds (gems, edged)
+#K:497:/3800 # adamantite (coins)
