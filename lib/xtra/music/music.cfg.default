@@ -5,40 +5,52 @@
 #
 # The format is:
 # <situation name> = <song names seperated by spaces>
+# where the situation names are listed in audio_bgm[] in lib/scpt/audio.lua.
 #
-# Where the situation names are listed in audio_bgm[] in lib/scpt/audio.lua.
-# One of the songs will be randomly picked, up to 64 songs may be specified.
-# Note: If song name contains spaces then it must be put in quotes.
-# Song names preceded by a '!' mark will be designated as 'initial' songs.
-# One of these will be played first when a music event starts, and it will not
-# be looped. When it ends, non-initial (ie normal) songs are picked (and may be
-# looped, depending on 'shuffle_music' client option). For filenames enclosed
-# in quotes the '!' mark must come before the quotes (eg: !"my music.mp3").
-# You can reference to other events by entering that event name, preceeded by a
-# '+' symbol (eg: Bree_night = BNight.mp3 +Bree  <-would, during night in Bree,
-# play BNight.mp3 and additionally all music that is defined for Bree daytime).
-# Note that 'initial' songs in a referenced music event will be ignored though.
-# Make sure that there aren't any spaces or tabs after the '=' in lines which
-# don't contain any song file name at all, or it will give an error.
-# Supported music formats are WAVE, MOD (includes S3M, IT, XM), MIDI, OGG, MP3.
+# One of the songs will be randomly picked, up to 100 songs may be specified.
+# If song name contains spaces then it must be put in quotes.
+#
+# Supported music formats are OGG, MP3, WAVE, MOD (includes S3M, IT, XM), MIDI.
+# However, guaranteed to work with every future release are just OGG and MP3.
 #
 # To disable a song, put a ';' in front of the line!
 # This is preferable over commenting out a line with '#', because the server
 # won't think that your music pack is outdated and possibly send you the wrong
 # music codes as a consequence!
+# There is no functional difference between '--#' (or '-#') and just '#'.
 #
-# Example:
+# You can concatenate multiple lines by ending a line on ' \' (line-wrap),
+# they will be treated as if they were a single, long line.
+#
+# Song names preceded by a '!' mark will be designated as 'initial' songs.
+# One of these will be played first when a music event starts, and it will not
+# be looped. When it ends, non-initial (ie normal) songs are picked (and may be
+# looped, depending on 'shuffle_music' and 'play_all' client options).
+# For filenames enclosed in quotes the '!' mark must come before the quotes,
+# eg: !"my music.mp3" .
+#
+# You can reference to other events by entering that event name, preceeded by a
+# '+' symbol (eg: Bree_night = BNight.mp3 +Bree  <-would, during night in Bree,
+# play BNight.mp3 and additionally all music that is defined for Bree daytime).
+# Note that 'initial' songs in a referenced music event will be ignored though.
+#
+# Example (with partially made up filenames/folders):
 # BarrowDowns = dungeons/bd1.mp3 "otherstuff/da dee doo.ogg"
 #
 #
-# Naming and meta data conventions:
+# Audio pack naming and meta data conventions:
 #
 # Edit the info in the [title] tag to provide accurate information about your
 # self-made audio packs, as these will be displayed in the audio pack selector.
 #
 # Further, use 7-zip (www.7-zip.org) to create a .7z file of your audio pack
-# with a filename starting on 'TomeNET-musicpack' and ending on '.7z'.
+# with a filename starting on 'TomeNET-musicpack' and ending on '.7z'
+# Starting in 4.9.3, other archive formats such as zip, gz, bz2, tar.gz and
+# tar.bz2 are also recognized.
+#
 # Example: 'TomeNET-musicpack-mycoolpack.v14a-rldude.7z'
+# Alternatively, file names just starting on 'music' are also accepted,
+# example: 'music.mycoolpack.v14a-rldude.7z'
 #
 # Make sure that the 7-zip file contains exactly one top-level folder, its name
 # starting on 'music', with everything else (including the music.cfg file)
@@ -49,7 +61,7 @@
 [title]
 
 packname = None
-#version = 1.0
+version = 1.0
 author = nobody
 description = No music.
 

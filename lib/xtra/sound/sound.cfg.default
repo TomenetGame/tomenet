@@ -5,31 +5,39 @@
 #
 # The format is:
 # <event name> = <sample-names seperated by spaces>
+# where the event names are listed in audio_sfx[] array in lib/scpt/audio.lua.
 #
-# Where the event names are listed in audio_sfx[] in lib/scpt/audio.lua.
-# One of the samples will be randomly picked, up to 64 samples may be specified.
-# Note: If sample name contains spaces then it must be put in quotes.
-# Make sure that there aren't any spaces or tabs after the '=' in lines which
-# don't contain any song file name at all, or it will give an error.
-# Supported sound formats are WAVE, AIFF, RIFF, OGG, and VOC.
+# One of the samples will be randomly picked, up to 100 samples may be specified.
+# If sample name contains spaces then it must be put in quotes.
+#
+# Supported sound formats are OGG, WAVE, AIFF, RIFF, and VOC.
 #
 # To disable a sound effect, put a ';' in front of the line!
 # This is preferable over commenting out a line with '#', because the server
 # won't think that your sound pack is outdated and possibly send you the wrong
 # sound codes as a consequence!
+# There is no functional difference between '--#' (or '-#') and just '#'.
+#
+# You can concatenate multiple lines by ending a line on ' \' (line-wrap),
+# they will be treated as if they were a single, long line.
 #
 # Example:
-# hit_weapon = player/combat/hit.wav "player/combat/hit steel.ogg"
+# hit_weapon = player/combat/hit.wav "player/combat/hit steel.wav"
 #
 #
-# Naming and meta data conventions:
+# Audio pack naming and meta data conventions:
 #
 # Edit the info in the [title] tag to provide accurate information about your
 # self-made audio packs, as these will be displayed in the audio pack selector.
 #
 # Further, use 7-zip (www.7-zip.org) to create a .7z file of your audio pack
 # with a filename starting on 'TomeNET-soundpack' and ending on '.7z'.
+# Starting in 4.9.3, other archive formats such as zip, gz, bz2, tar.gz and
+# tar.bz2 are also recognized.
+#
 # Example: 'TomeNET-soundpack-mycoolpack.v14a-rldude.7z'
+# Alternatively, file names just starting on 'sound' are also accepted,
+# example: 'sound.mycoolpack.v14a-rldude.7z'
 #
 # Make sure that the 7-zip file contains exactly one top-level folder, its name
 # starting on 'sound', with everything else (including the sound.cfg file)
@@ -40,7 +48,7 @@
 [title]
 
 packname = None (basic alert effects only)
-#version = 1.0
+version = 1.0
 author = C. Blue
 description = No sound effects except for basic alerts.
 
