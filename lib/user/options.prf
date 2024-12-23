@@ -75,12 +75,12 @@ Y:id_selection
 X:hp_bar
 X:mp_bar
 X:st_bar
-X:mp_huge_bar
-X:sn_huge_bar
-X:hp_huge_bar
+Y:mp_huge_bar
+Y:sn_huge_bar
+Y:hp_huge_bar
 X:flash_player2
 X:no_flicker
-X:stun_huge_bar
+Y:stun_huge_bar
 
 X:alert_hitpoint
 X:alert_mana

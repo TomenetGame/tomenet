@@ -539,11 +539,11 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.destroy_all_unmatched,	FALSE,	8,	0, 141, TRUE,
 	    "destroy_all_unmatched",	"Destroys ALL unmatched items. (Like A'#' in &.)" },
 
-	{ &c_cfg.mp_huge_bar,		FALSE,	1,	0, 142, TRUE,
+	{ &c_cfg.mp_huge_bar,		TRUE,	1,	0, 142, TRUE,
 	    "mp_huge_bar",		"Also show mana pool as huge bar (big_map only)" },
-	{ &c_cfg.sn_huge_bar,		FALSE,	1,	0, 143, TRUE,
+	{ &c_cfg.sn_huge_bar,		TRUE,	1,	0, 143, TRUE,
 	    "sn_huge_bar",		"Also show sanity as huge bar (big_map only)" },
-	{ &c_cfg.hp_huge_bar,		FALSE,	1,	0, 144, TRUE,
+	{ &c_cfg.hp_huge_bar,		TRUE,	1,	0, 144, TRUE,
 	    "hp_huge_bar",		"Also show HP pool as huge bar (big_map only)" },
 
 	{ &c_cfg.clone_to_stdout,	FALSE,	1,	0, 145, TRUE,
@@ -577,7 +577,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.no_flicker,		FALSE,	4,	0, 158, TRUE,
 	    "no_flicker",		"Disable all fast colour animations" },
-	{ &c_cfg.stun_huge_bar,		FALSE,	1,	0, 159, TRUE,
+	{ &c_cfg.stun_huge_bar,		TRUE,	1,	0, 159, TRUE,
 	    "stun_huge_bar",		"Show stun status as huge bar (big_map only)" },
 
 	//inactive
