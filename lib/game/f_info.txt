@@ -1641,6 +1641,11 @@ N:238:drawbridge
 G:=:u
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 
+# Like 237, but corners shaved off
+N:239:solid block
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+
 
 
 # NOTE: 255 is reserved for special purpose (RLE in server save file / 'not done yet' indicator -- TODO: Check the latter one, can't coexist w/ RLE?)

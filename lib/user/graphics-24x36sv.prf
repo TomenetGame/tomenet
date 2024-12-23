@@ -316,6 +316,7 @@ F:169:/554 # Solid block (UI), top side open
 F:170:/555 # Solid block (UI), bottom side open
 F:171:/556 # Solid block (UI), top+bottom sides open
 F:237:/557 # Solid block (UI)
+F:239:/558 # Solid block (UI), corners shaved off
 
 F:238:/295 # Drawbridge, horizontal
 
