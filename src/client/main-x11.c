@@ -1233,16 +1233,16 @@ struct term_data {
 	XImage *tiles;
 	Pixmap bgmask;
 	Pixmap fgmask;
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	Pixmap bg2mask;
 	Pixmap tilePreparation2;
-#endif
+ #endif
 	Pixmap tilePreparation;
 
-#ifdef TILE_CACHE_SIZE
+ #ifdef TILE_CACHE_SIZE
 	int cache_position;
 	struct tile_cache_entry tile_cache[TILE_CACHE_SIZE];
-#endif
+ #endif
 
 #endif
 };
@@ -1844,7 +1844,7 @@ static void free_graphics(term_data *td) {
 		XFreePixmap(Metadpy->dpy, td->fgmask);
 		td->fgmask = None;
 	}
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 	if (td->bg2mask) {
 		XFreePixmap(Metadpy->dpy, td->bg2mask);
 		td->bg2mask = None;
@@ -1853,29 +1853,29 @@ static void free_graphics(term_data *td) {
 		XFreePixmap(Metadpy->dpy, td->tilePreparation2);
 		td->tilePreparation2 = None;
 	}
-#endif
+ #endif
 	if (td->tilePreparation) {
 		XFreePixmap(Metadpy->dpy, td->tilePreparation);
 		td->tilePreparation = None;
 	}
-#ifdef TILE_CACHE_SIZE
+ #ifdef TILE_CACHE_SIZE
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		if (td->tile_cache[i].tilePreparation) {
 			XFreePixmap(Metadpy->dpy, td->tile_cache[i].tilePreparation);
 			td->tile_cache[i].tilePreparation = None;
 			td->tile_cache[i].c = 0xffffffff;
 			td->tile_cache[i].a = 0xff;
- #ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 			XFreePixmap(Metadpy->dpy, td->tile_cache[i].tilePreparation2);
 			td->tile_cache[i].tilePreparation2 = None;
 			td->tile_cache[i].c_back = 0xffffffff;
 			td->tile_cache[i].a_back = 0xff;
- #endif
+  #endif
 			td->tile_cache[i].is_valid = FALSE;
 			/* Optional 'bg' and 'fg' need no intialization */
 		}
 	}
-#endif
+ #endif
 }
 #endif
 
