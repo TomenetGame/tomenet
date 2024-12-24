@@ -602,7 +602,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.gfx_palanim_repaint,	TRUE,	1,	0, 168, TRUE,
 	    "gfx_palanim_repaint",	"Flicker-free repaint, glitches on some systems" },
 	{ &c_cfg.gfx_hack_repaint,	TRUE,	1,	0, 168, TRUE,
-	    "gfx_hack_repaint",		"If gfx_palanim_repaint is off this may reduce flicker" },
+	    "gfx_hack_repaint",		"May reduce flicker if gfx_palanim_repaint is off" },
 };
 
 cptr melee_techniques[16] = {
