@@ -1409,9 +1409,9 @@ void go_challenge_start(int Ind) {
 				a_back = 0;
 
  #ifdef GRAPHICS_BG_MASK
-				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 1 - n, a, c, a_back, c_back); /* Send stone (if any) on the board, if no stone then just send the board */
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 1 + n, a, c, a_back, c_back); /* Send stone (if any) on the board, if no stone then just send the board */
  #else
-				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 1 - n, a, c); /* Send either stone or (if there is no stone) the board */
+				Send_char_direct(Ind, GO_BOARD_X + 1 + x, GO_BOARD_Y + 1 + n, a, c); /* Send either stone or (if there is no stone) the board */
  #endif
 			}
 		}
