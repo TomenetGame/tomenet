@@ -3296,10 +3296,10 @@ static void go_engine_board(void) {
 
 				/* Board in the background */
 				if (x == 0) {
-					if (n == 0) {
+					if (n == 8) {
 						c_back = c_board_tl;
 						a_back = a_board_tl;
-					} else if (n == 8) {
+					} else if (n == 0) {
 						c_back = c_board_bl;
 						a_back = a_board_bl;
 					} else {
@@ -3307,20 +3307,20 @@ static void go_engine_board(void) {
 						a_back = a_board_l;
 					}
 				} else if (x == 8) {
-					if (n == 0) {
+					if (n == 8) {
 						c_back = c_board_tr;
 						a_back = a_board_tr;
-					} else if (n == 8) {
+					} else if (n == 0) {
 						c_back = c_board_br;
 						a_back = a_board_br;
 					} else {
 						c_back = c_board_r;
 						a_back = a_board_r;
 					}
-				} else if (n == 0) {
+				} else if (n == 8) {
 					c_back = c_board_t;
 					a_back = a_board_t;
-				} else if (n == 8) {
+				} else if (n == 0) {
 					c_back = c_board_b;
 					a_back = a_board_b;
 				} else  {
