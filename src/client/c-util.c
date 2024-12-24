@@ -10265,7 +10265,11 @@ static void do_cmd_options_tilesets(void) {
 
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377y-\377w/\377y+\377w,\377y=\377w switch tileset (requires restart), \377yENTER\377w enter a specific tileset name,");
+#ifdef GRAPHICS_BG_MASK
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w cycle graphics mode - requires client restart! \377yESC\377w keep changes and exit.");
+#else
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit.");
+#endif
 		l++;
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s).");
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sSo for graphics to look good, you should selected a font size that matches it");
@@ -10277,7 +10281,13 @@ static void do_cmd_options_tilesets(void) {
 		l++;
 
 		//GRAPHICS_BG_MASK @ UG_2MASK:
+#ifdef GRAPHICS_BG_MASK
+		Term_putstr(1, l++, -1, TERM_WHITE, format("Graphical tileset mode is %s\377w ('\377yv\377w' %s).",
+		    use_graphics_new == UG_2MASK ? "\377Genabled (dual-mask mode)" : (use_graphics_new ? "\377Genabled (standard)\377-" : "\377sdisabled\377-"),
+		    use_graphics_new == UG_2MASK ? "to disable" : (use_graphics_new ? "to enable 2-mask mode" : "to enable standard graphics mode")));
+#else
 		Term_putstr(1, l++, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics_new == UG_2MASK ? "\377Genabled (dual)" : (use_graphics_new ? "\377Genabled\377-" : "\377sdisabled\377-")));
+#endif
 		l++;
 
 		/* Tilesets are atm a global setting, not depending on terminal window */
