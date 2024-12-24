@@ -4103,12 +4103,13 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 
 /* XXX this ignores the chance of extra dmg via 'critical hit' */
 static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1) {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind], p_bak = *p_ptr;
 	object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
 	bool first = TRUE;
 
 	/* save timed effects that might be changed on weapon switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
+
 
 	/* this stuff doesn't take into account dual-wield or shield(lessness) directly,
 	   but the player actually has to take care of unequipping/reequipping his
@@ -4222,7 +4223,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
-	calc_boni(Ind);
+	*p_ptr = p_bak; /* Get rid of potential black breath from inspecting a Morgul weapon^^ */
 
 	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
 	p_ptr->tim_wraith = tim_wraith;
