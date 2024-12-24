@@ -3827,6 +3827,10 @@ bool inc_stat(int Ind, int stat) {
 			if (value < 18) {
 				if (gain / 10 >= 18 - value) gain -= (18 - value) * 9;
 				else gain /= 10;
+
+				/* Fix bug when value is < 18 but stat_top is >= 18:
+				   gain could end up < 10 so gain/10 would be zero (rounded down) */
+				if (!gain) gain = 1;
 			}
 #endif
 
