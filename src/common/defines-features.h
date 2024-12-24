@@ -623,7 +623,9 @@
  /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
 
  /* Note: To make use of GRAPHICS_BG_MASK, currently the TEST_CLIENT must be built. Normal client will not support it even if enabled here. */
- #if 0 /* Disabled for the time being to find and fix the (Term_)redraw glitch(es) glitches first, which surface if this is enabled... */
+ #if 1 /* 0 = Disabled for the time being to find and fix the (Term_)redraw glitch(es) glitches first, which surface if this is enabled... */
+  /* Reenabled this globally and added the client option gfx_palanim_repaint for the time being for upcoming 4.9.3,
+     so everyone can choose between smooth or flickery redraw depending on whether their system is affected by visul glitches or not. :/ - C. Blue */
   #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
  #else
   #ifndef CLIENT_SIDE /* For debugging purpose, enable it on the servers but not officially for the release clients */

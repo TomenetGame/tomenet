@@ -599,6 +599,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "sunburn_msg",		"Show message if you start/stop burning in the sun" },
 	{ &c_cfg.wide_scroll_margin,	TRUE,	1,	0, 167, TRUE,
 	    "wide_scroll_margin",	"Scroll the screen further away from the edges" },
+	{ &c_cfg.gfx_palanim_repaint,	TRUE,	1,	0, 168, TRUE,
+	    "gfx_palanim_repaint",	"Flicker-free repaint, glitches on some systems" },
 };
 
 cptr melee_techniques[16] = {

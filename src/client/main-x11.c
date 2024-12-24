@@ -4340,7 +4340,10 @@ void set_palette(byte c, byte r, byte g, byte b) {
   #endif
  #endif
 //WiP, not functional		if (screen_icky) Term_switch_fully(0);
-		Term_repaint(SCREEN_PAD_LEFT, SCREEN_PAD_TOP, screen_wid, screen_hgt); //flicker-free redraw - C. Blue
+		if (c_cfg.gfx_palanim_repaint)
+			Term_repaint(SCREEN_PAD_LEFT, SCREEN_PAD_TOP, screen_wid, screen_hgt); //flicker-free redraw - C. Blue
+		else
+			Term_redraw();
 //WiP, not functional		if (screen_icky) Term_switch_fully(0);
 		Term_activate(&old_td->t);
 		return;

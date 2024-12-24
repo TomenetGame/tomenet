@@ -4084,7 +4084,7 @@ errr Term_switch(int screen) {
 
 /* Since we don't completely erase in Term_repaint(), but actually flush a screen
    that is switched out, we'd potentially get garbage visuals in between, because
-   scr and old no longer fit togeter (scr is being switched, but term-switching doesn't touch old,
+   scr and old no longer fit together (scr is being switched, but term-switching doesn't touch old,
    instead Term_load() will simply mark everything as 'changed' to fully redraw, discarding the
    (invalid) old to solve the issue. Clean solution: Keep track of a new old_mem/old_mem_back that
    correctly term-switches together with its scr/scr_back, via new Term_switch_fully().

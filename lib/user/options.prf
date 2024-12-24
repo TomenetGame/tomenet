@@ -31,6 +31,7 @@ X:disable_lightning
 X:no_light_fainting
 X:gfx_autooff_fmsw
 Y:solid_bars
+Y:gfx_palanim_repaint
 
 Y:exp_bar
 X:uniques_alive
