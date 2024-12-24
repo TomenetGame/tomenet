@@ -6300,6 +6300,13 @@ int Receive_weather_colouring(void) {
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &col_raindrop, &col_snowflake)) <= 0) return(n);
 	}
+
+	/* hack for gfx_palanim_repaint=no to reduce flickering:
+	   weather colouring is sent on day/night change, right before the palette update is sent.
+	   So when we receive this we know that a day/night specific palette update will follow.
+	   For that one we use the old, flickering method, otherwise we use smooth repaint method. - C. Blue */
+	gfx_palanim_repaint_hack = TRUE;
+
 	return(1);
 }
 

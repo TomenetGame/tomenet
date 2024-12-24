@@ -1311,3 +1311,4 @@ extern int prev_huge_chp, prev_huge_mhp;
 
 extern bool fix_custom_font_after_startup;
 extern int flick_global_x, flick_global_y, flick_global_time;
+extern bool gfx_palanim_repaint_hack;

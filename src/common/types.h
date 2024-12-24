@@ -4761,7 +4761,7 @@ struct client_opts {
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;
 	bool no_flicker;
 
-	bool add_kind_diz, hide_lore_paste, sunburn_msg, gfx_palanim_repaint;
+	bool add_kind_diz, hide_lore_paste, sunburn_msg, gfx_palanim_repaint, gfx_hack_repaint;
 	bool instant_retaliator;
 };
 
