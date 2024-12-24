@@ -1641,8 +1641,26 @@ N:238:drawbridge
 G:=:u
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 
-# Like 237, but corners shaved off
-N:239:solid block
+# Like 237, but corners rounded or cut off
+N:239:solid block, rounded
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:240:solid block, rounded, symmetric
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:241:solid block, corners cut off
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:242:solid block, corners cut off, symmetric
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:243:solid block, diamond
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:244:solid block, diamond, symmetric
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:245:solid block, outlined
 G:#:w
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 

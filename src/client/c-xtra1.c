@@ -314,7 +314,10 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 
 #ifdef USE_GRAPHICS
 		/* Graphical tileset? Use extra tile for this */
-		if (use_graphics && exp_bar_char != '#') gfx_char = Client_setup.f_char[FEAT_SOLID_NC];
+		if (use_graphics && exp_bar_char == '*' && c_cfg.solid_bars && !force_cui) gfx_char = Client_setup.f_char[FEAT_SOLID_NC + 5]; //diamond
+		else if (use_graphics && exp_bar_char != '#')
+			gfx_char = Client_setup.f_char[165]; //either this, or:
+			//gfx_char = Client_setup.f_char[FEAT_SOLID_NC + 6]; //+0..+6, recommended: +0, +5, +6
 		else gfx_char = FALSE;
 #endif
 
