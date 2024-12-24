@@ -531,7 +531,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 				else s_printf("CASINO: In Between - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 				break;
 
-			case BACT_CRAPS:  /* Game of Craps - requires the good new RNG :) */
+			case BACT_CRAPS:  /* Game of Craps - requires the good new RNG :) (thanks Mikael for adding the SFMT) */
+				//TODO: add graphical tileset dice here visually via Send_char_direct() (similar to the Go challenge in go.c) - C. Blue
 				msg_print(Ind, "\377GCraps");
 				win = 3;
 				odds = 1;
