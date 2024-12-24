@@ -4223,7 +4223,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
-	*p_ptr = p_bak; /* Get rid of potential black breath from inspecting a Morgul weapon^^ */
+	*p_ptr = p_bak; /* Get rid of potential black breath from inspecting a Morgul weapon as reported by Lavas */
 
 	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
 	p_ptr->tim_wraith = tim_wraith;
