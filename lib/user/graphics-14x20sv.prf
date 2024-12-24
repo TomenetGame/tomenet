@@ -1352,6 +1352,14 @@ K:946:/3406 # Black Queen
 K:939:/3407 # White King
 K:945:/3407 # Black King
 
+# Dice
+K:816:/3408 # Die 1
+K:817:/3409 # Die 2
+K:818:/3410 # Die 3
+K:819:/3411 # Die 4
+K:820:/3412 # Die 5
+K:821:/3413 # Die 6
+
 ##### Demolitionist stuff #####
 
 # U:48:/3500 # Unknown ingrideint

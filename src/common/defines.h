@@ -3679,6 +3679,12 @@
 #define SV_SNOWBALL			16
 #define SV_WHITE_DAME			17
 #define SV_BLACK_DAME			18
+#define SV_DIE_1			19
+#define SV_DIE_2			20
+#define SV_DIE_3			21
+#define SV_DIE_4			22
+#define SV_DIE_5			23
+#define SV_DIE_6			24
 
 /*
  * Special "sval" limit -- first "aimed" rod

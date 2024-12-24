@@ -6804,6 +6804,50 @@ W:10:0:2:75
 A:10/1
 D:Removes all kinds of temporary magical effects.
 
+# Graphical tileset meta objects: Game dice:
+N:816:& Die~ (1)
+G:*:U
+I:13:19:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:817:& Die~ (2)
+G:*:U
+I:13:20:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:818:& Die~ (3)
+G:*:U
+I:13:21:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:819:& Die~ (4)
+G:*:U
+I:13:22:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:820:& Die~ (5)
+G:*:U
+I:13:23:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:821:& Die~ (6)
+G:*:U
+I:13:24:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+
 # HOLE 816-838
 
 ##### Keys #####
