@@ -101,6 +101,7 @@ X:ascii_monsters
 X:ascii_uniques
 Y:add_kind_diz
 X:hide_lore_paste
+Y:topline_first
 
 
 # Audio options:

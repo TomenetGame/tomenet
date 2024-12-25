@@ -601,8 +601,10 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "wide_scroll_margin",	"Scroll the screen further away from the edges" },
 	{ &c_cfg.gfx_palanim_repaint,	TRUE,	1,	0, 168, TRUE,
 	    "gfx_palanim_repaint",	"Flicker-free repaint, glitches on some systems" },
-	{ &c_cfg.gfx_hack_repaint,	TRUE,	1,	0, 168, TRUE,
+	{ &c_cfg.gfx_hack_repaint,	TRUE,	1,	0, 169, TRUE,
 	    "gfx_hack_repaint",		"May reduce flicker if gfx_palanim_repaint is off" },
+	{ &c_cfg.topline_first,		TRUE,	0,	0, 170, TRUE,
+	    "topline_first",		"Top line shows first line of multi-line messages" },
 };
 
 cptr melee_techniques[16] = {

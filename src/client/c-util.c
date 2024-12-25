@@ -4638,8 +4638,8 @@ void c_msg_print(cptr msg) {
 	bool first_line = TRUE;
 
 	if (msg && msg[0] == '\377' && msg[1] == '\377') {
-		first_line = FALSE;
 		msg += 2;
+		if (c_cfg.topline_first) first_line = FALSE;
 	}
 
 	if (!c_cfg.topline_no_msg && first_line)
