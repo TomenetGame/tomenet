@@ -9408,7 +9408,10 @@ void process_player_change_wpos(int Ind) {
 	else if (in_irondeepdive(&p_ptr->wpos) && l_ptr && (l_ptr->flags1 & LF1_RANDOM_TOWN)) p_ptr->IDDC_found_rndtown = TRUE;
 
 	/* hack -- update night/day in wilderness levels */
-	if (!wpos->wz) {
+	if (!wpos->wz
+	    /* No need to re-day/night everything if the player was already on the surface -
+	       added this also for gfx_hack_repaint hack, as this would call Send_weather_colouring() again, resulting in extra flickering */
+	    && p_ptr->wpos_old.wz) {
 		if (IS_DAY) player_day(Ind);
 		else player_night(Ind);
 	}
@@ -10091,10 +10094,12 @@ void process_player_change_wpos(int Ind) {
 	/* Display this warning at most once per floor. Once per secret area would be nice but requires some non-trivial coding... */
 	p_ptr->warning_secret_area = FALSE;
 
+#if 0 /* Moved to PR_MAP */
 	/* Hack for gfx_hack_repaint: On sector change, also do a full Term_redraw().
 	   According to Zhardas this improves the glitching a lot, as 'it's much faster so less noticable'. */
 	if (IS_DAY) Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE, TERM_L_UMBER, '+');
 	else Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE, TERM_L_UMBER, '+');
+#endif
 
 	// DYNAMIC_CLONE_MAP (worldmap, while not shopping): extract code from wild_display_mini_map()
 }

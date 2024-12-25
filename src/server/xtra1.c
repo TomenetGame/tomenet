@@ -7891,6 +7891,15 @@ void redraw_stuff(int Ind) {
 		p_ptr->redraw &= ~(PR_MAP);
 		prt_map(Ind, FALSE);
 
+		if (!p_ptr->panel_changed) {
+#if 0 /* Moved here from process_player_change_wpos() */
+			/* Hack for gfx_hack_repaint: On sector change, also do a full Term_redraw().
+			   According to Zhardas this improves the glitching a lot, as 'it's much faster so less noticable'. */
+			if (IS_DAY) Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE, TERM_L_UMBER, '+');
+			else Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE, TERM_L_UMBER, '+');
+#endif
+		}
+
 #ifdef CLIENT_SIDE_WEATHER
 		/* hack: update weather if it was just a panel-change
 		   (ie level-sector) and not a level-change.
