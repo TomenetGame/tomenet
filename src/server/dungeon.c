@@ -10091,7 +10091,8 @@ void process_player_change_wpos(int Ind) {
 	/* Display this warning at most once per floor. Once per secret area would be nice but requires some non-trivial coding... */
 	p_ptr->warning_secret_area = FALSE;
 
-	/* Hack for gfx_hack_repaint: On sector change, also do a full Term_redraw(): */
+	/* Hack for gfx_hack_repaint: On sector change, also do a full Term_redraw().
+	   According to Zhardas this improves the glitching a lot, as 'it's much faster so less noticable'. */
 	if (IS_DAY) Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE, TERM_L_UMBER, '+');
 	else Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE, TERM_L_UMBER, '+');
 
