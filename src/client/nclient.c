@@ -6305,9 +6305,7 @@ int Receive_weather_colouring(void) {
 	   weather colouring is sent on day/night change, right before the palette update is sent.
 	   (And it is sent once on initial login.)
 	   So when we receive this we know that a day/night specific palette update will follow.
-	   For that one we use the old, flickering method, otherwise we use smooth repaint method. - C. Blue
-	   Also as part of this hack, process_player_change_wpos() calls Send_weather_colouring() to ensure a full Term_redraw() on wpos sector change,
-	   as as reported by Zhardas changing sectors can cause glitching still. */
+	   For that one we use the old, flickering method, otherwise we use smooth repaint method. - C. Blue */
 	if (gfx_palanim_repaint_hack_login) gfx_palanim_repaint_hack_login = FALSE; /* So I put a hack in your hack, just to skip weather-col call from initial login */
 	else gfx_palanim_repaint_hack = TRUE;
 
