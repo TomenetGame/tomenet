@@ -2475,7 +2475,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	/* Dead player */
 	if (p_ptr->csane < 0) {
 		/* Hack -- Note death */
-		msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
+		msg_format(Ind, "\377v%s", HCMSG_VEGETABLE);
 		/*msg_print(Ind, "\377RYou die.");
 		msg_print(Ind, NULL); - already in xtra2.c (C. Blue)*/
 

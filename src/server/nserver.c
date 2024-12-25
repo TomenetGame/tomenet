@@ -3242,7 +3242,7 @@ static int Handle_login(int ind) {
 				/* Clear note */
 				priv_note_sender[i][0] = priv_note_target[i][0] = priv_note[i][0] = priv_note_date[i][0] = 0;
 			} else { /* Deliver a note */
-				msg_format(NumPlayers, "\374\377R%s Note from %s: %s", priv_note_date[i], priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
+				msg_format(NumPlayers, "\374\377R%s %s%s: %s", priv_note_date[i], HCMSG_NOTE, priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
 				// Hack: Delivery-marker for 'we received at least one note', for the sfx ^^
 				p_ptr->tmp_y = 1;
 				/* Also notify sender if online right now */

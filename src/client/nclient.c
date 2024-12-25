@@ -3171,13 +3171,13 @@ int Receive_message(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0) return(n);
 
 	/* Ultra-hack for light-source fainting. (First two bytes are "\377w".) */
-	if (!c_cfg.no_lite_fainting && !strcmp(buf + 2, "Your light is growing faint.")) lamp_fainting = 30; //deciseconds
+	if (!c_cfg.no_lite_fainting && !strcmp(buf + 2, HCMSG_LIGHT_FAINT)) lamp_fainting = 30; //deciseconds
 
 	/* Hack for tombstone music from insanity-deaths. (First four bytes are "\377w\377v".) */
-	if (!strcmp(buf + 4, "You turn into an unthinking vegetable.")) insanity_death = TRUE;
+	if (!strcmp(buf + 4, HCMSG_VEGETABLE)) insanity_death = TRUE;
 
 	/* Hack for storing private messages to disk, in case we miss them; handle multi-line messages (subsequent lines start on a space) */
-	if (!strncmp(buf + 6, "Note from ", 10) || (got_note && buf[2] == ' ')) {
+	if (!strncmp(buf + 6, HCMSG_NOTE, 10) || (got_note && buf[2] == ' ')) {
 		FILE *fp;
 		char path[1024];
 		time_t ct = time(NULL);

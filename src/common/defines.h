@@ -9772,3 +9772,8 @@ extern int PlayerUID;
 
 /* For debugging - fixed */
 //#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_XPROTECT && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
+
+/* Hard-coded message strings that are used in both client and server and need to be consistent */
+#define HCMSG_VEGETABLE "You turn into an unthinking vegetable."
+#define HCMSG_LIGHT_FAINT "Your light is growing faint."
+#define HCMSG_NOTE "Note from "

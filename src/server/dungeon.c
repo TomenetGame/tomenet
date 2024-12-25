@@ -6408,7 +6408,7 @@ static bool process_player_end_aux(int Ind) {
 			/* The light is getting dim */
 			else if ((o_ptr->timeout < 100) && (!(o_ptr->timeout % 10))) {
 				if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
-				msg_print(Ind, "Your light is growing faint.");
+				msg_print(Ind, HCMSG_LIGHT_FAINT);
 			}
 		}
 	}

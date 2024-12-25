@@ -1187,7 +1187,7 @@ static void calc_sanity(int Ind) {
 		if (p_ptr->csane < 0) {
 			if (!p_ptr->safe_sane) {
 				/* Hack -- Note death */
-				msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
+				msg_format(Ind, "\377v%s", HCMSG_VEGETABLE);
 				(void)strcpy(p_ptr->died_from, "insanity");
 				p_ptr->died_from_ridx = 0;
 				(void)strcpy(p_ptr->really_died_from, "insanity");
@@ -11264,7 +11264,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			    q_ptr->paging == 0)
 				q_ptr->paging = 1;
 
-			msg_format(i, "\374\377RNote from %s: %s", p_ptr->name, str);
+			msg_format(i, "\374\377R%s%s: %s", HCMSG_NOTE, p_ptr->name, str);
 			//return; //so double-msg him just to be safe he sees it
 		}
 

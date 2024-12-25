@@ -3086,7 +3086,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				    q_ptr->paging == 0)
 					q_ptr->paging = 1;
 
-				msg_format(i, "\374\377RNote from %s: %s", p_ptr->name, censor ? msg : msg_u);
+				msg_format(i, "\374\377R%s%s: %s", HCMSG_NOTE, p_ptr->name, censor ? msg : msg_u);
 #ifdef USE_SOUND_2010
 				//sound(i, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 				sound(i, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
