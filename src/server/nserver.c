@@ -7280,7 +7280,7 @@ int Send_message(int Ind, cptr msg) {
 	if (msg == NULL) {
 		//return(1);
 		/* Hack: Indicate a NULL string by sending a string just consisting of char \377 */
-		return Packet_printf(&connp->c, "%c%c%c", PKT_MESSAGE, 255, 0);
+		return Packet_printf(&connp->c, "%c%c%c", PKT_MESSAGE, '\377', 0);
 	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
