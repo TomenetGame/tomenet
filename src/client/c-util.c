@@ -4635,8 +4635,14 @@ void c_msg_print(cptr msg) {
 	int n, x, y;
 	char buf[1024];
 	char *t;
+	bool first_line = TRUE;
 
-	if (!c_cfg.topline_no_msg)
+	if (msg && msg[0] == '\377' && msg[1] == '\377') {
+		first_line = FALSE;
+		msg += 2;
+	}
+
+	if (!c_cfg.topline_no_msg && first_line)
 		/* using clear_topline() here prevents top-line clearing via c_msg_print(NULL) */
 		if (!topline_icky) clear_topline();
 
@@ -4765,7 +4771,7 @@ void c_msg_print(cptr msg) {
 	}
 
 	/* Don't display any messages in top line? */
-	if (c_cfg.topline_no_msg || topline_icky) return;
+	if (c_cfg.topline_no_msg || topline_icky || !first_line) return;
 
 	/* Small length limit */
 	if (n > 80) n = 80;

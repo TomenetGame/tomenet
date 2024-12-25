@@ -2852,6 +2852,8 @@ void msg_print(int Ind, cptr msg_raw) {
 	bool first_character = TRUE;
 	//bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
+	//for strings that get split up and sent as multiple lines: mark subsequent lines for the client, for topline handling
+	bool first_line = TRUE, first_line_notok = is_older_than(&p_ptr->version, 4, 9, 2, 0, 0, 1);
 
 	/* for {- feature */
 	char first_colour_code = 'w';
@@ -3183,16 +3185,18 @@ void msg_print(int Ind, cptr msg_raw) {
 				}
 			}
 		}
-		Send_message(Ind, format("%s%s%s",
+		Send_message(Ind, format("%s%s%s%s",
+		    first_line ? "" : "\377\377",
 		    client_chat ? "\375" : (client_all ? "\374" : ""),
 		    client_ctrlo ? "\376" : "",
 		    msg_buf));
+		first_line = first_line_notok;
 		/* hack: avoid trailing space in the next sub-line */
 		//if (msg[msg_scan] == ' ') msg_scan++;
 		while (msg[msg_scan] == ' ') msg_scan++;//avoid all trailing spaces in the next sub-line
 	}
 
-	if (msg == NULL) Send_message(Ind, msg);
+	if (msg == NULL) Send_message(Ind, NULL);
 
 	return;
 #endif // enable line breaks?
