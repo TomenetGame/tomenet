@@ -4045,7 +4045,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
 				msg_print(Ind, "\374\377yHINT: You can inscribe your stack of empty bottles \377o!Mn\377y to limit their amount");
-				msg_print(Ind, "\374\377y      to at most n, eg \"!M20\". Useful if the bottles start weighing you down.");
+				msg_print(Ind, "\374\377y      to at most n, eg \"!K20\". Useful if the bottles start weighing you down.");
 				s_printf("warning_limitbottles: %s\n", p_ptr->name);
 				p_ptr->warning_limitbottles = 1;
 			}
