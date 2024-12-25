@@ -63,7 +63,7 @@ DisableNumlock=1
 ; Sets blue to #0033ff instead of #0000ff
 LighterDarkBlue=1
 
-; - Enable graphics in general (0 = off, 1 = on)
+; - Enable graphics in general (0 = off, 1 = on, 2 = dual-mask mode)
 Graphics=0
 ; - Specify basename for loaded graphics file and possible custom graphics character redefinitions.
 ;   If "Graphics" option is enabled, the tiles can be loaded from lib\xtra\graphics\{graphic_tiles}.bmp (Eg: lib\xtra\graphics\9x15.bmp).

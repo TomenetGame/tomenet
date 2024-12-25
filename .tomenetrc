@@ -77,8 +77,7 @@ lighterDarkBlue
 
 ## Graphics settings
 
-## - Enable graphics in general (0 = off)
-##   Note: Usage of graphic tiles is experimental.
+## - Enable graphics in general (0 = off. 1 = on, 2 = dual-mask mode)
 graphics	0
 
 ## - Specify basename for loaded graphics file and possible custom graphics character redefinitions.
