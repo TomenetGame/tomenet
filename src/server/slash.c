@@ -10844,9 +10844,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* toggle own client-side weather for testing purpose:
 			   This overrides regular weather, to reenable use
 			   /cweather -1 x x x.
-			   Syntax: Type, Wind, WEATHER_GEN_TICKS, Intensity, Speed.
-			   To turn on rain: 1 0 3 8 3 */
+			   Syntax: Type Wind WEATHER_GEN_TICKS Intensity Speed [:Playername].
+			   To turn on rain: 1 0 3 8 3 :somedood */
 			else if (prefix(messagelc, "/cweather") || prefix(messagelc, "/cw")) {
+				char *c;
+				int p = Ind;
+
+				if (tk < 5) {
+					msg_print(Ind, "Not enough parameters.");
+					return;
+				}
 				if (k == -1) p_ptr->custom_weather = FALSE;
 				else p_ptr->custom_weather = TRUE;
 				/* Note: 'cloud'-shaped restrictions don't apply
@@ -10854,7 +10861,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				   In that case, the weather will simply fill the
 				   whole worldmap sector.
 				   revoke_clouds is TRUE here, so it'll be all-sector. */
-				Send_weather(Ind,
+				if ((c = strchr(message3, ':'))) {
+					if (!(p = name_lookup_loose(Ind, c + 1, FALSE, TRUE, FALSE))) {
+						msg_print(Ind, "Player not online.");
+						return;
+					}
+				}
+				Send_weather(p,
 				    atoi(token[1]), atoi(token[2]), atoi(token[3]), atoi(token[4]), atoi(token[5]),
 				    FALSE, TRUE);
 				return;
