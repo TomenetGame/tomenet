@@ -1457,7 +1457,7 @@ void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, 
 		if (lptr == line) /* Indent subsequent lines with a leading space */
 			c_msg_format("%s%s", crossmod_item ? "\377D" : "", tmp);
 		else
-			c_msg_format(" %s%s", crossmod_item ? "\377D" : "", tmp);
+			c_msg_format("%s %s%s", c_cfg.topline_first ? "\377\377" : "", crossmod_item ? "\377D" : "", tmp);
 
 		lptr += c - tmp + 1;
 	}
@@ -1465,7 +1465,7 @@ void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, 
 	if (lptr == line) /* Indent subsequent lines with a leading space */
 		c_msg_format("%s%s", crossmod_item ? "\377D" : "", lptr);
 	else
-		c_msg_format(" %s%s", crossmod_item ? "\377D" : "", lptr);
+		c_msg_format("%s %s%s", c_cfg.topline_first ? "\377\377" : "", crossmod_item ? "\377D" : "", lptr);
 }
 
 /*
