@@ -599,12 +599,14 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "sunburn_msg",		"Show message if you start/stop burning in the sun" },
 	{ &c_cfg.wide_scroll_margin,	TRUE,	1,	0, 167, TRUE,
 	    "wide_scroll_margin",	"Scroll the screen further away from the edges" },
-	{ &c_cfg.gfx_palanim_repaint,	TRUE,	1,	0, 168, TRUE,
+	{ &c_cfg.gfx_palanim_repaint,	TRUE,	1,	0, 168, TRUE, //just for debugging repaint glitches
 	    "gfx_palanim_repaint",	"Flicker-free repaint, glitches on some systems" },
-	{ &c_cfg.gfx_hack_repaint,	TRUE,	1,	0, 169, TRUE,
+	{ &c_cfg.gfx_hack_repaint,	TRUE,	1,	0, 169, TRUE, //just for debugging repaint glitches
 	    "gfx_hack_repaint",		"May reduce flicker if gfx_palanim_repaint is off" },
 	{ &c_cfg.topline_first,		TRUE,	0,	0, 170, TRUE,
 	    "topline_first",		"Top line shows first line of multi-line messages" },
+	{ &c_cfg.ascii_weather,		FALSE,	1,	0, 171, TRUE, //just for debugging weather glitches
+	    "ascii_weather",		"Always use plain ASCII symbols for weather" },
 };
 
 cptr melee_techniques[16] = {
