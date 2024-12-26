@@ -2658,7 +2658,7 @@ void do_cmd_uninscribe(int Ind, int item) {
 	}
 
 	/* Message */
-	msg_print(Ind, "Inscription removed.");
+	msg_format(Ind, "Inscription '%s' removed.", quark_str(o_ptr->note));
 
 	/* Remove the incription */
 	o_ptr->note = 0;
