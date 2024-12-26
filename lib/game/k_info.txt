@@ -6804,51 +6804,91 @@ W:10:0:2:75
 A:10/1
 D:Removes all kinds of temporary magical effects.
 
-# Graphical tileset meta objects: Game dice:
+# Graphical tileset meta objects - these are pseudo-objects just for graphical tilesets, not actual in-game objects
+
+# Game dice:
 N:816:& Die~ (1)
 G:*:U
-I:13:19:0
+I:125:8:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:817:& Die~ (2)
 G:*:U
-I:13:20:0
+I:125:9:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:818:& Die~ (3)
 G:*:U
-I:13:21:0
+I:125:10:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:819:& Die~ (4)
 G:*:U
-I:13:22:0
+I:125:11:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:820:& Die~ (5)
 G:*:U
-I:13:23:0
+I:125:12:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:821:& Die~ (6)
 G:*:U
-I:13:24:0
+I:125:13:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 
-# HOLE 816-838
+N:822:Raindrop
+G:|:w
+I:125:1:0
+W:127:0:0:0
+A:127/0
+N:823:Raindrop (E1)
+G:|:w
+I:125:2:0
+W:127:0:0:0
+A:127/0
+N:824:Raindrop (E2)
+G:|:w
+I:125:3:0
+W:127:0:0:0
+A:127/0
+N:825:Raindrop (W1)
+G:|:w
+I:125:4:0
+W:127:0:0:0
+A:127/0
+N:826:Raindrop (W2)
+G:|:w
+I:125:5:0
+W:127:0:0:0
+A:127/0
+N:827:Snowflake
+G:|:w
+I:125:6:0
+W:127:0:0:0
+A:127/0
+N:828:Sandgrain
+G:|:w
+I:125:7:0
+W:127:0:0:0
+A:127/0
+
+#todo: fireworks tiles (eg: '|', '/', '\', '-', <explosion>, <rocket> perhaps, or whatever...)
+
+# HOLE 829-838
 
 ##### Keys #####
 
@@ -8543,7 +8583,7 @@ d:(This is a quest item)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
 #W:(level):(rarity[arts only] 0..255):(weight):(price)  --  depth, rarity and weight have no effect on INSTA_ARTs; price has effect while the item is not known, otherwise it gets overridden by a_ptr->price.
-#A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]  -- this line has no effect on INSTA_ARTs
+#A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]  -- this line has no effect on INSTA_ARTs -- chance 0 means item won't be generated
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC)
 #F:(Flag) |...
 # Note that W and A lines are not in effect for INSTA_ARTs. Only a_info counts for those.

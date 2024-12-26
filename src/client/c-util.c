@@ -13729,6 +13729,26 @@ static void handle_process_graphics_file(void) {
 	char_map_offset = MAX_FONT_CHAR + 1;
 	if (process_pref_file(fname) == -1) printf("ERROR: Can't read graphics preferences file: %s\n", fname);
 	char_map_offset = 0;
+
+	/* Initialize pseudo-features and pseudo-objects that don't exist in the game world but are just used for graphical tilesets */
+	/* --- Init pseudo-objects --- */
+	/* Weather particles */
+	kidx_po_rain_char = Client_setup.k_char[KIDX_PO_RAIN];
+	kidx_po_rain_attr = Client_setup.k_attr[KIDX_PO_RAIN];
+	kidx_po_rain_e1_char = Client_setup.k_char[KIDX_PO_RAIN_E1];
+	kidx_po_rain_e1_attr = Client_setup.k_attr[KIDX_PO_RAIN_E1];
+	kidx_po_rain_e2_char = Client_setup.k_char[KIDX_PO_RAIN_E2];
+	kidx_po_rain_e2_attr = Client_setup.k_attr[KIDX_PO_RAIN_E2];
+	kidx_po_rain_w1_char = Client_setup.k_char[KIDX_PO_RAIN_W1];
+	kidx_po_rain_w1_attr = Client_setup.k_attr[KIDX_PO_RAIN_W1];
+	kidx_po_rain_w2_char = Client_setup.k_char[KIDX_PO_RAIN_W2];
+	kidx_po_rain_w2_attr = Client_setup.k_attr[KIDX_PO_RAIN_W2];
+	kidx_po_snow_char = Client_setup.k_char[KIDX_PO_SNOW];
+	kidx_po_snow_attr = Client_setup.k_attr[KIDX_PO_SNOW];
+	kidx_po_sand_char = Client_setup.k_char[KIDX_PO_SAND];
+	kidx_po_sand_attr = Client_setup.k_attr[KIDX_PO_SAND];
+	/* --- Init pseudo-features --- */
+	/* Currently there are no pseudo-features used on client-side here; go board in the casino is handled server-side */
 }
 #endif
 

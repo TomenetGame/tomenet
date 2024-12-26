@@ -5333,43 +5333,61 @@ void do_weather(bool no_weather) {
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				if (weather_element_type[i] == 1) {
 					/* display raindrop */
-#ifdef GRAPHICS_BG_MASK /* TODO: Allow using mapped graphics tiles for weather particles, fireworks, etc. */
-					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
-					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'),
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
-					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
-					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+#ifdef GRAPHICS_BG_MASK
+					if (use_graphics == 2 && kidx_po_rain_char)
+						Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
+						    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					else
 #endif
+					if (use_graphics && kidx_po_rain_char)
+						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
+					else
+						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 				} else if (weather_element_type[i] == 2) {
 					/* display snowflake */
 #ifdef GRAPHICS_BG_MASK
-					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
-					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_snowflake, '*',
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
-					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
-					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_snowflake, '*');
+					if (use_graphics == 2 && kidx_po_snow_char)
+						Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_snowflake, kidx_po_snow_char,
+						    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					else
 #endif
+					if (use_graphics && kidx_po_snow_char)
+						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_snowflake, kidx_po_snow_char);
+					else
+						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_snowflake, '*');
 				} else if (weather_element_type[i] == 3) {
 					/* display sand grain */
 #ifdef GRAPHICS_BG_MASK
-					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
-					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_sandgrain, c_sandgrain,
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
-					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
-					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_sandgrain, c_sandgrain);
+					if (use_graphics == 2 && kidx_po_sand_char)
+						Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_sandgrain, kidx_po_sand_char,
+						    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					else
 #endif
+					if (use_graphics && kidx_po_sand_char)
+						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_sandgrain, kidx_po_sand_char);
+					else
+						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+						    panel_y + weather_element_y[i] - weather_panel_y,
+						    col_sandgrain, c_sandgrain);
 				}
 			}
 		}
@@ -5569,18 +5587,19 @@ void do_weather(bool no_weather) {
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* restore original grid content */
 #ifdef GRAPHICS_BG_MASK
-				Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
-				    panel_y + weather_element_y[i] - weather_panel_y,
-				    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-				    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-				    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-				    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
+				if (use_graphics == 2)
+					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+					    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+				else
+#endif
 				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 				    panel_y + weather_element_y[i] - weather_panel_y,
 				    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
 				    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#endif
 			}
 		}
 
@@ -5636,16 +5655,22 @@ void do_weather(bool no_weather) {
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* display raindrop */
 #ifdef GRAPHICS_BG_MASK
-				Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
-				    panel_y + weather_element_y[i] - weather_panel_y,
-				    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'),
-				    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-				    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
-				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
-				    panel_y + weather_element_y[i] - weather_panel_y,
-				    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+				if (use_graphics == 2 && kidx_po_rain_char)
+					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
+					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+				else
 #endif
+				if (use_graphics && kidx_po_rain_char)
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
+				else
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 			}
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't
@@ -5686,16 +5711,22 @@ void do_weather(bool no_weather) {
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* display snowflake */
 #ifdef GRAPHICS_BG_MASK
-				Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
-				    panel_y + weather_element_y[i] - weather_panel_y,
-				    col_snowflake, '*',
-				    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-				    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
-				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
-				    panel_y + weather_element_y[i] - weather_panel_y,
-				    col_snowflake, '*');
+				if (use_graphics == 2 && kidx_po_snow_char)
+					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_snowflake, kidx_po_snow_char,
+					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+				else
 #endif
+				if (use_graphics && kidx_po_snow_char)
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_snowflake, kidx_po_snow_char);
+				else
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_snowflake, '*');
 			}
 		}
 		/* advance sand grain - weather_speed should be high always for a sand storm */
@@ -5735,16 +5766,22 @@ void do_weather(bool no_weather) {
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* display sand grain */
 #ifdef GRAPHICS_BG_MASK
-				Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
-				    panel_y + weather_element_y[i] - weather_panel_y,
-				    col_sandgrain, c_sandgrain,
-				    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-				    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
-				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
-				    panel_y + weather_element_y[i] - weather_panel_y,
-				    col_sandgrain, c_sandgrain);
+				if (use_graphics == 2 && kidx_po_sand_char)
+					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_sandgrain, kidx_po_sand_char,
+					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+				else
 #endif
+				if (use_graphics && kidx_po_sand_char)
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_sandgrain, kidx_po_sand_char);
+				else
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
+					    col_sandgrain, c_sandgrain);
 			}
 		}
 	}

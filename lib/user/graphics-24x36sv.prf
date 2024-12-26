@@ -326,9 +326,6 @@ F:245:/564 # Solid block (UI), outlined
 
 F:238:/295 # Drawbridge, horizontal
 
-#todo: weather particles: rain drops, snow flakes, sand grains (for direct use in c-xtra1.c)
-
-
 ################# Objects #################
 
 ##### Mushrooms #####
@@ -1367,9 +1364,9 @@ K:819:/3411 # Die 4
 K:820:/3412 # Die 5
 K:821:/3413 # Die 6
 
-##### Demolitionist stuff #####
+##### Demolitionist stuff / Chemicals #####
 
-# U:48:/3500 # Unknown ingrideint
+# U:48:/3500 # Unknown ingredient
 
 K:449:/3500 # Heap of Wood Chips
 K:718:/3500 # Smattering of Rust
@@ -1385,6 +1382,7 @@ K:736:/3500 # Dash of Caustic Salt
 K:737:/3500 # Pinch of Vitriol
 
 # U:47:/3502 # Unknown Charge
+
 K:702:/3502 # Blast Charge
 K:703:/3502 # Large Blast Charge
 K:704:/3502 # Surgical Charge
@@ -1422,3 +1420,15 @@ K:716:/3502 # Underground Charge
 #K:495:/3800 # mithril (coins)
 #K:496:/3801 # diamonds (gems, edged)
 #K:497:/3800 # adamantite (coins)
+
+##### Weather particles (pseudo-objects, for direct use in c-xtra1.c) #####
+
+K:822:/3600 # rain drop
+K:823:/3601 # rain drop, east wind
+K:824:/3602 # rain drop, strong east wind
+K:825:/3603 # rain drop, west wind
+K:826:/3604 # rain drop, strong west wind
+K:827:/3605 # snow flake
+K:828:/3606 # sand grain
+
+#todo: fireworks tiles

@@ -351,6 +351,8 @@ extern byte use_graphics, use_graphics_new, use_graphics_err;
 extern char use_graphics_errstr[MAX_CHARS_WIDE];
 #ifdef USE_GRAPHICS
 extern char graphic_tiles[256];
+extern char32_t kidx_po_rain_char, kidx_po_rain_e1_char, kidx_po_rain_e2_char, kidx_po_rain_w1_char, kidx_po_rain_w2_char, kidx_po_snow_char, kidx_po_sand_char;
+extern byte kidx_po_rain_attr, kidx_po_rain_e1_attr, kidx_po_rain_e2_attr, kidx_po_rain_w1_attr, kidx_po_rain_w2_attr, kidx_po_snow_attr, kidx_po_sand_attr;
 #endif
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;

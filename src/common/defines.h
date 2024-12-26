@@ -3476,9 +3476,8 @@
 #define TV_DAEMON_BOOK	115
 #endif  /* 0 */
 
+#define TV_PSEUDO_OBJ	125	/* These are just fake/pseudo objects for visual processing of graphical tilesets, not actual in-game objects */
 #define TV_SUBINVEN	126
-
-/* special items */
 #define TV_SPECIAL	127
 
 /* Maximum "tval" */
@@ -3679,12 +3678,6 @@
 #define SV_SNOWBALL			16
 #define SV_WHITE_DAME			17
 #define SV_BLACK_DAME			18
-#define SV_DIE_1			19
-#define SV_DIE_2			20
-#define SV_DIE_3			21
-#define SV_DIE_4			22
-#define SV_DIE_5			23
-#define SV_DIE_6			24
 
 /*
  * Special "sval" limit -- first "aimed" rod
@@ -4725,6 +4718,33 @@
  #define SI_WRAPPING_SKILL 10
 #endif
 
+
+/* svals for TV_PSEUDO_OBJ -- just pseudo objects for graphical tilesets, not actual in-game objects
+   (and due to their nature, their svals aren't actually used anywhere) */
+#define SV_PO_RAIN	1	/* Standard, vertical rain */
+#define SV_PO_RAIN_E1	2	/* Rain under east wind */
+#define SV_PO_RAIN_E2	3	/* Rain under strong east wind */
+#define SV_PO_RAIN_W1	4	/* Rain under west wind */
+#define SV_PO_RAIN_W2	5	/* Rain under strong west wind */
+#define SV_PO_SNOW	6	/* Snowflake */
+#define SV_PO_SAND	7	/* Sandstorm particle */
+#define SV_PO_DIE_1	8
+#define SV_PO_DIE_2	9
+#define SV_PO_DIE_3	10
+#define SV_PO_DIE_4	11
+#define SV_PO_DIE_5	12
+#define SV_PO_DIE_6	13
+/* k_idx for TV_PSEUDO_OBJ -- for graphical tiles the svals actually don't matter, they are just defined for good measure but have no use;
+   instead the k_idx values are used, especially client-side! */
+#define KIDX_PO_RAIN	822
+#define KIDX_PO_RAIN_E1	823
+#define KIDX_PO_RAIN_E2	824
+#define KIDX_PO_RAIN_W1	825
+#define KIDX_PO_RAIN_W2	826
+#define KIDX_PO_SNOW	827
+#define KIDX_PO_SAND	828
+
+
 /* svals for TV_SUBINVEN */
 #define SV_SI_SATCHEL			0	/* Stores DEMOLITIONIST ingredients */
 #define SV_SI_TRAPKIT_BAG		1
@@ -4766,7 +4786,9 @@
 						   xtra5 = custom fake k-info diz via LUA custom_object_diz().
 						   (xtra6/7/8/9 = reserved for xtra3 & 0x200, see above.) */
 #define SV_QUEST			2	/* a custom quest item (not to be confused with questors) */
-//SV_GIFT_WRAPPING_START..SV_GIFT_WRAPPING_END: 10..19 (used up to 15)	/* An item wrapped as a gift */
+/* TV_SPECIAL also reuses the defines from TV_JUNK - while it is paper there, here it is the actual wrapped gift:
+ SV_GIFT_WRAPPING_START..SV_GIFT_WRAPPING_END: 10..19 (used up to 15) */
+
 
 
 /*** General flag values ***/
