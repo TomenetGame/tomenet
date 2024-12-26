@@ -9407,12 +9407,9 @@ void process_player_change_wpos(int Ind) {
 	/* Cover disallowing the same if he enters a random town someone else already generated */
 	else if (in_irondeepdive(&p_ptr->wpos) && l_ptr && (l_ptr->flags1 & LF1_RANDOM_TOWN)) p_ptr->IDDC_found_rndtown = TRUE;
 
-	/* hack -- update night/day in wilderness levels */
-	if (!wpos->wz
-	    /* Optimization: No need to re-day/night everything if the player was already on the surface -
-	       added this also for gfx_hack_repaint hack, as this would call Send_weather_colouring() again, resulting in extra flickering */
-	    && p_ptr->wpos_old.wz
-	    ) {
+	/* hack -- update night/day in wilderness levels - this must be done even if previous wpos.wz was also zero, or towns would appear "unlit".
+	   Note that this will currently also trigger gfx_hack_repaint as these functions also Send_weather_colouring() again. */
+	if (!wpos->wz) {
 		if (IS_DAY) player_day(Ind);
 		else player_night(Ind);
 	}
