@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. December 2024 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 28. December 2024 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -25830,22 +25830,49 @@ Manage your spells and items:
 It can happen often that you die in a specific situation that you could have
 survived had you actually used everything at your disposal, that you forgot
 about, either because..
--you panicked or because
+
+-you panicked. It happens often that you do have all sorts of consumables or
+ devices on you to handle a situation, but you forgot to actually use them and
+ now you are dead. A good way to improve here is to make macros for these
+ consumables, such as cure poison mushrooms, or potions or scrolls, or even a
+ staff of slow monsters or whatever else you got.
+ I have often seen players getting killed in situations they could have EASILY
+ handled just because of the 5 different items they could've used they actually
+ used none.
+ Another true classic are warriors who die to some orc pack and still had their
+ starter potion of berserk strength when they died.
+ At the very least buy a scroll or staff of teleportation when you can afford
+ one and macro it as a get-out-of-jail-free card.
+
 -you expected a new, strong opponent to perform just as weakly as the other
  hundred monsters you slew before even though it gives away that it is special
  by its blinking colour or by being represented by a symbol/letter that you are
  not familiar with and haven't seen before in that dungeon.
 
+-you didn't prepare properly before going into the dungeon:
+ Of course you should buy some means of phase door and healing, but also
+ some basic resistance rings or amulet.
+ Don't forget to enchant your armour when you can afford it.
+ And what I see especially often are players making their own lives harder by
+ not buying a spell they could already use. If you train some holy/magic skill,
+ you should verify if you can use a new spell now and buy it in the book store.
+ It seems that some players vastly underestimate the benefits of some spells,
+ so just give it a try when you learn it, maybe on some 'safe' monsters.
+
 Some examples:
+
 -Forgetting to apply a buff, such as a berserk strength potion or resist heat
- against strong fire breathers (which are one of the early threats in the game)
--Neglecting to use a protective/defensive spell before engaging in a fight
+ against strong fire breathers (which are rather early threats in the game).
+
+-Neglecting to use a protective/defensive spell before engaging in a fight.
+
 -Not casting 'damage-add' spells, ie spells that don't deal high damage but
  that deal _additional_ damage to your main damage spells, which is a welcome
  bonus that can make a difference. Examples are mainly storm-type spells but
  can also be cloud spells, ie all spells that continue to deal damage over time
  after being initially cast, allowing you to cast direct damage spells in
  addition to them being active, increasing your total overall damage output.
+
 -Not using items because you weren't aware of their beneficial uses. Such as
  throwing a potion of salt water at a pack of monsters that is trying to
  surround you, to temporarily blind them (which has the same result as applying
