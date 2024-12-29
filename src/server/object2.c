@@ -10938,16 +10938,16 @@ void trap_found(struct worldpos *wpos, int y, int x) {
 }
 
 void discharge_rod(object_type *o_ptr, int c) {
+	//discharge whole stack
 #ifndef NEW_MDEV_STACKING
 	o_ptr->pval += c;
 #else
 	o_ptr->pval += c * o_ptr->number;
-	o_ptr->bpval = o_ptr->number; //discharge whole stack
+	o_ptr->bpval = o_ptr->number;
 #endif
 
-	//limit against rod-specific max:
-	 //todo: make a function from the cmd6.c ..zap_rod.. code that returns the default recharge time of a rod or sth..
-
+	//limit against rod-specific max - a rod cannot be more empty than empty:
+	if (o_ptr->pval > rod_base_cd[o_ptr->sval]) o_ptr->pval = rod_base_cd[o_ptr->sval];
 }
 
 /*
