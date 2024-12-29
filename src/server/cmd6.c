@@ -1310,7 +1310,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	int ident, klev;
 	object_type *o_ptr, forge;
-	bool flipped = FALSE;
+	bool flipped = FALSE, keep_newest_potion = FALSE;
 
 	/* Restrict choices to potions (apparently meanless) */
 	item_tester_tval = TV_POTION;
@@ -1422,6 +1422,10 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		    o_name);
 	}
 
+	/* QoL: If item_newest is this potion and there are still more potions left in this stack,
+	   don't set item_newest to a potentially resulting empty bottle, but keep it as it as we might chain-quaff */
+	if (item >= 0 && p_ptr->item_newest == item && o_ptr->number != 1) keep_newest_potion = TRUE;
+
 	/* Destroy a potion in the pack */
 	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
@@ -1454,6 +1458,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 #ifdef ENABLE_SUBINVEN
 			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE)) return;
 #endif
+			if (keep_newest_potion) o_ptr->mode |= MODE_NOT_NEWEST_ITEM;
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
 				msg_print(Ind, "\374\377yHINT: You can inscribe your stack of empty bottles \377o!Mn\377y to limit their amount");
