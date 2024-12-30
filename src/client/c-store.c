@@ -207,6 +207,8 @@ static int get_stock(int *com_val, cptr pmt, int i, int j) {
 		/* Convert */
 		k = (islower(command) ? A2I(command) : -1);
 		store_last_item = k;
+		store_last_item_tval = store.stock[k].tval;
+		store_last_item_sval = store.stock[k].sval;
 
 		/* Legal responses */
 		if ((k >= i) && (k <= j)) {

@@ -4366,15 +4366,19 @@ int Receive_store(void) {
 			return(n);
 	}
 
+	/* If we had store_last_item active and the item we just received is in its position but apparently a different item, clear store_last_item.
+	   Ie happens if we buy/steal the last item of a stack in a store slot. */
+	if (pos == store_last_item && (sval != store_last_item_sval || tval != store_last_item_tval)) store_last_item = -1;
+
+	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].sval = sval;
-	store.stock[(int)pos].weight = wgt;
+	store.stock[(int)pos].pval = pval;
 	store.stock[(int)pos].number = num;
+	store.stock[(int)pos].weight = wgt;
 	store_prices[(int)pos] = price;
+	store.stock[(int)pos].attr = attr;
 	strncpy(store_names[(int)pos], name, ONAME_LEN - 1);
 	store_names[(int)pos][ONAME_LEN - 1] = 0;
-	store.stock[(int)pos].tval = tval;
-	store.stock[(int)pos].attr = attr;
-	store.stock[(int)pos].pval = pval;
 	strncpy(store_powers[(int) pos], powers, MAX_CHARS_WIDE - 1);
 	store_powers[(int)pos][MAX_CHARS_WIDE - 1] = 0;
 
