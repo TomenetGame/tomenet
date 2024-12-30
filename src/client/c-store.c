@@ -206,9 +206,16 @@ static int get_stock(int *com_val, cptr pmt, int i, int j) {
 
 		/* Convert */
 		k = (islower(command) ? A2I(command) : -1);
+
+		/* Remember this item pile in the stock for buying/stealing more of the same */
 		store_last_item = k;
 		store_last_item_tval = store.stock[k].tval;
 		store_last_item_sval = store.stock[k].sval;
+		/* ...except if this was actually the last item!
+		   (We assume that this command gets through and the item _is_ really removed.
+		   If it isn't, the "+" option won't be available and the player will just have to
+		   operate on this last item manually, also not a big loss, since it's only 1.) */
+		if (store.stock[k].number == 1) store_last_item = -1;
 
 		/* Legal responses */
 		if ((k >= i) && (k <= j)) {

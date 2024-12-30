@@ -4367,7 +4367,8 @@ int Receive_store(void) {
 	}
 
 	/* If we had store_last_item active and the item we just received is in its position but apparently a different item, clear store_last_item.
-	   Ie happens if we buy/steal the last item of a stack in a store slot. */
+	   Ie happens if we buy/steal the last item of a stack in a store slot.
+           Note however that this method fails for macros without \w waits, as the macro might already execute the next get_stock() before this inven packet actually arrives to reset store_last_item to -1! */
 	if (pos == store_last_item && (sval != store_last_item_sval || tval != store_last_item_tval)) store_last_item = -1;
 
 	store.stock[(int)pos].tval = tval;
@@ -4417,7 +4418,8 @@ int Receive_store_wide(void) {
 	}
 
 	/* If we had store_last_item active and the item we just received is in its position but apparently a different item, clear store_last_item.
-	   Ie happens if we buy/steal the last item of a stack in a store slot. */
+	   Ie happens if we buy/steal the last item of a stack in a store slot.
+           Note however that this method fails for macros without \w waits, as the macro might already execute the next get_stock() before this inven packet actually arrives to reset store_last_item to -1! */
 	if (pos == store_last_item && (sval != store_last_item_sval || tval != store_last_item_tval)) store_last_item = -1;
 
 	store.stock[(int)pos].tval = tval;
