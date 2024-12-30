@@ -4416,15 +4416,15 @@ int Receive_store_wide(void) {
 		xtra7 = (s16b)xtra7b; xtra8 = (s16b)xtra8b; xtra9 = (s16b)xtra9b;
 	}
 
+	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].sval = sval;
-	store.stock[(int)pos].weight = wgt;
+	store.stock[(int)pos].pval = pval;
 	store.stock[(int)pos].number = num;
+	store.stock[(int)pos].weight = wgt;
 	store_prices[(int)pos] = price;
+	store.stock[(int)pos].attr = attr;
 	strncpy(store_names[(int)pos], name, ONAME_LEN - 1);
 	store_names[(int)pos][ONAME_LEN - 1] = 0;
-	store.stock[(int)pos].tval = tval;
-	store.stock[(int)pos].attr = attr;
-	store.stock[(int)pos].pval = pval;
 	store.stock[(int)pos].xtra1 = xtra1;
 	store.stock[(int)pos].xtra2 = xtra2;
 	store.stock[(int)pos].xtra3 = xtra3;
