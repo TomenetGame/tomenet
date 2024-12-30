@@ -4544,6 +4544,10 @@ int Receive_store_kick(void) {
 
 	/* Leave the store */
 	leave_store = TRUE;
+
+	/* Stop macro execution if we're on safe_macros! Added this for stealing macros ("Z+..."). */
+	if (parse_macro && c_cfg.safe_macros) flush_now();
+
 	clear_pstore_visuals();
 
 	return(1);

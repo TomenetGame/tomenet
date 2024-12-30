@@ -1210,9 +1210,6 @@ void display_store(void) {
 	shopping = FALSE;
 	store.stock_num = 0;
 	store_last_item = -1;
-	/* For world surface shops only, as we can be attacked while in dungeon shops and might hit a emergency macro to save ourslelves:
-	   Stop macro execution if we're on safe_macros! */
-	if (parse_macro && c_cfg.safe_macros && !p_ptr->wpos.wz) flush_now();
 
 	/* Flush any events that happened */
 	Flush_queue();
@@ -1303,9 +1300,6 @@ void display_store_special(void) {
 	shopping = FALSE;
 	store.stock_num = 0;
 	store_last_item = -1;
-	/* For world surface shops only, as we can be attacked while in dungeon shops and might hit a emergency macro to save ourslelves:
-	   Stop macro execution if we're on safe_macros! */
-	if (parse_macro && c_cfg.safe_macros && !p_ptr->wpos.wz) flush_now();
 
 	/* Flush any events that happened */
 	Flush_queue();
