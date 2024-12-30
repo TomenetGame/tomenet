@@ -164,6 +164,7 @@ extern int store_prices[STORE_INVEN_MAX];
 extern char store_names[STORE_INVEN_MAX][ONAME_LEN];
 extern char store_powers[STORE_INVEN_MAX][MAX_CHARS_WIDE];
 extern s16b store_num;
+extern int store_last_item;
 
 extern char spell_info[MAX_REALM + 9][9][9][80];
 

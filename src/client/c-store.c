@@ -182,8 +182,8 @@ void display_inventory(void) {
  * Get the ID of a store item and return its value      -RAK-
  */
 static int get_stock(int *com_val, cptr pmt, int i, int j) {
-	char    command;
-	char    out_val[160];
+	char command;
+	char out_val[160];
 
 	/* Paranoia XXX XXX XXX */
 	clear_topline_forced();
@@ -192,7 +192,8 @@ static int get_stock(int *com_val, cptr pmt, int i, int j) {
 	*com_val = (-1);
 
 	/* Build the prompt */
-	(void)sprintf(out_val, "(Items %c-%c, ESC to exit) %s", I2A(i), I2A(j), pmt);
+	if (store_last_item == -1) (void)sprintf(out_val, "(Items %c-%c, ESC to exit) %s", I2A(i), I2A(j), pmt);
+	else (void)sprintf(out_val, "(Items %c-%c, + for previous, ESC to exit) %s", I2A(i), I2A(j), pmt);
 
 	/* Ask until done */
 	while (TRUE) {
@@ -201,8 +202,11 @@ static int get_stock(int *com_val, cptr pmt, int i, int j) {
 		/* Escape */
 		if (!get_com(out_val, &command)) break;
 
+		if (command == '+') command = 'a' + store_last_item;
+
 		/* Convert */
 		k = (islower(command) ? A2I(command) : -1);
+		store_last_item = k;
 
 		/* Legal responses */
 		if ((k >= i) && (k <= j)) {
@@ -1203,6 +1207,7 @@ void display_store(void) {
 	/* We are no longer "shopping" */
 	shopping = FALSE;
 	store.stock_num = 0;
+	store_last_item = -1;
 
 	/* Flush any events that happened */
 	Flush_queue();
@@ -1292,6 +1297,7 @@ void display_store_special(void) {
 	/* We are no longer "shopping" */
 	shopping = FALSE;
 	store.stock_num = 0;
+	store_last_item = -1;
 
 	/* Flush any events that happened */
 	Flush_queue();
