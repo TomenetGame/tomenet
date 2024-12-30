@@ -4416,6 +4416,10 @@ int Receive_store_wide(void) {
 		xtra7 = (s16b)xtra7b; xtra8 = (s16b)xtra8b; xtra9 = (s16b)xtra9b;
 	}
 
+	/* If we had store_last_item active and the item we just received is in its position but apparently a different item, clear store_last_item.
+	   Ie happens if we buy/steal the last item of a stack in a store slot. */
+	if (pos == store_last_item && (sval != store_last_item_sval || tval != store_last_item_tval)) store_last_item = -1;
+
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].sval = sval;
 	store.stock[(int)pos].pval = pval;
