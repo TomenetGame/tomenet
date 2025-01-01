@@ -20817,6 +20817,9 @@ Note: For some classes the power curve can depend heavily on the way you
 
       Istari lose their weakness aka their fragility when they acquire the
       Mana school spell 'Disruption Shield' which is considered essential.
+      They are unmatched in terms of controlling almost any situation and
+      at the same time being able to focus on raw +speed accumulation while
+      maintaining very high survivability thanks to disruption shield.
 
       Especially non-martial-arts melee-classes can reach '++++' in the
       'Post-winning' stage if they are able to acquire a great set of equipment
