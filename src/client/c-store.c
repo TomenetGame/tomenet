@@ -214,7 +214,14 @@ static int get_stock(int *com_val, cptr pmt, int i, int j) {
 		/* ...except if this was actually the last item!
 		   (We assume that this command gets through and the item _is_ really removed.
 		   If it isn't, the "+" option won't be available and the player will just have to
-		   operate on this last item manually, also not a big loss, since it's only 1.) */
+		   operate on this last item manually, also not a big loss, since it's only 1.)
+		   Again, this can fail if macro doesn't use \w waits because the stock number update
+		   might not yet been received from the server for numbers > 1.
+		   Potential local workaround: If client knew that we are specifically stealing,
+		   it could assume each attempt successful and decrement a working copy of the stock number
+		   as local counter and use that instead of the server-updated stock.number. If stealing failed
+		   we'd have to re-enter the store anyway so the stock number would correctly get updated again.
+		   ...Or just use \w waits in the macros. */
 		if (store.stock[k].number == 1) store_last_item = -1;
 
 		/* Legal responses */
