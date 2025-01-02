@@ -7442,8 +7442,8 @@ if (cfg.unikill_format) {
 		/* all-Nazgul-slain or Nazgul-slain music if available client-side, but don't override important music */
 		else if ((r_ptr->flags7 & RF7_NAZGUL) &&
 		    p_ptr->music_monster != 88 && p_ptr->music_monster != 91 && /* Winner, Sauron slain */
-		    p_ptr->music_monster != 40 && (p_ptr->music_monster <= 200 || p_ptr->music_monster >= 204) && /* special unique */
-		    p_ptr->music_monster != 41 && (p_ptr->music_monster <= 182 || p_ptr->music_monster >= 199) && /* dungeon boss */
+		    p_ptr->music_monster != 40 && (p_ptr->music_monster < 201 || p_ptr->music_monster > 205) && /* special unique */
+		    p_ptr->music_monster != 41 && (p_ptr->music_monster < 182 || p_ptr->music_monster > 200) && /* dungeon boss */
 		    p_ptr->music_monster != 43 && p_ptr->music_monster != 44 && p_ptr->music_monster != 45) { /* Sauron, Morgoth, Zu-Aon */
 			if (p_ptr->r_killed[RI_UVATHA] == 1 && p_ptr->r_killed[RI_ADUNAPHEL] == 1 && p_ptr->r_killed[RI_AKHORAHIL] == 1 &&
 			    p_ptr->r_killed[RI_REN] == 1 && p_ptr->r_killed[RI_JI] == 1 && p_ptr->r_killed[RI_DWAR] == 1 &&

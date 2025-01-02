@@ -12819,19 +12819,20 @@ void process_monsters(void) {
 							case RI_KING_IN_YELLOW: bm = 197; break;
 							case RI_TRON: bm = 198; break;
 							case RI_MINOTAUR_OTL: bm = 199; break;
+							case RI_LIVING_LIGHTNING: bm = 200; break;
 							}
 							Send_music(pl, (p_ptr->music_monster = bm), 41, -1);
 						//Special Unique (non-respawning)? Can't override dungeon boss..
 						} else if (r_ptr->level >= 98
-						    && p_ptr->music_monster != 41 && (p_ptr->music_monster <= 182 || p_ptr->music_monster >= 199)) {
+						    && p_ptr->music_monster != 41 && (p_ptr->music_monster < 182 || p_ptr->music_monster > 200)) {
 							int bm = 40; //default generic 'boss_specialunique' theme
 
 							switch (m_ptr->r_idx) {
-							case RI_MICHAEL: bm = 200; break;
-							case RI_TIK_SRVZLLAT: bm = 201; break;
-							case RI_BAHAMUT: bm = 202; break;
-							case RI_HELLRAISER: bm = 203; break;
-							case RI_DOR: bm = 204; break;
+							case RI_MICHAEL: bm = 201; break;
+							case RI_TIK_SRVZLLAT: bm = 202; break;
+							case RI_BAHAMUT: bm = 203; break;
+							case RI_HELLRAISER: bm = 204; break;
+							case RI_DOR: bm = 205; break;
 							}
 							Send_music(pl, (p_ptr->music_monster = bm), 40, -1);
 						}

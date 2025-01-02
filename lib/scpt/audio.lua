@@ -560,12 +560,13 @@ audio_bgm = {
     "boss_TheIllusoryCastle",
     "boss_TheSacredLandofMountains",
     "boss_TheMaze",
+    "boss_TheCloudPlanes",--200
 
-    "specialunique_Michael", --200
+    "specialunique_Michael",
     "specialunique_TikSrvzllat",
     "specialunique_Bahamut",
     "specialunique_Hellraiser",
-    "specialunique_Dor",
+    "specialunique_Dor",--205
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
