@@ -581,7 +581,7 @@ static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
 	char buffer0[4096], *buffer = buffer0, bufferx[4096];
 	FILE *fff;
-	int i, j;
+	int i, j, cur_line;
 	char out_val[160];
 	bool disabled;
 
@@ -715,6 +715,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Parse the file */
 	/* Lines are always of the form "name = sample [sample ...]" */
+	cur_line = 0;
 	while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 		char *cfg_name;
 		cptr lua_name;
@@ -724,6 +725,30 @@ static bool sound_sdl_init(bool no_cache) {
 		char *next_token;
 		int event;
 		char *c;
+
+		cur_line++;
+
+		/* Everything after a non-quoted '#' gets ignored */
+		c = buffer0;
+		while (*c && (c = strchr(c, '#'))) {
+			char *c2;
+			bool quoted = 0;
+
+			/* Check if the # is caught inside quotes, then part of a legal file name eg "botpack #9.mp3" */
+			c2 = buffer0;
+			while (*c2 && c2 < c) {
+				if (*c2 == '"') quoted = !quoted;
+				c2++;
+			}
+			if (quoted) {
+				c++;
+				continue;
+			}
+
+			/* Ignore everything after the '#' */
+			*c = 0;
+			break;
+		}
 
 		/* (2022, 4.9.0) strip preceding spaces/tabs */
 		c = buffer0;
@@ -848,7 +873,7 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Build the path to the sample */
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, cur_token);
 			if (!my_fexists(path)) {
-				fprintf(stderr, "Can't find sample '%s'\n", cur_token);
+				fprintf(stderr, "Can't find sample '%s' (line %d)\n", cur_token, cur_line);
 				goto next_token_snd;
 			}
 
@@ -1042,6 +1067,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Parse the file */
 	/* Lines are always of the form "name = music [music ...]" */
+	cur_line = 0;
 	while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 		char *cfg_name;
 		cptr lua_name;
@@ -1052,6 +1078,30 @@ static bool sound_sdl_init(bool no_cache) {
 		int event;
 		bool initial, reference;
 		char *c;
+
+		cur_line++;
+
+		/* Everything after a non-quoted '#' gets ignored */
+		c = buffer0;
+		while (*c && (c = strchr(c, '#'))) {
+			char *c2;
+			bool quoted = 0;
+
+			/* Check if the # is caught inside quotes, then part of a legal file name eg "botpack #9.mp3" */
+			c2 = buffer0;
+			while (*c2 && c2 < c) {
+				if (*c2 == '"') quoted = !quoted;
+				c2++;
+			}
+			if (quoted) {
+				c++;
+				continue;
+			}
+
+			/* Ignore everything after the '#' */
+			*c = 0;
+			break;
+		}
 
 		/* (2022, 4.9.0) strip preceding spaces/tabs */
 		c = buffer0;
@@ -1208,7 +1258,7 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Build the path to the sample */
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, cur_token);
 			if (!my_fexists(path)) {
-				fprintf(stderr, "Can't find song '%s'\n", cur_token);
+				fprintf(stderr, "Can't find song '%s' (line %d)\n", cur_token, cur_line);
 				goto next_token_mus;
 			}
 
