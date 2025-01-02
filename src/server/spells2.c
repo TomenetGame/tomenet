@@ -5014,6 +5014,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 		case GF_DISP_DEMON:
 		case GF_DISP_EVIL:
 		case GF_DISP_ALL:
+		case GF_DISP_UNDEAD_DEMON:
 			dam /= 2;
 			break;
 		}
@@ -5123,7 +5124,6 @@ bool turn_monsters(int Ind, int dam) {
 	return(project_los(Ind, GF_TURN_ALL, dam, " calls against all monsters"));
 }
 
-
 /* Dispel undead monsters */
 bool dispel_undead(int Ind, int dam) {
 	return(project_los(Ind, GF_DISP_UNDEAD, dam, " banishes all undead"));
@@ -5140,7 +5140,10 @@ bool dispel_demons(int Ind, int dam) {
 bool dispel_monsters(int Ind, int dam) {
 	return(project_los(Ind, GF_DISP_ALL, dam, " banishes all monsters"));
 }
-
+/* Dispel undead+demons */
+bool dispel_undead_demons(int Ind, int dam) {
+	return(project_los(Ind, GF_DISP_UNDEAD_DEMON, dam, " banishes all undead and demons"));
+}
 
 /*
  * Wake up all monsters, and speed up "los" monsters.

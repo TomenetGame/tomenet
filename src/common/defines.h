@@ -5373,8 +5373,9 @@
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
 #define GF_SHOW_LIGHTNING	211
 #define GF_THUNDER_VISUAL	212
+#define GF_DISP_UNDEAD_DEMON	213
 
-#define MAX_GF_TYPES		(212+1)
+#define MAX_GF_TYPES		(213+1)
 
 
 #if 0	/* Let's implement one by one.. - New types for Zangband begin here... */

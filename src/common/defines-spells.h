@@ -238,3 +238,4 @@
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
 #define GF_SHOW_LIGHTNING	211
 #define GF_THUNDER_VISUAL	212
+#define GF_DISP_UNDEAD_DEMON	213

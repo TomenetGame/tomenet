@@ -42,7 +42,7 @@
 #define ROYAL_ARMOUR_SHORTEN_ANTIRIAD_DEPLETED
 
 
-
+/* For ammunition explosion types, must be consistent with ammo_explosion[] */
 static void init_GF_names(void) {
 	/* names: length max 17, short names: length max 6 */
 	strcpy(GF_name[GF_ELEC], "lightning"); strcpy(GF_name_short[GF_ELEC], "elec");

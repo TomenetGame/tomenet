@@ -14502,7 +14502,8 @@ Healing         Staves:
                 Heals 100 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
 
-Holiness        Dispels nearby undead. Also protects you from evil for a while.
+Holiness        Dispels nearby undead and demons.
+                Also protects you from evil for a while.
                 Cures poison/disease/cuts, removes fear/stun, heals somewhat.
 
 Magi            Restores your intelligence and 500 mana points.

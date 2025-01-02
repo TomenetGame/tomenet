@@ -3766,9 +3766,17 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 
 	case SV_STAFF_HOLINESS:
-		if (dispel_undead(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		if (dispel_undead_demons(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 		//if (p_ptr->suscep_life) {
-		if (p_ptr->suscep_good || p_ptr->suscep_life) { /* Added suscep_good check for the set_protevil() effect, also see SV_SCROLL_PROTECTION_FROM_EVIL notes! */
+		if (p_ptr->suscep_good || p_ptr->suscep_life /* Added suscep_good check for the set_protevil() effect, also see SV_SCROLL_PROTECTION_FROM_EVIL notes! */
+		/* (These are redundant as long as 'suscep_good' is tested anyway) */
+#if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
+		    || p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef CLASS_CPRIEST
+		    || (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster) //Demon form
+ #endif
+#endif
+		    ) {
 			dam = damroll(50, 3);
 			msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, msg ? "a staff of holiness" : "holy aura", 0);

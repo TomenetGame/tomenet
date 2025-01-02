@@ -8498,6 +8498,28 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		break;
 
+	case GF_DISP_UNDEAD_DEMON:
+		/* Only affect demons */
+		if (r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD)) {
+#ifdef OLD_MONSTER_LORE
+			/* Learn about type */
+			if (seen) r_ptr->r_flags3 |= ((r_ptr->flags3 & RF3_DEMON) ? RF3_DEMON : RF3_UNDEAD);
+#endif
+
+			/* Obvious */
+			if (seen) obvious = TRUE;
+
+			/* Message */
+			note = " shudders";
+			note_dies = " dissolves";
+		}
+		/* Ignore other monsters */
+		else {
+			no_dam = TRUE;
+			quiet = TRUE;
+		}
+		break;
+
 	/* Dispel monster */
 	case GF_DISP_ALL:
 		/* Obvious */
@@ -12301,6 +12323,26 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam = 0;
 		break;
 
+	case GF_DISP_UNDEAD_DEMON:
+		/* Only affect demons */
+		if (p_ptr->body_monster && (r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD))) {
+#if 0 /* monsters do not resist either */
+			if (rand_int(100) < p_ptr->skill_sav) msg_print(Ind, "You shudder, but you resist the effect!");
+			else
+#endif
+			{
+				/* Message */
+				msg_print(Ind, "You shudder!");
+				dam /= 3; /* full dam is too harsh */
+				take_hit(Ind, dam, killer, -who);
+			}
+		}
+		/* Ignore other monsters */
+		else
+			/* No damage */
+			dam = 0;
+		break;
+
 	/* Dispel monster */
 	case GF_DISP_ALL:
 #if 0 /* well, since Maiar use it, let's make it work on all players (for PvP/BB) */
@@ -14579,6 +14621,10 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 	case GF_DISP_DEMON:
 		if (!(r_ptr->flags3 & RF3_DEMON))
+			dam = 0;
+		break;
+	case GF_DISP_UNDEAD_DEMON:
+		if (!(r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON)))
 			dam = 0;
 		break;
 	case GF_DISP_ALL:

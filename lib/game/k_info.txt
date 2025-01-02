@@ -2744,7 +2744,7 @@ I:55:26:0
 W:70:0:50:4500
 A:70/2
 P:0:1d2:0:0:0
-D:Dispels evil for 200..500 damage. Also protects you from evil for a while.
+D:Dispels undead/demons for 200..500 damage. Protects you from evil for a while.
 D:Cures poison, disease, cuts, and stun. Removes fear and heals you somewhat.
 
 N:328:Enlightenment
