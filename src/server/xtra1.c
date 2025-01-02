@@ -1202,6 +1202,19 @@ static void calc_sanity(int Ind) {
 				/* Note death */
 				p_ptr->death = TRUE;
 				p_ptr->deathblow = 0;
+
+				/* Hack: Ents turn into normal trees :D - C. Blue */
+				if (p_ptr->prace == RACE_ENT) {
+					cave_type **zcave = getcave(&p_ptr->wpos);
+
+					s_printf("Ent death (B) -> testing floor...");
+					/* Note that we do not check for items below us, so they will get 'entombed' (entreeed),
+					   but they can be dug free again for the purpose of looting so np :) */
+					if (zcave && cave_floor_basic(zcave, p_ptr->py, p_ptr->px)) {
+						s_printf("ok to become a tree.\n");
+						cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_TREE);
+					} else s_printf("failed to become a tree.\n");
+				}
 			} else {
 				p_ptr->csane = 0;
 			}

@@ -7721,7 +7721,6 @@
      !((C)->m_idx))
 #endif	/* 0 */
 
-
 /*
  * Grid based version of "cave_perma_bold()"
  */
@@ -7735,7 +7734,6 @@
       ((C)->feat <= FEAT_SHOP_TAIL)))
 #endif	/* 0 */
 
-
 /*
  * Grid based version of "cave_valid_bold()"
  */
@@ -7743,6 +7741,10 @@
     (!cave_perma_grid(C) && \
      (!(C)->o_idx || \
       !artifact_p(&o_list[(C)->o_idx])))
+
+/* Basic aka non-permanent floor */
+#define cave_floor_basic(ZCAVE,Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT))
 
 
 

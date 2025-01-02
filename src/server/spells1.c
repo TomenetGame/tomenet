@@ -2505,6 +2505,19 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		/* This way, player dies without becoming a ghost. */
 		//ptr->ghost = 1;
 
+		/* Hack: Ents turn into normal trees :D - C. Blue */
+		if (p_ptr->prace == RACE_ENT) {
+			cave_type **zcave = getcave(&p_ptr->wpos);
+
+			s_printf("Ent death (A) -> testing floor...");
+			/* Note that we do not check for items below us, so they will get 'entombed' (entreeed),
+			   but they can be dug free again for the purpose of looting so np :) */
+			if (zcave && cave_floor_basic(zcave, p_ptr->py, p_ptr->px)) {
+				s_printf("ok to become a tree.\n");
+				cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_TREE);
+			} else s_printf("failed to become a tree.\n");
+		}
+
 		/* Dead */
 		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
