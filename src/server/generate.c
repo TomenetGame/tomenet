@@ -10879,13 +10879,16 @@ static void town_gen_hack(struct worldpos *wpos) {
 
 	/* Prepare an Array of "remaining stores", and count them */
 	for (n = 0; n < base_stores; n++) {
+#if 0 /* 0'ed: Actually add it, so we can have +1 music event for this one (tavern_town_dungeon)! */
 		/* For dungeon towns, skip '8' since it allows exploiting 100% riskfree combat.
 		   Not true anymore, if STORE_HOME_DUN is used instead. But there is no home in
 		   the middle of the dungeon anyway. >:p */
 		if (n == STORE_HOME && dungeon_town) rooms[n] = STORE_POND;
+		else
+#endif
 		/* allocate base store
 		   (dungeon towns use offset of +70 to avoid collision with normal town stores) */
-		else rooms[n] = n + (dungeon_town ? STORE_GENERAL_DUN : 0);
+		rooms[n] = n + (dungeon_town ? STORE_GENERAL_DUN : 0);
 	}
 	for (n = base_stores; n < base_stores + 10; n++) rooms[n] = STORE_POND;
 	for (n = base_stores + 10; n < base_stores + 20; n++) rooms[n] = STORE_FOREST;
