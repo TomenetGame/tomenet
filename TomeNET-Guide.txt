@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 1. January 2025 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 3. January 2025 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9197,7 +9197,7 @@ The Mirror              Donate gold and pray to the gods.
                            A highly complex spell that chirurgically wipes only
                            the desired memories, so you keep level 35.
                            This spell is quite costly though and the magicians
-                           will ask for a fair compensation of three million Au
+                           will ask for a fair compensation of two million Au
                            for their service.
 
 The Soothsayer          Presage fate. Will tell you a random rumour.
