@@ -605,7 +605,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "gfx_hack_repaint",		"May reduce flicker if gfx_palanim_repaint is off" },
 	{ &c_cfg.topline_first,		TRUE,	0,	0, 170, TRUE,
 	    "topline_first",		"Top line shows first line of multi-line messages" },
-	{ &c_cfg.ascii_weather,		FALSE,	1,	0, 171, TRUE, //just for debugging weather glitches
+	{ &c_cfg.ascii_weather,		TRUE,	1,	0, 171, TRUE, //just for debugging weather glitches
 	    "ascii_weather",		"Always use plain ASCII symbols for weather" },
 	{ &c_cfg.no2mask_weather,	TRUE,	1,	0, 172, TRUE, //just for debugging weather glitches
 	    "no2mask_weather",		"Never use dual-mask grapics for weather" },
