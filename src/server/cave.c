@@ -4318,6 +4318,13 @@ void lite_spot(int Ind, int y, int x) {
 			if (p_ptr->body_monster == RI_DOOR_MIMIC && (p_ptr->temp_misc_1 & 0x01)) c = '\'';
 #endif
 
+			/* visual cues for HK - low priority */
+			if (p_ptr->ptrait == TRAIT_CORRUPTED && magik(85)) {
+				if (p_ptr->blood_frenzy_active && p_ptr->zeal) a = TERM_FIRE; //like the fire of a handgun
+				else if (p_ptr->blood_frenzy_active) a = TERM_RED;
+				else if (p_ptr->zeal) a = TERM_L_RED;
+			} 
+
 			/*if (p_ptr->invis && !p_ptr->body_monster) {  - hmm why not always TERM_VIOLET */
 			/* special invis colour */
 			if (p_ptr->invis) a = TERM_VIOLET;
