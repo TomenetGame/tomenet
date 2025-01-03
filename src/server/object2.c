@@ -1021,21 +1021,28 @@ errr get_obj_num_prep(u32b resf) {
 #if FORCED_DROPS != 0 /* either, way 1 or 2 */
 	int tval, sval;
 #endif
-	bool aquatic_hack;
-
-
-	/* Bad hack, as we are out of RESF_ flags: Use combo of mutually exclusive RESF_COND_SWORD + RESF_COND_BLUNT
-	   to indicate that we want to generate aquatic-monster themed weaponry... */
-	if ((resf & (RESF_COND_SWORD | RESF_COND_BLUNT)) == (RESF_COND_SWORD | RESF_COND_BLUNT)) {
-		resf &= ~(RESF_COND_SWORD | RESF_COND_BLUNT); //'aquatic_hack'
-		aquatic_hack = TRUE;
-	} else aquatic_hack = FALSE;
 
 	/* Get the entry */
 	alloc_entry *restrict table = alloc_kind_table;
 
 	/* Copy the hook into a local variable for speed */
 	int (*hook)(int k_idx, u32b resf) = get_obj_num_hook;
+
+	bool aquatic_hack, axe_hack;
+
+
+	/* Bad hack #1, as we are out of RESF_ flags: Use combo of mutually exclusive RESF_COND_SWORD + RESF_COND_BLUNT
+	   to indicate that we want to generate aquatic-monster themed weaponry... */
+	if ((resf & (RESF_COND_SWORD | RESF_COND_BLUNT)) == (RESF_COND_SWORD | RESF_COND_BLUNT)) {
+		resf &= ~(RESF_COND_SWORD | RESF_COND_BLUNT); //'aquatic_hack'
+		aquatic_hack = TRUE;
+	} else aquatic_hack = FALSE;
+	/* Bad hack #2, as we are out of RESF_ flags: Use combo of mutually exclusive RESF_COND_DARKSWORD + RESF_COND_BLUNT
+	   to indicate that we want to generate axes... */
+	if ((resf & (RESF_COND_DARKSWORD | RESF_COND_BLUNT)) == (RESF_COND_DARKSWORD | RESF_COND_BLUNT)) {
+		resf &= ~(RESF_COND_DARKSWORD | RESF_COND_BLUNT); //'axe_hack'
+		axe_hack = TRUE;
+	} else axe_hack = FALSE;
 
 	/* Scan the allocation table */
 	for (i = 0, n = alloc_kind_size; i < n; i++) {
@@ -1067,6 +1074,8 @@ errr get_obj_num_prep(u32b resf) {
 
 		//SOFT-force generation of an aquatic weapon (polearm), if generating a combat at all
 		if (aquatic_hack && is_melee_weapon(tval) && (tval != TV_POLEARM || !is_aquatic_polearm(sval))) p = 0;
+		//SOFT-force generation of an axe, if generating a combat at all
+		if (axe_hack && is_melee_weapon(tval) && tval != TV_AXE) p = 0;
 		//force generation of a sword, if generating a combat item at all
 		if ((resf & RESF_COND_SWORD) && which_theme(tval) == TC_COMBAT) {
 			if (tval != TV_SWORD) p = 0;
@@ -1101,6 +1110,10 @@ errr get_obj_num_prep(u32b resf) {
 		if (resf & RESF_COND_FORCE) {
 			if (aquatic_hack && is_melee_weapon(tval)) { //SOFT-force generation (same as in FORCED_DROPS == 1) of an aquatic weapon (polearm)
 				if (tval != TV_POLEARM || !is_aquatic_polearm(sval)) p = 0;
+				else p = 10000;
+			}
+			if (axe_hack && is_melee_weapon(tval)) { //SOFT-force generation (same as in FORCED_DROPS == 1) of an axe
+				if (tval != TV_AXE) p = 0;
 				else p = 10000;
 			}
 			if (resf & RESF_COND_SWORD) { //force generation of a sword
@@ -1143,6 +1156,11 @@ errr get_obj_num_prep(u32b resf) {
 			//SOFT-force generation (same as in FORCED_DROPS == 1) of an aquatic weapon (polearm)
 			if (aquatic_hack && is_melee_weapon(tval)) {
 				if (tval != TV_POLEARM || !is_aquatic_polearm(sval)) p = 0;
+				else p = 10000;
+			}
+			//SOFT-force generation (same as in FORCED_DROPS == 1) of an axe
+			if (axe_hack && is_melee_weapon(tval)) {
+				if (tval != TV_AXE) p = 0;
 				else p = 10000;
 			}
 			//force generation of a sword, if generating a weapon
@@ -8391,6 +8409,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	//'aquatic_hack':
 	if (((resf & (RESF_COND_SWORD | RESF_COND_BLUNT)) == (RESF_COND_SWORD | RESF_COND_BLUNT))
 	    && forge.tval == TV_POLEARM && is_aquatic_polearm(forge.sval)) place_object_restrictor |= RESF_COND_SWORD | RESF_COND_BLUNT;
+	//'axe_hack':
+	if (((resf & (RESF_COND_DARKSWORD | RESF_COND_BLUNT)) == (RESF_COND_DARKSWORD | RESF_COND_BLUNT))
+	    && forge.tval == TV_AXE) place_object_restrictor |= RESF_COND_DARKSWORD | RESF_COND_BLUNT;
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */

@@ -6546,11 +6546,24 @@ bool monster_death(int Ind, int m_idx) {
 		case 539: //slinger have FRIENDS
 			resf_drops |= RESF_COND_SLING;
 			break;
-		/* specialty: Saruman - avoid duplicate mage staff drop */
-		case 771:
+		case 771: /* specialty: Saruman - avoid duplicate mage staff drop */
 			/* the dedicated +10 mstaff is not for farming! */
 			if (!(resf_chosen & RESF_NOTRUEART)) resf_drops |= RESF_CONDF_NOMSTAFF;
 			break;
+#if 1
+		case 731: /* Hell knight. And dwarves - drop axes mostly */
+		//case 770: /* Artsi commented out as his diz says "his _blade_" which sounds like a sword */
+		case 111: //nibelung - these don't drop combat stuff though anyway
+		case 382: case 383: case 491: //Khim, Ibun, Mim (only Khim and Ibun drop a lot of combat tc specifically)
+		//case 762: /* Fundin isn't enabled as monster and also he has an artifact blunt weapon instead! */
+		case 865: //dwarven warrior, not enabled
+		case 936: //Nar -- has 'any' tc though
+		case 1042: //Thrain, not enabled
+			if (rand_int(3))
+				/* Bad hack: Since we're out of flags, combine two otherwise mutually exclusive flags to indicate this -_-' */
+				resf_drops |= RESF_COND_DARKSWORD | RESF_COND_BLUNT; //'axe_hack'
+			break;
+#endif
 		/* -- for the remaining monsters here, only do 'flexible vs tough armour' choice -- */
 		default:
 			switch (r_idx) {

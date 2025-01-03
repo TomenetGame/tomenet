@@ -5943,7 +5943,8 @@
 #define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 #define RESF_STOREBM		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 
-/* Note: There is a bad 'aquatic_hack' for certain polearm drops as we're out of RESF_ flag space. -_- */
+/* Note: There is a bad 'aquatic_hack' for certain polearm drops as we're out of RESF_ flag space. -_- (RESF_COND_SWORD+RESF_COND_BLUNT)
+   Note2: Also added an 'axe_hack' for same reason (RESF_COND_DARKSWORD+RESF_COND_BLUNT) -_- */
 #define RESF_COND_MASK		(RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | RESF_CONDF_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_CONDF_RUNE)
 
 
