@@ -10695,6 +10695,13 @@ Black Breath is a deadly spiritual malady, making your character flicker dark
 
 - It will permanently drain your experience in slow but steady intervals,
   so it cannot be restored (eg via 'Restore Life Levels' or equivalent means).
+
+  You can lose levels this way and if you drop below zero XP you will die.
+
+  The amount of XP lost is independant of your race/class experience factors
+  so high-penalty characters (eg Maia race) suffer the most as they have a
+  harder time (re)gaining experience.
+
   Taking such an xp hit will break rogue's 'cloaking'.
 
 Undead characters and hobbits, that includes mimicked monster forms, have less
