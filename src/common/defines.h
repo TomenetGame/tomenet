@@ -1522,6 +1522,7 @@
 #define RI_LEPER		13
 #define RI_NOVICE_MAGE		46
 #define RI_SMEAGOL		63	/* DROP_CHOSEN */
+#define RI_SLHOBBIT		74	/* Black Breath */
 #define RI_NOVICE_MAGE_F	93
 #define RI_ROBIN_HOOD		138	/* DROP_CHOSEN */
 #define RI_NURGLING		139
@@ -1543,6 +1544,7 @@
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
 #define RI_WATCHER_IN_THE_WATER	517
 #define RI_BLOODLETTER		523
+#define RI_HALFLING_SLINGER	539	/* Black Breath */
 #define RI_RAALS_TOME		557	/* DROP_CHOSEN */
 #define RI_EOL			660	/* DROP_CHOSEN */
 #define RI_WARRIOR_DAWN		693

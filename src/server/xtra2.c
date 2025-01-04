@@ -9535,7 +9535,7 @@ void player_death(int Ind) {
 		}
 
 		/* Cure him from various maladies */
-		//if (p_ptr->black_breath == 1) p_ptr->black_breath = FALSE;
+		//p_ptr->black_breath = FALSE;
 		if (p_ptr->image) (void)set_image(Ind, 0);
 		if (p_ptr->blind) (void)set_blind(Ind, 0);
 		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
@@ -9855,10 +9855,8 @@ void player_death(int Ind) {
 			if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 			(void)set_food(Ind, PY_FOOD_FULL - 1);
 
-			if (p_ptr->black_breath == 1) {
-				//msg_print(Ind, "The hold of the Black Breath on you is broken!");
-				p_ptr->black_breath = FALSE;
-			}
+			//msg_print(Ind, "The hold of the Black Breath on you is broken!");
+			p_ptr->black_breath = FALSE;
 
 			/* Remove the death flag */
 			p_ptr->death = FALSE;
@@ -10700,7 +10698,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 	if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 
 	/* Cure him from various maladies */
-	if (p_ptr->black_breath == 1) p_ptr->black_breath = FALSE;
+	p_ptr->black_breath = FALSE;
 	if (p_ptr->image) (void)set_image(Ind, 0);
 	if (p_ptr->blind) (void)set_blind(Ind, 0);
 	if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);

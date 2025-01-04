@@ -2879,7 +2879,7 @@ static void process_world_player(int Ind) {
 	 * object, and stop any resting. -LM-
 	 */
 	/* Probably better done in process_player_end?	- Jir - */
-	if (!(turn % (cfg.fps * 50)) && (p_ptr->black_breath)) {
+	if (!(turn % (cfg.fps * 50)) && p_ptr->black_breath) {
 		msg_print(Ind, "\377WThe Black Breath saps your soul!");
 
 		/* alert to the neighbors also */
@@ -6544,7 +6544,8 @@ static bool process_player_end_aux(int Ind) {
 	 * As per Tolkien, hobbits are resistant.
 	 */
 	if (p_ptr->black_breath &&
-	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT || p_ptr->suscep_life ? 2 : 5)) {
+	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) <
+	    (p_ptr->prace == RACE_HOBBIT || p_ptr->body_monster == RI_HALFLING_SLINGER || p_ptr->body_monster == RI_SLHOBBIT || p_ptr->suscep_life ? 2 : 5)) {
 		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
 		    "Black Breath", TRUE, TRUE, TRUE, 0);
