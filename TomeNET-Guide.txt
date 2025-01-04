@@ -10704,6 +10704,13 @@ Black Breath is a deadly spiritual malady, making your character flicker dark
 
   Taking such an xp hit will break rogue's 'cloaking'.
 
+- In fixed intervals you will see a message:
+    "The Black Breath saps your soul!"
+  which disturbs any resting you might be doing.
+  At the same time players nearby you will see the warning message:
+    "A dark aura seems to surround <your name>!"
+
+
 Undead characters and hobbits, that includes mimicked monster forms, have less
 chance of getting infected and will less frequently suffer from the infection.
 
