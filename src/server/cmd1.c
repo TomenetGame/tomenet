@@ -7136,7 +7136,10 @@ void set_black_breath(int Ind, int cause) {
 
 	switch (cause) {
 	case MAX_PLAYERS: s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", p_ptr->name); break;
-	case 0: s_printf("BLACK-BREATH (Morgul): %s\n", p_ptr->name); break;
+	case 0:
+		s_printf("BLACK-BREATH (Morgul): %s\n", p_ptr->name);
+		p_ptr->black_breath = 2; //'granted' via equipped item -> cannot be broken unless item is unequipped first
+		break;
 	default:
 		if (cause > 0) s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, Players[cause]->name);
 		else {
@@ -7147,9 +7150,11 @@ void set_black_breath(int Ind, int cause) {
 		}
 	}
 
-	msg_print(Ind, "\376\377DYour foe calls upon your soul!");
-	msg_print(Ind, "\376\377DYou feel the Black Breath slowly draining you of life...");
-	p_ptr->black_breath = TRUE;
+	if (!p_ptr->black_breath) {
+		msg_print(Ind, "\376\377DYour foe calls upon your soul!");
+		msg_print(Ind, "\376\377DYou feel the Black Breath slowly draining you of life...");
+		p_ptr->black_breath = 1;
+	}
 }
 
 

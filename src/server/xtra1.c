@@ -3947,6 +3947,8 @@ void calc_boni(int Ind) {
 	p_ptr->to_h_tmp += p_ptr->focus_val;
 #endif
 
+	/* Potentially downgrade Black Breath if it was from an item and we no longer have it equipped */
+	if (p_ptr->black_breath == 2) p_ptr->black_breath = 3;
 	/* Scan the equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		char32_t c;
@@ -4654,6 +4656,8 @@ void calc_boni(int Ind) {
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
 	}
+	/* Downgrade black breath level if no longer have an TR4_BLACK_BREATH item equipped! */
+	if (p_ptr->black_breath == 3) p_ptr->black_breath = 1;
 
 	/* Has to be done here as it may depend on other items granting light resistance,
 	   so all items have to be applied first: */

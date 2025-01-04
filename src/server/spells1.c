@@ -11636,7 +11636,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)do_res_stat(Ind, A_CHR);
 		}
 		if (dam & 0x08) { /* Black breath (herbal tea) */
-			if (p_ptr->black_breath) {
+			if (p_ptr->black_breath == 1) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
 			}
@@ -11725,7 +11725,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			msg_print(Ind, "You feel a calming warmth touching your soul.");
 			take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
 		}
-		if (p_ptr->black_breath) {
+		if (p_ptr->black_breath == 1) {
 			msg_print(Ind, "The hold of the Black Breath on you is broken!");
 			p_ptr->black_breath = FALSE;
 		}

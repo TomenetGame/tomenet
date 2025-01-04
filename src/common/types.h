@@ -3824,7 +3824,7 @@ struct player_type {
 	bool (*master_move_hook)(int Ind, char *args);
 
 	/* some new borrowed flags (saved) */
-	bool black_breath;		/* The Tolkien's Black Breath */
+	char black_breath;		/* The Tolkien's Black Breath */
 	/*u32b malady;*/		/* TODO: Flags for malady */
 
 	s16b msane;			/* Max sanity */

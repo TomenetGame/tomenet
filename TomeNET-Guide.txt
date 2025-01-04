@@ -13945,6 +13945,8 @@ Weapons of Morgul
                 Wielding a weapon of Morgul will allow you to see the invisible
                 but also infect you with Black Breath, drain your experience
                 and aggravate nearby monsters.
+                Note that the black breath cannot be cured as long as you are
+                still wielding the Morgul weapon!
 
                 Since they have a heavy curse on them, if you want to get rid
                 of them you will need to either use a scroll of *remove curse*

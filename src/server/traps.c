@@ -2259,7 +2259,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 				msg_print(k, "A fragrant mist fills the air...");
 				hp_player(k, 9999, FALSE, FALSE);
-				if (q_ptr->black_breath && magik(50)) {
+				if (q_ptr->black_breath == 1 && magik(50)) {
 					msg_print(k, "The hold of the Black Breath on you is broken!");
 					q_ptr->black_breath = FALSE;
 				}

@@ -1760,7 +1760,7 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f4 & TR4_LEVITATE) total += 10000;
 	if (f4 & TR4_NEVER_BLOW) total -= 15000;
 	if (f4 & TR4_PRECOGNITION) total += 250000;
-	if (f4 & TR4_BLACK_BREATH) total -= 12500;
+	if (f4 & TR4_BLACK_BREATH) total -= 12500; //usually Morgul ego is zero value anyway
 	if (f4 & TR4_DG_CURSE) total -= 25000;
 	if (f4 & TR4_CLONE) total -= 10000;
 	//if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;
@@ -2680,7 +2680,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f4 & TR4_LEVITATE) total += 10000;
 	if (f4 & TR4_NEVER_BLOW) total -= 15000;
 	if (f4 & TR4_PRECOGNITION) total += 250000;
-	if (f4 & TR4_BLACK_BREATH) total -= 40000;
+	if (f4 & TR4_BLACK_BREATH) total -= 40000;//only Vampires can use this really...
 	if (f4 & TR4_DG_CURSE) total -= 25000;
 	if (f4 & TR4_CLONE) total -= 20000;
 	//if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;

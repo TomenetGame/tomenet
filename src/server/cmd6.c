@@ -328,14 +328,14 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			(void)set_image(Ind, 0); // "clears the minds"
 			//(void)do_res_stat(Ind, A_STR);
 			//(void)do_res_stat(Ind, A_CON);
-			if (p_ptr->black_breath) {
+			if (p_ptr->black_breath == 1) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
 			}
 		} else {
 			dam = 250;
 			msg_format(Ind, "You are hit by cleansing powers for \377o%d \377wdamage!", dam);
-			if (p_ptr->black_breath) {
+			if (p_ptr->black_breath == 1) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
 			}
@@ -987,7 +987,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			(void)do_res_stat(Ind, A_INT);
 			(void)do_res_stat(Ind, A_CHR);
 			(void)restore_level(Ind);
-			if (p_ptr->black_breath) {
+			if (p_ptr->black_breath == 1) {
 				p_ptr->black_breath = FALSE;
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 			}
@@ -7137,8 +7137,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 #if 1
 		case ART_ELESSAR:
-			if (p_ptr->black_breath) msg_print(Ind, "The hold of the Black Breath on you is broken!");
-			p_ptr->black_breath = FALSE;
+			if (p_ptr->black_breath == 1) {
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				p_ptr->black_breath = FALSE;
+			}
 			hp_player(Ind, 100, FALSE, FALSE);
 			o_ptr->recharging = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;

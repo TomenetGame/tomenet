@@ -2186,7 +2186,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			set_confused(Ind, 0);
 			set_cut(Ind, 0, 0);
 			set_stun(Ind, 0);
-			if (p_ptr->black_breath) {
+			if (p_ptr->black_breath == 1) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
 			}

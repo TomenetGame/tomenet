@@ -1983,7 +1983,7 @@ static bool rd_extra(int Ind) {
 		p_ptr->insta_res = tmp8u & 0x1;
 		p_ptr->fluent_artifact_reset = tmp8u & 0x2;
 		p_ptr->death = tmp8u & 0x4;
-		p_ptr->black_breath = tmp8u & 0x8;
+		p_ptr->black_breath = (tmp8u & 0x8) ? 1 : 0; //(will be correctly bumped to 2 via calc_boni() automatically if applicable, eg equipped Morgul)
 		p_ptr->event_participated = tmp8u & 0x10;
 		p_ptr->IDDC_found_rndtown = tmp8u & 0x20;
 		p_ptr->IDDC_freepass = tmp8u & 0x40;
