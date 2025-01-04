@@ -9199,7 +9199,7 @@ The Mirror              Donate gold and pray to the gods.
                            A highly complex spell that chirurgically wipes only
                            the desired memories, so you keep level 35.
                            This spell is quite costly though and the magicians
-                           will ask for a fair compensation of two million Au
+                           will ask for a fair compensation of 1.5 million Au
                            for their service.
 
 The Soothsayer          Presage fate. Will tell you a random rumour.

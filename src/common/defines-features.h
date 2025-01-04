@@ -307,7 +307,7 @@
 #define RESET_SKILL 35
 #ifdef RESET_SKILL
  #define RESET_SKILL_LEVELS	5
- #define RESET_SKILL_FEE	2000000
+ #define RESET_SKILL_FEE	1500000
 #endif
 
 /* Do vampires not suffer Black Breath at all? */
