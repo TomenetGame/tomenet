@@ -2349,9 +2349,6 @@ static byte player_color(int Ind) {
 		return(TERM_L_DARK);
 	}
 
-	/* Black Breath carriers emit malignant aura sometimes.. */
-	if (p_ptr->black_breath && magik(50)) return(TERM_L_DARK);
-
 	/* Covered by a mummy wrapping? Tarpaulin has no such effect for now. */
 	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
 	if (p_ptr->cloaked == 1) pcolor = TERM_L_DARK; /* ignore cloak_neutralized for now */
@@ -2368,6 +2365,10 @@ static byte player_color(int Ind) {
 
 	/* See vampires burn in the sun sometimes.. */
 	if (p_ptr->sun_burn && magik(33)) return(TERM_FIRE);
+
+	/* Black Breath carriers emit malignant aura sometimes..
+	   As dark grey can sometimes be our 'normal' colour, in that case flicker 'upwards' to slate instead, to still make a visual difference */
+	if (p_ptr->black_breath && magik(50)) return(pcolor == TERM_L_DARK ? TERM_SLATE : TERM_L_DARK);
 
 	/* Mana Shield and GOI also flicker */
 	/* NOTE: For the player looking at himself, this is done in lite_spot(),
@@ -3931,15 +3932,12 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			else c = '@';
 
 #endif
-			/* Always show party members as dark grey @? Allow pvp flickers still */
+			/* Always show party members as basic '@'? (Allows pvp flickers still.) */
 			if (p_ptr->basic_players_symb) c = '@';
 			if (p_ptr->basic_players_col) {
-#if 0 /* 0'ed for now as TERM_L_DARK is used for DK/HK nowadays, and there were requests to still show class colours in basic-visuals mode */
-				a = TERM_L_DARK;
-#else /* use class colour instead */
 				a = p2_ptr->cp_ptr->color;
-#endif
-				if (p2_ptr->black_breath && magik(50)) a = TERM_SLATE;
+				/* As dark grey can sometimes be our 'normal' colour, in that case flicker 'upwards' to slate instead, to still make a visual difference */
+				if (p2_ptr->black_breath && magik(50)) a = (a == TERM_L_DARK ? TERM_SLATE : TERM_L_DARK);
 			}
 
 			/* snowed by a snowball hit? */
@@ -4300,7 +4298,7 @@ void lite_spot(int Ind, int y, int x) {
 #endif
 
 		/* Handle "player" seeing himself/herself */
-		if ((y == p_ptr->py) && (x == p_ptr->px)) {
+		if (y == p_ptr->py && x == p_ptr->px) {
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
 			int num_hp, num_mp;
 			char32_t c_hp, c_mp;
@@ -4310,13 +4308,13 @@ void lite_spot(int Ind, int y, int x) {
 				r_ptr = &r_info[p_ptr->inventory[INVEN_BODY].bpval];
 
 			/* Get the "player" attr */
-			a = r_ptr->d_attr;
+			a = r_ptr->d_attr; //for body_monster == 0 this always returns TERM_WHITE, from r_info[0] aka 'generic player'
 
 			/* Get the "player" char */
-			c = r_ptr->d_char;
-#if 1 /* just for fun */
+			c = r_ptr->d_char; //for body_monster == 0 this always returns '@', from r_info[0] aka 'generic player'
+
+			/* just for fun */
 			if (p_ptr->body_monster == RI_DOOR_MIMIC && (p_ptr->temp_misc_1 & 0x01)) c = '\'';
-#endif
 
 			/* visual cues for HK - low priority */
 			if (p_ptr->ptrait == TRAIT_CORRUPTED && magik(85)) {
@@ -4335,7 +4333,9 @@ void lite_spot(int Ind, int y, int x) {
 			}
 
 			/* notice own Black Breath by colour instead just from occasional message */
-			if (p_ptr->black_breath && magik(50)) a = TERM_L_DARK;
+			/* As dark grey can sometimes be our 'normal' colour, in that case flicker 'upwards' to slate instead, to still make a visual difference.
+			   The only 'l-dark' colour at this point would be from 'cloaking' though, which gets broken anyway as soon as we take an xp hit from BB, so this is kind of moot... */
+			if (p_ptr->black_breath && magik(50)) a = (a == TERM_L_DARK ? TERM_SLATE : TERM_L_DARK);
 
 			/* see oneself burning in the sun */
 			if (p_ptr->sun_burn && magik(33)) a = TERM_FIRE;
@@ -4453,7 +4453,7 @@ void lite_spot(int Ind, int y, int x) {
 			/* display ourselves in basic colour? */
 			if (p_ptr->basic_players_col) {
 				a = TERM_WHITE;
-				if (p_ptr->black_breath && magik(50)) a = TERM_SLATE;
+				if (p_ptr->black_breath && magik(50)) a = TERM_L_DARK;
 				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster == p_ptr->tim_mimic_what) {
 					if (
 #ifdef ENABLE_HELLKNIGHT
