@@ -7432,25 +7432,13 @@ Chain_Macro:
 								l++;
 								switch (choice) {
 								case 'a':
-									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S0");
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)*tt-");
 									else strcpy(buf2, "\\e)*tf-");
 									break;
-								case 'b':
-									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S1");
-									else strcpy(buf2, "{-!=LM@m0\\r");
-									break;
-								case 'c':
-									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S2");
-									else strcpy(buf2, "\\e)*tv1-");
-									break;
-								case 'd':
-									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S3");
-									else strcpy(buf2, "{-!=L@v1\\r");
-									break;
-								case 'e':
-									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S3");
-									else strcpy(buf2, "\\e)*tv@{bad}\r-");
-									break;
+								case 'b': strcpy(buf2, "{-!=LM@m0\\r"); break;
+								case 'c': strcpy(buf2, "\\e)*tv1-"); break;
+								case 'd': strcpy(buf2, "{-!=L@v1\\r"); break;
+								case 'e': strcpy(buf2, "\\e)*tv@{bad}\r-"); break;
 								case 'f': strcpy(buf2, ":/edmt\\r"); break;
 								}
 								break;
