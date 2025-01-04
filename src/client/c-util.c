@@ -6558,7 +6558,7 @@ void interact_macros(void) {
 
 		else if (i == 'z') {
 			int target_dir = '5';
-			bool should_wait, force_command;
+			bool should_wait, force_normal;
 #define mw_quaff 'a'
 #define mw_read 'b'
 #define mw_fire 'c'
@@ -6640,7 +6640,7 @@ Chain_Macro:
 
 				switch (i) {
 				case 0:
-					force_command = FALSE;
+					force_normal = FALSE;
 					l = 8;
 					Term_putstr(5, l++, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
@@ -7267,7 +7267,7 @@ Chain_Macro:
 						break;
 
 					case mw_common:
-						force_command = FALSE;
+						force_normal = FALSE;
 						l = 8;
 						//Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:"); --make room for one more entry instead
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                            :+:");
@@ -7570,7 +7570,7 @@ Chain_Macro:
 
 							*buf2 = 0;
 							while (num--) strcat(buf2, delay ? format("Z+%s", tmp) : "Z+");
-							force_command = TRUE;
+							force_normal = TRUE;
 							break; }
 						case 'm': strcpy(buf2, ":/ex\\r"); break;
 						case 'n': strcpy(buf2, ":/time\\r"); break;
@@ -8482,12 +8482,18 @@ Chain_Macro:
 #endif
 					    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 					    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
-					    || force_command) {
+					    ) {
 						/* make it a command macro */
 						/* Link the macro */
 						macro_add(buf, macro__buf, TRUE, FALSE);
 						/* Message */
 						c_msg_print("Created a new command macro.");
+					} else if (force_normal) {
+						/* make it a normal macro */
+						/* Link the macro */
+						macro_add(buf, macro__buf, FALSE, FALSE);
+						/* Message */
+						c_msg_print("Created a new normal macro.");
 					} else {
 						/* make it a hybrid macro */
 						/* Link the macro */
