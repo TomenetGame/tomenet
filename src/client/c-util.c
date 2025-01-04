@@ -6558,7 +6558,7 @@ void interact_macros(void) {
 
 		else if (i == 'z') {
 			int target_dir = '5';
-			bool should_wait;
+			bool should_wait, force_command;
 #define mw_quaff 'a'
 #define mw_read 'b'
 #define mw_fire 'c'
@@ -6640,6 +6640,7 @@ Chain_Macro:
 
 				switch (i) {
 				case 0:
+					force_command = FALSE;
 					l = 8;
 					Term_putstr(5, l++, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
@@ -7266,6 +7267,7 @@ Chain_Macro:
 						break;
 
 					case mw_common:
+						force_command = FALSE;
 						l = 8;
 						//Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:"); --make room for one more entry instead
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                            :+:");
@@ -7274,18 +7276,14 @@ Chain_Macro:
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "d) word-of-recall (scroll/rod/spellbook must be inscribed '@R')");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "e) cough (reduces sleep of monsters nearby)                  :/cough\\r");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "f) shout (breaks sleep of monsters nearby)                   :/shout\\r");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "g) quick-toggle option 'easy_disarm_montraps'                :/edmt\\r");
-						//Term_putstr(2, l++, -1, TERM_L_GREEN, "h) display some extra information                            :/ex\\r");
-						//Term_putstr(2, l++, -1, TERM_L_GREEN, "i) display in-game time (daylight is 6am-10pm)               :/time\\r");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "h) fire equipped shooter at closest enemy                    \\e)*tf-");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "i) inscribe ammo/trap payload to auto pickup+merge+load+@m0  {-!=LM@m0\\r");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "j) throw an item inscribed '@v1' at closest enemy            \\e)*tv1-");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "k) inscribe throwing weapon to auto pickup+equip+@v1         {-!=L@v1\\r");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "l) prompt for a guide quick search                           :/? ");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "m) swap two items (eg inventory and equipment) or equip/unequip one item");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "n) enter/leave the PvP arena (PvP mode only)                 :/pvp\\r");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "o) throw an item tagged {bad} at closest monster             \\e)*tv@{bad}\\r-");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "p) use an item inscribed '@/1' (w/ or w/o target)            \\e)*t/1-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "g) shooting, ammunition, trapping, throwing");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "h) prompt for a guide quick search                           :/? ");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "i) swap two items (eg inventory and equipment) or equip/unequip one item");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "j) enter/leave the PvP arena (PvP mode only)                 :/pvp\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "k) use an item inscribed '@/1' (w/ or w/o target)            \\e)*t/1-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "l) steal from shop more of the last interacted-with item     Z+\\wNN");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "m) display some extra information                            :/ex\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "n) display in-game time (daylight is 6am-10pm)               :/time\\r");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -7389,15 +7387,77 @@ Chain_Macro:
 							break;
 						case 'e': strcpy(buf2, ":/cough\\r"); break;
 						case 'f': strcpy(buf2, ":/shout\\r"); break;
-						case 'g': strcpy(buf2, ":/edmt\\r"); break;
-						//case 'h': strcpy(buf2, ":/ex\\r"); break;
-						//case 'i': strcpy(buf2, ":/time\\r"); break;
-						case 'h': strcpy(buf2, "\\e)*tf-"); break;
-						case 'i': strcpy(buf2, "{-!=LM@m0\\r"); break;
-						case 'j': strcpy(buf2, "\\e)*tv1-"); break;
-						case 'k': strcpy(buf2, "{-!=L@v1\\r"); break; 
-						case 'l': strcpy(buf2, ":/? "); break;
-						case 'm':
+						case 'g':
+							while (TRUE) {
+								clear_from(8);
+								l = 10;
+								Term_putstr(2, l++, -1, TERM_GREEN, "Select one of the following:");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "a) fire equipped shooter at closest enemy                    \\e)*tf-");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) inscribe ammo/trap payload to auto pickup+merge+load+@m0  {-!=LM@m0\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) throw an item inscribed '@v1' at closest enemy            \\e)*tv1-");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) inscribe throwing weapon to auto pickup+equip+@v1         {-!=L@v1\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) throw an item tagged {bad} at closest monster             \\e)*tv@{bad}\\r-");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) quick-toggle option 'easy_disarm_montraps'                :/edmt\\r");
+
+								while (TRUE) {
+									switch (choice = inkey()) {
+									case ESCAPE:
+									case 'p':
+									case '\010': /* backspace */
+										i = -2; /* leave */
+										break;
+									case ':': /* Allow chatting */
+										cmd_message();
+										continue;
+									case KTRL('T'):
+										/* Take a screenshot */
+										xhtml_screenshot("screenshot????", 2);
+										continue;
+									default:
+										/* invalid action -> exit wizard */
+										if (choice < 'a' || choice > 'f') {
+											//i = -1;
+											continue;
+										}
+									}
+									break;
+								}
+								/* exit? */
+								if (i == -2) {
+									/* hack before we exit: remember menu choice 'common' */
+									choice = mw_common;
+									break;
+								}
+
+								l++;
+								switch (choice) {
+								case 'a':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S0");
+									else strcpy(buf2, "\\e)*tf-");
+									break;
+								case 'b':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S1");
+									else strcpy(buf2, "{-!=LM@m0\\r");
+									break;
+								case 'c':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S2");
+									else strcpy(buf2, "\\e)*tv1-");
+									break;
+								case 'd':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S3");
+									else strcpy(buf2, "{-!=L@v1\\r");
+									break;
+								case 'e':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S3");
+									else strcpy(buf2, "\\e)*tv@{bad}\r-");
+									break;
+								case 'f': strcpy(buf2, ":/edmt\\r"); break;
+								}
+								break;
+							}
+							break;
+						case 'h': strcpy(buf2, ":/? "); break;
+						case 'i':
 							while (TRUE) {
 								clear_from(8);
 								l = 10;
@@ -7468,15 +7528,59 @@ Chain_Macro:
 								break;
 							}
 							break;
-						case 'n': strcpy(buf2, ":/pvp\\r"); break;
-						case 'o': strcpy(buf2, "\\e)*tv@{bad}\r-"); break;
-						case 'p': strcpy(buf2, "\\e)*t/1-"); break;
+						case 'j': strcpy(buf2, ":/pvp\\r"); break;
+						case 'k': strcpy(buf2, "\\e)*t/1-"); break;
+						case 'l': {
+							int delay, num = 1;
+
+							clear_from(8);
+							l = 9;
+							Term_putstr(2, l++, -1, TERM_GREEN, "Steal item(s) from shop, from the same stock slot you last interacted with:");
+							Term_putstr(4, l++, -1, TERM_GREEN, "As long as the latency-delay matches, the macro will stop automatically");
+							Term_putstr(4, l++, -1, TERM_GREEN, "after stealing the last item in the store slot.");
+							l++;
+							Term_putstr(10, l++, -1, TERM_YELLOW, "Steal up to how many (1-20)?");
+							/* default: suggest to just steal 1 item at a time */
+							sprintf(tmp, "1");
+							Term_gotoxy(40, l - 1);
+							if (askfor_aux(tmp, 50, 0)) {
+								num = atoi(tmp);
+								if (num < 1) num = 1;
+								if (num > 20) num = 20;
+							}
+							l++;
+
+							Term_putstr(10, l++, -1, TERM_YELLOW, "This macro needs a latency-based delay to work properly!");
+							Term_putstr(10, l++, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
+							Term_putstr(10, l++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+
+							/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
+							sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
+							Term_gotoxy(52, l - 1);
+							if (askfor_aux(tmp, 50, 0)) {
+								delay = atoi(tmp);
+								if (delay % 100) delay += 100; //QoL hack for noobs who can't read
+								delay /= 100;
+								if (delay < 0) delay = 0;
+								if (delay > 99) delay = 99;
+
+								if (delay) sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
+							}
+
+							*buf2 = 0;
+							while (num--) strcat(buf2, delay ? format("Z+%s", tmp) : "Z+");
+							force_command = TRUE;
+							break; }
+						case 'm': strcpy(buf2, ":/ex\\r"); break;
+						case 'n': strcpy(buf2, ":/time\\r"); break;
 						}
 
 						/* hack before we exit: remember menu choice 'common' */
 						choice = mw_common;
 						/* exit? */
 						if (i == -2) continue;
+
 						break;
 
 					case mw_prfele:
@@ -8378,7 +8482,7 @@ Chain_Macro:
 #endif
 					    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 					    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
-					    ) {
+					    || force_command) {
 						/* make it a command macro */
 						/* Link the macro */
 						macro_add(buf, macro__buf, TRUE, FALSE);
