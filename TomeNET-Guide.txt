@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. January 2025 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 4. January 2025 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -127,8 +127,9 @@ Contents
     (4.10)  Houses
     (4.10a) Player stores
     (4.11)  Malicious effects players can suffer
-    (4.11a) Drain effects
-    (4.11b) Common recurring combat buffs
+    (4.11a) Black Breath
+    (4.11b) Drain effects
+    (4.11c) Common recurring combat buffs
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Extermination orders, events and Ironman Challenge
     (4.14)  Time systems, speed
@@ -3635,6 +3636,7 @@ magic, or -if everything else is not available- visiting the Earth-Dome in
 Gondolin, where you can receive 'Herbal Healing' for a (somewhat high) price.
 Players cannot infect other players with Black Breath if they are in Bree or in
 the Training Tower, those are safe zones.
+(For all details about Black Breath see (4.11a).)
 
 Each Nazgul will drop a ring of power, which is a random artifact ring bearing
 the Nazgul's name. These rings have a lot of random mods (ie abilities) and
@@ -9068,7 +9070,7 @@ Library                 *Identify* Service, will *identify* an item for a fee.
                         See (5.7) for more information about ID, *ID*, shops!
 
 Earth-Dome              Herbal Healing Service.
-                        Will cure black breath for a high fee. (See (1.3a) for
+                        Will cure black breath for a high fee. (See (4.11a) for
                         more information about Black Breath.)
 
 Sea-Dome                Morph Restoration Service.
@@ -10682,7 +10684,71 @@ effect. UN_BONUS attacks do not get their damage reduced by AC, so a Star-Spawn
 always has a chance to stun you, even if your AC is very high.
 
 
-(4.11a) Drain effects
+(4.11a) Black Breath
+--------------------
+Black Breath is a deadly spiritual malady, making your character flicker dark
+(which is visible to other players and yourself) with the following effects:
+
+- It will randomly drain your stats in slow but steady intervals persistently,
+  requiring you to use some means of restoration (such as potions from the
+  alchemist town shop).
+
+- It will permanently drain your experience in slow but steady intervals,
+  so it cannot be restored (eg via 'Restore Life Levels' or equivalent means).
+  Taking such an xp hit will break rogue's 'cloaking'.
+
+Undead characters and hobbits, that includes mimicked monster forms, have less
+chance of getting infected and will less frequently suffer from the infection.
+
+Training 'Holy Curing' to 50.000 will further reduce the frequency of suffering
+from Black Breath infection (also stacks with the hobbit/undead advantage).
+
+
+Black Breath can be inflicted on the player in four ways:
+
+- coming in contact with a Nazgul (high chance to get infected, very high even
+  for martial arts users as they tend to come into contact more directly with
+  hands, feet and limbs).
+
+- coming in contact with a high level undead monster (very low chance to get
+  infected. Also, the halloween event monster 'The Great Pumpkin' will never
+  inflict Black Breath despite being a level 127 undead monster in theory.)
+
+- another player bumping into you, switching places with you or pushing past
+  you (or trying to).
+  However, there are exceptions when players cannot infect other players:
+  - if they are in Bree or in the 'Training Tower' dungeon or in Valinor.
+  - if the target character is in a town in 'afk' state (eg via the /afk slash
+    command or auto_afk setting kicking in).
+  - if the target character level is lower than 25.
+
+- equipping an item that inflicts black breath.
+  Currently only weapons of Morgul do this.
+  Note that the black breath cannot be cured until you unequip the item.
+
+
+Some characters are even completely immune to Black Breath:
+
+- Vampires (place race, not mimicked) are immune to Black Breath.
+- Players under the effect of 'Martyr' prayer are immune to new infections
+  (casting Martyr won't heal an existing infection though).
+
+
+There are several possibilities to cure Black Breath:
+
+- Eating a Sprig of Athelas.
+- 'Soul Curing' prayer, ask a friendly priest to cast it on you.
+- 'Herbal Tea' druid spell, ask a friendly druid to cast it on you.
+- Visiting the Earth-Dome in Gondolin which offers 'Herbal Healing'
+  for a (somewhat steep) price (also see (4.5a about special town shops)).
+- Quaffing a potion of Life.
+
+(However, note that you cannot cure black breath for as long as you have an
+item equipped that inflicts it, ie a weapon of Morgul. Take it off first,
+then cure it.)
+
+
+(4.11b) Drain effects
 ---------------------
 Apart from the effects listed above which are indicated in the status bar at
 the bottom of the main window, there are three 'drain' effects that can be
@@ -10894,7 +10960,7 @@ Sanity drain
 
 
 
-(4.11b) Common recurring combat buffs
+(4.11c) Common recurring combat buffs
 -------------------------------------
 On the plus side, there are three very common recurring combat buffs that can
 be acquired by lots of different sources such as potions, item activations,
@@ -13595,7 +13661,7 @@ DRAIN_HP ('It drains your health')
         Slowly drains your HP over time down to zero, but you cannot actually
         die from this as it will stop at zero, and a character is still alive
         at that point, as death occurs when your HP drop _below_ zero.
-        For more information see (4.11a).
+        For more information see (4.11b).
 
 DRAIN_EXP ('It drains your life force')
         Your experience points are drained in random intervals. This effect
@@ -13609,7 +13675,7 @@ DRAIN_EXP ('It drains your life force')
         that drain exp will drain less than twice the amount one item drains.
         While in town areas (that means dungeon towns, normal towns and the
         surrounding housing area) the drain effect will be on hold!
-        For more information see (4.11a).
+        For more information see (4.11b).
 
 HOLD_LIFE ('It provides resistance to life draining attacks.')
         Hold Life gives you a chance to resist the experience-draining effects
@@ -14068,7 +14134,7 @@ Augmentation    Raises all your stats.
 Berserk Strength
                 Temporary effects: Heals you for 30, increases CHP and MHP by
                 20, become fearless, -10 malus to ac and +10 to strength,
-                compare (4.11b). Does not stack with 'Berserk' technique.
+                compare (4.11c). Does not stack with 'Berserk' technique.
                 ("You feel like a killing machine!")
 
 Blood           Cannot be found or bought, but only gathered from fountains of
@@ -14147,7 +14213,7 @@ Experience      Gives you additionally half your current experience plus 10,
                 harder than if they were at 200,000 exp already.
 
 Heroism         Temporary effects: Increases CHP and MHP by 10. Removes fear.
-                +12 bonus to-hit, compare (4.11b). ("You feel like a hero!")
+                +12 bonus to-hit, compare (4.11c). ("You feel like a hero!")
 
 Infra-vision    Temporarily grants you 100..200 ft of infra-vision randomly,
                 ie the ability to see warm-blooded creatures from afar, even
@@ -14626,7 +14692,7 @@ Wine                Will satisfy your hunger somewhat, and may have random side
                     paralysis, fear, blindness (methyl? ew), vomitting if
                     your stomach isn't relatively empty, temporary stat
                     decrease (except for strength), slowness,
-                    heroism, berserk, speed (compare (4.11b)).
+                    heroism, berserk, speed (compare (4.11c)).
 
                     Note that the unique dwarven ale of the Khazad is vastly
                     superiour to normal ale or wine, and will mostly affect the
@@ -14689,10 +14755,10 @@ Firestone           These can be eaten by Draconians and players in dragon
                         - Physical Instability:     Probability Travel.
                         - Fury:         speed bonus, to-dam bonus, no fear,
                                         to-hit malus, to-ac malus.
-                                        Compare (4.11b).
+                                        Compare (4.11c).
                         - Speed-up:     Speed bonus.
                         - Heroism:      +10 CHP/MHP, +12 to-hit, resist fear,
-                                        compare (4.11b).
+                                        compare (4.11c).
                         - Temp res:     Temporary base and poison resistance.
                     If you eat too many of them over a short period of time you
                     might get poisoned by adrenaline overdose, with lethal
@@ -14834,7 +14900,7 @@ Grimoire            These are magic books that may contain magic spells of any
                     (Note that you cannot use these books if your game client
                     version is below 4.4.2!)
 
-Sprig of Athelas    Eat this one to cure Black Breath (see (1.3a) for more
+Sprig of Athelas    Eat this one to cure Black Breath (see (4.11a) for more
                     information about Black Breath),
                     also heals for 8d8, cures poison, disease, stun, cuts,
                     confusion and hallucinations.
@@ -14874,13 +14940,13 @@ Cloak of Lordly Resistance:   Temporary base+poison resistance.
 Dragon Scale Mail:            According breath attack.
 Weapon of the Thunderlords:   Teleportation.
 Weapon of Spinning:           Spin attack.
-Weapon of Fury:               Temporary fury, compare (4.11b).
+Weapon of Fury:               Temporary fury, compare (4.11c).
 Cap of the Nolor:             Treasure detection.
 Spectral weapon:              Temporary wraithform (see (5.20)).
 
 Amulet of the Serpents:       Poison breath.
 Amulet of the Moon:           Sleep monsters.
-Amulet of Rage:               Temporary fury, compare (4.11b).
+Amulet of Rage:               Temporary fury, compare (4.11c).
 
 Ring of Flames:
 Ring of Ice:
@@ -15725,12 +15791,12 @@ In fact, they add up / stack. Those are:
 -Extra might (concerning ranged weapons)
 -Drain mana ('Drains your magic'. Note that 'mana regeneration' (also called
  mana-charging) does NOT stack. So it can cancel out the effect of only ONE
- item that drains mana, not of any more). See (4.11a) for more information.
+ item that drains mana, not of any more). See (4.11b) for more information.
 -Drain hit points ('Drains your health'. note that 'regeneration' does NOT
  stack, so it can cancel out the effect of only ONE item that drains hit
  points, not of any more. However, the 'Health' skill is able to further
- increase your regeneration rate). See (4.11a) for more information.
--Drain experience ('Drains your life force'). See (4.11a) for more information.
+ increase your regeneration rate). See (4.11b) for more information.
+-Drain experience ('Drains your life force'). See (4.11b) for more information.
 -Extra light radius
 
 
@@ -17030,7 +17096,7 @@ LITE            Light or blindness resistance.
                 resistance and gets amplified by susceptibility.
 
 Getting hit by higher undead creatures may also infect you with the
-Black Breath! (See (1.3a) for more information about Black Breath.)
+Black Breath! (See (4.11a) for more information about Black Breath.)
 In general, unique undead monsters of at least level 35 can infect you, and
 non-unique undead monsters of at least level 40 can infect you. The chance of
 infection increases with monster level.
@@ -19250,7 +19316,8 @@ create a character!):
     disarming, perception, and stealth; so they make excellent rogues, but
     prefer to be called burglars. They are much weaker than humans, and no good
     at melee fighting. Halflings have fair infra-vision, so they can detect
-    warm-blooded creatures at a distance. Hobbits resist black breath somewhat.
+    warm-blooded creatures at a distance. Hobbits resist black breath somewhat,
+    both in terms of initial infection chance and suffering the consequences.
     Since Hobbits have a great passion for mushrooms they are able to determine
     the quality of them immediately when they find them.
     They get bonus on 'Sling-mastery', 'Sneakiness', 'Dodging' and a large
@@ -21264,6 +21331,7 @@ All monsters with stone skin (HURT_ROCK flag)
 All dragonriders
                 ESP_DRAGON at level 5, feather falling,
                 levitation at level 30.
+All hobbits     Suffer less often from black breath infection and consequences.
 All evil creatures
                 Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
@@ -22703,7 +22771,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
     Faithful Focus  Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
 
-    Soul Curing     Cures Black Breath (See (1.3a) for more information about
+    Soul Curing     Cures Black Breath (See (4.11a) for more information about
                     Black Breath).                             (auto-project)
                     Required skill level for first spell level: 25.
 
@@ -23593,7 +23661,7 @@ uses the normal spell level just like all other spells, NOT the astral level.)
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 30.
 
-    Empowerment     Enlightened: Incite self-fury, compare (4.11b).
+    Empowerment     Enlightened: Incite self-fury, compare (4.11c).
                     Corrupted: Increases own hit points temporarily.
                     (This spell uses WISDOM to determine fail-rates!)
                     Note that this effect is the same as and stacks with +LIFE
@@ -24784,7 +24852,7 @@ The techniques are as follows:
         (Spinning around costs a turn of energy.)
     Berserk             10 stamina
         Temporary effects: Heals you for 30 HP, increases CHP and MHP by 20,
-        become fearless, -10 malus to ac and +10 to strength, compare (4.11b).
+        become fearless, -10 malus to ac and +10 to strength, compare (4.11c).
         (Entering berserk rage does not cost movement energy.)
         Does not stack with a potion of berserk strength.
 
@@ -25183,7 +25251,7 @@ Beginners (level 1)
   improve the chance to hit the opponent, which will raise the fighting
   potential for example against enemies like Farmer Maggot's dogs. Even if
   your character has a decent amount of Hit Points, these potions raise your
-  fighting abilities a good deal, compare (4.11b).
+  fighting abilities a good deal, compare (4.11c).
 + Potion of Cure Light Wounds
   They become useless quickly while you gain some character levels since they
   don't heal very many HP (Hit Points). At the beginning they are very helpful
@@ -25226,7 +25294,7 @@ Medium level character (up to 25)
 + Some Potions of Berserk Strength (mainly for fighter classes).
   These potions work similar to heroism, but they rise your strength instead
   of your hit chance, allowing you to deal greatly increased damage,
-  compare (4.11b).
+  compare (4.11c).
   Unfortunately they are quite rare. If they are used together with potions
   of speed the result can be devastating.
 + Several Scrolls of Word of Recall
@@ -25307,7 +25375,7 @@ Higher characters (up to 35)
   to give you Black Breath.
   You can leave the sprig in your house since Black Breath saps your soul very
   slowly, so there should be enough time to finish business in the dungeon and
-  recall to town afterwards to eat a sprig. (See (1.3a) for more information
+  recall to town afterwards to eat a sprig. (See (4.11a) for more information
   about Black Breath.)
 + Scrolls of *Remove Curse*. These are expensive in the black market, but are
   sometimes sold in the temple cheaply, so always check the temple when you
