@@ -7707,29 +7707,32 @@ Chain_Macro:
 								   until the server tells the client that the item has been successfully equipped.
 								   Example: Polymorph into a form that has a certain spell available to cast.
 								   The casting needs to wait until the server tells us that we successfully polymorphed. */
+								clear_from(18);
 								if (should_wait) {
-									clear_from(18);
 									Term_putstr(10, 19, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
 									Term_putstr(10, 20, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
-									Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
-									Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+								} else {
+									Term_putstr(10, 19, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
+									Term_putstr(10, 20, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
+								}
+								Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+								Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
 
-									/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
-									sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
-									Term_gotoxy(52, 23);
-									if (askfor_aux(tmp, 50, 0)) {
-										delay = atoi(tmp);
-										if (delay % 100) delay += 100; //QoL hack for noobs who can't read
-										delay /= 100;
-										if (delay < 0) delay = 0;
-										if (delay > 99) delay = 99;
+								/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
+								sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
+								Term_gotoxy(52, 23);
+								if (askfor_aux(tmp, 50, 0)) {
+									delay = atoi(tmp);
+									if (delay % 100) delay += 100; //QoL hack for noobs who can't read
+									delay /= 100;
+									if (delay < 0) delay = 0;
+									if (delay > 99) delay = 99;
 
-										if (delay) {
-											sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
-											text_to_ascii(macro__buf, tmp);
-											strcat(chain_macro_buf, macro__buf);
-											strcpy(macro__buf, chain_macro_buf);
-										}
+									if (delay) {
+										sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
+										text_to_ascii(macro__buf, tmp);
+										strcat(chain_macro_buf, macro__buf);
+										strcpy(macro__buf, chain_macro_buf);
 									}
 								}
 
@@ -8308,6 +8311,8 @@ Chain_Macro:
 								continue;
 							}
 
+							/* If not already planned to be suggested, still ask if we want to add a delay */
+
 							/* Some macros require a latency-based delay in order to update the client with
 							   necessary reply information from the server before another command based on
 							   this action might work.
@@ -8315,29 +8320,32 @@ Chain_Macro:
 							   until the server tells the client that the item has been successfully equipped.
 							   Example: Polymorph into a form that has a certain spell available to cast.
 							   The casting needs to wait until the server tells us that we successfully polymorphed. */
+							clear_from(19);
 							if (should_wait) {
-								clear_from(19);
 								Term_putstr(10, 19, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
 								Term_putstr(10, 20, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
-								Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
-								Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+							} else {
+								Term_putstr(10, 19, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
+								Term_putstr(10, 20, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
+							}
+							Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+							Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
 
-								/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
-								sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
-								Term_gotoxy(52, 23);
-								if (askfor_aux(tmp, 50, 0)) {
-									delay = atoi(tmp);
-									if (delay % 100) delay += 100; //QoL hack for noobs who can't read
-									delay /= 100;
-									if (delay < 0) delay = 0;
-									if (delay > 99) delay = 99;
+							/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
+							sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
+							Term_gotoxy(52, 23);
+							if (askfor_aux(tmp, 50, 0)) {
+								delay = atoi(tmp);
+								if (delay % 100) delay += 100; //QoL hack for noobs who can't read
+								delay /= 100;
+								if (delay < 0) delay = 0;
+								if (delay > 99) delay = 99;
 
-									if (delay) {
-										sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
-										text_to_ascii(macro__buf, tmp);
-										strcat(chain_macro_buf, macro__buf);
-										strcpy(macro__buf, chain_macro_buf);
-									}
+								if (delay) {
+									sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
+									text_to_ascii(macro__buf, tmp);
+									strcat(chain_macro_buf, macro__buf);
+									strcpy(macro__buf, chain_macro_buf);
 								}
 							}
 
