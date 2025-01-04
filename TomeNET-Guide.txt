@@ -10743,7 +10743,7 @@ Black Breath can be inflicted on the player in four ways:
 
 Some characters are even completely immune to Black Breath:
 
-- Vampires (place race, not mimicked) are immune to Black Breath.
+- Vampires (player race, not mimicked) are immune to Black Breath.
 - Players under the effect of 'Martyr' prayer are immune to new infections
   (casting Martyr won't heal an existing infection though).
 
