@@ -2946,66 +2946,89 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 	}
 	if (fego1 & ETR1_PVAL_M1) {
 		/* Increase pval */
-		a_ptr->pval++;
+		if (a_ptr->pval >= 0) a_ptr->pval++;
+		else a_ptr->pval--;
 	}
 	if (fego1 & ETR1_PVAL_M2) {
 		/* Increase pval */
-		a_ptr->pval += m_bonus(2, dlev);
+		if (a_ptr->pval >= 0) a_ptr->pval += m_bonus(2, dlev);
+		else a_ptr->pval -= m_bonus(2, dlev);
 	}
 	if (fego1 & ETR1_PVAL_M3) {
 		/* Increase pval */
-		a_ptr->pval += m_bonus(3, dlev);
+		if (a_ptr->pval >= 0) a_ptr->pval += m_bonus(3, dlev);
+		else a_ptr->pval -= m_bonus(3, dlev);
 	}
 	if (fego1 & ETR1_PVAL_M5) {
 		/* Increase pval */
-		a_ptr->pval += m_bonus(5, dlev);
+		if (a_ptr->pval >= 0) a_ptr->pval += m_bonus(5, dlev);
+		else a_ptr->pval -= m_bonus(5, dlev);
 	}
 #if 0
 	if (fego1 & ETR1_AC_M1) {
 		/* Increase ac */
-		a_ptr->to_a++;
+		if (a_ptr->to_a >= 0) a_ptr->to_a++;
+		else a_ptr->to_a--;
 	}
 	if (fego1 & ETR1_AC_M2) {
 		/* Increase ac */
-		a_ptr->to_a += m_bonus(2, dlev);
+		if (a_ptr->to_a >= 0) a_ptr->to_a += m_bonus(2, dlev);
+		else a_ptr->to_a -= m_bonus(2, dlev);
 	}
 	if (fego1 & ETR1_AC_M3) {
 		/* Increase ac */
-		a_ptr->to_a += m_bonus(3, dlev);
+		if (a_ptr->to_a >= 0) a_ptr->to_a += m_bonus(3, dlev);
+		else a_ptr->to_a -= m_bonus(3, dlev);
 	}
 #endif
 	if (fego1 & ETR1_AC_M5) {
 		/* Increase ac */
-		a_ptr->to_a += m_bonus(5, dlev);
+		if (a_ptr->to_a >= 0) a_ptr->to_a += m_bonus(5, dlev);
+		else a_ptr->to_a -= m_bonus(5, dlev);
 	}
 #if 0
 	if (fego1 & ETR1_TH_M1) {
 		/* Increase to hit */
-		a_ptr->to_h++;
+		if (a_ptr->to_h >= 0) a_ptr->to_h++;
+		else a_ptr->to_h--;
 	}
 	if (fego1 & ETR1_TH_M2) {
 		/* Increase to hit */
-		a_ptr->to_h += m_bonus(2, dlev);
+		if (a_ptr->to_h >= 0) a_ptr->to_h += m_bonus(2, dlev);
+		else a_ptr->to_h -= m_bonus(2, dlev);
 	}
 	if (fego1 & ETR1_TH_M3) {
 		/* Increase to hit */
-		a_ptr->to_h += m_bonus(3, dlev);
+		if (a_ptr->to_h >= 0) a_ptr->to_h += m_bonus(3, dlev);
+		else a_ptr->to_h -= m_bonus(3, dlev);
 	}
 	if (fego1 & ETR1_TH_M5) {
 		/* Increase to hit */
-		a_ptr->to_h += m_bonus(5, dlev);
+		if (a_ptr->to_h >= 0) a_ptr->to_h += m_bonus(5, dlev);
+		else a_ptr->to_h -= m_bonus(5, dlev);
 	}
 #endif
 #if 0
 	if (fego1 & ETR1_TD_M1) {
 		/* Increase to dam */
-		a_ptr->to_d++;
+		if (a_ptr->to_d >= 0) a_ptr->to_d++;
+		else a_ptr->to_d--;
 	}
 	if (fego1 & ETR1_TD_M2) {
 		/* Increase to dam */
-		a_ptr->to_d += m_bonus(2, dlev);
+		if (a_ptr->to_d >= 0) a_ptr->to_d += m_bonus(2, dlev);
+		else a_ptr->to_d -= m_bonus(2, dlev);
 	}
-
+	if (fego1 & ETR1_TD_M3) {
+		/* Increase to dam */
+		if (a_ptr->to_d >= 0) a_ptr->to_d += m_bonus(3, dlev);
+		else a_ptr->to_d -= m_bonus(3, dlev);
+	}
+	if (fego1 & ETR1_TD_M5) {
+		/* Increase to dam */
+		if (a_ptr->to_d >= 0) a_ptr->to_d += m_bonus(5, dlev);
+		else a_ptr->to_d -= m_bonus(5, dlev);
+	}
 #endif
 	if (fego1 & ETR1_R_ESP) {
 		add_random_esp(a_ptr, 1);
@@ -3013,16 +3036,6 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 	if (fego1 & ETR1_NO_SEED) {
 		/* Nothing */
 	}
-#if 0
-	if (fego1 & ETR1_TD_M3) {
-		/* Increase to dam */
-		a_ptr->to_d += m_bonus(3, dlev);
-	}
-	if (fego1 & ETR1_TD_M5) {
-		/* Increase to dam */
-		a_ptr->to_d += m_bonus(5, dlev);
-	}
-#endif
 	if (fego1 & ETR1_R_P_ABILITY) {
 		/* Add a random pval-affected ability */
 		/* This might cause boots with + to blows */
