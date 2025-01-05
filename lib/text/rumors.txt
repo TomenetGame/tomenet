@@ -8,7 +8,7 @@
 # You can colour the rumours with '{' tag. Use '{{' to write literal '{'.
 
 N:*:Default
-924
+925
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -933,3 +933,4 @@ Your face will turn to alabaster when you find your servant is your master.
 It's a secret to everybody.
 You are.. the navigator
 Kid felt like he was on top of the world
+The words are everything. Where the words end the world ends.
