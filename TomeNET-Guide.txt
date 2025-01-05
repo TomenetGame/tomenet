@@ -20509,11 +20509,11 @@ Class           STR     DEX     Light weapon    Startup weapon
 ------------------------------------------------------------------------
 Warrior         17      18/10   2               1
                 18      10      2               1
-                18/10   all     2               1
-                18/30   all     3               1-2 (depends on weapon)
+                18/10   any     2               1
+                18/30   any     3               1-2 (depends on weapon)
                 18/40   18/10   4               2
-                18/50   all     3               2
-                18/70..110 all  3-4             2-3 (depends on weapon)
+                18/50   any     3               2
+                18/70..110 any  3-4             2-3 (depends on weapon)
                 18/80   18/10   3-4             3   (depends on weapon)
                 and for spears (no special treatment, just weight related):
                 18/40   18/10   3
