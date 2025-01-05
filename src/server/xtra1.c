@@ -11635,7 +11635,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		case SKILL_BOW:
 		case SKILL_XBOW:
 		case SKILL_BOOMERANG:
-		case SKILL_ANTIMAGIC:
+		//case SKILL_ANTIMAGIC:
 		case SKILL_DEVICE:
 			msg_print(Ind, "\377yThis is not a valid skill to reset.");
 			return;
