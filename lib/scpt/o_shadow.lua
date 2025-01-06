@@ -278,7 +278,10 @@ SHADOWGATE = add_spell {
 	["info"] = 	function()
 		return "range "..(4 + get_level(Ind, SHADOWGATE, 12))
 		end,
-	["desc"] = 	{ "Teleports you to the nearest opponent in line of sight.", }
+	["desc"] = 	{
+		"Teleports you to the nearest opponent in line of sight",
+		"within a maximum range that increases with skill."
+	}
 }
 
 OLEVITATION = add_spell {

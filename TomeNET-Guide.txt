@@ -22934,7 +22934,8 @@ All Unlife spells are Wisdom-based.)
                     At level 10 the stream is sufficient to grant levitation.
                     Required skill level for first spell level: 18.
 
-    Shadow Gate     Teleports you to the nearest opponent in line of sight.
+    Shadow Gate     Teleports you to the nearest opponent in line of sight
+                    within a maximum radius that increases with skill.
                     Required skill level for first spell level: 26.
                     Shared spell (see above): O.Shadow, Conveyance.
                     This spell cannot be found in the Conveyance tome.
