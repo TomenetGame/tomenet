@@ -579,8 +579,12 @@ void prt_hp(int max, int cur, bool bar, bool boosted) {
 					int w;
 
 					for (w = COL_CURHP; w - COL_CURHP < strlen(tmp); w++)
-						//Term_draw(w, ROW_CURHP, color, w == COL_CURHP ? 807 : (w - COL_CURHP == strlen(tmp) - 1 ? 808 : 809));
-						Term_draw(w, ROW_CURHP, color, 813);
+						Term_draw(w, ROW_CURHP, color, w == COL_CURHP ? 807 : (w - COL_CURHP == strlen(tmp) - 1
+  #ifdef HP_MP_ST_BAR_HALFSTEPS
+						    /* Do we show a half step? */
+						    && !((half % 2) && n > 0)
+  #endif
+						    ? 808 : 809));
 				} else
  #endif
 				c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
@@ -595,10 +599,8 @@ void prt_hp(int max, int cur, bool bar, bool boosted) {
 					case TERM_L_RED: color = TERM_RED; break;
 					}
   #ifdef USE_GRAPHICS
-					if (use_graphics) {
-						//Term_draw(COL_CURHP + n, ROW_CURHP, color, w == COL_CURHP + n ? 807 : (w - (COL_CURHP + n) == strlen(tmp) - 1 ? 808 : 809));
-						Term_draw(COL_CURHP + n, ROW_CURHP, color, 813);
-					} else
+					if (use_graphics) Term_draw(COL_CURHP + n, ROW_CURHP, color, 808);//813
+					else
   #endif
 					c_put_str(color, format("%c", bar_char), ROW_CURHP, COL_CURHP + n);
 				}
@@ -685,8 +687,14 @@ void prt_stamina(int max, int cur, bool bar) {
 				int w;
 
 				for (w = COL_CURST; w - COL_CURST < strlen(tmp); w++)
-					//Term_draw(w, ROW_CURST, color, w == COL_CURST ? 807 : (w - COL_CURST == strlen(tmp) - 1 ? 808 : 809));
-					Term_draw(w, ROW_CURST, color, 813);
+					Term_draw(w, ROW_CURST, color, w == COL_CURST ? 807 : (w - COL_CURST == strlen(tmp) - 1
+  #if 0
+   #ifdef HP_MP_ST_BAR_HALFSTEPS
+					    /* Do we show a half step? */
+					    && !((half % 2) && n > 0)
+   #endif
+  #endif
+					    ? 808 : 809));
 			} else
  #endif
 			c_put_str(color, tmp, ROW_CURST, COL_CURST);
@@ -701,10 +709,8 @@ void prt_stamina(int max, int cur, bool bar) {
 				}
 				if (color != TERM_DARK)
    #ifdef USE_GRAPHICS
-					if (use_graphics) {
-						//Term_draw(COL_CURST + n, ROW_CURST, color, w == COL_CURST + n ? 807 : (w - (COL_CURST + n) == strlen(tmp) - 1 ? 808 : 809));
-						Term_draw(COL_CURST + n, ROW_CURST, color, 813);
-					} else
+					if (use_graphics) Term_draw(COL_CURST + n, ROW_CURST, color, 808);//813
+					else
    #endif
 					c_put_str(color, format("%c", bar_char), ROW_CURST, COL_CURST + n);
 			}
@@ -911,8 +917,12 @@ void prt_mp(int max, int cur, bool bar) {
 					int w;
 
 					for (w = COL_CURMP; w - COL_CURMP < strlen(tmp); w++)
-						//Term_draw(w, ROW_CURMP, color, w == COL_CURMP ? 807 : (w - COL_CURMP == strlen(tmp) - 1 ? 808 : 809));
-						Term_draw(w, ROW_CURMP, color, 813);
+						Term_draw(w, ROW_CURMP, color, w == COL_CURMP ? 807 : (w - COL_CURMP == strlen(tmp) - 1
+   #ifdef HP_MP_ST_BAR_HALFSTEPS
+						    /* Do we show a half step? */
+						    && !((half % 2) && n > 0)
+   #endif
+						    ? 808 : 809));
 				} else
   #endif
 				c_put_str(color, tmp, ROW_CURMP, COL_CURMP);
@@ -926,10 +936,8 @@ void prt_mp(int max, int cur, bool bar) {
 					case TERM_VIOLET: color = TERM_L_DARK; break;
 					}
    #ifdef USE_GRAPHICS
-					if (use_graphics) {
-						//Term_draw(COL_CURMP + n, ROW_CURMP, color, w == COL_CURMP + n ? 807 : (w - (COL_CURMP + n) == strlen(tmp) - 1 ? 808 : 809));
-						Term_draw(COL_CURMP + n, ROW_CURMP, color, 813);
-					} else
+					if (use_graphics) Term_draw(COL_CURMP + n, ROW_CURMP, color, 808);//813
+					else
    #endif
 					c_put_str(color, format("%c", bar_char), ROW_CURMP, COL_CURMP + n);
 				}
