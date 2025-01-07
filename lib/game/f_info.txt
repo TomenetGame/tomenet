@@ -1663,6 +1663,18 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 N:245:solid block, outlined
 G:#:w
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:246:solid block, top left corner rounded
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:247:solid block, top right corner rounded
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:248:solid block, bottom left corner rounded
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+N:249:solid block, bottom right corner rounded
+G:#:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 
 
 

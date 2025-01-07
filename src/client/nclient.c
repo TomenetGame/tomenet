@@ -199,12 +199,25 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	/* Fill extra (non-green) part with red if we don't start out full */
 	if (redraw)
 		for (n = ye; n > MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n--) {
-#ifdef USE_GRAPHICS
+#ifdef USE_GRAPHICS //821,822,813, 813,813,813, 823,813,824
 			if (use_graphics) {
 				int w;
 
-				for (w = x; w - x < strlen(marker); w++)
-					Term_draw(w, n, ae, 813); //'solid' UI feats: 165..171,237 (and more after that)
+				/* Silyl visual hack: Don't draw rounded corners if we're "inside" the huge stun bar... would look odd to have these little black patches ~~ */
+				if (c_cfg.stun_huge_bar && p_ptr->stun) {
+					for (w = x; w - x < strlen(marker); w++)
+						Term_draw(w, n, ae, 813);
+				/* Normal bars while not stunned... */
+				} else if (n == MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE + 1) {
+					for (w = x; w - x < strlen(marker); w++)
+						Term_draw(w, n, ae, w == x ? 821 : (w - x == strlen(marker) - 1 ? 822 : 813));
+				} else if (n == MAX_SCREEN_HGT - 2) {
+					for (w = x; w - x < strlen(marker); w++)
+						Term_draw(w, n, ae, w == x ? 823 : (w - x == strlen(marker) - 1 ? 824 : 813));
+				} else {
+					for (w = x; w - x < strlen(marker); w++)
+						Term_draw(w, n, ae, 813);
+				}
 			} else
 #endif
 			Term_putstr(x, n, -1, ae, marker);
@@ -216,9 +229,21 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		if (use_graphics) {
 			int w;
 
-			for (w = x; w - x < strlen(marker); w++)
-				//Term_draw(w, n, col, w == x ? 807 : (w - x == strlen(marker) - 1 ? 808 : 809)); //'solid' UI feats: 165..171,237 (and more after that)
-				Term_draw(w, n, col, 813); //todo: add 4 more tiles for the 4 corners of huge bars - until then use just 813
+			/* Silyl visual hack: Don't draw rounded corners if we're "inside" the huge stun bar... would look odd to have these little black patches ~~ */
+			if (c_cfg.stun_huge_bar && p_ptr->stun) {
+				for (w = x; w - x < strlen(marker); w++)
+					Term_draw(w, n, col, 813);
+			/* Normal bars while not stunned... */
+			} else if (n == MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE + 1) {
+				for (w = x; w - x < strlen(marker); w++)
+					Term_draw(w, n, col, w == x ? 821 : (w - x == strlen(marker) - 1 ? 822 : 813));
+			} else if (n == MAX_SCREEN_HGT - 2) {
+				for (w = x; w - x < strlen(marker); w++)
+					Term_draw(w, n, col, w == x ? 823 : (w - x == strlen(marker) - 1 ? 824 : 813));
+			} else {
+				for (w = x; w - x < strlen(marker); w++)
+					Term_draw(w, n, col, 813);
+			}
 		} else
 #endif
 		Term_putstr(x, n, -1, col, marker);
@@ -255,7 +280,12 @@ void draw_huge_stun_bar(byte attr) {
 			//if (scr_cc[x] == ' ')
 #ifdef USE_GRAPHICS
 				if (use_graphics && c != ' ')
-					Term_draw(x, y, attr, 813); //'solid' UI feats: 165..171,237 (and more after that)
+					Term_draw(x, y, attr,
+					    y == MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE ? (
+					    x == 1 ? 821 : (x == SCREEN_PAD_LEFT - 1 - 1 ? 822 : 813)) :
+					    (y == MAX_SCREEN_HGT - 2 + 1 ? (
+					    x == 1 ? 823 : (x == SCREEN_PAD_LEFT - 1 - 1 ? 824 : 813)) :
+					    813));
 				else
 #endif
 				Term_putch(x, y, attr, c);

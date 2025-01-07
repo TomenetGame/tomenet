@@ -322,6 +322,10 @@ F:242:/561 # Solid block (UI), corners cut off, symmetric
 F:243:/562 # Solid block (UI), corners cut off more
 F:244:/563 # Solid block (UI), corners cut off more, symmetric
 F:245:/564 # Solid block (UI), outlined
+F:246:/565 # Solid block (UI), top left corner rounded
+F:247:/566 # Solid block (UI), top right corner rounded
+F:248:/567 # Solid block (UI), bottom left corner rounded
+F:249:/568 # Solid block (UI), bottom right corner rounded
 
 F:238:/295 # Drawbridge, horizontal
 

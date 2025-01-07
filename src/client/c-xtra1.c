@@ -1556,6 +1556,8 @@ void prt_stun(int stun) {
 	if (stun == -1) stun = old_stun;
 	else old_stun = stun;
 
+	p_ptr->stun = stun; //just for use_graphics actually, to change huge bars rounded corners to square grids instead when drawing stun grid around them ^^
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
