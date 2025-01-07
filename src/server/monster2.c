@@ -908,6 +908,11 @@ void heal_m_list(struct worldpos *wpos) {
  * Note that this function must maintain the special "m_fast"
  * array of indexes of "live" monsters.
  */
+#define BACKTRACE_OOM /* Actually dump bt info about being out of ...monsters. */
+ /* Can apparently happen when power-staving warriors of the dawn in arena level. */
+#ifdef BACKTRACE_NOTHINGS
+ #include <execinfo.h>
+#endif
 s16b m_pop(void) {
 	int i, n, k;
 
@@ -957,7 +962,23 @@ s16b m_pop(void) {
 	}
 
 	/* Warn the player */
-	if (server_dungeon) s_printf("Too many monsters!\n");
+	if (server_dungeon) {
+		s_printf("Too many monsters!\n");
+#ifdef BACKTRACE_OOM
+		{
+			int size, i;
+			void *buf[1000];
+			char **fnames;
+
+			size = backtrace(buf, 1000);
+			s_printf("size = %d\n", size);
+
+			fnames = backtrace_symbols(buf, size);
+			for (i = 0; i < size; i++)
+				s_printf("%s\n", fnames[i]);
+		}
+#endif
+	}
 
 	/* Try not to crash */
 	return(0);
