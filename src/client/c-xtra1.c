@@ -246,8 +246,10 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #endif
 			exp_bar_char = '#';
 
+#ifdef USE_GRAPHICS
 		/* Graphical tileset? Use extra tile for this */
 		if (use_graphics && exp_bar_char != '#') exp_bar_char = Client_setup.f_char[FEAT_SOLID_NC];
+#endif
 
 		if (level >= PY_MAX_PLAYER_LEVEL || !adv || !scale) {
 			if (cur < PY_MAX_EXP) {
@@ -5342,11 +5344,13 @@ void do_weather(bool no_weather) {
 						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
 					else
 #endif
+#ifdef USE_GRAPHICS
 					if (use_graphics && kidx_po_rain_char && !c_cfg.ascii_weather)
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
 					else
+#endif
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
@@ -5361,11 +5365,13 @@ void do_weather(bool no_weather) {
 						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
 					else
 #endif
+#ifdef USE_GRAPHICS
 					if (use_graphics && kidx_po_snow_char && !c_cfg.ascii_weather)
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_snowflake, kidx_po_snow_char);
 					else
+#endif
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_snowflake, '*');
@@ -5380,11 +5386,13 @@ void do_weather(bool no_weather) {
 						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
 					else
 #endif
+#ifdef USE_GRAPHICS
 					if (use_graphics && kidx_po_sand_char && !c_cfg.ascii_weather)
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_sandgrain, kidx_po_sand_char);
 					else
+#endif
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_sandgrain, c_sandgrain);
@@ -5663,11 +5671,13 @@ void do_weather(bool no_weather) {
 					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
 				else
 #endif
+#ifdef USE_GRAPHICS
 				if (use_graphics && kidx_po_rain_char && !c_cfg.ascii_weather)
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
 				else
+#endif
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
@@ -5719,11 +5729,13 @@ void do_weather(bool no_weather) {
 					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
 				else
 #endif
+#ifdef USE_GRAPHICS
 				if (use_graphics && kidx_po_snow_char && !c_cfg.ascii_weather)
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_snowflake, kidx_po_snow_char);
 				else
+#endif
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_snowflake, '*');
@@ -5774,11 +5786,13 @@ void do_weather(bool no_weather) {
 					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
 				else
 #endif
+#ifdef USE_GRAPHICS
 				if (use_graphics && kidx_po_sand_char && !c_cfg.ascii_weather)
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_sandgrain, kidx_po_sand_char);
 				else
+#endif
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_sandgrain, c_sandgrain);
