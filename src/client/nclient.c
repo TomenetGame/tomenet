@@ -198,30 +198,30 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 
 	/* Fill extra (non-green) part with red if we don't start out full */
 	if (redraw)
-		for (n = ye; n > MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n--)
-#if 1
-			Term_putstr(x, n, -1, ae, marker);
-#else /* testing - 24x32sv.bmp graphical UI bars */
-		{
-			int w;
+		for (n = ye; n > MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n--) {
+#ifdef USE_GRAPHICS
+			if (use_graphics) {
+				int w;
 
-			for (w = x; w - x < strlen(marker); w++)
-				Term_draw(w, n, ae, 560); //'solid' UI feats: 165..171,237 -> map to BMP coords 550..557 in 24x36sv.bmp
-		}
+				for (w = x; w - x < strlen(marker); w++)
+					Term_draw(w, n, ae, 813); //'solid' UI feats: 165..171,237 (and more after that)
+			} else
 #endif
+			Term_putstr(x, n, -1, ae, marker);
+		}
 
 	/* Only draw the difference to before */
 	for (n = ys; n > ye; n--)
-#if 1
-		Term_putstr(x, n, -1, col, marker);
-#else /* testing - 24x32sv.bmp graphical UI bars */
-		{
+#ifdef USE_GRAPHICS
+		if (use_graphics) {
 			int w;
 
 			for (w = x; w - x < strlen(marker); w++)
-				Term_draw(w, n, col, w == x ? 807 : (w - x == strlen(marker) - 1 ? 808 : 809)); //'solid' UI feats: 165..171,237 -> map to BMP coords 550..557 in 24x36sv.bmp
-		}
+				//Term_draw(w, n, col, w == x ? 807 : (w - x == strlen(marker) - 1 ? 808 : 809)); //'solid' UI feats: 165..171,237 (and more after that)
+				Term_draw(w, n, col, 813); //todo: add 4 more tiles for the 4 corners of huge bars - until then use just 813
+		} else
 #endif
+		Term_putstr(x, n, -1, col, marker);
 
 	*prev = cur;
 }
@@ -251,9 +251,14 @@ void draw_huge_stun_bar(byte attr) {
 
 	for (y = MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; y <= MAX_SCREEN_HGT - 2 + 1; y++) {
 		//scr_cc = Term->scr->c[y];
-		for (x = 0; x < SCREEN_PAD_LEFT - 1; x++)
+		for (x = 1; x < SCREEN_PAD_LEFT - 1; x++)
 			//if (scr_cc[x] == ' ')
-				Term_putch(x , y, attr, c);
+#ifdef USE_GRAPHICS
+				if (use_graphics && c != ' ')
+					Term_draw(x, y, attr, 813); //'solid' UI feats: 165..171,237 (and more after that)
+				else
+#endif
+				Term_putch(x, y, attr, c);
 	}
 
 	/* Restore the other huge bars over the stun "background bar" */
