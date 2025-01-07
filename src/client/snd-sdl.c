@@ -3512,6 +3512,8 @@ void do_cmd_options_sfx_sdl(void) {
 	FILE *fff, *fff2;
 	bool cfg_audio_master_org = cfg_audio_master, cfg_audio_sound_org = cfg_audio_sound;
 	bool cfg_audio_music_org = cfg_audio_music, cfg_audio_weather_org = cfg_audio_weather;
+	static char searchstr[MAX_CHARS] = { 0 };
+	static int searchres = -1, searchoffset = 0;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -3915,11 +3917,7 @@ void do_cmd_options_sfx_sdl(void) {
 			if (y < 0) y = 0;
 			if (y >= audio_sfx) y = audio_sfx - 1;
 			break;
-		case '/':
 		case 's': /* Search for event name */
-			{
-			char searchstr[MAX_CHARS] = { 0 };
-
 			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) sound event name: ");
 			askfor_aux(searchstr, MAX_CHARS - 1, 0);
 			if (!searchstr[0]) break;
@@ -3935,10 +3933,36 @@ void do_cmd_options_sfx_sdl(void) {
 				if (!my_strcasestr(lua_name, searchstr)) continue;
 				/* match */
 				y = i2;
+				searchoffset = y;
+				searchres = j;
 				break;
 			}
 			break;
+		case '/': /* Search for next result */
+			if (!searchstr[0]) continue;
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			i2 = -1;
+			searchoffset++; //we start searching at searchres + 1!
+			for (d = searchres + 1; d <= searchres + SOUND_MAX_2010; d++) {
+				j = d % SOUND_MAX_2010;
+				if (!j) {
+					i2 = -1;
+					searchoffset = 0;
+				}
+				if (!samples[j].config) continue;
+				i2++;
+				/* get event name */
+				sprintf(out_val, "return get_sound_name(%d)", j);
+				lua_name = string_exec_lua(0, out_val);
+				if (!my_strcasestr(lua_name, searchstr)) continue;
+				/* match */
+				y = i2 + searchoffset;
+				searchoffset = y;
+				searchres = j;
+				break;
 			}
+			break;
+
 		case NAVI_KEY_PAGEUP:
 		case '9':
 		case 'p':
@@ -4016,6 +4040,8 @@ void do_cmd_options_mus_sdl(void) {
  #endif
 	cptr path_p;
 #endif
+	static char searchstr[MAX_CHARS] = { 0 };
+	static int searchres = -1, searchoffset = 0;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -4875,14 +4901,11 @@ void do_cmd_options_mus_sdl(void) {
 			if (y >= audio_music) y = audio_music - 1;
 			break;
 
-		case '/':
 		case 's': /* Search for event name */
-			{
-			char searchstr[MAX_CHARS] = { 0 };
-
 			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) music event name: ");
 			askfor_aux(searchstr, MAX_CHARS - 1, 0);
 			if (!searchstr[0]) break;
+			searchres = -1;
 
 			/* Map events we've listed in our local config file onto audio.lua indices */
 			i2 = -1;
@@ -4895,10 +4918,35 @@ void do_cmd_options_mus_sdl(void) {
 				if (!my_strcasestr(lua_name, searchstr)) continue;
 				/* match */
 				y = i2;
+				searchoffset = y;
+				searchres = j;
 				break;
 			}
 			break;
+		case '/': /* Search for next result */
+			if (!searchstr[0]) continue;
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			i2 = -1;
+			searchoffset++; //we start searching at searchres + 1!
+			for (d = searchres + 1; d <= searchres + MUSIC_MAX; d++) {
+				j = d % MUSIC_MAX;
+				if (!j) {
+					i2 = -1;
+					searchoffset = 0;
+				}
+				if (!songs[j].config) continue;
+				i2++;
+				/* get event name */
+				sprintf(out_val, "return get_music_name(%d)", j);
+				lua_name = string_exec_lua(0, out_val);
+				if (!my_strcasestr(lua_name, searchstr)) continue;
+				/* match */
+				y = i2 + searchoffset;
+				searchoffset = y;
+				searchres = j;
+				break;
 			}
+			break;
 
 		case NAVI_KEY_PAGEUP:
 		case '9':
