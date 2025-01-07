@@ -14,7 +14,7 @@ Press SHIFT+P to form a party with a friend.
 
 ----------------------------------------------------------------------------
 
-    Administrators are God/Sandman, Mikael and C. Blue.
+    Administrators are Kurzel, God/Sandman, Mikael and C. Blue.
     If you find a bug, report it via /bug command.
     Submit suggestions via /rfe command or write to the forum.
     If you have any questions or need help or a rescue just ask in chat!
