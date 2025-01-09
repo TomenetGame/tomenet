@@ -4978,6 +4978,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
  #ifdef BLF_SRC_PREFEED
 						if (line_prefeed_blank != -1 && line_prefeed_blank < searchline
 						    && remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+							if (line_prefeed_blank + maxlines <= searchline) line_prefeed_blank = searchline - maxlines + 1; /* don't go TOO far back ie more than 1 screen height */
 							/* Don't overshoot over the last line of our file */
 							if (line_prefeed_blank + maxlines > file_lastline[remembrance_index]) line_prefeed_blank = file_lastline[remembrance_index] - maxlines + 1;
 							/* Last blank line before the data blob containing our current search match: */
@@ -5045,6 +5046,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 #ifdef BLF_SRC_PREFEED
 					if (line_prefeed_blank != -1 && line_prefeed_blank < searchline
 					    && remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+						if (line_prefeed_blank + maxlines <= searchline) line_prefeed_blank = searchline - maxlines + 1; /* don't go TOO far back ie more than 1 screen height */
 						/* Don't overshoot over the last line of our file */
 						if (line_prefeed_blank + maxlines > file_lastline[remembrance_index]) line_prefeed_blank = file_lastline[remembrance_index] - maxlines + 1;
 						/* Last blank line before the data blob containing our current search match: */
