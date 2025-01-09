@@ -8947,6 +8947,23 @@ Black Market    7       Sells many different items, mostly very good ones.
                         as long as a regular store will pay you better.
                         Some items cannot be sold elsewhere though.
 
+                        The black market randomly offers practically any item,
+                        although some can be extremely rare (for example high
+                        dragon scale mails or scrolls of artifact creation)
+                        with very few exceptions. These items never appear:
+                        - Golem-creation related items (massive base materials,
+                          limbs, command scrolls).
+                        - Talismans (amulets of luck).
+                        - Magic or ethereal ammunition.
+                        - Runes, except in the Secret Black Market (dungeon).
+                        - Items that can only be used by winners (WINNERS_ONLY)
+                        - Items of base value not greater than 50 Au.
+                          (This means that cursed ego items where the ego power
+                          value is 0 can also not be generated, same as for any
+                          other shop. No shop offers items worth 0 Au.)
+                        - Potions of experience, invulnerability, learning,
+                          chauve-souris, cure insanty (any tier).
+
 The Inn         8       In Bree it's The Prancing Pony. Inside the inn,
                         players are relatively safe from monsters.
 
