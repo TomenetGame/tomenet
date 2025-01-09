@@ -4761,6 +4761,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 #ifdef BLF_SRC_PREFEED
 	int line_prefeed_blank = -1; /* Last blank line before the data blob containing our current search match */
+	int line_prefeed_result = -1; /* Remember actual result match line */
 #endif
 
 
@@ -4987,6 +4988,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 							Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[remembrance_index] + 1, file_lastline[remembrance_index] + 1));
 							/* Re-display part of the document starting at line_prefeed_blank instead of n=0. */
 							line_prefeed_blank = -2; //hack:marker
+							/* And remember the real search result match line, for starting subsequent-match search from here */
+							line_prefeed_result = searchline;
 							break;
 						}
  #endif
@@ -5055,6 +5058,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[remembrance_index] + 1, file_lastline[remembrance_index] + 1));
 						/* Re-display part of the document starting at line_prefeed_blank instead of n=0. */
 						line_prefeed_blank = -2; //hack:marker
+						/* And remember the real search result match line, for starting subsequent-match search from here */
+						line_prefeed_result = searchline;
 						break;
 					}
 #endif
@@ -5472,6 +5477,9 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			inkey_msg = inkey_msg_old;
 			if (!searchstr[0]) continue;
 
+#ifdef BLF_SRC_PREFEED
+			line_prefeed_result = -1;
+#endif
 			line_before_search[remembrance_index] = line_cur[remembrance_index];
 			line_presearch = line_cur[remembrance_index];
 			/* Skip the line we're currently in, start with the next line actually */
@@ -5516,6 +5524,9 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 				continue;
 			}
 
+#ifdef BLF_SRC_PREFEED
+			line_prefeed_result = -1;
+#endif
 			line_before_search[remembrance_index] = line_cur[remembrance_index];
 			line_presearch = line_cur[remembrance_index];
 			/* Skip the line we're currently in, start with the next line actually */
@@ -5538,6 +5549,9 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 		case 'S':
 			marking = marking_after = FALSE; //clear hack
 
+#ifdef BLF_SRC_PREFEED
+			line_prefeed_result = -1;
+#endif
 			line_cur[remembrance_index] = line_before_search[remembrance_index];
 			continue;
 		/* search for next occurance of the previously used search keyword */
@@ -5546,6 +5560,9 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 			if (!lastsearch[remembrance_index][0]) continue;
 
+#ifdef BLF_SRC_PREFEED
+			if (line_prefeed_result != -1) line_cur[remembrance_index] = line_prefeed_result;
+#endif
 			line_presearch = line_cur[remembrance_index];
 			/* Skip the line we're currently in, start with the next line actually */
 			line_cur[remembrance_index]++;
@@ -5602,6 +5619,9 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 			if (!lastsearch[remembrance_index][0]) continue;
 
+#ifdef BLF_SRC_PREFEED
+			if (line_prefeed_result != -1) line_cur[remembrance_index] = line_prefeed_result;
+#endif
 			line_presearch = line_cur[remembrance_index];
 			/* Inverse location/direction */
 			backwards = TRUE;
