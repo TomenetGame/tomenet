@@ -4960,6 +4960,10 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 				/* We found a regexp result */
 				else if (search_regexp) {
 					if (my_strregexp_skipcol(buf2, re_src, searchstr_re, withinsearch, &i)) {
+ #ifdef BLF_SRC_PREFEED
+						bool was_backwards = backwards;
+ #endif
+
 						/* Reverse again to normal direction/location */
 						if (backwards) {
 							backwards = FALSE;
@@ -4977,7 +4981,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 						searchstr[0] = 0;
 						searchwrap = FALSE;
  #ifdef BLF_SRC_PREFEED
-						if (line_prefeed_blank != -1 && line_prefeed_blank < searchline
+						if (!was_backwards && /* for now */
+						    line_prefeed_blank != -1 && line_prefeed_blank < searchline
 						    && remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
 							if (line_prefeed_blank + maxlines <= searchline) line_prefeed_blank = searchline - maxlines + 1; /* don't go TOO far back ie more than 1 screen height */
 							/* Don't overshoot over the last line of our file */
@@ -5011,7 +5016,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 					/* Still searching */
 					else {
  #ifdef BLF_SRC_PREFEED
-						if (remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+						if (!backwards /* for now */
+						    && remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
 							char *emptycheck = buf2;
 
 							while (*emptycheck == ' ') emptycheck++;
@@ -5029,6 +5035,10 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 				/* We found a result (non-regexp) */
 				else if (my_strcasestr_skipcol(buf2, searchstr, FALSE)) {
+#ifdef BLF_SRC_PREFEED
+					bool was_backwards = backwards;
+#endif
+
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
@@ -5047,7 +5057,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 					searchstr[0] = 0;
 					searchwrap = FALSE;
 #ifdef BLF_SRC_PREFEED
-					if (line_prefeed_blank != -1 && line_prefeed_blank < searchline
+					if (!was_backwards && /* for now */
+					    line_prefeed_blank != -1 && line_prefeed_blank < searchline
 					    && remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
 						if (line_prefeed_blank + maxlines <= searchline) line_prefeed_blank = searchline - maxlines + 1; /* don't go TOO far back ie more than 1 screen height */
 						/* Don't overshoot over the last line of our file */
@@ -5080,7 +5091,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 				/* Still searching */
 				} else {
 #ifdef BLF_SRC_PREFEED
-					if (remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+					if (!backwards && /* for now */
+					    remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
 						char *emptycheck = buf2;
 
 						while (*emptycheck == ' ') emptycheck++;
@@ -5620,7 +5632,8 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			if (!lastsearch[remembrance_index][0]) continue;
 
 #ifdef BLF_SRC_PREFEED
-			if (line_prefeed_result != -1) line_cur[remembrance_index] = line_prefeed_result;
+			//not 'backwards' for now
+			//if (line_prefeed_result != -1) line_cur[remembrance_index] = line_prefeed_result;
 #endif
 			line_presearch = line_cur[remembrance_index];
 			/* Inverse location/direction */
