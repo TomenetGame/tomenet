@@ -4720,6 +4720,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 /* Added based on cmd_the_guide() to similarly browse the client-side spoiler files. - C. Blue
    Remember things such as last line visited, last search term.. for up to this - 1 different fixed files (0 is reserved for 'not saved'). */
 #define MAX_REMEMBRANCE_INDICES 11
+/* Hack: Searching will actually pre-feed up to previous spacer line?
+   Used for *_info.txt files, so you can see the whole data block belonging to your search result. */
+#define BLF_SRC_PREFEED
 void browse_local_file(const char* angband_path, char* fname, int remembrance_index, bool reverse) {
 	static int line_cur[MAX_REMEMBRANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBRANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBRANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBRANCE_INDICES] = { -1 };
 	static char lastsearch[MAX_REMEMBRANCE_INDICES][MAX_CHARS] = { 0 };
@@ -4755,6 +4758,10 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 	bool syntax_S = streq(fname, "f_info.txt");
 	char *tag_y, *tag_n, *tag_src;
 	bool tag_ok;
+
+#ifdef BLF_SRC_PREFEED
+	int line_prefeed_blank = -1; /* Last blank line before the data blob containing our current search match */
+#endif
 
 
 	if (!remembrance_index || remembrance_index >= MAX_REMEMBRANCE_INDICES) {
@@ -4968,12 +4975,47 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 						searchstr[0] = 0;
 						searchwrap = FALSE;
+ #ifdef BLF_SRC_PREFEED
+						if (line_prefeed_blank != -1 && line_prefeed_blank < searchline
+						    && remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+							/* Don't overshoot over the last line of our file */
+							if (line_prefeed_blank + maxlines > file_lastline[remembrance_index]) line_prefeed_blank = file_lastline[remembrance_index] - maxlines + 1;
+							/* Last blank line before the data blob containing our current search match: */
+							line_cur[remembrance_index] = line_prefeed_blank;
+							/* Redraw line number display */
+							Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[remembrance_index] + 1, file_lastline[remembrance_index] + 1));
+							/* Re-display part of the document starting at line_prefeed_blank instead of n=0. */
+							line_prefeed_blank = -2; //hack:marker
+							break;
+						}
+ #endif
+ #ifdef BLF_SRC_PREFEED
+						/* Don't overshoot over the last line of our file */
+						if (searchline + maxlines > file_lastline[remembrance_index]) searchline = file_lastline[remembrance_index] - maxlines + 1;
+ #endif
+
 						line_cur[remembrance_index] = searchline;
 						/* Redraw line number display */
 						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[remembrance_index] + 1, file_lastline[remembrance_index] + 1));
+
+ #ifdef BLF_SRC_PREFEED
+						/* Re-display part of the document starting at line_prefeed_blank instead of n=0. */
+						line_prefeed_blank = -2; //hack:marker
+						break;
+ #endif
 					}
 					/* Still searching */
 					else {
+ #ifdef BLF_SRC_PREFEED
+						if (remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+							char *emptycheck = buf2;
+
+							while (*emptycheck == ' ') emptycheck++;
+							/* Found an empty line? (that is, zero length or just spaces) */
+							if (*emptycheck == 0) line_prefeed_blank = searchline + 1;
+						}
+ #endif
+
 						/* Skip all lines until we find the desired string */
 						n--;
 						continue;
@@ -4987,25 +5029,59 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 					if (backwards) {
 						backwards = FALSE;
 						searchline = file_lastline[remembrance_index] - searchline;
- #ifndef BUFFER_LOCAL_FILE
+#ifndef BUFFER_LOCAL_FILE
 						/* Skip end of line, advancing to next line */
 						fseek(fff, 1, SEEK_CUR);
 						/* This line has already been read too, by fgets_inverse(), so skip too */
 						res = fgets(bufdummy, MAX_CHARS_WIDE + 1, fff); //res just slays compiler warning
- #else
+#else
 						fseek_pseudo[remembrance_index] += 2;
- #endif
+#endif
 					}
 
 					strcpy(withinsearch, searchstr);
 					searchstr[0] = 0;
 					searchwrap = FALSE;
+#ifdef BLF_SRC_PREFEED
+					if (line_prefeed_blank != -1 && line_prefeed_blank < searchline
+					    && remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+						/* Don't overshoot over the last line of our file */
+						if (line_prefeed_blank + maxlines > file_lastline[remembrance_index]) line_prefeed_blank = file_lastline[remembrance_index] - maxlines + 1;
+						/* Last blank line before the data blob containing our current search match: */
+						line_cur[remembrance_index] = line_prefeed_blank;
+						/* Redraw line number display */
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[remembrance_index] + 1, file_lastline[remembrance_index] + 1));
+						/* Re-display part of the document starting at line_prefeed_blank instead of n=0. */
+						line_prefeed_blank = -2; //hack:marker
+						break;
+					}
+#endif
+#ifdef BLF_SRC_PREFEED
+					/* Don't overshoot over the last line of our file */
+					if (searchline + maxlines > file_lastline[remembrance_index]) searchline = file_lastline[remembrance_index] - maxlines + 1;
+#endif
+
 					line_cur[remembrance_index] = searchline;
 					/* Redraw line number display */
 					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[remembrance_index] + 1, file_lastline[remembrance_index] + 1));
 
+#ifdef BLF_SRC_PREFEED
+					/* Re-display part of the document starting at line_prefeed_blank instead of n=0. */
+					line_prefeed_blank = -2; //hack:marker
+					break;
+#endif
 				/* Still searching */
 				} else {
+#ifdef BLF_SRC_PREFEED
+					if (remembrance_index) { /* only do this for *_info.txt files (those have != 0 here) */
+						char *emptycheck = buf2;
+
+						while (*emptycheck == ' ') emptycheck++;
+						/* Found an empty line? (that is, zero length or just spaces) */
+						if (*emptycheck == 0) line_prefeed_blank = searchline + 1;
+					}
+#endif
+
 					/* Skip all lines until we find the desired string */
 					n--;
 					continue;
@@ -5247,7 +5323,14 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			/* Display processed line, colourized by chapters and search results (and 'syntax' highlighting) */
 			Term_putstr(0, 2 + n, -1, attr, bufp_offset);
 		}
-
+#ifdef BLF_SRC_PREFEED
+		/* Hack: Restart display at last blank line on successful seach result */
+		if (line_prefeed_blank == -2) {
+			line_prefeed_blank = -1;
+			marking = TRUE;
+			continue;
+		}
+#endif
 		/* failed to find search string? wrap around and search once more,
 		   this time from the beginning up to our actual posititon. */
 		if (searchstr[0]) {
