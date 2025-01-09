@@ -1800,6 +1800,10 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	if (o_ptr->to_h > 0) return(FALSE);
 	if (o_ptr->to_d > 0) return(FALSE);
 
+	/* All of the following code only affects non-enchantable items,
+	   as enchantable items are usually enchanted and therefore just passed the above checks...
+	   So it's mostly about consumables. */
+
 #if 0	/* Would mess up at least the dungeon BMs, and was buggy all the time anyway \
 	 * (returned FALSE instead of TRUE), so disabling it altogether. */
 	/* Don't allow items in black markets that are listed in other BMs' templates already */
@@ -1848,7 +1852,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
   #else /* using light-weight version that shouldn't pose problems */
 		/* Check the other basic normal stores (entrance '1' to '6') */
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < 6; i++) { //todo: shift this for dungeon BM to check specifically the dungeon versions of town stores (STORE_DUN...)?
   #endif
 			/* Check every item in the store */
 			for (j = 0; j < st_ptr[i].stock_num; j++) {
@@ -2173,7 +2177,7 @@ static void store_create(store_type *st_ptr) {
 			case SV_SCROLL_ACQUIREMENT:
 			case SV_SCROLL_STAR_ACQUIREMENT:
 			case SV_SCROLL_ARTIFACT_CREATION:
-			case SV_SCROLL_FIREWORK:
+			case SV_SCROLL_FIREWORK: //fireworks cannot be generated 'naturally' anyway as rarity is 'disabled', it's only generated via special code
 			case SV_SCROLL_LOTTERY:
 				if (black_market) break;
 				continue;
