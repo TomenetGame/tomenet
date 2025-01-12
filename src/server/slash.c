@@ -8092,21 +8092,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				if (message3[0] == '*') {
-					i = 0;
-					for (k = 0; k < MAX_LIST_INVALID; k++) {
-						if (!list_invalid_name[k][0]) break;
-						i++;
-						msg_format(Ind, "\377GValidating entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
-						switch (validate(list_invalid_name[k])) {
-						case -1: break; //success (validate() clears the entry, so message needed to be displayed first)
-						case 0: msg_print(Ind, "\377rAccount not found!");
-							break;
-						case 1: msg_print(Ind, "\377oAccount already completely valid.");
-							break;
+					/* Could just iterate backwards from MAX_LIST_INVALID right away, whatever */
+					for (i = 0; i < MAX_LIST_INVALID; i++)
+						if (!list_invalid_name[i][0]) break;
+					if (i) {
+						for (k = i - 1; k >= 0; k--) { /* Could just remain on index 0 instead of iterating, but maybe an account-not-found error happens and we want to continue despite of it */
+							msg_format(Ind, "\377GValidating entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
+							switch (validate(list_invalid_name[k])) {
+							case -1: break; //success (validate() clears the entry, so message needed to be displayed first)
+							case 0: msg_print(Ind, "\377rAccount not found!");
+								break;
+							case 1: msg_print(Ind, "\377oAccount already completely valid.");
+								break;
+							}
 						}
-					}
-					if (!i) msg_print(Ind, "\377yThe new-invalid-list is empty.");
-					else msg_format(Ind, "Processed %d new accounts.", i);
+						msg_format(Ind, "Processed %d new accounts.", i);
+					} else msg_print(Ind, "\377yThe new-invalid-list is empty.");
 				} else {
 					if (!list_invalid_name[k][0]) {
 						msg_format(Ind, "\377yEntry %d doesn't exist.", k);
