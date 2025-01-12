@@ -20326,9 +20326,9 @@ S:1_IN_2 |
 S:BR_ICE | BR_INER | BR_DISI
 S:S_HI_DRAGON
 D:This revered dragon deity has a long, sinuous shape covered in silver-white
-D:scales that sparkle and gleam even in the dimmest light. Bahamut’s catlike
+D:scales that sparkle and gleam even in the dimmest light. Bahamut's catlike
 D:eyes are deep blue, as azure as a midsummer sky, some say. Others insist
-D:that Bahamut’s eyes are a frosty indigo, like the heart of a glacier.
+D:that Bahamut's eyes are a frosty indigo, like the heart of a glacier.
 D:While stern and disapproving of evil, he has no tolerance for any intruders.
 
 N:1147:The Living Lightning
