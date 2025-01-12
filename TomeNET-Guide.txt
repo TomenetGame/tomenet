@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. January 2025 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 13. January 2025 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7843,7 +7843,9 @@ example a high level 50 character on an (to him) easy dungeon level like 60)
 may result in diminishing returns of experience points for killed monsters.
 
 On the other hand, killing monsters of higher level than the player's level
-will give bonus experience.
+will give bonus experience. (The xp calculation uses the m-level, so fighting
+leveled-up monsters due to deeper dungeon floors will yield bonus experience
+accordingly, also see 'mlevel' in (0.4).)
 
 Experience is shared automatically in 'parties', see (7.9).
 
