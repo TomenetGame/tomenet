@@ -4159,18 +4159,18 @@ void calc_boni(int Ind) {
 		if (k_ptr->flags5 & TR5_PVAL_MASK) {
 			if (k_ptr->flags5 & TR5_DISARM) p_ptr->skill_dis += (o_ptr->bpval) * 5;
 			if (k_ptr->flags5 & TR5_LUCK) { p_ptr->luck += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].luck += o_ptr->bpval; }
-#if 0 /* xtra_crit are all +crit modifiers that are NOT the weapons used (but eg rings, gloves) */
-			/* There are no known weapons so far that add to crit intrinsically. */
-			if (k_ptr->flags5 & TR5_CRIT) { p_ptr->xtra_crit += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->bpval; }
-#endif
+			/* 'xtra_crit' is summing up all NON-WEAPON +crit modifiers separately (eg from rings, gloves). */
+			/* Now there are currently no known weapons that add to crit intrinsically, but we test for all of it anyway: */
+			if (i != INVEN_WIELD && (i != INVEN_ARM || o_ptr->tval == TV_SHIELD) &&
+			    i != INVEN_AMMO && i != INVEN_BOW && i != INVEN_TOOL) {
+				if (k_ptr->flags5 & TR5_CRIT) { p_ptr->xtra_crit += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->bpval; }
+			}
 		}
 
 		/* Next, add our ego bonuses */
 		/* Hack -- clear out any pval bonuses that are in the base item
 		 * bonus but not the ego bonus so we don't add them twice.
 		 */
-#if 1
-		//if (o_ptr->name2 && o_ptr->tval != TV_RING) // pls see apply_magic ;)
 		if (o_ptr->name2) {
 			artifact_type *a_ptr;
 
@@ -4203,8 +4203,6 @@ void calc_boni(int Ind) {
 			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
 		}
-#endif
-
 
 		/* Affect stats */
 		if (f1 & TR1_STR) { p_ptr->stat_add[A_STR] += pval; csheet_boni[i-INVEN_WIELD].pstr += pval; }
@@ -4263,7 +4261,7 @@ void calc_boni(int Ind) {
 		/* Affect disarming (factor of 20) */
 		if (f5 & (TR5_DISARM)) p_ptr->skill_dis += pval * 5;
 
-		/* Hack -- Sensible */
+		/* Hack -- Sensitive */
 		/* not yet implemented
 		if (f5 & (TR5_SENS_FIRE)) p_ptr->suscep_fire = TRUE;
 		if (f5 & (TR6_SENS_COLD)) p_ptr->suscep_cold = TRUE;
@@ -4272,7 +4270,6 @@ void calc_boni(int Ind) {
 		if (f5 & (TR6_SENS_POIS)) p_ptr->suscep_acid = TRUE; */
 
 		/* Boost shots */
-		//if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
 		if (f3 & TR3_AUTO_ID) { p_ptr->auto_id = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAUID; }
 
 		/* Boost shots */
@@ -4598,9 +4595,10 @@ void calc_boni(int Ind) {
 			if (f1 & TR1_BRAND_FIRE) { p_ptr->slay_equip |= TR1_BRAND_FIRE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE; }
 			if (f1 & TR1_BRAND_COLD) { p_ptr->slay_equip |= TR1_BRAND_COLD; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD; }
 		}
-		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
+		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP; //affects melee attacks only, so we don't need to differentiate on which item this flag is here
 
-		/* Hack -- do not apply "weapon", "bow", "ammo", or "tool"  boni */
+
+		/* --- Hack: Handle "weapon", "bow", "ammo", or "tool" boni specifically and do not apply them generally after this --- */
 		if ((i == INVEN_WIELD) || (i == INVEN_ARM && o_ptr->tval != TV_SHIELD)) {
 			if (f1 & TR1_BLOWS) csheet_boni[i-INVEN_WIELD].blow += pval;
 			if (f5 & TR5_CRIT) csheet_boni[i-INVEN_WIELD].crit += pval;
@@ -4613,12 +4611,12 @@ void calc_boni(int Ind) {
 			if (f3 & TR3_BLESSED) p_ptr->blessed_weapon = TRUE;
 			continue;
 		}
-
 		if (i == INVEN_AMMO || i == INVEN_BOW) {
 			if (f1 & TR1_VAMPIRIC) { p_ptr->vampiric_ranged = WEAPON_VAMPIRIC_CHANCE_RANGED; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
 			continue;
 		}
 		if (i == INVEN_TOOL) continue;
+
 
 		if (f1 & TR1_BLOWS) { p_ptr->extra_blows += pval; csheet_boni[i-INVEN_WIELD].blow += pval; }
 		if (f5 & TR5_CRIT) { p_ptr->xtra_crit += pval; csheet_boni[i-INVEN_WIELD].crit += pval; }
