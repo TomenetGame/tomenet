@@ -1551,7 +1551,16 @@ void do_cmd_drink_fountain(int Ind) {
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN) {
 		msg_print(Ind, "The fountain is dried out.");
 		return;
-	} else if (c_ptr->feat == FEAT_DEEP_WATER ||
+	}
+
+	if (!p_ptr->warning_fill) {
+		p_ptr->warning_fill = 1;
+		msg_print(Ind, "\374\377yHINT: You can use the \377o/fill\377y command to fill empty bottles at fountains! Bottles");
+		msg_print(Ind, "\374\377y      can be obtained via the \377o= 0 keep_bottle\377y option or the \377o/empty\377y command.");
+		s_printf("warning_fill: %s\n", p_ptr->name);
+	}
+
+	if (c_ptr->feat == FEAT_DEEP_WATER ||
 	    c_ptr->feat == FEAT_SHAL_WATER) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
