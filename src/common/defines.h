@@ -1590,6 +1590,7 @@
 #define RI_GOLEM_BRONZE		1015	/* For translating to custom golem_creation visuals */
 #define RI_MINOTAUR_OTL		1029
 #define RI_SANDWORM_QUEEN	1030
+#define RI_SANDWORM		1031
 #define RI_TIK_SRVZLLAT		1032
 #define RI_WHITE_BALROG		1034
 #define RI_GOLGARACH		1035

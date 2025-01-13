@@ -9110,13 +9110,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		//hack_dun_idx = DI_SANDWORM_LAIR;
 
-		hack_monster_idx = 1031;
-		hack_monster_rarity = r_info[1031].rarity;
-		r_info[1031].rarity = 1;
+		hack_monster_idx = RI_SANDWORM;
+		hack_monster_rarity = r_info[RI_SANDWORM].rarity;
+		r_info[RI_SANDWORM].rarity = 1;
 
 		i = 0;
 		do {
-			if (table[i].index == 1031) {
+			if (table[i].index == RI_SANDWORM) {
 				hack_dun_table_idx = i;
 				hack_dun_table_prob1 = table[i].prob1;
 				hack_dun_table_prob2 = table[i].prob2;
