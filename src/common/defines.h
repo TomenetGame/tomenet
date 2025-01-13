@@ -5616,12 +5616,7 @@
 #define TR2_RES_CHAOS			0x40000000U
 #define TR2_RES_DISEN			0x80000000U
 
-
-#if 0
-#define TR3_KNOWLEDGE			0x00000001U	/* Later */
-#endif	/* 0 */
 /* Flags from ToME - Jir - */
-
 #define TR3_SH_FIRE		0x00000001U     /* Immolation (Fire) */
 #define TR3_SH_ELEC		0x00000002U     /* Electric Sheath */
 #define TR3_SH_COLD		0x00000004U		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */

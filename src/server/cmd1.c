@@ -272,11 +272,11 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, int o_crit, bool all
 	in the skill description, which is logical since you
 	cannot maneuver a heavy weapon so that it pierces through
 	the small weak spot of an opponent's armour, hitting exactly
-	into his artery or sth. So #if 0.. */
+	into his artery or sth. */
 
 	/* Extract critical maneuver potential (interesting term..) */
 	/* The larger the weapon the more difficult to quickly strike
-	the critical spot. Cap weight influence at 100+ lb */
+	the critical spot. Cap weight influence at 10.0 lb */
 	w = weight;
 	if (w > 100) w = 10;
 	else w = 110 - w;
