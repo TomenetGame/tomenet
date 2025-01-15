@@ -567,6 +567,54 @@ audio_bgm = {
     "specialunique_Bahamut",
     "specialunique_Hellraiser",
     "specialunique_Dor",--205
+
+    "boss_BarrowDowns_slain",
+    "boss_ThePathsoftheDead_slain",
+    "boss_TheOrcCave_slain",
+    "boss_TheHelcaraxe_slain",
+    "boss_TheLandofRhun_slain",--210
+    "boss_TheSandwormLair_slain",
+    "boss_TheOldForest_slain",
+    "boss_TheHeartoftheEarth_slain",
+    "boss_TheMinesofMoria_slain",
+    "boss_CirithUngol_slain",
+    "boss_TheSmallWaterCave_slain",
+    "boss_Mirkwood_slain",
+    "boss_DolGuldur_slain",
+    "boss_SubmergedRuins_slain",
+    "boss_Erebor_slain",--220
+    "boss_TheIllusoryCastle_slain",
+    "boss_TheSacredLandofMountains_slain",
+    "boss_TheMaze_slain",
+    "boss_TheCloudPlanes_slain",
+
+    "specialunique_Michael_slain",
+    "specialunique_TikSrvzllat_slain",
+    "specialunique_Bahamut_slain",
+    "specialunique_Hellraiser_slain",
+    "specialunique_Dor_slain",
+
+    "Nazgul_Uvatha",--230
+    "Nazgul_Adunaphel",
+    "Nazgul_Akhorahil",
+    "Nazgul_Ren",
+    "Nazgul_Ji",
+    "Nazgul_Dwar",
+    "Nazgul_Hoarmurath",
+    "Nazgul_Khamul",
+    "Nazgul_Witchking",
+
+    "Nazgul_Uvatha_slain",
+    "Nazgul_Adunaphel_slain",--240
+    "Nazgul_Akhorahil_slain",
+    "Nazgul_Ren",
+    "Nazgul_Ji_slain",
+    "Nazgul_Dwar_slain",
+    "Nazgul_Hoarmurath_slain",
+    "Nazgul_Khamul_slain",
+    "Nazgul_Witchking_slain",
+
+    "event_Halloween_done",--248
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

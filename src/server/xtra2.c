@@ -7270,6 +7270,93 @@ if (cfg.unikill_format) {
 			Send_music(Ind, 92, -1, -1);
 		}
 	}
+	/* Dungeon bosses, Nazgul, Special Unique, event boss - slain music */
+	else if (!is_Morgoth && r_idx != RI_BLUE /* Sauron, Zu-Aon, Morgoth etc special music slain music are already handled elsewhere */
+	    /* Also don't override 'lesser' slain music or 'active Morgoth/Zu-Aon/Sauron' music here! */
+	    && p_ptr->music_monster != 43 && p_ptr->music_monster != 44 && p_ptr->music_monster != 45
+	    && p_ptr->music_monster != 98 && p_ptr->music_monster != 99
+	    ) {
+		/* Pseudo-uniques (event bosses) slain? */
+		if (m_ptr->r_idx == RI_PUMPKIN) {
+			Send_music(Ind, 248, -1, -1);
+		}
+		/* Note: We don't use a specific music for slaying Santa Claus (is_Santa), as we instead just restore town music (done further above) */
+		/* Real uniques... */
+		else if (r_ptr->flags1 & RF1_UNIQUE) {
+			//Dungeon boss slain?
+			if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
+				int bm = 90; //default generic 'dungeonboss_slain' theme
+
+				switch (m_ptr->r_idx) {
+				case RI_WIGHT_KING: bm = 206; break;
+				case RI_FEAGWATH: bm = 207; break;
+				case RI_AZOG: bm = 208; break;
+				case RI_WHITE_BALROG: bm = 209; break;
+				case RI_ULFANG: bm = 210; break;
+				case RI_SANDWORM_QUEEN: bm = 211; break;
+				case RI_OLD_MAN_WILLOW: bm = 212; break;
+				case RI_GOLGARACH: bm = 213; break;
+				case RI_BALROG_OF_MORIA: bm = 214; break;
+				case RI_SHELOB: bm = 215; break;
+				case RI_WATCHER_IN_THE_WATER: bm = 216; break;
+				case RI_SAENATHRA: bm = 217; break;
+				case RI_DOL_GULDUR: bm = 218; break;
+				case RI_AR_PHARAZON: bm = 219; break;
+				case RI_SMAUG: bm = 220; break;
+				case RI_KING_IN_YELLOW: bm = 221; break;
+				case RI_TRON: bm = 222; break;
+				case RI_MINOTAUR_OTL: bm = 223; break;
+				case RI_LIVING_LIGHTNING: bm = 224; break;
+				}
+				Send_music(Ind, bm, 90, -1);
+			}
+			/* all-Nazgul-slain or Nazgul-slain music if available client-side, but don't override important music */
+			else if ((r_ptr->flags7 & RF7_NAZGUL) &&
+			    p_ptr->music_monster != 88 && p_ptr->music_monster != 91 && /* Winner, Sauron slain */
+			    p_ptr->music_monster != 40 && (p_ptr->music_monster < 201 || p_ptr->music_monster > 205) && /* special unique */
+			    p_ptr->music_monster != 41 && (p_ptr->music_monster < 182 || p_ptr->music_monster > 200) && /* dungeon boss */
+			    p_ptr->music_monster != 43 && p_ptr->music_monster != 44 && p_ptr->music_monster != 45) { /* Sauron, Morgoth, Zu-Aon */
+				int bm, bm2;
+
+				/* Note: The client will only play the all_Nazgul_slain music if it hasn't defined the specific 'slain' music for the final Nazgul */
+				if (p_ptr->r_killed[RI_UVATHA] == 1 && p_ptr->r_killed[RI_ADUNAPHEL] == 1 && p_ptr->r_killed[RI_AKHORAHIL] == 1 &&
+				    p_ptr->r_killed[RI_REN] == 1 && p_ptr->r_killed[RI_JI] == 1 && p_ptr->r_killed[RI_DWAR] == 1 &&
+				    p_ptr->r_killed[RI_HOARMURATH] == 1 && p_ptr->r_killed[RI_KHAMUL] == 1 && p_ptr->r_killed[RI_WITCHKING] == 1) {
+					bm = 102;
+					bm2 = 101;
+				} else {
+					bm = 101;
+					bm2 = -1;
+				}
+				/* No further Nazgul in line of sight? */
+				//todo: implement some not too expensive check maybe -_-
+				switch (r_idx) {
+				case RI_UVATHA: Send_music(Ind, 239, bm, bm2); break;
+				case RI_ADUNAPHEL: Send_music(Ind, 240, bm, bm2); break;
+				case RI_AKHORAHIL: Send_music(Ind, 241, bm, bm2); break;
+				case RI_REN: Send_music(Ind, 242, bm, bm2); break;
+				case RI_JI: Send_music(Ind, 243, bm, bm2); break;
+				case RI_DWAR: Send_music(Ind, 244, bm, bm2); break;
+				case RI_HOARMURATH: Send_music(Ind, 245, bm, bm2); break;
+				case RI_KHAMUL: Send_music(Ind, 246, bm, bm2); break;
+				case RI_WITCHKING: Send_music(Ind, 247, bm, bm2); break;
+				default: Send_music(Ind, bm, bm2, -1); //paranoia
+				}
+			}
+			/* Special-unique-slain music if available client-side */
+			else if (r_ptr->level >= 98) {
+				//todo: make Nazgul check in melee2.c consistent with when this song is actually already playing..
+				switch (r_idx) {
+				case RI_MICHAEL: Send_music(Ind, 225, 100, -1); break;
+				case RI_TIK_SRVZLLAT: Send_music(Ind, 226, 100, -1); break;
+				case RI_BAHAMUT: Send_music(Ind, 227, 100, -1); break;
+				case RI_HELLRAISER: Send_music(Ind, 228, 100, -1); break;
+				case RI_DOR: Send_music(Ind, 229, 100, -1); break;
+				default: Send_music(Ind, 100, -1, -1); //paranoia
+				}
+			}
+		}
+	}
 #endif
 
 	if (r_idx == RI_BLUE) { /* just for now, testing */
@@ -7445,31 +7532,6 @@ if (cfg.unikill_format) {
 			s_printf("..dropped.\n");
 		}
 	}
-#ifdef USE_SOUND_2010
-	/* else if not a dungeon boss but a special unique or Nazgul.. */
-	else if (r_ptr->flags1 & RF1_UNIQUE) {
-		/* Special-unique-slain music if available client-side */
-		//todo: make Nazgul check in melee2.c consistent with when this song is actually already playing..
-		if (r_ptr->level >= 98 && !is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 100, -1, -1);
-
-		/* all-Nazgul-slain or Nazgul-slain music if available client-side, but don't override important music */
-		else if ((r_ptr->flags7 & RF7_NAZGUL) &&
-		    p_ptr->music_monster != 88 && p_ptr->music_monster != 91 && /* Winner, Sauron slain */
-		    p_ptr->music_monster != 40 && (p_ptr->music_monster < 201 || p_ptr->music_monster > 205) && /* special unique */
-		    p_ptr->music_monster != 41 && (p_ptr->music_monster < 182 || p_ptr->music_monster > 200) && /* dungeon boss */
-		    p_ptr->music_monster != 43 && p_ptr->music_monster != 44 && p_ptr->music_monster != 45) { /* Sauron, Morgoth, Zu-Aon */
-			if (p_ptr->r_killed[RI_UVATHA] == 1 && p_ptr->r_killed[RI_ADUNAPHEL] == 1 && p_ptr->r_killed[RI_AKHORAHIL] == 1 &&
-			    p_ptr->r_killed[RI_REN] == 1 && p_ptr->r_killed[RI_JI] == 1 && p_ptr->r_killed[RI_DWAR] == 1 &&
-			    p_ptr->r_killed[RI_HOARMURATH] == 1 && p_ptr->r_killed[RI_KHAMUL] == 1 && p_ptr->r_killed[RI_WITCHKING] == 1)
-				Send_music(Ind, 102, -1, -1);
-			else {
-				/* No further Nazgul in line of sight? */
-				//todo: implement some not too expensive check maybe -_-
-				Send_music(Ind, 101, -1, -1);
-			}
-		}
-	}
-#endif
 
 	/* ----- Drop some special item(s) or specific artifacts (not FINAL_OBJECTs/FINAL_ARTIFACTs, just unique-specific drops) ----- */
 	if (r_ptr->flags1 & (RF1_DROP_CHOSEN)) {

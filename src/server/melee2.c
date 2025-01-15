@@ -12773,7 +12773,18 @@ void process_monsters(void) {
 				if (r_ptr->flags7 & RF7_NAZGUL) {
 					//Nazgul; doesn't override Sauron or Halloween (The Great Pumpkin)
 					if (p_ptr->music_monster != 43 && p_ptr->music_monster != 55) {
-						Send_music(pl, (p_ptr->music_monster = 42), -1, -1);
+						switch (m_ptr->r_idx) {
+						case RI_UVATHA: Send_music(pl, 230, 42, -1); break;
+						case RI_ADUNAPHEL: Send_music(pl, 42, 101, -1); break;
+						case RI_AKHORAHIL: Send_music(pl, 42, 101, -1); break;
+						case RI_REN: Send_music(pl, 233, 42, -1); break;
+						case RI_JI: Send_music(pl, 234, 42, -1); break;
+						case RI_DWAR: Send_music(pl, 235, 42, -1); break;
+						case RI_HOARMURATH: Send_music(pl, 42, 101, -1); break;
+						case RI_KHAMUL: Send_music(pl, 237, 42, -1); break;
+						case RI_WITCHKING: Send_music(pl, 238, 42, -1); break;
+						default: Send_music(pl, (p_ptr->music_monster = 42), -1, -1); //paranoia
+						}
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
 					if (m_ptr->r_idx == RI_SAURON) {
