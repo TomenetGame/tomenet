@@ -6920,7 +6920,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	if (l_ptr->flags1 & LF1_NO_DESTROY)
 		msg_print(Ind, "\377oThe walls here seem very solid.");
 	if (l_ptr->flags1 & LF1_NO_GHOST)
-		msg_print(Ind, "\377oYou feel that your life hangs in the balance!"); //credits to Moltor actually, ha!:)
+		msg_print(Ind, "\377RYou feel that your life hangs in the balance!"); //credits to Moltor actually, ha!:)
 #if 0
 	if (l_ptr->flags1 & DF1_NO_RECALL)
 		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");
