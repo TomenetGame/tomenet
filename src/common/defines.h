@@ -1579,7 +1579,7 @@
 #define RI_REN			949
 #define RI_JI			950
 #define RI_DWAR			951
-#define RI_HOARMUTH		952
+#define RI_HOARMURATH		952
 #define RI_KHAMUL		953
 #define RI_WITCHKING		954
 

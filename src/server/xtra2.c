@@ -7460,7 +7460,7 @@ if (cfg.unikill_format) {
 		    p_ptr->music_monster != 43 && p_ptr->music_monster != 44 && p_ptr->music_monster != 45) { /* Sauron, Morgoth, Zu-Aon */
 			if (p_ptr->r_killed[RI_UVATHA] == 1 && p_ptr->r_killed[RI_ADUNAPHEL] == 1 && p_ptr->r_killed[RI_AKHORAHIL] == 1 &&
 			    p_ptr->r_killed[RI_REN] == 1 && p_ptr->r_killed[RI_JI] == 1 && p_ptr->r_killed[RI_DWAR] == 1 &&
-			    p_ptr->r_killed[RI_HOARMUTH] == 1 && p_ptr->r_killed[RI_KHAMUL] == 1 && p_ptr->r_killed[RI_WITCHKING] == 1)
+			    p_ptr->r_killed[RI_HOARMURATH] == 1 && p_ptr->r_killed[RI_KHAMUL] == 1 && p_ptr->r_killed[RI_WITCHKING] == 1)
 				Send_music(Ind, 102, -1, -1);
 			else {
 				/* No further Nazgul in line of sight? */
