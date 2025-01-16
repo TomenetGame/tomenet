@@ -4109,6 +4109,7 @@ void do_cmd_options_mus_sdl(void) {
 			Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yP\377w pause", MUSIC_SKIP));
 		Term_putstr(0, 2, -1, TERM_WHITE, " Key: [current/max song] - orange colour indicates 'initial' song.              ");
 		if (jukebox_play_all) Term_putstr(67, 2, -1, TERM_WHITE, "\377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip");
+		else Term_putstr(67, 2, -1, TERM_WHITE, "\377yq\377B/\377yw skip    "); //for new 'jukebox_subonly_play_all'
 		Term_putstr(0, 3, -1, TERM_WHITE, " File:                                                                          ");
 
 		if (music_cur != -1 && songs[music_cur].config) {
@@ -4707,7 +4708,25 @@ void do_cmd_options_mus_sdl(void) {
 
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
-		case 'w': /* Skip current sub-song, possibly advancing to next music event if this was the last subsong of the current music event */
+		case 'w':
+			/* We're playing a single music event - skip through its subsongs, backwards */
+			if (jukebox_playing != -1 && !jukebox_play_all) { //jukebox_subonly_play_all) {
+				d = music_cur;
+				/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+				jukebox_paused = FALSE;
+				play_music_instantly(d);
+				if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
+
+				jukebox_update_songlength();
+  #if 0 /* paranoia/not needed */
+				/* Reset position */
+				Mix_SetMusicPosition(0);
+  #endif
+				curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
+				break;
+			}
+
+			/* Skip current sub-song, possibly advancing to next music event if this was the last subsong of the current music event */
 			if (jukebox_playing == -1 || !jukebox_play_all) continue;
 
 			d = music_cur;
@@ -4794,7 +4813,34 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 			}
 
-		case 'q': /* Skip to previous sub-song, possibly regressing to previous music event if this was the first subsong of the current music event */
+		case 'q':
+			/* We're playing a single music event - skip through its subsongs, backwards */
+			if (jukebox_playing != -1 && !jukebox_play_all) { //jukebox_subonly_play_all) {
+				d = music_cur;
+				if (music_cur_song == 0) {
+					if (jukebox_playing != -1 && songs[d].num) {
+						music_cur_song = songs[d].num - 2;
+						if (music_cur_song == -1) music_cur = -1; //music_cur_song = 0;
+					}
+				} else {
+					if (music_cur_song == 1) music_cur = -1; //music_cur_song = 0;
+					else music_cur_song = music_cur_song - 2;
+				}
+				/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
+				jukebox_paused = FALSE;
+				play_music_instantly(d);
+				if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
+
+				jukebox_update_songlength();
+  #if 0 /* paranoia/not needed */
+				/* Reset position */
+				Mix_SetMusicPosition(0);
+  #endif
+				curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
+				break;
+			}
+
+			/* Skip to previous sub-song, possibly regressing to previous music event if this was the first subsong of the current music event */
 			if (jukebox_playing == -1 || !jukebox_play_all) continue;
 
 			d = music_cur;
