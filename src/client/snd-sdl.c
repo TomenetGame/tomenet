@@ -4560,11 +4560,15 @@ void do_cmd_options_mus_sdl(void) {
 				}
 			} else {
 				if (music_cur == j_sel) {
+					int jbo = jukebox_org; //the play_music() call below will modify jukebox_org wrongly, so we have to keep it here and restore it afterwards
+
 					music_cur = -1; //allow restarting it
 					jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 					jukebox_paused = FALSE;
 					play_music(j_sel);
 					jukebox_screen = TRUE;
+
+					jukebox_org = jbo;
 				}
 			}
 			break;
@@ -4572,11 +4576,15 @@ void do_cmd_options_mus_sdl(void) {
 		case 'y':
 			songs[j_sel].disabled = FALSE;
 			if (music_cur == j_sel) {
+				int jbo = jukebox_org; //the play_music() call below will modify jukebox_org wrongly, so we have to keep it here and restore it afterwards
+
 				music_cur = -1; //allow restarting it
 				jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 				jukebox_paused = FALSE;
 				play_music(j_sel);
 				jukebox_screen = TRUE;
+
+				jukebox_org = jbo;
 			}
 			break;
 
