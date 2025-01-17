@@ -18,11 +18,15 @@
 
 #ifdef COPY_MULTILINE
 /* helper function */
-static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int i, int s, int n, int nn) {
+static void copy_to_clipboard_multiline(char message_array[MAX_WINDOW_HGT][MSG_LEN], int size) {
+	cptr msg_raw = message_array[0];
+
+	/* Strip leading control/colour codes */
 	if (msg_raw[0] == '\376') msg_raw++;
+	while (msg_raw[0] == '\377') msg_raw += 2;
 
 	/* Is this the following-up line of a multiline message? */
-	if (msg_raw[0] == ' ' || (msg_raw[0] == '\377' && msg_raw[2] == ' ')) {
+	if (msg_raw[0] == ' ') {
 		int j;
 		char xmsg[MSG_LEN], xmsg_reverse[MSG_LEN];
 		const char *c;
@@ -37,98 +41,54 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 		/* avoid duplicate ' ' */
 		if (xmsg[strlen(xmsg) - 1] == ' ') xmsg[strlen(xmsg) - 1] = 0;
 
-		if (s == -1) { /* message_important */
-			for (j = 0 + 1; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
-				c = message_recall[nn - 1 - (i + j)]; /* because of inverted traversal direction */
-				if (!c) continue;
-				if (*c == '\376') c++;
+		for (j = 1; j < size; j++) {
+			c = message_array[j];
+			if (!c) continue; //skip completely empty lines (as they were probably just separator lines for visual style)
 
-				/* End at the initial line of the multiline message */
-				if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
+			/* Strip leading control/colour codes */
+			if (*c == '\376') c++;
+			while (*c == '\377') c += 2;
 
-				formatted_and_not_chat = 0;
-				if (!end) {
-					if (*c == '\377') c += 2;
-					while (*c == ' ') {
-						formatted_and_not_chat++;
-						c++;
-					}
-					/* Inserting this space could break an URL, so we'll check for it later again and possibly remove it */
-					strcpy(xmsg_reverse, " ");
-				} else xmsg_reverse[0] = 0;
+			/* End at the initial line of the multiline message */
+			if (c[0] != ' ') end = TRUE;
 
-				strcat(xmsg_reverse, c);
-				/* avoid duplicate ' ' */
-				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+			formatted_and_not_chat = 0;
+			if (!end) {
+				if (*c == '\377') c += 2;
+				while (*c == ' ') {
+					formatted_and_not_chat++;
+					c++;
+				}
+				strcpy(xmsg_reverse, " ");
+			} else xmsg_reverse[0] = 0;
 
-				/* For multi-line messages that aren't chat, but some sort of - probably formatted - server info output (/tym!) */
-				if (formatted_and_not_chat >= 2) strcat(xmsg_reverse, " ");
+			strcat(xmsg_reverse, c);
+			/* avoid duplicate ' ' */
+			if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
 
-				/* Multiline chat messages will fix into MSG_LEN.
-				   But this could also be a multiline status output message from the server, eg from the /tym command,
-				   in which case it might be a lot of lines long and never fit into MSG_LEN but cause buffer overflow.
-				   Catch that here: */
-				if (strlen(xmsg) + strlen(xmsg_reverse) >= MSG_LEN) break;
+			/* For multi-line messages that aren't chat, but some sort of - probably formatted - server info output (/tym!) */
+			if (formatted_and_not_chat >= 2) strcat(xmsg_reverse, " ");
 
-#if 0
-				/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
-				   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
-				if (xmsg[0] == ' ' && !isalphanum(xmsg_reverse[strlen(xmsg_reverse) - 1])) strcat(xmsg_reverse, xmsg + 1);
-#else
-				/* never insert spaces? (we do, but we delete it here again) - URLs are perfectly safe this way, but words might get concatinated wrongly */
-				if (xmsg[0] == ' ') strcat(xmsg_reverse, xmsg + 1);
-#endif
-				else strcat(xmsg_reverse, xmsg);
-				strcpy(xmsg, xmsg_reverse);
-
-				if (end) break;
-			}
-		} else { /* message_recall */
-			for (j = 0 + 1; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
-				c = message_recall[i + j + s];
-				if (!c) continue;
-				if (*c == '\376') c++;
-
-				/* End at the initial line of the multiline message */
-				if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
-
-				formatted_and_not_chat = 0;
-				if (!end) {
-					if (*c == '\377') c += 2;
-					while (*c == ' ') {
-						formatted_and_not_chat++;
-						c++;
-					}
-					strcpy(xmsg_reverse, " ");
-				} else xmsg_reverse[0] = 0;
-
-				strcat(xmsg_reverse, c);
-				/* avoid duplicate ' ' */
-				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
-
-				/* For multi-line messages that aren't chat, but some sort of - probably formatted - server info output (/tym!) */
-				if (formatted_and_not_chat >= 2) strcat(xmsg_reverse, " ");
-
-				/* Multiline chat messages will fix into MSG_LEN.
-				   But this could also be a multiline status output message from the server, eg from the /tym command,
-				   in which case it might be a lot of lines long and never fit into MSG_LEN but cause buffer overflow.
-				   Catch that here: */
-				if (strlen(xmsg) + strlen(xmsg_reverse) >= MSG_LEN) break;
+			/* Multiline chat messages will fix into MSG_LEN.
+			   But this could also be a multiline status output message from the server, eg from the /tym command,
+			   in which case it might be a lot of lines long and never fit into MSG_LEN but cause buffer overflow.
+			   Catch that here: */
+			if (strlen(xmsg) + strlen(xmsg_reverse) >= MSG_LEN) break;
 
 #if 0
-				/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
-				   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
-				if (xmsg[0] == ' ' && !isalphanum(xmsg_reverse[strlen(xmsg_reverse) - 1])) strcat(xmsg_reverse, xmsg + 1);
+			/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
+			   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
+			if (xmsg[0] == ' ' && !isalphanum(xmsg_reverse[strlen(xmsg_reverse) - 1])) strcat(xmsg_reverse, xmsg + 1);
 #else
-				/* never insert spaces? (we do, but we delete it here again) - URLs are perfectly safe this way, but words might get concatinated wrongly */
-				if (xmsg[0] == ' ') strcat(xmsg_reverse, xmsg + 1);
+			/* never insert spaces? (we do, but we delete it here again) - URLs are perfectly safe this way, but words might get concatinated wrongly */
+			if (xmsg[0] == ' ') strcat(xmsg_reverse, xmsg + 1);
 #endif
-				else strcat(xmsg_reverse, xmsg);
-				strcpy(xmsg, xmsg_reverse);
+			else strcat(xmsg_reverse, xmsg);
+			strcpy(xmsg, xmsg_reverse);
 
-				if (end) break;
-			}
+			if (end) break;
 		}
+
 		(void)copy_to_clipboard(xmsg, FALSE);
 	} else (void)copy_to_clipboard((char*)msg_raw, FALSE);
 }
@@ -159,7 +119,7 @@ void do_cmd_messages(void) {
 	char finder[80] = "";
 
 	cptr message_recall[MESSAGE_MAX] = {0};
-	cptr msg = "", msg2, msg_raw = NULL, msg3;
+	cptr msg = "", msg2, msg3;
 
 	/* Display messages in different colors -Zz */
 
@@ -167,6 +127,9 @@ void do_cmd_messages(void) {
 	cptr nomsg_map = "Map sector ";
 
 	bool regexp = FALSE, marked; //REGEX_SEARCH
+
+	char msg_shown[MAX_WINDOW_HGT][MSG_LEN]; //shortcut pointer, solely for copy-to-clipboard functionality
+	int msg_shown_max;
 
 
 	/* Total messages */
@@ -208,6 +171,9 @@ void do_cmd_messages(void) {
 		/* Clear screen */
 		Term_clear();
 
+		memset(msg_shown, 0, sizeof(msg_shown));
+		msg_shown_max = 0;
+
 		n = nn;  /* new total # of messages in our new array */
 		r = 0;	/* how many times the message is Repeated */
 		s = 0;	/* how many lines Saved */
@@ -220,7 +186,6 @@ void do_cmd_messages(void) {
 
 			msg2 = msg;
 			msg = message_recall[i + j + s];
-			if (!j) msg_raw = msg; //remember the bottom-most line
 
 			/* Handle repeated messages
 			   (Minor glitch note: if the first msgs after joining the server are repeated 'searching' msgs, the first one will not combine) */
@@ -235,6 +200,7 @@ void do_cmd_messages(void) {
 
 			if (r) {
 				Term_putstr(t < 72 ? t : 72, 21 + HGT_PLUS - j + 1 - k, -1, a, format(" (x%d)", r + 1));
+				strcpy(msg_shown[msg_shown_max++], format(" (x%d)", r + 1));
 				r = 0;
 			}
 
@@ -277,6 +243,7 @@ void do_cmd_messages(void) {
 						}
 						*tc = 0;
 						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						strcpy(msg_shown[msg_shown_max++], tmp);
 						marked = TRUE;
 					}
 				} else {
@@ -304,6 +271,7 @@ void do_cmd_messages(void) {
 						}
 						*tc = 0;
 						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						strcpy(msg_shown[msg_shown_max++], tmp);
 						marked = TRUE;
 					}
 					regfree(&re_src);
@@ -313,6 +281,7 @@ void do_cmd_messages(void) {
 			if (!marked) { /* Normal line processing (ie no shower set) */
 				/* Dump the messages, bottom to top */
 				Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg3);
+				strcpy(msg_shown[msg_shown_max++], (char*)msg3);
 			}
 
 			/* For bundling of subsequent identical lines:
@@ -558,11 +527,11 @@ void do_cmd_messages(void) {
 		}
 
 		/* Copy to clipboard o_o */
-		if (k == KTRL('K') && msg != NULL) {
+		if (k == KTRL('K') && msg_shown_max) {
 #ifdef COPY_MULTILINE
-			copy_to_clipboard_multiline(msg_raw, message_recall, i, s, n, -1);
+			copy_to_clipboard_multiline(msg_shown, msg_shown_max);
 #else
-			(void)copy_to_clipboard((char*)msg_raw, FALSE);
+			(void)copy_to_clipboard((char*)msg_shown[0], FALSE);
 #endif
 			continue;
 		}
@@ -600,7 +569,7 @@ void do_cmd_messages_important(void) {
 	char shower[80] = "";
 	char finder[80] = "";
 
-	cptr msg = "", msg_raw = NULL, msg3;
+	cptr msg = "", msg3;
 
 	/* Create array to store message buffer for important messags  */
 	/* (This is an expensive hit, move to c-init.c?  But this only */
@@ -609,6 +578,9 @@ void do_cmd_messages_important(void) {
 	cptr message_important[MESSAGE_MAX] = {0};
 
 	bool regexp = FALSE, marked; //REGEX_SEARCH
+
+	char msg_shown[MAX_WINDOW_HGT][MSG_LEN]; //shortcut pointer, solely for copy-to-clipboard functionality
+	int msg_shown_max;
 
 
 	/* Display messages in different colors */
@@ -639,6 +611,9 @@ void do_cmd_messages_important(void) {
 		/* Clear screen */
 		Term_clear();
 
+		memset(msg_shown, 0, sizeof(msg_shown));
+		msg_shown_max = 0;
+
 		/* Use last element in message_important as  message_num() */
 		n = nn;
 
@@ -647,7 +622,6 @@ void do_cmd_messages_important(void) {
 			a = ab = ap = TERM_WHITE;
 
 			msg = message_important[i + j];
-			if (!j) msg_raw = msg; //remember the bottom-most line
 
 			/* Note: msg2 is not used in this function as we don't do bundling of identical subsequent lines here unlike in do_cmd_messages(). */
 
@@ -687,6 +661,7 @@ void do_cmd_messages_important(void) {
 						}
 						*tc = 0;
 						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						strcpy(msg_shown[msg_shown_max++], tmp);
 						marked = TRUE;
 					}
 				} else {
@@ -714,6 +689,7 @@ void do_cmd_messages_important(void) {
 						}
 						*tc = 0;
 						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						strcpy(msg_shown[msg_shown_max++], tmp);
 						marked = TRUE;
 					}
 					regfree(&re_src);
@@ -723,6 +699,7 @@ void do_cmd_messages_important(void) {
 			if (!marked) { /* Normal line processing (ie no shower set) */
 				/* Dump the messages, bottom to top */
 				Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg3);
+				strcpy(msg_shown[msg_shown_max++], (char*)msg3);
 			}
 		}
 
@@ -969,11 +946,11 @@ void do_cmd_messages_important(void) {
 		}
 
 		/* Copy to clipboard o_o */
-		if (k == KTRL('K') && msg_raw != NULL) {
+		if (k == KTRL('K') && msg_shown_max) {
 #ifdef COPY_MULTILINE
-			copy_to_clipboard_multiline(msg_raw, message_important, i, -1, n, nn);
+			copy_to_clipboard_multiline(msg_shown, msg_shown_max);
 #else
-			(void)copy_to_clipboard((char*)msg_raw, FALSE);
+			(void)copy_to_clipboard((char*)msg_shown[0], FALSE);
 #endif
 			continue;
 		}
