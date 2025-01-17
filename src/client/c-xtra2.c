@@ -128,7 +128,7 @@ void do_cmd_messages(void) {
 
 	bool regexp = FALSE, marked; //REGEX_SEARCH
 
-	char msg_shown[MAX_WINDOW_HGT][MSG_LEN]; //shortcut pointer, solely for copy-to-clipboard functionality
+	char msg_shown[MAX_WINDOW_HGT][MSG_LEN]; //shortcut pointer, solely for copy-to-clipboard functionality (note: in theory, 2-3 lines would probably suffice instead of MAX_WINDOW_HGT, complete overkill)
 	int msg_shown_max;
 
 
@@ -579,7 +579,7 @@ void do_cmd_messages_important(void) {
 
 	bool regexp = FALSE, marked; //REGEX_SEARCH
 
-	char msg_shown[MAX_WINDOW_HGT][MSG_LEN]; //shortcut pointer, solely for copy-to-clipboard functionality
+	char msg_shown[MAX_WINDOW_HGT][MSG_LEN]; //shortcut pointer, solely for copy-to-clipboard functionality (note: in theory, 2-3 lines would probably suffice instead of MAX_WINDOW_HGT, complete overkill)
 	int msg_shown_max;
 
 
