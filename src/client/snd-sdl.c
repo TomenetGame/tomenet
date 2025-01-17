@@ -4109,7 +4109,7 @@ void do_cmd_options_mus_sdl(void) {
 			Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yP\377w pause", MUSIC_SKIP));
 		Term_putstr(0, 2, -1, TERM_WHITE, " Key: [current/max song] - orange colour indicates 'initial' song.              ");
 		if (jukebox_play_all) Term_putstr(67, 2, -1, TERM_WHITE, "\377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip");
-		else Term_putstr(67, 2, -1, TERM_WHITE, "\377yq\377B/\377yw skip    "); //for new 'jukebox_subonly_play_all'
+		else if (jukebox_playing != -1) Term_putstr(67, 2, -1, TERM_WHITE, "\377yq\377B/\377yw skip    "); //for new 'jukebox_subonly_play_all'
 		Term_putstr(0, 3, -1, TERM_WHITE, " File:                                                                          ");
 
 		if (music_cur != -1 && songs[music_cur].config) {
