@@ -4306,7 +4306,6 @@ void do_cmd_options_mus_sdl(void) {
  #else /* Resume playing the raw way, for better control and restoration of playing state */
 				Mix_Music *wave = NULL;
 
-c_msg_format("mc %d, jo %d, mcs %d, jos %d, used %d", music_cur, jukebox_org, music_cur_song, jukebox_org_song, jukebox_used);
 				/* Still the same music event? */
 				if (jukebox_org == music_cur) {
 					/* Note: Even if the subsong is the same, we still restart playing it, because we want to ensure setting the correct 'repeat' value in any case. */
