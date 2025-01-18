@@ -1144,6 +1144,8 @@ extern void weather_handle_fading(void);
 extern void ambient_handle_fading(void);
 extern void mixer_fadeall(void);
 extern int music_cur, music_cur_song, music_next, music_next_song, weather_channel, weather_current, weather_current_vol, weather_channel_volume, ambient_channel, ambient_current, ambient_channel_volume;
+extern int music_cur_repeat, jukebox_org_song, jukebox_org_repeat, jukebox_org_vol;
+extern bool jukebox_gamemusicchanged;
 extern int sound_cur, sound_cur_wav;
 extern char music_vol;
 extern int weather_sound_change, weather_fading, ambient_fading;

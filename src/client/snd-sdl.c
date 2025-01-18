@@ -2459,6 +2459,7 @@ void jukebox_update_songlength(void) {
 /*
  * Play a music of type "event".
  * Hack: If 10000 is added to 'event', the music is played instantly without fade-in effect.
+ *       This is only used on client-side for the meta server ist 'meta' music event.
  */
 static bool play_music(int event) {
 	int n, initials = 0, vols = 100;
@@ -2476,8 +2477,15 @@ static bool play_music(int event) {
 #ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1) {
-		jukebox_org = event;
-		return(TRUE);
+		/* Check there are samples for this event, otherwise don't switch (unless it's a 'stop music' event sort of thing) */
+		if (event < 0 || songs[event].num) jukebox_org = event;
+		/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
+		if (event == 89 && songs[event].num && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
+		return(event < 0 || songs[event].num != 0);
+	} else if (jukebox_screen) {
+		/* Still update jukebox_org et al, as they WILL be restored even if jukebox wasn't playing at all (could be prevented for efficiency I guess, pft) */
+		/* Check there are samples for this event, otherwise don't remember (unless it's a 'stop music' event sort of thing) */
+		if (event < 0 || songs[event].num) jukebox_org = event;
 	}
 #endif
 
@@ -2527,21 +2535,17 @@ static bool play_music(int event) {
 	if (songs[event].volume) vols = songs[event].volume;
 #endif
 
-	/* if music event is the same as is already running, don't do anything */
-	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
-		/* Just change volume if requested, ie if play_music() is called after a play_music_vol() call: We revert back to 100% volume then. */
-		if (music_vol != 100) {
-			music_vol = 100;
-			Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, vols));
-		}
-		return(TRUE); //pretend we played it
-	}
-
-	music_next = event;
+	/* In case the current music was played via play_music_vol() at reduced volume, restore to normal */
 	if (music_vol != 100) {
 		music_vol = 100;
 		Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, vols));
 	}
+	jukebox_org_vol = music_vol;
+
+	/* if music event is the same as is already running, don't do anything */
+	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) return(TRUE); //pretend we played it
+
+	music_next = event;
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
 	/* no initial songs - just pick a song normally */
@@ -2574,15 +2578,14 @@ static bool play_music(int event) {
 			}
 	}
 
-	/* new: if upcoming music file is same as currently playing one, don't do anything */
+	/* new: if upcoming music _file_ (not music event!) happens to be the same as the currently playing one, don't do anything */
 	if (music_cur != -1 && music_cur_song != -1 &&
-	    songs[music_next].num /* Check there are samples for this event */
-	    && !strcmp(
-	     songs[music_next].paths[music_next_song], /* Choose a random event and pretend it's the one that would've gotten picked */
-	     songs[music_cur].paths[music_cur_song]
-	     )) {
-		music_next = event;
-		music_next_song = music_cur_song;
+	    !songs[music_next].disabled && songs[music_next].num /* Check there are samples for this event */
+	    && !strcmp(songs[music_next].paths[music_next_song], songs[music_cur].paths[music_cur_song])) {
+		/* 'silent transition', ie we don't need to fade in the next song, as we're already playing the very same file, although it was from a different music event! */
+		music_cur = event;
+		music_cur_song = music_next_song;
+		music_next = -1;
 		return(TRUE);
 	}
 
@@ -2620,8 +2623,15 @@ static bool play_music_vol(int event, char vol) {
 #ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1) {
-		jukebox_org = event;
-		return(TRUE);
+		/* Check there are samples for this event, otherwise don't switch (unless it's a 'stop music' event sort of thing) */
+		if (event < 0 || songs[event].num) jukebox_org = event;
+		/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
+		if (event == 89 && songs[event].num && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
+		return(event < 0 || songs[event].num != 0);
+	} else if (jukebox_screen) {
+		/* Still update jukebox_org et al, as they WILL be restored even if jukebox wasn't playing at all (could be prevented for efficiency I guess, pft) */
+		/* Check there are samples for this event, otherwise don't remember (unless it's a 'stop music' event sort of thing) */
+		if (event < 0 || songs[event].num) jukebox_org = event;
 	}
 #endif
 
@@ -2671,17 +2681,15 @@ static bool play_music_vol(int event, char vol) {
 	if (songs[event].volume) vols = songs[event].volume;
 #endif
 
+	jukebox_org_vol = vol;
+	/* Just change volume if requested */
+	if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
+	music_vol = vol;
+
 	/* if music event is the same as is already running, don't do anything */
-	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
-		/* Just change volume if requested */
-		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
-		music_vol = vol;
-		return(TRUE); //pretend we played it
-	}
+	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) return(TRUE); //pretend we played it
 
 	music_next = event;
-	music_vol = vol;
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
 	/* no initial songs - just pick a song normally */
@@ -2716,13 +2724,12 @@ static bool play_music_vol(int event, char vol) {
 
 	/* new: if upcoming music file is same as currently playing one, don't do anything */
 	if (music_cur != -1 && music_cur_song != -1 &&
-	    songs[music_next].num /* Check there are samples for this event */
-	    && !strcmp(
-	     songs[music_next].paths[music_next_song], /* Choose a random event and pretend it's the one that would've gotten picked */
-	     songs[music_cur].paths[music_cur_song]
-	     )) {
-		music_next = event;
-		music_next_song = music_cur_song;
+	    !songs[music_next].disabled && songs[music_next].num /* Check there are samples for this event */
+	    && !strcmp(songs[music_next].paths[music_next_song], songs[music_cur].paths[music_cur_song])) {
+		/* 'silent transition', ie we don't need to fade in the next song, as we're already playing the very same file, although it was from a different music event! */
+		music_cur = event;
+		music_cur_song = music_next_song;
+		music_next = -1;
 		return(TRUE);
 	}
 
@@ -2800,7 +2807,8 @@ static void fadein_next_music(void) {
 	   already set a new song number. Eg for events with 1 initial and 2 normal songs this means the randomizer would avoid
 	   the initial song, then pick the one of the other two we're currently NOT playing, but play_music_instantly() would
 	   increment that number (music_cur_song) _again_, leaving it unchanging at always the same song. - C. Blue */
-	if (jukebox_screen) return;
+	if (jukebox_screen && jukebox_playing != -1) return;
+	if (jukebox_screen) jukebox_gamemusicchanged = TRUE; //update jukebox UI's 'current song' (selector etc)
 
 	/* Catch music_next == -1, this can now happen with shuffle_music or play_all option, since songs are no longer looped if it's enabled */
 	if (
@@ -2862,7 +2870,8 @@ static void fadein_next_music(void) {
 		}
 
 		/* Actually play the thing */
-		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000); //-1 infinite, 0 once, or n times
+		music_cur_repeat = (c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);
+		Mix_FadeInMusic(wave, music_cur_repeat, 1000); //-1 infinite, 0 once, or n times
 #ifdef ENABLE_JUKEBOX
 		if (jukebox_screen) jukebox_update_songlength();
 #endif
@@ -4029,7 +4038,7 @@ void do_cmd_options_mus_sdl(void) {
 	char ch;
 	byte a, a2;
 	cptr lua_name;
-	bool go = TRUE;
+	bool go = TRUE, play, jukebox_used = FALSE;
 	char buf[1024], buf2[1024], out_val[4096], out_val2[4096], *p, evname[4096];
 	FILE *fff, *fff2;
 #ifdef ENABLE_JUKEBOX
@@ -4066,6 +4075,9 @@ void do_cmd_options_mus_sdl(void) {
 
 #ifdef ENABLE_JUKEBOX
 	jukebox_org = music_cur;
+	jukebox_org_song = music_cur_song;
+	jukebox_org_repeat = music_cur_repeat;
+	jukebox_org_vol = music_vol;
 	jukebox_screen = TRUE;
 #endif
 
@@ -4211,10 +4223,12 @@ void do_cmd_options_mus_sdl(void) {
 #endif
 		ch = inkey();
 
-		/* Hack to auto-update song info while in 'play-all' automatic mode with inkey hack (-1) */
-		if (ch == -1 && jukebox_play_all) {
-			jukebox_play_all_prev = jukebox_playing;
-			jukebox_play_all_prev_song = jukebox_playing_song;
+		/* Hack to auto-update song info while in 'play-all' automatic mode, or for jukebox_gamemusicchanged, with inkey hack (-1) */
+		if (ch == -1) {
+			if (jukebox_play_all) {
+				jukebox_play_all_prev = jukebox_playing;
+				jukebox_play_all_prev_song = jukebox_playing_song;
+			}
 
 			/* Locate currently playing song, select it visually */
 			d = -1;
@@ -4246,26 +4260,101 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_static200vol = FALSE;
 			jukebox_playing = -1;
 			jukebox_play_all = FALSE;
- #ifdef JUKEBOX_INSTANT_PLAY
-			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
-			   so no need for us to check here for songs[].disabled explicitely for that particular case.
-			   However, if the currently jukeboxed song is the same one as the disabled one we do need to halt it. */
-			if (jukebox_org == -1 || songs[jukebox_org].disabled)
-				play_music_instantly(-2);//play_music(-2); -- halt song instantly instead of fading out
-			else if (jukebox_org != music_cur)
-				play_music_instantly(jukebox_org);//play_music(jukebox_org); -- switch song instantly instead of fading out+in
- #else
-			if (jukebox_org == -1 || songs[jukebox_org].disabled)
-				play_music(-2);
-			else if (jukebox_org != music_cur)
-				play_music(jukebox_org);
- #endif
-			/* Handle paused music if it was the currently playing game music */
-			else if (jukebox_paused) Mix_ResumeMusic();
-			jukebox_paused = FALSE;
 
-			/* If a song was "playing silently" ie just disabled, restore its (silenced) playing state. Because the -2 call above would just set music_cur to -1. */
-			music_cur = jukebox_org;
+			/* (Assume we want to stop music:) */
+			play = FALSE;
+			/* Paranoia: Make sure to catch hacks (-2,-3,-4) and reroute them to 'no music'. These shouldn't really be able to occur here though: */
+			if (jukebox_org < -1) jukebox_org = -1;
+ #ifdef JUKEBOX_INSTANT_PLAY
+			/* --- Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
+			   so no need for us to check here for songs[].disabled explicitely for that particular case.
+			   However, if the currently jukeboxed song is the same one as the disabled one we do need to halt it. --- */
+			/* Check if we want to stop music or play/resume music */
+			if (jukebox_org == -1 || songs[jukebox_org].disabled)
+				play_music_instantly(-2);//halt song instantly instead of fading out
+ #else
+			if (jukebox_org == -1 || songs[jukebox_org].disabled) {
+				jukebox_playing = -1; //required for play_music() to work correctly
+				play_music(-2);//fade-out song
+			}
+ #endif
+			else if (jukebox_org != music_cur)
+				play = TRUE;
+			/* Handle paused music if it was the currently playing game music */
+			else if (jukebox_paused) {
+				jukebox_paused = FALSE;
+				if (music_cur == jukebox_org) Mix_ResumeMusic();
+				/* But if (a) the music event meanwhile changed or (b) if we changed the subsong in the jukebox...
+				   a) don't resume the deprecated music but play the new one instead
+				   b) return to the old subsong  */
+				play = jukebox_used;
+			} else play = jukebox_used; //same music event but we changed the subsong or enabled/disabled the active event, thereb halting/replaying it?
+			/* Note that even if the music event is the same AND subsong is the same, if we used the jukebox, calling play_music_instantly() in the process,
+			   we usually do want to restart the song just to make sure everything is back in clean state (paranoia++) */
+
+			/* Play the correct in-game music again */
+			if (play) {
+ #if 0 /* Resume playing via play_music...() functions */
+  #ifdef JUKEBOX_INSTANT_PLAY
+				/* This seems wrong, as it doesn't handle initial/etc special song states? */
+				play_music_instantly(jukebox_org);//switch song instantly instead of fading out+in
+  #else
+				/* Should always use this instead, on jukebox exit? */
+				jukebox_playing = -1; //required for play_music() to work correctly
+				play_music(jukebox_org);
+  #endif
+ #else /* Resume playing the raw way, for better control and restoration of playing state */
+				Mix_Music *wave = NULL;
+
+c_msg_format("mc %d, jo %d, mcs %d, jos %d, used %d", music_cur, jukebox_org, music_cur_song, jukebox_org_song, jukebox_used);
+				/* Still the same music event? */
+				if (jukebox_org == music_cur) {
+					/* Note: Even if the subsong is the same, we still restart playing it, because we want to ensure setting the correct 'repeat' value in any case. */
+					music_cur_song = jukebox_org_song;
+					music_cur_repeat = jukebox_org_repeat;
+
+					/* Choose the predetermined random event */
+					wave = songs[music_cur].wavs[music_cur_song];
+
+					/* Try loading it, if it's not cached */
+					if (!wave && !(wave = load_song(music_cur, music_cur_song))) {
+						/* we really failed to load it */
+						plog(format("SDL music load failed (%d, %d) [1].", music_cur, music_cur_song));
+						puts(format("SDL music load failed (%d, %d) [1].", music_cur, music_cur_song));
+						return;
+					}
+					/* In case the current music was played via play_music_vol() at reduced volume */
+					if (jukebox_org_vol != 100) {
+						int vols = 100;
+
+  #ifdef USER_VOLUME_MUS
+						/* Apply user-defined custom volume modifier */
+						if (songs[music_cur].volume) vols = songs[music_cur].volume;
+  #endif
+						music_vol = jukebox_org_vol;
+						Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)music_vol]) / MIX_MAX_VOLUME, vols));
+					}
+					/* Only really play anything if we actually used the jukebox at all! */
+					if (jukebox_used) Mix_FadeInMusic(wave, music_cur_repeat, 1000);
+				}
+				/* Music event was changed meanwhile */
+				else {
+					jukebox_playing = -1; //required for play_music() to work correctly
+					play_music(jukebox_org);
+				}
+ #endif
+			} else {
+				/* If a song was "playing silently" ie just disabled, restore its (silenced) playing state. Because the -2 call further above would just set music_cur to -1. */
+				music_cur = jukebox_org;
+				music_cur_song = jukebox_org_song;
+				music_cur_repeat = jukebox_org_repeat;
+				music_vol = jukebox_org_vol;
+			}
+
+			jukebox_org = -1;
+			curmus_timepos = -1; //no more song is playing in the jukebox now
+			jukebox_screen = FALSE;
+			topline_icky = FALSE;
 
  #if 0 /* this was okay before jukebox_play_all was added... */
 			/* If music was actually 'off' in the mixer, apply that - it just means volume is 0, not that music is halted!
@@ -4274,11 +4363,6 @@ void do_cmd_options_mus_sdl(void) {
  #else /* ...it mutes everything when the playlist ends! So we need to re-mix here, to make already enabled music audible again: */
 			set_mixing();
  #endif
-
-			jukebox_org = -1;
-			curmus_timepos = -1; //no more song is playing in the jukebox now
-			jukebox_screen = FALSE;
-			topline_icky = FALSE;
 #endif
 
 			/* auto-save */
@@ -4556,6 +4640,7 @@ void do_cmd_options_mus_sdl(void) {
 			if (songs[j_sel].disabled) {
 				if (music_cur == j_sel && Mix_PlayingMusic()) {
 					d = music_cur; //halting will set cur to -1
+					jukebox_used = TRUE; //we actually used the jukebox
 					Mix_HaltMusic();
 					music_cur = d;
 				}
@@ -4566,6 +4651,7 @@ void do_cmd_options_mus_sdl(void) {
 					music_cur = -1; //allow restarting it
 					jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 					jukebox_paused = FALSE;
+					jukebox_used = TRUE; //we actually used the jukebox
 					play_music(j_sel);
 					jukebox_screen = TRUE;
 
@@ -4582,6 +4668,7 @@ void do_cmd_options_mus_sdl(void) {
 				music_cur = -1; //allow restarting it
 				jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 				jukebox_paused = FALSE;
+				jukebox_used = TRUE; //we actually used the jukebox
 				play_music(j_sel);
 				jukebox_screen = TRUE;
 
@@ -4591,7 +4678,10 @@ void do_cmd_options_mus_sdl(void) {
 
 		case 'n':
 			songs[j_sel].disabled = TRUE;
-			if (music_cur == j_sel && Mix_PlayingMusic()) Mix_HaltMusic();
+			if (music_cur == j_sel && Mix_PlayingMusic()) {
+				jukebox_used = TRUE; //we actually used the jukebox
+				Mix_HaltMusic();
+			}
 			break;
 
 #ifdef ENABLE_JUKEBOX
@@ -4611,6 +4701,7 @@ void do_cmd_options_mus_sdl(void) {
 			songs[j_sel].disabled = FALSE;
 
 			jukebox_playing = j_sel;
+			jukebox_used = TRUE; //we actually used the jukebox
 			jukebox_paused = FALSE;
 			play_music_instantly(j_sel);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
@@ -4626,6 +4717,7 @@ void do_cmd_options_mus_sdl(void) {
 			if (songs[j_sel].disabled) break;
 
 			jukebox_playing = j_sel;
+			jukebox_used = TRUE; //we actually used the jukebox
 			jukebox_paused = FALSE;
 			play_music(j_sel);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
@@ -4671,6 +4763,7 @@ void do_cmd_options_mus_sdl(void) {
 			if (j == MUSIC_MAX) break; //edge case: a music pack without a single event defined >_>
 
 			jukebox_playing = d;
+			jukebox_used = TRUE; //we actually used the jukebox
 			jukebox_play_all = TRUE;
 			jukebox_play_all_prev = jukebox_play_all_prev_song = -1;
 
@@ -4689,6 +4782,7 @@ void do_cmd_options_mus_sdl(void) {
 			if (j == MUSIC_MAX) break; //edge case: a music pack without a single event defined >_>
 
 			jukebox_playing = d;
+			jukebox_used = TRUE; //we actually used the jukebox
 			jukebox_play_all = TRUE;
 			jukebox_play_all_prev = jukebox_play_all_prev_song = -1;
 
@@ -4709,6 +4803,7 @@ void do_cmd_options_mus_sdl(void) {
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
 		case 'w':
+			jukebox_used = TRUE; //we actually used the jukebox
 			/* We're playing a single music event - skip through its subsongs, backwards */
 			if (jukebox_playing != -1 && !jukebox_play_all) { //jukebox_subonly_play_all) {
 				d = music_cur;
@@ -4801,6 +4896,7 @@ void do_cmd_options_mus_sdl(void) {
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			jukebox_paused = FALSE;
+			jukebox_used = TRUE; //we actually used the jukebox
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
@@ -4814,6 +4910,7 @@ void do_cmd_options_mus_sdl(void) {
 			}
 
 		case 'q':
+			jukebox_used = TRUE; //we actually used the jukebox
 			/* We're playing a single music event - skip through its subsongs, backwards */
 			if (jukebox_playing != -1 && !jukebox_play_all) { //jukebox_subonly_play_all) {
 				d = music_cur;
@@ -4928,6 +5025,7 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			jukebox_paused = FALSE;
+			jukebox_used = TRUE; //we actually used the jukebox
 			play_music_instantly(d);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 

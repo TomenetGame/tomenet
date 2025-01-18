@@ -378,6 +378,8 @@ bool (*music_hook)(int music), (*music_hook_vol)(int music, char music_vol);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
 int sound_cur = -1, sound_cur_wav = -1; //just for jukebox
 int music_cur = -1, music_cur_song = -1, music_next = -1, music_next_song = -1, weather_channel = -1, weather_current = -1, weather_current_vol = -1, weather_channel_volume = 100, ambient_channel = -1, ambient_current = -1, ambient_channel_volume = 100;
+int music_cur_repeat, jukebox_org_song, jukebox_org_repeat, jukebox_org_vol;
+bool jukebox_gamemusicchanged;
 char music_vol = 100;
 int weather_sound_change, weather_fading, ambient_fading;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;
