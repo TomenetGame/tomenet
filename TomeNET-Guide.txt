@@ -12747,7 +12747,7 @@ If the armour becomes too heavy to perform those, a message will appear:
 "The weight of your armour strains your flexibility and awareness."
 
 This 'rogueish weight limit' (the skills are mostly used by rogues) is:
-20.0 + Combat skill * 0.14 lb, ie max 27.0 lb (20.0 + 50 * 0.14).
+20.0 + Combat skill * 0.25 lb, ie max 32.5 lb (20.0 + 50 * 0.25).
 
 IMPORTANT: If you get the above flexibility warning message, that means your
            secondary weapon is NOT APPLIED AT ALL!
