@@ -2973,13 +2973,7 @@ int calc_blows_weapons(int Ind) {
 	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield && p_ptr->dual_mode
 	    /* don't give dual-wield EA bonus if one of the weapons is NEVER_BLOW! */
 	    && blows1 != 0 && blows2 != 0)
-#if 0 /* if rounding down, add percentage bpr bonus maybe */
-//		num_blow += (1 + (num_blow - 1) / 5);
 		num_blow++;
-#else /* if rounding up, add fixed (ie small) bpr bonus! */
-//		num_blow += (1 + (num_blow - 1) / 5);  <- warriors could rightfully complain I think, mh.
-		num_blow++;
-#endif
 
 	/* done */
 	return(num_blow);
@@ -6130,6 +6124,7 @@ void calc_boni(int Ind) {
 		p_ptr->icky_wield = TRUE;
 	}
 
+	/* +todam bonus from mimic forms that have high melee dice */
 	if (p_ptr->body_monster) {
 		d = 0;
 		for (i = 0; i < 4; i++) {
@@ -6183,12 +6178,16 @@ void calc_boni(int Ind) {
 			p_ptr->to_d_melee = (p_ptr->to_d_melee + d) / 2;
 	}
 
-
-#if 0 /* disabled atm (it's already not easy to find two weapons that both deal great damage) */
-	/* dual-wielding gets a slight to-hit malus */
-	if (p_ptr->dual_wield && p_ptr->dual_mode) p_ptr->to_h_melee = (p_ptr->to_h_melee * 17) / 20; /* 85% */
-#endif
-
+	/* Dual-wielding grants a damage bonus depending on our BpR.
+	   Idea: 2h weapons gain excessive damage from the increased dice.
+	   Dual-wielding grants only a fixed +1 Bpr. This is big when total BpR is low,
+	   but later on provides no significant damage plus.
+	   Granting a percentage-BpR-bonus instead doesn't work as it would only work on tresholds due to rounding issues, as BpR is integer.
+	   So turning it into a +dam bonu works best even, allow for smooth increases. - C. Blue */
+	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield && p_ptr->dual_mode)
+		p_ptr->to_d_melee += p_ptr->num_blow * 2;
+	/* Alternative idea: boni from each weapon partially (or it would be way too much, eg +60 damage) count for both weapons! Eg to-hit, to-dam, +crit, +ea, etc. (The_sandman)
+	   Alternative idea: main hand weapon hits as usual for the full BpR (no BpR bonus from dual-wield in this case), and afterwards the 2nd weapon hits once or more times depending on some metrics. (Virus) */
 
 	/* Note that stances currently factor in AFTER mimicry effect has been calculated!
 	   Reason I chose this for now is that currently mimicry does not effect shield_deflect,

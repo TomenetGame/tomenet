@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. January 2025 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 18. January 2025 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12739,6 +12739,7 @@ Those are...
  - stabbing attacks from 'Backstabbing' skill.
  - extra parry bonus from dual-wielding two weapons. (Also see (7.11).)
  - extra blow/round bonus from dual-wielding two weapons.
+ - extra +damage bonus from dual-wielding two weapons.
  - area searching for the 'Rogue' class (exclusive ability).
  - cloaking mode for the 'Rogue' class (exclusive ability).
 
@@ -17686,8 +17687,9 @@ stated.
                                 1,5- or 2-handed weapons cannot be used.
 
                                 Dual-wielding will give you additional parry
-                                chance as well as a blows/round bonus
-                                (see (7.11) for details about parrying), and of
+                                chance (see (7.11) for details about parrying)
+                                as well as a +1 blows/round bonus and a melee
+                                damage bonus depending on your BpR, and of
                                 course your character will gain all magical
                                 boni from both weapons (such as resistances).
 
