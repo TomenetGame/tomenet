@@ -22680,6 +22680,13 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Tier III: Level 30.
                     Same effect as scroll of Holy Prayer.      (auto-project)
 
+    Dispel Magic    Removes magical influences.
+                    Lv  1: Blindness/Confusion.
+                    Lv  7: Confusion/Hallucination.
+                    Lv 13: Speed/Slowness/Stun.
+                    Required skill level for first spell level: 10.
+                    This spell can be used even while confused or blind.
+
     Protection from evil
                     Evil creatures that try to attack you in melee might get
                     repelled, thereby preventing them from actually hitting
@@ -22689,13 +22696,6 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Doesn't work at all on monsters of an r-level more than 10
                     levels higher than your character level.
                     Required skill level for first spell level: 12.
-
-    Dispel Magic    Removes magical influences.
-                    Lv  1: Blindness/Confusion.
-                    Lv  7: Confusion/Hallucination.
-                    Lv 13: Speed/Slowness/Stun.
-                    Required skill level for first spell level: 10.
-                    This spell can be used even while confused or blind.
 
     Holy Resistance Lets you resist heat and cold.             (auto-project)
                     Required skill level for first spell level: 20.
@@ -23390,15 +23390,6 @@ All Unlife spells are Wisdom-based.)
     Quickfeet       Temporarily boosts your speed.             (auto-project)
                     Required skill level for first spell level: 13.
 
-    Forest's Embrace
-                    Creates a cloud around you which heals everyone including
-                    yourself over time.                        (auto-project)
-                    Required skill level for first spell level: 18.
-
-                    Tier II: Level 29.
-
-                    Tier III: Level 40.
-
     Extra Growth    Increases your attributes temporarily and also grants HP
                     regeneration (same as for example an amulet of regeneration
                     so the effect doesn't stack).
@@ -23409,6 +23400,15 @@ All Unlife spells are Wisdom-based.)
                     Tier II: Level 25.
                     Also increases constitution.
                     Lv 11: Also increases intelligence.
+
+    Forest's Embrace
+                    Creates a cloud around you which heals everyone including
+                    yourself over time.                        (auto-project)
+                    Required skill level for first spell level: 18.
+
+                    Tier II: Level 29.
+
+                    Tier III: Level 40.
 
 
 - Mindcraft -
