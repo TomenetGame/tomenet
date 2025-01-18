@@ -9885,6 +9885,7 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 bool create_snowball(int Ind, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
+	int slot;
 
 	if (cold_place(wpos) && /* during winter we can make snowballs~ */
 	    /* not in dungeons (helcaraxe..?) -- IC we assume they're just ice, not really snow, snow is only found on the world surface :p */
@@ -9916,8 +9917,8 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 			return(FALSE);
 		}
-		inven_carry(Ind, &forge);
-		msg_print(Ind, "You pick up some snow and form a snowball.");
+		slot = inven_carry(Ind, &forge);
+		msg_format(Ind, "You pick up some snow and form a snowball (%c).", index_to_label(slot));
 
 		/* Take a turn */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
