@@ -7083,91 +7083,90 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 
 		/* give credit to the killer by default */
-if (cfg.unikill_format) {
-	/* let's try with titles before the name :) -C. Blue */
-		strcpy(titlebuf, get_ptitle(q_ptr, FALSE));
+		if (cfg.unikill_format) {
+			/* let's try with titles before the name :) -C. Blue */
+			strcpy(titlebuf, get_ptitle(q_ptr, FALSE));
 #ifdef ENABLE_SUBCLASS_TITLE
-		if (q_ptr->sclass) {
-			strcat(titlebuf, " ");
-			strcat(titlebuf, get_ptitle2(q_ptr, FALSE));
-		}
+			if (q_ptr->sclass) {
+				strcat(titlebuf, " ");
+				strcat(titlebuf, get_ptitle2(q_ptr, FALSE));
+			}
 #endif
 
-		if (is_Morgoth)
-			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-#ifdef ZU_AON_FLASHY_MSG
-		else if (is_ZuAon)
-			snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s.\377x**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-#endif
-		else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
-#ifdef IDDC_BOSS_COL
-			if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s.\377D**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-			else
-#endif
-			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-		} else
-			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-} else {
-	/* for now disabled (works though) since we don't have telepath class
-	   at the moment, and party names would make the line grow too long if
-	   combined with title before the actual name :/ -C. Blue */
-		if (!Ind2) {
 			if (is_Morgoth)
-				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 #ifdef ZU_AON_FLASHY_MSG
 			else if (is_ZuAon)
-				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s.\377x**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s.\377x**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 #endif
 			else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
-				if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s.\377D**", r_name_get(m_ptr), p_ptr->name);
+				if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s.\377D**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 				else
 #endif
-				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 			} else
-				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		} else {
-			if (is_Morgoth)
-				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+			/* for now disabled (works though) since we don't have telepath class
+			   at the moment, and party names would make the line grow too long if
+			   combined with title before the actual name :/ -C. Blue */
+			if (!Ind2) {
+				if (is_Morgoth)
+					snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
 #ifdef ZU_AON_FLASHY_MSG
-			else if (is_ZuAon)
-				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by fusion %s-%s.\377x**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				else if (is_ZuAon)
+					snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s.\377x**", r_name_get(m_ptr), p_ptr->name);
 #endif
-			else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
+				else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
-				if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by fusion %s-%s.\377D**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+					if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s.\377D**", r_name_get(m_ptr), p_ptr->name);
 				else
 #endif
-				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
-			} else
-				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
-		}
-
-		/* give credit to the party if there is a teammate on the
-		   level, and the level is not 0 (the town)  */
-		if (p_ptr->party) {
-			for (i = 1; i <= NumPlayers; i++) {
-				if ((Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz)) {
-					if (is_Morgoth)
-						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+					snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
+				} else
+					snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
+			} else {
+				if (is_Morgoth)
+					snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 #ifdef ZU_AON_FLASHY_MSG
-					else if (is_ZuAon)
-						snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s of %s.\377x**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+				else if (is_ZuAon)
+					snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by fusion %s-%s.\377x**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 #endif
-					else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
+				else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
-						if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s of %s.\377D**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
-						else
+					if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by fusion %s-%s.\377D**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				else
 #endif
-						snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
-					} else
-						snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
-					break;
-				}
+					snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				} else
+					snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+			}
 
+			/* give credit to the party if there is a teammate on the
+			   level, and the level is not 0 (the town)  */
+			if (p_ptr->party) {
+				for (i = 1; i <= NumPlayers; i++) {
+					if ((Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz)) {
+						if (is_Morgoth)
+							snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+#ifdef ZU_AON_FLASHY_MSG
+						else if (is_ZuAon)
+							snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s of %s.\377x**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+#endif
+						else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
+#ifdef IDDC_BOSS_COL
+							if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s of %s.\377D**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+							else
+#endif
+							snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						} else
+							snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						break;
+					}
+				}
 			}
 		}
-}
 
 		if (!is_admin(p_ptr)) {
 #ifdef TOMENET_WORLDS
