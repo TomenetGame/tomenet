@@ -7276,7 +7276,13 @@ bool monster_death(int Ind, int m_idx) {
 	    && p_ptr->music_monster != 98 && p_ptr->music_monster != 99
 	    ) {
 		/* Pseudo-uniques (event bosses) slain? */
-		if (m_ptr->r_idx == RI_PUMPKIN) Send_music(Ind, 248, -1, -1);
+		if (m_ptr->r_idx == RI_PUMPKIN) {
+			/* Since the event-done message (pumpkin slain) is displayed server-wide, everyone on the level may receive the according music */
+			for (i = 1; i <= NumPlayers; i++) {
+				if (!inarea(&p_ptr->wpos, &Players[i]->wpos) || Players[i]->ghost) continue;
+				Send_music(i, 248, -1, -1);
+			}
+		}
 		/* Note: We don't use a specific music for slaying Santa Claus (is_Santa), as we instead just restore town music (done further above) */
 		/* Real uniques... */
 		else if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -7305,7 +7311,15 @@ bool monster_death(int Ind, int m_idx) {
 				case RI_MINOTAUR_OTL: bm = 223; break;
 				case RI_LIVING_LIGHTNING: bm = 224; break;
 				}
-				Send_music(Ind, bm, 90, -1);
+				for (i = 1; i <= NumPlayers; i++) {
+					if (!inarea(&p_ptr->wpos, &Players[i]->wpos) || Players[i]->ghost) continue;
+					/* If player is unrelated to the kill and didn't have it in Line of Sight, don't play slain-music for him */
+					if (i != Ind
+					    && !los(&p_ptr->wpos, Players[i]->py, Players[i]->px, m_ptr->fy, m_ptr->fx)
+					    && (!p_ptr->party || p_ptr->party != Players[i]->party))
+						continue;
+					Send_music(i, bm, 90, -1);
+				}
 			}
 			/* all-Nazgul-slain or Nazgul-slain music if available client-side, but don't override important music */
 			else if ((r_ptr->flags7 & RF7_NAZGUL) &&
@@ -7313,43 +7327,62 @@ bool monster_death(int Ind, int m_idx) {
 			    p_ptr->music_monster != 40 && (p_ptr->music_monster < 201 || p_ptr->music_monster > 205) && /* special unique */
 			    p_ptr->music_monster != 41 && (p_ptr->music_monster < 182 || p_ptr->music_monster > 200) && /* dungeon boss */
 			    p_ptr->music_monster != 43 && p_ptr->music_monster != 44 && p_ptr->music_monster != 45) { /* Sauron, Morgoth, Zu-Aon */
-				int bm, bm2;
+				int bmN = -1, bm, bm2;
 
-				/* Note: The client will only play the all_Nazgul_slain music if it hasn't defined the specific 'slain' music for the final Nazgul */
-				if (p_ptr->r_killed[RI_UVATHA] == 1 && p_ptr->r_killed[RI_ADUNAPHEL] == 1 && p_ptr->r_killed[RI_AKHORAHIL] == 1 &&
-				    p_ptr->r_killed[RI_REN] == 1 && p_ptr->r_killed[RI_JI] == 1 && p_ptr->r_killed[RI_DWAR] == 1 &&
-				    p_ptr->r_killed[RI_HOARMURATH] == 1 && p_ptr->r_killed[RI_KHAMUL] == 1 && p_ptr->r_killed[RI_WITCHKING] == 1) {
-					bm = 102;
-					bm2 = 101;
-				} else {
-					bm = 101;
-					bm2 = -1;
-				}
 				/* No further Nazgul in line of sight? */
 				//todo: implement some not too expensive check maybe -_-
 				switch (r_idx) {
-				case RI_UVATHA: Send_music(Ind, 239, bm, bm2); break;
-				case RI_ADUNAPHEL: Send_music(Ind, 240, bm, bm2); break;
-				case RI_AKHORAHIL: Send_music(Ind, 241, bm, bm2); break;
-				case RI_REN: Send_music(Ind, 242, bm, bm2); break;
-				case RI_JI: Send_music(Ind, 243, bm, bm2); break;
-				case RI_DWAR: Send_music(Ind, 244, bm, bm2); break;
-				case RI_HOARMURATH: Send_music(Ind, 245, bm, bm2); break;
-				case RI_KHAMUL: Send_music(Ind, 246, bm, bm2); break;
-				case RI_WITCHKING: Send_music(Ind, 247, bm, bm2); break;
-				default: Send_music(Ind, bm, bm2, -1); //paranoia
+				case RI_UVATHA: bmN = 239; break;
+				case RI_ADUNAPHEL: bmN = 240; break;
+				case RI_AKHORAHIL: bmN = 241; break;
+				case RI_REN: bmN = 242; break;
+				case RI_JI: bmN = 243; break;
+				case RI_DWAR: bmN = 244; break;
+				case RI_HOARMURATH: bmN = 245; break;
+				case RI_KHAMUL: bmN = 246; break;
+				case RI_WITCHKING: bmN = 247; break;
+				}
+				for (i = 1; i <= NumPlayers; i++) {
+					if (!inarea(&p_ptr->wpos, &Players[i]->wpos) || Players[i]->ghost) continue;
+					/* If player is unrelated to the kill and didn't have it in Line of Sight, don't play slain-music for him */
+					if (i != Ind
+					    && !los(&p_ptr->wpos, Players[i]->py, Players[i]->px, m_ptr->fy, m_ptr->fx)
+					    && (!p_ptr->party || p_ptr->party != Players[i]->party))
+						continue;
+					/* Note: The client will only play the all_Nazgul_slain music if it hasn't defined the specific 'slain' music for the final Nazgul */
+					if (Players[i]->r_killed[RI_UVATHA] == 1 && Players[i]->r_killed[RI_ADUNAPHEL] == 1 && Players[i]->r_killed[RI_AKHORAHIL] == 1 &&
+					    Players[i]->r_killed[RI_REN] == 1 && Players[i]->r_killed[RI_JI] == 1 && Players[i]->r_killed[RI_DWAR] == 1 &&
+					    Players[i]->r_killed[RI_HOARMURATH] == 1 && Players[i]->r_killed[RI_KHAMUL] == 1 && Players[i]->r_killed[RI_WITCHKING] == 1) {
+						bm = 102;
+						bm2 = 101;
+					} else {
+						bm = 101;
+						bm2 = -1;
+					}
+					if (bmN == -1) Send_music(i, bm, bm2, -1); //paranoia
+					else Send_music(i, bmN, bm, bm2);
 				}
 			}
 			/* Special-unique-slain music if available client-side */
 			else if (r_ptr->level >= 98) {
+				int bm = 100;
+
 				//todo: make Nazgul check in melee2.c consistent with when this song is actually already playing..
 				switch (r_idx) {
-				case RI_MICHAEL: Send_music(Ind, 225, 100, -1); break;
-				case RI_TIK_SRVZLLAT: Send_music(Ind, 226, 100, -1); break;
-				case RI_BAHAMUT: Send_music(Ind, 227, 100, -1); break;
-				case RI_HELLRAISER: Send_music(Ind, 228, 100, -1); break;
-				case RI_DOR: Send_music(Ind, 229, 100, -1); break;
-				default: Send_music(Ind, 100, -1, -1); //paranoia
+				case RI_MICHAEL: bm = 225; break;
+				case RI_TIK_SRVZLLAT: bm = 226; break;
+				case RI_BAHAMUT: bm = 227; break;
+				case RI_HELLRAISER: bm = 228; break;
+				case RI_DOR: bm = 229; break;
+				}
+				for (i = 1; i <= NumPlayers; i++) {
+					if (!inarea(&p_ptr->wpos, &Players[i]->wpos) || Players[i]->ghost) continue;
+					/* If player is unrelated to the kill and didn't have it in Line of Sight, don't play slain-music for him */
+					if (i != Ind
+					    && !los(&p_ptr->wpos, Players[i]->py, Players[i]->px, m_ptr->fy, m_ptr->fx)
+					    && (!p_ptr->party || p_ptr->party != Players[i]->party))
+						continue;
+					Send_music(i, bm, 100, -1);
 				}
 			}
 		}
@@ -7372,10 +7405,6 @@ bool monster_death(int Ind, int m_idx) {
 		    d_info[d_ptr->type].name
 #endif
 		    );
-#ifdef USE_SOUND_2010
-		/* Dungeon-boss-slain music if available client-side */
-		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -1, -1);
-#endif
 
 		/* Drop final artifact? */
 		if ((
