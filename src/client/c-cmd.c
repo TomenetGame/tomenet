@@ -5309,7 +5309,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			/* Maybe todo: indicate by colour things that have 0 probability of being generated normally. */
 
 			/* Automatically add colour to "#" comments */
-			if ((cp = strchr(buf2ptr, '#')) && (cp == buf2ptr || *(cp -1) != ':')) {
+			if ((cp = strchr(buf2ptr, '#')) && (cp == buf2ptr || (*(cp -1) != ':' && *(cp -1) != '_'))) {
 				/* If the comment contains (part of) a search result, we must replace the \377w marker accordingly */
 				while ((cp2 = strstr(cp, "\377w")))
 					*(cp2 + 1) = 'D'; /* Comments are dark grey instead of white */
