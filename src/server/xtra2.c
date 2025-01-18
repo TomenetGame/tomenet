@@ -7262,12 +7262,12 @@ if (cfg.unikill_format) {
 			Send_music(i, 91, -1, -1);
 		}
 	}
-	//else if (is_Morgoth) Send_music(Ind, 88, -1, -1); //handled in handle_music() already
+	//else if (is_Morgoth) Send_music(Ind, 88, -1, -1); //handled in handle_music() already (gets called further down in the kinging-code)
 	else if (is_ZuAon) {
 		/* Unlike Dungeonboss/nazgul/allnazgul/specialunique slain, this music affects -all- players around, not just the killer */
 		for (i = 1; i <= NumPlayers; i++) {
 			if (!inarea(&p_ptr->wpos, &Players[i]->wpos) || Players[i]->ghost) continue;
-			Send_music(Ind, 92, -1, -1);
+			Send_music(i, 92, -1, -1);
 		}
 	}
 	/* Dungeon bosses, Nazgul, Special Unique, event boss - slain music */
@@ -7277,9 +7277,7 @@ if (cfg.unikill_format) {
 	    && p_ptr->music_monster != 98 && p_ptr->music_monster != 99
 	    ) {
 		/* Pseudo-uniques (event bosses) slain? */
-		if (m_ptr->r_idx == RI_PUMPKIN) {
-			Send_music(Ind, 248, -1, -1);
-		}
+		if (m_ptr->r_idx == RI_PUMPKIN) Send_music(Ind, 248, -1, -1);
 		/* Note: We don't use a specific music for slaying Santa Claus (is_Santa), as we instead just restore town music (done further above) */
 		/* Real uniques... */
 		else if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -7552,12 +7550,9 @@ if (cfg.unikill_format) {
 				if (q_ptr->ghost) continue;
 				/* Make everyone in the game in the same party on the
 				 * same level greater than or equal to level 40 total
-				 * winners.
-				 */
+				 * winners. */
 				if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
-				    (q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos, &q_ptr->wpos))
-				{
-
+				    (q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos, &q_ptr->wpos)) {
 					/* Total winner */
 					q_ptr->total_winner = TRUE;
 					q_ptr->once_winner = TRUE;
@@ -7574,7 +7569,7 @@ if (cfg.unikill_format) {
 					clockin(i, 9);
 
 #ifdef USE_SOUND_2010
-					/* Play 'winner' music */
+					/* Play 'winner' music for all players who kinged from this */
 					handle_music(i);
 #endif
 
