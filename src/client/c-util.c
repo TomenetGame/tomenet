@@ -3107,6 +3107,22 @@ bool askfor_aux(char *buf, int len, char mode) {
 		default:
 			/* We entered a normal character */
 
+			/* For account/character name input: Live-replace all invalid chars with '_' like Trim_name() would do */
+			if (mode & ASKFOR_LIVETRIM) {
+				/* first char... */
+				if (!l) {
+					/* force upper-case */
+					i = toupper(i);
+					/* must be a letter */
+					if (i < 'A' || i > 'Z') continue;
+				}
+				if (!((i >= 'A' && i <= 'Z') ||
+				    (i >= 'a' && i <= 'z') ||
+				    (i >= '0' && i <= '9') ||
+				    strchr(" .,-'&_$%~#<>|", i))) /* chars allowed for character name, */
+					i = '_';
+			}
+
 			if (search) search_changed = TRUE; /* Search term was changed */
 
 			/* inkey_letter_all hack for c_get_quantity() */

@@ -9433,6 +9433,7 @@ extern int PlayerUID;
 /* Mode bits for askfor_aux */
 #define ASKFOR_PRIVATE		0x01
 #define ASKFOR_CHATTING		0x02
+#define ASKFOR_LIVETRIM		0x10
 
 
 /* Hard-coded coordinates keeping track of special worldmap locations */

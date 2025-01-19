@@ -157,7 +157,7 @@ static void choose_name(void) {
 		if (rl_password) rl_password = FALSE;
 		else
 #endif
-		if (askfor_aux(tmp, ACCNAME_LEN - 1, 0)) strcpy(nick, tmp);
+		if (askfor_aux(tmp, ACCNAME_LEN - 1, ASKFOR_LIVETRIM)) strcpy(nick, tmp);
 		/* at this point: ESC = quit game */
 		else {
 			/* Nuke each term before exit. */
