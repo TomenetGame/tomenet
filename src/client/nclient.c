@@ -1145,9 +1145,9 @@ void Receive_login(void) {
 		else strcpy(c_name, cname);
 
 		if (total_cpa <= 15)
-			c_put_str(TERM_SLATE, "(Keep blank to pick a random name, ESC to cancel)", offset + 1, COL_CHARS);
+			c_put_str(TERM_SLATE, "Keep blank for random name, ESC to cancel. Allowed symbols: .,-'&_$%~#<>|", offset + 1, COL_CHARS);
 		else
-			c_put_str(TERM_SLATE, "(Keep blank to pick a random name, ESC to cancel)", offset, 35);
+			c_put_str(TERM_SLATE, "Keep blank for random name, ESC to cancel. Allowed symbols: .,-'&_$%~#<>|", offset, 35);
 
 		while (1) {
 			c_put_str(TERM_YELLOW, "New name: ", offset, COL_CHARS);
