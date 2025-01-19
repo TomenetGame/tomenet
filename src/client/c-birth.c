@@ -204,7 +204,7 @@ static void choose_name(void) {
 #endif
 
 	/* Erase the prompt, etc */
-	clear_from(20);
+	clear_from(21);
 }
 
 
@@ -256,7 +256,7 @@ static bool enter_password(void) {
 #endif
 
 	/* Erase the prompt, etc */
-	clear_from(20);
+	clear_from(21);
 	return(TRUE);
 }
 
@@ -1999,7 +1999,7 @@ void get_char_name(void) {
 #endif
 
 	/* Message */
-	put_str("Connecting to server....", 21, 1);
+	put_str("Connecting to server....", 22, 1);
 
 	/* Make sure the message is shown */
 	Term_fresh();
