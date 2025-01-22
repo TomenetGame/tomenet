@@ -11354,6 +11354,9 @@ void handle_request_return_num(int Ind, int id, int num) {
 			// .. revive Sauron too? =P .. */
 			p_ptr->once_winner = 0;
 			p_ptr->r_killed[RI_MORGOTH] = 0;
+ #ifdef USE_SOUND_2010
+			sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
 		}
 		/* Check how far we are away from rekinging actually */
 		else {
@@ -11661,6 +11664,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 			p_ptr->redraw |= PR_GOLD;
  #ifdef USE_SOUND_2010
 			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+			sound(Ind, "levelup", NULL, SFX_TYPE_MISC, FALSE);
  #endif
 
 			msg_print(Ind, "The spell chirurgically wipes your memories while keeping your brain flexible..");
@@ -11686,6 +11690,9 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 			/* Window stuff - Items might be come (un)usable depending on level! */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+ #ifdef USE_SOUND_2010
+			sound(Ind, "levelup", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
 			msg_print(Ind, "The spell roughly wipes your memories while keeping your brain flexible..");
 		}
 		s_printf("RESET_SKILL(done): %s (%s): %s (%d).\n", p_ptr->name, id == RID_LOSE_MEMORIES_I ? "I" : "II", s_name + s_info[i].name, i);
