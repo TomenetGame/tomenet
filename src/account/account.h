@@ -46,6 +46,7 @@ struct account{
 	char hostname[20];	/* last used hostname -- [HOSTNAME_LEN] */
 	char addr[80];		/* last used IP address -- [MAX_CHARS] */
 	char reply_name[20];	/* p_ptr->reply_name [NAME_LEN] */
+	char email[80];		/* idea: if player wants to, he can submit an email for notification if a character or the account is about to expire */
 
 	/* for future use */
 	unsigned char unused1;

@@ -2930,6 +2930,7 @@ struct account {
 	char hostname[HOSTNAME_LEN];	/* last used hostname */
 	char addr[MAX_CHARS];		/* last used IP address */
 	char reply_name[20];		/* p_ptr->reply_name [NAME_LEN] */
+	char email[80];
 
 	/* for future use */
 	unsigned char unused1;
@@ -2960,6 +2961,7 @@ struct account_old {
 
 	char hostname[HOSTNAME_LEN];	/* last used hostname */
 	char addr[MAX_CHARS];		/* last used IP address */
+	char reply_name[20];		/* p_ptr->reply_name [NAME_LEN] */
 
 	/* for future use */
 	unsigned char unused1;

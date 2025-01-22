@@ -39,7 +39,7 @@ FILE *fp;
 WINDOW *listwin, *mainwin;
 
 char *fname = "tomenet.acc";
-char newpass[21];
+char newpass[21], newmail[81];
 char *crypass;
 
 int tfpos;
@@ -119,6 +119,9 @@ int ListAccounts(int fpos) {
 	mvwaddstr(listwin, 0, 51, "PK");
 	mvwaddstr(listwin, 0, 55, "Qui");
 	mvwaddstr(listwin, 0, 59, "Ban");
+	//mvwprintw(mainwin, 12, 4, "Last hostname:  %-20s", c_acc.hostname);
+	//mvwprintw(mainwin, 13, 4, "Last IP addr:   %-20s", c_acc.addr);
+	//mvwprintw(mainwin, 14, 4, "Email if any:   %-55s", c_acc.email);
 	mvwaddstr(listwin, 0, 64, "Account ID");
 	if (fpos > LINES - 11) {
 		ifpos = fpos - (LINES - 11);
@@ -168,6 +171,12 @@ int ListAccounts(int fpos) {
 		move(LINES - 1, 0);
 		clrtoeol();
 		switch (ch) {
+			case 'e':
+			case 'E':
+				getstring("New email: ", newmail, 80);
+				strncpy(c_acc.email, newmail, 79);
+				change = 1;
+				break;
 			case 'h':
 			case 'H':
 				getstring("New password: ", newpass, 20);
@@ -418,6 +427,7 @@ void editor() {
 		mvwprintw(mainwin, 11, 4, "Banned:         %s", c_acc.flags & ACC_BANNED ? "** Yes ** " : "No        ");
 		mvwprintw(mainwin, 12, 4, "Last hostname:  %-20s", c_acc.hostname);
 		mvwprintw(mainwin, 13, 4, "Last IP addr:   %-20s", c_acc.addr);
+		mvwprintw(mainwin, 14, 4, "Email if any:   %-55s", c_acc.email);
 		mvwprintw(mainwin, 3, 37, "%-7s", c_acc.flags & ACC_DELD ? "DELETED" : "");
 		wrefresh(mainwin);
 		do {
@@ -425,6 +435,12 @@ void editor() {
 			move(LINES - 1, 0);
 			clrtoeol();
 			switch (ch) {
+				case 'e':
+				case 'E':
+					getstring("New email: ", newmail, 80);
+					strncpy(c_acc.email, newmail, 79);
+					change = 1;
+					break;
 				case 'h':
 				case 'H':
 					getstring("New password: ", newpass, 20);

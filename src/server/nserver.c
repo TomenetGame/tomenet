@@ -571,13 +571,14 @@ static bool update_acc_file_version(void) {
 
 		strcpy(acc.hostname, acc_old.hostname);
 		strcpy(acc.addr, acc_old.addr);
+		strcpy(acc.reply_name, acc_old.reply_name);
 
 		acc.unused1 = acc_old.unused1;
 		acc.unused2 = acc_old.unused2;
 		acc.unused3 = acc_old.unused3;
 
 		/* changes/additions - just init */
-		acc.reply_name[0] = 0;
+		acc.email[0] = 0;
 
 		/* write it back */
 		if (fwrite(&acc, sizeof(struct account), 1, fp) < 1)
