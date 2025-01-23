@@ -6185,7 +6185,7 @@ void calc_boni(int Ind) {
 	   Granting a percentage-BpR-bonus instead doesn't work as it would only work on tresholds due to rounding issues, as BpR is integer.
 	   So turning it into a +dam bonu works best even, allow for smooth increases. - C. Blue */
 	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield && p_ptr->dual_mode)
-		p_ptr->to_d_melee += get_skill_scale(p_ptr, SKILL_DUAL, 25);
+		p_ptr->to_d_melee += (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv); /* Basically 'simulate' a dual-wield skill that auto-increase from 0 to 50 as SKILL_STANCE does. */
 	/* Alternative idea: boni from each weapon partially (or it would be way too much, eg +60 damage) count for both weapons! Eg to-hit, to-dam, +crit, +ea, etc. (The_sandman)
 	   Alternative idea: main hand weapon hits as usual for the full BpR (no BpR bonus from dual-wield in this case), and afterwards the 2nd weapon hits once or more times depending on some metrics. (Virus) */
 

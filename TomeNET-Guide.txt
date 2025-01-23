@@ -17689,10 +17689,13 @@ stated.
                                 Dual-wielding will give you additional parry
                                 chance (see (7.11) for details about parrying)
                                 as well as a +1 blows/round bonus and a melee
-                                damage bonus of half the skill's value, ie +25
-                                at skill 50.000. And of course your character
-                                will gain all magical boni from both weapons
-                                (eg stats, abilities, resistances).
+                                damage bonus of half the player's top level,
+                                capping at 50, ie +25 at 50+. (The 'top level'
+                                is the highest level the character has ever
+                                attained so far.)
+                                And of course your character will gain all
+                                magical boni from both weapons (eg stats,
+                                abilities, resistances).
 
                                 NOTE: If your armour is too heavy (see (5.5))
                                 then you won't receive any bonus and your
