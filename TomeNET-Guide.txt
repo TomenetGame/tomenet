@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. January 2025 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 23. January 2025 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.2 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17689,9 +17689,10 @@ stated.
                                 Dual-wielding will give you additional parry
                                 chance (see (7.11) for details about parrying)
                                 as well as a +1 blows/round bonus and a melee
-                                damage bonus depending on your BpR, and of
-                                course your character will gain all magical
-                                boni from both weapons (such as resistances).
+                                damage bonus of half the skill's value, ie +25
+                                at skill 50.000. And of course your character
+                                will gain all magical boni from both weapons
+                                (eg stats, abilities, resistances).
 
                                 NOTE: If your armour is too heavy (see (5.5))
                                 then you won't receive any bonus and your

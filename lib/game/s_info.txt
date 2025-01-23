@@ -444,8 +444,8 @@ $ENABLE_MAIA$A:11:Cast a spell
 $ENABLE_MAIA$I:1000:111
 
 $DUAL_WIELD$N:78:Dual-wield
-$DUAL_WIELD$D:Ability to wield two one-handed weapons at once.
-$DUAL_WIELD$D:This won't work well if your armour is too heavy.
+$DUAL_WIELD$D:Ability to wield two one-handed weapons at once. Requires light armour.
+$DUAL_WIELD$D:In dual-mode, grants a melee to-damage bonus of half the skill value.
 $DUAL_WIELD$I:1000:0
 $DUAL_WIELD$F:MAX_1
 $DUAL_WIELD$A:1:Switch between main-hand and dual-hand
