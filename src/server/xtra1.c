@@ -8482,9 +8482,9 @@ void stop_global_event(int Ind, int n) {
 	ge->start_turn = turn;
 	ge->announcement_time = -1; /* enter the processing phase, */
  #endif
-#ifdef DM_MODULES
+ #ifdef DM_MODULES
 	if (ge->getype == GE_ADVENTURE) ge->state[1] = 0; /* signal cancellation */
-#endif
+ #endif
 	ge->state[0] = 255; /* ..and process clean-up! */
 #endif
 	return;
@@ -9186,6 +9186,7 @@ static void process_global_event(int ge_id) {
 		case 0: /* prepare level, gather everyone, start exp'ing */
 			ge->cleanup = 1;
 			sector000separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			s_printf("sector000separation++ -> %d\n", sector000separation);
 			sector000flags1 = sector000flags2 = 0x0;
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
@@ -9584,6 +9585,8 @@ static void process_global_event(int ge_id) {
 
 			sector000flags1 = sector000flags2 = 0x0;
 			sector000separation--;
+			s_printf("sector000separation-- -> %d\n", sector000separation);
+			ge->cleanup = FALSE;
 
 			/* still got a staircase to remove? */
 			if (ge->extra[5]) {
@@ -9725,6 +9728,7 @@ static void process_global_event(int ge_id) {
 			ge->state[1] = 0;
 			ge->cleanup = 1;
 			sector000separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			s_printf("sector000separation++ -> %d\n", sector000separation);
 			sector000music = 64;
 			sector000musicalt = 46; /* terrifying (notele) music */
 			sector000musicalt2 = 46;
@@ -10075,6 +10079,8 @@ static void process_global_event(int ge_id) {
 
 			sector000flags1 = sector000flags2 = 0x0;
 			sector000separation--;
+			s_printf("sector000separation-- -> %d\n", sector000separation);
+			ge->cleanup = FALSE;
 
 			/* cleanly teleport all lingering admins out instead of displacing them into (non-generated) pvp-dungeon ^^ */
 			for (i = 1; i <= NumPlayers; i++)
@@ -10097,7 +10103,9 @@ static void process_global_event(int ge_id) {
 	case GE_ADVENTURE:
 		switch (ge->state[0]) {
 		case 0: /* require active participation to start <- what does this mean? */
+			ge->cleanup = 1;
 			sector000separation++; // in_sector000..() check needs this to function
+			s_printf("sector000separation++ -> %d\n", sector000separation);
 
 			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
 
@@ -10171,7 +10179,13 @@ static void process_global_event(int ge_id) {
 
 			break;
 		case 255: /* clean-up or restart */
+			if (!ge->cleanup) {
+				ge->getype = GE_NONE; /* end of event */
+				break;
+			}
 			sector000separation--;
+			s_printf("sector000separation-- -> %d\n", sector000separation);
+			ge->cleanup = FALSE;
 
 			/* wipe participation */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
@@ -10217,6 +10231,11 @@ static void process_global_event(int ge_id) {
 	default: /* generic clean-up routine for untitled events */
 		switch (ge->state[0]) {
 		case 255: /* remove an untitled event that has been stopped */
+			/* if (ge->cleanup) { --we cannot know if cleanup specifically refers to separation here, so commented out
+				sector000separation--;
+				s_printf("sector000separation-- -> %d\n", sector000separation);
+				ge->cleanup = FALSE;
+			} */
 			ge->getype = GE_NONE;
 			break;
 		}
