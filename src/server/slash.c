@@ -6189,6 +6189,79 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Auto-retaliator works the new way, wind-up delay to save reserve energy.");
 			}
 			return;
+		} else if (prefix(messagelc, "/email")) { //set or check email for notifications
+			struct account acc;
+			char *pos;
+			int res;
+
+			if (!Admin_GetAccount(&acc, p_ptr->accountname)) return; //paranoia
+
+			if (!message3[0]) {
+				if (!acc.email[0]) {
+					msg_print(Ind, "Currently you do not have a notification email address set.");
+					msg_print(Ind, "  If you wish to, you can set one with:  \377y/email youremailaddress");
+					msg_print(Ind, "  The email address will be used to send you notifications about impending");
+					msg_print(Ind, "  expiry of character or account, and possibly also about major changes to");
+					msg_print(Ind, "  the server or to the game itself such as new version releases.");
+				} else {
+					msg_print(Ind, "You have currently set your notification email to:");
+					msg_format(Ind, "  <\377U%s\377w>", acc.email);
+					msg_print(Ind, "  You can change your email with:  \377y/email yournewemailaddress");
+					msg_print(Ind, "  You can delete your email with:  \377y/email -");
+				}
+			} else {
+				/* delete email */
+				if (!strcmp(message3, "-")) {
+					if (!acc.email[0]) msg_print(Ind, "Your email was not yet set anyway.");
+					else {
+						msg_print(Ind, "Your email was previously set to:");
+						msg_format(Ind, "  <\377s%s\377w>", acc.email);
+						msg_format(Ind, "  Your email has now been deleted, so you will not receive any emails.");
+						if (is_admin(p_ptr)) { //debug/testing
+							res = system(format("echo '(admin) test email -> deleted' > _testmail.txt"));
+							res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
+							//remove("_testmail.txt");
+							if (res) s_printf("(/email system shell error)\n");
+						}
+						acc.email[0] = 0;
+						WriteAccount(&acc, FALSE);
+					}
+				}
+				/* Check for kinda valid email format */
+				else if ((pos = strchr(message3, '@')) && pos > message3 && (pos = strchr(pos + 2, '.')) && *(pos + 1) != 0) {
+					if (!acc.email[0]) msg_print(Ind, "Your email was previously not set.");
+					else {
+						msg_print(Ind, "Your email was previously set to:");
+						msg_format(Ind, "  <\377s%s\377w>", acc.email);
+					}
+					msg_format(Ind, "  Your email is now set to:");
+					strncpy(acc.email, message3, 80 - 10); //pft, just shave off 10 chars for easier formatting in-game ^^
+					acc.email[79 - 10] = 0;
+					msg_format(Ind, "  <\377U%s\377w>", acc.email);
+					WriteAccount(&acc, FALSE);
+					if (is_admin(p_ptr)) { //debug/testing
+						res = system(format("echo '(admin) test email -> set' > _testmail.txt"));
+						res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
+						//remove("_testmail.txt");
+						if (res) s_printf("(/email system shell error)\n");
+					}
+				} else {
+					msg_format(Ind, "Your input '\377y%s\377w' is not a valid email address.", message3);
+					msg_print(Ind, "  Usage to set/change email address:   \377y/email youremailaddress");
+					msg_print(Ind, "  Usage to delete your email address:  \377y/email -");
+					msg_print(Ind, "  The email address will be used to send you notifications about impending");
+					msg_print(Ind, "  expiry of character or account, and possibly also about major changes to");
+					msg_print(Ind, "  the server or to the game itself such as new version releases.");
+					if (!acc.email[0]) msg_print(Ind, "  Currently you do not have a notification email address set.");
+					else {
+						msg_print(Ind, "  You have currently set your notification email to:");
+						msg_format(Ind, "  <\377U%s\377w>", acc.email);
+					}
+				}
+			}
+			msg_print(Ind, NULL); //clear topline
+			WIPE(&acc, struct account);
+			return;
 		}
 
 
