@@ -4768,8 +4768,8 @@ void do_cmd_options_mus_sdl(void) {
 
 			jukebox_paused = FALSE;
 			play_music_instantly(d);
-			if (ch == 'A') {
-				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+			if (ch == 'A' || ch == 'U') {
+				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT: Play at maximum allowed volume aka 200% boost. */
 				jukebox_static200vol = TRUE;
 			} else jukebox_static200vol = FALSE;
  #else
@@ -4787,7 +4787,7 @@ void do_cmd_options_mus_sdl(void) {
 
 			jukebox_paused = FALSE;
 			play_music(d);
-			if (ch == 'A') Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+			if (ch == 'A' || ch == 'U') Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT: Play at maximum allowed volume aka 200% boost. */
  #endif
 
 			jukebox_update_songlength();
@@ -4801,7 +4801,7 @@ void do_cmd_options_mus_sdl(void) {
 
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
-		case 'w':
+		case 'w': /* Skip to next subsong */
 			jukebox_used = TRUE; //we actually used the jukebox
 			/* We're playing a single music event - skip through its subsongs, backwards */
 			if (jukebox_playing != -1 && !jukebox_play_all) { //jukebox_subonly_play_all) {
@@ -4908,7 +4908,7 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 			}
 
-		case 'q':
+		case 'q': /* Skip to previous subsong */
 			jukebox_used = TRUE; //we actually used the jukebox
 			/* We're playing a single music event - skip through its subsongs, backwards */
 			if (jukebox_playing != -1 && !jukebox_play_all) { //jukebox_subonly_play_all) {
