@@ -7329,7 +7329,6 @@ bool monster_death(int Ind, int m_idx) {
 			    p_ptr->music_monster != 43 && p_ptr->music_monster != 44 && p_ptr->music_monster != 45) { /* Sauron, Morgoth, Zu-Aon */
 				int bmN = -1, bm, bm2;
 
-				/* No further Nazgul in line of sight? */
 				//todo: implement some not too expensive check maybe -_-
 				switch (r_idx) {
 				case RI_UVATHA: bmN = 239; break;
@@ -7367,7 +7366,7 @@ bool monster_death(int Ind, int m_idx) {
 			else if (r_ptr->level >= 98) {
 				int bm = 100;
 
-				//todo: make Nazgul check in melee2.c consistent with when this song is actually already playing..
+				//todo: make Super-unique check in melee2.c consistent with when this song is actually already playing..
 				switch (r_idx) {
 				case RI_MICHAEL: bm = 225; break;
 				case RI_TIK_SRVZLLAT: bm = 226; break;
