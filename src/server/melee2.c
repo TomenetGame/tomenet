@@ -12773,18 +12773,24 @@ void process_monsters(void) {
 				if (r_ptr->flags7 & RF7_NAZGUL) {
 					//Nazgul; doesn't override Sauron or Halloween (The Great Pumpkin)
 					if (p_ptr->music_monster != 43 && p_ptr->music_monster != 55) {
-						switch (m_ptr->r_idx) {
-						case RI_UVATHA: Send_music(pl, 230, 42, -1); break;
-						case RI_ADUNAPHEL: Send_music(pl, 231, 42, -1); break;
-						case RI_AKHORAHIL: Send_music(pl, 232, 42, -1); break;
-						case RI_REN: Send_music(pl, 233, 42, -1); break;
-						case RI_JI: Send_music(pl, 234, 42, -1); break;
-						case RI_DWAR: Send_music(pl, 235, 42, -1); break;
-						case RI_HOARMURATH: Send_music(pl, 236, 42, -1); break;
-						case RI_KHAMUL: Send_music(pl, 237, 42, -1); break;
-						case RI_WITCHKING: Send_music(pl, 238, 42, -1); break;
-						default: Send_music(pl, (p_ptr->music_monster = 42), -1, -1); //paranoia
+						int bm = 42;
+
+						switch (m_ptr->r_idx) { /* Sort Nazgul themes by Nazgul level, so we can implement precedence by level */
+						case RI_UVATHA: bm = 230; break;
+						case RI_ADUNAPHEL: bm = 231; break;
+						case RI_AKHORAHIL: bm = 232; break;
+						case RI_REN: bm = 233; break;
+						case RI_JI: bm = 234; break;
+						case RI_DWAR: bm = 235; break;
+						case RI_HOARMURATH: bm = 236; break;
+						case RI_KHAMUL: bm = 237; break;
+						case RI_WITCHKING: bm = 238; break;
 						}
+						if (bm == 42) Send_music(pl, (p_ptr->music_monster = 42), -1, -1); //paranoia
+						/* Avoid oscillation if multiple Nazgul are attacking us: Play only the highest one's theme */
+						else if (p_ptr->music_monster < 230 || p_ptr->music_monster > 238 || /* probably superfluous, as Nazgul cannot override other monster-specific music anyway */
+						    p_ptr->music_monster < bm) /* Stronger Nazgul overrides weaker Nazgul */
+							Send_music(pl, (p_ptr->music_monster = bm), 42, -1);
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
 					if (m_ptr->r_idx == RI_SAURON) {
@@ -12838,14 +12844,18 @@ void process_monsters(void) {
 						    && p_ptr->music_monster != 41 && (p_ptr->music_monster < 182 || p_ptr->music_monster > 200)) {
 							int bm = 40; //default generic 'boss_specialunique' theme
 
-							switch (m_ptr->r_idx) {
+							switch (m_ptr->r_idx) { /* Sort Super-unique themes by monster level, so we can implement precedence by level */
 							case RI_MICHAEL: bm = 201; break;
 							case RI_TIK_SRVZLLAT: bm = 202; break;
 							case RI_BAHAMUT: bm = 203; break;
 							case RI_HELLRAISER: bm = 204; break;
 							case RI_DOR: bm = 205; break;
 							}
-							Send_music(pl, (p_ptr->music_monster = bm), 40, -1);
+							if (bm == 40) Send_music(pl, (p_ptr->music_monster = 40), -1, -1); //paranoia
+							/* Avoid oscillation if multiple super-uniques are attacking us: Play only the highest one's theme */
+							else if (p_ptr->music_monster < 201 || p_ptr->music_monster > 205 || /* either no super-unique theme so far (maybe this cannot happen anyway, as Morgoth et al override super-uniques) */
+							    p_ptr->music_monster < bm) /* Stronger super-unique overrides weaker super-unique */
+								Send_music(pl, (p_ptr->music_monster = bm), 40, -1);
 						}
 					}
 				} else if (m_ptr->r_idx == RI_PUMPKIN && p_ptr->music_monster != 43) {
