@@ -12786,10 +12786,10 @@ void process_monsters(void) {
 						case RI_KHAMUL: bm = 237; break;
 						case RI_WITCHKING: bm = 238; break;
 						}
-						if (bm == 42) Send_music(pl, (p_ptr->music_monster = 42), -1, -1); //paranoia
+						if (bm == 42) Send_music(pl, (p_ptr->music_monster = 42), -1, -1); //paranoia: unknown Nazgul
 						/* Avoid oscillation if multiple Nazgul are attacking us: Play only the highest one's theme */
-						else if (p_ptr->music_monster < 230 || p_ptr->music_monster > 238 || /* probably superfluous, as Nazgul cannot override other monster-specific music anyway */
-						    p_ptr->music_monster < bm) /* Stronger Nazgul overrides weaker Nazgul */
+						else if ((p_ptr->music_monster < 230 || p_ptr->music_monster > 238 || /* probably superfluous, as Nazgul cannot override other monster-specific music anyway */
+						    p_ptr->music_monster < bm) && p_ptr->music_monster != 42) /* Stronger Nazgul overrides weaker Nazgul; paranoia-value 42 aka 'unknown Nazgul' overrides the others */
 							Send_music(pl, (p_ptr->music_monster = bm), 42, -1);
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -12851,10 +12851,10 @@ void process_monsters(void) {
 							case RI_HELLRAISER: bm = 204; break;
 							case RI_DOR: bm = 205; break;
 							}
-							if (bm == 40) Send_music(pl, (p_ptr->music_monster = 40), -1, -1); //paranoia
+							if (bm == 40) Send_music(pl, (p_ptr->music_monster = 40), -1, -1); //paranoia: unknown super-unique
 							/* Avoid oscillation if multiple super-uniques are attacking us: Play only the highest one's theme */
-							else if (p_ptr->music_monster < 201 || p_ptr->music_monster > 205 || /* either no super-unique theme so far (maybe this cannot happen anyway, as Morgoth et al override super-uniques) */
-							    p_ptr->music_monster < bm) /* Stronger super-unique overrides weaker super-unique */
+							else if ((p_ptr->music_monster < 201 || p_ptr->music_monster > 205 || /* either no super-unique theme so far (maybe this cannot happen anyway, as Morgoth et al override super-uniques) */
+							    p_ptr->music_monster < bm) && p_ptr->music_monster != 40) /* Stronger super-unique overrides weaker super-unique; paranoia-value 40 aka 'unknown SU' overrides the others */
 								Send_music(pl, (p_ptr->music_monster = bm), 40, -1);
 						}
 					}
