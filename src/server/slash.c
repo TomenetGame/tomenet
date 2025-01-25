@@ -6190,6 +6190,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			return;
 		} else if (prefix(messagelc, "/email")) { //set or check email for notifications
+#if defined(EMAIL_NOTIFICATIONS) && (defined(EMAIL_NOTIFICATION_EXPIRY_CHAR) || defined(EMAIL_NOTIFICATION_EXPIRY_ACC) || defined(EMAIL_NOTIFICATION_RELEASE))
 			struct account acc;
 			char *pos;
 			int res;
@@ -6200,9 +6201,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!acc.email[0]) {
 					msg_print(Ind, "Currently you do not have a notification email address set.");
 					msg_print(Ind, "  If you wish to, you can set one with:  \377y/email youremailaddress");
-					msg_print(Ind, "  The email address will be used to send you notifications about impending");
-					msg_print(Ind, "  expiry of character or account, and possibly also about major changes to");
-					msg_print(Ind, "  the server or to the game itself such as new version releases.");
+					msg_print(Ind, "  The email address will be used to send you notifications about:");
+ #if defined(EMAIL_NOTIFICATION_EXPIRY_CHAR) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+					msg_format(Ind, "   - impending expiry of a character (~%dd) or account (~%dd) of yours.", EMAIL_NOTIFICATION_EXPIRY_CHAR, EMAIL_NOTIFICATION_EXPIRY_ACC);
+ #elif defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+					msg_format(Ind, "   - impending expiry of a character of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_CHAR);
+ #elif defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+					msg_format(Ind, "   - impending expiry of an account of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_ACC);
+ #endif
+ #ifdef EMAIL_NOTIFICATION_RELEASE
+					msg_print(Ind, "   - new game version releases.");
+ #endif
 				} else {
 					msg_print(Ind, "You have currently set your notification email to:");
 					msg_format(Ind, "  <\377U%s\377w>", acc.email);
@@ -6249,9 +6258,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "Your input '\377y%s\377w' is not a valid email address.", message3);
 					msg_print(Ind, "  Usage to set/change email address:   \377y/email youremailaddress");
 					msg_print(Ind, "  Usage to delete your email address:  \377y/email -");
-					msg_print(Ind, "  The email address will be used to send you notifications about impending");
-					msg_print(Ind, "  expiry of character or account, and possibly also about major changes to");
-					msg_print(Ind, "  the server or to the game itself such as new version releases.");
+					msg_print(Ind, "  The email address will be used to send you notifications about:");
+ #if defined(EMAIL_NOTIFICATION_EXPIRY_CHAR) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+					msg_format(Ind, "   - impending expiry of a character (~%dd) or account (~%dd) of yours.", EMAIL_NOTIFICATION_EXPIRY_CHAR, EMAIL_NOTIFICATION_EXPIRY_ACC);
+ #elif defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+					msg_format(Ind, "   - impending expiry of a character of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_CHAR);
+ #elif defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+					msg_format(Ind, "   - impending expiry of an account of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_ACC);
+ #endif
+ #ifdef EMAIL_NOTIFICATION_RELEASE
+					msg_print(Ind, "   - new game version releases.");
+ #endif
 					if (!acc.email[0]) msg_print(Ind, "  Currently you do not have a notification email address set.");
 					else {
 						msg_print(Ind, "  You have currently set your notification email to:");
@@ -6261,6 +6278,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			msg_print(Ind, NULL); //clear topline
 			WIPE(&acc, struct account);
+#else
+			msg_print(Ind, "This command is not available in the current server configuration.");
+#endif
 			return;
 		}
 

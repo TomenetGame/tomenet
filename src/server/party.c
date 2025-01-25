@@ -5085,13 +5085,18 @@ void scan_characters() {
 		ptr = hash_table[slot];
 		while (ptr) {
 			total++;
-			if ((ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)) /*15552000; 7776000 = 90 days at 60fps*/
+			if ((ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS))
 			    && !(cfg.admins_never_expire && ptr->admin)) {
 				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout\n", showdate(), ptr->name, ptr->level);
 				erase_player_hash(slot, &pptr, &ptr);
 				amt++;
 				continue;
 			} else {
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+				if ((ptr->laston && (now - ptr->laston == 3600 * 24 * (CHARACTER_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_CHAR)))
+				    && !(cfg.admins_never_expire && ptr->admin)) { //ACC_EMN_CX
+				}
+#endif
 #if 0 /* Low-performance version */
 				/* if a character didn't timeout, timestamp his
 				   account here, to help the account-expiry routines,
@@ -5221,6 +5226,10 @@ void scan_accounts() {
 			s_printf("  (TESTING) Account '%s' expired.\n", acc.name);
 #endif
 		}
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+		if (now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC)) { //ACC_EMN_AX
+		}
+#endif
 
 		//if (modified) WriteAccount(&acc, FALSE);
 		if (modified) {

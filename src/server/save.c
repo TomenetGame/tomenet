@@ -2912,8 +2912,9 @@ static bool load_server_info_classic(void) {
 		    (version_minor != sf_minor) ||
 		    (version_patch != sf_patch)) {
 			/* Message */
-			s_printf("Converted a %d.%d.%d server savefile.\n",
-					sf_major, sf_minor, sf_patch);
+			s_printf("Converted a %d.%d.%d server savefile.\n", sf_major, sf_minor, sf_patch);
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_RELEASE)
+#endif
 		}
 
 		/* The server state was loaded */

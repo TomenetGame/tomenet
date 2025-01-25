@@ -3393,6 +3393,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		return(FALSE);
 	}
 
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+	/* ACC_EMN_AX */
+#endif
+
 	/* Attempt to load from a savefile */
 	character_loaded = FALSE;
 
@@ -3444,6 +3448,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 			p_ptr->s_info[SKILL_PICK_BREATH].value = 1000;
 			Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
 		}
+
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+		/* ACC_EMN_CX */
+#endif
 
 		return(TRUE);
 	}

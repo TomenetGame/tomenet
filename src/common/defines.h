@@ -9580,7 +9580,10 @@ extern int PlayerUID;
 #define ACC_VQUIET	0x00002000U	/* may not chat or emote, be it public or private */
 #define ACC_BANNED	0x00004000U	/* account is temporarily suspended */
 #define ACC_DELD	0x00008000U	/* Delete account/members */
-
+#ifdef EMAIL_NOTIFICATIONS
+ #define ACC_EMN_CX	0x00010000U	/* (to avoid duplicate notifications) Account has been notified about one or more characters being about to expire */
+ #define ACC_EMN_AX	0x00020000U	/* (to avoid duplicate notifications) Account has been notified about it being about to expire */
+#endif
 #define ACC_GUILD_ADDER	0x20000000U	/* Character who died last was a guild adder (for auto-re-add) */
 #define ACC_WARN_SALE	0x40000000U	/* 'Warn' that he has sold items in a player store */
 #define ACC_WARN_REST	0x80000000U	/* Received a one-time warning about resting */
