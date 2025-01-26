@@ -482,6 +482,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	/* Artifacts */
 	if (o_ptr->name1) {
 		artifact_type *a_ptr;
+
 		/* Obtain the artifact info */
 		if (o_ptr->name1 == ART_RANDART)
 			a_ptr = randart_make(o_ptr);
