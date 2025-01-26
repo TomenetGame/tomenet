@@ -5005,7 +5005,7 @@
 #define PU_SANITY	0x00000008U     /* Calculate csane and msane */
 #define PU_HP		0x00000010U	/* Calculate chp and mhp */
 #define PU_MANA		0x00000020U	/* Calculate cmp and mmp */
-/* xxx */
+/* maybe add PU_WEIGHT for p_ptr->total_weight, using PU_BONUS for that in inven_item_increase() seems overkill */
 #define PU_SKILL_MOD	0x00000080U	/* Update client skill values/... */
 /* xxx (many) */
 /* xxx (many) */
