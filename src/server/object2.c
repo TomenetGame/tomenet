@@ -11194,6 +11194,9 @@ void inven_item_increase(int Ind, int item, int num) {
 		/* Add the weight */
 		p_ptr->total_weight += (num * o_ptr->weight);
 
+		/* Recalculate bonuses - especially total weight now that we gained/lost something */
+		p_ptr->update |= (PU_BONUS);
+
 #ifdef ENABLE_SUBINVEN
 		if (item >= SUBINVEN_INVEN_MUL) {
 			/* If we lose an item, prepare for a warning, given in subsequent inven_item_describe() call */
@@ -11210,8 +11213,6 @@ void inven_item_increase(int Ind, int item, int num) {
 		}
 #endif
 
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
 		/* Recalculate torch */
 		p_ptr->update |= (PU_TORCH);
 		/* Recalculate mana */
