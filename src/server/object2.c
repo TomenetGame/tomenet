@@ -9500,7 +9500,20 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 					continue;
 				}
 				break; //accept
+
+			/* Can happen with high-value base item, eg Shield of Deflection: */
+			case EGO_RESIST_ACID:
+			case EGO_RESIST_FIRE:
+			case EGO_RESIST_COLD:
+			case EGO_RESIST_ELEC:
+				continue;
 			}
+
+			/* Prevent low-value ego powers as single ego power.
+			   If not prevented here, these might pass if the base item value is very high, eg shield of deflection).
+			   Probably only really affects single-resist egos, these are already caught above, so this is probably not needed.
+			   Also, this needs checking that no 'interesting' ego powers that have low value are actually discarded. */
+			//if (o_ptr->name2 && e_info[o_ptr->name2].cost <= 1000) continue;
 		}
 
 		/* melee/ranged ego handling, not suited for spells-only: */
