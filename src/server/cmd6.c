@@ -3242,7 +3242,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			wilderness_type *wild;
 			dungeon_type *d_ptr;
 
-			msg_format(Ind, "\376\377sYou learn the world map layout around sector \377u(%d,%d)\377s.", (xs + xe) / 2, (ys + ye) / 2); //for patch area revelation
+			msg_format(Ind, "\376\377sThis wilderness map piece depicts terrain around sector \377u(%d,%d)\377s.", (xs + xe) / 2, (ys + ye) / 2); //for patch area revelation
 
 			for (x = xs; x <= xe; x++) for (y = ys; y <= ye; y++) {
 				wild = &wild_info[y][x];
@@ -3250,7 +3250,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
  #if 0 /* this only makes sense for single (x,y) revelation, not for patch area */
 				if (p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
 				    (1U << (x + y * MAX_WILD_X) % 8)) {
-					msg_format(Ind, "\376\377sThis world map piece shows the layout at \377u(%d,%d)\377s which you already know.", x, y);
+					msg_format(Ind, "\376\377sThis wilderness map piece depicts terrain at \377u(%d,%d)\377s which you already know.", x, y);
 					break;
 				}
  #endif
@@ -3261,7 +3261,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				/* Exclude (temporary) event dungeons at (0,0), including PvP arena */
 				if (x || y) {
 					if ((d_ptr = wild->tower) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
-						msg_print(Ind, "\376\377sYou learn that there is a tower at or next to that location, called:");
+						msg_print(Ind, "\376\377sIt indicates that there is a tower at or next to that location, called:");
 						msg_format(Ind, "\376\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
@@ -3277,7 +3277,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						}
 					}
 					if ((d_ptr = wild->dungeon) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
-						msg_print(Ind, "\376\377sYou learn that there is a dungeon at or next to that location, called:");
+						msg_print(Ind, "\376\377sIt indicates that there is a dungeon at or next to that location, called:");
 						msg_format(Ind, "\376\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
