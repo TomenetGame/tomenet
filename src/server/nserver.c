@@ -1793,6 +1793,174 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	return(TRUE);
 }
 
+bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig) {
+	connection_t	*connp = Conn[ind];
+	int		id = -1, len, sock;
+	char		pkt[MAX_CHARS_WIDE];
+	char		*reason, *host, *accname, *accpass, *charname;
+	int		i, player = 0;
+	char		traffic[50 + 1];
+	player_type	*p_ptr = NULL;
+	struct account acc;
+
+	/* reason was probably made using format() which uses a static buffer so copy it - mikaelh */
+	reason = (char*)string_make(reason_orig);
+	host = (char*)string_make(relogin_host);
+	accname = (char*)string_make(relogin_accname);
+	accpass = (char*)string_make(relogin_accpass);
+	charname = (char*)string_make(relogin_charname);
+
+	kill_xfers(ind);	/* don't waste time sending to a dead
+				   connection ( or crash! ) */
+
+	if (!connp || connp->state == CONN_FREE) {
+		errno = 0;
+		plog(format("Cannot destroy empty connection (\"%s\")", reason));
+		string_free(reason);
+		return(FALSE);
+	}
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", player, connp->id, connp->c_name, showtime()));
+		/* in case winners CAN hold arts as long as they don't leave the floor (default): */
+		//lua_strip_true_arts_from_present_player(GetInd[connp->id], int mode)
+	} else
+		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", 0, connp->id, connp->c_name, showtime()));
+
+	/* Timestamp account for 'laston' moment */
+	if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
+		time_t now = time(&now);
+		acc.acc_laston = now;
+		acc.acc_laston_real = now;
+		if (p_ptr) strcpy(acc.reply_name, p_ptr->reply_name);
+		WriteAccount(&acc, FALSE);
+	}
+
+	sock = connp->w.sock;
+	if (sock != -1) remove_input(sock);
+
+
+	pkt[0] = (char)PKT_RELOGIN;
+	len = 1;
+
+	strcpy(&pkt[len], host);
+	len += strlen(&pkt[len]);
+	pkt[len] = 0;
+	len++;
+
+	strcpy(&pkt[len], accname);
+	len += strlen(&pkt[len]);
+	pkt[len] = 0;
+	len++;
+
+	strcpy(&pkt[len], accpass);
+	len += strlen(&pkt[len]);
+	pkt[len] = 0;
+	len++;
+
+	strcpy(&pkt[len], charname);
+	len += strlen(&pkt[len]);
+	pkt[len] = 0;
+	len++;
+
+	strcpy(&pkt[len], reason);
+	len += strlen(&pkt[len]);
+	pkt[len] = 0;
+	len++;
+
+	pkt[len] = PKT_END;
+	pkt[len + 1] = '\0';
+
+	if (sock != -1) {
+#if 1	// sorry evileye, removing it causes SIGPIPE to the client
+
+		if (DgramWrite(sock, pkt, len) != len) {
+			GetSocketError(sock);
+//maybe remove this one too? Or have its error be cleared too? - C. Blue
+//			DgramWrite(sock, pkt, len);
+		}
+#endif
+	}
+
+	if (p_ptr) {
+		/* Clean up SPECIAL store's status/features if player ALT+F4's in the middle of something.. */
+#ifdef ENABLE_GO_GAME
+		if (go_game_up && p_ptr->id == go_engine_player_id) go_challenge_cancel();
+#endif
+
+#ifdef SOLO_REKING
+		if (p_ptr->solo_reking) {
+			time_t now = time(&now);
+			p_ptr->solo_reking_laston = now;
+		}
+#endif
+
+		s_printf("%s: Goodbye [RELOGIN] %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
+		    showtime(),
+		    connp->c_name ? connp->c_name : "",
+		    connp->nick ? connp->nick : "",
+		    connp->real ? connp->real : "",
+		    connp->host ? connp->host : "",
+		    reason, player, ind,
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+		    p_ptr->px, p_ptr->py);
+		clockin(player, 7); /* Remember his wpos -- should be redundant with clockin() call in dungeon.c:process_player_change_wpos() */
+		clockin(player, 0); /* Timestamp him (laston) */
+	} else
+		s_printf("%s: Goodbye [RELOGIN] %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=-,-,-;xy=-,-)\n",
+		    showtime(),
+		    connp->c_name ? connp->c_name : "",
+		    connp->nick ? connp->nick : "",
+		    connp->real ? connp->real : "",
+		    connp->host ? connp->host : "",
+		    reason, player, ind);
+
+	Conn_set_state(connp, CONN_FREE, CONN_FREE);
+
+	if (connp->id != -1) {
+		id = connp->id;
+		connp->id = -1;
+	/*
+		Players[GetInd[id]]->conn = NOT_CONNECTED;
+	*/
+		Delete_player(GetInd[id]);
+	}
+
+	exec_lua(0, format("player_has_left(%d, %d, \"%/s\", \"%s\")", player, id == -1 ? connp->id : -1 - id, connp->c_name, showtime()));
+	if (NumPlayers == 0) exec_lua(0, format("last_player_has_left(%d, %d, \"%/s\", \"%s\")", player, id == -1 ? connp->id : -1 - id, connp->c_name, showtime()));
+	strcpy(traffic, "");
+	for (i = 1; (i <= NumPlayers) && (i < 50); i++)
+		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
+	p_printf("%s -  %03d  %s\n", showtime(), NumPlayers, traffic);
+
+	if (connp->real != NULL) free(connp->real);
+	if (connp->nick != NULL) free(connp->nick);
+	if (connp->addr != NULL) free(connp->addr);
+	if (connp->host != NULL) free(connp->host);
+	if (connp->c_name != NULL) free(connp->c_name);
+	if (connp->pass != NULL) free(connp->pass);
+	Sockbuf_cleanup(&connp->w);
+	Sockbuf_cleanup(&connp->r);
+	Sockbuf_cleanup(&connp->c);
+	Sockbuf_cleanup(&connp->q);
+	memset(connp, 0, sizeof(*connp));
+
+	/* Free the connection_t structure - mikaelh */
+	KILL(Conn[ind], connection_t);
+	connp = NULL;
+
+	num_logouts++;
+
+	if (sock != -1) DgramClose(sock);
+
+	string_free(reason);
+
+	return(TRUE);
+}
+
 int Check_connection(char *real, char *nick, char *addr) {
 	int i;
 	connection_t *connp;

@@ -3650,6 +3650,15 @@ void client_init(char *argv1, bool skip) {
 #ifdef RETRY_LOGIN
 	retry_contact:
 
+	/* Via PKT_RELOGIN? (SERVER_PORTALS): Server asked us to relogin to a specific server. */
+	if (relogin_host[0]) {
+		strcpy(server_name, relogin_host);
+		relogin_host[0] = 0;
+		strcpy(nick, relogin_accname);
+		strcpy(pass, relogin_accpass);
+		strcpy(cname, relogin_charname);
+	}
+
 	/* clear all windows of previous text */
 	for (retries = 1; retries < ANGBAND_TERM_MAX; retries++) {
 		/* No window */
@@ -3897,7 +3906,7 @@ void client_init(char *argv1, bool skip) {
 			Net_cleanup();
 			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
 			if (!rl_auto_relogin) my_memfrob(pass, strlen(pass)); //need to un-frob the password as it will get refrobbed right over there again
-			skip = FALSE; //prevent infinite loop if -lNAME PASS args were supplied and they are wrong
+			skip = rl_auto_relogin = FALSE; //prevent infinite loop if -lNAME PASS args were supplied and they are wrong
 			goto retry_contact;
 		}
 		/* bad character name? */
@@ -4103,7 +4112,7 @@ void client_init(char *argv1, bool skip) {
 
 #ifdef RETRY_LOGIN
 	if (rl_connection_state >= 2) {
-		/* We quit the game actively? (Otherwise the quit_hook will already have taken care of fading out) */
+		/* We quit the game actively? (Otherwise the quit_hook will already have taken care of fading out). Or, in 4.9.3+, it' PKT_RELOGIN from the server. */
 		if (rl_connection_state == 3) {
  #ifdef USE_SOUND_2010
   #ifdef SOUND_SDL

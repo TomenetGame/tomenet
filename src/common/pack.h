@@ -3,19 +3,6 @@
  * Packet types
  */
 
-/* Packet types 0-12 are "administrative" */
-#define PKT_UNDEFINED		0
-#define PKT_VERIFY		1
-#define PKT_REPLY		2
-#define PKT_PLAY		3
-#define PKT_QUIT		4
-#define PKT_LEAVE		5
-#define PKT_MAGIC		6
-#define PKT_RELIABLE		7
-#define PKT_ACK			8
-#define PKT_TALK		9
-
-
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
 #define PKT_SKILL_INIT_DESC     1
@@ -31,6 +18,17 @@
 #define PKT_FILE_SUM		6	/* checksum reply */
 #define	PKT_FILE_INIT		7	/* initiate a transfer */
 
+/* Packet types 0-12 are "administrative" */
+#define PKT_UNDEFINED		0
+#define PKT_VERIFY		1
+#define PKT_REPLY		2
+#define PKT_PLAY		3
+#define PKT_QUIT		4
+#define PKT_LEAVE		5
+#define PKT_MAGIC		6
+#define PKT_RELIABLE		7
+#define PKT_ACK			8
+#define PKT_TALK		9
 
 #define PKT_START		10
 #define PKT_END			11
@@ -39,7 +37,6 @@
 
 /* reserved 14 to 19 for non play purposes - evileye */
 #define PKT_FILE		14	/* internal file transfer */
-
 
 /* Packet types 20-59 are info that is sent to the client */
 #define PKT_PLUSSES		20
@@ -86,7 +83,6 @@
 #define PKT_PAUSE		58
 #define PKT_MONSTER_HEALTH	59
 
-
 /* Packet types 60-65 are sent from either the client or server */
 #define PKT_DIRECTION		60
 #define PKT_ITEM		61
@@ -94,7 +90,6 @@
 #define PKT_PARTY		63
 #define PKT_SPECIAL_LINE	64
 #define PKT_SKILL_MOD   	65
-
 
 /* Packet types 67-116 are sent from the client */
 #define PKT_TAKE_OFF_AMT	66
@@ -278,7 +273,7 @@
 #define PKT_SFLAGS		213
 #define PKT_CHAR_DIRECT		214
 #define PKT_SPLIT_STACK		215	/* alternative function to PKT_FORCE_STACK - split up a stack of items */
-
+#define PKT_RELOGIN		216	/* Does what PKT_QUIT does, but then also asks the client to reconnect to a specific server! Added for SERVER_PORTALS (WiP). - C. Blue */
 
 /*
  * Possible error codes returned

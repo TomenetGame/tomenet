@@ -1248,6 +1248,7 @@ extern void refresh_palette(void);
 extern bool rl_connection_destructible, rl_connection_destroyed, rl_password;
 extern byte rl_connection_state;
 extern bool player_pref_files_loaded;
+extern char relogin_host[40], relogin_accname[ACCNAME_LEN], relogin_accpass[PASSWORD_LEN], relogin_charname[CNAME_LEN]; //max length of IPv6 addr is 39
 #endif
 
 extern int guide_lastline, guide_errno;

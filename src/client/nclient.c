@@ -311,12 +311,12 @@ static void Receive_init(void) {
 
 	receive_tbl[PKT_RELIABLE]	= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_QUIT]		= Receive_quit;
+	receive_tbl[PKT_RELOGIN]	= Receive_relogin;
 	receive_tbl[PKT_START]		= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_END]		= Receive_end;
 	receive_tbl[PKT_LOGIN]		= NULL; /* Should not be called like this */
 	receive_tbl[PKT_FILE]		= Receive_file;
 
-	receive_tbl[PKT_QUIT]		= Receive_quit;
 	receive_tbl[PKT_STAT]		= Receive_stat;
 	receive_tbl[PKT_HP]		= Receive_hp;
 	receive_tbl[PKT_AC]		= Receive_ac;
@@ -452,169 +452,154 @@ int Receive_file(void) {
 
 	/* NOTE: The amount of data read is stored in n so that the socket
 	 * buffer can be rolled back if the packet isn't complete. - mikaelh */
-	if ((n = Packet_scanf(&rbuf, "%c%c%hd", &ch, &command, &fnum)) <= 0)
-		return(n);
+	if ((n = Packet_scanf(&rbuf, "%c%c%hd", &ch, &command, &fnum)) <= 0) return(n);
 
-	if (n == 3) {
-		bytes_read = 4;
+	if (n != 3) return(1);
 
-		switch (command) {
-			case PKT_FILE_INIT:
-				if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
-					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, bytes_read);
+	bytes_read = 4;
 
-					return(n);
-				}
-				if (no_lua_updates) {
-					sprintf(outbuf, "\377yIgnoring update for file %s [%d]", fname, fnum);
-					c_msg_print(outbuf);
-					x = FALSE;
-					break;
-				}
-				x = local_file_init(0, fnum, fname);
-				if (x) {
-					sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);
-					c_msg_print(outbuf);
-
-					if (strstr(fname, "audio.lua")) updated_audio = TRUE;
-					if (strstr(fname, "guide.lua")) updated_guide = TRUE;
-				} else {
-					if (errno == EACCES) c_msg_print("\377rNo access to update files");
-				}
-				break;
-			case PKT_FILE_DATA:
-				if ((n = Packet_scanf(&rbuf, "%hd", &len)) <= 0) {
-					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, bytes_read);
-
-					return(n);
-				}
-				bytes_read += 2;
-				x = local_file_write(0, fnum, len);
-				if (x == -1) {
-					/* Not enough data available */
-
-					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, bytes_read);
-
-					return(0);
-				} else if (x == -2) {
-					/* Write failed */
-					sprintf(outbuf, "\377rWrite failed [%d]", fnum);
-					c_msg_print(outbuf);
-
-					return(0);
-				}
-				break;
-			case PKT_FILE_END:
-				x = local_file_close(0, fnum);
-				if (x) {
-					sprintf(outbuf, "\377gReceived file %d", fnum);
-					c_msg_print(outbuf);
-				}
-				else {
-					if (errno == EACCES) {
-						c_msg_print("\377rNo access to lib directory!");
-					} else {
-						c_msg_print("\377rFile could not be written!");
-					}
-				}
-
-				/* HACK - If this was the last file, reinitialize Lua on the fly - mikaelh */
-				if (!get_xfers_num()) {
-					c_msg_print("\377GReinitializing Lua");
-					reopen_lua();
-
-					if (updated_audio) {
-						c_msg_print("\377R* Audio information was updated - restarting the game is recommended! *");
-						c_msg_print("\377R   Without a restart, you might be hearing the wrong sound effects or music.");
-					}
-					if (updated_guide) {
-						int i;
-
-						/* Silently re-init guide info (keep consistent to init_guide() in c-init.c) */
-						guide_races = exec_lua(0, "return guide_races");
-						for (i = 0; i < guide_races; i++)
-							strcpy(guide_race[i], string_exec_lua(0, format("return guide_race[%d]", i + 1)));
-
-						guide_classes = exec_lua(0, "return guide_classes");
-						for (i = 0; i < guide_classes; i++)
-							strcpy(guide_class[i], string_exec_lua(0, format("return guide_class[%d]", i + 1)));
-
-						guide_skills = exec_lua(0, "return guide_skills");
-						for (i = 0; i < guide_skills; i++)
-							strcpy(guide_skill[i], string_exec_lua(0, format("return guide_skill[%d]", i + 1)));
-
-						guide_schools = exec_lua(0, "return guide_schools");
-						for (i = 0; i < guide_schools; i++)
-							strcpy(guide_school[i], string_exec_lua(0, format("return guide_school[%d]", i + 1)));
-
-						guide_spells = exec_lua(0, "return guide_spells");
-						for (i = 0; i < guide_spells; i++)
-							strcpy(guide_spell[i], string_exec_lua(0, format("return guide_spell[%d]", i + 1)));
-					}
-				}
-
-				break;
-			case PKT_FILE_CHECK:
-				if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
-					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, bytes_read);
-
-					return(n);
-				}
-				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
-					unsigned digest_net[4];
-
-					x = local_file_check_new(fname, digest);
-					md5_digest_to_bigendian_uint(digest_net, digest);
-					Packet_printf(&wbuf, "%c%c%hd%u%u%u%u", PKT_FILE, PKT_FILE_SUM, fnum, digest_net[0], digest_net[1], digest_net[2], digest_net[3]);
-				} else {
-					x = local_file_check(fname, &csum);
-					Packet_printf(&wbuf, "%c%c%hd%d", PKT_FILE, PKT_FILE_SUM, fnum, csum);
-				}
-				return(1);
-				break;
-			case PKT_FILE_SUM:
-				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
-					unsigned digest_net[4];
-
-					if ((n = Packet_scanf(&rbuf, "%u%u%u%u", &digest_net[0], &digest_net[1], &digest_net[2], &digest_net[3])) <= 0) {
-						/* Rollback the socket buffer */
-						Sockbuf_rollback(&rbuf, bytes_read);
-
-						return(n);
-					}
-					md5_digest_to_char_array(digest, digest_net);
-					check_return_new(0, fnum, digest, 0);
-				} else {
-					if ((n = Packet_scanf(&rbuf, "%d", &csum)) <= 0) {
-						/* Rollback the socket buffer */
-						Sockbuf_rollback(&rbuf, bytes_read);
-
-						return(n);
-					}
-					check_return(0, fnum, csum, 0);
-				}
-				return(1);
-				break;
-			case PKT_FILE_ACK:
-				local_file_ack(0, fnum);
-				return(1);
-				break;
-			case PKT_FILE_ERR:
-				local_file_err(0, fnum);
-				/* continue the send/terminate */
-				return(1);
-				break;
-			case 0:
-				return(1);
-			default:
-				x = 0;
+	switch (command) {
+	case PKT_FILE_INIT:
+		if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			return(n);
 		}
-		Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, x ? PKT_FILE_ACK : PKT_FILE_ERR, fnum);
+		if (no_lua_updates) {
+			sprintf(outbuf, "\377yIgnoring update for file %s [%d]", fname, fnum);
+			c_msg_print(outbuf);
+			x = FALSE;
+			break;
+		}
+		x = local_file_init(0, fnum, fname);
+		if (x) {
+			sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);
+			c_msg_print(outbuf);
+			if (strstr(fname, "audio.lua")) updated_audio = TRUE;
+			if (strstr(fname, "guide.lua")) updated_guide = TRUE;
+		} else {
+			if (errno == EACCES) c_msg_print("\377rNo access to update files");
+		}
+		break;
+	case PKT_FILE_DATA:
+		if ((n = Packet_scanf(&rbuf, "%hd", &len)) <= 0) {
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			return(n);
+		}
+		bytes_read += 2;
+		x = local_file_write(0, fnum, len);
+		if (x == -1) {
+			/* Not enough data available */
+
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			return(0);
+		} else if (x == -2) {
+			/* Write failed */
+			sprintf(outbuf, "\377rWrite failed [%d]", fnum);
+			c_msg_print(outbuf);
+			return(0);
+		}
+		break;
+	case PKT_FILE_END:
+		x = local_file_close(0, fnum);
+		if (x) {
+			sprintf(outbuf, "\377gReceived file %d", fnum);
+			c_msg_print(outbuf);
+		} else {
+			if (errno == EACCES) c_msg_print("\377rNo access to lib directory!");
+			else c_msg_print("\377rFile could not be written!");
+		}
+
+		/* HACK - If this was the last file, reinitialize Lua on the fly - mikaelh */
+		if (!get_xfers_num()) {
+			c_msg_print("\377GReinitializing Lua");
+			reopen_lua();
+
+			if (updated_audio) {
+				c_msg_print("\377R* Audio information was updated - restarting the game is recommended! *");
+				c_msg_print("\377R   Without a restart, you might be hearing the wrong sound effects or music.");
+			}
+			if (updated_guide) {
+				int i;
+
+				/* Silently re-init guide info (keep consistent to init_guide() in c-init.c) */
+				guide_races = exec_lua(0, "return guide_races");
+				for (i = 0; i < guide_races; i++)
+					strcpy(guide_race[i], string_exec_lua(0, format("return guide_race[%d]", i + 1)));
+
+				guide_classes = exec_lua(0, "return guide_classes");
+				for (i = 0; i < guide_classes; i++)
+					strcpy(guide_class[i], string_exec_lua(0, format("return guide_class[%d]", i + 1)));
+
+				guide_skills = exec_lua(0, "return guide_skills");
+				for (i = 0; i < guide_skills; i++)
+					strcpy(guide_skill[i], string_exec_lua(0, format("return guide_skill[%d]", i + 1)));
+
+				guide_schools = exec_lua(0, "return guide_schools");
+				for (i = 0; i < guide_schools; i++)
+					strcpy(guide_school[i], string_exec_lua(0, format("return guide_school[%d]", i + 1)));
+
+				guide_spells = exec_lua(0, "return guide_spells");
+				for (i = 0; i < guide_spells; i++)
+					strcpy(guide_spell[i], string_exec_lua(0, format("return guide_spell[%d]", i + 1)));
+			}
+		}
+
+		break;
+	case PKT_FILE_CHECK:
+		if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			return(n);
+		}
+		if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
+			unsigned digest_net[4];
+
+			x = local_file_check_new(fname, digest);
+			md5_digest_to_bigendian_uint(digest_net, digest);
+			Packet_printf(&wbuf, "%c%c%hd%u%u%u%u", PKT_FILE, PKT_FILE_SUM, fnum, digest_net[0], digest_net[1], digest_net[2], digest_net[3]);
+		} else {
+			x = local_file_check(fname, &csum);
+			Packet_printf(&wbuf, "%c%c%hd%d", PKT_FILE, PKT_FILE_SUM, fnum, csum);
+		}
+		return(1);
+		break;
+	case PKT_FILE_SUM:
+		if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
+			unsigned digest_net[4];
+
+			if ((n = Packet_scanf(&rbuf, "%u%u%u%u", &digest_net[0], &digest_net[1], &digest_net[2], &digest_net[3])) <= 0) {
+				/* Rollback the socket buffer */
+				Sockbuf_rollback(&rbuf, bytes_read);
+				return(n);
+			}
+			md5_digest_to_char_array(digest, digest_net);
+			check_return_new(0, fnum, digest, 0);
+		} else {
+			if ((n = Packet_scanf(&rbuf, "%d", &csum)) <= 0) {
+				/* Rollback the socket buffer */
+				Sockbuf_rollback(&rbuf, bytes_read);
+				return(n);
+			}
+			check_return(0, fnum, csum, 0);
+		}
+		return(1);
+	case PKT_FILE_ACK:
+		local_file_ack(0, fnum);
+		return(1);
+	case PKT_FILE_ERR:
+		local_file_err(0, fnum);
+		/* continue the send/terminate */
+		return(1);
+	case 0:
+		return(1);
+	default:
+		x = 0;
 	}
+
+	Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, x ? PKT_FILE_ACK : PKT_FILE_ERR, fnum);
 	return(1);
 }
 
@@ -1588,6 +1573,16 @@ unsigned char Net_login() {
 #endif
 		quit(&rbuf.ptr[1]);
 	}
+	/* Same/similar (WiP) for SERVER_PORTALS - C. Blue */
+	if (rbuf.len > 1 && rbuf.ptr[0] == (char)PKT_RELOGIN) {
+#ifdef RETRY_LOGIN
+		rl_connection_destroyed = TRUE;
+		/* should be illegal character name this time.. */
+		plog(&rbuf.ptr[1]);
+		return(E_RETRY_LOGIN);
+#endif
+		quit(&rbuf.ptr[1]);
+	}
 #ifdef RETRY_LOGIN
 	/* back to normal - can quit() anytime */
 	rl_connection_destructible = 0;
@@ -1809,7 +1804,7 @@ static int Net_packet(void) {
 			rbuf.state &= ~SOCKBUF_LOCK;
 			if (result <= 0) {
 				if (result == -1) {
-					if (type != PKT_QUIT) {
+					if (type != PKT_QUIT && type != PKT_RELOGIN) {
 						errno = 0;
 						plog(format("Processing packet type (%d, %d) failed", type, prev_type));
 					}
@@ -1980,6 +1975,35 @@ int Receive_quit(void) {
 		}
 
 		quit(format("%s", reason));
+	}
+	return(-1);
+}
+/* Quit like Receive_quit(), but relogin to an IP specified to us by the server - for SERVER_PORTALS. */
+int Receive_relogin(void) {
+	unsigned char pkt;
+	char reason[MAX_CHARS_WIDE];
+
+	/* game ends, so leave all other screens like
+	   shops or browsed books or skill screen etc */
+	if (screen_icky) Term_load();
+	topline_icky = FALSE;
+
+	/* 'reason' is an optional parameter - no real reason for this though (badumtsh) */
+	if (Packet_scanf(&rbuf, "%c%s%s%s%s", &pkt, relogin_host, relogin_accname, relogin_accpass, relogin_charname) != 5) {
+		errno = 0;
+		plog("Can't read relogin packet");
+	} else {
+		if (Packet_scanf(&rbuf, "%s", reason) <= 0) strcpy(reason, "unknown reason");
+		errno = 0;
+
+		//cl_initialized = FALSE;
+
+#ifdef RETRY_LOGIN
+		rl_connection_destructible = TRUE;
+		rl_connection_state = 2;
+#endif
+
+		quit(format("Relog to %s\n(%s)", relogin_host, reason));
 	}
 	return(-1);
 }

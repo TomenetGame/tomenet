@@ -14489,7 +14489,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-
+#ifdef TRUE //SERVER_PORTALS
+			else if (prefix(messagelc, "/relog")) { /* debugging/testing: Send PKT_RELOGIN request to our client */
+				if (!message3[0]) {
+					msg_print(Ind, "Usage: /relog <hostname/ip>");
+					return;
+				}
+				/* Use '+' as prefix to account/character name, as this is an invalid symbol that cannot normally be used by players,
+				   so collisions with regularly existing players are impossible. */
+ #if 0 /* use basically valid acc/char names */
+				Relogin_connection(p_ptr->conn, message3, p_ptr->accountname, "temppass", p_ptr->name, "TEST(NORMAL)");
+ #else /* use for normal logins 'invalid' acc/char names thanks to prefixed '+' which is an illegal symbol outside of SERVER_PORTALS */
+				Relogin_connection(p_ptr->conn, message3, format("+%s", p_ptr->accountname), "temppass", format("+%s", p_ptr->name), "TEST(EXT)");
+ #endif
+				return;
+			}
+#endif
 		}
 	}
 

@@ -1354,6 +1354,7 @@ extern void Start_evilmeta(void);
 extern void Check_evilmeta(void);
 extern int Setup_net_server(void);
 extern bool Destroy_connection(int Ind, char *reason);
+extern bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig); //SERVER_PORTALS/PKT_RELOGIN
 
 extern sockbuf_t *get_conn_q(int Ind);
 extern char *compacttime(void);
