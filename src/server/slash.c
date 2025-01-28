@@ -14497,7 +14497,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				/* Use '+' as prefix to account/character name, as this is an invalid symbol that cannot normally be used by players,
 				   so collisions with regularly existing players are impossible. */
- #if 0 /* use basically valid acc/char names */
+ #if 1 /* use basically valid acc/char names */
 				Relogin_connection(p_ptr->conn, message3, p_ptr->accountname, "temppass", p_ptr->name, "TEST(NORMAL)");
  #else /* use for normal logins 'invalid' acc/char names thanks to prefixed '+' which is an illegal symbol outside of SERVER_PORTALS */
 				Relogin_connection(p_ptr->conn, message3, format("+%s", p_ptr->accountname), "temppass", format("+%s", p_ptr->name), "TEST(EXT)");
