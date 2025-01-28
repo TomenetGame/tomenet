@@ -748,7 +748,9 @@ void Receive_login(void) {
 		/* illegal name? don't suggest it as default again */
 		if (strstr(&rbuf.ptr[1], "a different name")) strcpy(nick, "");
 		/* no password entered? then auto-fill-in the name again he alread picked */
-		else if (strstr(&rbuf.ptr[1], "enter a password")) rl_password = TRUE;
+		else if (strstr(&rbuf.ptr[1], "nter a password") /* (Avoid upper-case issues) */
+		    || strstr(&rbuf.ptr[1], "assword length")) /* or if the password was just too short (avoid upper-case issues) */
+			rl_password = TRUE;
 		return;
 #endif
 		quit(&rbuf.ptr[1]);
