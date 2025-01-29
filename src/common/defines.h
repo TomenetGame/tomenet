@@ -59,7 +59,7 @@
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	9
-#define VERSION_PATCH_OUTDATED	2
+#define VERSION_PATCH_OUTDATED	1
 #define VERSION_EXTRA_OUTDATED	0
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	2 /* should always be 1 (or higher) to invalidate previous 'test' versions */
