@@ -13798,6 +13798,7 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         Has a chance that the weapon damage dice result is multiplied on
         hitting, you'll see 'Your weapon cuts deep into your enemy'.
         Brand/slay effects will further increase the damage, if applicable.
+        Has no effect on targets that cannot be cut (NO_CUT).
 
         VORPAL requires an edged weapon, so swords, axes and several polearms
         can obtain 'VORPAL' mod via "Sharp" or "Spinning" ego power.
