@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. January 2025 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 29. January 2025 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -19229,13 +19229,14 @@ Stealth
     Determines if monsters will immediately wake up if you're nearby or if
     you are able to sneak past sleeping monsters without waking them.
 Perception
-    Determines how often you have a chance to spot hidden traps or doors on
-    adjacent fields without even searching for them. Whether you really
-    discover something will depend on your Searching ability.
+    This is your 'spontaneous' searching frequency that has a chance to trigger
+    one turn of 'searching' each time you move, without actually actively
+    pressing the search key or being in 'searching mode'.
+    Whether you really discover something depend on your 'Searching' ability:
 Searching
     Determines how easily you spot hidden traps/doors on adjacent fields
     while searching for them (with 's' or 'S'), or when you automatically
-    notice them due to your Perception ability.
+    search for them due to your Perception ability.
 Disarming
     How well you can disarm traps (without setting them off), and how likely
     you avoid known traps if you accidentally step on them again.
@@ -19798,8 +19799,8 @@ Vampire     +2   +2   -1   +2    0   +3        11      240%    150ft
 Maia        +2   +3   +3   +1   +1   +2        11      400%    100ft
              3   20    3    0    5    1    5    5
 
-(Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
-Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
+(Di:Disarming,    MD:Magic Device,   ST:Saving Throw,   St:Stealth,
+ Pe:Perception,   Sr:Searching,      Fi:Fighting,       BT:Bows/Throw)
 
 
 
@@ -20490,8 +20491,8 @@ Death Knight  +3   -3   +1    0   +2   +2         +8    +30%         5
 Hell Knight   +3   -3   +1    0   +2   +2         +8    +30%         5
  dark grey    10   25   54    1   16   13   60   40            good     superb
 
-(Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
-Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
+(Di:Disarming,    MD:Magic Device,   ST:Saving Throw,   St:Stealth,
+ Pe:Perception,   Sr:Searching,      Fi:Fighting,       BT:Bows/Throw)
 
 (*) Corrupted Priest is same as Priest in this table.
 
@@ -21136,11 +21137,6 @@ I: speed : hit points : vision : armor class : alertness
     (3/4 player_base_AC) + (3/4 player_magical_to_AC) + (1/4 calc_ac).
     Otherwise, the final AC will be
     (1/2 player_base_AC) + (1/2 player_magical_to_AC) + (1/2 calc_ac).
-  vision:
-    Searching ability of the player =
-    (player_searching / 2) + (monster_vision / 10)
-    Perception of the player =
-    (player_perception / 2) + (monster_vision / 10)
 
 E: hands : torso : arms : finger : head : leg
     These values indicate how many pieces of equipment the player can
