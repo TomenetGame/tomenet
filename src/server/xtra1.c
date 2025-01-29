@@ -8942,7 +8942,7 @@ static void process_global_event(int ge_id) {
 	int xstart = 0, ystart = 0; /* for arena generation */
 	long elapsed, elapsed_turns; /* amounts of seconds elapsed since the event was started (created) */
 	char m_name[MNAME_LEN], buf[MSG_LEN];
-	int m_idx, tries = 0;
+	int m_idx, tries = 0, was_getype = ge->getype;
 	time_t now;
 	cptr pname;
 
@@ -9557,6 +9557,7 @@ static void process_global_event(int ge_id) {
 			}
 			break;
 		case 255: /* clean-up */
+			s_printf("(Clean-up event, state0 %d)\n", ge->state[0]);
 			if (!ge->cleanup) {
 				ge->getype = GE_NONE; /* end of event */
 				break;
@@ -9690,6 +9691,7 @@ static void process_global_event(int ge_id) {
 			}
 			break;
 		case 255: /* clean-up */
+			s_printf("(Clean-up event, state0 %d)\n", ge->state[0]);
 			if (getcave(&wpos)) {
 				wipe_m_list(&wpos); /* clear any (powerful) spawns */
 				wipe_o_list_safely(&wpos); /* and objects too */
@@ -10072,6 +10074,7 @@ static void process_global_event(int ge_id) {
 			}
 			break;
 		case 255: /* clean-up */
+			s_printf("(Clean-up event, state0 %d)\n", ge->state[0]);
 			if (!ge->cleanup) {
 				ge->getype = GE_NONE; /* end of event */
 				break;
@@ -10179,6 +10182,7 @@ static void process_global_event(int ge_id) {
 
 			break;
 		case 255: /* clean-up or restart */
+			s_printf("(Clean-up event, state0 %d)\n", ge->state[0]);
 			if (!ge->cleanup) {
 				ge->getype = GE_NONE; /* end of event */
 				break;
@@ -10229,6 +10233,7 @@ static void process_global_event(int ge_id) {
 #endif
 
 	default: /* generic clean-up routine for untitled events */
+		s_printf("(Default call - untitled event, state0 %d)\n", ge->state[0]);
 		switch (ge->state[0]) {
 		case 255: /* remove an untitled event that has been stopped */
 			/* if (ge->cleanup) { --we cannot know if cleanup specifically refers to separation here, so commented out
@@ -10244,7 +10249,7 @@ static void process_global_event(int ge_id) {
 	/* Check for end of event */
 	if (ge->getype == GE_NONE) {
 		msg_broadcast_format(0, "\374\377W[%s has ended]", ge->title);
-		s_printf("%s EVENT_END: %d - '%s'(%d).\n", showtime(), ge_id + 1, ge->title, ge->getype);
+		s_printf("%s EVENT_END: %d - '%s'(%d).\n", showtime(), ge_id + 1, ge->title, was_getype);
 	}
 }
 
