@@ -4868,28 +4868,29 @@ s32b c_get_quantity(cptr prompt, s32b predef, s32b max) {
 		else amt = PY_MAX_GOLD;
 	} else if (buf[0] == 'a' /* 'a' means "all" - C. Blue */
 	    /* allow old 'type in any letter for "all"' hack again too?: */
-	    || isalpha(buf[0])
-	    ) {
+	    || (isalpha(buf[0])
+	    /* exempt the E factors */
+	    && ((buf[0] != 'k' && buf[0] != 'K' && buf[0] != 'm' && buf[0] != 'M' && buf[0] != 'g' && buf[0] != 'G')
+	    /* ..except if after a factor there is no actual number following, then we allow this to be 'all' */
+	    || !buf[1] || (buf[1] < '0' || buf[1] > '9')))) {
 		if (max >= 0) amt = max;
 		/* hack for dropping gold (max is -1) */
 		else amt = PY_MAX_GOLD;
-	} else
-#if 1
-	{
+	} else {
 		/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M'/'G'/ for kilo/mega/giga: */
 		if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]
 		    && (buf[1] < '0' || buf[1] > '9')) {
 			//all..
 			buf[0] = 'a';
 			buf[1] = 0;
-		} else
-
+		}
 		/* new method slightly extended: allow leading 'k' or 'M' or 'G' too */
-		if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]) {
+		else if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]) {
 			/* add leading '0' to revert it to the usual format */
 			for (i = QUANTITY_WIDTH + 1; i >= 1; i--) buf[i] = buf[i - 1];
 			buf[0] = '0';
 		}
+
 		/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
 		while (buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
 		bi1[i] = '\0';
@@ -4921,21 +4922,9 @@ s32b c_get_quantity(cptr prompt, s32b predef, s32b max) {
 			amt = i1 * mul + i2;
 		} else amt = i1;
 	}
-#else
-	/* Extract a number */
-	amt = atoi(buf);
-
-	/* Analyse abreviation like '15k' */
-	if (strchr(buf, 'k'))
-		amt = amt * 1000;
-	else if (strchr(buf, 'm') || strchr(buf, 'M')
-		amt = amt * 1000000;
-	else if (strchr(buf, 'g') || strchr(buf, 'G')
-		amt = amt * 1000000000;
-#endif
 
 	/* Enforce the maximum, if maximum is defined */
-	if ((max >= 0) && (amt > max)) amt = max;
+	if (max >= 0 && amt > max) amt = max;
 
 	/* Enforce the minimum */
 	if (amt < 0) amt = 0;
