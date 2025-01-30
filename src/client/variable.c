@@ -184,7 +184,8 @@ u16b race, dna_race;
 u16b class, dna_class;
 cptr dna_class_title; //ENABLE_DEATHKNIGHT,ENABLE_HELLKNIGHT,ENABLE_CPRIEST
 u16b sex, dna_sex;
-u16b mode, lives;
+u32b mode;
+u16b lives;
 s16b trait = 0, dna_trait; //-1 for 'traits not available'
 s16b stat_order[6], dna_stat_order[6]; /* Desired order of stats */
 

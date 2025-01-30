@@ -7392,7 +7392,7 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 /* compare mode compatibility (eg player/player for merchants guild post, player/party, player/guild member) - C. Blue
    Note: returns NULL if compatible.
    Note: We don't handle MODE_SOLO, so it has to be checked explicitely whenever important. */
-cptr compat_mode(u16b mode1, u16b mode2) {
+cptr compat_mode(u32b mode1, u32b mode2) {
 	if (mode1 & MODE_PVP) {
 		if (!(mode2 & MODE_PVP)) {
 			return("non-pvp");
@@ -8154,7 +8154,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 
 /* backup all house prices and contents for all players to lib/save/estate/.
    partial: don't stop with failure if a character files can't be read. */
-#define ESTATE_BACKUP_VERSION "v8"
+#define ESTATE_BACKUP_VERSION "v9"
 bool backup_estate(bool partial) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
@@ -8513,6 +8513,7 @@ void restore_estate(int Ind) {
 	bool gained_anything = FALSE;
 
 	int conversion = 0;
+	object_type_v8 forge_v8, *o_ptr_v8 = &forge_v8;
 	object_type_v7 forge_v7, *o_ptr_v7 = &forge_v7;
 	object_type_v6 forge_v6, *o_ptr_v6 = &forge_v6;
 	object_type_v5 forge_v5, *o_ptr_v5 = &forge_v5;
@@ -8557,6 +8558,7 @@ void restore_estate(int Ind) {
 	else if (streq(version, "v5")) conversion = 6;
 	else if (streq(version, "v6")) conversion = 7;
 	else if (streq(version, "v7")) conversion = 8;
+	else if (streq(version, "v8")) conversion = 9;
 	else {
 		s_printf("  error: Invalid backup version.\nfailed.\n");
 		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
@@ -8757,7 +8759,7 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
-				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->mode = o_ptr_v2->mode; /* u16b = byte */
 				break;
 			case 2: r = fread(o_ptr_v2a, sizeof(object_type_v2a), 1, fp);
 				o_ptr->owner = o_ptr_v2a->owner;
@@ -8889,7 +8891,7 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
-				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->mode = o_ptr_v2a->mode; /* u16b = byte */
 				break;
 			case 3: r = fread(o_ptr_v2b, sizeof(object_type_v2b), 1, fp);
 				o_ptr->owner = o_ptr_v2b->owner;
@@ -9020,7 +9022,7 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
-				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->mode = o_ptr_v2b->mode; /* u16b = byte */
 				break;
 			case 4: r = fread(o_ptr_v3, sizeof(object_type_v3), 1, fp);
 				o_ptr->owner = o_ptr_v3->owner;
@@ -9150,7 +9152,7 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
-				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->mode = o_ptr_v3->mode; /* u16b = byte */
 				break;
 			case 5: r = fread(o_ptr_v4, sizeof(object_type_v4), 1, fp);
 				o_ptr->owner = o_ptr_v4->owner;
@@ -9279,7 +9281,7 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
-				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->mode = o_ptr_v4->mode; /* u16b = byte */
 				break;
 			case 6: r = fread(o_ptr_v5, sizeof(object_type_v5), 1, fp);
 				o_ptr->owner = o_ptr_v5->owner;
@@ -9413,7 +9415,7 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
-				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->mode = o_ptr_v5->mode; /* u16b = byte */
 				break;
 			case 7: r = fread(o_ptr_v6, sizeof(object_type_v6), 1, fp);
 				o_ptr->owner = o_ptr_v6->owner;
@@ -9547,7 +9549,7 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_destruction = 0;
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
-				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->mode = o_ptr_v6->mode; /* u16b = byte */
 				break;
 			case 8: r = fread(o_ptr_v7, sizeof(object_type_v7), 1, fp);
 				o_ptr->owner = o_ptr_v7->owner;
@@ -9680,6 +9682,138 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = o_ptr_v7->custom_lua_usage;
 				//convert:
 				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				break;
+			case 9: r = fread(o_ptr_v8, sizeof(object_type_v8), 1, fp);
+				o_ptr->owner = o_ptr_v8->owner;
+				o_ptr->killer = o_ptr_v8->killer;
+				o_ptr->level = o_ptr_v8->level;
+				o_ptr->k_idx = o_ptr_v8->k_idx;
+				o_ptr->h_idx = o_ptr_v8->h_idx;
+				o_ptr->wpos = o_ptr_v8->wpos;
+				o_ptr->iy = o_ptr_v8->iy;
+				o_ptr->ix = o_ptr_v8->ix;
+				o_ptr->tval = o_ptr_v8->tval;
+				o_ptr->sval = o_ptr_v8->sval;
+				o_ptr->tval2 = o_ptr_v8->tval2;
+				o_ptr->sval2 = o_ptr_v8->sval2;
+				o_ptr->bpval = o_ptr_v8->bpval;
+				o_ptr->pval = o_ptr_v8->pval;
+				o_ptr->pval2 = o_ptr_v8->pval2;
+				o_ptr->pval3 = o_ptr_v8->pval3;
+				o_ptr->pval_org = o_ptr_v8->pval_org;
+				o_ptr->bpval_org = o_ptr_v8->bpval_org;
+				o_ptr->to_h_org = o_ptr_v8->to_h_org;
+				o_ptr->to_d_org = o_ptr_v8->to_d_org;
+				o_ptr->to_a_org = o_ptr_v8->to_a_org;
+				o_ptr->sigil = o_ptr_v8->sigil;
+				o_ptr->sseed = o_ptr_v8->sseed;
+				o_ptr->discount = o_ptr_v8->discount;
+				o_ptr->number = o_ptr_v8->number;
+				o_ptr->weight = o_ptr_v8->weight;
+				o_ptr->name1 = o_ptr_v8->name1;
+				o_ptr->name2 = o_ptr_v8->name2;
+				o_ptr->name2b = o_ptr_v8->name2b;
+				o_ptr->name3 = o_ptr_v8->name3;
+				o_ptr->name4 = o_ptr_v8->name4;
+				o_ptr->attr = o_ptr_v8->attr;
+				o_ptr->xtra1 = o_ptr_v8->xtra1;
+				o_ptr->xtra2 = o_ptr_v8->xtra2;
+				o_ptr->xtra3 = o_ptr_v8->xtra3;
+				o_ptr->xtra4 = o_ptr_v8->xtra4;
+				o_ptr->xtra5 = o_ptr_v8->xtra5;
+				o_ptr->xtra6 = o_ptr_v8->xtra6;
+				o_ptr->xtra7 = o_ptr_v8->xtra7;
+				o_ptr->xtra8 = o_ptr_v8->xtra8;
+				o_ptr->xtra9 = o_ptr_v8->xtra9;
+				o_ptr->uses_dir = o_ptr_v8->uses_dir;
+#ifdef PLAYER_STORES
+				o_ptr->ps_idx_x = o_ptr_v8->ps_idx_x;
+				o_ptr->ps_idx_y = o_ptr_v8->ps_idx_y;
+				o_ptr->appraised_value = o_ptr_v8->appraised_value;
+#endif
+				o_ptr->to_h = o_ptr_v8->to_h;
+				o_ptr->to_d = o_ptr_v8->to_d;
+				o_ptr->to_a = o_ptr_v8->to_a;
+				o_ptr->ac = o_ptr_v8->ac;
+				o_ptr->dd = o_ptr_v8->dd;
+				o_ptr->ds = o_ptr_v8->ds;
+				o_ptr->ident = o_ptr_v8->ident;
+				o_ptr->timeout = o_ptr_v8->timeout;
+				o_ptr->timeout_magic = o_ptr_v8->timeout_magic;
+				o_ptr->recharging = o_ptr_v8->recharging;
+				o_ptr->marked = o_ptr_v8->marked;
+				o_ptr->marked2 = o_ptr_v8->marked2;
+				o_ptr->questor = o_ptr_v8->questor;
+				o_ptr->quest = o_ptr_v8->quest;
+				o_ptr->quest_stage = o_ptr_v8->quest_stage;
+				o_ptr->questor_idx = o_ptr_v8->questor_idx;
+				o_ptr->questor_invincible = o_ptr_v8->questor_invincible;
+				o_ptr->quest_credited = o_ptr_v8->quest_credited;
+				o_ptr->note = o_ptr_v8->note;
+				o_ptr->note_utag = o_ptr_v8->note_utag;
+				o_ptr->inven_order = o_ptr_v8->inven_order;
+				o_ptr->next_o_idx = o_ptr_v8->next_o_idx;
+				o_ptr->held_m_idx = o_ptr_v8->held_m_idx;
+				o_ptr->auto_insc = o_ptr_v8->auto_insc;
+				o_ptr->stack_pos = o_ptr_v8->stack_pos;
+				o_ptr->cheeze_dlv = o_ptr_v8->cheeze_dlv;
+				o_ptr->cheeze_plv = o_ptr_v8->cheeze_plv;
+				o_ptr->cheeze_plv_carry = o_ptr_v8->cheeze_plv_carry;
+				o_ptr->housed = o_ptr_v8->housed;
+				o_ptr->changed = o_ptr_v8->changed;
+				o_ptr->NR_tradable = o_ptr_v8->NR_tradable;
+				o_ptr->no_soloist = o_ptr_v8->no_soloist;
+				o_ptr->temp = o_ptr_v8->temp;
+				o_ptr->iron_trade = o_ptr_v8->iron_trade;
+				o_ptr->iron_turn = o_ptr_v8->iron_turn;
+				o_ptr->embed = o_ptr_v8->embed;
+				o_ptr->id = o_ptr_v8->id;
+				o_ptr->f_id = o_ptr_v8->f_id;
+				strcpy(o_ptr->f_name, o_ptr_v8->f_name);
+				o_ptr->f_turn = o_ptr_v8->f_turn;
+				o_ptr->f_time = o_ptr_v8->f_time;
+				o_ptr->f_wpos = o_ptr_v8->f_wpos;
+				o_ptr->f_dun = o_ptr_v8->f_dun;
+				o_ptr->f_player = o_ptr_v8->f_player;
+				o_ptr->f_player_turn = o_ptr_v8->f_player_turn;
+				o_ptr->f_ridx = o_ptr_v8->f_ridx;
+				o_ptr->f_reidx = o_ptr_v8->f_reidx;
+				o_ptr->f_special = o_ptr_v8->f_special;
+				o_ptr->f_reward = o_ptr_v8->f_reward;
+				o_ptr->number2 = o_ptr_v8->number2;
+				o_ptr->note2 = o_ptr_v8->note2;
+				o_ptr->note2_utag = o_ptr_v8->note2_utag;
+				o_ptr->slain_monsters = o_ptr_v8->slain_monsters;
+				o_ptr->slain_uniques = o_ptr_v8->slain_uniques;
+				o_ptr->slain_players = o_ptr_v8->slain_players;
+				o_ptr->times_activated = o_ptr_v8->times_activated;
+				o_ptr->time_equipped = o_ptr_v8->time_equipped;
+				o_ptr->time_carried = o_ptr_v8->time_carried;
+				o_ptr->slain_orcs = o_ptr_v8->slain_orcs;
+				o_ptr->slain_trolls = o_ptr_v8->slain_trolls;
+				o_ptr->slain_giants = o_ptr_v8->slain_giants;
+				o_ptr->slain_animals = o_ptr_v8->slain_animals;
+				o_ptr->slain_dragons = o_ptr_v8->slain_dragons;
+				o_ptr->slain_demons = o_ptr_v8->slain_demons;
+				o_ptr->slain_undead = o_ptr_v8->slain_undead;
+				o_ptr->slain_evil = o_ptr_v8->slain_evil;
+				o_ptr->slain_bosses = o_ptr_v8->slain_bosses;
+				o_ptr->slain_nazgul = o_ptr_v8->slain_nazgul;
+				o_ptr->slain_superuniques = o_ptr_v8->slain_superuniques;
+				o_ptr->slain_sauron = o_ptr_v8->slain_sauron;
+				o_ptr->slain_morgoth = o_ptr_v8->slain_morgoth;
+				o_ptr->slain_zuaon = o_ptr_v8->slain_zuaon;
+				o_ptr->done_damage = o_ptr_v8->done_damage;
+				o_ptr->done_healing = o_ptr_v8->done_healing;
+				o_ptr->got_damaged = o_ptr_v8->got_damaged;
+				o_ptr->got_repaired = o_ptr_v8->got_repaired;
+				o_ptr->got_enchanted = o_ptr_v8->got_enchanted;
+				o_ptr->custom_lua_carrystate = o_ptr_v8->custom_lua_carrystate;
+				o_ptr->custom_lua_equipstate = o_ptr_v8->custom_lua_equipstate;
+				o_ptr->custom_lua_destruction = o_ptr_v8->custom_lua_destruction;
+				o_ptr->custom_lua_usage = o_ptr_v8->custom_lua_usage;
+				//convert:
+				o_ptr->mode = o_ptr_v8->mode; /* u32b = u16b */
 			}
 			if (r == 0) {
 				s_printf("  error: Failed to read object.\n");
@@ -9767,6 +9901,9 @@ void restore_estate(int Ind) {
 					case 8:
 						(void)fwrite(o_ptr_v7, sizeof(object_type_v7), 1, fp_tmp);
 						break;
+					case 9:
+						(void)fwrite(o_ptr_v8, sizeof(object_type_v8), 1, fp_tmp);
+						break;
 					}
 #endif
 
@@ -9821,6 +9958,9 @@ void restore_estate(int Ind) {
 					break;
 				case 8:
 					(void)fwrite(o_ptr_v7, sizeof(object_type_v7), 1, fp_tmp);
+					break;
+				case 9:
+					(void)fwrite(o_ptr_v8, sizeof(object_type_v8), 1, fp_tmp);
 					break;
 				}
 

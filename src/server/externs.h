@@ -1220,7 +1220,7 @@ extern int Send_gold(int Ind, s32b gold, s32b balance);
 extern int Send_hp(int Ind, int mhp, int chp);
 extern int Send_stamina(int Ind, int mst, int cst);
 extern int Send_mp(int Ind, int mmp, int cmp);
-extern int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, int lives, cptr name);
+extern int Send_char_info(int Ind, int race, int class, int trait, int sex, u32b mode, int lives, cptr name);
 extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
 extern int Send_stat(int Ind, int stat);
 extern int Send_history(int Ind, int line, cptr hist);
@@ -1603,8 +1603,8 @@ extern int lookup_player_id(cptr name);
 extern int lookup_case_player_id(cptr name);
 extern int lookup_player_id_messy(cptr name);
 /* another arg, and its getting a struct... pfft. */
-extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, u16b mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order);
-extern void verify_player(cptr name, int id, u32b account, byte race, byte class, u16b mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order);
+extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, u32b mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order);
+extern void verify_player(cptr name, int id, u32b account, byte race, byte class, u32b mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list, u32b account);
@@ -1617,7 +1617,7 @@ extern char lookup_player_maxplv(int id);
 extern s32b lookup_player_party(int id);
 extern s32b lookup_player_guild(int id);
 extern u32b lookup_player_guildflags(int id);
-extern u16b lookup_player_mode(int id);
+extern u32b lookup_player_mode(int id);
 extern u32b lookup_player_account(int id);
 extern char lookup_player_admin(int id);
 extern char lookup_player_winner(int id);
@@ -2159,7 +2159,7 @@ extern bool is_older_than(version_type *version, int major, int minor, int patch
 extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern void my_memfrob(void *s, int n);
 
-extern cptr compat_mode(u16b mode1, u16b mode2);
+extern cptr compat_mode(u32b mode1, u32b mode2);
 extern cptr compat_pmode(int Ind1, int Ind2, bool strict);
 extern cptr compat_pomode(int Ind, object_type *o_ptr);
 extern cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr);

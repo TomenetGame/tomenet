@@ -132,7 +132,7 @@ static void wr_item(object_type *o_ptr) {
 
 	wr_s32b(o_ptr->owner);
 	wr_s16b(o_ptr->level);
-	wr_u16b(o_ptr->mode);
+	wr_u32b(o_ptr->mode);
 
 	wr_s16b(o_ptr->k_idx);
 
@@ -654,7 +654,7 @@ static void wr_guilds() {
 		wr_string(guilds[i].name);
 		wr_s32b(guilds[i].master);
 		wr_s32b(guilds[i].members);
-		wr_u16b(guilds[i].cmode);
+		wr_u32b(guilds[i].cmode);
 		wr_u32b(guilds[i].flags);
 		wr_s16b(guilds[i].minlev);
 		for (j = 0; j < 5; j++)
@@ -675,9 +675,9 @@ static void wr_party(party_type *party_ptr) {
 	wr_s32b(party_ptr->created);
 
 	/* Save the modus and members */
-	wr_u16b(party_ptr->mode);
+	wr_u32b(party_ptr->mode);
 	/* Save the creator's character mode */
-	wr_u16b(party_ptr->cmode);
+	wr_u32b(party_ptr->cmode);
 
 	/* Iron Team max exp */
 	wr_s32b(party_ptr->experience);
@@ -714,7 +714,7 @@ static void wr_house(house_type *house) {
 	wr_byte(house->dx);
 	wr_byte(house->dy);
 	wr_u32b(house->dna->creator);
-	wr_u16b(house->dna->mode);
+	wr_u32b(house->dna->mode);
 	wr_s32b(house->dna->owner);
 	wr_byte(house->dna->owner_type);
 	wr_byte(house->dna->a_flags);
@@ -787,7 +787,7 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->ptrait);
 	wr_byte(p_ptr->male);
 	wr_u16b(p_ptr->party); /* changed to u16b to allow more parties - mikaelh */
-	wr_u16b(p_ptr->mode);
+	wr_u32b(p_ptr->mode);
 
 	wr_byte(p_ptr->hitdie);
 	wr_s16b(p_ptr->expfact);
@@ -2376,7 +2376,7 @@ static void wr_player_names(void) {
 			/* 3.4.2 server */
 			wr_byte(ptr->race);
 			wr_byte(ptr->class);
-			wr_u16b(ptr->mode);
+			wr_u32b(ptr->mode);
 			wr_byte(ptr->level);
 			wr_byte(ptr->max_plv);
 			wr_u16b(ptr->party); /* changed to u16b to allow more parties */
@@ -2412,17 +2412,11 @@ static void wr_auctions()
 		auc_ptr = &auctions[i];
 		wr_byte(auc_ptr->status);
 		wr_byte(auc_ptr->flags);
-		wr_u16b(auc_ptr->mode);
+		wr_u32b(auc_ptr->mode);
 		wr_s32b(auc_ptr->owner);
 		wr_item(&auc_ptr->item);
-		if (auc_ptr->desc)
-		{
-			wr_string(auc_ptr->desc);
-		}
-		else
-		{
-			wr_string("");
-		}
+		if (auc_ptr->desc) wr_string(auc_ptr->desc);
+		else wr_string("");
 		wr_s32b(auc_ptr->starting_price);
 		wr_s32b(auc_ptr->buyout_price);
 		wr_s32b(auc_ptr->bids_cnt);

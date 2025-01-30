@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	18
+#define SF_VERSION_PATCH	19
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -8176,35 +8176,43 @@ extern int PlayerUID;
 
 
 /* Client modes (e) */
-#define CLIENT_NORMAL		0x0000
-#define CLIENT_PARTY		0x0001
+#define CLIENT_NORMAL		0x00
+#define CLIENT_PARTY		0x01
 
-/* Diff mode (type is 'byte') */
-#define MODE_NORMAL		0x0000	/* WARNING: This flag is ONLY valid to use in comparisons against MODE_MASK'ed mode flags! */
-#define MODE_SOLO		0x0001	/* Soloist mode: Unworldly and cannot trade with anybody. */
-# define MODE_MALE_OLD		0x0001	/* (flag kept atm for backward compat <= 4.7.1.1) */
+/* Diff mode (type is 'byte') -- some modes are only for player characters, some only for items, some also for parties/guilds/auctions etc. */
+#define MODE_NORMAL		0x00000000U	/* WARNING: This flag is ONLY valid to use in comparisons against MODE_MASK'ed mode flags! */
+#define MODE_SOLO		0x00000001U	/* Soloist mode: Unworldly and cannot trade with anybody. */
+# define MODE_MALE_OLD		0x00000001U	/* (flag kept atm for backward compat <= 4.7.1.1) */
 
-#define MODE_HARD		0x0002	/* Player-flag only (not for items): Penalized */
-#define MODE_NO_GHOST		0x0004	/* Player-flag only (not for items): traditional 'hellish' is 3 */
-#define MODE_EVERLASTING	0x0008	/* Player and item flag: No death counter */
-#define MODE_PVP		0x0010	/* Player and item flag: Specific PvP-mode character/item. */
+#define MODE_HARD		0x00000002U	/* Player-flag only (not for items): Penalized */
+#define MODE_NO_GHOST		0x00000004U	/* Player-flag only (not for items): traditional 'hellish' is 3 */
+#define MODE_EVERLASTING	0x00000008U	/* Player and item flag: No death counter */
+#define MODE_PVP		0x00000010U	/* Player and item flag: Specific PvP-mode character/item. */
 
-#define MODE_XXX		0x0020	/* UNUSED //hole */
-# define MODE_FRUIT_BAT_OLD	0x0020	/* (flag kept atm for backward compat <= 4.7.1.1) */
+#define MODE_XXX		0x00000020U	/* UNUSED //hole */
+# define MODE_FRUIT_BAT_OLD	0x00000020U	/* (flag kept atm for backward compat <= 4.7.1.1) */
 
-#define MODE_DED_IDDC		0x0040	/* Dedicated extra character slot for Ironman Deep Dive Challenge */
-#define MODE_DED_PVP		0x0080	/* Dedicated extra character slot for PvP-mode */
+#define MODE_DED_IDDC		0x00000040U	/* Dedicated extra character slot for Ironman Deep Dive Challenge */
+#define MODE_DED_PVP		0x00000080U	/* Dedicated extra character slot for PvP-mode */
 
 /* Temporary control flags only used during char creation.
    NOTE: modes are u16b (were bytes even), but 'connp->sex' is int (and sex/dna_sex are s16b on client-side), so this is ok for just that purpose! */
-#define MODE_MALE		0x0100
-#define MODE_FRUIT_BAT		0x0200
-#define MODE_DED_IDDC_OK	0x0400
-#define MODE_DED_PVP_OK		0x0800
+#define MODE_MALE		0x00000100U
+#define MODE_FRUIT_BAT		0x00000200U
+#define MODE_DED_IDDC_OK	0x00000400U
+#define MODE_DED_PVP_OK		0x00000800U
 
-#define MODE_STARTER_ITEM	0x1000	/* Items only: Mark as 'starter item', making it potentially unsalable, depending on server settings. */
-#define MODE_NEWLOOT_ITEM	0x2000	/* Items only: Mark as 'new loot', to be used if item is pre-owned, so ownership cannot be used to check whether it's new loot or not. */
-#define MODE_NOT_NEWEST_ITEM	0x4000	/* Items only, temporary flag, specifically for inven_carry(): This item is not to become the 'newest_item'. */
+#define MODE_STARTER_ITEM	0x00001000U	/* Items only: Mark as 'starter item', making it potentially unsalable, depending on server settings. */
+#define MODE_NEWLOOT_ITEM	0x00002000U	/* Items only: Mark as 'new loot', to be used if item is pre-owned, so ownership cannot be used to check whether it's new loot or not. */
+#define MODE_NOT_NEWEST_ITEM	0x00004000U	/* Items only, temporary flag, specifically for inven_carry(): This item is not to become the 'newest_item'. */
+//hole 0x8000
+
+#define MODE_ADMIN_WIZ		0x00010000U
+#define MODE_ADMIN_DM		0x00020000U
+#define MODE_PRIVILEGED		0x00040000U	/* privileged == 1 */
+#define MODE_VPRIVILEGED	0x00080000U	/* privileged >= 2 */
+#define MODE_RESTRICTED		0x00100000U	/* restricted == 1 */
+#define MODE_VRESTRICTED	0x00200000U	/* restricted == 2 */
 
 #define MODE_MASK		(MODE_SOLO | MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* "real" character modes, rather than 'softer modifiers' */
 

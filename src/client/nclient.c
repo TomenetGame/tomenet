@@ -2726,7 +2726,9 @@ int Receive_char_info(void) {
 	race = class = trait = sex = mode = 0;
 	lives = -1;
 
-	if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 9, 2, 1, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%d%hd%s", &ch, &race, &class, &trait, &sex, &mode, &lives, cname)) <= 0) return(n);
+	} else if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%hd%s", &ch, &race, &class, &trait, &sex, &mode, &lives, cname)) <= 0) return(n);
 	} else if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%s", &ch, &race, &class, &trait, &sex, &mode, cname)) <= 0) return(n);
@@ -2748,14 +2750,24 @@ int Receive_char_info(void) {
 	/* New for 4.7.3: Transmit admin etc status */
 	p_ptr->admin_wiz = p_ptr->admin_dm = FALSE;
 	p_ptr->privileged = p_ptr->restricted = 0;
-	if (mode & 0x0400) p_ptr->admin_wiz = TRUE;
-	if (mode & 0x0800) p_ptr->admin_dm = TRUE;
-	if (mode & 0x1000) p_ptr->privileged = 1;
-	if (mode & 0x2000) p_ptr->privileged = 2;
-	if (mode & 0x4000) p_ptr->restricted = 1;
-	if (mode & 0x8000) p_ptr->restricted = 2;
-	/* Clear any special transmission hacks */
-	p_ptr->mode = mode & 0xFF;
+	if (is_atleast(&server_version, 4, 9, 2, 1, 0, 1)) {
+		if (mode & MODE_ADMIN_WIZ) p_ptr->admin_wiz = TRUE;
+		if (mode & MODE_ADMIN_DM) p_ptr->admin_dm = TRUE;
+		if (mode & MODE_PRIVILEGED) p_ptr->privileged = 1;
+		if (mode & MODE_VPRIVILEGED) p_ptr->privileged = 2;
+		if (mode & MODE_RESTRICTED) p_ptr->restricted = 1;
+		if (mode & MODE_VRESTRICTED) p_ptr->restricted = 2;
+		p_ptr->mode = mode;
+	} else {
+		if (mode & 0x0400) p_ptr->admin_wiz = TRUE;
+		if (mode & 0x0800) p_ptr->admin_dm = TRUE;
+		if (mode & 0x1000) p_ptr->privileged = 1;
+		if (mode & 0x2000) p_ptr->privileged = 2;
+		if (mode & 0x4000) p_ptr->restricted = 1;
+		if (mode & 0x8000) p_ptr->restricted = 2;
+		/* Clear any special transmission hacks */
+		p_ptr->mode = mode & 0xFF;
+	}
 
 	/* Load preferences once */
 	if (!player_pref_files_loaded) {

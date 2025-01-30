@@ -31,9 +31,8 @@ struct worldpos{
 	s16b wz;	/* deep to sky */
 };
 
-struct object_type
-{
-	u16b mode;			/* Player that found it */
+struct object_type {
+	u32b mode;			/* Player that found it */
 	s32b owner;			/* Player that found it */
 	s16b level;			/* Level req */
 
@@ -751,7 +750,7 @@ struct player_type {
 
 	player_list_type	*blood_bond;	/* Norc is now happy :) */
 
-	u16b mode; /* Difficulty MODE */
+	u32b mode; /* Difficulty MODE */
 
 	s32b esp_link; /* Mental link */
 	byte esp_link_type;

@@ -1886,7 +1886,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	/* Show 5 per page, until "done" */
 	for (j = from, place = j + 1; j < i; j++, place++) {
 		int pr, pc, clev, mlev, cdun, mdun;
-		u16b modebuf;
+		u32b modebuf;
 		char modestr[20], modecol[5];
 		cptr gold, when, aged;
 

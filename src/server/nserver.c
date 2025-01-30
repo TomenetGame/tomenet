@@ -6392,7 +6392,7 @@ int Send_stamina(int Ind, int mst, int cst) {
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
 }
 
-int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, int lives, cptr name) {
+int Send_char_info(int Ind, int race, int class, int trait, int sex, u32b mode, int lives, cptr name) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL;
 	player_type *p_ptr = Players[Ind];
@@ -6403,18 +6403,26 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 
 	/* Hack: Transmitted 'mode' is int, not u16b, so we can stuff this in */
 	if (is_atleast(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->fruit_bat == 1) mode |= MODE_FRUIT_BAT;
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) {
+		mode |= (p_ptr->admin_wiz ? MODE_ADMIN_WIZ : 0x0) | (p_ptr->admin_dm ? MODE_ADMIN_DM : 0x0);
+		mode |= (p_ptr->privileged == 1 ? MODE_PRIVILEGED : 0x0) | (p_ptr->privileged >= 2 ? MODE_VPRIVILEGED : 0x0);
+		mode |= (p_ptr->restricted == 1 ? MODE_RESTRICTED : 0x0) | (p_ptr->restricted == 2 ? MODE_VRESTRICTED : 0x0);
+	}
 	/* Abuse 'u16b mode;' even more for stuffing in another byte to let the client know whether we're admin etc.
 	   We skip 0x0100 and 0x0200 because of MODE_FRUIT_BAT hack.  */
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
+	else if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
 		mode |= (p_ptr->admin_wiz ? 0x0400 : 0x0) | (p_ptr->admin_dm ? 0x0800 : 0x0);
 		mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged >= 2 ? 0x2000 : 0x0);
 		mode |= (p_ptr->restricted == 1 ? 0x4000 : 0x0) | (p_ptr->restricted == 2 ? 0x8000 : 0x0);
 	}
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Note that 'mode' was only set depending on Ind version above lazily, so if Ind2 has an outdated/newer client, it'll receive wrong info sort of */
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_atleast(&connp2->version, 4, 7, 3, 0, 0, 0)) {
+		if (is_atleast(&connp2->version, 4, 9, 2, 1, 0, 1)) {
+			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%d%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
+		} else if (is_atleast(&connp2->version, 4, 7, 3, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
 		} else if (is_newer_than(&connp2->version, 4, 5, 2, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
@@ -6432,7 +6440,9 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 		return(0);
 	}
 
-	if (is_atleast(&connp->version, 4, 7, 3, 0, 0, 0)) {
+	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1)) {
+		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%d%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
+	} else if (is_atleast(&connp->version, 4, 7, 3, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
 	} else if (is_newer_than(&connp->version, 4, 5, 2, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);

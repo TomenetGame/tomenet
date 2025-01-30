@@ -5408,7 +5408,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			} else {
 				u16b ptype = lookup_player_type(p_id);
 				int lev = lookup_player_level(p_id);
-				u16b mode = lookup_player_mode(p_id);
+				u32b mode = lookup_player_mode(p_id);
 				char col;
 				player_type Dummy;
 
