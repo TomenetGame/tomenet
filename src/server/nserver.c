@@ -1802,14 +1802,10 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 	int		i, player = 0;
 	char		traffic[50 + 1];
 	player_type	*p_ptr = NULL;
-	struct account acc;
+	struct account	acc;
 
 	/* reason was probably made using format() which uses a static buffer so copy it - mikaelh */
 	reason = (char*)string_make(reason_orig);
-	host = (char*)string_make(relogin_host);
-	accname = (char*)string_make(relogin_accname);
-	accpass = (char*)string_make(relogin_accpass);
-	charname = (char*)string_make(relogin_charname);
 
 	if (!connp || connp->state == CONN_FREE) {
 		errno = 0;
@@ -1818,39 +1814,46 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 		return(FALSE);
 	}
 
-	/* Timestamp account for 'laston' moment */
-	if (p_ptr && GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
-		time_t now = time(&now);
-		acc.acc_laston = now;
-		acc.acc_laston_real = now;
-		strcpy(acc.reply_name, p_ptr->reply_name);
-
-		/* Lock account on this home server, as we're now far-traveling to a remote server via SERVER_PORTALS */
-		acc.flags |= ACC_LOCKED;
-
-		WriteAccount(&acc, FALSE);
-
-		/* Send savefile to remote server, where it will auto-detect it */
-		i = system(format("sh ./server_portals.sh \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &", host, accname, accpass, charname, p_ptr->savefile));
-	}
-	/* Paranoia: If we cannot access the player or account for any reason, we must abort the relogin process and simply logout the player normally. */
-	else return(Destroy_connection(ind, "Relogin process failed."));
-
-	kill_xfers(ind); /* don't waste time sending to a dead connection ( or crash! ) */
-
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
+	}
 
-		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", player, connp->id, connp->c_name, showtime()));
-		/* in case winners CAN hold arts as long as they don't leave the floor (default): */
-		//lua_strip_true_arts_from_present_player(GetInd[connp->id], int mode)
-	} else
-		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", 0, connp->id, connp->c_name, showtime()));
+	if (!p_ptr || /* Need to be logged on normally */
+	    !GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL) || /* Access the account to set it to ACC_LOCKED while they are away on a remote server */
+	    !process_player_name(p_ptr->Ind, TRUE)) /* Build the player's savegame filename */
+		/* Paranoia: If we cannot access the player or account for any reason, we must abort the relogin process and simply logout the player normally. */
+		return(Destroy_connection(ind, "Relogin process failed."));
+
+	/* (see 'reason' comment above) */
+	host = (char*)string_make(relogin_host);
+	accname = (char*)string_make(relogin_accname);
+	accpass = (char*)string_make(relogin_accpass);
+	charname = (char*)string_make(relogin_charname);
+
+	time_t now = time(&now);
+	/* Timestamp account for 'laston' moment */
+	acc.acc_laston = now;
+	acc.acc_laston_real = now;
+	/* Remember last convo partner ^^ */
+	strcpy(acc.reply_name, p_ptr->reply_name);
+
+	/* Lock account on this home server, as we're now far-traveling to a remote server via SERVER_PORTALS */
+	acc.flags |= ACC_LOCKED;
+
+	WriteAccount(&acc, FALSE);
+
+	/* Send savefile to remote server, where it will auto-detect it */
+	i = system(format("sh ./server_portals.sh \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &", host, accname, accpass, charname, p_ptr->savefile));
+
+	kill_xfers(ind); /* don't waste time sending to a dead connection ( or crash! ) */
+
+	exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", player, connp->id, connp->c_name, showtime()));
+	/* in case winners CAN hold arts as long as they don't leave the floor (default): */
+	//lua_strip_true_arts_from_present_player(GetInd[connp->id], int mode)
 
 	sock = connp->w.sock;
 	if (sock != -1) remove_input(sock);
-
 
 	pkt[0] = (char)PKT_RELOGIN;
 	len = 1;
