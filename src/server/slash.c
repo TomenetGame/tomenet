@@ -12010,7 +12010,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/fix-house-modes")) {
 				/* if house doesn't have its mode set yet, search
 				   hash for player who owns it and set mode to his. */
-				u16b m = 0x0;
+				u32b m = 0x00000000U;
 
 				k = 0;
 				tk = 0;
