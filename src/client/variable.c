@@ -180,13 +180,13 @@ boni_col csheet_boni[15]; /* a-n inventory slots + @ column -- Hardcode - Kurzel
 byte csheet_page = 0;
 bool csheet_horiz = FALSE;
 bool valid_dna = FALSE, dedicated = FALSE;
-s16b race, dna_race;
-s16b class, dna_class;
+u16b race, dna_race;
+u16b class, dna_class;
 cptr dna_class_title; //ENABLE_DEATHKNIGHT,ENABLE_HELLKNIGHT,ENABLE_CPRIEST
-s16b sex, dna_sex;
-s16b mode, lives;
-s16b trait = 0, dna_trait;
-s16b stat_order[6], dna_stat_order[6];			/* Desired order of stats */
+u16b sex, dna_sex;
+u16b mode, lives;
+s16b trait = 0, dna_trait; //-1 for 'traits not available'
+s16b stat_order[6], dna_stat_order[6]; /* Desired order of stats */
 
 s16b class_extra;
 

@@ -310,12 +310,12 @@ extern boni_col csheet_boni[15];
 extern byte csheet_page;
 extern bool csheet_horiz;
 extern bool valid_dna, dedicated;
-extern s16b race, dna_race;
-extern s16b class, dna_class;
+extern u16b race, dna_race;
+extern u16b class, dna_class;
 extern cptr dna_class_title; //ENABLE_DEATHKNIGHT, ENABLE_HELLKNIGHT, ENABLE_CPRIEST
-extern s16b sex, dna_sex;
-extern s16b mode, lives;
-extern s16b trait, dna_trait;
+extern u16b sex, dna_sex;
+extern u16b mode, lives;
+extern s16b trait, dna_trait; //-1 for 'traits not available'
 
 /* DEG Stuff for new party client */
 extern s16b client;

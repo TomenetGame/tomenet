@@ -5313,7 +5313,8 @@ static int Receive_play(int ind) {
 	connection_t *connp = Conn[ind];
 	unsigned char ch;
 	int i, n, limit;
-	s16b sex, race, class, trait = 0;
+	u16b sex, race, class;
+	s16b trait = 0; //-1 for 'traits not available'
 	short int sfx = -1, mus = -1;
 	short int use_graphics;
 	char graphic_tiles[512], fname[512];
