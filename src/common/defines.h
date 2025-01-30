@@ -8205,7 +8205,8 @@ extern int PlayerUID;
 #define MODE_STARTER_ITEM	0x00001000U	/* Items only: Mark as 'starter item', making it potentially unsalable, depending on server settings. */
 #define MODE_NEWLOOT_ITEM	0x00002000U	/* Items only: Mark as 'new loot', to be used if item is pre-owned, so ownership cannot be used to check whether it's new loot or not. */
 #define MODE_NOT_NEWEST_ITEM	0x00004000U	/* Items only, temporary flag, specifically for inven_carry(): This item is not to become the 'newest_item'. */
-//hole 0x8000
+
+#define MODE_REMOTE		0x00008000U	/* SERVER_PORTALS: Player is a guest from a remote server who traveled here temporarily and is therefore restricted in some ways */
 
 #define MODE_ADMIN_WIZ		0x00010000U
 #define MODE_ADMIN_DM		0x00020000U
