@@ -2128,8 +2128,7 @@ static errr top_twenty(int Ind) {
 	sprintf(the_score.how, "%-.49s", p_ptr->died_from_list);
 
 	/* Save the modus (hellish, bat..) */
-//	sprintf(the_score.mode, "%c", p_ptr->mode);
-	the_score.mode[0] = p_ptr->mode;
+	the_score.mode[0] = (p_ptr->mode & 0xFF); //only process the relevant character mode flags, which are all in the first byte actually - note that fruit bat isn't there though
 
 	/* Lock (for writing) the highscore file, or fail */
 	if (fd_lock(highscore_fd, F_WRLCK)) return(1);
@@ -2214,7 +2213,7 @@ static errr predict_score(int Ind, int line) {
 	strcpy(the_score.how, "nobody (yet!)");
 
 	/* Modus.. */
-	the_score.mode[0] = p_ptr->mode;
+	the_score.mode[0] = (p_ptr->mode & 0xFF); //only process the relevant character mode flags, which are all in the first byte actually - note that fruit bat isn't there though
 
 	/* See where the entry would be placed */
 #ifndef NEW_HISCORE

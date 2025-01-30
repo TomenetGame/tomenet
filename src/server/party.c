@@ -1152,7 +1152,7 @@ int check_account(char *accname, char *c_name, int *Ind) {
 		ded_iddc = 0;
 		ded_pvp = 0;
 		for (i = 0; i < chars; i++) {
-			int m = lookup_player_mode(id_list[i]);
+			u32b m = lookup_player_mode(id_list[i]);
 
 			if ((m & MODE_DED_IDDC) && ded_iddc < MAX_DED_IDDC_CHARS) {
 				ded_iddc++;

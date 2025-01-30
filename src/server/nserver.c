@@ -4977,7 +4977,7 @@ static int Receive_login(int ind) {
 		if ((connp->password_verified || /* <- for "***" reorder hack! Original connp->pass has long been free'd again. */
 		    connp->pass) && (accfail = GetAccount(&acc, connp->nick, connp->pass, FALSE, NULL, NULL))) { /* Note: Calling GetAccount() with pass = NULL is fine! */
 			int *id_list;
-			u16b tmpm;
+			u32b tmpm;
 			char colour_sequence[3];
 			byte *id_order, *id_index, j;
 			u32b sflags0_local = sflags0;

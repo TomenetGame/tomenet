@@ -5722,7 +5722,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		} else if (prefix(messagelc, "/characters") || prefix(messagelc, "/chars")) { /* list all characters of the player's account (user-version of /acclist) */
 			int *id_list, i, n;
 			struct account acc;
-			byte tmpm;
+			u32b tmpm;
 			u16b ptype;
 			char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
 			struct worldpos wpos;
@@ -9945,7 +9945,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/acclist")) { /* list all living characters of a specified account name - C. Blue */
 				int *id_list, i, n;
 				struct account acc;
-				byte tmpm;
+				u32b tmpm;
 				u16b ptype;
 				char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
 				struct worldpos wpos;
@@ -10013,7 +10013,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* maybe do /acclist here? */
 				if (prefix(messagelc, "/characcl")) {
 					int *id_list, i, n;
-					byte tmpm;
+					u32b tmpm;
 					char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
 
 					n = player_id_list(&id_list, acc.id);
@@ -12300,18 +12300,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/debug-house")) {
 				int h_idx;
 				house_type *h_ptr;
+				u32b mode;
 
 				h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 				if (h_idx == -1) return;
 				h_ptr = &houses[h_idx];
 
-				j = -1;
+				mode = -1; //0xffffffff
 				if (h_ptr->dna->owner &&
 				    (h_ptr->dna->owner_type == OT_PLAYER)) {
-					j = lookup_player_mode(h_ptr->dna->owner);
+					mode = lookup_player_mode(h_ptr->dna->owner);
 				}
 
-				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d.", h_idx, h_ptr->dna->mode, j, h_ptr->colour);
+				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d.", h_idx, h_ptr->dna->mode, mode, h_ptr->colour);
 				return;
 			}
 			else if (prefix(messagelc, "/debugmd")) {//debug p_ptr->max_depth[]
@@ -14205,6 +14206,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int h_idx;
 				house_type *h_ptr;
 				char *tname;
+				u32b mode;
 
 				h_idx = k;
 				if (!tk || h_idx < 0 || h_idx >= num_houses) {
@@ -14224,13 +14226,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				j = -1;
+				mode = -1; //0xffffffff
 				if (h_ptr->dna->owner &&
 				    (h_ptr->dna->owner_type == OT_PLAYER)) {
-					j = lookup_player_mode(h_ptr->dna->owner);
+					mode = lookup_player_mode(h_ptr->dna->owner);
 				}
 
-				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d -> %s", h_idx, h_ptr->dna->mode, j, h_ptr->colour, tname);
+				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d -> %s", h_idx, h_ptr->dna->mode, mode, h_ptr->colour, tname);
 
 				if (!backup_one_estate(NULL, 0, 0, h_idx, tname)) {
 					msg_print(Ind, "...failed.");

@@ -271,7 +271,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 				int lev = 0;
 
 				if ((pname = lookup_player_name(a_ptr->carrier))) {
-					s32b tmpm = lookup_player_mode(a_ptr->carrier);
+					u32b tmpm = lookup_player_mode(a_ptr->carrier);
 
 					if (tmpm & MODE_EVERLASTING) strcpy(cs, "\377B");
 					else if (tmpm & MODE_PVP) strcpy(cs, format("\377%c", COLOUR_MODE_PVP));
