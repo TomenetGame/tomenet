@@ -875,12 +875,12 @@
    These could for example be:
    - Impending character/account expiry.
    - Major game updates. */
-//#define EMAIL_NOTIFICATIONS
+#define EMAIL_NOTIFICATIONS
 #ifdef EMAIL_NOTIFICATIONS
  /* Allow toggling specific notifications: */
  #define EMAIL_NOTIFICATION_EXPIRY_CHAR 14 /* Notify player <n> days in advance if a character is about to expire soon */
  #define EMAIL_NOTIFICATION_EXPIRY_ACC 14 /* Notify player <n> days in advance if their account is about to expire soon */
- #define EMAIL_NOTIFICATION_RELEASE /* Notify player on new release. */
+ //#define EMAIL_NOTIFICATION_RELEASE /* Notify player on new release. -- currently no meaningful way of implementation for automatic notification */
  /* About new-release notification, how to automate this maybe:
     Check if the 'server' file version is converted on server startup, and assume that this must be due to a new release. */
 #endif

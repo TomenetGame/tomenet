@@ -3393,10 +3393,6 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		return(FALSE);
 	}
 
-#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
-	/* ACC_EMN_AX */
-#endif
-
 	/* Attempt to load from a savefile */
 	character_loaded = FALSE;
 

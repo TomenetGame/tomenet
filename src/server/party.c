@@ -5051,7 +5051,10 @@ void ef_rename(const char *name) {
 
 /* For marking accounts active */
 static unsigned char *account_active = NULL;
-
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+/* For marking accounts that 1+ char is going to expire */
+static unsigned char *account_expiry_char = NULL;
+#endif
 /*
  *  Called once every 24 hours. Deletes unused IDs.
  */
@@ -5076,6 +5079,10 @@ void scan_characters() {
 
 	/* Allocate an array for marking accounts as active */
 	C_MAKE(account_active, MAX_ACCOUNTS / 8, unsigned char);
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+	/* Marking accounts that one or more chars are about to expire */
+	C_MAKE(account_expiry_char, MAX_ACCOUNTS / 8, unsigned char);
+#endif
 
 	now = time(&now);
 
@@ -5093,9 +5100,9 @@ void scan_characters() {
 				continue;
 			} else {
 #if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
-				if ((ptr->laston && (now - ptr->laston == 3600 * 24 * (CHARACTER_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_CHAR)))
-				    && !(cfg.admins_never_expire && ptr->admin)) { //ACC_EMN_CX
-				}
+				if ((ptr->laston && (now - ptr->laston >= 3600 * 24 * (CHARACTER_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_CHAR)))
+				    && !(cfg.admins_never_expire && ptr->admin)) //ACC_EMN_CX
+					account_expiry_char[ptr->account / 8] |= 1U << (ptr->account % 8);
 #endif
 #if 0 /* Low-performance version */
 				/* if a character didn't timeout, timestamp his
@@ -5213,7 +5220,7 @@ void scan_accounts() {
 		}
 
 		/* test for expiry -> delete */
-		else if (now - acc.acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
+		else if (now - acc.acc_laston > 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
 #if 1 /* temporarily disable for testing purpose? */
 			acc.flags |= ACC_DELD;
 
@@ -5226,8 +5233,41 @@ void scan_accounts() {
 			s_printf("  (TESTING) Account '%s' expired.\n", acc.name);
 #endif
 		}
+
 #if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
-		if (now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC)) { //ACC_EMN_AX
+		if (!(acc.flags & ACC_EMN_AX) && acc.email[0] && now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC)) {
+			int res;
+
+			acc.flags |= ACC_EMN_AX;
+			modified = TRUE;
+
+			res = system(format("echo 'Your account will expire within approximately %d days if you don't log in.' > _testmail.txt", EMAIL_NOTIFICATION_EXPIRY_ACC));
+			res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
+			remove("_testmail.txt");
+			if (res) s_printf("ACC_EMN_AX: System shell error (account '%s').\n", acc.name);
+			else s_printf("ACC_EMN_AX: Dispatched to '%s', account '%s'.\n", acc.email, acc.name);
+		} else if ((acc.flags & ACC_EMN_AX) && !(now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC))) {
+			/* Account is no longer near expiry -> clear flag again */
+			acc.flags &= ~ACC_EMN_AX;
+			modified = TRUE;
+		}
+#endif
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+		if (!(acc.flags & ACC_EMN_CX) && acc.email[0] && (account_expiry_char[acc.id / 8] & (1U << (acc.id % 8)))) {
+			int res;
+
+			acc.flags |= ACC_EMN_CX;
+			modified = TRUE;
+
+			res = system(format("echo 'At least one of your characters will expire within approximately %d days if you don't log in.' > _testmail.txt", EMAIL_NOTIFICATION_EXPIRY_CHAR));
+			res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
+				remove("_testmail.txt");
+			if (res) s_printf("ACC_EMN_CX: System shell error (account '%s').\n", acc.name);
+			else s_printf("ACC_EMN_CX: Dispatched to '%s', account '%s'.\n", acc.email, acc.name);
+		} else if ((acc.flags & ACC_EMN_CX) && !(account_expiry_char[acc.id / 8] & (1U << (acc.id % 8)))) {
+			/* No character is near expiry anymore -> clear flag again */
+			acc.flags &= ~ACC_EMN_CX;
+			modified = TRUE;
 		}
 #endif
 
@@ -5253,6 +5293,9 @@ void scan_accounts() {
 	s_printf("Finished account inactivity check.\n");
 
 	C_KILL(account_active, MAX_ACCOUNTS / 8, unsigned char);
+#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
+	C_KILL(account_expiry_char, MAX_ACCOUNTS / 8, unsigned char);
+#endif
 }
 
 /* Rename a player's char savegame as well as the name inside.
