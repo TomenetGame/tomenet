@@ -1819,11 +1819,11 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 	}
 
 	/* Timestamp account for 'laston' moment */
-	if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
+	if (p_ptr && GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
 		time_t now = time(&now);
 		acc.acc_laston = now;
 		acc.acc_laston_real = now;
-		if (p_ptr) strcpy(acc.reply_name, p_ptr->reply_name);
+		strcpy(acc.reply_name, p_ptr->reply_name);
 
 		/* Lock account on this home server, as we're now far-traveling to a remote server via SERVER_PORTALS */
 		acc.flags |= ACC_LOCKED;
@@ -1831,9 +1831,9 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 		WriteAccount(&acc, FALSE);
 
 		/* Send savefile to remote server, where it will auto-detect it */
-		i = system(format("sh ./server_portals.sh \"%s\" \"%s\"  \"%s\" \"%s\" &", host, accname, accpass, charname));
+		i = system(format("sh ./server_portals.sh \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &", host, accname, accpass, charname, p_ptr->savefile));
 	}
-	/* Paranoia: If we cannot access the account for any reason, we must abort the relogin process and simply logout the player normally. */
+	/* Paranoia: If we cannot access the player or account for any reason, we must abort the relogin process and simply logout the player normally. */
 	else return(Destroy_connection(ind, "Relogin process failed."));
 
 	kill_xfers(ind); /* don't waste time sending to a dead connection ( or crash! ) */
