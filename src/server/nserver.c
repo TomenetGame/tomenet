@@ -929,10 +929,12 @@ bool forbidden_name(char *cname) {
 
 //ENABLE_GO_GAME - don't allow posing as one of the AI players
 	if (strstr(name, " (ai)")) return(TRUE);
-	if (strstr(name, "godalf, The ")) return(TRUE);
+	if (strstr(name, "godalf, the ")) return(TRUE);
 
 	if (strstr(name, ".activitytime")) return(TRUE); /* For automatic rollback playtime loss detection */
 
+	if (!strcmp(name, "server_portals")) return(TRUE); /* special folder for temporary remote savegames */
+	if (strstr(name, "server") && strstr(name, "admin")) return(TRUE); /* imposter attempt? ^^ */
 
 	path_build(path_buf, 1024, ANGBAND_DIR_CONFIG, "badnames.txt");
 
@@ -1666,15 +1668,14 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	/* reason was probably made using format() which uses a static buffer so copy it - mikaelh */
 	reason = (char*)string_make(reason_orig);
 
-	kill_xfers(ind);	/* don't waste time sending to a dead
-				   connection ( or crash! ) */
-
 	if (!connp || connp->state == CONN_FREE) {
 		errno = 0;
 		plog(format("Cannot destroy empty connection (\"%s\")", reason));
 		string_free(reason);
 		return(FALSE);
 	}
+
+	kill_xfers(ind); /* don't waste time sending to a dead connection ( or crash! ) */
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -1810,15 +1811,32 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 	accpass = (char*)string_make(relogin_accpass);
 	charname = (char*)string_make(relogin_charname);
 
-	kill_xfers(ind);	/* don't waste time sending to a dead
-				   connection ( or crash! ) */
-
 	if (!connp || connp->state == CONN_FREE) {
 		errno = 0;
 		plog(format("Cannot destroy empty connection (\"%s\")", reason));
 		string_free(reason);
 		return(FALSE);
 	}
+
+	/* Timestamp account for 'laston' moment */
+	if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
+		time_t now = time(&now);
+		acc.acc_laston = now;
+		acc.acc_laston_real = now;
+		if (p_ptr) strcpy(acc.reply_name, p_ptr->reply_name);
+
+		/* Lock account on this home server, as we're now far-traveling to a remote server via SERVER_PORTALS */
+		acc.flags |= ACC_LOCKED;
+
+		WriteAccount(&acc, FALSE);
+
+		/* Send savefile to remote server, where it will auto-detect it */
+		i = system(format("sh ./server_portals.sh \"%s\" \"%s\"  \"%s\" \"%s\" &", host, accname, accpass, charname));
+	}
+	/* Paranoia: If we cannot access the account for any reason, we must abort the relogin process and simply logout the player normally. */
+	else return(Destroy_connection(ind, "Relogin process failed."));
+
+	kill_xfers(ind); /* don't waste time sending to a dead connection ( or crash! ) */
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -1829,15 +1847,6 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 		//lua_strip_true_arts_from_present_player(GetInd[connp->id], int mode)
 	} else
 		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", 0, connp->id, connp->c_name, showtime()));
-
-	/* Timestamp account for 'laston' moment */
-	if (GetAccount(&acc, connp->nick, NULL, TRUE, NULL, NULL)) {
-		time_t now = time(&now);
-		acc.acc_laston = now;
-		acc.acc_laston_real = now;
-		if (p_ptr) strcpy(acc.reply_name, p_ptr->reply_name);
-		WriteAccount(&acc, FALSE);
-	}
 
 	sock = connp->w.sock;
 	if (sock != -1) remove_input(sock);
