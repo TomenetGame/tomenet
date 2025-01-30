@@ -2228,6 +2228,8 @@ bool load_player(int Ind) {
 		sf_patch = vvv[2];
 		sf_extra = vvv[3];
 
+		s_printf("Reading a %d.%d.%d savefile...\n", sf_major, sf_minor, sf_patch);
+
 		/* Attempt to load */
 		err = rd_savefile_new(Ind);
 
@@ -2878,6 +2880,8 @@ static bool load_server_info_classic(void) {
 		sf_minor = vvv[1];
 		sf_patch = vvv[2];
 		sf_extra = vvv[3];
+
+		s_printf("Reading a %d.%d.%d server savefile...\n", sf_major, sf_minor, sf_patch);
 
 		/* Parse "MAngband" savefiles */
 		/* If I ever catch the one that put that STUPID UGLY IDIOT

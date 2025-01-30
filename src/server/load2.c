@@ -3590,7 +3590,7 @@ errr rd_server_savefile() {
 	fff_buf = C_NEW(MAX_BUF_SIZE, byte);
 	fff_buf_pos = MAX_BUF_SIZE;
 
-	/* Read the version */
+	/* Read the version (again, we already read them before and stored them into sf_major, sf_minor, sf_patch, sf_extra actually) */
 	xor_byte = 0;
 	rd_byte(&ssf_major);
 	xor_byte = 0;
