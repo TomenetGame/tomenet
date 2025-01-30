@@ -3086,7 +3086,7 @@ struct account {
 	char hostname[HOSTNAME_LEN];	/* last used hostname */
 	char addr[MAX_CHARS];		/* last used IP address */
 	char reply_name[20];		/* p_ptr->reply_name [NAME_LEN] */
-	char email[80];
+	char email[80];			/* EMAIL_NOTIFICATIONS */
 
 	/* for future use */
 	unsigned char unused1;
