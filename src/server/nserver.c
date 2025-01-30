@@ -1883,6 +1883,12 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 	pkt[len] = 0;
 	len++;
 
+	/* Delay in deci seconds for the client to wait before it reconnects to the target server,
+	   because the asynchronous scp transfer of savefile information needs to complete before the client tries to login or it will fail,
+	   as the remote server won't find the player's information in its lib/save/server_portals/ folder: */
+	pkt[len] = 20;
+	len++;
+
 	pkt[len] = PKT_END;
 	pkt[len + 1] = '\0';
 

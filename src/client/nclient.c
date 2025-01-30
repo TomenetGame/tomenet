@@ -1983,7 +1983,7 @@ int Receive_quit(void) {
 /* Quit like Receive_quit(), but relogin to an IP specified to us by the server - for SERVER_PORTALS. */
 int Receive_relogin(void) {
 	unsigned char pkt;
-	char reason[MAX_CHARS_WIDE];
+	char reason[MAX_CHARS_WIDE], delay;
 
 	/* game ends, so leave all other screens like
 	   shops or browsed books or skill screen etc */
@@ -1991,22 +1991,23 @@ int Receive_relogin(void) {
 	topline_icky = FALSE;
 
 	/* 'reason' is an optional parameter - no real reason for this though (badumtsh) */
-	if (Packet_scanf(&rbuf, "%c%s%s%s%s", &pkt, relogin_host, relogin_accname, relogin_accpass, relogin_charname) != 5) {
+	if (Packet_scanf(&rbuf, "%c%s%s%s%s%s%c", &pkt, relogin_host, relogin_accname, relogin_accpass, relogin_charname, reason, &delay) != 7) {
 		errno = 0;
 		plog("Can't read relogin packet");
-	} else {
-		if (Packet_scanf(&rbuf, "%s", reason) <= 0) strcpy(reason, "unknown reason");
-		errno = 0;
-
-		//cl_initialized = FALSE;
+		return(-1);
+	}
 
 #ifdef RETRY_LOGIN
-		rl_connection_destructible = TRUE;
-		rl_connection_state = 2;
+	rl_connection_destructible = TRUE;
+	rl_connection_state = 2;
 #endif
 
-		quit(format("Relog to %s\n(%s)", relogin_host, reason));
-	}
+	quit(format("Relog to %s\n(%s)", relogin_host, reason));
+#ifdef WINDOWS
+	Sleep(delay * 100); //ms
+#else
+	usleep(delay * 100000); //us
+#endif
 	return(-1);
 }
 
