@@ -1276,7 +1276,7 @@ static errr rd_store(store_type *st_ptr) {
 
 static void rd_bbs() {
 	int i, j;
-	s16b saved_lines, parties, guilds;
+	s16b saved_lines, num_parties, num_guilds;
 	char dummy[MSG_LEN];
 
 	rd_s16b(&saved_lines);
@@ -1293,10 +1293,10 @@ static void rd_bbs() {
 	/* load pbbs & gbbs - C. Blue */
 	if (!s_older_than(4, 4, 9)) {
 		/* read old parties */
-		rd_s16b(&parties);
-		if (parties < MAX_PARTIES) s_printf("Expanded party number from %d to %d.\n", parties, MAX_PARTIES);
-		else if (parties > MAX_PARTIES) s_printf("Reduced party number from %d to %d.\n", parties, MAX_PARTIES);
-		for (j = 0; j < parties; j++)
+		rd_s16b(&num_parties);
+		if (num_parties < MAX_PARTIES) s_printf("Expanded party number from %d to %d.\n", num_parties, MAX_PARTIES);
+		else if (num_parties > MAX_PARTIES) s_printf("Reduced party number from %d to %d.\n", num_parties, MAX_PARTIES);
+		for (j = 0; j < num_parties; j++)
 			if (j < MAX_PARTIES) {
 				for (i = 0; i < saved_lines; i++)
 					if (i >= BBS_LINES) {
@@ -1313,10 +1313,10 @@ static void rd_bbs() {
 				}
 			}
 		/* read old guilds */
-		rd_s16b(&guilds);
-		if (guilds < MAX_GUILDS) s_printf("Expanded guild number from %d to %d.\n", guilds, MAX_GUILDS);
-		else if (guilds > MAX_GUILDS) s_printf("Reduced guild number from %d to %d.\n", guilds, MAX_GUILDS);
-		for (j = 0; j < guilds; j++)
+		rd_s16b(&num_guilds);
+		if (num_guilds < MAX_GUILDS) s_printf("Expanded guild number from %d to %d.\n", num_guilds, MAX_GUILDS);
+		else if (num_guilds > MAX_GUILDS) s_printf("Reduced guild number from %d to %d.\n", num_guilds, MAX_GUILDS);
+		for (j = 0; j < num_guilds; j++)
 			if (j < MAX_GUILDS) {
 				for (i = 0; i < saved_lines; i++)
 					if (i >= BBS_LINES) {
@@ -1553,15 +1553,16 @@ static void rd_quests() {
 
 static void rd_guilds() {
 	int i;
-	u16b tmp16u;
+	u16b tmp16u, num_guilds;
 	byte tmpbyte;
 
 	rd_u16b(&tmp16u);
-	if (tmp16u > MAX_GUILDS) {
-		s_printf("Too many guilds (%d)\n", tmp16u);
+	num_guilds = tmp16u;
+	if (num_guilds > MAX_GUILDS) {
+		s_printf("Too many guilds (%d)\n", num_guilds);
 		return;
 	}
-	for (i = 0; i < tmp16u; i++) {
+	for (i = 0; i < num_guilds; i++) {
 		if (!s_older_than(4, 5, 8)) rd_u32b(&guilds[i].dna);
 		else {
 			guilds[i].dna = (u32b)rand_int(0xFFFF) << 16;
@@ -1816,13 +1817,12 @@ static bool rd_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge;
 
-	int i, j;
-	int k, l, m;
+	int i, j, k, l, m;
 	monster_race *r_ptr;
 	char login_char_name[80];
 
 	byte tmp8u;
-	u16b tmp16u, restart_info;
+	u16b tmp16u, restart_info, num_skills, num_monsters;
 	s16b tmp16s;
 	u32b tmp32u;
 	s32b tmp32s;
@@ -1920,8 +1920,9 @@ static bool rd_extra(int Ind) {
 	/* Read the skills */
 	{
 		rd_u16b(&tmp16u);
-		if (tmp16u > MAX_SKILLS) quit("Too many skills!");
-		for (i = 0; i < tmp16u; ++i) {
+		num_skills = tmp16u;
+		if (num_skills > MAX_SKILLS) quit("Too many skills!");
+		for (i = 0; i < num_skills; ++i) {
 			rd_s32b(&p_ptr->s_info[i].value);
 			rd_u16b(&p_ptr->s_info[i].mod);
 			rd_byte(&tmp8u);
@@ -1962,7 +1963,7 @@ static bool rd_extra(int Ind) {
 
 		/* /undoskills - mikaelh */
 		if (!older_than(4, 4, 4)) {
-			for (i = 0; i < tmp16u; ++i) {
+			for (i = 0; i < num_skills; ++i) {
 				rd_s32b(&p_ptr->s_info_old[i].value);
 				rd_u16b(&p_ptr->s_info_old[i].mod);
 				rd_byte(&tmp8u);
@@ -2222,14 +2223,14 @@ static bool rd_extra(int Ind) {
 
 	/* Monster Memory */
 	rd_u16b(&tmp16u);
-
+	num_monsters = tmp16u;
 	/* Incompatible save files */
-	if (tmp16u > MAX_R_IDX) {
-		s_printf("Too many (%u) monster races!\n", tmp16u);
+	if (num_monsters > MAX_R_IDX) {
+		s_printf("Too many (%u) monster races!\n", num_monsters);
 		return(22);
 	}
 	if (older_than(4, 7, 2))
-		for (i = 0; i < tmp16u; i++) {
+		for (i = 0; i < num_monsters; i++) {
 			rd_s16b(&p_ptr->r_killed[i]);
 			p_ptr->r_mimicry[i] = p_ptr->r_killed[i]; //translate, for backward-compatibility
 
@@ -2244,7 +2245,7 @@ static bool rd_extra(int Ind) {
 			}
 		}
 	else
-		for (i = 0; i < tmp16u; i++) {
+		for (i = 0; i < num_monsters; i++) {
 			rd_s16b(&p_ptr->r_killed[i]);
 			rd_s16b(&p_ptr->r_mimicry[i]);
 
@@ -2283,7 +2284,7 @@ static bool rd_extra(int Ind) {
 #if 1 /* To make this option, which isn't part of the current client, persistent before next client release */
 	if (!older_than(4, 5, 6)) {
 		rd_s16b(&tmp16s);
-		p_ptr->flash_self2 = tmp16u != 0;
+		p_ptr->flash_self2 = (tmp16s != 0);
 	} else {
 		strip_bytes(2);
 		p_ptr->flash_self2 = FALSE;
@@ -3212,6 +3213,7 @@ static void rd_auctions() {
 static errr rd_savefile_new_aux(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, err_code = 0;
+	u16b objects, traps;
 
 	//byte panic;
 	u16b tmp16u;
@@ -3258,15 +3260,16 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	/* Object Memory */
 	rd_u16b(&tmp16u);
+	objects = tmp16u;
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_K_IDX) {
-		s_printf("Too many (%u) object kinds!\n", tmp16u);
+	if (objects > MAX_K_IDX) {
+		s_printf("Too many (%u) object kinds!\n", objects);
 		return(22);
 	}
 
 	/* Read the object memory */
-	for (i = 0; i < tmp16u; i++) {
+	for (i = 0; i < objects; i++) {
 		rd_byte(&tmp8u);
 		Players[Ind]->obj_aware[i] = (tmp8u & 0x01) ? TRUE : FALSE;
 		Players[Ind]->obj_tried[i] = (tmp8u & 0x02) ? TRUE : FALSE;
@@ -3277,25 +3280,26 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	/* Trap Memory */
 	rd_u16b(&tmp16u);
+	traps = tmp16u;
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_TR_IDX) {
-		s_printf("Too many (%u) trap kinds!\n", tmp16u);
+	if (traps > MAX_TR_IDX) {
+		s_printf("Too many (%u) trap kinds!\n", traps);
 		return(22);
 	}
 
 	/* Read the trap memory */
 	//if (older_than(4, 9, 0)) {
-		for (i = 0; i < tmp16u; i++) {
+		for (i = 0; i < traps; i++) {
 			rd_byte(&tmp8u);
 			Players[Ind]->trap_ident[i] = (tmp8u & 0x01) ? TRUE : FALSE;
 		}
 	/* pft, maybe not efficient enough ie bad tradeoff mem vs cpu, dunno though:
 	} else {
-		for (i = 0; i < tmp16u / 8; i++) {
+		for (i = 0; i < traps / 8; i++) {
 			rd_byte(&tmp8u);
 			for (j = 0; j < 8; j++) {
-				if (i * 8 + j >= tmp16u) break;
+				if (i * 8 + j >= traps) break;
 				Players[Ind]->trap_ident[i * 8 + j] = (tmp8u & (1 << j)) ? TRUE : FALSE;
 			}
 		}
@@ -3311,7 +3315,6 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	/* Read the player_hp array */
 	rd_u16b(&tmp16u);
-
 	/* Read the player_hp array */
 	for (i = 0; i < tmp16u; i++)
 		rd_s16b(&p_ptr->player_hp[i]);
@@ -3563,11 +3566,11 @@ errr rd_server_savefile() {
 
 	char savefile[MAX_PATH_LENGTH];
 
-	byte tmp8u, restart_info = 0;
-	u16b tmp16u;
+	byte tmp8u, restart_info = 0, iddc_records, highscore_records;
+	u16b tmp16u, num_monraces, num_artifacts, num_parties, num_objects;
 	s16b tmp16s;
-	u32b tmp32u;
-	s32b tmp32s;
+	u32b tmp32u, num_monsters, num_players;
+	s32b tmp32s, player_id;
 
 #ifdef ALLOW_EXCESS_DATA
 	u32b overflow; /* For discarding data that is too much to fit in */
@@ -3665,33 +3668,34 @@ errr rd_server_savefile() {
 
 	/* Monster Memory */
 	rd_u16b(&tmp16u);
+	num_monraces = tmp16u;
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_R_IDX) {
+	if (num_monraces > MAX_R_IDX) {
 //todo: ALLOW_EXCESS_DATA
-		s_printf("Too many (%u) monster races!\n", tmp16u);
+		s_printf("Too many (%u) monster races!\n", num_monraces);
 		return(21);
 	}
-
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++) {
+	for (i = 0; i < num_monraces; i++) {
 		/* Read the monster race information */
 		rd_global_lore(i);
 	}
 
 
-
 	/* Load the Artifacts */
 	rd_u16b(&tmp16u);
+	num_artifacts = tmp16u;
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_A_IDX) {
+	if (num_artifacts > MAX_A_IDX) {
 //todo: ALLOW_EXCESS_DATA
-		s_printf("Too many (%u) artifacts!\n", tmp16u);
+		s_printf("Too many (%u) artifacts!\n", num_artifacts);
 		return(24);
 	}
+
 	/* Read the artifact flags */
-	for (i = 0; i < tmp16u; i++) {
+	for (i = 0; i < num_artifacts; i++) {
 		rd_byte(&tmp8u);
 		a_info[i].cur_num = tmp8u;
 		rd_byte(&tmp8u);
@@ -3743,28 +3747,27 @@ errr rd_server_savefile() {
 	}
 
 
-
 	rd_u16b(&tmp16u);
+	num_parties = tmp16u;
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_PARTIES) {
+	if (num_parties > MAX_PARTIES) {
 //todo: ALLOW_EXCESS_DATA
-		s_printf("Too many (%u) parties!\n", tmp16u);
+		s_printf("Too many (%u) parties!\n", num_parties);
 		return(25);
 	}
-
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++) rd_party(i);
+	for (i = 0; i < num_parties; i++) rd_party(i);
 
 	if (s_older_than(4, 2, 4)) {
-		for (i = tmp16u; i < MAX_PARTIES; i++) {
+		for (i = num_parties; i < MAX_PARTIES; i++) {
 			/* HACK Initialize new parties just to make sure they'll work - mikaelh */
 			parties[i].members = 0;
 			parties[i].created = 0;
 		}
 	}
 
-	/* XXX If new enough, read in the saved levels and monsters. */
+	/* XXX If new enough, read in the saved levels and . */
 
 	/* read the number of levels to be loaded */
 	rd_towns();
@@ -3775,20 +3778,21 @@ errr rd_server_savefile() {
 
 	/* get the number of monsters to be loaded */
 	rd_u32b(&tmp32u);
-	if (tmp32u > MAX_M_IDX) {
+	num_monsters = tmp32u;
+	if (num_monsters > MAX_M_IDX) {
 #ifndef ALLOW_EXCESS_DATA
-		s_printf("Too many (%u) monsters!\n", tmp16u);
+		s_printf("Too many (%u) monsters!\n", num_monsters);
 		return(29);
 #else
-		s_printf("Too many (%u) monsters! Discarding %d beyond %d.\n", tmp16u, tmp16u - MAX_M_IDX, MAX_M_IDX);
-		overflow = tmp16u - MAX_M_IDX;
-		tmp16u = MAX_M_IDX;
+		s_printf("Too many (%u) num_monsters! Discarding %d beyond %d.\n", num_monsters, num_monsters - MAX_M_IDX, MAX_M_IDX);
+		overflow = num_monsters - MAX_M_IDX;
+		num_monsters = MAX_M_IDX;
 	} else {
 		overflow = 0;
 #endif
 	}
 	/* load the monsters */
-	for (i = 0; i < tmp32u; i++) rd_monster(&m_list[m_pop()]);
+	for (i = 0; i < num_monsters; i++) rd_monster(&m_list[m_pop()]);
 #ifdef ALLOW_EXCESS_DATA
 	/* Just discard excess data */
 	for (i = 0; i < overflow; i++) {
@@ -3825,23 +3829,24 @@ errr rd_server_savefile() {
 
 	/* Read object info if new enough */
 	rd_u16b(&tmp16u);
+	num_objects = tmp16u;
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_O_IDX) {
+	if (num_objects > MAX_O_IDX) {
 #ifndef ALLOW_EXCESS_DATA
-		s_printf("Too many (%u) objects!\n", tmp16u);
+		s_printf("Too many (%u) objects!\n", num_objects);
 		return(26);
 #else
-		s_printf("Too many (%u) objects! Discarding %d beyond %d.\n", tmp16u, tmp16u - MAX_O_IDX, MAX_O_IDX);
-		overflow = tmp16u - MAX_O_IDX;
-		tmp16u = MAX_O_IDX;
+		s_printf("Too many (%u) objects! Discarding %d beyond %d.\n", num_objects, num_objects - MAX_O_IDX, MAX_O_IDX);
+		overflow = num_objects - MAX_O_IDX;
+		num_objects = MAX_O_IDX;
 	} else {
 		overflow = 0;
 #endif
 	}
 
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++) rd_item(&o_list[i]);
+	for (i = 0; i < num_objects; i++) rd_item(&o_list[i]);
 
 #ifdef ALLOW_EXCESS_DATA
 	/* Just discard excess data */
@@ -3853,7 +3858,7 @@ errr rd_server_savefile() {
 #endif
 
 	/* Set the maximum object number */
-	o_max = tmp16u;
+	o_max = num_objects;
 
 
 
@@ -3895,13 +3900,15 @@ errr rd_server_savefile() {
 		byte order;
 
 		rd_u32b(&tmp32u);
+		num_players = tmp32u;
 
 		/* Read the available records */
-		for (i = 0; i < tmp32u; i++) {
+		for (i = 0; i < num_players; i++) {
 			s32b laston;
 
 			/* Read the ID */
 			rd_s32b(&tmp32s);
+			player_id = tmp32s;
 			rd_u32b(&acct);
 			rd_s32b(&laston);
 			rd_byte(&race);
@@ -3961,9 +3968,9 @@ errr rd_server_savefile() {
 #endif
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner, order);
+			add_player_name(name, player_id, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner, order);
 		}
-		s_printf("Read %d player name records.\n", tmp32u);
+		s_printf("Read %d player name records.\n", num_players);
 	}
 
 #if 1
@@ -4003,7 +4010,8 @@ errr rd_server_savefile() {
 		char dummy[MAX_CHARS_WIDE];
 
 		rd_byte(&tmp8u);
-		for (i = 0; i < tmp8u; i++) {
+		iddc_records = tmp8u;
+		for (i = 0; i < iddc_records; i++) {
 			rd_s16b(&tmp16s);
 			if (i >= IDDC_HIGHSCORE_SIZE) {
 				rd_string(dummy, MAX_CHARS_WIDE);
@@ -4019,7 +4027,7 @@ errr rd_server_savefile() {
 			rd_s16b(&tmp16s);
 			deep_dive_class[i] = tmp16s;
 		}
-		for (i = tmp8u; i < IDDC_HIGHSCORE_SIZE; i++) {
+		for (i = iddc_records; i < IDDC_HIGHSCORE_SIZE; i++) {
 			deep_dive_level[i] = 0;
 			deep_dive_name[i][0] = 0;
 			deep_dive_char[i][0] = 0;
@@ -4030,7 +4038,8 @@ errr rd_server_savefile() {
 		char dummy[MAX_CHARS_WIDE];
 
 		rd_byte(&tmp8u);
-		for (i = 0; i < tmp8u; i++) {
+		highscore_records = tmp8u;
+		for (i = 0; i < highscore_records; i++) {
 			rd_s16b(&tmp16s);
 			if (i >= IDDC_HIGHSCORE_SIZE) {
 				rd_string(dummy, MAX_CHARS_WIDE);
@@ -4039,7 +4048,7 @@ errr rd_server_savefile() {
 			deep_dive_level[i] = tmp16s;
 			rd_string(deep_dive_name[i], MAX_CHARS);
 		}
-		for (i = tmp8u; i < IDDC_HIGHSCORE_SIZE; i++) {
+		for (i = highscore_records; i < IDDC_HIGHSCORE_SIZE; i++) {
 			deep_dive_level[i] = 0;
 			deep_dive_name[i][0] = 0;
 		}
