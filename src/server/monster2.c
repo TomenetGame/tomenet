@@ -910,7 +910,7 @@ void heal_m_list(struct worldpos *wpos) {
  */
 #define BACKTRACE_OOM /* Actually dump bt info about being out of ...monsters. */
  /* Can apparently happen when power-staving warriors of the dawn in arena level. */
-#ifdef BACKTRACE_NOTHINGS
+#ifdef BACKTRACE_OOM
  #include <execinfo.h>
 #endif
 s16b m_pop(void) {
