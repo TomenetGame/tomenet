@@ -5113,7 +5113,9 @@ void message_pain(int Ind, int m_idx, int dam) {
 
 	/* DEG Modified to give damage information */
 	/* Jelly's, Mold's, Vortex's, Quthl's */
-	if (r_ptr->flags3 & RF3_NONLIVING) { /* Constructs: No message. Note that this means vortices too (handled below otherwise). */
+	if ((r_ptr->flags3 & RF3_NONLIVING)
+	    || (strchr("e", r_ptr->d_char) && (r_ptr->level <= 18 || r_ptr->level == 34)) /* Ugh hard-coding: 'Beholders' have a mouth, but actual 'Eyes', and apparently also the 'Gas Spore' don't... */
+	    ) { /* Constructs: No message. Note that this means vortices too (handled below otherwise). */
 		if (r_ptr->flags1 & RF1_UNIQUE)
 			msg_format(Ind, "\377%c%^s takes \377e%d \377%cdamage.", uniq, m_name, dam, uniq);
 		else
