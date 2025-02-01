@@ -3567,6 +3567,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* Set his ID */
 	p_ptr->id = newid();
+	s_printf("New ID: %d\n", p_ptr->id);
 
 	/* Level one (never zero!) */
 	p_ptr->lev = 1;

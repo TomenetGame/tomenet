@@ -4880,6 +4880,7 @@ int newid() {
 		player_id = id + 1;	/* new cycle counter */
 		return(id);
 	}
+	s_printf("Warning: newid() returns 0!\n");
 	return(0);	/* no user IDs available - not likely */
 }
 
@@ -5733,6 +5734,8 @@ void delete_player_id(int id) {
 	/* Keep a pointer one step behind this one */
 	old_ptr = NULL;
 
+	s_printf("delete_player_id(%d) -> slot %d...", id, slot);
+
 	/* Attempt to find the ID to delete */
 	while (ptr) {
 		/* Check this one */
@@ -5750,6 +5753,7 @@ void delete_player_id(int id) {
 			KILL(ptr, hash_entry);
 
 			/* Done */
+			s_printf("done.\n");
 			return;
 		}
 
@@ -5761,6 +5765,7 @@ void delete_player_id(int id) {
 	}
 
 	/* Not found */
+	s_printf("not found!\n");
 	return;
 }
 
