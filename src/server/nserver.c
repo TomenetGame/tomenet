@@ -6410,10 +6410,13 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, u32b mode, 
 	}
 	/* Abuse 'u16b mode;' even more for stuffing in another byte to let the client know whether we're admin etc.
 	   We skip 0x0100 and 0x0200 because of MODE_FRUIT_BAT hack.  */
-	else if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
-		mode |= (p_ptr->admin_wiz ? 0x0400 : 0x0) | (p_ptr->admin_dm ? 0x0800 : 0x0);
-		mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged >= 2 ? 0x2000 : 0x0);
-		mode |= (p_ptr->restricted == 1 ? 0x4000 : 0x0) | (p_ptr->restricted == 2 ? 0x8000 : 0x0);
+	else {
+		mode &= 0xFFFF; /* Paranoia (as this would happen automatically anyway): u16b, just truncate all newer flags, they aren't relevant for the client-side really */
+		if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
+			mode |= (p_ptr->admin_wiz ? 0x0400 : 0x0) | (p_ptr->admin_dm ? 0x0800 : 0x0);
+			mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged >= 2 ? 0x2000 : 0x0);
+			mode |= (p_ptr->restricted == 1 ? 0x4000 : 0x0) | (p_ptr->restricted == 2 ? 0x8000 : 0x0);
+		}
 	}
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
