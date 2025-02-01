@@ -3570,7 +3570,7 @@ errr rd_server_savefile() {
 	u16b tmp16u, num_monraces, num_artifacts, num_parties, num_objects;
 	s16b tmp16s;
 	u32b tmp32u, num_monsters, num_players;
-	s32b tmp32s, player_id;
+	s32b tmp32s, cur_player_id;
 
 #ifdef ALLOW_EXCESS_DATA
 	u32b overflow; /* For discarding data that is too much to fit in */
@@ -3908,7 +3908,7 @@ errr rd_server_savefile() {
 
 			/* Read the ID */
 			rd_s32b(&tmp32s);
-			player_id = tmp32s;
+			cur_player_id = tmp32s;
 			rd_u32b(&acct);
 			rd_s32b(&laston);
 			rd_byte(&race);
@@ -3968,7 +3968,7 @@ errr rd_server_savefile() {
 #endif
 
 			/* Store the player name */
-			add_player_name(name, player_id, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner, order);
+			add_player_name(name, cur_player_id, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner, order);
 		}
 		s_printf("Read %d player name records.\n", num_players);
 	}
