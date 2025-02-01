@@ -4223,9 +4223,16 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
-	*p_ptr = p_bak; /* Get rid of potential black breath from inspecting a Morgul weapon as reported by Lavas */
 
-	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
+	/* First calc_boni() also sends this weapon to the Chh screen! Need to call it again here to restore Chh screen to normal.
+	   Since calling calc_boni() is expensive, all the 2nd calls of it should just be replaced by *p_ptr = p_bak instead,
+	   and calc_boni would need a flag to not alter Chh information (as there will be no 2nd call to calc_boni that restores it to normal at the end). */
+	calc_boni(Ind);
+
+	/* Get rid of potential black breath from inspecting a Morgul weapon as reported by Lavas */
+	*p_ptr = p_bak;
+
+	/* restore timed effects that might have been changed from the weapon switching - C. Blue (Redundant now) */
 	p_ptr->tim_wraith = tim_wraith;
 
 	suppress_message = FALSE;
