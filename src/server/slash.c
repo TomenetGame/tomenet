@@ -10683,10 +10683,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				id = atoi(message3);
+#if 0 /* Actually if tomenet.acc/server consistency is bugged maybe, we had a case where a character ID was 0 */
 				if (!id) {
 					msg_print(Ind, "Invalid ID");
 					return;
 				}
+#else
+				if (id < 0) {
+					msg_print(Ind, "Invalid ID");
+					return;
+				}
+#endif
 				msg_format(Ind, "Erasing player id %d from hash table.", id);
 				delete_player_id(id);
 				return;
