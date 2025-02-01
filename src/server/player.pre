@@ -1024,3 +1024,6 @@ extern void lua_fix_max_depth_bug(int Ind);
 extern void lua_fix_acc_house_limit(int Ind);
 
 extern void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level);
+
+extern s32b player_id;
+extern u32b account_id;
