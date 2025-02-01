@@ -24679,8 +24679,13 @@ The device will receive some boni when you use it. Usually:
 
  - 20% chance to actually retain the charge/energy of the device instead of
    spending it, but at the cost of your own MP.
-   The cost depends on the item k-level (at least 1 MP), if you don't have
-   enough MP then you will not retain the charge/energy.
+   The cost depends on the item k-level, if you don't have enough MP then you
+   will not retain the charge/energy (and your MP won't get drained of course).
+   The MP cost solely depends on the base item level of the absorbed device,
+   examples:
+   - wand of magic missile, k-level 2 (lowest): 1 MP,
+   - staff of perception, k-level 40: 6 MP,
+   - rod of havoc, k-level 95 (highest): 42 MP.
 
 If you have duplicates of a device, both in your inventory and equipped, then
 the equipped and therefore boosted version will take precedence.
