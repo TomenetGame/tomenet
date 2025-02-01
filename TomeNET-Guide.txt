@@ -19594,9 +19594,11 @@ create a character!):
     and light sources (which may drain their hit points if equipped, even if
     the vampire acquired resistance to light).
     Vampires fear the sunlight and any kind of items giving off powerful light
-    (radius of 3 or more, artifact lights, or light sources that are blessed,
-    evil-slaying or undead-slaying or give off pure white light). Asides from
-    strong light sources they fear all items that are blessed or *slay undead*.
+    (radius of 3 or more; lights that are blessed or have undead/evil slaying
+    effects; white-light sources that either have radius 2 or are artifacts or
+    the vampire doesn't have a source of light resistance). Asides from strong
+    light sources they fear all items that are blessed, and non-weapons that
+    have *slay undead* ability.
     Any such item that is adverse to undead will burn them, draining their hit
     points, or draining their mana if worn on head or hands. Exceptions are
     cursed items, chaotic items and the "Stone of Lore", these are always safe.
@@ -20189,10 +20191,14 @@ create a character!):
     exception as for vampires: Weapons "of nothingness" will do them no good
     either, and some randarts may fail to flip.) See the end of (5.12) for
     details on item-flipping.
-    Also similar to how vampires can be affected by items that are adverse to
-    undead, inflicting hit point drain by burning them or mana drain if worn
-    on the head or hands, hell knights can be affected in the same manner by
-    items that are adverse to demons.
+    Hell Knights fear items giving off enchanted light (lights that are blessed
+    or demon-slaying or evil-slaying; white-light sources that either have at
+    least radius 2 or are artifacts). Asides from these light sources they
+    fear all items that are blessed, and non-weapons that have the *slay demon*
+    ability.
+    Any such item that is adverse to demons will burn them, draining their hit
+    points, or draining their mana if worn on head or hands. Exceptions are
+    cursed items, chaotic items and the "Stone of Lore", these are always safe.
     Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (7.3) under 'Saving Throw' for details
     on those).
