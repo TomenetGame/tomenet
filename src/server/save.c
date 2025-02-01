@@ -2520,6 +2520,7 @@ static bool wr_server_savefile() {
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) {
 		artifact_type *a_ptr = &a_info[i];
+
 		wr_byte(a_ptr->cur_num);
 		wr_byte(a_ptr->known);
 		wr_s32b(a_ptr->carrier);
