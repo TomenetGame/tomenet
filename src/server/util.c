@@ -1735,15 +1735,17 @@ void handle_music(int Ind) {
 	    ) {
 		p_ptr->music_monster = -2;
  #if 0
-		if (p_ptr->wpos.wz == 0) Send_music(Ind, 1, -1, -1); /* 'generic town' music instead of Bree default */
-		else {
+		if (p_ptr->wpos.wz == 0) {
+			if (night_surface) Send_music(Ind, 49, 1, 0); /* 'generic town night' music (and 'generic town' -> 'generic' as fallback) instead of Bree default */
+			else Send_music(Ind, 1, 0, -1); /* 'generic town' music (and 'generic' as fallback) instead of Bree default */
+		} else {
 			//47 and 48 are actually pieces used in other arena events
 			if (rand_int(2)) Send_music(Ind, 47, 1, 1);
 			else Send_music(Ind, 48, 1, 1);
 		}
  #else
-		if (p_ptr->wpos.wz == 0) Send_music(Ind, 48, 1, 1); /* 'arena' ;) sounds a bit like Unreal Tournament menu music hehe */
-		else Send_music(Ind, 47, 1, 1); /* 'death match' music (pvp arena) */
+		if (p_ptr->wpos.wz == 0) Send_music(Ind, 48, night_surface ? 49 : 1, 1); /* 'arena' ;) sounds a bit like Unreal Tournament menu music hehe (generic town(night) music as fallback) */
+		else Send_music(Ind, 47, 1, 1); /* 'death match' music (pvp arena), generic town musicas fallback */
  #endif
 		return;
 	}
@@ -2178,7 +2180,7 @@ void handle_music(int Ind) {
 					Send_music(Ind, 80, 2, 2);
 					return;
 				}
-				Send_music(Ind, 2, 1, 1); /* the usual music for this case */
+				Send_music(Ind, 2, 1, 1); /* the usual 'dungeon town' music for this case */
 			}
 			return;
 		}
