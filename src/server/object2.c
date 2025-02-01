@@ -12988,6 +12988,9 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	if (wield_slot(0, o_ptr) == -1) return(FALSE);
 	/* Cursed items never harm undead */
 	if (cursed_p(o_ptr)) return(FALSE);
+	/* Flipped items (heavily cursed, used by undead/demons) are always considered heavily cursed while in flipped state -
+	   now for randarts the curse flag itself might disappear, but it is still 'valid' for this purpose here, so we 'assume' it: */
+	if (o_ptr->pval2) return(FALSE);
 
 	/* hack: it's carried by the wight-king! */
 	if (o_ptr->name1 == ART_STONE_LORE) return(FALSE);
@@ -13051,6 +13054,9 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 	if (wield_slot(0, o_ptr) == -1) return(FALSE);
 	/* Cursed items never harm demons */
 	if (cursed_p(o_ptr)) return(FALSE);
+	/* Flipped items (heavily cursed, used by undead/demons) are always considered heavily cursed while in flipped state -
+	   now for randarts the curse flag itself might disappear, but it is still 'valid' for this purpose here, so we 'assume' it: */
+	if (o_ptr->pval2) return(FALSE);
 
 	/* hack: it's carried by the wight-king! */
 	if (o_ptr->name1 == ART_STONE_LORE) return(FALSE);
