@@ -4630,6 +4630,8 @@ void do_cmd_look(int Ind, int dir) {
 			if (divi_nd)
 				//sprintf(extrainfo, ", \377Uimmortal\377-");
 				sprintf(extrainfo, "\377U%s\377-, %d AC, %d Spd", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? (strlen(m_name) > 26 ? "ind." : "indestructible") : (strlen(m_name) > 30 ? "imm." : "immortal"), m_ptr->ac, m_ptr->mspeed - 110);
+			else if (m_ptr->r_idx == RI_BLUE)
+				sprintf(extrainfo, "????? HP, %d AC, %d Spd", m_ptr->ac, m_ptr->mspeed - 110);
 			else
 				sprintf(extrainfo, "%d HP, %d AC, %d Spd", m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
 		}
@@ -4656,23 +4658,28 @@ void do_cmd_look(int Ind, int dir) {
 			    look_mon_desc(c_ptr->m_idx, FALSE)
 			    //, extrainfo
 			    );
+		else if (m_ptr->r_idx == RI_BLUE)
+			snprintf(out_val, sizeof(out_val), "%s (Lv ???, %s%s%s)",
+			    m_name,
+			    look_mon_desc(c_ptr->m_idx, divi),
+			    (!divi_nd && extrainfo[0]) ? ", " : "", extrainfo);
 		else
 #if 0 /* attach 'slain' for uniques we already killed */
-//		snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
-		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
-		//snprintf(out_val, sizeof(out_val), "%s (%s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
-		    m_ptr->level,
-		    look_mon_desc(c_ptr->m_idx, divi),
-		    divi_nd ? (m_ptr->clone ? "clone" : (done_unique ? "slain" : "")) : (m_ptr->clone ? ", clone" : (done_unique ? ", slain" : "")), ((!divi_nd || m_ptr->clone || done_unique) && extrainfo[0]) ? ", " : "", extrainfo);
+			//snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
+			snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+			//snprintf(out_val, sizeof(out_val), "%s (%s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+			    m_ptr->level,
+			    look_mon_desc(c_ptr->m_idx, divi),
+			    divi_nd ? (m_ptr->clone ? "clone" : (done_unique ? "slain" : "")) : (m_ptr->clone ? ", clone" : (done_unique ? ", slain" : "")), ((!divi_nd || m_ptr->clone || done_unique) && extrainfo[0]) ? ", " : "", extrainfo);
 #else /* use different colour for uniques we already killed */
-		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s%s)",
-		//snprintf(out_val, sizeof(out_val), "%s%s (%s%s%s)",
-		    done_unique ? "\377D" : "",
-		    //r_name_get(&m_list[c_ptr->m_idx]),
-		    m_name,
-		    m_ptr->level,
-		    look_mon_desc(c_ptr->m_idx, divi),
-		    divi_nd ? (m_ptr->clone ? "clone" : "") : (m_ptr->clone ? ", clone" : ""), ((!divi_nd || m_ptr->clone) && extrainfo[0]) ? ", " : "", extrainfo);
+			snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s%s)",
+			//snprintf(out_val, sizeof(out_val), "%s%s (%s%s%s)",
+			    done_unique ? "\377D" : "",
+			    //r_name_get(&m_list[c_ptr->m_idx]),
+			    m_name,
+			    m_ptr->level,
+			    look_mon_desc(c_ptr->m_idx, divi),
+			    divi_nd ? (m_ptr->clone ? "clone" : "") : (m_ptr->clone ? ", clone" : ""), ((!divi_nd || m_ptr->clone) && extrainfo[0]) ? ", " : "", extrainfo);
 #endif
 	/* An object */
 	} else if (c_ptr->o_idx) {

@@ -13904,6 +13904,7 @@ bool target_set(int Ind, int dir) {
     /* Currently you cannot select any available target, even though you can look at it,
 	probably a problem in target_pick(). */
     /* Also make 'l'ooking at a monster target it, probably. (p_ptr->look_index vs p_ptr->target_who) */
+    //TODO: ensure consistency with do_cmd_look() in cmd3.c!
 			if (p_ptr->target_idx[i] > 0) {
 				m_ptr = &m_list[p_ptr->target_idx[i]];
 				snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s)",

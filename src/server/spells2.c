@@ -6044,19 +6044,26 @@ bool probing(int Ind) {
 
 			/* Get "the monster" or "something" */
 			monster_desc(Ind, m_name, i, 0x04);
-			sprintf(buf, "blows");
 
+			/* Print out melee attack dice */
+			strcpy(buf, "attacks for");
 			for (j = 0; j < 4; j++)
 				if (m_ptr->blow[j].d_dice) strcat(buf, format(" %dd%d", m_ptr->blow[j].d_dice, m_ptr->blow[j].d_side));
+			/* no attacks? */
+			if (!buf[11]) strcpy(buf, "does not attack in melee");
 
 			/* Describe the monster */
 			if (r_ptr->flags7 & RF7_NO_DEATH)
-				msg_format(Ind, "%^s (%d) has unknown hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed - 110);
+				msg_format(Ind, "%^s (Lv %d) is %s, has %d ac and %d speed.", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? "indestructible" : "immortal",
+				    m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed - 110);
+			else if (m_ptr->r_idx == RI_BLUE)
+				msg_format(Ind, "%^s (Lv \?\?\?) has unknown hp, %d ac and %d speed.", m_name, m_ptr->ac, m_ptr->mspeed - 110);
 			else
-				msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
+				msg_format(Ind, "%^s (Lv %d) has %d hp, %d ac and %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
 			/* include m_idx and ego for admins */
-			if (is_admin(p_ptr)) msg_format(Ind, "%^s (Lv%d,%d,%d) %s.", m_name, m_ptr->level, i, m_ptr->ego, buf);
-			else msg_format(Ind, "%^s (Lv%d) %s.", m_name, m_ptr->level, buf);
+			if (is_admin(p_ptr)) msg_format(Ind, " %^s (%d,%d) %s.", m_name, i, m_ptr->ego, buf);
+			else if (m_ptr->r_idx == RI_BLUE) msg_format(Ind, " %^s %s.", m_name, buf);
+			else msg_format(Ind, " %^s %s.", m_name, buf);
 
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);
