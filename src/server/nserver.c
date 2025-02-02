@@ -742,11 +742,11 @@ void setup_contact_socket(void) {
 		s_printf("Couldn't create console socket\n");
 		return;
 	}
-#ifdef FD_CLOEXEC
+ #ifdef FD_CLOEXEC
 	/* Make the socket close-on-exec if possible - mikaelh */
 	if (fcntl(ConsoleSocket, F_SETFD, FD_CLOEXEC) == -1)
 		plog("Can't make console socket close-on-exec");
-#endif
+ #endif
 	if (SocketLinger(ConsoleSocket) == -1)
 		plog("Couldn't set SO_LINGER on the console socket");
 

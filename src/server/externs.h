@@ -872,8 +872,10 @@ extern void use_stamina(player_type *p_ptr, byte st);
 /* control.c */
 extern void SGWHit(int fd, int arg);
 extern void SGWTimeout();
+#ifdef NEW_SERVER_CONSOLE
 extern void NewConsole(int fd, int arg);
 extern bool InitNewConsole(int write_fd);
+#endif
 
 /* dungeon.c */
 extern void process_player_change_wpos(int Ind);
