@@ -567,7 +567,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 	int	ap_cnt;
 	int	mon_acid = 0, mon_fire = 0, blows_total = 0;
 
-	int	i, j, k, tmp, ac, rlev;
+	int	i, j, k, tmp, ac, rlev, r_idx = m_ptr->r_idx;
 #ifndef NEW_DODGING /* actually 'chance' is used a lot in this function -> FIXME */
 	int chance;
 #endif
@@ -608,7 +608,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 	/* Get the "died from" information (i.e. "a kobold") */
 	//hack: 'The' Horned Reaper from Dungeon Keeper ;)
-	if (m_ptr->r_idx == RI_HORNED_REAPER_GE) monster_desc(Ind, ddesc, m_idx, 0x0180);
+	if (r_idx == RI_HORNED_REAPER_GE) monster_desc(Ind, ddesc, m_idx, 0x0180);
 	else monster_desc(Ind, ddesc, m_idx, 0x0188);
 
 	/* determine how much parrying or blocking would endanger our weapon/shield */
@@ -972,7 +972,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 			/* Roll out the damage in advance, since it might be required in the avoidance-calcs below (Kinetic Shield) */
 			damage = damroll(d_dice, d_side);
-			if (m_ptr->r_idx == RI_MIRROR) damage = (damage * MIRROR_REDUCE_DAM_DEALT_MELEE + 99) / 100;
+			if (r_idx == RI_MIRROR) damage = (damage * MIRROR_REDUCE_DAM_DEALT_MELEE + 99) / 100;
 			if (invuln_applied) damage = (damage + 1) / 2;
 #ifdef EXPERIMENTAL_MITIGATION
 			damage_org = damage; /* as a special service, we allow the invuln reduction above to factor in first, to prevent getting ko'ed on stairs :-p */
@@ -1130,7 +1130,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 			if (!p_ptr->black_breath &&
 			    !safe_area(Ind) && /* just for Arena Monster Challenge! */
-			    m_ptr->r_idx != RI_PUMPKIN && /* The Great Pumpkin of Halloween event shouldn't give BB, lol. -C. Blue */
+			    r_idx != RI_PUMPKIN && /* The Great Pumpkin of Halloween event shouldn't give BB, lol. -C. Blue */
 			    (!p_ptr->suscep_life || !rand_int(3)) && (
 			     ((r_ptr->flags7 & RF7_NAZGUL) && magik(player_vulnerable ? 10 : 25)) || (
 			     (r_ptr->flags3 & RF3_UNDEAD) && m_ptr->ego != 32 /* not 'Purified' ego */
@@ -2243,7 +2243,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					/* Radius 8 earthquake centered at the monster */
 					/* Morgoth overrides LF1_NO_DESTROY. Note: This also works for Hru at these values. */
 					if (damage > 23 || (damage && !rand_int(25 - damage))) {
-						if (m_ptr->r_idx == RI_MORGOTH) override_LF1_NO_DESTROY = TRUE;
+						if (r_idx == RI_MORGOTH) override_LF1_NO_DESTROY = TRUE;
 						earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
 					}
 					break;
@@ -3065,10 +3065,10 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 				/* Simulate Martial Arts techniques - unfair advantage though as we're RF3_NO_STUN. */
 #if 0
-				if (m_ptr->r_idx == RI_MIRROR && !tmp && !rand_int(4)) tmp = 1 + rand_int(2);
+				if (r_idx == RI_MIRROR && !tmp && !rand_int(4)) tmp = 1 + rand_int(2);
 #else
 				/* So tone it down to a minimum at least */
-				if (m_ptr->r_idx == RI_MIRROR && !tmp && !rand_int(5)) tmp = 1;
+				if (r_idx == RI_MIRROR && !tmp && !rand_int(5)) tmp = 1;
 #endif
 
 				/* Roll for damage */
@@ -3100,7 +3100,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 				}
 			}
 
-			if (touched) {
+			/* Apply our retaliation-auras */
+			if (touched && alive) {
 				/* Check if our 'intrinsic' (Blood Magic, not from item/external spell) auras were suppressed by our own antimagic field. */
 				bool aura_ok = !magik((p_ptr->antimagic * 8) / 5);
 				int auras_failed = 0;
@@ -3127,7 +3128,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
-							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+							if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " turns into a pile of ashes")) {
@@ -3147,7 +3148,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
-							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+							if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " freezes and shatters")) {
@@ -3168,7 +3169,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
-							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+							if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " turns into a pile of ashes")) {
@@ -3188,7 +3189,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
-							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+							if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " freezes and shatters")) {
@@ -3209,7 +3210,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						player_aura_dam = damroll(2,6);
 						if (r_ptr->flags9 & RF9_RES_ELEC) player_aura_dam /= 3;
 						if (r_ptr->flags9 & RF9_SUSCEP_ELEC) player_aura_dam *= 2;
-						if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+						if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 						msg_format(Ind, "%^s gets zapped for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 						    " turns into a pile of cinder")) {
@@ -3228,6 +3229,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 				if (p_ptr->nimbus && alive) {
 					msg_format(Ind, "%^s breaches your aura of power!", m_name);
 					do_nimbus(Ind, m_ptr->fy, m_ptr->fx);
+					if (!m_ptr->r_idx) alive = FALSE; //hack: Monster was deleted meanwhile if it died, so m_ptr was wiped. We test for r_idx as it should never be zero unless wiped.
 				}
 
 				/*
@@ -3237,7 +3239,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_COUNTER) && alive) {
 					int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 
-					if (m_ptr->r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+					if (r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 					msg_format(Ind, "%^s gets bashed by your mystic shield!", m_name);
 					if (mon_take_hit(Ind, m_idx, d, &fear, " is bashed by your mystic shield")) {
 						blinked = FALSE;
@@ -3251,7 +3253,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 						if (r_ptr->flags9 & RF9_RES_FIRE) d /= 3;
 						if (r_ptr->flags3 & RF3_SUSCEP_FIRE) d *= 2;
-						if (m_ptr->r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+						if (r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 						msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
 						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of ashes")) {
 							blinked = FALSE;
@@ -3264,6 +3266,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (magik(25)) {
 						sprintf(p_ptr->attacker, " is enveloped in ice for");
 						fire_ball(Ind, GF_ICE, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
+						if (!m_ptr->r_idx) alive = FALSE; //hack: Monster was deleted meanwhile if it died, so m_ptr was wiped. We test for r_idx as it should never be zero unless wiped.
 					}
 				}
 				/* plasma shield, functionally similar to aura of death - Kurzel */
@@ -3271,17 +3274,18 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (magik(25)) {
 						sprintf(p_ptr->attacker, " is enveloped in plasma for");
 						fire_ball(Ind, GF_PLASMA, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
+						if (!m_ptr->r_idx) alive = FALSE; //hack: Monster was deleted meanwhile if it died, so m_ptr was wiped. We test for r_idx as it should never be zero unless wiped.
 					}
 				}
+#if 0
 				/* lightning shield */
-				/*
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ELEC) && alive) {
 					if (!(r_ptr->flags3 & RF3_IM_ELEC)) {
 						int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 
 						if (r_ptr->flags9 & RF9_RES_ELEC) d /= 3;
 						if (r_ptr->flags9 & RF9_SUSCEP_ELEC) d *= 2;
-						if (m_ptr->r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
+						if (r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 						msg_format(Ind, "%^s gets zapped by your lightning shield!", m_name);
 						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of cinder")) {
 							blinked = FALSE;
@@ -3289,32 +3293,31 @@ bool make_attack_melee(int Ind, int m_idx) {
 						}
 					}
 				}
-				*/
 				/* fear shield */
-//				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && alive
-//				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
-//				    && (!(r_ptr->flags2 & RF2_POWERFUL))
-//				    && (!(r_ptr->flags1 & RF1_UNIQUE))
-//				    ) {
-//					int tmp, d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level;
-//					if (d > 0) {
-//						msg_format(Ind, "%^s gets scared away!", m_name);
-//						/* Increase fear */
-//						tmp = m_ptr->monfear + p_ptr->shield_power_opt;
-//						fear = TRUE;
-//						/* Set fear */
-//						m_ptr->monfear = (tmp < 200) ? tmp : 200;
-//						m_ptr->monfear_gone = 0;
-//					}
-//				}
-
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && alive
+				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
+				    && (!(r_ptr->flags2 & RF2_POWERFUL))
+				    && (!(r_ptr->flags1 & RF1_UNIQUE))
+				    ) {
+					int tmp, d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level;
+					if (d > 0) {
+						msg_format(Ind, "%^s gets scared away!", m_name);
+						/* Increase fear */
+						tmp = m_ptr->monfear + p_ptr->shield_power_opt;
+						fear = TRUE;
+						/* Set fear */
+						m_ptr->monfear = (tmp < 200) ? tmp : 200;
+						m_ptr->monfear_gone = 0;
+					}
+				}
+#endif
 				/*
 				 * Apply the blood magic auras
 				 */
 				/* Aura of fear is now affected by the monster level too */
 				if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[AURA_FEAR] &&
 				    (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING))
-				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
+				    && (!(r_ptr->flags3 & RF3_NO_FEAR)) && alive
 				    ) {
 					int mod = ((r_ptr->flags2 & RF2_POWERFUL) ? 10 : 0) + ((r_ptr->flags1 & RF1_UNIQUE) ? 10 : 0);
 
@@ -3330,7 +3333,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 				}
 				/* Shivering Aura is affected by the monster level */
 				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (p_ptr->aura[AURA_SHIVER] || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
-				    && (!(r_ptr->flags3 & RF3_NO_STUN)) && (!(r_ptr->flags3 & RF3_IM_COLD))
+				    && (!(r_ptr->flags3 & RF3_NO_STUN)) && (!(r_ptr->flags3 & RF3_IM_COLD)) && alive
 				    ) {
 					int mod = ((r_ptr->flags1 & RF1_UNIQUE) ? 10 : 0);
 					int chance_trigger = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 25);
@@ -3355,7 +3358,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 				}
 				/* Aura of death is NOT affected by monster level*/
-				if (get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[AURA_DEATH]) {
+				if (get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[AURA_DEATH] && alive) {
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
 
 					if (magik(chance)) {
@@ -3371,6 +3374,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 								sprintf(p_ptr->attacker, " eradiates a wave of ice for");
 								fire_ball(Ind, GF_ICE, 0, dam, 1, p_ptr->attacker);
 							}
+							if (!m_ptr->r_idx) alive = FALSE; //hack: Monster was deleted meanwhile if it died, so m_ptr was wiped. We test for r_idx as it should never be zero unless wiped.
 						} else auras_failed++;
 					}
 				}
@@ -3436,7 +3440,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 
 	/* Blink away */
-	if (blinked) {
+	if (blinked && alive) {
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5)) {
 			msg_print(Ind, "There is a puff of smoke!");
 #ifdef USE_SOUND_2010
@@ -3475,7 +3479,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 	/* Always notice cause of death */
 	if (p_ptr->death) {
-		if (!r_ptr->r_deaths && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st death: %d by %s (%s).\n", m_ptr->r_idx, p_ptr->name, p_ptr->accountname);
+		if (!r_ptr->r_deaths && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st death: %d by %s (%s).\n", r_idx, p_ptr->name, p_ptr->accountname);
 		r_ptr->r_deaths++;
 	}
 
