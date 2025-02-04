@@ -5965,8 +5965,10 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_melee_sprint(Ind, p_ptr->melee_sprint - 1);
 
 	/* Blessed */
-	if (p_ptr->blessed)
+	if (p_ptr->blessed > 0)
 		(void)set_blessed(Ind, p_ptr->blessed - 1, p_ptr->blessed_own);
+	else if (p_ptr->blessed < 0)
+		(void)set_blessed(Ind, p_ptr->blessed + 1, p_ptr->blessed_own);
 
 	/* Shield */
 	if (p_ptr->shield)

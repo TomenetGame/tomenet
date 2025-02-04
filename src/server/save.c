@@ -978,7 +978,8 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->tim_regen);
 	wr_s16b(p_ptr->tim_regen_pow);
 	wr_s16b(p_ptr->tim_regen_cost);
-	wr_s16b(p_ptr->blessed + p_ptr->blessed_power * 100 + (p_ptr->blessed_own ? 10000 : 0));
+	if (p_ptr->blessed >= 0) wr_s16b(p_ptr->blessed + p_ptr->blessed_power * 100 + (p_ptr->blessed_own ? 10000 : 0));
+	else wr_s16b(-(-p_ptr->blessed + p_ptr->blessed_power * 100 + (p_ptr->blessed_own ? 10000 : 0)));
 	wr_s16b(p_ptr->tim_invis);
 	wr_byte(p_ptr->go_level_top);//ENABLE_GO_GAME
 	wr_byte(p_ptr->tim_wraithstep);

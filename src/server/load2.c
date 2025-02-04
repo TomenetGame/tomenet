@@ -2166,9 +2166,15 @@ static bool rd_extra(int Ind) {
 		if (!older_than(4, 9, 7)) rd_s16b(&p_ptr->tim_regen_cost);
 	}
 	rd_s16b(&tmp16s);
-	p_ptr->blessed = tmp16s % 100;
-	p_ptr->blessed_power = (tmp16s % 10000) / 100;
-	p_ptr->blessed_own = (tmp16s / 10000);
+	if (tmp16s >= 0) {
+		p_ptr->blessed = tmp16s % 100;
+		p_ptr->blessed_power = (tmp16s % 10000) / 100;
+		p_ptr->blessed_own = (tmp16s / 10000);
+	} else { // 'cursed' blessing
+		p_ptr->blessed = tmp16s % 100; //stays negative, indicating cursedness
+		p_ptr->blessed_power = ((-tmp16s) % 10000) / 100;
+		p_ptr->blessed_own = ((-tmp16s) / 10000);
+	}
 	rd_s16b(&p_ptr->tim_invis);
 	rd_byte(&tmp8u);
 	p_ptr->go_level_top = tmp8u; //ENABLE_GO_GAME

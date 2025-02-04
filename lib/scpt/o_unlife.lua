@@ -241,7 +241,7 @@ OIMBUE = add_spell {
 	["name2"] = 	"Hunger",
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
-	["level"] = 	42,
+	["level"] = 	40,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
 	["fail"] = 	-80,
@@ -253,6 +253,61 @@ OIMBUE = add_spell {
 			return "dur "..(14 + get_level(Ind, OIMBUE, 69)).."+d5"
 			end,
 	["desc"] = 	{ "Temporarily imbue your melee attacks with vampiric power.", }
+}
+
+OEMBRACE = add_spell {
+	["name"] = 	"Death's Embrace",
+	["name2"] = 	"Embrace",
+	["school"] = 	{SCHOOL_OUNLIFE},
+	["spell_power"] = 0,
+	["level"] = 	42,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
+	["fail"] = 	-80,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			--share cooldown with Martyr/Blood Sacrifice!
+			if player.martyr_timeout > 0 then
+				msg_print(Ind, "\255yThe underworld's shadow is not drawing close yet.")
+			else
+				local pow, dur, chp, mhp
+
+				player.martyr_timeout = 1000
+				msg_print(Ind, "You savour the looming embrace of death, ecstatic feeling imbuing you..")
+
+				-- heal initially
+				chp = player.chp
+				hp_player(Ind, 700, FALSE, FALSE)
+
+				if player.suscep_evil ~= 0 then
+					msg_print(Ind, "\255yDeath's Embrace has no temporary effects while in a good-aligned form!") --\253 too?
+				else
+					mhp = player.mhp
+					if mhp == 0 then mhp = 1 end -- baseless div0 paranoia
+					pow = ((chp * 100) / mhp)
+					if pow > 100 then pow = 100 end -- more baseless paranoia x2
+					if pow < 0 then pow = 0 end
+					if chp ~= 0 and pow == 0 then pow = 1 end -- top effect is only attainable at 0 HP
+
+					dur = 20 + randint(5)
+					pow = 200 - pow
+					pow = (pow * pow * pow - 1000000) / 100000 -- must be < 9000 due to s16b constraints in save.c/load2.c encoding
+
+					-- grant stats ('demonic' flag set, to end at suscep_evil, same as for negative blessed_power below
+					do_xtra_stats(Ind, 5, pow / 7, dur, -1) -- or alternatively pow/6
+
+					-- grant AC
+					player.blessed_power = pow
+					set_blessed(Ind, -dur, TRUE) -- indicate it's a 'cursed' blessing
+				end
+			end
+			end,
+	["info"] = 	function()
+			return "dur 20+d5  cooldown 1000s"
+			end,
+	["desc"] = 	{ "The closer the shadow of the reaper looms over you, the more intense a call to",
+			  "continue your journey you shall receive. Temporarily increases your attributes",
+			  "and AC the higher the more you were hurt. Heals you for 700 HP initially.", }
 }
 
 OWRAITHSTEP = add_spell {

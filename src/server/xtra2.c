@@ -2431,9 +2431,17 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
  */
 bool set_blessed(int Ind, int v, bool own) {
 	player_type *p_ptr = Players[Ind];
-	bool notice = FALSE;
+	bool notice = FALSE, cursed = FALSE;
 
-	if (v && !own && (p_ptr->suscep_good || p_ptr->suscep_life)) return(FALSE);
+	if (v < 0) {
+		v = -v;
+		cursed = TRUE;
+	}
+
+	if (v && !own) {
+		if (!cursed && (p_ptr->suscep_good || p_ptr->suscep_life)) return(FALSE);
+		if (cursed && p_ptr->suscep_evil) return(FALSE);
+	}
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2441,8 +2449,13 @@ bool set_blessed(int Ind, int v, bool own) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->blessed) {
-			msg_format_near(Ind, "%s has become righteous.", p_ptr->name);
-			msg_print(Ind, "You feel righteous!");
+			if (cursed) {
+				msg_format_near(Ind, "%s is enveloped by by pale moonlight.", p_ptr->name);
+				msg_print(Ind, "You are enveloped by pale moonlight!");
+			} else {
+				msg_format_near(Ind, "%s has become righteous.", p_ptr->name);
+				msg_print(Ind, "You feel righteous!");
+			}
 			notice = TRUE;
 		}
 	}
@@ -2450,15 +2463,20 @@ bool set_blessed(int Ind, int v, bool own) {
 	/* Shut */
 	else {
 		if (p_ptr->blessed) {
-			msg_format_near(Ind, "%s has become less righteous.", p_ptr->name);
-			msg_print(Ind, "The prayer has expired.");
+			if (p_ptr->blessed < 0) {
+				msg_format_near(Ind, "%s is no longer enveloped by cursed moonlight.", p_ptr->name);
+				msg_print(Ind, "The cursed moonlight has faded.");
+			} else {
+				msg_format_near(Ind, "%s has become less righteous.", p_ptr->name);
+				msg_print(Ind, "The prayer has expired.");
+			}
 			notice = TRUE;
 			p_ptr->blessed_power = 0;
 		}
 	}
 
 	/* Use the value */
-	p_ptr->blessed = v;
+	p_ptr->blessed = (cursed ? -v : v);
 	p_ptr->blessed_own = own;
 
 	/* Nothing to notice */

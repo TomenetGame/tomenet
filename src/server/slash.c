@@ -2676,7 +2676,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				l_ptr = getfloor(&p_ptr->wpos);
 				if (l_ptr) lflags2 = l_ptr->flags2;
 			}
-			if (lflags2 & LF2_NO_MARTYR_SAC) {
+			if (lflags2 & LF2_NO_MARTYR) {
 				msg_print(Ind, "\377yThe heavens will not grant you martyrium here.");
 				return;
 			}
@@ -2687,13 +2687,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "The heavens are willing to accept your martyrium.");
 			return;
 		}
-#ifdef ENABLE_HELLKNIGHT
+#if defined(ENABLE_HELLKNIGHT) || defined(ENABLE_CPRIEST)
 		else if (prefix(messagelc, "/sacrifice") || prefix(messagelc, "/sac")) {
 			struct dun_level *l_ptr;
 			u32b lflags2 = 0x0;
 
 			/* we cannot cast 'blood sacrifice' spell at all? */
-			if ((p_ptr->pclass != CLASS_HELLKNIGHT
+			if ((TRUE
+ #ifdef ENABLE_HELLKNIGHT
+			    && p_ptr->pclass != CLASS_HELLKNIGHT
+ #endif
  #ifdef ENABLE_CPRIEST
 			    && p_ptr->pclass != CLASS_CPRIEST
  #endif
@@ -2707,7 +2710,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				l_ptr = getfloor(&p_ptr->wpos);
 				if (l_ptr) lflags2 = l_ptr->flags2;
 			}
-			if (lflags2 & LF2_NO_MARTYR_SAC) {
+			if (lflags2 & LF2_NO_MARTYR) {
 				msg_print(Ind, "\377yThe maelstrom of chaos will not devour your blood sacrifice here.");
 				return;
 			}
@@ -2719,6 +2722,31 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 #endif
+		else if (prefix(messagelc, "/embrace") || prefix(messagelc, "/emb")) { //..and the Unlife version
+			struct dun_level *l_ptr;
+			u32b lflags2 = 0x0;
+
+			if (exec_lua(0, format("return get_level(%d, OEMBRACE, 50, 0)", Ind)) < 1) {
+				msg_print(Ind, "You know not how to truly embrace death.");
+				return;
+			}
+
+			if (in_sector000(&p_ptr->wpos)) lflags2 = sector000flags2;
+			else if (p_ptr->wpos.wz) {
+				l_ptr = getfloor(&p_ptr->wpos);
+				if (l_ptr) lflags2 = l_ptr->flags2;
+			}
+			if (lflags2 & LF2_NO_MARTYR) {
+				msg_print(Ind, "\377yThe underworld will not bestow its curse here.");
+				return;
+			}
+
+			if (Players[Ind]->martyr_timeout)
+				msg_print(Ind, "\377yThe underworld's shadow is not drawing close at this time.");
+			else
+				msg_print(Ind, "The underworld's shadow is drawing close, waiting for you to embrace death!");
+			return;
+		}
 		else if (prefix(messagelc, "/pnote")) {
 			j = 0;
 			if (!p_ptr->party) {

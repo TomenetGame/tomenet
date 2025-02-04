@@ -8528,7 +8528,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 			pdf_hack_feat = -1;
 		} else {
-			dun->l_ptr->flags2 |= LF2_NO_MARTYR_SAC;
+			dun->l_ptr->flags2 |= LF2_NO_MARTYR;
 			s_printf("DF-mirror (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
 		}
 		//wipe_m_list(&p_ptr->wpos);

@@ -3197,6 +3197,14 @@ void calc_boni(int Ind) {
 		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
 
 		switch (p_ptr->xtrastat_which) {
+		case 5: /* Unlife: Death's Embrace */
+			p_ptr->stat_tmp[A_STR] = p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
+			p_ptr->stat_tmp[A_INT] = p_ptr->stat_add[A_INT] = p_ptr->xtrastat_pow; csheet_boni[14].pint += p_ptr->xtrastat_pow;
+			p_ptr->stat_tmp[A_WIS] = p_ptr->stat_add[A_WIS] = p_ptr->xtrastat_pow; csheet_boni[14].pwis += p_ptr->xtrastat_pow;
+			p_ptr->stat_tmp[A_DEX] = p_ptr->stat_add[A_DEX] = p_ptr->xtrastat_pow; csheet_boni[14].pdex += p_ptr->xtrastat_pow;
+			p_ptr->stat_tmp[A_CON] = p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow; csheet_boni[14].pcon += p_ptr->xtrastat_pow;
+			p_ptr->stat_tmp[A_CHR] = p_ptr->stat_add[A_CHR] = p_ptr->xtrastat_pow; csheet_boni[14].pchr += p_ptr->xtrastat_pow;
+			break;
 #ifdef ENABLE_HELLKNIGHT
 		case 4: /* Hell Knight's Demonic Strength */
 			p_ptr->stat_tmp[A_STR] = p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
@@ -6929,8 +6937,10 @@ void calc_boni(int Ind) {
 	   This can only really be triggered via form changes, but it is clunkier
 	   to actually put it into calc_body_bonus() instead of just doing it here. */
 	if (p_ptr->suscep_good || p_ptr->suscep_life) {
-		if (p_ptr->blessed && !p_ptr->blessed_own) set_blessed(Ind, 0, FALSE);
+		if (p_ptr->blessed > 0 && !p_ptr->blessed_own) set_blessed(Ind, 0, FALSE); //exempt 'cursed' blessing (Unlife: Death's Embrace)
 		if (p_ptr->protevil && !p_ptr->protevil_own) set_protevil(Ind, 0, FALSE);
+	} else if (p_ptr->suscep_evil) {
+		if (p_ptr->blessed < 0 && !p_ptr->blessed_own) set_blessed(Ind, 0, FALSE); //only for 'cursed' blessing
 	}
 	if (p_ptr->suscep_evil && (p_ptr->xtrastat_demonic)) do_xtra_stats(Ind, 0, 0, 0, FALSE);
 	if (old_suscep_good != p_ptr->suscep_good) {
