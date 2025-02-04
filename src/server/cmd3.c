@@ -531,6 +531,9 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 		o_ptr->sseed = 0;
 	}
 
+	/* For art_combo hack: Clear wielder Ind info. */
+	o_ptr->wInd = 0;
+
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) ;
 	else
