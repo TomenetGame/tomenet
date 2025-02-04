@@ -4681,8 +4681,12 @@ void calc_boni(int Ind) {
 
 	/* Hack: Specific artifact dagger combo effect (Judgement+Mercy) */
 	if (art_combo == 2) {
-		/* Hack flags wherever necessary, to set them to the upgrades below... */
-		p_ptr->temp_misc_3 |= 0x01;
+		if (!(p_ptr->temp_misc_3 & 0x01)) {
+			if (!(p_ptr->temp_misc_3 & 0x02)) msg_print(Ind, "\377B*Both your weapons glow more brightly!*"); //skip message once (login setup time)
+
+			/* Hack flags wherever necessary, to set them to the upgrades below... */
+			p_ptr->temp_misc_3 |= 0x01;
+		}
 
 		/* Judgement upgrades SLAY to KILL mods */
 		p_ptr->slay_equip |= TR1_KILL_DRAGON; csheet_boni[art_combo_slot1 - INVEN_WIELD].cb[8] |= CB9_KDRGN;
@@ -4692,7 +4696,14 @@ void calc_boni(int Ind) {
 		/* Mercy upgrades RES to IM and gains BLOWS */
 		p_ptr->immune_poison = TRUE; csheet_boni[art_combo_slot2 - INVEN_WIELD].cb[1] |= CB2_IPOIS;
 		csheet_boni[art_combo_slot2 - INVEN_WIELD].blow += pval;
-	} else p_ptr->temp_misc_3 &= ~0x01;
+	} else {
+		if (p_ptr->temp_misc_3 & 0x01) {
+			if (art_combo == 1) msg_format(Ind, "Your dagger '%s' glows less brightly!", art_combo_slot1 ? "Judgement" : "Mercy");
+			/* Unflag the combo hack mark */
+			p_ptr->temp_misc_3 &= ~0x01;
+		}
+	}
+	p_ptr->temp_misc_3 &= ~0x02;
 
 	/* Has to be done here as it may depend on other items granting light resistance,
 	   so all items have to be applied first: */
