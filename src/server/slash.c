@@ -5747,7 +5747,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, "Breath element set.");
 			p_ptr->breath_element = k;
 			return;
-		} else if (prefix(messagelc, "/characters") || prefix(messagelc, "/chars")) { /* list all characters of the player's account (user-version of /acclist) */
+		} else if (prefix(messagelc, "/characters") || prefix(messagelc, "/chars") || prefix(messagelc, "/charlist") ) { /* list all characters of the player's account (user-version of /acclist) */
 			int *id_list, i, n;
 			struct account acc;
 			u32b tmpm;

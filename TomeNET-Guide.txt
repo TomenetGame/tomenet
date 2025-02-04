@@ -1372,6 +1372,7 @@ They all start with a slash '/' hence they're called slash commands:
             client, instead of throwing us just back to the account screen.
 
 /characters
+/charlist
 /chars      Lists all your existing characters, including their locations.
 
 /chem       Same as client option 'autopickup_chemicals':
