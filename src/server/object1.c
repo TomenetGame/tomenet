@@ -6061,10 +6061,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f1 & TR1_SLAY_GIANT) ff_print("It is especially deadly against giants.", 1, TR1_SLAY_GIANT);
 	if (f1 & TR1_SLAY_ANIMAL) ff_print("It is especially deadly against natural creatures.", 1, TR1_SLAY_ANIMAL);
 	if (f1 & TR1_KILL_UNDEAD) ff_print("It is a great bane of undead.", 1, TR1_KILL_UNDEAD);
+	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of undead.\n");
 	else if (f1 & TR1_SLAY_UNDEAD) ff_print("It strikes at undead with holy wrath.", 1, TR1_SLAY_UNDEAD);
 	if (f1 & TR1_KILL_DEMON) ff_print("It is a great bane of demons.", 1, TR1_KILL_DEMON);
+	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of demons.\n");
 	else if (f1 & TR1_SLAY_DEMON) ff_print("It strikes at demons with holy wrath.", 1, TR1_SLAY_DEMON);
 	if (f1 & TR1_KILL_DRAGON) ff_print("It is a great bane of dragons.", 1, TR1_KILL_DRAGON);
+	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of dragons.\n");
 	else if (f1 & TR1_SLAY_DRAGON) ff_print("It is especially deadly against dragons.", 1, TR1_SLAY_DRAGON);
 	if (f1 & TR1_SLAY_EVIL) ff_print("It fights against evil with holy fury.", 1, TR1_SLAY_EVIL);
 	if (f1 & TR1_MANA) ff_print("It affects your mana capacity.", 1, TR1_MANA);
@@ -6095,6 +6098,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	}
 #endif
 	if (f2 & TR2_IM_POISON) ff_print("It provides \377Uimmunity\377- to poison.", 2, TR2_IM_POISON);
+	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_MERCY) {
+		fprintf(fff, "\377BIt provides \377Uimmunity\377- to poison.\n");
+		f2 &= ~TR2_RES_POIS; //don't display its original power that got upgraded to IM
+	}
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 		if (!(f2 & TR2_IM_FIRE)) {

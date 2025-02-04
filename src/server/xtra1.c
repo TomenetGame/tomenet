@@ -3096,6 +3096,8 @@ void calc_boni(int Ind) {
 #endif
 	bool may_reflect = FALSE;
 
+	char art_combo = 0, art_combo_slot1, art_combo_slot2;
+
 #ifdef EQUIPMENT_SET_BONUS
 	/* for boni of artifact "sets" ie arts of (about) identical name - C. Blue */
 	int equipment_set[INVEN_TOTAL - INVEN_WIELD], equipment_set_amount[INVEN_TOTAL - INVEN_WIELD];
@@ -3970,6 +3972,26 @@ void calc_boni(int Ind) {
 		csheet_boni[i - INVEN_WIELD].symbol = c;
 		csheet_boni[i - INVEN_WIELD].color = a; //WARNING: this is necessary because csheet_boni.color is type char instead of byte
 
+		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
+
+		/* Extract the item flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+		/* Note cursed/hidden status... */
+		if ((f3 & TR3_CURSED) || (f3 & TR3_HEAVY_CURSE) || (f3 & TR3_PERMA_CURSE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XCRSE;
+		if (!object_fully_known_p(Ind, o_ptr) && !(o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_XHIDD;
+
+		/* Not-burning light source does nothing, good or bad */
+		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
+
+		/* Anti-Cheeze (DWing in MH mode on heavy armoured warriors):
+		   Dual-wielding won't apply the second weapon if encumbered */
+		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD && rogue_heavy_armor(p_ptr)) continue;
+
+
+		/* ----- Item is not just equipped, but also 'in effect'! ----- */
+
+
 		/* Special admin items */
 		if (o_ptr->tval == TV_AMULET) {
 			switch (o_ptr->sval) {
@@ -4017,6 +4039,18 @@ void calc_boni(int Ind) {
 			strcpy(tmp_name, a_name + a_info[o_ptr->name1].name);
 			tmp_name_ptr = tmp_name;
 
+			/* Hack for specific artifact combo */
+			switch (o_ptr->name1) {
+			case ART_JUDGEMENT:
+				art_combo_slot1 = i;
+				art_combo++;
+				break;
+			case ART_MERCY:
+				art_combo_slot2 = i;
+				art_combo++;
+				break;
+			}
+
 			/* Specialty for true art rings of power: Check for extended base name "<item> < of power> 'of <name>|<name'" and skip the 'of power' extension: */
 			if (!strncasecmp(tmp_name, "of power ", 9)) tmp_name_ptr += 9;
 
@@ -4050,22 +4084,6 @@ void calc_boni(int Ind) {
 			}
 		}
 #endif
-
-		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
-
-		/* Extract the item flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
-		/* Note cursed/hidden status... */
-		if ((f3 & TR3_CURSED) || (f3 & TR3_HEAVY_CURSE) || (f3 & TR3_PERMA_CURSE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XCRSE;
-		if (!object_fully_known_p(Ind, o_ptr) && !(o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_XHIDD;
-
-		/* Not-burning light source does nothing, good or bad */
-		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
-
-		/* Anti-Cheeze (DWing in MH mode on heavy armoured warriors):
-		   Dual-wielding won't apply the second weapon if encumbered */
-		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD && rogue_heavy_armor(p_ptr)) continue;
 
 		if (f4 & TR4_NEVER_BLOW) {
 			if (is_ranged_weapon(o_ptr->tval)) never_blow_ranged = TRUE; //disable shooting attacks
@@ -4658,6 +4676,17 @@ void calc_boni(int Ind) {
 	}
 	/* Downgrade black breath level if no longer have an TR4_BLACK_BREATH item equipped! */
 	if (p_ptr->black_breath == 3) p_ptr->black_breath = 1;
+
+	/* Hack: Specific artifact dagger combo effect (Judgement+Mercy) */
+	if (art_combo == 2) {
+		p_ptr->temp_misc_3 |= 0x01;
+		/* Judgement upgrades SLAY to KILL mods */
+		p_ptr->slay_equip |= TR1_KILL_DRAGON; csheet_boni[art_combo_slot1 - INVEN_WIELD].cb[8] |= CB9_KDRGN;
+		p_ptr->slay_equip |= TR1_KILL_DEMON; csheet_boni[art_combo_slot1 - INVEN_WIELD].cb[8] |= CB9_KDEMN;
+		p_ptr->slay_equip |= TR1_KILL_UNDEAD; csheet_boni[art_combo_slot1 - INVEN_WIELD].cb[9] |= CB10_KUNDD;
+		/* Mercy upgrades RES to IM */
+		p_ptr->immune_poison = TRUE; csheet_boni[art_combo_slot2 - INVEN_WIELD].cb[1] |= CB2_IPOIS;
+	} else p_ptr->temp_misc_3 &= ~0x01;
 
 	/* Has to be done here as it may depend on other items granting light resistance,
 	   so all items have to be applied first: */

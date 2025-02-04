@@ -3492,6 +3492,7 @@ struct player_type {
 	bool fail_no_melee;
 	byte temp_misc_1; //0x01: door-mimic open state; 0x02: ppage, 0x04: gpage, 0x08: snowed, 0x10: random dungeon town handling, 0x20: loading old savegames before separate depths, 0x40 and 0x80: reserved for testing
 	byte temp_misc_2; //timer for snowed
+	byte temp_misc_3; //for art_combo hack, to avoid duplicate checks (ie outside of xtra1.c)
 	byte lifetime_flags;
 
 	bool page_on_privmsg;

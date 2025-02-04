@@ -3548,6 +3548,29 @@ D:A sacred armour of massive, dark gleaming metal plating covered by an eerie
 D:purple hue. It seems to be unpowered, lacking energy to be worn and used.
 
 
+# Judgement and Mercy
+
+N:286:'Judgement'
+I:23:4:2
+W:45:25:30:120000
+P:0:4d4:30:20:0
+F:HIDE_TYPE | SLAY_EVIL | SLAY_UNDEAD | SLAY_DRAGON | SLAY_DEMON
+F:SEE_INVIS | RES_CHAOS | FREE_ACT | BLOWS
+D:Each strike of this ornated, deep-red gleaming shiv will judge the foe without
+D:fail. It's one of two twin weapons, each forged with one half of a set of
+D:powerful spell runes.
+
+N:287:'Mercy'
+I:23:4:1
+W:60:45:30:120000
+P:0:2d4:30:10:10
+F:HIDE_TYPE | SPEED | LIFE
+F:RES_POIS | RES_DISEN | RES_NETHER | RES_FEAR | FREE_ACT
+D:This ornated dagger glows in soft white and grants the wielder respite from
+D:the terrors of combat. It's one of two twin weapons, each forged with one half
+D:of a set of powerful spell runes.
+
+
 
 # Combined item (3 pieces) Halberd 'Ang-Tir-Calad'
 
