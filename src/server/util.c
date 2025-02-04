@@ -9816,6 +9816,8 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = o_ptr_v8->custom_lua_usage;
 				//convert:
 				o_ptr->mode = o_ptr_v8->mode; /* u32b = u16b */
+				o_ptr->wInd = 0; /* Will be automatically set on first calc_boni() call on player login */
+				o_ptr->dummy1 = o_ptr->dummy2 = 0; /* (future use) */
 			}
 			if (r == 0) {
 				s_printf("  error: Failed to read object.\n");

@@ -308,6 +308,7 @@ static void rd_item(object_type *o_ptr) {
 	byte tmpbyte;
 	s32b tmp32s;
 	u16b tmp16u;
+	s16b tmp16s;
 
 	/* VAMPIRES_INV_CURSED */
 	bool flipped = FALSE;
@@ -617,6 +618,14 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->custom_lua_equipstate);
 		rd_s16b(&o_ptr->custom_lua_destruction);
 		rd_s16b(&o_ptr->custom_lua_usage);
+	}
+
+	if (!older_than(4, 9, 20)) {
+		rd_s16b(&tmp16s);
+		o_ptr->wInd = tmp16s;
+		/* For future use (2x u32b dummy) */
+		rd_u32b(&o_ptr->dummy1);
+		rd_u32b(&o_ptr->dummy2);
 	}
 
 
