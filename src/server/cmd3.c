@@ -71,6 +71,9 @@ s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
  #endif
 #endif
 
+	/* Clear 'wielded' mark */
+	o_ptr->wInd = 0;
+
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {
 		msg_print(Ind, "The sigil fades away.");

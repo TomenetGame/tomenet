@@ -841,6 +841,8 @@ struct object_type {
 	s16b custom_lua_equipstate;	/* Runs custom lua script on equipping/unequipping it */
 	s16b custom_lua_destruction;	/* Runs custom lua script on item destruction */
 	s16b custom_lua_usage;		/* Runs custom lua script on whatever this item can be used for via command: activation, quaff, read, eat.. */
+
+	int wInd;			/* Player currently _wielding/wearing_ the item. (Does not need to be saved/loaded as it's auto-regenerated.) */
 };
 typedef struct object_type_v8 object_type_v8;
 struct object_type_v8 {

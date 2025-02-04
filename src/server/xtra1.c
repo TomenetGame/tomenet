@@ -3966,6 +3966,8 @@ void calc_boni(int Ind) {
 		}
 		k_ptr = &k_info[o_ptr->k_idx];
 		pval = o_ptr->pval;
+		/* Mark item as 'wielded' */
+		o_ptr->wInd = Ind;
 
 		/* Set item display info */
 		get_object_visual(&c, &a, o_ptr, p_ptr);
@@ -4679,13 +4681,17 @@ void calc_boni(int Ind) {
 
 	/* Hack: Specific artifact dagger combo effect (Judgement+Mercy) */
 	if (art_combo == 2) {
+		/* Hack flags wherever necessary, to set them to the upgrades below... */
 		p_ptr->temp_misc_3 |= 0x01;
+
 		/* Judgement upgrades SLAY to KILL mods */
 		p_ptr->slay_equip |= TR1_KILL_DRAGON; csheet_boni[art_combo_slot1 - INVEN_WIELD].cb[8] |= CB9_KDRGN;
 		p_ptr->slay_equip |= TR1_KILL_DEMON; csheet_boni[art_combo_slot1 - INVEN_WIELD].cb[8] |= CB9_KDEMN;
 		p_ptr->slay_equip |= TR1_KILL_UNDEAD; csheet_boni[art_combo_slot1 - INVEN_WIELD].cb[9] |= CB10_KUNDD;
-		/* Mercy upgrades RES to IM */
+
+		/* Mercy upgrades RES to IM and gains BLOWS */
 		p_ptr->immune_poison = TRUE; csheet_boni[art_combo_slot2 - INVEN_WIELD].cb[1] |= CB2_IPOIS;
+		csheet_boni[art_combo_slot2 - INVEN_WIELD].blow += pval;
 	} else p_ptr->temp_misc_3 &= ~0x01;
 
 	/* Has to be done here as it may depend on other items granting light resistance,
@@ -7079,8 +7085,10 @@ void calc_boni(int Ind) {
 					} else can_have_hidden_powers = TRUE; //unknown jewelry type
 					/* Assume we must *id* (just once) to learn sigil powers */
 					if (o_ptr->sigil && !object_fully_known_p(Ind, o_ptr)) can_have_hidden_powers = TRUE;
-					ego_item_type *e_ptr;
+
 					if (object_known_p(Ind, o_ptr)) {
+						ego_item_type *e_ptr;
+
 						if (o_ptr->name2) {
 							e_ptr = &e_info[o_ptr->name2];
 							for (j = 0; j < 5; j++) {
@@ -7234,10 +7242,12 @@ void calc_boni(int Ind) {
 							  to get the -real- pvals (no more witans +8 stealth if +10 speed..) */
 							if (o_ptr->name2) {
 								artifact_type *a_ptr = ego_make(o_ptr);
+
 								f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 								f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
 							} else if (o_ptr->name1 == ART_RANDART) {
 								artifact_type *a_ptr = randart_make(o_ptr);
+
 								f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 								f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
 							}

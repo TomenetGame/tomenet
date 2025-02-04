@@ -1236,6 +1236,18 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			(*f5) |= a_ptr->flags5;
 			(*f6) |= a_ptr->flags6;
 			(*esp) |= a_ptr->esp;
+
+			/* Hack: art_combo for wielded items */
+			if (o_ptr->wInd && (Players[o_ptr->wInd]->temp_misc_3 & 0x01)) switch (o_ptr->name1) {
+			case ART_JUDGEMENT:
+				(*f1) |= TR1_KILL_DRAGON | TR1_KILL_DEMON | TR1_KILL_UNDEAD;
+				break;
+			case ART_MERCY:
+				(*f1) |= TR1_BLOWS;
+				(*f2) &= ~TR2_IM_POISON;
+				(*f2) |= TR2_IM_POISON;
+				break;
+			}
 		}
 #if 0
 		if ((!object_flags_no_set) && (a_ptr->set != -1))
@@ -6042,8 +6054,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f1 & TR1_INFRA) ff_print("It affects your infra-vision.", 1, TR1_INFRA);
 	if (f1 & TR1_TUNNEL) ff_print("It affects your ability to tunnel.", 1, TR1_TUNNEL);
 	if (f1 & TR1_SPEED) ff_print("It affects your speed.", 1, TR1_SPEED);
-	if (f1 & TR1_BLOWS) ff_print("It affects your melee attack speed.", 1, TR1_BLOWS);
-	if (f5 & TR5_CRIT) ff_print("It affects your ability to score critical hits.", 5, TR5_CRIT);
+	if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_MERCY)
+		fprintf(fff, "\377BIt affects your melee attack speed.\n");
+	else if (f1 & TR1_BLOWS) ff_print("It affects your melee attack speed.", 1, TR1_BLOWS);
+	if (f5 & TR5_CRIT) ff_print("It affects your ability to score critical hits.", 5, TR5_CRIT);//blue text to indicate 'upgrade'
 	if (f5 & TR5_LUCK) ff_print("It affects your luck.", 5, TR5_LUCK);
 
 	if (f1 & TR1_BRAND_ACID) ff_print("It does extra damage from acid.", 1, TR1_BRAND_ACID);
@@ -6060,14 +6074,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f1 & TR1_SLAY_TROLL) ff_print("It is especially deadly against trolls.", 1, TR1_SLAY_TROLL);
 	if (f1 & TR1_SLAY_GIANT) ff_print("It is especially deadly against giants.", 1, TR1_SLAY_GIANT);
 	if (f1 & TR1_SLAY_ANIMAL) ff_print("It is especially deadly against natural creatures.", 1, TR1_SLAY_ANIMAL);
-	if (f1 & TR1_KILL_UNDEAD) ff_print("It is a great bane of undead.", 1, TR1_KILL_UNDEAD);
-	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of undead.\n");
+	if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of undead.\n"); //blue text to indicate 'upgrade'
+	else if (f1 & TR1_KILL_UNDEAD) ff_print("It is a great bane of undead.", 1, TR1_KILL_UNDEAD);
 	else if (f1 & TR1_SLAY_UNDEAD) ff_print("It strikes at undead with holy wrath.", 1, TR1_SLAY_UNDEAD);
-	if (f1 & TR1_KILL_DEMON) ff_print("It is a great bane of demons.", 1, TR1_KILL_DEMON);
-	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of demons.\n");
+	if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of demons.\n"); //blue text to indicate 'upgrade'
+	else if (f1 & TR1_KILL_DEMON) ff_print("It is a great bane of demons.", 1, TR1_KILL_DEMON);
 	else if (f1 & TR1_SLAY_DEMON) ff_print("It strikes at demons with holy wrath.", 1, TR1_SLAY_DEMON);
-	if (f1 & TR1_KILL_DRAGON) ff_print("It is a great bane of dragons.", 1, TR1_KILL_DRAGON);
-	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of dragons.\n");
+	if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_JUDGEMENT) fprintf(fff, "\377BIt is a great bane of dragons.\n"); //blue text to indicate 'upgrade'
+	else if (f1 & TR1_KILL_DRAGON) ff_print("It is a great bane of dragons.", 1, TR1_KILL_DRAGON);
 	else if (f1 & TR1_SLAY_DRAGON) ff_print("It is especially deadly against dragons.", 1, TR1_SLAY_DRAGON);
 	if (f1 & TR1_SLAY_EVIL) ff_print("It fights against evil with holy fury.", 1, TR1_SLAY_EVIL);
 	if (f1 & TR1_MANA) ff_print("It affects your mana capacity.", 1, TR1_MANA);
@@ -6097,11 +6111,11 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (f2 & TRAP2_ONLY_EVIL) fprintf(fff, "It can only be set off by evil creatures.\n");
 	}
 #endif
-	if (f2 & TR2_IM_POISON) ff_print("It provides \377Uimmunity\377- to poison.", 2, TR2_IM_POISON);
-	else if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_MERCY) {
+	if ((p_ptr->temp_misc_3 & 0x01) && o_ptr->name1 == ART_MERCY) { //blue text to indicate 'upgrade'
 		fprintf(fff, "\377BIt provides \377Uimmunity\377- to poison.\n");
 		f2 &= ~TR2_RES_POIS; //don't display its original power that got upgraded to IM
 	}
+	else if (f2 & TR2_IM_POISON) ff_print("It provides \377Uimmunity\377- to poison.", 2, TR2_IM_POISON);
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 		if (!(f2 & TR2_IM_FIRE)) {
