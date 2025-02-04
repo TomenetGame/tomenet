@@ -2436,6 +2436,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	}
 	/* Handle flavoured insta-art names */
 	/* Redundant 'if' condition: modstr+unswitched can only be flavoured arts, and flavoured arts are always insta-arts (paranoia) */
+	/* (Hint: If server crashes for 'modstr' it's usually because spells weren't read from LUA completely, and the pval of a spell scroll is >= max_spells as a result) */
 	else if (modstr[0] && !switched_ego_prefix_and_modstr && (f3 & TR3_INSTA_ART)) {
 		append_name = FALSE;
 
