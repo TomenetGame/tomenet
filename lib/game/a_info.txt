@@ -3550,7 +3550,7 @@ D:purple hue. It seems to be unpowered, lacking energy to be worn and used.
 
 # Judgement and Mercy
 
-N:286:'Judgement'
+N:286:of Judgement
 I:23:4:2
 W:45:25:24:120000
 P:0:4d4:30:20:0
@@ -3560,7 +3560,7 @@ D:Each strike of this ornated, deep-red gleaming shiv will judge the foe without
 D:fail. It's one of two twin weapons, each forged with one half of a set of
 D:powerful spell runes.
 
-N:287:'Mercy'
+N:287:of Mercy
 I:23:4:1
 W:60:45:24:120000
 P:0:2d4:30:10:10
