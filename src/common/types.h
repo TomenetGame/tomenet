@@ -842,9 +842,9 @@ struct object_type {
 	s16b custom_lua_destruction;	/* Runs custom lua script on item destruction */
 	s16b custom_lua_usage;		/* Runs custom lua script on whatever this item can be used for via command: activation, quaff, read, eat.. */
 
-	int wId;			/* Player currently _wielding/wearing_ the item. */
+	s32b wId;			/* Player currently _wielding/wearing_ the item. */
 
-	u32b dummy1;			/* For future use */
+	u16b dummy1;			/* For future use */
 	u32b dummy2;			/* For future use */
 };
 typedef struct object_type_v8 object_type_v8;
