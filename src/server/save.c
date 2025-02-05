@@ -297,9 +297,9 @@ static void wr_item(object_type *o_ptr) {
 	wr_s16b(o_ptr->custom_lua_destruction);
 	wr_s16b(o_ptr->custom_lua_usage);
 
-	wr_s16b(o_ptr->wInd);
-	wr_u32b(o_ptr->dummy1);
-	wr_u32b(o_ptr->dummy2);
+	wr_s16b(0); //future use
+	wr_u32b(o_ptr->wId);//o_ptr->dummy1
+	wr_u32b(o_ptr->dummy2); //future use
 }
 
 /*

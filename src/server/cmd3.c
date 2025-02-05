@@ -71,8 +71,8 @@ s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
  #endif
 #endif
 
-	/* Clear 'wielded' mark */
-	o_ptr->wInd = 0;
+	/* For art_combo hack: Clear wielder info. */
+	o_ptr->wId = 0;
 
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {
@@ -226,6 +226,9 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 	else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
  #endif
 #endif
+
+	/* For art_combo hack: Clear wielder info. */
+	o_ptr->wId = 0;
 
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {
@@ -524,15 +527,15 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	/* Message */
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
 
+	/* For art_combo hack: Clear wielder info. */
+	o_ptr->wId = 0;
+
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {
 		msg_print(Ind, "The sigil fades away.");
 		o_ptr->sigil = 0;
 		o_ptr->sseed = 0;
 	}
-
-	/* For art_combo hack: Clear wielder Ind info. */
-	o_ptr->wInd = 0;
 
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) ;
@@ -1245,6 +1248,9 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			return(-1);
 		}
 	}
+
+	/* Mark item as 'wielded' */
+	o_ptr->wId = p_ptr->id;
 
 #if 1
 	/* Activation tax */

@@ -3966,8 +3966,6 @@ void calc_boni(int Ind) {
 		}
 		k_ptr = &k_info[o_ptr->k_idx];
 		pval = o_ptr->pval;
-		/* Mark item as 'wielded' */
-		o_ptr->wInd = Ind;
 
 		/* Set item display info */
 		get_object_visual(&c, &a, o_ptr, p_ptr);

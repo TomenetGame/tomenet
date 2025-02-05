@@ -307,6 +307,7 @@ static void rd_item(object_type *o_ptr) {
 
 	byte tmpbyte;
 	s32b tmp32s;
+	u32b tmp32u;
 	u16b tmp16u;
 	s16b tmp16s;
 
@@ -621,15 +622,12 @@ static void rd_item(object_type *o_ptr) {
 	}
 
 	if (!older_than(4, 9, 20)) {
-		rd_s16b(&tmp16s);
-#if 0 /* 0'ed: Don't set wInd, as the player is probably not even online right now, or another mismatching player currently has this Ind! */
-		o_ptr->wInd = tmp16s;
-#else /* Rely on live-setting it via calc_boni() and inven_takeoff() exclusively. */
-		o_ptr->wInd = 0;
-#endif
-		/* For future use (2x u32b dummy) */
-		rd_u32b(&o_ptr->dummy1);
-		rd_u32b(&o_ptr->dummy2);
+		rd_s16b(&tmp16s); //future use
+
+		rd_u32b(&tmp32u);
+		o_ptr->wId = tmp32u;
+
+		rd_u32b(&o_ptr->dummy2); //future use
 	}
 
 

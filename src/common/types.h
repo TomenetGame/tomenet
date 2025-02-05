@@ -842,7 +842,7 @@ struct object_type {
 	s16b custom_lua_destruction;	/* Runs custom lua script on item destruction */
 	s16b custom_lua_usage;		/* Runs custom lua script on whatever this item can be used for via command: activation, quaff, read, eat.. */
 
-	int wInd;			/* Player currently _wielding/wearing_ the item. (Even though it is saved/loaded, that's not really needed as it's auto-regenerated on login.) */
+	int wId;			/* Player currently _wielding/wearing_ the item. */
 
 	u32b dummy1;			/* For future use */
 	u32b dummy2;			/* For future use */

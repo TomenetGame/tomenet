@@ -1238,15 +1238,28 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			(*esp) |= a_ptr->esp;
 
 			/* Hack: art_combo for wielded items */
-			if (o_ptr->wInd && (Players[o_ptr->wInd]->temp_misc_3 & 0x01)) switch (o_ptr->name1) {
-			case ART_JUDGEMENT:
-				(*f1) |= TR1_KILL_DRAGON | TR1_KILL_DEMON | TR1_KILL_UNDEAD;
-				break;
-			case ART_MERCY:
-				(*f1) |= TR1_BLOWS;
-				(*f2) &= ~TR2_IM_POISON;
-				(*f2) |= TR2_IM_POISON;
-				break;
+			if (o_ptr->wId) {
+				int Ind;
+
+				for (Ind = 1; Ind <= NumPlayers; Ind++) {
+					if (Players[Ind]->conn == NOT_CONNECTED) continue;
+					if (Players[Ind]->id != o_ptr->wId) continue;
+
+					/* Not art_combo wielding currenly? */
+					if (!(Players[Ind]->temp_misc_3 & 0x01)) break;
+
+					switch (o_ptr->name1) {
+					case ART_JUDGEMENT:
+						(*f1) |= TR1_KILL_DRAGON | TR1_KILL_DEMON | TR1_KILL_UNDEAD;
+						break;
+					case ART_MERCY:
+						(*f1) |= TR1_BLOWS;
+						(*f2) &= ~TR2_IM_POISON;
+						(*f2) |= TR2_IM_POISON;
+						break;
+					}
+					break;
+				}
 			}
 		}
 #if 0
@@ -1271,6 +1284,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	/* Sigil */
 	if (o_ptr->sigil) {
 		bool failed = 0;
+
 		if (o_ptr->sseed) {
 			/* Build the flag pool */
 			u32b flag_pool[192]; byte flag_category[192]; byte flag_count = 0; //192 is 32*6, aka max # of flags - Kurzel
