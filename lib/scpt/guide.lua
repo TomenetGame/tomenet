@@ -216,7 +216,7 @@ guide_spell = {
 
     "Phase Door",
     "Disarm",
-    "Teleport",
+    "Teleportation",
     "Teleport Away",
     "Recall",
     "Probability Travel",
