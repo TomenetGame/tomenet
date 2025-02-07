@@ -22474,7 +22474,7 @@ these limitations will be lifted.
                     Required skill level for first spell level: 40.
                     (Telekinesis II is a Mindcraft spell, not in Wizardry.)
 
-    Mass Warp       Locks monsters in stasis for a while.
+    Mass Stasis     Locks monsters in stasis for a while.
                     Required skill level for first spell level: 45.
                     Shared spell (see above): Temporal, Conveyance.
 
@@ -22586,7 +22586,7 @@ these limitations will be lifted.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 30.
 
-    Disenchantment Beam
+    Disenchantment Ray
                     Conjures a powerful and nearly irresistible beam.
                     Required skill level for first spell level: 40.
 
