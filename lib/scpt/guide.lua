@@ -168,7 +168,7 @@ guide_school = {
 }
 
 -- note: indices start at 0, so number is final index + 1
-guide_spells = 194
+guide_spells = 193
 guide_spell = {
     "Manathrust",
     "Recharge",
