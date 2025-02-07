@@ -8448,7 +8448,7 @@ int check_monster(worldpos *wpos, int y, int x) {
 	if (!in_bounds(y, x)) return(0);
 	c_ptr = &zcave[y][x];
 
-	if (c_ptr->m_idx) {
+	if (c_ptr->m_idx > 0) {
 		m_ptr = &m_list[c_ptr->m_idx];
 		return(m_ptr->r_idx);
 	} else {
@@ -8464,7 +8464,7 @@ int check_monster_ego(worldpos *wpos, int y, int x) {
 	if (!in_bounds(y, x)) return(0);
 	c_ptr = &zcave[y][x];
 
-	if (c_ptr->m_idx) {
+	if (c_ptr->m_idx > 0) {
 		m_ptr = &m_list[c_ptr->m_idx];
 		return (m_ptr->ego);
 	} else return 0;
