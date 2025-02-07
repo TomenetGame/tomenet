@@ -220,7 +220,7 @@ guide_spell = {
     "Teleport Away",
     "Recall",
     "Probability Travel",
-    "Mass Warp",
+    --"Mass Stasis", --duplicate (temporal)
     "Telekinesis I",
 
     "Detect Monsters",
@@ -234,7 +234,7 @@ guide_spell = {
     "Magelock",
     "Slow Monster",
     "Essence of Speed",
-    "Mass Warp",
+    "Mass Stasis",
 
     "Confusion",
     "Stun",
@@ -242,7 +242,7 @@ guide_spell = {
     "Obliteration",
     "Wraithform",
     "Stop Wraithform",
-    "Disenchantment Beam",
+    "Disenchantment Ray",
     "Hellfire", --64
 
     "Curse",

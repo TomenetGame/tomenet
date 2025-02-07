@@ -22434,7 +22434,7 @@ these limitations will be lifted.
     Disarm          Destroys traps and reveals and unlocks doors around you.
                     Required skill level for first spell level: 5.
 
-    Teleport        Teleports you randomly within the floor.
+    Teleportation   Teleports you randomly within the floor.
                     Required skill level for first spell level: 10.
 
     Teleport Away   Teleports a line of monsters away.
