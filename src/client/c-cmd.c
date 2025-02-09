@@ -3436,12 +3436,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		/* home key to reset */
 		case NAVI_KEY_POS1:
 		case '7': //rl:?
+		case 'g':
 			line = 0;
 			continue;
 
 		/* support end key too.. */
 		case NAVI_KEY_END:
 		case '1': //rl:?
+		case 'G':
 			line = guide_lastline - maxlines + 1;
 			if (line < 0) line = 0;
 			continue;
@@ -3647,7 +3649,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 				/* Expand 'wor' to 'Word of Recall' and fall back to caps-search */
-				if (!strcasecmp(buf, "wor")) {
+				if (!strcasecmp(buf, "wor") || !strcasecmp(buf, "rec") || !strcasecmp(buf, "word of recall")) {
 					strcpy(buf, "WORD OF RECALL");
 					fallback = TRUE;
 					fallback_uppercase = 4;
