@@ -1714,7 +1714,7 @@ G:?:d
 I:70:22:0
 W:40:0:5:150
 A:40/1
-D:Attempts to recharges wands, staves or rods.
+D:Attempts to recharge wands, staves or rods.
 
 N:207:Genocide
 G:?:d
