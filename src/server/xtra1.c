@@ -1868,6 +1868,46 @@ void calc_hitpoints(int Ind) {
 		mhp += (p_ptr->lev <= 50 ? (p_ptr->lev - 20) * 2 : 60 + p_ptr->lev - 50);
 #endif
 
+#ifdef NATURE_HP_SUPPLEMENT
+	/* Abuse bonus and bonus_cap */
+	if (!p_ptr->tim_manashield && (bonus = get_skill(p_ptr, SKILL_NATURE))) {
+		if ((bonus_cap = 800 - mhp) > 0) {
+			bonus_cap /= 4;
+			if (bonus_cap > bonus) {
+				mhp += bonus * 4;
+				bonus = 0;
+			} else {
+				mhp += bonus_cap * 4;
+				bonus -= bonus_cap;
+			}
+		}
+		if (bonus && ((bonus_cap = 900 - mhp) > 0)) {
+			bonus_cap /= 3;
+			if (bonus_cap > bonus) {
+				mhp += bonus * 3;
+				bonus = 0;
+			} else {
+				mhp += bonus_cap * 3;
+				bonus -= bonus_cap;
+			}
+		}
+		if (bonus && ((bonus_cap = 1000 - mhp) > 0)) {
+			bonus_cap /= 2;
+			if (bonus_cap > bonus) {
+				mhp += bonus * 2;
+				bonus = 0;
+			} else {
+				mhp += bonus_cap * 2;
+				bonus -= bonus_cap;
+			}
+		}
+		if (bonus && ((bonus_cap = 1100 - mhp) > 0)) {
+			if (bonus_cap > bonus) mhp += bonus;
+			else mhp += bonus_cap;
+		}
+	}
+#endif
+
 #if 1
 	if (p_ptr->body_monster) {
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
