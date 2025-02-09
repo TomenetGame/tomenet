@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 4. February 2025 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 9. February 2025 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2693,8 +2693,8 @@ town you visited.
     or even better for any kind of recalling..
     @R          This inscription makes the above versions sort of obsolete.
                 If you have inscribed a Word of Recall item like this then you
-                can just type the command    /rec    into chat to invoke the
-                Word of Recall. Examples replacing above inscriptions:
+                can just type the command    /rec    into chat to invoke
+                the Word of Recall. Examples replacing above inscriptions:
                 /rec 500
                 /rec -350         <- when option depth_in_feet is 'yes'.
                 /rec -7           <- when option depth_in_feet is 'no'.
@@ -4958,8 +4958,8 @@ self-explaining or that are especially important are listed in detail here:
 
     Also use predefined server-side auto-inscriptions (auto_insc_server)
         Will provide a predefined (on server-side) set of item-inscriptions
-        that will be applied automatically to some selected items, which are
-        Word of Recall items, various scrolls and a few potions.
+        that will be applied automatically to some selected items,
+        which are Word of Recall items, various scrolls and a few potions.
         (These inscriptions are applied independantly of the custom auto
         inscription feature you can access with '&' key.)
         The server-side auto-inscriptions are currently:
@@ -8565,8 +8565,8 @@ staircase colours (also visible on the world map):
  Staircases are yellow.
 
 -NO_UP. These dungeons won't allow you to go upwards, similar to ironman,
- just without the penalty of permanent ghost-death. You are allowed to use
- Word of Recall as well! Ghosts of dead players can float upwards.
+ just without the penalty of permanent ghost-death. You are allowed to
+ use Word of Recall as well! Ghosts of dead players can float upwards.
  No-up dungeons/towers are marked by an orange < or > symbol.
 
 -NO_RECALL. These dungeons don't allow you to use Word of Recall nor
@@ -10190,8 +10190,8 @@ These feelings are as follows:
 
   "You don't sense a magic barrier here..." ->   This message only occurs in
                                         Ironman or no-recall dungeons/towers.
-                                        It lets you know that you may use
-                                        Word of Recall on this floor!
+                                        It lets you know that you may
+                                        use Word of Recall on this floor!
                                         (This message is displayed in green
                                         colour, not orange.)
 
@@ -11499,8 +11499,8 @@ top dog Pondos and many others.
 
     For servers running 'strict_etiquette', meaning that a player will lose all
     true artifacts after winning (the official server does NOT run use this):
-    If Morgoth is defeated, players on his floor will be allowed to use
-    Word of Recall to leave the dungeon if they wish!
+    If Morgoth is defeated, players on his floor will be allowed
+    to use Word of Recall to leave the dungeon if they wish!
 
   Requirements to enter, exclusive mode:
     The Deep Dive dungeon requires your character to have zero experience
