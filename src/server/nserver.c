@@ -13160,7 +13160,18 @@ static int Receive_search_mode(int ind) {
 		return(n);
 	}
 
-	if (p_ptr) do_cmd_toggle_search(player);
+	if (p_ptr && (
+	    p_ptr->searching || /* Turning it off again doesn't require energy */
+	    p_ptr->energy >= level_speed(&p_ptr->wpos))) {
+		/* Take a turn (only if it requires energy) */
+		if (!p_ptr->searching) p_ptr->energy -= level_speed(&p_ptr->wpos);
+		do_cmd_toggle_search(player);
+		return(1);
+	} else if (p_ptr) {
+		Packet_printf(&connp->q, "%c", ch);
+		return(0);
+	}
+
 	return(1);
 }
 
