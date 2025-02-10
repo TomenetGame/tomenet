@@ -454,7 +454,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
  #define CRAPS_X	30
- #define CRAPS_Y	10
+ #define CRAPS_Y	5
 	connp = Conn[p_ptr->conn];
 	if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
 		int k_idx;
