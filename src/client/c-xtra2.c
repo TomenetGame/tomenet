@@ -200,7 +200,6 @@ void do_cmd_messages(void) {
 
 			if (r) {
 				Term_putstr(t < 72 ? t : 72, 21 + HGT_PLUS - j + 1 - k, -1, a, format(" (x%d)", r + 1));
-				strcpy(msg_shown[msg_shown_max++], format(" (x%d)", r + 1));
 				r = 0;
 			}
 
