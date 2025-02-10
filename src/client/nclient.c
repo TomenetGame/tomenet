@@ -5713,18 +5713,19 @@ int Receive_weather(void) {
 				    weather_element_y[i] < weather_panel_y + screen_hgt) {
 					/* restore original grid content */
 #ifdef GRAPHICS_BG_MASK
-					Term_draw_2mask(PANEL_X + weather_element_x[i] - weather_panel_x,
-					    PANEL_Y + weather_element_y[i] - weather_panel_y,
-					    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#else
+					if (use_graphics == 2 && !c_cfg.ascii_weather && !c_cfg.no2mask_weather)
+						Term_draw_2mask(PANEL_X + weather_element_x[i] - weather_panel_x,
+						    PANEL_Y + weather_element_y[i] - weather_panel_y,
+						    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+						    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+						    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					else
+#endif
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 					    PANEL_Y + weather_element_y[i] - weather_panel_y,
 					    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
 					    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-#endif
 				}
 			}
 			if (screen_icky) Term_switch(0);

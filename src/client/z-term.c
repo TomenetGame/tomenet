@@ -444,6 +444,19 @@ static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	scr_aa[x] = a;
 	scr_cc[x] = c;
 
+#ifdef GRAPHICS_BG_MASK
+	/* Hack: If we draw something in 'non-BG-mask' mode we land here too, even if your use_graphics is = 2.
+	   In that case, 'background' info exists and we just don't use it, for this drawing action.
+	   So we should clear it instead of leaving it undefined: */
+	{
+		byte *scr_aa_back = Term->scr_back->a[y];
+		char32_t *scr_cc_back = Term->scr_back->c[y];
+
+		scr_aa_back[x] = 0;
+		scr_cc_back[x] = 32; //note: 0 would glitch as it's undefined, 32 aka space is correct for erasure
+	}
+#endif
+
 	/* Check for new min/max row info */
 	if (y < Term->y1) Term->y1 = y;
 	if (y > Term->y2) Term->y2 = y;

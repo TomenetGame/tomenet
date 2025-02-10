@@ -5651,7 +5651,7 @@ void do_weather(bool no_weather) {
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* restore original grid content */
 #ifdef GRAPHICS_BG_MASK
-				if (use_graphics == 2) // && !c_cfg.ascii_weather && !c_cfg.no2mask_weather
+				if (use_graphics == 2 && !c_cfg.ascii_weather && !c_cfg.no2mask_weather)
 					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
