@@ -156,10 +156,6 @@ static const int NONE = 0, DOWN = 1, UP = 2;
 /* Display log entries for debugging? */
 #define GO_DEBUGLOG
 
-/* Custom/Graphical stone visuals if player has custom mappings to allow it? */
-#define CUSTOM_VISUALS
-#define CUSTOM_VISUALS_EMPTY_FEAT 122 /* Star: 122, Sandwall (ie with GRAPHICS_BG_MASK): 258 */
-
 #ifdef USE_SOUND_2010
 /* Play stone clacking sound */
  #define CLACK "item_rune"

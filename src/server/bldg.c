@@ -443,10 +443,47 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	cptr p;
 #endif	// 0
 
+#ifdef CUSTOM_VISUALS
+	connection_t *connp;
+	char32_t c_die[6 + 1]; //pft ^^
+	byte a_die[6 + 1];
+	int ycv = 1;
+	bool custom_visuals = FALSE;
+#endif
+
+
+#ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
+ #define CRAPS_X	30
+ #define CRAPS_Y	10
+	connp = Conn[p_ptr->conn];
+	if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
+		int k_idx;
+
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
+		c_die[1] = p_ptr->k_char[k_idx];
+		a_die[1] = p_ptr->k_attr[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_2);
+		c_die[2] = p_ptr->k_char[k_idx];
+		a_die[2] = p_ptr->k_attr[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_3);
+		c_die[3] = p_ptr->k_char[k_idx];
+		a_die[3] = p_ptr->k_attr[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_4);
+		c_die[4] = p_ptr->k_char[k_idx];
+		a_die[4] = p_ptr->k_attr[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_5);
+		c_die[5] = p_ptr->k_char[k_idx];
+		a_die[5] = p_ptr->k_attr[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
+		c_die[6] = p_ptr->k_char[k_idx];
+		a_die[6] = p_ptr->k_attr[k_idx];
+
+		custom_visuals = TRUE;
+	}
+#endif
+
 	/* Avoid mad casino spam */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-
-	//screen_save();
 
 	if (cmd == BACT_GAMBLE_RULES) {
 		/* Peruse the gambling help file */
@@ -545,6 +582,19 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #endif
 				msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1,
 				    roll2, roll3);
+
+#ifdef CUSTOM_VISUALS
+ #ifdef GRAPHICS_BG_MASK
+				if (custom_visuals) {
+					Send_char_direct(Ind, CRAPS_X, CRAPS_Y, a_die[roll1], c_die[roll1], 0, 0);
+					Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y, a_die[roll2], c_die[roll2], 0, 0);
+ #else
+					Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y, a_die[roll1], c_die[roll1]);
+					Send_char_direct(Ind, CRAPS_X, CRAPS_Y, a_die[roll2], c_die[roll2]);
+ #endif
+				}
+#endif
+
 				if ((roll3 == 7) || (roll3 == 11))
 					win = TRUE;
 				else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
@@ -560,6 +610,18 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 						msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d",
 						    roll1, roll2, roll3);
+#ifdef CUSTOM_VISUALS
+ #ifdef GRAPHICS_BG_MASK
+						if (custom_visuals) {
+							Send_char_direct(Ind, CRAPS_X, CRAPS_Y + ycv, a_die[roll1], c_die[roll1], 0, 0);
+							Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y + ycv, a_die[roll2], c_die[roll2], 0, 0);
+ #else
+							Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y + ycv, a_die[roll1], c_die[roll1]);
+							Send_char_direct(Ind, CRAPS_X, CRAPS_Y + ycv, a_die[roll2], c_die[roll2]);
+ #endif
+							if (ycv < 10) ycv++; //overflow limit >,>
+						}
+#endif
 
 						if (roll3 == choice) win = TRUE;
 						else if (roll3 == 7) win = FALSE;
