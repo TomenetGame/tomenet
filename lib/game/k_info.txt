@@ -6829,42 +6829,42 @@ D:Removes all kinds of temporary magical effects.
 
 # Game dice:
 N:816:& Die~ (1)
-G:*:U
+G:*:u
 I:125:8:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:817:& Die~ (2)
-G:*:U
+G:*:u
 I:125:9:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:818:& Die~ (3)
-G:*:U
+G:*:u
 I:125:10:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:819:& Die~ (4)
-G:*:U
+G:*:u
 I:125:11:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:820:& Die~ (5)
-G:*:U
+G:*:u
 I:125:12:0
 W:127:0:1:0
 A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 N:821:& Die~ (6)
-G:*:U
+G:*:u
 I:125:13:0
 W:127:0:1:0
 A:127/0
