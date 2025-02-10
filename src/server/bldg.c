@@ -453,7 +453,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
- #define CRAPS_X	30
+ #define CRAPS_X	34
  #define CRAPS_Y	5
 	connp = Conn[p_ptr->conn];
 	if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
@@ -567,9 +567,9 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 				msg_format(Ind, "          Red die: \377r%d", choice);
 
 				//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
-				Send_store_special_str(Ind, CRAPS_Y, CRAPS_X, TERM_L_DARK, format("%2d", roll1));
-				Send_store_special_str(Ind, CRAPS_Y, CRAPS_X + 8, TERM_L_DARK, format("%2d", roll2));
-				Send_store_special_str(Ind, CRAPS_Y + 1, CRAPS_X + 4, TERM_L_RED, format("%2d", choice));
+				Send_store_special_str(Ind, CRAPS_Y, CRAPS_X - 4, TERM_L_DARK, format("%2d", roll1));
+				Send_store_special_str(Ind, CRAPS_Y, CRAPS_X + 4, TERM_L_DARK, format("%2d", roll2));
+				Send_store_special_str(Ind, CRAPS_Y + 1, CRAPS_X, TERM_L_RED, format("%2d", choice));
 
 				if (((choice > roll1) && (choice < roll2)) ||
 				    ((choice < roll1) && (choice > roll2)))
