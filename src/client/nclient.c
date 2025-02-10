@@ -3193,6 +3193,7 @@ int Receive_char(void) {
 			} else {
 				c_back = panel_map_c_back[x - PANEL_X][y - PANEL_Y];
 				a_back = panel_map_a_back[x - PANEL_X][y - PANEL_Y];
+				if (!c_back) c_back = panel_map_c_back[x - PANEL_X][y - PANEL_Y] = 32;
 			}
 #endif
 		}
@@ -4256,6 +4257,7 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 					} else {
 						a_back = panel_map_a_back[x - PANEL_X][y - PANEL_Y];
 						c_back_real = panel_map_c_back[x - PANEL_X][y - PANEL_Y];
+						if (!c_back_real) c_back_real = panel_map_c_back[x - PANEL_X][y - PANEL_Y] = 32;
 					}
 #endif
 				}

@@ -447,7 +447,8 @@ static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 #ifdef GRAPHICS_BG_MASK
 	/* Hack: If we draw something in 'non-BG-mask' mode we land here too, even if your use_graphics is = 2.
 	   In that case, 'background' info exists and we just don't use it, for this drawing action.
-	   So we should clear it instead of leaving it undefined: */
+	   So we should clear it instead of leaving it undefined.
+	   (Except for weather particles, where the effect of leaving the background here would actually be desired, as the weather particle is just temporary.) */
 	{
 		byte *scr_aa_back = Term->scr_back->a[y];
 		char32_t *scr_cc_back = Term->scr_back->c[y];
@@ -483,8 +484,10 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	/* Save the "literal" information */
 	scr_aa[x] = a;
 	scr_cc[x] = c;
-	scr_aa_back[x] = a_back;
-	scr_cc_back[x] = c_back;
+	if (c_back) {
+		scr_aa_back[x] = a_back;
+		scr_cc_back[x] = c_back;
+	}
 
 	/* Check for new min/max row info */
 	if (y < Term->y1) Term->y1 = y;
