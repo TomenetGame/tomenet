@@ -1401,7 +1401,7 @@ void go_challenge_start(int Ind) {
 				   The background becomes the foreground, so we can still display it to non-2mask-clients */
 				c = c_back;
 				a = a_back;
-				c_back = 0;
+				c_back = 32;
 				a_back = 0;
 
  #ifdef GRAPHICS_BG_MASK
@@ -3329,7 +3329,7 @@ static void go_engine_board(void) {
 				if (c == c_empty) {
 					c = c_back;
 					a = a_back;
-					c_back = 0;
+					c_back = 32;
 					a_back = 0;
 				}
 
