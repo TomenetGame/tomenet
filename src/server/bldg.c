@@ -447,7 +447,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	connection_t *connp;
 	char32_t c_die[6 + 1]; //pft ^^
 	byte a_die[6 + 1];
-	int ycv = 1;
+	int ycv;
 	bool custom_visuals = FALSE;
 #endif
 
@@ -544,6 +544,11 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		prt(tmp_str,21,2);
 #endif	// 0
 
+		/* Erase any previous results */
+		for (ycv = 3; ycv <= 16; ycv++)
+			Send_store_special_str(Ind, ycv, 0, TERM_DARK, "                                                                                ");
+		ycv = 0;
+
 		do {
 			switch (cmd) {
 			case BACT_IN_BETWEEN: /* Game of In-Between */
@@ -592,8 +597,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
 				if (custom_visuals) {
-					Send_char_direct(Ind, CRAPS_X, CRAPS_Y, a_die[roll1], c_die[roll1], 0, 0);
-					Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y, a_die[roll2], c_die[roll2], 0, 0);
+					Send_char_direct(Ind, CRAPS_X, CRAPS_Y, a_die[roll1], c_die[roll1], 0, 32);
+					Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y, a_die[roll2], c_die[roll2], 0, 32);
  #else
 					Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y, a_die[roll1], c_die[roll1]);
 					Send_char_direct(Ind, CRAPS_X, CRAPS_Y, a_die[roll2], c_die[roll2]);
@@ -619,8 +624,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
 						if (custom_visuals) {
-							Send_char_direct(Ind, CRAPS_X, CRAPS_Y + ycv, a_die[roll1], c_die[roll1], 0, 0);
-							Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y + ycv, a_die[roll2], c_die[roll2], 0, 0);
+							Send_char_direct(Ind, CRAPS_X, CRAPS_Y + ycv, a_die[roll1], c_die[roll1], 0, 32);
+							Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y + ycv, a_die[roll2], c_die[roll2], 0, 32);
  #else
 							Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y + ycv, a_die[roll1], c_die[roll1]);
 							Send_char_direct(Ind, CRAPS_X, CRAPS_Y + ycv, a_die[roll2], c_die[roll2]);
