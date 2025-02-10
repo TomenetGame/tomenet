@@ -1367,6 +1367,12 @@ K:819:/3411 # Die 4
 K:820:/3412 # Die 5
 K:821:/3413 # Die 6
 
+# Cards colours
+K:829:/3414 # Clubs
+K:830:/3415 # Spades
+K:831:/3416 # Hearts
+K:832:/3417 # Diamonds
+
 ##### Demolitionist stuff / Chemicals #####
 
 # U:48:/3500 # Unknown ingredient

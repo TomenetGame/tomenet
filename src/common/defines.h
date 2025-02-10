@@ -4739,6 +4739,10 @@
 #define SV_PO_DIE_4	11
 #define SV_PO_DIE_5	12
 #define SV_PO_DIE_6	13
+#define SV_CARDS_CLUBS		14
+#define SV_CARDS_SPADES		15
+#define SV_CARDS_HEARTS		16
+#define SV_CARDS_DIAMONDS	17
 /* k_idx for TV_PSEUDO_OBJ -- for graphical tiles the svals actually don't matter, they are just defined for good measure but have no use;
    instead the k_idx values are used, especially client-side! */
 #define KIDX_PO_RAIN	822

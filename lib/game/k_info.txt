@@ -6907,9 +6907,39 @@ I:125:7:0
 W:127:0:0:0
 A:127/0
 
+#Card colours:
+N:829:& Clubs~
+G:+:D
+I:125:14:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:830:& Spades~
+G:^:D
+I:125:15:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:831:& Hearts~
+G:v:R
+I:125:16:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:832:& Diamonds~
+G:*:R
+I:125:17:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+
 #todo: fireworks tiles (eg: '|', '/', '\', '-', <explosion>, <rocket> perhaps, or whatever...)
 
-# HOLE 829-838
+# HOLE 823-838
 
 ##### Keys #####
 
