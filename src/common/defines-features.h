@@ -646,8 +646,11 @@
 
 /* Casino: Use custom/graphical visuals for Go stones, dice, etc. if player has custom mappings to allow it? */
 #define CUSTOM_VISUALS
-#define CUSTOM_VISUALS_EMPTY_FEAT 122 /* [For the Go board] Star: 122, Sandwall (ie with GRAPHICS_BG_MASK): 258 */
-
+#ifdef CUSTOM_VISUALS
+ #define DICE_X	39
+ #define DICE_Y	4
+ #define CUSTOM_VISUALS_EMPTY_FEAT 122 /* [For the Go board] Star: 122, Sandwall (ie with GRAPHICS_BG_MASK): 258 */
+#endif
 
 /* Traumaturgy + Dual-Wield + 2x Axe equipped -> Blood frenzy possibility. (Khorne Berserkers - C. Blue) */
 #define ENABLE_BLOOD_FRENZY

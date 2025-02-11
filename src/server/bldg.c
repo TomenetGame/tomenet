@@ -339,87 +339,87 @@ static void arena_comm(int cmd) {
 	}
 }
 
+#endif	// 0
+
 
 /*
  * display fruit for dice slots
  */
-static void display_fruit(int row, int col, int fruit) {
+static void display_fruit(int Ind, int row, int col, int fruit) {
 	switch (fruit) {
 	case 0: /* lemon */
-		c_put_str(TERM_YELLOW, "   ####.", row, col);
-		c_put_str(TERM_YELLOW, "  #    #", row + 1, col);
-		c_put_str(TERM_YELLOW, " #     #", row + 2, col);
-		c_put_str(TERM_YELLOW, "#      #", row + 3, col);
-		c_put_str(TERM_YELLOW, "#      #", row + 4, col);
-		c_put_str(TERM_YELLOW, "#     # ", row + 5, col);
-		c_put_str(TERM_YELLOW, "#    #  ", row + 6, col);
-		c_put_str(TERM_YELLOW, ".####   ", row + 7, col);
-		prt(" Lemon  ", row + 8, col);
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_YELLOW, "   ####.");
+		Send_store_special_str(Ind, row + 1, col + 0, TERM_YELLOW, "  #    #");
+		Send_store_special_str(Ind, row + 2, col + 0, TERM_YELLOW, " #     #");
+		Send_store_special_str(Ind, row + 3, col + 0, TERM_YELLOW, "#      #");
+		Send_store_special_str(Ind, row + 4, col + 0, TERM_YELLOW, "#      #");
+		Send_store_special_str(Ind, row + 5, col + 0, TERM_YELLOW, "#     # ");
+		Send_store_special_str(Ind, row + 6, col + 0, TERM_YELLOW, "#    #  ");
+		Send_store_special_str(Ind, row + 7, col + 0, TERM_YELLOW, ".####   ");
+		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Lemon  ");
 		break;
 
 	case 1: /* orange */
-		c_put_str(TERM_ORANGE, "   ##   ", row, col);
-		c_put_str(TERM_ORANGE, "  #..#  ", row + 1, col);
-		c_put_str(TERM_ORANGE, " #....# ", row + 2, col);
-		c_put_str(TERM_ORANGE, "#......#", row + 3, col);
-		c_put_str(TERM_ORANGE, "#......#", row + 4, col);
-		c_put_str(TERM_ORANGE, " #....# ", row + 5, col);
-		c_put_str(TERM_ORANGE, "  #..#  ", row + 6, col);
-		c_put_str(TERM_ORANGE, "   ##   ", row + 7, col);
-		prt(" Orange ", row + 8, col);
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "   ##   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "  #..#  ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, " #....# ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "#......#");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "#......#");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, " #....# ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "  #..#  ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "   ##   ");
+		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Orange ");
 		break;
 
 	case 2: /* sword */
-		c_put_str(TERM_SLATE, "   /\\   ", row, col);
-		c_put_str(TERM_SLATE, "   ##   ", row + 1, col);
-		c_put_str(TERM_SLATE, "   ##   ", row + 2, col);
-		c_put_str(TERM_SLATE, "   ##   ", row + 3, col);
-		c_put_str(TERM_SLATE, "   ##   ", row + 4, col);
-		c_put_str(TERM_SLATE, "   ##   ", row + 5, col);
-		c_put_str(TERM_UMBER, " ###### ", row + 6, col);
-		c_put_str(TERM_UMBER, "   ##   ", row + 7, col);
-		prt(" Sword  ", row + 8, col);
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   /\\   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_UMBER, " ###### ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_UMBER, "   ##   ");
+		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Sword  ");
 		break;
 
 	case 3: /* shield */
-		c_put_str(TERM_SLATE, " ###### ", row, col);
-		c_put_str(TERM_SLATE, "#      #", row + 1, col);
-		c_put_str(TERM_SLATE, "# ++++ #", row + 2, col);
-		c_put_str(TERM_SLATE, "# +==+ #", row + 3, col);
-		c_put_str(TERM_SLATE, "#  ++  #", row + 4, col);
-		c_put_str(TERM_SLATE, " #    # ", row + 5, col);
-		c_put_str(TERM_SLATE, "  #  #  ", row + 6, col);
-		c_put_str(TERM_SLATE, "   ##   ", row + 7, col);
-		prt(" Shield ", row + 8, col);
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, " ###### ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "#      #");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "# ++++ #");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "# +==+ #");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "#  ++  #");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, " #    # ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "  #  #  ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Shield ");
 		break;
 
 	case 4: /* plum */
-		c_put_str(TERM_VIOLET, "   ##   ", row, col);
-		c_put_str(TERM_VIOLET, " ###### ", row + 1, col);
-		c_put_str(TERM_VIOLET, "########", row + 2, col);
-		c_put_str(TERM_VIOLET, "########", row + 3, col);
-		c_put_str(TERM_VIOLET, "########", row + 4, col);
-		c_put_str(TERM_VIOLET, " ###### ", row + 5, col);
-		c_put_str(TERM_VIOLET, "  ####  ", row + 6, col);
-		c_put_str(TERM_VIOLET, "   ##   ", row + 7, col);
-		prt("  Plum  ", row + 8, col);
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "   ##   ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, " ###### ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "########");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "########");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "########");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, " ###### ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "  ####  ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "   ##   ");
+		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, "  Plum  ");
 		break;
 
 	case 5: /* cherry */
-		c_put_str(TERM_RED, "      ##", row, col);
-		c_put_str(TERM_RED, "   ###  ", row + 1, col);
-		c_put_str(TERM_RED, "  #..#  ", row + 2, col);
-		c_put_str(TERM_RED, "  #..#  ", row + 3, col);
-		c_put_str(TERM_RED, " ###### ", row + 4, col);
-		c_put_str(TERM_RED, "#..##..#", row + 5, col);
-		c_put_str(TERM_RED, "#..##..#", row + 6, col);
-		c_put_str(TERM_RED, " ##  ## ", row + 7, col);
-		prt(" Cherry ", row + 8, col);
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "      ##");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "   ###  ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "  #..#  ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "  #..#  ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, " ###### ");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "#..##..#");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "#..##..#");
+		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, " ##  ## ");
+		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Cherry ");
 		break;
 	}
 }
-
-#endif	// 0
 
 /*
  * gamble_comm
@@ -435,45 +435,43 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	s32b wager;
 	s32b maxbet;
-	//s32b oldgold;
 
-#if 0
 	static const char *fruit[6] = {"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
-	char out_val[160], tmp_str[80], again;
-	cptr p;
-#endif	// 0
+	char tmp_str[80];
 
-#ifdef CUSTOM_VISUALS
+#ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 	connection_t *connp;
 	char32_t c_die[6 + 1]; //pft ^^
 	byte a_die[6 + 1];
-	int ycv;
+	int ycv = 0;
 	bool custom_visuals = FALSE;
-#endif
-
-
-#ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
- #define CRAPS_X	34
- #define CRAPS_Y	5
 	connp = Conn[p_ptr->conn];
+
+
+	/* Prepare the graphical visuals for this player (6 dice results) */
 	if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
 		int k_idx;
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
 		c_die[1] = p_ptr->k_char[k_idx];
 		a_die[1] = p_ptr->k_attr[k_idx];
+
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_2);
 		c_die[2] = p_ptr->k_char[k_idx];
 		a_die[2] = p_ptr->k_attr[k_idx];
+
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_3);
 		c_die[3] = p_ptr->k_char[k_idx];
 		a_die[3] = p_ptr->k_attr[k_idx];
+
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_4);
 		c_die[4] = p_ptr->k_char[k_idx];
 		a_die[4] = p_ptr->k_attr[k_idx];
+
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_5);
 		c_die[5] = p_ptr->k_char[k_idx];
 		a_die[5] = p_ptr->k_attr[k_idx];
+
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
 		c_die[6] = p_ptr->k_char[k_idx];
 		a_die[6] = p_ptr->k_attr[k_idx];
@@ -485,288 +483,210 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	/* Avoid mad casino spam */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	if (cmd == BACT_GAMBLE_RULES) {
-		/* Peruse the gambling help file */
-		//(void)show_file(Ind, "gambling.txt", NULL, 0, 0, 0, NULL);
 
-		/* Get the filename */
-		char    path[MAX_PATH_LENGTH];
+	/* --- Show game rules --- */
+	if (cmd == BACT_GAMBLE_RULES) {
+		char path[MAX_PATH_LENGTH];
 
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "gambling.txt");
 		do_cmd_check_other_prepare(Ind, path, "Gambling Rules");
 #ifdef USE_SOUND_2010
 		sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-	} else {
-		//clear_bldg(5, 23);
+		return(TRUE);
+	}
 
-		/* Set maximum bet */
-		if (p_ptr->lev < 10)
-			maxbet = (p_ptr->lev * 100);
-		else
-			maxbet = (p_ptr->lev * 1000);
 
-		/* Get the wager */
-#if 0
-		strcpy(out_val, "");
-		strnfmt(tmp_str, 80, "Your wager (1-%d) ? ", maxbet);
-		get_string(tmp_str, out_val,32);
+	/* --- Gamble! --- */
 
-		/* Strip spaces */
-		for (p = out_val; *p == ' '; p++);
+	/* Clear store screen aka erase any previous results */
+	Send_store_special_clr(Ind, 3, 19);
 
-		wager = atol(p);
-#endif	// 0
+	/* Set maximum bet */
+	if (p_ptr->lev < 10) maxbet = (p_ptr->lev * 100);
+	else maxbet = (p_ptr->lev * 1000);
 
-		wager = gold;
+	/* Get the wager */
+	wager = gold;
 
-		if (wager > p_ptr->au) {
-			msg_print(Ind, "Hey! You don't have the gold - get out of here!");
-			store_kick(Ind, FALSE);
-			//screen_load();
-			return(FALSE);
-		} else if (wager > maxbet) {
-			msg_format(Ind, "I'll take $%d of that. Keep the rest.", maxbet);
-			wager = maxbet;
-		} else if (wager < 1) {
-			msg_print(Ind, "Ok, we'll start with 1 Au.");
-			wager = 1;
-		}
-		//msg_print(Ind, NULL);
+	if (wager > p_ptr->au) {
+		msg_print(Ind, "Hey! You don't have the gold - get out of here!");
+		store_kick(Ind, FALSE);
+		return(FALSE);
+	} else if (wager > maxbet) {
+		msg_format(Ind, "I'll take $%d of that. Keep the rest.", maxbet);
+		wager = maxbet;
+	} else if (wager < 1) {
+		msg_print(Ind, "Ok, we'll start with 1 Au.");
+		wager = 1;
+	}
+
+	win = FALSE;
+	odds = 0;
+
+	switch (cmd) {
+	case BACT_IN_BETWEEN: /* Game of In-Between */
+		msg_print(Ind, "\377GIn Between");
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== In Between ===");
+
+		odds = 3;
 		win = FALSE;
-		odds = 0;
-#if 0
-		oldgold = p_ptr->au;
-		strnfmt(tmp_str, 80, "Gold before game: %10d", oldgold);
-		prt(tmp_str,20,2);
-
-		strnfmt(tmp_str, 80, "Current Wager:    %10d", wager);
-		prt(tmp_str,21,2);
-#endif	// 0
-
-		/* Erase any previous results */
-		for (ycv = 3; ycv <= 16; ycv++)
-			Send_store_special_str(Ind, ycv, 0, TERM_DARK, "                                                                                ");
-		ycv = 0;
-
-		do {
-			switch (cmd) {
-			case BACT_IN_BETWEEN: /* Game of In-Between */
-				//c_put_str(TERM_GREEN, "In Between",5,2);
-				msg_print(Ind, "\377GIn Between");
-				odds = 3;
-				win = FALSE;
-				roll1 = randint(10);
-				roll2 = randint(10);
-				choice = randint(10);
+		roll1 = randint(10);
+		roll2 = randint(10);
+		choice = randint(10);
 #ifdef USE_SOUND_2010
-				sound(Ind, "store_inbetween", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+		sound(Ind, "store_inbetween", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
-				msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d",
-				    roll1, roll2);
-				msg_format(Ind, "          Red die: \377r%d", choice);
+		msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d", roll1, roll2);
+		msg_format(Ind, "          Red die: \377r%d", choice);
 
-				//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
-				Send_store_special_str(Ind, CRAPS_Y, CRAPS_X - 4, TERM_L_DARK, format("%2d", roll1));
-				Send_store_special_str(Ind, CRAPS_Y, CRAPS_X + 4, TERM_L_DARK, format("%2d", roll2));
-				Send_store_special_str(Ind, CRAPS_Y + 1, CRAPS_X, TERM_L_RED, format("%2d", choice));
+		//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 5, TERM_L_DARK, format("%2d", roll1));
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X + 3, TERM_L_DARK, format("%2d", roll2));
+		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 1, TERM_L_RED, format("%2d", choice));
 
-				if (((choice > roll1) && (choice < roll2)) ||
-				    ((choice < roll1) && (choice > roll2)))
-					win = TRUE;
+		if (((choice > roll1) && (choice < roll2)) ||
+		    ((choice < roll1) && (choice > roll2)))
+			win = TRUE;
 
-				if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
-				else s_printf("CASINO: In Between - Player '%s' lost %d Au.\n", p_ptr->name, wager);
-				break;
+		if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		else s_printf("CASINO: In Between - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+		break;
 
-			case BACT_CRAPS:  /* Game of Craps - requires the good new RNG :) (thanks Mikael for adding the SFMT) */
-				//TODO: add graphical tileset dice here visually via Send_char_direct() (similar to the Go challenge in go.c) - C. Blue
-				msg_print(Ind, "\377GCraps");
-				win = 3;
-				odds = 1;
+	case BACT_CRAPS: /* Game of Craps - requires the good new RNG :) (thanks Mikael for adding the SFMT) */
+		msg_print(Ind, "\377GCraps");
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Craps ===");
+
+		win = 3;
+		odds = 1;
+		roll1 = randint(6);
+		roll2 = randint(6);
+		roll3 = roll1 +  roll2;
+		choice = roll3;
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
+		msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1, roll2, roll3);
+
+#ifdef CUSTOM_VISUALS
+ #ifdef GRAPHICS_BG_MASK
+		if (custom_visuals) {
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, a_die[roll1], c_die[roll1], 0, 32);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, a_die[roll2], c_die[roll2], 0, 32);
+ #else
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, a_die[roll1], c_die[roll1]);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, a_die[roll2], c_die[roll2]);
+ #endif
+		}
+#endif
+
+		if ((roll3 == 7) || (roll3 == 11)) win = TRUE;
+		else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) win = FALSE;
+		else {
+			do {
+				//msg_print(Ind, "Hit any key to roll again");
+				//msg_print(Ind, NULL);
+				msg_print(Ind, "Rerolling..");
 				roll1 = randint(6);
 				roll2 = randint(6);
-				roll3 = roll1 +  roll2;
-				choice = roll3;
-#ifdef USE_SOUND_2010
-				sound(Ind, "store_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
-#endif
-				msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1,
-				    roll2, roll3);
+				roll3 = roll1 + roll2;
 
+				msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
 				if (custom_visuals) {
-					Send_char_direct(Ind, CRAPS_X, CRAPS_Y, a_die[roll1], c_die[roll1], 0, 32);
-					Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y, a_die[roll2], c_die[roll2], 0, 32);
+					Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1], 0, 32);
+					Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2], 0, 32);
  #else
-					Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y, a_die[roll1], c_die[roll1]);
-					Send_char_direct(Ind, CRAPS_X, CRAPS_Y, a_die[roll2], c_die[roll2]);
+					Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1]);
+					Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2]);
  #endif
+					if (ycv < 10) ycv++; //overflow limit >,>
 				}
 #endif
 
-				if ((roll3 == 7) || (roll3 == 11))
-					win = TRUE;
-				else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
-					win = FALSE;
-				else {
-					do {
-						//msg_print(Ind, "Hit any key to roll again");
-						//msg_print(Ind, NULL);
-						msg_print(Ind, "Rerolling..");
-						roll1 = randint(6);
-						roll2 = randint(6);
-						roll3 = roll1 + roll2;
+				if (roll3 == choice) win = TRUE;
+				else if (roll3 == 7) win = FALSE;
+				else ; /* reroll */
+			} while ((win != TRUE) && (win != FALSE));
+		}
 
-						msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d",
-						    roll1, roll2, roll3);
-#ifdef CUSTOM_VISUALS
- #ifdef GRAPHICS_BG_MASK
-						if (custom_visuals) {
-							Send_char_direct(Ind, CRAPS_X, CRAPS_Y + ycv, a_die[roll1], c_die[roll1], 0, 32);
-							Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y + ycv, a_die[roll2], c_die[roll2], 0, 32);
- #else
-							Send_char_direct(Ind, CRAPS_X + 1, CRAPS_Y + ycv, a_die[roll1], c_die[roll1]);
-							Send_char_direct(Ind, CRAPS_X, CRAPS_Y + ycv, a_die[roll2], c_die[roll2]);
- #endif
-							if (ycv < 10) ycv++; //overflow limit >,>
-						}
-#endif
+		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+		break;
 
-						if (roll3 == choice) win = TRUE;
-						else if (roll3 == 7) win = FALSE;
-						else {
-							/* reroll */
-						}
-					} while ((win != TRUE) && (win != FALSE));
-				}
+	case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
+		win = FALSE;
+		odds = 10;
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");//5,2 (y,x)
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_WHITE, "  0  1  2  3  4  5  6  7  8  9");//7,5
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 15, TERM_WHITE, "--------------------------------");//8,3
+		p_ptr->odds = odds;
+		p_ptr->wager = wager;
+		Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9): ", -1);
+		return(TRUE);
 
-				if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
-				else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, wager);
-				break;
-
-#if 0
-			case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
-				win = FALSE;
-				odds = 10;
-				c_put_str(TERM_GREEN, "Wheel", 5, 2);
-				prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
-				prt("--------------------------------", 8, 3);
-				strcpy(out_val, "");
-				get_string ("Pick a number (1-9): ", out_val, 32);
-				for (p = out_val; *p == ' '; p++);
-				choice = atol(p);
-				if (choice < 0) {
-					msg_print(Ind, "I'll put you down for 0.");
-					choice = 0;
-				} else if (choice > 9) {
-					msg_print(Ind, "Ok, I'll put you down for 9.");
-					choice = 9;
-				}
-				msg_print(Ind, NULL);
+	case BACT_DICE_SLOTS: /* The Dice Slots */
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== Dice Slots ===");//5,2 (y,x)
 #ifdef USE_SOUND_2010
-				sound(Ind, "store_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+		sound(Ind, "store_slots", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
-				roll1 = randint(10) - 1;
-				strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d",
-				    roll1);
-				prt(tmp_str, 13, 3);
-				prt("", 9, 0);
-				prt("*", 9, (3 * roll1 + 5));
-				if (roll1 == choice)
-					win = TRUE;
+		win = FALSE;
+		roll1 = randint(6);
+		roll2 = randint(6);
+		choice = randint(6);
 
-				if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
-				else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, wager);
-				break;
+		strnfmt(tmp_str, 80, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1], fruit[choice - 1]);
+		Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 12, TERM_WHITE, tmp_str);//15,37
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_WHITE, "/--------------------------\\");//7,2
+		Send_store_special_str(Ind, DICE_Y + 13, DICE_X - 14, TERM_WHITE, "/--------------------------\\");//17,2
+		display_fruit(Ind, 8,  3, roll1 - 1);
+		display_fruit(Ind, 8, 12, roll2 - 1);
+		display_fruit(Ind, 8, 21, choice - 1);
 
-			case BACT_DICE_SLOTS: /* The Dice Slots */
-				c_put_str(TERM_GREEN, "Dice Slots",5,2);
-#ifdef USE_SOUND_2010
-				sound(Ind, "store_slots", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
-#endif
-				win = FALSE;
-				roll1 = randint(6);
-				roll2 = randint(6);
-				choice = randint(6);
-				strnfmt(tmp_str, 80, "%s %s %s",
-					    fruit[roll1 - 1], fruit[roll2 - 1],
-					    fruit[choice - 1]);
-				prt(tmp_str,15,37);
-				prt("/--------------------------\\", 7, 2);
-				prt("\\--------------------------/", 17, 2);
-				display_fruit(8,  3, roll1 - 1);
-				display_fruit(8, 12, roll2 - 1);
-				display_fruit(8, 21, choice - 1);
-				if ((roll1 == roll2) && (roll2 == choice)) {
-					win = TRUE;
-					if (roll1 == 1)
-						odds = 4;
-					else if (roll1 == 2)
-						odds = 6;
-					else
-						odds = roll1 * roll1;
-				} else if ((roll1 == 6) && (roll2 == 6)) {
-					win = TRUE;
-					odds = choice + 1;
-				}
+		if ((roll1 == roll2) && (roll2 == choice)) {
+			win = TRUE;
+			if (roll1 == 1) odds = 4;
+			else if (roll1 == 2) odds = 6;
+			else odds = roll1 * roll1;
+		} else if ((roll1 == 6) && (roll2 == 6)) {
+			win = TRUE;
+			odds = choice + 1;
+		}
 
-				if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
-				else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
-				break;
-#endif /* 0 */
-			}
-
-			if (win) {
-				msg_print(Ind, "YOU WON");
-				/* hack: prevent s32b overflow */
-				if (PY_MAX_GOLD - (odds * wager) < p_ptr->au) {
-					msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
-				} else {
-					p_ptr->au = p_ptr->au + (odds * wager);
-					/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
-					if (!p_ptr->max_exp) {
-						msg_print(Ind, "You gain a tiny bit of experience from gambling.");
-						gain_exp(Ind, 1);
-					}
-					msg_format(Ind, "Payoff: %d", odds);
-				}
-			} else {
-				msg_print(Ind, "You lost");
-				p_ptr->au = p_ptr->au - wager;
-			}
-			Send_gold(Ind, p_ptr->au, p_ptr->balance);
-#if 0
-			strnfmt(tmp_str, 80, "Current Gold:     %10d", p_ptr->au);
-			prt(tmp_str, 22, 2);
-			prt("Again(Y/N)?", 18, 37);
-			move_cursor(18, 49);
-			again = inkey();
-			if (wager > p_ptr->au) {
-				msg_print(Ind, "Hey! You don't have the gold - get out of here!");
-				msg_print(Ind, NULL);
-				screen_load();
-				return(FALSE);
-/*				strnfmt(tmp_str, 80, "Current Wager:    %10d",wager);
-				prt(tmp_str, 17, 2); */
-			}
-#endif /* 0 */
-//		} while ((again == 'y') || (again == 'Y'));
-		} while (FALSE);
-
-#if 0
-		prt("", 18, 37);
-		if (p_ptr->au >= oldgold)
-			msg_print(Ind, "You came out a winner! We'll win next time, I'm sure.");
-		else
-			msg_print(Ind, "You lost gold! Haha, better head home.");
-		msg_print(Ind, NULL);
-#endif /* 0 */
+		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+		break;
 	}
 
-	//screen_load();
+	p_ptr->odds = odds;
+	p_ptr->wager = wager;
+	casino_result(Ind, win);
 	return(TRUE);
+}
+
+void casino_result(int Ind, bool win) {
+	player_type *p_ptr = Players[Ind];
+
+	if (win) {
+		msg_print(Ind, "YOU WON");
+		/* hack: prevent s32b overflow */
+		if (PY_MAX_GOLD - (p_ptr->odds * p_ptr->wager) < p_ptr->au) {
+			msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
+		} else {
+			p_ptr->au = p_ptr->au + (p_ptr->odds * p_ptr->wager);
+			/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
+			if (!p_ptr->max_exp) {
+				msg_print(Ind, "You gain a tiny bit of experience from gambling.");
+				gain_exp(Ind, 1);
+			}
+			msg_format(Ind, "Payoff: %d", p_ptr->odds);
+		}
+	} else {
+		msg_print(Ind, "You lost");
+		p_ptr->au = p_ptr->au - p_ptr->wager;
+	}
+	Send_gold(Ind, p_ptr->au, p_ptr->balance);
 }
 
 
@@ -781,142 +701,131 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
  */
 static bool inn_comm(int Ind, int cmd) {
 	player_type *p_ptr = Players[Ind];
-	bool vampire = FALSE;
-
-#if 0
-	/* Extract race info */
-	vampire = ((PRACE_FLAG(PR1_VAMPIRE)) || (p_ptr->mimic_form == MIMIC_VAMPIRE));
-#endif	// 0
-	vampire = p_ptr->prace == RACE_VAMPIRE;
+	bool vampire = (p_ptr->prace == RACE_VAMPIRE);
 
 	switch (cmd) {
-		case BACT_FOOD: /* Buy food & drink */
-		{
-			if (!vampire) {
-				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The barkeep gives you a bowl of water.");
-				else msg_print(Ind, "The barkeep gives you some gruel and a beer.");
-				// msg_print(Ind, NULL);
-				(void)set_food(Ind, PY_FOOD_MAX - 1);
+	case BACT_FOOD: /* Buy food & drink */
+	{
+		if (!vampire) {
+			if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The barkeep gives you a bowl of water.");
+			else msg_print(Ind, "The barkeep gives you some gruel and a beer.");
+			// msg_print(Ind, NULL);
+			(void)set_food(Ind, PY_FOOD_MAX - 1);
 #ifdef USE_SOUND_2010
-				sound(Ind, "store_food_and_drink", NULL, SFX_TYPE_MISC, FALSE);
+			sound(Ind, "store_food_and_drink", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			} else {
-				msg_print(Ind, "You're a vampire and I don't have any food for you!");
-				return(FALSE);
-			}
-
-			break;
+		} else {
+			msg_print(Ind, "You're a vampire and I don't have any food for you!");
+			return(FALSE);
 		}
 
-		/*
-		 * I revamped this... Don't know why normal races didn't get
-		 * mana regenerated. It is the grand tradition of p&p games -- pelpel
-		 */
-		/*
-		 * XXX big problem.. we cannot modify 'turn'.. lol	- Jir -
-		 */
-		case BACT_REST: /* Rest for the night */
-		{
+		break;
+	}
+
+	/*
+	 * I revamped this... Don't know why normal races didn't get
+	 * mana regenerated. It is the grand tradition of p&p games -- pelpel
+	 */
+	/*
+	 * XXX big problem.. we cannot modify 'turn'.. lol	- Jir -
+	 */
+	case BACT_REST: /* Rest for the night */
+	{
 #if 0
-			bool nighttime;
-
-			/* Extract the current time */
-			nighttime = ((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL));
-
-			/* Normal races rest at night */
-			if (!vampire && !nighttime) {
-				msg_print(Ind, "The rooms are available only at night.");
-				msg_print(Ind, NULL);
-				return(FALSE);
-			}
-
-			/* Vampires rest during daytime */
-			if (vampire && nighttime) {
-				msg_print(Ind, "The rooms are available only at daylight for the Undeads.");
-				msg_print(Ind, NULL);
-				return(FALSE);
-			}
-#endif	// 0
-
-			/* Must cure HP draining status first */
-			if ((p_ptr->poisoned > 0) || (p_ptr->diseased > 0) || (p_ptr->cut > 0)) {
-				msg_print(Ind, "You need a healer, not a room.");
-				// msg_print(Ind, NULL);
-				msg_print(Ind, "Sorry, but don't want anyone dying in here.");
-				return(FALSE);
-			}
-
-#if 0
-			/* Let the time pass XXX XXX XXX */
-			if (vampire) {
-				/* Wait for sunset */
-				while ((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < NIGHTFALL))
-					turn += (10L * MINUTE);
-			} else {
-				/* Wait for sunrise */
-				while ((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL))
-					turn += (10L * MINUTE);
-			}
-#endif	// 0
-
-			/* Regen */
-			p_ptr->chp = p_ptr->mhp;
-			p_ptr->cmp = p_ptr->mmp;
-
-			/* Restore status */
-			set_blind(Ind, 0);
-			set_confused(Ind, 0);
-			set_stun(Ind, 0);
-			//p_ptr->stun = 0;
-
-			/* Message */
-#ifdef USE_SOUND_2010
-			sound(Ind, "store_rest", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-			if (vampire) msg_print(Ind, "You awake refreshed for the new night.");
-			else msg_print(Ind, "You awake refreshed for the new day.");
-
-#if 0
-			/* Dungeon stuff */
-			p_ptr->leaving = TRUE;
-			p_ptr->oldpx = px;
-			p_ptr->oldpy = py;
-
-			/* Select new bounties. */
-			select_bounties();
-#endif	// 0
-
-			store_kick(Ind, FALSE);
-
-			break;
+		/* Normal races rest at night */
+		if (!vampire && !night_surface) {
+			msg_print(Ind, "The rooms are available only at night.");
+			msg_print(Ind, NULL);
+			return(FALSE);
 		}
 
-		case BACT_RUMORS: /* Listen for rumors */
+		/* Vampires rest during daytime */
+		if (vampire && night_surface) {
+			msg_print(Ind, "The rooms are available only at daylight for the Undeads.");
+			msg_print(Ind, NULL);
+			return(FALSE);
+		}
+#endif	// 0
+
+		/* Must cure HP draining status first */
+		if ((p_ptr->poisoned > 0) || (p_ptr->diseased > 0) || (p_ptr->cut > 0)) {
+			msg_print(Ind, "You need a healer, not a room.");
+			// msg_print(Ind, NULL);
+			msg_print(Ind, "Sorry, but don't want anyone dying in here.");
+			return(FALSE);
+		}
+
+#if 0
+		/* Let the time pass XXX XXX XXX */
+		if (vampire) {
+			/* Wait for sunset */
+			while ((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < NIGHTFALL))
+				turn += (10L * MINUTE);
+		} else {
+			/* Wait for sunrise */
+			while ((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL))
+				turn += (10L * MINUTE);
+		}
+#endif	// 0
+
+		/* Regen */
+		p_ptr->chp = p_ptr->mhp;
+		p_ptr->cmp = p_ptr->mmp;
+
+		/* Restore status */
+		set_blind(Ind, 0);
+		set_confused(Ind, 0);
+		set_stun(Ind, 0);
+		//p_ptr->stun = 0;
+
+		/* Message */
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_rest", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		if (vampire) msg_print(Ind, "You awake refreshed for the new night.");
+		else msg_print(Ind, "You awake refreshed for the new day.");
+
+#if 0
+		/* Dungeon stuff */
+		p_ptr->leaving = TRUE;
+		p_ptr->oldpx = px;
+		p_ptr->oldpy = py;
+
+		/* Select new bounties. */
+		select_bounties();
+#endif	// 0
+
+		store_kick(Ind, FALSE);
+
+		break;
+		}
+
+	case BACT_RUMORS: /* Listen for rumors */
 		{
-			char rumor[MAX_CHARS_WIDE];
+		char rumor[MAX_CHARS_WIDE];
 
 #if 0 /* why this RNG stuff? also, it doesn't work (always same val) */
-			/* Set the RNG seed. */
-			//Rand_value = turn / (HOUR * 10);
-			Rand_value = time(NULL) / 600;
-			Rand_quick = TRUE;
+		/* Set the RNG seed. */
+		//Rand_value = turn / (HOUR * 10);
+		Rand_value = time(NULL) / 600;
+		Rand_quick = TRUE;
 
  #ifdef USE_SOUND_2010
-			sound(Ind, "store_listen", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "store_listen", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-			get_rnd_line("rumors.txt", 0, rumor, MAX_CHARS_WIDE);
-			bracer_ff(rumor);	/* colour it */
-			msg_format(Ind, "%s", rumor);
-			// msg_print(Ind, NULL);
+		get_rnd_line("rumors.txt", 0, rumor, MAX_CHARS_WIDE);
+		bracer_ff(rumor);	/* colour it */
+		msg_format(Ind, "%s", rumor);
+		// msg_print(Ind, NULL);
 
-			/* Restore RNG */
-			Rand_quick = FALSE;
+		/* Restore RNG */
+		Rand_quick = FALSE;
 #else
-			get_rnd_line("rumors.txt", 0, rumor, MAX_CHARS_WIDE);
-			bracer_ff(rumor);	/* colour it */
-			msg_format(Ind, "%s", rumor);
+		get_rnd_line("rumors.txt", 0, rumor, MAX_CHARS_WIDE);
+		bracer_ff(rumor);	/* colour it */
+		msg_format(Ind, "%s", rumor);
 #endif
-			break;
+		break;
 		}
 	}
 
@@ -953,9 +862,8 @@ static void get_questinfo(int questnum) {
 	prt(quest[questnum].name, 7, 0);
 
 	i = 0;
-	while ((i < 10) && (quest[questnum].desc[i][0] != '\0')) {
+	while ((i < 10) && (quest[questnum].desc[i][0] != '\0'))
 		c_put_str(TERM_YELLOW, quest[questnum].desc[i++], i + 8, 0);
-	}
 }
 
 
@@ -990,8 +898,7 @@ static bool castle_quest(int y, int x) {
 	}
 
 	/* Quest is still unfinished */
-	else if (q_ptr->status == QUEST_STATUS_TAKEN)
-	{
+	else if (q_ptr->status == QUEST_STATUS_TAKEN) {
 		put_str("You have not completed your current quest yet!",8,0);
 		put_str("Use CTRL-Q to check the status of your quest.",9,0);
 		put_str("Return when you have completed your quest.",12,0);
@@ -2602,12 +2509,16 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			reward_deed_blessing(Ind, item);
 			break;
 		case BACT_GO:
+			if (is_newer_than(&p_ptr->version, 4, 4, 6, 1, 0, 0)) {
 #ifdef ENABLE_GO_GAME
-			if (is_newer_than(&p_ptr->version, 4, 4, 6, 1, 0, 0))
 				go_challenge(Ind);
-			else
-				msg_print(Ind, "\377oThis feature requires at least client 4.4.6b");
+#else
+				Send_store_special_clr(Ind, 4, 18);
+				Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Sorry, the Go board, bowls and stones were stolen by some unknown bastard!");
+				Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Unfortunately I cannot say yet when a replacement will arrive.");
 #endif
+			} else
+				msg_print(Ind, "\377oThis feature requires at least client 4.4.6b");
 			break;
 		case BACT_INSTANT_RES:
 #ifdef ENABLE_INSTANT_RES

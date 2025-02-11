@@ -9540,6 +9540,8 @@ extern int PlayerUID;
  #define RID_LOSE_MEMORIES_II_SKILL	21
 #endif
 #define RID_CONTACT_OWNER	22
+#define RID_SPIN_WHEEL		23	//casino
+
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

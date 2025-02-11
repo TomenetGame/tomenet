@@ -11506,7 +11506,38 @@ void handle_request_return_num(int Ind, int id, int num) {
 		Send_request_str(Ind, RID_SEND_ITEM, "Who is the addressee, please? ", "");
 		return;
 #endif
-	default:;
+
+	case RID_SPIN_WHEEL: {
+		bool win = FALSE;
+		char tmp_str[80];
+		int roll1;
+
+		if (num < 0) {
+			msg_print(Ind, "I'll put you down for 0.");
+			num = 0;
+		} else if (num > 9) {
+			msg_print(Ind, "Ok, I'll put you down for 9.");
+			num = 9;
+		}
+		msg_print(Ind, NULL);
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
+		roll1 = randint(10) - 1;
+		strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d", roll1);
+		Send_store_special_str(Ind, DICE_Y + 8, DICE_X / 2, TERM_GREEN, tmp_str);//13,3
+		//prt("", 9, 0);
+		Send_store_special_str(Ind, DICE_Y + 9, DICE_X / 2 + (3 * roll1 + 5), TERM_GREEN, "*");//9,x
+		if (roll1 == num) win = TRUE;
+
+		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->odds * p_ptr->wager);
+		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->wager);
+
+		casino_result(Ind, win);
+		return;
+		}
+
+	default:; //unknown request, ignore
 	}
 }
 
