@@ -440,7 +440,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	connection_t *connp;
 	char32_t c_die[6 + 1]; //pft ^^
 	byte a_die[6 + 1];
-	int ycv = 0;
 	bool custom_visuals = FALSE;
 	connp = Conn[p_ptr->conn];
 
@@ -534,12 +533,11 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== In Between ===");
 
 		odds = 3;
-		win = FALSE;
 		roll1 = randint(10);
 		roll2 = randint(10);
 		choice = randint(10);
 #ifdef USE_SOUND_2010
-		sound(Ind, "store_inbetween", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+		sound(Ind, "casino_inbetween", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 		msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d", roll1, roll2);
 		msg_format(Ind, "          Red die: \377r%d", choice);
@@ -568,7 +566,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll3 = roll1 +  roll2;
 		choice = roll3;
 #ifdef USE_SOUND_2010
-		sound(Ind, "store_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+		sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 		msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1, roll2, roll3);
 
@@ -587,32 +585,12 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		if ((roll3 == 7) || (roll3 == 11)) win = TRUE;
 		else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) win = FALSE;
 		else {
-			do {
-				//msg_print(Ind, "Hit any key to roll again");
-				//msg_print(Ind, NULL);
-				msg_print(Ind, "Rerolling..");
-				roll1 = randint(6);
-				roll2 = randint(6);
-				roll3 = roll1 + roll2;
-
-				msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
-#ifdef CUSTOM_VISUALS
- #ifdef GRAPHICS_BG_MASK
-				if (custom_visuals) {
-					Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1], 0, 32);
-					Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2], 0, 32);
- #else
-					Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1]);
-					Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2]);
- #endif
-					if (ycv < 10) ycv++; //overflow limit >,>
-				}
-#endif
-
-				if (roll3 == choice) win = TRUE;
-				else if (roll3 == 7) win = FALSE;
-				else ; /* reroll */
-			} while ((win != TRUE) && (win != FALSE));
+			p_ptr->casino_roll = choice;
+			p_ptr->casino_progress = 1;
+			p_ptr->casino_odds = odds;
+			p_ptr->casino_wager = wager;
+			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
+			return(TRUE);
 		}
 
 		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
@@ -620,7 +598,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
-		win = FALSE;
 		odds = 9;
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_RED, "  0  \377w1  2  3  4  5  6  7  8  9");
@@ -633,9 +610,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	case BACT_DICE_SLOTS: /* The Dice Slots */
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== Dice Slots ===");
 #ifdef USE_SOUND_2010
-		sound(Ind, "store_slots", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+		sound(Ind, "casino_slots", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-		win = FALSE;
 		roll1 = randint(6);
 		roll2 = randint(6);
 		choice = randint(6);
@@ -680,6 +656,9 @@ void casino_result(int Ind, bool win) {
 			msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
 		} else {
 			p_ptr->au = p_ptr->au + (p_ptr->casino_odds * p_ptr->casino_wager);
+#ifdef USE_SOUND_2010
+			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 			/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
 			if (!p_ptr->max_exp) {
 				msg_print(Ind, "You gain a tiny bit of experience from gambling.");
@@ -688,10 +667,12 @@ void casino_result(int Ind, bool win) {
 			msg_format(Ind, "Payoff: %d", p_ptr->casino_odds);
 		}
 	} else {
+		p_ptr->au -= p_ptr->casino_wager;
 		msg_print(Ind, "\377sYou lost.");
-		p_ptr->au = p_ptr->au - p_ptr->casino_wager;
 	}
 	Send_gold(Ind, p_ptr->au, p_ptr->balance);
+
+	p_ptr->casino_wager = 0;
 }
 
 

@@ -10549,11 +10549,13 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		go_engine_move_human(Ind, str);
 		return;
 #endif
+
 	case RID_GUILD_RENAME:
 		str[40] = '\0'; /* prevent possile buffer overflow */
 		if (str[0] == '\e' || !str[0]) return; /* user ESCaped */
 		guild_rename(Ind, str);
 		return;
+
 #ifdef ENABLE_ITEM_ORDER
 	case RID_ITEM_ORDER: {
 		int i, j, num;
@@ -10990,6 +10992,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		return;
 		}
 #endif
+
 #ifdef ENABLE_MERCHANT_MAIL
 	case RID_SEND_ITEM: {
 		int i, plev, olev;
@@ -11209,6 +11212,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		object_desc(0, o_name, &mail_forge[i], TRUE, 3);
 		s_printf("MERCHANT_MAIL:(SENT) <%s> to <%s> sent: %s.\n", p_ptr->name, mail_target[i], o_name);
 		return; }
+
 	case RID_SEND_GOLD: {
 		int i;
 		u32b pmode;
@@ -11340,6 +11344,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		break;
 	}
 #endif
+
 #ifdef PLAYER_STORES
 	case RID_CONTACT_OWNER: {
 		int i;
@@ -11492,6 +11497,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 		}
 		return;
 #endif
+
 #ifdef ENABLE_MERCHANT_MAIL
 	case RID_SEND_ITEM_PAY:
 		if (num < 1) {
@@ -11521,7 +11527,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 		}
 		msg_print(Ind, NULL);
 #ifdef USE_SOUND_2010
-		sound(Ind, "store_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+		sound(Ind, "casino_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
 		roll1 = rand_int(10);
 		if (roll1 == num) win = TRUE;
@@ -11564,6 +11570,93 @@ void handle_request_return_key(int Ind, int id, char c) {
 		go_challenge_start(Ind);
 		return;
 #endif
+
+	case RID_CRAPS: {
+		int win = 3;
+		int roll1, roll2, roll3, ycv = p_ptr->casino_progress;
+
+#ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
+		connection_t *connp;
+		char32_t c_die[6 + 1]; //pft ^^
+		byte a_die[6 + 1];
+		bool custom_visuals = FALSE;
+		connp = Conn[p_ptr->conn];
+
+
+		/* Prepare the graphical visuals for this player (6 dice results) */
+		if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
+			int k_idx;
+
+			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
+			c_die[1] = p_ptr->k_char[k_idx];
+			a_die[1] = p_ptr->k_attr[k_idx];
+
+			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_2);
+			c_die[2] = p_ptr->k_char[k_idx];
+			a_die[2] = p_ptr->k_attr[k_idx];
+
+			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_3);
+			c_die[3] = p_ptr->k_char[k_idx];
+			a_die[3] = p_ptr->k_attr[k_idx];
+
+			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_4);
+			c_die[4] = p_ptr->k_char[k_idx];
+			a_die[4] = p_ptr->k_attr[k_idx];
+
+			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_5);
+			c_die[5] = p_ptr->k_char[k_idx];
+			a_die[5] = p_ptr->k_attr[k_idx];
+
+			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
+			c_die[6] = p_ptr->k_char[k_idx];
+			a_die[6] = p_ptr->k_attr[k_idx];
+
+			custom_visuals = TRUE;
+		}
+#endif
+
+#ifdef USE_SOUND_2010
+		sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
+
+		msg_print(Ind, "Rerolling..");
+		roll1 = randint(6);
+		roll2 = randint(6);
+		roll3 = roll1 + roll2;
+
+		msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
+#ifdef CUSTOM_VISUALS
+ #ifdef GRAPHICS_BG_MASK
+		if (custom_visuals) {
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1], 0, 32);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2], 0, 32);
+ #else
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1]);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2]);
+ #endif
+			if (ycv < 10) ycv++; //screen overflow limit >,>
+			else {
+				ycv = 2;
+				Send_store_special_clr(Ind, 7, 19);
+			}
+			p_ptr->casino_progress = ycv;
+		}
+#endif
+
+		if (roll3 == p_ptr->casino_roll) win = TRUE;
+		else if (roll3 == 7) win = FALSE;
+		else {
+			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
+			return;
+		}
+
+		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
+		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+
+		casino_result(Ind, win);
+		return;
+		}
+
 	default:;
 	}
 }
@@ -11613,6 +11706,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		go_challenge_accept(Ind, TRUE);
 		return;
 #endif
+
 	case RID_GUILD_RENAME:
 		if (cfr) Send_request_str(Ind, RID_GUILD_RENAME, "Enter a new guild name: ", "");
 		return;
@@ -11620,6 +11714,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		if (cfr) guild_create(Ind, p_ptr->cur_file_title);
 		p_ptr->cur_file_title[0] = 0;//not really needed
 		return;
+
 #ifdef ENABLE_ITEM_ORDER
 	case RID_ITEM_ORDER: {
 		s32b dur;
@@ -11662,6 +11757,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		return;
 		}
 #endif
+
 #ifdef ENABLE_MERCHANT_MAIL
 	case RID_SEND_ITEM:
 		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 2);
@@ -11730,21 +11826,21 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 				merchant_mail_delivery(Ind);
 			}
 		} else {
-#ifndef MERCHANT_MAIL_INFINITE
+ #ifndef MERCHANT_MAIL_INFINITE
 			/* catch the case of this already being returned mail, because it wasn't picked up by its original receipient.
 			   Note that this will only happen if
 			     1) MERCHANT_MAIL_INFINITE is NOT defined, or
 			     2) if it is defined and the original receipient died, so it cannot be bounced anymore. */
 			if (mail_timeout[i] < 0) {
- #if 0 /* too harsh, instead allow the whole timeout duration for still deciding to pay the fee. Also, this is too prone to misclick -> oops erased! */
+  #if 0 /* too harsh, instead allow the whole timeout duration for still deciding to pay the fee. Also, this is too prone to misclick -> oops erased! */
 				/* erase it */
 				//msg_format(Ind, "\377yAlright, %s. Without legal receipient, we'll be confiscating it.", p_ptr->male ? "sir" : "ma'am");
- #else
+  #else
 				msg_format(Ind, "\377yWell %s, you can still decide to pay the fee before the package expires. If you do not, however, we will have no choice but confiscate it and then it will be irrevocably gone.", p_ptr->male ? "Sir" : "Ma'am");
 				return;
- #endif
+  #endif
 			}
-#endif
+ #endif
 			/* return to sender */
 			msg_format(Ind, "Alright, %s. We're sending it back.", p_ptr->male ? "sir" : "ma'am");
 			mail_timeout[i] = -2;
@@ -11758,12 +11854,14 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		Send_request_num(Ind, RID_SEND_ITEM_PAY, "How much gold does the receipient have to pay you? ", -1);
 		return;
 #endif
+
 	case RID_REPAIR_ARMOUR:
 		if (cfr) repair_item_aux(Ind, p_ptr->request_extra, TRUE);
 		return;
 	case RID_REPAIR_WEAPON:
 		if (cfr) repair_item_aux(Ind, p_ptr->request_extra, FALSE);
 		return;
+
 #ifdef RESET_SKILL
 	case RID_LOSE_MEMORIES_I:
 	case RID_LOSE_MEMORIES_II:
@@ -11855,6 +11953,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		p_ptr->reskill_possible |= RESKILL_F_RESET; /* Permanent flag: Only once per character */
 		return;
 #endif
+
 	default: ;
 	}
 }

@@ -3613,17 +3613,24 @@ void do_cmd_steal(int Ind, int dir) {
 	if (rand_int(100) < success) {
 		/* Steal gold 25% of the time */
 		if (rand_int(100) < 25) {
-			int amt = q_ptr->au / 10;
+			s32b available = q_ptr->au - q_ptr->casino_wager; //in case target is currently inside the casino o_O
+			s32b amt;
 
+			if (available < 0) available = 0; //paranoia
+			amt = available / 10;
+
+			if (!amt
 #ifndef TOOL_NOTHEFT_COMBO
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik(100)) {
+			    || (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik(100))
 #else
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE)) {
+			    || (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE))
 #endif
+			    ) {
 				/* Saving throw message */
 				msg_print(Ind, "You couldn't find any money!");
 				amt = 0;
-				s_printf("StealingPvP: %s fails to steal %d gold from %s (chance %d%%): money belt.\n", p_ptr->name, amt, q_ptr->name, success);
+				if (!amt) s_printf("StealingPvP: %s fails to steal %d gold from %s (chance %d%%): broke.\n", p_ptr->name, amt, q_ptr->name, success);
+				else s_printf("StealingPvP: %s fails to steal %d gold from %s (chance %d%%): money belt.\n", p_ptr->name, amt, q_ptr->name, success);
 			}
 
 #ifdef IDDC_RESTRICTED_TRADING
@@ -3655,7 +3662,8 @@ void do_cmd_steal(int Ind, int dir) {
 			/* Check for target noticing */
 			if (rand_int(100) < notice) {
 				/* Message */
-				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %d gold!", p_ptr->name, amt);
+				if (!amt) msg_format(0 - c_ptr->m_idx, "\377rYou notice %s trying to steal gold!", p_ptr->name);
+				else msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %d gold!", p_ptr->name, amt);
 				caught = TRUE;
 			}
 		} else {

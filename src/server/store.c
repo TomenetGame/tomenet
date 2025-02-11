@@ -5766,7 +5766,7 @@ void store_kick(int Ind, bool say) {
 	teleport_player_force(Ind, 1);
 }
 /* Just silently exits store in case we are in one.
-   No teleportation needed because we're only called if player wants to move anyway. */
+   No teleportation needed because we're only called if player wants to move anyway, or if he leaves the game. */
 void store_exit(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
@@ -8582,6 +8582,13 @@ void handle_store_leave(int Ind) {
 	cave_type **zcave = getcave(&p_ptr->wpos);
 #endif
 
+	/* Don't allow running away from the casino mid game with your wager */
+	if (p_ptr->casino_wager) {
+		p_ptr->au = p_ptr->au - p_ptr->casino_wager;
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
+		p_ptr->casino_wager = 0;
+	}
+
 	/* hack: non-town stores (ie dungeon, but could also be wild) */
 	if (i == -1) i = gettown_dun(Ind);
 #ifdef PLAYER_STORES
@@ -8608,6 +8615,9 @@ void handle_store_leave(int Ind) {
 	/* We're no longer busy with anything */
 	p_ptr->store_action = 0;
 
+	/* Do nothing if pointer is not valid - mikaelh */
+	if (!st_ptr) return;
+
 #ifdef USE_SOUND_2010
 	/* For possible store-specific music */
 	handle_music(Ind);
@@ -8617,9 +8627,6 @@ void handle_store_leave(int Ind) {
 	p_ptr->grid_house = FALSE; //just assume we did not get kicked out 'into' an inn.. (shouldn't happen)
 	if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
 #endif
-
-	/* Do nothing if pointer is not valid - mikaelh */
-	if (!st_ptr) return;
 
 	/* Not a special store? Nothing to do then */
 	if (!(st_info[st_ptr->st_idx].flags1 & SF1_SPECIAL)) return;

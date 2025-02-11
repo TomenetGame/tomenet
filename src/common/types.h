@@ -4361,7 +4361,7 @@ struct player_type {
 	s32b go_turn; /* for HIDDEN_STAGE when playing Go */
 	s16b go_mail_cooldown;
 	/* For the 'new' casino games o_O */
-	int casino_odds, casino_roll;
+	int casino_odds, casino_roll, casino_progress;
 	s32b casino_wager;
 
 	/* Delayed requests are for quests, to prevent players from spamming password attempts */

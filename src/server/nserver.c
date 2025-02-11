@@ -1412,6 +1412,9 @@ static void Delete_player(int Ind) {
 	/* Be paranoid */
 	cave_type **zcave;
 
+	/* Remove him from any stores, especially important for special stores and their RID_ dialogues */
+	if (p_ptr->store_num != -1) handle_store_leave(Ind);
+
 	/* terminate mindcrafter charm effect */
 	do_mstopcharm(Ind);
 

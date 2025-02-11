@@ -193,14 +193,19 @@ static bool do_eat_gold(int Ind, int m_idx) {
 	monster_race    *r_ptr = race_inf(m_ptr);
 	int i, k;
 #endif	// 0
-	s32b            gold;
+	s32b            gold, available;
 
 	if (safe_area(Ind)) return(TRUE);
 
-	gold = (p_ptr->au / 10) + randint(25);
+	available = p_ptr->au - p_ptr->casino_wager;
+	if (available < 0) return(TRUE); //paranoia
+
+	gold = (available / 10) + randint(25);
 	if (gold < 2) gold = 2;
-	if (gold > 5000) gold = (p_ptr->au / 20) + randint(3000);
-	if (gold > p_ptr->au) gold = p_ptr->au;
+	if (gold > 5000) gold = (available / 20) + randint(3000);
+	if (gold > available) gold = available;
+
+
 	p_ptr->au -= gold;
 	if (gold <= 0) {
 		msg_print(Ind, "Nothing was stolen.");
