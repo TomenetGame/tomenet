@@ -4688,6 +4688,11 @@ int Receive_store_special_anim(void) {
 		while (anim_step--) {
 			Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
 			Term_putstr(DICE_X - 13 + 3 * ((anim_step + anim2) % 10), DICE_Y + 4, -1, TERM_L_GREEN, "*");
+
+			/* hack: hide cursor */
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
+
 			Term_fresh();
 			usleep(anim_step > ANIM_WHEEL_SETTLE ? ANIM_WHEEL_SPEED : ANIM_WHEEL_SPEED + ANIM_WHEEL_SETTLE * ANIM_WHEEL_SETTLE_SLOWDOWN - anim_step * ANIM_WHEEL_SETTLE_SLOWDOWN);
 		}
@@ -4703,6 +4708,11 @@ int Receive_store_special_anim(void) {
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 3 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
 			display_fruit(8, 26, (anim_step + anim2) % 6 + 1);
+
+			/* hack: hide cursor */
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
+
 			Term_fresh();
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
@@ -4711,6 +4721,11 @@ int Receive_store_special_anim(void) {
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 2 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
 			display_fruit(8, 35, (anim_step + anim3) % 6 + 1);
+
+			/* hack: hide cursor */
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
+
 			Term_fresh();
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
@@ -4719,6 +4734,11 @@ int Receive_store_special_anim(void) {
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 1 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
 			display_fruit(8, 44, (anim_step + anim4) % 6 + 1);
+
+			/* hack: hide cursor */
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
+
 			Term_fresh();
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
@@ -6315,11 +6335,6 @@ int Receive_request_key(void) {
 	if (get_com(prompt, &buf)) Send_request_key(id, buf);
 	else Send_request_key(id, 0);
 	request_pending = FALSE;
-
-	/* hack: hide cursor */
-	Term->scr->cx = Term->wid;
-	Term->scr->cu = 1;
-
 	return(1);
 }
 /* Request number */
@@ -6332,11 +6347,6 @@ int Receive_request_num(void) {
 	request_pending = TRUE;
 	Send_request_num(id, c_get_quantity(prompt, 0, max));
 	request_pending = FALSE;
-
-	/* hack: hide cursor */
-	Term->scr->cx = Term->wid;
-	Term->scr->cu = 1;
-
 	return(1);
 }
 /* Request string (1 line) */
@@ -6350,11 +6360,6 @@ int Receive_request_str(void) {
 	if (get_string(prompt, buf, MAX_CHARS_WIDE - 1)) Send_request_str(id, buf);
 	else Send_request_str(id, "\e");
 	request_pending = FALSE;
-
-	/* hack: hide cursor */
-	Term->scr->cx = Term->wid;
-	Term->scr->cu = 1;
-
 	return(1);
 }
 /* Request confirmation (y/n) */
@@ -6375,11 +6380,6 @@ int Receive_request_cfr(void) {
 	request_pending = TRUE;
 	Send_request_cfr(id, get_check3(prompt, default_choice));
 	request_pending = FALSE;
-
-	/* hack: hide cursor */
-	Term->scr->cx = Term->wid;
-	Term->scr->cu = 1;
-
 	return(1);
 }
 /* Cancel pending input request */
