@@ -642,6 +642,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			display_fruit(Ind, 8, 44, choice);
 		}
 
+#define SLOTS_BONUS 1 /* fine-tuning: must be 0 or 1 */
 		if (roll1 == roll2 && roll2 == choice) {
 			win = TRUE;
 			if (roll1 == 1) odds = 4;
@@ -649,12 +650,14 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			else odds = roll1 * roll1;
 		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
-			odds = choice + 2; //slight boost (was +1), for contrasting the double plum below
+			odds = choice + 1 + SLOTS_BONUS; //slight boost (was +1), for contrasting the double plum below
 		} else if (roll1 == 5 && roll2 == 5) { //added some extra winnage (this combo didn't exist before) ^^
 			win = TRUE;
-			odds = choice + 1;
+			odds = choice + SLOTS_BONUS;
+		} else if (roll2 == choice && roll2 != 3 && roll2 != 4) { //this too...so generous oO
+			win = TRUE;
+			odds = 0; //just get the wager back
 		}
-		/* could add: any pair is payoff 0, aka get the wager back */
 
 		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
