@@ -646,6 +646,9 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			else odds = roll1 * roll1;
 		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
+			odds = choice + 2; //slight boost (was +1), for contrasting the double plum below
+		} else if (roll1 == 5 && roll2 == 5) { //added some extra winnage (this combo didn't exist before) ^^
+			win = TRUE;
 			odds = choice + 1;
 		}
 
