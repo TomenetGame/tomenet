@@ -671,13 +671,12 @@ void casino_result(int Ind, bool win) {
 	player_type *p_ptr = Players[Ind];
 
 	if (win) {
-		msg_print(Ind, "\377GYOU WON!");
 #ifdef USE_SOUND_2010
 		sound(Ind, "casino_win", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 		/* hack: prevent s32b overflow */
 		if (PY_MAX_GOLD - (p_ptr->casino_odds * p_ptr->casino_wager) < p_ptr->au) {
-			msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
+			msg_format(Ind, "\377oYou won! But you cannot carry more than %d gold!", PY_MAX_GOLD);
 		} else {
 			p_ptr->au = p_ptr->au + (p_ptr->casino_odds * p_ptr->casino_wager);
 #ifdef USE_SOUND_2010
@@ -688,11 +687,11 @@ void casino_result(int Ind, bool win) {
 				msg_print(Ind, "You gain a tiny bit of experience from gambling.");
 				gain_exp(Ind, 1);
 			}
-			msg_format(Ind, "Payoff: %d", p_ptr->casino_odds);
+			msg_format(Ind, "\377GYou won %d Au! (Payoff: %d)", p_ptr->casino_odds * p_ptr->casino_wager, p_ptr->casino_odds);
 		}
 	} else {
 		p_ptr->au -= p_ptr->casino_wager;
-		msg_print(Ind, "\377sYou lost.");
+		msg_format(Ind, "\377sYou lost your wager of %d Au.", p_ptr->casino_wager);
 #ifdef USE_SOUND_2010
 		sound(Ind, "casino_lose", NULL, SFX_TYPE_MISC, FALSE);
 #endif
