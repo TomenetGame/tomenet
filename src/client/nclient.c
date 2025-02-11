@@ -4673,6 +4673,7 @@ static void display_fruit(int row, int col, int fruit) {
 #define ANIM_SLOT_LENGTH		3	/* multiplier and random-increase for the whole sequence, smaller is faster [2 (theoretically for visually masking the result it should be 6 ^^)] */
 #define ANIM_SLOT_SETTLE		6	/* settling sequence length when the animation becomes slower and eventually halts, smaller is faster [6] */
 #define ANIM_SLOT_SETTLE_SLOWDOWN	25000	/* us frame delay increase for the settling sequence, added each frame, smaller is faster [25000] */
+#define ANIM_SLOT_OPTIMIZE_SFX_DELAY		/* Actually already start playing the sfx _before_ the delay before the final state, will sync audibly better -_-' */
 
 #define ANIM_WHEEL_SPEED		50000	/* [50000] */
 #define ANIM_WHEEL_LENGTH		10	/* [10] */
@@ -4692,7 +4693,7 @@ int Receive_store_special_anim(void) {
 	switch (anim1) {
 	case 0: //wheel
 		anim_step = rand_int(ANIM_WHEEL_LENGTH) + ANIM_WHEEL_LENGTH * 2;
-		while (anim_step--) {
+		while (--anim_step) { //decrement first, or final loop ends up same as final placement done afterwards, resulting in a perceived 'extra sfx' as there is no visible change
 			Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
 			Term_putstr(DICE_X - 13 + 3 * ((anim_step + anim2) % 10), DICE_Y + 4, -1, TERM_L_GREEN, "*");
 
@@ -4724,11 +4725,18 @@ int Receive_store_special_anim(void) {
 			Term->scr->cu = 1;
 
 			Term_fresh();
+#ifdef USE_SOUND_2010
+ #ifdef ANIM_SLOT_OPTIMIZE_SFX_DELAY
+			if (!anim_step) sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+ #endif
+#endif
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
 		display_fruit(8, 26, anim2 + 1);
 #ifdef USE_SOUND_2010
+ #ifndef ANIM_SLOT_OPTIMIZE_SFX_DELAY
 		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+ #endif
 #endif
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 2 * ANIM_SLOT_LENGTH;
@@ -4740,11 +4748,18 @@ int Receive_store_special_anim(void) {
 			Term->scr->cu = 1;
 
 			Term_fresh();
+#ifdef USE_SOUND_2010
+ #ifdef ANIM_SLOT_OPTIMIZE_SFX_DELAY
+			if (!anim_step) sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+ #endif
+#endif
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
 		display_fruit(8, 35, anim3 + 1);
 #ifdef USE_SOUND_2010
+ #ifndef ANIM_SLOT_OPTIMIZE_SFX_DELAY
 		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+ #endif
 #endif
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 1 * ANIM_SLOT_LENGTH;
@@ -4756,11 +4771,18 @@ int Receive_store_special_anim(void) {
 			Term->scr->cu = 1;
 
 			Term_fresh();
+#ifdef USE_SOUND_2010
+ #ifdef ANIM_SLOT_OPTIMIZE_SFX_DELAY
+			if (!anim_step) sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+ #endif
+#endif
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
 		display_fruit(8, 44, anim4 + 1);
 #ifdef USE_SOUND_2010
+ #ifndef ANIM_SLOT_OPTIMIZE_SFX_DELAY
 		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+ #endif
 #endif
 
 		break;
