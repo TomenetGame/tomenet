@@ -411,6 +411,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_STORE_SPECIAL_STR]	= Receive_store_special_str;
 	receive_tbl[PKT_STORE_SPECIAL_CHAR]	= Receive_store_special_char;
 	receive_tbl[PKT_STORE_SPECIAL_CLR]	= Receive_store_special_clr;
+	receive_tbl[PKT_STORE_SPECIAL_ANIM]	= Receive_store_special_anim;
 
 	receive_tbl[PKT_MARTYR]		= Receive_martyr;
 	receive_tbl[PKT_PALETTE]	= Receive_palette;
@@ -4584,6 +4585,155 @@ int Receive_store_special_clr(void) {
 	return(1);
 }
 
+static void display_fruit(int row, int col, int fruit) {
+	switch (fruit) {
+	case 1: /* lemon */
+		Term_putstr(col, row + 0, -1, TERM_YELLOW, "   ####.");
+		Term_putstr(col, row + 1, -1, TERM_YELLOW, "  #....#");
+		Term_putstr(col, row + 2, -1, TERM_YELLOW, " #.....#");
+		Term_putstr(col, row + 3, -1, TERM_YELLOW, "#......#");
+		Term_putstr(col, row + 4, -1, TERM_YELLOW, "#......#");
+		Term_putstr(col, row + 5, -1, TERM_YELLOW, "#.....# ");
+		Term_putstr(col, row + 6, -1, TERM_YELLOW, "#....#  ");
+		Term_putstr(col, row + 7, -1, TERM_YELLOW, ".####   ");
+		Term_putstr(col, row + 9, -1, TERM_WHITE, " Lemon  ");
+		break;
+
+	case 2: /* orange */
+		Term_putstr(col, row + 0, -1, TERM_ORANGE, "  ####  ");
+		Term_putstr(col, row + 1, -1, TERM_ORANGE, " #....# ");
+		Term_putstr(col, row + 2, -1, TERM_ORANGE, "#......#");
+		Term_putstr(col, row + 3, -1, TERM_ORANGE, "#......#");
+		Term_putstr(col, row + 4, -1, TERM_ORANGE, "#......#");
+		Term_putstr(col, row + 5, -1, TERM_ORANGE, "#......#");
+		Term_putstr(col, row + 6, -1, TERM_ORANGE, " #....# ");
+		Term_putstr(col, row + 7, -1, TERM_ORANGE, "  ####  ");
+		Term_putstr(col, row + 9, -1, TERM_WHITE, " Orange ");
+		break;
+
+	case 3: /* sword */
+		Term_putstr(col, row + 0, -1, TERM_SLATE, "   /\\   ");
+		Term_putstr(col, row + 1, -1, TERM_SLATE, "   ##   ");
+		Term_putstr(col, row + 2, -1, TERM_SLATE, "   ##   ");
+		Term_putstr(col, row + 3, -1, TERM_SLATE, "   ##   ");
+		Term_putstr(col, row + 4, -1, TERM_SLATE, "   ##   ");
+		Term_putstr(col, row + 5, -1, TERM_SLATE, "   ##   ");
+		Term_putstr(col, row + 6, -1, TERM_UMBER, " ###### ");
+		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
+		Term_putstr(col, row + 9, -1, TERM_WHITE, " Sword  ");
+		break;
+
+	case 4: /* shield */
+		Term_putstr(col, row + 0, -1, TERM_UMBER, " ###### ");
+		Term_putstr(col, row + 1, -1, TERM_UMBER, "#      #");
+		Term_putstr(col, row + 2, -1, TERM_UMBER, "# \377U++++\377u #");
+		Term_putstr(col, row + 3, -1, TERM_UMBER, "# \377U+==+\377u #");
+		Term_putstr(col, row + 4, -1, TERM_UMBER, "#  \377U++\377u  #");
+		Term_putstr(col, row + 5, -1, TERM_UMBER, " #    # ");
+		Term_putstr(col, row + 6, -1, TERM_UMBER, "  #  #  ");
+		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
+		Term_putstr(col, row + 9, -1, TERM_WHITE, " Shield ");
+		break;
+
+	case 5: /* plum */
+		Term_putstr(col, row + 0, -1, TERM_UMBER, "   ##   ");
+		Term_putstr(col, row + 1, -1, TERM_VIOLET, " ###### ");
+		Term_putstr(col, row + 2, -1, TERM_VIOLET, "########");
+		Term_putstr(col, row + 3, -1, TERM_VIOLET, "########");
+		Term_putstr(col, row + 4, -1, TERM_VIOLET, "########");
+		Term_putstr(col, row + 5, -1, TERM_VIOLET, " ###### ");
+		Term_putstr(col, row + 6, -1, TERM_VIOLET, "  ####  ");
+		Term_putstr(col, row + 7, -1, TERM_VIOLET, "   ##   ");
+		Term_putstr(col, row + 9, -1, TERM_WHITE, "  Plum  ");
+		break;
+
+	case 6: /* cherry */
+		Term_putstr(col, row + 0, -1, TERM_GREEN, "     ## ");
+		Term_putstr(col, row + 1, -1, TERM_RED, "   ###  ");
+		Term_putstr(col, row + 2, -1, TERM_RED, "  #..#  ");
+		Term_putstr(col, row + 3, -1, TERM_RED, "  #..#  ");
+		Term_putstr(col, row + 4, -1, TERM_RED, " ###### ");
+		Term_putstr(col, row + 5, -1, TERM_RED, "#..##..#");
+		Term_putstr(col, row + 6, -1, TERM_RED, "#..##..#");
+		Term_putstr(col, row + 7, -1, TERM_RED, " ##  ## ");
+		Term_putstr(col, row + 9, -1, TERM_WHITE, " Cherry ");
+		break;
+	}
+}
+
+
+#define ANIM_SLOT_SPEED			75000	/* us frame delay, smaller is faster [75000] */
+#define ANIM_SLOT_LENGTH		3	/* multiplier and random-increase for the whole sequence, smaller is faster [2 (theoretically for visually masking the result it should be 6 ^^)] */
+#define ANIM_SLOT_SETTLE		6	/* settling sequence length when the animation becomes slower and eventually halts, smaller is faster [6] */
+#define ANIM_SLOT_SETTLE_SLOWDOWN	25000	/* us frame delay increase for the settling sequence, added each frame, smaller is faster [25000] */
+
+#define ANIM_WHEEL_SPEED		35000	/* [35000] */
+#define ANIM_WHEEL_LENGTH		10	/* [10] */
+#define ANIM_WHEEL_SETTLE		10	/* [10] */
+#define ANIM_WHEEL_SETTLE_SLOWDOWN	25000	/* [25000] */
+
+int Receive_store_special_anim(void) {
+	int n;
+	char ch;
+	u16b anim1, anim2, anim3, anim4;
+	int anim_step;
+
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &anim1, &anim2, &anim3, &anim4)) <= 0) return(n);
+	if (!shopping) return(1);
+
+	/* Casino: Wheel and Slot machine animations */
+	switch (anim1) {
+	case 0: //wheel
+		anim_step = rand_int(ANIM_WHEEL_LENGTH) + ANIM_WHEEL_LENGTH * 2;
+		while (anim_step--) {
+			Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
+			Term_putstr(DICE_X - 13 + 3 * ((anim_step + anim2) % 10), DICE_Y + 4, -1, TERM_L_GREEN, "*");
+			Term_fresh();
+			usleep(anim_step > ANIM_WHEEL_SETTLE ? ANIM_WHEEL_SPEED : ANIM_WHEEL_SPEED + ANIM_WHEEL_SETTLE * ANIM_WHEEL_SETTLE_SLOWDOWN - anim_step * ANIM_WHEEL_SETTLE_SLOWDOWN);
+		}
+		Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
+		Term_putstr(DICE_X - 13 + 3 * anim2, DICE_Y + 4, -1, TERM_L_GREEN, "*");
+		break;
+
+	case 1: //slot
+		anim2--;
+		anim3--;
+		anim4--;
+
+		anim_step = rand_int(ANIM_SLOT_LENGTH) + 3 * ANIM_SLOT_LENGTH;
+		while (anim_step--) {
+			display_fruit(8, 26, (anim_step + anim2) % 6 + 1);
+			Term_fresh();
+			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
+		}
+		display_fruit(8, 26, anim2 + 1);
+
+		anim_step = rand_int(ANIM_SLOT_LENGTH) + 2 * ANIM_SLOT_LENGTH;
+		while (anim_step--) {
+			display_fruit(8, 35, (anim_step + anim3) % 6 + 1);
+			Term_fresh();
+			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
+		}
+		display_fruit(8, 35, anim3 + 1);
+
+		anim_step = rand_int(ANIM_SLOT_LENGTH) + 1 * ANIM_SLOT_LENGTH;
+		while (anim_step--) {
+			display_fruit(8, 44, (anim_step + anim4) % 6 + 1);
+			Term_fresh();
+			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
+		}
+		display_fruit(8, 44, anim4 + 1);
+
+		break;
+	}
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+
+	return(1);
+}
+
 int Receive_store_info(void) {
 	int n, max_cost;
 	char ch, owner_name[MAX_CHARS], store_name[MAX_CHARS];
@@ -6165,6 +6315,11 @@ int Receive_request_key(void) {
 	if (get_com(prompt, &buf)) Send_request_key(id, buf);
 	else Send_request_key(id, 0);
 	request_pending = FALSE;
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+
 	return(1);
 }
 /* Request number */
@@ -6177,6 +6332,11 @@ int Receive_request_num(void) {
 	request_pending = TRUE;
 	Send_request_num(id, c_get_quantity(prompt, 0, max));
 	request_pending = FALSE;
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+
 	return(1);
 }
 /* Request string (1 line) */
@@ -6190,6 +6350,11 @@ int Receive_request_str(void) {
 	if (get_string(prompt, buf, MAX_CHARS_WIDE - 1)) Send_request_str(id, buf);
 	else Send_request_str(id, "\e");
 	request_pending = FALSE;
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+
 	return(1);
 }
 /* Request confirmation (y/n) */
@@ -6210,6 +6375,11 @@ int Receive_request_cfr(void) {
 	request_pending = TRUE;
 	Send_request_cfr(id, get_check3(prompt, default_choice));
 	request_pending = FALSE;
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+
 	return(1);
 }
 /* Cancel pending input request */

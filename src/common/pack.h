@@ -274,6 +274,7 @@
 #define PKT_CHAR_DIRECT		214
 #define PKT_SPLIT_STACK		215	/* alternative function to PKT_FORCE_STACK - split up a stack of items */
 #define PKT_RELOGIN		216	/* Does what PKT_QUIT does, but then also asks the client to reconnect to a specific server! Added for SERVER_PORTALS (WiP). - C. Blue */
+#define PKT_STORE_SPECIAL_ANIM	217	/* For the casino: Special store screen animations */
 
 /*
  * Possible error codes returned

@@ -9361,6 +9361,33 @@ int Send_store_special_clr(int Ind, char line_start, char line_end) {
 	return Packet_printf(&connp->c, "%c%c%c", PKT_STORE_SPECIAL_CLR, line_start, line_end);
 }
 
+int Send_store_special_anim(int Ind, u16b anim1, u16b anim2, u16b anim3, u16b anim4) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+#ifdef MINDLINK_STORE
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL;
+#endif
+
+	if (is_older_than(&connp->version, 4, 9, 2, 1, 0, 1)) return(0);
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for store anim (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return(0);
+	}
+
+#ifdef MINDLINK_STORE
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		if (is_newer_than(&connp2->version, 4, 9, 2, 1, 0, 1))
+			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd", PKT_STORE_SPECIAL_ANIM, anim1, anim2, anim3, anim4);
+	}
+#endif
+
+	return Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_STORE_SPECIAL_ANIM, anim1, anim2, anim3, anim4);
+}
+
 /*
  * This function is supposed to handle 'store actions' too,
  * like 'buy' 'identify' 'heal' 'bid to an auction'		- Jir -

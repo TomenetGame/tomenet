@@ -4364,7 +4364,7 @@ struct player_type {
 	s32b casino_wager;
 	int casino_odds, casino_roll, casino_progress;
 #if 0
-	int casino_game, casino_timer;
+	int casino_game, casino_timer; /* In case we ever need server-side timed casino operations, currently all animation is just client-side */
 #endif
 
 	/* Delayed requests are for quests, to prevent players from spamming password attempts */

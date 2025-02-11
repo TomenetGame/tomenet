@@ -11526,20 +11526,21 @@ void handle_request_return_num(int Ind, int id, int num) {
 			num = 9;
 		}
 		msg_print(Ind, NULL);
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 13 + 3 * num - 1, TERM_GREEN, "<");
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 13 + 3 * num + 1, TERM_GREEN, ">");
 #ifdef USE_SOUND_2010
 		sound(Ind, "casino_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
 		roll1 = rand_int(10);
 
-#if 0
-		p_ptr->casino_game = BACT_SPIN_WHEEL; //todo: implement actual spinning via timer
-		p_ptr->casino_timer = 1;
-		p_ptr->casino_progress = 0;
-		p_ptr->casino_roll = roll1;
-#endif
+		/* Create client-side animation */
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			Send_store_special_anim(Ind, 0, roll1, num, 0);
+		else
+			Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 13 + 3 * roll1, TERM_L_GREEN, "*");
 
 		if (roll1 == num) win = TRUE;
-		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 13 + 3 * roll1, TERM_L_GREEN, "*");
+
 		strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d", roll1);
 		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 21, win ? TERM_GREEN : TERM_SLATE, tmp_str);
 

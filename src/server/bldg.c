@@ -621,15 +621,14 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_WHITE, "/--------------------------\\");
 		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_WHITE, "\\--------------------------/");
 
-#if 0
-		p_ptr->casino_game = BACT_DICE_SLOTS; //todo: implement actual spinning via timer
-		p_ptr->casino_timer = 1;
-		p_ptr->casino_progress = 0;
-#endif
-
-		display_fruit(Ind, 8, 26, roll1);
-		display_fruit(Ind, 8, 35, roll2);
-		display_fruit(Ind, 8, 44, choice);
+		/* Create client-side animation */
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			Send_store_special_anim(Ind, 1, roll1, roll2, choice);
+		else {
+			display_fruit(Ind, 8, 26, roll1);
+			display_fruit(Ind, 8, 35, roll2);
+			display_fruit(Ind, 8, 44, choice);
+		}
 
 		if (roll1 == roll2 && roll2 == choice) {
 			win = TRUE;
@@ -643,6 +642,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			win = TRUE;
 			odds = choice + 1;
 		}
+		/* could add: any pair is payoff 0, aka get the wager back */
 
 		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
