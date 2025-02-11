@@ -554,8 +554,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		}
 
 		if (((choice > roll1) && (choice < roll2)) ||
-		    ((choice < roll1) && (choice > roll2)))
+		    ((choice < roll1) && (choice > roll2))) {
 			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 4, TERM_GREEN, "You won!");
+		} else Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 4, TERM_SLATE, "You lost.");
 
 		if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: In Between - Player '%s' lost %d Au.\n", p_ptr->name, wager);
@@ -591,12 +593,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, a_die[roll1], c_die[roll1]);
 			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, a_die[roll2], c_die[roll2]);
  #endif
-		}
+		} else
 #endif
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
 
-		if ((roll3 == 7) || (roll3 == 11)) win = TRUE;
-		else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) win = FALSE;
-		else {
+		if ((roll3 == 7) || (roll3 == 11)) {
+			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 6, TERM_GREEN, "wins!");
+		} else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) {
+			win = FALSE;
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 6, TERM_SLATE, "loses.");
+		} else {
 			p_ptr->casino_roll = choice;
 			p_ptr->casino_progress = 1;
 			p_ptr->casino_odds = odds;
@@ -645,19 +652,23 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #define SLOTS_BONUS 1 /* fine-tuning: must be 0 or 1 */
 		if (roll1 == roll2 && roll2 == choice) {
 			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			if (roll1 == 1) odds = 4;
 			else if (roll1 == 2) odds = 6;
 			else odds = roll1 * roll1;
 		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			odds = choice + 1 + SLOTS_BONUS; //slight boost (was +1), for contrasting the double plum below
 		} else if (roll1 == 5 && roll2 == 5) { //added some extra winnage (this combo didn't exist before) ^^
 			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			odds = choice + SLOTS_BONUS;
 		} else if (roll2 == choice && roll2 != 3 && roll2 != 4) { //this too...so generous oO
 			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			odds = 0; //just get the wager back
-		}
+		} else Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_SLATE, "You lost.");
 
 		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);

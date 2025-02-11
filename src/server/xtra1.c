@@ -11652,18 +11652,24 @@ void handle_request_return_key(int Ind, int id, char c) {
 			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1]);
 			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2]);
  #endif
+		} else
+#endif
+		Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
+
+		if (roll3 == p_ptr->casino_roll) {
+			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "wins!");
+		} else if (roll3 == 7) {
+			win = FALSE;
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "loses!");
+		} else {
 			if (ycv < 10) ycv++; //screen overflow limit >,>
 			else {
 				ycv = 2;
 				Send_store_special_clr(Ind, 7, 19);
 			}
 			p_ptr->casino_progress = ycv;
-		}
-#endif
 
-		if (roll3 == p_ptr->casino_roll) win = TRUE;
-		else if (roll3 == 7) win = FALSE;
-		else {
 			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
 			return;
 		}
