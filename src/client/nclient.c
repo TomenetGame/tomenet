@@ -3464,6 +3464,13 @@ int Receive_message(void) {
 
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
+	/* For the casino: Cursor was visible after game result message (won/loss) */
+	if (shopping) {
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+	}
+
 	return(1);
 }
 

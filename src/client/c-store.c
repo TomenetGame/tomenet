@@ -1051,6 +1051,10 @@ void c_store_prt_gold(void) {
 #else
 	if (special_line_type || screen_icky > 1) Term_switch(1);
 #endif
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 
 void do_redraw_store(void) {
