@@ -84,7 +84,7 @@ If you have two plums in slot 1 and 2, the payoff is:
  The third slot's symbol's value plus one.
 
 Last chance for salvation:
-If the 2nd and 3rd slot are the same fruit type (and not shields or swords)
+If the 2nd and 3rd slot are the same fruit type (not shields or swords)
 you get your wager back, so you come out with neither profit nor loss.
 
 eg.

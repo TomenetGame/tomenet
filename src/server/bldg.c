@@ -690,7 +690,8 @@ void casino_result(int Ind, bool win) {
 				msg_print(Ind, "You gain a tiny bit of experience from gambling.");
 				gain_exp(Ind, 1);
 			}
-			msg_format(Ind, "\377GYou won %d Au! (Payoff: %d)", p_ptr->casino_odds * p_ptr->casino_wager, p_ptr->casino_odds);
+			if (p_ptr->casino_odds) msg_format(Ind, "\377GYou won %d Au! (Payoff: %d)", p_ptr->casino_odds * p_ptr->casino_wager, p_ptr->casino_odds);
+			else msg_format(Ind, "\377GYou won and got your wager of %d Au back.", p_ptr->casino_odds * p_ptr->casino_wager, p_ptr->casino_odds);
 		}
 	} else {
 		p_ptr->au -= p_ptr->casino_wager;
