@@ -90,8 +90,8 @@ D:&^^--------------#---OOO-c-OOO-##-#SScSS--OOOOOO,##,#---------ssssssss----    
 D:&^^^--#----------##-OOO-sssOOO--#--ssssss-OOOOOO--#,#####-----SScSSSSS-----                                                @@VV@                --OO-                                                &
 D:&^^^--#-----------#OOO-#####OOO-##-ssssss--OOOOOO-#,,######---ssssssss--O---                                              @@VVV@                -OO--                                                &
 D:&^^--###----------OOO-------OOO--#-####2#--OOOOOO-##,#k#,,##--ssssssss--O----                                             @VVV@@               --O--                                                 &
-D:&^^^-###---------OOO#--SSScS-OOO-#---------OOOOO---#,,,,,,,#--ssssssss--O-----                                           @@VV@@               --OO-                                                  &
-D:&^^-#####-------OOO-#--sssss-OOO-#--ssss--OOOOO--T-#,-----,#--#####d##--O------                                          @VVV@               --OO--                                                  &
+D:&^^^-###---------OOO#--SSScS-OOO-#---------OOOOO---#,,,,,,,#--********--O-----                                           @@VV@@               --OO-                                                  &
+D:&^^-#####-------OOO-#--sssss-OOO-#--ssss--OOOOO--T-#,-----,#--####d###--O------                                          @VVV@               --OO--                                                  &
 D:&^^#######------OOO-##-###j#-OOO-##-ssss--OOOOO-tT-#------,#-------,,,,,O------                                         @@VV@@              --OO--                                                   &
 D:&^^^########----OOO--#-------OOO--#-ScSS--OOOOO-TT-#-----,,#------------O-------                                        @VVV@@             --OO--                                                    &
 D:&^^############-OOO--##-ScSSS-OOO-#-ssss--OOOOO--T-#----,,##---ssssssss-O--------                                      @@VV@@             --OOO--                                                    &
