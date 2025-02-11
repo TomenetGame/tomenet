@@ -347,76 +347,76 @@ static void arena_comm(int cmd) {
  */
 static void display_fruit(int Ind, int row, int col, int fruit) {
 	switch (fruit) {
-	case 0: /* lemon */
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_YELLOW, "   ####.");
-		Send_store_special_str(Ind, row + 1, col + 0, TERM_YELLOW, "  #    #");
-		Send_store_special_str(Ind, row + 2, col + 0, TERM_YELLOW, " #     #");
-		Send_store_special_str(Ind, row + 3, col + 0, TERM_YELLOW, "#      #");
-		Send_store_special_str(Ind, row + 4, col + 0, TERM_YELLOW, "#      #");
-		Send_store_special_str(Ind, row + 5, col + 0, TERM_YELLOW, "#     # ");
-		Send_store_special_str(Ind, row + 6, col + 0, TERM_YELLOW, "#    #  ");
-		Send_store_special_str(Ind, row + 7, col + 0, TERM_YELLOW, ".####   ");
-		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Lemon  ");
+	case 1: /* lemon */
+		Send_store_special_str(Ind, row + 0, col, TERM_YELLOW, "   ####.");
+		Send_store_special_str(Ind, row + 1, col, TERM_YELLOW, "  #....#");
+		Send_store_special_str(Ind, row + 2, col, TERM_YELLOW, " #.....#");
+		Send_store_special_str(Ind, row + 3, col, TERM_YELLOW, "#......#");
+		Send_store_special_str(Ind, row + 4, col, TERM_YELLOW, "#......#");
+		Send_store_special_str(Ind, row + 5, col, TERM_YELLOW, "#.....# ");
+		Send_store_special_str(Ind, row + 6, col, TERM_YELLOW, "#....#  ");
+		Send_store_special_str(Ind, row + 7, col, TERM_YELLOW, ".####   ");
+		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Lemon  ");
 		break;
 
-	case 1: /* orange */
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "   ##   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "  #..#  ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, " #....# ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "#......#");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "#......#");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, " #....# ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "  #..#  ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_ORANGE, "   ##   ");
-		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Orange ");
+	case 2: /* orange */
+		Send_store_special_str(Ind, row + 0, col, TERM_ORANGE, "  ####  ");
+		Send_store_special_str(Ind, row + 1, col, TERM_ORANGE, " #....# ");
+		Send_store_special_str(Ind, row + 2, col, TERM_ORANGE, "#......#");
+		Send_store_special_str(Ind, row + 3, col, TERM_ORANGE, "#......#");
+		Send_store_special_str(Ind, row + 4, col, TERM_ORANGE, "#......#");
+		Send_store_special_str(Ind, row + 5, col, TERM_ORANGE, "#......#");
+		Send_store_special_str(Ind, row + 6, col, TERM_ORANGE, " #....# ");
+		Send_store_special_str(Ind, row + 7, col, TERM_ORANGE, "  ####  ");
+		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Orange ");
 		break;
 
-	case 2: /* sword */
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   /\\   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_UMBER, " ###### ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_UMBER, "   ##   ");
-		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Sword  ");
+	case 3: /* sword */
+		Send_store_special_str(Ind, row + 0, col, TERM_SLATE, "   /\\   ");
+		Send_store_special_str(Ind, row + 1, col, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 2, col, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 3, col, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 4, col, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 5, col, TERM_SLATE, "   ##   ");
+		Send_store_special_str(Ind, row + 6, col, TERM_UMBER, " ###### ");
+		Send_store_special_str(Ind, row + 7, col, TERM_UMBER, "   ##   ");
+		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Sword  ");
 		break;
 
-	case 3: /* shield */
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, " ###### ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "#      #");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "# ++++ #");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "# +==+ #");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "#  ++  #");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, " #    # ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "  #  #  ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_SLATE, "   ##   ");
-		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Shield ");
+	case 4: /* shield */
+		Send_store_special_str(Ind, row + 0, col, TERM_UMBER, " ###### ");
+		Send_store_special_str(Ind, row + 1, col, TERM_UMBER, "#      #");
+		Send_store_special_str(Ind, row + 2, col, TERM_UMBER, "# \377U++++\377u #");
+		Send_store_special_str(Ind, row + 3, col, TERM_UMBER, "# \377U+==+\377u #");
+		Send_store_special_str(Ind, row + 4, col, TERM_UMBER, "#  \377U++\377u  #");
+		Send_store_special_str(Ind, row + 5, col, TERM_UMBER, " #    # ");
+		Send_store_special_str(Ind, row + 6, col, TERM_UMBER, "  #  #  ");
+		Send_store_special_str(Ind, row + 7, col, TERM_UMBER, "   ##   ");
+		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Shield ");
 		break;
 
-	case 4: /* plum */
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "   ##   ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, " ###### ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "########");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "########");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "########");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, " ###### ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "  ####  ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_VIOLET, "   ##   ");
-		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, "  Plum  ");
+	case 5: /* plum */
+		Send_store_special_str(Ind, row + 0, col, TERM_UMBER, "   ##   ");
+		Send_store_special_str(Ind, row + 1, col, TERM_VIOLET, " ###### ");
+		Send_store_special_str(Ind, row + 2, col, TERM_VIOLET, "########");
+		Send_store_special_str(Ind, row + 3, col, TERM_VIOLET, "########");
+		Send_store_special_str(Ind, row + 4, col, TERM_VIOLET, "########");
+		Send_store_special_str(Ind, row + 5, col, TERM_VIOLET, " ###### ");
+		Send_store_special_str(Ind, row + 6, col, TERM_VIOLET, "  ####  ");
+		Send_store_special_str(Ind, row + 7, col, TERM_VIOLET, "   ##   ");
+		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, "  Plum  ");
 		break;
 
-	case 5: /* cherry */
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "      ##");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "   ###  ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "  #..#  ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "  #..#  ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, " ###### ");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "#..##..#");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, "#..##..#");
-		Send_store_special_str(Ind, row + 0, col + 0, TERM_RED, " ##  ## ");
-		Send_store_special_str(Ind, row + 9, col + 0, TERM_WHITE, " Cherry ");
+	case 6: /* cherry */
+		Send_store_special_str(Ind, row + 0, col, TERM_GREEN, "     ## ");
+		Send_store_special_str(Ind, row + 1, col, TERM_RED, "   ###  ");
+		Send_store_special_str(Ind, row + 2, col, TERM_RED, "  #..#  ");
+		Send_store_special_str(Ind, row + 3, col, TERM_RED, "  #..#  ");
+		Send_store_special_str(Ind, row + 4, col, TERM_RED, " ###### ");
+		Send_store_special_str(Ind, row + 5, col, TERM_RED, "#..##..#");
+		Send_store_special_str(Ind, row + 6, col, TERM_RED, "#..##..#");
+		Send_store_special_str(Ind, row + 7, col, TERM_RED, " ##  ## ");
+		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Cherry ");
 		break;
 	}
 }
@@ -435,9 +435,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	s32b wager;
 	s32b maxbet;
-
-	static const char *fruit[6] = {"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
-	char tmp_str[80];
 
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 	connection_t *connp;
@@ -617,17 +614,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
 		win = FALSE;
-		odds = 10;
-		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");//5,2 (y,x)
-		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_WHITE, "  0  1  2  3  4  5  6  7  8  9");//7,5
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 15, TERM_WHITE, "--------------------------------");//8,3
+		odds = 9;
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_RED, "  0  \377w1  2  3  4  5  6  7  8  9");
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 15, TERM_WHITE, "--------------------------------");
 		p_ptr->odds = odds;
 		p_ptr->wager = wager;
 		Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9): ", -1);
 		return(TRUE);
 
 	case BACT_DICE_SLOTS: /* The Dice Slots */
-		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== Dice Slots ===");//5,2 (y,x)
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== Dice Slots ===");
 #ifdef USE_SOUND_2010
 		sound(Ind, "store_slots", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
@@ -636,20 +633,18 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll2 = randint(6);
 		choice = randint(6);
 
-		strnfmt(tmp_str, 80, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1], fruit[choice - 1]);
-		Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 12, TERM_WHITE, tmp_str);//15,37
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_WHITE, "/--------------------------\\");//7,2
-		Send_store_special_str(Ind, DICE_Y + 13, DICE_X - 14, TERM_WHITE, "/--------------------------\\");//17,2
-		display_fruit(Ind, 8,  3, roll1 - 1);
-		display_fruit(Ind, 8, 12, roll2 - 1);
-		display_fruit(Ind, 8, 21, choice - 1);
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_WHITE, "/--------------------------\\");
+		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_WHITE, "\\--------------------------/");
+		display_fruit(Ind, 8, 26, roll1);
+		display_fruit(Ind, 8, 35, roll2);
+		display_fruit(Ind, 8, 44, choice);
 
-		if ((roll1 == roll2) && (roll2 == choice)) {
+		if (roll1 == roll2 && roll2 == choice) {
 			win = TRUE;
 			if (roll1 == 1) odds = 4;
 			else if (roll1 == 2) odds = 6;
 			else odds = roll1 * roll1;
-		} else if ((roll1 == 6) && (roll2 == 6)) {
+		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
 			odds = choice + 1;
 		}
@@ -669,7 +664,7 @@ void casino_result(int Ind, bool win) {
 	player_type *p_ptr = Players[Ind];
 
 	if (win) {
-		msg_print(Ind, "YOU WON");
+		msg_print(Ind, "\377GYOU WON!");
 		/* hack: prevent s32b overflow */
 		if (PY_MAX_GOLD - (p_ptr->odds * p_ptr->wager) < p_ptr->au) {
 			msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
@@ -683,7 +678,7 @@ void casino_result(int Ind, bool win) {
 			msg_format(Ind, "Payoff: %d", p_ptr->odds);
 		}
 	} else {
-		msg_print(Ind, "You lost");
+		msg_print(Ind, "\377sYou lost.");
 		p_ptr->au = p_ptr->au - p_ptr->wager;
 	}
 	Send_gold(Ind, p_ptr->au, p_ptr->balance);
@@ -2082,8 +2077,8 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 
 		case BACT_IN_BETWEEN:
 		case BACT_CRAPS:
-		//case BACT_SPIN_WHEEL:
-		//case BACT_DICE_SLOTS:
+		case BACT_SPIN_WHEEL:
+		case BACT_DICE_SLOTS:
 		case BACT_GAMBLE_RULES:
 			gamble_comm(Ind, bact, gold);
 			break;

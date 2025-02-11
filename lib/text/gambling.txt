@@ -53,7 +53,43 @@ eg.
 
 
 \{D==============================================================================
-\{U3. 'Go challenge'
+\{U3. 'Spin the wheel'
+
+A wheel with 10 numbers, 'zero' to 'nine' is spun.
+
+You bet on exactly one of the numbers, except on 'zero' which is forbidden.
+
+If the wheel stops at your number you receive nine times (9x) your wager,
+so the payoff odds are 9. The 'zero' always loses.
+
+
+\{D==============================================================================
+\{U4. 'Dice slots'
+
+Three random slots are spun and can stop at one of six symbols:
+ '\{yLemon\{w', '\{oOrange\{w', '\{sSword\{w', '\{uShield\{w', '\{vPlum\{w' and '\{rCherry\{w'.
+They have different values:
+ Lemon 1, Orange 2, Sword 3, Shield 4, Plum 5, Cherry 6.
+
+To win, you must either get 3 identical symbols
+or the first two symbols must both be 'Cherry'.
+
+If you have 3 identical symbols, the payoff is:
+ Lemon:  4x.
+ Orange: 6x.
+ Otherwise the square of the symbol's value.
+If you have two cherries in slot 1 and 2, the payoff is:
+ The third slot's symbol's value plus one.
+
+eg.
+if orange, orange, orange appears, you win at payoff 6.
+if cherry, cherry, cherry appears, you win at payoff 36 (ie 6 * 6).
+if cherry, cherry, sword appears, you win at payoff 4 (ie 3 + 1).
+if lemon, cherry, cherry appears, you lose.
+
+
+\{D==============================================================================
+\{U5. 'Go challenge'
 
 Two different short video tutorials on YouTube:
 \{Bhttp://youtu.be/qhBQasS5IRI

@@ -11512,9 +11512,9 @@ void handle_request_return_num(int Ind, int id, int num) {
 		char tmp_str[80];
 		int roll1;
 
-		if (num < 0) {
-			msg_print(Ind, "I'll put you down for 0.");
-			num = 0;
+		if (num < 1) {
+			msg_print(Ind, "I'll put you down for 1.");
+			num = 1;
 		} else if (num > 9) {
 			msg_print(Ind, "Ok, I'll put you down for 9.");
 			num = 9;
@@ -11523,12 +11523,11 @@ void handle_request_return_num(int Ind, int id, int num) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "store_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
-		roll1 = randint(10) - 1;
-		strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d", roll1);
-		Send_store_special_str(Ind, DICE_Y + 8, DICE_X / 2, TERM_GREEN, tmp_str);//13,3
-		//prt("", 9, 0);
-		Send_store_special_str(Ind, DICE_Y + 9, DICE_X / 2 + (3 * roll1 + 5), TERM_GREEN, "*");//9,x
+		roll1 = rand_int(10);
 		if (roll1 == num) win = TRUE;
+		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 13 + 3 * roll1, TERM_L_GREEN, "*");
+		strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d", roll1);
+		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 21, win ? TERM_GREEN : TERM_SLATE, tmp_str);
 
 		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->odds * p_ptr->wager);
 		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->wager);
