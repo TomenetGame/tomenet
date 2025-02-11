@@ -602,8 +602,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_RED, "  0  \377w1  2  3  4  5  6  7  8  9");
 		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 15, TERM_WHITE, "--------------------------------");
+
 		p_ptr->casino_odds = odds;
 		p_ptr->casino_wager = wager;
+
 		Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9): ", -1);
 		return(TRUE);
 
@@ -618,6 +620,13 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_WHITE, "/--------------------------\\");
 		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_WHITE, "\\--------------------------/");
+
+#if 0
+		p_ptr->casino_game = BACT_DICE_SLOTS; //todo: implement actual spinning via timer
+		p_ptr->casino_timer = 1;
+		p_ptr->casino_progress = 0;
+#endif
+
 		display_fruit(Ind, 8, 26, roll1);
 		display_fruit(Ind, 8, 35, roll2);
 		display_fruit(Ind, 8, 44, choice);

@@ -11530,6 +11530,14 @@ void handle_request_return_num(int Ind, int id, int num) {
 		sound(Ind, "casino_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
 		roll1 = rand_int(10);
+
+#if 0
+		p_ptr->casino_game = BACT_SPIN_WHEEL; //todo: implement actual spinning via timer
+		p_ptr->casino_timer = 1;
+		p_ptr->casino_progress = 0;
+		p_ptr->casino_roll = roll1;
+#endif
+
 		if (roll1 == num) win = TRUE;
 		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 13 + 3 * roll1, TERM_L_GREEN, "*");
 		strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d", roll1);
