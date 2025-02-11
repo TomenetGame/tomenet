@@ -529,23 +529,29 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	switch (cmd) {
 	case BACT_IN_BETWEEN: /* Game of In-Between */
-		msg_print(Ind, "\377GIn Between");
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== In Between ===");
 
 		odds = 3;
 		roll1 = randint(10);
 		roll2 = randint(10);
 		choice = randint(10);
-#ifdef USE_SOUND_2010
-		sound(Ind, "casino_inbetween", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d", roll1, roll2);
-		msg_format(Ind, "          Red die: \377r%d", choice);
 
-		//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 5, TERM_L_DARK, format("%2d", roll1));
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X + 3, TERM_L_DARK, format("%2d", roll2));
-		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 1, TERM_L_RED, format("%2d", choice));
+		/* Create client-side animation */
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			Send_store_special_anim(Ind, 2, roll1, roll2, choice);
+		else {
+			//msg_print(Ind, "\377GIn Between");
+			//This is only needed for old clients < 4.4.6b
+			//msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d", roll1, roll2);
+			//msg_format(Ind, "          Red die: \377r%d", choice);
+#ifdef USE_SOUND_2010
+			sound(Ind, "casino_inbetween", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
+			Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 5, TERM_L_DARK, format("%2d", roll1));
+			Send_store_special_str(Ind, DICE_Y + 3, DICE_X + 3, TERM_L_DARK, format("%2d", roll2));
+			Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 1, TERM_L_RED, format("%2d", choice));
+		}
 
 		if (((choice > roll1) && (choice < roll2)) ||
 		    ((choice < roll1) && (choice > roll2)))
@@ -556,7 +562,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_CRAPS: /* Game of Craps - requires the good new RNG :) (thanks Mikael for adding the SFMT) */
-		msg_print(Ind, "\377GCraps");
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Craps ===");
 
 		win = 3;
@@ -565,10 +570,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll2 = randint(6);
 		roll3 = roll1 +  roll2;
 		choice = roll3;
+
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			Send_store_special_anim(Ind, 3, 0, 0, 0); /* fake 'animation' - it's actually just a delay, waiting for the dice to fall ;) */
 #ifdef USE_SOUND_2010
-		sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);
+		else
+			//msg_print(Ind, "\377GCraps");
+			sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-		msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1, roll2, roll3);
+
+		//This is only needed for old clients < 4.4.6b
+		//msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1, roll2, roll3);
 
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
@@ -611,9 +623,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	case BACT_DICE_SLOTS: /* The Dice Slots */
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== Dice Slots ===");
-#ifdef USE_SOUND_2010
-		sound(Ind, "casino_slots", NULL, SFX_TYPE_MISC, FALSE);
-#endif
 		roll1 = randint(6);
 		roll2 = randint(6);
 		choice = randint(6);
@@ -625,6 +634,9 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			Send_store_special_anim(Ind, 1, roll1, roll2, choice);
 		else {
+#ifdef USE_SOUND_2010
+			sound(Ind, "casino_slots", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			display_fruit(Ind, 8, 26, roll1);
 			display_fruit(Ind, 8, 35, roll2);
 			display_fruit(Ind, 8, 44, choice);
@@ -660,6 +672,9 @@ void casino_result(int Ind, bool win) {
 
 	if (win) {
 		msg_print(Ind, "\377GYOU WON!");
+#ifdef USE_SOUND_2010
+		sound(Ind, "casino_win", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		/* hack: prevent s32b overflow */
 		if (PY_MAX_GOLD - (p_ptr->casino_odds * p_ptr->casino_wager) < p_ptr->au) {
 			msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
@@ -678,6 +693,9 @@ void casino_result(int Ind, bool win) {
 	} else {
 		p_ptr->au -= p_ptr->casino_wager;
 		msg_print(Ind, "\377sYou lost.");
+#ifdef USE_SOUND_2010
+		sound(Ind, "casino_lose", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	}
 	Send_gold(Ind, p_ptr->au, p_ptr->balance);
 

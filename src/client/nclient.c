@@ -4674,7 +4674,7 @@ static void display_fruit(int row, int col, int fruit) {
 #define ANIM_SLOT_SETTLE		6	/* settling sequence length when the animation becomes slower and eventually halts, smaller is faster [6] */
 #define ANIM_SLOT_SETTLE_SLOWDOWN	25000	/* us frame delay increase for the settling sequence, added each frame, smaller is faster [25000] */
 
-#define ANIM_WHEEL_SPEED		35000	/* [35000] */
+#define ANIM_WHEEL_SPEED		50000	/* [50000] */
 #define ANIM_WHEEL_LENGTH		10	/* [10] */
 #define ANIM_WHEEL_SETTLE		10	/* [10] */
 #define ANIM_WHEEL_SETTLE_SLOWDOWN	25000	/* [25000] */
@@ -4701,6 +4701,9 @@ int Receive_store_special_anim(void) {
 			Term->scr->cu = 1;
 
 			Term_fresh();
+#ifdef USE_SOUND_2010
+			sound(casino_wheel_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
 			usleep(anim_step > ANIM_WHEEL_SETTLE ? ANIM_WHEEL_SPEED : ANIM_WHEEL_SPEED + ANIM_WHEEL_SETTLE * ANIM_WHEEL_SETTLE_SLOWDOWN - anim_step * ANIM_WHEEL_SETTLE_SLOWDOWN);
 		}
 		Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
@@ -4724,6 +4727,9 @@ int Receive_store_special_anim(void) {
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
 		display_fruit(8, 26, anim2 + 1);
+#ifdef USE_SOUND_2010
+		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 2 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
@@ -4737,6 +4743,9 @@ int Receive_store_special_anim(void) {
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
 		display_fruit(8, 35, anim3 + 1);
+#ifdef USE_SOUND_2010
+		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 1 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
@@ -4750,8 +4759,52 @@ int Receive_store_special_anim(void) {
 			usleep(anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN);
 		}
 		display_fruit(8, 44, anim4 + 1);
+#ifdef USE_SOUND_2010
+		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
 
 		break;
+
+	case 2: //in-between
+		Term_fresh();
+
+#ifdef USE_SOUND_2010
+		sound(casino_inbetween_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
+		usleep(1000000);
+		Term_putstr(DICE_X - 5, DICE_Y + 3, -1, TERM_L_DARK, format("%2d", anim2));
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+		Term_fresh();
+
+#ifdef USE_SOUND_2010
+		sound(casino_inbetween_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
+		usleep(1000000);
+		Term_putstr(DICE_X + 3, DICE_Y + 3, -1, TERM_L_DARK, format("%2d", anim3));
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+		Term_fresh();
+
+#ifdef USE_SOUND_2010
+		sound(casino_inbetween_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
+		usleep(1000000);
+		Term_putstr(DICE_X - 1, DICE_Y + 4, -1, TERM_L_RED, format("%2d", anim4));
+		break;
+
+	case 3: //craps, or just any dice roll: wait for it to settle
+#ifdef USE_SOUND_2010
+		sound(casino_craps_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
+		Term_fresh();
+		usleep(500000); // xD
+		break;
+
+	default:
+		c_msg_format("\377RERROR: Unknown store animation %d.", anim1);
 	}
 
 	/* hack: hide cursor */

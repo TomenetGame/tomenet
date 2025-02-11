@@ -11526,18 +11526,20 @@ void handle_request_return_num(int Ind, int id, int num) {
 			num = 9;
 		}
 		msg_print(Ind, NULL);
+
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 13 + 3 * num - 1, TERM_GREEN, "<");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 13 + 3 * num + 1, TERM_GREEN, ">");
-#ifdef USE_SOUND_2010
-		sound(Ind, "casino_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
-#endif
 		roll1 = rand_int(10);
 
 		/* Create client-side animation */
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			Send_store_special_anim(Ind, 0, roll1, num, 0);
-		else
+		else {
+#ifdef USE_SOUND_2010
+			sound(Ind, "casino_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
 			Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 13 + 3 * roll1, TERM_L_GREEN, "*");
+		}
 
 		if (roll1 == num) win = TRUE;
 
@@ -11624,16 +11626,23 @@ void handle_request_return_key(int Ind, int id, char c) {
 		}
 #endif
 
-#ifdef USE_SOUND_2010
-		sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
-#endif
+		//This is only needed for old clients < 4.4.6b
+		//msg_print(Ind, "Rerolling..");
 
-		msg_print(Ind, "Rerolling..");
 		roll1 = randint(6);
 		roll2 = randint(6);
 		roll3 = roll1 + roll2;
 
-		msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			Send_store_special_anim(Ind, 3, 0, 0, 0); /* fake 'animation' - it's actually just a delay, waiting for the dice to fall ;) */
+#ifdef USE_SOUND_2010
+		else
+			sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
+
+		//This is only needed for old clients < 4.4.6b
+		//msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
+
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
 		if (custom_visuals) {

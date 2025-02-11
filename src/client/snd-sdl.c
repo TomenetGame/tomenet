@@ -1439,7 +1439,7 @@ static bool sound_sdl_init(bool no_cache) {
 static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x, int dist_y) {
 	Mix_Chunk *wave = NULL;
 	int s, vols = 100;
-	bool test = FALSE, real_event = (event >= 0 && event < SOUND_MAX_2010);
+	bool test = FALSE, real_event = (event >= 0 && event < SOUND_MAX_2010), allow_overlap = FALSE;
 
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_sound) return(TRUE); /* claim that it 'succeeded' */
@@ -1510,10 +1510,15 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 	case SFX_TYPE_AMBIENT:
 		/* always allow overlapping, since these should be sent by the
 		   server in a completely sensibly timed manner anyway. */
+		allow_overlap = TRUE;
+		break;
+	case SFX_TYPE_OVERLAP: /* Same as SFX_TYPE_MISC, but never checks against overlapping */
+		allow_overlap = TRUE;
 		break;
 	default:
 		test = TRUE;
 	}
+
 	if (test) {
 #if 0 /* old method before sounds could've come from other players nearby us, too */
 		if (samples[event].current_channel != -1) return(TRUE);
@@ -1526,8 +1531,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 
 	/* prevent playing duplicate sfx that were initiated very closely
 	   together in time, after one each other? (efficiency) */
-	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick) return(TRUE);
-
+	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick && !allow_overlap) return(TRUE);
 
 	/* Choose a random event (normal gameplay), except when in the jukebox screen where we play everything sequentially  */
 	if (jukebox_sfx_screen) {
@@ -3303,7 +3307,10 @@ errr re_init_sound_sdl(void) {
 	//cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = AUDIO_VOLUME_DEFAULT;
 
 	//grid_weather_volume = grid_ambient_volume = grid_weather_volume_goal = grid_ambient_volume_goal = 100, grid_weather_volume_step, grid_ambient_volume_step;
-	bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1, thunder_sound_idx = -1, browseinven_sound_idx = -1;
+	bell_sound_idx = -1; page_sound_idx = -1; warning_sound_idx = -1;
+	rain1_sound_idx = -1; rain2_sound_idx = -1; snow1_sound_idx = -1; snow2_sound_idx = -1; thunder_sound_idx = -1;
+	browse_sound_idx = -1; browsebook_sound_idx = -1; browseinven_sound_idx = -1;
+	casino_craps_sound_idx = -1; casino_inbetween_sound_idx = -1; casino_wheel_sound_idx = -1; casino_slots_sound_idx = -1;
 
 	/* --- init --- */
 

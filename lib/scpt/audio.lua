@@ -232,15 +232,17 @@ audio_sfx = {
     "casino_wheel",
     "casino_slots", --190
     "casino_rules",
+    "casino_win",
+    "casino_lose",
     "home_extend",
     "store_doorbell_enter",
     "store_doorbell_leave",
     "store_paperwork",
     "store_cancel",
     "store_repair",
-    "store_food_and_drink",
+    "store_food_and_drink", --200
     "store_redeem",
-    "store_rest", --200
+    "store_rest",
     "store_listen",
     "store_prayer",
     "store_enchant",
@@ -250,9 +252,9 @@ audio_sfx = {
     "store_recall",
 
     --[item]
-    "item_food",
+    "item_food", --210
     "item_weapon",
-    "item_sword", --210
+    "item_sword",
     "item_blunt",
     "item_whip",
     "item_axe",
@@ -260,9 +262,9 @@ audio_sfx = {
     "item_magestaff",
     "item_boomerang",
     "item_bow",
-    "item_shot",
+    "item_shot", --220
     "item_arrow",
-    "item_bolt", --220
+    "item_bolt",
     "item_ring",
     "item_amulet",
     "item_lightsource",
@@ -271,9 +273,9 @@ audio_sfx = {
     "item_tool",
     "item_tool_digger",
 
-    "item_book",
+    "item_book", --230
     "item_scroll",
-    "item_bottle", --230
+    "item_bottle",
     "item_potion",
     "item_rune",
     "item_skeleton",
@@ -281,9 +283,9 @@ audio_sfx = {
     "item_spike",
     "item_chest",
     "item_junk",
-    "item_trapkit",
+    "item_trapkit", --240
     "item_staff",
-    "item_wand", --240
+    "item_wand",
     "item_rod",
     "item_key",
     "item_golem_wood",
@@ -293,9 +295,9 @@ audio_sfx = {
 
     --[ambient]
     "ambient_fireplace",
-    "ambient_shore",
+    "ambient_shore", --250
     "ambient_lake",
-    "ambient_fire", --250
+    "ambient_fire",
 
     "ambient_store_general",
     "ambient_store_armour",
@@ -304,9 +306,9 @@ audio_sfx = {
     "ambient_store_alchemy",
     "ambient_store_magic",
     "ambient_store_black",
-    "ambient_store_book",
+    "ambient_store_book", --260
     "ambient_store_rune",
-    "ambient_store_merchants", --260
+    "ambient_store_merchants",
     "ambient_store_official",
     "ambient_store_casino",
     "ambient_store_misc",
@@ -315,8 +317,8 @@ audio_sfx = {
     "animal_owl",
     "animal_seagull",
     "animal_toad",
-    "animal_wolf",
-    "animal_birdofprey", --269
+    "animal_wolf", --270
+    "animal_birdofprey",
 }
 function get_sound_name(idx)
     if audio_sfx[idx + 1] == nil then return "" end

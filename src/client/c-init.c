@@ -3439,6 +3439,10 @@ static void init_sound() {
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
 	browseinven_sound_idx = exec_lua(0, "return get_sound_index(\"inventory\")");
+	casino_craps_sound_idx = exec_lua(0, "return get_sound_index(\"casino_craps\")");
+	casino_inbetween_sound_idx = exec_lua(0, "return get_sound_index(\"casino_inbetween\")");
+	casino_wheel_sound_idx = exec_lua(0, "return get_sound_index(\"casino_wheel\")");
+	casino_slots_sound_idx = exec_lua(0, "return get_sound_index(\"casino_slots\")");
 #endif
 }
 /* Try to re-init specifically SDL-audio.
@@ -3500,6 +3504,10 @@ int re_init_sound() {
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
 	browseinven_sound_idx = exec_lua(0, "return get_sound_index(\"inventory\")");
+	casino_craps_sound_idx = exec_lua(0, "return get_sound_index(\"casino_craps\")");
+	casino_inbetween_sound_idx = exec_lua(0, "return get_sound_index(\"casino_inbetween\")");
+	casino_wheel_sound_idx = exec_lua(0, "return get_sound_index(\"casino_wheel\")");
+	casino_slots_sound_idx = exec_lua(0, "return get_sound_index(\"casino_slots\")");
 
 	/* Inform server about potentially changed capabilities */
 	Send_audio();
