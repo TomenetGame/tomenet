@@ -478,8 +478,15 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #endif
 
 	/* Avoid mad casino spam */
+	if (p_ptr->energy < level_speed(&p_ptr->wpos)) return(FALSE);
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+	/* Since more than just the Go challenge now use the Send_store_special_xxx() functions,
+	   it's mandatory now: */
+	if (!is_newer_than(&p_ptr->version, 4, 4, 6, 1, 0, 0)) {
+		msg_print(Ind, "\377yYou need at least game client version 4.4.6b to use the casino.");
+		return(FALSE);
+	}
 
 	/* --- Show game rules --- */
 	if (cmd == BACT_GAMBLE_RULES) {
@@ -618,8 +625,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_RED, "  0  \377w1  2  3  4  5  6  7  8  9");
 		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 15, TERM_WHITE, "--------------------------------");
-		p_ptr->odds = odds;
-		p_ptr->wager = wager;
+		p_ptr->casino_odds = odds;
+		p_ptr->casino_wager = wager;
 		Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9): ", -1);
 		return(TRUE);
 
@@ -657,8 +664,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 	}
 
-	p_ptr->odds = odds;
-	p_ptr->wager = wager;
+	p_ptr->casino_odds = odds;
+	p_ptr->casino_wager = wager;
 	casino_result(Ind, win);
 	return(TRUE);
 }
@@ -669,20 +676,20 @@ void casino_result(int Ind, bool win) {
 	if (win) {
 		msg_print(Ind, "\377GYOU WON!");
 		/* hack: prevent s32b overflow */
-		if (PY_MAX_GOLD - (p_ptr->odds * p_ptr->wager) < p_ptr->au) {
+		if (PY_MAX_GOLD - (p_ptr->casino_odds * p_ptr->casino_wager) < p_ptr->au) {
 			msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
 		} else {
-			p_ptr->au = p_ptr->au + (p_ptr->odds * p_ptr->wager);
+			p_ptr->au = p_ptr->au + (p_ptr->casino_odds * p_ptr->casino_wager);
 			/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
 			if (!p_ptr->max_exp) {
 				msg_print(Ind, "You gain a tiny bit of experience from gambling.");
 				gain_exp(Ind, 1);
 			}
-			msg_format(Ind, "Payoff: %d", p_ptr->odds);
+			msg_format(Ind, "Payoff: %d", p_ptr->casino_odds);
 		}
 	} else {
 		msg_print(Ind, "\377sYou lost.");
-		p_ptr->au = p_ptr->au - p_ptr->wager;
+		p_ptr->au = p_ptr->au - p_ptr->casino_wager;
 	}
 	Send_gold(Ind, p_ptr->au, p_ptr->balance);
 }

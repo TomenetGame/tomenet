@@ -11529,8 +11529,8 @@ void handle_request_return_num(int Ind, int id, int num) {
 		strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d", roll1);
 		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 21, win ? TERM_GREEN : TERM_SLATE, tmp_str);
 
-		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->odds * p_ptr->wager);
-		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->wager);
+		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
+		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
 		casino_result(Ind, win);
 		return;
