@@ -660,9 +660,12 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_str(Ind, DICE_Y + 13, DICE_X - 14, TERM_SLATE,  " [      ] [      ] [      ]");
 
 		/* Create client-side animation */
-		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) {
+			/* If we have time, play a separate 'initiate-slots' sfx first */
+			sound(Ind, "casino_slots_init", NULL, SFX_TYPE_MISC, FALSE);
 			Send_store_special_anim(Ind, 1, roll1, roll2, choice);
-		else {
+		} else {
+			/* If everything happens instantaneously, no init sfx, just the final 'clack' from symbols falling into place */
 #ifdef USE_SOUND_2010
 			sound(Ind, "casino_slots", NULL, SFX_TYPE_MISC, FALSE);
 #endif

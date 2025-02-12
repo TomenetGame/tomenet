@@ -230,7 +230,8 @@ audio_sfx = {
     "casino_inbetween",
     "casino_craps",
     "casino_wheel",
-    "casino_slots", --190
+    "casino_slots_init", --190
+    "casino_slots",
     "casino_rules",
     "casino_win",
     "casino_lose",
@@ -239,8 +240,8 @@ audio_sfx = {
     "store_doorbell_leave",
     "store_paperwork",
     "store_cancel",
-    "store_repair",
-    "store_food_and_drink", --200
+    "store_repair", --200
+    "store_food_and_drink",
     "store_redeem",
     "store_rest",
     "store_listen",
@@ -249,10 +250,10 @@ audio_sfx = {
     "store_recharge",
     "store_id",
     "store_curing",
-    "store_recall",
+    "store_recall", --210
 
     --[item]
-    "item_food", --210
+    "item_food",
     "item_weapon",
     "item_sword",
     "item_blunt",
@@ -261,8 +262,8 @@ audio_sfx = {
     "item_polearm",
     "item_magestaff",
     "item_boomerang",
-    "item_bow",
-    "item_shot", --220
+    "item_bow", --220
+    "item_shot",
     "item_arrow",
     "item_bolt",
     "item_ring",
@@ -271,9 +272,9 @@ audio_sfx = {
     "item_armour_light",
     "item_armour_heavy",
     "item_tool",
-    "item_tool_digger",
+    "item_tool_digger", --230
 
-    "item_book", --230
+    "item_book",
     "item_scroll",
     "item_bottle",
     "item_potion",
@@ -282,8 +283,8 @@ audio_sfx = {
     "item_firestone",
     "item_spike",
     "item_chest",
-    "item_junk",
-    "item_trapkit", --240
+    "item_junk", --240
+    "item_trapkit",
     "item_staff",
     "item_wand",
     "item_rod",
@@ -294,8 +295,8 @@ audio_sfx = {
     "item_seal",
 
     --[ambient]
-    "ambient_fireplace",
-    "ambient_shore", --250
+    "ambient_fireplace", --250
+    "ambient_shore",
     "ambient_lake",
     "ambient_fire",
 
@@ -305,8 +306,8 @@ audio_sfx = {
     "ambient_store_temple",
     "ambient_store_alchemy",
     "ambient_store_magic",
-    "ambient_store_black",
-    "ambient_store_book", --260
+    "ambient_store_black", --260
+    "ambient_store_book",
     "ambient_store_rune",
     "ambient_store_merchants",
     "ambient_store_official",
@@ -316,8 +317,8 @@ audio_sfx = {
     "animal_bird",
     "animal_owl",
     "animal_seagull",
-    "animal_toad",
-    "animal_wolf", --270
+    "animal_toad", --270
+    "animal_wolf",
     "animal_birdofprey",
 }
 function get_sound_name(idx)
