@@ -439,7 +439,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 	connection_t *connp;
 	char32_t c_die[6 + 1]; //pft ^^
-	byte a_die[6 + 1];
+	//byte a_die[6 + 1];
 	bool custom_visuals = FALSE;
 	connp = Conn[p_ptr->conn];
 
@@ -450,27 +450,27 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
 		c_die[1] = p_ptr->k_char[k_idx];
-		a_die[1] = p_ptr->k_attr[k_idx];
+		//a_die[1] = p_ptr->k_attr[k_idx];
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_2);
 		c_die[2] = p_ptr->k_char[k_idx];
-		a_die[2] = p_ptr->k_attr[k_idx];
+		//a_die[2] = p_ptr->k_attr[k_idx];
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_3);
 		c_die[3] = p_ptr->k_char[k_idx];
-		a_die[3] = p_ptr->k_attr[k_idx];
+		//a_die[3] = p_ptr->k_attr[k_idx];
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_4);
 		c_die[4] = p_ptr->k_char[k_idx];
-		a_die[4] = p_ptr->k_attr[k_idx];
+		//a_die[4] = p_ptr->k_attr[k_idx];
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_5);
 		c_die[5] = p_ptr->k_char[k_idx];
-		a_die[5] = p_ptr->k_attr[k_idx];
+		//a_die[5] = p_ptr->k_attr[k_idx];
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
 		c_die[6] = p_ptr->k_char[k_idx];
-		a_die[6] = p_ptr->k_attr[k_idx];
+		//a_die[6] = p_ptr->k_attr[k_idx];
 
 		custom_visuals = TRUE;
 	}
