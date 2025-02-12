@@ -348,27 +348,27 @@ static void arena_comm(int cmd) {
 static void display_fruit(int Ind, int row, int col, int fruit) {
 	switch (fruit) {
 	case 1: /* lemon */
-		Send_store_special_str(Ind, row + 0, col, TERM_YELLOW, "   ####.");
-		Send_store_special_str(Ind, row + 1, col, TERM_YELLOW, "  #....#");
+		Send_store_special_str(Ind, row + 0, col, TERM_YELLOW, "   ### ");
+		Send_store_special_str(Ind, row + 1, col, TERM_YELLOW, "  #...#");
 		Send_store_special_str(Ind, row + 2, col, TERM_YELLOW, " #.....#");
 		Send_store_special_str(Ind, row + 3, col, TERM_YELLOW, "#......#");
 		Send_store_special_str(Ind, row + 4, col, TERM_YELLOW, "#......#");
 		Send_store_special_str(Ind, row + 5, col, TERM_YELLOW, "#.....# ");
-		Send_store_special_str(Ind, row + 6, col, TERM_YELLOW, "#....#  ");
-		Send_store_special_str(Ind, row + 7, col, TERM_YELLOW, ".####   ");
-		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Lemon  ");
+		Send_store_special_str(Ind, row + 6, col, TERM_YELLOW, " #...#  ");
+		Send_store_special_str(Ind, row + 7, col, TERM_YELLOW, "  ###   ");
+		Send_store_special_str(Ind, row + 9, col, TERM_SLATE, "[LEMON ]");
 		break;
 
 	case 2: /* orange */
 		Send_store_special_str(Ind, row + 0, col, TERM_ORANGE, "  ####  ");
-		Send_store_special_str(Ind, row + 1, col, TERM_ORANGE, " #....# ");
-		Send_store_special_str(Ind, row + 2, col, TERM_ORANGE, "#......#");
-		Send_store_special_str(Ind, row + 3, col, TERM_ORANGE, "#......#");
-		Send_store_special_str(Ind, row + 4, col, TERM_ORANGE, "#......#");
-		Send_store_special_str(Ind, row + 5, col, TERM_ORANGE, "#......#");
-		Send_store_special_str(Ind, row + 6, col, TERM_ORANGE, " #....# ");
+		Send_store_special_str(Ind, row + 1, col, TERM_ORANGE, " #++++# ");
+		Send_store_special_str(Ind, row + 2, col, TERM_ORANGE, "#++++++#");
+		Send_store_special_str(Ind, row + 3, col, TERM_ORANGE, "#++++++#");
+		Send_store_special_str(Ind, row + 4, col, TERM_ORANGE, "#++++++#");
+		Send_store_special_str(Ind, row + 5, col, TERM_ORANGE, "#++++++#");
+		Send_store_special_str(Ind, row + 6, col, TERM_ORANGE, " #++++# ");
 		Send_store_special_str(Ind, row + 7, col, TERM_ORANGE, "  ####  ");
-		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Orange ");
+		Send_store_special_str(Ind, row + 9, col, TERM_SLATE, "[ORANGE]");
 		break;
 
 	case 3: /* sword */
@@ -380,7 +380,7 @@ static void display_fruit(int Ind, int row, int col, int fruit) {
 		Send_store_special_str(Ind, row + 5, col, TERM_SLATE, "   ##   ");
 		Send_store_special_str(Ind, row + 6, col, TERM_UMBER, " ###### ");
 		Send_store_special_str(Ind, row + 7, col, TERM_UMBER, "   ##   ");
-		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Sword  ");
+		Send_store_special_str(Ind, row + 9, col, TERM_SLATE, "[SWORD ]");
 		break;
 
 	case 4: /* shield */
@@ -392,31 +392,31 @@ static void display_fruit(int Ind, int row, int col, int fruit) {
 		Send_store_special_str(Ind, row + 5, col, TERM_UMBER, " #    # ");
 		Send_store_special_str(Ind, row + 6, col, TERM_UMBER, "  #  #  ");
 		Send_store_special_str(Ind, row + 7, col, TERM_UMBER, "   ##   ");
-		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Shield ");
+		Send_store_special_str(Ind, row + 9, col, TERM_SLATE, "[SHIELD]");
 		break;
 
 	case 5: /* plum */
-		Send_store_special_str(Ind, row + 0, col, TERM_UMBER, "   ##   ");
-		Send_store_special_str(Ind, row + 1, col, TERM_VIOLET, " ###### ");
-		Send_store_special_str(Ind, row + 2, col, TERM_VIOLET, "########");
+		Send_store_special_str(Ind, row + 0, col, TERM_UMBER, "     #  ");
+		Send_store_special_str(Ind, row + 1, col, TERM_VIOLET, "  ##### ");
+		Send_store_special_str(Ind, row + 2, col, TERM_VIOLET, " #######");
 		Send_store_special_str(Ind, row + 3, col, TERM_VIOLET, "########");
 		Send_store_special_str(Ind, row + 4, col, TERM_VIOLET, "########");
-		Send_store_special_str(Ind, row + 5, col, TERM_VIOLET, " ###### ");
-		Send_store_special_str(Ind, row + 6, col, TERM_VIOLET, "  ####  ");
-		Send_store_special_str(Ind, row + 7, col, TERM_VIOLET, "   ##   ");
-		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, "  Plum  ");
+		Send_store_special_str(Ind, row + 5, col, TERM_VIOLET, "####### ");
+		Send_store_special_str(Ind, row + 6, col, TERM_VIOLET, " ###### ");
+		Send_store_special_str(Ind, row + 7, col, TERM_VIOLET, "  ####  ");
+		Send_store_special_str(Ind, row + 9, col, TERM_SLATE, "[ PLUM ]");
 		break;
 
 	case 6: /* cherry */
 		Send_store_special_str(Ind, row + 0, col, TERM_GREEN, "     ## ");
-		Send_store_special_str(Ind, row + 1, col, TERM_RED, "   ###  ");
-		Send_store_special_str(Ind, row + 2, col, TERM_RED, "  #..#  ");
-		Send_store_special_str(Ind, row + 3, col, TERM_RED, "  #..#  ");
+		Send_store_special_str(Ind, row + 1, col, TERM_GREEN, "   ###  ");
+		Send_store_special_str(Ind, row + 2, col, TERM_GREEN, "  #  #  ");
+		Send_store_special_str(Ind, row + 3, col, TERM_GREEN, "  #  #  ");
 		Send_store_special_str(Ind, row + 4, col, TERM_RED, " ###### ");
 		Send_store_special_str(Ind, row + 5, col, TERM_RED, "#..##..#");
 		Send_store_special_str(Ind, row + 6, col, TERM_RED, "#..##..#");
 		Send_store_special_str(Ind, row + 7, col, TERM_RED, " ##  ## ");
-		Send_store_special_str(Ind, row + 9, col, TERM_WHITE, " Cherry ");
+		Send_store_special_str(Ind, row + 9, col, TERM_SLATE, "[CHERRY]");
 		break;
 	}
 }
@@ -556,7 +556,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		if (((choice > roll1) && (choice < roll2)) ||
 		    ((choice < roll1) && (choice > roll2))) {
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 4, TERM_GREEN, "You won!");
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 4, TERM_L_GREEN, "You won!");
 		} else Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 4, TERM_SLATE, "You lost.");
 
 		if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
@@ -564,6 +564,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_CRAPS: /* Game of Craps - requires the good new RNG :) (thanks Mikael for adding the SFMT) */
+#define CRAPS_1STDICE_ATTR TERM_RED /* Colour of the first pair of dice rolled for better distinguishing of function :). (Second pair is normal colour aka k_info->TERM_L_UMBER.) */
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Craps ===");
 
 		win = 3;
@@ -587,25 +588,25 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
 		if (custom_visuals) {
-			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, a_die[roll1], c_die[roll1], 0, 32);
-			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, a_die[roll2], c_die[roll2], 0, 32);
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll1], 0, 32);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll2], 0, 32);
  #else
-			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, a_die[roll1], c_die[roll1]);
-			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, a_die[roll2], c_die[roll2]);
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll1]);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll2]);
  #endif
 		} else
 #endif
-		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 3, CRAPS_1STDICE_ATTR, format("%2d  %2d", roll1, roll2));
 
 		if ((roll3 == 7) || (roll3 == 11)) {
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 6, TERM_GREEN, "wins!");
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_L_GREEN, "You won!");
 		} else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) {
 			win = FALSE;
-			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 6, TERM_SLATE, "loses.");
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_SLATE, "You lost.");
 		} else {
 			p_ptr->casino_roll = choice;
-			p_ptr->casino_progress = 1;
+			p_ptr->casino_progress = 0;
 			p_ptr->casino_odds = odds;
 			p_ptr->casino_wager = wager;
 			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
@@ -634,8 +635,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll2 = randint(6);
 		choice = randint(6);
 
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_WHITE, "/--------------------------\\");
-		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_WHITE, "\\--------------------------/");
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_SLATE,  "/==========================\\");
+		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 10, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 11, DICE_X - 14, TERM_SLATE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_SLATE, "\\==========================/");
+		Send_store_special_str(Ind, DICE_Y + 13, DICE_X - 14, TERM_SLATE,  " [      ] [      ] [      ]");
 
 		/* Create client-side animation */
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
@@ -652,22 +662,22 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #define SLOTS_BONUS 1 /* fine-tuning: must be 0 or 1 */
 		if (roll1 == roll2 && roll2 == choice) {
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			if (roll1 == 1) odds = 4;
 			else if (roll1 == 2) odds = 6;
 			else odds = roll1 * roll1;
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
 		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			odds = choice + 1 + SLOTS_BONUS; //slight boost (was +1), for contrasting the double plum below
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
 		} else if (roll1 == 5 && roll2 == 5) { //added some extra winnage (this combo didn't exist before) ^^
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			odds = choice + SLOTS_BONUS;
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
 		} else if (roll2 == choice && roll2 != 3 && roll2 != 4) { //this too...so generous oO
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_GREEN, "You won!");
 			odds = 0; //just get the wager back
+			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_L_GREEN, "You won!");
 		} else Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_SLATE, "You lost.");
 
 		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);

@@ -4595,27 +4595,27 @@ int Receive_store_special_clr(void) {
 static void display_fruit(int row, int col, int fruit) {
 	switch (fruit) {
 	case 1: /* lemon */
-		Term_putstr(col, row + 0, -1, TERM_YELLOW, "   ####.");
-		Term_putstr(col, row + 1, -1, TERM_YELLOW, "  #....#");
+		Term_putstr(col, row + 0, -1, TERM_YELLOW, "   ### ");
+		Term_putstr(col, row + 1, -1, TERM_YELLOW, "  #...#");
 		Term_putstr(col, row + 2, -1, TERM_YELLOW, " #.....#");
 		Term_putstr(col, row + 3, -1, TERM_YELLOW, "#......#");
 		Term_putstr(col, row + 4, -1, TERM_YELLOW, "#......#");
 		Term_putstr(col, row + 5, -1, TERM_YELLOW, "#.....# ");
-		Term_putstr(col, row + 6, -1, TERM_YELLOW, "#....#  ");
-		Term_putstr(col, row + 7, -1, TERM_YELLOW, ".####   ");
-		Term_putstr(col, row + 9, -1, TERM_WHITE, " Lemon  ");
+		Term_putstr(col, row + 6, -1, TERM_YELLOW, " #...#  ");
+		Term_putstr(col, row + 7, -1, TERM_YELLOW, "  ###   ");
+		Term_putstr(col, row + 9, -1, TERM_SLATE,  "[LEMON ]");
 		break;
 
 	case 2: /* orange */
 		Term_putstr(col, row + 0, -1, TERM_ORANGE, "  ####  ");
-		Term_putstr(col, row + 1, -1, TERM_ORANGE, " #....# ");
-		Term_putstr(col, row + 2, -1, TERM_ORANGE, "#......#");
-		Term_putstr(col, row + 3, -1, TERM_ORANGE, "#......#");
-		Term_putstr(col, row + 4, -1, TERM_ORANGE, "#......#");
-		Term_putstr(col, row + 5, -1, TERM_ORANGE, "#......#");
-		Term_putstr(col, row + 6, -1, TERM_ORANGE, " #....# ");
+		Term_putstr(col, row + 1, -1, TERM_ORANGE, " #++++# ");
+		Term_putstr(col, row + 2, -1, TERM_ORANGE, "#++++++#");
+		Term_putstr(col, row + 3, -1, TERM_ORANGE, "#++++++#");
+		Term_putstr(col, row + 4, -1, TERM_ORANGE, "#++++++#");
+		Term_putstr(col, row + 5, -1, TERM_ORANGE, "#++++++#");
+		Term_putstr(col, row + 6, -1, TERM_ORANGE, " #++++# ");
 		Term_putstr(col, row + 7, -1, TERM_ORANGE, "  ####  ");
-		Term_putstr(col, row + 9, -1, TERM_WHITE, " Orange ");
+		Term_putstr(col, row + 9, -1, TERM_SLATE,  "[ORANGE]");
 		break;
 
 	case 3: /* sword */
@@ -4627,7 +4627,7 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_SLATE, "   ##   ");
 		Term_putstr(col, row + 6, -1, TERM_UMBER, " ###### ");
 		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
-		Term_putstr(col, row + 9, -1, TERM_WHITE, " Sword  ");
+		Term_putstr(col, row + 9, -1, TERM_SLATE, "[SWORD ]");
 		break;
 
 	case 4: /* shield */
@@ -4639,31 +4639,31 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_UMBER, " #    # ");
 		Term_putstr(col, row + 6, -1, TERM_UMBER, "  #  #  ");
 		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
-		Term_putstr(col, row + 9, -1, TERM_WHITE, " Shield ");
+		Term_putstr(col, row + 9, -1, TERM_SLATE, "[SHIELD]");
 		break;
 
 	case 5: /* plum */
-		Term_putstr(col, row + 0, -1, TERM_UMBER, "   ##   ");
-		Term_putstr(col, row + 1, -1, TERM_VIOLET, " ###### ");
-		Term_putstr(col, row + 2, -1, TERM_VIOLET, "########");
+		Term_putstr(col, row + 0, -1, TERM_UMBER, "     #  ");
+		Term_putstr(col, row + 1, -1, TERM_VIOLET, "  ##### ");
+		Term_putstr(col, row + 2, -1, TERM_VIOLET, " #######");
 		Term_putstr(col, row + 3, -1, TERM_VIOLET, "########");
 		Term_putstr(col, row + 4, -1, TERM_VIOLET, "########");
-		Term_putstr(col, row + 5, -1, TERM_VIOLET, " ###### ");
-		Term_putstr(col, row + 6, -1, TERM_VIOLET, "  ####  ");
-		Term_putstr(col, row + 7, -1, TERM_VIOLET, "   ##   ");
-		Term_putstr(col, row + 9, -1, TERM_WHITE, "  Plum  ");
+		Term_putstr(col, row + 5, -1, TERM_VIOLET, "####### ");
+		Term_putstr(col, row + 6, -1, TERM_VIOLET, " ###### ");
+		Term_putstr(col, row + 7, -1, TERM_VIOLET, "  ####  ");
+		Term_putstr(col, row + 9, -1, TERM_SLATE, "[ PLUM ]");
 		break;
 
 	case 6: /* cherry */
 		Term_putstr(col, row + 0, -1, TERM_GREEN, "     ## ");
-		Term_putstr(col, row + 1, -1, TERM_RED, "   ###  ");
-		Term_putstr(col, row + 2, -1, TERM_RED, "  #..#  ");
-		Term_putstr(col, row + 3, -1, TERM_RED, "  #..#  ");
+		Term_putstr(col, row + 1, -1, TERM_GREEN, "   ###  ");
+		Term_putstr(col, row + 2, -1, TERM_GREEN, "  #  #  ");
+		Term_putstr(col, row + 3, -1, TERM_GREEN, "  #  #  ");
 		Term_putstr(col, row + 4, -1, TERM_RED, " ###### ");
 		Term_putstr(col, row + 5, -1, TERM_RED, "#..##..#");
 		Term_putstr(col, row + 6, -1, TERM_RED, "#..##..#");
 		Term_putstr(col, row + 7, -1, TERM_RED, " ##  ## ");
-		Term_putstr(col, row + 9, -1, TERM_WHITE, " Cherry ");
+		Term_putstr(col, row + 9, -1, TERM_SLATE, "[CHERRY]");
 		break;
 	}
 }

@@ -11541,10 +11541,14 @@ void handle_request_return_num(int Ind, int id, int num) {
 			Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 13 + 3 * roll1, TERM_L_GREEN, "*");
 		}
 
-		if (roll1 == num) win = TRUE;
-
-		strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d", roll1);
-		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 21, win ? TERM_GREEN : TERM_SLATE, tmp_str);
+		if (roll1 == num) {
+			win = TRUE;
+			strnfmt(tmp_str, 80, "The wheel spins to a stop and your number %d won!", roll1);
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 23, TERM_L_GREEN, tmp_str);
+		} else {
+			strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d.", roll1);
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 22, TERM_SLATE, tmp_str);
+		}
 
 		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
 		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
@@ -11585,6 +11589,13 @@ void handle_request_return_key(int Ind, int id, char c) {
 	case RID_CRAPS: {
 		int win = 3;
 		int roll1, roll2, roll3, ycv = p_ptr->casino_progress;
+
+		if (ycv < 10) ycv++; //screen overflow limit >,>
+		else {
+			ycv = 1;
+			Send_store_special_clr(Ind, 7, 19);
+		}
+		p_ptr->casino_progress = ycv;
 
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 		connection_t *connp;
@@ -11642,7 +11653,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 
 		//This is only needed for old clients < 4.4.6b
 		//msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
-
+msg_format(Ind, "ycv=%d",ycv);
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
 		if (custom_visuals) {
@@ -11655,7 +11666,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 		} else
 #endif
 		Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
-
+roll3=-1;
 		if (roll3 == p_ptr->casino_roll) {
 			win = TRUE;
 			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "wins!");
@@ -11663,13 +11674,6 @@ void handle_request_return_key(int Ind, int id, char c) {
 			win = FALSE;
 			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "loses!");
 		} else {
-			if (ycv < 10) ycv++; //screen overflow limit >,>
-			else {
-				ycv = 2;
-				Send_store_special_clr(Ind, 7, 19);
-			}
-			p_ptr->casino_progress = ycv;
-
 			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
 			return;
 		}
