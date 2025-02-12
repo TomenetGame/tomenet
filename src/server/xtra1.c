@@ -11653,7 +11653,6 @@ void handle_request_return_key(int Ind, int id, char c) {
 
 		//This is only needed for old clients < 4.4.6b
 		//msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
-msg_format(Ind, "ycv=%d",ycv);
 #ifdef CUSTOM_VISUALS
  #ifdef GRAPHICS_BG_MASK
 		if (custom_visuals) {
@@ -11666,7 +11665,6 @@ msg_format(Ind, "ycv=%d",ycv);
 		} else
 #endif
 		Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
-roll3=-1;
 		if (roll3 == p_ptr->casino_roll) {
 			win = TRUE;
 			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "wins!");
