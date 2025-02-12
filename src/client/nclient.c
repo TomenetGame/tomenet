@@ -4814,7 +4814,10 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(800000);
 #endif
-		Term_putstr(DICE_X - 5, DICE_Y + 3, -1, TERM_L_DARK, format("%2d", anim2));
+		Term_putstr(DICE_X - 8, DICE_Y + 2, -1, TERM_L_DARK, "  _");
+		Term_putstr(DICE_X - 8, DICE_Y + 3, -1, TERM_L_DARK, " / \\");
+		Term_putstr(DICE_X - 8, DICE_Y + 4, -1, TERM_L_DARK, format("/ %1d \\", anim2));
+		Term_putstr(DICE_X - 8, DICE_Y + 5, -1, TERM_L_DARK, "\\___/");
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -4828,7 +4831,10 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(300000);
 #endif
-		Term_putstr(DICE_X + 3, DICE_Y + 3, -1, TERM_L_DARK, format("%2d", anim3));
+		Term_putstr(DICE_X + 4, DICE_Y + 2, -1, TERM_L_DARK, "  _");
+		Term_putstr(DICE_X + 4, DICE_Y + 3, -1, TERM_L_DARK, " / \\");
+		Term_putstr(DICE_X + 4, DICE_Y + 4, -1, TERM_L_DARK, format("/ %1d \\", anim3));
+		Term_putstr(DICE_X + 4, DICE_Y + 5, -1, TERM_L_DARK, "\\___/");
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -4847,7 +4853,10 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(1000000);
 #endif
-		Term_putstr(DICE_X - 1, DICE_Y + 4, -1, TERM_L_RED, format("%2d", anim4));
+		Term_putstr(DICE_X - 2, DICE_Y + 6, -1, TERM_L_RED, "  _");
+		Term_putstr(DICE_X - 2, DICE_Y + 7, -1, TERM_L_RED, " / \\");
+		Term_putstr(DICE_X - 2, DICE_Y + 8, -1, TERM_L_RED, format("/ %1d \\", anim4));
+		Term_putstr(DICE_X - 2, DICE_Y + 9, -1, TERM_L_RED, "\\___/");
 		break;
 
 	case 3: //craps, or just any dice roll: wait for it to settle

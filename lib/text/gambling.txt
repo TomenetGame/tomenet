@@ -17,14 +17,15 @@ The game of Go has fixed bets for each stage that you cannot change.
 \{D==============================================================================
 \{U1. 'In-Between'
 
-Three 10-faced dice are used for this game. Two black, one red.
+Three 10-faced dice (ranging from 0 to 9) are used. Two black, one red.
 
 First, the dealer rolls the two black dice.
-Then you roll the red die - you win if the roll is 'in between' the two black
-dice and you'll receive the payoff at odds of 3 to 1.
+Then you roll the red die - you win if the roll is 'in between'
+the two black dice and you'll receive the payoff at odds of 3 to 1.
 
 eg.
-if two black dice are 4 and 7, and you rolled 6, you win.
+if two black dice are 0 and 7, and you rolled 6, you win.
+if two black dice are 7 and 4, and you rolled 5, you win.
 if two black dice are 2 and 9, and you rolled 1, you lose.
 if two black dice are 2 and 9, and you rolled 2, you lose.
 

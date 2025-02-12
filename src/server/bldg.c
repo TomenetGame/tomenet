@@ -532,9 +532,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== In Between ===");
 
 		odds = 3;
-		roll1 = randint(10);
-		roll2 = randint(10);
-		choice = randint(10);
+		/* Changed it for better formatting visually to use 0..9 instead of 1..10, so we know the number is always 1 char wide ^^' - C. Blue */
+		roll1 = rand_int(10);
+		roll2 = rand_int(10);
+		choice = rand_int(10);
 
 		/* Create client-side animation */
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
@@ -548,16 +549,27 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			sound(Ind, "casino_inbetween", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
-			Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 5, TERM_L_DARK, format("%2d", roll1));
-			Send_store_special_str(Ind, DICE_Y + 3, DICE_X + 3, TERM_L_DARK, format("%2d", roll2));
-			Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 1, TERM_L_RED, format("%2d", choice));
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 8, TERM_L_DARK, "  _");
+			Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 8, TERM_L_DARK, " / \\");
+			Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 8, TERM_L_DARK, format("/ %1d \\", roll1));
+			Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 8, TERM_L_DARK, "\\___/");
+
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 4, TERM_L_DARK, " / \\");
+			Send_store_special_str(Ind, DICE_Y + 3, DICE_X + 4, TERM_L_DARK, " / \\");
+			Send_store_special_str(Ind, DICE_Y + 4, DICE_X + 4, TERM_L_DARK, format("/ %1d \\", roll2));
+			Send_store_special_str(Ind, DICE_Y + 5, DICE_X + 4, TERM_L_DARK, "\\___/");
+
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 2, TERM_L_RED, "  _");
+			Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 2, TERM_L_RED, " / \\");
+			Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 2, TERM_L_RED, format("/ %1d \\", choice));
+			Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 2, TERM_L_RED, "\\___/");
 		}
 
 		if (((choice > roll1) && (choice < roll2)) ||
 		    ((choice < roll1) && (choice > roll2))) {
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 4, TERM_L_GREEN, "You won!");
-		} else Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 4, TERM_SLATE, "You lost.");
+			Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 4, TERM_L_GREEN, "You won!");
+		} else Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 4, TERM_SLATE, "You lost.");
 
 		if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: In Between - Player '%s' lost %d Au.\n", p_ptr->name, wager);
