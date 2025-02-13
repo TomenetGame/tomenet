@@ -11545,8 +11545,11 @@ void handle_request_return_num(int Ind, int id, int num) {
 			win = TRUE;
 			strnfmt(tmp_str, 80, "The wheel spins to a stop and your number %d won!", roll1);
 			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 23, TERM_L_GREEN, tmp_str);
-		} else {
+		} else if (roll1) {
 			strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d.", roll1);
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 22, TERM_SLATE, tmp_str);
+		} else { /* zero never wins */
+			strnfmt(tmp_str, 80, "The wheel spins to a stop at \377rzero\377-. Everyone loses.");
 			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 22, TERM_SLATE, tmp_str);
 		}
 
