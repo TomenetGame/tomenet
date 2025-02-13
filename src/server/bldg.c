@@ -559,10 +559,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			Send_store_special_str(Ind, DICE_Y + 4, DICE_X + 4, TERM_L_DARK, format("/ %1d \\", roll2));
 			Send_store_special_str(Ind, DICE_Y + 5, DICE_X + 4, TERM_L_DARK, "\\___/");
 
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 2, TERM_L_RED, "  _");
-			Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 2, TERM_L_RED, " / \\");
-			Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 2, TERM_L_RED, format("/ %1d \\", choice));
-			Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 2, TERM_L_RED, "\\___/");
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 2, TERM_RED, "  _");
+			Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 2, TERM_RED, " / \\");
+			Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 2, TERM_RED, format("/ %1d \\", choice));
+			Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 2, TERM_RED, "\\___/");
 		}
 
 		if (((choice > roll1) && (choice < roll2)) ||

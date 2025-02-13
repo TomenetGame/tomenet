@@ -4861,10 +4861,10 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(1000000);
 #endif
-		Term_putstr(DICE_X - 2, DICE_Y + 6, -1, TERM_L_RED, "  _");
-		Term_putstr(DICE_X - 2, DICE_Y + 7, -1, TERM_L_RED, " / \\");
-		Term_putstr(DICE_X - 2, DICE_Y + 8, -1, TERM_L_RED, format("/ %1d \\", anim4));
-		Term_putstr(DICE_X - 2, DICE_Y + 9, -1, TERM_L_RED, "\\___/");
+		Term_putstr(DICE_X - 2, DICE_Y + 6, -1, TERM_RED, "  _");
+		Term_putstr(DICE_X - 2, DICE_Y + 7, -1, TERM_RED, " / \\");
+		Term_putstr(DICE_X - 2, DICE_Y + 8, -1, TERM_RED, format("/ %1d \\", anim4));
+		Term_putstr(DICE_X - 2, DICE_Y + 9, -1, TERM_RED, "\\___/");
 		break;
 
 	case 3: //craps, or just any dice roll: wait for it to settle
