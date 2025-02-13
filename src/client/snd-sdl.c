@@ -3517,7 +3517,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 
 /* Display options page UI that allows to comment out sounds easily */
 void do_cmd_options_sfx_sdl(void) {
-	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
+	int i, i2, j, d, vertikal_offset = 4, horiz_offset = 5, list_size = 9;
 	static int y = 0, j_sel = 0;
 	int tmp;
 	char ch;
@@ -3530,6 +3530,7 @@ void do_cmd_options_sfx_sdl(void) {
 	bool cfg_audio_music_org = cfg_audio_music, cfg_audio_weather_org = cfg_audio_weather;
 	static char searchstr[MAX_CHARS] = { 0 };
 	static int searchres = -1, searchoffset = 0;
+	cptr path_p;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -3561,6 +3562,8 @@ void do_cmd_options_sfx_sdl(void) {
 	sound_cur_wav = -1;
 
 	/* Interact */
+	Term_putstr(0, 2, -1, TERM_WHITE, " File:                                                                          ");
+	Term_putstr(7, 2, -1, TERM_L_DARK, "-");
 	while (go) {
 #ifdef USER_VOLUME_SFX
  #ifdef ENABLE_SHIFT_SPECIALKEYS
@@ -3576,9 +3579,9 @@ void do_cmd_options_sfx_sdl(void) {
 #endif
 
 		/* Display the events */
-		for (i = y - 10 ; i <= y + 10 ; i++) {
+		for (i = y - list_size ; i <= y + list_size; i++) {
 			if (i < 0 || i >= audio_sfx) {
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                          ");
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + list_size - y, -1, TERM_WHITE, "                                                          ");
 				continue;
 			}
 
@@ -3606,28 +3609,28 @@ void do_cmd_options_sfx_sdl(void) {
 				a2 = TERM_YELLOW;
 			}
 
-			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d [   %2d]", i + 1, samples[j].num));
-			if (sound_cur == j && sound_cur_wav != -1) Term_putstr(horiz_offset + 5 + 7, vertikal_offset + i + 10 - y, -1, TERM_YELLOW, format("%2d/", sound_cur_wav + 1));
-			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, "                                            ");
-			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+			Term_putstr(horiz_offset + 5, vertikal_offset + i + list_size - y, -1, a2, format("  %3d [   %2d]", i + 1, samples[j].num));
+			if (sound_cur == j && sound_cur_wav != -1) Term_putstr(horiz_offset + 5 + 7, vertikal_offset + i + list_size - y, -1, TERM_YELLOW, format("%2d/", sound_cur_wav + 1));
+			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, "                                            ");
+			Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, (char*)lua_name);
 			if (j == weather_current || j == ambient_current) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
-				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, format("%-27s  (playing)", (char*)lua_name));
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + list_size - y, -1, a, "*");
+				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, format("%-27s  (playing)", (char*)lua_name));
 			} else
-				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME_SFX
 			if (samples[j].volume && samples[j].volume != 100) {
 				if (samples[j].volume < 100) a = TERM_UMBER; else a = TERM_L_UMBER;
-				Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", samples[j].volume));
+				Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + list_size - y, -1, a, format("%2d%%", samples[j].volume));
 			}
 #endif
 		}
 
 		/* display static selector */
-		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
+		Term_putstr(horiz_offset + 1, vertikal_offset + list_size, -1, TERM_SELECTOR, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + list_size, -1, TERM_SELECTOR, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -3922,6 +3925,18 @@ void do_cmd_options_sfx_sdl(void) {
 			sound(j_sel, SFX_TYPE_MISC, 100, 0, 0, 0);
 			samples[j_sel].disabled = dis;
 
+			Term_putstr(0, 2, -1, TERM_WHITE, " File:                                                                          ");
+			path_p = samples[j_sel].paths[sound_cur_wav];
+			if (path_p) {
+#if 0 /* crop full path? */
+				path_p = path_p + strlen(path_p) - 1;
+				while (path_p > samples[j_sel].paths[sound_cur_wav] && *(path_p - 1) != '/') path_p--;
+#else /* crop only the lib-sound path? */
+				path_p += strlen(ANGBAND_DIR_XTRA_SOUND) + 1;
+#endif
+				Term_putstr(7, 2, -1, TERM_YELLOW, format("%s", path_p));
+			} else Term_putstr(7, 2, -1, TERM_L_DARK, "%"); //paranoia
+
 			//cfg_audio_sound = cfg_audio_sound_org;
 			break;
 
@@ -3983,21 +3998,23 @@ void do_cmd_options_sfx_sdl(void) {
 		case '9':
 		case 'p':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
-			y = (y - 10 + audio_sfx) % audio_sfx;
+			y = (y - list_size + audio_sfx) % audio_sfx;
 			break;
 		case NAVI_KEY_PAGEDOWN:
 		case '3':
 		case ' ':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
-			y = (y + 10 + audio_sfx) % audio_sfx;
+			y = (y + list_size + audio_sfx) % audio_sfx;
 			break;
 		case NAVI_KEY_END:
 		case '1':
+		case 'G':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = audio_sfx - 1;
 			break;
 		case NAVI_KEY_POS1:
 		case '7':
+		case 'g':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = 0;
 			break;
