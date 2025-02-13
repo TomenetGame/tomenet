@@ -4821,9 +4821,9 @@ int Receive_store_special_anim(void) {
 		sound(casino_inbetween_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
 #endif
 #ifdef WINDOWS
-		Sleep(800);
+		Sleep(600);
 #else
-		usleep(800000);
+		usleep(600000);
 #endif
 		Term_putstr(DICE_X - 8, DICE_Y + 2, -1, TERM_L_DARK, "  _");
 		Term_putstr(DICE_X - 8, DICE_Y + 3, -1, TERM_L_DARK, " / \\");
@@ -4860,9 +4860,9 @@ int Receive_store_special_anim(void) {
 		sound(casino_inbetween_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
 #endif
 #ifdef WINDOWS
-		Sleep(1000);
+		Sleep(600);
 #else
-		usleep(1000000);
+		usleep(600000);
 #endif
 		Term_putstr(DICE_X - 2, DICE_Y + 6, -1, TERM_RED, "  _");
 		Term_putstr(DICE_X - 2, DICE_Y + 7, -1, TERM_RED, " / \\");
