@@ -4723,9 +4723,9 @@ int Receive_store_special_anim(void) {
 		/* 'init' sfx is playing, wait for a very little bit to harmonize with it ^^ */
 		Term_fresh(); /* display the 'slot machine' immediately */
 #ifdef WINDOWS
-		Sleep(300);
+		Sleep(200);
 #else
-		usleep(300000);
+		usleep(200000);
 #endif
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 3 * ANIM_SLOT_LENGTH;
