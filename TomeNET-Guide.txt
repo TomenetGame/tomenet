@@ -9317,20 +9317,22 @@ which you can play on a 9x9 board.
 Below you'll find the gamling rules, you can also view these in-game when
 entering the casino and pressing 'r' there:
 
+
            /---------------------------------------------+
            |          Tome-NET Gambling Rules            |
            +---------------------------------------------/
 
 Welcome to the TomeNET Casino!
 
-Currently, the games 'In-Between', 'Craps' and 'Go' are available for playing.
-('Spin the Wheel' and 'Dice Slots' are under construction.)
-Some games playable among players are planned for the future (I hope).
+The games 'In-Between', 'Craps', 'Spin the Wheel' and 'Dice Slots', which are
+true gambling, and the 'Go Challenge', which instead is complete-information
+mind game, are available for playing.
 
+For all the gambling games, you can bet up to 1000*level AU per game, except
+for players below level 10 who can bet up to 100*level AU.
+So eg at level 9 you could bet up to 900 Au, and at level 10 up to 10000 Au.
 
-For all the games, you can bet up to 1000*level AU per game, except for
-players below level 10 who can bet up to 100*level AU.
-The game of Go has fixed bets for each stage that you cannot change.
+The game of Go however has fixed bets for each stage that you cannot change.
 
 
 ==============================================================================
@@ -9338,14 +9340,15 @@ The game of Go has fixed bets for each stage that you cannot change.
 In-Between
 ----------
 
-Three 10-faced dice are used for this game. Two black, one red.
+Three 10-faced dice (ranging from 0 to 9) are used. Two black, one red.
 
 First, the dealer rolls the two black dice.
-Then you roll the red die - you win if the roll is 'in between' the two black
-dice and you'll receive the payoff at odds of 3 to 1.
+Then you roll the red die - you win if the roll is 'in between'
+the two black dice and you'll receive the payoff at odds of 3 to 1.
 
 eg.
-if two black dice are 4 and 7, and you rolled 6, you win.
+if two black dice are 0 and 7, and you rolled 6, you win.
+if two black dice are 7 and 4, and you rolled 5, you win.
 if two black dice are 2 and 9, and you rolled 1, you lose.
 if two black dice are 2 and 9, and you rolled 2, you lose.
 
@@ -9358,7 +9361,7 @@ Craps
 Two 6-faced (cube) dice are used for this game.
 
 You cast the two dice; if the sum of rolls is 7 or 11, you win at once.
-if the sum is 2, 3 or 12, you lose at once(craps!).
+if the sum is 2, 3 or 12, you lose at once ("craps!").
 
 If the sum isn't one of the numbers above, you cast them once more.
 If the sum matches to the first sum, you win.
@@ -9373,6 +9376,53 @@ eg.
 [4, 1](5) {you win}
 
 [5, 6](11) {you win with the first roll}
+
+
+==============================================================================
+
+Spin the wheel
+--------------
+
+A wheel with 10 numbers, 'zero' to 'nine' is spun.
+
+You bet on exactly one of the numbers, except on 'zero' which is forbidden.
+
+If the wheel stops at your number you receive nine times (9x) your wager,
+so the payoff odds are 9. The 'zero' always loses.
+
+
+==============================================================================
+
+Dice slots
+----------
+
+Three random slots are spun and can stop at one of six symbols:
+ 'Lemon', 'Orange', 'Sword', 'Shield', 'Plum' and 'Cherry'.
+They have different values:
+ Lemon 1, Orange 2, Sword 3, Shield 4, Plum 5, Cherry 6.
+
+To win, you must either get 3 identical symbols
+or the first two symbols must both be 'Cherry'.
+
+If you have 3 identical symbols, the payoff is:
+ Lemon:  4x.
+ Orange: 6x.
+ Otherwise the square of the symbol's value!
+If you have two cherries in slot 1 and 2, the payoff is:
+ The third slot's symbol's value plus two.
+If you have two plums in slot 1 and 2, the payoff is:
+ The third slot's symbol's value plus one.
+
+Last chance for salvation:
+If the 2nd and 3rd slot are the same fruit type (not shields or swords)
+you get your wager back, so you come out with neither profit nor loss.
+
+eg.
+if orange, orange, orange appears, you win at payoff 6.
+if cherry, cherry, cherry appears, you win at payoff 36 (ie 6 * 6).
+if cherry, cherry, sword appears, you win at payoff 5 (ie 3 + 2).
+if plum, plum, cherry appears, you win at payoff 7 (ie 6 + 1).
+if lemon, cherry, cherry appears, you lose.
 
 
 ==============================================================================

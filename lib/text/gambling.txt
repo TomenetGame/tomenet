@@ -4,14 +4,15 @@
 
 Welcome to the TomeNET Casino!
 
-Currently, the games 'In-Between', 'Craps' and 'Go' are available for playing.
-('Spin the Wheel' and 'Dice Slots' are under construction.)
-Some games playable among players are planned for the future (I hope).
+The games 'In-Between', 'Craps', 'Spin the Wheel' and 'Dice Slots', which are
+true gambling, and the 'Go Challenge', which instead is complete-information
+mind game, are available for playing.
 
+For all the gambling games, you can bet up to 1000*level AU per game, except
+for players below level 10 who can bet up to 100*level AU.
+So eg at level 9 you could bet up to 900 Au, and at level 10 up to 10000 Au.
 
-For all the games, you can bet up to 1000*level AU per game, except for
-players below level 10 who can bet up to 100*level AU.
-The game of Go has fixed bets for each stage that you cannot change.
+The game of Go however has fixed bets for each stage that you cannot change.
 
 
 \{D==============================================================================
@@ -36,7 +37,7 @@ if two black dice are 2 and 9, and you rolled 2, you lose.
 Two 6-faced (cube) dice are used for this game.
 
 You cast the two dice; if the sum of rolls is 7 or 11, you win at once.
-if the sum is 2, 3 or 12, you lose at once(craps!).
+if the sum is 2, 3 or 12, you lose at once ("craps!").
 
 If the sum isn't one of the numbers above, you cast them once more.
 If the sum matches to the first sum, you win.
