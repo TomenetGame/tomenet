@@ -517,7 +517,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		store_kick(Ind, FALSE);
 		return(FALSE);
 	} else if (wager > maxbet) {
-		msg_format(Ind, "I'll take $%d of that. Keep the rest.", maxbet);
+		msg_format(Ind, "I'll take %d Au of that. Keep the rest.", maxbet);
 		wager = maxbet;
 	} else if (wager < 1) {
 		msg_print(Ind, "Ok, we'll start with 1 Au.");
