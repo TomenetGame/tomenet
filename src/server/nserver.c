@@ -4910,7 +4910,7 @@ static int Receive_login(int ind) {
 			   Don't prevent already existing accounts from logging in though. */
 			if (!Admin_GetAccount(&acc, connp->nick) && lookup_similar_account(connp->nick, NULL)) {
 				//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
-				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
+				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password. (1)");
 				return(-1);
 			}
 			/* For skip-motd hack for persistent message log across relogs -
@@ -4924,7 +4924,7 @@ static int Receive_login(int ind) {
 			   So we verify it first, just for Check_names(), here:
 			   (Note: This is also the first time we call GetAccount() for a so far non-existing account, so we need to imprint host+ip on acc struct here.) */
 			if (!GetAccount(&acc, connp->nick, connp->pass, FALSE, connp->host, connp->addr)) {
-				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
+				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password (2).");
 				return(-1);
 			}
 			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
