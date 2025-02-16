@@ -22469,10 +22469,19 @@ these limitations will be lifted.
                     and brands melee attacks with venom.
                     Required skill level for first spell level: 30.
 
-    BONI:           Regeneration (faster hit point regeneration, same as from
+    BONI:           A hit point bonus, that is applied on the total hit points
+                    after all other HP boni and modifications (eg +LIFE, mimic
+                    form HP or Corrupted HP bonus) have been applied except for
+                    the temporary Heroism or Berserk boni:
+                    +4 for each 1.000 in Nature while HP is still below 800,
+                    +3 for each 1.000 in Nature while HP is still below 900,
+                    +2 for each 1.000 in Nature while HP is still below 1000,
+                    +1 for each 1.000 in Nature while HP is still below 1100.
+
+                    Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration, so doesn't stack with
                     item flag regeneration) at 30,
-                    pass trees and swim in water at 30,
+                    pass trees at 30,
                     poison resistance at 40.
 
 

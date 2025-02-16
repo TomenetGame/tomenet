@@ -1868,6 +1868,19 @@ void calc_hitpoints(int Ind) {
 		mhp += (p_ptr->lev <= 50 ? (p_ptr->lev - 20) * 2 : 60 + p_ptr->lev - 50);
 #endif
 
+#if 1
+	if (p_ptr->body_monster) {
+		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
+		mhp += (p_ptr->lev > 50) ?
+		    (((p_ptr->lev - 50) * ((rlev > 80 ? 80 :
+ #if 0 /* for 15..17/32 hp birth calc */
+		    rlev) + 30)) / 100) * 5 : 0;
+ #else /* for 31..33/64 hp birth calc */
+		    rlev) + 30)) / 25) : 0;
+ #endif
+	}
+#endif
+
 #ifdef NATURE_HP_SUPPLEMENT
 	/* Abuse bonus and bonus_cap */
 	if (!p_ptr->tim_manashield && (bonus = get_skill(p_ptr, SKILL_NATURE))) {
@@ -1905,19 +1918,6 @@ void calc_hitpoints(int Ind) {
 			if (bonus_cap > bonus) mhp += bonus;
 			else mhp += bonus_cap;
 		}
-	}
-#endif
-
-#if 1
-	if (p_ptr->body_monster) {
-		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
-		mhp += (p_ptr->lev > 50) ?
-		    (((p_ptr->lev - 50) * ((rlev > 80 ? 80 :
- #if 0 /* for 15..17/32 hp birth calc */
-		    rlev) + 30)) / 100) * 5 : 0;
- #else /* for 31..33/64 hp birth calc */
-		    rlev) + 30)) / 25) : 0;
- #endif
 	}
 #endif
 
@@ -6495,12 +6495,14 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_FIRE) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
 	if (get_skill(p_ptr, SKILL_MANA) >= 40) { p_ptr->resist_mana = TRUE; csheet_boni[14].cb[3] |= CB4_RMANA; }
 	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= 50) { p_ptr->res_tele = TRUE; csheet_boni[14].cb[4] |= CB5_RTELE; }
+
 #ifndef NATURE_HP_SUPPLEMENT
-	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP; }
-	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
 #endif
+	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP; }
+	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 40) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
+
 	/* - SKILL_MIND also helps to reduce hallucination time in set_image() */
 	if (get_skill(p_ptr, SKILL_MIND) >= 40 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
 	if (get_skill(p_ptr, SKILL_MIND) >= 50) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }

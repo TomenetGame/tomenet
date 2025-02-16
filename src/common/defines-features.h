@@ -655,6 +655,9 @@
 /* Traumaturgy + Dual-Wield + 2x Axe equipped -> Blood frenzy possibility. (Khorne Berserkers - C. Blue) */
 #define ENABLE_BLOOD_FRENZY
 
+/* Istar w/o reliance on disruption shield */
+#define NATURE_HP_SUPPLEMENT
+
 
 
 /* ------------------------------------------------------------------------- */
@@ -739,9 +742,6 @@
 
  /* Harsh weather gives us trouble of some sort? */
  #define IRRITATING_WEATHER /* TODO: Fix weather code, see pos_in_weather() and two related code parts commented about there */
-
- /* Istar w/o reliance on disruption shield */
- #define NATURE_HP_SUPPLEMENT
 #endif
 
 /* Specific settings for Arcade server only */
