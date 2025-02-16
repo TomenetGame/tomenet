@@ -1675,6 +1675,9 @@ void calc_hitpoints(int Ind) {
 	u32b mHPLim, finalHP;
 	int bonus_cap, to_life;
 	int rlev = r_info[p_ptr->body_monster].level;
+#ifdef NATURE_HP_SUPPLEMENT
+	int nhps_cap, nhps_steps;
+#endif
 
 
 	p_ptr->mhp_tmp = 0; /* Track temporary buffs, just for client-side colourised indicator */
@@ -1884,7 +1887,10 @@ void calc_hitpoints(int Ind) {
 #ifdef NATURE_HP_SUPPLEMENT
 	/* Abuse bonus and bonus_cap */
 	if (!p_ptr->tim_manashield && (bonus = get_skill(p_ptr, SKILL_NATURE))) {
-		if ((bonus_cap = 800 - mhp) > 0) {
+		nhps_cap = (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) * 16; //800 HP at 50
+		nhps_steps = (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) * 2; //+100 HP steps at 50
+
+		if ((bonus_cap = nhps_cap - mhp) > 0) {
 			bonus_cap /= 4;
 			if (bonus_cap > bonus) {
 				mhp += bonus * 4;
@@ -1894,7 +1900,7 @@ void calc_hitpoints(int Ind) {
 				bonus -= bonus_cap;
 			}
 		}
-		if (bonus && ((bonus_cap = 900 - mhp) > 0)) {
+		if (bonus && ((bonus_cap = nhps_cap + nhps_steps - mhp) > 0)) {
 			bonus_cap /= 3;
 			if (bonus_cap > bonus) {
 				mhp += bonus * 3;
@@ -1904,7 +1910,7 @@ void calc_hitpoints(int Ind) {
 				bonus -= bonus_cap;
 			}
 		}
-		if (bonus && ((bonus_cap = 1000 - mhp) > 0)) {
+		if (bonus && ((bonus_cap = nhps_cap + nhps_steps * 2 - mhp) > 0)) {
 			bonus_cap /= 2;
 			if (bonus_cap > bonus) {
 				mhp += bonus * 2;
@@ -1914,7 +1920,7 @@ void calc_hitpoints(int Ind) {
 				bonus -= bonus_cap;
 			}
 		}
-		if (bonus && ((bonus_cap = 1100 - mhp) > 0)) {
+		if (bonus && ((bonus_cap = nhps_cap + nhps_steps * 3 - mhp) > 0)) {
 			if (bonus_cap > bonus) mhp += bonus;
 			else mhp += bonus_cap;
 		}
