@@ -578,6 +578,7 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass, ch
 			if (val != 0) {
 				fclose(fp);
 				WIPE(c_acc, struct account);
+				s_printf("GetAccount: Password check failed.\n");
 				return(FALSE);
 			} else {
 				fclose(fp);
@@ -589,6 +590,7 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass, ch
 	if (!pass) {
 		WIPE(c_acc, struct account);
 		fclose(fp);
+		s_printf("GetAccount: New account has no password.\n");
 		return(FALSE);
 	}
 
@@ -653,17 +655,17 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass, ch
 		if (!(WriteAccount(c_acc, TRUE))) {
 			WIPE(c_acc, struct account);
 			fclose(fp);
+			s_printf("GetAccount: Account-write failed.\n");
 			return(FALSE);
 		}
 	}
 	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	fclose(fp);
-	if (c_acc->id) {
-		return(TRUE);
-	} else {
-		WIPE(c_acc, struct account);
-		return(FALSE);
-	}
+	if (c_acc->id) return(TRUE);
+
+	WIPE(c_acc, struct account);
+	s_printf("GetAccount: Account has no id.\n");
+	return(FALSE);
 }
 /* Case-insensitive GetAccount() - but does NOT allow 'pass' and hence doesn't allow account-creation.
    Instead it takes correct_name parameter and sets it to the case-correct account name found. */
