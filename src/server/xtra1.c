@@ -1887,7 +1887,8 @@ void calc_hitpoints(int Ind) {
 #ifdef NATURE_HP_SUPPLEMENT
 	/* Abuse bonus and bonus_cap */
 	if (!p_ptr->tim_manashield && (bonus = get_skill(p_ptr, SKILL_NATURE))) {
-		nhps_cap = (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) * 16; //800 HP at 50
+		nhps_cap = (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) + 10;
+		nhps_cap = (nhps_cap * nhps_cap * nhps_cap) / 270; //800 HP at 50
 		nhps_steps = (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) * 2; //+100 HP steps at 50
 
 		if ((bonus_cap = nhps_cap - mhp) > 0) {
