@@ -820,6 +820,7 @@ static char *t_crypt(char *inbuf, const char *salt) {
 
 		strcpy(fixed_name, salt);
 		fixed_name[2] = 0; //just terminate, as we only use 2 chars for salt anyway (!)
+		strcpy(out, (char*)crypt(inbuf, fixed_name));
 	} else
   #endif
  #endif
