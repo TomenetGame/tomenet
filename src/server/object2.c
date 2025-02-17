@@ -11848,6 +11848,15 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			if (o_tv > j_tv) break;
 			if (o_tv < j_tv) continue;
 
+#ifdef SUBINVEN_LIMIT_GROUP
+			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
+			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
+			   and don't move into the first slot of that subinven type, which would make them usable too. */
+			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
+			    get_subinven_group(j_ptr->sval) == get_subinven_group(o_ptr->sval))
+				continue;
+#endif
+
 			/* Hack: Don't sort ammo any further, to allow players
 			   a custom order of usage for !L inscription - C. Blue */
 			if (is_ammo(o_ptr->tval)) continue;
@@ -11859,15 +11868,6 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			/* Objects sort by increasing sval */
 			if (o_sv < j_sv) break;
 			if (o_sv > j_sv) continue;
-
-#ifdef SUBINVEN_LIMIT_GROUP
-			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
-			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
-			   and don't move into the first slot of that subinven type, which would make them usable too. */
-			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
-			    get_subinven_group(j_ptr->sval) == get_subinven_group(o_ptr->sval))
-				continue;
-#endif
 
 			/* Level 0 items owned by the player come first, so we use them up first when triggering consumable-macros */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
@@ -12499,6 +12499,15 @@ void reorder_pack(int Ind) {
 			if (o_tv > j_tv) break;
 			if (o_tv < j_tv) continue;
 
+#ifdef SUBINVEN_LIMIT_GROUP
+			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
+			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
+			   and don't move into the first slot of that subinven type, which would make them usable too. */
+			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
+			    get_subinven_group(j_ptr->sval) == get_subinven_group(o_ptr->sval))
+				continue;
+#endif
+
 			/* Hack: Don't sort ammo any further, to allow players
 			   a custom order of usage for !L inscription - C. Blue */
 			if (is_ammo(o_ptr->tval)) continue;
@@ -12510,15 +12519,6 @@ void reorder_pack(int Ind) {
 			/* Objects sort by increasing sval */
 			if (o_sv < j_sv) break;
 			if (o_sv > j_sv) continue;
-
-#ifdef SUBINVEN_LIMIT_GROUP
-			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
-			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
-			   and don't move into the first slot of that subinven type, which would make them usable too. */
-			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
-			    get_subinven_group(j_ptr->sval) == get_subinven_group(o_ptr->sval))
-				continue;
-#endif
 
 			/* Level 0 items owned by the player come first, so we use them up first when triggering consumable-macros */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
