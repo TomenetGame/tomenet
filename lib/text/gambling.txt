@@ -61,6 +61,9 @@ A wheel with 10 numbers, 'zero' to 'nine' is spun.
 
 You bet on exactly one of the numbers, except on 'zero' which is forbidden.
 
+However, if you don't want to choose a number yourself, you can just choose
+'zero' to have the casino pick a random number ranging from 1 to 9 for you.
+
 If the wheel stops at your number you receive nine times (9x) your wager,
 so the payoff odds are 9. The 'zero' always loses.
 
