@@ -5179,28 +5179,16 @@ void scan_accounts() {
 		/* Count all accounts in the file */
 		total++;
 
+		/* Skip accounts that are already marked as 'Deleted' */
 		if (acc.flags & ACC_DELD) continue;
 
 		/* Count non-deleted accounts */
 		nondel++;
 
-		if (acc.flags & ACC_ADMIN) {
-			/* Admin accounts always count as active */
-			active++;
-			continue;
-		}
-
 		//if (!acc.acc_laston) continue; /* not using this 'hack' for staticing here */
 
-		/* fix old accounts that don't have a timestamp yet */
-		if (!acc.acc_laston) {
-			acc.acc_laston = acc.acc_laston_real = now; /* set new timestamp */
-			fixed++;
-			modified = TRUE;
-		}
-
-		/* Check for bad account id */
-		else if (acc.id >= MAX_ACCOUNTS) {
+		/* Check for bad account id first of all! (These caused a crash on Arcade server actually) */
+		if (acc.id >= MAX_ACCOUNTS) {
 			/* Log it */
 			s_printf("  Bad account ID: %d\n", acc.id);
 
@@ -5211,7 +5199,20 @@ void scan_accounts() {
 			acc.flags |= ACC_DELD;
 
 			modified = TRUE;
-			valid = FALSE;
+			valid = FALSE; //it's deleted!
+		}
+
+		/* Admin accounts always count as active */
+		else if (acc.flags & ACC_ADMIN) {
+			active++;
+			continue;
+
+		}
+		/* fix old accounts that don't have a timestamp yet */
+		else if (!acc.acc_laston) {
+			acc.acc_laston = acc.acc_laston_real = now; /* set new timestamp */
+			fixed++;
+			modified = TRUE;
 		}
 
 		/* Was the account marked as active? */
@@ -5237,7 +5238,7 @@ void scan_accounts() {
 #else
 			s_printf("  (TESTING) Account '%s' expired.\n", acc.name);
 #endif
-			valid = FALSE;
+			valid = FALSE; //it's expired!
 		}
 
 #ifdef EMAIL_NOTIFICATIONS
@@ -5281,6 +5282,7 @@ void scan_accounts() {
 		}
 #endif
 
+		/* Mark 'Deleted' (ie invalid) accounts and timestamp valid accounts */
 		//if (modified) WriteAccount(&acc, FALSE);
 		if (modified) {
 			fseek(fp, -((signed int)(sizeof(struct account))), SEEK_CUR);
