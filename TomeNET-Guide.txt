@@ -22469,7 +22469,8 @@ these limitations will be lifted.
                     and brands melee attacks with venom.
                     Required skill level for first spell level: 30.
 
-    BONI:           A hit point bonus, that is applied on the total hit points
+    BONI:           While 'Disruption Shield' is not active, Nature grants
+                    a hit point bonus, that is applied on the total hit points
                     after all other HP boni and modifications (eg +LIFE, mimic
                     form HP or Corrupted HP bonus) have been applied except for
                     the temporary Heroism or Berserk boni.
