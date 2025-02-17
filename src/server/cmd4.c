@@ -227,7 +227,10 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 
 				if (timeout <= 0 || cfg.persistent_artifacts) {
 					/* debug: Some non-multi artifacts lose their timeout for some unknown reason */
-					if (!multiple_artifact_p(&forge)) sprintf(timeleft, "\377R ---");
+					if (!multiple_artifact_p(&forge)) {
+						if (!timeout) sprintf(timeleft, "\377R ---");
+						else sprintf(timeleft, "\377R %3d", timeout);
+					}
 					/* normal behaviour: */
 					else sprintf(timeleft, "\377s  - ");
 				}
