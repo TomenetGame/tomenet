@@ -5143,7 +5143,7 @@ void scan_characters() {
  */
 void scan_accounts() {
 	int total = 0, nondel = 0, active = 0, expired = 0, fixed = 0;
-	bool modified;
+	bool modified, valid;
 	FILE *fp;
 	char buf[1024];
 	struct account acc;
@@ -5174,6 +5174,7 @@ void scan_accounts() {
 
 	while (fread(&acc, sizeof(struct account), 1, fp)) {
 		modified = FALSE;
+		valid = TRUE; //assume valid
 
 		/* Count all accounts in the file */
 		total++;
@@ -5210,6 +5211,7 @@ void scan_accounts() {
 			acc.flags |= ACC_DELD;
 
 			modified = TRUE;
+			valid = FALSE;
 		}
 
 		/* Was the account marked as active? */
@@ -5235,42 +5237,47 @@ void scan_accounts() {
 #else
 			s_printf("  (TESTING) Account '%s' expired.\n", acc.name);
 #endif
+			valid = FALSE;
 		}
 
-#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
-		if (!(acc.flags & ACC_EMN_AX) && acc.email[0] && now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC)) {
-			int res;
+#ifdef EMAIL_NOTIFICATIONS
+		if (valid) {
+ #ifdef EMAIL_NOTIFICATION_EXPIRY_ACC
+			if (!(acc.flags & ACC_EMN_AX) && acc.email[0] && now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC)) {
+				int res;
 
-			acc.flags |= ACC_EMN_AX;
-			modified = TRUE;
+				acc.flags |= ACC_EMN_AX;
+				modified = TRUE;
 
-			res = system(format("echo 'Your account will expire within approximately %d days if you don't log in.' > _testmail.txt", EMAIL_NOTIFICATION_EXPIRY_ACC));
-			res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
-			remove("_testmail.txt");
-			if (res) s_printf("ACC_EMN_AX: System shell error (account '%s').\n", acc.name);
-			else s_printf("ACC_EMN_AX: Dispatched to '%s', account '%s'.\n", acc.email, acc.name);
-		} else if ((acc.flags & ACC_EMN_AX) && !(now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC))) {
-			/* Account is no longer near expiry -> clear flag again */
-			acc.flags &= ~ACC_EMN_AX;
-			modified = TRUE;
-		}
-#endif
-#if defined(EMAIL_NOTIFICATIONS) && defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
-		if (!(acc.flags & ACC_EMN_CX) && acc.email[0] && (account_expiry_char[acc.id / 8] & (1U << (acc.id % 8)))) {
-			int res;
-
-			acc.flags |= ACC_EMN_CX;
-			modified = TRUE;
-
-			res = system(format("echo 'At least one of your characters will expire within approximately %d days if you don't log in.' > _testmail.txt", EMAIL_NOTIFICATION_EXPIRY_CHAR));
-			res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
+				res = system(format("echo 'Your account will expire within approximately %d days if you don't log in.' > _testmail.txt", EMAIL_NOTIFICATION_EXPIRY_ACC));
+				res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
 				remove("_testmail.txt");
-			if (res) s_printf("ACC_EMN_CX: System shell error (account '%s').\n", acc.name);
-			else s_printf("ACC_EMN_CX: Dispatched to '%s', account '%s'.\n", acc.email, acc.name);
-		} else if ((acc.flags & ACC_EMN_CX) && !(account_expiry_char[acc.id / 8] & (1U << (acc.id % 8)))) {
-			/* No character is near expiry anymore -> clear flag again */
-			acc.flags &= ~ACC_EMN_CX;
-			modified = TRUE;
+				if (res) s_printf("ACC_EMN_AX: System shell error (account '%s').\n", acc.name);
+				else s_printf("ACC_EMN_AX: Dispatched to '%s', account '%s'.\n", acc.email, acc.name);
+			} else if ((acc.flags & ACC_EMN_AX) && !(now - acc.acc_laston >= 3600 * 24 * (ACCOUNT_EXPIRY_DAYS - EMAIL_NOTIFICATION_EXPIRY_ACC))) {
+				/* Account is no longer near expiry -> clear flag again */
+				acc.flags &= ~ACC_EMN_AX;
+				modified = TRUE;
+			}
+ #endif
+ #ifdef EMAIL_NOTIFICATION_EXPIRY_CHAR
+			if (!(acc.flags & ACC_EMN_CX) && acc.email[0] && (account_expiry_char[acc.id / 8] & (1U << (acc.id % 8)))) {
+				int res;
+
+				acc.flags |= ACC_EMN_CX;
+				modified = TRUE;
+
+				res = system(format("echo 'At least one of your characters will expire within approximately %d days if you don't log in.' > _testmail.txt", EMAIL_NOTIFICATION_EXPIRY_CHAR));
+				res += system(format("sh ./email.sh \"%s\" \"_testmail.txt\" &", acc.email));
+					remove("_testmail.txt");
+				if (res) s_printf("ACC_EMN_CX: System shell error (account '%s').\n", acc.name);
+				else s_printf("ACC_EMN_CX: Dispatched to '%s', account '%s'.\n", acc.email, acc.name);
+			} else if ((acc.flags & ACC_EMN_CX) && !(account_expiry_char[acc.id / 8] & (1U << (acc.id % 8)))) {
+				/* No character is near expiry anymore -> clear flag again */
+				acc.flags &= ~ACC_EMN_CX;
+				modified = TRUE;
+			}
+ #endif
 		}
 #endif
 
