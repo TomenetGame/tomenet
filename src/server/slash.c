@@ -12073,11 +12073,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Sending request(s)...");
 				switch (k) {
 				case 0: Send_request_key(Ind, 0, "Key: "); break;
-				case 1: Send_request_num(Ind, 0, "Num: ", 9); break;
+				case 1: Send_request_amt(Ind, 0, "Amt: ", 9); break;
 				case 2: Send_request_str(Ind, 0, "Str: ", "mh"); break;
 				case 3: Send_request_cfr(Ind, 0, "Y/n: ", TRUE); break;
+				case 4: Send_request_num(Ind, 0, "Num: ", -3, -9, 9); break;
 				}
-//				Send_request_abort(Ind);
+				//Send_request_abort(Ind);
 				msg_print(Ind, "...done.");
 				return;
 			}

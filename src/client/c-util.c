@@ -4933,6 +4933,124 @@ s32b c_get_quantity(cptr prompt, s32b predef, s32b max) {
 	return(amt);
 }
 
+s32b c_get_number(cptr prompt, s32b predef, s32b min, s32b max) {
+	s32b amt;
+	char tmp[80];
+	char buf[80], *bufptr;
+
+	char bi1[80], bi2[9 + 1];
+	int n, i, j;
+	s32b i1, i2, mul;
+	bool negative;
+
+
+redo:
+	n = i = j = 0;
+	i1 = i2 = 0;
+	mul = 1;
+	negative = FALSE;
+
+	/* Build the default */
+	sprintf(buf, "%d", predef);
+
+	/* Build a prompt if needed */
+	if (!prompt) {
+		/* Build a prompt */
+		inkey_letter_all = TRUE;
+
+		if (max != -1) sprintf(tmp, "Number (%d-%d, ", min, max);
+		else sprintf(tmp, "Number (");
+
+		if (predef < max) strcat(tmp, format("ENTER = %d, 'a'/SPACE = all): ", predef));
+		else strcat(tmp, "ENTER/'a'/SPACE = all): ");
+
+		/* Use that prompt */
+		prompt = tmp;
+	}
+
+	/* Ask for a quantity */
+	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return(0);
+
+	if (!buf[0]) { /* ENTER = default */
+		if (predef >= 0) amt = predef;
+		/* hack for dropping gold (max is -1) */
+		else amt = PY_MAX_GOLD;
+	} else if (buf[0] == 'a' /* 'a' means "all" - C. Blue */
+	    /* allow old 'type in any letter for "all"' hack again too?: */
+	    || (isalpha(buf[0])
+	    /* exempt the E factors */
+	    && ((buf[0] != 'k' && buf[0] != 'K' && buf[0] != 'm' && buf[0] != 'M' && buf[0] != 'g' && buf[0] != 'G')
+	    /* ..except if after a factor there is no actual number following, then we allow this to be 'all' */
+	    || !buf[1] || (buf[1] < '0' || buf[1] > '9')))) {
+		if (max >= 0) amt = max;
+		/* hack for dropping gold (max is -1) */
+		else amt = PY_MAX_GOLD;
+	} else {
+		bufptr = buf;
+		if (*bufptr == '-') {
+			negative = TRUE;
+			bufptr++;
+			n++;
+		}
+
+		/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M'/'G'/ for kilo/mega/giga: */
+		if ((*bufptr == 'k' || *bufptr == 'K' || *bufptr == 'm' || *bufptr == 'M' || *bufptr == 'g' || *bufptr == 'G') && *(bufptr + 1)
+		    && (*(bufptr + 1) < '0' || *(bufptr + 1) > '9')) {
+			//all..
+			*bufptr = 'a';
+			*(bufptr + 1) = 0;
+		}
+		/* new method slightly extended: allow leading 'k' or 'M' or 'G' too */
+		else if ((*bufptr == 'k' || *bufptr == 'K' || *bufptr == 'm' || *bufptr == 'M' || *bufptr == 'g' || *bufptr == 'G') && *(bufptr + 1)) {
+			/* add leading '0' to revert it to the usual format */
+			for (i = QUANTITY_WIDTH + 1; i >= 1; i--) buf[i] = buf[i - 1];
+			*bufptr = '0';
+		}
+
+		/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
+		while (buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
+		bi1[i] = '\0';
+		i1 = atoi(bi1);
+		if ((buf[n] == 'k' || buf[n] == 'K') && n > 0) mul = 1000;
+		else if (buf[n] == 'm' || buf[n] == 'M') mul = 1000000;
+		else if (buf[n] == 'g' || buf[n] == 'G') mul = 1000000000;
+		if (mul > 1) {
+			n++;
+			i = 0;
+			while (buf[n] >= '0' && buf[n] <= '9' && i < 6) bi2[i++] = buf[n++];
+			bi2[i] = '\0';
+
+			i = 0;
+			while (i < 9) {
+				 if (bi2[i] == '\0') {
+					j = i;
+					while (j < 9) bi2[j++] = '0';
+					break;
+				 }
+				 i++;
+			}
+
+			if (mul == 1000) bi2[3] = '\0';
+			else if (mul == 1000000) bi2[6] = '\0';
+			else if (mul == 1000000000) bi2[9] = '\0';
+
+			i2 = atoi(bi2);
+			amt = i1 * mul + i2;
+		} else amt = i1;
+	}
+
+	if (negative) amt = -amt;
+
+	/* Enforce the maximum */
+	if (amt > max) goto redo;
+
+	/* Enforce the minimum */
+	if (amt < min) goto redo;
+
+	/* Return the result */
+	return(amt);
+}
+
 void clear_from(int row) {
 	int y;
 

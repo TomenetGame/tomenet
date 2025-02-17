@@ -9505,9 +9505,10 @@ extern int PlayerUID;
 
 /* Request types for p_ptr->request_type - C. Blue */
 #define RTYPE_STR	0
-#define RTYPE_NUM	1
+#define RTYPE_AMT	1
 #define RTYPE_KEY	2
 #define RTYPE_CFR	3
+#define RTYPE_NUM	4
 
 /* ..and request IDs for p_ptr->request_id */
 #define RID_NONE		0	/* fixed */

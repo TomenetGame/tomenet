@@ -638,7 +638,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		p_ptr->casino_odds = odds;
 		p_ptr->casino_wager = wager;
 
-		Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9): ", -1);
+		Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9, or 0 for random): ", p_ptr->casino_choice, 0, 9);
 		return(TRUE);
 
 	case BACT_DICE_SLOTS: /* The Dice Slots */
@@ -2740,7 +2740,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				msg_print(Ind, "You need an up-to-date client to donate.");
 				break;
 			}
-			Send_request_num(Ind, RID_SR_DONATE, "Donate how much gold to the temple? ", p_ptr->au);
+			Send_request_amt(Ind, RID_SR_DONATE, "Donate how much gold to the temple? ", p_ptr->au);
 			break;
 #endif
 #ifdef ENABLE_ITEM_ORDER

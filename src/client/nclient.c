@@ -404,6 +404,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_MINI_MAP_POS]	= Receive_mini_map_pos;
 
 	receive_tbl[PKT_REQUEST_KEY]	= Receive_request_key;
+	receive_tbl[PKT_REQUEST_AMT]	= Receive_request_amt;
 	receive_tbl[PKT_REQUEST_NUM]	= Receive_request_num;
 	receive_tbl[PKT_REQUEST_STR]	= Receive_request_str;
 	receive_tbl[PKT_REQUEST_CFR]	= Receive_request_cfr;
@@ -4692,6 +4693,7 @@ int Receive_store_special_anim(void) {
 	/* Casino: Wheel and Slot machine animations */
 	switch (anim1) {
 	case 0: //wheel
+		Term_fresh(); //show initial 'I'll put you down for...' msgs
 		anim_step = rand_int(ANIM_WHEEL_LENGTH) + ANIM_WHEEL_LENGTH * 2;
 		while (--anim_step) { //decrement first, or final loop ends up same as final placement done afterwards, resulting in a perceived 'extra sfx' as there is no visible change
 			Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
@@ -6476,15 +6478,27 @@ int Receive_request_key(void) {
 	request_pending = FALSE;
 	return(1);
 }
-/* Request number */
-int Receive_request_num(void) {
+/* Request 'amount' number */
+int Receive_request_amt(void) {
 	int n, id, max;
 	char ch, prompt[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &max)) <= 0) return(n);
 
 	request_pending = TRUE;
-	Send_request_num(id, c_get_quantity(prompt, 0, max));
+	Send_request_amt(id, c_get_quantity(prompt, 0, max));
+	request_pending = FALSE;
+	return(1);
+}
+/* Request number */
+int Receive_request_num(void) {
+	int n, id, predef, min, max;
+	char ch, prompt[MAX_CHARS];
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%s%d%d%d", &ch, &id, prompt, &predef, &min, &max)) <= 0) return(n);
+
+	request_pending = TRUE;
+	Send_request_num(id, c_get_number(prompt, predef, min, max));
 	request_pending = FALSE;
 	return(1);
 }
@@ -8227,6 +8241,11 @@ int Send_split_stack(int item, int amt) {
 int Send_request_key(int id, char key) {
 	int n;
 	if ((n = Packet_printf(&wbuf, "%c%d%c", PKT_REQUEST_KEY, id, key)) <= 0) return(n);
+	return(1);
+}
+int Send_request_amt(int id, int num) {
+	int n;
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_REQUEST_AMT, id, num)) <= 0) return(n);
 	return(1);
 }
 int Send_request_num(int id, int num) {

@@ -402,6 +402,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_SPLIT_STACK]	= Receive_split_stack;
 
 	playing_receive[PKT_REQUEST_KEY]	= Receive_request_key;
+	playing_receive[PKT_REQUEST_AMT]	= Receive_request_amt;
 	playing_receive[PKT_REQUEST_NUM]	= Receive_request_num;
 	playing_receive[PKT_REQUEST_STR]	= Receive_request_str;
 	playing_receive[PKT_REQUEST_CFR]	= Receive_request_cfr;
@@ -10766,10 +10767,26 @@ int Send_request_key(int Ind, int id, char *prompt) {
 	Players[Ind]->request_extra = 0; //anti-exploit: clear!
 	return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_KEY, id, prompt);
 }
-int Send_request_num(int Ind, int id, char *prompt, int max) {
+int Send_request_amt(int Ind, int id, char *prompt, int max) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for request_amt (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return(0);
+	}
+
+	Players[Ind]->request_id = id;
+	Players[Ind]->request_type = RTYPE_AMT;
+	Players[Ind]->request_extra = 0; //anti-exploit: clear!
+	return Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_AMT, id, prompt, max);
+}
+int Send_request_num(int Ind, int id, char *prompt, int predef, int min, int max) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 9, 2, 1, 0, 0)) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for request_num (%d.%d.%d)",
@@ -10780,7 +10797,7 @@ int Send_request_num(int Ind, int id, char *prompt, int max) {
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_NUM;
 	Players[Ind]->request_extra = 0; //anti-exploit: clear!
-	return Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_NUM, id, prompt, max);
+	return Packet_printf(&connp->c, "%c%d%s%d%d%d", PKT_REQUEST_NUM, id, prompt, predef, min, max);
 }
 void Send_delayed_request_str(int Ind, int id, char *prompt, char *std) {
 	player_type *p_ptr = Players[Ind];
@@ -15541,6 +15558,27 @@ static int Receive_request_key(int ind) {
 	handle_request_return_key(player, id, key);
 	return(2);
 }
+static int Receive_request_amt(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+
+	char ch;
+	int n, id, player = -1, num;
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		//use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &id, &num)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return(n);
+	}
+	if (!p_ptr) return(1);
+
+	handle_request_return_amt(player, id, num);
+	return(2);
+}
 static int Receive_request_num(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
@@ -15549,7 +15587,7 @@ static int Receive_request_num(int ind) {
 	int n, id, player = -1, num;
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-//		use_esp_link(&player, LINKF_OBJ);
+		//use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
 	}
 

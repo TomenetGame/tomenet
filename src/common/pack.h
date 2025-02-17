@@ -236,7 +236,7 @@
 #define PKT_MUSIC		183	/* background music */
 
 #define PKT_REQUEST_KEY		184	/* (special) gets a keypress from the player */
-#define PKT_REQUEST_NUM		185	/* (special) gets a number from the player */
+#define PKT_REQUEST_AMT		185	/* (special) gets an 'amount' number from the player */
 #define PKT_REQUEST_STR		186	/* (special) gets a 1-line string from the player */
 #define PKT_REQUEST_CFR		187	/* (special) requests confirmation ('y/n') from player */
 #define PKT_REQUEST_ABORT	188	/* (special) abort pending requests (eg if player left store) */
@@ -275,6 +275,7 @@
 #define PKT_SPLIT_STACK		215	/* alternative function to PKT_FORCE_STACK - split up a stack of items */
 #define PKT_RELOGIN		216	/* Does what PKT_QUIT does, but then also asks the client to reconnect to a specific server! Added for SERVER_PORTALS (WiP). - C. Blue */
 #define PKT_STORE_SPECIAL_ANIM	217	/* For the casino: Special store screen animations */
+#define PKT_REQUEST_NUM		218	/* (special) gets a number from the player */
 
 /*
  * Possible error codes returned

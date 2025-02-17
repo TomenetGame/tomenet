@@ -11434,8 +11434,8 @@ void handle_request_return_str(int Ind, int id, char *str) {
 	}
 }
 
-/* Handle number input request replies */
-void handle_request_return_num(int Ind, int id, int num) {
+/* Handle 'amount' number input request replies */
+void handle_request_return_amt(int Ind, int id, int num) {
 	player_type *p_ptr = Players[Ind];
 
 	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
@@ -11445,7 +11445,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 	p_ptr->request_id = RID_NONE;
 
 	/* verify that a number had been requested */
-	if (RTYPE_NUM != p_ptr->request_type) return;
+	if (RTYPE_AMT != p_ptr->request_type) return;
 
 	switch (id) {
 #ifdef SOLO_REKING
@@ -11522,19 +11522,42 @@ void handle_request_return_num(int Ind, int id, int num) {
 		return;
 #endif
 
+	default:; //unknown request, ignore
+	}
+}
+/* Handle number input request replies */
+void handle_request_return_num(int Ind, int id, int num) {
+	player_type *p_ptr = Players[Ind];
+
+	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
+	if (id != p_ptr->request_id) return;
+
+	/* request done */
+	p_ptr->request_id = RID_NONE;
+
+	/* verify that a number had been requested */
+	if (RTYPE_NUM != p_ptr->request_type) return;
+
+	switch (id) {
 	case RID_SPIN_WHEEL: {
 		bool win = FALSE;
 		char tmp_str[80];
 		int roll1;
 
-		if (num < 1) {
+		if (num < 0) {
 			msg_print(Ind, "I'll put you down for 1.");
 			num = 1;
+			p_ptr->casino_choice = num; //remember favourite number as default for next time
+		} else if (!num) {
+			p_ptr->casino_choice = num; //remember favourite number as default for next time
+			num = randint(9);
+			msg_format(Ind, "Ok, I'll put you down for %d.", num);
 		} else if (num > 9) {
-			msg_print(Ind, "Ok, I'll put you down for 9.");
+			msg_print(Ind, "I'll put you down for 9.");
 			num = 9;
-		}
-		msg_print(Ind, NULL);
+			p_ptr->casino_choice = num; //remember favourite number as default for next time
+		} else p_ptr->casino_choice = num; //remember favourite number as default for next time
+		//msg_print(Ind, NULL);
 
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 13 + 3 * num - 1, TERM_GREEN, "<");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 13 + 3 * num + 1, TERM_GREEN, ">");
@@ -11572,7 +11595,6 @@ void handle_request_return_num(int Ind, int id, int num) {
 	default:; //unknown request, ignore
 	}
 }
-
 /* Handle key input request replies */
 void handle_request_return_key(int Ind, int id, char c) {
 	player_type *p_ptr = Players[Ind];
@@ -11889,7 +11911,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		return;
 	case RID_SEND_ITEM_PAY2:
 		p_ptr->mail_COD = !cfr;
-		Send_request_num(Ind, RID_SEND_ITEM_PAY, "How much gold does the receipient have to pay you? ", -1);
+		Send_request_amt(Ind, RID_SEND_ITEM_PAY, "How much gold does the receipient have to pay you? ", -1);
 		return;
 #endif
 

@@ -1315,7 +1315,8 @@ extern int Send_weather(int ind, int weather_type, int weather_wind, int weather
 extern int Send_inventory_revision(int ind);
 extern int Send_account_info(int ind);
 extern int Send_request_key(int Ind, int id, char *prompt);
-extern int Send_request_num(int Ind, int id, char *prompt, int max);
+extern int Send_request_amt(int Ind, int id, char *prompt, int max);
+extern int Send_request_num(int Ind, int id, char *prompt, int predef, int min, int max);
 extern int Send_request_str(int Ind, int id, char *prompt, char *std);
 extern int Send_request_cfr(int Ind, int id, char *prompt, char default_choice);
 extern int Send_request_abort(int Ind);
@@ -2248,6 +2249,7 @@ extern void use_esp_link(int *Ind, u32b flags);
 
 extern void handle_request_return_str(int Ind, int id, char *str);
 extern void handle_request_return_key(int Ind, int id, char c);
+extern void handle_request_return_amt(int Ind, int id, int num);
 extern void handle_request_return_num(int Ind, int id, int num);
 extern void handle_request_return_cfr(int Ind, int id, bool cfr);
 
