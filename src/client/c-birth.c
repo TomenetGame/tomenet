@@ -1804,15 +1804,18 @@ static bool choose_mode(void) {
 			hazard = TRUE;
 		} else if (c == '#') {
 			if (valid_dna) {
+				hazard = TRUE;
 				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
 				else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c = 's';
 				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
 				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING && !s_RPG) c = 'e';
 				else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c = 'p';
 				else if (!s_RPG) c = 'n';
-				hazard = TRUE;
+
+				//prevent endless loop on Arcade (because s_RPG is true there too - maybe it shouldn't?) (and RPG?) server
+				if ((c == '#') ||
 				//prevent endless loop on RPG server
-				if (s_RPG && (c == 'n' || c == 'p' || c == 'e')) {
+				    (s_RPG && (c == 'n' || c == 'p' || c == 'e'))) {
 					bell();
 					hazard = FALSE;
 					auto_reincarnation = FALSE;
