@@ -11707,10 +11707,10 @@ void handle_request_return_key(int Ind, int id, char c) {
 		Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
 		if (roll3 == p_ptr->casino_roll) {
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "wins!");
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "You won!");
 		} else if (roll3 == 7) {
 			win = FALSE;
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "loses!");
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You lost!");
 		} else {
 			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
 			return;
