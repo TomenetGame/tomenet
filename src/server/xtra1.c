@@ -11522,6 +11522,12 @@ void handle_request_return_amt(int Ind, int id, int num) {
 		return;
 #endif
 
+	case RID_SPIN_WHEEL: /* Backward compatibility with 4.9.2 clients */
+		p_ptr->request_type = RTYPE_NUM;
+		p_ptr->request_id = RID_SPIN_WHEEL;
+		handle_request_return_num(Ind, id, num);
+		break;
+
 	default:; //unknown request, ignore
 	}
 }

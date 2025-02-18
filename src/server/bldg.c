@@ -638,7 +638,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		p_ptr->casino_odds = odds;
 		p_ptr->casino_wager = wager;
 
-		Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9, or 0 for random): ", p_ptr->casino_choice, 0, 9);
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			Send_request_num(Ind, RID_SPIN_WHEEL, "Pick a number (1-9, or 0 for random): ", p_ptr->casino_choice, 0, 9);
+		else
+			Send_request_amt(Ind, RID_SPIN_WHEEL, "Pick a number (1-9, or 0 for random): ", -1);
 		return(TRUE);
 
 	case BACT_DICE_SLOTS: /* The Dice Slots */
