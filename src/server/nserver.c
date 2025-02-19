@@ -2417,13 +2417,13 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->warn_unique_credit = options[1];
 
 		if (is_older_than(&p_ptr->version, 4, 4, 8, 2, 0, 0))
-			p_ptr->newbie_tips = TRUE;
+			p_ptr->newbie_hints = TRUE;
 		else {
-			tmp = p_ptr->newbie_tips;
-			p_ptr->newbie_tips = options[3];
+			tmp = p_ptr->newbie_hints;
+			p_ptr->newbie_hints = options[3];
 
 			/* disable some or all newbie tips */
-			if (!p_ptr->newbie_tips) disable_specific_warnings(p_ptr);
+			if (!p_ptr->newbie_hints) disable_specific_warnings(p_ptr);
 			else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie tips requires you to exit and log in again.");
 		}
 
@@ -2648,10 +2648,10 @@ static void sync_options(int Ind, bool *options) {
 		//page 1
 
 		p_ptr->rogue_like_commands = options[0];
-		tmp = p_ptr->newbie_tips;
-		p_ptr->newbie_tips = options[1];
+		tmp = p_ptr->newbie_hints;
+		p_ptr->newbie_hints = options[1];
 		/* disable some or all newbie tips */
-		if (!p_ptr->newbie_tips) disable_specific_warnings(p_ptr);
+		if (!p_ptr->newbie_hints) disable_specific_warnings(p_ptr);
 		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie tips requires you to exit and log in again.");
 		p_ptr->censor_swearing = options[2];
 
@@ -14298,7 +14298,7 @@ static int Receive_options(int ind) {
 		/* Messages that require options to be synched */
 		if ((connp->state & CONN_PLAYING) && !p_ptr->initial_options_sync) {
 			p_ptr->initial_options_sync = TRUE;
-			if (p_ptr->newbie_tips && !is_admin(p_ptr)) {
+			if (p_ptr->newbie_hints && !is_admin(p_ptr)) {
 				if (p_ptr->max_plv <= 10 && p_ptr->ghost) {
 					msg_format(NumPlayers, "\377yYou died some time ago, so you are a ghost right now!");
 					msg_format(NumPlayers, "\377yYou may go to the temple (4) to revive, or press 'Q' to erase your character.");

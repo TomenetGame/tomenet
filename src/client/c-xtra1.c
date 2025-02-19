@@ -1039,7 +1039,7 @@ void prt_hunger(int food) {
 	Term_locate(&x, &y);
 
 	if (warn_once) {
-		if (!c_cfg.newbie_tips || p_ptr->max_plv > 15) warn_once = 0;
+		if (!c_cfg.newbie_hints || p_ptr->max_plv > 15) warn_once = 0;
 		else if (food != -1) {
 			food_prev = food;
 			if ((warn_once >= 3 && food < PY_FOOD_ALERT) ||

@@ -8,7 +8,7 @@
 # User interface options:
 
 X:rogue_like_commands
-Y:newbie_tips
+Y:newbie_hints
 Y:censor_swearing
 Y:highlight_chat
 Y:highbeep_chat
