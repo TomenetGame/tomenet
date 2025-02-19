@@ -608,6 +608,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			u32b f1, f2, f3, f4, f5, f6, esp;
 			bool nontag = FALSE, baseonly = FALSE, pile = FALSE, inscr = FALSE;
 			cptr inscr_str;
+#ifdef ENABLE_SUBINVEN
+			bool within_subinven = FALSE;
+			int s = 0;
+#endif
 
 			//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			if (p_ptr->energy < 0) return;
@@ -760,8 +764,33 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			for (i = 0; i < INVEN_PACK; i++) {
 				bool resist = FALSE;
+
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
+
+#ifdef ENABLE_SUBINVEN
+				if (within_subinven) {
+					/* Dedraw previously checked/dis'ed slot */
+					if (s) display_subinven_aux(Ind, i, s - 1);
+					/* Check/dis this slot */
+					if (s >= p_ptr->inventory[i].bpval || !p_ptr->subinventory[i][s].tval) {
+						within_subinven = FALSE;
+						continue;
+					}
+					o_ptr = &p_ptr->subinventory[i][s];
+					s++;
+					i--;
+				}
+				/* If we tag an empty subinventory _specifically_, treat it directly as object,
+				   if we tag a non-empty subinventory, instead treat the items inside it.
+				   If we didn't specifically tag it, treat it and the items inside it. */
+				else if (o_ptr->tval == TV_SUBINVEN) {
+					within_subinven = TRUE;
+					/* First, we keep treating the subinven directly, then all items inside it */
+					s = 0;
+					i--;
+				}
+#endif
 
 				object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -845,8 +874,25 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* guild keys cannot be destroyed */
 				if (o_ptr->tval == TV_KEY) continue;
 
-				do_cmd_destroy(Ind, i, o_ptr->number);
-				if (!resist) i--;
+#ifdef ENABLE_SUBINVEN
+				if (within_subinven && s) {
+					do_cmd_destroy(Ind, (i + 2) * SUBINVEN_INVEN_MUL + s - 1, o_ptr->number);
+					if (!resist) s--;
+				} else
+#endif
+				{
+#ifdef ENABLE_SUBINVEN
+					if (within_subinven) {
+						/* Destroy the actual subinven? */
+						do_cmd_destroy(Ind, i + 1, o_ptr->number);
+						within_subinven = FALSE;
+					} else
+#endif
+					{
+						do_cmd_destroy(Ind, i, o_ptr->number);
+						if (!resist) i--;
+					}
+				}
 
 				/* Hack - Don't take a turn here */
 				p_ptr->energy += level_speed(&p_ptr->wpos);
