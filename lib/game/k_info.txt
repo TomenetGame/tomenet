@@ -1772,7 +1772,7 @@ G:?:d
 I:70:20:0
 W:20:0:5:1250
 A:20/3:50/2
-D:May enchant armour up to +15. Higher fail chance on item stacks.
+D:May enchant armour up to [+15]. Higher fail chance on item stacks.
 
 N:215:Curse Armour
 G:?:d
