@@ -10342,7 +10342,7 @@ static void process_global_event(int ge_id) {
 #endif
 
 	default: /* generic clean-up routine for untitled events */
-		s_printf("(Default call - untitled event (idx %d, type %d), state0 %d)\n", ge_id, ge->getype, ge->state[0]);
+		s_printf("(Default call - untitled event (idx %d, type %d, was_type %d), state0 %d)\n", ge_id, ge->getype, was_getype, ge->state[0]);
 		switch (ge->state[0]) {
 		case 255: /* remove an untitled event that has been stopped */
 			/* if (ge->cleanup) { --we cannot know if cleanup specifically refers to separation here, so commented out
