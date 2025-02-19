@@ -5463,12 +5463,14 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 		/* home key to reset */
 		case NAVI_KEY_POS1:
+		case 'g':
 		case '7': //rl:?
 			line_cur[remembrance_index] = 0;
 			continue;
 
 		/* support end key too.. */
 		case NAVI_KEY_END:
+		case 'G':
 		case '1': //rl:?
 			line_cur[remembrance_index] = file_lastline[remembrance_index] - maxlines + 1;
 			if (line_cur[remembrance_index] < 0) line_cur[remembrance_index] = 0;
