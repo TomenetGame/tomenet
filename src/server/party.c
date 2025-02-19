@@ -114,6 +114,7 @@ int validate(char *name) {
 	if (acc.flags & ACC_TRIAL) {
 		effect = TRUE;
 		acc.flags &= ~(ACC_TRIAL | ACC_NOSCORE);
+		s_printf("VALIDATE: %s '%s'\n", showtime(), name);
 
 		/* Remove from "new players that need validation" list aka 'list-invalid.txt'. */
 		for (i = 0; i < MAX_LIST_INVALID; i++) {
@@ -132,8 +133,6 @@ int validate(char *name) {
 			list_invalid_name[i][0] = 0;
 			break;
 		}
-
-		s_printf("VALIDATE: %s '%s'\n", showtime(), name);
 	}
 
 	/* Write account to disk */
@@ -181,6 +180,7 @@ int invalidate(char *name, bool admin) {
 	if (!(acc.flags & ACC_TRIAL)) {
 		effect = TRUE;
 		acc.flags |= (ACC_TRIAL | ACC_NOSCORE);
+		s_printf("INVALIDATE: %s '%s'\n", showtime(), name);
 
 		/* Potentially add to "new players that need validation" list aka 'list-invalid.txt'. */
 		for (i = 0; i < MAX_LIST_INVALID; i++) {
@@ -202,8 +202,6 @@ int invalidate(char *name, bool admin) {
 			break;
 		}
 		if (i == MAX_LIST_INVALID) s_printf("Warning: list-invalid is full.\n");
-
-		s_printf("INVALIDATE: %s '%s'\n", showtime(), name);
 	}
 
 	/* Write account to disk */
