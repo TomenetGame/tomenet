@@ -26,7 +26,7 @@ function classname2index(cn)
 	return c
 end
 
---(A) just return fixed values from the table?
+--(A) just return fixed values from the table? (UNUSED)
 function get_class_bpr(cn, n)
 	local c
 
@@ -38,6 +38,7 @@ function get_class_bpr_tablesize()
 end
 
 --(B) alternatively, return the actual dps formula's result
+--(If this function is instead empty, it should still at least return 'X' to notify the client of its absence!)
 function get_class_bpr2(cn, wwgt, st, dx)
 --	return "X" --means "disabled"
 	local div, wgt, mul, str_adj, str_index, dex_index, numblow
@@ -60,7 +61,7 @@ function get_class_bpr2(cn, wwgt, st, dx)
 		--calculate BpR..
 		if c == 0 then
 			wgt = 30
-			mul = 4
+			mul = 5
 		elseif c == 2 then
 			wgt = 35
 			mul = 4
@@ -113,15 +114,15 @@ function get_class_bpr2(cn, wwgt, st, dx)
 	return bpr
 end
 
---(C) use formula to calc bpr for all 4 weapon classes
+--(C) use formula to calc bpr for all 4 weapon classes --- (USED)
 function get_class_bpr3(cn, st, dx)
 	local sword, blunt, axe, polearm
 	local ssword, sblunt, saxe, spolearm
 
 	sword = get_class_bpr2(cn, 30, st, dx) --dagger/main gauche
 	blunt = get_class_bpr2(cn, 30, st, dx) --whip
-	axe = get_class_bpr2(cn, 50, st, dx) --cleaver
-	polearm = get_class_bpr2(cn, 60, st, dx) --spear
+	axe = get_class_bpr2(cn, 40, st, dx) --cleaver
+	polearm = get_class_bpr2(cn, 50, st, dx) --sickle
 
 	if sword == 1 then ssword = "\255o1"
 	elseif sword == 2 then ssword = "\255y2"
@@ -163,7 +164,8 @@ blows_table = {
 	{  3,   3,   4,   4,   4,   4,   5,   5,   5,   6,   6,   6, },
 	{  3,   3,   4,   4,   4,   4,   5,   5,   6,   6,   6,   7, },}
 
--- for each class: 3x {str,dex,bpr} (stat 0 = any)
+-- Only for method (A):
+-- For each class: 3x {str,dex,bpr} (stat 0 = any)
 __class_bpr = {
 { --warrior
     { 18, 10, 2, },

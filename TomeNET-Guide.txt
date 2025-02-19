@@ -19934,13 +19934,20 @@ create a character!):
     somewhat higher level.
 
     Hints:
-    On character creation increase your strength to 18/30 at the very
-    least to get a decent attack speed (3 blows per round with very light
-    weapons).
 
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm),
     or Martial Arts if you don't want to use weapons, and always keep it
     maximized!
+
+    On character creation increase your strength to 18/30 at the very
+    least to get a decent attack speed (3 blows per round 'BpR' with a very
+    light weapon). Typical desired starter configurations are:
+    - If you train sword-mastery: Dagger + small metal shield.
+    - If you train blunt-mastery: Whip + small metal shield.
+    - If you train axe-mastery, you'd need 18/40 STR to get 3 bpr with a
+      cleaver, the lightest existing (1-handed) axe (4.0 lbs).
+    - If you train polearm-mastery, you'd need 18/50 STR to get 3 bpr with
+      a sickle, the lightest existing (1-handed) polearm (5.0 lbs).
 
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
@@ -20010,6 +20017,7 @@ create a character!):
     Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
     Hints:
+
     Note that their spell Call Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
 
@@ -20080,6 +20088,7 @@ create a character!):
     (monsters only).
 
     Hints:
+
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
@@ -20133,6 +20142,7 @@ create a character!):
     forms will diminish as they continue to rise to very high character levels.
 
     Hints:
+
     Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
 
@@ -20172,6 +20182,7 @@ create a character!):
     one, except if it gets destroyed by some elemental attack.
 
     Hints:
+
     Enchanting your ranged weapon to-damage is especially effective because
     the damage bonus will be multiplied by the weapons multiplier, eg (x3) for
     a long bow. So buy enchant to-dam scrolls from the alchemy shop as soon as
@@ -20208,6 +20219,7 @@ create a character!):
     adept at 'Holy Curing'.
 
     Hints:
+
     Note that the spell Call Light can be used to deal decent damage after it's
     been brought up a few levels. Orcs are said to fear it a lot.
 
@@ -20291,6 +20303,7 @@ create a character!):
     walking over it.
 
     Hints:
+
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
@@ -20317,6 +20330,7 @@ create a character!):
     abilities.
 
     Hint:
+
     Adventurers are difficult to play for beginners because to fully utilize
     them you need to know exactly what you are trying to achieve and how you
     want to distribute their skill points to make them effective.
@@ -20353,6 +20367,7 @@ create a character!):
     To see an overview of the forms and their abilities, see (7.7c).
 
     Hints:
+
     Druids have a powerful ranged area attack spell they can use very early
     on: Toxic Moisture, from Arcane Lore skill. Look for it in the bookstore!
     They also have a spell that satisfies hunger, later on cures poison and
@@ -20404,6 +20419,7 @@ create a character!):
     humanoid forms in case you are training a weapon skill.
 
     Hints:
+
     Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
 
@@ -20442,6 +20458,7 @@ create a character!):
     depending synergistically on both the rune element and recipient item.
 
     Hint:
+
     Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
     against which you can easily acquire the required resistance, for example
@@ -20494,6 +20511,7 @@ create a character!):
     10, 20 or 40).
 
     Hints:
+
     Mindcrafters have a powerful ranged attack spell they can use very early
     on, Psionic Blast. Look for it in the bookstore right away.
 
@@ -20595,6 +20613,8 @@ DEX, given for both, lightest possible weapon and startup weapon:
 
 Note: 'Light' weapon may refer to as low as 3.0 lb (varies depending on STR
       and DEX - any weapon that weighs at most 3.0 lb will definitely work).
+      Since axes and polearms don't have such light weapons, for most classes
+      their requirements to get 3 BpR are different and specifically mentioned.
 
 Class           STR     DEX     Light weapon    Startup weapon
 ------------------------------------------------------------------------
@@ -20606,9 +20626,12 @@ Warrior         17      18/10   2               1
                 18/50   any     3               2
                 18/70..110 any  3-4             2-3 (depends on weapon)
                 18/80   18/10   3-4             3   (depends on weapon)
-                and for spears (no special treatment, just weight related):
-                18/40   18/10   3
-                18/70   10      3
+
+                for axes, the cleaver is lightest at 4.0 lbs:
+                18/40   10      3
+                for polearms, the sickle is ligthest at 5.0 lbs:
+                18/50   10      3
+
                 note: there are more break points, too many to include all,
                 mainly at STR 18/10, 18/20, 18/50, 18/60 and at DEX 18/10.
 
@@ -20624,8 +20647,11 @@ Rogue           15      18/10   2               2
 
 Mimic           similar to priest, also:
                 18/30   18/10   3               2
-                and for polearms (spears):
-                18/70   10      3
+
+                for axes, the cleaver is lightest at 4.0 lbs:
+                18/40   10      3
+                for polearms, the sickle is ligthest at 5.0 lbs:
+                18/50   10      3
 
 Archer          -
 
@@ -20634,32 +20660,47 @@ Paladin         18/10   10      2               1
                 18/30   10      3               2
                 18/20   18/10   3               2
 
+                for axes, the cleaver is lightest at 4.0 lbs:
+                18/40   10      3
+                for polearms, the sickle is ligthest at 5.0 lbs:
+                18/50   10      3
+
 Ranger          similar to priest, also:
                 18/50   10      3               2-3 (depends on weapon)
                 18/30   18/10   3               2-3 (depends on weapon)
 
-Adventurer      similar to paladin, also:
-                18/30   18/10   3               2-3 (depends on weapon)
+                for polearms, the sickle is ligthest at 5.0 lbs:
+                18/70   10      3
+
+Adventurer      similar to ranger.
 
 Druid           -
 
-Shaman          similar to priest
-Runemaster      similar to rogue
-Mindcrafter     similar to ranger
-Death Knight    same as paladin
-Hell Knight     same as paladin
-Corrupt.Priest  same as priest
+Shaman          similar to priest.
+
+Runemaster      similar to rogue.
+
+Mindcrafter     similar to ranger.
+
+Death Knight    same as paladin.
+
+Hell Knight     same as paladin.
+
+Corrupt.Priest  same as priest.
+
 
 So if you're playing a melee-oriented characer, make sure you start with at
 least 2 BpR (in some cases you might have to buy very light weapon and discard
 your starter weapon to achieve this)!
 
-If you think it's strange that 'Mimic fights similar to Priest' keep in mind
-that this is not about actual melee potential, but rather about some sort of
-'blows/round improvement curve' displayed by a class. If a class is busy
-studying other things in parallel (magic), its learning curve gets less steep.
-This, however, doesn't determine its final performance, which is actually
-given by the 'Max. base blows/round' shown further above, and other parameters.
+If you think it's strange that for example 'Mimic fights similar to Priest'
+keep in mind that this is not about actual melee potential, but rather about
+some sort of 'blows/round improvement curve' displayed by a class.
+If a class is busy studying other things in parallel (magic), its improvement
+curve gets less steep. :)
+This, however, doesn't determine its final melee performance, which is actually
+given by the 'Max. base blows/round' shown further above, and other parameters
+such as blocking/parrying effectiveness.
 
 
 (7.5b) Titles
