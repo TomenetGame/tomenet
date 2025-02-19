@@ -11427,8 +11427,8 @@ void kill_xorder(int Ind) {
 				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 5 + rand_int(2); break;
 				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 5 + rand_int(2); break;
 
-				case 8: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 2; break;
-				case 9: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 2; break;
+				case 8: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 1; break;
+				case 9: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 1; break;
 				case 10: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 1; break;
 
 				case 11: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL)); o_ptr->number = 4 + rand_int(2); break;
@@ -11472,8 +11472,8 @@ void kill_xorder(int Ind) {
 				case 2: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 16 + rand_int(3); break;
 				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 16 + rand_int(3); break;
 
-				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 5 + rand_int(2); break;
-				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 5 + rand_int(2); break;
+				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 3 + rand_int(2); break;
+				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 3; break;
 				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 2 + rand_int(2); break;
 
 				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)); o_ptr->number = 1 + rand_int(2); break;
@@ -11483,10 +11483,10 @@ void kill_xorder(int Ind) {
 				switch (rand_int(7)) {
 				case 0: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_CRITICAL)); o_ptr->number = 15 + rand_int(4); break;
 
-				case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_RESTORE_MANA)); o_ptr->number = 5 + rand_int(2); break;
-				case 2: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SPEED)); o_ptr->number = 4 + rand_int(2); break;
-				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEALING)); o_ptr->number = 4 + rand_int(2); break;
-				case 4: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_RESISTANCE)); o_ptr->number = 5 + rand_int(2); break;
+				case 1: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_RESTORE_MANA)); o_ptr->number = 3 + rand_int(2); break;
+				case 2: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SPEED)); o_ptr->number = 3 + rand_int(2); break;
+				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEALING)); o_ptr->number = 3 + rand_int(2); break;
+				case 4: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_RESISTANCE)); o_ptr->number = 3 + rand_int(2); break;
 
 				case 5: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_ENLIGHTENMENT)); o_ptr->number = 2; break;
 				case 6: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURING)); o_ptr->number = 1 + rand_int(2); break;
