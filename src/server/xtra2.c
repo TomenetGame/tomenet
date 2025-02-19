@@ -5098,7 +5098,7 @@ void check_experience(int Ind) {
 	disable_lowlevel_warnings(p_ptr);
 
 	/* Give helpful msg about how to distribute skill points at first level-up */
-	if (p_ptr->newbie_hints && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * SKILL_NB_BASE))) {
+	if (p_ptr->newbie_tips && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * SKILL_NB_BASE))) {
 	    // && p_ptr->inval) /* (p_ptr->warning_skills) */
 		msg_print(Ind, "\374\377GHINT: Press \377gSHIFT+g\377G to distribute your skill points!");
 	}
@@ -5567,7 +5567,7 @@ void check_experience(int Ind) {
 #endif
 
 #ifdef RESET_SKILL
-	if (old_lev < RESET_SKILL && p_ptr->lev == RESET_SKILL && p_ptr->newbie_hints) {
+	if (old_lev < RESET_SKILL && p_ptr->lev == RESET_SKILL && p_ptr->newbie_tips) {
 		msg_print(Ind, "\374\377GYou may utilize the grand 'Lose Memories' spells of 'The Mirror' in Lothlorien");
 		msg_print(Ind, "\374\377G to reset one skill of your choice -with a few exceptions- once, if you wish!");
 		msg_format(Ind, "\374\377G This is only possible now while you are exactly level %d! (See '/? lose mem'.)", RESET_SKILL);

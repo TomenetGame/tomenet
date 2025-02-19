@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. February 2025 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 19. February 2025 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -46,7 +46,7 @@ Contents
     (0.3)   Important inscriptions, Word of Recall
     (0.3a)  The auto-inscription feature
     (0.4)   Typical slang/abbreviations
-    (0.5)   Some hints and warnings (READ!)
+    (0.5)   Some tips and warnings (READ!)
 (1) Introduction
     (1.1)   What is TomeNET? (Where can I get the latest sources?)
     (1.1a)  Where do I get in contact?
@@ -217,7 +217,7 @@ Contents
     (8.3a)  When you are stuck
     (8.4)   Spoiler files
     (8.5)   Monster tactics
-    (8.6)   Town/dungeon related hints
+    (8.6)   Town/dungeon related tips
 (9) Miscellanous
     (9.1)   'The Art Not To Die'
     (9.1a)  The worst kind of help
@@ -1149,7 +1149,7 @@ CTRL+P  view previous messages.
         forwards).
         Press CTRL+K in here to copy the bottom-most line to the OS clipboard.
         On Linux/Mac OS X this requires 'xclip' to be installed.
-        Hint: Tapping CTRL+K twice will try to extract an URL from the bottom-
+        Tip: Tapping CTRL+K twice will try to extract an URL from the bottom-
         most line and copy that to the OS clipboard instead, if it finds one.
         Note that the search function here works in reverse from bottom to top.
 
@@ -3304,8 +3304,8 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 
 
-(0.5) Some hints and warnings (READ!)
--------------------------------------
+(0.5) Some tips and warnings (READ!)
+------------------------------------
 -To report a bug use the /bug command in the game. It allows you to type a line
  of text to explain the bug or problem you encountered. You can use the /bug
  command multiple times if one line is not sufficient for the amount of text
@@ -6402,7 +6402,7 @@ You can chat with other players using the ':' key. This way you can also enter
 certain commands like /fill to fill an empty bottle with water of a fountain.
 At the beginning, all players receive a parchment with their start-up
 equipment. It's the "Gazette". Press 'r' to read it. It may contain some notes
-about the server or hints for newbies.
+about the server or tips for newbies.
 
 
 (3.4c) Item basics
@@ -10112,8 +10112,8 @@ You can disarm your own traps to get back the trap kit (and ammunition).
 Make sure to check out the easy_disarm_montraps option or the /edmt command!
 
 
-Hints for quick and easy handling:
-----------------------------------
+Tips for quick and easy handling:
+---------------------------------
 It is a good idea to inscribe trap kits and their loads.
 For example you could inscribe all trapping-related items  !=  so you will pick
 them up from the floor automatically when you want to retrieve trap kits that
@@ -11280,7 +11280,7 @@ Here is a list of all available events:
     holy animals). The arena corners are safe zones and allow for spectating.
     Note that you cannot die or suffer various hazardous effects in the arena,
     you won't consume food and monsters cannot summon.
-    Hint: If you want to spice a monster up, try the /scream command while
+    Tip: If you want to spice a monster up, try the /scream command while
     it's in your line of sight.
     Inventory and equipment cannot be damaged/destroyed or disenchanted in this
     event, and you cannot get disarmed either.
@@ -11334,7 +11334,7 @@ Here is a list of all available events:
     It does not matter who the first or last is to find the exit, everyone who
     manages to get out, wins.
 
-    Hints:
+    Tips:
     -The Horned Reaper in this maze bashes doors instead of opening them.
     -If you stand still for a turn, you can 'run' over one adjacent floor grid
      as quickly as you can double-tap a movement key (maybe create a macro).
@@ -14931,7 +14931,7 @@ Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     world surface (meaning not in a dungeon/tower) while it's
                     day, the sun will burn them if they don't resist light or
                     wear a mummy wrapping.
-                    Hint: Polymorphing into a vampire bat may improve hit
+                    Tip: Polymorphing into a vampire bat may improve hit
                     point regeneration rate.
 
 Picklock            When equipped, improves your trap-disarming (and therefore
@@ -15552,7 +15552,7 @@ CURSED          can be broken by a regular 'remove curse'.
 HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
                 Item cannot be removed until the curse is broken.
                 On weapons, there is a high chance of resisting disarming.
-                See the hint regarding the use of enchant scrolls to break a
+                See the tip regarding the use of enchant scrolls to break a
                 heavy curse instead of using a *rc* scroll, written at the
                 bottom of this paragraph!
 PERMA_CURSE     This curse can never be broken.
@@ -16656,7 +16656,7 @@ DISBELIEVE      Monster has an anti-magic field, the strength depending on its
 
 DROP_GOOD       The monster usually drops enchanted items.
 DROP_GREAT      The monster usually drops items with ego powers or artifacts.
-                Hint: Usually monsters that have this flag are pretty powerful,
+                Tip: Usually monsters that have this flag are pretty powerful,
                 but there are actually some low-to-mid-level monsters that have
                 it too, so make sure to kill these when you see them:
                 Smeagol (level 3), Wormtongue (level 9), Robin Hood (level 10),
@@ -18778,13 +18778,13 @@ stated.
                                 (depending on your skill) to salvage a trap kit
                                 from any trap you disarm!
 
-                                Hint: Inscribe all your trapping components
-                                      '!=' for easy auto-pickup and make sure
-                                      to create macros so you can place a trap
-                                      by simply pressing a single button.
+                                Tip: Inscribe all your trapping components
+                                     '!=' for easy auto-pickup and make sure
+                                     to create macros so you can place a trap
+                                     by simply pressing a single button.
 
-                                      To reduce inventory space usage, go to
-                                      general store and buy a trap kit bag.
+                                     To reduce inventory space usage, go to
+                                     general store and buy a trap kit bag.
 
 +Health                         Increases your hit points by 2 for each point.
  (0.500)                        Note that this gain stacks with +LIFE items
@@ -19111,7 +19111,7 @@ in a matter of seconds and it will go off, so depending on the fuse length you
 might want to hurry up and get away.
 If you change your mind in time, you can try to disarm an armed charge before
 it goes boom, take care.
-See the table below about fuse lengths and note the hint about !F inscription.
+See the table below about fuse lengths and note the tip about !F inscription.
 
 An alternative method is to just throw the charge, which will auto-arm it.
 (Basically the same conditions as for activating a charge will apply.)
@@ -19606,7 +19606,7 @@ create a character!):
 
     (*) Multi-hued lineage can use specific breaths in the 'm' menu.
 
-    Hint:
+    Tip:
     Make sure to set your breath attack to a hotkey when you learn it.
 
 - Kobold
@@ -19737,7 +19737,7 @@ create a character!):
     As undead, Vampires gain a moderate skill bonus for 'Nether' runes but in
     turn find it extremely hard to improve in 'Light' runes.
 
-    Hint:
+    Tip:
     In case you lose your mummy wrapping and the general store doesn't have
     one in stock, you can order one there (press 'o' key in the store).
 
@@ -19808,7 +19808,7 @@ create a character!):
 
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
-    Hint:
+    Tip:
     Since all Maiar start with a point in 'Astral Knowledge' skill, you should
     buy a spell scroll of Power Bolt I right away from the bookstore, because
     you will already be able to use it.
@@ -19933,7 +19933,7 @@ create a character!):
     wounds and maybe also a macro for phase door scrolls until you reach a
     somewhat higher level.
 
-    Hints:
+    Tips:
 
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm),
     or Martial Arts if you don't want to use weapons, and always keep it
@@ -19986,7 +19986,7 @@ create a character!):
     These two schools, Shadow and Unlife, are not affected by Sorcery though,
     so they have to be trained additionally to any Sorcery skill.
 
-    Hint:
+    Tip:
     An istar has very few hit points compared to other classes, making
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
@@ -20016,7 +20016,7 @@ create a character!):
     at which they are able to notice curses almost instantly.
     Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
-    Hints:
+    Tips:
 
     Note that their spell Call Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
@@ -20087,7 +20087,7 @@ create a character!):
     similar cloaking or shadowing techniques employed by their opponents
     (monsters only).
 
-    Hints:
+    Tips:
 
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
@@ -20141,7 +20141,7 @@ create a character!):
     their advantage in hit points, ie the extra hit points they gain from such
     forms will diminish as they continue to rise to very high character levels.
 
-    Hints:
+    Tips:
 
     Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
@@ -20181,7 +20181,7 @@ create a character!):
     into your quiver. Magic ammunition always returns to you so you only need
     one, except if it gets destroyed by some elemental attack.
 
-    Hints:
+    Tips:
 
     Enchanting your ranged weapon to-damage is especially effective because
     the damage bonus will be multiplied by the weapons multiplier, eg (x3) for
@@ -20218,7 +20218,7 @@ create a character!):
     While they may train in all sorts of holy schools, they are slightly less
     adept at 'Holy Curing'.
 
-    Hints:
+    Tips:
 
     Note that the spell Call Light can be used to deal decent damage after it's
     been brought up a few levels. Orcs are said to fear it a lot.
@@ -20302,7 +20302,7 @@ create a character!):
     the ammunition  !=  to pick it up automatically from the floor by simply
     walking over it.
 
-    Hints:
+    Tips:
 
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
@@ -20329,7 +20329,7 @@ create a character!):
     and more distinct classes in one character, creating unusual mixtures of
     abilities.
 
-    Hint:
+    Tip:
 
     Adventurers are difficult to play for beginners because to fully utilize
     them you need to know exactly what you are trying to achieve and how you
@@ -20366,7 +20366,7 @@ create a character!):
     chat command, or press ~ followed by 2 and @.
     To see an overview of the forms and their abilities, see (7.7c).
 
-    Hints:
+    Tips:
 
     Druids have a powerful ranged area attack spell they can use very early
     on: Toxic Moisture, from Arcane Lore skill. Look for it in the bookstore!
@@ -20418,7 +20418,7 @@ create a character!):
     by shamans too and are not so useful to normal mimics. It also lists some
     humanoid forms in case you are training a weapon skill.
 
-    Hints:
+    Tips:
 
     Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
@@ -20457,7 +20457,7 @@ create a character!):
     instead used only to apply sigils to worn equipment, granting some boni
     depending synergistically on both the rune element and recipient item.
 
-    Hint:
+    Tip:
 
     Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
@@ -20510,7 +20510,7 @@ create a character!):
     (same as other characters get when they actually train 'Health' skill to
     10, 20 or 40).
 
-    Hints:
+    Tips:
 
     Mindcrafters have a powerful ranged attack spell they can use very early
     on, Psionic Blast. Look for it in the bookstore right away.
@@ -24217,8 +24217,8 @@ Example: /arr taeda         Moderate fire bolt, but 'in town only'.
 Example: /arr -             Disable any auto-retaliation with runes.
 
 
-Hints:
-------
+Tips:
+-----
 You can use the mkey * display to see a list of spell failure rates, or go
 through the macro wizard to display the specific attributes of any spell.
 Your abilities and status are included in the calculations.
@@ -26235,8 +26235,8 @@ spells - compare (4.12)).
 
 
 
-(8.6) Town/dungeon related hints
---------------------------------
+(8.6) Town/dungeon related tips
+-------------------------------
 -Before going as deep as 1000 ft (ie dungeon level 20) or deeper, make sure
  that you have 'free action' because many monsters will be able to try and
  paralyze you.

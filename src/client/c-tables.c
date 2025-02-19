@@ -187,8 +187,8 @@ cptr window_flag_desc[NR_OPTIONS_SHOWN] = {
 option_type option_info[OPT_MAX] = { // there is room for 22 options per page on the (non-bigmap) screen
 	{ &c_cfg.rogue_like_commands,	FALSE,	1,	0, 0, TRUE,
 	    "rogue_like_commands",	"Rogue-like keyset (for covering lack of a numpad)" },
-	{ &c_cfg.newbie_hints,		TRUE,	1,	0, 1, TRUE,
-	    "newbie_hints",		"Display hints/warnings for new players" },
+	{ &c_cfg.newbie_tips,		TRUE,	1,	0, 1, TRUE,
+	    "newbie_tips",		"Display tips/warnings for new players" },
 	{ &c_cfg.censor_swearing,	TRUE,	1,	0, 2, TRUE,
 	    "censor_swearing",		"Censor certain swear words in public messages" },
 

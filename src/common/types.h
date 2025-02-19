@@ -3506,7 +3506,7 @@ struct player_type {
 	bool player_list2;
 	bool auto_untag;
 	bool idle_starve_kick;
-	bool newbie_hints;
+	bool newbie_tips;
 	bool censor_swearing;
 	bool warn_unique_credit;
 	bool uniques_alive;
@@ -4724,7 +4724,7 @@ typedef struct client_opts client_opts;
 struct client_opts {
     //page 1
 	bool rogue_like_commands; //0
-	bool newbie_hints;
+	bool newbie_tips;
 	bool censor_swearing;
 	bool hilite_chat;
 	bool hibeep_chat;

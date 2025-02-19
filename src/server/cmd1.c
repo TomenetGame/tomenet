@@ -3053,7 +3053,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 						msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
 #if 0 /* Maybe spammy/unnecessary */
 #ifdef SI_WRAPPING_SKILL
-					if (o_ptr->sval == SV_SI_MDEVP_WRAPPING && p_ptr->newbie_hints && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL)
+					if (o_ptr->sval == SV_SI_MDEVP_WRAPPING && p_ptr->newbie_tips && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL)
 						msg_format(Ind, "\377yYou need %d in 'Magic Device' or 'Trapping' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
 #endif
 #endif
@@ -6353,7 +6353,7 @@ void py_bash_py(int Ind, int y, int x) {
 		stop_shooting_till_kill(Ind2);
 		disturb(Ind, 1, 0);
 		disturb(Ind2, 1, 0);
-		/* Grid effects/hints */
+		/* Grid effects/tips */
 		moved_player(Ind2, q_ptr, zcave, p_ptr->px, p_ptr->py);
 		moved_player(Ind, p_ptr, zcave, q_ptr->px, q_ptr->py);
 
@@ -7474,7 +7474,7 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 				s_printf("warning_staircase_iddc: %s\n", p_ptr->name);
 				p_ptr->warning_staircase_iddc = 1;
 			}
-			/* Give a special hint for the Halls of Mandos, so DED_IDDC people aren't nervous they got the wrong dungeon aka "did I turn off the stove?" */
+			/* Give a special tip for the Halls of Mandos, so DED_IDDC people aren't nervous they got the wrong dungeon aka "did I turn off the stove?" */
 			else if (!p_ptr->warning_staircase_mandos && hallsofmandos_wpos_x == p_ptr->wpos.wx && hallsofmandos_wpos_y == p_ptr->wpos.wy
 			    && ((hallsofmandos_wpos_z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
 			    (hallsofmandos_wpos_z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
@@ -8133,7 +8133,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						s_printf("warning_tunnel: %s\n", p_ptr->name);
 						p_ptr->warning_tunnel = 1;
 					}
-				/* Treasure - just for the 'warning' hint */
+				/* Treasure - just for the 'warning' tip */
 				} else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
 					msg_print(Ind, "You feel a wall blocking your way.");
 					*w_ptr |= CAVE_MARK;
@@ -8227,7 +8227,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 							p_ptr->warning_tunnel = 1;
 						}
 					}
-					/* Treasure - just for the 'warning' hint */
+					/* Treasure - just for the 'warning' tip */
 					else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
 						msg_print(Ind, "There is a wall blocking your way.");
 						//msg_print(Ind, "There is a wall with valuable minerals blocking your way.");

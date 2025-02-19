@@ -2938,7 +2938,7 @@ static void do_bard_skill(int Ind)
 /* Disable various warnings, if the player chose a class that isn't affected primarily: */
 void disable_specific_warnings(player_type *p_ptr) {
 	/* disable ALL warnings? (client-side option) */
-	if (!p_ptr->newbie_hints) {
+	if (!p_ptr->newbie_tips) {
 		p_ptr->warning_bpr = 1;
 		p_ptr->warning_bpr2 = 1;
 		p_ptr->warning_bpr3 = 1;
@@ -3115,7 +3115,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_cloak = 1;
 
 #ifdef RPG_SERVER
-	/* No need for WoR hints in an all-Ironman environment */
+	/* No need for WoR tips in an all-Ironman environment */
 	p_ptr->warning_wor = 1;
 	p_ptr->warning_wor2 = 1;
 #endif
@@ -3435,7 +3435,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		/* hack: if he's in town, get him pseudo tree-passing */
 		if (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
 
-		p_ptr->newbie_hints = TRUE;
+		p_ptr->newbie_tips = TRUE;
 		disable_specific_warnings(p_ptr);
 
 		/* Fix old draconians that have a lineage with a multi-breath element and don't have the switch-skill yet */
@@ -3831,7 +3831,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* Prepare newbie-aiding warnings that ought to occur only
 	   once (not necessarily implemented like that atm) - C. Blue */
-	p_ptr->newbie_hints = TRUE;
+	p_ptr->newbie_tips = TRUE;
 	disable_specific_warnings(p_ptr);
 
 	/* No active quests */

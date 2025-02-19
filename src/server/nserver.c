@@ -2417,14 +2417,14 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->warn_unique_credit = options[1];
 
 		if (is_older_than(&p_ptr->version, 4, 4, 8, 2, 0, 0))
-			p_ptr->newbie_hints = TRUE;
+			p_ptr->newbie_tips = TRUE;
 		else {
-			tmp = p_ptr->newbie_hints;
-			p_ptr->newbie_hints = options[3];
+			tmp = p_ptr->newbie_tips;
+			p_ptr->newbie_tips = options[3];
 
-			/* disable some or all newbie hints */
-			if (!p_ptr->newbie_hints) disable_specific_warnings(p_ptr);
-			else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
+			/* disable some or all newbie tips */
+			if (!p_ptr->newbie_tips) disable_specific_warnings(p_ptr);
+			else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie tips requires you to exit and log in again.");
 		}
 
 		p_ptr->use_old_target = options[4];
@@ -2648,11 +2648,11 @@ static void sync_options(int Ind, bool *options) {
 		//page 1
 
 		p_ptr->rogue_like_commands = options[0];
-		tmp = p_ptr->newbie_hints;
-		p_ptr->newbie_hints = options[1];
-		/* disable some or all newbie hints */
-		if (!p_ptr->newbie_hints) disable_specific_warnings(p_ptr);
-		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
+		tmp = p_ptr->newbie_tips;
+		p_ptr->newbie_tips = options[1];
+		/* disable some or all newbie tips */
+		if (!p_ptr->newbie_tips) disable_specific_warnings(p_ptr);
+		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie tips requires you to exit and log in again.");
 		p_ptr->censor_swearing = options[2];
 
 		p_ptr->page_on_privmsg = options[5];
@@ -3861,14 +3861,14 @@ static int Handle_login(int ind) {
 
 	if (p_ptr->IDDC_logscum) msg_print(NumPlayers, "\377RThis floor has become stale, take a staircase to move on!");
 
-	/* some one-time hints and other stuff after char creation in player_birth() */
+	/* some one-time tips and other stuff after char creation in player_birth() */
 	if (p_ptr->newly_created) {
 		p_ptr->newly_created = FALSE;
 
 		/* Newly created chars are frozen for a moment, kind of annoying and feels wrong. Remedy: */
 		if (p_ptr->energy <= level_speed(&p_ptr->wpos)) p_ptr->energy = level_speed(&p_ptr->wpos) - 1;
 
-		/* hints */
+		/* tips */
 		newly_created_msg = TRUE;
 		if (p_ptr->mode & MODE_PVP) {
 			msg_print(NumPlayers, "\377yType \"/pvp\" into chat to enter the pvp arena, and again to leave it.");
@@ -14298,7 +14298,7 @@ static int Receive_options(int ind) {
 		/* Messages that require options to be synched */
 		if ((connp->state & CONN_PLAYING) && !p_ptr->initial_options_sync) {
 			p_ptr->initial_options_sync = TRUE;
-			if (p_ptr->newbie_hints && !is_admin(p_ptr)) {
+			if (p_ptr->newbie_tips && !is_admin(p_ptr)) {
 				if (p_ptr->max_plv <= 10 && p_ptr->ghost) {
 					msg_format(NumPlayers, "\377yYou died some time ago, so you are a ghost right now!");
 					msg_format(NumPlayers, "\377yYou may go to the temple (4) to revive, or press 'Q' to erase your character.");
