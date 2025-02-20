@@ -1318,7 +1318,7 @@ static int repair_cost(int k_idx, int to_x) {
 /* Repair an item (no enchantment!) */
 /* Don't allow repairing if item is damaged more than this, to prevent money-cheezing by uncursing heavily negative items: */
 #define REPAIR_ITEM_EXPLOIT_LIMIT -5
-static bool repair_item(int Ind, int i, bool iac) {
+static bool repair_item(int Ind, int i, bool iac, u16b flags) {
 	player_type *p_ptr = Players[Ind];
 
 	int minenchant, cost;
@@ -1336,6 +1336,19 @@ static bool repair_item(int Ind, int i, bool iac) {
 			if (is_weapon(o_ptr->tval)) msg_print(Ind, "'I only repair armour. For weapons go see the weaponsmith, next door.'");
 			else msg_print(Ind, "'That is not a piece of armour.'");
 			return(FALSE);
+		}
+
+		if (flags & BACT_F_TOGGLE_CLOAKS) {
+			/* Armour _except for_ cloaks */
+			if ((flags & BACT_F_ARMOUR) && o_ptr->tval == TV_CLOAK) {
+				msg_print(Ind, "'I repair armour but not cloaks, sorry. You should ask at the general store.'");
+				return(FALSE);
+			}
+			/* _Only_ cloaks */
+			else if (!(flags & BACT_F_ARMOUR) && o_ptr->tval != TV_CLOAK) {
+				msg_print(Ind, "'I only repair cloaks, sorry. For armour repairs please ask at the armoury.'");
+				return(FALSE);
+			}
 		}
 
 		if (o_ptr->tval == TV_SHIELD)
@@ -2846,10 +2859,10 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			break; }
 #endif
 		case BACT_REPAIR_WEAPON:
-			paid = repair_item(Ind, item, FALSE);
+			paid = repair_item(Ind, item, FALSE, 0x0);
 			break;
 		case BACT_REPAIR_ARMOUR:
-			paid = repair_item(Ind, item, TRUE);
+			paid = repair_item(Ind, item, TRUE, ba_ptr->flags);
 			break;
 		case BACT_HIGHEST_LEVELS:
 			view_highest_levels(Ind);

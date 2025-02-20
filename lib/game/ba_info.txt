@@ -27,6 +27,17 @@
 # 16 = Only allow items that aren't identified yet
 # 128 = Hardcoded in client
 
+# Enchanting/repair services flags:
+# 256 = armour
+# 512 = armour except shields
+# 1024 = weapons
+# 2048 = no artifacts
+# 4096 = melee only
+# 8192 = trapkits
+
+# 16384 = toggle cloaks (repair service flag: general store vs armoury)
+
+
 # Version stamp (required)
 
 V:2.0.0
@@ -370,7 +381,7 @@ I:71:0:r:1026
 
 N:78:Repair armour
 C:0:0:0
-I:72:0:r:514
+I:72:0:r:17154
 
 N:79:The strongest known
 C:0:0:0
@@ -395,3 +406,7 @@ I:77:0:G:0
 N:84:Scrutinize item
 C:60:50:40
 I:78:0:r:18
+
+N:85:Repair cloak
+C:0:0:0
+I:72:0:r:16386
