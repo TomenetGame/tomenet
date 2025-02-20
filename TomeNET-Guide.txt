@@ -1804,7 +1804,7 @@ They all start with a slash '/' hence they're called slash commands:
             /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
             /mix 094*   -> mix those chemicals and self-activate the mixture.
             /mix 3      -> Self-activates a mixture inscribed '@C3'.
- Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:
+ Additional syntax, lower-case for alchemy satchel, upper-case for inventory:
   /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
             Example:  /mix accD*  -> mix chemicals from the satchel slot (a),
                                      two units from the satchel slot (c), one
@@ -1812,6 +1812,7 @@ They all start with a slash '/' hence they're called slash commands:
                                      self-activate the resulting mixture.
  Optional 'x<0-9>' parameter, must be first in line, repeats the whole process!
             Example:  /mix x5 bc9E*   -> performs the crafting attempt 5 times.
+ To find and mix chemicals you must have the 'Demolitionist' perk, see (7.2b).
 
 /monsters
 /mon [<monster character>] [<+minimum level>]
