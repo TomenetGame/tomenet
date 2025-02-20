@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 19. February 2025 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 20. February 2025 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -19076,39 +19076,101 @@ any town's alchemy shop.
 Use a grinding tool (also available at the alchemy shop) to grind items that
 you don't need anymore to easily obtain wood chips or reactive metal powder.
 
-By pressing 'A' to activate ingredients or mixtures you can combine them to
-create new ingredients or to create new mixtures. The order in which mixing is
-done is not important.
+By combining ingredients you obtain mixtures (or sometimes new ingredients)
+depending on the validity of the combination you chose.
 Mixtures are works in progress containing at least two different ingredients,
 that can be combined with further ingredients until you are satisfied with the
-combination. In that case you can activate the mixture and 'combine' it with
-itself (think of it as some kind of drying process maybe :-p) and if you used a
-valid combination of chemicals you will craft a type of blast charge from it!
+combination. A mixture based on a valid recipe can be finalized to yield a
+crafting result, mostly some type of blast charge, but there are other recipes
+too.
 
-A simpler way to create mixtures is to use the slash command "/mix":
+
+There are two ways to perform demolitionist alchemy. The results and recipes
+are the same, it's just about whether you prefer a lot of button pressing
+(which seems unlikely) or a single slash command to do the job instead:
+
+A) By pressing 'A' to activate ingredients or mixtures you can combine them to
+   create new ingredients or to create new mixtures. The order in which mixing
+   is done is not important. This is the old way that was implemented first,
+   and will entail either a lot of button 'A' pressing or creating macros to do
+   that for you.
+
+B) By using the slash command '/mix' which is much easier to handle.
+   This was added later as a quality-of-life way to craft faster, more easily
+   and more efficiently (as you can even craft whole stacks at once).
+
+
+Finalizing a mixture you deem finished, to obtain a craft result:
+
+A) If you don't use the '/mix' command but rely on 'A'ctivation instead, you
+   can activate a mixture you deem final and choose itself when prompted what
+   you want to 'combine' it with (think of it as some kind of drying process^^)
+   and if you used a valid combination of chemicals you will craft a type of
+   blast charge (or whatever the recipe entails) from it!
+
+B) If you use the '/mix' command, finalization (ie self-activation of the final
+   mixture) is done by specifying the '*' character. See below for examples.
+
+
+The simple way to create mixtures - using the slash command "/mix":
+This command has two different ways of specifying ingredients to mix.
+The clou is that you can actually combine both syntaxes as you wish!
+
+(1) With '@Cn' tags the items must be inscribed with, where the numbers 'n' on
+    the tags of the items are given to the /mix command.
+    While inscribing all the ingredients may seem tedious it is a safe way to
+    craft, as it will be independant on the inventory position of the items.
+
+(2) by specifying inventory slot letters instead of tag-numbers in the command,
+    with lower-case letters refering to items inside an Alchemy Satchel if you
+    have one, and upper-case letters refering to items in normal inventory.
+    This is a very fast way to craft things on the fly, but of course requires
+    you to pay attention which ingredient is in which inventory slot.
+
+Here are the two syntaxes in detail with examples:
+
+Syntax (1):
   /mix <tag numbers 'n' of chemicals inscribed '@Cn'> [<'*' to self-activate>]
-This command mixes chemicals and/or self-activate a mixture, which must all be
+This command mixes chemicals and/or self-activates a mixture, which must all be
 inscribed @C<n> where <n> is a numerical tag from 0 to 9.
 Examples:
   /mix 094       -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
   /mix 094*      -> mix those chemicals and self-activate the mixture.
   /mix 3         -> Self-activates a mixture inscribed '@C3'.
-Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:
+
+Syntax (2):
   /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
+Lower-case for alchemy satchel, upper-case for inventory:
 Example:
   /mix accD*     -> mix chemicals from the satchel slot (a), two units from the
                     satchel slot (c), one from normal inventory slot (d), and
                     finally self-activate the resulting mixture.
-Optional 'x<0-9>' parameter, must be first in line, repeats the whole process!
-Example:
+
+Last but not least, you can optionally specify a 'repeat' parameter in the
+beginning, denoted by an 'x' followed by the count. If you use it it must be
+the first thing in the mix command-line, before ingredients:
+ Optional 'x<0-9>' parameter, must be first in line, repeats the whole process!
+
+Here is an example that uses repeat and combines both syntaxes (1) and (2):
   /mix x5 bc9E*  -> performs the crafting attempt 5 times.
+Each craft will be combined from:
+ -an ingredient from alchemy satchel slot (b),
+ -an ingredient from alchemy satchel slot (c),
+ -an ingredient that is inscribed '@C9',
+ -and finally an ingredient from normal inventory slot (e).
+ -finally the resulting mixture is 'finalized' ie turned into a ready-to-use
+  craft result item - provided you got all the ingredients correct and it was
+  actually a valid combination, of course.
 
-A mixture that contains no valid combination of ingredients in the correct
-amounts is ruined and you can just discard it with 'k'.
 
-You then activate the blast charge to place and arm it. Its fuse will burn down
-in a matter of seconds and it will go off, so depending on the fuse length you
-might want to hurry up and get away.
+A mixture that contains no valid combination of the correct ingredients in the
+correct amounts is ruined and you can just discard it with 'k' (ie 'kill item'
+command key).
+
+If you successfully created a blast charge from the mixing and finalizing
+process, you then activate the charge to carefully place and arm it.
+Its fuse will automatically burn down in a matter of seconds and it will go
+off, so depending on the fuse length you might want to hurry up and get away.
 If you change your mind in time, you can try to disarm an armed charge before
 it goes boom, take care.
 See the table below about fuse lengths and note the tip about !F inscription.
