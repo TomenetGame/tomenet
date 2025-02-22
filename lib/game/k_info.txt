@@ -7471,8 +7471,8 @@ A:15/2:30/1
 F:EASY_KNOW
 D:Read to reveal a random world sector and notify of dungeons there.
 # Compare cmd6.c:
-D:To add a dungeon to the list of discovered ones however, one must
-D:travel there in person and spot the entrance with one's own eyes.
+D:To count a dungeon as discovered though, travel there in person
+D:and spot the entrance with your own eyes.
 
 # from RFEs
 N:915:& Scourge~
