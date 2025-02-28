@@ -2021,9 +2021,10 @@ void xhtml_screenshot(cptr name, byte redux) {
 		}
 	}
 
-#ifdef USE_X11
- #ifdef ENABLE_SHIFT_SPECIALKEYS
-	/* Hack: SHIFT+CTRL+T makes a real (PNG) screenshot instead, if imagemagick's 'import' is available. - C. Blue */
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+	/* Hack: SHIFT+CTRL+T makes a real (PNG) screenshot instead of an xhtml screenshot - C. Blue */
+ #if defined(USE_X11)
+	/* On X11, use ImageMagick's 'import' if available */
 	if (inkey_shift_special == 3 && x11_win_term_main) {
 		char buf2[1028];
 
@@ -2035,6 +2036,21 @@ void xhtml_screenshot(cptr name, byte redux) {
 			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
 			else silent_dump = FALSE;
 		} else c_msg_format("Error: Failed to call imagemagick's 'import'. ('%s')", buf2);
+		return;
+	}
+ #elif defined(WINDOWS)
+	/* On Windows, use the powershell w/ .NET framework if available */
+	if (inkey_shift_special == 3) {
+		char buf2[1028];
+
+		strcpy(buf2, buf);
+		buf2[strlen(buf2) - 5] = 0;
+		if (!system(format("Take-ScreenShot.ps1 -activewindow -file \"%spng\" -imagetype png", buf2))) {
+			strcpy(buf2, file_name);
+			buf2[strlen(buf2) - 5] = 0;
+			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
+			else silent_dump = FALSE;
+		} else c_msg_format("Error: Failed to call powershell script, make sure the MicroSoft .NET framework is installed. ('%s')", buf2);
 		return;
 	}
  #endif
