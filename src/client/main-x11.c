@@ -605,7 +605,7 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h, unsigned i
 	   Note that we assume that the first window initialized here is the main screen. */
 	if (x11_win_root == dad && !x11_win_term_main) {
 		/* We need this just for making screenshots later, so only set it differently
-		   from FALSE if we don't actually have the required screenshot tool: */
+		   from FALSE if we don't actually have the required screenshot tool (ImageMagick's "import"): */
 		if (!system("which import")) x11_win_term_main = xid;
 	}
 
