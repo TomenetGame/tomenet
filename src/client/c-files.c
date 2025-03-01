@@ -2050,7 +2050,15 @@ void xhtml_screenshot(cptr name, byte redux) {
 			buf2[strlen(buf2) - 5] = 0;
 			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
 			else silent_dump = FALSE;
-		} else c_msg_format("Error: Failed to call powershell script, make sure the MicroSoft .NET framework is installed. ('%s')", buf2);
+		} else {
+			c_msg_print("Error: Failed to call powershell/NET method. Trying batch script instead...");
+			if (!system(format("screenCapture.bat \"%spng\" \"\"", buf2))) {
+				strcpy(buf2, file_name);
+				buf2[strlen(buf2) - 5] = 0;
+				if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
+				else silent_dump = FALSE;
+			} else c_msg_format("Error: Failed to call batch script too. ('%s')", buf2);
+		}
 		return;
 	}
  #endif
