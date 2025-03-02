@@ -9256,6 +9256,9 @@ static void process_global_event(int ge_id) {
 							break;
 						}
 					}
+#ifdef DM_MODULES
+					s_printf("GE_DEBUG: sector000separation = %d, state[0] = %d, state[1] = %d\n", sector000separation, ge->state[0], ge->state[1]);
+#endif
 				}
 			}
 
