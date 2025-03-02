@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 20. February 2025 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 2. March 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1187,11 +1187,12 @@ Q       lets your character commit suicide (use this to permanently delete a
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
 
-CTRL+T  take a screen shot. See /screenshot command below.
+CTRL+T  take a screenshot. See /screenshot command below.
 SHIFT+CTRL+T
-        X11 client only: Takes a screen shot in PNG format. This function
-        requires the package 'imagemagick' to be installed, as it utilizes
-        its 'import' command.
+        Takes a screenshot in PNG format. To work properly, this requires:
+        A) On Linux/OSX clients the package 'imagemagick' to be installed, as
+           it utilizes its 'import' command.
+        B) On Windows clients the .NET framework to be installed.
 
 TAB or CTRL+I
         displays lag-o-meter.
@@ -1894,10 +1895,13 @@ They all start with a slash '/' hence they're called slash commands:
                 members. So it's a party-internal BBS.
                 To read its contents, type /pbbs without any <text>.
 
-/png        Client-side command that invokes creation of a PNG screenshot from
+/cvpng      Client-side command that invokes creation of a PNG screenshot from
             a previously taken xhtml screenshot, same as if the user pressed
             the '~' key while already inside the knowledge menu ('~' too), ie
             double-tapping the '~' key.
+            This utilizes an installed Firefox or Chrome or Chromium webbrowser
+            to render the PNG file from the xhtml file. If you have installed
+            none of these then this command will not work.
 
 /pkill
 /pk         Toggles the player's status regarding participation in 'PK' actions
@@ -2012,15 +2016,34 @@ They all start with a slash '/' hence they're called slash commands:
             same name on that account.
             (Same as IRC command ?seen.)
 
-/screenshot  or  /screenshot <filename>
-/shot       Takes a screen shot to a html file. If <filename> is omitted, it
-            writes to 'screenshot?????.xhtml' by default, where ????? are
-            increasing numbers. You may also use CTRL+T.
-            You can view those xhtml files in most webbrowsers.
-            Also see /png command for how to convert screenshots to PNG format.
+/screenshot [<filename>]
+/shot       Takes a screenshot to a html file. If <filename> is omitted, it
+            writes to 'screenshot?????.xhtml' by default, where "?????" are
+            either increasing numbers or the current date and time if you have
+            the option 'screenshot_format' enabled.
+            You can also press CTRL+T to take a screenshot, which is exactly
+            the same thing as using this slash command.
 
-            On X11 clients you can directly screenshot PNG files if you have
-            the package imagemagick installed, see SHIFT+CTRL+T hotkey.
+            You can view those xhtml files in most webbrowsers.
+            Also see /cvpng command for how to convert the last taken xhtml
+            screenshot to a PNG format image file.
+
+/screenshotpng [<filename>]
+/shotpng
+            Takes a screenshot as PNG image file. If <filename> is omitted, it
+            writes to 'screenshot?????.png' by default, where "?????" are
+            either increasing numbers or the current date and time if you have
+            the option 'screenshot_format' enabled.
+            You can also press CTRL+SHIFT+T to take a screenshot, which is
+            exactly the same thing as using this slash command.
+
+            This requires you to have installed...
+             A) for Linux/OSX clients the package 'imagemagick', specifically
+                the 'import' command contained in this package.
+             B) for Windows clients the .NET framework.
+
+            The screenshots are saved to the "lib/user" folder on POSIX clients
+            (Linux/OSX) and to the "tomenet-user" folder on Windows clients.
 
 /shuffle    See further up, above /deal command.
 
@@ -3527,10 +3550,12 @@ Players who defeat Morgoth, become 'winners' and get the title of King and
 Queen respectively, or Emperor/Empress if their character is of unworldly or
 hellish mode. A player must be at least level 40 to get credit for this.
 
-When you win the game, an automatic chardump is generated in /lib/user called
-'<charname>-victory.txt' (see (9.2)) which you can view with any text editor.
-Also, a screenshot is made automatically, displaying your situation, saved
-to '<charname>-victory-screenshot.xhtml'.
+When you win the game, an automatic chardump is generated in the "/lib/user"
+folder on Linux/OSX clients or the "tomenet-user" folder on Windows clients,
+called '<charname>-victory.txt' (see (9.2)) which you can view with any text
+editor.
+Also, a screenshot is made automatically in the same folder, displaying your
+situation, saved to '<charname>-victory-screenshot.xhtml'.
 (You can view xhtml files in most webbrowsers.)
 
 Winners (Kings, Queens, Emperors, Empresses) can still continue playing the
@@ -3890,7 +3915,10 @@ programs you can install on Windows:
   version): For installing/updating audio packs and opening URLs and folders
   from within the knowledge (~) menu.
 - 7-zip (www.7-zip.org): For installing or updating audio packs.
-- Firefox or Chrome or Chromium: For making PNG screenshots.
+- Firefox or Chrome or Chromium: For converting an xhtml screenshot taken to a
+  PNG image file.
+- Dot-net (.NET) framework for utilizing direct PNG screenshot capture via
+  the CTRL+SHIFT+T hotkey.
 
 Optional dependencies on Linux/Mac OS X:
 ----------------------------------------
@@ -6340,7 +6368,10 @@ just use it if you are unsure.
 
 A few generic commands are always available from within subinventory:
   - Chat (:).
-  - Screenshot (CTRL+T).
+  - Screenshot (CTRL+T for xhtml file, CTRL+SHIFT+T for PNG image file).
+    The xhtml files take up extremely little space and can be viewed in any
+    web browser. The screenshots are saved to the lib/user folder on POSIX
+    clients (Linux/OSX) and to the tomenet-user folder on Windows clients.
   - Inspect item (x).
   - Drop an item (d).
   - Destroy (kill) an item (k or CTRL+D).
@@ -26406,7 +26437,7 @@ it will be named Gandalf-victory.txt accordingly.
 Also, newer clients will automatically take an xhtml screenshot too when a
 char dump is made, of same name but with .xhtml ending. Those can be viewed
 in most webbrowsers. To manually take an xhtml-Screenshot at any time, press
-CTRL+T.
+CTRL+T. To take a PNG screenshot press CTRL+SHIFT+T.
 
 
 (9.2a) High Score

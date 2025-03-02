@@ -7757,6 +7757,9 @@ void cmd_message(void) {
 		if (prefix(buf, "/shot") || prefix(buf, "/screenshot")) {
 			char *space = strchr(buf, ' ');
 
+			/* Added PNG screenshots via external helpers - C. Blue */
+			if (prefix(buf, "/shotpng") || prefix(buf, "/screenshotpng")) inkey_shift_special = 3; //hax: Pretend we pressed CTRL+SHIFT+T
+
 			if (space && space[1]) {
 				/* Use given parameter as filename */
 				xhtml_screenshot(space + 1, FALSE);
@@ -8133,7 +8136,7 @@ void cmd_message(void) {
 			cmd_check_misc();
 			inkey_msg = FALSE;
 			return;
-		} else if (!strcasecmp(buf, "/png")) { /* Someone claimed that he doesn't have a '~' key ">_>.. */
+		} else if (!strcasecmp(buf, "/cvpng")) { /* Someone claimed that he doesn't have a '~' key ">_>.. */
 			(void)png_screenshot();
 			inkey_msg = FALSE;
 			return;
