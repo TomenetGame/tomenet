@@ -1929,7 +1929,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 		if (!c_cfg.screenshot_format) {
 			/* Replace '????' with a continuously increasing number */
- #ifdef WINDOWS
+#ifdef WINDOWS
 			/* Windows implementation */
 			WIN32_FIND_DATA findFileData;
 			HANDLE hFind;
@@ -1960,7 +1960,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 				FindClose(hFind);
 			}
- #else
+#else
 			/* UNIX implementation based on opendir */
 			DIR *dp;
 			struct dirent *entry;
@@ -1984,7 +1984,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 			}
 
 			closedir(dp);
- #endif
+#endif
 			/* Use the next number in the name */
 			strncpy(buf, name, x);
 			buf[x] = '\0';
@@ -2039,26 +2039,24 @@ void xhtml_screenshot(cptr name, byte redux) {
 		return;
 	}
  #elif defined(WINDOWS)
-	/* On Windows, use the powershell w/ .NET framework if available */
+	/* On Windows, use the .NET framework if available, via batch file */
 	if (inkey_shift_special == 3) {
 		char buf2[1028];
 
 		strcpy(buf2, buf);
 		buf2[strlen(buf2) - 5] = 0;
-		if (!system(format("Take-ScreenShot.ps1 -activewindow -file \"%spng\" -imagetype png", buf2))) {
+		if (!WinExec(format("screenCapture.bat \"%spng\" \"TomeNET\"", buf2), SW_HIDE)) {
 			strcpy(buf2, file_name);
 			buf2[strlen(buf2) - 5] = 0;
 			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
 			else silent_dump = FALSE;
-		} else {
-			c_msg_print("Error: Failed to call powershell/NET method. Trying batch script instead...");
-			if (!system(format("screenCapture.bat \"%spng\" \"\"", buf2))) {
-				strcpy(buf2, file_name);
-				buf2[strlen(buf2) - 5] = 0;
-				if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
-				else silent_dump = FALSE;
-			} else c_msg_format("Error: Failed to call batch script too. ('%s')", buf2);
-		}
+		} else c_msg_print("Error: Failed to use screenCapture.bat, make sure .NET framework is installed.");
+  #if 1
+		//if (!system(format("screenCapture.bat \"%spng\" \"\"", buf2))) {
+		WinExec("screenCapture.bat test-active.png \"\"", SW_HIDE);
+		WinExec("screenCapture.bat test-tomenet.png \"TomeNET\"", SW_HIDE);
+		WinExec("screenCapture.bat test-full.png", SW_HIDE);
+  #endif
 		return;
 	}
  #endif
