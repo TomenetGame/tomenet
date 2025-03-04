@@ -12015,17 +12015,19 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 /* Helper function for character birth: Equip starter items automatically. */
 void inven_carry_equip(int Ind, object_type *o_ptr) {
-	int item = inven_carry(Ind, o_ptr);
+	int item;
 
+	/* Inscribe basic spell for use with F1 predefined macro;
+	   assuming that noone receives more than 1 TV_BOOK item, so inscriptions won't collide. */
+	if (o_ptr->tval == TV_BOOK) o_ptr->note = quark_add("@m1");
+
+	/* First, put it into the inventory */
+	item = inven_carry(Ind, o_ptr);
+
+	/* If it cannot be equipped, we're done. Otherwise equip it. */
 	if (!wearable_p(o_ptr)) return;
 
-	if (!is_ammo(o_ptr->tval)) {
-		suppress_message = TRUE;
-		(void)do_cmd_wield(Ind, item, 0x0);
-		suppress_message = FALSE;
-		/* make the torch somewhat 'used' */
-		if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) Players[Ind]->inventory[INVEN_LITE].timeout -= rand_int(FUEL_TORCH / 10);
-	} else {
+	if (is_ammo(o_ptr->tval)) {
 		/* Don't put ammo into the quiver if it does't match an already equipped ranged weapon! */
 		if (Players[Ind]->inventory[INVEN_BOW].tval) {
 			switch (o_ptr->tval) { /* No need to check INVEN_BOW for tval actually */
@@ -12043,6 +12045,13 @@ void inven_carry_equip(int Ind, object_type *o_ptr) {
 		suppress_message = TRUE;
 		(void)do_cmd_wield(Ind, item, 0x0);
 		suppress_message = FALSE;
+	} else {
+		suppress_message = TRUE;
+		(void)do_cmd_wield(Ind, item, 0x0);
+		suppress_message = FALSE;
+
+		/* make torches somewhat 'used' */
+		if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) Players[Ind]->inventory[INVEN_LITE].timeout -= rand_int(FUEL_TORCH / 10);
 	}
 }
 
