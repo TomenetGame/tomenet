@@ -2045,18 +2045,15 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 		strcpy(buf2, buf);
 		buf2[strlen(buf2) - 5] = 0;
-		if (!WinExec(format("screenCapture.bat \"%spng\" \"TomeNET\"", buf2), SW_HIDE)) {
+		if ((x = WinExec(format("screenCapture.bat \"%spng\" \"\"", buf2), SW_HIDE)) > 31) {
+			//todo: catch .NET-missing-error from screenCapture.bat:
+			//c_msg_print("Error: Failed to use screenCapture.bat, make sure .NET framework is installed.");
+
 			strcpy(buf2, file_name);
 			buf2[strlen(buf2) - 5] = 0;
 			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
 			else silent_dump = FALSE;
-		} else c_msg_print("Error: Failed to use screenCapture.bat, make sure .NET framework is installed.");
-  #if 1
-		//if (!system(format("screenCapture.bat \"%spng\" \"\"", buf2))) {
-		WinExec("screenCapture.bat test-active.png \"\"", SW_HIDE);
-		WinExec("screenCapture.bat test-tomenet.png \"TomeNET\"", SW_HIDE);
-		WinExec("screenCapture.bat test-full.png", SW_HIDE);
-  #endif
+		} else c_msg_print("Error: Failed to call screenCapture.bat.");
 		return;
 	}
  #endif
