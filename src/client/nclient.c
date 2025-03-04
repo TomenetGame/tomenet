@@ -7911,8 +7911,9 @@ static void do_meta_pings(void) {
 
 			/* Don't show a console window */
 			si.wShowWindow = SW_HIDE;
-			si.dwFlags = STARTF_USESHOWWINDOW;
-			u32b dwCreationFlags = DETACHED_PROCESS | CREATE_NO_WINDOW; // DETACHED_PROCESS supposedly works specifically on Win98 to hide the window
+			//si.dwFlags = STARTF_USESHOWWINDOW; // causes flickering up of a popup shortly on WINE at leas
+			//u32b dwCreationFlags = DETACHED_PROCESS | CREATE_NO_WINDOW; // DETACHED_PROCESS supposedly works specifically on Win98 to hide the window
+			u32b dwCreationFlags = CREATE_NO_WINDOW; // DETACHED_PROCESS supposedly works specifically on Win98 to hide the window
 
 			/* Check for ping-wrap.exe's existance */
 			if (method == 1)
