@@ -10,16 +10,21 @@ for /r "%SystemRoot%\Microsoft.NET\Framework\" %%# in ("*csc.exe") do  set "csc=
 
 if not exist "%csc%" (
    echo no .net framework installed
+   echo 10 > screenCapture.err
    exit /b 10
 )
 
 if not exist "%~n0.exe" (
    call %csc% /nologo /r:"Microsoft.VisualBasic.dll" /out:"%~n0.exe" "%~dpsfnx0" || (
+      echo %errorlevel% > screenCapture.err
       exit /b %errorlevel% 
    )
 )
 %~n0.exe %*
-endlocal & exit /b %errorlevel%
+endlocal & (
+    echo %errorlevel% > screenCapture.err
+    exit /b %errorlevel%
+)
 
 */
 
