@@ -2045,15 +2045,29 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 		strcpy(buf2, buf);
 		buf2[strlen(buf2) - 5] = 0;
-		if ((x = WinExec(format("screenCapture.bat \"%spng\" \"\"", buf2), SW_HIDE)) > 31) {
-			//todo: catch .NET-missing-error from screenCapture.bat:
-			//c_msg_print("Error: Failed to use screenCapture.bat, make sure .NET framework is installed.");
+
+		remove("screenCapture.err");
+		if (WinExec(format("screenCapture.bat \"%spng\" \"\"", buf2), SW_HIDE) > 31) {
+			//this is an async process spawn, wait for it to complete
+			x = 0;
+			while (!my_fexists("screenCapture.err") && x < 40) { // paranoia: Time out if for some reason the bat never returns.
+				x++;
+				sync_sleep(50);
+			}
+			if (my_fexists("screenCapture.err")) {
+				//assume the error value in it was '10' which indicates no .NET framework, as it's unlikely any other error gets thrown =p
+				c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
+				return;
+			} else {
+				c_msg_print("Error: screenCapture.bat didn't return in time.");
+				return;
+			}
 
 			strcpy(buf2, file_name);
 			buf2[strlen(buf2) - 5] = 0;
 			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
 			else silent_dump = FALSE;
-		} else c_msg_print("Error: Failed to call screenCapture.bat.");
+		} else c_msg_format("Error: Failed to call screenCapture.bat (%lu).", GetLastError());
 		return;
 	}
  #endif
