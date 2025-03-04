@@ -7409,6 +7409,7 @@ Chain_Macro:
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "l) steal from shop more of the last interacted-with item     Z+\\wNN");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "m) display some extra information                            :/ex\\r");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "n) display in-game time (daylight is 6am-10pm)               :/time\\r");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "o) cast spell 'a)' from a book '@m1' (w/ or w/o target)      \\e)*tm@11\\r1a-");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -7429,7 +7430,7 @@ Chain_Macro:
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'p') {
+								if (choice < 'a' || choice > 'o') {
 									//i = -1;
 									continue;
 								}
@@ -7687,6 +7688,7 @@ Chain_Macro:
 							break; }
 						case 'm': strcpy(buf2, ":/ex\\r"); break;
 						case 'n': strcpy(buf2, ":/time\\r"); break;
+						case 'o': strcpy(buf2, "\\e)*tm@11\\r1a-"); break;
 						}
 
 						/* hack before we exit: remember menu choice 'common' */
