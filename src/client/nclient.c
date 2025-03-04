@@ -7909,14 +7909,19 @@ static void do_meta_pings(void) {
 			si.cb = sizeof(si);
 			ZeroMemory(&pi, sizeof(pi));
 
+			/* Don't show a console window */
+			si.wShowWindow = SW_HIDE;
+			si.dwFlags = STARTF_USESHOWWINDOW;
+			u32b dwCreationFlags = DETACHED_PROCESS | CREATE_NO_WINDOW; // DETACHED_PROCESS supposedly works specifically on Win98 to hide the window
+
 			/* Check for ping-wrap.exe's existance */
 			if (method == 1)
 				CreateProcess( NULL, format("ping-wrap.exe %s %s%s", meta_pings_server_name[i], path, meta_pings_xpath),
-				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+				    NULL, NULL, FALSE, dwCreationFlags, NULL, NULL, &si, &pi);
 			/* Fall back to cmd usage instead (causes terms to pop up once on start) */
 			else
 				CreateProcess( NULL, format("cmd.exe /c \"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path),
-				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+				    NULL, NULL, FALSE, dwCreationFlags, NULL, NULL, &si, &pi);
   #else /* replace the pipe '>' by manually setting a file handle for stdout/stderr of createprocess() */
     /* problem: the _ping_..server..tmp files are 0 B on a real Win 7 (works on Wine-Win7)...wtfff */
    #if 1 /* do we reset the handle on reading the result? then reopen it here again */
