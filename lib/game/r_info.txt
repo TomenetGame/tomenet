@@ -20450,7 +20450,7 @@ D:life! Showing no hesitation, empathy or doubt it attacked immediately!
 N:1154:Horned reaper
 G:U:B
 I:111:10d100:200:50:0
-W:72:0:7500:18000
+W:72:0:7500:3000
 E:1:1:2:2:1:2
 O:0:100:0:0
 B:HIT:HURT:11d11
