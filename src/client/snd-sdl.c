@@ -39,6 +39,9 @@
  #define JUKEBOX_INSTANT_PLAY
 #endif
 
+/* Show filename of currently selected song even if it's not actively playing? */
+#define JUKEBOX_SELECTED_FILENAME
+
 /* Smooth dynamic weather volume change depending on amount of particles,
    instead of just on/off depending on particle count window? */
 //#define WEATHER_VOL_PARTICLES  -- not yet that cool
@@ -3628,6 +3631,38 @@ void do_cmd_options_sfx_sdl(void) {
 #endif
 		}
 
+#ifdef JUKEBOX_SELECTED_FILENAME /* Show currently selected music event's first song's filename */
+		Term_putstr(0, 2, -1, TERM_WHITE, " File:                                                                          ");
+		if (samples[j_sel].config) {
+			path_p = samples[j_sel].paths[0];
+			if (path_p) {
+				path_p = path_p + strlen(path_p) - 1;
+				while (path_p > samples[j_sel].paths[0] && *(path_p - 1) != '/') path_p--;
+				Term_putstr(7, 2, -1, TERM_UMBER, format("%s", path_p));
+			} else Term_putstr(7, 2, -1, TERM_L_DARK, "%"); //paranoia
+		}
+		else Term_putstr(7, 2, -1, TERM_L_DARK, "-");
+#endif
+		/* Specialty for big_map: Display list of all subsamples below the normal jukebox stuff */
+		if (screen_hgt == MAX_SCREEN_HGT && samples[j_sel].config) {
+			int s, offs = 24, showmax = MAX_WINDOW_HGT - offs - 2;
+
+			clear_from(offs);
+			for (s = 0; s < MAX_SONGS; s++) {
+				path_p = samples[j_sel].paths[s];
+				if (!path_p) break;
+				if (s >= showmax) continue;
+				path_p = path_p + strlen(path_p) - 1;
+				while (path_p > samples[j_sel].paths[s] && *(path_p - 1) != '/') path_p--;
+				if (sound_cur == j_sel && sound_cur_wav == s)
+					Term_putstr(7 - 4, offs + 1 + s, -1, TERM_YELLOW, format("%2d. %s", s + 1, path_p));
+				else
+					Term_putstr(7 - 4, offs + 1 + s, -1, TERM_UMBER, format("%2d. %s", s + 1, path_p));
+			}
+			if (s >= showmax) Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, format("... and %d more...", s - showmax));
+			Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected sound event:", showmax, s));
+		}
+
 		/* display static selector */
 		Term_putstr(horiz_offset + 1, vertikal_offset + list_size, -1, TERM_SELECTOR, ">>>");
 		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + list_size, -1, TERM_SELECTOR, "<<<");
@@ -4056,10 +4091,6 @@ void intshuffle(int *array, int size) {
 	}
 }
 #endif
-
-/* Show filename of currently selected song even if it's not actively playing? */
-#define JUKEBOX_SELECTED_FILENAME
-
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
