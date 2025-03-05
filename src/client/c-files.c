@@ -2046,15 +2046,15 @@ void xhtml_screenshot(cptr name, byte redux) {
 		strcpy(buf2, buf);
 		buf2[strlen(buf2) - 5] = 0;
 
-		remove("screenCapture.err");
+		remove("screenCapture.res");
 		if (WinExec(format("screenCapture.bat \"%spng\" \"\"", buf2), SW_HIDE) > 31) {
 			//this is an async process spawn, wait for it to complete
 			x = 0;
-			while (!my_fexists("screenCapture.err") && x < 40) { // paranoia: Time out if for some reason the bat never returns.
+			while (!my_fexists("screenCapture.res") && x < 40) { // paranoia: Time out if for some reason the bat never returns.
 				x++;
 				sync_sleep(50);
 			}
-			if (my_fexists("screenCapture.err")) {
+			if (my_fexists("screenCapture.res")) {
 				//assume the error value in it was '10' which indicates no .NET framework, as it's unlikely any other error gets thrown =p
 				c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
 				return;
