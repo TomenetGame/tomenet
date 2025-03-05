@@ -4056,6 +4056,10 @@ void intshuffle(int *array, int size) {
 	}
 }
 #endif
+
+/* Show filename of currently selected song even if it's not actively playing? */
+#define JUKEBOX_SELECTED_FILENAME
+
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
@@ -4148,15 +4152,6 @@ void do_cmd_options_mus_sdl(void) {
 		else if (jukebox_playing != -1) Term_putstr(67, 2, -1, TERM_WHITE, "\377yq\377B/\377w skip    "); //for new 'jukebox_subonly_play_all'
 		Term_putstr(0, 3, -1, TERM_WHITE, " File:                                                                          ");
 
-		if (music_cur != -1 && songs[music_cur].config) {
-			path_p = songs[music_cur].paths[music_cur_song];
-			if (path_p) {
-				path_p = path_p + strlen(path_p) - 1;
-				while (path_p > songs[music_cur].paths[music_cur_song] && *(path_p - 1) != '/') path_p--;
-				Term_putstr(7, 3, -1, songs[music_cur].initial[music_cur_song] ? TERM_ORANGE : TERM_YELLOW, format("%s", path_p)); //currently no different colour for songs[].disabled, consistent with 'Key' info
-			} else Term_putstr(7, 3, -1, TERM_L_DARK, "%"); //paranoia
-		} else Term_putstr(7, 3, -1, TERM_L_DARK, "-");
-
 		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
  #ifdef USER_VOLUME_MUS
@@ -4229,6 +4224,50 @@ void do_cmd_options_mus_sdl(void) {
 				Term_putstr(horiz_offset + 1 + 12 + 36 + 1 + 4, vertikal_offset + i + list_size - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
 			}
 #endif
+		}
+
+		/* Show currently playing music event's specific song's filename */
+		if (music_cur != -1 && songs[music_cur].config
+#ifdef JUKEBOX_SELECTED_FILENAME
+		    && music_cur == j_sel
+#endif
+		    ) {
+			path_p = songs[music_cur].paths[music_cur_song];
+			if (path_p) {
+				path_p = path_p + strlen(path_p) - 1;
+				while (path_p > songs[music_cur].paths[music_cur_song] && *(path_p - 1) != '/') path_p--;
+				Term_putstr(7, 3, -1, songs[music_cur].initial[music_cur_song] ? TERM_ORANGE : TERM_YELLOW, format("%s", path_p)); //currently no different colour for songs[].disabled, consistent with 'Key' info
+			} else Term_putstr(7, 3, -1, TERM_L_DARK, "%"); //paranoia
+		}
+#ifdef JUKEBOX_SELECTED_FILENAME /* Show currently selected music event's first song's filename */
+		else if (songs[j_sel].config) {
+			path_p = songs[j_sel].paths[0];
+			if (path_p) {
+				path_p = path_p + strlen(path_p) - 1;
+				while (path_p > songs[j_sel].paths[0] && *(path_p - 1) != '/') path_p--;
+				Term_putstr(7, 3, -1, songs[j_sel].initial[0] ? TERM_L_UMBER : TERM_UMBER, format("%s", path_p)); //currently no different colour for songs[].disabled, consistent with 'Key' info
+			} else Term_putstr(7, 3, -1, TERM_L_DARK, "%"); //paranoia
+		}
+#endif
+		else Term_putstr(7, 3, -1, TERM_L_DARK, "-");
+		/* Specialty for big_map: Display list of all subsongs below the normal jukebox stuff */
+		if (screen_hgt == MAX_SCREEN_HGT && songs[j_sel].config) {
+			int s, offs = 25, showmax = MAX_WINDOW_HGT - offs - 2;
+
+			clear_from(offs);
+			for (s = 0; s < MAX_SONGS; s++) {
+				path_p = songs[j_sel].paths[s];
+				if (!path_p) break;
+				if (s >= showmax) continue;
+				path_p = path_p + strlen(path_p) - 1;
+				while (path_p > songs[j_sel].paths[s] && *(path_p - 1) != '/') path_p--;
+				if (music_cur == j_sel && music_cur_song == s)
+					Term_putstr(7 - 4, offs + 1 + s, -1, songs[j_sel].initial[s] ? TERM_ORANGE : TERM_YELLOW, format("%2d. %s", s + 1, path_p)); //currently no different colour for songs[].disabled, consistent with 'Key' info
+				else
+					Term_putstr(7 - 4, offs + 1 + s, -1, songs[j_sel].initial[s] ? TERM_L_UMBER : TERM_UMBER, format("%2d. %s", s + 1, path_p)); //currently no different colour for songs[].disabled, consistent with 'Key' info
+			}
+			if (s >= showmax) Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, format("... and %d more...", s - showmax));
+			Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected music event:", showmax, s));
 		}
 
 		/* display static selector */
