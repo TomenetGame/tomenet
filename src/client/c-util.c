@@ -5326,7 +5326,7 @@ void interact_macros(void) {
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yG\377w/\377yC\377w/\377yB\377w/\377yU\377w/\377yX\377w) Forget global.prf / <character>.prf / both / most / all");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yt\377w/\377yi\377w) Test a key for an existing macro / list all currently defined macros");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yw\377w) Switch the macro(s) of two keys");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yw\377w) Swap the macro(s) of two keys");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ua\377s) Enter a new macro action manually. Afterwards..");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uh\377s) ..create a hybrid macro     (usually preferable over command/normal)");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) ..create a command macro    (most compatible, eg for using / and * key)");
@@ -5764,7 +5764,7 @@ void interact_macros(void) {
 			int mi1, mi2;
 			char mpat1[1024], mpat2[1024];
 
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Switch macro(s) of two keys");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Swap macro(s) of two keys");
 
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "Press first key: ");
 			mpat1[0] = 0;
@@ -5790,7 +5790,7 @@ void interact_macros(void) {
 			else if (mi2 == macro__num)
 				c_msg_format("Moving %s macro from first key to second key.", !macro__act[mi1][0] ? "empty" : (macro__hyb[mi1] ? "hybrid" : (macro__cmd[mi1] ? "command" : "normal")));
 			else
-				c_msg_format("Switching macros of first key (%s) and second key (%s).",
+				c_msg_format("Swapping macros of first key (%s) and second key (%s).",
 				    !macro__act[mi1][0] ? "empty" : (macro__hyb[mi1] ? "hybrid" : (macro__cmd[mi1] ? "command" : "normal")),
 				    !macro__act[mi2][0] ? "empty" : (macro__hyb[mi2] ? "hybrid" : (macro__cmd[mi2] ? "command" : "normal")));
 
