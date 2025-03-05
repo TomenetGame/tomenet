@@ -13207,6 +13207,7 @@ static int Receive_search_mode(int ind) {
 		return(n);
 	}
 
+#if 1 /* Toggling it on costs energy? */
 	if (p_ptr && (
 	    p_ptr->searching || /* Turning it off again doesn't require energy */
 	    p_ptr->energy >= level_speed(&p_ptr->wpos))) {
@@ -13218,6 +13219,9 @@ static int Receive_search_mode(int ind) {
 		Packet_printf(&connp->q, "%c", ch);
 		return(0);
 	}
+#else /* Never costs energy -> spammable -> screen refresh info each time can clog the connection potentially, similar to CTRL+R spam */
+	if (p_ptr) do_cmd_toggle_search(player);
+#endif
 
 	return(1);
 }
