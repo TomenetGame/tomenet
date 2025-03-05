@@ -2057,6 +2057,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 			if (my_fexists("screenCapture.res")) {
 				//assume the error value in it was '10' which indicates no .NET framework, as it's unlikely any other error gets thrown =p
 				c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
+				remove("screenCapture.res");
 				return;
 			} else {
 				c_msg_print("Error: screenCapture.bat didn't return in time.");
