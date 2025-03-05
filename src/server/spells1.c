@@ -4932,9 +4932,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Secret / Locked doors are found and unlocked */
-		else if ((c_ptr->feat == FEAT_SECRET) ||
-		    ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
-		    (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))) {
+		else if (c_ptr->feat == FEAT_SECRET ||
+		    (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01 &&
+		    c_ptr->feat <= FEAT_DOOR_HEAD + 0x07)) {
 			/* Notice */
 			if (!quiet && (*w_ptr & CAVE_MARK)) {
 				msg_print(Ind, "Click!");
@@ -4970,8 +4970,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		bool door = FALSE;
 
 		/* Destroy all visible traps and open doors */
-		if ((c_ptr->feat == FEAT_OPEN) ||
-		    (c_ptr->feat == FEAT_BROKEN)) {
+		if (c_ptr->feat == FEAT_OPEN ||
+		    c_ptr->feat == FEAT_BROKEN) {
 			door = TRUE;
 
 			/* Hack -- special message */
@@ -4999,8 +4999,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Destroy all closed doors */
-		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
+		if ((c_ptr->feat >= FEAT_DOOR_HEAD &&
+		    c_ptr->feat <= FEAT_DOOR_TAIL)
+		    || c_ptr->feat == FEAT_SECRET) {
 			door = TRUE;
 
 			/* Hack -- special message */
@@ -5090,8 +5091,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Destroy all visible traps and open doors */
-		if ((c_ptr->feat == FEAT_OPEN) ||
-		    (c_ptr->feat == FEAT_BROKEN)) {
+		if (c_ptr->feat == FEAT_OPEN ||
+		    c_ptr->feat == FEAT_BROKEN) {
 			/* Hack -- special message */
 			if (!quiet && (*w_ptr & CAVE_MARK)) {
 				msg_print(Ind, "There is a bright flash of light!");
@@ -5117,8 +5118,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Destroy all closed doors */
-		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
+		if ((c_ptr->feat >= FEAT_DOOR_HEAD &&
+		    c_ptr->feat <= FEAT_DOOR_TAIL)
+		    || c_ptr->feat == FEAT_SECRET) {
 			/* Hack -- special message */
 			if (!quiet && (*w_ptr & CAVE_MARK)) {
 				msg_print(Ind, "There is a bright flash of light!");
