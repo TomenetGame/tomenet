@@ -4458,7 +4458,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You have cleared the spider web.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				if (!quiet_borer) sound(Ind, "miss", NULL, SFX_TYPE_NO_OVERLAP, TRUE); //'swiping' sfx^^
 #endif
 			}
 		}
@@ -4468,7 +4468,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You try to clear the spider web.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				if (!quiet_borer) sound(Ind, "miss", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				*more = TRUE;
 			}
