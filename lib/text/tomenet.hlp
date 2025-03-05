@@ -37,4 +37,4 @@ u   Use staff   T Tunnel (dig)   _ Sip from fountain or show item on the floor
 v   Throw       V Cloak          ? Help/Guide      SPACE  Stop auto-repeating
 \{Bw   Wear/Wield\{w  W Wear/Wield 2   \{s; Guide search    [  Repeat chat command
 x   Swap        z Zap rod        \{sX Swap equipable items inscribed @x0
-\{s,   Reply to private chat    F1/F2 Fire ranged weapon/Cast at closest monster
+\{s,   Private reply    F1/(SHIFT+)F2 Fire ranged weapon/Cast at closest monster

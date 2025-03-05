@@ -12019,10 +12019,11 @@ void inven_carry_equip(int Ind, object_type *o_ptr) {
 	int item;
 
 	/* Inscribe basic spell for use with F1 predefined macro;
-	   Maiar can receive more than 1 TV_BOOK item as they are granted a Power Bolt scroll racially,
-	   so for them ignore other books to avoid collision of multiple @m1 inscriptions. */
-	if (o_ptr->tval == TV_BOOK &&
-	    (p_ptr->prace != RACE_MAIA || o_ptr->pval == __lua_POWERBOLT)) o_ptr->note = quark_add("@m1");
+	   Maiar can receive more than 1 TV_BOOK item as they are granted a Power Bolt scroll racially. */
+	if (o_ptr->tval == TV_BOOK) {
+		if (p_ptr->prace != RACE_MAIA || o_ptr->pval == __lua_POWERBOLT) o_ptr->note = quark_add("@m1");
+		else o_ptr->note = quark_add("@m2"); // Maia of a class that receives a spell too
+	}
 
 	/* First, put it into the inventory */
 	item = inven_carry(Ind, o_ptr);

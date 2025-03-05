@@ -308,9 +308,12 @@ P:^_N_FF9A\r
 A:\e)*tf-
 H:^__FFBE\r
 
-# 4.9.3: Standard spellcast macro for any starter spells we get on birth.
+# 4.9.3: Standard spellcast macro for any starter spells we get on birth, 1st spell on F2, 2nd (Maiar only) on SHIFT+F2.
 A:\e)*tm@11\r1a-
 H:^__FFBF\r
+
+A:\e)*tm@11\r2a-
+H:^_S_FFBF\r
 
 
 # Added for 4.8.1: Standard quaff/read macros + an universal targetting-enabled macro
