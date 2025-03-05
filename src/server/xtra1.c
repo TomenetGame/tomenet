@@ -9226,6 +9226,7 @@ static void process_global_event(int ge_id) {
 					if (ge->getype == GE_ADVENTURE && ge->state[1] == 2) {
 						ge->state[1] = 1;
 						announce_global_event(ge_id);
+						return; // do NOT start the event yet, as we regressed into signup/announcement-phase
 					} else
 #endif
 					ge->getype = GE_NONE;
