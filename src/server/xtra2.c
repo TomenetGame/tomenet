@@ -6320,9 +6320,13 @@ bool monster_death(int Ind, int m_idx) {
 		apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 		drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
-		invcopy(qq_ptr, lookup_kind(TV_POLEARM, SV_SCYTHE_OF_SLICING));
-		qq_ptr->number = 1;
-		apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+		i = 20;
+		while (--i) {
+			invcopy(qq_ptr, lookup_kind(TV_POLEARM, SV_SCYTHE_OF_SLICING));
+			qq_ptr->number = 1;
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+			if (object_value_real(0, qq_ptr) >= 20000) break;
+		}
 		drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 	}
 
