@@ -1034,7 +1034,7 @@ B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
 F:BASH_DOOR | WILD_TOO | DROP_SKELETON | DROP_CORPSE |
 F:ANIMAL | MORTAL | BASEANGBAND
-D:A larger than normal feline, hissing loudly. Its velvet claws conceal a
+D:A larger than normal feline, hissing loudly. Its velvet paws conceal a
 D:fistful of needles.
 
 N:63:Smeagol
