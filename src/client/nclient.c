@@ -4714,7 +4714,7 @@ int Receive_store_special_anim(void) {
 #endif
 		}
 #ifdef USE_SOUND_2010
-		sound(casino_wheel_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+		//sound(casino_wheel_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
 #endif
 		Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
 		Term_putstr(DICE_X - 13 + 3 * anim2, DICE_Y + 4, -1, TERM_L_GREEN, "*");
