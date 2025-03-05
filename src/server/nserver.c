@@ -13207,7 +13207,7 @@ static int Receive_search_mode(int ind) {
 		return(n);
 	}
 
-#if 1 /* Toggling it on costs energy? */
+#if 0 /* Toggling it on costs energy? */
 	if (p_ptr && (
 	    p_ptr->searching || /* Turning it off again doesn't require energy */
 	    p_ptr->energy >= level_speed(&p_ptr->wpos))) {
