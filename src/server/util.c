@@ -4540,26 +4540,30 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			/* we can skip ahead */
 			offset = pos + strlen(swear[i].word);
 
+			/* If it's level 1, allow for chat but not for naming (eg foreign language words that are deemed inoffensive while used in the respective language) */
+			if (swear[i].level > 1) {
  #if 0
-			/* censor it! */
-			for (j = 0; j < eff_len); j++) {
-				line[cc[pos + j]] = buf[cc[pos + j]] = '*';
-				lcopy[pos + j] = '*';
-			}
+				/* censor it! */
+				for (j = 0; j < eff_len; j++) {
+					line[cc[pos + j]] = buf[cc[pos + j]] = '*';
+					lcopy[pos + j] = '*';
+				}
  #else
-			/* actually censor separator chars too, just so it looks better ;) */
-			for (j = 0; j < eff_len - 1; j++) {
-				for (k = cc[pos + j]; k <= cc[pos + j + 1]; k++)
-					line[k] = buf[k] = '*';
+				/* actually censor separator chars too, just so it looks better ;) */
+				for (j = 0; j < eff_len - 1; j++) {
+					for (k = cc[pos + j]; k <= cc[pos + j + 1]; k++)
+						line[k] = buf[k] = '*';
 
-				/* MUST be disabled or interferes with detection overlaps: */
-				/* for processing lcopy in a while loop instead of just 'if'
-				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
+					/* MUST be disabled or interferes with detection overlaps: */
+					/* for processing lcopy in a while loop instead of just 'if'
+					   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
+					//lcopy[pos + j] = '*';
+				}
+				/* see right above - MUST be disabled: */
 				//lcopy[pos + j] = '*';
-			}
-			/* see right above - MUST be disabled: */
-			//lcopy[pos + j] = '*';
  #endif
+			}
+
  #if 1 //for debugging only
 			if (!no_logging) s_printf("SWEARING: Matched '%s' (%d) <%s>\n", swear[i].word, swear[i].level, line);
  #endif
@@ -4962,6 +4966,40 @@ int handle_censor(char *message) {
 		if (tmp4[offset] == '*') line[offset] = '*';
  #endif
 
+	/* Translate working copy back into original message, reinserting its special characters (\372..\377) */
+	word = message;
+	c_p = line;
+	while (*word) {
+		/* discard all special markers */
+		if (*word >= '\373' && *word <= '\376') {
+			word++;
+			continue;
+		}
+
+		/* discard _valid_ colour codes */
+		if (*word == '\377' ||
+		/* unhack: hlore uses \372 marker at the beginning as replacemen for \377, kdiz uses it later on in the line */
+		    *word == '\372') {
+			switch (word[1]) {
+			case '\377':
+				*c_p = '{';
+				c_p++;
+				/* fall through */
+			case '-':
+			case '.':
+				word++;
+				break;
+			default:
+				/* if no valid colour code symbol, treat as normal character, else skip it too */
+				if (color_char_to_attr(word[1]) != -1) word++;
+			}
+		} else {
+			*word = *c_p;
+			c_p++;
+		}
+		word++;
+	}
+
 	/* return 'worst' result */
 	if (j > i) i = j;
 	if (im > i) i = im;
@@ -5061,7 +5099,7 @@ int handle_ml_censor(int Ind, char *line) {
 	   Plus, we can at least censor the final line */
 	strcpy(line, " ***"); //whatever, just start on a space in case this was a slash command, to ensure it still is processed as one, as intended.
 
-	return(cl + 1);
+	return(cl + 1); //increased punishment ^^'
 }
  #endif
 
@@ -5070,13 +5108,15 @@ void handle_punish(int Ind, int level) {
 	switch (level) {
 	case 0: //nothing to censor
 		break;
-	case 1: //censored, but no punishment for this
+	case 1: //not censored in chat, but censored in naming
 		break;
-	case 2: //light punishment: reminder
+	case 2: //censored, but no punishment for this
+		break;
+	case 3: //light punishment: reminder
 		msg_print(Ind, "Please do not swear.");
 		break;
 	default: //normal/heavy punishment: go to jail
-		imprison(Ind, (level - 2) * JAIL_SWEARING, "swearing");
+		imprison(Ind, (level - 3) * JAIL_SWEARING, "swearing");
 	}
 }
 #else

@@ -11400,7 +11400,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
-		if (handle_censor(str)) {
+		if (handle_censor(str) > 1) {
 			s_printf("RID_CONTACT_OWNER: censored <%s>.\n", str);
 			msg_print(Ind, "Bad note text, check your wording please.");
 			return;

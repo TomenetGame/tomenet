@@ -2733,7 +2733,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 	/* Since someone inscribed a piece of wood for shops subparly.. */
 	strcpy(tmp, inscription);
-	if (handle_censor(tmp)) {
+	if (handle_censor(tmp)) { // > 1 ?
 		s_printf("cmd_inscribe(): censored <%s>.\n", inscription);
 		msg_print(Ind, "Invalid inscription, check your wording please.");
 		return;

@@ -2886,7 +2886,7 @@ static void display_entry(int Ind, int pos) {
 				tmp2[strlen(tmp) / 2] = 0;
 				sprintf(o_name, "%35s%s", tmp2, tmp + strlen(tmp2));
  #endif
-				handle_censor(o_name);
+				handle_censor(o_name); // > 1 ?
 			} else
 
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES

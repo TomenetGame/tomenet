@@ -4970,7 +4970,7 @@ static int Receive_login(int ind) {
 #if 1			/* Check hostname too for swearing? */
 			strcpy(tmp_name_wide, connp->host);
 			if (handle_censor(tmp_name_wide)) {
-				Destroy_connection(ind, format("Your host name is '%s' which is deemed offensive. Please change it.", connp->host));
+				Destroy_connection(ind, format("Your hostname '%s' fails a filter check, please change it.", connp->host));
 				return(-1);
 			}
 #endif
