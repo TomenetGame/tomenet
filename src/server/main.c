@@ -264,7 +264,8 @@ int main(int argc, char *argv[]) {
 
 	/* Initialize the server log file */
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.log");
-
+	/* Make a backup of an existing file instead of just overwriting it */
+	fd_move(buf, format("%s.bak", buf));
 	/* Open the file */
 	s_setup(buf);
 
