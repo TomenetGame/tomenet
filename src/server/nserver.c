@@ -238,11 +238,12 @@ void get_date(int *weekday, int *day, int *month, int *year) {
 	*year = tmp->tm_year + 1900;
 }
 
-void add_banlist(char *account, char *ip_addy, char *hostname, int time, char *reason) {
+/* time = 0 will not add a ban; use time -1 for permanently. */
+int add_banlist(char *account, char *ip_addy, char *hostname, int time, char *reason) {
 	struct combo_ban *ptr;
 
-	if (!time) return;
-	if (!account && !ip_addy) return;
+	if (!time) return(1);
+	if (!account && !ip_addy) return(2);
 
 	ptr = NEW(struct combo_ban);
 	ptr->next = banlist;
@@ -250,6 +251,7 @@ void add_banlist(char *account, char *ip_addy, char *hostname, int time, char *r
 	ptr->time = time;
 	if (reason) strcpy(ptr->reason, reason);
 	else ptr->reason[0] = 0;
+
 	if (hostname) {
 		strncpy(ptr->hostname, hostname, MAX_CHARS);
 		ptr->hostname[MAX_CHARS - 1] = 0;
@@ -267,6 +269,7 @@ void add_banlist(char *account, char *ip_addy, char *hostname, int time, char *r
 	} else ptr->ip[0] = 0;
 
 	banlist = ptr;
+	return(0);
 }
 
 /*
@@ -276,8 +279,7 @@ void add_banlist(char *account, char *ip_addy, char *hostname, int time, char *r
 static void Init_receive(void) {
 	int i;
 
-	for (i = 0; i < 256; i++)
-	{
+	for (i = 0; i < 256; i++) {
 		login_receive[i] = Receive_undefined;
 		playing_receive[i] = Receive_undefined;
 		drain_receive[i] = Receive_undefined;

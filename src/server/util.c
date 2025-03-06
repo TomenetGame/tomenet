@@ -70,25 +70,39 @@ int stricmp(cptr a, cptr b) {
 
 int in_banlist(char *acc, char *addr, int *time, char *reason) {
 	struct combo_ban *ptr;
-	int found = 0x0;
+	int found = 0x0, time_longest = 0;
 
 	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next) {
 		if (ptr->ip[0] && addr && !strcmp(addr, ptr->ip)) found |= 0x1;
 		if (ptr->acc[0] && acc && !strcmp(acc, ptr->acc)) found |= 0x2;
 
-		if (reason) strcpy(reason, ptr->reason);
-		if (time) *time = ptr->time;
+		/* Of all applicable bans, return the one with the highest duration.
+		   If more than one of equally long duraation are found, return the last one in the list.
+		   time = -1 is the longest duration aka "permanently". */
+		if (ptr->time == -1 || (time_longest != -1 && time_longest < ptr->time)) {
+			/* Longer or at least same length ban found, use this new ban's duration */
+			if (time) *time = ptr->time;
+			if (reason) {
+				/* If a reason is given, overwrite the previous reason with this new ban's reason */
+				if (ptr->reason[0]) strcpy(reason, ptr->reason);
+				/* If NO reason is given, only clear the previous reason (if it existed) if the new duration is longer than the previous one,
+				   but keep the 'old' reason if they actually have the same duration. */
+				else if (reason[0] && (time_longest != ptr->time)) reason[0] = 0;
+			}
 
-		return(found);
+			/* Remember this as so far longest duration, and therefore prioritized, ban. */
+			time_longest = ptr->time;
+		}
 	}
-	return(0x0);
+	return(found);
 }
 
 void check_banlist() {
 	struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
+
 	ptr = banlist;
 	while (ptr != (struct combo_ban*)NULL) {
-		if (ptr->time) {
+		if (ptr->time > 0) { // -1 stands for 'permanent'
 			if (!(--ptr->time)) {
 				if (ptr->reason[0]) s_printf("Unbanning due to ban timeout (ban reason was '%s'):\n", ptr->reason);
 				else s_printf("Unbanning due to ban timeout:\n");

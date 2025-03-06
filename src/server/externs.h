@@ -80,7 +80,7 @@ extern int SGWSocket;
 extern void process_pending_commands(int Ind);
 extern bool player_is_king(int Ind);
 extern void end_mind(int Ind, bool update);
-extern void add_banlist(char *account, char *ip_addy, char *hostname, int time, char *reason);
+extern int add_banlist(char *account, char *ip_addy, char *hostname, int time, char *reason);
 extern void kick_ip(int Ind_kicker, char *ip_kickee, char *reason, bool msg);
 extern void kick_char(int Ind_kicker, int Ind_kickee, char *reason);
 extern connection_t **Conn;

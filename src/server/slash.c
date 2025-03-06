@@ -6632,6 +6632,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!tk) {
 					msg_print(Ind, "\377oUsage: /banip <IP address> [time [reason]]");
+					msg_print(Ind, "\377o       Time in minutes, -1 for permanently.");
 					return;
 				}
 
@@ -6646,7 +6647,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "Banning %s for %d minutes.", token[1], time);
 					s_printf("Banning %s for %d minutes.\n", token[1], time);
 				}
-				add_banlist(NULL, token[1], NULL, time, reason);
+				j = add_banlist(NULL, token[1], NULL, time, reason);
+				switch (j) {
+				case 1: msg_print(Ind, "Ban failed: Time must not be 0."); break;
+				case 2: msg_print(Ind, "Ban failed: Account name and IP given must not both be 0."); break;
+				}
 				kick_ip(Ind, token[1], kickmsg, TRUE);
 				return;
 			}
@@ -6667,6 +6672,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!tk) {
 					if (combo) msg_print(Ind, "\377oUsage: /bancombo <account name>:<IP address> [time [reason]]");
 					else msg_print(Ind, "\377oUsage: /ban <account name>[:time [reason]]");
+					msg_print(Ind, "\377o       Time in minutes, -1 for permanently.");
 					return;
 				}
 
@@ -6715,7 +6721,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 					}
 					/* ban! ^^ */
-					add_banlist(message3, ip_addr[0] ? ip_addr : NULL, hostname, time, NULL);
+					j = add_banlist(message3, ip_addr[0] ? ip_addr : NULL, hostname, time, NULL);
+					switch (j) {
+					case 1: msg_print(Ind, "Ban failed: Time must not be 0."); break;
+					case 2: msg_print(Ind, "Ban failed: Account name and IP given must not both be 0."); break;
+					}
 					return;
 				}
 
@@ -6827,7 +6837,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if (combo) kick_ip(Ind, ip_addr, kickmsg, !found);
 				/* ban! ^^ */
-				add_banlist(message3, combo ? ip_addr : NULL, hostname, time, reason);
+				j = add_banlist(message3, combo ? ip_addr : NULL, hostname, time, reason);
+				switch (j) {
+				case 1: msg_print(Ind, "Ban failed: Time must not be 0."); break;
+				case 2: msg_print(Ind, "Ban failed: Account name and IP given must not both be 0."); break;
+				}
 				return;
 			}
 			else if (prefix(messagelc, "/kickip")) {
