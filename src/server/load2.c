@@ -4796,10 +4796,10 @@ void load_banlist(void) {
 		}
 
 		/* ffff... scanf */
-		if (ptr->acc[0] == '\255' && ptr->acc[1] == 0) ptr->acc[0] = 0;
-		if (ptr->ip[0] == '\255' && ptr->ip[1] == 0) ptr->ip[0] = 0;
-		if (ptr->hostname[0] == '\255' && ptr->hostname[1] == 0) ptr->hostname[0] = 0;
-		if (ptr->reason[0] == '\255' && ptr->reason[1] == 0) ptr->reason[0] = 0;
+		if (ptr->acc[0] == '\377') ptr->acc[0] = 0;
+		if (ptr->ip[0] == '\377') ptr->ip[0] = 0;
+		if (ptr->hostname[0] == '\377') ptr->hostname[0] = 0;
+		if (ptr->reason[0] == '\377') ptr->reason[0] = 0;
 
 		s_printf("Read banlist entry %2d (%d fields): %s|%s|%s|%d|%s\n", n, r, ptr->acc, ptr->ip, ptr->hostname, ptr->time, ptr->reason);
 

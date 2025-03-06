@@ -3102,10 +3102,10 @@ void save_banlist(void) {
 
 	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next)
 		fprintf(fp, "%s|%s|%s|%d|%s\n",
-		    ptr->acc[0] ? ptr->acc : "\255",
-		    ptr->ip[0] ? ptr->ip : "\255",
-		    ptr->hostname[0] ? ptr->hostname : "\255",
-		    ptr->time, ptr->reason[0] ? ptr->reason : "\255"); /* omg fu fscanf^^ need a non-space as placeholder char, as spaces don't get read correctly if the 1st argument (accountname) is one */
+		    ptr->acc[0] ? ptr->acc : "\377",
+		    ptr->ip[0] ? ptr->ip : "\377",
+		    ptr->hostname[0] ? ptr->hostname : "\377",
+		    ptr->time, ptr->reason[0] ? ptr->reason : "\377"); /* omg fu fscanf^^ need a non-space as placeholder char, as spaces don't get read correctly if the 1st argument (accountname) is one */
 
 	fclose(fp);
 }
