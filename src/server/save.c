@@ -3087,6 +3087,9 @@ void wr_towns() {
 	}
 }
 
+/* Note that banlist order is reversed on every server startup,
+   as 'banlist' is processed from last to first element, but savefile data is written from top to bottom,
+   which will get loaded on next server startup as first to last element. */
 void save_banlist(void) {
 	char buf[1024];
 	FILE *fp;
@@ -3098,7 +3101,12 @@ void save_banlist(void) {
 	if (!fp) return;
 
 	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next)
-		fprintf(fp, "%s|%s|%s|%d|%s\n", ptr->acc[0] ? ptr->acc : " ", ptr->ip[0] ? ptr->ip : " ", ptr->hostname[0] ? ptr->hostname : " ", ptr->time, ptr->reason[0] ? ptr->reason : " "); /* omg fu scanf^^ */
+		fprintf(fp, "%s|%s|%s|%d|%s\n",
+		    ptr->acc[0] ? ptr->acc : "\255",
+		    ptr->ip[0] ? ptr->ip : "\255",
+		    ptr->hostname[0] ? ptr->hostname : "\255",
+		    ptr->time, ptr->reason[0] ? ptr->reason : "\255"); /* omg fu fscanf^^ need a non-space as placeholder char, as spaces don't get read correctly if the 1st argument (accountname) is one */
+
 	fclose(fp);
 }
 

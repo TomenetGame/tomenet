@@ -4775,31 +4775,40 @@ void load_banlist(void) {
 	char buf[1024];
 	FILE *fp;
 	struct combo_ban *ptr;
+	int r, n = 0;
 
 	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "banlist.txt");
 
 	fp = fopen(buf, "r");
 	if (!fp) return;
 
+	s_printf("Loading banlist.txt...");
 	do {
+		if (!n) s_printf("\n");
+
 		ptr = NEW(struct combo_ban);
 
-		if (fscanf(fp, "%[^|]|%[^|]|%[^|]|%d|%[^\n]\n", ptr->acc, ptr->ip, ptr->hostname, &ptr->time, ptr->reason) == EOF) {
-			s_printf("Reading banlist.txt: %s\n", strerror(ferror(fp)));
+		if ((r = fscanf(fp, "%[^|]|%[^|]|%[^|]|%d|%[^\n]\n", ptr->acc, ptr->ip, ptr->hostname, &ptr->time, ptr->reason)) == EOF || r < 5) {
+			s_printf("Error reading banlist.txt: (%d/%d) %s\n", r, EOF, strerror(ferror(fp)));
+			s_printf("Read banlist entry %2d (%d fields): %s|%s|%s|%d|%s\n", n, r, ptr->acc, ptr->ip, ptr->hostname, ptr->time, ptr->reason);
 			KILL(ptr, struct combo_ban);
 			break;
 		}
 
 		/* ffff... scanf */
-		if (ptr->acc[0] == ' ' && ptr->acc[1] == 0) ptr->acc[0] = 0;
-		if (ptr->ip[0] == ' ' && ptr->ip[1] == 0) ptr->ip[0] = 0;
-		if (ptr->hostname[0] == ' ' && ptr->hostname[1] == 0) ptr->hostname[0] = 0;
-		if (ptr->reason[0] == ' ' && ptr->reason[1] == 0) ptr->reason[0] = 0;
+		if (ptr->acc[0] == '\255' && ptr->acc[1] == 0) ptr->acc[0] = 0;
+		if (ptr->ip[0] == '\255' && ptr->ip[1] == 0) ptr->ip[0] = 0;
+		if (ptr->hostname[0] == '\255' && ptr->hostname[1] == 0) ptr->hostname[0] = 0;
+		if (ptr->reason[0] == '\255' && ptr->reason[1] == 0) ptr->reason[0] = 0;
+
+		s_printf("Read banlist entry %2d (%d fields): %s|%s|%s|%d|%s\n", n, r, ptr->acc, ptr->ip, ptr->hostname, ptr->time, ptr->reason);
 
 		ptr->next = banlist;
 		banlist = ptr;
-	} while (!feof(fp));
+		n++;
+	} while (!feof(fp) && n < 100); // Arbitrary limit of banlist entries
 	fclose(fp);
+	if (!n) s_printf("no entries.\n");
 }
 
 /* ---------- Load dynamic quest data.  ---------- */
