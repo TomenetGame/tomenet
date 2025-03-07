@@ -6317,6 +6317,11 @@ bool monster_death(int Ind, int m_idx) {
 
 		invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT));
 		qq_ptr->number = 1;
+#ifdef ACQUIREMENT_DISQUALIFYING_THEFT
+		qq_ptr->discount = 99; //workaround -> practically unsalable
+#else
+		qq_ptr->discount = 100;
+#endif
 		apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 		drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
