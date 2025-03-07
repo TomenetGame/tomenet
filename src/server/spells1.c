@@ -335,7 +335,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		radius = 3;
 		//dt = GF_DISINTEGRATE; /* GF_ROCKET;/* was GF_SHARDS */
 		dt = GF_DETONATION; /* GF_DETONATION like GF_ROCKET does partially DISI ;) - C. Blue */
-		dam = damroll(45, 25);
+		dam = damroll(30, 20);
 		aggravate_monsters_floorpos(wpos, y, x);
 		angry = TRUE;
 		ident = TRUE;
@@ -347,7 +347,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	case SV_POTION_DEATH:
 		//dt = GF_DEATH_RAY;	/* !! */	/* not implemented yet. */
 		dt = GF_NETHER_WEAK; /* special damage type solemnly for potion smash effect */
-		dam = damroll(30,30);
+		dam = damroll(25, 20);
 		angry = TRUE;
 		radius = 2;
 		ident = TRUE;
@@ -359,17 +359,17 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		break;
 	case SV_POTION_CURE_LIGHT:
 		dt = GF_OLD_HEAL;
-		dam = damroll(2,3);
+		dam = damroll(2, 3);
 		ident = TRUE;
 		break;
 	case SV_POTION_CURE_SERIOUS:
 		dt = GF_OLD_HEAL;
-		dam = damroll(4,3);
+		dam = damroll(4, 3);
 		ident = TRUE;
 		break;
 	case SV_POTION_CURE_CRITICAL:
 		dt = GF_OLD_HEAL;
-		dam = damroll(6,3);
+		dam = damroll(6, 3);
 		ident = TRUE;
 		break;
 	case SV_POTION_CURING:
@@ -379,31 +379,31 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		break;
 	case SV_POTION_HEALING:
 		dt = GF_OLD_HEAL;
-		dam = damroll(10,10);
+		dam = damroll(10, 10);
 		ident = TRUE;
 		break;
 	case SV_POTION_STAR_HEALING:
 		dt = GF_OLD_HEAL;
-		dam = damroll(30,20);
+		dam = damroll(30, 20);
 		radius = 1;
 		ident = TRUE;
 		break;
 	case SV_POTION_LIFE:
 		dt = GF_LIFEHEAL;
-		dam = damroll(30,20);
+		dam = damroll(30, 20);
 		radius = 1;
 		ident = TRUE;
 		break;
 #if 0 /* silly. people DRINK these */
 	case SV_POTION_RESTORE_MANA:   /* MANA */
 		dt = GF_MANA;
-		dam = damroll(8,10);
+		dam = damroll(8, 10);
 		radius = 1;
 		ident = TRUE;
 		break;
 	case SV_POTION_STAR_RESTORE_MANA:   /* MANA */
 		dt = GF_MANA;
-		dam = damroll(12,10);
+		dam = damroll(12, 10);
 		radius = 1;
 		ident = TRUE;
 		break;
