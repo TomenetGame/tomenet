@@ -4539,7 +4539,8 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 
 	if (dam) identify_mon_trap_load(who, o_ptr);
 
-	/* Trapping skill influences damage - C. Blue */
+	/* Trapping skill influences damage - C. Blue
+	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
 		if (perc) {
 			/* it's a percentage, don't go crazy */
@@ -4742,7 +4743,8 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 
 	identify_mon_trap_load(who, o_ptr);
 
-	/* Trapping skill influences damage - C. Blue */
+	/* Trapping skill influences damage - C. Blue
+	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
 		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3;
@@ -4981,7 +4983,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	}
 #endif
 
-	/* Trapping skill influences damage - C. Blue */
+	/* Trapping skill influences damage - C. Blue
+	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
 		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
@@ -5192,7 +5195,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 
 	identify_mon_trap_load(who, o_ptr);
 
-	/* Trapping skill influences damage - C. Blue */
+	/* Trapping skill influences damage - C. Blue
+	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
 		if (perc) {
 			/* it's a percentage, don't go crazy */
@@ -5481,11 +5485,12 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 #endif
 		}
 	}
-	else return(FALSE);
+	else return(FALSE); //paranoia
 
 	identify_mon_trap_load(who, o_ptr);
 
-	/* Trapping skill influences damage - C. Blue */
+	/* Trapping skill influences damage - C. Blue
+	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
 		dam *= (150 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
@@ -5522,7 +5527,8 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	dam = damroll(10, 20);
 	rad = 1;
 
-	/* Trapping skill influences damage - C. Blue */
+	/* Trapping skill influences damage - C. Blue
+	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
