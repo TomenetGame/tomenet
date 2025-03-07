@@ -29,6 +29,7 @@
  */
 #define MISSILE_TRAP_FACTOR 75
 
+
 static void ruin_chest(object_type *o_ptr);
 
 
@@ -4708,7 +4709,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		rad = 3;
 		break;
 	case SV_STAFF_HOLINESS:
-		typ = GF_DISP_EVIL;
+		typ = GF_DISP_UNDEAD_DEMON;
 		dam = 100;
 		rad = 3;
 		break;
@@ -4746,7 +4747,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	/* Trapping skill influences damage - C. Blue
 	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
-		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 20;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3;
 	}
 	/* ..and new, also radius (if any, and if not kind of stone-prison like effect (rad 1) - which is paranoia since we don't have that atm) */
@@ -4986,7 +4987,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	/* Trapping skill influences damage - C. Blue
 	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
-		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 25;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 	}
 
@@ -5148,13 +5149,13 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_WAND_DRAGON_FIRE:
 		typ = GF_FIRE;
-		dam = 200;
+		dam = 80;
 		rad = 3;
 		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_WAND_DRAGON_COLD:
 		typ = GF_COLD;
-		dam = 170;
+		dam = 80;
 		rad = 3;
 		flg &= ~(PROJECT_NODF);
 		break;
@@ -5166,7 +5167,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		case 4: typ = GF_COLD; break;
 		case 5: typ = GF_POIS; break;
 		}
-		dam = 250;
+		dam = 90;
 		rad = 3;
 		break;
 	case SV_WAND_TELEPORT_TO:
@@ -5175,7 +5176,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_WAND_ROCKETS:
 		typ = GF_ROCKET;
-		dam = 300;
+		dam = 100;
 		rad = 3;
 		flg &= ~(PROJECT_NODF);
 		break;
@@ -5203,8 +5204,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty / 10;
 		} else {
 			/* normal damage increase */
-			dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2); dam /= 50;
-			dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
+			dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 20;
+			dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 		}
 	}
 
@@ -5229,6 +5230,9 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
  * Monster hitting a potions trap -MWK-
  *
  * Return TRUE if the monster died
+ *
+ * Important: Damage should in most cases be higher than for just throwing the potion for potion_smash_effect()
+ *            at least at non-beginer Trapping skill, but mostly already at 1.000 so there is a noticable benefit right from the start - C. Blue
  */
 static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
@@ -5265,11 +5269,6 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			return(FALSE);
 
 		case SV_POTION_SALT_WATER:
-			/*if (!r_ptr->flags3 & RF3_NO_STUN) {
-				m_ptr->stunned += 5;
-				msg_print_near_monster(m_idx, "appears stunned");
-			}
-			return(FALSE);*/
 			typ = GF_BLIND;
 			dam = damroll(3, 2);
 			break;
@@ -5352,7 +5351,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		case SV_POTION_SLOWNESS:
 			rad = 2;
 			typ = GF_OLD_SLOW;
-			dam = damroll(4, 6);
+			dam = damroll(5, 10);
 			break;
 		case SV_POTION_POISON:
 			typ = GF_POIS;
@@ -5371,28 +5370,28 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		case SV_POTION_CONFUSION:
 			rad = 3;
 			typ = GF_CONFUSION;
-			dam = damroll(5, 4);
+			dam = damroll(10, 8);
 			break;
 		case SV_POTION_BLINDNESS:
 			rad = 3;
 			//typ = GF_DARK;
 			typ = GF_BLIND;
-			dam = 10;
+			dam = damroll(4, 5);
 			break;
 		case SV_POTION_SLEEP:
 			rad = 3;
 			typ = GF_OLD_SLEEP;
-			dam = damroll (4, 6);
+			dam = damroll (10, 8);
 			break;
 		case SV_POTION_LOSE_MEMORIES:
 			rad = 2;
 			typ = GF_OLD_CONF;
-			dam = damroll(10, 5);
+			dam = damroll(11, 10);
 			break;
 		case SV_POTION_DETONATIONS:
 			//typ = GF_DISINTEGRATE;
 			typ = GF_DETONATION;
-			dam = damroll(40, 20);
+			dam = damroll(30, 20); //seems 'low' but that's only at Trapping 1.000 as it gets greatly increased with trapping skill further down
 			rad = 3;
 #ifdef USE_SOUND_2010
 			/* sound only if we can see the trap detonate */
@@ -5401,10 +5400,10 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			}
 #endif
 			break;
-		case SV_POTION_DEATH:
+		case SV_POTION_DEATH: // In fumes shape, death potions have higher efficiency compared to deto pots than for potion_smash_effect() :)
 			rad = 3;
 			typ = GF_NETHER_WEAK;
-			dam = damroll(60, 20);
+			dam = damroll(35, 25); //seems 'low' but that's only at Trapping 1.000 as it gets greatly increased with trapping skill further down
 			break;
 		case SV_POTION_BOLDNESS:
 			/*if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
@@ -5465,6 +5464,20 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			dam = damroll(30, 20);
 			rad = 3;
 			break;
+#if 0 /* could break charm/silence ;) pft, not for now */
+		case SV_POTION_RESTORE_MANA:   /* MANA */
+			dt = GF_MANA;
+			dam = damroll(8, 10);
+			radius = 1;
+			ident = TRUE;
+			break;
+		case SV_POTION_STAR_RESTORE_MANA:   /* MANA */
+			dt = GF_MANA;
+			dam = damroll(12, 10);
+			radius = 1;
+			ident = TRUE;
+			break;
+#endif
 		default:
 			return(FALSE);
 		}
@@ -5492,7 +5505,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	/* Trapping skill influences damage - C. Blue
 	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
 	if (!fixed) {
-		dam *= (150 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+		dam *= (25 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 25;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
 	}
 
@@ -5529,7 +5542,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 
 	/* Trapping skill influences damage - C. Blue
 	   Note that this damage will usually be capped at MAGICAL_CAP [1600] (after which resistances etc of the target are applied). */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
+	dam *= (25 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 25;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
 #ifdef USE_SOUND_2010
