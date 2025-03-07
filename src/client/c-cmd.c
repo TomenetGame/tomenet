@@ -9748,12 +9748,12 @@ static void cmd_master_aux_summon(void) {
 			/* X here */
 			case '1':
 				buf[0] = 'x';
-				buf[1] = c_get_quantity("Summon how many? ", 127, -1);
+				buf[1] = c_get_quantity("Summon how many? ", 1, -1);
 				break;
 			/* X in different places */
 			case '2':
 				buf[0] = 'X';
-				buf[1] = c_get_quantity("Summon how many? ", 127, -1);
+				buf[1] = c_get_quantity("Summon how many? ", 1, -1);
 				break;
 			/* Group here */
 			case '3':
