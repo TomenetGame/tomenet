@@ -1,12 +1,11 @@
 function get_speed()
 	local spd
 
---  22->35skill+10, 19->39skill+10, 17->42skill+10
-	spd = get_level(Ind, QUICKFEET, 17)
-	if spd > 10 then
-		spd = 10
+	spd = (get_level(Ind, QUICKFEET, 100) + 4) / 3
+	if spd > 20 then
+		spd = 20
 	end
-	return spd
+	return(spd / 2)
 end
 
 -- The original 'healing cloud' for priests (which never happened)
@@ -80,7 +79,7 @@ QUICKFEET = add_spell {
 	["name2"] = 	"Quick",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
-	["level"] = 	13,
+	["level"] = 	16,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	-10,
@@ -91,7 +90,7 @@ QUICKFEET = add_spell {
 			fire_ball(Ind, GF_SPEED_PLAYER, 0, get_speed() * 2, 2, "")
 			end,
 	["info"] = 	function()
-			return "dur " .. (30 + get_level(Ind, QUICKFEET, 30)) .. "+d10 speed +" .. get_speed()
+			return("dur " .. (30 + get_level(Ind, QUICKFEET, 30)) .. "+d10 speed +" .. get_speed())
 			end,
 	["desc"] = 	{ "Quicken your steps and those around you. (Auto-projecting)", }
 }

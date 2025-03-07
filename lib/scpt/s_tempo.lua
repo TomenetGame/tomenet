@@ -85,7 +85,7 @@ ESSENSESPEED = add_spell {
 	["spell"] = 	function()
 			local s
 
-			s = get_level(Ind, ESSENSESPEED, 17)
+			s = (get_level(Ind, ESSENSESPEED, 50) + 2) / 3
 			if s > 12 then s = get_level(Ind, ESSENSESPEED, 14)
 			elseif s > 10 then s = 10
 			end
@@ -96,7 +96,7 @@ ESSENSESPEED = add_spell {
 	["info"] = 	function()
 			local s
 
-			s = get_level(Ind, ESSENSESPEED, 17)
+			s = (get_level(Ind, ESSENSESPEED, 50) + 2) / 3
 			if s > 12 then s = get_level(Ind, ESSENSESPEED, 14)
 			elseif s > 10 then s = 10
 			end

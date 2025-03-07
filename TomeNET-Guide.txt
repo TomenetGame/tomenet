@@ -23622,9 +23622,6 @@ All Unlife spells are Wisdom-based.)
                     Lv 35: Cures black breath!                 (auto-project)
                     Required skill level for first spell level: 3.
 
-    Quickfeet       Temporarily boosts your speed.             (auto-project)
-                    Required skill level for first spell level: 13.
-
     Extra Growth    Increases your attributes temporarily and also grants HP
                     regeneration (same as for example an amulet of regeneration
                     so the effect doesn't stack).
@@ -23635,6 +23632,9 @@ All Unlife spells are Wisdom-based.)
                     Tier II: Level 25.
                     Also increases constitution.
                     Lv 11: Also increases intelligence.
+
+    Quickfeet       Temporarily boosts your speed.             (auto-project)
+                    Required skill level for first spell level: 16.
 
     Forest's Embrace
                     Creates a cloud around you which heals everyone including
@@ -23735,13 +23735,13 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Attunement / Mental Intrusion.
 
-    Accelerate Nerves
-                    Speeds you up.
+    Telepathy       Senses the minds of creatures.
                     Required skill level for first spell level: 20.
                     This spell can be used even while blind.
 
-    Telepathy       Senses the minds of creatures.
-                    Required skill level for first spell level: 20.
+    Accelerate Nerves
+                    Speeds you up.
+                    Required skill level for first spell level: 22.
                     This spell can be used even while blind.
 
     Stabilize Thoughts

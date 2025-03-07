@@ -56,12 +56,12 @@ MHASTE = add_spell {
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["blind"] = 	0,
-	["level"] = 	20,
+	["level"] = 	22,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
 	["fail"] = 	1,
 	["spell"] = 	function()
-			local spd = get_level(Ind, MHASTE, 25)
+			local spd = (get_level(Ind, MHASTE, 50) + 1) / 2
 
 			if spd > 10 then
 				spd = 10
@@ -69,7 +69,7 @@ MHASTE = add_spell {
 			set_fast(Ind, 30 + randint(10) + get_level(Ind, MHASTE, 17), spd)
 			end,
 	["info"] = 	function()
-			local spd = get_level(Ind, MHASTE, 25)
+			local spd = (get_level(Ind, MHASTE, 50) + 1) / 2
 
 			if spd > 10 then
 				spd = 10
