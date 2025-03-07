@@ -4221,8 +4221,84 @@ bool ask_for_bigmap_generic(void) {
 	Term_putstr(8, 6, -1, TERM_YELLOW, "This game uses letters, numbers and symbols for 'graphics'.");
 	Term_putstr(8, 8, -1, TERM_YELLOW, "But if you prefer a true graphical representation, after logging");
 	Term_putstr(8, 9, -1, TERM_YELLOW, "in, press  \377o=  g\377y  and then  \377ov\377y  to enable a graphical tileset!");
+	Term_putstr(8, 11, -1, TERM_YELLOW, "<Press any key to continue>");
 	ch = inkey();
 
 	Term_clear();
 	return ok;
+}
+
+static void PTerm_putstr(int x, int y, int maxlen_dummy, int attr_dummy, cptr str) {
+	int i;
+	static int y_last = 9999;
+	char str2[MSG_LEN], *str2_p = str2;
+	cptr str_p = str;
+
+	/* strip colours */
+	while (*str_p) {
+		if (*str_p == '\377') {
+			str_p += 2;
+			continue;
+		}
+		*str2_p = *str_p;
+		str_p++;
+		str2_p++;
+	}
+	*str2_p = 0;
+
+	/* Try to emulate x,y coordinates on plain terminal somewhat... */
+
+	if (y > y_last) for (i = 1; i < y - y_last; i++) printf("\n");
+	y_last = y;
+
+	for (i = 0; i < x; i++) printf(" ");
+
+	printf("%s\n", str2);
+}
+static void PTerm_clear(void) {
+	printf("\n\n");
+}
+static int Pinkey(void) {
+	return(getchar()); //note: waits for ENTER as terminal is line-buffered in default mode (use termios etc maybe to change)
+}
+void ask_for_graphics_generic(void) {
+	int ch;
+
+	PTerm_clear();
+	PTerm_putstr(8, 3, -1, TERM_YELLOW, "This game originally uses letters, numbers and symbols for 'graphics'.");
+	PTerm_putstr(8, 4, -1, TERM_YELLOW, "But if you prefer a true graphical representation, after logging");
+	PTerm_putstr(8, 5, -1, TERM_YELLOW, "in, press  \377o=  g\377y  and then  \377ov\377y  to enable a graphical tileset!");
+
+	//PTerm_putstr(8, 6, -1, TERM_YELLOW, "In terminal/commandline mode, graphics are not available though.");
+
+#ifdef USE_GRAPHICS
+	/* If server is older than 4.8.1, then it doesn't support 32bit characters, so turn off graphics if turned on. */
+	if (use_graphics == UG_NONE) {
+ #if 0 /* we're not yet connected to a server, as not even the visual module is initialized at this point */
+		if (is_older_than(&server_version, 4, 8, 1, 0, 0, 0)) {
+			Term_putstr(8, 7, -1, TERM_YELLOW, "The server you connected to doesn't support graphics though,");
+			Term_putstr(8, 8, -1, TERM_YELLOW, "so for now graphics are turned off and ASCII characters are used.");
+			Term_putstr(8, 10, -1, TERM_YELLOW, "<Press any key to continue>");
+			(void)Pinkey();
+		} else
+ #endif
+		{
+			PTerm_putstr(8, 7, -1, TERM_YELLOW, "If you want to enable graphics immediately right now, press '\377Gy\377y'.");
+			PTerm_putstr(8, 8, -1, TERM_YELLOW, "To continue with original ASCII (text symbol) representation, press '\377rn\377y'.");
+			PTerm_putstr(8, 9, -1, TERM_YELLOW, "(You can switch/disable that later anytime in-game by pressing \377o= g\377y.)");
+			while (TRUE) {
+				ch = Pinkey();
+				if (ch == 'y' || ch == 'Y') {
+					use_graphics_new = use_graphics = UG_NORMAL;
+					break;
+				} else if (ch == 'n' || ch == 'N') break;
+			}
+		}
+	}
+#else
+	PTerm_putstr(8, 7, -1, TERM_YELLOW, "(Your client does not support graphics. Original ASCII will be used.)");
+	PTerm_putstr(8, 8, -1, TERM_YELLOW, "<Press any key to continue>");
+	(void)Pinkey();
+#endif
+	PTerm_clear();
 }

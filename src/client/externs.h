@@ -625,6 +625,7 @@ extern void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]
 extern void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool to_chat);
 extern bool check_dir2(cptr s);
 extern void init_guide(void);
+extern void ask_for_graphics_generic(void);
 
 /* c-inven.c */
 extern s16b index_to_label(int i);
