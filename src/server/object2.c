@@ -8380,7 +8380,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	}
 
 	forge.marked2 = removal_marker;
+#ifdef ACQUIREMENT_DISQUALIFYING_THEFT
 	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */
+#endif
 	drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 
 	/* for now ignore live-spawns. change that maybe? */

@@ -1306,6 +1306,9 @@
 /* Not allowed to steal on protected floor grids (Inns)? */
 #define PROTECTED_NO_STEALING
 
+/* Stolen acquirement/*acquirement* scrolls produce unsalable items (EXPERIMENTAL: Turned off for testing) */
+//#define ACQUIREMENT_DISQUALIFYING_THEFT
+
 /* Combine 'Money Belt' and 'Device of Theft Prevention' aka Backpack Safety Lock in one item? */
 #define TOOL_NOTHEFT_COMBO
 /* Tool's chance to prevent theft */
