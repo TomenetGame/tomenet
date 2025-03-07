@@ -8237,24 +8237,37 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/dinv")) { /* Delete one entry from list of new invalid account names that tried to log in meanwhile */
 				if (!tk || k < 0 || k >= MAX_LIST_INVALID) {
-					msg_format(Ind, "Usage: /dinv <list entry # [0..%d]>", MAX_LIST_INVALID - 1);
+					msg_format(Ind, "Usage: /dinv <list entry # [0..%d] | '*'>", MAX_LIST_INVALID - 1);
 					return;
 				}
-				if (!list_invalid_name[k][0]) {
-					msg_format(Ind, "Entry %d doesn't exist.", k);
-					return;
+				if (message3[0] == '*') {
+					/* Could just iterate backwards from MAX_LIST_INVALID right away, whatever */
+					for (i = 0; i < MAX_LIST_INVALID; i++)
+						if (!list_invalid_name[i][0]) break;
+					if (i) {
+						for (k = i - 1; k >= 0; k--) {
+							msg_format(Ind, "\377GDeleted entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
+							list_invalid_name[k][0] = 0;
+						}
+						msg_format(Ind, "Discarded %d new accounts.", i);
+					} else msg_print(Ind, "\377yThe new-invalid-list is empty.");
+				} else {
+					if (!list_invalid_name[k][0]) {
+						msg_format(Ind, "Entry %d doesn't exist.", k);
+						return;
+					}
+					msg_format(Ind, "Deleted entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
+					/* Remove and slide everyone else down by once, to maintain the sorted-by-date state */
+					while (k < MAX_LIST_INVALID - 1) {
+						if (!list_invalid_name[k][0]) break;
+						strcpy(list_invalid_name[k], list_invalid_name[k + 1]);
+						strcpy(list_invalid_host[k], list_invalid_host[k + 1]);
+						strcpy(list_invalid_addr[k], list_invalid_addr[k + 1]);
+						strcpy(list_invalid_date[k], list_invalid_date[k + 1]);
+						k++;
+					}
+					list_invalid_name[k][0] = 0;
 				}
-				msg_format(Ind, "Deleted entry #%d) %s %s@%s (%s)", k, list_invalid_date[k], list_invalid_name[k], list_invalid_host[k], list_invalid_addr[k]);
-				/* Remove and slide everyone else down by once, to maintain the sorted-by-date state */
-				while (k < MAX_LIST_INVALID - 1) {
-					if (!list_invalid_name[k][0]) break;
-					strcpy(list_invalid_name[k], list_invalid_name[k + 1]);
-					strcpy(list_invalid_host[k], list_invalid_host[k + 1]);
-					strcpy(list_invalid_addr[k], list_invalid_addr[k + 1]);
-					strcpy(list_invalid_date[k], list_invalid_date[k + 1]);
-					k++;
-				}
-				list_invalid_name[k][0] = 0;
 				return;
 			}
 			else if (prefix(messagelc, "/vinv")) { /* Validate one entry from list of new invalid account names that tried to log in meanwhile, or '*' for all */
