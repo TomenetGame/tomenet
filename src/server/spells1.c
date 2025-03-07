@@ -187,13 +187,8 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 				}
 			}
 		}
-#if 0 /* in traps they deal blind, why conf? */
-		dt = GF_OLD_CONF;
-		dam = damroll(10, 5);
-#else
 		dt = GF_BLIND;
-		dam = damroll(3, 2);
-#endif
+		dam = damroll(2, 2);
 		ident = TRUE;
 		angry = TRUE;
 		break;
@@ -294,7 +289,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	case SV_POTION_SLOWNESS:
 		radius = 1;
 		dt = GF_OLD_SLOW;
-		dam = damroll(10, 5);
+		dam = damroll(5, 10);
 		ident = TRUE;
 		angry = TRUE;
 		break;
