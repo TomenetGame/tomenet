@@ -4970,9 +4970,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 		}
 	}
 
-	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
-	(void)check_guide_checksums(FALSE);
-
 #if 0 /* terminal text mode sucks for this - let's just ask/hint later @ bigmap-hint time instead */
 	/* This cannot be asked in ask_for_bigmap_generic() as that is way too late,
 	   the visual module will be initialized just below, so we need to do this now:
