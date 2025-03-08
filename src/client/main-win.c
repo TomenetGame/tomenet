@@ -4870,8 +4870,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 						    "  -v              save chat log on exit",
 						    "  -V              save chat+message log on exit",
 						    "  -x              don't save chat/message log on exit",
-						    "  -a/-g/-G       switch to ASCII/gfx/dualgfx mode",
-						    ));
+						    "  -a/-g/-G       switch to ASCII/gfx/dualgfx mode"));
 					else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
 						plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 						    longVersion,
@@ -4899,8 +4898,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 						    "  -v              save chat log on exit",
 						    "  -V              save chat+message log on exit",
 						    "  -x              don't save chat/message log on exit",
-						    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode",
-						    ));
+						    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode"));
 					if (initialized) quit(NULL);
 					just_h = TRUE;
 					break;
