@@ -16,6 +16,11 @@
 /* For dirname */
 #include <libgen.h>
 
+#ifdef WINDOWS
+ #include <process.h> /* For execv() */
+#endif
+
+
 static int Socket;
 
 #ifdef USE_SOUND_2010
