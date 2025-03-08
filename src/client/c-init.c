@@ -3804,6 +3804,59 @@ void client_init(char *argv1, bool skip) {
 		break;
 	}
 
+	/* On first startup: Ask for graphics mode before asking for bigmap, as this might terminate+rerun the client */
+	if (ask_for_graphics) ask_for_graphics_generic();
+
+	/* On first startup: Handle asking for big_map mode */
+#ifndef GLOBAL_BIG_MAP
+	if (c_cfg.big_map) bigmap_hint = firstrun = FALSE;
+ #if defined(USE_X11) || defined(WINDOWS)
+	if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
+		c_cfg.big_map = TRUE;
+		Client_setup.options[CO_BIGMAP] = TRUE;
+		check_immediate_options(CO_BIGMAP, TRUE, FALSE);
+		//(void)options_dump("global.opt");
+		(void)options_dump(format("%s.opt", cname));
+	}
+ #endif
+	/* If command-line client reads from same config file as X11 one it might
+	   read a big-map-enabled screen_hgt, so reset it: */
+	if (!strcmp(ANGBAND_SYS, "gcu")) screen_hgt = SCREEN_HGT;
+#else
+	if (global_c_cfg_big_map) bigmap_hint = firstrun = FALSE;
+ #if defined(USE_X11) || defined(WINDOWS)
+	if (bigmap_hint && !global_c_cfg_big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
+		global_c_cfg_big_map = TRUE;
+
+		if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
+		    && (sflags1 & SFLG1_BIG_MAP)) {
+			if (screen_hgt <= SCREEN_HGT) {
+				screen_hgt = MAX_SCREEN_HGT;
+				resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+  #if 0
+				if (screen_icky) Term_switch(0);
+				Term_clear(); /* paranoia ;) */
+				if (screen_icky) Term_switch(0);
+				Send_screen_dimensions();
+  #endif
+			}
+		} else global_c_cfg_big_map = FALSE;
+	}
+	if (!global_c_cfg_big_map) {
+		screen_hgt = SCREEN_HGT;
+		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+	}
+ #endif
+ #if 0 /* 0'ed: New (2024): support BIG_MAP on GCU! */
+	/* If command-line client reads from same config file as X11 one it might
+	   read a big-map-enabled screen_hgt, so reset it: */
+	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		screen_hgt = SCREEN_HGT;
+		global_c_cfg_big_map = FALSE;
+	}
+ #endif
+#endif
+
 #ifdef USE_GRAPHICS
 	/* If server is older than 4.8.1, then it doesn't support 32bit characters, so turn off graphics if turned on. */
 	if (use_graphics && is_older_than(&server_version, 4, 8, 1, 0, 0, 0)) {
@@ -3976,59 +4029,6 @@ void client_init(char *argv1, bool skip) {
 	}
 	Send_options();
 
-	/* Ask for graphics mode before asking for bigmap, as this might terminate+rerun the client */
-	if (ask_for_graphics) ask_for_graphics_generic();
-
-	/* Handle asking for big_map mode on first time startup */
-#ifndef GLOBAL_BIG_MAP
-	if (c_cfg.big_map) bigmap_hint = firstrun = FALSE;
- #if defined(USE_X11) || defined(WINDOWS)
-	if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
-		c_cfg.big_map = TRUE;
-		Client_setup.options[CO_BIGMAP] = TRUE;
-		check_immediate_options(CO_BIGMAP, TRUE, FALSE);
-		//(void)options_dump("global.opt");
-		(void)options_dump(format("%s.opt", cname));
-	}
- #endif
-	/* If command-line client reads from same config file as X11 one it might
-	   read a big-map-enabled screen_hgt, so reset it: */
-	if (!strcmp(ANGBAND_SYS, "gcu")) screen_hgt = SCREEN_HGT;
-#else
-	if (global_c_cfg_big_map) bigmap_hint = firstrun = FALSE;
- #if defined(USE_X11) || defined(WINDOWS)
-	if (bigmap_hint && !global_c_cfg_big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
-		global_c_cfg_big_map = TRUE;
-
-		if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
-		    && (sflags1 & SFLG1_BIG_MAP)) {
-			if (screen_hgt <= SCREEN_HGT) {
-				screen_hgt = MAX_SCREEN_HGT;
-				resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-  #if 0
-				if (screen_icky) Term_switch(0);
-				Term_clear(); /* paranoia ;) */
-				if (screen_icky) Term_switch(0);
-				Send_screen_dimensions();
-  #endif
-			}
-		} else global_c_cfg_big_map = FALSE;
-	}
-	if (!global_c_cfg_big_map) {
-		screen_hgt = SCREEN_HGT;
-		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-	}
- #endif
- #if 0 /* 0'ed: New (2024): support BIG_MAP on GCU! */
-	/* If command-line client reads from same config file as X11 one it might
-	   read a big-map-enabled screen_hgt, so reset it: */
-	if (!strcmp(ANGBAND_SYS, "gcu")) {
-		screen_hgt = SCREEN_HGT;
-		global_c_cfg_big_map = FALSE;
-	}
- #endif
-#endif
-
 	/* Initiate character creation? */
 	if (status == E_NEED_INFO) {
 		/* Get sex/race/class/etc */
@@ -4198,8 +4198,6 @@ bool ask_for_bigmap_generic(void) {
 	int ch;
 	bool ok;
 
-	//bigmap_hint = FALSE; //this is instead cleared when writing the rc/ini file!
-
 	Term_clear();
 	Term_putstr(8, 3, -1, TERM_ORANGE, "Do you want \377Gdouble window size\377o aka 'big_map' option?");
 	Term_putstr(8, 5, -1, TERM_YELLOW, "It is recommended to do this on desktops and normal laptops");
@@ -4222,6 +4220,14 @@ bool ask_for_bigmap_generic(void) {
 			break;
 		}
 	}
+
+	/* Remember that we got the hint */
+#ifdef WINDOWS
+	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
+	bigmap_hint = FALSE;
+#else //assume POSIX
+	write_mangrc(FALSE, FALSE, FALSE); //implicitely clears bigmap_hint if it's set
+#endif
 
 	Term_clear();
 	return ok;
@@ -4254,11 +4260,12 @@ void ask_for_graphics_generic(void) {
 			while (TRUE) {
 				ch = inkey();
 				if (ch == 'y' || ch == 'Y') {
-					char *args[] = { "tomenet", "-g", NULL };
+					my_memfrob(pass, strlen(pass));
+					char *args[] = { "tomenet", "-g", format("-l%s", nick), pass, server_name, NULL };
 
 					Term_putstr(8, 10, -1, TERM_GREEN, "Switching to graphics mode...");
-
-					execv("./tomenet", args); //specifying the parameter will prevent the new instance from asking us again
+					execv("./tomenet", args); //specifying the -a/-g parameter will prevent the new instance from asking us again
+					my_memfrob(pass, strlen(pass));
 					Term_putstr(8, 11, -1, TERM_RED, "Switching to graphics mode failed. Please press = g in-game to try again.");
 					break;
 				} else if (ch == 'n' || ch == 'N') break;
