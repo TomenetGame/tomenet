@@ -1658,7 +1658,7 @@ static void load_prefs(void) {
 
 	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
 	if (!bigmap_hint) firstrun = FALSE;
-	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
+	//WritePrivateProfileString("Base", "HintBigmap", "0", ini_file); --instead done in ask_for_bigmap_generic()
 
 #if defined(USE_SOUND) && !defined(USE_SOUND_2010)
 	/* Prepare the sounds */
@@ -3273,9 +3273,18 @@ static void init_windows(void) {
 	usleep(100000);
 #endif
 
+	/* Load .INI preferences - this will overwrite nick and pass, so we need to keep these if we got them from command-line */
+	if (nick[0]) {
+		char tmpnick[ACCNAME_LEN], tmppass[PASSWORD_LEN];
 
-	/* Load .INI preferences */
-	load_prefs();
+		strcpy(tmpnick, nick);
+		strcpy(tmppass, pass);
+
+		load_prefs();
+
+		strcpy(nick, tmpnick);
+		strcpy(pass, tmppass);
+	} else load_prefs();
 
 
 	/* Need these before term_getsize gets called */
@@ -4526,6 +4535,7 @@ void init_stuff(void) {
 
 	/* Hack -- access "ANGBAND.INI" */
 	GetModuleFileName(hInstance, path, 512);
+	argv0 = strdup(path); //save for execv() call
 	strcpy(path + strlen(path) - 4, ".ini");
 
 	/* If tomenet.ini file doesn't exist yet, check for tomenet.ini.default

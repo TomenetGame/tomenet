@@ -3570,7 +3570,6 @@ void client_init(char *argv1, bool skip) {
 	FILE *fp;
 	char buf[1024];
 
-
 #if defined(USE_X11) || defined(USE_GCU)
 	/* Force creation of fresh .tomenetrc file in case none existed yet.
 	   The reason we do it *right now* is that it generates visual glitches later
@@ -4261,10 +4260,11 @@ void ask_for_graphics_generic(void) {
 				ch = inkey();
 				if (ch == 'y' || ch == 'Y') {
 					my_memfrob(pass, strlen(pass));
+					/* Specifying the -a/-g parameter will prevent the new instance from asking us again: */
 					char *args[] = { "tomenet", "-g", format("-l%s", nick), pass, server_name, NULL };
 
 					Term_putstr(8, 10, -1, TERM_GREEN, "Switching to graphics mode...");
-					execv("./tomenet", args); //specifying the -a/-g parameter will prevent the new instance from asking us again
+					execv(argv0, args);
 					my_memfrob(pass, strlen(pass));
 					Term_putstr(8, 11, -1, TERM_RED, "Switching to graphics mode failed. Please press = g in-game to try again.");
 					break;
