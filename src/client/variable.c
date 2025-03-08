@@ -473,7 +473,7 @@ char last_prompt[MSG_LEN] = { 0 };
 bool last_prompt_macro = FALSE;
 
 int screen_wid = SCREEN_WID, screen_hgt = SCREEN_HGT;
-bool bigmap_hint = TRUE, firstrun = TRUE;
+bool bigmap_hint = TRUE, firstrun = TRUE, ask_for_graphics = TRUE;
 #ifndef GLOBAL_BIG_MAP
 bool global_big_map_hold = FALSE;
 #endif

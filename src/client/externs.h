@@ -1219,7 +1219,7 @@ extern struct u32b_char_dict_t *floor_mapping_mod;
 
 extern int screen_wid, screen_hgt;
 extern void (*resize_main_window)(int cols, int rows);
-extern bool bigmap_hint, global_big_map_hold, firstrun;
+extern bool bigmap_hint, global_big_map_hold, firstrun, ask_for_graphics;
 extern bool ask_for_bigmap_generic(void);
 extern bool in_game;
 extern bool rand_term_lamp;

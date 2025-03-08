@@ -3976,6 +3976,9 @@ void client_init(char *argv1, bool skip) {
 	}
 	Send_options();
 
+	/* Ask for graphics mode before asking for bigmap, as this might terminate+rerun the client */
+	if (ask_for_graphics) ask_for_graphics_generic();
+
 	/* Handle asking for big_map mode on first time startup */
 #ifndef GLOBAL_BIG_MAP
 	if (c_cfg.big_map) bigmap_hint = firstrun = FALSE;
@@ -4195,7 +4198,7 @@ bool ask_for_bigmap_generic(void) {
 	int ch;
 	bool ok;
 
-	bigmap_hint = FALSE;
+	//bigmap_hint = FALSE; //this is instead cleared when writing the rc/ini file!
 
 	Term_clear();
 	Term_putstr(8, 3, -1, TERM_ORANGE, "Do you want \377Gdouble window size\377o aka 'big_map' option?");
@@ -4220,94 +4223,52 @@ bool ask_for_bigmap_generic(void) {
 		}
 	}
 
-	/* While at it, point towards graphical fonts */
-	Term_clear();
-	Term_putstr(8, 4, -1, TERM_YELLOW, "And one last thing:");
-	Term_putstr(8, 6, -1, TERM_YELLOW, "This game uses letters, numbers and symbols for 'graphics'.");
-	Term_putstr(8, 8, -1, TERM_YELLOW, "But if you prefer a true graphical representation, after logging");
-	Term_putstr(8, 9, -1, TERM_YELLOW, "in, press  \377o=  g\377y  and then  \377ov\377y  to enable a graphical tileset!");
-	Term_putstr(8, 11, -1, TERM_YELLOW, "<Press any key to continue>");
-	ch = inkey();
-
 	Term_clear();
 	return ok;
-}
-
-static void PTerm_putstr(int x, int y, int maxlen_dummy, int attr_dummy, cptr str) {
-	int i;
-	static int y_last = 9999;
-	char str2[MSG_LEN], *str2_p = str2;
-	cptr str_p = str;
-
-	/* strip colours */
-	while (*str_p) {
-		if (*str_p == '\377') {
-			str_p += 2;
-			continue;
-		}
-		*str2_p = *str_p;
-		str_p++;
-		str2_p++;
-	}
-	*str2_p = 0;
-
-	/* Try to emulate x,y coordinates on plain terminal somewhat... */
-
-	if (y > y_last) for (i = 1; i < y - y_last; i++) printf("\n");
-	y_last = y;
-
-	for (i = 0; i < x; i++) printf(" ");
-
-	printf("%s\n", str2);
-}
-static void PTerm_clear(void) {
-	printf("\n\n");
-}
-static int Pinkey(void) {
-	return(getchar()); //note: waits for ENTER as terminal is line-buffered in default mode (use termios etc maybe to change)
 }
 void ask_for_graphics_generic(void) {
 	int ch;
 
-	PTerm_clear();
-	PTerm_putstr(8, 3, -1, TERM_YELLOW, "This game originally uses letters, numbers and symbols for 'graphics'.");
-	PTerm_putstr(8, 4, -1, TERM_YELLOW, "But if you prefer a true graphical representation, after logging");
-	PTerm_putstr(8, 5, -1, TERM_YELLOW, "in, press  \377o=  g\377y  and then  \377ov\377y  to enable a graphical tileset!");
+	Term_clear();
+	Term_putstr(8, 3, -1, TERM_YELLOW, "This game originally uses letters, numbers and symbols for 'graphics'.");
+	Term_putstr(8, 4, -1, TERM_YELLOW, "But if you prefer a true graphical representation, after logging");
+	Term_putstr(8, 5, -1, TERM_YELLOW, "in, press  \377o=  g\377y  and then  \377ov\377y  to enable a graphical tileset!");
 
-	//PTerm_putstr(8, 6, -1, TERM_YELLOW, "In terminal/commandline mode, graphics are not available though.");
+	//Term_putstr(8, 6, -1, TERM_YELLOW, "In terminal/commandline mode, graphics are not available though.");
 
 #ifdef USE_GRAPHICS
 	/* If server is older than 4.8.1, then it doesn't support 32bit characters, so turn off graphics if turned on. */
 	if (use_graphics == UG_NONE) {
- #if 0 /* we're not yet connected to a server, as not even the visual module is initialized at this point */
+ #if 1 /* 0 this if we are called before we connected to a server (which in turn is currently 0'ed as it sucks), because not even the visual module would be initialized at this point in that case */
 		if (is_older_than(&server_version, 4, 8, 1, 0, 0, 0)) {
 			Term_putstr(8, 7, -1, TERM_YELLOW, "The server you connected to doesn't support graphics though,");
 			Term_putstr(8, 8, -1, TERM_YELLOW, "so for now graphics are turned off and ASCII characters are used.");
 			Term_putstr(8, 10, -1, TERM_YELLOW, "<Press any key to continue>");
-			(void)Pinkey();
+			(void)inkey();
 		} else
  #endif
 		{
-			PTerm_putstr(8, 7, -1, TERM_YELLOW, "If you want to enable graphics immediately right now, press '\377Gy\377y'.");
-			PTerm_putstr(8, 8, -1, TERM_YELLOW, "To continue with original ASCII (text symbol) representation, press '\377rn\377y'.");
-			PTerm_putstr(8, 9, -1, TERM_YELLOW, "(You can switch/disable that later anytime in-game by pressing \377o= g\377y.)");
+			Term_putstr(8, 7, -1, TERM_YELLOW, "If you want to \377Genable graphics immediately\377y right now, press '\377Gy\377y'.");
+			Term_putstr(8, 8, -1, TERM_YELLOW, "To continue with \377roriginal ASCII (text symbol)\377y visuals, press '\377rn\377y'.");
+			//Term_putstr(8, 9, -1, TERM_YELLOW, "(You can switch/disable that later anytime in-game via \377o= g\377y menu.)");
 			while (TRUE) {
-				ch = Pinkey();
+				ch = inkey();
 				if (ch == 'y' || ch == 'Y') {
 					char *args[] = { "tomenet", "-g", NULL };
 
-					PTerm_putstr(8, 10, -1, TERM_GREEN, "Switching to graphics mode...");
-					execv("./tomenet", args);
-					PTerm_putstr(8, 11, -1, TERM_RED, "Switching to graphics mode failed. Please press = g in-game to try again.");
+					Term_putstr(8, 10, -1, TERM_GREEN, "Switching to graphics mode...");
+
+					execv("./tomenet", args); //specifying the parameter will prevent the new instance from asking us again
+					Term_putstr(8, 11, -1, TERM_RED, "Switching to graphics mode failed. Please press = g in-game to try again.");
 					break;
 				} else if (ch == 'n' || ch == 'N') break;
 			}
 		}
 	}
 #else
-	PTerm_putstr(8, 7, -1, TERM_YELLOW, "(Your client does not support graphics. Original ASCII will be used.)");
-	PTerm_putstr(8, 8, -1, TERM_YELLOW, "<Press any key to continue>");
-	(void)Pinkey();
+	Term_putstr(8, 7, -1, TERM_YELLOW, "(Your client does not support graphics. Original ASCII will be used.)");
+	Term_putstr(8, 8, -1, TERM_YELLOW, "<Press any key to continue>");
+	(void)inkey();
 #endif
-	PTerm_clear();
+	Term_clear();
 }

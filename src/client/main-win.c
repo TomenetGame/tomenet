@@ -4953,9 +4953,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 				case 'x':
 					save_chat = 3;
 					break;
-				case 'a': use_graphics_new = use_graphics = UG_NONE; break; // ASCII
-				case 'g': use_graphics_new = use_graphics = UG_NORMAL; break; // graphics
-				case 'G': use_graphics_new = use_graphics = UG_2MASK; break; // dual-mask graphics
+				case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
+				case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
+				case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 			}
 			quoted = FALSE;
 		} else if (lpCmdLine[i] == ' ') {
@@ -4969,13 +4969,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			quoted = FALSE;
 		}
 	}
-
-#if 0 /* terminal text mode sucks for this - let's just ask/hint later @ bigmap-hint time instead */
-	/* This cannot be asked in ask_for_bigmap_generic() as that is way too late,
-	   the visual module will be initialized just below, so we need to do this now:
-	   Ask for graphics mode on first run. */
-	if (bigmap_hint && !c_cfg.big_map) ask_for_graphics_generic(); //note that we cannot test for ANGBAND_SYS != 'gcu (cannot have graphics) here either, as it's still NULL
-#endif
 
 	if (hPrevInst == NULL) {
 /* Not required, just a paranoia note, it's pretty undocumented */
@@ -5058,6 +5051,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
 	/* Prepare the windows */
 	init_windows();
+#if 1
+	/* Check after ini has been loaded, so we know the bigmap_hint state and can use it to conclude if this is a first-run or not. */
+	if (!bigmap_hint || c_cfg.big_map) ask_for_graphics = FALSE;
+#endif
 
 	/* Activate hooks */
 	plog_aux = hook_plog;

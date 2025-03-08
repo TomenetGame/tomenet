@@ -1220,9 +1220,9 @@ int main(int argc, char **argv) {
 			}
 			break;
 
-		case 'a': use_graphics_new = use_graphics = UG_NONE; break; // ASCII
-		case 'g': use_graphics_new = use_graphics = UG_NORMAL; break; // graphics
-		case 'G': use_graphics_new = use_graphics = UG_2MASK; break; // dual-mask graphics
+		case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
+		case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
+		case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 		}
 
 		default:
@@ -1282,12 +1282,7 @@ int main(int argc, char **argv) {
 	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
 	(void)check_guide_checksums(FALSE);
 
-#if 0 /* terminal text mode sucks for this - let's just ask/hint later @ bigmap-hint time instead */
-	/* This cannot be asked in ask_for_bigmap_generic() as that is way too late,
-	   the visual module will be initialized just below, so we need to do this now:
-	   Ask for graphics mode on first run. */
-	if (bigmap_hint && !c_cfg.big_map) ask_for_graphics_generic(); //note that we cannot test for ANGBAND_SYS != 'gcu (cannot have graphics) here either, as it's still NULL
-#endif
+	if (!bigmap_hint || c_cfg.big_map) ask_for_graphics = FALSE;
 
 	/* Attempt to initialize a visual module */
 
