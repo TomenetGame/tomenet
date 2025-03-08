@@ -4229,7 +4229,7 @@ bool ask_for_bigmap_generic(void) {
 #endif
 
 	Term_clear();
-	return ok;
+	return(ok);
 }
 void ask_for_graphics_generic(void) {
 	int ch;
