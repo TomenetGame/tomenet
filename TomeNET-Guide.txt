@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. March 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 8. March 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4037,6 +4037,9 @@ Windows command-line options:
 -v                      Automatically save chat log on exit (exclusive with -V)
 -V                      Automatically save complete message log on exit
 -x                      Don't save chat/message log on exit (don't prompt)
+-a                      Switch to 'ASCII' mode ie the original visuals mode
+-g                      Switch to graphics mode, using a graphical tileset
+-G                      Switch to dual-mask graphics mode (fore+background)
 <ip address>            for example 37.187.75.24
 
 (Skip down to (2.4) to continue reading.)
@@ -4210,6 +4213,9 @@ POSIX command-line options:
 -v                      automatically save chat log on exit
 -V                      automatically save complete message log on exit
 -x                      don't save chat/message log on exit (don't prompt)
+-a                      Switch to 'ASCII' mode ie the original visuals mode
+-g                      Switch to graphics mode, using a graphical tileset
+-G                      Switch to dual-mask graphics mode (fore+background)
 <ip address>            for example 37.187.75.24
 
 Full command-line example:

@@ -1219,6 +1219,10 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "Failed to open tomenet.log for writing!\n");
 			}
 			break;
+
+		case 'a': use_graphics_new = use_graphics = UG_NONE; break; // ASCII
+		case 'g': use_graphics_new = use_graphics = UG_NORMAL; break; // graphics
+		case 'G': use_graphics_new = use_graphics = UG_2MASK; break; // dual-mask graphics
 		}
 
 		default:
@@ -1261,6 +1265,7 @@ int main(int argc, char **argv) {
 		puts("  -v                 Save chat log on exit, don't prompt");
 		puts("  -V                 Save complete message log on exit, don't prompt");
 		puts("  -x                 Don't save chat/message log on exit (don't prompt)");
+		puts("  -a/-g/-G           Switch to ASCII/gfx/dualmask-gfx mode");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

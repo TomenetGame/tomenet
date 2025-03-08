@@ -4289,7 +4289,11 @@ void ask_for_graphics_generic(void) {
 			while (TRUE) {
 				ch = Pinkey();
 				if (ch == 'y' || ch == 'Y') {
-					use_graphics_new = use_graphics = UG_NORMAL;
+					char *args[] = { "tomenet", "-g", NULL };
+
+					PTerm_putstr(8, 10, -1, TERM_GREEN, "Switching to graphics mode...");
+					execv("./tomenet", args);
+					PTerm_putstr(8, 11, -1, TERM_RED, "Switching to graphics mode failed. Please press = g in-game to try again.");
 					break;
 				} else if (ch == 'n' || ch == 'N') break;
 			}

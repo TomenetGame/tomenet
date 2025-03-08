@@ -4840,40 +4840,13 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					break;
 				case 'h':
 					/* Attempt to print out some usage information */
-#if 0 /* we don't have the console attached anymore */
-					puts(longVersion);
-					puts(format("Running on %s.", os_version));
-					puts("Usage  : tomenet [options] [servername]");
-					puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu");
-					puts("  -h                 Display this help");
-					puts("  -C                 Compatibility mode for very old servers");
-					puts("  -F                 Client FPS");
-					puts("  -I                 force IME off (for CJK languages)",
-					puts("  -i                 force IME on (for CJK languages)",
- #ifdef USE_LOGFONT
-					puts("  -L                 Use LOGFONT (Windows-internal font)",
- #endif
-					puts("  -l<nick> <passwd>  Login as");
-					puts("  -N<name>           character Name");
-					puts("  -R<name>           character Name, auto-reincarnate");
-					puts("  -p<num>            change game Port number");
-					puts("  -P<path>           set the lib directory Path");
-					puts("  -k                 don't disable numlock on client startup");
-					puts("  -m                 skip motd (message of the day) on login");
-					puts("  -q                 disable audio capabilities ('quiet mode')");
-					puts("  -u                 disable client-side automatic lua updates");
-					puts("  -w                 disable client-side weather effects");
-					puts("  -v                 save chat log on exit instead of asking");
-					puts("  -V                 save complete message log on exit, don't prompt");
-					puts("  -x                 don't save chat/message log on exit (don't prompt)");
-#else
 					if (initialized) /* We're called AFTER init_windows()? Then we'll appear in a graphical windows message window, with annoying formatting :p */
 						/* Message box on Windows has a default limit of characters, we need to cut out the 4
 						   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
 						plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 						    longVersion,
 						    os_version,
-						    "Usage:    tomenet [options] [server]",
+						    //"Usage:    tomenet [options] [server]",
 						    "Example: tomenet -lMorgoth MorgyPass",
 						    "                              -p18348 europe.tomenet.eu",
 						    /* "  -h              Display this help",
@@ -4881,9 +4854,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 						    "  -F              Client FPS", */
 						    "  -I              force IME off (for CJK languages)",
 						    "  -i               force IME on (for CJK languages)",
- #ifdef USE_LOGFONT
+#ifdef USE_LOGFONT
 						    "  -L              Use LOGFONT (Windows-internal font)",
- #endif
+#endif
 						    "  -l<name> <pwd>       Login crecedentials",
 						    "  -N<name>       character name",
 						    "  -R<name>       char name, auto-reincarnate",
@@ -4896,11 +4869,11 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 						    "  -w             disable client-side weather effects",
 						    "  -v              save chat log on exit",
 						    "  -V              save chat+message log on exit",
-						    "  -x              don't save chat/message log on exit"));
+						    "  -x              don't save chat/message log on exit",
+						    "  -a/-g/-G       switch to ASCII/gfx/dualgfx mode",
+						    ));
 					else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
-						/* Message box on Windows has a default limit of characters, we need to cut out the 4
-						   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
-						plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+						plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 						    longVersion,
 						    os_version,
 						    "Usage:    tomenet [options] [server]",
@@ -4910,9 +4883,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 						    "  -F              Client FPS", */
 						    "  -I              force IME off (for CJK languages)",
 						    "  -i              force IME on (for CJK languages)",
- #ifdef USE_LOGFONT
+#ifdef USE_LOGFONT
 						    "  -L              Use LOGFONT (Windows-internal font)",
- #endif
+#endif
 						    "  -l<name> <pwd>  Login crecedentials",
 						    "  -N<name>        character name",
 						    "  -R<name>        char name, auto-reincarnate",
@@ -4921,12 +4894,13 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 						    "  -k              don't disable numlock on startup",
 						    "  -m              skip message of the day window",
 						    "  -q              disable all audio ('quiet mode')",
-						    /* "  -u              disable automatic lua updates", */
+						    // "  -u              disable automatic lua updates",
 						    "  -w              disable client-side weather effects",
 						    "  -v              save chat log on exit",
 						    "  -V              save chat+message log on exit",
-						    "  -x              don't save chat/message log on exit"));
-#endif
+						    "  -x              don't save chat/message log on exit",
+						    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode",
+						    ));
 					if (initialized) quit(NULL);
 					just_h = TRUE;
 					break;
@@ -4981,6 +4955,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 				case 'x':
 					save_chat = 3;
 					break;
+				case 'a': use_graphics_new = use_graphics = UG_NONE; break; // ASCII
+				case 'g': use_graphics_new = use_graphics = UG_NORMAL; break; // graphics
+				case 'G': use_graphics_new = use_graphics = UG_2MASK; break; // dual-mask graphics
 			}
 			quoted = FALSE;
 		} else if (lpCmdLine[i] == ' ') {
@@ -4994,6 +4971,16 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			quoted = FALSE;
 		}
 	}
+
+	/* As this spawns an ugly shell window on Windows, do it here before we even init the windows */
+	(void)check_guide_checksums(FALSE);
+
+#if 0 /* terminal text mode sucks for this - let's just ask/hint later @ bigmap-hint time instead */
+	/* This cannot be asked in ask_for_bigmap_generic() as that is way too late,
+	   the visual module will be initialized just below, so we need to do this now:
+	   Ask for graphics mode on first run. */
+	if (bigmap_hint && !c_cfg.big_map) ask_for_graphics_generic(); //note that we cannot test for ANGBAND_SYS != 'gcu (cannot have graphics) here either, as it's still NULL
+#endif
 
 	if (hPrevInst == NULL) {
 /* Not required, just a paranoia note, it's pretty undocumented */
