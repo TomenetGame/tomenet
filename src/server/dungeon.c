@@ -7787,9 +7787,6 @@ static void scan_objs() {
 		/* check items on the world's surface */
 		if (!o_ptr->wpos.wz && cfg.surface_item_removal) {
 			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia
-				/* Artifacts and objects that were inscribed and dropped by
-				the dungeon master or by unique monsters on their death
-				stay n times as long as cfg.surface_item_removal specifies */
 				if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
 					if (++o_ptr->marked >= 2) {
 						delete_object_idx(i, TRUE);
@@ -7800,12 +7797,15 @@ static void scan_objs() {
 						delete_object_idx(i, TRUE);
 						dcnt++;
 					}
-				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* ITEM_REMOVAL_NORMAL; stormy too */
+				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* Stormbringer too */
 				    (o_ptr->note && !o_ptr->owner))?
-				    cfg.surface_item_removal * 3 : cfg.surface_item_removal)
+				    cfg.surface_item_removal * 3 : cfg.surface_item_removal) /* ITEM_REMOVAL_NORMAL [10 min, all normal surface area drops, including towns, excluding houses]  */
 				    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
 				    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? cfg.long_wild_item_removal : 0)
 				    ) {
+					/* Artifacts and objects that were inscribed and dropped by
+					the dungeon master or by unique monsters on their death
+					stay n times as long as cfg.surface_item_removal specifies */
 					delete_object_idx(i, TRUE);
 					dcnt++;
 				}
