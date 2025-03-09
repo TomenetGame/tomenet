@@ -4715,9 +4715,11 @@ static int Receive_login(int ind) {
 		unsigned char ip_iaddr[6] = { 0 };
 
 		n = (Packet_scanf(&connp->r, "%s%c%c%c%c%c%c", choice, &ip_iaddr[0], &ip_iaddr[1], &ip_iaddr[2], &ip_iaddr[3], &ip_iaddr[4], &ip_iaddr[5]) == 7 ? 1 : 0);
-		s_printf("Player '%s' connects from '%s',%s/%02x:%02x:%02x:%02x:%02x:%02x)\n", connp->nick, connp->host, connp->addr, ip_iaddr[0], ip_iaddr[1], ip_iaddr[2], ip_iaddr[3], ip_iaddr[4], ip_iaddr[5]);
-	} else
+		s_printf("Player '%s' connects from '%s',%s/%02x:%02x:%02x:%02x:%02x:%02x\n", connp->nick, connp->host, connp->addr, ip_iaddr[0], ip_iaddr[1], ip_iaddr[2], ip_iaddr[3], ip_iaddr[4], ip_iaddr[5]);
+	} else {
 		n = Packet_scanf(&connp->r, "%s", choice);
+		s_printf("Player '%s' connects from '%s',%s/-\n", connp->nick, connp->host, connp->addr);
+	}
 
 	if (n != 1) {
 		errno = 0;
