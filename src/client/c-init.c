@@ -7,6 +7,10 @@
  * Windows), then it should be placed in the "main-???.c" file.
  */
 
+#ifdef WIN32 /* Note that WINDOWS is not yet defined here, but gets defined in angband.h->config.h->h-config.h below! */
+ #include <winsock2.h> /* To slay warning about ws2tcpip.h include */
+#endif
+
 #include "angband.h"
 
 /* For opendir */
@@ -18,6 +22,7 @@
 
 #ifdef WINDOWS
  #include <process.h> /* For execv() */
+ #include <ws2tcpip.h> /* For inet_ntop() */
 #endif
 
 
@@ -3722,6 +3727,7 @@ void client_init(char *argv1, bool skip) {
 		quit("That server either isn't up, or you mistyped the hostname.\n");
 
 	{
+#if defined (USE_X11) || defined(USE_GCU)
 		struct sockaddr_in local_addr;
 		socklen_t len = sizeof(local_addr);
 
@@ -3751,6 +3757,21 @@ void client_init(char *argv1, bool skip) {
 			}
 		}
 		freeifaddrs(ifaddr);
+#elif defined(WINDOWS)
+		WORD wVersionRequested;
+		WSADATA wsaData;
+		char name[MAX_CHARS];
+		PHOSTENT hostinfo;
+		wVersionRequested = MAKEWORD( 2, 0 );
+
+		if (WSAStartup(wVersionRequested, &wsaData) == 0) {
+			if (gethostname(name, sizeof(name)) == 0) {
+				if ((hostinfo = gethostbyname(name)) != NULL)
+					strcpy(ip_iface, inet_ntoa(*(struct in_addr *)*hostinfo->h_addr_list));
+			}
+			WSACleanup( );
+		}
+#endif
 
 #if defined(USE_X11) || defined(USE_GCU)
 		#include <sys/ioctl.h>
@@ -3764,6 +3785,126 @@ void client_init(char *argv1, bool skip) {
 			memcpy(ip_iaddr, ifr.ifr_ifru.ifru_hwaddr.sa_data, 6);
 			//if (memcmp(ip_iaddr, "\0\0\0\0\0\0", 6) == 0 && ifr.ifr_ifru.ifru_hwaddr.sa_family == 0xfffe) exit(-1);
 		}
+#elif defined(WINDOWS)
+ #if 0
+		#include <iphlpapi.h> //requires to link -liphlpap (and -lws2_32?)
+		#ifdef _MSC_VER
+		 #pragma comment(lib, "IPHLPAPI.lib")
+		#endif
+
+		PIP_ADAPTER_INFO pAdapterInfo;
+		PIP_ADAPTER_INFO pAdapter = NULL;
+		DWORD err;
+		ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
+
+		pAdapterInfo = (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
+		if (pAdapterInfo == NULL) {
+			fprintf(stderr, "Error allocating memory needed to call GetAdaptersinfo\n");
+			exit(-1);
+		}
+		/* Query the adapter info. If the buffer is not big enough, loop around and try again */
+again:
+		err = GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
+		if (err == ERROR_BUFFER_OVERFLOW) {
+			free(pAdapterInfo);
+			pAdapterInfo = (IP_ADAPTER_INFO *)malloc(ulOutBufLen);
+			if (pAdapterInfo == NULL) {
+				fprintf(stderr, "Error allocating memory needed to call GetAdaptersinfo\n");
+				exit(-1);
+			}
+			goto again;
+		}
+		if (err != NO_ERROR) {
+			fprintf(stderr, "GetAdaptersInfo failed with error: %u\n", (unsigned)err);
+			exit(-1);
+		}
+		/* loop through all adapters looking for ours */
+		for (pAdapter = pAdapterInfo; pAdapter; pAdapter = pAdapter->Next) {
+  #if 0
+			if (rawsock_is_adapter_names_equal(pAdapter->AdapterName, ip_iface)) break;
+			int rawsock_is_adapter_names_equal(const char *lhs, const char *rhs) {
+				if (memcmp(lhs, "\\Device\\NPF_", 12) == 0) lhs += 12;
+				if (memcmp(rhs, "\\Device\\NPF_", 12) == 0) rhs += 12;
+				return strcmp(lhs, rhs) == 0;
+			}
+  #endif
+			//break;
+			plog_fmt("%s vs %s", ip_iface, pAdapter->AdapterName);
+		}
+		if (pAdapter) {
+			if (pAdapter->AddressLength != 6) exit(-1);
+			memcpy(ip_iaddr, pAdapter->Address, 6);
+		}
+		if (pAdapterInfo) free(pAdapterInfo);
+ #else /* gawd Windows */
+		FILE *fp;
+		int x = 0;
+
+		remove("__ipc");
+		WinExec("ipconfig /all > __ipc", SW_HIDE);
+		while (!my_fexists("__ipc") && x < 40) { // paranoia: Time out if for some reason the bat never returns.
+			x++;
+			Sleep(50);
+		}
+		fp = fopen("__ipc", "r");
+		if (fp) {
+			char tmp[MAX_CHARS_WIDE], tmp_iaddr[MAX_CHARS];
+			char *addr, *ret;
+			bool found = FALSE;
+
+			while (!found && fgets(tmp, MAX_CHARS_WIDE - 1, fp)) {
+				if (tmp[0] == ' ' || tmp[0] == 13 || tmp[0] == 10 || tmp[0] == 0) continue;
+				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+				addr = strchr(tmp, ':');
+				if (!addr) continue;
+				addr += 2;
+				ret = strchr(addr, 14);
+				if (ret) *ret = 0;
+				strcpy(tmp_iaddr, addr);
+				while (!found && fgets(tmp, MAX_CHARS_WIDE - 1, fp)) {
+					if (strstr(tmp, "IPv4")) {
+						addr = strchr(tmp, ':');
+						ret = strchr(addr, 13);
+						if (!ret) ret = strchr(addr, 10);
+
+						if (addr && ret) {
+							addr += 2;
+							*ret = 0;
+							if (!strcmp(addr, ip_iface)) {
+								char hex[3] = { 0 };
+
+								hex[0] = tmp_iaddr[0];
+								hex[1] = tmp_iaddr[1];
+								ip_iaddr[0] = strtol(hex, NULL, 16);
+								hex[0] = tmp_iaddr[3];
+								hex[1] = tmp_iaddr[4];
+								ip_iaddr[1] = strtol(hex, NULL, 16);
+								hex[0] = tmp_iaddr[6];
+								hex[1] = tmp_iaddr[7];
+								ip_iaddr[2] = strtol(hex, NULL, 16);
+								hex[0] = tmp_iaddr[9];
+								hex[1] = tmp_iaddr[10];
+								ip_iaddr[3] = strtol(hex, NULL, 16);
+								hex[0] = tmp_iaddr[12];
+								hex[1] = tmp_iaddr[13];
+								ip_iaddr[4] = strtol(hex, NULL, 16);
+								hex[0] = tmp_iaddr[15];
+								hex[1] = tmp_iaddr[16];
+								ip_iaddr[5] = strtol(hex, NULL, 16);
+
+								found = TRUE;
+							}
+						}
+					}
+				}
+			}
+			fclose(fp);
+		}
+		remove("__ipc");
+ #endif
 #endif
 	}
 
