@@ -3340,6 +3340,7 @@ static void quit_hook(cptr s) {
 	/* Only write history if we have at least one line though */
 	if (hist_chat_end || hist_chat_looped) {
 		FILE *fp;
+
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");
 		if (!hist_chat_looped) {
@@ -3360,6 +3361,7 @@ static void quit_hook(cptr s) {
 	/* Save guide bookmarks */
 	{
 		FILE *fp;
+
 		path_build(buf, 1024, ANGBAND_DIR_USER, "bookmarks.tmp");
 		fp = fopen(buf, "w");
 		for (j = 0; j < GUIDE_BOOKMARKS; j++) {
@@ -3718,6 +3720,52 @@ void client_init(char *argv1, bool skip) {
 	/* Create the net socket and make the TCP connection */
 	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
 		quit("That server either isn't up, or you mistyped the hostname.\n");
+
+	{
+		struct sockaddr_in local_addr;
+		socklen_t len = sizeof(local_addr);
+
+		getsockname(Socket, (struct sockaddr*)&local_addr, &len);
+		inet_ntop(AF_INET, &local_addr.sin_addr, ip_ihost, sizeof(ip_ihost));
+
+		#include <ifaddrs.h>
+		struct ifaddrs* ifaddr;
+		struct ifaddrs* ifa;
+
+		getifaddrs(&ifaddr);
+
+		// look which interface contains the wanted IP.
+		// When found, ifa->ifa_name contains the name of the interface (eth0, eth1, ppp0...)
+		for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+			if (ifa->ifa_addr) {
+				if (AF_INET == ifa->ifa_addr->sa_family) {
+					struct sockaddr_in* inaddr = (struct sockaddr_in*)ifa->ifa_addr;
+
+					if (inaddr->sin_addr.s_addr == local_addr.sin_addr.s_addr) {
+						if (ifa->ifa_name) {
+							strcpy(ip_iface, ifa->ifa_name);
+							break;
+						}
+					}
+				}
+			}
+		}
+		freeifaddrs(ifaddr);
+
+#if defined(USE_X11) || defined(USE_GCU)
+		#include <sys/ioctl.h>
+		#include <net/if.h>
+		struct ifreq ifr;
+
+		strncpy(ifr.ifr_name, ip_iface, IFNAMSIZ);
+		if (ioctl(Socket, SIOCGIFHWADDR, (char *)&ifr) < 0) ; //perror("ioctl");
+		else {
+			//printf("type=0x%04x\n", ifr.ifr_ifru.ifru_hwaddr.sa_family);
+			memcpy(ip_iaddr, ifr.ifr_ifru.ifru_hwaddr.sa_data, 6);
+			//if (memcmp(ip_iaddr, "\0\0\0\0\0\0", 6) == 0 && ifr.ifr_ifru.ifru_hwaddr.sa_family == 0xfffe) exit(-1);
+		}
+#endif
+	}
 
 	/* Create a socket buffer */
 	if (Sockbuf_init(&ibuf, Socket, CLIENT_SEND_SIZE,

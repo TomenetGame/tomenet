@@ -1305,16 +1305,9 @@ static void Contact(int fd, int arg) {
 		/* Hack - Send server version too - mikaelh */
 		Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS | 0x02);
 		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
-	} else {
+	} else
 		Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS);
-	}
 
-/* -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
-	for (i = 0; i < MAX_CLASS; i++)
-	{
-		 Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-	}
-*/
 	Reply(host_addr, fd);
 }
 
@@ -4718,7 +4711,15 @@ static int Receive_login(int ind) {
 		return(-1);
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1) {
+	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 2)) {
+		unsigned char ip_iaddr[6] = { 0 };
+
+		n = (Packet_scanf(&connp->r, "%s%c%c%c%c%c%c", choice, &ip_iaddr[0], &ip_iaddr[1], &ip_iaddr[2], &ip_iaddr[3], &ip_iaddr[4], &ip_iaddr[5]) == 7 ? 1 : 0);
+		s_printf("Player '%s' connects from '%s',%s/%02x:%02x:%02x:%02x:%02x:%02x)\n", connp->nick, connp->host, connp->addr, ip_iaddr[0], ip_iaddr[1], ip_iaddr[2], ip_iaddr[3], ip_iaddr[4], ip_iaddr[5]);
+	} else
+		n = Packet_scanf(&connp->r, "%s", choice);
+
+	if (n != 1) {
 		errno = 0;
 		s_printf("%d\n", n);
 		s_printf("Failed reading login packet");

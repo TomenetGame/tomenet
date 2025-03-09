@@ -1533,7 +1533,11 @@ unsigned char Net_login() {
 	unsigned char tc;
 
 	Sockbuf_clear(&wbuf);
+
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, "");
+	if (is_atleast(&server_version, 4, 9, 2, 1, 0, 2))
+		Packet_printf(&wbuf, "%c%c%c%c%c%c", ip_iaddr[0], ip_iaddr[1], ip_iaddr[2], ip_iaddr[3], ip_iaddr[4], ip_iaddr[5]);
+
 	if (Sockbuf_flush(&wbuf) == -1)
 		quit("Can't send first login packet");
 
