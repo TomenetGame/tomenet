@@ -6238,6 +6238,7 @@ int Send_gold(int Ind, s32b au, s32b balance) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for gold (%d.%d.%d)",
@@ -6257,6 +6258,7 @@ int Send_sanity(int Ind, byte attr, cptr msg, int cur, int max) {
 	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
 	char dam = (p_ptr->csane_prev > p_ptr->csane);
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for hp (%d.%d.%d)",
@@ -6290,6 +6292,8 @@ int Send_hp(int Ind, int mhp, int chp) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	char drain = p_ptr->hp_drained ? 1 : 0;
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
 	/* Display hack */
 	if (p_ptr->health_bar) mhp += 10000;
 
@@ -6322,6 +6326,8 @@ int Send_mp(int Ind, int mmp, int cmp) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
 	/* Display hack */
 	if (p_ptr->mana_bar) mmp += 10000;
 
@@ -6349,6 +6355,8 @@ int Send_mp(int Ind, int mmp, int cmp) {
 int Send_stamina(int Ind, int mst, int cst) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	/* Display hack */
 	if (p_ptr->stamina_bar) mst += 10000;
@@ -6488,6 +6496,7 @@ int Send_stat(int Ind, int stat) {
 	/* Don't display boosted indicator if we were at '***' already anyway */
 	bool boosted = (p_ptr->stat_tmp[stat] != 0 && max - p_ptr->stat_tmp[stat] < 238);
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for stat (%d.%d.%d)",
@@ -7043,9 +7052,9 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	bool no_tele = FALSE;
 	int dlev = getlevel(wpos);
 
-	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
-
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
+	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
 
 	if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 	else if (wpos->wz < 0) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
@@ -7253,6 +7262,7 @@ int Send_food(int Ind, int food) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for food (%d.%d.%d)",
@@ -7272,6 +7282,7 @@ int Send_blind(int Ind, bool blind) {
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	int blind_hallu = (blind ? 0x1 : 0x0) + (Players[Ind]->image ? 0x2 : 0);
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for blind (%d.%d.%d)",
@@ -7289,6 +7300,7 @@ int Send_confused(int Ind, bool confused) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for confusion (%d.%d.%d)",
@@ -7306,6 +7318,7 @@ int Send_fear(int Ind, bool fear) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for fear (%d.%d.%d)",
@@ -7323,6 +7336,7 @@ int Send_poison(int Ind, char poisoned) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for poison (%d.%d.%d)",
@@ -7345,6 +7359,7 @@ int Send_state(int Ind, bool paralyzed, bool searching, bool resting) {
 	if (is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) &&
 	    (p_ptr->stun > 100 || (!paralyzed && p_ptr->stun))) return(0);
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for state (%d.%d.%d)",
@@ -7362,6 +7377,7 @@ int Send_speed(int Ind, int speed) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for speed (%d.%d.%d)",
@@ -7420,6 +7436,7 @@ int Send_cut(int Ind, int cut) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for cut (%d.%d.%d)",
@@ -7442,6 +7459,7 @@ int Send_stun(int Ind, int stun) {
 	if (is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) &&
 	    p_ptr->paralyzed && p_ptr->stun <= 100) return(0);
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for stun (%d.%d.%d)",
