@@ -2360,7 +2360,7 @@ static int Handle_listening(int ind) {
 		s_printf(" (version %04x)", connp->version);
 #else
 	/* Extended version support */
-	s_printf(" (version %d.%d.%d.%d branch %d build %d, os %d)", version->major, version->minor, version->patch, version->extra, version->branch, version->build, version->os);
+	s_printf(" (version %d.%d.%d.%d.%d.%d, os %d)", version->major, version->minor, version->patch, version->extra, version->branch, version->build, version->os);
 #endif
 	s_printf("\n");
 
@@ -16154,7 +16154,13 @@ static int Receive_version(int ind) {
 
 	if (connp->id != -1) p_ptr = Players[GetInd[connp->id]];
 
-	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1)) {
+	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 2)) {
+		if ((n = Packet_scanf(&connp->r, "%c%s%s%d%d%s%d%s%s%s%s", &ch, version, os_version, &avg, &guide_lastline, v_tag, &sys_lang,
+		    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return(n);
+		}
+	} else if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1)) {
 		if ((n = Packet_scanf(&connp->r, "%c%s%s%d%d%d%d%s%d%s%s%s%s", &ch, version, os_version, &avg, &guide_lastline, &v_branch, &v_build, v_tag, &sys_lang,
 		    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
@@ -16181,9 +16187,14 @@ static int Receive_version(int ind) {
 	version[MAX_CHARS - 1] = '\0';
 
 	if (p_ptr) {
-		s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
-		    p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang,
-		    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
+		if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 2))
+			s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s<%s>\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
+			    p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_tag, os_version, sys_lang,
+			    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
+		else
+			s_printf("PKT_VERSION <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
+			    p_ptr->name, p_ptr->accountname, avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang,
+			    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
 		if (fake_waitpid_clver) {
 			player_type *pa_ptr;
 
@@ -16197,7 +16208,10 @@ static int Receive_version(int ind) {
 			/* Found him */
 			if (n <= NumPlayers) {
 				msg_format(n, "Client version <%s> (%s) %d ms, gll %d, lang %02x:", p_ptr->name, p_ptr->accountname, avg, guide_lastline, sys_lang);
-				msg_format(n, " %s [%d,%d<%s>]", version, v_branch, v_build, v_tag);
+				if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 2))
+					msg_format(n, " %s<%s>", version, v_tag);
+				else
+					msg_format(n, " %s [%d,%d<%s>]", version, v_branch, v_build, v_tag);
 				msg_format(n, " %s", os_version);
 				msg_format(n, " SP '%s' (%s) MP '%s' (%s)", cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
 			}
@@ -16205,9 +16219,16 @@ static int Receive_version(int ind) {
 			fake_waitpid_clver = 0;
 			fake_waitpid_clver_timer = 0;
 		}
-	} else s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
-	    connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang,
-	    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
+	} else {
+		if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 2))
+			s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s<%s>\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
+			    connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_tag, os_version, sys_lang,
+			    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
+		else
+			s_printf("PKT_VERSION2 <%s> (%s) %d ms, gll %d: %s [%d,%d<%s>]\n %s {%02x}\n SP: %s (%s) MP: %s (%s)\n",
+			    connp->c_name ? connp->c_name : "NULL", connp->nick ? connp->nick : "NULL", avg, guide_lastline, version, v_branch, v_build, v_tag, os_version, sys_lang,
+			    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version);
+	}
 
 	return(1);
 }

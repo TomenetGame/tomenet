@@ -7452,8 +7452,11 @@ int Send_version(void) {
 			if ((n = Packet_printf(&wbuf, "%c%s%s%d", PKT_VERSION, longVersion, os_version, avg)) <= 0) return(n);
 		} else if (is_older_than(&server_version, 4, 9, 2, 1, 0, 1)) {
 			if ((n = Packet_printf(&wbuf, "%c%s%s%d%d%d%d%s%d", PKT_VERSION, longVersion, os_version, avg, guide_lastline, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG, sys_lang)) <= 0) return(n);
-		} else {
+		} else if (is_older_than(&server_version, 4, 9, 2, 1, 0, 2)) {
 			if ((n = Packet_printf(&wbuf, "%c%s%s%d%d%d%d%s%d%s%s%s%s", PKT_VERSION, longVersion, os_version, avg, guide_lastline, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG, sys_lang,
+			    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version)) <= 0) return(n);
+		} else {
+			if ((n = Packet_printf(&wbuf, "%c%s%s%d%d%s%d%s%s%s%s", PKT_VERSION, longVersion, os_version, avg, guide_lastline, CLIENT_VERSION_TAG, sys_lang,
 			    cfg_soundpack_name, cfg_soundpack_version, cfg_musicpack_name, cfg_musicpack_version)) <= 0) return(n);
 		}
 	}
