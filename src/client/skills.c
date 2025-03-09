@@ -540,7 +540,7 @@ static int do_cmd_activate_skill_aux() {
 	}
 /*	if (max == 1 && c_cfg.quick_messages)
 	{
-		return p[0];
+		return(p[0]);
 	}
 */
 
@@ -656,7 +656,7 @@ static int do_cmd_activate_skill_aux() {
 
 	C_FREE(p, MAX_SKILLS, int);
 
-	return ret;
+	return(ret);
 }
 
 /*

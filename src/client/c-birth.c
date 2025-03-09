@@ -2326,7 +2326,7 @@ static bool enter_server_name(void) {
 	strcpy(server_name, "europe.tomenet.eu");
 
 	/* Ask for server name */
-	return askfor_aux(server_name, 79, 0);
+	return(askfor_aux(server_name, 79, 0));
 }
 
 #ifdef EXPERIMENTAL_META
@@ -2718,7 +2718,7 @@ bool get_server_name(void) {
 			remove(path);
 			meta_pings_servers = 0;
 #endif
-			return enter_server_name();
+			return(enter_server_name());
 		} else if (c == ESCAPE) {
 #ifdef META_PINGS
 			char path[1024];

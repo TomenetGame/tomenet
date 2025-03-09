@@ -5731,14 +5731,14 @@ int Receive_beep(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return(n);
 	if (!c_cfg.allow_paging) return(1);
-	return page();
+	return(page());
 }
 int Receive_warning_beep(void) {
 	char ch;
 	int n;
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return(n);
-	return warning_page();
+	return(warning_page());
 }
 
 int Receive_AFK(void) {

@@ -723,7 +723,7 @@ static int mon_highlit_flags(char *line) {
 		}
 	}
 
-	return i;
+	return(i);
 }
 static void mon_highlight_flags(char *info) {
 	const char (*f)[NAME_LEN], a_flag = 's';
@@ -2077,7 +2077,7 @@ static int obj_highlit_flags(char *line) {
 		f++;
 	}
 
-	return i;
+	return(i);
 }
 static void obj_highlight_flags(char *info, bool minus) {
 	const char **f = obj_flags2highlight, a_flag = 's';
@@ -3483,7 +3483,7 @@ int re_init_sound() {
 			break;
 		} else {
 			puts("ERROR: SDL audio failed to re-initialize.");
-			return err;
+			return(err);
 		}
  #endif
 	}

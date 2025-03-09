@@ -9917,7 +9917,7 @@ static void do_cmd_options_win(void) {
 //  #ifdef WINDOWS
 static int font_name_cmp(const void *a, const void *b) {
    #if 0 /* simple way */
-	return strcmp((const char*)a, (const char*)b);
+	return(strcmp((const char*)a, (const char*)b));
    #elif 0 /* sort in single-digit numbers before double-digit ones */
 	char at[256], bt[256];
 
@@ -9927,7 +9927,7 @@ static int font_name_cmp(const void *a, const void *b) {
 	else strcpy(at, (char *)a);
 	if (atoi((char*)b) < 10) strcpy(bt + 1, (char *)b);
 	else strcpy(bt, (char *)b);
-	return strcmp(at, bt);
+	return(strcmp(at, bt));
    #else /* Sort by width, then height */
 	/* Let's sort the array by font size actually */
 	int fwid1, fhgt1, fwid2, fhgt2;
@@ -12890,7 +12890,7 @@ bool sound(int val, int type, int vol, s32b player_id, int dist_x, int dist_y) {
 	if (!use_sound) return(TRUE);
 
 	/* play a sound */
-	if (sound_hook) return sound_hook(val, type, vol, player_id, dist_x, dist_y);
+	if (sound_hook) return(sound_hook(val, type, vol, player_id, dist_x, dist_y));
 	else return(FALSE);
 }
 
@@ -12912,14 +12912,14 @@ bool music(int val) {
 	if (!use_sound) return(TRUE);
 
 	/* play a sound */
-	if (music_hook) return music_hook(val);
+	if (music_hook) return(music_hook(val));
 	else return(FALSE);
 }
 bool music_volume(int val, char vol) {
 	if (!use_sound) return(TRUE);
 
 	/* play a sound */
-	if (music_hook_vol) return music_hook_vol(val, vol);
+	if (music_hook_vol) return(music_hook_vol(val, vol));
 	else return(FALSE);
 }
 

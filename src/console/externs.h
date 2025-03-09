@@ -81,6 +81,7 @@ extern void init_temp_path(void);
 extern cptr longVersion;
 extern cptr shortVersion;
 extern void version_build(void);
+extern int color_char_to_attr(char c);
 
 
 /*

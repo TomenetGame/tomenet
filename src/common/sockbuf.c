@@ -280,7 +280,7 @@ int Sockbuf_flush(sockbuf_t *sbuf) {
 	}
 	Sockbuf_advance(sbuf, len);
     }
-    return len;
+    return(len);
 }
 
 int Sockbuf_write(sockbuf_t *sbuf, char *buf, int len) {
@@ -302,7 +302,7 @@ int Sockbuf_write(sockbuf_t *sbuf, char *buf, int len) {
     memcpy(sbuf->buf + sbuf->len, buf, len);
     sbuf->len += len;
 
-    return len;
+    return(len);
 }
 
 int Sockbuf_read(sockbuf_t *sbuf) {
@@ -393,7 +393,7 @@ int Sockbuf_read(sockbuf_t *sbuf) {
 	sbuf->len += len;
     }
 
-    return sbuf->len;
+    return(sbuf->len);
 }
 
 int Sockbuf_copy(sockbuf_t *dest, sockbuf_t *src, int len) {
@@ -410,7 +410,7 @@ int Sockbuf_copy(sockbuf_t *dest, sockbuf_t *src, int len) {
     memcpy(dest->buf + dest->len, src->buf, len);
     dest->len += len;
 
-    return len;
+    return(len);
 }
 
 #if STDVA
@@ -606,7 +606,7 @@ int Packet_printf(va_alist)
 
     va_end(ap);
 
-    return count;
+    return(count);
 }
 
 #if STDVA

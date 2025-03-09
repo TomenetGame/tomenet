@@ -4608,7 +4608,7 @@ int Send_leave(int ind, int id) {
 			connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%hd", PKT_LEAVE, id);
+	return(Packet_printf(&connp->c, "%c%hd", PKT_LEAVE, id));
 }
 
 // Actually quit. This was seperated as a hack to allow us to
@@ -6095,7 +6095,7 @@ int Send_plusses(int Ind, int tohit, int todam, int hr, int dr, int hm, int dm) 
 		Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
 	}
 
-	return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
+	return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm));
 }
 
 

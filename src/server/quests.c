@@ -360,7 +360,7 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
 			/* loading a map file implies staticness! so it doesn't get reset */
 			new_players_on_depth(wpos, 1, FALSE);
 		} else if (stat) new_players_on_depth(wpos, 1, FALSE);
-		return getcave(wpos);
+		return(getcave(wpos));
 	}
 
 	/* not yet allocated, comfortable for us.. */
@@ -376,7 +376,7 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
 		/* loading a map file implies staticness! so it doesn't get reset */
 		new_players_on_depth(wpos, 1, FALSE);
 	} else if (stat) new_players_on_depth(wpos, 1, FALSE);
-	return getcave(wpos);
+	return(getcave(wpos));
 }
 
 /* Replace placeholders $$<letter> / $$<capital letter> in a string,

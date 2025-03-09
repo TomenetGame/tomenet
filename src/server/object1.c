@@ -4010,7 +4010,7 @@ static long two_dice_cdf(int die1, int die2, int bonus, int target) {
 	if (target <= bonus + 2) return(0);
 	if (target <= die2 + bonus + 1) return((long)(target - bonus - 2) * (target - bonus - 1) / 2);
 	if (target <= die1 + bonus + 1)
-		return ((long)(target - die2 - bonus - 1) * die2 + (long)(die2 - 1) * die2 / 2);
+		return((long)(target - die2 - bonus - 1) * die2 + (long)(die2 - 1) * die2 / 2);
 	if (target <= die1 + die2 + bonus)
 		return((long) die1 * die2 - (long) (die1 + die2 + bonus - target + 1) * (die1 + die2 + bonus - target + 2) / 2);
 	return((long) die1 * die2);

@@ -368,7 +368,7 @@ int get_xfers_num() {
 
 	trav = fdata;
 	for (; trav; trav = trav->next) num++;
-	return num;
+	return(num);
 }
 
 #ifdef WIN32
@@ -392,7 +392,7 @@ FILE *ftmpopen(char *template) {
 
 	fp = fopen(f, "wb+");
 	strcpy(template, f);	/* give back our filename */
-	return fp;
+	return(fp);
 }
 #endif
 

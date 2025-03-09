@@ -365,7 +365,7 @@ int	fd;
 
     if (sscanf(addr.sun_path, "/tmp/tomenet%d", &port) < 1)
         return (-1);
-    return port;
+    return(port);
 #else
     struct sockaddr_in	addr;
 
@@ -373,7 +373,7 @@ int	fd;
     if (getsockname(fd, (struct sockaddr *)&addr, &len) < 0)
 	return (-1);
 
-    return (ntohs(addr.sin_port));
+    return(ntohs(addr.sin_port));
 #endif
 } /* GetPortNum */
 
@@ -631,7 +631,7 @@ int	fd;
     retval = accept(fd, (struct sockaddr*)&sl_dgram_lastaddr, &socklen);
     cmw_priv_deassert_netaccess();
 
-    return retval;
+    return(retval);
 } /* SocketAccept */
 
 /*
@@ -685,7 +685,7 @@ int	fd;
     int				lsize  = sizeof(struct linger);
 #endif
 
-    return setsockopt(fd, SOL_SOCKET, SO_LINGER, (void *)&linger, lsize);
+    return(setsockopt(fd, SOL_SOCKET, SO_LINGER, (void *)&linger, lsize));
 #endif
 } /* SocketLinger */
 
@@ -1268,7 +1268,7 @@ char	*buf;
     retval = write(fd, buf, size);
     cmw_priv_deassert_netaccess();
 
-    return retval;
+    return(retval);
 } /* SocketWrite */
 
 
@@ -1799,7 +1799,7 @@ char	*host, *sbuf;
     cmw_priv_assert_netaccess();
     retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&the_addr, sizeof(the_addr));
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramSend */
 
 
@@ -1850,7 +1850,7 @@ int	size;
     cmw_priv_assert_netaccess();
     retval = recvfrom(fd, rbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr, &addrlen);
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramReceiveAny */
 
 
@@ -1982,7 +1982,7 @@ char	*sbuf;
     retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr,
 		   sizeof(sl_dgram_lastaddr));
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramReply */
 
 
@@ -2031,7 +2031,7 @@ int	size;
     cmw_priv_assert_netaccess();
     retval = recv(fd, rbuf, size, 0);
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramRead */
 
 
@@ -2081,7 +2081,7 @@ int	size;
     cmw_priv_assert_netaccess();
     retval = send(fd, wbuf, size, 0);
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramWrite */
 
 
@@ -2309,7 +2309,7 @@ DgramLastname(int fd)
 	str = inet_ntoa(sl_dgram_lastaddr.sin_addr);
     else
 	str = (char *) he->h_name;
-    return str;
+    return(str);
 #endif
 } /* DgramLastname */
 
@@ -2350,12 +2350,12 @@ DgramLastport(int fd)
     int port;
 
     if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/tomenet%d", &port) < 1) return (-1);
-    return port;
+    return(port);
 #else
     socklen_t len = sizeof(struct sockaddr_in);
 
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
-    return (ntohs((int)sl_dgram_lastaddr.sin_port));
+    return(ntohs((int)sl_dgram_lastaddr.sin_port));
 #endif
 } /* DgramLastport */
 
@@ -2531,7 +2531,7 @@ char *inet_ntoa (struct in_addr in) {
 		addr >> 8 & 0xFF,
 		addr & 0xFF);
 
-	return ascii;
+	return(ascii);
 }
 #endif
 

@@ -128,7 +128,7 @@ char *strdup(cptr s) {
 	char *dup;
 	dup = (char *)malloc(sizeof(char) * (strlen(s) + 1));
 	strcpy(dup, s);
-	return dup;
+	return(dup);
 }
 
 #endif /* ultrix */

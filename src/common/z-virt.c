@@ -64,7 +64,7 @@ void *mem_alloc(size_t len) {
 	/* Handle OOM */
 	if (!mem) quit("Out of Memory!");
 
-	return mem;
+	return(mem);
 }
 
 
@@ -82,7 +82,7 @@ void *mem_free(void *p) {
 	else            free(p);
 
 	/* Done */
-	return (NULL);
+	return(NULL);
 }
 
 
@@ -99,7 +99,7 @@ void *mem_realloc(void *p, size_t len) {
 	void *mem;
 
 	/* Fail gracefully */
-	if (!p || len == 0) return (NULL);
+	if (!p || len == 0) return(NULL);
 
 	if (realloc_aux) mem = (*realloc_aux)(p, len);
 	else             mem = realloc(p, len);
@@ -107,7 +107,7 @@ void *mem_realloc(void *p, size_t len) {
 	/* Handle OOM */
 	if (!mem) quit("Out of Memory!");
 
-	return mem;
+	return(mem);
 }
 
 
@@ -129,7 +129,7 @@ char *string_make(const char *str) {
 	/* Copy the string (with terminator) */
 	memcpy(res, str, siz);
 
-	return res;
+	return(res);
 }
 
 
@@ -139,5 +139,5 @@ char *string_make(const char *str) {
 #undef string_free
 char *string_free(char *str) {
 	/* Kill the buffer of chars we must have allocated above */
-	return mem_free(str);
+	return(mem_free(str));
 }

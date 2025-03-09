@@ -413,7 +413,7 @@ static int my_fgetc(FILE *fff) {
 	}
 
 	if (my_fgetc_pos < my_fgetc_len) {
-		return my_fgetc_buf[my_fgetc_pos++];
+		return(my_fgetc_buf[my_fgetc_pos++]);
 	} else {
 		/* Reset */
 		my_fgetc_pos = 4096;
@@ -421,7 +421,7 @@ static int my_fgetc(FILE *fff) {
 		my_fgetc_fp = NULL;
 
 		/* Return EOF */
-		return EOF;
+		return(EOF);
 	}
 }
 

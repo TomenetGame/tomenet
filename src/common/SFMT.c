@@ -119,11 +119,11 @@ inline static void swap(w128_t *array, int size);
  */
 #ifdef ONLY64
 inline static int idxof(int i) {
-    return i ^ 1;
+    return(i ^ 1);
 }
 #else
 inline static int idxof(int i) {
-    return i;
+    return(i);
 }
 #endif
 /**
@@ -338,7 +338,7 @@ inline static void swap(w128_t *array, int size) {
  * @return 32-bit integer
  */
 static uint32_t func1(uint32_t x) {
-    return (x ^ (x >> 27)) * (uint32_t)1664525UL;
+    return(x ^ (x >> 27)) * (uint32_t)1664525UL;
 }
 
 /**
@@ -348,7 +348,7 @@ static uint32_t func1(uint32_t x) {
  * @return 32-bit integer
  */
 static uint32_t func2(uint32_t x) {
-    return (x ^ (x >> 27)) * (uint32_t)1566083941UL;
+    return(x ^ (x >> 27)) * (uint32_t)1566083941UL;
 }
 
 /**
@@ -390,7 +390,7 @@ static void period_certification(void) {
  * and all parameters of this generator.
  */
 const char *get_idstring(void) {
-    return IDSTR;
+    return(IDSTR);
 }
 
 /**
@@ -399,7 +399,7 @@ const char *get_idstring(void) {
  * @return minimum size of array used for fill_array32() function.
  */
 int get_min_array_size32(void) {
-    return N32;
+    return(N32);
 }
 
 /**
@@ -408,7 +408,7 @@ int get_min_array_size32(void) {
  * @return minimum size of array used for fill_array64() function.
  */
 int get_min_array_size64(void) {
-    return N64;
+    return(N64);
 }
 
 #ifndef ONLY64
@@ -426,7 +426,7 @@ uint32_t gen_rand32(void) {
 	idx = 0;
     }
     r = psfmt32[idx++];
-    return r;
+    return(r);
 }
 #endif
 /**
@@ -454,11 +454,11 @@ uint64_t gen_rand64(void) {
     r1 = psfmt32[idx];
     r2 = psfmt32[idx + 1];
     idx += 2;
-    return ((uint64_t)r2 << 32) | r1;
+    return((uint64_t)r2 << 32) | r1;
 #else
     r = psfmt64[idx / 2];
     idx += 2;
-    return r;
+    return(r);
 #endif
 }
 

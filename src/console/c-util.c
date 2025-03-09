@@ -5,13 +5,11 @@ bool multi_key_macros = FALSE;
 
 static bool flush_later = FALSE;
 
-void move_cursor(int row, int col)
-{
+void move_cursor(int row, int col) {
 	Term_gotoxy(col, row);
 }
 
-void flush(void)
-{
+void flush(void) {
 	flush_later = TRUE;
 }
 
@@ -19,16 +17,14 @@ void flush(void)
 /*
  * XXX -- Temporary version of "inkey" with no macros
  */
-char inkey(void)
-{
+char inkey(void) {
 	char ch;
 
 	/* Refresh screen */
 	Term_fresh();
 
 	/* Check for flush */
-	if (flush_later)
-	{
+	if (flush_later) {
 		/* Flush input */
 		Term_flush();
 
@@ -38,15 +34,14 @@ char inkey(void)
 
 	(void)(Term_inkey(&ch, TRUE, TRUE));
 
-	return ch;
+	return(ch);
 }
 
 
 /*
  * Flush the screen, make a noise
  */
-void bell(void)
-{
+void bell(void) {
 	/* Mega-Hack -- Flush the output */
 	Term_fresh();
 
@@ -61,8 +56,7 @@ void bell(void)
  * Display a string on the screen using an attribute, and clear
  * to the end of the line.
  */
-void c_prt(byte attr, cptr str, int row, int col)
-{
+void c_prt(byte attr, cptr str, int row, int col) {
 	/* Hack -- fake monochrome */
 	/* if (!use_color) attr = TERM_WHITE; */
 
@@ -76,8 +70,7 @@ void c_prt(byte attr, cptr str, int row, int col)
 /*
  * As above, but in "white"
  */
-void prt(cptr str, int row, int col)
-{
+void prt(cptr str, int row, int col) {
 	/* Spawn */
 	c_prt(TERM_WHITE, str, row, col);
 }
@@ -95,16 +88,11 @@ void prt(cptr str, int row, int col)
  */
 
 /* APD -- added private so passwords will not be displayed. */
-bool askfor_aux(char *buf, int len, char private)
-{
+bool askfor_aux(char *buf, int len, char private) {
 	int y, x;
-
 	int i = 0;
-
 	int k = 0;
-
 	bool done = FALSE;
-
 
 	/* Locate the cursor */
 	Term_locate(&x, &y);
@@ -189,8 +177,7 @@ bool askfor_aux(char *buf, int len, char private)
  *
  * We clear the input, and return FALSE, on "ESCAPE".
  */
-bool get_string(cptr prompt, char *buf, int len)
-{
+bool get_string(cptr prompt, char *buf, int len) {
 	bool res;
 
 	/* Display prompt */
@@ -213,8 +200,7 @@ bool get_string(cptr prompt, char *buf, int len)
  *
  * Returns TRUE unless the character is "Escape"
  */
-bool get_com(cptr prompt, char *command)
-{
+bool get_com(cptr prompt, char *command) {
 	/* Display a prompt */
 	prt(prompt, 0, 0);
 
@@ -245,10 +231,8 @@ bool get_com(cptr prompt, char *command)
  * Note that this command is used both in the dungeon and in
  * stores, and must be careful to work in both situations.
  */
-void request_command(bool shopping)
-{
+void request_command(bool shopping) {
 	char cmd;
-
 
 	/* Flush the input */
 	/* flush(); */
@@ -263,14 +247,12 @@ void request_command(bool shopping)
 	prt("", 0, 0);
 
 	/* Bypass "keymap" */
-	if (cmd == '\\')
-	{
+	if (cmd == '\\') {
 		/* Get a char to use without casting */
 		(void)(get_com("Command: ", &cmd));
 
 		/* Hack -- allow "control chars" to be entered */
-		if (cmd == '^')
-		{
+		if (cmd == '^') {
 			/* Get a char to "cast" into a control char */
 			(void)(get_com("Command: Control: ", &cmd));
 
@@ -280,13 +262,9 @@ void request_command(bool shopping)
 
 		/* Use the key directly */
 		command_cmd = cmd;
-	}
-
-	else
-	{
+	} else {
 		/* Hack -- allow "control chars" to be entered */
-		if (cmd == '^')
-		{
+		if (cmd == '^') {
 			/* Get a char to "cast" into a control char */
 			(void)(get_com("Control: ", &cmd));
 
@@ -311,8 +289,7 @@ void request_command(bool shopping)
  * At the given location, using the given attribute, if allowed,
  * add the given string.  Do not clear the line.
  */
-void c_put_str(byte attr, cptr str, int row, int col)
-{
+void c_put_str(byte attr, cptr str, int row, int col) {
 	/* Position cursor, Dump the attr/text */
 	Term_putstr(col, row, -1, attr, str);
 }
@@ -321,8 +298,7 @@ void c_put_str(byte attr, cptr str, int row, int col)
 /*
  * As above, but in "white"
  */
-void put_str(cptr str, int row, int col)
-{
+void put_str(cptr str, int row, int col) {
 	/* Spawn */
 	Term_putstr(col, row, -1, TERM_WHITE, str);
 }
@@ -334,10 +310,8 @@ void put_str(cptr str, int row, int col)
  *
  * Note that "[y/n]" is appended to the prompt.
  */
-bool get_check(cptr prompt)
-{
+bool get_check(cptr prompt) {
 	int i;
-
 	char buf[80];
 
 	/* Hack -- Build a "useful" prompt */
@@ -347,8 +321,7 @@ bool get_check(cptr prompt)
 	prt(buf, 0, 0);
 
 	/* Get an acceptable answer */
-	while (TRUE)
-	{
+	while (TRUE) {
 		i = inkey();
 		if (i == ESCAPE) break;
 		if (strchr("YyNn", i)) break;
@@ -371,18 +344,13 @@ bool get_check(cptr prompt)
  *
  * Hack -- allow "command_arg" to specify a quantity
  */
-s16b c_get_quantity(cptr prompt, int max)
-{
+s16b c_get_quantity(cptr prompt, int max) {
 	int amt;
-
 	char tmp[80];
-
 	char buf[80];
 
-
 	/* Build a prompt if needed */
-	if (!prompt)
-	{
+	if (!prompt) {
 		/* Build a prompt */
 		sprintf(tmp, "Quantity (1-%d): ", max);
 
@@ -416,32 +384,30 @@ s16b c_get_quantity(cptr prompt, int max)
 	return (amt);
 }
 
-void clear_from(int row)
-{
+void clear_from(int row) {
 	int y;
 
 	/* Erase requested rows */
-	for (y = row; y < Term->hgt; y++)
-	{
+	for (y = row; y < Term->hgt; y++) {
 		/* Erase part of the screen */
 		Term_erase(0, y, 255);
 	}
 }
 
-void prt_num(cptr header, int num, int row, int col, byte color)
-{
+void prt_num(cptr header, int num, int row, int col, byte color) {
 	int len = strlen(header);
 	char out_val[32];
+
 	put_str(header, row, col);
 	put_str("   ", row, col + len);
 	(void)sprintf(out_val, "%6d", num);
 	c_put_str(color, out_val, row, col + len + 3);
 }
 
-void prt_lnum(cptr header, s32b num, int row, int col, byte color)
-{
+void prt_lnum(cptr header, s32b num, int row, int col, byte color) {
 	int len = strlen(header);
 	char out_val[32];
+
 	put_str(header, row, col);
 	(void)sprintf(out_val, "%9d", num);
 	c_put_str(color, out_val, row, col + len);
@@ -457,12 +423,9 @@ void prt_lnum(cptr header, s32b num, int row, int col, byte color)
  *
  * Fake "usleep()" function grabbed from the inl netrek server -cba
  */
-int usleep(huge microSeconds)
-{
+int usleep(huge microSeconds) {
 	struct timeval		Timer;
-
 	int			nfds = 0;
-
 #ifdef FD_SET
 	fd_set		*no_fds = NULL;
 #else
@@ -482,8 +445,7 @@ int usleep(huge microSeconds)
 	Timer.tv_usec = (microSeconds % 1000000L);
 
 	/* Wait for it */
-	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0)
-	{
+	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0) {
 		/* Hack -- ignore interrupts */
 		if (errno != EINTR) return(-1);
 	}
@@ -497,8 +459,7 @@ int usleep(huge microSeconds)
 #endif /* SET_UID */
 
 #ifdef WIN32
-int usleep(long microSeconds)
-{
+int usleep(long microSeconds) {
 	Sleep(microSeconds/10); /* meassured in milliseconds not microseconds*/
 }
 #endif /* WIN32 */

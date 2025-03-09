@@ -270,27 +270,27 @@ bool process_command(void) {
 
 	/* Check the command */
 	switch(command_cmd) {
-	case 'a': return get_player_list();
+	case 'a': return(get_player_list());
 		  break;
-	case 'b': return get_artifact_list();
+	case 'b': return(get_artifact_list());
 		  break;
-	case 'c': return get_unique_list();
+	case 'c': return(get_unique_list());
 		  break;
-	case 'd': return modify_artifact();
+	case 'd': return(modify_artifact());
 		  break;
-	case 'e': return modify_unique();
+	case 'e': return(modify_unique());
 		  break;
-	case 'f': return get_player_info();
+	case 'f': return(get_player_info());
 		  break;
-	case 'g': return send_message();
+	case 'g': return(send_message());
 		  break;
-	case 'h': return kick_player();
+	case 'h': return(kick_player());
 		  break;
-	case 'i': return reload_server_preferences();
+	case 'i': return(reload_server_preferences());
 		  break;
-	case 'j': return shutdown_server();
+	case 'j': return(shutdown_server());
 		  break;
-	case 'k': return quit_console();
+	case 'k': return(quit_console());
 		  break;
 	default: /* Bad command */
 		  return(FALSE);

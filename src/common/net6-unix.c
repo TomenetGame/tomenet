@@ -365,7 +365,7 @@ int	fd;
     len = sizeof(addr);
     if (getsockname(fd, (struct sockaddr *)&addr, &len) < 0) return (-1);
     if (sscanf(addr.sun_path, "/tmp/tomenet%d", &port) < 1) return (-1);
-    return port;
+    return(port);
 #else
     struct sockaddr_in6	addr;
 
@@ -645,7 +645,7 @@ int	fd;
     //retval = accept(fd, NULL, 0);
     cmw_priv_deassert_netaccess();
 
-    return retval;
+    return(retval);
 } /* SocketAccept */
 
 /*
@@ -699,7 +699,7 @@ int	fd;
     int				lsize  = sizeof(struct linger);
 #endif
 
-    return setsockopt(fd, SOL_SOCKET, SO_LINGER, (void *)&linger, lsize);
+    return(setsockopt(fd, SOL_SOCKET, SO_LINGER, (void *)&linger, lsize));
 #endif
 } /* SocketLinger */
 
@@ -834,7 +834,7 @@ int	flag;
      * with the setsockopt(TCP_NODELAY) option.
      * They control completely different features!
      */
-    return setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (void *)&flag, sizeof(flag));
+    return(setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (void *)&flag, sizeof(flag)));
 } /* SetSocketNoDelay */
 #endif
 
@@ -993,7 +993,7 @@ int	fd;
 int	flag;
 #endif /* __STDC__ */
 {
-    return setsockopt(fd, SOL_SOCKET, SO_BROADCAST, (void *)&flag, sizeof(flag));
+    return(setsockopt(fd, SOL_SOCKET, SO_BROADCAST, (void *)&flag, sizeof(flag)));
 } /* SetSocketBroadcast */
 #endif /* if 0 */
 
@@ -1266,7 +1266,7 @@ char	*buf;
     retval = write(fd, buf, size);
     cmw_priv_deassert_netaccess();
 
-    return retval;
+    return(retval);
 } /* SocketWrite */
 
 
@@ -1820,7 +1820,7 @@ char	*host, *sbuf;
     cmw_priv_assert_netaccess();
     retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&the_addr, sizeof(the_addr));
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramSend */
 
 
@@ -1871,7 +1871,7 @@ int	size;
     cmw_priv_assert_netaccess();
     retval = recvfrom(fd, rbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr, &addrlen);
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramReceiveAny */
 
 
@@ -1939,7 +1939,7 @@ char	*rbuf;
 	    hp = gethostbyname2(from, AF_INET);
 	    if (hp == NULL) {
 	   	sl_errno = SL_EHOSTNAME;
-	    	return (-1);
+	    	return(-1);
 	    }
 	    else {
 		/* I dont like this really */
@@ -1959,9 +1959,9 @@ char	*rbuf;
 #endif
     ) {
 	sl_errno = SL_EWRONGHOST;
-	return (-1);
+	return(-1);
     }
-    return (retval);
+    return(retval);
 } /* DgramReceive */
 
 
@@ -2012,7 +2012,7 @@ char	*sbuf;
     retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr,
 		   sizeof(sl_dgram_lastaddr));
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramReply */
 
 
@@ -2061,7 +2061,7 @@ int	size;
     cmw_priv_assert_netaccess();
     retval = recv(fd, rbuf, size, 0);
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramRead */
 
 
@@ -2111,7 +2111,7 @@ int	size;
     cmw_priv_assert_netaccess();
     retval = send(fd, wbuf, size, 0);
     cmw_priv_deassert_netaccess();
-    return retval;
+    return(retval);
 } /* DgramWrite */
 
 
@@ -2215,7 +2215,7 @@ char	*host, *sbuf, *rbuf;
 
     (void) signal(SIGALRM, DgramInthandler);
     while (retry > 0) {
-	if (DgramSend(fd, host, port, sbuf, sbuf_size) == -1) return (-1);
+	if (DgramSend(fd, host, port, sbuf, sbuf_size) == -1) return(-1);
 
 	(void) alarm(sl_timeout_s);
 	retval = DgramReceive(fd, host, rbuf, rbuf_size);
@@ -2236,7 +2236,7 @@ char	*host, *sbuf, *rbuf;
     }
     (void) alarm(0);
     (void) signal(SIGALRM, SIG_DFL);
-    return (retval);
+    return(retval);
 } /* DgramInthandler */
 
 
@@ -2273,13 +2273,13 @@ char	*host, *sbuf, *rbuf;
  */
 char *DgramLastaddr(int fd) {
 #ifdef UNIX_SOCKETS
-    return "localhost";
+    return("localhost");
 #else
     static char addbuff[INET6_ADDRSTRLEN];
     socklen_t len = sizeof(struct sockaddr_in6);
 
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
-    return ((char*)inet_ntop(AF_INET6, &sl_dgram_lastaddr.sin6_addr, (char*)&addbuff, INET6_ADDRSTRLEN));
+    return((char*)inet_ntop(AF_INET6, &sl_dgram_lastaddr.sin6_addr, (char*)&addbuff, INET6_ADDRSTRLEN));
 #endif
 } /* DgramLastaddr */
 
@@ -2319,7 +2319,7 @@ char *DgramLastaddr(int fd) {
  */
 char *DgramLastname(int fd) {
 #ifdef UNIX_SOCKETS
-    return "localhost";
+    return("localhost");
 #else
     struct hostent	*he;
     char		*str;
@@ -2332,7 +2332,7 @@ char *DgramLastname(int fd) {
 	str = (char*)inet_ntop(AF_INET6, &sl_dgram_lastaddr.sin6_addr, (char*)&addbuff, INET6_ADDRSTRLEN);
     else
 	str = (char *) he->h_name;
-    return str;
+    return(str);
 #endif
 } /* DgramLastname */
 
@@ -2370,13 +2370,13 @@ int DgramLastport(int fd) {
 #ifdef UNIX_SOCKETS
     int port;
 
-    if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/tomenet%d", &port) < 1) return (-1);
-    return port;
+    if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/tomenet%d", &port) < 1) return(-1);
+    return(port);
 #else
     socklen_t len = sizeof(struct sockaddr_in6);
 
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
-    return (ntohs((int)sl_dgram_lastaddr.sin6_port));
+    return(ntohs((int)sl_dgram_lastaddr.sin6_port));
 #endif
 } /* DgramLastport */
 
@@ -2558,7 +2558,7 @@ char *inet_ntoa (struct in_addr in) {
 		addr >> 8 & 0xFF,
 		addr & 0xFF);
 
-	return ascii;
+	return(ascii);
 }
 #endif
 

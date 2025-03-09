@@ -913,7 +913,7 @@ int DgramSend(int fd, char *host, int port, char *sbuf, int size) {
     retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&the_addr,
 		   sizeof(struct sockaddr_in));
 
-    return retval;
+    return(retval);
 } /* DgramSend */
 
 /*
@@ -955,7 +955,7 @@ int DgramReceiveAny(int fd, char *rbuf, int size) {
     retval = recvfrom(fd, rbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr,
 	&addrlen);
 
-    return retval;
+    return(retval);
 } /* DgramReceiveAny */
 
 /*
@@ -1052,7 +1052,7 @@ int DgramReply(int fd, char *sbuf, int size) {
 	retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr,
 		   sizeof(struct sockaddr_in));
 
-	return retval;
+	return(retval);
 } /* DgramReply */
 
 /*
@@ -1096,7 +1096,7 @@ int DgramRead(int fd, char *rbuf, int size) {
 		return(-1);
 	}
 
-    return retval;
+    return(retval);
 } /* DgramRead */
 
 /*
@@ -1141,7 +1141,7 @@ int DgramWrite(int fd, char *wbuf, int size) {
 		return(-1);
 	}
 
-    return retval;
+    return(retval);
 } /* DgramWrite */
 
 /*
@@ -1340,7 +1340,7 @@ char *DgramLastname(int fd) {
 		       sizeof(struct in_addr), AF_INET);
     if (he == NULL) str = inet_ntoa(sl_dgram_lastaddr.sin_addr);
     else str = (char *) he->h_name;
-    return str;
+    return(str);
 #endif
 } /* DgramLastname */
 
@@ -1379,12 +1379,12 @@ int DgramLastport(int fd) {
 
     if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/tomenet%d", &port) < 1)
         return (-1);
-    return port;
+    return(port);
 #else
     int len = sizeof(struct sockaddr_in);
 
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
-    return (ntohs((int)sl_dgram_lastaddr.sin_port));
+    return(ntohs((int)sl_dgram_lastaddr.sin_port));
 #endif
 } /* DgramLastport */
 
@@ -1737,7 +1737,7 @@ int SocketAccept(int fd) {
 
     retval = accept(fd, NULL, 0);
 
-    return retval;
+    return(retval);
 } /* SocketAccept */
 
 
@@ -1774,7 +1774,7 @@ int SocketLinger(int fd) {
     static struct linger	linger = {1, 300};
     int				lsize  = sizeof(struct linger);
 
-    return setsockopt(fd, SOL_SOCKET, SO_LINGER, (void *)&linger, lsize);
+    return(setsockopt(fd, SOL_SOCKET, SO_LINGER, (void *)&linger, lsize));
 } /* SocketLinger */
 
 
@@ -1915,7 +1915,7 @@ int SocketWrite(int fd, char *buf, int size) {
      */
     retval = write(fd, buf, size);
 
-    return retval;
+    return(retval);
 } /* SocketWrite */
 
 /*#endif */	/*SERVER function? */

@@ -3006,7 +3006,7 @@ bool load_server_info(void) {
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
 	if (file_exist(buf)) {
 		//s_printf("Found classic 'server' savefile\n");
-		return load_server_info_classic();
+		return(load_server_info_classic());
 	}
 
 	/* check for existence of partial server save files */

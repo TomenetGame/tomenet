@@ -473,21 +473,21 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
 static char get_shimmer_color() {
 	switch (randint(7)) {
 		case 1:
-			return TERM_RED;
+			return(TERM_RED);
 		case 2:
-			return TERM_L_RED;
+			return(TERM_L_RED);
 		case 3:
-			return TERM_WHITE;
+			return(TERM_WHITE);
 		case 4:
-			return TERM_L_GREEN;
+			return(TERM_L_GREEN);
 		case 5:
-			return TERM_BLUE;
+			return(TERM_BLUE);
 		case 6:
-			return TERM_L_DARK;
+			return(TERM_L_DARK);
 		case 7:
-			return TERM_GREEN;
+			return(TERM_GREEN);
 	}
-	return (TERM_VIOLET);
+	return(TERM_VIOLET);
 }
 #endif
 
@@ -502,84 +502,84 @@ byte flick_colour(byte attr) {
 		return(randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
 	/* additional flickering from 'pvp' flag? */
 	} else if (flags & TERM_PVP) {
-		if (rand_int(6) < 3) return (attr);
+		if (rand_int(6) < 3) return(attr);
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_RED;
-		case 3: return TERM_YELLOW;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_L_RED);
+		case 3: return(TERM_YELLOW);
 		}
 	}
 #else
 	switch (attr) {
 	/* flickering from 'black'n'white' flag? */
-	case TERM_BNW: return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+	case TERM_BNW: return(randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
 	case TERM_BNWM:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return flick_colour(TERM_HOLYFIRE);
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(flick_colour(TERM_HOLYFIRE));
 		}
 	case TERM_BNWSR:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return TERM_BLUE;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(TERM_BLUE);
 		}
 	case TERM_BNWKS:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return flick_colour(TERM_PSI);
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(flick_colour(TERM_PSI));
 		}
 	case TERM_BNWKS2:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return TERM_ORANGE;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(TERM_ORANGE);
 		}
 	/* flickering from 'pvp' flag? */
 	case TERM_PVPBB:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_SLATE;
-		case 3: return TERM_YELLOW;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_SLATE);
+		case 3: return(TERM_YELLOW);
 		}
 	case TERM_PVP:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_RED;
-		case 3: return TERM_YELLOW;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_L_RED);
+		case 3: return(TERM_YELLOW);
 		}
 	}
 #endif
 
 	if (attr == TERM_SHIELDM) {
 /*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)) {
-		if (randint(2) == 1) return (attr - TERM_SHIELDM);
+		if (randint(2) == 1) return(attr - TERM_SHIELDM);
 		if ((attr - TERM_SHIELDM) != TERM_VIOLET)
 		return((randint(2) == 1) ? TERM_VIOLET : TERM_ORANGE);
 		else
 		return((randint(2) == 1) ? TERM_L_RED : TERM_ORANGE);
 */		switch (randint(3)) {
-		case 1: return TERM_VIOLET;
-		case 2: return TERM_L_RED;
-		case 3: return TERM_ORANGE;
+		case 1: return(TERM_VIOLET);
+		case 2: return(TERM_L_RED);
+		case 3: return(TERM_ORANGE);
 		}
 	}
 	if (attr == TERM_SHIELDI) {
 /*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)) {
-		if (randint(4) == 1) return (attr - TERM_SHIELDI);
+		if (randint(4) == 1) return(attr - TERM_SHIELDI);
 */		switch (randint(5)) {
-		case 1: return (TERM_L_RED);
-		case 2: return (TERM_L_GREEN);
-		case 3: return (TERM_L_BLUE);
-		case 4: return (TERM_YELLOW);
-		case 5: return (TERM_VIOLET);
-/*		case 1: return (TERM_L_RED);
-		case 2: return (TERM_VIOLET);
-		case 3: return (TERM_RED);
-		case 4: return (TERM_L_DARK);
-		case 5: return (TERM_WHITE);
+		case 1: return(TERM_L_RED);
+		case 2: return(TERM_L_GREEN);
+		case 3: return(TERM_L_BLUE);
+		case 4: return(TERM_YELLOW);
+		case 5: return(TERM_VIOLET);
+/*		case 1: return(TERM_L_RED);
+		case 2: return(TERM_VIOLET);
+		case 3: return(TERM_RED);
+		case 4: return(TERM_L_DARK);
+		case 5: return(TERM_WHITE);
 */		}
 	}
 	switch (attr) {
@@ -1248,7 +1248,7 @@ errr Term_fresh(void) {
 
 
 	/* Do nothing unless "mapped" */
-	if (!Term->mapped_flag) return (1);
+	if (!Term->mapped_flag) return(1);
 
 
 	/* Paranoia -- enforce "fake" hooks if needed */
@@ -1528,7 +1528,7 @@ errr Term_fresh(void) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1541,13 +1541,13 @@ errr Term_fresh(void) {
  */
 errr Term_set_cursor(int v) {
 	/* Already done */
-	if (Term->scr->cv == v) return (1);
+	if (Term->scr->cv == v) return(1);
 
 	/* Change */
 	Term->scr->cv = v;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1561,8 +1561,8 @@ errr Term_gotoxy(int x, int y) {
 	int h = Term->hgt;
 
 	/* Verify */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
 
 	/* Remember the cursor */
 	Term->scr->cx = x;
@@ -1572,7 +1572,7 @@ errr Term_gotoxy(int x, int y) {
 	Term->scr->cu = 0;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 

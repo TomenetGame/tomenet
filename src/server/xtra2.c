@@ -15789,7 +15789,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 		if (tmp > 0) return(tmp);
 
 		/* if the name was specified, summon this exact race */
-		if (strlen(monster_parms) > 1) return race_index(monster_parms);
+		if (strlen(monster_parms) > 1) return(race_index(monster_parms));
 		/* otherwise, summon a monster that looks like us */
 		else {
 			master_specific_race_char = monster_parms[0];
@@ -15809,57 +15809,57 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 	/* orc specified */
 	case 'o':
 		/* if not random, assume specific orc specified */
-		if (strcmp(monster_parms, "random")) return race_index(monster_parms);
+		if (strcmp(monster_parms, "random")) return(race_index(monster_parms));
 		/* random orc */
 		else switch (rand_int(6)) {
-			case 0: return race_index("Snaga");
-			case 1: return race_index("Cave orc");
-			case 2: return race_index("Hill orc");
-			case 3: return race_index("Dark orc");
-			case 4: return race_index("Half-orc");
-			case 5: return race_index("Uruk");
+			case 0: return(race_index("Snaga"));
+			case 1: return(race_index("Cave orc"));
+			case 2: return(race_index("Hill orc"));
+			case 3: return(race_index("Dark orc"));
+			case 4: return(race_index("Half-orc"));
+			case 5: return(race_index("Uruk"));
 		}
 		break;
 
 	/* low undead specified */
 	case 'u':
 		/* if not random, assume specific high undead specified */
-		if (strcmp(monster_parms, "random")) return race_index(monster_parms);
+		if (strcmp(monster_parms, "random")) return(race_index(monster_parms));
 		/* random low undead */
 		else switch (rand_int(11)) {
-			case 0: return race_index("Poltergeist");
-			case 1: return race_index("Green glutton ghost");
-			case 2: return race_index("Lost soul");
-			case 3: return race_index("Skeleton kobold");
-			case 4: return race_index("Skeleton orc");
-			case 5: return race_index("Skeleton human");
-			case 6: return race_index("Zombified orc");
-			case 7: return race_index("Zombified human");
-			case 8: return race_index("Mummified orc");
-			case 9: return race_index("Moaning spirit");
-			case 10: return race_index("Vampire bat");
+			case 0: return(race_index("Poltergeist"));
+			case 1: return(race_index("Green glutton ghost"));
+			case 2: return(race_index("Lost soul"));
+			case 3: return(race_index("Skeleton kobold"));
+			case 4: return(race_index("Skeleton orc"));
+			case 5: return(race_index("Skeleton human"));
+			case 6: return(race_index("Zombified orc"));
+			case 7: return(race_index("Zombified human"));
+			case 8: return(race_index("Mummified orc"));
+			case 9: return(race_index("Moaning spirit"));
+			case 10: return(race_index("Vampire bat"));
 		}
 		break;
 
 	/* high undead specified */
 	case 'U':
 		/* if not random, assume specific high undead specified */
-		if (strcmp(monster_parms, "random")) return race_index(monster_parms);
+		if (strcmp(monster_parms, "random")) return(race_index(monster_parms));
 		/* random low undead */
 		else switch (rand_int(13)) {
-			case 0: return race_index("Vampire");
-			case 1: return race_index("Giant skeleton troll");
-			case 2: return race_index("Lich");
-			case 3: return race_index("Master vampire");
-			case 4: return race_index("Dread");
-			case 5: return race_index("Nether wraith");
-			case 6: return race_index("Night mare");
-			case 7: return race_index("Vampire lord");
-			case 8: return race_index("Archpriest");
-			case 9: return race_index("Undead beholder");
-			case 10: return race_index("Dreadmaster");
-			case 11: return race_index("Nightwing");
-			case 12: return race_index("Nightcrawler");
+			case 0: return(race_index("Vampire"));
+			case 1: return(race_index("Giant skeleton troll"));
+			case 2: return(race_index("Lich"));
+			case 3: return(race_index("Master vampire"));
+			case 4: return(race_index("Dread"));
+			case 5: return(race_index("Nether wraith"));
+			case 6: return(race_index("Night mare"));
+			case 7: return(race_index("Vampire lord"));
+			case 8: return(race_index("Archpriest"));
+			case 9: return(race_index("Undead beholder"));
+			case 10: return(race_index("Dreadmaster"));
+			case 11: return(race_index("Nightwing"));
+			case 12: return(race_index("Nightcrawler"));
 		}
 		break;
 

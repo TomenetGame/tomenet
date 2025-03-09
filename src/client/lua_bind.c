@@ -362,5 +362,5 @@ bool get_item_aux(int *cp, cptr pmt, bool equip, bool inven, bool floor) {
 	if (inven) mode |= USE_INVEN;
 	if (floor) mode |= USE_FLOOR;
 
-	return c_get_item(cp, pmt, mode);
+	return(c_get_item(cp, pmt, mode));
 }

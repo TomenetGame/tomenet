@@ -2908,7 +2908,7 @@ void init_swearing() {
  * Read randart names from lib/text/randart.txt.
  */
 static errr init_randart(void) {
-	return read_lines_to_memory("randarts.txt", &randart_names, &num_randart_names);
+	return(read_lines_to_memory("randarts.txt", &randart_names, &num_randart_names));
 }
 
 /*
@@ -3192,7 +3192,7 @@ static void init_guardians(void) {
 
 static bool str_to_boolean(char * str) {
 	/* false by default */
-	return !(strcasecmp(str, "true"));
+	return(!strcasecmp(str, "true"));
 }
 
 /* Try to set a server option.  This is handled very sloppily right now,
