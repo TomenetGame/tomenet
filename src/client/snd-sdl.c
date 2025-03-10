@@ -4392,16 +4392,7 @@ void do_cmd_options_mus_sdl(void) {
 
 			/* Play the correct in-game music again */
 			if (play) {
- #if 0 /* Resume playing via play_music...() functions */
-  #ifdef JUKEBOX_INSTANT_PLAY
-				/* This seems wrong, as it doesn't handle initial/etc special song states? */
-				play_music_instantly(jukebox_org);//switch song instantly instead of fading out+in
-  #else
-				/* Should always use this instead, on jukebox exit? */
-				jukebox_playing = -1; //required for play_music() to work correctly
-				play_music(jukebox_org);
-  #endif
- #else /* Resume playing the raw way, for better control and restoration of playing state */
+				/* Resume playing the raw way, for better control and restoration of playing state */
 				Mix_Music *wave = NULL;
 
 				/* Still the same music event? */
@@ -4424,10 +4415,10 @@ void do_cmd_options_mus_sdl(void) {
 					if (jukebox_org_vol != 100) {
 						int vols = 100;
 
-  #ifdef USER_VOLUME_MUS
+ #ifdef USER_VOLUME_MUS
 						/* Apply user-defined custom volume modifier */
 						if (songs[music_cur].volume) vols = songs[music_cur].volume;
-  #endif
+ #endif
 						music_vol = jukebox_org_vol;
 						Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)music_vol]) / MIX_MAX_VOLUME, vols));
 					}
@@ -4437,9 +4428,9 @@ void do_cmd_options_mus_sdl(void) {
 				/* Music event was changed meanwhile */
 				else {
 					jukebox_playing = -1; //required for play_music() to work correctly
-					play_music(jukebox_org);
+					if (jukebox_org_vol == 100) play_music(jukebox_org);
+					else play_music_vol(jukebox_org, jukebox_org_vol);
 				}
- #endif
 			} else {
 				/* If a song was "playing silently" ie just disabled, restore its (silenced) playing state. Because the -2 call further above would just set music_cur to -1. */
 				music_cur = jukebox_org;
@@ -4749,7 +4740,8 @@ void do_cmd_options_mus_sdl(void) {
 					jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 					jukebox_paused = FALSE;
 					jukebox_used = TRUE; //we actually used the jukebox
-					play_music(j_sel);
+					if (jukebox_org_vol == 100) play_music(j_sel);
+					else play_music_vol(j_sel, jukebox_org_vol);
 					jukebox_screen = TRUE;
 
 					jukebox_org = jbo;
@@ -4766,7 +4758,8 @@ void do_cmd_options_mus_sdl(void) {
 				jukebox_screen = FALSE; /* Hack: play_music(), unlike play_music_instantly(), aborts if it detects jukebox-specific operations */
 				jukebox_paused = FALSE;
 				jukebox_used = TRUE; //we actually used the jukebox
-				play_music(j_sel);
+				if (jukebox_org_vol == 100) play_music(j_sel);
+				else play_music_vol(j_sel, jukebox_org_vol);
 				jukebox_screen = TRUE;
 
 				jukebox_org = jbo;
