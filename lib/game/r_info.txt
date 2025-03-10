@@ -20459,7 +20459,7 @@ B:HIT:HURT:11d11
 B:HIT:HURT:11d11
 F:BLUEBAND | NO_CREDIT | FORCE_MAXHP | BASH_DOOR | KILL_BODY | POWERFUL |
 F:EVIL | DEMON | NO_CONF | NO_SLEEP | CAN_FLY | HAS_LITE | NO_NEST | NO_ESCORT
-F:IM_FIRE | RES_COLD | IM_POIS | IM_ACID | RES_ELEC
+F:IM_FIRE | RES_COLD | IM_POIS | IM_ACID | RES_ELEC | NO_REDUCE
 D:A giant humanoid demon wielding a massive, heavy and sharp scythe. Feared
 D:by foes and friends alike when it flies into one of its berserk rages, the
 D:Horned Reaper will cut down anything in its path between it and you.
