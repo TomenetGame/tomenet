@@ -2485,14 +2485,14 @@ static bool play_music(int event) {
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1) {
 		/* Check there are samples for this event, otherwise don't switch (unless it's a 'stop music' event sort of thing) */
-		if (event < 0 || songs[event].num) jukebox_org = event;
+		if (event < 0 || songs[event].num) jukebox_org = (event < 0 ? -1 : event);
 		/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 		if (event == 89 && songs[event].num && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
 		return(event < 0 || songs[event].num != 0);
 	} else if (jukebox_screen) {
 		/* Still update jukebox_org et al, as they WILL be restored even if jukebox wasn't playing at all (could be prevented for efficiency I guess, pft) */
 		/* Check there are samples for this event, otherwise don't remember (unless it's a 'stop music' event sort of thing) */
-		if (event < 0 || songs[event].num) jukebox_org = event;
+		if (event < 0 || songs[event].num) jukebox_org = (event < 0 ? -1 : event);
 	}
 #endif
 
@@ -2590,7 +2590,7 @@ static bool play_music(int event) {
 	    !songs[music_next].disabled && songs[music_next].num /* Check there are samples for this event */
 	    && !strcmp(songs[music_next].paths[music_next_song], songs[music_cur].paths[music_cur_song])) {
 		/* 'silent transition', ie we don't need to fade in the next song, as we're already playing the very same file, although it was from a different music event! */
-		music_cur = event;
+		music_cur = (event < 0 ? -1 : event);
 		music_cur_song = music_next_song;
 		music_next = -1;
 		return(TRUE);
@@ -2631,14 +2631,14 @@ static bool play_music_vol(int event, char vol) {
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1) {
 		/* Check there are samples for this event, otherwise don't switch (unless it's a 'stop music' event sort of thing) */
-		if (event < 0 || songs[event].num) jukebox_org = event;
+		if (event < 0 || songs[event].num) jukebox_org = (event < 0 ? -1 : event);
 		/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 		if (event == 89 && songs[event].num && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
 		return(event < 0 || songs[event].num != 0);
 	} else if (jukebox_screen) {
 		/* Still update jukebox_org et al, as they WILL be restored even if jukebox wasn't playing at all (could be prevented for efficiency I guess, pft) */
 		/* Check there are samples for this event, otherwise don't remember (unless it's a 'stop music' event sort of thing) */
-		if (event < 0 || songs[event].num) jukebox_org = event;
+		if (event < 0 || songs[event].num) jukebox_org = (event < 0 ? -1 : event);
 	}
 #endif
 
@@ -2734,7 +2734,7 @@ static bool play_music_vol(int event, char vol) {
 	    !songs[music_next].disabled && songs[music_next].num /* Check there are samples for this event */
 	    && !strcmp(songs[music_next].paths[music_next_song], songs[music_cur].paths[music_cur_song])) {
 		/* 'silent transition', ie we don't need to fade in the next song, as we're already playing the very same file, although it was from a different music event! */
-		music_cur = event;
+		music_cur = (event < 0 ? -1 : event);
 		music_cur_song = music_next_song;
 		music_next = -1;
 		return(TRUE);
@@ -2969,6 +2969,11 @@ static bool play_music_instantly(int event) {
 	Mix_Music *wave = NULL;
 	bool no_repeat = FALSE;
 
+	if (event >= 19000) { //carry over any hacks just in case
+		no_repeat = TRUE;
+		event -= 20000;
+	}
+
 	/* Ultra-hack to avoid unwanted recursion: In jukebox and 'play all': Mix_HaltMusic() will call 'fadein_next_music()' here, but that is too early!
 	   We only want to call fadein_next_music() after the song we are intending to start here via play_music_instantly() has actually ended. */
 	if (jukebox_screen && jukebox_play_all) {
@@ -2977,14 +2982,13 @@ static bool play_music_instantly(int event) {
 		jukebox_play_all = TRUE; //unhax
 	} else
 	/* Normal operation (;>_>) */
-	Mix_HaltMusic();
-
-	if (event >= 19000) { //carry over any hacks just in case
-		no_repeat = TRUE;
-		event -= 20000;
+	{
+		/* Mix_HaltMusic() will call 'fadein_next_music()' which would play the next subsong of music_cur, so we need to set it to -1 too for real music-stop. */
+		if (event == -2) music_cur = -1;
+		Mix_HaltMusic();
 	}
 
-	/* We just wanted to top currently playing music, do nothing more and just return. */
+	/* We just wanted to stop currently playing music, do nothing more and just return. */
 	if (event == -2) {
 		music_cur = -1;
 		return(TRUE); //whatever..
@@ -3001,7 +3005,7 @@ static bool play_music_instantly(int event) {
 	   We ignore shuffle_music, play_all or 'initial' song type and just go through all songs
 	   one by one in their order listed in music.cfg. */
 	if (music_cur != event) {
-		music_cur = event;
+		music_cur = (event < 0 ? -1 : event);
 		music_cur_song = 0;
 	} else music_cur_song = (music_cur_song + 1) % songs[music_cur].num;
 
