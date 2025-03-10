@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. March 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 10. March 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3350,7 +3350,9 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  characters) usually expire after 62 days.
 
 -Items on the ground (especially in towns) often disappear automatically after
- a while. So don't use the town or the wilderniss to 'store' loot.
+ a while (usually 10-20 minutes for towns and wilderness, depending on server
+ settings).
+ So don't use the town or the wilderness to 'store' loot.
  If you don't own any houses, you can use public houses that are accessible to
  everyone. Risk is of course that someone takes your items.
  True artifacts dropped outside of towns will usually vanish instantly the
