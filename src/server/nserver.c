@@ -10776,6 +10776,7 @@ int Send_account_info(int Ind) {
 	}
 
 	if (GetAccount(&acc, connp->nick, NULL, FALSE, NULL, NULL)) acc_flags = acc.flags;
+	if ((acc_flags & (ACC_QUIET | ACC_VQUIET)) == (ACC_QUIET | ACC_VQUIET)) acc_flags &= ~(ACC_QUIET | ACC_VQUIET);
 
 	return Packet_printf(&connp->c, "%c%hd", PKT_ACCOUNT_INFO, acc_flags);
 }

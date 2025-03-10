@@ -164,6 +164,7 @@ void world_comm(int fd, int arg) {
 			/* World's 'server' flags decides about filtering our incoming messages */
 			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->mutedchat == 3) continue;
 
 				/* lame method just now */
 				if (world_check_ignore(i, wpk->d.chat.id, wpk->serverid)) continue;
@@ -201,6 +202,7 @@ void world_comm(int fd, int arg) {
 		case WP_PMSG:
 			/* private message from afar -authed */
 			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->mutedchat == 3) continue;
 				if (!strcmp(Players[i]->name, wpk->d.pmsg.victim)) {
 					if (!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid)) {
 						msg_format(i, "\375\377%c[%s:%s] %s", WP_PMSG_DEFAULT_COLOUR, wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
@@ -401,6 +403,7 @@ void world_comm(int fd, int arg) {
 				if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (Players[i]->ignoring_chat) continue;
 				if (Players[i]->limit_chat) continue;
+				if (Players[i]->mutedchat == 3) continue;
 				msg_print(i, wpk->d.chat.ctxt);
 			}
 

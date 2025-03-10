@@ -3410,8 +3410,7 @@ void guild_msg(int guild_id, cptr msg) {
 
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
 
 		/* Check this guy */
 		if (guild_id == Players[i]->guild)
@@ -3423,11 +3422,9 @@ void guild_msg_ignoring(int sender, int guild_id, cptr msg) {
 
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
-		if (check_ignore(i, sender))
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (check_ignore(i, sender)) continue;
+		if ((Players[sender]->mutedchat == 3 || Players[i]->mutedchat == 3) && i != sender) continue;
 
 		/* Check this guy */
 		if (guild_id == Players[i]->guild)
@@ -3439,11 +3436,9 @@ void guild_msg_ignoring2(int sender, int guild_id, cptr msg, cptr msg_u) {
 
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
-		if (check_ignore(i, sender))
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (check_ignore(i, sender)) continue;
+		if ((Players[sender]->mutedchat == 3 || Players[i]->mutedchat == 3) && i != sender) continue;
 
 		/* Check this guy */
 		if (guild_id == Players[i]->guild)
@@ -3494,8 +3489,7 @@ void party_msg(int party_id, cptr msg) {
 
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED)continue;
 
 		/* Check this guy */
 		if (player_in_party(party_id, i))
@@ -3531,15 +3525,12 @@ void party_msg_ignoring(int sender, int party_id, cptr msg) {
 
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
-		if (check_ignore(i, sender))
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (check_ignore(i, sender)) continue;
+		if ((Players[sender]->mutedchat == 3 || Players[i]->mutedchat == 3) && i != sender) continue;
 
 		/* Check this guy */
-		if (player_in_party(party_id, i))
-			msg_print(i, msg);
+		if (player_in_party(party_id, i)) msg_print(i, msg);
 	}
 }
 void party_msg_ignoring2(int sender, int party_id, cptr msg, cptr msg_u) {
@@ -3547,11 +3538,9 @@ void party_msg_ignoring2(int sender, int party_id, cptr msg, cptr msg_u) {
 
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
-		if (check_ignore(i, sender))
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (check_ignore(i, sender)) continue;
+		if ((Players[sender]->mutedchat == 3 || Players[i]->mutedchat == 3) && i != sender) continue;
 
 		/* Check this guy */
 		if (player_in_party(party_id, i))

@@ -3379,7 +3379,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->restricted = (acc.flags & ACC_VRESTRICTED) ? 2 : (acc.flags & ACC_RESTRICTED) ? 1 : 0;
 		p_ptr->privileged = (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0;
 		p_ptr->pvpexception = (acc.flags & ACC_PVP) ? 1 : (acc.flags & ACC_NOPVP) ? 2 : (acc.flags & ACC_ANOPVP) ? 3 : 0;
-		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
+		p_ptr->mutedchat = ((acc.flags & ACC_VQUIET) ? 2 : 0) + ((acc.flags & ACC_QUIET) ? 1 : 0);
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		acc_houses = acc.houses;
 		s_printf("(%s) ACC1:Player %s@%s(%s) has flags %d%s and %d houses.\n", showtime(), accname, get_conn_host(conn), get_conn_ip(conn), acc.flags, p_ptr->inval ? "[INVAL]" : "", acc_houses);
@@ -3475,7 +3475,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->restricted = (acc.flags & ACC_VRESTRICTED) ? 2 : (acc.flags & ACC_RESTRICTED) ? 1 : 0;
 		p_ptr->privileged = (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0;
 		p_ptr->pvpexception = (acc.flags & ACC_PVP) ? 1 : (acc.flags & ACC_NOPVP) ? 2 : (acc.flags & ACC_ANOPVP) ? 3 : 0;
-		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
+		p_ptr->mutedchat = ((acc.flags & ACC_VQUIET) ? 2 : 0) + ((acc.flags & ACC_QUIET) ? 1 : 0);
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		//s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, acc.flags);
 		s_printf("(%s) ACC2:Player %s has flags %d (%s)\n", showtime(), accname, acc.flags, get_conn_userhost(conn));

@@ -7006,15 +7006,35 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							msg_format(Ind, "Player '%s' already muted (%d).", p2_ptr->name, p2_ptr->mutedchat);
 						else {
 							msg_format(Ind, "Player '%s' now muted (1).", p2_ptr->name);
+							s_printf("<%s> muted '%s'.\n", p_ptr->name, p2_ptr->name);
 							p2_ptr->mutedchat = 1;
 							acc_set_flags(p2_ptr->accountname, ACC_QUIET, TRUE);
 							msg_print(j, "\377fYou have been muted.");
-							s_printf("<%s> muted '%s'.\n", p_ptr->name, p2_ptr->name);
 						}
 					}
 					return;
 				}
 				msg_print(Ind, "\377oUsage: /mute <character name>");
+				return;
+			}
+			else if (prefix(messagelc, "/xmute")) {
+				if (tk) {
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+					if (j) {
+						player_type *p2_ptr = Players[j];
+
+						if (p2_ptr->mutedchat == 3)
+							msg_format(Ind, "Player '%s' already muted (%d).", p2_ptr->name, p2_ptr->mutedchat);
+						else {
+							msg_format(Ind, "Player '%s' now muted (3).", p2_ptr->name);
+							s_printf("<%s> xmuted '%s' (%d).\n", p_ptr->name, p2_ptr->name, p2_ptr->mutedchat);
+							p2_ptr->mutedchat = 3;
+							acc_set_flags(p2_ptr->accountname, ACC_QUIET | ACC_VQUIET, TRUE);
+						}
+					}
+					return;
+				}
+				msg_print(Ind, "\377oUsage: /xmute <character name>");
 				return;
 			}
 			else if (prefix(messagelc, "/unmute")) {   //oh no!
@@ -7026,19 +7046,42 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						if (!p2_ptr->mutedchat && !p2_ptr->mutedtemp)
 							msg_format(Ind, "Player '%s' already unmuted.", p2_ptr->name);
 						else {
-							msg_format(Ind, "Player '%s' now unmuted.", p2_ptr->name);
-							if (p_ptr->mutedchat) {
+							msg_format(Ind, "Player '%s' now unmuted (%d).", p2_ptr->name, p2_ptr->mutedchat);
+							s_printf("<%s> unmuted '%s' (%d).\n", p_ptr->name, p2_ptr->name, p2_ptr->mutedchat);
+							if (p2_ptr->mutedchat) {
 								p2_ptr->mutedchat = FALSE;
-								acc_set_flags(p2_ptr->accountname, ACC_QUIET |  ACC_VQUIET, FALSE);
+								acc_set_flags(p2_ptr->accountname, ACC_QUIET | ACC_VQUIET, FALSE);
 							}
 							p2_ptr->mutedtemp = FALSE;
 							msg_print(j, "\377fYou have been unmuted.");
-							s_printf("<%s> unmuted '%s'.\n", p_ptr->name, p2_ptr->name);
 						}
 					}
 					return;
 				}
 				msg_print(Ind, "\377oUsage: /unmute <character name>");
+				return;
+			}
+			else if (prefix(messagelc, "/xunmute")) {   //oh no!
+				if (tk) {
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+					if (j) {
+						player_type *p2_ptr = Players[j];
+
+						if (!p2_ptr->mutedchat && !p2_ptr->mutedtemp)
+							msg_format(Ind, "Player '%s' already unmuted.", p2_ptr->name);
+						else {
+							msg_format(Ind, "Player '%s' now unmuted (%d).", p2_ptr->name, p2_ptr->mutedchat);
+							s_printf("<%s> xunmuted '%s' (%d).\n", p_ptr->name, p2_ptr->name, p2_ptr->mutedchat);
+							if (p2_ptr->mutedchat) {
+								p2_ptr->mutedchat = FALSE;
+								acc_set_flags(p2_ptr->accountname, ACC_QUIET | ACC_VQUIET, FALSE);
+							}
+							p2_ptr->mutedtemp = FALSE;
+						}
+					}
+					return;
+				}
+				msg_print(Ind, "\377oUsage: /xunmute <character name>");
 				return;
 			}
 			/* erase items and monsters */

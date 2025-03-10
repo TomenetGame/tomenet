@@ -9540,8 +9540,9 @@ void display_account_information(void) {
 		else if (acc_flags & ACC_PVP) c_prt(TERM_SLATE, "Your account may participate in PvP.", l, 2);
 
 		l++;
-		if (acc_flags & ACC_VQUIET) c_prt(TERM_ORANGE, "Your account is silenced.", l, 2);
-		else if (acc_flags & ACC_QUIET) c_prt(TERM_YELLOW, "Your account is partially silenced.", l, 2);
+		if ((acc_flags & ACC_VQUIET) && !(acc_flags & ACC_QUIET)) c_prt(TERM_ORANGE, "Your account is silenced.", l, 2);
+		else if ((acc_flags & ACC_QUIET) && !(acc_flags & ACC_VQUIET)) c_prt(TERM_YELLOW, "Your account is partially silenced.", l, 2);
+		else if ((acc_flags & ACC_QUIET) && (acc_flags & ACC_VQUIET)) c_prt(TERM_YELLOW, "Your account is *silenced*.", l, 2);
 #endif
 	} else c_prt(TERM_SLATE, "Retrieving data...", l, 2);
 

@@ -3401,6 +3401,8 @@ static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (check_ignore(i, sender)) continue;
+		if ((Players[sender]->mutedchat == 3 || Players[i]->mutedchat == 3) && i != sender) continue;
+
 		/* Check this guy */
 		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
 	}
@@ -3414,6 +3416,8 @@ static void floor_msg_ignoring2(int sender, struct worldpos *wpos, cptr msg, cpt
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (check_ignore(i, sender)) continue;
+		if ((Players[sender]->mutedchat == 3 || Players[i]->mutedchat == 3) && i != sender) continue;
+
 		/* Check this guy */
 		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
 	}
@@ -3446,6 +3450,7 @@ void world_surface_msg(cptr msg) {
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
+
 		/* Check this guy */
 		if (Players[i]->wpos.wz == 0) msg_print(i, msg);
 	}
@@ -5681,7 +5686,7 @@ static void player_talk_aux(int Ind, char *message) {
 #endif
 
 		/* Send message to target party */
-		if (p_ptr->mutedchat < 2) {
+		if (p_ptr->mutedchat < 2 || p_ptr->mutedchat == 3) {
 #ifdef GROUP_CHAT_NOCLUTTER
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - 10 - strlen(sender)] = 0;
@@ -5719,11 +5724,13 @@ static void player_talk_aux(int Ind, char *message) {
 				/* prevent buffer overflow */
 				message[MSG_LEN - 1 + 2 - strlen(p_ptr->name) - 9] = 0;
 				message_u[MSG_LEN - 1 + 2 - strlen(p_ptr->name) - 9] = 0;
-				msg_print_near2(Ind, format("\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message + 2), format("\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message_u + 2));
+				if (p_ptr->mutedchat != 3)
+					msg_print_near2(Ind, format("\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message + 2), format("\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message_u + 2));
 				msg_format(Ind, "\377%cYou say: %s", COLOUR_CHAT, censor ? message + 2 : message_u + 2);
 				handle_punish(Ind, censor_punish);
 			} else {
-				msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
+				if (p_ptr->mutedchat != 3)
+					msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
 				msg_format(Ind, "\377%cYou clear your throat.", COLOUR_CHAT);
 			}
 #endif
@@ -5731,7 +5738,7 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 
 		/* Send message to target floor */
-		if (p_ptr->mutedchat < 2) {
+		if (p_ptr->mutedchat < 2 || p_ptr->mutedchat == 3) {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - 6] = 0;
 			message_u[MSG_LEN - 1 + 2 - strlen(sender) - 6] = 0;
@@ -5783,7 +5790,7 @@ static void player_talk_aux(int Ind, char *message) {
 #endif
 
 		/* Send message to guild party */
-		if (p_ptr->mutedchat < 2) {
+		if (p_ptr->mutedchat < 2 || p_ptr->mutedchat == 3) {
 #ifdef GROUP_CHAT_NOCLUTTER
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - 16] = 0;
@@ -5823,7 +5830,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 		/* Add a trailing NULL */
 		search[colon - message] = '\0';
-	} else if (p_ptr->mutedchat || p_ptr->mutedtemp) return;
+	} else if ((p_ptr->mutedchat && p_ptr->mutedchat != 3) || p_ptr->mutedtemp) return;
 
 	/* From here on we need colon_u */
 	if (colon) colon_u = message_u + (colon - message);
@@ -5846,7 +5853,8 @@ static void player_talk_aux(int Ind, char *message) {
 			if (w_player) {
 				/* prevent buffer overflow */
 				message[MSG_LEN - strlen(p_ptr->name) - 7 - 8 - strlen(w_player->name) + target_raw_len] = 0;//8 are world server tax
-				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
+				if (p_ptr->mutedchat != 3)
+					world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
 				msg_format(Ind, "\375\377%c[%s:%s] %s", WP_PMSG_DEFAULT_COLOUR, p_ptr->name, w_player->name, colon + 1);
 
 				/* hack: assume that the target player will become the
@@ -5908,16 +5916,17 @@ static void player_talk_aux(int Ind, char *message) {
 			message[MSG_LEN - strlen(sender) - 7 - strlen(q_ptr->name) + target_raw_len] = 0;
 			message_u[MSG_LEN - strlen(sender) - 7 - strlen(q_ptr->name) + target_raw_len] = 0;
 
-			/* Send message to target */
-			msg_format(target, "\375\377g[%s:%s] %s", sender, q_ptr->name, q_ptr->censor_swearing ? colon : colon_u);
-			if ((q_ptr->page_on_privmsg ||
-			    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
-			    q_ptr->paging == 0)
-				q_ptr->paging = 1;
+			if ((p_ptr->mutedchat != 3 && Players[target]->mutedchat != 3) || target == Ind) {
+				/* Send message to target */
+				msg_format(target, "\375\377g[%s:%s] %s", sender, q_ptr->name, q_ptr->censor_swearing ? colon : colon_u);
+				if ((q_ptr->page_on_privmsg ||
+				    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
+				    q_ptr->paging == 0)
+					q_ptr->paging = 1;
+			}
 
 			/* Also send back to sender */
-			if (target != Ind)
-				msg_format(Ind, "\375\377g[%s:%s] %s", sender, q_ptr->name, censor ? colon : colon_u);
+			if (target != Ind) msg_format(Ind, "\375\377g[%s:%s] %s", sender, q_ptr->name, censor ? colon : colon_u);
 
 			/* Only display this message once now - mikaelh */
 			if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id)) {
@@ -5925,27 +5934,28 @@ static void player_talk_aux(int Ind, char *message) {
 				player_list_add(&p_ptr->afk_noticed, q_ptr->id);
 			}
 
+			if (p_ptr->mutedchat != 3 && target != Ind) {
 #if 0
-			/* hack: assume that the target player will become the
-			   one we want to 'reply' to, afterwards, if we don't
-			   have a reply-to target yet. */
-			if (!p_ptr->reply_name || !strlen(p_ptr->reply_name))
-				strcpy(p_ptr->reply_name, q_ptr->name);
+				/* hack: assume that the target player will become the
+				   one we want to 'reply' to, afterwards, if we don't
+				   have a reply-to target yet. */
+				if (!p_ptr->reply_name || !strlen(p_ptr->reply_name))
+					strcpy(p_ptr->reply_name, q_ptr->name);
 #else
-			/* hack: assume that the target player will become the
-			   one we want to 'reply' to, afterwards.
-			   This might get somewhat messy if we're privchatting
-			   to two players at the same time, but so would
-			   probably the other variant above. That one stays
-			   true to the '+:' definition given in the guide though,
-			   while this one diverges a bit. */
+				/* hack: assume that the target player will become the
+				   one we want to 'reply' to, afterwards.
+				   This might get somewhat messy if we're privchatting
+				   to two players at the same time, but so would
+				   probably the other variant above. That one stays
+				   true to the '+:' definition given in the guide though,
+				   while this one diverges a bit. */
  #if 0
-			strcpy(p_ptr->reply_name, q_ptr->name);
+				strcpy(p_ptr->reply_name, q_ptr->name);
  #else /* use his account name instead, since it's possible now */
-			strcpy(p_ptr->reply_name, q_ptr->accountname);
+				strcpy(p_ptr->reply_name, q_ptr->accountname);
  #endif
 #endif
-
+			}
 			//exec_lua(0, "chat_handler()");
 #ifdef PUNISH_WHISPER
 			handle_punish(Ind, censor_punish);
@@ -6093,15 +6103,17 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 	}
 
-	/* worldd_pubchat decides if we broadcast all our chat out there or not. */
-	/* in case privchat wasn't handled above (because it's disabled),
-	   exempt it here so we only process real chat/broadcasts */
-	if (!(!cfg.worldd_privchat && len && target != 0)) {
-		if (broadcast && cfg.worldd_broadcast) {
-			world_chat(0, tmessage); /* can't ignore */
-		} else if (!broadcast && cfg.worldd_pubchat
-		    && !p_ptr->limit_chat) { /* Actually never forward chat from players that have limit_chat on, because people on IRC or other servers might try to reply but the player cannot see it. */
-			world_chat(p_ptr->id, tmessage);
+	if (p_ptr->mutedchat != 3) {
+		/* worldd_pubchat decides if we broadcast all our chat out there or not. */
+		/* in case privchat wasn't handled above (because it's disabled),
+		   exempt it here so we only process real chat/broadcasts */
+		if (!(!cfg.worldd_privchat && len && target != 0)) {
+			if (broadcast && cfg.worldd_broadcast) {
+				world_chat(0, tmessage); /* can't ignore */
+			} else if (!broadcast && cfg.worldd_pubchat
+			    && !p_ptr->limit_chat) { /* Actually never forward chat from players that have limit_chat on, because people on IRC or other servers might try to reply but the player cannot see it. */
+				world_chat(p_ptr->id, tmessage);
+			}
 		}
 	}
 
@@ -6109,7 +6121,7 @@ static void player_talk_aux(int Ind, char *message) {
 	reached = FALSE;
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
-
+		if ((p_ptr->mutedchat == 3 || q_ptr->mutedchat == 3) && i != Ind) continue;
 		if (!admin) {
 			if (check_ignore(i, Ind)) continue;
 			if (q_ptr->ignoring_chat) continue;
@@ -6127,6 +6139,7 @@ static void player_talk_aux(int Ind, char *message) {
 	reached = FALSE;
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
+		if ((p_ptr->mutedchat == 3 || q_ptr->mutedchat == 3) && i != Ind) continue;
 
 		if (!admin) {
 			if (check_ignore(i, Ind)) continue;
