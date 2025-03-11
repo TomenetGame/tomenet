@@ -6314,6 +6314,24 @@ bool monster_death(int Ind, int m_idx) {
 	/* Easteregg, sort of: Killing the Horned Reaper in Dungeon Keeper event gives you a reward worth the 180k you likely spend to achieve this :-p */
 	else if (r_idx == RI_HORNED_REAPER_GE) {
 		qq_ptr = &forge;
+		char tmp[MSG_LEN];
+
+		if (cfg.unikill_format)
+#ifdef ENABLE_SUBCLASS_TITLE
+			sprintf(tmp, "\374\377c**\377s%s%s%s %s has defeated a lost vault's guardian.\377c**", get_ptitle(q_ptr, FALSE), (q_ptr->sclass) ? " " : "", get_ptitle2(q_ptr, FALSE), p_ptr->name);
+#else
+			sprintf(tmp, "\374\377c**\377s%s %s has defeated a lost vault's guardian.\377c**", get_ptitle(q_ptr, FALSE), p_ptr->name);
+#endif
+		else
+			sprintf(tmp, "\374\377c**\377s%s has defeated a lost guardian.\377c**", p_ptr->name);
+
+		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master) {
+			msg_broadcast(0, tmp);
+#ifdef TOMENET_WORLDS
+			if (cfg.worldd_unideath) world_msg(tmp);
+#endif
+		} else msg_print(Ind, tmp);
+		s_printf("RI_HORNED_REAPER_GE: %s (%d/%d) kill.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 
 		invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT));
 		qq_ptr->number = 1;
