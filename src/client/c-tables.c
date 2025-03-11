@@ -609,6 +609,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "ascii_weather",		"Always use plain ASCII symbols for weather" },
 	{ &c_cfg.no2mask_weather,	TRUE,	1,	0, 172, TRUE, //just for debugging weather glitches
 	    "no2mask_weather",		"Never use dual-mask grapics for weather" },
+	{ &c_cfg.auto_inscr_server_ch,	TRUE,	8,	9, 173, TRUE,
+	    "auto_inscr_server_ch",	"Server-defined auto-inscriptions for chemicals" },
 };
 
 cptr melee_techniques[16] = {

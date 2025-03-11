@@ -3477,6 +3477,7 @@ struct player_type {
 	bool easy_tunnel;
 	bool clear_inscr;
 	bool auto_inscr_server;
+	bool auto_inscr_server_ch;
 	bool autopickup_chemicals;
 	bool taciturn_messages;
 	bool last_words;
@@ -4787,6 +4788,7 @@ struct client_opts {
 	bool auto_untag;
 	bool clear_inscr;
 	bool auto_inscr_server;
+	bool auto_inscr_server_ch;
 	bool autopickup_chemicals;
 	bool stack_force_notes;
 	bool stack_force_costs;

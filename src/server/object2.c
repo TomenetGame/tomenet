@@ -16,13 +16,6 @@
 #include "angband.h"
 
 
-/*
- * Allow to use client option auto_inscribe?
- */
-// DGDGDGDG -- na, dont let tehm be lazy
-// Alas, I'm too lazy.. see '/at'	- Jir -
-#define AUTO_INSCRIBER
-
 /* At 50% there were too many cursed jewelry in general in my opinion, using a macro now - C. Blue */
 #define CURSED_JEWELRY_CHANCE	25
 
@@ -11467,84 +11460,133 @@ void floor_item_optimize(int item) {
  *
  * TODO: inscribe item's power like {+StCo[FiAc;FASI}
  */
-void auto_inscribe(int Ind, object_type *o_ptr, int flags) {
+bool auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 	player_type *p_ptr = Players[Ind];
 #if 0
 	char c[] = "@m ";
 #endif
-
-	if (!o_ptr->tval) return;
+	if (!o_ptr->tval) return(FALSE);
 
 	/* skip inscribed items */
 	if (!flags && o_ptr->note &&
 	    strcmp(quark_str(o_ptr->note), "on sale") &&
 	    strcmp(quark_str(o_ptr->note), "stolen") &&
 	    strcmp(quark_str(o_ptr->note), "handmade"))
-		return;
+		return(FALSE);
 
-	if (!p_ptr->obj_aware[o_ptr->k_idx]) return;
+	if (!p_ptr->obj_aware[o_ptr->k_idx]) return(FALSE);
 
-	if (o_ptr->tval == TV_SCROLL &&
-	    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) {
-		o_ptr->note = quark_add("@r3@R");
-		return;
-	} else if (o_ptr->tval == TV_ROD &&
-	    o_ptr->sval == SV_ROD_RECALL) {
-		o_ptr->note = quark_add("@z3@R");
-		return;
-	}
-	else if (o_ptr->tval == TV_SCROLL) {
-		if (o_ptr->sval == SV_SCROLL_PHASE_DOOR) {
+	switch (o_ptr->tval) {
+	case TV_ROD:
+		switch (o_ptr->sval) {
+		case SV_ROD_RECALL:
+			o_ptr->note = quark_add("@z3@R");
+			return(TRUE);
+		}
+		return(FALSE);
+	case TV_SCROLL:
+		switch (o_ptr->sval) {
+		case SV_SCROLL_PHASE_DOOR:
 			o_ptr->note = quark_add("@r1");
-			return;
-		}
-		if (o_ptr->sval == SV_SCROLL_TELEPORT) {
+			return(TRUE);
+		case SV_SCROLL_TELEPORT:
 			o_ptr->note = quark_add("@r2");
-			return;
-		}
-		if (o_ptr->sval == SV_SCROLL_IDENTIFY) {
+			return(TRUE);
+		case SV_SCROLL_WORD_OF_RECALL:
+			o_ptr->note = quark_add("@r3@R");
+			return(TRUE);
+		case SV_SCROLL_LIGHT:
+			o_ptr->note = quark_add("@r4");
+			return(TRUE);
+		case SV_SCROLL_IDENTIFY:
 			o_ptr->note = quark_add("@r5");//@r5!X
-			return;
-		}
-		if (o_ptr->sval == SV_SCROLL_TRAP_DOOR_DESTRUCTION) {
+			return(TRUE);
+		case SV_SCROLL_DETECT_GOLD:
+			o_ptr->note = quark_add("@r6");
+			return(TRUE);
+		case SV_SCROLL_MONSTER_CONFUSION:
+			o_ptr->note = quark_add("@r7");
+			return(TRUE);
+		case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
 			o_ptr->note = quark_add("@r8");
-			return;
-		}
-		if (o_ptr->sval == SV_SCROLL_MAPPING) {
+			return(TRUE);
+		case SV_SCROLL_MAPPING:
 			o_ptr->note = quark_add("@r9");
-			return;
-		}
-		if (o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) {
+			return(TRUE);
+		case SV_SCROLL_SATISFY_HUNGER:
 			o_ptr->note = quark_add("@r0");
-			return;
+			return(TRUE);
 		}
-	}
-	else if (o_ptr->tval == TV_POTION) {
-		if (o_ptr->sval == SV_POTION_HEALING) {
+		return(FALSE);
+	case TV_POTION:
+		switch (o_ptr->sval) {
+		case SV_POTION_HEALING:
 			o_ptr->note = quark_add("@q1");
-			return;
-		}
-		if (o_ptr->sval == SV_POTION_SPEED) {
+			return(TRUE);
+		case SV_POTION_SPEED:
 			o_ptr->note = quark_add("@q2");
-			return;
-		}
-		if (o_ptr->sval == SV_POTION_RESISTANCE) {
+			return(TRUE);
+		case SV_POTION_RESISTANCE:
 			o_ptr->note = quark_add("@q3");
-			return;
-		}
-		if (o_ptr->sval == SV_POTION_RESTORE_EXP) {
+			return(TRUE);
+		case SV_POTION_RESTORE_EXP:
 			o_ptr->note = quark_add("@q4");
-			return;
+			return(TRUE);
 		}
+		return(FALSE);
+	case TV_CHEMICAL:
+		switch (o_ptr->sval) {
+		case SV_CHARCOAL:
+			o_ptr->note = quark_add("@C1");
+			return(TRUE);
+		case SV_SULFUR:
+			o_ptr->note = quark_add("@C2");
+			return(TRUE);
+		case SV_SALTPETRE:
+			o_ptr->note = quark_add("@C3");
+			return(TRUE);
+		case SV_AMMONIA_SALT:
+			o_ptr->note = quark_add("@C4");
+			return(TRUE);
+		case SV_METAL_POWDER:
+			o_ptr->note = quark_add("@C5");
+			return(TRUE);
+		case SV_METAL_PEROXIDE:
+			o_ptr->note = quark_add("@C6");
+			return(TRUE);
+		case SV_METAL_PERCHLORATE:
+			o_ptr->note = quark_add("@C7");
+			return(TRUE);
+		case SV_VITRIOL:
+			o_ptr->note = quark_add("@C8");
+			return(TRUE);
+		//case SV_WOOD_CHIPS: -- these get processed but not mixed
+#ifdef NO_RUST_NO_HYDROXIDE
+		case SV_MIXTURE: //We have tags to spare, so just allow mixtures to get tagged too, for easy /mix'ing of any already prepared mixtures
+			o_ptr->note = quark_add("@C0");
+			return(TRUE);
+#else
+		case SV_METAL_HYDROXIDE:
+			o_ptr->note = quark_add("@C9");
+			return(TRUE);
+		case SV_RUST:
+			o_ptr->note = quark_add("@C0");
+			return(TRUE);
+		//case SV_MIXTURE: -- gets the shaft as we're out of tags and ingredients take precedence, for easy /mix'ing
+#endif
+		}
+		return(FALSE);
 	}
 
 #if 0	/* disabled till new spell system is done */
-	if (!is_realm_book(o_ptr) && o_ptr->tval != TV_BOOK) return;
+	if (!is_realm_book(o_ptr) && o_ptr->tval != TV_BOOK) return(FALSE);
 
 	/* XXX though it's ok with 'm' for everything.. */
 	c[2] = o_ptr->sval +1 +48;
 	o_ptr->note = quark_add(c);
+	return(TRUE);
 #endif
+	return(FALSE);
 }
 
 
@@ -11940,9 +11982,9 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	}
 
 	/* Auto-inscriber */
-#ifdef AUTO_INSCRIBER
-	if (p_ptr->auto_inscr_server) auto_inscribe(Ind, o_ptr, 0);
-#endif
+	if (p_ptr->auto_inscr_server ||
+	    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL))
+		(void)auto_inscribe(Ind, o_ptr, 0);
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 

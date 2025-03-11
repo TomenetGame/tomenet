@@ -1703,7 +1703,7 @@ void cmd_uninscribe(byte flag) {
 }
 
 void cmd_apply_autoins(void) {
-	int item;
+	int item, tv;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
@@ -1712,9 +1712,24 @@ void cmd_apply_autoins(void) {
 	/* Get the item */
 	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
+#ifdef ENABLE_SUBINVEN
+	if (item >= SUBINVEN_INVEN_MUL) tv = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
+	else
+#endif
+	tv = inventory[item].tval;
+
+	/* First check for client-side autoinscriptions (& list) */
 	if (!apply_auto_inscriptions_aux(item, -1, TRUE)
-	    && c_cfg.auto_inscr_server && !inventory_inscription_len[item])
+	    /* Then if desired and there is not already an inscription, apply any server-side inscription */
+	    && (c_cfg.auto_inscr_server || (c_cfg.auto_inscr_server_ch && tv == TV_CHEMICAL))) {
+#ifdef ENABLE_SUBINVEN
+		if (item >= SUBINVEN_INVEN_MUL) {
+			if (subinventory_inscription_len[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL]) return;
+		} else
+#endif
+		if (inventory_inscription_len[item]) return;
 		Send_autoinscribe(item);
+	}
 }
 
 void cmd_steal(void) {

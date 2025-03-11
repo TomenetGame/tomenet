@@ -184,6 +184,7 @@ X:no_house_magic
 X:auto_untag
 X:clear_inscr
 X:auto_inscr_server
+Y:auto_inscr_server_ch
 X:auto_pickup
 X:auto_destroy
 X:destroy_all_unmatched

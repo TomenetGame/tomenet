@@ -4680,10 +4680,10 @@
  #define CI_MC	8
  #define CI_VI	9
  #define CI_RU	10
- #define CI_LO	11
- #define CI_WA	12
- #define CI_SW	13
- #define CI_AC	14
+ #define CI_LO	11	/* Flask of oil ("Lamp oil") */
+ #define CI_WA	12	/* Potion of water */
+ #define CI_SW	13	/* Potion of salt water */
+ #define CI_AC	14	/* Flask of acid */
 /* Helper flags for the ingredient svals -- IMPORTANT: the CI_ values must match the flag leftshift to get the CF_! Eg: ammonia = 1 << (CI_AS - 1) = CF_AS */
  #define CF_CC		0x0001
  #define CF_SU		0x0002

@@ -1421,7 +1421,7 @@ extern void floor_item_charges(int item);
 extern void floor_item_describe(int item);
 extern void floor_item_increase(int item, int num);
 extern void floor_item_optimize(int item);
-extern void auto_inscribe(int Ind, object_type *o_ptr, int flags);
+extern bool auto_inscribe(int Ind, object_type *o_ptr, int flags);
 extern int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance);
 extern bool inven_carry_cursed_okay(int Ind, object_type *o_ptr, s16b tolerance);
 extern s16b inven_carry(int Ind, object_type *o_ptr);

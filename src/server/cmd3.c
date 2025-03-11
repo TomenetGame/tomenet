@@ -5297,9 +5297,10 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 			}
 
 			/* Auto-inscriber */
-#ifdef AUTO_INSCRIBER
-			if (p_ptr->auto_inscr_server) auto_inscribe(Ind, o_ptr, 0);
-#endif
+			if (p_ptr->auto_inscr_server ||
+			    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL)) {
+				(void)auto_inscribe(Ind, o_ptr, 0);
+			}
 
 			object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 

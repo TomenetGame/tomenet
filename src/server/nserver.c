@@ -2740,6 +2740,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->auto_untag = options[54];
 		p_ptr->clear_inscr = options[55];
 		p_ptr->auto_inscr_server = options[56];
+		p_ptr->auto_inscr_server = options[173];
 		p_ptr->stack_force_notes = options[57];
 		p_ptr->stack_force_costs = options[58];
 		p_ptr->stack_allow_items = options[59];
@@ -12880,6 +12881,7 @@ static int Receive_autoinscribe(int ind) {
 	int n, player = -1;
 	s16b item;
 	player_type *p_ptr = NULL;
+	object_type *o_ptr;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12892,18 +12894,26 @@ static int Receive_autoinscribe(int ind) {
 		return(n);
 	}
 
-	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return(1);
-
 	if (p_ptr) {
+		/* Sanity check - mikaelh */
+		if (!verify_inven_item(player, item)) return(1); //redundant as we call get_inven_item() which checks for validity too?
+		if (!get_inven_item(player, item, &o_ptr)) return(1);
+
 		item = replay_inven_changes(player, item);
 		if (item == 0x7FFF) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
 
-		auto_inscribe(player, &(p_ptr->inventory[item]), TRUE);
-		p_ptr->window |= PW_INVEN;
+		if (auto_inscribe(player, o_ptr, TRUE)) {
+#ifdef ENABLE_SUBINVEN
+			if (item >= SUBINVEN_INVEN_MUL) {
+				/* Manually do this here for now: Update subinven slot for client. */
+				display_subinven_aux(player, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
+			} else
+#endif
+			p_ptr->window |= PW_INVEN;
+		}
 	}
 
 	return(1);

@@ -2048,7 +2048,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			for (i = 0; i < INVEN_PACK; i++) {
 				o_ptr = &(p_ptr->inventory[i]);
-				auto_inscribe(Ind, o_ptr, tk);
+				(void)auto_inscribe(Ind, o_ptr, tk);
 			}
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);// | PW_EQUIP);
