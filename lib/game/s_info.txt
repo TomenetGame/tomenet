@@ -846,9 +846,9 @@ f:Aura of Death:Magic%5
 # Exercises are good to your health :)
 #f:Training:Health%25
 f:Agility:Health%25
-f:Swimming:Health%25
+f:Swimming:Health%40
 f:Digging:Health%35
-f:Climbing:Health%25
+f:Climbing:Health%40
 #f:Levitation:Health%15
 #f:Free Action:Health%15
 #f:Confusion Resistance:Health%15

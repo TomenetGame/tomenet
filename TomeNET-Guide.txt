@@ -18860,9 +18860,9 @@ stated.
                                 in general spill over quite a good chunk of
                                 skill points into their parent skill Health.
 
-    .Swimming                   Allows you to swim even while carrying more
-                                weight and to better protect your items from
-                                water.
+    .Swimming                   Allows you to swim better, allowing to carry
+                                more weight and to better protect your items
+                                from water.
 
                                 Skill maxes at 1.000, with the ability to swim
                                 improving steadily while increasing it.
@@ -18870,9 +18870,16 @@ stated.
                                 if no monsters are within sight, enabling you
                                 to 'run' through water.
 
+                                This skill spills over especially generously
+                                into its parent skill 'Health'.
+
                                 For more details about swimming see (4.15).
 
-    .Climbing                   You need this at 1.000 to be able to climb.
+    .Climbing                   You need this at 1.000 to be able to climb,
+                                which is also the maximum this skill can reach.
+                                (Before reaching it, this skill will have no
+                                beneficial effects, so it's like a toggle.)
+
                                 Climbing allows you to pass mountain terrain
                                 without the need for a climbing set, special
                                 boots or magical means.
@@ -18880,11 +18887,15 @@ stated.
                                 learn climbing intrinsically when they reach
                                 level 30.
 
+                                This skill spills over especially generously
+                                into its parent skill 'Health'.
+
     .Digging                    How well you are able to dig. Also affects
                                 your chance to find items (from digging only),
                                 and chance for those items to be good or even
                                 great, and it affects the amount of cash
                                 generated from mining mineral veins.
+
                                 This skill spills over especially generously
                                 into its parent skill 'Health'.
 
