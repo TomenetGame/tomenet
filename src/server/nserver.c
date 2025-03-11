@@ -2740,7 +2740,6 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->auto_untag = options[54];
 		p_ptr->clear_inscr = options[55];
 		p_ptr->auto_inscr_server = options[56];
-		p_ptr->auto_inscr_server = options[173];
 		p_ptr->stack_force_notes = options[57];
 		p_ptr->stack_force_costs = options[58];
 		p_ptr->stack_allow_items = options[59];
@@ -2936,6 +2935,9 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->instant_retaliator = p_ptr->sunburn_msg = TRUE;
 		p_ptr->basic_players_col = p_ptr->basic_players_symb;
 	}
+
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 2)) p_ptr->auto_inscr_server_ch = options[173];
+	else p_ptr->auto_inscr_server_ch = TRUE;
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,
