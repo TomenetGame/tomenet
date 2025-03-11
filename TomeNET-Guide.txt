@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. March 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 11. March 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18939,6 +18939,9 @@ stated.
                                 All ingredients as well as the items you craft
                                 from them are level 0 and hence bound to your
                                 character (untradable).
+                                Ingredients are auto-inscribed by default (via
+                                client option 'auto_inscr_server_ch') for easy
+                                use of the '/mix' command for crafting.
                                 Some ingredients are acquired by digging, some
                                 by actually killing monsters or by other means,
                                 and then there is the 'grinding tool' that you
@@ -19138,6 +19141,8 @@ A) By pressing 'A' to activate ingredients or mixtures you can combine them to
 B) By using the slash command '/mix' which is much easier to handle.
    This was added later as a quality-of-life way to craft faster, more easily
    and more efficiently (as you can even craft whole stacks at once).
+   Ingredients come auto-inscribed by default to allow easy use of the '/mix'
+   command (you can turn that off via client option 'auto_inscr_server_ch').
 
 
 Finalizing a mixture you deem finished, to obtain a craft result:
