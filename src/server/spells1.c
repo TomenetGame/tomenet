@@ -7972,7 +7972,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Assume no obvious effect */
 		obvious = FALSE;
 
-		switch(randint(3)) {
+		switch (randint(3)) {
 		case 1: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags9 & RF9_NO_REDUCE) ||

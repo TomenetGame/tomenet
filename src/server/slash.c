@@ -14534,7 +14534,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				if (messagelc[8] != ' ') {
-					switch(messagelc[7]) {
+					switch (messagelc[7]) {
 					case '0':
 						msg_format(Ind, "sflags0=%d", sflags0);
 						break;
@@ -14553,7 +14553,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				f = atol(&messagelc[9]);
-				switch(messagelc[7]) {
+				switch (messagelc[7]) {
 				case '0':
 					sflags0 = f;
 					break;

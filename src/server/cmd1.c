@@ -1491,7 +1491,7 @@ void search(int Ind) {
 			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d)", Ind, c_ptr->custom_lua_search))) return;
 			if (!findings) continue;
 
-			switch(finding[rand_int(findings)]) {
+			switch (finding[rand_int(findings)]) {
 			case 0:
 #else
 			/* Secret door */

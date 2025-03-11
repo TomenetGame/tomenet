@@ -794,7 +794,7 @@ static void prt_indicators(int Ind) {
 
 	if (p_ptr->tim_reflect) indicators |= IND_SHIELD1;
 	if (p_ptr->tim_lcage) indicators |= IND_SHIELD2;
-	if (p_ptr->shield) switch(p_ptr->shield_opt) {
+	if (p_ptr->shield) switch (p_ptr->shield_opt) {
 		case SHIELD_COUNTER: indicators |= IND_SHIELD3; break;
 		case SHIELD_FIRE: indicators |= IND_SHIELD4; break;
 		case SHIELD_ICE: indicators |= IND_SHIELD5; break;

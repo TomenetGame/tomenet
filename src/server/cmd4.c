@@ -1542,7 +1542,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 			if (cfg.secret_dungeon_master && !admin) continue;
 		}
 
-		switch(q_ptr->version.os) {
+		switch (q_ptr->version.os) {
 		case OS_WIN32: strcpy(version, "W\377-"); break;
 		case OS_GCU: strcpy(version, "G\377-"); break;
 		case OS_X11: strcpy(version, "X\377-"); break;

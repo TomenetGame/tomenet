@@ -1422,7 +1422,7 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	return(0);
 }
 static bool store_will_buy(int Ind, object_type *o_ptr) {
-	switch(store_will_buy_aux(Ind, o_ptr)) {
+	switch (store_will_buy_aux(Ind, o_ptr)) {
 	case 0: return(TRUE);
 	case 1: msg_print(Ind, "I don't want that!"); break;
 	case 2: msg_print(Ind, "I am only selling goods, not buying them."); break;
