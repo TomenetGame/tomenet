@@ -6035,9 +6035,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			if (!tk) {
 				msg_format(Ind, "Usage:    /mix <tag numbers 'n' of chemicals inscribed '@Cn'>[<'*' activates>]");
-				msg_format(Ind, "Example:  /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.");
-				msg_format(Ind, "Example:  /mix 094*   -> mix those chemicals and self-activate the mixture.");
-				msg_format(Ind, "Example:  /mix 3      -> Self-activates a mixture inscribed '@C3'.");
+				msg_format(Ind, "Example:  /mix 1233   -> mix chemicals inscribed '@C1', '@C2' and twice '@C3'.");
+				msg_format(Ind, "Example:  /mix 1233*  -> mix those chemicals and self-activate the mixture.");
+				msg_format(Ind, "Example:  /mix 0      -> Self-activates a mixture inscribed '@C0'.");
 				msg_format(Ind, "Alternative syntax, lower-case for alchemy satchel, upper-case for inventory:");
 				msg_format(Ind, "Usage:    /mix <slot letters>[<'*' activates>]");
 				msg_format(Ind, "Example:  /mix accD*  -> satchel slots: a, c twice, normal inven: d, activate.");

@@ -1802,9 +1802,9 @@ They all start with a slash '/' hence they're called slash commands:
             Mixes chemicals and/or self-activate a mixture, which must all be
             inscribed @C<n> where <n> is a numerical tag from 0 to 9.
             Examples:
-            /mix 094    -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
-            /mix 094*   -> mix those chemicals and self-activate the mixture.
-            /mix 3      -> Self-activates a mixture inscribed '@C3'.
+            /mix 1233   -> mix chemicals inscribed '@C1', '@C2' and 2x '@C3'.
+            /mix 1233*  -> mix those chemicals and self-activate the mixture.
+            /mix 0      -> Self-activates a mixture inscribed '@C0'.
  Additional syntax, lower-case for alchemy satchel, upper-case for inventory:
   /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
             Example:  /mix accD*  -> mix chemicals from the satchel slot (a),
@@ -19163,8 +19163,10 @@ The clou is that you can actually combine both syntaxes as you wish!
 
 (1) With '@Cn' tags the items must be inscribed with, where the numbers 'n' on
     the tags of the items are given to the /mix command.
-    While inscribing all the ingredients may seem tedious it is a safe way to
-    craft, as it will be independant on the inventory position of the items.
+    This is a safe way to craft, as it will be independant on the inventory
+    position of the items. You do not need to tediously inscribe the chemicals
+    manually, as there is an option 'auto_inscr_server_ch' which is enabled by
+    default and will auto-inscribe ingredients you pick up.
 
 (2) by specifying inventory slot letters instead of tag-numbers in the command,
     with lower-case letters refering to items inside an Alchemy Satchel if you
@@ -19179,9 +19181,9 @@ Syntax (1):
 This command mixes chemicals and/or self-activates a mixture, which must all be
 inscribed @C<n> where <n> is a numerical tag from 0 to 9.
 Examples:
-  /mix 094       -> mix chemicals inscribed '@C0', '@C9' and '@C4'.
-  /mix 094*      -> mix those chemicals and self-activate the mixture.
-  /mix 3         -> Self-activates a mixture inscribed '@C3'.
+  /mix 1233      -> mix chemicals inscribed '@C1', '@C2' and two times '@C3'.
+  /mix 1233*     -> mix those chemicals and self-activate the mixture.
+  /mix 0         -> Self-activates a mixture inscribed '@C0'.
 
 Syntax (2):
   /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
@@ -19197,11 +19199,11 @@ the first thing in the mix command-line, before ingredients:
  Optional 'x<0-9>' parameter, must be first in line, repeats the whole process!
 
 Here is an example that uses repeat and combines both syntaxes (1) and (2):
-  /mix x5 bc9E*  -> performs the crafting attempt 5 times.
+  /mix x5 bc7E*  -> performs the crafting attempt 5 times.
 Each craft will be combined from:
  -an ingredient from alchemy satchel slot (b),
  -an ingredient from alchemy satchel slot (c),
- -an ingredient that is inscribed '@C9',
+ -an ingredient that is inscribed '@C7',
  -and finally an ingredient from normal inventory slot (e).
  -finally the resulting mixture is 'finalized' ie turned into a ready-to-use
   craft result item - provided you got all the ingredients correct and it was
