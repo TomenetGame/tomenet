@@ -2044,7 +2044,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		/* add inscription to books */
 		else if (prefix(messagelc, "/autotag") || prefix(messagelc, "/at")) {
-			object_type		*o_ptr;
+			object_type *o_ptr;
+
 			for (i = 0; i < INVEN_PACK; i++) {
 				o_ptr = &(p_ptr->inventory[i]);
 				auto_inscribe(Ind, o_ptr, tk);
