@@ -4723,20 +4723,21 @@ static int Receive_login(int ind) {
 		return(-1);
 	}
 	/* On first time PKT_LOGIN only (accountname+password, not character name) we receive the iaddr too: */
-	if (!choice[0] && is_atleast(&connp->version, 4, 9, 2, 1, 0, 2)) {
-		unsigned char ip_iaddr[6] = { 0 };
+	if (!choice[0]) {
+		if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 2)) {
+			unsigned char ip_iaddr[6] = { 0 };
 
-		n = Packet_scanf(&connp->r, "%c%c%c%c%c%c", &ip_iaddr[0], &ip_iaddr[1], &ip_iaddr[2], &ip_iaddr[3], &ip_iaddr[4], &ip_iaddr[5]);
-		if (n != 6) {
-			errno = 0;
-			s_printf("%d\n", n);
-			s_printf("Failed reading login packet");
-			Destroy_connection(ind, "receive error in login");
-			return(-1);
-		}
-		s_printf("Player '%s' connects from '%s',%s/%02x:%02x:%02x:%02x:%02x:%02x\n", connp->nick, connp->host, connp->addr, ip_iaddr[0], ip_iaddr[1], ip_iaddr[2], ip_iaddr[3], ip_iaddr[4], ip_iaddr[5]);
-	} else if (is_older_than(&connp->version, 4, 9, 2, 1, 0, 2))
-		s_printf("Player '%s' connects from '%s',%s/-\n", connp->nick, connp->host, connp->addr);
+			n = Packet_scanf(&connp->r, "%c%c%c%c%c%c", &ip_iaddr[0], &ip_iaddr[1], &ip_iaddr[2], &ip_iaddr[3], &ip_iaddr[4], &ip_iaddr[5]);
+			if (n != 6) {
+				errno = 0;
+				s_printf("%d\n", n);
+				s_printf("Failed reading login packet");
+				Destroy_connection(ind, "receive error in login");
+				return(-1);
+			}
+			s_printf("Player '%s' connects from '%s',%s/%02x:%02x:%02x:%02x:%02x:%02x\n", connp->nick, connp->host, connp->addr, ip_iaddr[0], ip_iaddr[1], ip_iaddr[2], ip_iaddr[3], ip_iaddr[4], ip_iaddr[5]);
+		} else s_printf("Player '%s' connects from '%s',%s/-\n", connp->nick, connp->host, connp->addr);
+	}
 
 	/* Hack for reordering characters:
 	   Resend the character overview screen (now with new character order) */
