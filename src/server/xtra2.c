@@ -5912,6 +5912,7 @@ void lose_exp(int Ind, s32b amount) {
 /* helper function to boost a character to a specific level (for Dungeon Keeper event) */
 void gain_exp_to_level(int Ind, int level) {
 	u32b k = 0;
+
 	if (level <= 1) return;
 	k = player_exp[level - 2];
 	if (Players[Ind]->max_exp < k)
@@ -6225,17 +6226,25 @@ bool monster_death(int Ind, int m_idx) {
 			p_ptr->r_killed[RI_MIRROR] = 1;
 
 			/* ~double SV_POTION_EXPERIENCE effect applied (keep consistent!) */
-			if (p_ptr->exp < PY_MAX_EXP) {
-				s32b ee = p_ptr->exp + 10;
+			if (p_ptr->exp < PY_MAX_EXP && !(p_ptr->mode & MODE_PVP)) {
+				s32b ce = p_ptr->exp, ee;
+				int pots = 3; /* Grant effect of quaffing n ('pots') potions of XP in a row */
 
-				if (ee > 200000L) ee = 200000L;
+				/* Calculate how much 'visual' XP we'd get from n potions of XP */
+				while (pots--) {
+					ee = (ce / 2) + 10;
+					if (ee > 100000L) ee = 100000L;
+					ce += ee;
+				}
+				/* Calculate how much this would be as one-time raw XP gain, and adjust with our xpfactor */
+				ee = ce - p_ptr->exp;
+				ce = ee; /* Just remeber the 'raw' aka visual amount for logging */
 #ifdef ALT_EXPRATIO
 				ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
 #endif
-				if (!(p_ptr->mode & MODE_PVP)) {
-					//msg_print(Ind, "\377GYou feel more experienced.");
-					gain_exp(Ind, ee);
-				}
+				s_printf("MIRROR: '%s' has %d XP and gains %d raw XP (%d visual XP).\n", p_ptr->name, p_ptr->exp, ee, ce);
+				//msg_print(Ind, "\377GYou feel more experienced.");
+				gain_exp(Ind, ee);
 			}
 			s_printf("MIRROR: %s (%d/%d) won (1st).\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 		} else s_printf("MIRROR: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
