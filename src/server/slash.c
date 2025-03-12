@@ -6266,6 +6266,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!acc.email[0]) {
 					msg_print(Ind, "Currently you do not have a notification email address set.");
 					msg_print(Ind, "  If you wish to, you can set one with:  \377y/email youremailaddress");
+				    if (is_admin(p_ptr)) { /* As it's unclear which server currently has mail configured in a working state for ANY kind of destination ISP, better not make promises for now^^ -> EXPERIMENTAL */
 					msg_print(Ind, "  The email address will be used to send you notifications about:");
  #if defined(EMAIL_NOTIFICATION_EXPIRY_CHAR) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
 					msg_format(Ind, "   - impending expiry of a character (~%dd) or account (~%dd) of yours.", EMAIL_NOTIFICATION_EXPIRY_CHAR, EMAIL_NOTIFICATION_EXPIRY_ACC);
@@ -6277,6 +6278,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
  #ifdef EMAIL_NOTIFICATION_RELEASE
 					msg_print(Ind, "   - new game version releases.");
  #endif
+				    }
 				} else {
 					msg_print(Ind, "You have currently set your notification email to:");
 					msg_format(Ind, "  <\377U%s\377w>", acc.email);
@@ -6323,17 +6325,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "Your input '\377y%s\377w' is not a valid email address.", message3);
 					msg_print(Ind, "  Usage to set/change email address:   \377y/email youremailaddress");
 					msg_print(Ind, "  Usage to delete your email address:  \377y/email -");
+				    if (is_admin(p_ptr)) { /* As it's unclear which server currently has mail configured in a working state for ANY kind of destination ISP, better not make promises for now^^ -> EXPERIMENTAL */
 					msg_print(Ind, "  The email address will be used to send you notifications about:");
  #if defined(EMAIL_NOTIFICATION_EXPIRY_CHAR) && defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
 					msg_format(Ind, "   - impending expiry of a character (~%dd) or account (~%dd) of yours.", EMAIL_NOTIFICATION_EXPIRY_CHAR, EMAIL_NOTIFICATION_EXPIRY_ACC);
  #elif defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
 					msg_format(Ind, "   - impending expiry of a character of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_CHAR);
- #elif defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+  #elif defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
 					msg_format(Ind, "   - impending expiry of an account of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_ACC);
  #endif
  #ifdef EMAIL_NOTIFICATION_RELEASE
 					msg_print(Ind, "   - new game version releases.");
  #endif
+				    }
 					if (!acc.email[0]) msg_print(Ind, "  Currently you do not have a notification email address set.");
 					else {
 						msg_print(Ind, "  You have currently set your notification email to:");
