@@ -11449,7 +11449,7 @@ void kill_xorder(int Ind) {
 			switch (rand_int(2)) {
 			case 0:
 				switch (rand_int(in_irondeepdive(&p_ptr->wpos) ? 11 : 12)) {
-				case 0: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR)); o_ptr->number = 10 + rand_int(3); break;
+				case 0: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR)); o_ptr->number = 20 + rand_int(4); break;
 				case 1: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TRAP_DOOR_DESTRUCTION)); o_ptr->number = 6 + rand_int(3); break;
 				case 2: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION)); o_ptr->number = 5 + rand_int(2); break;
 				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_MAPPING)); o_ptr->number = 8 + rand_int(3); break;
