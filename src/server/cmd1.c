@@ -5774,7 +5774,11 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 			/* Exploding Attack - Kurzel */
 			if (p_ptr->nimbus) do_nimbus(Ind, y, x);
-
+			/* Have to check if monster died from the nimbus projection... */
+			if (!m_ptr->r_idx) {
+				fear = FALSE; /* paranoia */
+				break; /* monster is dead */
+			}
 		}
 		/* Player misses */
 		else {
