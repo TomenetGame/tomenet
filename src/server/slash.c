@@ -6373,10 +6373,25 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			 * Privileged commands, level 1
 			 */
 			if (prefix(messagelc, "/val")) {
+				struct account acc;
+				bool res;
+
 				if (!tk) {
 					msg_print(Ind, "Usage: /val <player name>");
 					return;
 				}
+
+				if (!GetcaseAccount(&acc, message3, message3, FALSE)) {
+					msg_print(Ind, "Error: Account name not found.");
+					return;
+				}
+				res = (acc.flags & ACC_QUIET) && (acc.flags & ACC_VQUIET);
+				if (res) {
+					msg_print(Ind, "(System: Currently not possible.)");
+					s_printf("VALIDATE_SKIP: %s '%s'\n", showtime(), message3);
+					return;
+				}
+
 				/* added checking for account existence - mikaelh */
 				switch (validate(message3)) {
 				case -1: msg_format(Ind, "\377GValidating %s", message3);
