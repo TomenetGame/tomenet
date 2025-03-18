@@ -1517,9 +1517,9 @@
 #define DI_VALINOR		31
 #define DI_CLOUD_PLANES		32
 
-/* Monster indices (r_idx) hardcoded from r_info.txt file.
+/* Monster race indices (r_idx) hardcoded from r_info.txt file.
    (Note -- the following code parts still use hard-coded numbers:
-   taunt_monsters(), calc_body_bonus(), fountain_guard(), and mimic form handling:
+   taunt_monsters(), monster_death(), calc_body_bonus(), price_poly_ring(), item_tester_hook_wear(), and mimic form handling:
    (mimic_shaman_E, mimic_druid, mimic_vampire, check_experience(), do_cmd_check_extra_info()).) */
 #define RI_FARMER_MAGGOT	8
 #define RI_LEPER		13
@@ -1653,8 +1653,8 @@
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
 
-
-/* Monster ego power indices from re_info.txt */
+/* Monster race ego indices (re_idx) hardcoded from re_info.txt file.
+   (Note -- some code parts still use hard-coded numbers, see RI_ paragraph's initial comment above.) */
 #define RE_NONE			0
 #define RE_DRUNK		15
 #define RE_MASTER_THIEF		33	/* CHAR_CLEAR+ATTR_CLEAR */
