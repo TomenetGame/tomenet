@@ -6222,6 +6222,8 @@ bool monster_death(int Ind, int m_idx) {
 
 		/* First time reward */
 		if (!p_ptr->r_killed[RI_MIRROR]) {
+			int old_lev = p_ptr->lev;
+
 			/* Hack credit manually, as this monster has RF9_NO_CREDIT */
 			p_ptr->r_killed[RI_MIRROR] = 1;
 
@@ -6242,9 +6244,9 @@ bool monster_death(int Ind, int m_idx) {
 #ifdef ALT_EXPRATIO
 				ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
 #endif
-				s_printf("MIRROR: '%s' has %d XP and gains %d raw XP (%d visual XP).\n", p_ptr->name, p_ptr->exp, ee, ce);
-				//msg_print(Ind, "\377GYou feel more experienced.");
+				s_printf("MIRROR: '%s' has %d XP and gains %d raw XP (%d visual XP), ", p_ptr->name, p_ptr->exp, ee, ce);
 				gain_exp(Ind, ee);
+				s_printf("lv %d -> %d.\n", old_lev, p_ptr->lev);
 			}
 			s_printf("MIRROR: %s (%d/%d) won (1st).\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 		} else s_printf("MIRROR: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
