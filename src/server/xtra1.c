@@ -2311,9 +2311,10 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		/* holy/druidic forms get some WIS bonus too, others get INT only */
 		if (r_ptr->d_char == 'h' || r_ptr->d_char == 'p') {
 			switch (r_ptr->d_attr) {
+			case TERM_YELLOW:
+				// note: 'h' don't have any paladins and there is only one yellow 'h' which is Nar, so it doesn't matter...
 			case TERM_GREEN:
 			case TERM_L_GREEN:
-			case TERM_WHITE:
 				i = spellbonus / 2;
 				j = spellbonus - i;
 				p_ptr->stat_add[A_WIS] += i; csheet_boni->pwis += i;
