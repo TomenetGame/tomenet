@@ -2197,7 +2197,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL;
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
-	if (p_ptr->body_monster == 485 || p_ptr->body_monster == 564) {/* Ninja, Nightblade */
+	if (p_ptr->body_monster == RI_NINJA || p_ptr->body_monster == RI_NIGHTBLADE) {
 		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
 		p_ptr->skill_stl = p_ptr->skill_stl + 3; csheet_boni->slth += 3;
 	}
@@ -2366,7 +2366,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 		/* Elves get resist_lite, Dark-Elves get resist_dark */
 		case 122:	case 400:	case 178:	case 182:	case 226:
-		case 234:	case 348:	case 375:	case 564:	case 657:
+		case 234:	case 348:	case 375:	case RI_NIGHTBLADE:	case 657:
 			p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
 			break;
 		case 864:

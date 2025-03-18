@@ -6570,8 +6570,8 @@ bool monster_death(int Ind, int m_idx) {
 			}
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
-		case 564: ///nightblade has FRIENDS
-		case 485: //ninja
+		case RI_NIGHTBLADE: ///nightblade has FRIENDS
+		case RI_NINJA: //ninja
 			resf_drops |= RESF_COND_LSWORD;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
@@ -6604,10 +6604,10 @@ bool monster_death(int Ind, int m_idx) {
 			if (!rand_int(10)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
-		case 539: //slinger have FRIENDS
+		case RI_HALFLING_SLINGER: //slinger have FRIENDS
 			resf_drops |= RESF_COND_SLING;
 			break;
-		case 771: /* specialty: Saruman - avoid duplicate mage staff drop */
+		case RI_SARUMAN: /* specialty: Saruman - avoid duplicate mage staff drop */
 			/* the dedicated +10 mstaff is not for farming! */
 			if (!(resf_chosen & RESF_NOTRUEART)) resf_drops |= RESF_CONDF_NOMSTAFF;
 			break;
@@ -16148,6 +16148,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 				break;
 			}
+			/* Note: The '1' r_idx is just any placeholder and gets overwritten with get_prison_monster(). */
 			if (id) place_monster_one(&houses[i].wpos,
 			    y, x,
 			    1, 0, 0, rand_int(2) ? TRUE : FALSE, 0, 0);

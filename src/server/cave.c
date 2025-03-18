@@ -839,8 +839,8 @@ void check_Morgoth(int Ind) {
 
 					/* place replacement monster (clone): Death Orb (Star-Spawn, GB, GWoP) */
 					summon_override_checks = SO_ALL; /* needed? */
-					//place_monster_one(&p_ptr->wpos, y, x, 975, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//DOrb (kills items)
-					place_monster_one(&p_ptr->wpos, y, x, 847, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//GWoP (best maybe)
+					//place_monster_one(&p_ptr->wpos, y, x, RI_DEATH_ORB, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//Death Orb (kills items)
+					place_monster_one(&p_ptr->wpos, y, x, RI_GWOP, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//GWoP (best maybe)
 					summon_override_checks = SO_NONE;
 
 					/* Notice */

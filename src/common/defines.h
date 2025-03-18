@@ -1518,9 +1518,10 @@
 #define DI_CLOUD_PLANES		32
 
 /* Monster race indices (r_idx) hardcoded from r_info.txt file.
-   (Note -- the following code parts still use hard-coded numbers:
-   taunt_monsters(), monster_death(), calc_body_bonus(), price_poly_ring(), item_tester_hook_wear(), and mimic form handling:
-   (mimic_shaman_E, mimic_druid, mimic_vampire, check_experience(), do_cmd_check_extra_info()).) */
+   Note -- the following code parts still use hard-coded numbers:
+   taunt_monsters(), monster_death(), calc_body_bonus(), price_poly_ring(), item_tester_hook_wear(), process_timers()
+   and regarding mimic form handling: mimic_shaman_E, mimic_druid, mimic_vampire,
+   and specifically for druid form info: check_experience(), do_cmd_check_extra_info(). */
 #define RI_FARMER_MAGGOT	8
 #define RI_LEPER		13
 #define RI_NOVICE_MAGE		46
@@ -1581,6 +1582,7 @@
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
 #define RI_MEPHISTOPHELES	831	/* DROP_CHOSEN */
 #define RI_OREMORJ		843	/* note: jokeangband */
+#define RI_GWOP			847
 #define RI_GOTHMOG		856	/* DROP_CHOSEN */
 #define RI_SAURON		860
 #define RI_MORGOTH		862
@@ -1611,6 +1613,7 @@
 
 #define RI_GORLIM		961	/* DROP_CHOSEN */
 #define RI_WIGHT_KING		971
+#define RI_DEATH_ORB		975
 #define RI_AR_PHARAZON		980
 #define RI_ULFANG		990
 #define RI_NALFESHNEE		994
