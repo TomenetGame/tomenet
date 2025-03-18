@@ -10233,13 +10233,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* Occasionally 'slip' on icy floor, similar to player in move_player() */
 	if ((c_ptr->feat == FEAT_ICE || c_ptr->slippery >= 1000) &&
-	    !(m_ptr->r_idx == 52 || m_ptr->r_idx == 141 || m_ptr->r_idx == 179 || m_ptr->r_idx == 224) &&
+	    r_ptr->d_char != 'y' && /* Yeeks have intrinsic feather falling! */
 	    !(r_ptr->flags7 & RF7_CAN_FLY) && !(r_ptr->flags2 & RF2_PASS_WALL) &&
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
 	    !(r_ptr->flags3 & RF3_IM_COLD)) {
 	    //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
 		if (magik(70 - r_ptr->level / 6 - (r_ptr->weight / 50) * (r_ptr->flags2 & RF2_POWERFUL ? 2 : 1)
-		    - (m_ptr->r_idx == 564 || (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) ? r_ptr->level / 2 : 0) //nightblade, master rogues+ (ninjas have CAN_FLY anyway)
+		    - (m_ptr->r_idx == RI_NIGHTBLADE || (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) ? r_ptr->level / 2 : 0) //nightblade, master rogues+ (ninjas have CAN_FLY anyway)
 		    )) {
 			force_random_movement = TRUE;
 			/* Oily floor */

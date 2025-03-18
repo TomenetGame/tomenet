@@ -2667,7 +2667,7 @@ bool detect_noise(int Ind) {
 		if (m_ptr->mspeed <= m_ptr->speed) { //aggravated (well, or hasted in this case) creatures are never stealthy
 			if (r_ptr->d_char == 'f') continue; //felines
 			if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) continue; //master rogues
-			if (m_ptr->r_idx == 485 || m_ptr->r_idx == 564) continue; //ninja, nightblade
+			if (m_ptr->r_idx == RI_NINJA || m_ptr->r_idx == RI_NIGHTBLADE) continue; //ninja, nightblade
 		}
 
 		/* Detect all non-invisible monsters */

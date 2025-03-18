@@ -5709,8 +5709,8 @@ bool mon_hit_trap(int m_idx) {
 		else
 			disarming -= 25;
 	}
-	/* Special monster types: Rogues, rangers and ninjas */
-	if (r_ptr->d_char == 'p' && (r_ptr->d_attr == TERM_BLUE || r_ptr->d_attr == TERM_L_WHITE || m_ptr->r_idx == 485))
+	/* Special monster types: Rogues, rangers and ninjas - and nightblades? */
+	if (r_ptr->d_char == 'p' && (r_ptr->d_attr == TERM_BLUE || r_ptr->d_attr == TERM_L_WHITE || m_ptr->r_idx == RI_NINJA || m_ptr->r_idx == RI_NIGHTBLADE))
 		disarming += 20 + m_ptr->level / 2;
 	else if (m_ptr->ego) {
 		switch (re_info[m_ptr->ego].d_attr) {

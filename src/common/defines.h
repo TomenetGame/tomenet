@@ -1548,6 +1548,7 @@
 #define RI_SEAHORSE		443
 #define RI_GOLEM_MITHRIL	464	/* For translating to custom golem_creation visuals */
 #define RI_SHELOB		481
+#define RI_NINJA		485
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
 #define RI_WATER_TROLL		509
 #define RI_WATER_ELEMENTAL	512
@@ -1555,6 +1556,7 @@
 #define RI_BLOODLETTER		523
 #define RI_HALFLING_SLINGER	539	/* Black Breath */
 #define RI_RAALS_TOME		557	/* DROP_CHOSEN */
+#define RI_NIGHTBLADE		564
 #define RI_BODAK		566
 #define RI_MEZZODAEMON		568
 #define RI_ELDER_THING		569
