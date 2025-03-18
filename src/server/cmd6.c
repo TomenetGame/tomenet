@@ -1484,20 +1484,20 @@ static void fountain_guard(int Ind, bool blood) {
 	if (!magik(FOUNTAIN_GUARDS)) return;
 
 	if (blood) {
-		if (getlevel(&p_ptr->wpos) >= 60) { switch (randint(3)) { case 1: ridx = 758; break; case 2: ridx = 994; break; case 3: ridx = 812; }
-		} else if (getlevel(&p_ptr->wpos) >= 50) { switch (randint(3)) { case 1: ridx = 662; break; case 2: ridx = 569; break; case 3: ridx = 659; }
-		} else { switch (randint(3)) { case 1: ridx = 566; break; break; case 2: ridx = 357; break; case 3: ridx = 568; }
+		if (getlevel(&p_ptr->wpos) >= 60) { switch (randint(3)) { case 1: ridx = RI_BLOODTHIRSTER; break; case 2: ridx = RI_NALFESHNEE; break; case 3: ridx = RI_PIT_FIEND; }
+		} else if (getlevel(&p_ptr->wpos) >= 50) { switch (randint(3)) { case 1: ridx = RI_SPAWN_OF_TSATHOGGUA; break; case 2: ridx = RI_ELDER_THING; break; case 3: ridx = RI_BYAKHEE; }
+		} else { switch (randint(3)) { case 1: ridx = RI_BODAK; break; break; case 2: ridx = RI_ARCH_VILE; break; case 3: ridx = RI_MEZZODAEMON; }
 		}
 	} else {
-		if (getlevel(&p_ptr->wpos) >= 40) { switch (randint(2)) { case 1: ridx = 924; break; case 2: ridx = 893; }
-		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1: ridx = 1038; break; case 2: ridx = 894; break; case 3: ridx = 902; }
-		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1: ridx = 512; break; case 2: ridx = 509; }
-		} else if (getlevel(&p_ptr->wpos) >= 25) { ridx = 443;
-		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) { case 1: ridx = 919; break; case 2: ridx = 882; break; case 3: ridx = 927; break; case 4: ridx = 1057; }
-		} else if (getlevel(&p_ptr->wpos) >= 15) { switch (randint(3)) { case 1: ridx = 303; break; case 2: ridx = 923; break; case 3: ridx = 926; }
-		} else if (getlevel(&p_ptr->wpos) >= 10) { ridx = 925;
-		} else if (getlevel(&p_ptr->wpos) >= 5) { ridx = 207;
-		} else { ridx = 900;
+		if (getlevel(&p_ptr->wpos) >= 40) { switch (randint(2)) { case 1: ridx = RI_WATER_DEMON; break; case 2: ridx = RI_EYE_OF_THE_DEEP; }
+		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1: ridx = RI_WATER_HOUND; break; case 2: ridx = RI_MURK_DWELLER; break; case 3: ridx = RI_SCRAG; }
+		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1: ridx = RI_WATER_ELEMENTAL; break; case 2: ridx = RI_WATER_TROLL; }
+		} else if (getlevel(&p_ptr->wpos) >= 25) { ridx = RI_SEAHORSE;
+		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) { case 1: ridx = RI_WATER_NAGA; break; case 2: ridx = RI_MERMAID; break; case 3: ridx = RI_VAMPIRIC_IXITXACHITL; break; case 4: ridx = RI_SIRENE; }
+		} else if (getlevel(&p_ptr->wpos) >= 15) { switch (randint(3)) { case 1: ridx = RI_WATER_SPIRIT; break; case 2: ridx = RI_AQUATIC_HOUND; break; case 3: ridx = RI_IXITXACHITL_PRIEST; }
+		} else if (getlevel(&p_ptr->wpos) >= 10) { ridx = RI_IXITXACHITL;
+		} else if (getlevel(&p_ptr->wpos) >= 5) { ridx = RI_HIPPOCAMPUS;
+		} else { ridx = RI_AQUATIC_KOBOLD;
 		}
 	}
 
