@@ -21569,7 +21569,9 @@ Further, certain races get additional fixed abilities
 Bats            Feather falling.
 Elves           Resist light.
 Dark-Elves      Resist darkness.
-Hobbits         Dexterity bonus of +2 for not wearing shoes. (Or 'Halflings'.)
+Hobbits         (Also sometimes called 'Halflings', same race.)
+                Dexterity bonus of +2 for not wearing shoes.
+                Suffer less often from black breath infection and consequences.
 Gnomes          Free action.
 (Dwarves        Blindness resistance, climbing at level 30.)
 (High-Elves     Resist light, see invisible.)
@@ -21578,10 +21580,10 @@ Yeeks           Feather falling. Pass trees (from their ANIMAL flag).
                 level 4, can swim easily, pass trees.)
 All animals     Able to pass trees.
 All spiders     Able to pass spider webs.
-All orcs        Resist darkness.
-All trolls      Sustain strength. Extraordinary HP regeneration (2x as fast as
-                from 'REGEN' flag, doesn't stack with items. 1.5x as fast for
-                Half-Troll form).
+All orcs        Resist darkness. (Half-orcs too.)
+All trolls      Sustain strength. (Half-trolls too.)
+                Extraordinary HP regeneration (2x as fast as from 'REGEN' flag,
+                doesn't stack with items. 1.5x as fast for Half-Troll form).
                 They even continue regenerating while suffering open cuts.
 All giants      Sustain strength. (Note that all Ogres also count as giants.)
 All hydras      Extraordinary HP regeneration (2x as fast as from 'REGEN' flag,
@@ -21592,7 +21594,6 @@ All monsters with stone skin (HURT_ROCK flag)
 All dragonriders
                 ESP_DRAGON at level 5, feather falling,
                 levitation at level 30.
-All hobbits     Suffer less often from black breath infection and consequences.
 All evil creatures
                 Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
