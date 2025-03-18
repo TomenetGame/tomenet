@@ -7390,6 +7390,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		else do_dist = 0;
 
 		if ((r_ptr->flags4 & RF4_BR_GRAV) ||
+		    r_ptr->d_char != 'y' || /* Yeeks have intrinsic feather falling! */
 		    (r_ptr->flags7 & RF7_CAN_FLY)) {
 			note = " resists";
 			dam *= 3; dam /= (randint(6) + 6);
@@ -14329,7 +14330,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 		if (!resist_tele) {}//do_dist = 10;
 		else {}//do_dist = 0;
 
-		if (r_ptr->flags4 & RF4_BR_GRAV) {
+		if ((r_ptr->flags4 & RF4_BR_GRAV) ||
+		    r_ptr->d_char != 'y' || /* Yeeks have intrinsic feather falling! */
+		    (r_ptr->flags7 & RF7_CAN_FLY)) {
 			dam /= 3;
 			//do_dist = 0;
 		}
