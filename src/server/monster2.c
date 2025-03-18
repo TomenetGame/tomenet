@@ -5456,33 +5456,33 @@ cptr r_name_get(monster_type *m_ptr) {
 	---> snprintf(buf, sizeof(buf), "%s'%s Wood Golem", p, bgen);
 #endif
 		switch (m_ptr->r_idx - 1) {
-			case SV_GOLEM_WOOD:
-				strcpy(buf, "Wood Golem");
-				break;
-			case SV_GOLEM_COPPER:
-				strcpy(buf, "Copper Golem");
-				break;
-			case SV_GOLEM_IRON:
-				strcpy(buf, "Iron Golem");
-				break;
-			case SV_GOLEM_ALUM:
-				strcpy(buf, "Aluminium Golem");
-				break;
-			case SV_GOLEM_SILVER:
-				strcpy(buf, "Silver Golem");
-				break;
-			case SV_GOLEM_GOLD:
-				strcpy(buf, "Gold Golem");
-				break;
-			case SV_GOLEM_MITHRIL:
-				strcpy(buf, "Mithril Golem");
-				break;
-			case SV_GOLEM_ADAM:
-				strcpy(buf, "Adamantite Golem");
-				break;
-			default: //paranoia
-				strcpy(buf, "Unknown Golem");
-				break;
+		case SV_GOLEM_WOOD:
+			strcpy(buf, "Wood Golem");
+			break;
+		case SV_GOLEM_COPPER:
+			strcpy(buf, "Copper Golem");
+			break;
+		case SV_GOLEM_IRON:
+			strcpy(buf, "Iron Golem");
+			break;
+		case SV_GOLEM_ALUM:
+			strcpy(buf, "Aluminium Golem");
+			break;
+		case SV_GOLEM_SILVER:
+			strcpy(buf, "Silver Golem");
+			break;
+		case SV_GOLEM_GOLD:
+			strcpy(buf, "Gold Golem");
+			break;
+		case SV_GOLEM_MITHRIL:
+			strcpy(buf, "Mithril Golem");
+			break;
+		case SV_GOLEM_ADAM:
+			strcpy(buf, "Adamantite Golem");
+			break;
+		default: //paranoia
+			strcpy(buf, "Unknown Golem");
+			break;
 		}
 		return(buf);
 	}
