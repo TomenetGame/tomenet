@@ -9395,7 +9395,7 @@ void player_death(int Ind) {
 	monster_type *m_ptr;
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	char buf[1024], m_name_extra[MNAME_LEN], msg_layout = 'a';
+	char buf[1024], m_name_extra[MNAME_LEN], msg_layout = 'a', died_from_selfvis[MAX_CHARS];
 	int i, k, j, tries = 0;
 #if 0
 	int inventory_loss = 0, equipment_loss = 0;
@@ -9449,6 +9449,11 @@ void player_death(int Ind) {
 		if (just_fruitbat_transformation) p_ptr->fruit_bat = 0;
 		return;
 	}
+
+	if (!strcmp(p_ptr->died_from, "herself") || !strcmp(p_ptr->died_from, "himself"))
+		strcpy(died_from_selfvis, "yourself");
+	else
+		strcpy(died_from_selfvis, p_ptr->died_from);
 
 	/* prepare player's title */
 	strcpy(titlebuf, get_ptitle(p_ptr, FALSE));
@@ -9961,7 +9966,7 @@ void player_death(int Ind) {
 			}
 
 			/* Tell him what happened -- moved the messages up here so they get onto the chardump! */
-			msg_format(Ind, "\374\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
+			msg_format(Ind, "\374\377RYou were defeated by %s, but the priests have saved you.", died_from_selfvis);
 
  #if CHATTERBOX_LEVEL > 2
   #ifdef WHO_LET_THE_DOGS_OUT
@@ -10351,7 +10356,7 @@ void player_death(int Ind) {
 			else death_type = DEATH_INSANITY;
 		} else if (p_ptr->ghost) {
 			/* Tell him */
-			msg_format(Ind, "\374\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
+			msg_format(Ind, "\374\377a**\377rYour ghost was destroyed by %s.\377a**", died_from_selfvis);
 #if CHATTERBOX_LEVEL > 2
  #ifdef WHO_LET_THE_DOGS_OUT
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(WHO_LET_THE_DOGS_OUT)) {
@@ -10421,7 +10426,7 @@ void player_death(int Ind) {
 				case 4: strcpy(funky_msg, "torn up");break;
 				case 5: strcpy(funky_msg, "crushed");break; /* again :) */
 				}
-				msg_format(Ind, "\374\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, p_ptr->died_from, msg_layout);
+				msg_format(Ind, "\374\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, died_from_selfvis, msg_layout);
 				if (cfg.unikill_format) {
 					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was %s by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
 				} else {
@@ -10437,11 +10442,11 @@ void player_death(int Ind) {
 				    || streq(p_ptr->died_from, "starvation")
 				    || streq(p_ptr->died_from, "poisonous food")
 				    || insanity) {
-					msg_format(Ind, "\374\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+					msg_format(Ind, "\374\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, died_from_selfvis, msg_layout);
 				} else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-					msg_format(Ind, "\374\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+					msg_format(Ind, "\374\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, died_from_selfvis, msg_layout);
 				} else {
-					msg_format(Ind, "\374\377%c**\377rYou have been vaporized by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+					msg_format(Ind, "\374\377%c**\377rYou have been vaporized by %s.\377%c**", msg_layout, died_from_selfvis, msg_layout);
 				}
 
 				if (cfg.unikill_format) {
@@ -10826,10 +10831,10 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 	    || streq(p_ptr->died_from, "starvation")
 	    || streq(p_ptr->died_from, "poisonous food")
 	    || insanity)
-		msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
+		msg_format(Ind, "\374\377RYou have been killed by %s.", died_from_selfvis);
 	else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-		msg_format(Ind, "\374\377RYou have been annihilated by %s.", p_ptr->died_from);
-	else msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
+		msg_format(Ind, "\374\377RYou have been annihilated by %s.", died_from_selfvis);
+	else msg_format(Ind, "\374\377RYou have been vaporized by %s.", died_from_selfvis);
 
 	/* Paranoia - ghosts getting destroyed are already caught above */
 	if (p_ptr->ghost) Send_chardump(Ind, "-ghost"); else
