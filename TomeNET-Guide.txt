@@ -10730,7 +10730,8 @@ Cut                     Cuts will make you lose HP continuously.
                         Cure Light/Serious Wounds potions can heal cuts a bit,
                         while Cure Critical Wounds and Healing work much better
                         and any means of 'Curing' will completely heal cuts.
-                        Note that half-trolls, trolls and hydras can continue
+                        While cut, HP regeneration is inhibited except
+                        for half-trolls, trolls and hydras which can continue
                         regenerating HP even while cut.
 
 Poison   -Poisoned      The player will continuously lose Hit Points.
@@ -10742,11 +10743,13 @@ Poison   -Poisoned      The player will continuously lose Hit Points.
                         some Lembas, which will all completely cure poison.
                         While poison is slowed, the poison indicator will be
                         displayed in yellow colour instead of orange.
+                        While poisoned, HP regeneration is inhibited.
 
 Disease  -Diseased      Very similar to poison, but poison resistance does not
                         help against this. Can be cured by eating some Lembas,
                         a sprig of Athelas, Holiness staves, *Healing* (or
                         potions of Life) or any curing magic.
+                        While diseased, HP regeneration is inhibited.
 
 Hallucination           These are random wrong visual, like wrong symbols and
                         colours for monster and other players.
@@ -10764,7 +10767,13 @@ Hallucination           These are random wrong visual, like wrong symbols and
                         example by eating a mushroom of hallucination, but also
                         as a recurring flashback when your Sanity is reduced.
 
-Not really a status effect but..
+Sunburn                 This affects vampires that are exposed to sunlight
+                        without any means protection such as resistance or
+                        shade. Sunburn has no text indicator but your character
+                        symbol's colour will flicker fierly.
+                        While burning, HP regeneration is inhibited.
+
+And lastly, not an actual status effects, but...
 Switch places           Monsters that have MOVE_BODY flag may switch place with
                         the player. This can be very dangerous if it happens in
                         a situation where the player is standing on a staircase
