@@ -2664,6 +2664,16 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		}
 
 		case SV_SCROLL_GOLEM:
+			if (in_deathfate_x(&p_ptr->wpos)) {
+				if (o_ptr) {
+#ifdef USE_SOUND_2010
+					sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+					msg_print(Ind, "The scroll flares up for a moment but the magic seems to get suppressed here.");
+				}
+				*keep = TRUE;
+				break;
+			}
 			if (o_ptr) msg_print(Ind, "This is a golem creation scroll.");
 			ident = TRUE;
 			golem_creation(Ind, 1);

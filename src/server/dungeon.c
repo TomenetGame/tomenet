@@ -9090,6 +9090,10 @@ void process_player_change_wpos(int Ind) {
 	bool travel_ambient = FALSE;
 #endif
 
+	monster_type *m_ptr;
+	cave_type **mcave;
+
+
 	/* Prevent exploiting /undoskills by invoking it right before each level-up:
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
 	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible &= ~RESKILL_F_UNDO;
@@ -9688,9 +9692,9 @@ void process_player_change_wpos(int Ind) {
 	cave_midx_debug(wpos, y, x, -Ind);
 
 	/* Update his golem's location */
-	for (m_idx = m_top - 1; m_idx >= 0; m_idx--) {
-		monster_type *m_ptr = &m_list[m_fast[m_idx]];
-		cave_type **mcave;
+	/* Exception: Death Fate does not allow golems */
+	if (!in_deathfate_x(wpos)) for (m_idx = m_top - 1; m_idx >= 0; m_idx--) {
+		m_ptr = &m_list[m_fast[m_idx]];
 		mcave = getcave(&m_ptr->wpos);
 
 		if (!m_fast[m_idx]) continue;
@@ -9698,8 +9702,10 @@ void process_player_change_wpos(int Ind) {
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx) continue;
 
+		/* We're not the owner of this monster? */
 		if (m_ptr->owner != p_ptr->id) continue;
 
+		/* If the golem is set to stand guard instead of following, don't move it with us */
 		if ((m_ptr->mind & GOLEM_GUARD) && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
 
 		/* XXX XXX XXX (merging) */
@@ -9733,7 +9739,7 @@ void process_player_change_wpos(int Ind) {
 			mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
 			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 		}
-		wpcopy(&m_ptr->wpos,wpos);
+		wpcopy(&m_ptr->wpos, wpos);
 		mcave = getcave(&m_ptr->wpos);
 		m_ptr->fx = mx;
 		m_ptr->fy = my;
