@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. March 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 19. March 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2878,6 +2878,10 @@ BpR/SpR     Blows per round, shots per round. The number of attacks you get
             For martial arts or ranged weapons, STR and DEX stats (or any other
             stats) have no effect on BpR or SpR respectively.
 
+bpval       Base pval, aka item enchantment stemming from the base item type,
+            independant of any ego or artifact powers, granting stat boni.
+            Also see 'pval' and for details (6.3).
+
 Cheeze      Questionable action, not quite cheating but close to it.
             This can be transferring items from a high-level character to a
             low-level character to boost him and trivialize the beginning phase
@@ -3161,6 +3165,9 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             ie when it's sold to shops or bought from them. So some 'good'
             items might even have undesired effects on the character.
             See (5.7) for more information about identification.
+
+pval        Item enchantment stemming from either ego powers or artifact
+            powers granting stat boni. Also see 'bpval' and for details (6.3).
 
 PvE         Player vs environment. This is the main game style of TomeNET:
             You fight against the computer-controlled environment, usually not
@@ -16914,6 +16921,45 @@ Note that there is a small chance that an item is sometimes allowed to vastly
 exceed the usual maximum level, an "Out of Depth" (OoD) drop!
 This phenomenon accounts for finding Dragon Scale Mail in the Orc Caves and
 other such occurances..
+
+
+Enchantments - bpval and pval, to-hit, to-dam, to-AC:
+-----------------------------------------------------
+Items can have 5 different types of numerical enchantments.
+
+to-hit grants hit chance, to-dam increases the damage, to-ac increases the AC
+ie your armour class to avoid/reduce incoming physical damage.
+The visual format in the item's name for to-hit and to-dam is "(+hit,+dam)" if
+they both occur on an item, otherwise just "(+hit)" or "(+dam)".
+The format for to-ac is "[+ac]" or if the item comes with a base AC (eg armour)
+it will be added to it after a comma: "[base ac,+ac].
+
+pval and bpval are stat-increasing boni, for example to Strength or to BpR.
+These numbers are in parentheses, eg a "Shovel of Digging (+1) (+3)" has
+a bpval of +1 and a pval of 3.
+The bpval is the 'base pval' which items get from their base type, like a
+shovel always comes with a base pval of (+1) that grants digging power.
+The pval is an extra bonus that comes from either an ego power or the artifact
+powers of the item if it's an artifact.
+Here the ego power 'of Digging' grants a random pval of (+3) which also
+affects digging power, resulting in a total digging power bonus of +4 for
+this shovel.
+Often the bpval and pval affect different stats though, eg
+a Shadow Blade of Extra Attacks (+2) (+3) grants a bpval of +2 to Stealth which
+stems from the base item type 'Shadow Blade' and then a pval of +3 to your BpR
+aka number of melee attacks/round.
+
+For artifacts, all of these stats will be either totally random, independant of
+the level where you found the item, or for player-created artifacts the three
+boni to hit, dam and AC might be taken from the base item used in the process
+if it is a jewelry item (meaning ring or amulet, also see (9.4) for more info.)
+
+For all other items besides artifacts however, the hit/dam/ac and pval
+enchantments on items are randomized but will be affected by the depth where
+the item was found, meaning that deeper levels have a higher chance to produce
+higher enchantments of these four types.
+The pval (which comes from either ego powers or artifact powers) however is
+generated completely randomly, independant of depth.
 
 
 (6.3a) Special item drops of monsters
