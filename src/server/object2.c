@@ -4301,6 +4301,7 @@ void invcopy(object_type *o_ptr, int k_idx) {
 
 /*
  * Help determine an "enchantment bonus" for an object.
+ * Returns: 0..'max' (where 'level' scales from 0..MAX_DEPTH_OBJ (128)).
  *
  * To avoid floating point but still provide a smooth distribution of bonuses,
  * we simply round the results of division in such a way as to "average" the
@@ -5936,7 +5937,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
     +5: 1/3*1/3 = 1/9
 */
 
-			o_ptr->bpval = randint(3 + randint(2));
+			//o_ptr->bpval = randint(3 + randint(2));
 /* chances:
     +1: 1/2*1/4 + 1/2*1/5 = 9/40
     +2: 1/2*1/4 + 1/2*1/5 = 9/40
@@ -5944,6 +5945,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
     +4: 1/2*1/4 + 1/2*1/5 = 9/40
     +5: 1/2*1/5 = 4/40
 */
+			o_ptr->bpval = randint(3 + randint(m_bonus(2, level)));
 
 			/* Cursed */
 			if (power < 0) {
