@@ -2981,7 +2981,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			k_ptr->ds = hd2;
 			k_ptr->to_h = th;
 			k_ptr->to_d = td;
-			k_ptr->to_a =  ta;
+			k_ptr->to_a = ta;
 
 			/* Next... */
 			continue;
