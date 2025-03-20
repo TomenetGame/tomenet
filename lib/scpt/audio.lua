@@ -610,7 +610,7 @@ audio_bgm = {
     "Nazgul_Uvatha_slain",
     "Nazgul_Adunaphel_slain",--240
     "Nazgul_Akhorahil_slain",
-    "Nazgul_Ren",
+    "Nazgul_Ren_slain",
     "Nazgul_Ji_slain",
     "Nazgul_Dwar_slain",
     "Nazgul_Hoarmurath_slain",
