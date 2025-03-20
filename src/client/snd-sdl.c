@@ -2438,7 +2438,10 @@ void jukebox_update_songlength(void) {
 	int i, lb, l;
 	double p; //ohoho -_-
 
-	if (music_cur == -1 || music_cur_song == -1) return; //paranoia
+	if (music_cur == -1 || music_cur_song == -1) {
+		curmus_song_dur = 0;
+		return; //paranoia
+	}
 
 	p = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
 	//Mix_RewindMusic();
@@ -4731,6 +4734,7 @@ void do_cmd_options_mus_sdl(void) {
 					jukebox_used = TRUE; //we actually used the jukebox
 					Mix_HaltMusic();
 					music_cur = d;
+					curmus_song_dur = 0;
 				}
 			} else {
 				if (music_cur == j_sel) {
@@ -4745,11 +4749,13 @@ void do_cmd_options_mus_sdl(void) {
 					jukebox_screen = TRUE;
 
 					jukebox_org = jbo;
+					jukebox_update_songlength();
 				}
 			}
 			break;
 
 		case 'y':
+			if (!songs[j_sel].disabled) break;
 			songs[j_sel].disabled = FALSE;
 			if (music_cur == j_sel) {
 				int jbo = jukebox_org; //the play_music() call below will modify jukebox_org wrongly, so we have to keep it here and restore it afterwards
@@ -4763,14 +4769,19 @@ void do_cmd_options_mus_sdl(void) {
 				jukebox_screen = TRUE;
 
 				jukebox_org = jbo;
+				jukebox_update_songlength();
 			}
 			break;
 
 		case 'n':
+			if (songs[j_sel].disabled) break;
 			songs[j_sel].disabled = TRUE;
 			if (music_cur == j_sel && Mix_PlayingMusic()) {
+				d = music_cur; //halting will set cur to -1
 				jukebox_used = TRUE; //we actually used the jukebox
 				Mix_HaltMusic();
+				music_cur = d;
+				curmus_song_dur = 0;
 			}
 			break;
 
