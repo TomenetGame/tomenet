@@ -1886,7 +1886,13 @@ void handle_music(int Ind) {
 	}
 
 	/* Shopping music ^^ */
-	if (p_ptr->store_num >= 0) {
+	if (p_ptr->store_num >= 0
+	    /* In Minas Anor, the 'Inn' shop ('+') is NOT part of the usual inn building, but in a different building w/o any room.
+	       This will result in 'Inn' music being called via grid_affects_player() on _leaving_ the shop, immediately restarting the town music after shop-leave-teleport1.
+	       So we need to correctly play the 'Inn' shop music on entering the shop already, instead of trying to play a (possibly nonexisting) generi-shop music here.
+	       (An alternative way would be to not test for STORE_INN and STORE_DUNGEON_INN here but for 'inside_inn()' instead, and add code to that function that checks
+	       whether there is at least one adjacent FF1_PROTECTED grid! That way, "true-inn-room-inns" would still play tavern music, while "no-inn-room-inns" would play generic shop music (if defined).) */
+	    && p_ptr->store_num != STORE_INN && p_ptr->store_num != STORE_DUNGEON_INN) {
 		int a;
 
 		switch (p_ptr->store_num) {
