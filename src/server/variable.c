@@ -1028,7 +1028,7 @@ int spell = -1, ID_spell1, ID_spell1a, ID_spell1b, ID_spell2, ID_spell3, ID_spel
 # ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
 u16b depthrange_visited[20]; //(levels 0..9 each, so [19] := 190..199)
 # endif
-int dungeon_id_max = 0;
+int dungeon_id_max = 0; /* Note that this starts at index 1 for dungeons, not at 0! (Similar to how NumPlayers works.) */
 /* Note: doubling MAX_D_IDX to also account for possible custom dungeons ("Wilderness") along with the default d_info[] dungeons */
 int dungeon_x[MAX_D_IDX * 2], dungeon_y[MAX_D_IDX * 2];
 u16b dungeon_visit_frequency[MAX_D_IDX * 2];   /* how often players enter this dungeon */
