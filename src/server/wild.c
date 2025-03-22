@@ -5109,3 +5109,98 @@ bool pos_in_weather(struct worldpos *wpos, int x, int y) {
 	return(TRUE);
 }
 #endif
+
+#ifdef DUNFOUND_REWARDS_NORMAL
+/* Monetary reward instead of items? */
+#define DUNFOUND_REWARDS_MONEY
+/* If monetary reward is enabled, will it be dropped to the ground instead of gained directly? */
+//#define DUNFOUND_REWARDS_MONEY_DROP
+void dunfound_reward(int Ind, dungeon_type *d_ptr) {
+	dungeon_type *d2_ptr;
+	int reward, i, dun_total_normal = 0, dun_total_normal_known = 0;
+	bool normal = FALSE;
+ #if !defined(DUNFOUND_REWARDS_MONEY) || defined(DUNFOUND_REWARDS_MONEY_DROP)
+	player_type *p_ptr = Players[Ind];
+	object_type forge;
+	char o_name[ONAME_LEN];
+  #if !defined(DUNFOUND_REWARDS_MONEY)
+	int slot;
+  #endif
+ #endif
+
+	// Note: If we want to scan ALL dungeons, including wilderness etc,
+	// we'd still want to exempt stuff like: (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)
+
+	/* Scan all normally-findable dungeons that are canon, from d_info.txt */
+	for (i = 1; i <= dungeon_id_max; i++) {
+		d2_ptr = (dungeon_tower[i] ? wild_info[dungeon_y[i]][dungeon_x[i]].tower : wild_info[dungeon_y[i]][dungeon_x[i]].dungeon);
+
+		/* only normally-findable ones */
+		if (!d2_ptr->type) continue;
+		if (d2_ptr->flags1 & DF1_UNLISTED) continue;
+
+		/* The dungeon we're checking is a 'normal' one? */
+		if (d_ptr->type == d2_ptr->type) normal = TRUE;
+
+		/* Total number of 'normal' canon dungeons */
+		dun_total_normal++;
+
+		/* Count how many of these are already known */
+		if (d2_ptr->known & 0x1) dun_total_normal_known++;
+	}
+	/* The dungeon we're checking is itself not a 'normal' dungeon even, nothing to do then */
+	if (!normal) return;
+
+	/* Paranoia */
+	if (dun_total_normal - dun_total_normal_known < 1) {
+		s_printf("Error in dunfound_reward(): dun_total_normal (%d) - dun_total_normal_known (%d) < 1\n", dun_total_normal, dun_total_normal_known);
+		return;
+	}
+
+	disturb(Ind, 0, 0);
+	/* Depending on amount of unfound dungeons left, reward becomes higher.
+	   Maxes out for the last 2 dungeons, not just the final one. */
+ #ifndef DUNFOUND_REWARDS_MONEY /* Item reward */
+	//reward = 1 + 30 / ((dun_total_normal - dun_total_normal_known + 1) / 2 + 1); // scales from 3 (none of 27 found) to 16 (last two remaining of 27)
+	//reward = 1 + 30 / ((dun_total_normal - dun_total_normal_known + 1) / 2 + 0); // scales from 3 (none of 27 found) to 31 (last two remaining of 27)
+	reward = 1 + 72 / (((dun_total_normal - dun_total_normal_known) * 9 + 1) / 10); // scales from 4 (none of 27 found) to 73 (last two remaining of 27)
+
+	invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_STAR_HEALING));
+	forge.number = (reward * 1357) / 1000; // 5..99
+
+	if (!forge.k_idx) return; //paranoia (as Bree is always TF_KNOWN)
+	/* Optional: For enchantable items */
+	apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
+	object_desc(Ind, o_name, &forge, TRUE, 3);
+
+  #if 1 /* Auto-pick it up? */
+	slot = inven_carry(Ind, &forge);
+	if (slot != -1 ) {
+		//msg_format(Ind, "You notice %s lying on the ground!", o_name);
+		msg_format(Ind, "The Mathom House sends you a gift to support your exploration efforts!");
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+	}
+  #else /* Just drop it at our feet? */
+	drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	msg_format(Ind, "You notice %s lying on the ground!", o_name);
+  #endif
+ #else /* Monetary reward */
+	//reward = 80646 * (1 + 30 / ((dun_total_normal - dun_total_normal_known + 1) / 2 + 0)); // scales from 242k (none of 27 found) to 2.5M (last two remaining of 27)
+	//reward = 67568 * (1 + 36 / (((dun_total_normal - dun_total_normal_known) * 2 + 1) / 3)); // scales from 203k (none of 27 found) to 2.5M (last two remaining of 27)
+	//reward = 55556 * (1 + 44 / (((dun_total_normal - dun_total_normal_known) * 5 + 1) / 6)); // scales from 167k (none of 27 found) to 2.5M (last two remaining of 27)
+	reward = 34247 * (1 + 72 / (((dun_total_normal - dun_total_normal_known) * 9 + 1) / 10)); // scales from 137k (none of 27 found) to 2.5M (last two remaining of 27)
+  #ifndef DUNFOUND_REWARDS_MONEY_DROP /* Auto-pick it up? */
+	msg_format(Ind, "The Mathom House sends %d gold pieces to support your exploration efforts!", reward);
+	(void)gain_au(Ind, reward, FALSE, FALSE);
+  #else
+	invcopy(&forge, lookup_kind(TV_GOLD, 1));
+	forge.pval = reward;
+	forge.k_idx = gold_colour(reward, FALSE, TRUE);
+	forge.sval = k_info[forge.k_idx].sval;
+	object_desc(Ind, o_name, &forge, TRUE, 3);
+	drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	msg_format(Ind, "You notice %s lying on the ground!", o_name);
+  #endif
+ #endif
+}
+#endif

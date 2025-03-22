@@ -3757,6 +3757,9 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				/* Announce it to publicly */
 				l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
 				msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
+ #ifdef DUNFOUND_REWARDS_NORMAL
+				dunfound_reward(Ind, d_ptr);
+ #endif
 			}
 #endif
 		}

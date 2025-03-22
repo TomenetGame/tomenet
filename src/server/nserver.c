@@ -7083,6 +7083,12 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 				desc = town_profile[town[i].type].name;
 				/* Hack: 'Discover' the town, for Mathom's House's exploration history */
 				if (!(town[i].flags & TF_KNOWN) && !is_admin(p_ptr)) {
+#ifdef TOWNFOUND_REWARDS
+					object_type forge;
+					int slot;
+					char o_name[ONAME_LEN];
+#endif
+
 					town[i].flags |= TF_KNOWN; // we do allow p_ptr->ghost, same as for d_ptr->known stuff
 					/* Make a fuzz */
 					s_printf("(%s) TOWNFOUND: Player %s (%s) discovered town '%s' (%d) at (%d,%d).\n",
@@ -7091,6 +7097,54 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 					/* Announce it to publicly */
 					l_printf("%s \\{B%s discovered a town: %s\n", showdate(), p_ptr->name, town_profile[town[i].type].name);
 					msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a town: '%s'! \377i***", p_ptr->name, town_profile[town[i].type].name);
+
+#ifdef TOWNFOUND_REWARDS
+					/* Setting the forge.level is only needed if apply_magic() isn't called, as it calls determine_level_req() for us. */
+					switch(town[i].type) {
+					case TOWN_VANILLA:
+						invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT));
+						forge.number = 1;
+						break;
+ #ifndef DUNFOUND_REWARDS_NORMAL /* Already covered? As all of these have at least one normal dungeon */
+					case TOWN_BREE:
+						/* Always known ie can never be discovered */
+						break;
+					case TOWN_GONDOLIN:
+						invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_HEALING));
+						forge.number = 99;
+						break;
+					case TOWN_MINAS_ANOR:
+						invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT));
+						forge.number = 99;
+						break;
+					case TOWN_LOTHLORIEN:
+						invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_RESISTANCE));
+						forge.number = 99;
+						break;
+					case TOWN_KHAZADDUM:
+						invcopy(&forge, lookup_kind(TV_LITE, SV_LITE_DWARVEN));
+						forge.number = 1;
+						break;
+ #endif
+					}
+					if (!forge.k_idx) break; /* (If DUNFOUND_REWARDS_NORMAL is not defined, this is just paranoia (as Bree is always TF_KNOWN)) */
+
+					/* Optional: For enchantable items */
+					apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
+					object_desc(Ind, o_name, &forge, TRUE, 3);
+
+					disturb(Ind, 0, 0);
+ #if 1 /* Auto-pick it up? */
+					slot = inven_carry(Ind, &forge);
+					if (slot != -1 ) {
+						msg_format(Ind, "The Mathom House sends you a gift to support your exploration efforts!");
+						msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+					}
+ #else /* Just drop it at our feet? */
+					drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+					msg_format(Ind, "You notice %s lying on the ground!", o_name);
+ #endif
+#endif
 				}
 				break;
 			}

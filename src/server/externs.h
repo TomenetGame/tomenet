@@ -1048,6 +1048,9 @@ extern int wild_gettown(int x, int y);
 #if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
 extern bool pos_in_weather(struct worldpos *wpos, int x, int y);
 #endif
+#ifdef DUNFOUND_REWARDS_NORMAL
+extern void dunfound_reward(int Ind, dungeon_type *d_ptr);
+#endif
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);

@@ -295,6 +295,14 @@
 /* Wilderness mapping scrolls are special: They're actually pieces of the world map. */
 #define NEW_WILDERNESS_MAP_SCROLLS
 
+/* Discovering a town grants a reward.
+   If DUNFOUND_REWARDS_NORMAL is defined, this will only treat non-predefined towns (ie TOWN_VANILLA style, aka wild towns)
+   as all predefined towns contain at least one town dungeon and therefore would yield duplicate reward. */
+#define TOWNFOUND_REWARDS
+/* Discovering a canonical dungeon (d_info.txt, and normally-findable) grants a reward,
+   the higher the less dungeons are remaining to be found */
+#define DUNFOUND_REWARDS_NORMAL
+
 /* Disable manual declaration of hostility/peace */
 #define NO_PK
 

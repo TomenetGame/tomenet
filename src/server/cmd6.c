@@ -3281,6 +3281,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 							/* Announce it to publicly */
 							l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 							msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+  #ifdef DUNFOUND_REWARDS_NORMAL
+							dunfound_reward(Ind, d_ptr);
+  #endif
  #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
 							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
  #endif
@@ -3297,6 +3300,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 							/* Announce it to publicly */
 							l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 							msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+  #ifdef DUNFOUND_REWARDS_NORMAL
+							dunfound_reward(Ind, d_ptr);
+  #endif
  #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
 							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
  #endif
