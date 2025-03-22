@@ -11381,17 +11381,18 @@ Here is a list of all available events:
     After about 5 minutes, the dungeon floor however will crackle, and be
     flooded more and more with lava. Time is running out. Now the players who
     haven't escaped yet should hurry, before the maze is completely submerged
-    in lava. Doors and the exit beacons will stay clear until the very final
-    push of lava occurs which then completely submerges everything.
+    in lava. Doors, void gates and the exit beacons will stay clear until the
+    very final push of lava occurs which then completely submerges everything.
     However, it seems the former keeper of this abandoned maze left behind a
     horrible guardian, the Horned Reaper. It can sense your presence and if it
     manages to catch you, there is no hope of survival.
 
     It does not matter who the first or last is to find the exit, everyone who
-    manages to get out, wins.
+    manages to get out, wins. You could even form a party if compatible.
 
     Tips:
     -The Horned Reaper in this maze bashes doors instead of opening them.
+     The noise will help you to roughly locate him if he is close enough.
     -If you stand still for a turn, you can 'run' over one adjacent floor grid
      as quickly as you can double-tap a movement key (maybe create a macro).
     -Players usually do not start next to rooms that have escape beacons.
@@ -11399,6 +11400,11 @@ Here is a list of all available events:
      possible, not to cover areas "cleanly".
     -It is known that in a world of squares, moving diagonally has a certain
      advantage.
+    -A brass lantern is not required but can make things easier sometimes.
+    -Form a party if possible.
+     If you are waiting for team mates at an exit beacon, stay on the beacon
+     to avoid suddenly drowning in lava (until the very last lava push which
+     will kill everyone no matter where you stand).
 
 
 Reward deeds:
