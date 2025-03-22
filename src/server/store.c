@@ -7393,14 +7393,17 @@ void view_exploration_history(int Ind) {
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 	bool none = TRUE;
-#if 0
+ #if 0
 	bool admin = admin_p(Ind); //use ~8 for full info instead..
-#else
+ #else
 	bool admin = FALSE; //..and here just display knowledge as it's available to players
-#endif
+ #endif
 	byte known;
 	struct dungeon_type *d_ptr;
 	char boss_name[MNAME_LEN + 2], *bn = boss_name, *bnc, *bn1, *bn2, *bn3, tmp_name[MNAME_LEN + 2]; //+2 for prefixed colour code
+ #ifdef DUNFOUND_REWARDS_NORMAL
+	int dun_total_normal = 0, dun_total_normal_known = 0;
+ #endif
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -7428,9 +7431,6 @@ void view_exploration_history(int Ind) {
 		/* only show those dungeons that have been discovered */
 		if (dungeon_tower[i]) d_ptr = wild_info[dungeon_y[i]][dungeon_x[i]].tower;
 		else d_ptr = wild_info[dungeon_y[i]][dungeon_x[i]].dungeon;
-		known = d_ptr->known;
-		if (admin) known = 0x1 + 0x2 + 0x4 + 0x8;
-		if (!known) continue;
 
 		/* Not to be listed dungeon? */
 		if (d_ptr->flags1 & DF1_UNLISTED) continue;
@@ -7445,6 +7445,21 @@ void view_exploration_history(int Ind) {
 		if (!dungeon_x[i] && !dungeon_y[i]) continue;
 		/* exclude DF-type stuff */
 		if (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE) continue;
+
+ #ifdef DUNFOUND_REWARDS_NORMAL
+		/* only normally-findable ones */
+		if (d_ptr->type) {
+			/* Total number of 'normal' canon dungeons */
+			dun_total_normal++;
+
+			/* Count how many of these are already known */
+			if (d_ptr->known & 0x1) dun_total_normal_known++;
+		}
+ #endif
+
+		known = d_ptr->known;
+		if (admin) known = 0x1 + 0x2 + 0x4 + 0x8;
+		if (!known) continue;
 
 		none = FALSE;
 
@@ -7499,9 +7514,14 @@ void view_exploration_history(int Ind) {
 	}
 
 	if (none) fprintf(fff, "\n\377u    Nobody has ever discovered a dungeon in this town's history!\n");
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 	else sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
-#endif
+ #endif
+
+ #ifdef DUNFOUND_REWARDS_NORMAL
+	if (!none && dun_total_normal - dun_total_normal_known)
+		fprintf(fff, "\n\377U    The Mathom House's staff suspects that there more dungeons to discover!\n");
+ #endif
 
 	my_fclose(fff);
 	/* Display the file contents */
