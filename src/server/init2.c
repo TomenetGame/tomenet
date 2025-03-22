@@ -4085,7 +4085,7 @@ void init_firework_dungeon(void) {
 			if (i == DI_CLOUD_PLANES) continue;
 			if (i == DI_NETHER_REALM) continue;
 			/* not Valinor, no monsters there */
-			if (i == DI_VALINOR) continue;
+			if (d_info[i].flags1 & DF1_UNLISTED) continue;
 			/* logic: scrolls would either burn or explode on lava? :-p */
 			if (i == DI_MT_DOOM) continue;
 			/* scrolls would instantly get soaked */
