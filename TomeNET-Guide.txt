@@ -14470,7 +14470,7 @@ Holy Prayer     Temporarily increases your AC by 8 (blessing), 14 (holy chant)
 
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
-                of you has to read a BB scroll, it's working bidirectional).
+                of you has to read a BB scroll, it's working bidirectionally).
 
                 Everyone on the server will receive messages about that blood
                 bond been formed: "<player A> blood bonds with <player B>".
