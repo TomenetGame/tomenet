@@ -9043,10 +9043,13 @@ Mayor's Office (Bree)   Allows you to turn in deed parchments you won in
                         tournaments or on other occasions for a reward.
                         Also, you can receive an extermination order here
                         (see (4.13) about those).
+                        There are other major buildings in different cities
+                        that will provide extermination orders too.
+                        It also houses the guild administration office where
+                        you can get your guild's name officially changed.
+                        Then it has a list of the strongest heroes known.
                         Last but not least you can check out a list of
                         noteworthy occurances that may happened lately.
-                        There are other major buildings in different cities
-                        that will provide extermination orders.
 
 The Mathom-house        This is located in the same building as the Mayor's
                         Office, the biggest building in Bree.
@@ -9068,6 +9071,17 @@ The Mathom-house        This is located in the same building as the Mayor's
                         boss then visiting its final floor will already result
                         in the information being recorded here that it has no
                         final guardian.
+
+                        Note that if any of the canonical standard dungeons
+                        (those in d_info.txt, which are accessible via normal
+                        staircases from the world surface) are not yet found,
+                        there will be a notification line at the end of the
+                        list of dungeons, saying:
+      "- The Mathom House heard rumours about further undiscovered dungeons! -"
+                        If you manage to discover any unknown dungeons, you
+                        will receive a reward from the Mathom-house for your
+                        effors in exploration, the bigger the fewer dungeons
+                        are left to discover!
 
                         The Mathom-house also has another function,
                         'Exploration reports':
@@ -14662,7 +14676,7 @@ Wilderness Mapping
                 go there in person and find the entrance staircase (get it
                 into unobstructed line-of-sight of your character) for it to
                 register! Only then it will be officially 'known', to you and
-                server-wide (in the Mathom House).
+                server-wide (in the Mathom-house).
 
 Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 dungeon or tower within your current sector.
