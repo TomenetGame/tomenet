@@ -7520,7 +7520,7 @@ void view_exploration_history(int Ind) {
 
  #ifdef DUNFOUND_REWARDS_NORMAL
 	if (!none && dun_total_normal - dun_total_normal_known)
-		fprintf(fff, "\n\377U    The Mathom House's staff suspects that there more dungeons to discover!\n");
+		fprintf(fff, "\377U    - The Mathom House heard rumours about further undiscovered dungeons! -\n");
  #endif
 
 	my_fclose(fff);
