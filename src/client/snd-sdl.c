@@ -3527,7 +3527,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 
 /* Display options page UI that allows to comment out sounds easily */
 void do_cmd_options_sfx_sdl(void) {
-	int i, i2, j, d, vertikal_offset = 4, horiz_offset = 5, list_size = 9;
+	int i, i2, j, d, k, vertikal_offset = 4, horiz_offset = 5, list_size = 9;
 	static int y = 0, j_sel = 0;
 	int tmp;
 	char ch;
@@ -3540,6 +3540,7 @@ void do_cmd_options_sfx_sdl(void) {
 	bool cfg_audio_music_org = cfg_audio_music, cfg_audio_weather_org = cfg_audio_weather;
 	static char searchstr[MAX_CHARS] = { 0 };
 	static int searchres = -1, searchoffset = 0;
+	static bool searchforfilename = FALSE;
 	cptr path_p;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
@@ -3578,13 +3579,13 @@ void do_cmd_options_sfx_sdl(void) {
 #ifdef USER_VOLUME_SFX
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu"))
-			Term_putstr(0, 0, -1, TERM_WHITE, "  \377ydir\377w/\377y#\377w/\377ys\377w/'\377y/\377w', \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377y[SHIFT+]RETURN\377w [boost+]play");
+			Term_putstr(0, 0, -1, TERM_WHITE, "  \377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377y[SHIFT+]RETURN\377w [boost+]play");
 		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
  #endif
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yv\377w volume, \377yRETURN\377w (play)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yv\377w volume, \377yRETURN\377w (play)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  \377yESC \377wleave and auto-save all changes.                                          ");
 #else
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yRETURN\377w (play), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yRETURN\377w (play), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 #endif
 
@@ -3994,6 +3995,8 @@ void do_cmd_options_sfx_sdl(void) {
 			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) sound event name: ");
 			askfor_aux(searchstr, MAX_CHARS - 1, 0);
 			if (!searchstr[0]) break;
+			searchres = -1;
+			searchforfilename = FALSE;
 
 			/* Map events we've listed in our local config file onto audio.lua indices */
 			i2 = -1;
@@ -4004,6 +4007,29 @@ void do_cmd_options_sfx_sdl(void) {
 				sprintf(out_val, "return get_sound_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
 				if (!my_strcasestr(lua_name, searchstr)) continue;
+				/* match */
+				y = i2;
+				searchoffset = y;
+				searchres = j;
+				break;
+			}
+			break;
+		case 'S': /* Search for file name */
+			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) sound file name: ");
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			if (!searchstr[0]) break;
+			searchres = -1;
+			searchforfilename = TRUE;
+
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			i2 = -1;
+			for (j = 0; j < SOUND_MAX_2010; j++) {
+				if (!samples[j].config) continue;
+				i2++;
+				/* get file name */
+				for (d = 0; d < samples[j].num; d++)
+					if (my_strcasestr(samples[j].paths[d], searchstr)) break;
+				if (d == samples[j].num) continue;
 				/* match */
 				y = i2;
 				searchoffset = y;
@@ -4024,10 +4050,19 @@ void do_cmd_options_sfx_sdl(void) {
 				}
 				if (!samples[j].config) continue;
 				i2++;
-				/* get event name */
-				sprintf(out_val, "return get_sound_name(%d)", j);
-				lua_name = string_exec_lua(0, out_val);
-				if (!my_strcasestr(lua_name, searchstr)) continue;
+
+				if (searchforfilename) {
+					/* get file name */
+					for (k = 0; k < samples[j].num; k++)
+						if (my_strcasestr(samples[j].paths[k], searchstr)) break;
+					if (k == samples[j].num) continue;
+				} else {
+					/* get event name */
+					sprintf(out_val, "return get_sound_name(%d)", j);
+					lua_name = string_exec_lua(0, out_val);
+					if (!my_strcasestr(lua_name, searchstr)) continue;
+				}
+
 				/* match */
 				y = i2 + searchoffset;
 				searchoffset = y;
@@ -4099,7 +4134,7 @@ void intshuffle(int *array, int size) {
 }
 #endif
 void do_cmd_options_mus_sdl(void) {
-	int i, i2, j, d, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
+	int i, i2, j, d, k, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
 	char ch;
 	byte a, a2;
@@ -4117,6 +4152,7 @@ void do_cmd_options_mus_sdl(void) {
 #endif
 	static char searchstr[MAX_CHARS] = { 0 };
 	static int searchres = -1, searchoffset = 0;
+	static bool searchforfilename = FALSE;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -4174,9 +4210,9 @@ void do_cmd_options_mus_sdl(void) {
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/'\377y/\377w', \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yv\377w/\377y+\377w/\377y-\377w vol., \377yESC \377wsave+quit");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur, \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yv\377w/\377y+\377w/\377y-\377w vol, \377yESC \377wsave+quit");
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/'\377y/\377w', \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yESC \377wsave+quit");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yESC \377wsave+quit");
  #endif
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu"))
@@ -5153,12 +5189,12 @@ void do_cmd_options_mus_sdl(void) {
 			y = i;
 			if (y >= audio_music) y = audio_music - 1;
 			break;
-
 		case 's': /* Search for event name */
 			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) music event name: ");
 			askfor_aux(searchstr, MAX_CHARS - 1, 0);
 			if (!searchstr[0]) break;
 			searchres = -1;
+			searchforfilename = FALSE;
 
 			/* Map events we've listed in our local config file onto audio.lua indices */
 			i2 = -1;
@@ -5169,6 +5205,29 @@ void do_cmd_options_mus_sdl(void) {
 				sprintf(out_val, "return get_music_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
 				if (!my_strcasestr(lua_name, searchstr)) continue;
+				/* match */
+				y = i2;
+				searchoffset = y;
+				searchres = j;
+				break;
+			}
+			break;
+		case 'S': /* Search for file name */
+			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) music file name: ");
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			if (!searchstr[0]) break;
+			searchres = -1;
+			searchforfilename = TRUE;
+
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			i2 = -1;
+			for (j = 0; j < MUSIC_MAX; j++) {
+				if (!songs[j].config) continue;
+				i2++;
+				/* get file name */
+				for (d = 0; d < songs[j].num; d++)
+					if (my_strcasestr(songs[j].paths[d], searchstr)) break;
+				if (d == songs[j].num) continue;
 				/* match */
 				y = i2;
 				searchoffset = y;
@@ -5189,10 +5248,19 @@ void do_cmd_options_mus_sdl(void) {
 				}
 				if (!songs[j].config) continue;
 				i2++;
-				/* get event name */
-				sprintf(out_val, "return get_music_name(%d)", j);
-				lua_name = string_exec_lua(0, out_val);
-				if (!my_strcasestr(lua_name, searchstr)) continue;
+
+				if (searchforfilename) {
+					/* get file name */
+					for (k = 0; k < songs[j].num; k++)
+						if (my_strcasestr(songs[j].paths[k], searchstr)) break;
+					if (k == songs[j].num) continue;
+				} else {
+					/* get event name */
+					sprintf(out_val, "return get_music_name(%d)", j);
+					lua_name = string_exec_lua(0, out_val);
+					if (!my_strcasestr(lua_name, searchstr)) continue;
+				}
+
 				/* match */
 				y = i2 + searchoffset;
 				searchoffset = y;
