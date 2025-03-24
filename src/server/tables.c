@@ -1627,7 +1627,7 @@ player_race race_info[MAX_RACE] = {
 			'+', 0,
 			'%', 110, },
 		{ SKILL_DIG,
-			'+', 4000,
+			'+', 3000,
 			'%', 130, },
 		{ SKILL_CLIMB,
 			'+', 0,
