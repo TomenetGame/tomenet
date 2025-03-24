@@ -2679,33 +2679,13 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
-/* NOTE: Currently this code has no effect as Windows clients don't have/use a tile cache/TILE_CACHE_SIZE,
-   it is merely here to potentially mirror the cache-invalidation-code in main-x11.c for hypothetical future changes.
-   c_idx: -1 = invalidate all; otherwise only tiles that use this foreground colour as 'c' are invalidated. */
-#if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
-static void invalidate_graphics_cache_win(term_data *td, int c_idx) {
-	int i;
-
-	if (c_idx == -1)
-		for (i = 0; i < TILE_CACHE_SIZE; i++)
-			td->tile_cache[i].is_valid = FALSE;
-	else
-		for (i = 0; i < TILE_CACHE_SIZE; i++)
-			if (td->tile_cache[i].a == c_idx
- #ifdef GRAPHICS_BG_MASK
-			    || td->tile_cache[i].a_back == c_idx
- #endif
-			    )
-				td->tile_cache[i].is_valid = FALSE;
-}
-#endif
 
 #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
  #if 0 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_win(x, y, a, c));
- #else
-#ifdef USE_GRAPHICS
+ #endif
+ #ifdef USE_GRAPHICS
 	term_data *td;
 	int x1, y1, x1b, y1b;
 	COLORREF bgColor, fgColor;
@@ -2732,19 +2712,19 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	a = term2attr(a);
 	a_back = term2attr(a_back);
 
- #ifdef PALANIM_SWAP
+  #ifdef PALANIM_SWAP
 	if (a < CLIENT_PALETTE_SIZE) a = (a + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
 	if (a_back < CLIENT_PALETTE_SIZE) a_back = (a_back + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
- #endif
+  #endif
 
 	td = (term_data*)(Term->data);
 
- #ifdef USE_LOGFONT
+  #ifdef USE_LOGFONT
 	if (use_logfont) {
 		fwid = td->lf.lfWidth;
 		fhgt = td->lf.lfHeight;
 	} else
- #endif
+  #endif
 	{
 		fwid = td->font_wid;
 		fhgt = td->font_hgt;
@@ -2763,23 +2743,23 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	bgColor = RGB(0, 0, 0); //this 0-init not really needed?
 	fgColor = RGB(0, 0, 0);
 
- #ifndef EXTENDED_COLOURS_PALANIM
-  #ifndef EXTENDED_BG_COLOURS
+  #ifndef EXTENDED_COLOURS_PALANIM
+   #ifndef EXTENDED_BG_COLOURS
 	fgColor = win_clr[a & 0x0F];
-  #else
+   #else
 	fgColor = win_clr[a & 0x1F];
 	//bgColor = PALETTEINDEX(win_clr_bg[a & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
 	bgColor = win_clr_bg[a & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
-  #endif
- #else
-  #ifndef EXTENDED_BG_COLOURS
-	fgColor = win_clr[a & 0x1F];
+   #endif
   #else
+   #ifndef EXTENDED_BG_COLOURS
+	fgColor = win_clr[a & 0x1F];
+   #else
 	fgColor = win_clr[a & 0x3F];
 	//bgColor = PALETTEINDEX(win_clr_bg[a & 0x1F]); //verify correctness
 	bgColor = win_clr_bg[a & 0x3F]; //verify correctness
+   #endif
   #endif
- #endif
 
 	/* Note about the graphics tiles image (stored in hdcTiles):
 	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
@@ -2812,23 +2792,23 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	bgColor = RGB(0, 0, 0); //this 0-init not really needed?
 	fgColor = RGB(0, 0, 0);
 
- #ifndef EXTENDED_COLOURS_PALANIM
-  #ifndef EXTENDED_BG_COLOURS
+  #ifndef EXTENDED_COLOURS_PALANIM
+   #ifndef EXTENDED_BG_COLOURS
 	fgColor = win_clr[a_back & 0x0F];
-  #else
+   #else
 	fgColor = win_clr[a_back & 0x1F];
 	//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
 	bgColor = win_clr_bg[a_back & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
-  #endif
- #else
-  #ifndef EXTENDED_BG_COLOURS
-	fgColor = win_clr[a_back & 0x1F];
+   #endif
   #else
+   #ifndef EXTENDED_BG_COLOURS
+	fgColor = win_clr[a_back & 0x1F];
+   #else
 	fgColor = win_clr[a_back & 0x3F];
 	//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x1F]); //verify correctness
 	bgColor = win_clr_bg[a_back & 0x3F]; //verify correctness
+   #endif
   #endif
- #endif
 
 	/* Note about the graphics tiles image (stored in hdcTiles):
 	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
@@ -2868,21 +2848,40 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	/* --- Copy the picture from the (bg) tile preparation memory to the window --- */
 	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
 
- #ifndef OPTIMIZE_DRAWING
+  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
- #endif
+  #endif
 
-#else /* #ifdef USE_GRAPHICS -> no graphics available */
+ #else /* #ifdef USE_GRAPHICS -> no graphics available */
 	/* Just erase this grid */
 	return(Term_wipe_win(x, y, 1));
-#endif
+ #endif
 
 	/* Success */
 	return(0);
- #endif
 }
 #endif
 
+/* NOTE: Currently this code has no effect as Windows clients don't have/use a tile cache/TILE_CACHE_SIZE,
+   it is merely here to potentially mirror the cache-invalidation-code in main-x11.c for hypothetical future changes.
+   c_idx: -1 = invalidate all; otherwise only tiles that use this foreground colour as 'c' are invalidated. */
+#if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+static void invalidate_graphics_cache_win(term_data *td, int c_idx) {
+	int i;
+
+	if (c_idx == -1)
+		for (i = 0; i < TILE_CACHE_SIZE; i++)
+			td->tile_cache[i].is_valid = FALSE;
+	else
+		for (i = 0; i < TILE_CACHE_SIZE; i++)
+			if (td->tile_cache[i].a == c_idx
+ #ifdef GRAPHICS_BG_MASK
+			    || td->tile_cache[i].a_back == c_idx
+ #endif
+			    )
+				td->tile_cache[i].is_valid = FALSE;
+}
+#endif
 
 /*
  * Low level graphics.  Assumes valid input.

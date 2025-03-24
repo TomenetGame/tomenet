@@ -2215,14 +2215,14 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 
 	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
 	if (hole != -1) {
-#ifdef TILE_CACHE_LOG
-c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
-#endif
+  #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+  #endif
 		entry = &td->tile_cache[hole];
 	} else {
-#ifdef TILE_CACHE_LOG
-c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
-#endif
+  #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+  #endif
 		// Replace valid cache entries in FIFO order
 		entry = &td->tile_cache[td->cache_position++];
 		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
@@ -2347,14 +2347,14 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
 	if (hole != -1) {
-#ifdef TILE_CACHE_LOG
-c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
-#endif
+  #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+  #endif
 		entry = &td->tile_cache[hole];
 	} else {
-#ifdef TILE_CACHE_LOG
-c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
-#endif
+  #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+  #endif
 		// Replace valid cache entries in FIFO order
 		entry = &td->tile_cache[td->cache_position++];
 		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
@@ -2485,9 +2485,9 @@ static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
 	else
 		for (i = 0; i < TILE_CACHE_SIZE; i++)
 			if (td->tile_cache[i].a == c_idx
- #ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 			    || td->tile_cache[i].a_back == c_idx
- #endif
+  #endif
 			    )
 				td->tile_cache[i].is_valid = FALSE;
 }
