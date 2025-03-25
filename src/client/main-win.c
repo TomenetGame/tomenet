@@ -313,6 +313,46 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 
 void resize_main_window_win(int cols, int rows);
 
+
+/* Cache for prepared graphical tiles.
+   Observations:
+    Size 256:    Cache fills maybe within first 10 floors of Barrow-Downs (2mask mode), so it's very comfortable.
+                 However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
+    Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
+*/
+#define TILE_CACHE_SIZE (256*4)
+
+/* Output cache state information in the message window? Spammy and only for debugging purpose. */
+//#define TILE_CACHE_LOG
+
+#if 1 /* Enable extra cache efficiency regarding palette animation? */
+ #if 1 /* Choose a cache behaviour aspect regarding palette animation, the 1st is more efficient */
+ /* Cache invalidates based on attr when new palette info is received? -- more efficient */
+  #define TILE_CACHE_NEWPAL
+ #else
+ /* Cache uses foreground + background colour palette values too? */
+  #define TILE_CACHE_FGBG
+ #endif
+#endif
+
+struct tile_cache_entry {
+    HDC hdcTilePreparation;
+    //HBITMAP hbmTilePreparation;
+    char32_t c;
+    byte a;
+#ifdef GRAPHICS_BG_MASK
+    HDC hdcTilePreparation2;
+    //HBITMAP hbmTilePreparation2;
+    char32_t c_back;
+    byte a_back;
+#endif
+    bool is_valid;
+#ifdef TILE_CACHE_FGBG
+    s32b fg, bg; /* Optional palette_animation handling */
+#endif
+};
+
+
 /*
  * Forward declare
  */
@@ -341,6 +381,11 @@ struct _term_data {
 	HDC hdcTilePreparation2;
  #endif
 	HDC hdcTilePreparation;
+
+ #ifdef TILE_CACHE_SIZE
+	int cache_position;
+	struct tile_cache_entry tile_cache[TILE_CACHE_SIZE];
+ #endif
 #endif
 
 	DWORD    dwStyle;
@@ -757,6 +802,25 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 		td->hdcBg2Mask = NULL;
 	}
  #endif
+
+ #ifdef TILE_CACHE_SIZE
+	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+		if (td->tile_cache[i].hdcTilePreparation) {
+			DeleteDC(td->tile_cache[i].hdcTilePreparation);
+			td->tile_cache[i].hdcTilePreparation = NULL;
+			td->tile_cache[i].c = 0xffffffff;
+			td->tile_cache[i].a = 0xff;
+  #ifdef GRAPHICS_BG_MASK
+			DeleteDC(td->tile_cache[i].hdcTilePreparation2);
+			td->tile_cache[i].hdcTilePreparation2 = NULL;
+			td->tile_cache[i].c_back = 0xffffffff;
+			td->tile_cache[i].a_back = 0xff;
+  #endif
+			td->tile_cache[i].is_valid = FALSE;
+			/* Optional 'bg' and 'fg' need no intialization */
+		}
+	}
+ #endif
 }
 
 /* Called on term_data_link() (initial term creation+initialization) and on term_font_force() (any font change): */
@@ -824,6 +888,36 @@ static void recreateGraphicsObjects(term_data *td) {
  #ifdef GRAPHICS_BG_MASK
 	DeleteBitmap(hbmOldTilePreparation2);
 	DeleteBitmap(hbmOldBg2Mask);
+ #endif
+
+ #ifdef TILE_CACHE_SIZE
+	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+		//td->tiles->depth=32
+		HBITMAP hbmCacheTilePreparation = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+
+		/* Create a compatible device content in memory. */
+		td->tile_cache[i].hdcTilePreparation = CreateCompatibleDC(hdc);
+
+		/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
+		HBITMAP hbmOldCacheTilePreparation = SelectObject(td->tile_cache[i].hdcTilePreparation, hbmCacheTilePreparation);
+
+		/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+		DeleteBitmap(hbmOldCacheTilePreparation);
+
+  #ifdef GRAPHICS_BG_MASK
+		//td->tiles->depth=32
+		HBITMAP hbmCacheTilePreparation2 = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+
+		/* Create a compatible device content in memory. */
+		td->tile_cache[i].hdcTilePreparation2 = CreateCompatibleDC(hdc);
+
+		/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
+		HBITMAP hbmOldCacheTilePreparation2 = SelectObject(td->tile_cache[i].hdcTilePreparation2, hbmCacheTilePreparation2);
+
+		/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+		DeleteBitmap(hbmOldCacheTilePreparation2);
+  #endif
+	}
  #endif
 
 	/* Release */
@@ -2577,9 +2671,26 @@ static errr Term_curs_win(int x, int y) {
  * "use_graphics" flag is off, we simply "wipe" the given grid.
  */
 static errr Term_pict_win(int x, int y, byte a, char32_t c) {
+#ifdef USE_GRAPHICS
+	term_data *td;
+	int x1, y1;
+	COLORREF bgColor, fgColor;
+	HDC hdc;
+
+	RECT rectBg;
+	RECT rectFg;
+	HBRUSH brushBg;
+	HBRUSH brushFg;
+
 	int fwid, fhgt;
 
-#ifdef USE_GRAPHICS
+ #ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry;
+	int i, hole = -1;
+	HDC hdcTilePreparation;
+ #endif
+
+
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
 	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
@@ -2589,7 +2700,6 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 	a = term2attr(a);
 
-	COLORREF bgColor, fgColor;
 	bgColor = RGB(0, 0, 0);
 	fgColor = RGB(0, 0, 0);
 
@@ -2616,7 +2726,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
   #endif
  #endif
 
-	term_data *td = (term_data*)(Term->data);
+	td = (term_data*)(Term->data);
 
  #ifdef USE_LOGFONT
 	if (use_logfont) {
@@ -2633,16 +2743,73 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	x = x * fwid + td->size_ow1;
 	y = y * fhgt + td->size_oh1;
 
-	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
-	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
+	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
+	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
-	HDC hdc = myGetDC(td->w);
+
+
+ #ifdef TILE_CACHE_SIZE
+	entry = NULL;
+	for (i = 0; i < TILE_CACHE_SIZE; i++) {
+		entry = &td->tile_cache[i];
+		if (!entry->is_valid) hole = i;
+		else if (entry->c == c && entry->a == a
+  #ifdef GRAPHICS_BG_MASK
+		    && entry->c_back == 0 && entry->a_back == 0
+  #endif
+  #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+		    && fgColor == entry->fg && bgColor == entry->bg
+  #endif
+		    ) {
+			/* Copy cached tile to window. */
+			BitBlt(hdc, x, y, fwid, fhgt, entry->hdcTilePreparation, 0, 0, SRCCOPY);
+
+			/* Success */
+			return(0);
+		}
+	}
+
+	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+	if (hole != -1) {
+  #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+  #endif
+		entry = &td->tile_cache[hole];
+	} else {
+  #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+  #endif
+		// Replace valid cache entries in FIFO order
+		entry = &td->tile_cache[td->cache_position++];
+		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+	}
+
+	hdcTilePreparation = entry->hdcTilePreparation;
+	entry->c = c;
+	entry->a = a;
+  #ifdef GRAPHICS_BG_MASK
+	entry->c_back = 0;
+	entry->a_back = 0;
+  #endif
+	entry->is_valid = TRUE;
+  #ifdef TILE_CACHE_FGBG
+	entry->fg = fgColor;
+	entry->bg = bgColor;
+  #endif
+ #else /* (TILE_CACHE_SIZE) No caching: */
+	hdcTilePreparation = td->hdcTilePreparation;
+ #endif
+
+
+
+	hdc = myGetDC(td->w);
 
 	/* Paint background rectangle .*/
-	RECT rectBg = { 0, 0, fwid, fhgt };
-	RECT rectFg = { fwid, 0, 2 * fwid, fhgt };
-	HBRUSH brushBg = CreateSolidBrush(bgColor);
-	HBRUSH brushFg = CreateSolidBrush(fgColor);
+	rectBg = (RECT){ 0, 0, fwid, fhgt };
+	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
+	brushBg = CreateSolidBrush(bgColor);
+	brushFg = CreateSolidBrush(fgColor);
 	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
 	FillRect(td->hdcTilePreparation, &rectFg, brushFg);
 	DeleteObject(brushBg);
@@ -2697,6 +2864,13 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	HBRUSH brushFg;
 
 	int fwid, fhgt;
+
+ #ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry;
+	int i, hole = -1;
+	HDC hdcTilePreparation;
+	HDC hdcTilePreparation2;
+ #endif
 
 
 	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
@@ -2768,22 +2942,78 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
+
+
+   #ifdef TILE_CACHE_SIZE
+	entry = NULL;
+	for (i = 0; i < TILE_CACHE_SIZE; i++) {
+		entry = &td->tile_cache[i];
+		if (!entry->is_valid) hole = i;
+		else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
+    #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+		    && fgColor == entry->fg && bgColor == entry->bg
+    #endif
+		    ) {
+			/* Copy cached tile to window. */
+			BitBlt(hdc, x, y, fwid, fhgt, entry->hdcTilePreparation, 0, 0, SRCCOPY);
+
+			/* Success */
+			return(0);
+		}
+	}
+
+	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+	if (hole != -1) {
+    #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+    #endif
+		entry = &td->tile_cache[hole];
+	} else {
+    #ifdef TILE_CACHE_LOG
+		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+    #endif
+		// Replace valid cache entries in FIFO order
+		entry = &td->tile_cache[td->cache_position++];
+		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+	}
+
+	hdcTilePreparation = entry->hdcTilePreparation; //in 2mask-mode actually not used, as only tilePreparation2 is interesting as it holds the final result
+	hdcTilePreparation2 = entry->hdcTilePreparation2;
+	entry->c = c;
+	entry->a = a;
+    #ifdef GRAPHICS_BG_MASK
+	entry->c_back = c_back;
+	entry->a_back = a_back;
+    #endif
+	entry->is_valid = TRUE;
+    #ifdef TILE_CACHE_FGBG
+	entry->fg = fgColor;
+	entry->bg = bgColor;
+    #endif
+   #else /* (TILE_CACHE_SIZE) No caching: */
+	hdcTilePreparation = td->hdcTilePreparation;
+	hdcTilePreparation2 = td->hdcTilePreparation2;
+   #endif
+
+
+
 	/* Paint background rectangle .*/
 	rectBg = (RECT){ 0, 0, fwid, fhgt }; //uhh, C99 ^^'
 	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
 	brushBg = CreateSolidBrush(bgColor);
 	brushFg = CreateSolidBrush(fgColor);
-	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
-	FillRect(td->hdcTilePreparation, &rectFg, brushFg);
+	FillRect(hdcTilePreparation, &rectBg, brushBg);
+	FillRect(hdcTilePreparation, &rectFg, brushFg);
 	DeleteObject(brushBg);
 	DeleteObject(brushFg);
 
 
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+	BitBlt(hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+	BitBlt(hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
 
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+	BitBlt(hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+	BitBlt(hdcTilePreparation, 0, 0, fwid, fhgt, hdcTilePreparation, fwid, 0, SRCPAINT);
 
 
 	/* --- Background (terrain) graphical tile --- */
@@ -2822,8 +3052,8 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
 	brushBg = CreateSolidBrush(bgColor);
 	brushFg = CreateSolidBrush(fgColor);
-	FillRect(td->hdcTilePreparation2, &rectBg, brushBg);
-	FillRect(td->hdcTilePreparation2, &rectFg, brushFg);
+	FillRect(hdcTilePreparation2, &rectBg, brushBg);
+	FillRect(hdcTilePreparation2, &rectFg, brushFg);
 	DeleteObject(brushBg);
 	DeleteObject(brushFg);
 
@@ -2831,22 +3061,22 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	if (c_back == 32) {
 		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
 	} else {
-		BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
-		BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
+		BitBlt(hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
+		BitBlt(hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
 
-		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
-		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation2, fwid, 0, SRCPAINT);
+		BitBlt(hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
+		BitBlt(hdcTilePreparation2, 0, 0, fwid, fhgt, hdcTilePreparation2, fwid, 0, SRCPAINT);
 	}
 
 
 	/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
 
-	BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+	BitBlt(hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
+	BitBlt(hdcTilePreparation2, 0, 0, fwid, fhgt, hdcTilePreparation, fwid, 0, SRCPAINT);
 
 
 	/* --- Copy the picture from the (bg) tile preparation memory to the window --- */
-	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
+	BitBlt(hdc, x, y, fwid, fhgt, hdcTilePreparation2, 0, 0, SRCCOPY);
 
   #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -3263,6 +3493,22 @@ static void init_windows(void) {
 		td->size_oh2 = 1;
 		td->pos_x = 0;
 		td->pos_y = 0;
+
+#ifdef USE_GRAPHICS
+ #ifdef TILE_CACHE_SIZE
+		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+			td->tile_cache[i].hdcTilePreparation = NULL;
+			td->tile_cache[i].c = 0xffffffff;
+			td->tile_cache[i].a = 0xff;
+  #ifdef GRAPHICS_BG_MASK
+			td->tile_cache[i].hdcTilePreparation2 = NULL;
+			td->tile_cache[i].c_back = 0xffffffff;
+			td->tile_cache[i].a_back = 0xff;
+  #endif
+			td->tile_cache[i].is_valid = FALSE;
+		}
+ #endif
+#endif /* USE_GRAPHICS */
 	}
 
 
@@ -3332,7 +3578,62 @@ static void init_windows(void) {
 
 #ifdef USE_GRAPHICS
 	/* Handle "graphics" mode */
-	if (use_graphics) (void)init_graphics_win();
+	if (use_graphics) {
+ #ifdef TILE_CACHE_SIZE
+		int fwid, fhgt;
+		HDC hdc;
+ #endif
+
+		(void)init_graphics_win();
+
+ #ifdef TILE_CACHE_SIZE
+		for (i = 1; i < MAX_TERM_DATA; i++) {
+			td = &data[i];
+			hdc = GetDC(td->w);
+
+  #ifdef USE_LOGFONT
+			if (use_logfont) {
+				fwid = td->lf.lfWidth;
+				fhgt = td->lf.lfHeight;
+			} else
+  #endif
+			{
+				fwid = td->font_wid;
+				fhgt = td->font_hgt;
+			}
+
+			/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
+			   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
+			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+				//td->tiles->depth=32
+				HBITMAP hbmCacheTilePreparation = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+
+				/* Create a compatible device content in memory. */
+				td->tile_cache[i].hdcTilePreparation = CreateCompatibleDC(hdc);
+
+				/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
+				HBITMAP hbmOldCacheTilePreparation = SelectObject(td->tile_cache[i].hdcTilePreparation, hbmCacheTilePreparation);
+
+				/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+				DeleteBitmap(hbmOldCacheTilePreparation);
+
+  #ifdef GRAPHICS_BG_MASK
+				//td->tiles->depth=32
+				HBITMAP hbmCacheTilePreparation2 = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+
+				/* Create a compatible device content in memory. */
+				td->tile_cache[i].hdcTilePreparation2 = CreateCompatibleDC(hdc);
+
+				/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
+				HBITMAP hbmOldCacheTilePreparation2 = SelectObject(td->tile_cache[i].hdcTilePreparation2, hbmCacheTilePreparation2);
+
+				/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+				DeleteBitmap(hbmOldCacheTilePreparation2);
+  #endif
+			}
+		}
+ #endif
+	}
 #endif
 
 	/* Screen window */
@@ -5598,7 +5899,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #else
  #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_NEWPAL)
 	/* Invalidate cache using this particular colour to ensure redrawal doesn't get cancelled by tile-caching */
-	invalidate_graphics_cache_win(td, c);
+	invalidate_graphics_cache_win(&data[0], c);
  #endif
 #endif
 }
