@@ -893,7 +893,7 @@ static void recreateGraphicsObjects(term_data *td) {
  #ifdef TILE_CACHE_SIZE
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		//td->tiles->depth=32
-		HBITMAP hbmCacheTilePreparation = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+		HBITMAP hbmCacheTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 
 		/* Create a compatible device content in memory. */
 		td->tile_cache[i].hdcTilePreparation = CreateCompatibleDC(hdc);
@@ -906,7 +906,7 @@ static void recreateGraphicsObjects(term_data *td) {
 
   #ifdef GRAPHICS_BG_MASK
 		//td->tiles->depth=32
-		HBITMAP hbmCacheTilePreparation2 = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+		HBITMAP hbmCacheTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 
 		/* Create a compatible device content in memory. */
 		td->tile_cache[i].hdcTilePreparation2 = CreateCompatibleDC(hdc);
@@ -3606,7 +3606,7 @@ static void init_windows(void) {
 			   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
 			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 				//td->tiles->depth=32
-				HBITMAP hbmCacheTilePreparation = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+				HBITMAP hbmCacheTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 
 				/* Create a compatible device content in memory. */
 				td->tile_cache[i].hdcTilePreparation = CreateCompatibleDC(hdc);
@@ -3619,7 +3619,7 @@ static void init_windows(void) {
 
   #ifdef GRAPHICS_BG_MASK
 				//td->tiles->depth=32
-				HBITMAP hbmCacheTilePreparation2 = CreateBitmap(fwid, fhgt, 1, 32, NULL);
+				HBITMAP hbmCacheTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 
 				/* Create a compatible device content in memory. */
 				td->tile_cache[i].hdcTilePreparation2 = CreateCompatibleDC(hdc);
