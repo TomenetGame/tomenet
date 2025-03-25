@@ -320,7 +320,7 @@ void resize_main_window_win(int cols, int rows);
                  However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
 */
-#define TILE_CACHE_SIZE (256*4)
+//#define TILE_CACHE_SIZE (256*4)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
@@ -2683,11 +2683,11 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	HBRUSH brushFg;
 
 	int fwid, fhgt;
+	HDC hdcTilePreparation;
 
  #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
-	HDC hdcTilePreparation;
  #endif
 
 
@@ -2864,12 +2864,12 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	HBRUSH brushFg;
 
 	int fwid, fhgt;
+	HDC hdcTilePreparation;
+	HDC hdcTilePreparation2;
 
  #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
-	HDC hdcTilePreparation;
-	HDC hdcTilePreparation2;
  #endif
 
 
