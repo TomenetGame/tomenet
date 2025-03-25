@@ -2360,7 +2360,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
 	}
 
-	tilePreparation = entry->tilePreparation;
+	tilePreparation = entry->tilePreparation; //in 2mask-mode actually not used, as only tilePreparation2 is interesting as it holds the final result
 	tilePreparation2 = entry->tilePreparation2;
 	entry->c = c;
 	entry->a = a;
