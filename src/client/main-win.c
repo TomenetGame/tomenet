@@ -2810,27 +2810,27 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
 	brushBg = CreateSolidBrush(bgColor);
 	brushFg = CreateSolidBrush(fgColor);
-	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
-	FillRect(td->hdcTilePreparation, &rectFg, brushFg);
+	FillRect(hdcTilePreparation, &rectBg, brushBg);
+	FillRect(hdcTilePreparation, &rectFg, brushFg);
 	DeleteObject(brushBg);
 	DeleteObject(brushFg);
 
 
 	//BitBlt(hdc, 0, 0, 2*9, 15, hdcTilePreparation, 0, 0, SRCCOPY);
 
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+	BitBlt(hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+	BitBlt(hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
 
-	//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
+	//BitBlt(hdc, 0, 15, 2*9, 15, hdcTilePreparation, 0, 0, SRCCOPY);
 
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+	BitBlt(hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+	BitBlt(hdcTilePreparation, 0, 0, fwid, fhgt, hdcTilePreparation, fwid, 0, SRCPAINT);
 
 	//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
 	//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
 	//
 	/* Copy the picture from the tile preparation memory to the window */
-	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+	BitBlt(hdc, x, y, fwid, fhgt, hdcTilePreparation, 0, 0, SRCCOPY);
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -2935,14 +2935,6 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
    #endif
   #endif
 
-	/* Note about the graphics tiles image (stored in hdcTiles):
-	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
-	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
-
-	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
-	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
-
-
 
    #ifdef TILE_CACHE_SIZE
 	entry = NULL;
@@ -2956,7 +2948,7 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
     #endif
 		    ) {
 			/* Copy cached tile to window. */
-			BitBlt(hdc, x, y, fwid, fhgt, entry->hdcTilePreparation, 0, 0, SRCCOPY);
+			BitBlt(hdc, x, y, fwid, fhgt, entry->hdcTilePreparation2, 0, 0, SRCCOPY);
 
 			/* Success */
 			return(0);
@@ -2996,6 +2988,13 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	hdcTilePreparation2 = td->hdcTilePreparation2;
    #endif
 
+
+	/* Note about the graphics tiles image (stored in hdcTiles):
+	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
+	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
+
+	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
+	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
 
 	/* Paint background rectangle .*/
