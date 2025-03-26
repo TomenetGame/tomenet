@@ -4421,8 +4421,7 @@ int Net_input(void) {
 	for (i = 0; i < max_connections; i++) {
 		connp = Conn[i];
 
-		if (!connp || connp->state == CONN_FREE)
-			continue;
+		if (!connp || connp->state == CONN_FREE) continue;
 		if (connp->timeout && (connp->start + connp->timeout * cfg.fps < turn)) {
 			if (connp->state & (CONN_PLAYING | CONN_READY)) {
 /*				sprintf(msg, "%s mysteriously disappeared!",
@@ -4431,14 +4430,11 @@ int Net_input(void) {
 			}
 			sprintf(msg, "timeout %02x", connp->state);
 			Destroy_connection(i, msg);
-
-#if 0
-			/* Very VERY bad hack :/ - C. Blue */
-			save_game_panic();
-#endif
-
 			continue;
 		}
+#if 0 /* Debug: Cannot timeout while paralyzed? */
+if (!(turn % (cfg.fps / 2))) s_printf("connp %d: start %ld\n", i, connp->start);
+#endif
 
 		// Make sure that the player we are looking at is not already in the
 		// game.  If he is already in the game then we will send him data
