@@ -9526,11 +9526,14 @@ void player_death(int Ind) {
 			/* ok, be lenient about mirror fight, but still.. */
 			secure = TRUE;
 			penalty = TRUE;
-#if 1 /* Global message? */
-			/* Note: AMC defeat msg uses \376 instead of \374, but mirror-success msg is actually \374 so this one too for now. */
-			msg_broadcast_format(0, "\374\377A** %s was defeated by %s mirror image! **", p_ptr->name, p_ptr->male ? "His" : "Her");
-			//s_printf("MIRROR_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
-#endif
+
+			/* Global message? */
+			if (l_ptr && (l_ptr->flags2 & LF2_NO_MARTYR)) { //abuse this flag to check for actual mirror fight
+				/* Note: AMC defeat msg uses \376 instead of \374, but mirror-success msg is actually \374 so this one too for now. */
+				msg_broadcast_format(0, "\374\377A** %s was defeated by %s mirror image! **", p_ptr->name, p_ptr->male ? "His" : "Her");
+				//s_printf("MIRROR_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
+			} else
+				msg_broadcast_format(0, "\374\377A** %s perished in the Death Fate! **", p_ptr->name);
 
 			/* Remove permanent stasis */
 			if (p_ptr->paralyzed == 255) {
@@ -9569,7 +9572,6 @@ void player_death(int Ind) {
 					}
 				}
 			}
-
 		}
 	}
 
@@ -9671,7 +9673,7 @@ void player_death(int Ind) {
 	/* Remove all pending player actions, in case we died while being paralyzed and the command queue is full of stuff (quaff, read, etc) */
 	Handle_clear_buffer(Ind);
 
-	/* Hack -- amulet of life saving */
+	/* NO_DEATH / safe death / Hack -- amulet of life saving -> no death message! (Except for AMC) */
 	if (!p_ptr->suicided && !erase && (secure ||
 	    (p_ptr->inventory[INVEN_NECK].k_idx &&
 	    p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING))) {
@@ -9715,6 +9717,8 @@ void player_death(int Ind) {
 			p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 			p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 			p_ptr->recall_pos.wz = 0;
+
+			/* AMC event death? */
 			if (ge_secure) {
 				k = 0;
 				/* reset the monster :D */
