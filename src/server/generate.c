@@ -8475,6 +8475,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
 		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES | LF2_NO_TRAPS;
+		dun->l_ptr->flags2 |= LF2_INDOORS; //hack: Abuse as marker
 #ifdef SIMPLE_RI_MIRROR
 		dun->l_ptr->flags2 |= LF2_NO_RUN; /* Don't allow too easy kiting */
 #endif

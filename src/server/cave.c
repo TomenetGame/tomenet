@@ -514,7 +514,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	if (in_deathfate(wpos)) {
 		struct dun_level *l_ptr = getfloor(wpos);
 
-		if (l_ptr) {
+		if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) {
 			/* Only 1 player? Make sure he's unfrozen */
 			if (l_ptr->ondepth == 1) {
 				s_printf("DF: ondepth=1.\n"); //paranoia: catch possible bugs

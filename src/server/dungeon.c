@@ -9407,6 +9407,11 @@ void process_player_change_wpos(int Ind) {
 	    )
 		dealloc_dungeon_level(&p_ptr->wpos_old);
 
+	if (!in_deathfate_x(&p_ptr->wpos_old) && in_deathfate_x(&p_ptr->wpos))
+		s_printf("DF-ENTER: %s (%d) -> %d\n", p_ptr->name, p_ptr->accountname, p_ptr->wpos_old.wz);
+	if (in_deathfate_x(&p_ptr->wpos_old) && !in_deathfate_x(&p_ptr->wpos))
+		s_printf("DF-LEAVE: %s (%d) <- %d\n", p_ptr->name, p_ptr->accountname, p_ptr->wpos_old.wz);
+
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 
 	/* Allow the player again to find another random IDDC town, if he hit a static IDDC town */
