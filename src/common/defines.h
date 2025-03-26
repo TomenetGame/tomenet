@@ -468,7 +468,7 @@
  * This limit has never been stretched, and it would be interesting to see
  * what happens when 100 or so players play at once.
  */
-#define MAX_PLAYERS	1000
+#define MAX_PLAYERS	1000	/* Todo: Sync usage with MAX_SELECT_FD */
 
 #ifdef PLAYER_STORES
 /* How many of them can at once visit different player stores? */

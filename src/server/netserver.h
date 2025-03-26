@@ -6,7 +6,7 @@
 # define EWOULDBLOCK WSAEWOULDBLOCK
 #endif
 
-#define MAX_SELECT_FD                   1023
+#define MAX_SELECT_FD                   1023		/* Todo: Sync usage with MAX_PLAYERS */
 /* #define MAX_RELIABLE_DATA_PACKET_SIZE        1024 */
 #define MAX_RELIABLE_DATA_PACKET_SIZE   512
 
