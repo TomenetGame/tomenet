@@ -320,7 +320,7 @@ void resize_main_window_win(int cols, int rows);
                  However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
 */
-//#define TILE_CACHE_SIZE (256*4)
+#define TILE_CACHE_SIZE (256*4)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
@@ -2746,6 +2746,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
+	hdc = myGetDC(td->w);
 
 
  #ifdef TILE_CACHE_SIZE
@@ -2801,9 +2802,6 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	hdcTilePreparation = td->hdcTilePreparation;
  #endif
 
-
-
-	hdc = myGetDC(td->w);
 
 	/* Paint background rectangle .*/
 	rectBg = (RECT){ 0, 0, fwid, fhgt };
