@@ -337,12 +337,12 @@ void resize_main_window_win(int cols, int rows);
 
 struct tile_cache_entry {
     HDC hdcTilePreparation;
-    //HBITMAP hbmTilePreparation;
+    HBITMAP hbmTP, hbmOldTP; //fix GDI objects leak -- todo: is this also needed for normal gfx tiles handling?
     char32_t c;
     byte a;
 #ifdef GRAPHICS_BG_MASK
     HDC hdcTilePreparation2;
-    //HBITMAP hbmTilePreparation2;
+    HBITMAP hbmTP2, hbmOldTP2; //fix GDI objects leak -- todo: is this also needed for normal gfx tiles handling?
     char32_t c_back;
     byte a_back;
 #endif
@@ -806,24 +806,36 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
  #ifdef TILE_CACHE_SIZE
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		if (td->tile_cache[i].hdcTilePreparation) {
+			/* Select original Bitmap or apparently the created one cannot be deleted and we'll leak... */
+			SelectObject(td->tile_cache[i].hdcTilePreparation, td->tile_cache[i].hbmOldTP);
+			DeleteBitmap(td->tile_cache[i].hbmTP);
+
 			DeleteDC(td->tile_cache[i].hdcTilePreparation);
 			td->tile_cache[i].hdcTilePreparation = NULL;
 			td->tile_cache[i].c = 0xffffffff;
 			td->tile_cache[i].a = 0xff;
+		}
   #ifdef GRAPHICS_BG_MASK
+		if (td->tile_cache[i].hdcTilePreparation2) {
+			/* Select original Bitmap or apparently the created one cannot be deleted and we'll leak... */
+			SelectObject(td->tile_cache[i].hdcTilePreparation2, td->tile_cache[i].hbmOldTP2);
+			DeleteBitmap(td->tile_cache[i].hbmTP2);
+
 			DeleteDC(td->tile_cache[i].hdcTilePreparation2);
 			td->tile_cache[i].hdcTilePreparation2 = NULL;
 			td->tile_cache[i].c_back = 0xffffffff;
 			td->tile_cache[i].a_back = 0xff;
-  #endif
-			td->tile_cache[i].is_valid = FALSE;
-			/* Optional 'bg' and 'fg' need no intialization */
 		}
+  #endif
+		td->tile_cache[i].is_valid = FALSE;
+		/* Optional 'bg' and 'fg' need no intialization */
 	}
  #endif
 }
 
 /* Called on term_data_link() (initial term creation+initialization) and on term_font_force() (any font change): */
+/* This can cause a crash due to too many leaked GDI objects if TILE_CACHE_SIZE is defined. Fixed now, see comments.
+   However, this beckons the question whether the other gfx tileset code requires something similar perhaps. - C. Blue */
 static void recreateGraphicsObjects(term_data *td) {
 	int fwid, fhgt;
 
@@ -841,12 +853,12 @@ static void recreateGraphicsObjects(term_data *td) {
 	releaseCreatedGraphicsObjects(td);
 
 	HBITMAP hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
+	HBITMAP hbmBgMask, hbmFgMask;
  #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
-	HBITMAP hbmBgMask, hbmFgMask, hbmBg2Mask;
+	HBITMAP hbmBg2Mask;
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask);
  #else
-	HBITMAP hbmBgMask, hbmFgMask;
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
  #endif
 
@@ -902,7 +914,12 @@ static void recreateGraphicsObjects(term_data *td) {
 		HBITMAP hbmOldCacheTilePreparation = SelectObject(td->tile_cache[i].hdcTilePreparation, hbmCacheTilePreparation);
 
 		/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+  #if 0
 		DeleteBitmap(hbmOldCacheTilePreparation);
+  #else /* Trying to fix GDI objects leak (will cause crash after switching fonts a lot of times) - C. Blue */
+		td->tile_cache[i].hbmTP = hbmCacheTilePreparation;
+		td->tile_cache[i].hbmOldTP = hbmOldCacheTilePreparation;
+  #endif
 
   #ifdef GRAPHICS_BG_MASK
 		//td->tiles->depth=32
@@ -915,7 +932,12 @@ static void recreateGraphicsObjects(term_data *td) {
 		HBITMAP hbmOldCacheTilePreparation2 = SelectObject(td->tile_cache[i].hdcTilePreparation2, hbmCacheTilePreparation2);
 
 		/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+   #if 0
 		DeleteBitmap(hbmOldCacheTilePreparation2);
+   #else /* Trying to fix GDI objects leak (will cause crash after switching fonts a lot of times) - C. Blue */
+		td->tile_cache[i].hbmTP2 = hbmCacheTilePreparation2;
+		td->tile_cache[i].hbmOldTP2 = hbmOldCacheTilePreparation2;
+   #endif
   #endif
 	}
  #endif
