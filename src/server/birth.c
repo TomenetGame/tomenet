@@ -2377,6 +2377,10 @@ static void player_setup(int Ind, bool new) {
 			count++;
 	}
 
+#ifdef DEATH_FATE_SPECIAL
+	if (in_deathfate_x(wpos)) p_ptr->temp_misc_1 |= 0x10; //abuse no-dungeon-town marker as new_level_flag replacement
+#endif
+
 	/* Make sure he's supposed to be here -- if not, then the level has
 	 * been unstaticed and so he should forget his memory of the old level.
 	 */
@@ -2814,6 +2818,17 @@ static void player_setup(int Ind, bool new) {
 		clockin(Ind, 3);
 	}
 
+	/* Stuff that is done in player_process_change_wpos() after 'if (p_ptr->new_level_flag) return;' that needs to be done here too: */
+	p_ptr->warning_secret_area = FALSE; /* Display this warning at most once per floor. Once per secret area would be nice but requires some non-trivial coding... */
+	if (in_pvparena(&p_ptr->wpos)) wiz_lite_extra(Ind);
+	if (ge_special_sector && in_arena(&p_ptr->wpos)) wiz_lite_extra(Ind);
+#ifdef DEATH_FATE_SPECIAL
+	if (in_deathfate_x(wpos)) {
+		wiz_lite_extra(Ind);
+		p_ptr->temp_misc_1 &= ~0x10; //unhack marker
+	}
+	if (p_ptr->paralyzed == 255 && (!in_deathfate(&p_ptr->wpos) || (l_ptr && !(l_ptr->flags2 & LF2_INDOORS)))) p_ptr->paralyzed = 0;
+#endif
 
 #if 1 /* fix problem that player logging on on regenerated level cant see himself at the beginning */
  #if 0

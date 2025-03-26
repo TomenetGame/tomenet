@@ -535,15 +535,20 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			} else {
 				bool para = TRUE, free = FALSE;
 
-				/* Ensure that a player who just joined us here does get frozen in the first place */
-				for (i = 1; i <= NumPlayers; i++) {
+				/* Ensure that a player who just joined us here does get frozen in the first place.
+				   Note that we can get called from player_birth()->player_setup(), which sets up a newly logged/created player
+				   with Ind = NumPlayers + 1! So we need to anticipate this here. Verification for valid NumPlayers+1 entry is done via 0x10 flag check.
+				   Also need to not do this if NumPlayers is 0, as that is server init/loading-up time and would cause a crash as **Players is not initialized. */
+				for (i = 1; i <= (NumPlayers && (NumPlayers + 1 < MAX_PLAYERS) ? NumPlayers + 1 : NumPlayers); i++) {
 					p_ptr = Players[i];
+					if (i == NumPlayers + 1 && !(p_ptr->temp_misc_1 & 0x10)) continue;
+
 					if (p_ptr->conn == NOT_CONNECTED) continue;
 					if (p_ptr->admin_dm) continue;
 					if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-					if (!p_ptr->new_level_flag) {
-						s_printf("DF: Player lacks new_level_flag: %s\n", p_ptr->name); //paranoia: catch possible bugs
+					if (!p_ptr->new_level_flag && !(p_ptr->temp_misc_1 & 0x10)) {
+						s_printf("DF: Player lacks new_level_flag/0x10: %s\n", p_ptr->name); //paranoia: catch possible bugs
 						continue;
 					}
 					p_ptr->paralyzed = 255;
