@@ -7090,25 +7090,41 @@ static void process_player_end(int Ind) {
 #endif
 
 					msg_print(Ind, "\377GYou are free to go!");
-
-					/* Get the jail door location */
-					if (!p_ptr->house_num) teleport_player_force(Ind, 1); //should no longer happen as house_num is saved now between logins
-					else {
-						zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-						everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-						p_ptr->px = houses[p_ptr->house_num - 1].dx;
-						p_ptr->py = houses[p_ptr->house_num - 1].dy;
-						p_ptr->house_num = 0;
-						teleport_player_force(Ind, 1);
-
-						/* Hack: We started on the prison door, which isn't CAVE_STCK.
-						   So we have to manually add a message and redraw the no-tele indicators. */
-						msg_print(Ind, "\377sFresh air greets you as you leave the prison.");
-						p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-						p_ptr->redraw |= PR_BPR_WRAITH;
-					}
+#ifdef JAIL_KICK
+					p_ptr->tim_jail_delay = JAIL_KICK + 1;
+#else
+					p_ptr->tim_jail_delay = 1;
+#endif
 				}
 			}
+		}
+		if (p_ptr->tim_jail_delay) {
+			p_ptr->tim_jail_delay--;
+			if (!p_ptr->tim_jail_delay) {
+#ifdef JAIL_KICK
+				if (JAIL_KICK > 0) msg_print(Ind, "\377sThe prison guards are out of patience and escort you out.");
+#endif
+				/* Get the jail door location */
+				if (!p_ptr->house_num) teleport_player_force(Ind, 1); //should no longer happen as house_num is saved now between logins
+				else {
+					zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+					everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+					p_ptr->px = houses[p_ptr->house_num - 1].dx;
+					p_ptr->py = houses[p_ptr->house_num - 1].dy;
+					p_ptr->house_num = 0;
+					teleport_player_force(Ind, 1);
+
+					/* Hack: We started on the prison door, which isn't CAVE_STCK.
+					   So we have to manually add a message and redraw the no-tele indicators. */
+					msg_print(Ind, "\377sFresh air greets you as you leave the prison.");
+					p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+					p_ptr->redraw |= PR_BPR_WRAITH;
+				}
+			}
+#ifdef JAIL_KICK
+			else if (JAIL_KICK >= 12 && p_ptr->tim_jail_delay == JAIL_KICK / 2)
+				msg_print(Ind, "\377sThe prison guards are waiting for you to leave the prison...");
+#endif
 		}
 	}
 

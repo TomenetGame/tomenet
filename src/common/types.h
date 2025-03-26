@@ -3715,6 +3715,7 @@ struct player_type {
 	byte tim_wraithstep;		/* Timed -- Extra info flags */
 	u16b tim_jail;			/* Timed -- Jailed */
 	u16b tim_susp;			/* Suspended sentence (dungeon) */
+	u16b tim_jail_delay;		/* Time we're still sticking around in jail despite being free to go */
 	u16b house_num;			/* Added for easier jail-leaving handling: House index of jail we're in */
 	u16b tim_pkill;			/* pkill changeover timer */
 	u16b pkill;			/* pkill flags */

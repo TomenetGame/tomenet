@@ -10159,7 +10159,12 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		}
 	}
 	if (ox != -1 && (zcave[oy][ox].info & CAVE_STCK) && !(zcave[y][x].info & CAVE_STCK)) {
-		msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
+		/* If we don't get insta-kicked out of jail (JAIL_KICK),
+		   we might actually be walking out of a jail, not out of a vault */
+		if (zcave[oy][ox].info & CAVE_JAIL)
+			msg_print(Ind, "\377sFresh air greets you as you leave the prison.");
+		else
+			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
 		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
 		p_ptr->redraw |= PR_BPR_WRAITH;
 #ifdef USE_SOUND_2010

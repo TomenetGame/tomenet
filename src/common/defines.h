@@ -792,15 +792,6 @@
 #define SEASON_AUTUMN 2
 #define SEASON_WINTER 3
 
-/* Jail - crime sentences */
-#define JAIL_MURDER 100
-#define JAIL_MURDER_KPK 500
-#define JAIL_STEALING 500
-#define JAIL_SWEARING 20
-#define JAIL_SPAM 30
-#define JAIL_OLD_CRIMES 0
-#define JAIL_VISIT 10
-
 
 /* ---------------------------------------------------------------- (Rather fundamental 'features')  ---------------------------------------------------------------- */
 
@@ -1072,6 +1063,18 @@
 #define JAIL_TOWN_AREA
 /* does the Jailer remove WoR scrolls and discharge WoR rods? */
 //#define JAILER_KILLS_WOR
+/* Automatically throw us out of prison? Or give us time to let us choose, in case we want to take the dungeon route maybe.
+   If set to anything > 0 it will give us that much time in seconds until we do get kicked out. [30] */
+#define JAIL_KICK 30
+
+/* Jail - crime sentences */
+#define JAIL_MURDER 100
+#define JAIL_MURDER_KPK 500
+#define JAIL_STEALING 500
+#define JAIL_SWEARING 20
+#define JAIL_SPAM 30
+#define JAIL_OLD_CRIMES 0
+#define JAIL_VISIT 10
 
 /* Monster interception ("interference") will not cancel FTK (fire-till-kill)?
    -- TODO: implement for spells/runecraft/mimicpowers (those have 0 interference chance atm though so it doesn't matter) */
