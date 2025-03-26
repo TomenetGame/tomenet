@@ -14672,6 +14672,137 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "ondepth: %d", players_on_depth(&p_ptr->wpos));
 				return;
 			}
+			else if (prefix(messagelc, "/relocchar")) { /* Relocates a character that can optionally be currently offline */
+				int p, slot;
+				s32b p_id;
+				struct worldpos tpos;
+				char *c, *c2;
+				player_type *q_ptr;
+				hash_entry *ptr;
+				object_type *o_ptr;
+
+				/* valid argument format? */
+				message3[0] = toupper(message3[0]); //qol
+				c = strchr(message3, ':');
+				if (c == message) c = 0;
+				if (c) {
+					*c++ = 0;
+					c2 = strchr(c, ',');
+					if (c2) {
+						*c2++ = 0;
+						tpos.wx = atoi(c);
+						c = strchr(c2, ',');
+						if (c) {
+							*c++ = 0;
+							tpos.wy = atoi(c2);
+							if (*c) tpos.wz = atoi(c);
+							else c = 0; // mark as 'error'
+						} // else 'error'
+					} else c = 0; // mark as 'error'
+				}
+				if (!c) {
+					msg_print(Ind, "\377oUsage: /relocchar <exact character name>:<worldX,worldY,worldZ>");
+					return;
+				}
+
+
+				/* Player is online? */
+				p = name_lookup(Ind, message3, FALSE, TRUE, FALSE);//gotta be exact for this kind of critical command
+				if (p) {
+					cave_type **zcave;
+
+					q_ptr = Players[p];
+
+					if (!(zcave = getcave(&q_ptr->wpos))) {
+						msg_print(Ind, "Error: Cannot getcave().");
+						return;
+					}
+
+					if (inarea(&q_ptr->wpos, &tpos)) {
+						msg_print(Ind, "That player is already at the specified world coordinates.");
+						return;
+					}
+
+					s_printf("RELOCCHAR(live): '%s' (%s) relocates '%s' (%s) from %d,%d,%d to %d,%d,%d\n",
+					    p_ptr->name, p_ptr->accountname, q_ptr->name, q_ptr->accountname,
+					    q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz, tpos.wx, tpos.wy, tpos.wz);
+					msg_format(Ind, "Relocating live player '%s' (%s) from %d,%d,%d to %d,%d,%d",
+					    q_ptr->name, q_ptr->accountname,
+					    q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz, tpos.wx, tpos.wy, tpos.wz);
+					q_ptr->recall_pos = tpos;
+					if (!q_ptr->recall_pos.wz) q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					else q_ptr->new_level_method = LEVEL_RAND;
+					recall_player(p, "\377yA magical gust of wind lifts you up and carries you away!");
+					process_player_change_wpos(p);
+					return;
+				}
+
+				/* Player not online, check existance in the database */
+				if (!(p_id = lookup_case_player_id(message3))) {
+						msg_print(Ind, "That character does not exist.");
+						return;
+				}
+
+				/* Hack NumPlayers to load his savegame to edit his location info */
+				NumPlayers++;
+				MAKE(Players[NumPlayers], player_type);
+				q_ptr = Players[NumPlayers];
+				q_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+				for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+					ptr = hash_table[slot];
+					while (ptr) {
+						/* not the target player? */
+						if (strcmp(ptr->name, message3)) {
+							/* advance to next character */
+							ptr = ptr->next;
+							continue;
+						}
+
+						/* init his data structures */
+						o_ptr = q_ptr->inventory;
+						WIPE(q_ptr, player_type);
+						q_ptr->inventory = o_ptr;
+						q_ptr->Ind = NumPlayers;
+						C_WIPE(q_ptr->inventory, INVEN_TOTAL, object_type);
+						/* set his supposed name */
+						strcpy(q_ptr->name, ptr->name);
+						/* generate savefile name */
+						process_player_name(NumPlayers, TRUE);
+						/* try to load him! */
+						if (!load_player(NumPlayers)) {
+							/* bad fail */
+							s_printf("RELOCCHAR: load_player '%s' failed\n", q_ptr->name);
+							msg_format(Ind, "Error: load_player '%s' failed!", q_ptr->name);
+							slot = NUM_HASH_ENTRIES; // break out
+							break;
+						}
+						/* Check whether we need to modify */
+						if (inarea(&q_ptr->wpos, &tpos)) {
+							msg_print(Ind, "That player is already at the specified world coordinates.");
+						} else {
+							/* Modify worldpos */
+							msg_format(Ind, "Relocating player '%s' (%s) from %d,%d,%d to %d,%d,%d",
+							    q_ptr->name, q_ptr->accountname,
+							    q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz, tpos.wx, tpos.wy, tpos.wz);
+							s_printf("RELOCCHAR: '%s'(%s) relocates '%s'(%s) from %d,%d,%d to %d,%d,%d\n",
+							    p_ptr->name, p_ptr->accountname, q_ptr->name, q_ptr->accountname,
+							    q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz, tpos.wx, tpos.wy, tpos.wz);
+							q_ptr->wpos = tpos;
+							/* also write wpos to hashtable info (like clockin 7) */
+							ptr->wpos = q_ptr->wpos;
+							/* write savegame back */
+							save_player(NumPlayers);
+						}
+						slot = NUM_HASH_ENTRIES; // break out
+						break;
+					}
+				}
+				/* unhack */
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
+				NumPlayers--;
+				return;
+			}
 		}
 	}
 
