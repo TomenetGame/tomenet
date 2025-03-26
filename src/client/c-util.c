@@ -13957,6 +13957,7 @@ u32b parse_color_code(const char *str) {
    "Access the "graphic visual" system pref file (if any)". */
 static void handle_process_graphics_file(void) {
 	char fname[255 + 13 + 1];
+
 	/* Figure out graphics prefs file name to be loaded. */
 	sprintf(fname, "graphics-%s.prf", graphic_tiles);
 	/* Access the "graphic visual" system pref file (if any). */
