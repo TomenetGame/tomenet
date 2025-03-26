@@ -14639,7 +14639,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 #ifdef ENABLE_SUBINVEN
 			else if (prefix(messagelc, "/dbgsi")) { //display the first 3 elements of the first n subinventory arrays each
-				player_type *p_ptr = Players[Ind];
 				object_type *o_ptr;
 				char o_name[ONAME_LEN];
 
@@ -14669,6 +14668,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
+			else if (prefix(messagelc, "/ondepth")) {
+				msg_format(Ind, "ondepth: %d", players_on_depth(&p_ptr->wpos));
+				return;
+			}
 		}
 	}
 
