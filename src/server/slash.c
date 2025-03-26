@@ -14672,7 +14672,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "ondepth: %d", players_on_depth(&p_ptr->wpos));
 				return;
 			}
-			else if (prefix(messagelc, "/relocchar")) { /* Relocates a character that can optionally be currently offline */
+			/* Relocates a character that can be online or offline */
+			else if (prefix(messagelc, "/relocatechar") || prefix(messagelc, "/relocchar") || prefix(messagelc, "/relchar")) {
 				int p, slot;
 				s32b p_id;
 				struct worldpos tpos;
