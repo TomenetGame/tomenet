@@ -2765,7 +2765,9 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 		    ) {
 			/* Copy cached tile to window. */
 			BitBlt(hdc, x, y, fwid, fhgt, entry->hdcTilePreparation, 0, 0, SRCCOPY);
-
+  #ifndef OPTIMIZE_DRAWING
+			ReleaseDC(td->w, hdc);
+  #endif
 			/* Success */
 			return(0);
 		}
@@ -2947,7 +2949,9 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		    ) {
 			/* Copy cached tile to window. */
 			BitBlt(hdc, x, y, fwid, fhgt, entry->hdcTilePreparation2, 0, 0, SRCCOPY);
-
+  #ifndef OPTIMIZE_DRAWING
+			ReleaseDC(td->w, hdc);
+  #endif
 			/* Success */
 			return(0);
 		}
@@ -3628,6 +3632,8 @@ static void init_windows(void) {
 				DeleteBitmap(hbmOldCacheTilePreparation2);
   #endif
 			}
+
+			ReleaseDC(td->w, hdc);
 		}
  #endif
 	}
