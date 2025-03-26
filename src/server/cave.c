@@ -583,7 +583,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 					break;
 				}
 			}
-		} else s_printf("NOPD: No l_ptr!\n");
+		} else if (!l_ptr) s_printf("NOPD: No l_ptr!\n");
 	}
 #endif
 
