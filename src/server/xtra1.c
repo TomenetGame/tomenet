@@ -281,8 +281,10 @@ static void prt_sanity(int Ind) {
 
 	ratio = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
 
-	/* Vague (ie first assume sanity_bars_allowed == 1) */
-	max = 6;
+	/* Vague (ie first assume sanity_bars_allowed == 1).
+	   Changes the scale from 6 to 16 and transmission from best to worst case for 'cur' values,
+	   so it works best with huge_bar option, as the huge bars have a height of 16. */
+	max = 16;
 	if (ratio < 0) {
 		/* This guy should be dead - for tombstone */
 		attr = TERM_RED;
@@ -300,19 +302,19 @@ static void prt_sanity(int Ind) {
 	} else if (ratio < 50) {
 		attr = TERM_ORANGE;
 		strcpy(buf, "    Crazy");
-		cur = 3;
+		cur = 4;
 	} else if (ratio < 75) {
 		attr = TERM_YELLOW;
 		strcpy(buf, "    Weird");
-		cur = 4;
+		cur = 8;
 	} else if (ratio < 90) {
 		attr = TERM_GREEN;
 		strcpy(buf, "     Sane");
-		cur = 5;
+		cur = 12;
 	} else {
 		attr = TERM_L_GREEN;
 		strcpy(buf, "    Sound");
-		cur = 6;
+		cur = 16;
 	}
 
 	/* We are threoretically allowed to know the exact ratio? */
