@@ -1407,6 +1407,7 @@ static void Delete_player(int Ind) {
 	inventory_change_type *inv_change;
 	/* Be paranoid */
 	cave_type **zcave;
+	bool df = in_deathfate(&p_ptr->wpos);
 
 	/* Remove him from any stores, especially important for special stores and their RID_ dialogues */
 	if (p_ptr->store_num != -1) handle_store_leave(Ind);
@@ -1642,6 +1643,7 @@ static void Delete_player(int Ind) {
 
 	/* Update Morgoth eventually if the player was on his level */
 	check_Morgoth(0);
+	if (df) check_df();
 
 	/* Tell the metaserver about the loss of a player */
 	Report_to_meta(META_UPDATE);
@@ -3927,6 +3929,7 @@ static int Handle_login(int ind) {
 
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
+	if (in_deathfate(&p_ptr->wpos)) check_df();
 
 	/* Initialise his temporary quest helper information */
 	quest_check_player_location(NumPlayers);

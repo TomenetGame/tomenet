@@ -429,6 +429,116 @@ static void update_uniques_killed(struct worldpos *wpos) {
 	}
 }
 
+#ifdef DEATH_FATE_SPECIAL
+/* (Note that new_players_on_depth() is always called when new_level_flag is set,
+   so if we get called from process_player_change_wpos() then l_ptr->ondepth will be up to date.) */
+void check_df() {
+	struct dun_level;
+	int i;
+	player_type *p_ptr;
+	struct worldpos wpos_forge = { WPOS_DF_X, WPOS_DF_Y, WPOS_DF_Z }, *wpos = &wpos_forge;
+
+	/* Hack for allowing only a single player to act at a time on this floor.
+	   IMPORTANT: For this to work on the newly arrived player,
+	   their new_level_flag (or temp_misc_1 0x10 hack) must always be set _before_ calling us for the target floor! */
+
+	dun_level *l_ptr = getfloor(wpos);
+
+	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) {
+		/* Only 1 player? Make sure he's unfrozen */
+		if (l_ptr->ondepth == 1) {
+			s_printf("DF: ondepth=1.\n"); //paranoia: catch possible bugs
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (p_ptr->admin_dm) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) {
+					/* Play it safe and paranoia-unfreeze anyone just in case */
+					if (p_ptr->paralyzed == 255) {
+						p_ptr->paralyzed = 0;
+						p_ptr->redraw |= PR_STATE;
+						msg_print(i, "You can move again!");
+						msg_format_near(i, "%s can move again.", p_ptr->name);
+					}
+					continue;
+				}
+
+				if (p_ptr->paralyzed == 255) {
+					p_ptr->paralyzed = 0;
+					p_ptr->redraw |= PR_STATE;
+					msg_print(i, "You can move again!");
+					msg_format_near(i, "%s can move again.", p_ptr->name);
+				}
+				break;
+			}
+		} else {
+			bool para = TRUE, free = FALSE;
+
+			/* Ensure that a player who just joined us here does get frozen in the first place.
+			   Note that we can get called from player_birth()->player_setup(), which sets up a newly logged/created player
+			   with Ind = NumPlayers + 1! So we need to anticipate this here. Verification for valid NumPlayers+1 entry is done via 0x10 flag check.
+			   Also need to not do this if NumPlayers is 0, as that is server init/loading-up time and would cause a crash as **Players is not initialized. */
+			for (i = 1; i <= (NumPlayers && (NumPlayers + 1 < MAX_PLAYERS) && Players[NumPlayers + 1] ? NumPlayers + 1 : NumPlayers); i++) {
+				p_ptr = Players[i];
+
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (p_ptr->admin_dm) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) {
+					/* Play it safe and paranoia-unfreeze anyone just in case */
+					if (p_ptr->paralyzed == 255) {
+						p_ptr->paralyzed = 0;
+						p_ptr->redraw |= PR_STATE;
+						msg_print(i, "You can move again!");
+						msg_format_near(i, "%s can move again.", p_ptr->name);
+					}
+					continue;
+				}
+
+				if (!p_ptr->new_level_flag && !(p_ptr->temp_misc_1 & 0x10)) {
+					s_printf("DF: Player lacks new_level_flag/0x10: %s\n", p_ptr->name); //paranoia: catch possible bugs
+					continue;
+				}
+				p_ptr->paralyzed = 255;
+				p_ptr->redraw |= PR_STATE;
+				msg_print(i, "You are frozen in stasis!");
+				msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
+				break;
+			}
+			/* Ensure that not more than one player is unfrozen (paranoia?) */
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (p_ptr->admin_dm) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+				if (p_ptr->paralyzed == 255) continue;
+				free = TRUE;
+				if (!para) {
+					p_ptr->paralyzed = 255;
+					p_ptr->redraw |= PR_STATE;
+					msg_print(i, "You are frozen in stasis!");
+					msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
+				}
+				else para = FALSE;
+			}
+			/* If everyone is frozen, ensure that one player is unfrozen, pick one player "randomly" */
+			if (!free) for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (p_ptr->admin_dm) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+				p_ptr->paralyzed = 0;
+				p_ptr->redraw |= PR_STATE;
+				msg_print(i, "You can move again!");
+				msg_format_near(i, "%s can move again.", p_ptr->name);
+				break;
+			}
+		}
+	} else if (!l_ptr) s_printf("NOPD: No l_ptr!\n");
+}
+#endif
+
 void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	struct wilderness_type *w_ptr;
 	time_t now;
@@ -508,88 +618,6 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		}
 	}
 
-	/* Hack for allowing only a single player to act at a time on this floor.
-	   IMPORTANT: For this to work, new_level_flag must always be set _before_ calling us for the target floor! */
-#ifdef DEATH_FATE_SPECIAL
-	if (in_deathfate(wpos)) {
-		struct dun_level *l_ptr = getfloor(wpos);
-
-		if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) {
-			/* Only 1 player? Make sure he's unfrozen */
-			if (l_ptr->ondepth == 1) {
-				s_printf("DF: ondepth=1.\n"); //paranoia: catch possible bugs
-				for (i = 1; i <= NumPlayers; i++) {
-					p_ptr = Players[i];
-					if (p_ptr->conn == NOT_CONNECTED) continue;
-					if (p_ptr->admin_dm) continue;
-					if (!inarea(&p_ptr->wpos, wpos)) continue;
-
-					if (p_ptr->paralyzed == 255) {
-						p_ptr->paralyzed = 0;
-						p_ptr->redraw |= PR_STATE;
-						msg_print(i, "You can move again!");
-						msg_format_near(i, "%s can move again.", p_ptr->name);
-					}
-					break;
-				}
-			} else {
-				bool para = TRUE, free = FALSE;
-
-				/* Ensure that a player who just joined us here does get frozen in the first place.
-				   Note that we can get called from player_birth()->player_setup(), which sets up a newly logged/created player
-				   with Ind = NumPlayers + 1! So we need to anticipate this here. Verification for valid NumPlayers+1 entry is done via 0x10 flag check.
-				   Also need to not do this if NumPlayers is 0, as that is server init/loading-up time and would cause a crash as **Players is not initialized. */
-				for (i = 1; i <= (NumPlayers && (NumPlayers + 1 < MAX_PLAYERS) && Players[NumPlayers + 1] ? NumPlayers + 1 : NumPlayers); i++) {
-					p_ptr = Players[i];
-
-					if (p_ptr->conn == NOT_CONNECTED) continue;
-					if (p_ptr->admin_dm) continue;
-					if (!inarea(&p_ptr->wpos, wpos)) continue;
-
-					if (!p_ptr->new_level_flag && !(p_ptr->temp_misc_1 & 0x10)) {
-						s_printf("DF: Player lacks new_level_flag/0x10: %s\n", p_ptr->name); //paranoia: catch possible bugs
-						continue;
-					}
-					p_ptr->paralyzed = 255;
-					p_ptr->redraw |= PR_STATE;
-					msg_print(i, "You are frozen in stasis!");
-					msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
-					break;
-				}
-				/* Ensure that not more than one player is unfrozen (paranoia?) */
-				for (i = 1; i <= NumPlayers; i++) {
-					p_ptr = Players[i];
-					if (p_ptr->conn == NOT_CONNECTED) continue;
-					if (p_ptr->admin_dm) continue;
-					if (!inarea(&p_ptr->wpos, wpos)) continue;
-
-					if (p_ptr->paralyzed == 255) continue;
-					free = TRUE;
-					if (!para) {
-						p_ptr->paralyzed = 255;
-						p_ptr->redraw |= PR_STATE;
-						msg_print(i, "You are frozen in stasis!");
-						msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
-					}
-					else para = FALSE;
-				}
-				/* If everyone is frozen, ensure that one player is unfrozen, pick one player "randomly" */
-				if (!free) for (i = 1; i <= NumPlayers; i++) {
-					p_ptr = Players[i];
-					if (p_ptr->conn == NOT_CONNECTED) continue;
-					if (p_ptr->admin_dm) continue;
-					if (!inarea(&p_ptr->wpos, wpos)) continue;
-
-					p_ptr->paralyzed = 0;
-					p_ptr->redraw |= PR_STATE;
-					msg_print(i, "You can move again!");
-					msg_format_near(i, "%s can move again.", p_ptr->name);
-					break;
-				}
-			}
-		} else if (!l_ptr) s_printf("NOPD: No l_ptr!\n");
-	}
-#endif
 
 	update_uniques_killed(wpos);
 

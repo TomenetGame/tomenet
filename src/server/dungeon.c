@@ -9089,6 +9089,7 @@ void process_player_change_wpos(int Ind) {
 #ifdef USE_SOUND_2010
 	bool travel_ambient = FALSE;
 #endif
+	bool df = FALSE;
 
 	monster_type *m_ptr;
 	cave_type **mcave;
@@ -9407,10 +9408,14 @@ void process_player_change_wpos(int Ind) {
 	    )
 		dealloc_dungeon_level(&p_ptr->wpos_old);
 
-	if (!in_deathfate_x(&p_ptr->wpos_old) && in_deathfate_x(&p_ptr->wpos))
-		s_printf("DF-ENTER: %s (%d) -> %d\n", p_ptr->name, p_ptr->accountname, p_ptr->wpos_old.wz);
-	if (in_deathfate_x(&p_ptr->wpos_old) && !in_deathfate_x(&p_ptr->wpos))
-		s_printf("DF-LEAVE: %s (%d) <- %d\n", p_ptr->name, p_ptr->accountname, p_ptr->wpos_old.wz);
+	if (!in_deathfate_x(&p_ptr->wpos_old) && in_deathfate_x(&p_ptr->wpos)) {
+		s_printf("DF-ENTER: %s (%s) -> %d\n", p_ptr->name, p_ptr->accountname, p_ptr->wpos_old.wz);
+		df = TRUE;
+	}
+	if (in_deathfate_x(&p_ptr->wpos_old) && !in_deathfate_x(&p_ptr->wpos)) {
+		s_printf("DF-LEAVE: %s (%s) <- %d\n", p_ptr->name, p_ptr->accountname, p_ptr->wpos_old.wz);
+		df = TRUE;
+	}
 
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 
@@ -9972,6 +9977,7 @@ void process_player_change_wpos(int Ind) {
 	   with the only exception of server join/leave in nserver.c and Morgoth
 	   live spawn (ie not on level generation time) in monster2.c. - C. Blue */
 	check_Morgoth(Ind);
+	if (df) check_df();
 	if (p_ptr->new_level_flag) return;
 
 #ifdef CLIENT_SIDE_WEATHER
