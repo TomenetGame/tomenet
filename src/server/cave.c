@@ -539,9 +539,8 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 				   Note that we can get called from player_birth()->player_setup(), which sets up a newly logged/created player
 				   with Ind = NumPlayers + 1! So we need to anticipate this here. Verification for valid NumPlayers+1 entry is done via 0x10 flag check.
 				   Also need to not do this if NumPlayers is 0, as that is server init/loading-up time and would cause a crash as **Players is not initialized. */
-				for (i = 1; i <= (NumPlayers && (NumPlayers + 1 < MAX_PLAYERS) ? NumPlayers + 1 : NumPlayers); i++) {
+				for (i = 1; i <= (NumPlayers && (NumPlayers + 1 < MAX_PLAYERS) && Players[NumPlayers + 1] ? NumPlayers + 1 : NumPlayers); i++) {
 					p_ptr = Players[i];
-					if (i == NumPlayers + 1 && !(p_ptr->temp_misc_1 & 0x10)) continue;
 
 					if (p_ptr->conn == NOT_CONNECTED) continue;
 					if (p_ptr->admin_dm) continue;
