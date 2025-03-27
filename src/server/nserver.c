@@ -7100,7 +7100,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 
 #ifdef TOWNFOUND_REWARDS
 					/* Setting the forge.level is only needed if apply_magic() isn't called, as it calls determine_level_req() for us. */
-					switch(town[i].type) {
+					switch (town[i].type) {
 					case TOWN_VANILLA:
 						invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT));
 						forge.number = 1;
