@@ -12462,36 +12462,44 @@ void do_cmd_options(void) {
 			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) { //ignore win_dontmoveuser here, as user asked for it deliberately
 				//char out_val[1024];
 
-				/* Copy to 'scpt' folder */
-				/* make sure it exists (paranoia except if user did something very silyl) */
-				if (!check_dir(ANGBAND_DIR_SCPT)) {
-					mkdir(ANGBAND_DIR_SCPT);
-					c_msg_format("\377wCreated target folder %s.", ANGBAND_DIR_SCPT);
-				}
-				/* copy over the default files from the installation folder */
-				c_msg_format("\377wCopying %sscpt to %s.", ANGBAND_DIR, ANGBAND_DIR_SCPT);
+				if (!strcmp(format("%sscpt", ANGBAND_DIR), ANGBAND_DIR_SCPT)) {
+					c_msg_format("\377ySource and target scpt folder are the same: '%s'. Skipping.", ANGBAND_DIR_SCPT);
+				} else {
+					/* Copy to 'scpt' folder */
+					/* make sure it exists (paranoia except if user did something very silyl) */
+					if (!check_dir(ANGBAND_DIR_SCPT)) {
+						mkdir(ANGBAND_DIR_SCPT);
+						c_msg_format("\377wCreated target folder %s.", ANGBAND_DIR_SCPT);
+					}
+					/* copy over the default files from the installation folder */
+					c_msg_format("\377wCopying %sscpt to %s.", ANGBAND_DIR, ANGBAND_DIR_SCPT);
  #if 1 /* Copy in the background? */
-				WinExec(format("xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT), SW_NORMAL); //SW_HIDE);
+					WinExec(format("xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT), SW_NORMAL); //SW_HIDE);
  #else /* Will timeout the client if LOTS of screenshots etc ^^ */
-				sprintf(out_val, "xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT);
-				system(out_val);
+					sprintf(out_val, "xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT);
+					system(out_val);
  #endif
-
-				/* Copy to 'user' folder */
-				/* make sure it exists (paranoia except if user did something very silyl) */
-				if (!check_dir(ANGBAND_DIR_USER)) {
-					mkdir(ANGBAND_DIR_USER);
-					c_msg_format("\377wCreated target folder %s.", ANGBAND_DIR_USER);
 				}
 
-				/* copy over the default files from the installation folder */
-				c_msg_format("\377wCopying %suser to %s.", ANGBAND_DIR, ANGBAND_DIR_USER);
+
+				if (!strcmp(format("%suser", ANGBAND_DIR), ANGBAND_DIR_USER)) {
+					c_msg_format("\377ySource and target user folder are the same: '%s'. Skipping.", ANGBAND_DIR_USER);
+				} else {
+					/* Copy to 'user' folder */
+					/* make sure it exists (paranoia except if user did something very silyl) */
+					if (!check_dir(ANGBAND_DIR_USER)) {
+						mkdir(ANGBAND_DIR_USER);
+						c_msg_format("\377wCreated target folder %s.", ANGBAND_DIR_USER);
+					}
+					/* copy over the default files from the installation folder */
+					c_msg_format("\377wCopying %suser to %s.", ANGBAND_DIR, ANGBAND_DIR_USER);
  #if 1 /* Copy in the background? */
-				WinExec(format("xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "user", ANGBAND_DIR_USER), SW_NORMAL); //SW_HIDE);
+					WinExec(format("xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "user", ANGBAND_DIR_USER), SW_NORMAL); //SW_HIDE);
  #else /* Will timeout the client if LOTS of screenshots etc ^^ */
-				sprintf(out_val, "xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "user", ANGBAND_DIR_USER);
-				system(out_val);
+					sprintf(out_val, "xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "user", ANGBAND_DIR_USER);
+					system(out_val);
  #endif
+				}
 			} else c_msg_print("\377yFailure: Environment variables HOMEDRIVE and/or HOMEPATH not available.");
 		}
 #endif
