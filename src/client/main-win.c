@@ -319,8 +319,9 @@ void resize_main_window_win(int cols, int rows);
     Size 256:    Cache fills maybe within first 10 floors of Barrow-Downs (2mask mode), so it's very comfortable.
                  However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
+    Size 256*4:  Default choice now, for reserves.
 */
-#define TILE_CACHE_SIZE (256*1)	/* [256*4] */
+#define TILE_CACHE_SIZE (256*4)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG

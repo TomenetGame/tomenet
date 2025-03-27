@@ -1184,6 +1184,7 @@ static term_data* term_idx_to_term_data(int term_idx);
     Size 256:    Cache fills maybe within first 10 floors of Barrow-Downs (2mask mode), so it's very comfortable.
                  However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
+    Size 256*4:  Default choice now, for reserves.
 */
 #define TILE_CACHE_SIZE (256*4)
 
