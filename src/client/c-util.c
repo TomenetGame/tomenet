@@ -12345,7 +12345,7 @@ void do_cmd_options(void) {
 #ifdef WINDOWS
 		else if (k == 'Y') {
 			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) { //ignore win_dontmoveuser here, as user asked for it deliberately
-				char out_val[1024];
+				//char out_val[1024];
 
 				/* Copy to 'scpt' folder */
 				/* make sure it exists (paranoia except if user did something very silyl) */
