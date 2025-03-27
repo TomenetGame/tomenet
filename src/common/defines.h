@@ -7018,10 +7018,10 @@
 #define DF1_CAVE		0x00000400U	/* Allow rooms */
 #define DF1_CAVERN		0x00000800U	/* Allow cavern rooms */
 
-#define DF1_NO_UP		0x00001000U	/* Disallow up stairs */
+#define DF1_NO_UP		0x00001000U	/* Disallow up stairs (but can recall anytime) */
 #define DF1_HOT_PLACE		0x00002000U	/* Corpses on ground and in pack decay quicker through heat -- not implemented -- todo: good idea for consumables going bad */
 #define DF1_COLD_PLACE		0x00004000U	/* Corpses on ground and in pack decay slower through cold -- not implemented -- todo: good idea for consumables going bad */
-#define DF1_FORCE_DOWN		0x00008000U	/* No up stairs generated */
+#define DF1_FORCE_DOWN		0x00008000U	/* No up stairs generated and cannot recall until reaching the final floor */
 
 #define DF1_FORGET		0x00010000U	/* Features are forgotten, like the Maze and Illusory Castle */
 #define DF1_NO_DESTROY		0x00020000U	/* No destroyed levels in dungeon */
