@@ -3439,6 +3439,7 @@ gfx_skip:
 		use_graphics_new = FALSE;
 	}
 
+	logprint(format("Graphics initialization complete, use_graphics is %d.\n", use_graphics));
 	return(use_graphics);
 }
 #endif
@@ -3579,46 +3580,7 @@ static void init_windows(void) {
 
 #ifdef USE_GRAPHICS
 	/* Handle "graphics" mode */
-	if (use_graphics) {
- #ifdef TILE_CACHE_SIZE
-		int fwid, fhgt;
-		HDC hdc;
- #endif
-
-		(void)init_graphics_win();
-
- #ifdef TILE_CACHE_SIZE
-		if (!disable_tile_cache)
-		for (i = 1; i < MAX_TERM_DATA; i++) {
-			td = &data[i];
-			hdc = GetDC(td->w);
-
-  #ifdef USE_LOGFONT
-			if (use_logfont) {
-				fwid = td->lf.lfWidth;
-				fhgt = td->lf.lfHeight;
-			} else
-  #endif
-			{
-				fwid = td->font_wid;
-				fhgt = td->font_hgt;
-			}
-
-			/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
-			   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
-			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
-				//td->tiles->depth=32
-				td->tile_cache[i].hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
-  #ifdef GRAPHICS_BG_MASK
-				//td->tiles->depth=32
-				td->tile_cache[i].hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
-  #endif
-			}
-
-			ReleaseDC(td->w, hdc);
-		}
- #endif
-	}
+	if (use_graphics) (void)init_graphics_win();
 #endif
 
 	/* Screen window */
@@ -3665,6 +3627,45 @@ static void init_windows(void) {
 	/* Create a "brush" for drawing the "cursor" */
 	hbrYellow = CreateSolidBrush(win_clr[TERM_YELLOW]);
 
+#if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
+	if (use_graphics && !disable_tile_cache) {
+		int i, j;
+		int fwid, fhgt;
+		HDC hdc;
+
+		for (i = 1; i < MAX_TERM_DATA; i++) {
+			td = &data[i];
+			hdc = GetDC(td->w);
+
+ #ifdef USE_LOGFONT
+			if (use_logfont) {
+				fwid = td->lf.lfWidth;
+				fhgt = td->lf.lfHeight;
+			} else
+ #endif
+			{
+				fwid = td->font_wid;
+				fhgt = td->font_hgt;
+			}
+
+			logprint(format("Graphical tileset cache (%d): fwid %d, fhgt %d.\n", i, fwid, fhgt));
+
+			/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
+			   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
+			for (j = 0; j < TILE_CACHE_SIZE; j++) {
+				//td->tiles->depth=32
+				td->tile_cache[j].hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
+ #ifdef GRAPHICS_BG_MASK
+				//td->tiles->depth=32
+				td->tile_cache[j].hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
+ #endif
+			}
+
+			ReleaseDC(td->w, hdc);
+		}
+		logprint("Graphical tileset cache initialized.\n");
+	}
+#endif
 
 	/* Process pending messages */
 	(void)Term_xtra_win_flush();
