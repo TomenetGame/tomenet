@@ -1200,20 +1200,24 @@ static term_data* term_idx_to_term_data(int term_idx);
  #endif
 #endif
 
+#ifdef TILE_CACHE_SIZE
+extern bool disable_tile_cache;
+bool disable_tile_cache = FALSE;
 struct tile_cache_entry {
     Pixmap tilePreparation;
     char32_t c;
     byte a;
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
     Pixmap tilePreparation2;
     char32_t c_back;
     byte a_back;
-#endif
+ #endif
     bool is_valid;
-#ifdef TILE_CACHE_FGBG
+ #ifdef TILE_CACHE_FGBG
     s32b fg, bg; /* Optional palette_animation handling */
-#endif
+ #endif
 };
+#endif
 
 
 /*
@@ -1859,6 +1863,7 @@ static void free_graphics(term_data *td) {
 		td->tilePreparation = None;
 	}
  #ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache)
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		if (td->tile_cache[i].tilePreparation) {
 			XFreePixmap(Metadpy->dpy, td->tile_cache[i].tilePreparation);
@@ -2189,6 +2194,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	y *= Infofnt->hgt;
 
  #ifdef TILE_CACHE_SIZE
+    if (!disable_tile_cache) {
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
@@ -2240,6 +2246,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	entry->fg = Infoclr->fg;
 	entry->bg = Infoclr->bg;
   #endif
+    } else tilePreparation = td->tilePreparation;
  #else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
  #endif
@@ -2324,6 +2331,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	y *= Infofnt->hgt;
 
    #ifdef TILE_CACHE_SIZE
+    if (!disable_tile_cache) {
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
@@ -2373,6 +2381,10 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry->fg = Infoclr->fg;
 	entry->bg = Infoclr->bg;
     #endif
+    } else {
+	tilePreparation = td->tilePreparation;
+	tilePreparation2 = td->tilePreparation2;
+    }
    #else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
 	tilePreparation2 = td->tilePreparation2;
@@ -2478,6 +2490,8 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 /* c_idx: -1 = invalidate all; otherwise only tiles that use this colour are invalidated. */
 static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
 	int i;
+
+	if (disable_tile_cache) return;
 
 	if (c_idx == -1)
 		for (i = 0; i < TILE_CACHE_SIZE; i++)
@@ -3141,6 +3155,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
  #endif
 	td->tilePreparation = None;
  #ifdef TILE_CACHE_SIZE
+printf("dtc=%d\n", disable_tile_cache);
+	if (!disable_tile_cache)
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		td->tile_cache[i].tilePreparation = None;
 		td->tile_cache[i].c = 0xffffffff;
@@ -3201,6 +3217,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
 		   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
  #ifdef TILE_CACHE_SIZE
+		if (!disable_tile_cache)
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			td->tile_cache[i].tilePreparation = XCreatePixmap(
 				Metadpy->dpy, Metadpy->root,
@@ -3848,6 +3865,7 @@ static void term_force_font(int term_idx, cptr fnt_name) {
  #endif
 
  #ifdef TILE_CACHE_SIZE
+			if (!disable_tile_cache)
 			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 				td->tile_cache[i].tilePreparation = XCreatePixmap(
 					Metadpy->dpy, Metadpy->root,

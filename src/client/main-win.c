@@ -335,22 +335,25 @@ void resize_main_window_win(int cols, int rows);
  #endif
 #endif
 
+#ifdef TILE_CACHE_SIZE
+bool disable_tile_cache = FALSE;
 struct tile_cache_entry {
     HDC hdcTilePreparation;
     HBITMAP hbmTP, hbmOldTP; //fix GDI objects leak -- todo: is this also needed for normal gfx tiles handling?
     char32_t c;
     byte a;
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
     HDC hdcTilePreparation2;
     HBITMAP hbmTP2, hbmOldTP2; //fix GDI objects leak -- todo: is this also needed for normal gfx tiles handling?
     char32_t c_back;
     byte a_back;
-#endif
+ #endif
     bool is_valid;
-#ifdef TILE_CACHE_FGBG
+ #ifdef TILE_CACHE_FGBG
     s32b fg, bg; /* Optional palette_animation handling */
-#endif
+ #endif
 };
+#endif
 
 
 /*
@@ -804,6 +807,7 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
  #endif
 
  #ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache)
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		if (td->tile_cache[i].hdcTilePreparation) {
 			/* Select original Bitmap or apparently the created one cannot be deleted and we'll leak... */
@@ -903,6 +907,7 @@ static void recreateGraphicsObjects(term_data *td) {
  #endif
 
  #ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache)
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		//td->tiles->depth=32
 		HBITMAP hbmCacheTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
@@ -2772,6 +2777,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 
  #ifdef TILE_CACHE_SIZE
+    if (!disable_tile_cache) {
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
@@ -2822,6 +2828,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	entry->fg = fgColor;
 	entry->bg = bgColor;
   #endif
+    } else hdcTilePreparation = td->hdcTilePreparation;
  #else /* (TILE_CACHE_SIZE) No caching: */
 	hdcTilePreparation = td->hdcTilePreparation;
  #endif
@@ -2959,6 +2966,7 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 
    #ifdef TILE_CACHE_SIZE
+    if (!disable_tile_cache) {
 	entry = NULL;
 	for (i = 0; i < TILE_CACHE_SIZE; i++) {
 		entry = &td->tile_cache[i];
@@ -3007,6 +3015,10 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry->fg = fgColor;
 	entry->bg = bgColor;
     #endif
+    } else {
+	hdcTilePreparation = td->hdcTilePreparation;
+	hdcTilePreparation2 = td->hdcTilePreparation2;
+    }
    #else /* (TILE_CACHE_SIZE) No caching: */
 	hdcTilePreparation = td->hdcTilePreparation;
 	hdcTilePreparation2 = td->hdcTilePreparation2;
@@ -3121,6 +3133,8 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
 static void invalidate_graphics_cache_win(term_data *td, int c_idx) {
 	int i;
+
+	if (disable_tile_cache) return;
 
 	if (c_idx == -1)
 		for (i = 0; i < TILE_CACHE_SIZE; i++)
@@ -3519,6 +3533,7 @@ static void init_windows(void) {
 
 #ifdef USE_GRAPHICS
  #ifdef TILE_CACHE_SIZE
+		if (!disable_tile_cache)
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			td->tile_cache[i].hdcTilePreparation = NULL;
 			td->tile_cache[i].c = 0xffffffff;
@@ -3610,6 +3625,7 @@ static void init_windows(void) {
 		(void)init_graphics_win();
 
  #ifdef TILE_CACHE_SIZE
+		if (!disable_tile_cache)
 		for (i = 1; i < MAX_TERM_DATA; i++) {
 			td = &data[i];
 			hdc = GetDC(td->w);
@@ -5168,8 +5184,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
 			switch (lpCmdLine[i]) {
 			case 'C': /* compatibility mode */
-				server_protocol = 1;
-				break;
+				server_protocol = 1; break;
 			case 'F':
 				i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_client_fps);
 				break;
@@ -5237,16 +5252,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 				if (initialized) quit(NULL);
 				just_h = TRUE;
 				break;
-			case 'I':
-				disable_CS_IME = TRUE;
-				break;
-			case 'i':
-				enable_CS_IME = TRUE;
-				break;
+			case 'I': disable_CS_IME = TRUE; break;
+			case 'i': enable_CS_IME = TRUE; break;
 #ifdef USE_LOGFONT
-			case 'L':
-				use_logfont = TRUE;
-				break;
+			case 'L': use_logfont = TRUE; break;
 #endif
 			case 'l': /* account name & password */
 				i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);
@@ -5264,33 +5273,22 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			case 'P': /* lib directory path */
 				i += cmd_get_string(&lpCmdLine[i + 1], path, 1024, quoted);
 				break;
-			case 'q':
-				quiet_mode = TRUE;
-				break;
-			case 'w':
-				noweather_mode = TRUE;
-				break;
-			case 'u':
-				no_lua_updates = TRUE;
-				break;
-			case 'k':
-				disable_numlock = FALSE;
-				break;
-			case 'm':
-				skip_motd = TRUE;
-				break;
-			case 'v':
-				save_chat = 1;
-				break;
-			case 'V':
-				save_chat = 2;
-				break;
-			case 'x':
-				save_chat = 3;
-				break;
+			case 'q': quiet_mode = TRUE; break;
+			case 'w': noweather_mode = TRUE; break;
+			case 'u': no_lua_updates = TRUE; break;
+			case 'k': disable_numlock = FALSE; break;
+			case 'm': skip_motd = TRUE; break;
+			case 'v': save_chat = 1; break;
+			case 'V': save_chat = 2; break;
+			case 'x': save_chat = 3; break;
 			case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
 			case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 			case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+#ifdef TILE_CACHE_SIZE
+			case 'T': disable_tile_cache = TRUE;
+				printf("Graphics tiles cache disabled.\n");
+				break;
+#endif
 			}
 			quoted = FALSE;
 		} else if (lpCmdLine[i] == ' ') {

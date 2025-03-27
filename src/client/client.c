@@ -9,7 +9,7 @@
  */
 
 #include "angband.h"
-
+extern bool disable_tile_cache;
 
 char mangrc_filename[100] = "";
 bool convert_rc = FALSE;
@@ -1133,31 +1133,14 @@ int main(int argc, char **argv) {
 			i = argc;
 #endif
 			break;
-
 		/* Source other files */
-		case 'f':
-			skip = read_mangrc(&argv[i][2]);
-			break;
-
-		case 'p':
-			cfg_game_port = atoi(&argv[i][2]);
-			break;
-
-		case 'F':
-			cfg_client_fps = atoi(&argv[i][2]);
-			break;
-
-		case 'P':
-			strcpy(path, argv[i] + 2);
-			break;
-
-		case 'R':
-			auto_reincarnation = TRUE;
+		case 'f': skip = read_mangrc(&argv[i][2]); break;
+		case 'p': cfg_game_port = atoi(&argv[i][2]); break;
+		case 'F': cfg_client_fps = atoi(&argv[i][2]); break;
+		case 'P': strcpy(path, argv[i] + 2); break;
+		case 'R': auto_reincarnation = TRUE;
 			/* Fall through */
-		case 'N':
-			strcpy(cname, argv[i] + 2);
-			break;
-
+		case 'N': strcpy(cname, argv[i] + 2); break;
 		/* Pull login id */
 		case 'l':
 			if (argv[i][2]) { /* Hack -- allow space after '-l' */
@@ -1166,52 +1149,22 @@ int main(int argc, char **argv) {
 			}
 			else modus = 1;
 			break;
-
 		/* Pull 'real name' */
 		case 'n':
-			if (argv[i][2])	/* Hack -- allow space after '-l' */
-			{
+			if (argv[i][2]) { /* Hack -- allow space after '-l' */
 				strcpy(real_name, argv[i] + 2);
 				break;
 			}
 			/* Fall through */
-
-		case 'c':
-			force_cui = TRUE;
-			break;
-
-		case 'C':
-			server_protocol = 1;
-			break;
-
-		case 'q':
-			quiet_mode = TRUE;
-			break;
-
-		case 'w':
-			noweather_mode = TRUE;
-			break;
-
-		case 'u':
-			no_lua_updates = TRUE;
-			break;
-
-		case 'm':
-			skip_motd = TRUE;
-			break;
-
-		case 'v':
-			save_chat = 1;
-			break;
-
-		case 'V':
-			save_chat = 2;
-			break;
-
-		case 'x':
-			save_chat = 3;
-			break;
-
+		case 'c': force_cui = TRUE; break;
+		case 'C': server_protocol = 1; break;
+		case 'q': quiet_mode = TRUE; break;
+		case 'w': noweather_mode = TRUE; break;
+		case 'u': no_lua_updates = TRUE; break;
+		case 'm': skip_motd = TRUE; break;
+		case 'v': save_chat = 1; break;
+		case 'V': save_chat = 2; break;
+		case 'x': save_chat = 3; break;
 		case 'e': {
 			/* Since ALSA might spam underrun errors.. */
 			FILE *fr = freopen("tomenet.log", "w", stderr);
@@ -1219,10 +1172,12 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "Failed to open tomenet.log for writing!\n");
 			}
 			break;
-
 		case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
 		case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 		case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+		case 'T': disable_tile_cache = TRUE; //TILE_CACHE_SIZE
+			printf("Graphics tiles cache disabled.\n");
+			break;
 		}
 
 		default:
