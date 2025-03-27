@@ -652,6 +652,7 @@ extern void slippery_floor(int oily, struct worldpos *wpos, int x, int y);
 #ifdef DEATH_FATE_SPECIAL
 extern void check_df(void);
 #endif
+extern int get_staircase_colour(dungeon_type *d_ptr, byte *c);
 
 /* cmd1.c */
 extern byte cycle[], chome[];

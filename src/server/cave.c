@@ -190,7 +190,7 @@ byte level_rand_y(struct worldpos *wpos) {
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_y : wild->dungeon->level[ABS(wpos->wz) - 1].rn_y);
 }
 
-static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
+int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	if (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 		*c = TERM_L_DARK;
 		return(-2);
