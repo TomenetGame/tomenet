@@ -245,12 +245,15 @@ function rcraft_prt(u,w)
   local i
   local U,C,row,col
 
-  if w~=0 then
+  if w==1 then
     C = TERM_GREEN
     row,col = 9,16
-  else
+  elseif w==0 then
     C = TERM_WHITE
     row,col = 1,13
+  elseif w==2 then
+    C = TERM_GREEN
+    row,col = 7,16
   end
   if band(u,MODE)~=0 then
     if w~=0 then

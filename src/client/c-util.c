@@ -5284,7 +5284,7 @@ static void get_macro_trigger(char *buf) {
    Shoudln't be needed. */
 //#define FORGET_MACRO_VISUALS
 void interact_macros(void) {
-	int i, j = 0, l, chain_type;
+	int i, j = 0, l, l2, chain_type;
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
 	char fff[1024], t_key[10], choice;
 	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
@@ -6683,7 +6683,7 @@ void interact_macros(void) {
 		}
 
 		else if (i == 'z') {
-			int target_dir = '5';
+			int target_dir = '5', ystart = 6;
 			bool should_wait, force_normal;
 #define mw_quaff 'a'
 #define mw_read 'b'
@@ -6736,8 +6736,8 @@ Chain_Macro:
 			/* Describe */
 			Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 			//Term_putstr(25, 22, -1, TERM_L_UMBER, "[Press ESC to exit anytime]");
-			Term_putstr(1, 6, -1, TERM_L_DARK, "Don't forget to save your macros with 's' when you are back in the macro menu!");
-			Term_putstr(19, 7, -1, TERM_L_UMBER, "----------------------------------------");
+			Term_putstr(1, 4, -1, TERM_L_DARK, "Don't forget to save your macros with 's' when you are back in the macro menu!");
+			Term_putstr(19, 5, -1, TERM_L_UMBER, "----------------------------------------");
 
 			/* Initialize wizard state: First state */
 			i = choice = 0;
@@ -6758,17 +6758,18 @@ Chain_Macro:
 					should_wait = FALSE;
 				}
 
-				Term_putstr(12, 2, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
-				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
-				Term_putstr(12, 4, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
+				/* Colour currently active step */
+				Term_putstr(12, 1, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
+				Term_putstr(12, 2, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
+				Term_putstr(12, 3, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
 
-				clear_from(8);
+				clear_from(ystart);
 
 				switch (i) {
 				case 0:
 					force_normal = FALSE;
-					l = 8;
-					Term_putstr(5, l++, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
+					l = ystart;
+					Term_putstr(1, l++, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "c\377w/\377GC) Fire ranged weapon (including boomerangs). \377w/\377G Throw an item.");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "d\377w/\377GD) Cast school \377w/\377G mimic spell without a target (or target manually).");
@@ -6800,6 +6801,8 @@ Chain_Macro:
 						case ':':
 							/* specialty: allow chatting from within here (only in macro wizard step 1) */
 							cmd_message();
+							/* Restore top line */
+							Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 							continue;
 						case KTRL('T'):
 							/* Take a screenshot */
@@ -6825,21 +6828,24 @@ Chain_Macro:
 					i++;
 					break;
 				case 1:
+					l = ystart + 2;
 					switch (choice) {
 					case mw_quaff:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the potion's name or inscription.");
-						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377GCritical Wounds");
-						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the potion's name or inscription.");
+						//Term_putstr(5, l++, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GCritical Wounds");
+						Term_putstr(5, l++, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
+						l += 3;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
 
 					case mw_read:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name or inscription.");
-						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
-						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name or inscription.");
+						//Term_putstr(5, l++, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
+						Term_putstr(5, l++, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
+						l += 3;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
 						should_wait = TRUE; /* recharge scrolls mostly; id/enchant scrolls.. */
 						break;
 
@@ -6847,82 +6853,89 @@ Chain_Macro:
 						should_wait = TRUE; /* Just to be on the safe side, if the item picked is one that might require waiting (eg scroll of recharging in a chained macro). */
 						__attribute__ ((fallthrough));
 					case mw_anydir:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
-						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
+						//Term_putstr(5, l++, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
 						if (choice == mw_any) {
-							Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377GRation");
-							Term_putstr(5, 12, -1, TERM_GREEN, "if you want to use (eat) a 'Ration of Food'.");
+							Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GRation");
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use (eat) a 'Ration of Food'.");
 						} else {
 							/* actually a bit silyl here, we're not really using inscriptions but instead treat them as text -_-.. */
-							Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377G@/0"); /* ..so 'correctly' this should just be '/0' :-p */
-							Term_putstr(5, 12, -1, TERM_GREEN, "if you want to use (fire) a wand or rod inscribed '@/0'.");
+							Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377G@/0"); /* ..so 'correctly' this should just be '/0' :-p */
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use (fire) a wand or rod inscribed '@/0'.");
 						}
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
+						l += 3;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
 
 					case mw_schoolnt:
 						sprintf(tmp, "return get_class_spellnt(%d)", p_ptr->pclass);
 						strcpy(buf, string_exec_lua(0, tmp));
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
-						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
+						Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						l += 3;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact spell name:");
 						should_wait = TRUE; /* identify/recharge spells */
 						break;
 
 					case mw_mimicnt:
 						sprintf(tmp, "return get_class_mimicnt(%d)", p_ptr->pclass);
 						strcpy(buf, string_exec_lua(0, tmp));
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");//and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
-						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact spell name.");//and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
+						Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						l += 3;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 
 					case mw_schoolt:
 						sprintf(tmp, "return get_class_spellt(%d)", p_ptr->pclass);
 						strcpy(buf, string_exec_lua(0, tmp));
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
-						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
+						Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						l += 3;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 
 					case mw_mimict:
 						sprintf(tmp, "return get_class_mimict(%d)", p_ptr->pclass);
 						strcpy(buf, string_exec_lua(0, tmp));
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
-						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
+						Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						l += 3;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 
 					case mw_mimicidx:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter a spell number, starting from 1, which is");
-						Term_putstr(10, 11, -1, TERM_GREEN, "the first spell after the 3 basic powers and immunity");
-						Term_putstr(10, 12, -1, TERM_GREEN, "preference setting, which always occupy spell slots a)-d).");
-						Term_putstr(10, 13, -1, TERM_GREEN, "So \377G1\377g = spell e), \377G2\377g = f), \377G3\377g = g), \377G4\377g = h) etc.");
-						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter spell index number:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter a spell number, starting from 1, which is");
+						Term_putstr(10, l++, -1, TERM_GREEN, "the first spell after the 3 basic powers and immunity");
+						Term_putstr(10, l++, -1, TERM_GREEN, "preference setting, which always occupy spell slots a)-d).");
+						Term_putstr(10, l++, -1, TERM_GREEN, "So \377G1\377g = spell e), \377G2\377g = f), \377G3\377g = g), \377G4\377g = h) etc.");
+						Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						l++;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter spell index number:");
 						break;
 
 					case mw_fight:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GSprint");
-						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, "For example, enter:     \377GSprint");
+						Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
+						l += 3;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
 
 					case mw_stance:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick a stance:");
-						Term_putstr(10, 11, -1, TERM_GREEN, "  \377Ga\377g) Balanced stance (standard)");
-						Term_putstr(10, 12, -1, TERM_GREEN, "  \377Gb\377g) Defensive stance");
-						Term_putstr(10, 13, -1, TERM_GREEN, "  \377Gc\377g) Offensive stance");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please pick a stance:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "  \377Ga\377g) Balanced stance (standard)");
+						Term_putstr(10, l++, -1, TERM_GREEN, "  \377Gb\377g) Defensive stance");
+						Term_putstr(10, l++, -1, TERM_GREEN, "  \377Gc\377g) Offensive stance");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -6936,6 +6949,8 @@ Chain_Macro:
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -6958,33 +6973,36 @@ Chain_Macro:
 						break;
 
 					case mw_shoot:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GFlare Missile");
-						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, "For example, enter:     \377GFlare Missile");
+						Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
+						l += 3;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
 
 					case mw_poly:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact monster name OR its code. (You can find");
-						Term_putstr(10, 11, -1, TERM_GREEN, "codes you have already learned by pressing  \377s~ 2 @  \377gin the game");
-						Term_putstr(10, 12, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon @");
-						Term_putstr(10, 13, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
-						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
-						Term_putstr(10, 15, -1, TERM_GREEN, "To return to the form you used before your current form, enter:  \377G-1\377g .");
-						Term_putstr(10, 16, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
-						Term_putstr(10, 17, -1, TERM_GREEN, "To get asked about the form every time, just leave this blank.");
-						//Term_putstr(10, 18, -1, TERM_GREEN, "You must have learned a form before you can use it!");
-						Term_putstr(1, 19, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact monster name OR its code. (You can find");
+						Term_putstr(10, l++, -1, TERM_GREEN, "codes you have already learned by pressing  \377s~ 2 @  \377gin the game");
+						Term_putstr(10, l++, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon @");
+						Term_putstr(10, l++, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
+						Term_putstr(10, l++, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
+						Term_putstr(10, l++, -1, TERM_GREEN, "To return to the form you used before your current form, enter:  \377G-1\377g .");
+						Term_putstr(10, l++, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
+						Term_putstr(10, l++, -1, TERM_GREEN, "To get asked about the form every time, just leave this blank.");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						l++;
+						Term_putstr(1, l++, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
 						should_wait = TRUE;
 						break;
 
 					case mw_prfimm:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an immunity preference:");
-						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current immunity preference)");
-						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) None (pick one randomly on polymorphing)");
-						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Electricity  \377Gd\377g) Cold  \377Ge\377g) Fire  \377Gf\377g) Acid  \377Gg\377g) Poison  \377Gh\377g) Water");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-h): ");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please choose an immunity preference:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current immunity preference)");
+						Term_putstr(5, l++, -1, TERM_GREEN, "\377Gb\377g) None (pick one randomly on polymorphing)");
+						Term_putstr(5, l++, -1, TERM_GREEN, "\377Gc\377g) Electricity  \377Gd\377g) Cold  \377Ge\377g) Fire  \377Gf\377g) Acid  \377Gg\377g) Poison  \377Gh\377g) Water");
+						l += 2;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Pick one (a-h): ");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -6995,6 +7013,8 @@ Chain_Macro:
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -7038,9 +7058,9 @@ Chain_Macro:
 
 						/* Ask for a runespell? */
 						while (!exec_lua(0, format("return rcraft_end(%d)", u))) {
-							clear_from(8);
+							clear_from(ystart);
 							Term_putstr(12, 22, -1, TERM_GREEN, "(Press Backspace to go back one step or Escape to quit)");
-							exec_lua(0, format("return rcraft_prt(%d, %d, %d)", u, 1));
+							exec_lua(0, format("return rcraft_prt(%d, %d)", u, 2));
 							/* Hack: Hide the cursor */
 							Term->scr->cx = Term->wid;
 							Term->scr->cu = 1;
@@ -7058,6 +7078,8 @@ Chain_Macro:
 								continue;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -7085,14 +7107,15 @@ Chain_Macro:
 
 					case mw_trap:
 						/* ---------- Enter trap kit name ---------- */
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name or inscription.");
-						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
-						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Kit'.");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial trap kit name or inscription:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name or inscription.");
+						//Term_putstr(5, l++, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
+						Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Kit'.");
+						l += 3;
+						Term_putstr(5, l, -1, TERM_L_GREEN, "Enter partial trap kit name or inscription:");
 
 						/* Get an item name */
-						Term_gotoxy(50, 16);
+						Term_gotoxy(50, l);
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
 							i = -2;
@@ -7101,17 +7124,19 @@ Chain_Macro:
 						strcat(buf, "\\r");
 
 						/* ---------- Enter ammo/load name ---------- */
-						clear_from(10);
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item name or inscription you");
-						Term_putstr(5, 11, -1, TERM_GREEN, "want to load the trap kit with.");//, and pay attention to upper-case");
-						//Term_putstr(5, 12, -1, TERM_GREEN, "and lower-case letters!");
-						Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
-						Term_putstr(5, 13, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
-						Term_putstr(5, 14, -1, TERM_GREEN, "If you want to choose ammo manually, just press the \377GRETURN\377g key.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial ammo/load name or inscription:");
+						l = ystart + 2;
+						clear_from(l);
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the item name or inscription you");
+						Term_putstr(5, l++, -1, TERM_GREEN, "want to load the trap kit with.");//, and pay attention to upper-case");
+						//Term_putstr(5, l++, -1, TERM_GREEN, "and lower-case letters!");
+						Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
+						Term_putstr(5, l++, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
+						Term_putstr(5, l++, -1, TERM_GREEN, "If you want to choose ammo manually, just press the \377GRETURN\377g key.");
+						l += 2;
+						Term_putstr(5, l, -1, TERM_L_GREEN, "Enter partial ammo/load name or inscription:");
 
 						/* Get an item name */
-						Term_gotoxy(50, 17);
+						Term_gotoxy(50, l);
 						strcpy(buf2, "");
 						if (!askfor_aux(buf2, 159, 0)) {
 							i = -2;
@@ -7126,13 +7151,14 @@ Chain_Macro:
 						break;
 
 					case mw_device:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the type of magic device you want to use:");
-						Term_putstr(15, 12, -1, TERM_L_GREEN, "a) a wand");
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "b) a staff");
-						Term_putstr(15, 14, -1, TERM_L_GREEN, "c) a rod that doesn't require a target");
-						Term_putstr(15, 15, -1, TERM_L_GREEN, "d) a rod that requires a target");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "e) an activatable item that doesn't require a target");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "f) an activatable item that requires a target");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please choose the type of magic device you want to use:");
+						l++;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "a) a wand");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "b) a staff");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "c) a rod that doesn't require a target");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "d) a rod that requires a target");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "e) an activatable item that doesn't require a target");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "f) an activatable item that requires a target");
 
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
@@ -7147,6 +7173,8 @@ Chain_Macro:
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -7188,85 +7216,93 @@ Chain_Macro:
 
 						/* ---------- Enter device name ---------- */
 
-						clear_from(10);
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name or");
-						Term_putstr(5, 11, -1, TERM_GREEN, "inscription.");// and pay attention to upper-case and lower-case letters!");
+						l = ystart + 2;
+						clear_from(ystart);
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name or");
+						Term_putstr(5, l++, -1, TERM_GREEN, "inscription.");// and pay attention to upper-case and lower-case letters!");
 						switch (choice) {
-						case 'a': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GMagic Mis");
-							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Wand of Magic Missiles'.");
+						case 'a': Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GMagic Mis");
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use a 'Wand of Magic Missiles'.");
 							break;
-						case 'b': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GTelep");
-							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
+						case 'b': Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GTelep");
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
 							break;
-						case 'c': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GTrap Loc");
-							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Rod of Trap Location'.");
+						case 'c': Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GTrap Loc");
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use a 'Rod of Trap Location'.");
 							break;
-						case 'd': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GLightn");
-							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
+						case 'd': Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GLightn");
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
 							break;
-						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GFrostw");
-							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Frostwoven Cloak'.");
+						case 'e': Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GFrostw");
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use a 'Frostwoven Cloak'.");
 							break;
-						case 'f': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GSerpen");
-							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use an 'Amulet of the Serpents'.");
+						case 'f': Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377GSerpen");
+							Term_putstr(5, l++, -1, TERM_GREEN, "if you want to use an 'Amulet of the Serpents'.");
 							break;
 						}
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial device name or inscription:");
+						l += 2;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter partial device name or inscription:");
 
 						/* hack before we exit: remember menu choice 'magic device' */
 						choice = mw_device;
 						break;
 
 					case mw_abilitynt:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact ability name.");// and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GSwitch between main-hand and dual-hand");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact ability name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact ability name.");// and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, "For example, enter:     \377GSwitch between main-hand and dual-hand");
+						l += 4;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact ability name:");
 						break;
 					case mw_abilityt:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact ability name.");// and pay attention");
-						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GBreathe element");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact ability name:");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please enter the exact ability name.");// and pay attention");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, l++, -1, TERM_GREEN, "For example, enter:     \377GBreathe element");
+						l += 4;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Enter exact ability name:");
 						break;
 
 					case mw_throw:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
-						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377G{bad}");
-						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to throw any item that is inscribed '{bad}'.");
-						Term_putstr(5, 13, -1, TERM_GREEN, "(That can for example give otherwise useless potions some use..)");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
+						//Term_putstr(5, l++, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377G{bad}");
+						Term_putstr(5, l++, -1, TERM_GREEN, "if you want to throw any item that is inscribed '{bad}'.");
+						Term_putstr(5, l++, -1, TERM_GREEN, "(That can for example give otherwise useless potions some use..)");
+						l += 2;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
 						break;
 
 					case mw_slash:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the complete slash command.");
-						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377G/cough");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter a slash command:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter the complete slash command.");
+						Term_putstr(5, l++, -1, TERM_GREEN, "For example, enter:     \377G/cough");
+						l += 4;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter a slash command:");
 						break;
 
 					case mw_custom:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the custom macro action string.");
-						Term_putstr(5, 11, -1, TERM_GREEN, "(You have to specify everything manually here, and won't get");
-						Term_putstr(5, 12, -1, TERM_GREEN, "prompted about a targetting method or anything else either.)");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter a new action:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter the custom macro action string.");
+						Term_putstr(5, l++, -1, TERM_GREEN, "(You have to specify everything manually here, and won't get");
+						Term_putstr(5, l++, -1, TERM_GREEN, "prompted about a targetting method or anything else either.)");
+						l += 3;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter a new action:");
 						break;
 
 					case mw_load:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the macro file name.");
-						Term_putstr(5, 11, -1, TERM_GREEN, "If you are on Linux or OSX it is case-sensitive! On Windows it is not.");
-						Term_putstr(5, 12, -1, TERM_GREEN, format("For example, enter:     \377G%s.prf", cname));
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Exact file name:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter the macro file name.");
+						Term_putstr(5, l++, -1, TERM_GREEN, "If you are on Linux or OSX it is case-sensitive! On Windows it is not.");
+						Term_putstr(5, l++, -1, TERM_GREEN, format("For example, enter:     \377G%s.prf", cname));
+						l += 3;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Exact file name:");
 						break;
 
 					case mw_option:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Do you want to enable, disable or toggle (flip) an option?");
-						Term_putstr(5, 11, -1, TERM_L_GREEN, "    y\377g) enable an option");
-						Term_putstr(5, 12, -1, TERM_L_GREEN, "    n\377g) disable an option");
-						Term_putstr(5, 13, -1, TERM_L_GREEN, "    t\377g) toggle an option");
-						Term_putstr(5, 15, -1, TERM_L_GREEN, "    Y\377g) enable an option and display feedback message");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "    N\377g) disable an option and display feedback message");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "    T\377g) toggle an option and display feedback message");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Do you want to enable, disable or toggle (flip) an option?");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    y\377g) enable an option");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    n\377g) disable an option");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    t\377g) toggle an option");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    Y\377g) enable an option and display feedback message");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    N\377g) disable an option and display feedback message");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    T\377g) toggle an option and display feedback message");
 						/* hack: hide cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -7280,6 +7316,8 @@ Chain_Macro:
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -7296,29 +7334,32 @@ Chain_Macro:
 						/* exit? */
 						if (i == -2) continue;
 
-						clear_from(10);
-						Term_putstr(5, 10, -1, TERM_GREEN, "Now please enter the exact name of an option, for example: \377Gbig_map");
-						Term_putstr(5, 12, -1, TERM_L_GREEN, "Enter exact option name: ");
+						l = ystart + 2;
+						clear_from(l);
+						Term_putstr(5, l++, -1, TERM_GREEN, "Now please enter the exact name of an option, for example: \377Gbig_map");
+						l++;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter exact option name: ");
 
 						j = choice;
 						choice = mw_option;
 						break;
 
 					case mw_equip:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Do you want to wear/wield, take off or swap an item?");
-						Term_putstr(5, 11, -1, TERM_L_GREEN, "    w\377g) primary wear/wield");
-						Term_putstr(5, 12, -1, TERM_L_GREEN, "    W\377g) secondary wear/wield");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Do you want to wear/wield, take off or swap an item?");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    w\377g) primary wear/wield");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    W\377g) secondary wear/wield");
 						if (c_cfg.rogue_like_commands) {
-							Term_putstr(5, 13, -1, TERM_L_GREEN, "    T\377g) take off an item");
-							Term_putstr(5, 14, -1, TERM_L_GREEN, "    S\377g) swap item(s)");
+							Term_putstr(5, l++, -1, TERM_L_GREEN, "    T\377g) take off an item");
+							Term_putstr(5, l++, -1, TERM_L_GREEN, "    S\377g) swap item(s)");
 						} else {
-							Term_putstr(5, 13, -1, TERM_L_GREEN, "    t\377g) take off an item");
-							Term_putstr(5, 14, -1, TERM_L_GREEN, "    x\377g) swap item(s)");
+							Term_putstr(5, l++, -1, TERM_L_GREEN, "    t\377g) take off an item");
+							Term_putstr(5, l++, -1, TERM_L_GREEN, "    x\377g) swap item(s)");
 						}
-						Term_putstr(5, 15, -1, TERM_L_GREEN, "    d\377g) invoke '/dress' command (optionally with a tag)");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "    b\377g) invoke '/bed' command (optionally with a tag)");
-						Term_putstr(5, 18, -1, TERM_GREEN, "Note: This macro depends on your current 'rogue_like_commands' option");
-						Term_putstr(5, 19, -1, TERM_GREEN, "      setting and will not work anymore if you change the keyset.");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    d\377g) invoke '/dress' command (optionally with a tag)");
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "    b\377g) invoke '/bed' command (optionally with a tag)");
+						l++;
+						Term_putstr(5, l++, -1, TERM_GREEN, "Note: This macro depends on your current 'rogue_like_commands' option");
+						Term_putstr(5, l++, -1, TERM_GREEN, "      setting and will not work anymore if you change the keyset.");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -7333,6 +7374,8 @@ Chain_Macro:
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
+									/* Restore top line */
+									Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
@@ -7361,6 +7404,8 @@ Chain_Macro:
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
+									/* Restore top line */
+									Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
@@ -7383,9 +7428,11 @@ Chain_Macro:
 						/* exit? */
 						if (i == -2) continue;
 
-						clear_from(10);
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
+						l = ystart + 2;
+						clear_from(l);
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
+						l += 4;
+						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
 
 						j = choice;
 						choice = mw_equip;
@@ -7394,7 +7441,7 @@ Chain_Macro:
 
 					case mw_common:
 						force_normal = FALSE;
-						l = 8;
+						l = ystart;
 						//Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:"); --make room for one more entry instead
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                            :+:");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "b) repeat previous chat command or message                   :^P\\r");
@@ -7425,6 +7472,8 @@ Chain_Macro:
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -7449,8 +7498,8 @@ Chain_Macro:
 						case 'c': strcpy(buf2, ":/afk\\r"); break;
 						case 'd':
 							while (TRUE) {
-								clear_from(8);
-								l = 10;
+								clear_from(ystart);
+								l = ystart + 2;
 								Term_putstr(1, l++, -1, TERM_GREEN, "Please choose a type of word-of-recall:");
 								l++;
 								Term_putstr(1, l++, -1, TERM_L_GREEN, "a) just basic word-of-recall (in to max depth / back out again)  :/rec\\r");
@@ -7467,6 +7516,8 @@ Chain_Macro:
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
+										/* Restore top line */
+										Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
@@ -7517,8 +7568,8 @@ Chain_Macro:
 						case 'f': strcpy(buf2, ":/shout\\r"); break;
 						case 'g':
 							while (TRUE) {
-								clear_from(8);
-								l = 10;
+								clear_from(ystart);
+								l = ystart + 2;
 								Term_putstr(2, l++, -1, TERM_GREEN, "Select one of the following:");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "a) fire equipped shooter at closest enemy                    \\e)*tf-");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) inscribe ammo/trap payload to auto pickup+merge+load+@m0  {-!=LM@m0\\r");
@@ -7536,6 +7587,8 @@ Chain_Macro:
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
+										/* Restore top line */
+										Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
@@ -7575,8 +7628,8 @@ Chain_Macro:
 						case 'h': strcpy(buf2, ":/? "); break;
 						case 'i':
 							while (TRUE) {
-								clear_from(8);
-								l = 10;
+								clear_from(ystart);
+								l = ystart + 2;
 								Term_putstr(10, l++, -1, TERM_GREEN, "Pick one item-swap inscription:");
 								l++;
 
@@ -7601,6 +7654,8 @@ Chain_Macro:
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
+										/* Restore top line */
+										Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
@@ -7649,31 +7704,31 @@ Chain_Macro:
 						case 'l': {
 							int delay, num = 1;
 
-							clear_from(8);
-							l = 9;
+							clear_from(ystart);
+							l = ystart + 1;
 							Term_putstr(2, l++, -1, TERM_GREEN, "Steal item(s) from shop, from the same stock slot you last interacted with:");
 							Term_putstr(4, l++, -1, TERM_GREEN, "As long as the latency-delay matches, the macro will stop automatically");
 							Term_putstr(4, l++, -1, TERM_GREEN, "after stealing the last item in the store slot.");
 							l++;
-							Term_putstr(10, l++, -1, TERM_YELLOW, "Steal up to how many (1-20)?");
+							Term_putstr(10, l, -1, TERM_YELLOW, "Steal up to how many (1-20)?");
 							/* default: suggest to just steal 1 item at a time */
 							sprintf(tmp, "1");
-							Term_gotoxy(40, l - 1);
+							Term_gotoxy(40, l);
 							if (askfor_aux(tmp, 50, 0)) {
 								num = atoi(tmp);
 								if (num < 1) num = 1;
 								if (num > 20) num = 20;
 							}
-							l++;
+							l += 2;
 
 							Term_putstr(10, l++, -1, TERM_YELLOW, "This macro needs a latency-based delay to work properly!");
 							Term_putstr(10, l++, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
 							Term_putstr(10, l++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
-							Term_putstr(10, l++, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+							Term_putstr(10, l, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
 
 							/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
 							sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
-							Term_gotoxy(52, l - 1);
+							Term_gotoxy(52, l);
 							if (askfor_aux(tmp, 50, 0)) {
 								delay = atoi(tmp);
 								if (delay % 100) delay += 100; //QoL hack for noobs who can't read
@@ -7702,11 +7757,12 @@ Chain_Macro:
 						break;
 
 					case mw_prfele:
-						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an elemental preference:");
-						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current elemental preference)");
-						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) None (random)");
-						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Lightning  \377Gd\377g) Frost  \377Ge\377g) Fire  \377Gf\377g) Acid  \377Gg\377g) Poison");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-g): ");
+						Term_putstr(5, l++, -1, TERM_GREEN, "Please choose an elemental preference:");
+						Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current elemental preference)");
+						Term_putstr(5, l++, -1, TERM_GREEN, "\377Gb\377g) None (random)");
+						Term_putstr(5, l++, -1, TERM_GREEN, "\377Gc\377g) Lightning  \377Gd\377g) Frost  \377Ge\377g) Fire  \377Gf\377g) Acid  \377Gg\377g) Poison");
+						l += 2;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Pick one (a-g): ");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -7717,6 +7773,8 @@ Chain_Macro:
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -7757,16 +7815,16 @@ Chain_Macro:
 					case mw_dir_tunnel:
 					case mw_dir_disarm:
 					case mw_dir_close:
-						clear_from(8);
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
-
-						Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
-						Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | /");
-						Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
-						Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\");
-						Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
-
-						Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9) ");
+						clear_from(ystart);
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
+						l += 2;
+						Term_putstr(25, l++, -1, TERM_L_GREEN, " 7  8  9");
+						Term_putstr(25, l++, -1, TERM_GREEN, "  \\ | /");
+						Term_putstr(25, l++, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
+						Term_putstr(25, l++, -1, TERM_GREEN, "  / | \\");
+						Term_putstr(25, l++, -1, TERM_L_GREEN, " 1  2  3");
+						l += 2;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Your choice? (1 to 9) ");
 
 						while (TRUE) {
 							target_dir = inkey();
@@ -7778,6 +7836,8 @@ Chain_Macro:
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -7825,10 +7885,11 @@ Chain_Macro:
 						bool bind = FALSE;
 
 						while (TRUE) {
-							clear_from(8);
-							Term_putstr(10, 10, -1, TERM_GREEN, "Please press the key carrying the macro you want to chain.");
-							Term_putstr(10, 11, -1, TERM_GREEN, "Pressing ESC will cancel and quit the macro-chaining process.");
-							Term_putstr(10, 13, -1, TERM_L_GREEN, "Trigger: ");
+							clear_from(ystart);
+							Term_putstr(10, l++, -1, TERM_GREEN, "Please press the key carrying the macro you want to chain.");
+							Term_putstr(10, l++, -1, TERM_GREEN, "Pressing ESC will cancel and quit the macro-chaining process.");
+							l++;
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "Trigger: ");
 
 							get_macro_trigger(buf);
 
@@ -7892,17 +7953,22 @@ Chain_Macro:
 							bind = TRUE;
 						}
 						/* Ask if we want to bind it to a key or continue chaining stuff */
-						Term_putstr(10, 18, -1, TERM_GREEN, "Press the key to bind the macro to. (ESC and % key cannot be used.)");
-						Term_putstr(10, 19, -1, TERM_GREEN, "Most keys can be combined with \377USHIFT\377g, \377UALT\377g or \377UCTRL\377g modifiers!");
+						l += 4;
+						l2 = l;
+						Term_putstr(10, l++, -1, TERM_GREEN, "Press the key to bind the macro to. (ESC and % key cannot be used.)");
+						Term_putstr(10, l++, -1, TERM_GREEN, "Most keys can be combined with \377USHIFT\377g, \377UALT\377g or \377UCTRL\377g modifiers!");
 						if (!bind) {
-							Term_putstr(10, 20, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
-							Term_putstr(5, 21, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining: ");
-						} else Term_putstr(5, 21, -1, TERM_L_GREEN, "Press the key to bind the macro to: ");
+							Term_putstr(10, l++, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
+							Term_putstr(5, l, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining: ");
+						} else {
+							l++;
+							Term_putstr(5, l, -1, TERM_L_GREEN, "Press the key to bind the macro to: ");
+						}
 
 						while (TRUE) {
 							/* Get a macro trigger */
-							Term_putstr(67, 21, -1, TERM_WHITE, "  ");//45
-							Term_gotoxy(67, 21);
+							Term_putstr(67, l, -1, TERM_WHITE, "  ");//45
+							Term_gotoxy(67, l);
 							get_macro_trigger(buf);
 
 							/* choose proper macro type, and bind it to key */
@@ -7929,20 +7995,21 @@ Chain_Macro:
 								   until the server tells the client that the item has been successfully equipped.
 								   Example: Polymorph into a form that has a certain spell available to cast.
 								   The casting needs to wait until the server tells us that we successfully polymorphed. */
-								clear_from(18);
+								clear_from(l2++);
 								if (should_wait) {
-									Term_putstr(10, 19, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
-									Term_putstr(10, 20, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
+									Term_putstr(10, l2++, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
+									Term_putstr(10, l2++, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
 								} else {
-									Term_putstr(10, 19, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
-									Term_putstr(10, 20, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
+									Term_putstr(10, l2++, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
+									Term_putstr(10, l2++, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
 								}
-								Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
-								Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+								l2++;
+								Term_putstr(10, l2, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
 
 								/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
 								sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
-								Term_gotoxy(52, 23);
+								Term_gotoxy(52, l);
 								if (askfor_aux(tmp, 50, 0)) {
 									delay = atoi(tmp);
 									if (delay % 100) delay += 100; //QoL hack for noobs who can't read
@@ -8003,7 +8070,7 @@ Chain_Macro:
 
 					/* might input a really long line? */
 					if (choice == mw_custom) {
-						Term_gotoxy(5, 17);
+						Term_gotoxy(5, ystart + 9);
 
 						/* Get an item/spell name */
 						strcpy(buf, "");
@@ -8013,7 +8080,7 @@ Chain_Macro:
 						}
 					}
 					else if (choice == mw_slash) {
-						Term_gotoxy(5, 17);
+						Term_gotoxy(5, ystart + 9);
 
 						/* Get an item/spell name */
 						strcpy(buf, "");
@@ -8027,7 +8094,7 @@ Chain_Macro:
 					else if (choice == mw_mimicidx) {
 						while (TRUE) {
 							/* Get power slot */
-							Term_gotoxy(47, 16);
+							Term_gotoxy(47, ystart + 8);
 							strcpy(buf, "");
 							if (!askfor_aux(buf, 159, 0)) {
 								i = -2;
@@ -8046,10 +8113,10 @@ Chain_Macro:
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm &&
 					    choice != mw_stance && choice != mw_common && choice != mw_dir_run && choice != mw_dir_tunnel &&
 					    choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close && choice != mw_prfele) {
-						if (choice == mw_load) Term_gotoxy(23, 16);
-						else if (choice == mw_poly) Term_gotoxy(47, 19);
-						else if (choice == mw_option) Term_gotoxy(30, 12);
-						else Term_gotoxy(47, 16);
+						if (choice == mw_load) Term_gotoxy(23, ystart + 8);
+						else if (choice == mw_poly) Term_gotoxy(47, ystart + 10);
+						else if (choice == mw_option) Term_gotoxy(30, ystart + 4);
+						else Term_gotoxy(47, ystart + 8);
 
 						/* Get an item/spell name */
 						strcpy(buf, "");
@@ -8351,23 +8418,26 @@ Chain_Macro:
 					    ) {
 						while (TRUE) {
 							i = 1; //clearing it in case it was set to -3 below
-							clear_from(8);
-							Term_putstr(10, 8, -1, TERM_GREEN, "Please choose the targetting method:");
+							clear_from(ystart);
+							l = ystart + 1;
+							Term_putstr(10, l++, -1, TERM_GREEN, "Please choose the targetting method:");
+							l++;
 
-							//Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
-							Term_putstr(10, 10, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
-							Term_putstr(10, 11, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
-							Term_putstr(10, 12, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
-							Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
-							Term_putstr(10, 14, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
-							Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise target own grid.");
-							Term_putstr(10, 16, -1, TERM_L_GREEN, "d) Fire into a fixed direction or prompt for direction.");
-							Term_putstr(10, 17, -1, TERM_L_GREEN, "e) Target own grid (ie yourself).");
+							//Term_putstr(10, l++, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "   otherwise target own grid.");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "d) Fire into a fixed direction or prompt for direction.");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "e) Target own grid (ie yourself).");
+							l++;
 
-							Term_putstr(10, 19, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
-							Term_putstr(10, 20, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
-							Term_putstr(10, 21, -1, TERM_L_GREEN, "g) Target most wounded friendly player,");
-							Term_putstr(10, 22, -1, TERM_L_GREEN, "   target own grid instead if no player is nearby.");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "g) Target most wounded friendly player,");
+							Term_putstr(10, l++, -1, TERM_L_GREEN, "   target own grid instead if no player is nearby.");
 
 							while (TRUE) {
 								switch (choice = inkey()) {
@@ -8379,6 +8449,8 @@ Chain_Macro:
 								case ':': /* Allow chatting */
 									cmd_message();
 									inkey_msg = TRUE; /* And suppress macros again.. */
+									/* Restore top line */
+									Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
@@ -8398,18 +8470,21 @@ Chain_Macro:
 
 							/* Get a specific fixed direction */
 							if (choice == 'd') {
-								clear_from(8);
-								Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction or '%':");
+								clear_from(ystart);
+								l = ystart + 2;
+								Term_putstr(10, l++, -1, TERM_GREEN, "Please pick the specific, fixed direction or '%':");
+								l += 2;
 
-								Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
-								Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | / ");
-								Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
-								//Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G?\377g = 'Prompt for direction each time'");
-								Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G%\377g = 'Prompt for direction each time'");
-								Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
+								Term_putstr(25, l++, -1, TERM_L_GREEN, " 7  8  9");
+								Term_putstr(25, l++, -1, TERM_GREEN, "  \\ | / ");
+								Term_putstr(25, l++, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
+								//Term_putstr(25, l++, -1, TERM_GREEN, "  / | \\         \377G?\377g = 'Prompt for direction each time'");
+								Term_putstr(25, l++, -1, TERM_GREEN, "  / | \\         \377G%\377g = 'Prompt for direction each time'");
+								Term_putstr(25, l++, -1, TERM_L_GREEN, " 1  2  3");
+								l += 2;
 
-								//Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '?') ");
-								Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '%') ");
+								//Term_putstr(15, l++, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '?') ");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '%') ");
 
 //#if 0 /* No - this will break if the user has any kind of macro on the key already. Eg on his '?' key, and then presses '?' here. Need another solution. */
 #if 1 /* Actually we need this, but we will replace ? by %, so it's guaranteedly a macro-free key. */
@@ -8427,6 +8502,8 @@ Chain_Macro:
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
+										/* Restore top line */
+										Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
@@ -8492,20 +8569,26 @@ Chain_Macro:
 					i++;
 					break;
 				case 2:
-					Term_putstr(10, 9, -1, TERM_GREEN, "In this final step, press the key you would like");
-					Term_putstr(10, 10, -1, TERM_GREEN, "to bind the macro to. (ESC and % key cannot be used.)");
-					Term_putstr(10, 11, -1, TERM_GREEN, "You should use keys that have no other purpose!");
-					Term_putstr(10, 12, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12 and unused number pad keys.");
-					//Term_putstr(10, 14, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
-					Term_putstr(10, 14, -1, TERM_GREEN, "Most keys can be combined with \377USHIFT\377g, \377UALT\377g or \377UCTRL\377g modifiers!");
-					Term_putstr(10, 16, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
-					Term_putstr(10, 17, -1, TERM_GREEN, "By doing this you can combine multiple macros into one hotkey.");
-					Term_putstr(5, 19, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining: ");
+					l = ystart + 1;
+					Term_putstr(10, l++, -1, TERM_GREEN, "In this final step, press the key you would like");
+					Term_putstr(10, l++, -1, TERM_GREEN, "to bind the macro to. (ESC and % key cannot be used.)");
+					Term_putstr(10, l++, -1, TERM_GREEN, "You should use keys that have no other purpose!");
+					Term_putstr(10, l++, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12 and unused number pad keys.");
+					l++;
+					//Term_putstr(10, l++, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
+					Term_putstr(10, l++, -1, TERM_GREEN, "Most keys can be combined with \377USHIFT\377g, \377UALT\377g or \377UCTRL\377g modifiers!");
+					l++;
+					Term_putstr(10, l++, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
+					Term_putstr(10, l++, -1, TERM_GREEN, "By doing this you can combine multiple macros into one hotkey.");
+					l++;
+					Term_putstr(5, l, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining: ");
 
 					while (TRUE) {
+						l2 = l;
+
 						/* Get a macro trigger */
-						Term_putstr(67, 19, -1, TERM_WHITE, "  ");//45
-						Term_gotoxy(67, 19);
+						Term_putstr(67, l2, -1, TERM_WHITE, "  ");//45
+						Term_gotoxy(67, l2);
 						get_macro_trigger(buf);
 
 						/* choose proper macro type, and bind it to key */
@@ -8542,20 +8625,21 @@ Chain_Macro:
 							   until the server tells the client that the item has been successfully equipped.
 							   Example: Polymorph into a form that has a certain spell available to cast.
 							   The casting needs to wait until the server tells us that we successfully polymorphed. */
-							clear_from(19);
+							clear_from(l2);
 							if (should_wait) {
-								Term_putstr(10, 19, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
-								Term_putstr(10, 20, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
 							} else {
-								Term_putstr(10, 19, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
-								Term_putstr(10, 20, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
 							}
-							Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
-							Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+							Term_putstr(10, l2++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+							l2++;
+							Term_putstr(10, l2, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
 
 							/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
 							sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
-							Term_gotoxy(52, 23);
+							Term_gotoxy(52, l2);
 							if (askfor_aux(tmp, 50, 0)) {
 								delay = atoi(tmp);
 								if (delay % 100) delay += 100; //QoL hack for noobs who can't read
@@ -9519,6 +9603,7 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 
 void display_account_information(void) {
 	int l = 3;
+
 	if (!acc_opt_screen) return;
 
 	if (acc_got_info) {
@@ -9579,12 +9664,13 @@ static void do_cmd_options_acc(void) {
 	char old_pass[PASSWORD_LEN], new_pass[PASSWORD_LEN], con_pass[PASSWORD_LEN];
 	char tmp[PASSWORD_LEN];
 
-	acc_opt_screen = TRUE;
-	acc_got_info = FALSE;
-
 	/* suppress hybrid macros */
 	bool inkey_msg_old = inkey_msg;
 	inkey_msg = TRUE;
+
+
+	acc_opt_screen = TRUE;
+	acc_got_info = FALSE;
 
 	/* Get the account info */
 	Send_account_info();
@@ -10758,7 +10844,6 @@ errr options_dump(cptr fname) {
 	FILE *fff;
 	char buf[1024];
 
-
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
 
@@ -10767,6 +10852,7 @@ errr options_dump(cptr fname) {
 
 	if (fff) {
 		char buf2[1024];
+
 		fclose(fff);
 
 		/* Attempt to rename */
