@@ -3119,7 +3119,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				if (!((i >= 'A' && i <= 'Z') ||
 				    (i >= 'a' && i <= 'z') ||
 				    (i >= '0' && i <= '9') ||
-				    strchr(" .,-'&_$%~#<>|", i))) /* chars allowed for character name, */
+				    //strchr(" .,-'&_$%~#<>|", i))) /* chars allowed for character name, */
+				    strchr(" .,-'&_$%~#", i))) /* chars allowed for character name, */
 					i = '_';
 			}
 
@@ -12036,7 +12037,11 @@ void do_cmd_options(void) {
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377yc\377w)   Colour palette and colour blindness options");
 		l++;
 
+#ifdef WINDOWS
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UA\377w/\377UY\377w) Account Options / Re-copy user/scpt folders to user home folder.");
+#else
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UA\377w)   Account Options");
+#endif
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UI\377w)   Install sound/music pack from 7z-file you placed in your TomeNET folder");
 #ifdef WINDOWS
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377UC\377w/\377UU\377w) Check / Update the TomeNET Guide (downloads and reinits the Guide)");
@@ -12336,6 +12341,45 @@ void do_cmd_options(void) {
 		else if (k == 'I') do_cmd_options_install_audio_packs();
 
 		else if (k == 'c') do_cmd_options_colourblindness();
+
+#ifdef WINDOWS
+		else if (k == 'Y') {
+			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) { //ignore win_dontmoveuser here, as user asked for it deliberately
+				char out_val[1024];
+
+				/* Copy to 'scpt' folder */
+				/* make sure it exists (paranoia except if user did something very silyl) */
+				if (!check_dir(ANGBAND_DIR_SCPT)) {
+					mkdir(ANGBAND_DIR_SCPT);
+					c_msg_format("\377wCreated target folder %s.", ANGBAND_DIR_SCPT);
+				}
+				/* copy over the default files from the installation folder */
+				c_msg_format("\377wCopying %sscpt to %s.", ANGBAND_DIR, ANGBAND_DIR_SCPT);
+ #if 1 /* Copy in the background? */
+				WinExec(format("xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT), SW_NORMAL); //SW_HIDE);
+ #else /* Will timeout the client if LOTS of screenshots etc ^^ */
+				sprintf(out_val, "xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT);
+				system(out_val);
+ #endif
+
+				/* Copy to 'user' folder */
+				/* make sure it exists (paranoia except if user did something very silyl) */
+				if (!check_dir(ANGBAND_DIR_USER)) {
+					mkdir(ANGBAND_DIR_USER);
+					c_msg_format("\377wCreated target folder %s.", ANGBAND_DIR_USER);
+				}
+
+				/* copy over the default files from the installation folder */
+				c_msg_format("\377wCopying %suser to %s.", ANGBAND_DIR, ANGBAND_DIR_USER);
+ #if 1 /* Copy in the background? */
+				WinExec(format("xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "user", ANGBAND_DIR_USER), SW_NORMAL); //SW_HIDE);
+ #else /* Will timeout the client if LOTS of screenshots etc ^^ */
+				sprintf(out_val, "xcopy /I /E /Y /H /C %s%s \"%s\"", ANGBAND_DIR, "user", ANGBAND_DIR_USER);
+				system(out_val);
+ #endif
+			} else c_msg_print("\377yFailure: Environment variables HOMEDRIVE and/or HOMEPATH not available.");
+		}
+#endif
 
 		/* Unknown option */
 		else {

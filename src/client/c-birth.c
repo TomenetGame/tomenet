@@ -1973,7 +1973,7 @@ void get_char_name(void) {
 	put_str("Name        :", LOGIN_ROW + 4, 1);
 	put_str("Password    :", LOGIN_ROW + 5, 1);
 	c_put_str(TERM_SLATE, "Name and password are case-sensitive! Name must start on upper-case letter.", LOGIN_ROW + 7, 2);
-	c_put_str(TERM_SLATE, "The name may also contain numbers, spaces and these symbols: .,-'&_$%~#<>|", LOGIN_ROW + 8, 2);
+	c_put_str(TERM_SLATE, "The name may also contain numbers, spaces and these symbols: .,-'&_$%~#", LOGIN_ROW + 8, 2);
 #endif
 	/* Dump the default name */
 #ifndef SIMPLE_LOGIN

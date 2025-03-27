@@ -972,7 +972,8 @@ static void Trim_name(char *nick_name) {
 		if (!((*ptr >= 'A' && *ptr <= 'Z') ||
 		    (*ptr >= 'a' && *ptr <= 'z') ||
 		    (*ptr >= '0' && *ptr <= '9') ||
-		    strchr(" .,-'&_$%~#<>|", *ptr))) /* chars allowed for character name, */
+		    //strchr(" .,-'&_$%~#<>|", *ptr))) /* chars allowed for character name, */
+		    strchr(" .,-'&_$%~#", *ptr))) /* chars allowed for character name, */
 			*ptr = '_'; /* but they become _ in savefile name */
 	}
 }
