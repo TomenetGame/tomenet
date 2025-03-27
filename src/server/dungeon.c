@@ -9624,7 +9624,7 @@ void process_player_change_wpos(int Ind) {
 
 	/* Did we take a staircase into/inside a one-way dungeon? */
 	took_oneway_stairs = ((p_ptr->new_level_method == LEVEL_UP || p_ptr->new_level_method == LEVEL_DOWN)
-	    && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) || (d_ptr->flags2 & DF2_IRON)));
+	    && d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) || (d_ptr->flags2 & DF2_IRON)));
 
 	/* Did we use a level-changing method that should avoid any no-tele-vaults and nests/pits? */
 	dont_end_up_in_ntvault_nestpit = ((p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
