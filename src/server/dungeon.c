@@ -9105,11 +9105,10 @@ void process_player_change_wpos(int Ind) {
 #ifdef USE_SOUND_2010
 	bool travel_ambient = FALSE;
 #endif
-	bool df = FALSE;
-
+	bool df = FALSE, took_oneway_stairs, dont_end_up_in_ntvault_nestpit;
 	monster_type *m_ptr;
 	cave_type **mcave;
-
+	struct dungeon_type *d_ptr = getdungeon(wpos);
 
 	/* Prevent exploiting /undoskills by invoking it right before each level-up:
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
@@ -9452,15 +9451,17 @@ void process_player_change_wpos(int Ind) {
 
 	/* Determine starting location */
 	switch (p_ptr->new_level_method) {
-	/* Climbed down */
+	/* Recalled down */
 	case LEVEL_RECALL_DOWN:
+	/* Took staircase down */
 	case LEVEL_DOWN:
 		starty = level_down_y(wpos);
 		startx = level_down_x(wpos);
 		break;
 
-	/* Climbed up */
+	/* Recalled up */
 	case LEVEL_RECALL_UP:
+	/* Took staircase up */
 	case LEVEL_UP:
 		starty = level_up_y(wpos);
 		startx = level_up_x(wpos);
@@ -9621,6 +9622,16 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 
+	/* Did we take a staircase into/inside a one-way dungeon? */
+	took_oneway_stairs = ((p_ptr->new_level_method == LEVEL_UP || p_ptr->new_level_method == LEVEL_DOWN)
+	    && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) || (d_ptr->flags2 & DF2_IRON)));
+
+	/* Did we use a level-changing method that should avoid any no-tele-vaults and nests/pits? */
+	dont_end_up_in_ntvault_nestpit = ((p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
+	    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND ||
+	    p_ptr->new_level_method == LEVEL_PROB_TRAVEL || took_oneway_stairs)
+	    && !(p_ptr->global_event_temp & PEVF_STCK_OK));
+
 	//s_printf("finding area (%d,%d)\n", startx, starty);
 	/* Place the player in an empty space */
 	for (j = 0; j < 5000; j++) {
@@ -9639,13 +9650,9 @@ void process_player_change_wpos(int Ind) {
 			if (!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method == LEVEL_HOUSE)) continue;
 		}
 
-		/* Prevent recalling or prob-travelling into no-tele vaults and monster nests! - C. Blue */
-		if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
-		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
-		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND ||
-		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL)
-		    && !(p_ptr->global_event_temp & PEVF_STCK_OK))
-			continue;
+		/* Prevent recalling or prob-travelling into no-tele vaults and monster nests! - C. Blue
+		   And also prevent taking staircases into these if we are in a one-way-only dungeon. */
+		if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) && dont_end_up_in_ntvault_nestpit) continue;
 
 		/* Prevent landing onto a store entrance */
 		if (zcave[y][x].feat == FEAT_SHOP) continue;
@@ -9672,12 +9679,8 @@ void process_player_change_wpos(int Ind) {
 		x = startx;
 		y = starty;
 
-		/* REALLY don't recall/probtravel into no-tele.. */
-		if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
-		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
-		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND ||
-		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL)
-		    && !(p_ptr->global_event_temp & PEVF_STCK_OK)) {
+		/* REALLY don't recall/probtravel into no-tele.. | and also don't take one-way staircase now */
+		if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) && dont_end_up_in_ntvault_nestpit) {
 			for (starty = 1; starty < p_ptr->cur_hgt - 1; starty++) {
 				for (startx = 1; startx < p_ptr->cur_wid - 1; startx++) {
 					if (!(zcave[starty][startx].info & CAVE_STCK) &&
