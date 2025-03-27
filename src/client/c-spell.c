@@ -1862,7 +1862,7 @@ void do_runecraft() {
 		if (c_cfg.always_show_lists) {
 			redraw = TRUE;
 			Term_save();
-			exec_lua(0, format("return rcraft_prt(%d, %d, %d)", u, 0));
+			exec_lua(0, format("return rcraft_prt(%d, %d)", u, 0));
 		}
 		done = FALSE;
 		strcpy(prompt, string_exec_lua(0, format("return rcraft_com(%d)", u)));
@@ -1884,7 +1884,7 @@ void do_runecraft() {
 				u = u_prev[--step];
 				if (redraw) {
 					Term_restore();
-					exec_lua(0, format("return rcraft_prt(%d, %d, %d)", u, 0));
+					exec_lua(0, format("return rcraft_prt(%d, %d)", u, 0));
 				}
 				strcpy(prompt, string_exec_lua(0, format("return rcraft_com(%d)", u)));
 				continue;
@@ -1893,7 +1893,7 @@ void do_runecraft() {
 				if (!redraw) {
 					redraw = TRUE;
 					Term_save();
-					exec_lua(0, format("return rcraft_prt(%d, %d, %d)", u, 0));
+					exec_lua(0, format("return rcraft_prt(%d, %d)", u, 0));
 				} else {
 					redraw = FALSE;
 					Term_load();
