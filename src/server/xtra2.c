@@ -9528,7 +9528,8 @@ void player_death(int Ind) {
 			penalty = TRUE;
 
 			/* Global message? */
-			if (l_ptr && (l_ptr->flags2 & LF2_NO_MARTYR)) { //abuse this flag to check for actual mirror fight
+			//if (l_ptr && (l_ptr->flags2 & LF2_NO_MARTYR)) { //abuse this flag to check for actual mirror fight
+			if (!strcmp(p_ptr->died_from, "your mirror image")) { //in theory, death via DoT (bleed, poison) won't register as inflicted by the mirror image this way...
 				/* Note: AMC defeat msg uses \376 instead of \374, but mirror-success msg is actually \374 so this one too for now. */
 				msg_broadcast_format(0, "\374\377A** %s was defeated by %s mirror image! **", p_ptr->name, p_ptr->male ? "His" : "Her");
 				//s_printf("MIRROR_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
