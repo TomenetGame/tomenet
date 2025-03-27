@@ -5167,130 +5167,130 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			i++;
 
 			switch (lpCmdLine[i]) {
-				case 'C': /* compatibility mode */
-					server_protocol = 1;
-					break;
-				case 'F':
-					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_client_fps);
-					break;
-				case 'h':
-					/* Attempt to print out some usage information */
-					if (initialized) /* We're called AFTER init_windows()? Then we'll appear in a graphical windows message window, with annoying formatting :p */
-						/* Message box on Windows has a default limit of characters, we need to cut out the 4
-						   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
-						plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
-						    longVersion,
-						    os_version,
-						    //"Usage:    tomenet [options] [server]",
-						    "Example: tomenet -lMorgoth MorgyPass",
-						    "                              -p18348 europe.tomenet.eu",
-						    /* "  -h              Display this help",
-						    "  -C              Compatibility mode for OLD servers",
-						    "  -F              Client FPS", */
-						    "  -I              force IME off (for CJK languages)",
-						    "  -i               force IME on (for CJK languages)",
+			case 'C': /* compatibility mode */
+				server_protocol = 1;
+				break;
+			case 'F':
+				i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_client_fps);
+				break;
+			case 'h':
+				/* Attempt to print out some usage information */
+				if (initialized) /* We're called AFTER init_windows()? Then we'll appear in a graphical windows message window, with annoying formatting :p */
+					/* Message box on Windows has a default limit of characters, we need to cut out the 4
+					   commented-out lines or it won't fit. Adding empty lines however seems to be no problem. */
+					plog(format("%s\nRunning on %s.\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					    longVersion,
+					    os_version,
+					    //"Usage:    tomenet [options] [server]",
+					    "Example: tomenet -lMorgoth MorgyPass",
+					    "                              -p18348 europe.tomenet.eu",
+					    /* "  -h              Display this help",
+					    "  -C              Compatibility mode for OLD servers",
+					    "  -F              Client FPS", */
+					    "  -I              force IME off (for CJK languages)",
+					    "  -i               force IME on (for CJK languages)",
 #ifdef USE_LOGFONT
-						    "  -L              Use LOGFONT (Windows-internal font)",
+					    "  -L              Use LOGFONT (Windows-internal font)",
 #endif
-						    "  -l<name> <pwd>       Login crecedentials",
-						    "  -N<name>       character name",
-						    "  -R<name>       char name, auto-reincarnate",
-						    "  -p<num>         change game Port number",
-						    "  -P<path>        set the lib directory Path",
-						    "  -k              don't disable numlock on startup",
-						    "  -m             skip message of the day window",
-						    "  -q              disable all audio ('quiet mode')",
-						    /* "  -u              disable automatic lua updates", */
-						    "  -w             disable client-side weather effects",
-						    "  -v              save chat log on exit",
-						    "  -V              save chat+message log on exit",
-						    "  -x              don't save chat/message log on exit",
-						    "  -a/-g/-G       switch to ASCII/gfx/dualgfx mode"));
-					else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
-						plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
-						    longVersion,
-						    os_version,
-						    "Usage:    tomenet [options] [server]",
-						    "Example:  tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu",
-						    /* "  -h              Display this help",
-						    "  -C              Compatibility mode for OLD servers",
-						    "  -F              Client FPS", */
-						    "  -I              force IME off (for CJK languages)",
-						    "  -i              force IME on (for CJK languages)",
+					    "  -l<name> <pwd>       Login crecedentials",
+					    "  -N<name>       character name",
+					    "  -R<name>       char name, auto-reincarnate",
+					    "  -p<num>         change game Port number",
+					    "  -P<path>        set the lib directory Path",
+					    "  -k              don't disable numlock on startup",
+					    "  -m             skip message of the day window",
+					    "  -q              disable all audio ('quiet mode')",
+					    /* "  -u              disable automatic lua updates", */
+					    "  -w             disable client-side weather effects",
+					    "  -v              save chat log on exit",
+					    "  -V              save chat+message log on exit",
+					    "  -x              don't save chat/message log on exit",
+					    "  -a/-g/-G       switch to ASCII/gfx/dualgfx mode"));
+				else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
+					plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					    longVersion,
+					    os_version,
+					    "Usage:    tomenet [options] [server]",
+					    "Example:  tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu",
+					    /* "  -h              Display this help",
+					    "  -C              Compatibility mode for OLD servers",
+					    "  -F              Client FPS", */
+					    "  -I              force IME off (for CJK languages)",
+					    "  -i              force IME on (for CJK languages)",
 #ifdef USE_LOGFONT
-						    "  -L              Use LOGFONT (Windows-internal font)",
+					    "  -L              Use LOGFONT (Windows-internal font)",
 #endif
-						    "  -l<name> <pwd>  Login crecedentials",
-						    "  -N<name>        character name",
-						    "  -R<name>        char name, auto-reincarnate",
-						    "  -p<num>         change game Port number",
-						    "  -P<path>        set the lib directory Path",
-						    "  -k              don't disable numlock on startup",
-						    "  -m              skip message of the day window",
-						    "  -q              disable all audio ('quiet mode')",
-						    // "  -u              disable automatic lua updates",
-						    "  -w              disable client-side weather effects",
-						    "  -v              save chat log on exit",
-						    "  -V              save chat+message log on exit",
-						    "  -x              don't save chat/message log on exit",
-						    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode"));
-					if (initialized) quit(NULL);
-					just_h = TRUE;
-					break;
-				case 'I':
-					disable_CS_IME = TRUE;
-					break;
-				case 'i':
-					enable_CS_IME = TRUE;
-					break;
+					    "  -l<name> <pwd>  Login crecedentials",
+					    "  -N<name>        character name",
+					    "  -R<name>        char name, auto-reincarnate",
+					    "  -p<num>         change game Port number",
+					    "  -P<path>        set the lib directory Path",
+					    "  -k              don't disable numlock on startup",
+					    "  -m              skip message of the day window",
+					    "  -q              disable all audio ('quiet mode')",
+					    // "  -u              disable automatic lua updates",
+					    "  -w              disable client-side weather effects",
+					    "  -v              save chat log on exit",
+					    "  -V              save chat+message log on exit",
+					    "  -x              don't save chat/message log on exit",
+					    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode"));
+				if (initialized) quit(NULL);
+				just_h = TRUE;
+				break;
+			case 'I':
+				disable_CS_IME = TRUE;
+				break;
+			case 'i':
+				enable_CS_IME = TRUE;
+				break;
 #ifdef USE_LOGFONT
-				case 'L':
-					use_logfont = TRUE;
-					break;
+			case 'L':
+				use_logfont = TRUE;
+				break;
 #endif
-				case 'l': /* account name & password */
-					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);
-					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS, FALSE);
-					done = TRUE;
-					break;
-				case 'R':
-					auto_reincarnation = TRUE;
-				case 'N': /* character name */
-					i += cmd_get_string(&lpCmdLine[i + 1], cname, MAX_CHARS, quoted);
-					break;
-				case 'p': /* port */
-					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_game_port);
-					break;
-				case 'P': /* lib directory path */
-					i += cmd_get_string(&lpCmdLine[i + 1], path, 1024, quoted);
-					break;
-				case 'q':
-					quiet_mode = TRUE;
-					break;
-				case 'w':
-					noweather_mode = TRUE;
-					break;
-				case 'u':
-					no_lua_updates = TRUE;
-					break;
-				case 'k':
-					disable_numlock = FALSE;
-					break;
-				case 'm':
-					skip_motd = TRUE;
-					break;
-				case 'v':
-					save_chat = 1;
-					break;
-				case 'V':
-					save_chat = 2;
-					break;
-				case 'x':
-					save_chat = 3;
-					break;
-				case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
-				case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
-				case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+			case 'l': /* account name & password */
+				i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);
+				i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS, FALSE);
+				done = TRUE;
+				break;
+			case 'R':
+				auto_reincarnation = TRUE;
+			case 'N': /* character name */
+				i += cmd_get_string(&lpCmdLine[i + 1], cname, MAX_CHARS, quoted);
+				break;
+			case 'p': /* port */
+				i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_game_port);
+				break;
+			case 'P': /* lib directory path */
+				i += cmd_get_string(&lpCmdLine[i + 1], path, 1024, quoted);
+				break;
+			case 'q':
+				quiet_mode = TRUE;
+				break;
+			case 'w':
+				noweather_mode = TRUE;
+				break;
+			case 'u':
+				no_lua_updates = TRUE;
+				break;
+			case 'k':
+				disable_numlock = FALSE;
+				break;
+			case 'm':
+				skip_motd = TRUE;
+				break;
+			case 'v':
+				save_chat = 1;
+				break;
+			case 'V':
+				save_chat = 2;
+				break;
+			case 'x':
+				save_chat = 3;
+				break;
+			case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
+			case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
+			case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 			}
 			quoted = FALSE;
 		} else if (lpCmdLine[i] == ' ') {
