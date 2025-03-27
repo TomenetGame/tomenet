@@ -5285,7 +5285,7 @@ static void get_macro_trigger(char *buf) {
 //#define FORGET_MACRO_VISUALS
 void interact_macros(void) {
 	int i, j = 0, l, l2, chain_type;
-	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
+	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024], buf_fileset[1024];
 	char fff[1024], t_key[10], choice;
 	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
 	bool were_recording = FALSE;
@@ -6720,6 +6720,7 @@ void interact_macros(void) {
 #define mw_dir_close 'u'
 #define mw_LAST 'u'
 #define mw_chain 'Z'
+#define mw_fileset 'S'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
@@ -6785,7 +6786,9 @@ Chain_Macro:
 					Term_putstr(6, l++, -1, TERM_L_GREEN, "n\377w/\377GN\377w/\377GZ) Slash command. \377w/\377G Custom action ('%a'). \377w/\377G Chain existing macros.");
 					Term_putstr(6, l++, -1, TERM_L_GREEN, "o\377w/\377GO\377w/\377Gp) Load a macro file. \377w/\377G Modify an option. \377w/\377G Change equipment.");
 					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
-
+#ifdef TEST_CLIENT
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "S)   Create a switchable multi-macrofile set.");
+#endif
 
 					while (TRUE) {
 						/* Hack: Hide the cursor */
@@ -6814,7 +6817,11 @@ Chain_Macro:
 							    choice != 'C' && choice != 'D' && choice != 'E' &&
 							    choice != 'G' && choice != 'H' && choice != 'I' && choice != 'J' &&
 							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N' && choice != 'O' &&
-							    choice != 'Z') {
+							    choice != 'Z'
+#ifdef TEST_CLIENT
+							    && choice != 'S'
+#endif
+							    ) {
 								//i = -1;
 								continue;
 							}
@@ -8060,6 +8067,9 @@ Chain_Macro:
 						i = -2;
 						continue;
 						}
+
+					case mw_fileset:
+						break;
 					}
 
 
@@ -8112,7 +8122,8 @@ Chain_Macro:
 					/* no need for inputting an item/spell to use with the macro? */
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm &&
 					    choice != mw_stance && choice != mw_common && choice != mw_dir_run && choice != mw_dir_tunnel &&
-					    choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close && choice != mw_prfele) {
+					    choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close && choice != mw_prfele &&
+					    choice != mw_fileset) {
 						if (choice == mw_load) Term_gotoxy(23, ystart + 8);
 						else if (choice == mw_poly) Term_gotoxy(47, ystart + 10);
 						else if (choice == mw_option) Term_gotoxy(30, ystart + 4);
@@ -8138,7 +8149,7 @@ Chain_Macro:
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
 					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common &&
 					    choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash &&
-					    choice != mw_dir_close && choice != mw_prfele) {
+					    choice != mw_dir_close && choice != mw_prfele && choice != mw_fileset) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
