@@ -3559,7 +3559,7 @@ void do_cmd_options_sfx_sdl(void) {
 	/* Check if the file exists */
 	fff = my_fopen(buf, "r");
 	if (!fff) {
-		c_msg_print("\377oError: File 'sound.cfg' not found.");
+		c_msg_format("\377oError: Cannot read sound config file '%s'.", buf);
 		return;
 	}
 	fclose(fff);
@@ -3715,20 +3715,20 @@ void do_cmd_options_sfx_sdl(void) {
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
-				c_msg_print("Error: File 'sound.cfg' not found.");
+				c_msg_format("Error: Cannot read sound config file '%s'.", buf);
 				jukebox_sfx_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
-				c_msg_print("Error: Cannot write to disabled-sound config file.");
+				c_msg_format("Error: Cannot write to disabled-sound config file '%s'.", buf2);
 				jukebox_sfx_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
-					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'sound.cfg'.");
+					if (ferror(fff)) c_msg_format("Error: Failed to read from sound config file '%s'.", buf);
 					break;
 				}
 
@@ -3813,20 +3813,20 @@ void do_cmd_options_sfx_sdl(void) {
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
-				c_msg_print("Error: File 'sound.cfg' not found.");
+				c_msg_format("Error: Cannot read sound config file '%s'.", buf);
 				jukebox_sfx_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
-				c_msg_print("Error: Cannot write to sound volume config file.");
+				c_msg_format("Error: Cannot write to sound volume config file '%s'.", buf2);
 				jukebox_sfx_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
-					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'sound.cfg'.");
+					if (ferror(fff)) c_msg_format("Error: Failed to read from sound config file '%s'.", buf);
 					jukebox_sfx_screen = FALSE;
 					topline_icky = FALSE;
 					break;
@@ -4170,7 +4170,7 @@ void do_cmd_options_mus_sdl(void) {
 	/* Check if the file exists */
 	fff = my_fopen(buf, "r");
 	if (!fff) {
-		c_msg_print("\377oError: File 'music.cfg' not found.");
+		c_msg_format("\377oError: Cannot read music config file '%s'.", buf);
 		return;
 	}
 	fclose(fff);
@@ -4509,20 +4509,20 @@ void do_cmd_options_mus_sdl(void) {
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
-				c_msg_print("Error: File 'music.cfg' not found.");
+				c_msg_format("Error: Cannot read music config file '%s'.", buf);
 				jukebox_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
-				c_msg_print("Error: Cannot write to disabled-music config file.");
+				c_msg_format("Error: Cannot write to disabled-music config file '%s'.", buf2);
 				jukebox_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
-					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'music.cfg'.");
+					if (ferror(fff)) c_msg_format("Error: Failed to read from music config file '%s'.", buf);
 					break;
 				}
 
@@ -4607,20 +4607,20 @@ void do_cmd_options_mus_sdl(void) {
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
-				c_msg_print("Error: File 'music.cfg' not found.");
+				c_msg_format("Error: Cannot read music config file '%s'.", buf);
 				jukebox_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			if (!fff2) {
-				c_msg_print("Error: Cannot write to music volume config file.");
+				c_msg_format("Error: Cannot write to music volume config file '%s'.", buf2);
 				jukebox_screen = FALSE;
 				topline_icky = FALSE;
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
-					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'music.cfg'.");
+					if (ferror(fff)) c_msg_format("Error: Failed to read from music config file '%s'.", buf);
 					break;
 				}
 
