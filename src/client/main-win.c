@@ -1554,7 +1554,7 @@ void save_prefs(void) {
 
 	/* Delete deprecated entries now that they have been copy-converted. */
 	if (convert_ini) {
-		printf("Writing back window-parameter conversions to .ini file.\n");
+		logprint("Writing back window-parameter conversions to .ini file.\n");
 		WritePrivateProfileString("Main window", NULL, NULL, ini_file);
 		WritePrivateProfileString("Mirror window", NULL, NULL, ini_file);
 		WritePrivateProfileString("Recall window", NULL, NULL, ini_file);
@@ -4885,7 +4885,7 @@ void init_stuff(void) {
 	if (!fp0) {
 		char path2[1024];
 
-		printf("No file '%s' found. Trying to use default template.\n", path);
+		logprint(format("No file '%s' found. Trying to use default template.\n", path));
 		GetModuleFileName(hInstance, path2, 512);
 		strcpy(path2 + strlen(path2) - 4, ".ini.default");
 
@@ -4912,7 +4912,7 @@ void init_stuff(void) {
 			fclose(fp2);
 			fclose(fp);
 #endif
-			printf("Successfully generated %s.\n", path);
+			logprint(format("Successfully generated %s.\n", path));
 		} else plog(format("Error: Neither %s nor %s exists", path, path2));
 	}
 
@@ -5286,7 +5286,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 #ifdef TILE_CACHE_SIZE
 			case 'T': disable_tile_cache = TRUE;
-				printf("Graphics tiles cache disabled.\n");
+				logprint("Graphics tiles cache disabled.\n");
 				break;
 #endif
 			}

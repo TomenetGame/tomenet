@@ -724,43 +724,43 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 				/* Add missing windows (added for older client versions that didn't have 7-9 yet) */
 				if (!found_window[0]) {
 					write_mangrc_aux(0, "Term-Main", config2);
-					printf("Added missing Term-Main window to config file.\n");
+					logprint("Added missing Term-Main window to config file.\n");
 				}
 				if (!found_window[1]) {
 					write_mangrc_aux(1, "Term-1", config2);
-					printf("Added missing Term-1 window to config file.\n");
+					logprint("Added missing Term-1 window to config file.\n");
 				}
 				if (!found_window[2]) {
 					write_mangrc_aux(2, "Term-2", config2);
-					printf("Added missing Term-2 window to config file.\n");
+					logprint("Added missing Term-2 window to config file.\n");
 				}
 				if (!found_window[3]) {
 					write_mangrc_aux(3, "Term-3", config2);
-					printf("Added missing Term-3 window to config file.\n");
+					logprint("Added missing Term-3 window to config file.\n");
 				}
 				if (!found_window[4]) {
 					write_mangrc_aux(4, "Term-4", config2);
-					printf("Added missing Term-4 window to config file.\n");
+					logprint("Added missing Term-4 window to config file.\n");
 				}
 				if (!found_window[5]) {
 					write_mangrc_aux(5, "Term-5", config2);
-					printf("Added missing Term-5 window to config file.\n");
+					logprint("Added missing Term-5 window to config file.\n");
 				}
 				if (!found_window[6]) {
 					write_mangrc_aux(6, "Term-6", config2);
-					printf("Added missing Term-6 window to config file.\n");
+					logprint("Added missing Term-6 window to config file.\n");
 				}
 				if (!found_window[7]) {
 					write_mangrc_aux(7, "Term-7", config2);
-					printf("Added missing Term-7 window to config file.\n");
+					logprint("Added missing Term-7 window to config file.\n");
 				}
 				if (!found_window[8]) {
 					write_mangrc_aux(8, "Term-8", config2);
-					printf("Added missing Term-8 window to config file.\n");
+					logprint("Added missing Term-8 window to config file.\n");
 				}
 				if (!found_window[9]) {
 					write_mangrc_aux(9, "Term-9", config2);
-					printf("Added missing Term-9 window to config file\n.");
+					logprint("Added missing Term-9 window to config file\n.");
 				}
 			}
 #endif
@@ -1176,7 +1176,7 @@ int main(int argc, char **argv) {
 		case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 		case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 		case 'T': disable_tile_cache = TRUE; //TILE_CACHE_SIZE
-			printf("Graphics tiles cache disabled.\n");
+			logprint("Graphics tiles cache disabled.\n");
 			break;
 		}
 
@@ -1227,7 +1227,7 @@ int main(int argc, char **argv) {
 	//also, ANGBAND_DIR_XTRA is not yet initialized at this point, if needed..
 		/* Print the name and help for each available module */
 		for (i = 0; i < (int)N_ELEMENTS(modules); i++)
-			printf("     %s   %s\n", modules[i].name, modules[i].help);
+			logprint(format("     %s   %s\n", modules[i].name, modules[i].help));
 #endif
 #endif
 
@@ -1310,7 +1310,7 @@ int main(int argc, char **argv) {
 	/* No visual module worked */
 	if (!done) {
 		Net_cleanup();
-		printf("Unable to initialize a display module!\n");
+		logprint("Unable to initialize a display module!\n");
 		exit(1);
 	}
 

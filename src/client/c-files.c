@@ -1167,7 +1167,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	if (!fp) {
 		if (!quiet) {
 			if (rl_connection_state == 1) c_message_add(format("\377yCould not open file %s", buf));
-			if (strcmp(ANGBAND_SYS, "gcu")) printf("Could not open file %s.\n", buf);
+			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Could not open file %s.\n", buf));
 		}
 		return(-1);
 	}
@@ -1178,7 +1178,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 		if (process_pref_file_aux_aux(buf2, fmt)) {
 			/* Useful error message */
 			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
-			if (strcmp(ANGBAND_SYS, "gcu")) printf("Error in '%s' parsing '%s'.\n", buf2, name);
+			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Error in '%s' parsing '%s'.\n", buf2, name));
 			//else if (rl_connection_state != 1) plog_fmt("Error in '%s' parsing '%s'.\n", buf2, name); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
 			//errors = TRUE;
 		}
@@ -1188,7 +1188,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 				c_msg_format("\377yThe mapping '%s' in '%s' maps non-wall feat", buf2, name);
 				c_msg_print("\377y to solid wall symbols (either 2 or 127), indicating that the mapping is broken!");
 			}
-			if (strcmp(ANGBAND_SYS, "gcu")) printf("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name);
+			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name));
 			else if (rl_connection_state != 1) plog_fmt("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name);
 			bad_solid_mapping = FALSE;
 		}
@@ -1201,13 +1201,13 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 			c_msg_format("\377yThe mapping in '%s' maps non-wall feats to", name);
 			c_msg_print("\377y solid wall symbols (either 2 or 127), indicating that the mapping is broken!");
 		}
-		if (strcmp(ANGBAND_SYS, "gcu")) printf("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name);
+		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name));
 		else if (rl_connection_state != 1) plog_fmt("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name);
 		bad_solid_mapping = FALSE;
 	}
 #endif
 	if (err == 2) {
-		if (strcmp(ANGBAND_SYS, "gcu")) printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
+		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Grave error: Couldn't allocate memory when parsing '%s'.\n", name));
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:
 		c_msg_format("\377R!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!", name);
 	} else err = 0;
@@ -1242,7 +1242,7 @@ errr process_pref_file(cptr name) {
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
-	if (strcmp(ANGBAND_SYS, "gcu")) printf("Processing prf file '%s'.\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
+	if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Processing prf file '%s'.\n", name)); //in GCU-only client this lands across the curses terminals instead of the console, pointless
 	return(process_pref_file_aux(buf, name, TRUE));
 }
 errr process_pref_file_manual(cptr name) {
@@ -1250,7 +1250,7 @@ errr process_pref_file_manual(cptr name) {
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
-	if (strcmp(ANGBAND_SYS, "gcu")) printf("Processing prf file '%s'.\n", name); //in GCU-only client this lands across the curses terminals instead of the console, pointless
+	if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Processing prf file '%s'.\n", name)); //in GCU-only client this lands across the curses terminals instead of the console, pointless
 	return(process_pref_file_aux(buf, name, FALSE));
 }
 
@@ -2738,7 +2738,7 @@ int check_guide_checksums(bool forced) {
 	if (system("sha256sum --version"))
 #endif
 	{
-		//printf("Warning: No sha256sum found, cannot auto-check guide for outdatedness.\n"); --could be spammy
+		//logprint("Warning: No sha256sum found, cannot auto-check guide for outdatedness.\n"); --could be spammy
 		guide_outdated = FALSE;
 		c_msg_print("\377yError verifying Guide version: 'sha256sum' is not installed.");
 		return(1);

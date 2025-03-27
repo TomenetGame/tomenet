@@ -3525,7 +3525,7 @@ int init_graphics_x11(void) {
 	/* Ensure the BMP isn't empty or too small */
 	if (width < graphics_tile_wid || height < graphics_tile_hgt) {
 		sprintf(use_graphics_errstr, "Invalid image dimensions (width x height): %dx%d", width, height);
-		printf("%s\n", use_graphics_errstr);
+		logprint(format("%s\n", use_graphics_errstr));
  #ifndef GFXERR_FALLBACK
 		quit("Graphics load error (X4)");
  #else
@@ -3578,7 +3578,7 @@ int init_graphics_x11(void) {
 
 gfx_skip:
 	if (!use_graphics) {
-		printf("Disabling graphics and falling back to normal text mode.\n");
+		logprint("Disabling graphics and falling back to normal text mode.\n");
 		/* Actually also show it as 'off' in =g menu, as in, "desired at config-file level" */
 		use_graphics_new = FALSE;
 	}

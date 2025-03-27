@@ -640,7 +640,7 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len) {
 	Sockbuf_flush(&wbuf);
 	Packet_printf(&wbuf, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
 	if (Sockbuf_write(&wbuf, buf, len) != len)
-		printf("failed sending file data\n");
+		logprint("failed sending file data\n");
 	return(0);
 }
 
@@ -1788,7 +1788,7 @@ static int Net_packet(void) {
 	while (rbuf.buf + rbuf.len > rbuf.ptr) {
 		type = (*rbuf.ptr & 0xFF);
 #if DEBUG_LEVEL > 2
-		if (type > 50) printf("Received packet: %d\n", type);
+		if (type > 50) logprint(format("Received packet: %d\n", type));
 #endif	/* DEBUG_LEVEL */
 		if (receive_tbl[type] == NULL) {
 			errno = 0;

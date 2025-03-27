@@ -952,7 +952,7 @@ errr init_gcu(void) {
  #endif
 #endif
 
-	printf("\rFound %s %dx%d 'curses' screen.\n", cols_an, COLS, LINES);
+	logprint(format("\rFound %s %dx%d 'curses' screen.\n", cols_an, COLS, LINES));
 
 	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
 	//no effect here, as it gets reset by check_immediate_options()
@@ -1102,7 +1102,7 @@ errr init_gcu(void) {
 	keymap_game_prepare();
 
 
-	if (window_hgt == MAX_WINDOW_HGT) printf("\rRunning in BIG_MAP mode.\n"); /* For some reason, the cursor isn't at the beginning of the line */
+	if (window_hgt == MAX_WINDOW_HGT) logprint("\rRunning in BIG_MAP mode.\n"); /* For some reason, the cursor isn't at the beginning of the line */
 
 	/*** Now prepare the term(s) ***/
 	/* TODO: Create the term layout from the term info we read from .tomenetrc instead, like for X11 clients.
@@ -1177,12 +1177,12 @@ errr init_gcu(void) {
 			continue;
 		}
 
-		printf("\rInitializing term #%d at %d,%d with dimensions %d,%d\n", next_win, x[i], y[i], cols[i], rows[i]);
+		logprint(format("\rInitializing term #%d at %d,%d with dimensions %d,%d\n", next_win, x[i], y[i], cols[i], rows[i]));
 		next_win++;
 	}
 	/* Paranoia, can't happen */
 	if (!next_win) {
-		printf("\rERROR: No window layout.\n");
+		logprint("\rERROR: No window layout.\n");
 		return(-3);
 	}
 	/* Actually init the terms.
