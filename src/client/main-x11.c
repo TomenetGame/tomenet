@@ -3156,7 +3156,6 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
  #endif
 	td->tilePreparation = None;
  #ifdef TILE_CACHE_SIZE
-printf("dtc=%d\n", disable_tile_cache);
 	if (!disable_tile_cache)
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 		td->tile_cache[i].tilePreparation = None;
