@@ -1332,7 +1332,7 @@ s16b get_mon_num(int level, int dlevel) {
 	}
 #if 0
 	/* Halls of Mandos: No towns there, prevent super-ood to make life easier? */
-	//if (d_ptr->type == DI_MANDOS && dlev + 20 < level) level = dlev + 20;
+	//if (d_ptr->type == DI_HALLS_OF_MANDOS && dlev + 20 < level) level = dlev + 20;
 #endif
 
 	/* Reset total */
@@ -3411,7 +3411,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
 		if (wpos->wz && dlev < 50 && r_ptr->level > dlev - 10 + (dlev > 20 ? dlev : 20)) return(45);
 #if 0
 		/* Halls of Mandos: No towns there, prevent super-ood to make life easier? */
-		if (d_ptr->type == DI_MANDOS && dlev + 20 < r_ptr->level) return(45);
+		if (d_ptr->type == DI_HALLS_OF_MANDOS && dlev + 20 < r_ptr->level) return(45);
 #endif
 	}
 #ifdef PMO_DEBUG
