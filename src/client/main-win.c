@@ -778,7 +778,12 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 }
 
 static void releaseCreatedGraphicsObjects(term_data *td) {
-	if (td == NULL) return;
+	if (td == NULL) {
+		logprint("(debug) releaseCreatedGraphicsObjects : NULL\n");
+		return;
+	}
+
+	logprint("(debug) releaseCreatedGraphicsObjects\n");
 
 	if (td->hdcTilePreparation != NULL) {
 		DeleteDC(td->hdcTilePreparation);
@@ -808,24 +813,27 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
  #endif
 
  #ifdef TILE_CACHE_SIZE
-	if (!disable_tile_cache)
-	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
-		if (td->tile_cache[i].hbmTilePreparation) {
-			DeleteBitmap(td->tile_cache[i].hbmTilePreparation);
-			td->tile_cache[i].hbmTilePreparation = NULL;
-			td->tile_cache[i].c = 0xffffffff;
-			td->tile_cache[i].a = 0xff;
-		}
+	if (!disable_tile_cache) {
+		logprint("(debug) releaseCreatedGraphicsObjects : cache.\n");
+		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+			if (td->tile_cache[i].hbmTilePreparation != NULL) {
+				DeleteBitmap(td->tile_cache[i].hbmTilePreparation);
+				td->tile_cache[i].hbmTilePreparation = NULL;
+				td->tile_cache[i].c = 0xffffffff;
+				td->tile_cache[i].a = 0xff;
+			}
   #ifdef GRAPHICS_BG_MASK
-		if (td->tile_cache[i].hbmTilePreparation2) {
-			DeleteBitmap(td->tile_cache[i].hbmTilePreparation2);
-			td->tile_cache[i].hbmTilePreparation2 = NULL;
-			td->tile_cache[i].c_back = 0xffffffff;
-			td->tile_cache[i].a_back = 0xff;
-		}
+			if (td->tile_cache[i].hbmTilePreparation2 != NULL) {
+				DeleteBitmap(td->tile_cache[i].hbmTilePreparation2);
+				td->tile_cache[i].hbmTilePreparation2 = NULL;
+				td->tile_cache[i].c_back = 0xffffffff;
+				td->tile_cache[i].a_back = 0xff;
+			}
   #endif
-		td->tile_cache[i].is_valid = FALSE;
-		/* Optional 'bg' and 'fg' need no intialization */
+			td->tile_cache[i].is_valid = FALSE;
+			/* Optional 'bg' and 'fg' need no intialization */
+		}
+		logprint("(debug) releaseCreatedGraphicsObjects : cache completed.\n");
 	}
  #endif
 }
@@ -900,14 +908,17 @@ static void recreateGraphicsObjects(term_data *td) {
  #endif
 
  #ifdef TILE_CACHE_SIZE
-	if (!disable_tile_cache)
-	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
-		//td->tiles->depth=32
-		td->tile_cache[i].hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
+	if (!disable_tile_cache) {
+		logprint("(debug) recreateGraphicsObjects : cache.\n");
+		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+			//td->tiles->depth=32
+			td->tile_cache[i].hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
   #ifdef GRAPHICS_BG_MASK
-		//td->tiles->depth=32
-		td->tile_cache[i].hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
+			//td->tiles->depth=32
+			td->tile_cache[i].hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
   #endif
+		}
+		logprint("(debug) recreateGraphicsObjects : cache completed.\n");
 	}
  #endif
 
@@ -3258,7 +3269,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 /*
  * Create and initialize a "term_data" given a title
  */
-static void term_data_link(term_data *td) {
+static void term_data_link(int i, term_data *td) {
 	term *t = &td->t;
 
 	/* Initialize the term */
@@ -3286,6 +3297,7 @@ static void term_data_link(term_data *td) {
 
 #ifdef USE_GRAPHICS
 	if (use_graphics) {
+		logprint(format("(debug) TDL:recreateGraphicsObjects (term %d)\n", i));
 		recreateGraphicsObjects(td);
 
 		/* Graphics hook */
@@ -3504,6 +3516,8 @@ static void init_windows(void) {
 
 #ifdef USE_GRAPHICS
  #ifdef TILE_CACHE_SIZE
+		//Note: Cache cannot be disabled from ini file at this point yet,
+		//      as we load_prefs() further below this, but doesn't matter as it just sets to NULL anyway.
 		if (!disable_tile_cache)
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			td->tile_cache[i].hbmTilePreparation = NULL;
@@ -3601,7 +3615,7 @@ static void init_windows(void) {
 	                           HWND_DESKTOP, NULL, hInstance, NULL);
 	if (!td_ptr->w) quit("Failed to create TomeNET window");
 	td_ptr = NULL;
-	term_data_link(&data[0]);
+	term_data_link(0, &data[0]);
 	ang_term[0] = &data[0].t;
 
 	/* Windows */
@@ -3620,7 +3634,7 @@ static void init_windows(void) {
 			td_ptr->size_hack = FALSE;
 		}
 		td_ptr = NULL;
-		term_data_link(&data[i]);
+		term_data_link(i, &data[i]);
 		ang_term[i] = &data[i].t;
 	}
 
