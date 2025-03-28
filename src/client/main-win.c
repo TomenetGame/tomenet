@@ -649,6 +649,8 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	HDC hdcMemResBg2Mask = CreateCompatibleDC(NULL);
  #endif
 
+	logprint("(debug) ResizeTilesWithMasks-0.\n");
+
 	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
 	HBITMAP hbmOldMemTiles = SelectObject(hdcMemTiles, g_hbmTiles);
 	HBITMAP hbmOldMemBgMask = SelectObject(hdcMemBgMask, g_hbmBgMask);
@@ -663,6 +665,8 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	HBITMAP hbmOldMemResBg2Mask = SelectObject(hdcMemResBg2Mask, hbmResBg2Mask);
  #endif
 
+	logprint("(debug) ResizeTilesWithMasks-1.\n");
+
  #if 1 /* use StretchBlt instead of SetPixel-loops */
 	/* StretchBlt is much faster on native Windows - mikaelh */
 	SetStretchBltMode(hdcMemResTiles, COLORONCOLOR);
@@ -676,6 +680,8 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	StretchBlt(hdcMemResBg2Mask, 0, 0, width2, height2, hdcMemBg2Mask, 0, 0, width1, height1, SRCCOPY);
   #endif
  #else
+
+	logprint("(debug) ResizeTilesWithMasks-2.\n");
 
 	/* I like more this classical and slower approach, as the commented StretchBlt code above. In my opinion, it makes nicer resized pictures.*/
 	int x1, x2, y1, y2, Tx, Ty;
@@ -740,6 +746,8 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	}
  #endif
 
+	logprint("(debug) ResizeTilesWithMasks-3.\n");
+
 	/* Restore the stored default bitmap into the memory DC. */
 	SelectObject(hdcMemTiles, hbmOldMemTiles);
 	SelectObject(hdcMemBgMask, hbmOldMemBgMask);
@@ -753,6 +761,8 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	SelectObject(hdcMemBg2Mask, hbmOldMemBg2Mask);
 	SelectObject(hdcMemResBg2Mask, hbmOldMemResBg2Mask);
  #endif
+
+	logprint("(debug) ResizeTilesWithMasks-4.\n");
 
 	/* Release the created memory DC. */
 	DeleteDC(hdcMemTiles);
@@ -860,13 +870,17 @@ static void recreateGraphicsObjects(term_data *td) {
 	logprint("(debug) recreateGraphicsObjects-0.\n");
 
 	HBITMAP hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
+	logprint("(debug) recreateGraphicsObjects-0a.\n");
 	HBITMAP hbmBgMask, hbmFgMask;
  #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
+	logprint("(debug) recreateGraphicsObjects-0b.\n");
 	HBITMAP hbmBg2Mask;
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask);
+	logprint("(debug) recreateGraphicsObjects-0c.\n");
  #else
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
+	logprint("(debug) recreateGraphicsObjects-0d.\n");
  #endif
 
 	if (hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL
