@@ -321,7 +321,7 @@ void resize_main_window_win(int cols, int rows);
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
     Size 256*4:  Default choice now, for reserves.
 */
-#define TILE_CACHE_SIZE (256*4)
+#define TILE_CACHE_SIZE (256*1)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
