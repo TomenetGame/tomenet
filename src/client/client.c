@@ -859,7 +859,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			/* On writing a default .tomenetrc, also default to 16x24sv tileset */
 			if (!graphic_tiles[0]) strcpy(graphic_tiles, "16x24sv");
 			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
-			fputs("disableGfxCache\t\t0\n"), config2);
+			fputs("disableGfxCache\t\t0\n", config2);
 #endif
 			fputs("\n", config2);
 //#ifdef USE_SOUND
