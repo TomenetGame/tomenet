@@ -3302,6 +3302,7 @@ int init_graphics_win(void) {
 	char filename[1024];
 	HDC hdc = GetDC(NULL);
 
+	logprint("Initializing graphics.\n");
 	if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
 		sprintf(use_graphics_errstr, "Using graphic tiles needs a device content with at least 24 bits per pixel.");
 		logprint(format("%s\n", use_graphics_errstr));
@@ -3460,6 +3461,7 @@ static void init_windows(void) {
 	static char version[20];
 	term_data *td;
 
+	logprint("Initializing windows.\n");
 
 	/* Main window */
 	td = &data[0];
@@ -3520,6 +3522,7 @@ static void init_windows(void) {
 	usleep(100000);
 #endif
 
+	logprint("Loading INI file.\n");
 	/* Load .INI preferences - this will overwrite nick and pass, so we need to keep these if we got them from command-line */
 	if (nick[0]) {
 		char tmpnick[ACCNAME_LEN], tmppass[PASSWORD_LEN];
@@ -3547,6 +3550,7 @@ static void init_windows(void) {
 	}
 
 	/* Windows */
+	logprint("Initializing termdata font info.\n");
 	for (i = 0; i < MAX_TERM_DATA; i++) {
 #ifdef USE_LOGFONT
 		if (use_logfont) {
@@ -3596,6 +3600,7 @@ static void init_windows(void) {
 	ang_term[0] = &data[0].t;
 
 	/* Windows */
+	logprint("Initializing termdata windows.\n");
 	for (i = 1; i < MAX_TERM_DATA; i++) {
 		td_ptr = &data[i];
 		td_ptr->w = CreateWindowEx(td_ptr->dwExStyle, AngList,
@@ -3623,7 +3628,6 @@ static void init_windows(void) {
 	/* New palette XXX XXX XXX */
 	new_palette();
 
-
 	/* Create a "brush" for drawing the "cursor" */
 	hbrYellow = CreateSolidBrush(win_clr[TERM_YELLOW]);
 
@@ -3632,6 +3636,8 @@ static void init_windows(void) {
 		int i, j;
 		int fwid, fhgt;
 		HDC hdc;
+
+		logprint("Initializing graphical tileset cache.\n");
 
 		for (i = 1; i < MAX_TERM_DATA; i++) {
 			td = &data[i];
@@ -3666,6 +3672,7 @@ static void init_windows(void) {
 		logprint("Graphical tileset cache initialized.\n");
 	}
 #endif
+	logprint("Window initialization completed.\n");
 
 	/* Process pending messages */
 	(void)Term_xtra_win_flush();
