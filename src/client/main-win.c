@@ -857,6 +857,8 @@ static void recreateGraphicsObjects(term_data *td) {
 
 	releaseCreatedGraphicsObjects(td);
 
+	logprint("(debug) recreateGraphicsObjects-0.\n");
+
 	HBITMAP hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 	HBITMAP hbmBgMask, hbmFgMask;
  #ifdef GRAPHICS_BG_MASK
@@ -874,8 +876,12 @@ static void recreateGraphicsObjects(term_data *td) {
 	    )
 		quit("Resizing tiles or masks failed.\n");
 
+	logprint("(debug) recreateGraphicsObjects-1.\n");
+
 	/* Get device content for current window. */
 	HDC hdc = GetDC(td->w);
+
+	logprint("(debug) recreateGraphicsObjects-2.\n");
 
 	/* Create a compatible device content in memory. */
 	td->hdcTilePreparation = CreateCompatibleDC(hdc);
@@ -887,6 +893,8 @@ static void recreateGraphicsObjects(term_data *td) {
 	td->hdcBg2Mask = CreateCompatibleDC(hdc);
  #endif
 
+	logprint("(debug) recreateGraphicsObjects-3.\n");
+
 	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
 	HBITMAP hbmOldTilePreparation = SelectObject(td->hdcTilePreparation, hbmTilePreparation);
 	HBITMAP hbmOldTiles = SelectObject(td->hdcTiles, hbmTiles);
@@ -897,6 +905,8 @@ static void recreateGraphicsObjects(term_data *td) {
 	HBITMAP hbmOldBg2Mask = SelectObject(td->hdcBg2Mask, hbmBg2Mask);
  #endif
 
+	logprint("(debug) recreateGraphicsObjects-4.\n");
+
 	/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
 	DeleteBitmap(hbmOldTilePreparation);
 	DeleteBitmap(hbmOldTiles);
@@ -906,6 +916,8 @@ static void recreateGraphicsObjects(term_data *td) {
 	DeleteBitmap(hbmOldTilePreparation2);
 	DeleteBitmap(hbmOldBg2Mask);
  #endif
+
+	logprint("(debug) recreateGraphicsObjects-5.\n");
 
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache) {
@@ -921,6 +933,8 @@ static void recreateGraphicsObjects(term_data *td) {
 		logprint("(debug) recreateGraphicsObjects : cache completed.\n");
 	}
  #endif
+
+	logprint("(debug) recreateGraphicsObjects-6.\n");
 
 	/* Release */
 	ReleaseDC(td->w, hdc);
