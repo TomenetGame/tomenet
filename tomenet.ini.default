@@ -71,6 +71,8 @@ Graphics=0
 ;   or from a custom graphics redefinition file lib\user\graphics-{graphic_tiles}.prf, if the file exists.
 ;   Important: The value has to be in format "{int width}x{int height}[{string}]", because tile width and height is extracted from the string.
 GraphicTiles=16x24sv
+; - Disable cache for graphics tiles (not recommended)? (0 = don't disable, 1 = disable)
+DisableGfxCache=0
 
 ; - Enable audio in general (0 = off, 1 = on)
 Sound=1

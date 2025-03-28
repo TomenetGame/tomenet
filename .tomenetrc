@@ -88,6 +88,10 @@ graphics	0
 ##   Important: The value has to be in format "{int width}x{int height}[{string}]", because tile width and height is extracted from the string.
 graphic_tiles 16x24sv
 
+## - Disable cache for graphics tiles? (Not recommended, basically just slows down drawing)
+##   Set to '0' to keep the the cache enabled, 1 to disable the cache.
+disableGfxCache 0
+
 
 
 ## Audio settings

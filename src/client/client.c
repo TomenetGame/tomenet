@@ -275,6 +275,13 @@ retry_mangrc:
 				p = strtok(NULL, "\t\n");
 				if (p) strcpy(graphic_tiles, p);
 			}
+			if (!strncmp(buf, "disableGfxCache", 15)) { //TILE_CACHE_SIZE
+				char *p;
+
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (atoi(p) != 0) disable_tile_cache = TRUE;
+			}
 #endif
 #ifdef USE_SOUND
 			/* sound */
@@ -852,6 +859,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			/* On writing a default .tomenetrc, also default to 16x24sv tileset */
 			if (!graphic_tiles[0]) strcpy(graphic_tiles, "16x24sv");
 			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
+			fputs("disableGfxCache\t\t0\n"), config2);
 #endif
 			fputs("\n", config2);
 //#ifdef USE_SOUND
@@ -1175,9 +1183,7 @@ int main(int argc, char **argv) {
 		case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
 		case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 		case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
-		case 'T': disable_tile_cache = TRUE; //TILE_CACHE_SIZE
-			logprint("Graphics tiles cache disabled.\n");
-			break;
+		case 'T': disable_tile_cache = TRUE; break; //TILE_CACHE_SIZE
 		}
 
 		default:
@@ -1186,6 +1192,8 @@ int main(int argc, char **argv) {
 			break;
 		}
 	}
+
+	if (disable_tile_cache) logprint("Graphics tiles cache disabled.\n");
 
 	if (quiet_mode) use_sound = FALSE;
 

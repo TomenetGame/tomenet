@@ -1653,6 +1653,11 @@ static void load_prefs_IME(void) {
 	disable_CS_IME = INI_disable_CS_IME = (GetPrivateProfileInt("Base", "ForceIMEOff", 0, ini_file) != 0);
 	enable_CS_IME = INI_enable_CS_IME = (GetPrivateProfileInt("Base", "ForceIMEOn", 0, ini_file) != 0);
 }
+#ifdef TILE_CACHE_SIZE
+static void load_prefs_TILE_CACHE(void) {
+	if (GetPrivateProfileInt("Base", "DisableGfxCache", 0, ini_file) != 0) disable_tile_cache = TRUE;
+}
+#endif
 #ifdef USE_LOGFONT
 /* Load just the logfont preferences from the .INI file, as it must be done early before Windows are initialized */
 static void load_prefs_logfont(void) {
@@ -5127,6 +5132,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	/* Load logfont settings before commandline-args (to allow -L to modify it) and before window initialization (or it won't work) */
 	load_prefs_logfont();
 #endif
+#ifdef TILE_CACHE_SIZE
+	load_prefs_TILE_CACHE();
+#endif
 
 	/* Process the command line -- now before initializing the main window because of CS_IME setting via cmdline arg 'I'/'i':*/
 	for (i = 0, n = strlen(lpCmdLine); i < n; i++) {
@@ -5237,9 +5245,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 			case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 #ifdef TILE_CACHE_SIZE
-			case 'T': disable_tile_cache = TRUE;
-				logprint("Graphics tiles cache disabled.\n");
-				break;
+			case 'T': disable_tile_cache = TRUE; break;
 #endif
 			}
 			quoted = FALSE;
@@ -5254,6 +5260,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			quoted = FALSE;
 		}
 	}
+
+	if (disable_tile_cache) logprint("Graphics tiles cache disabled.\n");
 
 	if (hPrevInst == NULL) {
 /* Not required, just a paranoia note, it's pretty undocumented */
