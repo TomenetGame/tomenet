@@ -887,8 +887,11 @@ static void recreateGraphicsObjects(term_data *td) {
  #ifdef GRAPHICS_BG_MASK
 	    || hbmBg2Mask == NULL || hbmTilePreparation2 == NULL
  #endif
-	    )
+	    ) {
+		logprint("(debug) ht %d, hbg %d, hfm %d, htp %d\n", hbmTiles, hbmBgMask, hbmFgMask, hbmTilePreparation);
+		logprint("(debug) hbg2 %d, htp2 %d.\n", hbmBg2Mask, hbmTilePreparation2);
 		quit("Resizing tiles or masks failed.\n");
+	}
 
 	logprint("(debug) recreateGraphicsObjects-1.\n");
 
