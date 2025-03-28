@@ -223,6 +223,10 @@ void quit(cptr str) {
 
 	if (is_client_side && str && streq(str, "Not a reply packet after play (3,0,0)")) plog("You were disconnected, probably because a server update happened meanwhile.\nPlease log in again.");
 
+#ifdef CLIENT_SIDE
+	logprint(format("quit('%s')\n", str ? str : "NULL"));
+#endif
+
 	/* Save exit string */
 	if (str) {
 		strncpy(buf, str, 1024);
