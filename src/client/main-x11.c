@@ -2195,59 +2195,59 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	y *= Infofnt->hgt;
 
  #ifdef TILE_CACHE_SIZE
-    if (!disable_tile_cache) {
-	entry = NULL;
-	for (i = 0; i < TILE_CACHE_SIZE; i++) {
-		entry = &td->tile_cache[i];
-		if (!entry->is_valid) hole = i;
-		else if (entry->c == c && entry->a == a
+	if (!disable_tile_cache) {
+		entry = NULL;
+		for (i = 0; i < TILE_CACHE_SIZE; i++) {
+			entry = &td->tile_cache[i];
+			if (!entry->is_valid) hole = i;
+			else if (entry->c == c && entry->a == a
   #ifdef GRAPHICS_BG_MASK
-		    && entry->c_back == 0 && entry->a_back == 0
+			    && entry->c_back == 0 && entry->a_back == 0
   #endif
   #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
-		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
-		    && Infoclr->fg == entry->fg && Infoclr->bg == entry->bg
+			    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+			    && Infoclr->fg == entry->fg && Infoclr->bg == entry->bg
   #endif
-		    ) {
-			/* Copy cached tile to window. */
-			XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
-				0, 0,
-				td->fnt->wid, td->fnt->hgt,
-				x, y);
+			    ) {
+				/* Copy cached tile to window. */
+				XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
+					0, 0,
+					td->fnt->wid, td->fnt->hgt,
+					x, y);
 
-			/* Success */
-			return(0);
+				/* Success */
+				return(0);
+			}
 		}
-	}
 
-	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
-	if (hole != -1) {
+		// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+		if (hole != -1) {
   #ifdef TILE_CACHE_LOG
-		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+			c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
   #endif
-		entry = &td->tile_cache[hole];
-	} else {
+			entry = &td->tile_cache[hole];
+		} else {
   #ifdef TILE_CACHE_LOG
-		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+			c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
   #endif
-		// Replace valid cache entries in FIFO order
-		entry = &td->tile_cache[td->cache_position++];
-		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
-	}
+			// Replace valid cache entries in FIFO order
+			entry = &td->tile_cache[td->cache_position++];
+			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+		}
 
-	tilePreparation = entry->tilePreparation;
-	entry->c = c;
-	entry->a = a;
+		tilePreparation = entry->tilePreparation;
+		entry->c = c;
+		entry->a = a;
   #ifdef GRAPHICS_BG_MASK
-	entry->c_back = 0;
-	entry->a_back = 0;
+		entry->c_back = 0;
+		entry->a_back = 0;
   #endif
-	entry->is_valid = TRUE;
+		entry->is_valid = TRUE;
   #ifdef TILE_CACHE_FGBG
-	entry->fg = Infoclr->fg;
-	entry->bg = Infoclr->bg;
+		entry->fg = Infoclr->fg;
+		entry->bg = Infoclr->bg;
   #endif
-    } else tilePreparation = td->tilePreparation;
+	} else tilePreparation = td->tilePreparation;
  #else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
  #endif
@@ -3189,9 +3189,9 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	t->nuke_hook = Term_nuke_x11;
 
 #ifdef USE_GRAPHICS
-
 	/* Use graphics */
 	if (use_graphics) {
+		logprint(format("Termdata graphics init (%d): fwid %d, fhgt %d.\n", index, td->fnt->wid, td->fnt->hgt));
 
 		/* Use resized tiles & masks. */
 #ifdef GRAPHICS_BG_MASK
@@ -3217,16 +3217,17 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
 		   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
  #ifdef TILE_CACHE_SIZE
-		if (!disable_tile_cache)
-		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
-			td->tile_cache[i].tilePreparation = XCreatePixmap(
-				Metadpy->dpy, Metadpy->root,
-				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+		if (!disable_tile_cache) {
+			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+				td->tile_cache[i].tilePreparation = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
   #ifdef GRAPHICS_BG_MASK
-			td->tile_cache[i].tilePreparation2 = XCreatePixmap(
-				Metadpy->dpy, Metadpy->root,
-				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+				td->tile_cache[i].tilePreparation2 = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
   #endif
+			}
 		}
  #endif
 
@@ -3462,6 +3463,7 @@ int init_graphics_x11(void) {
 	Visual *visual;
 
 	/* Load graphics file. Quit if file missing or load error. */
+	logprint("Initializing graphics.\n");
 
 	/* Check for tiles string & extract tiles width & height. */
 	if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
@@ -3583,6 +3585,7 @@ gfx_skip:
 		use_graphics_new = FALSE;
 	}
 
+	logprint(format("Graphics initialization complete, use_graphics is %d.\n", use_graphics));
 	return(use_graphics);
 }
 #endif
