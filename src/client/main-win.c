@@ -888,8 +888,8 @@ static void recreateGraphicsObjects(term_data *td) {
 	    || hbmBg2Mask == NULL || hbmTilePreparation2 == NULL
  #endif
 	    ) {
-		logprint("(debug) ht %d, hbg %d, hfm %d, htp %d\n", hbmTiles, hbmBgMask, hbmFgMask, hbmTilePreparation);
-		logprint("(debug) hbg2 %d, htp2 %d.\n", hbmBg2Mask, hbmTilePreparation2);
+		logprint(format("(debug) ht %d, hbg %d, hfm %d, htp %d\n", hbmTiles, hbmBgMask, hbmFgMask, hbmTilePreparation));
+		logprint(format("(debug) hbg2 %d, htp2 %d.\n", hbmBg2Mask, hbmTilePreparation2));
 		quit("Resizing tiles or masks failed.\n");
 	}
 
