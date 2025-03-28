@@ -2740,59 +2740,59 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 
  #ifdef TILE_CACHE_SIZE
-    if (!disable_tile_cache) {
-	entry = NULL;
-	for (i = 0; i < TILE_CACHE_SIZE; i++) {
-		entry = &td->tile_cache[i];
-		if (!entry->is_valid) hole = i;
-		else if (entry->c == c && entry->a == a
+	if (!disable_tile_cache) {
+		entry = NULL;
+		for (i = 0; i < TILE_CACHE_SIZE; i++) {
+			entry = &td->tile_cache[i];
+			if (!entry->is_valid) hole = i;
+			else if (entry->c == c && entry->a == a
   #ifdef GRAPHICS_BG_MASK
-		    && entry->c_back == 0 && entry->a_back == 0
+			    && entry->c_back == 0 && entry->a_back == 0
   #endif
   #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
-		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
-		    && fgColor == entry->fg && bgColor == entry->bg
+			    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+			    && fgColor == entry->fg && bgColor == entry->bg
   #endif
-		    ) {
-			/* Copy cached tile to window. */
-			SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
-			BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+			    ) {
+				/* Copy cached tile to window. */
+				SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
+				BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
   #ifndef OPTIMIZE_DRAWING
-			ReleaseDC(td->w, hdc);
+				ReleaseDC(td->w, hdc);
   #endif
-			/* Success */
-			return(0);
+				/* Success */
+				return(0);
+			}
 		}
-	}
 
-	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
-	if (hole != -1) {
+		// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+		if (hole != -1) {
   #ifdef TILE_CACHE_LOG
-		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+			c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
   #endif
-		entry = &td->tile_cache[hole];
-	} else {
+			entry = &td->tile_cache[hole];
+		} else {
   #ifdef TILE_CACHE_LOG
-		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+			c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
   #endif
-		// Replace valid cache entries in FIFO order
-		entry = &td->tile_cache[td->cache_position++];
-		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
-	}
+			// Replace valid cache entries in FIFO order
+			entry = &td->tile_cache[td->cache_position++];
+			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+		}
 
-	SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
-	entry->c = c;
-	entry->a = a;
+		SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
+		entry->c = c;
+		entry->a = a;
   #ifdef GRAPHICS_BG_MASK
-	entry->c_back = 0;
-	entry->a_back = 0;
+		entry->c_back = 0;
+		entry->a_back = 0;
   #endif
-	entry->is_valid = TRUE;
+		entry->is_valid = TRUE;
   #ifdef TILE_CACHE_FGBG
-	entry->fg = fgColor;
-	entry->bg = bgColor;
+		entry->fg = fgColor;
+		entry->bg = bgColor;
   #endif
-    } else SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
+	} else SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
  #else /* (TILE_CACHE_SIZE) No caching: */
 	SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
  #endif
