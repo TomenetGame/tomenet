@@ -3565,7 +3565,7 @@ static void init_windows(void) {
 	usleep(100000);
 #endif
 
-	logprint("Loading INI file '%s'.\n", ini_file ? ini_file : "NULL");
+	logprint(format("Loading .ini file '%s'.\n", ini_file ? ini_file : "NULL"));
 	/* Load .INI preferences - this will overwrite nick and pass, so we need to keep these if we got them from command-line */
 	if (nick[0]) {
 		char tmpnick[ACCNAME_LEN], tmppass[PASSWORD_LEN];
