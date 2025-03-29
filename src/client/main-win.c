@@ -347,7 +347,17 @@ void resize_main_window_win(int cols, int rows);
             Fix all this GDI handle silliness - maybe just use one huge 'cache bitmap' per window,
             and the single cache tiles are merely coordinate references within it.
 */
-#define TILE_CACHE_SIZE (384)
+/* Alternate method to remedy the Windows-specific GDI object limit w/o modifying the Registry:
+   We can use a different cache structure: One large cache bitmap per window, instead of many small bitmaps for each tile.
+   The number of cache tiles per line is defined by TILE_CACHE_SINGLEBMP's value [32],
+   so the TILE_CACHE_SIZE should always be multiple of this: */
+#define TILE_CACHE_SINGLEBMP 32		/* <- Comment out this define if you want to use the default cache method */
+#ifdef TILE_CACHE_SINGLEBMP
+ #define TILE_CACHE_SIZE (256 * 4)
+#else
+ #define TILE_CACHE_SIZE (384) /* Without the single-bmp structure, we cannot use a bigger cache w/o modifying the registry as explained above */
+ //#define TILE_CACHE_SIZE (256 * 2) /* Only use this (or even bigger values) if you have modified the registry as explained above */
+#endif
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
@@ -365,11 +375,15 @@ void resize_main_window_win(int cols, int rows);
 #ifdef TILE_CACHE_SIZE
 bool disable_tile_cache = FALSE;
 struct tile_cache_entry {
+ #ifndef TILE_CACHE_SINGLEBMP
     HBITMAP hbmTilePreparation;
+ #endif
     char32_t c;
     byte a;
  #ifdef GRAPHICS_BG_MASK
+  #ifndef TILE_CACHE_SINGLEBMP
     HBITMAP hbmTilePreparation2;
+  #endif
     char32_t c_back;
     byte a_back;
  #endif
@@ -415,6 +429,14 @@ struct _term_data {
  #ifdef TILE_CACHE_SIZE
 	int cache_position;
 	struct tile_cache_entry tile_cache[TILE_CACHE_SIZE];
+  #ifdef TILE_CACHE_SINGLEBMP
+	HBITMAP hbmCacheTilePreparation;
+	HDC hdcCacheTilePreparation;
+   #ifdef GRAPHICS_BG_MASK
+	HBITMAP hbmCacheTilePreparation2;
+	HDC hdcCacheTilePreparation2;
+   #endif
+  #endif
  #endif
 #endif
 
@@ -810,27 +832,33 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 	}
 
 	if (td->hdcTilePreparation != NULL) {
+		//associated bitmap gets auto-deleted?
 		DeleteDC(td->hdcTilePreparation);
 		td->hdcTilePreparation = NULL;
 	}
 	if (td->hdcTiles != NULL) {
+		//associated bitmap gets auto-deleted?
 		DeleteDC(td->hdcTiles);
 		td->hdcTiles = NULL;
 	}
 	if (td->hdcBgMask != NULL) {
+		//associated bitmap gets auto-deleted?
 		DeleteDC(td->hdcBgMask);
 		td->hdcBgMask = NULL;
 	}
 	if (td->hdcFgMask != NULL) {
+		//associated bitmap gets auto-deleted?
 		DeleteDC(td->hdcFgMask);
 		td->hdcFgMask = NULL;
 	}
  #ifdef GRAPHICS_BG_MASK
 	if (td->hdcTilePreparation2 != NULL) {
+		//associated bitmap gets auto-deleted?
 		DeleteDC(td->hdcTilePreparation2);
 		td->hdcTilePreparation2 = NULL;
 	}
 	if (td->hdcBg2Mask != NULL) {
+		//associated bitmap gets auto-deleted?
 		DeleteDC(td->hdcBg2Mask);
 		td->hdcBg2Mask = NULL;
 	}
@@ -838,20 +866,41 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache) {
+  #ifdef TILE_CACHE_SINGLEBMP
+		if (td->hbmCacheTilePreparation != NULL) {
+			DeleteBitmap(td->hbmCacheTilePreparation);
+			DeleteDC(td->hdcCacheTilePreparation);
+			td->hdcCacheTilePreparation = NULL;
+		}
+		if (td->hbmCacheTilePreparation2 != NULL) {
+			DeleteBitmap(td->hbmCacheTilePreparation2);
+			DeleteDC(td->hdcCacheTilePreparation2);
+			td->hdcCacheTilePreparation2 = NULL;
+		}
+  #endif
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+  #ifndef TILE_CACHE_SINGLEBMP
 			if (td->tile_cache[i].hbmTilePreparation != NULL) {
 				DeleteBitmap(td->tile_cache[i].hbmTilePreparation);
 				td->tile_cache[i].hbmTilePreparation = NULL;
 				td->tile_cache[i].c = 0xffffffff;
 				td->tile_cache[i].a = 0xff;
 			}
-  #ifdef GRAPHICS_BG_MASK
+   #ifdef GRAPHICS_BG_MASK
 			if (td->tile_cache[i].hbmTilePreparation2 != NULL) {
 				DeleteBitmap(td->tile_cache[i].hbmTilePreparation2);
 				td->tile_cache[i].hbmTilePreparation2 = NULL;
 				td->tile_cache[i].c_back = 0xffffffff;
 				td->tile_cache[i].a_back = 0xff;
 			}
+   #endif
+  #else
+			td->tile_cache[i].c = 0xffffffff;
+			td->tile_cache[i].a = 0xff;
+   #ifdef GRAPHICS_BG_MASK
+			td->tile_cache[i].c_back = 0xffffffff;
+			td->tile_cache[i].a_back = 0xff;
+   #endif
   #endif
 			td->tile_cache[i].is_valid = FALSE;
 			/* Optional 'bg' and 'fg' need no intialization */
@@ -936,14 +985,27 @@ static void recreateGraphicsObjects(term_data *td) {
 
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache) {
+  #ifdef TILE_CACHE_SINGLEBMP
+		td->hbmCacheTilePreparation = CreateBitmap(TILE_CACHE_SINGLEBMP * 2 * fwid, (TILE_CACHE_SIZE / TILE_CACHE_SINGLEBMP) * fhgt, 1, 32, NULL);
+		td->hdcTilePreparation = CreateCompatibleDC(hdc);
+		HBITMAP hbmOldCacheTilePreparation = SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation);
+		DeleteBitmap(hbmOldCacheTilePreparation);
+   #ifdef GRAPHICS_BG_MASK
+		td->hbmCacheTilePreparation2 = CreateBitmap(TILE_CACHE_SINGLEBMP * 2 * fwid, (TILE_CACHE_SIZE / TILE_CACHE_SINGLEBMP) * fhgt, 1, 32, NULL);
+		td->hdcTilePreparation2 = CreateCompatibleDC(hdc);
+		HBITMAP hbmOldCacheTilePreparation2 = SelectObject(td->hdcCacheTilePreparation2, td->hbmCacheTilePreparation2);
+		DeleteBitmap(hbmOldCacheTilePreparation2);
+   #endif
+  #else
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			//td->tiles->depth=32
 			td->tile_cache[i].hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
-  #ifdef GRAPHICS_BG_MASK
+   #ifdef GRAPHICS_BG_MASK
 			//td->tiles->depth=32
 			td->tile_cache[i].hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
-  #endif
+   #endif
 		}
+  #endif
 	}
  #endif
 
@@ -2719,6 +2781,9 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
  #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
+  #ifdef TILE_CACHE_SINGLEBMP
+	int tc_idx, tc_x, tc_y;
+  #endif
  #endif
 
 
@@ -2770,10 +2835,11 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 		fhgt = td->font_hgt;
 	}
 
-	/* Location of window cell */
+	/* Location of screen window cell */
 	x = x * fwid + td->size_ow1;
 	y = y * fhgt + td->size_oh1;
 
+	/* Location of graphics tile in the tileset */
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
@@ -2796,8 +2862,13 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
   #endif
 			    ) {
 				/* Copy cached tile to window. */
+  #ifdef TILE_CACHE_SINGLEBMP
+				SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
+				BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation, (i % TILE_CACHE_SINGLEBMP) * 2 * fwid, (i / TILE_CACHE_SINGLEBMP) * fhgt, SRCCOPY);
+  #else
 				SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
 				BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+  #endif
   #ifndef OPTIMIZE_DRAWING
 				ReleaseDC(td->w, hdc);
   #endif
@@ -2811,17 +2882,28 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
   #ifdef TILE_CACHE_LOG
 			c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
   #endif
+  #ifdef TILE_CACHE_SINGLEBMP
+			tc_idx = hole;
+  #endif
 			entry = &td->tile_cache[hole];
 		} else {
   #ifdef TILE_CACHE_LOG
 			c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
   #endif
 			// Replace valid cache entries in FIFO order
+  #ifdef TILE_CACHE_SINGLEBMP
+			tc_idx = td->cache_position;
+  #endif
 			entry = &td->tile_cache[td->cache_position++];
 			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
 		}
 
+  #ifndef TILE_CACHE_SINGLEBMP
 		SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
+  #else
+		SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
+  #endif
+
 		entry->c = c;
 		entry->a = a;
   #ifdef GRAPHICS_BG_MASK
@@ -2839,32 +2921,68 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
  #endif
 
 
-	/* Paint background rectangle .*/
-	rectBg = (RECT){ 0, 0, fwid, fhgt };
-	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
-	brushBg = CreateSolidBrush(bgColor);
-	brushFg = CreateSolidBrush(fgColor);
-	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
-	FillRect(td->hdcTilePreparation, &rectFg, brushFg);
-	DeleteObject(brushBg);
-	DeleteObject(brushFg);
+ #if defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_SINGLEBMP)
+	if (!disable_tile_cache) {
+		tc_x = (tc_idx % TILE_CACHE_SINGLEBMP) * 2 * fwid;
+		tc_y = (tc_idx / TILE_CACHE_SINGLEBMP) * fhgt;
+
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ tc_x, tc_y, tc_x + fwid, tc_y + fhgt };
+		rectFg = (RECT){ tc_x + fwid, tc_y, tc_x + 2 * fwid, tc_y + fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
+		FillRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
 
 
-	//BitBlt(hdc, 0, 0, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 0, 2*9, 15, td->hdcCacheTilePreparation, 0, 0, SRCCOPY);
 
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
 
-	//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcCacheTilePreparation, 0, 0, SRCCOPY);
 
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x + fwid, tc_y, SRCPAINT);
 
-	//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
-	//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
-	//
-	/* Copy the picture from the tile preparation memory to the window */
-	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
+		//
+		/* Copy the picture from the tile preparation memory to the window */
+		BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x, tc_y, SRCCOPY);
+	} else
+ #endif
+	{
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ 0, 0, fwid, fhgt };
+		rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcTilePreparation, &rectBg, brushBg);
+		FillRect(td->hdcTilePreparation, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
+
+
+		//BitBlt(hdc, 0, 0, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
+
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+
+		//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
+
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+
+		//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
+		//
+		/* Copy the picture from the tile preparation memory to the window */
+		BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+	}
+
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -2902,6 +3020,9 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
+  #ifdef TILE_CACHE_SINGLEBMP
+	int tc_idx, tc_x, tc_y;
+  #endif
  #endif
 
 
@@ -2969,60 +3090,78 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 
    #ifdef TILE_CACHE_SIZE
-    if (!disable_tile_cache) {
-	entry = NULL;
-	for (i = 0; i < TILE_CACHE_SIZE; i++) {
-		entry = &td->tile_cache[i];
-		if (!entry->is_valid) hole = i;
-		else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
+	if (!disable_tile_cache) {
+		entry = NULL;
+		for (i = 0; i < TILE_CACHE_SIZE; i++) {
+			entry = &td->tile_cache[i];
+			if (!entry->is_valid) hole = i;
+			else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
     #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
-		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
-		    && fgColor == entry->fg && bgColor == entry->bg
+			    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+			    && fgColor == entry->fg && bgColor == entry->bg
     #endif
-		    ) {
-			/* Copy cached tile to window. */
-			SelectObject(td->hdcTilePreparation2, entry->hbmTilePreparation2);
-			BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
-  #ifndef OPTIMIZE_DRAWING
-			ReleaseDC(td->w, hdc);
+			    ) {
+				/* Copy cached tile to window. */
+  #ifdef TILE_CACHE_SINGLEBMP
+				//SelectObject(td->hdcCacheTilePreparation2, td->hbmCacheTilePreparation2); //already selected?
+				BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation2, (i % TILE_CACHE_SINGLEBMP) * 2 * fwid, (i / TILE_CACHE_SINGLEBMP) * fhgt, SRCCOPY);
+  #else
+				SelectObject(td->hdcTilePreparation2, entry->hbmTilePreparation2);
+				BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
   #endif
-			/* Success */
-			return(0);
+  #ifndef OPTIMIZE_DRAWING
+				ReleaseDC(td->w, hdc);
+  #endif
+				/* Success */
+				return(0);
+			}
 		}
-	}
 
-	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
-	if (hole != -1) {
+		// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+		if (hole != -1) {
     #ifdef TILE_CACHE_LOG
-		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+			c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
     #endif
-		entry = &td->tile_cache[hole];
-	} else {
+    #ifdef TILE_CACHE_SINGLEBMP
+			tc_idx = hole;
+    #endif
+			entry = &td->tile_cache[hole];
+		} else {
     #ifdef TILE_CACHE_LOG
-		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+			c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
     #endif
-		// Replace valid cache entries in FIFO order
-		entry = &td->tile_cache[td->cache_position++];
-		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
-	}
+			// Replace valid cache entries in FIFO order
+    #ifdef TILE_CACHE_SINGLEBMP
+			tc_idx = td->cache_position;
+    #endif
+			entry = &td->tile_cache[td->cache_position++];
+			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+		}
 
-	SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation); //in 2mask-mode actually not used, as only tilePreparation2 is interesting as it holds the final result
-	SelectObject(td->hdcTilePreparation2, entry->hbmTilePreparation2);
-	entry->c = c;
-	entry->a = a;
+  #ifndef TILE_CACHE_SINGLEBMP
+		SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation); //in 2mask-mode actually not used, as only tilePreparation2 is interesting as it holds the final result
+		SelectObject(td->hdcTilePreparation2, entry->hbmTilePreparation2);
+  #else
+		//already selected?
+		SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation);
+		SelectObject(td->hdcCacheTilePreparation2, td->hbmCacheTilePreparation2);
+  #endif
+
+		entry->c = c;
+		entry->a = a;
     #ifdef GRAPHICS_BG_MASK
-	entry->c_back = c_back;
-	entry->a_back = a_back;
+		entry->c_back = c_back;
+		entry->a_back = a_back;
     #endif
-	entry->is_valid = TRUE;
+		entry->is_valid = TRUE;
     #ifdef TILE_CACHE_FGBG
-	entry->fg = fgColor;
-	entry->bg = bgColor;
+		entry->fg = fgColor;
+		entry->bg = bgColor;
     #endif
-    } else {
-	SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
-	SelectObject(td->hdcTilePreparation2, td->hbmTilePreparation2);
-    }
+	} else {
+		SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
+		SelectObject(td->hdcTilePreparation2, td->hbmTilePreparation2);
+	}
    #else /* (TILE_CACHE_SIZE) No caching: */
 	SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
 	SelectObject(td->hdcTilePreparation2, td->hbmTilePreparation2);
@@ -3037,85 +3176,173 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
 
-	/* Paint background rectangle .*/
-	rectBg = (RECT){ 0, 0, fwid, fhgt }; //uhh, C99 ^^'
-	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
-	brushBg = CreateSolidBrush(bgColor);
-	brushFg = CreateSolidBrush(fgColor);
-	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
-	FillRect(td->hdcTilePreparation, &rectFg, brushFg);
-	DeleteObject(brushBg);
-	DeleteObject(brushFg);
+  #if defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_SINGLEBMP)
+	if (!disable_tile_cache) {
+		tc_x = (tc_idx % TILE_CACHE_SINGLEBMP) * 2 * fwid;
+		tc_y = (tc_idx / TILE_CACHE_SINGLEBMP) * fhgt;
+
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ tc_x, tc_y, tc_x + fwid, tc_y + fhgt }; //uhh, C99 ^^'
+		rectFg = (RECT){ tc_x + fwid, tc_y, tc_x + 2 * fwid, tc_y + fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
+		FillRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
 
 
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
 
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x + fwid, tc_y, SRCPAINT);
 
 
-	/* --- Background (terrain) graphical tile --- */
+		/* --- Background (terrain) graphical tile --- */
 
-	/* Background/Foreground color */
-	bgColor = RGB(0, 0, 0); //this 0-init not really needed?
-	fgColor = RGB(0, 0, 0);
+		/* Background/Foreground color */
+		bgColor = RGB(0, 0, 0); //this 0-init not really needed?
+		fgColor = RGB(0, 0, 0);
 
-  #ifndef EXTENDED_COLOURS_PALANIM
-   #ifndef EXTENDED_BG_COLOURS
-	fgColor = win_clr[a_back & 0x0F];
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
+		fgColor = win_clr[a_back & 0x0F];
+    #else
+		fgColor = win_clr[a_back & 0x1F];
+		//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+		bgColor = win_clr_bg[a_back & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+    #endif
    #else
-	fgColor = win_clr[a_back & 0x1F];
-	//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
-	bgColor = win_clr_bg[a_back & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+    #ifndef EXTENDED_BG_COLOURS
+		fgColor = win_clr[a_back & 0x1F];
+    #else
+		fgColor = win_clr[a_back & 0x3F];
+		//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x1F]); //verify correctness
+		bgColor = win_clr_bg[a_back & 0x3F]; //verify correctness
+    #endif
    #endif
-  #else
-   #ifndef EXTENDED_BG_COLOURS
-	fgColor = win_clr[a_back & 0x1F];
-   #else
-	fgColor = win_clr[a_back & 0x3F];
-	//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x1F]); //verify correctness
-	bgColor = win_clr_bg[a_back & 0x3F]; //verify correctness
-   #endif
+
+		/* Note about the graphics tiles image (stored in hdcTiles):
+		   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
+		   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
+
+		x1b = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
+		y1b = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
+
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ tc_x, tc_y, tc_x + fwid, tc_y + fhgt }; //uhh, C99 ^^'
+		rectFg = (RECT){ tc_x + fwid, tc_y, tc_x + 2 * fwid, tc_y + fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcCacheTilePreparation2, &rectBg, brushBg);
+		FillRect(td->hdcCacheTilePreparation2, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
+
+
+		if (c_back == 32) {
+			/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
+		} else {
+			BitBlt(td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
+
+			BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, SRCPAINT);
+		}
+
+
+		/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
+
+		BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x + fwid, tc_y, SRCPAINT);
+
+
+		/* --- Copy the picture from the (bg) tile preparation memory to the window --- */
+		BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation2, tc_x, tc_y, SRCCOPY);
+	} else
   #endif
-
-	/* Note about the graphics tiles image (stored in hdcTiles):
-	   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
-	   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
-
-	x1b = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
-	y1b = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
-
-	/* Paint background rectangle .*/
-	rectBg = (RECT){ 0, 0, fwid, fhgt }; //uhh, C99 ^^'
-	rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
-	brushBg = CreateSolidBrush(bgColor);
-	brushFg = CreateSolidBrush(fgColor);
-	FillRect(td->hdcTilePreparation2, &rectBg, brushBg);
-	FillRect(td->hdcTilePreparation2, &rectFg, brushFg);
-	DeleteObject(brushBg);
-	DeleteObject(brushFg);
+	{
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ 0, 0, fwid, fhgt }; //uhh, C99 ^^'
+		rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcTilePreparation, &rectBg, brushBg);
+		FillRect(td->hdcTilePreparation, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
 
 
-	if (c_back == 32) {
-		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
-	} else {
-		BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
-		BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
 
-		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
-		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation2, fwid, 0, SRCPAINT);
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+
+
+		/* --- Background (terrain) graphical tile --- */
+
+		/* Background/Foreground color */
+		bgColor = RGB(0, 0, 0); //this 0-init not really needed?
+		fgColor = RGB(0, 0, 0);
+
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
+		fgColor = win_clr[a_back & 0x0F];
+    #else
+		fgColor = win_clr[a_back & 0x1F];
+		//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+		bgColor = win_clr_bg[a_back & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+    #endif
+   #else
+    #ifndef EXTENDED_BG_COLOURS
+		fgColor = win_clr[a_back & 0x1F];
+    #else
+		fgColor = win_clr[a_back & 0x3F];
+		//bgColor = PALETTEINDEX(win_clr_bg[a_back & 0x1F]); //verify correctness
+		bgColor = win_clr_bg[a_back & 0x3F]; //verify correctness
+    #endif
+   #endif
+
+		/* Note about the graphics tiles image (stored in hdcTiles):
+		   Mask generation has blackened (or whitened if 'inverse') any pixel in it that was actually recognized as eligible mask pixel!
+		   For this reason, usage of OR (SRCPAINT) bitblt here is correct as it doesn't collide with the original image's mask-pixels (as these are now black). */
+
+		x1b = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
+		y1b = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
+
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ 0, 0, fwid, fhgt }; //uhh, C99 ^^'
+		rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcTilePreparation2, &rectBg, brushBg);
+		FillRect(td->hdcTilePreparation2, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
+
+
+		if (c_back == 32) {
+			/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
+		} else {
+			BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
+
+			BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation2, fwid, 0, SRCPAINT);
+		}
+
+
+		/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
+
+		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+
+
+		/* --- Copy the picture from the (bg) tile preparation memory to the window --- */
+		BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
 	}
-
-
-	/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
-
-	BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
-	BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
-
-
-	/* --- Copy the picture from the (bg) tile preparation memory to the window --- */
-	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation2, 0, 0, SRCCOPY);
 
   #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -3542,17 +3769,28 @@ static void init_windows(void) {
  #ifdef TILE_CACHE_SIZE
 		//Note: Cache cannot be disabled from ini file at this point yet,
 		//      as we load_prefs() further below this, but doesn't matter as it just sets to NULL anyway.
-		if (!disable_tile_cache)
-		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
-			td->tile_cache[i].hbmTilePreparation = NULL;
-			td->tile_cache[i].c = 0xffffffff;
-			td->tile_cache[i].a = 0xff;
-  #ifdef GRAPHICS_BG_MASK
-			td->tile_cache[i].hbmTilePreparation2 = NULL;
-			td->tile_cache[i].c_back = 0xffffffff;
-			td->tile_cache[i].a_back = 0xff;
+		if (!disable_tile_cache) {
+  #ifdef TILE_CACHE_SINGLEBMP
+			td->hbmCacheTilePreparation = NULL;
+   #ifdef GRAPHICS_BG_MASK
+			td->hbmCacheTilePreparation2 = NULL;
+   #endif
   #endif
-			td->tile_cache[i].is_valid = FALSE;
+			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+  #ifndef TILE_CACHE_SINGLEBMP
+				td->tile_cache[i].hbmTilePreparation = NULL;
+  #endif
+				td->tile_cache[i].c = 0xffffffff;
+				td->tile_cache[i].a = 0xff;
+  #ifdef GRAPHICS_BG_MASK
+   #ifndef TILE_CACHE_SINGLEBMP
+				td->tile_cache[i].hbmTilePreparation2 = NULL;
+   #endif
+				td->tile_cache[i].c_back = 0xffffffff;
+				td->tile_cache[i].a_back = 0xff;
+  #endif
+				td->tile_cache[i].is_valid = FALSE;
+			}
 		}
  #endif
 #endif /* USE_GRAPHICS */
@@ -3676,7 +3914,10 @@ static void init_windows(void) {
 
 #if defined(USE_GRAPHICS) && defined(TILE_CACHE_SIZE)
 	if (use_graphics && !disable_tile_cache) {
-		int i, j;
+		int i;
+ #ifndef TILE_CACHE_SINGLEBMP
+		int j;
+ #endif
 		int fwid, fhgt;
 		HDC hdc;
 
@@ -3699,14 +3940,21 @@ static void init_windows(void) {
 
 			/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
 			   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
+ #ifdef TILE_CACHE_SINGLEBMP
+			td->hbmCacheTilePreparation = CreateBitmap(TILE_CACHE_SINGLEBMP * 2 * fwid, (TILE_CACHE_SIZE / TILE_CACHE_SINGLEBMP) * fhgt, 1, 32, NULL);
+  #ifdef GRAPHICS_BG_MASK
+			td->hbmCacheTilePreparation2 = CreateBitmap(TILE_CACHE_SINGLEBMP * 2 * fwid, (TILE_CACHE_SIZE / TILE_CACHE_SINGLEBMP) * fhgt, 1, 32, NULL);
+  #endif
+ #else
 			for (j = 0; j < TILE_CACHE_SIZE; j++) {
 				//td->tiles->depth=32
 				td->tile_cache[j].hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
- #ifdef GRAPHICS_BG_MASK
+  #ifdef GRAPHICS_BG_MASK
 				//td->tiles->depth=32
 				td->tile_cache[j].hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
- #endif
+  #endif
 			}
+ #endif
 
 			ReleaseDC(td->w, hdc);
 		}
