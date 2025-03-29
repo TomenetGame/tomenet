@@ -329,11 +329,11 @@ void resize_main_window_win(int cols, int rows);
            - or increase the limit at
              HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
              which has a range of 256...65536
-             The default value is 0x2710 (decimal 10000) and should be increasable to 18000 (hex 0x4650).
+             The default value is 0x2710 (decimal 10000) and should be increased to (hex 0x).
              Be aware on x64 there are two GDIProcessHandleQuota values in the registry!
              You have to reboot for these registry changes to take effect.
 */
-#define TILE_CACHE_SIZE (256*1)
+#define TILE_CACHE_SIZE (256*2)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
