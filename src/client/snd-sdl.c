@@ -2780,7 +2780,7 @@ static void fadein_next_music(void) {
 					look_for_next = FALSE;
 					continue;
 				}
-				if (!songs[d].config) continue;
+				if (!songs[d].config || songs[d].disabled) continue;
 				break;
 			}
 			if (j == MUSIC_MAX) {
@@ -4891,10 +4891,11 @@ void do_cmd_options_mus_sdl(void) {
 			/* Actually do shuffle? */
 			if (jukebox_shuffle) intshuffle(jukebox_shuffle_map, MUSIC_MAX);
 
+			/* Find first song */
  #ifdef JUKEBOX_INSTANT_PLAY
 			for (j = 0; j < MUSIC_MAX; j++) {
 				d = jukebox_shuffle_map[j];
-				if (!songs[d].config) continue;
+				if (!songs[d].config || songs[d].disabled) continue;
 				break;
 			}
 			if (j == MUSIC_MAX) break; //edge case: a music pack without a single event defined >_>
@@ -4973,7 +4974,7 @@ void do_cmd_options_mus_sdl(void) {
 						look_for_next = FALSE;
 						continue;
 					}
-					if (!songs[d].config) continue;
+					if (!songs[d].config || songs[d].disabled) continue;
 					break;
 				}
 				if (j == MUSIC_MAX) {
@@ -5014,7 +5015,7 @@ void do_cmd_options_mus_sdl(void) {
 					look_for_next = FALSE;
 					continue;
 				}
-				if (!songs[d].config) continue;
+				if (!songs[d].config || songs[d].disabled) continue;
 				break;
 			}
 			if (j == MUSIC_MAX) {
@@ -5089,7 +5090,7 @@ void do_cmd_options_mus_sdl(void) {
 						look_for_next = FALSE;
 						continue;
 					}
-					if (!songs[d].config) continue;
+					if (!songs[d].config || songs[d].disabled) continue;
 					break;
 				}
 				if (j == -1) {
@@ -5138,7 +5139,7 @@ void do_cmd_options_mus_sdl(void) {
 					look_for_next = FALSE;
 					continue;
 				}
-				if (!songs[d].config) continue;
+				if (!songs[d].config || songs[d].disabled) continue;
 				break;
 			}
 			if (j == -1) {
