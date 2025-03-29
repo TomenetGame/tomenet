@@ -5280,16 +5280,46 @@ static void get_macro_trigger(char *buf) {
 	Term_addstr(-1, TERM_WHITE, tmp);
 }
 
+
 /* When reinitializing macros, also reload font/graf prefs?
    Shoudln't be needed. */
 //#define FORGET_MACRO_VISUALS
+
+#ifdef TEST_CLIENT
+/* Maximum amount of switchable macrofile-sets loaded at the same time */
+#define MACROFILESETS_MAX 10
+/* Maximum amount of switchable macrofile-set-stages */
+#define MACROFILESETS_STAGES_MAX 6
+/* String part that serves as marker for recognizing macrosets and their switch-type by the macros on their dedicated cycle/switch-keys */
+#define MACROFILESET_MARKER_CYCLE "Cycling to set "
+#define MACROFILESET_MARKER_SWITCH "Switching to set "
+struct macro_fileset_type {
+	bool style_cycle; // Style: cyclic (at least one trigger key was found that cycles)
+	bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
+	int stages; // Amount of stages to cycle/switch between
+	char macro__pat__switch[MACROFILESETS_STAGES_MAX][128];
+	char macro__act__switch[MACROFILESETS_STAGES_MAX][128];
+	char macro__buf__switch[MACROFILESETS_STAGES_MAX][128];
+	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended
+};
+typedef struct macro_fileset_type macro_fileset_type;
+#endif
+
 void interact_macros(void) {
 	int i, j = 0, l, l2, chain_type;
-	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024], buf_fileset[1024];
+	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
 	char fff[1024], t_key[10], choice;
 	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
+
+	//mw_fileset:
+#ifdef TEST_CLIENT
+	int filesets_found;
+	static int fileset_selected = -1;
+	macro_fileset_type fileset[MACROFILESETS_MAX];
+#endif
+
 
 	/* Save screen */
 	Term_save();
@@ -8068,7 +8098,7 @@ Chain_Macro:
 						continue;
 						}
 
-					case mw_fileset:
+					case mw_fileset: {
 						//on first macrowizard run, don't have any selected 'working' set.
 						//on entering this menu, once auto-detect current fileset via..
 						// a) scanning all macros for presence of '%:Set 1 of n ([cyclic|free])' style self-msg to retrieve 3 parms: size, type and base filename!
@@ -8087,7 +8117,46 @@ Chain_Macro:
 						// c) purge (delete) one of the setfiles, auto-merging the rest together accordingly.
 						// d) load aka activate a setfile #k of the current fileset (k in 1..n).
 						// e) add current macros to current fileset as setfile #k (insert or append into the set!).
-						break;
+						// NOTE: Selecting a working set means that all macros currently in RAM are erased, and the particular prf file is loaded!
+						//       This is required to allow having more than 1 concurrently available macroset.
+
+#ifdef TEST_CLIENT
+						int k, m, n;
+
+						/* Scan for loaded filesets */
+						filesets_found = 0;
+						k = -1;
+						m = -1;
+						while (++k < MACROFILESETS_MAX) {
+							while (++m < macro__num) {
+								/* Get trigger in parsable format */
+								ascii_to_text(buf, macro__pat[i]);
+								/* Get macro in parsable format */
+								strncpy(macro__buf, macro__act[i], 159);
+								macro__buf[159] = '\0';
+								ascii_to_text(buf2, macro__buf);
+
+								/*
+								macro__pat__switch[MACROFILESETS_STAGES_MAX][128];
+								macro__act__switch[MACROFILESETS_STAGES_MAX][128];
+								macro__buf__switch[MACROFILESETS_STAGES_MAX][128];
+
+								bool style_cyclic
+								bool style_free
+								int stages
+								char basefilename[1024]
+								*/
+							}
+						}
+						/*
+						static int fileset_selected = -1;
+						macro_fileset_type fileset[MACROFILESETS_MAX];
+						MACROFILESET_MARKER_SWITCH
+						MACROFILESET_MARKER_CYCLE
+						*/
+
+#endif
+						break; }
 					}
 
 
