@@ -987,12 +987,12 @@ static void recreateGraphicsObjects(term_data *td) {
 	if (!disable_tile_cache) {
   #ifdef TILE_CACHE_SINGLEBMP
 		td->hbmCacheTilePreparation = CreateBitmap(TILE_CACHE_SINGLEBMP * 2 * fwid, (TILE_CACHE_SIZE / TILE_CACHE_SINGLEBMP) * fhgt, 1, 32, NULL);
-		td->hdcTilePreparation = CreateCompatibleDC(hdc);
+		td->hdcCacheTilePreparation = CreateCompatibleDC(hdc);
 		HBITMAP hbmOldCacheTilePreparation = SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation);
 		DeleteBitmap(hbmOldCacheTilePreparation);
    #ifdef GRAPHICS_BG_MASK
 		td->hbmCacheTilePreparation2 = CreateBitmap(TILE_CACHE_SINGLEBMP * 2 * fwid, (TILE_CACHE_SIZE / TILE_CACHE_SINGLEBMP) * fhgt, 1, 32, NULL);
-		td->hdcTilePreparation2 = CreateCompatibleDC(hdc);
+		td->hdcCacheTilePreparation2 = CreateCompatibleDC(hdc);
 		HBITMAP hbmOldCacheTilePreparation2 = SelectObject(td->hdcCacheTilePreparation2, td->hbmCacheTilePreparation2);
 		DeleteBitmap(hbmOldCacheTilePreparation2);
    #endif
