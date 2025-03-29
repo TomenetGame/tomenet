@@ -321,19 +321,28 @@ void resize_main_window_win(int cols, int rows);
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
     Size 256*4:  Default choice now, for reserves.
 
-    NOTES: On Windows (at least v10), a 256*4 size would lead to exceeding the default GDI objects limit of 10000
+    NOTES: On Windows (any version, up to at least 10), a 256*4 size would lead to exceeding the default GDI objects limit of 10000
            (as cache always gets initialized for all 10 windows (main window + 9 subterms),
            resulting in NULL pointer getting returned by some CreateBitmap() calls half way through initialization,
            eg within ResizeTilesWithMasks(). To workaround this,
-           - either reduce the cache size to 256*1
+           - either reduce the cache size to 384
            - or increase the limit at
-             HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
-             which has a range of 256...65536
-             The default value is 0x2710 (decimal 10000) and should be increased to (hex 0x).
-             Be aware on x64 there are two GDIProcessHandleQuota values in the registry!
-             You have to reboot for these registry changes to take effect.
+             for x86 systems only: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
+             for x64 systems only: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
+             which have a range of 256...65536 (on Windows 2000 only up to 16384)
+             The default value is 0x2710 (decimal 10000) and should be increased to something safe eg 0x61A8 (decimal 25000).
+             You have to reboot for these registry changes to take effect!
+
+             Tested working GDI handle values vs cache sizes:
+             (256 * 2) : 25000
+
+             Potential issues with old x86 systems:
+             However, on x86 anything above 12,000 might rarely give an effective increase above this due to x86-system resource constraints.
+             Also, GDI is allocated out of desktop heap, it's possible on x86 systems for huge allocation sizes (not handle counts)
+             to need to increase desktop heap allocation in Session View space from 20MB all the way up to 48MB by modifying a registry key,
+             but Session View space is limited on x86 and other regions might get less resources in turn.
 */
-#define TILE_CACHE_SIZE (256*2)
+#define TILE_CACHE_SIZE (384)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
