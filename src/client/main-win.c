@@ -315,32 +315,37 @@ void resize_main_window_win(int cols, int rows);
 
 
 /* Cache for prepared graphical tiles.
-   Observations:
+   Usage observations:
     Size 256:    Cache fills maybe within first 10 floors of Barrow-Downs (2mask mode), so it's very comfortable.
                  However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
     Size 256*4:  Default choice now, for reserves.
 
-    NOTES: On Windows (any version, up to at least 10), a 256*4 size would lead to exceeding the default GDI objects limit of 10000
-           (as cache always gets initialized for all 10 windows (main window + 9 subterms),
-           resulting in NULL pointer getting returned by some CreateBitmap() calls half way through initialization,
-           eg within ResizeTilesWithMasks(). To workaround this,
-           - either reduce the cache size to 384
-           - or increase the limit at
-             for x86 systems only: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
-             for x64 systems only: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
-             which have a range of 256...65536 (on Windows 2000 only up to 16384)
-             The default value is 0x2710 (decimal 10000) and should be increased to something safe eg 0x61A8 (decimal 25000).
-             You have to reboot for these registry changes to take effect!
+   Notes: On Windows (any version, up to at least 10), a 256*4 size would lead to exceeding the default GDI objects limit of 10000
+          (as cache always gets initialized for all 10 windows (main window + 9 subterms),
+          resulting in NULL pointer getting returned by some CreateBitmap() calls half way through initialization,
+          eg within ResizeTilesWithMasks(). To workaround this,
+          - either reduce the cache size (eg to 384, compare 'tested values' table further below)
+          - or increase the limit at
+            for x86 systems only: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
+            for x64 systems only: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
+            which have a range of 256...65536 (on Windows 2000 only up to 16384)
+            The default value is 0x2710 (decimal 10000) and should be increased to something safe depending on the tile cache size.
+            You have to reboot for these registry changes to take effect!
 
-             Tested working GDI handle values vs cache sizes:
-             (256 * 2) : 25000
+            Potential issues with old x86 systems:
+            However, on x86 anything above 12,000 might rarely give an effective increase above this due to x86-system resource constraints.
+            Also, GDI is allocated out of desktop heap, it's possible on x86 systems for huge allocation sizes (not handle counts)
+            to need to increase desktop heap allocation in Session View space from 20MB all the way up to 48MB by modifying a registry key,
+            but Session View space is limited on x86 and other regions might get less resources in turn.
 
-             Potential issues with old x86 systems:
-             However, on x86 anything above 12,000 might rarely give an effective increase above this due to x86-system resource constraints.
-             Also, GDI is allocated out of desktop heap, it's possible on x86 systems for huge allocation sizes (not handle counts)
-             to need to increase desktop heap allocation in Session View space from 20MB all the way up to 48MB by modifying a registry key,
-             but Session View space is limited on x86 and other regions might get less resources in turn.
+          Tested working GDI handle values vs cache sizes (10000 GDI handles means it works out of the box w/o need to change the registry):
+            10000: (256 * 1), (384)
+            25000: (256 * 2)
+
+          TODO:
+            Fix all this GDI handle silliness - maybe just use one huge 'cache bitmap' per window,
+            and the single cache tiles are merely coordinate references within it.
 */
 #define TILE_CACHE_SIZE (384)
 
@@ -670,8 +675,6 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	HDC hdcMemResBg2Mask = CreateCompatibleDC(NULL);
  #endif
 
-	logprint("(debug) ResizeTilesWithMasks-0.\n");
-
 	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
 	HBITMAP hbmOldMemTiles = SelectObject(hdcMemTiles, g_hbmTiles);
 	HBITMAP hbmOldMemBgMask = SelectObject(hdcMemBgMask, g_hbmBgMask);
@@ -686,8 +689,6 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	HBITMAP hbmOldMemResBg2Mask = SelectObject(hdcMemResBg2Mask, hbmResBg2Mask);
  #endif
 
-	logprint("(debug) ResizeTilesWithMasks-1.\n");
-
  #if 1 /* use StretchBlt instead of SetPixel-loops */
 	/* StretchBlt is much faster on native Windows - mikaelh */
 	SetStretchBltMode(hdcMemResTiles, COLORONCOLOR);
@@ -701,8 +702,6 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	StretchBlt(hdcMemResBg2Mask, 0, 0, width2, height2, hdcMemBg2Mask, 0, 0, width1, height1, SRCCOPY);
   #endif
  #else
-
-	logprint("(debug) ResizeTilesWithMasks-2.\n");
 
 	/* I like more this classical and slower approach, as the commented StretchBlt code above. In my opinion, it makes nicer resized pictures.*/
 	int x1, x2, y1, y2, Tx, Ty;
@@ -767,8 +766,6 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	}
  #endif
 
-	logprint("(debug) ResizeTilesWithMasks-3.\n");
-
 	/* Restore the stored default bitmap into the memory DC. */
 	SelectObject(hdcMemTiles, hbmOldMemTiles);
 	SelectObject(hdcMemBgMask, hbmOldMemBgMask);
@@ -782,8 +779,6 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 	SelectObject(hdcMemBg2Mask, hbmOldMemBg2Mask);
 	SelectObject(hdcMemResBg2Mask, hbmOldMemResBg2Mask);
  #endif
-
-	logprint("(debug) ResizeTilesWithMasks-4.\n");
 
 	/* Release the created memory DC. */
 	DeleteDC(hdcMemTiles);
@@ -814,8 +809,6 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 		return;
 	}
 
-	logprint("(debug) releaseCreatedGraphicsObjects\n");
-
 	if (td->hdcTilePreparation != NULL) {
 		DeleteDC(td->hdcTilePreparation);
 		td->hdcTilePreparation = NULL;
@@ -845,7 +838,6 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache) {
-		logprint("(debug) releaseCreatedGraphicsObjects : cache.\n");
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			if (td->tile_cache[i].hbmTilePreparation != NULL) {
 				DeleteBitmap(td->tile_cache[i].hbmTilePreparation);
@@ -864,7 +856,6 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 			td->tile_cache[i].is_valid = FALSE;
 			/* Optional 'bg' and 'fg' need no intialization */
 		}
-		logprint("(debug) releaseCreatedGraphicsObjects : cache completed.\n");
 	}
  #endif
 }
@@ -888,20 +879,14 @@ static void recreateGraphicsObjects(term_data *td) {
 
 	releaseCreatedGraphicsObjects(td);
 
-	logprint("(debug) recreateGraphicsObjects-0.\n");
-
 	HBITMAP hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
-	logprint("(debug) recreateGraphicsObjects-0a.\n");
 	HBITMAP hbmBgMask, hbmFgMask;
  #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
-	logprint("(debug) recreateGraphicsObjects-0b.\n");
 	HBITMAP hbmBg2Mask;
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask);
-	logprint("(debug) recreateGraphicsObjects-0c.\n");
  #else
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
-	logprint("(debug) recreateGraphicsObjects-0d.\n");
  #endif
 
 	if (hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL
@@ -916,12 +901,8 @@ static void recreateGraphicsObjects(term_data *td) {
 		quit("Resizing tiles or masks failed.\n");
 	}
 
-	logprint("(debug) recreateGraphicsObjects-1.\n");
-
 	/* Get device content for current window. */
 	HDC hdc = GetDC(td->w);
-
-	logprint("(debug) recreateGraphicsObjects-2.\n");
 
 	/* Create a compatible device content in memory. */
 	td->hdcTilePreparation = CreateCompatibleDC(hdc);
@@ -933,8 +914,6 @@ static void recreateGraphicsObjects(term_data *td) {
 	td->hdcBg2Mask = CreateCompatibleDC(hdc);
  #endif
 
-	logprint("(debug) recreateGraphicsObjects-3.\n");
-
 	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
 	HBITMAP hbmOldTilePreparation = SelectObject(td->hdcTilePreparation, hbmTilePreparation);
 	HBITMAP hbmOldTiles = SelectObject(td->hdcTiles, hbmTiles);
@@ -944,8 +923,6 @@ static void recreateGraphicsObjects(term_data *td) {
 	HBITMAP hbmOldTilePreparation2 = SelectObject(td->hdcTilePreparation2, hbmTilePreparation2);
 	HBITMAP hbmOldBg2Mask = SelectObject(td->hdcBg2Mask, hbmBg2Mask);
  #endif
-
-	logprint("(debug) recreateGraphicsObjects-4.\n");
 
 	/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
 	DeleteBitmap(hbmOldTilePreparation);
@@ -957,11 +934,8 @@ static void recreateGraphicsObjects(term_data *td) {
 	DeleteBitmap(hbmOldBg2Mask);
  #endif
 
-	logprint("(debug) recreateGraphicsObjects-5.\n");
-
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache) {
-		logprint("(debug) recreateGraphicsObjects : cache.\n");
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			//td->tiles->depth=32
 			td->tile_cache[i].hbmTilePreparation = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
@@ -970,11 +944,8 @@ static void recreateGraphicsObjects(term_data *td) {
 			td->tile_cache[i].hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
   #endif
 		}
-		logprint("(debug) recreateGraphicsObjects : cache completed.\n");
 	}
  #endif
-
-	logprint("(debug) recreateGraphicsObjects-6.\n");
 
 	/* Release */
 	ReleaseDC(td->w, hdc);
@@ -3351,7 +3322,6 @@ static void term_data_link(int i, term_data *td) {
 
 #ifdef USE_GRAPHICS
 	if (use_graphics) {
-		logprint(format("(debug) TDL:recreateGraphicsObjects (term %d)\n", i));
 		recreateGraphicsObjects(td);
 
 		/* Graphics hook */
@@ -3595,7 +3565,7 @@ static void init_windows(void) {
 	usleep(100000);
 #endif
 
-	logprint("Loading INI file.\n");
+	logprint("Loading INI file '%s'.\n", ini_file ? ini_file : "NULL");
 	/* Load .INI preferences - this will overwrite nick and pass, so we need to keep these if we got them from command-line */
 	if (nick[0]) {
 		char tmpnick[ACCNAME_LEN], tmppass[PASSWORD_LEN];
@@ -3727,8 +3697,6 @@ static void init_windows(void) {
 				fhgt = td->font_hgt;
 			}
 
-			logprint(format("Graphical tileset cache (%d): fwid %d, fhgt %d.\n", i, fwid, fhgt));
-
 			/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
 			   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
 			for (j = 0; j < TILE_CACHE_SIZE; j++) {
@@ -3742,7 +3710,6 @@ static void init_windows(void) {
 
 			ReleaseDC(td->w, hdc);
 		}
-		logprint("Graphical tileset cache initialized.\n");
 	}
 #endif
 	logprint("Window initialization completed.\n");
