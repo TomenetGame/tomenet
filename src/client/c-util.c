@@ -5291,15 +5291,16 @@ static void get_macro_trigger(char *buf) {
 /* Maximum amount of switchable macrofile-set-stages */
 #define MACROFILESETS_STAGES_MAX 6
 /* String part that serves as marker for recognizing macrosets and their switch-type by the macros on their dedicated cycle/switch-keys */
-#define MACROFILESET_MARKER_CYCLE "Cycling to set "
-#define MACROFILESET_MARKER_SWITCH "Switching to set "
+#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset"
+#define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
 struct macro_fileset_type {
-	bool style_cycle; // Style: cyclic (at least one trigger key was found that cycles)
+	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles)
 	bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
-	int stages; // Amount of stages to cycle/switch between
-	char macro__pat__switch[MACROFILESETS_STAGES_MAX][128];
-	char macro__act__switch[MACROFILESETS_STAGES_MAX][128];
-	char macro__buf__switch[MACROFILESETS_STAGES_MAX][128];
+	int stages; // Amount of stages to cyclic/switch between
+	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
+	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
+	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
+	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
 	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended
 };
 typedef struct macro_fileset_type macro_fileset_type;
@@ -8121,38 +8122,102 @@ Chain_Macro:
 						//       This is required to allow having more than 1 concurrently available macroset.
 
 #ifdef TEST_CLIENT
-						int k, m, n;
+						int f, k, m, s;
+						int stage;
+						char *cc, *cf, *cfile;
+						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
+						char buf_basename[1024];
+						bool style_cyclic, style_free;
+
+						/* Init filesets */
+						for (k = 0; k < MACROFILESETS_MAX; k++) fileset[k].stages = 0;
 
 						/* Scan for loaded filesets */
 						filesets_found = 0;
 						k = -1;
 						m = -1;
+						s = 0;
 						while (++k < MACROFILESETS_MAX) {
 							while (++m < macro__num) {
-								/* Get trigger in parsable format */
-								ascii_to_text(buf, macro__pat[i]);
+								style_cyclic = style_free = FALSE;
+
 								/* Get macro in parsable format */
-								strncpy(macro__buf, macro__act[i], 159);
-								macro__buf[159] = '\0';
-								ascii_to_text(buf2, macro__buf);
+								strncpy(buf_act, macro__act[m], 159);
+								buf_act[159] = '\0';
+								ascii_to_text(buftxt_act, buf_act);
 
-								/*
-								macro__pat__switch[MACROFILESETS_STAGES_MAX][128];
-								macro__act__switch[MACROFILESETS_STAGES_MAX][128];
-								macro__buf__switch[MACROFILESETS_STAGES_MAX][128];
+								/* Scan macro for marker text, indicating that it's a set-switch */
+								// (note: MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset")
+								// (note: MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset")
+								if ((cc = strstr(buftxt_act, MACROFILESET_MARKER_CYCLIC))) style_cyclic = TRUE;
+								if ((cf = strstr(buftxt_act, MACROFILESET_MARKER_SWITCH))) style_free = TRUE;
 
-								bool style_cyclic
-								bool style_free
-								int stages
-								char basefilename[1024]
-								*/
+								if (!style_cyclic && !style_free) continue;
+
+								/* Found one! */
+
+								/* Determine base filename from the action text : %lFILENAME\r\e */
+								cfile = strstr(buftxt_act, "%l");
+								if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+								strcpy(buf_basename, cfile + 2);
+								/* Find end of filename */
+								cfile = strstr(buf_basename, "\\r\\e");
+								if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+								*cfile = 0;
+								/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
+								   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
+							    //TODO
+							    //actually no: if this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
+							    //so it should follow a specific format: ":%:Cycling to set n of m\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+								if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
+								/* Finalize stage index */
+								stage = atoi(buf_basename + strlen(buf_basename) - 8);
+								/* Finalize base filename */
+								buf_basename[strlen(buf_basename) - 8] = 0;
+
+								/* Scan already known filesets for same basename,
+								to either add the found key to an existing one or add a new fileset */
+								for (f = 0; f < k; f++) {
+									if (strcmp(fileset[f].basefilename, buf_basename)) continue;
+
+									/* Found set! */
+
+									/* Too many stages? */
+									if (stage >= MACROFILESETS_STAGES_MAX) {
+										c_msg_format("\377yWarning: Discarding excess stage for macroset '%s' (max %d).", buf_basename, MACROFILESETS_STAGES_MAX);
+										continue;
+									}
+
+									/* Sort this stage in */
+									if (fileset[f].stages < stage) fileset[f].stages = stage;
+
+									/* Add stage to this already known set */
+									break;
+								}
+								/* No known fileset of this basename found? Add a new set. */
+								if (f == k) {
+									fileset[k].style_cyclic = style_cyclic;
+									fileset[k].style_free = style_free;
+
+									/* Get trigger in parsable format */
+									strncpy(buf_pat, macro__pat[m], 31);
+									buf_pat[31] = '\0';
+									ascii_to_text(buftxt_pat, buf_pat);
+
+									strcpy(fileset[k].macro__pat__switch[s], buf_pat);
+									strcpy(fileset[k].macro__patbuf__switch[s], buftxt_pat);
+									strcpy(fileset[k].macro__act__switch[s], buf_act);
+									strcpy(fileset[k].macro__actbuf__switch[s], buftxt_act);
+
+									fileset[k].stages = 1;
+									strcpy(fileset[k].basefilename, buf_basename);
+								}
+								/* Continue scanning keys for switch-macros */
 							}
 						}
 						/*
 						static int fileset_selected = -1;
 						macro_fileset_type fileset[MACROFILESETS_MAX];
-						MACROFILESET_MARKER_SWITCH
-						MACROFILESET_MARKER_CYCLE
 						*/
 
 #endif
