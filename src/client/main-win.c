@@ -836,7 +836,7 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
  #endif
 
  #ifdef TILE_CACHE_SIZE
-	if (!disable_tile_cache && !gfx_1st_run) {
+	if (!disable_tile_cache && !gfx_1st_init) {
 		logprint("(debug) releaseCreatedGraphicsObjects : cache.\n");
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			if (td->tile_cache[i].hbmTilePreparation != NULL) {
