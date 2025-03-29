@@ -320,8 +320,17 @@ void resize_main_window_win(int cols, int rows);
                  However, it overflows instantly in just 1 sector of housing area around Bree, on admin who can see all objects.
     Size 256*3:  Cache manages to more or less capture a whole housing area sector fine. This seems a good minimum cache size.
     Size 256*4:  Default choice now, for reserves.
+
+    NOTES: On Windows (at least v10), a 256*4 size would lead to exceeding the default GDI objects limit of 10000,
+           resulting in NULL pointer getting returned by some CreateBitmap() calls, eg within ResizeTilesWithMasks().
+           To workaround this,
+           - either reduce the cache size to 256* ...
+           - or increase the limit at
+             HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
+             HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\USERProcessHandleQuota
+             These have default 0x2710 and should be increasable to at least 18000 aka 0x4650.
 */
-#define TILE_CACHE_SIZE (256*1)
+#define TILE_CACHE_SIZE (256*2)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
@@ -337,7 +346,7 @@ void resize_main_window_win(int cols, int rows);
 #endif
 
 #ifdef TILE_CACHE_SIZE
-bool disable_tile_cache = FALSE;
+bool disable_tile_cache = FALSE, gfx_1st_init = TRUE;
 struct tile_cache_entry {
     HBITMAP hbmTilePreparation;
     char32_t c;
@@ -788,6 +797,10 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 }
 
 static void releaseCreatedGraphicsObjects(term_data *td) {
+ #ifdef TILE_CACHE_SIZE
+	//if (gfx_1st_init) return;
+ #endif
+
 	if (td == NULL) {
 		logprint("(debug) releaseCreatedGraphicsObjects : NULL\n");
 		return;
@@ -823,7 +836,7 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
  #endif
 
  #ifdef TILE_CACHE_SIZE
-	if (!disable_tile_cache) {
+	if (!disable_tile_cache && !gfx_1st_run) {
 		logprint("(debug) releaseCreatedGraphicsObjects : cache.\n");
 		for (int i = 0; i < TILE_CACHE_SIZE; i++) {
 			if (td->tile_cache[i].hbmTilePreparation != NULL) {
@@ -3688,6 +3701,8 @@ static void init_windows(void) {
 		int i, j;
 		int fwid, fhgt;
 		HDC hdc;
+
+		gfx_1st_init = FALSE;
 
 		logprint("Initializing graphical tileset cache.\n");
 
