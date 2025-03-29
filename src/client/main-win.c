@@ -325,13 +325,15 @@ void resize_main_window_win(int cols, int rows);
            (as cache always gets initialized for all 10 windows (main window + 9 subterms),
            resulting in NULL pointer getting returned by some CreateBitmap() calls half way through initialization,
            eg within ResizeTilesWithMasks(). To workaround this,
-           - either reduce the cache size to 256*2
+           - either reduce the cache size to 256*1
            - or increase the limit at
              HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\GDIProcessHandleQuota
-             HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\USERProcessHandleQuota
-             These have default 0x2710 and should be increasable to at least 18000 aka 0x4650.
+             which has a range of 256...65536
+             The default value is 0x2710 (decimal 10000) and should be increasable to 18000 (hex 0x4650).
+             Be aware on x64 there are two GDIProcessHandleQuota values in the registry!
+             You have to reboot for these registry changes to take effect.
 */
-#define TILE_CACHE_SIZE (256*2)
+#define TILE_CACHE_SIZE (256*1)
 
 /* Output cache state information in the message window? Spammy and only for debugging purpose. */
 //#define TILE_CACHE_LOG
