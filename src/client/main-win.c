@@ -2859,7 +2859,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 			    ) {
 				/* Copy cached tile to window. */
   #ifdef TILE_CACHE_SINGLEBMP
-				SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
+				//SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
 				BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation, (i % TILE_CACHE_SINGLEBMP) * 2 * fwid, (i / TILE_CACHE_SINGLEBMP) * fhgt, SRCCOPY);
   #else
 				SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
@@ -2897,7 +2897,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
   #ifndef TILE_CACHE_SINGLEBMP
 		SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
   #else
-		SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
+		//SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
   #endif
 
 		entry->c = c;
@@ -3139,8 +3139,8 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		SelectObject(td->hdcTilePreparation2, entry->hbmTilePreparation2);
   #else
 		//already selected?
-		SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation);
-		SelectObject(td->hdcCacheTilePreparation2, td->hbmCacheTilePreparation2);
+		//SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation);
+		//SelectObject(td->hdcCacheTilePreparation2, td->hbmCacheTilePreparation2);
   #endif
 
 		entry->c = c;
