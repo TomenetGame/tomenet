@@ -342,16 +342,12 @@ void resize_main_window_win(int cols, int rows);
           Tested working GDI handle values vs cache sizes (10000 GDI handles means it works out of the box w/o need to change the registry):
             10000: (256 * 1), (384)
             25000: (256 * 2)
-
-          TODO:
-            Fix all this GDI handle silliness - maybe just use one huge 'cache bitmap' per window,
-            and the single cache tiles are merely coordinate references within it.
 */
 /* Alternate method to remedy the Windows-specific GDI object limit w/o modifying the Registry:
    We can use a different cache structure: One large cache bitmap per window, instead of many small bitmaps for each tile.
    The number of cache tiles per line is defined by TILE_CACHE_SINGLEBMP's value [32],
    so the TILE_CACHE_SIZE should always be multiple of this: */
-#define TILE_CACHE_SINGLEBMP 32		/* <- Comment out this define if you want to use the default cache method */
+#define TILE_CACHE_SINGLEBMP 32		/* <- Comment out this define if you want to use the default cache method that is limited by GDI handle limit */
 #ifdef TILE_CACHE_SINGLEBMP
  #define TILE_CACHE_SIZE (256 * 4)
 #else
