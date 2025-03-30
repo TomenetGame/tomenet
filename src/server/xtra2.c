@@ -9452,10 +9452,10 @@ void player_death(int Ind) {
 	/* Message to tomb stone required static colours as flickering would be silly */
 	if (insanity) {
 		strcpy(died_from_msg, "\377minsanity\377r");
-		strcpy(died_from_tomb, "\377od\377yi\377ov\377wi\377on\377ye \377ow\377wr\377oa\377yt\377oh\377r");
+		strcpy(died_from_tomb, "\377oi\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r");
 	} else if (divine_wrath) {
 		strcpy(died_from_msg, "\377Jdivine wrath\377r");
-		strcpy(died_from_tomb, "\377oi\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r");
+		strcpy(died_from_tomb, "\377od\377yi\377ov\377wi\377on\377ye \377ow\377wr\377oa\377yt\377oh\377r");
 	} else if (!strcmp(p_ptr->died_from, "herself") || !strcmp(p_ptr->died_from, "himself")) {
 		strcpy(died_from_msg, p_ptr->died_from);
 		strcpy(died_from_tomb, "yourself");
