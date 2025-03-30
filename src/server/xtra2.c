@@ -9456,10 +9456,13 @@ void player_death(int Ind) {
 	} else if (divine_wrath) {
 		strcpy(died_from_msg, "\377Jdivine wrath\377r");
 		strcpy(died_from_tomb, "\377oi\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r");
-	} else if (!strcmp(p_ptr->died_from, "herself") || !strcmp(p_ptr->died_from, "himself"))
+	} else if (!strcmp(p_ptr->died_from, "herself") || !strcmp(p_ptr->died_from, "himself")) {
+		strcpy(died_from_msg, p_ptr->died_from);
 		strcpy(died_from_tomb, "yourself");
-	else
+	} else {
+		strcpy(died_from_msg, p_ptr->died_from);
 		strcpy(died_from_tomb, p_ptr->died_from);
+	}
 
 	p_ptr->tmp_y = p_ptr->total_winner; //was: bool was_total_winner = p_ptr->total_winner,;
 
