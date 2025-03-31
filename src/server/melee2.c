@@ -9790,7 +9790,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					zcave[2][55].feat = FEAT_UNSEALED_DOOR;
 					everyone_lite_spot(wpos, 2, 55);
 				}
-			} else if (m_ptr->extra < 45) { //move right
+			} else if (m_ptr->extra < 46) { //move right
 				zcave[oy][ox].m_idx = 0;
 				m_ptr->fx++;
 				who = zcave[oy][m_ptr->fx].m_idx;
@@ -12744,7 +12744,7 @@ void process_monsters(void) {
 			    || p_ptr->admin_invinc)
 			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) { /* for Dungeon Master GF_DOMINATE */
 				if (los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) && j <= MAX_SIGHT) m_ptr->strongest_los = pl;
-				continue;
+				if (m_ptr->r_idx != RI_BLUE) continue;
 			}
 
 			/* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
