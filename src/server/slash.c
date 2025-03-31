@@ -14804,6 +14804,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				NumPlayers--;
 				return;
 			}
+			else if (prefix(messagelc, "/dbgmon")) {
+				monster_type *m_ptr;
+
+				for (i = 1; i < m_max; i++) {
+					m_ptr = &m_list[i];
+					if (m_ptr->r_idx != 0) continue;
+					//m_ptr-> = 0;
+					break;
+				}
+				return;
+			}
 		}
 	}
 
