@@ -327,6 +327,11 @@ F:247:/566 # Solid block (UI), top right corner rounded
 F:248:/567 # Solid block (UI), bottom left corner rounded
 F:249:/568 # Solid block (UI), bottom right corner rounded
 
+F:250:/569 # Solid block (UI), half top right shaved off
+F:251:/570 # Solid block (UI), half bottom left shaved off
+F:252:/571 # Solid block (UI), half bottom right shaved off
+F:253:/572 # Solid block (UI), half top left shaved off
+
 F:238:/295 # Drawbridge, horizontal
 
 ################# Objects #################

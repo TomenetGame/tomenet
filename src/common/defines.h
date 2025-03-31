@@ -570,7 +570,7 @@
  * TODO: make them redefinable w/o client update
  */
 
-#define MAX_F_IDX	256	/* Max size for "f_info[]" */
+#define MAX_F_IDX	256	/* Max size for "f_info[]" -- TODO! Expand to 512, change data type from byte to u16b accordingly */
 #define MAX_K_IDX	1280	/* Max size for "k_info[]" */
 #define MAX_A_IDX	512	/* Max size for "a_info[]" */
 #define MAX_E_IDX	384	/* Max size for "e_info[]" */

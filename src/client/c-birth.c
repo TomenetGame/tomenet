@@ -109,24 +109,46 @@ static void choose_name(void) {
 	strcpy(introline[4], "    |##|     |##| ##|  |##|\\##/|##|  |##|       |##|\\###|  |##|         |##|   ");
 	strcpy(introline[5], "    |##|     |######|  |##| \\/ |##|  |######|   |##| \\##|  |######|     |##|   ");
   #endif
-  #ifdef LOGO_SOLID
-	if (strcmp(ANGBAND_SYS, "gcu") && !force_cui) /* No solid chars in terminal mode for now, seems to cause glitches */
-   #if defined(WINDOWS) && defined(USE_LOGFONT)
-	if (!use_logfont) /* doesn't have font_map_solid_walls style characters */
+  #ifdef USE_GRAPHICS
+	if (use_graphics) {
+		int w;
+		char c;
+		char32_t c32;
+
+		for (y = 0; y < 6; y++) {
+			for (w = 0; w < 80; w++) {
+				c = introline[y][w];
+				switch (c) {
+				case '#': c32 = 813; break;
+				case '|': c32 = ' '; break;
+				case '\\': c32 = (introline[y][w - 1] == '#' || introline[y][w + 1] == ' ' ? 825 : 826); break;
+				case '/': c32 = (introline[y][w - 1] == '#' || introline[y][w + 1] == ' ' ? 827 : 828); break;
+   #if 0 // 0'ed -> keep the flickering top parts ASCII? :)
+				case '^': c32 = ...we don't have anything for this actually^^...; break;
    #endif
-	for (y = 0; y < 6; y++) for (x = 0; x < MAX_CHARS; x++) if (introline[y][x] == '#')
+				default: c32 = (char32_t)c;
+				}
+				Term_draw(w, LOGO_ROW + y, introline_col[y], c32);
+			}
+		}
+	} else
+  #endif
+	{
+  #ifdef LOGO_SOLID
+		if (strcmp(ANGBAND_SYS, "gcu") && !force_cui) /* No solid chars in terminal mode for now, seems to cause glitches */
+   #if defined(WINDOWS) && defined(USE_LOGFONT)
+		if (!use_logfont) /* doesn't have font_map_solid_walls style characters */
+   #endif
+		for (y = 0; y < 6; y++) for (x = 0; x < MAX_CHARS; x++) if (introline[y][x] == '#')
    #ifdef WINDOWS
-		introline[y][x] = FONT_MAP_SOLID_WIN;
+			introline[y][x] = FONT_MAP_SOLID_WIN;
    #else
-		introline[y][x] = FONT_MAP_SOLID_X11;
+			introline[y][x] = FONT_MAP_SOLID_X11;
    #endif
   #endif
-	c_put_str(introline_col[0], introline[0], LOGO_ROW, 0);
-	c_put_str(introline_col[1], introline[1], LOGO_ROW + 1, 0);
-	c_put_str(introline_col[2], introline[2], LOGO_ROW + 2, 0);
-	c_put_str(introline_col[3], introline[3], LOGO_ROW + 3, 0);
-	c_put_str(introline_col[4], introline[4], LOGO_ROW + 4, 0);
-	c_put_str(introline_col[5], introline[5], LOGO_ROW + 5, 0);
+		for (y = 0; y < 6; y++)
+			c_put_str(introline_col[y], introline[y], LOGO_ROW + y, 0);
+	}
  #endif
 	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", LOGIN_ROW, 2);
 	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice. Remember", LOGIN_ROW + 1, 2);
