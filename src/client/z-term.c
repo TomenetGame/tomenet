@@ -467,6 +467,7 @@ static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	if (x > Term->x2[y]) Term->x2[y] = x;
 }
 #ifdef GRAPHICS_BG_MASK
+/* If c_back is zero, it keeps the current background char instead of setting one. */
 static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
 	byte *scr_aa = Term->scr->a[y];
 	char32_t *scr_cc = Term->scr->c[y];
@@ -479,7 +480,7 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	char32_t oc_back = scr_cc_back[x];
 
 	/* Hack -- Ignore non-changes */
-	if (oa == a && oc == c && oa_back == a_back && oc_back == c_back) return;
+	if (oa == a && oc == c && oa_back == a_back && (!c_back || oc_back == c_back)) return;
 
 	/* Save the "literal" information */
 	scr_aa[x] = a;
@@ -567,6 +568,8 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 
 #if 0 /* 0'ed cause only used for text printing, not for actual pict-printing (ie graphics tiles) */
 #ifdef GRAPHICS_BG_MASK
+/* If a c_back is zero, it keeps the current background char at that position, instead of setting one.
+   HOWEVER, this is currently not implemented for DRAW_LARGER_CHUNKS! */
 static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte a_back, char32_t *s_back) {
 	int x1 = -1, x2 = -1;
 
@@ -576,6 +579,7 @@ static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte 
 	char32_t *scr_cc_back = Term->scr_back->c[y];
 
  #ifdef DRAW_LARGER_CHUNKS
+	//TODO: new back-character may have value zero to keep current background char
 	memset(scr_aa + x, a, n);
 	memcpy(scr_cc + x, s, n * sizeof(s[0]));
 	memset(scr_aa_back + x, a_back, n);
@@ -592,13 +596,15 @@ static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte 
 		int oc_b = scr_cc_back[x];
 
 		/* Hack -- Ignore non-changes */
-		if (oa == a && oc == *s && oa_b == a_back && oc_b == *s_back) continue;
+		if (oa == a && oc == *s && oa_b == a_back && (!*s_back || oc_b == *s_back)) continue;
 
 		/* Save the "literal" information */
 		scr_aa[x] = a;
 		scr_cc[x] = *s;
-		scr_aa_back[x] = a_back;
-		scr_cc_back[x] = *s_back;
+		if (*s_back) {
+			scr_aa_back[x] = a_back;
+			scr_cc_back[x] = *s_back;
+		}
 
 		/* Note the "range" of window updates */
 		if (x1 < 0) x1 = x;

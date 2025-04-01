@@ -5396,8 +5396,7 @@ void do_weather(bool no_weather) {
 						Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
-						    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+						    0, 0);
 					else
 #endif
 #ifdef USE_GRAPHICS
@@ -5417,8 +5416,7 @@ void do_weather(bool no_weather) {
 						Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_snowflake, kidx_po_snow_char,
-						    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+						    0, 0);
 					else
 #endif
 #ifdef USE_GRAPHICS
@@ -5438,8 +5436,7 @@ void do_weather(bool no_weather) {
 						Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_sandgrain, kidx_po_sand_char,
-						    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-						    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+						    0, 0);
 					else
 #endif
 #ifdef USE_GRAPHICS
@@ -5656,8 +5653,7 @@ void do_weather(bool no_weather) {
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
 					    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					    0, 0);
 				else
 #endif
 				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
@@ -5723,8 +5719,7 @@ void do_weather(bool no_weather) {
 					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					    0, 0);
 				else
 #endif
 #ifdef USE_GRAPHICS
@@ -5781,8 +5776,7 @@ void do_weather(bool no_weather) {
 					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_snowflake, kidx_po_snow_char,
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					    0, 0);
 				else
 #endif
 #ifdef USE_GRAPHICS
@@ -5838,8 +5832,7 @@ void do_weather(bool no_weather) {
 					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_sandgrain, kidx_po_sand_char,
-					    panel_map_a_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-					    panel_map_c_back[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+					    0, 0);
 				else
 #endif
 #ifdef USE_GRAPHICS
