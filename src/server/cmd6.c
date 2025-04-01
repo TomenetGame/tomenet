@@ -3275,7 +3275,6 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						msg_format(Ind, "\376\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
-							d_ptr->known |= 0x1;
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
 							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far! \377i***", get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 							/* Announce it to publicly */
@@ -3284,6 +3283,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
   #ifdef DUNFOUND_REWARDS_NORMAL
 							dunfound_reward(Ind, d_ptr);
   #endif
+							d_ptr->known |= 0x1;
  #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
 							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
  #endif
@@ -3294,7 +3294,6 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						msg_format(Ind, "\376\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
-							d_ptr->known |= 0x1;
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
 							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377y', that nobody before you has found so far! \377i***", get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 							/* Announce it to publicly */
@@ -3303,6 +3302,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
   #ifdef DUNFOUND_REWARDS_NORMAL
 							dunfound_reward(Ind, d_ptr);
   #endif
+							d_ptr->known |= 0x1;
  #else /* learn about dungeon just as player, having to go there and really find it in character-person?  */
 							s_printf("(%s) DUNHINT: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
  #endif

@@ -3783,7 +3783,6 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			/* player has seen the entrance on the actual main screen -> add it to global exploration history knowledge */
 			if (!is_admin(p_ptr) && d_ptr && !(d_ptr->known & 0x1)
 			    && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
-				d_ptr->known |= 0x1;
 				s_printf("(%s) DUNFOUND: Player %s (%s) discovered dungeon '%s' (%d) at (%d,%d) [%d,%d].\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE), d_ptr->type, tpos.wx, tpos.wy, x, y);
 				msg_format(Ind, "\374\377i***\377B You discovered the staircase to a new dungeon, '\377U%s\377y', that nobody before you has found so far! \377i***", get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
 				/* Announce it to publicly */
@@ -3792,6 +3791,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
  #ifdef DUNFOUND_REWARDS_NORMAL
 				dunfound_reward(Ind, d_ptr);
  #endif
+				d_ptr->known |= 0x1;
 			}
 #endif
 		}
