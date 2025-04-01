@@ -5309,6 +5309,7 @@ void do_animate_lightning(bool reset) {
  * Note: keep following defines in sync with nclient.c, beginning of file.
  * do_weather() is called by do_ping() which is called [at least] every frame.
  * 'no_weather': Only perform lighting-flash palette animation and play thunderclap sfx (provided those were caused by a non-weather source). */
+#define WEATHER_PARTICLES_MAX	1024	/* max amount of weather particles to animate at once */
 #define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
 #define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
 #define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
@@ -5530,8 +5531,18 @@ void do_weather(bool no_weather) {
 		/* factor in received intensity */
 		intensity *= weather_intensity;
 
+		/* modifier of weather particles to generate:
+		   1x for ASCII or multi-particle graphical tiles,
+		   2x for single-particle graphical tiles: */
+#ifdef USE_GRAPHICS
+		if (use_graphics && !c_cfg.ascii_weather) intensity = (intensity * 25) / 10; // x2..3 seems best
+		else
+#endif
+		/* Boost ASCII particle count somewhat actually, x1 seems a bit lowish? */
+		intensity = (intensity * 15) / 10;
+
 		/* create weather elements, ie rain drops, snow flakes, sand grains */
-		if (weather_elements <= 1024 - intensity) {
+		if (weather_elements <= WEATHER_PARTICLES_MAX - intensity) {
 			for (i = 0; i < intensity; i++) {
 				/* NOTE: Basically same code in c-xtra1.c:do_weather(), dungeon.c:cloud_move(), wild.c:pos_in_weather() */
 				/* generate random starting pos */
