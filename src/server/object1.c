@@ -2164,11 +2164,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		p_ptr = Players[Ind];
 		short_item_names = p_ptr->short_item_names;
 
-		/* See if the object is "aware" */
-		if (object_aware_p(Ind, o_ptr)) aware = TRUE;
-
 		/* See if the object is "known" */
 		if (object_known_p(Ind, o_ptr)) known = TRUE;
+
+		/* See if the object is "aware" */
+		if (object_aware_p(Ind, o_ptr)) aware = TRUE;
+		/* For flavoured artifacts (flavoured base item that is insta-art, eg "ivory jewel 'evenstar'"),
+		   which have been *ID*ed by someone else, but item flavour is not yet known to us actually! */
+		else known = FALSE;
 	} else {
 		/* Assume aware and known */
 		aware = known = TRUE;
@@ -2453,7 +2456,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	if (modstr == NULL) modstr = "<nf>";
 
 	/* Handle flavoured randart names: Keep our special randart naming ;) 'the slow digestion of..' */
-	if (o_ptr->name1 == ART_RANDART && known && !special_rop) {
+	if (o_ptr->name1 == ART_RANDART && known && !special_rop
+	    /* handle flavoured base items that are artifacts (insta-arts only atm),
+	       for the case that the item has been *ID*ed by someone else, but we don't even know the flavour-ID yet! */
+	    && (aware || !object_has_flavor(o_ptr->k_idx))
+	    ) {
 		//no flavour
 		modstr = "";
 		append_name = FALSE;
