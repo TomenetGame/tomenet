@@ -612,7 +612,7 @@ extern bool jukebox_play_all, jukebox_play_all_done; //ENABLE_JUKEBOX
 extern int jukebox_playing, jukebox_play_all_prev, jukebox_playing_song, jukebox_play_all_prev_song; //ENABLE_JUKEBOX
 extern int check_guide_checksums(bool forced);
 #ifdef WINDOWS
-extern void screenshot_result_check(void);4
+extern void screenshot_result_check(void);
 #endif
 
 /* c-init.c */
