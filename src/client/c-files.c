@@ -2057,10 +2057,10 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 			/* Since this is an async process spawn, wait for a limited time for it to complete */
 			x = 0;
-			while (!my_fexists("screenCapture.res") && x < 40) { /* paranoia: Time out if for some reason the bat never returns. */
+			while (!my_fexists("screenCapture.res") && x < 30) { /* paranoia: Time out if for some reason the bat never returns. */
 				x++;
 				sync_sleep(50);
-			}
+			} //had one report that on an i5/Win10 screenshotting took somewhat over 2s sometimes o_O so this might time out a lot.
 
 			/* Screenshot process didn't complete in time? */
 			if (!my_fexists("screenCapture.res")) {
@@ -2068,10 +2068,10 @@ void xhtml_screenshot(cptr name, byte redux) {
 					/* Generate filename without path (from xhtml filename) */
 					strcpy(buf2, file_name);
 					buf2[strlen(buf2) - 5] = 0;
-					c_msg_print("Warning: screenCapture.bat didn't return in time. Despite that, the screenshot");
-					c_msg_format(" maybe successfully saved to %spng", buf2);
+					c_msg_print("Warning: screenCapture exceeded time limit, but might still have worked fine.");
+					c_msg_format(" If so, it saved to %spng", buf2);
 				} else {
-					c_msg_print("Warning: screenCapture.bat didn't return in time.");
+					c_msg_print("Warning: screenCapture.bat exceeded time limit.");
 					silent_dump = FALSE;
 				}
 				return;
