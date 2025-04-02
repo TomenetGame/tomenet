@@ -13923,7 +13923,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "");
 				}
 #else
-				for (j = 0; j < MAX_F_IDX; j++) {
+				// instead of full MAX_F_IDX whatever that value may be (currently 512) we limit it to 512
+				k = MAX_F_IDX;
+				if (k > 512) k = 512;
+				for (j = 0; j < k; j++) {
 					oc = f_info[j].z_char;
 					if (c && c != oc) continue;
 					if (p_ptr->f_char[j] == oc) continue;

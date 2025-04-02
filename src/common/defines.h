@@ -43,7 +43,7 @@
 #define VERSION_PATCH		2
 #define VERSION_EXTRA		1
 #define VERSION_BRANCH		0
-#define VERSION_BUILD		2
+#define VERSION_BUILD		3
 
 /* MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15).
    If a player is online with a version > this && <= current version (VERSION_)
@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	20
+#define SF_VERSION_PATCH	21
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -570,7 +570,7 @@
  * TODO: make them redefinable w/o client update
  */
 
-#define MAX_F_IDX	256	/* Max size for "f_info[]" -- TODO! Expand to 512, change data type from byte to u16b accordingly */
+#define MAX_F_IDX	512	/* Max size for "f_info[]" */
 #define MAX_K_IDX	1280	/* Max size for "k_info[]" */
 #define MAX_A_IDX	512	/* Max size for "a_info[]" */
 #define MAX_E_IDX	384	/* Max size for "e_info[]" */
@@ -584,7 +584,7 @@
 #define MAX_D_IDX	64	/* Max size for "d_info[]" */
 #define MAX_Q_IDX	100	/* Max size for "q_info[]" */
 
-/* for compatibility with 4.5.8.1- clients: */
+/* for compatibility with 4.5.8.1- clients (and 4.9.2.1.0.2- for MAX_F_IDX): */
 #define MAX_F_IDX_COMPAT	256
 #define MAX_K_IDX_COMPAT	1024
 #define MAX_A_IDX_COMPAT	512

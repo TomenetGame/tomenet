@@ -2289,8 +2289,8 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 	t_ptr->monst_lev *= 1;
 }
 
-static unsigned char terrain_spot(terrain_type * terrain) {
-	unsigned char feat = FEAT_DIRT;
+static u16b terrain_spot(terrain_type * terrain) {
+	u16b feat = FEAT_DIRT;
 	u32b tmp_seed;
 
 	if (rand_int(1000) < terrain->grass) feat = FEAT_GRASS;

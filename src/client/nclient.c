@@ -1675,8 +1675,9 @@ int Net_start(int sex, int race, int class) {
 	}
 
 	/* Send the "feature" redefinitions */
-	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX;
-	else limit = MAX_F_IDX_COMPAT;
+	if (is_newer_than(&server_version, 4, 9, 1, 2, 0, 2)) limit = MAX_F_IDX;
+	else if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX_COMPAT;
+	else limit = MAX_F_IDX_COMPAT; //used to be different
 
 	for (i = 0; i < limit; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
@@ -8301,7 +8302,7 @@ int Send_client_setup(void) {
 	}
 
 	/* Send the "feature" redefinitions */
-	for (i = 0; i < MAX_F_IDX; i++) {
+	for (i = 0; i < (is_atleast(&server_version, 4, 9, 2, 1, 0, 3) ? MAX_F_IDX : MAX_F_IDX_COMPAT); i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
 		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.f_attr[i], Client_setup.f_char[i]);

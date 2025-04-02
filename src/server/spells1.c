@@ -4729,7 +4729,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_STONE_WALL:
 	    {
 		struct c_special *cs_ptr;
-		byte feat = c_ptr->feat;
+		u16b feat = c_ptr->feat;
 
 		/* Require a "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) break;
@@ -4960,7 +4960,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Destroy Doors (and traps on them) */
 	case GF_KILL_DOOR: {
-		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
+		u16b feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
 		struct c_special *cs_ptr;
 		bool door = FALSE;
 
@@ -5054,7 +5054,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Destroy Traps and Doors */
 	case GF_KILL_TRAP_DOOR: {
-		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
+		u16b feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
 		struct c_special *cs_ptr;
 
 		/* Destroy any traps */
@@ -5143,7 +5143,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Destroy walls (and doors) */
 	case GF_KILL_WALL: {
-		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR), mult = 10; /* NOTE: For cmd_tunnel() mult is actually at least 30. */
+		u16b feat = twall_erosion(wpos, y, x, FEAT_FLOOR), mult = 10; /* NOTE: For cmd_tunnel() mult is actually at least 30. */
 
 		if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) break;
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
@@ -5409,7 +5409,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_KILL_GLYPH: {
-		byte feat = twall_erosion(wpos, y, x, FEAT_DIRT);
+		u16b feat = twall_erosion(wpos, y, x, FEAT_DIRT);
 
 		if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) && !(c_ptr->info & CAVE_NO_TFORM)) break;
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;

@@ -5922,7 +5922,7 @@ static bool monster_ground(int r_idx) {
  * Also note that fountains mustn't count as safe haven for aquatic monsters,
  * or fountain guards without ranged attacks might be pretty helpless.
  */
-bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b info) {
+bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b info) {
 	/* Deep water */
 	if (feat == FEAT_DEEP_WATER) {
 		if ((r_ptr->flags7 & RF7_AQUATIC) ||

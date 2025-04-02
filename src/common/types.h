@@ -155,9 +155,7 @@ struct feature_type {
 #endif
 
 	byte mimic;		/* Feature to mimic */
-
 	byte extra;		/* Extra byte (unused) */
-
 	s16b unused;		/* Extra bytes (unused) */
 
 	/* NOTE: it's d_ and x_ in ToME */
@@ -585,8 +583,8 @@ struct c_special{
 		struct { byte fy, fx; } between; /* or simply 'dpos'? */
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
-		struct { u16b trap_kit; byte difficulty, feat; bool found; } montrap;
-		struct { s32b id; s16b dam; byte rad, typ, feat; bool found; } rune; /* CS_RUNE */
+		struct { u16b trap_kit; byte difficulty; u16b feat; bool found; } montrap;
+		struct { s32b id; s16b dam; byte rad, typ; u16b feat; bool found; } rune; /* CS_RUNE */
 	} sc;
 	struct c_special *next;
 };
@@ -603,8 +601,8 @@ struct sfunc {
 
 struct cave_type {
 	u32b info, info2;	/* Hack -- cave flags */
-	byte feat;		/* Hack -- feature type */
-	byte feat_org;		/* UNUSED -- Feature type backup (TODO: for wall-created grids to revert to original feat when tunneled! Add to save/load!) */
+	u16b feat;		/* Hack -- feature type */
+	u16b feat_org;		/* UNUSED -- Feature type backup (TODO: for wall-created grids to revert to original feat when tunneled! Add to save/load!) */
 
 	u16b o_idx;		/* Item index (in o_list) or zero */
 	s16b m_idx;		/* Monster index (in m_list) or zero */
@@ -4595,8 +4593,8 @@ struct dungeon_info_type {
 typedef struct town_extra town_extra;
 struct town_extra {
 	cptr name;
-	byte feat1;
-	byte feat2;
+	u16b feat1;
+	u16b feat2;
 	byte ratio;		/* percent of feat1 */
 	byte wild_req;	/* On what kind of wilderness this town should be built */
 	u16b dungeons[2];	/* Type of dungeon(s) the town contains */

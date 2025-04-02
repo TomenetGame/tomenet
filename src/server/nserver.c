@@ -2976,7 +2976,7 @@ static void set_player_font_definitions(int ind, int player) {
 		}
 	}
 
-	for (i = 0; i < MAX_F_IDX; i++) {
+	for (i = 0; i < (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 3) ? MAX_F_IDX : MAX_F_IDX_COMPAT); i++) {
 /* Hacking the no-floor bug for loth/bree tower/gondo city -C. Blue */
 		p_ptr->f_attr[i] = connp->Client_setup.f_attr[i];
 		p_ptr->f_char[i] = connp->Client_setup.f_char[i];
@@ -5323,8 +5323,9 @@ static int Receive_login(int ind) {
 }
 
 #define RECEIVE_PLAY_SIZE		(2 * 6 + OPT_MAX +8     + 2 * (TV_MAX + MAX_F_IDX        + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
-#define RECEIVE_PLAY_SIZE_462		(2 * 6 + OPT_MAX_154 +8 + 2 * (TV_MAX + MAX_F_IDX        + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
-#define RECEIVE_PLAY_SIZE_OPT154	(2 * 6 + OPT_MAX_154    + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
+#define RECEIVE_PLAY_SIZE_492102	(2 * 6 + OPT_MAX +8     + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
+#define RECEIVE_PLAY_SIZE_462		(2 * 6 + OPT_MAX_154 +8 + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
+#define RECEIVE_PLAY_SIZE_OPT154	(2 * 6 + OPT_MAX_154    + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT)) //did this MAX_F_IDX_COMBAT use to be an even lower value than 256?...
 #define RECEIVE_PLAY_SIZE_OPTMAXCOMPAT	(2 * 6 + OPT_MAX_COMPAT + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXOLD	(2 * 6 + OPT_MAX_OLD    + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
 //#define STRICT_RECEIVE_PLAY
@@ -5598,7 +5599,8 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "feature" char/attrs */
-		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX;
+		if (is_newer_than(&connp->version, 4, 9, 1, 2, 0, 2)) limit = MAX_F_IDX;
+		else if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX_COMPAT;
 		else limit = MAX_F_IDX_COMPAT;
 
 		for (i = 0; i < limit; i++) {
@@ -15788,7 +15790,7 @@ static int Receive_client_setup(int ind) {
 	}
 
 	/* Read the "feature" char/attrs */
-	for (i = 0; i < MAX_F_IDX; i++) {
+	for (i = 0; i <  (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 3) ? MAX_F_IDX : MAX_F_IDX_COMPAT); i++) {
 		connp->Client_setup.f_char[i] = 0; /* Needs to be initialized for proper packet read. */
 		/* 4.8.1 and newer clients use 32bit character size. */
 		if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0))
@@ -15932,9 +15934,16 @@ static int Receive_client_setup_F(int ind) {
 	}
 
 	/* Read the "feature" char/attrs */
-	if (begin < 0 || begin >= MAX_F_IDX || end < 0 || end > MAX_F_IDX || end < begin) {
-		Destroy_connection(ind, "bad f-setup");
-		return(-1);
+	if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 3)) {
+		if (begin < 0 || begin >= MAX_F_IDX || end < 0 || end > MAX_F_IDX || end < begin) {
+			Destroy_connection(ind, "bad f-setup");
+			return(-1);
+		}
+	} else {
+		if (begin < 0 || begin >= MAX_F_IDX_COMPAT || end < 0 || end > MAX_F_IDX_COMPAT || end < begin) {
+			Destroy_connection(ind, "bad f-setup");
+			return(-1);
+		}
 	}
 	for (i = begin; i < end; i++) {
 		connp->Client_setup.f_char[i] = 0; /* Needs to be initialized for proper packet read. */

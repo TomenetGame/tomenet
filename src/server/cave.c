@@ -9675,7 +9675,7 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	return(i);
 }
 
-bool allow_terraforming(struct worldpos *wpos, byte feat) {
+bool allow_terraforming(struct worldpos *wpos, u16b feat) {
 	bool bree = in_bree(wpos);
 	bool town = istown(wpos) || isdungeontown(wpos);
 	bool townarea = istownarea(wpos, MAX_TOWNAREA);

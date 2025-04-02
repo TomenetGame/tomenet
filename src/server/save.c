@@ -1280,7 +1280,7 @@ static void wr_floor(struct worldpos *wpos) {
 	unsigned char runlength;
 	/* init RLE control vars to some 'reserved' value, usually the highest we can express in their type,
 	   and set as rule that it may not be used by the scripts, so it stays distinguished as init-marker. */
-	byte prev_feature = 0xff;
+	u16b prev_feature = 0xff;
 	u32b prev_info = 0xffffffff, prev_info2 = 0xffffffff;
 	s16b prev_custom_lua_tunnel_hand = (s16b)0xffff;
 	s16b prev_custom_lua_tunnel = (s16b)0xffff;
@@ -1360,7 +1360,7 @@ static void wr_floor(struct worldpos *wpos) {
 				if (runlength) {
 					/* if we just finished a run, write it */
 					wr_byte(runlength);
-					wr_byte(prev_feature);
+					wr_u16b(prev_feature);
 					wr_u32b(prev_info);
 					wr_u32b(prev_info2);
 					wr_s16b(prev_custom_lua_tunnel_hand);
@@ -1390,7 +1390,7 @@ static void wr_floor(struct worldpos *wpos) {
 		}
 		/* hack -- write the final run of this row */
 		wr_byte(runlength);
-		wr_byte(prev_feature);
+		wr_u16b(prev_feature);
 		wr_u32b(prev_info);
 		wr_u32b(prev_info2);
 		wr_s16b(prev_custom_lua_tunnel_hand);

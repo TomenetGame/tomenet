@@ -338,7 +338,7 @@ typedef struct qi_feature {
 
 	s16b x, y;					/* the cave pos to change */
 
-	byte feat;					/* the f_info.txt feat to build */
+	u16b feat;					/* the f_info.txt feat to build */
 } qi_feature;
 
 typedef struct qi_monsterspawn {

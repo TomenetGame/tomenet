@@ -3392,7 +3392,7 @@ void do_cmd_close(int Ind, int dir) {
  * Check the terrain around the location to see if erosion takes place.
  * TODO: expand this for more generic terrain types		- Jir -
  */
-byte twall_erosion(worldpos *wpos, int y, int x, byte feat) {
+u16b twall_erosion(worldpos *wpos, int y, int x, u16b feat) {
 	int tx, ty, d;
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -3432,7 +3432,7 @@ byte twall_erosion(worldpos *wpos, int y, int x, byte feat) {
  * This will, however, produce grids which are NOT illuminated
  * (or darkened) along with the rest of the room.
  */
-bool twall(int Ind, struct worldpos *wpos, int y, int x, byte feat) {
+bool twall(int Ind, struct worldpos *wpos, int y, int x, u16b feat) {
 	byte *w_ptr = Ind ? &Players[Ind]->cave_flag[y][x] : NULL;
 	cave_type **zcave;
 

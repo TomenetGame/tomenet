@@ -325,7 +325,11 @@ void montrapload(c_special *cs_ptr) {
 
 	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
-	rd_byte(&cs_ptr->sc.montrap.feat);
+	if (s_older_than(4, 9, 21)) {
+		rd_byte(&tmp8u);
+		cs_ptr->sc.montrap.feat = (u16b)tmp8u;
+	}
+	else rd_u16b(&cs_ptr->sc.montrap.feat);
 	if (s_older_than(4, 7, 12)) return;
 	rd_byte(&tmp8u);
 	cs_ptr->sc.montrap.found = (tmp8u != 0);
@@ -334,7 +338,7 @@ void montrapload(c_special *cs_ptr) {
 void montrapsave(c_special *cs_ptr) {
 	wr_u16b(cs_ptr->sc.montrap.trap_kit);
 	wr_byte(cs_ptr->sc.montrap.difficulty);
-	wr_byte(cs_ptr->sc.montrap.feat);
+	wr_u16b(cs_ptr->sc.montrap.feat);
 	wr_byte(cs_ptr->sc.montrap.found);
 }
 
@@ -345,7 +349,10 @@ void runeload(c_special *cs_ptr) {
 	rd_s16b(&cs_ptr->sc.rune.dam);
 	rd_byte(&cs_ptr->sc.rune.rad);
 	rd_byte(&cs_ptr->sc.rune.typ);
-	rd_byte(&cs_ptr->sc.rune.feat);
+	if (s_older_than(4, 9, 21)) {
+		rd_byte(&tmp8u);
+		cs_ptr->sc.rune.feat = (u16b)tmp8u;
+	} else rd_u16b(&cs_ptr->sc.rune.feat);
 	if (s_older_than(4, 7, 12)) return;
 	rd_byte(&tmp8u);
 	cs_ptr->sc.rune.found = (tmp8u != 0);
@@ -356,7 +363,7 @@ void runesave(c_special *cs_ptr) {
 	wr_s16b(cs_ptr->sc.rune.dam);
 	wr_byte(cs_ptr->sc.rune.rad);
 	wr_byte(cs_ptr->sc.rune.typ);
-	wr_byte(cs_ptr->sc.rune.feat);
+	wr_u16b(cs_ptr->sc.rune.feat);
 	wr_byte(cs_ptr->sc.rune.found);
 }
 

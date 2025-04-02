@@ -7325,7 +7325,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp) {
 	int fx = m_ptr->fx;
 
  #if 0
-	byte feat = FEAT_DEEP_WATER;	// maybe feat[10] or sth
+	u16b feat = FEAT_DEEP_WATER;	// maybe feat[10] or sth
 	bool negate = FALSE;
  #endif	// 0
 
@@ -7714,7 +7714,7 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr) {
 }
 
 #ifdef MONSTER_DIG_FACTOR
-static int digging_difficulty(byte feat) {
+static int digging_difficulty(u16b feat) {
  #if 0
 	if (!(f_info[feat].flags1 & FF1_TUNNELABLE) ||
 	    (f_info[feat].flags1 & FF1_PERMANENT))

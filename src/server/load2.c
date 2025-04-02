@@ -2909,7 +2909,7 @@ static errr rd_hostilities(int Ind) {
 static errr rd_floor(void) {
 	struct worldpos wpos;
 	s16b tmp16b;
-	byte tmp;
+	byte tmp, tmp8u;
 	cave_type **zcave;
 	u16b max_y, max_x;
 
@@ -2919,7 +2919,8 @@ static errr rd_floor(void) {
 	dun_level *l_ptr;
 	struct c_special *cs_ptr;
 
-	unsigned char runlength, feature;
+	byte runlength;
+	u16b feature;
 	u16b tmpinfo;
 	u32b info, info2;
 	s16b custom_lua_tunnel_hand = 0;
@@ -2998,7 +2999,10 @@ static errr rd_floor(void) {
 	for (x = y = 0; y < max_y; ) {
 		/* Grab RLE info */
 		rd_byte(&runlength);
-		rd_byte(&feature);
+		if (s_older_than(4, 9, 21)) {
+			rd_byte(&tmp8u);
+			feature = (u16b)tmp8u;
+		} else rd_u16b(&feature);
 		if (!s_older_than(4, 6, 1)) rd_u32b(&info);
 		else {
 			rd_u16b(&tmpinfo);

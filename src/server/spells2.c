@@ -6103,7 +6103,7 @@ bool probing(int Ind) {
  * Later we may use one function for both "destruction" and
  * "earthquake" by using the "full" to select "destruction".
  */
-void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat, int stun) {
+void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, u16b feat, int stun) {
 	int y, x, k, t, Ind;
 	player_type *p_ptr;
 	cave_type *c_ptr;

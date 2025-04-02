@@ -639,7 +639,7 @@ extern void disturb(int Ind, int stop_search, int keep_resting);
 extern void update_players(void);
 
 extern int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags);
-extern bool allow_terraforming(struct worldpos *wpos, byte feat);
+extern bool allow_terraforming(struct worldpos *wpos, u16b feat);
 extern void everyone_lite_later_spot(struct worldpos *wpos, int y, int x);
 extern bool outdoor_affects(struct worldpos *wpos);
 extern int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour);
@@ -678,7 +678,7 @@ extern void move_player(int Ind, int dir, int do_pickup, char *consume_full_ener
 extern void run_step(int Ind, int dir, char *consume_full_energy);
 extern void black_breath_infection(int Ind, int Ind2);
 extern int see_wall(int Ind, int dir, int y, int x);
-extern bool player_can_enter(int Ind, byte feature, bool comfortably);
+extern bool player_can_enter(int Ind, u16b feature, bool comfortably);
 extern void hit_trap(int Ind);
 extern int apply_dodge_chance(int Ind, int attack_level);
 extern int apply_block_chance(player_type *p_ptr, int n);
@@ -707,7 +707,7 @@ extern void do_cmd_search(int Ind);
 extern void do_cmd_toggle_search(int Ind);
 extern void do_cmd_open(int Ind, int dir);
 extern void do_cmd_close(int Ind, int dir);
-extern byte twall_erosion(worldpos *wpos, int y, int x, byte feat);
+extern u16b twall_erosion(worldpos *wpos, int y, int x, u16b feat);
 extern void do_cmd_tunnel(int Ind, int dir, bool quiet_borer);
 extern void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, int wood_power, int fibre_power,bool quiet_borer, bool quiet_full, bool *no_quake, bool *more, bool *door);
 extern void do_cmd_disarm(int Ind, int dir);
@@ -728,7 +728,7 @@ extern bool inside_inn(player_type *p_ptr, cave_type *c_ptr);
 extern void house_admin(int Ind, int dir, char *args);
 extern void do_cmd_cloak(int Ind);
 extern void shadow_run(int Ind);
-extern bool twall(int Ind, struct worldpos *wpos, int y, int x, byte feat);
+extern bool twall(int Ind, struct worldpos *wpos, int y, int x, u16b feat);
 extern int breakage_chance(object_type *o_ptr);
 extern int get_shooter_mult(object_type *o_ptr);
 extern bool get_something_tval(int Ind, int tval, int *ip);
@@ -1192,7 +1192,7 @@ extern int monster_gain_exp(int m_idx, u32b exp, bool silent);
 #ifdef MONSTER_INVENTORY
 extern void monster_drop_carried_objects(int m_idx, monster_type *m_ptr);
 #endif	/* MONSTER_INVENTORY */
-extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b info);
+extern bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b info);
 
 extern void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr);
 extern void player_desc(int Ind, char *desc, int Ind2, int mode);
@@ -1850,7 +1850,7 @@ extern bool dispel_demons(int Ind, int dam);
 extern bool dispel_monsters(int Ind, int dam);
 extern bool dispel_undead_demons(int Ind, int dam);
 extern bool turn_undead(int Ind);
-extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat, int stun);
+extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, u16b feat, int stun);
 extern void earthquake(struct worldpos *wpos, int cy, int cx, int r);
 extern void wipe_spell(struct worldpos *wpos, int cy, int cx, int r);
 extern void lite_room(int Ind, struct worldpos *wpos, int y1, int x1);

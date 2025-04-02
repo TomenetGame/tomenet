@@ -12,7 +12,7 @@ int do_use_mp(int, int, float);
 void cast_rune_spell(int, int);
 void transform_level(int, byte, int);
 
-void transform_level(int Ind, byte feat, int chance) {
+void transform_level(int Ind, u16b feat, int chance) {
 	player_type *p_ptr = Players[Ind];
 	int x, y;
 	struct c_special *cs_ptr;

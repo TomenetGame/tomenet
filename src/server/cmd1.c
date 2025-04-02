@@ -7307,7 +7307,7 @@ static bool wraith_access_virtual(int Ind, int y, int x) {
 /* 'comfortably': also check for things like lava if player isn't fire immune. - C. Blue
  * This function is a mess and needs cleaning up, especially with wraith step now.
  * Why do we have all three flags WALL, NO_WALK, CAN_PASS and then still proceed PERMANENT on top of it even...? */
-bool player_can_enter(int Ind, byte feature, bool comfortably) {
+bool player_can_enter(int Ind, u16b feature, bool comfortably) {
 	player_type *p_ptr = Players[Ind];
 	bool pass_wall;
 	bool only_wall = FALSE;

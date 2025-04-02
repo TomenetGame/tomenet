@@ -384,8 +384,8 @@ static dun_data *dun;
  * Why the first two are byte and the rest s16b???
  */
 /* ToME variables -- not implemented, but needed to have it work */
-static byte feat_wall_outer = FEAT_WALL_OUTER;	/* Outer wall of rooms */
-static byte feat_wall_inner = FEAT_WALL_INNER;	/* Inner wall of rooms */
+static u16b feat_wall_outer = FEAT_WALL_OUTER;	/* Outer wall of rooms */
+static u16b feat_wall_inner = FEAT_WALL_INNER;	/* Inner wall of rooms */
 s16b floor_type[1000];	/* Dungeon floor */
 s16b fill_type[1000];	/* Dungeon filler */
 
