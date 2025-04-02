@@ -5301,6 +5301,7 @@ struct macro_fileset_type {
 	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
 	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
+	char macro_stage_comment[MACROFILESETS_STAGES_MAX][20];
 	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended
 };
 typedef struct macro_fileset_type macro_fileset_type;
@@ -8132,12 +8133,11 @@ Chain_Macro:
 						/* Init filesets */
 						for (k = 0; k < MACROFILESETS_MAX; k++) fileset[k].stages = 0;
 
-						/* Scan for loaded filesets */
-						filesets_found = 0;
-						k = -1;
+						/* Auto-scan for all currently loaded (ie are referenced in our currently active macros) filesets */
+						k = 0;
 						m = -1;
 						s = 0;
-						while (++k < MACROFILESETS_MAX) {
+						while (k < MACROFILESETS_MAX) {
 							while (++m < macro__num) {
 								style_cyclic = style_free = FALSE;
 
@@ -8168,8 +8168,12 @@ Chain_Macro:
 								   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
 							    //TODO
 							    //actually no: if this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
-							    //so it should follow a specific format: ":%:Cycling to set n of m\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+							    //so it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
 								if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
+							    //macro_stage_comment (eg 'water/cold spells' that is part of the switching-message)
+
+								/* --- Confirmed valid macro belonging to a macro set found --- */
+
 								/* Finalize stage index */
 								stage = atoi(buf_basename + strlen(buf_basename) - 8);
 								/* Finalize base filename */
@@ -8194,7 +8198,7 @@ Chain_Macro:
 									/* Add stage to this already known set */
 									break;
 								}
-								/* No known fileset of this basename found? Add a new set. */
+								/* No known fileset of this basename found? Register a new set. */
 								if (f == k) {
 									fileset[k].style_cyclic = style_cyclic;
 									fileset[k].style_free = style_free;
@@ -8211,15 +8215,98 @@ Chain_Macro:
 
 									fileset[k].stages = 1;
 									strcpy(fileset[k].basefilename, buf_basename);
+
+									/* One more registered macroset */
+									k++;
 								}
 								/* Continue scanning keys for switch-macros */
 							}
+							/* Scanned the last one of all loaded macros? We're done. */
+							if (m >= macro__num - 1) break;
 						}
-						/*
-						static int fileset_selected = -1;
-						macro_fileset_type fileset[MACROFILESETS_MAX];
-						*/
+						filesets_found = k;
 
+						/* Space requirements are a lot, adjust visual layout depending on bigmap screen mode! */
+						if (screen_hgt == MAX_SCREEN_HGT) {
+							/* --- Bigmap screen --- */
+
+							/* Give user a choice and wait for user selection of what to do */
+							l = ystart;
+							if (!filesets_found) Term_putstr(3, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
+							else Term_putstr(3, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d) currently loaded:", filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX));
+							for (k = 0; k < filesets_found; k++)
+								Term_putstr(5, l++, -1, fileset_selected == k ? TERM_YELLOW : TERM_GREEN, format("\377s%2d\377-) \377s%d\377-/%d Stages, %s, '\377s%s\377-'",
+								    k + 1, fileset[k].stages, MACROFILESETS_STAGES_MAX,
+								    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSW"),
+								    fileset[k].basefilename));
+
+							// a) select one of the scanned sets as the 'working set' for editing->
+							//  scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
+							// b) delete one of the scanned sets completely (ew?).
+							// c) init new fileset, setting base filename (default: charname), type (cyclic/free) and size (n); new set is selected as working set.
+							//    also ask if we maybe want to add current macros as first setfile #1 to the new set right away.
+							//    also ask to set actual switching key(s) right away.
+							l++;
+							Term_putstr(3, l++, -1, TERM_GREEN, "\377gYou may...");
+							Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Initialise a new fileset");
+							if (filesets_found) {
+								Term_putstr(5, l++, -1, TERM_GREEN, "\377Gb\377-) Select a set");
+								Term_putstr(5, l++, -1, TERM_GREEN, "\377Gc\377-) Delete a complete set");
+							} else l += 2;
+
+							//freely offer to (selected set aka working set):
+							// a) change switchkey(s).
+							// b) change switchmethod (cyclic (one key for the whole filese) vs free (one key for each setfile)).
+							// c) purge (delete) one of the setfiles, auto-merging the rest together accordingly.
+							// d) load aka activate a setfile #k of the current fileset (k in 1..n).
+							// e) add current macros to current fileset as setfile #k (insert or append into the set!).
+							if (fileset_selected != -199) {
+								l++;
+								Term_putstr(3, l++, -1, TERM_GREEN, format("And with the currently selected fileset (%d) you may...", fileset_selected));
+								Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Modify its switching keys");
+							Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Change its switching method");
+								Term_putstr(5, l++, -1, TERM_GREEN, format("\377Ga\377-) Purge one of the set stage files (%d-%d", 1, fileset[fileset_selected].stages));
+								Term_putstr(5, l++, -1, TERM_GREEN, format("\377Ga\377-) Switch to another stage (load the stage's macro file) (%d-%d)", 1, fileset[fileset_selected].stages));
+								Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Add all current macros to the set, as a new stage file");
+							}
+						} else {
+							/* Small screen */
+
+						}
+
+						l++;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "Please choose an action: ");
+						/* Hack: Hide the cursor */
+						Term->scr->cx = Term->wid;
+						Term->scr->cu = 1;
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -2; /* leave */
+								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								/* Restore top line */
+								Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
+								continue;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????", 2);
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'a') {
+									//i = -2;
+									continue;
+								}
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -2) continue;
 #endif
 						break; }
 					}
