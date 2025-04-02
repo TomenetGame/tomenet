@@ -2080,7 +2080,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 			/* try to read result code */
 			fp = fopen("screenCapture.res", "r");
 			if (fp) {
-				if (fgets(fp, resbuf)) res = atoi(resbuf);
+				if (fgets(resbuf, 5, fp)) res = atoi(resbuf);
 				else c_msg_print("Error: Unable to read result value from screenCapture.res."); //paranoia
 				fclose(fp);
 			} else c_msg_print("Error: Cannot open screenCapture.res."); //paranoia
