@@ -1338,6 +1338,7 @@ extern int flick_global_x, flick_global_y, flick_global_time;
 extern bool gfx_palanim_repaint_hack, gfx_palanim_repaint_hack_login;
 
 #ifdef WINDOWS
+extern bool screenshot_silent_dump;
 extern int screenshotting;
 extern char screenshotting_filename[MAX_CHARS];
 #endif

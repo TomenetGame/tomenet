@@ -1877,12 +1877,12 @@ void screenshot_result_check(void) {
 
 	/* Screenshot process didn't complete in time? */
 	if (missing) {
-		if (!silent_dump) {
+		if (!screenshot_silent_dump) {
 			c_msg_print("Warning: screenCapture exceeded time limit, but might still have worked fine.");
 			c_msg_format(" If so, it saved to %spng", screenshotting_filename);
 		} else {
+			screenshot_silent_dump = FALSE;
 			c_msg_print("Warning: screenCapture.bat exceeded time limit.");
-			silent_dump = FALSE;
 		}
 		return;
 	}
@@ -1896,7 +1896,7 @@ void screenshot_result_check(void) {
 	} else c_msg_print("Error: Cannot open screenCapture.res."); //paranoia
 	remove("screenCapture.res");
 	if (res == -1) {
-		silent_dump = FALSE;
+		screenshot_silent_dump = FALSE;
 		return;
 	}
 
@@ -1904,7 +1904,8 @@ void screenshot_result_check(void) {
 	if (res == 10) c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
 	else if (res != 0) c_msg_format("Error: Unknown error %d.", atoi(resbuf));
 	//res = 0 aka no error:
-	else if (!silent_dump) c_msg_format("Screenshot saved to %spng", screenshotting_filename);
+	else if (!screenshot_silent_dump) c_msg_format("Screenshot saved to %spng", screenshotting_filename);
+	screenshot_silent_dump = FALSE;
 }
 #endif
 
@@ -2102,6 +2103,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 			strcpy(buf2, file_name);
 			buf2[strlen(buf2) - 5] = 0;
 			strcpy(screenshotting_filename, buf2);
+			screenshot_silent_dump = silent_dump;
 		} else c_msg_format("Error: Failed to call screenCapture.bat (%lu).", GetLastError());
 		silent_dump = FALSE;
 		return;

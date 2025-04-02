@@ -788,6 +788,7 @@ int flick_global_x = 0, flick_global_y = 0, flick_global_time = 0; //time is for
 bool gfx_palanim_repaint_hack = FALSE, gfx_palanim_repaint_hack_login = TRUE;
 
 #ifdef WINDOWS
+bool screenshot_silent_dump = FALSE;
 int screenshotting = 0;
 char screenshotting_filename[MAX_CHARS];
 #endif
