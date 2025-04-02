@@ -124,7 +124,7 @@ static void choose_name(void) {
 				case '\\': c32 = (introline[y][w - 1] == '#' || introline[y][w + 1] == ' ' ? 825 : 826); break;
 				case '/': c32 = (introline[y][w - 1] == '#' || introline[y][w + 1] == ' ' ? 827 : 828); break;
    #if 0 // 0'ed -> keep the flickering top parts ASCII? :)
-				case '^': c32 = ...we don't have anything for this actually^^...; break;
+				//case '^': c32 = ...we don't have anything for this actually^^...; break;
    #endif
 				default: c32 = (char32_t)c;
 				}
