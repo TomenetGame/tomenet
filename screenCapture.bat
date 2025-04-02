@@ -21,9 +21,10 @@ if not exist "%~n0.exe" (
    )
 )
 %~n0.exe %*
+set errlev=%errorlevel%
+echo %errlev% > screenCapture.res
 endlocal & (
-    echo %errorlevel% > screenCapture.res
-    exit /b %errorlevel%
+    exit /b %errlev%
 )
 
 */
