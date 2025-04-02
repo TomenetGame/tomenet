@@ -1969,6 +1969,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 			if (!dp) {
 				c_msg_print("Couldn't open the user directory.");
+				silent_dump = FALSE;
 				return;
 			}
 
@@ -2034,8 +2035,8 @@ void xhtml_screenshot(cptr name, byte redux) {
 			strcpy(buf2, file_name);
 			buf2[strlen(buf2) - 5] = 0;
 			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
-			else silent_dump = FALSE;
 		} else c_msg_format("Error: Failed to call imagemagick's 'import'. ('%s')", buf2);
+		silent_dump = FALSE;
 		return;
 	}
  #elif defined(WINDOWS)
@@ -2043,32 +2044,64 @@ void xhtml_screenshot(cptr name, byte redux) {
 	if (inkey_shift_special == 3) {
 		char buf2[1028];
 
+		/* Generate filename with path (from xhtml filename) */
 		strcpy(buf2, buf);
 		buf2[strlen(buf2) - 5] = 0;
 
+		/* Spawn async process to take screenshot */
 		remove("screenCapture.res");
 		if (WinExec(format("screenCapture.bat \"%spng\" \"\"", buf2), SW_HIDE) > 31) {
-			//this is an async process spawn, wait for it to complete
+			FILE *fp;
+			char resbuf[5];
+			int res = -1;
+
+			/* Since this is an async process spawn, wait for a limited time for it to complete */
 			x = 0;
-			while (!my_fexists("screenCapture.res") && x < 40) { // paranoia: Time out if for some reason the bat never returns.
+			while (!my_fexists("screenCapture.res") && x < 40) { /* paranoia: Time out if for some reason the bat never returns. */
 				x++;
 				sync_sleep(50);
 			}
-			if (my_fexists("screenCapture.res")) {
-				//assume the error value in it was '10' which indicates no .NET framework, as it's unlikely any other error gets thrown =p
-				c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
-				remove("screenCapture.res");
-				return;
-			} else {
-				c_msg_print("Error: screenCapture.bat didn't return in time.");
+
+			/* Screenshot process didn't complete in time? */
+			if (!my_fexists("screenCapture.res")) {
+				if (!silent_dump) {
+					/* Generate filename without path (from xhtml filename) */
+					strcpy(buf2, file_name);
+					buf2[strlen(buf2) - 5] = 0;
+					c_msg_print("Warning: screenCapture.bat didn't return in time. Despite that, the screenshot");
+					c_msg_format(" maybe successfully saved to %spng", buf2);
+				} else {
+					c_msg_print("Warning: screenCapture.bat didn't return in time.");
+					silent_dump = FALSE;
+				}
 				return;
 			}
 
-			strcpy(buf2, file_name);
-			buf2[strlen(buf2) - 5] = 0;
-			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
-			else silent_dump = FALSE;
+			/* try to read result code */
+			fp = fopen("screenCapture.res", "r");
+			if (fp) {
+				if (fgets(fp, resbuf)) res = atoi(resbuf);
+				else c_msg_print("Error: Unable to read result value from screenCapture.res."); //paranoia
+				fclose(fp);
+			} else c_msg_print("Error: Cannot open screenCapture.res."); //paranoia
+			remove("screenCapture.res");
+			if (res == -1) {
+				silent_dump = FALSE;
+				return;
+			}
+
+			/* evaluate result code. '10' indicates no .NET framework, it's unlikely any other error gets thrown */
+			if (res == 10) c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
+			else if (res != 0) c_msg_format("Error: Unknown error %d.", atoi(resbuf));
+			//res = 0 aka no error:
+			else if (!silent_dump) {
+				/* Generate filename without path (from xhtml filename) */
+				strcpy(buf2, file_name);
+				buf2[strlen(buf2) - 5] = 0;
+				c_msg_format("Screenshot saved to %spng", buf2);
+			}
 		} else c_msg_format("Error: Failed to call screenCapture.bat (%lu).", GetLastError());
+		silent_dump = FALSE;
 		return;
 	}
  #endif
@@ -2077,6 +2110,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 	fp = fopen(buf, "wb");
 	if (!fp) {
 		/* Couldn't write */
+		silent_dump = FALSE;
 		return;
 	}
 
@@ -2224,6 +2258,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 					fprintf(stderr, "fwrite failed\n");
 					c_msg_print("\377rScreenshot could not be written!");
 					fclose(fp);
+					silent_dump = FALSE;
 					return;
 				}
 
@@ -2239,6 +2274,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 			fprintf(stderr, "fwrite failed\n");
 			c_msg_print("\377rScreenshot could not be written!");
 			fclose(fp);
+			silent_dump = FALSE;
 			return;
 		}
 	}
