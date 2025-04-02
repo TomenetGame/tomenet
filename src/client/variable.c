@@ -786,3 +786,8 @@ int prev_huge_chp = -1, prev_huge_mhp = -1;
 bool fix_custom_font_after_startup = TRUE;
 int flick_global_x = 0, flick_global_y = 0, flick_global_time = 0; //time is for TERM_SRCLITE_TEMP
 bool gfx_palanim_repaint_hack = FALSE, gfx_palanim_repaint_hack_login = TRUE;
+
+#ifdef WINDOWS
+int screenshotting = 0;
+char screenshotting_filename[MAX_CHARS];
+#endif

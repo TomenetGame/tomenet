@@ -1863,6 +1863,51 @@ errr file_character(cptr name, bool quiet) {
 	return(0);
 }
 
+#ifdef WINDOWS
+/* On Windows async screenshot process: Test if it finished meanwhile. */
+void screenshot_result_check(void) {
+	FILE *fp;
+	char resbuf[5];
+	int res = -1;
+	bool missing;
+
+	/* Since this is an async process spawn, wait for a limited time for it to complete */
+	if ((missing = !my_fexists("screenCapture.res")) && screenshotting) return;
+	//had one report that on an i5/Win10 screenshotting took somewhat over 2s sometimes o_O so this might time out a lot.
+
+	/* Screenshot process didn't complete in time? */
+	if (missing) {
+		if (!silent_dump) {
+			c_msg_print("Warning: screenCapture exceeded time limit, but might still have worked fine.");
+			c_msg_format(" If so, it saved to %spng", screenshotting_filename);
+		} else {
+			c_msg_print("Warning: screenCapture.bat exceeded time limit.");
+			silent_dump = FALSE;
+		}
+		return;
+	}
+
+	/* try to read result code */
+	fp = fopen("screenCapture.res", "r");
+	if (fp) {
+		if (fgets(resbuf, 5, fp)) res = atoi(resbuf);
+		else c_msg_print("Error: Unable to read result value from screenCapture.res."); //paranoia
+		fclose(fp);
+	} else c_msg_print("Error: Cannot open screenCapture.res."); //paranoia
+	remove("screenCapture.res");
+	if (res == -1) {
+		silent_dump = FALSE;
+		return;
+	}
+
+	/* evaluate result code. '10' indicates no .NET framework, it's unlikely any other error gets thrown */
+	if (res == 10) c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
+	else if (res != 0) c_msg_format("Error: Unknown error %d.", atoi(resbuf));
+	//res = 0 aka no error:
+	else if (!silent_dump) c_msg_format("Screenshot saved to %spng", screenshotting_filename);
+}
+#endif
+
 /*
  * Make an xhtml screenshot - mikaelh
  * Some code borrowed from ToME
@@ -2051,55 +2096,12 @@ void xhtml_screenshot(cptr name, byte redux) {
 		/* Spawn async process to take screenshot */
 		remove("screenCapture.res");
 		if (WinExec(format("screenCapture.bat \"%spng\" \"\"", buf2), SW_HIDE) > 31) {
-			FILE *fp;
-			char resbuf[5];
-			int res = -1;
+			screenshotting = 500; // 500 * 10ms interval -> wait for 5s max to give feedback msg
 
-			/* Since this is an async process spawn, wait for a limited time for it to complete */
-			x = 0;
-			while (!my_fexists("screenCapture.res") && x < 30) { /* paranoia: Time out if for some reason the bat never returns. */
-				x++;
-				sync_sleep(50);
-			} //had one report that on an i5/Win10 screenshotting took somewhat over 2s sometimes o_O so this might time out a lot.
-
-			/* Screenshot process didn't complete in time? */
-			if (!my_fexists("screenCapture.res")) {
-				if (!silent_dump) {
-					/* Generate filename without path (from xhtml filename) */
-					strcpy(buf2, file_name);
-					buf2[strlen(buf2) - 5] = 0;
-					c_msg_print("Warning: screenCapture exceeded time limit, but might still have worked fine.");
-					c_msg_format(" If so, it saved to %spng", buf2);
-				} else {
-					c_msg_print("Warning: screenCapture.bat exceeded time limit.");
-					silent_dump = FALSE;
-				}
-				return;
-			}
-
-			/* try to read result code */
-			fp = fopen("screenCapture.res", "r");
-			if (fp) {
-				if (fgets(resbuf, 5, fp)) res = atoi(resbuf);
-				else c_msg_print("Error: Unable to read result value from screenCapture.res."); //paranoia
-				fclose(fp);
-			} else c_msg_print("Error: Cannot open screenCapture.res."); //paranoia
-			remove("screenCapture.res");
-			if (res == -1) {
-				silent_dump = FALSE;
-				return;
-			}
-
-			/* evaluate result code. '10' indicates no .NET framework, it's unlikely any other error gets thrown */
-			if (res == 10) c_msg_print("Error: .NET framework must be installed to take PNG image screenshots.");
-			else if (res != 0) c_msg_format("Error: Unknown error %d.", atoi(resbuf));
-			//res = 0 aka no error:
-			else if (!silent_dump) {
-				/* Generate filename without path (from xhtml filename) */
-				strcpy(buf2, file_name);
-				buf2[strlen(buf2) - 5] = 0;
-				c_msg_format("Screenshot saved to %spng", buf2);
-			}
+			/* Generate filename without path (from xhtml filename) */
+			strcpy(buf2, file_name);
+			buf2[strlen(buf2) - 5] = 0;
+			strcpy(screenshotting_filename, buf2);
 		} else c_msg_format("Error: Failed to call screenCapture.bat (%lu).", GetLastError());
 		silent_dump = FALSE;
 		return;

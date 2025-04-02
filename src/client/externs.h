@@ -611,6 +611,9 @@ extern int within_cmd_player_ticks;
 extern bool jukebox_play_all, jukebox_play_all_done; //ENABLE_JUKEBOX
 extern int jukebox_playing, jukebox_play_all_prev, jukebox_playing_song, jukebox_play_all_prev_song; //ENABLE_JUKEBOX
 extern int check_guide_checksums(bool forced);
+#ifdef WINDOWS
+extern void screenshot_result_check(void);4
+#endif
 
 /* c-init.c */
 extern void init_stuff(void);
@@ -1333,3 +1336,8 @@ extern int prev_huge_chp, prev_huge_mhp;
 extern bool fix_custom_font_after_startup;
 extern int flick_global_x, flick_global_y, flick_global_time;
 extern bool gfx_palanim_repaint_hack, gfx_palanim_repaint_hack_login;
+
+#ifdef WINDOWS
+extern int screenshotting;
+extern char screenshotting_filename[MAX_CHARS];
+#endif

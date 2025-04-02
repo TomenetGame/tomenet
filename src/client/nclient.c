@@ -7822,6 +7822,14 @@ void do_ping(void) {
 	   -- moved it from Term_inkey() to here - C. Blue
 	 */
 	refresh_clone_map();
+
+#ifdef WINDOWS
+	/* Check if PNG screenshot returned successfully */
+	if (screenshotting) {
+		/* Check every 50 ms */
+		if (!(--screenshotting % 5)) screenshot_result_check();
+	}
+#endif
 }
 
 #ifdef META_PINGS
