@@ -5325,6 +5325,7 @@ void interact_macros(void) {
 
 	/* Save screen */
 	Term_save();
+	topline_icky = TRUE;
 
 	/* No macros should work within the macro menu itself */
 	inkey_interact_macros = TRUE; /* This makes setting inkey_msg = TRUE after cmd_message() redundant and therefore not needed */
@@ -6377,6 +6378,7 @@ void interact_macros(void) {
 
 			/* Reload screen */
 			Term_load();
+			topline_icky = FALSE;
 
 			/* Flush the queue */
 			Flush_queue();
@@ -9028,6 +9030,7 @@ Chain_Macro:
 
 	/* Reload screen */
 	Term_load();
+	topline_icky = FALSE;
 
 	/* Flush the queue */
 	Flush_queue();
