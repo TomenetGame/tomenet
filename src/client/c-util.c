@@ -8227,12 +8227,10 @@ Chain_Macro:
 						}
 						filesets_found = k;
 
- #if 1 //debugging
-  #define DEBUG_MACROSET -2
+ #define DEBUG_MACROSET /*debugging*/
+ #ifdef DEBUG_MACROSET
   fileset_selected = 0;
   fileset_stage_selected = 0;
- #else //normal
-  #define DEBUG_MACROSET -1
  #endif
 
 						/* --- Begin of visual output --- */
@@ -8271,13 +8269,11 @@ Chain_Macro:
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Gc\377-) Forget a set (forgets all loaded reference keys to that set)");
 							} else l += 2;
 
-							//freely offer to (selected set aka working set):
-							// a) change switchkey(s).
-							// b) change switchmethod (cyclic (one key for the whole filese) vs free (one key for each setfile)).
-							// c) purge (delete) one of the setfiles, auto-merging the rest together accordingly.
-							// d) load aka activate a setfile #k of the current fileset (k in 1..n).
-							// e) add current macros to current fileset as setfile #k (insert or append into the set!).
-							if (fileset_selected != -DEBUG_MACROSET) { //correct check is '!= -1' (otherwise just testing/debugging)
+ #ifdef DEBUG_MACROSET
+							if (fileset_selected != -2) { //just pretend a set was selected
+ #else
+							if (fileset_selected != -1) {
+ #endif
 								l++;
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (%d) you may...", fileset_selected));
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
