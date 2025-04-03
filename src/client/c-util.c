@@ -5318,7 +5318,7 @@ void interact_macros(void) {
 	//mw_fileset:
 #ifdef TEST_CLIENT
 	int filesets_found;
-	static int fileset_selected = -1;
+	static int fileset_selected = -1, fileset_stage_selected = -1;
 	macro_fileset_type fileset[MACROFILESETS_MAX];
 #endif
 
@@ -8123,6 +8123,7 @@ Chain_Macro:
 						//       This is required to allow having more than 1 concurrently available macroset.
 
 #ifdef TEST_CLIENT
+						int xoffset1 = 2, xoffset2 = 4;
 						int f, k, m, s;
 						int stage;
 						char *cc, *cf, *cfile;
@@ -8226,19 +8227,34 @@ Chain_Macro:
 						}
 						filesets_found = k;
 
+ #if 1 //debugging
+  #define DEBUG_MACROSET -2
+  fileset_selected = 0;
+  fileset_stage_selected = 0;
+ #else //normal
+  #define DEBUG_MACROSET -1
+ #endif
+
+						/* --- Begin of visual output --- */
+						l = ystart + 1;
+
 						/* Space requirements are a lot, adjust visual layout depending on bigmap screen mode! */
 						if (screen_hgt == MAX_SCREEN_HGT) {
 							/* --- Bigmap screen --- */
 
 							/* Give user a choice and wait for user selection of what to do */
-							l = ystart;
-							if (!filesets_found) Term_putstr(3, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
-							else Term_putstr(3, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d) currently loaded:", filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX));
-							for (k = 0; k < filesets_found; k++)
-								Term_putstr(5, l++, -1, fileset_selected == k ? TERM_YELLOW : TERM_GREEN, format("\377s%2d\377-) \377s%d\377-/%d Stages, %s, '\377s%s\377-'",
-								    k + 1, fileset[k].stages, MACROFILESETS_STAGES_MAX,
-								    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSW"),
-								    fileset[k].basefilename));
+							if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
+							else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d, max %d stages each) currently loaded:",
+							    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
+							for (k = 0; k < MACROFILESETS_MAX; k++)
+								if (k < filesets_found)
+									Term_putstr(xoffset2, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
+									    format("%2d\377g) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
+									    k + 1, fileset[k].stages, fileset_stage_selected == -1 ? "\377unone\377-" : format("\377v%d\377-", fileset_stage_selected),
+									    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSW"),
+									    fileset[k].basefilename));
+								else
+									Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
 							// a) select one of the scanned sets as the 'working set' for editing->
 							//  scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
@@ -8247,11 +8263,12 @@ Chain_Macro:
 							//    also ask if we maybe want to add current macros as first setfile #1 to the new set right away.
 							//    also ask to set actual switching key(s) right away.
 							l++;
-							Term_putstr(3, l++, -1, TERM_GREEN, "\377gYou may...");
-							Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Initialise a new fileset");
+							Term_putstr(xoffset1, l++, -1, TERM_GREEN, "\377gWith the filesets listed above, you may...");
+							Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found < MACROFILESETS_MAX ?
+							    "\377Ga\377-" : "\377Da", ") Initialise a new set (it will also get selected automatically)"));
 							if (filesets_found) {
-								Term_putstr(5, l++, -1, TERM_GREEN, "\377Gb\377-) Select a set");
-								Term_putstr(5, l++, -1, TERM_GREEN, "\377Gc\377-) Delete a complete set");
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Gb\377-) Select a set to work with (persists through leaving this menu)");
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Gc\377-) Forget a set (forgets all loaded reference keys to that set)");
 							} else l += 2;
 
 							//freely offer to (selected set aka working set):
@@ -8260,22 +8277,42 @@ Chain_Macro:
 							// c) purge (delete) one of the setfiles, auto-merging the rest together accordingly.
 							// d) load aka activate a setfile #k of the current fileset (k in 1..n).
 							// e) add current macros to current fileset as setfile #k (insert or append into the set!).
-							if (fileset_selected != -199) {
+							if (fileset_selected != -DEBUG_MACROSET) { //correct check is '!= -1' (otherwise just testing/debugging)
 								l++;
-								Term_putstr(3, l++, -1, TERM_GREEN, format("And with the currently selected fileset (%d) you may...", fileset_selected));
-								Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Modify its switching keys");
-							Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Change its switching method");
-								Term_putstr(5, l++, -1, TERM_GREEN, format("\377Ga\377-) Purge one of the set stage files (%d-%d", 1, fileset[fileset_selected].stages));
-								Term_putstr(5, l++, -1, TERM_GREEN, format("\377Ga\377-) Switch to another stage (load the stage's macro file) (%d-%d)", 1, fileset[fileset_selected].stages));
-								Term_putstr(5, l++, -1, TERM_GREEN, "\377Ga\377-) Add all current macros to the set, as a new stage file");
+								Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (%d) you may...", fileset_selected));
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
+							Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
+								// all '== -1' checks are only for debugging purpose (DEBUG_MACROSET):
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, (fileset_selected == -1 ? 999 : fileset[fileset_selected].stages) >= 2 ? //debug: 999
+								    "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377GD\377-) Purge one of the set stage files (purges its reference keys) (%d-%d)",
+								    1, fileset_selected == -1 ? -1 : fileset[fileset_selected].stages)); //debug: -1
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", (fileset_selected == -1 ? 0 : fileset[fileset_selected].stages) < MACROFILESETS_STAGES_MAX ? //debug: -1
+								    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377GF\377-) Activate a stage (forgets active macros & loads stage macrofile) (%d-%d)",
+								    1, fileset_selected == -1 ? -1 : fileset[fileset_selected].stages)); //debug: -1
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GG\377-) Write all currently active macros to the activated stage file");
 							}
+
+							l++;
+							Term_putstr(xoffset1, l++, -1, TERM_GREEN, "After selecting a set (and stage), you can leave this menu with \377GESC\377- to work");
+							Term_putstr(xoffset1, l++, -1, TERM_GREEN, "on the macros you wish this set to contain. When done, return here to save");
+							Term_putstr(xoffset1, l++, -1, TERM_GREEN, "the macros to the selected stage file with '\377GG\377-)' (this will overwrite it).");
+
+							l++;
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "Please choose an action: ");
 						} else {
 							/* Small screen */
 
+							//TODO: Implement ^^
+							Term_putstr(9, l++, -1, TERM_GREEN, "\377RSorry, this function is currently only supported in bigmap aka");
+							Term_putstr(9, l++, -1, TERM_GREEN, "\377Rdouble window height mode. To switch to bigmap mode, exit this");
+							Term_putstr(9, l++, -1, TERM_GREEN, "\377Rmacro wizard, invoke the options menu with '=' and press 'b'.");
+
+							l++;
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "Press ESC to exit.");
 						}
 
-						l++;
-						Term_putstr(15, l++, -1, TERM_L_GREEN, "Please choose an action: ");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
