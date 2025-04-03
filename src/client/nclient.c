@@ -7826,8 +7826,8 @@ void do_ping(void) {
 #ifdef WINDOWS
 	/* Check if PNG screenshot returned successfully */
 	if (screenshotting) {
-		/* Check every 50 ms */
-		if (!(--screenshotting % 5)) screenshot_result_check();
+		/* Check every 10ms * '10' = 100 ms */
+		if (!(--screenshotting % 10)) screenshot_result_check();
 	}
 #endif
 }
