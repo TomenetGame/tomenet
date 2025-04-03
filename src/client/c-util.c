@@ -8330,20 +8330,45 @@ Chain_Macro:
 								xhtml_screenshot("screenshot????", 2);
 								continue;
 							default:
-								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'a') {
-									//i = -2;
-									continue;
-								}
+								/* invalid action? */
+								if (screen_hgt != MAX_SCREEN_HGT) continue; //TODO: Implement for non-bigmap mode too
+								if ((choice < 'a' || choice > 'c') && (choice < 'A' || choice > 'G')) continue;
 							}
 							break;
 						}
 						/* exit? */
 						if (i == -2) continue;
-#endif
-						break; }
-					}
 
+						/* Perform selected action */
+						switch (choice) {
+						/* Fileset actions: */
+						case 'a':
+							break;
+						case 'b':
+							break;
+						case 'c':
+							break;
+						/* Fileset-stage actions: */
+						case 'A':
+							break;
+						case 'B':
+							break;
+						case 'C':
+							break;
+						case 'D':
+							break;
+						case 'E':
+							break;
+						case 'F':
+							break;
+						case 'G':
+							break;
+						}
+#endif
+						/* this was the final step, we're done */
+						i = -2;
+						continue; }
+					}
 
 
 					/* --------------- specify item/parm if required --------------- */
