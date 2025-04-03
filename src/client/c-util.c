@@ -5,6 +5,7 @@
 #include "angband.h"
 
 #include <sys/time.h>
+#include <glob.h>
 
 #define ENABLE_SUBWINDOW_MENU /* allow =f menu function for setting fonts/visibility of term windows */
 //#ifdef ENABLE_SUBWINDOW_MENU
@@ -8133,6 +8134,10 @@ Chain_Macro:
 						char buf_basename[1024];
 						bool style_cyclic, style_free;
 						bool ok_new_set, ok_new_stage, ok_swap_stages;
+						//glob.h:
+						size_t n;
+						glob_t res;
+						char **p, cwd[1024];
 
 						/* Init filesets */
 						for (k = 0; k < MACROFILESETS_MAX; k++) fileset[k].stages = 0;
@@ -8170,11 +8175,12 @@ Chain_Macro:
 								*cfile = 0;
 								/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
 								   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
-							    //TODO
-							    //actually no: if this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
-							    //so it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+								/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
+								   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+								   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
 								if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
-							    //macro_stage_comment (eg 'water/cold spells' that is part of the switching-message)
+
+								//TODO: Extract 'macro_stage_comment' (eg 'water/cold spells' that is part of the switching-message)
 
 								/* --- Confirmed valid macro belonging to a macro set found --- */
 
@@ -8202,6 +8208,7 @@ Chain_Macro:
 									/* Add stage to this already known set */
 									break;
 								}
+
 								/* No known fileset of this basename found? Register a new set. */
 								if (f == k) {
 									fileset[k].style_cyclic = style_cyclic;
@@ -8229,6 +8236,30 @@ Chain_Macro:
 							if (m >= macro__num - 1) break;
 						}
 						filesets_found = k;
+
+						/* For cyclic sets: These don't have keys to switch to each stage, but only 1 key that switches to the next stage.
+						   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename: */
+						for (k = 0; k < filesets_found; k++) {
+							getcwd(cwd, sizeof(cwd));
+							chdir(ANGBAND_DIR_USER);
+							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &res);
+							n = res.gl_pathc;
+							if (n < 1) { /* No macro files found at all, ew. */
+printf("no file found: %s\n", *p);
+							} else { /* Found 'n' macro files */
+								for (p = res.gl_pathv; n; p++, n--) {
+printf("file(s) found (%zu): %s\n", n, *p);
+									/* Extract stage number, if it's higher than our highest known stage number, increase our known number to this one */
+									f = atoi(*p + strlen(fileset[k].basefilename) + 3);
+									if (f > fileset[k].stages) {
+printf("  stages increased from %d to %d\n", fileset[k].stages, f);
+										fileset[k].stages = f;
+									}
+								}
+							}
+							globfree(&res);
+							chdir(cwd);
+						}
 
  #define DEBUG_MACROSET /*debugging*/
  #ifdef DEBUG_MACROSET
