@@ -8371,7 +8371,7 @@ Chain_Macro:
 								    fileset_selected == -1 ? -1 : fileset[fileset_selected].stages));
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
 								    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
-								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (forgets active macros & loads stage macrofile) (1-%d)",
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile) (1-%d)",
 								    (fileset_selected == -1 ? -1 : fileset[fileset_selected].stages) ? "\377GF\377-" : "\377DF",
 								    fileset_selected == -1 ? -1 : fileset[fileset_selected].stages));
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GG\377-) Write all currently active macros to the activated stage file");
