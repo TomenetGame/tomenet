@@ -8457,7 +8457,20 @@ Chain_Macro:
 							/* Perform selected action */
 							if (screen_hgt == MAX_SCREEN_HGT) Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
 							switch (choice) {
-
+/*
+#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset"
+#define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
+struct macro_fileset_type {
+	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles)
+	bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
+	int stages; // Amount of stages to cyclic/switch between
+	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
+	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
+	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
+	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
+	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
+	char macro_stage_comment[MACROFILESETS_STAGES_MAX][20];
+	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended */
 							/* Fileset actions: */
 							case 'a': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
