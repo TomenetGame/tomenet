@@ -8190,10 +8190,10 @@ Chain_Macro:
 
 								/* Too many stages? */
 								if (stage >= MACROFILESETS_STAGES_MAX) {
-									c_msg_format("\377yWarning: Discarding excess stage %d for macroset '%s' (max %d).", stage, buf_basename, MACROFILESETS_STAGES_MAX);
+									c_msg_format("\377yWarning: Discarding excess stage %d for macroset '%s' (max %d).", stage + 1, buf_basename, MACROFILESETS_STAGES_MAX);
 									continue;
-								} else if (stage <= 0) {
-									c_msg_format("\377yWarning: Discarding invalid stage %d for macroset '%s' (stages must start at 1).", stage, buf_basename);
+								} else if (stage < 0) {
+									c_msg_format("\377yWarning: Discarding invalid stage %d for macroset '%s' (stages must start at 1).", stage + 1, buf_basename);
 									continue;
 								}
 
@@ -8216,8 +8216,7 @@ Chain_Macro:
 									fileset[k].style_cyclic = style_cyclic;
 									fileset[k].style_free = style_free;
 
-
-									fileset[k].stages = 1;
+									fileset[k].stages = stage + 1; // We have at least this many stages, apparently
 									strcpy(fileset[k].basefilename, buf_basename);
 
 									/* One more registered macroset */
@@ -8250,13 +8249,21 @@ Chain_Macro:
 							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &glob_res);
 							glob_size = glob_res.gl_pathc;
 							if (glob_size < 1) { /* No macro files found at all, ew. */
-								c_msg_format("Warning: Currently loaded macros refer to macroset \"%s\" but there were no macro files \"%s-FS*.prf\" found of that name!", fileset[k].basefilename, fileset[k].basefilename);
+								/* -- this warning is redundant with 'has no stage file(s)' warning further down ---
+								c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
+								c_msg_format("\377y         but there were no macro files \"%s-FS*.prf\" found of that name!", fileset[k].basefilename);
+								*/
 							} else { /* Found 'n' macro files */
 								for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 									/* Extract stage number */
-									f = atoi(*p + strlen(fileset[k].basefilename) + 3);
+									f = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
 									if (f >= MACROFILESETS_STAGES_MAX) {
-										c_msg_format("\377yWarning: Discarding excess stage file %d for macroset '%s' (max %d).", f, buf_basename, MACROFILESETS_STAGES_MAX);
+										c_msg_format("\377yWarning: Discarding excess stage file %d (maximum stage is %d)", f + 1, MACROFILESETS_STAGES_MAX);
+										c_msg_format("\377y         for macroset '%s'.", buf_basename);
+										continue;
+									} else if (f < 0) {
+										c_msg_format("\377yWarning: Discarding invalid stage file %d (stages must start at 1)", f + 1);
+										c_msg_format("\377y         for macroset '%s'.", buf_basename);
 										continue;
 									}
 
@@ -8278,19 +8285,24 @@ Chain_Macro:
 							if (n != fileset[k].stages) {
 								if (!n) {
 									if (fileset[k].stages == 1)
-										c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no stage file.", buf_basename);
+										c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no file.", buf_basename);
 									else
-										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no stage files for any stage.",
+#if 0
+										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for any stage.",
 										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+#else /* Save screen space, shorter message */
+										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files.",
+										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+#endif
 								} else if (n == fileset[k].stages - 1)
-									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no stage files for stage %d.",
-									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage);
+									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no file for stage %d.",
+									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
 								else {
 									tmpbuf[0] = 0;
 									for (f = 0; f < fileset[k].stages; f++)
-										if (!fileset[k].macro_stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f));
+										if (!fileset[k].macro_stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
 									tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
-									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no stage file for stages %s.",
+									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for stages %s.",
 									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
 								}
 							}
@@ -8323,7 +8335,7 @@ Chain_Macro:
 								if (k < filesets_found)
 									Term_putstr(xoffset2, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
 									    format("%2d\377g) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
-									    k + 1, fileset[k].stages, fileset_stage_selected == -1 ? "\377unone\377-" : format("\377v%d\377-", fileset_stage_selected),
+									    k + 1, fileset[k].stages, fileset_stage_selected == -1 ? "\377unone\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 									    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSW"),
 									    fileset[k].basefilename));
 								else
