@@ -5357,6 +5357,7 @@ void interact_macros(void) {
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yA\377B) Save macros to named / global.prf / form-named / class pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w/\377yL\377w) Load macros from a pref file / load current class-specific pref file");
+		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yZ\377w) Invoke macro wizard and implicitely choose macro-set creation.");
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
@@ -5374,7 +5375,7 @@ void interact_macros(void) {
 		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ur\377s) Record a macro");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377up\377s) Paste currently shown macro action to chat");
-		l++;
+		//l++;
 
 		/* Describe that action */
 		Term_putstr(0, l + 2, -1, TERM_L_GREEN, "Current action (if any) shown below:");
@@ -6718,7 +6719,7 @@ void interact_macros(void) {
 			Send_paste_msg(buf);
 		}
 
-		else if (i == 'z') {
+		else if (i == 'z' || i == 'Z') {
 			int target_dir = '5', ystart = 6;
 			bool should_wait, force_normal;
 #define mw_quaff 'a'
@@ -6777,7 +6778,10 @@ Chain_Macro:
 			Term_putstr(19, 5, -1, TERM_L_UMBER, "----------------------------------------");
 
 			/* Initialize wizard state: First state */
-			i = choice = 0;
+			if (i == 'Z') { //shortcut
+				i = 1;
+				choice = mw_fileset;
+			} else i = choice = 0;
 			/* Paranoia */
 			memset(tmp, 0, 160);
 			memset(buf, 0, 1024);
@@ -8515,7 +8519,7 @@ struct macro_fileset_type {
 						}
 #endif
 						/* this was the final step, we're done */
-						i = -2;
+						i = -1; //actually don't continue (back to macro wizard main screen) but break out (back to macro menu) for convenience!
 						continue; }
 					}
 
