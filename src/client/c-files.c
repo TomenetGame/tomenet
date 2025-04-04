@@ -722,7 +722,7 @@ void init_file_paths(char *path) {
 #endif /* VM */
 }
 
-/* Convert a macro trigger key between Windows and Posix */
+/* Convert a macro trigger key between Windows and Posix -- not implemented ie currently does nothing */
 static void key_autoconvert(char *tmp, byte fmt) {
 	//if (fmt == VERSION_OS || fmt == OS_UNKNOWN || VERSION_OS == OS_UNKNOWN) return;
 	if (fmt == VERSION_OS || (fmt == OS_UNKNOWN && VERSION_OS != OS_WIN32)) return;

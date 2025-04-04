@@ -493,7 +493,7 @@ bool silent_dump = FALSE;
 bool equip_no_weapon = FALSE;
 
 bool auto_reincarnation = FALSE;
-char macro_trigger_exclusive[MAX_CHARS];
+char macro_trigger_exclusive[MAX_CHARS]; //hack for 'd'eleting a macro, to auto-restore the original key
 bool macro_processing_exclusive = FALSE;
 
 /* To make graphics char remappings easier and there is no need to update mapping files when MAX_FONT_CHAR changes. */
