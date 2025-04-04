@@ -5287,6 +5287,7 @@ static void get_macro_trigger(char *buf) {
 //#define FORGET_MACRO_VISUALS
 
 #ifdef TEST_CLIENT
+
 /* Maximum amount of switchable macrofile-sets loaded at the same time */
 #define MACROFILESETS_MAX 9
 /* Maximum amount of switchable macrofile-set-stages */
@@ -5307,6 +5308,18 @@ struct macro_fileset_type {
 	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended
 };
 typedef struct macro_fileset_type macro_fileset_type;
+
+/* Prompt to enter an existing macrofileset number, stores it in 'f': */
+#define GET_MACROFILESET \
+	{ if (!filesets_found) continue; \
+	Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of set to select (1-%d): ", filesets_found)); \
+	if (!askfor_aux(tmpbuf, 3, 0)) continue; \
+	f = atoi(tmpbuf) - 1; \
+	if (f < 0 || f >= filesets_found) { \
+		c_msg_format("\377oError: Invalid number entered (%d).", f + 1); \
+		continue; \
+	} }
+
 #endif
 
 void interact_macros(void) {
@@ -8185,7 +8198,8 @@ Chain_Macro:
 
 								//TODO: Extract 'macro_stage_comment' (eg 'water/cold spells' that is part of the switching-message)
 
-								/* --- Confirmed valid macro belonging to a macro set found --- */
+								/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
+
 								if (k >= MACROFILESETS_MAX) {
 									/* Too many macro sets! */
 									c_msg_format("\377yWarning: Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
@@ -8480,19 +8494,71 @@ struct macro_fileset_type {
 								if (!ok_new_set) continue;
 								break;
 							case 'b': //select a set
-								if (!filesets_found) continue;
-								Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of set to select (1-%d): ", filesets_found));
-								if (askfor_aux(tmpbuf, 3, 0)) {
-									f = atoi(tmpbuf) - 1;
-									if (f < 0 || f >= filesets_found) {
-										c_msg_format("\377oError: Invalid number entered (%d).", f + 1);
-										continue;
-									}
-									fileset_selected = f;
-								}
+								GET_MACROFILESET
+								fileset_selected = f;
 								break;
 							case 'c': //forget a set
-								if (!filesets_found) continue;
+								GET_MACROFILESET
+								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
+								//scan all macros
+								m = -1;
+								while (TRUE) {
+									while (++m < macro__num) {
+										/* Get macro in parsable format */
+										strncpy(buf_act, macro__act[m], 159);
+										buf_act[159] = '\0';
+										ascii_to_text(buftxt_act, buf_act);
+
+										/* Scan macro for marker text, indicating that it's a set-switch */
+										// (note: MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset")
+										// (note: MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset")
+										if ((cc = strstr(buftxt_act, MACROFILESET_MARKER_CYCLIC))) style_cyclic = TRUE;
+										if ((cf = strstr(buftxt_act, MACROFILESET_MARKER_SWITCH))) style_free = TRUE;
+
+										if (!style_cyclic && !style_free) continue;
+
+										/* Found one! */
+
+										/* Determine base filename from the action text : %lFILENAME\r\e */
+										cfile = strstr(buftxt_act, "%l");
+										if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+										strcpy(buf_basename, cfile + 2);
+										/* Find end of filename */
+										cfile = strstr(buf_basename, "\\r\\e");
+										if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+										*cfile = 0;
+										/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
+										   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
+										/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
+										   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+										   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
+										if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
+
+										/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
+
+										/* Finalize base filename */
+										buf_basename[strlen(buf_basename) - 8] = 0;
+
+										/* Compare to set we want to delete */
+										if (strcmp(fileset[f].basefilename, buf_basename)) continue;
+
+										/* --- Matches target set! --- */
+
+										/* Delete macro */
+										(void)macro_del(macro__pat[m]);
+
+										/* Continue scanning keys for switch-macros */
+									}
+									/* Scanned the last one of all loaded macros? We're done. */
+									if (m >= macro__num - 1) break;
+								}
+
+								/* Slide the rest of the sets list one up */
+								filesets_found--; /* One less registered macroset */
+								for (k = f; k < filesets_found; k++)
+									fileset[k] = fileset[k + 1];
+								/* Erase final one */
+								fileset[k].stages = 0;
 								break;
 
 							/* Note: If a fileset is activated, a stage of it will also be activated automatically. If it's a new set, it'll be stage #1 (still empty). */
