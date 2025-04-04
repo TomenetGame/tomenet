@@ -11020,7 +11020,7 @@ D:itself struggles to banish it.
 N:668:Greater basilisk
 G:R:D
 I:120:20d100:25:100:15
-W:42:2:3000:10000
+W:42:2:3000:6000
 E:0:1:0:2:1:0
 O:0:50:50:0
 B:GAZE:PARALYZE:3d12
@@ -11149,7 +11149,7 @@ D:A Dark Judge, reputedly so frightening that his gaze can kill.
 N:675:Ancient multi-hued dragon
 G:D:v
 I:120:100d26:25:120:80
-W:43:1:170000:13000
+W:43:1:170000:11000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d10
@@ -11473,7 +11473,7 @@ D:pitiful frame.
 N:690:Dreadmaster
 G:G:y
 I:120:12d100:20:100:0
-W:44:2:1000:8000
+W:44:2:1000:6000
 E:0:0:0:0:0:0
 O:10:40:25:10
 B:HIT:HURT:6d6
@@ -11495,7 +11495,7 @@ D:of purest black, crush rock and flesh with ease.
 N:691:Drolem
 G:g:g
 I:120:30d100:25:130:30
-W:44:3:40000:12000
+W:44:3:40000:10000
 E:0:1:2:6:1:2
 O:0:0:0:0
 B:CLAW:HURT:3d10
@@ -11792,7 +11792,7 @@ D:steed for his Ringwraiths.
 N:705:Spectral tyrannosaur
 G:R:G
 I:120:70d50:25:120:30
-W:46:3:0:15000
+W:46:3:0:8000
 E:0:0:0:0:0:0
 O:20:20:20:20
 #was 2x2d13, increased for druids
@@ -12019,7 +12019,7 @@ D:the definition of dragonfire.
 N:716:Behemoth
 G:H:B
 I:120:50d100:25:200:30
-W:49:3:6000:16000
+W:49:3:6000:9000
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:BITE:FIRE:5d8
