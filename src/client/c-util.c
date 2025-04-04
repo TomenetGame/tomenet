@@ -8309,16 +8309,9 @@ Chain_Macro:
 						}
 						chdir(cwd); //Return to TomeNET working directory
 
- #define DEBUG_MACROSET /*debugging*/
- #ifdef DEBUG_MACROSET
-  fileset_selected = 0;
-  fileset_stage_selected = 0;
- #endif
-
-						// all '== -1' checks are only for debugging purpose (DEBUG_MACROSET):
-						ok_new_set = filesets_found < MACROFILESETS_MAX;
-						ok_new_stage = (fileset_selected == -1 ? 0 : fileset[fileset_selected].stages) < MACROFILESETS_STAGES_MAX; // (0 = debugging)
-						ok_swap_stages = (fileset_selected == -1 ? 999 : fileset[fileset_selected].stages) >= 2; //need at least 2 stages in order to swap anything (999 = debugging)
+						ok_new_set = (filesets_found < MACROFILESETS_MAX);
+						ok_new_stage = (fileset[fileset_selected].stages < MACROFILESETS_STAGES_MAX);
+						ok_swap_stages = (fileset[fileset_selected].stages >= 2); //need at least 2 stages in order to swap anything
 
 						/* --- Begin of visual output --- */
 						l = ystart + 1;
@@ -8355,25 +8348,18 @@ Chain_Macro:
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Forget a set (forgets all loaded reference keys to that set)"));
 							} else l += 2;
 
- #ifdef DEBUG_MACROSET
-							if (TRUE) { //just pretend a set was selected
- #else
 							if (fileset_selected != -1) {
- #endif
 								l++;
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (%d) you may...", fileset_selected));
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
-								// all '== -1' checks are only for debugging purpose (DEBUG_MACROSET):
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, ok_swap_stages ? "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Purge one of the set stage files (purges its reference keys) (1-%d)",
-								    (fileset_selected == -1 ? -1 : fileset[fileset_selected].stages) ? "\377GD\377-" : "\377DD",
-								    fileset_selected == -1 ? -1 : fileset[fileset_selected].stages));
+								    fileset[fileset_selected].stages ? "\377GD\377-" : "\377DD", fileset[fileset_selected].stages));
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
 								    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile) (1-%d)",
-								    (fileset_selected == -1 ? -1 : fileset[fileset_selected].stages) ? "\377GF\377-" : "\377DF",
-								    fileset_selected == -1 ? -1 : fileset[fileset_selected].stages));
+								    fileset[fileset_selected].stages ? "\377GF\377-" : "\377DF", fileset[fileset_selected].stages));
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GG\377-) Write all currently active macros to the activated stage file");
 							}
 
