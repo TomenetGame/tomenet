@@ -8619,6 +8619,7 @@ Chain_Macro:
 
 									/* Forge macro action (in human-readable format) */
 									sprintf(tmpbuf, ":%%:TEST-CYCLIC\r");
+									//"\e):%:Cycling\sto\sset\sTESTSET\r\e)%ldummyset-FS3.prf\r\e"
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
@@ -8654,6 +8655,7 @@ Chain_Macro:
 
 									/* Forge macro action (in human-readable format) */
 									sprintf(tmpbuf, ":%%:TEST-FREESW\r");
+									//"\e):%:Switching\sto\sset\sTESTSET\r\e)%ldummyset-FS3.prf\r\e"
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
