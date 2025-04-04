@@ -8145,7 +8145,7 @@ Chain_Macro:
 						/* Auto-scan for all currently loaded (ie are referenced in our currently active macros) filesets */
 						k = 0;
 						m = -1;
-						while (k < MACROFILESETS_MAX) {
+						while (TRUE) {
 							while (++m < macro__num) {
 								style_cyclic = style_free = FALSE;
 
@@ -8182,6 +8182,11 @@ Chain_Macro:
 								//TODO: Extract 'macro_stage_comment' (eg 'water/cold spells' that is part of the switching-message)
 
 								/* --- Confirmed valid macro belonging to a macro set found --- */
+								if (k >= MACROFILESETS_MAX) {
+									/* Too many macro sets! */
+									c_msg_format("\377yWarning: Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
+									continue;
+								}
 
 								/* Finalize stage index */
 								stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
