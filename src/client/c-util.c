@@ -8464,6 +8464,7 @@ Chain_Macro:
 							Term->scr->cx = Term->wid;
 							Term->scr->cu = 1;
 
+							i = 0;
 							while (TRUE) {
 								switch (choice = inkey()) {
 								case ESCAPE:
@@ -8473,19 +8474,21 @@ Chain_Macro:
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
-									/* Restore top line */
-									Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
-									continue;
+									i = -3;
+									break;
 								case KTRL('T'):
 									/* Take a screenshot */
 									xhtml_screenshot("screenshot????", 2);
-									continue;
+									i = -3;
+									break;
 								default:
 									/* invalid action? */
 									if ((choice < 'a' || choice > 'c') && (fileset_selected == -1 || choice < 'A' || choice > 'G')) continue;
 								}
 								break;
 							}
+							/* Restore top line */
+							if (i == -3) continue;
 							/* exit? */
 							if (i == -2) break;
 
