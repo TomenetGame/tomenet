@@ -8586,8 +8586,17 @@ Chain_Macro:
 								fileset[f].stages = 1;
 								fileset_stage_selected = 0;
 
+								/* Init cycle keys */
+								fileset[f].macro__pat__cycle[0] = 0;
+								fileset[f].macro__patbuf__cycle[0] = 0;
+								/* Init switch keys */
+								fileset[f].macro__pat__switch[fileset_stage_selected][0] = 0;
+								fileset[f].macro__patbuf__switch[fileset_stage_selected][0] = 0;
+								fileset[f].macro__act__switch[fileset_stage_selected][0] = 0;
+								fileset[f].macro__actbuf__switch[fileset_stage_selected][0] = 0;
+
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/1+2)
-								if (fileset[f].style_cyclic) {
+								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
 									while (TRUE) {
 										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as macro-cycling trigger: ");
 										tmpbuf[0] = 0;
@@ -8609,7 +8618,7 @@ Chain_Macro:
 									strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
-									sprintf(tmpbuf, ":%%:TEST\r");
+									sprintf(tmpbuf, ":%%:TEST-CYCLIC\r");
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
@@ -8622,7 +8631,40 @@ Chain_Macro:
 									//key_autoconvert(tmp, fmt);
 									macro_add(buf_pat, buf_act, FALSE, FALSE);
 								}
-								if (fileset[f].style_free) {
+								if (fileset[f].style_free) { //ask for stage-specific switching-key
+									while (TRUE) {
+										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as stage 1-specific trigger: ");
+										tmpbuf[0] = 0;
+										get_macro_trigger(tmpbuf);
+										if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
+											c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+											if (!strcmp(buf, "\e")) break;
+											continue;
+										}
+										break;
+									}
+									if (!strcmp(buf, "\e")) continue; //abort
+
+									/* Set macro trigger */
+									strcpy(buf_pat, tmpbuf);
+									strcpy(fileset[k].macro__pat__switch[fileset_stage_selected], buf_pat);
+									/* Set macro trigger in human-readable format */
+									ascii_to_text(buftxt_pat, buf_pat);
+									strcpy(fileset[k].macro__patbuf__switch[fileset_stage_selected], buftxt_pat);
+
+									/* Forge macro action (in human-readable format) */
+									sprintf(tmpbuf, ":%%:TEST-FREESW\r");
+
+									/* Set macro action in human-readable format */
+									strcpy(buftxt_act, tmpbuf);
+									strcpy(fileset[k].macro__actbuf__switch[fileset_stage_selected], buftxt_act);
+									/* Set macro action */
+									text_to_ascii(buf_act, buftxt_act);
+									strcpy(fileset[k].macro__act__switch[fileset_stage_selected], buf_act);
+
+									/* Also add it to the currently loaded macros */
+									//key_autoconvert(tmp, fmt);
+									macro_add(buf_pat, buf_act, FALSE, FALSE);
 								}
 
 								break;
