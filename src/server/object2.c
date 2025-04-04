@@ -221,7 +221,7 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	/* Hack: Erase monster trap, if this item was part of one */
 	if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix, o_idx);
 
-#if 1 /* extra logging for artifact timeout debugging */
+	/* extra logging for artifact timeout debugging */
 	if (true_artifact_p(o_ptr) && o_ptr->owner) {
 		char o_name[ONAME_LEN];
 
@@ -232,8 +232,17 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 		    wpos->wx, wpos->wy, wpos->wz,
 		    o_name);
 	}
-#endif
+	/* log all true arts anyway */
+	else if (true_artifact_p(o_ptr) && !o_ptr->owner) {
+		char o_name[ONAME_LEN];
 
+		object_desc_store(0, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s unowned true artifact (ua=%d) deleted at (%d,%d,%d):\n  %s\n",
+		    showtime(), unfound_art,
+		    wpos->wx, wpos->wy, wpos->wz,
+		    o_name);
+	}
 	/* Extra logging for those cases of "where did my randart disappear to??1" */
 	if (o_ptr->name1 == ART_RANDART) {
 		char o_name[ONAME_LEN];
@@ -245,7 +254,17 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 		    wpos->wx, wpos->wy, wpos->wz,
 		    o_name);
 	}
+	/* log special cases */
+	else if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
+		//note: number is already 0 at this point if it was floor/inven_item_increase'd
+		s_printf("%s ARTSCROLL_DELETED (amt:%d) (%d,%d,%d)\n", showtime(), o_ptr->number, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+	/* log big losses */
+	else if ((i = object_value_real(0, o_ptr) * o_ptr->number) >= 50000) {
+		char o_name[ONAME_LEN];
 
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("DELETED_VALUABLE: %s (%d)\n", o_name, i);
+	}
 
 	/* Artifact becomes 'not found' status */
 	if (true_artifact_p(o_ptr) && unfound_art)
@@ -297,11 +316,6 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	/* Visual update */
 	/* Dungeon floor */
 	if (!(o_ptr->held_m_idx) && !o_ptr->embed) everyone_lite_spot(wpos, y, x);
-
-	/* log special cases */
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
-		//note: number is already 0 at this point if it was floor/inven_item_increase'd
-		s_printf("%s ARTSCROLL_DELETED (amt:%d) (%d,%d,%d)\n", showtime(), o_ptr->number, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
 
 	/* Wipe the object */
 	WIPE(o_ptr, object_type);
