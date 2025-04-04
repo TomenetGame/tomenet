@@ -8160,13 +8160,12 @@ Chain_Macro:
 
 #ifdef TEST_CLIENT
 						int xoffset1 = 2, xoffset2 = 4;
-						int f, k, m, n, stage;
+						int f, k, m, n, stage, found;
 						char *cc, *cf, *cfile;
 						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
 						char buf_basename[1024], tmpbuf[1024];
 						bool style_cyclic, style_free;
 						bool ok_new_set, ok_new_stage, ok_swap_stages;
-						//glob.h:
 						size_t glob_size;
 						glob_t glob_res;
 						char **p, cwd[1024];
@@ -8512,21 +8511,27 @@ Chain_Macro:
 								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a name for the new set: ");
 								tmpbuf[0] = 0;
 								if (!askfor_aux(tmpbuf, MACROSET_NAME_LEN, 0)) continue;
+
+								/* --- do the rest in a new, cleared screen perhaps, so there is room for explanations --- */
+
 								// get type (switching method)
 								// get comment
 								// auto-select set and its first stage
 								fileset_selected = f;
 								fileset_stage_selected = 0;
 								break;
+
 							case 'b': //select a set
 								GET_MACROFILESET
 								fileset_selected = f;
 								break;
+
 							case 'c': //forget a set
 								GET_MACROFILESET
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
 								//scan all macros
 								m = -1;
+								found = 0;
 								while (TRUE) {
 									while (++m < macro__num) {
 										/* Get macro in parsable format */
@@ -8571,12 +8576,15 @@ Chain_Macro:
 
 										/* Delete macro */
 										(void)macro_del(macro__pat[m]);
+										found++;
 
 										/* Continue scanning keys for switch-macros */
 									}
 									/* Scanned the last one of all loaded macros? We're done. */
 									if (m >= macro__num - 1) break;
 								}
+								if (!found) c_msg_print("No references to the macroset were found within currently loaded macros.");
+								c_msg_format("%d reference%s to the macroset were cleared within currently loaded macros.", found, found == 1 ? "" : "s");
 
 								/* Slide the rest of the sets list one up */
 								filesets_found--; /* One less registered macroset */
@@ -8590,21 +8598,27 @@ Chain_Macro:
 							/* Fileset-stage actions (required 'fileset_selected != -1' condition was already checked directly after inkey() read) : */
 							case 'A': //modify switching keys
 								break;
+
 							case 'B': //modify switching method
 								break;
+
 							case 'C': //swap two stages
 								if (!ok_swap_stages) continue;
 								break;
+
 							case 'D': //purge a stage
 								if (!fileset[fileset_selected].stages) continue;
 								break;
+
 							case 'E': //init additional stage
 								if (!ok_new_stage) continue;
 								break;
+
 							case 'F': //activate a stage
 								GET_MACROFILESET_STAGE
 								fileset_stage_selected = f;
 								break;
+
 							case 'G': //write current macros to active stage
 								break;
 							}
