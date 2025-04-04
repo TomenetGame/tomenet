@@ -8384,7 +8384,7 @@ Chain_Macro:
 
 								/* Give user a choice and wait for user selection of what to do */
 								if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
-								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d, max %d stages each) currently loaded:",
+								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each) currently loaded:",
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found)
@@ -8438,7 +8438,7 @@ Chain_Macro:
 
 								/* Give user a choice and wait for user selection of what to do */
 								if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
-								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d, max %d stages each) currently loaded:",
+								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each) currently loaded:",
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found)
