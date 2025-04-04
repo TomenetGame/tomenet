@@ -8241,16 +8241,15 @@ Chain_Macro:
 						/* For cyclic sets: These don't have keys to switch to each stage, but only 1 key that switches to the next stage.
 						   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
 						   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
+						getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
+						chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
 						for (k = 0; k < filesets_found; k++) {
-							getcwd(cwd, sizeof(cwd));
-							chdir(ANGBAND_DIR_USER);
 							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &res);
 							n = res.gl_pathc;
 							if (n < 1) { /* No macro files found at all, ew. */
-printf("no file found: %s\n", *p);
+								c_msg_format("Warning: Currently loaded macros refer to macroset \"%s\" but there were no macro files \"%s-FS*.prf\" found of that name!", fileset[k].basefilename, fileset[k].basefilename);
 							} else { /* Found 'n' macro files */
 								for (p = res.gl_pathv; n; p++, n--) {
-printf("file(s) found (%zu): %s\n", n, *p);
 									/* Extract stage number */
 									f = atoi(*p + strlen(fileset[k].basefilename) + 3);
 									if (f >= MACROFILESETS_STAGES_MAX) {
@@ -8262,15 +8261,17 @@ printf("file(s) found (%zu): %s\n", n, *p);
 									fileset[k].macro_stage_file_exists[f] = TRUE;
 
 									/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
-									if (f > fileset[k].stages) {
-printf("  stages increased from %d to %d\n", fileset[k].stages, f);
-										fileset[k].stages = f;
-									}
+									if (f > fileset[k].stages) fileset[k].stages = f;
 								}
 							}
 							globfree(&res);
-							chdir(cwd);
+
+							for (f = 0; f < fileset[k].stages; f++) {
+								if (!fileset[k].macro_stage_file_exists[f])
+									c_msg_format("\377yWarning: Macroset \"%s\" has no stage file for stage %d.", buf_basename, f);
+							}
 						}
+						chdir(cwd); //Return to TomeNET working directory
 
  #define DEBUG_MACROSET /*debugging*/
  #ifdef DEBUG_MACROSET
