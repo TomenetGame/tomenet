@@ -8368,8 +8368,8 @@ Chain_Macro:
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
 										    format("%s%2d\377g) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"", fileset_selected == k ? ">" : " ",
-										    k + 1, fileset[k].stages, fileset_stage_selected == -1 ? "\377unone\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
-										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSW"),
+										    k + 1, fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
 									else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
@@ -8422,8 +8422,8 @@ Chain_Macro:
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
 										    format("%s%2d\377g) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"", fileset_selected == k ? ">" : " ",
-										    k + 1, fileset[k].stages, fileset_stage_selected == -1 ? "\377unone\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
-										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSW"),
+										    k + 1, fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
 									else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
@@ -8463,7 +8463,7 @@ Chain_Macro:
 							Term->scr->cx = Term->wid;
 							Term->scr->cu = 1;
 
-							i = 0;
+							i = choice = 0;
 							while (TRUE) {
 								switch (choice = inkey()) {
 								case ESCAPE:
@@ -8506,18 +8506,61 @@ Chain_Macro:
 							case 'a': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
 								// new set index, gets appended to existing ones
-								f = filesets_found++;
 								// get name
-								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a name for the new set: ");
+								Term_putstr(1, l, -1, TERM_L_GREEN, "Enter a name for the new set: ");
 								tmpbuf[0] = 0;
-								if (!askfor_aux(tmpbuf, MACROSET_NAME_LEN, 0)) continue;
+								if (!askfor_aux(tmpbuf, MACROSET_NAME_LEN, 0) || !tmpbuf[0]) continue;
+								f = filesets_found++;
+								strcpy(fileset[f].basefilename, tmpbuf);
 
+ #if 1
+								// get type (switching method)
+								Term_putstr(1, l, -1, TERM_L_GREEN, "Set the set type aka switching method (1 cyclic, 2 free-switch, 3 both): ");
+								n = -1;
+								while (TRUE) {
+									tmpbuf[0] = 0;
+									Term_gotoxy(74, l);
+									if (!askfor_aux(tmpbuf, 1, 0)) break;
+									n = atoi(tmpbuf);
+									if (n < 1 || n > 3) continue;
+									break;
+								}
+								if (n == -1) continue;
+								fileset[f].style_cyclic = (n % 2 != 0);
+								fileset[f].style_free = (n / 2 != 0);
+ #else
 								/* --- do the rest in a new, cleared screen perhaps, so there is room for explanations --- */
 
+								l = 0;
+								clear_from(l);
+								Term_putstr(1, l++, -1, TERM_L_GREEN, format("Set \"\377s%s\377-\":", fileset[f].basefilename));
+								l++;
+
 								// get type (switching method)
-								// get comment
+								Term_putstr(1, l++, -1, TERM_L_GREEN, "Set the set type aka switching method (1 cyclic, 2 free-switch, 3 both): ");
+								n = -1;
+								while (TRUE) {
+									tmpbuf[0] = 0;
+									Term_gotoxy(74, l);
+									if (!askfor_aux(tmpbuf, 1, 0)) break;
+									n = atoi(tmpbuf);
+									if (n < 1 || n > 3) continue;
+									break;
+								}
+								if (n == -1) continue;
+								fileset[f].style_cyclic = (n % 2 != 0);
+								fileset[f].style_free = (n / 2 != 0);
+								if (fileset[f].style_cyclic) {
+									if (fileset[f].style_free)
+										Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sCyclic+FreeSw");
+									else
+										Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sCyclic");
+								} else Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sFreeSw");
+								l++;
+ #endif
 								// auto-select set and its first stage
 								fileset_selected = f;
+								fileset[f].stages = 1;
 								fileset_stage_selected = 0;
 								break;
 
@@ -8620,6 +8663,14 @@ Chain_Macro:
 								break;
 
 							case 'G': //write current macros to active stage
+ #if 0
+								// get comment
+								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a comment (optional): ");
+								tmpbuf[0] = 0;
+								if (!askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) fileset[f].comment[0] = 0;
+								strcpy(fileset[f].comment, tmpbuf);
+ #endif
+
 								break;
 							}
 						}
