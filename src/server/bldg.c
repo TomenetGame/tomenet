@@ -803,7 +803,7 @@ static bool inn_comm(int Ind, int cmd) {
 #endif	// 0
 
 		/* Must cure HP draining status first */
-		if ((p_ptr->poisoned > 0) || (p_ptr->diseased > 0) || (p_ptr->cut > 0)) {
+		if (p_ptr->poisoned || p_ptr->diseased || p_ptr->cut) {
 			msg_print(Ind, "You need a healer, not a room.");
 			// msg_print(Ind, NULL);
 			msg_print(Ind, "Sorry, but don't want anyone dying in here.");
