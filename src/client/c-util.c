@@ -5295,6 +5295,8 @@ static void get_macro_trigger(char *buf) {
 /* String part that serves as marker for recognizing macrosets and their switch-type by the macros on their dedicated cycle/switch-keys */
 #define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset"
 #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
+#define MACROSET_NAME_LEN 20
+#define MACROSET_COMMENT_LEN 20
 struct macro_fileset_type {
 	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles)
 	bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
@@ -5304,8 +5306,8 @@ struct macro_fileset_type {
 	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
 	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
 	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
-	char macro_stage_comment[MACROFILESETS_STAGES_MAX][20];
-	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended
+	char macro_stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN];
+	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
 };
 typedef struct macro_fileset_type macro_fileset_type;
 
@@ -5313,9 +5315,22 @@ typedef struct macro_fileset_type macro_fileset_type;
 #define GET_MACROFILESET \
 	{ if (!filesets_found) continue; \
 	Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of set to select (1-%d): ", filesets_found)); \
+	tmpbuf[0] = 0; \
 	if (!askfor_aux(tmpbuf, 3, 0)) continue; \
 	f = atoi(tmpbuf) - 1; \
 	if (f < 0 || f >= filesets_found) { \
+		c_msg_format("\377oError: Invalid number entered (%d).", f + 1); \
+		continue; \
+	} }
+
+/* Prompt to enter an existing macrofileset-stage number of the currently selected fileset, stores it in 'f': */
+#define GET_MACROFILESET_STAGE \
+	{ if (fileset_selected == -1 || !fileset[fileset_selected].stages) continue; \
+	Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of stage to select (1-%d): ", fileset[fileset_selected].stages)); \
+	tmpbuf[0] = 0; \
+	if (!askfor_aux(tmpbuf, 3, 0)) continue; \
+	f = atoi(tmpbuf) - 1; \
+	if (f < 0 || f >= fileset[fileset_selected].stages) { \
 		c_msg_format("\377oError: Invalid number entered (%d).", f + 1); \
 		continue; \
 	} }
@@ -8386,7 +8401,8 @@ Chain_Macro:
 									    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile) (1-%d)",
 									    fileset[fileset_selected].stages ? "\377GF\377-" : "\377DF", fileset[fileset_selected].stages));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GG\377-) Write all currently active macros to the activated stage file");
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377GG\377-) Write all currently active macros to the activated stage file%s",
+									    fileset_stage_selected == -1 ? "" : format(" (\377v%d\377-)", fileset_stage_selected + 1)));
 								}
 
 								l++;
@@ -8436,7 +8452,8 @@ Chain_Macro:
 									    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile) (1-%d)",
 									    fileset[fileset_selected].stages ? "\377GF\377-" : "\377DF", fileset[fileset_selected].stages));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GG\377-) Write all currently active macros to the activated stage file");
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377GG\377-) Write all currently active macros to the activated stage file%s",
+									    fileset_stage_selected == -1 ? "" : format(" (\377v%d\377-)", fileset_stage_selected + 1)));
 								}
 
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "After selecting a set (and stage), you can leave this menu with \377GESC\377- to work");
@@ -8476,22 +8493,27 @@ Chain_Macro:
 							if (screen_hgt == MAX_SCREEN_HGT) Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
 							switch (choice) {
 /*
-#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset"
-#define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
-struct macro_fileset_type {
-	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles)
-	bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
+#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset" #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
+	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles), bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
 	int stages; // Amount of stages to cyclic/switch between
-	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
-	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
-	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
-	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
+	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32]; char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
+	char macro__act__switch[MACROFILESETS_STAGES_MAX][160]; char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
 	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
-	char macro_stage_comment[MACROFILESETS_STAGES_MAX][20];
-	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended */
+	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended  */
 							/* Fileset actions: */
 							case 'a': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
+								// new set index, gets appended to existing ones
+								f = filesets_found++;
+								// get name
+								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a name for the new set: ");
+								tmpbuf[0] = 0;
+								if (!askfor_aux(tmpbuf, MACROSET_NAME_LEN, 0)) continue;
+								// get type (switching method)
+								// get comment
+								// auto-select set and its first stage
+								fileset_selected = f;
+								fileset_stage_selected = 0;
 								break;
 							case 'b': //select a set
 								GET_MACROFILESET
@@ -8577,7 +8599,8 @@ struct macro_fileset_type {
 								if (!ok_new_stage) continue;
 								break;
 							case 'F': //activate a stage
-								if (!fileset[fileset_selected].stages) continue;
+								GET_MACROFILESET_STAGE
+								fileset_stage_selected = f;
 								break;
 							case 'G': //write current macros to active stage
 								break;
