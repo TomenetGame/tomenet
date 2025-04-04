@@ -8128,16 +8128,15 @@ Chain_Macro:
 
 #ifdef TEST_CLIENT
 						int xoffset1 = 2, xoffset2 = 4;
-						int f, k, m, s;
-						int stage;
+						int f, k, m, n, stage;
 						char *cc, *cf, *cfile;
 						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
-						char buf_basename[1024];
+						char buf_basename[1024], tmpbuf[1024];
 						bool style_cyclic, style_free;
 						bool ok_new_set, ok_new_stage, ok_swap_stages;
 						//glob.h:
-						size_t n;
-						glob_t res;
+						size_t glob_size;
+						glob_t glob_res;
 						char **p, cwd[1024];
 
 						/* Init filesets */
@@ -8146,7 +8145,6 @@ Chain_Macro:
 						/* Auto-scan for all currently loaded (ie are referenced in our currently active macros) filesets */
 						k = 0;
 						m = -1;
-						s = 0;
 						while (k < MACROFILESETS_MAX) {
 							while (++m < macro__num) {
 								style_cyclic = style_free = FALSE;
@@ -8186,9 +8184,18 @@ Chain_Macro:
 								/* --- Confirmed valid macro belonging to a macro set found --- */
 
 								/* Finalize stage index */
-								stage = atoi(buf_basename + strlen(buf_basename) - 8);
+								stage = atoi(buf_basename + strlen(buf_basename) - 8) - 1;
 								/* Finalize base filename */
 								buf_basename[strlen(buf_basename) - 8] = 0;
+
+								/* Too many stages? */
+								if (stage >= MACROFILESETS_STAGES_MAX) {
+									c_msg_format("\377yWarning: Discarding excess stage %d for macroset '%s' (max %d).", stage, buf_basename, MACROFILESETS_STAGES_MAX);
+									continue;
+								} else if (stage <= 0) {
+									c_msg_format("\377yWarning: Discarding invalid stage %d for macroset '%s' (stages must start at 1).", stage, buf_basename);
+									continue;
+								}
 
 								/* Scan already known filesets for same basename,
 								to either add the found key to an existing one or add a new fileset */
@@ -8197,14 +8204,8 @@ Chain_Macro:
 
 									/* Found set! */
 
-									/* Too many stages? */
-									if (stage >= MACROFILESETS_STAGES_MAX) {
-										c_msg_format("\377yWarning: Discarding excess stage %d for macroset '%s' (max %d).", stage, buf_basename, MACROFILESETS_STAGES_MAX);
-										continue;
-									}
-
-									/* Sort this stage in */
-									if (fileset[f].stages < stage) fileset[f].stages = stage;
+									/* New maximum stage registered? Then update # of stages. */
+									if (stage >= fileset[f].stages) fileset[f].stages = stage + 1;
 
 									/* Add stage to this already known set */
 									break;
@@ -8215,22 +8216,24 @@ Chain_Macro:
 									fileset[k].style_cyclic = style_cyclic;
 									fileset[k].style_free = style_free;
 
-									/* Get trigger in parsable format */
-									strncpy(buf_pat, macro__pat[m], 31);
-									buf_pat[31] = '\0';
-									ascii_to_text(buftxt_pat, buf_pat);
-
-									strcpy(fileset[k].macro__pat__switch[s], buf_pat);
-									strcpy(fileset[k].macro__patbuf__switch[s], buftxt_pat);
-									strcpy(fileset[k].macro__act__switch[s], buf_act);
-									strcpy(fileset[k].macro__actbuf__switch[s], buftxt_act);
 
 									fileset[k].stages = 1;
 									strcpy(fileset[k].basefilename, buf_basename);
 
 									/* One more registered macroset */
 									k++;
-								}
+								} else k = f; //unify, for subsequent code:
+
+								/* Get trigger in parsable format */
+								strncpy(buf_pat, macro__pat[m], 31);
+								buf_pat[31] = '\0';
+								ascii_to_text(buftxt_pat, buf_pat);
+
+								strcpy(fileset[k].macro__pat__switch[stage], buf_pat);
+								strcpy(fileset[k].macro__patbuf__switch[stage], buftxt_pat);
+								strcpy(fileset[k].macro__act__switch[stage], buf_act);
+								strcpy(fileset[k].macro__actbuf__switch[stage], buftxt_act);
+
 								/* Continue scanning keys for switch-macros */
 							}
 							/* Scanned the last one of all loaded macros? We're done. */
@@ -8244,12 +8247,12 @@ Chain_Macro:
 						getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
 						chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
 						for (k = 0; k < filesets_found; k++) {
-							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &res);
-							n = res.gl_pathc;
-							if (n < 1) { /* No macro files found at all, ew. */
+							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &glob_res);
+							glob_size = glob_res.gl_pathc;
+							if (glob_size < 1) { /* No macro files found at all, ew. */
 								c_msg_format("Warning: Currently loaded macros refer to macroset \"%s\" but there were no macro files \"%s-FS*.prf\" found of that name!", fileset[k].basefilename, fileset[k].basefilename);
 							} else { /* Found 'n' macro files */
-								for (p = res.gl_pathv; n; p++, n--) {
+								for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 									/* Extract stage number */
 									f = atoi(*p + strlen(fileset[k].basefilename) + 3);
 									if (f >= MACROFILESETS_STAGES_MAX) {
@@ -8261,14 +8264,29 @@ Chain_Macro:
 									fileset[k].macro_stage_file_exists[f] = TRUE;
 
 									/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
-									if (f > fileset[k].stages) fileset[k].stages = f;
+									if (f >= fileset[k].stages) fileset[k].stages = f + 1;
 								}
 							}
-							globfree(&res);
+							globfree(&glob_res);
 
+							/* Check whether macro files for all/some stages are missing */
+							n = 0;
 							for (f = 0; f < fileset[k].stages; f++) {
-								if (!fileset[k].macro_stage_file_exists[f])
-									c_msg_format("\377yWarning: Macroset \"%s\" has no stage file for stage %d.", buf_basename, f);
+								if (fileset[k].macro_stage_file_exists[f]) n++;
+								else stage = f;
+							}
+							if (n != fileset[k].stages) {
+								if (!n)
+									c_msg_format("\377yWarning: Macroset \"%s\" (%d stages) has no stage files for any stage.", buf_basename, fileset[k].stages);
+								else if (n == fileset[k].stages - 1)
+									c_msg_format("\377yWarning: Macroset \"%s\" (%d stages) has no stage files for stage %d.", buf_basename, fileset[k].stages, stage);
+								else {
+									tmpbuf[0] = 0;
+									for (f = 0; f < fileset[k].stages; f++)
+										if (!fileset[k].macro_stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f));
+									tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
+									c_msg_format("\377yWarning: Macroset \"%s\" (%d stages) has no stage file for stages %s.", buf_basename, fileset[k].stages, tmpbuf);
+								}
 							}
 						}
 						chdir(cwd); //Return to TomeNET working directory
