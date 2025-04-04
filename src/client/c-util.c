@@ -8320,7 +8320,8 @@ Chain_Macro:
 							ok_swap_stages = (fileset[fileset_selected].stages >= 2); //need at least 2 stages in order to swap anything
 
 							/* --- Begin of visual output --- */
-							l = ystart + 1;
+							//l = ystart + 1;
+							l = 0; //Actually discard the compelete, usual 4-lines macro wizard header. Doesn't apply to us here and just takes up space.
 							clear_from(l);
 
 							/* Space requirements are a lot, adjust visual layout depending on bigmap screen mode! */
@@ -8357,7 +8358,7 @@ Chain_Macro:
 
 								if (fileset_selected != -1) {
 									l++;
-									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (%d) you may...", fileset_selected));
+									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, ok_swap_stages ? "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
@@ -8380,13 +8381,48 @@ Chain_Macro:
 							} else {
 								/* Small screen */
 
-								//TODO: Implement ^^
-								Term_putstr(9, l++, -1, TERM_GREEN, "\377RSorry, this function is currently only supported in bigmap aka");
-								Term_putstr(9, l++, -1, TERM_GREEN, "\377Rdouble window height mode. To switch to bigmap mode, exit this");
-								Term_putstr(9, l++, -1, TERM_GREEN, "\377Rmacro wizard, invoke the options menu with '=' and press 'b'.");
+								/* Give user a choice and wait for user selection of what to do */
+								if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
+								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d, max %d stages each) currently loaded:",
+								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
+								for (k = 0; k < MACROFILESETS_MAX; k++)
+									if (k < filesets_found)
+										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
+										    format("%s%2d\377g) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"", fileset_selected == k ? ">" : " ",
+										    k + 1, fileset[k].stages, fileset_stage_selected == -1 ? "\377unone\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSW"),
+										    fileset[k].basefilename));
+									else
+										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
-								l++;
-								Term_putstr(15, l++, -1, TERM_L_GREEN, "Press ESC to exit.");
+								// a) select one of the scanned sets as the 'working set' for editing->
+								//  scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
+								// b) delete one of the scanned sets completely (ew?).
+								// c) init new fileset, setting base filename (default: charname), type (cyclic/free) and size (n); new set is selected as working set.
+								//    also ask if we maybe want to add current macros as first setfile #1 to the new set right away.
+								//    also ask to set actual switching key(s) right away.
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Ga\377-" : "\377Da", ") Initialise a new set (it will also get selected automatically)"));
+								if (filesets_found) {
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gb\377-" : "\377Db", ") Select a set to work with (persists through leaving this menu)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Forget a set (forgets all loaded reference keys to that set)"));
+								} else l += 2;
+
+								if (fileset_selected != -1) {
+									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("With the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, ok_swap_stages ? "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Purge one of the set stage files (purges its reference keys) (1-%d)",
+									    fileset[fileset_selected].stages ? "\377GD\377-" : "\377DD", fileset[fileset_selected].stages));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
+									    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile) (1-%d)",
+									    fileset[fileset_selected].stages ? "\377GF\377-" : "\377DF", fileset[fileset_selected].stages));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GG\377-) Write all currently active macros to the activated stage file");
+								}
+
+								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "After selecting a set (and stage), you can leave this menu with \377GESC\377- to work");
+								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "on the macros. Return here to save all macros to selected stage with '\377GG\377-)'");
 							}
 
 							/* Hack: Hide the cursor */
@@ -8411,7 +8447,6 @@ Chain_Macro:
 									continue;
 								default:
 									/* invalid action? */
-									if (screen_hgt != MAX_SCREEN_HGT) continue; //TODO: Implement for non-bigmap mode too
 									if ((choice < 'a' || choice > 'c') && (fileset_selected == -1 || choice < 'A' || choice > 'G')) continue;
 								}
 								break;
@@ -8420,7 +8455,7 @@ Chain_Macro:
 							if (i == -2) break;
 
 							/* Perform selected action */
-							Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
+							if (screen_hgt == MAX_SCREEN_HGT) Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
 							switch (choice) {
 
 							/* Fileset actions: */
