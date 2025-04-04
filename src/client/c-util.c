@@ -5302,6 +5302,7 @@ struct macro_fileset_type {
 	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
 	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
+	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
 	char macro_stage_comment[MACROFILESETS_STAGES_MAX][20];
 	char basefilename[1024]; // Base .prf filename part (including path) for all macro files of this set, to which stage numbers get appended
 };
@@ -8198,7 +8199,7 @@ Chain_Macro:
 
 									/* Too many stages? */
 									if (stage >= MACROFILESETS_STAGES_MAX) {
-										c_msg_format("\377yWarning: Discarding excess stage for macroset '%s' (max %d).", buf_basename, MACROFILESETS_STAGES_MAX);
+										c_msg_format("\377yWarning: Discarding excess stage %d for macroset '%s' (max %d).", stage, buf_basename, MACROFILESETS_STAGES_MAX);
 										continue;
 									}
 
@@ -8238,7 +8239,8 @@ Chain_Macro:
 						filesets_found = k;
 
 						/* For cyclic sets: These don't have keys to switch to each stage, but only 1 key that switches to the next stage.
-						   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename: */
+						   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
+						   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
 						for (k = 0; k < filesets_found; k++) {
 							getcwd(cwd, sizeof(cwd));
 							chdir(ANGBAND_DIR_USER);
@@ -8249,8 +8251,17 @@ printf("no file found: %s\n", *p);
 							} else { /* Found 'n' macro files */
 								for (p = res.gl_pathv; n; p++, n--) {
 printf("file(s) found (%zu): %s\n", n, *p);
-									/* Extract stage number, if it's higher than our highest known stage number, increase our known number to this one */
+									/* Extract stage number */
 									f = atoi(*p + strlen(fileset[k].basefilename) + 3);
+									if (f >= MACROFILESETS_STAGES_MAX) {
+										c_msg_format("\377yWarning: Discarding excess stage file %d for macroset '%s' (max %d).", f, buf_basename, MACROFILESETS_STAGES_MAX);
+										continue;
+									}
+
+									/* Register that there is an existing file to back up this stage's existance */
+									fileset[k].macro_stage_file_exists[f] = TRUE;
+
+									/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
 									if (f > fileset[k].stages) {
 printf("  stages increased from %d to %d\n", fileset[k].stages, f);
 										fileset[k].stages = f;
