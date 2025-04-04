@@ -8184,7 +8184,7 @@ Chain_Macro:
 								/* --- Confirmed valid macro belonging to a macro set found --- */
 
 								/* Finalize stage index */
-								stage = atoi(buf_basename + strlen(buf_basename) - 8) - 1;
+								stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
 								/* Finalize base filename */
 								buf_basename[strlen(buf_basename) - 8] = 0;
 
@@ -8276,16 +8276,22 @@ Chain_Macro:
 								else stage = f;
 							}
 							if (n != fileset[k].stages) {
-								if (!n)
-									c_msg_format("\377yWarning: Macroset \"%s\" (%d stages) has no stage files for any stage.", buf_basename, fileset[k].stages);
-								else if (n == fileset[k].stages - 1)
-									c_msg_format("\377yWarning: Macroset \"%s\" (%d stages) has no stage files for stage %d.", buf_basename, fileset[k].stages, stage);
+								if (!n) {
+									if (fileset[k].stages == 1)
+										c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no stage file.", buf_basename);
+									else
+										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no stage files for any stage.",
+										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+								} else if (n == fileset[k].stages - 1)
+									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no stage files for stage %d.",
+									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage);
 								else {
 									tmpbuf[0] = 0;
 									for (f = 0; f < fileset[k].stages; f++)
 										if (!fileset[k].macro_stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f));
 									tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
-									c_msg_format("\377yWarning: Macroset \"%s\" (%d stages) has no stage file for stages %s.", buf_basename, fileset[k].stages, tmpbuf);
+									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no stage file for stages %s.",
+									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
 								}
 							}
 						}
