@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 23. March 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 4. April 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -126,11 +126,11 @@ Contents
     (4.9)   Navigating on maps
     (4.10)  Houses
     (4.10a) Player stores
-    (4.11)  Malicious effects players can suffer
+    (4.11)  Malicious effects (status effects) players can suffer
     (4.11a) Black Breath
     (4.11b) Drain effects
     (4.11c) Common recurring combat buffs
-    (4.12)  Malicious effects monsters can suffer
+    (4.12)  Malicious effects (status effects) monsters can suffer
     (4.13)  Extermination orders, events and Ironman Challenge
     (4.14)  Time systems, speed
     (4.14a) In-game metrics
@@ -10661,8 +10661,8 @@ you already removed might linger there for a bit more.
 
 
 
-(4.11) Malicious effects players can suffer
--------------------------------------------
+(4.11) Malicious effects (status effects) players can suffer
+------------------------------------------------------------
 The player can suffer from various effects caused by monsters, traps or
 himself. Against several of these effects the 'Saving Throw' ability helps
 to decide whether it will be resisted or not (especially true for effects
@@ -10753,7 +10753,8 @@ Cut                     Cuts will make you lose HP continuously.
                         and any means of 'Curing' will completely heal cuts.
                         While cut, HP regeneration is inhibited except
                         for half-trolls, trolls and hydras which can continue
-                        regenerating HP even while cut.
+                        regenerating HP even while cut - except if the cut was
+                        applied before shapeshifting into one of these forms.
 
 Poison   -Poisoned      The player will continuously lose Hit Points.
                         Resisting poison will prevent the player from getting
@@ -11158,8 +11159,8 @@ Berserk Rage:     Remove and resist fear.
 
 
 
-(4.12) Malicious effects monsters can suffer
---------------------------------------------
+(4.12) Malicious effects (status effects) monsters can suffer
+-------------------------------------------------------------
 Monsters can be affected by similar effects as players.
 Those are:
 
@@ -23038,8 +23039,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Invincible here in detail means that you won't take..
                     -any hit point decreasing damage (except genocide strain),
                     -any sanity decreasing damage,
-                    -any malicious effects such as poisoning, fear, blindness,
-                     confusion, paralysis, slowness, stun or cuts,
+                    -any malicious effects such as disease, poisoning, cuts,
+                     fear, blindness, confusion, paralysis, slowness or stun,
                     -black breath infections,
                     -nexus, polymorph and teleportation effects.
                     Martyrdom doesn't protect your inventory from harm though.
