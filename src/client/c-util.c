@@ -5300,14 +5300,19 @@ static void get_macro_trigger(char *buf) {
 struct macro_fileset_type {
 	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles)
 	bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
+	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
+	char macro__pat__cycle[32];
+	char macro__patbuf__cycle[32];
+	char macro__act__cycle[160];
+	char macro__actbuf__cycle[160];
 	int stages; // Amount of stages to cyclic/switch between
+
 	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
 	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
 	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
 	char macro_stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN];
-	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
 };
 typedef struct macro_fileset_type macro_fileset_type;
 
@@ -8256,6 +8261,10 @@ Chain_Macro:
 									fileset[k].stages = stage + 1; // We have at least this many stages, apparently
 									strcpy(fileset[k].basefilename, buf_basename);
 
+									/* Init cycle keys */
+									fileset[k].macro__pat__cycle[0] = 0;
+									fileset[k].macro__patbuf__cycle[0] = 0;
+
 									/* One more registered macroset */
 									k++;
 								} else k = f; //unify, for subsequent code:
@@ -8265,10 +8274,23 @@ Chain_Macro:
 								buf_pat[31] = '\0';
 								ascii_to_text(buftxt_pat, buf_pat);
 
-								strcpy(fileset[k].macro__pat__switch[stage], buf_pat);
-								strcpy(fileset[k].macro__patbuf__switch[stage], buftxt_pat);
-								strcpy(fileset[k].macro__act__switch[stage], buf_act);
-								strcpy(fileset[k].macro__actbuf__switch[stage], buftxt_act);
+								/* Init switch keys */
+								fileset[k].macro__pat__switch[stage][0] = 0;
+								fileset[k].macro__patbuf__switch[stage][0] = 0;
+								fileset[k].macro__act__switch[stage][0] = 0;
+								fileset[k].macro__actbuf__switch[stage][0] = 0;
+								/* Macro-set specific: */
+								if (style_cyclic) {
+									strcpy(fileset[k].macro__pat__cycle, buf_pat);
+									strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
+								}
+								/* Macro-set-stage specific: */
+								if (style_free) {
+									strcpy(fileset[k].macro__pat__switch[stage], buf_pat);
+									strcpy(fileset[k].macro__patbuf__switch[stage], buftxt_pat);
+									strcpy(fileset[k].macro__act__switch[stage], buf_act);
+									strcpy(fileset[k].macro__actbuf__switch[stage], buftxt_act);
+								}
 
 								/* Continue scanning keys for switch-macros */
 							}
@@ -8494,14 +8516,15 @@ Chain_Macro:
 							/* Perform selected action */
 							if (screen_hgt == MAX_SCREEN_HGT) Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
 							switch (choice) {
-/*
-#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset" #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
-	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles), bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
+/* 	#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset" #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
+	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles) bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
+	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
+	char macro__pat__cycle[32]; char macro__patbuf__cycle[32]; char macro__act__cycle[160]; char macro__actbuf__cycle[160];
 	int stages; // Amount of stages to cyclic/switch between
 	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32]; char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__act__switch[MACROFILESETS_STAGES_MAX][160]; char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
 	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
-	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended  */
+	char macro_stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN]; */
 							/* Fileset actions: */
 							case 'a': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
@@ -8562,6 +8585,13 @@ Chain_Macro:
 								fileset_selected = f;
 								fileset[f].stages = 1;
 								fileset_stage_selected = 0;
+
+								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/1+2)
+								if (fileset[f].style_cyclic) {
+								}
+								if (fileset[f].style_free) {
+								}
+
 								break;
 
 							case 'b': //select a set
