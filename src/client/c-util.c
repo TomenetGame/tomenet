@@ -8588,6 +8588,33 @@ Chain_Macro:
 
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/1+2)
 								if (fileset[f].style_cyclic) {
+									while (TRUE) {
+										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as macro-cycling trigger: ");
+										tmpbuf[0] = 0;
+										get_macro_trigger(tmpbuf);
+										if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
+											c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+											if (!strcmp(buf, "\e")) break;
+											continue;
+										}
+										break;
+									}
+									if (!strcmp(buf, "\e")) continue; //abort
+
+									/* Set macro trigger */
+									strcpy(fileset[k].macro__pat__cycle, tmpbuf);
+									/* Set macro trigger in human-readable format */
+									ascii_to_text(buftxt_pat, tmpbuf);
+									strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
+
+									/* Forge macro action (in human-readable format) */
+									sprintf(tmpbuf, ":%%:TEST\r");
+
+									/* Set macro action in human-readable format */
+									strcpy(fileset[k].macro__actbuf__cycle, tmpbuf);
+									/* Set macro action */
+									text_to_ascii(buf_act, tmpbuf);
+									strcpy(fileset[k].macro__act__cycle, buf_act);
 								}
 								if (fileset[f].style_free) {
 								}
