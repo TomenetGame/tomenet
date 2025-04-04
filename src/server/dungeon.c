@@ -5588,7 +5588,7 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->sun_burn
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
 	    /* Trolls and Hydras continue to regenerate even while cut (it's the whole point of their regen) */
-	    || (p_ptr->cut && !intrinsic_regen)
+	    || (p_ptr->cut && (!intrinsic_regen || p_ptr->cut_intrinsic))
 #else
 	    || p_ptr->cut
 #endif

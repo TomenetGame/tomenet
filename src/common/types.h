@@ -3659,6 +3659,8 @@ struct player_type {
 	s16b diseased;			/* Timed -- Diseased */
 	int poisoned_attacker;		/* Who poisoned the player - used for blood bond */
 	s16b cut;			/* Timed -- Cut */
+	bool cut_intrinsic;		/* Was a currently active cut applied before acquiring 'intrinsic_regen' aka TROLL_REGENERATION/HYDRA_REGENERATION, ie by form change? */
+	bool nocut_intrinsic;		/* Cut was applied before acquiring 'NO_CUT' property ie by form change? */
 	int cut_attacker;		/* Who cut the player - used for blood bond */
 	s16b stun;			/* Timed -- Stun */
 

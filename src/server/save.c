@@ -946,7 +946,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->sc);
 	wr_s16b(p_ptr->fruit_bat);
 
-	wr_byte(p_ptr->lives);		/* old "rest" */
+	wr_byte(p_ptr->lives);
 	wr_byte(p_ptr->houses_owned);
 
 	wr_byte(p_ptr->breath_element);
@@ -1182,7 +1182,12 @@ static void wr_extra(int Ind) {
 	wr_u16b(p_ptr->tim_reflect);
 
 	wr_byte(p_ptr->tim_lcage);
-	for (i = 0; i < 8; i++) wr_byte(0); //future use
+
+	tmp8u = (p_ptr->cut_intrinsic ? 0x01 : 0x00) + (p_ptr->nocut_intrinsic ? 0x02 : 0x00);
+	wr_byte(tmp8u);
+
+	/* --- future use / HOLE: --- */
+	for (i = 0; i < 7; i++) wr_byte(0);
 
 	/* for shuffling/dealing a deck of cards */
 	wr_u16b(p_ptr->cards_diamonds);

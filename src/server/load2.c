@@ -2106,7 +2106,7 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->sc);
 	rd_s16b(&p_ptr->fruit_bat);
 
-	/* Read the flags */
+	/* Read the # of lives left */
 	rd_byte(&tmp8u);
 	p_ptr->lives = tmp8u;
 
@@ -2695,7 +2695,13 @@ if (p_ptr->updated_savegame == 0) {
 
 	if (!older_than(4, 9, 15)) {
 		rd_byte(&p_ptr->tim_lcage);
-		strip_bytes(8); //future use
+
+		rd_byte(&tmp8u);
+		p_ptr->cut_intrinsic = (tmp8u & 0x01);
+		p_ptr->nocut_intrinsic = (tmp8u & 0x02);
+
+		// --- future use / HOLE: ---
+		strip_bytes(7);
 	} else p_ptr->tim_lcage = 0;
 
 	if (!older_than(4, 5, 28)) {

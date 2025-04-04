@@ -2864,6 +2864,12 @@ bool set_martyr(int Ind, int v) {
 	if (v) {
 		if (!p_ptr->martyr) {
 			msg_print(Ind, "\377vYou feel the heavens grant your their powers.");
+
+			/* Cancel all DoTs initially */
+			set_cut(Ind, 0, 0);
+			set_diseased(Ind, 0, 0);
+			set_poisoned(Ind, 0, 0);
+
 			hp_player(Ind, 5000, TRUE, FALSE); /* fully heal */
 			p_ptr->martyr_timeout = 1000;
 			notice = TRUE;
@@ -3583,8 +3589,24 @@ bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 	//v = (v > cfg.spell_stack_limit * 5) ? cfg.spell_stack_limit * 5 : (v < 0) ? 0 : v;
 	v = (v > 1001) ? 1001 : (v < 0) ? 0 : v;
 
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+ #ifdef HYDRA_REGENERATION
+	if (r_ptr->d_char == 'M' || (r_ptr->flags2 & RF2_REGENERATE_TH)) p_ptr->cut_intrinsic = 0;
+	else
+ #endif
+ #ifdef TROLL_REGENERATION
+	if (m_ptr->r_idx == RI_HALF_TROLL || (r_ptr->flags2 & RF2_REGENERATE_T2)
+	    || r_ptr->d_char == 'T' || (r_ptr->flags2 & RF2_REGENERATE_TH)) p_ptr->cut_intrinsic = 0;
+	else
+ #endif
+	p_ptr->cut_intrinsic = 1;
+#endif
+
 	/* p_ptr->no_cut? for mimic forms that cannot bleed */
-	if (p_ptr->no_cut) v = 0;
+	if (p_ptr->no_cut) {
+		if (!p_ptr->cut || !v) p_ptr->nocut_intrinsic = 0;
+		if (!p_ptr->nocut_intrinsic) v = 0;
+	} else p_ptr->nocut_intrinsic = 1;
 
 	/* a ghost never bleeds */
 	if (v && p_ptr->ghost) v = 0;
