@@ -5306,6 +5306,7 @@ struct macro_fileset_type {
 	char macro__act__cycle[160];
 	char macro__actbuf__cycle[160];
 	int stages; // Amount of stages to cyclic/switch between
+	bool any_stage_file_exists; // just QoL shortcut derived from at least one of 'stage_file_exists[]' being TRUE
 
 	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
