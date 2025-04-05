@@ -8150,27 +8150,10 @@ Chain_Macro:
 						}
 
 					case mw_fileset: {
-						//on first macrowizard run, don't have any selected 'working' set.
-						//on entering this menu, once auto-detect current fileset via..
-						// a) scanning all macros for presence of '%:Set 1 of n ([cyclic|free])' style self-msg to retrieve 3 parms: size, type and base filename!
-						// b) list the different sets via 1 line each, depending on their base filename (but also show size, type).
-						// c) if one of the sets was already selected by us as 'working' set previously in the macro wizard, remember that and mark it.
-						//freely offer to (whole-set operations):
-						// a) select one of the scanned sets as the 'working set' for editing->
-						//  scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
-						// b) delete one of the scanned sets completely (ew?).
-						// c) init new fileset, setting base filename (default: charname), type (cyclic/free) and size (n); new set is selected as working set.
-						//    also ask if we maybe want to add current macros as first setfile #1 to the new set right away.
-						//    also ask to set actual switching key(s) right away.
-						//freely offer to (selected set aka working set):
-						// a) change switchkey(s).
-						// b) change switchmethod (cyclic (one key for the whole filese) vs free (one key for each setfile)).
-						// c) purge (delete) one of the setfiles, auto-merging the rest together accordingly.
-						// d) load aka activate a setfile #k of the current fileset (k in 1..n).
-						// e) add current macros to current fileset as setfile #k (insert or append into the set!).
-						// NOTE: Selecting a working set means that all macros currently in RAM are erased, and the particular prf file is loaded!
-						//       This is required to allow having more than 1 concurrently available macroset.
-
+						// - scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
+						// - delete one of the scanned sets completely (ew?).
+						// - purge (delete) one of the setfiles, auto-merging the rest together accordingly.
+						// - add current macros to current fileset as setfile #k (insert or append into the set!).
 #ifdef TEST_CLIENT
 						int xoffset1 = 2, xoffset2 = 4;
 						int f, k, m, n, stage, found;
@@ -8445,12 +8428,6 @@ Chain_Macro:
 									else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
-								// a) select one of the scanned sets as the 'working set' for editing->
-								//  scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
-								// b) delete one of the scanned sets completely (ew?).
-								// c) init new fileset, setting base filename (default: charname), type (cyclic/free) and size (n); new set is selected as working set.
-								//    also ask if we maybe want to add current macros as first setfile #1 to the new set right away.
-								//    also ask to set actual switching key(s) right away.
 								l++;
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "\377gWith the filesets listed above, you may...");
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Ga\377-) Clear list and rescan (discards any unsaved macro set)");
@@ -8500,12 +8477,6 @@ Chain_Macro:
 									else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
-								// a) select one of the scanned sets as the 'working set' for editing->
-								//  scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
-								// b) delete one of the scanned sets completely (ew?).
-								// c) init new fileset, setting base filename (default: charname), type (cyclic/free) and size (n); new set is selected as working set.
-								//    also ask if we maybe want to add current macros as first setfile #1 to the new set right away.
-								//    also ask to set actual switching key(s) right away.
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Ga\377-) Clear list and rescan (discards any unsaved macro set)");
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Gb\377-" : "\377Db", ") Initialise a new set (it will also get selected automatically)"));
 								if (filesets_found) {
