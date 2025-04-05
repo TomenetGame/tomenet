@@ -2881,6 +2881,9 @@ static void fadein_next_music(void) {
 
 		/* Actually play the thing */
 		music_cur_repeat = (c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);
+		/* If we only have 1 subsong, ie we cannot shuffle/playall among different songs,
+		   set repeat to 'forever' to avoid a new fade-in-sequence each time the song ends and restarts */
+		if (songs[music_cur].num == 1) music_cur_repeat = -1;
 		Mix_FadeInMusic(wave, music_cur_repeat, 1000); //-1 infinite, 0 once, or n times
 #ifdef ENABLE_JUKEBOX
 		if (jukebox_screen) jukebox_update_songlength();
