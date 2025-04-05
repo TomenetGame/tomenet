@@ -219,7 +219,11 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	struct worldpos *wpos = &o_ptr->wpos;
 
 	/* Hack: Erase monster trap, if this item was part of one */
-	if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix, o_idx);
+	if (o_ptr->embed == 1) {
+		erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix, o_idx);
+		//erase_mon_trap() will also delete the item itself, so we must return here */
+		return;
+	}
 
 	/* extra logging for artifact timeout debugging */
 	if (true_artifact_p(o_ptr) && o_ptr->owner) {
