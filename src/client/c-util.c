@@ -5307,6 +5307,7 @@ struct macro_fileset_type {
 	char macro__actbuf__cycle[160];
 	int stages; // Amount of stages to cyclic/switch between
 	bool any_stage_file_exists; // just QoL shortcut derived from at least one of 'stage_file_exists[]' being TRUE
+	bool currently_referenced; // this macro set is referenced by at least one existing macro among all currently loaded macros
 
 	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
@@ -8306,11 +8307,13 @@ Chain_Macro:
 						}
 						filesets_found = k;
 
+						/* Disk operations: Read macro files from TomeNET's user folder */
+						getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
+						chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
+
 						/* For cyclic sets: These don't have keys to switch to each stage, but only 1 key that switches to the next stage.
 						   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
 						   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
-						getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
-						chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
 						for (k = 0; k < filesets_found; k++) {
 							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &glob_res);
 							glob_size = glob_res.gl_pathc;
@@ -8373,6 +8376,42 @@ Chain_Macro:
 								}
 							}
 						}
+
+						//Now also scan user folder for any macro sets that aren't referenced by our currently loaded macros
+						glob("*-FS*.prf", 0, 0, &glob_res);
+						glob_size = glob_res.gl_pathc;
+						if (glob_size < 1) { /* No macro files found at all, ew. */
+							/* -- this warning is redundant with 'has no stage file(s)' warning further down ---
+							c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
+							c_msg_format("\377y         but there were no macro files \"%s-FS*.prf\" found of that name!", fileset[k].basefilename);
+							*/
+						} else { /* Found 'n' macro files */
+							for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
+								//...implement
+#if 0 //copypaste
+								/* Extract stage number */
+								f = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
+								if (f >= MACROFILESETS_STAGES_MAX) {
+									c_msg_format("\377yWarning: Discarding excess stage file %d (maximum stage is %d)", f + 1, MACROFILESETS_STAGES_MAX);
+									c_msg_format("\377y         for macroset '%s'.", buf_basename);
+									continue;
+								} else if (f < 0) {
+									c_msg_format("\377yWarning: Discarding invalid stage file %d (stages must start at 1)", f + 1);
+									c_msg_format("\377y         for macroset '%s'.", buf_basename);
+									continue;
+								}
+
+								/* Register that there is an existing file to back up this stage's existance */
+								fileset[k].stage_file_exists[f] = TRUE;
+
+								/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
+								if (f >= fileset[k].stages) fileset[k].stages = f + 1;
+#endif
+							}
+						}
+						globfree(&glob_res);
+
+						/* End of 'user' folder disk operations */
 						chdir(cwd); //Return to TomeNET working directory
 
 						while (TRUE) {
