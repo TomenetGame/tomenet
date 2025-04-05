@@ -8389,6 +8389,9 @@ Chain_Macro:
 							for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 								//...implement
 #if 0 //copypaste
+								for (k = 0; k < filesets_found; k++) {
+								// format("%s-FS*.prf", fileset[k].basefilename
+
 								/* Extract stage number */
 								f = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
 								if (f >= MACROFILESETS_STAGES_MAX) {
