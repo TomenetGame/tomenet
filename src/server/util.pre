@@ -456,6 +456,60 @@ extern bool allow_similar_names;
 
 extern bool pvp_disabled;
 
+struct monster_type {
+	monster_race *r_ptr;		/* Used for special monsters and questors */
+	bool special;			/* Does it use a special r_info ? */
+	byte pet;			/* Special pet value (not an ID). 0 = not a pet. 1 = is a pet. */
+
+	s16b r_idx;			/* Monster race index */
+
+	s32b owner;			/* ID of the player owning it (if it is a pet) */
+	s32b related;			/* ID of the player who is related to this monster spawn, just for visual/messaging purpose, not gameplay relevant */
+	byte related_type;		/* 0 = player/none, 1 = everyone, 2 = party, 3 = guild */
+
+	byte fy;			/* Y location on map */
+	byte fx;			/* X location on map */
+
+	struct worldpos wpos;		/* (6 x s16b) */
+
+	s32b exp;			/* Experience of the monster */
+	s16b level;			/* Level of the monster */
+
+	u16b hold_o_idx;		/* Object being held (if any) */
+
+	s16b cdis;			/* Current dis from player */
+	s16b closest_player;		/* The player closest to this monster */
+
+	u16b clone;			/* clone value */
+	u16b clone_summoning;		/* counter to keep track of summoning */
+
+	s16b mind;			/* Current action (golems, pets) -- Now also use for new AI_HYBRID (added for Tzeentch) */
+#ifdef RANDUNIS
+	u16b ego;			/* Ego monster type */
+	s32b name3;			/* Randuni seed, if any */
+#endif
+
+	s16b status;			/* Status(friendly, pet, companion, ..) */
+	s16b target;			/* Monster target */
+
+	byte backstabbed;		/* has this monster been backstabbed from cloaking mode already? prevent exploit */
+
+	s16b henc;			/* 'highest_encounter' - my final anti-cheeze strike I hope ;) - C. Blue */
+	s16b henc_top;
+
+#ifdef MONSTER_ASTAR
+	s32b astar_idx;			/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
+#endif
+
+	/* for new quest_info */
+	s16b quest;
+	s16b questor_idx;
+	bool questor;
+	byte questor_invincible;	/* further quest_info flags are referred to when required, no need to copy all of them here */
+	byte questor_hostile;		/* hostility flags (0x1 = vs py, 0x2 = vs mon) */
+	byte questor_target;		/* can get targetted by monsters and stuff..? */
+};
+
 /* For debugging/verifying of available object memory */
 extern s32b o_nxt;
 extern s32b o_max;
@@ -463,6 +517,9 @@ extern s32b o_top;
 extern s32b m_nxt;
 extern s32b m_max;
 extern s32b m_top;
+
+extern object_type o_list[MAX_O_IDX];
+extern monster_type m_list[MAX_M_IDX];
 
 extern void verify_expfact(int Ind, int p);
 extern void loadmap(cptr name, int wx, int wy, int wz, int x, int y);
