@@ -2964,6 +2964,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_chat = 1;
 		p_ptr->warning_lite = 1;
 		p_ptr->warning_lite_refill = 1;
+		p_ptr->warning_lamp_oil = 1;
 		p_ptr->warning_wield_combat = 1;
 #if WARNING_REST_TIMES == 0
 		if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
@@ -3217,6 +3218,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_dual_mode = 1;
 		p_ptr->warning_hungry = 2;
 		p_ptr->warning_lite_refill = 1;
+		p_ptr->warning_lamp_oil = 1;
 		p_ptr->warning_repair = 1;
 		//p_ptr->warning_blastcharge = 1; //instead, we save/load it!
 		p_ptr->warning_ingredients = 1;

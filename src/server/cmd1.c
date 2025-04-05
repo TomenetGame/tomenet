@@ -2988,6 +2988,14 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 				}
 
+				if (!p_ptr->warning_lamp_oil && o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_LANTERN
+				    && p_ptr->inventory[INVEN_LITE].tval == TV_LITE && p_ptr->inventory[INVEN_LITE].sval == SV_LITE_LANTERN) {
+					msg_print(Ind, "\374\377yHINT: You can also refill your lantern with another lantern with \377oSHIFT+F\377y,");
+					msg_print(Ind, "\374\377y      and the chat command '\377o/empty\377y' can empty lanterns to make them stack.");
+					s_printf("warning_lamp_oil: %s\n", p_ptr->name);
+					p_ptr->warning_lamp_oil = 1;
+				}
+
 				if (!p_ptr->warning_inspect &&
 				    (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET)// || o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF || o_ptr->tval == TV_ROD)
 				    && object_known_p(Ind, o_ptr)

@@ -4309,7 +4309,7 @@ struct player_type {
 	   again and again - although noone probably reads them anyway ;-p - C. Blue */
 	char warning_bpr, warning_bpr2, warning_bpr3;
 	char warning_run, warning_run_steps, warning_run_monlos, warning_run_lite;
-	char warning_wield, warning_chat, warning_lite, warning_lite_refill;
+	char warning_wield, warning_chat, warning_lite, warning_lite_refill, warning_lamp_oil;
 	char warning_wield_combat; /* warn if engaging into combat (attacking/taking damage) without having equipped melee/ranged weapons! (except for druids) */
 	char warning_rest, warning_rest_cooldown;/* if a char rests from <= 40% to 50% without R, or so..*/
 	char warning_mimic, warning_dual, warning_dual_mode, warning_potions, warning_wor;
