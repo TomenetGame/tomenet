@@ -2249,6 +2249,7 @@ struct monster_type {
 	s16b custom_lua_deletion;	/* Runs custom lua script on deletion */
 	s16b custom_lua_awoke;		/* Runs custom lua script on waking up (only the 1st time) */
 	s16b custom_lua_sighted;	/* Runs custom lua script on LoS to player (only the 1st time) */
+	//add status effects too, eg slept/feared/...?
 
 	s32b temp;			/* Misc/temp stuff -- unused */
 };
