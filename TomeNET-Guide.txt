@@ -17825,11 +17825,12 @@ stated.
                                                  your chance of parrying is
                                                  increased instead of blocking.
 
-                                Offensive stance - you can stun opponents
-                                                   depending on your strength,
-                                                   your 'Weaponmastery' skill,
-                                                   your stance rank, and your
-                                                   opponent
+                                Offensive stance - your hits get a chance to
+                                                   stun opponents, depending on
+                                                   - your strength,
+                                                   - your Weaponmastery skill,
+                                                   - your stance rank, and
+                                                   - your opponent's prowess
                                                    (see (4.12) about stunning),
                                                  - intercept more often,
                                                  - parry and dodge only rarely,
@@ -17860,10 +17861,9 @@ stated.
                                 Parry/Dodge    -100%  -90%  -80%  -70%
 
                                 All offensive stances reduce AC by 30.
-                                Offensive stance rank increases chance of
-                                applying a stun.
-                                Weaponmastery and Combat skill can greatly
-                                prolongs those stun effect durations.
+                                If stun from offensive stance is successfully
+                                applied, its power is affected by your strength
+                                and your skills 'Weaponmastery' and 'Combat'.
 
         .Dual-wield             The ability to wield two weapons at once. This
                                 ability cannot be trained, it's always at 1.000
