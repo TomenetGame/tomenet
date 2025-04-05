@@ -4112,8 +4112,10 @@ int custom_place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx,
 
 	res = place_monster_ego(wpos, y, x, r_idx, e_idx, slp, grp, clo, clone_summoning);
 	if (!res) {
+		struct cave_type **zcave = getcave(wpos);
+
 		/* Success */
-		m_ptr = &m_list[res];
+		m_ptr = &m_list[zcave[y][x].m_idx];
 
 		m_ptr->custom_lua_death = custom_lua_death;
 		m_ptr->custom_lua_deletion = custom_lua_deletion;
