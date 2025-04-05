@@ -4077,7 +4077,6 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 
 #ifdef DM_MODULES
 int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning) {
-	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
 	int res;
 
@@ -4086,22 +4085,20 @@ int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool s
 	if (in_trainingtower(wpos)) return(-2);
  #endif
 
-	if (!(summon_override_checks & SO_SURFACE)) {
-		/* Do not allow breeders to spawn in the wilderness - the_sandman */
-		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return(-3);
-	}
+	summon_override_checks = SO_ALL;
 
 	/* Place one monster, or fail */
 	if ((res = place_monster_one(wpos, y, x, r_idx, e_idx, 0, slp, clo, clone_summoning)) != 0) {
-		// DEBUG
-		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
-			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
+		s_printf("place_monster_one (%d,%d) failed (%d) at [y=%d,x=%d] (%d,%d,%d) cave-feat %d!\n",
+		    r_idx, e_idx, res, y, x, wpos->wx, wpos->wy, wpos->wz, zcave[y][x].feat);
+
 		/* Failure (!=0) */
 		return(res);
 	}
-	/* Success (==0) */
 
-	/* Success */
+	summon_override_checks = SO_NONE;
+
+	/* Success (==0) */
 	return(0);
 }
 
