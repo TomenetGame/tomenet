@@ -5289,7 +5289,7 @@ static void get_macro_trigger(char *buf) {
 #ifdef TEST_CLIENT
 
 /* Maximum amount of switchable macrofile-sets loaded at the same time */
-#define MACROFILESETS_MAX 9
+#define MACROFILESETS_MAX 8
 /* Maximum amount of switchable macrofile-set-stages */
 #define MACROFILESETS_STAGES_MAX 6
 /* String part that serves as marker for recognizing macrosets and their switch-type by the macros on their dedicated cycle/switch-keys */
@@ -5311,8 +5311,8 @@ struct macro_fileset_type {
 	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
 	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
-	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
-	char macro_stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN];
+	bool stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
+	char stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN];
 };
 typedef struct macro_fileset_type macro_fileset_type;
 
@@ -5352,9 +5352,9 @@ void interact_macros(void) {
 
 	//mw_fileset:
 #ifdef TEST_CLIENT
-	int filesets_found;
+	static int filesets_found = 0;
 	static int fileset_selected = -1, fileset_stage_selected = -1;
-	macro_fileset_type fileset[MACROFILESETS_MAX];
+	static macro_fileset_type fileset[MACROFILESETS_MAX] = { 0 };
 #endif
 
 
@@ -6821,6 +6821,12 @@ Chain_Macro:
 			memset(buf2, 0, 1024);
 
 			while (i != -1) {
+				/* mw_fileset: Restart */
+				if (i == 'Z') { //hack
+					i = 1;
+					choice = mw_fileset;
+				}
+
 				/* Restart wizard from a wrong choice? */
 				if (i == -2) {
 					/* Paranoia */
@@ -8215,7 +8221,7 @@ Chain_Macro:
 								   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
 								if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
 
-								//TODO: Extract 'macro_stage_comment' (eg 'water/cold spells' that is part of the switching-message)
+								//TODO: Extract 'stage_comment' (eg 'water/cold spells' that is part of the switching-message)
 
 								/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
 
@@ -8327,7 +8333,7 @@ Chain_Macro:
 									}
 
 									/* Register that there is an existing file to back up this stage's existance */
-									fileset[k].macro_stage_file_exists[f] = TRUE;
+									fileset[k].stage_file_exists[f] = TRUE;
 
 									/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
 									if (f >= fileset[k].stages) fileset[k].stages = f + 1;
@@ -8338,7 +8344,7 @@ Chain_Macro:
 							/* Check whether macro files for all/some stages are missing */
 							n = 0;
 							for (f = 0; f < fileset[k].stages; f++) {
-								if (fileset[k].macro_stage_file_exists[f]) n++;
+								if (fileset[k].stage_file_exists[f]) n++;
 								else stage = f;
 							}
 							if (n != fileset[k].stages) {
@@ -8359,7 +8365,7 @@ Chain_Macro:
 								else {
 									tmpbuf[0] = 0;
 									for (f = 0; f < fileset[k].stages; f++)
-										if (!fileset[k].macro_stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
+										if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
 									tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
 									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for stages %s.",
 									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
@@ -8404,10 +8410,11 @@ Chain_Macro:
 								//    also ask to set actual switching key(s) right away.
 								l++;
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "\377gWith the filesets listed above, you may...");
-								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Ga\377-" : "\377Da", ") Initialise a new set (it will also get selected automatically)"));
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Ga\377-) Clear list and rescan (discards any unsaved macro set)");
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Gb\377-" : "\377Db", ") Initialise a new set (it will also get selected automatically)"));
 								if (filesets_found) {
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gb\377-" : "\377Db", ") Select a set to work with (persists through leaving this menu)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Forget a set (forgets all loaded reference keys to that set)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Select a set to work with (persists through leaving this menu)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gd\377-" : "\377Dd", ") Forget a set (forgets all loaded reference keys to that set)"));
 								} else l += 2;
 
 								if (fileset_selected != -1) {
@@ -8456,10 +8463,11 @@ Chain_Macro:
 								// c) init new fileset, setting base filename (default: charname), type (cyclic/free) and size (n); new set is selected as working set.
 								//    also ask if we maybe want to add current macros as first setfile #1 to the new set right away.
 								//    also ask to set actual switching key(s) right away.
-								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Ga\377-" : "\377Da", ") Initialise a new set (it will also get selected automatically)"));
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Ga\377-) Clear list and rescan (discards any unsaved macro set)");
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Gb\377-" : "\377Db", ") Initialise a new set (it will also get selected automatically)"));
 								if (filesets_found) {
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gb\377-" : "\377Db", ") Select a set to work with (persists through leaving this menu)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Forget a set (forgets all loaded reference keys to that set)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Select a set to work with (persists through leaving this menu)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gd\377-" : "\377Dd", ") Forget a set (forgets all loaded reference keys to that set)"));
 								} else l += 2;
 
 								if (fileset_selected != -1) {
@@ -8504,7 +8512,7 @@ Chain_Macro:
 									break;
 								default:
 									/* invalid action? */
-									if ((choice < 'a' || choice > 'c') && (fileset_selected == -1 || choice < 'A' || choice > 'G')) continue;
+									if ((choice < 'a' || choice > 'd') && (fileset_selected == -1 || choice < 'A' || choice > 'G')) continue;
 								}
 								break;
 							}
@@ -8523,10 +8531,17 @@ Chain_Macro:
 	int stages; // Amount of stages to cyclic/switch between
 	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32]; char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
 	char macro__act__switch[MACROFILESETS_STAGES_MAX][160]; char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
-	bool macro_stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
-	char macro_stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN]; */
+	bool stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
+	char stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN]; */
 							/* Fileset actions: */
-							case 'a': //init new fileset (implies initialization+activation of a 1st stage too)
+							case 'a': // wipe memory list and rescan
+								/* Init filesets */
+								for (k = 0; k < MACROFILESETS_MAX; k++) fileset[k].stages = 0;
+								filesets_found = 0;
+								fileset_selected = fileset_stage_selected = -1;
+								i = -4;
+								break;
+							case 'b': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
 								// new set index, gets appended to existing ones
 								// get name
@@ -8671,12 +8686,12 @@ Chain_Macro:
 
 								break;
 
-							case 'b': //select a set
+							case 'c': //select a set
 								GET_MACROFILESET
 								fileset_selected = f;
 								break;
 
-							case 'c': //forget a set
+							case 'd': //forget a set
 								GET_MACROFILESET
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
 								//scan all macros
@@ -8780,8 +8795,18 @@ Chain_Macro:
 
 								break;
 							}
+
+							/* Restart mw_fileset menu */
+							if (i == -4) break;
+						}
+
+						/* Hack: Restart mw_fileset menu */
+						if (i == -4) {
+							i = 'Z';
+							continue;
 						}
 #endif
+
 						/* this was the final step, we're done */
 						i = -1; //actually don't continue (back to macro wizard main screen) but break out (back to macro menu) for convenience!
 						continue; }
