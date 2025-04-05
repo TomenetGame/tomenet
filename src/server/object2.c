@@ -10304,6 +10304,7 @@ static bool check_orome(int Ind, struct worldpos *wpos, cave_type **zcave, int x
  *
  * Returns -1 for 'legal item death' (burnt up or just broke, as in 'the correct way of dropping this is to make it poof'!)
  * Returns -2 for 'code-limits item death' (including 'no room'!, no cave paranoia)
+ * Returns o_idx on success (o_idx is always non-zero).
  */
 #define DROP_KILL_NOTE /* todo: needs adjustments - see below */
 #define DROP_ON_STAIRS_IN_EMERGENCY
