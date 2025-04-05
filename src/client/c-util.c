@@ -5,7 +5,9 @@
 #include "angband.h"
 
 #include <sys/time.h>
-#include <glob.h>
+#ifndef WINDOWS
+ #include <glob.h>
+#endif
 
 #define ENABLE_SUBWINDOW_MENU /* allow =f menu function for setting fonts/visibility of term windows */
 //#ifdef ENABLE_SUBWINDOW_MENU
@@ -8158,9 +8160,12 @@ Chain_Macro:
 						char buf_basename[1024], tmpbuf[1024];
 						bool style_cyclic, style_free;
 						bool ok_new_set, ok_new_stage, ok_swap_stages;
+ #ifndef WINDOWS
 						size_t glob_size;
 						glob_t glob_res;
-						char **p, cwd[1024];
+						char **p;
+ #endif
+						char cwd[1024];
 
 						/* Init filesets */
 						for (k = 0; k < MACROFILESETS_MAX; k++) fileset[k].stages = 0;
@@ -8294,6 +8299,7 @@ Chain_Macro:
 						   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
 						   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
 						for (k = 0; k < filesets_found; k++) {
+ #ifndef WINDOWS
 							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &glob_res);
 							glob_size = glob_res.gl_pathc;
 							if (glob_size < 1) { /* No macro files found at all, ew. */
@@ -8323,7 +8329,20 @@ Chain_Macro:
 								}
 							}
 							globfree(&glob_res);
+ #else
+							//todo: implement above POSIX stuff here for WINDOWS
+							WIN32_FIND_DATA FindFileData;
+							HANDLE hFind;
 
+							hFind = FindFirstFile(format("%s-FS*.prf", fileset[k].basefilename), &FindFileData);
+							if (hFind == INVALID_HANDLE_VALUE) {
+								printf("FindFirstFile failed (%ld)\n", GetLastError());
+								return;
+							} else {
+								printf("The first file found is %s\n", FindFileData.cFileName);
+								FindClose(hFind);
+							}
+ #endif
 							/* Check whether macro files for all/some stages are missing */
 							n = 0;
 							for (f = 0; f < fileset[k].stages; f++) {
@@ -8335,13 +8354,13 @@ Chain_Macro:
 									if (fileset[k].stages == 1)
 										c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no file.", buf_basename);
 									else
-#if 0
+ #if 0
 										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for any stage.",
 										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
-#else /* Save screen space, shorter message */
+ #else /* Save screen space, shorter message */
 										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files.",
 										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
-#endif
+ #endif
 								} else if (n == fileset[k].stages - 1)
 									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no file for stage %d.",
 									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
@@ -8357,6 +8376,7 @@ Chain_Macro:
 						}
 
 						//Now also scan user folder for any macro sets that aren't referenced by our currently loaded macros
+ #ifndef WINDOWS
 						glob("*-FS*.prf", 0, 0, &glob_res);
 						glob_size = glob_res.gl_pathc;
 						if (glob_size < 1) { /* No macro files found at all, ew. */
@@ -8367,7 +8387,7 @@ Chain_Macro:
 						} else { /* Found 'n' macro files */
 							for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 								//...implement
-#if 0 //copypaste
+  #if 0 //copypaste
 								for (k = 0; k < filesets_found; k++) {
 								// format("%s-FS*.prf", fileset[k].basefilename
 
@@ -8388,11 +8408,24 @@ Chain_Macro:
 
 								/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
 								if (f >= fileset[k].stages) fileset[k].stages = f + 1;
-#endif
+  #endif
 							}
 						}
 						globfree(&glob_res);
+ #else
+						//todo: implement above POSIX stuff here for WINDOWS
+						WIN32_FIND_DATA FindFileData;
+						HANDLE hFind;
 
+						hFind = FindFirstFile("*-FS*.prf", &FindFileData);
+						if (hFind == INVALID_HANDLE_VALUE) {
+							printf("FindFirstFile failed (%ld)\n", GetLastError());
+							return;
+						} else {
+							printf("The first file found is %s\n", FindFileData.cFileName);
+							FindClose(hFind);
+						}
+ #endif
 						/* End of 'user' folder disk operations */
 						chdir(cwd); //Return to TomeNET working directory
 
