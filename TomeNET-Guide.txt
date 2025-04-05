@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 4. April 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 5. April 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12275,17 +12275,24 @@ get more blows/round from it, sometimes you don't.
 If you try to wield a weapon that is too heavy for your character, meaning
 your 'STRength' stat isn't high enough yet, you'll get a warning message:
 "You have trouble wielding such a heavy weapon".
-This means you won't get any benefits from your 'Weaponmastery' skill, nor
-any extra blows per round at all, instead you'll be stuck with 1 blow/round.
-Also, you'll be more prone to disarming attacks.
+This means
+- you won't get any benefits from your 'Weaponmastery' skill.
+- nor any extra blows per round at all, you'll be stuck with 1 blow/round.
+- your hit chance will be lowered depending on the 'overweight' amount.
+- your parry chance cut to 1/3
+- digging effectiveness (if you use the weapon for digging) will be low
+- you cannot use it as effective throwing weapon.
+- you'll be more prone to disarming attacks.
 
 Similar is possible for shields. If you try to use a shield which is too heavy
 for you, you'll get another warning message:
 "You have trouble wielding such a heavy shield".
-That means you will hardly be able to deflect anything with this shield and
-won't get get any 'reflection' ability from it, if it provides this.
-All other abilities you gain from it are not affected though (eg resistances
-or stat boni), you will benefit from these just fine.
+That means
+- chance to block attacks will be cut down to 1/3.
+- you won't get get any 'reflection' ability (REFLECT flag) from it, if it
+  provides this. (All other abilities you gain from it are not affected though
+  (eg resistances or stat boni), you will benefit from these just fine.)
+- you will not be able to bash anything with it.
 
 Your character might have a chance to parry attacks with his weapon and block
 attacks with his shield, provided he uses one.
@@ -12425,8 +12432,11 @@ If you try to wield a ranged weapon that is too heavy for your character,
 meaning your 'STRength' stat isn't high enough yet, you'll get a warning
 message:
 "You have trouble wielding such a heavy bow".
-That means you'll get neither any benefits from your 'Archery' skill nor from
-any particular ranged mastery (extra shots!) at all when using that weapon.
+That means
+- you'll get neither any benefits from your 'Archery' skill or from any
+  specific ranged mastery skill at all! That means you will not receive from
+  these skills: Extra shots, extra might, hit chance bonus, damage bonus.
+- your to-hit chance will be reduced depending on the 'overweight' amount.
 
 Note: +damage bonus from other items besides the ranged weapon itself or the
 ammunition it uses will not be added to ranged attacks, while +hit bonus will.
@@ -12775,8 +12785,10 @@ Weapon weight
 -------------
 If your melee weapon or ranged weapon is too heavy you will hardly be able
 to use it, resulting in reduced attack number per round and less damage.
-You will get the message "You have trouble wielding such a heavy weapon/bow"
-and probably your blows will drop to 1 and tohit/todam go near to zero.
+You will get the message "You have trouble wielding such a heavy weapon",
+or for ranged weapons "You have trouble wielding such a heavy bow",
+and probably your blows (or shots, for ranged weapons) will drop to 1 and
+your tohit/todam values get reduced drastically.
 A weapon is too heavy for you if its weight is greater than the so-called
 str_hold value. Below is a table with the str_hold values, depending on a
 character's strength:
@@ -16061,6 +16073,11 @@ be very lucky and hope for the random(0..799) roll for quartz to actually be a
 0 so that the result will be 0+20 which is 20 and therefore smaller than your
 digging power of 21. So on each turn of tunnelling your chance to succeed would
 be 1 in 800 in that case.
+
+If you try to use a digging tool that is too heavy for you, you will see it in
+your encumberment bar and there will be a warning message on equipping it,
+ "You have trouble wielding such a heavy tool"
+which means your digging power will be cut down to 1/3 when using it to dig.
 
 
 (5.17b) Digging - common example values
@@ -25073,6 +25090,10 @@ raw numbers:
 "You have an excellent chance of parrying."     Below 50% chance.
 "You have a superb chance of parrying."         50% chance or better.
 
+If you try to use a weapon which is too heavy for you and get the warning:
+ "You have trouble wielding such a heavy weapon"
+your parry chance will be lowered to 1/3 (among other things, compare (5.1)).
+
 Note: If you aim at maximizing your parry chance on a character that is
       proficient in combat stances, you might choose defensive stance without
       a shield equipped. Because if no shield is equipped, defensive combat
@@ -25093,6 +25114,10 @@ raw numbers:
 "You have an excellent chance of blocking."     Below 48% chance.
 "You have a superb chance of blocking."         48-50% chance (the highest
                                                 reachable).
+
+If you try to use a shield which is too heavy for you and get the warning:
+ "You have trouble wielding such a heavy shield"
+your block chance will be lowered to 1/3 (among other things, compare (5.1)).
 
 Note: To achieve an extraordinarily high block chance you'll have to enter a
       defensive combat stance, and your shield should have a high base block
