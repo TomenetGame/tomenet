@@ -4082,9 +4082,9 @@ int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool s
 	int res;
 
 	if (!(zcave = getcave(wpos))) return(-1);
-#ifdef ARCADE_SERVER
+ #ifdef ARCADE_SERVER
 	if (in_trainingtower(wpos)) return(-2);
-#endif
+ #endif
 
 	if (!(summon_override_checks & SO_SURFACE)) {
 		/* Do not allow breeders to spawn in the wilderness - the_sandman */
@@ -4103,6 +4103,25 @@ int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool s
 
 	/* Success */
 	return(0);
+}
+
+int custom_place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning,
+    s16b custom_lua_death, s16b custom_lua_deletion, s16b custom_lua_awoke, s16b custom_lua_sighted) {
+	monster_type *m_ptr;
+	int res;
+
+	res = place_monster_ego(wpos, y, x, r_idx, e_idx, slp, grp, clo, clone_summoning);
+	if (!res) {
+		/* Success */
+		m_ptr = &m_list[res];
+
+		m_ptr->custom_lua_death = custom_lua_death;
+		m_ptr->custom_lua_deletion = custom_lua_deletion;
+		m_ptr->custom_lua_awoke = custom_lua_awoke;
+		m_ptr->custom_lua_sighted = custom_lua_sighted;
+	}
+
+	return(res);
 }
 #endif
 

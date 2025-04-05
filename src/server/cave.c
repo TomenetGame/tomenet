@@ -8536,9 +8536,9 @@ int check_item_sval(worldpos *wpos, int y, int x) {
 }
 
 // Basic wish, then drop the item. - Kurzel
-void place_item_module(worldpos *wpos, int y, int x, int tval, int sval) {
-	object_type forge;
-	object_type *o_ptr = &forge;
+int place_item_module(worldpos *wpos, int y, int x, int tval, int sval) {
+	object_type forge, *o_ptr = &forge;
+
 	object_wipe(o_ptr);
 	invcopy(o_ptr, lookup_kind(tval, sval));
 	o_ptr->number = 1;
@@ -8546,7 +8546,25 @@ void place_item_module(worldpos *wpos, int y, int x, int tval, int sval) {
 	apply_magic(wpos, o_ptr,
 		(in_module(wpos) ? exec_lua(0, format("return adventure_locale(%d, 1)", wpos->wz)) : -2),
 		TRUE, TRUE, FALSE, FALSE, RESF_NONE); // use native depth if not loading as an event
-	drop_near(TRUE, 0, o_ptr, -1, wpos, y, x);
+	return(drop_near(TRUE, 0, o_ptr, -1, wpos, y, x));
+}
+
+int custom_place_item_module(worldpos *wpos, int y, int x, int tval, int sval,
+    s16b custom_lua_carrystate, s16b custom_lua_equipstate, s16b custom_lua_destruction, s16b custom_lua_usage) {
+	object_type *o_ptr;
+	int res;
+
+	if ((res = place_item_module(wpos, y, x, tval, sval)) > 0) {
+		/* Success */
+		o_ptr = &o_list[res];
+
+		o_ptr->custom_lua_carrystate = custom_lua_carrystate;
+		o_ptr->custom_lua_equipstate = custom_lua_equipstate;
+		o_ptr->custom_lua_destruction = custom_lua_destruction;
+		o_ptr->custom_lua_usage = custom_lua_usage;
+	}
+
+	return(res);
 }
 #endif
 
@@ -8955,14 +8973,52 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	return(TRUE);
 }
 
+void custom_cave_set_feat(worldpos *wpos, int y, int x, int feat,
+    s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance, s16b custom_lua_newlivefeat, s16b custom_lua_way) {
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+	if (!in_bounds_array(y, x)) return;
+
+	cave_set_feat(wpos, y, x, feat);
+
+	zcave[y][x].custom_lua_tunnel_hand = custom_lua_tunnel_hand;
+	zcave[y][x].custom_lua_tunnel = custom_lua_tunnel;
+	zcave[y][x].custom_lua_search = custom_lua_search;
+	zcave[y][x].custom_lua_search_diff_minus = custom_lua_search_diff_minus;
+	zcave[y][x].custom_lua_search_diff_chance = custom_lua_search_diff_chance;
+	zcave[y][x].custom_lua_newlivefeat = custom_lua_newlivefeat;
+	zcave[y][x].custom_lua_way = custom_lua_way;
+}
+
+bool custom_cave_set_feat_live(worldpos *wpos, int y, int x, int feat,
+    s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance, s16b custom_lua_newlivefeat, s16b custom_lua_way) {
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if (!in_bounds_array(y, x)) return(FALSE);
+
+	if (!cave_set_feat_live(wpos, y, x, feat)) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(TRUE); //we did set the feat!
+
+	zcave[y][x].custom_lua_tunnel_hand = custom_lua_tunnel_hand;
+	zcave[y][x].custom_lua_tunnel = custom_lua_tunnel;
+	zcave[y][x].custom_lua_search = custom_lua_search;
+	zcave[y][x].custom_lua_search_diff_minus = custom_lua_search_diff_minus;
+	zcave[y][x].custom_lua_search_diff_chance = custom_lua_search_diff_chance;
+	zcave[y][x].custom_lua_newlivefeat = custom_lua_newlivefeat;
+	zcave[y][x].custom_lua_way = custom_lua_way;
+
+	return(TRUE);
+}
+
 
 
 /*
  * Calculate "incremental motion". Used by project() and shoot().
  * Assumes that (*y,*x) lies on the path from (y1,x1) to (y2,x2).
  */
-void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
-{
+void mmove2(int *y, int *x, int y1, int x1, int y2, int x2) {
 	int dy, dx, dist, shift;
 
 	/* Extract the distance travelled */
@@ -8985,11 +9041,8 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 
 
 	/* Move mostly vertically */
-	if (dy > dx)
-	{
-
+	if (dy > dx) {
 #if 0
-
 		int k;
 
 		/* Starting shift factor */
@@ -9006,7 +9059,6 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 
 		/* Always move along major axis */
 		(*y) = (y2 < y1) ? (*y - 1) : (*y + 1);
-
 #endif
 
 		/* Extract a shift factor */
@@ -9020,9 +9072,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 	}
 
 	/* Move mostly horizontally */
-	else
-	{
-
+	else {
 #if 0
 
 		int k;
@@ -9041,7 +9091,6 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 
 		/* Always move along major axis */
 		(*x) = (x2 < x1) ? (*x - 1) : (*x + 1);
-
 #endif
 
 		/* Extract a shift factor */
