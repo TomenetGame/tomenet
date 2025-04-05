@@ -1848,6 +1848,9 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
  #define PBA1 14
  #define PBA2 6
 #endif
+/* For wands/staves (and mstaves fused) this routine will try to divide bonus Au for charges by the o_ptr->number.
+   However, when we're called from delete_object_idx() the number will sometimes be zero. We substitute 1 then to avoid div/0.
+   TODO: Check if this is a good/consistent idea... */
 s64b object_value_real(int Ind, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -2024,14 +2027,14 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		if (o_ptr->xtra1) {
 			value = k_info[lookup_kind(TV_STAFF, o_ptr->xtra1 - 1)].cost;
  #ifdef NEW_MDEV_STACKING
-			value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+			value += ((value / 20) * o_ptr->pval) / (o_ptr->number ? o_ptr->number : 1);
  #else
 			value += ((value / 20) * o_ptr->pval);
  #endif
 			value += k_ptr->cost;
 		} else if (o_ptr->xtra2) {
 			value = k_info[lookup_kind(TV_WAND, o_ptr->xtra2 - 1)].cost;
-			value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+			value += ((value / 20) * o_ptr->pval) / (o_ptr->number ? o_ptr->number : 1);
 			value += k_ptr->cost;
 		} else if (o_ptr->xtra3) {
 			value += k_info[lookup_kind(TV_ROD, o_ptr->xtra3 - 1)].cost;
@@ -2310,7 +2313,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	/* Wands/Staffs */
 	case TV_WAND:
 		/* Pay extra for charges */
-		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+		value += ((value / 20) * o_ptr->pval) / (o_ptr->number ? o_ptr->number : 1);
 
 		/* Done */
 		break;
@@ -2318,7 +2321,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_STAFF:
 		/* Pay extra for charges */
 #ifdef NEW_MDEV_STACKING
-		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+		value += ((value / 20) * o_ptr->pval) / (o_ptr->number ? o_ptr->number : 1);
 #else
 		value += ((value / 20) * o_ptr->pval);
 #endif
@@ -3231,14 +3234,14 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	/* Wands/Staffs */
 	case TV_WAND:
 		/* Pay extra for charges */
-		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+		value += ((value / 20) * o_ptr->pval) / (o_ptr->number ? o_ptr->number : 1);
 		/* Done */
 		break;
 
 	case TV_STAFF:
 		/* Pay extra for charges */
 #ifdef NEW_MDEV_STACKING
-		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+		value += ((value / 20) * o_ptr->pval) / (o_ptr->number ? o_ptr->number : 1);
 #else
 		value += ((value / 20) * o_ptr->pval);
 #endif
