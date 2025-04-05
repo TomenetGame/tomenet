@@ -8150,10 +8150,6 @@ Chain_Macro:
 						}
 
 					case mw_fileset: {
-						// - scan filenames <charactername>_SETk (k=1..n) to verify presence and read the free-switch keys if any, list them.
-						// - delete one of the scanned sets completely (ew?).
-						// - purge (delete) one of the setfiles, auto-merging the rest together accordingly.
-						// - add current macros to current fileset as setfile #k (insert or append into the set!).
 #ifdef TEST_CLIENT
 						int xoffset1 = 2, xoffset2 = 4;
 						int f, k, m, n, stage, found;
@@ -8789,7 +8785,7 @@ Chain_Macro:
 								if (!fileset[fileset_selected].stages) continue;
 								break;
 
-							case 'E': //init additional stage
+							case 'E': //init additional stage; append it to or insert it into the current stages list
 								if (!ok_new_stage) continue;
 								break;
 
