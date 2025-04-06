@@ -7757,6 +7757,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				   over as-close-as-possible-to-prefix-matching name */
 				for (i = 1; i < max_k_idx; i++) {
 					k_ptr = &k_info[i];
+					if (k_ptr->tval == TV_PSEUDO_OBJ) continue; //only real objects
 					//if (!k_ptr->k_idx) continue;
 
 					s = my_strcasestr(k_name + k_ptr->name, item);
@@ -14198,7 +14199,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				while (TRUE) {
 					l = rand_int(max_k_idx);
-					if (!k_info[l].tval || !k_info[l].chance[0]) continue;
+					if (!k_info[l].tval || !k_info[l].chance[0]) continue; //TV_PSEUDO_OBJ are covered by chance == 0 check.
 					invcopy(&forge, l);
 					if (forge.tval != TV_POTION && forge.tval != TV_SCROLL && forge.tval != TV_JUNK && forge.tval != TV_SKELETON) continue;
 					object_flags(&forge, &f1, &f2, &f3, &f4, &f5, &f6, &esp);

@@ -10763,6 +10763,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		/* check for failure, if item does not exist in the game */
 		for (i = 1; i < max_k_idx; i++) {
 			invcopy(&forge, i);
+			if (forge.tval == TV_PSEUDO_OBJ) continue; //only real objects
 			forge.number = num; //hack: make item name match player input for plural (num > 1)
 			object_desc(0, o_name, &forge, FALSE, 256);
 			if (!o_name[0] || o_name[0] == ' ') continue;

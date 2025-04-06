@@ -199,7 +199,7 @@ static bool do_player_trap_garbage(int Ind, int times) {
 	for (k = 0; k < times; k++) {
 		l = rand_int(max_k_idx);
 
-		/* hack -- !ruin, !death cannot be generated */
+		/* hack -- !ruin, !death cannot be generated. (TV_PSEUDO_OBJ are covered by chance == 0.)  */
 		if (!k_info[l].tval || k_info[l].cost || k_info[l].level > lv || k_info[l].level > 30 || !k_info[l].chance[0]) continue;
 
 		o_ptr = &forge;
