@@ -15,6 +15,9 @@
 
 #include "angband.h"
 
+/* Track TV_PSEUDO_OBJ in object_desc() */
+#include <execinfo.h>
+
 /*
  * Name flavors by combination of adj and extra modifier, so that
  * we don't have to devise new flavor every time adding a new item.
@@ -2440,6 +2443,18 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	case TV_CHARGE:
 		break;
 #endif
+
+	case TV_PSEUDO_OBJ: {
+		int size, i;
+		void *buf[1000];
+		char **fnames;
+
+		s_printf("TV_PSEUDO_OBJ in object_desc():\n");
+		size = backtrace(buf, 1000);
+		s_printf(" size = %d\n", size);
+		fnames = backtrace_symbols(buf, size);
+		for (i = 0; i < size; i++) s_printf(" %s\n", fnames[i]);
+		return; }
 
 	/* Used in the "inventory" routine */
 	default:
