@@ -51,6 +51,12 @@
 
 /* Resume wilderness music in subsong's index and position, whenever switching from one wilderness music event to another? */
 #define WILDERNESS_MUSIC_RESUME
+#ifdef WILDERNESS_MUSIC_RESUME
+ /* Also resume wilderness music if previous music was not wilderness music? This is mainly for staircase scumming at 0 ft <-> -50 ft. */
+ #define WILDERNESS_MUSIC_ALWAYS_RESUME
+ /* Also resume town and tavern music the same way wilderness music is resumed */
+ #define TOWN_TAVERN_MUSIC_RESUME_TOO
+#endif
 
 /* Allow user-defined custom volume factor for each sample or song? ([].volume) */
 #define USER_VOLUME_SFX
@@ -2603,13 +2609,23 @@ static bool play_music(int event) {
 	if (Mix_PlayingMusic()) {
 		if (Mix_FadingMusic() != MIX_FADING_OUT) {
 #ifdef WILDERNESS_MUSIC_RESUME
+			cptr mc = string_exec_lua(0, format("return get_music_name(%d)", music_cur));
+
 			/* Special: If current music is in category 'wilderness', remember its position to resume it instead of restarting it, next time it happens to play */
-			if (prefix(string_exec_lua(0, format("return get_music_name(%d)", music_cur)), "wilderness_")) {
+			if (prefix(mc, "wilderness_")
+ #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
+			    || prefix(mc, "town_") || prefix(mc, "tavern_")
+			    || prefix(mc, "Bree_") || prefix(mc, "Gondolin_") || prefix(mc, "MinasAnor_") || prefix(mc, "Lothlorien_") || prefix(mc, "Khazaddum_")
+			    || prefix(mc, "Menegroth_") || prefix(mc, "Nargothrond_")
+ #endif
+			    ) {
 				songs[music_cur].bak_song = music_cur_song;
 				songs[music_cur].bak_pos = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]) * 1000 + 500; /* pre-add the fading-out time span (in ms) */
 			}
+ #if !defined(WILDERNESS_MUSIC_ALWAYS_RESUME) && !defined(TOWN_TAVERN_MUSIC_RESUME_TOO)
 			/* Special special: If we're playing a non-'wilderness' music, forget ALL wilderness-music positions */
 			else for (n = 0; n < MUSIC_MAX; n++) songs[n].bak_pos = 0;
+ #endif
 #endif
 			Mix_FadeOutMusic(500);
 		}
@@ -2907,11 +2923,20 @@ static void fadein_next_music(void) {
 
 #ifdef WILDERNESS_MUSIC_RESUME
 	/* Special: If new music is in category 'wilderness', restore its position to resume it instead of restarting it.
-	   However, only do this if the previous music was actually in 'wilderness' too!
+	   However, only do this if the previous music was actually in 'wilderness' too! (except if WILDERNESS_MUSIC_ALWAYS_RESUME)
 	   Part 1/2: Restore the song subnumber: */
 	if (music_cur != -1) {
 		pmn = string_exec_lua(0, format("return get_music_name(%d)", music_cur));
+ #ifndef WILDERNESS_MUSIC_ALWAYS_RESUME
 		prev_wilderness = prefix(pmn, "wilderness_");
+  #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
+		prev_wilderness |= (prefix(pmn, "town_") || prefix(pmn, "tavern_")
+		    || prefix(pmn, "Bree_") || prefix(pmn, "Gondolin_") || prefix(pmn, "MinasAnor_") || prefix(pmn, "Lothlorien_") || prefix(pmn, "Khazaddum_")
+		    || prefix(pmn, "Menegroth_") || prefix(pmn, "Nargothrond_"));
+  #endif
+ #else /* Always resume (as if previous music was wilderness music ie is eligible for resuming) - except on day/night change still */
+		prev_wilderness = TRUE;
+ #endif
 		pmn_day = suffix(pmn, "_day");
 
 		mn = string_exec_lua(0, format("return get_music_name(%d)", music_next));
@@ -2921,7 +2946,13 @@ static void fadein_next_music(void) {
 
 			for (n = 0; n < MUSIC_MAX; n++) songs[n].bak_pos = 0;
 			prev_wilderness = FALSE; //(efficient discard; not needed as we reset the pos to zero anyway)
-		} else if (prev_wilderness && prefix(mn, "wilderness_"))
+		} else if (prev_wilderness && (prefix(mn, "wilderness_")
+  #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
+		    || prefix(mn, "town_") || prefix(mn, "tavern_")
+		    || prefix(mn, "Bree_") || prefix(mn, "Gondolin_") || prefix(mn, "MinasAnor_") || prefix(mn, "Lothlorien_") || prefix(mn, "Khazaddum_")
+		    || prefix(mn, "Menegroth_") || prefix(mn, "Nargothrond_")
+  #endif
+		    ))
 			music_next_song = songs[music_next].bak_song;
 	} else prev_wilderness = FALSE;
 #endif
@@ -2958,9 +2989,18 @@ static void fadein_next_music(void) {
 	   However, only do this if the previous music was actually in 'wilderness' too!
 	   Part 2/2: Restore the position: */
 	//if (prev_wilderness && prefix(songs[music_cur].paths[music_cur_song], format("%s/wilderness/", ANGBAND_DIR_XTRA_MUSIC))) {
-	if (prev_wilderness && prefix(string_exec_lua(0, format("return get_music_name(%d)", music_cur)), "wilderness_")) {
-		music_cur_song = songs[music_cur].bak_song;
-		Mix_SetMusicPosition(songs[music_cur].bak_pos / 1000);
+	if (prev_wilderness) {
+		mn = string_exec_lua(0, format("return get_music_name(%d)", music_cur));
+		if (prefix(mn, "wilderness_")
+  #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
+		    || prefix(mn, "town_") || prefix(mn, "tavern_")
+		    || prefix(mn, "Bree_") || prefix(mn, "Gondolin_") || prefix(mn, "MinasAnor_") || prefix(mn, "Lothlorien_") || prefix(mn, "Khazaddum_")
+		    || prefix(mn, "Menegroth_") || prefix(mn, "Nargothrond_")
+  #endif
+		    ) {
+			music_cur_song = songs[music_cur].bak_song;
+			Mix_SetMusicPosition(songs[music_cur].bak_pos / 1000);
+		}
 	}
 #endif
 #ifdef ENABLE_JUKEBOX
