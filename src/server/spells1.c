@@ -4899,6 +4899,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Destroy locks and traps */
 	case GF_KILL_TRAP: {
 		struct c_special *cs_ptr;
+		bool note = FALSE;
 
 		/* Destroy invisible traps */
 		//if (c_ptr->feat == FEAT_INVIS)
@@ -4913,17 +4914,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			//c_ptr->feat = FEAT_FLOOR;
 			cs_erase(c_ptr, cs_ptr);
 
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
-
-				/* Redraw */
-				if (c_ptr->o_idx && !c_ptr->m_idx)
-					/* Make sure no traps are displayed on the screen anymore - mikaelh */
-					everyone_clear_ovl_spot(wpos, y, x);
-				else
-					everyone_lite_spot(wpos, y, x);
-			}
+			if (!quiet) note = TRUE;
 		}
 
 		/* Secret / Locked doors are found and unlocked.
@@ -4931,7 +4922,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    - keep all secret doors turning into normal unlocked doors on discovery, in which casewe could remove the FEAT_SECRET check here, as these aren't locked!
 		    - make secret doors on discovery turn into randomly locked doors, in which case this makes kind of sense to check for them here too
 		    - best of course would be to have a 'lockedness' for FEAT_SECRET too, not just for FEAT_DOOR_HEAD. */
-		else if (c_ptr->feat == FEAT_SECRET ||
+		if (c_ptr->feat == FEAT_SECRET ||
 		    (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01 &&
 		    c_ptr->feat <= FEAT_DOOR_HEAD + 0x07)) {
 			/* Notice */
@@ -4944,20 +4935,21 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
 			/* Clear mimic feature */
-			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
-				cs_erase(c_ptr, cs_ptr);
+			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
+			if (!quiet) note = TRUE;
+		}
 
-				/* Redraw */
-				if (c_ptr->o_idx && !c_ptr->m_idx)
-					/* Make sure no traps are displayed on the screen anymore - mikaelh */
-					everyone_clear_ovl_spot(wpos, y, x);
-				else
-					everyone_lite_spot(wpos, y, x);
-			}
+		if (note) {
+			/* Notice */
+			note_spot(Ind, y, x);
+
+			/* Redraw */
+			if (c_ptr->o_idx && !c_ptr->m_idx)
+				/* Make sure no traps are displayed on the screen anymore - mikaelh */
+				everyone_clear_ovl_spot(wpos, y, x);
+			else
+				everyone_lite_spot(wpos, y, x);
 		}
 
 		break; }
@@ -4970,65 +4962,25 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Destroy all visible traps and open doors */
 		if (c_ptr->feat == FEAT_OPEN ||
-		    c_ptr->feat == FEAT_BROKEN) {
+		    c_ptr->feat == FEAT_BROKEN)
 			door = TRUE;
-
-			/* Hack -- special message */
-			if (!quiet && (*w_ptr & CAVE_MARK)) {
-				msg_print(Ind, "There is a bright flash of light!");
-				obvious = TRUE;
-			}
-
-			/* Destroy the feature */
-			cave_set_feat_live(wpos, y, x, feat);
-			/* Forget the wall */
-			everyone_forget_spot(wpos, y, x);
-
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
-
-				/* Redraw */
-				if (c_ptr->o_idx && !c_ptr->m_idx)
-					/* Make sure no traps are displayed on the screen anymore - mikaelh */
-					everyone_clear_ovl_spot(wpos, y, x);
-				else
-					everyone_lite_spot(wpos, y, x);
-			}
-		}
 
 		/* Destroy all closed doors */
-		if ((c_ptr->feat >= FEAT_DOOR_HEAD &&
+		if (c_ptr->feat >= FEAT_DOOR_HEAD &&
 		    c_ptr->feat <= FEAT_DOOR_TAIL)
-		    || c_ptr->feat == FEAT_SECRET) {
 			door = TRUE;
 
-			/* Hack -- special message */
-			if (!quiet && (*w_ptr & CAVE_MARK)) {
-				msg_print(Ind, "There is a bright flash of light!");
-				obvious = TRUE;
-			}
-
-			/* Destroy the feature */
-			cave_set_feat_live(wpos, y, x, feat);
-
-			/* Forget the wall */
-			everyone_forget_spot(wpos, y, x);
-
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
-
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-			}
+		/* Destroy all hidden doors, clear mimic feature */
+		if (c_ptr->feat == FEAT_SECRET
+		    && (cs_ptr = GetCS(c_ptr, CS_MIMIC))) {
+			cs_erase(c_ptr, cs_ptr);
+			door = TRUE;
 		}
 
-		/* Destroy any traps that were on this door */
-		if (door && (cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+		if (door) {
+			/* Destroy any traps that were on this door */
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) cs_erase(c_ptr, cs_ptr);
+
 			/* Hack -- special message */
 			if (!quiet && player_can_see_bold(Ind, y, x)) {
 				msg_print(Ind, "There is a bright flash of light!");
@@ -5036,8 +4988,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Destroy the feature */
-			//c_ptr->feat = FEAT_FLOOR;
-			cs_erase(c_ptr, cs_ptr);
+			cave_set_feat_live(wpos, y, x, feat);
 
 			/* Forget the wall */
 			everyone_forget_spot(wpos, y, x);
@@ -5060,38 +5011,34 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_KILL_TRAP_DOOR: {
 		u16b feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
 		struct c_special *cs_ptr;
+		bool note = FALSE, door = FALSE;
 
 		/* Destroy any traps */
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
-			/* Hack -- special message */
-			if (!quiet && player_can_see_bold(Ind, y, x)) {
-				msg_print(Ind, "There is a bright flash of light!");
-				obvious = TRUE;
-			}
-
-			/* Destroy the feature */
-			//c_ptr->feat = FEAT_FLOOR;
 			cs_erase(c_ptr, cs_ptr);
-
-			/* Forget the wall */
-			everyone_forget_spot(wpos, y, x);
-
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
-
-				/* Redraw */
-				if (c_ptr->o_idx && !c_ptr->m_idx)
-					/* Make sure no traps are displayed on the screen anymore - mikaelh */
-					everyone_clear_ovl_spot(wpos, y, x);
-				else
-					everyone_lite_spot(wpos, y, x);
-			}
+			note = TRUE;
 		}
-
-		/* Destroy all visible traps and open doors */
+		/* Destroy all secret doors */
+		if (c_ptr->feat == FEAT_SECRET
+		    && (cs_ptr = GetCS(c_ptr, CS_MIMIC))) {
+			cs_erase(c_ptr, cs_ptr);
+			note = TRUE;
+			door = TRUE;
+		}
+		/* Destroy all visible open/broken doors */
 		if (c_ptr->feat == FEAT_OPEN ||
 		    c_ptr->feat == FEAT_BROKEN) {
+			note = TRUE;
+			door = TRUE;
+		}
+		/* Destroy all closed doors */
+		if (c_ptr->feat >= FEAT_DOOR_HEAD &&
+		    c_ptr->feat <= FEAT_DOOR_TAIL) {
+			note = TRUE;
+			door = TRUE;
+		}
+
+		if (note) {
 			/* Hack -- special message */
 			if (!quiet && (*w_ptr & CAVE_MARK)) {
 				msg_print(Ind, "There is a bright flash of light!");
@@ -5099,9 +5046,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Destroy the feature */
-			cave_set_feat_live(wpos, y, x, feat);
+			if (door) cave_set_feat_live(wpos, y, x, feat);
+
 			/* Forget the wall */
-			everyone_forget_spot(wpos, y, x);
+			if (door) everyone_forget_spot(wpos, y, x);
 
 			if (!quiet) {
 				/* Notice */
@@ -5116,38 +5064,13 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 		}
 
-		/* Destroy all closed doors */
-		if ((c_ptr->feat >= FEAT_DOOR_HEAD &&
-		    c_ptr->feat <= FEAT_DOOR_TAIL)
-		    || c_ptr->feat == FEAT_SECRET) {
-			/* Hack -- special message */
-			if (!quiet && (*w_ptr & CAVE_MARK)) {
-				msg_print(Ind, "There is a bright flash of light!");
-				obvious = TRUE;
-			}
-
-			/* Destroy the feature */
-			cave_set_feat_live(wpos, y, x, feat);
-
-			/* Forget the wall */
-			everyone_forget_spot(wpos, y, x);
-
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
-
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-			}
-		}
 		break; }
 
-	/* Destroy walls (and doors) */
+	/* Destroy walls (and doors, and traps on the doors) */
 	case GF_KILL_WALL: {
 		u16b feat = twall_erosion(wpos, y, x, FEAT_FLOOR), mult = 10; /* NOTE: For cmd_tunnel() mult is actually at least 30. */
+		bool door = FALSE;
+		struct c_special *cs_ptr;
 
 		if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) break;
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
@@ -5220,7 +5143,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!istown(wpos)) place_gold(Ind, wpos, y, x, mult, 0);
 			object_level = old_object_level;
 		}
-
 		/* Quartz / Magma */
 		else if (c_ptr->feat >= FEAT_MAGMA) {
 			/* Message */
@@ -5232,7 +5154,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Destroy the wall */
 			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 		}
-
 		/* Rubble */
 		else if (c_ptr->feat == FEAT_RUBBLE) {
 			/* Message */
@@ -5259,7 +5180,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 			}
 		}
-
 		/* House doors are immune */
 		else if (c_ptr->feat == FEAT_HOME) {
 			/* Message */
@@ -5271,15 +5191,39 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Destroy doors (and secret doors) */
-		else if (c_ptr->feat >= FEAT_DOOR_HEAD) {
+		else if (c_ptr->feat >= FEAT_DOOR_HEAD &&
+		    c_ptr->feat <= FEAT_DOOR_TAIL) {
 			/* Hack -- special message */
 			if (!quiet && (*w_ptr & CAVE_MARK)) {
 				msg_print(Ind, "The door turns into mud!");
 				obvious = TRUE;
 			}
+			door = TRUE;
 
 			/* Destroy the feature */
 			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
+		}
+
+		else if (c_ptr->feat == FEAT_SECRET) {
+			/* Hack -- special message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The wall turns into mud!"); // "wall" ^^ we might also have been able to notice that it was actually a secret door that just melted
+				obvious = TRUE;
+			}
+			door = TRUE;
+
+			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
+				cs_erase(c_ptr, cs_ptr);
+
+			/* Destroy the feature */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
+		}
+
+		/* Destroy any traps on doors that melted */
+		if (door) {
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
+				cs_erase(c_ptr, cs_ptr);
+
 		}
 
 		/* Non s2m'able features */
