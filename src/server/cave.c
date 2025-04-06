@@ -8571,9 +8571,10 @@ int custom_place_item_module(worldpos *wpos, int y, int x, int tval, int sval,
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
  * (Adapted from PernAngband)
+ * Returns 0 on success.
  */
 bool level_generation_time = FALSE;
-void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
+int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -8583,8 +8584,8 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	dun_level *l_ptr = getfloor(wpos);
 	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
-	if (!(zcave = getcave(wpos))) return;
-	if (!in_bounds_array(y, x)) return;
+	if (!(zcave = getcave(wpos))) return(1);
+	if (!in_bounds_array(y, x)) return(2);
 	c_ptr = &zcave[y][x];
 
 	/* Trees in greater fire become dead trees at once */
@@ -8595,7 +8596,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		feat = FEAT_DEAD_TREE;
 
 	/* Don't mess with inns please! */
-	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return(3);
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
 	if (in_netherrealm(wpos)) switch (feat) {
@@ -8639,7 +8640,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	if (rad) cave_illuminate_rad(wpos, zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
 	aquatic_terrain_hack(zcave, x, y);
 
-	if (level_generation_time) return;
+	if (level_generation_time) return(0); //success
 
 	/* XXX it's not needed when called from generate.c */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -8654,6 +8655,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		/* Redraw */
 		lite_spot(i, y, x);
 	}
+	return(0); //success
 }
 
 /* Helper function - like cave_set_feat_live() but doesn't set anything, just tests.
@@ -8767,6 +8769,7 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
  * by players and monsters. More specific restrictions can be placed here.
  * NOTE: We assume, that allow_terraforming() has already been checked before
  *       cave_set_feat_live() is actually called.
+ * Returns 0 on success.
  */
 bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;
@@ -8976,11 +8979,13 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 void custom_cave_set_feat(worldpos *wpos, int y, int x, int feat,
     s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance, s16b custom_lua_newlivefeat, s16b custom_lua_way) {
 	cave_type **zcave;
+	int res;
 
 	if (!(zcave = getcave(wpos))) return;
 	if (!in_bounds_array(y, x)) return;
 
-	cave_set_feat(wpos, y, x, feat);
+	res = cave_set_feat(wpos, y, x, feat);
+	if (res) s_printf("cave_set_feat() failed (%d) at [y=%d,x=%d] (%d,%d,%d) feat %d!\n", res, y, x, wpos->wx, wpos->wy, wpos->wz, feat);
 
 	zcave[y][x].custom_lua_tunnel_hand = custom_lua_tunnel_hand;
 	zcave[y][x].custom_lua_tunnel = custom_lua_tunnel;
