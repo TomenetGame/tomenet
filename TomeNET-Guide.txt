@@ -12283,6 +12283,7 @@ This means
 - digging effectiveness (if you use the weapon for digging) will be low
 - you cannot use it as effective throwing weapon.
 - you'll be more prone to disarming attacks.
+(For mage staves overweight has no negative effects beyond these listed above.)
 
 Similar is possible for shields. If you try to use a shield which is too heavy
 for you, you'll get another warning message:
