@@ -5957,7 +5957,7 @@
 #define RESF_FORCERANDART	0x00080000U	/* generate a random artifact -- ensure the item is eligible via randart_eligible(tval) */
 
 #define RESF_NO_ENCHANT		0x00100000U	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
-#define RESF_SAURON		0x00200000U	/* don't generate The One Ring, as player has already slain Sauron. -- This flag is abused for no_soloist drops eg from Santa Claus! */
+#define RESF_SAURON		0x00200000U	/* don't generate The One Ring, as player has already slain Sauron or is in Mt Doom. -- This flag is abused for no_soloist drops eg from Santa Claus! */
 
 #define RESF_COND_SWORD		0x00400000U	/* don't allow weapons besides a sword (swordmen, rogues) */
 #define RESF_COND_DARKSWORD	0x00800000U	/* don't allow weapons besides a dark sword (unbelievers) */
