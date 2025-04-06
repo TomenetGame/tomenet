@@ -4926,7 +4926,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 		}
 
-		/* Secret / Locked doors are found and unlocked */
+		/* Secret / Locked doors are found and unlocked.
+		   TODO: Currently there are no secret locked doors. So either...
+		    - keep all secret doors turning into normal unlocked doors on discovery, in which casewe could remove the FEAT_SECRET check here, as these aren't locked!
+		    - make secret doors on discovery turn into randomly locked doors, in which case this makes kind of sense to check for them here too
+		    - best of course would be to have a 'lockedness' for FEAT_SECRET too, not just for FEAT_DOOR_HEAD. */
 		else if (c_ptr->feat == FEAT_SECRET ||
 		    (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01 &&
 		    c_ptr->feat <= FEAT_DOOR_HEAD + 0x07)) {

@@ -1500,7 +1500,7 @@ void search(int Ind) {
 				/* Message */
 				msg_print(Ind, "You have found a secret door.");
 				/* Pick a door XXX XXX XXX */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+				c_ptr->feat = FEAT_DOOR_HEAD + 0x00; // add random 'lockage'? ' + (!rand_int(4) ? rand_int(8) : 0) ' -- not just here but whereever secret doors are un-secreted
 				/* Clear mimic feature */
 				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 				/* Notice */
