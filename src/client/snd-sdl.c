@@ -2510,6 +2510,7 @@ static bool play_music(int event) {
 	/* We previously failed to play both music and alternative music.
 	   Stop currently playing music before returning */
 	if (event == -2) {
+		music_next = -1;
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(500);
 		music_cur = -1;
@@ -2535,6 +2536,7 @@ static bool play_music(int event) {
 	/* New, for title screen -> character screen switch: Halt current music */
 	if (event == -4) {
 		/* Stop currently playing music though, before returning */
+		music_next = -1;
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(2000);
 		music_cur = -1;
@@ -2664,6 +2666,7 @@ static bool play_music_vol(int event, char vol) {
 	/* We previously failed to play both music and alternative music.
 	   Stop currently playing music before returning */
 	if (event == -2) {
+		music_next = -1;
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(500);
 		music_cur = -1;
@@ -2689,6 +2692,7 @@ static bool play_music_vol(int event, char vol) {
 	/* New, for title screen -> character screen switch: Halt current music */
 	if (event == -4) {
 		/* Stop currently playing music though, before returning */
+		music_next = -1;
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(2000);
 		music_cur = -1;
@@ -3445,6 +3449,7 @@ errr re_init_sound_sdl(void) {
 
 /* on game termination */
 void mixer_fadeall(void) {
+	music_next = -1;
 	Mix_FadeOutMusic(1500);
 	Mix_FadeOutChannel(-1, 1500);
 }
@@ -4230,6 +4235,9 @@ void do_cmd_options_mus_sdl(void) {
 	jukebox_org_repeat = music_cur_repeat;
 	jukebox_org_vol = music_vol;
 	jukebox_screen = TRUE;
+	/* Resolve timing glitch: If music is currently in transition of fading out -> new music going to fade in afterwards
+	   (eg town->dungeon character movement), the jukebox will need to update the 'org' stats with the new music. */
+	if (Mix_FadingMusic() == MIX_FADING_OUT) jukebox_org = music_next;
 #endif
 
 	/* Clear screen */
