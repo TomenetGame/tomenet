@@ -309,6 +309,11 @@ extern void house_creation(int Ind, bool floor, bool jail);
 extern bool do_vermin_control(int Ind);
 extern void do_autokinesis_to(int Ind, int dis);
 extern bool do_mstopcharm(int Ind);
+extern bool cast_raindrop(worldpos *wpos, int x);
+extern bool cast_snowflake(worldpos *wpos, int x, int interval);
+extern bool cast_fireworks(worldpos *wpos, int x, int y, int typ);
+extern bool cast_falling_star(worldpos *wpos, int x, int y, int dur);
+extern bool thunderstorm_visual(worldpos *wpos, int x, int y, int dur);
 
 /* traps.c */
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
