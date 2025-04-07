@@ -1332,6 +1332,7 @@ extern int food_warn_once_timer;
 extern int prev_huge_cmp, prev_huge_mmp;
 extern int prev_huge_csn, prev_huge_msn;
 extern int prev_huge_chp, prev_huge_mhp;
+extern int prev_huge_cst, prev_huge_mst;
 
 extern bool fix_custom_font_after_startup;
 extern int flick_global_x, flick_global_y, flick_global_time;

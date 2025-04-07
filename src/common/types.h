@@ -4930,7 +4930,7 @@ struct client_opts {
 	bool colourize_bignum;
 	bool clone_to_stdout;
 	bool clone_to_file;
-	bool mp_huge_bar, sn_huge_bar, hp_huge_bar, stun_huge_bar;
+	bool mp_huge_bar, sn_huge_bar, hp_huge_bar, st_huge_bar, stun_huge_bar;
 	bool load_form_macros;
 	bool auto_inscr_off;
 	bool ascii_feats, ascii_items, ascii_monsters, ascii_uniques;

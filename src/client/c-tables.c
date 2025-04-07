@@ -618,6 +618,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "wild_resume_from_any",	"Resume wilderness music even after non-wild music" },
 	{ &c_cfg.tavern_town_resume,	TRUE,	5,	0, 176, TRUE,
 	    "tavern_town_resume",	"If wild_resume_from_any, also resume tavern/town" },
+	{ &c_cfg.st_huge_bar,		FALSE,	1,	0, 177, TRUE,
+	    "st_huge_bar",		"Also show stamina as huge bar (big_map only)" },
 };
 
 cptr melee_techniques[16] = {

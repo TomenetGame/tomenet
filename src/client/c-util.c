@@ -14792,9 +14792,10 @@ void check_immediate_options(int i, bool yes, bool playing) {
 
 	if ((option_info[i].o_var == &c_cfg.mp_huge_bar ||
 	    option_info[i].o_var == &c_cfg.sn_huge_bar ||
-	    option_info[i].o_var == &c_cfg.hp_huge_bar) ||
+	    option_info[i].o_var == &c_cfg.hp_huge_bar ||
+	    option_info[i].o_var == &c_cfg.st_huge_bar) ||
 	    (option_info[i].o_var == &c_cfg.solid_bars &&
-	    (c_cfg.mp_huge_bar || c_cfg.sn_huge_bar || c_cfg.hp_huge_bar))) {
+	    (c_cfg.mp_huge_bar || c_cfg.sn_huge_bar || c_cfg.hp_huge_bar || c_cfg.st_huge_bar))) {
 		if (screen_icky) Term_switch(0);
 
 		clear_huge_bars();
@@ -14809,6 +14810,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (p_ptr->mmp) draw_huge_bar(0, &prev_huge_cmp, p_ptr->cmp, &prev_huge_mmp, p_ptr->mmp);
 		if (p_ptr->msane) draw_huge_bar(1, &prev_huge_csn, p_ptr->csane, &prev_huge_msn, p_ptr->msane);
 		if (p_ptr->mhp) draw_huge_bar(2, &prev_huge_chp, p_ptr->chp, &prev_huge_mhp, p_ptr->mhp);
+		if (p_ptr->mst) draw_huge_bar(3, &prev_huge_cst, p_ptr->cst, &prev_huge_mst, p_ptr->mst);
 
 		if (screen_icky) Term_switch(0);
 	}

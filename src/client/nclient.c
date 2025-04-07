@@ -83,14 +83,17 @@ static char		cl_initialized = 0;
 char *marker1 = "#######";
 char *marker2 = "####";
 char *marker3 = "###";
+char *marker4 = "##";
 #ifdef WINDOWS
 char smarker1[] = { FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, 0 };
 char smarker2[] = { FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, 0 };
 char smarker3[] = { FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, 0 };
+char smarker4[] = { FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, 0 };
 #elif defined(USE_X11)
 char smarker1[] = { FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, 0 };
 char smarker2[] = { FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, 0 };
 char smarker3[] = { FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, 0 };
+char smarker4[] = { FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, 0 };
 //#else /* command-line client ("-c") doesn't draw either! */
 #endif
 void clear_huge_bars(void) {
@@ -155,17 +158,24 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		af = TERM_L_GREEN;
 		ae = TERM_RED;
 		break;
+	case 3: if (!c_cfg.st_huge_bar) return;
+		af = TERM_L_WHITE;
+		ae = TERM_L_DARK;
+		break;
 	}
 
-	/* Order of unimportance, from left to right: MP / SN / HP */
+	/* Order of unimportance, from left to right: MP / SN / HP -- edit: appended ST to the right, maybe todo: move it to the left instead */
 	pos = -1;
 	if (c_cfg.mp_huge_bar) pos++;
 	if (typ > 0) {
 		if (c_cfg.sn_huge_bar) pos++;
-		if (typ > 1 && c_cfg.hp_huge_bar) pos++;
+		if (typ > 1) {
+			if (c_cfg.hp_huge_bar) pos++;
+			if (typ > 2) if (c_cfg.st_huge_bar) pos++;
+		}
 	}
 	/* Find actual bar width */
-	switch ((c_cfg.mp_huge_bar ? 1 : 0) + (c_cfg.sn_huge_bar ? 1 : 0) + (c_cfg.hp_huge_bar ? 1 : 0)) {
+	switch ((c_cfg.mp_huge_bar ? 1 : 0) + (c_cfg.sn_huge_bar ? 1 : 0) + (c_cfg.hp_huge_bar ? 1 : 0) + (c_cfg.st_huge_bar ? 1 : 0)) {
 	case 1:
 		x = 3;
 #if defined(WINDOWS) || defined(USE_X11)
@@ -189,6 +199,14 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		else
 #endif
 		marker = marker3;
+		break;
+	case 4:
+		x = 1 + (2 + 1) * pos;
+#if defined(WINDOWS) || defined(USE_X11)
+		if (!force_cui && c_cfg.solid_bars) marker = smarker4;
+		else
+#endif
+		marker = marker4;
 		break;
 	}
 	gain = (c > p);
@@ -292,11 +310,11 @@ void draw_huge_stun_bar(byte attr) {
 	}
 
 	/* Restore the other huge bars over the stun "background bar" */
-	prev_huge_cmp = prev_huge_csn = prev_huge_chp = -1; // force redrawing
+	prev_huge_cmp = prev_huge_csn = prev_huge_chp = prev_huge_cst = -1; // force redrawing
 	if (p_ptr->mmp) draw_huge_bar(0, &prev_huge_cmp, p_ptr->cmp, &prev_huge_mmp, p_ptr->mmp);
 	if (p_ptr->msane) draw_huge_bar(1, &prev_huge_csn, p_ptr->csane, &prev_huge_msn, p_ptr->msane);
 	if (p_ptr->mhp) draw_huge_bar(2, &prev_huge_chp, p_ptr->chp, &prev_huge_mhp, p_ptr->mhp);
-
+	if (p_ptr->mst) draw_huge_bar(3, &prev_huge_cst, p_ptr->cst, &prev_huge_mst, p_ptr->mst);
 }
 
 
@@ -2188,6 +2206,7 @@ int Receive_stamina(void) {
 
 	if (screen_icky) Term_switch(0);
 	prt_stamina(max, cur, bar);
+	draw_huge_bar(3, &prev_huge_cst, cur, &prev_huge_mst, max);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
