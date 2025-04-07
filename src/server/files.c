@@ -470,7 +470,7 @@ static void display_player_middle(int Ind) {
 	show_tohit_m += bmh;
 	show_todam_m += bmd;
 
-	/* Dump the bonuses to hit/dam */
+	/* Dump the boni to hit/dam */
 	Send_plusses(Ind, 0, 0, show_tohit_r, show_todam_r, show_tohit_m, show_todam_m);
 
 	/* Dump the armor class bonus */

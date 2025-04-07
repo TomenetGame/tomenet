@@ -121,7 +121,7 @@ function update_p(name)
 	players(name).update = bor(players(name).update, 3145919)
 
 -- 3145919 is a combination of the following:
--- PU_BONUS		0x00000001L	Calculate bonuses
+-- PU_BONUS		0x00000001L	Calculate boni
 -- PU_TORCH		0x00000002L	Calculate torch radius
 -- PU_SKILL_INFO	0x00000004L	Update client skill info
 -- PU_SANITY		0x00000008L	Calculate csane and msane

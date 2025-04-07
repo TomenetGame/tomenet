@@ -3405,7 +3405,7 @@ int equip_damage(int Ind, int typ) {
 		s_printf("warning_repair: %s\n", p_ptr->name);
 	}
 
-	/* Calculate bonuses */
+	/* Calculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Window stuff */
@@ -3476,7 +3476,7 @@ int shield_takes_damage(int Ind, int typ) {
 		s_printf("warning_repair: %s\n", p_ptr->name);
 	}
 
-	/* Calculate bonuses */
+	/* Calculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Window stuff */
@@ -3556,7 +3556,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 		s_printf("warning_repair: %s\n", p_ptr->name);
 	}
 
-	/* Calculate bonuses */
+	/* Calculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Window stuff */
@@ -3857,7 +3857,7 @@ bool inc_stat(int Ind, int stat) {
 		/* Bring up the maximum too */
 		if (value > p_ptr->stat_max[stat]) p_ptr->stat_max[stat] = value;
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 
 		/* Success */
@@ -3991,7 +3991,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 			}
 		}
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 //WIS drain -> Sanity changes;	p_ptr->update |= (PU_BONUS); */
 		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
 	}
@@ -4016,7 +4016,7 @@ bool res_stat(int Ind, int stat) {
 		/* Restore */
 		p_ptr->stat_cur[stat] = p_ptr->stat_max[stat];
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 //		p_ptr->update |= (PU_BONUS);
 		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
 
@@ -4092,7 +4092,7 @@ bool apply_disenchant(int Ind, int mode) {
 		    ((i != 1) ? "fade" : "fades"));
 		inven_item_increase(Ind, t, -i);
 		inven_item_optimize(Ind, t);
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -4149,7 +4149,7 @@ bool apply_disenchant(int Ind, int mode) {
 			   o_name, index_to_label(t),
 			   ((o_ptr->number != 1) ? "were" : "was"));
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Window stuff */
@@ -6291,7 +6291,7 @@ static int percent_damage(int hp, int dam) {
  * We assume "Nether" is an evil, necromantic force, so it doesn't hurt undead,
  * and hurts evil less.  If can breath nether, then it resists it as well.
  *
- * Damage reductions use the following formulas:
+ * Damage reductions use the following formulae:
  *   Note that "dam = dam * 6 / (randint(6) + 6);"
  *	 gives avg damage of .655, ranging from .858 to .500
  *   Note that "dam = dam * 5 / (randint(6) + 6);"

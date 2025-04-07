@@ -3081,7 +3081,7 @@ mlevel, rlevel
             for their melee attacks on each level-up. To find out in what way a
             particular monster has been boosted you can use a rod of probing.
 
-            Some formulas used by the game use mlev, some use rlev.
+            Some formulae used by the game use mlev, some use rlev.
             (Note: This is similar to klevel vs olevel for items.)
 
 Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
@@ -6191,7 +6191,7 @@ CTRL+A to switch to 'normal' mode, CTRL+T to switch to 'party' (team) mode,
 CTRL+G for 'guild' mode and CTRL+F for floor mode (current dungeon level, or
 gets converted to a "/say" action if not in a dungeon).
 
-Also you can use the following prefixes in the beginning of a chat line,
+Also you can use the following prefices in the beginning of a chat line,
 to get similar behaviour as in one of the chat modes just for one line:
 !:      Sends the following text to your current party.
 $:      Sends the following text to your current guild.
@@ -10094,7 +10094,7 @@ other weapon.
 
 Trap kits can have special (ego) powers:
 
-Prefixes:
+Prefices:
 ---------
 Automatic       - Can set off up to 99 times, with a 20% chance each time of
                   ceasing to function. Requires the according amount of ammo
@@ -10112,7 +10112,7 @@ Complicated     - Trap gets an extra AC bonus, making it harder to disarm.
 Obvious         - Curses the trap and makes it practically useless.
                   It has the STEALTH flag but a negative (-pval) malus.
 
-Suffixes:
+Suffices:
 ---------
 of Extra Might  - Fires with +x (bonus shown in round brackets) extra might.
                   ("It fires missiles with extra might.")
@@ -12983,7 +12983,7 @@ Breath damage is capped, the number is given in the corresponding description
 and actual breath damage generally depends on the monster's current hit points.
 
 Bolts and balls depend damage-wise on the level of the casting monster as the
-formulas show and is not as strictly capped as breath damage.
+formulae show and is not as strictly capped as breath damage.
 
 However, all breaths and magical attacks (such as bolts and ball spells) are
 subject to a global magical damage cap of 1600. Even though breaths are not
@@ -13700,7 +13700,7 @@ b) identification via ID (eg by scroll, staff or shop service (see (4.5a)) -
       it has been identified.
    2) It identifies the flavour of an item (if it is a flavoured item) for
       the particular player who identifies it.
-      Flavours are prefixes in the base item name, in particular:
+      Flavours are prefices in the base item name, in particular:
       -potion colours
       -scroll titles
       -ring/amulet materials

@@ -1817,7 +1817,7 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
  * and "brand" and "ignore" variety.
  *
  * Armor with a negative armor bonus is worthless.
- * Weapons with negative hit+damage bonuses are worthless.
+ * Weapons with negative hit+damage boni are worthless.
  *
  * Every wearable item with a "pval" bonus is worth extra (see below).
  */
@@ -2141,7 +2141,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 					kpval = 0;
 				}
 
-				/* Give credit for stat bonuses */
+				/* Give credit for stat boni */
 				//if (f1 & TR1_STR) value += (pval * 200L);
 				//if (f1 & TR1_STR) value += (boost * 200L);
 				if (f1 & TR1_STR) count++;
@@ -2333,7 +2333,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_RING:
 	case TV_AMULET:
 #if 0
-		/* Hack -- negative bonuses are bad */
+		/* Hack -- negative boni are bad */
 		if (o_ptr->to_a < 0) return(0L);
 		if (o_ptr->to_h < 0) return(0L);
 		if (o_ptr->to_d < 0) return(0L);
@@ -2343,7 +2343,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		   This price will be the store-sells price so it must be higher than the store-buys price there. */
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return(price_poly_ring(0, o_ptr, 1));
 
-		/* Give credit for bonuses */
+		/* Give credit for boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) +
@@ -2367,7 +2367,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Hack -- negative armor bonus */
 		if (o_ptr->to_a < 0) return(0L);
 #endif
-		/* Give credit for bonuses */
+		/* Give credit for boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
@@ -2398,7 +2398,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_MSTAFF:
 	case TV_TRAPKIT:
 #if 0
-		/* Hack -- negative hit/damage bonuses */
+		/* Hack -- negative hit/damage boni */
 		if (o_ptr->to_h + o_ptr->to_d < 0) {
 			/* Hack -- negative hit/damage are of no importance */
 			if (o_ptr->tval == TV_MSTAFF) break;
@@ -2406,7 +2406,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			else return(0L);
 		}
 #endif
-		/* Factor in the bonuses */
+		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
@@ -2430,10 +2430,10 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_SHOT:
 	case TV_ARROW:
 	case TV_BOLT:
-		/* Hack -- negative hit/damage bonuses */
+		/* Hack -- negative hit/damage boni */
 		//if (o_ptr->to_h + o_ptr->to_d < 0) return(0L);
 
-		/* Factor in the bonuses */
+		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
@@ -3077,7 +3077,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				kpval = 0;
 			}
 
-			/* Give credit for stat bonuses */
+			/* Give credit for stat boni */
 			//if (f1 & TR1_STR) value += (pval * 200L);
 			//if (f1 & TR1_STR) value += (boost * 200L);
 			if (f1 & TR1_STR) count++;
@@ -3252,14 +3252,14 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_RING:
 	case TV_AMULET:
 #if 0
-		/* Hack -- negative bonuses are bad */
+		/* Hack -- negative boni are bad */
 		if (o_ptr->to_a < 0) return(0L);
 		if (o_ptr->to_h < 0) return(0L);
 		if (o_ptr->to_d < 0) return(0L);
 #endif
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) value += price_poly_ring(0, o_ptr, 1); //impossible, poly rings cannot be artifacts
 
-		/* Give credit for bonuses */
+		/* Give credit for boni */
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) +
@@ -3283,7 +3283,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		/* Hack -- negative armor bonus */
 		if (o_ptr->to_a < 0) return(0L);
 #endif
-		/* Give credit for bonuses */
+		/* Give credit for boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
@@ -3314,7 +3314,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_MSTAFF:
 	case TV_TRAPKIT:
 #if 0
-		/* Hack -- negative hit/damage bonuses */
+		/* Hack -- negative hit/damage boni */
 		if (o_ptr->to_h + o_ptr->to_d < 0) {
 			/* Hack -- negative hit/damage are of no importance */
 			if (o_ptr->tval == TV_MSTAFF) break;
@@ -3322,7 +3322,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 			else return(0L);
 		}
 #endif
-		/* Factor in the bonuses */
+		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
@@ -3346,10 +3346,10 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_SHOT:
 	case TV_ARROW:
 	case TV_BOLT:
-		/* Hack -- negative hit/damage bonuses */
+		/* Hack -- negative hit/damage boni */
 		//if (o_ptr->to_h + o_ptr->to_d < 0) return(0L);
 
-		/* Factor in the bonuses */
+		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
@@ -3466,7 +3466,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
  *
  * This function returns the "value" of the given item (qty one)
  *
- * Never notice "unknown" bonuses or properties, including "curses",
+ * Never notice "unknown" boni or properties, including "curses",
  * since that would give the player information he did not have.
  *
  * Note that discounted items stay discounted forever, even if
@@ -4324,7 +4324,7 @@ void invcopy(object_type *o_ptr, int k_idx) {
  * Help determine an "enchantment bonus" for an object.
  * Returns: 0..'max' (where 'level' scales from 0..MAX_DEPTH_OBJ (128)).
  *
- * To avoid floating point but still provide a smooth distribution of bonuses,
+ * To avoid floating point but still provide a smooth distribution of boni,
  * we simply round the results of division in such a way as to "average" the
  * correct floating point value.
  *
@@ -4912,7 +4912,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 			/* Cannot be a double ego of the same ego type */
 			if (i == o_ptr->name2) continue;
 
-			/* Cannot have 2 suffixes or 2 prefixes */
+			/* Cannot have 2 suffices or 2 prefices */
 			if (e_info[o_ptr->name2].before && e_ptr->before) continue;
 			if ((!e_info[o_ptr->name2].before) && (!e_ptr->before)) continue;
 
@@ -5420,7 +5420,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 			o_ptr->bpval = randint(3);       /* No cursed elven cloaks...? */
 		}
  #if 1
-		/* Set the Kolla cloak's base bonuses*/
+		/* Set the Kolla cloak's base boni*/
 		if (o_ptr->sval == SV_KOLLA) {
 			o_ptr->bpval = randint(2);
 		}
@@ -5802,7 +5802,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				/* Cursed */
 				o_ptr->ident |= (ID_CURSED);
 
-				/* Reverse bonuses */
+				/* Reverse boni */
 				o_ptr->to_h = 0 - (o_ptr->to_h);
 				o_ptr->to_d = 0 - (o_ptr->to_d);
 			}
@@ -5862,7 +5862,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				/* Cursed */
 				o_ptr->ident |= (ID_CURSED);
 
-				/* Reverse bonuses */
+				/* Reverse boni */
 				o_ptr->bpval = 0 - (o_ptr->bpval);
 			}
 
@@ -5878,7 +5878,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				/* Cursed */
 				o_ptr->ident |= (ID_CURSED);
 
-				/* Reverse bonuses */
+				/* Reverse boni */
 				o_ptr->bpval = 0 - (o_ptr->bpval);
 			}
 
@@ -5907,7 +5907,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				/* Cursed */
 				o_ptr->ident |= (ID_CURSED);
 
-				/* Reverse bonuses */
+				/* Reverse boni */
 				o_ptr->bpval = 0 - (o_ptr->bpval);
 			}
 
@@ -5976,7 +5976,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				/* Cursed */
 				o_ptr->ident |= ID_CURSED;
 
-				/* Reverse bonuses */
+				/* Reverse boni */
 				o_ptr->bpval = 0 - (o_ptr->bpval);
 			}
 
@@ -5994,7 +5994,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				/* Cursed */
 				o_ptr->ident |= ID_CURSED;
 
-				/* Reverse bonuses */
+				/* Reverse boni */
 				o_ptr->bpval = 0 - (o_ptr->bpval);
 			}
 
@@ -6009,7 +6009,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				o_ptr->ident |= ID_BROKEN;
 				/* Cursed */
 				o_ptr->ident |= ID_CURSED;
-				/* Reverse bonuses */
+				/* Reverse boni */
 				o_ptr->to_a = -o_ptr->to_a;
 			}
 			break;
@@ -6144,7 +6144,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 /*
  * Complete the "creation" of an object by applying "magic" to the item
  *
- * This includes not only rolling for random bonuses, but also putting the
+ * This includes not only rolling for random boni, but also putting the
  * finishing touches on ego-items and artifacts, giving charges to wands and
  * staffs, giving fuel to lites, and placing traps on chests.
  *
@@ -11229,7 +11229,7 @@ void inven_item_increase(int Ind, int item, int num) {
 		/* Add the weight */
 		p_ptr->total_weight += (num * o_ptr->weight);
 
-		/* Recalculate bonuses - especially total weight now that we gained/lost something */
+		/* Recalculate boni - especially total weight now that we gained/lost something */
 		p_ptr->update |= (PU_BONUS);
 
 #ifdef ENABLE_SUBINVEN
@@ -11381,7 +11381,7 @@ bool inven_item_optimize(int Ind, int item) {
 		/* Erase the empty slot */
 		invwipe(&p_ptr->inventory[item]);
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 
 		/* Recalculate torch */
@@ -11822,7 +11822,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			/* Increase the weight */
 			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
 
-			/* Recalculate bonuses */
+			/* Recalculate boni */
 			p_ptr->update |= (PU_BONUS);
 
 			/* Window stuff */
@@ -12042,7 +12042,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	/* Count the items */
 	p_ptr->inven_cnt++;
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Reorder pack */

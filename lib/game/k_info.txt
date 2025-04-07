@@ -7163,7 +7163,7 @@ D:Multiple of these can be read at once for creating an even bigger house.
 ####
 # (Pern)Mangband native items
 # Scheduled to be ego items.
-# Currently, those items will be generated w/o random bonuses.
+# Currently, those items will be generated w/o random boni.
 
 N:882:& Orcish Shield~
 G:):D

@@ -125,13 +125,13 @@ static void do_curse(artifact_type *a_ptr) {
 		if (rand_int(7) == 0) a_ptr->flags3 |= TR3_TELEPORT;
 	}
 
-	/* Some chance or reversing good bonuses */
+	/* Some chance or reversing good boni */
 	if (!is_ammo(a_ptr->tval) && (a_ptr->pval > 0) && (rand_int(2) == 0)) a_ptr->pval = -a_ptr->pval;
 	if ((a_ptr->to_a > 0) && (rand_int(2) == 0)) a_ptr->to_a = -a_ptr->to_a;
 	if ((a_ptr->to_h > 0) && (rand_int(2) == 0)) a_ptr->to_h = -a_ptr->to_h;
 	if ((a_ptr->to_d > 0) && (rand_int(4) == 0)) a_ptr->to_d = -a_ptr->to_d;
 
-	/* Some chance of making bad bonuses worse */
+	/* Some chance of making bad boni worse */
 	if (!is_ammo(a_ptr->tval) && (a_ptr->pval < 0) && (rand_int(2) == 0)) a_ptr->pval -= rand_int(2);
 	if ((a_ptr->to_a < 0) && (rand_int(2) == 0)) a_ptr->to_a -= 3 + rand_int(10);
 	if ((a_ptr->to_h < 0) && (rand_int(2) == 0)) a_ptr->to_h -= 3 + rand_int(6);
@@ -2586,7 +2586,7 @@ try_an_other_ego:
 	}
 #endif
 
-	/* Hack -- obtain bonuses */
+	/* Hack -- obtain boni */
 	if (e_ptr->max_to_h > 0) a_ptr->to_h += randint(e_ptr->max_to_h);
 	if (e_ptr->max_to_h < 0) a_ptr->to_h -= randint(-e_ptr->max_to_h);
 	if (e_ptr->max_to_d > 0) a_ptr->to_d += randint(e_ptr->max_to_d);

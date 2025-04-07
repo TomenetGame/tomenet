@@ -9621,7 +9621,7 @@ void disturb(int Ind, int stop_search, int keep_resting) {
 		/* Cancel */
 		p_ptr->searching = FALSE;
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 
 		/* Redraw stuff */

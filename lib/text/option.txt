@@ -405,7 +405,7 @@ by wandering monsters and found again at a later time.  This only works for
 non-identified artifacts.
 
 The "maximize" flag, if set when the character was created, causes the "race"
-and "class" stat bonuses to be applied as "equipment" bonuses.  This usually
+and "class" stat bonuses to be applied as "equipment" boni.  This usually
 makes the character harder at the beginning of the game, but easier later on,
 since the stats are no longer limited to a "natural" value of "18/100".
 

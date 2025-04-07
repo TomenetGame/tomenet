@@ -43,7 +43,7 @@
 /* Boomerangs cannot be destroyed by using them (they just fall to the floor). */
 #define INDESTRUCTIBLE_BOOMERANGS
 
-/* 4.7.3a: Boomerangs may get VORPAL flag, need all the melee formulas here too now
+/* 4.7.3a: Boomerangs may get VORPAL flag, need all the melee formulae here too now
    ---- TODO: Maybe implement some of this stuff, but maybe we just don't need it! ... */
 
 /* Inverse chance to get a vorpal cut (1 in n) [4] */
@@ -1797,7 +1797,7 @@ void do_cmd_toggle_search(int Ind) {
 		/* Clear the searching flag */
 		p_ptr->searching = FALSE;
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 
 		/* Redraw stuff */
@@ -6589,7 +6589,7 @@ bool retaliating_cmd = FALSE;
  * required to make each shot, spreading the shots out over time.
  *
  * Note that when firing missiles, the launcher multiplier is applied
- * after all the bonuses are added in, making multipliers very useful.
+ * after all the boni are added in, making multipliers very useful.
  *
  * Note that Bows of "Extra Might" get extra range and an extra bonus
  * for the damage multiplier.
@@ -8040,7 +8040,7 @@ void do_cmd_fire(int Ind, int dir) {
 					inven_item_optimize(Ind, item);
 				}
 
-				/* Recalculate bonuses */
+				/* Recalculate boni */
 				p_ptr->update |= (PU_BONUS);
 				/* Recalculate torch */
 				p_ptr->update |= (PU_TORCH);

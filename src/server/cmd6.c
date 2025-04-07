@@ -2183,7 +2183,7 @@ bool curse_armor(int Ind) {
 		/* Break it */
 		o_ptr->ident |= ID_BROKEN;
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 
 		/* Recalculate mana */
@@ -2268,7 +2268,7 @@ bool curse_weapon(int Ind) {
 		/* Break it */
 		o_ptr->ident |= ID_BROKEN;
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 
 		/* Recalculate mana */
@@ -2356,7 +2356,7 @@ bool curse_an_item(int Ind, int slot) {
 		/* Break it */
 		o_ptr->ident |= ID_BROKEN;
 
-		/* Recalculate bonuses */
+		/* Recalculate boni */
 		p_ptr->update |= (PU_BONUS);
 
 		/* Recalculate mana */

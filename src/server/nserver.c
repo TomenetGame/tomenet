@@ -13973,7 +13973,7 @@ static int Receive_redraw(int ind) {
 			p_ptr->redraw |= PR_PLUSSES;
 			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
 
-			/* Update his view, light, bonuses, and torch radius */
+			/* Update his view, light, boni, and torch radius */
 #ifdef ORIG_SKILL_EVIL	/* not to be defined */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
 					| PU_SKILL_INFO | PU_SKILL_MOD);

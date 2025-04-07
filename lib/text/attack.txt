@@ -63,10 +63,10 @@ it in the backpack, and switching it with the primary weapon when needed.
 
 Weapons have two main magical characteristics, their enchanted ability to hit
 and their enchanted ability to do damage, expressed as `(+#,+#)'.  A normal
-weapon would be `(+0,+0)'.  Many weapons in Angband have bonuses to hit
+weapon would be `(+0,+0)'.  Many weapons in Angband have boni to hit
 and/or do damage.  Some weapons are cursed, and have penalties that hurt the
 player.  Cursed weapons cannot be unwielded until the curse is lifted.
-Identifying a weapon will inform you of the magical bonuses and penalties
+Identifying a weapon will inform you of the magical boni and penalties
 and whether or not it is cursed.
 
 Angband assumes that your youth in the rough environment near the dungeons
@@ -86,8 +86,8 @@ and the the launcher multiplier is applied to the total damage, making
 missile weapons very powerful given the proper missiles, especially if they
 are enchanted.
 
-Although you receive any magical bonuses an unidentified weapon may possess
-when you wield it, those bonuses will not be added in to the displayed
+Although you receive any magical boni an unidentified weapon may possess
+when you wield it, those boni will not be added in to the displayed
 values of to-hit and to-dam on your character sheet.  You must identify the
 weapon before the displayed values reflect the real values used.
 

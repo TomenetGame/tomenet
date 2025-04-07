@@ -76,7 +76,7 @@
 #define DEFENSIVE_STANCE_TOTAL_MELEE_REDUCTION		/* Globally just cut _TOTAL_ melee damage by nn% in defensive stance, depending on stance level */
 
 #define ENABLE_CLOAKING		/* cloaking mode for rogues */
-#define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
+#define NEW_DODGING		/* reworked dodging formulae to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
 #define ENABLE_TECHNIQUES
 #define NEW_HISCORE		/* extended high score options for tomenet.cfg */
 

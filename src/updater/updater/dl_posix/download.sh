@@ -37,7 +37,7 @@ NOOVERWRITE,x,no-overwrite,,Do not overwrite existing files
 OUTPUT_DIR,o,output-directory,D=DIR,Directory where files will be saved
 TEMP_DIR,,temp-directory,D=DIR,Directory for temporary files (final link download, cookies, images)
 TEMP_RENAME,,temp-rename,,Append .part suffix to filename while file is being downloaded
-MAX_LIMIT_RATE,,max-rate,r=SPEED,Limit maximum speed to bytes/sec (accept usual suffixes)
+MAX_LIMIT_RATE,,max-rate,r=SPEED,Limit maximum speed to bytes/sec (accept usual suffices)
 MIN_LIMIT_RATE,,min-rate,r=SPEED,Limit minimum speed to bytes/sec (during 30 seconds)
 MIN_LIMIT_SPACE,,min-space,R=LIMIT,Set the minimum amount of disk space to exit.
 INTERFACE,i,interface,s=IFACE,Force IFACE network interface

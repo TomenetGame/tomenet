@@ -3411,10 +3411,10 @@ check_argument_type() {
     # t: Non empty string (multiple command-line switch allowed)
     elif [[ $TYPE = [st] && $VAL = '' ]]; then
         log_error "$NAME ($OPT): empty string not expected"
-    # r: Speed rate (positive value, in bytes). Known suffixes: Ki/K/k/Mi/M/m
+    # r: Speed rate (positive value, in bytes). Known suffices: Ki/K/k/Mi/M/m
     elif [ "$TYPE" = 'r' ] && ! check_transfer_speed "$VAL"; then
         log_error "$NAME ($OPT): positive transfer rate expected"
-    # R: Disk size (positive value, suffix is mandatory). Known suffixes: Mi/m/M/MB/Gi/G/GB
+    # R: Disk size (positive value, suffix is mandatory). Known suffices: Mi/m/M/MB/Gi/G/GB
     elif [ "$TYPE" = 'R' ] && ! check_disk_size "$VAL"; then
         log_error "$NAME ($OPT): wrong value, megabyte or gigabyte suffix is mandatory"
     # e: E-mail string

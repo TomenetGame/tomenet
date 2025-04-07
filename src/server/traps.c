@@ -436,7 +436,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 	/* Batch of Morgul daggers might also be over the top */
 	if (o_ptr->name2 == EGO_MORGUL || o_ptr->name2b == EGO_MORGUL)
 		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
-	/* Reverse good bonuses */
+	/* Reverse good boni */
 	if (o_ptr->bpval > 0) o_ptr->bpval = 0;
 	if (o_ptr->pval > 0) o_ptr->pval = 0;
 	if (o_ptr->to_a > 0) o_ptr->to_a = 0;
@@ -547,7 +547,7 @@ static bool generic_handle_missile_trap(struct worldpos *wpos, int x, int y, s16
 	/* Batch of Morgul daggers might also be over the top */
 	if (o_ptr->name2 == EGO_MORGUL || o_ptr->name2b == EGO_MORGUL)
 		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
-	/* Reverse good bonuses */
+	/* Reverse good boni */
 	if (o_ptr->bpval > 0) o_ptr->bpval = 0;
 	if (o_ptr->pval > 0) o_ptr->pval = 0;
 	if (o_ptr->to_a > 0) o_ptr->to_a = 0;
@@ -1552,7 +1552,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				combine_pack(Ind);
 				reorder_pack(Ind);
 				msg_print(Ind, "You suddenly feel you have time for self-reflection.");
-				/* Recalculate bonuses */
+				/* Recalculate boni */
 				p_ptr->update |= (PU_BONUS);
 
 				/* Recalculate mana */

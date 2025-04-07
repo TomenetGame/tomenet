@@ -4664,7 +4664,7 @@
    ^ vitriol (works as acid replacement - when creating perchlorate too? as metal is not a liquid? ah w/e just allow..): mining (volcanic)/dragons.
    ..rust: metal powder + (salt) water. Or use some kind of 'grinding tool' on rusty armour or on normal metal items to obtain (not 'reactive' though) metal powder first.
     */
-/* Optionally enable simplifications of ingredients and formulas: */
+/* Optionally enable simplifications of ingredients and formulae: */
  #define NO_RUST_NO_HYDROXIDE		/* Note: Rusty items can still be ground and will just turn into normal metal powder instead, assuming the item was only partially rusted ^^. */
  #ifdef NO_RUST_NO_HYDROXIDE
   #define CHEMICALS_NUM 9

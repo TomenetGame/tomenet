@@ -637,7 +637,7 @@ static s16b get_stats(int Ind, int stat_order[6]) {
 				/* Start fully healed */
 				p_ptr->stat_cur[i] = p_ptr->stat_max[i];
 
-				/* Efficiency -- Apply the racial/class bonuses */
+				/* Efficiency -- Apply the racial/class boni */
 				stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
 			}
 
@@ -2847,7 +2847,7 @@ static void player_setup(int Ind, bool new) {
 	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
 	p_ptr->redraw |= PR_PLUSSES | PR_STATE;
 
-	/* Update his view, light, bonuses, and torch radius */
+	/* Update his view, light, boni, and torch radius */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SKILL_INFO | PU_SKILL_MOD | PU_LUA);
 	p_ptr->temp_misc_3 |= 0x02; /* Don't display art_combo message this time from calc_boni(), ie on initial login-setup. */
 

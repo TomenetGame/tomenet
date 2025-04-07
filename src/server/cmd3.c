@@ -189,7 +189,7 @@ s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	}
 #endif
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
@@ -244,7 +244,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 	/* What are we "doing" with the object */
 	if (original_number > o_ptr->number) {
 		//we still have some of these objects left in our equipment slot! So no need for a 'loss' message.
-		/* Recalculate bonuses cause of weight change */
+		/* Recalculate boni cause of weight change */
 		p_ptr->update |= (PU_BONUS);
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -332,7 +332,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 	}
 #endif
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
@@ -1511,7 +1511,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	if (hobbit_warning) msg_print(Ind, "\377yYou feel somewhat less dextrous than when barefeet.");
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Recalculate torch */
@@ -3107,7 +3107,7 @@ void do_cmd_steal_from_monster(int Ind, int m_idx) {
 
 	//notice -= q_ptr->skill_fos; /* perception */
 
-	/* Hack -- Rogues get bonuses to chances */
+	/* Hack -- Rogues get boni to chances */
 	if (!p_ptr->rogue_heavyarmor && get_skill(p_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);
@@ -3589,7 +3589,7 @@ void do_cmd_steal(int Ind, int dir) {
 		s_printf("warning_stealing_rha: %s\n", p_ptr->name);
 	}
 
-	/* Hack -- Rogues get bonuses to chances */
+	/* Hack -- Rogues get boni to chances */
 	if (!p_ptr->rogue_heavyarmor && get_skill(p_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);

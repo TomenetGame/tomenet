@@ -103,7 +103,7 @@ static int arctan[12][34] = {	/* [y, x] -> arctan(y/x) in degrees, with y=0..11,
  * about the underlying platform.
  *
  * The game "Angband" uses a set of files called "main-xxx.c", for
- * various "xxx" suffixes.  Most of these contain a function called
+ * various "xxx" suffices.  Most of these contain a function called
  * "init_xxx()", that will prepare the underlying visual system for
  * use with Angband, and then create one or more "term" structures,
  * using flags and hooks appropriate to the given platform, so that

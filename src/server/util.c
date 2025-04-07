@@ -5253,7 +5253,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 
 	/* hack: preparse for private chat target, and if found
-	   then strip chat mode prefixes to switch to private chat mode - C. Blue */
+	   then strip chat mode prefices to switch to private chat mode - C. Blue */
 	/* Form a search string if we found a colon */
 	if (strlen(message) > 4 && message[1] == ':' && message[2] != ':' &&
 	    (message[0] == '!' || message[0] == '#' || message[0] == '$')

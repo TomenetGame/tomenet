@@ -3743,7 +3743,7 @@ void display_player(int hist) {
 			    format("%d feet", p_ptr->see_infra * 10), y_row3 + 3, 69);
 		}
 
-		/* Dump the bonuses to hit/dam */
+		/* Dump the boni to hit/dam */
 		tmp = (p_ptr->to_h_melee > 5000 ? p_ptr->to_h_melee - 10000 : p_ptr->to_h_melee); tmpc = (p_ptr->to_h_melee > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
 		put_str("+To Melee Hit    ", y_row2, 1);
 		c_put_str(tmpc, format("%3d", p_ptr->dis_to_h + tmp), y_row2, 19);

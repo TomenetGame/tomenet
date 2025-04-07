@@ -2221,7 +2221,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		/* let speed bonus not be that high that players won't try any slower form */
 		//p_ptr->pspeed = (((r_ptr->speed - 110) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 		//Pfft, include the -speed into the calculation, too. Seems lame how -speed is counted for 100% but not + bonus.
-		//But really, if physical-race-intrinsic bonuses/maluses are counted in mimicry, then dwarves
+		//But really, if physical-race-intrinsic boni/mali are counted in mimicry, then dwarves
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
 		p_ptr->pspeed = (((r_ptr->speed + MIMIC_LOWSPEED_BONUS - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
@@ -3065,7 +3065,7 @@ int calc_crit_obj(object_type *o_ptr) {
  * because in the old days a player could just avoid 300 pounds,
  * and helps because now carrying 300 pounds is not very painful.
  *
- * The "weapon" and "bow" do *not* add to the bonuses to hit or to
+ * The "weapon" and "bow" do *not* add to the boni to hit or to
  * damage, since that would affect non-combat things.  These values
  * are actually added in later, at the appropriate place.
  *
@@ -3208,7 +3208,7 @@ void calc_boni(int Ind) {
 	old_dis_ac = p_ptr->dis_ac;
 	old_dis_to_a = p_ptr->dis_to_a;
 
-	/* Save the old hit/damage bonuses */
+	/* Save the old hit/damage boni */
 	old_dis_to_h = p_ptr->dis_to_h;
 	old_dis_to_d = p_ptr->dis_to_d;
 
@@ -3243,7 +3243,7 @@ void calc_boni(int Ind) {
 		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
 	}
 #endif
-	/* Originally Druidism bonuses */
+	/* Originally Druidism boni */
 	else if (p_ptr->xtrastat_tim) {
 		/* Extra Growth / Demonic Strength now imply Regeneration */
 		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
@@ -3278,7 +3278,7 @@ void calc_boni(int Ind) {
 
 	/* Clear the Displayed/Real armor class */
 	p_ptr->dis_ac = p_ptr->ac = 0;
-	/* Clear the Displayed/Real Bonuses */
+	/* Clear the Displayed/Real boni */
 	p_ptr->dis_to_h = p_ptr->to_h = p_ptr->to_h_melee = p_ptr->to_h_ranged = p_ptr->to_h_tmp = p_ptr->to_h_melee_tmp = p_ptr->to_h_ranged_tmp = 0;
 	p_ptr->dis_to_d = p_ptr->to_d = p_ptr->to_d_melee = p_ptr->to_d_ranged = p_ptr->to_d_tmp = p_ptr->to_d_melee_tmp = p_ptr->to_d_ranged_tmp = 0;
 	p_ptr->dis_to_a = p_ptr->to_a = p_ptr->to_a_tmp = 0;
@@ -4159,20 +4159,20 @@ void calc_boni(int Ind) {
 			p_ptr->see_infra = MAX_SIGHT;
 #endif
 
-		/* Hack -- first add any "base bonuses" of the item.  A new
+		/* Hack -- first add any "base boni" of the item.  A new
 		 * feature in MAngband 0.7.0 is that the magnitude of the
-		 * base bonuses is stored in bpval instead of pval, making the
-		 * magnitude of "base bonuses" and "ego bonuses" independent
+		 * base boni is stored in bpval instead of pval, making the
+		 * magnitude of "base boni" and "ego boni" independent
 		 * from each other.
 		 * An example of an item that uses this independency is an
 		 * Orcish Shield of the Avari that gives +1 to STR and +3 to
 		 * CON. (base bonus from the shield +1 STR,CON, ego bonus from
 		 * the Avari +2 CON).
 		 * Of course, the proper fix would be to redesign the object
-		 * type so that each of the ego bonuses has its own independent
+		 * type so that each of the ego boni has its own independent
 		 * parameter.
 		 */
-		/* If we have any base bonuses to add, add them */
+		/* If we have any base boni to add, add them */
 		if (k_ptr->flags1 & TR1_PVAL_MASK) {
 			/* Affect stats */
 			if (k_ptr->flags1 & TR1_STR) { p_ptr->stat_add[A_STR] += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].pstr += o_ptr->bpval; }
@@ -4237,8 +4237,8 @@ void calc_boni(int Ind) {
 			}
 		}
 
-		/* Next, add our ego bonuses */
-		/* Hack -- clear out any pval bonuses that are in the base item
+		/* Next, add our ego boni */
+		/* Hack -- clear out any pval boni that are in the base item
 		 * bonus but not the ego bonus so we don't add them twice.
 		 */
 		if (o_ptr->name2) {
@@ -4585,7 +4585,7 @@ void calc_boni(int Ind) {
 #endif
 
 #ifndef NEW_SHIELDS_NO_AC
-		/* Apply the bonuses to armor class */
+		/* Apply the boni to armor class */
 		if (o_ptr->tval == TV_SHIELD) may_to_a += o_ptr->to_a;
  #ifndef WEAPONS_NO_AC
 		else p_ptr->to_a += o_ptr->to_a;
@@ -4605,7 +4605,7 @@ void calc_boni(int Ind) {
  #endif
 #endif
 
-		/* Apply the mental bonuses to armor class, if known */
+		/* Apply the mental boni to armor class, if known */
 		if (object_known_p(Ind, o_ptr)) {
 #ifndef NEW_SHIELDS_NO_AC
 			if (o_ptr->tval == TV_SHIELD) may_dis_to_a += o_ptr->to_a;
@@ -4716,11 +4716,11 @@ void calc_boni(int Ind) {
 			if (o_ptr->xtra2 & 0x10) { p_ptr->immune_poison = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IPOIS; }
 		}
 
-		/* Apply the bonuses to hit/damage */
+		/* Apply the boni to hit/damage */
 		p_ptr->to_h += o_ptr->to_h;
 		p_ptr->to_d += o_ptr->to_d;
 
-		/* Apply the mental bonuses tp hit/damage, if known */
+		/* Apply the mental boni tp hit/damage, if known */
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
 	}
@@ -5363,7 +5363,7 @@ void calc_boni(int Ind) {
 		}
 	}
 
-	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
+	/* Actual Modifier boni (Un-inflate stat boni) */
 	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
 	p_ptr->to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 #if 1 /* addition */
@@ -5375,7 +5375,7 @@ void calc_boni(int Ind) {
 	//p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 	//p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
-	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
+	/* Displayed Modifier boni (Un-inflate stat boni) */
 	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
 	//p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 	//p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
@@ -6135,15 +6135,15 @@ void calc_boni(int Ind) {
 		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if (f4 & TR4_SHOULD2H) {
-			/* Reduce the real bonuses */
+			/* Reduce the real boni */
 			if (p_ptr->to_h > 0) p_ptr->to_h = (2 * p_ptr->to_h) / 3;
 			if (p_ptr->to_d > 0) p_ptr->to_d = (2 * p_ptr->to_d) / 3;
 
-			/* Reduce the mental bonuses */
+			/* Reduce the mental boni */
 			if (p_ptr->dis_to_h > 0) p_ptr->dis_to_h = (2 * p_ptr->dis_to_h) / 3;
 			if (p_ptr->dis_to_d > 0) p_ptr->dis_to_d = (2 * p_ptr->dis_to_d) / 3;
 
-			/* Reduce the weaponmastery bonuses */
+			/* Reduce the weaponmastery boni */
 			if (p_ptr->to_h_melee > 0) p_ptr->to_h_melee = (2 * p_ptr->to_h_melee) / 3;
 			if (p_ptr->to_d_melee > 0) p_ptr->to_d_melee = (2 * p_ptr->to_d_melee) / 3;
 
@@ -6208,7 +6208,7 @@ void calc_boni(int Ind) {
 	    || (p_ptr->pclass == CLASS_HELLKNIGHT && p_ptr->blessed_weapon)
 #endif
 	    )) {
-		/* Reduce the real bonuses */
+		/* Reduce the real boni */
 		/*p_ptr->to_h -= 2;
 		p_ptr->to_d -= 2;*/
 		p_ptr->to_h = p_ptr->to_h * 3 / 5;
@@ -6216,7 +6216,7 @@ void calc_boni(int Ind) {
 		p_ptr->to_h_melee = p_ptr->to_h_melee * 3 / 5;
 		p_ptr->to_d_melee = p_ptr->to_d_melee * 3 / 5;
 
-		/* Reduce the mental bonuses */
+		/* Reduce the mental boni */
 		/*p_ptr->dis_to_h -= 2;
 		p_ptr->dis_to_d -= 2;*/
 		p_ptr->dis_to_h = p_ptr->dis_to_h * 3 / 5;
@@ -6258,7 +6258,7 @@ void calc_boni(int Ind) {
 		//WRONG: this formula was for double values of d, oops (as if Maulo had 55 and Jabber 112)
 		//d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 10000 / ((d - 50) * (d - 50) + 490);
 		//Maulo@25, Jabber@55, this seems fine:
-		//d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 700 / ((d - 25) * (d - 25) + 70);//geez :/ it's the Godzilla of the the mimic formulas I think..
+		//d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 700 / ((d - 25) * (d - 25) + 70);//geez :/ it's the Godzilla of the the mimic formulae I think..
 		//d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 1300 / ((d - 26) * (d - 26) + 90);//was ok
 		d = (2200 / ((250 / (d + 4)) + 22)) - 20 - 950 / ((d - 25) * (d - 25) + 100);
 		//d = (2000 / ((130 / (d + 4)) + 22)) - 20 - 650 / ((d - 25) * (d - 25) + 90);//too little
@@ -7547,12 +7547,12 @@ void calc_boni_weapon(int Ind, object_type *o_ptr, int *to_hit, int *to_dam) {
 		if (i == INVEN_WIELD || (i == INVEN_ARM && oi_ptr->tval != TV_SHIELD) ||
 		    i == INVEN_AMMO || i == INVEN_BOW || i == INVEN_TOOL) continue;
 
-		/* Apply the bonuses to hit/damage */
+		/* Apply the boni to hit/damage */
 		to_h += oi_ptr->to_h;
 		to_d += oi_ptr->to_d;
 	}
 
-	/* If we have any base bonuses to add, add them */
+	/* If we have any base boni to add, add them */
 
 #if 0 /* should this stuff be mvoed to affect _total p_ptr->to_h instead of being applied so (too) early here? */
 	/* Apply temporary "stun" */
@@ -7580,7 +7580,7 @@ void calc_boni_weapon(int Ind, object_type *o_ptr, int *to_hit, int *to_dam) {
 		to_d += 10;
 	}
 
-	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
+	/* Actual Modifier boni (Un-inflate stat boni) */
 	to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 #if 0
 #if 1 /* addition */

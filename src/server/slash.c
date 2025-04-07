@@ -275,7 +275,7 @@ static void do_cmd_refresh(int Ind) {
 	/* Clear the target */
 	p_ptr->target_who = 0;
 
-	/* Update his view, light, bonuses, and torch radius */
+	/* Update his view, light, boni, and torch radius */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH |
 			PU_DISTANCE | PU_SKILL_MOD);
 
@@ -11463,7 +11463,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				s_printf("Purged ITEM_REMOVAL_NEVER off %d items.\n", j);
 				return;
 			}
-			/* test new \376, \375, \374 chat line prefixes */
+			/* test new \376, \375, \374 chat line prefices */
 			else if (prefix(messagelc, "/testchat")) {
 				msg_print(Ind, "No code.");
 				msg_print(Ind, "\376376 code.");

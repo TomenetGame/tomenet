@@ -2707,16 +2707,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 					*t++ = 'e';
 				}
 
-				/* Hack -- "Cod/ex -> Cod/ices" */
+				/* Hack -- "Cod/ex -> Cod/ices" and "Suffix" -> "Suffices" */
 				else if (k == 'x') {
-					if (k2 == 'e') {
+					if (k2 == 'e' || k2 == 'i') {
 						t -= 2;
 						*t++ = 'i';
 						*t++ = 'c';
 						*t++ = 'e';
-					} else {
-					    /* and "Suffix" -> "Suffixes", theoretically.. >_> */
-					    *t++ = 'e';
 					}
 				}
 
@@ -3272,7 +3269,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* Dump "pval" flags for wearable items */
 		if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK)))
 		    || o_ptr->tval == TV_GOLEM || o_ptr->tval == TV_TRAPKIT)) {
-			/* Hack -- first display any base pval bonuses. */
+			/* Hack -- first display any base pval boni. */
 			if (o_ptr->bpval && !special_rop) {
 				if (!(mode & 8)) t = object_desc_chr(t, ' ');
 				t = object_desc_chr(t, p1);
@@ -3304,7 +3301,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				t = object_desc_str(t, "(-2)");
 			}
 #endif
-			/* Next, display any pval bonuses. */
+			/* Next, display any pval boni. */
 			if (o_ptr->pval) {
 				artifact_type *a_ptr;
 

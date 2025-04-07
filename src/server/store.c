@@ -6137,7 +6137,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	case TV_BOLT:
 	case TV_ARROW:
 	case TV_SHOT:
-		/* Require identical "bonuses" -
+		/* Require identical "boni" -
 		except for ammunition which carries special inscription (will merge!) - C. Blue */
 		if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
 		    artifact_p(o_ptr) || artifact_p(j_ptr))) ||
