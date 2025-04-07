@@ -2220,7 +2220,8 @@ extern int get_subinven_group(int sval);
 #endif
 extern int cclen(cptr str);
 extern bool may_address_dm(player_type *p_ptr);
-
+extern char *custom_lua_timer_parmstr_get(int i);
+extern void custom_lua_timer_parmstr_set(int i, char *str);
 
 /* world.c */
 extern struct list *rpmlist;
@@ -2882,3 +2883,7 @@ extern u16b mushroom_field_wx[MAX_MUSHROOM_FIELDS], mushroom_field_wy[MAX_MUSHRO
 
 extern char list_invalid_name[MAX_LIST_INVALID][ACCNAME_LEN], list_invalid_host[MAX_LIST_INVALID][HOSTNAME_LEN], list_invalid_addr[MAX_LIST_INVALID][MAX_CHARS], list_invalid_date[MAX_LIST_INVALID][24];
 extern char GF_name[MAX_GF_TYPES][18], GF_name_short[MAX_GF_TYPES][7];
+
+extern int custom_lua_timer_timeout[CUSTOM_LUA_TIMERS];
+extern char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE];
+extern int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS], custom_lua_timer_parm2[CUSTOM_LUA_TIMERS], custom_lua_timer_parm3[CUSTOM_LUA_TIMERS];

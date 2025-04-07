@@ -11056,3 +11056,14 @@ int cclen(cptr str) {
 
 	return(l);
 }
+
+/* Bind custom_lua_timer */
+char *custom_lua_timer_parmstr_get(int i) {
+	if (i < 1 || i >= CUSTOM_LUA_TIMERS) return(NULL);
+	return(custom_lua_timer_parmstr[i]);
+}
+void custom_lua_timer_parmstr_set(int i, char *str) {
+	if (i < 1 || i >= CUSTOM_LUA_TIMERS) return;
+	strncpy(custom_lua_timer_parmstr[i], str, MAX_CHARS_WIDE);
+	custom_lua_timer_parmstr[i][MAX_CHARS_WIDE - 1] = 0;
+}

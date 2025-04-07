@@ -288,3 +288,24 @@ end
 -- Usage: 0 = activate, 1 = read, 2 = quaff, 3 = eat, 4 = aim, 5 = use, 6 = zap, 7 = disarm-attempt, 8 = disarm-failed, 9 = disarmed, 10 = opened, 11 = bashed
 function custom_object_usage(Ind, o_idx, slot, usage, index)
 end
+
+-- Set custom timer: Will trigger in <timeout> seconds.
+-- parmstr can be <nil> if you don't want to use it, it will be stored as "" (empty string) then.
+-- parameters 1-3 are int values.
+function custom_lua_timer_set(index, timeout, parmstr, parm1, parm2, parm3)
+	-- Basic overflow protection
+	if index < 1 or index >= 20 then return end --CUSTOM_LUA_TIMERS
+
+	custom_lua_timer_timeout[index] = timeout
+	if parmstr == nil then
+		custom_lua_timer_parmstr_set(index, "")
+	else
+		custom_lua_timer_parmstr_set(index, parmstr)
+	end
+	custom_lua_timer_parm1[index] = parm1
+	custom_lua_timer_parm2[index] = parm2
+	custom_lua_timer_parm3[index] = parm3
+end
+-- Custom timers expiring, in seconds.
+function custom_lua_timer(index, parmstr, parm1, parm2, parm3)
+end

@@ -11526,6 +11526,14 @@ void process_timers() {
 	int y, x, i;
 	player_type *p_ptr;
 
+	for (i = 1; i < CUSTOM_LUA_TIMERS; i++) { //accomodate for LUA arrays starting at index 1, just play it safe
+		if (!custom_lua_timer_timeout[i]) continue;
+		custom_lua_timer_timeout[i]--;
+		if (!custom_lua_timer_timeout[i])
+			exec_lua(0, format("custom_lua_timer(%d,\"%s\",%d,%d,%d)", i,
+			    custom_lua_timer_parmstr[i], custom_lua_timer_parm1[i], custom_lua_timer_parm2[i], custom_lua_timer_parm3[i]));
+	}
+
 #ifdef ENABLE_GO_GAME
 	/* Process Go AI engine communication (its replies) */
 	if (go_game_up || go_wait_for_sgf) go_engine_clocks();

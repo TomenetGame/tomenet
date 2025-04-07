@@ -533,3 +533,10 @@ extern u32b sflags1;
 extern u32b sflags2;
 extern u32b sflags3;
 extern u32b sflags_TEMP;
+
+extern int custom_lua_timer_timeout[CUSTOM_LUA_TIMERS];
+extern int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS];
+extern int custom_lua_timer_parm2[CUSTOM_LUA_TIMERS];
+extern int custom_lua_timer_parm3[CUSTOM_LUA_TIMERS];
+extern char *custom_lua_timer_parmstr_get(int i);
+extern void custom_lua_timer_parmstr_set(int i, char *str);

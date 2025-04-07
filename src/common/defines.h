@@ -9863,3 +9863,6 @@ extern int PlayerUID;
 #define HCMSG_VEGETABLE "You turn into an unthinking vegetable."
 #define HCMSG_LIGHT_FAINT "Your light is growing faint."
 #define HCMSG_NOTE "Note from "
+
+/* Custom lua timers */
+#define CUSTOM_LUA_TIMERS 20

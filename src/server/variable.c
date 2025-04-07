@@ -1106,3 +1106,7 @@ u16b mushroom_field_wx[MAX_MUSHROOM_FIELDS], mushroom_field_wy[MAX_MUSHROOM_FIEL
 
 char list_invalid_name[MAX_LIST_INVALID][ACCNAME_LEN] = { 0 }, list_invalid_host[MAX_LIST_INVALID][HOSTNAME_LEN], list_invalid_addr[MAX_LIST_INVALID][MAX_CHARS], list_invalid_date[MAX_LIST_INVALID][24];
 char GF_name[MAX_GF_TYPES][18] = { 0 }, GF_name_short[MAX_GF_TYPES][7] = { 0 };
+
+int custom_lua_timer_timeout[CUSTOM_LUA_TIMERS] = { 0 };
+char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE] = { 0 };
+int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm2[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm3[CUSTOM_LUA_TIMERS] = { 0 };
