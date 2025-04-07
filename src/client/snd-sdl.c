@@ -3708,11 +3708,20 @@ void do_cmd_options_sfx_sdl(void) {
 		/* Specialty for big_map: Display list of all subsamples below the normal jukebox stuff */
 		if (screen_hgt == MAX_SCREEN_HGT && samples[j_sel].config) {
 			int s, offs = 24, showmax = MAX_WINDOW_HGT - offs - 2;
+			char tmp_lastslot[MAX_CHARS] = { 0 };
 
 			clear_from(offs);
 			for (s = 0; s < MAX_SONGS; s++) {
 				path_p = samples[j_sel].paths[s];
 				if (!path_p) break;
+				if (s == showmax) { /* add a final entry if it fits exactly */
+					path_p = path_p + strlen(path_p) - 1;
+					while (path_p > samples[j_sel].paths[s] && *(path_p - 1) != '/') path_p--;
+					if (sound_cur == j_sel && sound_cur_wav == s)
+						snprintf(tmp_lastslot, MAX_CHARS, "\377y%2d. %s", s + 1, path_p);
+					else
+						snprintf(tmp_lastslot, MAX_CHARS, "\377u%2d. %s", s + 1, path_p);
+				}
 				if (s >= showmax) continue;
 				path_p = path_p + strlen(path_p) - 1;
 				while (path_p > samples[j_sel].paths[s] && *(path_p - 1) != '/') path_p--;
@@ -3721,8 +3730,14 @@ void do_cmd_options_sfx_sdl(void) {
 				else
 					Term_putstr(7 - 4, offs + 1 + s, -1, TERM_UMBER, format("%2d. %s", s + 1, path_p));
 			}
-			if (s >= showmax) Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, format("... and %d more...", s - showmax));
-			Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected sound event:", showmax, s));
+			if (s == showmax + 1) {
+				Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, tmp_lastslot);
+				Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected sound event:", showmax + 1, s));
+			} else if (s > showmax + 1) {
+				Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, format("... and %d more...", s - showmax));
+				Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected sound event:", showmax, s));
+			} else
+				Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected sound event:", showmax + 1, s));
 		}
 
 		/* display static selector */
@@ -4384,11 +4399,20 @@ void do_cmd_options_mus_sdl(void) {
 		/* Specialty for big_map: Display list of all subsongs below the normal jukebox stuff */
 		if (screen_hgt == MAX_SCREEN_HGT && songs[j_sel].config) {
 			int s, offs = 25, showmax = MAX_WINDOW_HGT - offs - 2;
+			char tmp_lastslot[MAX_CHARS] = { 0 };
 
 			clear_from(offs);
 			for (s = 0; s < MAX_SONGS; s++) {
 				path_p = songs[j_sel].paths[s];
 				if (!path_p) break;
+				if (s == showmax) { /* add a final entry if it fits exactly */
+					path_p = path_p + strlen(path_p) - 1;
+					while (path_p > songs[j_sel].paths[s] && *(path_p - 1) != '/') path_p--;
+					if (music_cur == j_sel && music_cur_song == s)
+						snprintf(tmp_lastslot, MAX_CHARS, "\377%c%2d. %s", songs[j_sel].initial[s] ? 'o' : 'y', s + 1, path_p);
+					else
+						snprintf(tmp_lastslot, MAX_CHARS, "\377%c%2d. %s", songs[j_sel].initial[s] ? 'U' : 'u', s + 1, path_p);
+				}
 				if (s >= showmax) continue;
 				path_p = path_p + strlen(path_p) - 1;
 				while (path_p > songs[j_sel].paths[s] && *(path_p - 1) != '/') path_p--;
@@ -4397,8 +4421,14 @@ void do_cmd_options_mus_sdl(void) {
 				else
 					Term_putstr(7 - 4, offs + 1 + s, -1, songs[j_sel].initial[s] ? TERM_L_UMBER : TERM_UMBER, format("%2d. %s", s + 1, path_p)); //currently no different colour for songs[].disabled, consistent with 'Key' info
 			}
-			if (s >= showmax) Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, format("... and %d more...", s - showmax));
-			Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected music event:", showmax, s));
+			if (s == showmax + 1) {
+				Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, tmp_lastslot);
+				Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected music event:", showmax + 1, s));
+			} else if (s > showmax + 1) {
+				Term_putstr(7 - 4, MAX_WINDOW_HGT - 1, -1, TERM_SLATE, format("... and %d more...", s - showmax));
+				Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected music event:", showmax, s));
+			} else
+				Term_putstr(0, offs, -1, TERM_WHITE, format("List of the first %d subsong filenames (found \377y%d\377w) of the selected music event:", showmax + 1, s));
 		}
 
 		/* display static selector */
