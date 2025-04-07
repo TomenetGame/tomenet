@@ -129,12 +129,13 @@ X:mute_when_idle
 X:shuffle_music
 Y:play_all
 X:first_song
+Y:wild_resume_from_any
+Y:tavern_town_resume
 
 Y:audio_paging
 X:paging_master_vol
 X:paging_max_vol
 X:quiet_os
-
 
 # Gameplay options:
 

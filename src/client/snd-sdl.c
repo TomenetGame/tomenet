@@ -425,6 +425,8 @@ typedef struct {
 	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
 #ifdef WILDERNESS_MUSIC_RESUME
 	int bak_song, bak_pos;		/* Specifically for 'wilderness' music: Remember song and position of each wilderness-type event. */
+	bool bak_nighttime;		/* TRUE for day, FALSE for night, also FALSE for if there was no nighttime suffix for this music event.
+					   Note that '_night' is specifically picked because eg town events don't have a "_day" suffix but only "_night" suffices! */
 #endif
 	bool disabled;			/* disabled by user? */
 	bool config;
@@ -623,7 +625,7 @@ static bool sound_sdl_init(bool no_cache) {
 		songs[i].config = FALSE;
 		songs[i].disabled = FALSE;
 #ifdef WILDERNESS_MUSIC_RESUME
-		songs[i].bak_pos = FALSE;
+		songs[i].bak_pos = 0;
 #endif
 	}
 
@@ -2614,18 +2616,16 @@ static bool play_music(int event) {
 			/* Special: If current music is in category 'wilderness', remember its position to resume it instead of restarting it, next time it happens to play */
 			if (prefix(mc, "wilderness_")
  #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
-			    || prefix(mc, "town_") || prefix(mc, "tavern_")
-			    || prefix(mc, "Bree_") || prefix(mc, "Gondolin_") || prefix(mc, "MinasAnor_") || prefix(mc, "Lothlorien_") || prefix(mc, "Khazaddum_")
-			    || prefix(mc, "Menegroth_") || prefix(mc, "Nargothrond_")
+			    || (c_cfg.tavern_town_resume && (
+			    prefix(mc, "town_") || prefix(mc, "tavern_") ||
+			    prefix(mc, "Bree") || prefix(mc, "Gondolin") || prefix(mc, "MinasAnor") || prefix(mc, "Lothlorien") || prefix(mc, "Khazaddum") ||
+			    prefix(mc, "Menegroth") || prefix(mc, "Nargothrond")))
  #endif
 			    ) {
 				songs[music_cur].bak_song = music_cur_song;
 				songs[music_cur].bak_pos = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]) * 1000 + 500; /* pre-add the fading-out time span (in ms) */
+				songs[music_cur].bak_nighttime = suffix(mc, "_night");
 			}
- #if !defined(WILDERNESS_MUSIC_ALWAYS_RESUME) && !defined(TOWN_TAVERN_MUSIC_RESUME_TOO)
-			/* Special special: If we're playing a non-'wilderness' music, forget ALL wilderness-music positions */
-			else for (n = 0; n < MUSIC_MAX; n++) songs[n].bak_pos = 0;
- #endif
 #endif
 			Mix_FadeOutMusic(500);
 		}
@@ -2775,7 +2775,7 @@ static void fadein_next_music(void) {
 #ifdef WILDERNESS_MUSIC_RESUME
 	bool prev_wilderness;
 	cptr pmn, mn;
-	bool pmn_day, mn_day;
+	bool mn_night;
 #endif
 
 #ifdef DISABLE_MUTED_AUDIO
@@ -2927,33 +2927,38 @@ static void fadein_next_music(void) {
 	   Part 1/2: Restore the song subnumber: */
 	if (music_cur != -1) {
 		pmn = string_exec_lua(0, format("return get_music_name(%d)", music_cur));
- #ifndef WILDERNESS_MUSIC_ALWAYS_RESUME
-		prev_wilderness = prefix(pmn, "wilderness_");
-  #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
-		prev_wilderness |= (prefix(pmn, "town_") || prefix(pmn, "tavern_")
-		    || prefix(pmn, "Bree_") || prefix(pmn, "Gondolin_") || prefix(pmn, "MinasAnor_") || prefix(pmn, "Lothlorien_") || prefix(pmn, "Khazaddum_")
-		    || prefix(pmn, "Menegroth_") || prefix(pmn, "Nargothrond_"));
-  #endif
- #else /* Always resume (as if previous music was wilderness music ie is eligible for resuming) - except on day/night change still */
-		prev_wilderness = TRUE;
- #endif
-		pmn_day = suffix(pmn, "_day");
+ //#ifndef WILDERNESS_MUSIC_ALWAYS_RESUME --- changed to client options, so unhardcoding this line by commenting it out
+		if (!c_cfg.wild_resume_from_any)
+			prev_wilderness = prefix(pmn, "wilderness_");
+ //#else /* Always resume (as if previous music was wilderness music ie is eligible for resuming) - except on day/night change still */
+		else
+			prev_wilderness = TRUE;
+ //#endif
 
 		mn = string_exec_lua(0, format("return get_music_name(%d)", music_next));
-		mn_day = suffix(mn, "_day");
-		if (pmn_day != mn_day) { /* On day/night change, do not resume. Instead, reset all saved positions! */
+		/* On day/night change, do not resume. Instead, reset all saved positions */
+		mn_night = suffix(mn, "_night");
+		if (songs[music_next].bak_nighttime != mn_night) {
 			int n;
 
-			for (n = 0; n < MUSIC_MAX; n++) songs[n].bak_pos = 0;
+			for (n = 0; n < MUSIC_MAX; n++) {
+ #if 0 /* just reset positions of day/night specific music? -- problem with this: Some music doesn't have a "_day" suffix but only a "_night" one. So we just reset all. */
+				pmn = string_exec_lua(0, format("return get_music_name(%d)", n)); //abuse pmn
+				if (!suffix(pmn, "_day") && !suffix(pmn, "_night")) continue;
+ #endif
+				songs[n].bak_pos = 0;
+			}
 			prev_wilderness = FALSE; //(efficient discard; not needed as we reset the pos to zero anyway)
 		} else if (prev_wilderness && (prefix(mn, "wilderness_")
   #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
-		    || prefix(mn, "town_") || prefix(mn, "tavern_")
-		    || prefix(mn, "Bree_") || prefix(mn, "Gondolin_") || prefix(mn, "MinasAnor_") || prefix(mn, "Lothlorien_") || prefix(mn, "Khazaddum_")
-		    || prefix(mn, "Menegroth_") || prefix(mn, "Nargothrond_")
+		    || (c_cfg.tavern_town_resume && (
+		    prefix(mn, "town_") || prefix(mn, "tavern_") ||
+		    prefix(mn, "Bree") || prefix(mn, "Gondolin") || prefix(mn, "MinasAnor") || prefix(mn, "Lothlorien") || prefix(mn, "Khazaddum") ||
+		    prefix(mn, "Menegroth") || prefix(mn, "Nargothrond")))
   #endif
-		    ))
+		    )) {
 			music_next_song = songs[music_next].bak_song;
+		}
 	} else prev_wilderness = FALSE;
 #endif
 	/* Choose the predetermined random event */
@@ -2993,9 +2998,10 @@ static void fadein_next_music(void) {
 		mn = string_exec_lua(0, format("return get_music_name(%d)", music_cur));
 		if (prefix(mn, "wilderness_")
   #ifdef TOWN_TAVERN_MUSIC_RESUME_TOO
-		    || prefix(mn, "town_") || prefix(mn, "tavern_")
-		    || prefix(mn, "Bree_") || prefix(mn, "Gondolin_") || prefix(mn, "MinasAnor_") || prefix(mn, "Lothlorien_") || prefix(mn, "Khazaddum_")
-		    || prefix(mn, "Menegroth_") || prefix(mn, "Nargothrond_")
+		    || (c_cfg.tavern_town_resume && (
+		    prefix(mn, "town_") || prefix(mn, "tavern_") ||
+		    prefix(mn, "Bree") || prefix(mn, "Gondolin") || prefix(mn, "MinasAnor") || prefix(mn, "Lothlorien") || prefix(mn, "Khazaddum") ||
+		    prefix(mn, "Menegroth") || prefix(mn, "Nargothrond")))
   #endif
 		    ) {
 			music_cur_song = songs[music_cur].bak_song;
@@ -3313,7 +3319,7 @@ errr re_init_sound_sdl(void) {
 		songs[i].config = FALSE;
 		songs[i].disabled = FALSE;
 #ifdef WILDERNESS_MUSIC_RESUME
-		songs[i].bak_pos = FALSE;
+		songs[i].bak_pos = 0;
 #endif
 	}
 

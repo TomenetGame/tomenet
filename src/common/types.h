@@ -4938,6 +4938,8 @@ struct client_opts {
 
 	bool add_kind_diz, hide_lore_paste, sunburn_msg, gfx_palanim_repaint, gfx_hack_repaint, topline_first, ascii_weather, no2mask_weather;
 	bool instant_retaliator;
+	bool wild_resume_from_any;
+	bool tavern_town_resume;
 };
 
 /*
