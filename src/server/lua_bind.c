@@ -535,12 +535,12 @@ void remote_update_lua(int Ind, cptr file) {
 
 /* Write a string to the log file */
 void lua_s_print(cptr logstr) {
-	s_printf("%s\n", logstr);
+	s_printf("%s", logstr);
 }
 
 /* Write a time-stamped string to an external file. - Added for AI experiments - C. Blue */
 void lua_x_print(cptr logstr) {
-	x_printf("%s\n", logstr);
+	x_printf("%s", logstr);
 }
 
 void lua_add_anote(char *anote) {
