@@ -100,6 +100,7 @@ function module_load(wx,wy,wz,name,light)
   -- msg_print(Ind,"READ (W,H): ("..W..","..H..")")
 
   local x, y, f, r, e, t, s
+  local r_death
 
   generate_cave_blank(wpos,W,H,light)
   summon_override(1) -- SO_ALL
@@ -111,7 +112,11 @@ function module_load(wx,wy,wz,name,light)
       r = read("*n")
       e = read("*n")
       if r ~= 0 then
-        place_monster_ego(wpos,y,x,r,e,1,0,0,0) -- sleep 1
+        if r >= 2000 then -- proof-of-concept hack for setting custom_monster_death() index - C. Blue
+          r_death = r / 2000
+          r = imod(r, 2000)
+        else r_death = 0 end
+        custom_place_monster_ego(wpos,y,x,r,e,1,0,0,0,r_death,0,0,0) -- sleep 1
       end
       t,s = 0,0
       t = read("*n")
