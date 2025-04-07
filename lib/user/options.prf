@@ -92,6 +92,7 @@ X:alert_afk_dam
 Y:alert_offpanel_dam
 Y:alert_starvation
 Y:screenshot_format
+X:screenshot_keys
 X:clone_to_stdout
 X:clone_to_file
 X:equip_text_colour

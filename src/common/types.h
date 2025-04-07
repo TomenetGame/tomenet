@@ -4845,6 +4845,7 @@ struct client_opts {
 	bool no_monsterattack_sfx;
 	bool positional_audio;
 	bool screenshot_format;
+	bool screenshot_keys;
 	bool quiet_house_sfx;
 	bool no_house_sfx;
 	bool alert_starvation;

@@ -2070,24 +2070,25 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 #ifdef ENABLE_SHIFT_SPECIALKEYS
 	/* Hack: SHIFT+CTRL+T makes a real (PNG) screenshot instead of an xhtml screenshot - C. Blue */
+	if ((!c_cfg.screenshot_keys && inkey_shift_special == 3) ||
+	    (c_cfg.screenshot_keys && inkey_shift_special != 3)) {
  #if defined(USE_X11)
-	/* On X11, use ImageMagick's 'import' if available */
-	if (inkey_shift_special == 3 && x11_win_term_main) {
-		char buf2[1028];
+		/* On X11, use ImageMagick's 'import' if available */
+		if (x11_win_term_main) {
+			char buf2[1028];
 
-		strcpy(buf2, buf);
-		buf2[strlen(buf2) - 5] = 0;
-		if (!system(format("import -window %d %spng", x11_win_term_main, buf2))) {
-			strcpy(buf2, file_name);
+			strcpy(buf2, buf);
 			buf2[strlen(buf2) - 5] = 0;
-			if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
-		} else c_msg_format("Error: Failed to call imagemagick's 'import'. ('%s')", buf2);
-		silent_dump = FALSE;
-		return;
-	}
+			if (!system(format("import -window %d %spng", x11_win_term_main, buf2))) {
+				strcpy(buf2, file_name);
+				buf2[strlen(buf2) - 5] = 0;
+				if (!silent_dump) c_msg_format("Screenshot saved to %spng", buf2);
+			} else c_msg_format("Error: Failed to call imagemagick's 'import'. ('%s')", buf2);
+			silent_dump = FALSE;
+			return;
+		}
  #elif defined(WINDOWS)
-	/* On Windows, use the .NET framework if available, via batch file */
-	if (inkey_shift_special == 3) {
+		/* On Windows, use the .NET framework if available, via batch file */
 		char buf2[1028];
 
 		/* Generate filename with path (from xhtml filename) */
@@ -2107,8 +2108,8 @@ void xhtml_screenshot(cptr name, byte redux) {
 		} else c_msg_format("Error: Failed to call screenCapture.bat (%lu).", GetLastError());
 		silent_dump = FALSE;
 		return;
-	}
  #endif
+	}
 #endif
 
 	fp = fopen(buf, "wb");
