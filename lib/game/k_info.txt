@@ -8629,6 +8629,132 @@ d:(This is a quest item)
 
 # 1041 = Handbook of Transportation
 
+N:1042:& Large Die~ (TL)
+G:*:u
+I:125:18:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1043:& Large Die~ (TR)
+G:*:u
+I:125:19:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1044:& Large Die~ (TLT)
+G:*:u
+I:125:20:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1045:& Large Die~ (TRT)
+G:*:u
+I:125:21:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1046:& Large Die~ (TLM)
+G:*:u
+I:125:22:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1047:& Large Die~ (TRM)
+G:*:u
+I:125:23:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1048:& Large Die~ (TlM)
+G:*:u
+I:125:24:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1049:& Large Die~ (TrM)
+G:*:u
+I:125:25:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1050:& Large Die~ (Tl)
+G:*:u
+I:125:26:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1051:& Large Die~ (BL)
+G:*:u
+I:125:27:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1052:& Large Die~ (BR)
+G:*:u
+I:125:28:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1053:& Large Die~ (BLB)
+G:*:u
+I:125:29:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1054:& Large Die~ (BRB)
+G:*:u
+I:125:30:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1055:& Large Die~ (BLM)
+G:*:u
+I:125:31:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1056:& Large Die~ (BRM)
+G:*:u
+I:125:32:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1057:& Large Die~ (BlM)
+G:*:u
+I:125:33:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1058:& Large Die~ (BrM)
+G:*:u
+I:125:34:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:1059:& Large Die~ (Br)
+G:*:u
+I:125:35:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
 
 
 #N:(No.):(name)

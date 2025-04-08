@@ -4778,6 +4778,24 @@
 #define SV_PO_CARDS_SPADES	15
 #define SV_PO_CARDS_HEARTS	16
 #define SV_PO_CARDS_DIAMONDS	17
+#define SV_PO_DIE_TL	18
+#define SV_PO_DIE_TR	19
+#define SV_PO_DIE_TLT	20
+#define SV_PO_DIE_TRT	21
+#define SV_PO_DIE_TLM	22
+#define SV_PO_DIE_TRM	23
+#define SV_PO_DIE_TlM	24
+#define SV_PO_DIE_TrM	25
+#define SV_PO_DIE_Tl	26
+#define SV_PO_DIE_BL	27
+#define SV_PO_DIE_BR	28
+#define SV_PO_DIE_BLB	29
+#define SV_PO_DIE_BRB	30
+#define SV_PO_DIE_BLM	31
+#define SV_PO_DIE_BRM	32
+#define SV_PO_DIE_BlM	33
+#define SV_PO_DIE_BrM	34
+#define SV_PO_DIE_Br	35
 /* k_idx for TV_PSEUDO_OBJ -- for graphical tiles the svals actually don't matter, they are just defined for good measure but have no use;
    instead the k_idx values are used, especially client-side! */
 #define KIDX_PO_RAIN	822

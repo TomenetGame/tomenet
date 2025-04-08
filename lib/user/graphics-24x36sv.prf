@@ -1373,6 +1373,26 @@ K:819:/3411 # Die 4
 K:820:/3412 # Die 5
 K:821:/3413 # Die 6
 
+# Large dice parts (1/4 tiles)
+K:1042:/3418 # Die top left dot
+K:1043:/3419 # Die top right dot
+K:1044:/3420 # Die top left+top dot
+K:1045:/3421 # Die top right+top dot
+K:1046:/3422 # Die top left+middle dot
+K:1047:/3423 # Die top right+middle dot
+K:1048:/3424 # Die top left, dot middle
+K:1049:/3425 # Die top right, dot middle
+K:1050:/3426 # Die top left (no dot)
+K:1051:/3427 # Die bottom left dot
+K:1052:/3428 # Die bottom right dot
+K:1053:/3429 # Die bottom left+bottom dot
+K:1054:/3430 # Die bottom right+bottom dot
+K:1055:/3431 # Die bottom left+middle dot
+K:1056:/3432 # Die bottom right+middle dot
+K:1057:/3433 # Die bottom left, dot middle
+K:1058:/3434 # Die bottom right, dot middle
+K:1059:/3435 # Die bottom right (no dot)
+
 # Cards colours
 K:829:/3414 # Clubs
 K:830:/3415 # Spades
