@@ -11319,7 +11319,7 @@ static void do_cmd_options_fonts(void) {
 //#include <dirent.h> /* for do_cmd_options_tilesets() */
 static void do_cmd_options_tilesets(void) {
 	int j, l;
-	char ch;
+	char ch, old_tileset[MAX_CHARS];
 	bool go = TRUE, inkey_msg_old;
 
 	char tileset_name[MAX_FONTS][256], path[1024];
@@ -11380,6 +11380,8 @@ static void do_cmd_options_tilesets(void) {
 
 	/* Clear screen */
 	Term_clear();
+
+	strcpy(old_tileset, graphic_tiles);
 
 	/* Interact */
 	while (go) {
@@ -11469,6 +11471,10 @@ static void do_cmd_options_tilesets(void) {
 		switch (ch) {
 		case ESCAPE:
 			go = FALSE;
+
+			if (strcmp(old_tileset, graphic_tiles))
+				c_msg_print("\377yGraphical tileset was changed. Requires client restart (use CTRL+Q).");
+
 			break;
 
 		case KTRL('T'):
