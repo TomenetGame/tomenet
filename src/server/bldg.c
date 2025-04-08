@@ -446,7 +446,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 
 	/* Prepare the graphical visuals for this player (6 dice results) */
-	if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
+	if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT ; && !p_ptr->ascii_feats?
 		int k_idx;
 
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
@@ -710,8 +710,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		//msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1, roll2, roll3);
 
 #ifdef CUSTOM_VISUALS
- #ifdef GRAPHICS_BG_MASK
 		if (custom_visuals) {
+ #ifdef GRAPHICS_BG_MASK
   #ifndef DICE_HUGE //normal die
 			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll1], 0, 32);
 			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll2], 0, 32);
@@ -763,6 +763,21 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		odds = 9;
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_RED, "  0  \377w1  2  3  4  5  6  7  8  9");
+#if 0 //not for now; should probably add more proper graphics: horizontal 'chain', an arrow/triange, better selected-number brackets/marker (existing half-triangles maybe)
+#ifdef CUSTOM_VISUALS
+		if (custom_visuals) {
+			int x;
+
+			for (x = 0; x < 30; x++)
+ #ifdef GRAPHICS_BG_MASK
+    //111,116,126
+				Send_char_direct(Ind, DICE_X - 15 + x, DICE_Y + 3, TERM_WHITE, p_ptr->f_char[126], 0, 32);
+ #else
+				Send_char_direct(Ind, DICE_X - 15 + x, DICE_Y + 3, TERM_WHITE, p_ptr->f_char[126]);
+ #endif
+		} else
+#endif
+#endif
 		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 15, TERM_WHITE, "--------------------------------");
 
 		p_ptr->casino_odds = odds;
