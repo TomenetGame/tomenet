@@ -780,17 +780,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll2 = randint(6);
 		choice = randint(6);
 
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_SLATE,  "/==========================\\");
-		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 10, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 11, DICE_X - 14, TERM_SLATE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_SLATE, "\\==========================/");
-		Send_store_special_str(Ind, DICE_Y + 13, DICE_X - 14, TERM_SLATE,  " [      ] [      ] [      ]");
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_SEL_BLUE,  "/==========================\\");
+		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 10, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 11, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_SEL_BLUE, "\\==========================/");
+		Send_store_special_str(Ind, DICE_Y + 13, DICE_X - 14, TERM_SEL_BLUE,  " [      ] [      ] [      ]");
 
 		/* Create client-side animation */
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) {

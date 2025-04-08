@@ -4628,7 +4628,7 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_YELLOW, "#.....# ");
 		Term_putstr(col, row + 6, -1, TERM_YELLOW, " #...#  ");
 		Term_putstr(col, row + 7, -1, TERM_YELLOW, "  ###   ");
-		Term_putstr(col, row + 9, -1, TERM_SLATE,  "[LEMON ]");
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE,  "LEMON ");
 		break;
 
 	case 2: /* orange */
@@ -4640,7 +4640,7 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_ORANGE, "#++++++#");
 		Term_putstr(col, row + 6, -1, TERM_ORANGE, " #++++# ");
 		Term_putstr(col, row + 7, -1, TERM_ORANGE, "  ####  ");
-		Term_putstr(col, row + 9, -1, TERM_SLATE,  "[ORANGE]");
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE,  "ORANGE");
 		break;
 
 	case 3: /* sword */
@@ -4652,7 +4652,7 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_SLATE, "   ##   ");
 		Term_putstr(col, row + 6, -1, TERM_UMBER, " ###### ");
 		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
-		Term_putstr(col, row + 9, -1, TERM_SLATE, "[SWORD ]");
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "SWORD ");
 		break;
 
 	case 4: /* shield */
@@ -4664,7 +4664,7 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_UMBER, " #    # ");
 		Term_putstr(col, row + 6, -1, TERM_UMBER, "  #  #  ");
 		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
-		Term_putstr(col, row + 9, -1, TERM_SLATE, "[SHIELD]");
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "SHIELD");
 		break;
 
 	case 5: /* plum */
@@ -4676,7 +4676,7 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_VIOLET, "####### ");
 		Term_putstr(col, row + 6, -1, TERM_VIOLET, " ###### ");
 		Term_putstr(col, row + 7, -1, TERM_VIOLET, "  ####  ");
-		Term_putstr(col, row + 9, -1, TERM_SLATE, "[ PLUM ]");
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, " PLUM ");
 		break;
 
 	case 6: /* cherry */
@@ -4688,7 +4688,7 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_RED, "#..##..#");
 		Term_putstr(col, row + 6, -1, TERM_RED, "#..##..#");
 		Term_putstr(col, row + 7, -1, TERM_RED, " ##  ## ");
-		Term_putstr(col, row + 9, -1, TERM_SLATE, "[CHERRY]");
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "CHERRY");
 		break;
 	}
 }
