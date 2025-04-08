@@ -630,7 +630,7 @@ byte flick_colour(byte attr) {
 
 extern term *ang_term[];
 
-void flicker() {
+void flicker(void) {
 	int y, x, i;
 	char ch;
 	byte attr;
