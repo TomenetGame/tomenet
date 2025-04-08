@@ -1854,7 +1854,7 @@ static void mimic_object(byte *ap, char32_t *cp, int seed, player_type *p_ptr) {
 	Rand_quick = FALSE;
 
 	invcopy(o_ptr, n);
-	if (forge.tval == TV_PSEUDO_OBJ) n = ((n + 100) % max_k_idx) + 1; //emergency fallback (assume max 100 svals for TV_PSEUDO_OBJ): only real objects
+	if (forge.tval == TV_PSEUDO_OBJ) invcopy(o_ptr, 1); //emergency fallback (mushroom): only real objects
 	get_object_visual(cp, ap, o_ptr, p_ptr);
 
 	/* Random color */
