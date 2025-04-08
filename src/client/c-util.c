@@ -14791,7 +14791,9 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	/* Refresh music when shuffle_music or play_all is toggled */
 	if (option_info[i].o_var == &c_cfg.shuffle_music || option_info[i].o_var == &c_cfg.play_all) {
 		/* ..but only if we're not already in the process of changing music! */
-		if (music_next == -1)
+		if (music_next == -1
+		    && in_game /* Not when we're in the account overview screen and start the character creation process */
+		    )
 			music(-3); //refresh!
 	}
 #endif
