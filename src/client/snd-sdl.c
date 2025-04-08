@@ -2526,8 +2526,12 @@ static bool play_music(int event) {
 			music_next = -1;
 			Mix_FadeOutMusic(500);
 		} else {
+#if 0 /* wrong? */
 			music_next = music_cur; //hack
 			music_next_song = music_cur_song;
+#else
+			music_next = -1; //nothing
+#endif
 		}
 		return(TRUE); //whatever..
 	}
