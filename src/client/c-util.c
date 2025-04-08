@@ -14926,6 +14926,12 @@ static void handle_process_graphics_file(void) {
 	kidx_po_snow_attr = Client_setup.k_attr[KIDX_PO_SNOW];
 	kidx_po_sand_char = Client_setup.k_char[KIDX_PO_SAND];
 	kidx_po_sand_attr = Client_setup.k_attr[KIDX_PO_SAND];
+	kidx_po_d10f_tl = Client_setup.k_char[KIDX_PO_D10F_TL];
+	kidx_po_d10f_t = Client_setup.k_char[KIDX_PO_D10F_T];
+	kidx_po_d10f_tr = Client_setup.k_char[KIDX_PO_D10F_TR];
+	kidx_po_d10f_bl = Client_setup.k_char[KIDX_PO_D10F_BL];
+	kidx_po_d10f_b = Client_setup.k_char[KIDX_PO_D10F_B];
+	kidx_po_d10f_br = Client_setup.k_char[KIDX_PO_D10F_BR];
 	/* --- Init pseudo-features --- */
 	/* Currently there are no pseudo-features used on client-side here; go board in the casino is handled server-side */
 }

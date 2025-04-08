@@ -597,7 +597,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		choice = rand_int(10);
 
 		/* Create client-side animation */
-		if (FALSE && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			Send_store_special_anim(Ind, 2, roll1, roll2, choice);
 		else {
 			//msg_print(Ind, "\377GIn Between");
@@ -608,8 +608,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			sound(Ind, "casino_inbetween", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 #ifdef CUSTOM_VISUALS
- #ifdef GRAPHICS_BG_MASK
 			if (custom_visuals) {
+ #ifdef GRAPHICS_BG_MASK
 				Send_char_direct(Ind, DICE_X - 7, DICE_Y + 4, TERM_L_DARK, c_d10f[0], 0, 32);
 				Send_char_direct(Ind, DICE_X - 6, DICE_Y + 3, TERM_L_DARK, c_d10f[1], 0, 32);
 				Send_char_direct(Ind, DICE_X - 5, DICE_Y + 4, TERM_L_DARK, c_d10f[2], 0, 32);
@@ -630,14 +630,31 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 				Send_char_direct(Ind, DICE_X - 1, DICE_Y + 9, TERM_RED, c_d10f[3], 0, 32);
 				Send_char_direct(Ind, DICE_X, DICE_Y + 9, TERM_RED, c_d10f[4], 0, 32);
 				Send_char_direct(Ind, DICE_X + 1, DICE_Y + 9, TERM_RED, c_d10f[5], 0, 32);
+ #else
+				Send_char_direct(Ind, DICE_X - 7, DICE_Y + 4, TERM_L_DARK, c_d10f[0]);
+				Send_char_direct(Ind, DICE_X - 6, DICE_Y + 3, TERM_L_DARK, c_d10f[1]);
+				Send_char_direct(Ind, DICE_X - 5, DICE_Y + 4, TERM_L_DARK, c_d10f[2]);
+				Send_char_direct(Ind, DICE_X - 7, DICE_Y + 5, TERM_L_DARK, c_d10f[3]);
+				Send_char_direct(Ind, DICE_X - 6, DICE_Y + 5, TERM_L_DARK, c_d10f[4]);
+				Send_char_direct(Ind, DICE_X - 5, DICE_Y + 5, TERM_L_DARK, c_d10f[5]);
 
+				Send_char_direct(Ind, DICE_X + 5, DICE_Y + 4, TERM_L_DARK, c_d10f[0]);
+				Send_char_direct(Ind, DICE_X + 6, DICE_Y + 3, TERM_L_DARK, c_d10f[1]);
+				Send_char_direct(Ind, DICE_X + 7, DICE_Y + 4, TERM_L_DARK, c_d10f[2]);
+				Send_char_direct(Ind, DICE_X + 5, DICE_Y + 5, TERM_L_DARK, c_d10f[3]);
+				Send_char_direct(Ind, DICE_X + 6, DICE_Y + 5, TERM_L_DARK, c_d10f[4]);
+				Send_char_direct(Ind, DICE_X + 7, DICE_Y + 5, TERM_L_DARK, c_d10f[5]);
+
+				Send_char_direct(Ind, DICE_X - 1, DICE_Y + 8, TERM_RED, c_d10f[0]);
+				Send_char_direct(Ind, DICE_X, DICE_Y + 7, TERM_RED, c_d10f[1]);
+				Send_char_direct(Ind, DICE_X + 1, DICE_Y + 8, TERM_RED, c_d10f[2]);
+				Send_char_direct(Ind, DICE_X - 1, DICE_Y + 9, TERM_RED, c_d10f[3]);
+				Send_char_direct(Ind, DICE_X, DICE_Y + 9, TERM_RED, c_d10f[4]);
+				Send_char_direct(Ind, DICE_X + 1, DICE_Y + 9, TERM_RED, c_d10f[5]);
+ #endif
 				Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 6, TERM_L_DARK, format("%1d", roll1));
 				Send_store_special_str(Ind, DICE_Y + 4, DICE_X + 6, TERM_L_DARK, format("%1d", roll2));
 				Send_store_special_str(Ind, DICE_Y + 8, DICE_X, TERM_RED, format("%1d", choice));
- #else
-				//Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, TERM_L_DARK, c_die[roll1]);
-				//Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, TERM_L_DARK, c_die[roll2]);
- #endif
 			} else
 #endif
 			{

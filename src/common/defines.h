@@ -4812,6 +4812,12 @@
 #define KIDX_PO_RAIN_W2	826
 #define KIDX_PO_SNOW	827
 #define KIDX_PO_SAND	828
+#define KIDX_PO_D10F_TL	833
+#define KIDX_PO_D10F_T	834
+#define KIDX_PO_D10F_TR	835
+#define KIDX_PO_D10F_BL	836
+#define KIDX_PO_D10F_B	837
+#define KIDX_PO_D10F_BR	838
 
 
 /* svals for TV_SUBINVEN */

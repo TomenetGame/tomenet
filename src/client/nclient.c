@@ -4710,6 +4710,7 @@ int Receive_store_special_anim(void) {
 	char ch;
 	u16b anim1, anim2, anim3, anim4;
 	int anim_step;
+	bool use_gfx_d10f = TRUE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &anim1, &anim2, &anim3, &anim4)) <= 0) return(n);
 	if (!shopping) return(1);
@@ -4851,10 +4852,34 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(600000);
 #endif
-		Term_putstr(DICE_X - 8, DICE_Y + 2, -1, TERM_L_DARK, "  _");
-		Term_putstr(DICE_X - 8, DICE_Y + 3, -1, TERM_L_DARK, " / \\");
-		Term_putstr(DICE_X - 8, DICE_Y + 4, -1, TERM_L_DARK, format("/ %1d \\", anim2));
-		Term_putstr(DICE_X - 8, DICE_Y + 5, -1, TERM_L_DARK, "\\___/");
+#ifdef GRAPHICS_BG_MASK
+		if (use_gfx_d10f && use_graphics == 2) {
+			Term_draw_2mask(DICE_X - 7, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tl, 0, 0);
+			Term_draw_2mask(DICE_X - 6, DICE_Y + 3, TERM_L_DARK, kidx_po_d10f_t, 0, 0);
+			Term_draw_2mask(DICE_X - 5, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tr, 0, 0);
+			Term_draw_2mask(DICE_X - 7, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_bl, 0, 0);
+			Term_draw_2mask(DICE_X - 6, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_b, 0, 0);
+			Term_draw_2mask(DICE_X - 5, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_br, 0, 0);
+			Term_putstr(DICE_X - 6, DICE_Y + 4, -1, TERM_L_DARK, format("%1d", anim2));
+		} else
+#endif
+#ifdef USE_GRAPHICS
+		if (use_gfx_d10f && use_graphics) {
+			Term_draw(DICE_X - 7, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tl);
+			Term_draw(DICE_X - 6, DICE_Y + 3, TERM_L_DARK, kidx_po_d10f_t);
+			Term_draw(DICE_X - 5, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tr);
+			Term_draw(DICE_X - 7, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_bl);
+			Term_draw(DICE_X - 6, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_b);
+			Term_draw(DICE_X - 5, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_br);
+			Term_putstr(DICE_X - 6, DICE_Y + 4, -1, TERM_L_DARK, format("%1d", anim2));
+		} else
+#endif
+		{
+			Term_putstr(DICE_X - 8, DICE_Y + 2, -1, TERM_L_DARK, "  _");
+			Term_putstr(DICE_X - 8, DICE_Y + 3, -1, TERM_L_DARK, " / \\");
+			Term_putstr(DICE_X - 8, DICE_Y + 4, -1, TERM_L_DARK, format("/ %1d \\", anim2));
+			Term_putstr(DICE_X - 8, DICE_Y + 5, -1, TERM_L_DARK, "\\___/");
+		}
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -4868,10 +4893,34 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(300000);
 #endif
-		Term_putstr(DICE_X + 4, DICE_Y + 2, -1, TERM_L_DARK, "  _");
-		Term_putstr(DICE_X + 4, DICE_Y + 3, -1, TERM_L_DARK, " / \\");
-		Term_putstr(DICE_X + 4, DICE_Y + 4, -1, TERM_L_DARK, format("/ %1d \\", anim3));
-		Term_putstr(DICE_X + 4, DICE_Y + 5, -1, TERM_L_DARK, "\\___/");
+#ifdef GRAPHICS_BG_MASK
+		if (use_gfx_d10f && use_graphics == 2) {
+			Term_draw_2mask(DICE_X + 5, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tl, 0, 0);
+			Term_draw_2mask(DICE_X + 6, DICE_Y + 3, TERM_L_DARK, kidx_po_d10f_t, 0, 0);
+			Term_draw_2mask(DICE_X + 7, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tr, 0, 0);
+			Term_draw_2mask(DICE_X + 5, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_bl, 0, 0);
+			Term_draw_2mask(DICE_X + 6, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_b, 0, 0);
+			Term_draw_2mask(DICE_X + 7, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_br, 0, 0);
+			Term_putstr(DICE_X + 6, DICE_Y + 4, -1, TERM_L_DARK, format("%1d", anim3));
+		} else
+#endif
+#ifdef USE_GRAPHICS
+		if (use_gfx_d10f && use_graphics) {
+			Term_draw(DICE_X + 5, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tl);
+			Term_draw(DICE_X + 6, DICE_Y + 3, TERM_L_DARK, kidx_po_d10f_t);
+			Term_draw(DICE_X + 7, DICE_Y + 4, TERM_L_DARK, kidx_po_d10f_tr);
+			Term_draw(DICE_X + 5, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_bl);
+			Term_draw(DICE_X + 6, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_b);
+			Term_draw(DICE_X + 7, DICE_Y + 5, TERM_L_DARK, kidx_po_d10f_br);
+			Term_putstr(DICE_X + 6, DICE_Y + 4, -1, TERM_L_DARK, format("%1d", anim3));
+		} else
+#endif
+		{
+			Term_putstr(DICE_X + 4, DICE_Y + 2, -1, TERM_L_DARK, "  _");
+			Term_putstr(DICE_X + 4, DICE_Y + 3, -1, TERM_L_DARK, " / \\");
+			Term_putstr(DICE_X + 4, DICE_Y + 4, -1, TERM_L_DARK, format("/ %1d \\", anim3));
+			Term_putstr(DICE_X + 4, DICE_Y + 5, -1, TERM_L_DARK, "\\___/");
+		}
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -4890,10 +4939,34 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(600000);
 #endif
-		Term_putstr(DICE_X - 2, DICE_Y + 6, -1, TERM_RED, "  _");
-		Term_putstr(DICE_X - 2, DICE_Y + 7, -1, TERM_RED, " / \\");
-		Term_putstr(DICE_X - 2, DICE_Y + 8, -1, TERM_RED, format("/ %1d \\", anim4));
-		Term_putstr(DICE_X - 2, DICE_Y + 9, -1, TERM_RED, "\\___/");
+#ifdef GRAPHICS_BG_MASK
+		if (use_gfx_d10f && use_graphics == 2) {
+			Term_draw_2mask(DICE_X - 1, DICE_Y + 8, TERM_RED, kidx_po_d10f_tl, 0, 0);
+			Term_draw_2mask(DICE_X, DICE_Y + 7, TERM_RED, kidx_po_d10f_t, 0, 0);
+			Term_draw_2mask(DICE_X + 1, DICE_Y + 8, TERM_RED, kidx_po_d10f_tr, 0, 0);
+			Term_draw_2mask(DICE_X - 1, DICE_Y + 9, TERM_RED, kidx_po_d10f_bl, 0, 0);
+			Term_draw_2mask(DICE_X, DICE_Y + 9, TERM_RED, kidx_po_d10f_b, 0, 0);
+			Term_draw_2mask(DICE_X + 1, DICE_Y + 9, TERM_RED, kidx_po_d10f_br, 0, 0);
+			Term_putstr(DICE_X, DICE_Y + 8, -1, TERM_RED, format("%1d", anim4));
+		} else
+#endif
+#ifdef USE_GRAPHICS
+		if (use_gfx_d10f && use_graphics) {
+			Term_draw(DICE_X - 1, DICE_Y + 8, TERM_RED, kidx_po_d10f_tl);
+			Term_draw(DICE_X, DICE_Y + 7, TERM_RED, kidx_po_d10f_t);
+			Term_draw(DICE_X + 1, DICE_Y + 8, TERM_RED, kidx_po_d10f_tr);
+			Term_draw(DICE_X - 1, DICE_Y + 9, TERM_RED, kidx_po_d10f_bl);
+			Term_draw(DICE_X, DICE_Y + 9, TERM_RED, kidx_po_d10f_b);
+			Term_draw(DICE_X + 1, DICE_Y + 9, TERM_RED, kidx_po_d10f_br);
+			Term_putstr(DICE_X, DICE_Y + 8, -1, TERM_RED, format("%1d", anim4));
+		} else
+#endif
+		{
+			Term_putstr(DICE_X - 2, DICE_Y + 6, -1, TERM_RED, "  _");
+			Term_putstr(DICE_X - 2, DICE_Y + 7, -1, TERM_RED, " / \\");
+			Term_putstr(DICE_X - 2, DICE_Y + 8, -1, TERM_RED, format("/ %1d \\", anim4));
+			Term_putstr(DICE_X - 2, DICE_Y + 9, -1, TERM_RED, "\\___/");
+		}
 		break;
 
 	case 3: //craps, or just any dice roll: wait for it to settle

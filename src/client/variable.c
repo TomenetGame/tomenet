@@ -225,6 +225,7 @@ char use_graphics_errstr[MAX_CHARS_WIDE] = { 0 };
 char graphic_tiles[256] = "16x24sv";
 char32_t kidx_po_rain_char = 0, kidx_po_rain_e1_char = 0, kidx_po_rain_e2_char = 0, kidx_po_rain_w1_char = 0, kidx_po_rain_w2_char = 0, kidx_po_snow_char = 0, kidx_po_sand_char = 0; /* pseudo objects for graphical weather particles */
 byte kidx_po_rain_attr = 0, kidx_po_rain_e1_attr = 0, kidx_po_rain_e2_attr = 0, kidx_po_rain_w1_attr = 0, kidx_po_rain_w2_attr = 0, kidx_po_snow_attr = 0, kidx_po_sand_attr = 0; /* pseudo objects for graphical weather particles */
+char32_t kidx_po_d10f_tl = 0, kidx_po_d10f_t = 0, kidx_po_d10f_tr = 0, kidx_po_d10f_bl = 0, kidx_po_d10f_b = 0, kidx_po_d10f_br = 0;
 #endif
 #ifdef USE_SOUND_2010
 bool use_sound = TRUE, use_sound_org = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue
