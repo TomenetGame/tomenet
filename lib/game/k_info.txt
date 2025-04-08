@@ -6938,9 +6938,51 @@ A:127/0
 P:0:1d1:0:0:0
 F:EASY_KNOW
 
-#todo: fireworks tiles (eg: '|', '/', '\', '-', <explosion>, <rocket> perhaps, or whatever...)
+# d10 frame:
+N:833:Top left
+G:/:D
+I:125:36:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:834:Top
+G:_:D
+I:125:37:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:835:Top right
+G:\:D
+I:125:38:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:836:Bottom left
+G:\:D
+I:125:39:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:837:Bottom
+G:_:D
+I:125:40:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+N:838:Bottom right
+G:/:D
+I:125:41:0
+W:127:0:1:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
 
-# HOLE 823-838
+#todo: fireworks tiles (eg: '|', '/', '\', '-', <explosion>, <rocket> perhaps, or whatever...)
 
 ##### Keys #####
 

@@ -1393,6 +1393,14 @@ K:1057:/3433 # Die bottom left, dot middle
 K:1058:/3434 # Die bottom right, dot middle
 K:1059:/3435 # Die bottom right (no dot)
 
+# d10 frame
+K:833:/3436 # D10 top left
+K:834:/3437 # D10 top
+K:835:/3438 # D10 top right
+K:836:/3439 # D10 bottom left
+K:837:/3440 # D10 bottom
+K:838:/3441 # D10 bottom right
+
 # Cards colours
 K:829:/3414 # Clubs
 K:830:/3415 # Spades

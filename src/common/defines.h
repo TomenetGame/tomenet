@@ -4796,6 +4796,13 @@
 #define SV_PO_DIE_BlM	33
 #define SV_PO_DIE_BrM	34
 #define SV_PO_DIE_Br	35
+#define SV_PO_D10F_TL	36
+#define SV_PO_D10F_T	37
+#define SV_PO_D10F_TR	38
+#define SV_PO_D10F_BL	39
+#define SV_PO_D10F_B	40
+#define SV_PO_D10F_BR	41
+
 /* k_idx for TV_PSEUDO_OBJ -- for graphical tiles the svals actually don't matter, they are just defined for good measure but have no use;
    instead the k_idx values are used, especially client-side! */
 #define KIDX_PO_RAIN	822

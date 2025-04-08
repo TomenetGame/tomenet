@@ -439,6 +439,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 	connection_t *connp;
 	char32_t c_die[6 + 1], c_die_huge[6 + 1][2][2]; //huge die tile array layout: (x: left..right, y: top..bottom)
+	char32_t c_d10f[6]; //frame for any d10 die
 	//byte a_die[6 + 1];
 	bool custom_visuals = FALSE;
 	connp = Conn[p_ptr->conn];
@@ -516,6 +517,20 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_Br);
 		c_die_huge[2][1][1] = p_ptr->k_char[k_idx];
 
+		/* Generic D10 die frame*/
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_D10F_TL);
+		c_d10f[0] = p_ptr->k_char[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_D10F_T);
+		c_d10f[1] = p_ptr->k_char[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_D10F_TR);
+		c_d10f[2] = p_ptr->k_char[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_D10F_BL);
+		c_d10f[3] = p_ptr->k_char[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_D10F_B);
+		c_d10f[4] = p_ptr->k_char[k_idx];
+		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_D10F_BR);
+		c_d10f[5] = p_ptr->k_char[k_idx];
+
 		custom_visuals = TRUE;
 	}
 #endif
@@ -582,7 +597,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		choice = rand_int(10);
 
 		/* Create client-side animation */
-		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+		if (FALSE && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			Send_store_special_anim(Ind, 2, roll1, roll2, choice);
 		else {
 			//msg_print(Ind, "\377GIn Between");
@@ -592,21 +607,57 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "casino_inbetween", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
-			Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 8, TERM_L_DARK, "  _");
-			Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 8, TERM_L_DARK, " / \\");
-			Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 8, TERM_L_DARK, format("/ %1d \\", roll1));
-			Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 8, TERM_L_DARK, "\\___/");
+#ifdef CUSTOM_VISUALS
+ #ifdef GRAPHICS_BG_MASK
+			if (custom_visuals) {
+				Send_char_direct(Ind, DICE_X - 7, DICE_Y + 4, TERM_L_DARK, c_d10f[0], 0, 32);
+				Send_char_direct(Ind, DICE_X - 6, DICE_Y + 3, TERM_L_DARK, c_d10f[1], 0, 32);
+				Send_char_direct(Ind, DICE_X - 5, DICE_Y + 4, TERM_L_DARK, c_d10f[2], 0, 32);
+				Send_char_direct(Ind, DICE_X - 7, DICE_Y + 5, TERM_L_DARK, c_d10f[3], 0, 32);
+				Send_char_direct(Ind, DICE_X - 6, DICE_Y + 5, TERM_L_DARK, c_d10f[4], 0, 32);
+				Send_char_direct(Ind, DICE_X - 5, DICE_Y + 5, TERM_L_DARK, c_d10f[5], 0, 32);
 
-			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 4, TERM_L_DARK, " / \\");
-			Send_store_special_str(Ind, DICE_Y + 3, DICE_X + 4, TERM_L_DARK, " / \\");
-			Send_store_special_str(Ind, DICE_Y + 4, DICE_X + 4, TERM_L_DARK, format("/ %1d \\", roll2));
-			Send_store_special_str(Ind, DICE_Y + 5, DICE_X + 4, TERM_L_DARK, "\\___/");
+				Send_char_direct(Ind, DICE_X + 5, DICE_Y + 4, TERM_L_DARK, c_d10f[0], 0, 32);
+				Send_char_direct(Ind, DICE_X + 6, DICE_Y + 3, TERM_L_DARK, c_d10f[1], 0, 32);
+				Send_char_direct(Ind, DICE_X + 7, DICE_Y + 4, TERM_L_DARK, c_d10f[2], 0, 32);
+				Send_char_direct(Ind, DICE_X + 5, DICE_Y + 5, TERM_L_DARK, c_d10f[3], 0, 32);
+				Send_char_direct(Ind, DICE_X + 6, DICE_Y + 5, TERM_L_DARK, c_d10f[4], 0, 32);
+				Send_char_direct(Ind, DICE_X + 7, DICE_Y + 5, TERM_L_DARK, c_d10f[5], 0, 32);
 
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 2, TERM_RED, "  _");
-			Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 2, TERM_RED, " / \\");
-			Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 2, TERM_RED, format("/ %1d \\", choice));
-			Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 2, TERM_RED, "\\___/");
+				Send_char_direct(Ind, DICE_X - 1, DICE_Y + 8, TERM_RED, c_d10f[0], 0, 32);
+				Send_char_direct(Ind, DICE_X, DICE_Y + 7, TERM_RED, c_d10f[1], 0, 32);
+				Send_char_direct(Ind, DICE_X + 1, DICE_Y + 8, TERM_RED, c_d10f[2], 0, 32);
+				Send_char_direct(Ind, DICE_X - 1, DICE_Y + 9, TERM_RED, c_d10f[3], 0, 32);
+				Send_char_direct(Ind, DICE_X, DICE_Y + 9, TERM_RED, c_d10f[4], 0, 32);
+				Send_char_direct(Ind, DICE_X + 1, DICE_Y + 9, TERM_RED, c_d10f[5], 0, 32);
+
+				Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 6, TERM_L_DARK, format("%1d", roll1));
+				Send_store_special_str(Ind, DICE_Y + 4, DICE_X + 6, TERM_L_DARK, format("%1d", roll2));
+				Send_store_special_str(Ind, DICE_Y + 8, DICE_X, TERM_RED, format("%1d", choice));
+ #else
+				//Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, TERM_L_DARK, c_die[roll1]);
+				//Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, TERM_L_DARK, c_die[roll2]);
+ #endif
+			} else
+#endif
+			{
+				//Note: These are 10-sided dice, so CUSTOM_VISUALS is pointless as they will be a 'number' visually anyway instead of 'dots'
+				Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 8, TERM_L_DARK, "  _");
+				Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 8, TERM_L_DARK, " / \\");
+				Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 8, TERM_L_DARK, format("/ %1d \\", roll1));
+				Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 8, TERM_L_DARK, "\\___/");
+
+				Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 4, TERM_L_DARK, "  _");
+				Send_store_special_str(Ind, DICE_Y + 3, DICE_X + 4, TERM_L_DARK, " / \\");
+				Send_store_special_str(Ind, DICE_Y + 4, DICE_X + 4, TERM_L_DARK, format("/ %1d \\", roll2));
+				Send_store_special_str(Ind, DICE_Y + 5, DICE_X + 4, TERM_L_DARK, "\\___/");
+
+				Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 2, TERM_RED, "  _");
+				Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 2, TERM_RED, " / \\");
+				Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 2, TERM_RED, format("/ %1d \\", choice));
+				Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 2, TERM_RED, "\\___/");
+
+			}
 		}
 
 		if (((choice > roll1) && (choice < roll2)) ||
