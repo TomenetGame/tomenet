@@ -490,6 +490,20 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		scr_cc_back[x] = c_back;
 	}
 
+	/* If we draw over a tile that was previous printed here as ASCII instead of graphics,
+	   we need to take care of the background, as ASCII doesn't set that.
+	   This for example concerns town stores during rain
+	   (note that all weather particles draw with 0,0 for a_back,c_back). - C. Blue */
+	if (scr_cc_back[x] == 32//ASCII was drawn here?
+ #if 0 //actually the colour check can be removed as it doesn't matter (would even improve future compatibility if we ever print ASCII with coloured backgrounds)
+	     && !scr_aa_back[x]
+ #endif
+	     ) {
+		//replace the 'space (usually w/ colour 0]' ASCII background with graphical '(usually black, accordingly) box', so we can properly merge-draw on it
+		scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID_NC];
+		//(colour stays the same)
+	}
+
 	/* Check for new min/max row info */
 	if (y < Term->y1) Term->y1 = y;
 	if (y > Term->y2) Term->y2 = y;
