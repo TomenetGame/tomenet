@@ -733,6 +733,9 @@ char *roman_suffix(char* cname) {
 			maybe_prefix = FALSE; //irregular ;) simply as it's the highest roman number..
 			rome_prev = 1000;
 			break;
+		case '.':
+			// allow one optional final trailing dot
+			if (!*(p + 1)) continue;
 		default:
 			/* Other letters do not belong into roman numbers */
 			return(NULL);

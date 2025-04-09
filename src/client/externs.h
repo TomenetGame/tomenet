@@ -605,8 +605,8 @@ extern errr get_safe_file(char *buf, cptr file);
 extern void xhtml_screenshot(cptr name, byte redux);
 extern void save_auto_inscriptions(cptr name);
 extern void load_auto_inscriptions(cptr name);
-extern void save_birth_file(cptr name, bool touch);
-extern void load_birth_file(cptr name);
+extern void save_birth_file(cptr cname, bool touch);
+extern void load_birth_file(cptr cname);
 extern bool within_cmd_player;
 extern int within_cmd_player_ticks;
 extern bool jukebox_play_all, jukebox_play_all_done; //ENABLE_JUKEBOX

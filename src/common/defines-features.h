@@ -721,6 +721,10 @@
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
+/* When Highlighting/beeping when character name is mentioned in chat:
+   Recognize and ignore any roman number suffix attached to our 'real' character name? */
+#define CHARNAME_ROMAN
+
  /* Just for debugging - unbind savegames from accounts */
  #define IGNORE_SAVEGAME_MISMATCH
 
@@ -783,6 +787,11 @@
     from slate tone? */
  #define DISTINCT_DARK
 
+ /* When Highlighting/beeping when character name is mentioned in chat,
+   and now also used for reincarnation to detect similar charnames:
+   Recognize and ignore any roman number suffix attached to our 'real' character name? */
+ #define CHARNAME_ROMAN
+
  /* Remove some hard-coding in the client options */
  #define CO_BIGMAP			7
  #define CO_FONT_MAP_SOLID_WALLS	8
@@ -798,7 +807,7 @@
  /* Atmospheric login screens, with animation, sound and music? */
  #define ATMOSPHERIC_INTRO
 
-/* 4.6.2: Allow to retry login, for re-entering invalid account/character names or after death. */
+ /* 4.6.2: Allow to retry login, for re-entering invalid account/character names or after death. */
  #define RETRY_LOGIN
 
  /* Buffer guide in RAM, to reduce searching times (especially on Windows OS, not really bad on Linux) */

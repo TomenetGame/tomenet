@@ -47,10 +47,6 @@
 #define PANEL_Y	(SCREEN_PAD_TOP)
 
 
-/* When Highlighting/beeping when character name is mentioned in chat:
-   Recognize and ignore any roman number suffix attached to our 'real' character name? */
-#define CHARNAME_ROMAN
-
 
 /* Use Windows TEMP folder (acquired from environment variable) for pinging the servers in the meta server list.
    KEEP CONSISTENT WITH c-birth.c!

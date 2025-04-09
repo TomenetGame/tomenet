@@ -2561,12 +2561,24 @@ void load_auto_inscriptions(cptr name) {
 	}
 }
 
-/* Save Character-Birth file (*.dna) */
-void save_birth_file(cptr name, bool touch) {
+/* Save Character-Birth file (*.dna).
+ * 'touch': Keep saved values dna_sex (Sex/Body/Mode), dna_class, dna_race, dna_trait instead of updating them to newly chosen values.
+ */
+void save_birth_file(cptr cname, bool touch) {
 	FILE *fp;
 	char buf[1024];
 	char file_name[256];
 	int i;
+	char name[CNAME_LEN + 4];
+#ifdef CHARNAME_ROMAN
+	char *ptr;
+#endif
+
+	strcpy(name, cname);
+#ifdef CHARNAME_ROMAN
+	/* Ignore roman number at the end, for players who increment after each death :) */
+	if ((ptr = roman_suffix(name))) *(ptr - 1) = 0;
+#endif
 
 	strncpy(file_name, name, 249);
 	file_name[249] = '\0';
@@ -2621,22 +2633,32 @@ void save_birth_file(cptr name, bool touch) {
 }
 
 /* Load Character-Birth file (*.dna) */
-void load_birth_file(cptr name) {
+void load_birth_file(cptr cname) {
 	FILE *fp;
 	char buf[1024];
 	char file_name[256];
+	char name[CNAME_LEN + 4];
+#ifdef CHARNAME_ROMAN
+	char *ptr;
+#endif
 
 	int vm = 0, vi = 0, vp = 0;
 	char vt = '%', *p;
 	bool update = FALSE;
-
-	strncpy(file_name, name, 249);
-	file_name[249] = '\0';
 	int tmp, i, r;
 
 
 	/* Assume invalid until we completely loaded it successfully */
 	valid_dna = FALSE;
+
+	strcpy(name, cname);
+#ifdef CHARNAME_ROMAN
+	/* Ignore roman number at the end, for players who increment after each death :) */
+	if ((ptr = roman_suffix(name))) *(ptr - 1) = 0;
+#endif
+
+	strncpy(file_name, name, 249);
+	file_name[249] = '\0';
 
 	/* add '.dna' extension if not already existing */
 	if (strlen(name) > 4) {
