@@ -3586,6 +3586,10 @@ void client_init(char *argv1, bool skip) {
 	/* Set the "plog hook" */
 	if (!plog_aux) plog_aux = plog_hook;
 
+	/* Set this option's default value to TRUE while client is still 'uninitialized' in regards to loading any option settings,
+	   so screenshots taking in meta screen, login screen, account screen and character creation process use this desirable format: */
+	c_cfg.screenshot_format = TRUE;
+
 	/* Setup the file paths */
 	init_stuff();
 

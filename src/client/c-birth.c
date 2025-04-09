@@ -320,6 +320,7 @@ static bool choose_sex(void) {
 
 		if (!hazard) c = inkey();
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+		if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -468,6 +469,7 @@ race_redraw:
 		if (!hazard) c = inkey();
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+		if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -730,6 +732,7 @@ trait_redraw:
 		if (!hazard) c = inkey();
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+		if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -952,6 +955,7 @@ class_redraw:
 		if (!hazard) c = inkey();
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+		if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -1163,6 +1167,7 @@ static bool choose_stat_order(void) {
 
 					c = inkey();
 					if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+					if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 					if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -1455,6 +1460,7 @@ static bool choose_stat_order(void) {
 				} else break;
 			}
 			if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+			if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 			if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -1563,6 +1569,7 @@ static bool choose_mode(void) {
 			if (!hazard) c = inkey();
 
 			if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+			if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 			if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -1757,6 +1764,7 @@ static bool choose_mode(void) {
 		}
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+		if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -1908,6 +1916,7 @@ static bool choose_body_modification(void) {
 		if (!hazard) c = inkey();
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
+		if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return(FALSE);
 #endif
@@ -2312,7 +2321,8 @@ cstats:
 	put_str("Entering game...  [Hit any key]", 21, 1);
 
 	/* Wait for key */
-	inkey();
+	i = inkey();
+	if (i == KTRL('T')) xhtml_screenshot("screenshot????", FALSE); //xD
 
 	/* Clear */
 	clear_from(20);
