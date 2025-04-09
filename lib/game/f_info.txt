@@ -25,7 +25,7 @@ V:4.0.0
 # Note: For transparency of t_*.prf files loaded over existing floors etc, use special feat FEAT_ALPHA! (138 / 8A)
 
 N:0:nothing
-G: :w
+G: :d
 F:FLOOR
 
 # 0x01 --> open floor
@@ -174,8 +174,7 @@ F:WALL | NO_WALK | CAN_PASS | NOTICE | SUPPORT_LIGHT | PERMANENT
 
 # used for the wilderness border
 N:22:permanent wall
-#G: :w
-G: :w
+G: :d
 F:PERMANENT
 #added all of those flags to allow running wilderness transitions - C. Blue:
 #removed this one too and added a hack in run_step..  F:DONT_NOTICE_RUNNING
@@ -610,7 +609,7 @@ F:NO_SHADE
 #added to visually "blank" unused space on floors that are smaller than possible
 #N:79:permanent clear wall
 N:79:nothing
-G: :w
+G: :d
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | BOUNDARY | NO_ARTICLE
 
@@ -837,7 +836,7 @@ F:LOS | NO_WALK | DONT_NOTICE_RUNNING | PERMANENT | NO_ARTICLE
 D:0:Ohhh, it is *dark* and *deep*.
 
 N:108:bottomless abyss
-G: :w
+G: :d
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | BOUNDARY
 
@@ -911,7 +910,7 @@ F:NO_ARTICLE
 D:1:You cannot break down these bars.
 
 N:121:empty sky
-G: :w
+G: :d
 F:WALL | NO_WALK | LOS | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | BOUNDARY | NO_ARTICLE
 
