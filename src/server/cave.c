@@ -1791,13 +1791,6 @@ static bool monster_okay_no_mimic(int r_idx) {
 }
 
 /*
- * Hack -- Legal monster codes - and '@' to hallucinate another "player" instead
- */
-static cptr image_monster_hack = \
-//"@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-"@abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; //removed 'l', nonexistant monster letter
-
-/*
  * Mega-Hack -- Hallucinatory monster
  */
 static void image_monster(byte *ap, char32_t *cp, player_type *p_ptr) {
@@ -1817,13 +1810,6 @@ static void image_monster(byte *ap, char32_t *cp, player_type *p_ptr) {
 	/* Random color */
 	(*ap) = randint(15);
 }
-
-
-/*
- * Hack -- Legal object codes
- */
-static cptr image_object_hack = \
-"?/|\\\"!$()_-=[]{},~";
 
 /*
  * Mega-Hack -- Hallucinatory object
@@ -2231,11 +2217,22 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 	/* Multi-hued monster */
 	else if (r_ptr->flags1 & RF1_ATTR_MULTI) {
 		/* Is it a shapechanger? */
-		if (r_ptr->flags2 & RF2_SHAPECHANGER)	// TODO: Actually use real mappings (see image_monster(), image_object()) and _stick_ with a form at least for a bunch of turns!
-			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
-				 image_object_hack[randint(strlen(image_object_hack))]:
-				 image_monster_hack[randint(strlen(image_monster_hack))]);
-		else (*cp) = c;
+		if (r_ptr->flags2 & RF2_SHAPECHANGER) {
+			byte dummy;
+
+			Rand_value = m_ptr->name3; //fix RNG to this monster
+			Rand_quick = TRUE;
+
+#if 0 //0:only allow mimics to look like objects?
+			if (rand_int(25)) image_monster(&dummy, cp, p_ptr);
+			else image_object(&dummy, cp, p_ptr);
+#else
+			image_monster(&dummy, cp, p_ptr);
+#endif
+
+			Rand_quick = FALSE; //restore RNG
+			if (!rand_int(50)) m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+		} else (*cp) = c;
 
 		/* Multi-hued attr */
 		if (r_ptr->flags2 & (RF2_ATTR_ANY))
@@ -2290,10 +2287,22 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 		(*cp) = c;
 
 		/* Is it a non-colourchanging shapechanger? */
-		if (r_ptr->flags2 & RF2_SHAPECHANGER)	// TODO: Actually use real mappings (see image_monster(), image_object()) and _stick_ with a form at least for a bunch of turns!
-			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1 ?
-				 image_object_hack[randint(strlen(image_object_hack))]:
-				 image_monster_hack[randint(strlen(image_monster_hack))]);
+		if (r_ptr->flags2 & RF2_SHAPECHANGER) {
+			byte dummy;
+
+			Rand_value = m_ptr->name3; //fix RNG to this monster
+			Rand_quick = TRUE;
+
+#if 0 //0:only allow mimics to look like objects?
+			if (rand_int(25)) image_monster(&dummy, cp, p_ptr);
+			else image_object(&dummy, cp, p_ptr);
+#else
+			image_monster(&dummy, cp, p_ptr);
+#endif
+
+			Rand_quick = FALSE; //restore RNG
+			if (!rand_int(50)) m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+		}
 
 		/* Use attr */
 		(*ap) = a;
@@ -2318,12 +2327,22 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 			(*cp) = c;
 
 			/* Is it a non-colourchanging shapechanger? */
-			if (r_ptr->flags2 & RF2_SHAPECHANGER) {		// TODO: Actually use real mappings (see image_monster(), image_object()) and _stick_ with a form at least for a bunch of turns!
-				(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
-					 image_object_hack[randint(strlen(image_object_hack))]:
-					 image_monster_hack[randint(strlen(image_monster_hack))]);
-			}
+			if (r_ptr->flags2 & RF2_SHAPECHANGER) {
+				byte dummy;
 
+				Rand_value = m_ptr->name3; //fix RNG to this monster
+				Rand_quick = TRUE;
+
+#if 0 //0:only allow mimics to look like objects?
+				if (rand_int(25)) image_monster(&dummy, cp, p_ptr);
+				else image_object(&dummy, cp, p_ptr);
+#else
+				image_monster(&dummy, cp, p_ptr);
+#endif
+
+				Rand_quick = FALSE; //restore RNG
+				if (!rand_int(50)) m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+			}
 		}
 		/* Normal (non-clear attr) monster */
 		else if (!(r_ptr->flags1 & RF1_ATTR_CLEAR)) (*ap) = a;

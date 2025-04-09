@@ -3531,6 +3531,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 //	m_ptr->name3 = randuni;
 #endif	// RANDUNIS
 
+	/* Shapechanger get a seed that keeps their form [semi] permanent */
+	if (race_inf(m_ptr)->flags2 & RF2_SHAPECHANGER) m_ptr->name3 = rand_int(100000000);
+
 	/* Place the monster at the location */
 	m_ptr->fy = y;
 	m_ptr->fx = x;
