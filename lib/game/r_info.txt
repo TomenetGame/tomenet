@@ -2367,7 +2367,7 @@ B:HIT:HURT:1d4
 B:HIT:HURT:1d4
 F:EVIL | FRIENDS | DROP_60 | DROP_90 | DROP_SKELETON | DROP_CORPSE |
 F:OPEN_DOOR | MALE | WILD_TOO | WILD_WASTE | WILD_SWAMP |
-F:MORTAL | ZANGBAND | CAN_SWIM
+F:MORTAL | ZANGBAND | CAN_SWIM | ANIMAL
 D:A mutated rat-creature from the great waste, it is vaguely
 D:humanoid in appearance and walks on its hind legs. This race
 D:serves chaos fervently and is greatly feared by others.
@@ -3271,7 +3271,7 @@ B:HIT:HURT:1d7
 F:MALE | WILD_TOO | WILD_SWAMP | WILD_WASTE |
 F:FORCE_SLEEP | DROP_90 |
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE |
-F:EVIL | MORTAL | ZANGBAND
+F:EVIL | MORTAL | ZANGBAND | ANIMAL
 S:1_IN_8 |
 S:BLINK | CURSE | MISSILE | CONF | SCARE
 D:The shaman of a skaven tribe gets his powers from a mystic
