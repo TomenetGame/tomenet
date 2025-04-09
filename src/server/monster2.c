@@ -5433,7 +5433,7 @@ int race_index(char * name) {
 	return(0);
 }
 
-monster_race* r_info_get(monster_type *m_ptr) {
+monster_race* race_inf(monster_type *m_ptr) {
 	/* player golem or questor? */
 	if (m_ptr->special || m_ptr->questor) return(m_ptr->r_ptr);
 #ifdef RANDUNIS

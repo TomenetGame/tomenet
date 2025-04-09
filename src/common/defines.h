@@ -8325,8 +8325,6 @@ extern int PlayerUID;
 #define MONSTER_LEVEL_MAX	500
 #define MONSTER_TOO_WEAK	50
 #define MONSTER_EXP(level)	((((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * (((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * (((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * 9)
-/* R_INFO is obsolete; use race_inf instead.	- Jir -	*/
-#define R_INFO(m_ptr)		(r_info_get(m_ptr))
 
 /*
  * Golem defines
@@ -8361,12 +8359,6 @@ extern int PlayerUID;
 #define MEGO_SUB		1
 #define MEGO_FIX		2
 #define MEGO_PRC		3
-
-
-/* pfft */
-/* #define race_inf(m_ptr) (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3))
- */
-#define race_inf(m_ptr) r_info_get(m_ptr)
 
 /* wpos to old-fashioned wilderness 'height' */
 /* #define wild_idx(p_ptr) (p_ptr->wpos.wx+p_ptr->wpos.wy*MAX_WILD_X); */
