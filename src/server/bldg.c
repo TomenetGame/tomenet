@@ -2726,7 +2726,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 #ifdef ENABLE_GO_GAME
 				go_challenge(Ind);
 #else
-				Send_store_special_clr(Ind, 4, 18);
+				Send_store_special_clr(Ind, 3, 19);
 				Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Sorry, the Go board, bowls and stones were stolen by some unknown bastard!");
 				Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Unfortunately I cannot say yet when a replacement will arrive.");
 #endif

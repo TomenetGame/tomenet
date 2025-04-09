@@ -11846,7 +11846,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	case RID_GO:
 		if (p_ptr->store_num == -1) return; /* Discard if we left the building */
 		if (!cfr) {
-			Send_store_special_clr(Ind, 5, 18);
+			Send_store_special_clr(Ind, 5, 19);
 			Send_store_special_str(Ind, 8, 8, TERM_ORANGE, "Now you're chickening out huh!");
 			p_ptr->store_action = 0;
 			return;
