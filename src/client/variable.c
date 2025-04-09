@@ -220,6 +220,7 @@ bool bad_solid_mapping = FALSE;
 bool use_logfont = FALSE, use_logfont_ini;
 #endif
 byte use_graphics = FALSE, use_graphics_new = FALSE, use_graphics_err = 0;
+int override_graphics = -1; /* For '-a', '-g' and '-G' command-line parameters: These override the settings in the prf! */
 char use_graphics_errstr[MAX_CHARS_WIDE] = { 0 };
 #ifdef USE_GRAPHICS
 char graphic_tiles[256] = "16x24sv";

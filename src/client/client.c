@@ -1180,9 +1180,9 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "Failed to open tomenet.log for writing!\n");
 			}
 			break;
-		case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
-		case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
-		case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+		case 'a': override_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
+		case 'g': override_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
+		case 'G': override_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 		case 'T': disable_tile_cache = TRUE; break; //TILE_CACHE_SIZE
 		}
 
@@ -1192,6 +1192,8 @@ int main(int argc, char **argv) {
 			break;
 		}
 	}
+
+	if (override_graphics != -1) use_graphics_new = use_graphics = override_graphics;
 
 	if (disable_tile_cache) logprint("Graphics tiles cache disabled.\n");
 

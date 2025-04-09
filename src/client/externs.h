@@ -363,6 +363,7 @@ extern bool disable_numlock;
 extern bool use_logfont, use_logfont_ini;
 #endif
 extern byte use_graphics, use_graphics_new, use_graphics_err;
+extern int override_graphics;
 extern char use_graphics_errstr[MAX_CHARS_WIDE];
 #ifdef USE_GRAPHICS
 extern char graphic_tiles[256];

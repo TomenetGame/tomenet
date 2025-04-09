@@ -3813,6 +3813,8 @@ static void init_windows(void) {
 		strcpy(pass, tmppass);
 	} else load_prefs();
 
+	/* For '-a', '-g' and '-G' command-line parameters: These override the settings in the prf we just loaded! */
+	if (override_graphics != -1) use_graphics_new = use_graphics = override_graphics;
 
 	/* Need these before term_getsize gets called */
 	data[0].dwStyle = (WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU |
@@ -5520,9 +5522,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			case 'v': save_chat = 1; break;
 			case 'V': save_chat = 2; break;
 			case 'x': save_chat = 3; break;
-			case 'a': use_graphics_new = use_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
-			case 'g': use_graphics_new = use_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
-			case 'G': use_graphics_new = use_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+			case 'a': override_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
+			case 'g': override_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
+			case 'G': override_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
 #ifdef TILE_CACHE_SIZE
 			case 'T': disable_tile_cache = TRUE; break;
 #endif
