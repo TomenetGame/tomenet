@@ -5529,6 +5529,7 @@ void interact_macros(void) {
 
 			/* Default filename */
 			if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
+			/* Fall back to normal character name if not using any monster form */
 			else sprintf(tmp, "%s.prf", cname);
 
 			/* Ask for a file */
@@ -6493,8 +6494,7 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			sprintf(buf, "%s.prf", cname);
-			process_pref_file(buf);
+			load_charspec_macros(cname);
 
 			macro_processing_exclusive = FALSE;
 			c_msg_print("Reninitialized all macros, omitting 'global.prf'");
@@ -6547,12 +6547,11 @@ void interact_macros(void) {
 			}
 #if 0 /* skip exactly these here */
 			/* Access the "character" pref file */
-			sprintf(buf, "%s.prf", cname);
-			process_pref_file(buf);
+			load_charspec_macros(cname);
 #endif
 
 			macro_processing_exclusive = FALSE;
-			c_msg_format("Reninitialized all macros, omitting '%s.prf'", cname);
+			c_msg_format("Reninitialized all macros, omitting '%s*.prf", cname);
 		}
 
 		else if (i == 'B') {
@@ -6604,12 +6603,11 @@ void interact_macros(void) {
 			}
 #if 0 /* skip these here */
 			/* Access the "character" pref file */
-			sprintf(buf, "%s.prf", cname);
-			process_pref_file(buf);
+			load_charspec_macros(cname);
 #endif
 
 			macro_processing_exclusive = FALSE;
-			c_msg_format("Reninitialized all macros, omitting 'global.prf' and '%s.prf'", cname);
+			c_msg_format("Reninitialized all macros, omitting 'global.prf' and '%s*.prf'", cname);
 		}
 
 		else if (i == 'U') {
@@ -6659,13 +6657,13 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			sprintf(buf, "%s.prf", cname);
-			process_pref_file(buf);
+			load_charspec_macros(cname);
 #endif
 
 			macro_processing_exclusive = FALSE;
 			c_msg_print("Reninitialized all macros, omitting all auto-loaded prf-files:");
-			c_msg_format(" 'global.prf', '%s.prf', '%s.prf', '%s.prf, '%s.prf'", cname,
+			c_msg_format(" 'global.prf', '%s*.prf', '%s.prf', '%s.prf, '%s.prf'",
+			    cname,
 			    race < Setup.max_race ? race_info[race].title : "NO_RACE",
 			    trait < Setup.max_trait ? trait_info[trait].title : "NO_TRAIT",
 			    class < Setup.max_class ? class_info[class].title : "NO_CLASS");
@@ -6735,8 +6733,8 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			sprintf(buf, "%s.prf", cname);
-			process_pref_file(buf);
+			load_charspec_macros(cname);
+
 
 			macro_processing_exclusive = FALSE;
 			c_msg_print("Reninitialized all macros.");

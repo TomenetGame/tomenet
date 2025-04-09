@@ -315,9 +315,7 @@ void initialize_player_pref_files(void) {
 	}
 
 	/* Access the "character" pref file */
-	sprintf(buf, "%s.prf", cname);
-	/* Process that file */
-	process_pref_file(buf);
+	load_charspec_macros(cname);
 
 	/* Special hack: On ARCADE_SERVER, load special arcade macros! */
 	if (s_ARCADE) {

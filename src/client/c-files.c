@@ -1254,6 +1254,23 @@ errr process_pref_file_manual(cptr name) {
 	return(process_pref_file_aux(buf, name, FALSE));
 }
 
+/* Wrapper to try and load both, the character name based macros
+   and the character name + monster form specific macros (if form-specific macros are disabled). */
+errr load_charspec_macros(cptr cname) {
+	char tmp[MAX_CHARS];
+	errr error1;
+
+	sprintf(tmp, "%s.prf", cname);
+	error1 = process_pref_file(tmp);
+
+	if (c_cfg.load_form_macros && strcmp(c_p_ptr->body_name, "Player")) {
+
+		sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
+		(void)process_pref_file(tmp);
+	}
+
+	return(error1);
+}
 
 /*
  * Show the Message of the Day.
