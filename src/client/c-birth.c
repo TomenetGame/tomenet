@@ -2773,7 +2773,7 @@ bool get_server_name(void) {
 #endif
 			quit(NULL);
 			return(FALSE);
-		}
+		} else if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 
 		/* Index */
 		j = (islower(c) ? A2I(c) : -1);
