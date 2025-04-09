@@ -498,9 +498,9 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
  #endif
 	     ) {
 		//replace the 'space (usually w/ colour 0]' ASCII background with graphical '(usually black, accordingly) box', so we can properly merge-draw on it
-		scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID_NC];
+		scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID];
 		/* Colour should stay the same - however, we need to hack it for the case that we have an ASCII tile that has 'space' foreground, but non-black colour!
-		   In these cases the FEAT_SOLID_NC would obtain the foreground colour, thereby turning into a coloured 'pseudo-background' for our graphical foreground tile.
+		   In these cases the FEAT_SOLID would obtain the foreground colour, thereby turning into a coloured 'pseudo-background' for our graphical foreground tile.
 		   Another solution would be to change all 'clear' aka 'space' feats in f_info to use 'd' (TERM_DARK) colour, which is probably the better solution than setting a_back to TERM_DARK here.
 		   ---
 		   BOTH SOLUTIONS have been implemented now ie the blank feats in f_info.txt had their colour changed to 'd',
