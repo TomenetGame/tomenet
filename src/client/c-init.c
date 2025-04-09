@@ -4452,7 +4452,11 @@ void ask_for_graphics_generic(void) {
 				if (ch == 'y' || ch == 'Y') {
 					my_memfrob(pass, strlen(pass));
 					/* Specifying the -a/-g parameter will prevent the new instance from asking us again: */
+ #ifdef WINDOWS
+					char *args[] = { "TomeNET.exe", "-g", format("-l%s", nick), pass, server_name, NULL };
+ #else
 					char *args[] = { "tomenet", "-g", format("-l%s", nick), pass, server_name, NULL };
+ #endif
 
 					Term_putstr(8, 10, -1, TERM_GREEN, "Switching to graphics mode...");
 					execv(argv0, args);
