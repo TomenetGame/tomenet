@@ -1784,6 +1784,9 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 	return(TRUE);
 }
 
+/* Hack -- Legal monster codes and object codes for rapid character alternation (RF7_VORTEX?) */
+//static cptr flicker_monster_vis = "abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; //no '@', no 'l'
+//static cptr flicker_object_vis = "?/|\\\"!$()_-=[]{},~";
 
 static bool monster_okay_no_shapechanger(int r_idx) {
 	if (r_info[r_idx].flags9 & RF9_MIMIC) return(FALSE);
