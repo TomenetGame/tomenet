@@ -1790,7 +1790,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 
 static bool monster_okay_no_shapechanger(int r_idx) {
 	if (r_info[r_idx].flags9 & RF9_MIMIC) return(FALSE);
-	if (r_info[r_idx].flags9 & RF2_SHAPECHANGER) return(FALSE);
+	if (r_info[r_idx].flags2 & RF2_SHAPECHANGER) return(FALSE);
 	return(TRUE);
 }
 
