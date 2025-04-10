@@ -2239,7 +2239,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 #endif
 
 			Rand_quick = FALSE; //restore RNG
-			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 50))
+			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 30))
 				m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
 		} else (*cp) = c;
 
@@ -2310,7 +2310,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 #endif
 
 			Rand_quick = FALSE; //restore RNG
-			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 50))
+			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 30))
 				m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
 		}
 
@@ -2351,7 +2351,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 #endif
 
 				Rand_quick = FALSE; //restore RNG
-				if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 50))
+				if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 30))
 					m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
 			}
 		}
