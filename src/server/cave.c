@@ -1785,8 +1785,9 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 }
 
 
-static bool monster_okay_no_mimic(int r_idx) {
+static bool monster_okay_no_shapechanger(int r_idx) {
 	if (r_info[r_idx].flags9 & RF9_MIMIC) return(FALSE);
+	if (r_info[r_idx].flags9 & RF2_SHAPECHANGER) return(FALSE);
 	return(TRUE);
 }
 
@@ -1796,7 +1797,9 @@ static bool monster_okay_no_mimic(int r_idx) {
 static void image_monster(byte *ap, char32_t *cp, player_type *p_ptr) {
 	int n, image = p_ptr->image;
 
-	get_mon_num_hook = monster_okay_no_mimic;
+	//no recursion! Would crash for RF9_SHAPECHANGER as we don't give an m_ptr to get_monster_visual().
+	get_mon_num_hook = monster_okay_no_shapechanger;
+
 	get_mon_num_prep(0, NULL);
 	n = get_mon_num(127, 127);
 	//get_mon_num_hook = dungeon_aux;
