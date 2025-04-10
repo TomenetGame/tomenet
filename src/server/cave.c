@@ -1791,6 +1791,8 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 static bool monster_okay_no_shapechanger(int r_idx) {
 	if (r_info[r_idx].flags9 & RF9_MIMIC) return(FALSE);
 	if (r_info[r_idx].flags2 & RF2_SHAPECHANGER) return(FALSE);
+	/* Hm, no 'invisible' form? */
+	if (r_info[r_idx].flags1 & RF1_CHAR_CLEAR) return(FALSE);
 	return(TRUE);
 }
 
@@ -2237,7 +2239,8 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 #endif
 
 			Rand_quick = FALSE; //restore RNG
-			if (!rand_int(50)) m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 50))
+				m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
 		} else (*cp) = c;
 
 		/* Multi-hued attr */
@@ -2307,7 +2310,8 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 #endif
 
 			Rand_quick = FALSE; //restore RNG
-			if (!rand_int(50)) m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 50))
+				m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
 		}
 
 		/* Use attr */
@@ -2347,7 +2351,8 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 #endif
 
 				Rand_quick = FALSE; //restore RNG
-				if (!rand_int(50)) m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+				if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 50))
+					m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
 			}
 		}
 		/* Normal (non-clear attr) monster */

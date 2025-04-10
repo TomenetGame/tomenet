@@ -6205,7 +6205,7 @@
 #define RF1_MALE			0x00000004U	/* Male gender */
 #define RF1_FEMALE			0x00000008U	/* Female gender */
 #define RF1_CHAR_CLEAR		0x00000010U	/* Absorbs symbol */
-#define RF1_CHAR_MULTI		0x00000020U	/* Changes symbol */
+#define RF1_CHAR_MULTI		0x00000020U	/* Changes symbol -- no effect and unused in the code, use RF2_SHAPECHANGER instead */
 #define RF1_ATTR_CLEAR		0x00000040U	/* Absorbs color */
 #define RF1_ATTR_MULTI		0x00000080U	/* Changes color depending on breaths */
 #define RF1_FORCE_DEPTH			0x00000100U	/* Start at "correct" depth */
