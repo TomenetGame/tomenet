@@ -492,8 +492,12 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   we need to take care of the background, as ASCII doesn't set that.
 	   This for example concerns town stores during rain
 	   (note that all weather particles draw with 0,0 for a_back,c_back). - C. Blue */
-	if (scr_cc_back[x] == 32//ASCII was drawn here?
- #if 0 //actually the colour check can be removed as it doesn't matter (would even improve future compatibility if we ever print ASCII with coloured backgrounds)
+	if ((scr_cc_back[x] == 32 // <- ASCII was drawn here?
+	    /* Rare special case: Even if background contains graphics (because we are in 2mask-mode)
+	       we were fed ASCII in the foreground w/o overriding the graphical background.
+	       This should only ever happen if we're receiving visual info from an ASCII client while locally drawing 2mask-mode, ie weather particles: */
+	    || scr_cc[x] < 256)
+ #if 0 //actually this colour check can be removed as it doesn't matter (would even improve future compatibility if we ever print ASCII with coloured backgrounds)
 	     && !scr_aa_back[x]
  #endif
 	     ) {
