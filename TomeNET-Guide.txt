@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. April 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 11. April 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9812,35 +9812,35 @@ together with any other floor feelings): "You feel a commanding presence.."
 Here is a list of all dungeon bosses and the artifacts they are guarding:
 (Some names have been shortened to fit.)
 
-Dungeon, sorted by depth     |          Boss         | Artifact (or extra loot)
------------------------------+-----------------------+-------------------------
-The Training Tower    (A)    |  -                    | -
-Barrow-Downs                 |  Wight-King           | Stone of Lore
-Mordor                       |  -                    | -
-The Paths of the Dead        |  Feagwath             | Doomcaller
-Angband                      |  -  (B)               | -
-------Non-town dungeons------+-----------------------+-------------------------
-Death Fate                   |  -                    | -
-The Halls of Mandos   (C)    |  -                    | -
-The Orc Cave                 |  Azog                 | -
-Mirkwood                     |  Saenathra            | - (A random chest)
-The Old Forest               |  Old Man Willow       | Boomerang of Beor
-The Helcaraxe                |  White Balrog         | Pike 'Til-i-arc'
-The Sandworm lair            |  Sandworm Queen       | Armour of the Sandworm
-The Heart of the Earth       |  Golgarach            | Space-time Anchor  (D)
-The Maze                     |  Minotaur             | Helm of Hammerhand
-Cirith Ungol                 |  Shelob               | Smallsword 'Sting'
-The Land of Rhun             |  Ulfang the Black     | Sabre 'Careth Asdriag'
-Moria                        |  Balrog of Moria      | Quarterstaff 'Ruyi Bang'
-The Small Water Cave         |  Watcher in the Water | Trident of Wrath
-Submerged Ruins              |  Ar-Pharazon          | Amulet 'Toris Mejistos'
-The Illusory Castle          |  King in Yellow       | Helm of Knowledge
-The Sacred Land of Mountains |  T'ron  (level 72!)   | Coat of T'ron
-Erebor                       |  Smaug                | Arkenstone of Thrain
-Dol Guldur            (E)    |  Shadow of Dol Guldur | Ring of Durin
-Mount Doom            (E)    |  Sauron, the Sorceror | -
-The Cloud Planes             |  The Living Lightning | - (Lightning items)
-Nether Realm                 |  Zu-Aon  (F)          | Ring of Phasing
+Dungeon, sorted by depth      |         Boss         | Artifact (or extra loot)
+------------------------------+----------------------+-------------------------
+The Training Tower    (A)     | -                    | -
+Barrow-Downs                  | Wight-King           | Stone of Lore
+Mordor                        | -                    | -
+The Paths of the Dead         | Feagwath             | Doomcaller
+Angband                       | -  (B)               | -
+------Non-town dungeons-------+----------------------+-------------------------
+Death Fate                    | -                    | -
+The Halls of Mandos   (C)     | -                    | -
+The Orc Cave                  | Azog                 | -
+Mirkwood                      | Saenathra            | - (A random chest)
+The Old Forest                | Old Man Willow       | Boomerang of Beor
+The Helcaraxe                 | White Balrog         | Pike 'Til-i-arc'
+The Sandworm Lair             | Sandworm Queen       | Armour of the Sandworm
+The Heart of the Earth        | Golgarach            | Space-time Anchor  (D)
+The Maze                      | Minotaur             | Helm of Hammerhand
+Cirith Ungol                  | Shelob               | Smallsword 'Sting'
+The Land of Rhun              | Ulfang the Black     | Sabre 'Careth Asdriag'
+The Mines of Moria            | Balrog of Moria      | Quarterstaff 'Ruyi Bang'
+The Small Water Cave          | Watcher in the Water | Trident of Wrath
+Submerged Ruins               | Ar-Pharazon          | Amulet 'Toris Mejistos'
+The Illusory Castle           | King in Yellow       | Helm of Knowledge
+The Sacred Land of Mountains  | T'ron  (level 72!)   | Coat of T'ron
+Erebor                        | Smaug                | Arkenstone of Thrain
+Dol Guldur            (E)     | Shadow of Dol Guldur | Ring of Durin
+Mount Doom            (E)     | Sauron, the Sorceror | -
+The Cloud Planes              | The Living Lightning | - (Lightning items)
+Nether Realm                  | Zu-Aon  (F)          | Ring of Phasing
 
 (A) In the Training Tower, you cannot die for real (except for PvP mode chars).
 

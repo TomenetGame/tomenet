@@ -3903,7 +3903,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (my_strcasestr(buf, "Land")) find++;
 				if (my_strcasestr(buf, "Mou")) find++;
 				if (find >= 2 || !strcasecmp(buf, "slom")) {
-					strcpy(chapter, "The Sacred Land of Mountains   ");
+					strcpy(chapter, "The Sacred Land of Mountains  ");
 					continue;
 				}
 				if (my_strcasestr(buf, "Ereb")) {
