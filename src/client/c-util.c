@@ -5359,6 +5359,7 @@ void interact_macros(void) {
 	static int filesets_found = 0;
 	static int fileset_selected = -1, fileset_stage_selected = -1;
 	static macro_fileset_type fileset[MACROFILESETS_MAX] = { 0 };
+	static bool rescan = TRUE;
 #endif
 
 
@@ -8165,140 +8166,219 @@ Chain_Macro:
  #endif
 						char cwd[1024];
 
-						/* Init filesets */
-						for (k = 0; k < MACROFILESETS_MAX; k++) fileset[k].stages = 0;
 
-						/* Auto-scan for all currently loaded (ie are referenced in our currently active macros) filesets */
-						k = 0;
-						m = -1;
-						while (TRUE) {
-							while (++m < macro__num) {
-								style_cyclic = style_free = FALSE;
+						if (rescan) {
+							/* Init filesets - fileset[] already gets zero-initialized */
+							for (k = 0; k < MACROFILESETS_MAX; k++) fileset[k].stages = 0;
 
-								/* Get macro in parsable format */
-								strncpy(buf_act, macro__act[m], 159);
-								buf_act[159] = '\0';
-								ascii_to_text(buftxt_act, buf_act);
+							/* Auto-scan for all currently loaded (ie are referenced in our currently active macros) filesets */
+							k = 0;
+							m = -1;
+							while (TRUE) {
+								while (++m < macro__num) {
+									style_cyclic = style_free = FALSE;
 
-								/* Scan macro for marker text, indicating that it's a set-switch */
-								// (note: MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset")
-								// (note: MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset")
-								if ((cc = strstr(buftxt_act, MACROFILESET_MARKER_CYCLIC))) style_cyclic = TRUE;
-								if ((cf = strstr(buftxt_act, MACROFILESET_MARKER_SWITCH))) style_free = TRUE;
+									/* Get macro in parsable format */
+									strncpy(buf_act, macro__act[m], 159);
+									buf_act[159] = '\0';
+									ascii_to_text(buftxt_act, buf_act);
 
-								if (!style_cyclic && !style_free) continue;
+									/* Scan macro for marker text, indicating that it's a set-switch */
+									// (note: MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset")
+									// (note: MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset")
+									if ((cc = strstr(buftxt_act, MACROFILESET_MARKER_CYCLIC))) style_cyclic = TRUE;
+									if ((cf = strstr(buftxt_act, MACROFILESET_MARKER_SWITCH))) style_free = TRUE;
 
-								/* Found one! */
+									if (!style_cyclic && !style_free) continue;
 
-								/* Determine base filename from the action text : %lFILENAME\r\e */
-								cfile = strstr(buftxt_act, "%l");
-								if (!cfile) continue; //broken set-switching macro (not following our known scheme)
-								strcpy(buf_basename, cfile + 2);
-								/* Find end of filename */
-								cfile = strstr(buf_basename, "\\r\\e");
-								if (!cfile) continue; //broken set-switching macro (not following our known scheme)
-								*cfile = 0;
-								/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
-								   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
-								/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
-								   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
-								   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
-								if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
+									/* Found one! */
 
-								//TODO: Extract 'stage_comment' (eg 'water/cold spells' that is part of the switching-message)
+									/* Determine base filename from the action text : %lFILENAME\r\e */
+									cfile = strstr(buftxt_act, "%l");
+									if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+									strcpy(buf_basename, cfile + 2);
+									/* Find end of filename */
+									cfile = strstr(buf_basename, "\\r\\e");
+									if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+									*cfile = 0;
+									/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
+									   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
+									/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
+									   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+									   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
+									if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
 
-								/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
+									//TODO: Extract 'stage_comment' (eg 'water/cold spells' that is part of the switching-message)
 
-								if (k >= MACROFILESETS_MAX) {
-									/* Too many macro sets! */
-									c_msg_format("\377yWarning: Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
-									continue;
+									/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
+
+									if (k >= MACROFILESETS_MAX) {
+										/* Too many macro sets! */
+										c_msg_format("\377yWarning: Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
+										continue;
+									}
+
+									/* Finalize stage index */
+									stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
+									/* Finalize base filename */
+									buf_basename[strlen(buf_basename) - 8] = 0;
+
+									/* Too many stages? */
+									if (stage >= MACROFILESETS_STAGES_MAX) {
+										c_msg_format("\377yWarning: Discarding excess stage %d for macroset '%s' (max %d).", stage + 1, buf_basename, MACROFILESETS_STAGES_MAX);
+										continue;
+									} else if (stage < 0) {
+										c_msg_format("\377yWarning: Discarding invalid stage %d for macroset '%s' (stages must start at 1).", stage + 1, buf_basename);
+										continue;
+									}
+
+									/* Scan already known filesets for same basename,
+									to either add the found key to an existing one or add a new fileset */
+									for (f = 0; f < k; f++) {
+										if (strcmp(fileset[f].basefilename, buf_basename)) continue;
+
+										/* Found set! */
+
+										/* New maximum stage registered? Then update # of stages. */
+										if (stage >= fileset[f].stages) fileset[f].stages = stage + 1;
+
+										/* Add stage to this already known set */
+										break;
+									}
+
+									/* No known fileset of this basename found? Register a new set. */
+									if (f == k) {
+										fileset[k].style_cyclic = style_cyclic;
+										fileset[k].style_free = style_free;
+
+										fileset[k].stages = stage + 1; // We have at least this many stages, apparently
+										strcpy(fileset[k].basefilename, buf_basename);
+
+										/* Init cycle keys */
+										fileset[k].macro__pat__cycle[0] = 0;
+										fileset[k].macro__patbuf__cycle[0] = 0;
+
+										/* One more registered macroset */
+										k++;
+									} else k = f; //unify, for subsequent code:
+
+									/* Get trigger in parsable format */
+									strncpy(buf_pat, macro__pat[m], 31);
+									buf_pat[31] = '\0';
+									ascii_to_text(buftxt_pat, buf_pat);
+
+									/* Init switch keys */
+									fileset[k].macro__pat__switch[stage][0] = 0;
+									fileset[k].macro__patbuf__switch[stage][0] = 0;
+									fileset[k].macro__act__switch[stage][0] = 0;
+									fileset[k].macro__actbuf__switch[stage][0] = 0;
+									/* Macro-set specific: */
+									if (style_cyclic) {
+										strcpy(fileset[k].macro__pat__cycle, buf_pat);
+										strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
+									}
+									/* Macro-set-stage specific: */
+									if (style_free) {
+										strcpy(fileset[k].macro__pat__switch[stage], buf_pat);
+										strcpy(fileset[k].macro__patbuf__switch[stage], buftxt_pat);
+										strcpy(fileset[k].macro__act__switch[stage], buf_act);
+										strcpy(fileset[k].macro__actbuf__switch[stage], buftxt_act);
+									}
+
+									/* Continue scanning keys for switch-macros */
 								}
-
-								/* Finalize stage index */
-								stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
-								/* Finalize base filename */
-								buf_basename[strlen(buf_basename) - 8] = 0;
-
-								/* Too many stages? */
-								if (stage >= MACROFILESETS_STAGES_MAX) {
-									c_msg_format("\377yWarning: Discarding excess stage %d for macroset '%s' (max %d).", stage + 1, buf_basename, MACROFILESETS_STAGES_MAX);
-									continue;
-								} else if (stage < 0) {
-									c_msg_format("\377yWarning: Discarding invalid stage %d for macroset '%s' (stages must start at 1).", stage + 1, buf_basename);
-									continue;
-								}
-
-								/* Scan already known filesets for same basename,
-								to either add the found key to an existing one or add a new fileset */
-								for (f = 0; f < k; f++) {
-									if (strcmp(fileset[f].basefilename, buf_basename)) continue;
-
-									/* Found set! */
-
-									/* New maximum stage registered? Then update # of stages. */
-									if (stage >= fileset[f].stages) fileset[f].stages = stage + 1;
-
-									/* Add stage to this already known set */
-									break;
-								}
-
-								/* No known fileset of this basename found? Register a new set. */
-								if (f == k) {
-									fileset[k].style_cyclic = style_cyclic;
-									fileset[k].style_free = style_free;
-
-									fileset[k].stages = stage + 1; // We have at least this many stages, apparently
-									strcpy(fileset[k].basefilename, buf_basename);
-
-									/* Init cycle keys */
-									fileset[k].macro__pat__cycle[0] = 0;
-									fileset[k].macro__patbuf__cycle[0] = 0;
-
-									/* One more registered macroset */
-									k++;
-								} else k = f; //unify, for subsequent code:
-
-								/* Get trigger in parsable format */
-								strncpy(buf_pat, macro__pat[m], 31);
-								buf_pat[31] = '\0';
-								ascii_to_text(buftxt_pat, buf_pat);
-
-								/* Init switch keys */
-								fileset[k].macro__pat__switch[stage][0] = 0;
-								fileset[k].macro__patbuf__switch[stage][0] = 0;
-								fileset[k].macro__act__switch[stage][0] = 0;
-								fileset[k].macro__actbuf__switch[stage][0] = 0;
-								/* Macro-set specific: */
-								if (style_cyclic) {
-									strcpy(fileset[k].macro__pat__cycle, buf_pat);
-									strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
-								}
-								/* Macro-set-stage specific: */
-								if (style_free) {
-									strcpy(fileset[k].macro__pat__switch[stage], buf_pat);
-									strcpy(fileset[k].macro__patbuf__switch[stage], buftxt_pat);
-									strcpy(fileset[k].macro__act__switch[stage], buf_act);
-									strcpy(fileset[k].macro__actbuf__switch[stage], buftxt_act);
-								}
-
-								/* Continue scanning keys for switch-macros */
+								/* Scanned the last one of all loaded macros? We're done. */
+								if (m >= macro__num - 1) break;
 							}
-							/* Scanned the last one of all loaded macros? We're done. */
-							if (m >= macro__num - 1) break;
-						}
-						filesets_found = k;
+							filesets_found = k;
 
-						/* Disk operations: Read macro files from TomeNET's user folder */
-						getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
-						chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
+							/* Disk operations: Read macro files from TomeNET's user folder */
+							getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
+							chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
 
-						/* For cyclic sets: These don't have keys to switch to each stage, but only 1 key that switches to the next stage.
-						   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
-						   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
-						for (k = 0; k < filesets_found; k++) {
+							/* For cyclic sets: These don't have keys to switch to each stage, but only 1 key that switches to the next stage.
+							   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
+							   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
+							for (k = 0; k < filesets_found; k++) {
  #ifndef WINDOWS
-							glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &glob_res);
+								glob(format("%s-FS*.prf", fileset[k].basefilename), 0, 0, &glob_res);
+								glob_size = glob_res.gl_pathc;
+								if (glob_size < 1) { /* No macro files found at all, ew. */
+									/* -- this warning is redundant with 'has no stage file(s)' warning further down ---
+									c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
+									c_msg_format("\377y         but there were no macro files \"%s-FS*.prf\" found of that name!", fileset[k].basefilename);
+									*/
+								} else { /* Found 'n' macro files */
+									for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
+										/* Extract stage number */
+										f = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
+										if (f >= MACROFILESETS_STAGES_MAX) {
+											c_msg_format("\377yWarning: Discarding excess stage file %d (maximum stage is %d)", f + 1, MACROFILESETS_STAGES_MAX);
+											c_msg_format("\377y         for macroset '%s'.", buf_basename);
+											continue;
+										} else if (f < 0) {
+											c_msg_format("\377yWarning: Discarding invalid stage file %d (stages must start at 1)", f + 1);
+											c_msg_format("\377y         for macroset '%s'.", buf_basename);
+											continue;
+										}
+
+										/* Register that there is an existing file to back up this stage's existance */
+										fileset[k].stage_file_exists[f] = TRUE;
+
+										/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
+										if (f >= fileset[k].stages) fileset[k].stages = f + 1;
+									}
+								}
+								globfree(&glob_res);
+ #else
+								//todo: implement above POSIX stuff here for WINDOWS
+								WIN32_FIND_DATA FindFileData;
+								HANDLE hFind;
+
+								hFind = FindFirstFile(format("%s-FS*.prf", fileset[k].basefilename), &FindFileData);
+								if (hFind == INVALID_HANDLE_VALUE) {
+									printf("FindFirstFile failed (%ld)\n", GetLastError());
+									return;
+								} else {
+									printf("The first file found is %s\n", FindFileData.cFileName);
+									FindClose(hFind);
+								}
+ #endif
+								/* Check whether macro files for all/some stages are missing */
+								n = 0;
+								for (f = 0; f < fileset[k].stages; f++) {
+									if (fileset[k].stage_file_exists[f]) n++;
+									else stage = f;
+								}
+								if (n != fileset[k].stages) {
+									if (!n) {
+										if (fileset[k].stages == 1)
+											c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no file.", buf_basename);
+										else
+ #if 0
+											c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for any stage.",
+											    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+ #else /* Save screen space, shorter message */
+											c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files.",
+											    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+ #endif
+									} else if (n == fileset[k].stages - 1)
+										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no file for stage %d.",
+										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
+									else {
+										tmpbuf[0] = 0;
+										for (f = 0; f < fileset[k].stages; f++)
+											if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
+										tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
+										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for stages %s.",
+										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
+									}
+								}
+							}
+
+							//Now also scan user folder for any macro sets that aren't referenced by our currently loaded macros
+ #ifndef WINDOWS
+							glob("*-FS*.prf", 0, 0, &glob_res);
 							glob_size = glob_res.gl_pathc;
 							if (glob_size < 1) { /* No macro files found at all, ew. */
 								/* -- this warning is redundant with 'has no stage file(s)' warning further down ---
@@ -8307,6 +8387,11 @@ Chain_Macro:
 								*/
 							} else { /* Found 'n' macro files */
 								for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
+									//...implement
+  #if 0 //copypaste
+									for (k = 0; k < filesets_found; k++) {
+									// format("%s-FS*.prf", fileset[k].basefilename
+
 									/* Extract stage number */
 									f = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
 									if (f >= MACROFILESETS_STAGES_MAX) {
@@ -8324,6 +8409,7 @@ Chain_Macro:
 
 									/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
 									if (f >= fileset[k].stages) fileset[k].stages = f + 1;
+  #endif
 								}
 							}
 							globfree(&glob_res);
@@ -8332,7 +8418,7 @@ Chain_Macro:
 							WIN32_FIND_DATA FindFileData;
 							HANDLE hFind;
 
-							hFind = FindFirstFile(format("%s-FS*.prf", fileset[k].basefilename), &FindFileData);
+							hFind = FindFirstFile("*-FS*.prf", &FindFileData);
 							if (hFind == INVALID_HANDLE_VALUE) {
 								printf("FindFirstFile failed (%ld)\n", GetLastError());
 								return;
@@ -8341,91 +8427,10 @@ Chain_Macro:
 								FindClose(hFind);
 							}
  #endif
-							/* Check whether macro files for all/some stages are missing */
-							n = 0;
-							for (f = 0; f < fileset[k].stages; f++) {
-								if (fileset[k].stage_file_exists[f]) n++;
-								else stage = f;
-							}
-							if (n != fileset[k].stages) {
-								if (!n) {
-									if (fileset[k].stages == 1)
-										c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no file.", buf_basename);
-									else
- #if 0
-										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for any stage.",
-										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
- #else /* Save screen space, shorter message */
-										c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files.",
-										    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
- #endif
-								} else if (n == fileset[k].stages - 1)
-									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no file for stage %d.",
-									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
-								else {
-									tmpbuf[0] = 0;
-									for (f = 0; f < fileset[k].stages; f++)
-										if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
-									tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
-									c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for stages %s.",
-									    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
-								}
-							}
+							/* End of 'user' folder disk operations */
+							chdir(cwd); //Return to TomeNET working directory
 						}
 
-						//Now also scan user folder for any macro sets that aren't referenced by our currently loaded macros
- #ifndef WINDOWS
-						glob("*-FS*.prf", 0, 0, &glob_res);
-						glob_size = glob_res.gl_pathc;
-						if (glob_size < 1) { /* No macro files found at all, ew. */
-							/* -- this warning is redundant with 'has no stage file(s)' warning further down ---
-							c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
-							c_msg_format("\377y         but there were no macro files \"%s-FS*.prf\" found of that name!", fileset[k].basefilename);
-							*/
-						} else { /* Found 'n' macro files */
-							for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
-								//...implement
-  #if 0 //copypaste
-								for (k = 0; k < filesets_found; k++) {
-								// format("%s-FS*.prf", fileset[k].basefilename
-
-								/* Extract stage number */
-								f = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
-								if (f >= MACROFILESETS_STAGES_MAX) {
-									c_msg_format("\377yWarning: Discarding excess stage file %d (maximum stage is %d)", f + 1, MACROFILESETS_STAGES_MAX);
-									c_msg_format("\377y         for macroset '%s'.", buf_basename);
-									continue;
-								} else if (f < 0) {
-									c_msg_format("\377yWarning: Discarding invalid stage file %d (stages must start at 1)", f + 1);
-									c_msg_format("\377y         for macroset '%s'.", buf_basename);
-									continue;
-								}
-
-								/* Register that there is an existing file to back up this stage's existance */
-								fileset[k].stage_file_exists[f] = TRUE;
-
-								/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
-								if (f >= fileset[k].stages) fileset[k].stages = f + 1;
-  #endif
-							}
-						}
-						globfree(&glob_res);
- #else
-						//todo: implement above POSIX stuff here for WINDOWS
-						WIN32_FIND_DATA FindFileData;
-						HANDLE hFind;
-
-						hFind = FindFirstFile("*-FS*.prf", &FindFileData);
-						if (hFind == INVALID_HANDLE_VALUE) {
-							printf("FindFirstFile failed (%ld)\n", GetLastError());
-							return;
-						} else {
-							printf("The first file found is %s\n", FindFileData.cFileName);
-							FindClose(hFind);
-						}
- #endif
-						/* End of 'user' folder disk operations */
-						chdir(cwd); //Return to TomeNET working directory
 
 						while (TRUE) {
 							ok_new_set = (filesets_found < MACROFILESETS_MAX);
