@@ -6882,7 +6882,7 @@ void calc_boni(int Ind) {
 	/* Admin-specific item powers - C. Blue */
 	/* Can a player see the secret_dungeon_master? Only if he wears the special Goggles.. */
 	o_ptr = &p_ptr->inventory[INVEN_HEAD];
-	p_ptr->player_sees_dm = (o_ptr->tval && o_ptr->name1 == ART_GOGGLES_DM);
+	p_ptr->player_sees_dm = ((o_ptr->tval && o_ptr->name1 == ART_GOGGLES_DM) || in_deathfate2(&p_ptr->wpos));
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	p_ptr->instakills = (o_ptr->tval && o_ptr->name1 == ART_SCYTHE_DM) ? ((o_ptr->note && strstr(quark_str(o_ptr->note), "IDDQD")) ? 2 : 1) : 0; //at doom's gate...
 

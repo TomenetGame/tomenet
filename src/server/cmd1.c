@@ -8912,12 +8912,14 @@ static bool run_test(int Ind) {
 		    (!(m_list[c_ptr->m_idx].pet))
 		    /* Even in Bree (despite of Santa Claus: Rogues in cloaking mode might want to not 'run him over' but wait for allies) - C. Blue */
 		    ) {
+			//dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 			/* Visible monster */
 			if (p_ptr->mon_vis[c_ptr->m_idx] &&
 			   (!(m_list[c_ptr->m_idx].special) &&
+			   //(!l_ptr || !(l_ptr->flags1 & LF1_CAN_ALWAYS_RUN)) &&  ---apparently not needed
 			   r_info[m_list[c_ptr->m_idx].r_idx].level != 0))
 				return(TRUE);
-
 		}
 
 #ifdef HOSTILITY_ABORTS_RUNNING /* pvp mode chars cannot run with this on */
@@ -9209,12 +9211,10 @@ void run_step(int Ind, int dir, char *consume_full_energy) {
 	if (dir) {
 		/* Calculate torch radius */
 		p_ptr->update |= (PU_TORCH);
-
 		/* Initialize */
 		run_init(Ind, dir);
 		/* check if we have enough energy to move */
-		if (p_ptr->energy < level_speed(&p_ptr->wpos) / real_speed)
-			return;
+		if (p_ptr->energy < level_speed(&p_ptr->wpos) / real_speed) return;
 	}
 
 	/* Keep running */

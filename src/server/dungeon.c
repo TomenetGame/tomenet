@@ -4069,6 +4069,7 @@ static void process_player_begin(int Ind) {
 		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
 		everyone_lite_spot(&p_ptr->wpos, oy, ox);
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		p_ptr->player_sees_dm = TRUE;
 		break;
 	case AT_MUMBLE:
 		if (turn < p_ptr->auto_transport_turn + cfg.fps * 2) break; /* cool down.. */

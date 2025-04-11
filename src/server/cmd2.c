@@ -1100,6 +1100,8 @@ void do_cmd_go_down(int Ind) {
 
 	if (c_ptr->feat == FEAT_BETWEEN) {
 		if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+			p_ptr->player_sees_dm = (p_ptr->inventory[INVEN_HEAD].tval && p_ptr->inventory[INVEN_HEAD].name1 == ART_GOGGLES_DM);
+
 			un_afk_idle(Ind);
 
 			c_ptr->m_idx = 0;
@@ -6308,6 +6310,7 @@ int do_cmd_run(int Ind, int dir) {
 		 */
 		return(0);
 	}
+
 	return(2);
 }
 

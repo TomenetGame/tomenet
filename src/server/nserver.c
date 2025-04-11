@@ -11442,7 +11442,7 @@ static int Receive_run(int ind) {
 	/* paranoia? */
 	//if (player == -1) return;
 
-	if (p_ptr->command_rep) {
+	if (p_ptr && p_ptr->command_rep) {
 #ifdef USE_SOUND_2010
 		if (p_ptr->command_rep != PKT_BASH) sound(player, NULL, NULL, SFX_TYPE_STOP, TRUE);
 #endif
@@ -11450,7 +11450,7 @@ static int Receive_run(int ind) {
 	}
 
 	/* If not the dungeon master, who can always run */
-	if (!p_ptr->admin_dm && !p_ptr->admin_invinc) {
+	if (p_ptr && !p_ptr->admin_dm && !p_ptr->admin_invinc) {
 		monster_race *r_ptr;
 
 		if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(ind);
@@ -11458,10 +11458,10 @@ static int Receive_run(int ind) {
 		if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_RUN)) return Receive_walk(ind);
 
 		/* check for status impairments (lack of light is checked in run_test()) */
-		if (p_ptr->confused || p_ptr->blind)
-			return Receive_walk(ind);
+		if (p_ptr->confused || p_ptr->blind) return Receive_walk(ind);
 
 		/* Check for monsters in sight */
+		if (!l_ptr || !(l_ptr->flags1 & LF1_CAN_ALWAYS_RUN))
 		for (i = 1; i < m_max; i++) {
 			/* Check this monster */
 			if (p_ptr->mon_los[i] && !m_list[i].csleep && !m_list[i].special
@@ -11512,7 +11512,7 @@ static int Receive_run(int ind) {
 //if (p_ptr->auto_retaliating) s_printf("auto-retal\n");
 //else s_printf("not a-r\n");
 //	if (!p_ptr->admin_dm && p_ptr->auto_retaliating) {
-	if (p_ptr->auto_retaliating || p_ptr->shooting_till_kill)
+	if (p_ptr && (p_ptr->auto_retaliating || p_ptr->shooting_till_kill))
 		return Receive_walk(ind);
 #endif
 
