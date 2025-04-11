@@ -274,7 +274,7 @@ bool can_go_up(struct worldpos *wpos, byte mode) {
 	if (wpos->wz < 0) d_ptr = wild->dungeon;
 
 #if 0 /* fixed (old /update-dun killed flags2) */
-	/* paranoia, but caused panic: in wilderness_gen() cmd_up({0,0,0},0x1) would return 1
+	/* paranoia, but caused panic: in wilderness_gen() cmd_go_up({0,0,0},0x1) would return 1
 	   resulting in bad up/down values for staircase generation when it attempts to locate
 	   a staircase leading into pvp-arena and put some feats around it (at coords 0,0 ...).
 	   Apparently, WILD_F_UP is set here, too. And even w_ptr->tower was also valid.
@@ -312,7 +312,7 @@ bool can_go_down(struct worldpos *wpos, byte mode) {
 	if (wpos->wz > 0) d_ptr = wild->tower;
 
 #if 0 /* fixed (old /update-dun killed flags2) */
-	/* paranoia, but caused panic: in wilderness_gen() cmd_up({0,0,0},0x1) would return 1
+	/* paranoia, but caused panic: in wilderness_gen() cmd_go_up({0,0,0},0x1) would return 1
 	   resulting in bad up/down values for staircase generation when it attempts to locate
 	   a staircase leading into pvp-arena and put some feats around it (at coords 0,0 ...).
 	   Apparently, WILD_F_UP is set here, too. And even w_ptr->tower was also valid.

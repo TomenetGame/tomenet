@@ -558,6 +558,7 @@ void do_cmd_go_up(int Ind) {
 #endif
 		else if (wpos->wz == -1) {
 			msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
+			if (in_deathfate(wpos)) msg_print(Ind, "There is no trace of the mysterious figure, seems you took a different turn.");
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {

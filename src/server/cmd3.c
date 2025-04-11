@@ -4807,7 +4807,7 @@ void do_cmd_look(int Ind, int dir) {
 			name = "grand mirror stands before you. Your reflection seems to stare at you..";
 
 		/* Let character 'pseudo-deduce' staircase type from its player-perceived colour? */
-		if (feat == FEAT_MORE || feat == FEAT_LESS || feat == FEAT_WAY_MORE || feat == FEAT_WAY_LESS) {
+		if (!p_ptr->wpos.wz && (feat == FEAT_MORE || feat == FEAT_LESS || feat == FEAT_WAY_MORE || feat == FEAT_WAY_LESS)) {
 			struct dungeon_type *d_ptr;
 			worldpos tpos = p_ptr->wpos; /* copy */
 			wilderness_type *wild = &wild_info[tpos.wy][tpos.wx];
