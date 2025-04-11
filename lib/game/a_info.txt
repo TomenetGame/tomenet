@@ -2509,7 +2509,7 @@ D:less solid than this one. You feel your senses reel, and must make a
 D:conscious effort not to throw this ring as far from you as possible.
 
 
-# The Blue Stone 'Toris Mejistos'
+# The Orichalcum Blue Stone 'Toris Mejistos'
 
 N:204:'Toris Mejistos'
 I:40:18:2
@@ -2522,7 +2522,7 @@ F:ESP_GOOD | ESP_EVIL | HOLD_LIFE
 F:INSTA_ART | SPECIAL_GENE
 F:REGEN_MANA |
 D:A blue stone, with an incredible number of incredibly small runes of power
-D:on it. It carries many secrets.
+D:on it. Legends link it to a fabulous sunken city, it carries many secrets.
 
 
 # The Ring of Durin - last of the Seven Rings of the Dwarf-lords
