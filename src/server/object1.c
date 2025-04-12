@@ -5412,6 +5412,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	/* Let the player scroll through this info */
 	p_ptr->special_file_type = TRUE;
 
+	/* Paranoia - ensure cleared hack flags for any subsequent calls */
+	hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
+
 	//polyring price debug
 	//if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) fprintf(fff,"%u - %u\n", price_poly_ring(Ind, o_ptr, 1), price_poly_ring(Ind, o_ptr, 0));
 
@@ -5443,6 +5446,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			fprintf(fff, "An amount of \377y%d\377w gold pieces.\n", o_ptr->pval);
 			my_fclose(fff);
 			Send_special_other(Ind);
+
+			/* Paranoia - ensure cleared hack flags for any subsequent calls */
+			hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 			return(TRUE);
 		}
 		/* Empty gift */
@@ -5450,6 +5456,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			fprintf(fff, "Nothing\n");
 			my_fclose(fff);
 			Send_special_other(Ind);
+
+			/* Paranoia - ensure cleared hack flags for any subsequent calls */
+			hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 			return(TRUE);
 		}
 	}
@@ -5641,6 +5650,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		Send_special_other(Ind);
 
 		/* Gave knowledge */
+		/* Paranoia - ensure cleared hack flags for any subsequent calls */
+		hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 		return(TRUE);
 	}
 #endif
@@ -5668,6 +5679,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		}
 		my_fclose(fff);
 		Send_special_other(Ind);
+
+		/* Paranoia - ensure cleared hack flags for any subsequent calls */
+		hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 		return(TRUE);
 	}
 
@@ -5995,11 +6009,17 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		fff = my_fopen(p_ptr->infofile, "rb");
 		if (my_fgets(fff, buf, 1024, FALSE)) {
 			my_fclose(fff);
+
+			/* Paranoia - ensure cleared hack flags for any subsequent calls */
+			hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 			return(FALSE);
 		}
 		my_fclose(fff);
 		strcpy(p_ptr->cur_file_title, "Basic Item Information");
 		Send_special_other(Ind);
+
+		/* Paranoia - ensure cleared hack flags for any subsequent calls */
+		hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 		return(TRUE);
 	}
 
