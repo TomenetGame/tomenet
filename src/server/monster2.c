@@ -46,6 +46,15 @@
 /* No Unmaker spawns at all in Ironman Deep Dive Challenge or Halls of Mandos? */
 #define IDDC_MANDOS_NO_UNMAKERS
 
+/* Super experimental:
+   Boost dungeon boss HP for high level players to avoid insta-kill pushovers?
+   Just for fun though, as the monster damage etc aren't increased so they are still pushovers technically.
+   This only affects bosses of floors < 100, aka ideal player level 50, and hard-coded also only floors shallower than 99, to make sure to exempt Sauron.
+   TODO: Dynamically adjust HP upwards if a higher level player joins after spawn, otherwise things get silyl again. */
+#ifdef TEST_SERVER
+ #define FINAL_GUARDIAN_DIFFBOOST
+#endif
+
 
 static cptr horror_desc[MAX_HORROR] = {
 	"abominable",
@@ -3726,6 +3735,38 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 		s_printf("FINAL_GUARDIAN %d spawned\n", r_idx);
 		if (level_generation_time && l_ptr) l_ptr->flags2 |= LF2_DUN_BOSS; /* Floor feeling (IDDC) */
+
+#ifdef FINAL_GUARDIAN_DIFFBOOST
+		if (dlev < 99) { /* Ensure Sauron isn't affected (also, ideal_lev should cap at 50) */
+			int top_lev = 0, ideal_lev = det_req_level_inverse(dlev);
+			player_type *p_ptr;
+
+			//s_printf("FINAL_GUARDIAN_DIFFBOOST: ideal lev (d) %d\n", ideal_lev);
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+ #ifndef TEST_SERVER
+				if (is_admin(p_ptr)) continue;
+ #endif
+				if (p_ptr->lev > top_lev) top_lev = p_ptr->lev;
+			}
+			if (top_lev > ideal_lev) {
+				if (top_lev > 50) top_lev = 50; //pft
+				top_lev = top_lev - ideal_lev + 10;
+				top_lev = top_lev * top_lev; //100..1369 (Azog, lowest level dungeon boss) ((3600 theoretical maximum for a hypothetical level 0 boss))
+				//s_printf("FINAL_GUARDIAN_DIFFBOOST: raw boost %d\n", top_lev);
+
+				/* Actually reduce the boost if the monster is already a higher level one */
+				ideal_lev = det_req_level_inverse(r_ptr->level);
+				//s_printf("FINAL_GUARDIAN_DIFFBOOST: ideal lev (r) %d\n", ideal_lev);
+				ideal_lev = (ideal_lev * ideal_lev) / 25; // -> %age of reduction of the boost
+				top_lev = 100 + ((top_lev - 100) * (100 - ideal_lev)) / 100; // reduce HP boost over 100% by a higher %age the higher level the monster actually is
+
+				m_ptr->hp = m_ptr->maxhp = m_ptr->org_maxhp = (m_ptr->maxhp * top_lev) / 100;
+				s_printf("FINAL_GUARDIAN_DIFFBOOST:FINAL_GUARDIAN HP increased to %d%% (%d HP)\n", top_lev, m_ptr->hp);
+			}
+		}
+#endif
 	}
 
 	/* Success */
