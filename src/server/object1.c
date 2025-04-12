@@ -6569,6 +6569,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
  #endif
 #endif
 
+	/* Paranoia - ensure cleared hack flags for any subsequent calls */
+	hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
+
 	/* Close the file */
 	my_fclose(fff);
 
