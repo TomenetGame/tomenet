@@ -1213,7 +1213,9 @@ extern void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr);
 extern void py2mon_update_equip(monster_type *m_ptr, player_type *p_ptr);
 extern void py2mon_update_skills(monster_type *m_ptr, player_type *p_ptr);
 extern void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr);
-
+#ifdef FINAL_GUARDIAN_DIFFBOOST
+extern void final_guardian_diffboost(int m_idx);
+#endif
 
 /* netserver.c (nserver.c) */
 /* XXX those entries are duplicated with those in netserver.h

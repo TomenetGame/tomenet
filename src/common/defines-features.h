@@ -672,6 +672,12 @@
 /* Istar w/o reliance on disruption shield */
 #define NATURE_HP_SUPPLEMENT
 
+/* Super experimental:
+   Boost dungeon boss HP for high level players to avoid insta-kill pushovers?
+   Just for fun though, as the monster damage etc aren't increased so they are still pushovers technically.
+   This only affects bosses of floors < 100, aka ideal player level 50, and hard-coded also only floors shallower than 99, to make sure to exempt Sauron. */
+#define FINAL_GUARDIAN_DIFFBOOST
+
 
 
 /* ------------------------------------------------------------------------- */
@@ -693,8 +699,10 @@
  #define OPTIMIZED_ANIMATIONS	/* testing */
 #endif
 
+
 /* Specific settings for test-server only */
 #ifdef TEST_SERVER
+
  /* Allow subclassing ie. planned access to skills from a secondary class!
    Enables role customization while preserving unique features of base classes.
    Currently applies a big +200% XP penalty for 2/3 ratios from both classes. */
@@ -720,10 +728,6 @@
  #define TELEPORT_SURPRISES 5	/* monsters are surprised for a short moment (0.1s * n) if a player long-range teleported next to them */
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
-
-/* When Highlighting/beeping when character name is mentioned in chat:
-   Recognize and ignore any roman number suffix attached to our 'real' character name? */
-#define CHARNAME_ROMAN
 
  /* Just for debugging - unbind savegames from accounts */
  #define IGNORE_SAVEGAME_MISMATCH
@@ -760,11 +764,14 @@
 
  /* Harsh weather gives us trouble of some sort? */
  #define IRRITATING_WEATHER /* TODO: Fix weather code, see pos_in_weather() and two related code parts commented about there */
+
 #endif
+
 
 /* Specific settings for Arcade server only */
 #ifdef ARCADE_SERVER
 #endif
+
 
 /* Specific settings for main-server only */
 #if !defined(RPG_SERVER) && !defined(TEST_SERVER) && !defined(ARCADE_SERVER)

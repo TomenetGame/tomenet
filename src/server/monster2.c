@@ -46,14 +46,6 @@
 /* No Unmaker spawns at all in Ironman Deep Dive Challenge or Halls of Mandos? */
 #define IDDC_MANDOS_NO_UNMAKERS
 
-/* Super experimental:
-   Boost dungeon boss HP for high level players to avoid insta-kill pushovers?
-   Just for fun though, as the monster damage etc aren't increased so they are still pushovers technically.
-   This only affects bosses of floors < 100, aka ideal player level 50, and hard-coded also only floors shallower than 99, to make sure to exempt Sauron.
-   TODO: Dynamically adjust HP upwards if a higher level player joins after spawn, otherwise things get silyl again. */
-#ifdef TEST_SERVER
- #define FINAL_GUARDIAN_DIFFBOOST
-#endif
 
 
 static cptr horror_desc[MAX_HORROR] = {
@@ -2974,6 +2966,54 @@ static int get_prison_monster(void) {
 	return(7); /* compiler paranoia dog */
 }
 
+#ifdef FINAL_GUARDIAN_DIFFBOOST
+void final_guardian_diffboost(int m_idx) {
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	struct worldpos *wpos = &m_ptr->wpos;
+	int i, top_lev = 0, dlev = getlevel(&m_ptr->wpos), ideal_lev = det_req_level_inverse(dlev);
+	player_type *p_ptr;
+
+	if (ideal_lev > 50) ideal_lev = 50; //pft
+
+//s_printf("FINAL_GUARDIAN_DIFFBOOST: ideal lev (d) %d; cur HP %d, org_maxhp2 %d\n", ideal_lev, m_ptr->org_maxhp, m_ptr->org_maxhp2);
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+ #ifndef TEST_SERVER
+		if (is_admin(p_ptr)) continue;
+ #endif
+		if (p_ptr->lev > top_lev) top_lev = p_ptr->lev;
+	}
+
+	if (top_lev > ideal_lev) {
+		if (top_lev > 50) top_lev = 50; //pft
+		top_lev = top_lev - ideal_lev + 10;
+		top_lev = top_lev * top_lev; //100..1369 (Azog, lowest level dungeon boss) ((3600 theoretical maximum for a hypothetical level 0 boss))
+//s_printf("FINAL_GUARDIAN_DIFFBOOST: raw boost %d\n", top_lev);
+
+		/* Actually reduce the boost if the monster is already a higher level one */
+		ideal_lev = det_req_level_inverse(r_ptr->level);
+//s_printf("FINAL_GUARDIAN_DIFFBOOST: ideal lev (r) %d\n", ideal_lev);
+		ideal_lev = (ideal_lev * ideal_lev) / 25; // -> %age of reduction of the boost
+		top_lev = 100 + ((top_lev - 100) * (100 - ideal_lev)) / 100; // reduce HP boost over 100% by a higher %age the higher level the monster actually is
+
+		/* Calculate HP gain from base HP */
+		ideal_lev = (m_ptr->org_maxhp2 * top_lev) / 100 - m_ptr->org_maxhp2;
+
+		/* Calculate remaining HP gain in case monster was already boosted previously */
+		ideal_lev = ideal_lev - (m_ptr->org_maxhp - m_ptr->org_maxhp2);
+		if (ideal_lev <= 0) return;
+
+		/* Apply HP gain */
+		m_ptr->hp += ideal_lev;
+		m_ptr->maxhp += ideal_lev;
+		m_ptr->org_maxhp += ideal_lev;
+		s_printf("FINAL_GUARDIAN_DIFFBOOST:FINAL_GUARDIAN HP increased to %d%% (%d HP)\n", top_lev, m_ptr->hp);
+	}
+}
+#endif
+
 /*
  * Attempt to place a monster of the given race at the given location.
  *
@@ -2992,7 +3032,7 @@ static int get_prison_monster(void) {
  */
 /* lots of hard-coded stuff in here -C. Blue */
 int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning) {
-	int		i, Ind, j, dlev;
+	int		i, Ind, j, dlev, m_idx;
 	bool		already_on_level = FALSE;
 	cave_type	*c_ptr;
 	dun_level	*l_ptr = getfloor(wpos);
@@ -3521,17 +3561,18 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	r_ptr = race_info_idx(r_idx, ego, randuni);
 
 	/* Make a new monster */
-	c_ptr->m_idx = m_pop();
-
+	m_idx = m_pop();
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return(49);
+	if (!m_idx) return(49);
+
+	c_ptr->m_idx = m_idx;;
 
 
 	/* --- Success! --- */
 
 
 	/* Get a new monster record */
-	m_ptr = &m_list[c_ptr->m_idx];
+	m_ptr = &m_list[m_idx];
 
 	/* Save the race */
 	m_ptr->r_idx = r_idx;
@@ -3541,7 +3582,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 #endif	// RANDUNIS
 
 	/* Shapechanger get a seed that keeps their form [semi] permanent */
-	if (race_inf(m_ptr)->flags2 & RF2_SHAPECHANGER) m_ptr->name3 = rand_int(100000000);
+	if (race_inf(m_ptr)->flags2 & RF2_SHAPECHANGER) m_ptr->body_monster = rand_int(0xFFFF);
 
 	/* Place the monster at the location */
 	m_ptr->fy = y;
@@ -3647,13 +3688,13 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		if (Players[Ind]->conn == NOT_CONNECTED)
 			continue;
 
-		Players[Ind]->mon_los[c_ptr->m_idx] = FALSE;
-		Players[Ind]->mon_vis[c_ptr->m_idx] = FALSE;
+		Players[Ind]->mon_los[m_idx] = FALSE;
+		Players[Ind]->mon_vis[m_idx] = FALSE;
 	}
 
 	if (dlev >= (m_ptr->level + 8)) {
 		m_ptr->exp = MONSTER_EXP(m_ptr->level + ((dlev - m_ptr->level - 5) / 3));
-		monster_check_experience(c_ptr->m_idx, TRUE);
+		monster_check_experience(m_idx, TRUE);
 	}
 
 
@@ -3684,7 +3725,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	strcpy(buf, (r_name + r_ptr->name));
 
 	/* Update the monster */
-	update_mon(c_ptr->m_idx, TRUE);
+	update_mon(m_idx, TRUE);
 
 
 	/* Assume no sleeping */
@@ -3695,7 +3736,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
 	}
-	//if (!m_ptr->csleep && m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, c_ptr->m_idx, m_ptr->custom_lua_awoke)); //not needed here?
+	//if (!m_ptr->csleep && m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, m_idx, m_ptr->custom_lua_awoke)); //not needed here?
 
 	/*if (m_ptr->hold_o_idx) {
 		s_printf("AHA! monster created with an object in hand!\n");
@@ -3711,7 +3752,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* DEX */
 	m_ptr->org_ac = m_ptr->ac;
 	/* CON */
-	m_ptr->org_maxhp = m_ptr->maxhp;
+	m_ptr->org_maxhp2 = m_ptr->org_maxhp = m_ptr->maxhp;
 
 #ifdef MONSTER_ASTAR
 	if (r_ptr->flags7 & RF7_ASTAR) {
@@ -3719,7 +3760,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
 			/* found an available instance? */
 			if (astar_info_open[j].m_idx == -1) {
-				astar_info_open[j].m_idx = c_ptr->m_idx;
+				astar_info_open[j].m_idx = m_idx;
 				m_ptr->astar_idx = j;
  #ifdef ASTAR_DISTRIBUTE
 				astar_info_closed[j].nodes = 0;
@@ -3737,35 +3778,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		if (level_generation_time && l_ptr) l_ptr->flags2 |= LF2_DUN_BOSS; /* Floor feeling (IDDC) */
 
 #ifdef FINAL_GUARDIAN_DIFFBOOST
-		if (dlev < 99) { /* Ensure Sauron isn't affected (also, ideal_lev should cap at 50) */
-			int top_lev = 0, ideal_lev = det_req_level_inverse(dlev);
-			player_type *p_ptr;
-
-			//s_printf("FINAL_GUARDIAN_DIFFBOOST: ideal lev (d) %d\n", ideal_lev);
-			for (i = 1; i <= NumPlayers; i++) {
-				p_ptr = Players[i];
-				if (!inarea(&p_ptr->wpos, wpos)) continue;
- #ifndef TEST_SERVER
-				if (is_admin(p_ptr)) continue;
- #endif
-				if (p_ptr->lev > top_lev) top_lev = p_ptr->lev;
-			}
-			if (top_lev > ideal_lev) {
-				if (top_lev > 50) top_lev = 50; //pft
-				top_lev = top_lev - ideal_lev + 10;
-				top_lev = top_lev * top_lev; //100..1369 (Azog, lowest level dungeon boss) ((3600 theoretical maximum for a hypothetical level 0 boss))
-				//s_printf("FINAL_GUARDIAN_DIFFBOOST: raw boost %d\n", top_lev);
-
-				/* Actually reduce the boost if the monster is already a higher level one */
-				ideal_lev = det_req_level_inverse(r_ptr->level);
-				//s_printf("FINAL_GUARDIAN_DIFFBOOST: ideal lev (r) %d\n", ideal_lev);
-				ideal_lev = (ideal_lev * ideal_lev) / 25; // -> %age of reduction of the boost
-				top_lev = 100 + ((top_lev - 100) * (100 - ideal_lev)) / 100; // reduce HP boost over 100% by a higher %age the higher level the monster actually is
-
-				m_ptr->hp = m_ptr->maxhp = m_ptr->org_maxhp = (m_ptr->maxhp * top_lev) / 100;
-				s_printf("FINAL_GUARDIAN_DIFFBOOST:FINAL_GUARDIAN HP increased to %d%% (%d HP)\n", top_lev, m_ptr->hp);
-			}
-		}
+		if (dlev < 99) /* Ensure Sauron isn't affected */
+			final_guardian_diffboost(m_idx);
 #endif
 	}
 

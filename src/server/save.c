@@ -380,6 +380,12 @@ static void wr_monster(monster_type *m_ptr) {
 	}
 	wr_s32b(m_ptr->hp);
 	wr_s32b(m_ptr->maxhp);
+	wr_s32b(m_ptr->org_maxhp);
+	wr_s32b(m_ptr->org_maxhp2);
+	wr_s16b(m_ptr->body_monster);
+	wr_s32b(m_ptr->extra);
+	wr_s32b(m_ptr->extra2);
+	wr_s32b(m_ptr->extra3);
 	wr_s16b(m_ptr->csleep);
 	wr_byte(m_ptr->mspeed);
 	wr_s16b(m_ptr->energy);

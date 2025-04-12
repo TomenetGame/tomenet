@@ -747,6 +747,12 @@ void check_Morgoth(int Ind) {
 			continue;
 		}
 
+#ifdef FINAL_GUARDIAN_DIFFBOOST
+		if ((r_info[m_ptr->r_idx].flags8 & RF8_FINAL_GUARDIAN)
+		    && getlevel(&m_ptr->wpos) < 99) /* Ensure Sauron isn't affected */
+			final_guardian_diffboost(m_idx);
+#endif
+
 		/* search for Morgy */
 		if (m_ptr->r_idx != RI_MORGOTH) continue;
 		wpos = &m_ptr->wpos;
@@ -2228,7 +2234,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 		if (r_ptr->flags2 & RF2_SHAPECHANGER) {
 			byte dummy;
 
-			Rand_value = m_ptr->name3; //fix RNG to this monster
+			Rand_value = m_ptr->body_monster; //fix RNG to this monster
 			Rand_quick = TRUE;
 
 #if 0 //0:only allow mimics to look like objects?
@@ -2240,7 +2246,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 
 			Rand_quick = FALSE; //restore RNG
 			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 30))
-				m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+				m_ptr->body_monster = rand_int(0xFFFF); //randomly change shape sometimes
 		} else (*cp) = c;
 
 		/* Multi-hued attr */
@@ -2299,7 +2305,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 		if (r_ptr->flags2 & RF2_SHAPECHANGER) {
 			byte dummy;
 
-			Rand_value = m_ptr->name3; //fix RNG to this monster
+			Rand_value = m_ptr->body_monster; //fix RNG to this monster
 			Rand_quick = TRUE;
 
 #if 0 //0:only allow mimics to look like objects?
@@ -2311,7 +2317,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 
 			Rand_quick = FALSE; //restore RNG
 			if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 30))
-				m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+				m_ptr->body_monster = rand_int(0xFFFF); //randomly change shape sometimes
 		}
 
 		/* Use attr */
@@ -2340,7 +2346,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 			if (r_ptr->flags2 & RF2_SHAPECHANGER) {
 				byte dummy;
 
-				Rand_value = m_ptr->name3; //fix RNG to this monster
+				Rand_value = m_ptr->body_monster; //fix RNG to this monster
 				Rand_quick = TRUE;
 
 #if 0 //0:only allow mimics to look like objects?
@@ -2352,7 +2358,7 @@ static void get_monster_visual(int Ind, monster_type *m_ptr, monster_race *r_ptr
 
 				Rand_quick = FALSE; //restore RNG
 				if (!rand_int((r_ptr->flags7 & RF7_VORTEX) ? 1 : 30))
-					m_ptr->name3 = rand_int(100000000); //randomly change shape sometimes
+					m_ptr->body_monster = rand_int(0xFFFF); //randomly change shape sometimes
 			}
 		}
 		/* Normal (non-clear attr) monster */

@@ -2125,7 +2125,8 @@ struct monster_type {
 
 	s32b hp;			/* Current Hit points */
 	s32b maxhp;			/* Max Hit points */
-	s32b org_maxhp;			/* Max Hit points */
+	s32b org_maxhp;			/* Max Hit points set initially on monster spawn */
+	s32b org_maxhp2;		/* Max Hit points set initially on monster spawn, but potentially modified (FINAL_GUARDIAN_DIFFBOOST) */
 
 	s16b csleep;			/* Inactive counter */
 
@@ -2175,7 +2176,7 @@ struct monster_type {
 
 #ifdef RANDUNIS
 	u16b ego;			/* Ego monster type */
-	s32b name3;			/* Randuni seed, if any */
+	s32b name3;			/* Randuni seed, if any. */
 #endif
 
 	s16b status;			/* Status(friendly, pet, companion, ..) */
@@ -2212,7 +2213,8 @@ struct monster_type {
 #endif
 
 	s16b strongest_los;		/* Closest/most hp LoS to a player, no matter if actually a valid target or not */
-	s32b extra, extra2, extra3;	/* (not saved) extra flags for debugging/testing purpose;
+	s16b body_monster;		/* RF2_SHAPECHANGER: RNG seed for monster changing into other monster. */
+	s32b extra, extra2, extra3;	/* extra flags for debugging/testing purpose;
 					   extra: also used for robins and target dummy's "snowiness" now; new: also for Sauron boosting; for Morgoth "roar" sfx */
 
 #ifdef MONSTER_ASTAR

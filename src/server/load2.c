@@ -1117,6 +1117,14 @@ static void rd_monster(monster_type *m_ptr) {
 	}
 	rd_s32b(&m_ptr->hp);
 	rd_s32b(&m_ptr->maxhp);
+	if (!s_older_than(4, 9, 22)) {
+		rd_s32b(&m_ptr->org_maxhp);
+		rd_s32b(&m_ptr->org_maxhp2);
+		rd_s16b(&m_ptr->body_monster);
+		rd_s32b(&m_ptr->extra);
+		rd_s32b(&m_ptr->extra2);
+		rd_s32b(&m_ptr->extra3);
+	}
 	rd_s16b(&m_ptr->csleep);
 	rd_byte(&m_ptr->mspeed);
 	rd_s16b(&m_ptr->energy);
