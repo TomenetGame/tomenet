@@ -21569,7 +21569,8 @@ F: flag list
                 The usual limits of the Anti-Magic skill apply, see (7.2) for
                 details.
     ARROW_1, ARROW_2, ARROW_3
-                The player will receive an extra shot per round with slings or
+                If the monster has at least one of these (they don't stack),
+                the player will get an extra shot per round with slings or
                 bows since the monster seems to be good at shooting.
                 If the monster shoots 1_IN_3 or better (better means faster,
                 ie higher frequency, that is 1_IN_2 or 1_IN_1), the player will
