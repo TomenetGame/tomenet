@@ -1287,6 +1287,14 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	/* Sigil */
 	if (o_ptr->sigil) {
 		bool failed = 0;
+		/* Remember flags without the sigil, these already include the full ego powers */
+		hack_sigil_f[1] = *f1;
+		hack_sigil_f[2] = *f2;
+		hack_sigil_f[3] = *f3;
+		hack_sigil_f[4] = *f4;
+		hack_sigil_f[5] = *f5;
+		hack_sigil_f[6] = *f6;
+		hack_sigil_f[0] = *esp;
 
 		if (o_ptr->sseed) {
 			/* Build the flag pool */
@@ -1777,7 +1785,16 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			o_ptr->sigil = 0;
 			o_ptr->sseed = 0;
 		}
-	}
+
+		/* Get flag difference made by the sigil */
+		hack_sigil_f[1] = *f1 & ~hack_sigil_f[1];
+		hack_sigil_f[2] = *f2 & ~hack_sigil_f[2];
+		hack_sigil_f[3] = *f3 & ~hack_sigil_f[3];
+		hack_sigil_f[4] = *f4 & ~hack_sigil_f[4];
+		hack_sigil_f[5] = *f5 & ~hack_sigil_f[5];
+		hack_sigil_f[6] = *f6 & ~hack_sigil_f[6];
+		hack_sigil_f[0] = *esp & ~hack_sigil_f[0];
+	} else hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 
 	/* Hack for mindcrafter spell scrolls:
 	   Since they're called 'crystals', add water+fire immunity.
@@ -5357,7 +5374,8 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot
  * (for player stores maybe.).
  */
 /* Print object flag info to file, specifically with colouring for randomized powers ie those from ego items. */
-#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & (flag))) ? "" : "\377B", msg)
+//#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & (flag))) ? "" : "\377B", msg)
+#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & (flag))) ? "" : ((hack_sigil_f[flag_slot] & (flag)) ? "\377G" : "\377B"), msg)
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];

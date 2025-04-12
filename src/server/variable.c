@@ -1110,3 +1110,4 @@ char GF_name[MAX_GF_TYPES][18] = { 0 }, GF_name_short[MAX_GF_TYPES][7] = { 0 };
 int custom_lua_timer_timeout[CUSTOM_LUA_TIMERS] = { 0 };
 char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE] = { 0 };
 int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm2[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm3[CUSTOM_LUA_TIMERS] = { 0 };
+u32b hack_sigil_f[7]; //same as ego_granted_flags
