@@ -5546,39 +5546,6 @@ c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename,
 			FindClose(hFind);
 		}
 #endif
-
-#if 0 //instead of here, this is now done after all 3 scan stages have been completed (a/b/c)
-		/* Check whether macro files for all/some stages are missing */
-		n = 0;
-		for (f = 0; f < fileset[k].stages; f++) {
-			if (fileset[k].stage_file_exists[f]) n++;
-			else stage = f;
-		}
-		if (n != fileset[k].stages) {
-			if (!n) {
-				if (fileset[k].stages == 1)
-					c_msg_format("\377yWarning(1): Macroset \"%s\" (1 stage) has no file.", buf_basename);
-				else
- #if 0
-					c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no files for any stage.",
-					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
- #else /* Save screen space, shorter message */
-					c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no files.",
-					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
- #endif
-			} else if (n == fileset[k].stages - 1)
-				c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no file for stage %d.",
-				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
-			else {
-				tmpbuf[0] = 0;
-				for (f = 0; f < fileset[k].stages; f++)
-					if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
-				tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
-				c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no files for stages %s.",
-				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
-			}
-		}
-#endif
 	}
 
 
