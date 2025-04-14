@@ -5309,6 +5309,7 @@ struct macro_fileset_type {
 	char macro__actbuf__cycle[160];
 	int stages; // Amount of stages to cyclic/switch between
 	bool any_stage_file_exists; // just QoL shortcut derived from at least one of 'stage_file_exists[]' being TRUE
+	bool all_stage_files_exist; // just QoL shortcut
 	bool currently_referenced; // this macro set is referenced by at least one existing macro among all currently loaded macros
 
 	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
@@ -5347,7 +5348,7 @@ int macroset_scan(void) {
 	/* Discard known filesets - fileset[] already gets zero-initialized */
 	for (k = 0; k < MACROFILESETS_MAX; k++) {
 		fileset[k].stages = 0;
-		fileset[k].currently_referenced = fileset[k].any_stage_file_exists = FALSE;
+		fileset[k].currently_referenced = fileset[k].any_stage_file_exists = fileset[k].all_stage_files_exist = FALSE;
 	}
 	filesets_found = 0;
 	fileset_selected = fileset_stage_selected = -1;
@@ -5678,34 +5679,44 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	/* ---------- For all known macro sets, now check whether macro files for all/some stages are missing ---------- */
 
 	for (k = 0; k < filesets_found; k++) {
+		/* Count all stage files */
 		n = 0;
 		for (f = 0; f < fileset[k].stages; f++) {
 			if (fileset[k].stage_file_exists[f]) n++;
 			else stage = f;
 		}
-		if (n != fileset[k].stages) {
-			if (!n) {
-				if (fileset[k].stages == 1)
-					c_msg_format("\377yWarning(+): Macroset \"%s\" (1 stage) has no file.", buf_basename);
-				else
+
+		/* Found all of them aka fileset is complete? We're done. */
+		if (n == fileset[k].stages) {
+			fileset[k].all_stage_files_exist = TRUE;
+			continue;
+		}
+
+		/* Found none, ie all stages are missing their file each? */
+		if (!n) {
+			if (fileset[k].stages == 1)
+				c_msg_format("\377yWarning(+): Macroset \"%s\" (1 stage) has no file.", buf_basename);
+			else
  #if 0
-					c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for any stage.",
-					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for any stage.",
+				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #else /* Save screen space, shorter message */
-					c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files.",
-					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files.",
+				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #endif
-			} else if (n == fileset[k].stages - 1)
-				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no file for stage %d.",
-				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
-			else {
-				tmpbuf[0] = 0;
-				for (f = 0; f < fileset[k].stages; f++)
-					if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
-				tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
-				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for stages %s.",
-				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
-			}
+		}
+		/* Just one of the stages is missing a file? */
+		else if (n == fileset[k].stages - 1)
+			c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no file for stage %d.",
+			    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
+		/* Several stages are missing files */
+		else {
+			tmpbuf[0] = 0;
+			for (f = 0; f < fileset[k].stages; f++)
+				if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
+			tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
+			c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for stages %s.",
+			    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
 		}
 	}
 
@@ -8573,8 +8584,8 @@ Chain_Macro:
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
-										    format("%s%2d\377g) (%s\377-) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk",
+										    format("%s%2d\377g) (%s\377g) %sStages\377g: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", fileset[k].all_stage_files_exist ? "" : "\377y",
 										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
@@ -8623,8 +8634,8 @@ Chain_Macro:
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
-										    format("%s%2d\377g) (%s\377-)Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk",
+										    format("%s%2d\377g) (%s\377g) %sStages\377g: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", fileset[k].all_stage_files_exist ? "" : "\377y",
 										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
