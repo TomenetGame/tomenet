@@ -5329,7 +5329,7 @@ static macro_fileset_type fileset[MACROFILESETS_MAX] = { 0 };
    (b) look on disk for files belonging to those scanned in (a),
    (c) all macro files on disk (in user/TomeNET-user folder) for filesets. - C. Blue */
 int macroset_scan(void) {
-	int k, m = -1;
+	int k, m;
 	bool style_cyclic, style_free;
 
 	int f, n, stage;
@@ -5355,6 +5355,8 @@ int macroset_scan(void) {
 
 	/* ---------- (a) Auto-scan for all currently loaded (ie are referenced in our currently active macros) filesets ---------- */
 
+	k = 0;
+	m = -1;
 	while (TRUE) {
 		while (++m < macro__num) {
 			style_cyclic = style_free = FALSE;
@@ -5395,7 +5397,7 @@ int macroset_scan(void) {
 
 			if (k >= MACROFILESETS_MAX) {
 				/* Too many macro sets! */
-				c_msg_format("\377yWarning: Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
+				c_msg_format("\377yWarning(0): Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
 				continue;
 			}
 
@@ -5406,11 +5408,11 @@ int macroset_scan(void) {
 
 			/* Too many stages? */
 			if (stage >= MACROFILESETS_STAGES_MAX) {
-				c_msg_format("\377yWarning: Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
+				c_msg_format("\377yWarning(0): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
 				c_msg_format("\377y         for macroset '%s'.", buf_basename);
 				continue;
 			} else if (stage < 0) {
-				c_msg_format("\377yWarning: Discarding invalid stage file %d (stages must start at 1)", stage + 1);
+				c_msg_format("\377yWarning(0): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
 				c_msg_format("\377y         for macroset '%s'.", buf_basename);
 				continue;
 			}
@@ -5489,6 +5491,7 @@ int macroset_scan(void) {
 	   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
 	for (k = 0; k < filesets_found; k++) {
 #ifndef WINDOWS
+c_msg_format("(1)scan disk for set (%d) <%s>", k, fileset[k].basefilename);
 		glob(format("%s-FS?.prf", fileset[k].basefilename), 0, 0, &glob_res);
 		glob_size = glob_res.gl_pathc;
 		if (glob_size < 1) { /* No macro files found at all, ew. */
@@ -5496,27 +5499,29 @@ int macroset_scan(void) {
 			c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
 			c_msg_format("\377y         but there were no macro files \"%s-FS?.prf\" found of that name!", fileset[k].basefilename);
 			*/
+c_msg_print("(1)nothing");
 		} else { /* Found 'n' macro files */
 			fileset[k].any_stage_file_exists = TRUE;
 
 			for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 				/* Extract stage number */
-				f = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
-				if (f >= MACROFILESETS_STAGES_MAX) {
-					c_msg_format("\377yWarning: Discarding excess stage file %d (maximum stage is %d)", f + 1, MACROFILESETS_STAGES_MAX);
+				stage = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
+				if (stage >= MACROFILESETS_STAGES_MAX) {
+					c_msg_format("\377yWarning(1): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
 					c_msg_format("\377y         for macroset '%s'.", buf_basename);
 					continue;
-				} else if (f < 0) {
-					c_msg_format("\377yWarning: Discarding invalid stage file %d (stages must start at 1)", f + 1);
+				} else if (stage < 0) {
+					c_msg_format("\377yWarning(1): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
 					c_msg_format("\377y         for macroset '%s'.", buf_basename);
 					continue;
 				}
+c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename, stage);
 
 				/* Register that there is an existing file to back up this stage's existance */
-				fileset[k].stage_file_exists[f] = TRUE;
+				fileset[k].stage_file_exists[stage] = TRUE;
 
 				/* If stage number is higher than our highest known stage number, increase our known number to this one (new max found) */
-				if (f >= fileset[k].stages) fileset[k].stages = f + 1;
+				if (stage >= fileset[k].stages) fileset[k].stages = stage + 1;
 			}
 		}
 		globfree(&glob_res);
@@ -5527,10 +5532,10 @@ int macroset_scan(void) {
 
 		hFind = FindFirstFile(format("%s-FS?.prf", fileset[k].basefilename), &FindFileData);
 		if (hFind == INVALID_HANDLE_VALUE) {
-			printf("FindFirstFile failed (%ld)\n", GetLastError());
+			printf("FindFirstFile(1) failed (%ld)\n", GetLastError());
 			return;
 		} else {
-			printf("The first file found is %s\n", FindFileData.cFileName);
+			printf("The first file found(1) is %s\n", FindFileData.cFileName);
 			FindClose(hFind);
 		}
 #endif
@@ -5545,24 +5550,24 @@ int macroset_scan(void) {
 		if (n != fileset[k].stages) {
 			if (!n) {
 				if (fileset[k].stages == 1)
-					c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no file.", buf_basename);
+					c_msg_format("\377yWarning(1): Macroset \"%s\" (1 stage) has no file.", buf_basename);
 				else
  #if 0
-					c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for any stage.",
+					c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no files for any stage.",
 					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #else /* Save screen space, shorter message */
-					c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files.",
+					c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no files.",
 					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #endif
 			} else if (n == fileset[k].stages - 1)
-				c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no file for stage %d.",
+				c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no file for stage %d.",
 				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
 			else {
 				tmpbuf[0] = 0;
 				for (f = 0; f < fileset[k].stages; f++)
 					if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
 				tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
-				c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for stages %s.",
+				c_msg_format("\377yWarning(1): Macroset \"%s\" (%d stage%s) has no files for stages %s.",
 				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
 			}
 		}
@@ -5575,7 +5580,8 @@ int macroset_scan(void) {
 #ifndef WINDOWS
 	glob("*-FS?.prf", 0, 0, &glob_res);
 	glob_size = glob_res.gl_pathc;
-	if (glob_size < 1) ; /* No macro files found at all */
+	if (glob_size < 1) //; /* No macro files found at all */
+c_msg_print("(2)nothing");
 	else { /* Found 'n' macro files */
 		for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 			/* Extract stage index */
@@ -5584,13 +5590,14 @@ int macroset_scan(void) {
 			strcpy(buf_basename, *p);
 			*p[strlen(*p) - 8] = 0;
 
+c_msg_format("(2)set <%s> / stage %d found", buf_basename, stage);
 			/* Too many stages? */
 			if (stage >= MACROFILESETS_STAGES_MAX) {
-				c_msg_format("\377yWarning: Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
+				c_msg_format("\377yWarning(2): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
 				c_msg_format("\377y         for macroset '%s'.", buf_basename);
 				continue;
 			} else if (stage < 0) {
-				c_msg_format("\377yWarning: Discarding invalid stage file %d (stages must start at 1)", stage + 1);
+				c_msg_format("\377yWarning(2): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
 				c_msg_format("\377y         for macroset '%s'.", buf_basename);
 				continue;
 			}
@@ -5607,6 +5614,7 @@ int macroset_scan(void) {
 				if (fileset[k].currently_referenced) continue;
 
 				/* It's a new stage of a set we have registered already */
+c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basefilename, stage);
 
 				/* Register that there is an existing file to back up this stage's existance */
 				fileset[k].stage_file_exists[stage] = TRUE;
@@ -5622,7 +5630,7 @@ int macroset_scan(void) {
 
 				if (k >= MACROFILESETS_MAX) {
 					/* Too many macro sets! */
-					c_msg_format("\377yWarning: Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
+					c_msg_format("\377yWarning(2): Excess macroset reference \"%s\" found! (max %d sets.).", buf_basename, MACROFILESETS_MAX);
 					continue;
 				}
 
@@ -5656,10 +5664,10 @@ int macroset_scan(void) {
 
 	hFind = FindFirstFile("*-FS?.prf", &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE) {
-		printf("FindFirstFile failed (%ld)\n", GetLastError());
+		printf("FindFirstFile(2) failed (%ld)\n", GetLastError());
 		return;
 	} else {
-		printf("The first file found is %s\n", FindFileData.cFileName);
+		printf("The first file found(2) is %s\n", FindFileData.cFileName);
 		FindClose(hFind);
 	}
 #endif
@@ -5678,24 +5686,24 @@ int macroset_scan(void) {
 		if (n != fileset[k].stages) {
 			if (!n) {
 				if (fileset[k].stages == 1)
-					c_msg_format("\377yWarning: Macroset \"%s\" (1 stage) has no file.", buf_basename);
+					c_msg_format("\377yWarning(+): Macroset \"%s\" (1 stage) has no file.", buf_basename);
 				else
  #if 0
-					c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for any stage.",
+					c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for any stage.",
 					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #else /* Save screen space, shorter message */
-					c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files.",
+					c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files.",
 					    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #endif
 			} else if (n == fileset[k].stages - 1)
-				c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no file for stage %d.",
+				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no file for stage %d.",
 				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
 			else {
 				tmpbuf[0] = 0;
 				for (f = 0; f < fileset[k].stages; f++)
 					if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
 				tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
-				c_msg_format("\377yWarning: Macroset \"%s\" (%d stage%s) has no files for stages %s.",
+				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for stages %s.",
 				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
 			}
 		}
