@@ -5540,7 +5540,7 @@ c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename,
 		hFind = FindFirstFile(format("%s-FS?.prf", fileset[k].basefilename), &FindFileData);
 		if (hFind == INVALID_HANDLE_VALUE) {
 			printf("FindFirstFile(1) failed (%ld)\n", GetLastError());
-			return;
+			return(filesets_found);
 		} else {
 			printf("The first file found(1) is %s\n", FindFileData.cFileName);
 			FindClose(hFind);
@@ -5673,7 +5673,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	hFind = FindFirstFile("*-FS?.prf", &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE) {
 		printf("FindFirstFile(2) failed (%ld)\n", GetLastError());
-		return;
+		return(filesets_found);
 	} else {
 		printf("The first file found(2) is %s\n", FindFileData.cFileName);
 		FindClose(hFind);
