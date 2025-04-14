@@ -1118,7 +1118,7 @@ static void Console(int fd, int arg) {
 
 	/* See what we got */
 	/* this code added by thaler, 6/28/97 */
-	fgets(buf, 1024, stdin);
+	(void)fgets(buf, 1024, stdin);
 	if (*buf && buf[strlen(buf) - 1] == '\n') buf[strlen(buf) - 1] = '\0';
 
 	for (i = 0; i < strlen(buf) && buf[i] != ' '; i++) {

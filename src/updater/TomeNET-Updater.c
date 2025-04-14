@@ -282,7 +282,7 @@ void install_client(GtkButton *button, gpointer label) {
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		fgets(out_val, 20, fp);
+		(void)fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
@@ -437,7 +437,7 @@ exit(0);
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		fgets(out_val, 20, fp);
+		(void)fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
@@ -538,7 +538,7 @@ exit(0);
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		fgets(out_val, 20, fp);
+		(void)fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
@@ -684,7 +684,7 @@ void install_music(GtkButton *button, gpointer label) {
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		fgets(out_val, 20, fp);
+		(void)fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
@@ -785,7 +785,7 @@ void install_music(GtkButton *button, gpointer label) {
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		fgets(out_val, 20, fp);
+		(void)fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
@@ -842,7 +842,7 @@ void install_guide(GtkButton *button, gpointer label) {
 	fp = fopen("TomeNET-Guide.txt", "r");
 	if (fp) {//~paranoia?
 		out_val[0] = 0;
-		fgets(out_val, 2, fp);
+		(void)fgets(out_val, 2, fp);
 		res = (out_val[0] < 32);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
@@ -1054,7 +1054,7 @@ int main(int argc, char *argv[]) {
 	/* find out about Linux vs OS X */
 	system("uname -s > arch.tmp");
 	fp = fopen("arch.tmp", "r");
-	fgets(buf, 64, fp);
+	(void)fgets(buf, 64, fp);
 	fclose(fp);
 	remove("arch.tmp");
 	if (strncmp(buf, "Linux", 5)) is_linux = 0; //usually 'Darwin' for OS X
@@ -1062,7 +1062,7 @@ int main(int argc, char *argv[]) {
 	/* find out about 32 vs 64 bit */
 	system("uname -m > arch.tmp");
 	fp = fopen("arch.tmp", "r");
-	fgets(buf, 64, fp);
+	(void)fgets(buf, 64, fp);
 	fclose(fp);
 	remove("arch.tmp");
 	if (strncmp(buf, "x86_64", 6)) is_64bit = 0;
@@ -1083,7 +1083,7 @@ int main(int argc, char *argv[]) {
 	fp = fopen("__wget.tmp", "r");
 	if (fp) {
 		buf[0] = 0;
-		fgets(buf, 2, fp);
+		(void)fgets(buf, 2, fp);
 		fclose(fp);
 		remove("__wget.tmp");
 		if (buf[0] < 32) {

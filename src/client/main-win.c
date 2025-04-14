@@ -5144,7 +5144,7 @@ void init_stuff(void) {
 			if (!fp) quit(format("error: can't open %s for writing", path));
 			if (!fp2) quit(format("error: can't open %s for reading", path2));
 			while (!feof(fp2)) {
-				fgets(buf, 1024, fp2);
+				(void)fgets(buf, 1024, fp2);
 				if (!feof(fp2)) fputs(buf, fp);
 			}
 			fclose(fp2);

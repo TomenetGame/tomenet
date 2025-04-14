@@ -6867,9 +6867,9 @@ bool png_screenshot(void) {
 		/* Obtain path to browser */
 		system("reg query \"HKEY_CLASSES_ROOT\\ChromiumHTML\\shell\\open\\command\" /ve > __temp__"); //<- just guessed the reg value, VERIFY!
 		fp = fopen("__temp__", "r");
-		fgets(tmp, 1024, fp);
-		fgets(tmp, 1024, fp);
-		fgets(tmp, 1024, fp);
+		(void)fgets(tmp, 1024, fp);
+		(void)fgets(tmp, 1024, fp);
+		(void)fgets(tmp, 1024, fp);
 		fclose(fp);
 		c = strchr(tmp, '"');
 		if (!c) return(FALSE); //error
@@ -6914,9 +6914,9 @@ bool png_screenshot(void) {
 			/* Obtain path to browser */
 			system("reg query \"HKEY_CLASSES_ROOT\\ChromeHTML\\shell\\open\\command\" /ve > __temp__");
 			fp = fopen("__temp__", "r");
-			fgets(tmp, 1024, fp);
-			fgets(tmp, 1024, fp);
-			fgets(tmp, 1024, fp);
+			(void)fgets(tmp, 1024, fp);
+			(void)fgets(tmp, 1024, fp);
+			(void)fgets(tmp, 1024, fp);
 			fclose(fp);
 			c = strchr(tmp, '"');
 			if (!c) return(FALSE); //error
@@ -6962,9 +6962,9 @@ bool png_screenshot(void) {
 				/* Obtain path to browser */
 				system("reg query \"HKEY_CLASSES_ROOT\\Applications\\firefox.exe\\shell\\open\\command\" /ve > __temp__");
 				fp = fopen("__temp__", "r");
-				fgets(tmp, 1024, fp);
-				fgets(tmp, 1024, fp);
-				fgets(tmp, 1024, fp);
+				(void)fgets(tmp, 1024, fp);
+				(void)fgets(tmp, 1024, fp);
+				(void)fgets(tmp, 1024, fp);
 				fclose(fp);
 				c = strchr(tmp, '"');
 				if (!c) return(FALSE); //error

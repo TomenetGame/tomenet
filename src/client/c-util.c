@@ -11872,7 +11872,7 @@ static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_cla
 		return(FALSE);
 	}
 	out_val[0] = 0;
-	if (!feof(fff)) fgets(out_val, 1024, fff);
+	if (!feof(fff)) (void)fgets(out_val, 1024, fff);
 	fclose(fff);
 	if (strlen(out_val) >= 3) return(TRUE);
 
@@ -11884,7 +11884,7 @@ static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_cla
 		return(FALSE);
 	}
 	out_val[0] = 0;
-	if (!feof(fff)) fgets(out_val, 1024, fff);
+	if (!feof(fff)) (void)fgets(out_val, 1024, fff);
 	if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
 	fclose(fff);
 	if (strlen(out_val) < 3) {
@@ -11900,7 +11900,7 @@ static bool test_for_password(cptr path_7z_quoted, cptr pack_name, cptr pack_cla
 		return(FALSE);
 	}
 	out_val[0] = 0;
-	if (!feof(fff)) fgets(out_val, 1024, fff);
+	if (!feof(fff)) (void)fgets(out_val, 1024, fff);
 	fclose(fff);
 	passworded = strlen(out_val) >= 3;
 
@@ -11990,7 +11990,7 @@ static bool verify_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class
 		return(FALSE);
 	}
 	out_val[0] = 0;
-	if (!feof(fff)) fgets(out_val, 1024, fff);
+	if (!feof(fff)) (void)fgets(out_val, 1024, fff);
 	if (out_val[0]) out_val[strlen(out_val) - 1] = 0; //strip \n
 	fclose(fff);
 	if (strlen(out_val) < 3) {
@@ -12006,7 +12006,7 @@ static bool verify_password(cptr path_7z_quoted, cptr pack_name, cptr pack_class
 		return(FALSE);
 	}
 	out_val[0] = 0;
-	if (!feof(fff)) fgets(out_val, 1024, fff);
+	if (!feof(fff)) (void)fgets(out_val, 1024, fff);
 	fclose(fff);
 	passworded = strlen(out_val) >= 3;
 
