@@ -5346,10 +5346,16 @@ int macroset_scan(void) {
 
 
 	/* Discard known filesets - fileset[] already gets zero-initialized */
+#if 0
 	for (k = 0; k < MACROFILESETS_MAX; k++) {
 		fileset[k].stages = 0;
 		fileset[k].currently_referenced = fileset[k].any_stage_file_exists = fileset[k].all_stage_files_exist = FALSE;
+		for (f = 0; f < MACROFILESETS_STAGES_MAX; f++)
+			fileset[k].stage_file_exists[f] = FALSE;
 	}
+#else
+	memset(fileset, 0, sizeof(fileset));
+#endif
 	filesets_found = 0;
 	fileset_selected = fileset_stage_selected = -1;
 
@@ -5585,11 +5591,12 @@ c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename,
 c_msg_print("(2)nothing");
 	else { /* Found 'n' macro files */
 		for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
+			/* Acquire base name and stage */
+			strcpy(buf_basename, *p);
 			/* Extract stage index */
 			stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
 			/* Extract base name */
-			strcpy(buf_basename, *p);
-			*p[strlen(*p) - 8] = 0;
+			buf_basename[strlen(buf_basename) - 8] = 0;
 
 c_msg_format("(2)set <%s> / stage %d found", buf_basename, stage);
 			/* Too many stages? */
@@ -5695,20 +5702,20 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 		/* Found none, ie all stages are missing their file each? */
 		if (!n) {
 			if (fileset[k].stages == 1)
-				c_msg_format("\377yWarning(+): Macroset \"%s\" (1 stage) has no file.", buf_basename);
+				c_msg_format("\377yWarning(+): Macroset \"%s\" (1 stage) has no file.", fileset[k].basefilename);
 			else
  #if 0
 				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for any stage.",
-				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+				    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #else /* Save screen space, shorter message */
 				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files.",
-				    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+				    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
  #endif
 		}
 		/* Just one of the stages is missing a file? */
 		else if (n == fileset[k].stages - 1)
 			c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no file for stage %d.",
-			    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
+			    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
 		/* Several stages are missing files */
 		else {
 			tmpbuf[0] = 0;
@@ -5716,7 +5723,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				if (!fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("%d, ", f + 1));
 			tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
 			c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for stages %s.",
-			    buf_basename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
+			    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", tmpbuf);
 		}
 	}
 
