@@ -8574,7 +8574,7 @@ Chain_Macro:
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
 										    format("%s%2d\377g) (%s\377-) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377sdisk",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk",
 										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
@@ -8624,7 +8624,7 @@ Chain_Macro:
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
 										    format("%s%2d\377g) (%s\377-)Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377sdisk",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk",
 										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
