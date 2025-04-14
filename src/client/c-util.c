@@ -5341,6 +5341,9 @@ int macroset_scan(void) {
 	size_t glob_size;
 	glob_t glob_res;
 	char **p;
+#else
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind;
 #endif
 	char cwd[1024];
 
@@ -5416,11 +5419,11 @@ int macroset_scan(void) {
 			/* Too many stages? */
 			if (stage >= MACROFILESETS_STAGES_MAX) {
 				c_msg_format("\377yWarning(0): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
-				c_msg_format("\377y         for macroset '%s'.", buf_basename);
+				c_msg_format("\377y            for macroset '%s'.", buf_basename);
 				continue;
 			} else if (stage < 0) {
 				c_msg_format("\377yWarning(0): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
-				c_msg_format("\377y         for macroset '%s'.", buf_basename);
+				c_msg_format("\377y            for macroset '%s'.", buf_basename);
 				continue;
 			}
 
@@ -5511,15 +5514,30 @@ c_msg_print("(1)nothing");
 			fileset[k].any_stage_file_exists = TRUE;
 
 			for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
+				/* Acquire base name and stage */
+				strcpy(buf_basename, *p);
+#else
+		hFind = FindFirstFile("*-FS?.prf", &FindFileData);
+		if (hFind == INVALID_HANDLE_VALUE) //;
+c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
+		else {
+			strcpy(buf_basename, FindFileData.cFileName);
+			n = 0;
+			while (TRUE) {
+				if (n++) {
+					if (FindNextFile(hFind, &FindFileData)) strcpy(buf_basename, FindFileData.cFileName);
+					else break;
+				}
+#endif
 				/* Extract stage number */
-				stage = atoi(*p + strlen(fileset[k].basefilename) + 3) - 1;
+				stage = atoi(buf_basename + strlen(fileset[k].basefilename) + 3) - 1;
 				if (stage >= MACROFILESETS_STAGES_MAX) {
 					c_msg_format("\377yWarning(1): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
-					c_msg_format("\377y         for macroset '%s'.", buf_basename);
+					c_msg_format("\377y            for macroset '%s'.", buf_basename);
 					continue;
 				} else if (stage < 0) {
 					c_msg_format("\377yWarning(1): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
-					c_msg_format("\377y         for macroset '%s'.", buf_basename);
+					c_msg_format("\377y            for macroset '%s'.", buf_basename);
 					continue;
 				}
 c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename, stage);
@@ -5531,20 +5549,10 @@ c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename,
 				if (stage >= fileset[k].stages) fileset[k].stages = stage + 1;
 			}
 		}
+#ifndef WINDOWS
 		globfree(&glob_res);
 #else
-		//todo: implement above POSIX stuff here for WINDOWS
-		WIN32_FIND_DATA FindFileData;
-		HANDLE hFind;
-
-		hFind = FindFirstFile(format("%s-FS?.prf", fileset[k].basefilename), &FindFileData);
-		if (hFind == INVALID_HANDLE_VALUE) {
-			c_msg_format("FindFirstFile(1) failed (%ld)\n", GetLastError());
-			return(filesets_found);
-		} else {
-			c_msg_format("The first file found(1) is %s\n", FindFileData.cFileName);
-			FindClose(hFind);
-		}
+		if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
 #endif
 	}
 
@@ -5560,6 +5568,19 @@ c_msg_print("(2)nothing");
 		for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 			/* Acquire base name and stage */
 			strcpy(buf_basename, *p);
+#else
+	hFind = FindFirstFile("*-FS?.prf", &FindFileData);
+	if (hFind == INVALID_HANDLE_VALUE) { //;
+		c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
+	} else {
+		strcpy(buf_basename, FindFileData.cFileName);
+		n = 0;
+		while (TRUE) {
+			if (n++) {
+				if (FindNextFile(hFind, &FindFileData)) strcpy(buf_basename, FindFileData.cFileName);
+				else break;
+			}
+#endif
 			/* Extract stage index */
 			stage = atoi(buf_basename + strlen(buf_basename) - 5) - 1;
 			/* Extract base name */
@@ -5569,11 +5590,11 @@ c_msg_format("(2)set <%s> / stage %d found", buf_basename, stage);
 			/* Too many stages? */
 			if (stage >= MACROFILESETS_STAGES_MAX) {
 				c_msg_format("\377yWarning(2): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
-				c_msg_format("\377y         for macroset '%s'.", buf_basename);
+				c_msg_format("\377y            for macroset '%s'.", buf_basename);
 				continue;
 			} else if (stage < 0) {
 				c_msg_format("\377yWarning(2): Discarding invalid stage file %d (stages must start at 1)", stage + 1);
-				c_msg_format("\377y         for macroset '%s'.", buf_basename);
+				c_msg_format("\377y            for macroset '%s'.", buf_basename);
 				continue;
 			}
 
@@ -5629,22 +5650,11 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				filesets_found++;
 			}
 		}
-
 	}
+#ifndef WINDOWS
 	globfree(&glob_res);
 #else
-	//todo: implement above POSIX stuff here for WINDOWS
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind;
-
-	hFind = FindFirstFile("*-FS?.prf", &FindFileData);
-	if (hFind == INVALID_HANDLE_VALUE) {
-		c_msg_format("FindFirstFile(2) failed (%ld)\n", GetLastError());
-		return(filesets_found);
-	} else {
-		c_msg_format("The first file found(2) is %s\n", FindFileData.cFileName);
-		FindClose(hFind);
-	}
+	if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
 #endif
 	/* End of 'user' folder disk operations */
 	chdir(cwd); //Return to TomeNET working directory
