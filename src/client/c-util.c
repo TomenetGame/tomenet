@@ -8451,7 +8451,7 @@ Chain_Macro:
 						bool style_cyclic, style_free;
 						bool ok_new_set, ok_new_stage, ok_swap_stages;
 
-						if (rescan) {
+						if (rescan) { /* (Is statically TRUE on first invocation of mw_fileset, to ensure an initial scan) */
 							rescan = FALSE;
 							filesets_found = macroset_scan();
 						}
