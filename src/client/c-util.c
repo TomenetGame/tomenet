@@ -8582,14 +8582,23 @@ Chain_Macro:
 								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each. REFD=currently referenced):",
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 								for (k = 0; k < MACROFILESETS_MAX; k++)
-									if (k < filesets_found)
+									if (k < filesets_found) {
+										/* Build stages string */
+										tmpbuf[0] = 0;
+										for (f = 0; f < fileset[k].stages; f++) {
+											if (f) strcat(tmpbuf, "\377g/");
+											if (fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("\377s%d", f + 1));
+											else strcat(tmpbuf, format("\377D%d", f + 1));
+										}
+										for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
+
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
-										    format("%s%2d\377g) (%s\377g) %sStages\377g: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", fileset[k].all_stage_files_exist ? "" : "\377y",
-										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
+										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
-									else
+									} else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
 								l++;
@@ -8632,14 +8641,23 @@ Chain_Macro:
 								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each. REFD=currently referenced):",
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 								for (k = 0; k < MACROFILESETS_MAX; k++)
-									if (k < filesets_found)
+									if (k < filesets_found) {
+										/* Build stages string */
+										tmpbuf[0] = 0;
+										for (f = 0; f < fileset[k].stages; f++) {
+											if (f) strcat(tmpbuf, "\377g/");
+											if (fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("\377s%d", f + 1));
+											else strcat(tmpbuf, format("\377D%d", f + 1));
+										}
+										for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
+
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
-										    format("%s%2d\377g) (%s\377g) %sStages\377g: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", fileset[k].all_stage_files_exist ? "" : "\377y",
-										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
+										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
-									else
+									} else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Ga\377-) Clear list and rescan (discards any unsaved macro set)");
