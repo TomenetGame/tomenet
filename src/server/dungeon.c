@@ -5271,7 +5271,7 @@ static bool process_player_end_aux(int Ind) {
 				/* If we're, after all (enough wood and/or enough swiming or aquatic/Ent) not drowning... */
 				if (drowning < 0) {
 					/* Special flavour message when not drowning and carrying a huge block of wood */
-					if (huge_wood && is_ent && !rand_int(5)) {
+					if (huge_wood && !is_ent && !rand_int(5)) {
 						/* Give specific message for flavour, about clinging to the massive piece of wood, being our 'main relief' ;) */
 						msg_print(Ind, "You float in the water safely, clinging to the wood.");
 					}
