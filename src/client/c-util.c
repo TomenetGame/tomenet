@@ -8539,7 +8539,7 @@ Chain_Macro:
 
 					case mw_fileset: {
 #ifdef TEST_CLIENT
-						int xoffset1 = 2, xoffset2 = 4;
+						int xoffset1 = 1, xoffset2 = 3;
 						int f, k, m, n, found;
 						char *cc, *cf, *cfile;
 						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
@@ -8567,14 +8567,15 @@ Chain_Macro:
 								/* --- Bigmap screen --- */
 
 								/* Give user a choice and wait for user selection of what to do */
-								if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
-								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each) currently loaded:",
+								if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d).", MACROFILESETS_MAX));
+								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each. REFD=currently referenced):",
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
-										    format("%s%2d\377g) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"", fileset_selected == k ? ">" : " ",
-										    k + 1, fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    format("%s%2d\377g) (%s\377-) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377sdisk",
+										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
 									else
@@ -8616,14 +8617,15 @@ Chain_Macro:
 								/* Small screen */
 
 								/* Give user a choice and wait for user selection of what to do */
-								if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d) currently loaded.", MACROFILESETS_MAX));
-								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each) currently loaded:",
+								if (!filesets_found) Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found no macrosets (max %d).", MACROFILESETS_MAX));
+								else Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("Found %d macroset%s (max %d sets, max %d stages each. REFD=currently referenced):",
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found)
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
-										    format("%s%2d\377g) Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"", fileset_selected == k ? ">" : " ",
-										    k + 1, fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    format("%s%2d\377g) (%s\377-)Stages: \377s%d\377-, active: %s; \377s%s\377-; \"\377s%s\377-\"",
+										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377sdisk",
+										    fileset[k].stages, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : "FreeSw"),
 										    fileset[k].basefilename));
 									else
