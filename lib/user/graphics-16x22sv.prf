@@ -282,6 +282,8 @@ F:115:/285 # cordon 'o'
 
 F:196:/286 # window
 F:197:/287 # small window
+F:256:/296 # open window
+F:257:/297 # open small window
 
 F:198:/288 # rain barrel
 
@@ -289,6 +291,9 @@ F:131:/289 # hearthfire
 F:132:/290 # hearthfire's embers
 
 F:140:/291 # decorative glowing sphere (for xmas tree top)
+F:147:/292 # small glowing sphere
+F:148:/293 # glowing sphere
+F:149:/294 # large glowing sphere
 
 # F:182:/57 # Ekkaia, the Encircling Sea
 F:182:/158 # Ekkaia, the Encircling Sea
