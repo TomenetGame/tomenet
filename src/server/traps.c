@@ -4312,7 +4312,9 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 	cave_set_feat_live(wpos, y, x, feat);
 }
 
-void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
+/* Erases a monster trap and all items in it.
+   Returns TRUE if successful, FALSE if not (ie if it got called on an invalid cs_ptr). - C. Blue */
+bool erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 	int this_o_idx, next_o_idx, feat;
 	object_type *o_ptr;
 	cave_type *c_ptr;
@@ -4323,7 +4325,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 	if (!(zcave = getcave(wpos))) {
 		/* Fall back to at least erasing the object in it and any other object linked to it.
 		   Note that this traverses only from trapkit to trapload item, but not vice versa, so not perfect. */
-		if (!o_idx) return;
+		if (!o_idx) return(TRUE);
 		for (this_o_idx = o_idx; this_o_idx; this_o_idx = next_o_idx) {
 			o_ptr = &o_list[this_o_idx];
 #ifdef ENABLE_DEMOLITIONIST
@@ -4334,7 +4336,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 			o_ptr->embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 			delete_object_idx(this_o_idx, TRUE);
 		}
-		return;
+		return(TRUE);
 	}
 
 	c_ptr = &zcave[y][x];
@@ -4344,7 +4346,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 	   So, adding a check for cs_ptr validity here.. - C. Blue, 2022-10-07 */
 	if (!cs_ptr) {
 		s_printf("WARNING: erase_mon_trap() called on invalid cs_ptr at (%d,%d,%d) [%d,%d] feat:%d, o_idx:%d (t=%d/s=%d).\n", wpos->wx, wpos->wy, wpos->wz, x, y, c_ptr->feat, o_idx, o_list[o_idx].tval, o_list[o_idx].sval);
-		return;
+		return(FALSE);
 	}
 	feat = cs_ptr->sc.montrap.feat;
 
@@ -4371,7 +4373,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 
 	cs_erase(c_ptr, cs_ptr);
 	cave_set_feat_live(wpos, y, x, feat);
-	return;
+	return(TRUE);
 }
 
 /* hack: Identify the load? */

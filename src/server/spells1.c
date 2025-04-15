@@ -4754,7 +4754,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Cleanup monster traps */
 		if (feat == FEAT_MON_TRAP) {
-			erase_mon_trap(wpos, y, x, 0);
+			(void)erase_mon_trap(wpos, y, x, 0);
 			/* erasing the monster trap will reset feature to previous type, so have to overwrite it again with the new wall */
 			c_ptr->feat = FEAT_WALL_EXTRA;
 		}
@@ -13391,7 +13391,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 
 					/* Cleanup monster traps */
 					cs_ptr = GetCS(c_ptr2, CS_MON_TRAP);
-					if (cs_ptr) erase_mon_trap(wpos, y, x, 0);
+					if (cs_ptr) (void)erase_mon_trap(wpos, y, x, 0);
 
 					/* Specialty: Detonation potions/blast charges are mining equipment - but miners want treasure as well! */
 					if (typ == GF_DETONATION && !istown(wpos) && !c_ptr->o_idx) { /* paranoia @ o_idx (for gi_ok) */

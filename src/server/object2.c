@@ -220,9 +220,9 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 
 	/* Hack: Erase monster trap, if this item was part of one */
 	if (o_ptr->embed == 1) {
-		erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix, o_idx);
-		//erase_mon_trap() will also delete the item itself, so we must return here */
-		return;
+		/* erase_mon_trap() will also delete the item itself, so we must return here */
+		if (erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix, o_idx)) return;
+		/* However, if there was a faulty cs_ptr and the trap couldn't be processed, we continue here and just erase this item. */
 	}
 
 	/* extra logging for artifact timeout debugging */

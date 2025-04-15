@@ -2520,7 +2520,7 @@ extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, in
 extern void place_trap_object(object_type *o_ptr);
 extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
 extern void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x);
-extern void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx);
+extern bool erase_mon_trap(worldpos *wpos, int y, int x, int o_idx);
 extern bool mon_hit_trap(int m_idx);
 extern bool py_hit_trap(int Ind);
 

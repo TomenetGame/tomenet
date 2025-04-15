@@ -1017,7 +1017,7 @@ void FreeCS(cave_type *c_ptr) {
 
 	while (trav) {
 		/* Delete embedded items - C. Blue */
-		//if (trav->type == CS_MON_TRAP) erase_mon_trap(wpos, y, x, 0);
+		//if (trav->type == CS_MON_TRAP) (void)erase_mon_trap(wpos, y, x, 0);
 		if (trav->type == CS_MON_TRAP) {
 			/* Erase objects being carried */
 			object_type *o_ptr;
