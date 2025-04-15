@@ -4376,14 +4376,19 @@ static bool do_cmd_look_accept(int Ind, int y, int x) {
 
 		/* Notice shops */
 		if (c_ptr->feat == FEAT_SHOP) return(TRUE);
-#if 0
+ #if 0
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return(TRUE);
-#endif	// 0
+ #endif	// 0
 
 		/* Notice doors */
 		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		    (c_ptr->feat <= FEAT_DOOR_TAIL)) return(TRUE);
+
+		/* Notice windows */
+		if (c_ptr->feat == FEAT_WINDOW || c_ptr->feat == FEAT_WINDOW_SMALL
+		    c_ptr->feat == FEAT_OPEN_WINDOW || c_ptr->feat == FEAT_OPEN_WINDOW_SMALL)
+			return(TRUE);
 
 		/* Notice rubble */
 		if (c_ptr->feat == FEAT_RUBBLE) return(TRUE);
