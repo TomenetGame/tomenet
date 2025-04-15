@@ -3319,12 +3319,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden == FALSE || admin)) {
 					n++;
 					if (n == 1) msg_print(Ind, "\377WCurrently ongoing events:");
-#ifdef DM_MODULES
-					if ((global_event[i].getype == GE_ADVENTURE) && (global_event[i].state[1] == 1)) {
-						msg_format(Ind, "  \377U%d\377W) '%s' accepts challengers indefinitely.", i+1, global_event[i].title);
+					if (global_event[i].signup_begins_announcement == 1) {
+						msg_format(Ind, "  \377U%d\377W) '%s' accepts challengers indefinitely.", i + 1, global_event[i].title);
 						continue;
 					}
-#endif
 					/* Event still in announcement phase? */
 					at = global_event[i].announcement_time - (turn - global_event[i].start_turn) / cfg.fps;
 					if (at > 0) {
@@ -3363,6 +3361,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int at = global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps;
 				int as = global_event[k0].signup_time - (turn - global_event[k0].start_turn) / cfg.fps;
 
+				/* Hack: Always allow signing up, ie at any time during the full run of the event? */
+				if (global_event[k0].signup_time == -2) as = 1;
+
 				signup[0] = '\0';
 				if (!(global_event[k0].signup_time == -1) &&
 				    !(!global_event[k0].signup_time &&
@@ -3385,9 +3386,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (global_event[k0].noghost) msg_print(Ind, "\377RIn this event death is permanent - if you die your character will be erased!");
 
 //				msg_print(Ind, "\377d ");
-#ifdef DM_MODULES
-				if ((global_event[k0].getype == GE_ADVENTURE) && (global_event[k0].state[1] == 1)) return;
-#endif
+				if (global_event[k0].signup_begins_announcement == 1) return;
 				if (at >= 120) {
 					msg_format(Ind, "\377WThis event will start in %ld minute%s.%s", at / 60, at / 60 == 1 ? "" : "s", signup);
 				} else if (at > 0) {
@@ -3434,15 +3433,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (global_event[k0].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
 			else if (!global_event[k0].signup_time &&
-#ifdef DM_MODULES
-						((global_event[k0].getype == GE_ADVENTURE) &&
-						!(global_event[k0].state[1] == 1)) &&
-#endif
-				    (!global_event[k0].announcement_time ||
-				    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
+			    global_event[k0].signup_begins_announcement != 1 &&
+			    (!global_event[k0].announcement_time ||
+			    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
 				msg_print(Ind, "\377yThat event has already started.");
-			else if (global_event[k0].signup_time &&
-				    (global_event[k0].signup_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0))
+			else if (global_event[k0].signup_time && global_event[k0].signup_time != -2 &&
+			    (global_event[k0].signup_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0))
 				msg_print(Ind, "\377yThat event does not allow signing up anymore now.");
 			else {
 				if (tk < 2) global_event_signup(Ind, k0, NULL);
@@ -3463,12 +3459,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (global_event[k0].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
 			else if (!global_event[k0].signup_time &&
-#ifdef DM_MODULES
-						((global_event[k0].getype == GE_ADVENTURE) &&
-						!(global_event[k0].state[1] == 1)) &&
-#endif
-				    (!global_event[k0].announcement_time ||
-				    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
+			    global_event[k0].signup_begins_announcement != 1 &&
+			    (!global_event[k0].announcement_time ||
+			    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
 				msg_print(Ind, "\377yThat event has already started.");
 			else {
 				global_event_type *ge = &global_event[k0];
@@ -3482,9 +3475,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					s_printf("%s EVENT_SIGNOFF: '%s' (%d) -> #%d '%s'(%d) [%d]\n", showtime(), p_ptr->name, Ind, k0, ge->title, ge->getype, i);
 					p_ptr->global_event_type[k0] = GE_NONE;
 
-#ifdef DM_MODULES
 					/* If the adventure is pending, possibly retract sign-up phase */
-					if (ge->getype == GE_ADVENTURE && ge->state[1] == 2) {
+					if (ge->signup_begins_announcement == 2) {
 						n = 0;
 						for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 							if (!ge->participant[j]) continue;
@@ -3501,11 +3493,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							}
 						}
 						if (!n) { // if zero participants, reset
-							ge->state[1] = 1;
+							ge->signup_begins_announcement = 1;
+							ge->pre_announcement_time = 0;
 							announce_global_event(k0);
 						}
 					}
-#endif
 
 					return;
 				}
@@ -10405,7 +10397,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						// s_printf("strcmp(message3,global_event[i].title) %d\n",strcmp(message3,global_event[i].title));
 						if (!(strcmp(message3,global_event[i].title) == 0)) continue; // strcmp() returns 0 if equal
 						// s_printf("global_event: i %d global_event[i].getype %d global_event[i].title %s global_event[i].state[0] %d\n",i,global_event[i].getype,global_event[i].title, global_event[i].state[0]);
-						if (global_event[i].state[0] || global_event[i].state[1]) {
+						if (global_event[i].state[0] || global_event[i].signup_begins_announcement) {
 							msg_print(Ind, "Error: adventure already running!");
 							return;
 						}
@@ -10507,7 +10499,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					    (!ge->announcement_time ||
 					    (ge->announcement_time - (turn - ge->start_turn) / cfg.fps <= 0)))
 						continue;
-					if (ge->signup_time &&
+					if (ge->signup_time && ge->signup_time != -2 &&
 					    (ge->signup_time - (turn - ge->start_turn) / cfg.fps <= 0))
 						continue;
 					break;

@@ -8395,14 +8395,17 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->getype = getype;
 	ge->creator = 0;
 	if (Ind) ge->creator = p_ptr->id;
-	ge->announcement_time = 1800; /* time until event finally starts, announced every 15 mins */
-	ge->signup_time = 0; /* 0 = during announcement time */
+	ge->signup_begins_announcement = 0; /* event will begin the announcement phase when there is the first player signing up for it. So this is basically an indefinite pre-announcement phase. */
+	ge->announcement_time = 1800; /* time until event finally starts, announced every 15 mins. */
+	ge->signup_time = 0; /* 0 = during announcement time, -1 = any time after the event has started */
+	ge->pre_announcement_time = 0;
 	ge->first_announcement = TRUE; /* first announcement will also display available commands */
 	ge->start_turn = turn;
 	//ge->start_turn = turn + 1; /* +1 is a small hack, to prevent double-announcement */
 	/* hack - synch start_turn to cfg.fps, since process_global_events is only called every
 	   (turn % cfg.fps == 0), and its announcement timer checks will fail otherwise */
 	ge->start_turn += (cfg.fps - (turn % cfg.fps));
+	time(&ge->created);
 	time(&ge->started);
 	ge->paused = FALSE;
 	ge->paused_turns = 0; /* counter for real turns the event "missed" while being paused */
@@ -8489,7 +8492,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		}
 #endif
 		ge->announcement_time = 0;
-		ge->signup_time = 60 * 30;
+		ge->signup_time = -2; //any time!
 		ge->min_participants = 0;
 		break;
 	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' Labyrinth */
@@ -8532,7 +8535,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		// Provides the /evinfo warning, check applies PEVF_NOGHOST_00 elsewhere - Kurzel
 
 		// Indefinite "challenge" events, managed by a DM. Use /gestop to cancel.
-		ge->state[1] = exec_lua(0, format("return adventure_type(\"%s\", 7)", parm));
+		ge->signup_begins_announcement = exec_lua(0, format("return adventure_type(\"%s\", 7)", parm));
 
 		// for (i = 0; i < 64; i++) // Up to 64, only 7 defined (so far)
 		for (i = 0; i < 7; i++) // GE_EXTRA in adventures.lua
@@ -8541,7 +8544,6 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 		for (i = 0; i < 10; i++) // GE_DESCRIPTION in adventures.lua (default "")
 			strcpy(ge->description[i], string_exec_lua(0, format("return adventure_description(\"%s\", %d)", parm, i + 1)));
-
 		break;
 #endif
 	}
@@ -8594,9 +8596,7 @@ void stop_global_event(int Ind, int n) {
 	ge->start_turn = turn;
 	ge->announcement_time = -1; /* enter the processing phase, */
  #endif
- #ifdef DM_MODULES
-	if (ge->getype == GE_ADVENTURE) ge->state[1] = 0; /* signal cancellation */
- #endif
+	if (ge->signup_begins_announcement) ge->signup_begins_announcement = 0; /* signal true cancellation (ie event is erased, instead of just regressing into wait-for-1st-signup-phase. */
 	ge->state[0] = 255; /* ..and process clean-up! */
 #endif
 	return;
@@ -8606,12 +8606,10 @@ void announce_global_event(int ge_id) {
 	global_event_type *ge = &global_event[ge_id];
 	int time_left = ge->announcement_time - ((turn - ge->start_turn) / cfg.fps);
 
-#ifdef DM_MODULES
-	if ((ge->getype == GE_ADVENTURE) && (ge->state[1] == 1)) {
+	if (ge->signup_begins_announcement == 1) {
 		msg_broadcast_format(0, "\374\377W[%s (\377U%d\377W) is accepting challengers]", ge->title, ge_id + 1);
 		return;
 	}
-#endif
 
 	/* display minutes, if at least 120s left */
 	//if (time_left >= 120) msg_broadcast_format(0, "\374\377W[%s (%d) starts in %d minutes. See \377s/evinfo\377W]", ge->title, ge_id + 1, time_left / 60);
@@ -8633,7 +8631,7 @@ void announce_global_event(int ge_id) {
  */
 void global_event_signup(int Ind, int n, cptr parm) {
 	int i, p, max_p;
-	bool fake_signup = FALSE;
+	bool fake_signup = FALSE, first_signup = FALSE;
 	global_event_type *ge = &global_event[n];
 	player_type *p_ptr = Players[Ind];
 
@@ -8671,6 +8669,14 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	if (p_ptr->inval) {
 		msg_print(Ind, "\377ySorry, only validated accounts may participate.");
 		return;
+	}
+
+	/* If the event is infinitely recruiting, begin sign-up phase! */
+	if (ge->signup_begins_announcement == 1) {
+		/* Begin! */
+		ge->signup_begins_announcement = 2;
+		/* Modules at least want to know if this was the first player signing up */
+		first_signup = TRUE;
 	}
 
 	/* check individual event restrictions against player */
@@ -8958,7 +8964,6 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		break;
 #ifdef DM_MODULES
 	case GE_ADVENTURE:
-
 		/* Disqualified? */
 		if (p_ptr->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
@@ -8995,29 +9000,23 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			if (!is_admin(p_ptr)) return;
 		}
 
-		/* If the adventure is ongoing, begin sign-up phase! */
-		if (ge->state[1] == 1) {
-
+		if (first_signup) {
 			/* Stall for any real player presence, eg. DM or testers but NOT static counter */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
 				if (in_module(&Players[i]->wpos) && (Players[i]->wpos.wz >= ge->extra[3]) && (Players[i]->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
 			if (n) {
 				msg_print(Ind, "\377ySorry, this event is currently undergoing renovations.");
+				ge->signup_begins_announcement = 1; //discard this signup attempt, regress into waiting-for-1st-signup phase
 				return;
 			}
 
 			/* HACK - restart timers */
-			ge->start_turn = turn + (cfg.fps - (turn % cfg.fps));
+			ge->start_turn = turn;// - cfg.fps + (turn % cfg.fps);
 			time(&ge->started);
 			ge->announcement_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 1)", ge->title));
 			ge->end_turn = ge->start_turn + cfg.fps * 60 * exec_lua(0, format("return adventure_type(\"%s\", 3)", ge->title));
-
-			/* Begin! */
-			ge->state[1] = 2;
-
 		}
-
 		break;
 #endif
 	}
@@ -9040,6 +9039,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 
 /*
  * Process a global event - C. Blue
+ * Called every second.
  */
 static void process_global_event(int ge_id) {
 	global_event_type *ge = &global_event[ge_id];
@@ -9078,9 +9078,13 @@ static void process_global_event(int ge_id) {
 		s_printf("%s EVENT_STOP (turn overflow): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 	}
 
-#ifdef DM_MODULES
-	if ((ge->getype == GE_ADVENTURE) && (ge->state[1] == 1)) return; /* waiting for first participant to signup */
-#endif
+	if (ge->signup_begins_announcement == 1) {
+		ge->start_turn = turn; /* continuously update start turn so we never exceed elapsed_turns regarding 'turn overflow' (see right above) */
+		/* Instead of start_turn, increase this seconds-counter, just so we keep track of time in
+		   SOME way at least if not in turns (even though this isn't really needed for anything): */
+		ge->pre_announcement_time++;
+		return; /* waiting for first participant to signup */
+	}
 
 	/* extra warning at T - x min for last minute subscribers */
 	if (ge->announcement_time * cfg.fps - elapsed_turns == GE_FINAL_ANNOUNCEMENT * cfg.fps) {
@@ -9224,15 +9228,13 @@ static void process_global_event(int ge_id) {
 							ge->participant[i] = 0; // wipe offline participants too
 						}
 					}
-#ifdef DM_MODULES
 					/* If the adventure is pending, retract sign-up phase! */
-					if (ge->getype == GE_ADVENTURE && ge->state[1] == 2) {
-						ge->state[1] = 1;
+					if (ge->signup_begins_announcement == 2) {
+						ge->signup_begins_announcement = 1;
+						ge->pre_announcement_time = 0;
 						announce_global_event(ge_id);
 						return; // do NOT start the event yet, as we regressed into signup/announcement-phase
-					} else
-#endif
-					ge->getype = GE_NONE;
+					} else ge->getype = GE_NONE;
 
 				/* Participants are ok, event now starts! */
 				} else {
@@ -9261,15 +9263,12 @@ static void process_global_event(int ge_id) {
 						}
 					}
 #ifdef DM_MODULES
-					s_printf("GE_DEBUG: sector000separation = %d, state[0] = %d, state[1] = %d\n", sector000separation, ge->state[0], ge->state[1]);
+					s_printf("GE_DEBUG: sector000separation=%d, state[0]=%d, signup_begins_announcement=%d\n", sector000separation, ge->state[0], ge->signup_begins_announcement);
 #endif
 				}
 			}
-
 		/* we're still just announcing the event -- nothing more to do for now */
-		} else {
-			return; /* still announcing */
-		}
+		} else return; /* still announcing */
 	}
 
 	/* Event starts immediately without announcement time? Still display a hint message. */
@@ -10279,7 +10278,7 @@ static void process_global_event(int ge_id) {
 				ge->state[0] = 255;
 				s_printf("%s EVENT_STOP (no players (5)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 			} else ge->state[0] = 1;
-			// s_printf("DM_MODULES: wpos (%d,%d,%d) contains %d players (state = %d,%d).\n",wpos.wx,wpos.wy,wpos.wz,n,ge->state[0],ge->state[1]);
+			// s_printf("DM_MODULES: wpos (%d,%d,%d) contains %d players (state = %d,%d).\n", wpos.wx, wpos.wy, wpos.wz, n, ge->state[0], ge->signup_begins_announcement);
 
 			break;
 		case 1: /* ongoing modules are actually running now, not just in signup phase */
@@ -10294,7 +10293,7 @@ static void process_global_event(int ge_id) {
 				ge->state[0] = 255;
 				s_printf("%s EVENT_STOP (no players (6)): #%d '%s'(%d)\n", showtime(), ge_id, ge->title, ge->getype);
 			}
-			// s_printf("DM_MODULES: %d participants (state = %d,%d).\n",n,ge->state[0],ge->state[1]);
+			// s_printf("DM_MODULES: %d participants (state = %d,%d).\n", n, ge->state[0], ge->signup_begins_announcement);
 
 			break;
 		case 255: /* clean-up or restart */
@@ -10330,14 +10329,15 @@ static void process_global_event(int ge_id) {
 			// Don't wipe it once generated, avoiding conflicts with PVPARENA / other modules - Kurzel
 			// if (wild_info[wpos.wy][wpos.wx].tower) (void)rem_dungeon(&wpos, TRUE);
 
-			/* Debug why state[1] might be != 2 and therefore state[0] wouldn't be reset, if we didn't add the 'Always reset stage' safety measure below */
-			s_printf("ge->state[1] is %d\n", ge->state[1]);
+			/* Debug why signup_begins_announcement might be != 2 and therefore state[0] wouldn't be reset, if we didn't add the 'Always reset stage' safety measure below */
+			s_printf("ge->signup_begins_announcement is %d\n", ge->signup_begins_announcement);
 			/* Always reset stage to the beginning, to be safe */
 			ge->state[0] = 0;
 			/* restart challenge announcement */
-			if (ge->state[1] == 2) {
-				//ge->state[0] = 0; --safety measure: moved above
-				ge->state[1] = 1;
+			if (ge->signup_begins_announcement == 2) {
+				//ge->signup_begins_announcement = 0; --safety measure: moved above
+				ge->signup_begins_announcement = 1;
+				ge->pre_announcement_time = 0;
 				announce_global_event(ge_id);
 				break;
 			}

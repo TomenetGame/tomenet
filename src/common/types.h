@@ -5021,6 +5021,7 @@ struct school_type {
    schedule. Timing is possible too. Might want to make use of AT_... sequences. */
 typedef struct global_event_type global_event_type;
 struct global_event_type {
+	time_t created;		/* event creation date (ie call of start_global_event()) */
 	int getype;		/* Type of the event (or quest) */
 	struct worldpos beacon_wpos[128];	/* Exit beacon wpos, arbitrary amount, basically: Each participant could have his own floor, in the same event, competing! Or a level 127 dungeon could have a beacon on each floor! */
 	s16b beacon_parm[128];			/* Each beacon can have an optional parameter to be evaluated on player taking the beacon. */
@@ -5030,16 +5031,19 @@ struct global_event_type {
 	s32b extra[64];		/* extra info (zero'ed on event start) */
 	s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
 	s32b creator;		/* Player ID or 0L */
-	long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
+	byte signup_begins_announcement; /* 0 = disabled, 1 = first player signing up will begin the announcement phase and this value is set to 2. */
+	long int pre_announcement_time; /* if signup_begins_announcement is 1: for how many seconds have we been waiting for first signup. */
+	long int announcement_time;	/* for how many seconds the event will be announced until it actually starts. */
 	long int signup_time;	/* for how many seconds the event will allow signing up:
+				   -2 = this event always allows signing up, even while the event is already running.
 				   -1 = this event doesn't allow signing up at all!
 				   0 = same as announcement_time, ie during the announcement phase
 				   >0 = designated time instead of announcement_time. */
 	bool first_announcement;	/* just keep track of first advertisement, and add additional info that time */
-	s32b start_turn;	/* quest started */
-	s32b end_turn;		/* quest will end */
-	time_t started;		/* quest started */
-	time_t ending;		/* quest will end */
+	s32b start_turn;	/* event start turn*/
+	s32b end_turn;		/* event end turn */
+	time_t started;		/* event start date */
+	time_t ending;		/* event end date */
 	char title[64];		/* short title of this event (used for /gesign <n> player command) */
 	char description[10][MAX_CHARS_WIDE];	/* longer event description (full line = 80 chars, + colour codes) */
 	bool hidden;		/* hidden from the players? */
