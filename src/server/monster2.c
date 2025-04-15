@@ -6000,7 +6000,7 @@ static bool monster_ground(int r_idx) {
  */
 bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b info) {
 	/* Deep water */
-	if (feat == FEAT_DEEP_WATER) {
+	if (is_deep_water(feat)) {
 		if ((r_ptr->flags7 & RF7_AQUATIC) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY) ||
 		    (r_ptr->flags3 & RF3_IM_WATER) ||
@@ -6010,7 +6010,7 @@ bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b 
 			return(FALSE);
 	}
 	/* Shallow water */
-	else if (feat == FEAT_SHAL_WATER) {
+	else if (is_shal_water(feat)) {
 		if ((r_ptr->flags2 & RF2_AURA_FIRE)
 		    && r_ptr->level < 25 /* no more Solar Blades stuck in shallow water o_o */
 		    /*(this level is actually only undercut by a) Jumping Fireball, b) Fire Spirit and c) Fire Vortex)*/
@@ -6028,16 +6028,7 @@ bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b 
 		else return(FALSE);
 	}
 	/* Lava OR fire damage */
-	else if (feat == FEAT_SHAL_LAVA ||
-	    feat == FEAT_DEEP_LAVA ||
-	    feat == FEAT_EMBERS ||
-	    feat == FEAT_SMALL_FIRE ||
-	    feat == FEAT_SMALL_CAMPFIRE ||
-	    feat == FEAT_CAMPFIRE ||
-	    // feat == FEAT_BURNING_TORCH ||
-	    // feat == FEAT_BURNING_LAMP ||
-	    feat == FEAT_FIRE ||
-	    feat == FEAT_GREAT_FIRE) {
+	else if (is_lava(feat) || is_acute_fire(feat)) {
 		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
 		    (r_ptr->flags9 & RF9_RES_FIRE) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY))
@@ -6052,23 +6043,11 @@ bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b 
 
 void set_mon_num2_hook(int feat) {
 	/* Set the monster list */
-	switch (feat) {
-	case FEAT_SHAL_WATER:
-		get_mon_num2_hook = monster_shallow_water;
-		break;
-	case FEAT_DEEP_WATER:
-		get_mon_num2_hook = monster_deep_water;
-		break;
-	case FEAT_DEEP_LAVA:
-	case FEAT_SHAL_LAVA:
-	case FEAT_FIRE: //added the 'fires', dunno..
-	case FEAT_GREAT_FIRE:
+	if (is_shal_water(feat)) get_mon_num2_hook = monster_shallow_water;
+	else if (is_deep_water(feat)) get_mon_num2_hook = monster_deep_water;
+	else if (is_lava(feat) || is_fire(feat)) //added the 'fires', dunno..
 		get_mon_num2_hook = monster_lava;
-		break;
-	default:
-		get_mon_num2_hook = monster_ground;
-		break;
-	}
+	else get_mon_num2_hook = monster_ground;
 }
 
 /* Generic function to set a proper hook for monster spawning. */

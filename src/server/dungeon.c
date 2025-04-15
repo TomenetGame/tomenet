@@ -5128,7 +5128,7 @@ static bool process_player_end_aux(int Ind) {
 		apply_terrain_effect(Ind);
 
 		/* Drowning, but not ghosts */
-		if (c_ptr->feat == FEAT_DEEP_WATER) {
+		if (is_deep_water(c_ptr->feat)) {
 			/* Rewrote this whole routine to take into account DSMs, wood helping thanks to its relative density, subinventories etc. - C. Blue */
 			if (!p_ptr->tim_wraith && !p_ptr->levitate) { /* Wraiths and levitating players are completely unaffected by water, including their items */
 				bool huge_wood = FALSE, cold = cold_place(wpos), is_ent = (p_ptr->prace == RACE_ENT && !p_ptr->body_monster);
@@ -5325,12 +5325,11 @@ static bool process_player_end_aux(int Ind) {
 		else if ((p_ptr->body_monster) &&
 		    ((r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) &&
 		    !(r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD))
-		    && ((c_ptr->feat != FEAT_SHAL_WATER) ||
+		    && (!is_shal_water(c_ptr->feat) ||
 		    r_info[p_ptr->body_monster].weight > 700)
 		    /* new: don't get stunned from crossing door/stair grids every time - C. Blue */
 		    && !is_always_passable(c_ptr->feat)
-		    && !p_ptr->tim_wraith)
-		{
+		    && !p_ptr->tim_wraith) {
 			long hit = p_ptr->mhp >> 6; /* Take damage */
 
 			hit += randint(p_ptr->chp >> 5);
@@ -5339,7 +5338,7 @@ static bool process_player_end_aux(int Ind) {
 			if (!hit) hit = 1;
 
 			if (hit) {
-				if (c_ptr->feat != FEAT_SHAL_WATER)
+				if (!is_shal_water(c_ptr->feat))
 					msg_print(Ind, "\377rYou cannot breathe air!");
 				else
 					msg_print(Ind, "\377rThere's not enough water to breathe!");
@@ -5447,7 +5446,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Ent's natural food while in 'Resting Mode' - C. Blue
 	   Water helps much, natural floor helps some. */
 	if (!p_ptr->ghost && p_ptr->prace == RACE_ENT && p_ptr->resting) {
-		if (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_MUD)
+		if ((is_water(c_ptr->feat) && c_ptr->feat != FEAT_TAINTED_WATER) || c_ptr->feat == FEAT_MUD)
 			autofood = 200; //Delicious!
 		else if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_DIRT)
 			autofood = 100;
@@ -9534,8 +9533,8 @@ void process_player_change_wpos(int Ind) {
 			}
 		}
 		while (((zcave[starty][startx].info & (CAVE_ICKY | CAVE_STCK | CAVE_NEST_PIT)) /* Don't recall into houses. Stck/Nest-pit shouldn't really happen on world surface though.. */
-			|| (zcave[starty][startx].feat == FEAT_DEEP_WATER)
-			|| (zcave[starty][startx].feat == FEAT_DEEP_LAVA)
+			|| is_deep_water(zcave[starty][startx].feat)
+			|| is_deep_lava(zcave[starty][startx].feat)
 			|| (zcave[starty][startx].feat == FEAT_SICKBAY_AREA) /* don't recall him into sickbay areas */
 			|| (zcave[starty][startx].info & CAVE_PROT) /* don't recall into stables or inns */
 			|| (f_info[zcave[starty][startx].feat].flags1 & FF1_PROTECTED)
@@ -12778,7 +12777,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 			}
 		}
 	    /* or running-swimming? */
-		else if ((c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_GLIT_WATER || c_ptr->feat == FEAT_TAINTED_WATER || c_ptr->feat == FEAT_DEEP_WATER) && p_ptr->can_swim) {
+		else if (is_water(c_ptr->feat) && p_ptr->can_swim) {
 			/* Allow Aquatic players run/swim at full speed */
 			if (!(r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC)) {
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) *real_speed = (*real_speed * 100) / (100 + impair); // -50% speed

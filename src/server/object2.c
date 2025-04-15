@@ -10177,15 +10177,9 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 	} else if (!d_ptr || d_ptr->type != DI_MT_DOOM) return(FALSE);
 
 	/* grid isn't lava or 'fire'? */
-	switch (c_ptr->feat) {
-	case FEAT_SHAL_LAVA:
-	case FEAT_DEEP_LAVA:
-	case FEAT_FIRE: //allow 'fires' too
-	case FEAT_GREAT_FIRE:
-		break;
-	default:
+	if (!is_lava(c_ptr->feat) &&
+	    !is_acute_fire(c_ptr->feat)) //allow 'fires' too
 		return(FALSE);
-	}
 
 	/* lands safely on top of a loot pile? :-p */
 	if (c_ptr->o_idx) return(FALSE);
@@ -10576,11 +10570,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	if (o_ptr->tval == TV_FLASK) is_flask = TRUE;
 	if (o_ptr->number > 1) plural = TRUE;
 #endif
-	switch (c_ptr->feat) {
-	case FEAT_SHAL_WATER:
-	case FEAT_DEEP_WATER:
-	case FEAT_GLIT_WATER: //this isn't real water, it's boundary wall actually
-	//case FEAT_TAINTED_WATER:
+	if (is_water(c_ptr->feat)) {
 		if (hates_water(o_ptr)) {
 			do_kill = TRUE;
 #ifdef DROP_KILL_NOTE
@@ -10588,17 +10578,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 #endif
 			if (f5 & TR5_IGNORE_WATER) do_kill = FALSE;
 		}
-		break;
-	case FEAT_SHAL_LAVA:
-	case FEAT_DEEP_LAVA:
-	case FEAT_EMBERS:
-	case FEAT_SMALL_FIRE:
-	case FEAT_SMALL_CAMPFIRE:
-	case FEAT_CAMPFIRE:
-	// case FEAT_BURNING_TORCH:
-	// case FEAT_BURNING_LAMP:
-	case FEAT_FIRE:
-	case FEAT_GREAT_FIRE:
+	} else if (is_fire(c_ptr->feat) || is_lava(c_ptr->feat)) {
 		if (hates_fire(o_ptr)) {
 			do_kill = TRUE;
 #ifdef DROP_KILL_NOTE
@@ -10606,7 +10586,6 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 #endif
 			if (f3 & TR3_IGNORE_FIRE) do_kill = FALSE;
 		}
-		break;
 	}
 
 	if (do_kill) {

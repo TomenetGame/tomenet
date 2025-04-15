@@ -2544,8 +2544,7 @@ byte get_trap_color(int Ind, int t_idx, int feat) {
 	a = t_info[t_idx].color;
 
 	/* Get a new color with a strange formula :) */
-	if (t_info[t_idx].flags & FTRAP_CHANGE)
-	{
+	if (t_info[t_idx].flags & FTRAP_CHANGE) {
 		u32b tmp;
 
 		/* tmp = dlev + dungeon_type + c_ptr->feat; */
@@ -2557,8 +2556,8 @@ byte get_trap_color(int Ind, int t_idx, int feat) {
 	}
 
 	/* Hack -- always l.blue if underwater */
-	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
-		a = TERM_L_BLUE;
+	if (feat == FEAT_TAINTED_WATER) a = TERM_UMBER;
+	else if (is_water(feat)) a = TERM_L_BLUE;
 
 	return(a);
 }
@@ -2576,8 +2575,8 @@ byte get_monster_trap_color(int Ind, int o_idx, int feat) {
 	a = k_info[kit_o_ptr->k_idx].d_attr;
 
 	/* Hack -- always l.blue if underwater */
-	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
-		a = TERM_L_BLUE;
+	if (feat == FEAT_TAINTED_WATER) a = TERM_UMBER;
+	else if (is_water(feat)) a = TERM_L_BLUE;
 
 	return(a);
 }
@@ -3231,8 +3230,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 #if 0 /* currently this doesn't make sense because montraps are their own feature (like runes) instead of using just the cs_ptr (like normal traps)! This means they cancel the water grid! ew. */
 						/* Hack -- always l.blue if underwater */
-						if (cs_ptr->sc.montrap.feat == FEAT_DEEP_WATER || cs_ptr->sc.montrap.feat == FEAT_SHAL_WATER)
-							a = TERM_L_BLUE;
+						if (cs_ptr->sc.montrap.feat == FEAT_TAINTED_WATER) a = TERM_UMBER;
+						else if (is_water(cs_ptr->sc.montrap.feat)) a = TERM_L_BLUE;
 #endif
 					}
 					keep = TRUE;
@@ -3892,7 +3891,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				get_object_visual(cp, ap, &o_list[c_ptr->o_idx], p_ptr);
 
 				/* Hack -- always l.blue if underwater */
-				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER) (*ap) = TERM_L_BLUE;
+				if (feat == FEAT_TAINTED_WATER) (*ap) = TERM_UMBER; //dirty water
+				else if (is_water(feat)) (*ap) = TERM_L_BLUE;
 
 #ifdef ENABLE_DEMOLITIONIST
 				/* Hack -- thrown aka non-planted, armed demolition charges flicker as the fuse is lit */
@@ -4986,7 +4986,7 @@ void prt_map_forward(int Ind) {
  *
  * Note that all "walls" always look like "secret doors" (see "map_info()").
  */
-static byte priority_table[][2] = {
+static u16b priority_table[][2] = {
 	/* Dark */
 	{ FEAT_NONE, 2 },
 
@@ -5045,6 +5045,24 @@ static byte priority_table[][2] = {
 	{ FEAT_SHAL_WATER, 20 },
 	{ FEAT_DEEP_LAVA, 20 },
 	{ FEAT_SHAL_LAVA, 20 },
+	{ FEAT_ANIM_SHAL_WATER_EAST, 20 },
+	{ FEAT_ANIM_SHAL_WATER_WEST, 20 },
+	{ FEAT_ANIM_SHAL_WATER_NORTH, 20 },
+	{ FEAT_ANIM_SHAL_WATER_SOUTH, 20 },
+	{ FEAT_ANIM_DEEP_WATER_EAST, 20 },
+	{ FEAT_ANIM_DEEP_WATER_WEST, 20 },
+	{ FEAT_ANIM_DEEP_WATER_NORTH, 20 },
+	{ FEAT_ANIM_DEEP_WATER_SOUTH, 20 },
+
+	{ FEAT_ANIM_SHAL_LAVA_EAST, 20 },
+	{ FEAT_ANIM_SHAL_LAVA_WEST, 20 },
+	{ FEAT_ANIM_SHAL_LAVA_NORTH, 20 },
+	{ FEAT_ANIM_SHAL_LAVA_SOUTH, 20 },
+	{ FEAT_ANIM_DEEP_LAVA_EAST, 20 },
+	{ FEAT_ANIM_DEEP_LAVA_WEST, 20 },
+	{ FEAT_ANIM_DEEP_LAVA_NORTH, 20 },
+	{ FEAT_ANIM_DEEP_LAVA_SOUTH, 20 },
+
 	{ FEAT_DARK_PIT, 20 },
 	{ FEAT_MOUNTAIN, 20 },
 
@@ -8628,9 +8646,7 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 
 	/* Trees in greater fire become dead trees at once */
 	if ((feat == FEAT_TREE || feat == FEAT_BUSH) &&
-	    (c_ptr->feat == FEAT_SHAL_LAVA ||
-	    c_ptr->feat == FEAT_FIRE ||
-	    c_ptr->feat == FEAT_GREAT_FIRE))
+	    (is_lava(c_ptr->feat) || is_acute_fire(c_ptr->feat)))
 		feat = FEAT_DEAD_TREE;
 
 	/* Don't mess with inns please! */
@@ -8639,8 +8655,6 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	/* in Nether Realm, floor is always nether mist (or lava)! */
 	if (in_netherrealm(wpos)) switch (feat) {
 		case FEAT_IVY:
-		case FEAT_SHAL_WATER:
-		case FEAT_DEEP_WATER:
 		case FEAT_SNOW:
 		case FEAT_ICE:
 		case FEAT_FLOOR:
@@ -8652,11 +8666,13 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		case FEAT_FLOWER:
 			feat = FEAT_NETHER_MIST;
+			break;
+		default:
+			if (is_water(feat)) feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
 		case FEAT_IVY:
-		case FEAT_SHAL_WATER:
 		case FEAT_SNOW:
 		case FEAT_ICE:
 		case FEAT_FLOOR:
@@ -8668,6 +8684,9 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		case FEAT_FLOWER:
 			feat = FEAT_DEEP_WATER;
+			break;
+		default:
+			if (is_shal_water(feat)) feat = FEAT_DEEP_WATER;
 	}
 
 	/* Change the feature */
@@ -8724,14 +8743,12 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_MAGMA:
 			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
-		case FEAT_SHAL_WATER:
-		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
-			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
+		default:
+			if (is_water(feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 
 		switch (c_ptr->feat) {
@@ -8744,14 +8761,12 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_MAGMA:
 			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
-		case FEAT_SHAL_WATER:
-		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
-			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
+		default:
+			if (is_water(c_ptr->feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 #else
 		/* hack: only allow around store entrances */
@@ -8795,7 +8810,7 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_DEEP_LAVA ||
 	    c_ptr->feat == FEAT_DEEP_WATER))
 #else
-	if (c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
+	if (is_deep_lava(c_ptr->feat) || is_deep_water(c_ptr->feat))
 #endif
 		return(FALSE);
 
@@ -8846,14 +8861,12 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_MAGMA:
 			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
-		case FEAT_SHAL_WATER:
-		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
-			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
+		default:
+			if (is_water(feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 
 		switch (c_ptr->feat) {
@@ -8866,14 +8879,12 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_MAGMA:
 			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
-		case FEAT_SHAL_WATER:
-		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
-			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
+		default:
+			if (is_water(c_ptr->feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 #else
 		/* hack: only allow around store entrances */
@@ -8917,15 +8928,13 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_DEEP_LAVA ||
 	    c_ptr->feat == FEAT_DEEP_WATER))
 #else
-	if (c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
+	if (is_deep_lava(c_ptr->feat) || is_deep_water(c_ptr->feat))
 #endif
 		return(FALSE);
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
 	if (in_netherrealm(wpos)) switch (feat) {
 		case FEAT_IVY:
-		case FEAT_SHAL_WATER:
-		case FEAT_DEEP_WATER:
 		case FEAT_SNOW:
 		case FEAT_ICE:
 		case FEAT_FLOOR:
@@ -8937,11 +8946,13 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		case FEAT_FLOWER:
 			feat = FEAT_NETHER_MIST;
+			break;
+		default:
+			if (is_water(feat)) feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
 		case FEAT_IVY:
-		case FEAT_SHAL_WATER:
 		case FEAT_SNOW:
 		case FEAT_ICE:
 		case FEAT_FLOOR:
@@ -8953,14 +8964,15 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		case FEAT_FLOWER:
 			feat = FEAT_DEEP_WATER;
+			break;
+		default:
+			if (is_shal_water(feat)) feat = FEAT_DEEP_WATER;
 	}
 
 
 	/* Trees in greater fire become dead trees at once */
 	if ((feat == FEAT_TREE || feat == FEAT_BUSH) &&
-	    (c_ptr->feat == FEAT_SHAL_LAVA ||
-	    c_ptr->feat == FEAT_FIRE ||
-	    c_ptr->feat == FEAT_GREAT_FIRE))
+	    (is_lava(c_ptr->feat) || is_acute_fire(c_ptr->feat)))
 		feat = FEAT_DEAD_TREE;
 
 	/* Clear mimic feature left by a secret door - mikaelh */
@@ -9789,6 +9801,16 @@ bool allow_terraforming(struct worldpos *wpos, u16b feat) {
 	/* water is annoying in all towns - mikaelh */
 	case FEAT_SHAL_WATER:
 	case FEAT_DEEP_WATER:
+	//case FEAT_GLIT_WATER:
+	case FEAT_TAINTED_WATER:
+	case FEAT_ANIM_SHAL_WATER_EAST:
+	case FEAT_ANIM_SHAL_WATER_WEST:
+	case FEAT_ANIM_SHAL_WATER_NORTH:
+	case FEAT_ANIM_SHAL_WATER_SOUTH:
+	case FEAT_ANIM_DEEP_WATER_EAST:
+	case FEAT_ANIM_DEEP_WATER_WEST:
+	case FEAT_ANIM_DEEP_WATER_NORTH:
+	case FEAT_ANIM_DEEP_WATER_SOUTH:
 		if (town) return(FALSE);
 		break;
 
@@ -9802,6 +9824,14 @@ bool allow_terraforming(struct worldpos *wpos, u16b feat) {
 	case FEAT_WALL_EXTRA: /* tested by earthquake(), destroy_area(), project_f() for GF_STONE_WALL (stone prison, wall creation) */
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
+	case FEAT_ANIM_SHAL_LAVA_EAST:
+	case FEAT_ANIM_SHAL_LAVA_WEST:
+	case FEAT_ANIM_SHAL_LAVA_NORTH:
+	case FEAT_ANIM_SHAL_LAVA_SOUTH:
+	case FEAT_ANIM_DEEP_LAVA_EAST:
+	case FEAT_ANIM_DEEP_LAVA_WEST:
+	case FEAT_ANIM_DEEP_LAVA_NORTH:
+	case FEAT_ANIM_DEEP_LAVA_SOUTH:
 		if (town || townarea || sector000 || valinor || nr_bottom) return(FALSE);
 		break;
 
@@ -10084,7 +10114,7 @@ void aquatic_terrain_hack(cave_type **zcave, int x, int y) {
 		xx = x + ddx[d];
 		yy = y + ddy[d];
 		if (!in_bounds(yy, xx)) continue;
-		if (zcave[yy][xx].feat == FEAT_DEEP_WATER) {
+		if (is_deep_water(zcave[yy][xx].feat)) {
 			zcave[y][x].info |= CAVE_WATERY;
 			return;
 		}

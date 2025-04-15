@@ -981,13 +981,10 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 			if (left_shop && dis <= 5) {
 				/* Copy/paste from player_can_enter(), could replace it with that (with comfortably=TRUE flag) */
-				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
-				    zcave[y][x].feat == FEAT_DEEP_LAVA ||
-				    zcave[y][x].feat == FEAT_FIRE ||
-				    zcave[y][x].feat == FEAT_GREAT_FIRE)
+				if (is_lava(zcave[y][x].feat) || is_acute_fire(zcave[y][x].feat))
 					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire)))
 						continue;
-				if (zcave[y][x].feat == FEAT_DEEP_WATER)
+				if (is_deep_water(zcave[y][x].feat))
 					//if (!(p_ptr->immune_water || p_ptr->res_water ||
 					if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
 						continue;
@@ -1226,10 +1223,7 @@ void teleport_player_to(int Ind, int ny, int nx, char forced) {
 
 		if (!forced) { /* normal tele-to */
 			if (town) {
-				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
-				    zcave[y][x].feat == FEAT_DEEP_LAVA ||
-				    zcave[y][x].feat == FEAT_FIRE ||
-				    zcave[y][x].feat == FEAT_GREAT_FIRE)
+				if (is_lava(zcave[y][x].feat) || is_acute_fire(zcave[y][x].feat))
 					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire))) {
 						/* Occasionally advance the distance */
 						if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
@@ -1238,7 +1232,7 @@ void teleport_player_to(int Ind, int ny, int nx, char forced) {
 						}
 						continue;
 					}
-				if (zcave[y][x].feat == FEAT_DEEP_WATER)
+				if (is_deep_water(zcave[y][x].feat))
 					//if (!(p_ptr->immune_water || p_ptr->res_water ||
 					if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith)) {
 						/* Occasionally advance the distance */
@@ -4698,7 +4692,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_ICE:
 	case GF_ICEPOISON:
 		/* misc flavour: turn shallow water into ice? */
-		if (((c_ptr->feat == FEAT_SHAL_WATER) || (c_ptr->feat == FEAT_TAINTED_WATER)) && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_ICE);
+		if (is_shal_water(c_ptr->feat) && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_ICE);
 		if (typ == GF_COLD) break;
 		//fall through
 	case GF_SHARDS:
@@ -4882,6 +4876,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
 			break;
 		case FEAT_SHAL_WATER:
+		case FEAT_TAINTED_WATER:
+		case FEAT_ANIM_SHAL_WATER_EAST:
+		case FEAT_ANIM_SHAL_WATER_WEST:
+		case FEAT_ANIM_SHAL_WATER_NORTH:
+		case FEAT_ANIM_SHAL_WATER_SOUTH:
 			if (rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_MUD);
 			break;
 #if 1
@@ -5401,7 +5400,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				p2 = 15; f2 = FEAT_MUD;
 			}
 		}
-		else if (c_ptr->feat == FEAT_SHAL_LAVA) {
+		else if (is_shal_lava(c_ptr->feat)) {
 			/* 15% chance to convert it to normal floor */
 			p1 = 15; f1 = FEAT_VOLCANIC;//FEAT_ROCKY, FEAT_ASH
 		}
@@ -13369,11 +13368,8 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 
 				if (cave_valid_bold(zcave, y, x) && /* <- implies !FF1_PERMANENT */
 				    //(cave[y][x].feat < FEAT_PATTERN_START || cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
-				    (c_ptr2->feat != FEAT_SHAL_WATER) &&
-				    (c_ptr2->feat != FEAT_DEEP_WATER) &&
-				    (c_ptr2->feat != FEAT_TAINTED_WATER) &&
-				    (c_ptr2->feat != FEAT_DEEP_LAVA) &&
-				    (c_ptr2->feat != FEAT_SHAL_LAVA) &&
+				    !is_water(c_ptr2->feat) &&
+				    !is_lava(c_ptr2->feat) &&
 				    //(c_ptr2->feat != FEAT_ASH) &&
 				    (c_ptr2->feat != FEAT_MUD) &&
 				    (c_ptr2->feat != FEAT_DIRT) &&
