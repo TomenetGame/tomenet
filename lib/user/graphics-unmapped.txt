@@ -1,0 +1,17 @@
+Notes regarding unmapped f_info.txt features:
+- 'DARK SPACE' doesn't need to get mapped, or rather, is already mapped, as it's just an empty rectangle.
+- 'ARCADE' mean these features are only for the dedicated ARCADE_SERVER.
+
+
+65-73	road
+
+(74	shop	--probably requires some coding as shop symbols aren't mapped directly from f_info.txt but via CS_SHOP)
+
+(79	perma-clear wall	DARK SPACE)
+(108	bottomless abyss	DARK SPACE)
+(121	empty sky		DARK SPACE)
+
+146	burning oil lamp
+181	field
+
+(228	ai tron (ARCADE)	--looks like a player ie '@' so not to map at this time as we don't have player-specific mappings yet.)
