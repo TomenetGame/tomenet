@@ -4343,7 +4343,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 	   Specifically, cs_ptr->sc was pointing to 0x8 and sc/sc.montrap/sc.montrap.feat were all segfaults.
 	   So, adding a check for cs_ptr validity here.. - C. Blue, 2022-10-07 */
 	if (!cs_ptr) {
-		s_printf("WARNING: erase_mon_trap() called on invalid cs_ptr at (%d,%d,%d) [%d,%d] <%d>.\n", wpos->wx, wpos->wy, wpos->wz, x, y, c_ptr->feat);
+		s_printf("WARNING: erase_mon_trap() called on invalid cs_ptr at (%d,%d,%d) [%d,%d] feat:%d, o_idx:%d (t=%d/s=%d).\n", wpos->wx, wpos->wy, wpos->wz, x, y, c_ptr->feat, o_idx, o_list[o_idx].tval, o_list[o_idx].sval);
 		return;
 	}
 	feat = cs_ptr->sc.montrap.feat;
