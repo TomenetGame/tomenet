@@ -4546,6 +4546,7 @@ bool can_use_wordofrecall(player_type *p_ptr) {
 
 /* Handles WoR
  * XXX dirty -- REWRITEME
+ * bypass : ignore any normal restrictions (ironman, fear..) - this is unused actually, instead, this function performs admin checks that ignore such restrictions.
  */
 static void do_recall(int Ind, bool bypass) {
 	player_type *p_ptr = Players[Ind];
@@ -4662,10 +4663,14 @@ static void do_recall(int Ind, bool bypass) {
 	else if ((!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP | WILD_F_DOWN))) && !bypass) {
 		int dis;
 
+		/* We haven't mapped the target worldmap sector yet? */
 		if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos)) / 8] &
 		    (1U << (wild_idx(&p_ptr->recall_pos)) % 8))) &&
 		    !is_admin(p_ptr) ) ||
-		    inarea(&p_ptr->wpos, &p_ptr->recall_pos))
+		    /* Or we have specified no target sector or the same sector we're already in? */
+		    (inarea(&p_ptr->wpos, &p_ptr->recall_pos)
+		    && p_ptr->recall_x == -1 //exception for admins: Allow precise recall within same sector
+		    ))
 		{
 			/* back to the last town (s)he visited.
 			 * (This can fail if gone too far) */
