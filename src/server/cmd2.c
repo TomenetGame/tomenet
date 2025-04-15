@@ -2843,11 +2843,13 @@ void do_cmd_open(int Ind, int dir) {
 			msg_print(Ind, "That door cannot be opened.");
 
 		else if (c_ptr->feat == FEAT_WINDOW) {
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot open that window from outside.");
+				return;
+			}
 			cave_set_feat_live(wpos, y, x, FEAT_OPEN_WINDOW);
 
-			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			break_cloaking(Ind, 3);
 			break_shadow_running(Ind);
 			stop_precision(Ind);
@@ -2862,11 +2864,13 @@ void do_cmd_open(int Ind, int dir) {
 #endif
 		}
 		else if (c_ptr->feat == FEAT_WINDOW_SMALL) {
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot open that window from outside.");
+				return;
+			}
 			cave_set_feat_live(wpos, y, x, FEAT_OPEN_WINDOW_SMALL);
 
-			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			break_cloaking(Ind, 3);
 			break_shadow_running(Ind);
 			stop_precision(Ind);
@@ -3307,11 +3311,15 @@ void do_cmd_close(int Ind, int dir) {
 			msg_print(Ind, "That door cannot be closed.");
 
 		else if (c_ptr->feat == FEAT_OPEN_WINDOW) {
+#if 0 /* xD */
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot close that window from outside.");
+				return;
+			}
+#endif
 			cave_set_feat_live(wpos, y, x, FEAT_WINDOW);
 
-			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			break_cloaking(Ind, 3);
 			break_shadow_running(Ind);
 			stop_precision(Ind);
@@ -3325,11 +3333,15 @@ void do_cmd_close(int Ind, int dir) {
 #endif
 		}
 		else if (c_ptr->feat == FEAT_OPEN_WINDOW_SMALL) {
+#if 0 /* xD */
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot close that window from outside.");
+				return;
+			}
+#endif
 			cave_set_feat_live(wpos, y, x, FEAT_WINDOW_SMALL);
 
-			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			break_cloaking(Ind, 3);
 			break_shadow_running(Ind);
 			stop_precision(Ind);
