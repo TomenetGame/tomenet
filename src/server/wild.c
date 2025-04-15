@@ -4924,6 +4924,16 @@ void knock_house(int Ind, int x, int y) {
 	sound_house_knock(h_idx, x, y);
 #endif
 }
+void knock_window(int Ind, int x, int y) {
+	player_type *p_ptr = Players[Ind];
+
+	/* knock on the house door! */
+	msg_format_near(Ind, "\377s%s knocks on the window..", p_ptr->name);
+	msg_print(Ind, "\377sYou knock on the window..");
+#ifdef USE_SOUND_2010
+	sound_near_site(y, x, &p_ptr->wpos, 0, "knock_window", "knock", SFX_TYPE_COMMAND, FALSE);//don't require LOS
+#endif
+}
 
 /* Modify grids of an outdoor level:
    Change features depending on season,

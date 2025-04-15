@@ -1562,8 +1562,8 @@ void sound_house_knock(int h_idx, int dx, int dy) {
 		Send_sound(i, val, val2, SFX_TYPE_COMMAND, 100 - (d * 50) / 11, 0, dx - Players[i]->px, dy - Players[i]->py);
 #endif
 	}
-
 }
+
 /* like msg_print_near_monster() just for sounds,
    basically same as sound_near_site() except no player can be exempt - C. Blue */
 void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {

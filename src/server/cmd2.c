@@ -9733,14 +9733,16 @@ void house_admin(int Ind, int dir, char *args) {
 	if (!(zcave = getcave(wpos))) return;	//(FALSE);
 
 	if (dir && args) {
+		struct c_special *cs_ptr;
+
 		/* Get requested direction */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
 		/* Get requested grid */
 		c_ptr = &zcave[y][x];
-		if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
-			struct c_special *cs_ptr;
-
+		switch (c_ptr->feat) {
+		case FEAT_HOME:
+		case FEAT_HOME_OPEN:
 			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
 				/* Test for things that don't require access: */
 				switch (args[0]) {
@@ -9783,7 +9785,20 @@ void house_admin(int Ind, int dir, char *args) {
 					} else msg_print(Ind, "\377oChange failed.");
 				} else msg_print(Ind, "\377oAccess not permitted.");
 			} else msg_print(Ind, "\377yNot a door of a private house.");
-		} else msg_print(Ind, "\377sThere is no home door there.");
+			break;
+		case FEAT_WINDOW:
+		case FEAT_WINDOW_SMALL:
+		case FEAT_OPEN_WINDOW:
+		case FEAT_OPEN_WINDOW_SMALL:
+			/* Windows only allow knocking */
+			if (args[0] == 'H') {
+				knock_window(Ind, x, y);
+				return;
+			}
+			//fall through
+		default:
+			msg_print(Ind, "\377sThere is no house door there.");
+		}
 	}
 	return;
 }
