@@ -2817,6 +2817,10 @@
 
 #define FEAT_OPEN_WINDOW	256
 #define FEAT_OPEN_WINDOW_SMALL	257
+#define FEAT_ANIM_WATER_EAST	258
+#define FEAT_ANIM_WATER_WEST	259
+#define FEAT_ANIM_WATER_NORTH	260
+#define FEAT_ANIM_WATER_SOUTH	261
 
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS	2
