@@ -1736,6 +1736,83 @@ F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 F:NO_SHADE | NO_LITE_WHITEN
 #LAMP_LITE_OPTIONAL
+# Stream of animated deep water, eastward
+N:262:stream of deep water
+G:~:%a
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+# Stream of animated deep water, westward
+N:263:stream of deep water
+G:~:%b
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+# Stream of animated deep water, northward
+N:264:stream of deep water
+G:~:%c
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+# Stream of animated deep water, southward
+N:265:stream of deep water
+G:~:%d
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+
+# Stream of animated lava, eastward
+N:266:stream of shallow lava
+G:~:%e
+E:4d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava burns you.
+# Stream of animated lava, westward
+N:267:stream of lava
+G:~:%f
+E:4d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava burns you.
+# Stream of animated lava, northward
+N:268:stream of shallow lava
+G:~:%g
+E:4d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava burns you.
+# Stream of animated lava, southward
+N:269:stream of shallow lava
+G:~:%h
+E:4d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava burns you.
+# Stream of animated deep lava, eastward
+N:270:stream of deep lava
+G:~:%e
+E:8d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava BURNS you.
+# Stream of animated deep lava, westward
+N:271:stream of deep lava
+G:~:%f
+E:8d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava BURNS you.
+# Stream of animated deep lava, northward
+N:272:stream of deep lava
+G:~:%g
+E:8d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava BURNS you.
+# Stream of animated deep lava, southward
+N:273:stream of deep lava
+G:~:%h
+E:8d4:2:FIRE
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
+D:0:The lava BURNS you.
 
 
 # generic scheme (all lines are unique except

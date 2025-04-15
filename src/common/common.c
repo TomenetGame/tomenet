@@ -139,6 +139,10 @@ int color_char_ext_to_attr(char c) {
 	case 'b': return(TERM_ANIM_WATER_WEST);
 	case 'c': return(TERM_ANIM_WATER_NORTH);
 	case 'd': return(TERM_ANIM_WATER_SOUTH);
+	case 'e': return(TERM_ANIM_LAVA_EAST);
+	case 'f': return(TERM_ANIM_LAVA_WEST);
+	case 'g': return(TERM_ANIM_LAVA_NORTH);
+	case 'h': return(TERM_ANIM_LAVA_SOUTH);
 
 	default: return(-1);
 	}

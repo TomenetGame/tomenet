@@ -73,6 +73,24 @@ F:174:/56 # stream of tainted water
 F:110:/56 # puddle of water
 F:94:/56 # mud
 
+F:258:/56 # stream of water (eastward)
+F:259:/56 # stream of water (westward)
+F:260:/56 # stream of water (northward)
+F:261:/56 # stream of water (southward)
+F:262:/57 # stream of deep water (eastward)
+F:263:/57 # stream of deep water (westward)
+F:264:/57 # stream of deep water (northward)
+F:265:/57 # stream of deep water (southward)
+
+F:266:/156 # stream of lava (eastward)
+F:267:/156 # stream of lava (westward)
+F:268:/156 # stream of lava (northward)
+F:269:/156 # stream of lava (southward)
+F:270:/157 # stream of deep lava (eastward)
+F:271:/157 # stream of deep lava (westward)
+F:272:/157 # stream of deep lava (northward)
+F:273:/157 # stream of deep lava (southward)
+
 F:160:/66 # void jumpgate
 F:105:/166 # unstable void jumpgate
 F:233:/66 # Iridescent Gate

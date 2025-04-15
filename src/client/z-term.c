@@ -1555,6 +1555,19 @@ byte flick_colour(byte attr) {
 		if (!flick_global_x) return(flick_colour(TERM_WATE));
 		return((flick_global_y - ticks / 1) % 5 ? flick_colour(TERM_WATE) : (rand_int(4) ? TERM_L_BLUE : TERM_BLUE));
 
+	case TERM_ANIM_LAVA_EAST: /* lava stream flowing eastward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_FIRE));
+		return((flick_global_x - ticks / 1) % 5 ? flick_colour(TERM_FIRE) : (rand_int(4) ? TERM_YELLOW : TERM_ORANGE));
+	case TERM_ANIM_LAVA_WEST: /* lava stream flowing westward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_FIRE));
+		return((flick_global_x + ticks / 1) % 5 ? flick_colour(TERM_FIRE) : (rand_int(4) ? TERM_YELLOW : TERM_ORANGE));
+	case TERM_ANIM_LAVA_NORTH: /* lava stream flowing northward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_FIRE));
+		return((flick_global_y + ticks / 1) % 5 ? flick_colour(TERM_FIRE) : (rand_int(4) ? TERM_YELLOW : TERM_ORANGE));
+	case TERM_ANIM_LAVA_SOUTH: /* lava stream flowing southward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_FIRE));
+		return((flick_global_y - ticks / 1) % 5 ? flick_colour(TERM_FIRE) : (rand_int(4) ? TERM_YELLOW : TERM_ORANGE));
+
 	default:
 #if 0 /* old way: xhtml_screenshot() would call us on ANY colour, even non-animated */
 		return(attr); /* basically only happens in screenshot function, where flick_colour() is used indiscriminately on ALL colours even those not animated.. pft */

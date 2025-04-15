@@ -8075,6 +8075,10 @@ extern int PlayerUID;
   #define TERM_ANIM_WATER_WEST 88
   #define TERM_ANIM_WATER_NORTH 89
   #define TERM_ANIM_WATER_SOUTH 90
+  #define TERM_ANIM_LAVA_EAST 91
+  #define TERM_ANIM_LAVA_WEST 92
+  #define TERM_ANIM_LAVA_NORTH 93
+  #define TERM_ANIM_LAVA_SOUTH 94
 
   /* Problem: Not enough colours! So we need to change these masks to actual colours. */
   #define TERM_BNW	120	/* black & white, for admin wizards and pandas */
