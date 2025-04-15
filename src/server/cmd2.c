@@ -2859,8 +2859,7 @@ void do_cmd_open(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 #ifdef USE_SOUND_2010
-			//sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
-			sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(Ind, "open_window", "open_chest", SFX_TYPE_COMMAND, TRUE);
 #endif
 		}
 		else if (c_ptr->feat == FEAT_WINDOW_SMALL) {
@@ -2880,8 +2879,7 @@ void do_cmd_open(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 #ifdef USE_SOUND_2010
-			//sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
-			sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(Ind, "open_window", "open_chest", SFX_TYPE_COMMAND, TRUE);
 #endif
 		}
 
@@ -3329,7 +3327,7 @@ void do_cmd_close(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(Ind, "close_window", "close_door", SFX_TYPE_COMMAND, TRUE);
 #endif
 		}
 		else if (c_ptr->feat == FEAT_OPEN_WINDOW_SMALL) {
@@ -3351,7 +3349,7 @@ void do_cmd_close(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(Ind, "close_window", "close_door", SFX_TYPE_COMMAND, TRUE);
 #endif
 		}
 
