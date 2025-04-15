@@ -12792,6 +12792,75 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 	}
 #endif
 
+#if 1
+	/* Hinder player movement in deep, moving streams of water/lava - and speed us up if we're moving with it! */
+	if (//!p_ptr->ghost && !p_ptr->levitate && !p_ptr->tim_wraith
+	    *real_speed == cfg.running_speed) { /* Only if we're not already slowed down for some reason (by above terrain slowdown code) */
+		switch (c_ptr->feat) {
+
+		/* Deep streams have major impact */
+		case FEAT_ANIM_DEEP_LAVA_EAST:
+		case FEAT_ANIM_DEEP_WATER_EAST:
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 4 || p_ptr->find_current == 7)
+				*real_speed = (*real_speed * 5) / 10;
+			if (p_ptr->find_current == 3 || p_ptr->find_current == 6 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 13) / 10;
+			break;
+		case FEAT_ANIM_DEEP_LAVA_WEST:
+		case FEAT_ANIM_DEEP_WATER_WEST:
+			if (p_ptr->find_current == 3 || p_ptr->find_current == 6 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 5) / 10;
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 4 || p_ptr->find_current == 7)
+				*real_speed = (*real_speed * 13) / 10;
+			break;
+		case FEAT_ANIM_DEEP_LAVA_NORTH:
+		case FEAT_ANIM_DEEP_WATER_NORTH:
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 2 || p_ptr->find_current == 3)
+				*real_speed = (*real_speed * 5) / 10;
+			if (p_ptr->find_current == 7 || p_ptr->find_current == 8 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 13) / 10;
+			break;
+		case FEAT_ANIM_DEEP_LAVA_SOUTH:
+		case FEAT_ANIM_DEEP_WATER_SOUTH:
+			if (p_ptr->find_current == 7 || p_ptr->find_current == 8 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 5) / 10;
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 2 || p_ptr->find_current == 3)
+				*real_speed = (*real_speed * 13) / 10;
+			break;
+
+		/* Shallow streams have minor impact */
+		case FEAT_ANIM_SHAL_LAVA_EAST:
+		case FEAT_ANIM_SHAL_WATER_EAST:
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 4 || p_ptr->find_current == 7)
+				*real_speed = (*real_speed * 8) / 10;
+			if (p_ptr->find_current == 3 || p_ptr->find_current == 6 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 11) / 10;
+			break;
+		case FEAT_ANIM_SHAL_LAVA_WEST:
+		case FEAT_ANIM_SHAL_WATER_WEST:
+			if (p_ptr->find_current == 3 || p_ptr->find_current == 6 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 8) / 10;
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 4 || p_ptr->find_current == 7)
+				*real_speed = (*real_speed * 11) / 10;
+			break;
+		case FEAT_ANIM_SHAL_LAVA_NORTH:
+		case FEAT_ANIM_SHAL_WATER_NORTH:
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 2 || p_ptr->find_current == 3)
+				*real_speed = (*real_speed * 8) / 10;
+			if (p_ptr->find_current == 7 || p_ptr->find_current == 8 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 11) / 10;
+			break;
+		case FEAT_ANIM_SHAL_LAVA_SOUTH:
+		case FEAT_ANIM_SHAL_WATER_SOUTH:
+			if (p_ptr->find_current == 7 || p_ptr->find_current == 8 || p_ptr->find_current == 9)
+				*real_speed = (*real_speed * 8) / 10;
+			if (p_ptr->find_current == 1 || p_ptr->find_current == 2 || p_ptr->find_current == 3)
+				*real_speed = (*real_speed * 11) / 10;
+			break;
+		}
+	}
+#endif
+
 #ifdef IRRITATING_WEATHER /* Hinder player movement if running against the wind speed */
  #if defined(CLIENT_SIDE_WEATHER) && !defined(CLIENT_WEATHER_GLOBAL)
 	if (!p_ptr->grid_house && !p_ptr->wpos.wz) {
