@@ -8574,7 +8574,7 @@ Chain_Macro:
 										tmpbuf[0] = 0;
 										for (f = 0; f < fileset[k].stages; f++) {
 											if (f) strcat(tmpbuf, "\377g/");
-											if (fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("\377s%d", f + 1));
+											if (fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("\377W%d", f + 1));
 											else strcat(tmpbuf, format("\377D%d", f + 1));
 										}
 										for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
@@ -8634,7 +8634,7 @@ Chain_Macro:
 										tmpbuf[0] = 0;
 										for (f = 0; f < fileset[k].stages; f++) {
 											if (f) strcat(tmpbuf, "\377g/");
-											if (fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("\377s%d", f + 1));
+											if (fileset[k].stage_file_exists[f]) strcat(tmpbuf, format("\377W%d", f + 1));
 											else strcat(tmpbuf, format("\377D%d", f + 1));
 										}
 										for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
