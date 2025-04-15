@@ -433,8 +433,12 @@ static errr term_win_copy_part(term_win *s, term_win *f, int x_start, int y_star
 static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	byte *scr_aa = Term->scr->a[y];
 	char32_t *scr_cc = Term->scr->c[y];
+#ifdef GRAPHICS_BG_MASK
+	byte *scr_aa_back = Term->scr_back->a[y];
+	char32_t *scr_cc_back = Term->scr_back->c[y];
+#endif
 
-	int oa = scr_aa[x];
+	byte oa = scr_aa[x];
 	char32_t oc = scr_cc[x];
 
 	/* Hack -- Ignore non-changes */
@@ -449,13 +453,8 @@ static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	   In that case, 'background' info exists and we just don't use it, for this drawing action.
 	   So we should clear it instead of leaving it undefined.
 	   (Except for weather particles, where the effect of leaving the background here would actually be desired, as the weather particle is just temporary.) */
-	{
-		byte *scr_aa_back = Term->scr_back->a[y];
-		char32_t *scr_cc_back = Term->scr_back->c[y];
-
-		scr_aa_back[x] = 0;
-		scr_cc_back[x] = 32; //note: 0 would glitch as it's undefined, 32 aka space is correct for erasure
-	}
+	scr_aa_back[x] = 0;
+	scr_cc_back[x] = 32; //note: 0 would glitch as it's undefined, 32 aka space is correct for erasure
 #endif
 
 	/* Check for new min/max row info */
@@ -474,13 +473,13 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	byte *scr_aa_back = Term->scr_back->a[y];
 	char32_t *scr_cc_back = Term->scr_back->c[y];
 
-	int oa = scr_aa[x];
+	byte oa = scr_aa[x];
 	char32_t oc = scr_cc[x];
-	int oa_back = scr_aa_back[x];
+	byte oa_back = scr_aa_back[x];
 	char32_t oc_back = scr_cc_back[x];
 
 	/* Hack -- Ignore non-changes */
-	if (oa == a && oc == c && oa_back == a_back && (!c_back || oc_back == c_back)) return;
+	if (oa == a && oc == c && (!c_back || (oa_back == a_back && oc_back == c_back))) return;
 
 	/* Save the "literal" information (background) */
 	if (c_back) {
@@ -493,11 +492,15 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   This for example concerns town stores during rain
 	   (note that all weather particles draw with 0,0 for a_back,c_back). - C. Blue */
 	if ((scr_cc_back[x] == 32 // <- ASCII was drawn here?
+ #if 0 /* actually any ASCII drawage, aka QueueAttrChar(), already sets cc_back to 32 so the check above should suffice and this one isn't clear, gfx could also be < 256?! */
 	    /* Rare special case: Even if background contains graphics (because we are in 2mask-mode)
 	       we were fed ASCII in the foreground w/o overriding the graphical background.
 	       This should only ever happen if we're receiving visual info from an ASCII client while locally drawing 2mask-mode, ie weather particles: */
 	    || scr_cc[x] < 256)
- #if 0 //actually this colour check can be removed as it doesn't matter (would even improve future compatibility if we ever print ASCII with coloured backgrounds)
+ #else /* freaking compiler warning */
+	    && TRUE)
+ #endif
+ #if 0 /* actually this colour check can be removed as it doesn't matter (would even improve future compatibility if we ever print ASCII with coloured backgrounds) */
 	     && !scr_aa_back[x]
  #endif
 	     ) {
@@ -542,15 +545,17 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 
 	byte *scr_aa = Term->scr->a[y];
 	char32_t *scr_cc = Term->scr->c[y];
+#ifdef GRAPHICS_BG_MASK
+	byte *scr_aa_back = Term->scr_back->a[y];
+	char32_t *scr_cc_back = Term->scr_back->c[y];
+#endif
 
 #ifdef DRAW_LARGER_CHUNKS
 	memset(scr_aa + x, a, n);
 	memcpy(scr_cc + x, s, n * sizeof(s[0]));
- #if 0
  #ifdef GRAPHICS_BG_MASK /* Erase any background info */
 	memset(scr_aa_back + x, 0, n);
 	memcpy(scr_cc_back + x, 0, n * sizeof(s[0]));
- #endif
  #endif
 
 	x1 = x;
@@ -558,8 +563,8 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 #else
 	/* Queue the attr/chars */
 	for ( ; n; x++, s++, n--) {
-		int oa = scr_aa[x];
-		int oc = scr_cc[x];
+		byte oa = scr_aa[x];
+		char32_t oc = scr_cc[x];
 
 		/* Hack -- Ignore non-changes */
 		if (oa == a && oc == *s) continue;
@@ -567,11 +572,9 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 		/* Save the "literal" information */
 		scr_aa[x] = a;
 		scr_cc[x] = *s;
- #if 0
- #ifdef GRAPHICS_BG_MASK /* Erase any background info */
-		scr_aa[x] = 0;
-		scr_cc[x] = 0;
- #endif
+ #ifdef GRAPHICS_BG_MASK /* We print ASCII, so erase any background info! (Important for QueueAttrChar_2mask() to have 32 aka 'blank' here!) */
+		scr_aa_back[x] = 0;
+		scr_cc_back[x] = 32;
  #endif
 
 		/* Note the "range" of window updates */
@@ -616,13 +619,13 @@ static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte 
  #else
 	/* Queue the attr/chars */
 	for ( ; n; x++, s++, n--) {
-		int oa = scr_aa[x];
-		int oc = scr_cc[x];
-		int oa_b = scr_aa_back[x];
-		int oc_b = scr_cc_back[x];
+		byte oa = scr_aa[x];
+		char32_t oc = scr_cc[x];
+		byte oa_b = scr_aa_back[x];
+		char32_t oc_b = scr_cc_back[x];
 
 		/* Hack -- Ignore non-changes */
-		if (oa == a && oc == *s && oa_b == a_back && (!*s_back || oc_b == *s_back)) continue;
+		if (oa == a && oc == *s && (!*s_back || (oa_b == a_back && oc_b == *s_back))) continue;
 
 		/* Save the "literal" information */
 		scr_aa[x] = a;
