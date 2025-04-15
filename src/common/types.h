@@ -154,7 +154,7 @@ struct feature_type {
 	u32b flags2;
 #endif
 
-	byte mimic;		/* Feature to mimic */
+	u16b mimic;		/* Feature to mimic */
 	byte extra;		/* Extra byte (unused) */
 	s16b unused;		/* Extra bytes (unused) */
 
