@@ -2785,7 +2785,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
-	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + screen_wid && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + screen_hgt) {
 		flick_global_x = x;
 		flick_global_y = y;
 	} else flick_global_x = 0;
@@ -3027,7 +3027,7 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
-	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + screen_wid && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + screen_hgt) {
 		flick_global_x = x;
 		flick_global_y = y;
 	} else flick_global_x = 0;
@@ -3419,7 +3419,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
-	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + SCREEN_WID && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + SCREEN_HGT) {
+	if (Term && Term->data == &data[0] && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + screen_wid && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + screen_hgt) {
 		flick_global_x = x;
 		flick_global_y = y;
 	} else flick_global_x = 0;
