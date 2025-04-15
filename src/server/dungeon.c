@@ -12794,7 +12794,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 
 #if 1
 	/* Hinder player movement in deep, moving streams of water/lava - and speed us up if we're moving with it! */
-	if (//!p_ptr->ghost && !p_ptr->levitate && !p_ptr->tim_wraith
+	if (!p_ptr->ghost && !p_ptr->levitate && !p_ptr->tim_wraith &&
 	    *real_speed == cfg.running_speed) { /* Only if we're not already slowed down for some reason (by above terrain slowdown code) */
 		switch (c_ptr->feat) {
 
