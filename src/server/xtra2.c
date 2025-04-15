@@ -15743,7 +15743,7 @@ bool master_build(int Ind, char * parms) {
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
 	struct c_special *cs_ptr;
-	static unsigned char new_feat = FEAT_WALL_EXTRA;
+	static u16b new_feat = FEAT_WALL_EXTRA;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
@@ -15757,6 +15757,13 @@ bool master_build(int Ind, char * parms) {
 		switch (parms[1]) {
 		case 'T': p_ptr->master_move_hook = master_build; break;
 		case 'F': p_ptr->master_move_hook = NULL; return(FALSE);
+		case 'X': p_ptr->master_move_hook = master_build;
+			new_feat = (parms[3] | (parms[2] << 8));
+			if (new_feat == FEAT_HOME || new_feat == FEAT_SIGN) { //paranoia for now, as 'X' currently always implies feat values >= 256
+				msg_print(Ind, "FEAT_HOME and FEAT_SIGN are not eligible for building mode X.");
+				return(FALSE);
+			}
+			break;
 		default : break;
 		}
 	}

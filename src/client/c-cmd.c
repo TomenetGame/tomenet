@@ -9239,6 +9239,7 @@ static void cmd_master_aux_generate(void) {
 
 static void cmd_master_aux_build(void) {
 	char i;
+	int n;
 	char buf[80];
 	bool inkey_msg_old = inkey_msg;
 
@@ -9256,10 +9257,17 @@ static void cmd_master_aux_build(void) {
 		Term_putstr(0, 2, -1, TERM_WHITE, "Building commands");
 
 		/* Selections */
+#ifdef TEST_CLIENT
+		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Granite Mode          (A) Set this cave info");
+		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Permanent Mode        (B) Set this cave info2");
+		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Tree Mode             (C) Cave info mode");
+		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Evil Tree Mode        (D) Cave info2 mode");
+#else
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Granite Mode");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Permanent Mode");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Tree Mode");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Evil Tree Mode");
+#endif
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Grass Mode");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Dirt Mode");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Floor Mode");
@@ -9267,7 +9275,11 @@ static void cmd_master_aux_build(void) {
 		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Signpost");
 		Term_putstr(5, 13, -1, TERM_WHITE, "(0) Any feature");
 
+#ifdef TEST_CLIENT
+		Term_putstr(5, 15, -1, TERM_WHITE, "(a) Build Mode Off        (z) Paint mode off");
+#else
 		Term_putstr(5, 15, -1, TERM_WHITE, "(a) Build Mode Off");
+#endif
 
 		/* Prompt */
 		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
@@ -9321,10 +9333,65 @@ static void cmd_master_aux_build(void) {
 			break;
 		/* Ask for feature */
 		case '0':
-			buf[0] = c_get_quantity("Enter feature value: ", 0xff, -1);
+			n = c_get_quantity("Enter feature value: ", 0, -1);
+			if (n >= 256) {
+				buf[0] = 1; //dummy
+				buf[1] = 'X'; //extended codes^^ aka 2 byte instead of 1, since feat is now u16b
+				buf[2] = (n & 0xff00) >> 8; //will never be zero, so it won't wrongly terminate the buf string early on transmission
+				buf[3] = (n & 0xff);
+				buf[4] = 0;
+			} else buf[0] = n;
 			break;
+
 		/* Build mode off */
 		case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
+#ifdef TEST_CLIENT  /* Ask for CAVE_INFO -- WiP! -- TODO: change transmit/receive packet format from %s to %c%c%c%c as some of these might be zero and would terminate the string too early */
+		case 'A':
+			n = c_get_quantity("Enter info value: ", 0, -1);
+			buf[0] = 1; //dummy
+			buf[1] = 'i';
+			buf[2] = (n & 0xff);
+			buf[3] = (n & 0xff00) >> 8;
+			buf[4] = (n & 0xff0000) >> 16;
+			buf[5] = (n & 0xff000000) >> 24;
+			buf[6] = 0;
+			break;
+		case 'B':
+			n = c_get_quantity("Enter info value: ", 0, -1);
+			buf[0] = 1; //dummy
+			buf[1] = 'j';
+			buf[2] = (n & 0xff);
+			buf[3] = (n & 0xff00) >> 8;
+			buf[4] = (n & 0xff0000) >> 16;
+			buf[5] = (n & 0xff000000) >> 24;
+			buf[6] = 0;
+			break;
+		case 'C':
+			n = c_get_quantity("Enter info value: ", 0, -1);
+			buf[0] = 1; //dummy
+			buf[1] = 'I';
+			buf[2] = (n & 0xff);
+			buf[3] = (n & 0xff00) >> 8;
+			buf[4] = (n & 0xff0000) >> 16;
+			buf[5] = (n & 0xff000000) >> 24;
+			buf[6] = 0;
+			break;
+		case 'D':
+			n = c_get_quantity("Enter info value: ", 0, -1);
+			buf[0] = 1; //dummy
+			buf[1] = 'J';
+			buf[2] = (n & 0xff);
+			buf[3] = (n & 0xff00) >> 8;
+			buf[4] = (n & 0xff0000) >> 16;
+			buf[5] = (n & 0xff000000) >> 24;
+			buf[6] = 0;
+			break;
+		/* Info-painting mode off */
+		case 'z':
+			buf[0] = 1; //dummy
+			buf[1] = 'z';
+			break;
+#endif
 		/* Oops */
 		default : bell(); break;
 		}
