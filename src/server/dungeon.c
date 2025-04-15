@@ -4570,7 +4570,7 @@ static void do_recall(int Ind, bool bypass) {
 		if (!pass) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
 			p_ptr->redraw |= (PR_DEPTH);
-			p_ptr->recall_x = p_ptr->recall_y = -1;
+			p_ptr->recall_x = p_ptr->recall_y = 0;
 			return;
 		}
 	}
@@ -4592,7 +4592,7 @@ static void do_recall(int Ind, bool bypass) {
 				msg_print(Ind, "\377oA tension leaves the air around you...");
 				p_ptr->redraw |= (PR_DEPTH);
 				if (!is_admin(p_ptr)) {
-					p_ptr->recall_x = p_ptr->recall_y = -1;
+					p_ptr->recall_x = p_ptr->recall_y = 0;
 					set_afraid(Ind, 10);// + (d_ptr->baselevel - p_ptr->max_dlv));
 					return;
 				}
@@ -4603,7 +4603,7 @@ static void do_recall(int Ind, bool bypass) {
 		if (d_ptr && (d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
 			msg_print(Ind, "\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
-				p_ptr->recall_x = p_ptr->recall_y = -1;
+				p_ptr->recall_x = p_ptr->recall_y = 0;
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
@@ -4625,7 +4625,7 @@ static void do_recall(int Ind, bool bypass) {
 					recall_ok = FALSE;
 					/* Redraw the depth(colour) */
 					p_ptr->redraw |= (PR_DEPTH);
-					p_ptr->recall_x = p_ptr->recall_y = -1;
+					p_ptr->recall_x = p_ptr->recall_y = 0;
 				}
 			} else if ((p_ptr->mode & MODE_DED_IDDC) && in_irondeepdive(&p_ptr->wpos)) {
 				msg_print(Ind, "You have dedicated yourself to the Ironman Deep Dive Challenge!");
@@ -4633,7 +4633,7 @@ static void do_recall(int Ind, bool bypass) {
 					recall_ok = FALSE;
 					/* Redraw the depth(colour) */
 					p_ptr->redraw |= (PR_DEPTH);
-					p_ptr->recall_x = p_ptr->recall_y = -1;
+					p_ptr->recall_x = p_ptr->recall_y = 0;
 				}
 			}
 		}
@@ -4669,7 +4669,7 @@ static void do_recall(int Ind, bool bypass) {
 		    !is_admin(p_ptr) ) ||
 		    /* Or we have specified no target sector or the same sector we're already in? */
 		    (inarea(&p_ptr->wpos, &p_ptr->recall_pos)
-		    && p_ptr->recall_x == -1 //exception for admins: Allow precise recall within same sector
+		    && p_ptr->recall_x == 0 //exception for admins: Allow precise recall within same sector
 		    ))
 		{
 			/* back to the last town (s)he visited.
@@ -4831,7 +4831,7 @@ static void do_recall(int Ind, bool bypass) {
 		/* new_pos isn't set so recalling shouldn't be allowed - mikaelh */
 		recall_ok = FALSE;
 		p_ptr->redraw |= (PR_DEPTH);
-		p_ptr->recall_x = p_ptr->recall_y = -1;
+		p_ptr->recall_x = p_ptr->recall_y = 0;
 	}
 
 	if (recall_ok) {
@@ -6923,7 +6923,7 @@ static bool process_player_end_aux(int Ind) {
 		    ) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
 			p_ptr->word_recall = 0;
-			p_ptr->recall_x = p_ptr->recall_y = -1;
+			p_ptr->recall_x = p_ptr->recall_y = 0;
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 			/* Redraw the depth(colour) */
 			p_ptr->redraw |= (PR_DEPTH);
@@ -9726,11 +9726,11 @@ void process_player_change_wpos(int Ind) {
 		if (j) s_printf("failed!\n");
 	}
 
-	if (is_admin(p_ptr) && p_ptr->recall_x != -1 && p_ptr->recall_y != -1) {
+	if (is_admin(p_ptr) && p_ptr->recall_x != 0 && p_ptr->recall_y != 0) {
 		p_ptr->px = p_ptr->recall_x;
 		p_ptr->py = p_ptr->recall_y;
-		p_ptr->recall_x = -1;
-		p_ptr->recall_y = -1;
+		p_ptr->recall_x = 0;
+		p_ptr->recall_y = 0;
 	} else {
 		p_ptr->px = x;
 		p_ptr->py = y;

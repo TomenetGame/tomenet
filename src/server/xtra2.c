@@ -14761,7 +14761,7 @@ bool set_recall_timer(int Ind, int v) {
 	else {
 		if (p_ptr->word_recall) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
-			p_ptr->recall_x = p_ptr->recall_y = -1;
+			p_ptr->recall_x = p_ptr->recall_y = 0;
 			notice = TRUE;
 		}
 	}

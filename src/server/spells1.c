@@ -11556,7 +11556,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "\377o%^s charges the air around you!", killer);
 		} else {
 			p_ptr->word_recall = 0;
-			p_ptr->recall_x = p_ptr->recall_y = -1;
+			p_ptr->recall_x = p_ptr->recall_y = 0;
 			if (fuzzy) msg_print(Ind, "\377oA tension leaves the air around you!");
 			else msg_format(Ind, "\377o%^s dispels the tension from the air around you!", killer);
 		}
