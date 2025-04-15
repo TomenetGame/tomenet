@@ -4569,6 +4569,7 @@ static void do_recall(int Ind, bool bypass) {
 		if (!pass) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
 			p_ptr->redraw |= (PR_DEPTH);
+			p_ptr->recall_x = p_ptr->recall_y = -1;
 			return;
 		}
 	}
@@ -4590,6 +4591,7 @@ static void do_recall(int Ind, bool bypass) {
 				msg_print(Ind, "\377oA tension leaves the air around you...");
 				p_ptr->redraw |= (PR_DEPTH);
 				if (!is_admin(p_ptr)) {
+					p_ptr->recall_x = p_ptr->recall_y = -1;
 					set_afraid(Ind, 10);// + (d_ptr->baselevel - p_ptr->max_dlv));
 					return;
 				}
@@ -4600,6 +4602,7 @@ static void do_recall(int Ind, bool bypass) {
 		if (d_ptr && (d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
 			msg_print(Ind, "\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
+				p_ptr->recall_x = p_ptr->recall_y = -1;
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
@@ -4621,6 +4624,7 @@ static void do_recall(int Ind, bool bypass) {
 					recall_ok = FALSE;
 					/* Redraw the depth(colour) */
 					p_ptr->redraw |= (PR_DEPTH);
+					p_ptr->recall_x = p_ptr->recall_y = -1;
 				}
 			} else if ((p_ptr->mode & MODE_DED_IDDC) && in_irondeepdive(&p_ptr->wpos)) {
 				msg_print(Ind, "You have dedicated yourself to the Ironman Deep Dive Challenge!");
@@ -4628,6 +4632,7 @@ static void do_recall(int Ind, bool bypass) {
 					recall_ok = FALSE;
 					/* Redraw the depth(colour) */
 					p_ptr->redraw |= (PR_DEPTH);
+					p_ptr->recall_x = p_ptr->recall_y = -1;
 				}
 			}
 		}
@@ -4821,6 +4826,7 @@ static void do_recall(int Ind, bool bypass) {
 		/* new_pos isn't set so recalling shouldn't be allowed - mikaelh */
 		recall_ok = FALSE;
 		p_ptr->redraw |= (PR_DEPTH);
+		p_ptr->recall_x = p_ptr->recall_y = -1;
 	}
 
 	if (recall_ok) {
@@ -9714,8 +9720,15 @@ void process_player_change_wpos(int Ind) {
 		if (j) s_printf("failed!\n");
 	}
 
-	p_ptr->py = y;
-	p_ptr->px = x;
+	if (is_admin(p_ptr) && p_ptr->recall_x != -1 && p_ptr->recall_y != -1) {
+		p_ptr->px = p_ptr->recall_x;
+		p_ptr->py = p_ptr->recall_y;
+		p_ptr->recall_x = -1;
+		p_ptr->recall_y = -1;
+	} else {
+		p_ptr->px = x;
+		p_ptr->py = y;
+	}
 
 	/* Update the player location */
 	zcave[y][x].m_idx = 0 - Ind;

@@ -3332,6 +3332,7 @@ struct player_type {
 	s16b max_plv;			/* Max Player Level */
 	s16b max_dlv;			/* Max dungeon level explored. */
 	worldpos recall_pos;		/* what position to recall to */
+	s16b recall_x, recall_y;	/* Exact [x,y] coords to land on after recall (admins only, maybe special events) */
 	u16b town_x, town_y;
 
 	int avoid_loc;			/* array size of locations to avoid when changing wpos (recalling not next to a DK escape beacon) */

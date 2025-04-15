@@ -1480,8 +1480,35 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 //#define R_REQUIRES_AWARE /* Item can only be used for '@R' inscription if we're aware of its flavour? */
 			int good_match_found = 0;
 			char const *candidate_destination;
+			char *c, *c2;
+			int x = -1, y = -1;
 
+			p_ptr->recall_x = -1;
+			p_ptr->recall_y = -1;
 			if (admin) {
+				/* Ultra-hack: Admins may specify "/x,y" to teleport directly to a specific [x,y] coord after recall */
+				if ((c = strchr(message3, '/')) && *(c + 1)) { //verify correct format
+					x = atoi(c + 1);
+					if ((c2 = strchr(c, ',')) && *(c2 + 1)) { //verify correct format
+						y = atoi(c2 + 1);
+						if (!in_bounds(y, x)) x = y = -1; //discard
+					} else x = -1; //discard
+					/* Crop the coord string from recall parms and proceed normally */
+					c2 = strchr(c, ' ');
+					if (c2) {
+						char tmp[MSG_LEN];
+
+						strcpy(tmp, message3);
+						strcpy(tmp + (c - message3), c2);
+						strcpy(message3, tmp);
+					} else *c = 0;
+					while (*message3 && message3[strlen(message3) - 1] == ' ') message3[strlen(message3) - 1] = 0; //trim trailing spaces
+					p_ptr->recall_x = x;
+					p_ptr->recall_y = y;
+					do_slash_cmd(Ind, format("/rec %s", message3), format("/rec %s", message3)); //hax! this is done to re-tokenize the new message3 string
+					return;
+				}
+
 				if (!p_ptr->word_recall) set_recall_timer(Ind, 1);
 				else set_recall_timer(Ind, 0);
 			} else {
