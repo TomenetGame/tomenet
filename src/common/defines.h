@@ -2781,8 +2781,8 @@
 /* Feature 0xC1 -- brick roof */
 /* Feature 0xC2 -- brick roof top */
 /* Feature 0xC3 -- brick roof chimney */
-/* Feature 0xC4 -- window */
-/* Feature 0xC5 -- small window */
+#define FEAT_WINDOW		0xC4 /* Feature 0xC4 -- window */
+#define FEAT_WINDOW_SMALL	0xC5 /* Feature 0xC5 -- small window */
 /* Feature 0xC6 -- rain barrel */
 #define FEAT_FLOWER		0xC7 /* 199 */
 /* Feature 0xC8 -- cobblestone road */
@@ -2814,6 +2814,9 @@
 #define FEAT_SOLID		237	/* Pseudo feature definition for graphical tilesets for 'solid_bars' UI elements and similar. Also see 165-171.*/
 #define FEAT_DRAWBRIDGE_HORIZ	238
 #define FEAT_SOLID_NC		239
+
+#define FEAT_OPEN_WINDOW	256
+#define FEAT_OPEN_WINDOW_SMALL	257
 
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS	2

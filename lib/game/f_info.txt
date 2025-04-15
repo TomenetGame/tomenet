@@ -1366,12 +1366,12 @@ G:":r
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # window
-N:196:window
+N:196:closed window
 G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 
 # small window
-N:197:small window
+N:197:small closed window
 G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 
@@ -1688,11 +1688,25 @@ N:253:solid block, half top left shaved off
 G:#:w
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 
+#HOLE (254)
+
 # Uh oh, only #254 is left. If we need more space we could check which of the pseudo-feats are currently unused and delete them:
 # 165-171, 237, 239-253.
 # Best solution of course: Expand MAX_F_IDX to 512, change data type from byte to u16b accordingly o_O"
 
 # NOTE: 255 is reserved for special purpose (RLE in server save file / 'not done yet' indicator -- TODO: Check the latter one, can't coexist w/ RLE?)
+
+# window
+N:256:open window
+G:":W
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:LOS | BLOCK_CONTACT
+
+# small window
+N:257:small open window
+G:":W
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:LOS | BLOCK_CONTACT
 
 
 # generic scheme (all lines are unique except

@@ -2842,6 +2842,45 @@ void do_cmd_open(int Ind, int dir) {
 		if (c_ptr->feat == FEAT_SEALED_DOOR)
 			msg_print(Ind, "That door cannot be opened.");
 
+		else if (c_ptr->feat == FEAT_WINDOW) {
+			cave_set_feat_live(wpos, y, x, FEAT_OPEN_WINDOW);
+
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
+
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			//sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+		}
+		else if (c_ptr->feat == FEAT_WINDOW_SMALL) {
+			cave_set_feat_live(wpos, y, x, FEAT_OPEN_WINDOW_SMALL);
+
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
+
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			//sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+		}
+
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		      (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
@@ -3266,6 +3305,43 @@ void do_cmd_close(int Ind, int dir) {
 		/* hack for fluff */
 		else if (c_ptr->feat == FEAT_UNSEALED_DOOR)
 			msg_print(Ind, "That door cannot be closed.");
+
+		else if (c_ptr->feat == FEAT_OPEN_WINDOW) {
+			cave_set_feat_live(wpos, y, x, FEAT_WINDOW);
+
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
+
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+		}
+		else if (c_ptr->feat == FEAT_OPEN_WINDOW_SMALL) {
+			cave_set_feat_live(wpos, y, x, FEAT_WINDOW_SMALL);
+
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
+
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+		}
 
 		/* Require open door */
 		else if (c_ptr->feat != FEAT_OPEN && c_ptr->feat != FEAT_HOME_OPEN) {
