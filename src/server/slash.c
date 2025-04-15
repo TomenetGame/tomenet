@@ -1483,8 +1483,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			char *c, *c2;
 			int x = -1, y = -1;
 
-			p_ptr->recall_x = -1;
-			p_ptr->recall_y = -1;
 			if (admin) {
 				/* Ultra-hack: Admins may specify "/x,y" to teleport directly to a specific [x,y] coord after recall */
 				if ((c = strchr(message3, '/')) && *(c + 1)) { //verify correct format
