@@ -15741,8 +15741,8 @@ bool guild_build(int Ind) {
  * it together right now for Halloween. -APD
  */
 bool master_build(int Ind, char * parms) {
-	player_type * p_ptr = Players[Ind];
-	cave_type * c_ptr;
+	player_type *p_ptr = Players[Ind];
+	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 	static u16b new_feat = FEAT_WALL_EXTRA;
 	cave_type **zcave;
@@ -15753,7 +15753,7 @@ bool master_build(int Ind, char * parms) {
 	/* extract arguments, otherwise build a wall of type new_feat */
 	if (parms) {
 		/* Hack -- the first character specifies the type of wall */
-		new_feat = parms[0];
+		new_feat = (unsigned char)parms[0];
 		/* Hack -- toggle auto-build on/off */
 		switch (parms[1]) {
 		case 'T': p_ptr->master_move_hook = master_build; break;
