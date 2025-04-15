@@ -294,6 +294,13 @@ F:147:/292 # small glowing sphere
 F:148:/293 # glowing sphere
 F:149:/294 # large glowing sphere
 
+F:220:/558 # arcade server player 1 trail -> rounded solid rectangle
+F:221:/558 # arcade server player 2 trail -> rounded solid rectangle
+F:222:/558 # arcade server player 3 trail -> rounded solid rectangle
+F:223:/558 # arcade server player 4 trail -> rounded solid rectangle
+F:227:/250 # arcade server orange wall -> inner permanent wall (vault)
+F:229:/294 # arcade server powerup -> large glowing sphere
+
 # F:182:/57 # Ekkaia, the Encircling Sea
 F:182:/158 # Ekkaia, the Encircling Sea
 
