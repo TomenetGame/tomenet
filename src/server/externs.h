@@ -35,6 +35,7 @@ void world_pmsg_send(uint32_t id, char *name, char *pname, char *text);
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern int color_char_to_attr(char c);
 extern char color_attr_to_char(byte a);
+extern int color_char_ext_to_attr(char c);
 extern void version_build(void);
 extern byte mh_attr(int max);
 extern char *my_strcasestr(const char *big, const char *little);

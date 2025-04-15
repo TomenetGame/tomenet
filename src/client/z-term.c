@@ -1541,6 +1541,20 @@ byte flick_colour(byte attr) {
 		default: return(TERM_L_DARK); /* need TERM_L_DARK or TERM_SLATE to get enough contrast to dark blue */
 #endif
 		}}
+
+	case TERM_ANIM_WATER_EAST: /* water stream flowing eastward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_WATE));
+		return((flick_global_x - ticks / 1) % 5 ? flick_colour(TERM_WATE) : (rand_int(4) ? TERM_L_BLUE : TERM_BLUE));
+	case TERM_ANIM_WATER_WEST: /* water stream flowing westward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_WATE));
+		return((flick_global_x + ticks / 1) % 5 ? flick_colour(TERM_WATE) : (rand_int(4) ? TERM_L_BLUE : TERM_BLUE));
+	case TERM_ANIM_WATER_NORTH: /* water stream flowing northward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_WATE));
+		return((flick_global_y + ticks / 1) % 5 ? flick_colour(TERM_WATE) : (rand_int(4) ? TERM_L_BLUE : TERM_BLUE));
+	case TERM_ANIM_WATER_SOUTH: /* water stream flowing southward, every 5th grid has a 'lighter' foam */
+		if (!flick_global_x) return(flick_colour(TERM_WATE));
+		return((flick_global_y - ticks / 1) % 5 ? flick_colour(TERM_WATE) : (rand_int(4) ? TERM_L_BLUE : TERM_BLUE));
+
 	default:
 #if 0 /* old way: xhtml_screenshot() would call us on ANY colour, even non-animated */
 		return(attr); /* basically only happens in screenshot function, where flick_colour() is used indiscriminately on ALL colours even those not animated.. pft */

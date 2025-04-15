@@ -1046,6 +1046,7 @@ extern void version_build(void);
 extern int find_realm(int book);
 extern char color_attr_to_char(byte a);
 extern int color_char_to_attr(char c);
+extern int color_char_ext_to_attr(char c);
 extern byte mh_attr(int max);
 extern char *my_strcasestr(const char *big, const char *little);
 extern char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);

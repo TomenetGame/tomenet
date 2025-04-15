@@ -1708,6 +1708,35 @@ G:":W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 F:LOS | BLOCK_CONTACT
 
+# Stream of animated water, eastward
+N:258:stream of water
+G:~:%a
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+# Stream of animated water, westward
+N:259:stream of water
+G:~:%b
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+# Stream of animated water, northward
+N:260:stream of water
+G:~:%c
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+# Stream of animated water, southward
+N:261:stream of water
+G:~:%d
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE | NO_LITE_WHITEN
+#LAMP_LITE_OPTIONAL
+
 
 # generic scheme (all lines are unique except
 # where it's mentioned otherwise) - C. Blue

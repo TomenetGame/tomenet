@@ -2235,8 +2235,11 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			if (!buf[3]) return(1);
 			if (!buf[4]) return(1);
 
-			/* Extract the color */
-			tmp = color_char_to_attr(buf[4]);
+			/* Hack for additional colours */
+			if (buf[4] == '%') tmp = color_char_ext_to_attr(buf[5]);
+			/* Extract the color (normal operation) */
+			else tmp = color_char_to_attr(buf[4]);
+
 			if (tmp < 0) return(1);
 
 			/* Save the values */
@@ -2509,8 +2512,10 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			if (!buf[3]) return(1);
 			if (!buf[4]) return(1);
 
-			/* Extract the color */
-			tmp = color_char_to_attr(buf[4]);
+			/* Hack for additional colours */
+			if (buf[4] == '%') tmp = color_char_ext_to_attr(buf[5]);
+			/* Extract the color (normal operation) */
+			else tmp = color_char_to_attr(buf[4]);
 
 			/* Paranoia */
 			if (tmp < 0) return(1);

@@ -60,77 +60,88 @@
  */
 int color_char_to_attr(char c) {
 	switch (c) {
-	case 'd': return (TERM_DARK);
-	case 'w': return (TERM_WHITE);
-	case 's': return (TERM_SLATE);
-	case 'o': return (TERM_ORANGE);
-	case 'r': return (TERM_RED);
-	case 'g': return (TERM_GREEN);
-	case 'b': return (TERM_BLUE);
-	case 'u': return (TERM_UMBER);
+	case 'd': return(TERM_DARK);
+	case 'w': return(TERM_WHITE);
+	case 's': return(TERM_SLATE);
+	case 'o': return(TERM_ORANGE);
+	case 'r': return(TERM_RED);
+	case 'g': return(TERM_GREEN);
+	case 'b': return(TERM_BLUE);
+	case 'u': return(TERM_UMBER);
 
-	case 'D': return (TERM_L_DARK);
-	case 'W': return (TERM_L_WHITE);
-	case 'v': return (TERM_VIOLET);
-	case 'y': return (TERM_YELLOW);
-	case 'R': return (TERM_L_RED);
-	case 'G': return (TERM_L_GREEN);
-	case 'B': return (TERM_L_BLUE);
-	case 'U': return (TERM_L_UMBER);
+	case 'D': return(TERM_L_DARK);
+	case 'W': return(TERM_L_WHITE);
+	case 'v': return(TERM_VIOLET);
+	case 'y': return(TERM_YELLOW);
+	case 'R': return(TERM_L_RED);
+	case 'G': return(TERM_L_GREEN);
+	case 'B': return(TERM_L_BLUE);
+	case 'U': return(TERM_L_UMBER);
 
-	case 'p': return (TERM_POIS);
-	case 'f': return (TERM_FIRE);
-	case 'a': return (TERM_ACID);
-	case 'e': return (TERM_ELEC);
-	case 'c': return (TERM_COLD);
-	case 'h': return (TERM_HALF);
-	case 'm': return (TERM_MULTI);
-	case 'L': return (TERM_LITE);
+	case 'p': return(TERM_POIS);
+	case 'f': return(TERM_FIRE);
+	case 'a': return(TERM_ACID);
+	case 'e': return(TERM_ELEC);
+	case 'c': return(TERM_COLD);
+	case 'h': return(TERM_HALF);
+	case 'm': return(TERM_MULTI);
+	case 'L': return(TERM_LITE);
 
-	case 'C': return (TERM_CONF);
-	case 'S': return (TERM_SOUN);
-	case 'H': return (TERM_SHAR);
-	case 'A': return (TERM_DARKNESS);
-	case 'M': return (TERM_SHIELDM);
-	case 'I': return (TERM_SHIELDI);
+	case 'C': return(TERM_CONF);
+	case 'S': return(TERM_SOUN);
+	case 'H': return(TERM_SHAR);
+	case 'A': return(TERM_DARKNESS);
+	case 'M': return(TERM_SHIELDM);
+	case 'I': return(TERM_SHIELDI);
 
 	/* maybe TODO: add EXTENDED_TERM_COLOURS here too */
-	//case 'E': return TERM_CURSE; //like TERM_DARKNESS
-	//case 'N': return TERM_ANNI; //like TERM_DARKNESS
-	case 'P': return TERM_PSI;
-	case 'x': return TERM_NEXU;
-	case 'n': return TERM_NETH;
-	case 'T': return TERM_DISE;
-	case 'q': return TERM_INER;
-	case 'F': return TERM_FORC;
-	case 'V': return TERM_GRAV;
-	case 't': return TERM_TIME;
-	case 'E': return TERM_METEOR;
-	case 'N': return TERM_MANA;
-	case 'Q': return TERM_DISI;
-	case 'Y': return TERM_WATE;
-	case 'i': return TERM_ICE; //pretty similar to elec
-	case 'l': return TERM_PLAS;
-	case 'O': return TERM_DETO;
-	case 'k': return TERM_NUKE;
-	case 'K': return TERM_UNBREATH; //ugh --pretty similar to pois
-	case 'j': return TERM_HOLYORB;
-	case 'J': return TERM_HOLYFIRE;
-	case 'X': return TERM_HELLFIRE;
-	case 'z': return TERM_THUNDER;
-	case 'Z': return TERM_EMBER;
-	case '0': return TERM_STARLITE;
-	case '1': return TERM_HAVOC;
-	case '2': return TERM_LAMP;
-	case '3': return TERM_LAMP_DARK;
-	case '4': return TERM_SELECTOR;
-	case '5': return TERM_SMOOTHPAL;
-	case '6': return TERM_SEL_RED;
-	case '7': return TERM_SEL_BLUE;
-	case '8': return TERM_SRCLITE;
-	}
+	//case 'E': return(TERM_CURSE); //like TERM_DARKNESS
+	//case 'N': return(TERM_ANNI); //like TERM_DARKNESS
+	case 'P': return(TERM_PSI);
+	case 'x': return(TERM_NEXU);
+	case 'n': return(TERM_NETH);
+	case 'T': return(TERM_DISE);
+	case 'q': return(TERM_INER);
+	case 'F': return(TERM_FORC);
+	case 'V': return(TERM_GRAV);
+	case 't': return(TERM_TIME);
+	case 'E': return(TERM_METEOR);
+	case 'N': return(TERM_MANA);
+	case 'Q': return(TERM_DISI);
+	case 'Y': return(TERM_WATE);
+	case 'i': return(TERM_ICE); //pretty similar to elec
+	case 'l': return(TERM_PLAS);
+	case 'O': return(TERM_DETO);
+	case 'k': return(TERM_NUKE);
+	case 'K': return(TERM_UNBREATH); //ugh --pretty similar to pois
+	case 'j': return(TERM_HOLYORB);
+	case 'J': return(TERM_HOLYFIRE);
+	case 'X': return(TERM_HELLFIRE);
+	case 'z': return(TERM_THUNDER);
+	case 'Z': return(TERM_EMBER);
+	case '0': return(TERM_STARLITE);
+	case '1': return(TERM_HAVOC);
+	case '2': return(TERM_LAMP);
+	case '3': return(TERM_LAMP_DARK);
+	case '4': return(TERM_SELECTOR);
+	case '5': return(TERM_SMOOTHPAL);
+	case '6': return(TERM_SEL_RED);
+	case '7': return(TERM_SEL_BLUE);
+	case '8': return(TERM_SRCLITE);
 
-	return (-1);
+	default: return(-1);
+	}
+}
+
+int color_char_ext_to_attr(char c) {
+	switch (c) {
+	case 'a': return(TERM_ANIM_WATER_EAST);
+	case 'b': return(TERM_ANIM_WATER_WEST);
+	case 'c': return(TERM_ANIM_WATER_NORTH);
+	case 'd': return(TERM_ANIM_WATER_SOUTH);
+
+	default: return(-1);
+	}
 }
 
 /*
@@ -139,98 +150,99 @@ int color_char_to_attr(char c) {
  */
 char color_attr_to_char(byte a) {
 	switch (a) {
-	case TERM_DARK: return 'd';
-	case TERM_WHITE: return 'w';
-	case TERM_SLATE: return 's';
-	case TERM_ORANGE: return 'o';
-	case TERM_RED: return 'r';
-	case TERM_GREEN: return 'g';
-	case TERM_BLUE: return 'b';
-	case TERM_UMBER: return 'u';
+	case TERM_DARK: return('d');
+	case TERM_WHITE: return('w');
+	case TERM_SLATE: return('s');
+	case TERM_ORANGE: return('o');
+	case TERM_RED: return('r');
+	case TERM_GREEN: return('g');
+	case TERM_BLUE: return('b');
+	case TERM_UMBER: return('u');
 
-	case TERM_L_DARK: return 'D';
-	case TERM_L_WHITE: return 'W';
-	case TERM_VIOLET: return 'v';
-	case TERM_YELLOW: return 'y';
-	case TERM_L_RED: return 'R';
-	case TERM_L_GREEN: return 'G';
-	case TERM_L_BLUE: return 'B';
-	case TERM_L_UMBER: return 'U';
+	case TERM_L_DARK: return('D');
+	case TERM_L_WHITE: return('W');
+	case TERM_VIOLET: return('v');
+	case TERM_YELLOW: return('y');
+	case TERM_L_RED: return('R');
+	case TERM_L_GREEN: return('G');
+	case TERM_L_BLUE: return('B');
+	case TERM_L_UMBER: return('U');
 
-	case TERM_HALF: return 'h';
-	case TERM_MULTI: return 'm';
-	case TERM_POIS: return 'p';
-	case TERM_FIRE: return 'f';
-	case TERM_ACID: return 'a';
-	case TERM_ELEC: return 'e';
-	case TERM_COLD: return 'c';
-	case TERM_LITE: return 'L';
+	case TERM_HALF: return('h');
+	case TERM_MULTI: return('m');
+	case TERM_POIS: return('p');
+	case TERM_FIRE: return('f');
+	case TERM_ACID: return('a');
+	case TERM_ELEC: return('e');
+	case TERM_COLD: return('c');
+	case TERM_LITE: return('L');
 
-	case TERM_CONF: return 'C';
-	case TERM_SOUN: return 'S';
-	case TERM_SHAR: return 'H';
-	case TERM_DARKNESS: return 'A';
-	case TERM_SHIELDM: return 'M';
-	case TERM_SHIELDI: return 'I';
+	case TERM_CONF: return('C');
+	case TERM_SOUN: return('S');
+	case TERM_SHAR: return('H');
+	case TERM_DARKNESS: return('A');
+	case TERM_SHIELDM: return('M');
+	case TERM_SHIELDI: return('I');
 
 	/* maybe TODO: add EXTENDED_TERM_COLOURS here too */
-	//case TERM_CURSE: return 'E'; //like TERM_DARKNESS
-	//case TERM_ANNI: return 'N'; //like TERM_DARKNESS
-	case TERM_PSI: return 'P';
-	case TERM_NEXU: return 'x';
-	case TERM_NETH: return 'n';
-	case TERM_DISE: return 'T';
-	case TERM_INER: return 'q';
-	case TERM_FORC: return 'F';
-	case TERM_GRAV: return 'V';
-	case TERM_TIME: return 't';
-	case TERM_METEOR: return 'E';
-	case TERM_MANA: return 'N';
-	case TERM_DISI: return 'Q';
-	case TERM_WATE: return 'Y';
-	case TERM_ICE: return 'i';//pretty similar to elec
-	case TERM_PLAS: return 'l';
-	case TERM_DETO: return 'O';
-	case TERM_NUKE: return 'k';
-	case TERM_UNBREATH: return 'K';//ugh --pretty similar to pois
-	case TERM_HOLYORB: return 'j';
-	case TERM_HOLYFIRE: return 'J';
-	case TERM_HELLFIRE: return 'X';
-	case TERM_THUNDER: return 'z';
-	case TERM_EMBER: return 'Z'; //this was the final free letter ;) no more colour letters available now!
-	case TERM_STARLITE: return '0'; //:-p
-	case TERM_HAVOC: return '1';
-	case TERM_LAMP: return '2';
-	case TERM_LAMP_DARK: return '3';
-	case TERM_SELECTOR: return '4';
-	case TERM_SMOOTHPAL: return '5';
-	case TERM_SEL_RED: return '6';
-	case TERM_SEL_BLUE: return '7';
-	case TERM_SRCLITE: return '8';
-	}
+	//case TERM_CURSE: return('E'); //like TERM_DARKNESS
+	//case TERM_ANNI: return('N'); //like TERM_DARKNESS
+	case TERM_PSI: return('P');
+	case TERM_NEXU: return('x');
+	case TERM_NETH: return('n');
+	case TERM_DISE: return('T');
+	case TERM_INER: return('q');
+	case TERM_FORC: return('F');
+	case TERM_GRAV: return('V');
+	case TERM_TIME: return('t');
+	case TERM_METEOR: return('E');
+	case TERM_MANA: return('N');
+	case TERM_DISI: return('Q');
+	case TERM_WATE: return('Y');
+	case TERM_ICE: return('i');//pretty similar to elec
+	case TERM_PLAS: return('l');
+	case TERM_DETO: return('O');
+	case TERM_NUKE: return('k');
+	case TERM_UNBREATH: return('K');//ugh --pretty similar to pois
+	case TERM_HOLYORB: return('j');
+	case TERM_HOLYFIRE: return('J');
+	case TERM_HELLFIRE: return('X');
+	case TERM_THUNDER: return('z');
+	case TERM_EMBER: return('Z'); //this was the final free letter ;) no more colour letters available now!
+	case TERM_STARLITE: return('0'); //:-p
+	case TERM_HAVOC: return('1');
+	case TERM_LAMP: return('2');
+	case TERM_LAMP_DARK: return('3');
+	case TERM_SELECTOR: return('4');
+	case TERM_SMOOTHPAL: return('5');
+	case TERM_SEL_RED: return('6');
+	case TERM_SEL_BLUE: return('7');
+	case TERM_SRCLITE: return('8');
 
-	return 'w';
+	default: return('w');
+	}
 }
 
 byte mh_attr(int max) {
 	switch (randint(max)) {
-	case  1: return (TERM_RED);
-	case  2: return (TERM_GREEN);
-	case  3: return (TERM_BLUE);
-	case  4: return (TERM_YELLOW);
-	case  5: return (TERM_ORANGE);
-	case  6: return (TERM_VIOLET);
-	case  7: return (TERM_L_RED);
-	case  8: return (TERM_L_GREEN);
-	case  9: return (TERM_L_BLUE);
-	case 10: return (TERM_UMBER);
-	case 11: return (TERM_L_UMBER);
-	case 12: return (TERM_SLATE);
-	case 13: return (TERM_WHITE);
-	case 14: return (TERM_L_WHITE);
-	case 15: return (TERM_L_DARK);
+	case  1: return(TERM_RED);
+	case  2: return(TERM_GREEN);
+	case  3: return(TERM_BLUE);
+	case  4: return(TERM_YELLOW);
+	case  5: return(TERM_ORANGE);
+	case  6: return(TERM_VIOLET);
+	case  7: return(TERM_L_RED);
+	case  8: return(TERM_L_GREEN);
+	case  9: return(TERM_L_BLUE);
+	case 10: return(TERM_UMBER);
+	case 11: return(TERM_L_UMBER);
+	case 12: return(TERM_SLATE);
+	case 13: return(TERM_WHITE);
+	case 14: return(TERM_L_WHITE);
+	case 15: return(TERM_L_DARK);
+
+	default: return(TERM_WHITE);
 	}
-	return (TERM_WHITE);
 }
 
 /*
@@ -272,7 +284,7 @@ errr path_build(char *buf, int max, cptr path, cptr file) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 char os_temp_path[1024];
@@ -375,19 +387,19 @@ void version_build() {
 int find_realm(int book) {
 	switch (book) {
 	case TV_MAGIC_BOOK:
-		return REALM_MAGERY;
+		return(REALM_MAGERY);
 	case TV_PRAYER_BOOK:
-		return REALM_PRAYER;
+		return(REALM_PRAYER);
 	case TV_SORCERY_BOOK:
-		return REALM_SORCERY;
+		return(REALM_SORCERY);
 	case TV_FIGHT_BOOK:
-		return REALM_FIGHTING;
+		return(REALM_FIGHTING);
 	case TV_SHADOW_BOOK:
-		return REALM_SHADOW;
+		return(REALM_SHADOW);
 	case TV_PSI_BOOK:
-		return REALM_PSI;
+		return(REALM_PSI);
 	case TV_HUNT_BOOK:
-		return REALM_HUNT;
+		return(REALM_HUNT);
 	};
 	return(-1);
 }
@@ -537,7 +549,7 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 				cnt2++;
 			}
 
-			if (L == l) return (char*)ret;
+			if (L == l) return(char*)ret;
 			cnt++;
 		} while (big[cnt] != '\0');
 		return(NULL);
@@ -1004,5 +1016,5 @@ int distance(int y1, int x1, int y2, int x2) { /* Note: This is currently only u
 	d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 	/* Return the distance */
-	return (d);
+	return(d);
 }

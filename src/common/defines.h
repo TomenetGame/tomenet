@@ -8064,6 +8064,14 @@ extern int PlayerUID;
   #define TERMA_L_BLUE	78
   #define TERMA_L_UMBER	79
 
+  // EXTENDED_BG_COLOURS reserves 80..86
+
+  /* Space-time-animated colours ^^ */
+  #define TERM_ANIM_WATER_EAST 87
+  #define TERM_ANIM_WATER_WEST 88
+  #define TERM_ANIM_WATER_NORTH 89
+  #define TERM_ANIM_WATER_SOUTH 90
+
   /* Problem: Not enough colours! So we need to change these masks to actual colours. */
   #define TERM_BNW	120	/* black & white, for admin wizards and pandas */
   #define TERM_BNWM	121	/* black & white + holyfire, for martyr */
