@@ -12425,6 +12425,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/lsl") || prefix(messagelc, "/lsls") || prefix(messagelc, "/lslsu")) {
 				int x, y;
 				struct dungeon_type *d_ptr;
+				dun_level *l_ptr;
 				worldpos tpos;
 				bool stale = FALSE, used = FALSE, unstat = FALSE;
 
@@ -12435,40 +12436,60 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
 					/* check surface */
 					k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = 0;
-					for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
-					if (used && k) msg_format(Ind, "\377g  %2d,%2d", x, y);
-					else if (wild_info[y][x].surface.ondepth > k) {
-						msg_format(Ind, "  %2d,%2d", x, y);
-						if (unstat) master_level_specific(Ind, &tpos, "u");
+					l_ptr = getfloor(&tpos);
+					if (l_ptr && (l_ptr->flags2 & LF2_STATIC)) {
+						msg_format(Ind, "  \377v%2d,%2d", x, y);
+						//todo maybe: apply 'unstat'
+					} else {
+						for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+						if (used && k) msg_format(Ind, "\377g  %2d,%2d", x, y);
+						else if (wild_info[y][x].surface.ondepth > k) {
+							msg_format(Ind, "  %2d,%2d", x, y);
+							if (unstat) master_level_specific(Ind, &tpos, "u");
+						}
+						else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377D  %2d,%2d", x, y);
 					}
-					else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377D  %2d,%2d", x, y);
+
 					/* check tower */
 					if ((d_ptr = wild_info[y][x].tower)) {
-					    //msg_format(Ind, "T max,base = %d,%d", d_ptr->maxdepth, d_ptr->baselevel);
-					    for (i = 0; i < d_ptr->maxdepth; i++) {
-						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = i + 1;
-						for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
-						if (used && k) msg_format(Ind, "\377gT %2d,%2d,%2d", x, y, i + 1);
-						else if (d_ptr->level[i].ondepth > k) {
-							msg_format(Ind, "T %2d,%2d,%2d", x, y, i + 1);
-							if (unstat) master_level_specific(Ind, &tpos, "u");
+						//msg_format(Ind, "T max,base = %d,%d", d_ptr->maxdepth, d_ptr->baselevel);
+						for (i = 0; i < d_ptr->maxdepth; i++) {
+							k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = i + 1;
+							l_ptr = getfloor(&tpos);
+							if (l_ptr && (l_ptr->flags2 & LF2_STATIC)) {
+								msg_format(Ind, "  \377v%2d,%2d,%2d", x, y, i + 1);
+								//todo maybe: apply 'unstat'
+							} else {
+								for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+								if (used && k) msg_format(Ind, "\377gT %2d,%2d,%2d", x, y, i + 1);
+								else if (d_ptr->level[i].ondepth > k) {
+									msg_format(Ind, "T %2d,%2d,%2d", x, y, i + 1);
+									if (unstat) master_level_specific(Ind, &tpos, "u");
+								}
+								else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377DT %2d,%2d,%2d", x, y, i + 1);
+							}
 						}
-						else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377DT %2d,%2d,%2d", x, y, i + 1);
-					    }
 					}
+
 					/* check dungeon */
 					if ((d_ptr = wild_info[y][x].dungeon)) {
-					    //msg_format(Ind, "D max,base = %d,%d", d_ptr->maxdepth, d_ptr->baselevel);
-					    for (i = 0; i < d_ptr->maxdepth; i++) {
-						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = -(i + 1);
-						for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
-						if (used && k) msg_format(Ind, "\377gD %2d,%2d,%2d", x, y, -(i + 1));
-						else if (d_ptr->level[i].ondepth > k) {
-							msg_format(Ind, "D %2d,%2d,%2d", x, y, -(i + 1));
-							if (unstat) master_level_specific(Ind, &tpos, "u");
+						//msg_format(Ind, "D max,base = %d,%d", d_ptr->maxdepth, d_ptr->baselevel);
+						for (i = 0; i < d_ptr->maxdepth; i++) {
+							k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = -(i + 1);
+							l_ptr = getfloor(&tpos);
+							if (l_ptr && (l_ptr->flags2 & LF2_STATIC)) {
+								msg_format(Ind, "  \377v%2d,%2d,%2d", x, y, -(i + 1));
+								//todo maybe: apply 'unstat'
+							} else {
+								for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+								if (used && k) msg_format(Ind, "\377gD %2d,%2d,%2d", x, y, -(i + 1));
+								else if (d_ptr->level[i].ondepth > k) {
+									msg_format(Ind, "D %2d,%2d,%2d", x, y, -(i + 1));
+									if (unstat) master_level_specific(Ind, &tpos, "u");
+								}
+								else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377DD %2d,%2d,%2d", x, y, -(i + 1));
+							}
 						}
-						else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377DD %2d,%2d,%2d", x, y, -(i + 1));
-					    }
 					}
 				}
 				msg_print(Ind, "done.");
