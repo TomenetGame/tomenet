@@ -479,7 +479,9 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	char32_t oc_back = scr_cc_back[x];
 
 	/* Hack -- Ignore non-changes */
-	if (oa == a && oc == c && (!c_back || (oa_back == a_back && oc_back == c_back))) return;
+	//if (oa == a && oc == c && (!c_back || (oa_back == a_back && oc_back == c_back))) return;
+	//if (oa == a && oc == c && oa_back == a_back && (!c_back || oc_back == c_back)) return;
+	if (oa == a && oc == c && oa_back == a_back && oc_back == c_back) return; //max paranoia
 
 	/* Save the "literal" information (background) */
 	if (c_back) {
@@ -625,7 +627,9 @@ static void QueueAttrChars_2mask(int x, int y, int n, byte a, char32_t *s, byte 
 		char32_t oc_b = scr_cc_back[x];
 
 		/* Hack -- Ignore non-changes */
-		if (oa == a && oc == *s && (!*s_back || (oa_b == a_back && oc_b == *s_back))) continue;
+		//if (oa == a && oc == *s && (!*s_back || (oa_b == a_back && oc_b == *s_back))) continue;
+		//if (oa == a && oc == *s && oa_b == a_back && (!*s_back || oc_b == *s_back)) continue;
+		if (oa == a && oc == *s && oa_b == a_back && oc_b == *s_back) continue; //max paranoia
 
 		/* Save the "literal" information */
 		scr_aa[x] = a;
