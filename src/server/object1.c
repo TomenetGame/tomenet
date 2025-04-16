@@ -5143,8 +5143,9 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id, ego_grante
 	/* fixed_flag_forge: Collect all 100% granted flags, that is from ego powers and also the base item. */
 	if (static_e_ptr && !o_ptr->name1) { /* Arts are expected to have practically all abilities as 'hidden powers', no detail needed here (would even be spammy colour-wise). */
 		*static_e_ptr = &fixed_flag_forge;
-		fixed_flag_forge.flags[0] = fixed_flag_forge.flags[1] = fixed_flag_forge.flags[2] =
-		fixed_flag_forge.flags[3] = fixed_flag_forge.flags[4] = fixed_flag_forge.flags[5] = 0;
+		fixed_flag_forge.flags[0] = \
+		fixed_flag_forge.flags[1] = fixed_flag_forge.flags[2] = fixed_flag_forge.flags[3] = \
+		fixed_flag_forge.flags[4] = fixed_flag_forge.flags[5] = fixed_flag_forge.flags[6] = 0;
 		if (o_ptr->name2) {
 			e_ptr = &e_info[o_ptr->name2];
 			for (j = 0; j < 5; j++) {
@@ -5375,7 +5376,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot
  */
 /* Print object flag info to file, specifically with colouring for randomized powers ie those from ego items. */
 //#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & (flag))) ? "" : "\377B", msg)
-#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & (flag))) ? "" : ((hack_sigil_f[flag_slot] & (flag)) ? "\377G" : "\377B"), msg)
+#define ff_print(msg, flag_slot, flag) fprintf(fff, "%s%s\n", (!es_ptr || (es_ptr->flags[flag_slot] & (flag))) ? "" : ((hack_sigil_local_f[flag_slot] & (flag)) ? "\377G" : "\377B"), msg)
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
@@ -5402,6 +5403,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	int buf_tmp_i, buf_tmp_n;
 	char timeleft[51] = { 0 };//[26]
 	ego_granted_flags *es_ptr = NULL; //silence compiler warning
+	u32b hack_sigil_local_f[7] = { 0 }; //same as ego_granted_flags
 
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
@@ -5621,6 +5623,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	/* conclude hack: can *identifying* actually make a difference at all? */
 	if (!can_have_hidden_powers) eff_full = TRUE;
+
+	/* Remember all flags from previous object_flags() call, as the non-local array ('hack_sigil_f[]') could be overwritten in between */
+	hack_sigil_local_f[1] = hack_sigil_f[1];
+	hack_sigil_local_f[2] = hack_sigil_f[2];
+	hack_sigil_local_f[3] = hack_sigil_f[3];
+	hack_sigil_local_f[4] = hack_sigil_f[4];
+	hack_sigil_local_f[5] = hack_sigil_f[5];
+	hack_sigil_local_f[6] = hack_sigil_f[6];
+	hack_sigil_local_f[0] = hack_sigil_f[0];
 
 	/* ------------------------------------------------------------------------------------------ */
 #endif
