@@ -11,7 +11,6 @@ Notes regarding unmapped f_info.txt features:
 (108	bottomless abyss	DARK SPACE)
 (121	empty sky		DARK SPACE)
 
-146	burning oil lamp
 181	field
 
 (228	ai tron (ARCADE)	--looks like a player ie '@' so not to map at this time as we don't have player-specific mappings yet.)
