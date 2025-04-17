@@ -122,6 +122,12 @@ void world_comm(int fd, int arg) {
 	int x, i;
 	struct wpacket *wpk;
 
+	//hack: Reinit static vars (used after disconnecting from world server)
+	if (fd == -1) {
+		bpos = blen = 0;
+		return;
+	}
+
 	x = recv(fd, buffer + (bpos + blen), 1024 - (bpos + blen), 0);
 	if (x == 0) {
 		//struct rplist *c_pl, *n_pl;

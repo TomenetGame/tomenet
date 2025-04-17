@@ -815,6 +815,12 @@ void world_disconnect(int Ind) {
 	s_printf("World server disconnected\n");
 	remove_input(WorldSocket);
 	close(WorldSocket);
+
+	//hack: Tell world_comm to reinit static vars.
+	//Added this after today the NA server suddenly got packet-error-desync'ed with world,
+	//and not even /unworld+/world helped but a restart of the NA server was required. - C. Blue
+	world_comm(-1, 0);
+
 	/* Clear all the world players quietly */
 	while (remlist(&rpmlist, rpmlist));
 #if 0
