@@ -790,6 +790,13 @@ void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL);
 		else sound_near_site(y, x, &p_ptr->wpos, Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
+	else if (m_list[m_idx].r_idx == RI_LIVING_LIGHTNING) {
+		sound(Ind, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, TRUE);//SFX_TYPE_MON_SPELL
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "lightning", "thunder", SFX_TYPE_NO_OVERLAP);//SFX_TYPE_MON_SPELL
+		else sound_near_site(y, x, &p_ptr->wpos, Ind, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE);//SFX_TYPE_MON_SPELL
+
+	}
 	else if (p_ptr->sfx_monsterattack) {
 		sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
