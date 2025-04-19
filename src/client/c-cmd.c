@@ -5593,6 +5593,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 
 #ifdef BLF_SRC_PREFEED
 			if (line_prefeed_result != -1) line_cur[remembrance_index] = line_prefeed_result;
+			line_prefeed_result = -1;
 #endif
 			line_presearch = line_cur[remembrance_index];
 			/* Skip the line we're currently in, start with the next line actually */
@@ -5651,8 +5652,11 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 			if (!lastsearch[remembrance_index][0]) continue;
 
 #ifdef BLF_SRC_PREFEED
-			//not 'backwards' for now
-			//if (line_prefeed_result != -1) line_cur[remembrance_index] = line_prefeed_result;
+ #if 0 //not 'backwards' for now? todo maybe: implement
+c_msg_format("<%s>, lpr/lpb %d/%d, lc %d, lps %d", lastsearch[remembrance_index], line_prefeed_result, line_prefeed_blank, line_cur[remembrance_index], line_presearch); //testing/debug
+			if (line_prefeed_result != -1) line_cur[remembrance_index] = line_prefeed_result;
+ #endif
+			line_prefeed_result = -1;
 #endif
 			line_presearch = line_cur[remembrance_index];
 			/* Inverse location/direction */
