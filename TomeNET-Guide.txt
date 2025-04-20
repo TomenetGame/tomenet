@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. April 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 20. April 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -27751,14 +27751,16 @@ Solution:   This can have several reasons. On disconnection a message box will
                     The login process couldn't be completed. Probably a network
                     problem, or really bad lag/timeout.
 
-            If you are living in a place with ISPs that utilize bad network
-            infrastructure/routing, for example Australia, you could try a VPN
-            service such as 'NordVPN' (not affiliated, random example) who
-            offer their 'Meshnet' service aimed specifically at gaming, or the
-            also gaming-specific service 'Exitlag' (again not affiliated).
+            If you are living in a place with ISPs that have bad network
+            infrastructure/routing, for example Australia or New Zealand, you
+            could try a VPN service such as 'NordVPN' (not affiliated, random
+            example) who offer their 'Meshnet' service aimed specifically at
+            gaming, or the also gaming-specific service 'Exitlag' (again not
+            affiliated).
             These are services that gamers from Australia apparently use to
             improve their gaming experience.
             At the time of writing, these provide free trial periods.
+            (A ping improvement of 70ms was reported by one player from NZ.)
 
             To check how your ISP routes your network traffic, you can use the
             'traceroute' command on your PC (eg 'traceroute europe.tomenet.eu')
