@@ -79,6 +79,12 @@
  #endif
 #endif
 
+/*
+ * Base version strings of TomeNET (see version_build)
+ */
+#define TOMENET_VERSION_SHORT		"TomeNET"
+
+
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
 #define MIN_VERSION_MINOR	4
@@ -140,19 +146,20 @@
 #endif
 
 
+/* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
+#include "defines-local.h"
 
-/*
- * Base version strings of TomeNET (see version_build)
- */
-#define TOMENET_VERSION_SHORT		"TomeNET"
+/* Add feature enabling/disabling definitions - C. Blue */
+#include "defines-features.h"
+
+/* Add colour schemes - C. Blue */
+#include "colours.h"
+
 
 /*
  * This value is a single 16-bit number holding the version info
  */
-
-#define MY_VERSION (VERSION_MAJOR << 12 | VERSION_MINOR << 8 | VERSION_PATCH \
-	<< 4 | VERSION_EXTRA)
-
+#define MY_VERSION (VERSION_MAJOR << 12 | VERSION_MINOR << 8 | VERSION_PATCH << 4 | VERSION_EXTRA)
 
 
 /* Main server flags */
@@ -179,15 +186,6 @@
 #define SFLG1_CIPD		0x00000040U	/* Server is ok with CLIENT_ITEM_PASTE_DIZ */
 #define SFLG1_SIPD		0x00000080U	/* Server is ok with SERVER_ITEM_PASTE_DIZ */
 
-
-/* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
-#include "defines-local.h"
-
-/* Add feature enabling/disabling definitions - C. Blue */
-#include "defines-features.h"
-
-/* Add colour schemes - C. Blue */
-#include "colours.h"
 
 
 /* Characters disallowed in save files */
