@@ -11151,7 +11151,7 @@ void death_drop_object(player_type *p_ptr, int slot, object_type *o_ptr) {
 
 		/* If the item isn't to be scattered, drop it here now */
 		if (!away) {
-			s16b res;
+			int res; //o_idx is u16b, so we must accomodate for this value range in the positives, and drop_near() can also return -1 or -2 for failures
 
 			if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 			else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
