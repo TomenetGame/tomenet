@@ -4019,7 +4019,8 @@ again:
 		global_c_cfg_big_map = TRUE;
 
 		if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
-		    && (sflags1 & SFLG1_BIG_MAP)) {
+		    //|| !(sflags1 & SFLG1_BIG_MAP) -- sflags are not yet initialised!
+		    ) {
 			if (screen_hgt <= SCREEN_HGT) {
 				screen_hgt = MAX_SCREEN_HGT;
 				resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
