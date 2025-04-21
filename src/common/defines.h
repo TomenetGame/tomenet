@@ -76,10 +76,9 @@
   #define CLIENT_VERSION_TAG	CLIENT_TAG
  #else
   #define CLIENT_VERSION_TAG	CLIENT_TAG"-Test"
-   #if VERSION_BUILD == 0 /* Don't override higher build versions (we use anything > 0 for test client builds) */
-    #undef VERSION_BUILD
-    #define VERSION_BUILD 1
-   #endif
+  #if VERSION_BUILD == 0 /* Don't override higher build versions (we use anything > 0 for test client builds) */
+   #undef VERSION_BUILD
+   #define VERSION_BUILD 1
   #endif
  #endif
 #endif
