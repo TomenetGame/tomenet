@@ -14306,12 +14306,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				  "readme": "https://ipinfo.io/missingauth"
 				}
 				*/
-				char ip_addr[MAX_CHARS];
-				bool ip = atoi(message3); /* specified an IP? */
+				char ip_addr[MAX_CHARS], *mp = message3;
+				bool is_ip, is_idx;
+
+				while (*mp == ' ') mp++;
+				is_ip = (atoi(mp) || *mp == '0') && strchr(mp, '.'); /* specified an IP? */
+				is_idx = (atoi(mp) || *mp == '0') && !strchr(mp, '.'); /* specified an index? */
 
 				if (!tk) {
 					msg_print(Ind, "\377oUsage: /geo <character name>");
 					msg_print(Ind, "\377oUsage: /geo <ip address>");
+					msg_print(Ind, "\377oUsage: /geo <invalid-list entry index>");
 					return;
 				}
 
@@ -14320,8 +14325,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				if (!ip) {
-					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (is_idx) {
+					if (k < 0) {
+						msg_print(Ind, "\377yIndex must start at 0.");
+						return;
+					}
+					for (i = 0; i < MAX_LIST_INVALID; i++)
+						if (!list_invalid_name[i][0]) break;
+					if (k >= i) {
+						msg_print(Ind, "No such invalid-accounts list index.");
+						return;
+					}
+					msg_format(Ind, "Looking up IP %s (#%d '%s@%s') ...", list_invalid_addr[k], k, list_invalid_name[k], list_invalid_host[k]);
+					strcpy(ip_addr, list_invalid_addr[k]);
+				} else if (is_ip) {
+					char *p = strchr(mp, '/');
+
+					/* QoL: automatically cut off '/nnnnn' trailing port info if given */
+					if (p) *p = 0;
+
+					strcpy(ip_addr, mp);
+					msg_format(Ind, "Looking up IP %s ...", ip_addr);
+				} else { /* character name specified */
+					j = name_lookup_loose(Ind, mp, FALSE, TRUE, FALSE);
 					if (!j) {
 						msg_print(Ind, "\377yCharacter not online.");
 						return;
@@ -14329,14 +14355,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					/* Note: Could also use LUA's execute() hehee */
 					strcpy(ip_addr, get_player_ip(j));
 					msg_format(Ind, "Looking up IP %s of player '%s'...", ip_addr, Players[j]->name);
-				} else {
-					char *p = strchr(message3, '/');
-
-					/* QoL: automatically cut off '/nnnnn' trailing port info if given */
-					if (p) *p = 0;
-
-					strcpy(ip_addr, message3);
-					msg_format(Ind, "Looking up IP %s ...", ip_addr);
 				}
 
 				i = system(format("curl https://ipinfo.io/%s > __ipinfo.tmp &", ip_addr));
