@@ -4328,7 +4328,7 @@ struct player_type {
 	/* For the 4.4.8.1.0.0 lua update crash bug */
 	char warning_lua_update, warning_lua_count;
 	char warning_tunnel, warning_tunnel2, warning_tunnel3, warning_tunnel4, warning_tunnel_hidden, warning_trap, warning_tele, warning_fracexp;
-	char warning_death;
+	char warning_death, warning_away;
 	char warning_drained, warning_boomerang, warning_bash, warning_inspect;
 	/* 4.7.1b+ additions */
 	char warning_repair, warning_partyexp, warning_wor2, warning_depth; //repair weapon/armour, no xp sharing, wor INTO dun (display at -50 BD when char is hilev), low/no exp on grey/yellow

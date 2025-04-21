@@ -11029,7 +11029,7 @@ void player_death(int Ind) {
 
 /* Drop an item on player's death */
 void death_drop_object(player_type *p_ptr, int slot, object_type *o_ptr) {
-	bool away = FALSE;
+	bool away = FALSE, warning_away = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 
 
@@ -11194,7 +11194,7 @@ void death_drop_object(player_type *p_ptr, int slot, object_type *o_ptr) {
 
 					object_desc(0, o_name, o_ptr, TRUE, 3);
 					s_printf("Death-failed-to-away %s\n", o_name);
-				}
+				} else warning_away = TRUE;
 			} else s_printf("Death-NO-ZCAVE.\n"); //paranoia-log
 		}
 	} else {
@@ -11217,6 +11217,13 @@ void death_drop_object(player_type *p_ptr, int slot, object_type *o_ptr) {
 
 	/* No more item */
 	invwipe(o_ptr);
+
+	if (!p_ptr->warning_away && warning_away) {
+		p_ptr->warning_away = 1;
+		msg_print(p_ptr->Ind, "\375\377yHINT: If items cannot drop because there is not enough space on your grid,");
+		msg_print(p_ptr->Ind, "\375\377y      they are instead teleported to random locations on your dungeon floor.");
+		s_printf("warning_away: %s\n", p_ptr->name);
+	}
 }
 
 

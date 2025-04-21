@@ -3029,6 +3029,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_xp_recover = 1;
 		p_ptr->warning_newautoret = 1;
 		p_ptr->warning_fill = 1;
+		p_ptr->warning_away = 1;
 		return;
 	}
 
@@ -3245,6 +3246,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_stealing = p_ptr->warning_stealing_rha = 1;
 		p_ptr->warning_limitbottles = 1;
 	}
+	/* Note: We never 'outlevel' warning_away atm */
 }
 
 #if 0
