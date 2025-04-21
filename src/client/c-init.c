@@ -4413,9 +4413,9 @@ bool ask_for_bigmap_generic(void) {
 	}
 
 	/* Remember that we got the hint */
+	bigmap_hint = FALSE;
 #ifdef WINDOWS
 	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
-	bigmap_hint = FALSE;
 #else //assume POSIX
 	write_mangrc(FALSE, FALSE, FALSE); //implicitely clears bigmap_hint if it's set
 #endif
@@ -4473,5 +4473,6 @@ void ask_for_graphics_generic(void) {
 	Term_putstr(8, 8, -1, TERM_YELLOW, "<Press any key to continue>");
 	(void)inkey();
 #endif
+	ask_for_graphics = FALSE; //don't re-ask every time we switch characters, until the config file finally gets saved by quitting the game
 	Term_clear();
 }
