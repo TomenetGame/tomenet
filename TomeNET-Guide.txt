@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 20. April 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 23. April 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6284,6 +6284,22 @@ already full and there is another expensive weapon on the floor you'd like to
 haul back to town to sell it, you could just equip it anyway to just use that
 weapon slot in your equipment as a +1 extension of your inventory, and then
 teleport back to town right away (via a scroll of Word of Recall).
+
+Paste item (also dubbed "link item") to chat:
+---------------------------------------------
+You can paste an item's name (including its inscription) to chat by pressing
+either 'i' for inventory or 'e' for equipment and then SHIFT + slot letter.
+For example if you have an item "b) a Dagger" in your inventory, you would
+press 'i', then 'SHIFT+B' to paste it into chat.
+While you are inside a shop, you can also paste items offered by the shop to
+chat by pressing the 'c' key and then the shop item's slot letter.
+Another method to insert items into your chat messages is to use the \\x tag
+for inventory \\X for equipment, and \\\x for shop items. Finally, there is
+the \\_ tag for pasting items under your feet (ie on the ground on the grid
+you are currently standing on), where 'x' stands for the slot letter and 'X'
+stands for SHIFT + slot letter. So for example to mention your equipped
+weapon, which is in equipment slot 'a)', you could write this chat message:
+"Hey everyone, look at the \\A which I'm wielding."
 
 
 (3.4a) Subinventory aka Bags
