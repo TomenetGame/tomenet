@@ -5711,7 +5711,7 @@ void do_cmd_bash(int Ind, int dir) {
 			msg_print(Ind, "You bash the mirror and it shatters into a thousand pieces.");
 			msg_print(Ind, " But the image of yourself that you saw in it.. is still there!");
 
-			p_ptr->suspended = turn + (is_admin(p_ptr) ? cfg.fps / 4 : cfg.fps * 3); //short break to grasp the situation ^^
+			p_ptr->suspended = turn + cfg.fps * 3; //short break to grasp the situation ^^
 			p_ptr->redraw |= PR_STATE;
 #ifdef USE_SOUND_2010
 			//sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, TRUE);
