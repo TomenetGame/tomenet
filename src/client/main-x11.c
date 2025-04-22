@@ -4362,7 +4362,10 @@ void set_palette(byte c, byte r, byte g, byte b) {
  #endif
 //WiP, not functional		if (screen_icky) Term_switch_fully(0);
 		if (c_cfg.gfx_palanim_repaint || (c_cfg.gfx_hack_repaint && !gfx_palanim_repaint_hack))
-			Term_repaint(SCREEN_PAD_LEFT, SCREEN_PAD_TOP, screen_wid, screen_hgt); //flicker-free redraw - C. Blue
+			/* Alternative function for flicker-free redraw - C. Blue */
+			//Term_repaint(SCREEN_PAD_LEFT, SCREEN_PAD_TOP, screen_wid, screen_hgt);
+			/* Include the UI elements, which is required if we use ANIM_FULL_PALETTE_FLASH or ANIM_FULL_PALETTE_LIGHTNING  - C. Blue */
+			Term_repaint(0, 0, CL_WINDOW_WID, CL_WINDOW_HGT);
 		else {
 			Term_redraw();
 			gfx_palanim_repaint_hack = FALSE;
