@@ -877,8 +877,10 @@ static byte anim2static(byte attr) {
 		case 9: case 10: case 11:
 			return(TERM_YELLOW);
 		}
-		/* Fall through should not happen, just silence the compiler */
-		__attribute__ ((fallthrough));
+#ifdef TEST_CLIENT
+		c_msg_print("Colour error 1");
+#endif
+		return(TERM_VIOLET); //paranoia + just silence the compiler */
 	case TERM_SMOOTHPAL:
 		switch ((((unsigned)ticks * 10) / 52) % 6) { //xD
 		case 0: return(TERM_L_RED);
@@ -888,8 +890,10 @@ static byte anim2static(byte attr) {
 		case 4: return(TERM_L_BLUE);
 		case 5: return(TERM_VIOLET);
 		}
-		/* Fall through should not happen, just silence the compiler */
-		__attribute__ ((fallthrough));
+#ifdef TEST_CLIENT
+		c_msg_print("Colour error 2");
+#endif
+		return(TERM_VIOLET); //paranoia + just silence the compiler */
 	case TERM_SEL_RED:
 #if 0 /* somewhat calm still */
 		switch ((unsigned)ticks % 10) {
@@ -924,8 +928,10 @@ static byte anim2static(byte attr) {
 			return(TERM_L_DARK);
 		}
 #endif
-		/* Fall through should not happen, just silence the compiler */
-		__attribute__ ((fallthrough));
+#ifdef TEST_CLIENT
+		c_msg_print("Colour error 3");
+#endif
+		return(TERM_VIOLET); //paranoia + just silence the compiler */
 	case TERM_SEL_BLUE: //atm for testing purpose only, see comments below...
 		/* Dual-animation! Use palette animation if available, colour-rotation otherwise */
 		if (TRUE
@@ -980,8 +986,10 @@ static byte anim2static(byte attr) {
 			return(TERM_L_BLUE);
 #endif
 		}
-		/* Fall through should not happen, just silence the compiler */
-		__attribute__ ((fallthrough));
+#ifdef TEST_CLIENT
+		c_msg_print("Colour error 4");
+#endif
+		return(TERM_VIOLET); //paranoia + just silence the compiler */
 	case TERM_SRCLITE: {
 //#define TERM_SRCLITE_TEMP /* only animate temporarily instead of permanently? */
 #define TERM_SRCLITE_HUE 1 /* 1 = reddish, else blueish */

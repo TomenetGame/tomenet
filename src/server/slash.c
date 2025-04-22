@@ -5725,7 +5725,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			Send_confused(Ind, TRUE);
 			Send_fear(Ind, TRUE);
 			Send_poison(Ind, is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) ? 0x4 : 0x2);
-			Send_state(Ind, TRUE, TRUE, TRUE);
+			Send_state(Ind, 1, TRUE, TRUE);
 			Send_speed(Ind, 210);
 			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) Send_study(Ind, TRUE);
 			else Send_bpr_wraith(Ind, 99, TERM_L_RED, "wRaItH");

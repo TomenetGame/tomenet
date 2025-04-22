@@ -456,6 +456,7 @@ struct player_type {
 	s16b slow;			/* Timed -- Slow */
 	s16b blind;			/* Timed -- Blindness */
 	s16b paralyzed;			/* Timed -- Paralysis */
+	u32b suspended;			/* Timed -- Paralysis */
 	s16b confused;			/* Timed -- Confusion */
 	s16b afraid;			/* Timed -- Fear */
 	s16b image;			/* Timed -- Hallucination */
@@ -1028,3 +1029,4 @@ extern void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pva
 
 extern s32b player_id;
 extern u32b account_id;
+extern void disturb(int Ind, int stop_search, int keep_resting);

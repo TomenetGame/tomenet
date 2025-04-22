@@ -7423,7 +7423,7 @@ int Send_poison(int Ind, char poisoned) {
 	return Packet_printf(&connp->c, "%c%c", PKT_POISON, poisoned);
 }
 
-int Send_state(int Ind, bool paralyzed, bool searching, bool resting) {
+int Send_state(int Ind, s16b paralyzed, bool searching, bool resting) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 

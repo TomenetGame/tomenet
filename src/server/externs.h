@@ -1290,7 +1290,7 @@ extern int Send_powers_info(int Ind);
 extern int Send_technique_info(int Ind); /* for MKEY_MELEE and MKEY_RANGED */
 extern int Send_item_request(int Ind, signed char tester_hook); //paranoia @ 'signed' char =-p
 extern int Send_spell_request(int Ind, int item);
-extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
+extern int Send_state(int Ind, s16b paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s16b pval, char *powers);
 extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s16b pval,

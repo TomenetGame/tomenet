@@ -1147,34 +1147,29 @@ void prt_poisoned(char poisoned) {
 /*
  * Prints paralyzed/searching status
  */
-void prt_state(bool paralyzed, bool searching, bool resting) {
-	byte attr = TERM_WHITE;
+void prt_state(s16b paralyzed, bool searching, bool resting) {
+	byte attr = TERM_RED;
 	char text[16];
 	int x, y;
 
-	if (paralyzed) {
-		attr = TERM_RED;
+	switch (paralyzed) {
+	case 0:
+		attr = TERM_WHITE;
+		if (searching) strcpy(text, "Searching   ");
+		else if (resting) strcpy(text, "Resting     ");
+		else strcpy(text, "            ");
+		break;
+	case 2:
+		strcpy(text, "In Stasis!  ");
+		break;
+	case 3:
+		strcpy(text, "Suspended!  ");
+		break;
+	case 1:
+	default:
 		strcpy(text, "Paralyzed!  ");
+		break;
 	}
-
-	else if (searching) {
-#if 0
-		if (get_skill(SKILL_STEALTH) <= 10)
-			strcpy(text, "Searching   ");
-		else {
-			attr = TERM_L_DARK;
-			strcpy(text, "Stlth Mode  ");
-		}
-#else
-		strcpy(text, "Searching   ");
-#endif
-
-	}
-
-	else if (resting)
-		strcpy(text, "Resting     ");
-	else
-		strcpy(text, "            ");
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -5143,10 +5138,12 @@ void do_animate_screenflash(bool reset) {
 			active = FALSE;
 		}
 		return;
-	}
+	} else if (!animate_screenflash) return;
 
 	/* Animate palette */
-	if (/* !c_cfg.disable_lightning && */ !animate_screenflash_icky && c_cfg.palette_animation) switch (animate_screenflash) {
+	if (c_cfg.palette_animation && /* !c_cfg.disable_lightning && */
+	    (!animate_screenflash_icky || animate_screenflash == FLASH_END)) /* Actually do reset colours back to normal if flash ends while screen is icky */
+	switch (animate_screenflash) {
 	case 1:
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {

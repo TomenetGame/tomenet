@@ -776,7 +776,7 @@ extern void prt_blind_hallu(char blind_hallu);
 extern void prt_confused(bool confused);
 extern void prt_afraid(bool fear);
 extern void prt_poisoned(char poisoned);
-extern void prt_state(bool paralyzed, bool searching, bool resting);
+extern void prt_state(s16b paralyzed, bool searching, bool resting);
 extern void prt_speed(int speed);
 extern void prt_study(bool study);
 extern void prt_bpr_wraith(byte bpr, byte attr, cptr bpr_str);

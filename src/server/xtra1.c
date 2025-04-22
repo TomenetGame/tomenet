@@ -457,11 +457,14 @@ static void prt_poisoned(int Ind) {
 static void prt_state(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	bool p, s, r;
+	s16b p;
+	bool s, r;
 
 	/* Paralysis */
-	if (p_ptr->paralyzed || p_ptr->suspended) p = TRUE;
-	else p = FALSE;
+	if (p_ptr->paralyzed > cfg.spell_stack_limit) p = 2;
+	else if (p_ptr->paralyzed) p = 1;
+	else if (p_ptr->suspended) p = 3;
+	else p = 0;
 
 	/* Searching */
 	if (p_ptr->searching) s = TRUE;
