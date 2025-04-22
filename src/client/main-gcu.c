@@ -77,6 +77,7 @@ struct term_data {
 
 static term_data data[MAX_TERM_DATA_GCU]; // [4], defines.h
 
+bool disable_tile_cache = FALSE; //unused in GCU, just added because it's external in generic code
 
 /*
  * Hack -- try to guess which systems use what commands
