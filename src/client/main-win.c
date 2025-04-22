@@ -2850,7 +2850,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 			if (!entry->is_valid) hole = i;
 			else if (entry->c == c && entry->a == a
   #ifdef GRAPHICS_BG_MASK
-			    && entry->c_back == 0 && entry->a_back == 0
+			    && entry->c_back == 32 && entry->a_back == TERM_DARK
   #endif
   #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
 			    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
@@ -2903,8 +2903,8 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 		entry->c = c;
 		entry->a = a;
   #ifdef GRAPHICS_BG_MASK
-		entry->c_back = 0;
-		entry->a_back = 0;
+		entry->c_back = 32;
+		entry->a_back = TERM_DARK;
   #endif
 		entry->is_valid = TRUE;
   #ifdef TILE_CACHE_FGBG
@@ -3021,6 +3021,11 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
   #endif
  #endif
 
+	/* Avoid visual glitches while not in 2mask mode */
+	if (use_graphics != UG_2MASK) {
+		a_back = TERM_DARK;
+		c_back = 32; //space! NOT zero!
+	}
 
 	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
 	if (c_back == 32) a_back = TERM_DARK;
@@ -3393,6 +3398,27 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	term_data *td = (term_data*)(Term->data);
 	int fwid, fhgt;
 
+	RECT rc;
+	HDC  hdc;
+
+
+#if 1 /* For 2mask mode: Actually imprint screen buffer with "empty background" for this text printed grid, to possibly avoid glitches */
+ #ifdef USE_GRAPHICS
+  #ifdef GRAPHICS_BG_MASK
+	{
+		byte *scr_aa_back = Term->scr_back->a[y];
+		char32_t *scr_cc_back = Term->scr_back->c[y];
+
+		byte *old_aa_back = Term->old_back->a[y];
+		char32_t *old_cc_back = Term->old_back->c[y];
+
+		old_aa_back[x] = scr_aa_back[x] = TERM_DARK;
+		old_cc_back[x] = scr_cc_back[x] = 32;
+	}
+  #endif
+ #endif
+#endif
+
 #ifdef USE_LOGFONT
 	if (use_logfont) {
 		fwid = td->lf.lfWidth;
@@ -3403,10 +3429,6 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 		fwid = td->font_wid;
 		fhgt = td->font_hgt;
 	}
-
-	RECT rc;
-	HDC  hdc;
-
 
 	/* Location */
 	rc.left   = x * fwid + td->size_ow1;
@@ -3431,7 +3453,6 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 #endif
 
 #ifdef OPTIMIZE_DRAWING
-
 	if (old_attr != a) {
 		/* Foreground color */
 		if (colors16) {
