@@ -4076,11 +4076,6 @@ static void process_player_begin(int Ind) {
 		msg_print(Ind, "\374\377BYou hear some very annoyed mumbling...");
 		p_ptr->auto_transport = 0;
 		break;
-	case AT_SCREENFLASH: //FIX_ANIM_FULL_PALETTE
-		if (turn < p_ptr->auto_transport_turn) break;
-		Send_screenflash(Ind);
-		p_ptr->auto_transport = 0;
-		break;
 	}
 
 #if defined(TARGET_SWITCHING_COST) || defined(TARGET_SWITCHING_COST_RANGED)

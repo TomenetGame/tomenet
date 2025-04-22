@@ -16,18 +16,6 @@
 #include "angband.h"
 
 
-/* First send any (UI) redraws, then next server frame send the actual screenflash request,
-   for if the client-side has ANIM_FULL_PALETTE_FLASH or ANIM_FULL_PALETTE_LIGHTNING defined:
-
-   In those cases, the colour of status bar text can be set to white on initial status bar change,
-   if the change happens the same frame as sending the animation request to the client, but since
-   redrawing palette-animated colours does only happen within the 'game map screen', the status bar
-   won't be redrawn and hence stay at the initial colour (eg TERM_WHITE for screenflashing)!
-
-   A more proper fix would be to (on client-side) redraw the whole screen including all UI instead
-   of just the map screen when set_palette() is called, and erase this FIX_ANIM_FULL_PALETTE stuff. */
-#define FIX_ANIM_FULL_PALETTE
-
 /* Amount of experience a player gets for disarming a trap. - C. Blue
    (It's personal, not distributed over the party)
    diff,lvl go from 2,2 to 12,38 atm (some traps disabled).
@@ -5730,13 +5718,7 @@ void do_cmd_bash(int Ind, int dir) {
 			sound_floor_vol(wpos, "shatter_potion", NULL, SFX_TYPE_MISC, 100); //^^'
 			if (is_atleast(&p_ptr->version, 4, 7, 4, 4, 0, 0)) {
 				sound_floor_vol(wpos, "destruction", NULL, SFX_TYPE_MISC, 100);
- #ifdef FIX_ANIM_FULL_PALETTE
-				redraw_stuff(Ind);
-				p_ptr->auto_transport = AT_SCREENFLASH;
-				p_ptr->auto_transport_turn = turn;
- #else
 				Send_screenflash(Ind);
- #endif
 			} else
 				sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100); //ambient, for implied lightning visuals
 #endif

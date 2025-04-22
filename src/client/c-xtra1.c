@@ -29,7 +29,15 @@
    Uncool thing about it is it causes all chat text, character stats, just everything to get (lightning-)flashed.
    Todo maybe: Use extended colours for the dungeon too, not just world surface.
    Note that while lightning happens on world surface and doesn't need to work inside the dungeon,
-   flash happens inside the dungeon mainly, so disabling it here would render it practically completely non-existant. */
+   flash happens inside the dungeon mainly, so disabling it here would render it practically completely non-existant.
+
+   HOWEVER, there is a bug: The colour of status bar text can be set to white on initial status bar change,
+   eg 'Suspended' info on shattering the mirror, if the change happens too close to sending the animation request to
+   the client, but redrawing palette-animated colours will only happen within the 'game map screen', so the status
+   bar won't be redrawn and hence stay at the initial colour (eg TERM_WHITE for screenflashing).
+
+   This set_palette() redrawal either needs fixing to affect the whole UI in gfx mode too,
+   or FULL-palette anims should both be commented out here. */
 #define ANIM_FULL_PALETTE_FLASH
 //#define ANIM_FULL_PALETTE_LIGHTNING
 
