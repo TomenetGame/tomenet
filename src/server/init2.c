@@ -3309,8 +3309,11 @@ static void set_server_option(char * option, char * value) {
 		cfg.dungeon_shop_type = atoi(value);
 	else if (!strcmp(option, "DUNGEON_SHOP_TIMEOUT"))
 		cfg.dungeon_shop_timeout = atoi(value);
-	else if (!strcmp(option, "SPELL_STACK_LIMIT"))
+	else if (!strcmp(option, "SPELL_STACK_LIMIT")) {
 		cfg.spell_stack_limit = atoi(value);
+		/* Ensure sane limits. Also, we use certain reserved values for hacks (paralyzed 255). */
+		if (cfg.spell_stack_limit > 250) cfg.spell_stack_limit = 250;
+	}
 	else if (!strcmp(option, "KINGS_ETIQUETTE"))
 		cfg.kings_etiquette = str_to_boolean(value);
 	else if (!strcmp(option, "FALLENKINGS_ETIQUETTE"))
