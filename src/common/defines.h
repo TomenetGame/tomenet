@@ -9370,6 +9370,7 @@ extern int PlayerUID;
 #define AT_PARTY2	10
 #define AT_MUMBLE	11
 #define AT_VALINORX	12
+#define AT_SCREENFLASH	13	//for FIX_ANIM_FULL_PALETTE
 
 
 /* Masks for restricted mimicry */

@@ -5222,10 +5222,12 @@ void do_animate_lightning(bool reset) {
 			active = FALSE;
 		}
 		return;
-	}
+	} else if (!animate_lightning) return;
 
 	/* Animate palette */
-	if (!c_cfg.disable_lightning && !animate_lightning_icky && c_cfg.palette_animation) switch (animate_lightning) {
+	if (!c_cfg.disable_lightning && c_cfg.palette_animation &&
+	    (!animate_lightning_icky || animate_lightning == AL_END)) /* Actually do reset colours back to normal if lightning ends while screen is icky */
+	switch (animate_lightning) {
 	case 1:
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
