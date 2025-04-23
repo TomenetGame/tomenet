@@ -2903,7 +2903,11 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 		entry->c = c;
 		entry->a = a;
   #ifdef GRAPHICS_BG_MASK
+   #if 0
 		entry->c_back = 32;
+   #else
+		entry->c_back = Client_setup.f_char[FEAT_SOLID];;
+   #endif
 		entry->a_back = TERM_DARK;
   #endif
 		entry->is_valid = TRUE;
@@ -3024,7 +3028,11 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
 		a_back = TERM_DARK;
+  #if 0
 		c_back = 32; //space! NOT zero!
+  #else
+		c_back = Client_setup.f_char[FEAT_SOLID]; // 'graphical space' for erasure
+  #endif
 	}
 
 	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
@@ -3402,7 +3410,8 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	HDC  hdc;
 
 
-#if 1 /* For 2mask mode: Actually imprint screen buffer with "empty background" for this text printed grid, to possibly avoid glitches */
+#if 1
+	/* For 2mask mode: Actually imprint screen buffer with "empty background" for this text printed grid, to possibly avoid glitches. */
  #ifdef USE_GRAPHICS
   #ifdef GRAPHICS_BG_MASK
 	{
@@ -3413,7 +3422,11 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 		char32_t *old_cc_back = Term->old_back->c[y];
 
 		old_aa_back[x] = scr_aa_back[x] = TERM_DARK;
+   #if 0
 		old_cc_back[x] = scr_cc_back[x] = 32;
+   #else
+		old_cc_back[x] = scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID];
+   #endif
 	}
   #endif
  #endif

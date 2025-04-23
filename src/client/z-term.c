@@ -453,8 +453,15 @@ static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	   In that case, 'background' info exists and we just don't use it, for this drawing action.
 	   So we should clear it instead of leaving it undefined.
 	   (Except for weather particles, where the effect of leaving the background here would actually be desired, as the weather particle is just temporary.) */
-	scr_aa_back[x] = 0;
-	scr_cc_back[x] = 32; //note: 0 would glitch as it's undefined, 32 aka space is correct for erasure
+//	if (use_graphics == 2) {
+		scr_aa_back[x] = 0;
+ #if 0
+		scr_cc_back[x] = 32; //note: 0 would glitch as it's undefined, 32 aka space is correct for erasure
+ #else
+		//replace the 'space (usually w/ colour 0]' ASCII background with graphical '(usually black, accordingly) box', so we can properly merge-draw on it
+		scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID];
+ #endif
+//	}
 #endif
 
 	/* Check for new min/max row info */
@@ -494,11 +501,11 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   This for example concerns town stores during rain
 	   (note that all weather particles draw with 0,0 for a_back,c_back). - C. Blue */
 	if ((scr_cc_back[x] == 32 // <- ASCII was drawn here?
- #if 0 /* actually any ASCII drawage, aka QueueAttrChar(), already sets cc_back to 32 so the check above should suffice and this one isn't clear, gfx could also be < 256?! */
+ #if 1 /* actually any ASCII drawage, aka QueueAttrChar(), already sets cc_back to 32 so the check above should suffice and this one isn't clear, gfx could also be < 256?! */
 	    /* Rare special case: Even if background contains graphics (because we are in 2mask-mode)
 	       we were fed ASCII in the foreground w/o overriding the graphical background.
 	       This should only ever happen if we're receiving visual info from an ASCII client while locally drawing 2mask-mode, ie weather particles: */
-	    || scr_cc[x] < 256)
+	    || (Term->higher_pict && scr_cc[x] <= MAX_FONT_CHAR))
  #else /* freaking compiler warning */
 	    && TRUE)
  #endif
@@ -576,7 +583,11 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 		scr_cc[x] = *s;
  #ifdef GRAPHICS_BG_MASK /* We print ASCII, so erase any background info! (Important for QueueAttrChar_2mask() to have 32 aka 'blank' here!) */
 		scr_aa_back[x] = 0;
+  #if 0
 		scr_cc_back[x] = 32;
+  #else
+		scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID];
+  #endif
  #endif
 
 		/* Note the "range" of window updates */
@@ -2486,7 +2497,11 @@ static void Term_repaint_row_pict(int y, byte *aa, char32_t *cc, byte *back_aa, 
 
    So this function doesn't change/update a/c values, but just their visuals.
    TODO maybe: For efficiency, restrict to actual map screen area instead of full window, and also don't use a 'buf' for every single text char. */
-#define OLD_VS_SCR /* define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct... */
+
+/* Define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct...
+   Note that Term_text_win() enables a 2-mask anti-glitch hack that actually overwrites Term->old and Term->scr. */
+//#define OLD_VS_SCR
+
 void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 	int y;
 
@@ -2519,10 +2534,10 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 	/* Pending text starts in the first column */
 	int fx = x1;
 	/* Pending text color is "blank" */
-	int fa = Term->attr_blank;
-#ifdef DRAW_LARGER_CHUNKS
+	int fa = Term->attr_blank; //TODO: Move behind the 'Term_switch(0)'!
+ #ifdef DRAW_LARGER_CHUNKS
 	int i;
-#endif
+ #endif
 	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
 	int mod_num = x2 - x1 + 1;
 	char text[mod_num + 1];
@@ -2533,7 +2548,7 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 
 
 	/* Various icky checks, these exist only for term 0 aka the main window */
-	if (icky_s) Term_switch(0);
+//	if (icky_s) Term_switch(0);
 
 	/* --- Repaint, with _text or _pict or _pict_2mask --- */
 
@@ -2573,7 +2588,8 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 #endif
 
 			if (!xc || xc == 32
-			    || !xa) /* let's also ignore black feats */
+			    || !xa /* let's also ignore black feats */
+			    )
 				continue;
 
 			/* Hack -- use "Term_pict()" always */
@@ -2602,7 +2618,7 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 		}
 	}
 
-	if (icky_s) Term_switch(0);
+//	if (icky_s) Term_switch(0);
 }
 
 
