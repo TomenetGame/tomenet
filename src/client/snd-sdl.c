@@ -704,7 +704,7 @@ static bool sound_sdl_init(bool no_cache) {
 			return(FALSE);
 		}
 
-		while (my_fgets(fff, buffer, sizeof(buffer)) == 0)
+		while (my_fgets(fff, buffer, sizeof(buffer0)) == 0)
 			fprintf(fff2, "%s\n", buffer);
 
 		my_fclose(fff2);
@@ -1056,7 +1056,7 @@ static bool sound_sdl_init(bool no_cache) {
 			return(FALSE);
 		}
 
-		while (my_fgets(fff, buffer, sizeof(buffer)) == 0)
+		while (my_fgets(fff, buffer, sizeof(buffer0)) == 0)
 			fprintf(fff2, "%s\n", buffer);
 
 		my_fclose(fff2);
