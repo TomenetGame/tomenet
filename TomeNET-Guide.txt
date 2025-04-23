@@ -6436,15 +6436,22 @@ an item from within it via 'S' (capital 'S' instead the usual lower-case 's').
 There are also inscriptions that can be put onto these bags (don't mix them):
   !A  Do not auto-stow items into this bag.
   !A0 ..except if this item can stack with already existing items in the bag.
-  !A1 ..except if they are at least similar to existing items.
+  !A1 ..except if they are at least similar(*) to existing items.
 
   !O  Do not auto-stow unowned items (ie new loot) into this bag.
   !O0 ..except if this item can stack with already existing items in the bag.
-  !O1 ..except if they are at least similar to existing items.
+  !O1 ..except if they are at least similar(*) to existing items.
 
   !S  Only auto-stow items into this bag when buying from a store.
   !S0 ..and only if this item can stack with already existing items in the bag.
-  !S1 ..and only if they are at least similar to existing items.
+  !S1 ..and only if they are at least similar(*) to existing items.
+
+  (*) 'Similar' just means they can stack with the item, but there might not
+      be enough space to get fully absorbed into the existing stack.
+      So only part of the items may stack and the rest or even all of it has
+      to be placed into a fresh, empty bag slot.
+
+  Also see !S inscription for items, which prevents auto-stowing an item.
 
 The inscriptions !d and !s have a special, additional QoL function when used
 on bags: They will prevent storing the bag in a list house. Either one works.
