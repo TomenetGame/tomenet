@@ -7096,10 +7096,11 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 #endif
 
 					town[i].flags |= TF_KNOWN; // we do allow p_ptr->ghost, same as for d_ptr->known stuff
+					forge.k_idx = 0; //init for paranoia
 					/* Make a fuzz */
 					s_printf("(%s) TOWNFOUND: Player %s (%s) discovered town '%s' (%d) at (%d,%d).\n",
 					    showtime(), p_ptr->name, p_ptr->accountname, town_profile[town[i].type].name, i, town[i].x, town[i].y);
-					msg_format(Ind, "\374\377i***\377B You discovered a new town, '\377U%s\377y', that nobody before you has found so far! \377i***", town_profile[town[i].type].name);
+					msg_format(Ind, "\374\377i***\377B You discovered a new town, '\377U%s\377B', that nobody before you has found so far! \377i***", town_profile[town[i].type].name);
 					/* Announce it to publicly */
 					l_printf("%s \\{B%s discovered a town: %s\n", showdate(), p_ptr->name, town_profile[town[i].type].name);
 					msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a town: '%s'! \377i***", p_ptr->name, town_profile[town[i].type].name);
@@ -7111,7 +7112,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 						invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT));
 						forge.number = 1;
 						break;
- #ifndef DUNFOUND_REWARDS_NORMAL /* Already covered? As all of these have at least one normal dungeon */
+ #if !defined(DUNFOUND_REWARDS_NORMAL) || !defined(TOWNFOUND_REWARDS_VANILLAONLY) /* Already covered? As all of these have at least one normal dungeon */
 					case TOWN_BREE:
 						/* Always known ie can never be discovered */
 						break;
