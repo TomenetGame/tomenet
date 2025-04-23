@@ -100,7 +100,7 @@ RECHARGE_I = add_spell {
 				recharge(Ind, get_recharge_pow(Ind, 49), -1)
 				return
 			end
-			recharge(Ind, get_recharge_pow(Ind, 49), player.inventory[1 + args.book])
+			recharge(Ind, get_recharge_pow(Ind, 49), args.book)
 	end,
 	["info"] = 	function()
 			return "power "..get_recharge_pow(Ind, 49)
@@ -122,7 +122,7 @@ RECHARGE_II = add_spell {
 				recharge(Ind, get_recharge_pow(Ind, 78), -1)
 				return
 			end
-			recharge(Ind, get_recharge_pow(Ind, 78), player.inventory[1 + args.book])
+			recharge(Ind, get_recharge_pow(Ind, 78), args.book)
 	end,
 	["info"] = 	function()
 			return "power "..get_recharge_pow(Ind, 78)
@@ -144,7 +144,7 @@ RECHARGE_III = add_spell {
 				recharge(Ind, get_recharge_pow(Ind, 0), -1)
 				return
 			end
-			recharge(Ind, get_recharge_pow(Ind, 0), player.inventory[1 + args.book])
+			recharge(Ind, get_recharge_pow(Ind, 0), args.book)
 	end,
 	["info"] = 	function()
 			return "power "..get_recharge_pow(Ind, 0)
