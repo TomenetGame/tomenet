@@ -2020,8 +2020,10 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	object_type *o_ptr, *q_ptr, forge;
 	//cptr q, s;
 
-	o_ptr = &p_ptr->inventory[slot];
-	if (!o_ptr->k_idx) return;
+	if (!get_inven_item(Ind, slot, &o_ptr) || !o_ptr->k_idx) {
+		msg_print(Ind, "\377oInvalid item.");
+		return;
+	}
 
 	tval = o_ptr->tval;
 
