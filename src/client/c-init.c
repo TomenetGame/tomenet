@@ -3841,71 +3841,88 @@ again:
  #else /* gawd Windows */
 		FILE *fp;
 		int x = 0;
+		char path[1024], path2[1024], pathbat[1024];
 
-		remove("__ipc");
-		WinExec("ipconfig /all > __ipc", SW_HIDE);
-		while (!my_fexists("__ipc") && x < 40) { // paranoia: Time out if for some reason the bat never returns.
-			x++;
-			Sleep(50);
-		}
-		fp = fopen("__ipc", "r");
+		path_build(path, 1024, ANGBAND_DIR_USER, "__ipc");
+		path_build(path, 1024, ANGBAND_DIR_USER, "__ipc_done");
+		path_build(pathbat, 1024, ANGBAND_DIR_USER, "__ipc.bat");
+		fp = fopen(pathbat, "w");
 		if (fp) {
-			char tmp[MAX_CHARS_WIDE], tmp_iaddr[MAX_CHARS];
-			char *addr, *ret;
-			bool found = FALSE;
+			fprintf(fp, "ipconfig /all > %s\n", path);
+			fprintf(fp, "echo > %s\n", path2); //'semaphore' so we know above line has completed writing to file
+			fclose(fp);
+		}
 
-			while (!found && fgets(tmp, MAX_CHARS_WIDE - 1, fp)) {
-				if (tmp[0] == ' ' || tmp[0] == 13 || tmp[0] == 10 || tmp[0] == 0) continue;
-				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
-				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
-				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
-				if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
-				addr = strchr(tmp, ':');
-				if (!addr) continue;
-				addr += 2;
-				ret = strchr(addr, 14);
-				if (ret) *ret = 0;
-				strcpy(tmp_iaddr, addr);
+		remove(path);
+		remove(path2);
+		if (WinExec(pathbat, SW_HIDE) > 31) { //success
+			//file <path> may exist yet, but the pipe writes unbuffered lines, so writing to it may not have completed yet and it might not have been closed yet, so it would appear 'empty' to fgets()!
+			while (!my_fexists(path2) && x < 40) { // paranoia: Time out if for some reason the bat never returns.
+				x++;
+				Sleep(50);
+			}
+			remove(path2);
+
+			fp = fopen(path, "r");
+			if (fp) {
+				char tmp[MAX_CHARS_WIDE], tmp_iaddr[MAX_CHARS];
+				char *addr, *ret;
+				bool found = FALSE;
+
 				while (!found && fgets(tmp, MAX_CHARS_WIDE - 1, fp)) {
-					if (strstr(tmp, "IPv4")) {
-						addr = strchr(tmp, ':');
-						ret = strchr(addr, 13);
-						if (!ret) ret = strchr(addr, 10);
+					if (tmp[0] == ' ' || tmp[0] == 13 || tmp[0] == 10 || tmp[0] == 0) continue;
+					if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+					if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+					if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+					if (!fgets(tmp, MAX_CHARS_WIDE - 1, fp)) break;
+					addr = strchr(tmp, ':');
+					if (!addr) continue;
+					addr += 2;
+					ret = strchr(addr, 14);
+					if (ret) *ret = 0;
+					strcpy(tmp_iaddr, addr);
+					while (!found && fgets(tmp, MAX_CHARS_WIDE - 1, fp)) {
+						if (strstr(tmp, "IPv4")) {
+							addr = strchr(tmp, ':');
+							ret = strchr(addr, 13);
+							if (!ret) ret = strchr(addr, 10);
 
-						if (addr && ret) {
-							addr += 2;
-							*ret = 0;
-							if (!strcmp(addr, ip_iface)) {
-								char hex[3] = { 0 };
+							if (addr && ret) {
+								addr += 2;
+								*ret = 0;
+								if (!strcmp(addr, ip_iface)) {
+									char hex[3] = { 0 };
 
-								hex[0] = tmp_iaddr[0];
-								hex[1] = tmp_iaddr[1];
-								ip_iaddr[0] = strtol(hex, NULL, 16);
-								hex[0] = tmp_iaddr[3];
-								hex[1] = tmp_iaddr[4];
-								ip_iaddr[1] = strtol(hex, NULL, 16);
-								hex[0] = tmp_iaddr[6];
-								hex[1] = tmp_iaddr[7];
-								ip_iaddr[2] = strtol(hex, NULL, 16);
-								hex[0] = tmp_iaddr[9];
-								hex[1] = tmp_iaddr[10];
-								ip_iaddr[3] = strtol(hex, NULL, 16);
-								hex[0] = tmp_iaddr[12];
-								hex[1] = tmp_iaddr[13];
-								ip_iaddr[4] = strtol(hex, NULL, 16);
-								hex[0] = tmp_iaddr[15];
-								hex[1] = tmp_iaddr[16];
-								ip_iaddr[5] = strtol(hex, NULL, 16);
+									hex[0] = tmp_iaddr[0];
+									hex[1] = tmp_iaddr[1];
+									ip_iaddr[0] = strtol(hex, NULL, 16);
+									hex[0] = tmp_iaddr[3];
+									hex[1] = tmp_iaddr[4];
+									ip_iaddr[1] = strtol(hex, NULL, 16);
+									hex[0] = tmp_iaddr[6];
+									hex[1] = tmp_iaddr[7];
+									ip_iaddr[2] = strtol(hex, NULL, 16);
+									hex[0] = tmp_iaddr[9];
+									hex[1] = tmp_iaddr[10];
+									ip_iaddr[3] = strtol(hex, NULL, 16);
+									hex[0] = tmp_iaddr[12];
+									hex[1] = tmp_iaddr[13];
+									ip_iaddr[4] = strtol(hex, NULL, 16);
+									hex[0] = tmp_iaddr[15];
+									hex[1] = tmp_iaddr[16];
+									ip_iaddr[5] = strtol(hex, NULL, 16);
 
-								found = TRUE;
+									found = TRUE;
+								}
 							}
 						}
 					}
 				}
+				fclose(fp);
 			}
-			fclose(fp);
+			remove(path);
 		}
-		remove("__ipc");
+		remove(pathbat);
  #endif
 #endif
 	}
