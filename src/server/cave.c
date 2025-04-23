@@ -3821,7 +3821,8 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			if (!is_admin(p_ptr) && d_ptr && !(d_ptr->known & 0x1)
 			    && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
 				s_printf("(%s) DUNFOUND: Player %s (%s) discovered dungeon '%s' (%d) at (%d,%d) [%d,%d].\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE), d_ptr->type, tpos.wx, tpos.wy, x, y);
-				msg_format(Ind, "\374\377i***\377B You discovered the staircase to a new dungeon, '\377U%s\377B', that nobody before you has found so far! \377i***", get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
+				msg_format(Ind, "\374\377i***\377B You discovered the staircase to a new dungeon, '\377U%s\377B',", get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
+				msg_print(Ind, "\374\377B    that nobody has found before! \377i***");
 				/* Announce it to publicly */
 				l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));
 				msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(tpos.wx, tpos.wy, d_ptr == wild->tower, d_ptr, 0, FALSE));

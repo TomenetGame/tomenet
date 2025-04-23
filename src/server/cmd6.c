@@ -3275,7 +3275,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE), d_ptr->type, x, y);
-							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377B', that nobody before you has found so far! \377i***", get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377B',", get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+							msg_print(Ind, "\374\377B    that nobody has found before! \377i***");
 							/* Announce it to publicly */
 							l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 							msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
@@ -3294,7 +3295,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						if (!is_admin(p_ptr) && !(d_ptr->known & 0x1)) {
  #if 0 /* learn about dungeon existance as character? */
 							s_printf("(%s) DUNFOUND: Player %s (%s) wildmapped dungeon '%s' (%d) at (%d,%d).\n", showtime(), p_ptr->name, p_ptr->accountname, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE), d_ptr->type, x, y);
-							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377B', that nobody before you has found so far! \377i***", get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+							msg_format(Ind, "\374\377i***\377B You discovered the location of a new dungeon, '\377U%s\377B',", get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+							msg_print(Ind, "\374\377B    that nobody has found before! \377i***");
 							/* Announce it to publicly */
 							l_printf("%s \\{B%s discovered a dungeon: %s\n", showdate(), p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 							msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a dungeon: '%s'! \377i***", p_ptr->name, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));

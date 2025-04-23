@@ -7100,7 +7100,12 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 					/* Make a fuzz */
 					s_printf("(%s) TOWNFOUND: Player %s (%s) discovered town '%s' (%d) at (%d,%d).\n",
 					    showtime(), p_ptr->name, p_ptr->accountname, town_profile[town[i].type].name, i, town[i].x, town[i].y);
-					msg_format(Ind, "\374\377i***\377B You discovered a new town, '\377U%s\377B', that nobody before you has found so far! \377i***", town_profile[town[i].type].name);
+#if 1
+					msg_format(Ind, "\374\377i***\377B You discovered a new town, '\377U%s\377B', that nobody has found before! \377i***", town_profile[town[i].type].name);
+#else
+					msg_format(Ind, "\374\377i***\377B You discovered a new town, '\377U%s\377B',", town_profile[town[i].type].name);
+					msg_print(Ind, "\374\377B    that nobody has found before! \377i***");
+#endif
 					/* Announce it to publicly */
 					l_printf("%s \\{B%s discovered a town: %s\n", showdate(), p_ptr->name, town_profile[town[i].type].name);
 					msg_broadcast_format(Ind, "\374\377i*** \377B%s discovered a town: '%s'! \377i***", p_ptr->name, town_profile[town[i].type].name);
@@ -7138,6 +7143,9 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 
 					/* Optional: For enchantable items */
 					apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
+					object_aware(Ind, &forge);
+					object_known(&forge);
+					forge.ident |= ID_MENTAL;
 					object_desc(Ind, o_name, &forge, TRUE, 3);
 
 					disturb(Ind, 0, 0);

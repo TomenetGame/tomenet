@@ -5152,6 +5152,9 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 		forge.number = damroll(6, 2);
 		/* Optional: For enchantable items */
 		apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
+		object_aware(Ind, &forge);
+		object_known(&forge);
+		forge.ident |= ID_MENTAL;
 		object_desc(Ind, o_name, &forge, TRUE, 3);
    #if 1 /* Auto-pick it up? */
 		slot = inven_carry(Ind, &forge);
@@ -5203,6 +5206,9 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 	if (!forge.k_idx) return; //paranoia (as Bree is always TF_KNOWN)
 	/* Optional: For enchantable items */
 	apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
+	object_aware(Ind, &forge);
+	object_known(&forge);
+	forge.ident |= ID_MENTAL;
 	object_desc(Ind, o_name, &forge, TRUE, 3);
 
   #if 1 /* Auto-pick it up? */
