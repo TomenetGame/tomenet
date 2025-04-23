@@ -304,6 +304,8 @@
 /* Discovering a canonical dungeon (d_info.txt, and normally-findable) grants a reward,
    the higher the less dungeons are remaining to be found */
  #define DUNFOUND_REWARDS_NORMAL
+/* Discovering a non-canonical dungeon (not in d_info.txt, but normally-findable) grants a reward. */
+ #define DUNFOUND_REWARDS_EXTRA
 #endif
 
 /* Disable manual declaration of hostility/peace */

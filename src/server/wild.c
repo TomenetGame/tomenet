@@ -5142,7 +5142,46 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 		if (d2_ptr->known & 0x1) dun_total_normal_known++;
 	}
 	/* The dungeon we're checking is itself not a 'normal' dungeon even, nothing to do then */
-	if (!normal) return;
+	if (!normal) {
+ #ifdef DUNFOUND_NORMAL_EXTRA
+		/* grant a reward anyway */
+		disturb(Ind, 0, 0);
+
+  #ifndef DUNFOUND_REWARDS_MONEY /* Item reward */
+		invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_STAR_HEALING));
+		forge.number = damroll(6, 2);
+		/* Optional: For enchantable items */
+		apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+   #if 1 /* Auto-pick it up? */
+		slot = inven_carry(Ind, &forge);
+		if (slot != -1 ) {
+			//msg_format(Ind, "You notice %s lying on the ground!", o_name);
+			msg_format(Ind, "The Mathom House sends you a gift to support your exploration efforts!");
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+		}
+   #else /* Just drop it at our feet? */
+		drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		msg_format(Ind, "You notice %s lying on the ground!", o_name);
+   #endif
+  #else /* Monetary reward */
+		reward = dam_roll(4000, 50);
+   #ifndef DUNFOUND_REWARDS_MONEY_DROP /* Auto-pick it up? */
+		msg_format(Ind, "The Mathom House sends %d gold pieces to support your exploration efforts!", reward);
+		(void)gain_au(Ind, reward, FALSE, FALSE);
+   #else
+		invcopy(&forge, lookup_kind(TV_GOLD, 1));
+		forge.pval = reward;
+		forge.k_idx = gold_colour(reward, FALSE, TRUE);
+		forge.sval = k_info[forge.k_idx].sval;
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		msg_format(Ind, "You notice %s lying on the ground!", o_name);
+   #endif
+  #endif
+ #endif
+		return;
+	}
 
 	/* Paranoia */
 	if (dun_total_normal - dun_total_normal_known < 1) {
