@@ -11639,12 +11639,7 @@ static void do_cmd_options_tilesets(void) {
 			   as it will cause instant packet corruption due to missing server-client synchronisation.
 			   So we just switch the savegame-affecting 'use_graphics_new' instead of actual 'use_graphics'. */
 #ifdef GRAPHICS_BG_MASK
- //#ifdef TEST_CLIENT
- #if 1
 			use_graphics_new = (use_graphics_new + 1) % 3;
- #else
-			use_graphics_new = (use_graphics_new + 1) % 2;
- #endif
 			if (use_graphics_new == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart (use CTRL+Q).");
 			else
 #else
