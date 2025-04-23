@@ -2535,15 +2535,20 @@ Gift wrappings:
 Bags (subinventory):
     !A[0|1]     Do not auto-stow items into this bag.
                 0: Except if they stack with existing items.
-                1: Except if they are at least similar to existing items.
+                1: Except if they are at least similar(*) to existing items.
 
     !O[0|1]     Do not auto-stow unowned items (ie new loot) into this bag.
                 0: Except if they stack with existing items.
-                1: Except if they are at least similar to existing items.
+                1: Except if they are at least similar(*) to existing items.
 
     !S[0|1]     Only auto-stow items into this bag when buying from store.
                 0: And only if they stack with existing items.
-                1: And only if they are at least similar to existing items.
+                1: And only if they are at least similar(*) to existing items.
+
+    (*) 'Similar' just means they can stack with the item, but there might not
+        be enough space to get fully absorbed into the existing stack.
+        So only part of the items may stack and the rest or even all of it has
+        to be placed into a fresh, empty bag slot.
 
     Also see !S inscription for items, which prevents auto-stowing an item.
 
