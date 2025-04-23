@@ -974,16 +974,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* skip inscribed items, except if we designated one item in particular (j==h) */
 				if (o_ptr->note &&
 				    strcmp(quark_str(o_ptr->note), "terrible") &&
-				    strcmp(quark_str(o_ptr->note), "cursed") &&
-				    strcmp(quark_str(o_ptr->note), "uncursed") &&
 				    strcmp(quark_str(o_ptr->note), "broken") &&
-				    strcmp(quark_str(o_ptr->note), "average") &&
 				    strcmp(quark_str(o_ptr->note), "good") &&
 				    strcmp(quark_str(o_ptr->note), "worthless") &&
-				    strcmp(quark_str(o_ptr->note), "stolen") &&
-				    strcmp(quark_str(o_ptr->note), "handmade") &&
-				    strcmp(quark_str(o_ptr->note), "on sale")
-				    ) {
+				    !DISCARDABLE_INSCR_FLOOR(quark_str(o_ptr->note))) {
 					if (j != h) continue; /* skip inscribed items when mass-tagging */
 					else o_ptr->note = 0; /* hack to overwrite its inscription */
 				}

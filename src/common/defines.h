@@ -638,6 +638,21 @@
 #endif
 
 
+/* Inscriptions that shouldn't count as 'item is inscribed' really - for auto-inscribing checks.
+   NOTE: "% off" and "unsalable" are NOT inscriptions, but it can still be part of the item name and LOOK like on as it appears in curly brackets. */
+#define DISCARDABLE_INSCR(STR) \
+    (strstr(STR, "% off") || !strcmp(STR, "unsalable") || !strcmp(STR, "on sale") || !strcmp(STR, "stolen") || !strcmp(STR, "handmade") || !strcmp(STR, "uncursed") || !strcmp(STR, "average"))
+/* Also add 'cursed' for items that were floor-identified before being picked up */
+#define DISCARDABLE_INSCR_FLOOR(STR) \
+    (DISCARDABLE_INSCR(STR) || !strcmp(STR, "cursed"))
+/* Full-item-name versions of the above */
+#define NAME_DISCARDABLE_INSCR(STR) \
+    (strstr(STR, "% off}") || !strcmp(STR, "{unsalable}") || !strcmp(STR, "{on sale}") || !strcmp(STR, "{stolen}") || !strcmp(STR, "{handmade}") || !strcmp(STR, "{uncursed}") || !strcmp(STR, "{average}"))
+/* Also add 'cursed' for items that were floor-identified before being picked up */
+#define NAME_DISCARDABLE_INSCR_FLOOR(STR) \
+    (NAME_DISCARDABLE_INSCR(STR) || !strcmp(STR, "{cursed}"))
+
+
 /*
  * Maximum array bounds for entity list arrays
  */

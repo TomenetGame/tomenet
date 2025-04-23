@@ -3992,12 +3992,8 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 		/* Hack -- require semi-matching "inscriptions" */
 		/* Hack^2 -- books do merge.. it's to prevent some crashes */
 		if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
-		    && strcmp(quark_str(o_ptr->note), "on sale")
-		    && strcmp(quark_str(j_ptr->note), "on sale")
-		    && strcmp(quark_str(o_ptr->note), "stolen")
-		    && strcmp(quark_str(j_ptr->note), "stolen")
-		    && strcmp(quark_str(o_ptr->note), "handmade")
-		    && strcmp(quark_str(j_ptr->note), "handmade")
+		    && !DISCARDABLE_INSCR(quark_str(o_ptr->note))
+		    && !DISCARDABLE_INSCR(quark_str(j_ptr->note))
 		    && !is_realm_book(o_ptr)
 		    && !check_guard_inscription(o_ptr->note, 'M')
 		    && !check_guard_inscription(j_ptr->note, 'M'))
@@ -11472,9 +11468,7 @@ bool auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 
 	/* skip inscribed items */
 	if (!flags && o_ptr->note &&
-	    strcmp(quark_str(o_ptr->note), "on sale") &&
-	    strcmp(quark_str(o_ptr->note), "stolen") &&
-	    strcmp(quark_str(o_ptr->note), "handmade"))
+	    !DISCARDABLE_INSCR(quark_str(o_ptr->note)))
 		return(FALSE);
 
 	if (!p_ptr->obj_aware[o_ptr->k_idx]) return(FALSE);
