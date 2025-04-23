@@ -1834,7 +1834,7 @@ extern bool identify_fully(int Ind);
 extern bool identify_fully_item(int Ind, int item);
 extern bool identify_fully_item_quiet(int Ind, int item);
 extern bool identify_fully_object_quiet(int Ind, object_type *o_ptr);
-extern bool recharge(int Ind, int num);
+extern bool recharge(int Ind, int num, int item);
 extern bool recharge_aux(int Ind, int item, int num);
 extern bool speed_monsters(int Ind);
 extern bool slow_monsters(int Ind, int pow);

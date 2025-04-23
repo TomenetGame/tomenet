@@ -2934,9 +2934,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			if (!o_ptr) break;
 
 			msg_print(Ind, "This is a Scroll of Recharging.");
-			(void)recharge(Ind, 60);
-			*used_up = FALSE;
-			p_ptr->using_up_item = item;
+			(void)recharge(Ind, 60, item);
+			*used_up = (p_ptr->current_recharge == 0); /* We need to use it up right away, if the 'item' '@I' direct recharge worked! */
+			if (!*used_up) p_ptr->using_up_item = item; /* Otherwise it will be used up later, after successful hanle_item()->recharge_aux() */
 			ident = TRUE;
 			break;
 
@@ -6418,7 +6418,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_ENERGY_CELL) {
-		recharge(Ind, 10000 + get_skill_scale(p_ptr, SKILL_DEVICE, 100)); //10000: Hack, marker that it's not a normal recharging
+		(void)recharge(Ind, 10000 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), -1); //10000: Hack, marker that it's not a normal recharging
 		p_ptr->using_up_item = item;
 		return;
 	}
@@ -6744,7 +6744,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_THINGOL:
 			msg_print(Ind, "You hear a low humming noise...");
-			recharge(Ind, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
+			(void)recharge(Ind, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 30), item);
 			o_ptr->recharging = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 		case ART_COLANNON:

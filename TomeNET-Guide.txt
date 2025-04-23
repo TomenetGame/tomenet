@@ -2442,6 +2442,20 @@ Weapons/ammo, devices and spells:
                 For details about auto-retaliation and the different types of
                 @O... inscriptions, see (4.1a)!
 
+Items that can recharge magic devices (eg Scrolls of Recharging):
+    @I<partial item name>
+                Will not prompt for a target item but try to find the target
+                item matching the partial item name specified after '@I'.
+                Only magic devices will be considered as target items.
+                Example:
+                "A Scroll of Recharging {{1} {@r4 @IWond}"
+                If this scroll were read, it would try to enchant a magic
+                device which name partially matches "Wond". So if you carry
+                a Wand of Wonder in your inventory, the scroll would try to
+                recharge that one.
+                You can also specify (parts of) an inscription of a target
+                item, for example "@Imydev" or whatever you like.
+
 For magic devices:
     !B          Will play a beep sound if you either fail the activation roll
                 to use the device or if the device is out of charges or still
@@ -14676,6 +14690,8 @@ Protection from evil
                 ("You feel safe from evil!")
 
 Recharging      Recharges a magical device (rod, wand or staff, see (5.18)).
+                Can be inscribed "@I<partial item name>" to target a specific
+                item.
 
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
@@ -16266,6 +16282,9 @@ returns low and if it ever fails you might lose a lot of wands/staves at once.
 
 Note that inside the Ironman Deep Dive Challenge (IDDC) it is not possible to
 recharge Staves of Summoning or Wands of Polymorph.
+
+Items used to recharge magic devices can be inscribed "@I<partial item name>"
+to target a specific item. Also see (0.3) for details about "@I" inscription.
 
 
 

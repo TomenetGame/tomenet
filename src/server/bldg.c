@@ -2342,7 +2342,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				msg_print(Ind, "You cannot recharge that item.");
 				//get_item(Ind);
 			} else {
-				//if (recharge(80)) paid = TRUE;
+				//if (recharge(Ind, 80, -1)) paid = TRUE;
 #ifdef USE_SOUND_2010
 				sound(Ind, "store_recharge", NULL, SFX_TYPE_MISC, FALSE);
 #endif

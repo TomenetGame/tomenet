@@ -4579,16 +4579,67 @@ bool item_tester_hook_recharge(object_type *o_ptr) {
 	return(FALSE);
 }
 
-bool recharge(int Ind, int num) {
+/* If item is not -1 but a valid inventory/equipment slot,
+   recharge() will try to extract a target item name from an existing "@I" inscription on the 'item',
+   instead of prompting for get_item(). - C. Blue */
+bool recharge(int Ind, int num, int item) {
 	player_type *p_ptr = Players[Ind];
+
+	/* Specialty: Is recharging-item type is basically eligible for recharging via any potential '@I<item name>'? */
+	if (num < 10000 && item != -1 //recharge must be initiated via item, and not special stuff
+	    && item >= 0 && item < INVEN_TOTAL) { //restrict to normal inventor+equipmnt
+		object_type *o_ptr = &p_ptr->inventory[item];
+		char *c;
+
+		/* Recharging-item (scroll) carries a '@I' inscription */
+		if (o_ptr->tval && o_ptr->note && (c = strstr(quark_str(o_ptr->note), "@I"))
+#if 0 /* Optional: and @I inscription is not empty? Otherwise if just "@I" is specified, the first magic device found would be used. */
+		    && *(c + 2)
+#endif
+		    ) {
+			int i, i_found = -1;
+			char o_name[ONAME_LEN];
+
+			/* Extract (partial) target item name and search inventory+equipment for it */
+			c += 2;
+			for (i = 0; i < INVEN_TOTAL; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				if (!o_ptr->tval) break;
+				if (i == item) continue;
+
+#if 1 /* Optional: Perform a 'item_tester_hook_device()-like check: */
+				if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_STAFF && o_ptr->tval != TV_WAND
+ #ifdef MSTAFF_MDEV_COMBO
+				    && !(o_ptr->tval == TV_MSTAFF && o_ptr->xtra4) //hack: marker as 'rechargable' for ITH_RECHARGE
+ #endif
+				    ) continue;
+#endif
+
+				object_desc(Ind, o_name, &p_ptr->inventory[i], TRUE, 3);
+				if (!strstr(o_name, c)) continue;
+
+				i_found = i;
+				break;
+			}
+			/* Success: Found a matching target item - try to recharge it */
+			if (i_found != -1) {
+				clear_current(Ind);
+				p_ptr->current_recharge = num;
+				recharge_aux(Ind, i_found, p_ptr->current_recharge);
+				return(TRUE);
+			}
+			/* Failure? Don't ask for item but abort reading the scroll basically. */
+			return(FALSE);
+		}
+	}
 
 	/* Special marker hack? */
 	if (num >= 10000) get_item(Ind, ITH_NONE);
 	else
 #ifdef MSTAFF_MDEV_COMBO
-		/* Allow outdated clients to still recharge the mage staff - so we need to lift the restriction completely */
-		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1)) get_item(Ind, ITH_NONE);
-		else
+	/* Allow outdated clients to still recharge the mage staff - so we need to lift the restriction completely */
+	if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1)) get_item(Ind, ITH_NONE);
+	else
 #endif
 	/* Normal recharging routine */
 	get_item(Ind, ITH_RECHARGE);
