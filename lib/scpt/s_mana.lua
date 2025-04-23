@@ -95,8 +95,12 @@ RECHARGE_I = add_spell {
 	["fail"] = 	20,
 	["stat"] = 	A_INT,
 	["spell_power"] = 0,
-	["spell"] = 	function()
-			recharge(Ind, get_recharge_pow(Ind, 49))
+	["spell"] = 	function(args)
+			if args.book < 0 then
+				recharge(Ind, get_recharge_pow(Ind, 49), -1)
+				return
+			end
+			recharge(Ind, get_recharge_pow(Ind, 49), player.inventory[1 + args.book])
 	end,
 	["info"] = 	function()
 			return "power "..get_recharge_pow(Ind, 49)
@@ -113,8 +117,12 @@ RECHARGE_II = add_spell {
 	["fail"] = 	-25,
 	["stat"] = 	A_INT,
 	["spell_power"] = 0,
-	["spell"] = 	function()
-			recharge(Ind, get_recharge_pow(Ind, 78))
+	["spell"] = 	function(args)
+			if args.book < 0 then
+				recharge(Ind, get_recharge_pow(Ind, 78), -1)
+				return
+			end
+			recharge(Ind, get_recharge_pow(Ind, 78), player.inventory[1 + args.book])
 	end,
 	["info"] = 	function()
 			return "power "..get_recharge_pow(Ind, 78)
@@ -131,8 +139,12 @@ RECHARGE_III = add_spell {
 	["fail"] = 	-65,
 	["stat"] = 	A_INT,
 	["spell_power"] = 0,
-	["spell"] = 	function()
-			recharge(Ind, get_recharge_pow(Ind, 0))
+	["spell"] = 	function(args)
+			if args.book < 0 then
+				recharge(Ind, get_recharge_pow(Ind, 0), -1)
+				return
+			end
+			recharge(Ind, get_recharge_pow(Ind, 0), player.inventory[1 + args.book])
 	end,
 	["info"] = 	function()
 			return "power "..get_recharge_pow(Ind, 0)

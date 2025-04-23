@@ -233,7 +233,7 @@ extern bool ident_spell(int Ind);
 extern bool ident_spell_aux(int Ind, int item);
 extern bool identify_fully(int Ind);
 extern bool identify_fully_item(int Ind, int item);
-extern bool recharge(int Ind, int num);
+extern bool recharge(int Ind, int num, int item);
 extern bool recharge_aux(int Ind, int item, int num);
 extern bool speed_monsters(int Ind);
 extern bool slow_monsters(int Ind, int pow);

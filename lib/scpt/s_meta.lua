@@ -10,7 +10,7 @@ RECHARGE_I = add_spell {
 	["fail"] = 	20,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
-			recharge(Ind, 10 + get_level(Ind, RECHARGE_I, 45))
+			recharge(Ind, 10 + get_level(Ind, RECHARGE_I, 45), -1)
 	end,
 	["info"] = 	function()
 			return "power "..(10 + get_level(Ind, RECHARGE_I, 45))
@@ -27,7 +27,7 @@ RECHARGE_II = add_spell {
 	["fail"] = 	-10,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
-			recharge(Ind, 10 + 50 + get_level(Ind, RECHARGE_II, 50))
+			recharge(Ind, 10 + 50 + get_level(Ind, RECHARGE_II, 50), -1)
 	end,
 	["info"] = 	function()
 			return "power "..(10 + 50 + get_level(Ind, RECHARGE_II, 50))
@@ -44,7 +44,7 @@ RECHARGE_III = add_spell {
 	["fail"] = 	-60,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
-			recharge(Ind, 10 + get_level(Ind, RECHARGE_III, 140))
+			recharge(Ind, 10 + get_level(Ind, RECHARGE_III, 140), -1)
 	end,
 	["info"] = 	function()
 			return "power "..(10 + get_level(Ind, RECHARGE_III, 140))
