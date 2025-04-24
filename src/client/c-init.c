@@ -3844,7 +3844,7 @@ again:
 		char path[1024], path2[1024], pathbat[1024];
 
 		path_build(path, 1024, ANGBAND_DIR_USER, "__ipc");
-		path_build(path, 1024, ANGBAND_DIR_USER, "__ipc_done");
+		path_build(path2, 1024, ANGBAND_DIR_USER, "__ipc_done");
 		path_build(pathbat, 1024, ANGBAND_DIR_USER, "__ipc.bat");
 		fp = fopen(pathbat, "w");
 		if (fp) {
