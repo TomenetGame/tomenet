@@ -287,7 +287,8 @@ void do_redraw_skills() {
  */
 #define SKILL_SCREEN_PAD_TOP 4		/* The top n lines of the skill screen that don't contain skill lines but some other stuff/text/diz */
 void do_cmd_skill() {
-	char c;
+	bool leave = FALSE;
+	char ch;
 	int i;
 	int wid, hgt;
 
@@ -307,37 +308,46 @@ void do_cmd_skill() {
 	/* Initialise the skill list */
 	init_table(table, &max, FALSE);
 
-	while (TRUE) {
+	while (!leave) {
 		Term_get_size(&wid, &hgt);
 
 		/* Display list of skills */
 		print_skills(table, max, sel, start);
 
-		c = inkey();
+		ch = inkey();
 
+		switch(ch) {
 		/* Leave the skill screen */
-		if (c == ESCAPE || c == KTRL('Q')) break;
+		case ESCAPE:
+		case KTRL('Q'):
+			leave = TRUE;
+			break;
 
-		else if (c == '?') {
+		case '?':
 			/* Exception for runecraft, since the runes are not spells/schools:
 			   Just redirect to runecraft in general. */
 			if (s_info[table[sel][0]].father == SKILL_SCHOOL_RUNECRAFT) cmd_the_guide(3, 0, "Runecraft");
 			else cmd_the_guide(3, 0, (char*)s_info[table[sel][0]].name);
-		}
+			break;
 
 		/* Take a screenshot */
-		else if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????", FALSE);
+			break;
 
 		/* specialty: allow chatting from within here */
-		else if (c == ':') cmd_message();
+		case ':':
+			cmd_message();
+			break;
 
 		/* Expand / collapse list of skills */
-		else if (c == '\r') {
+		case '\r':
 			if (p_ptr->s_info[table[sel][0]].dev) p_ptr->s_info[table[sel][0]].dev = FALSE;
 			else p_ptr->s_info[table[sel][0]].dev = TRUE;
 			init_table(table, &max, FALSE);
 			Send_skill_dev(table[sel][0], p_ptr->s_info[table[sel][0]].dev);
-		} else if (c == 'c') {
+			break;
+		case 'c':
 			for (i = 0; i < max; i++) {
 				p_ptr->s_info[table[i][0]].dev = FALSE;
 				Send_skill_dev(-1, FALSE);
@@ -345,7 +355,8 @@ void do_cmd_skill() {
 
 			init_table(table, &max, FALSE);
 			start = sel = 0;
-		} else if (c == 'o') {
+			break;
+		case 'o':
 			for (i = 0; i < max; i++) {
 				p_ptr->s_info[table[i][0]].dev = TRUE;
 				Send_skill_dev(-1, TRUE);
@@ -353,18 +364,24 @@ void do_cmd_skill() {
 
 			init_table(table, &max, FALSE);
 			/* TODO: memorize and recover the cursor position */
-		}
+			break;
 
-		else if (c == 'g')
+		case 'g':
+		case '7':
+		case NAVI_KEY_POS1:
 			start = sel = 0;
-		else if (c == 'G') {
+			break;
+		case 'G':
+		case '1':
+		case NAVI_KEY_END:
 			sel = max - 1;
 			start = sel - (hgt - SKILL_SCREEN_PAD_TOP);
 			if (start < 0) start = 0;
 			if (sel >= start + (hgt - SKILL_SCREEN_PAD_TOP)) start = sel - (hgt - SKILL_SCREEN_PAD_TOP) + 1;
-		}
+			break;
+
 		/* Hack -- go to a specific line */
-		else if (c == '#') {
+		case '#': {
 			char tmp[80];
 
 			prt(format("Goto Line(max %d): ", max), 23 + HGT_PLUS, 0);
@@ -374,26 +391,37 @@ void do_cmd_skill() {
 				if (sel >= max) sel = start = max - 1;
 				if (sel < 0) sel = start = 0;
 			}
-		}
+			break;
+			}
 
 		/* Next page */
-		else if (c == 'n' || c == ' ') {
-			sel += (hgt - SKILL_SCREEN_PAD_TOP);
-			start += (hgt - SKILL_SCREEN_PAD_TOP);
+		case 'n':
+		case ' ':
+		case '3':
+		case NAVI_KEY_PAGEDOWN:
+			//note: /4 -> actually move in half-screen increments instead of jumping a whole page
+			sel += (hgt - SKILL_SCREEN_PAD_TOP + 3) / 4;
+			start += (hgt - SKILL_SCREEN_PAD_TOP + 3) / 4;
 			if (sel >= max) sel = max - 1;
 			if (start >= max) start = max - 1;
-		}
+			break;
 
 		/* Previous page */
-		else if (c == 'p' || c == 'b') {
-			sel -= (hgt - SKILL_SCREEN_PAD_TOP);
-			start -= (hgt - SKILL_SCREEN_PAD_TOP);
+		case 'p':
+		case 'b':
+		case '9':
+		case NAVI_KEY_PAGEUP:
+			//note: /4 -> actually move in half-screen increments instead of jumping a whole page
+			sel -= (hgt - SKILL_SCREEN_PAD_TOP + 3) / 4;
+			start -= (hgt - SKILL_SCREEN_PAD_TOP + 3) / 4;
 			if (sel < 0) sel = 0;
 			if (start < 0) start = 0;
-		}
+			break;
 
 		/* Search for skill name */
-		else if (c == 's' || c == '/') {
+		case 's':
+		case '/':
+			{
 			char tmp[MAX_CHARS];
 			bool inkey_msg_old = inkey_msg;
 			int j, k;
@@ -436,11 +464,12 @@ void do_cmd_skill() {
 
 				break;
 			}
-		}
+			}
+			break;
 
 		/* Select / increase a skill */
-		else {
-			int dir = c;
+		default: {
+			int dir = ch;
 
 			/* Move cursor down */
 			if (dir == '2' || dir == 'j') sel++;
@@ -461,6 +490,7 @@ void do_cmd_skill() {
 			if (sel >= max) sel = 0;
 			if (sel < start) start = sel;
 			if (sel >= start + (hgt - SKILL_SCREEN_PAD_TOP)) start = sel - (hgt - SKILL_SCREEN_PAD_TOP) + 1;
+			}
 		}
 	}
 
