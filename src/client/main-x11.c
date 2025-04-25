@@ -4155,6 +4155,7 @@ void set_font_name(int term_idx, char* fnt) {
 	if (&td->t != Term) {
 		/* Terminal for which the font was forced is not activated. Activate, redraw and activate the terminal before. */
 		term *old_term = Term;
+
 		Term_activate(&td->t);
 		Term_redraw();
 		Term_activate(old_term);

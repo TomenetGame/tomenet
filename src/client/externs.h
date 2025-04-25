@@ -1144,6 +1144,7 @@ extern void store_audiopackfolders(void);
 extern void save_term_data_to_term_prefs(void);
 extern void save_prefs(void);
 extern void set_window_title_win(int term_idx, cptr title);
+extern errr Term_xtra_win_fresh(int v);
 #endif
 extern void store_crecedentials(void);
 extern int sys_lang;

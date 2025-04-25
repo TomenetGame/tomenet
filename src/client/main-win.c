@@ -2416,10 +2416,8 @@ static errr Term_xtra_win_react(void) {
 }
 
 
-#ifdef OPTIMIZE_DRAWING
-/* Declare before use */
-static errr Term_xtra_win_fresh(int v);
-#endif
+/* For OPTIMIZE_DRAWING - declare before use */
+errr Term_xtra_win_fresh(int v);
 
 
 /*
@@ -2593,11 +2591,14 @@ static errr Term_xtra_win_delay(int v) {
 }
 
 
-#ifdef OPTIMIZE_DRAWING
 /*
+ * For OPTIMIZE_DRAWING, made available for z-term.c to fix the visual glitch
+ * if a message ("The sun has risen.") is received together with the palette changes,
+ * probably resulting in the hdc from term 'chat+msg' being wrongly used to paint into the main screen.
  * This is where we free the DC we've been using.  -- note: 'v' is unused.
  */
-static errr Term_xtra_win_fresh(int v) {
+errr Term_xtra_win_fresh(int v) {
+#ifdef OPTIMIZE_DRAWING
 	term_data *td = (term_data*)(Term->data);
 
 	if (oldDC) {
@@ -2606,9 +2607,9 @@ static errr Term_xtra_win_fresh(int v) {
 	}
 
 	/* Success */
+#endif
 	return(0);
 }
-#endif
 
 
 /*
@@ -3408,7 +3409,6 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 
 	RECT rc;
 	HDC  hdc;
-
 
 #if 1
 	/* For 2mask mode: Actually imprint screen buffer with "empty background" for this text printed grid, to possibly avoid glitches. */
@@ -6124,7 +6124,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 			Term_redraw();
 			gfx_palanim_repaint_hack = FALSE;
 		}
-//WiP, not functional		if (screen_icky) Term_switch_fully(0);
+//WiP, not functional:		if (screen_icky) Term_switch_fully(0);
 		/* Restore */
 		Term_activate(term_old);
 		return;

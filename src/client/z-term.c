@@ -2499,8 +2499,9 @@ static void Term_repaint_row_pict(int y, byte *aa, char32_t *cc, byte *back_aa, 
    TODO maybe: For efficiency, restrict to actual map screen area instead of full window, and also don't use a 'buf' for every single text char. */
 
 /* Define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct...
+   ...on the other hand, Term_save() stores Term->scr into memory, while Term->old isn't stored at all.
    Note that Term_text_win() enables a 2-mask anti-glitch hack that actually overwrites/reinits the background part of Term->old and Term->scr. */
-#define OLD_VS_SCR
+//#define OLD_VS_SCR
 
 void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 	int y;
@@ -2544,12 +2545,17 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 #endif
 
 #if 0 /* TRFIX: in Term_repaint() we don't write chars to a term's screen, but we redraw whatever the term is currently showing! so this is the wrong place for any icky_screen checks or Term_switch()ing! */
-//	bool icky_s = (Term == ang_term[0] && screen_icky);
-	bool icky_tl = topline_icky && Term == ang_term[0] && !screen_icky;
+//	bool icky_s = (Term == term_term_main && screen_icky);
+	bool icky_tl = topline_icky && Term == term_term_main && !screen_icky;
 
 	/* Various icky checks, these exist only for term 0 aka the main window */
 //	if (icky_s) Term_switch(0);
 #endif
+	/* instead, don't repaint anything if this isn't the main term */
+	if (Term != term_term_main) return;
+
+/* Sure fix for the visual glitch on day/night change while in menus/shopping */
+//if (screen_icky) return;
 
 	/* --- Repaint, with _text or _pict or _pict_2mask --- */
 
@@ -2592,6 +2598,9 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 
 			if (!xc || xc == 32
 			    || !xa /* let's also ignore black feats */
+#ifdef GRAPHICS_BG_MASK
+			    || !xc_back /* ignore grids that have invalid/undefined background to avoid visual glitching */
+#endif
 			    )
 				continue;
 
@@ -2617,12 +2626,16 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 				(void)((*Term->text_hook)(x, y, 1, xa, buf));
 			}
 			/* Hack -- erase the grid */
-			//else (void)((*Term->wipe_hook)(x, y, 1));  -- we're just repainting, if grid was already empty, even better -> we just ignore it
+			//else (void)((*Term->wipe_hook)(x, y, 1)); // -- we're just repainting, if grid was already empty, even better -> we just ignore it
 		}
 	}
 
 #if 0 /* TRFIX */
 //	if (icky_s) Term_switch(0);
+#endif
+#ifdef WINDOWS
+	/* Instead, we need to release the OldDC to avoid graphical glitches! */
+	Term_xtra_win_fresh(0);
 #endif
 }
 
@@ -3935,7 +3948,7 @@ errr refresh_clone_map() {
 
 
 	//Find the map in memory.
-	Term_activate(ang_term[0]);
+	Term_activate(term_term_main);
 	if (screen_icky > 0) scr_a = Term->mem[0];
 	else scr_a = Term->scr;
 #ifdef GRAPHICS_BG_MASK
