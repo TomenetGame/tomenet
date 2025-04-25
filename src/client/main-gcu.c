@@ -1243,7 +1243,7 @@ void resize_main_window_gcu(int cols, int rows) {
 #if 0 /* copy/pasted from USE_X11 -- todo: implement for ncurses */
 	int wid, hgt;
 	term_data *td = term_idx_to_term_data(0);
-	term *t = ang_term[0]; //&term_main
+	term *t = term_term_main; //ang_term[0]
 
 	term_prefs[0].columns = cols; //screen_wid + (SCREEN_PAD_X);
 	term_prefs[0].lines = rows; //screen_hgt + (SCREEN_PAD_Y);
