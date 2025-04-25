@@ -2499,8 +2499,8 @@ static void Term_repaint_row_pict(int y, byte *aa, char32_t *cc, byte *back_aa, 
    TODO maybe: For efficiency, restrict to actual map screen area instead of full window, and also don't use a 'buf' for every single text char. */
 
 /* Define to use 'old', undefine to use 'scr' -- both work, but 'old' should be logically correct...
-   Note that Term_text_win() enables a 2-mask anti-glitch hack that actually overwrites Term->old and Term->scr. */
-//#define OLD_VS_SCR
+   Note that Term_text_win() enables a 2-mask anti-glitch hack that actually overwrites/reinits the background part of Term->old and Term->scr. */
+#define OLD_VS_SCR
 
 void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 	int y;
@@ -2543,19 +2543,22 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 	char text[mod_num + 1];
 #endif
 
+#if 0 /* TRFIX: in Term_repaint() we don't write chars to a term's screen, but we redraw whatever the term is currently showing! so this is the wrong place for any icky_screen checks or Term_switch()ing! */
 //	bool icky_s = (Term == ang_term[0] && screen_icky);
 	bool icky_tl = topline_icky && Term == ang_term[0] && !screen_icky;
 
-
 	/* Various icky checks, these exist only for term 0 aka the main window */
 //	if (icky_s) Term_switch(0);
+#endif
 
 	/* --- Repaint, with _text or _pict or _pict_2mask --- */
 
 	for (y = ystart; y < ystart + hgt; y++) {
+#if 0 /* TRFIX */
 		/* Just skip the topline if it's icky, no need to Term_switch+paint+Term_switch again here really,
 		   as the topline is certainly going to get cleared later anyway. */
 		if (icky_tl && !y) continue;
+#endif
 
 #ifdef OLD_VS_SCR
 		aa = Term->old->a[y];
@@ -2618,7 +2621,9 @@ void Term_repaint(int xstart, int ystart, int wid, int hgt) {
 		}
 	}
 
+#if 0 /* TRFIX */
 //	if (icky_s) Term_switch(0);
+#endif
 }
 
 
