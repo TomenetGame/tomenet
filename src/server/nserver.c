@@ -11301,6 +11301,19 @@ int Send_sflags(int Ind) {
 	return(Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SFLAGS, sflags0, sflags1, sflags2, sflags3));
 }
 
+int Send_macro_failure(int Ind) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for macro_failure (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return(0);
+	}
+
+	return Packet_printf(&connp->c, "%c", PKT_MACRO_FAILURE);
+}
+
 
 /* --------------------------------------------------------------------------*/
 

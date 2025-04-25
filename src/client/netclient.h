@@ -131,3 +131,4 @@ int Receive_whats_under_you_feet(void);
 int Receive_screenflash(void);
 int Receive_version(void);
 int Receive_sflags(void);
+int Receive_macro_failure(void);

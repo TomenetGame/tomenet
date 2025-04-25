@@ -449,6 +449,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_EQUIP_WIDE]	= Receive_equip_wide;
 	receive_tbl[PKT_SFLAGS]		= Receive_sflags;
 	receive_tbl[PKT_CHAR_DIRECT]	= Receive_char;
+	receive_tbl[PKT_MACRO_FAILURE] 	= Receive_macro_failure;
 }
 
 
@@ -6853,6 +6854,19 @@ int Receive_sflags(void) {
 	char ch;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags0, &sflags1, &sflags2, &sflags3)) <= 0) return(n);
+	return(1);
+}
+
+int Receive_macro_failure(void) {
+	int n;
+	char ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return(n);
+
+	/* Stop macro execution if we're on safe_macros!
+	   There is currently no use for this, just added it in case we ever need it as fail-safe. */
+	if (parse_macro && c_cfg.safe_macros) flush_now();
+
 	return(1);
 }
 
