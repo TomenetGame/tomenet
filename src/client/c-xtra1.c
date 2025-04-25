@@ -1686,7 +1686,9 @@ void prt_lagometer(int lag) {
 	int x, y;
 	bool hidden;
 
+	/* These two are just workarounds, as we ideally just Term_switch() to draw the lag-o-meter to the correct screen layer (0)... */
 	if (shopping) return; /* Lag-o-meter not visible as shop screens encompass the whole main window */
+	if (jukebox_screen) return; /* Neither in jukebox screen -- fix the possibly 2mask/Term_repaint() day/night change glitch that shows lag-o-meter in the jukebox */
 
 	/* disable(d)? */
 	if (!lagometer_enabled) return;
