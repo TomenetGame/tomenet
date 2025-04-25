@@ -93,6 +93,14 @@
  #define DEFAULT_LOGFONTNAME "9X15"
 #endif
 
+
+/* Note that there was an issue with optimized drawing, when Term_repaint() and an incoming message happen together,
+   like on sunrise/sunset:
+   The hdc handle from repainting wasn't closed and then used when the chat+msg window was redrawn due to the incoming
+   message, resulting in all messages in it being pasted into the main window instead (with the (usually smaller) font
+   grid size of the chat+msg window.
+   To fix this, the function Term_xtra_win_fresh() is now public and used in Term_repaint() before returning, to reset
+   the OldDC handle. (Another idea might be to have a distinct OldDC[] handle for each term window.) - C. Blue */
 #define OPTIMIZE_DRAWING
 
 
