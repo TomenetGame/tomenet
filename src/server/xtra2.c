@@ -6542,7 +6542,7 @@ bool monster_death(int Ind, int m_idx) {
 		resf_drops |= RESF_CONDF_NOSWORD;
 		resf_drops |= RESF_COND2_LARMOUR;
 		break;
-	case 9: case 30: //mages (mage/sorceror)
+	case 9: case 30: //mages (mage/sorcerer)
 		if (rand_int(3)) resf_drops |= RESF_CONDF_MSTAFF;
 		resf_drops |= RESF_COND2_LARMOUR;
 		break;

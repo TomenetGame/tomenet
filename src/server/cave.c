@@ -715,7 +715,7 @@ void check_Pumpkin(void) {
 
 /* This lets Morgoth become stronger, weaker or teleport himself away if
  * a King/Queen joins his level or if a player enters it who hasn't killed
- * Sauron, the Sorceror yet - C. Blue
+ * Sauron, the Sorcerer yet - C. Blue
  */
 void check_Morgoth(int Ind) {
 	int k, i, x, y, num_on_depth = 0, m_idx;
@@ -808,7 +808,7 @@ void check_Morgoth(int Ind) {
 						l_ptr->flags1 &= ~LF1_NO_GHOST;
 
 						/* notifications */
-						sprintf(msg, "\377sMorgoth, Lord of Darkness summons Sauron, the Sorceror, and teleports out!");
+						sprintf(msg, "\377sMorgoth, Lord of Darkness summons Sauron, the Sorcerer, and teleports out!");
 						for (i = 1; i <= NumPlayers; i++) {
 							if (Players[i]->conn == NOT_CONNECTED) continue;
 							/* Player on Morgy depth? */

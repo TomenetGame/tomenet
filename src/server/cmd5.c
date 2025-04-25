@@ -79,7 +79,7 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr) {
 	/* Extract the minimum failure rate */
 	//minfail = adj_mag_fail[p_ptr->stat_ind[magic_info[realm].spell_stat]];
 
-	/* Non mage/sorceror/priest characters never get too good */
+	/* Non mage/sorcerer/priest characters never get too good */
 #if 0 // NEED to find a good way to do that without class
 	if ((p_ptr->pclass != CLASS_MAGE) && (p_ptr->pclass != CLASS_PRIEST)
  #ifdef ENABLE_CPRIEST

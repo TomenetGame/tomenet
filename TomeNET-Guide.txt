@@ -3569,7 +3569,7 @@ dangers but also fantastic treasure. Players on the same server can also play
 together by forming parties and sharing their experience! Players will acquire
 new ranks as their experience grows, allowing them to learn new abilities and
 to become stronger. Morgoth is said not to show up until his servant Sauron,
-the Sorceror has been defeated. (See (1.3a) for details about Morgoth.)
+the Sorcerer has been defeated. (See (1.3a) for details about Morgoth.)
 
 On their journey through wilderness and remote towns, towers and dungeons,
 characters will gain experience points that increase their level up to 50.
@@ -3702,7 +3702,7 @@ themselves (5.12).
 
 About Sauron:
 -------------
-In order to find Morgoth, players have to defeat Sauron, the Sorceror first,
+In order to find Morgoth, players have to defeat Sauron, the Sorcerer first,
 Morgoth's servant, who dwells at the bottom of Mount Doom. A player must get
 the killing blow on Sauron to get kill credit, so if you are in a party of
 several players who all haven't killed him yet, you must seek him out multiple
@@ -3785,7 +3785,7 @@ See the following paragraph (1.3b) for more information on Morgoth.
 (1.3b) How to encounter the final boss: Morgoth, Lord of Darkness
 -----------------------------------------------------------------
 -Morgoth is found only at dungeon level 100 or deeper.
--He won't show up until you defeated Sauron, the Sorceror, who is found at the
+-He won't show up until you defeated Sauron, the Sorcerer, who is found at the
  bottom of Mount Doom (which is dungeon level 99).
 -Morgoth does not neccessarily spawn on each fitting dungeon level,
  sometimes you have to search for him, like for all other monsters/uniques.
@@ -9881,7 +9881,7 @@ The Illusory Castle           | King in Yellow       | Helm of Knowledge
 The Sacred Land of Mountains  | T'ron  (level 72!)   | Coat of T'ron
 Erebor                        | Smaug                | Arkenstone of Thrain
 Dol Guldur            (E)     | Shadow of Dol Guldur | Ring of Durin
-Mount Doom            (E)     | Sauron, the Sorceror | -
+Mount Doom            (E)     | Sauron, the Sorcerer | -
 The Cloud Planes              | The Living Lightning | - (Lightning items)
 Nether Realm                  | Zu-Aon  (F)          | Ring of Phasing
 
@@ -9901,7 +9901,7 @@ deeper. See (1.3), (1.3a) and (1.3b) for more information.
 create a temporary anti-teleportation field of radius 12 that will prevent all
 teleportation from and to, and stall all Word of Recall attempts within.
 
-(E) While Sauron, the Sorceror, boss of Mount Doom, does not drop any
+(E) While Sauron, the Sorcerer, boss of Mount Doom, does not drop any
 specific artifact, he is still a required kill before you are able to encounter
 Morgoth, the Lord of Darkness (compare (1.3), (1.3a) and (1.3b)).
 When you kill Sauron, you will be able to recall out from that dungeon level!
@@ -12959,7 +12959,7 @@ the encumberment bar about this.
 
 Glove encumberment (concerning magic)
 -------------------------------------
-Wearing gloves as a sorceror may reduce your maximum mana points if they are
+Wearing gloves as a sorcerer may reduce your maximum mana points if they are
 not magically enchanted, such as:
 Providing 'Free Action' / increasing your mana / increasing your dexterity.
 You will receive a warning message, saying:
@@ -16489,7 +16489,7 @@ on the final level of a particular dungeon and when you kill them you will
 info about dungeon bosses.
 
 Morgoth, the Lord of Darkness is the game boss. To actually encounter him you
-first need to defeat Sauron, the Sorceror though. See (1.3b) for details.
+first need to defeat Sauron, the Sorcerer though. See (1.3b) for details.
 By defeating Morgoth the player is awarded royal status. There will be two
 more dungeons that can only be entered by royalty and offer further, insanely
 hard challenges and new unique bosses.
@@ -19895,7 +19895,7 @@ create a character!):
     who live on the surface under the burning light of the sun. Overthrowing
     rivals by treachery and murder are acknowledged ways in their society,
     as long as noone is left alive who might bring charge against the victors.
-    Dark-Elves are good fighters and sorcerors, but also decent priests.
+    Dark-Elves are good fighters and sorcerers, but also decent priests.
     Dark-Elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
     They get bonus on 'Stealth', 'Dodging', 'Sneakiness', 'Backstabbing', a
@@ -26218,7 +26218,7 @@ The most powerful representant of each class:
 -Patriarchs, these unfaltering priestlords can summon and curse rapidly.
 -Master Mindcrafters, their ability to summon mighty support and to smash
  your brain by psi attacks is feared.
--Old sorcerors are able to summon ancient dragonkind and wyrms, beware!
+-Old sorcerers are able to summon ancient dragonkind and wyrms, beware!
 -(Grand) Swordsmasters, most skilled swordsmen that will disarm you easily.
 -(Grand) Master mystics, most powerful martial artists. With their special
  moves they can manage to stun you easily. Best remedy is high AC so
