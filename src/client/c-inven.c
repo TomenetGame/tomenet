@@ -1535,7 +1535,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				/* get_tag() is using_subinven agnostic, so we have to convert k back to a direct subinven index */
 				if (k >= SUBINVEN_INVEN_MUL) k = k % SUBINVEN_INVEN_MUL;
 
-				if ((k < using_subinven_size) ? !subinven) {
+				if (k < using_subinven_size && !subinven) {
 					if (c_cfg.item_error_beep) bell();
 					else bell_silent();
 					break;
