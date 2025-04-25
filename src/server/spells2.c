@@ -4629,6 +4629,7 @@ bool recharge(int Ind, int num, int item) {
 				return(TRUE);
 			}
 			/* Failure? Don't ask for item but abort reading the scroll basically. */
+			msg_print(Ind, "\377ySpecified item was not found.");
 			return(FALSE);
 		}
 	}
