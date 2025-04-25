@@ -327,6 +327,9 @@
 #define VAMPIRES_BB_IMMUNE
 /* Allow vampires to polymorph into vampiric mist at 40, obtaining some special feats? */
 #define VAMPIRIC_MIST
+/* Vampire race intrinsic polymorph levels */
+#define VAMPIRE_XFORM_LEVEL_BAT 15
+#define VAMPIRE_XFORM_LEVEL_MIST 30
 
 /* Note about vampire istari, not getting access to all normal istar spells:
    They currently cannot train Water or Nature school, Divination is at 75% and Fire Flash is unusable.

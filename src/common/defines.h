@@ -9423,12 +9423,12 @@ extern int PlayerUID;
 #ifndef VAMPIRIC_MIST
  #define mimic_vampire(ridx, plv)	\
 	(((ridx) == 0) || \
-	((plv) >= 20 && (ridx) == RI_VAMPIRE_BAT))
+	((plv) >= VAMPIRE_XFORM_LEVEL_BAT && (ridx) == RI_VAMPIRE_BAT))
 #else
  #define mimic_vampire(ridx, plv)	\
 	(((ridx) == 0) || \
-	((plv) >= 20 && (ridx) == RI_VAMPIRE_BAT) || \
-	((plv) >= 35 && (ridx) == RI_VAMPIRIC_MIST))
+	((plv) >= VAMPIRE_XFORM_LEVEL_BAT && (ridx) == RI_VAMPIRE_BAT) || \
+	((plv) >= VAMPIRE_XFORM_LEVEL_MIST && (ridx) == RI_VAMPIRIC_MIST))
 #endif
 
 #define mimic_hatchling(ridx)	\

@@ -4146,9 +4146,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		    r_name + r_info[p_ptr->tim_mimic_what].name, p_ptr->tim_mimic_what, p_ptr->tim_mimic);
 
 	if (p_ptr->prace == RACE_VAMPIRE) {
-		if (lev >= 20) msg_print(Ind, "\377BYou are able to change into a vampire bat (#391).");
+		if (lev >= VAMPIRE_XFORM_LEVEL_BAT) msg_print(Ind, "\377BYou are able to change into a vampire bat (#391).");
 #ifdef VAMPIRIC_MIST
-		if (lev >= 35) msg_print(Ind, "\377BYou are able to change into vampiric mist (#365).");
+		if (lev >= VAMPIRE_XFORM_LEVEL_MIST) msg_print(Ind, "\377BYou are able to change into vampiric mist (#365).");
 #endif
 	}
 

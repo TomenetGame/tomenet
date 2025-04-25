@@ -5377,12 +5377,12 @@ void check_experience(int Ind) {
 		if (old_lev < 80 && p_ptr->lev >= 80) msg_print(Ind, "\374\377GYour vision extends.");
 		if (old_lev < 90 && p_ptr->lev >= 90) msg_print(Ind, "\374\377GYour vision extends.");
 		//if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to levitate!");
-		if (old_lev < 20 && p_ptr->lev >= 20) {
+		if (old_lev < VAMPIRE_XFORM_LEVEL_BAT && p_ptr->lev >= VAMPIRE_XFORM_LEVEL_BAT) {
 			msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
 			msg_print(Ind, "\374\377G(Press '\377gm\377G' key and choose '\377guse innate power\377G' to polymorph.)");
 		}
 #ifdef VAMPIRIC_MIST
-		if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\374\377GYou are now able to turn into vampiric mist (#365)!");
+		if (old_lev < VAMPIRE_XFORM_LEVEL_MIST && p_ptr->lev >= VAMPIRE_XFORM_LEVEL_MIST) msg_print(Ind, "\374\377GYou are now able to turn into vampiric mist (#365)!");
 #endif
 		break;
 #ifdef ENABLE_MAIA
