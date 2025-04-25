@@ -379,6 +379,12 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
  * Addition: flags 'inven' and 'equip' tell it which items to check:
  * If one of them is false, the according part is ignored. - C. Blue
  * mode flags checked here: INVEN_FIRST, CHECK_MULTI, CHECK_CHARGED.
+ *
+ * NOTE: Unlike c_get_item() which differentiates between inven, subinven and equip,
+ *       get_tag() currently only knows 'inven' and 'equip', and treats 'inven' as
+ *       encompassing both, inventory and subinventory. So it needs to be called from
+ *       c_get_item() with 'inven | subinven' for its 'inven' parameter in order to
+ *       access tags in bags while 'inven' is actually FALSE in c_get_item() when it calls get_tag().
  */
 static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	int i, j, si;
@@ -1080,7 +1086,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Check for special '%' tag, based on current command_cmd:
 	   Use first item found with new "@<commandkey>%" inscription right away without prompting for item choice */
-	if (get_tag(&k, '%', inven, equip, mode)) {
+	if (get_tag(&k, '%', inven | subinven, equip, mode)) {
 		(*cp) = k;
 
 		screen_line_icky = -1;
@@ -1519,7 +1525,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		case '4': case '5': case '6':
 		case '7': case '8': case '9':
 			/* XXX XXX Look up that tag */
-			if (!get_tag(&k, which, inven, equip, mode)) {
+			if (!get_tag(&k, which, inven | subinven, equip, mode)) {
 				if (c_cfg.item_error_beep) bell();
 				else bell_silent();
 				break;
@@ -1529,14 +1535,14 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				/* get_tag() is using_subinven agnostic, so we have to convert k back to a direct subinven index */
 				if (k >= SUBINVEN_INVEN_MUL) k = k % SUBINVEN_INVEN_MUL;
 
-				if ((k < using_subinven_size) ? !inven : !equip) {
+				if ((k < using_subinven_size) ? !subinven) {
 					if (c_cfg.item_error_beep) bell();
 					else bell_silent();
 					break;
 				}
 			} else if (k >= SUBINVEN_INVEN_MUL) {
 				/* Hack -- verify item (in subinventory) */
-				if (!inven) {
+				if (!inven && !subinven) {
 					if (c_cfg.item_error_beep) bell();
 					else bell_silent();
 					break;
