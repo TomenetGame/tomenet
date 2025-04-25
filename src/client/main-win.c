@@ -101,7 +101,9 @@
    grid size of the chat+msg window.
    To fix this, the function Term_xtra_win_fresh() is now public and used in Term_repaint() before returning, to reset
    the OldDC handle. (Another idea might be to have a distinct OldDC[] handle for each term window.) - C. Blue */
-#define OPTIMIZE_DRAWING
+/* Unfortunatels there is still a bug: On sunrise/sunset if you type in chat the client could now crash.
+   Disabling OPTIMIZE_DRAWING completely for now. */
+//#define OPTIMIZE_DRAWING
 
 
 /*
