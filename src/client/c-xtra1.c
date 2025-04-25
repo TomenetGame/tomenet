@@ -1685,18 +1685,25 @@ void prt_lagometer(int lag) {
 	int num;
 	int x, y;
 	bool hidden;
-
-	/* These two are just workarounds, as we ideally just Term_switch() to draw the lag-o-meter to the correct screen layer (0)... */
-	if (shopping) return; /* Lag-o-meter not visible as shop screens encompass the whole main window */
-	if (jukebox_screen) return; /* Neither in jukebox screen -- fix the possibly 2mask/Term_repaint() day/night change glitch that shows lag-o-meter in the jukebox */
+	term *old;
 
 	/* disable(d)? */
 	if (!lagometer_enabled) return;
+
+	/* Paranoia: Maybe just don't draw it at all while screen is icky, not even in the background? */
+	//if (screen_icky) return;
+
+	/* Prevent visual redraw glich if current term is NOT term_main, and we check for screen_icky and then Term_switch() layers of the wrong Term (ie some other term than term_main) */
+	old = Term;
+	Term_activate(term_term_main);
+
 	if (lag == -1) {
 		if (screen_icky) Term_switch(0);
 		//Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[//////////]");
 		Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[----------]");
 		if (screen_icky) Term_switch(0);
+
+		Term_activate(old);
 		return;
 	}
 
@@ -1741,21 +1748,23 @@ void prt_lagometer(int lag) {
 	}
 #endif
 
+	if (screen_icky) Term_switch(0);
+
 	/* remember cursor position */
 	hidden = Term_locate(&x, &y);
-
-	if (screen_icky) Term_switch(0);
 
 	/* Default to "unknown" */
 	Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[----------]");
 	/* Dump the current "lag" (use '*' symbols) */
 	Term_putstr(COL_LAG + 1, ROW_LAG, num, attr, "++++++++++");
 
-	if (screen_icky) Term_switch(0);
-
 	/* restore cursor position */
 	Term_gotoxy(x, y);
 	if (hidden) Term->scr->cu = 1;
+
+	if (screen_icky) Term_switch(0);
+
+	Term_activate(old);
 }
 
 /*
