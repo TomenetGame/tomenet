@@ -9367,6 +9367,8 @@ extern int PlayerUID;
 /* Invalid (Nothing) items: Enable backtracing if we're using glibc */
 #ifdef __GLIBC__
  #define BACKTRACE_NOTHINGS
+ #define BACKTRACE_TV_PSEUDO_OBJ
+ #define BACKTRACE_OOM
 #endif
 /* Actually remove the invalid c_ptr->o_idx reference? */
 #define FIX_NOTHINGS

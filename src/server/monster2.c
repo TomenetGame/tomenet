@@ -909,9 +909,9 @@ void heal_m_list(struct worldpos *wpos) {
  * Note that this function must maintain the special "m_fast"
  * array of indexes of "live" monsters.
  */
-#define BACKTRACE_OOM /* Actually dump bt info about being out of ...monsters. */
- /* Can apparently happen when power-staving warriors of the dawn in arena level. */
 #ifdef BACKTRACE_OOM
+ /* Actually dump bt info about being out of ...monsters. */
+ /* Can apparently happen when power-staving warriors of the dawn in arena level. */
  #include <execinfo.h>
 #endif
 s16b m_pop(void) {

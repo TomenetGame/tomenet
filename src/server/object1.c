@@ -15,8 +15,10 @@
 
 #include "angband.h"
 
+#ifdef BACKTRACE_TV_PSEUDO_OBJ
 /* Track TV_PSEUDO_OBJ in object_desc() */
-#include <execinfo.h>
+ #include <execinfo.h>
+#endif
 
 /*
  * Name flavors by combination of adj and extra modifier, so that
@@ -2462,6 +2464,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 #endif
 
 	case TV_PSEUDO_OBJ: {
+#ifdef BACKTRACE_TV_PSEUDO_OBJ
 		int size, i;
 		void *buf[1000];
 		char **fnames;
@@ -2471,6 +2474,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		s_printf(" size = %d\n", size);
 		fnames = backtrace_symbols(buf, size);
 		for (i = 0; i < size; i++) s_printf(" %s\n", fnames[i]);
+#endif
 		return; }
 
 	/* Used in the "inventory" routine */
