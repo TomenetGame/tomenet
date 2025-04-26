@@ -500,28 +500,30 @@ static void QueueAttrChar_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   we need to take care of the background, as ASCII doesn't set that.
 	   This for example concerns town stores during rain
 	   (note that all weather particles draw with 0,0 for a_back,c_back). - C. Blue */
-	if ((scr_cc_back[x] == 32 // <- ASCII was drawn here?
+	if (!c_back || c_back == 32) { /* Only applies if we don't want to change it */
+		if ((scr_cc_back[x] == 32 // <- ASCII was drawn here
  #if 1 /* actually any ASCII drawage, aka QueueAttrChar(), already sets cc_back to 32 so the check above should suffice and this one isn't clear, gfx could also be < 256?! */
-	    /* Rare special case: Even if background contains graphics (because we are in 2mask-mode)
-	       we were fed ASCII in the foreground w/o overriding the graphical background.
-	       This should only ever happen if we're receiving visual info from an ASCII client while locally drawing 2mask-mode, ie weather particles: */
-	    || (Term->higher_pict && scr_cc[x] <= MAX_FONT_CHAR))
+		    /* Rare special case: Even if background contains graphics (because we are in 2mask-mode)
+		       we were fed ASCII in the foreground w/o overriding the graphical background.
+		       This should only ever happen if we're receiving visual info from an ASCII client while locally drawing 2mask-mode, ie weather particles: */
+		    || (Term->higher_pict && scr_cc[x] <= MAX_FONT_CHAR))
  #else /* freaking compiler warning */
 	    && TRUE)
  #endif
  #if 0 /* actually this colour check can be removed as it doesn't matter (would even improve future compatibility if we ever print ASCII with coloured backgrounds) */
-	     && !scr_aa_back[x]
+		     && !scr_aa_back[x]
  #endif
-	     ) {
-		//replace the 'space (usually w/ colour 0]' ASCII background with graphical '(usually black, accordingly) box', so we can properly merge-draw on it
-		scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID];
-		/* Colour should stay the same - however, we need to hack it for the case that we have an ASCII tile that has 'space' foreground, but non-black colour!
-		   In these cases the FEAT_SOLID would obtain the foreground colour, thereby turning into a coloured 'pseudo-background' for our graphical foreground tile.
-		   Another solution would be to change all 'clear' aka 'space' feats in f_info to use 'd' (TERM_DARK) colour, which is probably the better solution than setting a_back to TERM_DARK here.
-		   ---
-		   BOTH SOLUTIONS have been implemented now ie the blank feats in f_info.txt had their colour changed to 'd',
-		   so if we ever require coloured backgrounds in text mode we should be able to remove the following line anytime just fine. */
-		scr_aa_back[x] = TERM_DARK;
+		     ) {
+			//replace the 'space (usually w/ colour 0]' ASCII background with graphical '(usually black, accordingly) box', so we can properly merge-draw on it
+			scr_cc_back[x] = Client_setup.f_char[FEAT_SOLID];
+			/* Colour should stay the same - however, we need to hack it for the case that we have an ASCII tile that has 'space' foreground, but non-black colour!
+			   In these cases the FEAT_SOLID would obtain the foreground colour, thereby turning into a coloured 'pseudo-background' for our graphical foreground tile.
+			   Another solution would be to change all 'clear' aka 'space' feats in f_info to use 'd' (TERM_DARK) colour, which is probably the better solution than setting a_back to TERM_DARK here.
+			   ---
+			   BOTH SOLUTIONS have been implemented now ie the blank feats in f_info.txt had their colour changed to 'd',
+			   so if we ever require coloured backgrounds in text mode we should be able to remove the following line anytime just fine. */
+			scr_aa_back[x] = TERM_DARK;
+		}
 	}
 
 	/* Save the "literal" information (foreground) */
