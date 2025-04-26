@@ -2850,6 +2850,8 @@
 #define FEAT_ANIM_DEEP_LAVA_WEST	271
 #define FEAT_ANIM_DEEP_LAVA_NORTH	272
 #define FEAT_ANIM_DEEP_LAVA_SOUTH	273
+#define FEAT_BARRED_WINDOW		274
+#define FEAT_BARRED_WINDOW_SMALL	275
 
 
 #define is_shal_water(F) \
@@ -6982,7 +6984,7 @@
 #define		WILD_ROCK_HOME		1
 #define		WILD_PERM_HOME		2
 #define		WILD_SHACK		3
-#define		WILD_TOWN_HOME		4
+#define		WILD_TOWN_HOME		4	/* player-purchasable houses */
 
 /* types of crops */
 #define		WILD_CROP_POTATO	0
