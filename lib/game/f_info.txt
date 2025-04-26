@@ -1369,11 +1369,13 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 N:196:closed window
 G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
+F:LOS | BLOCK_CONTACT
 
 # small window
 N:197:small closed window
 G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
+F:LOS | BLOCK_CONTACT
 
 # rain barrel
 N:198:rain barrel
@@ -1700,13 +1702,13 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 N:256:open window
 G:":W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
-F:LOS | BLOCK_CONTACT
+F:LOS
 
 # small window
 N:257:small open window
 G:":W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
-F:LOS | BLOCK_CONTACT
+F:LOS
 
 # Stream of animated water, eastward
 N:258:stream of water
@@ -1813,6 +1815,17 @@ G:~:%h
 E:8d4:2:FIRE
 F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
 D:0:The lava BURNS you.
+
+# window, shutters closed
+N:274:barred window
+G:":W
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
+
+# small window, shutters closed
+N:275:small barred window
+G:":W
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
+
 
 
 # generic scheme (all lines are unique except
