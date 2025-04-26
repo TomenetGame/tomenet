@@ -4386,8 +4386,9 @@ static bool do_cmd_look_accept(int Ind, int y, int x) {
 		    (c_ptr->feat <= FEAT_DOOR_TAIL)) return(TRUE);
 
 		/* Notice windows */
-		if (c_ptr->feat == FEAT_WINDOW || c_ptr->feat == FEAT_WINDOW_SMALL
-		    c_ptr->feat == FEAT_OPEN_WINDOW || c_ptr->feat == FEAT_OPEN_WINDOW_SMALL)
+		if (c_ptr->feat == FEAT_WINDOW || c_ptr->feat == FEAT_WINDOW_SMALL ||
+		    c_ptr->feat == FEAT_OPEN_WINDOW || c_ptr->feat == FEAT_OPEN_WINDOW_SMALL ||
+		    c_ptr->feat == FEAT_BARRED_WINDOW || c_ptr->feat == FEAT_BARRED_WINDOW_SMALL)
 			return(TRUE);
 
 		/* Notice rubble */

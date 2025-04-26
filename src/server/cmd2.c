@@ -2884,6 +2884,48 @@ void do_cmd_open(int Ind, int dir) {
 			sound_near_site(y, x, wpos, 0, "open_window", "open_chest", SFX_TYPE_COMMAND, FALSE);
 #endif
 		}
+		else if (c_ptr->feat == FEAT_BARRED_WINDOW) {
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot open that window from outside.");
+				return;
+			}
+			cave_set_feat_live(wpos, y, x, FEAT_WINDOW); /* Open shutters ^^ */
+
+			un_afk_idle(Ind);
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			//sound(Ind, "open_window", "open_chest", SFX_TYPE_COMMAND, TRUE);
+			sound_near_site(y, x, wpos, 0, "open_window", "open_chest", SFX_TYPE_COMMAND, FALSE);
+#endif
+		}
+		else if (c_ptr->feat == FEAT_BARRED_WINDOW_SMALL) {
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot open that window from outside.");
+				return;
+			}
+			cave_set_feat_live(wpos, y, x, FEAT_WINDOW_SMALL); /* Open shutters ^^ */
+
+			un_afk_idle(Ind);
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			//sound(Ind, "open_window", "open_chest", SFX_TYPE_COMMAND, TRUE);
+			sound_near_site(y, x, wpos, 0, "open_window", "open_chest", SFX_TYPE_COMMAND, FALSE);
+#endif
+		}
 
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -3341,6 +3383,53 @@ void do_cmd_close(int Ind, int dir) {
 			}
 #endif
 			cave_set_feat_live(wpos, y, x, FEAT_WINDOW_SMALL);
+
+			un_afk_idle(Ind);
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			//sound(Ind, "close_window", "close_door", SFX_TYPE_COMMAND, TRUE);
+			sound_near_site(y, x, wpos, 0, "close_window", "close_door", SFX_TYPE_COMMAND, FALSE);
+#endif
+		}
+
+		else if (c_ptr->feat == FEAT_WINDOW) {
+#if 0 /* xD */
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot close that window from outside.");
+				return;
+			}
+#endif
+			cave_set_feat_live(wpos, y, x, FEAT_BARRED_WINDOW); /* closed the shutters ^^ */
+
+			un_afk_idle(Ind);
+			break_cloaking(Ind, 3);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			/* Take half a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+			//sound(Ind, "close_window", "close_door", SFX_TYPE_COMMAND, TRUE);
+			sound_near_site(y, x, wpos, 0, "close_window", "close_door", SFX_TYPE_COMMAND, FALSE);
+#endif
+		}
+		else if (c_ptr->feat == FEAT_WINDOW_SMALL) {
+#if 0 /* xD */
+			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+				msg_print(Ind, "You cannot close that window from outside.");
+				return;
+			}
+#endif
+			cave_set_feat_live(wpos, y, x, FEAT_BARRED_WINDOW_SMALL); /* closed the shutters ^^ */
 
 			un_afk_idle(Ind);
 			break_cloaking(Ind, 3);
@@ -9790,6 +9879,8 @@ void house_admin(int Ind, int dir, char *args) {
 		case FEAT_WINDOW_SMALL:
 		case FEAT_OPEN_WINDOW:
 		case FEAT_OPEN_WINDOW_SMALL:
+		case FEAT_BARRED_WINDOW:
+		case FEAT_BARRED_WINDOW_SMALL:
 			/* Windows only allow knocking */
 			if (args[0] == 'H') {
 				knock_window(Ind, x, y);

@@ -4102,6 +4102,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					switch (zcave[y][x].feat) {
 					case FEAT_WINDOW: case FEAT_WINDOW_SMALL:
 					case FEAT_OPEN_WINDOW: case FEAT_OPEN_WINDOW_SMALL:
+					case FEAT_BARRED_WINDOW: case FEAT_BARRED_WINDOW_SMALL:
 						found_window = TRUE;
 						wx = x;
 						wy = y;
