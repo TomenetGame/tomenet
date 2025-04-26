@@ -10289,7 +10289,7 @@ void apply_auto_inscriptions(int insc_idx) {
 /* Helper function for option manipulation - check before and after, and refresh stuff if the changes made require it.
    init: TRUE before an option gets changed, FALSE afterwards. */
 void options_immediate(bool init) {
-	static bool changed1, changed2, changed3;
+	static bool changed1, changed2, changed3, changed3a;
 	static bool changed4a, changed4b, changed4c;
 	static bool changed5, changed5a, changed6;
 	static bool changed7, changed8;
@@ -10321,7 +10321,7 @@ void options_immediate(bool init) {
 #endif
 
 	if (init) {
-		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.solid_bars;
+		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.solid_bars; changed3a = c_cfg.huge_bars_gfx;
 		changed4a = c_cfg.hp_bar; changed4b = c_cfg.mp_bar; changed4c = c_cfg.st_bar;
 		changed5 = c_cfg.equip_text_colour;
 		changed5a = c_cfg.equip_set_colour;
@@ -10337,7 +10337,7 @@ void options_immediate(bool init) {
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
 	/* in case hp/mp/st are displayed as bars,
 	   or hp/mp/st have just been switched between number form and bar form */
-	if (changed3 != c_cfg.solid_bars ||
+	if (changed3 != c_cfg.solid_bars || changed3a != c_cfg.huge_bars_gfx ||
 	    changed4a != c_cfg.hp_bar || changed4b != c_cfg.mp_bar || changed4c != c_cfg.st_bar) {
 		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
 		if (changed4b != c_cfg.mp_bar) mp_bar = c_cfg.mp_bar;
@@ -14940,7 +14940,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	    option_info[i].o_var == &c_cfg.sn_huge_bar ||
 	    option_info[i].o_var == &c_cfg.hp_huge_bar ||
 	    option_info[i].o_var == &c_cfg.st_huge_bar) ||
-	    (option_info[i].o_var == &c_cfg.solid_bars &&
+	    ((option_info[i].o_var == &c_cfg.solid_bars || option_info[i].o_var == &c_cfg.huge_bars_gfx) &&
 	    (c_cfg.mp_huge_bar || c_cfg.sn_huge_bar || c_cfg.hp_huge_bar || c_cfg.st_huge_bar))) {
 		if (screen_icky) Term_switch(0);
 

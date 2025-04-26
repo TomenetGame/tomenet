@@ -599,15 +599,15 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "sunburn_msg",		"Show message if you start/stop burning in the sun" },
 	{ &c_cfg.wide_scroll_margin,	TRUE,	1,	0, 167, TRUE,
 	    "wide_scroll_margin",	"Scroll the screen further away from the edges" },
-	{ &c_cfg.gfx_palanim_repaint,	TRUE,	1,	0, 168, TRUE, //just for debugging repaint glitches
+	{ &c_cfg.gfx_palanim_repaint,	TRUE,	1,	0, 168, FALSE, //just for debugging repaint glitches
 	    "gfx_palanim_repaint",	"Flicker-free repaint, glitches on some systems" },
-	{ &c_cfg.gfx_hack_repaint,	TRUE,	1,	0, 169, TRUE, //just for debugging repaint glitches
+	{ &c_cfg.gfx_hack_repaint,	TRUE,	1,	0, 169, FALSE, //just for debugging repaint glitches
 	    "gfx_hack_repaint",		"May reduce flicker if gfx_palanim_repaint is off" },
 	{ &c_cfg.topline_first,		TRUE,	0,	0, 170, TRUE,
 	    "topline_first",		"Top line shows first line of multi-line messages" },
 	{ &c_cfg.ascii_weather,		FALSE,	1,	0, 171, TRUE, //just for debugging weather glitches
 	    "ascii_weather",		"Always use plain ASCII symbols for weather" },
-	{ &c_cfg.no2mask_weather,	FALSE,	1,	0, 172, TRUE, //just for debugging weather glitches
+	{ &c_cfg.no2mask_weather,	FALSE,	1,	0, 172, FALSE, //just for debugging weather glitches
 	    "no2mask_weather",		"Never use dual-mask grapics for weather" },
 	{ &c_cfg.auto_inscr_server_ch,	TRUE,	8,	9, 173, TRUE,
 	    "auto_inscr_server_ch",	"Server-defined auto-inscriptions for chemicals" },
@@ -620,6 +620,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "tavern_town_resume",	"If wild_resume_from_any, also resume tavern/town" },
 	{ &c_cfg.st_huge_bar,		FALSE,	1,	0, 177, TRUE,
 	    "st_huge_bar",		"Also show stamina as huge bar (big_map only)" },
+	{ &c_cfg.huge_bars_gfx,		TRUE,	1,	0, 178, TRUE,
+	    "huge_bars_gfx",		"Display huge bars graphically if graphics are on" },
 };
 
 cptr melee_techniques[16] = {

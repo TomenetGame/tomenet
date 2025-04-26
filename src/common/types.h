@@ -4943,6 +4943,7 @@ struct client_opts {
 	bool instant_retaliator;
 	bool wild_resume_from_any;
 	bool tavern_town_resume;
+	bool huge_bars_gfx;
 };
 
 /*

@@ -214,7 +214,7 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	if (redraw)
 		for (n = ye; n > MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n--) {
 #ifdef USE_GRAPHICS //821,822,813, 813,813,813, 823,813,824
-			if (use_graphics) {
+			if (use_graphics && c_cfg.huge_bars_gfx) {
 				int w;
 
 				/* Silyl visual hack: Don't draw rounded corners if we're "inside" the huge stun bar... would look odd to have these little black patches ~~ */
@@ -240,7 +240,7 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	/* Only draw the difference to before */
 	for (n = ys; n > ye; n--)
 #ifdef USE_GRAPHICS
-		if (use_graphics) {
+		if (use_graphics && c_cfg.huge_bars_gfx) {
 			int w;
 
 			/* Silyl visual hack: Don't draw rounded corners if we're "inside" the huge stun bar... would look odd to have these little black patches ~~ */
@@ -293,7 +293,7 @@ void draw_huge_stun_bar(byte attr) {
 		for (x = 1; x < SCREEN_PAD_LEFT - 1; x++)
 			//if (scr_cc[x] == ' ')
 #ifdef USE_GRAPHICS
-				if (use_graphics && c != ' ')
+				if (use_graphics && c_cfg.huge_bars_gfx && c != ' ')
 					Term_draw(x, y, attr,
 					    y == MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE ? (
 					    x == 1 ? 821 : (x == SCREEN_PAD_LEFT - 1 - 1 ? 822 : 813)) :
