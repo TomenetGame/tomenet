@@ -57,6 +57,11 @@
 /* Max # of attempts to place dungeons on the world map until giving up due to probably impossible terrain situation */
 #define MAX_TRIES_DUN_PLACEMENT 500000
 
+/* Add windows to wilderness houses ('dwellings')? */
+#define WILD_HOUSES_WINDOWS
+
+
+
 
 /* This function takes the players x,y level world coordinate and uses it to
  calculate p_ptr->dun_depth.  The levels are stored in a series of "rings"
@@ -1380,11 +1385,11 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 }
 #endif
 
-/* adds a building to the wilderness. if the coordinate is not given,
+/* Adds a building to the wilderness. if the coordinate is not given,
    find it randomly.
+   for now will make a simple box, but we could do really fun stuff with this later.
 
- for now will make a simple box,
-   but we could do really fun stuff with this later.
+   The buildings of type WILD_TOWN_HOME here are those players can own.
 */
 static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	int	h_x1,h_y1,h_x2,h_y2, p_x1,p_y1,p_x2,p_y2,
@@ -1663,7 +1668,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 		if (rand_int(100) < 60) door_feature = FEAT_DOOR_HEAD + rand_int(7);
 		else door_feature = FEAT_DOOR_HEAD;
 		break;
-	case WILD_TOWN_HOME:
+	case WILD_TOWN_HOME:	/* player-purchasable houses */
 		//wall_feature = FEAT_PERM_EXTRA;
 		wall_feature = FEAT_WALL_HOUSE;
 		door_feature = FEAT_HOME;
@@ -1872,7 +1877,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 		zcave[drawbridge_y[2]][drawbridge_x[2]].info |= CAVE_ICKY;
 	}
 
-	/* Hack -- finish making a town house */
+	/* Hack -- finish making a town house (aka player-purchasable house) */
 	if (type == WILD_TOWN_HOME) {
 		struct c_special *cs_ptr;
 
@@ -1950,8 +1955,137 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 		}
 	}
 
+#ifdef WILD_HOUSES_WINDOWS
+	/* Add windows? */
+	if (!trad) {
+		/* Keep RNG state, or this feature of adding windows would change housing zone layout! */
+		u32b tmp_seed = Rand_value;
+
+		int side_y = h_y2 - h_y1 - 1, side_x = h_x2 - h_x1 - 1;
+		int num_win, max_win_x, max_win_y, max_win_total;
+		int dist_win_x, dist_win_y, spacer_x, spacer_y;
+
+		if (has_moat) { /* Castles: Regular windows every 2 or 3 steps (fixed) */
+			/* For sides of even length, place windows with distance 3 (ie 2 grids between them): */
+			int mod3_x = side_x % 3, mod3_y = side_y % 3;
+			/* For sides of odd length, distance 2 (ie 1 grid between) always works trivially. */
+
+			/* Even or odd distance between the two corners of each wall? */
+			if (side_x % 2) {
+ #if 0 /* a window every 2 grids */
+				dist_win_x = 2;
+				spacer_x = 2;
+ #else /* a window every 4 grids */
+				dist_win_x = 4;
+				spacer_x = 2 - (side_x % 4 == 1 ? 1 : 0);
+ #endif
+			} else {
+				dist_win_x = 3;
+				switch (mod3_x) {
+				case 0: spacer_x = 2; break;
+				case 1: spacer_x = 1; break;
+				case 2: spacer_x = 3; break;
+				}
+			}
+			if (side_y % 2) {
+ #if 0 /* a window every 2 grids */
+				dist_win_y = 2;
+				spacer_y = 2;
+ #else /* a window every 4 grids */
+				dist_win_y = 4;
+				spacer_y = 2 - (side_y % 4 == 1 ? 1 : 0);
+ #endif
+			} else {
+				dist_win_y = 3;
+				switch (mod3_y) {
+				case 0: spacer_y = 2; break;
+				case 1: spacer_y = 1; break;
+				case 2: spacer_y = 3; break;
+				}
+			}
+
+			/* North & south sides */
+			for (x = h_x1 + spacer_x; x <= h_x2 - spacer_x; x += dist_win_x) {
+				if (zcave[h_y1][x].feat != FEAT_HOME && zcave[h_y1][x - 1].feat != FEAT_HOME && zcave[h_y1][x + 1].feat != FEAT_HOME)
+					zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
+				if (zcave[h_y2][x].feat != FEAT_HOME && zcave[h_y2][x - 1].feat != FEAT_HOME && zcave[h_y2][x + 1].feat != FEAT_HOME)
+					zcave[h_y2][x].feat = FEAT_BARRED_WINDOW;
+			}
+			/* East & west sides */
+			for (y = h_y1 + spacer_y; y <= h_y2 - spacer_y; y += dist_win_y) {
+				if (zcave[y][h_x1].feat != FEAT_HOME && zcave[y - 1][h_x1].feat != FEAT_HOME && zcave[y + 1][h_x1].feat != FEAT_HOME)
+					zcave[y][h_x1].feat = FEAT_BARRED_WINDOW_SMALL;
+				if (zcave[y][h_x2].feat != FEAT_HOME && zcave[y - 1][h_x2].feat != FEAT_HOME && zcave[y + 1][h_x2].feat != FEAT_HOME)
+					zcave[y][h_x2].feat = FEAT_BARRED_WINDOW_SMALL;
+			}
+		} else { /* Non-castles: Depending on house wall length, 0-3 per side */
+			int windows_left;
+ #if 0 /* way too mucho, looks weird */
+			max_win_x = (side_x + 3) / 5;
+			max_win_y = (side_y + 3) / 5;
+			max_win_total = 4 + (max_win_x + max_win_y) / 3;
+ #else
+			max_win_x = 1;
+			max_win_y = 1;
+			max_win_total = 2 + (h_x2 - h_x1) / 5 + (h_y2 - h_y1) / 5;
+ #endif
+			dist_win_x = side_x / max_win_x;
+			dist_win_y = side_y / max_win_y;
+
+			/* North & south sides */
+			num_win = rand_int(max_win_x + 1);
+			tmp = (max_win_total + rand_int(2)) / 2;
+			if (num_win > tmp) num_win = tmp;
+			max_win_total -= num_win;
+			windows_left = num_win;
+			for (tmp = 0; tmp < num_win; tmp++) {
+				/* Place window randomly within the dist_win_ interval */
+				if (windows_left != 1 || rand_int(2)) {
+					x = h_x1 + 1 + tmp * dist_win_x + rand_int(dist_win_x);
+					if (zcave[h_y1][x].feat != FEAT_HOME && zcave[h_y1][x - 1].feat != FEAT_HOME && zcave[h_y1][x + 1].feat != FEAT_HOME) {
+						zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
+						windows_left--;
+					}
+				}
+				if (windows_left != 1) {
+					x = h_x1 + 1 + tmp * dist_win_x + rand_int(dist_win_x);
+					if (zcave[h_y2][x].feat != FEAT_HOME && zcave[h_y2][x - 1].feat != FEAT_HOME && zcave[h_y2][x + 1].feat != FEAT_HOME) {
+						zcave[h_y2][x].feat = FEAT_BARRED_WINDOW;
+						windows_left--;
+					}
+				}
+			}
+
+			/* East & west sides */
+			num_win = rand_int(max_win_y + 1);
+			if (num_win > max_win_total) num_win = max_win_total;
+			windows_left = num_win;
+			for (tmp = 0; tmp < num_win; tmp++) {
+				/* Place window randomly within the dist_win_ interval */
+				if (windows_left != 1 || rand_int(2)) {
+					y = h_y1 + 1 + tmp * dist_win_y + rand_int(dist_win_y);
+					if (zcave[y][h_x1].feat != FEAT_HOME && zcave[y - 1][h_x1].feat != FEAT_HOME && zcave[y + 1][h_x1].feat != FEAT_HOME) {
+						zcave[y][h_x1].feat = FEAT_BARRED_WINDOW;
+						windows_left--;
+					}
+				}
+				if (windows_left != 1) {
+					y = h_y1 + 1 + tmp * dist_win_y + rand_int(dist_win_y);
+					if (zcave[y][h_x2].feat != FEAT_HOME && zcave[y - 1][h_x2].feat != FEAT_HOME && zcave[y + 1][h_x2].feat != FEAT_HOME) {
+						zcave[y][h_x2].feat = FEAT_BARRED_WINDOW;
+						windows_left--;
+					}
+				}
+			}
+		}
+		/* Restore RNG as if nothing happened~ */
+		Rand_value = tmp_seed;
+	}
+#endif
+
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
+
 }
 
 
@@ -2326,6 +2460,7 @@ static u16b terrain_spot(terrain_type * terrain) {
 
 /* adds an island in a lake, or a clearing in a forest, or a glade in a plain.
    done to make the levels a bit more interesting.
+   Also calls function to add player houses.
 
    chopiness defines the randomness of the circular shape.
 
@@ -2476,7 +2611,7 @@ static void wild_add_hotspot(struct worldpos *wpos) {
 		}
 	}
 
-	/* add inhabitants */
+	/* add houses, including player-purchasable ones */
 	if (add_dwelling) wild_add_dwelling(wpos, x_cen, y_cen );
 }
 
@@ -3503,7 +3638,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 	}
 #endif
 
-	/* add wilderness dwellings */
+	/* add wilderness dwellings, aka houses, including player-purchasable houses */
 	/* hack -- the number of dwellings is proportional to their chance of existing */
 	while (terrain.dwelling > 0) {
 		if (rand_int(1000) < terrain.dwelling) wild_add_dwelling(wpos, -1, -1);
