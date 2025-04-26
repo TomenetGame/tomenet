@@ -1367,13 +1367,13 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # window
 N:196:closed window
-G:#:W
+G:%:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
 F:LOS | BLOCK_CONTACT
 
 # small window
 N:197:small closed window
-G:#:W
+G:%:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
 F:LOS | BLOCK_CONTACT
 
@@ -1818,12 +1818,12 @@ D:0:The lava BURNS you.
 
 # window, shutters closed
 N:274:barred window
-G:":W
+G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
 
 # small window, shutters closed
 N:275:small barred window
-G:":W
+G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
 
 
