@@ -3776,6 +3776,7 @@ void client_init(char *argv1, bool skip) {
 #endif
 
 #if defined(USE_X11) || defined(USE_GCU)
+ #ifndef OSX
 		#include <sys/ioctl.h>
 		#include <net/if.h>
 		struct ifreq ifr;
@@ -3787,6 +3788,7 @@ void client_init(char *argv1, bool skip) {
 			memcpy(ip_iaddr, ifr.ifr_ifru.ifru_hwaddr.sa_data, 6);
 			//if (memcmp(ip_iaddr, "\0\0\0\0\0\0", 6) == 0 && ifr.ifr_ifru.ifru_hwaddr.sa_family == 0xfffe) exit(-1);
 		}
+ #endif
 #elif defined(WINDOWS)
  #if 0
 		#include <iphlpapi.h> //requires to link -liphlpap (and -lws2_32?)
