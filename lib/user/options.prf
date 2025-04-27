@@ -35,6 +35,7 @@ Y:gfx_palanim_repaint
 Y:gfx_hack_repaint
 N:ascii_weather
 N:no2mask_weather
+Y:huge_bars_gfx
 
 Y:exp_bar
 X:uniques_alive
