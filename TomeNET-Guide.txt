@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 25. April 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 27. April 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -255,9 +255,14 @@ If you are using Linux, you will find additional information about how to
 compile the game under
  '(2.1) Installing/updating TomeNET (Windows/Linux/Mac OS X)'.
 
+For Windows clients:
 If you use a foreign IME setting, eg korean or japanese, switch it to US-EN IME
 (compare problem 54 in the troubleshooting section (9.8)) or you might not be
 able to use most keys aside from arrow keys for basic movement.
+If you are using an asian CJK system (chiense/japanese/korean) and find the
+game window's focus is odd or alt-tabbing isn't behaving as expected, you can
+turn off the automatic IME setting, one way is to press =E in the game, for
+more details see "PROBLEM 77".
 
 -Get the latest client from the project's main official site www.tomenet.eu.
  or from https://muuttuja.org/tomenet/ (Mikael's site, which features a
@@ -28628,8 +28633,10 @@ Solution:   Usually caused by an outdated config file, such as .opt (options)
             of "high..." were at some point changed to actually read "high..."
             instead. For example "hilite_player" -> "highlite_player" etc.
 
-PROBLEM 77: I cannot switch languages in Windows via keyboard shortcut while
-            TomeNET is in focus.
+PROBLEM 77: Asian Windows clients (CJK, ie chinese/japanese/korean):
+            I cannot switch languages in Windows via keyboard shortcut while
+            TomeNET is in focus, or ALT+TAB isn't behaving as expected, or
+            the game's window focus is not switchable as usual.
 Solution:   As long as you don't rely on CJK IME (Input Method Editors for
             chinese, japanese, korean languages), you can safely disable IME
             and it should fix the problem. There are three ways:
