@@ -1836,5 +1836,6 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NOTICE
 # M:<feature # to mimic, for example secret door seeming to be granite wall>
 # E (up to 4 lines):<effect damage in format 'xdy'>:<effect rarity>:<effect damage type, eg 'ELEC'>
 # F (any # of lines):<flags|...>
+# D:0:<descriptive text for looking at it>
 # D:1:<descriptive text for tunneling xor bashing>
 # D:2:<descriptive text for getting one's movement blocked by it>
