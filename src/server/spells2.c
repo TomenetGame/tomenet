@@ -10849,7 +10849,7 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 	}
 
 	/* If in water, fuse is extinguished, if in cold, sometimes extinguish */
-	if (thrown && is_water(c_ptr->feat)) {
+	if (thrown && feat_is_water(c_ptr->feat)) {
 		msg_print(Ind, "\377y*Splash!* The fuse is extinguished by the water.");
 		return(FALSE);
 	}
@@ -11097,7 +11097,7 @@ void detonate_charge(int o_idx) {
 				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
 				if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;// || !allow_terraforming(wpos, FEAT_NONE))
 				if (!cave_clean_bold(zcave, y2, x2) || c_ptr->special
-				    || is_deep_lava(c_ptr->feat) || is_deep_water(c_ptr->feat))
+				    || feat_is_deep_lava(c_ptr->feat) || feat_is_deep_water(c_ptr->feat))
 					continue;
 				cave_set_feat_live(wpos, y2, x2, FEAT_RUBBLE);
 				c_ptr->info2 |= CAVE2_NOYIELD;
@@ -11167,7 +11167,7 @@ void detonate_charge(int o_idx) {
 				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
 				if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) continue;// || !allow_terraforming(wpos, FEAT_NONE))
 				if (!cave_clean_bold(zcave, y2, x2) || c_ptr->special
-				    || is_deep_lava(c_ptr->feat) || is_deep_water(c_ptr->feat))
+				    || feat_is_deep_lava(c_ptr->feat) || feat_is_deep_water(c_ptr->feat))
 					continue;
 				cave_set_feat_live(wpos, y2, x2, i);
 			}

@@ -3573,7 +3573,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int modx) {
 
 	/* Require empty, clean, floor grid */
 	/* Hack - '+1' for secret doors */
-	if (cave_floor_grid(c_ptr) || is_deep_water(c_ptr->feat)) flags = FTRAP_FLOOR;
+	if (cave_floor_grid(c_ptr) || feat_is_deep_water(c_ptr->feat)) flags = FTRAP_FLOOR;
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL + 1)) flags = FTRAP_DOOR;
 	else return;
 
@@ -3687,13 +3687,13 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	/* Require empty, clean, floor grid */
 	/* Hack - '+1' for secret doors */
 #if 0
-	if (cave_floor_grid(c_ptr) || is_deep_water(c_ptr->feat)) flags = FTRAP_FLOOR;
+	if (cave_floor_grid(c_ptr) || feat_is_deep_water(c_ptr->feat)) flags = FTRAP_FLOOR;
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 	    (c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else return;
 #else
-	if (!(cave_floor_grid(c_ptr) || is_deep_water(c_ptr->feat) || c_ptr->feat >= FEAT_DOOR_HEAD))
+	if (!(cave_floor_grid(c_ptr) || feat_is_deep_water(c_ptr->feat) || c_ptr->feat >= FEAT_DOOR_HEAD))
 		return;
 #endif
 

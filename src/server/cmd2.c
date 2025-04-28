@@ -3590,11 +3590,11 @@ u16b twall_erosion(worldpos *wpos, int y, int x, u16b feat) {
 		if (!in_bounds(ty, tx)) continue;
 
 		c_ptr = &zcave[ty][tx];
-		if (is_deep_water(c_ptr->feat)) {
+		if (feat_is_deep_water(c_ptr->feat)) {
 			//feat = FEAT_DEEP_WATER; /* <- this is only if FEAT_DEEP_WATER is also terraformable in turn (see cave_set_feat_live) */
 			feat = FEAT_SHAL_WATER; /* <- this should be used otherwise */
 			break;
-		} else if (is_deep_lava(c_ptr->feat)) {
+		} else if (feat_is_deep_lava(c_ptr->feat)) {
 			//feat = FEAT_DEEP_LAVA; /* <- this is only if FEAT_DEEP_LAVA is also terraformable in turn (see cave_set_feat_live) */
 			feat = FEAT_SHAL_LAVA; /* <- this should be used otherwise */
 			break;
@@ -5769,7 +5769,7 @@ void do_cmd_bash(int Ind, int dir) {
 		/* for leaderless guild houses */
 		if ((zcave[y][x].info2 & CAVE2_GUILD_SUS)) return;
 
-		if (is_water(c_ptr->feat) || is_lava(c_ptr->feat)) {
+		if (feat_is_water(c_ptr->feat) || feat_is_lava(c_ptr->feat)) {
 			if (bash_type != 3) bash_type = 2;
 			water = TRUE;
 		}
@@ -9736,7 +9736,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			}
  #endif
 			/* If thrown into fire, insta-trigger */
-			if (is_lava(zcave[y][x].feat) || is_acute_fire(zcave[y][x].feat)) o_ptr->timeout = -1;
+			if (feat_is_lava(zcave[y][x].feat) || feat_is_acute_fire(zcave[y][x].feat)) o_ptr->timeout = -1;
 		}
 	}
 #endif

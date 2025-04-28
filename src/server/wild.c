@@ -867,8 +867,8 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
 
 		/* hack -- buildings and farms can partially, but not completly,
 		   be built on water. */
-		if (is_deep_water(zcave[*y1][*x1].feat) &&
-		    is_deep_water(zcave[*y2][*x2].feat))
+		if (feat_is_deep_water(zcave[*y1][*x1].feat) &&
+		    feat_is_deep_water(zcave[*y2][*x2].feat))
 			plot_clear = 0;
 
 		/* if we have a clear plot, reserve it and return */
@@ -1306,7 +1306,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x) {
 		if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
 
 		/* Nasty terrain covering the door */
-		if (is_deep_water(c_ptr->feat) || is_deep_lava(c_ptr->feat)) continue;
+		if (feat_is_deep_water(c_ptr->feat) || feat_is_deep_lava(c_ptr->feat)) continue;
 
 		/* Found a neat entrance */
 		return(TRUE);
@@ -1354,7 +1354,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 			if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
 
 			/* Nasty terrain covering the door */
-			if (is_deep_water(c_ptr->feat) || is_deep_lava(c_ptr->feat)) continue;
+			if (feat_is_deep_water(c_ptr->feat) || feat_is_deep_lava(c_ptr->feat)) continue;
 
 			/* Found a neat entrance */
 			return(TRUE);
@@ -1372,7 +1372,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 			if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
 
 			/* Nasty terrain covering the door */
-			if (is_deep_water(c_ptr->feat) || is_deep_lava(c_ptr->feat)) continue;
+			if (feat_is_deep_water(c_ptr->feat) || feat_is_deep_lava(c_ptr->feat)) continue;
 
 			/* Found a neat entrance */
 			return(TRUE);
@@ -3654,7 +3654,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 	for (x = 1; x < MAX_WID - 1; x++) {
 		c_ptr = &zcave[y][x];
 		/* turn single deep water fields to shallow */
-		if (is_deep_water(c_ptr->feat)) {
+		if (feat_is_deep_water(c_ptr->feat)) {
 			found_more_water = 0;
 			for (y2 = y - 1; y2 <= y + 1; y2++)
 			for (x2 = x - 1; x2 <= x + 1; x2++) {
@@ -3664,14 +3664,14 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 					found_more_water++; /* hack */
 					continue;
 				}
-				if (is_water(c2_ptr->feat)) found_more_water++;
+				if (feat_is_water(c2_ptr->feat)) found_more_water++;
 			}
 			//if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
 			/* also important for SEASON_WINTER, to turn lake border into ice */
 			if (found_more_water < 6) c_ptr->feat = FEAT_SHAL_WATER;
 		}
 		/* turn single non-<deep water> fields to deep water */
-		else if (!is_deep_water(c_ptr->feat)) {
+		else if (!feat_is_deep_water(c_ptr->feat)) {
 			found_more_water = 0;
 			for (y2 = y - 1; y2 <= y + 1; y2++)
 			for (x2 = x - 1; x2 <= x + 1; x2++) {
@@ -3681,7 +3681,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 					found_more_water++; /* hack */
 					continue;
 				}
-				if (is_water(c2_ptr->feat)) found_more_water++;
+				if (feat_is_water(c2_ptr->feat)) found_more_water++;
 			}
 			if (found_more_water >= 7) c_ptr->feat = FEAT_DEEP_WATER;
 		}
@@ -5074,7 +5074,7 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 			for (y = 1; y < MAX_HGT - 1; y++)
 			for (x = 1; x < MAX_WID - 1; x++) {
 				c_ptr = &zcave[y][x];
-				if (is_water(c_ptr->feat)) c_ptr->feat = FEAT_ICE;
+				if (feat_is_water(c_ptr->feat)) c_ptr->feat = FEAT_ICE;
 			}
 	}
 	/* apply season-specific FEAT-manipulation */
@@ -5086,7 +5086,7 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 			for (y = 1; y < MAX_HGT - 1; y++)
 			for (x = 1; x < MAX_WID - 1; x++) {
 				c_ptr = &zcave[y][x];
-				if (is_shal_water(c_ptr->feat)) c_ptr->feat = FEAT_ICE;
+				if (feat_is_shal_water(c_ptr->feat)) c_ptr->feat = FEAT_ICE;
 			}
 	}
 

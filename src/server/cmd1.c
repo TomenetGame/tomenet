@@ -3094,7 +3094,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 #endif
 
 	/* splash! harm items */
-	if (is_deep_water(c_ptr->feat) && magik(WATER_ITEM_DAMAGE_CHANCE)
+	if (feat_is_deep_water(c_ptr->feat) && magik(WATER_ITEM_DAMAGE_CHANCE)
 	    && !p_ptr->levitate && !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC)) // && !p_ptr->tim_wraith
 	    && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50))) {
 		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN
@@ -7279,7 +7279,9 @@ bool wraith_access(int Ind) {
 					return(TRUE);
 #else
 					/* Allow players access on house door, and additionally on permawalls of mangstyle houses (paranoia: !zcave) */
-					return((houses[i].flags & HF_TRAD) ? ((!zcave || (zcave[p_ptr->py][p_ptr->px].feat == FEAT_WALL_HOUSE)) ? FALSE : TRUE) : TRUE);
+					return((houses[i].flags & HF_TRAD) ?
+					    ((!zcave || zcave[p_ptr->py][p_ptr->px].feat == FEAT_WALL_HOUSE || feat_is_window(zcave[p_ptr->py][p_ptr->px].feat)) ? FALSE : TRUE)
+					    : TRUE);
 #endif
 				break;
 			}
@@ -7341,7 +7343,7 @@ bool player_can_enter(int Ind, u16b feature, bool comfortably) {
 		    || feature == FEAT_BUSH || feature == FEAT_TREE || feature == FEAT_DEAD_TREE)
 			return(TRUE);
 		//use natural drown/damage code for this stuff instead:
-		//if (is_deep_water(feature) || is_deep_lava(feature)) return(FALSE);
+		//if (feat_is_deep_water(feature) || feat_is_deep_lava(feature)) return(FALSE);
 	}
 
 #if 0	// it's interesting.. hope we can have similar feature :)
@@ -8116,7 +8118,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		if (p_ptr->tim_wraith || p_ptr->ghost ||
 		    (p_ptr->prace == RACE_VAMPIRE && p_ptr->lev >= 35) /* vampire mist QoL hack */
 		    ) {
-			if (c_ptr->feat == FEAT_WALL_HOUSE) {
+			if (c_ptr->feat == FEAT_WALL_HOUSE || feat_is_window(c_ptr->feat)) {
 				if (!wraith_access_virtual(Ind, y, x)) {
 					msg_print(Ind, "The wall blocks your movement.");
 					disturb(Ind, 0, 0);
@@ -8519,7 +8521,7 @@ int see_wall(int Ind, int dir, int y, int x) {
 	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREE || zcave[y][x].feat == FEAT_BUSH)
 	     && p_ptr->pass_trees) return(FALSE);
 	/* hack - allow 'running' if player can swim - HARDCODED :( */
-	if (is_water(zcave[y][x].feat) && p_ptr->can_swim) return(FALSE);
+	if (feat_is_water(zcave[y][x].feat) && p_ptr->can_swim) return(FALSE);
 #endif
 	/* Must be known to the player */
 	if (!(p_ptr->cave_flag[y][x] & CAVE_MARK)) return(FALSE);
@@ -8950,7 +8952,7 @@ static bool run_test(int Ind) {
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return(TRUE);
 
 		/* Hack -- basically stop in water */
-		if (is_deep_water(c_ptr->feat) && !aqua) return(TRUE);
+		if (feat_is_deep_water(c_ptr->feat) && !aqua) return(TRUE);
 
 		/* Assume unknown */
 		inv = TRUE;

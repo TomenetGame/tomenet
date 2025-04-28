@@ -6578,7 +6578,7 @@ int mon_will_run(int Ind, int m_idx) {
 
  #if 0 // I'll run instead!
 	/* Hack -- aquatic life outa water */
-	if (!is_deep_water(zcave[m_ptr->fy][m_ptr->fx].feat)) {
+	if (!feat_is_deep_water(zcave[m_ptr->fy][m_ptr->fx].feat)) {
 		if (r_ptr->flags7 & RF7_AQUATIC) return(TRUE);
 	} else {
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
@@ -7226,8 +7226,8 @@ static bool monster_is_comfortable(monster_race *r_ptr, cave_type *c_ptr) {
 		return(TRUE);
 
 	/* I'd like to be under the sea ./~ */
-	if (r_ptr->flags7 & RF7_AQUATIC) return(is_deep_water(c_ptr->feat));
-	else return(!is_deep_water(c_ptr->feat));
+	if (r_ptr->flags7 & RF7_AQUATIC) return(feat_is_deep_water(c_ptr->feat));
+	else return(!feat_is_deep_water(c_ptr->feat));
 }
 #endif	// 0
 
@@ -10123,7 +10123,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 #if 0	// too bad hack!
 	/* Hack -- aquatic life outa water */
-	if (!is_deep_water(zcave[oy][ox].feat)) {
+	if (!feat_is_deep_water(zcave[oy][ox].feat)) {
 		if (r_ptr->flags7 & RF7_AQUATIC) {
 			m_ptr->monfear = 50;
 			m_ptr->monfear_gone = 0;

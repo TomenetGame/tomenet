@@ -1560,7 +1560,7 @@ void do_cmd_drink_fountain(int Ind) {
 		s_printf("warning_fill: %s\n", p_ptr->name);
 	}
 
-	if (is_water(c_ptr->feat) && c_ptr->feat != FEAT_TAINTED_WATER) {
+	if (feat_is_water(c_ptr->feat) && c_ptr->feat != FEAT_TAINTED_WATER) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
@@ -1812,7 +1812,7 @@ void do_cmd_fill_bottle(int Ind, int force_slot) {
 	    && c_ptr->feat != FEAT_FOUNTAIN_BLOOD
 #endif
 	    ) {
-		if (!is_water(c_ptr->feat) || c_ptr->feat == FEAT_TAINTED_WATER) {
+		if (!feat_is_water(c_ptr->feat) || c_ptr->feat == FEAT_TAINTED_WATER) {
 			msg_print(Ind, "You see nothing here to fill bottles with.");
 			return;
 		}

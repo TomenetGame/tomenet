@@ -10173,8 +10173,8 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 	} else if (!d_ptr || d_ptr->type != DI_MT_DOOM) return(FALSE);
 
 	/* grid isn't lava or 'fire'? */
-	if (!is_lava(c_ptr->feat) &&
-	    !is_acute_fire(c_ptr->feat)) //allow 'fires' too
+	if (!feat_is_lava(c_ptr->feat) &&
+	    !feat_is_acute_fire(c_ptr->feat)) //allow 'fires' too
 		return(FALSE);
 
 	/* lands safely on top of a loot pile? :-p */
@@ -10566,7 +10566,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	if (o_ptr->tval == TV_FLASK) is_flask = TRUE;
 	if (o_ptr->number > 1) plural = TRUE;
 #endif
-	if (is_water(c_ptr->feat)) {
+	if (feat_is_water(c_ptr->feat)) {
 		if (hates_water(o_ptr)) {
 			do_kill = TRUE;
 #ifdef DROP_KILL_NOTE
@@ -10574,7 +10574,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 #endif
 			if (f5 & TR5_IGNORE_WATER) do_kill = FALSE;
 		}
-	} else if (is_fire(c_ptr->feat) || is_lava(c_ptr->feat)) {
+	} else if (feat_is_fire(c_ptr->feat) || feat_is_lava(c_ptr->feat)) {
 		if (hates_fire(o_ptr)) {
 			do_kill = TRUE;
 #ifdef DROP_KILL_NOTE

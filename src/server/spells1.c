@@ -981,10 +981,10 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 			if (left_shop && dis <= 5) {
 				/* Copy/paste from player_can_enter(), could replace it with that (with comfortably=TRUE flag) */
-				if (is_lava(zcave[y][x].feat) || is_acute_fire(zcave[y][x].feat))
+				if (feat_is_lava(zcave[y][x].feat) || feat_is_acute_fire(zcave[y][x].feat))
 					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire)))
 						continue;
-				if (is_deep_water(zcave[y][x].feat))
+				if (feat_is_deep_water(zcave[y][x].feat))
 					//if (!(p_ptr->immune_water || p_ptr->res_water ||
 					if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
 						continue;
@@ -1223,7 +1223,7 @@ void teleport_player_to(int Ind, int ny, int nx, char forced) {
 
 		if (!forced) { /* normal tele-to */
 			if (town) {
-				if (is_lava(zcave[y][x].feat) || is_acute_fire(zcave[y][x].feat))
+				if (feat_is_lava(zcave[y][x].feat) || feat_is_acute_fire(zcave[y][x].feat))
 					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire))) {
 						/* Occasionally advance the distance */
 						if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
@@ -1232,7 +1232,7 @@ void teleport_player_to(int Ind, int ny, int nx, char forced) {
 						}
 						continue;
 					}
-				if (is_deep_water(zcave[y][x].feat))
+				if (feat_is_deep_water(zcave[y][x].feat))
 					//if (!(p_ptr->immune_water || p_ptr->res_water ||
 					if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith)) {
 						/* Occasionally advance the distance */
@@ -4692,7 +4692,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_ICE:
 	case GF_ICEPOISON:
 		/* misc flavour: turn shallow water into ice? */
-		if (is_shal_water(c_ptr->feat) && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_ICE);
+		if (feat_is_shal_water(c_ptr->feat) && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_ICE);
 		if (typ == GF_COLD) break;
 		//fall through
 	case GF_SHARDS:
@@ -5400,7 +5400,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				p2 = 15; f2 = FEAT_MUD;
 			}
 		}
-		else if (is_shal_lava(c_ptr->feat)) {
+		else if (feat_is_shal_lava(c_ptr->feat)) {
 			/* 15% chance to convert it to normal floor */
 			p1 = 15; f1 = FEAT_VOLCANIC;//FEAT_ROCKY, FEAT_ASH
 		}
@@ -13363,8 +13363,8 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 
 				if (cave_valid_bold(zcave, y, x) && /* <- implies !FF1_PERMANENT */
 				    //(cave[y][x].feat < FEAT_PATTERN_START || cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
-				    !is_water(c_ptr2->feat) &&
-				    !is_lava(c_ptr2->feat) &&
+				    !feat_is_water(c_ptr2->feat) &&
+				    !feat_is_lava(c_ptr2->feat) &&
 				    //(c_ptr2->feat != FEAT_ASH) &&
 				    (c_ptr2->feat != FEAT_MUD) &&
 				    (c_ptr2->feat != FEAT_DIRT) &&

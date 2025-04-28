@@ -2854,32 +2854,35 @@
 #define FEAT_BARRED_WINDOW_SMALL	275
 
 
-#define is_shal_water(F) \
+#define feat_is_shal_water(F) \
 	((F) == FEAT_ANIM_SHAL_WATER_EAST || (F) == FEAT_ANIM_SHAL_WATER_WEST || (F) == FEAT_ANIM_SHAL_WATER_NORTH || (F) == FEAT_ANIM_SHAL_WATER_SOUTH || \
 	(F) == FEAT_SHAL_WATER || (F) == FEAT_TAINTED_WATER)
-#define is_deep_water(F) \
+#define feat_is_deep_water(F) \
 	((F) == FEAT_ANIM_DEEP_WATER_EAST || (F) == FEAT_ANIM_DEEP_WATER_WEST || (F) == FEAT_ANIM_DEEP_WATER_NORTH || (F) == FEAT_ANIM_DEEP_WATER_SOUTH || \
 	(F) == FEAT_DEEP_WATER || (F) == FEAT_GLIT_WATER)
 	//Note that FEAT_GLIT_WATER is just a boundary, so strictly speaking it's neither shallow nor deep but a permawall. ^^
-#define is_water(F) (is_shal_water(F) || is_deep_water(F))
+#define feat_is_water(F) (feat_is_shal_water(F) || feat_is_deep_water(F))
 
-#define is_shal_lava(F) \
+#define feat_is_shal_lava(F) \
 	((F) == FEAT_ANIM_SHAL_LAVA_EAST || (F) == FEAT_ANIM_SHAL_LAVA_WEST || (F) == FEAT_ANIM_SHAL_LAVA_NORTH || (F) == FEAT_ANIM_SHAL_LAVA_SOUTH || \
 	(F) == FEAT_SHAL_LAVA)
-#define is_deep_lava(F) \
+#define feat_is_deep_lava(F) \
 	((F) == FEAT_ANIM_DEEP_LAVA_EAST || (F) == FEAT_ANIM_DEEP_LAVA_WEST || (F) == FEAT_ANIM_DEEP_LAVA_NORTH || (F) == FEAT_ANIM_DEEP_LAVA_SOUTH || \
 	(F) == FEAT_DEEP_LAVA)
-#define is_lava(F) (is_shal_lava(F) || is_deep_lava(F))
+#define feat_is_lava(F) (feat_is_shal_lava(F) || feat_is_deep_lava(F))
 
 /* Intense fires that creatures cannot avoid: */
-#define is_acute_fire(F) ((F) == FEAT_FIRE || (F) == FEAT_GREAT_FIRE)
+#define feat_is_acute_fire(F) ((F) == FEAT_FIRE || (F) == FEAT_GREAT_FIRE)
 /* Fire that won't necessarily harm creatures, but objects falling into these can easily get destroyed: */
-#define is_avoidable_fire(F) ((F) == FEAT_EMBERS || (F) == FEAT_SMALL_FIRE || (F) == FEAT_SMALL_CAMPFIRE || (F) == FEAT_CAMPFIRE)
+#define feat_is_avoidable_fire(F) ((F) == FEAT_EMBERS || (F) == FEAT_SMALL_FIRE || (F) == FEAT_SMALL_CAMPFIRE || (F) == FEAT_CAMPFIRE)
 /* Any fire */
-#define is_fire(F) (is_acute_fire(F) || is_avoidable_fire(F))
+#define feat_is_fire(F) (feat_is_acute_fire(F) || feat_is_avoidable_fire(F))
 
 /* Note: Just fiery light sources 'dropped to the floor'. These won't even threaten items, for now:
 	FEAT_BURNING_TORCH, FEAT_BURNING_LAMP. */
+
+#define feat_is_window(F) ((F) == FEAT_WINDOW || (F) == FEAT_WINDOW_SMALL || (F) == FEAT_OPEN_WINDOW || (F) == FEAT_OPEN_WINDOW_SMALL || (F) == FEAT_BARRED_WINDOW || (F) == FEAT_BARRED_WINDOW_SMALL)
+
 
 
 /* number of connected void gates or something? */
@@ -7667,13 +7670,13 @@
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_LEVITATE) && p_ptr->levitate) || \
 	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->levitate)) || /* fly is redundant, covered a line above */ \
-	(is_water(ZCAVE[Y][X].feat) && p_ptr->can_swim))
+	(feat_is_water(ZCAVE[Y][X].feat) && p_ptr->can_swim))
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing --
    note last line, added for Paths of the Dead, allowing to run over pits */
 #define cave_running_bold_notrees(p_ptr,ZCAVE,Y,X) \
 	( ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_LEVITATE) && p_ptr->levitate) || \
-	(is_water(ZCAVE[Y][X].feat) && p_ptr->can_swim)) \
+	(feat_is_water(ZCAVE[Y][X].feat) && p_ptr->can_swim)) \
 	&& !(ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH || \
 	    ZCAVE[Y][X].feat == FEAT_DARK_PIT) )
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing --

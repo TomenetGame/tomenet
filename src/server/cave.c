@@ -2557,7 +2557,7 @@ byte get_trap_color(int Ind, int t_idx, int feat) {
 
 	/* Hack -- always l.blue if underwater */
 	if (feat == FEAT_TAINTED_WATER) a = TERM_UMBER;
-	else if (is_water(feat)) a = TERM_L_BLUE;
+	else if (feat_is_water(feat)) a = TERM_L_BLUE;
 
 	return(a);
 }
@@ -2576,7 +2576,7 @@ byte get_monster_trap_color(int Ind, int o_idx, int feat) {
 
 	/* Hack -- always l.blue if underwater */
 	if (feat == FEAT_TAINTED_WATER) a = TERM_UMBER;
-	else if (is_water(feat)) a = TERM_L_BLUE;
+	else if (feat_is_water(feat)) a = TERM_L_BLUE;
 
 	return(a);
 }
@@ -3231,7 +3231,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 #if 0 /* currently this doesn't make sense because montraps are their own feature (like runes) instead of using just the cs_ptr (like normal traps)! This means they cancel the water grid! ew. */
 						/* Hack -- always l.blue if underwater */
 						if (cs_ptr->sc.montrap.feat == FEAT_TAINTED_WATER) a = TERM_UMBER;
-						else if (is_water(cs_ptr->sc.montrap.feat)) a = TERM_L_BLUE;
+						else if (feat_is_water(cs_ptr->sc.montrap.feat)) a = TERM_L_BLUE;
 #endif
 					}
 					keep = TRUE;
@@ -3893,7 +3893,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 				/* Hack -- always l.blue if underwater */
 				if (feat == FEAT_TAINTED_WATER) (*ap) = TERM_UMBER; //dirty water
-				else if (is_water(feat)) (*ap) = TERM_L_BLUE;
+				else if (feat_is_water(feat)) (*ap) = TERM_L_BLUE;
 
 #ifdef ENABLE_DEMOLITIONIST
 				/* Hack -- thrown aka non-planted, armed demolition charges flicker as the fuse is lit */
@@ -8647,7 +8647,7 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 
 	/* Trees in greater fire become dead trees at once */
 	if ((feat == FEAT_TREE || feat == FEAT_BUSH) &&
-	    (is_lava(c_ptr->feat) || is_acute_fire(c_ptr->feat)))
+	    (feat_is_lava(c_ptr->feat) || feat_is_acute_fire(c_ptr->feat)))
 		feat = FEAT_DEAD_TREE;
 
 	/* Don't mess with inns please! */
@@ -8669,7 +8669,7 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 			feat = FEAT_NETHER_MIST;
 			break;
 		default:
-			if (is_water(feat)) feat = FEAT_NETHER_MIST;
+			if (feat_is_water(feat)) feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
@@ -8687,7 +8687,7 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 			feat = FEAT_DEEP_WATER;
 			break;
 		default:
-			if (is_shal_water(feat)) feat = FEAT_DEEP_WATER;
+			if (feat_is_shal_water(feat)) feat = FEAT_DEEP_WATER;
 	}
 
 	/* Change the feature */
@@ -8749,7 +8749,7 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		default:
-			if (is_water(feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
+			if (feat_is_water(feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 
 		switch (c_ptr->feat) {
@@ -8767,7 +8767,7 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		default:
-			if (is_water(c_ptr->feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
+			if (feat_is_water(c_ptr->feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 #else
 		/* hack: only allow around store entrances */
@@ -8811,7 +8811,7 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_DEEP_LAVA ||
 	    c_ptr->feat == FEAT_DEEP_WATER))
 #else
-	if (is_deep_lava(c_ptr->feat) || is_deep_water(c_ptr->feat))
+	if (feat_is_deep_lava(c_ptr->feat) || feat_is_deep_water(c_ptr->feat))
 #endif
 		return(FALSE);
 
@@ -8867,7 +8867,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		default:
-			if (is_water(feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
+			if (feat_is_water(feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 
 		switch (c_ptr->feat) {
@@ -8885,7 +8885,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		default:
-			if (is_water(c_ptr->feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
+			if (feat_is_water(c_ptr->feat) && TOWN_TERRAFORM_WATER == 0) return(FALSE);
 		}
 #else
 		/* hack: only allow around store entrances */
@@ -8929,7 +8929,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_DEEP_LAVA ||
 	    c_ptr->feat == FEAT_DEEP_WATER))
 #else
-	if (is_deep_lava(c_ptr->feat) || is_deep_water(c_ptr->feat))
+	if (feat_is_deep_lava(c_ptr->feat) || feat_is_deep_water(c_ptr->feat))
 #endif
 		return(FALSE);
 
@@ -8949,7 +8949,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 			feat = FEAT_NETHER_MIST;
 			break;
 		default:
-			if (is_water(feat)) feat = FEAT_NETHER_MIST;
+			if (feat_is_water(feat)) feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
@@ -8967,13 +8967,13 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 			feat = FEAT_DEEP_WATER;
 			break;
 		default:
-			if (is_shal_water(feat)) feat = FEAT_DEEP_WATER;
+			if (feat_is_shal_water(feat)) feat = FEAT_DEEP_WATER;
 	}
 
 
 	/* Trees in greater fire become dead trees at once */
 	if ((feat == FEAT_TREE || feat == FEAT_BUSH) &&
-	    (is_lava(c_ptr->feat) || is_acute_fire(c_ptr->feat)))
+	    (feat_is_lava(c_ptr->feat) || feat_is_acute_fire(c_ptr->feat)))
 		feat = FEAT_DEAD_TREE;
 
 	/* Clear mimic feature left by a secret door - mikaelh */
@@ -10115,7 +10115,7 @@ void aquatic_terrain_hack(cave_type **zcave, int x, int y) {
 		xx = x + ddx[d];
 		yy = y + ddy[d];
 		if (!in_bounds(yy, xx)) continue;
-		if (is_deep_water(zcave[yy][xx].feat)) {
+		if (feat_is_deep_water(zcave[yy][xx].feat)) {
 			zcave[y][x].info |= CAVE_WATERY;
 			return;
 		}
