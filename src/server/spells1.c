@@ -12981,11 +12981,13 @@ msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
  #endif
 				    || broke_on_terrain2) break;
 #endif
-				else if (!cave_contact(zcave, y9, x9)
+				else if (!cave_contact(zcave, y9, x9) /* Entities on walls are not safe! */
 #ifdef DOUBLE_LOS_SAFETY
 				    && !ok_DLS
 #endif
 				    ) {
+					/* Specialty: Entities on specific BLOCK_CONTACT grids are always safe! */
+					if (f_info[zcave[y9][x9].feat].flags1 & FF1_BLOCK_CONTACT) break;
 #ifndef PROJ_MON_ON_WALL
 					/* if there isn't a player on the grid, we can't target it */
 					if (zcave[y9][x9].m_idx >= 0) break;
@@ -13013,20 +13015,11 @@ msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
 				char ch;
 				byte attr;
 
-				if (p_ptr->conn == NOT_CONNECTED)
-					continue;
-
-				if (!inarea(&p_ptr->wpos, wpos))
-					continue;
-
-				if (p_ptr->blind)
-					continue;
-
-				if (!panel_contains(y9, x9))
-					continue;
-
-				if (!player_has_los_bold(j, y9, x9))
-					continue;
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+				if (p_ptr->blind) continue;
+				if (!panel_contains(y9, x9)) continue;
+				if (!player_has_los_bold(j, y9, x9)) continue;
 
 				dispx = x9 - p_ptr->panel_col_prt;
 				dispy = y9 - p_ptr->panel_row_prt;
@@ -13189,11 +13182,13 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 	#endif
 							    || broke_on_terrain2) break;
 #endif
-							else if (!cave_contact(zcave, y9, x9)
+							else if (!cave_contact(zcave, y9, x9) /* Entities on walls are not safe! */
 #ifdef DOUBLE_LOS_SAFETY
 							    && !ok_DLS
 #endif
 							    ) {
+								/* Specialty: Entities on specific BLOCK_CONTACT grids are always safe! */
+								if (f_info[zcave[y9][x9].feat].flags1 & FF1_BLOCK_CONTACT) break;
 #ifndef PROJ_MON_ON_WALL
 								/* if there isn't a player on the grid, we can't target it */
 								if (zcave[y9][x9].m_idx >= 0) break;
@@ -13263,10 +13258,10 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 	if ((flg & PROJECT_EVSG) && zcave[y][x].m_idx != 0 && typ != GF_VINE_SLOW) /* vine-slow has greenish floor fluff effects, and is cast via grid_bolt so it gets EVSG... */
 		flg &= ~(PROJECT_GRID | PROJECT_ITEM);
 
-	/* hack: FF1_BLOCK_CONTACT grids prevent explosions,
+	/* hack: prevent explosions TOWARDS THE WRONG SIDE when hitting entities on walls,
 	   since those would carry over on the other side if it's
 	   just a wall of thickness 1 and possibly hit monsters there. */
-	if (f_info[zcave[y9][x9].feat].flags1 & FF1_BLOCK_CONTACT) suppress_explosion = TRUE;
+	if (x == x9 && y == y9 && !cave_contact(zcave, y9, x9)) suppress_explosion = TRUE;
 
 #ifdef OPTIMIZED_ANIMATIONS
 	if (path_num) {
@@ -13327,7 +13322,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 	if (typ == GF_ROCKET || typ == GF_DETONATION) disi_range_limit = (flg & PROJECT_TRAP) ? 2 : 1;
 
 	/* If we found a "target", explode there. */
-	if (true_dist <= MAX_RANGE && !suppress_explosion
+	if (true_dist <= MAX_RANGE
 	    && !((flg & PROJECT_BEAM) && !rad) /* Note regarding beams, 1/2 (see right below for 2nd part) - beams that have radius 0 don't need to 'explode' */
 	    ) {
 		dist = 0;
@@ -13413,8 +13408,12 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 					//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 				}
 			}
-			/* Ball explosions are stopped by walls */
-			if (!los(wpos, y2, x2, y, x)) continue;
+
+			/* No explosions on the wrong side of a wall if they started on a wall; a grid is on the 'wrong' side when it has no projection line to the caster */
+			if (suppress_explosion && !projectable(wpos, y, x, y1, x1, MAX_RANGE)) continue;
+
+			/* Ball explosions are stopped by walls, even if we have los (Glass walls etc) */
+			if (!projectable(wpos, y2, x2, y, x, MAX_RANGE)) continue;
 
 			/* Save this grid */
 #ifdef DEBUG_PROJECT_GRIDS
@@ -13455,20 +13454,11 @@ msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
 					int k;
 					bool flag = TRUE;
 
-					if (p_ptr->conn == NOT_CONNECTED)
-						continue;
-
-					if (!inarea(&p_ptr->wpos, wpos))
-						continue;
-
-					if (p_ptr->blind)
-						continue;
-
-					if (!panel_contains(y, x))
-						continue;
-
-					if (!player_has_los_bold(j, y, x))
-						continue;
+					if (p_ptr->conn == NOT_CONNECTED) continue;
+					if (!inarea(&p_ptr->wpos, wpos))continue;
+					if (p_ptr->blind) continue;
+					if (!panel_contains(y, x)) continue;
+					if (!player_has_los_bold(j, y, x)) continue;
 
 					attr = spell_color(typ);
 
@@ -13515,10 +13505,9 @@ msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
 			}
 
 			/* Flush the explosion */
-			for (j = 0; j < num_can_see; j++) {
+			for (j = 0; j < num_can_see; j++)
 				/* Show this radius and delay */
 				Send_flush(who_can_see[j]);
-			}
 		}
 	}
 #endif
