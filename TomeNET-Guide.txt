@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 27. April 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 28. April 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -28646,5 +28646,25 @@ Solution:   As long as you don't rely on CJK IME (Input Method Editors for
                'DisableIME' and set it to '1' instead of '0'.
             3) Start TomeNET with the command-line option '-I', for example
                from a terminal window or a .BAT file:  TomeNET.exe -I
+
+PROBLEM 78: On startup the game keeps asking for bigmap (double screen height)
+            mode or for graphics mode.
+Solution:   TomeNET writes a hint to its config file after asking this so next
+            startup it knows not to ask again when it reads the config file.
+            Since this mechanism doesn't seem to work, you either
+            - set the TomeNET config file to write-protected or
+            - have some script that automatically overwrites it with an initial
+              state/version.
+            You can also  edit your TomeNET config file with a text editor and
+            add the missing hint manually to suppress the query on startup:
+            For Windows client:
+             Edit TomeNET.ini (must be same base filename as the executable, ie
+             in this case TomeNET.exe, assumed you aren't using a command-line
+             parameter to load a differently named ini file) and add or modify
+             a line in it: "HintBigmap=0"
+            For X11 client (Linux/OSX):
+             Edit .tomenetrc file (assumed you aren't using a command-line parm
+             to load a differently named rc file) and add a line just saying:
+             "hintBigmap".
 
 ===============================================================================
