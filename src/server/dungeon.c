@@ -1177,6 +1177,7 @@ static void process_effects(void) {
 			/* Creates a "wave" effect*/
 			if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) {
 				if (projectable(wpos, e_ptr->cy, e_ptr->cx, j, i, MAX_RANGE)
+				    //&& projectable(wpos, e_ptr->caster_y, e_ptr->caster_x, j, i, MAX_RANGE) --enable if caster_x/y are needed for special combo effects, if ever
 				    && (distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
 					apply_effect(k, &who, wpos, i, j, c_ptr);
 			}
@@ -1623,6 +1624,7 @@ static void process_effects(void) {
 				if (c_ptr->effect && c_ptr->effect != k) continue; /* 'skip' */
 
 				if (projectable(wpos, e_ptr->cy, e_ptr->cx, j, i, MAX_RANGE)
+				    //&& projectable(wpos, e_ptr->caster_y, e_ptr->caster_x, j, i, MAX_RANGE) --enable if caster_x/y are needed for special combo effects, if ever
 				    && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 					apply_effect(k, &who, wpos, i, j, c_ptr);
 					if (!(e_ptr->flags & EFF_DUMMY)) {
@@ -1676,6 +1678,7 @@ static void process_effects(void) {
 					if (!in_bounds(j, i)) continue;
 					c_ptr = &zcave[j][i];
 					if (projectable(wpos, e_ptr->cy, e_ptr->cx, j, i, MAX_RANGE)
+					    //&& projectable(wpos, e_ptr->caster_y, e_ptr->caster_x, j, i, MAX_RANGE) --enable if caster_x/y are needed for special combo effects, if ever
 					    && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 						c_ptr->effect = k;
 						if (!(e_ptr->flags & EFF_DUMMY))
