@@ -9726,8 +9726,13 @@ static int effect_pop(int who_id) {
 int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags) {
 	int i;
 	s32b who_id = 0;
+	player_type *p_ptr = NULL;
 
-	if (who < 0 && who > PROJECTOR_UNUSUAL) who_id = Players[0 - who]->id;
+	/* Caster is a player? */
+	if (who < 0 && who > PROJECTOR_UNUSUAL) {
+		p_ptr = Players[0 - who];
+		who_id = p_ptr->id;
+	}
 
 	if ((i = effect_pop(who_id)) == -1) return(-1);
 	effects[i].interval = interval;
@@ -9739,18 +9744,26 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	effects[i].cx = cx;
 	effects[i].cy = cy;
 
-	if ((project_time_effect & EFF_VORTEX) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
+	if (who_id) {
+		effects[i].caster_x = p_ptr->px;
+		effects[i].caster_y = p_ptr->py;
+	} else {
+		effects[i].caster_x = -1;
+		effects[i].caster_y = -1;
+	}
+
+	if ((project_time_effect & EFF_VORTEX) && who_id) {
 		if (target_okay(0 - who)) {
-			effects[i].whot = Players[0 - who]->target_who;
-			effects[i].cy = Players[0 - who]->target_row;
-			effects[i].cx = Players[0 - who]->target_col;
+			effects[i].whot = p_ptr->target_who;
+			effects[i].cy = p_ptr->target_row;
+			effects[i].cx = p_ptr->target_col;
 		}
 	}
-	else if ((project_time_effect & EFF_SEEKER) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
+	else if ((project_time_effect & EFF_SEEKER) && who_id) {
 		if (target_okay(0 - who)) {
-			effects[i].whot = Players[0 - who]->target_who;
-			effects[i].ty = Players[0 - who]->py;
-			effects[i].tx = Players[0 - who]->px;
+			effects[i].whot = p_ptr->target_who;
+			effects[i].ty = p_ptr->py;
+			effects[i].tx = p_ptr->px;
 		}
 	}
 	else if (project_time_effect & EFF_METEOR) {

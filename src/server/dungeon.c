@@ -1176,8 +1176,8 @@ static void process_effects(void) {
 
 			/* Creates a "wave" effect*/
 			if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) {
-				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
-				    (distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
+				if (projectable(wpos, e_ptr->cy, e_ptr->cx, j, i, MAX_RANGE)
+				    && (distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
 					apply_effect(k, &who, wpos, i, j, c_ptr);
 			}
 
@@ -1622,11 +1622,11 @@ static void process_effects(void) {
 				c_ptr = &zcave[j][i];
 				if (c_ptr->effect && c_ptr->effect != k) continue; /* 'skip' */
 
-				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
+				if (projectable(wpos, e_ptr->cy, e_ptr->cx, j, i, MAX_RANGE)
+				    && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 					apply_effect(k, &who, wpos, i, j, c_ptr);
 					if (!(e_ptr->flags & EFF_DUMMY)) {
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
-
 						/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
 						if (Players[0 - who]->conn == NOT_CONNECTED || Players[0 - who]->death) {
 							erase_effects(k);
@@ -1675,7 +1675,8 @@ static void process_effects(void) {
 					i = e_ptr->cx + tdx[l];
 					if (!in_bounds(j, i)) continue;
 					c_ptr = &zcave[j][i];
-					if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
+					if (projectable(wpos, e_ptr->cy, e_ptr->cx, j, i, MAX_RANGE)
+					    && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 						c_ptr->effect = k;
 						if (!(e_ptr->flags & EFF_DUMMY))
 							project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");

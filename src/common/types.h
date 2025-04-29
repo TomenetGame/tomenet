@@ -665,6 +665,7 @@ struct effect_type {
 	s16b cx;		/* Center of the cast */
 	s32b whot;		/* Effect target, p_ptr->target_who - Kurzel */
 	s16b tx, ty, cflags;	/* Target x,y and control-flags */
+	s16b caster_x, caster_y;	/* x,y coords from where the spell was cast - added to make it break on the correct side of walls for 1-grid thick walls */
 };
 
 /*
