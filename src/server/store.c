@@ -539,8 +539,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	}
 
 	switch (shop_type) {
-	case 0:
-		/* npc shop buys: very cheap */
+	case 0: /* npc shop buys: very cheap */
 		/* We have to manually handle whether the player has IDed / knows the ring flavour or not! */
 		if (Ind && !object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
 			price = object_value_base(Ind, o_ptr);
@@ -554,68 +553,23 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		if (!price) return(0);
 		if (Ind && !object_known_p(Ind, o_ptr)) return(price);
 
- #if 0
-		/* Add ego-power bonus (Note: Poly rings can never be artifacts) */
-		if (o_ptr->name2) {
-			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-			/* Hack -- "worthless" ego-items */
-			if (!e_ptr->cost) return(0L);
-			price += e_ptr->cost;
-
-			if (o_ptr->name2b) {
-				e_ptr = &e_info[o_ptr->name2b];
-
-				/* Hack -- "worthless" ego-items */
-				if (!e_ptr->cost) return(0L);
-				price += e_ptr->cost;
-			}
-		}
- #else
 		if (o_ptr->name2) price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
- #endif
- #if 0 /* cheapo, basically just a tip :/ */
-		if (o_ptr->pval != 0) price += r_info[o_ptr->pval].level * 100;
- #elif 0 /* can be a very serious tip. Worth selling forms you don't need, perhaps even? (1/10 of npc stores' selling price) */
-		if (o_ptr->pval != 0) price += ((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) / 10;
- #else /* get even moar out of it! Side hustle for mimicry users! */
 		if (o_ptr->pval != 0) price += (((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) * 10) / (30 + 300 / (r_ptr->level + 5));
- #endif
 
 		/* Apply discount (if any) */
 		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
 
 		break;
-	case 1:
-		/* npc shop sells: very expensive */
+
+	case 1: /* npc shop sells: very expensive */
 		if (o_ptr->pval != 0) price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
-
-#if 0
-		/* Add ego-power bonus (Note: Poly rings can never be artifacts) */
-		if (o_ptr->name2) {
-			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-			/* Hack -- "worthless" ego-items */
-			if (!e_ptr->cost) return(0L);
-			price += e_ptr->cost;
-
-			if (o_ptr->name2b) {
-				e_ptr = &e_info[o_ptr->name2b];
-
-				/* Hack -- "worthless" ego-items */
-				if (!e_ptr->cost) return(0L);
-				price += e_ptr->cost;
-			}
-		}
-#else
 		if (o_ptr->name2) price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
-#endif
 
 		/* Apply discount (if any) */
 		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
 		break;
-	case 2:
-		/* player store: balanced */
+
+	case 2: /* player store: balanced */
 		if (Ind && !object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
 			price = object_value_base(Ind, o_ptr);
 
@@ -625,27 +579,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		price = k_info[o_ptr->k_idx].cost;
 		if (!price) return(0);
 		if (Ind && !object_known_p(Ind, o_ptr)) return((price * player_store_factor(o_ptr)) / 10);
-
-#if 0
-		/* Add ego-power bonus (Note: Poly rings can never be artifacts) */
-		if (o_ptr->name2) {
-			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-			/* Hack -- "worthless" ego-items */
-			if (!e_ptr->cost) return(0L);
-			price += e_ptr->cost;
-
-			if (o_ptr->name2b) {
-				e_ptr = &e_info[o_ptr->name2b];
-
-				/* Hack -- "worthless" ego-items */
-				if (!e_ptr->cost) return(0L);
-				price += e_ptr->cost;
-			}
-		}
-#else
 		if (o_ptr->name2) price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
-#endif
 		if (o_ptr->pval != 0) {
 			r_val /= 2; //half price of npc stores
 			price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
