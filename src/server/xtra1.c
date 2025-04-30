@@ -4016,6 +4016,9 @@ void calc_boni(int Ind) {
 		case ART_NARTHANC: comboset_flags[1] |= 0x1; comboset_flags_cnt[1]++; break;
 		case ART_NIMTHANC: comboset_flags[1] |= 0x2; comboset_flags_cnt[1]++; break;
 		case ART_DETHANC: comboset_flags[1] |= 0x4; comboset_flags_cnt[1]++; break;
+
+		case ART_MOLTOR: comboset_flags[2] |= 0x1; break;
+		case ART_BOOTS_MOLTOR: comboset_flags[2] |= 0x2; break;
 		}
 	}
 	/* Imprint the results onto the equipped items -
@@ -4030,18 +4033,29 @@ void calc_boni(int Ind) {
 
 		case ART_NARTHANC:
 			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
-			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = 1;
-			else o_ptr->pval = 0;
+			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
+			else o_ptr->pval = a_info[o_ptr->name1].pval;
 			break;
 		case ART_NIMTHANC:
 			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
-			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = 1;
-			else o_ptr->pval = 0;
+			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
+			else o_ptr->pval = a_info[o_ptr->name1].pval;
 			break;
 		case ART_DETHANC:
 			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
-			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = 1;
-			else o_ptr->pval = 0;
+			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
+			else o_ptr->pval = a_info[o_ptr->name1].pval;
+			break;
+
+		case ART_MOLTOR:
+			o_ptr->comboset_flags = comboset_flags[2];
+			if (o_ptr->comboset_flags == 0x3) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
+			else o_ptr->pval = a_info[o_ptr->name1].pval;
+			break;
+		case ART_BOOTS_MOLTOR:
+			o_ptr->comboset_flags = comboset_flags[2];
+			if (o_ptr->comboset_flags == 0x3) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
+			else o_ptr->pval = a_info[o_ptr->name1].pval;
 			break;
 		}
 
@@ -4067,7 +4081,16 @@ void calc_boni(int Ind) {
 			case 0x4: msg_print(Ind, "Your dagger 'Dethanc' glows less brightly!"); break;
 		}
 	}
-	p_ptr->temp_misc_3 &= ~0x01; //clear once-skip marker forever, until next login
+	/* - comboset #2 -> bit 3 */
+	if ((comboset_flags[2] == 0x3) && !(p_ptr->combosets & 0x4)) {
+		p_ptr->combosets |= 0x4;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "\377B*Your pick and boots glow brightly!*");
+	} else if ((comboset_flags[2] != 0x3) && (p_ptr->combosets & 0x4)) {
+		p_ptr->combosets &= ~0x4;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_format(Ind, "Your %s less brightly!", comboset_flags[2] & 0x1 ? "pick glows" : "boots glow");
+	}
+	/* Clear the 'skip-comboset-messages-once' marker forever, until next login */
+	p_ptr->temp_misc_3 &= ~0x01;
 
 	/* Potentially downgrade Black Breath if it was from an item and we no longer have it equipped */
 	if (p_ptr->black_breath == 2) p_ptr->black_breath = 3;

@@ -1289,6 +1289,8 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				(*f1) |= TR1_DEX;
 			}
 			break;
+
+		//case ART_MOLTOR: case ART_BOOTS_MOLTOR: -- nothing here, as flags are unchanged.
 		}
 
 		/* Get flag difference made by the sigil */
@@ -7876,6 +7878,13 @@ void clear_comboset(object_type *o_ptr) {
 	case ART_NIMTHANC:
 	case ART_DETHANC:
 		o_ptr->pval = 0;
+		break;
+
+	case ART_MOLTOR:
+		o_ptr->pval = 1;
+		break;
+	case ART_BOOTS_MOLTOR:
+		o_ptr->pval = 5;
 		break;
 	}
 
