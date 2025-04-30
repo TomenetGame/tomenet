@@ -622,9 +622,10 @@ static void rd_item(object_type *o_ptr) {
 	if (!older_than(4, 9, 20)) {
 		rd_s32b(&tmp32s);
 		o_ptr->wId = tmp32s;
+		rd_byte(&o_ptr->comboset_flags);
+		rd_byte(&o_ptr->comboset_flags_cnt);
 
-		rd_u16b(&o_ptr->dummy1); //future use
-		rd_u32b(&o_ptr->dummy2); //future use
+		rd_u32b(&o_ptr->dummy1); //future use
 	}
 
 
@@ -2708,8 +2709,10 @@ if (p_ptr->updated_savegame == 0) {
 		p_ptr->cut_intrinsic = (tmp8u & 0x01);
 		p_ptr->nocut_intrinsic = (tmp8u & 0x02);
 
+		rd_byte(&p_ptr->combosets);
+
 		// --- future use / HOLE: ---
-		strip_bytes(7);
+		strip_bytes(6);
 	} else p_ptr->tim_lcage = 0;
 
 	if (!older_than(4, 5, 28)) {

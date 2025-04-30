@@ -920,6 +920,7 @@ struct player_type {
 
 	byte temp_misc_1;
 	byte temp_misc_2;
+	byte temp_misc_3;
 
 #ifdef SOLO_REKING
 	int solo_reking;

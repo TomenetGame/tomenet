@@ -847,10 +847,11 @@ struct object_type {
 	s16b custom_lua_destruction;	/* Runs custom lua script on item destruction */
 	s16b custom_lua_usage;		/* Runs custom lua script on whatever this item can be used for via command: activation, quaff, read, eat.. */
 
-	s32b wId;			/* Player currently _wielding/wearing_ the item. */
+	s32b wId;			/* Player currently _wielding/wearing_ the item. -- deprecated, superceded by 'comboset_flags' method */
+	byte comboset_flags;		/* Flag array of all equipped items affecting this item too to create a comboset */
+	byte comboset_flags_cnt;	/* Flag array of all equipped items affecting this item too to create a comboset - flag count */
 
-	u16b dummy1;			/* For future use */
-	u32b dummy2;			/* For future use */
+	u32b dummy1;			/* For future use */
 };
 typedef struct object_type_v8 object_type_v8;
 struct object_type_v8 {
@@ -3507,8 +3508,9 @@ struct player_type {
 	bool fail_no_melee;
 	byte temp_misc_1; //0x01: door-mimic open state; 0x02: ppage, 0x04: gpage, 0x08: snowed, 0x10: random dungeon town handling, 0x20: loading old savegames before separate depths, 0x40 and 0x80: reserved for testing
 	byte temp_misc_2; //timer for snowed
-	byte temp_misc_3; //for art_combo hack, to avoid duplicate checks (ie outside of xtra1.c)
+	byte temp_misc_3; //0x01: for combosets, to skip set-gain messages once: on login
 	byte lifetime_flags;
+	byte combosets; /* Just for messaging, could be optimized out maybe: Index flag array of all existing combosets, to check which are active (MAX_ITEM_COMBOSETS is 5, so 8 bits are 3 more than needed) */
 
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;

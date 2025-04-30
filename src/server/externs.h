@@ -2891,4 +2891,4 @@ extern char GF_name[MAX_GF_TYPES][18], GF_name_short[MAX_GF_TYPES][7];
 extern int custom_lua_timer_timeout[CUSTOM_LUA_TIMERS];
 extern char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE];
 extern int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS], custom_lua_timer_parm2[CUSTOM_LUA_TIMERS], custom_lua_timer_parm3[CUSTOM_LUA_TIMERS];
-extern u32b hack_sigil_f[7]; //same as ego_granted_flags
+extern u32b hack_sigil_f[7], hack_comboset_f[7]; //same as ego_granted_flags

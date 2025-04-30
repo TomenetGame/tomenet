@@ -604,6 +604,9 @@
 /* Max ego base type restrictions */
 #define MAX_EGO_BASETYPES	10
 
+/* Max equipped-item combo-sets */
+#define MAX_ITEM_COMBOSETS	5
+
 
 #ifdef CLIENT_SIDE
  /* Client-side unique list */

@@ -2849,7 +2849,7 @@ static void player_setup(int Ind, bool new) {
 
 	/* Update his view, light, boni, and torch radius */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SKILL_INFO | PU_SKILL_MOD | PU_LUA);
-	p_ptr->temp_misc_3 |= 0x02; /* Don't display art_combo message this time from calc_boni(), ie on initial login-setup. */
+	p_ptr->temp_misc_3 |= 0x01; /* Don't display art_combo message this time from calc_boni(), ie on initial login-setup. */
 
 	/* Update his inventory, equipment, and spell info */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);

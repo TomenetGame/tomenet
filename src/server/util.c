@@ -9889,8 +9889,8 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = o_ptr_v8->custom_lua_usage;
 				//convert:
 				o_ptr->mode = o_ptr_v8->mode; /* u32b = u16b */
-				o_ptr->wId = 0;
-				o_ptr->dummy1 = o_ptr->dummy2 = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				o_ptr->dummy1 = 0; /* (future use) */
 			}
 			if (r == 0) {
 				s_printf("  error: Failed to read object.\n");

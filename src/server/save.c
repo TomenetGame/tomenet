@@ -298,9 +298,10 @@ static void wr_item(object_type *o_ptr) {
 	wr_s16b(o_ptr->custom_lua_usage);
 
 	wr_s32b(o_ptr->wId);
+	wr_byte(o_ptr->comboset_flags);
+	wr_byte(o_ptr->comboset_flags_cnt);
 
-	wr_u16b(o_ptr->dummy1); //future use
-	wr_u32b(o_ptr->dummy2); //future use
+	wr_u32b(o_ptr->dummy1); //future use
 }
 
 /*
@@ -1191,9 +1192,10 @@ static void wr_extra(int Ind) {
 
 	tmp8u = (p_ptr->cut_intrinsic ? 0x01 : 0x00) + (p_ptr->nocut_intrinsic ? 0x02 : 0x00);
 	wr_byte(tmp8u);
+	wr_byte(p_ptr->combosets);
 
 	/* --- future use / HOLE: --- */
-	for (i = 0; i < 7; i++) wr_byte(0);
+	for (i = 0; i < 6; i++) wr_byte(0);
 
 	/* for shuffling/dealing a deck of cards */
 	wr_u16b(p_ptr->cards_diamonds);
