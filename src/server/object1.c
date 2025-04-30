@@ -1272,13 +1272,22 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			break;
 
 		case ART_NARTHANC:
-			if (o_ptr->comboset_flags_cnt == 2) (*f2) |= TR2_SUST_STR;
+			if (o_ptr->comboset_flags_cnt == 2) {
+				(*f2) |= TR2_SUST_STR;
+				(*f1) |= TR1_STR;
+			}
 			break;
 		case ART_NIMTHANC:
-			if (o_ptr->comboset_flags_cnt == 2) (*f2) |= TR2_SUST_STR;
+			if (o_ptr->comboset_flags_cnt == 2) {
+				(*f2) |= TR2_SUST_STR;
+				(*f1) |= TR1_STR;
+			}
 			break;
 		case ART_DETHANC:
-			if (o_ptr->comboset_flags_cnt == 2) (*f2) |= TR2_SUST_DEX;
+			if (o_ptr->comboset_flags_cnt == 2) {
+				(*f2) |= TR2_SUST_DEX;
+				(*f1) |= TR1_DEX;
+			}
 			break;
 		}
 
@@ -7856,4 +7865,20 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 	}
 	/* Multiple failures occurred */
 	if (failure) msg_print(Ind, "You are unable to use any of your identify items.");
+}
+
+void clear_comboset(object_type *o_ptr) {
+	if (!o_ptr->comboset_flags) return;
+
+	/* Analyze and reset according to specific comboset boni it received */
+	switch (o_ptr->name1) {
+	case ART_NARTHANC:
+	case ART_NIMTHANC:
+	case ART_DETHANC:
+		o_ptr->pval = 0;
+		break;
+	}
+
+	o_ptr->wId = 0; //deprecated, superceded by comboset_lags
+	o_ptr->comboset_flags = 0;
 }

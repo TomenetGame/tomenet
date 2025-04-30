@@ -71,8 +71,7 @@ s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
  #endif
 #endif
 
-	/* For art_combo hack: Clear wielder info. */
-	o_ptr->wId = o_ptr->comboset_flags = 0;
+	clear_comboset(o_ptr);
 
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {
@@ -227,8 +226,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
  #endif
 #endif
 
-	/* For art_combo hack: Clear wielder info. */
-	o_ptr->wId = o_ptr->comboset_flags = 0;
+	clear_comboset(o_ptr);
 
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {
@@ -527,8 +525,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	/* Message */
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
 
-	/* For art_combo hack: Clear wielder info. */
-	o_ptr->wId = o_ptr->comboset_flags = 0;
+	clear_comboset(o_ptr);
 
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {

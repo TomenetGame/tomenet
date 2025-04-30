@@ -10803,8 +10803,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 		/* Make a new object */
 		o_idx = o_pop();
 
-		/* For art_combo hack: Clear wielder info. */
-		o_ptr->wId = o_ptr->comboset_flags = 0;
+		clear_comboset(o_ptr);
 
 		/* Sigil (reset it) */
 		if (o_ptr->sigil) {

@@ -4018,7 +4018,9 @@ void calc_boni(int Ind) {
 		case ART_DETHANC: comboset_flags[1] |= 0x4; comboset_flags_cnt[1]++; break;
 		}
 	}
-	/* Imprint the results onto the equipped items */
+	/* Imprint the results onto the equipped items -
+           while based on this, item flags are modified on the fly in any object_flags() later,
+           any stat-value modifications must be done to the item here and now: */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		/* Specific (artifact) combos */
@@ -4026,10 +4028,23 @@ void calc_boni(int Ind) {
 		case ART_JUDGEMENT: o_ptr->comboset_flags = comboset_flags[0]; break;
 		case ART_MERCY: o_ptr->comboset_flags = comboset_flags[0]; break;
 
-		case ART_NARTHANC: o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1]; break;
-		case ART_NIMTHANC: o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1]; break;
-		case ART_DETHANC: o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1]; break;
+		case ART_NARTHANC:
+			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
+			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = 1;
+			else o_ptr->pval = 0;
+			break;
+		case ART_NIMTHANC:
+			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
+			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = 1;
+			else o_ptr->pval = 0;
+			break;
+		case ART_DETHANC:
+			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
+			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = 1;
+			else o_ptr->pval = 0;
+			break;
 		}
+
 	}
 	/* Imprint the results onto the player and give feedback message about combosets, gaining or losing a combo effect: */
 	/* - comboset #0 -> bit 1 */

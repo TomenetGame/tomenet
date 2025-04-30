@@ -6578,8 +6578,7 @@ void home_sell(int Ind, int item, int amt) {
 		else o_ptr = &o_list[0 - item];
 	}
 
-	/* For art_combo hack: Clear wielder info. */
-	o_ptr->wId = o_ptr->comboset_flags = 0;
+	clear_comboset(o_ptr);
 
 	/* Sigil (reset it) - Kurzel (fix the list house exploit) */
 	if (sold_obj.sigil) {
