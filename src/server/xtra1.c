@@ -4032,29 +4032,27 @@ void calc_boni(int Ind) {
 		}
 	}
 	/* Imprint the results onto the player and give feedback message about combosets, gaining or losing a combo effect: */
-	if (!(p_ptr->temp_misc_3 & 0x01)) { //skip message once (login setup time)
-		/* comboset #0 -> bit 1 */
-		if ((comboset_flags[0] == 0x3) && !(p_ptr->combosets & 0x1)) {
-			msg_print(Ind, "\377B*Both your weapons glow more brightly!*");
-			p_ptr->combosets |= 0x1;
-		} else if ((comboset_flags[0] != 0x3) && (p_ptr->combosets & 0x1)) {
-			msg_format(Ind, "Your dagger '%s' glows less brightly!", comboset_flags[0] & 0x1 ? "Judgement" : "Mercy");
-			p_ptr->combosets &= ~0x1;
-		}
-
-		/* comboset #1 -> bit 2 */
-		if (comboset_flags_cnt[1] == 2 && !(p_ptr->combosets & 0x2)) {
-			msg_print(Ind, "\377B*Both your weapons glow more brightly!*");
-			p_ptr->combosets |= 0x2;
-		} else if ((comboset_flags_cnt[1] != 2) && (p_ptr->combosets & 0x2)) {
-			switch (comboset_flags[1]) {
+	/* - comboset #0 -> bit 1 */
+	if ((comboset_flags[0] == 0x3) && !(p_ptr->combosets & 0x1)) {
+		p_ptr->combosets |= 0x1;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "\377B*Both your weapons glow more brightly!*");
+	} else if ((comboset_flags[0] != 0x3) && (p_ptr->combosets & 0x1)) {
+		p_ptr->combosets &= ~0x1;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_format(Ind, "Your dagger '%s' glows less brightly!", comboset_flags[0] & 0x1 ? "Judgement" : "Mercy");
+	}
+	/* - comboset #1 -> bit 2 */
+	if (comboset_flags_cnt[1] == 2 && !(p_ptr->combosets & 0x2)) {
+		p_ptr->combosets |= 0x2;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "\377B*Both your weapons glow more brightly!*");
+	} else if ((comboset_flags_cnt[1] != 2) && (p_ptr->combosets & 0x2)) {
+		p_ptr->combosets &= ~0x2;
+		if (!(p_ptr->temp_misc_3 & 0x01)) switch (comboset_flags[1]) {
 			case 0x1: msg_print(Ind, "Your dagger 'Narthanc' glows less brightly!"); break;
 			case 0x2: msg_print(Ind, "Your dagger 'Nimthanc' glows less brightly!"); break;
 			case 0x4: msg_print(Ind, "Your dagger 'Dethanc' glows less brightly!"); break;
-			}
-			p_ptr->combosets &= ~0x2;
 		}
-	} else p_ptr->temp_misc_3 &= ~0x01; //clear once-skip marker forever, until next login
+	}
+	p_ptr->temp_misc_3 &= ~0x01; //clear once-skip marker forever, until next login
 
 	/* Potentially downgrade Black Breath if it was from an item and we no longer have it equipped */
 	if (p_ptr->black_breath == 2) p_ptr->black_breath = 3;
