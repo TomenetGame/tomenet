@@ -553,7 +553,10 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		if (!price) return(0);
 		if (Ind && !object_known_p(Ind, o_ptr)) return(price);
 
-		if (o_ptr->name2) price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
+		if (o_ptr->name2) {
+			if (e_info[o_ptr->name2].cost) return(0);
+			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
+		}
 		if (o_ptr->pval != 0) price += (((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) * 10) / (30 + 300 / (r_ptr->level + 5));
 
 		/* Apply discount (if any) */
@@ -562,8 +565,14 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		break;
 
 	case 1: /* npc shop sells: very expensive */
+		price = k_info[o_ptr->k_idx].cost;
+		if (!price) return(0);
+
+		if (o_ptr->name2) {
+			if (e_info[o_ptr->name2].cost) return(0);
+			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
+		}
 		if (o_ptr->pval != 0) price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
-		if (o_ptr->name2) price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
 
 		/* Apply discount (if any) */
 		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
@@ -579,7 +588,11 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		price = k_info[o_ptr->k_idx].cost;
 		if (!price) return(0);
 		if (Ind && !object_known_p(Ind, o_ptr)) return((price * player_store_factor(o_ptr)) / 10);
-		if (o_ptr->name2) price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
+
+		if (o_ptr->name2) {
+			if (e_info[o_ptr->name2].cost) return(0);
+			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
+		}
 		if (o_ptr->pval != 0) {
 			r_val /= 2; //half price of npc stores
 			price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
