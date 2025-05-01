@@ -4019,6 +4019,10 @@ void calc_boni(int Ind) {
 
 		case ART_MOLTOR: comboset_flags[2] |= 0x1; break;
 		case ART_BOOTS_MOLTOR: comboset_flags[2] |= 0x2; break;
+
+		case ART_DURIN: comboset_flags[3] |= 0x1; break;
+		case ART_HELM_DURIN: comboset_flags[3] |= 0x2; break;
+		case ART_RING_DURIN: comboset_flags[3] |= 0x4; break;
 		}
 	}
 	/* Imprint the results onto the equipped items -
@@ -4028,34 +4032,31 @@ void calc_boni(int Ind) {
 		o_ptr = &p_ptr->inventory[i];
 		/* Specific (artifact) combos */
 		switch (o_ptr->name1) {
-		case ART_JUDGEMENT: o_ptr->comboset_flags = comboset_flags[0]; break;
-		case ART_MERCY: o_ptr->comboset_flags = comboset_flags[0]; break;
+		case ART_JUDGEMENT:
+		case ART_MERCY:
+			o_ptr->comboset_flags = comboset_flags[0];
+			break;
 
 		case ART_NARTHANC:
-			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
-			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
-			else o_ptr->pval = a_info[o_ptr->name1].pval;
-			break;
 		case ART_NIMTHANC:
-			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
-			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
-			else o_ptr->pval = a_info[o_ptr->name1].pval;
-			break;
 		case ART_DETHANC:
-			o_ptr->comboset_flags = comboset_flags[1]; o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
+			o_ptr->comboset_flags = comboset_flags[1];
+			o_ptr->comboset_flags_cnt = comboset_flags_cnt[1];
 			if (o_ptr->comboset_flags_cnt == 2) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
 			else o_ptr->pval = a_info[o_ptr->name1].pval;
 			break;
 
 		case ART_MOLTOR:
-			o_ptr->comboset_flags = comboset_flags[2];
-			if (o_ptr->comboset_flags == 0x3) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
-			else o_ptr->pval = a_info[o_ptr->name1].pval;
-			break;
 		case ART_BOOTS_MOLTOR:
 			o_ptr->comboset_flags = comboset_flags[2];
 			if (o_ptr->comboset_flags == 0x3) o_ptr->pval = a_info[o_ptr->name1].pval + 1;
 			else o_ptr->pval = a_info[o_ptr->name1].pval;
+			break;
+
+		case ART_DURIN:
+		case ART_HELM_DURIN:
+		case ART_RING_DURIN:
+			o_ptr->comboset_flags = comboset_flags[3];
 			break;
 		}
 
@@ -4088,6 +4089,14 @@ void calc_boni(int Ind) {
 	} else if ((comboset_flags[2] != 0x3) && (p_ptr->combosets & 0x4)) {
 		p_ptr->combosets &= ~0x4;
 		if (!(p_ptr->temp_misc_3 & 0x01)) msg_format(Ind, "Your %s less brightly!", comboset_flags[2] & 0x1 ? "pick glows" : "boots glow");
+	}
+	/* - comboset #3 -> bit 4 */
+	if ((comboset_flags[3] == 0x7) && !(p_ptr->combosets & 0x8)) {
+		p_ptr->combosets |= 0x8;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "\377B*Your Ring of Durin glows brightly!*");
+	} else if ((comboset_flags[3] != 0x7) && (p_ptr->combosets & 0x8)) {
+		p_ptr->combosets &= ~0x8;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "Your Ring of Durin glows less brightly!");
 	}
 	/* Clear the 'skip-comboset-messages-once' marker forever, until next login */
 	p_ptr->temp_misc_3 &= ~0x01;

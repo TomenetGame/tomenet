@@ -1291,6 +1291,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			break;
 
 		//case ART_MOLTOR: case ART_BOOTS_MOLTOR: -- nothing here, as flags are unchanged.
+
+		case ART_RING_DURIN:
+			if (o_ptr->comboset_flags == 0x7) (*f3) &= ~TR3_DRAIN_EXP;
+			break;
 		}
 
 		/* Get flag difference made by the sigil */
@@ -7869,10 +7873,11 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 	if (failure) msg_print(Ind, "You are unable to use any of your identify items.");
 }
 
+/* Comboset boni: Analyze and reset modified stats (if any) back to normal.
+   Does NOT treat item flags, as these are handled directly in object_flags(). */
 void clear_comboset(object_type *o_ptr) {
 	if (!o_ptr->comboset_flags) return;
 
-	/* Analyze and reset according to specific comboset boni it received */
 	switch (o_ptr->name1) {
 	case ART_NARTHANC:
 	case ART_NIMTHANC:

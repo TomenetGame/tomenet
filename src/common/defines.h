@@ -3163,6 +3163,8 @@
 #define ART_NIGHT		157
 #define ART_NATUREBANE		158
 
+#define ART_RING_DURIN		205
+
 /* ToME-NET additions */
 #define ART_GIVEROFSLEEP	209
 #define ART_METHODIQUE		211
