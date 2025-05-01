@@ -18,6 +18,16 @@
    This may be required in Windows 7 and higher, where access rights could cause problems when writing to these folders. - C. Blue */
 #define WINDOWS_USER_HOME
 
+/* Always map a custom font/tileset definition even if it's omitted, as omitted just means 'zero' aka 'use the standard colour' anyway.
+   This is important for the specific case when a custom font AND a graphical tileset are picked at the same time,
+   in which case the tileset should have the last say. Now if the font already defined an attr but the tileset wants to use the standard attr instead,
+   then the attr must be cleared again to zero ie standard, when the omitted-attr line is read from the tileset definition prf file.
+
+   So in other words the only effect this has is to sort out priority of graphical tileset definitions over font defininitions if both compete,
+   in which case the tileset will win as it is loaded after the font. - C. Blue*/
+#define CUSTOM_MAPPING_ALWAYS
+
+
 
 static int MACRO_WAIT = 96; //hack: see c-util.c and keep consistent
 static int MACRO_XWAIT = 30; //hack: see c-util.c and keep consistent
@@ -871,8 +881,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
-			if (n1) Client_setup.r_attr[i] = n1;
-			if (n2) {
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				Client_setup.r_attr[i] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+			{
 				Client_setup.r_char[i] = n2;
 				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
 			}
@@ -891,8 +907,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
-			if (n1) Client_setup.k_attr[i] = n1;
-			if (n2) Client_setup.k_char[i] = n2;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				Client_setup.k_attr[i] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+				Client_setup.k_char[i] = n2;
 			return(0);
 		}
 		break;
@@ -908,8 +930,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
-			if (n1) Client_setup.f_attr[i] = n1;
-			if (n2) {
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				Client_setup.f_attr[i] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+			{
 				Client_setup.f_char[i] = n2;
 				floor_mapping_mod = u32b_char_dict_set(floor_mapping_mod, n2, floor_mapping_org[i]);
 
@@ -935,8 +963,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
-			if (n1) Client_setup.u_attr[j] = n1;
-			if (n2) Client_setup.u_char[j] = n2;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				Client_setup.u_attr[j] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+				Client_setup.u_char[j] = n2;
 			return(0);
 		}
 		break;
@@ -954,8 +988,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
-			if (n1) Client_setup.r_attr[i] = n1;
-			if (n2) {
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				Client_setup.r_attr[i] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+			{
 				Client_setup.r_char[i] = n2;
 				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
 			}
@@ -980,8 +1020,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
-			if (n1) Client_setup.u_attr[j] = n1;
-			if (n2) Client_setup.u_char[j] = n2;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				Client_setup.u_attr[j] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+				Client_setup.u_char[j] = n2;
 			return(0);
 		}
 #endif
@@ -1003,8 +1049,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
-			if (n1) Client_setup.u_attr[j] = n1;
-			if (n2) Client_setup.u_char[j] = n2;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				Client_setup.u_attr[j] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+				Client_setup.u_char[j] = n2;
 			return(0);
 		}
 #endif
@@ -1019,8 +1071,14 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			j = (byte)strtol(zz[0], NULL, 0) % 128;
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-			if (n1) tval_to_attr[j] = n1;
-			if (n2) tval_to_char[j] = n2;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n1)
+#endif
+				tval_to_attr[j] = n1;
+#ifndef CUSTOM_MAPPING_ALWAYS
+			if (n2)
+#endif
+				tval_to_char[j] = n2;
 			return(0);
 		}
 #endif
