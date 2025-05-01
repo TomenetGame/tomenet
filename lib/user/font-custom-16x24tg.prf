@@ -237,11 +237,11 @@ F:215:/147 # Decorative yellow crystal
 F:216:/147 # Decorative orange crystal
 F:217:/147 # Decorative red crystal
 
-F:196:35/ # Window
+F:196:/ # Window
 
-F:197:42/ # Small window
+F:197:/ # Small window
 
-F:203:7/ # Town entrance
+F:203:/ # Town entrance
 
 
 
