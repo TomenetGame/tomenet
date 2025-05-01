@@ -4023,6 +4023,9 @@ void calc_boni(int Ind) {
 		case ART_DURIN: comboset_flags[3] |= 0x1; break;
 		case ART_HELM_DURIN: comboset_flags[3] |= 0x2; break;
 		case ART_RING_DURIN: comboset_flags[3] |= 0x4; break;
+
+		case ART_BILBO: comboset_flags[4] |= 0x1; break;
+		case ART_STING: comboset_flags[4] |= 0x2; break;
 		}
 	}
 	/* Imprint the results onto the equipped items -
@@ -4057,6 +4060,11 @@ void calc_boni(int Ind) {
 		case ART_HELM_DURIN:
 		case ART_RING_DURIN:
 			o_ptr->comboset_flags = comboset_flags[3];
+			break;
+
+		case ART_BILBO:
+		case ART_STING:
+			o_ptr->comboset_flags = comboset_flags[4];
 			break;
 		}
 
@@ -4093,10 +4101,18 @@ void calc_boni(int Ind) {
 	/* - comboset #3 -> bit 4 */
 	if ((comboset_flags[3] == 0x7) && !(p_ptr->combosets & 0x8)) {
 		p_ptr->combosets |= 0x8;
-		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "\377B*Your Ring of Durin glows brightly!*");
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "\377B*Your ring of Durin glows brightly!*");
 	} else if ((comboset_flags[3] != 0x7) && (p_ptr->combosets & 0x8)) {
 		p_ptr->combosets &= ~0x8;
-		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "Your Ring of Durin glows less brightly!");
+		if (!(p_ptr->temp_misc_3 & 0x01) && (comboset_flags[3] & 0x2)) msg_print(Ind, "Your ring of Durin glows less brightly!");
+	}
+	/* - comboset #4 -> bit 5 */
+	if ((comboset_flags[4] == 0x3) && !(p_ptr->combosets & 0x10)) {
+		p_ptr->combosets |= 0x10;
+		if (!(p_ptr->temp_misc_3 & 0x01)) msg_print(Ind, "\377B*Your smallsword 'Sting' glows brightly!*");
+	} else if ((comboset_flags[4] != 0x3) && (p_ptr->combosets & 0x10)) {
+		p_ptr->combosets &= ~0x10;
+		if (!(p_ptr->temp_misc_3 & 0x01) && (comboset_flags[4] & 0x2)) msg_print(Ind, "Your smallsword 'Sting' glows less brightly!");
 	}
 	/* Clear the 'skip-comboset-messages-once' marker forever, until next login */
 	p_ptr->temp_misc_3 &= ~0x01;

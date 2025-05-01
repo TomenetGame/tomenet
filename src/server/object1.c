@@ -1295,6 +1295,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 		case ART_RING_DURIN:
 			if (o_ptr->comboset_flags == 0x7) (*f3) &= ~TR3_DRAIN_EXP;
 			break;
+
+		case ART_STING:
+			if (o_ptr->comboset_flags == 0x3) (*f2) |= TR2_RES_FEAR;
+			break;
 		}
 
 		/* Get flag difference made by the sigil */
