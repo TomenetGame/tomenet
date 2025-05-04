@@ -128,6 +128,10 @@
  #define FORMATDEATH "\377r"
 #endif
 
+/* 'Recent deaths' log: Display un-funky messages (derived from s_printf() log message) [DEFAULT]
+   or display the actual in-game message which can be longer/different for deaths from specific causes/monsters? */
+#define RDPRINT_BASIC
+
 
 /*
  * Thresholds for scrolling.	[3,8] [2,4]
@@ -9418,6 +9422,7 @@ void player_death(int Ind) {
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char buf[1024], m_name_extra[MNAME_LEN], msg_layout = 'a', died_from_msg[MAX_CHARS], died_from_tomb[MAX_CHARS];
+	char time_str[MAX_CHARS], date_str[MAX_CHARS], shortdate_str[MAX_CHARS];
 	int i, k, j, tries = 0;
 #if 0
 	int inventory_loss = 0, equipment_loss = 0;
@@ -9441,6 +9446,8 @@ void player_death(int Ind) {
 		if (just_fruitbat_transformation) p_ptr->fruit_bat = 0;
 		return;
 	}
+
+	get_time_date_shortdate(time_str, date_str, shortdate_str);
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
@@ -9686,7 +9693,7 @@ void player_death(int Ind) {
 
 		if (ABS(p_ptr->wpos.wz) >= 30)
 			l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n",
-			    showdate(), p_ptr->name, p_ptr->max_plv, ABS(p_ptr->wpos.wz));
+			    date_str, p_ptr->name, p_ptr->max_plv, ABS(p_ptr->wpos.wz));
 		else if (i < IDDC_HIGHSCORE_SIZE) { /* the score table is updated anyway, even if no l_printf() entry is created */
 			char path[MAX_PATH_LENGTH];
 			char path_rev[MAX_PATH_LENGTH];
@@ -9714,7 +9721,7 @@ void player_death(int Ind) {
 	if (!p_ptr->suicided && !erase && (secure ||
 	    (p_ptr->inventory[INVEN_NECK].k_idx &&
 	    p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING))) {
-		s_printf("%s - %s (%d%s) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("%s - %s (%d%s) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", time_str, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		if (!secure) {
 			msg_print(Ind, "\377oYour amulet shatters into pieces!");
@@ -9884,7 +9891,7 @@ void player_death(int Ind) {
 	}
 	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && p_ptr->csane >= 0 && in_sector000_dun(&p_ptr->wpos) && !p_ptr->suicided) {
 		s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
-		s_printf("%s - %s%s (%d%s) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("%s - %s%s (%d%s) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
@@ -9969,9 +9976,12 @@ void player_death(int Ind) {
  #endif
 
 			/* Log it */
-			s_printf("%s%s - %s%s (%d%s) was defeated by %s for %d damage at %d, %d, %d. (INSTARES)\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s%s (%d%s) was defeated by %s for %d damage at %d, %d, %d. (INSTARES)\n", FORMATDEATH, time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || insanity || p_ptr->image)
 				s_printf("(%s was really defeated by %s.)\n", p_ptr->name, p_ptr->really_died_from);
+ #ifdef RDPRINT_BASIC
+			rd_print(Ind, shortdate_str, format("%s%s (%d) was defeated by %s.", logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from), 0);
+ #endif
 
  #ifdef USE_SOUND_2010
 			/* Play the death sound */
@@ -9988,6 +9998,9 @@ void player_death(int Ind) {
 				snprintf(buf, sizeof(buf), "\374\377D%s (%d) was defeated by %s.", p_ptr->name, p_ptr->lev, died_from_msg);
 
 			msg_broadcast(Ind, buf);
+ #ifndef RDPRINT_BASIC
+			rd_print(Ind, shortdate_str, buf, 1);
+ #endif
  #ifdef TOMENET_WORLDS
 			if (cfg.worldd_pdeath) world_msg(buf);
  #endif
@@ -9995,9 +10008,9 @@ void player_death(int Ind) {
 			/* Add to legends log if he was a winner or very high level */
 			if (!is_admin(p_ptr)) {
 				if (p_ptr->total_winner)
-					l_printf("%s \\{r%s royalty %s (%d) died and was instantly resurrected\n", showdate(), p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
+					l_printf("%s \\{r%s royalty %s (%d) died and was instantly resurrected\n", date_str, p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
 				else if (p_ptr->lev >= 50)
-					l_printf("%s \\{r%s (%d) died and was instantly resurrected\n", showdate(), p_ptr->name, p_ptr->lev);
+					l_printf("%s \\{r%s (%d) died and was instantly resurrected\n", date_str, p_ptr->name, p_ptr->lev);
 			}
 
 			/* Tell him what happened -- moved the messages up here so they get onto the chardump! */
@@ -10402,7 +10415,10 @@ void player_death(int Ind) {
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s's (%d) ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, died_from_msg);
 				}
 			}
-			s_printf("%s%s - %s%s's (%d%s) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s%s's (%d%s) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", FORMATDEATH, time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+#ifdef RDPRINT_BASIC
+			rd_print(Ind, shortdate_str, format("%s%s (%d) was destroyed by %s.", logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from), 0);
+#endif
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 			death_type = DEATH_GHOST;
@@ -10489,7 +10505,10 @@ void player_death(int Ind) {
 #ifdef MORGOTH_FUNKY_KILL_MSGS
 			}
 #endif
-			s_printf("%s%s - %s%s (%d%s) was killed and destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s%s (%d%s) was killed and destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+#ifdef RDPRINT_BASIC
+			rd_print(Ind, shortdate_str, format("%s%s (%d) was *killed* by %s.", logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from), 0);
+#endif
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really killed and destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 			s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n", pvp ? "PVP" : "NOGHOST", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
@@ -10517,6 +10536,9 @@ void player_death(int Ind) {
 #endif
 
 		if (is_admin(p_ptr)) snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
+#ifndef RDPRINT_BASIC
+		rd_print(Ind, shortdate_str, buf, 1);
+#endif
 
 		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 #ifdef TOMENET_WORLDS
@@ -10631,20 +10653,20 @@ void player_death(int Ind) {
 		/* Add to legends log if he was at least 50 or died vs Morgoth */
 		if (!is_admin(p_ptr)) {
 			if (p_ptr->total_winner)
-				l_printf("%s \\{r%s royalty %s (%d) died\n", showdate(), p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
+				l_printf("%s \\{r%s royalty %s (%d) died\n", date_str, p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
 			else if (l_ptr && (l_ptr->flags1 & LF1_NO_GHOST)
 			    /* actually verify that Morgoth hasn't despawned meanwhile */
 			    && (r_info[RI_MORGOTH].cur_num) && Morgoth_x == p_ptr->wpos.wx && Morgoth_y == p_ptr->wpos.wy && Morgoth_z == p_ptr->wpos.wz
 			    ) {
-				l_printf("%s \\{r%s (%d) died facing Morgoth\n", showdate(), p_ptr->name, p_ptr->lev);
+				l_printf("%s \\{r%s (%d) died facing Morgoth\n", date_str, p_ptr->name, p_ptr->lev);
 			}
 #ifndef RPG_SERVER
 			/* for non-ghost deaths, display somewhat "lower" levels (below 50) too */
 			else if (p_ptr->lev >= 40)
-				l_printf("%s \\{r%s (%d) died\n", showdate(), p_ptr->name, p_ptr->lev);
+				l_printf("%s \\{r%s (%d) died\n", date_str, p_ptr->name, p_ptr->lev);
 #else /* for RPG_SERVER, also display more trivial deaths, so people know the player is up for startup-party again */
 			else if (p_ptr->lev >= 20)
-				l_printf("%s \\{r%s (%d) died\n", showdate(), p_ptr->name, p_ptr->lev);
+				l_printf("%s \\{r%s (%d) died\n", date_str, p_ptr->name, p_ptr->lev);
 #endif
 		}
 
@@ -10659,7 +10681,7 @@ void player_death(int Ind) {
 
 	/* Add to legends log if he was a winner */
 	if (p_ptr->total_winner && !is_admin(p_ptr) && !p_ptr->suicided) {
-		l_printf("%s \\{r%s (%d) lost %s royal title by death\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
+		l_printf("%s \\{r%s (%d) lost %s royal title by death\n", date_str, p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
 #ifdef SOLO_REKING
 		p_ptr->solo_reking = p_ptr->solo_reking_au = SOLO_REKING;
 #endif
@@ -10708,7 +10730,10 @@ void player_death(int Ind) {
 				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, died_from_msg);
 			}
 		}
-		s_printf("%s%s - %s%s (%d%s) was killed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("%s%s - %s%s (%d%s) was killed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+#ifdef RDPRINT_BASIC
+		rd_print(Ind, shortdate_str, format("%s%s (%d) was killed by %s.", logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from), 0);
+#endif
 		if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 			s_printf("(%s was really killed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 		s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
@@ -10716,12 +10741,15 @@ void player_death(int Ind) {
 	else if (p_ptr->iron_winner) {
 		if (p_ptr->total_winner) {
 			snprintf(buf, sizeof(buf), "\374\377vThe Iron Emperor %s (%d) has retired to a warm, sunny climate.", p_ptr->name, p_ptr->lev);
-			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired from the Iron Throne\n", showdate(), p_ptr->name, p_ptr->lev);
+			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired from the Iron Throne\n", date_str, p_ptr->name, p_ptr->lev);
 		} else {
 			snprintf(buf, sizeof(buf), "\374\377sThe Iron Champion %s (%d) has retired to a warm, sunny climate.", p_ptr->name, p_ptr->lev);
-			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an Iron Champion\n", showdate(), p_ptr->name, p_ptr->lev);
+			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an Iron Champion\n", date_str, p_ptr->name, p_ptr->lev);
 		}
-		s_printf("%s%s - %s%s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+		s_printf("%s%s - %s%s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+#ifdef RDPRINT_BASIC
+		rd_print(Ind, shortdate_str, format("%s%s (%d) retired to a warm, sunny climate.", logtitlebuf, p_ptr->name, p_ptr->lev), 0);
+#endif
 		death_type = DEATH_QUIT_RET;
 		s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	}
@@ -10735,20 +10763,26 @@ void player_death(int Ind) {
 		snprintf(buf, sizeof(buf), "\374\377D%s (%d) committed suicide.", p_ptr->name, p_ptr->lev);
 		/* Avoid death log spam with pvp min lev suicides */
 		if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL)
-			s_printf("%s - %s%s (%d%s) committed pvp-suicide.\n", showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : "")); /* just so the death-log script won't trigger on 'committed suicide' */
+			s_printf("%s - %s%s (%d%s) committed pvp-suicide.\n", time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : "")); /* just so the death-log script won't trigger on 'committed suicide' */
 		else
-			s_printf("%s - %s%s (%d%s) committed suicide.\n", showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+			s_printf("%s - %s%s (%d%s) committed suicide.\n", time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
 		death_type = DEATH_QUIT_SUI;
 		s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+#ifdef RDPRINT_BASIC
+		rd_print(Ind, shortdate_str, format("%s%s (%d) committed suicide.", logtitlebuf, p_ptr->name, p_ptr->lev), 0);
+#endif
 	} else {
 		if (in_valinor(&p_ptr->wpos)) {
 			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s (%d) has retired to the shores of valinor.", p_ptr->name, p_ptr->lev);
-			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to the shores of valinor\n", showdate(), p_ptr->name, p_ptr->lev);
+			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to the shores of valinor\n", date_str, p_ptr->name, p_ptr->lev);
 		} else {
 			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s (%d) has retired to a warm, sunny climate.", p_ptr->name, p_ptr->lev);
-			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
+			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", date_str, p_ptr->name, p_ptr->lev);
 		}
-		s_printf("%s%s - %s%s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+		s_printf("%s%s - %s%s (%d%s) retired to a warm, sunny climate.\n", FORMATDEATH, time_str, logtitlebuf, p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""));
+#ifdef RDPRINT_BASIC
+		rd_print(Ind, shortdate_str, format("%s%s (%d) retired to a warm, sunny climate.", logtitlebuf, p_ptr->name, p_ptr->lev), 0);
+#endif
 		death_type = DEATH_QUIT_RET;
 		s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	}
@@ -10773,7 +10807,9 @@ void player_death(int Ind) {
 					msg_print(i, buf);
 			}
 		} else msg_broadcast(Ind, buf);
-
+#ifndef RDPRINT_BASIC
+		rd_print(Ind, shortdate_str, buf, 1);
+#endif
 #ifdef TOMENET_WORLDS
 		if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
 #endif

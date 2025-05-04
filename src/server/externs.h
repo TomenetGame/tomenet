@@ -1384,6 +1384,7 @@ extern char *compacttime(void);
 extern char *showtime(void);
 extern char *showdate(void);
 extern void get_date(int *weekday, int *day, int *month, int *year);
+extern void get_time_date_shortdate(char *time_str, char *date_str, char *shortdate_str);
 extern int is_inactive(int Ind);
 extern bool purge_acc_file(void);
 
@@ -1701,6 +1702,7 @@ extern int l_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern int reverse_lines(cptr input_file, cptr output_file);
 extern int su_print(char *str);
 extern int e_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
+extern void rd_print(int Ind, char *shortdate_str, char *demise_str, int format);
 
 /* save.c */
 extern bool save_player(int Ind);

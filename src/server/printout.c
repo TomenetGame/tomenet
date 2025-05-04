@@ -63,7 +63,7 @@ extern int s_shutdown(void) {
 extern int s_printf(const char *str, ...) {
 	va_list va;
 
-	if (init == FALSE) {  /* in case we don't start her up properly */
+	if (init == FALSE) {  /* in case we don't start up properly */
 		fp = fopen("tomenet.log", "w+");
 		init = TRUE;
 	}
@@ -147,7 +147,7 @@ extern bool s_setupr(char *str) {
 extern bool rfe_printf(char *str, ...) {
 	va_list va;
 
-	if (initr == FALSE) { /* in case we don't start her up properly */
+	if (initr == FALSE) { /* in case we don't start up properly */
 		fpr = fopen("tomenet.rfe", "a+");
 		initr = TRUE;
 	}
@@ -312,7 +312,7 @@ extern int l_printf(char *str, ...) {
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
 	path_build(path_rev, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
 
-	if (initl == FALSE) { /* in case we don't start her up properly */
+	if (initl == FALSE) { /* in case we don't start up properly */
 		fpl = fopen(path, "a+");
 		initl = TRUE;
 	}
@@ -335,7 +335,7 @@ extern int c_printf(char *str, ...) {
 	va_list va;
 
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze.log");
-	if (initc == FALSE) { /* in case we don't start her up properly */
+	if (initc == FALSE) { /* in case we don't start up properly */
 		fpc = fopen(path, "a+");
 		initc = TRUE;
 	}
@@ -353,7 +353,7 @@ extern int p_printf(char *str, ...) {
 	va_list va;
 
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "traffic.log");
-	if (initp == FALSE) { /* in case we don't start her up properly */
+	if (initp == FALSE) { /* in case we don't start up properly */
 		fpp = fopen(path, "a+");
 		initp = TRUE;
 	}
@@ -373,7 +373,7 @@ extern int su_print(char *str) {
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "superuniques.log");
 	get_date(&dwd, &dd, &dm, &dy);
 
-	if (inits == FALSE) { /* in case we don't start her up properly */
+	if (inits == FALSE) { /* in case we don't start up properly */
 		fps = fopen(path, "a+");
 		inits = TRUE;
 	}
@@ -391,7 +391,7 @@ extern int e_printf(char *str, ...) {
 	va_list va;
 
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "erasure.log");
-	if (inite == FALSE) { /* in case we don't start her up properly */
+	if (inite == FALSE) { /* in case we don't start up properly */
 		fpe = fopen(path, "a+");
 		inite = TRUE;
 	}
@@ -401,4 +401,67 @@ extern int e_printf(char *str, ...) {
 	va_end(va);
 	fflush(fpe);
 	return(TRUE);
+}
+
+/* Log recent deaths, for internal handling of "~d" instead of relying on external scripts - C. Blue
+   Level 7+, no low level suicides (like in xtra2.c), but include all Horned Reaper kills from DK.
+   format:
+     0 = derived from s_printf() log messages, but already preformatted in xtra2.c
+     1 = derived from in-game msg_broadcast, needs to be completely reformatted by us */
+extern void rd_print(int Ind, char *shortdate_str, char *demise_str, int format) {
+	char path[MAX_PATH_LENGTH];
+	player_type *p_ptr = Players[Ind];
+	char attr, tmp_str[MAX_CHARS_WIDE], *c, *c2;
+
+	/* Filter out trivial deaths */
+	//if (p_ptr->lev < 7 && !strstr(demise_str, "the Horned Reaper")) return; /* Log Dungeon Keeper event deaths by the Horned Reaper? */
+	if (p_ptr->lev < 7) return;
+	if (is_admin(p_ptr)) return;
+
+	/* Colourize depending on level */
+	if (p_ptr->lev < 20) attr = 's';
+	else if (p_ptr->lev < 40) attr = 'r';
+	else if (p_ptr->lev < 60) attr = 'R';
+	else attr = 'l';
+
+	switch (format) {
+	case 0:
+		strcpy(tmp_str, demise_str);
+		break;
+	case 1:
+		/* Trim leading asterisks and char codes */
+		if ((c = strchr(demise_str, '*'))) demise_str = c + 2;
+		else if (*demise_str >= '\374' && *demise_str != '\377') demise_str++;
+		if (*demise_str == '\377') demise_str += 2;
+		if (*demise_str == ' ') demise_str++;
+
+		/* Shorten some kill causes */
+		strcpy(tmp_str, demise_str);
+		if ((c = strstr(demise_str, "killed and destroyed"))) strcpy(tmp_str + (c - demise_str), c + 21);
+		else if ((c = strstr(demise_str, "ghost was destroyed"))) {
+			char tmp_str2[MAX_CHARS_WIDE];
+
+			/* Crop the 'ghost' part too */
+			strcpy(tmp_str2 + (c - demise_str), c + 6);
+
+			/* Crop the genitivus apostrophe */
+			strcpy(tmp_str, tmp_str2);
+			c2 = strchr(tmp_str2, '(');
+			if (*(c2 - 2) == '\'') strcpy(tmp_str + (c2 - tmp_str2) - 2, c2 - 1);
+			else strcpy(tmp_str + (c2 - tmp_str2) - 3, c2 - 1);
+		}
+
+		/* Trim trailing char codes (will trim all the rest too, if any, such as asterisks again) */
+		if ((c = strchr(tmp_str, '\377'))) *c = 0;
+		break;
+	}
+
+	/* Write to file */
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "recent-deaths.log");
+	if (inits == FALSE) { /* in case we don't start up properly */
+		fps = fopen(path, "a+");
+		inits = TRUE;
+	}
+	fprintf(fps, "\\{%c%s - %s\n", attr, shortdate_str, tmp_str);
+	fflush(fps);
 }

@@ -238,6 +238,29 @@ void get_date(int *weekday, int *day, int *month, int *year) {
 	*year = tmp->tm_year + 1900;
 }
 
+/* added for death logs, we want both, time for normal death log, date for legends log, shortdate for recent deaths log - C. Blue */
+void get_time_date_shortdate(char *time_str, char *date_str, char *shortdate_str) {
+	time_t		now;
+	struct tm	*tmp;
+	static char	month_names[13][4] = {
+				"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+				"Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+				"Bug"
+			};
+	static char	day_names[7][4] = {
+				"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
+			};
+
+	time(&now);
+	tmp = localtime(&now);
+
+	sprintf(time_str, "%02d %s (%s) %02d:%02d:%02d",
+		tmp->tm_mday, month_names[tmp->tm_mon], day_names[tmp->tm_wday],
+		tmp->tm_hour, tmp->tm_min, tmp->tm_sec);
+	sprintf(date_str, "%04d-%02d-%02d", tmp->tm_year + 1900, tmp->tm_mon + 1, tmp->tm_mday);
+	sprintf(shortdate_str, "%02d %s", tmp->tm_mday, month_names[tmp->tm_mon]);
+}
+
 /* time = 0 will not add a ban; use time -1 for permanently. */
 int add_banlist(char *account, char *ip_addy, char *hostname, int time, char *reason) {
 	struct combo_ban *ptr;
@@ -14316,7 +14339,11 @@ static int Receive_special_line(int ind) {
 	case SPECIAL_FILE_DEATHS: {
 		char path[MAX_PATH_LENGTH];
 
+#if 0 /* (DEPRECATED) externally created from tomenet.log via scripts */
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-deaths-short.txt");
+#else /* internally created via rd_print() */
+		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "recent-deaths.log");
+#endif
 		do_cmd_check_other_prepare(player, path, "Recent Deaths (some low ones omitted)");
 		break; }
 	case SPECIAL_FILE_MOTD2:
