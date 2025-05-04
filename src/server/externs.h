@@ -1119,6 +1119,7 @@ extern void load_banlist(void);
 /* for actually loading/saving dynamic quest information */
 extern void load_quests(void);
 extern bool s_older_than(byte x, byte y, byte z); /* for csfunc structure changes */
+extern void load_recent_deaths(void);
 
 /* melee1.c */
 extern cptr desc_moan_halloween[];
@@ -2896,3 +2897,4 @@ extern int custom_lua_timer_timeout[CUSTOM_LUA_TIMERS];
 extern char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE];
 extern int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS], custom_lua_timer_parm2[CUSTOM_LUA_TIMERS], custom_lua_timer_parm3[CUSTOM_LUA_TIMERS];
 extern u32b hack_sigil_f[7], hack_comboset_f[7]; //same as ego_granted_flags
+extern char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE];

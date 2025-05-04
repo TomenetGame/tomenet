@@ -1111,3 +1111,4 @@ int custom_lua_timer_timeout[CUSTOM_LUA_TIMERS] = { 0 };
 char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE] = { 0 };
 int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm2[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm3[CUSTOM_LUA_TIMERS] = { 0 };
 u32b hack_sigil_f[7] = { 0 }, hack_comboset_f[7] = { 0 }; //same as ego_granted_flags
+char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE] = { 0 };

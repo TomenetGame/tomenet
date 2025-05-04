@@ -5109,3 +5109,15 @@ void load_quests(void) {
 	s_printf("Error (%s) reading a %d.%d.%d quests savefile.\n", what, qsf_major, qsf_minor, qsf_patch);
 	return; //FALSE;
 }
+
+void load_recent_deaths(void) {
+	char buf[1024];
+	FILE *fp;
+	int n = -1;
+
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "recent-deaths.log");
+	if ((fp = fopen(buf, "rb")) == NULL) return;
+
+	while (++n < RECENT_DEATHS_ENTRIES && fgets(recent_deaths[n], MAX_CHARS_WIDE, fp) != NULL)
+		recent_deaths[n][strlen(recent_deaths[n]) - 1] = 0; //trim trailing newline
+}

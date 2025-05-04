@@ -412,6 +412,8 @@ extern void rd_print(int Ind, char *shortdate_str, char *demise_str, int format)
 	char path[MAX_PATH_LENGTH];
 	player_type *p_ptr = Players[Ind];
 	char attr, tmp_str[MAX_CHARS_WIDE], *c, *c2;
+	int n;
+	FILE *fp;
 
 	/* Filter out trivial deaths */
 	//if (p_ptr->lev < 7 && !strstr(demise_str, "the Horned Reaper")) return; /* Log Dungeon Keeper event deaths by the Horned Reaper? */
@@ -456,12 +458,17 @@ extern void rd_print(int Ind, char *shortdate_str, char *demise_str, int format)
 		break;
 	}
 
+	/* Replace least recent entry */
+	for (n = RECENT_DEATHS_ENTRIES - 1; n > 0; n--)
+		strcpy(recent_deaths[n], recent_deaths[n - 1]);
+	sprintf(recent_deaths[0], "\\{%c%s - %s", attr, shortdate_str, tmp_str);
+
 	/* Write to file */
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "recent-deaths.log");
-	if (inits == FALSE) { /* in case we don't start up properly */
-		fps = fopen(path, "a+");
-		inits = TRUE;
-	}
-	fprintf(fps, "\\{%c%s - %s\n", attr, shortdate_str, tmp_str);
-	fflush(fps);
+	fp = fopen(path, "w");
+	if (fp) {
+		for (n = 0; n < RECENT_DEATHS_ENTRIES; n++)
+			fprintf(fp, "%s\n", recent_deaths[n]);
+		fclose(fp);
+	} else s_printf("ERROR: Couldn't open recent-deaths.log for writing.\n");
 }

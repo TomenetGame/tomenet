@@ -742,6 +742,10 @@
 /* Max amount of legal words that override swear words */
 #define MAX_NONSWEAR 200
 
+/* Size of the 'Recent Death' list [42 = one full screen in big_map mode] */
+#define RECENT_DEATHS_ENTRIES 42
+
+
 /*
  * Maximum size of the "view" array (see "cave.c")
  * Note that the "view radius" will NEVER exceed 20, and even if the "view"

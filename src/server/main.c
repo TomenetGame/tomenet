@@ -434,6 +434,10 @@ int main(int argc, char *argv[]) {
 	go_engine_init();
 #endif
 
+	/* Load recent deaths list into memory for faster adding+replacing */
+	load_recent_deaths();
+
+	/* All initialization done */
 	post_init_lua();
 
 
