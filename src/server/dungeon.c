@@ -10004,11 +10004,16 @@ void process_player_change_wpos(int Ind) {
 	    )
 		imprison(Ind, JAIL_OLD_CRIMES, "old crimes");
 
-	/* daylight problems for vampires */
-	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind);
+	/* daylight problems for vampires; and nightly darkvision boost is _sometimes_ not revoked when recalling into the dungeon until first movement step is taken */
+	if (p_ptr->prace == RACE_VAMPIRE
 	/* temp luck blessings are on hold while on the surface - which is applied in calc_boni(): */
-	else if (p_ptr->bless_temp_luck) calc_boni(Ind);
-
+	    || p_ptr->bless_temp_luck) {
+		calc_boni(Ind);
+		if (p_ptr->prace == RACE_VAMPIRE) {
+			p_ptr->update |= PU_TORCH;
+			update_stuff(Ind);
+		}
+	}
 
 	/* moved here, since it simplifies the wpos-changing process and
 	   should keep it highly consistent and linear.
