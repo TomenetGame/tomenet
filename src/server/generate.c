@@ -9988,29 +9988,28 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if (!(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) {
 			/* Low-level store?
 			   Herbalist - is now allowed again, for IDDC, and hence not restricted in here anymore. */
-
 			/* Build one of several misc iron dungeon helper stores for basic items of certain type */
 			//todo: maybe use the new d_ptr->store_timer for randomly generated stores
 #ifdef TEST_SERVER
+			/* Allow almost anywhere, for testing */
 			if (!store_failed && (!build_special_store) && (dun_lev >= 6)) {
 				if (!rand_int(5)) build_special_store = 3;
 				else store_failed = TRUE;
 			}
-#else
- #ifdef RPG_SERVER
+#elif defined(RPG_SERVER)
+			/* Allowed in any canonical dungeon (they are all ironman on RPG server)! */
 			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 6)) {
 				//((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
 				if (!rand_int(5)) build_special_store = 3;
 				else store_failed = TRUE;
 			}
- #endif
+#else
+			/* Build one of several misc stores for basic items of certain type */
+			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 6)) {
+				if (!rand_int(3)) build_special_store = 3;
+				else store_failed = TRUE;
+			}
 #endif
-		}
-
-		/* Build one of several misc stores for basic items of certain type, like on RPG server above */
-		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 6)) {
-			if (!rand_int(3)) build_special_store = 3;
-			else store_failed = TRUE;
 		}
 
 		/* Build deep supplies store if desired (good for challenge dungeons actually) - frequent store! */
@@ -10023,18 +10022,20 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			}
 		}
 
-		/* Check for building low-level store (Herbalist) - frequent store if levels are explored slowly (like in IDDC)! */
-		if ((!build_special_store) &&
-		    (!dungeon_store2_timer) && (dun_lev >= 6) && (dun_lev <= 30))
+		if (!(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) {
+			/* Check for building low-level store (Herbalist) - frequent store if levels are explored slowly (like in IDDC)! */
+			if ((!build_special_store) &&
+			    (!dungeon_store2_timer) && (dun_lev >= 6) && (dun_lev <= 30))
 #ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
  #ifndef IDDC_REFUGE_EXTRA_STORES_RANDOM
-			if (!in_irondeepdive(wpos))
+				if (!in_irondeepdive(wpos))
  #else
-			/* Only disable it on levels where it already exists within a refuge */
-			if (!dun->l_ptr || !dun->l_ptr->refuge_x)
+				/* Only disable it on levels where it already exists within a refuge */
+				if (!dun->l_ptr || !dun->l_ptr->refuge_x)
  #endif
 #endif
-			build_special_store = 2;
+				build_special_store = 2;
+		}
 
 		/* if failed, we're done */
 		if (!build_special_store) return;
