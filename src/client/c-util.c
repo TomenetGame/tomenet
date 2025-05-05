@@ -13442,7 +13442,7 @@ void do_cmd_options(void) {
 
 	if (custom_font_warning) {
 		custom_font_warning = FALSE;
-		if (c_cfg.font_map_solid_walls) c_msg_print("\377wCustom font loaded. If visuals seem wrong, disable '\377yfont_map_solid_walls\377w' in =1.");
+		if (c_cfg.font_map_solid_walls) c_msg_print("\377wCustom font loaded. If visuals seem wrong, disable '\377yfont_map_solid_walls\377w' in =2.");
 	}
 }
 

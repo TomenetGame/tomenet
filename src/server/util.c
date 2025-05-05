@@ -6137,7 +6137,7 @@ static void player_talk_aux(int Ind, char *message) {
 		reached = TRUE;
 		msg_print(i, q_ptr->censor_swearing ? tmessage : tmessage_u);
 	}
-	if (!reached && p_ptr->limit_chat) msg_print(Ind, "(Nobody could hear you. Note that you have limit_chat enabled in =2 .)");
+	if (!reached && p_ptr->limit_chat) msg_print(Ind, "(Nobody could hear you. Note that you have limit_chat enabled in =5 .)");
 
 #else /* in case TOMENET_WORLDS is not defined: */
 
@@ -6185,7 +6185,7 @@ static void player_talk_aux(int Ind, char *message) {
 			else msg_format(i, "%s %s", sender, q_ptr->censor_swearing ? message + 4 : message_u + 4);
 		}
 	}
-	if (!reached && p_ptr->limit_chat) msg_print(Ind, "(Nobody could hear you. Note that you have limit_chat enabled in =2 .)");
+	if (!reached && p_ptr->limit_chat) msg_print(Ind, "(Nobody could hear you. Note that you have limit_chat enabled in =5 .)");
 #endif
 
 	p_ptr->warning_chat = 1;

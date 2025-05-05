@@ -6154,7 +6154,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 
 	/* Need complex color mode for palette animation */
 	if (colors16) {
-		c_msg_print("\377yPalette animation failed! Disable it in = 3 'palette_animation'!");
+		c_msg_print("\377yPalette animation failed! Disable it in = 2 'palette_animation'!");
 		return;
 	}
 

@@ -5221,7 +5221,7 @@ void check_experience(int Ind) {
 		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377o/instar\377y command:");
 		else
-			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377oinstant_retaliator\377y option in \377o= 7\377y:");
+			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377oinstant_retaliator\377y option in \377o= 1\377y:");
 		msg_print(Ind, "\374\377y      If \377ooff\377y, you will take an extra turn on initiating auto-attacking, but you");
 		msg_print(Ind, "\374\377y      will be able to perform a near-instantanous action during it, eg teleport.");
 		s_printf("warning_newautoret: %s\n", p_ptr->name);
@@ -11047,7 +11047,7 @@ void player_death(int Ind) {
 
 	if (p_ptr->limit_chat) {
 		msg_print(Ind, "\374\3774Warning: \377oYou have the option '\377Rlimit_chat\377o' enabled so nobody will be able to read");
-		msg_print(Ind, "\374\377o         your chat unless he is on your floor or you disable the option via \377R=2\377o !");
+		msg_print(Ind, "\374\377o         your chat unless he is on your floor or you disable the option via \377R=5\377o !");
 		s_printf("warning_limit_chat: %s\n", p_ptr->name); //not a true warning_ flag
 	}
 

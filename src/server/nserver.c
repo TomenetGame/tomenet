@@ -3431,7 +3431,7 @@ static int Handle_login(int ind) {
 	else msg_print(NumPlayers, NULL);
 
 	/* Warn about certain options' current status */
-	if (p_ptr->limit_chat) msg_print(NumPlayers, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
+	if (p_ptr->limit_chat) msg_print(NumPlayers, "\377yYou have enabled '\377olimit_chat\377y' in \377o=5\377y. Your chat is not globally visible!");
 #if 0
 	if (p_ptr->suppress_ingredients) {
 #ifdef ENABLE_DEMOLITIONIST
