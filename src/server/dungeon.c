@@ -13136,4 +13136,15 @@ void apply_jail_flags(u32b *f1, u32b *f2, u32b *f3) {
 	*f3 |= DF3_DARK;
 	*f2 |= DF2_NO_MAGIC_MAP;
 	//*f3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_LIMIT_ESP; //DF3_NO_ESP |
+
+	/* Make it more escape-tunnelish */
+	*f1 |= DF1_SMALLEST | DF1_FLAT | DF1_NO_DOORS;
+	*f2 |= DF2_NO_RECALL_INTO | DF2_NO_ENTRY_PROB;
+	//*f3 |= DF3_NOT_EMPTY | DF3_FEW_ROOMS | DF3_NO_VAULTS; //too small/few rooms, sometimes whole floor is 100% walled, with 1 staircase grid left, ie 0 rooms.
+	*f3 |= DF3_NOT_EMPTY | DF3_NO_VAULTS | DF3_NO_SIMPLE_STORES;
+	//*f3 |= DF3_NO_SUMMON; //make it cheesy?^^
+
+	/* Actually just make it force-down instead of iron */
+	*f2 &= ~DF2_IRON;
+	*f1 |= DF1_FORCE_DOWN;
 }
