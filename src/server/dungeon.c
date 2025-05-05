@@ -6916,7 +6916,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Delayed Word-of-Recall */
 	if (p_ptr->word_recall) {
-		if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
+		if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE) && !is_admin(p_ptr))
 #ifdef ANTI_TELE_CHEEZE
 		    || p_ptr->anti_tele
  #ifdef ANTI_TELE_CHEEZE_ANCHOR
