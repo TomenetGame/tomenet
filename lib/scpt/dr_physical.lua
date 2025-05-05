@@ -174,13 +174,13 @@ EXTRASTATS_I = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			if (get_level(Ind, EXTRASTATS_I, 50) >= 5) then
-				do_xtra_stats(Ind, 1, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
+				do_xtra_stats(Ind, 1, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 24 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			else
-				do_xtra_stats(Ind, 0, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
+				do_xtra_stats(Ind, 0, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 24 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			end
 			end,
 	["info"] = 	function()
-			return "+" .. (1 + get_level(Ind, EXTRASTATS_I, 50) / 9) .. " dur d5+" .. (17 + get_level(Ind, EXTRASTATS_I, 10))
+			return "+" .. (1 + get_level(Ind, EXTRASTATS_I, 50) / 9) .. " dur d5+" .. (24 + get_level(Ind, EXTRASTATS_I, 10))
 			end,
 	["desc"] = 	{ "At level 1 increases your strength.",
 			  "At level 5 also increases your dexterity.",
@@ -200,13 +200,13 @@ EXTRASTATS_II = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			if (get_level(Ind, EXTRASTATS_II, 50) >= 11) then
-				do_xtra_stats(Ind, 3, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
+				do_xtra_stats(Ind, 3, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 24 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			else
-				do_xtra_stats(Ind, 2, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
+				do_xtra_stats(Ind, 2, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 24 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			end
 			end,
 	["info"] = 	function()
-			return "+" .. (1 + get_level(Ind, EXTRASTATS_I, 50) / 9) .. " dur d5+" .. (17 + get_level(Ind, EXTRASTATS_I, 10))
+			return "+" .. (1 + get_level(Ind, EXTRASTATS_I, 50) / 9) .. " dur d5+" .. (24 + get_level(Ind, EXTRASTATS_I, 10))
 			end,
 	["desc"] = 	{ "Increases strength, dexterity, constitution.",
 			  "At level 11 also increases your intelligence.",
