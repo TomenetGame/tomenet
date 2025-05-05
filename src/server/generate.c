@@ -10057,9 +10057,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			y = rand_int(dun->l_ptr->hgt - 4) + 2;
 			x = rand_int(dun->l_ptr->wid - 4) + 2;
 			csbm_ptr = &zcave[y][x];
+#if 0
 			/* Must be in a wall, must not be in perma wall. Outside of vaults. */
 			if ((f_info[csbm_ptr->feat].flags1 & FF1_WALL) &&
 			    !(f_info[csbm_ptr->feat].flags1 & FF1_PERMANENT) &&
+#else
+			/* Must be in a wall, but for Halls of Mandos allow perma-walls - and just allow them in general, seems no harm done? */
+			if ((f_info[csbm_ptr->feat].flags1 & FF1_WALL) &&
+#endif
 			    !(csbm_ptr->info & CAVE_ICKY)) {
 				/* must have at least 1 'free' adjacent field */
 				bool found1free = FALSE;
