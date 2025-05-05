@@ -2699,6 +2699,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_FOOD:
+		case TV_FIRESTONE:
 			if (auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		}

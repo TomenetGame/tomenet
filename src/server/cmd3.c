@@ -5699,7 +5699,7 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 			eligible_bag = TRUE;
 			break;
 		case SV_SI_FOOD_BAG:
-			if (i_ptr->tval != TV_FOOD) continue;
+			if (i_ptr->tval != TV_FOOD && i_ptr->tval != TV_FIRESTONE) continue;
 			eligible_bag = TRUE;
 			break;
 		default:
@@ -5841,7 +5841,7 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 			eligible_item = TRUE;
 			break;
 		case SV_SI_FOOD_BAG:
-			if (i_ptr->tval != TV_FOOD) continue;
+			if (i_ptr->tval != TV_FOOD && i_ptr->tval != TV_FIRESTONE) continue;
 			eligible_item = TRUE;
 			break;
 		default:
