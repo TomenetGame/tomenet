@@ -8408,9 +8408,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif
 	bool netherrealm_level = FALSE, nr_bottom = FALSE;
 	int build_special_store = 0; /* 0 = don't build a dungeon store,
-					1 = build deep dungeon store,
-					2 = build low-level dungeon store,
-					3 = build ironman supply store
+					1 = build deep dungeon store (rare gear/sbm),
+					2 = build low-level dungeon store (herbalist),
+					3 = build ironman supply store (various: town-like stores, also hidden library)
 					4 = build specific ironman supply store: hidden library
 					5 = build specific ironman supply store: deep supply
 				    - C. Blue */
@@ -9962,7 +9962,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 	/* Nether Realm has an overriding shop creation routine. */
 	if (!netherrealm_level) {
-		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
+		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around -- currently no effect due to the way it's used ^^' */
 
 		/* Check for building deep store (Rare & expensive stores) */
 		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100))
@@ -9993,13 +9993,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			/* Build one of several misc iron dungeon helper stores for basic items of certain type */
 			//todo: maybe use the new d_ptr->store_timer for randomly generated stores
 #ifdef TEST_SERVER
-			if (!store_failed && (!build_special_store) && (dun_lev >= 13)) {
+			if (!store_failed && (!build_special_store) && (dun_lev >= 6)) {
 				if (!rand_int(5)) build_special_store = 3;
 				else store_failed = TRUE;
 			}
 #else
  #ifdef RPG_SERVER
-			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 13)) {
+			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 6)) {
 				//((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
 				if (!rand_int(5)) build_special_store = 3;
 				else store_failed = TRUE;
@@ -10009,8 +10009,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 
 		/* Build one of several misc stores for basic items of certain type, like on RPG server above */
-		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 13)) {
-			if (!rand_int(5)) build_special_store = 3;
+		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 6)) {
+			if (!rand_int(3)) build_special_store = 3;
 			else store_failed = TRUE;
 		}
 
