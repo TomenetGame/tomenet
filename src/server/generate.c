@@ -8979,8 +8979,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 	if (maze) permaze = magik(DUN_MAZE_PERMAWALL);
 
-	if (!maze && !cavern &&
-	    ((dflags1 & (DF1_EMPTY)) || (!rand_int(EMPTY_LEVEL) && !(dflags3 & DF3_NOT_EMPTY)))) {
+	if (!maze && !cavern && !(dflags3 & DF3_NOT_EMPTY) &&
+	    ((dflags1 & DF1_EMPTY) || !rand_int(EMPTY_LEVEL))) {
 		empty_level = TRUE;
 		if ((randint(DARK_EMPTY) != 1 || (randint(100) > dun_lev)))
 			dark_empty = FALSE;
@@ -8988,7 +8988,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if (dflags3 & DF3_NO_DARK) dark_level = FALSE;
 	else if (dflags3 & DF3_DARK) dark_level = TRUE;
 
-	if (dflags3 & DF3_NO_EMPTY) empty_level = FALSE;
 	if (dflags3 & DF3_NO_DESTROYED) destroyed = FALSE;
 	if (dflags3 & DF3_NO_MAZE) maze = permaze = FALSE;
 

@@ -1277,7 +1277,7 @@ static cptr d_info_flags3[] = {
 	"FEW_ROOMS",
 	"NO_VAULTS",
 	"NO_MAZE",
-	"NO_EMPTY",
+	"XXX3-X",
 	"NO_DESTROYED",
 
 	"NO_TELE",

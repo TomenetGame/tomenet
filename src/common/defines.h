@@ -7253,7 +7253,7 @@
 
 #define DF3_NO_VAULTS		0x00100000U	/* Less room_build() calls for any sort of struct (including vaults) */
 #define DF3_NO_MAZE		0x00200000U	/* don't build (perma)mazes */
-#define DF3_NO_EMPTY		0x00400000U	/* don't build empty levels (arenas) */
+//HOLE #define DF3_XXX		0x00400000U	/* */
 #define DF3_NO_DESTROYED	0x00800000U	/* don't build 'destroyed' levels */
 
 #define DF3_NO_TELE		0x01000000U	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering). Implies LF1_NO_MAGIC! */
@@ -7270,7 +7270,7 @@
    without changing its main flags (set by admin on dungeon creation) too much */
 #define DF3_THEME_MASK \
 	(DF3_DERARE_MONSTERS | DF3_MANY_MONSTERS | DF3_VMANY_MONSTERS | \
-	DF3_WALL_STREAMERS | DF3_NOT_EMPTY | DF3_NOT_WATERY | DF3_FEW_ROOMS | DF3_NO_VAULTS | DF3_NO_MAZE | DF3_NO_EMPTY | DF3_NO_DARK | DF3_NO_DESTROYED)
+	DF3_WALL_STREAMERS | DF3_NOT_EMPTY | DF3_NOT_WATERY | DF3_FEW_ROOMS | DF3_NO_VAULTS | DF3_NO_MAZE | DF3_NO_DARK | DF3_NO_DESTROYED)
 
 
 /* level flags for dun_level */
