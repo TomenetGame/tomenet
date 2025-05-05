@@ -3116,6 +3116,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 #endif
 		/* Keep Ironman Deep Dive Challenge entrance sector clean too */
 		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && !wpos->wz) return(11);
+		/* Halls of Mandos too...? It doesn't have XP entrance restrictions though. */
+		if (wpos->wx == hallsofmandos_wpos_x && wpos->wy == hallsofmandos_wpos_y && !wpos->wz) return(11);
 	}
 
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
