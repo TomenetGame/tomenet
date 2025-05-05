@@ -1001,6 +1001,7 @@ F:GOOD | GREAT | PRICE4 | PRICE2 | VHARD_STEAL
 W:48
 
 N:62:Herbalist
+$ENABLE_SUBINVEN$T:50:126:4
 T:95:80:4
 #unhealth/disease had their price zero'ed for pseudo-id :/
 #T:95:80:10
