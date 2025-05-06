@@ -9049,7 +9049,7 @@ Chain_Macro:
 					    choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close && choice != mw_prfele &&
 					    choice != mw_fileset) {
 						if (choice == mw_load) Term_gotoxy(23, ystart + 8);
-						else if (choice == mw_poly) Term_gotoxy(47, ystart + 10);
+						else if (choice == mw_poly) Term_gotoxy(47, ystart + 11);
 						else if (choice == mw_option) Term_gotoxy(30, ystart + 4);
 						else Term_gotoxy(47, ystart + 8);
 
