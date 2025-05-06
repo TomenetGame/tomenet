@@ -5038,7 +5038,12 @@ void do_cmd_options_mus_sdl(void) {
 				d = music_cur;
 				/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 				jukebox_paused = FALSE;
+
+				dis = songs[d].disabled;
+				songs[d].disabled = FALSE;
 				play_music_instantly(d);
+				songs[d].disabled = dis;
+
 				if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 				jukebox_update_songlength();
@@ -5085,7 +5090,12 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			jukebox_paused = FALSE;
+
+			dis = songs[d].disabled;
+			songs[d].disabled = FALSE;
 			play_music_instantly(d);
+			songs[d].disabled = dis;
+
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
@@ -5126,7 +5136,9 @@ void do_cmd_options_mus_sdl(void) {
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			jukebox_paused = FALSE;
 			jukebox_used = TRUE; //we actually used the jukebox
+
 			play_music_instantly(d);
+
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
@@ -5154,7 +5166,12 @@ void do_cmd_options_mus_sdl(void) {
 				}
 				/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 				jukebox_paused = FALSE;
+
+				dis = songs[d].disabled;
+				songs[d].disabled = FALSE;
 				play_music_instantly(d);
+				songs[d].disabled = dis;
+
 				if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 				jukebox_update_songlength();
@@ -5209,7 +5226,12 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			jukebox_paused = FALSE;
+
+			dis = songs[d].disabled;
+			songs[d].disabled = FALSE;
 			play_music_instantly(d);
+			songs[d].disabled = dis;
+
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
