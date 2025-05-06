@@ -425,8 +425,6 @@ typedef struct {
 	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
 #ifdef WILDERNESS_MUSIC_RESUME
 	int bak_song, bak_pos;		/* Specifically for 'wilderness' music: Remember song and position of each wilderness-type event. */
-	bool bak_nighttime;		/* TRUE for day, FALSE for night, also FALSE for if there was no nighttime suffix for this music event.
-					   Note that '_night' is specifically picked because eg town events don't have a "_day" suffix but only "_night" suffices! */
 #endif
 	bool disabled;			/* disabled by user? */
 	bool config;
@@ -2630,7 +2628,6 @@ static bool play_music(int event) {
 			    ) {
 				songs[music_cur].bak_song = music_cur_song;
 				songs[music_cur].bak_pos = Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]) * 1000 + 500; /* pre-add the fading-out time span (in ms) */
-				songs[music_cur].bak_nighttime = suffix(mc, "_night");
 			}
 #endif
 			Mix_FadeOutMusic(500);
@@ -2783,7 +2780,6 @@ static void fadein_next_music(void) {
 #ifdef WILDERNESS_MUSIC_RESUME
 	bool prev_wilderness;
 	cptr pmn, mn;
-	bool mn_night;
 #endif
 
 #ifdef DISABLE_MUTED_AUDIO
@@ -2934,6 +2930,8 @@ static void fadein_next_music(void) {
 	   However, only do this if the previous music was actually in 'wilderness' too! (except if WILDERNESS_MUSIC_ALWAYS_RESUME)
 	   Part 1/2: Restore the song subnumber: */
 	if (music_cur != -1) {
+		bool day_night_changed = FALSE;
+
 		pmn = string_exec_lua(0, format("return get_music_name(%d)", music_cur));
  //#ifndef WILDERNESS_MUSIC_ALWAYS_RESUME --- changed to client options, so unhardcoding this line by commenting it out
 		if (!c_cfg.wild_resume_from_any)
@@ -2945,8 +2943,21 @@ static void fadein_next_music(void) {
 
 		mn = string_exec_lua(0, format("return get_music_name(%d)", music_next));
 		/* On day/night change, do not resume. Instead, reset all saved positions */
-		mn_night = suffix(mn, "_night");
-		if (songs[music_next].bak_nighttime != mn_night) {
+		/* We detect day/night change by checking if either the current or the next song has '_night' in its name,
+		   and if so, we compare the two names without the '_night' and any optional '_day' part:
+		   If the name is identical, then we just had a day/night change happen! (eg 'Bree' vs 'Bree_night'.) */
+		if (suffix(pmn, "_night") != suffix(mn, "_night")) {
+			char tmpname1[MAX_CHARS], tmpname2[MAX_CHARS], *c;
+
+			strcpy(tmpname1, pmn);
+			strcpy(tmpname2, mn);
+			if ((c = strstr(tmpname1, "_night")) && c == tmpname1 + strlen(tmpname1) - 6) *c = 0;
+			if ((c = strstr(tmpname1, "_day")) && c == tmpname1 + strlen(tmpname1) - 4) *c = 0;
+			if ((c = strstr(tmpname2, "_night")) && c == tmpname2 + strlen(tmpname2) - 6) *c = 0;
+			if ((c = strstr(tmpname2, "_day")) && c == tmpname2 + strlen(tmpname2) - 4) *c = 0;
+			if (!strcmp(tmpname1, tmpname2)) day_night_changed = TRUE;
+		}
+		if (day_night_changed) {
 			int n;
 
 			for (n = 0; n < MUSIC_MAX; n++) {
