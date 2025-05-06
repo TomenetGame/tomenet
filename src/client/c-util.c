@@ -8474,16 +8474,16 @@ Chain_Macro:
 									Term_putstr(10, l2++, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
 									Term_putstr(10, l2++, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
 								} else {
-									Term_putstr(10, l2++, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
-									Term_putstr(10, l2++, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
+									Term_putstr(10, l2++, -1, TERM_YELLOW, "No need to add a latency-based delay so you can just press ESC. But");
+									Term_putstr(10, l2++, -1, TERM_YELLOW, "if you want one, eg for shop interaction, you may modify it in steps");
 								}
-								Term_putstr(10, l2++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or just press ESC to not use a delay.");
 								l2++;
 								Term_putstr(10, l2, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
 
 								/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
 								sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
-								Term_gotoxy(52, l);
+								Term_gotoxy(52, l2);
 								if (askfor_aux(tmp, 50, 0)) {
 									delay = atoi(tmp);
 									if (delay % 100) delay += 100; //QoL hack for noobs who can't read
@@ -9565,10 +9565,10 @@ Chain_Macro:
 								Term_putstr(10, l2++, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
 								Term_putstr(10, l2++, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
 							} else {
-								Term_putstr(10, l2++, -1, TERM_YELLOW, "If you want to add a latency-based delay, eg for shop interaction,");
-								Term_putstr(10, l2++, -1, TERM_YELLOW, "you can accept the suggested delay or modify it in steps");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "No need to add a latency-based delay so you can just press ESC. But");
+								Term_putstr(10, l2++, -1, TERM_YELLOW, "if you want one, eg for shop interaction, you may modify it in steps");
 							}
-							Term_putstr(10, l2++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+							Term_putstr(10, l2++, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or just press ESC to not use a delay.");
 							l2++;
 							Term_putstr(10, l2, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
 
