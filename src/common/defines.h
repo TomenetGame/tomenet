@@ -2905,7 +2905,7 @@
 /* For aquatic monsters/players: These feats can always be passed without damaging/impairing them. */
 #define is_always_passable(feat) \
 	(is_door(feat) || is_stair(feat) || \
-	(feat) == FEAT_FOUNTAIN || (feat) == FEAT_EMPTY_FOUNTAIN || (feat) == FEAT_FOUNTAIN_BLOOD)
+	(feat) == FEAT_FOUNTAIN || (feat) == FEAT_EMPTY_FOUNTAIN || (feat) == FEAT_FOUNTAIN_BLOOD || (feat) == FEAT_RUBBLE)
 
 
 /*
