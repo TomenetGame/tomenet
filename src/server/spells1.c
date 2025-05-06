@@ -855,12 +855,12 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
-	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) return(FALSE);
-
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death && !left_shop) {
+		if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
+		if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) return(FALSE);
+
 		if (p_ptr->mode & MODE_PVP) {
 #ifdef HOSTILITY_ABORTS_RUNNING
  #if 1
