@@ -330,11 +330,12 @@ static int a2slot(int Ind, char slot, char slot2, bool inven, bool equip) {
  */
 
 void do_slash_cmd(int Ind, char *message, char *message_u) {
-	int i = 0, j = 0, h = 0;
+	int i = 0, j = 0, h = 0, n = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
-	char *colon, *token[9], message2[MAX_SLASH_LINE_LEN], message3[MAX_SLASH_LINE_LEN];
-	char message4[MAX_SLASH_LINE_LEN], messagelc[MAX_SLASH_LINE_LEN];
+	char *colon, *token[9];
+	char message2[MAX_SLASH_LINE_LEN], message3[MAX_SLASH_LINE_LEN], message4[MAX_SLASH_LINE_LEN];
+	char messagelc[MAX_SLASH_LINE_LEN];
 
 	worldpos wp;
 	bool admin = is_admin(p_ptr);
@@ -1692,26 +1693,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
+			// here we check to make sure the user didn't enter a depth or a coordinate
+			// we could use isalpha, except we'd like it to be robust against town names
+			// that start with special characters.
 			if (tk && !isdigit(token[1][0]) && (token[1][0] != '-')) {
-				// here we check to make sure the user didn't enter a depth or a coordinate
-				// we could use isalpha, except we'd like it to be robust against town names
-				// that start with special characters.
-				strcpy(message4, message3);
-				for (i = 0; message4[i]; ++i) message4[i] = tolower(message4[i]);
-				k = 0; h = 0;
-				// k holds length of best match, h holds index of best match
+				char *msgptr = message3, *cdptr;
+
+				if (!strncasecmp(msgptr, "The ", 4) && strlen(msgptr) > 4) msgptr += 4;
+				h = 0;
+				n = 256; // n holds best (ie earliest) match starting location in candidate name string
 				for (i = 0; i < numtowns; ++i) {
-					j = 0;
 					candidate_destination = town_profile[town[i].type].name;
-					while (message4[j] && (message4[j] == tolower(candidate_destination[j]))) ++j;
-					if (!message4[j] && !(candidate_destination[j])) { // perfect match
+					if (!strcasecmp(candidate_destination, msgptr)) { // perfect match
 						h = i;
 						good_match_found = 2;
 						break;
 					}
-					if (j == k) good_match_found = 0;
-					else if (j > k) {
-						k = j;
+					/* If the destination entered is not an actual substring of the best candidate, discard it */
+					if (!(cdptr = my_strcasestr(candidate_destination, msgptr))) continue;
+
+					if (cdptr - candidate_destination < n) {
+						n = cdptr - candidate_destination;
 						h = i;
 						good_match_found = 1;
 					}
@@ -1720,20 +1722,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					dungeon_type *d_ptr;
 
 					for (i = 1; i <= dungeon_id_max; ++i) {
-						j = 0;
 						d_ptr = getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1}));
 						if (!(d_ptr->known & 0x1) && !admin) continue;
 						candidate_destination = get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i], d_ptr, 0, TRUE);
-						if (!strncmp(candidate_destination, "The ", 4)) candidate_destination += 4;
-						while (message4[j] && (message4[j] == tolower(candidate_destination[j]))) ++j;
-						if (!message4[j] && !(candidate_destination[j])) { // perfect match
+						if (!strncmp(candidate_destination, "The ", 4) && strlen(candidate_destination) > 4) candidate_destination += 4;
+						if (!strcasecmp(candidate_destination, msgptr)) { // perfect match
 							h = i;
 							good_match_found = 4;
 							break;
 						}
-						if (j == k) good_match_found = 0;
-						else if (j > k) {
-							k = j;
+						/* If the destination entered is not an actual substring of the best candidate, discard it */
+						if (!(cdptr = my_strcasestr(candidate_destination, msgptr))) continue;
+
+						if (cdptr - candidate_destination < n) {
+							n = cdptr - candidate_destination;
 							h = i;
 							good_match_found = 3;
 						}
@@ -3678,8 +3680,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 #ifdef AUCTION_SYSTEM
 		else if (prefix(messagelc, "/auc") || prefix(messagelc, "/auction")) {
-			int n;
-
 			if (p_ptr->inval) {
 				msg_print(Ind, "\377oYou must be validated to use the auction system.");
 				return;
@@ -3961,7 +3961,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/pbbs")) {
 			/* Look at or write to in-game party bbs, as suggested by Caine/Goober - C. Blue */
 			bool bbs_empty = TRUE;
-			int n;
 
 			if (!p_ptr->party) {
 				msg_print(Ind, "You have to be in a party to interact with a party BBS.");
@@ -3989,7 +3988,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/gbbs")) {
 			/* Look at or write to in-game guild bbs - C. Blue */
 			bool bbs_empty = TRUE;
-			int n;
 
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You have to be in a guild to interact with a guild BBS.");
