@@ -14528,19 +14528,19 @@ void audio_pack_selector(void) {
 
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
-						strcpy(sp_name[soundpacks], cval);
+						strncpy(sp_name[soundpacks], cval, MAX_CHARS);
 						continue;
 					}
 					if (!strcmp(ckey, "author")) {
-						strcpy(sp_author[soundpacks], cval);
+						strncpy(sp_author[soundpacks], cval, MAX_CHARS);
 						continue;
 					}
 					if (!strcmp(ckey, "description")) {
-						strcpy(sp_diz[soundpacks], cval);
+						strncpy(sp_diz[soundpacks], cval, MAX_CHARS * 3);
 						continue;
 					}
 					if (!strcmp(ckey, "version")) {
-						strcpy(sp_version[soundpacks], cval);
+						strncpy(sp_version[soundpacks], cval, MAX_CHARS);
 						continue;
 					}
 				}
@@ -14588,19 +14588,19 @@ void audio_pack_selector(void) {
 
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
-						strcpy(mp_name[musicpacks], cval);
+						strncpy(mp_name[musicpacks], cval, MAX_CHARS);
 						continue;
 					}
 					if (!strcmp(ckey, "author")) {
-						strcpy(mp_author[musicpacks], cval);
+						strncpy(mp_author[musicpacks], cval, MAX_CHARS);
 						continue;
 					}
 					if (!strcmp(ckey, "description")) {
-						strcpy(mp_diz[musicpacks], cval);
+						strncpy(mp_diz[musicpacks], cval, MAX_CHARS * 3);
 						continue;
 					}
 					if (!strcmp(ckey, "version")) {
-						strcpy(mp_version[musicpacks], cval);
+						strncpy(mp_version[musicpacks], cval, MAX_CHARS);
 						continue;
 					}
 				}

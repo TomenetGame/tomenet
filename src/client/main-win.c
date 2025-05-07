@@ -1825,8 +1825,8 @@ static void load_prefs(void) {
 	cfg_max_channels = GetPrivateProfileInt("Base", "MaxChannels", 32, ini_file);
 	cfg_audio_buffer = GetPrivateProfileInt("Base", "AudioBuffer", 1024, ini_file);
 	cfg_audio_master = (GetPrivateProfileInt("Base", "AudioMaster", 1, ini_file) != 0);
-	GetPrivateProfileString("Base", "SoundpackFolder", "sound", cfg_soundpackfolder, 127, ini_file);
-	GetPrivateProfileString("Base", "MusicpackFolder", "music", cfg_musicpackfolder, 127, ini_file);
+	GetPrivateProfileString("Base", "SoundpackFolder", "sound", cfg_soundpackfolder, 1024, ini_file);
+	GetPrivateProfileString("Base", "MusicpackFolder", "music", cfg_musicpackfolder, 1024, ini_file);
 	cfg_audio_music = (GetPrivateProfileInt("Base", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Base", "AudioSound", 1, ini_file) != 0);
 	cfg_audio_weather = (GetPrivateProfileInt("Base", "AudioWeather", 1, ini_file) != 0);

@@ -616,7 +616,7 @@ static bool sound_sdl_init(bool no_cache) {
 	int references = 0;
 	int referencer[REFERENCES_MAX];
 	bool reference_initial[REFERENCES_MAX];
-	char referenced_event[REFERENCES_MAX][40];
+	char referenced_event[REFERENCES_MAX][MAX_CHARS_WIDE];
 
 
 	/* Paranoia? null all the pointers */
@@ -762,7 +762,7 @@ static bool sound_sdl_init(bool no_cache) {
 			continue;
 		}
 
-		buffer0[strlen(buffer0) - 1] = 0; //trim linefeed
+		if (buffer0[strlen(buffer0) - 1] == '\n') buffer0[strlen(buffer0) - 1] = 0; //trim linefeed (the last line in the file might not have one)
 
 		/* Everything after a non-quoted '#' gets ignored */
 		c = buffer0;
@@ -864,10 +864,10 @@ static bool sound_sdl_init(bool no_cache) {
 			while (*cval == ' ' || *cval == '\t') cval++;
 			while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
 
-			if (!strncmp(buffer, "packname", 8)) strcpy(cfg_soundpack_name, cval);
+			if (!strncmp(buffer, "packname", 8)) strncpy(cfg_soundpack_name, cval, MAX_CHARS);
 			//if (!strncmp(buffer, "author", 6)) ;
 			//if (!strncmp(buffer, "description", 11)) ;
-			if (!strncmp(buffer, "version", 7)) strcpy(cfg_soundpack_version, cval);
+			if (!strncmp(buffer, "version", 7)) strncpy(cfg_soundpack_version, cval, MAX_CHARS);
 			continue;
 		}
 
@@ -926,7 +926,7 @@ static bool sound_sdl_init(bool no_cache) {
 			if (search) {
 				search[0] = '\0';
 				search = strpbrk(search + 1, " \t");
-			}
+			} else logprint(format("Sound.cfg error: Missing closing quotes in line %d.\n", cur_line));
 		} else {
 			search = strpbrk(cur_token, " \t");
 		}
@@ -990,7 +990,7 @@ static bool sound_sdl_init(bool no_cache) {
 					if (search) {
 						search[0] = '\0';
 						search = strpbrk(search + 1, " \t");
-					}
+					} else logprint(format("Sound.cfg error: Missing closing quotes in line %d.\n", cur_line));
 				} else {
 					/* Try to find a space */
 					search = strpbrk(cur_token, " \t");
@@ -1174,7 +1174,7 @@ static bool sound_sdl_init(bool no_cache) {
 			continue;
 		}
 
-		buffer0[strlen(buffer0) - 1] = 0; //trim linefeed
+		if (buffer0[strlen(buffer0) - 1] == '\n') buffer0[strlen(buffer0) - 1] = 0; //trim linefeed (the last line in the file might not have one)
 
 		/* Everything after a non-quoted '#' gets ignored */
 		c = buffer0;
@@ -1276,10 +1276,10 @@ static bool sound_sdl_init(bool no_cache) {
 			while (*cval == ' ' || *cval == '\t') cval++;
 			while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
 
-			if (!strncmp(buffer, "packname", 8)) strcpy(cfg_musicpack_name, cval);
+			if (!strncmp(buffer, "packname", 8)) strncpy(cfg_musicpack_name, cval, MAX_CHARS);
 			//if (!strncmp(buffer, "author", 6)) ;
 			//if (!strncmp(buffer, "description", 11)) ;
-			if (!strncmp(buffer, "version", 7)) strcpy(cfg_musicpack_version, cval);
+			if (!strncmp(buffer, "version", 7)) strncpy(cfg_musicpack_version, cval, MAX_CHARS);
 			continue;
 		}
 
@@ -1350,7 +1350,7 @@ static bool sound_sdl_init(bool no_cache) {
 			if (search) {
 				search[0] = '\0';
 				search = strpbrk(search + 1, " \t");
-			}
+			} else logprint(format("Music.cfg error: Missing closing quotes in line %d.\n", cur_line));
 		} else {
 			search = strpbrk(cur_token, " \t");
 		}
@@ -1447,7 +1447,7 @@ static bool sound_sdl_init(bool no_cache) {
 					if (search) {
 						search[0] = '\0';
 						search = strpbrk(search + 1, " \t");
-					}
+					} else logprint(format("Music.cfg error: Missing closing quotes in line %d.\n", cur_line));
 				} else {
 					/* Try to find a space */
 					search = strpbrk(cur_token, " \t");
@@ -1483,7 +1483,7 @@ static bool sound_sdl_init(bool no_cache) {
 		int num, event, event_ref, j;
 		cptr lua_name;
 		bool initial;
-		char cur_token[40];
+		char cur_token[MAX_CHARS_WIDE];
 
 		strcpy(cur_token, referenced_event[i]);
 		/* Make sure this is a valid event name */
