@@ -896,7 +896,7 @@ static bool sound_sdl_init(bool no_cache) {
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
 		if (event < 0) {
-			fprintf(stderr, "Sound effect '%s' not in audio.lua\n", cfg_name);
+			logprint(format("Sound effect '%s' not in audio.lua\n", cfg_name));
 			continue;
 		}
 
@@ -949,7 +949,7 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Build the path to the sample */
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, cur_token);
 			if (!my_fexists(path)) {
-				fprintf(stderr, "Can't find sample '%s' (line %d)\n", cur_token, cur_line);
+				logprint(format("Can't find sample '%s' (line %d)\n", cur_token, cur_line));
 				goto next_token_snd;
 			}
 
@@ -1309,7 +1309,7 @@ static bool sound_sdl_init(bool no_cache) {
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
 		if (event < 0) {
-			fprintf(stderr, "Music event '%s' not in audio.lua\n", cfg_name);
+			logprint(format("Music event '%s' not in audio.lua\n", cfg_name));
 			continue;
 		}
 
@@ -1393,7 +1393,7 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Build the path to the sample */
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, cur_token);
 			if (!my_fexists(path)) {
-				fprintf(stderr, "Can't find song '%s' (line %d)\n", cur_token, cur_line);
+				logprint(format("Can't find song '%s' (line %d)\n", cur_token, cur_line));
 				goto next_token_mus;
 			}
 
@@ -1494,7 +1494,7 @@ static bool sound_sdl_init(bool no_cache) {
 			if (strcmp(cur_token, lua_name) == 0) break;
 		}
 		if (event < 0) {
-			fprintf(stderr, "Referenced music event '%s' not in audio.lua\n", cur_token);
+			logprint(format("Referenced music event '%s' not in audio.lua\n", cur_token));
 			continue;
 		}
 		event_ref = event;
