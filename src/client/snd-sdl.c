@@ -748,7 +748,7 @@ static bool sound_sdl_init(bool no_cache) {
 	while (fgets(buffer0, sizeof(buffer0), fff) != 0) {
 		char *cfg_name;
 		cptr lua_name;
-		char *sample_list;
+		char *sample_sublist;
 		char *search;
 		char *cur_token;
 		char *next_token;
@@ -912,13 +912,13 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Songs: Trim spaces/tabs */
 		c = search;
 		while (*c == ' ' || *c == '\t') c++;
-		sample_list = c;
+		sample_sublist = c;
 
 		/* no audio filenames listed? */
-		if (!sample_list[0]) continue;
+		if (!sample_sublist[0]) continue;
 
 		/* Terminate the current token */
-		cur_token = sample_list;
+		cur_token = sample_sublist;
 		/* Handle sample names within quotes */
 		if (cur_token[0] == '\"') {
 			cur_token++;
@@ -1159,7 +1159,7 @@ static bool sound_sdl_init(bool no_cache) {
 	while (fgets(buffer0, sizeof(buffer0), fff) != 0) {
 		char *cfg_name;
 		cptr lua_name;
-		char *song_list;
+		char *song_sublist;
 		char *search;
 		char *cur_token;
 		char *next_token;
@@ -1325,13 +1325,13 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Songs: Trim spaces/tabs */
 		c = search;
 		while (*c == ' ' || *c == '\t') c++;
-		song_list = c;
+		song_sublist = c;
 
 		/* no audio filenames listed? */
-		if (!song_list[0]) continue;
+		if (!song_sublist[0]) continue;
 
 		/* Terminate the current token */
-		cur_token = song_list;
+		cur_token = song_sublist;
 		/* Handle '!' indicator for 'initial' songs */
 		if (cur_token[0] == '!') {
 			cur_token++;
