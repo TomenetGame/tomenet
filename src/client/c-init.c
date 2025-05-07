@@ -3325,7 +3325,7 @@ static void quit_hook(cptr s) {
 			if (fp != (FILE*)NULL) {
 				dump_messages_aux(fp, i, 2 - res, FALSE);//FALSE
 				fclose(fp);
-			}
+			} else logprint(format("Error: Cannot save chat/message history to %s.\n", buf2));
 		}
 	}
 
@@ -3346,18 +3346,20 @@ static void quit_hook(cptr s) {
 
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");
-		if (!hist_chat_looped) {
-			for (j = 0; j < hist_chat_end; j++) {
-				if (!message_history_chat[j][0]) continue;
-				fprintf(fp, "%s\n", message_history_chat[j]);
+		if (fp) {
+			if (!hist_chat_looped) {
+				for (j = 0; j < hist_chat_end; j++) {
+					if (!message_history_chat[j][0]) continue;
+					fprintf(fp, "%s\n", message_history_chat[j]);
+				}
+			} else {
+				for (j = hist_chat_end; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
+					if (!message_history_chat[j % MSG_HISTORY_MAX][0]) continue;
+					fprintf(fp, "%s\n", message_history_chat[j % MSG_HISTORY_MAX]);
+				}
 			}
-		} else {
-			for (j = hist_chat_end; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
-				if (!message_history_chat[j % MSG_HISTORY_MAX][0]) continue;
-				fprintf(fp, "%s\n", message_history_chat[j % MSG_HISTORY_MAX]);
-			}
-		}
-		fclose(fp);
+			fclose(fp);
+		} else logprint(format("Error: Cannot save chat history to chathist-%s.tmp.\n", nick));
 	}
 
 #ifdef GUIDE_BOOKMARKS
@@ -3367,11 +3369,13 @@ static void quit_hook(cptr s) {
 
 		path_build(buf, 1024, ANGBAND_DIR_USER, "bookmarks.tmp");
 		fp = fopen(buf, "w");
-		for (j = 0; j < GUIDE_BOOKMARKS; j++) {
-			if (!bookmark_line[j]) continue;
-			fprintf(fp, "%d,%s\n", bookmark_line[j], bookmark_name[j]);
-		}
-		fclose(fp);
+		if (fp) {
+			for (j = 0; j < GUIDE_BOOKMARKS; j++) {
+				if (!bookmark_line[j]) continue;
+				fprintf(fp, "%d,%s\n", bookmark_line[j], bookmark_name[j]);
+			}
+			fclose(fp);
+		} else logprint("Error: Cannot save guide bookmarks to bookmarks.tmp.\n");
 	}
 #endif
 

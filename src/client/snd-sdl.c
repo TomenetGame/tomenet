@@ -2936,7 +2936,7 @@ static void fadein_next_music(void) {
 		bool look_for_next = TRUE; //required for handling shuffle
 
 		/* After having played all subsongs, advance to the next music event, starting at song #0 again */
-		if (music_cur_song == songs[music_cur].num - 1) {
+		if (music_cur != -1 && music_cur_song == songs[music_cur].num - 1) {
 			for (j = 0; j < MUSIC_MAX; j++) {
 				d = jukebox_shuffle_map[j];
 				if (look_for_next) {
@@ -3124,6 +3124,8 @@ static void fadein_next_music(void) {
 		}
 	} else prev_wilderness = FALSE;
 #endif
+
+//logprint(format("fnm mc=%d/%d,mn=%d/%d\n", music_cur, music_cur_song, music_next, music_next_song));
 	/* Choose the predetermined random event */
 	wave = songs[music_next].wavs[music_next_song];
 
