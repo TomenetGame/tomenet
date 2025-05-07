@@ -12318,7 +12318,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		/* Scan contents for 'tar' file */
 		fff = fopen("__tomenethelper.bat", "w");
 		if (!fff) {
-			c_message_add("\377oError: Couldn't write temporary file.");
+			c_message_add("\377oError: Couldn't write temporary file (I1).");
 			return;
 		}
 		if (passworded) fprintf(fff, format("@%s -p\"%s\" l \"%s\" > __tomenet.tmp\n", path_7z_quoted, password, pack_name));
@@ -12356,7 +12356,7 @@ static void do_cmd_options_install_audio_packs(void) {
 				l7z = FALSE;
 				fff = fopen("__tomenethelper.bat", "w");
 				if (!fff) {
-					c_message_add("\377oError: Couldn't write temporary file.");
+					c_message_add("\377oError: Couldn't write temporary file (I2).");
 					return;
 				}
 				if (passworded) fprintf(fff, format("@%s x -p\"%s\" -so \"%s\" | %s l -si -ttar > __tomenet.tmp\n", path_7z_quoted, password, pack_name, path_7z_quoted));
@@ -14430,13 +14430,10 @@ void audio_pack_selector(void) {
 #endif
 
 
-	/* Save screen */
-	Term_save();
-
 	/* Get list of all folders starting on 'music' or 'sound' within lib/xtra */
 	fff = fopen("__tomenet.tmp", "w"); //just make sure the file always exists, for easier file-reading handling.. pft */
 	if (!fff) {
-		c_message_add("\377oError: Couldn't write temporary file.");
+		c_message_add("\377oError: Couldn't write temporary file (P1).");
 		return;
 	}
 	fclose(fff);
@@ -14444,7 +14441,7 @@ void audio_pack_selector(void) {
  #if 0 /* use system calls - easy, but has drawback of cmd shell window popup -_- */
 	fff = fopen("__tomenethelper.bat", "w");
 	if (!fff) {
-		c_message_add("\377oError: Couldn't write temporary file.");
+		c_message_add("\377oError: Couldn't write temporary file (P2).");
 		return;
 	}
 	fprintf(fff, "@dir %s /a:d /b > __tomenet.tmp\n", ANGBAND_DIR_XTRA);
@@ -14475,7 +14472,7 @@ void audio_pack_selector(void) {
 #endif
 	fff = fopen("__tomenet.tmp", "r");
 	if (!fff) {
-		c_message_add("\377oError: Couldn't scan audio pack folders.");
+		c_message_add("\377oError: Couldn't read temporary file.");
 		return;
 	}
 	while (!feof(fff)) {
@@ -14620,6 +14617,9 @@ void audio_pack_selector(void) {
 #else
 	remove("__tomenethelper.bat");
 #endif
+
+	/* Save screen */
+	Term_save();
 
 	/* suppress hybrid macros */
 	inkey_msg = TRUE;
