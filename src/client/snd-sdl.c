@@ -600,7 +600,7 @@ static bool sound_sdl_init(bool no_cache) {
 	int buffers_used, buffer_cur;
 	char buffer0[BUFFERSIZE], *buffer = buffer0, bufferx0[BUFFERAMT][BUFFERSIZE], *bufferx = bufferx0[0];
 #else
-	char buffer0[BUFFERSIZE], *buffer = buffer0, bufferx[BUFFERSIZE];
+	char buffer0[BUFFERSIZE] = { 0 }, *buffer = buffer0, bufferx[BUFFERSIZE] = { 0 };
 #endif
 	//bufferx size: 1024 is safe, 4096 causes stack smashing for format() calls, and segfault / invalid server choice / music-load(59,0) error oO
 	//...now apparently the critical threshold for everything file-related glitching out, even giving random packet errors, is between 836 and 885, not 1024,
@@ -785,6 +785,10 @@ static bool sound_sdl_init(bool no_cache) {
 			*c = 0;
 			break;
 		}
+
+		/* strip trailing spaces/tabs */
+		c = buffer0;
+		while (*c && (c[strlen(c) - 1] == ' ' || c[strlen(c) - 1] == '\t')) c[strlen(c) - 1] = 0;
 
 		/* (2022, 4.9.0) strip preceding spaces/tabs */
 		c = buffer0;
@@ -1193,6 +1197,10 @@ static bool sound_sdl_init(bool no_cache) {
 			*c = 0;
 			break;
 		}
+
+		/* strip trailing spaces/tabs */
+		c = buffer0;
+		while (*c && (c[strlen(c) - 1] == ' ' || c[strlen(c) - 1] == '\t')) c[strlen(c) - 1] = 0;
 
 		/* (2022, 4.9.0) strip preceding spaces/tabs */
 		c = buffer0;
