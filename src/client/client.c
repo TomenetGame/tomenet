@@ -767,7 +767,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 				}
 				if (!found_window[9]) {
 					write_mangrc_aux(9, "Term-9", config2);
-					logprint("Added missing Term-9 window to config file\n.");
+					logprint("Added missing Term-9 window to config file.\n");
 				}
 			}
 #endif
