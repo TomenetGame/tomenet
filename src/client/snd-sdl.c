@@ -587,12 +587,13 @@ static bool open_audio(void) {
  * memory to avoid I/O latency later.
  */
 static bool sound_sdl_init(bool no_cache) {
-	char path[2048];
+	char path[4096];
 	char buffer0[4096], *buffer = buffer0, bufferx[4096];
+	//bufferx size: 1024 is safe, 4096 causes stack smashing for format() calls, and segfault / invalid server choice / music-load(59,0) error oO
 	FILE *fff;
-	int i, j, cur_line;
+	int i, j, cur_line, k;
 	char out_val[160];
-	bool disabled;
+	bool disabled, cat_this_line, cat_next_line;
 
 	bool events_loaded_semaphore;
 
@@ -725,6 +726,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Parse the file */
 	/* Lines are always of the form "name = sample [sample ...]" */
 	cur_line = 0;
+	cat_this_line = cat_next_line = FALSE;
 	while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 		char *cfg_name;
 		cptr lua_name;
@@ -762,19 +764,29 @@ static bool sound_sdl_init(bool no_cache) {
 		/* (2022, 4.9.0) strip preceding spaces/tabs */
 		c = buffer0;
 		while (*c == ' ' || *c == '\t') c++;
-		strcpy(bufferx, c);
-#if 1 /* linewrap via trailing ' \' */
+
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
-		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && (buffer0[strlen(buffer0) - 2] == ' ' || buffer0[strlen(buffer0) - 2] == ' ')) {
-			if (strlen(bufferx) + strlen(buffer0) >= 4096) continue; /* String overflow protection: Discard all that is too much. */
-			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
-			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+		if (cat_next_line) {
+			cat_this_line = TRUE;
+			cat_next_line = FALSE;
+		}
+		if (strlen(c) >= 2 && c[strlen(c) - 1] == '\\' && (c[strlen(c) - 2] == ' ' || c[strlen(c) - 2] == '\t')) {
+			c[strlen(c) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
+			cat_next_line = TRUE;
+		}
+		if (!cat_this_line) strcpy(bufferx, c);
+		else {
+			cat_this_line = FALSE;
+			if (strlen(bufferx) + strlen(c) + 1 >= sizeof(bufferx) / sizeof(char)) { //+1: we strcat a space sometimes, see below
+				logprint(format("Warning: Sound.cfg line #%d is too long to concatinate.\n", cur_line));
+				continue; /* String overflow protection: Discard all that is too much. */
+			} else {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
-				if (buffer0[0] != ' ' && buffer0[0] != '\t' && buffer0[0]) strcat(bufferx, " ");
-				strcat(bufferx, buffer0);
+				if (c[0] != ' ' && c[0] != '\t' && c[0]) strcat(bufferx, " ");
+				strcat(bufferx, c);
 			}
 		}
-#endif
+		if (cat_next_line) continue;
 		strcpy(buffer0, bufferx);
 
 		/* Lines starting on ';' count as 'provided event' but actually
@@ -1077,6 +1089,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Parse the file */
 	/* Lines are always of the form "name = music [music ...]" */
 	cur_line = 0;
+	cat_this_line = cat_next_line = FALSE;
 	while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 		char *cfg_name;
 		cptr lua_name;
@@ -1115,19 +1128,29 @@ static bool sound_sdl_init(bool no_cache) {
 		/* (2022, 4.9.0) strip preceding spaces/tabs */
 		c = buffer0;
 		while (*c == ' ' || *c == '\t') c++;
-		strcpy(bufferx, c);
-#if 1 /* linewrap via trailing ' \' */
+
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
-		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && (buffer0[strlen(buffer0) - 2] == ' ' || buffer0[strlen(buffer0) - 2] == '\t')) {
-			if (strlen(bufferx) + strlen(buffer0) >= 4096) continue; /* String overflow protection: Discard all that is too much. */
-			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
-			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+		if (cat_next_line) {
+			cat_this_line = TRUE;
+			cat_next_line = FALSE;
+		}
+		if (strlen(c) >= 2 && c[strlen(c) - 1] == '\\' && (c[strlen(c) - 2] == ' ' || c[strlen(c) - 2] == '\t')) {
+			c[strlen(c) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
+			cat_next_line = TRUE;
+		}
+		if (!cat_this_line) strcpy(bufferx, c);
+		else {
+			cat_this_line = FALSE;
+			if (strlen(bufferx) + strlen(c) + 1 >= sizeof(bufferx) / sizeof(char)) { //+1: we strcat a space sometimes, see below
+				logprint(format("Warning: Music.cfg line #%d is too long to concatinate.\n", cur_line));
+				continue; /* String overflow protection: Discard all that is too much. */
+			} else {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
-				if (buffer0[0] != ' ' && buffer0[0] != '\t' && buffer0[0]) strcat(bufferx, " ");
-				strcat(bufferx, buffer0);
+				if (c[0] != ' ' && c[0] != '\t' && c[0]) strcat(bufferx, " ");
+				strcat(bufferx, c);
 			}
 		}
-#endif
+		if (cat_next_line) continue;
 		strcpy(buffer0, bufferx);
 
 		/* Lines starting on ';' count as 'provided event' but actually
@@ -1377,6 +1400,14 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Never reference initial songs */
 			if (songs[event_ref].initial[j]) continue;
 
+			/* Avoid cross-referencing ourselves! */
+			for (k = 0; k < songs[event].num; k++)
+				if (streq(songs[event].paths[k], songs[event_ref].paths[j])) break;
+			if (k != songs[event].num) {
+				logprint(format("Music: Duplicate reference <%s> (%d,%d <-> %d,%d)\n", songs[event].paths[k], event, k, event_ref, j));
+				continue;
+			}
+
 			songs[event].paths[num] = songs[event_ref].paths[j];
 			songs[event].wavs[num] = songs[event_ref].wavs[j];
 			songs[event].initial[num] = initial;
@@ -1411,6 +1442,7 @@ static bool sound_sdl_init(bool no_cache) {
 			songs[i].disabled = TRUE;
 		}
 	}
+	my_fclose(fff);
 #endif
 #ifdef WINDOWS
 	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
@@ -1433,6 +1465,7 @@ static bool sound_sdl_init(bool no_cache) {
 			songs[i].volume = atoi(buffer0);
 		}
 	}
+	my_fclose(fff);
 
 #ifdef DEBUG_SOUND
 	puts("sound_sdl_init() done.");
