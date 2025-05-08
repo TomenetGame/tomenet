@@ -354,6 +354,37 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		/* Never get "silly" */
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
+		/* You're not a welcomed customer.. */
+		if (p_ptr->tim_blacklist) price = price * 4;
+
+#ifdef IDDC_DED_DISCOUNT
+ #ifdef DED_IDDC_MANDOS
+		/* Don't make shops extra-expensive except for stat potions.
+		   Note: This also foregoes SELL67 which is beneficial, but at least as MODE_DED_IDDC char we get at least 50% discount guaranteed anyway! */
+		if (in_hallsofmandos(&p_ptr->wpos) && !(st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)) {
+			switch (o_ptr->tval) {
+			case TV_POTION:
+				switch (o_ptr->sval) {
+				case SV_POTION_INC_STR:
+				case SV_POTION_INC_DEX:
+				case SV_POTION_INC_WIS:
+				case SV_POTION_INC_INT:
+				case SV_POTION_INC_CON:
+				case SV_POTION_INC_CHR:
+				case SV_POTION_AUGMENTATION:
+				case SV_POTION_STAR_ENLIGHTENMENT:
+					break;
+				default:
+					return(price);
+				}
+				break;
+			default:
+				return(price);
+			}
+		}
+ #endif
+#endif
+
 		/* Note: Previously BM, XBM, SBM and Rare Jewelry Store had same prices for speed/poly rings!
 		         Other rings were 2x as expensive in SBM than in BM/XBM/RJS.
 		         Now, XBM/SBM/RJS are same price for speed and 2x as expensive as BM.
@@ -388,9 +419,6 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 
 		/* CHEAPER items: Added for Hidden Library in IDDC */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_SELL67) price = (price * 2 + 1) / 3;
-
-		/* You're not a welcomed customer.. */
-		if (p_ptr->tim_blacklist) price = price * 4;
 	}
 
 	/* Compute the final price (with rounding) */
