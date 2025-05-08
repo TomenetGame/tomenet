@@ -283,7 +283,12 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	ot_ptr = &ow_info[st_ptr->owner];
 
 #ifdef IDDC_DED_DISCOUNT
-	if ((p_ptr->mode & MODE_DED_IDDC) && in_bree(&p_ptr->wpos) && !p_ptr->iron_winner_ded && !flip) {
+	if (!flip && (p_ptr->mode & MODE_DED_IDDC) && !p_ptr->iron_winner_ded &&
+	    (in_bree(&p_ptr->wpos)
+ #ifdef DED_IDDC_MANDOS
+	    || in_hallsofmandos(&p_ptr->wpos)
+ #endif
+	    )) {
 		int dis = o_ptr->discount;
 
 		if (o_ptr->discount < 50) o_ptr->discount = 50;
@@ -2803,7 +2808,12 @@ static void display_entry(int Ind, int pos) {
 #endif
 #ifdef IDDC_DED_DISCOUNT
 		/* Also display correct discount, so as to not confuse anybody, abuse unused 'wgt' for this. */
-		if ((p_ptr->mode & MODE_DED_IDDC) && in_bree(&p_ptr->wpos) && !p_ptr->iron_winner_ded) {
+		if ((p_ptr->mode & MODE_DED_IDDC) && !p_ptr->iron_winner_ded &&
+		    (in_bree(&p_ptr->wpos)
+ #ifdef DED_IDDC_MANDOS
+		    || in_hallsofmandos(&p_ptr->wpos)
+ #endif
+		    )) {
 			wgt = o_ptr->discount;
 			/* IDDC-mode characters get at least a 50% discount on all town store items in Bree */
 			if (o_ptr->discount < 50) o_ptr->discount = 50;
