@@ -1848,8 +1848,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if (amt < 1) {
 				msg_print(Ind, "You feel as if it's the day before the payday.");
 			} else {
-				object_type *o_ptr, forge;
-				o_ptr = &forge;
+				object_type forge, *o_ptr = &forge;
+
 				invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 
 				if (amt > 8) amt = 8;//was 10
@@ -2137,9 +2137,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 #if 0	/* insane - this COULD be cool if it was adjusted to be more sane */
 			{
 			int i, j, k, k_idx;
-			object_type *o_ptr;
-			object_type forge;
-			object_type *q_ptr = &forge;
+			object_type *o_ptr, forge, *q_ptr = &forge;
 
 			for (i = 0; i < INVEN_PACK; i++) {
 				o_ptr = &p_ptr->inventory[i];
@@ -2169,6 +2167,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					q_ptr->mode = o_ptr->mode;
 					q_ptr->level = o_ptr->level;
 					q_ptr->note = o_ptr->note;
+					o_ptr->iron_trade = p_ptr->iron_trade;
+					o_ptr->iron_turn = turn;
 					(void)inven_carry(Ind, q_ptr);
 				}
 
@@ -2280,8 +2280,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			break;
 
 		case TRAP_OF_DESPAIR: { /* AHAH jir well done ;) */
-			object_type     forge;
-			object_type     *o_ptr = &forge;
+			object_type forge, *o_ptr = &forge;
 
 			msg_print(Ind, "You are driven to despair.");
 			//ident |= dec_stat(Ind, A_DEX, 25, TRUE);	// TRUE..!?
@@ -2298,6 +2297,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			o_ptr->owner = p_ptr->id;
 			o_ptr->mode = p_ptr->mode;
 			o_ptr->level = 0;
+			o_ptr->iron_trade = p_ptr->iron_trade;
+			o_ptr->iron_turn = turn;
 			(void)inven_carry(Ind, o_ptr);
 
 			invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
@@ -2306,6 +2307,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			o_ptr->owner = p_ptr->id;
 			o_ptr->mode = p_ptr->mode;
 			o_ptr->level = 0;
+			o_ptr->iron_trade = p_ptr->iron_trade;
+			o_ptr->iron_turn = turn;
 			(void)inven_carry(Ind, o_ptr);
 
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -2313,8 +2316,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			break; }
 
 		case TRAP_OF_RARE_BOOKS: {
-			object_type     forge;
-			object_type     *o_ptr = &forge;
+			object_type forge, *o_ptr = &forge;
 
 			msg_print(Ind, "Suddenly you felt something really splendid just happened to you!");
 
@@ -2534,9 +2536,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Thirsty Trap */
 		case TRAP_OF_THIRST: {
 			int i, j, bottles = 0;
-			object_type *o_ptr;
-			object_type     forge;
-			object_type     *q_ptr = &forge;
+			object_type *o_ptr, forge, *q_ptr = &forge;
 			bool iddc = in_irondeepdive(wpos);
 
 			for (i = 0; i < INVEN_PACK; i++) {
