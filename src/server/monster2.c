@@ -3076,7 +3076,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 	/* No live spawn inside IDDC -- except for breeder clones/summons */
 	if (!(summon_override_checks & SO_IDDC) &&
 	    !level_generation_time &&
-	    in_irondeepdive(wpos)
+	    (in_irondeepdive(wpos) || in_hallsofmandos(wpos)) /* Both IDDC and HoM use character-'stale'ness, so they should both prevent live spawns accordingly. */
 	    && !clo && !clone_summoning)
 		return(6);
 
@@ -3091,7 +3091,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 
 #ifdef IDDC_MANDOS_NO_UNMAKERS
 	/* No unmakers at all in IDDC/Mandos? (At all, as live-spawning is prohibited for them anyway, so only need to check at generation time here) */
-	if (level_generation_time && r_idx == RI_UNMAKER && !(summon_override_checks & SO_BOSS_MONSTERS) && (in_irondeepdive(wpos) || in_hallsofmandos(wpos))) return(58);
+	if (level_generation_time && r_idx == RI_UNMAKER && !(summon_override_checks & SO_BOSS_MONSTERS)
+	    && (in_irondeepdive(wpos) || in_hallsofmandos(wpos)))
+		return(58);
 #endif
 
 #ifdef PMO_DEBUG
@@ -3254,7 +3256,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 				}
 			} else
 #endif
-			/* Allow all dungeon bosses in Halls of Mandos, at their native depth */
+			/* Allow all dungeon bosses in Halls of Mandos, at their native depth -- actually no effect, as Mandos has no unique monsters! */
 			if (in_hallsofmandos(wpos)) {
 				if (r_ptr->level != ABS(wpos->wz)
 				    /* allow Sauron in Halls of Mandos, at any depth starting at his native depth (99) */
@@ -3831,7 +3833,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		/* if it was a live spawn, adjust his power according to amount of players on his floor */
 		if (!level_generation_time) check_Morgoth(0);
 
-		/* Just for some misc death message stuff */
+		/* Just for determining death message '<player> died facing Morgoth' */
 		if (!in_irondeepdive(wpos)) {
 			Morgoth_x = wpos->wx;
 			Morgoth_y = wpos->wy;

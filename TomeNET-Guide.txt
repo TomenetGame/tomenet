@@ -9780,6 +9780,8 @@ the game. For more information, see (4.13), Ironman Challenge.
   gain is not enforced: Normal experience is gained on any depth regardless of
   your character's level. But unlike in IDDC this is only true for characters
   up to level 49. Characters of level 50+ will receive depth-restricted XP.
+ -Same as in the IDDC there are no live-spawns and floors become stale after
+  relogging to the same depth but a newly generated floor.
  -The Halls of Mandos are barred to any unique monsters and to Unmakers!
  -Various more or less basic stores, including a library, will spawn in
   addition to the usual dungeon stores. Also (like in the IDDC) a deep supply
