@@ -13042,6 +13042,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/fixarttimeout")) {
+				if (!tk) {
+					msg_print(Ind, "No artifact index specified.");
+					return;
+				}
+				if (k < 1 || k >= max_a_idx) {
+					msg_format(Ind, "Error: Artifact index must range from 1 to %d.", max_a_idx - 1);
+					return;
+				}
+
+				/* --- partial copy/paste from determine_artifact_timeout(): --- */
+
+				a_info[k].timeout = get_artifact_timeout(k);
+				/* Specialty hacks */
+				if (k == ART_ANTIRIAD) a_info[ART_ANTIRIAD_DEPLETED].timeout = a_info[k].timeout;
+
+				return;
+			}
 			else if (prefix(messagelc, "/mtrack")) { /* track monster health of someone's current target */
 				char m_name[MNAME_LEN];
 				int p;
