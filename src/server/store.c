@@ -2283,6 +2283,16 @@ static void store_create(store_type *st_ptr) {
 		}
 
 		switch (st_ptr->st_idx) {
+		case STORE_SPEC_ARCHER:
+			/* No magic ammunition */
+			switch (o_ptr->tval) {
+			case TV_SHOT:
+			case TV_BOLT:
+			case TV_ARROW:
+				if (o_ptr->sval == SV_AMMO_MAGIC) continue;
+				// fall through as accepted
+			}
+			break;
 		case STORE_SPEC_POTION: /* Let's not allow 'Cure * Insanity' or 'Augmentation' potions - the_sandman */
 			switch (o_ptr->tval) {
 			case TV_POTION:

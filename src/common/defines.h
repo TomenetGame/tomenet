@@ -1888,7 +1888,6 @@
 #define SF2_KEEP_TQUART		0x00000008U	/* On store inventory turnover, keep at most 3/4 of the stock, resulting in somewhat more new items (for book stores mostly) */
 #define SF2_FILL_WELL		0x00000010U	/* Fill up store inventory on turnover, so only few slots remain empty (potentially for buying items from the player). For book stores mostly. */
 
-
 /* This seems to be bad, but backported once anyway;
  * consider removing them later */
 #define STORE_GENERAL	0
