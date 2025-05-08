@@ -373,6 +373,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 				case SV_POTION_INC_CHR:
 				case SV_POTION_AUGMENTATION:
 				case SV_POTION_STAR_ENLIGHTENMENT:
+				case SV_POTION_STAR_HEALING:
 					break;
 				default:
 					return(price);
