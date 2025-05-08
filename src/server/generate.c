@@ -10135,10 +10135,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 									case 3: cs_ptr->sc.omni = STORE_SPEC_POLE;break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_SWORD;break;*/
 									case 0: cs_ptr->sc.omni = STORE_HIDDENLIBRARY; break;
-									case 1: case 2: cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT; break;
-									case 3: cs_ptr->sc.omni = STORE_SPEC_POTION; break;
-									case 4: cs_ptr->sc.omni = STORE_SPEC_SCROLL; break;
-									case 5: cs_ptr->sc.omni = STORE_SPEC_ARCHER; break;
+									case 1: cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT; break;
+									case 2: cs_ptr->sc.omni = STORE_SPEC_POTION; break;
+									case 3: cs_ptr->sc.omni = STORE_SPEC_SCROLL; break;
+									case 4: cs_ptr->sc.omni = STORE_SPEC_ARCHER; break;
+									case 5: cs_ptr->sc.omni = STORE_COMMON; break;
 									default: cs_ptr->sc.omni = STORE_STRADER; break;
 									}
 								} else if (build_special_store == 4) cs_ptr->sc.omni = STORE_HIDDENLIBRARY;

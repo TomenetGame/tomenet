@@ -1914,6 +1914,7 @@
 #define STORE_LIBRARY	46		/* unused */
 #define STORE_FORBIDDENLIBRARY	47	/* unused */
 #define STORE_BLACKX	48
+#define STORE_COMMON	49
 #define STORE_MINING	59
 #define STORE_BLACKS	60
 #define STORE_BTSUPPLY	61
