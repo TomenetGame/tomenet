@@ -1189,6 +1189,9 @@
 /* Unowned gold piles are auto-split between party members on the same floor */
 #define IDDC_AUTOSPLIT_GOLD
 
+/* Shops in the Halls of Mandos buy anything but don't display the sold items */
+#define MANDOS_BUYALL_EATALL
+
 
 /* Maximum amount of gold that can be farmed from townies before you get 1 XP
    from it. This is an anti-cheeze for Highlander Tournament and Ironman Deep

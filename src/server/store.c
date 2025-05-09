@@ -985,8 +985,10 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	if (p_ptr->store_num <= -2) return(2);
 #endif
 
+#ifdef MANDOS_BUYALL_EATALL
 	/* Shops in Halls of Mandos will buy anything (but not display it) */
 	if (in_hallsofmandos(&p_ptr->wpos)) return(0);
+#endif
 
 	/* Hack: The Mathom House */
 	if (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) {
@@ -4875,8 +4877,13 @@ void store_confirm(int Ind) {
 	/* Handle stuff */
 	handle_stuff(Ind);
 
+#ifdef MANDOS_BUYALL_EATALL
 	/* Stores in the Halls of Mandos will buy anything, but not display it */
-	if (in_hallsofmandos(&p_ptr->wpos)) return;
+	if (in_hallsofmandos(&p_ptr->wpos)) {
+		if (true_artifact_p(&sold_obj)) handle_art_d(sold_obj.name1);
+		return;
+	}
+#endif
 
 	/* Artifact won't be sold in a store */
 	if ((cfg.anti_arts_shop || p_ptr->total_winner) && true_artifact_p(&sold_obj) && !museum) {
