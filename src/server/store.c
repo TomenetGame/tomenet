@@ -330,6 +330,21 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 
 		/* Seasoned Tradesman et al don't pay very much either, they know the customers can't disagree.. */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY67) price = (price * 2 + 1) / 3;
+#ifdef MANDOS_BUYALL_EATALL
+		/* Shops may buy all, but won't pay as much for non-canonical wares */
+		//TODO: implement
+		else if (in_hallsofmandos(&p_ptr->wpos)) {
+			switch (st_ptr->st_idx) {
+			case STORE_COMMON:
+			case STORE_SPEC_SCROLL:
+			case STORE_SPEC_POTION:
+			case STORE_SPEC_ARCHER:
+			case STORE_SPEC_CLOSECOMBAT:
+			case STORE_HIDDENLIBRARY:
+				break;
+			}
+		}
+#endif
 
 		/* Seasoned Tradesman et al don't pay very much either, they know the customers can't disagree.. */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY50) price = (price + 1) / 2;

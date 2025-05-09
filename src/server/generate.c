@@ -9975,10 +9975,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100))
 			build_special_store = 1;
 
-		/* Build hidden library if desired (good for challenge dungeons actually) - very frequent store! */
-		if (//!store_failed &&
-		    (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
-			if (!rand_int(in_hallsofmandos(wpos) ? 5 : dun_lev / 2 + 1))
+		/* Build hidden library if desired (good for challenge dungeons actually) - very frequent store!
+		   Note that even if these checks fail, the hidden library can still be built via build_special_store == 3 aka DF2_MISC_STORES (Halls of Mandos)! */
+		if ((!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) { // && !store_failed
+			if (!rand_int(dun_lev / 2 + 1))
 #ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
  #ifndef IDDC_REFUGE_EXTRA_STORES_RANDOM
 				if (!in_irondeepdive(wpos))
@@ -10000,20 +10000,20 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			//todo: maybe use the new d_ptr->store_timer for randomly generated stores
 #ifdef TEST_SERVER
 			/* Allow almost anywhere, for testing */
-			if (!store_failed && (!build_special_store) && (dun_lev >= 6)) {
+			if (!store_failed && !build_special_store && dun_lev >= 6) {
 				if (!rand_int(5)) build_special_store = 3;
 				else store_failed = TRUE;
 			}
 #elif defined(RPG_SERVER)
 			/* Allowed in any canonical dungeon (they are all ironman on RPG server)! */
-			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 6)) {
+			if (!store_failed && !build_special_store && (d_ptr->flags2 & DF2_IRON) && dun_lev >= 6) {
 				//((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
 				if (!rand_int(5)) build_special_store = 3;
 				else store_failed = TRUE;
 			}
 #else
 			/* Build one of several misc stores for basic items of certain type */
-			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 6)) {
+			if (!store_failed && !build_special_store && (d_ptr->flags2 & DF2_MISC_STORES) && dun_lev >= 6) {
 				if (!rand_int(3)) build_special_store = 3;
 				else store_failed = TRUE;
 			}
@@ -10021,8 +10021,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 
 		/* Build deep supplies store if desired (good for challenge dungeons actually) - frequent store! */
-		if (//!store_failed &&
-		    (!build_special_store) && (d_ptr->flags3 & DF3_DEEPSUPPLY) && (dun_lev >= 80)) {
+		if (!build_special_store && (d_ptr->flags3 & DF3_DEEPSUPPLY) && dun_lev >= 80) { // && !store_failed
 			if (!rand_int(5)) build_special_store = 5;
 			else {
 				//s_printf("DUNGEON_STORE: DEEPSUPPLY roll failed.\n");
@@ -10145,18 +10144,16 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 								} else if (build_special_store == 2) cs_ptr->sc.omni = STORE_HERBALIST;
 								else if (build_special_store == 3) {
 									//Add specialist stores? - the_sandman
-									switch (rand_int(7)) {
-									/*case 1: cs_ptr->sc.omni = STORE_SPEC_AXE;break;
-									case 2: cs_ptr->sc.omni = STORE_SPEC_BLUNT;break;
-									case 3: cs_ptr->sc.omni = STORE_SPEC_POLE;break;
-									case 4: cs_ptr->sc.omni = STORE_SPEC_SWORD;break;*/
+									switch (rand_int(6)) {
 									case 0: cs_ptr->sc.omni = STORE_HIDDENLIBRARY; break;
 									case 1: cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT; break;
 									case 2: cs_ptr->sc.omni = STORE_SPEC_POTION; break;
 									case 3: cs_ptr->sc.omni = STORE_SPEC_SCROLL; break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_ARCHER; break;
-									case 5: cs_ptr->sc.omni = STORE_COMMON; break;
-									default: cs_ptr->sc.omni = STORE_STRADER; break;
+									case 5:
+										if (in_hallsofmandos(wpos)) cs_ptr->sc.omni = STORE_COMMON; /* Light version, but offers all bags */
+										else cs_ptr->sc.omni = STORE_STRADER; /* Heavy version, renders scribe/potion/library store moot for resupplying */
+										break;
 									}
 								} else if (build_special_store == 4) cs_ptr->sc.omni = STORE_HIDDENLIBRARY;
 								else if (build_special_store == 5) cs_ptr->sc.omni = STORE_DEEPSUPPLY;

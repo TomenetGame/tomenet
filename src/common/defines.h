@@ -1189,7 +1189,8 @@
 /* Unowned gold piles are auto-split between party members on the same floor */
 #define IDDC_AUTOSPLIT_GOLD
 
-/* Shops in the Halls of Mandos buy anything but don't display the sold items */
+/* Shops in the Halls of Mandos buy anything but don't display the sold items.
+   However, shops will pay less for non-canonical wares. */
 #define MANDOS_BUYALL_EATALL
 
 
