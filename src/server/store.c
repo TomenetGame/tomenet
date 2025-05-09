@@ -342,7 +342,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 				break;
 			case STORE_HIDDENLIBRARY:
 				if (o_ptr->tval == TV_BOOK) break;
-				else if (o_ptr->tval == TV_SCROLL) price = (price * 2 + 1) / 3;
+				else if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_LITE) price = (price * 2 + 1) / 3;
 				else price = (price + 1) / 2;
 				break;
 			case STORE_COMMON:
@@ -350,7 +350,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 				break;
 			case STORE_SPEC_SCROLL:
 				if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_BOOK) break;
-				else if (o_ptr->tval == TV_POTION || is_magic_device(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) price = (price * 2 + 1) / 3;
+				else if (o_ptr->tval == TV_LITE || o_ptr->tval == TV_POTION || is_magic_device(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) price = (price * 2 + 1) / 3;
 				else price = (price + 1) / 2;
 				break;
 			case STORE_SPEC_POTION:
@@ -361,12 +361,12 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 				break;
 			case STORE_SPEC_ARCHER:
 				if (is_ranged_weapon(o_ptr->tval) || is_ammo(o_ptr->tval)) break;
-				else if (is_weapon(o_ptr->tval) || is_armour(o_ptr->tval)) price = (price * 2 + 1) / 3;
+				else if (is_weapon(o_ptr->tval) || is_armour(o_ptr->tval) || o_ptr->tval == TV_TRAPKIT) price = (price * 2 + 1) / 3;
 				else price = (price + 1) / 2;
 				break;
 			case STORE_SPEC_CLOSECOMBAT:
 				if (is_melee_weapon(o_ptr->tval) || is_armour(o_ptr->tval)) break;
-				else if (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval)) price = (price * 2 + 1) / 3;
+				else if (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) || o_ptr->tval == TV_TRAPKIT) price = (price * 2 + 1) / 3;
 				else price = (price + 1) / 2;
 				break;
 			}
