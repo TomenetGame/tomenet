@@ -328,19 +328,46 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		/* Mega-Hack -- Black market sucks */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price = (price + 3) / 4;
 
-		/* Seasoned Tradesman et al don't pay very much either, they know the customers can't disagree.. */
+		/* Seasoned Tradesman et al (DF2_MISC_STORES dungeon stores) don't pay very much either, they know the customers can't disagree.. */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY67) price = (price * 2 + 1) / 3;
+
 #ifdef MANDOS_BUYALL_EATALL
-		/* Shops may buy all, but won't pay as much for non-canonical wares */
-		//TODO: implement
+		/* Shops may buy all, but won't pay as much for non-canonical wares (DF2_MISC_STORES) */
 		else if (in_hallsofmandos(&p_ptr->wpos)) {
 			switch (st_ptr->st_idx) {
-			case STORE_COMMON:
-			case STORE_SPEC_SCROLL:
-			case STORE_SPEC_POTION:
-			case STORE_SPEC_ARCHER:
-			case STORE_SPEC_CLOSECOMBAT:
+			case STORE_HERBALIST:
+				if (o_ptr->tval == TV_FOOD) break;
+				else if (o_ptr->tval == TV_POTION) price = (price * 2 + 1) / 3;
+				else price = (price + 1) / 2;
+				break;
 			case STORE_HIDDENLIBRARY:
+				if (o_ptr->tval == TV_BOOK) break;
+				else if (o_ptr->tval == TV_SCROLL) price = (price * 2 + 1) / 3;
+				else price = (price + 1) / 2;
+				break;
+			case STORE_COMMON:
+				if (o_ptr->tval == TV_BOOK || is_magic_device(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) price = (price * 2 + 1) / 3;
+				break;
+			case STORE_SPEC_SCROLL:
+				if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_BOOK) break;
+				else if (o_ptr->tval == TV_POTION || is_magic_device(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) price = (price * 2 + 1) / 3;
+				else price = (price + 1) / 2;
+				break;
+			case STORE_SPEC_POTION:
+			case STORE_POTION_IDDC:
+				if (o_ptr->tval == TV_POTION) break;
+				else if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_BOOK || is_magic_device(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) price = (price * 2 + 1) / 3;
+				else price = (price + 1) / 2;
+				break;
+			case STORE_SPEC_ARCHER:
+				if (is_ranged_weapon(o_ptr->tval) || is_ammo(o_ptr->tval)) break;
+				else if (is_weapon(o_ptr->tval) || is_armour(o_ptr->tval)) price = (price * 2 + 1) / 3;
+				else price = (price + 1) / 2;
+				break;
+			case STORE_SPEC_CLOSECOMBAT:
+				if (is_melee_weapon(o_ptr->tval) || is_armour(o_ptr->tval)) break;
+				else if (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval)) price = (price * 2 + 1) / 3;
+				else price = (price + 1) / 2;
 				break;
 			}
 		}
@@ -1001,8 +1028,20 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 #endif
 
 #ifdef MANDOS_BUYALL_EATALL
-	/* Shops in Halls of Mandos will buy anything (but not display it) */
-	if (in_hallsofmandos(&p_ptr->wpos)) return(0);
+	/* DF2_MISC_STORES/basic dungeon shops in Halls of Mandos will buy anything (but not display it) */
+	if (in_hallsofmandos(&p_ptr->wpos)) {
+		switch (p_ptr->store_num) {
+		case STORE_HERBALIST:
+		case STORE_HIDDENLIBRARY:
+		case STORE_COMMON:
+		case STORE_SPEC_SCROLL:
+		case STORE_SPEC_POTION:
+		case STORE_POTION_IDDC:
+		case STORE_SPEC_ARCHER:
+		case STORE_SPEC_CLOSECOMBAT:
+			return(0);
+		}
+	}
 #endif
 
 	/* Hack: The Mathom House */
