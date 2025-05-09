@@ -9788,8 +9788,6 @@ the game. For more information, see (4.13), Ironman Challenge.
   store can spawn on very deep floors.
  -An IDDC-exclusive character is (under the usual server settings) also able to
   enter the Halls of Mandos instead of the IDDC!
-  This mode will also grant at least a 50% discount in all shops inside
-  the dungeon, same as IDDC-exclusive characters would get in Bree's stores.
  -Depending on local server settings, the Halls of Mandos might have special
   or unusual dungeon flags, such as 'disallow any teleport', 'limit ESP range'
   and 'disallow any summoning', making gameplay quite distinguished from other

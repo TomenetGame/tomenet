@@ -283,12 +283,8 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	ot_ptr = &ow_info[st_ptr->owner];
 
 #ifdef IDDC_DED_DISCOUNT
-	if (!flip && (p_ptr->mode & MODE_DED_IDDC) && !p_ptr->iron_winner_ded &&
-	    (in_bree(&p_ptr->wpos)
- #ifdef DED_IDDC_MANDOS
-	    || in_hallsofmandos(&p_ptr->wpos)
- #endif
-	    )) {
+	/* Must be restricted to world surface, as you could sell for non-discounted amt again inside the dungeon! */
+	if (!flip && (p_ptr->mode & MODE_DED_IDDC) && !p_ptr->iron_winner_ded && in_bree(&p_ptr->wpos)) {
 		int dis = o_ptr->discount;
 
 		if (o_ptr->discount < 50) o_ptr->discount = 50;
@@ -357,11 +353,15 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = price * 4;
 
+		/* CHEAPER items: Added for Hidden Library in IDDC */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_SELL67) price = (price * 2 + 1) / 3;
+
 #ifdef IDDC_DED_DISCOUNT
  #ifdef DED_IDDC_MANDOS
-		/* Don't make shops extra-expensive except for stat potions.
-		   Note: This also foregoes SELL67 which is beneficial, but at least as MODE_DED_IDDC char we get at least 50% discount guaranteed anyway! */
-		if (in_hallsofmandos(&p_ptr->wpos) && !(st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)) {
+		/* Don't make shops extra-expensive except for stat potions. */
+		if (in_hallsofmandos(&p_ptr->wpos)
+		    /* Don't skip the pricyness for black markets and for rare footwear/rare jewelry shop */
+		    && !(st_info[st_ptr->st_idx].flags1 & (SF1_ALL_ITEM | SF1_NO_DISCOUNT1))) {
 			switch (o_ptr->tval) {
 			case TV_POTION:
 				switch (o_ptr->sval) {
@@ -417,9 +417,6 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 			if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price /= 2;
 			if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 2) / 3;
 		}
-
-		/* CHEAPER items: Added for Hidden Library in IDDC */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_SELL67) price = (price * 2 + 1) / 3;
 	}
 
 	/* Compute the final price (with rounding) */
@@ -2847,12 +2844,8 @@ static void display_entry(int Ind, int pos) {
 #endif
 #ifdef IDDC_DED_DISCOUNT
 		/* Also display correct discount, so as to not confuse anybody, abuse unused 'wgt' for this. */
-		if ((p_ptr->mode & MODE_DED_IDDC) && !p_ptr->iron_winner_ded &&
-		    (in_bree(&p_ptr->wpos)
- #ifdef DED_IDDC_MANDOS
-		    || in_hallsofmandos(&p_ptr->wpos)
- #endif
-		    )) {
+		/* (Must be restricted to world surface, as you could sell for non-discounted amt again inside the dungeon.) */
+		if ((p_ptr->mode & MODE_DED_IDDC) && !p_ptr->iron_winner_ded && in_bree(&p_ptr->wpos)) {
 			wgt = o_ptr->discount;
 			/* IDDC-mode characters get at least a 50% discount on all town store items in Bree */
 			if (o_ptr->discount < 50) o_ptr->discount = 50;
