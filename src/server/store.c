@@ -418,10 +418,14 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 				case SV_POTION_STAR_HEALING:
 					break;
 				default:
+					price = (price * adjust + 30L) / 100L;
+					if (price <= 0L) return(1L);
 					return(price);
 				}
 				break;
 			default:
+				price = (price * adjust + 30L) / 100L;
+				if (price <= 0L) return(1L);
 				return(price);
 			}
 		}
