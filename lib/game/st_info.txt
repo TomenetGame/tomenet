@@ -794,7 +794,8 @@ F:PRICE4 | PRICE2 | PRICY_ITEMS2
 W:36
 
 N:49:Common Shop
-I:95:& Brass Lantern~
+I:90:& Wooden Torch~
+I:80:& Brass Lantern~
 I:100:& Flask~ of oil
 I:100:& Ration~ of Food
 I:60:& Shovel~
@@ -805,14 +806,14 @@ I:70:& Bolt~
 I:70:& Arrow~
 I:98:& Cloak~
 I:46:& Fur Cloak~
-I:50:Word of Recall
-I:100:Cure Serious Wounds
-I:100:Cure Critical Wounds
 I:70:Light
 I:90:Door/Stair Location
 I:100:Identify
+I:50:Word of Recall
 I:50:Remove Curse
 I:50:Slow Poison
+I:100:71:35
+I:100:71:36
 # specialty: offer all normal bags, as some might not be available in Mandos any other way
 $ENABLE_SUBINVEN$T:50:126:0
 $ENABLE_SUBINVEN$T:50:126:1
