@@ -1875,9 +1875,9 @@
 #define SF1_HARD_STEAL		0x02000000U	/* hard to steal from this shop */
 #define SF1_VHARD_STEAL		0x04000000U	/* very hard to steal from this shop */
 #define SF1_SPECIAL		0x08000000U	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
-#define SF1_BUY67		0x10000000U	/* Shop buys for 67% of value */
+#define SF1_BUY67		0x10000000U	/* Shop buys for 67% of value (can be combined with BUY50, for 1/3 sell value) */
 #define SF1_NO_DISCOUNT1	0x20000000U	/* no 20+% discounts even */
-#define SF1_SELL67		0x40000000U	/* Store sells for 67% of value (can be combined with BUY50, for 1/3 sell value) */
+#define SF1_SELL67		0x40000000U	/* Store sells for 67% of value */
 #define SF1_ZEROLEVEL		0x80000000U	/* all items are level 0 and can't be traded */
 
 #define SF1_NO_DISCOUNT3	(SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)	/* Hack: Reduce discounts somewhat */
