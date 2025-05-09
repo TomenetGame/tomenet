@@ -1147,7 +1147,7 @@ A:2:0:3:0:0:82
 #note: stealing is usually turned off for pstores anyway
 F:VHARD_STEAL
 
-# Variant of dungeon potion store, for Ironman Deep Dive Challenge towns
+# Variant of dungeon potion store, for Ironman Deep Dive Challenge towns - has less harsh prices (x2 instead of x3) and bigger stock
 N:67:Potion Store
 $ENABLE_SUBINVEN$T:5:126:3
 T:100:71:256
