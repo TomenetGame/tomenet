@@ -805,8 +805,14 @@ I:70:& Bolt~
 I:70:& Arrow~
 I:98:& Cloak~
 I:46:& Fur Cloak~
-I:100:Word of Recall
+I:50:Word of Recall
+I:100:Cure Serious Wounds
 I:100:Cure Critical Wounds
+I:70:Light
+I:90:Door/Stair Location
+I:100:Identify
+I:50:Remove Curse
+I:50:Slow Poison
 # specialty: offer all normal bags, as some might not be available in Mandos any other way
 $ENABLE_SUBINVEN$T:50:126:0
 $ENABLE_SUBINVEN$T:50:126:1
