@@ -1045,10 +1045,11 @@ F:RANDOM
 
 #the_sandman: added normal ammos to shop & increased amount of ids
 N:63:Seasoned Tradesman
+#ammo
 T:95:16:1
 T:95:17:1
 T:95:18:1
-#Trap-scrolls
+#Trap-scrolls: Fire, Ice, Chaos
 T:100:70:48
 T:100:70:49
 T:100:70:50
@@ -1064,6 +1065,7 @@ I:50:Detect Invisible
 I:50:Recharging
 I:50:Satisfy Hunger
 I:50:Word of Recall
+#teleport scroll
 T:2:70:9
 T:50:71:42
 I:50:Restore Intelligence
@@ -1086,6 +1088,7 @@ I:100:Cure Critical Wounds
 I:50:Restore Life Levels
 I:2:*Remove Curse*
 I:50:Neutralize Poison
+#beginner handbooks and any spell scrolls
 T:100:111:50
 T:100:111:56
 T:100:111:61
