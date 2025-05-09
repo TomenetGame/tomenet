@@ -9962,6 +9962,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* Nether Realm has an overriding shop creation routine. */
 	if (!netherrealm_level) {
 		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around -- currently no effect due to the way it's used ^^' */
+		int dst, dst2;
+
+		/* Hack: Allow insta shop respawn in IDDC and Mandos */
+		if (in_hallsofmandos(wpos) || in_irondeepdive(wpos)) {
+			dst = dungeon_store_timer;
+			dst2 = dungeon_store2_timer;
+			dungeon_store_timer = dungeon_store2_timer = 0;
+		}
 
 		/* Check for building deep store (Rare & expensive stores) */
 		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100))
@@ -9970,7 +9978,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* Build hidden library if desired (good for challenge dungeons actually) - very frequent store! */
 		if (//!store_failed &&
 		    (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
-			if (!rand_int(dun_lev / 2 + 1))
+			if (!rand_int(in_hallsofmandos(wpos) ? 5 : dun_lev / 2 + 1))
 #ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
  #ifndef IDDC_REFUGE_EXTRA_STORES_RANDOM
 				if (!in_irondeepdive(wpos))
@@ -10037,15 +10045,23 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				build_special_store = 2;
 		}
 
+		if (build_special_store) {
+			/* reset deep (rare) shop timeout */
+			if (build_special_store == 1)
+				dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
+			/* reset low-level shop timeout */
+			if (build_special_store == 2)
+				dungeon_store2_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
+		}
+
+		/* Unhack: Allow insta shop respawn in IDDC and Mandos */
+		if (in_hallsofmandos(wpos) || in_irondeepdive(wpos)) {
+			dungeon_store_timer = dst;
+			dungeon_store2_timer = dst2;
+		}
+
 		/* if failed, we're done */
 		if (!build_special_store) return;
-
-		/* reset deep (rare) shop timeout */
-		if (build_special_store == 1)
-			dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
-		/* reset low-level shop timeout */
-		if (build_special_store == 2)
-			dungeon_store2_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
 	/* build only one special shop in the Nether Realm */
 	} else if (((dun_lev - 166) % 5 != 0) || (dun_lev == netherrealm_end)) return;
 
