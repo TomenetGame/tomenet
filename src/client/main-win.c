@@ -3423,6 +3423,10 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	RECT rc;
 	HDC  hdc;
 
+#ifndef WIN_GLYPH_FIX
+	WORD lpGlyphIndices[n];
+#endif
+
 #if 1
 	/* For 2mask mode: Actually imprint screen buffer with "empty background" for this text printed grid, to possibly avoid glitches. */
  #ifdef USE_GRAPHICS
@@ -3509,10 +3513,8 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
  #ifndef WIN_GLYPH_FIX
 	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc, s, n, NULL);
  #else
-	LPWORD lpGlyphIndices[n];
-
 	GetGlyphIndices(hdc, s, n, lpGlyphIndices, 0);
-	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED | ETO_GLYPH_INDEX, &rc, (LPCSTR)lpGlyphIndices, n, NULL).
+	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED | ETO_GLYPH_INDEX, &rc, (LPCSTR)lpGlyphIndices, n, NULL);
  #endif
 
 #else
@@ -3555,10 +3557,8 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
  #ifndef WIN_GLYPH_FIX
 	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc, s, n, NULL);
  #else
-	LPWORD lpGlyphIndices[n];
-
 	GetGlyphIndices(hdc, s, n, lpGlyphIndices, 0);
-	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED | ETO_GLYPH_INDEX, &rc, (LPCSTR)lpGlyphIndices, n, NULL).
+	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED | ETO_GLYPH_INDEX, &rc, (LPCSTR)lpGlyphIndices, n, NULL);
  #endif
 
 	/* Release DC */
