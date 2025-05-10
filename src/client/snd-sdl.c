@@ -606,11 +606,13 @@ static int get_filedescriptor_limit(void) {
 		return(1024); //assume default
 	}
 
+	if (limit.rlim_cur > 65536) limit.rlim_cur = 65536; //cap to sane values to save resources
+
 	return(limit.rlim_cur);
 }
 /* note: method 1 and method 2 report different amounts of free file descriptors at different times, and also different amounts before and after loading audio files -_- */
 #include <dirent.h>
-int count_open_fds(void) {
+int count_open_fds1(void) {
 	struct dirent *de;
 	int count = -3; // '.', '..', dp
 	DIR *dp = opendir("/proc/self/fd");
@@ -639,6 +641,15 @@ int count_open_fds2(int max) {
 	return(count);
 }
 #endif
+void log_fd_usage(void) {
+	int max_files, cur_files1, cur_files2;
+
+	max_files = get_filedescriptor_limit();
+	cur_files1 = count_open_fds1();
+	cur_files2 = count_open_fds2(max_files);
+
+	logprint(format("max_files = %d, cur_files1/2 = %d/%d -> sdl_files_cur/max = %d\n", max_files, cur_files1, cur_files2, sdl_files_cur, sdl_files_max));
+}
 
 
 /*
@@ -664,15 +675,13 @@ static bool sound_sdl_init(bool no_cache) {
 	char referenced_event[REFERENCES_MAX][MAX_CHARS_WIDE];
 
 	/* for checking whether we have enough available file descriptors for loading a lot of audio files */
-	int max_files = get_filedescriptor_limit();
-	int cur_files = count_open_fds();
-	int cur_files2 = count_open_fds2(max_files);
+	int max_files = get_filedescriptor_limit(), cur_files1 = count_open_fds1(), cur_files2 = count_open_fds2(max_files);
 
-	sdl_files_max = max_files - (cur_files > cur_files2 ? cur_files : cur_files2);
 
+	sdl_files_max = max_files - (cur_files1 > cur_files2 ? cur_files1 : cur_files2);
 
 #ifdef DEBUG_SOUND
-	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d -> sdl_files_max = %d\n", max_files, cur_files, cur_files2, sdl_files_max));
+	log_fd_usage()
 #endif
 
 	/* Paranoia? null all the pointers */
@@ -1099,10 +1108,7 @@ static bool sound_sdl_init(bool no_cache) {
 	my_fclose(fff);
 
 #ifdef DEBUG_SOUND
-	max_files = get_filedescriptor_limit();
-	cur_files = count_open_fds();
-	cur_files2 = count_open_fds2(max_files);
-	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+	log_fd_usage();
 #endif
 
 
@@ -1512,10 +1518,7 @@ static bool sound_sdl_init(bool no_cache) {
 	}
 
 #ifdef DEBUG_SOUND
-	max_files = get_filedescriptor_limit();
-	cur_files = count_open_fds();
-	cur_files2 = count_open_fds2(max_files);
-	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+	log_fd_usage();
 #endif
 
 #ifdef DEBUG_SOUND
@@ -1586,10 +1589,7 @@ static bool sound_sdl_init(bool no_cache) {
 	my_fclose(fff);
 
 #ifdef DEBUG_SOUND
-	max_files = get_filedescriptor_limit();
-	cur_files = count_open_fds();
-	cur_files2 = count_open_fds2(max_files);
-	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+	log_fd_usage();
 #endif
 
 #ifdef WINDOWS
@@ -3707,10 +3707,7 @@ static int thread_load_audio(void *dummy) {
 	}
 
 #ifdef DEBUG_SOUND
-	int max_files = get_filedescriptor_limit();
-	int cur_files = count_open_fds();
-	int cur_files2 = count_open_fds2(max_files);
-	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+	log_fd_usage();
 #endif
 
 	logprint(format("Opened %d audio files (of %d max OS fds. Change via 'ulimit -n').\n", sdl_files_cur, sdl_files_max));
