@@ -9219,6 +9219,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				} else msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending admin notes.", MAX_ADMINNOTES);
 				return;
 			}
+			else if (prefix(messagelc, "/manote")) { /* Modify a global admin note */
+				char *c;
+
+				j = 0;
+				if (tk < 2) { /* Explain command usage */
+					msg_format(Ind, "\377oUsage: /manote <note index 0..%d> <text>", MAX_ADMINNOTES - 1);
+					return;
+				}
+				if (k < 0 || k >= MAX_ADMINNOTES) {
+					msg_format(Ind, "\377oNote index must range from 0 to %d.", MAX_ADMINNOTES - 1);
+					return;
+				}
+				c = message3;
+				while (*c == ' ') c++;
+				strcpy(admin_note[k], strchr(c, ' ') + 1);
+				msg_print(Ind, "\377yNote has been stored.");
+				return;
+			}
 			else if (prefix(messagelc, "/broadcast-motd")) { /* Display all admin notes aka motd, plus any shutrec-warning, to all players. */
 				lua_broadcast_motd();
 				return;
