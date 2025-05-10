@@ -3423,7 +3423,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	RECT rc;
 	HDC  hdc;
 
-#ifndef WIN_GLYPH_FIX
+#ifdef WIN_GLYPH_FIX
 	WORD lpGlyphIndices[n];
 #endif
 
