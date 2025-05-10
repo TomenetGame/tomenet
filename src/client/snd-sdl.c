@@ -591,24 +591,10 @@ static bool open_audio(void) {
  * memory to avoid I/O latency later.
  */
 /* Instead of using one large string buffer, use multiple smaller ones? (Not recommended, was just for debugging/testing) */
-//#define MULTILINE_BUFFERS
-#ifdef MULTILINE_BUFFERS
- #define BUFFERAMT 6
- #define BUFFERSIZE 768
-#else
- #define BUFFERSIZE 4096
-#endif
+#define BUFFERSIZE 4096
 static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
-#ifdef MULTILINE_BUFFERS
-	int buffers_used, buffer_cur;
-	char buffer0[BUFFERSIZE], *buffer = buffer0, bufferx0[BUFFERAMT][BUFFERSIZE], *bufferx = bufferx0[0];
-#else
 	char buffer0[BUFFERSIZE] = { 0 }, *buffer = buffer0, bufferx[BUFFERSIZE] = { 0 };
-#endif
-	//bufferx size: 1024 is safe, 4096 causes stack smashing for format() calls, and segfault / invalid server choice / music-load(59,0) error oO
-	//...now apparently the critical threshold for everything file-related glitching out, even giving random packet errors, is between 836 and 885, not 1024,
-	//so it seems not really related to buffer size.
 	FILE *fff;
 	int i, j, cur_line, k;
 	char out_val[160];
@@ -745,9 +731,6 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Parse the file */
 	/* Lines are always of the form "name = sample [sample ...]" */
 	cur_line = 0;
-#ifdef MULTILINE_BUFFERS
-	buffers_used = 0;
-#endif
 	cat_this_line = cat_next_line = FALSE;
 	while (fgets(buffer0, sizeof(buffer0), fff) != 0) {
 		char *cfg_name;
@@ -807,28 +790,12 @@ static bool sound_sdl_init(bool no_cache) {
 			c[strlen(c) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
 			cat_next_line = TRUE;
 		}
-		if (!cat_this_line) {
-#ifdef MULTILINE_BUFFERS
-			buffers_used = 0;
-			bufferx = bufferx0[0];
-#endif
-			strcpy(bufferx, c);
-		} else {
+		if (!cat_this_line) strcpy(bufferx, c);
+		else {
 			cat_this_line = FALSE;
 			if (strlen(bufferx) + strlen(c) + 1 >= BUFFERSIZE) { //+1: we strcat a space sometimes, see below
-#ifdef MULTILINE_BUFFERS
-				if (buffers_used == BUFFERAMT - 1) {
-					logprint(format("Warning: Sound.cfg line #%d is too long to concatinate.\n", cur_line));
-					/* String overflow protection: Discard all that is too much. -- fall through and go on without this line */
-				} else {
-					buffers_used++;
-					bufferx = bufferx0[buffers_used];
-					strcpy(bufferx, c);
-				}
-#else
 				logprint(format("Warning: Sound.cfg line #%d is too long to concatinate.\n", cur_line));
 				/* String overflow protection: Discard all that is too much. -- fall through and go on without this line */
-#endif
 			} else {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
 				if (c[0] != ' ' && c[0] != '\t' && c[0]) strcat(bufferx, " ");
@@ -837,11 +804,7 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 		if (cat_next_line) continue;
 		/* Proceed with the beginning of the whole (multi-)line */
-#ifdef MULTILINE_BUFFERS
-		strcpy(buffer0, bufferx0[0]);
-#else
 		strcpy(buffer0, bufferx);
-#endif
 
 		/* Lines starting on ';' count as 'provided event' but actually
 		   remain silent, as a way of disabling effects/songs without
@@ -908,10 +871,6 @@ static bool sound_sdl_init(bool no_cache) {
 		 * Now we find all the sample names and add them one by one
 		*/
 		events_loaded_semaphore = FALSE;
-#ifdef MULTILINE_BUFFERS
-		buffer_cur = 0;
-		first_token_snd:
-#endif
 
 		/* Songs: Trim spaces/tabs */
 		c = search;
@@ -1004,14 +963,6 @@ static bool sound_sdl_init(bool no_cache) {
 					search[0] = '\0';
 					next_token = search + 1;
 				} else {
-#ifdef MULTILINE_BUFFERS
-					/* Handle multi-line buffers */
-					if (buffers_used && buffer_cur < buffers_used) {
-						buffer_cur++;
-						search = bufferx0[buffer_cur];
-						goto first_token_snd;
-					}
-#endif
 					/* Otherwise prevent infinite looping */
 					next_token = NULL;
 				}
@@ -1156,9 +1107,6 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Parse the file */
 	/* Lines are always of the form "name = music [music ...]" */
 	cur_line = 0;
-#ifdef MULTILINE_BUFFERS
-	buffers_used = 0;
-#endif
 	cat_this_line = cat_next_line = FALSE;
 	while (fgets(buffer0, sizeof(buffer0), fff) != 0) {
 		char *cfg_name;
@@ -1235,28 +1183,12 @@ static bool sound_sdl_init(bool no_cache) {
 			c[strlen(c) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
 			cat_next_line = TRUE;
 		}
-		if (!cat_this_line) {
-#ifdef MULTILINE_BUFFERS
-			buffers_used = 0;
-			bufferx = bufferx0[0];
-#endif
-			strcpy(bufferx, c);
-		} else {
+		if (!cat_this_line) strcpy(bufferx, c);
+		else {
 			cat_this_line = FALSE;
 			if (strlen(bufferx) + strlen(c) + 1 >= BUFFERSIZE) { //+1: we strcat a space sometimes, see below
-#ifdef MULTILINE_BUFFERS
-				if (buffers_used == BUFFERAMT - 1) {
-					logprint(format("Warning: Music.cfg line #%d is too long to concatinate.\n", cur_line));
-					/* String overflow protection: Discard all that is too much. -- fall through and go on without this line */
-				} else {
-					buffers_used++;
-					bufferx = bufferx0[buffers_used];
-					strcpy(bufferx, c);
-				}
-#else
 				logprint(format("Warning: Music.cfg line #%d is too long to concatinate.\n", cur_line));
 				/* String overflow protection: Discard all that is too much. -- fall through and go on without this line */
-#endif
 			} else {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
 				if (c[0] != ' ' && c[0] != '\t' && c[0]) strcat(bufferx, " ");
@@ -1265,11 +1197,7 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 		if (cat_next_line) continue;
 		/* Proceed with the beginning of the whole (multi-)line */
-#ifdef MULTILINE_BUFFERS
-		strcpy(buffer0, bufferx0[0]);
-#else
 		strcpy(buffer0, bufferx);
-#endif
 #ifdef DEBUG_SOUND
 		printf("<%s>\n", buffer0);
 #endif
@@ -1340,10 +1268,6 @@ static bool sound_sdl_init(bool no_cache) {
 		 * Now we find all the song names and add them one by one
 		*/
 		events_loaded_semaphore = FALSE;
-#ifdef MULTILINE_BUFFERS
-		buffer_cur = 0;
-		first_token_mus:
-#endif
 
 		/* Songs: Trim spaces/tabs */
 		c = search;
@@ -1483,14 +1407,6 @@ static bool sound_sdl_init(bool no_cache) {
 					search[0] = '\0';
 					next_token = search + 1;
 				} else {
-#ifdef MULTILINE_BUFFERS
-					/* Handle multi-line buffers */
-					if (buffers_used && buffer_cur < buffers_used) {
-						buffer_cur++;
-						search = bufferx0[buffer_cur];
-						goto first_token_mus;
-					}
-#endif
 					/* Otherwise prevent infinite looping */
 					next_token = NULL;
 				}
