@@ -88,6 +88,9 @@
 /* disabled because this can cause delays up to a few seconds */
 bool on_demand_loading = FALSE;
 
+/* assume normal softlimit for maximum amount of file descriptors, minus some very generous overhead */
+int sdl_files_max = 1024 - 32, sdl_files_cur = 0;
+
 /* output various status messages about initializing audio */
 //#define DEBUG_SOUND
 
@@ -584,6 +587,58 @@ static bool open_audio(void) {
 	return(TRUE);
 }
 
+#include <sys/resource.h> /* for rlimit et al */
+static int get_filedescriptor_limit(void) {
+	struct rlimit limit;
+
+#if 0
+	limit.rlim_cur = 65535;
+	limit.rlim_max = 65535;
+	if (setrlimit(RLIMIT_NOFILE, &limit) != 0) {
+		printf("setrlimit() failed with errno=%d\n", errno);
+		return(0);
+	}
+#endif
+
+	/* Get max number of files. */
+	if (getrlimit(RLIMIT_NOFILE, &limit) != 0) {
+		printf("getrlimit() failed with errno=%d\n", errno);
+		return(1024); //assume default
+	}
+
+	return(limit.rlim_cur);
+}
+/* note: method 1 and method 2 report different amounts of free file descriptors at different times, and also different amounts before and after loading audio files -_- */
+#include <dirent.h>
+int count_open_fds(void) {
+	struct dirent *de;
+	int count = -3; // '.', '..', dp
+	DIR *dp = opendir("/proc/self/fd");
+
+	if (dp == NULL) return(-1);
+
+	while ((de = readdir(dp)) != NULL) count++;
+	(void)closedir(dp);
+
+	return(count + 3);
+}
+#if 1
+#include <poll.h>
+int count_open_fds2(int max) {
+	struct pollfd fds[max];
+	int ret, i, count = 0;
+
+	for (i = 0; i < max; i++) fds[max].events = 0;
+
+	ret = poll(fds, max, 0);
+	if (ret <= 0) return(0);
+
+	for (i = 0; i < max; i++)
+		if (fds[i].revents & POLLNVAL) count++;
+
+	return(count);
+}
+#endif
 
 
 /*
@@ -608,6 +663,17 @@ static bool sound_sdl_init(bool no_cache) {
 	bool reference_initial[REFERENCES_MAX];
 	char referenced_event[REFERENCES_MAX][MAX_CHARS_WIDE];
 
+	/* for checking whether we have enough available file descriptors for loading a lot of audio files */
+	int max_files = get_filedescriptor_limit();
+	int cur_files = count_open_fds();
+	int cur_files2 = count_open_fds2(max_files);
+
+	sdl_files_max = max_files - (cur_files > cur_files2 ? cur_files : cur_files2);
+
+
+#ifdef DEBUG_SOUND
+	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d -> sdl_files_max = %d\n", max_files, cur_files, cur_files2, sdl_files_max));
+#endif
 
 	/* Paranoia? null all the pointers */
 	for (i = 0; i < SOUND_MAX_2010; i++) {
@@ -921,6 +987,15 @@ static bool sound_sdl_init(bool no_cache) {
 				/* Just save the path for later */
 				samples[event].paths[num] = string_make(path);
 			} else {
+				sdl_files_cur++;
+				if (sdl_files_cur >= sdl_files_max) {
+					logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
+					goto next_token_snd;
+				}
+#ifdef DEBUG_SOUND
+				logprint(format("s-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, path));
+#endif
+
 				/* Load the file now */
 				samples[event].wavs[num] = Mix_LoadWAV(path);
 				if (!samples[event].wavs[num]) {
@@ -1022,6 +1097,13 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 	}
 	my_fclose(fff);
+
+#ifdef DEBUG_SOUND
+	max_files = get_filedescriptor_limit();
+	cur_files = count_open_fds();
+	cur_files2 = count_open_fds2(max_files);
+	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+#endif
 
 
 	/* ------------------------------- Init Music */
@@ -1354,6 +1436,15 @@ static bool sound_sdl_init(bool no_cache) {
 				/* Just save the path for later */
 				songs[event].paths[num] = string_make(path);
 			} else {
+				sdl_files_cur++;
+				if (sdl_files_cur >= sdl_files_max) {
+					logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
+					goto next_token_mus;
+				}
+#ifdef DEBUG_SOUND
+				logprint(format("m-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, path));
+#endif
+
 				/* Load the file now */
 				songs[event].wavs[num] = Mix_LoadMUS(path);
 				if (!songs[event].wavs[num]) {
@@ -1421,6 +1512,13 @@ static bool sound_sdl_init(bool no_cache) {
 	}
 
 #ifdef DEBUG_SOUND
+	max_files = get_filedescriptor_limit();
+	cur_files = count_open_fds();
+	cur_files2 = count_open_fds2(max_files);
+	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+#endif
+
+#ifdef DEBUG_SOUND
 	logprint(format("solving REFs: #%d\n", references));
 #endif
 	/* Solve all stored references now */
@@ -1486,6 +1584,13 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Close the file */
 	my_fclose(fff);
+
+#ifdef DEBUG_SOUND
+	max_files = get_filedescriptor_limit();
+	cur_files = count_open_fds();
+	cur_files2 = count_open_fds2(max_files);
+	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+#endif
 
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
@@ -3490,6 +3595,8 @@ errr re_init_sound_sdl(void) {
 	browse_sound_idx = -1; browsebook_sound_idx = -1; browseinven_sound_idx = -1;
 	casino_craps_sound_idx = -1; casino_inbetween_sound_idx = -1; casino_wheel_sound_idx = -1; casino_slots_sound_idx = -1;
 
+	sdl_files_cur = 0;
+
 	/* --- init --- */
 
 	//if (no_cache_audio) plog("Audio cache disabled.");
@@ -3599,6 +3706,15 @@ static int thread_load_audio(void *dummy) {
 		}
 	}
 
+#ifdef DEBUG_SOUND
+	int max_files = get_filedescriptor_limit();
+	int cur_files = count_open_fds();
+	int cur_files2 = count_open_fds2(max_files);
+	logprint(format("max_files = %d, cur_files = %d, cur_files2 = %d\n", max_files, cur_files, cur_files2));
+#endif
+
+	logprint(format("Opened %d audio files (of %d max OS fds. Change via 'ulimit -n').\n", sdl_files_cur, sdl_files_max));
+
 	return(0);
 }
 
@@ -3630,6 +3746,18 @@ static Mix_Chunk* load_sample(int idx, int subidx) {
 		SDL_UnlockMutex(load_sample_mutex);
 		return(NULL);
 	}
+
+	sdl_files_cur++;
+	if (sdl_files_cur >= sdl_files_max) {
+		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
+		// and for now just disable the whole event, to be safe against repeated attempts to load it
+		samples[idx].disabled = TRUE;
+		SDL_UnlockMutex(load_sample_mutex);
+		return(NULL);
+	}
+#ifdef DEBUG_SOUND
+	logprint(format("LS-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, filename));
+#endif
 
 	/* Load */
 	wave = Mix_LoadWAV(filename);
@@ -3708,6 +3836,18 @@ static Mix_Music* load_song(int idx, int subidx) {
 		SDL_UnlockMutex(load_song_mutex);
 		return(NULL);
 	}
+
+	sdl_files_cur++;
+	if (sdl_files_cur >= sdl_files_max) {
+		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
+		// and for now just disable the whole event, to be safe against repeated attempts to load it
+		songs[idx].disabled = TRUE;
+		SDL_UnlockMutex(load_sample_mutex);
+		return(NULL);
+	}
+#ifdef DEBUG_SOUND
+	logprint(format("LM-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, filename));
+#endif
 
 	/* Load */
 	waveMUS = Mix_LoadMUS(filename);
