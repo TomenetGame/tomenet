@@ -345,6 +345,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 				else if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_LITE) price = (price * 2 + 1) / 3;
 				else price = (price + 1) / 2;
 				break;
+			case STORE_STRADER:
 			case STORE_COMMON:
 				if (o_ptr->tval == TV_BOOK || is_magic_device(o_ptr->tval) || o_ptr->tval == TV_MSTAFF) price = (price * 2 + 1) / 3;
 				break;

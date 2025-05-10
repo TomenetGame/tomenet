@@ -10151,7 +10151,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 									case 3: cs_ptr->sc.omni = STORE_SPEC_SCROLL; break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_ARCHER; break;
 									case 5:
-										if (in_hallsofmandos(wpos)) cs_ptr->sc.omni = STORE_COMMON; /* Light version, but offers all bags */
+										if (dun_lev < 40) cs_ptr->sc.omni = STORE_COMMON; /* Light version, but offers all bags */
 										else cs_ptr->sc.omni = STORE_STRADER; /* Heavy version, renders scribe/potion/library store moot for resupplying */
 										break;
 									}
