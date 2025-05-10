@@ -421,7 +421,11 @@ typedef struct {
 	int num;
 	Mix_Music *wavs[MAX_SONGS];
 	const char *paths[MAX_SONGS];
+
 	bool is_reference[MAX_SONGS];	/* Is just a reference pointer to another event, so don't accidentally try to "free" this one. */
+	int referenced_event[MAX_SONGS];
+	int referenced_song[MAX_SONGS];
+
 	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
 #ifdef WILDERNESS_MUSIC_RESUME
 	int bak_song, bak_pos;		/* Specifically for 'wilderness' music: Remember song and position of each wilderness-type event. */
@@ -1149,9 +1153,6 @@ static bool sound_sdl_init(bool no_cache) {
 	puts("sound_sdl_init() reading music.cfg:");
 #endif
 
-#ifdef TEST_CLIENT
- #define DEBUG_MUSICLOAD
-#endif
 	/* Parse the file */
 	/* Lines are always of the form "name = music [music ...]" */
 	cur_line = 0;
@@ -1269,8 +1270,8 @@ static bool sound_sdl_init(bool no_cache) {
 #else
 		strcpy(buffer0, bufferx);
 #endif
-#ifdef DEBUG_MUSICLOAD
-printf("<%s>\n", buffer0);
+#ifdef DEBUG_SOUND
+		printf("<%s>\n", buffer0);
 #endif
 
 		/* Lines starting on ';' count as 'provided event' but actually
@@ -1400,8 +1401,8 @@ printf("<%s>\n", buffer0);
 				referencer[references] = event;
 				reference_initial[references] = initial;
 				strcpy(referenced_event[references], cur_token);
-#ifdef DEBUG_MUSICLOAD
-logprint(format("added REF #%d <%d> -> <%s>\n", references, event, cur_token));
+#ifdef DEBUG_SOUND
+				logprint(format("added REF #%d <%d> -> <%s>\n", references, event, cur_token));
 #endif
 				references++;
 
@@ -1503,8 +1504,8 @@ logprint(format("added REF #%d <%d> -> <%s>\n", references, event, cur_token));
 		if (disabled) songs[event].disabled = TRUE;
 	}
 
-#ifdef DEBUG_MUSICLOAD
-logprint(format("solving REFs: #%d\n", references));
+#ifdef DEBUG_SOUND
+	logprint(format("solving REFs: #%d\n", references));
 #endif
 	/* Solve all stored references now */
 	for (i = 0; i < references; i++) {
@@ -1529,8 +1530,8 @@ logprint(format("solving REFs: #%d\n", references));
 		event = referencer[i];
 		initial = reference_initial[i];
 		num = songs[event].num;
-#ifdef DEBUG_MUSICLOAD
-logprint(format("adding REF #%d <%d> -> <%s> (ev = %d, initial = %d, songs %d)\n", i, event, referenced_event[i], event_ref, initial, num));
+#ifdef DEBUG_SOUND
+		logprint(format("adding REF #%d <%d> -> <%s> (ev = %d, initial = %d, songs %d)\n", i, event, referenced_event[i], event_ref, initial, num));
 #endif
 
 		for (j = 0; j < songs[event_ref].num; j++) {
@@ -1549,11 +1550,16 @@ logprint(format("adding REF #%d <%d> -> <%s> (ev = %d, initial = %d, songs %d)\n
 			}
 
 			songs[event].paths[num] = songs[event_ref].paths[j];
+#if 0 /* these are all NULL here, as thread_load_audio() is only called _after_ we return */
 			songs[event].wavs[num] = songs[event_ref].wavs[j];
+#else /* so we need to remember the reference indices instead to avoid duplicate/multiple loading of the same files over and over, killing our files handle pool (1024)... */
+			songs[event].referenced_event[num] = event_ref;
+			songs[event].referenced_song[num] = j;
+#endif
 			songs[event].initial[num] = initial;
 			songs[event].is_reference[num] = TRUE;
-#ifdef DEBUG_MUSICLOAD
-logprint(format("  adding song #%d <%d> : <%s> (initial = %d)\n", event, num, songs[event].paths[num], initial));
+#ifdef DEBUG_SOUND
+			logprint(format("  adding song #%d <%d> : <%s> (initial = %d)\n", event, num, songs[event].paths[num], initial));
 #endif
 			num++;
 			songs[event].num = num;
@@ -3657,6 +3663,9 @@ static int thread_load_audio(void *dummy) {
 
 	/* process all sound fx */
 	for (idx = 0; idx < SOUND_MAX_2010; idx++) {
+		/* any sounds exist for this event? */
+		if (!samples[idx].num) continue;
+
 		/* process all files for each sound event */
 		for (subidx = 0; subidx < samples[idx].num; subidx++) {
 			load_sample(idx, subidx);
@@ -3665,6 +3674,9 @@ static int thread_load_audio(void *dummy) {
 
 	/* process all music */
 	for (idx = 0; idx < MUSIC_MAX; idx++) {
+		/* any songs exist for this event? */
+		if (!songs[idx].num) continue;
+
 		/* process all files for each sound event */
 		for (subidx = 0; subidx < songs[idx].num; subidx++) {
 			load_song(idx, subidx);
@@ -3727,9 +3739,39 @@ static Mix_Music* load_song(int idx, int subidx) {
 	const char *filename = songs[idx].paths[subidx];
 	Mix_Music *waveMUS = NULL;
 
+	/* check if it's a reference - then check if original is already loaded...
+	   - and if so don't load it again as we're just the clone, but point to it.
+	   - if original isn't loaded yet, load it and point to it. */
+	if (songs[idx].is_reference[subidx]) {
+		/* original is not already loaded? */
+#ifdef DEBUG_SOUND
+		printf("load_song(%d,%d) -- reference %d,%d", idx, subidx, songs[idx].referenced_event[subidx], songs[idx].referenced_song[subidx]);
+#endif
+		if (!songs[songs[idx].referenced_event[subidx]].wavs[songs[idx].referenced_song[subidx]]) {
+			/* Load the original now, ahead of its time */
+#ifdef DEBUG_SOUND
+			printf("PRELOAD\n");
+#endif
+			if (!load_song(songs[idx].referenced_event[subidx], songs[idx].referenced_song[subidx]))
+				return(NULL); //if original fails to load, we fail too
+		}
+#ifdef DEBUG_SOUND
+		printf("\n");
+#endif
+		/* point to original */
+		songs[idx].paths[subidx] = songs[songs[idx].referenced_event[subidx]].paths[songs[idx].referenced_song[subidx]];
+		songs[idx].wavs[subidx] = songs[songs[idx].referenced_event[subidx]].wavs[songs[idx].referenced_song[subidx]];
+
+		return(songs[idx].wavs[subidx]);
+	}
+
 	SDL_LockMutex(load_song_mutex_entrance);
 	SDL_LockMutex(load_song_mutex);
 	SDL_UnlockMutex(load_song_mutex_entrance);
+
+#ifdef DEBUG_SOUND
+	printf("load_song(%d,%d)\n", idx, subidx);
+#endif
 
 	/* check if it's already loaded */
 	if (songs[idx].wavs[subidx]) {
