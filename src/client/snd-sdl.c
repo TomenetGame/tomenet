@@ -1149,6 +1149,9 @@ static bool sound_sdl_init(bool no_cache) {
 	puts("sound_sdl_init() reading music.cfg:");
 #endif
 
+#ifdef TEST_CLIENT
+ #define DEBUG_MUSICLOAD
+#endif
 	/* Parse the file */
 	/* Lines are always of the form "name = music [music ...]" */
 	cur_line = 0;
@@ -1169,12 +1172,22 @@ static bool sound_sdl_init(bool no_cache) {
 
 		cur_line++;
 
+
+		if (!buffer0[0]) {
+			if (cat_next_line) logprint(format("Warning: Blank line follows ' \\' line concatenator: #%d -> #%d!\n", cur_line - 1, cur_line));
+			continue;
+		}
 		if (strlen(buffer0) >= BUFFERSIZE - 1 && buffer0[strlen(buffer0) - 1] != '\n') {
 			logprint(format("Music.cfg: Discarded line %d as it is too long (must be %d at most)\n", cur_line, BUFFERSIZE - 1));
 			continue;
 		}
 
 		if (buffer0[strlen(buffer0) - 1] == '\n') buffer0[strlen(buffer0) - 1] = 0; //trim linefeed (the last line in the file might not have one)
+		if (!buffer0[0]) {
+			if (cat_next_line) logprint(format("Warning: Blank line follows ' \\' line concatenator: #%d -> #%d!\n", cur_line - 1, cur_line));
+			continue;
+		}
+
 
 		/* Everything after a non-quoted '#' gets ignored */
 		c = buffer0;
@@ -1205,6 +1218,12 @@ static bool sound_sdl_init(bool no_cache) {
 		/* (2022, 4.9.0) strip preceding spaces/tabs */
 		c = buffer0;
 		while (*c == ' ' || *c == '\t') c++;
+
+		if (!*c) {
+			if (cat_next_line) logprint(format("Warning: Blank line follows ' \\' line concatenator: #%d -> #%d!\n", cur_line - 1, cur_line));
+			continue;
+		}
+
 
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
 		if (cat_next_line) {
@@ -1249,6 +1268,9 @@ static bool sound_sdl_init(bool no_cache) {
 		strcpy(buffer0, bufferx0[0]);
 #else
 		strcpy(buffer0, bufferx);
+#endif
+#ifdef DEBUG_MUSICLOAD
+printf("<%s>\n", buffer0);
 #endif
 
 		/* Lines starting on ';' count as 'provided event' but actually
@@ -1378,6 +1400,9 @@ static bool sound_sdl_init(bool no_cache) {
 				referencer[references] = event;
 				reference_initial[references] = initial;
 				strcpy(referenced_event[references], cur_token);
+#ifdef DEBUG_MUSICLOAD
+logprint(format("added REF #%d <%d> -> <%s>\n", references, event, cur_token));
+#endif
 				references++;
 
 				if (!events_loaded_semaphore) {
@@ -1478,23 +1503,24 @@ static bool sound_sdl_init(bool no_cache) {
 		if (disabled) songs[event].disabled = TRUE;
 	}
 
+#ifdef DEBUG_MUSICLOAD
+logprint(format("solving REFs: #%d\n", references));
+#endif
 	/* Solve all stored references now */
 	for (i = 0; i < references; i++) {
 		int num, event, event_ref, j;
 		cptr lua_name;
 		bool initial;
-		char cur_token[MAX_CHARS_WIDE];
 
-		strcpy(cur_token, referenced_event[i]);
 		/* Make sure this is a valid event name */
 		for (event = MUSIC_MAX - 1; event >= 0; event--) {
 			sprintf(out_val, "return get_music_name(%d)", event);
 			lua_name = string_exec_lua(0, out_val);
 			if (!strlen(lua_name)) continue;
-			if (strcmp(cur_token, lua_name) == 0) break;
+			if (strcmp(referenced_event[i], lua_name) == 0) break;
 		}
 		if (event < 0) {
-			logprint(format("Referenced music event '%s' not in audio.lua\n", cur_token));
+			logprint(format("Referenced music event '%s' not in audio.lua\n", referenced_event[i]));
 			continue;
 		}
 		event_ref = event;
@@ -1503,6 +1529,9 @@ static bool sound_sdl_init(bool no_cache) {
 		event = referencer[i];
 		initial = reference_initial[i];
 		num = songs[event].num;
+#ifdef DEBUG_MUSICLOAD
+logprint(format("adding REF #%d <%d> -> <%s> (ev = %d, initial = %d, songs %d)\n", i, event, referenced_event[i], event_ref, initial, num));
+#endif
 
 		for (j = 0; j < songs[event_ref].num; j++) {
 			/* Don't allow too many songs */
@@ -1523,6 +1552,9 @@ static bool sound_sdl_init(bool no_cache) {
 			songs[event].wavs[num] = songs[event_ref].wavs[j];
 			songs[event].initial[num] = initial;
 			songs[event].is_reference[num] = TRUE;
+#ifdef DEBUG_MUSICLOAD
+logprint(format("  adding song #%d <%d> : <%s> (initial = %d)\n", event, num, songs[event].paths[num], initial));
+#endif
 			num++;
 			songs[event].num = num;
 			/* for do_cmd_options_...(): remember that this sample was mentioned in our config file */
