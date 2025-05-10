@@ -9454,6 +9454,22 @@ void player_death(int Ind) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+	/* Message to other players might contain additional colour codes, keep original clean */
+	/* Message to tomb stone required static colours as flickering would be silly */
+	if (insanity) {
+		strcpy(died_from_msg, "\377minsanity\377r");
+		strcpy(died_from_tomb, "\377oi\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r");
+	} else if (divine_wrath) {
+		strcpy(died_from_msg, "\377Jdivine wrath\377r");
+		strcpy(died_from_tomb, "\377od\377yi\377ov\377wi\377on\377ye \377ow\377wr\377oa\377yt\377oh\377r");
+	} else if (!strcmp(p_ptr->died_from, "herself") || !strcmp(p_ptr->died_from, "himself")) {
+		strcpy(died_from_msg, p_ptr->died_from);
+		strcpy(died_from_tomb, "yourself");
+	} else {
+		strcpy(died_from_msg, p_ptr->died_from);
+		strcpy(died_from_tomb, p_ptr->died_from);
+	}
+
 	/* It wasn't a death but just a fruit bat transformation? (Why does this utilize the player_death() function??! o_O) */
 	if (just_fruitbat_transformation) {
 		p_ptr->death = FALSE;
@@ -9474,23 +9490,6 @@ void player_death(int Ind) {
 			msg_broadcast(Ind, buf);
 		}
 		return;
-	}
-
-
-	/* Message to other players might contain additional colour codes, keep original clean */
-	/* Message to tomb stone required static colours as flickering would be silly */
-	if (insanity) {
-		strcpy(died_from_msg, "\377minsanity\377r");
-		strcpy(died_from_tomb, "\377oi\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r");
-	} else if (divine_wrath) {
-		strcpy(died_from_msg, "\377Jdivine wrath\377r");
-		strcpy(died_from_tomb, "\377od\377yi\377ov\377wi\377on\377ye \377ow\377wr\377oa\377yt\377oh\377r");
-	} else if (!strcmp(p_ptr->died_from, "herself") || !strcmp(p_ptr->died_from, "himself")) {
-		strcpy(died_from_msg, p_ptr->died_from);
-		strcpy(died_from_tomb, "yourself");
-	} else {
-		strcpy(died_from_msg, p_ptr->died_from);
-		strcpy(died_from_tomb, p_ptr->died_from);
 	}
 
 	p_ptr->tmp_y = p_ptr->total_winner; //was: bool was_total_winner = p_ptr->total_winner,;
