@@ -146,8 +146,8 @@ void display_inventory(void) {
 		display_entry(store_top + k, entries);
 	}
 
-	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i < entries; i++) prt("", i + y + 3, 0);
+	/* Erase the extra lines, +1 for the "more" prompt */
+	for (i = k; i < entries + 1; i++) prt("", i + y + 3, 0);
 
 	/* Assume "no current page" */
 	put_str("             ", y + 2, 20);
