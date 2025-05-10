@@ -10198,6 +10198,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
  * this can be used to build 'extra' towns for some purpose, though.
  */
 //TL;DR: nowadays _only_ used in town_gen_hack(), for dungeon (ironman) towns or 'generic' wilderness towns - C. Blue
+
+//  todo: some FEAT_WALL_HOUSE vs FEAT_PERM_EXTRA confusion? and FEAT_WALL_HOUSEUPPER for upper floors of FEAT_PERM_EXTRA solid buildings? but it doesn't matter...
+
 static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 	int i, y, x, y0, x0, y1, x1, y2, x2, tmp;
 	int size = 0;
@@ -10277,7 +10280,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 			c_ptr = &zcave[y][x];
 
 			/* Clear previous contents, add "basic" perma-wall */
-			c_ptr->feat = (n == 13) ? FEAT_WALL_HOUSE : FEAT_PERM_EXTRA;
+			c_ptr->feat = (n == 13) ? FEAT_WALL_HOUSE : FEAT_PERM_EXTRA; //todo? FEAT_WALL_HOUSEUPPER instead of FEAT_PERM_EXTRA for walls above the ground floor
 
 			/* Hack -- The buildings are illuminated and known */
 			/* c_ptr->info |= (CAVE_GLOW); */
@@ -10480,7 +10483,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 				c_ptr = &zcave[(y1 + y2) / 2][x];
 
 				/* Clear previous contents, add "basic" perma-wall */
-				c_ptr->feat = FEAT_PERM_EXTRA;
+				c_ptr->feat = FEAT_PERM_EXTRA; //FEAT_WALL_HOUSE?
 			}
 
 			for (y = y1; y <= y2; y++) {
@@ -10488,7 +10491,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 				c_ptr = &zcave[y][(x1 + x2) / 2];
 
 				/* Clear previous contents, add "basic" perma-wall */
-				c_ptr->feat = FEAT_PERM_EXTRA;
+				c_ptr->feat = FEAT_PERM_EXTRA; //FEAT_WALL_HOUSE?
 			}
 
 			/* Setup some "house info" */
@@ -10660,7 +10663,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 			if ((cs_ptr = AddCS(c_ptr, CS_DNADOOR))) cs_ptr->sc.ptr = houses[i].dna;
 		}
 	} else if (n == STORE_AUCTION) /* auctionhouse */
-		c_ptr->feat = FEAT_PERM_EXTRA; /* wants to work */
+		c_ptr->feat = FEAT_WALL_HOUSE; /* wants to work */
+		//FEAT_PERM_EXTRA?
 	else {
 		/* Clear previous contents, add a store door */
 		c_ptr->feat = FEAT_SHOP;	/* TODO: put CS_SHOP */

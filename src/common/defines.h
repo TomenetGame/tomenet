@@ -1959,7 +1959,7 @@
 /* special 'stores' (hacks for build_store()) */
 #define STORE_FEAT_MORE	100	/* staircase down */
 #define STORE_FEAT_LESS	101	/* staircase up */
-#define STORE_HOUSE	102	/* trad/list/appartment */
+#define STORE_HOUSE	102	/* player-purchasable trad/list/appartment */
 #define STORE_DOORWAY	103	/* 'destroyed house' */
 #define STORE_FOREST	104
 #define STORE_POND	105
@@ -2662,7 +2662,7 @@
 #define FEAT_WALL_INNER		0x39
 #define FEAT_WALL_OUTER		0x3A
 #define FEAT_WALL_SOLID		0x3B
-#define FEAT_PERM_EXTRA		0x3C	/* shop/house walls */
+#define FEAT_PERM_EXTRA		0x3C	/* shop/(non-player-)house walls */
 #define FEAT_PERM_INNER		0x3D	/* inner vault walls (also used for Dungeon Keeper) */
 #define FEAT_PERM_OUTER		0x3E	/* outer vault walls */
 #define FEAT_PERM_SOLID		0x3F	/* dungeon border */
