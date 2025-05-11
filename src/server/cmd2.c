@@ -3353,7 +3353,7 @@ void do_cmd_close(int Ind, int dir) {
 			msg_print(Ind, "That door cannot be closed.");
 
 		else if (c_ptr->feat == FEAT_OPEN_WINDOW) {
-#if 0 /* xD */
+#if 1 /* xD */
 			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
 				msg_print(Ind, "You cannot close that window from outside.");
 				return;
@@ -3376,7 +3376,7 @@ void do_cmd_close(int Ind, int dir) {
 #endif
 		}
 		else if (c_ptr->feat == FEAT_OPEN_WINDOW_SMALL) {
-#if 0 /* xD */
+#if 1 /* xD */
 			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
 				msg_print(Ind, "You cannot close that window from outside.");
 				return;
@@ -3400,7 +3400,7 @@ void do_cmd_close(int Ind, int dir) {
 		}
 
 		else if (c_ptr->feat == FEAT_WINDOW) {
-#if 0 /* xD */
+#if 1 /* xD */
 			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
 				msg_print(Ind, "You cannot close that window from outside.");
 				return;
@@ -3423,7 +3423,7 @@ void do_cmd_close(int Ind, int dir) {
 #endif
 		}
 		else if (c_ptr->feat == FEAT_WINDOW_SMALL) {
-#if 0 /* xD */
+#if 1 /* xD */
 			if (!inside_house(wpos, p_ptr->px, p_ptr->py) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
 				msg_print(Ind, "You cannot close that window from outside.");
 				return;
