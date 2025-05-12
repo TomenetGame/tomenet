@@ -9349,7 +9349,6 @@ static void cmd_master_aux_build(void) {
 
 		/* Build mode off */
 		case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
-#ifdef TEST_CLIENT  /* Ask for CAVE_INFO -- WiP! -- TODO: change transmit/receive packet format from %s to %c%c%c%c as some of these might be zero and would terminate the string too early */
 		case 'A':
 			n = c_get_quantity("Enter info value: ", 0, -1);
 			buf[0] = 1; //dummy
@@ -9390,7 +9389,6 @@ static void cmd_master_aux_build(void) {
 			buf[5] = (n & 0xff000000) >> 24;
 			buf[6] = 0;
 			break;
-#endif
 		/* Oops */
 		default : bell(); break;
 		}
