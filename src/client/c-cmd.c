@@ -9280,7 +9280,7 @@ static void cmd_master_aux_build(void) {
 		Term_putstr(5, 13, -1, TERM_WHITE, "(0) Any feature");
 
 #ifdef TEST_CLIENT
-		Term_putstr(5, 15, -1, TERM_WHITE, "(a) Build Mode Off        (z) Paint mode off");
+		Term_putstr(5, 15, -1, TERM_WHITE, "(a) Build/Set-info Mode Off");
 #else
 		Term_putstr(5, 15, -1, TERM_WHITE, "(a) Build Mode Off");
 #endif
@@ -9311,7 +9311,7 @@ static void cmd_master_aux_build(void) {
 		/* Perm mode on */
 		case '2': buf[0] = FEAT_PERM_EXTRA; break;
 		/* Tree mode on */
-		case '3': buf[0] = magik(80)?FEAT_TREE:(char)FEAT_BUSH; break;
+		case '3': buf[0] = FEAT_TREE; break;
 		/* Evil tree mode on */
 		case '4': buf[0] = FEAT_DEAD_TREE; break;
 		/* Grass mode on */
@@ -9322,7 +9322,7 @@ static void cmd_master_aux_build(void) {
 		case '7': buf[0] = FEAT_FLOOR; break;
 		/* House door mode on */
 		case '8':
-			buf[0] = FEAT_HOME_HEAD;
+			buf[0] = FEAT_HOME_HEAD; //note: FEAT_HOME == FEAT_HOME_HEAD
 			{
 				u16b keyid;
 
@@ -9389,11 +9389,6 @@ static void cmd_master_aux_build(void) {
 			buf[4] = (n & 0xff0000) >> 16;
 			buf[5] = (n & 0xff000000) >> 24;
 			buf[6] = 0;
-			break;
-		/* Info-painting mode off */
-		case 'z':
-			buf[0] = 1; //dummy
-			buf[1] = 'z';
 			break;
 #endif
 		/* Oops */

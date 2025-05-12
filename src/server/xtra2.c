@@ -15787,6 +15787,8 @@ bool master_build(int Ind, char * parms) {
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 	static u16b new_feat = FEAT_WALL_EXTRA;
+	static u32b new_info = 0x0, new_info2 = 0x0;
+	static bool set_new_feat = FALSE, set_new_info = FALSE, set_new_info2 = FALSE;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
@@ -15798,58 +15800,101 @@ bool master_build(int Ind, char * parms) {
 		new_feat = (unsigned char)parms[0];
 		/* Hack -- toggle auto-build on/off */
 		switch (parms[1]) {
-		case 'T': p_ptr->master_move_hook = master_build; break;
-		case 'F': p_ptr->master_move_hook = NULL; return(FALSE);
-		case 'X': p_ptr->master_move_hook = master_build;
+		case 'X': // 2 bytes for the feat, for all feats >= 256
 			new_feat = (parms[3] | (parms[2] << 8));
-			if (new_feat == FEAT_HOME || new_feat == FEAT_SIGN) { //paranoia for now, as 'X' currently always implies feat values >= 256
-				msg_print(Ind, "FEAT_HOME and FEAT_SIGN are not eligible for building mode X.");
-				return(FALSE);
-			}
+			// fall through
+		case 'T': // 1 byte for the feat, for all feats < 256
+			set_new_feat = TRUE;
+			set_new_info = FALSE;
+			p_ptr->master_move_hook = master_build;
 			break;
-		default : break;
+		case 'i':
+			new_info = parms[2] | parms[3] << 8 | parms[4] << 16 | parms[5] << 24;
+			set_new_feat = FALSE;
+			set_new_info = TRUE;
+			set_new_info2 = FALSE;
+			p_ptr->master_move_hook = NULL;
+			break;
+		case 'j':
+			new_info2 = parms[2] | parms[3] << 8 | parms[4] << 16 | parms[5] << 24;
+			set_new_feat = FALSE;
+			set_new_info = FALSE;
+			set_new_info2 = TRUE;
+			p_ptr->master_move_hook = NULL;
+			break;
+		case 'I':
+			new_info = parms[2] | parms[3] << 8 | parms[4] << 16 | parms[5] << 24;
+			set_new_feat = FALSE;
+			set_new_info = TRUE;
+			set_new_info2 = FALSE;
+			p_ptr->master_move_hook = master_build;
+			break;
+		case 'J':
+			new_info2 = parms[2] | parms[3] << 8 | parms[4] << 16 | parms[5] << 24;
+			set_new_feat = FALSE;
+			set_new_info = FALSE;
+			set_new_info2 = TRUE;
+			p_ptr->master_move_hook = master_build;
+			break;
+		case 'F':
+			// stop building/cave.info-setting mode
+			p_ptr->master_move_hook = NULL;
+			return(FALSE);
+		default:
+			break;
 		}
 	}
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	/* Never destroy real house doors! Work on this later */
-	if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) return(FALSE);
+	if (set_new_feat) {
+		/* Never destroy real house doors! Work on this later */
+		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) return(FALSE);
 
-	/* This part to be rewritten for stacked CS */
-	cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
-	// cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
-	if (c_ptr->feat == FEAT_HOME) {
-		struct c_special *cs_ptr;
-		/* new special door creation (with keys) */
-		struct key_type *key;
-		object_type newkey;
-		int id;
+		if (new_feat == FEAT_TREE || new_feat == FEAT_BUSH) new_feat = magik(80) ? FEAT_TREE : FEAT_BUSH;
+		/* This part to be rewritten for stacked CS */
+		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
+		// cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
 
-		MAKE(key, struct key_type);
-		sscanf(&parms[2], "%d", &id);
-		key->id = id;
-		invcopy(&newkey, lookup_kind(TV_KEY, SV_HOUSE_KEY));
-		newkey.pval = key->id;
-		newkey.marked2 = ITEM_REMOVAL_NEVER;
-		drop_near(TRUE, 0, &newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-		cs_ptr = ReplaceCS(c_ptr, CS_KEYDOOR);
-		if (cs_ptr) cs_ptr->sc.ptr = key;
-		else KILL(key, struct key_type);
-		p_ptr->master_move_hook = NULL;	/*buggers up if not*/
-	} else if (c_ptr->feat == FEAT_SIGN) {
-		struct c_special *cs_ptr;
-		struct floor_insc *sign;
+		/* These feats cannot be used in build-mode (aka feat painting mode): */
+		if (c_ptr->feat == FEAT_HOME) { //note: FEAT_HOME == FEAT_HOME_HEAD
+			struct c_special *cs_ptr;
+			/* new special door creation (with keys) */
+			struct key_type *key;
+			object_type newkey;
+			int id;
 
-		MAKE(sign, struct floor_insc);
-		strcpy(sign->text, &parms[2]);
-		cs_ptr = ReplaceCS(c_ptr, CS_INSCRIP);
-		if (cs_ptr) cs_ptr->sc.ptr = sign;
-		else KILL(sign, struct floor_insc);
-		p_ptr->master_move_hook = NULL;	/*buggers up if not*/
+			MAKE(key, struct key_type);
+			sscanf(&parms[2], "%d", &id);
+			key->id = id;
+			invcopy(&newkey, lookup_kind(TV_KEY, SV_HOUSE_KEY));
+			newkey.pval = key->id;
+			newkey.marked2 = ITEM_REMOVAL_NEVER;
+			drop_near(TRUE, 0, &newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			cs_ptr = ReplaceCS(c_ptr, CS_KEYDOOR);
+			if (cs_ptr) cs_ptr->sc.ptr = key;
+			else KILL(key, struct key_type);
+			p_ptr->master_move_hook = NULL; /*cannot be mass-painted */
+		} else if (c_ptr->feat == FEAT_SIGN) {
+			struct c_special *cs_ptr;
+			struct floor_insc *sign;
+
+			MAKE(sign, struct floor_insc);
+			strcpy(sign->text, &parms[2]);
+			cs_ptr = ReplaceCS(c_ptr, CS_INSCRIP);
+			if (cs_ptr) cs_ptr->sc.ptr = sign;
+			else KILL(sign, struct floor_insc);
+			p_ptr->master_move_hook = NULL; /* cannot be mass-painted */
+		}
+		return(TRUE);
+	} else if (set_new_info) {
+		c_ptr->info = new_info;
+		return(TRUE);
+	} else if (set_new_info2) {
+		c_ptr->info2 = new_info2;
+		return(TRUE);
 	}
-
-	return(TRUE);
+	return(FALSE); //paranoia
 }
 
 static char master_specific_race_char = 'a';
