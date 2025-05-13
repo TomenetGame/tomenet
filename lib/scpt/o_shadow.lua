@@ -306,6 +306,66 @@ OLEVITATION = add_spell {
 	}
 }
 
+function get_darkbeam_dam(Ind, limit_lev)
+	local lev
+
+	lev = get_level(Ind, DARKBEAM_I, 50)
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
+
+	return 6 + ((lev * 3) / 6), 8 + ((lev * 3) / 3) + 1
+end
+
+DARKBEAM_I = add_spell {
+	["name"] = 	"Darkness Rift I",
+	["name2"] = 	"DRift I",
+	["school"] = 	SCHOOL_OSHADOW,
+	["spell_power"] = 0,
+	["level"] = 	21,
+	["mana"] = 	9,
+	["mana_max"] = 	9,
+	["fail"] = 	-10,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_beam(Ind, GF_DARK, args.dir, damroll(get_darkbeam_dam(Ind, 10)), " casts a rift of darkness for")
+	end,
+	["info"] = 	function()
+			local xx, yy
+
+			xx, yy = get_darkbeam_dam(Ind, 10)
+			return "dam "..xx.."d"..yy
+	end,
+	["desc"] = 	{
+			"Forms a long rift of unbearable darkness.",
+		}
+}
+DARKBEAM_II = add_spell {
+	["name"] = 	"Darkness Rift II",
+	["name2"] = 	"DRift II",
+	["school"] = 	SCHOOL_OSHADOW,
+	["spell_power"] = 0,
+	["level"] = 	39,
+	["mana"] = 	18,
+	["mana_max"] = 	18,
+	["fail"] = 	-100,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_beam(Ind, GF_DARK, args.dir, damroll(get_darkbeam_dam(Ind, 0)), " casts a rift of darkness for")
+	end,
+	["info"] = 	function()
+			local xx, yy
+
+			xx, yy = get_darkbeam_dam(Ind, 0)
+			return "dam "..xx.."d"..yy
+	end,
+	["desc"] = 	{
+			"Forms a long rift of unbearable darkness.",
+		}
+}
+
 -- Grants invisibility (and the 'Shrouded' effect on unlit grids, currently disabled)
 OINVIS = add_spell {
 	["name"] = 	"Shadow Shroud",
@@ -370,8 +430,8 @@ DISPERSION = add_spell {
 	["level"] = 	33,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-60,
-	["stat"] = 	A_WIS,
+	["fail"] = 	-65,
+	["stat"] = 	A_INT,
 	["spell"] = 	function()
 		set_dispersion(Ind, 50 - get_level(Ind, DISPERSION, 72), 35 + get_level(Ind, DISPERSION, 30));
 	end,
@@ -393,7 +453,7 @@ STOPDISPERSION = add_spell {
 	["mana"] = 	0,
 	["mana_max"] = 	0,
 	["fail"] = 	101,
-	["stat"] = 	A_WIS,
+	["stat"] = 	A_INT,
 	["spell"] = 	function()
 		set_dispersion(Ind, 0, 0);
 	end,
@@ -431,16 +491,16 @@ DARKBALL = add_spell {
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	42,
-	["mana"] = 	35,
-	["mana_max"] = 	35,
+	["mana"] = 	27,
+	["mana_max"] = 	27,
 	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 340 + get_level(Ind, DARKBALL, 1400), 3, " conjures up a darkness storm for")
+			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 440 + get_level(Ind, DARKBALL, 1600), 3, " conjures up a darkness storm for")
 	end,
 	["info"] = 	function()
-		return "dam d100+"..(340 + get_level(Ind, DARKBALL, 1400)).." rad 3"
+		return "dam d100+"..(440 + get_level(Ind, DARKBALL, 1600)).." rad 3"
 	end,
 	["desc"] = 	{ "Conjures up a storm of darkness.", }
 }
