@@ -2036,6 +2036,18 @@ void c_prt(byte attr, cptr str, int row, int col) {
 	Term_addstr(-1, attr, str);
 }
 
+/* Like c_prt(), but allow the usual colour codes -- for future use in s_aux.lua instead of c_prt(), for coloured spell info */
+void cc_prt(byte attr, cptr str, int row, int col) {
+	/* Hack -- fake monochrome */
+	/* if (!c_cfg.use_color) attr = TERM_WHITE; */
+
+	/* Clear line, position cursor */
+	Term_erase(col, row, 255);
+
+	/* Dump the attr/text */
+	Term_putstr(col, row, -1, attr, (char*)str);
+}
+
 /*
  * As above, but in "white"
  */

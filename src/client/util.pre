@@ -46,6 +46,7 @@ extern void cat_script(char *name);
 
 extern void prt(cptr str, int row, int col);
 extern void c_prt(byte attr, cptr str, int row, int col);
+extern void cc_prt(byte attr, cptr str, int row, int col);
 
 /* No client-side hooks for the time being. */
 /* maintain hooks with LUA, not with server code */

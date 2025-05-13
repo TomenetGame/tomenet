@@ -665,6 +665,7 @@ extern int page(void);
 extern int warning_page(void);
 extern void logprint(const char *out);
 extern void c_prt(byte attr, cptr str, int row, int col);
+extern void cc_prt(byte attr, cptr str, int row, int col);
 extern void prt(cptr str, int row, int col);
 extern bool get_string(cptr prompt, char *buf, int len);
 extern bool get_com(cptr prompt, char *command);
