@@ -258,18 +258,28 @@ end
 
 -- Can we cast the spell ?
 function is_ok_spell(i, s)
+	-- client-side (0) or server-side (>=1) ?
+	if i ~= 0 then
+		ply = players(i)
+	else
+		ply = player
+	end
+
 	if get_level(i, s, 50, 0) == 0 then return nil end
 
-	if (s == FIREFLASH_I or s == FIREFLASH_II) and player.prace == RACE_VAMPIRE then
+	if (s == FIREFLASH_I or s == FIREFLASH_II) and ply.prace == RACE_VAMPIRE then
 		return nil
 	end
-	if player.admin_wiz == 0 and player.admin_dm == 0 then
-		if s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
+	if ply.admin_wiz == 0 and ply.admin_dm == 0 then
+		if s == BLOODSACRIFICE and ply.pclass ~= CLASS_HELLKNIGHT and ply.pclass ~= CLASS_CPRIEST then
 			return nil
 		end
-		if (s == OREGEN or s == OUNLIFERES) and player.prace ~= RACE_VAMPIRE then
+		if (s == OREGEN or s == OUNLIFERES) and ply.prace ~= RACE_VAMPIRE then
 			return nil
 		end
+	end
+	if s == OBLINK and ply.s_info[SKILL_CONVEYANCE + 1].value < 5000 then
+		return nil
 	end
 
 	return 1
@@ -278,18 +288,28 @@ end
 function is_ok_spell2(i, s)
 	local lev = get_level(i, s, 50, 0)
 
+	-- client-side (0) or server-side (>=1) ?
+	if i ~= 0 then
+		ply = players(i)
+	else
+		ply = player
+	end
+
 	if lev == 0 then return nil end
 
-	if (s == FIREFLASH_I or s == FIREFLASH_II) and player.prace == RACE_VAMPIRE then
+	if (s == FIREFLASH_I or s == FIREFLASH_II) and ply.prace == RACE_VAMPIRE then
 		return nil
 	end
-	if player.admin_wiz == 0 and player.admin_dm == 0 then
-		if s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
+	if ply.admin_wiz == 0 and ply.admin_dm == 0 then
+		if s == BLOODSACRIFICE and ply.pclass ~= CLASS_HELLKNIGHT and ply.pclass ~= CLASS_CPRIEST then
 			return nil
 		end
-		if (s == OREGEN or s == OUNLIFERES) and player.prace ~= RACE_VAMPIRE then
+		if (s == OREGEN or s == OUNLIFERES) and ply.prace ~= RACE_VAMPIRE then
 			return nil
 		end
+	end
+	if s == OBLINK and ply.s_info[SKILL_CONVEYANCE + 1].value < 5000 then
+		return nil
 	end
 
 	if __tmp_spells[s].priority then lev = lev + __tmp_spells[s].priority end
@@ -827,6 +847,13 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 		ply = players(i)
 	else
 		ply = player
+	end
+
+	if not is_ok_spell(i, s) then
+		local energy = level_speed(ply.wpos);
+		ply.energy = ply.energy - energy
+		msg_print(i, "\255oYou cannot cast this spell!")
+		return 0
 	end
 
 	local use = FALSE

@@ -256,7 +256,11 @@ OBLINK = add_spell {
 		retreat_player(Ind, dist)
 	end,
 	["info"] = 	function()
-		return "distance "..(3 + get_level(Ind, OBLINK, 69) / 17)
+		if players(Ind).s_info[SKILL_CONVEYANCE + 1].value < 5000 then
+			return "REQ: Conveyance 5.000"
+		else
+			return "distance "..(3 + get_level(Ind, OBLINK, 69) / 17)
+		end
 	end,
 	["desc"] = 	{ "Fade away from your current target, if any.", },
 }
