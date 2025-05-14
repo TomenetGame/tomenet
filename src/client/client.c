@@ -555,11 +555,14 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	    && !(creds_only == TRUE && update_creds == TRUE); /* Don't execute if we got called from store_crecedentials(). */
 	char *old_term_names[10] = { "Mainwindow", "Mirrorwindow", "Recallwindow", "Choicewindow", "Term-4window", "Term-5window", "Term-6window", "Term-7window", "Term-8window", "Term-9window" };
 	char *term_names[10] = { "Term-Main", "Term-1", "Term-2", "Term-3", "Term-4", "Term-5", "Term-6", "Term-7", "Term-8", "Term-9" };
+#ifdef USE_X11
 	char **use_term_names;
-	int i;
+#endif
 
+#ifdef USE_X11
 	use_term_names = term_names;
-	buf[0] = 0;//valgrind warning it seems..?
+#endif
+	buf[0] = 0; //valgrind warning it seems..?
 
 	strcpy(config_name2, mangrc_filename);
 	strcat(config_name2, ".$$$");
@@ -575,6 +578,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 				/* Get a line */
 				if (!fgets(buf, 1024, config)) break;
 
+#ifdef USE_X11
 				/* Hack for auto-conversion of 4.9.2->4.9.3 config files: Test if main window exists.
 				   If it doesn't that would be because it uses outdated names, so it must be pre 4.9.3 and we convert it. */
 				if (!convert_rc && strstr(buf, "Mainwindow")) {
@@ -582,6 +586,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 					plog("Auto-converting old .rc file (on writing).");
 				}
 				if (convert_rc) use_term_names = old_term_names;
+#endif
 
 				if (audiopacks_only) {
 					/* modify the line */
@@ -650,6 +655,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #ifdef USE_X11
 						/* Don't do this in terminal mode ('-c') */
 						if (!strcmp(ANGBAND_SYS, "x11")) {
+							int i;
 							bool win = FALSE;
 
 							/* save window positions/sizes/visibility (and possibly fonts) */
@@ -666,12 +672,12 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 								strcpy(buf, "graphics\t\t");
 								strcat(buf, format("%d\n", use_graphics_new));
 							}
-#ifdef USE_GRAPHICS
+ #ifdef USE_GRAPHICS
 							else if (!strncmp(buf, "graphic_tiles", 13)) {
 								strcpy(buf, "graphic_tiles\t\t");
 								strcat(buf, format("%s\n", graphic_tiles));
 							}
-#endif
+ #endif
 						}
 #endif /* USE_X11 */
 					}

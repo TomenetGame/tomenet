@@ -4715,7 +4715,9 @@ int Receive_store_special_anim(void) {
 	char ch;
 	u16b anim1, anim2, anim3, anim4;
 	int anim_step;
+#ifdef USE_GRAPHICS
 	bool use_gfx_d10f = TRUE;
+#endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &anim1, &anim2, &anim3, &anim4)) <= 0) return(n);
 	if (!shopping) return(1);

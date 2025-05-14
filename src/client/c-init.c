@@ -4447,8 +4447,6 @@ bool ask_for_bigmap_generic(void) {
 	return(ok);
 }
 void ask_for_graphics_generic(void) {
-	int ch;
-
 	Term_clear();
 	Term_putstr(8, 3, -1, TERM_YELLOW, "This game originally uses letters, numbers and symbols for 'graphics'.");
 	Term_putstr(8, 4, -1, TERM_YELLOW, "But if you prefer a true graphical representation, after logging");
@@ -4468,6 +4466,8 @@ void ask_for_graphics_generic(void) {
 		} else
  #endif
 		{
+			int ch;
+
 			Term_putstr(8, 7, -1, TERM_YELLOW, "If you want to \377Genable graphics immediately\377y right now, press '\377Gy\377y'.");
 			Term_putstr(8, 8, -1, TERM_YELLOW, "To continue with \377roriginal ASCII (text symbol)\377y visuals, press '\377rn\377y'.");
 			//Term_putstr(8, 9, -1, TERM_YELLOW, "(You can switch/disable that later anytime in-game via \377o= g\377y menu.)");
