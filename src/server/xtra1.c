@@ -4908,29 +4908,6 @@ void calc_boni(int Ind) {
 	if (p_ptr->luck < -10) p_ptr->luck = -10; /* luck caps at -10 */
 	if (p_ptr->luck > 40) p_ptr->luck = 40; /* luck caps at 40 */
 
-	old_sun_burn = p_ptr->sun_burn;
-	p_ptr->sun_burn = FALSE;
-	/* On sunlit grid, as vampire, not a ghost, without protection? -> Damage from sunlight */
-	if (p_ptr->grid_sunlit &&
-	    (p_ptr->prace == RACE_VAMPIRE || (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V')) &&
-	    !p_ptr->ghost &&
-	    //!(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
-	    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)) {
-#if 0
-		/* vampire bats can stay longer under the sunlight than actual vampire form */
-		if (p_ptr->body_monster == RI_VAMPIRE_BAT) p_ptr->drain_life++;
-		else /* currently, vampiric mist suffers same as normal vampire form (VAMPIRIC_MIST) */
-#endif
-		{
-			i = (turn % DAY) / HOUR;
-			i = 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn!: 2..5*/
-			if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
-			p_ptr->drain_life += i;
-		}
-		p_ptr->sun_burn = i;
-		if (!old_sun_burn && p_ptr->sunburn_msg) msg_format(Ind, "\377RYou %s in the sunlight!", i >= 3 ? "*burn*" : "burn");
-	} else if (old_sun_burn && p_ptr->sunburn_msg) msg_print(Ind, "You find respite from the sunlight.");
-
 	/* Apply temporary "stun" */
 	/* should this stuff be mvoed to affect _total p_ptr->to_h instead of being applied so (too) early here? */
 	if (p_ptr->stun > 50) {
@@ -6638,7 +6615,10 @@ void calc_boni(int Ind) {
 		p_ptr->skill_stl += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
 		csheet_boni[14].slth += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
 
-		if (get_skill(p_ptr, SKILL_OSHADOW) >= 40) { p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK; }
+		if (get_skill(p_ptr, SKILL_OSHADOW) >= 40) {
+			p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
+			p_ptr->suscep_lite = FALSE; csheet_boni[14].cb[2] &= ~CB3_SLITE;
+		}
 	}
  #if 0
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 45 && get_skill(p_ptr, SKILL_HDEFENSE) >= 45) {
@@ -6679,6 +6659,31 @@ void calc_boni(int Ind) {
 	/* Hack -- Res Chaos -> Res Conf */
 	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
 
+
+	old_sun_burn = p_ptr->sun_burn;
+	p_ptr->sun_burn = FALSE;
+	/* On sunlit grid, as vampire, not a ghost, without protection? -> Damage from sunlight */
+	if (p_ptr->grid_sunlit &&
+	    (p_ptr->prace == RACE_VAMPIRE || (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V')) &&
+	    !p_ptr->ghost &&
+	    //!(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
+	    !p_ptr->resist_lite && p_ptr->suscep_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING)
+	    //&& (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) -- it covers the backpack, not the character
+	    ) {
+#if 0
+		/* vampire bats can stay longer under the sunlight than actual vampire form */
+		if (p_ptr->body_monster == RI_VAMPIRE_BAT) p_ptr->drain_life++;
+		else /* currently, vampiric mist suffers same as normal vampire form (VAMPIRIC_MIST) */
+#endif
+		{
+			i = (turn % DAY) / HOUR;
+			i = 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn!: 2..5*/
+			if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
+			p_ptr->drain_life += i;
+		}
+		p_ptr->sun_burn = i;
+		if (!old_sun_burn && p_ptr->sunburn_msg) msg_format(Ind, "\377RYou %s in the sunlight!", i >= 3 ? "*burn*" : "burn");
+	} else if (old_sun_burn && p_ptr->sunburn_msg) msg_print(Ind, "You find respite from the sunlight.");
 
 	/* Take note when "heavy weapon" changes */
 	if (p_ptr->old_heavy_wield != p_ptr->heavy_wield) {
