@@ -501,10 +501,10 @@ DARKBALL = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 440 + get_level(Ind, DARKBALL, 1600), 3, " conjures up a darkness storm for")
+			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 390 + get_level(Ind, DARKBALL, 1500), 3, " conjures up a darkness storm for")
 	end,
 	["info"] = 	function()
-		return "dam d100+"..(440 + get_level(Ind, DARKBALL, 1600)).." rad 3"
+		return "dam d100+"..(390 + get_level(Ind, DARKBALL, 1500)).." rad 3"
 	end,
 	["desc"] = 	{ "Conjures up a storm of darkness.", }
 }
