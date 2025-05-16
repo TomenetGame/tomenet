@@ -7917,7 +7917,7 @@ Chain_Macro:
 						l = ystart + 2;
 						clear_from(l);
 						Term_putstr(5, l++, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
-						l += 4;
+						l += 5;
 						Term_putstr(5, l++, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
 
 						j = choice;
