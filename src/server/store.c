@@ -632,7 +632,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		if (Ind && !object_known_p(Ind, o_ptr)) return(price);
 
 		if (o_ptr->name2) {
-			if (e_info[o_ptr->name2].cost) return(0);
+			if (!e_info[o_ptr->name2].cost) return(0);
 			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
 		}
 		if (o_ptr->pval != 0) price += (((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) * 10) / (30 + 300 / (r_ptr->level + 5));
@@ -647,7 +647,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		if (!price) return(0);
 
 		if (o_ptr->name2) {
-			if (e_info[o_ptr->name2].cost) return(0);
+			if (!e_info[o_ptr->name2].cost) return(0);
 			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
 		}
 		if (o_ptr->pval != 0) price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
@@ -668,7 +668,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		if (Ind && !object_known_p(Ind, o_ptr)) return((price * player_store_factor(o_ptr)) / 10);
 
 		if (o_ptr->name2) {
-			if (e_info[o_ptr->name2].cost) return(0);
+			if (!e_info[o_ptr->name2].cost) return(0);
 			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
 		}
 		if (o_ptr->pval != 0) {
