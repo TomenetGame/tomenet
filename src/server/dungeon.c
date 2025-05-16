@@ -2337,6 +2337,8 @@ static void get_world_surface_palette_state(int *sky, int *sub, int *halfhours, 
 /* Local helper function for actually animating the palette.
    Note: For consistency we use Send_palette(<targetcol> - <targetcol - currentcol>) */
 #define PALANIM_OPTIMIZED /* KEEP SAME AS CLIENT! */
+/* Shade mountains aka TERM_L_UMBER too? */
+#define SHADE_MOUNTAINS
 static void world_surface_palette_player_do(int i, int sky, int sub, int halfhours) {
 	int steps = halfhours * PALANIM_HOUR_DIV / 2;
 
@@ -2497,8 +2499,12 @@ static void world_surface_palette_player_do(int i, int sky, int sub, int halfhou
 		    COLOUR_R(TERM_L_GREEN), COLOUR_G(TERM_L_GREEN), COLOUR_B(TERM_L_GREEN));
 		Send_palette(i, 30,		//l-blue
 		    COLOUR_R(TERM_L_BLUE), COLOUR_G(TERM_L_BLUE), COLOUR_B(TERM_L_BLUE));
+#endif
+#ifdef SHADE_MOUNTAINS
 		Send_palette(i, 31,		//l-umber
-		    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
+		    COLOUR_CALC_CR(0xe0, TERM_L_UMBER, steps, sub),
+		    COLOUR_CALC_CG(0xa0, TERM_L_UMBER, steps, sub),
+		    COLOUR_B(TERM_L_UMBER));
 #endif
 		break;
 	case 3: //sunsetty and darkish (PALANIM_HOUR_DIV steps) (18:30<19:00)
@@ -2556,9 +2562,11 @@ static void world_surface_palette_player_do(int i, int sky, int sub, int halfhou
 		    COLOUR_CALC_CR(0x3f, TERM_L_BLUE, steps, sub),
 		    COLOUR_CALC_CG(0xaf, TERM_L_BLUE, steps, sub),
 		    COLOUR_B(TERM_L_BLUE));
-#if 0 /* unchanged */
+#ifdef SHADE_MOUNTAINS
 		Send_palette(i, 31,		//l-umber
-		    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
+		    COLOUR_CALC_CRC(0xc0, 0xe0, steps, sub),
+		    COLOUR_CALC_CGC(0x70, 0xa0, steps, sub),
+		    COLOUR_B(TERM_L_UMBER));
 #endif
 		break;
 #ifndef STRETCHEDSUNSET /* todo: enable this more realistic, unstretched sunset */
@@ -2616,10 +2624,12 @@ static void world_surface_palette_player_do(int i, int sky, int sub, int halfhou
 		    COLOUR_CALC_CR(0x3f, TERM_L_BLUE, steps, sub),
 		    COLOUR_CALC_CG(0xaf, TERM_L_BLUE, steps, sub),
 		    COLOUR_B(TERM_L_BLUE));
- #if 0 /* unchanged */
+#ifdef SHADE_MOUNTAINS
 		Send_palette(i, 31,		//l-umber
-		    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
- #endif
+		    COLOUR_CALC_CRC(0xc0, 0xc0, steps, sub),
+		    COLOUR_CALC_CGC(0x70, 0x70, steps, sub),
+		    COLOUR_B(TERM_L_UMBER));
+#endif
 		break;
 	case 5: //NIGHTFALL! -- getting dark (PALANIM_HOUR_DIV steps) (19:30-20:00)
 		//leading sky 3 final colours to darkest colours (night theme)
@@ -2677,8 +2687,13 @@ static void world_surface_palette_player_do(int i, int sky, int sub, int halfhou
 		    COLOUR_CALC_GC(TERM_BLUE, 0xaf, steps, sub),
 		    COLOUR_B(TERM_BLUE)); //BLUE and L_BLUE are both 0xff
 		Send_palette(i, 31,		//l-umber		<-umber
+#ifdef SHADE_MOUNTAINS
+		    COLOUR_CALC_RC(TERM_UMBER, 0xc0, steps, sub),
+		    COLOUR_CALC_GC(TERM_UMBER, 0x70, steps, sub),
+#else
 		    COLOUR_CALC_R(TERM_UMBER, TERM_L_UMBER, steps, sub),
 		    COLOUR_CALC_G(TERM_UMBER, TERM_L_UMBER, steps, sub),
+#endif
 		    COLOUR_CALC_B(TERM_UMBER, TERM_L_UMBER, steps, sub));
 		break;
 #else
@@ -2738,8 +2753,13 @@ static void world_surface_palette_player_do(int i, int sky, int sub, int halfhou
 		    COLOUR_CALC_GC(TERM_BLUE, 0xaf, PALANIM_HOUR_DIV, sub),
 		    COLOUR_B(TERM_BLUE)); //BLUE and L_BLUE are both 0xff
 		Send_palette(i, 31,		//l-umber		<-umber
+#ifdef SHADE_MOUNTAINS
+		    COLOUR_CALC_RC(TERM_UMBER, 0xc0, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_UMBER, 0x70, PALANIM_HOUR_DIV, sub),
+#else
 		    COLOUR_CALC_R(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
 		    COLOUR_CALC_G(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
+#endif
 		    COLOUR_CALC_B(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub));
 		break;
 #endif
