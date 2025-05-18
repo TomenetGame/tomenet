@@ -20655,7 +20655,7 @@ D:For testing
 # N: serial number : monster name
 # G: symbol : color
 # I: speed : hit points : vision : armour class : alertness
-# W: depth : rarity : corpse weight : experience for kill
+# W: depth : rarity (0 = cannot spawn) : corpse weight : experience for kill
 # E: weapons : torso : arms : finger : head : leg
 # O: treasure : combat : magic : tool
 # B: attack method : attack effect : damage
