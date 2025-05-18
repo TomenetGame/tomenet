@@ -6107,8 +6107,9 @@ bool probing(int Ind) {
 
 			/* Describe the monster */
 			if (r_ptr->flags7 & RF7_NO_DEATH)
-				msg_format(Ind, "%^s (Lv %d) is %s, has %d ac and %d speed.", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? "indestructible" : "immortal",
-				    m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed - 110);
+				msg_format(Ind, "%^s (Lv %d) is %s, has %d ac and %d speed.",
+				    m_name, m_ptr->level, (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? "indestructible" : "immortal",
+				    m_ptr->ac, m_ptr->mspeed - 110);
 			else if (m_ptr->r_idx == RI_BLUE)
 				msg_format(Ind, "%^s (Lv \?\?\?) has unknown hp, %d ac and %d speed.", m_name, m_ptr->ac, m_ptr->mspeed - 110);
 			else
