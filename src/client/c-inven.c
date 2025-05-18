@@ -316,7 +316,10 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 				/* Compare tval and sval directly, assuming they are available - true for non-flavour items.
 				   Almost no need to check bpval or pval, because switching items in such a manner doesn't make much sense,
 				   not even for polymorph rings, EXCEPT for spell books! */
-				if (inventory[m].tval != tval || inventory[m].sval != sval || (inventory[m].tval == TV_BOOK && inventory[m].sval == SV_SPELLBOOK && inventory[m].pval != pval)) continue;
+				if (inventory[m].tval != tval || inventory[m].sval != sval || (inventory[m].tval == TV_BOOK && inventory[m].sval == SV_SPELLBOOK && inventory[m].pval != pval)
+				    //only for books (as we might stack multiple of the same type), rings (as only these and weapons have two equip slots - and for weapons we might want this (eg 2x dagger vs 1x 2hander))!
+				    || (inventory[m].tval != TV_RING && inventory[m].tval != TV_BOOK))
+					continue;
 				break;
 			case 2:
 				/* Compare item names, assuming flavoured item*/
@@ -424,7 +427,9 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 		if (i_found != -1) {
 			/* Skip same-type inventory items to become our alternative replacement item for swapping.
 			   TODO: Apply method 1/2/3 here, instead of just 1. */
-			if (tval == inventory[i].tval && sval == inventory[i].sval) continue;
+			if (tval == TV_RING && //(only for books (as we might stack multiple of the same type),) rings (as only these and weapons have two equip slots - and for weapons we might want this (eg 2x dagger vs 1x 2hander))!
+			    tval == inventory[i].tval && sval == inventory[i].sval)
+				continue;
 		}
 #endif
 
@@ -829,7 +834,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		if (i_found != -1) {
 			/* Skip same-type inventory items to become our alternative replacement item for swapping.
 			   TODO: Apply method 1/2/3 here, instead of just 1. */
-			if (tval == inventory[i].tval && sval == inventory[i].sval) continue;
+			if (tval == TV_RING && //(only for books (as we might stack multiple of the same type),) rings (as only these and weapons have two equip slots - and for weapons we might want this (eg 2x dagger vs 1x 2hander))!
+			    tval == inventory[i].tval && sval == inventory[i].sval)
+				continue;
 		}
 #endif
 
@@ -901,7 +908,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						/* Compare tval and sval directly, assuming they are available - true for non-flavour items.
 						   Almost no need to check bpval or pval, because switching items in such a manner doesn't make much sense,
 						   not even for polymorph rings, EXCEPT for spell books! */
-						if (inventory[k].tval != tval || inventory[k].sval != sval || (inventory[k].tval == TV_BOOK && inventory[k].sval == SV_SPELLBOOK && inventory[k].pval != pval)) continue;
+						if (inventory[k].tval != tval || inventory[k].sval != sval || (inventory[k].tval == TV_BOOK && inventory[k].sval == SV_SPELLBOOK && inventory[k].pval != pval)
+						    //only for books (as we might stack multiple of the same type), rings (as only these and weapons have two equip slots - and for weapons we might want this (eg 2x dagger vs 1x 2hander))!
+						    || (inventory[k].tval != TV_RING && inventory[k].tval != TV_BOOK))
+							continue;
 						break;
 					case 2:
 						/* Compare item names, assuming flavoured item*/
