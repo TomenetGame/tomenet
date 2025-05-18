@@ -17367,7 +17367,7 @@ SEDUCE          none. Makes you take off equipped items.
                 and if no other players or monsters are standing next to you:
                 - drain half of current mana or hit points
                 - drain constitution or wisdom
-                - get a disease (equals poison effect)
+                - get a disease (damage over time)
                 - lose an item or gold (monster steals it; tools won't help!)
                 - gain some experience
                 - regain some drained sanity, if any.
