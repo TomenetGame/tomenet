@@ -66,9 +66,9 @@ static void cmd_all_in_one(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 #ifdef ENABLE_SUBINVEN
-	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN))) {
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN | CHECK_CHARGED))) { // also process charged state for magic devices
 #else
-	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) {
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | CHECK_CHARGED))) { // also process charged state for magic devices
 #endif
 		if (item == -2) c_msg_print("You don't have any items.");
 		return;

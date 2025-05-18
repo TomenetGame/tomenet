@@ -253,13 +253,13 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
 
 			/* WIELD_DEVICES : Check equip first! */
 			get_tag(&k, tag, FALSE, TRUE, mode_ready);
-			/* unnecessary check, but whatever */
-			if (k != -1 && tval != inventory[k].tval) k = -1;
+			/* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
+			//if (k != -1 && tval != inventory[k].tval) k = -1;
 
 			/* Now check inven/subinven */
 			if (k == -1) get_tag(&k, tag, TRUE, FALSE, mode_ready);
-			/* unnecessary check, but whatever */
-			if (k != -1 && tval != (k >= SUBINVEN_INVEN_MUL ? subinventory[k / SUBINVEN_INVEN_MUL - 1][k % SUBINVEN_INVEN_MUL].tval : inventory[k].tval)) k = -1;
+			/* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
+			//if (k != -1 && tval != (k >= SUBINVEN_INVEN_MUL ? subinventory[k / SUBINVEN_INVEN_MUL - 1][k % SUBINVEN_INVEN_MUL].tval : inventory[k].tval)) k = -1;
 
 			/* Found a ready-to-use replacement magic device for our still-charging/empty one! */
 			if (k != -1) {
