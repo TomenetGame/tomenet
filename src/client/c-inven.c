@@ -516,16 +516,20 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		while (*ptr) {
 			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-			if (*ptr == '@') ptr ++;
-			else *ptr = tolower(*ptr);
+			if (*ptr == '@') {
+				ptr++;
+				if (!*ptr) break;
+			} else *ptr = tolower(*ptr);
 			ptr++;
 		}
 		ptr = buf2;
 		while (*ptr) {
 			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-			if (*ptr == '@') ptr += 2;
-			*ptr = tolower(*ptr);
+			if (*ptr == '@') {
+				ptr++;
+				if (!*ptr) break;
+			} else *ptr = tolower(*ptr);
 			ptr++;
 		}
 		if (strstr(buf1, buf2)) {
@@ -547,8 +551,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					while (*ptr) {
 						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-						if (*ptr == '@') ptr++;
-						else *ptr = tolower(*ptr);
+						if (*ptr == '@') {
+							ptr++;
+							if (!*ptr) break;
+						} else *ptr = tolower(*ptr);
 						ptr++;
 					}
 					/* Skip fully charging stacks */
@@ -558,7 +564,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						continue;
 
 					if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-					if (subinventory[using_subinven][k].tval == subinventory[using_subinven][i].tval && /* unnecessary check, but whatever */
+					if (//subinventory[using_subinven][k].tval == subinventory[using_subinven][i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 					    strstr(buf3, buf2)) {
 						i = k;
 						break;
@@ -592,16 +598,20 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			while (*ptr) {
 				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') ptr ++;
-				else *ptr = tolower(*ptr);
+				if (*ptr == '@') {
+					ptr++;
+					if (!*ptr) break;
+				} else *ptr = tolower(*ptr);
 				ptr++;
 			}
 			ptr = buf2;
 			while (*ptr) {
 				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') ptr += 2;
-				*ptr = tolower(*ptr);
+				if (*ptr == '@') {
+					ptr++;
+					if (!*ptr) break;
+				} else *ptr = tolower(*ptr);
 				ptr++;
 			}
 //printf("comparing '%s','%s'\n", buf1, buf2);
@@ -627,8 +637,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 								while (*ptr) {
 									/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 									   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-									if (*ptr == '@') ptr++;
-									else *ptr = tolower(*ptr);
+									if (*ptr == '@') {
+										ptr++;
+										if (!*ptr) break;
+									} else *ptr = tolower(*ptr);
 									ptr++;
 								}
 								/* Skip fully charging stacks */
@@ -638,7 +650,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 									continue;
 
 								if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-								if (subinventory[k][j].tval == inventory[i].tval && /* unnecessary check, but whatever */
+								if (//subinventory[k][j].tval == inventory[i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 								    strstr(buf3, buf2)) {
 									i = (k + 1) * SUBINVEN_INVEN_MUL + j;
 									break;
@@ -654,8 +666,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						while (*ptr) {
 							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-							if (*ptr == '@') ptr++;
-							else *ptr = tolower(*ptr);
+							if (*ptr == '@') {
+								ptr++;
+								if (!*ptr) break;
+							} else *ptr = tolower(*ptr);
 							ptr++;
 						}
 						/* Skip fully charging stacks */
@@ -665,7 +679,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 							continue;
 
 						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-						if (inventory[k].tval == inventory[i].tval && /* unnecessary check, but whatever */
+						if (//inventory[k].tval == inventory[i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 						    strstr(buf3, buf2)) {
 							i = k;
 							break;
@@ -704,16 +718,20 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			while (*ptr) {
 				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') ptr ++;
-				else *ptr = tolower(*ptr);
+				if (*ptr == '@') {
+					ptr++;
+					if (!*ptr) break;
+				} else *ptr = tolower(*ptr);
 				ptr++;
 			}
 			ptr = buf2;
 			while (*ptr) {
 				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') ptr += 2;
-				*ptr = tolower(*ptr);
+				if (*ptr == '@') {
+					ptr++;
+					if (!*ptr) break;
+				} else *ptr = tolower(*ptr);
 				ptr++;
 			}
 			if (strstr(buf1, buf2)) {
@@ -738,8 +756,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						while (*ptr) {
 							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-							if (*ptr == '@') ptr++;
-							else *ptr = tolower(*ptr);
+							if (*ptr == '@') {
+								ptr++;
+								if (!*ptr) break;
+							} else *ptr = tolower(*ptr);
 							ptr++;
 						}
 						/* Skip fully charging stacks */
@@ -749,7 +769,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 							continue;
 
 						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-						if (inventory[k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
+						if (//inventory[k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 						    strstr(buf3, buf2)) {
 							ic = k;
 							break;
@@ -765,8 +785,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						while (*ptr) {
 							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-							if (*ptr == '@') ptr++;
-							else *ptr = tolower(*ptr);
+							if (*ptr == '@') {
+								ptr++;
+								if (!*ptr) break;
+							} else *ptr = tolower(*ptr);
 							ptr++;
 						}
 						/* Skip fully charging stacks */
@@ -776,7 +798,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 							continue;
 
 						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-						if (subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
+						if (//subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 						    strstr(buf3, buf2)) {
 							ic = k;
 							break;
@@ -792,8 +814,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						while (*ptr) {
 							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-							if (*ptr == '@') ptr++;
-							else *ptr = tolower(*ptr);
+							if (*ptr == '@') {
+								ptr++;
+								if (!*ptr) break;
+							} else *ptr = tolower(*ptr);
 							ptr++;
 						}
 						/* Skip fully charging stacks */
@@ -803,7 +827,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 							continue;
 
 						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-						if (subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
+						if (//subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 						    strstr(buf3, buf2)) {
 							ic = k;
 							break;
@@ -820,6 +844,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	/* Fall through and scan inventory normally, after we didn't find anything in subinvens. */
     }
 #endif
+//c_msg_format("start %d, stop %d, step %d", start, stop, step);
 	for (j = start; j != stop; j += step) {
 		/* translate back so order within each - inven & equip - is alphabetically again */
 		if (inven_first)
@@ -849,19 +874,23 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		while (*ptr) {
 			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-			if (*ptr == '@') ptr ++;
-			else *ptr = tolower(*ptr);
+			if (*ptr == '@') {
+				ptr++;
+				if (!*ptr) break;
+			} else *ptr = tolower(*ptr);
 			ptr++;
 		}
 		ptr = buf2;
 		while (*ptr) {
 			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-			if (*ptr == '@') ptr += 2;
-			*ptr = tolower(*ptr);
+			if (*ptr == '@') {
+				ptr++;
+				if (!*ptr) break;
+			} else *ptr = tolower(*ptr);
 			ptr++;
 		}
-//printf("comparing '%s','%s'\n", buf1, buf2);
+//c_msg_format("comparing '%s','%s'\n", buf1, buf2);
 		if (strstr(buf1, buf2)) {
 #endif
 #ifdef SMART_SWAP /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
@@ -892,8 +921,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					while (*ptr) {
 						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-						if (*ptr == '@') ptr++;
-						else *ptr = tolower(*ptr);
+						if (*ptr == '@') {
+							ptr++;
+							if (!*ptr) break;
+						} else *ptr = tolower(*ptr);
 						ptr++;
 					}
  #if 0 /* old, unclean (and 'buggy' for items of same tval+sval but with different pval, yet we certainly don't want to treat them as 'different') */
@@ -947,6 +978,8 @@ bool get_item_hook_find_obj(int *item, int mode) {
 				if (k < INVEN_TOTAL && i_found != -1) continue;
 			}
 #endif
+//c_msg_format("charged = %d, charged_ready = %d", charged, charged_ready);
+//c_msg_format("<%s> charged = %d", buf1, charged);
 			if (charged && (
 			    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
 			    //(partially charging) || strstr(buf1, "(~)")
@@ -964,8 +997,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					while (*ptr) {
 						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
 						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-						if (*ptr == '@') ptr++;
-						else *ptr = tolower(*ptr);
+						if (*ptr == '@') {
+							ptr++;
+							if (!*ptr) break;
+						} else *ptr = tolower(*ptr);
 						ptr++;
 					}
 					/* Skip fully charging stacks */
@@ -975,7 +1010,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						continue;
 
 					if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-					if (inventory[k].tval == inventory[i].tval && /* unnecessary check, but whatever */
+					if (//inventory[k].tval == inventory[i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 					    strstr(buf3, buf2)) {
 						i = k;
 						break;
