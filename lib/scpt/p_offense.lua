@@ -11,6 +11,7 @@ HCURSE_I = add_spell {
 	["mana_max"] = 	2,
 	["fail"] = 	10,
 	["stat"] = 	A_WIS,
+	["ftk"] = 	1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE_I, 150), "points and curses for")
@@ -31,6 +32,7 @@ HCURSE_II = add_spell {
 	["mana_max"] = 	5,
 	["fail"] = 	-15,
 	["stat"] = 	A_WIS,
+	["ftk"] = 	1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE_I, 150), "points and curses for")
@@ -56,7 +58,7 @@ HCURSE_III = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function(args)
-			project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE_I, 150), "points and curses for")
+			project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE_I, 150), "screams a curse for")
 	end,
 	["info"] = 	function()
 			return "power "..(10 + get_level(Ind, HCURSE_I, 150))
