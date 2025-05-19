@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 16. May 2025 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 19. May 2025 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6222,7 +6222,8 @@ to get similar behaviour as in one of the chat modes just for one line:
 $:      Sends the following text to your current guild.
 #:      Sends the following text to everyone on your dungeon level.
         Note: While in town this will instead become a /say.
-%:      Sends the following text to yourself (has some use in macros).
+%:      Sends the following text to yourself (eg for feedback in macros).
+%%:     Sends the following text to yourself, qualifies as 'chat message'.
 +:      Sends the following text to the last person who whispered us a private
         message, so it's sort of a 'reply' function.
 

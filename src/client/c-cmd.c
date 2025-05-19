@@ -7930,7 +7930,13 @@ void cmd_message(void) {
 
 		/* Handle messages to '%' (self) in the client - mikaelh */
 		if (prefix(buf, "%:") && !prefix(buf, "%::")) {
-			c_msg_format("\377o<%%>\377w %s", buf + 2);
+			c_msg_format("\377o<%%>\377w %s", buf + 2); // hm, prefix \376 to add them to 'important scrollback' buffer too? or use below '%%' instead
+			inkey_msg = FALSE;
+			return;
+		}
+		/* Also allow these to go to chat instead of messages, for easier visibility */
+		else if (prefix(buf, "%%:") && !prefix(buf, "%%::")) {
+			c_msg_format("\374\377o<%%>\377w %s", buf + 3);
 			inkey_msg = FALSE;
 			return;
 		}
