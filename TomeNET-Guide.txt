@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 19. May 2025 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 20. May 2025 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.3 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20764,8 +20764,8 @@ create a character!):
     better than other classes.
     A lot of their spells can actually be cast while blinded (or even
     confused), and their targetted spells often do not require a clean line of
-    sight, since they manifest whereever their mind is focused on
-    (e.g. Psionic Blast).
+    sight, meaning there can be other monsters between you and your target,
+    since they manifest whereever their mind is focused on (eg Psionic Blast).
     Their spells also cannot be reflected by monsters for that same reason.
     Some of the mindcrafters' spells that interact with party members will
     require them to prepare and open their mind for telepathic contact. This
