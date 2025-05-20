@@ -40,7 +40,7 @@ N:2:fountain
 #G:_:w
 #G:_:e
 G:_:Y
-F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN | PERMANENT
 D:0:The liquid here seems magical.
 
 # 0x03 --> glyph of warding
@@ -116,7 +116,7 @@ D:1:You cannot tunnel a shaft.
 N:15:dried out fountain
 #G:_:D
 G:_:W
-F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN | PERMANENT
 D:0:The fountain seems dried out.
 
 N:16:spider webs
@@ -212,7 +212,7 @@ F:LAMP_LITE
 
 N:27:fountain of blood
 G:_:r
-F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN | PERMANENT
 D:0:This is fresh blood in the fountain.
 
 # permanent wall for houses, upper storeys
