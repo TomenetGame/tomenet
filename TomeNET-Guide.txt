@@ -2468,7 +2468,7 @@ For magic devices:
                 For all other cases of activation failure this inscription has
                 no effect.
 
-Rods only:
+Rods only (other magic devices will give a notification message anyway):
     !C          Will notify you when the rod finished recharging.
 
 Wands and directional rods:
