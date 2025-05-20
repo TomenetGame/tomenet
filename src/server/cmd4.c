@@ -3436,7 +3436,11 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 	bool admin = is_admin(p_ptr);
 	s16b idx[max_k_idx];
 
+	//byte a;
+	//char32_t c;
+
 	FILE *fff;
+
 
 	/* Paranoia */
 	// if (!letter) return;
@@ -3503,7 +3507,8 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 
 			if (admin) fprintf(fff, "\377s(%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
 
-			fprintf(fff, "%s\n", o_name);
+			//get_object_visual(&c, &a, &forge, p_ptr); -- we use ascii here ie fprintf, cannot get graphical visuals!
+			fprintf(fff, "\377%c%c\377w %s\n", color_attr_to_char(k_ptr->d_attr), k_ptr->d_char, o_name);
 		}
 	}
 
@@ -3609,7 +3614,7 @@ void do_cmd_knowledge_traps(int Ind) {
 		if (admin) fprintf(fff, "(%3d)", k);
 
 		/* Hack -- Build the trap name */
-		fprintf(fff, "     %s\n", t_name + t_ptr->name);
+		fprintf(fff, "     \377%c^\377w %s\n", color_attr_to_char(t_ptr->color), t_name + t_ptr->name);
 
 		total++;
 		shown = TRUE;
