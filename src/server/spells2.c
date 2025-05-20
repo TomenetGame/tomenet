@@ -3833,7 +3833,8 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
 				    (!(f3 & TR3_PERMA_CURSE)) &&
-				    (o_ptr->to_a >= 0) && (rand_int(100) < 25)) {
+				    //(o_ptr->to_a >= 0) && (rand_int(100) < 25)) {
+				    (rand_int(100) < 10 + 10 * o_ptr->to_a)) {
 					msg_print(Ind, "The curse is broken!");
 
 #ifdef VAMPIRES_INV_CURSED

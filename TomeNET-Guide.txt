@@ -16369,6 +16369,8 @@ Details about enchanting via scrolls:
   cases. For cursed weapons that have both to-h and to-d enchantments in the
   negative you should therefore pick the (arithmetically) higher value of these
   two to enchant, in order to reach +0 faster and therefore save cash.
+  The chance to break the curse is 10% + new enchantment * 10%, so at +0 the
+  chance is 10% and at +9 the chance is 10% + 9 x 10% = 100% success.
   Permanent curses can never be broken, obviously.
 
 To-dam enchantments on ranged weapons, ie slings, bows or crossbows, will get
