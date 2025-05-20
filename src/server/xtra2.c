@@ -4323,7 +4323,7 @@ bool set_food(int Ind, int v) {
 
 		/* Bloated */
 		case 5:
-		msg_print(Ind, "You have gorged yourself!");
+		msg_print(Ind, "\377yYou have gorged yourself!");
 		break;
 		}
 
