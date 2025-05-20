@@ -4225,7 +4225,23 @@ void recall_player(int Ind, char *message) {
 	p_ptr = Players[Ind];
 
 	if (!p_ptr) return;
-	if (!(zcave = getcave(&p_ptr->wpos))) return;	// eww
+	if (!(zcave = getcave(&p_ptr->wpos))) {
+		/* This seemed to have happened as 'double recall', leading to a panic save:
+		   A poisoned player recalled to orc caves surface and died with insta-res enabled just the moment he arrived,
+		   resulting in the level method getting set to LEVEL_TO_TEMPLE, but the cave not yet allocated,
+		   making the 2nd recall_player() (to temple) fail exactly here and therefore return(),
+		   so the subsequent process_player_change_wpos() call would attempt to apply LEVEL_TO_TEMPLE in the orc caves sector,
+		   which of course fails as there is no temple there, sets p_ptr->px/py both to 0, and this in turn crashed update_lite()...
+		   Solution: Ensure cave is allocated!   - C. Blue */
+		s_printf("ERORR in recall_player(): <%s>(%d) at (%d,%d,%d) has no cave!\n", p_ptr->name, Ind, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+#if 0
+		return;	// eww
+#else
+		/* Actually allocate the cave so we don't fail! */
+		alloc_dungeon_level(&p_ptr->wpos);
+		zcave = getcave(&p_ptr->wpos);
+#endif
+	}
 
 	/* Always clear exception-flag */
 	p_ptr->global_event_temp &= ~PEVF_PASS_00;
