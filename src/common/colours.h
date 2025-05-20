@@ -1,7 +1,7 @@
 
 /* Purpose: Define colour schemes and unify colour usage easily. - C. Blue */
 
-/* AFK messages / status change / indicator [was o, change to y/w/W to make distinguishable from orange warning type messages] */
+/* AFK messages / status change / indicator [was o, change to y/w/W (u collides with enter-dungeon-msg)  to make distinguishable from orange warning type messages] */
 #define COLOUR_AFK		'w'
 
 /* new character mode colours */
