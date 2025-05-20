@@ -11621,23 +11621,21 @@ D:and he seems to have studied magic too, and is a master of setting traps.
 N:697:Smaug the Golden
 #FINAL_GUARDIAN
 G:D:R
-I:130:48d100:30:150:80
+I:130:98d100:30:300:80
 W:70:2:230000:23000
 E:0:1:2:6:1:2
 O:20:80:0:0
-B:CLAW:HURT:5d12
-B:CLAW:HURT:5d12
-B:BITE:FIRE:7d14
-B:BITE:FIRE:7d14
+B:CLAW:HURT:9d12
+B:CLAW:HURT:9d12
+B:BITE:TERRIFY:50d1
+B:BITE:FIRE:10d14
 F:UNIQUE | MALE | REFLECTING | RES_MANA | CAN_FLY | DROP_CORPSE | WILD_MOUNTAIN
 F:FORCE_SLEEP | FORCE_MAXHP | CAN_SPEAK
 F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | DROP_GREAT |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY
 F:SMART | EVIL | DRAGON | IM_FIRE | NO_CONF | NO_SLEEP | BASEANGBAND
 F:RES_SOUND | RES_LITE | HAS_LITE
-S:1_IN_4 |
-S:CONF | CURSE |
-S:BR_FIRE
+S:1_IN_4 | BR_FIRE
 D:Smaug is one of the Uruloki that still survive, a fire-drake of immense
 D:cunning and intelligence. His speed through air is matched by few other
 D:dragons, his dragonfire is what legends are made of, and his hide is
