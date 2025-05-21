@@ -1621,7 +1621,15 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	int i, num, slot, globalslot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
-	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE;
+	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE, pick_all = FALSE;
+
+	/* '!g' inscription forces pick_one (if it wasn't set). */
+	if (!pick_one && check_guard_inscription(o_ptr->note, 'g')) pick_one = TRUE;
+	/* Hack: !g and !G turn 'EXPLICIT pick_one' into 'pick_all' */
+	else if (pick_one && (check_guard_inscription(o_ptr->note, 'G') || check_guard_inscription(o_ptr->note, 'g'))) {
+		pick_one = FALSE;
+		pick_all = TRUE;
+	}
 
 	/* Inscription to specifically prevent auto-stowing of an object. Useful for *perception* staff deposited in a house for example. */
 	if (check_guard_inscription(o_ptr->note, 'S')) return(FALSE);
@@ -1677,7 +1685,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		/* Eligible subinventory found, try to move as much as possible */
 		stowed_some = TRUE;
-		slot = subinven_stow_aux(Ind, o_ptr, i, quiet);
+		slot = subinven_stow_aux(Ind, o_ptr, i, quiet, pick_all);
 		globalslot = (i + 1) * SUBINVEN_INVEN_MUL + ABS(slot) - 1;
 		Send_item_newest(Ind, globalslot);
 		if ((fully_stowed = (slot > 0))) break; /* If complete stack was moved, we're done */
@@ -1774,9 +1782,11 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #endif
 
 	/* stuff for 'pick_one' hack: */
+	bool pick_one_org = pick_one; //remember our original intention for auto_stow(), as pick_one will get modified here
 	int num_org;
 	bool try_pickup = TRUE;
 	bool delete_it = TRUE; /* usually, the item is fully picked up and therefore deleted from the floor */
+	bool pick_all = FALSE;
 
 
 	if (!(zcave = getcave(wpos))) return;
@@ -1807,12 +1817,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 	/* Get the object */
 	o_ptr = &o_list[c_ptr->o_idx];
-	num_org = o_ptr->number; /* Hack in case 'pick_one' or 'pick_some' are invoked */
+	/* Hack: !g and !G turn 'EXPLICIT pick_one' into 'pick_all' */
+	if (pickup && pick_one && (check_guard_inscription(o_ptr->note, 'G') || check_guard_inscription(o_ptr->note, 'g'))) {
+		pick_one = FALSE;
+		pick_all = TRUE;
+	}
 
 	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 9)) return; //was 1
 
 	/* Hack: !g inscription induces pick_one! (Only when picking up, not when just feeling/looking at the item) */
-	if (check_guard_inscription(o_ptr->note, 'g') && pickup) pick_one = TRUE;
+	if (pickup && !pick_all && check_guard_inscription(o_ptr->note, 'g')) pick_one = TRUE;
 
 	/* Cannot pick up stuff in leaderless guild halls */
 	if ((zcave[p_ptr->py][p_ptr->px].info2 & CAVE2_GUILD_SUS) &&
@@ -2100,7 +2114,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 		bool auto_load = check_guard_inscription(o_ptr->note, 'L')
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
-		int pick_some = FALSE;
+		int pick_some = FALSE, limitG = -1;
 
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
@@ -2680,30 +2694,38 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		}
 
 #ifdef ENABLE_SUBINVEN
+		num_org = o_ptr->number; /* For !g/!G inscription on the target item, to keep track whether we actually auto-stowed any of it. */
+
 		/* Try to put into a specialized bag automatically -- note that this currently means that apply_XID() isn't called (which cannot handle subinventory items atm anyway) */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_TRAPKIT:
-			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_ROD:
 			/* Note that this returns FALSE too if rod is of a flavour yet unknown to the player, covering that case on the fly! :) */
 			if (rod_requires_direction(Ind, o_ptr)) break;
 			/* Fall through */
 		case TV_STAFF:
-			if (auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_POTION: case TV_POTION2: case TV_BOTTLE:
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_FOOD:
 		case TV_FIRESTONE:
-			if (auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		}
+
+		/* If the item contains a !G or !g inscription and was already auto-stowed at least partially, and we're not using pick_all, do not pick up any more of it! */
+		if (o_ptr->number != num_org && (check_guard_inscription(o_ptr->note, 'g') || check_guard_inscription(o_ptr->note, 'G'))) try_pickup = FALSE;
 #endif
+
+		/* After the number might have been reduced by auto_stow() above: */
+		num_org = o_ptr->number; /* Hack in case 'pick_one' or 'pick_some' are invoked */
 
 		/* hack for 'pick_one' (needed for inven_carry_okay() too, or rather for the object_similar() check inside of it */
 		if (pick_one) o_ptr->number = 1;
@@ -2722,6 +2744,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 			return;
 		}
+		/* New: Also check the item to pick up for !G inscription, for when we don't have any of it in our inventory yet,
+		   to preemptively apply that value to the amount we probably want to pick up (maybe make it a client option).
+		   Note: We only check the inven_carry_okay() return value for '-1' for 'no more space'.
+		    If there was an existing !G inscription in our inventory, we'll accept that and not process the possible object's own !G inscription here. */
+		if (try_pickup && !pick_all && pick_some == -1 && (limitG = check_guard_inscription(o_ptr->note, 'G') - 1) > 0)
+			if (limitG < o_ptr->number) pick_some = limitG;
 
 		/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
 		if (try_pickup && pick_some == -1 && !inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {

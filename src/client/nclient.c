@@ -6382,11 +6382,11 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	/* haaaaack: check for existing inscription! */
 	auto_inscribe = FALSE;
 	/* look for 1st '{' which must be level requirements on ANY item */
-	ex = strstr(iname, "{");
+	ex = strchr(iname, '{');
 	if (ex == NULL) return(FALSE); /* paranoia - should always be FALSE */
 	strcpy(ex_buf, ex + 1);
 	/* look for 2nd '{' which MUST be an inscription */
-	ex = strstr(ex_buf, "{");
+	ex = strchr(ex_buf, '{');
 
 	if (ex && !NAME_DISCARDABLE_INSCR(ex)) already_has_insc = TRUE;
 
@@ -6546,6 +6546,138 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 		return(TRUE);
 	}
 	return(already_has_insc);
+}
+
+/* For store-purchase-quantity preemptive auto-inscription-quantity-limit check xD :
+   Scan all client-side auto-inscriptions against an item (which we want to purchase from a store or grab from a home),
+   and if it matches, check if the tag would limit the quantity via !G and in that case limit the purchase amount to that.
+   So it's no longer required to buy ONE and then again buy 'all' when restocking !G-items that we ran out of completely. - C. Blue
+   Store items are never inscribed, but home items might be, in which case:
+    Instead of scanning auto-inscription list, we try to find a !G limit on the item inscription itself and just return 0 for 'no limit' if we don't find one,
+   Returns 0 if auto_inscr_off is enabled ie all auto-inscriptions are disabled (or if item was already inscribed but didn't contain a !G limit inscription).
+   Returns !G limit number from an auto-inscription list entry, if we found one matching the item.
+
+   PROBLEMS/LIMITATIONS:
+   We currently do not transmit inventory_inscription and inventory_inscription_len for store (or house) items, unlike for inventory items.
+   That means we cannot distinguish inscriptions (especially '#' ones, where we are most unsure where it starts) from the item name.
+   So we can still check for '!G' occurance easily, but we cannot know for certain, if a house item does contain an #-inscription or no inscription at all,
+   so we will treat the specific case of <house items containing only an '#'-inscription and no !/@/bracers> as 'no inscription'.
+   (The !, @, { are just arbitrarily the easiest to check things to find out that the item name must contain some sort of inscription.) */
+int scan_auto_inscriptions_for_limit(cptr iname) {
+	int i;
+	char *ex, ex_buf[ONAME_LEN];
+	char *ex2, ex_buf2[ONAME_LEN];
+	char *match, tag_buf[ONAME_LEN];
+	bool found, has_insc = FALSE;
+#ifdef REGEX_SEARCH
+	int ires = -999;
+	regex_t re_src;
+	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
+#endif
+
+	if (c_cfg.auto_inscr_off) return(FALSE);
+
+	/* look for 1st '{' which must be level requirements on ANY item */
+	ex = strchr(iname, '{');
+	if (ex == NULL) return(FALSE); /* paranoia - should always be FALSE */
+	strcpy(ex_buf, ex + 1);
+	/* look for 2nd '{' which MUST be an inscription */
+	ex = strchr(ex_buf, '{');
+
+	if (ex && !NAME_DISCARDABLE_INSCR(ex)) has_insc = TRUE; //NAME_DISCARDABLE_INSCR_FLOOR? probably not, consumables aren't cursed anyway
+
+	/* Check for #-inscriptions as good as we can, ie inscriptions not using bracers {...} (which got checked just above) */
+	if (strchr(iname, '!') || strchr(iname, '@')) has_insc = TRUE;
+
+	/* If we already have an inscription, scan for !G and use that or return 0, and we're done. */
+	if (has_insc) {
+		if ((i = check_guard_inscription_str(iname, 'G')) > 1) return(i - 1);
+		return(0);
+	}
+
+	strcpy(tag_buf, ""); /* initialise as empty */
+
+	/* look for matching auto-inscription */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		match = auto_inscription_match[i];
+		/* skip empty auto-inscriptions */
+		if (!match[0]) continue;
+		/* skip disabled auto-inscriptions */
+		if (auto_inscription_disabled[i]) continue;
+
+		/* 'all items' super wildcard? - this only works for auto-pickup/destroy, not for auto-inscribing */
+		if (!strcmp(match, "#")) continue;
+
+#ifdef REGEX_SEARCH
+		/* Check for '$' prefix, forcing regexp interpretation */
+		if (match[0] == '$') {
+			match++;
+
+			ires = regcomp(&re_src, match, REG_EXTENDED | REG_ICASE);
+			if (ires != 0) {
+				//too spammy when auto-inscribing the whole inventory -- c_msg_format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i);
+				continue;
+			}
+			if (regexec(&re_src, iname, REGEX_ARRAY_SIZE, pmatch, 0)) {
+				regfree(&re_src);
+				continue;
+			}
+			if (pmatch[0].rm_so == -1) {
+				regfree(&re_src);
+				continue;
+			}
+			/* Actually disallow searches that match empty strings */
+			if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) {
+				regfree(&re_src);
+				continue;
+			}
+			found = TRUE;
+
+		} else
+#endif
+		{
+			/* found a matching inscription? */
+			/* prepare */
+			strcpy(ex_buf, match);
+			ex2 = (char*)iname;
+			found = FALSE;
+
+			do {
+				ex = strstr(ex_buf, "#");
+				if (ex == NULL) {
+					if (strstr(ex2, ex_buf)) found = TRUE;
+					break;
+				} else {
+					/* get partial string up to before the '#' */
+					strncpy(ex_buf2, ex_buf, ex - ex_buf);
+					ex_buf2[ex - ex_buf] = '\0';
+					/* test partial string for match */
+					ex2 = strstr(ex2, ex_buf2);
+					if (ex2 == NULL) break; /* no match! */
+					/* this partial string matched, discard and continue with next part */
+					/* advance searching position in the item name */
+					ex2 += strlen(ex_buf2);
+					/* get next part of search string */
+					strcpy(ex_buf, ex + 1);
+					/* no more search string left? exit */
+					if (!strlen(ex_buf)) break;
+					/* no more item name left although search string is finished? exit with negative result */
+					if (!strlen(ex2)) {
+						found = FALSE;
+						break;
+					}
+				}
+			} while (TRUE);
+		}
+
+		if (found) break;
+	}
+	/* no match found? */
+	if (i == MAX_AUTO_INSCRIPTIONS) return(0);
+
+	/* Scan for !G and return that or 0 */
+	if ((i = check_guard_inscription_str(auto_inscription_tag[i], 'G')) > 1) return(i - 1);
+	return(0);
 }
 
 int Receive_account_info(void) {

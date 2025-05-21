@@ -5220,11 +5220,11 @@ void do_cmd_query_symbol(int Ind, char sym) {
    Increases player's total_weight. Does not delete source item if moved, just reduces its number (down to 0).
    Returns <slot+1> if fully stowed, <-slot-1> if partially stowed, otherwise 0. (Note: There is no function subinven_stow() actually.),
    where 'slot' is the subinven raw slot, ie 0...<bagcapacity-1>. */
-s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
+s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool pick_all) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr, forge_copy, forge_part, *i_ptr_tmp = i_ptr;
-	int i, inum, inum_org = i_ptr->number, xnum, Gnum, slot = -1;
+	int i, inum, inum_org = i_ptr->number, xnum, Gnum, slot = -1, limitG;
 	char o_name[ONAME_LEN];
 	u32b f3 = 0x0, dummy;
 
@@ -5239,11 +5239,13 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 			forge_part.tval = 0;
 			/* Hack 'number' to allow merging stacks partially */
 			xnum = MAX_STACK_SIZE - 1 - o_ptr->number;
+
 			/* For !Gn inscription, super hack to modify xnum further if required */
 			i_ptr->number = xnum;
 			Gnum = object_similar(Ind, o_ptr, i_ptr, 0x4 | 0x20);
 			i_ptr->number = inum;
 			if (Gnum > 0 && Gnum < xnum) xnum = Gnum;
+
 			/* Hack it! */
 			if (i_ptr->number > xnum) {
 				/* need to divide wand/staff charges */
@@ -5264,6 +5266,19 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 				   resulting in double crediting otherwise! */
 				if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
+				object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
+
+				/* Auto Curse */
+				if (f3 & TR3_AUTO_CURSE) {
+					/* The object recurse itself ! */
+					if (!(o_ptr->ident & ID_CURSED)) {
+						o_ptr->ident |= ID_CURSED;
+						o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+						note_toggle_cursed(o_ptr, TRUE);
+						s_printf("AUTO_RECURSE_SUBINVEN: %s : %d,%d,%d,%d (%d)(%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, sslot, i);
+					}
+				}
+
 				object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
 				if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
@@ -5283,7 +5298,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 					/* Also correctly reduce charges of original object, now that it was decided that we could absorb it (partially) */
 					*i_ptr = forge_copy;
 				} else /* Not a magic device */
-				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
+					i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
 
 				/* Manually do this here for now: Update subinven slot for client. */
 				display_subinven_aux(Ind, sslot, i);
@@ -5307,16 +5322,28 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 				}
 				i_ptr->number = inum; /* Unhack 'number', back to the original, full amount */
 			}
-		} else {
-			/* Fully move to a free slot. Done. */
+		}
+		/* New: Also check the item to stow for !G inscription, for when we don't have any of it in this bag yet,
+		   to preemptively apply that value to the amount we probably want to pick up (maybe make it a client option). */
+		else if (!pick_all && (limitG = check_guard_inscription(i_ptr->note, 'G') - 1) > 0 && limitG < i_ptr->number) {
+			forge_part.tval = 0;
+
+			/* need to divide wand/staff charges */
+			if (is_magic_device(i_ptr->tval)) {
+				/* Create a working copy, as we seriously mess up source item pval too via divide_charged_item() */
+				forge_copy = *i_ptr;
+				forge_part = *i_ptr;
+				forge_part.number = limitG;
+				divide_charged_item(&forge_part, &forge_copy, limitG);
+				forge_copy.number -= limitG;
+				i_ptr = &forge_part;
+			}
+
+			/* Partially move to the free slot. Done. */
 			*o_ptr = *i_ptr;
+			o_ptr->number = limitG;
 			o_ptr->marked = 0; //why change marked/marked2?...paranoia?
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-
-			/* Check whether this item was requested by an item-retrieval quest
-			   Note about quest_credited check: inven_carry() is also called by carry(),
-			   resulting in double crediting otherwise! */
-			if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
 			if (!o_ptr->owner && !p_ptr->admin_dm) {
 				o_ptr->owner = p_ptr->id;
@@ -5338,6 +5365,81 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet) {
 			    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL)) {
 				(void)auto_inscribe(Ind, o_ptr, 0);
 			}
+
+			/* Check whether this item was requested by an item-retrieval quest.
+			   Note about quest_credited check: inven_carry() is also called by carry(),
+			   resulting in double crediting otherwise! */
+			if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
+
+			object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
+
+			/* Auto Curse */
+			if (f3 & TR3_AUTO_CURSE) {
+				/* The object recurse itself ! */
+				if (!(o_ptr->ident & ID_CURSED)) {
+					o_ptr->ident |= ID_CURSED;
+					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+					note_toggle_cursed(o_ptr, TRUE);
+					s_printf("AUTO_RECURSE_SUBINVEN: %s : %d,%d,%d,%d (%d)(%d)\n", p_ptr->name, o_ptr->tval, o_ptr->sval, o_ptr->bpval, o_ptr->pval, sslot, i);
+				}
+			}
+
+			/* Describe the object */
+			if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+			}
+ #ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+ #endif
+			slot = i;
+
+			/* Magic device? */
+			if (forge_part.tval) {
+				/* Return to the original object, instead of the split-off partial object,
+				   so we can proceed trying to stack the rest somewhere in the subsequent slot(s).. */
+				i_ptr = i_ptr_tmp;
+				/* Also correctly reduce charges of original object, now that it was decided that we could absorb it (partially) */
+				*i_ptr = forge_copy;
+			} else /* Not a magic device */
+				i_ptr->number = inum - limitG; /* Unhack 'number' */
+
+			/* Manually do this here for now: Update subinven slot for client. */
+			display_subinven_aux(Ind, sslot, i);
+
+			/* Never pick up the rest, as that contradicts the !G inscription. */
+			break;
+		} else {
+			/* Fully move to a free slot. Done. */
+			*o_ptr = *i_ptr;
+			o_ptr->marked = 0; //why change marked/marked2?...paranoia?
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+
+			if (!o_ptr->owner && !p_ptr->admin_dm) {
+				o_ptr->owner = p_ptr->id;
+				o_ptr->mode = p_ptr->mode;
+				if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
+
+				/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+				if (!maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) o_ptr->ident |= ID_NO_HIDDEN;
+			}
+
+			/* Auto id ? */
+			if (p_ptr->auto_id) {
+				object_aware(Ind, o_ptr);
+				object_known(o_ptr);
+			}
+
+			/* Auto-inscriber */
+			if (p_ptr->auto_inscr_server ||
+			    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL)) {
+				(void)auto_inscribe(Ind, o_ptr, 0);
+			}
+
+			/* Check whether this item was requested by an item-retrieval quest
+			   Note about quest_credited check: inven_carry() is also called by carry(),
+			   resulting in double crediting otherwise! */
+			if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
 			object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 
