@@ -100,7 +100,7 @@ void show_building(int Ind, store_type *s_ptr) {
 		ba_ptr = &ba_info[st_ptr->actions[i]];
 
 		/* hack: some actions are admin-only (for testing purpose) */
-		if (!is_admin(Players[Ind]) && st_ptr->actions[i] == 70) { //BACT_STATIC
+		if (!is_admin(Players[Ind]) && (ba_ptr->flags & BACT_F_ADMIN)) {
 			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
 			continue;
 		}
@@ -2134,6 +2134,8 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 	bool recreate = FALSE;
 	//int amt;
 
+	if ((ba_ptr->flags & BACT_F_ADMIN) && !is_admin(p_ptr)) return(FALSE);
+
 	if (p_ptr->store_action) {
 		msg_print(Ind, "You are currently busy.");
 		return(FALSE);
@@ -2769,8 +2771,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), 2);
 			break;
 #if 1
-		case BACT_STATIC:
-			if (is_admin(p_ptr)) {
+		case BACT_STATIC: {
 				int x, y, i, j, k;
 				struct dungeon_type *d_ptr;
 				worldpos tpos;

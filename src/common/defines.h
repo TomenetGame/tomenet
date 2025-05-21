@@ -9174,7 +9174,6 @@ extern int PlayerUID;
 
 
 
-
 /*
  * Buildings actions
  */
@@ -9284,6 +9283,8 @@ extern int PlayerUID;
 #define BACT_F_MELEE		0x1000	/* for enchanting services */
 #define BACT_F_TRAPKIT_FA	0x2000	/* for enchanting services (FA = firearm type trapkits, as others don't have any (+hit,+dam) */
 #define BACT_F_TOGGLE_CLOAKS	0x4000	/* for repairing service: If specified with BACT_F_ARMOUR it _exempts_ cloaks, otherwise it _allows_ cloaks. (Flag efficiency -_-) */
+#define BACT_F_ADMIN		0x8000	/* action only available to admins */
+
 
 /* Reskill flags */
 #define RESKILL_F_UNDO		0x1

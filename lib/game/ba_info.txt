@@ -346,6 +346,7 @@ I:63:0:g:0
 
 N:70:Static floor records
 C:0:0:0
+#I:64:0:f:32768 -- admins only?
 I:64:0:f:0
 
 #SOLO_REKING
