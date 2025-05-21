@@ -2197,872 +2197,871 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 	if (!bcost) set_reward = TRUE;
 
 	switch (bact) {
-		case BACT_RESEARCH_ITEM:
-			/* since paid is always TRUE for identify_fully_item(),
-			   we can fix the 'Au refresh overwrites *id* info'
-			   visual glitch here, by sending gold first. */
-			p_ptr->au -= bcost;
-			//store_prt_gold(Ind);
-			Send_gold(Ind, p_ptr->au, p_ptr->balance);
+	case BACT_RESEARCH_ITEM:
+		/* since paid is always TRUE for identify_fully_item(),
+		   we can fix the 'Au refresh overwrites *id* info'
+		   visual glitch here, by sending gold first. */
+		p_ptr->au -= bcost;
+		//store_prt_gold(Ind);
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 //			paid = research_item(Ind, item);
-			paid = identify_fully_item(Ind, item);
+		paid = identify_fully_item(Ind, item);
 
-			return(FALSE);//..and to complete the Send_gold() hack, return here
-			//break;
+		return(FALSE);//..and to complete the Send_gold() hack, return here
+		//break;
 
-		case BACT_IDENT_ONE:
-			p_ptr->au -= bcost;
-			Send_gold(Ind, p_ptr->au, p_ptr->balance);
+	case BACT_IDENT_ONE:
+		p_ptr->au -= bcost;
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			paid = ident_spell_aux(Ind, item);
+		paid = ident_spell_aux(Ind, item);
 
-			return(FALSE);//..and to complete the Send_gold() hack, return here
-			//break;
+		return(FALSE);//..and to complete the Send_gold() hack, return here
+		//break;
 #if 0
-		case BACT_TOWN_HISTORY:
+	case BACT_TOWN_HISTORY:
 #ifdef USE_SOUND_2010
-			sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			town_history();
-			break;
+		town_history();
+		break;
 #endif
-		case BACT_RACE_LEGENDS:
+	case BACT_RACE_LEGENDS:
 #ifdef USE_SOUND_2010
-			sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			race_legends(Ind);
-			break;
+		race_legends(Ind);
+		break;
 #if 1
-		case BACT_GREET_KING:
+	case BACT_GREET_KING:
 #ifdef USE_SOUND_2010
 //			sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 //			castle_greet();
-			break;
-		case BACT_QUEST1:
-		case BACT_QUEST2:
-		case BACT_QUEST3:
-		case BACT_QUEST4:
-		{
+		break;
+	case BACT_QUEST1:
+	case BACT_QUEST2:
+	case BACT_QUEST3:
+	case BACT_QUEST4:
+	{
 #if 0
-			int y = 1, x = 1;
-			bool ok = FALSE;
+		int y = 1, x = 1;
+		bool ok = FALSE;
 
-			while ((x < cur_wid - 1) && !ok) {
-				y = 1;
-				while ((y < cur_hgt - 1) && !ok) {
-					/* Found the location of the quest info ? */
-					if (bact - BACT_QUEST1 + FEAT_QUEST1 == cave[y][x].feat) {
-						/* Stop the loop */
-						ok = TRUE;
-					}
-					y++;
+		while ((x < cur_wid - 1) && !ok) {
+			y = 1;
+			while ((y < cur_hgt - 1) && !ok) {
+				/* Found the location of the quest info ? */
+				if (bact - BACT_QUEST1 + FEAT_QUEST1 == cave[y][x].feat) {
+					/* Stop the loop */
+					ok = TRUE;
 				}
-				x++;
+				y++;
 			}
+			x++;
+		}
 
-			if (ok) recreate = castle_quest(y - 1, x - 1);
-			else msg_format(Ind, "ERROR: no quest info feature found: %d", bact - BACT_QUEST1 + FEAT_QUEST1);
+		if (ok) recreate = castle_quest(y - 1, x - 1);
+		else msg_format(Ind, "ERROR: no quest info feature found: %d", bact - BACT_QUEST1 + FEAT_QUEST1);
 #else
-			/* get an extermination order */
-			u16b flags = QUEST_MONSTER | QUEST_RANDOM | QUEST_RACE;
-			int lev = p_ptr->lev;
-			u16b type, num;
+		/* get an extermination order */
+		u16b flags = QUEST_MONSTER | QUEST_RANDOM | QUEST_RACE;
+		int lev = p_ptr->lev;
+		u16b type, num;
 
-			if (prepare_xorder(Ind, Ind, flags, &lev, &type, &num))
-				add_xorder(Ind, Ind, type, num, flags);
+		if (prepare_xorder(Ind, Ind, flags, &lev, &type, &num))
+			add_xorder(Ind, Ind, type, num, flags);
 #endif
-			break;
+		break;
+	}
+#endif
+#if 0
+	case BACT_KING_LEGENDS:
+	case BACT_ARENA_LEGENDS:
+	case BACT_LEGENDS:
+		show_highclass(building_loc);
+		break;
+	case BACT_POSTER:
+	case BACT_ARENA_RULES:
+	case BACT_ARENA:
+		arena_comm(bact);
+		break;
+#endif	// 0
+
+	case BACT_IN_BETWEEN:
+	case BACT_CRAPS:
+	case BACT_SPIN_WHEEL:
+	case BACT_DICE_SLOTS:
+	case BACT_GAMBLE_RULES:
+		gamble_comm(Ind, bact, gold);
+		break;
+	case BACT_REST:
+	case BACT_RUMORS:
+	case BACT_FOOD:
+		paid = inn_comm(Ind, bact);
+		break;
+#if 0
+	case BACT_RESEARCH_MONSTER:
+		paid = research_mon();
+		break;
+	case BACT_COMPARE_WEAPONS:
+		paid = compare_weapons();
+		break;
+#if 0
+	case BACT_GREET:
+		greet_char();
+		break;
+#endif
+#endif	// 0
+
+	case BACT_ENCHANT_WEAPON:
+		paid = fix_item(Ind, INVEN_WIELD, INVEN_ARM, 0, FALSE,
+				BACT_ENCHANT_WEAPON, set_reward);
+		break;
+	case BACT_ENCHANT_ARMOR:
+		paid = fix_item(Ind, INVEN_ARM, INVEN_FEET, 0, TRUE,
+				BACT_ENCHANT_ARMOR, set_reward);
+		break;
+	/* needs work */
+	case BACT_RECHARGE:
+	{
+		object_type		*o_ptr;
+
+		/* Only accept legal items */
+		item_tester_hook = item_tester_hook_recharge;
+
+		/* Get the item (in the pack) */
+		o_ptr = &p_ptr->inventory[item];
+
+		if (!item_tester_hook(o_ptr)) {
+			msg_print(Ind, "You cannot recharge that item.");
+			//get_item(Ind);
+		} else {
+			//if (recharge(Ind, 80, -1)) paid = TRUE;
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_recharge", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			recharge_aux(Ind, item, 125);
+			paid = TRUE;
+		}
+		break;
+	}
+	/* needs work */
+	case BACT_IDENTS:
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		identify_pack(Ind);
+		msg_print(Ind, "Your posessions have been identified.");
+		//msg_print(Ind, NULL);
+		paid = TRUE;
+		break;
+#if 0
+	case BACT_LEARN:
+		do_cmd_study();
+		break;
+#endif	// 0
+
+	/* needs work */
+	case BACT_STAR_HEAL:
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		hp_player(Ind, 200, FALSE, FALSE);
+		set_poisoned(Ind, 0, 0);
+		set_diseased(Ind, 0, 0);
+		set_blind(Ind, 0);
+		set_confused(Ind, 0);
+		set_cut(Ind, 0, 0);
+		set_stun(Ind, 0);
+		if (p_ptr->black_breath == 1) {
+			msg_print(Ind, "The hold of the Black Breath on you is broken!");
+			p_ptr->black_breath = FALSE;
+		}
+		paid = TRUE;
+		break;
+	/* needs work */
+	case BACT_HEALING:
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_prayer", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		hp_player(Ind, 200, FALSE, FALSE);
+		set_poisoned(Ind, 0, 0);
+		//set_diseased(Ind, 0, 0);
+		set_blind(Ind, 0);
+		set_confused(Ind, 0);
+		set_cut(Ind, 0, 0);
+		set_stun(Ind, 0);
+		paid = TRUE;
+		break;
+	/* needs work */
+	case BACT_RESTORE:
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		if (do_res_stat(Ind, A_STR)) paid = TRUE;
+		if (do_res_stat(Ind, A_INT)) paid = TRUE;
+		if (do_res_stat(Ind, A_WIS)) paid = TRUE;
+		if (do_res_stat(Ind, A_DEX)) paid = TRUE;
+		if (do_res_stat(Ind, A_CON)) paid = TRUE;
+		if (do_res_stat(Ind, A_CHR)) paid = TRUE;
+		if (restore_level(Ind)) paid = TRUE;
+		break;
+	/* set timed reward flag */
+	case BACT_GOLD:
+#if 0
+		if (!p_ptr->rewards[BACT_GOLD]) {
+			share_gold();
+			p_ptr->rewards[BACT_GOLD] = TRUE;
+		} else {
+			msg_print(Ind, "You just had your daily allowance!");
+			msg_print(Ind, NULL);
 		}
 #endif
+		break;
+	case BACT_ENCHANT_ARROWS:
+		paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, 0, FALSE, BACT_ENCHANT_ARROWS, set_reward);
+		break;
+	case BACT_ENCHANT_BOW:
+		//paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, TV_BOW, FALSE, BACT_ENCHANT_BOW, set_reward);
+		//allow boomerangs too:
+		paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, 0, FALSE, BACT_ENCHANT_BOW, set_reward);
+		break;
 #if 0
-		case BACT_KING_LEGENDS:
-		case BACT_ARENA_LEGENDS:
-		case BACT_LEGENDS:
-			show_highclass(building_loc);
-			break;
-		case BACT_POSTER:
-		case BACT_ARENA_RULES:
-		case BACT_ARENA:
-			arena_comm(bact);
-			break;
-#endif	// 0
+	case BACT_RECALL: {
+		struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
-		case BACT_IN_BETWEEN:
-		case BACT_CRAPS:
-		case BACT_SPIN_WHEEL:
-		case BACT_DICE_SLOTS:
-		case BACT_GAMBLE_RULES:
-			gamble_comm(Ind, bact, gold);
-			break;
-		case BACT_REST:
-		case BACT_RUMORS:
-		case BACT_FOOD:
-			paid = inn_comm(Ind, bact);
-			break;
-#if 0
-		case BACT_RESEARCH_MONSTER:
-			paid = research_mon();
-			break;
-		case BACT_COMPARE_WEAPONS:
-			paid = compare_weapons();
-			break;
-#if 0
-		case BACT_GREET:
-			greet_char();
-			break;
-#endif
-#endif	// 0
-
-		case BACT_ENCHANT_WEAPON:
-			paid = fix_item(Ind, INVEN_WIELD, INVEN_ARM, 0, FALSE,
-					BACT_ENCHANT_WEAPON, set_reward);
-			break;
-		case BACT_ENCHANT_ARMOR:
-			paid = fix_item(Ind, INVEN_ARM, INVEN_FEET, 0, TRUE,
-					BACT_ENCHANT_ARMOR, set_reward);
-			break;
-		/* needs work */
-		case BACT_RECHARGE:
-		{
-			object_type		*o_ptr;
-
-			/* Only accept legal items */
-			item_tester_hook = item_tester_hook_recharge;
-
-			/* Get the item (in the pack) */
-			o_ptr = &p_ptr->inventory[item];
-
-			if (!item_tester_hook(o_ptr)) {
-				msg_print(Ind, "You cannot recharge that item.");
-				//get_item(Ind);
-			} else {
-				//if (recharge(Ind, 80, -1)) paid = TRUE;
-#ifdef USE_SOUND_2010
-				sound(Ind, "store_recharge", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-				recharge_aux(Ind, item, 125);
-				paid = TRUE;
-			}
-			break;
-		}
-		/* needs work */
-		case BACT_IDENTS:
-#ifdef USE_SOUND_2010
-			sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-			identify_pack(Ind);
-			msg_print(Ind, "Your posessions have been identified.");
-			//msg_print(Ind, NULL);
-			paid = TRUE;
-			break;
-#if 0
-		case BACT_LEARN:
-			do_cmd_study();
-			break;
-#endif	// 0
-
-		/* needs work */
-		case BACT_STAR_HEAL:
-#ifdef USE_SOUND_2010
-			sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-			hp_player(Ind, 200, FALSE, FALSE);
-			set_poisoned(Ind, 0, 0);
-			set_diseased(Ind, 0, 0);
-			set_blind(Ind, 0);
-			set_confused(Ind, 0);
-			set_cut(Ind, 0, 0);
-			set_stun(Ind, 0);
-			if (p_ptr->black_breath == 1) {
-				msg_print(Ind, "The hold of the Black Breath on you is broken!");
-				p_ptr->black_breath = FALSE;
-			}
-			paid = TRUE;
-			break;
-		/* needs work */
-		case BACT_HEALING:
-#ifdef USE_SOUND_2010
-			sound(Ind, "store_prayer", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-			hp_player(Ind, 200, FALSE, FALSE);
-			set_poisoned(Ind, 0, 0);
-			//set_diseased(Ind, 0, 0);
-			set_blind(Ind, 0);
-			set_confused(Ind, 0);
-			set_cut(Ind, 0, 0);
-			set_stun(Ind, 0);
-			paid = TRUE;
-			break;
-		/* needs work */
-		case BACT_RESTORE:
-#ifdef USE_SOUND_2010
-			sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-			if (do_res_stat(Ind, A_STR)) paid = TRUE;
-			if (do_res_stat(Ind, A_INT)) paid = TRUE;
-			if (do_res_stat(Ind, A_WIS)) paid = TRUE;
-			if (do_res_stat(Ind, A_DEX)) paid = TRUE;
-			if (do_res_stat(Ind, A_CON)) paid = TRUE;
-			if (do_res_stat(Ind, A_CHR)) paid = TRUE;
-			if (restore_level(Ind)) paid = TRUE;
-			break;
-		/* set timed reward flag */
-		case BACT_GOLD:
-#if 0
-			if (!p_ptr->rewards[BACT_GOLD]) {
-				share_gold();
-				p_ptr->rewards[BACT_GOLD] = TRUE;
-			} else {
-				msg_print(Ind, "You just had your daily allowance!");
-				msg_print(Ind, NULL);
-			}
-#endif
-			break;
-		case BACT_ENCHANT_ARROWS:
-			paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, 0, FALSE, BACT_ENCHANT_ARROWS, set_reward);
-			break;
-		case BACT_ENCHANT_BOW:
-			//paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, TV_BOW, FALSE, BACT_ENCHANT_BOW, set_reward);
-			//allow boomerangs too:
-			paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, 0, FALSE, BACT_ENCHANT_BOW, set_reward);
-			break;
-#if 0
-		case BACT_RECALL: {
-			struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
-			if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
+		if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
  #ifdef ANTI_TELE_CHEEZE
-			    p_ptr->anti_tele ||
+		    p_ptr->anti_tele ||
   #ifdef ANTI_TELE_CHEEZE_ANCHOR
-			    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
+		    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
   #endif
-			    ) {
-				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
-				break;
-			}
+		    ) {
+			msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+			break;
+		}
  #endif
 #ifdef USE_SOUND_2010
-			sound(Ind, "store_recall", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "store_recall", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+		p_ptr->word_recall = 1;
+		msg_print(Ind, "\377oThe air about you becomes charged...");
+		paid = TRUE;
+		break; }
+	case BACT_TELEPORT_LEVEL: {
+		break;//disabled
+		struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+		if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
+ #ifdef ANTI_TELE_CHEEZE
+		    p_ptr->anti_tele ||
+  #ifdef ANTI_TELE_CHEEZE_ANCHOR
+		    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
+  #endif
+		    ) {
+			msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+			break;
+		}
+ #endif
+		if (reset_recall(FALSE)) {
 			p_ptr->word_recall = 1;
 			msg_print(Ind, "\377oThe air about you becomes charged...");
 			paid = TRUE;
-			break; }
-		case BACT_TELEPORT_LEVEL: {
-			break;//disabled
-			struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
-			if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
- #ifdef ANTI_TELE_CHEEZE
-			    p_ptr->anti_tele ||
-  #ifdef ANTI_TELE_CHEEZE_ANCHOR
-			    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
-  #endif
-			    ) {
-				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
-				break;
-			}
- #endif
-			if (reset_recall(FALSE)) {
-				p_ptr->word_recall = 1;
-				msg_print(Ind, "\377oThe air about you becomes charged...");
+		}
+		break; }
+	case BACT_BUYFIRESTONE:
+		amt = get_quantity("How many firestones (2000 gold each)? ", 10);
+		if (amt > 0) {
+			bcost = amt * 2000;
+			if (p_ptr->au >= bcost) {
 				paid = TRUE;
-			}
-			break; }
-		case BACT_BUYFIRESTONE:
-			amt = get_quantity("How many firestones (2000 gold each)? ", 10);
-			if (amt > 0) {
-				bcost = amt * 2000;
-				if (p_ptr->au >= bcost) {
-					paid = TRUE;
-					msg_print(Ind, "You have bought some firestones!");
+				msg_print(Ind, "You have bought some firestones!");
 
-					/* Hack -- Give the player Firestone! */
-					q_ptr = &forge;
-					object_prep(q_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-					q_ptr->number = amt;
-					object_aware(q_ptr);
-					object_known(q_ptr);
-					drop_near(TRUE, 0, q_ptr, -1, py, px);
-				}
-				else msg_print(Ind, "You do not have the gold!");
+				/* Hack -- Give the player Firestone! */
+				q_ptr = &forge;
+				object_prep(q_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
+				q_ptr->number = amt;
+				object_aware(q_ptr);
+				object_known(q_ptr);
+				drop_near(TRUE, 0, q_ptr, -1, py, px);
 			}
-			break;
-		case BACT_COMEBACKTIME:
-			if (PRACE_FLAG(PR1_TP)) {
-				if (do_res_stat(A_STR, TRUE)) paid = TRUE;
-				if (do_res_stat(A_INT, TRUE)) paid = TRUE;
-				if (do_res_stat(A_WIS, TRUE)) paid = TRUE;
-				if (do_res_stat(A_DEX, TRUE)) paid = TRUE;
-				if (do_res_stat(A_CON, TRUE)) paid = TRUE;
-				if (do_res_stat(A_CHR, TRUE)) paid = TRUE;
-				p_ptr->chp -= 1000;
-				if (p_ptr->chp <= 0) p_ptr->chp = 1;
-			} else {
-				msg_print(Ind, "Hum .. you are NOT a DragonRider, "
-						"you need a dragon to go between!");
-			}
-			break;
+			else msg_print(Ind, "You do not have the gold!");
+		}
+		break;
+	case BACT_COMEBACKTIME:
+		if (PRACE_FLAG(PR1_TP)) {
+			if (do_res_stat(A_STR, TRUE)) paid = TRUE;
+			if (do_res_stat(A_INT, TRUE)) paid = TRUE;
+			if (do_res_stat(A_WIS, TRUE)) paid = TRUE;
+			if (do_res_stat(A_DEX, TRUE)) paid = TRUE;
+			if (do_res_stat(A_CON, TRUE)) paid = TRUE;
+			if (do_res_stat(A_CHR, TRUE)) paid = TRUE;
+			p_ptr->chp -= 1000;
+			if (p_ptr->chp <= 0) p_ptr->chp = 1;
+		} else {
+			msg_print(Ind, "Hum .. you are NOT a DragonRider, "
+					"you need a dragon to go between!");
+		}
+		break;
 #endif	// 0
 
-		case BACT_MIMIC_NORMAL:
+	case BACT_MIMIC_NORMAL:
 #ifdef USE_SOUND_2010
-			sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			if (set_mimic(Ind, 0, 0)) paid = TRUE;	/* Undo temporary mimicry (It's Shadow mimicry)*/
-			if (p_ptr->fruit_bat == 2) { /* Undo fruit bat form from chauve-souris potion */
-				p_ptr->fruit_bat = 0;
-				p_ptr->update |= (PU_BONUS | PU_HP);
-				paid = TRUE;
-			}
-			if (p_ptr->body_monster) /* Undo normal mimicry */ {
-				p_ptr->body_monster_prev = p_ptr->body_monster;
-				p_ptr->body_monster = 0;
-				p_ptr->body_changed = TRUE;
-				paid = TRUE;
-
-				note_spot(Ind, p_ptr->py, p_ptr->px);
-				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-				/* Recalculate mana */
-				p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
-
-				/* Tell the client */
-				p_ptr->redraw |= PR_VARIOUS;
-
-				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-			}
-			if (paid) msg_print(Ind, "You are polymorphed back to normal form!");
-			break;
-#if 1
-		case BACT_VIEW_BOUNTIES:
-//			show_bounties();
-			break;
-		case BACT_VIEW_QUEST_MON:
-//			show_quest_monster();
-			break;
-		case BACT_SELL_QUEST_MON:
-//			sell_quest_monster();
-			break;
-		case BACT_SELL_CORPSES:
-//			sell_corpses();
-			break;
-		/* XXX no fates, for now */
-		case BACT_DIVINATION:
-#if 0
-			int i, count = 0;
-			bool something = FALSE;
-
-			while (count < 1000) {
-				count++;
-				i = rand_int(MAX_FATES);
-				if (!fates[i].fate) continue;
-				if (fates[i].know) continue;
-				msg_print(Ind, "You know a little more of your fate.");
-
-				fates[i].know = TRUE;
-				something = TRUE;
-				break;
-			}
-
-			if (!something) msg_print(Ind, "Well, you have no fate, anyway I'll keep your money!");
-#else /* fortune cookies for now, lol */
-			fortune(Ind, 1);
-#endif
+		if (set_mimic(Ind, 0, 0)) paid = TRUE;	/* Undo temporary mimicry (It's Shadow mimicry)*/
+		if (p_ptr->fruit_bat == 2) { /* Undo fruit bat form from chauve-souris potion */
+			p_ptr->fruit_bat = 0;
+			p_ptr->update |= (PU_BONUS | PU_HP);
 			paid = TRUE;
+		}
+		if (p_ptr->body_monster) /* Undo normal mimicry */ {
+			p_ptr->body_monster_prev = p_ptr->body_monster;
+			p_ptr->body_monster = 0;
+			p_ptr->body_changed = TRUE;
+			paid = TRUE;
+
+			note_spot(Ind, p_ptr->py, p_ptr->px);
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+			/* Recalculate mana */
+			p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
+
+			/* Tell the client */
+			p_ptr->redraw |= PR_VARIOUS;
+
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		}
+		if (paid) msg_print(Ind, "You are polymorphed back to normal form!");
+		break;
+#if 1
+	case BACT_VIEW_BOUNTIES:
+//			show_bounties();
+		break;
+	case BACT_VIEW_QUEST_MON:
+//			show_quest_monster();
+		break;
+	case BACT_SELL_QUEST_MON:
+//			sell_quest_monster();
+		break;
+	case BACT_SELL_CORPSES:
+//			sell_corpses();
+		break;
+	/* XXX no fates, for now */
+	case BACT_DIVINATION:
+#if 0
+		int i, count = 0;
+		bool something = FALSE;
+
+		while (count < 1000) {
+			count++;
+			i = rand_int(MAX_FATES);
+			if (!fates[i].fate) continue;
+			if (fates[i].know) continue;
+			msg_print(Ind, "You know a little more of your fate.");
+
+			fates[i].know = TRUE;
+			something = TRUE;
 			break;
+		}
+
+		if (!something) msg_print(Ind, "Well, you have no fate, anyway I'll keep your money!");
+#else /* fortune cookies for now, lol */
+		fortune(Ind, 1);
+#endif
+		paid = TRUE;
+		break;
 #endif	// 1
 
-		case BACT_BUY:
-			store_purchase(Ind, item, amt);
-			break;
-		case BACT_SELL:
-			store_sell(Ind, item, amt);
-			break;
-		case BACT_EXAMINE:
-			store_examine(Ind, item);
-			break;
-		case BACT_STEAL:
-			store_stole(Ind, item);
-			break;
+	case BACT_BUY:
+		store_purchase(Ind, item, amt);
+		break;
+	case BACT_SELL:
+		store_sell(Ind, item, amt);
+		break;
+	case BACT_EXAMINE:
+		store_examine(Ind, item);
+		break;
+	case BACT_STEAL:
+		store_stole(Ind, item);
+		break;
 #if 0
-		/* XXX we'd simply better not to backport it */
-		case BACT_REQUEST_ITEM:
-			store_request_item();
-			paid = TRUE;
+	/* XXX we'd simply better not to backport it */
+	case BACT_REQUEST_ITEM:
+		store_request_item();
+		paid = TRUE;
+		break;
+	/* XXX This will be quite abusable.. */
+	case BACT_GET_LOAN:
+		s64b i, price, req;
+
+		if (p_ptr->loan) {
+			msg_print(Ind, "You already have a loan!");
 			break;
-		/* XXX This will be quite abusable.. */
-		case BACT_GET_LOAN:
-			s64b i, price, req;
+		}
+		for (i = price = 0; i < INVEN_TOTAL; i++)
+			price += object_value_real(&inventory[i]); //missing "* inventory[i].number"?
 
-			if (p_ptr->loan) {
-				msg_print(Ind, "You already have a loan!");
-				break;
-			}
-			for (i = price = 0; i < INVEN_TOTAL; i++)
-				price += object_value_real(&inventory[i]); //missing "* inventory[i].number"?
+		/* hack: prevent s32b overflow */
+		if (PY_MAX_GOLD - p_ptr->au < price) {
+			price = PY_MAX_GOLD;
+		} else
+			price += p_ptr->au;
 
-			/* hack: prevent s32b overflow */
-			if (PY_MAX_GOLD - p_ptr->au < price) {
-				price = PY_MAX_GOLD;
-			} else
-				price += p_ptr->au;
+		if (price > p_ptr->loan - 30000) price = p_ptr->loan - 30000;
 
-			if (price > p_ptr->loan - 30000) price = p_ptr->loan - 30000;
+		msg_format(Ind, "You have a loan of %i.", p_ptr->loan);
 
-			msg_format(Ind, "You have a loan of %i.", p_ptr->loan);
+		req = get_quantity("How much would you like to get? ", price);
+		if (req > 100000) req = 100000;
 
-			req = get_quantity("How much would you like to get? ", price);
-			if (req > 100000) req = 100000;
+		if (PY_MAX_GOLD - req < p_ptr->loan) {
+			msg_format(Ind, "\377yYou cannot have a greater loan than %d gold!", PY_MAX_GOLD);
+			break;
+		}
 
-			if (PY_MAX_GOLD - req < p_ptr->loan) {
-				msg_format(Ind, "\377yYou cannot have a greater loan than %d gold!", PY_MAX_GOLD);
-				break;
-			}
+		if (!gain_au(Ind, req, FALSE, FALSE)) break;
 
-			if (!gain_au(Ind, req, FALSE, FALSE)) break;
+		p_ptr->loan += req;
+		p_ptr->loan_time += req;
 
-			p_ptr->loan += req;
-			p_ptr->loan_time += req;
-
-			msg_format(Ind, "You receive %i gold pieces", req);
+		msg_format(Ind, "You receive %i gold pieces", req);
 #ifdef USE_SOUND_2010
-			sound(Ind, "pickup_gold", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "pickup_gold", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
-			paid = TRUE;
-			break;
-		case BACT_PAY_BACK_LOAN:
-			s32b req;
+		paid = TRUE;
+		break;
+	case BACT_PAY_BACK_LOAN:
+		s32b req;
 
-			msg_format(Ind, "You have a loan of %i.", p_ptr->loan);
+		msg_format(Ind, "You have a loan of %i.", p_ptr->loan);
 
-			req = get_quantity("How much would you like to pay back?", p_ptr->loan);
+		req = get_quantity("How much would you like to pay back?", p_ptr->loan);
 
-			if (req > p_ptr->au) req = p_ptr->au;
-			if (req > p_ptr->loan) req = p_ptr->loan;
+		if (req > p_ptr->au) req = p_ptr->au;
+		if (req > p_ptr->loan) req = p_ptr->loan;
 
-			p_ptr->loan -= req;
-			p_ptr->au -= req;
+		p_ptr->loan -= req;
+		p_ptr->au -= req;
 
-			if (p_ptr->loan_time)
-				p_ptr->loan_time = MAX(p_ptr->loan/2, p_ptr->loan_time);
+		if (p_ptr->loan_time)
+			p_ptr->loan_time = MAX(p_ptr->loan/2, p_ptr->loan_time);
 
-			if (!p_ptr->loan) p_ptr->loan_time = 0;
+		if (!p_ptr->loan) p_ptr->loan_time = 0;
 
-			msg_format(Ind, "You pay back %i gold pieces", req);
+		msg_format(Ind, "You pay back %i gold pieces", req);
 #ifdef USE_SOUND_2010
-			sound(Ind, "drop_gold", NULL, SFX_TYPE_MISC, FALSE);
+		sound(Ind, "drop_gold", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
-			paid = TRUE;
-			break;
+		paid = TRUE;
+		break;
 #endif	// 0
 
-		case BACT_DEPOSIT:
-			if (gold > p_ptr->au) gold = p_ptr->au;
-			if (gold < 1) break;
+	case BACT_DEPOSIT:
+		if (gold > p_ptr->au) gold = p_ptr->au;
+		if (gold < 1) break;
 
-			/* hack: prevent s32b overflow */
-			if (PY_MAX_GOLD - gold < p_ptr->balance) {
-				msg_format(Ind, "\377yYou cannot deposit more than %d gold!", PY_MAX_GOLD);
-				break;
-			}
+		/* hack: prevent s32b overflow */
+		if (PY_MAX_GOLD - gold < p_ptr->balance) {
+			msg_format(Ind, "\377yYou cannot deposit more than %d gold!", PY_MAX_GOLD);
+			break;
+		}
 
-			p_ptr->balance += gold;
-			p_ptr->au -= gold;
+		p_ptr->balance += gold;
+		p_ptr->au -= gold;
 #ifdef USE_SOUND_2010
-			sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+		sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-			msg_format(Ind, "You deposit %i gold pieces.", gold);
-			s_printf("Deposit: %s - %d Au.\n", p_ptr->name, gold);
+		msg_format(Ind, "You deposit %i gold pieces.", gold);
+		s_printf("Deposit: %s - %d Au.\n", p_ptr->name, gold);
 
-			paid = TRUE;
+		paid = TRUE;
+		break;
+	case BACT_WITHDRAW:
+		if (gold > p_ptr->balance) gold = p_ptr->balance;
+		if (gold < 1) break;
+
+		/* hack: prevent s32b overflow */
+		if (PY_MAX_GOLD - gold < p_ptr->au) {
+			msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
 			break;
-		case BACT_WITHDRAW:
-			if (gold > p_ptr->balance) gold = p_ptr->balance;
-			if (gold < 1) break;
+		}
 
-			/* hack: prevent s32b overflow */
-			if (PY_MAX_GOLD - gold < p_ptr->au) {
-				msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
-				break;
-			}
-
-			p_ptr->balance -= gold;
-			p_ptr->au += gold;
+		p_ptr->balance -= gold;
+		p_ptr->au += gold;
 #ifdef USE_SOUND_2010
-			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-			msg_format(Ind, "You withdraw %i gold pieces.", gold);
-			s_printf("Withdraw: %s - %d Au.\n", p_ptr->name, gold);
+		msg_format(Ind, "You withdraw %i gold pieces.", gold);
+		s_printf("Withdraw: %s - %d Au.\n", p_ptr->name, gold);
 
-			paid = TRUE;
-			break;
-		case BACT_EXTEND_HOUSE:
-			//paid = home_extend(Ind);
-			home_extend(Ind);
-			break;
-		case BACT_CHEEZE_LIST:
-			view_cheeze_list(Ind);
-			break;
-		case BACT_DEED_ITEM:
-			reward_deed_item(Ind, item);
-			break;
-		case BACT_DEED_BLESSING:
-			reward_deed_blessing(Ind, item);
-			break;
-		case BACT_GO:
-			if (is_newer_than(&p_ptr->version, 4, 4, 6, 1, 0, 0)) {
+		paid = TRUE;
+		break;
+	case BACT_EXTEND_HOUSE:
+		//paid = home_extend(Ind);
+		home_extend(Ind);
+		break;
+	case BACT_CHEEZE_LIST:
+		view_cheeze_list(Ind);
+		break;
+	case BACT_DEED_ITEM:
+		reward_deed_item(Ind, item);
+		break;
+	case BACT_DEED_BLESSING:
+		reward_deed_blessing(Ind, item);
+		break;
+	case BACT_GO:
+		if (is_newer_than(&p_ptr->version, 4, 4, 6, 1, 0, 0)) {
 #ifdef ENABLE_GO_GAME
-				go_challenge(Ind);
+			go_challenge(Ind);
 #else
-				Send_store_special_clr(Ind, 3, 19);
-				Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Sorry, the Go board, bowls and stones were stolen by some unknown bastard!");
-				Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Unfortunately I cannot say yet when a replacement will arrive.");
+			Send_store_special_clr(Ind, 3, 19);
+			Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Sorry, the Go board, bowls and stones were stolen by some unknown bastard!");
+			Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Unfortunately I cannot say yet when a replacement will arrive.");
 #endif
-			} else
-				msg_print(Ind, "\377oThis feature requires at least client 4.4.6b");
-			break;
-		case BACT_INSTANT_RES:
+		} else
+			msg_print(Ind, "\377oThis feature requires at least client 4.4.6b");
+		break;
+	case BACT_INSTANT_RES:
 #ifdef ENABLE_INSTANT_RES
-			if (p_ptr->mode & MODE_EVERLASTING) {
-				if (p_ptr->insta_res) {
-					p_ptr->insta_res = FALSE;
-					msg_print(Ind, "\377rYou decide that you do not require the Instant Resurrection service!");
-				} else {
-					//int instant_res_cost = p_ptr->lev * p_ptr->lev * 10 + 10;
-
-					p_ptr->insta_res = TRUE;
-					msg_print(Ind, "\377GYou engage the Instant Resurrection service.");
-					//msg_format(Ind, "(At depth %d it would cost \377%c%d\377- Au.)", p_ptr->lev, (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'w', instant_res_cost);
-				}
+		if (p_ptr->mode & MODE_EVERLASTING) {
+			if (p_ptr->insta_res) {
+				p_ptr->insta_res = FALSE;
+				msg_print(Ind, "\377rYou decide that you do not require the Instant Resurrection service!");
 			} else {
-				msg_print(Ind, "\377oInstant Resurrection is only available to everlasting characters.");
+				//int instant_res_cost = p_ptr->lev * p_ptr->lev * 10 + 10;
+
+				p_ptr->insta_res = TRUE;
+				msg_print(Ind, "\377GYou engage the Instant Resurrection service.");
+				//msg_format(Ind, "(At depth %d it would cost \377%c%d\377- Au.)", p_ptr->lev, (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'w', instant_res_cost);
 			}
+		} else {
+			msg_print(Ind, "\377oInstant Resurrection is only available to everlasting characters.");
+		}
 #else
-			msg_print(Ind, "\377oInstant Resurrection has not been enabled on this server.");
+		msg_print(Ind, "\377oInstant Resurrection has not been enabled on this server.");
 #endif
-			break;
-		case BACT_EXPLORATIONS:
-			view_exploration_records(Ind);
-			break;
+		break;
+	case BACT_EXPLORATIONS:
+		view_exploration_records(Ind);
+		break;
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-		case BACT_DUNGEONS:
-			view_exploration_history(Ind);
-			break;
+	case BACT_DUNGEONS:
+		view_exploration_history(Ind);
+		break;
 #endif
-		case BACT_RENAME_GUILD:
-			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
-				msg_print(Ind, "You need an up-to-date client to rename a guild.");
-				break;
-			}
-			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), 2);
+	case BACT_RENAME_GUILD:
+		if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+			msg_print(Ind, "You need an up-to-date client to rename a guild.");
 			break;
-#if 1
-		case BACT_STATIC: {
-				int x, y, i, j, k;
-				struct dungeon_type *d_ptr;
-				worldpos tpos;
-				bool found = FALSE, first;
-				char dun_name[MAX_CHARS];
+		}
+		Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), 2);
+		break;
 
-				struct dun_level *l_ptr;
-				time_t now = time(&now);
-				int grace;
+	case BACT_STATIC: {
+		int x, y, i, j, k;
+		struct dungeon_type *d_ptr;
+		worldpos tpos;
+		bool found = FALSE, first;
+		char dun_name[MAX_CHARS];
 
-				FILE *fff;
-				char buf[1024];
+		struct dun_level *l_ptr;
+		time_t now = time(&now);
+		int grace;
 
-				/* Open a new file */
-				fff = my_fopen(p_ptr->infofile, "wb");
-				/* Current file viewing */
-				strcpy(p_ptr->cur_file, p_ptr->infofile);
-				/* Let the player scroll through this info */
-				p_ptr->special_file_type = TRUE;
+		FILE *fff;
+		char buf[1024];
 
-				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
-					/* check tower */
-					if ((d_ptr = wild_info[y][x].tower)) {
-						/* skip non-canonical dungeons */
-						if (!d_ptr->type) continue;
-						tpos.wx = x; tpos.wy = y;
-						tpos.wz = 1;
-						/* skip IDDC (included in check above) */
-						//if (in_irondeepdive(&tpos)) continue;
-						strcpy(dun_name, get_dun_name(x, y, TRUE, d_ptr, d_ptr->type, TRUE));
-						first = TRUE;
+		/* Open a new file */
+		fff = my_fopen(p_ptr->infofile, "wb");
+		/* Current file viewing */
+		strcpy(p_ptr->cur_file, p_ptr->infofile);
+		/* Let the player scroll through this info */
+		p_ptr->special_file_type = TRUE;
 
-						for (i = 0; i < d_ptr->maxdepth; i++) {
-							k = 0;
-							tpos.wz = i + 1;
+		for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+			/* check tower */
+			if ((d_ptr = wild_info[y][x].tower)) {
+				/* skip non-canonical dungeons */
+				if (!d_ptr->type) continue;
+				tpos.wx = x; tpos.wy = y;
+				tpos.wz = 1;
+				/* skip IDDC (included in check above) */
+				//if (in_irondeepdive(&tpos)) continue;
+				strcpy(dun_name, get_dun_name(x, y, TRUE, d_ptr, d_ptr->type, TRUE));
+				first = TRUE;
 
-							for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
-							if (d_ptr->level[i].ondepth <= k) continue;
+				for (i = 0; i < d_ptr->maxdepth; i++) {
+					k = 0;
+					tpos.wz = i + 1;
 
-							/* add an inter-dungeon spacer */
-							if (first && found) fprintf(fff, "\n");
+					for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+					if (d_ptr->level[i].ondepth <= k) continue;
 
-							l_ptr = &d_ptr->level[ABS(tpos.wz) - 1];
-							if (!l_ptr) {
-								/* paranoia */
-								fprintf(fff, "Something is wrong with %2d,%2d,%2d\n", x, y, i + 1);
-								continue;
-							}
-#ifdef SAURON_FLOOR_FAST_UNSTAT
-							if (d_ptr->type == DI_MT_DOOM && i + 1 == d_ptr->maxdepth) grace = 60 * 60; //1h
-							else
-#endif
-							grace = cfg.level_unstatic_chance * getlevel(&tpos) * 60;
+					/* add an inter-dungeon spacer */
+					if (first && found) fprintf(fff, "\n");
 
-							fprintf(fff, "\377s          %28s %5dft for %d more minutes\n", dun_name, (i + 1) * 50, (int)((grace - (now - l_ptr->lastused)) / 60));
-							/* display spacer instead of repeating the dungeon name subsequently */
-							if (first) for (j = 0; j < strlen(dun_name); j++) dun_name[j] = ' ';
-							found = TRUE;
-							first = FALSE;
-						}
+					l_ptr = &d_ptr->level[ABS(tpos.wz) - 1];
+					if (!l_ptr) {
+						/* paranoia */
+						fprintf(fff, "Something is wrong with %2d,%2d,%2d\n", x, y, i + 1);
+						continue;
 					}
-					/* check dungeon */
-					if ((d_ptr = wild_info[y][x].dungeon)) {
-						/* skip non-canonical dungeons */
-						if (!d_ptr->type) continue;
-						tpos.wx = x; tpos.wy = y;
-						tpos.wz = -1;
-						/* skip IDDC (included in check above) */
-						//if (in_irondeepdive(&tpos)) continue;
-						strcpy(dun_name, get_dun_name(x, y, FALSE, d_ptr, d_ptr->type, TRUE));
-						first = TRUE;
+#ifdef SAURON_FLOOR_FAST_UNSTAT
+					if (d_ptr->type == DI_MT_DOOM && i + 1 == d_ptr->maxdepth) grace = 60 * 60; //1h
+					else
+#endif
+					grace = cfg.level_unstatic_chance * getlevel(&tpos) * 60;
 
-						for (i = 0; i < d_ptr->maxdepth; i++) {
-							k = 0;
-							tpos.wz = -(i + 1);
+					fprintf(fff, "\377s          %28s %5dft for %d more minutes\n", dun_name, (i + 1) * 50, (int)((grace - (now - l_ptr->lastused)) / 60));
+					/* display spacer instead of repeating the dungeon name subsequently */
+					if (first) for (j = 0; j < strlen(dun_name); j++) dun_name[j] = ' ';
+					found = TRUE;
+					first = FALSE;
+				}
+			}
+			/* check dungeon */
+			if ((d_ptr = wild_info[y][x].dungeon)) {
+				/* skip non-canonical dungeons */
+				if (!d_ptr->type) continue;
+				tpos.wx = x; tpos.wy = y;
+				tpos.wz = -1;
+				/* skip IDDC (included in check above) */
+				//if (in_irondeepdive(&tpos)) continue;
+				strcpy(dun_name, get_dun_name(x, y, FALSE, d_ptr, d_ptr->type, TRUE));
+				first = TRUE;
 
-							for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
-							if (d_ptr->level[i].ondepth <= k) continue;
+				for (i = 0; i < d_ptr->maxdepth; i++) {
+					k = 0;
+					tpos.wz = -(i + 1);
 
-							/* add an inter-dungeon spacer */
-							if (first && found) fprintf(fff, "\n");
+					for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+					if (d_ptr->level[i].ondepth <= k) continue;
 
-							l_ptr = &d_ptr->level[ABS(tpos.wz) - 1];
-							if (!l_ptr) {
-								/* paranoia */
-								fprintf(fff, "Something is wrong with %2d,%2d,%2d\n", x, y, -(i + 1));
-								continue;
-							}
+					/* add an inter-dungeon spacer */
+					if (first && found) fprintf(fff, "\n");
+
+					l_ptr = &d_ptr->level[ABS(tpos.wz) - 1];
+					if (!l_ptr) {
+						/* paranoia */
+						fprintf(fff, "Something is wrong with %2d,%2d,%2d\n", x, y, -(i + 1));
+						continue;
+					}
 
 #ifdef SAURON_FLOOR_FAST_UNSTAT
-							if (d_ptr->type == DI_MT_DOOM && i + 1 == d_ptr->maxdepth) grace = 60 * 60; //1h
-							else
+					if (d_ptr->type == DI_MT_DOOM && i + 1 == d_ptr->maxdepth) grace = 60 * 60; //1h
+					else
 #endif
-							grace = cfg.level_unstatic_chance * getlevel(&tpos) * 60;
+					grace = cfg.level_unstatic_chance * getlevel(&tpos) * 60;
 
-							fprintf(fff, "\377s          %28s %5dft for %d more minutes\n", dun_name, -(i + 1) * 50, (int)((grace - (now - l_ptr->lastused)) / 60));
-							/* display spacer instead of repeating the dungeon name subsequently */
-							if (first) for (j = 0; j < strlen(dun_name); j++) dun_name[j] = ' ';
-							found = TRUE;
-							first = FALSE;
-						}
-					}
+					fprintf(fff, "\377s          %28s %5dft for %d more minutes\n", dun_name, -(i + 1) * 50, (int)((grace - (now - l_ptr->lastused)) / 60));
+					/* display spacer instead of repeating the dungeon name subsequently */
+					if (first) for (j = 0; j < strlen(dun_name); j++) dun_name[j] = ' ';
+					found = TRUE;
+					first = FALSE;
 				}
-
-				if (!found) {
-					fprintf(fff, "No static floors recorded.\n");
-				}
-
-				/* Close the file */
-				my_fclose(fff);
-				/* Hack -- anything written? (rewrite me) */
-				fff = my_fopen(p_ptr->infofile, "rb");
-				if (my_fgets(fff, buf, 1024, FALSE)) {
-					my_fclose(fff);
-					return(FALSE);
-				}
-				my_fclose(fff);
-				/* Let the client know it's about to get some info */
-				strcpy(p_ptr->cur_file_title, "Static floor records");
-				Send_special_other(Ind);
-
 			}
-			break;
-#endif
+		}
+
+		if (!found) {
+			fprintf(fff, "No static floors recorded.\n");
+		}
+
+		/* Close the file */
+		my_fclose(fff);
+		/* Hack -- anything written? (rewrite me) */
+		fff = my_fopen(p_ptr->infofile, "rb");
+		if (my_fgets(fff, buf, 1024, FALSE)) {
+			my_fclose(fff);
+			return(FALSE);
+		}
+		my_fclose(fff);
+		/* Let the client know it's about to get some info */
+		strcpy(p_ptr->cur_file_title, "Static floor records");
+		Send_special_other(Ind);
+
+		break; }
+
 #ifdef SOLO_REKING
-		case BACT_SR_DONATE:
-			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
-				msg_print(Ind, "You need an up-to-date client to donate.");
-				break;
-			}
-			Send_request_amt(Ind, RID_SR_DONATE, "Donate how much gold to the temple? ", p_ptr->au);
+	case BACT_SR_DONATE:
+		if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+			msg_print(Ind, "You need an up-to-date client to donate.");
 			break;
+		}
+		Send_request_amt(Ind, RID_SR_DONATE, "Donate how much gold to the temple? ", p_ptr->au);
+		break;
 #endif
 #ifdef ENABLE_ITEM_ORDER
-		case BACT_ITEM_ORDER:
-			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
-				msg_print(Ind, "You need an up-to-date client to order an item.");
-				break;
-			}
-			if (is_bookstore(p_ptr->store_num))
-				Send_request_str(Ind, RID_ITEM_ORDER, "Which item or spell would you like to order? (Or \"cancel\") ", "");
-			else
-				Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? (Or \"cancel\") ", "");
+	case BACT_ITEM_ORDER:
+		if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+			msg_print(Ind, "You need an up-to-date client to order an item.");
 			break;
+		}
+		if (is_bookstore(p_ptr->store_num))
+			Send_request_str(Ind, RID_ITEM_ORDER, "Which item or spell would you like to order? (Or \"cancel\") ", "");
+		else
+			Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? (Or \"cancel\") ", "");
+		break;
 #endif
 #ifdef ENABLE_MERCHANT_MAIL
-		case BACT_SEND_ITEM:
-		case BACT_SEND_ITEM_PAY: {
-			int i;
-			object_type *o_ptr = &p_ptr->inventory[item]; /* Get the item (in the pack) */
-			u32b fee;
+	case BACT_SEND_ITEM:
+	case BACT_SEND_ITEM_PAY: {
+		int i;
+		object_type *o_ptr = &p_ptr->inventory[item]; /* Get the item (in the pack) */
+		u32b fee;
 
-			if (!o_ptr->k_idx) {
-				msg_print(Ind, "Invalid item.");
-				break;
-			}
+		if (!o_ptr->k_idx) {
+			msg_print(Ind, "Invalid item.");
+			break;
+		}
 
-			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
-				msg_print(Ind, "\377oYou need an up-to-date client to send an item.");
-				break;
-			}
-			if (!object_known_p(Ind, o_ptr)) {
+		if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+			msg_print(Ind, "\377oYou need an up-to-date client to send an item.");
+			break;
+		}
+		if (!object_known_p(Ind, o_ptr)) {
+			msg_print(Ind, "\377yItems must be identified before you can send them.");
+			break;
+		}
+		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+			object_type *g_ptr;
+
+			peek_gift(o_ptr, &g_ptr);
+			if (g_ptr->tval != TV_GOLD && g_ptr->number && !object_known_p(Ind, g_ptr)) {
 				msg_print(Ind, "\377yItems must be identified before you can send them.");
 				break;
 			}
-			if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
-				object_type *g_ptr;
+		}
 
-				peek_gift(o_ptr, &g_ptr);
-				if (g_ptr->tval != TV_GOLD && g_ptr->number && !object_known_p(Ind, g_ptr)) {
-					msg_print(Ind, "\377yItems must be identified before you can send them.");
-					break;
-				}
+		for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+			if (!mail_sender[i][0]) break;
+
+			if (admin_p(Ind)) continue;
+			if (!strcmp(mail_sender[i], p_ptr->name)) {
+				msg_print(Ind, "\377yYou can only have one active shipment at a time.");
+				return(FALSE);
 			}
+		}
+		if (i == MAX_MERCHANT_MAILS) {
+			msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
+			break;
+		}
 
-			for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
-				if (!mail_sender[i][0]) break;
+		fee = (object_value_real(0, o_ptr) * o_ptr->number) / 20;
+		if (fee < 5) fee = 5;
 
-				if (admin_p(Ind)) continue;
-				if (!strcmp(mail_sender[i], p_ptr->name)) {
-					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
-					return(FALSE);
-				}
+		p_ptr->mail_item = item;
+		p_ptr->mail_fee = fee;
+		p_ptr->mail_xfee = 0;
+		Send_request_cfr(Ind, bact == BACT_SEND_ITEM ? RID_SEND_ITEM : RID_SEND_ITEM_PAY,
+		    format("The fee for sending this item is %d Au, accept?", fee), 2);
+		break; }
+	case BACT_SEND_GOLD: {
+		int i;
+		u32b fee;
+
+		if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+			msg_print(Ind, "\377oYou need an up-to-date client to send gold.");
+			break;
+		}
+
+		for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+			if (!mail_sender[i][0]) break;
+
+			if (admin_p(Ind)) continue;
+			if (!strcmp(mail_sender[i], p_ptr->name)) {
+				msg_print(Ind, "\377yYou can only have one active shipment at a time.");
+				return(FALSE);
 			}
-			if (i == MAX_MERCHANT_MAILS) {
-				msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
-				break;
-			}
+		}
+		if (i == MAX_MERCHANT_MAILS) {
+			msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
+			break;
+		}
 
-			fee = (object_value_real(0, o_ptr) * o_ptr->number) / 20;
-			if (fee < 5) fee = 5;
+		if (gold < 1) break;
+		if (gold > p_ptr->au) gold = p_ptr->au;
+		fee = gold / 20;
+		if (fee < 5) fee = 5;
 
-			p_ptr->mail_item = item;
-			p_ptr->mail_fee = fee;
-			p_ptr->mail_xfee = 0;
-			Send_request_cfr(Ind, bact == BACT_SEND_ITEM ? RID_SEND_ITEM : RID_SEND_ITEM_PAY,
-			    format("The fee for sending this item is %d Au, accept?", fee), 2);
-			break; }
-		case BACT_SEND_GOLD: {
-			int i;
-			u32b fee;
-
-			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
-				msg_print(Ind, "\377oYou need an up-to-date client to send gold.");
-				break;
-			}
-
-			for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
-				if (!mail_sender[i][0]) break;
-
-				if (admin_p(Ind)) continue;
-				if (!strcmp(mail_sender[i], p_ptr->name)) {
-					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
-					return(FALSE);
-				}
-			}
-			if (i == MAX_MERCHANT_MAILS) {
-				msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
-				break;
-			}
-
-			if (gold < 1) break;
-			if (gold > p_ptr->au) gold = p_ptr->au;
-			fee = gold / 20;
-			if (fee < 5) fee = 5;
-
-			p_ptr->mail_gold = gold;
-			p_ptr->mail_fee = fee;
-			p_ptr->mail_xfee = 0;
-			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), 2);
-			break; }
+		p_ptr->mail_gold = gold;
+		p_ptr->mail_fee = fee;
+		p_ptr->mail_xfee = 0;
+		Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), 2);
+		break; }
 #endif
-		case BACT_REPAIR_WEAPON:
-			paid = repair_item(Ind, item, FALSE, 0x0);
-			break;
-		case BACT_REPAIR_ARMOUR:
-			paid = repair_item(Ind, item, TRUE, ba_ptr->flags);
-			break;
-		case BACT_HIGHEST_LEVELS:
-			view_highest_levels(Ind);
-			break;
+	case BACT_REPAIR_WEAPON:
+		paid = repair_item(Ind, item, FALSE, 0x0);
+		break;
+	case BACT_REPAIR_ARMOUR:
+		paid = repair_item(Ind, item, TRUE, ba_ptr->flags);
+		break;
+	case BACT_HIGHEST_LEVELS:
+		view_highest_levels(Ind);
+		break;
 #ifdef RESET_SKILL
-		case BACT_LOSE_MEMORIES_I:
-		case BACT_LOSE_MEMORIES_II:
-			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
-				msg_print(Ind, "\377yYou need an up-to-date client to do this.");
-				break;
-			}
-			if (p_ptr->mode & MODE_PVP) {
-				msg_print(Ind, "\377yThis spell does not work on PVP-mode characters.");
-				break;
-			}
-			if (p_ptr->reskill_possible & RESKILL_F_RESET) {
-				msg_print(Ind, "\377yThis spell will never work twice on the same brain.");
-				break;
-			}
-			if (p_ptr->max_plv != RESET_SKILL) {
-				msg_format(Ind, "\377yThis spell only works on minds that have freshly attained level %d.", RESET_SKILL);
-				break;
-			}
-			if (bact == BACT_LOSE_MEMORIES_I)
-				Send_request_str(Ind, RID_LOSE_MEMORIES_I_SKILL, "Which skill do you wish to reset? ", "");
-			else {
-				if (p_ptr->au < RESET_SKILL_FEE) {
-					msg_format(Ind, "\377yYou need to carry %d Au to donate it for this advanced spell!", RESET_SKILL_FEE);
-					break;
-				}
-				Send_request_str(Ind, RID_LOSE_MEMORIES_II_SKILL, "Which skill do you wish to reset? ", "");
-			}
+	case BACT_LOSE_MEMORIES_I:
+	case BACT_LOSE_MEMORIES_II:
+		if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+			msg_print(Ind, "\377yYou need an up-to-date client to do this.");
 			break;
+		}
+		if (p_ptr->mode & MODE_PVP) {
+			msg_print(Ind, "\377yThis spell does not work on PVP-mode characters.");
+			break;
+		}
+		if (p_ptr->reskill_possible & RESKILL_F_RESET) {
+			msg_print(Ind, "\377yThis spell will never work twice on the same brain.");
+			break;
+		}
+		if (p_ptr->max_plv != RESET_SKILL) {
+			msg_format(Ind, "\377yThis spell only works on minds that have freshly attained level %d.", RESET_SKILL);
+			break;
+		}
+		if (bact == BACT_LOSE_MEMORIES_I)
+			Send_request_str(Ind, RID_LOSE_MEMORIES_I_SKILL, "Which skill do you wish to reset? ", "");
+		else {
+			if (p_ptr->au < RESET_SKILL_FEE) {
+				msg_format(Ind, "\377yYou need to carry %d Au to donate it for this advanced spell!", RESET_SKILL_FEE);
+				break;
+			}
+			Send_request_str(Ind, RID_LOSE_MEMORIES_II_SKILL, "Which skill do you wish to reset? ", "");
+		}
+		break;
 #endif
 #ifdef PLAYER_STORES
-		case BACT_CONTACT_OWNER:
-			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
-				msg_print(Ind, "\377yYou need an up-to-date client to do this.");
-				break;
-			}
-			Send_request_str(Ind, RID_CONTACT_OWNER, "Your note: ", "");
+	case BACT_CONTACT_OWNER:
+		if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+			msg_print(Ind, "\377yYou need an up-to-date client to do this.");
 			break;
+		}
+		Send_request_str(Ind, RID_CONTACT_OWNER, "Your note: ", "");
+		break;
 #endif
-		case BACT_LIST_GUILDS: {
-			view_guild_roster(Ind);
-			break;
-			}
-		default:
+	case BACT_LIST_GUILDS: {
+		view_guild_roster(Ind);
+		break;
+		}
+	default:
 #if 0
-			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {
-				paid = process_hooks_return[0].num;
-			}
+		if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {
+			paid = process_hooks_return[0].num;
+		}
 #endif	// 0
-			break;
+		break;
 	}
 
 	if (paid) {
