@@ -2561,7 +2561,7 @@ Any item in your inventory:
     !G[n]       Prevents an item from stacking with other items in any case.
                 If an optional number n is given, it will stack items up to
                 this stack size, at most 99. Usage examples: !G  or  !G34  .
-                If 'n' s specified, the inventory slot letter will change to
+                If 'n' is specified, the inventory slot letter will change to
                 yellow colour if the current stack size is lower than 'n'.
                 If picking up items that are inscribed !Gn and matching items
                 in your inventory are also inscribed !Gn then the lower n value
