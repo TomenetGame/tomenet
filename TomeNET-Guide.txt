@@ -1,8 +1,8 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 20. May 2025 - written by C. Blue (c_blue@gmx.net)        |
-| for TomeNET version v4.9.3 - official websites are:                      :
+| Latest update: 21. May 2025 - written by C. Blue (c_blue@gmx.net)        |
+| for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
@@ -2422,6 +2422,8 @@ Mainly for consumable items:
 Mainly for consumable items stored in piles:
     !g          trying to pick up this pile will only grab 1 item, as if the
                 player pressed CTRL+G (or CTRL+Z with rogue-like key set).
+                If you use CTRL+G on a !g stack, it will instead pick up the
+                whole stack.
 
 The # inscription:
     This one makes all following inscription be appended directly behind the
@@ -2578,6 +2580,13 @@ Any item in your inventory:
                 purchasing items from a store, stealing items from a store and
                 taking items from a list house (shop-style house).
 
+                If you purchase an item or get an item from a house or from the
+                floor, and the item has either a !Gn inscription or it has no
+                inscription but you have a matching !Gn inscription in your
+                auto-inscriptions list, the "Quantity?" prompt will suggest
+                that !G-amount as default quantity that you can simply confirm
+                with RETURN key (while a/spacebar are still 'all' as usual).
+
                 QoL effects:
                 You can use force-stack to combine !G stacks, overriding the
                 inscription.
@@ -2585,6 +2594,8 @@ Any item in your inventory:
                 nominal capacity, the suggested default amount will be exactly
                 the difference between actual stack size and inscription-based
                 capacity.
+                If you use CTRL+G on a !G stack, it will pick up the whole
+                stack instead of trying to limit the target slot stack size.
 
     !K[n]       Inscribed on an inventory item, will auto-destroy any further
                 items you acquire beyond the amount of n.
