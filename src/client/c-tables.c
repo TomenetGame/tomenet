@@ -624,8 +624,10 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "huge_bars_gfx",		"Display huge bars graphically if graphics are on" },
 
 	{ &c_cfg.autoloot_depth,	FALSE,	8,	0, 179, TRUE,
-	    "autoloot_depth",		"Enable pick+destroy in dungeons/disable elsewhere" },
-	{ &c_cfg.autoinsc_debug,	FALSE,	8,	0, 180, TRUE,
+	    "autoloot_depth",		"Enable pickup/destroy in dungeons, disable else" },
+	{ &c_cfg.autoloot_off,		FALSE,	8,	0, 180, TRUE,
+	    "autoloot_off",		"Disable auto-pickup/destroy on leaving a dungeon" },
+	{ &c_cfg.autoinsc_debug,	FALSE,	8,	0, 181, TRUE,
 	    "autoinsc_debug",		"Displays extra info on auto-inscriptions matching" },
 };
 

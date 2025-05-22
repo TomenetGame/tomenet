@@ -3617,6 +3617,12 @@ int Receive_depth(void) {
 				c_cfg.auto_pickup = c_cfg.auto_destroy = FALSE;
 			}
 		}
+	} else if (c_cfg.autoloot_off && !z) {
+		/* Auto-disable auto-pickup and auto-destroy */
+		if (c_cfg.auto_pickup || c_cfg.auto_destroy) {
+			//c_msg_print("Auto-disabled auto_pickup and auto_destroy."); //spammy
+			c_cfg.auto_pickup = c_cfg.auto_destroy = FALSE;
+		}
 	}
 
 	return(1);
