@@ -536,7 +536,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "auto_pickup",		"Automatically pickup items (see '/apickup')" },
 	{ &c_cfg.auto_destroy,		FALSE,	8,	0, 140, TRUE,
 	    "auto_destroy",		"Automatically destroy items (see '/adestroy')" },
-	{ &c_cfg.destroy_all_unmatched,	FALSE,	8,	0, 141, TRUE,
+	{ &c_cfg.destroy_all_unmatched,	FALSE,	8,	0, 141, TRUE,	// this option does't make sense, can just use '#' in & menu instead, much cheaper
 	    "destroy_all_unmatched",	"Destroys ALL unmatched items. (Like A'#' in &.)" },
 
 	{ &c_cfg.mp_huge_bar,		TRUE,	1,	0, 142, TRUE,
