@@ -937,10 +937,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			//reduxx = strstr(inscription, "@@@@");
 
 			if (tk && (token[1][0] != '*')) {
-				h = (token[1][0]) - 'a';
+				h = -1;
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) h = p_ptr->item_newest;
+				} else h = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE);
 				j = h;
 				if (h < 0 || h >= INVEN_PACK || token[1][1]) {
-					msg_print(Ind, "\377oUsage: /tag [a..w|* [<inscription>]]");
+					msg_print(Ind, "\377oUsage: /tag [a..w|+|* [<inscription>]]");
 					return;
 				}
 			} else {
@@ -2177,19 +2180,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/empty") || prefix(messagelc, "/emp")) {
-			int slot;
-
-			//return;//disabled for anti-cheeze
 			if (!tk) {
 				msg_print(Ind, "\377oUsage: /empty (inventory slot letter|+)");
 				return;
 			}
+
 			if (message3[0] == '+') {
-				if (p_ptr->item_newest >= 0) do_cmd_empty_potion(Ind, p_ptr->item_newest);
-				return;
-			}
-			if ((slot = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
-			do_cmd_empty_potion(Ind, slot);
+				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+				else return;
+			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
+
+			do_cmd_empty_potion(Ind, k);
 			return;
 		}
 		else if ((prefix(messagelc, "/dice") ||
@@ -3324,18 +3325,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 #endif
-		else if (prefix(messagelc, "/invn")) { /* Set o_ptr->number for an inventory slot */
-			char slot = message3[0];
-
-			if (slot < 'a' || slot > 'w') {
-				msg_print(Ind, "Usage: /invn <a..w> <number>");
-				return;
-			}
-			if (p_ptr->inventory[slot - 'a'].k_idx) p_ptr->inventory[slot - 'a'].number = atoi(message3 + 1);
-			else msg_format(Ind, "Empty slot: %c).", slot);
-			p_ptr->window |= PW_INVEN;
-			return;
-		}
 		else if (prefix(messagelc, "/evinfo")) { /* get info on a global event */
 			int n = 0;
 			char ppl[75];
@@ -3858,12 +3847,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		/* workaround - refill ligth source (outdated clients cannot use 'F' due to INVEN_ order change */
 		else if (prefix(messagelc, "/light") && !prefix(messagelc, "/lightning")) {
 			if (tk != 1) {
-				msg_print(Ind, "Usage: /light a...w");
+				msg_print(Ind, "Usage: /light a...w|+");
 				return;
 			}
-			k = message3[0] - 97;
+
+			if (message3[0] == '+') {
+				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+				else return;
+			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
+
 			if (k < 0 || k >= INVEN_PACK) {
-				msg_print(Ind, "Usage: /light a...w");
+				msg_print(Ind, "Usage: /light a...w|+");
 				return;
 			}
 			do_cmd_refill(Ind, k);
@@ -4057,7 +4051,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377oWhere the slot must be a potion which determines the colour.");
 				return;
 			}
-			if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
+			if (message3[0] == '+') {
+				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+				else return;
+			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
 
 			/* Check for a house door next to us */
 			for (x = p_ptr->px - 1; x <= p_ptr->px + 1; x++) {
@@ -5978,7 +5975,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
+			if (message3[0] == '+') {
+				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+				else return;
+			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
+
 			if (tk == 1) amt = 1;
 			else amt = atoi(token[2]);
 
@@ -6010,7 +6011,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 
 			if (tk) {
-				if ((k = a2slot(Ind, token[1][0], 0, TRUE, FALSE)) == -1) return;
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], 0, TRUE, FALSE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				if (!o_ptr->tval || o_ptr->tval != TV_SUBINVEN) {
 					msg_format(Ind, "Inventory item '%c)' is not a valid container.", token[1][0]);
@@ -6059,7 +6064,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Paralyzed? */
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 
-			if ((k = a2slot(Ind, token[1][0], 0, TRUE, FALSE)) == -1) return;
+			if (message3[0] == '+') {
+				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+				else return;
+			} else if ((k = a2slot(Ind, token[1][0], 0, TRUE, FALSE)) == -1) return;
+
 			o_ptr = &p_ptr->inventory[k];
 			if (!o_ptr->tval || o_ptr->tval != TV_SUBINVEN) {
 				msg_format(Ind, "Inventory item '%c)' is not a valid container.", token[1][0]);
@@ -9276,7 +9285,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
 
 				o_ptr = &p_ptr->inventory[k];
 				if (o_ptr->name1 != ART_RANDART) {
@@ -9390,7 +9402,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_type *o_ptr;
 				int tries = 1;
 
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
 
 				o_ptr = &p_ptr->inventory[k];
 				if (o_ptr->name1 != ART_RANDART) {
@@ -9443,7 +9458,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				if (!o_ptr->name2) {
 					msg_print(Ind, "\377oNot an ego item.");
@@ -11363,7 +11382,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /costs <inventory-slot>");
 					return;
 				}
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				object_desc(Ind, o_name, o_ptr, TRUE, 0);
 				msg_format(Ind, "Overview for item %s in slot %d:",
@@ -11999,7 +12023,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /madart <slot>");
 					return;
 				}
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				if (!o_ptr->tval) {
 					msg_print(Ind, "\377oInventory slot empty.");
@@ -12097,7 +12126,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /measureart <slot>");
 					return;
 				}
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				if (!o_ptr->tval) {
 					msg_print(Ind, "\377oInventory slot empty.");
@@ -13148,7 +13182,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /testrandart <inventory-slot>");
 					return;
 				}
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				if (o_ptr->name1 != ART_RANDART) {
 					if (o_ptr->name1) {
@@ -14751,7 +14790,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /icursed <inventory-slot>");
 					return;
 				}
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				inverse_cursed(o_ptr);
 				return;
@@ -14763,7 +14807,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /icursed <inventory-slot>");
 					return;
 				}
-				if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+					else return;
+				} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, TRUE)) == -1) return;
+
 				o_ptr = &p_ptr->inventory[k];
 				reverse_cursed(o_ptr);
 				return;
