@@ -9745,12 +9745,12 @@ void auto_inscriptions(void) {
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
 				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : (auto_inscription_ignore[cur_idx] ? "\377yi\377-" : " ")),
 #ifdef REGEX_SEARCH
-				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
+				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting, error colour code takes up 2 'chars' */
 #else
 				    "",
 #endif
+				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : (auto_inscription_ignore[cur_idx] ? "\377yi\377-" : " ")),
 				    c, tag_buf);
 
 #ifdef INTEGRATED_SELECTOR
@@ -9788,12 +9788,12 @@ void auto_inscriptions(void) {
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
 				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : (auto_inscription_ignore[cur_idx] ? "\377yi\377-" : " ")),
  #ifdef REGEX_SEARCH
-				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
+				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting, error colour code takes up 2 'chars'  */
  #else
 				    "",
  #endif
+				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : (auto_inscription_ignore[cur_idx] ? "\377yi\377-" : " ")),
 				    c, tag_buf);
 
  #ifdef AUTOINS_DIS_SUB_MATCH
@@ -10153,7 +10153,7 @@ void auto_inscriptions(void) {
 					auto_inscription_invalid[cur_idx] = TRUE;
 					c_msg_format("\377oInvalid regular expression in auto-inscription #%d.", cur_idx + 1);
 					/* Re-colour the line to indicate error */
-					Term_putstr(11, cur_line + 1, -1, TERM_L_RED, buf_ptr);
+					Term_putstr(5, cur_line + 1, -1, TERM_L_RED, buf_ptr);
 				} else auto_inscription_invalid[cur_idx] = FALSE;
 				regfree(&re_src);
 			}
