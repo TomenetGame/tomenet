@@ -3605,6 +3605,20 @@ int Receive_depth(void) {
 	/* For mini-map visual hacky fix.. -_- */
 	map_town = town;
 
+	if (c_cfg.autoloot_depth) {
+		if (z) { /* Auto-enable auto-pickup and auto-destroy */
+			if (!c_cfg.auto_pickup || !c_cfg.auto_destroy) {
+				//c_msg_print("Auto-enabled auto_pickup and auto_destroy."); //spammy
+				c_cfg.auto_pickup = c_cfg.auto_destroy = TRUE;
+			}
+		} else { /* Auto-disable auto-pickup and auto-destroy */
+			if (c_cfg.auto_pickup || c_cfg.auto_destroy) {
+				//c_msg_print("Auto-disabled auto_pickup and auto_destroy."); //spammy
+				c_cfg.auto_pickup = c_cfg.auto_destroy = FALSE;
+			}
+		}
+	}
+
 	return(1);
 }
 

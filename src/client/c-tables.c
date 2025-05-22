@@ -623,7 +623,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.huge_bars_gfx,		TRUE,	1,	0, 178, TRUE,
 	    "huge_bars_gfx",		"Display huge bars graphically if graphics are on" },
 
-	{ &c_cfg.autoinsc_debug,	FALSE,	8,	0, 179, TRUE,
+	{ &c_cfg.autoloot_depth,	FALSE,	8,	0, 179, TRUE,
+	    "autoloot_depth",		"Enable pick+destroy in dungeons/disable elsewhere" },
+	{ &c_cfg.autoinsc_debug,	FALSE,	8,	0, 180, TRUE,
 	    "autoinsc_debug",		"Displays extra info on auto-inscriptions matching" },
 };
 
