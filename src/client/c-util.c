@@ -9724,7 +9724,7 @@ void auto_inscriptions(void) {
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
 			Term_putstr(2, 21, -1, TERM_L_UMBER, "(\377y8\377U/\377y2\377U/\377ySPACE\377U/\377yBKSP\377U/\377yp\377U) navigate, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
 			Term_putstr(2, 22, -1, TERM_L_UMBER, "(\377yESC\377U\377U/\377y?\377U,\377yh\377U/\377ye\377U,\377yRET\377U/\377yd\377U/\377yc\377U) exit/help/edit/delete/CLEAR ALL, (\377ya\377U) auto-pickup/destroy");
-			Term_putstr(2, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move up/down, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U) Load/save from/to an '\377u.ins\377U'/'\377uglobal.ins\377U' file");
+			Term_putstr(2, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move up/down, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) Load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
 				cur_idx = cur_page * AUTOINS_PAGESIZE + i;
@@ -10105,6 +10105,22 @@ void auto_inscriptions(void) {
 			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
 
 			strcpy(tmp, "global.ins");
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			save_auto_inscriptions(tmp);
+			break;
+		case 'A':
+			/* Prompt */
+			clear_from(21);
+			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Save to class-specific inscription file ***");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
+
+			strcpy(tmp, format("%s.ins", p_ptr->cp_ptr->title));
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -13036,7 +13052,7 @@ void do_cmd_options(void) {
 			Term_putstr(1, l++, -1, TERM_L_DARK, "(\377sb\377D/\377sM\377D/\377sm\377D) Toggle/enable/disable big_map (double size) - NOT AVAILABLE ON GCU");
 #endif
 		l++;
-		Term_putstr(1, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)   Save all options & flags / Save to global.opt file (account-wide)");
+		Term_putstr(1, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w/\377oa\377w) Save options & flags / to global.opt (account) / to class-specific file");
 		Term_putstr(1, l++, -1, TERM_WHITE, "(\377ol\377w)     Load all options & flags");
 		if (strcmp(ANGBAND_SYS, "gcu")) {
 			Term_putstr(1, l++, -1, TERM_WHITE, "(\377oT\377w)     Save current window, positions and sizes to current config file");
@@ -13200,6 +13216,18 @@ void do_cmd_options(void) {
 
 			/* Default filename */
 			strcpy(tmp, "global.opt");
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			(void)options_dump(tmp);
+		} else if (k == 'a') {
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_YELLOW, "Save to class-specific .opt file: ");
+
+			/* Default filename */
+			strcpy(tmp, format("%s.opt", p_ptr->cp_ptr->title));
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
