@@ -1504,11 +1504,11 @@ static void fountain_guard(int Ind, bool blood) {
 	if (ridx) {
 		s_printf("FOUNTAIN_GUARDS: %d ", ridx);
 
-		msg_print(Ind, "A monster appears in the fountain!");
 		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC | SO_PLAYER_SUMMON;
-		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, ridx, 0, 1))
+		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, ridx, 0, 1)) {
 			s_printf("ok.\n");
-		else s_printf("failed.\n");
+			msg_print(Ind, "A monster appears in the fountain!");
+		} else s_printf("failed.\n");
 		summon_override_checks = SO_NONE;
 	}
 }
