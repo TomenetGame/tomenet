@@ -6328,7 +6328,7 @@ void apply_auto_pickup(char *item_name) {
 
 	/* just ignore it? */
 	if (auto_inscription_ignore[i]) {
-		if (c_cfg.autoinsc_debug) c_msg_format("Auto-inscription rule in line #%d matched, rule 'ingnore'.", i + 1);
+		if (c_cfg.autoinsc_debug) c_msg_format("Auto-inscription rule in line #%d matched, rule 'ignore'.", i + 1);
 		return;
 	}
 
