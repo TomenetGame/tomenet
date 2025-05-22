@@ -195,3 +195,4 @@ X:auto_destroy
 X:destroy_all_unmatched
 X:auto_insc_off
 Y:autopickup_chemicals
+X:autoinsc_debug

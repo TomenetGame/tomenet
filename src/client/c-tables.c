@@ -622,6 +622,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "st_huge_bar",		"Also show stamina as huge bar (big_map only)" },
 	{ &c_cfg.huge_bars_gfx,		TRUE,	1,	0, 178, TRUE,
 	    "huge_bars_gfx",		"Display huge bars graphically if graphics are on" },
+
+	{ &c_cfg.autoinsc_debug,	FALSE,	8,	0, 179, TRUE,
+	    "autoinsc_debug",		"Displays extra info on auto-inscriptions matching" },
 };
 
 cptr melee_techniques[16] = {

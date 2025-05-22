@@ -2412,7 +2412,7 @@ void save_auto_inscriptions(cptr name) {
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		fprintf(fp, "%s%s\n", auto_inscription_force[i] ? "!" : "", auto_inscription_match[i]);
 		fprintf(fp, "%s\n", auto_inscription_tag[i]);
-		fprintf(fp, "%d\n", auto_inscription_autopickup[i]);
+		fprintf(fp, "%d\n", auto_inscription_autopickup[i] + (auto_inscription_ignore[i] ? 2 : 0));
 		fprintf(fp, "%d\n", auto_inscription_autodestroy[i]);
 		fprintf(fp, "%d\n", auto_inscription_subinven[i]); //ENABLE_SUBINVEN
 		fprintf(fp, "%d\n", auto_inscription_disabled[i]);
@@ -2428,7 +2428,7 @@ void load_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024], *bufptr, dummy[1024], *rptr;
 	char file_name[256], vtag[7];
-	int i, c, j, c_eff, version, vmaj, vmin, vpatch;
+	int i, c, j, c_eff, version, vmaj, vmin, vpatch, tmp;
 	bool replaced, force;
 #ifdef REGEX_SEARCH
 	int ires = -999;
@@ -2541,7 +2541,13 @@ void load_auto_inscriptions(cptr name) {
 			/* try to read automation flags */
 			if (version >= 3) {
 				if (fgets(buf, 5, fp) == NULL) break;
-				auto_inscription_autopickup[j] = atoi(buf);
+				tmp = atoi(buf);
+				if (tmp >= 2) {
+					auto_inscription_ignore[j] = TRUE;
+					tmp -= 2;
+				}
+				auto_inscription_autopickup[j] = tmp;
+
 				if (fgets(buf, 5, fp) == NULL) break;
 				auto_inscription_autodestroy[j] = atoi(buf);
 			}
@@ -2600,7 +2606,13 @@ void load_auto_inscriptions(cptr name) {
 		/* try to read automation flags */
 		if (version >= 3) {
 			if (fgets(buf, 5, fp) == NULL) break;
-			auto_inscription_autopickup[c_eff] = atoi(buf);
+			tmp = atoi(buf);
+			if (tmp >= 2) {
+				auto_inscription_ignore[c_eff] = TRUE;
+				tmp -= 2;
+			}
+			auto_inscription_autopickup[c_eff] = tmp;
+
 			if (fgets(buf, 5, fp) == NULL) break;
 			auto_inscription_autodestroy[c_eff] = atoi(buf);
 		}

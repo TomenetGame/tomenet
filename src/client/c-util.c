@@ -9745,7 +9745,7 @@ void auto_inscriptions(void) {
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
 				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
+				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : (auto_inscription_ignore[cur_idx] ? "\377yi\377-" : " ")),
 #ifdef REGEX_SEARCH
 				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
 #else
@@ -9788,7 +9788,7 @@ void auto_inscriptions(void) {
 				strcat(match_buf, auto_inscription_match[cur_idx]);
 				strcpy(tag_buf, auto_inscription_tag[cur_idx]);
 				sprintf(fff, "\377%c%3d %-59s %s%s\377%c>%-19s", auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w', cur_idx + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
-				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : " "),
+				    auto_inscription_autodestroy[cur_idx] ? "\377RA\377-" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377-" : (auto_inscription_ignore[cur_idx] ? "\377yi\377-" : " ")),
  #ifdef REGEX_SEARCH
 				    auto_inscription_invalid[cur_idx] ? "  " : "", /* silyl sprintf %- formatting.. */
  #else
@@ -9881,7 +9881,7 @@ void auto_inscriptions(void) {
 			strcpy(tag_buf, auto_inscription_tag[cur_idx]);
 			sprintf(tmp, "\377sAuto-inscription %3d: %s%s<\377%c%s\377s>", cur_idx + 1,
 			    match_buf,
-			    auto_inscription_autodestroy[cur_idx] ? "\377RA\377s" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377s" : " "),
+			    auto_inscription_autodestroy[cur_idx] ? "\377RA\377s" : (auto_inscription_autopickup[cur_idx] ? "\377Ga\377s" : (auto_inscription_ignore[cur_idx] ? "\377yi\377s" : " ")),
 			    auto_inscription_force[cur_idx] ? AUTOINS_FORCE_COL : 'w',
 			    tag_buf);
 			Send_paste_msg(tmp);
@@ -9974,6 +9974,10 @@ void auto_inscriptions(void) {
 			auto_inscription_autopickup[cur_idx] = auto_inscription_autopickup[cur_idx + 1];
 			auto_inscription_autopickup[cur_idx + 1] = temp;
 
+			temp = auto_inscription_ignore[cur_idx];
+			auto_inscription_ignore[cur_idx] = auto_inscription_ignore[cur_idx + 1];
+			auto_inscription_ignore[cur_idx + 1] = temp;
+
 			temp = auto_inscription_force[cur_idx];
 			auto_inscription_force[cur_idx] = auto_inscription_force[cur_idx + 1];
 			auto_inscription_force[cur_idx + 1] = temp;
@@ -10019,6 +10023,10 @@ void auto_inscriptions(void) {
 			temp = auto_inscription_autopickup[cur_idx];
 			auto_inscription_autopickup[cur_idx] = auto_inscription_autopickup[cur_idx - 1];
 			auto_inscription_autopickup[cur_idx - 1] = temp;
+
+			temp = auto_inscription_ignore[cur_idx];
+			auto_inscription_ignore[cur_idx] = auto_inscription_ignore[cur_idx - 1];
+			auto_inscription_ignore[cur_idx - 1] = temp;
 
 			temp = auto_inscription_force[cur_idx];
 			auto_inscription_force[cur_idx] = auto_inscription_force[cur_idx - 1];
@@ -10178,10 +10186,8 @@ void auto_inscriptions(void) {
 			}
 			break;
 		case 'd':
-			auto_inscription_match[cur_idx][0] = 0;
-			auto_inscription_tag[cur_idx][0] = 0;
-			auto_inscription_autopickup[cur_idx] = FALSE;
-			auto_inscription_autodestroy[cur_idx] = FALSE;
+			auto_inscription_match[cur_idx][0] = auto_inscription_tag[cur_idx][0] = 0;
+			auto_inscription_autopickup[cur_idx] = auto_inscription_autodestroy[cur_idx] = auto_inscription_ignore[cur_idx] = FALSE;
 			auto_inscription_force[cur_idx] = FALSE;
 #ifdef REGEX_SEARCH
 			auto_inscription_invalid[cur_idx] = FALSE;
@@ -10201,10 +10207,8 @@ void auto_inscriptions(void) {
 			break;
 		case 'c':
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-				auto_inscription_match[i][0] = 0;
-				auto_inscription_tag[i][0] = 0;
-				auto_inscription_autopickup[i] = FALSE;
-				auto_inscription_autodestroy[i] = FALSE;
+				auto_inscription_match[i][0] = auto_inscription_tag[i][0] = 0;
+				auto_inscription_autopickup[i] = auto_inscription_autodestroy[i] = auto_inscription_ignore[i] = FALSE;
 				auto_inscription_force[i] = FALSE;
 #ifdef REGEX_SEARCH
 				auto_inscription_invalid[i] = FALSE;
@@ -10220,17 +10224,19 @@ void auto_inscriptions(void) {
 			redraw = TRUE;
 			break;
 		case 'a':
-			/* cycle: nothing / auto-pickup / auto-destroy */
-			if (!auto_inscription_autopickup[cur_idx]) {
-				if (!auto_inscription_autodestroy[cur_idx])
-					auto_inscription_autopickup[cur_idx] = TRUE;
-				else auto_inscription_autopickup[cur_idx] = auto_inscription_autodestroy[cur_idx] = FALSE; /* <- shouldn't happen (someone messed up his .ins) */
-			} else {
-				if (auto_inscription_autodestroy[cur_idx])
-					auto_inscription_autopickup[cur_idx] = auto_inscription_autodestroy[cur_idx] = FALSE;
-				else
-					auto_inscription_autodestroy[cur_idx] = TRUE;
-			}
+			/* cycle: nothing / auto-pickup / auto-destroy / ignore */
+			if (auto_inscription_ignore[cur_idx]) {
+				auto_inscription_ignore[cur_idx] = FALSE;
+				auto_inscription_autopickup[cur_idx] = auto_inscription_autodestroy[cur_idx] = FALSE; /* <- shouldn't happen (someone messed up his .ins) */
+			} else if (auto_inscription_autodestroy[cur_idx]) {
+				auto_inscription_autodestroy[cur_idx] = FALSE;
+				auto_inscription_ignore[cur_idx] = TRUE;
+				auto_inscription_autopickup[cur_idx] = FALSE; /* <- shouldn't happen (someone messed up his .ins) */
+			} else if (auto_inscription_autopickup[cur_idx]) {
+				auto_inscription_autopickup[cur_idx] = FALSE;
+				auto_inscription_autodestroy[cur_idx] = TRUE;
+				auto_inscription_ignore[cur_idx] = FALSE; /* <- shouldn't happen (someone messed up his .ins) */
+			} else auto_inscription_autopickup[cur_idx] = TRUE;
 			redraw = TRUE;
 			break;
 		case 'f':

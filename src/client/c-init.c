@@ -331,10 +331,8 @@ void initialize_player_ins_files(void) {
 
 	/* start with empty auto-inscriptions list */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-		auto_inscription_match[i][0] = 0;
-		auto_inscription_tag[i][0] = 0;
-		auto_inscription_autopickup[i] = FALSE;
-		auto_inscription_autodestroy[i] = FALSE;
+		auto_inscription_match[i][0] = auto_inscription_tag[i][0] = 0;
+		auto_inscription_autopickup[i] = auto_inscription_autodestroy[i] = auto_inscription_ignore[i] = FALSE;
 		auto_inscription_force[i] = FALSE;
 #ifdef REGEX_SEARCH
 		auto_inscription_invalid[i] = FALSE;

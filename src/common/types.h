@@ -4936,6 +4936,7 @@ struct client_opts {
 	bool auto_pickup;
 	bool auto_destroy; //140
 	bool destroy_all_unmatched;
+	bool autoinsc_debug;
 
 	bool equip_text_colour;
 	bool equip_set_colour;

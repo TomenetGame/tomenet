@@ -6217,6 +6217,7 @@ int Receive_idle(void) {
 	return(1);
 }
 
+/* Apply auto_pickup and auto_destroy */
 void apply_auto_pickup(char *item_name) {
 	int i;
 	char *ex, ex_buf[ONAME_LEN];
@@ -6229,6 +6230,8 @@ void apply_auto_pickup(char *item_name) {
 	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 #endif
 
+	if (!c_cfg.auto_pickup && !c_cfg.auto_destroy) return;
+
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		match = auto_inscription_match[i];
 
@@ -6238,7 +6241,9 @@ void apply_auto_pickup(char *item_name) {
 		if (auto_inscription_disabled[i]) continue;
 
 		/* do nothing if match is not set to auto-pickup (for items we dont want to pickup nor destroy, mainly for chests) */
-		if (!(c_cfg.auto_pickup && auto_inscription_autopickup[i]) && !(c_cfg.auto_destroy && auto_inscription_autodestroy[i]) && !dau) continue;
+		if (!(c_cfg.auto_pickup && auto_inscription_autopickup[i]) && !(c_cfg.auto_destroy && auto_inscription_autodestroy[i]) && !dau
+		    && !auto_inscription_ignore[i])
+			continue;
 
 		/* 'all items' super wildcard? */
 		if (!strcmp(match, "#") || !strcmp(match, "!#")) {
@@ -6321,11 +6326,20 @@ void apply_auto_pickup(char *item_name) {
 		return;
 	}
 
+	/* just ignore it? */
+	if (auto_inscription_ignore[i]) {
+		if (c_cfg.autoinsc_debug) c_msg_format("Auto-inscription rule in line #%d matched, rule 'ingnore'.", i + 1);
+		return;
+	}
+
 	/* destroy or pick up */
-	if (c_cfg.auto_destroy && auto_inscription_autodestroy[i])
+	if (c_cfg.auto_destroy && auto_inscription_autodestroy[i]) {
+		if (c_cfg.autoinsc_debug) c_msg_format("Auto-inscription rule in line #%d matched, rule 'destroy'.", i + 1);
 		Send_msg("/xdis fa"); /* didn't find a better way */
-	else if (c_cfg.auto_pickup && auto_inscription_autopickup[i])
+	} else if (c_cfg.auto_pickup && auto_inscription_autopickup[i]) {
+		if (c_cfg.autoinsc_debug) c_msg_format("Auto-inscription rule in line #%d matched, rule 'pickup'.", i + 1);
 		Send_stay_auto();
+	}
 }
 
 /* Apply client-side auto-inscriptions - C. Blue
@@ -6529,7 +6543,10 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 		}
 #endif
 
-		if (found) break;
+		if (found) {
+			if (c_cfg.autoinsc_debug) c_msg_format("Auto-inscription rule in line #%d matched.", i + 1);
+			break;
+		}
 	}
 	/* no match found? */
 	if (i == stop) return(already_has_insc);
@@ -6564,7 +6581,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
    so we will treat the specific case of <house items containing only an '#'-inscription and no !/@/bracers> as 'no inscription'.
    (The !, @, { are just arbitrarily the easiest to check things to find out that the item name must contain some sort of inscription.) */
 int scan_auto_inscriptions_for_limit(cptr iname) {
-	int i;
+	int i, g;
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
 	char *match, tag_buf[ONAME_LEN];
@@ -6676,7 +6693,10 @@ int scan_auto_inscriptions_for_limit(cptr iname) {
 	if (i == MAX_AUTO_INSCRIPTIONS) return(0);
 
 	/* Scan for !G and return that or 0 */
-	if ((i = check_guard_inscription_str(auto_inscription_tag[i], 'G')) > 1) return(i - 1);
+	if ((g = check_guard_inscription_str(auto_inscription_tag[i], 'G') - 1) > 0) {
+		if (c_cfg.autoinsc_debug) c_msg_format("Auto-inscription rule containing '!G%d' tag in line #%d matched.", g, i + 1);
+		return(g);
+	}
 	return(0);
 }
 

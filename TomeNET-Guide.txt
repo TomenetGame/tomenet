@@ -2859,10 +2859,11 @@ NOTE: In addition to this user-defined client-side auto-inscription list, there
       This option will add a predefined set of auto-inscriptions that might be
       generally useful for all types of characters, see (2.5) for details.
 
-By pressing 'a' you can toggle auto-pickup (green 'a') and auto-destroy (red
-'A') features. These two will actually allow specifying a "#" wildcard on its
-own, which means that ALL items will be picked up or destroyed and subsequent
-rules will be ignored accordingly. (The sole '#' will not work for inscribing).
+By pressing 'a' you can toggle auto-pickup (green 'a'), auto-destroy (red 'A')
+or just ignore (yellow 'i') features. These will actually allow specifying
+a "#" wildcard on its own, which means that ALL items will be picked up or
+destroyed or ignored and subsequent rules will be ignored accordingly.
+(The sole '#' will not work for inscribing items, any inscription is ignored).
 The client options 'auto_pickup' and 'auto_destroy' must be enabled for these
 functions to work. This can also be done via slash commands '/apickup' (which
 toggles auto_pickup option) and '/adestroy' (toggles auto_destroy option).
@@ -5088,7 +5089,8 @@ self-explaining or that are especially important are listed in detail here:
         Enables auto-pickup. Auto-pickup uses the auto-inscriptions rules list
         and the same matching algorithm.
         To choose items for auto-pickup press '&' to enter auto-inscriptions
-        screen and toggle auto-pickup/auto-destroy with 'a' key per item.
+        screen and toggle auto-pickup/auto-destroy/ignore with 'a' key per line
+        matching an item name (or multiple).
         A green 'a' means the item will be automatically picked up.
         A special match with just '#' can be created to pick up ALL items.
         This option causes a loop on item piles that ends if item matches
@@ -5102,7 +5104,8 @@ self-explaining or that are especially important are listed in detail here:
         Enables auto-destroy. Auto-destroy uses the auto-inscriptions rules
         list and the same matching algorithm.
         To choose items for auto-pickup press '&' to enter auto-inscriptions
-        screen and toggle auto-pickup/auto-destroy with 'a' key per item.
+        screen and toggle auto-pickup/auto-destroy/ignore with 'a' key per line
+        matching an item name (or multiple).
         A red 'A' means the item will be automatically destroyed!
         A special match with just '#' can be created to destroy up ALL items,
         the same effect can alternatively be invoked by enabling the option
