@@ -9722,9 +9722,9 @@ void auto_inscriptions(void) {
 
 			/* Describe */
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
-			Term_putstr(2, 21, -1, TERM_L_UMBER, "(\377y8\377U/\377y2\377U/\377ySPACE\377U/\377yBKSP\377U/\377yp\377U) navigate, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
-			Term_putstr(2, 22, -1, TERM_L_UMBER, "(\377yESC\377U\377U/\377y?\377U,\377yh\377U/\377ye\377U,\377yRET\377U/\377yd\377U/\377yc\377U) exit/help/edit/delete/CLEAR ALL, (\377ya\377U) auto-pickup/destroy");
-			Term_putstr(2, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move up/down, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) Load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
+			Term_putstr(2, 21, -1, TERM_L_UMBER, "(\377yESC\377U/\377y8\377U/\377y2\377U/\377ySPACE\377U/\377yBKSP\377U/\377yp\377U) nav, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
+			Term_putstr(2, 22, -1, TERM_L_UMBER, "(\377y?\377U/\377ye\377U,\377yRET\377U/\377yI\377U/\377yX\377U/\377yd\377U/\377yc\377U) help/edit/insert/excise/delete/CLEAR, (\377ya\377U) auto-pick/des/ig");
+			Term_putstr(2, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move up/down, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
 				cur_idx = cur_page * AUTOINS_PAGESIZE + i;
@@ -10220,6 +10220,61 @@ void auto_inscriptions(void) {
 				redraw = TRUE;
 			}
 #endif
+			break;
+		case 'X':
+			/* Slide rest up.. */
+			for (i = cur_idx; i < MAX_AUTO_INSCRIPTIONS - 1; i++) {
+				strcpy(auto_inscription_match[i], auto_inscription_match[i + 1]);
+				strcpy(auto_inscription_tag[i], auto_inscription_tag[i + 1]);
+				auto_inscription_autopickup[i] = auto_inscription_autopickup[i + 1];
+				auto_inscription_autodestroy[i] = auto_inscription_autodestroy[i + 1];
+				auto_inscription_ignore[i] = auto_inscription_ignore[i + 1];
+				auto_inscription_force[i] = auto_inscription_force[i + 1];
+#ifdef REGEX_SEARCH
+				auto_inscription_invalid[i] = auto_inscription_invalid[i + 1];
+#endif
+				auto_inscription_subinven[i] = auto_inscription_subinven[i + 1];
+				auto_inscription_disabled[i] = auto_inscription_disabled[i + 1];
+			}
+			/* ..and delete the last one */
+			auto_inscription_match[i][0] = auto_inscription_tag[i][0] = 0;
+			auto_inscription_autopickup[i] = auto_inscription_autodestroy[i] = auto_inscription_ignore[i] = FALSE;
+			auto_inscription_force[i] = FALSE;
+#ifdef REGEX_SEARCH
+			auto_inscription_invalid[i] = FALSE;
+#endif
+			auto_inscription_subinven[i] = FALSE;
+			auto_inscription_disabled[i] = FALSE;
+			break;
+		case 'I':
+			/* Check if the last inscription is free */
+			if (auto_inscription_match[MAX_AUTO_INSCRIPTIONS - 1][0]) {
+				c_msg_format("\377yThe last auto-inscription (#%d) must be unused in order to insert a line!", MAX_AUTO_INSCRIPTIONS);
+				break;
+			}
+			/* Slide all down.. */
+			for (i = MAX_AUTO_INSCRIPTIONS - 1; i > cur_idx; i--) {
+				strcpy(auto_inscription_match[i], auto_inscription_match[i - 1]);
+				strcpy(auto_inscription_tag[i], auto_inscription_tag[i - 1]);
+				auto_inscription_autopickup[i] = auto_inscription_autopickup[i - 1];
+				auto_inscription_autodestroy[i] = auto_inscription_autodestroy[i - 1];
+				auto_inscription_ignore[i] = auto_inscription_ignore[i - 1];
+				auto_inscription_force[i] = auto_inscription_force[i - 1];
+#ifdef REGEX_SEARCH
+				auto_inscription_invalid[i] = auto_inscription_invalid[i - 1];
+#endif
+				auto_inscription_subinven[i] = auto_inscription_subinven[i - 1];
+				auto_inscription_disabled[i] = auto_inscription_disabled[i - 1];
+			}
+			/* ..and clear the current line */
+			auto_inscription_match[i][0] = auto_inscription_tag[i][0] = 0;
+			auto_inscription_autopickup[i] = auto_inscription_autodestroy[i] = auto_inscription_ignore[i] = FALSE;
+			auto_inscription_force[i] = FALSE;
+#ifdef REGEX_SEARCH
+			auto_inscription_invalid[i] = FALSE;
+#endif
+			auto_inscription_subinven[i] = FALSE;
+			auto_inscription_disabled[i] = FALSE;
 			break;
 		case 'c':
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
