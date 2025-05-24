@@ -1509,7 +1509,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
-	if (spell == 0 || spell == 1) {
+	if (spell == 0 || spell == 1) { //change into next known form (1 for matching extremities too)
 		j = p_ptr->body_monster;
 		k = 0;
 
@@ -1601,6 +1601,20 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 		if (spell == 32767) j = p_ptr->body_monster_prev; /* hack: 32767 marks 'poly into previous' */
 		else j = spell - 20000;
 
+		if (k == j) { //already using this form?
+			msg_print(Ind, "You are already using that form.");
+			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+			return;
+		} else if ((j >= MAX_R_IDX - 1) || (j < 0)) {
+			msg_print(Ind, "That form does not exist in the realm!");
+			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+			return;
+		} else if (strlen(r_ptr->name + r_name) <= 1) {	/* <- ??? */
+			msg_print(Ind, "You cannot use that form!");
+			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+			return;
+		}
+
 		r_ptr = &r_info[j];
 
 		if (p_ptr->pclass == CLASS_DRUID) { /* SPecial ^^ */
@@ -1625,16 +1639,8 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				msg_print(Ind, "You cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			}
-		} else {
-			if ((j >= MAX_R_IDX - 1) || (j < 0)) {
-				msg_print(Ind, "That form does not exist in the realm!");
-				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-				return;
-			} else if (k == j) {
-				msg_print(Ind, "You are already using that form!");
-				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-				return;
-			} else if (r_ptr->flags1 & RF1_UNIQUE) {
+		} else { /* normal mimicry */
+			if (r_ptr->flags1 & RF1_UNIQUE) {
 				msg_print(Ind, "That form is unique!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
@@ -1643,6 +1649,18 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			    (r_ptr->flags9 & RF9_NO_CREDIT) ||
 			    (r_ptr->flags7 & RF7_NO_DEATH)) {
 				msg_print(Ind, "That form is unlearnable!");
+				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+				return;
+			} else if (!mon_allowed_chance(&r_info[j])) {
+				msg_print(Ind, "You cannot use that form!");
+				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+				return;
+			} else if (j && p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(j)) {
+				msg_print(Ind, "As a shaman you cannot use that form!");
+				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+				return;
+			} else if (r_ptr->level > skill_mimic) {
+				msg_print(Ind, "You are not powerful enough to change into that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			} else if (j && p_ptr->r_mimicry[j] < 1
@@ -1663,32 +1681,12 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				} else using_free_mimic = TRUE;
 			}
 
-			if (strlen(r_ptr->name + r_name) <= 1) {	/* <- ??? */
-				msg_print(Ind, "You cannot use that form!");
-				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-				return;
-			}
-			else if (!mon_allowed_chance(&r_info[j])) {
-				msg_print(Ind, "You cannot use that form!");
-				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-				return;
-			} else if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) {
-				msg_print(Ind, "You cannot use that form!");
-				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-				return;
-			} else if (r_ptr->level > skill_mimic) {
-				msg_print(Ind, "You are not powerful enough to change into that form!");
-				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-				return;
-			}
-
 			/* using up PvP-mode free mimic transformation? */
 			if (j && using_free_mimic) {
 				p_ptr->free_mimic--;
 				/* ..and actually learn the form, in case we get polymorphed so it isn't lost: */
 				p_ptr->r_mimicry[j] = r_ptr->level;
 			}
-
 			/* Activation tax */
 			else if (j && p_ptr->r_mimicry[j] < r_ptr->level
 			    && p_ptr->tim_mimic_what == j && p_ptr->tim_mimic > 10)
@@ -1699,7 +1697,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			if (skill_mimic <= 70) p_ptr->energy -= level_speed(&p_ptr->wpos);
 			else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (55 - skill_mimic / 2)) / 20;//1-pt resolution
 		}
-	} else {
+	} else { //use a mimic 'spell'
 		/* (S)he is no longer afk */
 		un_afk_idle(Ind);
 
