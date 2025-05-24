@@ -1609,7 +1609,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			msg_print(Ind, "That form does not exist in the realm!");
 			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			return;
-		} else if (strlen(r_ptr->name + r_name) <= 1) {	/* <- ??? */
+		} else if (j && strlen(r_name + r_info[j].name) <= 1) {	/* <- ??? */
 			msg_print(Ind, "You cannot use that form!");
 			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			return;
