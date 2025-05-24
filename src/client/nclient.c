@@ -3605,26 +3605,6 @@ int Receive_depth(void) {
 	/* For mini-map visual hacky fix.. -_- */
 	map_town = town;
 
-	if (c_cfg.autoloot_depth) {
-		if (z) { /* Auto-enable auto-pickup and auto-destroy */
-			if (!c_cfg.auto_pickup || !c_cfg.auto_destroy) {
-				//c_msg_print("Auto-enabled auto_pickup and auto_destroy."); //spammy
-				c_cfg.auto_pickup = c_cfg.auto_destroy = TRUE;
-			}
-		} else { /* Auto-disable auto-pickup and auto-destroy */
-			if (c_cfg.auto_pickup || c_cfg.auto_destroy) {
-				//c_msg_print("Auto-disabled auto_pickup and auto_destroy."); //spammy
-				c_cfg.auto_pickup = c_cfg.auto_destroy = FALSE;
-			}
-		}
-	} else if (c_cfg.autoloot_off && !z) {
-		/* Auto-disable auto-pickup and auto-destroy */
-		if (c_cfg.auto_pickup || c_cfg.auto_destroy) {
-			//c_msg_print("Auto-disabled auto_pickup and auto_destroy."); //spammy
-			c_cfg.auto_pickup = c_cfg.auto_destroy = FALSE;
-		}
-	}
-
 	return(1);
 }
 
@@ -6250,7 +6230,9 @@ void apply_auto_pickup(char *item_name) {
 	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 #endif
 
-	if (!c_cfg.auto_pickup && !c_cfg.auto_destroy) return;
+	if ((!c_cfg.auto_pickup && !c_cfg.auto_destroy) ||
+	    (c_cfg.autoloot_dunonly && !p_ptr->wpos.wz))
+		return;
 
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		match = auto_inscription_match[i];
@@ -7009,7 +6991,7 @@ int Receive_whats_under_you_feet(void) {
 	prt_whats_under_your_feet(o_name, crossmod_item, cant_see, on_pile);
 	strcpy(whats_under_your_feet, o_name);
 
-	if (c_cfg.auto_pickup || c_cfg.auto_destroy) apply_auto_pickup(o_name);
+	apply_auto_pickup(o_name);
 
 	return(1);
 }
