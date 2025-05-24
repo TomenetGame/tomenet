@@ -524,6 +524,7 @@ extern char audio_sfx[SOUND_MAX_2010][30];
 #endif
 
 extern int mon_hit_proj_id, mon_hit_proj_id2;
+extern bool proj_dam_uncapped;
 
 /* variable.c ends here */
 

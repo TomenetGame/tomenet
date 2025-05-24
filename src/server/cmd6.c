@@ -5804,12 +5804,12 @@ static bool item_tester_hook_activate(int Ind, object_type *o_ptr) {
 
 
 
-/*
- * Hack -- activate the ring of power
- */
+/* Activate the ring of power 'The One Ring' */
 #define ROP_DEC 10
-static void ring_of_power(int Ind, int dir) {
+static void the_one_ring(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
+
+	proj_dam_uncapped = TRUE;
 
 	/* Pick a random effect */
 	//switch (randint(10) + (magick(50) ? 0 : get_skill_scale_fine(p_ptr, SKILL_DEVICE, 1))) { --hmm nah, forces magic device skill to use the ring, no good for a specialty such as this one
@@ -5831,26 +5831,28 @@ static void ring_of_power(int Ind, int dir) {
 		break;
 
 	case 2:
-		/* Message */
-		msg_print(Ind, "You are surrounded by a *powerful* aura.");
-
 		/* Dispel monsters */
+		msg_print(Ind, "You are surrounded by a *powerful* aura.");
 		dispel_monsters(Ind, 5000); /* Enough to insta-kill even lesser Wyrms and non-leader greater demons */
 		break;
 
 	case 3:
 	case 4:
 		/* Mana Ball */
+		msg_print(Ind, "The ring releases a mana storm!");
 		sprintf(p_ptr->attacker, " invokes a mana storm for");
 		fire_ball(Ind, GF_MANA, dir, 3000, 3, p_ptr->attacker);
 		break;
 
 	default:
 		/* Mana Bolt */
+		msg_print(Ind, "The ring releases a mana bolt!");
 		sprintf(p_ptr->attacker, " fires a mana bolt for");
 		fire_bolt(Ind, GF_MANA, dir, 2000, p_ptr->attacker);
 		break;
 	}
+
+	proj_dam_uncapped = FALSE;
 }
 
 
@@ -7868,7 +7870,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			o_ptr->recharging = randint(175) + 425 - get_skill_scale(p_ptr, SKILL_DEVICE, 325);
 			break;
 		case ART_POWER:
-			ring_of_power(Ind, dir);
+			the_one_ring(Ind, dir);
 			o_ptr->recharging = randint(450) + 450;// - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
 			break;
 		case ART_MEDIATOR:

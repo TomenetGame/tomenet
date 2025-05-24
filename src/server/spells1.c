@@ -4559,7 +4559,7 @@ int divide_spell_damage(int dam, int div, int typ) {
 	/* Hack -- always do at least one point of damage -- paranoia/meddling? */
 	if (dam <= 0) dam = 1;
 	/* Hack -- Never do excessive damage */
-	if (dam > MAGICAL_CAP) dam = MAGICAL_CAP;
+	if (dam > MAGICAL_CAP && !proj_dam_uncapped) dam = MAGICAL_CAP;
 
 	/* default: divide damage, usually depending on ball spell radius, or /2 for wraithform casts */
 	return(dam / div);

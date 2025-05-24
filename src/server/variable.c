@@ -1011,6 +1011,8 @@ int deep_dive_class[IDDC_HIGHSCORE_SIZE]; /* scoreboard-despam: store class */
 
 /* Global projection counter for m_ptr->hit_proj_id */
 int mon_hit_proj_id, mon_hit_proj_id2;
+/* For The One Ring activation damage */
+bool proj_dam_uncapped = FALSE;
 
 /* remember school for each spell */
 int spell_school[512];
