@@ -3034,7 +3034,7 @@ static errr init_alloc(void) {
 			p = (10000 / r_ptr->rarity);
 
 			/* Adjust based on server settings - mikaelh */
-			p = p * mon_allowed_chance(r_ptr) / 100;
+			p = (p * mon_allowed_chance(r_ptr)) / 100;
 
 			/* Hack - Don't include zero probability entries in the table */
 			if (p == 0) continue;
@@ -3084,7 +3084,7 @@ static errr init_alloc(void) {
 			p = (10000 / r_ptr->rarity);
 
 			/* Adjust based on server settings - mikaelh */
-			p = p * mon_allowed_chance(r_ptr) / 100;
+			p = (p * mon_allowed_chance(r_ptr)) / 100;
 
 			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
 			if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
@@ -3108,9 +3108,8 @@ static errr init_alloc(void) {
 				if (table) {
 					/* hack: make all monsters' base probability 'most common'? */
 					if ((d_info[j].flags3 & DF3_DERARE_MONSTERS)) q = 10000;
-
 					/* Adjust the base probability */
-					q = p * restrict_monster_to_dungeon(i, j) / 100;
+					else q = (p * restrict_monster_to_dungeon(i, j)) / 100;
 
 					/* Load the entry */
 					table[z].index = i;
