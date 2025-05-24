@@ -9794,6 +9794,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* unhack */
 	if (hack_monster_idx) {
 		alloc_entry *table = alloc_race_table_dun[DI_SANDWORM_LAIR];
+
 		if (hack_dun_table_idx != -1) {
 			table[hack_dun_table_idx].prob1 = hack_dun_table_prob1;
 			table[hack_dun_table_idx].prob2 = hack_dun_table_prob2;
