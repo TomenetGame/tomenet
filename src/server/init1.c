@@ -513,7 +513,7 @@ static cptr r_info_flags8[] = {
 
 	"GENO_NO_THIN",
 	"FINAL_GUARDIAN", /* should NOT be used in r_info, it's instead set in d_info! */ //4
-	"WILD_SWAMP",	/* ToDo: Implement Swamp */
+	"WILD_SWAMP",
 	"WILD_TOO",
 };
 
