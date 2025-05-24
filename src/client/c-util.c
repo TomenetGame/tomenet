@@ -9722,7 +9722,7 @@ void auto_inscriptions(void) {
 
 			/* Describe */
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
-			Term_putstr(2, 21, -1, TERM_L_UMBER, "(\377yESC\377U/\377y8\377U/\377y2\377U/\377ySPACE\377U/\377yBKSP\377U/\377yp\377U) nav, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
+			Term_putstr(2, 21, -1, TERM_L_UMBER, "(\377yESC\377U/\377yg\377U/\377yG\377U/\377U/\377y8\377U/\377y2\377U/\377ySPC\377U/\377yBKSP\377U/\377yp\377U) nav, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
 			Term_putstr(2, 22, -1, TERM_L_UMBER, "(\377y?\377U/\377ye\377U,\377yRET\377U/\377yI\377U/\377yX\377U/\377yd\377U/\377yc\377U) help/edit/insert/excise/delete/CLEAR, (\377ya\377U) auto-pick/des/ig");
 			Term_putstr(2, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move up/down, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
 
@@ -9906,12 +9906,14 @@ void auto_inscriptions(void) {
 			if (cur_page < 0) cur_page = max_page;
 			redraw = TRUE;
 			break;
+		case 'G':
 		case '1': //end
 		case NAVI_KEY_END:
 			cur_page = max_page;
-			cur_line = 0;
+			cur_line = AUTOINS_PAGESIZE - 1;
 			redraw = TRUE;
 			break;
+		case 'g':
 		case '7': //home
 		case NAVI_KEY_POS1:
 			cur_page = 0;

@@ -2427,12 +2427,15 @@ void save_auto_inscriptions(cptr name) {
 }
 
 static char *ai_fgets(char *buf, int len, FILE *fp) {
+	char tmp[MAX_CHARS_WIDE];
+
 	while (TRUE) {
-		if (fgets(buf, AUTOINS_MATCH_LEN + 2, fp) == NULL) return(NULL);
+		if (fgets(tmp, MAX_CHARS_WIDE, fp) == NULL) return(NULL);
 		/* allow comments: Ignore all lines starting on '###' */
-		if (buf[0] == '#' && buf[1] == '#' && buf[2] == '#') continue;
+		if (tmp[0] == '#' && tmp[1] == '#' && tmp[2] == '#') continue;
 		break;
 	}
+	strncpy(buf, tmp, AUTOINS_MATCH_LEN + 2);
 	return(buf);
 }
 
