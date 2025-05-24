@@ -2408,8 +2408,8 @@ void save_auto_inscriptions(cptr name) {
 	fprintf(fp, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n",
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 
-	fprintf(fp, "## This file may contain comment lines, these, must start on '##' but will NOT be saved.\n");
-	fprintf(fp, "## Note that empty lines do count as data lines and hence cannot be inserted for the purpose of visual formatting.\n");
+	fprintf(fp, "### This file may contain comment lines, these, must start on '##' but will NOT be saved.\n");
+	fprintf(fp, "### Note that empty lines do count as data lines and hence cannot be inserted for the purpose of visual formatting.\n");
 
 	/* write inscriptions (2 lines each) */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
@@ -2429,8 +2429,8 @@ void save_auto_inscriptions(cptr name) {
 static char *ai_fgets(char *buf, int len, FILE *fp) {
 	while (TRUE) {
 		if (fgets(buf, AUTOINS_MATCH_LEN + 2, fp) == NULL) return(NULL);
-		/* allow comments: Ignore all lines starting on double '##' */
-		if (buf[0] == '#' && buf[1] == '#') continue;
+		/* allow comments: Ignore all lines starting on '###' */
+		if (buf[0] == '#' && buf[1] == '#' && buf[2] == '#') continue;
 		break;
 	}
 	return(buf);
