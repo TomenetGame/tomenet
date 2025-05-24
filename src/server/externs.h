@@ -1161,6 +1161,7 @@ extern void compact_monsters(int size, bool purge);
 extern s16b m_pop(void);
 extern int restrict_monster_to_dungeon(int r_idx, int dun_type);
 extern errr get_mon_num_prep(int dun_type, char *reject_monsters);
+extern errr get_mon_num_prep_wild(int town_distance, char *reject_monsters);
 extern s16b get_mon_num(int level, int dlevel);
 extern void set_mon_num2_hook(int feat);
 extern void set_mon_num_hook(struct worldpos *wpos);

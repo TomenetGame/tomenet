@@ -129,18 +129,19 @@ static void bleed_warn_feat(int wild_type, cave_type *c_ptr) {
    Note that the flags for these structures are loaded from the server savefile.
 
    Note that this has to be initially called with 0,0 to work properly.
-*/
 
+   'townlev' may be NULL if not required.
+*/
 static int towndist(int wx, int wy, s16b *townlev) {
 	int i;
 	int dist, mindist = 100;
 
-	*townlev = 0;
+	if (townlev) *townlev = 0;
 	for (i = 0; i < numtowns; i++) {
 		dist = abs(wx - town[i].x) + abs(wy - town[i].y);
 		if (dist < mindist) {
 			mindist = dist;
-			*townlev = town[i].baselevel;
+			if (townlev) *townlev = town[i].baselevel;
 		}
 	}
 	return(mindist);
@@ -782,13 +783,13 @@ void wild_add_monster(struct worldpos *wpos) {
 	/* Set the second hook according to the terrain type */
 	set_mon_num2_hook(zcave[monst_y][monst_x].feat);
 
-	get_mon_num_prep(0, l_ptr ? l_ptr->uniques_killed : NULL);
+	get_mon_num_prep_wild(towndist(wpos->wx, wpos->wy, NULL), l_ptr ? l_ptr->uniques_killed : NULL);
 
 	/* get the monster */
 	r_idx = get_mon_num(monster_level, monster_level);
 
 	/* place the monster */
-	place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE, 0);
+	tries = place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE, 0);
 
 	/* hack -- restore the monster selection function */
 	get_mon_num_hook = dungeon_aux;

@@ -1160,6 +1160,78 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters) {
 	/* Success */
 	return(0);
 }
+/* Same as get_mon_num_prep() (for dungeon 0 aka default 'wilderness'/no settings modifications),
+   but additionally consider town distance to reduce amount of humanoids if farther away from town. */
+errr get_mon_num_prep_wild(int town_distance, char *reject_monsters) {
+	alloc_entry	*restrict table = alloc_race_table_dun[0]; //dun_type is zero, no dungeon/default wilderness template
+	long		i, n, r_idx;
+	int people_perc, humanoids_perc, animals_perc;
+
+	if (!town_distance) town_distance = 1;
+
+	people_perc = (100 * 2) / (town_distance + 1);
+	if (people_perc < 25) people_perc = 25;
+
+	humanoids_perc = (100 * 4) / (town_distance + 3);
+	if (humanoids_perc < 50) humanoids_perc = 50;
+
+	animals_perc = 150 + town_distance * 10; /* This actually also boosts rarer animals as it flattens the chance differences against the cap of 10000 */
+	if (animals_perc > 300) animals_perc = 300;
+
+
+	/* Select the table based on dungeon type */
+	alloc_race_table = table;
+
+	/* Local copies of the hooks for speed */
+	bool (*hook)(int r_idx) = get_mon_num_hook;
+	bool (*hook2)(int r_idx) = get_mon_num2_hook;
+
+	/* Scan the allocation table */
+	for (i = 0, n = alloc_race_size; i < n; i++) {
+		/* Get the entry */
+		alloc_entry *entry = &table[i];
+
+		/* Default probability for this pass */
+		entry->prob2 = 0;
+
+		/* Access the "r_idx" of the chosen monster */
+		r_idx = entry->index;
+
+		/* Check the monster rejection array provided */
+		if (reject_monsters && reject_monsters[entry->index]) continue;
+
+#ifdef BLOODLETTER_SUMMON_NERF
+		if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) continue;
+#endif
+
+		/* Accept monsters which pass the restriction, if any */
+		if ((!hook || (*hook)(r_idx)) && (!hook2 || (*hook2)(r_idx))) {
+			/* Accept this monster */
+			entry->prob2 = entry->prob1;
+
+			/* Modify in favour of animals or against humanoids */
+			if (r_info[r_idx].flags3 & RF3_ANIMAL) {
+				entry->prob2 = (entry->prob2 * animals_perc) / 100;
+				if (entry->prob2 > 10000) entry->prob2 = 10000;
+			} else if (r_info[r_idx].flags8 & RF8_DUNGEON) { // ie not for WILD_ONLY flag monsters such as Woodsman
+				if (r_info[r_idx].d_char == 'p') // 'h' too? or leave them to 'humanoids' below
+					entry->prob2 = (entry->prob2 * people_perc) / 100;
+				else
+					entry->prob2 = (entry->prob2 * humanoids_perc) / 100;
+				if (!entry->prob2) entry->prob2 = 1;
+			}
+		}
+
+		/* Do not use this monster */
+		else {
+			/* Decline this monster */
+			continue;
+		}
+	}
+
+	/* Success */
+	return(0);
+}
 
 
 /* TODO: do this job when creating allocation table, for efficiency */
