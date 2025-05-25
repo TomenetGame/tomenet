@@ -5818,16 +5818,16 @@ static void the_one_ring(int Ind, int dir) {
 		/* Message */
 		msg_print(Ind, "You are surrounded by a *malignant* aura.");
 
-		/* Decrease all stats (permanently) */
-		if (p_ptr->sustain_str && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_STR, ROP_DEC, STAT_DEC_NORMAL);
-		if (p_ptr->sustain_int && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_INT, ROP_DEC, STAT_DEC_NORMAL);
-		if (p_ptr->sustain_wis && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_WIS, ROP_DEC, STAT_DEC_NORMAL);
-		if (p_ptr->sustain_dex && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_DEX, ROP_DEC, STAT_DEC_NORMAL);
-		if (p_ptr->sustain_con && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_CON, ROP_DEC, STAT_DEC_NORMAL);
-		if (p_ptr->sustain_chr && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_CHR, ROP_DEC, STAT_DEC_NORMAL);
+		/* Decrease all stats (permanently) - at max ST still 5% chance each -> 74% chance for no stat loss at all */
+		if (!p_ptr->sustain_str || rand_int(100) > p_ptr->skill_sav) (void)dec_stat(Ind, A_STR, ROP_DEC, STAT_DEC_PERMANENT);
+		if (!p_ptr->sustain_int || rand_int(100) > p_ptr->skill_sav) (void)dec_stat(Ind, A_INT, ROP_DEC, STAT_DEC_PERMANENT);
+		if (!p_ptr->sustain_wis || rand_int(100) > p_ptr->skill_sav) (void)dec_stat(Ind, A_WIS, ROP_DEC, STAT_DEC_PERMANENT);
+		if (!p_ptr->sustain_dex || rand_int(100) > p_ptr->skill_sav) (void)dec_stat(Ind, A_DEX, ROP_DEC, STAT_DEC_PERMANENT);
+		if (!p_ptr->sustain_con || rand_int(100) > p_ptr->skill_sav) (void)dec_stat(Ind, A_CON, ROP_DEC, STAT_DEC_PERMANENT);
+		if (!p_ptr->sustain_chr || rand_int(100) > p_ptr->skill_sav) (void)dec_stat(Ind, A_CHR, ROP_DEC, STAT_DEC_PERMANENT);
 
 		/* Lose some experience (permanently) */
-		take_xp_hit(Ind, p_ptr->exp / 100, "Ring of Power", TRUE, FALSE, TRUE, 0);
+		take_xp_hit(Ind, p_ptr->exp / 50, "Ring of Power", TRUE, FALSE, TRUE, 0);
 		break;
 
 	case 2:
