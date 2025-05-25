@@ -257,7 +257,8 @@ void do_autokinesis_to(int Ind, int dis) {
 void grow_trees(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 	int a, i, j;
-	cave_type **zcave = getcave(&p_ptr->wpos);
+	cave_type **zcave = getcave(&p_ptr->wpos), *c_ptr;
+	bool surface = (&p_ptr->wpos.wz == 0);
 
 	if (!zcave || !allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
@@ -272,9 +273,14 @@ void grow_trees(int Ind, int rad) {
 		if (!in_bounds(p_ptr->py + j, p_ptr->px + i)) continue;
 		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
 
+		c_ptr = &zcave[p_ptr->py + j][p_ptr->px + i];
+
+		/* Not inside houses */
+		if (surface && (c_ptr->info & CAVE_ICKY))
+
 		if (!cave_naked_bold(zcave, p_ptr->py + j, p_ptr->px + i) ||
-		    (f_info[zcave[p_ptr->py + j][p_ptr->px + i].feat].flags2 & FF2_NO_TFORM) ||
-		    (zcave[p_ptr->py + j][p_ptr->px + i].info & CAVE_NO_TFORM)) continue;
+		    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) ||
+		    (c_ptr->info & CAVE_NO_TFORM)) continue;
 
 		cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50) ? FEAT_TREE : FEAT_BUSH);
 #if 1
