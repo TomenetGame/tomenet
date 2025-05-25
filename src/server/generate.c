@@ -9321,7 +9321,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		if (wall_streamers) {
 			bool allow_outoftheme_soft; //allow sand-type streamers in a non-sand dungeon?
-			u32b f1 = f_info[d_info[d_ptr->theme].fill_type[0]].flags1;
+			u32b f1 = f_info[d_info[d_ptr->type].fill_type[0]].flags1;
 
 			/* Hack -- Add some magma streamers */
 			k = ((dflags3 & DF3_WALL_STREAMERS) ? DUN_STR_MAG : 0)
@@ -9338,8 +9338,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			/* Add some sand streamers */
 			allow_outoftheme_soft = !(((f1 & FF1_WALL) && (f1 & FF1_PERMANENT)) //permanent wall (26 and many more, Mandos), mountains
 			    || ((f1 & FF1_WALL) && !(f1 & FF1_NOTICE) && !(f1 & FF1_CAN_LEVITATE))); //granite wall (56-59, Angband etc), but allow for tree dungeons (can-levitate)
-			k = ((dflags3 & DF3_WALL_STREAMERS) && (((dflags1 & DF1_SAND_VEIN) && !rand_int(4)) || (allow_outoftheme_soft && magik(DUN_SANDWALL))) ? 1 : 0)
+			i = magik(DUN_SANDWALL);
+			k = ((dflags3 & DF3_WALL_STREAMERS) && (((dflags1 & DF1_SAND_VEIN) && !rand_int(4)) || (allow_outoftheme_soft && i)) ? 1 : 0)
 			    + (((dflags2 & DF2_WALL_STREAMER_ADD) && (dflags1 & DF1_SAND_VEIN)) ? 1 : 0);
+			if (i) s_printf("Streamer (%d,%d,%d): SAND_VEIN %d, allow %d / DUN_SANDWALL (%d) %d -> %d.\n",
+			    wpos->wx, wpos->wy, wpos->wz, (dflags1 & DF1_SAND_VEIN) != 0, allow_outoftheme_soft, DUN_SANDWALL, i, k);
 			for (i = 0; i < k; i++)
 				build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
 		}
