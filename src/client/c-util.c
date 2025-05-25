@@ -9838,24 +9838,27 @@ void auto_inscriptions(void) {
 		case '?':
 		case 'h':
 			Term_clear();
+			topline_icky = TRUE;
 			i = 0;
 
-			Term_putstr( 0, i++, -1, TERM_WHITE, "Editing item name matches (left column) and applied inscription (right column):");
-			i++;
+			Term_putstr( 0, i++, -1, TERM_SLATE, "Editing item name matches (left column) and applied inscription (right column):");
+			//i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item name matches:");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "The item name you enter is used as a partial match.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "The item name you enter is used as a partial match, case-sensitively.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "You can use '#' as wildcards, eg \"Rod#Healing\".");
 #ifdef REGEX_SEARCH
 			Term_putstr( 0, i++, -1, TERM_WHITE, "If you prefix a line with '$' the string will be interpreted as regexp.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In a regexp string, the '#' will no longer have a wildcard function.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "Regular expressions are parsed case-insensitively.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Regular expressions are parsed case-insensitively instead.");
 #endif
 			//i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item inscriptions to be applied:");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "No special rules here, it works the same as manual inscriptions.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "So you could even specify \"@@\" if you want a power-inscription.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "It works the same as manual inscriptions. So you could even specify \"@@\"");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "if you want a power-inscription. There is only one special rule:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "A matched entry that is set to '\377yi\377w'gnore will be skipped for the purpose");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "of inscribing if the tag is empty, and only work for auto-pickup/destroy.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Press 'f' to toggle force-inscribing, which will overwrite an existing");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Inscription always. Otherwise just trivial ones, eg discount tags.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "An orange tag text colour (instead of white) indicates forced-mode.");//AUTOINS_FORCE_COL
@@ -9872,6 +9875,8 @@ void auto_inscriptions(void) {
 
 			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
+
+			topline_icky = FALSE;
 			break;
 		case '/': // search
 			Term_putstr(0, 23, -1, TERM_YELLOW, "Enter search term: ");
