@@ -9696,7 +9696,7 @@ void auto_inscriptions(void) {
 	char tmp[160], buf[1024], *buf_ptr, c;
 	char match_buf[AUTOINS_MATCH_LEN + 8], tag_buf[AUTOINS_TAG_LEN + 2];
 
-	char fff[1024];
+	char fff[1024], search[MAX_CHARS];
 
 #ifdef REGEX_SEARCH
 	int ires = -999;
@@ -9722,9 +9722,9 @@ void auto_inscriptions(void) {
 
 			/* Describe */
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
-			Term_putstr(2, 21, -1, TERM_L_UMBER, "(\377yESC\377U/\377yg\377U/\377yG\377U/\377U/\377y8\377U/\377y2\377U/\377ySPC\377U/\377yBKSP\377U/\377yp\377U) nav, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
-			Term_putstr(2, 22, -1, TERM_L_UMBER, "(\377y?\377U/\377ye\377U,\377yRET\377U/\377yI\377U/\377yX\377U/\377yd\377U/\377yc\377U) help/edit/insert/excise/delete/CLEAR, (\377ya\377U) auto-pick/des/ig");
-			Term_putstr(2, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move up/down, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
+			Term_putstr(1, 21, -1, TERM_L_UMBER, "(\377yESC\377U/\377yg\377U/\377yG\377U/\377U/\377y8\377U/\377y2\377U/\377ySPC\377U/\377yBKSP\377U/\377yp\377U) nav, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
+			Term_putstr(1, 22, -1, TERM_L_UMBER, "(\377y?\377U/\377ye\377U,\377yRET\377U/\377yI\377U/\377yX\377U/\377yd\377U/\377yc\377U) help/edit/insert/excise/delete/CLEAR, (\377ya\377U) auto-pick/des/ig");
+			Term_putstr(1, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move, (\377y/\377U) find, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
 				cur_idx = cur_page * AUTOINS_PAGESIZE + i;
@@ -9872,6 +9872,20 @@ void auto_inscriptions(void) {
 
 			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
+			break;
+		case '/': // search
+			Term_putstr(0, 23, -1, TERM_YELLOW, "Enter search term: ");
+			if (!askfor_aux(search, MAX_CHARS, 0)) continue;
+
+			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++)
+				if (my_strcasestr(auto_inscription_match[(cur_idx + 1 + i) % MAX_AUTO_INSCRIPTIONS], search)) break;
+			/* If we're not looking for subsequent results, leave the options page instead of wrapping around */
+			if (i != MAX_AUTO_INSCRIPTIONS) {
+				cur_idx = (cur_idx + 1 + i) % MAX_AUTO_INSCRIPTIONS;
+				cur_line = (cur_idx % AUTOINS_PAGESIZE);
+				cur_page = cur_idx / AUTOINS_PAGESIZE;
+			}
+			redraw = TRUE;
 			break;
 		case 'P':
 			/* Paste currently selected entry to chat */
@@ -13226,15 +13240,15 @@ void do_cmd_options(void) {
 					}
 
 					switch(option_info[l].o_page) {
-					case 1:	m = do_cmd_options_aux(1, "UI Opt. 1 (Base/Vis)", k); break;
-					case 4:	m = do_cmd_options_aux(4, "UI Opt. 2 (Visuals)", k); break;
-					case 6:	m = do_cmd_options_aux(6, "UI Opt. 3 (Formatting)", k); break;
-					case 7:	m = do_cmd_options_aux(7, "UI Opt. 4 (Notifications)", k); break;
-					case 0:	m = do_cmd_options_aux(0, "UI Opt. 5 (Messages)", k); break;
-					case 5:	m = do_cmd_options_aux(5, "Audio Opt. 1 (SFX+Music)", k); break;
-					case 9:	m = do_cmd_options_aux(9, "Audio Opt. 2 (Paging+OS)", k); break;
-					case 2:	m = do_cmd_options_aux(2, "Play Opt. 1 (Actions/Safety)", k); break;
-					case 3:	m = do_cmd_options_aux(3, "Play Opt. 2 (Disturbances)", k); break;
+					case 1: m = do_cmd_options_aux(1, "UI Opt. 1 (Base/Vis)", k); break;
+					case 4: m = do_cmd_options_aux(4, "UI Opt. 2 (Visuals)", k); break;
+					case 6: m = do_cmd_options_aux(6, "UI Opt. 3 (Formatting)", k); break;
+					case 7: m = do_cmd_options_aux(7, "UI Opt. 4 (Notifications)", k); break;
+					case 0: m = do_cmd_options_aux(0, "UI Opt. 5 (Messages)", k); break;
+					case 5: m = do_cmd_options_aux(5, "Audio Opt. 1 (SFX+Music)", k); break;
+					case 9: m = do_cmd_options_aux(9, "Audio Opt. 2 (Paging+OS)", k); break;
+					case 2: m = do_cmd_options_aux(2, "Play Opt. 1 (Actions/Safety)", k); break;
+					case 3: m = do_cmd_options_aux(3, "Play Opt. 2 (Disturbances)", k); break;
 					case 8: m = do_cmd_options_aux(8, "Play Opt. 3 (Items)", k); break;
 					default: m = found = FALSE; c_msg_print("Option not found.");
 					}
