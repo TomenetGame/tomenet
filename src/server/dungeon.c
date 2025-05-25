@@ -5112,7 +5112,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/*** Damage over Time ***/
 #define POISON_DIV 30
-#define CUT_DIV 400
+#define CUT_DIV 200
 
 	/* Take damage from poison */
 	if (p_ptr->poisoned) {
