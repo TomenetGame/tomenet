@@ -5833,7 +5833,7 @@ static void the_one_ring(int Ind, int dir) {
 	case 2:
 		/* Dispel monsters */
 		msg_print(Ind, "You are surrounded by a *powerful* aura.");
-		dispel_monsters(Ind, 5000); /* Enough to insta-kill even lesser Wyrms and non-leader greater demons */
+		dispel_monsters(Ind, 3000); /* (5k: Enough to insta-kill even lesser Wyrms and non-leader greater demons) */
 		break;
 
 	case 3:
@@ -5841,7 +5841,7 @@ static void the_one_ring(int Ind, int dir) {
 		/* Mana Ball */
 		msg_print(Ind, "The ring releases a mana storm!");
 		sprintf(p_ptr->attacker, " invokes a mana storm for");
-		fire_ball(Ind, GF_MANA, dir, 3000, 3, p_ptr->attacker);
+		fire_ball(Ind, GF_MANA, dir, 2500, 3, p_ptr->attacker);
 		break;
 
 	default:
