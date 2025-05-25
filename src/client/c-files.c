@@ -2478,8 +2478,11 @@ void load_auto_inscriptions(cptr name) {
 		fclose(fp);
 		return;
 	}
+
 	/* extract version */
-	sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n", &vmaj, &vmin, &vpatch, vtag);
+	i = sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n", &vmaj, &vmin, &vpatch, vtag);
+	if (i < 4) vtag[0] = 0;
+
 	if (vmaj < 4 || /* at most 4.7.1a */
 	    (vmaj == 4 && (vmin < 7 ||
 	    (vmin == 7 && (vpatch < 1 ||
@@ -2496,7 +2499,7 @@ void load_auto_inscriptions(cptr name) {
 		version = 5;
 
 #ifdef TEST_CLIENT
-	//c_msg_format("Read a v%d.%d.%d%s .ins file, version %d.", vmaj, vmin, vpatch, vtag, version);
+	//c_msg_format("Read a v%d.%d.%d <%s><%c%c> .ins file, version %d.", vmaj, vmin, vpatch, vtag, vtag[0], vtag[1], version);
 #endif
 
 	/* attempt to merge current auto-inscriptions, and give priority to those we want to load here */
