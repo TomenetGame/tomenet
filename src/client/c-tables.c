@@ -627,6 +627,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "autoinsc_debug",		"Displays extra info on auto-inscriptions matching" },
 	{ &c_cfg.autoloot_dunonly,	FALSE,	8,	0, 180, TRUE,
 	    "autoloot_dunonly",		"Suppress auto-pickup/destroy while not in dungeon" },
+	{ &c_cfg.autoloot_dununown,	FALSE,	8,	0, 181, TRUE,
+	    "autoloot_dununown",	"Suppress auto-pck/des if owned and not in dungeon" },
 };
 
 cptr melee_techniques[16] = {

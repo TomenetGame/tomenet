@@ -6229,9 +6229,15 @@ void apply_auto_pickup(char *item_name) {
 	regex_t re_src;
 	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 #endif
+	bool unowned;
+	char *c;
+
+	c = strchr(item_name, '{');
+	unowned = (c && ((c[1] >= '0' && c[1] <= 9) || c[1] == '?'));
 
 	if ((!c_cfg.auto_pickup && !c_cfg.auto_destroy) ||
-	    (c_cfg.autoloot_dunonly && !p_ptr->wpos.wz))
+	    (c_cfg.autoloot_dunonly && !p_ptr->wpos.wz) ||
+	    (c_cfg.autoloot_dununown && !(p_ptr->wpos.wz || unowned)))
 		return;
 
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {

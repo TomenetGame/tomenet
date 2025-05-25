@@ -4938,6 +4938,7 @@ struct client_opts {
 	bool destroy_all_unmatched;
 	bool autoinsc_debug;
 	bool autoloot_dunonly;
+	bool autoloot_dununown;
 
 	bool equip_text_colour;
 	bool equip_set_colour;
