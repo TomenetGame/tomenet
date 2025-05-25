@@ -282,7 +282,7 @@ struct stairs_list {
 #define DUN_WAT_RNG	2	/* Width of rivers */
 #define DUN_WAT_CHG	50	/* 1 in 50 chance of junction in river */
 
-#define DUN_SANDWALL	10   /* percentage for Sandwall being generated [10] */
+#define DUN_SANDWALL	10	/* percentage for Sandwall being generated [5] (only if dungeon isn't defined with solid-wall types exclusively) */
 
 /* specify behaviour/possibility of vaults/rooms in 'maze' levels */
 #define VAULTS_OVERRIDE_MAZE	/* make vault walls override maze emptiness. otherwise, mazes can 'unwall' vaults! */
@@ -1402,7 +1402,7 @@ static bool vault_aux_aquatic(int r_idx) {
  */
 static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pierce) {
 	int i, tx, ty, tries = 1000;
-	int y, x, dir;
+	int y, x, dir, dun_level;
 	cave_type *c_ptr;
 
 	dungeon_type *dt_ptr = getdungeon(wpos);
@@ -1416,11 +1416,11 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 #ifdef ENABLE_DEMOLITIONIST
 	/* Kurzel - Replace some quartz with sandwall at mostly shallow depths? */
-	if (feat == FEAT_QUARTZ) {
-		int dun_level = getlevel(wpos);
-
-		if (magik((dun_level >= 25) ? 0 : (25 - dun_level))) // (0..25)% chance!
+	if (feat == FEAT_QUARTZ && (dun_level = getlevel(wpos)) < 20) {
+		if (magik(25 - dun_level)) { // (5..25)% chance!
+			s_printf("Streamer (%d,%d,%d): FEAT_SANDWALL conversion.\n", wpos->wx, wpos->wy, wpos->wz);
 			feat = FEAT_SANDWALL;
+		}
 	}
 #endif
 
@@ -9320,6 +9320,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 
 		if (wall_streamers) {
+			bool allow_outoftheme_soft; //allow sand-type streamers in a non-sand dungeon?
+			u32b f1 = f_info[d_info[d_ptr->theme].fill_type[0]].flags1;
+
 			/* Hack -- Add some magma streamers */
 			k = ((dflags3 & DF3_WALL_STREAMERS) ? DUN_STR_MAG : 0)
 			    + ((dflags2 & DF2_WALL_STREAMER_ADD) ? 1 : 0);
@@ -9333,7 +9336,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
 
 			/* Add some sand streamers */
-			k = ((dflags3 & DF3_WALL_STREAMERS) && (((dflags1 & DF1_SAND_VEIN) && !rand_int(4)) || magik(DUN_SANDWALL)) ? 1 : 0)
+			allow_outoftheme_soft = !(((f1 & FF1_WALL) && (f1 & FF1_PERMANENT)) //permanent wall (26 and many more, Mandos), mountains
+			    || ((f1 & FF1_WALL) && !(f1 & FF1_NOTICE) && !(f1 & FF1_CAN_LEVITATE))); //granite wall (56-59, Angband etc), but allow for tree dungeons (can-levitate)
+			k = ((dflags3 & DF3_WALL_STREAMERS) && (((dflags1 & DF1_SAND_VEIN) && !rand_int(4)) || (allow_outoftheme_soft && magik(DUN_SANDWALL))) ? 1 : 0)
 			    + (((dflags2 & DF2_WALL_STREAMER_ADD) && (dflags1 & DF1_SAND_VEIN)) ? 1 : 0);
 			for (i = 0; i < k; i++)
 				build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
