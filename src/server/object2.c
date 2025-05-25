@@ -2225,7 +2225,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				/* randarts and speed boots */
 				//else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
 				//else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 6000L;//7000 -> //5000
+				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 7000L;//7000 -> //6000
 
 				pval = o_ptr->pval;
 
