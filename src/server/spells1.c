@@ -3169,22 +3169,63 @@ int set_rust_destroy(object_type *o_ptr) {
 
 /*
  * Burn/Crash things
- */
-/*
- * Does a given object (usually) hate GF_ROCKET damage,
- * ie hates_fire() or hates_impact()?
- * (Note: Add shards too in case hates_shards() is ever added to the game)
+ * Does a given object (usually) hate GF_ROCKET damage ie impact/fire/shards?
  */
 int set_rocket_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
+	bool h_impact, h_fire, h_shards;
 
-	if (!hates_impact(o_ptr)) {
-		if (!hates_fire(o_ptr)) return(FALSE);
-		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-		if (f3 & TR3_IGNORE_FIRE) return(FALSE);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+	h_impact = hates_impact(o_ptr);
+	h_fire = (hates_fire(o_ptr) && !(f3 & TR3_IGNORE_FIRE));
+	h_shards = (hates_shards(o_ptr) && !ignores_shards(o_ptr));
+
+	if (h_impact || h_fire || h_shards) return(TRUE);
+	return(FALSE);
+}
+
+/*
+ * Does a given object (usually) hate shards?
+ */
+bool hates_shards(object_type *o_ptr) {
+	switch (o_ptr->tval) {
+	case TV_BOOK:
+		if (o_ptr->sval != SV_SPELLBOOK) return(FALSE);
+		break;
+
+	case TV_POTION: //shatters
+	case TV_POTION2:
+	case TV_SCROLL: //rips
+	case TV_PARCHMENT:
+		break;
+
+#ifdef ENABLE_DEMOLITIONIST
+	case TV_CHEMICAL:
+		if (o_ptr->sval == SV_MIXTURE) break;
+		return(FALSE);
+#endif
+	case TV_SPECIAL:
+		//if (o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x????)) return(FALSE);
+		//if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x????)) break;
+		return(FALSE);
+
+	default:
+		if (!is_cloth_armour(o_ptr->tval, o_ptr->sval)) return(FALSE);
 	}
+
 	return(TRUE);
+}
+/* Hacky draft for replacement of a nonexistant 'IGNORE_SHARDS' flag based on other elemental flags^^' */
+bool ignores_shards(object_type *o_ptr) {
+	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+	/* Hack: Assume that strongly magical items (cloth armour) will also resist shard tearing >_>' */
+	if ((f5 & TR5_IGNORE_MANA) || (f3 & (TR3_IGNORE_FIRE | TR3_IGNORE_ACID))) return(TRUE);
+
+	return(FALSE);
 }
 
 /*
@@ -5632,8 +5673,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				do_kill = TRUE;
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
-			}
-			else apply_discharge_item(this_o_idx, dam);
+			} else apply_discharge_item(this_o_idx, dam);
 			break;
 
 		/* Fire -- Flammable objects */
@@ -5702,8 +5742,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					ignore = FALSE;
 					note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				}
-			}
-			else apply_discharge_item(this_o_idx, dam / 2);
+			} else apply_discharge_item(this_o_idx, dam / 2);
 
 			/* Note: Force item destruction is probably already covered
 			   by applied fire item destruction above */
@@ -5716,51 +5755,41 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Fire + Impact */
 		case GF_METEOR:
 			do_smash_effect = TRUE;
-#if 0
-			ignore = TRUE;
-			if (hates_fire(o_ptr)) {
-				do_kill = TRUE;
-				if (!(f3 & TR3_IGNORE_FIRE)) {
-					ignore = FALSE;
-					if (is_meltable)
-						note_kill = (plural ? " melt!" : " melts!");
-					else if (is_potion)
-						note_kill = (plural ? " evaporate!" : " evaporates!");
-					else
-						note_kill = (plural ? " burn up!" : " burns up!");
-				}
-			}
-			if (hates_impact(o_ptr)) {
-				do_kill = TRUE;
-				if (!(f3 & TR3_IGNORE_COLD)) {
-					ignore = FALSE;
-					note_kill = (plural ? " shatter!" : " shatters!");
- #ifdef USE_SOUND_2010
-					if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
- #endif
-				}
-			}
-#else
 			do_kill = TRUE;
 			note_kill = (plural ? " are pulverized!" : " is pulverized!");
-#endif
 			break;
 
 		/* Hack -- break potions and such */
 		case GF_ICE:
 		case GF_ICEPOISON:
-			if (hates_cold(o_ptr) || hates_impact(o_ptr)) {
-				note_kill = (plural ? " shatter!" : " shatters!");
+			ignore = TRUE;
+			if (hates_cold(o_ptr)) {
 				do_kill = TRUE;
+				if (!(f3 & TR3_IGNORE_COLD)) {
+					ignore = FALSE;
+					note_kill = (plural ? " shatter!" : " shatters!");
+				}
 #ifdef USE_SOUND_2010
 				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			} else if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT || (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK)) {
-				note_kill = (plural ? " are shredded!" : " is shredded!");
+			} else if (hates_shards(o_ptr)) {
 				do_kill = TRUE;
+				if (!ignores_shards(o_ptr)) {
+					ignore = FALSE;
+					// Glass:
+					if (o_ptr->tval == TV_POTION || o_ptr->tval == TV_FLASK) {
+						note_kill = (plural ? " shatter!" : " shatters!");
 #ifdef USE_SOUND_2010
-				if (!quiet) sound(Ind, "item_scroll", NULL, SFX_TYPE_MISC, FALSE); //todo maybe: new sfx?
+						if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+					} else {
+#ifdef USE_SOUND_2010
+						/* if ((o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT || o_ptr->tval == TV_BOOK) && !quiet)
+							sound(Ind, "item_scroll", NULL, SFX_TYPE_MISC, FALSE); //todo maybe: new sfx? */
+#endif
+						note_kill = (plural ? " are shredded!" : " is shredded!");
+					}
+				}
 			}
 			break;
 
@@ -5768,27 +5797,42 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_FORCE:
 		case GF_SOUND:
 		case GF_THUNDER:
+			ignore = TRUE;
 			if (hates_impact(o_ptr)) {
-				note_kill = (plural ? " shatter!" : " shatters!");
 				do_kill = TRUE;
+				ignore = FALSE;
+				do_smash_effect = TRUE;
+				note_kill = (plural ? " shatter!" : " shatters!");
 #ifdef USE_SOUND_2010
 				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			} else if (typ == GF_SHARDS &&
-			    (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT || (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK))) {
-				note_kill = (plural ? " are shredded!" : " is shredded!");
+			} else if (typ == GF_SHARDS && hates_shards(o_ptr)) {
 				do_kill = TRUE;
+				if (!ignores_shards(o_ptr)) {
+					ignore = FALSE;
+					do_smash_effect = TRUE;
+					note_kill = (plural ? " are shredded!" : " is shredded!");
 #ifdef USE_SOUND_2010
-				if (!quiet) sound(Ind, "item_scroll", NULL, SFX_TYPE_MISC, FALSE); //todo maybe: new sfx?
+					//if (!quiet) sound(Ind, "item_scroll", NULL, SFX_TYPE_MISC, FALSE); //todo maybe: new sfx?
 #endif
+				}
+			} else if (typ == GF_THUNDER) {
+				if (hates_elec(o_ptr)) {
+					do_kill = TRUE;
+					if (!(f3 & TR3_IGNORE_ELEC)) {
+						note_kill = (plural ? " are destroyed!" : " is destroyed!");
+						ignore = FALSE;
+					}
+				} else apply_discharge_item(this_o_idx, dam / 2);
 			}
 			break;
 
 		/* Mana -- destroys everything -- except IGNORE_MANA items :p */
 		case GF_MANA:
+			do_kill = ignore = TRUE;
 			if (!(f5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
+				ignore = FALSE;
 				do_smash_effect = TRUE;
-				do_kill = TRUE;
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 			}
 			break;
@@ -5806,7 +5850,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		case GF_DISENCHANT:
-			if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) break;
+			if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) break; //no 'ignore' message for disenchant for the time being, as it's not that "observable" (and might even be spammy)
 			if (artifact_p(o_ptr) && magik(100)) break;
 
 			if (o_ptr->timeout_magic) o_ptr->timeout_magic /= 2;
@@ -5874,6 +5918,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HOLY_FIRE:
 			/* same effect as normal fire on items */
 			if (hates_fire(o_ptr)) {
+				do_smash_effect = TRUE;
 				do_kill = TRUE;
 				if (is_meltable)
 					note_kill = (plural ? " melt!" : " melts!");

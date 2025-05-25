@@ -3679,6 +3679,10 @@
 	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
 	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)) || \
 	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
+#define is_cloth_armour(tval,sval) \
+	(is_textile_armour(tval, sval) && ( \
+	(tval) != TV_SHIELD && (tval) != TV_BOOTS &&  /* There are no cloth boots/shields, only leather, which is more robust */ \
+	((tval) != TV_HELM || (sval) != SV_HARD_LEATHER_CAP)))
 /* what magic/roguish/martial artist would wear; ignores DSM */
 #define is_flexible_armour(tval,sval) \
 	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_HARD_LEATHER_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \

@@ -1777,6 +1777,8 @@ extern void teleport_to_player(int Ind, int m_idx);
 
 extern bool hates_fire(object_type *o_ptr);
 extern bool hates_water(object_type *o_ptr);
+extern bool hates_shards(object_type *o_ptr);
+extern bool ignores_shards(object_type *o_ptr);
 
 extern int safe_area(int Ind);
 extern int approx_damage(int m_idx, int dam, int typ);
