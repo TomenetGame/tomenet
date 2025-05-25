@@ -9722,9 +9722,9 @@ void auto_inscriptions(void) {
 
 			/* Describe */
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
-			Term_putstr(1, 21, -1, TERM_L_UMBER, "(\377yESC\377U/\377yg\377U/\377yG\377U/\377U/\377y8\377U/\377y2\377U/\377ySPC\377U/\377yBKSP\377U/\377yp\377U) nav, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
-			Term_putstr(1, 22, -1, TERM_L_UMBER, "(\377y?\377U/\377ye\377U,\377yRET\377U/\377yI\377U/\377yX\377U/\377yd\377U/\377yc\377U) help/edit/insert/excise/delete/CLEAR, (\377ya\377U) auto-pick/des/ig");
-			Term_putstr(1, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move, (\377y/\377U) find, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
+			Term_putstr(0, 21, -1, TERM_L_UMBER, "(\377yESC\377U/\377yg\377U/\377yG\377U/\377U/\377y8\377U/\377y2\377U/\377ySPC\377U/\377yBKSP\377U/\377yp\377U) nav, (\377yP\377U) chat-paste, (\377yf\377U/\377yb\377U/\377yt\377U) force/bags-only/toggle");
+			Term_putstr(0, 22, -1, TERM_L_UMBER, "(\377y?\377U/\377ye\377U,\377yRET\377U/\377yI\377U/\377yX\377U/\377yd\377U/\377yc\377U) help/edit/insert/excise/delete/CLEAR, (\377ya\377U) auto-pick/des/ig");
+			Term_putstr(0, 23, -1, TERM_L_UMBER, "(\377yw\377U/\377yx\377U) move, (\377y/\377U/\377y#\377U) find, (\377yl\377U/\377yL\377U/\377ys\377U/\377yS\377U/\377yA\377U) load/save '\377u.ins\377U'/'\377uglobal.ins\377U'/'\377u<class>.ins\377U'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
 				cur_idx = cur_page * AUTOINS_PAGESIZE + i;
@@ -9879,6 +9879,7 @@ void auto_inscriptions(void) {
 			topline_icky = FALSE;
 			break;
 		case '/': // search
+			redraw = TRUE;
 			Term_putstr(0, 23, -1, TERM_YELLOW, "Enter search term: ");
 			if (!askfor_aux(search, MAX_CHARS, 0)) continue;
 
@@ -9890,7 +9891,21 @@ void auto_inscriptions(void) {
 				cur_line = (cur_idx % AUTOINS_PAGESIZE);
 				cur_page = cur_idx / AUTOINS_PAGESIZE;
 			}
+			break;
+		case '#': // jump to line #
 			redraw = TRUE;
+			Term_putstr(0, 23, -1, TERM_YELLOW, format("Enter line number (1-%d): ", MAX_AUTO_INSCRIPTIONS));
+			if (!askfor_aux(tmp, MAX_CHARS, 0)) continue;
+
+			i = atoi(tmp);
+			if (i < 1 || i > MAX_AUTO_INSCRIPTIONS) {
+				c_msg_print("\377yInvalid line number.");
+				continue;
+			}
+
+			cur_idx = i - 1;
+			cur_line = (cur_idx % AUTOINS_PAGESIZE);
+			cur_page = cur_idx / AUTOINS_PAGESIZE;
 			break;
 		case 'P':
 			/* Paste currently selected entry to chat */
