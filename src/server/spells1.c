@@ -3913,7 +3913,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 			loss = ((randint(loss) + loss) * amount) / 100;
 
 			/* Maximal loss */
-			if (loss < amount/2) loss = amount/2;
+			if (loss < amount / 2) loss = amount / 2;
 
 			/* Lose some points */
 			cur = cur - loss;
@@ -3986,7 +3986,6 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 		}
 
 		/* Recalculate boni */
-//WIS drain -> Sanity changes;	p_ptr->update |= (PU_BONUS); */
 		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
 	}
 
