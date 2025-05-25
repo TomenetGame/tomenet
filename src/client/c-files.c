@@ -2569,6 +2569,8 @@ void load_auto_inscriptions(cptr name) {
 			auto_inscription_force[j] = force;
 
 			if (version < 5) {
+				auto_inscription_ignore[j] = FALSE;
+
 				/* try to read automation flags */
 				if (version >= 3) {
 					if (ai_fgets(buf, 5, fp) == NULL) break;
@@ -2598,7 +2600,7 @@ void load_auto_inscriptions(cptr name) {
 				res = sscanf(buf, "  %c,%c,%c,%c\n", &aif, &aiidp, &ais, &aid);
 				if (res != 4) break;
 
-				auto_inscription_force[j] = (aif == 'F');
+				auto_inscription_force[j] = force = (aif == 'F');
 				auto_inscription_ignore[j] = auto_inscription_autopickup[j] = auto_inscription_autodestroy[j] = FALSE;
 				switch (aiidp) {
 				case 'i': auto_inscription_ignore[j] = TRUE; break;
@@ -2653,6 +2655,8 @@ void load_auto_inscriptions(cptr name) {
 		strcpy(auto_inscription_tag[c_eff], buf);
 
 		if (version < 5) {
+			auto_inscription_ignore[c_eff] = FALSE;
+
 			/* try to read automation flags */
 			if (version >= 3) {
 				if (ai_fgets(buf, 5, fp) == NULL) break;
@@ -2685,7 +2689,7 @@ void load_auto_inscriptions(cptr name) {
 			auto_inscription_force[c_eff] = (aif == 'F');
 			auto_inscription_ignore[c_eff] = auto_inscription_autopickup[c_eff] = auto_inscription_autodestroy[c_eff] = FALSE;
 			switch (aiidp) {
-			case 'F': auto_inscription_ignore[c_eff] = TRUE; break;
+			case 'i': auto_inscription_ignore[c_eff] = TRUE; break;
 			case 'a': auto_inscription_autopickup[c_eff] = TRUE; break;
 			case 'A': auto_inscription_autodestroy[c_eff] = TRUE; break;
 			}
