@@ -258,7 +258,7 @@ void grow_trees(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 	int a, i, j;
 	cave_type **zcave = getcave(&p_ptr->wpos), *c_ptr;
-	bool surface = (&p_ptr->wpos.wz == 0);
+	bool surface = (p_ptr->wpos.wz == 0);
 
 	if (!zcave || !allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
