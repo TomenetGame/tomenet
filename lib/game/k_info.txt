@@ -3013,24 +3013,24 @@ D:Casts a line of light.
 N:357:Lightning Bolts
 G:-:d
 I:66:21:30
-W:20:0:15:2000
-A:20/1
+W:25:0:15:2000
+A:25/1
 P:0:1d1:0:0:0
 D:Casts a lightning bolt for 4..49d13 damage.
 
 N:358:Frost Bolts
 G:-:d
 I:66:23:35
-W:25:0:15:2500
-A:25/1
+W:30:0:15:2500
+A:30/1
 P:0:1d1:0:0:0
 D:Casts a frost bolt for 5..50d13 damage.
 
 N:359:Fire Bolts
 G:-:d
 I:66:22:40
-W:30:0:15:3000
-A:30/1
+W:35:0:15:3000
+A:35/1
 P:0:1d1:0:0:0
 D:Casts a fire bolt for 7..52d13 damage.
 
@@ -3061,8 +3061,8 @@ P:0:1d1:0:0:0
 N:363:Drain Life
 G:-:d
 I:66:18:30
-W:75:0:15:25000
-A:75/4
+W:85:0:15:35000
+A:85/4
 P:0:1d1:0:0:0
 D:Damages a monster for 10..15% of its current hit points (max 900)
 D:and returns 1/8 of the life force to you, replenishing your hit points.
@@ -3125,7 +3125,7 @@ D:Casts an acid bolt for 6..51d13 damage.
 N:371:Enlightenment
 G:-:d
 I:66:5:40
-W:65:0:15:10000
+W:65:0:15:15000
 A:65/4
 P:0:1d1:0:0:0
 D:Maps your surroundings.
@@ -3159,8 +3159,8 @@ D:and cures stun and most cuts.
 N:375:Detection
 G:-:d
 I:66:6:80
-W:70:0:15:25000
-A:70/8
+W:75:0:15:25000
+A:75/8
 P:0:1d1:0:0:0
 D:Detects treasure, traps, secret doors, stairs,
 D:and non-invisible creatures.
@@ -3169,7 +3169,7 @@ D:and non-invisible creatures.
 N:376:Restoration
 G:-:d
 I:66:10:140
-W:80:0:15:25000
+W:80:0:15:30000
 A:80/16
 P:0:1d1:0:0:0
 D:Restores all drained stats and drained experience.
