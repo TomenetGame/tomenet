@@ -2042,7 +2042,7 @@ static int weight_limit(int Ind) /* max. 3000 atm */ {
 /* intrinsic +attribute boni from forms */
 #define FORM_STAT_BONUS_SMALL 1
 #define FORM_STAT_BONUS_MEDIUM 2
-#define FORM_STAT_BONUS_BIG 3
+#define FORM_STAT_BONUS_BIG 3	/* currently not applied, pft */
 /* Should be called by every calc_bonus call */
 static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	player_type *p_ptr = Players[Ind];
@@ -2196,7 +2196,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	}
 	/* Warriors */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && r_ptr->level >= 20) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; } /* Skilled warriors */
-	if (p_ptr->body_monster == RI_BERSERKER) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; }
+	if (p_ptr->body_monster == RI_BERSERKER) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pstr += FORM_STAT_BONUS_MEDIUM; }
 	if (p_ptr->body_monster == RI_SWORDSMASTER || p_ptr->body_monster == RI_GRAND_SWORDSMASTER) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }
 	if (p_ptr->body_monster == RI_DAGASHI) {
 		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL;
