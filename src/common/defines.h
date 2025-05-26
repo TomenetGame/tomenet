@@ -1555,39 +1555,63 @@
    and specifically for druid form info: check_experience(), do_cmd_check_extra_info(). */
 #define RI_FARMER_MAGGOT	8
 #define RI_LEPER		13
+#define RI_MUSHROOM_GREY	22	/* font mapping */
+#define RI_MUSHROOM_SHRIEKER	40	/* font mapping */
 #define RI_NOVICE_MAGE		46
+#define RI_MUSHROOM_YELLOW	47	/* font mapping */
 #define RI_SMEAGOL		63	/* DROP_CHOSEN */
+#define RI_MUSHROOM_SPOTTED	72	/* font mapping */
 #define RI_SLHOBBIT		74	/* Black Breath */
+#define RI_CCOINS_COPPER	85	/* font mapping */
 #define RI_NOVICE_MAGE_F	93
+#define RI_DEATH_SWORD		107	/* font mapping */
+#define RI_MUSHROOM_PURPLE	108	/* font mapping */
+#define RI_CCOINS_SILVER	117	/* font mapping */
 #define RI_ROBIN_HOOD		138	/* DROP_CHOSEN */
 #define RI_NURGLING		139
 #define RI_YETI			154	/* Druid form */
 #define RI_CAVE_BEAR		160	/* Druid form */
+#define RI_MUSHROOM_CLEAR	184	/* font mapping */
 #define RI_BLUE_HORROR		189
 #define RI_GRIZZLY_BEAR		191	/* Druid form */
+#define RI_CCOINS_GOLD		195	/* font mapping */
 #define RI_PANTHER		198	/* Druid form */
-#define RI_OLD_MAN_WILLOW	206
+#define RI_OLD_MAN_WILLOW	206	/* font mapping; music */
 #define RI_HIPPOCAMPUS		207
+#define RI_CCOINS_MITHRIL	239	/* font mapping */
 #define RI_PINK_HORROR		242	/* DROP_CHOSEN */
 #define RI_SOFTWARE_BUG		246
+#define RI_TANGLEWEED		248	/* font mapping */
 #define RI_UFTHAK		260
 #define RI_GOLEM_CLAY		261	/* For translating to custom golem_creation visuals */
+#define RI_POISON_IVY		266	/* font mapping */
+#define RI_MUSHROOM_MAGIC	267	/* font mapping */
 #define RI_BEARER_NURGLE	268
 #define RI_GRIFFON		279	/* Druid form */
 #define RI_WATER_SPIRIT		303
-#define RI_DOOR_MIMIC		311
+#define RI_DOOR_MIMIC		311	/* font mapping */
+#define RI_GVFLYTRAP		317	/* font mapping */
+#define RI_STUNWALL		326	/* font mapping */
+#define RI_HUORN		329	/* font mapping */
 #define RI_WYVERN		334	/* Druid form */
 #define RI_GREAT_EAGLE		335	/* Druid form */
+#define RI_LIVINGSTONE		336	/* font mapping */
 #define RI_SASQUATCH		343	/* Druid form */
 #define RI_ARCH_VILE		357
 #define RI_VAMPIRIC_MIST	365	/* Vampire form */
 #define RI_GOLEM_IRON		367	/* For translating to custom golem_creation visuals */
 #define RI_AZOG			373
 #define RI_VAMPIRE_BAT		391	/* Vampire form */
+#define RI_XICLOTLAN		396	/* font mapping */
 #define RI_WEREBEAR		414	/* Druid form */
+#define RI_HELLBLADE		420	/* font mapping */
 #define RI_BEAST_NURGLE		422
+#define RI_CCOINS_ADAMANTITE	423	/* font mapping */
+#define RI_ROPER		426	/* font mapping */
 #define RI_HYDRA_5H		440	/* Druid form */
 #define RI_SEAHORSE		443
+#define RI_LWALLMON		448	/* font mapping */
+#define RI_CHAOS_TILE		458	/* font mapping */
 #define RI_GOLEM_MITHRIL	464	/* For translating to custom golem_creation visuals */
 #define RI_SHELOB		481
 #define RI_GIANT_SQUID		482	/* Druid form */
@@ -1614,8 +1638,9 @@
 #define RI_HYDRA_11H		688	/* Druid form */
 #define RI_WARRIOR_DAWN		693
 #define RI_SMAUG		697
-#define RI_STORMBRINGER		698	/* DROP_CHOSEN */
+#define RI_STORMBRINGER		698	/* DROP_CHOSEN; font mapping */
 #define RI_WINGED_HORROR	704	/* Druid form */
+#define RI_GWALLMON		718	/* font mapping */
 #define RI_MAULOTAUR		723	/* Druid form */
 #define RI_HOUND_PLASMA		726	/* Druid form */
 #define RI_SANTA1		733	/* terror santa from hell */
@@ -1630,6 +1655,7 @@
 #define RI_TRON			789	/* Druid form */
 #define RI_MARDRA		791	/* DROP_CHOSEN */
 #define RI_BLOODTHIRSTER	758	/* for ENABLE_OHERETICISM but also for blood fountains >:) */
+#define RI_NULL_TLV		803	/* font mapping */
 #define RI_FEAGWATH		804
 #define RI_PIT_FIEND		812
 #define RI_UNMAKER		815	/* prevent live spawn; Shaman form (forbidden) */
@@ -1680,15 +1706,17 @@
 #define RI_SANDWORM		1031
 #define RI_TIK_SRVZLLAT		1032
 #define RI_WHITE_BALROG		1034
-#define RI_GOLGARACH		1035
+#define RI_GOLGARACH		1035	/* font mapping; music */
 #define RI_KRONOS		1037	/* DROP_CHOSEN */
 #define RI_WATER_HOUND		1038
+#define RI_MUSHROOM_UNMAGIC	1045	/* font mapping */
 #define RI_SIRENE		1057
 #define RI_MICHAEL		1074
 #define RI_LIVING_LIGHTNING	1147
 #define RI_HELLRAISER		1067
 #define RI_GORM			1069	/* Druid form */
 #define RI_NETHER_GUARD		1068
+#define RI_VJG_MIMIC		1082	/* font mapping */
 #define RI_DOR			1085
 #define RI_PUMPKIN		1088	/* new: max hp version is now _the_ (only) Pumpkin form - its HP get downscaled live on spawn according to floor level. */
 #define RI_ZU_AON		1097
@@ -3858,6 +3886,26 @@
  */
  #define SV_BOOK_MIN_GOOD	4
 #endif
+
+/* TV_GOLD svals */
+#define SV_GOLD_COPPER		1
+#define SV_GOLD_SILVER		2
+#define SV_GOLD_CITRINES	3
+#define SV_GOLD_AMBER		4
+#define SV_GOLD_PERIDOTS	5
+#define SV_GOLD_TOPAZES		6
+#define SV_GOLD_GARNETS		7
+#define SV_GOLD_AQUAMARINES	8
+#define SV_GOLD_JADE		9
+#define SV_GOLD_GOLD		10
+#define SV_GOLD_TOURMALINES	11
+#define SV_GOLD_OPALS		12
+#define SV_GOLD_SAPPHIRES	13
+#define SV_GOLD_RUBIES		14
+#define SV_GOLD_EMERALDS	15
+#define SV_GOLD_MITHRIL		16
+#define SV_GOLD_DIAMONDS	17
+#define SV_GOLD_ADAMANTITE	18
 
 /*
  * Special "sval" limit -- last gold

@@ -3151,112 +3151,113 @@ static void set_player_font_definitions(int ind, int player) {
 	   chameleons of certain other things/features in the game! */
 	//items (Death Sword, Cloaker)
 	i = p_ptr->d_char[lookup_kind(TV_SWORD, rand_int(2) ? SV_LONG_SWORD : SV_BROAD_SWORD)];
-	p_ptr->r_char[107] = i;
-	p_ptr->r_attr[107] = r_info[107].d_attr;
+	p_ptr->r_char[RI_DEATH_SWORD] = i;
+	p_ptr->r_attr[RI_DEATH_SWORD] = r_info[RI_DEATH_SWORD].d_attr;
 	// + they arent chameleons but should still have sword-visuals: Hellblade, The Stormbringer
-	p_ptr->r_char[420] = i;
-	p_ptr->r_attr[420] = r_info[420].d_attr;
-	p_ptr->r_char[698] = i;
-	p_ptr->r_attr[698] = r_info[698].d_attr;
+	p_ptr->r_char[RI_HELLBLADE] = i;
+	p_ptr->r_attr[RI_HELLBLADE] = r_info[RI_HELLBLADE].d_attr;
+	p_ptr->r_char[RI_STORMBRINGER] = i;
+	p_ptr->r_attr[RI_STORMBRINGER] = r_info[RI_STORMBRINGER].d_attr;
 	//floors (Chaos tile, Null)
-	p_ptr->r_char[458] = p_ptr->f_char[FEAT_FLOOR];
-	p_ptr->r_attr[458] = r_info[458].d_attr;
-	p_ptr->r_char[803] = p_ptr->f_char[FEAT_FLOOR];
-	p_ptr->r_attr[803] = r_info[803].d_attr;
+	p_ptr->r_char[RI_CHAOS_TILE] = p_ptr->f_char[FEAT_FLOOR];
+	p_ptr->r_attr[RI_CHAOS_TILE] = r_info[RI_CHAOS_TILE].d_attr;
+	p_ptr->r_char[RI_NULL_TLV] = p_ptr->f_char[FEAT_FLOOR];
+	p_ptr->r_attr[RI_NULL_TLV] = r_info[RI_NULL_TLV].d_attr;
 	//trees (Old Man Willow, Huorn, Xiclotlan)
-	p_ptr->r_char[206] = p_ptr->f_char[FEAT_TREE];
-	p_ptr->r_attr[206] = r_info[206].d_attr;
-	p_ptr->r_char[329] = p_ptr->f_char[FEAT_TREE];
-	p_ptr->r_attr[329] = r_info[458].d_attr;
-	p_ptr->r_char[396] = p_ptr->f_char[FEAT_TREE];
-	p_ptr->r_attr[396] = r_info[458].d_attr;
+	p_ptr->r_char[RI_OLD_MAN_WILLOW] = p_ptr->f_char[FEAT_TREE];
+	p_ptr->r_attr[RI_OLD_MAN_WILLOW] = r_info[RI_OLD_MAN_WILLOW].d_attr;
+	p_ptr->r_char[RI_HUORN] = p_ptr->f_char[FEAT_TREE];
+	p_ptr->r_attr[RI_HUORN] = r_info[RI_HUORN].d_attr;
+	p_ptr->r_char[RI_XICLOTLAN] = p_ptr->f_char[FEAT_TREE];
+	p_ptr->r_attr[RI_XICLOTLAN] = r_info[RI_XICLOTLAN].d_attr;
 	//ivy (Tangleweed, Poison Ivy, Giant Venus Flytrap)
-	p_ptr->r_char[248] = p_ptr->f_char[FEAT_IVY];
-	p_ptr->r_attr[248] = r_info[248].d_attr;
-	p_ptr->r_char[266] = p_ptr->f_char[FEAT_IVY];
-	p_ptr->r_attr[266] = r_info[266].d_attr;
-	p_ptr->r_char[317] = p_ptr->f_char[FEAT_IVY];
-	p_ptr->r_attr[317] = r_info[317].d_attr;
+	p_ptr->r_char[RI_TANGLEWEED] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[RI_TANGLEWEED] = r_info[RI_TANGLEWEED].d_attr;
+	p_ptr->r_char[RI_POISON_IVY] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[RI_POISON_IVY] = r_info[RI_POISON_IVY].d_attr;
+	p_ptr->r_char[RI_GVFLYTRAP] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[RI_GVFLYTRAP] = r_info[RI_GVFLYTRAP].d_attr;
 	//mist (Vampiric mist, Mist giant, Weird fume, Dark mist)
 #if 0 /* there is currently no 'mist' tile except for 'nether mist' which is normal floor though. Using FEAT_IVY (or any other '#' symbol) doesn't cut it for custom font mapping. */
-	p_ptr->r_char[365] = p_ptr->f_char[FEAT_IVY];
-	p_ptr->r_attr[365] = r_info[365].d_attr;
-	p_ptr->r_char[552] = p_ptr->f_char[FEAT_IVY];
-	p_ptr->r_attr[552] = r_info[552].d_attr;
-	p_ptr->r_char[625] = p_ptr->f_char[FEAT_IVY];
-	p_ptr->r_attr[625] = r_info[625].d_attr;
-	p_ptr->r_char[1064] = p_ptr->f_char[FEAT_IVY];
-	p_ptr->r_attr[1064] = r_info[1064].d_attr;
+	p_ptr->r_char[RI_NETHER_MIST] = p_ptr->f_char[FEAT_MIST];
+	p_ptr->r_attr[RI_NETHER_MIST] = r_info[RI_NETHER_MIST].d_attr;
+	p_ptr->r_char[RI_MIST_GIANT] = p_ptr->f_char[FEAT_MIST];
+	p_ptr->r_attr[RI_MIST_GIANT] = r_info[RI_MIST_GIANT].d_attr;
+	p_ptr->r_char[RI_WEIRD_FUME] = p_ptr->f_char[FEAT_MIST];
+	p_ptr->r_attr[RI_WEIRD_FUME] = r_info[RI_WEIRD_FUME].d_attr;
+	p_ptr->r_char[RI_DARK_MIST] = p_ptr->f_char[FEAT_MIST];
+	p_ptr->r_attr[RI_DARK_MIST] = r_info[RI_DARK_MIST].d_attr;
 #endif
 	//walls (Stunwall, Livingstone, Lesser/Greater wall monster, Roper, Ahtu?, Glass Golem?, Golgarach)
-	p_ptr->r_char[326] = p_ptr->f_char[FEAT_WALL_EXTRA];
-	p_ptr->r_attr[326] = r_info[326].d_attr;
-	p_ptr->r_char[336] = p_ptr->f_char[FEAT_WALL_EXTRA];
-	p_ptr->r_attr[336] = r_info[336].d_attr;
-	p_ptr->r_char[448] = p_ptr->f_char[FEAT_WALL_EXTRA];
-	p_ptr->r_attr[448] = r_info[448].d_attr;
-	p_ptr->r_char[718] = p_ptr->f_char[FEAT_WALL_EXTRA];
-	p_ptr->r_attr[718] = r_info[718].d_attr;
-	p_ptr->r_char[426] = p_ptr->f_char[FEAT_WALL_EXTRA];
-	p_ptr->r_attr[426] = r_info[426].d_attr;
- #if 0
-	p_ptr->r_char[761] = p_ptr->f_char[FEAT_WALL_EXTRA];//Ahtu
-	p_ptr->r_attr[761] = r_info[761].d_attr;
-	p_ptr->r_char[1033] = p_ptr->f_char[FEAT_WALL_EXTRA];//Glass Golem
-	p_ptr->r_attr[1033] = r_info[1033].d_attr;
+	p_ptr->r_char[RI_STUNWALL] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_STUNWALL] = r_info[RI_STUNWALL].d_attr;
+	p_ptr->r_char[RI_LIVINGSTONE] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_LIVINGSTONE] = r_info[RI_LIVINGSTONE].d_attr;
+	p_ptr->r_char[RI_LWALLMON] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_LWALLMON] = r_info[RI_LWALLMON].d_attr;
+	p_ptr->r_char[RI_GWALLMON] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_GWALLMON] = r_info[RI_GWALLMON].d_attr;
+ #if 1 /* "pillar of rock", not exactly a wall, so maybe exempt this */
+	p_ptr->r_char[RI_ROPER] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_ROPER] = r_info[RI_ROPER].d_attr;
  #endif
-	p_ptr->r_char[1035] = p_ptr->f_char[FEAT_WALL_EXTRA];
-	p_ptr->r_attr[1035] = r_info[1035].d_attr;
+ #if 0
+	p_ptr->r_char[RI_AHTU] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_AHTU] = r_info[RI_AHTU].d_attr;
+	p_ptr->r_char[RI_GLASS_GOLEM] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_GLASS_GOLEM] = r_info[RI_GLASS_GOLEM].d_attr;
+ #endif
+	p_ptr->r_char[RI_GOLGARACH] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[RI_GOLGARACH] = r_info[RI_GOLGARACH].d_attr;
 	//doors (Door Mimic, Void Jumpgate Mimic)
-	p_ptr->r_char[311] = p_ptr->f_char[FEAT_HOME];
-	p_ptr->r_attr[311] = r_info[311].d_attr;
-	p_ptr->r_char[1082] = p_ptr->f_char[FEAT_BETWEEN];
-	p_ptr->r_attr[1082] = r_info[1082].d_attr;
+	p_ptr->r_char[RI_DOOR_MIMIC] = p_ptr->f_char[FEAT_HOME];
+	p_ptr->r_attr[RI_DOOR_MIMIC] = r_info[RI_DOOR_MIMIC].d_attr;
+	p_ptr->r_char[RI_VJG_MIMIC] = p_ptr->f_char[FEAT_BETWEEN];
+	p_ptr->r_attr[RI_VJG_MIMIC] = r_info[RI_VJG_MIMIC].d_attr;
+
 	//shrooms (mushroom patches)
-#if 0 /* pft - actually not all of these are really mushrooms.. and food could look differently anyway */
-	i = p_ptr->d_char[lookup_kind(TV_FOOD, 0)]; //anti-cheeze: all shrooms look alike
-	for (j = 1; j <= SV_FOOD_RESTORING; j++)
+#if 1 /* pft - actually not all of these are really mushrooms.. and food could look differently anyway */
+	i = p_ptr->d_char[lookup_kind(TV_FOOD, SV_FOOD_UNMAGIC)]; //anti-cheeze: all shrooms look alike
+	for (j = 1; j <= SV_FOOD_MUSHROOMS_MAX; j++) {
 		p_ptr->d_char[lookup_kind(TV_FOOD, j)] = i;
-	p_ptr->r_char[22] = i;
-	p_ptr->r_attr[22] = r_info[22].d_attr;
-	p_ptr->r_char[40] = i;
-	p_ptr->r_attr[40] = r_info[40].d_attr;
-	p_ptr->r_char[47] = i;
-	p_ptr->r_attr[47] = r_info[47].d_attr;
-	p_ptr->r_char[72] = i;
-	p_ptr->r_attr[72] = r_info[72].d_attr;
-	p_ptr->r_char[108] = i;
-	p_ptr->r_attr[108] = r_info[108].d_attr;
-	p_ptr->r_char[184] = i;
-	p_ptr->r_attr[184] = r_info[184].d_attr;
-	p_ptr->r_char[267] = i;
-	p_ptr->r_attr[267] = r_info[267].d_attr;
-	p_ptr->r_char[316] = i;
-	p_ptr->r_attr[316] = r_info[316].d_attr;
-	p_ptr->r_char[425] = i;
-	p_ptr->r_attr[425] = r_info[425].d_attr;
-	p_ptr->r_char[437] = i;
-	p_ptr->r_attr[437] = r_info[437].d_attr;
-	p_ptr->r_char[486] = i;
-	p_ptr->r_attr[486] = r_info[486].d_attr;
-	p_ptr->r_char[960] = i;
-	p_ptr->r_attr[960] = r_info[960].d_attr;
-	p_ptr->r_char[1045] = i;
-	p_ptr->r_attr[1045] = r_info[1045].d_attr;
-	p_ptr->r_char[1062] = i;
-	p_ptr->r_attr[1062] = r_info[1062].d_attr;
+		p_ptr->d_attr[lookup_kind(TV_FOOD, j)] = k_info[lookup_kind(TV_FOOD, j)].d_attr;
+	}
+
+	p_ptr->r_char[RI_MUSHROOM_GREY] = i;
+	p_ptr->r_attr[RI_MUSHROOM_GREY] = r_info[RI_MUSHROOM_GREY].d_attr;
+	p_ptr->r_char[RI_MUSHROOM_SHRIEKER] = i;
+	p_ptr->r_attr[RI_MUSHROOM_SHRIEKER] = r_info[RI_MUSHROOM_SHRIEKER].d_attr;
+	p_ptr->r_char[RI_MUSHROOM_YELLOW] = i;
+	p_ptr->r_attr[RI_MUSHROOM_YELLOW] = r_info[RI_MUSHROOM_YELLOW].d_attr;
+	p_ptr->r_char[RI_MUSHROOM_SPOTTED] = i;
+	p_ptr->r_attr[RI_MUSHROOM_SPOTTED] = r_info[RI_MUSHROOM_SPOTTED].d_attr;
+	p_ptr->r_char[RI_MUSHROOM_PURPLE] = i;
+	p_ptr->r_attr[RI_MUSHROOM_PURPLE] = r_info[RI_MUSHROOM_PURPLE].d_attr;
+	p_ptr->r_char[RI_MUSHROOM_CLEAR] = i;
+	p_ptr->r_attr[RI_MUSHROOM_CLEAR] = r_info[RI_MUSHROOM_CLEAR].d_attr;
+	p_ptr->r_char[RI_MUSHROOM_MAGIC] = i;
+	p_ptr->r_attr[RI_MUSHROOM_MAGIC] = r_info[RI_MUSHROOM_MAGIC].d_attr;
+	/* Not shrooms (and also not really any other 'plants' we know):
+	   Shambling mound, Flamer of Tzeentch, Corpser, Memory Moss */
+	/* p_ptr->r_char[RI_THREAD] = i; // these are mycorrhiza, ie Fungus+Plant symbiont
+	p_ptr->r_attr[RI_THREAD] = r_info[RI_THREAD].d_attr; */
+	p_ptr->r_char[RI_MUSHROOM_UNMAGIC] = i;
+	p_ptr->r_attr[RI_MUSHROOM_UNMAGIC] = r_info[RI_MUSHROOM_UNMAGIC].d_attr;
+	/* p_ptr->r_char[RI_MANDRAGORA] = i;
+	p_ptr->r_attr[RI_MANDRAGORA] = r_info[RI_MANDRAGORA].d_attr; */
 #endif
+
 	//coins (creeping coins)
-	p_ptr->r_char[85] = p_ptr->d_char[lookup_kind(TV_GOLD, 1)];
-	p_ptr->r_attr[85] = r_info[85].d_attr;
-	p_ptr->r_char[117] = p_ptr->d_char[lookup_kind(TV_GOLD, 2)];
-	p_ptr->r_attr[117] = r_info[117].d_attr;
-	p_ptr->r_char[195] = p_ptr->d_char[lookup_kind(TV_GOLD, 10)];
-	p_ptr->r_attr[195] = r_info[195].d_attr;
-	p_ptr->r_char[239] = p_ptr->d_char[lookup_kind(TV_GOLD, 16)];
-	p_ptr->r_attr[239] = r_info[239].d_attr;
-	p_ptr->r_char[423] = p_ptr->d_char[lookup_kind(TV_GOLD, 18)];
-	p_ptr->r_attr[423] = r_info[423].d_attr;
+	p_ptr->r_char[RI_CCOINS_COPPER] = p_ptr->d_char[lookup_kind(TV_GOLD, SV_GOLD_COPPER)];
+	p_ptr->r_attr[RI_CCOINS_COPPER] = r_info[RI_CCOINS_COPPER].d_attr;
+	p_ptr->r_char[RI_CCOINS_SILVER] = p_ptr->d_char[lookup_kind(TV_GOLD, SV_GOLD_SILVER)];
+	p_ptr->r_attr[RI_CCOINS_SILVER] = r_info[RI_CCOINS_SILVER].d_attr;
+	p_ptr->r_char[RI_CCOINS_GOLD] = p_ptr->d_char[lookup_kind(TV_GOLD, SV_GOLD_GOLD)];
+	p_ptr->r_attr[RI_CCOINS_GOLD] = r_info[RI_CCOINS_GOLD].d_attr;
+	p_ptr->r_char[RI_CCOINS_MITHRIL] = p_ptr->d_char[lookup_kind(TV_GOLD, SV_GOLD_MITHRIL)];
+	p_ptr->r_attr[RI_CCOINS_MITHRIL] = r_info[RI_CCOINS_MITHRIL].d_attr;
+	p_ptr->r_char[RI_CCOINS_ADAMANTITE] = p_ptr->d_char[lookup_kind(TV_GOLD, SV_GOLD_ADAMANTITE)];
+	p_ptr->r_attr[RI_CCOINS_ADAMANTITE] = r_info[RI_CCOINS_ADAMANTITE].d_attr;
 
 	p_ptr->custom_font = custom_font;
 }
