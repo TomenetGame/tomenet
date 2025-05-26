@@ -410,7 +410,9 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 			case DI_THE_ORC_CAVE:
 			case DI_OLD_FOREST:
 			case DI_MIRKWOOD:
+			case DI_HALLS_OF_MANDOS: /* Also Halls of Mandos? */
 				if (distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 20) continue;
+				break;
 			}
 		}
 
