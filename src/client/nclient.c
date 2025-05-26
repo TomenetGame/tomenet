@@ -6233,7 +6233,7 @@ void apply_auto_pickup(char *item_name) {
 	char *c;
 
 	c = strchr(item_name, '{');
-	unowned = (c && ((c[1] >= '0' && c[1] <= 9) || c[1] == '?'));
+	unowned = (c && ((c[1] >= '0' && c[1] <= '9') || c[1] == '?'));
 
 	if ((!c_cfg.auto_pickup && !c_cfg.auto_destroy) ||
 	    (c_cfg.autoloot_dunonly && !p_ptr->wpos.wz) ||
