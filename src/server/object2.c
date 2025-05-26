@@ -6198,7 +6198,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 	/* Base chance of being "good" */
 	/* Hack: Way too many fire/waterproof books in high level towns! */
-	if (o_ptr->tval == TV_BOOK) chance1 = 10;
+	if (o_ptr->tval == TV_BOOK && !is_library_book(o_ptr->sval)) chance1 = 10;
 	else chance1 = lev + 10;
 
 	/* Maximal chance of being "good" */
