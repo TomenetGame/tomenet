@@ -5386,7 +5386,7 @@ void check_experience(int Ind) {
 			msg_print(Ind, "\374\377G(Press '\377gm\377G' key and choose '\377guse innate power\377G' to polymorph.)");
 		}
 #ifdef VAMPIRIC_MIST
-		if (old_lev < VAMPIRE_XFORM_LEVEL_MIST && p_ptr->lev >= VAMPIRE_XFORM_LEVEL_MIST) msg_print(Ind, "\374\377GYou are now able to turn into vampiric mist (#365)!");
+		if (old_lev < VAMPIRE_XFORM_LEVEL_MIST && p_ptr->lev >= VAMPIRE_XFORM_LEVEL_MIST) msg_format(Ind, "\374\377GYou are now able to turn into vampiric mist (#%d)!", RI_VAMPIRIC_MIST);
 #endif
 		break;
 #ifdef ENABLE_MAIA
@@ -5484,23 +5484,23 @@ void check_experience(int Ind) {
 	case CLASS_DRUID: /* Forms gained by Druids */
 		/* compare mimic_druid in defines.h */
 		if (old_lev < 5 && p_ptr->lev >= 5) {
-			msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
+			msg_format(Ind, "\374\377GYou learn how to change into a Cave Bear (#%d) and Panther (#%d)", RI_CAVE_BEAR, RI_PANTHER);
 			msg_print(Ind, "\374\377G(Press '\377gm\377G' key and choose '\377guse innate power\377G' to polymorph.)");
 		}
 		if (old_lev < 10 && p_ptr->lev >= 10) {
-			msg_print(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#191) and Yeti (#154)");
+			msg_format(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#%d) and Yeti (#%d)", RI_GRIZZLY_BEAR, RI_YETI);
 			msg_print(Ind, "\374\377GYou learn how to walk among your brothers through deep forest.");
 		}
-		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to change into a Griffon (#279) and Sasquatch (#343)");
-		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn how to change into a Werebear (#414), Great Eagle (#335), Aranea (#963) and Great White Shark (#898)");
-		if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn how to change into a Wyvern (#334) and Multi-hued Hound (#513)");
-		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)");
-		if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\374\377GYou learn how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
-		if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740)");
-		if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\374\377GYou learn how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
-		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn how to change into a Gorm (#1069), Jabberwock (#778) and Greater Kraken (775)");//Leviathan (#782)");
-		if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\374\377GYou learn how to change into a Horned Serpent (#1131)");
-		if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
+		if (old_lev < 15 && p_ptr->lev >= 15) msg_format(Ind, "\374\377GYou learn how to change into a Griffon (#%d) and Sasquatch (#%d)", RI_GRIFFON, RI_SASQUATCH);
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_format(Ind, "\374\377GYou learn how to change into a Werebear (#%d), Great Eagle (#%d), Aranea (#%d) and Great White Shark (#%d)", RI_WEREBEAR, RI_GREAT_EAGLE, RI_ARANEA, RI_GREAT_WHITE_SHARK);
+		if (old_lev < 25 && p_ptr->lev >= 25) msg_format(Ind, "\374\377GYou learn how to change into a Wyvern (#%d) and Multi-hued Hound (#%d)", RI_WYVERN, RI_HOUND_MULTI);
+		if (old_lev < 30 && p_ptr->lev >= 30) msg_format(Ind, "\374\377GYou learn how to change into a 5-h-Hydra (#%d), Minotaur (#%d) and Giant Squid (#%d)", RI_HYDRA_5H, RI_MINOTAUR, RI_GIANT_SQUID);
+		if (old_lev < 35 && p_ptr->lev >= 35) msg_format(Ind, "\374\377GYou learn how to change into a 7-h-Hydra (#%d), Elder Aranea (#%d) and Plasma Hound (#%d)", RI_HYDRA_7H, RI_ELDER_ARANEA, RI_HOUND_PLASMA);
+		if (old_lev < 40 && p_ptr->lev >= 40) msg_format(Ind, "\374\377GYou learn how to change into an 11-h-Hydra (#%d), Giant Roc (#%d) and Lesser Kraken (#%d)", RI_HYDRA_11H, RI_GIANT_ROC, RI_LESSER_KRAKEN);
+		if (old_lev < 45 && p_ptr->lev >= 45) msg_format(Ind, "\374\377GYou learn how to change into a Maulotaur (#%d) and Winged Horror (#%d)", RI_MAULOTAUR, RI_WINGED_HORROR);
+		if (old_lev < 50 && p_ptr->lev >= 50) msg_format(Ind, "\374\377GYou learn how to change into a Gorm (#%d), Jabberwock (#%d) and Greater Kraken (#%d)", RI_GORM, RI_JABBERWOCK, RI_GREATER_KRAKEN);
+		if (old_lev < 55 && p_ptr->lev >= 55) msg_format(Ind, "\374\377GYou learn how to change into a Horned Serpent (#%d)", RI_HORNED_SERPENT);
+		if (old_lev < 60 && p_ptr->lev >= 60) msg_format(Ind, "\374\377GYou learn how to change into a Firebird (#%d)", RI_FIREBIRD);
 		break;
 	case CLASS_SHAMAN:
 		if (old_lev < 20 && p_ptr->lev >= 20

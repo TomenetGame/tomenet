@@ -1561,7 +1561,11 @@
 #define RI_NOVICE_MAGE_F	93
 #define RI_ROBIN_HOOD		138	/* DROP_CHOSEN */
 #define RI_NURGLING		139
+#define RI_YETI			154	/* Druid form */
+#define RI_CAVE_BEAR		160	/* Druid form */
 #define RI_BLUE_HORROR		189
+#define RI_GRIZZLY_BEAR		191	/* Druid form */
+#define RI_PANTHER		198	/* Druid form */
 #define RI_OLD_MAN_WILLOW	206
 #define RI_HIPPOCAMPUS		207
 #define RI_PINK_HORROR		242	/* DROP_CHOSEN */
@@ -1569,21 +1573,30 @@
 #define RI_UFTHAK		260
 #define RI_GOLEM_CLAY		261	/* For translating to custom golem_creation visuals */
 #define RI_BEARER_NURGLE	268
+#define RI_GRIFFON		279	/* Druid form */
 #define RI_WATER_SPIRIT		303
 #define RI_DOOR_MIMIC		311
+#define RI_WYVERN		334	/* Druid form */
+#define RI_GREAT_EAGLE		335	/* Druid form */
+#define RI_SASQUATCH		343	/* Druid form */
 #define RI_ARCH_VILE		357
-#define RI_VAMPIRIC_MIST	365
+#define RI_VAMPIRIC_MIST	365	/* Vampire form */
 #define RI_GOLEM_IRON		367	/* For translating to custom golem_creation visuals */
 #define RI_AZOG			373
-#define RI_VAMPIRE_BAT		391
+#define RI_VAMPIRE_BAT		391	/* Vampire form */
+#define RI_WEREBEAR		414	/* Druid form */
 #define RI_BEAST_NURGLE		422
+#define RI_HYDRA_5H		440	/* Druid form */
 #define RI_SEAHORSE		443
 #define RI_GOLEM_MITHRIL	464	/* For translating to custom golem_creation visuals */
 #define RI_SHELOB		481
+#define RI_GIANT_SQUID		482	/* Druid form */
 #define RI_NINJA		485
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
 #define RI_WATER_TROLL		509
 #define RI_WATER_ELEMENTAL	512
+#define RI_HOUND_MULTI		513	/* Druid form */
+#define RI_INVISIBLE_STALKER	514	/* Shaman form (forbidden) */
 #define RI_WATCHER_IN_THE_WATER	517
 #define RI_BLOODLETTER		523
 #define RI_HALFLING_SLINGER	539	/* Black Breath */
@@ -1592,24 +1605,34 @@
 #define RI_BODAK		566
 #define RI_MEZZODAEMON		568
 #define RI_ELDER_THING		569
+#define RI_HYDRA_7H		614	/* Druid form */
+#define RI_GIANT_ROC		640	/* Druid form */
+#define RI_MINOTAUR		641	/* Druid form */
 #define RI_BYAKHEE		659
 #define RI_EOL			660	/* DROP_CHOSEN */
 #define RI_SPAWN_OF_TSATHOGGUA	662
+#define RI_HYDRA_11H		688	/* Druid form */
 #define RI_WARRIOR_DAWN		693
 #define RI_SMAUG		697
 #define RI_STORMBRINGER		698	/* DROP_CHOSEN */
+#define RI_WINGED_HORROR	704	/* Druid form */
+#define RI_MAULOTAUR		723	/* Druid form */
+#define RI_HOUND_PLASMA		726	/* Druid form */
 #define RI_SANTA1		733	/* terror santa from hell */
 #define RI_KING_IN_YELLOW	735
 #define RI_GUO			736
+#define RI_LESSER_KRAKEN	740	/* Druid form */
 #define RI_ARTSI		770	/* DROP_CHOSEN */
 #define RI_SARUMAN		771	/* DROP_CHOSEN */
+#define RI_GREATER_KRAKEN	775	/* Druid form */
+#define RI_JABBERWOCK		778	/* Druid form */
 #define RI_VLAD_DRACULA		780	/* DROP_CHOSEN */
-#define RI_TRON			789
+#define RI_TRON			789	/* Druid form */
 #define RI_MARDRA		791	/* DROP_CHOSEN */
 #define RI_BLOODTHIRSTER	758	/* for ENABLE_OHERETICISM but also for blood fountains >:) */
 #define RI_FEAGWATH		804
 #define RI_PIT_FIEND		812
-#define RI_UNMAKER		815	/* prevent live spawn */
+#define RI_UNMAKER		815	/* prevent live spawn; Shaman form (forbidden) */
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
 #define RI_MEPHISTOPHELES	831	/* DROP_CHOSEN */
 #define RI_OREMORJ		843	/* note: jokeangband */
@@ -1622,6 +1645,7 @@
 #define RI_MERMAID		882
 #define RI_EYE_OF_THE_DEEP	893
 #define RI_MURK_DWELLER		894
+#define RI_ARANEA		898	/* Druid form */
 #define RI_AQUATIC_KOBOLD	900
 #define RI_SCRAG		902
 #define RI_WATER_NAGA		919
@@ -1630,6 +1654,8 @@
 #define RI_IXITXACHITL		925
 #define RI_IXITXACHITL_PRIEST	926
 #define RI_VAMPIRIC_IXITXACHITL	927
+#define RI_GREAT_WHITE_SHARK	963	/* Druid form */
+#define RI_ELDER_ARANEA		964	/* Druid form */
 
 /* The Nazgul */
 #define RI_UVATHA		946
@@ -1644,7 +1670,7 @@
 
 #define RI_GORLIM		961	/* DROP_CHOSEN */
 #define RI_WIGHT_KING		971
-#define RI_DEATH_ORB		975
+#define RI_DEATH_ORB		975	/* Shaman form (forbidden) */
 #define RI_AR_PHARAZON		980
 #define RI_ULFANG		990
 #define RI_NALFESHNEE		994
@@ -1661,6 +1687,7 @@
 #define RI_MICHAEL		1074
 #define RI_LIVING_LIGHTNING	1147
 #define RI_HELLRAISER		1067
+#define RI_GORM			1069	/* Druid form */
 #define RI_NETHER_GUARD		1068
 #define RI_DOR			1085
 #define RI_PUMPKIN		1088	/* new: max hp version is now _the_ (only) Pumpkin form - its HP get downscaled live on spawn according to floor level. */
@@ -1673,6 +1700,8 @@
 #define RI_DARKLING		1105	/* ENABLE_MAIA */
 #define RI_BAD_LUCK_BAT		1114
 #define RI_TARGET_DUMMY2	1126	/* snow-covered version */
+#define RI_FIREBIRD		1127	/* Druid form */
+#define RI_HORNED_SERPENT	1131	/* Druid form */
 #define RI_PANDA		1135
 #define RI_ROBIN		1142
 #define RI_TARGET_DUMMYA1	1144	/* normal armoured version */
@@ -9415,7 +9444,6 @@ extern int PlayerUID;
 /* Masks for restricted mimicry */
 /*	Shaman: Animals, Giants, Dragon(rider)s, Elementals/Spirits, Ghosts.
 	No undead/nonliving material beings; no Invisible Stalker/Unmaker/Death Orb. */
-/*	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_info[ridx].d_char == 'O')) || \ */
 #define mimic_shaman(ridx)	\
 	(((ridx) == 0) || \
 	(((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) || \
@@ -9424,26 +9452,23 @@ extern int PlayerUID;
 	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || (r_info[ridx].d_char == 'X') || \
 	(r_info[ridx].d_char == 'g') || (r_info[ridx].d_char == 'A'))
 #define mimic_shaman_E(ridx)	\
-	((r_info[ridx].d_char == 'E') && !((ridx) == 514 || (ridx) == 815 || (ridx) == 975)) //invisible stalker, unmaker, death orb
+	((r_info[ridx].d_char == 'E') && !((ridx) == RI_INVISIBLE_STALKER || (ridx) == RI_UNMAKER || (ridx) == RI_DEATH_ORB))
 #define mimic_shaman_fulleq(c)	(strchr("EGX", c))
 /*	Druid: Selected Animals and animal-similar creatures. */
 #define mimic_druid(ridx, plv)	\
 	(((ridx) == 0) || \
-	((plv) >= 5 && ((ridx) == 160 || (ridx) == 198)) || \
-	((plv) >= 10 && ((ridx) == 191 || (ridx) == 154)) || \
-	((plv) >= 15 && ((ridx) == 279 || (ridx) == 343)) || \
-	((plv) >= 20 && ((ridx) == 414 || (ridx) == 335 || (ridx) == 898 || (ridx) == 963)) || \
-	((plv) >= 25 && ((ridx) == 334 || (ridx) == 513)) || \
-	((plv) >= 30 && ((ridx) == 440 || (ridx) == 641 || (ridx) == 482)) || \
-	((plv) >= 35 && ((ridx) == 614 || (ridx) == 726 || (ridx) == 964)) || \
-	((plv) >= 40 && ((ridx) == 688 || (ridx) == 640 || (ridx) == 740)) || \
-	((plv) >= 45 && ((ridx) == 723 || (ridx) == 704)) || /* || (ridx) == 716 || \ */ \
-	((plv) >= 50 && ((ridx) == 1069 || (ridx) == 778 || (ridx) == 775)) || /* 782 */ \
-	((plv) >= 55 && ((ridx) == 1131)) || \
-	((plv) >= 60 && ((ridx) == 1127)))
-	/* possible postking additions - guiding ideas:
-	   fire immunity for NR; very maybe pass wall for comfort.
-	    1127 firebird, 739 ethereal hound? */
+	((plv) >= 5 && ((ridx) == RI_CAVE_BEAR || (ridx) == RI_PANTHER)) || \
+	((plv) >= 10 && ((ridx) == RI_GRIZZLY_BEAR || (ridx) == RI_YETI)) || \
+	((plv) >= 15 && ((ridx) == RI_GRIFFON || (ridx) == RI_SASQUATCH)) || \
+	((plv) >= 20 && ((ridx) == RI_WEREBEAR || (ridx) == RI_GREAT_EAGLE || (ridx) == RI_ARANEA || (ridx) == RI_GREAT_WHITE_SHARK)) || \
+	((plv) >= 25 && ((ridx) == RI_WYVERN || (ridx) == RI_HOUND_MULTI)) || \
+	((plv) >= 30 && ((ridx) == RI_HYDRA_5H || (ridx) == RI_MINOTAUR || (ridx) == RI_GIANT_SQUID)) || \
+	((plv) >= 35 && ((ridx) == RI_HYDRA_7H || (ridx) == RI_ELDER_ARANEA || (ridx) == RI_HOUND_PLASMA)) || \
+	((plv) >= 40 && ((ridx) == RI_HYDRA_11H || (ridx) == RI_GIANT_ROC || (ridx) == RI_LESSER_KRAKEN)) || \
+	((plv) >= 45 && ((ridx) == RI_MAULOTAUR || (ridx) == RI_WINGED_HORROR)) || \
+	((plv) >= 50 && ((ridx) == RI_GORM || (ridx) == RI_JABBERWOCK || (ridx) == RI_GREATER_KRAKEN)) || \
+	((plv) >= 55 && ((ridx) == RI_HORNED_SERPENT)) || \
+	((plv) >= 60 && ((ridx) == RI_FIREBIRD)))
 /* for vampires, who learn to transform into a vampire bat and back for transportation - C. Blue */
 #ifndef VAMPIRIC_MIST
  #define mimic_vampire(ridx, plv)	\

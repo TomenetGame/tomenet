@@ -2171,7 +2171,7 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_R_NETH, /* Moderate bonus to Nether, being the undead... */
 			'+', 0,
 			'%', 120, },
-		{ SKILL_MIMIC, /* polymorph to vampire bat and maybe vampiric mist */
+		{ SKILL_MIMIC, /* polymorph to vampire bat and vampiric mist */
 			'+', 1000,
 			'%', 0, },
 		{ SKILL_ANTIMAGIC, /* keep mimicry usable for bat form. vampires believe! for now at least... */

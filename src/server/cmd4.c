@@ -4130,20 +4130,20 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	if (p_ptr->pclass == CLASS_DRUID) { /* compare mimic_druid in defines.h */
 		if (lev >= 5) {
 			msg_print(Ind, "\377BAs a druid you have learned how to shapeshift into a...");
-			msg_format(Ind, "\377B Cave Bear (#160) and Panther (#198)%s", lev >= 10 ? "," : "");
+			msg_format(Ind, "\377B Cave Bear (#%d) and Panther (#%d)%s", RI_CAVE_BEAR, RI_PANTHER, lev >= 10 ? "," : "");
 		}
-		if (lev >= 10) msg_format(Ind, "\377B Grizzly Bear (#191) and Yeti (#154)%s", lev >= 15 ? "," : ".");
-		if (lev >= 15) msg_format(Ind, "\377B Griffon (#279) and Sasquatch (#343)%s", lev >= 20 ? "," : ".");
-		if (lev >= 20) msg_format(Ind, "\377B Werebear (#414), Great Eagle (#335), Aranea (#963), Great White Shark (#898)%s", lev >= 25 ? "," : ".");
-		if (lev >= 25) msg_format(Ind, "\377B Wyvern (#334) and Multi-hued Hound (#513)%s", lev >= 30 ? "," : ".");
-		if (lev >= 30) msg_format(Ind, "\377B 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)%s", lev >= 35 ? "," : ".");
-		if (lev >= 35) msg_format(Ind, "\377B 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)%s", lev >= 40 ? "," : ".");
-		if (lev >= 40) msg_format(Ind, "\377B an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)%s", lev >= 45 ? "," : ".");
-		if (lev >= 45) msg_format(Ind, "\377B Maulotaur (#723) and Winged Horror (#704)%s", lev >= 50 ? "," : ".");// and Behemoth (#716)");
-		if (lev >= 50) msg_format(Ind, "\377B Gorm (#1069), Jabberwock (#778) and Greater Kraken (#775)%s", lev >= 55 ? "," : ".");// and Leviathan (#782)");
+		if (lev >= 10) msg_format(Ind, "\377B Grizzly Bear (#%d) and Yeti (#%d)%s", RI_GRIZZLY_BEAR, RI_YETI, lev >= 15 ? "," : ".");
+		if (lev >= 15) msg_format(Ind, "\377B Griffon (#%d) and Sasquatch (#%d)%s", RI_GRIFFON, RI_SASQUATCH, lev >= 20 ? "," : ".");
+		if (lev >= 20) msg_format(Ind, "\377B Werebear (#%d), Great Eagle (#%d), Aranea (#%d), Great White Shark (#%d)%s", RI_WEREBEAR, RI_GREAT_EAGLE, RI_ARANEA, RI_GREAT_WHITE_SHARK, lev >= 25 ? "," : ".");
+		if (lev >= 25) msg_format(Ind, "\377B Wyvern (#%d) and Multi-hued Hound (#%d)%s", RI_WYVERN, RI_HOUND_MULTI, lev >= 30 ? "," : ".");
+		if (lev >= 30) msg_format(Ind, "\377B 5-h-Hydra (#%d), Minotaur (#%d) and Giant Squid (#%d)%s", RI_HYDRA_5H, RI_MINOTAUR, RI_GIANT_SQUID, lev >= 35 ? "," : ".");
+		if (lev >= 35) msg_format(Ind, "\377B 7-h-Hydra (#%d), Elder Aranea (#%d) and Plasma Hound (#%d)%s", RI_HYDRA_7H, RI_ELDER_ARANEA, RI_HOUND_PLASMA, lev >= 40 ? "," : ".");
+		if (lev >= 40) msg_format(Ind, "\377B an 11-h-Hydra (#%d), Giant Roc (#%d) and Lesser Kraken (#%d)%s", RI_HYDRA_11H, RI_GIANT_ROC, RI_LESSER_KRAKEN, lev >= 45 ? "," : ".");
+		if (lev >= 45) msg_format(Ind, "\377B Maulotaur (#%d) and Winged Horror (#%d)%s", RI_MAULOTAUR, RI_WINGED_HORROR, lev >= 50 ? "," : ".");// and Behemoth (#%d)", RI_BEHEMOTH);
+		if (lev >= 50) msg_format(Ind, "\377B Gorm (#%d), Jabberwock (#%d) and Greater Kraken (#%d)%s", RI_GORM, RI_JABBERWOCK, RI_GREATER_KRAKEN, lev >= 55 ? "," : ".");// and Leviathan (#%d)", RI_LEVIATHAN);
 		/* Don't spam just 1 line for 1 single form -_- */
-		if (lev >= 60) msg_print(Ind, "\377B Horned Serpent (#1131) and Firebird (#1127).");
-		else if (lev >= 55) msg_print(Ind, "\377B Horned Serpent (#1131).");
+		if (lev >= 60) msg_format(Ind, "\377B Horned Serpent (#%d) and Firebird (#%d).", RI_HORNED_SERPENT, RI_FIREBIRD);
+		else if (lev >= 55) msg_format(Ind, "\377B Horned Serpent (#%d).", RI_HORNED_SERPENT);
 	}
 
 	if (p_ptr->tim_mimic)
@@ -4151,9 +4151,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		    r_name + r_info[p_ptr->tim_mimic_what].name, p_ptr->tim_mimic_what, p_ptr->tim_mimic);
 
 	if (p_ptr->prace == RACE_VAMPIRE) {
-		if (lev >= VAMPIRE_XFORM_LEVEL_BAT) msg_print(Ind, "\377BYou are able to change into a vampire bat (#391).");
+		if (lev >= VAMPIRE_XFORM_LEVEL_BAT) msg_format(Ind, "\377BYou are able to change into a vampire bat (#%d).", RI_VAMPIRE_BAT);
 #ifdef VAMPIRIC_MIST
-		if (lev >= VAMPIRE_XFORM_LEVEL_MIST) msg_print(Ind, "\377BYou are able to change into vampiric mist (#365).");
+		if (lev >= VAMPIRE_XFORM_LEVEL_MIST) msg_format(Ind, "\377BYou are able to change into vampiric mist (#%d).", RI_VAMPIRIC_MIST);
 #endif
 	}
 
