@@ -2196,9 +2196,9 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	}
 	/* Warriors */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && r_ptr->level >= 20) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; } /* Skilled warriors */
-	if (p_ptr->body_monster == 239) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; } /* Berserker */
-	if (p_ptr->body_monster == 1058 || p_ptr->body_monster == 1059) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; } /* (Grand) Swordsmaster */
-	if (p_ptr->body_monster == 532) { /* Dagashi */
+	if (p_ptr->body_monster == RI_BERSERKER) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; }
+	if (p_ptr->body_monster == RI_SWORDSMASTER || p_ptr->body_monster == RI_GRAND_SWORDSMASTER) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }
+	if (p_ptr->body_monster == RI_DAGASHI) {
 		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL;
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
@@ -2212,8 +2212,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
 	/* Monks */
-	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Jade Monk */
-	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Ivory Monk */
+	if (p_ptr->body_monster == RI_JADE_MONK) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Jade Monk */
+	if (p_ptr->body_monster == RI_IVORY_MONK) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Ivory Monk */
 
 
 
@@ -2335,15 +2335,15 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	/* Racial boni depending on the form's race */
 	switch (p_ptr->body_monster) {
 		/* Bats get feather falling */
-		case 37:	case 114:	case 187:	case 235:	case 351:
-		case 377:	case RI_VAMPIRE_BAT:	case 406:	case 484:	case 968:
+		case RI_FRUIT_BAT:	case RI_BROWN_BAT:	case RI_TAN_BAT:	case RI_MONGBAT:	case RI_DRAGON_BAT_BLUE:
+		case RI_DRAGON_BAT_RED:	case RI_VAMPIRE_BAT:	case RI_DISE_BAT:	case RI_DOOMBAT:	case RI_BAT_OF_GORGOROTH:
 			p_ptr->feather_fall = TRUE;
 			csheet_boni->cb[5] |= CB6_RFFAL;
 			/* Vampire bats are vampiric */
 			if (p_ptr->body_monster == RI_VAMPIRE_BAT) { p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP; }
 #if 0 /* only real/chauvesouris ones for now, or spider/crow/wild cat forms would be obsolete! */
 			/* Fruit bats get some life leech */
-			if (p_ptr->body_monster == 37 && p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
+			if (p_ptr->body_monster == RI_FRUIT_BAT && p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
 #endif
 			break;
 
@@ -2364,50 +2364,52 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 				//p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni->cb[10] |= CB11_ACOLD;
 			}
 			break;
-		case 927: /* Vampiric ixitxachitl is vampiric */
+		case RI_VAMPIRIC_IXITXACHITL: /* Vampiric ixitxachitl is vampiric */
 			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
 			csheet_boni->cb[6] |= CB7_RVAMP;
 			break;
 
-		/* Elves get resist_lite, Dark-Elves get resist_dark */
-		case 122:	case 400:	case 178:	case 182:	case 226:
-		case 234:	case 348:	case 375:	case RI_NIGHTBLADE:	case 657:
+		/* (Non-aquatic) Elves get resist_lite, Dark-Elves get resist_dark */
+		case RI_DARK_ELF:		case RI_DARK_ELVEN_DRUID:	case RI_DARK_ELVEN_MAGE:
+		case RI_DARK_ELVEN_WARRIOR:	case RI_DARK_ELVEN_PRIEST:
+		case RI_DRIDER:			case RI_DARK_ELVEN_LORD:	case RI_DARK_ELVEN_WARLOCK:
+		case RI_NIGHTBLADE:		case RI_DARK_ELVEN_SORCEROR:
 			p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
 			break;
-		case 864:
+		case RI_ELVEN_ARCHER: // PET flag -> doesn't exist
 			p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE;
 			break;
 
 		/* Hobbits/Halflings get the no-shoes-bonus */
-		case 74:	case 539:
+		case RI_SLHOBBIT:	case RI_HALFLING_SLINGER:
 			if (!p_ptr->inventory[INVEN_FEET].k_idx)
 				{ p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; }
 			break;
 
 		/* Gnomes get free_act */
-		case 258:	case 281:
+		case RI_CHEERFUL_LEPRECHAUN:	case RI_GNOME_MAGE:
 			p_ptr->free_act = TRUE; csheet_boni->cb[4] |= CB5_RPARA;
 			break;
 
 		/* Dwarves get res_blind & climbing ability */
-		case 111:	case 865:
+		case RI_NIBELUNG:	case RI_DWARVEN_WARRIOR: //PET
 			p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND;
 			if (p_ptr->lev >= 30) { p_ptr->climb = TRUE; csheet_boni->cb[5] |= CB6_RCLMB; }
 			break;
 
 		/* High-elves resist_lite & see_inv */
-		case 945:
+		case RI_HE_RANGER: //PET
 			p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE;
 			p_ptr->see_inv = TRUE; csheet_boni->cb[4] |= CB5_RSINV;
 			break;
 
 		/* Yeeks get feather_fall */
-		case 52:	case 141:	case 179:	case 224:
+		case RI_BLUE_YEEK:	case RI_BROWN_YEEK:	case RI_KAMIKAZE_YEEK:	case RI_MASTER_YEEK:
 			p_ptr->feather_fall = TRUE; csheet_boni->cb[5] |= CB6_RFFAL;
 			break;
 
 		/* Ents */
-		case 708:
+		case RI_ENT: // PET
 			p_ptr->slow_digest = TRUE; csheet_boni->cb[6] |= CB7_RFOOD;
 			//if (p_ptr->prace != RACE_ENT)
 			p_ptr->pspeed -= 2;
@@ -2419,12 +2421,12 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			break;
 
 		/* Ghosts get additional boni - undead see below */
-		case 65:	case 100:	case 133:	case 152:	case 231:
-		case 385:	case 394:	case 477:	case 507:	case 508:
-		case 533:	case 534:	case 553:	case 630:	case 665:
-		case 667:	case 690:	case 774:	case 895:
-		case 929:	case 930:	case 931:	case 932:	case 933:
-		case 967:	case 973:	case 974:
+		case RI_POLTERGEIST:	case RI_GGGHOST:	case RI_LOST_SOUL:	case RI_PHANTOM_WARRIOR:	case RI_MOANING_SPIRIT:
+		case RI_PHANTOM_BEAST:	case RI_BANSHEE:	case RI_GHOST:		case RI_SHADE:			case RI_SPECTRE:
+		case RI_HEADLESS_GHOST:	case RI_DREAD:		case RI_PHANTOM:	case RI_SPIRIT_TROLL:		case RI_SHADOW:
+		case RI_DREAD_F:	case RI_DREADMASTER:	case RI_DREADLORD:	case RI_DROWNED_SOUL:
+		case RI_CHILD_SPIRIT:	case RI_YOUNG_SPIRIT:	case RI_MATURE_SPIRIT:	case RI_EXP_SPIRIT:		case RI_WISE_SPIRIT: // <- all PET
+		case RI_NOV_POSSESSOR:	case RI_EXP_POSSESSOR:	case RI_OLD_POSSESSOR: // <- all PET
 			/* I'd prefer ghosts having a radius of awareness, like a 'pseudo-light source',
 			since atm ghosts are completely blind in the dark :( -C. Blue */
 			p_ptr->see_inv = TRUE; csheet_boni->cb[4] |= CB5_RSINV;
@@ -2432,24 +2434,24 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			break;
 
 		/* Vampires have VAMPIRIC attacks */
-		case 432:	case 520:	case 521:	case 623:	case 989:
+		case RI_VAMPIRE:	case RI_MASTER_VAMPIRE:	case RI_ORIENTAL_VAMPIRE:	case RI_VAMPIRE_LORD:	case RI_ELDER_VAMPIRE:
 			if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
 			p_ptr->suscep_lite = TRUE; csheet_boni->cb[2] |= CB3_SLITE;
 			break;
 
 		/* Angels resist light, blindness and poison (usually immunity) */
-		case 417:	case 456:	case 511:	case 605:
-		case 661:	case 1071:	case 1072:	case 1073:
+		case RI_ANGEL:	case RI_ARCHANGEL:	case RI_CHERUB:		case RI_SERAPH:
+		case RI_ARCHON:	case RI_SKY_BLADE:	case RI_SOLAR_BLADE:	case RI_STAR_BLADE:
 			p_ptr->see_inv = TRUE; csheet_boni->cb[4] |= CB5_RSINV;
 			__attribute__ ((fallthrough));
 		/* Fallen Angel */
-		case 652:
+		case RI_FALLEN_ANGEL:
 			p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND;
 			break;
 		/* Mists/fumes have feather falling */
 		//(note: mist giant and weird fume already have CAN_FLY even, covering FF)
 		/* Dark mist */
-		case 1064:
+		case RI_DARK_MIST:
 			p_ptr->feather_fall = TRUE; csheet_boni->cb[5] |= CB6_RFFAL;
 			p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE;
 			//note: we use ff+pt combo instead of lev, so they can't easily pass water!

@@ -595,8 +595,8 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 			/* note: this check is redundant, because bats actually DO have a torso atm!
 			   funnily, native fruit bat players do NOT have one without this option o_O. */
 			switch (p_ptr->body_monster) {
-			case 37: case 114: case 187: case 235: case 351:
-			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
+			case RI_FRUIT_BAT: case RI_BROWN_BAT: case RI_TAN_BAT: case RI_MONGBAT: case RI_DRAGON_BAT_BLUE:
+			case RI_DRAGON_BAT_RED: case RI_VAMPIRE_BAT: case RI_DISE_BAT: case RI_DOOMBAT: case RI_BAT_OF_GORGOROTH:
 				body += 3;
 				break;
 			default:

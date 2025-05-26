@@ -1556,38 +1556,60 @@
 #define RI_FARMER_MAGGOT	8
 #define RI_LEPER		13
 #define RI_MUSHROOM_GREY	22	/* font mapping */
+#define RI_FRUIT_BAT		37	/* SKILL_MIMIC */
 #define RI_MUSHROOM_SHRIEKER	40	/* font mapping */
 #define RI_NOVICE_MAGE		46
 #define RI_MUSHROOM_YELLOW	47	/* font mapping */
+#define RI_BLUE_YEEK		52	/* SKILL_MIMIC */
 #define RI_SMEAGOL		63	/* DROP_CHOSEN */
+#define RI_POLTERGEIST		65	/* SKILL_MIMIC */
 #define RI_MUSHROOM_SPOTTED	72	/* font mapping */
 #define RI_SLHOBBIT		74	/* Black Breath */
 #define RI_CCOINS_COPPER	85	/* font mapping */
 #define RI_NOVICE_MAGE_F	93
+#define RI_GGGHOST		100	/* SKILL_MIMIC */
 #define RI_DEATH_SWORD		107	/* font mapping */
 #define RI_MUSHROOM_PURPLE	108	/* font mapping */
+#define RI_NIBELUNG		111	/* SKILL_MIMIC */
+#define RI_BROWN_BAT		114	/* SKILL_MIMIC */
 #define RI_CCOINS_SILVER	117	/* font mapping */
+#define RI_DARK_ELF		122	/* SKILL_MIMIC */
+#define RI_LOST_SOUL		133	/* SKILL_MIMIC */
 #define RI_ROBIN_HOOD		138	/* DROP_CHOSEN */
 #define RI_NURGLING		139
+#define RI_BROWN_YEEK		141	/* SKILL_MIMIC */
+#define RI_PHANTOM_WARRIOR	152	/* SKILL_MIMIC */
 #define RI_YETI			154	/* Druid form */
 #define RI_CAVE_BEAR		160	/* Druid form */
+#define RI_DARK_ELVEN_MAGE	178	/* SKILL_MIMIC */
+#define RI_KAMIKAZE_YEEK	179	/* SKILL_MIMIC */
+#define RI_DARK_ELVEN_WARRIOR	182	/* SKILL_MIMIC */
 #define RI_MUSHROOM_CLEAR	184	/* font mapping */
+#define RI_TAN_BAT		187	/* SKILL_MIMIC */
 #define RI_BLUE_HORROR		189
 #define RI_GRIZZLY_BEAR		191	/* Druid form */
 #define RI_CCOINS_GOLD		195	/* font mapping */
 #define RI_PANTHER		198	/* Druid form */
 #define RI_OLD_MAN_WILLOW	206	/* font mapping; music */
 #define RI_HIPPOCAMPUS		207
+#define RI_MASTER_YEEK		224	/* SKILL_MIMIC */
+#define RI_DARK_ELVEN_PRIEST	226	/* SKILL_MIMIC */
+#define RI_MOANING_SPIRIT	231	/* SKILL_MIMIC */
+#define RI_DRIDER		234	/* SKILL_MIMIC */
+#define RI_MONGBAT		235	/* SKILL_MIMIC */
 #define RI_CCOINS_MITHRIL	239	/* font mapping */
 #define RI_PINK_HORROR		242	/* DROP_CHOSEN */
 #define RI_SOFTWARE_BUG		246
 #define RI_TANGLEWEED		248	/* font mapping */
+#define RI_CHEERFUL_LEPRECHAUN	258	/* SKILL_MIMIC */
 #define RI_UFTHAK		260
 #define RI_GOLEM_CLAY		261	/* For translating to custom golem_creation visuals */
 #define RI_POISON_IVY		266	/* font mapping */
 #define RI_MUSHROOM_MAGIC	267	/* font mapping */
 #define RI_BEARER_NURGLE	268
 #define RI_GRIFFON		279	/* Druid form */
+#define RI_GNOME_MAGE		281	/* SKILL_MIMIC */
+#define RI_BERSERKER		293	/* SKILL_MIMIC */
 #define RI_WATER_SPIRIT		303
 #define RI_DOOR_MIMIC		311	/* font mapping */
 #define RI_GVFLYTRAP		317	/* font mapping */
@@ -1597,49 +1619,83 @@
 #define RI_GREAT_EAGLE		335	/* Druid form */
 #define RI_LIVINGSTONE		336	/* font mapping */
 #define RI_SASQUATCH		343	/* Druid form */
+#define RI_DARK_ELVEN_LORD	348	/* SKILL_MIMIC */
+#define RI_DRAGON_BAT_BLUE	351	/* SKILL_MIMIC */
 #define RI_ARCH_VILE		357
 #define RI_VAMPIRIC_MIST	365	/* Vampire form */
 #define RI_GOLEM_IRON		367	/* For translating to custom golem_creation visuals */
+#define RI_JADE_MONK		370	/* SKILL_MIMIC */
 #define RI_AZOG			373
+#define RI_DARK_ELVEN_WARLOCK	375	/* SKILL_MIMIC */
+#define RI_DRAGON_BAT_RED	377	/* SKILL_MIMIC */
+#define RI_PHANTOM_BEAST	385	/* SKILL_MIMIC */
 #define RI_VAMPIRE_BAT		391	/* Vampire form */
+#define RI_BANSHEE		394	/* SKILL_MIMIC */
 #define RI_XICLOTLAN		396	/* font mapping */
+#define RI_DARK_ELVEN_DRUID	400	/* SKILL_MIMIC */
+#define RI_DISE_BAT		406	/* SKILL_MIMIC */
 #define RI_WEREBEAR		414	/* Druid form */
+#define RI_ANGEL		417	/* SKILL_MIMIC */
 #define RI_HELLBLADE		420	/* font mapping */
 #define RI_BEAST_NURGLE		422
 #define RI_CCOINS_ADAMANTITE	423	/* font mapping */
 #define RI_ROPER		426	/* font mapping */
+#define RI_VAMPIRE		432	/* SKILL_MIMIC */
 #define RI_HYDRA_5H		440	/* Druid form */
 #define RI_SEAHORSE		443
 #define RI_LWALLMON		448	/* font mapping */
+#define RI_ARCHANGEL		456	/* SKILL_MIMIC */
 #define RI_CHAOS_TILE		458	/* font mapping */
 #define RI_GOLEM_MITHRIL	464	/* For translating to custom golem_creation visuals */
+#define RI_GHOST		477	/* SKILL_MIMIC */
 #define RI_SHELOB		481
 #define RI_GIANT_SQUID		482	/* Druid form */
+#define RI_DOOMBAT		484	/* SKILL_MIMIC */
 #define RI_NINJA		485
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
+#define RI_IVORY_MONK		492	/* SKILL_MIMIC */
+#define RI_SHADE		507	/* SKILL_MIMIC */
+#define RI_SPECTRE		508	/* SKILL_MIMIC */
 #define RI_WATER_TROLL		509
+#define RI_CHERUB		511	/* SKILL_MIMIC */
 #define RI_WATER_ELEMENTAL	512
 #define RI_HOUND_MULTI		513	/* Druid form */
 #define RI_INVISIBLE_STALKER	514	/* Shaman form (forbidden) */
 #define RI_WATCHER_IN_THE_WATER	517
+#define RI_MASTER_VAMPIRE	520	/* SKILL_MIMIC */
+#define RI_ORIENTAL_VAMPIRE	521	/* SKILL_MIMIC */
 #define RI_BLOODLETTER		523
+#define RI_DAGASHI		532	/* SKILL_MIMIC */
+#define RI_HEADLESS_GHOST	533	/* SKILL_MIMIC */
+#define RI_DREAD		534	/* SKILL_MIMIC */
 #define RI_HALFLING_SLINGER	539	/* Black Breath */
+#define RI_PHANTOM		553	/* SKILL_MIMIC */
 #define RI_RAALS_TOME		557	/* DROP_CHOSEN */
-#define RI_NIGHTBLADE		564
+#define RI_NIGHTBLADE		564	/* SKILL_MIMIC; + */
 #define RI_BODAK		566
 #define RI_MEZZODAEMON		568
 #define RI_ELDER_THING		569
+#define RI_SERAPH		605	/* SKILL_MIMIC */
 #define RI_HYDRA_7H		614	/* Druid form */
+#define RI_VAMPIRE_LORD		623	/* SKILL_MIMIC */
+#define RI_SPIRIT_TROLL		630	/* SKILL_MIMIC */
 #define RI_GIANT_ROC		640	/* Druid form */
 #define RI_MINOTAUR		641	/* Druid form */
+#define RI_FALLEN_ANGEL		652	/* SKILL_MIMIC */
+#define RI_DARK_ELVEN_SORCEROR	657	/* SKILL_MIMIC */
 #define RI_BYAKHEE		659
 #define RI_EOL			660	/* DROP_CHOSEN */
+#define RI_ARCHON		661	/* SKILL_MIMIC */
 #define RI_SPAWN_OF_TSATHOGGUA	662
+#define RI_SHADOW		665	/* SKILL_MIMIC */
+#define RI_DREAD_F		667	/* SKILL_MIMIC */
 #define RI_HYDRA_11H		688	/* Druid form */
+#define RI_DREADMASTER		690	/* SKILL_MIMIC */
 #define RI_WARRIOR_DAWN		693
 #define RI_SMAUG		697
 #define RI_STORMBRINGER		698	/* DROP_CHOSEN; font mapping */
 #define RI_WINGED_HORROR	704	/* Druid form */
+#define RI_ENT			708	/* (SKILL_MIMIC) */
 #define RI_GWALLMON		718	/* font mapping */
 #define RI_MAULOTAUR		723	/* Druid form */
 #define RI_HOUND_PLASMA		726	/* Druid form */
@@ -1649,6 +1705,7 @@
 #define RI_LESSER_KRAKEN	740	/* Druid form */
 #define RI_ARTSI		770	/* DROP_CHOSEN */
 #define RI_SARUMAN		771	/* DROP_CHOSEN */
+#define RI_DREADLORD		774	/* SKILL_MIMIC */
 #define RI_GREATER_KRAKEN	775	/* Druid form */
 #define RI_JABBERWOCK		778	/* Druid form */
 #define RI_VLAD_DRACULA		780	/* DROP_CHOSEN */
@@ -1666,11 +1723,14 @@
 #define RI_GOTHMOG		856	/* DROP_CHOSEN */
 #define RI_SAURON		860
 #define RI_MORGOTH		862
+#define RI_ELVEN_ARCHER		864	/* (SKILL_MIMIC) */
+#define RI_DWARVEN_WARRIOR	865	/* (SKILL_MIMIC) */
 #define RI_RNG			869
 #define RI_BALROG_OF_MORIA	872
 #define RI_MERMAID		882
 #define RI_EYE_OF_THE_DEEP	893
 #define RI_MURK_DWELLER		894
+#define RI_DROWNED_SOUL		895	/* SKILL_MIMIC */
 #define RI_ARANEA		898	/* Druid form */
 #define RI_AQUATIC_KOBOLD	900
 #define RI_SCRAG		902
@@ -1679,9 +1739,13 @@
 #define RI_WATER_DEMON		924
 #define RI_IXITXACHITL		925
 #define RI_IXITXACHITL_PRIEST	926
-#define RI_VAMPIRIC_IXITXACHITL	927
-#define RI_GREAT_WHITE_SHARK	963	/* Druid form */
-#define RI_ELDER_ARANEA		964	/* Druid form */
+#define RI_VAMPIRIC_IXITXACHITL	927	/* SKILL_MIMIC; FOUNTAIN_GUARDS */
+#define RI_CHILD_SPIRIT		929	/* (SKILL_MIMIC) */
+#define RI_YOUNG_SPIRIT		930	/* (SKILL_MIMIC) */
+#define RI_MATURE_SPIRIT	931	/* (SKILL_MIMIC) */
+#define RI_EXP_SPIRIT		932	/* (SKILL_MIMIC) */
+#define RI_WISE_SPIRIT		933	/* (SKILL_MIMIC) */
+#define RI_HE_RANGER		945	/* (SKILL_MIMIC) */
 
 /* The Nazgul */
 #define RI_UVATHA		946
@@ -1694,10 +1758,17 @@
 #define RI_KHAMUL		953
 #define RI_WITCHKING		954
 
+#define RI_GREAT_WHITE_SHARK	963	/* Druid form */
+#define RI_ELDER_ARANEA		964	/* Druid form */
 #define RI_GORLIM		961	/* DROP_CHOSEN */
+#define RI_NOV_POSSESSOR	967	/* (SKILL_MIMIC) */
+#define RI_BAT_OF_GORGOROTH	968	/* SKILL_MIMIC */
 #define RI_WIGHT_KING		971
+#define RI_EXP_POSSESSOR	973	/* (SKILL_MIMIC) */
+#define RI_OLD_POSSESSOR	974	/* (SKILL_MIMIC) */
 #define RI_DEATH_ORB		975	/* Shaman form (forbidden) */
 #define RI_AR_PHARAZON		980
+#define RI_ELDER_VAMPIRE	989	/* SKILL_MIMIC */
 #define RI_ULFANG		990
 #define RI_NALFESHNEE		994
 #define RI_GOLEM_BRONZE		1015	/* For translating to custom golem_creation visuals */
@@ -1711,6 +1782,12 @@
 #define RI_WATER_HOUND		1038
 #define RI_MUSHROOM_UNMAGIC	1045	/* font mapping */
 #define RI_SIRENE		1057
+#define RI_SWORDSMASTER		1058	/* SKILL_MIMIC */
+#define RI_GRAND_SWORDSMASTER	1059	/* SKILL_MIMIC */
+#define RI_DARK_MIST		1064	/* SKILL_MIMIC */
+#define RI_SKY_BLADE		1071	/* SKILL_MIMIC */
+#define RI_SOLAR_BLADE		1072	/* SKILL_MIMIC */
+#define RI_STAR_BLADE		1073	/* SKILL_MIMIC */
 #define RI_MICHAEL		1074
 #define RI_LIVING_LIGHTNING	1147
 #define RI_HELLRAISER		1067
