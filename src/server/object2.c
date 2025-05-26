@@ -6226,9 +6226,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		power = 1;
 
 		/* Higher chance2 for super heavy armours are already very rare
-		   and also for normal mithril/adamantite armour, since they're pretty deep level yet just sell loot. */
+		   and also for normal mithril/adamantite armour, since they're pretty deep level yet just sell loot;
+		   now also used for spellbooks/grimoires as these are very rare/expensive finds */
 		//if (k_info[o_ptr->k_idx].flags6 & TR6_OFTEN_EGO) chance2 += 10;
-		if (k_info[o_ptr->k_idx].flags6 & TR6_OFTEN_EGO) chance2 = chance2 / 2 + 23; //(this calc treats non-royal armour especially nice)
+		if (k_info[o_ptr->k_idx].flags6 & TR6_OFTEN_EGO) chance2 = chance2 / 2 + 23; // this calc treats non-royal armour especially nice; caps at 33% (20/2+23)
 
 		/* Roll for "great" */
 		if (great || magik(chance2)) power = 2;
