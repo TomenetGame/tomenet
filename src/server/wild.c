@@ -306,7 +306,7 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 	for (i = 1 + 1; i < TOWNS; i++) {
 		retry = FALSE;
 
-		/* avoid towns at the border of the world map (also: no housing space there!) */
+		/* avoid towns at the border of the world map (also: no housing space there!); especially 0,0 (event sector) and 63,63 (test/storage sector) */
 		y = 2 + rand_int(MAX_WILD_Y - 4);
 		x = 2 + rand_int(MAX_WILD_X - 4);
 
@@ -370,6 +370,9 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 
 		y = rand_int(MAX_WILD_Y);
 		x = rand_int(MAX_WILD_X);
+
+		/* avoid  0,0 (event sector) and 63,63 (test/storage sector) */
+		if ((!x && !y) || (x == MAX_WILD_X - 1 && y == MAX_WILD_Y - 1)) continue;
 
 		wpos.wy = y;
 		wpos.wx = x;
