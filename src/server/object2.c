@@ -1830,8 +1830,14 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
  *
  * XXX: 'Ego randarts' are not handled correltly, so be careful!
  */
+
 /* Magic devices: Ego powers multiply the price instead of adding? */
 #define EGO_MDEV_FACTOR
+
+/* Non-Spellbooks: Ego powers double the base price instead.
+   (Spellbooks retain their special price hack.) */
+#define EGO_BOOK_FACTOR
+
 /* Ego power value overrides negative enchantments?
    This is already done for NEW_SHIELDS_NO_AC below; it means that items such
    as [3,-4] armour can still return a value > 0 thanks to its ego power,
@@ -1944,6 +1950,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				}
 			} else
 #endif
+#ifdef EGO_BOOK_FACTOR
+			/* Hack: Books cost double - spell scrolls have a specific price hack though */
+			if (o_ptr->tval == TV_BOOK && o_ptr->sval != SV_SPELLBOOK) value <<= 1;
+			else
+#endif
 			/* Hack -- Reward the ego-item with a bonus */
 			value += e_ptr->cost;
 
@@ -1976,6 +1987,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 					default:		value += e_ptr->cost / 2;
 					}
 				} else
+#endif
+#ifdef EGO_BOOK_FACTOR
+				/* Hack: Books cost double - spell scrolls have a specific price hack though */
+				if (o_ptr->tval == TV_BOOK && o_ptr->sval != SV_SPELLBOOK) value <<= 1;
+				else
 #endif
 				/* Hack -- Reward the ego-item with a bonus */
 				value += e_ptr->cost;
@@ -2260,12 +2276,18 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			value += value < ego_value ? (value < ev ? ev : value) : ego_value;
 		} else if (is_custom_tome(o_ptr->sval)) {
 			/* Actually price these depending on the spells they contain :) */
-			int sl = 0, ego_value, ev;
+			int sl = 0;
 			long v = 0;
+#ifdef EGO_BOOK_FACTOR
+			int org_value = value;
+
+#else
+			int ego_value, ev;
 
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 			ego_value = value - k_ptr->cost;
 			ev = ego_value > 700 ? 700 : ego_value;
+#endif
 			/* override k_info.txt to have easier handling of possible changes here */
 			value = 2; //half value!
 			if ((sl = o_ptr->xtra1) && sl <= max_spells) {
@@ -2304,8 +2326,12 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				sl = school_spells[sl - 1].skill_level + 5;
 				v += value * (sl * sl);
 			}
+#ifdef EGO_BOOK_FACTOR
+			value = org_value + v;
+#else
 			/* Add up 'fireproof' etc cost, but related it to the actual book cost. */
 			value = k_ptr->cost + v + (v < ego_value ? (v < ev ? ev : v) : ego_value);
+#endif
 		}
 		/* Done */
 		break;
@@ -3181,12 +3207,18 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 			value = value * (skill_level * skill_level);
 		} else if (is_custom_tome(o_ptr->sval)) {
 			/* Actually price these depending on the spells they contain :) */
-			int sl = 0, ego_value, ev;
+			int sl = 0;
 			long v = 0;
+#ifdef EGO_BOOK_FACTOR
+			int org_value = value;
+
+#else
+			int ego_value, ev;
 
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 			ego_value = value - k_ptr->cost;
 			ev = ego_value > 700 ? 700 : ego_value;
+#endif
 			/* override k_info.txt to have easier handling of possible changes here */
 			value = 2; //half value!
 			if ((sl = o_ptr->xtra1) && sl <= max_spells) {
@@ -3225,8 +3257,12 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				sl = school_spells[sl - 1].skill_level + 5;
 				v += value * (sl * sl);
 			}
+#ifdef EGO_BOOK_FACTOR
+			value = org_value + v;
+#else
 			/* Add up 'fireproof' etc cost, but related it to the actual book cost. */
 			value = k_ptr->cost + v + (v < ego_value ? (v < ev ? ev : v) : ego_value);
+#endif
 		}
 		/* Done */
 		break;
