@@ -6220,7 +6220,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 	    && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x0050))
 	    && !((o_ptr->tval == TV_SPECIAL || o_ptr->tval == TV_JUNK) && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
-	    && !(o_ptr->tval == TV_JUNK && (o_ptr->sval == SV_GLASS_SHARD || o_ptr->sval == SV_ENERGY_CELL))
+	    && !(o_ptr->tval == TV_JUNK && (o_ptr->sval == SV_GLASS_SHARD || o_ptr->sval == SV_ENERGY_CELL || o_ptr->sval == SV_BANDAGE))
 	    ) {
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
@@ -6271,6 +6271,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* Roll for usage */
 	if (o_ptr->tval == TV_BOOK /* hack: blank books can always be 'activated' */
 	    || ((o_ptr->tval == TV_JUNK || o_ptr->tval == TV_SPECIAL) && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
+	    || (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE)
 #ifdef ENABLE_DEMOLITIONIST
 	    /* Alchemy has nothing to do with magic device skills, and especially shouldn't set command_rep or we may run into weirdness!: */
 	    || o_ptr->tval == TV_CHEMICAL
@@ -6287,6 +6288,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 		}
 #endif
+		/* Bandages require some DEX or INT */
+		if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE) {
+			if (rand_int(15) + p_ptr->stat_cur[A_INT] + p_ptr->stat_cur[A_DEX] < 20) { // at 6 INT+DEX: Succeed in 1 of 20; at 20 INT+DEX: Succeed always.
+				msg_format(Ind, "\377%cYou failed to apply the bandage properly.", COLOUR_MD_FAIL);
+				return;
+			}
+		}
 	} else if (!activate_magic_device(Ind, o_ptr, FALSE)) {
 #ifdef ENABLE_XID_SPELL
  #ifdef XID_REPEAT
