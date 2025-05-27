@@ -5878,6 +5878,7 @@ void do_cmd_bash(int Ind, int dir) {
 					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
+					bandage_fails(Ind);
 					return;
 				}
 #endif
@@ -5920,6 +5921,7 @@ void do_cmd_bash(int Ind, int dir) {
 					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
+					bandage_fails(Ind);
 					return;
 				}
 
@@ -6025,10 +6027,12 @@ void do_cmd_bash(int Ind, int dir) {
 				/* Hack -- Lose balance ala paralysis */
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 2 + rand_int(2));
 			}
+
 			break_cloaking(Ind, 0);
 			break_shadow_running(Ind);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
+			bandage_fails(Ind);
 		}
 	}
 
@@ -7299,6 +7303,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
+	bandage_fails(Ind);
 
 	/* Reduce and describe inventory */
 	if (!boomerang) {
@@ -8721,6 +8726,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+	bandage_fails(Ind);
 
 
 	/* Create a "local missile object" */
@@ -10383,6 +10389,30 @@ void stop_shooting_till_kill(int Ind) {
 
 		p_ptr->shoot_till_kill_rcraft = FALSE;
 	}
+}
+
+/* stop ranged technique 'barrage' preparation */
+void bandage_fails(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	if (!p_ptr->cut_bandaged) return;
+
+	msg_print(Ind, "Your bandage comes off!");
+	//disturb(Ind, 0, 0);
+
+#if 0 /* this doesn't set nocut_intrinsic properly */
+	p_ptr->cut += p_ptr->cut_bandaged;
+	p_ptr->cut_bandaged = 0;
+
+	p_ptr->update |= (PU_BONUS);
+	p_ptr->redraw |= (PR_CUT);
+	handle_stuff(Ind);
+#else
+	int tmp = p_ptr->cut_bandaged;
+
+	p_ptr->cut_bandaged = 0;
+	(void)set_cut(Ind, p_ptr->cut + tmp, p_ptr->cut_attacker);
+#endif
 }
 
 /*

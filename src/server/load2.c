@@ -2710,9 +2710,10 @@ if (p_ptr->updated_savegame == 0) {
 		p_ptr->nocut_intrinsic = (tmp8u & 0x02);
 
 		rd_byte(&p_ptr->combosets);
+		rd_s16b(&p_ptr->cut_bandaged);
 
 		// --- future use / HOLE: ---
-		strip_bytes(6);
+		strip_bytes(4);
 	} else p_ptr->tim_lcage = 0;
 
 	if (!older_than(4, 5, 28)) {

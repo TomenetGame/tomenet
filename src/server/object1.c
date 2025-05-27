@@ -3878,9 +3878,8 @@ cptr item_activation(object_type *o_ptr) {
 
 	// -------------------- base items -------------------- //
 
-	/* Require activation ability */
-	if (o_ptr->tval == TV_DRAG_ARMOR) {
-		/* Branch on the sub-type */
+	switch (o_ptr->tval) {
+	case TV_DRAG_ARMOR:
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLUE:
 			return("breathing lightning (600..1200) every 200+d100 turns");
@@ -3944,9 +3943,9 @@ cptr item_activation(object_type *o_ptr) {
 			return("breathing inertia/cold (250..1200) every 200+d100 turns");
 			//return("polymorph into an Ancient Gold Dragon every 200+d100 turns");
 		}
-	}
+		break;
 
-	if (o_ptr->tval == TV_RING) {
+	case TV_RING:
 		switch (o_ptr->sval) {
 		case SV_RING_ELEC:
 			return("a ball of lightning (50..200) and resist lightning every 25..50+d25 turns");
@@ -3973,9 +3972,9 @@ cptr item_activation(object_type *o_ptr) {
 			} else
 				return("transferring the form you are currently mimicking into the ring");
 		}
-	}
+		break;
 
-	if (o_ptr->tval == TV_AMULET) {
+	case TV_AMULET:
 		switch (o_ptr->sval) {
 			/* The amulet of the moon can be activated for sleep */
 		case SV_AMULET_THE_MOON:
@@ -3985,9 +3984,9 @@ cptr item_activation(object_type *o_ptr) {
 		case SV_AMULET_RAGE:
 			return("growing a fury every 150+d100 turns");
 		}
-	}
+		break;
 
-	if (o_ptr->tval == TV_GOLEM) {
+	case TV_GOLEM:
 		switch (o_ptr->sval) {
 		case SV_GOLEM_ATTACK:
 			return("commanding your golem to attack your target or stop doing so");
@@ -3996,46 +3995,57 @@ cptr item_activation(object_type *o_ptr) {
 		case SV_GOLEM_FOLLOW:
 			return("commanding your golem to follow you or stop doing so");
 		}
-	}
+		break;
 
-	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD)
-		return("altering a death fate");
+	case TV_JUNK:
+		switch (o_ptr->sval) {
+		case SV_BANDAGE: return("tending to open wounds");
+		case SV_GLASS_SHARD: return("altering a death fate");
+		case SV_ENERGY_CELL: return("delivering a full energy recharge");
+		default:
+			if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
+				return("wrapping a present");
+		}
+		break;
 
-	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_ENERGY_CELL)
-		return("delivering a full energy recharge");
-
-	if (o_ptr->tval == TV_JUNK && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
-		return("wrapping a present");
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
-		return("Opening the present");
+	case TV_SPECIAL:
+		if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
+			return("Opening the present");
+		break;
 
 #if 0
-	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
-		return("Spiritual recall");
+	case TV_PARCHMENT:
+		if (o_ptr->sval == SV_PARCHMENT_DEATH)
+			return("Spiritual recall");
+		break;
 #endif
 
-	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
-		//return("transcribing a spell scroll or spell crystal into it");
-		return(format("transcribing up to %d spell/prayer scrolls or spell crystals into it", o_ptr->bpval));
+	case TV_BOOK:
+		if (is_custom_tome(o_ptr->sval))
+			//return("transcribing a spell scroll or spell crystal into it");
+			return(format("transcribing up to %d spell/prayer scrolls or spell crystals into it", o_ptr->bpval));
+		break;
 
-	if (o_ptr->tval == TV_RUNE) return("tracing a sigil onto equipment");
+	case TV_RUNE: return("tracing a sigil onto equipment");
 
 #ifdef MSTAFF_MDEV_COMBO
-	if (o_ptr->tval == TV_MSTAFF && !o_ptr->name2 && !o_ptr->name2b && !o_ptr->name1) {
-		if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) return("absorbing the power of a magic device - staff, wand or rod");
-		else if (o_ptr->xtra1) return("releasing the absorbed power of a magic staff");
-		else if (o_ptr->xtra2) return("releasing the absorbed power of a magic wand");
-		else if (o_ptr->xtra3) return("releasing the absorbed power of a magic rod");
-	}
+	case TV_MSTAFF:
+		if (!o_ptr->name2 && !o_ptr->name2b && !o_ptr->name1) {
+			if (!o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3) return("absorbing the power of a magic device - staff, wand or rod");
+			else if (o_ptr->xtra1) return("releasing the absorbed power of a magic staff");
+			else if (o_ptr->xtra2) return("releasing the absorbed power of a magic wand");
+			else if (o_ptr->xtra3) return("releasing the absorbed power of a magic rod");
+		}
+		break;
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
-	if (o_ptr->tval == TV_CHEMICAL) {
+	case TV_CHEMICAL:
 		if (o_ptr->sval == SV_WOOD_CHIPS) return("heating up to get processed into charcoal");
 		else if (o_ptr->sval == SV_MIXTURE) return("combining with other chemicals or mixtures, or with itself to form a product");
-		else return("combining with other chemical ingredients or mixtures (also see \"/mix\")");
-	}
-	if (o_ptr->tval == TV_CHARGE) {
+		return("combining with other chemical ingredients or mixtures (also see \"/mix\")");
+
+	case TV_CHARGE: {
 		char *c;
 		int fuse;
 
@@ -4051,10 +4061,14 @@ cptr item_activation(object_type *o_ptr) {
 
 		if (!fuse) return("instant ignition"); //boOm
 		else if (fuse == 1) return("ignition after 1 second");
-		else return(format("ignition after %d seconds", fuse));
-	}
-	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return("grinding things consisting of wood or metal to bits");
+		return(format("ignition after %d seconds", fuse));
+		}
+
+	case TV_TOOL:
+		if (o_ptr->sval == SV_TOOL_GRINDER) return("grinding things consisting of wood or metal to bits");
+		break;
 #endif
+	}
 
 	/* Oops */
 	return(NULL);

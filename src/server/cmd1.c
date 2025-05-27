@@ -3414,8 +3414,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+	bandage_fails(Ind);
 	/* Disturb the player */
 	//q_ptr->sleep = 0;
+
 #ifndef KURZEL_PK
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (!(q_ptr->pkill & PKILL_KILLABLE)) {
@@ -4764,6 +4766,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+	bandage_fails(Ind);
+
 	/* Disturb the monster */
 	if (m_ptr->csleep) {
 		m_ptr->csleep = 0;
@@ -6093,6 +6097,8 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+	bandage_fails(Ind);
+
 	/* Disturb the monster */
 	if (m_ptr->csleep) {
 		m_ptr->csleep = 0;
@@ -6483,6 +6489,8 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	stop_precision(Ind2);
 	stop_shooting_till_kill(Ind);
 	stop_shooting_till_kill(Ind2);
+	bandage_fails(Ind);
+	bandage_fails(Ind2);
 
 	/* Calculate damage from shield weight (50..120,160 for AA) and strength */
 	k = 0;

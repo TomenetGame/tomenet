@@ -1193,9 +1193,10 @@ static void wr_extra(int Ind) {
 	tmp8u = (p_ptr->cut_intrinsic ? 0x01 : 0x00) + (p_ptr->nocut_intrinsic ? 0x02 : 0x00);
 	wr_byte(tmp8u);
 	wr_byte(p_ptr->combosets);
+	wr_s16b(p_ptr->cut_bandaged);
 
 	/* --- future use / HOLE: --- */
-	for (i = 0; i < 6; i++) wr_byte(0);
+	for (i = 0; i < 4; i++) wr_byte(0);
 
 	/* for shuffling/dealing a deck of cards */
 	wr_u16b(p_ptr->cards_diamonds);

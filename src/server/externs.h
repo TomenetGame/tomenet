@@ -748,6 +748,7 @@ extern void break_shadow_running(int Ind);
 extern void stop_cloaking(int Ind);
 extern void stop_precision(int Ind);
 extern void stop_shooting_till_kill(int Ind);
+extern void bandage_fails(int Ind);
 extern void do_cmd_fusion(int Ind);
 
 
@@ -869,6 +870,7 @@ extern char random_colour(void);
 extern void do_cmd_drink_fountain(int Ind);
 extern void do_cmd_fill_bottle(int Ind, int force_slot);
 extern void do_cmd_empty_potion(int Ind, int slot);
+extern void do_cmd_rip_cloth(int Ind, int slot);
 extern void do_cmd_fletchery(int Ind);
 extern void do_cmd_stance(int Ind, int stance);
 extern void do_cmd_melee_technique(int Ind, int technique);

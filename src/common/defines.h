@@ -3741,129 +3741,6 @@
 #define TV_MAX		127
 
 
-/* some masks (originally just is_armour for XBM control) - C. Blue */
-#define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
-#define is_melee_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
-#define is_melee_item(tval)	(is_melee_weapon(tval) || ((tval) == TV_MSTAFF))
-#define is_ranged_weapon(tval)	((tval) == TV_BOW || (tval) == TV_BOOMERANG)
-#define is_throwing_weapon(o_ptr) ( \
-	((o_ptr)->tval == TV_SWORD && ((o_ptr)->sval == SV_DAGGER || (o_ptr)->sval == SV_MAIN_GAUCHE)) || \
-	((o_ptr)->tval == TV_POLEARM && ((o_ptr)->sval == SV_HUNTING_SPEAR || (o_ptr)->sval == SV_SPEAR || (o_ptr)->sval == SV_TRIDENT || (o_ptr)->sval == SV_BROAD_SPEAR || (o_ptr)->sval == SV_TRIFURCATE_SPEAR)) || \
-	(o_ptr)->tval == TV_AXE )
-#define is_weapon(tval)		(is_melee_weapon(tval) || is_ranged_weapon(tval))
-/* For shops that only offer 'basic' items. Rarity at least /4 or /5. Execptions or special considerations listed behind each type line, if any. */
-#define is_rare_weapon(tval,sval) ( \
-	((tval) == TV_SWORD && ((sval) >= SV_BLADE_OF_CHAOS || (sval) >= SV_BLUESTEEL_BLADE || (sval) >= SV_SHADOW_BLADE)) || /* dark sword (needed by unbelievers), unsure about shadow blade */ \
-	((tval) == TV_BLUNT && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
-	((tval) == TV_AXE && ((sval) == SV_THUNDER_AXE || (sval) == SV_INFERNAL_AXE)) || /* hunting spear (low dice, just for fun) */ \
-	((tval) == TV_POLEARM && ((sval) == SV_SCYTHE_OF_SLICING || (sval) == SV_DRAGON_LANCE)) )
-#define is_nonmetallic_weapon(tval,sval) \
-	(((tval) == TV_BLUNT && ((sval) == SV_CLUB || (sval) == SV_WHIP || (sval) == SV_QUARTERSTAFF)) || \
-	((tval) == TV_BOOMERANG && ((sval) == SV_BOOM_WOOD || (sval) == SV_BOOM_S_WOOD)) || ((tval) == TV_BOW && ((sval) == SV_SLING || (sval) == SV_SHORT_BOW || (sval) == SV_LONG_BOW)))
-	/* || (sval) == SV_THREE_PIECE_ROD) -- metal connectors, maybe enough */
-#define is_slicing_polearm(sval) \
-	((sval) == SV_SICKLE || (sval) == SV_FAUCHARD || (sval) == SV_RHOMPHAIA || (sval) == SV_GLAIVE || (sval) == SV_SCYTHE || (sval) == SV_SCYTHE_OF_SLICING)
-#define is_aquatic_polearm(sval) \
-	((sval) == SV_HUNTING_SPEAR || (sval) == SV_SPEAR || (sval) == SV_AWL_PIKE || (sval) == SV_TRIDENT || /* halberd didn't make it*/ \
-	(sval) == SV_BROAD_SPEAR || (sval) == SV_PIKE || (sval) == SV_GLAIVE || (sval) == SV_GUISARME || (sval) == SV_TRIFURCATE_SPEAR)
-#define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
-#define is_rare_magic_device(tval,sval) ( \
-	((tval) == TV_WAND && ((sval) == SV_WAND_ANNIHILATION || (sval) == SV_WAND_ROCKETS || (sval) == SV_WAND_WALL_CREATION || (sval) == SV_WAND_TELEPORT_TO)) || \
-	/* allowing +perception+, healing, magi/power/holiness */ \
-	((tval) == TV_STAFF && ((sval) == SV_STAFF_EARTHQUAKES || (sval) == SV_STAFF_DESTRUCTION || (sval) == SV_STAFF_SPEED || (sval) == SV_STAFF_GENOCIDE)) || \
-	/* not allowing Speed/Healing so people aren't "forced" to train MD */ \
-	((tval) == TV_ROD && ((sval) == SV_ROD_HAVOC || (sval) == SV_ROD_IDENTIFY || \
-	    (sval) == SV_ROD_MAPPING || (sval) == SV_ROD_CURING || (sval) == SV_ROD_RESTORATION \
-	    || (sval) == SV_ROD_SPEED || (sval) == SV_ROD_HEALING)) )
-#define is_armour(tval)	\
-	(((tval) == TV_BOOTS) || ((tval) == TV_GLOVES) || \
-	((tval) == TV_HELM) || ((tval) == TV_CROWN) || \
-	((tval) == TV_SHIELD) || ((tval) == TV_CLOAK) || \
-	((tval) == TV_SOFT_ARMOR) || ((tval) == TV_HARD_ARMOR) || \
-	((tval) == TV_DRAG_ARMOR))
-#define is_rare_armour(tval,sval) ( \
-	(((tval) == TV_HELM) && ((sval) == SV_DRAGON_HELM || (sval) == SV_MITHRIL_HELM || (sval) == SV_ADAMANTITE_HELM)) || \
-	((tval) == TV_CROWN) || /* for telepathy crowns in Ironman dungeon stores (IDDC -2k especially) */ \
-	(((tval) == TV_SHIELD) && (((sval) == SV_ORCISH_SHIELD) || ((sval) == SV_DRAGON_SHIELD) || ((sval) == SV_SHIELD_OF_DEFLECTION) \
-	    || ((sval) == SV_MITHRIL_ANCILE) || ((sval) == SV_ADAMANTITE_AEGIS))) || \
-	(((tval) == TV_GLOVES) && ((sval) == SV_SET_OF_ELVEN_GLOVES)) || \
-	(((tval) == TV_CLOAK) && ((sval) == SV_KOLLA)) || \
-	(((tval) == TV_HARD_ARMOR) && (sval) >= SV_MITHRIL_CHAIN_MAIL) || \
-	((tval) == TV_DRAG_ARMOR) )
-/* doesn't include WINNERS_ONLY armour: */
-//	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_CHAIN_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) ||
-#define is_top_armour(tval,sval) \
-	(((tval) == TV_DRAG_ARMOR) && \
-	((sval) == SV_DRAGON_POWER || (sval) == SV_DRAGON_SKY || \
-	(sval) == SV_DRAGON_DEATH || (sval) == SV_DRAGON_SHINING || \
-	(sval) == SV_DRAGON_MULTIHUED || (sval) == SV_DRAGON_BALANCE))
-	/* ...and possibly all winners_only armour */
-#define is_common_armour(tval,sval) \
-	(is_armour(tval) && !is_rare_armour(tval,sval))
-#define sv_dsm_low(sv) \
-        (sv == SV_DRAGON_BLUE || sv == SV_DRAGON_WHITE || sv == SV_DRAGON_BLACK || \
-	sv == SV_DRAGON_RED || sv == SV_DRAGON_GREEN)
-#define sv_dsm_mid(sv) \
-        (sv == SV_DRAGON_BRONZE || sv == SV_DRAGON_SILVER || sv == SV_DRAGON_GOLD || \
-	sv == SV_DRAGON_PSEUDO)
-/* for determining sound effects for wear/wield command: */
-#define is_textile_armour(tval,sval) \
-	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \
-	((tval) == TV_GLOVES && (sval) != SV_SET_OF_GAUNTLETS && (sval) != SV_SET_OF_CESTI) || \
-	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
-	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)) || \
-	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
-#define is_cloth_armour(tval,sval) \
-	(is_textile_armour(tval, sval) && ( \
-	(tval) != TV_SHIELD && (tval) != TV_BOOTS &&  /* There are no cloth boots/shields, only leather, which is more robust */ \
-	((tval) != TV_HELM || (sval) != SV_HARD_LEATHER_CAP)))
-/* what magic/roguish/martial artist would wear; ignores DSM */
-#define is_flexible_armour(tval,sval) \
-	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_HARD_LEATHER_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \
-	((tval) == TV_GLOVES && (sval) != SV_SET_OF_GAUNTLETS && (sval) != SV_SET_OF_CESTI) || \
-	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
-	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)))
-/* what non-light melee fighters would wear; ignores DSM */
-#define is_tough_armour(tval,sval) \
-	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_SOFT_LEATHER_BOOTS) || \
-	((tval) == TV_GLOVES && (sval) != SV_SET_OF_LEATHER_GLOVES) || \
-	(tval) == TV_HARD_ARMOR || (tval) == TV_CLOAK || \
-	((tval) == TV_HELM && (sval) != SV_CLOTH_CAP && (sval) != SV_HARD_LEATHER_CAP && (sval) != SV_GOGGLES_DM) || \
-	(tval == TV_SHIELD))
-#ifndef ENABLE_DEMOLITIONIST
- #define is_cheap_misc(tval) \
-	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
-#else
- #define is_cheap_misc(tval) \
-	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK || (tval) == TV_CHEMICAL)
-#endif
-#define is_ranged_item(Ind, o_ptr) \
-	(is_ranged_weapon((o_ptr)->tval) || \
-	is_ammo((o_ptr)->tval) || \
-	(o_ptr)->tval == TV_BOOK || \
-	(o_ptr)->tval == TV_WAND || \
-	((o_ptr)->tval == TV_ROD && rod_requires_direction(Ind, o_ptr)))
-#define is_firearm_trapkit(sval) \
-	((sval) == SV_TRAPKIT_SLING || (sval) == SV_TRAPKIT_BOW || (sval) == SV_TRAPKIT_XBOW)
-#ifndef NEW_SHIELDS_NO_AC
-/* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
-#define is_enchantable_kind(o_ptr) \
-	(is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
-	(o_ptr)->tval == TV_MSTAFF || \
-	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
-	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING)
-#else
-/* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
-#define is_enchantable_kind(o_ptr) \
-	((is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
-	(o_ptr)->tval == TV_MSTAFF || \
-	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
-	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING) \
-	&& (o_ptr->tval != TV_SHIELD))
-#endif
-/* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
-
-
 /* Ones borrowed from PernAngband.	- Jir - */
 /*
  * Max sizes of the following arrays
@@ -3888,6 +3765,7 @@
 #define SV_EMPTY_BOTTLE			1
 
 /* sval for TV_JUNK */
+#define SV_BANDAGE			1
 #define SV_ENERGY_CELL			2
 #define SV_POTTERY			3
 #define SV_GLASS_SHARD			5	/* remains of the grand mirror */
@@ -5106,6 +4984,130 @@
 #define SV_QUEST			2	/* a custom quest item (not to be confused with questors) */
 /* TV_SPECIAL also reuses the defines from TV_JUNK - while it is paper there, here it is the actual wrapped gift:
  SV_GIFT_WRAPPING_START..SV_GIFT_WRAPPING_END: 10..19 (used up to 15) */
+
+
+/* some masks (originally just is_armour for XBM control) - C. Blue */
+#define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
+#define is_melee_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
+#define is_melee_item(tval)	(is_melee_weapon(tval) || ((tval) == TV_MSTAFF))
+#define is_ranged_weapon(tval)	((tval) == TV_BOW || (tval) == TV_BOOMERANG)
+#define is_throwing_weapon(o_ptr) ( \
+	((o_ptr)->tval == TV_SWORD && ((o_ptr)->sval == SV_DAGGER || (o_ptr)->sval == SV_MAIN_GAUCHE)) || \
+	((o_ptr)->tval == TV_POLEARM && ((o_ptr)->sval == SV_HUNTING_SPEAR || (o_ptr)->sval == SV_SPEAR || (o_ptr)->sval == SV_TRIDENT || (o_ptr)->sval == SV_BROAD_SPEAR || (o_ptr)->sval == SV_TRIFURCATE_SPEAR)) || \
+	(o_ptr)->tval == TV_AXE )
+#define is_weapon(tval)		(is_melee_weapon(tval) || is_ranged_weapon(tval))
+/* For shops that only offer 'basic' items. Rarity at least /4 or /5. Execptions or special considerations listed behind each type line, if any. */
+#define is_rare_weapon(tval,sval) ( \
+	((tval) == TV_SWORD && ((sval) >= SV_BLADE_OF_CHAOS || (sval) >= SV_BLUESTEEL_BLADE || (sval) >= SV_SHADOW_BLADE)) || /* dark sword (needed by unbelievers), unsure about shadow blade */ \
+	((tval) == TV_BLUNT && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
+	((tval) == TV_AXE && ((sval) == SV_THUNDER_AXE || (sval) == SV_INFERNAL_AXE)) || /* hunting spear (low dice, just for fun) */ \
+	((tval) == TV_POLEARM && ((sval) == SV_SCYTHE_OF_SLICING || (sval) == SV_DRAGON_LANCE)) )
+#define is_nonmetallic_weapon(tval,sval) \
+	(((tval) == TV_BLUNT && ((sval) == SV_CLUB || (sval) == SV_WHIP || (sval) == SV_QUARTERSTAFF)) || \
+	((tval) == TV_BOOMERANG && ((sval) == SV_BOOM_WOOD || (sval) == SV_BOOM_S_WOOD)) || ((tval) == TV_BOW && ((sval) == SV_SLING || (sval) == SV_SHORT_BOW || (sval) == SV_LONG_BOW)))
+	/* || (sval) == SV_THREE_PIECE_ROD) -- metal connectors, maybe enough */
+#define is_slicing_polearm(sval) \
+	((sval) == SV_SICKLE || (sval) == SV_FAUCHARD || (sval) == SV_RHOMPHAIA || (sval) == SV_GLAIVE || (sval) == SV_SCYTHE || (sval) == SV_SCYTHE_OF_SLICING)
+#define is_aquatic_polearm(sval) \
+	((sval) == SV_HUNTING_SPEAR || (sval) == SV_SPEAR || (sval) == SV_AWL_PIKE || (sval) == SV_TRIDENT || /* halberd didn't make it*/ \
+	(sval) == SV_BROAD_SPEAR || (sval) == SV_PIKE || (sval) == SV_GLAIVE || (sval) == SV_GUISARME || (sval) == SV_TRIFURCATE_SPEAR)
+#define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
+#define is_rare_magic_device(tval,sval) ( \
+	((tval) == TV_WAND && ((sval) == SV_WAND_ANNIHILATION || (sval) == SV_WAND_ROCKETS || (sval) == SV_WAND_WALL_CREATION || (sval) == SV_WAND_TELEPORT_TO)) || \
+	/* allowing +perception+, healing, magi/power/holiness */ \
+	((tval) == TV_STAFF && ((sval) == SV_STAFF_EARTHQUAKES || (sval) == SV_STAFF_DESTRUCTION || (sval) == SV_STAFF_SPEED || (sval) == SV_STAFF_GENOCIDE)) || \
+	/* not allowing Speed/Healing so people aren't "forced" to train MD */ \
+	((tval) == TV_ROD && ((sval) == SV_ROD_HAVOC || (sval) == SV_ROD_IDENTIFY || \
+	    (sval) == SV_ROD_MAPPING || (sval) == SV_ROD_CURING || (sval) == SV_ROD_RESTORATION \
+	    || (sval) == SV_ROD_SPEED || (sval) == SV_ROD_HEALING)) )
+#define is_armour(tval)	\
+	(((tval) == TV_BOOTS) || ((tval) == TV_GLOVES) || \
+	((tval) == TV_HELM) || ((tval) == TV_CROWN) || \
+	((tval) == TV_SHIELD) || ((tval) == TV_CLOAK) || \
+	((tval) == TV_SOFT_ARMOR) || ((tval) == TV_HARD_ARMOR) || \
+	((tval) == TV_DRAG_ARMOR))
+#define is_rare_armour(tval,sval) ( \
+	(((tval) == TV_HELM) && ((sval) == SV_DRAGON_HELM || (sval) == SV_MITHRIL_HELM || (sval) == SV_ADAMANTITE_HELM)) || \
+	((tval) == TV_CROWN) || /* for telepathy crowns in Ironman dungeon stores (IDDC -2k especially) */ \
+	(((tval) == TV_SHIELD) && (((sval) == SV_ORCISH_SHIELD) || ((sval) == SV_DRAGON_SHIELD) || ((sval) == SV_SHIELD_OF_DEFLECTION) \
+	    || ((sval) == SV_MITHRIL_ANCILE) || ((sval) == SV_ADAMANTITE_AEGIS))) || \
+	(((tval) == TV_GLOVES) && ((sval) == SV_SET_OF_ELVEN_GLOVES)) || \
+	(((tval) == TV_CLOAK) && ((sval) == SV_KOLLA)) || \
+	(((tval) == TV_HARD_ARMOR) && (sval) >= SV_MITHRIL_CHAIN_MAIL) || \
+	((tval) == TV_DRAG_ARMOR) )
+/* doesn't include WINNERS_ONLY armour: */
+//	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_CHAIN_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) ||
+#define is_top_armour(tval,sval) \
+	(((tval) == TV_DRAG_ARMOR) && \
+	((sval) == SV_DRAGON_POWER || (sval) == SV_DRAGON_SKY || \
+	(sval) == SV_DRAGON_DEATH || (sval) == SV_DRAGON_SHINING || \
+	(sval) == SV_DRAGON_MULTIHUED || (sval) == SV_DRAGON_BALANCE))
+	/* ...and possibly all winners_only armour */
+#define is_common_armour(tval,sval) \
+	(is_armour(tval) && !is_rare_armour(tval,sval))
+#define sv_dsm_low(sv) \
+        (sv == SV_DRAGON_BLUE || sv == SV_DRAGON_WHITE || sv == SV_DRAGON_BLACK || \
+	sv == SV_DRAGON_RED || sv == SV_DRAGON_GREEN)
+#define sv_dsm_mid(sv) \
+        (sv == SV_DRAGON_BRONZE || sv == SV_DRAGON_SILVER || sv == SV_DRAGON_GOLD || \
+	sv == SV_DRAGON_PSEUDO)
+/* for determining sound effects for wear/wield command: */
+#define is_textile_armour(tval,sval) \
+	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \
+	((tval) == TV_GLOVES && (sval) != SV_SET_OF_GAUNTLETS && (sval) != SV_SET_OF_CESTI) || \
+	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
+	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)) || \
+	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
+#define is_cloth_armour(tval,sval) \
+	((tval) == TV_CLOAK || ((tval) == TV_HELM && (sval) == SV_CLOTH_CAP) || \
+	((tval) == TV_SOFT_ARMOR && ( \
+	(sval) == SV_ROBE || (sval) == SV_TUNIC || (sval) == SV_FROCK || (sval) == SV_GOWN || \
+	(sval) == SV_FILTHY_RAG || (sval) == SV_COSTUME || (sval) == SV_SHIRT)))
+/* what magic/roguish/martial artist would wear; ignores DSM */
+#define is_flexible_armour(tval,sval) \
+	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_HARD_LEATHER_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \
+	((tval) == TV_GLOVES && (sval) != SV_SET_OF_GAUNTLETS && (sval) != SV_SET_OF_CESTI) || \
+	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
+	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)))
+/* what non-light melee fighters would wear; ignores DSM */
+#define is_tough_armour(tval,sval) \
+	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_SOFT_LEATHER_BOOTS) || \
+	((tval) == TV_GLOVES && (sval) != SV_SET_OF_LEATHER_GLOVES) || \
+	(tval) == TV_HARD_ARMOR || (tval) == TV_CLOAK || \
+	((tval) == TV_HELM && (sval) != SV_CLOTH_CAP && (sval) != SV_HARD_LEATHER_CAP && (sval) != SV_GOGGLES_DM) || \
+	(tval == TV_SHIELD))
+#ifndef ENABLE_DEMOLITIONIST
+ #define is_cheap_misc(tval) \
+	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
+#else
+ #define is_cheap_misc(tval) \
+	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK || (tval) == TV_CHEMICAL)
+#endif
+#define is_ranged_item(Ind, o_ptr) \
+	(is_ranged_weapon((o_ptr)->tval) || \
+	is_ammo((o_ptr)->tval) || \
+	(o_ptr)->tval == TV_BOOK || \
+	(o_ptr)->tval == TV_WAND || \
+	((o_ptr)->tval == TV_ROD && rod_requires_direction(Ind, o_ptr)))
+#define is_firearm_trapkit(sval) \
+	((sval) == SV_TRAPKIT_SLING || (sval) == SV_TRAPKIT_BOW || (sval) == SV_TRAPKIT_XBOW)
+#ifndef NEW_SHIELDS_NO_AC
+/* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
+#define is_enchantable_kind(o_ptr) \
+	(is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
+	(o_ptr)->tval == TV_MSTAFF || \
+	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
+	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING)
+#else
+/* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
+#define is_enchantable_kind(o_ptr) \
+	((is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
+	(o_ptr)->tval == TV_MSTAFF || \
+	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
+	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING) \
+	&& (o_ptr->tval != TV_SHIELD))
+#endif
+/* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 
 

@@ -1065,6 +1065,7 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	case STORE_GENERAL_DUN:
 		/* Analyze the type */
 		switch (o_ptr->tval) {
+		//case TV_JUNK: if (o_ptr->sval == SV_BANDAGE) break; else return(1);
 		case TV_FOOD:
 		case TV_LITE:
 		case TV_FLASK:
@@ -1149,6 +1150,7 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	case STORE_TEMPLE_DUN:
 		/* Analyze the type */
 		switch (o_ptr->tval) {
+		//case TV_JUNK: if (o_ptr->sval == SV_BANDAGE) break; else return(1);
 		case TV_BOOK:
 			if (get_book_name_color(o_ptr) != TERM_GREEN &&
 			    get_book_name_color(o_ptr) != TERM_WHITE) /* unused custom books */
@@ -1164,9 +1166,10 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 		break;
 
 	/* Alchemist */
+	case STORE_DEEPSUPPLY:
+		//case TV_JUNK: if (o_ptr->sval == SV_BANDAGE) break; else return(1);
 	case STORE_ALCHEMIST:
 	case STORE_ALCHEMIST_DUN:
-	case STORE_DEEPSUPPLY:
 		/* Analyze the type */
 		switch (o_ptr->tval) {
 #ifdef ENABLE_SUBINVEN
@@ -1305,6 +1308,7 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	case STORE_BTSUPPLY:
 		/* Analyze the type */
 		switch (o_ptr->tval) {
+		//case TV_JUNK: if (o_ptr->sval == SV_BANDAGE) break; else return(1);
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_SCROLL:

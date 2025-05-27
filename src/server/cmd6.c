@@ -2077,8 +2077,8 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	/* Create an empty bottle */
 	q_ptr = &forge;
 	object_wipe(q_ptr);
-	q_ptr->number = 1;
 	invcopy(q_ptr, lookup_kind(TV_BOTTLE, SV_EMPTY_BOTTLE));
+	q_ptr->number = 1;
 	q_ptr->level = 1;
 
 	if (p_ptr->item_newest == slot && o_ptr->number == 1) in_slot = p_ptr->item_newest = -1;
@@ -2106,6 +2106,69 @@ void do_cmd_empty_potion(int Ind, int slot) {
 		return;
 	}
 #endif
+	slot = inven_carry(Ind, q_ptr);
+	if (slot >= 0) inven_item_describe(Ind, slot);
+
+	/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
+	p_ptr->item_newest = in_slot;
+}
+
+/*
+ * Rip cloth into bandages
+ */
+void do_cmd_rip_cloth(int Ind, int slot) {
+	player_type *p_ptr = Players[Ind];
+	int in_slot = p_ptr->item_newest, amt;
+	object_type *o_ptr, *q_ptr, forge;
+
+	if (!get_inven_item(Ind, slot, &o_ptr) || !o_ptr->k_idx) {
+		msg_print(Ind, "\377oInvalid item.");
+		return;
+	}
+
+	if (!is_cloth_armour(o_ptr->tval, o_ptr->sval)) {
+		msg_print(Ind, "\377oThat's not a cloth item.");
+		return;
+	}
+
+	/* Create a fresh bandage */
+#if 0
+	amt = o_ptr->weight;
+	amt = 1 + 10 - 1000 / (amt + 90);
+	amt = (amt >> 1) + 1; //experimental: reduce a bit further..
+#else
+	amt = o_ptr->weight / 10; // 1 or 2
+#endif
+
+	q_ptr = &forge;
+	object_wipe(q_ptr);
+	invcopy(q_ptr, lookup_kind(TV_JUNK, SV_BANDAGE));
+	q_ptr->number = amt;
+	q_ptr->level = 1;
+
+	if (p_ptr->item_newest == slot && o_ptr->number == 1) in_slot = p_ptr->item_newest = -1;
+
+#ifdef USE_SOUND_2010
+#if 1
+	sound(Ind, "rip_cloth", "armour_light", SFX_TYPE_MISC, FALSE); //todo: add rip_cloth
+#endif
+#endif
+
+	/* Destroy the item in the pack */
+	inven_item_increase(Ind, slot, -1);
+	inven_item_describe(Ind, slot);
+	inven_item_optimize(Ind, slot);
+
+	/* let the player carry the bandage */
+	q_ptr->iron_trade = p_ptr->iron_trade;
+	q_ptr->iron_turn = turn;
+
+	/* S(he) is no longer afk */
+	un_afk_idle(Ind);
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 	slot = inven_carry(Ind, q_ptr);
 	if (slot >= 0) inven_item_describe(Ind, slot);
 
@@ -6289,6 +6352,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 	case TV_JUNK:
 		if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) msg_print(Ind, "You prepare the gift wrapping...");
+		else if (o_ptr->sval == SV_BANDAGE) msg_print(Ind, "\376You apply a bandage to your wound.");
 		else msg_print(Ind, "You activate it...");
 		break;
 	case TV_SPECIAL:
@@ -7685,6 +7749,33 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		/* Success */
 		return;
 
+	}
+
+	if (!done && o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE) {
+		if (!p_ptr->cut) {
+			msg_print(Ind, "You have no open wounds."); //yellow?
+			return;
+		} else if (p_ptr->cut_bandaged) {
+			msg_print(Ind, "You have already applied a bandage."); //yellow?
+			return;
+		}
+		inven_item_increase(Ind, item, -1);
+		inven_item_optimize(Ind, item);
+
+		/* Bandages can only lessen very bad cuts somewhat */
+		if (p_ptr->cut <= 100) {
+			p_ptr->cut_bandaged = p_ptr->cut;
+			p_ptr->cut = 0;
+		} else {
+			p_ptr->cut_bandaged = 100;
+			p_ptr->cut -= 100;
+		}
+
+		p_ptr->update |= (PU_BONUS);
+		p_ptr->redraw |= (PR_CUT);
+		handle_stuff(Ind);
+		//disturb(Ind, 0, 0)
+		return;
 	}
 
 	/* Mistake */

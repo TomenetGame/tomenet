@@ -2181,7 +2181,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/empty") || prefix(messagelc, "/emp")) {
 			if (!tk) {
-				msg_print(Ind, "\377oUsage: /empty (inventory slot letter|+)");
+				msg_print(Ind, "\377oUsage: /empty <inventory slot letter|+>");
 				return;
 			}
 
@@ -2191,6 +2191,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
 
 			do_cmd_empty_potion(Ind, k);
+			return;
+		}
+		else if (prefix(messagelc, "/rip") || prefix(messagelc, "/tear")) { //tear cloth into bandages
+			if (!tk) {
+				msg_print(Ind, "\377oUsage: /rip <inventory slot letter|+>");
+				return;
+			}
+
+			if (message3[0] == '+') {
+				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
+				else return;
+			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
+
+			do_cmd_rip_cloth(Ind, k);
 			return;
 		}
 		else if ((prefix(messagelc, "/dice") ||

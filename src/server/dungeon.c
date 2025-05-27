@@ -6179,11 +6179,11 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Cut */
-	if (p_ptr->cut) {
+	if (p_ptr->cut || p_ptr->cut_bandaged) {
 		int adjust = minus;// = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 		/* Hack -- Truly "mortal" wound */
-		if (p_ptr->cut >= CUT_MORTAL_WOUND) {
+		if (p_ptr->cut + p_ptr->cut_bandaged >= CUT_MORTAL_WOUND) {
 			/* Holiness > worldly bandages, always helps */
 			if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust = 2;
 			else adjust = 0;
@@ -6194,7 +6194,12 @@ static bool process_player_end_aux(int Ind) {
 		if (p_ptr->biofeedback) adjust += 5;
 
 		/* Apply some healing */
-		(void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1), p_ptr->cut_attacker);
+		if (p_ptr->cut) (void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1), p_ptr->cut_attacker);
+		else if (adjust >= p_ptr->cut_bandaged) {
+			p_ptr->cut_bandaged = p_ptr->cut_attacker = 0;
+			msg_format(Ind, "\376Your wound seems healed, you remove the bandage.");
+		}
+		else p_ptr->cut_bandaged -= adjust;
 	}
 
 #ifdef IRRITATING_WEATHER

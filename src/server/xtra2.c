@@ -3584,7 +3584,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
  */
 bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
-	int old_aux, new_aux;
+	int old_aux, new_aux, cut = p_ptr->cut + p_ptr->cut_bandaged;
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return(FALSE);
@@ -3608,7 +3608,7 @@ bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 
 	/* p_ptr->no_cut? for mimic forms that cannot bleed */
 	if (p_ptr->no_cut) {
-		if (!p_ptr->cut || !v) p_ptr->nocut_intrinsic = 0;
+		if (!cut || !(v + p_ptr->cut_bandaged)) p_ptr->nocut_intrinsic = 0;
 		if (!p_ptr->nocut_intrinsic) v = 0;
 	} else p_ptr->nocut_intrinsic = 1;
 
@@ -3695,7 +3695,7 @@ bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 		case 0:
 			msg_print(Ind, "You are no longer bleeding.");
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-			p_ptr->cut_attacker = 0;
+			if (!p_ptr->cut_bandaged) p_ptr->cut_attacker = 0;
 			break;
 		}
 
