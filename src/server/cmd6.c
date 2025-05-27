@@ -319,7 +319,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (!p_ptr->suscep_life) { // && !p_ptr->suscep_good
 			msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
 			(void)hp_player(Ind, damroll(8, 8), FALSE, FALSE); // like Lembas, but stronger
-			(void)set_cut(Ind, 0, 0, FALSE);	// like Lembas, but stronger
+			(void)set_cut(Ind, -1, 0, FALSE);	// like Lembas, but stronger
 			(void)set_stun(Ind, 0);		// "strengthens"
 			(void)set_poisoned(Ind, 0, 0);	// if it removes BB it can surely remove this
 			(void)set_diseased(Ind, 0, 0);	// if it removes BB it can surely remove this
@@ -960,7 +960,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
+			if (set_cut(Ind, -1, 0, FALSE)) ident = TRUE;
 			break;
 		case SV_POTION_LIFE:
 			msg_print(Ind, "\377GYou feel life flow through your body!");
@@ -979,7 +979,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			(void)set_confused(Ind, 0);
 			(void)set_image(Ind, 0);
 			(void)set_stun(Ind, 0);
-			(void)set_cut(Ind, 0, 0, FALSE);
+			(void)set_cut(Ind, -1, 0, FALSE);
 			(void)do_res_stat(Ind, A_STR);
 			(void)do_res_stat(Ind, A_CON);
 			(void)do_res_stat(Ind, A_DEX);
@@ -1136,7 +1136,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
+			if (set_cut(Ind, -1, 0, FALSE)) ident = TRUE;
 			if (set_image(Ind, 0)) ident = TRUE;
 			if (heal_insanity(Ind, damroll(4, 4))) ident = TRUE;
 			if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
@@ -3797,7 +3797,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
+		if (set_cut(Ind, -1, 0, FALSE)) ident = TRUE;
 		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		break;
@@ -3880,7 +3880,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
+			if (set_cut(Ind, -1, 0, FALSE)) ident = TRUE;
 			if (hp_player(Ind, 50, FALSE, FALSE)) ident = TRUE;
 		}
 		break;
@@ -4877,7 +4877,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
+		if (set_cut(Ind, -1, 0, FALSE)) ident = TRUE;
 		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		//if (o_ptr) o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
@@ -4888,7 +4888,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (i > 300) i = 300;
 		if (hp_player(Ind, i, FALSE, FALSE)) ident = TRUE;
 		if (set_stun(Ind, p_ptr->stun - 250)) ident = TRUE;
-		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
+		if (set_cut(Ind, -1, 0, FALSE)) ident = TRUE;
 		//if (o_ptr) o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 		break;
 
@@ -5684,7 +5684,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
+		if (set_cut(Ind, -1, 0, FALSE)) ident = TRUE;
 		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		//o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
@@ -6789,7 +6789,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "Your armour glows a bright white...");
 			msg_print(Ind, "\377GYou feel much better...");
 			(void)hp_player(Ind, 1000, FALSE, FALSE);
-			(void)set_cut(Ind, 0, 0, FALSE);
+			(void)set_cut(Ind, -1, 0, FALSE);
 			o_ptr->recharging = 888 - get_skill_scale(p_ptr, SKILL_DEVICE, 666);
 			break;
 		case ART_BELEGENNON:
@@ -6875,7 +6875,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_GONDOR:
 			msg_print(Ind, "\377GYou feel a warm tingling inside...");
 			(void)hp_player(Ind, 500, FALSE, FALSE);
-			(void)set_cut(Ind, 0, 0, FALSE);
+			(void)set_cut(Ind, -1, 0, FALSE);
 			o_ptr->recharging = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
 		case ART_RAZORBACK:
@@ -7207,7 +7207,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			set_diseased(Ind, 0, 0);
 			set_confused(Ind, 0);
 			set_stun(Ind, 0);
-			set_cut(Ind, 0, 0, FALSE);
+			set_cut(Ind, -1, 0, FALSE);
 			set_image(Ind, 0);
 			o_ptr->recharging = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 			break;

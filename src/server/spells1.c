@@ -11652,7 +11652,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_diseased(Ind, 0, 0); //mh
 		}
 		if (dam & 0x8) /* Close cuts */
-			(void)set_cut(Ind, 0, 0, FALSE);
+			(void)set_cut(Ind, -1, 0, FALSE);
 		if (dam & 0x10) { /* Remove conf/blind/stun */
 			(void)set_confused(Ind, 0);
 			(void)set_blind(Ind, 0);

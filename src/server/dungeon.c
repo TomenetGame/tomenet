@@ -6197,7 +6197,7 @@ static bool process_player_end_aux(int Ind) {
 		if (p_ptr->cut) (void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1), p_ptr->cut_attacker, FALSE);
 		else if (adjust >= p_ptr->cut_bandaged) {
 			p_ptr->cut_bandaged = p_ptr->cut_attacker = 0;
-			msg_format(Ind, "\376Your wound seems healed, you remove the bandage.");
+			msg_print(Ind, "\376Your wound seems healed, you remove the bandage.");
 		}
 		else p_ptr->cut_bandaged -= adjust;
 	}
