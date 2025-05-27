@@ -269,7 +269,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	case SV_FOOD_CURE_SERIOUS:
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
-		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker)) ident = TRUE;
+		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker, FALSE)) ident = TRUE;
 		//(void)set_poisoned(Ind, 0, 0);
 		//(void)set_image(Ind, 0);	// ok?
 		if (hp_player(Ind, damroll(6, 8), FALSE, FALSE)) ident = TRUE;
@@ -319,7 +319,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (!p_ptr->suscep_life) { // && !p_ptr->suscep_good
 			msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
 			(void)hp_player(Ind, damroll(8, 8), FALSE, FALSE); // like Lembas, but stronger
-			(void)set_cut(Ind, 0, 0);	// like Lembas, but stronger
+			(void)set_cut(Ind, 0, 0, FALSE);	// like Lembas, but stronger
 			(void)set_stun(Ind, 0);		// "strengthens"
 			(void)set_poisoned(Ind, 0, 0);	// if it removes BB it can surely remove this
 			(void)set_diseased(Ind, 0, 0);	// if it removes BB it can surely remove this
@@ -375,7 +375,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (!p_ptr->suscep_life && !p_ptr->suscep_good) {
 			msg_print(Ind, "That tastes very good.");
 			(void)hp_player(Ind, damroll(5, 8), FALSE, FALSE);
-			if (p_ptr->cut < CUT_MORTAL_WOUND) (void)set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker); //(csw potion does this) -- "hurt .. quickly healed"
+			if (p_ptr->cut < CUT_MORTAL_WOUND) (void)set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker, FALSE); //(csw potion does this) -- "hurt .. quickly healed"
 			//(void)set_stun(Ind, 0);
 			(void)set_poisoned(Ind, 0, 0); // "sick .. quickly healed"
 			(void)set_diseased(Ind, 0, 0); // "sick .. quickly healed"
@@ -842,7 +842,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			else if (msg == 1) take_hit(Ind, dam, "a fountain of detonation", 0); //disabled
 			else take_hit(Ind, dam, "detonations", 0);
 			(void)set_stun_raw(Ind, p_ptr->stun + 75);
-			(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
+			(void)set_cut(Ind, p_ptr->cut + 5000, Ind, FALSE);
 			ident = TRUE;
 			break;
 		case SV_POTION_DEATH:
@@ -929,13 +929,13 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION_CURE_LIGHT:
 			if (hp_player(Ind, damroll(3, 8), FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
-			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 20, p_ptr->cut_attacker)) ident = TRUE;
+			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 20, p_ptr->cut_attacker, FALSE)) ident = TRUE;
 			break;
 		case SV_POTION_CURE_SERIOUS:
 			if (hp_player(Ind, damroll(6, 8), FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
-			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker)) ident = TRUE;
+			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker, FALSE)) ident = TRUE;
 			break;
 		case SV_POTION_CURE_CRITICAL:
 			if (hp_player(Ind, damroll(14, 8), FALSE, FALSE)) ident = TRUE;
@@ -943,7 +943,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_confused(Ind, 0)) ident = TRUE;
 			//if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
+			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 250, 0, FALSE)) ident = TRUE;
 			break;
 		case SV_POTION_HEALING:
 			if (hp_player(Ind, 300, FALSE, FALSE)) ident = TRUE;
@@ -951,7 +951,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_confused(Ind, 0)) ident = TRUE;
 			//if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
+			if (set_cut(Ind, p_ptr->cut - 250, 0, FALSE)) ident = TRUE;
 			break;
 		case SV_POTION_STAR_HEALING:
 			if (hp_player(Ind, 700, FALSE, FALSE)) ident = TRUE;
@@ -960,7 +960,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
 			break;
 		case SV_POTION_LIFE:
 			msg_print(Ind, "\377GYou feel life flow through your body!");
@@ -979,7 +979,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			(void)set_confused(Ind, 0);
 			(void)set_image(Ind, 0);
 			(void)set_stun(Ind, 0);
-			(void)set_cut(Ind, 0, 0);
+			(void)set_cut(Ind, 0, 0, FALSE);
 			(void)do_res_stat(Ind, A_STR);
 			(void)do_res_stat(Ind, A_CON);
 			(void)do_res_stat(Ind, A_DEX);
@@ -1136,7 +1136,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
 			if (set_image(Ind, 0)) ident = TRUE;
 			if (heal_insanity(Ind, damroll(4, 4))) ident = TRUE;
 			if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
@@ -3786,7 +3786,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		/* Turned it into 'Cure Serious Wounds' - C. Blue */
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
-		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker)) ident = TRUE;
+		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker, FALSE)) ident = TRUE;
 		if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8), FALSE, FALSE)) ident = TRUE;
 		break;
 
@@ -3797,7 +3797,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
 		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		break;
@@ -3805,7 +3805,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	case SV_STAFF_HEALING:
 		if (hp_player(Ind, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), FALSE, FALSE)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
+		if (set_cut(Ind, p_ptr->cut - 250, 0, FALSE)) ident = TRUE;
 		break;
 
 	case SV_STAFF_THE_MAGI:
@@ -3880,7 +3880,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
 			if (hp_player(Ind, 50, FALSE, FALSE)) ident = TRUE;
 		}
 		break;
@@ -4877,7 +4877,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
 		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		//if (o_ptr) o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
@@ -4888,7 +4888,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (i > 300) i = 300;
 		if (hp_player(Ind, i, FALSE, FALSE)) ident = TRUE;
 		if (set_stun(Ind, p_ptr->stun - 250)) ident = TRUE;
-		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
 		//if (o_ptr) o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 		break;
 
@@ -5684,7 +5684,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0, FALSE)) ident = TRUE;
 		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		//o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
@@ -5695,7 +5695,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		if (i > 300) i = 300;
 		if (hp_player(Ind, i, FALSE, FALSE)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
-		if (set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
+		if (set_cut(Ind, p_ptr->cut - 250, 0, FALSE)) ident = TRUE;
 		//o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 		break;
 
@@ -6054,6 +6054,9 @@ bool activation_requires_direction(object_type *o_ptr) {
 		return(TRUE);
 #endif
 
+	/* Bandage ourselves or someone next to us! */
+	else if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE) return(TRUE);
+
 	/* All other items aren't activatable */
 	return(FALSE);
 }
@@ -6360,7 +6363,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 	case TV_JUNK:
 		if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) msg_print(Ind, "You prepare the gift wrapping...");
-		else if (o_ptr->sval == SV_BANDAGE) msg_print(Ind, "\376You apply a bandage to your wound.");
+		else if (o_ptr->sval == SV_BANDAGE) ; // message is given later, when the target is verified
 		else msg_print(Ind, "You activate it...");
 		break;
 	case TV_SPECIAL:
@@ -6760,7 +6763,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_LOTHARANG:
 			msg_print(Ind, "Your battle axe radiates deep purple...");
 			hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)), FALSE, FALSE);
-			if (p_ptr->cut < CUT_MORTAL_WOUND) (void)set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker);
+			if (p_ptr->cut < CUT_MORTAL_WOUND) (void)set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker, FALSE);
 			o_ptr->recharging = randint(3) + 2 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);//o_o
 			break;
 		case ART_CUBRAGOL:
@@ -6786,7 +6789,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "Your armour glows a bright white...");
 			msg_print(Ind, "\377GYou feel much better...");
 			(void)hp_player(Ind, 1000, FALSE, FALSE);
-			(void)set_cut(Ind, 0, 0);
+			(void)set_cut(Ind, 0, 0, FALSE);
 			o_ptr->recharging = 888 - get_skill_scale(p_ptr, SKILL_DEVICE, 666);
 			break;
 		case ART_BELEGENNON:
@@ -6872,7 +6875,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_GONDOR:
 			msg_print(Ind, "\377GYou feel a warm tingling inside...");
 			(void)hp_player(Ind, 500, FALSE, FALSE);
-			(void)set_cut(Ind, 0, 0);
+			(void)set_cut(Ind, 0, 0, FALSE);
 			o_ptr->recharging = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
 		case ART_RAZORBACK:
@@ -7204,7 +7207,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			set_diseased(Ind, 0, 0);
 			set_confused(Ind, 0);
 			set_stun(Ind, 0);
-			set_cut(Ind, 0, 0);
+			set_cut(Ind, 0, 0, FALSE);
 			set_image(Ind, 0);
 			o_ptr->recharging = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 			break;
@@ -7759,6 +7762,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	}
 
+	/* Deprecated - this is now a directional activation so we can bandage other players, see do_cmd_activate_dir() instead. */
 	if (!done && o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE) {
 		if (!p_ptr->cut) {
 			msg_print(Ind, "You have no open wounds."); //yellow?
@@ -7767,6 +7771,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "You have already applied a bandage."); //yellow?
 			return;
 		}
+		msg_print(Ind, "\376You apply a bandage to your wound.");
 		inven_item_increase(Ind, item, -1);
 		inven_item_optimize(Ind, item);
 
@@ -8356,6 +8361,84 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		return;
 	}
 #endif
+
+	if (!done && o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE) {
+		/* Bandage ourselves? */
+		if (dir == 5) {
+			if (!p_ptr->cut) {
+				msg_print(Ind, "You have no open wounds."); //yellow?
+				return;
+			} else if (p_ptr->cut_bandaged) {
+				msg_print(Ind, "You have already applied a bandage."); //yellow?
+				return;
+			}
+
+			msg_print(Ind, "\376You apply a bandage to your wound.");
+			inven_item_increase(Ind, item, -1);
+			inven_item_optimize(Ind, item);
+
+			/* Bandages can only lessen very bad cuts somewhat */
+			if (p_ptr->cut <= 100) {
+				p_ptr->cut_bandaged = p_ptr->cut;
+				p_ptr->cut = 0;
+			} else {
+				p_ptr->cut_bandaged = 100;
+				p_ptr->cut -= 100;
+			}
+
+			p_ptr->update |= (PU_BONUS);
+			p_ptr->redraw |= (PR_CUT);
+			handle_stuff(Ind);
+			//disturb(Ind, 0, 0)
+		} else {
+			cave_type **zcave = getcave(&p_ptr->wpos), *c_ptr;
+			int Ind2;
+			player_type *p2_ptr;
+
+			if (!zcave) return; //paranoia
+			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
+			Ind2 = -c_ptr->m_idx;
+			if (Ind2 <= 0 || Ind2 > NumPlayers) {
+				msg_print(Ind, "There is no player next to you in that direction.");
+				return;
+			}
+			p2_ptr = Players[Ind2];
+
+			if (!p2_ptr->cut) {
+				msg_print(Ind, "That player has no open wounds."); //yellow?
+				return;
+			} else if (p2_ptr->cut_bandaged) {
+				msg_print(Ind, "That player already has a bandage applied."); //yellow?
+				return;
+			}
+
+			switch (p2_ptr->name[strlen(p2_ptr->name) - 1]) {
+			case 's': case 'x': case 'z':
+				msg_format(Ind, "\376You apply a bandage to %s' wound.", p2_ptr->name);
+				break;
+			default:
+				msg_format(Ind, "\376You apply a bandage to %s's wound.", p2_ptr->name);
+			}
+			msg_format(Ind2, "\376%s applies a bandage to your wound.", p_ptr->name);
+			inven_item_increase(Ind, item, -1);
+			inven_item_optimize(Ind, item);
+
+			/* Bandages can only lessen very bad cuts somewhat */
+			if (p2_ptr->cut <= 100) {
+				p2_ptr->cut_bandaged = p2_ptr->cut;
+				p2_ptr->cut = 0;
+			} else {
+				p2_ptr->cut_bandaged = 100;
+				p2_ptr->cut -= 100;
+			}
+
+			p2_ptr->update |= (PU_BONUS);
+			p2_ptr->redraw |= (PR_CUT);
+			handle_stuff(Ind2);
+			//disturb(Ind2, 0, 0)
+		}
+		return;
+	}
 
 	/* Clear current activation */
 	p_ptr->current_activation = -1;

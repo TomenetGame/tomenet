@@ -2870,7 +2870,7 @@ bool set_martyr(int Ind, int v) {
 			msg_print(Ind, "\377vYou feel the heavens grant your their powers.");
 
 			/* Cancel all DoTs initially */
-			set_cut(Ind, 0, 0);
+			set_cut(Ind, 0, 0, FALSE);
 			set_diseased(Ind, 0, 0);
 			set_poisoned(Ind, 0, 0);
 
@@ -3582,7 +3582,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
+bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	int old_aux, new_aux, cut = p_ptr->cut + p_ptr->cut_bandaged;
 	bool notice = FALSE;
@@ -3651,6 +3651,7 @@ bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 
 	/* Increase cut */
 	if (new_aux > old_aux) {
+		if (!quiet)
 		/* Describe the state */
 		switch (new_aux) {
 		/* Graze */
@@ -9738,7 +9739,7 @@ void player_death(int Ind) {
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
+		if (p_ptr->cut) (void)set_cut(Ind, 0, 0, FALSE);
 		/* if (p_ptr->food < PY_FOOD_ALERT) */
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
@@ -9894,7 +9895,7 @@ void player_death(int Ind) {
 
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
+		if (p_ptr->cut) (void)set_cut(Ind, 0, 0, FALSE);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		if (!sector000downstairs) p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
@@ -10049,7 +10050,7 @@ void player_death(int Ind) {
 			if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 			if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 			if (p_ptr->stun) (void)set_stun(Ind, 0);
-			if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
+			if (p_ptr->cut) (void)set_cut(Ind, 0, 0, FALSE);
 			(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 			//msg_print(Ind, "The hold of the Black Breath on you is broken!");
@@ -10899,7 +10900,7 @@ void player_death(int Ind) {
 	if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 	if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 	if (p_ptr->stun) (void)set_stun(Ind, 0);
-	if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
+	if (p_ptr->cut) (void)set_cut(Ind, 0, 0, FALSE);
 	/* if (p_ptr->food < PY_FOOD_FULL) */
 	(void)set_food(Ind, PY_FOOD_FULL - 1);
 

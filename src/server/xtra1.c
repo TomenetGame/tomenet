@@ -9743,7 +9743,7 @@ static void process_global_event(int ge_id) {
 			/* avoid him dying */
 			set_poisoned(j, 0, 0);
 			set_diseased(j, 0, 0);
-			set_cut(j, 0, 0);
+			set_cut(j, 0, 0, FALSE);
 			set_food(j, PY_FOOD_FULL);
 			hp_player(j, 5000, TRUE, TRUE);
 
@@ -9832,7 +9832,7 @@ static void process_global_event(int ge_id) {
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
 					/* Give him his hit points back */
-					set_cut(i, 0, 0);
+					set_cut(i, 0, 0, FALSE);
 					Players[i]->chp = Players[i]->mhp;
 					Players[i]->chp_frac = 0;
 					Players[i]->redraw |= PR_HP;

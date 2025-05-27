@@ -3076,7 +3076,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
-				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx, FALSE);
 			}
 			break;
 		}
@@ -3099,7 +3099,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
-				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx, FALSE);
 			}
 			break;
 		}
@@ -3122,7 +3122,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
-				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx, FALSE);
 			}
 			break;
 		}
@@ -5318,7 +5318,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
-				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx, FALSE);
 			}
 			break;
 		}
@@ -5341,7 +5341,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
-				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx, FALSE);
 			}
 			break;
 		}
@@ -5364,7 +5364,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (!res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
-				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx, FALSE);
 			}
 			break;
 		}

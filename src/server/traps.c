@@ -2073,7 +2073,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				/* Maybe better make them other types of traps? */
 				if (dlev > 29) {
 					msg_print(Ind, "You are pierced by the spikes!");
-					(void)set_cut(Ind, p_ptr->cut + randint(dlev * 2) + 30, 0);
+					(void)set_cut(Ind, p_ptr->cut + randint(dlev * 2) + 30, 0, FALSE);
 
 					if (dlev > 49 && !p_ptr->resist_pois && !p_ptr->oppose_pois && !p_ptr->immune_poison) {
 						msg_print(Ind, "The spikes were poisoned!");
@@ -2597,7 +2597,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		case TRAP_OF_FINGER_CATCHING:
 			msg_print(Ind, "Ouch! You get your finger caught!");
 			trap_hit(Ind, trap);
-			(void)set_cut(Ind, p_ptr->cut + randint(dlev) + 5, 0);
+			(void)set_cut(Ind, p_ptr->cut + randint(dlev) + 5, 0, FALSE);
 			if (magik(50)) {
 				msg_print(Ind, "Your dominant hand gets hurt!");
 				do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);

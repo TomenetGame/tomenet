@@ -10827,7 +10827,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		if ((!p_ptr->resist_shard) && (!p_ptr->no_cut))
-			(void)set_cut(Ind, p_ptr->cut + dam, -who);
+			(void)set_cut(Ind, p_ptr->cut + dam, -who, FALSE);
 		break;
 
 	/* Sound -- mostly stunning */
@@ -11060,7 +11060,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 
 		if ((!p_ptr->resist_shard) && (!p_ptr->no_cut))
-			(void)set_cut(Ind, p_ptr->cut + damroll(5, 8), -who);
+			(void)set_cut(Ind, p_ptr->cut + damroll(5, 8), -who, FALSE);
 		/* if (!p_ptr->resist_sound)
 			(void)set_stun(Ind, p_ptr->stun + randint(15)); */
 		break;
@@ -11409,7 +11409,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_CURECUT_PLAYER:
-		(void)set_cut(Ind, p_ptr->cut - dam, -who);
+		(void)set_cut(Ind, p_ptr->cut - dam, -who, FALSE);
 		dam = 0;
 		break;
 
@@ -11430,11 +11430,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (p_ptr->cut && p_ptr->cut < CUT_MORTAL_WOUND) {
 			if (hack_dam & 0x2000) /* CCW */
-				(void)set_cut(Ind, p_ptr->cut - 250, 0);
+				(void)set_cut(Ind, p_ptr->cut - 250, 0, FALSE);
 			else if (hack_dam & 0x1000) /* CSW */
-				(void)set_cut(Ind, p_ptr->cut - 50, 0);
+				(void)set_cut(Ind, p_ptr->cut - 50, 0, FALSE);
 			else if (hack_dam & 0x800) { /* CLW */
-				(void)set_cut(Ind, p_ptr->cut - 20, 0);
+				(void)set_cut(Ind, p_ptr->cut - 20, 0, FALSE);
 			}
 		}
 
@@ -11652,7 +11652,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_diseased(Ind, 0, 0); //mh
 		}
 		if (dam & 0x8) /* Close cuts */
-			(void)set_cut(Ind, 0, 0);
+			(void)set_cut(Ind, 0, 0, FALSE);
 		if (dam & 0x10) { /* Remove conf/blind/stun */
 			(void)set_confused(Ind, 0);
 			(void)set_blind(Ind, 0);
@@ -11882,7 +11882,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 
 		if (!p_ptr->resist_shard && !p_ptr->no_cut)
-			(void)set_cut(Ind, p_ptr->cut + (dam / 2), -who);
+			(void)set_cut(Ind, p_ptr->cut + (dam / 2), -who, FALSE);
 		if (!p_ptr->resist_sound)
 			(void)set_stun(Ind, p_ptr->stun + randint(20));
 
@@ -11916,7 +11916,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 
 		if (!p_ptr->resist_shard && !p_ptr->no_cut)
-			(void)set_cut(Ind, p_ptr->cut + (dam / 2), -who);
+			(void)set_cut(Ind, p_ptr->cut + (dam / 2), -who, FALSE);
 		if (!p_ptr->resist_sound)
 			(void)set_stun(Ind, p_ptr->stun + randint(20));
 

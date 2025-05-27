@@ -10397,8 +10397,8 @@ void bandage_fails(int Ind) {
 
 	if (!p_ptr->cut_bandaged) return;
 
-	msg_print(Ind, "Your bandage comes off!");
-	//disturb(Ind, 0, 0);
+	msg_print(Ind, "\376Your bandage comes off and your wound reopens!");
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
 #if 0 /* this doesn't set nocut_intrinsic properly */
 	p_ptr->cut += p_ptr->cut_bandaged;
@@ -10411,7 +10411,7 @@ void bandage_fails(int Ind) {
 	int tmp = p_ptr->cut_bandaged;
 
 	p_ptr->cut_bandaged = 0;
-	(void)set_cut(Ind, p_ptr->cut + tmp, p_ptr->cut_attacker);
+	(void)set_cut(Ind, p_ptr->cut + tmp, p_ptr->cut_attacker, TRUE);
 #endif
 }
 

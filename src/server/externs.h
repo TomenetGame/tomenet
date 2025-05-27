@@ -2359,7 +2359,7 @@ extern bool set_oppose_cold(int Ind, int v);
 extern bool set_oppose_pois(int Ind, int v);
 extern bool set_stun(int Ind, int v);
 extern bool set_stun_raw(int Ind, int v);
-extern bool set_cut(int Ind, int v, int attacker);
+extern bool set_cut(int Ind, int v, int attacker, bool quiet);
 extern bool set_mindboost(int Ind, int p, int v);
 extern bool set_kinetic_shield(int Ind, int v);
 extern bool set_savingthrow(int Ind, int v);
