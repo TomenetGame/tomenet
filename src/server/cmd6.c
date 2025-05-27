@@ -2025,6 +2025,11 @@ void do_cmd_empty_potion(int Ind, int slot) {
 		return;
 	}
 
+	if (check_guard_inscription(o_ptr->note, 'k')) {
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
+
 	tval = o_ptr->tval;
 
 	/* specialty: empty brass lanterns, just to make them stack and sell later */
@@ -2126,10 +2131,15 @@ void do_cmd_rip_cloth(int Ind, int slot) {
 		return;
 	}
 
-	if (!is_cloth_armour(o_ptr->tval, o_ptr->sval)) {
+	if (!is_cloth(o_ptr->tval, o_ptr->sval)) {
 		msg_print(Ind, "\377oThat's not a cloth item.");
 		return;
 	}
+
+	if (check_guard_inscription(o_ptr->note, 'k')) {
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
 
 	/* Create a fresh bandage */
 #if 0
@@ -2138,6 +2148,7 @@ void do_cmd_rip_cloth(int Ind, int slot) {
 	amt = (amt >> 1) + 1; //experimental: reduce a bit further..
 #else
 	amt = o_ptr->weight / 10; // 1 or 2
+	if (!amt) amt = 1;
 #endif
 
 	q_ptr = &forge;

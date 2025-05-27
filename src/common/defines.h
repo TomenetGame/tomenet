@@ -5063,6 +5063,7 @@
 	((tval) == TV_SOFT_ARMOR && ( \
 	(sval) == SV_ROBE || (sval) == SV_TUNIC || (sval) == SV_FROCK || (sval) == SV_GOWN || \
 	(sval) == SV_FILTHY_RAG || (sval) == SV_COSTUME || (sval) == SV_SHIRT)))
+#define is_cloth(tval,sval)	(is_cloth_armour(tval,sval) || ((tval) == TV_TOOL && (sval) == SV_TOOL_WRAPPING))
 /* what magic/roguish/martial artist would wear; ignores DSM */
 #define is_flexible_armour(tval,sval) \
 	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_HARD_LEATHER_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \

@@ -3211,7 +3211,7 @@ bool hates_shards(object_type *o_ptr) {
 		return(FALSE);
 
 	default:
-		if (!is_cloth_armour(o_ptr->tval, o_ptr->sval)) return(FALSE);
+		if (!is_cloth(o_ptr->tval, o_ptr->sval)) return(FALSE);
 	}
 
 	return(TRUE);
