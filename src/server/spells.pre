@@ -133,7 +133,7 @@ extern bool set_oppose_fire(int Ind, int v);
 extern bool set_oppose_cold(int Ind, int v);
 extern bool set_oppose_pois(int Ind, int v);
 extern bool set_stun(int Ind, int v);
-extern bool set_cut(int Ind, int v, int attacker);
+extern bool set_cut(int Ind, int v, int attacker, bool quiet);
 extern bool set_food(int Ind, int v);
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
