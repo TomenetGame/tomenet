@@ -5150,12 +5150,12 @@ static bool process_player_end_aux(int Ind) {
 		if (!k) k = 1;
 
 		if (p_ptr->cut >= CUT_MORTAL_WOUND) i = 7;	/* Mortal wound */
-		if (p_ptr->cut >= 200) i = 6;	/* Deep gash */
-		if (p_ptr->cut >= 100) i = 5;	/* Severe cut */
-		if (p_ptr->cut >= 50) i = 4;	/* Nasty cut */
-		if (p_ptr->cut >= 25) i = 3;	/* Bad cut */
-		if (p_ptr->cut >= 10) i = 2;	/* Light cut */
-		else i = 1;			/* Graze */
+		if (p_ptr->cut >= CUT_DEEP_GASH) i = 6;		/* Deep gash */
+		if (p_ptr->cut >= CUT_SEVERE_CUT) i = 5;	/* Severe cut */
+		if (p_ptr->cut >= CUT_NASTY_CUT) i = 4;		/* Nasty cut */
+		if (p_ptr->cut >= CUT_BAD_CUT) i = 3;		/* Bad cut */
+		if (p_ptr->cut >= CUT_LIGHT_CUT) i = 2;		/* Light cut */
+		else i = 1; /* CUT_GRAZE:			   Graze */
 
 		/* Take damage */
 		p_ptr->died_from_ridx = 0;

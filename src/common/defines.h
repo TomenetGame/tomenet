@@ -2282,7 +2282,15 @@
 #define PY_REGEN_MNBASE		524		/* Min amount mana regen*2^16 */
 
 /* Cut thresholds */
+#define CUT_NONE		0
+#define CUT_GRAZE		1
+#define CUT_LIGHT_CUT		10
+#define CUT_BAD_CUT		25
+#define CUT_NASTY_CUT		50
+#define CUT_SEVERE_CUT		100
+#define CUT_DEEP_GASH		200
 #define CUT_MORTAL_WOUND	800	/* Was 1000 */
+#define CUT_MAX			1001	/* Ie +1 above former 'Mortal Wound' tier */
 
 
 /*** Option Definitions ***/

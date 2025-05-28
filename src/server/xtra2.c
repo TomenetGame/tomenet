@@ -3598,7 +3598,7 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 
 	/* Hack -- Force good values -- allow up to 1000 (Mortal Wound starts at 800..1000) */
 	//v = (v > cfg.spell_stack_limit * 5) ? cfg.spell_stack_limit * 5 : (v < 0) ? 0 : v;
-	v = (v > 1001) ? 1001 : (v < 0) ? 0 : v;
+	v = (v > CUT_MAX) ? CUT_MAX : (v < 0) ? 0 : v;
 
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
  #ifdef HYDRA_REGENERATION
@@ -3625,34 +3625,34 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 	/* Mortal wound */
 	if (p_ptr->cut >= CUT_MORTAL_WOUND) old_aux = 7;
 	/* Deep gash */
-	else if (p_ptr->cut >= 200) old_aux = 6;
+	else if (p_ptr->cut >= CUT_DEEP_GASH) old_aux = 6;
 	/* Severe cut */
-	else if (p_ptr->cut >= 100) old_aux = 5;
+	else if (p_ptr->cut >= CUT_SEVERE_CUT) old_aux = 5;
 	/* Nasty cut */
-	else if (p_ptr->cut >= 50) old_aux = 4;
+	else if (p_ptr->cut >= CUT_NASTY_CUT) old_aux = 4;
 	/* Bad cut */
-	else if (p_ptr->cut >= 25) old_aux = 3;
+	else if (p_ptr->cut >= CUT_BAD_CUT) old_aux = 3;
 	/* Light cut */
-	else if (p_ptr->cut >= 10) old_aux = 2;
+	else if (p_ptr->cut >= CUT_LIGHT_CUT) old_aux = 2;
 	/* Graze */
-	else if (p_ptr->cut > 0) old_aux = 1;
+	else if (p_ptr->cut > CUT_NONE) old_aux = 1; //CUT_GRAZE
 	/* None */
 	else old_aux = 0;
 
 	/* Mortal wound */
 	if (v >= CUT_MORTAL_WOUND) new_aux = 7;
 	/* Deep gash */
-	else if (v >= 200) new_aux = 6;
+	else if (v >= CUT_DEEP_GASH) new_aux = 6;
 	/* Severe cut */
-	else if (v >= 100) new_aux = 5;
+	else if (v >= CUT_SEVERE_CUT) new_aux = 5;
 	/* Nasty cut */
-	else if (v >= 50) new_aux = 4;
+	else if (v >= CUT_NASTY_CUT) new_aux = 4;
 	/* Bad cut */
-	else if (v >= 25) new_aux = 3;
+	else if (v >= CUT_BAD_CUT) new_aux = 3;
 	/* Light cut */
-	else if (v >= 10) new_aux = 2;
+	else if (v >= CUT_LIGHT_CUT) new_aux = 2;
 	/* Graze */
-	else if (v > 0) new_aux = 1;
+	else if (v > CUT_NONE) new_aux = 1; //CUT_GRAZE
 	/* None */
 	else new_aux = 0;
 
