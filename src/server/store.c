@@ -1161,6 +1161,12 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 		case TV_BLUNT:
 			break;
 		default:
+			if (is_melee_weapon(o_ptr->tval)) {
+				u32b dummy, f3;
+
+				object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
+				if (f3 & TR3_BLESSED) break;
+			}
 			return(1);
 		}
 		break;
