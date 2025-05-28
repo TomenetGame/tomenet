@@ -467,6 +467,8 @@ struct player_type {
 	s16b cut;			/* Timed -- Cut */
 	s16b cut_bandaged;		/* Timed -- Cut */
 	int cut_attacker;		/* Who cut the player - used for blood bond */
+	bool cut_intrinsic_regen;
+	bool cut_intrinsic_nocut;
 	s16b stun;			/* Timed -- Stun */
 
 	s16b xtrastat_tim;		/* Timed temp +stats */
