@@ -6304,8 +6304,15 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 		/* Bandages require some DEX or INT */
 		if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE) {
-			if (rand_int(15) + p_ptr->stat_cur[A_INT] + p_ptr->stat_cur[A_DEX] < 20) { // at 6 INT+DEX: Succeed in 1 of 20; at 20 INT+DEX: Succeed always.
-				msg_format(Ind, "\377%cYou failed to apply the bandage properly.", COLOUR_MD_FAIL);
+			// 1% at 3*2 displayed INT+DEX, 50% at 10*2, 77% at 14*2, 100% at 18*2:
+			int chance = ((adj_dex_th_mul[p_ptr->stat_ind[A_INT]] - 9) * (adj_dex_th_mul[p_ptr->stat_ind[A_DEX]] - 9)) / 100;
+
+			if (!magik(chance)) {
+				if (!magik(chance + 25)) {
+					inven_item_increase(Ind, item, -1);
+					inven_item_optimize(Ind, item);
+					msg_format(Ind, "\377%cThe bandage is ruined in the process.", COLOUR_MD_FAIL);
+				} else msg_format(Ind, "\377%cYou fail to apply the bandage properly.", COLOUR_MD_FAIL);
 				return;
 			}
 		}
@@ -7782,9 +7789,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "You have already applied a bandage."); //yellow?
 			return;
 		}
-		msg_print(Ind, "\376You apply a bandage to your wound.");
 		inven_item_increase(Ind, item, -1);
 		inven_item_optimize(Ind, item);
+		msg_print(Ind, "\376You apply a bandage to your wound.");
 
 		/* Bandages can only lessen very bad cuts somewhat */
 		if (p_ptr->cut <= 100) {
@@ -8384,9 +8391,9 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				return;
 			}
 
-			msg_print(Ind, "\376You apply a bandage to your wound.");
 			inven_item_increase(Ind, item, -1);
 			inven_item_optimize(Ind, item);
+			msg_print(Ind, "\376You apply a bandage to your wound.");
 
 			/* Bandages can only lessen very bad cuts somewhat */
 			if (p_ptr->cut <= 100) {
@@ -8423,6 +8430,8 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				return;
 			}
 
+			inven_item_increase(Ind, item, -1);
+			inven_item_optimize(Ind, item);
 			switch (p2_ptr->name[strlen(p2_ptr->name) - 1]) {
 			case 's': case 'x': case 'z':
 				msg_format(Ind, "\376You apply a bandage to %s' wound.", p2_ptr->name);
@@ -8431,8 +8440,6 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				msg_format(Ind, "\376You apply a bandage to %s's wound.", p2_ptr->name);
 			}
 			msg_format(Ind2, "\376%s applies a bandage to your wound.", p_ptr->name);
-			inven_item_increase(Ind, item, -1);
-			inven_item_optimize(Ind, item);
 
 			/* Bandages can only lessen very bad cuts somewhat */
 			if (p2_ptr->cut <= 100) {
