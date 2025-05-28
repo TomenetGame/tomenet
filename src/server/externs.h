@@ -2298,6 +2298,9 @@ extern void set_dungeon_bonus(int id, bool reset);
 #endif
 
 extern void intshuffle(int *array, int size);
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+extern int troll_hydra_regen(player_type *p_ptr);
+#endif
 
 /* xtra2.c */
 extern bool set_tim_reflect(int Ind, int v);

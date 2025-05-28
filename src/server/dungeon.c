@@ -31,11 +31,6 @@
 /* Inverse of (1 - assumed density of wood relative to water), we're assuming 0.5, so it's "1 / (1 - 0.5)" = 2. */
 #define WOOD_INV_DENSITY 2
 
-/* Half-Trolls and especially Trolls regenerate extraordinarily quickly (both players and monsters) */
-#define TROLL_REGENERATION
-/* Hydras regenerate extraordinarily quickly aka regrowing their heads (both players and monsters) */
-#define HYDRA_REGENERATION
-
 /* Maximum wilderness radius a player can travel with WoR [16]
  * TODO: Add another method to allow wilderness travels */
 #define RECALL_MAX_RANGE	24
@@ -1856,14 +1851,19 @@ static void regen_monsters(void) {
 			/* Hack -- Minimal regeneration rate */
 			if (!frac) frac = 1;
 
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+			if (r_ptr->flags2 & RF2_REGENERATE_TH) frac *= 4;
+			else if (r_ptr->flags2 & RF2_REGENERATE_T2) frac *= 3;
+			else
+#endif
 #ifdef HYDRA_REGENERATION
-			if (r_ptr->d_char == 'M' || (r_ptr->flags2 & RF2_REGENERATE_TH)) frac *= 4;
+			if (r_ptr->d_char == 'M') frac *= 4;
 			else
 #endif
 #ifdef TROLL_REGENERATION
 			/* Experimental - Trolls are super-regenerators (hard-coded) */
-			if (m_ptr->r_idx == RI_HALF_TROLL || (r_ptr->flags2 & RF2_REGENERATE_T2)) frac *= 3;
-			else if (r_ptr->d_char == 'T' || (r_ptr->flags2 & RF2_REGENERATE_TH)) frac *= 4;
+			if (m_ptr->r_idx == RI_HALF_TROLL) frac *= 3;
+			else if (r_ptr->d_char == 'T') frac *= 4;
 			else
 #endif
 			/* Hack -- Some monsters regenerate quickly */
@@ -5006,20 +5006,10 @@ int food_consumption(int Ind) {
 
 	/* Regeneration and extra-growth takes more food. (Intrinsic) super-regen takes a large amount of food. */
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
- #ifdef HYDRA_REGENERATION
-	/* Experimental - Hydras are super-regenerators aka regrowing heads */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M')
-		i += 25;
-	else
- #endif
- #ifdef TROLL_REGENERATION
-	/* Experimental - Trolls are super-regenerators (hard-coded) */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL)
-		i += 25;
-	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL)
-		i += 20;
-	else
- #endif
+	switch (troll_hydra_regen(p_ptr)) {
+	case 1: i += 20; break;
+	case 2: i += 25; break;
+	}
 #endif
 	if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 15;
 	/* Other stat-boosting effects: */
@@ -5607,21 +5597,13 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Regeneration ability - in pvp, damage taken is greatly reduced, so regen must not nullify the remaining damage easily */
-#ifdef HYDRA_REGENERATION
-	/* Experimental - Hydras are super-regenerators aka regrowing heads */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') {
-		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+	if ((i = troll_hydra_regen(p_ptr))) {
 		intrinsic_regen = TRUE;
-	} else
-#endif
-#ifdef TROLL_REGENERATION
-	/* Experimental - Trolls are super-regenerators (hard-coded) */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) {
-		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
-		intrinsic_regen = TRUE;
-	} else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) {
-		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 3;
-		intrinsic_regen = TRUE;
+		switch (i) {
+		case 1: regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 3; break;
+		case 2: regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4; break;
+		}
 	} else
 #endif
 	if (p_ptr->regenerate) regen_amount *= 2;
@@ -5639,7 +5621,7 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->sun_burn
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
 	    /* Trolls and Hydras continue to regenerate even while cut (it's the whole point of their regen) */
-	    || (p_ptr->cut && (!intrinsic_regen || p_ptr->cut_intrinsic))
+	    || (p_ptr->cut && (!intrinsic_regen || !p_ptr->cut_intrinsic_regen))
 #else
 	    || p_ptr->cut
 #endif

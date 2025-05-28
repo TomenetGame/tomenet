@@ -1190,7 +1190,7 @@ static void wr_extra(int Ind) {
 
 	wr_byte(p_ptr->tim_lcage);
 
-	tmp8u = (p_ptr->cut_intrinsic ? 0x01 : 0x00) + (p_ptr->nocut_intrinsic ? 0x02 : 0x00);
+	tmp8u = (p_ptr->cut_intrinsic_regen ? 0x01 : 0x00) + (p_ptr->cut_intrinsic_nocut ? 0x02 : 0x00);
 	wr_byte(tmp8u);
 	wr_byte(p_ptr->combosets);
 	wr_s16b(p_ptr->cut_bandaged);

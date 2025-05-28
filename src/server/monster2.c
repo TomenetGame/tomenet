@@ -7316,18 +7316,12 @@ else s_printf("\n");
 		/* not restricting for now */
 	}
 
-#ifdef HYDRA_REGENERATION
-	/* Experimental - Hydras are super-regenerators aka regrowing heads */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') r_ptr->flags2 |= RF2_REGENERATE_TH;
-	else
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+	switch (troll_hydra_regen(p_ptr)) {
+	case 1: r_ptr->flags2 |= RF2_REGENERATE_T2; break;
+	case 2: r_ptr->flags2 |= RF2_REGENERATE_TH; break;
+	}
 #endif
-#ifdef TROLL_REGENERATION
-	/* Experimental - Trolls are super-regenerators (hard-coded) */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) r_ptr->flags2 |= RF2_REGENERATE_T2;
-	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) r_ptr->flags2 |= RF2_REGENERATE_TH;
-	else
-#endif
-	;
 
 	/* Determine chance to use available spells/items */
 	switch (p_ptr->pclass) {

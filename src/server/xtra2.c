@@ -3587,7 +3587,6 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 	int old_aux, new_aux, cut = p_ptr->cut + p_ptr->cut_bandaged;
 	bool notice = FALSE, heal_bandaged = FALSE;
 
-	if (p_ptr->martyr && v) return(FALSE);
 	if (v == -1) {
 		if (p_ptr->cut_bandaged) {
 			heal_bandaged = TRUE;
@@ -3596,31 +3595,28 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 		v = 0;
 	}
 
+	/* Martyr / ghosts never bleed */
+	if ((p_ptr->martyr || p_ptr->ghost) && v) return(FALSE);
+
+	/* SKILL_MIMIC:
+	   Do we apply intrinsic anti-cut powers? These are NO_CUT and Troll/Hydra-Regeenration.
+	   Only if the cut is newly acquired, while we already have these powers:
+	   We're not cut yet or our cut is now fully healed? Then we're ok to profit from intrinsic powers for an upcoming cut. */
+	if (!cut || !(v + p_ptr->cut_bandaged)) {
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+		/* Intrinsic regen powers? */
+		if (troll_hydra_regen(p_ptr)) p_ptr->cut_intrinsic_regen = TRUE;/* Intrinsic regen power gets applied */
+#endif
+		/* Mimic forms that cannot bleed? */
+		if (p_ptr->no_cut) p_ptr->cut_intrinsic_nocut = TRUE; /* Intrinsic NO_CUT gets applied */
+	}
+
+	/* NO_CUT form? */
+	if (v && p_ptr->cut_intrinsic_nocut) return(FALSE);
+
 	/* Hack -- Force good values -- allow up to 1000 (Mortal Wound starts at 800..1000) */
 	//v = (v > cfg.spell_stack_limit * 5) ? cfg.spell_stack_limit * 5 : (v < 0) ? 0 : v;
 	v = (v > CUT_MAX) ? CUT_MAX : (v < 0) ? 0 : v;
-
-#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
- #ifdef HYDRA_REGENERATION
-	if (r_ptr->d_char == 'M' || (r_ptr->flags2 & RF2_REGENERATE_TH)) p_ptr->cut_intrinsic = 0;
-	else
- #endif
- #ifdef TROLL_REGENERATION
-	if (m_ptr->r_idx == RI_HALF_TROLL || (r_ptr->flags2 & RF2_REGENERATE_T2)
-	    || r_ptr->d_char == 'T' || (r_ptr->flags2 & RF2_REGENERATE_TH)) p_ptr->cut_intrinsic = 0;
-	else
- #endif
-	p_ptr->cut_intrinsic = 1;
-#endif
-
-	/* p_ptr->no_cut? for mimic forms that cannot bleed */
-	if (p_ptr->no_cut) {
-		if (!cut || !(v + p_ptr->cut_bandaged)) p_ptr->nocut_intrinsic = 0;
-		if (!p_ptr->nocut_intrinsic) v = 0;
-	} else p_ptr->nocut_intrinsic = 1;
-
-	/* a ghost never bleeds */
-	if (v && p_ptr->ghost) v = 0;
 
 	/* Mortal wound */
 	if (p_ptr->cut >= CUT_MORTAL_WOUND) old_aux = 7;

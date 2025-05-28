@@ -5088,6 +5088,12 @@ void calc_boni(int Ind) {
 		p_ptr->immune_elec = TRUE; csheet_boni[14].cb[1] |= CB2_IELEC;
 	}
 
+	/* Lose anti-cut powers? */
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+	if (!troll_hydra_regen(p_ptr)) p_ptr->cut_intrinsic_regen = FALSE; /* No intrinsic regen power */
+#endif
+	if (!p_ptr->no_cut) p_ptr->cut_intrinsic_nocut = FALSE; /* No intrinsic NO_CUT power */
+
 	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
 	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
 	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
@@ -12200,3 +12206,29 @@ void limit_energy(player_type *p_ptr) {
 	if (p_ptr->energy > (level_speed(&p_ptr->wpos) * 2) - 1)
 		p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
 }
+
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+/* Returns:
+   0 for no special regen
+   1 for tier I regen (half-troll or RF2_REGENERATE_T2 flag)
+   2 for tier II regen (troll, hydra or RF2_REGENERATe_TH flag) */
+int troll_hydra_regen(player_type *p_ptr) {
+	if (p_ptr->body_monster) {
+		monster_race *r_ptr = &r_info[p_ptr->body_monster];
+
+		if (r_ptr->flags2 & RF2_REGENERATE_TH) return(2);
+		if (r_ptr->flags2 & RF2_REGENERATE_T2) return(1); // Half-Troll
+ #ifdef HYDRA_REGENERATION
+		if (r_ptr->d_char == 'M' ) return(2);
+ #endif
+ #ifdef TROLL_REGENERATION
+		if (p_ptr->body_monster == RI_HALF_TROLL) return(1);
+		if (r_ptr->d_char == 'T') return(2);
+ #endif
+	}
+ #ifdef TROLL_REGENERATION
+	if (p_ptr->prace == RACE_HALF_TROLL) return(1);
+ #endif
+	return(0);
+}
+#endif

@@ -2706,8 +2706,8 @@ if (p_ptr->updated_savegame == 0) {
 		rd_byte(&p_ptr->tim_lcage);
 
 		rd_byte(&tmp8u);
-		p_ptr->cut_intrinsic = (tmp8u & 0x01);
-		p_ptr->nocut_intrinsic = (tmp8u & 0x02);
+		p_ptr->cut_intrinsic_regen = (tmp8u & 0x01);
+		p_ptr->cut_intrinsic_nocut = (tmp8u & 0x02);
 
 		rd_byte(&p_ptr->combosets);
 		rd_s16b(&p_ptr->cut_bandaged);

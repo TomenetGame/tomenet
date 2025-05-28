@@ -684,6 +684,11 @@
    This only affects bosses of floors < 100, aka ideal player level 50, and hard-coded also only floors shallower than 99, to make sure to exempt Sauron. */
 #define FINAL_GUARDIAN_DIFFBOOST
 
+/* Half-Trolls and especially Trolls regenerate extraordinarily quickly (both players and monsters) */
+#define TROLL_REGENERATION
+/* Hydras regenerate extraordinarily quickly aka regrowing their heads (both players and monsters) */
+#define HYDRA_REGENERATION
+
 
 
 /* ------------------------------------------------------------------------- */

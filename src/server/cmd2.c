@@ -10394,25 +10394,17 @@ void stop_shooting_till_kill(int Ind) {
 /* stop ranged technique 'barrage' preparation */
 void bandage_fails(int Ind) {
 	player_type *p_ptr = Players[Ind];
+	int tmp;
 
 	if (!p_ptr->cut_bandaged) return;
 
 	msg_print(Ind, "\376Your bandage comes off and your wound reopens!");
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-#if 0 /* this doesn't set nocut_intrinsic properly */
-	p_ptr->cut += p_ptr->cut_bandaged;
-	p_ptr->cut_bandaged = 0;
-
-	p_ptr->update |= (PU_BONUS);
-	p_ptr->redraw |= (PR_CUT);
-	handle_stuff(Ind);
-#else
-	int tmp = p_ptr->cut_bandaged;
-
+	/* clear cut_intrinsic_nocut properly */
+	tmp  = p_ptr->cut_bandaged;
 	p_ptr->cut_bandaged = 0;
 	(void)set_cut(Ind, p_ptr->cut + tmp, p_ptr->cut_attacker, TRUE);
-#endif
 }
 
 /*
