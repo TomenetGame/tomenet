@@ -7921,6 +7921,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
 			else invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
 			qq_ptr->number = (byte)rand_range(1,12);
+			qq_ptr->level = 0;
 
 			/* Drop it in the dungeon */
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
@@ -7996,6 +7997,8 @@ bool monster_death(int Ind, int m_idx) {
 			case 3: case 4:
 				invcopy(qq_ptr, lookup_kind(TV_BOOK, 55)); break; //Destroyer, woot
 			}
+
+			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 
 			/* Drop it in the dungeon */
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
