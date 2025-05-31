@@ -4059,7 +4059,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 #ifdef ENABLE_SUBINVEN
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE)) return;
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
 #endif
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {

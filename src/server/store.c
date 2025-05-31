@@ -3394,23 +3394,23 @@ int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet) {
  #endif
 		break;
 	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-		item_new = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, quiet);
+		item_new = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
 		break;
 	case TV_TRAPKIT:
-		item_new = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, quiet);
+		item_new = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
 		break;
 	case TV_ROD:
 		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
 		if (rod_requires_direction(Ind, o_ptr)) break;
 		/* fall through */
 	case TV_STAFF:
-		item_new = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, quiet);
+		item_new = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
 		break;
 	case TV_POTION: case TV_POTION2:
-		item_new = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, quiet);
+		item_new = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
 		break;
 	case TV_FOOD:
-		item_new = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, quiet);
+		item_new = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
 		break;
 	}
 
@@ -7003,23 +7003,23 @@ void home_purchase(int Ind, int item, int amt) {
 	/* Try to put into a specialized bag automatically */
 	switch (o_ptr->tval) {
 	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, FALSE);
+		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
 		break;
 	case TV_TRAPKIT:
-		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, FALSE);
+		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
 		break;
 	case TV_ROD:
 		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
 		if (rod_requires_direction(Ind, o_ptr)) break;
 		/* fall through */
 	case TV_STAFF:
-		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, FALSE);
+		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
 		break;
 	case TV_POTION: case TV_POTION2:
-		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, FALSE);
+		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
 		break;
 	case TV_FOOD:
-		(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, FALSE);
+		(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
 		break;
 	}
 

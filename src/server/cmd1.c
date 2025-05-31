@@ -1618,7 +1618,7 @@ void whats_under_your_feet(int Ind, bool force) {
     If item was partially stowed, return -subinvenslot if any of the six @<A|O|S><0|1> inscriptions is on the bag, otherwise FALSE.
     If item was not stowed at all, returns FALSE. (Eg we have to set try_pickup = FALSE in carry() in that case).
     If o_stowed_ptr isn't NULL its reference will be set to the resulting stowed object. */
-s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet) {
+s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info) {
 	int i, num, slot, globalslot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1684,7 +1684,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
  #endif
 		}
 
-		handle_pickup_item(Ind, o_ptr, 0x0);
+		handle_pickup_item(Ind, o_ptr, cave_info);
 
 		/* Eligible subinventory found, try to move as much as possible */
 		slot = subinven_stow_aux(Ind, o_ptr, i, quiet, pick_all);
@@ -2872,24 +2872,24 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Try to put into a specialized bag automatically -- note that this currently means that apply_XID() isn't called (which cannot handle subinventory items atm anyway) */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
+			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
 		case TV_TRAPKIT:
-			stowed = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
+			stowed = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
 		case TV_ROD:
 			/* Note that this returns FALSE too if rod is of a flavour yet unknown to the player, covering that case on the fly! :) */
 			if (rod_requires_direction(Ind, o_ptr)) break;
 			/* Fall through */
 		case TV_STAFF:
-			stowed = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
+			stowed = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
 		case TV_POTION: case TV_POTION2: case TV_BOTTLE:
-			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
+			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
 		case TV_FOOD:
 		case TV_FIRESTONE:
-			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
+			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
 		}
 		if (stowed) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)

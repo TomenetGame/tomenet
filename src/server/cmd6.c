@@ -1456,7 +1456,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 #ifdef ENABLE_SUBINVEN
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE)) return;
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
 #endif
 			if (keep_newest_potion) o_ptr->mode |= MODE_NOT_NEWEST_ITEM;
 			item = inven_carry(Ind, o_ptr);
@@ -2104,7 +2104,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 #ifdef ENABLE_SUBINVEN
-	if (auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE, FALSE)) {
+	if (auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE, FALSE, 0x0)) {
 		/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
 		p_ptr->item_newest = in_slot;
 
