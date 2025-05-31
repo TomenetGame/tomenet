@@ -10616,7 +10616,7 @@ static void grind_chemicals_aux(int Ind, int amt, object_type *q_ptr, object_typ
 #if 0
 	/* Give us the result */
  #ifdef ENABLE_SUBINVEN
-	if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE, FALSE)) return;
+	if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE, FALSE, NULL)) return;
  #endif
 	slot = inven_carry(Ind, q_ptr);
 	if (slot != -1) {

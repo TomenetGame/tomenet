@@ -4059,7 +4059,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 #ifdef ENABLE_SUBINVEN
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE)) return;
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE, NULL)) return;
 #endif
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
@@ -5345,7 +5345,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 			o_ptr->marked = 0; //why change marked/marked2?...paranoia?
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
-			if (!o_ptr->owner && !p_ptr->admin_dm) {
+			if (!o_ptr->owner) {// && !p_ptr->admin_dm) {
 				o_ptr->owner = p_ptr->id;
 				o_ptr->mode = p_ptr->mode;
 				if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */

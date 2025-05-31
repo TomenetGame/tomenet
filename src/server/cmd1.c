@@ -1614,10 +1614,10 @@ void whats_under_your_feet(int Ind, bool force) {
 /* Try to put a newly acquired item into a specialized bag automatically.
    If the item was from the floor, o_idx must be specified, otherwise it must be -1.
    Returns:
-    If item was completely stowned, returns subinvenslot of the item stowed.
+    If item was completely stowed, returns subinvenslot of the item stowed.
     If item was partially stowed, return -subinvenslot if any of the six @<A|O|S><0|1> inscriptions is on the bag, otherwise FALSE.
     If item was not stowed at all, returns FALSE. (Eg we have to set try_pickup = FALSE in carry() in that case). */
-s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet) {
+s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, object_type **o_stowed_ptr) {
 	int i, num, slot, globalslot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1643,6 +1643,8 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 	/* Don't auto-stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
+
+	if (o_stowed_ptr) *o_stowed_ptr = NULL;
 
 	/* Hack number */
 	forge_one.tval = 0;
@@ -1684,11 +1686,14 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		}
 
 		/* Eligible subinventory found, try to move as much as possible */
-		stowed_some = TRUE;
 		slot = subinven_stow_aux(Ind, o_ptr, i, quiet, pick_all);
-		globalslot = (i + 1) * SUBINVEN_INVEN_MUL + ABS(slot) - 1;
-		Send_item_newest(Ind, globalslot);
-		if ((fully_stowed = (slot > 0))) break; /* If complete stack was moved, we're done */
+		if (slot) { /* Paranoia. Will always be TRUE as we already checked subinven_can_stack() just above. */
+			if (o_stowed_ptr) *o_stowed_ptr = &p_ptr->subinventory[i][ABS(slot) - 1];
+			stowed_some = TRUE;
+			globalslot = (i + 1) * SUBINVEN_INVEN_MUL + ABS(slot) - 1;
+			Send_item_newest(Ind, globalslot);
+			if ((fully_stowed = (slot > 0))) break; /* If complete stack was moved, we're done */
+		}
  #ifdef SUBINVEN_LIMIT_GROUP
 		break;
  #endif
@@ -1748,6 +1753,170 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 }
 #endif
 
+void handle_pickup_item(int Ind, object_type *o_ptr, cave_type *c_ptr) {
+	player_type *p_ptr = Players[Ind];
+	char o_name[ONAME_LEN], o_name_real[ONAME_LEN];
+	struct worldpos *wpos = &p_ptr->wpos;
+
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	object_desc(0, o_name_real, o_ptr, TRUE, 3);
+
+	/* Check whether this item was requested by an item-retrieval quest */
+	if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
+
+	/* Own it */
+	if (!o_ptr->owner) {
+		int dlev = getlevel(&p_ptr->wpos); /* Just for logging 'expensive' items in relation to dlev */
+		s64b value = object_value_real(0, o_ptr); //add * o_ptr->number?
+		int min_value = (dlev <= 10 ? 10000 : (dlev < 30 ? dlev * 1000 : (dlev < 50 ? (dlev - 10) * 1500 : (dlev - 20) * 2000)));
+
+		o_ptr->owner = p_ptr->id;
+		o_ptr->mode = p_ptr->mode;
+
+		/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+		if (!maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) o_ptr->ident |= ID_NO_HIDDEN;
+
+		/* Actually only imprint iron_trade on newly owned items. This allows us to have stolen items be unexchangeable in IDDC if we want that: */
+		o_ptr->iron_trade = p_ptr->iron_trade;
+		if (o_ptr->iron_turn != -1) //paranoia
+			o_ptr->iron_turn = turn;
+
+#if CHEEZELOG_LEVEL > 2
+		/* Log when an item is found that is especially valuable (for its dungeon level, relative for dlevs < 30). */
+		if (value >= min_value)
+			s_printf("EXPENSIVE_ITEM: %s (%ld Au) found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
+			    o_name_real, value, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
+#endif
+
+		if (true_artifact_p(o_ptr)) {
+			a_info[o_ptr->name1].carrier = p_ptr->id;
+			determine_artifact_timeout(o_ptr->name1, wpos);
+#if CHEEZELOG_LEVEL > 2
+			s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
+			    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+#endif
+			/* Log top arts (except Grond/Crown of course) - atm this excludes Razorback and Mediator */
+			if ((a_info[o_ptr->name1].level >= 100 || o_ptr->name1 == ART_DWARVEN_ALE)
+			    && !multiple_artifact_p(o_ptr) && !is_admin(p_ptr)) {
+				char o_name_short[ONAME_LEN];
+
+				object_desc(0, o_name_short, o_ptr, TRUE, 256);
+				l_printf("%s \\{U%s found %s\n", showdate(), p_ptr->name, o_name_short);
+			}
+		}
+#if CHEEZELOG_LEVEL > 2
+		else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
+		    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+
+#endif
+		/* log the encounters of players with special heavy armour, just for informative purpose */
+		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("%s FOUND_WINNERS_ONLY: %s (%d) %s\n", showtime(), p_ptr->name, p_ptr->wpos.wz, o_name_real);
+
+		/* Some events don't allow transactions before they begin. Extend this to no_soloist-event-drops (Santa Claus). */
+		if (o_ptr->no_soloist && !p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
+			msg_print(Ind, "Due to the item's origin you gain a tiny bit of experience from picking it up.");
+			gain_exp(Ind, 1);
+		}
+		/* Prevent IDDC cheeze */
+		else if (wpos->wz && !p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
+			msg_print(Ind, "You gain a tiny bit of experience from picking up your first item in a dungeon.");
+			gain_exp(Ind, 1);
+		}
+	}
+
+#if CHEEZELOG_LEVEL > 2
+	/* Take cheezelog
+	 * TODO: ignore cheap items (like cure critical pot) */
+ #if 0
+	else if (p_ptr->id != o_ptr->owner &&
+	    !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */ )
+ #else
+	else if (p_ptr->id != o_ptr->owner)
+ #endif
+	{
+		cptr name = lookup_player_name(o_ptr->owner);
+		int lev = lookup_player_level(o_ptr->owner);
+		cptr acc_name = lookup_accountname(o_ptr->owner);
+
+		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+ #if 0
+		/* If level diff. is too large, target player is too low,
+		   and items aren't loot of a dead player, this might be cheeze! */
+		if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
+			s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
+				showtime(), name ? name : "(Dead player)", lev,
+				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+				o_name);
+			c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
+				showtime(), name ? name : "(---)", lev, acc_name,
+				p_ptr->name, p_ptr->lev, p_ptr->accountname,
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+		} else {
+			s_printf("%s Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
+				showtime(), name ? name : "(Dead player)", lev,
+				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+				o_name);
+			c_printf("%s item %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
+				showtime(), name ? name : "(---)", lev, acc_name,
+				p_ptr->name, p_ptr->lev, p_ptr->accountname,
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+		}
+ #else
+		s_printf("%s Item transaction from %s(%d) to %s(%d%s) at (%d,%d,%d):\n  %s\n",
+				showtime(), name ? name : "(Dead player)", lev,
+				p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+				p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+				o_name);
+		c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %" PRId64 "(%d%%) : %s\n",
+				showtime(), name ? name : "(---)", lev, acc_name,
+				p_ptr->name, p_ptr->lev, p_ptr->accountname,
+				p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+ #endif
+
+/* Since there apparently is sometimes a bug happening that triggers the 'redistributed' hack in load.c, log this to track the bug */
+s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr->name1, o_ptr->owner, name, a_info[o_ptr->name1].carrier, p_ptr->id, p_ptr->name);
+
+		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
+
+		/* Some events don't allow transactions before they begins */
+		if (!p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
+			msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
+			gain_exp(Ind, 1);
+		}
+	}
+#endif	// CHEEZELOG_LEVEL
+
+#if CHEEZELOG_LEVEL > 2
+	/* for PRE_OWN_DROP_CHOSEN: */
+	else {
+		if (true_artifact_p(o_ptr))
+			s_printf("%s Artifact %d picked up by %s(lv %d) at %d,%d,%d%s%s: %s\n",
+			    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+ #if 0 /* pointless spam */
+		else if (o_ptr->name1 == ART_RANDART)
+			s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
+			    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+ #endif
+	}
+#endif
+
+	/* log special objects, except for seals */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval) {
+		s_printf("%s Special object '%s' sv=%d,x1=%d,x2=%d,q=%d,qs=%d picked up by %s(lv %d) at %d,%d,%d%s%s : %s\n",
+		    showtime(), o_name_real, o_ptr->sval, o_ptr->xtra1, o_ptr->xtra2, o_ptr->quest, o_ptr->quest_stage, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+	}
+
+	can_use(Ind, o_ptr);
+	/* for Ironman Deep Dive Challenge cross-trading */
+	o_ptr->mode = p_ptr->mode;
+
+#ifdef ENABLE_SUBINVEN
+	/* ('empty-chest-hack') - Auto-remove 'empty' marker if we pick it up */
+	if (o_ptr->tval == TV_SUBINVEN && o_ptr->xtra8) o_ptr->xtra8 = 2;
+#endif
+}
 
 /*
  * Player "wants" to pick up an object or gold.
@@ -2115,6 +2284,11 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		bool auto_load = check_guard_inscription(o_ptr->note, 'L')
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 		int pick_some = FALSE, limitG = -1;
+
+#ifdef ENABLE_SUBINVEN
+		bool stowed = FALSE;
+		object_type *o_stowed_ptr = NULL;
+#endif
 
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
@@ -2699,26 +2873,28 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Try to put into a specialized bag automatically -- note that this currently means that apply_XID() isn't called (which cannot handle subinventory items atm anyway) */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
 			break;
 		case TV_TRAPKIT:
-			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			stowed = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
 			break;
 		case TV_ROD:
 			/* Note that this returns FALSE too if rod is of a flavour yet unknown to the player, covering that case on the fly! :) */
 			if (rod_requires_direction(Ind, o_ptr)) break;
 			/* Fall through */
 		case TV_STAFF:
-			if (auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			stowed = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
 			break;
 		case TV_POTION: case TV_POTION2: case TV_BOTTLE:
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
 			break;
 		case TV_FOOD:
 		case TV_FIRESTONE:
-			if (auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
 			break;
 		}
+		if (stowed) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+		if (o_stowed_ptr) handle_pickup_item(Ind, o_stowed_ptr, c_ptr);
 
 		/* If the item contains a !G or !g inscription and was already auto-stowed at least partially, and we're not using pick_all, do not pick up any more of it! */
 		if (o_ptr->number != num_org && (check_guard_inscription(o_ptr->note, 'g') || check_guard_inscription(o_ptr->note, 'G'))) try_pickup = FALSE;
@@ -2823,161 +2999,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					}
 				}
 
-				/* Check whether this item was requested by an item-retrieval quest */
-				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
-
-				/* Own it */
-				if (!o_ptr->owner) {
-					int dlev = getlevel(&p_ptr->wpos); /* Just for logging 'expensive' items in relation to dlev */
-					s64b value = object_value_real(0, o_ptr); //add * o_ptr->number?
-					int min_value = (dlev <= 10 ? 10000 : (dlev < 30 ? dlev * 1000 : (dlev < 50 ? (dlev - 10) * 1500 : (dlev - 20) * 2000)));
-
-					o_ptr->owner = p_ptr->id;
-					o_ptr->mode = p_ptr->mode;
-
-					/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
-					if (!maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) o_ptr->ident |= ID_NO_HIDDEN;
-
-					/* Actually only imprint iron_trade on newly owned items. This allows us to have stolen items be unexchangeable in IDDC if we want that: */
-					o_ptr->iron_trade = p_ptr->iron_trade;
-					if (o_ptr->iron_turn != -1) //paranoia
-						o_ptr->iron_turn = turn;
-
-#if CHEEZELOG_LEVEL > 2
-					/* Log when an item is found that is especially valuable (for its dungeon level, relative for dlevs < 30). */
-					if (value >= min_value)
-						s_printf("EXPENSIVE_ITEM: %s (%ld Au) found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
-						    o_name_real, value, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-						    (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
-#endif
-
-					if (true_artifact_p(o_ptr)) {
-						a_info[o_ptr->name1].carrier = p_ptr->id;
-						determine_artifact_timeout(o_ptr->name1, wpos);
-#if CHEEZELOG_LEVEL > 2
-						s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
-						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
-#endif
-						/* Log top arts (except Grond/Crown of course) - atm this excludes Razorback and Mediator */
-						if ((a_info[o_ptr->name1].level >= 100 || o_ptr->name1 == ART_DWARVEN_ALE)
-						    && !multiple_artifact_p(o_ptr) && !is_admin(p_ptr)) {
-							char o_name_short[ONAME_LEN];
-
-							object_desc(0, o_name_short, o_ptr, TRUE, 256);
-							l_printf("%s \\{U%s found %s\n", showdate(), p_ptr->name, o_name_short);
-						}
-					}
-#if CHEEZELOG_LEVEL > 2
-					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-					    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
-
-#endif
-					/* log the encounters of players with special heavy armour, just for informative purpose */
-					if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("%s FOUND_WINNERS_ONLY: %s (%d) %s\n", showtime(), p_ptr->name, p_ptr->wpos.wz, o_name_real);
-
-					/* Some events don't allow transactions before they begin. Extend this to no_soloist-event-drops (Santa Claus). */
-					if (o_ptr->no_soloist && !p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
-						msg_print(Ind, "Due to the item's origin you gain a tiny bit of experience from picking it up.");
-						gain_exp(Ind, 1);
-					}
-					/* Prevent IDDC cheeze */
-					else if (wpos->wz && !p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
-						msg_print(Ind, "You gain a tiny bit of experience from picking up your first item in a dungeon.");
-						gain_exp(Ind, 1);
-					}
-				}
-
-#if CHEEZELOG_LEVEL > 2
-				/* Take cheezelog
-				 * TODO: ignore cheap items (like cure critical pot) */
- #if 0
-				else if (p_ptr->id != o_ptr->owner &&
-				    !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */ )
- #else
-				else if (p_ptr->id != o_ptr->owner)
- #endif
-				{
-					cptr name = lookup_player_name(o_ptr->owner);
-					int lev = lookup_player_level(o_ptr->owner);
-					cptr acc_name = lookup_accountname(o_ptr->owner);
-
-					object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
- #if 0
-					/* If level diff. is too large, target player is too low,
-					   and items aren't loot of a dead player, this might be cheeze! */
-					if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
-					s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
-							showtime(), name ? name : "(Dead player)", lev,
-							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-							o_name);
-					c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
-							showtime(), name ? name : "(---)", lev, acc_name,
-							p_ptr->name, p_ptr->lev, p_ptr->accountname,
-							object_value_real(0, o_ptr), o_ptr->discount, o_name);
-					} else {
-					s_printf("%s Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
-							showtime(), name ? name : "(Dead player)", lev,
-							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-							o_name);
-					c_printf("%s item %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
-							showtime(), name ? name : "(---)", lev, acc_name,
-							p_ptr->name, p_ptr->lev, p_ptr->accountname,
-							object_value_real(0, o_ptr), o_ptr->discount, o_name);
-					}
- #else
-					s_printf("%s Item transaction from %s(%d) to %s(%d%s) at (%d,%d,%d):\n  %s\n",
-							showtime(), name ? name : "(Dead player)", lev,
-							p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-							p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-							o_name);
-					c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %" PRId64 "(%d%%) : %s\n",
-							showtime(), name ? name : "(---)", lev, acc_name,
-							p_ptr->name, p_ptr->lev, p_ptr->accountname,
-							p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-							object_value_real(0, o_ptr), o_ptr->discount, o_name);
- #endif
-
-/* Since there apparently is sometimes a bug happening that triggers the 'redistributed' hack in load.c, log this to track the bug */
-s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr->name1, o_ptr->owner, name, a_info[o_ptr->name1].carrier, p_ptr->id, p_ptr->name);
-
-					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
-
-					/* Some events don't allow transactions before they begins */
-					if (!p_ptr->max_exp && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos)) {
-						msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
-						gain_exp(Ind, 1);
-					}
-				}
-#endif	// CHEEZELOG_LEVEL
-
-#if CHEEZELOG_LEVEL > 2
-				/* for PRE_OWN_DROP_CHOSEN: */
-				else {
-					if (true_artifact_p(o_ptr))
-						s_printf("%s Artifact %d picked up by %s(lv %d) at %d,%d,%d%s%s: %s\n",
-						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
- #if 0 /* pointless spam */
-					else if (o_ptr->name1 == ART_RANDART)
-						s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-						    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
- #endif
-				}
-#endif
-
-				/* log special objects, except for seals */
-				if (o_ptr->tval == TV_SPECIAL && o_ptr->sval) {
-					s_printf("%s Special object '%s' sv=%d,x1=%d,x2=%d,q=%d,qs=%d picked up by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-					    showtime(), o_name_real, o_ptr->sval, o_ptr->xtra1, o_ptr->xtra2, o_ptr->quest, o_ptr->quest_stage, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
-				}
-
-				can_use(Ind, o_ptr);
-				/* for Ironman Deep Dive Challenge cross-trading */
-				o_ptr->mode = p_ptr->mode;
-
-#ifdef ENABLE_SUBINVEN
-				/* ('empty-chest-hack') - Auto-remove 'empty' marker if we pick it up */
-				if (o_ptr->tval == TV_SUBINVEN && o_ptr->xtra8) o_ptr->xtra8 = 2;
-#endif
+				handle_pickup_item(Ind, o_ptr, c_ptr);
 
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
