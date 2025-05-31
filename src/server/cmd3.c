@@ -4059,7 +4059,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 #ifdef ENABLE_SUBINVEN
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE, NULL)) return;
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE)) return;
 #endif
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
@@ -5362,9 +5362,8 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 
 			/* Auto-inscriber */
 			if (p_ptr->auto_inscr_server ||
-			    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL)) {
+			    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL))
 				(void)auto_inscribe(Ind, o_ptr, 0);
-			}
 
 			/* Check whether this item was requested by an item-retrieval quest.
 			   Note about quest_credited check: inven_carry() is also called by carry(),
@@ -5432,9 +5431,8 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 
 			/* Auto-inscriber */
 			if (p_ptr->auto_inscr_server ||
-			    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL)) {
+			    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL))
 				(void)auto_inscribe(Ind, o_ptr, 0);
-			}
 
 			/* Check whether this item was requested by an item-retrieval quest
 			   Note about quest_credited check: inven_carry() is also called by carry(),
@@ -5811,7 +5809,10 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 		}
 		/* Eligible subinventory found, try to move as much as possible */
 		last_num = i_ptr->number;
-		if (subinven_move_aux(Ind, islot, i, amt, FALSE) > 0) {
+		//i_ptr->ident |= ID_NO_AUTOINSC;
+		t = subinven_move_aux(Ind, islot, i, amt, FALSE);
+		//i_ptr->ident &= ~ID_NO_AUTOINSC;
+		if (t > 0) {
 			/* Successfully moved ALL items! We're done. */
 			all = TRUE;
 			last_ok_slot = i;
@@ -5954,7 +5955,9 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 
 		/* Eligible subinventory found, try to move as much as possible */
 		amt = i_ptr->number;
+		//i_ptr->ident |= ID_NO_AUTOINSC;
 		res = subinven_move_aux(Ind, i, slot, amt, quiet);
+		//i_ptr->ident &= ~ID_NO_AUTOINSC;
 #if 0
 		/* Successfully moved ALL items even? Lucky! */
 		if (res > 0) all = TRUE;
@@ -6015,7 +6018,9 @@ void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
 
 	/* Careful! We assume that subinventories are always above all other items,
 	   or this call might invalidate our s_ptr and o_ptr references: */
+	o_ptr->ident |= ID_NO_AUTOINSC;
 	i = inven_carry(Ind, o_ptr);
+	o_ptr->ident &= ~ID_NO_AUTOINSC;
 	if (i != -1) { /* Paranoia, as this function ASSUMES that there is free space. */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
@@ -6075,7 +6080,10 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot, int amt) {
 
 	if (amt < 1) amt = 1;
 	else if (amt > o_ptr->number) amt = o_ptr->number;
+
+	//o_ptr->ident |= ID_NO_AUTOINSC;
 	subinven_remove_aux(Ind, islot, slot, amt);
+	//o_ptr->ident &= ~ID_NO_AUTOINSC;
 
 	//break_cloaking(Ind, 5);
 	//break_shadow_running(Ind);
@@ -6144,7 +6152,9 @@ void do_cmd_split_stack(int Ind, int item, int amt) {
 	else if (!check_guard_inscription(o_ptr->note, 'G')) o_ptr->note = quark_add(format("%s !G", quark_str(o_ptr->note)));
 	else o_ptr->note = quark_add(format("%s-", quark_str(o_ptr->note)));
 
+	o_ptr->ident |= ID_NO_AUTOINSC;
 	item = inven_carry(Ind, o_ptr);
+	o_ptr->ident &= ~ID_NO_AUTOINSC;
 	if (item >= 0) {
 		o_ptr = &p_ptr->inventory[item];
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);

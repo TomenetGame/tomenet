@@ -700,10 +700,10 @@ extern void py_bash(int Ind, int y, int x);
 extern void py_bash_mon(int Ind, int y, int x);
 extern void py_bash_py(int Ind, int y, int x);
 #ifdef ENABLE_SUBINVEN
-extern s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, object_type **o_stowed_ptr);
+extern s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet);
 #endif
 extern int search_chance(player_type *p_ptr);
-extern void handle_pickup_item(int Ind, object_type *o_ptr, cave_type *c_ptr);
+extern void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info);
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);

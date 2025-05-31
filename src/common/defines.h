@@ -5813,6 +5813,7 @@
 #define ID_SENSED_ONCE	0x0100	/* Item was at least sensed once, maybe even IDed. (anti-exploit) */
 #define ID_SENSE_HEAVY	0x0200	/* Item was deeply pseudo-identified (felt_heavy) */
 #define ID_NO_HIDDEN	0x0400	/* Item obviously cannot have hidden powers and hence *ID*ing it wouldn't have any effect */
+#define ID_NO_AUTOINSC	0x0800	/* Temporary hack: Don't auto-inscribe this item on upcoming inven_carry() call, because it was simply unstowed from a bag. */
 
 
 

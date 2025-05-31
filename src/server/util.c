@@ -10969,7 +10969,9 @@ void empty_subinven(int Ind, int item, bool drop, bool quiet) {
 
 		/* Place item into player inventory, or drop if full */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
+			o_ptr->ident |= ID_NO_AUTOINSC;
 			k = inven_carry(Ind, o_ptr);
+			o_ptr->ident &= ~ID_NO_AUTOINSC;
 			if (k != -1) { /* Paranoia, as we just checked for inven_carry_okay, it must be != -1 */
 				if (!quiet) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);

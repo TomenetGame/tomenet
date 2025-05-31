@@ -11492,8 +11492,6 @@ void floor_item_optimize(int item) {
 /*
  * Inscribe the items automatically.	- Jir -
  * if 'flags' is non-0, overwrite existing inscriptions.
- *
- * TODO: inscribe item's power like {+StCo[FiAc;FASI}
  */
 bool auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 	player_type *p_ptr = Players[Ind];
@@ -11793,7 +11791,12 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	object_type forge;
 	object_type *j_ptr;
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
-	bool newest;
+	bool newest, do_auto_insc;
+
+	if (o_ptr->ident & ID_NO_AUTOINSC) {
+		do_auto_insc = FALSE;
+		o_ptr->ident &= ~ID_NO_AUTOINSC;
+	} else do_auto_insc = TRUE;
 
 	/* Evaluate and remove temporary flag for 'newest' change */
 	if (o_ptr->mode & MODE_NOT_NEWEST_ITEM) {
@@ -11838,20 +11841,18 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 			/* Success */
-			p_ptr->inventory[j].auto_insc = TRUE;
 #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
+			if (do_auto_insc) p_ptr->inventory[j].auto_insc = TRUE;
 			if (newest) Send_item_newest(Ind, j);
 			else Send_item_newest_2nd(Ind, j);
 			return(j);
 		}
 	}
 
-
 	/* Paranoia */
 	if (p_ptr->inven_cnt > INVEN_PACK) return(-1);
-
 
 	/* Find an empty slot */
 	for (j = 0; j < INVEN_PACK; j++) {
@@ -12015,8 +12016,9 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	}
 
 	/* Auto-inscriber */
-	if (p_ptr->auto_inscr_server ||
+	if ((p_ptr->auto_inscr_server ||
 	    (p_ptr->auto_inscr_server_ch && o_ptr->tval == TV_CHEMICAL))
+	    && do_auto_insc)
 		(void)auto_inscribe(Ind, o_ptr, 0);
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -12061,11 +12063,10 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Return the slot */
-	p_ptr->inventory[i].auto_insc = TRUE;
-
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
+	if (do_auto_insc) p_ptr->inventory[i].auto_insc = TRUE;
 	if (newest) Send_item_newest(Ind, i);
 	else Send_item_newest_2nd(Ind, i);
 

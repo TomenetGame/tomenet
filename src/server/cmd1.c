@@ -1616,8 +1616,9 @@ void whats_under_your_feet(int Ind, bool force) {
    Returns:
     If item was completely stowed, returns subinvenslot of the item stowed.
     If item was partially stowed, return -subinvenslot if any of the six @<A|O|S><0|1> inscriptions is on the bag, otherwise FALSE.
-    If item was not stowed at all, returns FALSE. (Eg we have to set try_pickup = FALSE in carry() in that case). */
-s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, object_type **o_stowed_ptr) {
+    If item was not stowed at all, returns FALSE. (Eg we have to set try_pickup = FALSE in carry() in that case).
+    If o_stowed_ptr isn't NULL its reference will be set to the resulting stowed object. */
+s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet) {
 	int i, num, slot, globalslot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1643,8 +1644,6 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 	/* Don't auto-stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
-
-	if (o_stowed_ptr) *o_stowed_ptr = NULL;
 
 	/* Hack number */
 	forge_one.tval = 0;
@@ -1685,13 +1684,15 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
  #endif
 		}
 
+		handle_pickup_item(Ind, o_ptr, 0x0);
+
 		/* Eligible subinventory found, try to move as much as possible */
 		slot = subinven_stow_aux(Ind, o_ptr, i, quiet, pick_all);
 		if (slot) { /* Paranoia. Will always be TRUE as we already checked subinven_can_stack() just above. */
-			if (o_stowed_ptr) *o_stowed_ptr = &p_ptr->subinventory[i][ABS(slot) - 1];
 			stowed_some = TRUE;
 			globalslot = (i + 1) * SUBINVEN_INVEN_MUL + ABS(slot) - 1;
 			Send_item_newest(Ind, globalslot);
+			Send_apply_auto_insc(Ind, globalslot);
 			if ((fully_stowed = (slot > 0))) break; /* If complete stack was moved, we're done */
 		}
  #ifdef SUBINVEN_LIMIT_GROUP
@@ -1753,7 +1754,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 }
 #endif
 
-void handle_pickup_item(int Ind, object_type *o_ptr, cave_type *c_ptr) {
+void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN], o_name_real[ONAME_LEN];
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -1786,7 +1787,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, cave_type *c_ptr) {
 		if (value >= min_value)
 			s_printf("EXPENSIVE_ITEM: %s (%ld Au) found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
 			    o_name_real, value, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-			    (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
+			    (cave_info & CAVE_STCK) ? "N" : (cave_info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
 #endif
 
 		if (true_artifact_p(o_ptr)) {
@@ -1794,7 +1795,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, cave_type *c_ptr) {
 			determine_artifact_timeout(o_ptr->name1, wpos);
 #if CHEEZELOG_LEVEL > 2
 			s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
-			    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+			    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (cave_info & CAVE_STCK) ? "N" : (cave_info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 #endif
 			/* Log top arts (except Grond/Crown of course) - atm this excludes Razorback and Mediator */
 			if ((a_info[o_ptr->name1].level >= 100 || o_ptr->name1 == ART_DWARVEN_ALE)
@@ -1807,7 +1808,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, cave_type *c_ptr) {
 		}
 #if CHEEZELOG_LEVEL > 2
 		else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-		    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+		    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (cave_info & CAVE_STCK) ? "N" : (cave_info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 
 #endif
 		/* log the encounters of players with special heavy armour, just for informative purpose */
@@ -1893,11 +1894,11 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 	else {
 		if (true_artifact_p(o_ptr))
 			s_printf("%s Artifact %d picked up by %s(lv %d) at %d,%d,%d%s%s: %s\n",
-			    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+			    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (cave_info & CAVE_STCK) ? "N" : (cave_info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
  #if 0 /* pointless spam */
 		else if (o_ptr->name1 == ART_RANDART)
 			s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-			    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+			    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (cave_info & CAVE_STCK) ? "N" : (cave_info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
  #endif
 	}
 #endif
@@ -1905,7 +1906,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 	/* log special objects, except for seals */
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval) {
 		s_printf("%s Special object '%s' sv=%d,x1=%d,x2=%d,q=%d,qs=%d picked up by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-		    showtime(), o_name_real, o_ptr->sval, o_ptr->xtra1, o_ptr->xtra2, o_ptr->quest, o_ptr->quest_stage, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+		    showtime(), o_name_real, o_ptr->sval, o_ptr->xtra1, o_ptr->xtra2, o_ptr->quest, o_ptr->quest_stage, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (cave_info & CAVE_STCK) ? "N" : (cave_info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 	}
 
 	can_use(Ind, o_ptr);
@@ -2284,10 +2285,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		bool auto_load = check_guard_inscription(o_ptr->note, 'L')
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 		int pick_some = FALSE, limitG = -1;
-
 #ifdef ENABLE_SUBINVEN
 		bool stowed = FALSE;
-		object_type *o_stowed_ptr = NULL;
 #endif
 
 		/* Hack -- disturb */
@@ -2873,28 +2872,27 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Try to put into a specialized bag automatically -- note that this currently means that apply_XID() isn't called (which cannot handle subinventory items atm anyway) */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
+			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
 			break;
 		case TV_TRAPKIT:
-			stowed = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
+			stowed = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
 			break;
 		case TV_ROD:
 			/* Note that this returns FALSE too if rod is of a flavour yet unknown to the player, covering that case on the fly! :) */
 			if (rod_requires_direction(Ind, o_ptr)) break;
 			/* Fall through */
 		case TV_STAFF:
-			stowed = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
+			stowed = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
 			break;
 		case TV_POTION: case TV_POTION2: case TV_BOTTLE:
-			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
+			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
 			break;
 		case TV_FOOD:
 		case TV_FIRESTONE:
-			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, &o_stowed_ptr);
+			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE);
 			break;
 		}
 		if (stowed) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
-		if (o_stowed_ptr) handle_pickup_item(Ind, o_stowed_ptr, c_ptr);
 
 		/* If the item contains a !G or !g inscription and was already auto-stowed at least partially, and we're not using pick_all, do not pick up any more of it! */
 		if (o_ptr->number != num_org && (check_guard_inscription(o_ptr->note, 'g') || check_guard_inscription(o_ptr->note, 'G'))) try_pickup = FALSE;
@@ -2999,7 +2997,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					}
 				}
 
-				handle_pickup_item(Ind, o_ptr, c_ptr);
+				handle_pickup_item(Ind, o_ptr, c_ptr->info);
 
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
