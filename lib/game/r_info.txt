@@ -17972,6 +17972,8 @@ S:1_IN_5 |
 S:BR_POIS
 D:It is a giant snake that drips with poison.
 
+# Colour note: Bronze is 'U' but this golem is particularly 'glowing with great heat'
+# so it's 'o', which is great for distinguishing (monster) golems.
 N:1015:Bronze golem
 G:g:o
 E:2:1:2:4:1:2

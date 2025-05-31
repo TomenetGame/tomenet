@@ -7061,7 +7061,7 @@ F:EASY_KNOW
 D:This is a chunk of material used for building a golem.
 
 N:851:& Massive Piece~ of Copper
-G:*:U
+G:*:o
 I:52:1:0
 W:30:0:8900:1400
 A:30/40:40/200
