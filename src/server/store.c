@@ -2049,7 +2049,7 @@ static void store_create(store_type *st_ptr) {
 
 	object_type tmp_obj;
 	object_type *o_ptr = &tmp_obj;
-	int force_num = 0;
+	int force_num;
 	object_kind *k_ptr;
 	ego_item_type *e_ptr, *e2_ptr;
 	bool good, great;
@@ -2065,38 +2065,31 @@ static void store_create(store_type *st_ptr) {
 	if ((st_info[st_ptr->st_idx].flags1 & SF1_FLAT_BASE)) resf |= RESF_STOREFLAT;
 
 	/* Hack -- consider up to n items */
-	for (tries = 0; tries < (black_market ? 60 : 4); tries++) /* 20:4, 40:4, 60:4, 100:4 !
-	    for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
-	    {
-		/* Black Market */
+	for (tries = 0; tries < (black_market ? 60 : 4); tries++) { /* 20:4, 40:4, 60:4, 100:4 !
+		for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
 
 		if (black_market) {
-			/* Hack -- Pick an item to sell */
+			/* Hack -- Pick an item from bm-promised items (predefined in st_info) to sell */
 			item = rand_int(st_info[st_ptr->st_idx].table_num);
 			i = st_info[st_ptr->st_idx].table[item][0];
 			chance = st_info[st_ptr->st_idx].table[item][1];
 
-			/* Does it pass the rarity check ? */
-#if 0
-			/* Balancing check for other items!!! */
-			if (!magik(chance) || magik(60)) i = 0;
-#else
+			/* Does it pass the rarity check? */
+			force_num = 0;
 			if (!magik(chance)) i = 0;
-#endif
 			/* Hack: Expensive Black Market accumulates predefined items way too quickly. */
 			else if ((st_info[st_ptr->st_idx].flags1 & (SF1_RARE | SF1_VERY_RARE)) && rand_int(1000)) i = 0;
-			/* Hack -- mass-produce for black-market promised items */
-			else force_num = rand_range(2, 5);//was 3,9
+			/* Hack -- mass-produce for black-market promised items (various potions & scrolls, mummy wrapping) */
+			else force_num = rand_range(2, 5);
 
 
 			/* Hack -- fake level for apply_magic() */
 
 			/* 'Fake town' dungeon stores don't have a sensible 'town level', use dungeon level instead */
-			if (st_ptr->st_idx >= STORE_GENERAL_DUN && st_ptr->st_idx <= STORE_RUNE_DUN) {
+			if (st_ptr->st_idx >= STORE_GENERAL_DUN && st_ptr->st_idx <= STORE_RUNE_DUN)
 				level = return_level(st_ptr, town[st_ptr->town].dlev_depth);
-			} else {
+			else
 				level = return_level(st_ptr, town[st_ptr->town].baselevel); /* note: it's margin is random! */
-			}
 
 
 			/* Hack -- i > 10000 means it's a tval and all svals are allowed */
@@ -2123,6 +2116,7 @@ static void store_create(store_type *st_ptr) {
 				i = get_obj_num(level, resf);
 			}
 
+			/* BM specialty (SF1_ALL_ITEM): Template item failed its rarity check, so instead pick ANY item */
 			if (!i) {
 				/* Pick a level for object/magic */
 				level = 60 + rand_int(25);	/* for now let's use this */
@@ -2148,7 +2142,7 @@ static void store_create(store_type *st_ptr) {
 			i = st_info[st_ptr->st_idx].table[item][0];
 			chance = st_info[st_ptr->st_idx].table[item][1];
 
-			/* Does it pass the rarity check ? */
+			/* Does it pass the rarity check? */
 			if (!magik(chance)) continue;
 
 
@@ -2614,40 +2608,36 @@ static void store_create(store_type *st_ptr) {
 			case 100: o_ptr->discount = 15; break;
 			}
 
-		if (force_num && !is_ammo(o_ptr->tval)) {
-			/* Only single items of these */
-			switch (o_ptr->tval) {
-			case TV_DRAG_ARMOR:
-				force_num = 1;
-				break;
-			case TV_SOFT_ARMOR:
-				if (o_ptr->sval == SV_COSTUME) force_num = 1;
-				break;
-			case TV_RING:
-				if (o_ptr->sval == SV_RING_POLYMORPH) force_num = 1;
-				break;
-			case TV_ROD:
-				if (o_ptr->sval == SV_ROD_HAVOC) force_num = 1;
-				break;
-			case TV_TOOL:
-				if (o_ptr->sval == SV_TOOL_WRAPPING) force_num = 1;
-				break;
-			case TV_SCROLL:
-				if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) force_num = 1;
-				break;
-			case TV_FOOD:
-				if (o_ptr->sval == SV_FOOD_ATHELAS) force_num = 1;
-				break;
-			}
-
-			/* Only single items of very expensive stuff */
-			if (object_value(0, o_ptr) >= 200000) force_num = 1;
-
-			/* No ego-stacks */
-			if (o_ptr->name2) force_num = 1;
-
-			o_ptr->number = force_num;
+		/* Only single items of these */
+		switch (o_ptr->tval) {
+		case TV_DRAG_ARMOR:
+			force_num = 1;
+			break;
+		case TV_SOFT_ARMOR:
+			if (o_ptr->sval == SV_COSTUME) force_num = 1;
+			break;
+		case TV_RING:
+			if (o_ptr->sval == SV_RING_POLYMORPH) force_num = 1;
+			break;
+		case TV_ROD:
+			if (o_ptr->sval == SV_ROD_HAVOC) force_num = 1;
+			break;
+		case TV_TOOL:
+			if (o_ptr->sval == SV_TOOL_WRAPPING) force_num = 1;
+			break;
+		case TV_SCROLL:
+			if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) force_num = 1;
+			break;
+		case TV_FOOD:
+			if (o_ptr->sval == SV_FOOD_ATHELAS) force_num = 1;
+			break;
 		}
+		/* Only single items of very expensive stuff */
+		if (object_value(0, o_ptr) >= 200000) force_num = 1;
+		/* No ego-stacks */
+		if (o_ptr->name2) force_num = 1;
+
+		if (force_num && !is_ammo(o_ptr->tval)) o_ptr->number = force_num;
 
 		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce (occurance 1 of 2, keep in sync) */
 		if ((o_ptr->tval == TV_WAND
