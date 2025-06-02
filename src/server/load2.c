@@ -4811,8 +4811,12 @@ void load_banlist(void) {
 		ptr = NEW(struct combo_ban);
 
 		if ((r = fscanf(fp, "%[^|]|%[^|]|%[^|]|%d|%[^\n]\n", ptr->acc, ptr->ip, ptr->hostname, &ptr->time, ptr->reason)) == EOF || r < 5) {
-			s_printf("Error reading banlist.txt: (%d/%d) %s\n", r, EOF, strerror(ferror(fp)));
-			s_printf("Read banlist entry %2d (%d fields): %s|%s|%s|%d|%s\n", n, r, ptr->acc, ptr->ip, ptr->hostname, ptr->time, ptr->reason);
+			if (r == EOF)
+				s_printf("No entry %2d found in banlist.txt: (%d/%d) %s\n", n, r, EOF, strerror(ferror(fp)));
+			else {
+				s_printf("Error reading banlist.txt: (%d/%d) %s\n", r, EOF, strerror(ferror(fp)));
+				s_printf("Read banlist entry %2d (%d fields): %s|%s|%s|%d|%s\n", n, r, ptr->acc, ptr->ip, ptr->hostname, ptr->time, ptr->reason);
+			}
 			KILL(ptr, struct combo_ban);
 			break;
 		}
