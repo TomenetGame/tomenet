@@ -1560,6 +1560,19 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	object_type *j_ptr;
 	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
+	/* Try tracking an odd bug that caused magic shop to have 0 staves of detect invis (30 charges).
+	   NOTE: For player stores this is actually okay. We still log it here too anyway. */
+	if (!o_ptr->number) {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("%s store_carry(%d) zero-number bug at (%d,%d,%d%s):\n  %s\n",
+		    showtime(),
+		    st_ptr->st_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
+		    st_ptr->player_owner ? "-pstore" : "",
+		    o_name);
+	}
+
 	if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
 		o_tv = o_ptr->tval2;
 		o_sv = o_ptr->sval2;
