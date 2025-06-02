@@ -1970,6 +1970,18 @@ static void store_delete(store_type *st_ptr) {
 	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
+	if (!o_ptr->number) { /* This happened for unknown reason, 02.Jun.2025, causing divide_charged_item() to panic */
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("%s store_delete(%d) zero-number bug at (%d,%d,%d):\n  %s\n",
+		    showtime(),
+		    st_ptr->st_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
+		    o_name);
+
+		store_item_optimize(st_ptr, what);
+		return;
+	} else
 	if (is_magic_device(o_ptr->tval)) //wait what? adding TODO marker here
 		divide_charged_item(NULL, o_ptr, num);
 
@@ -2068,6 +2080,7 @@ static void store_create(store_type *st_ptr) {
 	for (tries = 0; tries < (black_market ? 60 : 4); tries++) { /* 20:4, 40:4, 60:4, 100:4 !
 		for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
 
+		force_num = 0;
 		if (black_market) {
 			/* Hack -- Pick an item from bm-promised items (predefined in st_info) to sell */
 			item = rand_int(st_info[st_ptr->st_idx].table_num);
@@ -2075,7 +2088,6 @@ static void store_create(store_type *st_ptr) {
 			chance = st_info[st_ptr->st_idx].table[item][1];
 
 			/* Does it pass the rarity check? */
-			force_num = 0;
 			if (!magik(chance)) i = 0;
 			/* Hack: Expensive Black Market accumulates predefined items way too quickly. */
 			else if ((st_info[st_ptr->st_idx].flags1 & (SF1_RARE | SF1_VERY_RARE)) && rand_int(1000)) i = 0;
