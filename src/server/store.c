@@ -834,7 +834,7 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 	o_ptr->discount = discount;
 
 	/* Save the total pile size */
-	o_ptr->number = size - (size * discount / 100);
+	o_ptr->number = size - ((size * discount) / 100);
 }
 
 /*
