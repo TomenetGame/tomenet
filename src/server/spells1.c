@@ -13403,8 +13403,8 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 			    /* Reduce disintegration effect of rockets to radius 1 - C. Blue */
 			    //(disi_range_limit && (ABS(y - y2) <= disi_range_limit) && (ABS(x - x2) <= disi_range_limit)) ) {
 			    (disi_range_limit && distance(y, x, y2, x2) <= disi_range_limit)) {
+				/* Do not allow disintegrating effects to 'pass through' permanent wall features, erasing feats behind these. */
 				if (!projectable_wall_perm(wpos, y2, x2, y, x, MAX_RANGE)) continue;
-				//if (!projectable(wpos, y2, x2, y, x, MAX_RANGE)) continue;
 
 				c_ptr2 = &zcave[y][x];
 
