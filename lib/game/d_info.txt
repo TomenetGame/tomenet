@@ -615,6 +615,7 @@ R:100:0
 N:29:The Helcaraxe
 D:Ice:the entrance to the Grinding Ice of the Helcaraxe.
 W:20:41:10:0:14:160
+B:254
 #L:90:0:88:700:84:300:0:0:0:0
 #IDDC
 L:90:0:88:700:84:300:88:350:84:150

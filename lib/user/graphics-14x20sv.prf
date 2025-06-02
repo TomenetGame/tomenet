@@ -199,6 +199,7 @@ F:57:/261 # granite wall inner
 F:58:/261 # granite wall outer
 F:59:/261 # granite wall solid
 F:95:/257 # ice wall
+F:254:/257 # perma ice wall
 
 F:92:/450 # dead tree
 F:96:/451 # tree
