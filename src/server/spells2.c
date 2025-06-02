@@ -276,7 +276,7 @@ void grow_trees(int Ind, int rad) {
 		c_ptr = &zcave[p_ptr->py + j][p_ptr->px + i];
 
 		/* Not inside houses */
-		if (surface && (c_ptr->info & CAVE_ICKY))
+		if (surface && (c_ptr->info & CAVE_ICKY)) continue;
 
 		if (!cave_naked_bold(zcave, p_ptr->py + j, p_ptr->px + i) ||
 		    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) ||
