@@ -127,7 +127,7 @@ RECOVERY_I = add_spell	{
 	["fail"] = 	10,
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
-			set_cut(Ind, 0, 0)
+			set_cut(Ind, 0, 0, FALSE)
 			set_confused(Ind, 0)
 			set_blind(Ind, 0)
 			set_stun(Ind, 0)
@@ -152,7 +152,7 @@ RECOVERY_II = add_spell	{
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
 			set_diseased(Ind, 0, 0)
-			set_cut(Ind, 0, 0)
+			set_cut(Ind, 0, 0, FALSE)
 			set_confused(Ind, 0)
 			set_blind(Ind, 0)
 			set_stun(Ind, 0)
