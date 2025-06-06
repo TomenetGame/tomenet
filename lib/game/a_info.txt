@@ -1170,7 +1170,7 @@ D:of old; his lame foot will remind him of its might should he meet it again.
 N:83:'Anduril'
 I:23:23:4
 W:40:40:140:120000
-P:0:2d10:20:20:0
+P:0:2d10:25:25:0
 F:STR | DEX | SUST_STR | SUST_DEX | RES_FEAR | FREE_ACT | BLESSED | LUCK
 F:LITE1 | BRAND_FIRE | IM_FIRE | SLAY_EVIL | SLAY_TROLL | SLAY_ORC
 F:SEE_INVIS | ACTIVATE | IGNORE_DISEN | HIDE_TYPE | SHOW_MODS
