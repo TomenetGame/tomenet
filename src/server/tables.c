@@ -4110,8 +4110,7 @@ player_class class_info[MAX_CLASS] = {
  *   HD, Exp*/
 		30, 28, 36,  3, 35, 14, 55, 45,
 		 0, 9,  5,  0,  3,  3, 26, 25,
-		//5, 25,
-		6, 25,
+		7, 25,
 
 		{{ SKILL_COMBAT, /* Combat tree */
 			'+', 1000,
