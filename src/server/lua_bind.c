@@ -243,7 +243,6 @@ s16b new_school(int i, cptr name, s16b skill) {
 s16b new_spell(int i, cptr name) {
 	school_spells[i].name = string_make(name);
 	school_spells[i].level = 0;
-	school_spells[i].level = 0;
 	return(i);
 }
 
