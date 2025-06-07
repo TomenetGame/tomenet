@@ -271,7 +271,7 @@ SHADOWGATE = add_spell {
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_CONVEYANCE},
 	["am"] = 	75,
 	["spell_power"] = 0,
-	["level"] = 	26,
+	["level"] = 	23,
 	["mana"] = 	6,
 	["mana_max"] = 	6,
 	["fail"] = 	-50,
@@ -280,11 +280,17 @@ SHADOWGATE = add_spell {
 		do_shadow_gate(Ind, 4 + get_level(Ind, SHADOWGATE, 12))
 		end,
 	["info"] = 	function()
-		return "range "..(4 + get_level(Ind, SHADOWGATE, 12))
-		end,
+		if players(Ind).s_info[SKILL_CONVEYANCE + 1].value < 10000 then
+			return "REQ: Conveyance 10.000"
+		else
+			return "range "..(4 + get_level(Ind, SHADOWGATE, 12))
+		end
+	end,
 	["desc"] = 	{
 		"Teleports you to the nearest opponent in line of sight",
-		"within a maximum range that increases with skill."
+		"within a maximum range that increases with skill.",
+		"Your next immediate strike hits that target critically",
+		"(provided you don't miss) and dually (if you dual-wield)."
 	}
 }
 

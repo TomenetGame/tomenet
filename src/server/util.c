@@ -10258,6 +10258,9 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 	/* When the player enters a grid with items, he can destroy anything on it for 1x energy cost, until he enters another grid */
 	p_ptr->destroyed_floor_item = FALSE;
+
+	/* If player moves after a Shadow Gate cast they lose the critical-strike guarantee. */
+	p_ptr->melee_timeout_crit_dual = 0;
 }
 
 /* Items that can be shared even between incompatible character modes or if level 0! */

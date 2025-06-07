@@ -23363,7 +23363,7 @@ All Unlife spells are Wisdom-based.)
                     anti-teleport effects, it does get cancelled by no-teleport
                     floor grids, eg those inside no-teleport vaults, because
                     the still air on these will prevent your shadowy moves.
-                    *** This spell requires at least 5.000 in 'Conveyance'! ***
+                    ** This spell requires at least 5.000 in 'Conveyance'! **
                     Required skill level for first spell level: 8.
 
     Aspect of Peril                                            (auto-project)
@@ -23392,8 +23392,15 @@ All Unlife spells are Wisdom-based.)
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight
                     within a maximum radius that increases with skill.
-                    Required skill level for first spell level: 26.
+                    Your next melee attack against that target, if executed
+                    swiftly after the teleport effect and not missing, will be
+                    a guaranteed critical hit. If you dual-wield you will dual-
+                    strike same as you'd usually do vs sleeping targets or from
+                    within cloaked state (except there is no limit on how often
+                    this works on the same target).
+                    Required skill level for first spell level: 23.
                     Shared spell (see above): O.Shadow, Conveyance.
+                    ** This spell requires at least 10.000 in 'Conveyance'! **
                     This spell cannot be found in the Conveyance tome.
 
     Shadow Shroud   Grants temporary invisibility. (See (5.14) for details.)

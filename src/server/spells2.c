@@ -638,7 +638,7 @@ bool do_banish_dragons(int Ind, int chance) {
 /* Teleport-to a monster */
 bool do_shadow_gate(int Ind, int range) {
 	player_type *p_ptr = Players[Ind];
-	int nx, ny, tx = -1, ty = -1, mdist = 999, dist, idx;
+	int nx, ny, tx = -1, ty = -1, mdist = 999, dist, idx, midx = 0;
 	cave_type **zcave;
 
 	if (!p_ptr) return(FALSE);
@@ -669,6 +669,7 @@ bool do_shadow_gate(int Ind, int range) {
 		mdist = dist;
 		tx = nx;
 		ty = ny;
+		midx = idx;
 	}
 	if (tx == -1) {
 		msg_print(Ind, "There is no adversary close enough to you.");
@@ -676,6 +677,9 @@ bool do_shadow_gate(int Ind, int range) {
 	}
 
 	teleport_player_to(Ind, ty, tx, FALSE);
+	/* Grant a critical attack */
+	p_ptr->melee_crit_dual = midx;
+	p_ptr->melee_timeout_crit_dual = cfg.fps; //use level_speeds instead?
 	return(TRUE);
 }
 #endif

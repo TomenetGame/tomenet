@@ -287,7 +287,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, int o_crit, bool all
 	if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
 
 	/* Chance */
-	if (randint(5000) <= i) {
+	if (p_ptr->melee_timeout_crit_dual || randint(5000) <= i) {
 		/* _If_ a critical hit is scored then it will deal
 		more damage if the weapon is heavier */
 		k = weight + randint(700) + 500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20));
@@ -3361,6 +3361,8 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	bleeding &= !q_ptr->no_cut; //includes 'A' form handling
 #endif
 
+	if (p_ptr->melee_timeout_crit_dual && p_ptr->melee_crit_dual != -q_ptr->Ind)
+		p_ptr->melee_timeout_crit_dual = 0;
 
 #if 0
 	/* May not assault AFK players, sportsmanship ;)
@@ -3489,7 +3491,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		cloaked_stab = FALSE; /* a monster can only be backstabbed once, except if it gets resleeped or stabbed while fleeing */
 		shadow_stab = FALSE; /* assume monster doesn't fall twice for it */
 	}
-	if (!sleep_stab && !cloaked_stab && !shadow_stab) dual_stab = 0;
+	if (!sleep_stab && !cloaked_stab && !shadow_stab && !p_ptr->melee_timeout_crit_dual) dual_stab = 0;
 #else
 	sleep_stab = FALSE;
 #endif
@@ -4488,7 +4490,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		   (needed as workaround for sleep-dual-stabbing executed
 		   by auto-retaliator, where old-check below would otherwise break) - C. Blue */
 		if (dual_stab == 4) dual_stab = 0;
-		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = FALSE;
+		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = p_ptr->melee_timeout_crit_dual = FALSE;
 		if (dual_stab) {
 			num--;
 			continue;
@@ -4621,6 +4623,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = race_inf(m_ptr);
 	helpless = (m_ptr->csleep || m_ptr->stunned > 100 || m_ptr->confused);
+
+	if (p_ptr->melee_timeout_crit_dual && p_ptr->melee_crit_dual != c_ptr->m_idx)
+		p_ptr->melee_timeout_crit_dual = 0;
 
 	if (m_ptr->status & M_STATUS_FRIENDLY) return;
 
@@ -4779,7 +4784,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		cloaked_stab = FALSE; /* a monster can only be backstabbed once, except if it gets resleeped or stabbed while fleeing */
 		shadow_stab = FALSE; /* assume monster doesn't fall twice for it */
 	}
-	if (!sleep_stab && !cloaked_stab && !shadow_stab) dual_stab = 0;
+	if (!sleep_stab && !cloaked_stab && !shadow_stab && !p_ptr->melee_timeout_crit_dual) dual_stab = 0;
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind, 0);
@@ -5880,7 +5885,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		   (needed as workaround for sleep-dual-stabbing executed
 		   by auto-retaliator, where old-check below would otherwise break) - C. Blue */
 		if (dual_stab == 4) dual_stab = 0;
-		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = FALSE;
+		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = p_ptr->melee_timeout_crit_dual = FALSE;
 		if (dual_stab) {
 			num--;
 			continue;

@@ -281,6 +281,9 @@ function is_ok_spell(i, s)
 	if s == OBLINK and ply.s_info[SKILL_CONVEYANCE + 1].value < 5000 then
 		return nil
 	end
+	if s == SHADOWGATE and ply.s_info[SKILL_CONVEYANCE + 1].value < 10000 then
+		return nil
+	end
 
 	return 1
 end
@@ -309,6 +312,9 @@ function is_ok_spell2(i, s)
 		end
 	end
 	if s == OBLINK and ply.s_info[SKILL_CONVEYANCE + 1].value < 5000 then
+		return nil
+	end
+	if s == SHADOWGATE and ply.s_info[SKILL_CONVEYANCE + 1].value < 10000 then
 		return nil
 	end
 

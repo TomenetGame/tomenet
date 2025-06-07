@@ -4229,6 +4229,7 @@ struct player_type {
 	s16b melee_sprint, ranged_double_used;
 	bool ranged_flare, ranged_precision, ranged_double, ranged_barrage;
 	bool shadow_running;
+	s16b melee_crit_dual, melee_timeout_crit_dual;
 
 #ifdef AUTO_RET_CMD
 	byte autoret_base;		/* set auto-retaliation via command instead of inscription - used for martial arts and generic extra stuff (no sleeping monsters) */

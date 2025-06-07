@@ -3692,6 +3692,7 @@ static bool auto_retaliate_test(int Ind) {
 		if (p_ptr->piercing && !p_ptr->piercing_charged) p_ptr->piercing = 0;
 
 		p_ptr->ar_test_fail = TRUE;
+		p_ptr->melee_crit_dual = 0;
 		return(FALSE);
 	}
 
@@ -4154,6 +4155,7 @@ static void process_player_begin(int Ind) {
 		teleport_player(Ind, 40, FALSE);
 	}
 
+	if (p_ptr->melee_timeout_crit_dual) p_ptr->melee_timeout_crit_dual--;
 }
 
 
