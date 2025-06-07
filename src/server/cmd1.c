@@ -4490,7 +4490,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		   (needed as workaround for sleep-dual-stabbing executed
 		   by auto-retaliator, where old-check below would otherwise break) - C. Blue */
 		if (dual_stab == 4) dual_stab = 0;
-		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = p_ptr->melee_timeout_crit_dual = FALSE;
+		if (!dual_stab) p_ptr->melee_timeout_crit_dual = sleep_stab = cloaked_stab = shadow_stab = FALSE;
 		if (dual_stab) {
 			num--;
 			continue;
@@ -5885,7 +5885,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		   (needed as workaround for sleep-dual-stabbing executed
 		   by auto-retaliator, where old-check below would otherwise break) - C. Blue */
 		if (dual_stab == 4) dual_stab = 0;
-		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = p_ptr->melee_timeout_crit_dual = FALSE;
+		if (!dual_stab) p_ptr->melee_timeout_crit_dual = sleep_stab = cloaked_stab = shadow_stab = FALSE;
 		if (dual_stab) {
 			num--;
 			continue;
