@@ -125,7 +125,7 @@ function quest_towneltalk(Ind, msg, topic)
 		--suggest phase/heals etc?
 		w = 0; x = 0; y = 0; z = 0
 		if player.lev < 10 then
-			if player.resist_pois or player.immune_poison then x = 1
+			if player.resist_pois == 1 or player.immune_poison == 1 then x = 1
 			else for i = 0, INVEN_PACK do
 				--check for anti-poison
 				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 26 or player.inventory[i + 1].sval == 27) then x = 1 end --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
@@ -153,7 +153,7 @@ function quest_towneltalk(Ind, msg, topic)
 				if player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 12 then z = 1 end --TV_FOOD, SV_FOOD_CURE_POISON
 				if player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 17 then z = 1 end --TV_STAFF, SV_STAFF_CURING
 			end
-			if player.resist_pois or player.immune_poison then z = 1 end
+			if player.resist_pois == 1 or player.immune_poison == 1 then z = 1 end
 
 			hintsub = 0
 			if x == 0 then
