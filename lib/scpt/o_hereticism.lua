@@ -317,9 +317,10 @@ BLOODSACRIFICE = add_spell {
 	["name"] = 	"Blood Sacrifice",
 	["name2"] = 	"BSac",
 	["school"] = 	{SCHOOL_OHERETICISM},
+	["level"] = 	47,
+	["require_demon"] = 0,
 	["am"] = 	75,
 	["spell_power"] = 0,
-	["level"] = 	47,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
 	["fail"] = 	-60,
@@ -341,7 +342,11 @@ BLOODSACRIFICE = add_spell {
 			end
 	end,
 	["info"] = 	function()
+		if player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
+			return "REQIRE: Demonic"
+		else
 			return "dur "..(50 + get_level(Ind, BLOODSACRIFICE, 30)).."+d15, cooldown 1000s"
+		end
 	end,
 	["desc"] = 	{ "Inflict a mortal wound on yourself, causing the warped powers of chaos",
 			  "to temporarily change your form into a terrifying Bloodthirster.",

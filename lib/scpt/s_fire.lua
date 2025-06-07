@@ -161,6 +161,7 @@ FIREFLASH_I = add_spell {
 	["name2"] = 	"FFlash I",
 	["school"] = 	{SCHOOL_FIRE},
 	["level"] = 	30,
+	["forbid_undead"] = 0,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
 	["fail"] = 	-50,
@@ -170,7 +171,11 @@ FIREFLASH_I = add_spell {
 			fire_ball(Ind, GF_HOLY_FIRE, args.dir, 100 + get_level(Ind, FIREFLASH_I, 400), 2 + get_level(Ind, FIREFLASH_I, 3), " casts a ball of holy fire for")
 	end,
 	["info"] = 	function()
-		return "dam "..(100 + get_level(Ind, FIREFLASH_I, 400)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
+		if player.prace == RACE_VAMPIRE then
+			return "FORBID: Undead"
+		else
+			return "dam "..(100 + get_level(Ind, FIREFLASH_I, 400)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
+		end
 	end,
 	["desc"] = 	{ "Conjures a ball of holy fire to burn your foes to ashes.", }
 }
@@ -179,6 +184,7 @@ FIREFLASH_II = add_spell {
 	["name2"] = 	"FFlash II",
 	["school"] = 	{SCHOOL_FIRE},
 	["level"] = 	42,
+	["forbid_undead"] = 0,
 	["mana"] = 	35,
 	["mana_max"] = 	35,
 	["fail"] = 	-90,
@@ -188,7 +194,11 @@ FIREFLASH_II = add_spell {
 			fire_ball(Ind, GF_HOLY_FIRE, args.dir, 145 + get_level(Ind, FIREFLASH_I, 700), 2 + get_level(Ind, FIREFLASH_I, 3), " casts a ball of holy fire for")
 	end,
 	["info"] = 	function()
-		return "dam "..(145 + get_level(Ind, FIREFLASH_I, 700)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
+		if player.prace == RACE_VAMPIRE then
+			return "FORBID: Undead"
+		else
+			return "dam "..(145 + get_level(Ind, FIREFLASH_I, 700)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
+		end
 	end,
 	["desc"] = 	{ "Conjures a ball of holy fire to burn your foes to ashes.", }
 }

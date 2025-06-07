@@ -324,7 +324,7 @@ function use_power(i, s, s_ptr, no_cost, other)
 		end
 
 --[[		-- Sanity check for direction
-		if (need_direction(s) && other.direction == -1) then
+		if (need_direction(s) and other.direction == -1) then
 			msg_print(i, "Spell needs a direction.")
 			return
 		end

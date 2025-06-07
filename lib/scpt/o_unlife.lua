@@ -107,6 +107,7 @@ OREGEN = add_spell {
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
 	["level"] = 	22,
+	["require_undead"] = 0,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
 	["fail"] = 	-30,
@@ -119,10 +120,14 @@ OREGEN = add_spell {
 			end
 	end,
 	["info"] = 	function()
+		if player.prace ~= RACE_VAMPIRE then
+			return "REQIRE: Undead"
+		else
 			local p = 200 + get_level(Ind, OREGEN, 500)
 
 			p = p / 10
 			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 "..p.."HP/10MP tick"
+		end
 	end,
 	["desc"] = 	{
 			"Draws from nether undercurrents to replenish your health.",
@@ -188,6 +193,7 @@ OUNLIFERES = add_spell {
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
 	["level"] = 	35,
+	["require_undead"] = 0,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	-70,
@@ -206,8 +212,12 @@ OUNLIFERES = add_spell {
 			end
 		end,
 	["info"] = 	function()
+		if player.prace ~= RACE_VAMPIRE then
+			return "REQIRE: Undead"
+		else
 			return ""
-			end,
+		end
+	end,
 	["desc"] = 	{
 			"Restores drained stats and lost experience.",
 			"--- This spell is only usable by true vampires. ---",

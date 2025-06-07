@@ -273,17 +273,10 @@ function is_ok_spell(i, s)
 
 	if get_level(i, s, 50, 0) == 0 then return nil end
 
-	if (s == FIREFLASH_I or s == FIREFLASH_II) and ply.prace == RACE_VAMPIRE then
-		return nil
-	end
-	if ply.admin_wiz == 0 and ply.admin_dm == 0 then
-		if s == BLOODSACRIFICE and ply.pclass ~= CLASS_HELLKNIGHT and ply.pclass ~= CLASS_CPRIEST then
-			return nil
-		end
-		if (s == OREGEN or s == OUNLIFERES) and ply.prace ~= RACE_VAMPIRE then
-			return nil
-		end
-	end
+	if (not check_affect(s, "forbid_undead")) and ply.prace == RACE_VAMPIRE then return nil end
+	if (not check_affect(s, "require_undead")) and ply.prace ~= RACE_VAMPIRE then return nil end
+	if (not check_affect(s, "forbid_demon")) and (ply.pclass == CLASS_HELLKNIGHT or ply.pclass == CLASS_CPRIEST) then return nil end
+	if (not check_affect(s, "require_demon")) and ply.pclass ~= CLASS_HELLKNIGHT and ply.pclass ~= CLASS_CPRIEST then return nil end
 
 	if spell(s).extrareq ~= -1 then
 		local r = ply.s_info[spell(s).extrareq + 1].value
@@ -297,36 +290,12 @@ end
 function is_ok_spell2(i, s)
 	local lev = get_level(i, s, 50, 0)
 
-	-- client-side (0) or server-side (>=1) ?
-	if i ~= 0 then
-		ply = players(i)
-	else
-		ply = player
+	if is_ok_spell(i, s) ~= nil then
+		if __tmp_spells[s].priority then lev = lev + __tmp_spells[s].priority end
+		return lev
 	end
 
-	if lev == 0 then return nil end
-
-	if (s == FIREFLASH_I or s == FIREFLASH_II) and ply.prace == RACE_VAMPIRE then
-		return nil
-	end
-	if ply.admin_wiz == 0 and ply.admin_dm == 0 then
-		if s == BLOODSACRIFICE and ply.pclass ~= CLASS_HELLKNIGHT and ply.pclass ~= CLASS_CPRIEST then
-			return nil
-		end
-		if (s == OREGEN or s == OUNLIFERES) and ply.prace ~= RACE_VAMPIRE then
-			return nil
-		end
-	end
-	if s == OBLINK and ply.s_info[SKILL_CONVEYANCE + 1].value < 5000 then
-		return nil
-	end
-	if s == SHADOWGATE and ply.s_info[SKILL_CONVEYANCE + 1].value < 10000 then
-		return nil
-	end
-
-	if __tmp_spells[s].priority then lev = lev + __tmp_spells[s].priority end
-
-	return lev
+	return nil
 end
 
 -- Get the amount of mana(or power) needed
@@ -919,7 +888,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 		end
 
 --[[		-- Sanity check for direction
-		if (need_direction(s) && other.dir == -1) then
+		if (need_direction(s) and other.dir == -1) then
 			msg_print(i, "Spell needs a direction.")
 			return
 		end
