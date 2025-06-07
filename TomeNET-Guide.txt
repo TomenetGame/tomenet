@@ -707,6 +707,15 @@ q       q       quaff a potion.
                 which you can fill at a fountain.
 
 r       r       read a scroll.
+                There is a special mechanism for certain scrolls that can be
+                used on other items: Scrolls of Identify and Scrolls of Enchant
+                Weapon/Armour. If you read your last scroll of these but do not
+                select an item to use with the scroll, the scroll will not
+                vanish completely but remain in your inventory with an 'amount'
+                of zero, stating "no more Scrolls of...". You can then use this
+                'scroll' later, whenever you choose to.
+                If you want to get rid of this remnant scroll, press 'k' (or if
+                you use rogue-like key set it's CTRL+D) to destroy it finally.
 
 E       E       eat food. Hunger can kill you, if you don't eat for a longer
                 while, depending on your character. You will see a yellow
