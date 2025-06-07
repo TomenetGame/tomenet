@@ -72,6 +72,8 @@ function finish_spell(must_i)
 	assert(s.desc, "No spell desc!")
 	if not s.direction then s.direction = FALSE end
 	if not s.item then s.item = -1 end
+	if not s.extrareq then s.extrareq = -1 end
+	if not s.extralev then s.extralev = 0 end
 
 	i = new_spell(must_i, s.name)
 	assert(i == must_i, "ACK ! i != must_i ! please contact the maintainer")
@@ -86,10 +88,14 @@ function finish_spell(must_i)
 	else
 		spell(i).spell_power = 1
 	end
+
 	__spell_spell[i] = s.spell
 	__spell_name2[i] = s.name2
 	__spell_info[i] = s.info
 	__spell_desc[i] = s.desc
+
+	spell(i).extrareq = s.extrareq
+	spell(i).extralev = s.extralev
 	return i
 end
 
@@ -278,11 +284,11 @@ function is_ok_spell(i, s)
 			return nil
 		end
 	end
-	if s == OBLINK and ply.s_info[SKILL_CONVEYANCE + 1].value < 5000 then
-		return nil
-	end
-	if s == SHADOWGATE and ply.s_info[SKILL_CONVEYANCE + 1].value < 10000 then
-		return nil
+
+	if spell(s).extrareq ~= -1 then
+		local r = ply.s_info[spell(s).extrareq + 1].value
+
+		if r < spell(s).extralev then return nil end
 	end
 
 	return 1
