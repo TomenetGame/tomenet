@@ -7382,7 +7382,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->recharging = randint(75) + 175 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_AXE_GOTHMOG:
-			msg_print(Ind, "Your lochaber axe erupts in fire...");
+			msg_print(Ind, "Your axe erupts in fire...");
 			p_ptr->current_activation = item;
 			get_aim_dir(Ind);
 			return;
