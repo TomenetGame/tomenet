@@ -120,14 +120,6 @@ true_art_activation = {
 {109, "word of recall every 100..200 turns"},
 --case ART_DAWN:--110
 {110, "banishing undead (100..130) every 100..500+d100 turns"},
---[[
---case ART_ROBINTON:--137
-music_info[3].desc},
---case ART_PIEMUR:--138
-music_info[9].desc},
---case ART_MENOLLY:--139
-music_info[10].desc},
-]]
 --case ART_GROND:--111
 --111, "altering reality every 20000 turns"},
 --case ART_TOTILA:--112
@@ -146,6 +138,14 @@ music_info[10].desc},
 {123, "a fire ball (300..600) every 50..200+d200 turns"},
 --case ART_CUBRAGOL:--126
 {126, "fire branding of bolts every 222..999 turns"},
+--[[
+--case ART_ROBINTON:--137
+music_info[3].desc},
+--case ART_PIEMUR:--138
+music_info[9].desc},
+--case ART_MENOLLY:--139
+music_info[10].desc},
+]]
 --case ART_EREBOR:--140
 {140, "opening a secret passage every 50..200 turns"},
 --case ART_DRUEDAIN:--141
@@ -156,6 +156,8 @@ music_info[10].desc},
 {143, "a sound ball (300..600) every 300 turns"},
 --case ART_BOROMIR:--144
 {144, "mass human summoning every 500..1000 turns"},
+--case ART_AXE_GOTHMOG:--145
+{145, "a fire ball (300..600) every 50..200+d200 turns"},
 --case ART_ERU:--147
 {147, "healing (1000), curing every 250..500 turns"},
 --case ART_GANDALF:--127
