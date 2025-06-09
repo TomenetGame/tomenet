@@ -629,6 +629,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "autoloot_dunonly",		"Suppress auto-pickup/destroy while not in dungeon" },
 	{ &c_cfg.autoloot_dununown,	FALSE,	8,	0, 181, TRUE,
 	    "autoloot_dununown",	"Suppress auto-pck/des if owned and not in dungeon" },
+	{ &c_cfg.flash_starvation,	TRUE,	7,	0, 182, TRUE, //moved exp_bar to page 2 to make room for this
+	    "flash_starvation",		"Flash 'Starved' food status by colour animation." },
 };
 
 cptr melee_techniques[16] = {

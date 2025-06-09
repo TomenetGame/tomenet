@@ -1060,9 +1060,9 @@ void prt_hunger(int food) {
 	} else if (food == -1) return; /* Catch timing issue, if we feed from starved state quickly, before the blinking ends, resulting in visual glitch of redrawing us as blinking-starved mistakenly. */
 
 	if (food < PY_FOOD_FAINT)
-		c_put_str(food_warn_once_timer ? TERM_SEL_RED : TERM_L_RED, "Starved", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(food_warn_once_timer || c_cfg.flash_starvation ? TERM_SEL_RED : TERM_L_RED, "Starved", ROW_HUNGRY, COL_HUNGRY);
 	else if (food < PY_FOOD_WEAK)
-		c_put_str(food_warn_once_timer ? TERM_SELECTOR : TERM_ORANGE, "Starved", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(food_warn_once_timer || c_cfg.flash_starvation ? TERM_SELECTOR : TERM_ORANGE, "Starved", ROW_HUNGRY, COL_HUNGRY);
 	else if (food < PY_FOOD_ALERT)
 		c_put_str(food_warn_once_timer ? TERM_SELECTOR : TERM_YELLOW, "Hungry ", ROW_HUNGRY, COL_HUNGRY);
 	else if (food < PY_FOOD_FULL)

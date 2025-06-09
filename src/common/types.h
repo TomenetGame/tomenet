@@ -4862,6 +4862,7 @@ struct client_opts {
 	bool quiet_house_sfx;
 	bool no_house_sfx;
 	bool alert_starvation;
+	bool flash_starvation;
 
     //unmutable, pfft
 	bool use_color;
