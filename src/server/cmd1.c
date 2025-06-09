@@ -3119,6 +3119,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				/* Delete original */
 				//delete_object(wpos, p_ptr->py, p_ptr->px);
 				if (delete_it) {
+					/* extra logging for artifacts */
+					if (o_ptr->name1) {
+						char o_name[ONAME_LEN];
+
+						object_desc_store(0, o_name, o_ptr, TRUE, 3);
+						s_printf("%s artifact picked up at (%d,%d,%d) by '%s':\n  %s\n",
+						    showtime(), wpos->wx, wpos->wy, wpos->wz,
+						    p_ptr->name, o_name);
+					}
+
 					delete_object_idx(c_ptr->o_idx, FALSE);
 
 					/* Hack -- tell the player of the next object on the pile */
