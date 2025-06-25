@@ -11765,11 +11765,11 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	/* don't start too early -C. Blue */
 #ifndef RPG_SERVER
-	if (p_ptr->lev < 5 && !iddc) {
-		msg_print(Ind, "\377oYou need to be level 5 or higher to receive an extermination order!");
-#else /* for ironman there's no harm in allowing early quests */
-	if (p_ptr->lev < 3) {
+	if (p_ptr->lev < 3 && !iddc) {
 		msg_print(Ind, "\377oYou need to be level 3 or higher to receive an extermination order!");
+#else /* for ironman there's no harm in allowing early quests */
+	if (p_ptr->lev < 1) {
+		msg_print(Ind, "\377oYou need to be level 1 or higher to receive an extermination order!");
 #endif
 		return(FALSE);
 	}
