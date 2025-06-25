@@ -2485,18 +2485,14 @@ static errr init_q_info(void) {
 
 /*** Initialize others ***/
 
-static void prepare_distance()
-{
+static void prepare_distance() {
 	int d, y, x, count = 0;
 
 	/* Start with adjacent locations, spread further */
-	for (d = 0; d < PREPARE_RADIUS ; d++)
-	{
+	for (d = 0; d < PREPARE_RADIUS ; d++){
 		/* Check nearby locations */
-		for (y = - d; y <= d; y++)
-		{
-			for (x = - d; x <= d; x++)
-			{
+		for (y = - d; y <= d; y++) {
+			for (x = - d; x <= d; x++) {
 				/* Check distance */
 				if (distance(y, x, 0, 0) != d) continue;
 
@@ -2516,15 +2512,13 @@ static void prepare_distance()
 }
 
 
-void init_schools(s16b new_size)
-{
+void init_schools(s16b new_size) {
 	/* allocate the extra memory */
 	C_MAKE(schools, new_size, school_type);
 	max_schools = new_size;
 }
 
-void init_spells(s16b new_size)
-{
+void init_spells(s16b new_size) {
 	/* allocate the extra memory */
 	C_MAKE(school_spells, new_size, spell_type);
 	max_spells = new_size;
