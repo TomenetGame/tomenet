@@ -71,6 +71,11 @@
  #define GO_LEGENDS_LOG /* log reaching the absolute top rank to noteworthy occurances */
 #endif
 
+/* CPU opponent should never run out of time.
+   So if it happens we assume it was due to a broken pipe/go engine crash,
+   and do not award the player a win, as it could be easily exploitable by repeatedly playing the faulty engine. */
+#define CPU_TIMEOUT_DRAWS
+
 /* Set API (can be changed later) of the go engine we use */
 #define EAPI_NONE		0
 #define EAPI_GNUGO		1
@@ -1898,7 +1903,11 @@ static int verify_move_CPU(void) {
 	/* Catch timeout! Oops. */
 	if (engine_api == EAPI_FUEGO && !strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
  #ifdef GO_DEBUGPRINT
+  #ifndef CPU_TIMEOUT_DRAWS
 		s_printf("Your opponent's time has run out, therefore you have won the match!\n");
+  #else
+		s_printf("Your opponent's time has run out which should never happen, match is a draw!\n");
+  #endif
  #endif
 		return(4);
 	}
@@ -2045,7 +2054,7 @@ static int verify_move_CPU(void) {
 }
 
 static void go_engine_move_result(int move_result) {
-	bool invalid_move = FALSE, lost = FALSE, won = FALSE;
+	bool invalid_move = FALSE, lost = FALSE, won = FALSE, fainted = FALSE;
 	char result[80];
 	int Ind, wager = 0;
 	player_type *p_ptr;
@@ -2116,8 +2125,14 @@ static void go_engine_move_result(int move_result) {
 			}
 		}
 #endif
+#ifndef CPU_TIMEOUT_DRAWS
 		strcpy(result, "\377G*** Your opponent lost on time! ***");
 		won = TRUE;
+#else
+		strcpy(result, "\377yYour opponent has fainted! Sorry, the match is canceled!");
+		/* Treat it as a draw (not <won>, not <lost>) */
+		fainted = TRUE;
+#endif
 		break;
 	case 5:
 		if (engine_api == EAPI_FUEGO) {
@@ -2199,7 +2214,7 @@ static void go_engine_move_result(int move_result) {
 		s_printf("GO_RESULT: %s\n", result);
 #endif
 
-		switch (p_ptr->go_level) {
+		if (!fainted) switch (p_ptr->go_level) {
 		case 1:
 			if (lost) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Heh, bloody beginner are ya?");
@@ -2440,6 +2455,10 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "totally unlikely..");
 			}
 			break;
+		} else { /* Opponent 'fainted' aka engine/pipe bugged out */
+			Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "I am so sorry, your opponent seems kind of ill.");
+			Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "We unfortunately have to cancel this match for now,");
+			Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "please come back when your opponent feels better...");
 		}
 
 		if (p_ptr->go_level_top < p_ptr->go_level) {
