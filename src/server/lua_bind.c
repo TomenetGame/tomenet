@@ -1501,3 +1501,7 @@ void lua_fix_acc_house_limit(int Ind) {
 void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level) {
 	wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, level, NULL);
 }
+
+object_type lua_get_subinven_item(int Ind, int inven, int subinven) {
+	return(Players[Ind]->subinventory[inven][subinven]);
+}

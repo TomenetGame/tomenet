@@ -2648,6 +2648,7 @@ extern void lua_forget_map(int Ind);
 extern void lua_forget_parties(void);
 extern void lua_forget_guilds(void);
 extern void lua_fix_acc_house_limit(int Ind);
+extern object_type lua_get_subinven_item(int Ind, int inven, int subinven);
 
 #ifdef ENABLE_GO_GAME
 /* go.c - C. Blue */

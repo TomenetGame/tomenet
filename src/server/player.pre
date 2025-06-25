@@ -1034,3 +1034,4 @@ extern void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pva
 extern s32b player_id;
 extern u32b account_id;
 extern void disturb(int Ind, int stop_search, int keep_resting);
+extern object_type lua_get_subinven_item(int Ind, int inven, int subinven);

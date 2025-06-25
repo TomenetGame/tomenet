@@ -128,9 +128,20 @@ function quest_towneltalk(Ind, msg, topic)
 			if player.resist_pois == 1 or player.immune_poison == 1 then x = 1
 			else for i = 0, INVEN_PACK do
 				--check for anti-poison
-				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 26 or player.inventory[i + 1].sval == 27) then x = 1 end --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
-				if player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 12 then x = 1 end --TV_FOOD, SV_FOOD_CURE_POISON
-				if player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 17 then x = 1 end --TV_STAFF, SV_STAFF_CURING
+				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 26 or player.inventory[i + 1].sval == 27) then x = 1; break --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
+				elseif player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 12 then x = 1; break --TV_FOOD, SV_FOOD_CURE_POISON
+				elseif player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 17 then x = 1; break --TV_STAFF, SV_STAFF_CURING
+
+				--ENABLE_SUBINVEN
+				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 3 then --TV_SUBINVEN, SV_SI_POTION_BELT
+					for j = 0, player.inventory[i + 1].bpval - 1 do
+						forge = lua_get_subinven_item(Ind, i, j)
+						if forge.tval == 71 and (forge.sval == 26 or forge.sval == 27) then x = 1; break
+						elseif forge.tval == 80 and forge.sval == 12 then x = 1; break
+						elseif forge.tval == 55 and forge.sval == 17 then x = 1; break
+						end
+					end
+				end
 			end end
 
 			hintsub = 0
@@ -152,6 +163,28 @@ function quest_towneltalk(Ind, msg, topic)
 				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 26 or player.inventory[i + 1].sval == 27) then z = 1 end --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
 				if player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 12 then z = 1 end --TV_FOOD, SV_FOOD_CURE_POISON
 				if player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 17 then z = 1 end --TV_STAFF, SV_STAFF_CURING
+
+				--ENABLE_SUBINVEN
+				if player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 2 then --TV_SUBINVEN, SV_SI_MDEV_WRAPPING
+					for j = 0, player.inventory[i + 1].bpval - 1 do
+						forge = lua_get_subinven_item(Ind, i, j)
+						if forge.tval == 55 and forge.sval == 4 then x = 1 end --TV_STAFF, SV_STAFF_TELEPORTATION
+						if forge.tval == 55 and forge.sval == 16 then y = 1 end --TV_STAFF, SV_STAFF_CURE_SERIOUS
+						if forge.tval == 55 and forge.sval == 17 then z = 1 end --TV_STAFF, SV_STAFF_CURING
+					end
+				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 3 then --TV_SUBINVEN, SV_SI_POTION_BELT
+					for j = 0, player.inventory[i + 1].bpval - 1 do
+						forge = lua_get_subinven_item(Ind, i, j)
+						if forge.tval == 71 and (forge.sval == 35 or forge.sval == 36 or forge.sval == 38) then y = 1 end --TV_POTION, SV_POTION_CURE_SERIOUS, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+						if forge.tval == 71 and (forge.sval == 26 or forge.sval == 27) then z = 1 end --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
+					end
+				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 4 then --TV_SUBINVEN, SV_SI_FOOD_BAG
+					for j = 0, player.inventory[i + 1].bpval - 1 do
+						forge = lua_get_subinven_item(Ind, i, j)
+						if forge.tval == 80 and forge.sval == 16 then y = 1 end --TV_FOOD, SV_FOOD_CURE_SERIOUS
+						if forge.tval == 80 and forge.sval == 12 then z = 1 end --TV_FOOD, SV_FOOD_CURE_POISON
+					end
+				end
 			end
 			if player.resist_pois == 1 or player.immune_poison == 1 then z = 1 end
 
@@ -187,6 +220,20 @@ function quest_towneltalk(Ind, msg, topic)
 				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 36 or player.inventory[i + 1].sval == 38) then y = 1 end --TV_POTION, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
 				--check for one speed potion at least: TV_POTION, SV_POTION_SPEED
 				if player.inventory[i + 1].tval == 71 and player.inventory[i + 1].sval == 29 then w = 1 end
+
+				--ENABLE_SUBINVEN
+				if player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 2 then --TV_SUBINVEN, SV_SI_MDEV_WRAPPING
+					for j = 0, player.inventory[i + 1].bpval - 1 do
+						forge = lua_get_subinven_item(Ind, i, j)
+						if forge.tval == 55 and forge.sval == 4 then x = 1; z = 1 end --TV_STAFF, SV_STAFF_TELEPORTATION
+					end
+				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 3 then --TV_SUBINVEN, SV_SI_POTION_BELT
+					for j = 0, player.inventory[i + 1].bpval - 1 do
+						forge = lua_get_subinven_item(Ind, i, j)
+						if forge.tval == 71 and (forge.sval == 36 or forge.sval == 38) then y = 1 end --TV_POTION, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+						if forge.tval == 71 and forge.sval == 29 then w = 1 end --TV_POTION, SV_POTION_SPEED
+					end
+				end
 			end
 
 			hintsub = 0
@@ -218,61 +265,74 @@ function quest_towneltalk(Ind, msg, topic)
 			end
 		else -- lev 30+
 			hintsub = 0
+			xnum = 0
+			ynum = 0
+			znum = 0
+			wnum = 0
+
 			for i = 0, INVEN_PACK do
 				--check for escapes
-				if player.inventory[i + 1].tval == 70 then --TV_SCROLL
-					--SV_SCROLL_TELEPORT
-					if player.inventory[i + 1].sval == 9 then
-						x = 1
-						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 5 then
-							if hinted == 1 then msg_print(Ind, "\252\255UYour stack of teleportation scrolls is running dangerously low, you should buy more!")
-							else msg_print(Ind, "\252\255UOh "..msg..", your stack of teleportation scrolls is running dangerously low, you should buy more!") end
-							hinted = 1; hintsub = 1
-						end
-					end
-				end
+				if player.inventory[i + 1].tval == 70 and player.inventory[i + 1].sval == 9 then --TV_SCROLL,SV_SCROLL_TELEPORT
+					x = 1
+					xnum = xnum + player.inventory[i + 1].number
 				--check for heals
-				if player.inventory[i + 1].tval == 71 then --TV_POTION
-					 --SV_POTION_HEALING
-					if player.inventory[i + 1].sval == 38 then
-						y = 1
-						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 10 then
-							if hinted == 1 then
-								if hintsub == 1 then msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, too!")
-								else msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, you should buy more!") end
-							else msg_print(Ind, "\252\255UOh "..msg..", your supply of healing potions is running dangerously low, you should buy more!") end
-							hinted = 1; hintsub = 1
-						end
-					end
-				end
+				elseif player.inventory[i + 1].tval == 71 and player.inventory[i + 1].sval == 38 then --TV_POTION,SV_POTION_HEALING
+					y = 1
+					ynum = ynum + player.inventory[i + 1].number
 				--check for speed
-				if player.inventory[i + 1].tval == 71 then --TV_POTION
-					 --SV_POTION_SPEED
-					if player.inventory[i + 1].sval == 29 then
-						z = 1
-						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 6 then
-							if hinted == 1 then
-								if hintsub == 1 then msg_print(Ind, "\252\255USame goes for your supply of speed potins!")
-								else msg_print(Ind, "\252\255UYour supply of speed potions is running dangerously low, you should buy more!") end
-							else msg_print(Ind, "\252\255UOh "..msg..", your supply of speed potions is running dangerously low, you should buy more!") end
-							hinted = 1; hintsub = 1
-						end
-					end
-				end
+				elseif player.inventory[i + 1].tval == 71 and player.inventory[i + 1].sval == 29 then --TV_POTION,SV_POTION_SPEED
+					z = 1
+					znum = znum + player.inventory[i + 1].number
 				--check for resist
-				if player.inventory[i + 1].tval == 71 then --TV_POTION
-					 --SV_POTION_RESISTANCE
-					if player.inventory[i + 1].sval == 60 then
-						w = 1
-						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 5 then
-							if hinted == 1 then
-								if hintsub == 1 then msg_print(Ind, "\252\255UAnd your supply of resistance potions needs restocking as well!")
-								else msg_print(Ind, "\252\255UYour supply of resistance potions is running dangerously low, you should buy more!") end
-							else msg_print(Ind, "\252\255UOh "..msg..", your supply of resistance potions is running dangerously low, you should buy more!") end
-							hinted = 1; hintsub = 1
+				elseif player.inventory[i + 1].tval == 71 and player.inventory[i + 1].sval == 60 then --TV_POTION,SV_POTION_RESISTANCE
+					w = 1
+					wnum = wnum + player.inventory[i + 1].number
+
+				--ENABLE_SUBINVEN
+				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 3 then --TV_SUBINVEN, SV_SI_POTION_BELT
+					msg_print(Ind, "kewl")
+					for j = 0, player.inventory[i + 1].bpval - 1 do
+						forge = lua_get_subinven_item(Ind, i, j)
+
+						if forge.tval == 71 and forge.sval == 38 then --SV_POTION,SV_POTION_HEALING
+							y = 1
+							ynum = ynum + forge.number
+						elseif forge.tval == 71 and forge.sval == 29 then --TV_POTION,SV_POTION_SPEED
+							z = 1
+							znum = znum + forge.number
+						elseif forge.tval == 71 and forge.sval == 60 then --TV_POTION,SV_POTION_RESISTANCE
+							w = 1
+							wnum = wnum + forge.number
 						end
 					end
 				end
+			end
+
+			if x == 1 and xnum < 5 then
+				if hinted == 1 then msg_print(Ind, "\252\255UYour stack of teleportation scrolls is running dangerously low, you should buy more!")
+				else msg_print(Ind, "\252\255UOh "..msg..", your stack of teleportation scrolls is running dangerously low, you should buy more!") end
+				hinted = 1; hintsub = 1
+			end
+			if y == 1 and ynum < 10 then
+				if hinted == 1 then
+					if hintsub == 1 then msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, too!")
+					else msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, you should buy more!") end
+				else msg_print(Ind, "\252\255UOh "..msg..", your supply of healing potions is running dangerously low, you should buy more!") end
+				hinted = 1; hintsub = 1
+			end
+			if z == 1 and znum < 6 then
+				if hinted == 1 then
+					if hintsub == 1 then msg_print(Ind, "\252\255USame goes for your supply of speed potins!")
+					else msg_print(Ind, "\252\255UYour supply of speed potions is running dangerously low, you should buy more!") end
+				else msg_print(Ind, "\252\255UOh "..msg..", your supply of speed potions is running dangerously low, you should buy more!") end
+				hinted = 1; hintsub = 1
+			end
+			if w == 1 and wnum < 5 then
+				if hinted == 1 then
+					if hintsub == 1 then msg_print(Ind, "\252\255UAnd your supply of resistance potions needs restocking as well!")
+					else msg_print(Ind, "\252\255UYour supply of resistance potions is running dangerously low, you should buy more!") end
+				else msg_print(Ind, "\252\255UOh "..msg..", your supply of resistance potions is running dangerously low, you should buy more!") end
+				hinted = 1; hintsub = 1
 			end
 
 			hintsub = 0
