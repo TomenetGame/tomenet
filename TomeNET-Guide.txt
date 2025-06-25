@@ -23282,9 +23282,11 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
                     Tier II: Level 11.                         (auto-project)
                     Also neutralizes poison, cures blindness, cuts, confusion.
+                    This spell can be used even while blind.
 
                     Tier III: Level 21.                        (auto-project)
                     Also cures diseases, stun and hallucinations.
+                    This spell can be used even while blind or confused.
 
     Cure Wounds     Heals a fixed amount of hit points of a friendly target,
                     which is capped at 14d8, the same amount a potion of cure
@@ -23602,6 +23604,7 @@ All Unlife spells are Wisdom-based.)
                     Level 18: Also restores drained stats.
                     Level 28: Also restores lost experience.
                     Required skill level for first spell level: 4.
+                    This spell can be used even while blind of confused.
 
     Trance          Causes all ghosts, spirits and elementals that see you
                     to fall into a deep, spiritual sleep instantly.
