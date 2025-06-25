@@ -2532,7 +2532,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->flags7 & RF7_SPIDER) d = -1;
 
 	if (r_ptr->flags3 & RF3_NONLIVING) d = -1;
-	if (r_ptr->flags3 & RF3_EVIL) d = -1;
+	if (r_ptr->flags3 & RF3_EVIL) d = -1; //side note regarding Druid forms: Wyvern actually gets -1 vs Hydra here...
 
 	if (r_ptr->flags3 & RF3_ORC) d = -1;
 
