@@ -5155,7 +5155,7 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Misc. terrain effects */
-	if (!p_ptr->ghost) {
+	if (!p_ptr->ghost) { /* Spare dead players, even though levitation usually does NOT fully protect eg from lava fire damage? */
 		/* Generic terrain effects */
 		apply_terrain_effect(Ind);
 
