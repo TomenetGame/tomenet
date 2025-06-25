@@ -566,7 +566,14 @@ function print_spell_chat(s, inven_slot)
 
 	--format("   %-22s%-14s Level Cost Fail Info", "Name", "School")
 	--c_msg_print(format("\255G%-22s%-16s %3d %4s %3d%s %s", spell(s).name, sch_str, lvl, get_mana(i, s, inven_slot), spell_chance(i, s, inven_slot), "%", __spell_info[s]()))
-	Send_msg(format("\255G%-22s%-16s %3d %4s %3d%s %s", spell(s).name, sch_str, lvl, get_mana(i, s, inven_slot), spell_chance(i, s, inven_slot), "%", __spell_info[s]()))
+	local sinf = __spell_info[s]()
+	local fcol = strfind(sinf, ":")
+	if fcol ~= nil then
+		--duplicate the first colon so it isn't treated as private chat accidentally
+		--NOTE: Actually that not required here as the ':' is too far to the right anyway, preventing accidental 'name'-detection, but whatever, let's paranoia
+		sinf = strsub(sinf, 1, fcol)..":"..strsub(sinf, fcol + 1, -1)
+	end
+	Send_msg(format("\255G%-22s%-16s %3d %4s %3d%s %s", spell(s).name, sch_str, lvl, get_mana(i, s, inven_slot), spell_chance(i, s, inven_slot), "%", sinf))
 end
 function print_spell_desc_chat(s)
 	local index, desc
@@ -574,8 +581,21 @@ function print_spell_desc_chat(s)
 
 	if type(__spell_desc[s]) == "string" then Send_msg("\255W"..__spell_desc[s])
 	else
+		local col1 = 0
 		for index, desc in __spell_desc[s] do
-			msg = msg..desc.." "
+			if col1 == 0 then
+				local fcol = strfind(desc, ":")
+				if fcol == nil then
+					msg = msg..desc.." "
+				else
+					--duplicate (only) the first colon so it isn't treated as private chat accidentally
+					local descline = strsub(desc, 1, fcol)..":"..strsub(desc, fcol + 1, -1)
+					msg = msg..descline.." "
+					col1 = 1
+				end
+			else
+				msg = msg..desc.." "
+			end
 		end
 		Send_msg("\255W"..msg)
 	end
