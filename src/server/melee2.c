@@ -1407,6 +1407,9 @@ static void administrative_push(int Ind, monster_type *m_ptr, cave_type **zcave)
 	set_stun(Ind, p_ptr->stun + 10);
 }
 
+/* Hack: Low grab chances are extra effective against low level monsters? */
+#define LOW_LEVEL_MONSTER_INTERCEPTION
+
 int calc_grab_chance(player_type *p_ptr, int mod, int rlev) {
 	int grabchance;
 #ifdef ENABLE_STANCES
@@ -1473,6 +1476,15 @@ int calc_grab_chance(player_type *p_ptr, int mod, int rlev) {
  #ifdef ENABLE_STANCES
 	grabchance = (grabchance * fac) / 100; /* new way: modify final grabchance after rlev subtraction has been applied */
  #endif
+#endif
+
+#ifdef LOW_LEVEL_MONSTER_INTERCEPTION
+	if (rlev <= 90) {
+		int s = get_skill_scale(p_ptr, SKILL_INTERCEPT, 50), m = 100 / (rlev + 10) - 1;
+
+		if (s > m) s = m;
+		grabchance += s * 2;
+	}
 #endif
 
 	/* apply action-specific modifier */
