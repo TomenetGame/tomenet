@@ -831,8 +831,9 @@ struct player_type {
 //	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
 	int global_event_participated[MAX_GLOBAL_EVENT_TYPES];
 
-	int combat_stance;
-	int combat_stance_power;
+	byte combat_stance;
+	byte combat_stance_prev;
+	byte combat_stance_power;
 
 	bool shoot_till_kill;
 	bool shooty_till_kill;

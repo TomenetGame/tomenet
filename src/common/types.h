@@ -4221,8 +4221,8 @@ struct player_type {
 
 	/* ENABLE_STANCES - this code must always be compiled, otherwise savegames would screw up! so no #ifdef here. */
 	/* combat stances */
-	int combat_stance;		/* 0 = normal, 1 = def, 2 = off */
-	int combat_stance_power;	/* 1,2,3, and 4 = royal (for NR balanced) */
+	byte combat_stance, combat_stance_prev;	/* 0 = normal, 1 = def, 2 = off */
+	byte combat_stance_power;	/* 1,2,3, and 4 = royal (for NR balanced) */
 
 	/* more techniques */
 	byte cloaked, cloak_neutralized; /* Cloaking mode enabled; suspicious action was spotted */

@@ -2540,10 +2540,10 @@ if (p_ptr->updated_savegame == 0) {
 			p_ptr->global_event_participated[i] = 0;
 
 	if (!older_than(4, 3, 3)) {
-		rd_s16b(&tmp16s);
-		p_ptr->combat_stance = tmp16s;
-		rd_s16b(&tmp16s);
-		p_ptr->combat_stance_power = tmp16s;
+		rd_byte(&p_ptr->combat_stance);
+		rd_byte(&p_ptr->combat_stance_prev);
+		rd_byte(&p_ptr->combat_stance_power);
+		strip_bytes(1); //HOLE
 	}
 	if (!older_than(4, 3, 4)) rd_byte(&p_ptr->cloaked);
 	if (!older_than(4, 3, 9)) rd_byte((byte *) &p_ptr->shadow_running);

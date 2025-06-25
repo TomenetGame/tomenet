@@ -8987,6 +8987,12 @@ void do_cmd_stance(int Ind, int stance) {
 
 	if (!get_skill(p_ptr, SKILL_STANCE)) return;
 
+	if (stance == -1) {
+		stance = p_ptr->combat_stance_prev;
+		if (stance == p_ptr->combat_stance) return; //no 'already' message in this case
+	}
+	p_ptr->combat_stance_prev = p_ptr->combat_stance;
+
 	switch (stance) {
 	case 0: /* always known, no different power levels here */
 		if (!p_ptr->combat_stance) {

@@ -1370,6 +1370,7 @@ static int get_combatstance(int *cs) {
 	corresp[0] = 0; /* balanced stance */
 	corresp[1] = 1; /* defensive stance */
 	corresp[2] = 2; /* offensive stance */
+	corresp[3] = -1; /* previous stance */
 
 	/* Assume cancelled */
 	(*cs) = -1;
@@ -1379,7 +1380,7 @@ static int get_combatstance(int *cs) {
 	redraw = FALSE;
 
 	/* Build a prompt (accept all stances) */
-	strnfmt(out_val, 78, "(Stances %c-%c, *=List, ESC=exit) enter which stance? ",
+	strnfmt(out_val, 78, "(Stances %c-%c or '-' for previous, *=List, ESC=exit) enter which stance? ",
 		I2A(0), I2A(num - 1));
 
 	if (c_cfg.always_show_lists) {
@@ -1417,6 +1418,12 @@ static int get_combatstance(int *cs) {
 
 			/* Ask again */
 			continue;
+		}
+
+		if (choice == '-') {
+			i = 3;
+			flag = TRUE;
+			break;
 		}
 
 		/* extract request */
