@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 7. June 2025 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 25. June 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15692,6 +15692,14 @@ Players don't take damage from their 'own' earthquakes, caused by their
 equipment or items (for example weapons of earthquakes or scrolls of
 *destruction*).
 
+If you have equipped an item that has the ego power 'of Earthquakes' (either a
+weapon or a digging tool), you can try to cause an earthquake at will by
+striking the ground at your feet.
+To do this, tunnel into direction '5' aka your own grid you are standing on.
+The item with the biggest earthquake chance will automatically be chosen from
+your equipped digging tool and your equipped weapons (with the most powerful
+one being The Mighty Hammer 'Grond').
+
 Earthquakes can deal up to 300 damage if you cannot evade the falling rocks
 and shifting ground: Depending on the number of unchanged (by the earthquake)
 empty fields that are adjacent to your character, there is a chance to 'evade'
@@ -16112,25 +16120,51 @@ and its (+hit,+dam) enchantment and also on its weight (that's why a pick is a
 better digging tool than a shovel for example, even if they have the same bonus
 enchantments). Digging power further depends on your Digging skill and your STR
 (strength).
-If you lack a digging tool, an equipped sword or axe can substitute somewhat
-when you are just trying to hack down vegetation instead of rocks.
 
 Each digging attempt of your character has a constant chance to succeed, based
 on your digging power vs the material you're trying to tunnel through. If your
 digging power is too low, the chance might even be 0% so you would be trying
-forever, giving you a message "You cannot seem to make a dent in the ..." as
-your character realizes the futility of the attempt.
+forever, giving you a message "You cannot seem to make a dent in the ..." and
+automatically stopping your digging process, as your character realizes the
+futility of the attempt.
 
-If you're not interested in the exact formula, skip down to (5.17b) which has a
-table with example values for certain scenarios.
+Digging tools vs weapons
+------------------------
+Digging tools can actually also be wielded as weapons (Shift+W).
+Vice versa, an equipped weapon can also serve as digging tool, if it's any axe,
+any sword, or from the polearm-class a scythe or sickle.
+However, weapons only have 'digging power' against soft targets such as spider
+webs and vegetation, ie trees, bushes, ivy.
+So even if you lack a digging tool, an equipped sword or axe can substitute
+somewhat in these cases. For some weak, unenchanted digging tools, weapons can
+even be more effective to use (see table further below)!
+When you attempt to tunnel, your character will automtically apply the best
+tool you have equipped, choosing from weapons and an actual digging tool.
+
+Causing earthquakes
+-------------------
+For digging tools that have the ego-power 'of Earthquakes', you can cause an
+earthquake by digging the floor you are standing on, ie direction '5'.
+Again, this will also check your weapons, and if you have a weapon equipped
+that can also cause earthquakes, the strongest source will automatically be
+applied. So if you have The Mighty Hammer 'Grond' equipped and want to cause
+an earthquake with it, just tunnel direction '5' and your character will smash
+it into the floor where you are standing, most likely causing an earthquake.
+
+If you're not interested in the exact formulas for digging power, skip down
+to (5.17b) which has a table with example values for certain scenarios.
 
 
 (5.17a) Digging - exact calculation
 -----------------------------------
 Your digging power is calculated as follows:
+
+For actual digging tools
+------------------------
 An equipped item that provides (+X) to digging will add 20*X.
 If you have a digging tool equipped, its weight is added (eg 25.0 lb -> +25).
 If the digging tool is enchanted to hit or to damage, those values are added.
+
 The power value so far is now multiplied by a value between 1 and 2, depending
 on your 'Digging' skill (see (7.2)). If the skill is 0, the multiplier is 1, if
 it's 50, the multiplier is 2. Otherwise the value is linearly inbetween.
@@ -16143,11 +16177,41 @@ If your resulting final digging power is zero, then it is set to 1, so you
 always have at least a tiny chance of digging through the weaker materials
 that have a +0 difficulty (see table below).
 
+For weapons
+-----------
+The calculation is simpler than for diggin tools, as it doesn't take your
+digging skill into account.
+Swords:
+    vs wood:    30 + weight/2 + (tohit+todam)/3
+    vs fibre:   60 + weight/4 + (tohit+todam)/2
+Axes:
+    vs wood:    60 + weight   + (tohit+todam)/2
+    vs fibre:   30 + weight/2 + (tohit+todam)/3
+Scythes and sickles:
+    vs fibre:   60 + weight   + (tohit+todam)/2
+
+'Wood' encompasses trees, dead trees and bushes.
+'Fibre' encompasses bushes too, ivy, and actually spider webs.
+Against other types of 'terrain', weapons have no digging power at all.
+
+Now a bonus is added to the fibre/wood power, depending on your strength:
+Ranging from +0 at 3 over +9 at 18/10, +19 at 18/110 up to +30 at 18/***.
+(Internals: For this bonus we actually borrow the 'CON-MHP' bonus category,
+which we adjust to our purpose by subtracting 128 and re-adding 5 (net -123),
+so it's a different bonus scale than the 'STR-DIG' one used for digging tools.)
+
+Now if the weapon is a 1.5-handed weapon but it's not wielded with both hands
+because you also have a shield equipped (aka awkward_wield encumberment) the
+resulting fibre/wood digging powers are halved.
+
+
+Now we continue for both, weapons and real digging tools:
+
 To successfully dig through certain features, your digging power must be
 greater than the result of a random number roll "random(0..x-1) + y":
 ---------------------------------------------------------------------
 Spider web           100 +  0
-Rubble               200 +  0
+Rubble/Ivy           200 +  0
 Bush                 300 +  0
 Dead tree            300 +  0
 Tree                 400 +  0
@@ -16208,6 +16272,29 @@ You can tunnel through all tunneable materials, no matter your strength, with..
 -a (+1) pick that has +hit and +dam enchanted to a total of at least +6.
 -any (+2) digging tool or better (except if it was cursed and therefore has too
  negative (+hit,+dam) enchantments).
+
+For good measure a digging tool vs weapon example:
+ You have 5.000 Digging skill and you are trying to fell a tree (it classifies
+ as 'wood' target) and you equipped a Shovel (+1) (+0,+0) and are also wielding
+ a Broad Axe (2d6) (+0,+6). Your strength is 18/20.
+ The axe does provide digging power in this case as the target 'Tree' is in
+ either one of 'wood' and 'fibre' categories.
+
+ The shovel's digging power:
+    (+1) x 20 + 6.0 lbs weight +0+0 (no hit/dam enchantments) = 26
+    Your 5.000 skill is applied: 26 x (1 + (5.000/50.000)) = 26 x 1.1 = 28
+    Digging-tool class strength bonus added: 18/30 -> +15 -> 28 + 15 = 43.
+    The shovel's final digging power is 43.
+
+ The axe's digging power:
+    60 + 15.0 lbs weight + (+0+6)/2 = 60 + 15 + 3 = 78.
+    Weapon class strength bonus is added: 18/30 -> +11 -> 78 + 11 = 89.
+    The axe's final digging power is 89.
+
+ So since the axe provides a better digging power against the tree, you will
+ automatically be using the axe and your digging attempts will apply the axe's
+ digging power of 89 instead of the (in this scenario) weaker shovel's digging
+ power of 43.
 
 
 (5.17c) Digging - further information

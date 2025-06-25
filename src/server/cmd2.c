@@ -3668,6 +3668,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	int cfeat;
 	u32b cinfo, cinfo2;
 	int skill_dig = (!Ind || quiet_borer) ? 0 : get_skill(p_ptr, SKILL_DIG), mining = skill_dig;
+	int dual_power = wood_power > fibre_power ? wood_power : fibre_power;
 	int dug_feat = FEAT_NONE, tval = 0, sval = 0, special_k_idx = 0; //chest / golem base material / rune
 	struct dun_level *l_ptr = getfloor(wpos);
 
@@ -3970,7 +3971,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		*no_quake = TRUE;
 
 		/* mow down the vegetation */
-		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
+		if (((power > dual_power ? power : dual_power) > rand_int(300)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You hack your way through the vegetation.");
@@ -4455,7 +4456,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			diff = 200;
 			break;
 		case FEAT_BUSH:
-			if (power < wood_power) power = wood_power;
+			if (power < dual_power) power = dual_power;
 			diff = 300;
 			break;
 		case FEAT_DEAD_TREE:
@@ -4826,10 +4827,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				fibre_power = 40 + o2_ptr->weight / 10 + (o2_ptr->to_h + o2_ptr->to_d) / 2;
 			break;
 		}
-		if ((k_info[o2_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
-		    && !o3_ptr->k_idx) {
-			wood_power <<= 1;
-			fibre_power <<= 1;
+
+		wood_power += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
+		fibre_power += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
+
+		if (p_ptr->awkward_wield) {
+			wood_power >>= 1;
+			fibre_power >>= 1;
 		}
 	}
 	if (o3_ptr->k_idx && !p_ptr->heavy_wield) {
@@ -4837,17 +4841,25 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 		switch (o3_ptr->tval) {
 		case TV_AXE:
-			fp = 20 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3;
-			wp = 40 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2; break;
+			fp = 30 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3;
+			wp = 60 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2; break;
 		case TV_SWORD:
-			fp = 40 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
-			wp = 20 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3; break;
+			fp = 60 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
+			wp = 30 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3; break;
 		case TV_POLEARM:
 			if (o3_ptr->sval == SV_SCYTHE ||
 			    o3_ptr->sval == SV_SCYTHE_OF_SLICING ||
 			    o3_ptr->sval == SV_SICKLE)
-				fp = 40 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
+				fp = 60 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
 			break;
+		}
+
+		wp += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
+		fp += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
+
+		if (p_ptr->awkward_wield) {
+			wp >>= 1;
+			fp >>= 1;
 		}
 
 		if (wp > wood_power) wood_power = wp;
