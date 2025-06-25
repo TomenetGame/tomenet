@@ -611,6 +611,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	int dun_lev;
 	c_special *cs_ptr;
 	int svals[SV_POTION_LAST + SV_POTION2_LAST + 1], maxsval = 0, k;
+	struct dungeon_type *d_ptr = getdungeon(wpos);
 
 	if (!(zcave = getcave(wpos))) return;
 	dun_lev = getlevel(wpos);
@@ -619,6 +620,9 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 
 	/* No fountains over traps/house doors etc */
 	if (c_ptr->special) return;
+
+	/* No fountain in super hot levels (Mount Doom) */
+	if ((d_ptr->flags3 & DF3_NOT_WATERY) && (d_ptr->flags1 & DF1_HOT_PLACE)) return;
 
 	/* Place the fountain */
 	if (randint(100) < 20) { /* 30 */
