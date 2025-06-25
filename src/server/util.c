@@ -7503,12 +7503,22 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 			s2[p - s0] = '\0';
 			strcat(s2, p + 6);
 			if (id < 0) id = 0;
+		} else if ((p = strstr(s0, "-empty"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 6);
+			if (id < 0) id = 0;
 		} else if ((p = strstr(s0, "empty"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 5);
 			if (id < 0) id = 0;
 		} else if ((p = strstr(s0, "uncursed-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 9);
+			if (id < 0) id = 1;
+		} else if ((p = strstr(s0, "-uncursed"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
@@ -7523,12 +7533,22 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
 			if (id < 1) id = 2;
+		} else if ((p = strstr(s0, "-terrible"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 9);
+			if (id < 1) id = 2;
 		} else if ((p = strstr(s0, "terrible"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 8);
 			if (id < 1) id = 2;
 		} else if ((p = strstr(s0, "cursed-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 7);
+			if (id < 2) id = 3;
+		} else if ((p = strstr(s0, "-cursed"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 7);
@@ -7543,12 +7563,22 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 			s2[p - s0] = '\0';
 			strcat(s2, p + 4);
 			if (id < 2) id = 4;
+		} else if ((p = strstr(s0, "-bad"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 4);
+			if (id < 2) id = 4;
 		} else if ((p = strstr(s0, "bad"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 3);
 			if (id < 2) id = 4;
 		} else if ((p = strstr(s0, "worthless-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 10);
+			if (id < 4) id = 5;
+		} else if ((p = strstr(s0, "-worthless"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 10);
@@ -7563,12 +7593,22 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 			s2[p - s0] = '\0';
 			strcat(s2, p + 7);
 			if (id < 5) id = 6;
+		} else if ((p = strstr(s0, "-broken"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 7);
+			if (id < 5) id = 6;
 		} else if ((p = strstr(s0, "broken"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 6);
 			if (id < 5) id = 6;
 		} else if ((p = strstr(s0, "average-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 8);
+			if (id < 6) id = 7;
+		} else if ((p = strstr(s0, "-average"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 8);
@@ -7583,6 +7623,11 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 			s2[p - s0] = '\0';
 			strcat(s2, p + 5);
 			if (id < 7) id = 8;
+		} else if ((p = strstr(s0, "-good"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 5);
+			if (id < 7) id = 8;
 		} else if ((p = strstr(s0, "good"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
@@ -7593,12 +7638,22 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 			s2[p - s0] = '\0';
 			strcat(s2, p + 10);
 			if (id < 8) id = 9;
+		} else if ((p = strstr(s0, "-excellent"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 10);
+			if (id < 8) id = 9;
 		} else if ((p = strstr(s0, "excellent"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
 			if (id < 8) id = 9;
 		} else if ((p = strstr(s0, "special-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 8);
+			if (id < 9) id = 10;
+		} else if ((p = strstr(s0, "-special"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 8);
