@@ -16,6 +16,7 @@
 
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>
+# B:<boundary wall> [FEAT_PERM_SOLID]
 # W:<min depth>:<max depth>:<min player level>:<next dungeon>:<min alloc>:<max alloc chance>
 # L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>:<floor4>:<%4>:<floor5>:<%5>
 # L:<%end1>:<%end2>:<%end3>:<%end4>:<%end5>
@@ -65,7 +66,8 @@ W:11:34:5:0:14:160
 L:89:950:199:50:88:0:89:317:89:317
 #A:96:1000:97:0:56:0:0:0:0:0:202:96
 #IDDC
-A:96:1000:97:0:56:0:96:333:96:333:202:96
+#A:96:1000:97:0:56:0:96:333:96:333:202:96 -- todo: better dead trees vs trees randomization for wall grids
+A:96:500:92:250:92:250:96:333:92:333:202:96
 O:20:20:20:20
 F:NO_DOORS | NO_DESTROY | FLAT
 F:FILL_METHOD_0 | FINAL_GUARDIAN_1155 | FINAL_OBJECT_7
@@ -701,8 +703,10 @@ M:R_CHAR_Z
 # D:<3 letter short name>:<long name>
 # B:<boundary wall> [FEAT_PERM_SOLID]
 # W:<min depth>:<max depth>:<min player level>:<next dungeon>:<min alloc>:<max alloc chance>
-# L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>
-# A:<wall1>:<%1>:<wall2>:<%2>:<wall3>:<%3>:<outer wall>:<inner wall>
+# L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>:<floor4>:<%4>:<floor5>:<%5>
+# L:<%end1>:<%end2>:<%end3>:<%end4>:<%end5>
+# A:<wall1>:<%1>:<wall2>:<%2>:<wall3>:<%3>:<wall4>:<%4>:<wall5>:<%5>:<outer wall>:<inner wall>
+# A:<%end1>:<%end2>:<%end3>:<%end4>:<%end5>
 # O:<%treasure>:<%combat>:<%magic>:<%tools>
 # E:<dices>d<sides>:<frequency>:<attack type>
 # F:<flags>
