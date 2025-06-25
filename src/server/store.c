@@ -4891,8 +4891,8 @@ void store_confirm(int Ind) {
 		/* Actually this warning is rather specifically a warning about selling unid'ed but already aware-of magic devices with charges! */
 		if (!p_ptr->warning_sellunid && object_aware_p(Ind, o_ptr) && (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF)) {
 			msg_print(Ind, "\374\377yHint: Identify wands and staves before selling even if you already know what");
-			msg_print(Ind, "\377\377y      they do, because if their number of charges is known it will further");
-			msg_print(Ind, "\377\377y      increase their value!");
+			msg_print(Ind, "\374\377y      they do, because if their number of charges is known it will further");
+			msg_print(Ind, "\374\377y      increase their value!");
 			p_ptr->warning_sellunid = 1;
 			s_printf("warning_sellunid: %s\n", p_ptr->name);
 		}
