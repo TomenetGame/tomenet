@@ -4228,11 +4228,14 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	    (!o_ptr->note || streq(quark_str(o_ptr->note), "handmade") ||
 	     (streq(quark_str(o_ptr->note), "stolen") && !streq(quark_str(j_ptr->note), "handmade")))) { /* don't overwrite 'stolen' with 'handmade' */
 		o_ptr->note = j_ptr->note;
+		o_ptr->note_utag = j_ptr->note_utag; //retain info about unique-monster tag, for potential /untag u command to work
 	}
 	else if (merge_inscriptions) {
 		if (check_guard_inscription(o_ptr->note, 'M') && (!check_guard_inscription(j_ptr->note, 'M'))
-		    && (j_ptr->note) && strcmp(quark_str(j_ptr->note), "handmade") && strcmp(quark_str(j_ptr->note), "stolen"))
+		    && (j_ptr->note) && strcmp(quark_str(j_ptr->note), "handmade") && strcmp(quark_str(j_ptr->note), "stolen")) {
 			o_ptr->note = j_ptr->note;
+			o_ptr->note_utag = j_ptr->note_utag; //retain info about unique-monster tag, for potential /untag u command to work
+		}
 	}
 	/* hack to fix special case: old item just had an 'on sale' inscription and that doesn't apply anymore */
 	if (o_ptr->note && !strcmp(quark_str(o_ptr->note), "on sale") && o_ptr->discount != 50) o_ptr->note = 0;
