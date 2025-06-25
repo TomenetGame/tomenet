@@ -1193,11 +1193,6 @@ void cmd_subinven(int islot) {
 		/* Move item to backpack inventory */
 		case 's': cmd_subinven_remove(using_subinven); continue;
 
-		/* More basic functions */
-		//postponed
-		//case 'K': cmd_force_stack(); continue;
-		//case 'H': cmd_apply_autoins(); continue;
-
 		/* Specifically required for DEMOLITIONIST chemicals */
 		case 'a':
 			/* Restricted now to satchel only, no good really for other cases */
@@ -1241,9 +1236,9 @@ void cmd_subinven(int islot) {
 			}
 			continue;
 		/* Also allow force-stacking directly from here */
-		case 'K':
-			cmd_force_stack();
-			continue;
+		case 'K': cmd_force_stack(); continue;
+		/* Also allow auto-inscribing an item in the bag */
+		case 'H': cmd_apply_autoins(); continue;
 		}
 
 		if (leave) break;

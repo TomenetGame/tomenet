@@ -2622,11 +2622,11 @@ void show_subinven(int islot) {
 	//c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - 's': unstow, 'a': container-dependant activate.", k, inventory[islot].bpval), 0, 0);
 	/* Hack: If shopping, also show 'S' to sell something */
 	if (shopping) {
-		if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC, S: sell, s: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].bpval), 0, 0);
-		else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, S: sell, s: unstow, x/d/k/{/}.", k, inventory[islot].bpval), 0, 0);
+		if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC, S: sell, s: unstow, a: mix chemicals, x/d/k/{/}/H/K.", k, inventory[islot].bpval), 0, 0);
+		else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, S: sell, s: unstow, x/d/k/{/}/H/K.", k, inventory[islot].bpval), 0, 0);
 	} else {
-		if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].bpval), 0, 0);
-		else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, x/d/k/{/}.", k, inventory[islot].bpval), 0, 0);
+		if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, a: mix chemicals, x/d/k/{/}/H/K.", k, inventory[islot].bpval), 0, 0);
+		else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, x/d/k/{/}/H/K.", k, inventory[islot].bpval), 0, 0);
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
