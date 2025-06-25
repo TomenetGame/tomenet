@@ -10424,7 +10424,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 				if (!flag && !allow_stairs) {
 					allow_stairs = TRUE;
 					d = 0;
-					i = tdi[d] - 1;
+					i = -1;
 					continue;
 				}
 				allow_stairs = FALSE;
