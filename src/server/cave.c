@@ -8823,7 +8823,7 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
  * by players and monsters. More specific restrictions can be placed here.
  * NOTE: We assume, that allow_terraforming() has already been checked before
  *       cave_set_feat_live() is actually called.
- * Returns 0 on success.
+ * Returns TRUE on success, FALSE on failure.
  */
 bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;

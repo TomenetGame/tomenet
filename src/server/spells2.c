@@ -259,12 +259,11 @@ void grow_trees(int Ind, int rad) {
 	int a, i, j;
 	cave_type **zcave = getcave(&p_ptr->wpos), *c_ptr;
 	bool surface = (p_ptr->wpos.wz == 0);
+#ifdef USE_SOUND_2010
+	bool grew = FALSE;
+#endif
 
 	if (!zcave || !allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
-
-#ifdef USE_SOUND_2010
-	sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE);
-#endif
 
 	for (a = 0; a < rad * rad + 11; a++) {
 		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
@@ -282,8 +281,11 @@ void grow_trees(int Ind, int rad) {
 		    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) ||
 		    (c_ptr->info & CAVE_NO_TFORM)) continue;
 
+#ifdef USE_SOUND_2010
+		grew |=
+#endif
 		cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50) ? FEAT_TREE : FEAT_BUSH);
-#if 1
+
 		/* Redraw - the trees might block view and cause wall shading etc! */
 		for (i = 1; i <= NumPlayers; i++) {
 			/* If he's not playing, skip him */
@@ -293,8 +295,11 @@ void grow_trees(int Ind, int rad) {
 
 			Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
 		}
-#endif
 	}
+
+#ifdef USE_SOUND_2010
+	if (grew) sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 }
 
 /*
