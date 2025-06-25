@@ -11812,7 +11812,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	/* easier in Ironman environments */
 #ifndef RPG_SERVER
-	if (iddc) {
+	if (iddc || mandos) {
 #endif
 		if (lev < 40) {
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 3 + randint(4);
