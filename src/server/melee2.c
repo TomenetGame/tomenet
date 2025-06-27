@@ -13191,14 +13191,12 @@ void curse_equipment(int Ind, int chance, int heavy_chance) {
 	player_type *p_ptr = Players[Ind];
 	bool changed = FALSE;
 	u32b f1, f2, f3, f4, f5, f6, esp;
-	object_type * o_ptr = &p_ptr->inventory[INVEN_WIELD + rand_int(12)];
-
-	if (randint(100) > chance) return;
+	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD + rand_int(12)];
 
 	if (!(o_ptr->k_idx)) return;
+	if (randint(100) > chance) return;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
 
 	/* Extra, biased saving throw for blessed items */
 	if ((f3 & (TR3_BLESSED)) && (randint(888) > chance)) {
@@ -13230,9 +13228,12 @@ void curse_equipment(int Ind, int chance, int heavy_chance) {
 	if (changed) {
 		msg_print(Ind, "There is a malignant black aura surrounding you...");
 		if (o_ptr->note) {
-			if (streq(quark_str(o_ptr->note), "uncursed")) {
-				o_ptr->note = 0;
-			}
+			/* new: remove previous pseudo-id tag completely */
+			char note2[80], noteid[10];
+
+			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+			if (!note2[0]) o_ptr->note = o_ptr->note_utag = 0;
+			else o_ptr->note = quark_add(note2);
 		}
 	}
 }
