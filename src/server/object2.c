@@ -6236,10 +6236,11 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	object_type forge_bak, forge_highest, forge_lowest, forge_forcerandart_bak;
 	object_type *o_ptr_bak = NULL, *o_ptr_highest = &forge_highest;
 	object_type *o_ptr_lowest = &forge_lowest;
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool resf_fallback = TRUE;
 	s32b ego_value1, ego_value2, ovr, fc;
 	long depth = ABS(getlevel(wpos)), depth_value;
-	int i, rolls, chance1, chance2, power; //, j;
+	int i, rolls, chance1, chance2, power, crel; //, j;
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp; /* for RESF checks */
 
@@ -6282,8 +6283,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Higher chance2 for super heavy armours are already very rare
 		   and also for normal mithril/adamantite armour, since they're pretty deep level yet just sell loot;
 		   now also used for spellbooks/grimoires as these are very rare/expensive finds */
-		//if (k_info[o_ptr->k_idx].flags6 & TR6_OFTEN_EGO) chance2 += 10;
-		if (k_info[o_ptr->k_idx].flags6 & TR6_OFTEN_EGO) chance2 = chance2 / 2 + 23; // this calc treats non-royal armour especially nice; caps at 33% (20/2+23)
+		//if (k_ptr->flags6 & TR6_OFTEN_EGO) chance2 += 10;
+		if (k_ptr->flags6 & TR6_OFTEN_EGO) chance2 = chance2 / 2 + 23; // this calc treats non-royal armour especially nice; caps at 33% (20/2+23)
 
 		/* Roll for "great" */
 		if (great || magik(chance2)) power = 2;
@@ -6299,7 +6300,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	}
 
 	/* insta-ego items can never be random artifacts */
-	if ((k_info[o_ptr->k_idx].flags6 & TR6_INSTA_EGO)) {
+	if ((k_ptr->flags6 & TR6_INSTA_EGO)) {
 		if (power < 0) power = -2; //cursed ego
 		else power = 2; //great ego
 		resf &= ~RESF_FORCERANDART;
@@ -6349,6 +6350,28 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	   objects that cannot become randarts, eg magic devices, traps. Instead, make sure the monster or whatever
 	   cause does only drop randart-eligible items, via randart_eligible(tval) check. */
 	if ((resf & RESF_FORCERANDART)) rolls = 3;
+
+
+	if (k_ptr->flags6 & TR6_RELFREQ_ART) {
+		s_printf("TR6_RELFREQ_ART: rolls %d -> ", rolls);
+		crel = 65535; //k_info[].chance is u16b; max used though is 2000 (PDSM), followed by only other 4-digit value 1000 (Massive Adamantite)
+		for (i = 0; i < 4; i++) {
+			if (!k_ptr->chance[i]) continue; // hack: 0 is a special value for 'never generated'
+			if (k_ptr->chance[i] < crel) crel = k_ptr->chance[i];
+		}
+		//cubic root, div/3, cap at +3....
+		if (crel >= 729) rolls += 3;
+		else if (crel >= 216) {
+			rolls += 2;
+			//and accomodate for rounding, as the jump to +1 extra roll has pretty big impact if we only have a small number of rolls in total
+			if (rand_int(729 - 216) >= crel - 216) rolls++; //wrongly linear, ugly >,> fits kinda okish tho
+		} else if (crel >= 27) {
+			rolls += 1;
+			//and accomodate for rounding, as the jump to +1 extra roll has pretty big impact if we only have a small number of rolls in total
+			if (rand_int(216 - 27) >= crel - 27) rolls++; //wrongly linear, ugly >,> fits kinda okish tho
+		}
+		s_printf("%d (crel=%d).\n", rolls, crel);
+	}
 
 	/* Roll for artifacts if allowed */
 	for (i = 0; i < rolls; i++) {
@@ -6577,8 +6600,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Examine real objects */
 		if (o_ptr->k_idx) {
-			object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
 			/* Hack -- acquire "broken" flag */
 			if (!k_ptr->cost) o_ptr->ident |= ID_BROKEN;
 			/* Hack -- acquire "cursed" flag */
