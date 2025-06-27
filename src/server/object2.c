@@ -6312,8 +6312,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 	/* Hack -- Get no rolls if not allowed */
 	if (rolls && (!okay || o_ptr->name1)) {
-		s_printf("OBJ_NO_ART_ROLLS: %d,%d loses %d rolls (okay=%d,name1=%d).\n", o_ptr->tval, o_ptr->sval, rolls, okay, o_ptr->name1);
 		rolls = 0;
+
+		/* Don't spam this (especially on server startup) for store_create() */
+		if (!(resf & RESF_NOART)) s_printf("OBJ_NO_ART_ROLLS: %d,%d loses %d rolls (okay=%d,name1=%d).\n", o_ptr->tval, o_ptr->sval, rolls, okay, o_ptr->name1);
 	}
 
 
