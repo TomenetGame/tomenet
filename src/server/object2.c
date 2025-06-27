@@ -4633,9 +4633,9 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 
 /*
  * Attempt to change an object into an artifact (true arts except for INSTA_ART)
+ * Note that we first attempt to change into a true art, and if that fails we try to change it into a randart!
  *
  * This routine should only be called by "apply_magic()"
- *
  * Note -- see "make_artifact_special()" and "apply_magic()"
  */
 static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) {
