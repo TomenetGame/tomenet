@@ -288,6 +288,12 @@ D:A suit of adamant, set with scales of every color, surrounded in a nimbus
 D:of perfectly untramelled yet inextricably intermingled and utterly mastered
 D:powers elemental and ethereal.
 
+#- C. Blue -
+# Notes from making the trueart-DSMs more realistically findable (also concerns the other DSMs while their rarity is 1):
+# Since rarity is 1 now, chance2 capping at <20% for DROP_GOOD> or <20%*75% for deep+ floors> means that 1 of 5 or of 6.7 PDSMs will become trueart.
+# Furthermore, if the monster is DROP_GREAT, which are currently only uniques (and nether guards, but these require WINNER status, so not eligible)
+# then it's even 1 of 1, guarantee trueart.
+
 
 # The Spear of Melkor
 
