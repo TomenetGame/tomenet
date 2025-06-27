@@ -17109,6 +17109,10 @@ the two 'dungeon floor depth' and 'monster race level'. 'diff' caps at 13.
 Note that the highest level items in the game at this time are these two level
 115 items: 'Massive Piece of Adamantite' and 'Heavy Ribbed Adamantite Armour'.
 
+(The theoretical max item level, technically capped, is MAX_DEPTH_OBJ = 128.
+So the calculation result of monster level vs floor depth yada yada will always
+get limited to at most 128.)
+
 
 Example:
 
