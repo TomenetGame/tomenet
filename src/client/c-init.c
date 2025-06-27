@@ -1576,7 +1576,7 @@ static void init_kind_list() {
 
 			if (strlen(buf) < 3) continue;
 			else if (buf[0] == 'A') { /* depth, rarity +  (--note: Does not account for extra rarity increase due to OOD discrepancy between k-depth and a-depth) */
-				int best_rar = 255;
+				int best_rar = 65535;
 
 				while (TRUE) {
 					if (!strchr(p1, ':')) break;
@@ -1587,9 +1587,9 @@ static void init_kind_list() {
 					/* fetch rarity */
 					p2 = strchr(p1, '/') + 1;
 					p1 = p2;
-					if (atoi(p1) < best_rar) best_rar = atoi(p1);
+					if (atoi(p1) && atoi(p1) < best_rar) best_rar = atoi(p1); //rarity 0 means 'never generated'
 				}
-				kind_list_rarity[kind_list_idx] = best_rar;
+				kind_list_rarity[kind_list_idx] = best_rar; //65535 = 0 aka never generated. We don't set it to 0 here because INSTA_ARTs don't have a rarity either! (ie it's 0 for them too)
 			} else if (buf[0] == 'I') {
 				p1 = buf + 2; /* tval */
 				p2 = strchr(p1, ':') + 1; /* sval */
@@ -1817,6 +1817,9 @@ static void init_artifact_list() {
 		/* normal artifacts: */
 		else {
 			int krar = kind_list_rarity[i], krar_boost, rar_boost;
+
+			/* Hack: If base item type is actually disabled (via rarity 0), flashy-thingy us! */
+			if (krar == 65535) continue;
 
 			krar_boost = krar + (krar * krar) / 500;
 			rar_boost = rar + (rar * rar) / 500;
