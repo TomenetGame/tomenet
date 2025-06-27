@@ -6748,7 +6748,7 @@ bool monster_death(int Ind, int m_idx) {
 
 				/* hack to allow custom test l00t drop for admins: */
 				if (is_admin(p_ptr)) {
-					/* the hack works by using weapon's inscription! Format '%<tval>:<sval>' */
+					/* the hack works by using weapon's inscription! Format '%<tval>:<sval>[!]' */
 					char *k_tval_p, *k_sval_p;
 
 					if (p_ptr->inventory[INVEN_WIELD].tval &&
@@ -6762,6 +6762,8 @@ bool monster_death(int Ind, int m_idx) {
 						tmp_luck = lookup_kind(atoi(k_tval_p + 1), atoi(k_sval_p + 1));
 						/* catch invalid items */
 						if (!tmp_luck) resf_drops &= ~RESF_DEBUG_ITEM;
+						/* log all items that are being placed? (to track artifact vs normal version generation) */
+						if (strchr(k_sval_p, '!')) tmp_luck += 100000;
 					}
 					if (p_ptr->inventory[INVEN_WIELD].tval &&
 					    p_ptr->inventory[INVEN_WIELD].note &&

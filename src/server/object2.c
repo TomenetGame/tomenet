@@ -8169,6 +8169,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	dun_level *l_ptr = getfloor(wpos);
 	dungeon_type *d_ptr;
 	cave_type **zcave;
+	bool log_drop = FALSE;
 
 	if (!(zcave = getcave(wpos))) return;
 	dlev = getlevel(wpos);
@@ -8188,6 +8189,10 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	//if (!cave_clean_bold(zcave, y, x)) return;
 
 	if (resf & RESF_DEBUG_ITEM) {
+		if (luck >= 100000) {
+			log_drop = TRUE;
+			luck -= 100000;
+		}
 		debug_k_idx = luck;
 		luck = 0;
 	}
@@ -8500,6 +8505,13 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	//'axe_hack':
 	if (((resf & (RESF_COND_DARKSWORD | RESF_COND_BLUNT)) == (RESF_COND_DARKSWORD | RESF_COND_BLUNT))
 	    && forge.tval == TV_AXE) place_object_restrictor |= RESF_COND_DARKSWORD | RESF_COND_BLUNT;
+
+	if (log_drop) {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, &forge, TRUE, 3);
+		s_printf("LOG_DROP: %s\n", o_name);
+	}
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
