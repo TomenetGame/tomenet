@@ -8807,7 +8807,7 @@ F:EASY_KNOW
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
 #W:(level):(rarity[arts only] 0..255):(weight):(price)  --  depth, rarity and weight have no effect on INSTA_ARTs; price has effect while the item is not known, otherwise it gets overridden by a_ptr->price.
-#A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]  -- this line has no effect on INSTA_ARTs -- chance 0 means item won't be generated
+#A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 means item won't be generated]  -- this line has no effect on INSTA_ARTs -- chance is u16b, can be up to 65535; rarest are currently 1000 (PDSM, Massive Adamantite)
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC)
 #F:(Flag) |...
 # Note that W and A lines are not in effect for INSTA_ARTs. Only a_info counts for those.
