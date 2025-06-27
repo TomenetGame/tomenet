@@ -5794,7 +5794,7 @@ void cmd_help(void) {
 
 #define ARTIFACT_LORE_LIST_SIZE 17
 static void artifact_lore(void) {
-	char s[20 + 1], tmp[80];
+	char s[20 + 1], tmp[80], *tmpname;
 	int c, i, j, n, selected, selected_list, list_idx[ARTIFACT_LORE_LIST_SIZE], presorted;
 	bool show_lore = TRUE, direct_match;
 	int selected_line = 0;
@@ -5835,10 +5835,11 @@ static void artifact_lore(void) {
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
+			tmpname = tmp + 13; //skip symbol and level and spacers, start with the actual artifact name!
 
 			/* exact match? exact match without 'The ' at the beginning maybe? */
-			if (!strcmp(tmp, s) ||
-			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strcmp(tmp + 4, s))
+			if (!strcmp(tmpname, s) ||
+			    (tmpname[0] == 'T' && tmpname[1] == 'H' && tmpname[2] == 'E' && tmpname[3] == ' ' && !strcmp(tmpname + 4, s))
 			    || (s[0] == '#' && atoi(s + 1) && artifact_list_code[i] == atoi(s + 1))) { /* also allow typing in the artifact's aidx directly! */
 				if (direct_match) continue; //paranoia -- there should never be two artifacts of the exact same name or index number
 				direct_match = TRUE;
@@ -5876,7 +5877,7 @@ static void artifact_lore(void) {
 			   (only check for two, of which one might already be a direct match (checked above)) */
 			else if ((n == 0 || (direct_match && n == 1)) &&
 			    (!strncmp(tmp, s, strlen(s)) ||
-			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strncmp(tmp + 4, s, strlen(s))))) {
+			    (tmpname[0] == 'T' && tmpname[1] == 'H' && tmpname[2] == 'E' && tmpname[3] == ' ' && !strncmp(tmpname + 4, s, strlen(s))))) {
 				selected = artifact_list_code[i];
 				selected_list = i;
 
@@ -6458,7 +6459,6 @@ static void monster_lore(void) {
 				else if ((n == 0 || (direct_match && n == 1)) && !strncmp(tmp, s, strlen(s))) {
 					selected = monster_list_code[i];
 					selected_list = i;
-
 					if (Client_setup.r_char[monster_list_code[i]] && !c_cfg.ascii_monsters && !(monster_list_unique[i] && c_cfg.ascii_uniques)) {
 						sprintf(buf, "(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
 						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
@@ -6530,18 +6530,19 @@ static void monster_lore(void) {
 		if (selected_line >= n) {
 			selected_line = n - 1;
 			if (selected_line < 0) selected_line = 0;
-
-			if (Client_setup.r_char[monster_list_code[list_idx[selected_line]]] && !c_cfg.ascii_monsters && !(monster_list_unique[list_idx[selected_line]] && c_cfg.ascii_uniques)) {
-				sprintf(buf, "(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-				    monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0], monster_list_symbol[list_idx[selected_line]][1], n == selected_line ? 'y' : 'u',
-				    monster_list_symbol[list_idx[selected_line]][0], Client_setup.r_char[monster_list_code[list_idx[selected_line]]], n == selected_line ? 'y' : 'u', monster_list_name[list_idx[selected_line]]);
-				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, buf);
-				/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
-				Term_draw(5 + 15, 5 + selected_line, color_char_to_attr(monster_list_symbol[list_idx[selected_line]][0]), Client_setup.r_char[monster_list_code[list_idx[selected_line]]]);
-			} else {
-				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, L%-3d, \377%c%-3c\377y)  %s",
-				    monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
-				    monster_list_symbol[list_idx[selected_line]][1], monster_list_name[list_idx[selected_line]]));
+			else {
+				if (Client_setup.r_char[monster_list_code[list_idx[selected_line]]] && !c_cfg.ascii_monsters && !(monster_list_unique[list_idx[selected_line]] && c_cfg.ascii_uniques)) {
+					sprintf(buf, "(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
+					    monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0], monster_list_symbol[list_idx[selected_line]][1], n == selected_line ? 'y' : 'u',
+					    monster_list_symbol[list_idx[selected_line]][0], Client_setup.r_char[monster_list_code[list_idx[selected_line]]], n == selected_line ? 'y' : 'u', monster_list_name[list_idx[selected_line]]);
+					Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, buf);
+					/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
+					Term_draw(5 + 15, 5 + selected_line, color_char_to_attr(monster_list_symbol[list_idx[selected_line]][0]), Client_setup.r_char[monster_list_code[list_idx[selected_line]]]);
+				} else {
+					Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, L%-3d, \377%c%-3c\377y)  %s",
+					    monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
+					    monster_list_symbol[list_idx[selected_line]][1], monster_list_name[list_idx[selected_line]]));
+				}
 			}
 		}
 
