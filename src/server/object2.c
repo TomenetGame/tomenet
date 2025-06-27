@@ -4466,6 +4466,15 @@ static void log_arts(int a_idx, struct worldpos *wpos) {
 		s_printf("ARTIFACT: 'Vilya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 #endif
+	case ART_RAZORBACK:
+		s_printf("ARTIFACT: 'Razorback' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_BLADETURNER:
+		s_printf("ARTIFACT: 'Bladeturner' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_MEDIATOR:
+		s_printf("ARTIFACT: 'Mediator' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
 #if 0
 	default:
 		s_printf("ARTIFACT: '%s' created at %d,%d,%d.\n", a_name + a_info[a_idx].name, wpos->wx, wpos->wy, wpos->wz);
@@ -4643,7 +4652,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 	int difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
 	artifact_type *a_ptr;
-	int im, a_map[MAX_A_IDX];
+	int im, a_map[MAX_A_IDX], r;
 
 	/* No artifacts in the town, except if it's specifically requested */
 	if (istown(wpos) && !(resf & RESF_FORCERANDART)) return(FALSE);
@@ -4692,9 +4701,15 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 
 			/* We must make the "rarity roll" */
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
-			if (rand_int(a_ptr->rarity >> difficulty) != 0) continue;
+			if ((r = rand_int(a_ptr->rarity >> difficulty)) != 0) {
+				s_printf("TRUEART_RARITY: %d failed (%d), %d (%d)\n", i, r, a_ptr->rarity >> difficulty, a_ptr->rarity);
+				continue;
+			}
 #else
-			if (rand_int(a_ptr->rarity) != 0) continue;
+			if ((r = rand_int(a_ptr->rarity)) != 0) {
+				s_printf("TRUEART_RARITY: %d failed (%d), %d\n", i, r, a_ptr->rarity);
+				continue;
+			}
 #endif
 
 			/* enforce minimum/maximum ood */
@@ -6302,7 +6317,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	if (great) rolls = 2; // 4
 
 	/* Hack -- Get no rolls if not allowed */
-	if (!okay || o_ptr->name1) rolls = 0;
+	if (!okay || o_ptr->name1) {
+		s_printf("ART_NOROLLS: %d,%d loses %d rolls (okay=%d,name1=%d).\n", o_ptr->tval, o_ptr->sval, rolls, okay, o_ptr->name1);
+		rolls = 0;
+	}
 
 
 	/* virgin */
@@ -6339,8 +6357,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		   an ego power from a_m_aux_3() above. */
 		if (make_artifact(wpos, o_ptr_bak ? o_ptr_bak : o_ptr, resf)) {
 			if (o_ptr_bak) object_copy(o_ptr, o_ptr_bak);
+			s_printf("ART_ROLL: %d,%d succeeded roll %d/%d\n", o_ptr->tval, o_ptr->sval, i, rolls);
 			break;
 		}
+		//s_printf("ART_ROLL: %d,%d failed roll %d/%d\n", o_ptr->tval, o_ptr->sval, i, rolls); //spammy, as it will work on any item even those who cannot become arts
 	}
 	/* Hack -- analyze artifacts */
 	if (o_ptr->name1) {

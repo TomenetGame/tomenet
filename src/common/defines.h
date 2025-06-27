@@ -6081,6 +6081,7 @@
 #define TR6_OFTEN_EGO		0x00000100U		/* Item has higher chance to be generated with ego power */
 #define TR6_UNBLESSED		0x00000200U		/* Item never receives flags that hurt an undead/demonic wielder, from ego or art powers */
 #define TR6_RETURNING		0x00000400U		/* Item automatically returns to owner when thrown (artifact ammo does this already, without need for this flag) */
+#define TR6_RELFREQ_ART		0x00000800U		/* Item chance to turn artifact is increased depending on rarity of the base item, mainly to help generation of truearts of very rare base types */
 
 
 /* Character Sheet Boni Data Flags for Char/Byte PKT Transfer - Kurzel */
