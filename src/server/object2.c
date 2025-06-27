@@ -4600,11 +4600,15 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		if (rand_int(a_ptr->rarity) != 0) continue;
 #endif
 
-		/* enforce minimum/maximum ood */
-		if (true_artifact_ood(i, dlev)) continue;
-
 		/* Find the base object */
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+		if (!k_idx) {
+			s_printf("INSTA_ART_NONEXISTANT: %d failed\n", i);
+			continue; //base item does not exist/is commented out
+		}
+
+		/* enforce minimum/maximum ood */
+		if (true_artifact_ood(i, dlev)) continue;
 
 #if 0 /* although this makes level in k_info pointless, it just doesn't make sense to check an insta-art's level twice. \
 	 NOTE: This also fixes the problem of the k-level differring from the a-level, which is true for a lot of top-levle insta-art jewelry! (ew) */
