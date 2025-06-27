@@ -4455,17 +4455,6 @@ static void log_arts(int a_idx, struct worldpos *wpos) {
 	case ART_ANTIRIAD:
 		s_printf("ARTIFACT: 'Antiriad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
-#if 0
-	case ART_NARYA:
-		s_printf("ARTIFACT: 'Narya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
-		return;
-	case ART_NENYA:
-		s_printf("ARTIFACT: 'Nenya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
-		return;
-	case ART_VILYA:
-		s_printf("ARTIFACT: 'Vilya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
-		return;
-#endif
 	case ART_RAZORBACK:
 		s_printf("ARTIFACT: 'Razorback' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
@@ -4475,9 +4464,9 @@ static void log_arts(int a_idx, struct worldpos *wpos) {
 	case ART_MEDIATOR:
 		s_printf("ARTIFACT: 'Mediator' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
-#if 0
+#if 1
 	default:
-		s_printf("ARTIFACT: '%s' created at %d,%d,%d.\n", a_name + a_info[a_idx].name, wpos->wx, wpos->wy, wpos->wz);
+		s_printf("ARTIFACT(any): '%s' created at %d,%d,%d.\n", a_name + a_info[a_idx].name, wpos->wx, wpos->wy, wpos->wz);
 		return;
 #endif
 	}
