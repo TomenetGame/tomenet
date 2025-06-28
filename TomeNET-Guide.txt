@@ -13319,6 +13319,7 @@ Light           Light effects can blind you if you don't resist it.
                 If you are mimicking a monster that is susceptible to light
                 you will suffer double damage from attacks.
                 Breath damage is monster HP/6. Light breath caps at 400.
+                ('Starlight' is no different from light, just often stronger.)
 
 Darkness        Darkness effects can blind you if you don't resist it.
                 Resistance will cut damage to 4/7..4/12.
@@ -13347,6 +13348,43 @@ Disenchantment  This attack does massive damage and can also disenchant your
                 their magical (+X) pval bonus.
                 Artifacts have a chance to resist disenchantment.
 
+Psi             Psionic damage is intrusion via mindcraft that deals damage to
+                your hit points AND a fraction of that amount also to your
+                sanity and can cause confusion as side effect if player has no
+                confusion resistance and no psi resistance.
+                Resistance to psi effects will also reduce psi damage received
+                to 4/5...4/9 per psi resistance factor.
+                The mindcrafter class gets all psi damage it receives halved
+                (stacking with the damage reduction from psi resistance).
+                If you run out of sanity, your character dies PERMANENTLY even
+                if of 'everlasting' mode! It's erased same as no-ghost mode.
+                Also see (7.6) for more details on insanity in general.
+
+                There are no items that grant psi resistance. The only way to
+                gain it is being lucky on saving throw roll (provided your mind
+                is NOT opened (via 'p' key)) or a "willpower" (Mindcraft spell)
+                roll or being under the effect of Berserk which always instills
+                iron determination.
+                These 3 psi-resisting factors stack and will all help to reduce
+                the damage both on the mind (sanity) and body (hit points).
+                However, the resistances can also get reduced/canceled out if
+                the player currently suffers status effects, such as confusion,
+                being stunned, hallucinations or fear, while fear will only
+                reduce your psi resists if you fail an additional saving throw.
+                The other status effects are guaranteed resist-counters.
+
+                If you do have psi resists, having telepathy (full ESP) will
+                further reduce damage to 4/9...9/9, while if you do NOT have
+                psi resist factors (or if they got canceled out by bad status
+                effects) having telepathy will actually INCREASE damage you
+                take to 7/6...12/6 (so it could double the damage if unlucky)!
+
+                The resulting sanity damage will finally be reduced if the
+                player has insanity-reducing powers, see (7.6) for a list.
+
+                If the psi attack came from another player, it will only affect
+                your hit points but not your sanity.
+
 
 Irresistible/extremely powerful damage types:
 ---------------------------------------------
@@ -13368,6 +13406,25 @@ Gravity         These attacks have very annoying side-effects:
                 being thrown around by the shockwave and hence cut the damage
                 to 6/7..6/12.
                 Damage (breath only) is monster HP/3 and caps at 150.
+
+Holy Orb        This purely holy effect will deal double damage if you are
+                'evil' and half damage if you are 'good'.
+                If you are a (non-corrupt) priest you will take no damage.
+
+Holy Fire       Same as Holy Orb above, except that:
+                If you are immune to fire the damage will also be cut to half,
+                and if you are not immune then having fire resistance will cut
+                damage to 3/4 (once for permanent and once for temporary
+                resistance, stacking to 9/16).
+                Instead being susceptible to fire will increase damage to 4/3.
+
+Hellfire        This evil element will deal double damage if you are 'good' and
+                reduce damage to 3/4 if you are 'evil'.
+                If you are immune to fire the damage will also be cut to half,
+                and if you are not immune then having fire resistance will cut
+                damage to 3/4 (once for permanent and once for temporary
+                resistance, stacking to 9/16).
+                Instead being susceptible to fire will increase damage to 5/3.
 
 Mana            Mana is pure magical energy. There are only rumours
                 about items that provide resistance against it.
@@ -13394,6 +13451,10 @@ Meteor          This is an irresistible attack of pure impact.
 Disintegration  This is an irresistible attack of raw destruction.
                 Damage (breath only) is monster HP/3, capping at 300.
 
+Annihilation    Deals a percentage of your current hit points as damage points,
+                caping at 400 damage, but after applying the cap is always
+                randomly reduced further down to 6/7...6/12.
+
 
 Combined damage types:
 ----------------------
@@ -13409,10 +13470,20 @@ Plasma          Plasma attacks combine electricity, sound, and -most of all-
                 Breath damage is monster HP/6. Plasma breath caps at 150.
                 Plasma bolts do 10+level+(8d7) damage.
 
+Thunder         This is a lightning strike and deals:
+                1/3 electricity damage, 1/3 sound damage, 1/3 light damage.
+                The electricity damage is reduced by resistances or immunity
+                as usual, see 'Electricity' further above.
+                Having sound resistance cuts the sound damage to 5/7...5/12.
+                Having light resistance cuts the light damage to 4/7...4/12,
+                while light susceptibility doubles the light damage.
+                If you don't resist sound you will get stunned,
+                if you don't resist light or blindness you will get blinded.
+
 Radiation
 Nuke
 Toxic Waste     This is a poisonous attack (player suffers pure poison damage)3
-                that may have acidic effect on your inventory (inventory may
+ ('Nuke')       that may have acidic effect on your inventory (inventory may
                 get destroyed as if you were hit by acidic attacks).
                 If you resist poison
                 - you will just take 2/5 of the damage
@@ -13436,6 +13507,8 @@ Detonation      Same as rocket, usually caused by potions of detonations.
 
 Inferno         Same as rocket/detonation, except it does not destroy walls,
                 usually comes as 'cloud' type effect, aka lasting for a while.
+
+
 
 Havoc           A terrible mixture of wrecking inferno, blasts of uncontrolled
                 mana and waves of raw chaos.
@@ -21529,6 +21602,8 @@ will be coloured in red tones to make it easily visible:
 In addition to the message, sanity attacks will play a whispering sound effect,
 named 'insanity' in the sfx jukebox (press = n to access).
 
+For details about attacks using 'psi' damage, also see (5.6) under 'Psi'.
+
 There are no items granting any insanity resistance, but there are certain ways
 to reduce incoming insanity damage, depending on the flags of a mimicked form
 or your race, class or skills, in three tiers:
@@ -21539,6 +21614,10 @@ or your race, class or skills, in three tiers:
     Mindcrafter class: Level 10/20/40 = tier 1/2/3.
     Vampire race: Tier 2.
     Player ghosts: Tier 3.
+These tiers will randomly reduce incoming sanity damage to:
+    Tier 1:  9/12...12/12
+    Tier 2:  6/12...12/12
+    Tier 3:  6/12... 9/12
 Insanity reduction also helps resisting the adverse effects of encountering an
 eldritch horror (see (7.3) under Saving Throw).
 
