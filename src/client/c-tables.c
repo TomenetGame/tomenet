@@ -631,6 +631,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "autoloot_dununown",	"Suppress auto-pck/des if owned and not in dungeon" },
 	{ &c_cfg.flash_starvation,	TRUE,	7,	0, 182, TRUE, //moved exp_bar to page 2 to make room for this
 	    "flash_starvation",		"Flash 'Starved' food status by colour animation." },
+	{ &c_cfg.autoswitch_inven,	TRUE,	6,	0, 183, TRUE,
+	    "autoswitch_inven",		"Empty inven prompts auto-switch to equip or bag." },
 };
 
 cptr melee_techniques[16] = {

@@ -59,6 +59,7 @@ X:taciturn_messages
 Y:always_show_lists
 X:player_list
 X:player_list2
+Y:autoswitch_inven
 
 Y:flash_player
 X:highlight_player

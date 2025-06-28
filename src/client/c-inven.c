@@ -1054,7 +1054,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool found_subinven = FALSE;
 	bool subinven = FALSE; /* are items inside subinventory/subinventories (possible) subject to choose from? */
 	bool use_subinven = FALSE; /* can we select subinven items to enter? */
-	int sub_i = (using_subinven + 1) * SUBINVEN_INVEN_MUL;
+	int sub_i = (using_subinven + 1) * SUBINVEN_INVEN_MUL, autoswitch_subinven = -1;
 #endif
 	bool safe_input = FALSE;
 
@@ -1209,6 +1209,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			for (j = 0; j < inventory[k].bpval; j++) {
 				if (!get_item_okay((k + 1) * SUBINVEN_INVEN_MUL + j)) continue;
 				found_subinven = TRUE;
+				autoswitch_subinven = k;
 				break;
 			}
 		}
@@ -1289,6 +1290,41 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Start with equipment? ('A'ctivate command) */
 	if (equip_first) command_wrk = TRUE;
+
+	/* Automatically switch to equipment or to bags (or to inventory/bags if we started out in equipment)
+	   if no eligible item was found in our starter inventory screen */
+	if (c_cfg.autoswitch_inven && using_subinven == -1) {
+		if (command_wrk) { /* we start out in equipment */
+			if (e1 > e2) { /* no eligible item in the equipment? */
+				if (i1 > i2) { /* no eligible item in the inventory either? */
+					if (found_subinven) { //found_subinven must be TRUE if i1>i2, or we should've returned further above already
+						/* start out with subinventory */
+						command_wrk = FALSE; /* don't start in the equipment anymore */
+						//c_msg_format("SWITCHED->subinv(%d)", using_subinven);
+					}
+				} else {
+					/* start out with inventory */
+					command_wrk = FALSE; /* don't start in the equipment anymore */
+					//c_msg_print("SWITCHED->inv");
+					autoswitch_subinven = -1; /* don't start in a bag */
+				}
+			} else autoswitch_subinven = -1; /* don't start in a bag */
+		} else { /* we start out in inventory (standard) */
+			if (i1 > i2) { /* no eligible item in the inventory? */
+				if (e1 > e2) { /* no eligible item in the equipment either? */
+					if (found_subinven) { //found_subinven must be TRUE if i1>i2, or we should've returned further above already
+						/* start out with subinventory */
+						//c_msg_format("SWITCHED->subinv(%d)", using_subinven);
+					}
+				} else {
+					/* start out in the equipment screen */
+					command_wrk = TRUE;
+					//c_msg_print("SWITCHED->eq");
+					autoswitch_subinven = -1; /* don't start in a bag */
+				}
+			} else autoswitch_subinven = -1; /* don't start in a bag */
+		}
+	} else autoswitch_subinven = -1; /* don't start in a bag */
 
 	/* Redraw inventory */
 	p_ptr->window |= PW_INVEN;
@@ -1453,6 +1489,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		prompt_topline(tmp_val);
 
 
+#ifdef ENABLE_SUBINVEN
+		if (autoswitch_subinven != -1) which = '!';
+		else
+#endif
 		/* Get a key */
 		which = inkey();
 
@@ -1487,6 +1527,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				/* Fix the screen if necessary */
 				if (command_see) Term_load();
 
+				if (autoswitch_subinven != -1) {
+					i = autoswitch_subinven;
+					autoswitch_subinven = -1;
+				} else
 				if (!c_get_item(&i, "Use which bag? ", (USE_INVEN | EXCLUDE_SUBINVEN | NO_FAIL_MSG))) {
 					if (i == -2) c_msg_print("You have no bags.");
 					if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
@@ -1516,6 +1560,16 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 					*cp = i;
 					item = TRUE;
 					done = TRUE;
+				}
+
+				/* Leave this bag and continue looking for our original item type(s) in our normal inven/equip again?
+				   (The above c_get_item() will have NULL'ed item_tester_hook at least, so we have to restore it again.) */
+				if (!done) {
+					item_tester_tval = old_tval;
+					get_item_hook_find_obj_what = old_obj_what;
+					get_item_extra_hook = old_extra_hook;
+					item_tester_max_weight = old_max_weight;
+					item_tester_hook = old_tester_hook;
 				}
 
 				/* Leave subinventory again and return to our main inventory */
