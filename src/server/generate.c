@@ -436,7 +436,7 @@ extern void arcade_wipe(worldpos *wpos) {
 	if (!(zcave = getcave(wpos))) return;
 	for (mx = 1; mx < 131; mx++)
 		for (my = 1; my < 43; my++)
-			cave_set_feat(wpos, my, mx, 1);
+			cave_set_feat(wpos, my, mx, FEAT_FLOOR);
 	return;
 }
 #endif
@@ -774,7 +774,7 @@ void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
  * Place an altar at the given location
  */
 static void place_altar(int y, int x) {
-	if (magik(10)) cave_set_feat(y, x, 164);
+	if (magik(10)) cave_set_feat(y, x, FEAT_ALTAR);
 }
 #endif	/* 0 */
 
@@ -9873,31 +9873,31 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if (wpos->wz > 0)
 		for (mx = 1; mx < 131; mx++)
 			for (my = 1; my < 43; my++)
-				cave_set_feat(wpos, my, mx, 1);
+				cave_set_feat(wpos, my, mx, FEAT_FLOOR);
 	if (wpos->wz > 0 && wpos->wz < 7) {
 		for (my = 1; my < 8; my++)
 			for (mx = 63; mx < 70; mx++)
-				 cave_set_feat(wpos, my, mx, 209);
+				 cave_set_feat(wpos, my, mx, FEAT_BGOAL); //apparently just used for colouring/visual, not for actual 'goal' functionality? ^^
 		for (my = 36; my < 43; my++)
 			for (mx = 63; mx < 70; mx++)
-				 cave_set_feat(wpos, my, mx, 209);
+				 cave_set_feat(wpos, my, mx, FEAT_BGOAL);
 		for (my = 19; my < 26; my++)
 			for (mx = 1; mx < 8; mx++)
-				cave_set_feat(wpos, my, mx, 209);
+				cave_set_feat(wpos, my, mx, FEAT_BGOAL);
 		for (my = 19; my < 26; my++)
 			for (mx = 124; mx < 131; mx++)
-				cave_set_feat(wpos, my, mx, 209);
+				cave_set_feat(wpos, my, mx, FEAT_BGOAL);
 	}
 	if (wpos->wz == 7) {
 		for (mx = 1; mx<21; mx++)
-			cave_set_feat(wpos, 11, mx, 61);
+			cave_set_feat(wpos, 11, mx, FEAT_PERM_INNER);
 		for (mx = 1; mx < 12; mx++)
-			cave_set_feat(wpos, mx, 21, 61);
+			cave_set_feat(wpos, mx, 21, FEAT_PERM_INNER);
 	}
 	if (wpos->wz == 9)
 		for (mx = 1; mx < 131; mx++)
 			for (my = 1; my < 43; my++)
-				cave_set_feat(wpos, my, mx, 187);
+				cave_set_feat(wpos, my, mx, FEAT_DEEP_WATER);
 #endif
 
 #ifdef ENABLE_DOOR_CHECK

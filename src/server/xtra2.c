@@ -12211,7 +12211,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #endif
 
 #ifdef ARCADE_SERVER
-		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172); /* drop "blood"? */
+		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, FEAT_MARKER); /* drop "blood"? -- is this supposed to be the (otherwise unused) 'FEAT_MARKER'? */
 		if (m_ptr->hp < -1000) {
 
 			object_type forge, *o_ptr;

@@ -2910,12 +2910,13 @@
 #define FEAT_GAMEBOARD_BL	157
 #define FEAT_GAMEBOARD_BR	158
 
-#define FEAT_PERM_MAGMA		0x9F /* 159 */
-#define FEAT_BETWEEN		0xA0 /* 160 */
+#define FEAT_PERM_MAGMA		159 /* 159 */
+#define FEAT_BETWEEN		160 /* 160 */
 
 /* Altars -- deprecated codes */
-//#define FEAT_ALTAR_HEAD		0xA1 /* 161 */
-//#define FEAT_ALTAR_TAIL		0xAB /* 171 */
+//#define FEAT_ALTAR_HEAD	161
+//#define FEAT_ALTAR		162
+//#define FEAT_ALTAR_TAIL	164
 
 #define FEAT_SOLID_OUT		165	/* Pseudo feature definition for graphical tilesets for 'solid_bars' UI elements and similar. Also see 237.*/
 #define FEAT_SOLID_OUTLEFT	166
@@ -2925,7 +2926,7 @@
 #define FEAT_SOLID_OUTBOTTOM	170
 #define FEAT_SOLID_OUTTB	171
 
-#define FEAT_MARKER		0xAC /* 172 */
+#define FEAT_MARKER		0xAC /* 172 -- unused except as 'blood' in ARCADE_SERVER */
 /* Feature 0xAD -- Underground Tunnel */
 #define FEAT_TAINTED_WATER	0xAE /* 174 */
 #define FEAT_MON_TRAP		0xAF /* 175 */
