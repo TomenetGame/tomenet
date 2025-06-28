@@ -8650,8 +8650,10 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	    (feat_is_lava(c_ptr->feat) || feat_is_acute_fire(c_ptr->feat)))
 		feat = FEAT_DEAD_TREE;
 
+#if 0 /* actually disable this, as there's no place were inns would get accidentally messed up, and this inhibits admin-building capabilities */
 	/* Don't mess with inns please! */
 	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return(3);
+#endif
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
 	if (in_netherrealm(wpos)) switch (feat) {
