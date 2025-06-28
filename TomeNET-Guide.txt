@@ -13462,11 +13462,12 @@ Ice             Ice attacks combine shard and cold damage.
                 Ice damage (bolt only) is (6d6)+monsterlevel.
                 Ice damage consists of 60% cold damage and 40% shards damage.
 
-Plasma          Plasma attacks combine electricity, sound, and -most of all-
-                immense heat. The usual resistances, susceptibilities
-                and immunities for fire, electricity and sound apply as
-                available.
-                Plasma also has stun effect if sound resistance is missing.
+Plasma          Plasma attacks combine electricity (25%), sound (25%), and most
+                of all immense heat (50%).
+                The usual resistances, susceptibilities or immunities for fire,
+                electricity and sound apply as usual if you have them.
+                Plasma also has a strong stun effect if sound resistance is
+                missing, making for example plasma hounds highly dangerous.
                 Breath damage is monster HP/6. Plasma breath caps at 150.
                 Plasma bolts do 10+level+(8d7) damage.
 
