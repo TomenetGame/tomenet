@@ -7952,7 +7952,7 @@ void update_flow(void) {
 /*
  * Hack -- map the current panel (plus some) ala "magic mapping"
  */
-void map_area(int Ind) {
+void map_area(int Ind, bool full) {
 	player_type *p_ptr = Players[Ind];
 	int i, x, y, y1, y2, x1, x2;
 
@@ -7972,17 +7972,24 @@ void map_area(int Ind) {
 	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 	if (in_sector000(wpos) && (sector000flags1 & LF1_NO_MAGIC_MAP)) return;
 
-	/* Pick an area to map */
-	y1 = TRADPANEL_ROW_MIN - randint(10);
-	y2 = TRADPANEL_ROW_MAX + randint(10);
-	x1 = TRADPANEL_COL_MIN - randint(20);
-	x2 = TRADPANEL_COL_MAX + randint(20);
+	if (full) {
+		y1 = 1;
+		y2 = p_ptr->cur_hgt - 2;
+		x1 = 1;
+		x2 = p_ptr->cur_wid - 2;
+	} else {
+		/* Pick an area to map */
+		y1 = TRADPANEL_ROW_MIN - randint(10);
+		y2 = TRADPANEL_ROW_MAX + randint(10);
+		x1 = TRADPANEL_COL_MIN - randint(20);
+		x2 = TRADPANEL_COL_MAX + randint(20);
 
-	/* Speed -- shrink to fit legal bounds */
-	if (y1 < 1) y1 = 1;
-	if (y2 > p_ptr->cur_hgt - 2) y2 = p_ptr->cur_hgt - 2;
-	if (x1 < 1) x1 = 1;
-	if (x2 > p_ptr->cur_wid - 2) x2 = p_ptr->cur_wid - 2;
+		/* Speed -- shrink to fit legal bounds */
+		if (y1 < 1) y1 = 1;
+		if (y2 > p_ptr->cur_hgt - 2) y2 = p_ptr->cur_hgt - 2;
+		if (x1 < 1) x1 = 1;
+		if (x2 > p_ptr->cur_wid - 2) x2 = p_ptr->cur_wid - 2;
+	}
 
 	/* Scan that area */
 	for (y = y1; y <= y2; y++) {
@@ -8228,9 +8235,15 @@ void wiz_lite(int Ind) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
-	/* don't ruin the mood ^^ */
-	bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
+	//bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
 
+
+	/* don't ruin the mood ^^ */
+	// ...fall back to normal magic mapping, but for the whole town/sector, during mood-events */
+	if (wpos->wz == 0 && (season_halloween || season_newyearseve)) {
+		map_area(Ind, TRUE);
+		return;
+	}
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -8248,7 +8261,7 @@ void wiz_lite(int Ind) {
 			if (c_ptr->info2 & CAVE2_SCRT) continue;
 
 			/* No disturbance of nightly town/surface events */
-			if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
+			//if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
 
 			/* Memorize all objects */
 			if (c_ptr->o_idx) {
@@ -8269,7 +8282,7 @@ void wiz_lite(int Ind) {
 
 				/* Get the grid */
 				c_ptr = &zcave[yy][xx];
-				if (mood && !(c_ptr->info & CAVE_ICKY)) continue; //if this were commented out, house walls would be *bright*
+				//if (mood && !(c_ptr->info & CAVE_ICKY)) continue; //if this were commented out, house walls would be *bright*
 
 				/* Perma-lite the grid */
 				c_ptr->info |= (CAVE_GLOW);

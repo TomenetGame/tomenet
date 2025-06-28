@@ -89,7 +89,7 @@ VISION_I = add_spell {
 	["fail"] = 	0,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
-			map_area(Ind)
+			map_area(Ind, FALSE)
 	end,
 	["info"] = 	function()
 			return ""

@@ -101,7 +101,7 @@ HSENSE_I = add_spell {
 	["fail"] = 	-20,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			map_area(Ind)
+			map_area(Ind, FALSE)
 	end,
 	["info"] = 	function()
 			return ""

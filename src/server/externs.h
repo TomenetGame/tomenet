@@ -625,7 +625,7 @@ extern void forget_view(int Ind);
 extern void update_view(int Ind);
 extern void forget_flow(void);
 extern void update_flow(void);
-extern void map_area(int Ind);
+extern void map_area(int Ind, bool full);
 extern void mind_map_level(int Ind, int pow);
 extern void wiz_lite(int Ind);
 extern void wiz_lite_extra(int Ind);

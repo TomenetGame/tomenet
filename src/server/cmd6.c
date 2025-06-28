@@ -3030,7 +3030,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_MAPPING:
-			map_area(Ind);
+			map_area(Ind, FALSE);
 			ident = TRUE;
 			break;
 
@@ -3764,7 +3764,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 
 	case SV_STAFF_MAPPING:
-		map_area(Ind);
+		map_area(Ind, FALSE);
 		ident = TRUE;
 		break;
 
@@ -4858,7 +4858,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		break;
 
 	case SV_ROD_MAPPING:
-		map_area(Ind);
+		map_area(Ind, FALSE);
 		ident = TRUE;
 		//if (o_ptr) o_ptr->pval += 99;
 		/* up to a 50% faster with maxed MD - the_sandman */
@@ -5668,7 +5668,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		break;
 
 	case SV_ROD_MAPPING:
-		map_area(Ind);
+		map_area(Ind, FALSE);
 		ident = TRUE;
 		/* up to a 50% faster with maxed MD - the_sandman */
 		//o_ptr->pval += 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
@@ -6934,7 +6934,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				take_hit(Ind, dam, "The Star of Elendil", 0);
 			}
 			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-			map_area(Ind);
+			map_area(Ind, FALSE);
 			o_ptr->recharging = randint(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		case ART_THRAIN:

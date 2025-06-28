@@ -11384,7 +11384,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_SEEMAP_PLAYER:
-		map_area(Ind);
+		map_area(Ind, FALSE);
 		dam = 0;
 		break;
 
