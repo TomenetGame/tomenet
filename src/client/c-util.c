@@ -2240,6 +2240,7 @@ void copy_to_clipboard(char *buf, bool chat_input) {
 				continue;
 			}
 			break;
+		case '\\': *c2++ = '\\';
 		}
 		*c2 = *c;
 		c++;
@@ -2323,6 +2324,7 @@ void copy_to_clipboard(char *buf, bool chat_input) {
 				continue;
 			}
 			break;
+		case '\\': *c2++ = '\\';
 		}
 		*c2 = *c;
 		c++;
