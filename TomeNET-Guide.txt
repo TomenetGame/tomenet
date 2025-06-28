@@ -3470,6 +3470,10 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  level. This can be especially nasty because these spawns will not change the
  floor feeling, so you won't notice it except when you spot the monster.
 
+-Team mates trying to move into each other will switch places. This can be used
+ to pull your team mate across terrain they actually cannot cross on their own,
+ as long as you can cross it!
+
 -No, there is currently no 'fishing' feature implemented.
 
 
