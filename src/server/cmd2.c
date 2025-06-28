@@ -4886,7 +4886,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Check digging tool */
 	if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
-	    && !check_guard_inscription(o_ptr->note, 'Q')
+	    && (!check_guard_inscription(o_ptr->note, 'Q') || dir == 5)
 #endif
 	    ) {
 		u32b fx, f5;
@@ -4901,9 +4901,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Check weapons */
 	if (o2_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
-	    && !check_guard_inscription(o2_ptr->note, 'Q')
+	    && (!check_guard_inscription(o2_ptr->note, 'Q') || dir == 5)
 #else
-	    && (!check_guard_inscription(o2_ptr->note, 'Q') || o2_ptr->name1 != ART_GROND)
+	    && (!check_guard_inscription(o2_ptr->note, 'Q') || o2_ptr->name1 != ART_GROND || dir == 5)
 #endif
 	    ) {
 		u32b fx, f5;
@@ -4918,7 +4918,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	}
 	if (o3_ptr->k_idx && (is_weapon(o3_ptr->tval) || o3_ptr->tval == TV_MSTAFF)
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
-	    && !check_guard_inscription(o3_ptr->note, 'Q')
+	    && (!check_guard_inscription(o3_ptr->note, 'Q') || dir == 5)
 #endif
 	    ) {
 		u32b fx, f5;

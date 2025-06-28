@@ -2467,6 +2467,9 @@ Items that 'can cause Earthquakes':
                 only works on the artifact "The Mighty Hammer 'Grond'".
                 (Press keys  ~i  in the game to check server settings.)
                 See (5.11) for more information about earthquakes.
+                This inscription is ignored if the player tunnels their own
+                grid (ie direction '5') as that is interpreted as a deliberate
+                attempt to cause an earthquake.
 
 Weapons/ammo, devices and spells:
     @O          This and its variants control the 'auto-retaliator' which is a
@@ -15773,6 +15776,9 @@ To do this, tunnel into direction '5' aka your own grid you are standing on.
 The item with the biggest earthquake chance will automatically be chosen from
 your equipped digging tool and your equipped weapons (with the most powerful
 one being The Mighty Hammer 'Grond').
+When striking the floor, any 'Q' inscription (available on Grond only) on the
+item used is ignored as this action is interpreted as a deliberate attempt to
+cause an earthquake.
 
 Earthquakes can deal up to 300 damage if you cannot evade the falling rocks
 and shifting ground: Depending on the number of unchanged (by the earthquake)
