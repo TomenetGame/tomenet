@@ -1048,7 +1048,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	//bool floor = FALSE;
 	bool extra = FALSE, limit = FALSE;
 	bool special_req = FALSE;
-	bool newest = FALSE;
+	s16b newest = -1;
 	bool equip_first = FALSE;
 #ifdef ENABLE_SUBINVEN
 	bool found_subinven = FALSE;
@@ -1079,8 +1079,14 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	//if (mode & (USE_FLOOR) floor = TRUE;
 	if (mode & USE_EXTRA) extra = TRUE;
 	if (mode & SPECIAL_REQ) special_req = TRUE;
+
 	//if (mode & NEWEST)
-	newest = (item_newest != -1); /* experimental: always on if available */
+	newest = item_newest; /* experimental: always on if available */
+	if (!get_item_okay(newest)) {
+		newest = item_newest_2nd;
+		if (!get_item_okay(newest)) newest = -1;
+	}
+
 	if (mode & USE_LIMIT) limit = TRUE;
 	if (mode & EQUIP_FIRST) equip_first = TRUE;
 #ifdef ENABLE_SUBINVEN
@@ -1347,7 +1353,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	if (parse_macro && c_cfg.safe_macros) safe_input = TRUE;
 
 	/* Too long description - shorten? */
-	if (special_req + newest
+	if (special_req + (newest != -1)
 #if defined(ENABLE_SUBINVEN) && defined(ITEM_PROMPT_ALLOWS_SWITCHING_TO_SUBINVEN)
 	    + found_subinven
 #endif
@@ -1471,7 +1477,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			else strcat(out_val, " - to switch,");
 		}
 		/* Re-use 'newest' item? */
-		if (newest) {
+		if (newest != -1) {
 			if (spammy) strcat(out_val, " + newest,");
 			else strcat(out_val, " + for newest,");
 		}
@@ -1750,7 +1756,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			break;
 
 		case '+':
-			if (!newest) {
+			if (newest == -1) {
 				if (c_cfg.item_error_beep) bell();
 				else bell_silent();
 				break;
@@ -1761,13 +1767,13 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			__attribute__ ((fallthrough));
 #else
 			/* Validate the item */
-			if (!get_item_okay(item_newest)) {
+			if (!get_item_okay(newest)) { //redundant, we checked this at the start
 				if (c_cfg.item_error_beep) bell();
 				else bell_silent();
 				break;
 			}
 
-			*cp = item_newest;
+			*cp = newest;
 			item = TRUE;
 			done = TRUE;
 			break;

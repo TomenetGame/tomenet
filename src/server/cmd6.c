@@ -1426,6 +1426,9 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	   don't set item_newest to a potentially resulting empty bottle, but keep it as it as we might chain-quaff */
 	if (item >= 0 && p_ptr->item_newest == item && o_ptr->number != 1) keep_newest_potion = TRUE;
 
+	/* For 'mass'-quaffing sanity potions, small QoL... */
+	if (item >=0 && o_ptr->number != 1) Send_item_newest_2nd(Ind, item);
+
 	/* Destroy a potion in the pack */
 	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
