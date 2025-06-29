@@ -1526,6 +1526,8 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	/* warning messages, mostly for newbies */
 	if (p_ptr->warning_bpr3 == 0 && slot == INVEN_WIELD) p_ptr->warning_bpr3 = 2;
 
+	if (item != -1) Send_item_newest(Ind, slot); //Send_item_newest_2nd(Ind, slot);
+
 	return(slot);
 }
 
@@ -1612,7 +1614,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 
 	/* Take off the item */
 	item = inven_takeoff(Ind, item, amt, FALSE, FALSE);
-	if (item != -1) Send_item_newest_2nd(Ind, item);
+	if (item != -1) Send_item_newest(Ind, item); //Send_item_newest_2nd(Ind, item);
 }
 
 
