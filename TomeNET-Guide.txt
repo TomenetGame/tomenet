@@ -22993,7 +22993,8 @@ these limitations will be lifted.
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Air, Nature.
 
-    Regeneration    Increases your hit point regeneration rate.
+    Regeneration    Increases your hit point regeneration rate
+                    and also speeds up the healing process of cuts.
                     (Stacks with other regeneration effects and item flag.)
                     Required skill level for first spell level: 20.
 

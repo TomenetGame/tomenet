@@ -193,7 +193,10 @@ REGENERATION = add_spell {
 			p = p - p10 * 10
 			return "dur "..(5 + get_level(Ind, REGENERATION, 50)).."+d10 heal "..p10.."."..p
 	end,
-	["desc"] = 	{ "Increases your body's regeneration rate.", }
+	["desc"] = 	{
+			"Increases your body's regeneration rate,",
+			"regenerating hit points and closing wounds faster.",
+	}
 }
 
 VERMINCONTROL = add_spell {

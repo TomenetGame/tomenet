@@ -5021,7 +5021,7 @@ int food_consumption(int Ind) {
 	/* Non-magical regeneration burns enormously more food temporarily: Fast metabolism! */
 	if (p_ptr->tim_regen &&
 	    p_ptr->tim_regen_pow > 0 && /* (and definitely not Nether Sap, anyway) */
-	    p_ptr->tim_regen_cost) /* non-magical only */
+	    p_ptr->tim_regen_cost) /* non-magical only, ie via shroom of fast metabolism */
 		i += 30;
 
 	/* Hitpoints multiplier consume significantly much food (+0..15) */
@@ -5647,6 +5647,29 @@ static bool process_player_end_aux(int Ind) {
 			/* Actually 'quiet' and give msg afterwards */
 			i = hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE, TRUE);
 			if (i) msg_format(Ind, "\377gYou are healed for %d points.", i);
+			/* For spell: Also heal cuts */
+			if (!p_ptr->tim_regen_cost && p_ptr->cut) {
+				int nonlin, healcut; // tim_regen_pow is 134 at 50.000 Nature (0.000 SP), 183 at 50.000 SP.
+
+#if 0
+				nonlin = 10 + (1000 * (p_ptr->tim_regen_pow + 1)) / (p_ptr->cut * 10);
+				healcut = (p_ptr->tim_regen_pow * 10) / nonlin;
+				// cut 1:	rg 1: 1				rg 10: 1	rg 100: 1
+				// cut 10:	rg 1: 1		rg  5: 1	rg 10: 1	rg 100: 1
+				// cut 100:	rg 1: 1				rg 10: 4	rg 100: 9	rg 183: 9
+				// cut 1000:	rg 1: 1				rg 10: 9	rg 100: 50	rg 183: 65
+#else
+				nonlin = 20 + (1000 * (p_ptr->tim_regen_pow + 1)) / (p_ptr->cut * 10);
+				healcut = (p_ptr->tim_regen_pow * 5) / nonlin;
+				// cut 1:	rg 1: 				rg 10: 		rg 100: 1
+				// cut 10:	rg 1: 		rg  5: 		rg 10: 		rg 100: 1
+				// cut 100:	rg 1: 				rg 10: 		rg 100: 4	rg 183: 4
+				// cut 1000:	rg 1: 				rg 10: 		rg 100: 16	rg 183: 24
+#endif
+
+				if (!healcut) healcut = 1;
+				(void)set_cut(Ind, p_ptr->cut - healcut, p_ptr->cut_attacker, FALSE);
+			}
 		}
 		/* Nether Sap spell (Unlife) */
 		else if (p_ptr->tim_regen_pow < 0) {
