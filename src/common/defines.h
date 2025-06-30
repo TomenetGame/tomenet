@@ -3395,6 +3395,7 @@
 #define ART_ANTIRIAD_DEPLETED	285
 #define ART_JUDGEMENT		286
 #define ART_MERCY		287
+#define ART_TUGAVOS		288
 /* #define ART_ANGTIRCALAD	*/
 
 

@@ -7527,6 +7527,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			teleport_player(Ind, 200, FALSE); //quite far
 			o_ptr->recharging = 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
 			break;
+		case ART_TUGAVOS:
+			(void)detect_treasure(Ind, DEFAULT_RADIUS_DEV(p_ptr) * 3); //DEFAULT_RADIUS * 3);
+			o_ptr->recharging = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
+			break;
 		default: done = FALSE;
 		}
 

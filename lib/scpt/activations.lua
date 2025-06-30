@@ -230,6 +230,8 @@ music_info[10].desc},
 {283, "teleportation every 5..15 turns"},
 --case ART_ANTIRIAD:--284
 {284, "fire a plasma bolt (50..65d20) every 2 turns"},
+--case ART_TUGAVOS:--288
+{288, "mineral and metal detection every 100..400 turns"},
 }
 
 activation_info = { }

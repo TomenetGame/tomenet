@@ -3577,6 +3577,15 @@ D:the terrors of combat. It's one of two twin weapons, each forged with one half
 D:of a set of powerful spell runes.
 
 
+# The Gnomish Shovel 'Tug-Avos'
+N:288:'Tug-Avos'
+I:20:2:5
+W:30:15:50:25000
+P:0:1d2:0:00:0
+F:ACTIVATE
+D:A shovel imbued with gnomish magic that detects any minerals and precious
+D:metals, both bare or hidden in the rock and stone of the dungeon around you.
+
 
 # Combined item (3 pieces) Halberd 'Ang-Tir-Calad'
 

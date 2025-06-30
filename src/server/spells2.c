@@ -1918,6 +1918,27 @@ bool detect_treasure(int Ind, int rad) {
 					lite_spot(Ind, y, x);
 				}
 			}
+
+			/* Notice any precious metals/minerals, so massive pieces too */
+			if (o_ptr->tval == TV_GOLEM) switch (o_ptr->sval) {
+			case SV_GOLEM_COPPER:
+			case SV_GOLEM_SILVER:
+			case SV_GOLEM_GOLD:
+			case SV_GOLEM_MITHRIL:
+			case SV_GOLEM_ADAM:
+				/* Notice new items */
+				if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
+					/* Detect */
+					detect = TRUE;
+
+					/* Hack -- memorize the item */
+					p_ptr->obj_vis[c_ptr->o_idx] = TRUE;
+
+					/* Redraw */
+					lite_spot(Ind, y, x);
+				}
+				break;
+			}
 		}
 	}
 	return(detect);
@@ -1992,6 +2013,27 @@ bool floor_detect_treasure(int Ind) {
 					/* Redraw */
 					lite_spot(Ind, y, x);
 				}
+			}
+
+			/* Notice any precious metals/minerals, so massive pieces too */
+			if (o_ptr->tval == TV_GOLEM) switch (o_ptr->sval) {
+			case SV_GOLEM_COPPER:
+			case SV_GOLEM_SILVER:
+			case SV_GOLEM_GOLD:
+			case SV_GOLEM_MITHRIL:
+			case SV_GOLEM_ADAM:
+				/* Notice new items */
+				if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
+					/* Detect */
+					detect = TRUE;
+
+					/* Hack -- memorize the item */
+					p_ptr->obj_vis[c_ptr->o_idx] = TRUE;
+
+					/* Redraw */
+					lite_spot(Ind, y, x);
+				}
+				break;
 			}
 		}
 	}
