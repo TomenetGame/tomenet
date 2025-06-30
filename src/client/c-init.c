@@ -2943,17 +2943,11 @@ static void init_floor_mapping(void) {
 }
 
 /* Initialize info for the in-client guide search */
-#ifdef BUFFER_GUIDE
-char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1]; //one extra char per line for newline char '\n'
-#endif
-#ifdef BUFFER_LOCAL_FILE
-char local_file_line[LOCAL_FILE_LINES_MAX][MAX_CHARS_WIDE + 1]; //one extra char per line for newline char '\n'
-#endif
 void init_guide(void) {
-	int i;
+	int i, filesize, guide_lines_reserved = 1000, linelen;
 
 	FILE *fff;
-	char path[1024], buf[MAX_CHARS * 2 + 1], *c, *c2;
+	char path[1024], buf[MAX_CHARS * 2 + 1], *c, *c2, **guide_line_tmp;
 	byte contents = 0;
 
 	guide_lastline = -1;
@@ -2972,13 +2966,44 @@ void init_guide(void) {
 		return;
 	}
 
+	fseek(fff, 0, SEEK_END);
+	filesize = ftell(fff);
+	fseek(fff, 0, SEEK_SET);
+	guide_data = calloc(1, filesize + 1); //0-termination by strcpy()
+	if (!guide_data) {
+		c_msg_format("\377yCouldn't allocate the required %d bytes for the Guide.", filesize);
+		return;
+	}
+	guide_line = malloc(sizeof(char*) * guide_lines_reserved);
+	if (!guide_line) {
+		c_msg_format("\377yCouldn't allocate the required %lu bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
+		free(guide_data);
+		return;
+	}
+
 	/* count lines */
 	while (fgets(buf, 81 , fff)) {
-		guide_lastline++;
+		guide_lastline++; //note: guide_lastline was initialized to -1, so it'll start at 0 here as it should
 
 #ifdef BUFFER_GUIDE
-		if (guide_lastline >= GUIDE_LINES_MAX) continue; //catch memory overflow aka "Bad socket filedescriptor" client termination error
-		strcpy(guide_line[guide_lastline], buf); //note: guide_lastline was initialized to -1, so it'll start at 0 here as it should
+		if (guide_lastline + 1 >= guide_lines_reserved) {
+			guide_lines_reserved += 1000;
+			guide_line_tmp = realloc(guide_line, sizeof(char*) * guide_lines_reserved);
+			if (!guide_line_tmp) {
+				free(guide_data);
+				free(guide_line);
+				c_msg_format("\377yCouldn't allocate the required %lu bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
+				return;
+			}
+			guide_line = guide_line_tmp;
+		}
+		linelen = strlen(buf);
+		if (guide_lastline == 0) {
+			guide_line[0] = guide_data;
+			guide_line[1] = guide_data + linelen;
+		} else guide_line[guide_lastline + 1] = guide_line[guide_lastline] + linelen;
+		strcpy(guide_line[guide_lastline], buf);
+		guide_line[guide_lastline][linelen - 1] = 0; //replace newline by string terminator
 #endif
 
 		/* and also remember chapter titles */
@@ -3038,17 +3063,6 @@ void init_guide(void) {
 		c_message_add("\377y Try updating it via =U or the TomeNET-Updater or download it manually.");
 		return;
 	}
-
-#ifdef BUFFER_GUIDE
-	/* too big file? */
-	if (guide_lastline >= GUIDE_LINES_MAX) {
-		c_message_add(format("\377yThe file TomeNET-Guide.txt was too big (%d/%d lines) to load completely!", guide_lastline, GUIDE_LINES_MAX));
-		c_message_add("\377y Update your client via TomeNET-Updater or install the latest client manually.");
-		/* cap */
-		guide_lastline = GUIDE_LINES_MAX - 1;
-	}
-#endif
-
 
 	guide_races = exec_lua(0, "return guide_races");
 	for (i = 0; i < guide_races; i++)

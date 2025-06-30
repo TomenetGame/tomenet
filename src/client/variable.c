@@ -710,6 +710,12 @@ char guide_spell[256][MAX_CHARS];
 int guide_races = 0, guide_classes = 0, guide_skills = 0, guide_schools = 0, guide_spells = 0;
 char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
 int guide_chapters, guide_endofcontents;
+#ifdef BUFFER_GUIDE
+char *guide_data, **guide_line;
+#endif
+#ifdef BUFFER_LOCAL_FILE
+char *local_file_data, **local_file_line; //one extra char per line for newline char '\n'
+#endif
 
 #ifdef WINDOWS
 bool win_dontmoveuser = FALSE;

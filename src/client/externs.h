@@ -1284,9 +1284,6 @@ extern char relogin_host[40], relogin_accname[ACCNAME_LEN], relogin_accpass[PASS
 
 extern int guide_lastline, guide_errno;
 extern bool guide_outdated;
-#ifdef BUFFER_GUIDE
-extern char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1];
-#endif
 extern char guide_race[64][MAX_CHARS];
 extern char guide_class[64][MAX_CHARS];
 extern char guide_skill[128][MAX_CHARS];
@@ -1295,8 +1292,11 @@ extern char guide_spell[256][MAX_CHARS];
 extern int guide_races, guide_classes, guide_skills, guide_schools, guide_spells;
 extern char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
 extern int guide_chapters, guide_endofcontents;
+#ifdef BUFFER_GUIDE
+extern char *guide_data, **guide_line;
+#endif
 #ifdef BUFFER_LOCAL_FILE
-extern char local_file_line[LOCAL_FILE_LINES_MAX][MAX_CHARS_WIDE + 1];
+extern char *local_file_data, **local_file_line;
 #endif
 
 extern byte showing_inven, showing_equip;
