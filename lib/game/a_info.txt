@@ -2367,8 +2367,7 @@ N:174:of Nain
 I:20:7:6
 W:50:5:250:45000
 P:0:3d8:12:18:0
-F:TUNNEL | INFRA | SEARCH | STR | ESP_ORC | CLIMB |
-F:ACTIVATE
+F:TUNNEL | INFRA | SEARCH | STR | ESP_ORC | CLIMB | ACTIVATE
 D:Wielded by Nain of the Iron Hills at the Battle of Azanulbizar, this great
 D:mattock brought victory to the Dwarves over Azog's Orcs - though Nain
 D:himself fell at the last, even with victory already assured.
@@ -3581,8 +3580,8 @@ D:of a set of powerful spell runes.
 N:288:'Tug-Avos'
 I:20:2:5
 W:30:15:50:25000
-P:0:1d2:0:00:0
-F:ACTIVATE
+P:0:1d2:20:15:0
+F:ACTIVATE | TUNNEL
 D:A shovel imbued with gnomish magic that detects any minerals and precious
 D:metals, both bare or hidden in the rock and stone of the dungeon around you.
 
