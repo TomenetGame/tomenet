@@ -2405,7 +2405,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				}
 
 				//if (zcave) zcave[iy][ix].o_idx = 0;
-				delete_object_idx(k, TRUE);
+				delete_object_idx(k, TRUE, TRUE);
 
 				/* Wipe the object */
 				//WIPE(o_ptr, object_type);
@@ -3289,7 +3289,7 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 #endif
 
 				//if (zcave) zcave[iy][ix].o_idx = 0;
-				delete_object_idx(k, TRUE);
+				delete_object_idx(k, TRUE, TRUE);
 
 				/* Wipe the object */
 				//WIPE(o_ptr, object_type);
@@ -4243,7 +4243,7 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 		/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 		o_ptr->embed = 0;
 		/* Delete the object */
-		delete_object_idx(this_o_idx, FALSE);
+		delete_object_idx(this_o_idx, FALSE, FALSE);
 
 		/* If a player disarms the monster trap and is already the owner, put the items into his inventory directly. */
 		if (Ind && q_ptr->owner == p_ptr->id && inven_carry_okay(Ind, q_ptr, 0x0)) {
@@ -4291,19 +4291,24 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 					if (!q_ptr->number) continue;
 				}
 #endif
+				object_desc(Ind, o_name, q_ptr, TRUE, 3);
 				slot = inven_carry(Ind, q_ptr);
 				if (slot >= 0) {
 					//inven_item_describe(Ind, slot);
-					object_desc(Ind, o_name, q_ptr, TRUE, 3);
 					q_ptr->marked = 0;
 					q_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-				}
-				else drop_near(TRUE, 0, q_ptr, -1, wpos, y, x); //paranoia
+				} else if (drop_near(TRUE, 0, q_ptr, -1, wpos, y, x) < 0) //paranoia
+					s_printf("Montrap disarm -> item '%s' couldn't drop.\n", o_name);
 			}
 		} else {
 			/* Drop it */
-			drop_near(TRUE, 0, q_ptr, -1, wpos, y, x);
+			if (drop_near(TRUE, 0, q_ptr, -1, wpos, y, x) < 0) {
+				char o_name[ONAME_LEN];
+
+				object_desc(Ind, o_name, q_ptr, TRUE, 3);
+				s_printf("Montrap disarm -> item '%s' couldn't drop.\n", o_name);
+			}
 		}
 	}
 
@@ -4334,7 +4339,7 @@ bool erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 			next_o_idx = o_ptr->next_o_idx;
 			o_ptr->held_m_idx = 0;
 			o_ptr->embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
-			delete_object_idx(this_o_idx, TRUE);
+			delete_object_idx(this_o_idx, TRUE, TRUE);
 		}
 		return(TRUE);
 	}
@@ -4368,7 +4373,7 @@ bool erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 		/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 		o_ptr->embed = 0;
 		/* Delete the object */
-		delete_object_idx(this_o_idx, TRUE);
+		delete_object_idx(this_o_idx, TRUE, TRUE);
 	}
 
 	cs_erase(c_ptr, cs_ptr);
@@ -5901,7 +5906,7 @@ bool mon_hit_trap(int m_idx) {
 					if (load_o_ptr->number <= 0) {
 						remove = TRUE;
 						o_list[kit_o_ptr->next_o_idx].embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
-						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
+						delete_object_idx(kit_o_ptr->next_o_idx, TRUE, FALSE);
 						kit_o_ptr->next_o_idx = 0;
 					}
 
@@ -5941,7 +5946,7 @@ bool mon_hit_trap(int m_idx) {
 				if (load_o_ptr->number <= 0) {
 					remove = TRUE;
 					o_list[kit_o_ptr->next_o_idx].embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
-					delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
+					delete_object_idx(kit_o_ptr->next_o_idx, TRUE, FALSE);
 					kit_o_ptr->next_o_idx = 0;
 				}
 			}
@@ -5978,7 +5983,7 @@ bool mon_hit_trap(int m_idx) {
 					/* runes stay, scrolls poof */
 					if (load_o_ptr->tval == TV_SCROLL) {
 						o_list[kit_o_ptr->next_o_idx].embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
-						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
+						delete_object_idx(kit_o_ptr->next_o_idx, TRUE, FALSE);
 						kit_o_ptr->next_o_idx = 0;
 					} else {
 						/* hack: runes don't get consumed, so counter the previous decrement */
@@ -6049,7 +6054,7 @@ bool py_hit_trap(int Ind) {
 static void ruin_chest(object_type *o_ptr) {
 	/* Hack to destroy chests */
 	if (o_ptr && o_ptr->tval == TV_CHEST) { /* check for o_ptr - chest might already be destroyed at this point */
-		//delete_object_idx(k, TRUE);
+		//delete_object_idx(k, TRUE, FALSE);
 		o_ptr->sval = SV_CHEST_RUINED; /* Ruined chest now */
 		o_ptr->pval = 0; /* untrapped */
 		//o_ptr->bpval = 0;

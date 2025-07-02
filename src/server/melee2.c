@@ -11167,7 +11167,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 						if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s (%d,%d,%d)\n", o_name, m_name_real, wpos->wx, wpos->wy, wpos->wz);
 
 						/* Delete the object */
-						delete_object_idx(this_o_idx, TRUE);
+						delete_object_idx(this_o_idx, TRUE, FALSE);
 					} else
  #endif	// MONSTER_ITEM_CONSUME
 					{
@@ -11204,7 +11204,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s (%d,%d,%d)\n", o_name, m_name_real, wpos->wx, wpos->wy, wpos->wz);
 
 					/* Delete the object */
-					delete_object(wpos, ny, nx, TRUE);
+					delete_object(wpos, ny, nx, TRUE, FALSE);
 #endif	// MONSTER_INVENTORY
 				}
 
@@ -11226,7 +11226,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 					/* Delete the object */
 					//delete_object(wpos, ny, nx);	/* arts.. */
-					delete_object_idx(c_ptr->o_idx, TRUE);
+					delete_object_idx(c_ptr->o_idx, TRUE, FALSE);
 
 #if 0	// XXX
 					/* Scan all objects in the grid */
@@ -11244,7 +11244,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 						}
 
 						/* Wipe the object */
-						delete_object_idx(this_o_idx, TRUE);
+						delete_object_idx(this_o_idx, TRUE, FALSE);
 					}
 #endif
 				}
@@ -11271,7 +11271,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					m_ptr->no_move = 15; //alernative method, comes with proper hacked message when it ends, too :)
 
 					/* Delete the object */
-					delete_object(wpos, ny, nx, TRUE);
+					delete_object(wpos, ny, nx, TRUE, FALSE);
 				}
 			}
 #endif

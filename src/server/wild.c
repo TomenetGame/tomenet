@@ -971,7 +971,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 			/* if it's on our field, erase it */
 			if (o_ptr->iy >= y1 && o_ptr->iy <= y2 &&
 			    o_ptr->ix >= x1 && o_ptr->ix <= x2)
-				delete_object_idx(i, TRUE);
+				delete_object_idx(i, TRUE, TRUE);
 		}
 
 		/* Remember/reindex mushroom fields all over the world, for Farmer Maggot! */
@@ -3212,7 +3212,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if (func == FILL_CLEAR) {
-					delete_object(wpos, y, x, TRUE);
+					delete_object(wpos, y, x, TRUE, TRUE);
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if (func == FILL_BUILD) {
@@ -3375,7 +3375,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						break;
 					}
 					if (func == FILL_CLEAR) {
-						delete_object(wpos, miny + (y - 1), minx + (x - 1), TRUE);
+						delete_object(wpos, miny + (y - 1), minx + (x - 1), TRUE, TRUE);
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}

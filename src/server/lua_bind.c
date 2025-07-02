@@ -801,7 +801,7 @@ void lua_strip_true_arts_from_floors(void) {
 		if (o_ptr->k_idx) {
 			cnt++;
 			if (resettable_artifact_p(o_ptr)) {
-				delete_object_idx(i, TRUE);
+				delete_object_idx(i, TRUE, TRUE);
 				dcnt++;
 			}
 		}

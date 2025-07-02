@@ -11074,7 +11074,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							/* k_idx = 1 is something weird... */
 							else if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
 								msg_format(Ind, "Removed an invalid item (o_idx=%d) (k_idx=%d) found at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
-								delete_object_idx(o_idx, TRUE);
+								delete_object_idx(o_idx, TRUE, FALSE);
 							}
 							prev_o_ptr = NULL;
 							/* more objects on this grid? */
@@ -11094,7 +11094,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 								}
 								else if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
 									msg_format(Ind, "Removed an invalid item (o_idx=%d) (k_idx=%d) from a pile at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
-									delete_object_idx(o_idx, TRUE);
+									delete_object_idx(o_idx, TRUE, FALSE);
 								}
 							}
 						}

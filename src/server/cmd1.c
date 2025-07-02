@@ -1722,7 +1722,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 	/* We picked up everything there was! Delete original */
 	if (delete_it) {
-		delete_object_idx(o_idx, FALSE);
+		delete_object_idx(o_idx, FALSE, FALSE);
 
 		/* Hack -- tell the player of the next object on the pile */
 		whats_under_your_feet(Ind, FALSE);
@@ -2268,8 +2268,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 		/* Delete gold */
 		if (amount == o_ptr->pval) {
-			//delete_object(wpos, p_ptr->py, p_ptr->px);
-			delete_object_idx(c_ptr->o_idx, FALSE);//TRUE, but it's only gold, so can't be trueart anyway
+			//delete_object(wpos, p_ptr->py, p_ptr->px, FALSE);
+			delete_object_idx(c_ptr->o_idx, FALSE, FALSE);//TRUE, but it's only gold, so can't be trueart anyway
 		}
 		/* Reduce gold */
 		else o_ptr->pval -= amount;
@@ -2652,8 +2652,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
 			/* Delete original */
-			//delete_object(wpos, p_ptr->py, p_ptr->px);
-			delete_object_idx(c_ptr->o_idx, FALSE);
+			//delete_object(wpos, p_ptr->py, p_ptr->px, FALSE);
+			delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
 			whats_under_your_feet(Ind, FALSE);
@@ -2744,8 +2744,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
 			/* Delete original */
-			//delete_object(wpos, p_ptr->py, p_ptr->px);
-			delete_object_idx(c_ptr->o_idx, FALSE);
+			//delete_object(wpos, p_ptr->py, p_ptr->px, FALSE);
+			delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
 			whats_under_your_feet(Ind, FALSE);
@@ -2837,9 +2837,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
 			/* Delete original */
-			//delete_object(wpos, p_ptr->py, p_ptr->px);
+			//delete_object(wpos, p_ptr->py, p_ptr->px, FALSE);
 			if (delete_it) {
-				delete_object_idx(c_ptr->o_idx, FALSE);
+				delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 
 				/* Hack -- tell the player of the next object on the pile */
 				whats_under_your_feet(Ind, FALSE);
@@ -3117,7 +3117,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				}
 
 				/* Delete original */
-				//delete_object(wpos, p_ptr->py, p_ptr->px);
+				//delete_object(wpos, p_ptr->py, p_ptr->px, FALSE);
 				if (delete_it) {
 					/* extra logging for artifacts */
 					if (o_ptr->name1) {
@@ -3129,7 +3129,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 						    p_ptr->name, o_name);
 					}
 
-					delete_object_idx(c_ptr->o_idx, FALSE);
+					delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 
 					/* Hack -- tell the player of the next object on the pile */
 					whats_under_your_feet(Ind, FALSE);

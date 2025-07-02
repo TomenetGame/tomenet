@@ -7851,7 +7851,7 @@ static void scan_objs() {
 			/* Eat all non-transferrable items:
 			   Starter items and level 0 items that aren't rescue-exchangeable either */
 			if (((o_ptr->mode & MODE_STARTER_ITEM) || !o_ptr->level) && !exceptionally_shareable_item(o_ptr)) {
-				delete_object_idx(i, TRUE);
+				delete_object_idx(i, TRUE, FALSE);
 				cnt++;
 				dcnt++;
 				continue;
@@ -7869,12 +7869,12 @@ static void scan_objs() {
 			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia
 				if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
 					if (++o_ptr->marked >= 2) {
-						delete_object_idx(i, TRUE);
+						delete_object_idx(i, TRUE, TRUE);
 						dcnt++;
 					}
 				} else if (o_ptr->marked2 == ITEM_REMOVAL_MONTRAP) {
 					if (++o_ptr->marked >= 120) {
-						delete_object_idx(i, TRUE);
+						delete_object_idx(i, TRUE, TRUE);
 						dcnt++;
 					}
 				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* Stormbringer too */
@@ -7886,7 +7886,7 @@ static void scan_objs() {
 					/* Artifacts and objects that were inscribed and dropped by
 					the dungeon master or by unique monsters on their death
 					stay n times as long as cfg.surface_item_removal specifies */
-					delete_object_idx(i, TRUE);
+					delete_object_idx(i, TRUE, TRUE);
 					dcnt++;
 				}
 			}
@@ -7914,7 +7914,7 @@ static void scan_objs() {
 				if (++o_ptr->marked >= ((artifact_p(o_ptr) ||
 				    (o_ptr->note && !o_ptr->owner)) ?
 				    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
-					delete_object_idx(i, TRUE);
+					delete_object_idx(i, TRUE, TRUE);
 					dcnt++;
 				}
 			}
@@ -10265,7 +10265,7 @@ void steamblast_trigger(int idx) {
 						(void)generic_activate_trap_type(wpos, y, x, o_ptr, c_ptr->o_idx);
 						if ((o_ptr->xtra3 & 0x1) || /* Erase chest whenever the trap was set off */
 						    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Erase the chest if it got ruined by the trap */
-							delete_object_idx(c_ptr->o_idx, FALSE);
+							delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 						else {
 							/* If chest is not ruined, also disarm + unlock */
 							//o_ptr->pval = 0;

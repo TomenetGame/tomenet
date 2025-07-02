@@ -352,7 +352,7 @@ bool create_garden(int Ind, int chance) {
 			    ) {
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
-					delete_object(wpos, y, x, TRUE);
+					delete_object(wpos, y, x, TRUE, TRUE);
 					cave_set_feat_live(&p_ptr->wpos, y, x, magik(50) ? FEAT_TREE : FEAT_BUSH);
 					//c_ptr->feat = feat;
 				}
@@ -3645,7 +3645,7 @@ void stair_creation(int Ind) {
 	}
 
 	/* Hack -- Delete old contents */
-	delete_object(wpos, p_ptr->py, p_ptr->px, TRUE);
+	delete_object(wpos, p_ptr->py, p_ptr->px, TRUE, TRUE);
 
 	/* Create a staircase */
 	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
@@ -6345,7 +6345,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, u16b 
 				struct c_special *cs_ptr;
 
 				/* Delete the object (if any) */
-				delete_object(wpos, y, x, TRUE);
+				delete_object(wpos, y, x, TRUE, TRUE);
 
 				/* Wall (or floor) type */
 				t = rand_int(200);
@@ -6816,7 +6816,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 				bool floor = cave_floor_bold(zcave, yy, xx);
 
 				/* Delete any object that is still there */
-				delete_object(wpos, yy, xx, TRUE);
+				delete_object(wpos, yy, xx, TRUE, TRUE);
 
 				/* Wall (or floor) type */
 				t = (floor ? rand_int(100) : 200);
@@ -6893,7 +6893,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 			}
 
 			/* Delete objects */
-			delete_object(wpos, yy, xx, TRUE);
+			delete_object(wpos, yy, xx, TRUE, TRUE);
 
 			everyone_lite_spot(wpos, yy, xx);
 		}
@@ -11069,7 +11069,7 @@ void detonate_charge(int o_idx) {
 	/* Get rid of it so we don't get 'the charge was destroyed'
 	   message from our own fire/blast effets on the o_ptr, looks silyl.
 	   This is the reason we needed to create a working copy in 'forge'.  */
-	delete_object_idx(o_idx, TRUE);
+	delete_object_idx(o_idx, TRUE, FALSE);
 
 	/* Find owner of the charge */
 	for (i = 1; i <= NumPlayers; i++) {

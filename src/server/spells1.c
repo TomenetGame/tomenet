@@ -4358,7 +4358,7 @@ bool apply_discharge_item(int o_idx, int dam) {
 
 	/* Special treatment for new ego-type: Ethereal (ammunition): */
 	if (is_ammo(o_ptr->tval) && (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)) {
-		if (o_ptr->number == 1) delete_object_idx(o_idx, TRUE);
+		if (o_ptr->number == 1) delete_object_idx(o_idx, TRUE, FALSE);
 		else o_ptr->number--;
 		damaged = TRUE;
 	}
@@ -5987,7 +5987,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_NEXUS:
 		case GF_GRAVITY:
 			{
-				int j, dist = (typ == GF_NEXUS ? 80 : 15);
+				int j, dist = (typ == GF_NEXUS ? 80 : 15), res;
 				s16b cx, cy;
 				object_type tmp_obj = *o_ptr;
 
@@ -6010,13 +6010,13 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					    cave_perma_bold2(zcave, cy, cx)) continue;
 
 					//(void)floor_carry(cy, cx, &tmp_obj);
-					drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx);
+					res = drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx);
 
 					/* XXX not working? */
 					if (!quiet && note_kill)
 						msg_format_near_site(y, x, wpos, 0, TRUE, "\377oThe %s%s", o_name, note_kill);
 
-					delete_object_idx(this_o_idx, FALSE);
+					delete_object_idx(this_o_idx, FALSE, res < 0);
 					break;
 				}
 				break;
@@ -6073,8 +6073,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 
 				/* Delete the object */
-				//delete_object(wpos, y, x);
-				delete_object_idx(this_o_idx, TRUE);
+				//delete_object(wpos, y, x, TRUE, TRUE);
+				delete_object_idx(this_o_idx, TRUE, TRUE);
 
 				/* Potions produce effects when 'shattered'.
 				   But not if the potion got killed by the floor (lava), too dangerous for the player in Mt Doom for example. */

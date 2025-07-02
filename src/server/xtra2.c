@@ -8688,7 +8688,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 
 		/* Delete any old object XXX XXX XXX */
-		delete_object(wpos, y, x, TRUE);
+		delete_object(wpos, y, x, TRUE, TRUE);
 
 		/* Explain the stairway */
 		msg_print(Ind, "A magical stairway appears...");
@@ -8746,7 +8746,7 @@ void kill_house_contents(int h_idx) {
 		ex = h_ptr->x + h_ptr->coords.rect.width - 1;
 		for (y = sy; y < ey; y++) {
 			for (x = sx; x < ex; x++)
-				delete_object(wpos, y, x, TRUE);
+				delete_object(wpos, y, x, TRUE, TRUE);
 		}
 
 		/* make sure no player gets stuck by being inside while it's sold - C. Blue */

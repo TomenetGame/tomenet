@@ -431,7 +431,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 		o_ptr->held_m_idx = 0;
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx, unfound_arts);
+		delete_object_idx(this_o_idx, unfound_arts, TRUE);
 	}
 #endif	// MONSTER_INVENTORY
 
@@ -5960,7 +5960,7 @@ void monster_drop_carried_objects(int m_idx, monster_type *m_ptr) {
 		q_ptr->next_o_idx = 0;
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx, FALSE);
+		delete_object_idx(this_o_idx, FALSE, FALSE);
 
 		object_desc(0, o_name, q_ptr, 0, 0);
 		monster_desc(0, m_name, m_idx, 0);

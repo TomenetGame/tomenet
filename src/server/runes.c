@@ -38,7 +38,7 @@ void transform_level(int Ind, u16b feat, int chance) {
 		if (cave_valid_bold(zcave, y, x)) {
 			if (magik(chance)) {
 				/* Delete the object (if any) */
-				delete_object(wpos, y, x, TRUE);
+				delete_object(wpos, y, x, TRUE, TRUE);
 				cave_set_feat_live(&p_ptr->wpos, y, x, feat);
 			}
 		}

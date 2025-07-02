@@ -208,8 +208,9 @@ void excise_object_idx(int o_idx) {
  * Delete a dungeon object
  * unfound_art: TRUE -> set artifact to 'not found' aka findable again. This is the normal use.
  *              FALSE is used for when an item isn't really removed 'from the game world', but just relocated.
+ * log: TRUE -> log deletion if valuable/special in some way.
  */
-void delete_object_idx(int o_idx, bool unfound_art) {
+void delete_object_idx(int o_idx, bool unfound_art, bool log) {
 	object_type *o_ptr = &o_list[o_idx];
 	int i;
 
@@ -225,54 +226,55 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 		/* However, if there was a faulty cs_ptr and the trap couldn't be processed, we continue here and just erase this item. */
 	}
 
-	/* extra logging for artifact timeout debugging */
-	if (true_artifact_p(o_ptr) && o_ptr->owner) {
-		char o_name[ONAME_LEN];
+	if (log) {
+		/* extra logging for artifact timeout debugging */
+		if (true_artifact_p(o_ptr) && o_ptr->owner) {
+			char o_name[ONAME_LEN];
 
-		object_desc_store(0, o_name, o_ptr, TRUE, 3);
+			object_desc_store(0, o_name, o_ptr, TRUE, 3);
 
-		s_printf("%s owned true artifact (ua=%d) deleted at (%d,%d,%d):\n  %s\n",
-		    showtime(), unfound_art,
-		    wpos->wx, wpos->wy, wpos->wz,
-		    o_name);
-	}
-	/* log all true arts anyway */
-	else if (true_artifact_p(o_ptr) && !o_ptr->owner) {
-		char o_name[ONAME_LEN];
+			s_printf("%s owned true artifact (ua=%d) deleted at (%d,%d,%d):\n  %s\n",
+			    showtime(), unfound_art,
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+		/* log all true arts anyway */
+		else if (true_artifact_p(o_ptr) && !o_ptr->owner) {
+			char o_name[ONAME_LEN];
 
-		object_desc_store(0, o_name, o_ptr, TRUE, 3);
+			object_desc_store(0, o_name, o_ptr, TRUE, 3);
 
-		s_printf("%s unowned true artifact (ua=%d) deleted at (%d,%d,%d):\n  %s\n",
-		    showtime(), unfound_art,
-		    wpos->wx, wpos->wy, wpos->wz,
-		    o_name);
-	}
-	/* Extra logging for those cases of "where did my randart disappear to??1" */
-	if (o_ptr->name1 == ART_RANDART) {
-		char o_name[ONAME_LEN];
+			s_printf("%s unowned true artifact (ua=%d) deleted at (%d,%d,%d):\n  %s\n",
+			    showtime(), unfound_art,
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
 
-		object_desc(0, o_name, o_ptr, TRUE, 3);
+			object_desc(0, o_name, o_ptr, TRUE, 3);
 
-		s_printf("%s DELETE_OBJECT_IDX random artifact at (%d,%d,%d):\n  %s\n",
-		    showtime(),
-		    wpos->wx, wpos->wy, wpos->wz,
-		    o_name);
-	}
-	/* log special cases */
-	else if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
-		//note: number is already 0 at this point if it was floor/inven_item_increase'd
-		s_printf("%s ARTSCROLL_DELETED (amt:%d) (%d,%d,%d)\n", showtime(), o_ptr->number, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
-	/* log big losses */
-	else if ((i = object_value_real(0, o_ptr) * o_ptr->number) >= 50000) {
-		char o_name[ONAME_LEN];
+			s_printf("%s DELETE_OBJECT_IDX random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+		/* log special cases */
+		else if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
+			//note: number is already 0 at this point if it was floor/inven_item_increase'd
+			s_printf("%s ARTSCROLL_DELETED (amt:%d) (%d,%d,%d)\n", showtime(), o_ptr->number, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+		/* log big losses */
+		else if ((i = object_value_real(0, o_ptr) * o_ptr->number) >= 50000) {
+			char o_name[ONAME_LEN];
 
-		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_printf("DELETED_VALUABLE: %s (%d)\n", o_name, i);
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("DELETED_VALUABLE: %s (%d)\n", o_name, i);
+		}
 	}
 
 	/* Artifact becomes 'not found' status */
-	if (true_artifact_p(o_ptr) && unfound_art)
-		handle_art_d(o_ptr->name1);
+	if (true_artifact_p(o_ptr) && unfound_art) handle_art_d(o_ptr->name1);
 	/* uh, we abuse this */
 	if (unfound_art) questitem_d(o_ptr, o_ptr->number);
 
@@ -328,7 +330,7 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 /*
  * Deletes object from given location
  */
-void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* maybe */
+void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art, bool log) { /* maybe */
 	cave_type *c_ptr;
 	cave_type **zcave;
 
@@ -350,7 +352,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 #endif	// 0
 
 		/* Delete the object */
-		//if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx, unfound_art);
+		//if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx, unfound_art, log);
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
@@ -363,7 +365,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 			next_o_idx = o_ptr->next_o_idx;
 
 			/* Wipe the object */
-			delete_object_idx(this_o_idx, unfound_art);
+			delete_object_idx(this_o_idx, unfound_art, log);
 		}
 
 		/* Objects are gone */
@@ -378,7 +380,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 			object_type *o_ptr = &o_list[i];
 			if (o_ptr->k_idx && inarea(wpos, &o_ptr->wpos)) {
 				if (y == o_ptr->iy && x == o_ptr->ix)
-					delete_object_idx(i, unfound_art);
+					delete_object_idx(i, unfound_art, log);
 			}
 		}
 	}
@@ -496,7 +498,7 @@ void compact_objects(int size, bool purge) {
 			if (rand_int(100) < chance) continue;
 
 			/* Delete it */
-			delete_object_idx(i, TRUE);
+			delete_object_idx(i, TRUE, TRUE);
 
 			/* Count it */
 			num++;
@@ -524,7 +526,7 @@ void compact_objects(int size, bool purge) {
 			    continue;
 
 			/* Delete it first */
-			delete_object_idx(i, TRUE);
+			delete_object_idx(i, TRUE, TRUE);
 		}
 
 		/* One less object */
@@ -10825,7 +10827,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 		//c_ptr = &zcave[ny][nx];
 
 		/* Crush anything under us (for artifacts) */
-		if (flag == 3) delete_object(wpos, ny, nx, TRUE);
+		if (flag == 3) delete_object(wpos, ny, nx, TRUE, TRUE);
 
 
 #ifdef MAX_ITEMS_STACKING
@@ -10841,7 +10843,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 			if (o_ptr->note_utag &&
 			    o_list[c_ptr->o_idx].note_utag == 0) { /* hold back a bit if we'd have to destroy other unique loot;
 								    note: this ignores cases of unique loot below a normal item though. */
-				delete_object(wpos, ny, nx, TRUE);
+				delete_object(wpos, ny, nx, TRUE, TRUE);
 			}
 			/* can't drop! */
 			else
@@ -10854,7 +10856,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 					/* found a non-unique-loot item? */
 					if (!o_list[this_o_idx].note_utag) {
 						/* erase it */
-						delete_object_idx(this_o_idx, TRUE);
+						delete_object_idx(this_o_idx, TRUE, TRUE);
 						/* done */
 						do_kill = FALSE;
 						break;
@@ -11536,7 +11538,7 @@ void floor_item_optimize(int item) {
 	if (o_ptr->number) return;
 
 	/* Delete it */
-	delete_object_idx(item, FALSE); //must be FALSE (eg for cmd_throw()). Instead, manually call handle_art_d() wherever really needed
+	delete_object_idx(item, FALSE, TRUE); //must be FALSE (eg for cmd_throw()). Instead, manually call handle_art_d() wherever really needed
 }
 
 
@@ -12821,7 +12823,7 @@ void process_objects(void) {
 
 				o_ptr->timeout--;
 				/* poof */
-				if (!(o_ptr->timeout)) delete_object_idx(i, TRUE);
+				if (!(o_ptr->timeout)) delete_object_idx(i, TRUE, FALSE);
 				continue;
 			}
 		}
@@ -12843,7 +12845,7 @@ void process_objects(void) {
 
 			o_ptr->pval--;
 			/* poof */
-			if (!(o_ptr->pval)) delete_object_idx(i, TRUE);
+			if (!(o_ptr->pval)) delete_object_idx(i, TRUE, FALSE);
 			continue;
 		}
 		/* Recharge activatable items on the ground */
@@ -13569,7 +13571,7 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 					monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 					if (erase) {
 						s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #%d, (%d,%d,%d))\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, j, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, o_name);
-						delete_object_idx(this_o_idx, TRUE);
+						delete_object_idx(this_o_idx, TRUE, FALSE);
 						msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 					} else s_printf("ARTIFACT_LOCATE: %d - monster inventory (%d, '%s', #%d, (%d,%d,%d))\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, j, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, o_name);
 					return(TRUE);
@@ -13587,7 +13589,7 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 		if (o_ptr->embed == 1) {
 			if (erase) {
 				s_printf("FLUENT_ARTIFACT_RESETS: %d - monster trap (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
-				delete_object_idx(i, TRUE);
+				delete_object_idx(i, TRUE, FALSE);
 				msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 			} else s_printf("ARTIFACT_LOCATE: %d - monster trap (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
 			return(TRUE);
@@ -13618,7 +13620,7 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 #endif
 		if (erase) {
 			s_printf("FLUENT_ARTIFACT_RESETS: %d - floor (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
-			delete_object_idx(i, TRUE);
+			delete_object_idx(i, TRUE, FALSE);
 			msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 		} else s_printf("ARTIFACT_LOCATE: %d - floor (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
 		return(TRUE);

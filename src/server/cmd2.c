@@ -3045,14 +3045,14 @@ void do_cmd_open(int Ind, int dir) {
 					/* Let the Chest drop items */
 					chest_death(Ind, y, x, o_ptr);
 					if (o_ptr->xtra3 & 0x4) { /* Special option (custom lua): Erase chest on successful opening? */
-						delete_object_idx(c_ptr->o_idx, FALSE);
+						delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 						trp = FALSE; /* Don't try to delete an already deleted object! */
 					}
 				}
 				if (trp) {
 					if ((o_ptr->xtra3 & 0x1) || /* Special option (custom lua): Erase chest whenever the trap was set off? */
 					    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Special option (custom lua): Erase the chest if it got ruined by the trap? */
-						delete_object_idx(c_ptr->o_idx, FALSE);
+						delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 				}
 				/* Redraw chest for custom mapping users as it changed from closed to opened chest: */
 				everyone_lite_spot(wpos, y, x);
@@ -5468,7 +5468,7 @@ void do_cmd_disarm(int Ind, int dir) {
 						msg_print(Ind, "You set off a trap!");
 						if ((o_ptr->xtra3 & 0x1) || /* Erase chest whenever the trap was set off */
 						    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Erase the chest if it got ruined by the trap */
-							delete_object_idx(c_ptr->o_idx, FALSE);
+							delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 
 						break_cloaking(Ind, 0);
 						break_shadow_running(Ind);

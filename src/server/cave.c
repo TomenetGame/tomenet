@@ -586,7 +586,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 					object_desc(0, o_name, o_ptr, FALSE, 0);
 					s_printf("WILD_ART: %s of %s erased at (%d, %d, %d)\n",
 					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
-					delete_object_idx(i, TRUE);
+					delete_object_idx(i, TRUE, TRUE);
 				}
 			}
 		}
@@ -1033,7 +1033,7 @@ void FreeCS(cave_type *c_ptr) {
 				/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 				o_ptr->embed = 0;
 				/* Delete the object */
-				delete_object_idx(this_o_idx, TRUE);
+				delete_object_idx(this_o_idx, TRUE, TRUE);
 			}
 		} else if (trav->type == CS_INSCRIP) {
 			if (trav->sc.ptr) {

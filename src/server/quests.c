@@ -1119,9 +1119,9 @@ static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dis
 		if (!cave_floor_bold(zcave, cy, cx) ||
 		    cave_perma_bold2(zcave, cy, cx)) continue;
 
-//		(void)floor_carry(cy, cx, &tmp_obj);
-		drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx);
-		delete_object_idx(this_o_idx, FALSE);
+		//(void)floor_carry(cy, cx, &tmp_obj);
+		if (drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx) < 0) delete_object_idx(this_o_idx, FALSE, TRUE);
+		else delete_object_idx(this_o_idx, FALSE, FALSE);
 		break;
 	}
     }
@@ -1204,7 +1204,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 
 #ifdef QUESTOR_OBJECT_EXCLUSIVE
  #ifdef QUESTOR_OBJECT_CRUSHES
-		delete_object(&wpos, y, x, TRUE);
+		delete_object(&wpos, y, x, TRUE, TRUE);
  #else
 		/* teleport the whole pile of objects away */
 		teleport_objects_away(&wpos, x, y, 1);
@@ -1215,7 +1215,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 		/* Illusionate is looting D pits again */
 		if (c_ptr->o_idx > 0) teleport_objects_away(&wpos, x, y, 200);
 		/* out of patience */
-		if (c_ptr->o_idx > 0) delete_object_idx(c_ptr->o_idx, TRUE);
+		if (c_ptr->o_idx > 0) delete_object_idx(c_ptr->o_idx, TRUE, TRUE);
  #endif
 #else
 		/* just drop the questor onto the pile of stuff (if any).
@@ -1419,7 +1419,7 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 		o_list[j].questor = FALSE;
 		o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 		q_info[q_idx].objects_registered--; //..and count down manually
-		delete_object_idx(j, TRUE);
+		delete_object_idx(j, TRUE, FALSE);
 	}
 
 	if (q_info[q_idx].objects_registered < 0) {//paranoia
@@ -1686,7 +1686,7 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 				o_list[o_idx].questor = FALSE;
 				o_list[o_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 				q_info[q_idx].objects_registered--; //..and count down manually
-				delete_object_idx(c_ptr->o_idx, TRUE);
+				delete_object_idx(c_ptr->o_idx, TRUE, FALSE);
 			} else
 #if QDEBUG > 1
 				s_printf(" ..failed: Object is not a questor or has a different quest idx.\n");
@@ -1716,7 +1716,7 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 				o_list[j].questor = FALSE;
 				o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 				q_info[q_idx].objects_registered--; //..and count down manually
-				delete_object_idx(j, TRUE);
+				delete_object_idx(j, TRUE, FALSE);
 				//:-p break;
 			}
 #if 0 /* keep quest items in inventory. And questors are now unique and undroppable, so n.p.! */
@@ -6017,7 +6017,7 @@ void quest_handle_disabled_on_startup() {
 					o_list[q_ptr->questor[j].mo_idx].questor = FALSE;
 					o_list[q_ptr->questor[j].mo_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 					q_ptr->objects_registered--; //..and count down manually
-					delete_object_idx(q_ptr->questor[j].mo_idx, TRUE);
+					delete_object_idx(q_ptr->questor[j].mo_idx, TRUE, FALSE);
 				} else s_printf("..failed: Questor does not exist.\n");
 				break;
 			}

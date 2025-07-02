@@ -1468,8 +1468,8 @@ extern byte get_book_name_color(object_type *o_ptr);
 extern void show_equip(void);
 extern void toggle_inven_equip(void);
 extern bool get_item(int Ind, int *cp, cptr pmt, bool equip, bool inven, bool floor);*/
-extern void delete_object_idx(int i, bool unfound_art);
-extern void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art);
+extern void delete_object_idx(int i, bool unfound_art, bool log);
+extern void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art, bool log);
 extern void wipe_o_list(struct worldpos *wpos);
 extern void wipe_o_list_safely(struct worldpos *wpos);
 extern void wipe_o_list_special(struct worldpos *wpos);

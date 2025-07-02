@@ -1724,7 +1724,7 @@ static void lake_level(struct worldpos *wpos) {
 				if (cave_valid_bold(zcave, y, x)) {
 #if 0
 					/* Delete the object (if any) */
-					delete_object(wpos, y, x, TRUE);
+					delete_object(wpos, y, x, TRUE, TRUE);
 #endif
 
 					/* Access the grid */
@@ -1795,7 +1795,7 @@ static void destroy_level(struct worldpos *wpos) {
 				/* Destroy valid grids */
 				if (cave_valid_bold(zcave, y, x)) {
 					/* Delete the object (if any) */
-					delete_object(wpos, y, x, TRUE);
+					delete_object(wpos, y, x, TRUE, TRUE);
 
 					/* Access the grid */
 					c_ptr = &zcave[y][x];
