@@ -2786,6 +2786,7 @@ bool set_protevil(int Ind, int v, bool own) {
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
 	/* Handle stuff */
+	p_ptr->redraw2 |= (PR2_INDICATORS); /* Redraw indicator */
 	handle_stuff(Ind);
 
 	/* Result */

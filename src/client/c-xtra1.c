@@ -1272,6 +1272,7 @@ void prt_indicators(u32b indicators) {
 	prt_indicator_regen((indicators & IND_REGEN) != 0);
 	prt_indicator_dispersion((indicators & IND_DISPERSION) != 0);
 	prt_indicator_charm((indicators & IND_CHARM) != 0);
+	prt_indicator_pfe((indicators & IND_PFE) != 0);
 	if ((indicators & (IND_SHIELD1 | IND_SHIELD2 | IND_SHIELD3 | IND_SHIELD4 | IND_SHIELD5 | IND_SHIELD6 | IND_SHIELD7)) != 0) prt_indicator_shield(indicators);
 	else prt_indicator_shield(0);
 }
@@ -1429,8 +1430,8 @@ void prt_indicator_dispersion(bool is_active) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (is_active) c_put_str(TERM_SLATE, "Dis", ROW_DISPERSION, COL_DISPERSION);
-	else c_put_str(TERM_WHITE, "   ", ROW_DISPERSION, COL_DISPERSION);
+	if (is_active) c_put_str(TERM_SLATE, "Disp", ROW_DISPERSION, COL_DISPERSION);
+	else c_put_str(TERM_WHITE, "    ", ROW_DISPERSION, COL_DISPERSION);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -1445,8 +1446,24 @@ void prt_indicator_charm(bool is_active) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (is_active) c_put_str(TERM_L_BLUE, "Charm", ROW_CHARM, COL_CHARM);
-	else c_put_str(TERM_WHITE, "     ", ROW_CHARM, COL_CHARM);
+	if (is_active) c_put_str(TERM_L_BLUE, "Chm", ROW_CHARM, COL_CHARM);
+	else c_put_str(TERM_WHITE, "   ", ROW_CHARM, COL_CHARM);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_indicator_pfe(bool is_active) {
+	int x, y;
+
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_active) c_put_str(TERM_GREEN, "PfE", ROW_PFE, COL_PFE);
+	else c_put_str(TERM_WHITE, "   ", ROW_PFE, COL_PFE);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
