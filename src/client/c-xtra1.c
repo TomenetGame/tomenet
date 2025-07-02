@@ -1491,7 +1491,7 @@ void prt_indicator_shield(u32b flags) {
 			else if (flags & IND_SHIELD6) /*SHIELD_PLASMA*/ a = TERM_L_RED;
 			else /*IND_SHIELD7*/ a = TERM_VIOLET; //'mystic shield'
 		}
-		 c_put_str(a, "Shl", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+		 c_put_str(a, "Shld", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
 	}
 
 	/* restore cursor position */
