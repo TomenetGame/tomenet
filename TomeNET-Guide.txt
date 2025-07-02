@@ -6464,6 +6464,18 @@ There are four categories of subinventory containers:
   inscribed (see further down).
   Potion belts are sometimes sold by the Alchemy Shop in town.
 
+- Food Bag
+  This dry bag can store all kinds of food, such as rations, mushrooms and for
+  the sake of gameplay even pints of ale/wine :-p.
+  It has a relatively high capacity, allowing you to carry various special-
+  purpose mushrooms without taking up main inventory space.
+  (For client versions older than 4.9.2, you must use the '@' feature (call by
+  item name) in the prompt, or simply create a macro using the macro wizard,
+  which creates call-by-name macros.)
+  If you pick up food, it will be auto-stowed into this bag unless inscribed
+  (see further down).
+  This is by far the cheapest bag and often sold in the General Store in town.
+
 For client versions older than 4.9.2:
 From outside the subinventory you cannot access any items inside except if you
 use the '@' (call by item name) feature in the item prompt.
