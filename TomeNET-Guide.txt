@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 28. June 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 2. July 2025 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11666,7 +11666,7 @@ certain aspects of it:
 
   New year's eve:
     Running from 31st December to 1st January.
-    If seasons run at 2x speed, then also from 31st June till 1st July.
+    If seasons run at 2x speed, then also from 30st June till 1st July.
 
     Fireworks will be launched into the sky of the town of Bree.
     While it's night and fireworks are being launched, magic that lights up the
