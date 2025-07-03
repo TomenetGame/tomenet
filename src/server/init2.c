@@ -2696,6 +2696,7 @@ static byte getiddctype(byte depth, byte last) {
 		    //Hardcoded exclusions from d_info.txt indices:
 		    || (i == 0) //Wilderness
 		    || (i == DI_NETHER_REALM) //Nether Realm (paranoia, too deep anyhow!)
+		    || (i == DI_CLOUD_PLANES) //Cloud Planes (paranoia, too deep anyhow!)
 		    || (i == DI_DEATH_FATE) //Death Fate
 		    || (i == DI_VALINOR) //Valinor (more paranoia)
 		    || (i == DI_HALLS_OF_MANDOS) //Problem: Halls of Mandos doesn't allow any unique monsters(!)
@@ -2759,6 +2760,7 @@ static errr init_iddc() {
 				    //Hardcoded exclusions from d_info.txt indices:
 				    && (j != 0) //Wilderness
 				    && (j != DI_NETHER_REALM) //Nether Realm (paranoia, too deep anyhow!)
+				    && (j != DI_CLOUD_PLANES) //Cloud Planes (paranoia, too deep anyhow!)
 				    && (j != DI_DEATH_FATE) //Death Fate
 				    && (j != DI_VALINOR) //Valinor (more paranoia)
 				    && (j != DI_HALLS_OF_MANDOS)) //Problem: Halls of Mandos doesn't allow any unique monsters(!)
@@ -4094,6 +4096,7 @@ void init_firework_dungeon(void) {
 			    !strcmp(d_name + d_info[i].name, "The Training Tower") ||
 			    !strcmp(d_name + d_info[i].name, "Mordor") ||
 			    !strcmp(d_name + d_info[i].name, "Angband") ||
+			    !strcmp(d_name + d_info[i].name, "The Ash Mountains") ||
 			    !strcmp(d_name + d_info[i].name, "The Paths of the Dead"))
 				continue;
 
