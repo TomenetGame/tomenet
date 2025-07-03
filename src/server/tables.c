@@ -5372,7 +5372,7 @@ town_extra town_profile[6]= {
 		WILD_MOUNTAIN,
 		{
 			16,	/* Paths of the Dead */
-			0,
+			33,	/* The Ash Mountains */
 		},
 
 		40,

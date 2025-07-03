@@ -700,6 +700,40 @@ M:UNDEAD | DEMON | MULTIPLY | R_CHAR_j | R_CHAR_m
 R:100:4
 M:R_CHAR_Z
 
+# Alternative to Angband for pre-king deep leveling up to 50:
+# levels 59-95
+N:33:The Ash Mountains
+D:Ash:a foreboding mountain chain with high, scarred peaks.
+B:104
+#B:276
+W:59:95:28:0:35:200
+#dirt,grass,ice,ash,mud
+L:88:400:89:400:90:0:93:0:94:200
+L:100:25:175:700:0
+A:97:1000:101:0:0:0:0:0:0:0:97:97
+A:250:750:0:0:0
+O:5:50:10:25
+F:TOWER
+F:STREAMERS | WALL_STREAMERS
+F:CAVERN
+F:FILL_METHOD_2
+R:20:3
+M:GIANT
+R:20:3
+M:RES_COLD
+R:25:0
+M:CAN_FLY
+R:10:0
+M:CAN_CLIMB
+R:25:0
+
+#angband:
+#O:20:20:20:20
+#F:CAVERN
+#F:ADJUST_LEVEL_1_2 | ADJUST_LEVEL_1
+#F:FILL_METHOD_0 | STREAMERS | WALL_STREAMERS
+#R:100:0
+
 
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>
