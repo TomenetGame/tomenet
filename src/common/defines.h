@@ -4937,8 +4937,25 @@
 #define SV_PO_D10F_B	40
 #define SV_PO_D10F_BR	41
 
+#define SV_PO_FIREWORKS_LT1	42
+#define SV_PO_FIREWORKS_LT2	43
+#define SV_PO_FIREWORKS_LW1	44
+#define SV_PO_FIREWORKS_LW2	45
+#define SV_PO_FIREWORKS_LY1	46
+#define SV_PO_FIREWORKS_LY2	47
+#define SV_PO_FIREWORKS_LB1	48
+#define SV_PO_FIREWORKS_LB2	49
+#define SV_PO_FIREWORKS_ET1	50
+#define SV_PO_FIREWORKS_ET2	51
+#define SV_PO_FIREWORKS_EW1	52
+#define SV_PO_FIREWORKS_EW2	53
+#define SV_PO_FIREWORKS_EY1	54
+#define SV_PO_FIREWORKS_EY2	55
+#define SV_PO_FIREWORKS_EB1	56
+#define SV_PO_FIREWORKS_EB2	57
+
 /* k_idx for TV_PSEUDO_OBJ -- for graphical tiles the svals actually don't matter, they are just defined for good measure but have no use;
-   instead the k_idx values are used, especially client-side! */
+   instead the k_idx values are used. Note that this works only on client-side! (On server-side, k_idx are renumbered, not taken from k_info.txt!) */
 #define KIDX_PO_RAIN	822
 #define KIDX_PO_RAIN_E1	823
 #define KIDX_PO_RAIN_E2	824

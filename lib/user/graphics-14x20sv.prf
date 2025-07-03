@@ -1507,4 +1507,20 @@ K:826:/3604 # rain drop, strong west wind
 K:827:/3605 # snow flake
 K:828:/3606 # sand grain
 
-#todo: fireworks tiles
+##### Fireworks #####
+K:1060:/3607 # fireworks - launch (transparent, frame 1)
+K:1061:/3608 # fireworks - launch (transparent, frame 2)
+K:1062:/3609 # fireworks - launch (white, frame 1)
+K:1063:/3610 # fireworks - launch (white, frame 2)
+K:1064:/3611 # fireworks - launch (yellow, frame 1)
+K:1065:/3612 # fireworks - launch (yellow, frame 2)
+K:1066:/3613 # fireworks - launch (blue, frame 1)
+K:1067:/3614 # fireworks - launch (blue, frame 2)
+K:1068:/3615 # fireworks - explosion (transparent, frame 1)
+K:1069:/3616 # fireworks - explosion (transparent, frame 2)
+K:1070:/3617 # fireworks - explosion (white, frame 1)
+K:1071:/3618 # fireworks - explosion (white, frame 2)
+K:1072:/3619 # fireworks - explosion (yellow, frame 1)
+K:1073:/3620 # fireworks - explosion (yellow, frame 2)
+K:1074:/3621 # fireworks - explosion (blue, frame 1)
+K:1075:/3622 # fireworks - explosion (blue, frame 2)

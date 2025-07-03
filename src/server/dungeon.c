@@ -851,6 +851,7 @@ void erase_effects(int effect) {
 	e_ptr->cx = 0;
 	e_ptr->cy = 0;
 	e_ptr->rad = 0;
+	e_ptr->cflags = 0;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -1183,9 +1184,11 @@ static void process_effects(void) {
 
 				/* until half-time (or half-radius) the fireworks rise into the air */
 				if (e_ptr->rad < e_ptr->time) {
+					e_ptr->cflags = 1;
 					if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad)
 						apply_effect(k, &who, wpos, i, j, c_ptr);
 				} else { /* after that, they explode (w00t) */
+					e_ptr->cflags = 2;
 					/* explosion is faster than flying upwards */
 					//doesn't work-   e_ptr->interval = 2;
 #ifdef USE_SOUND_2010
