@@ -7177,10 +7177,12 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 					slot = inven_carry(Ind, &forge);
 					if (slot != -1 ) {
 						msg_format(Ind, "The Mathom House sends you a gift to support your exploration efforts!");
+						s_printf("TOWNFOUND_REWARD(1): %s gains '%s'.\n", p_ptr->name, o_name);
 						msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 					}
  #else /* Just drop it at our feet? */
 					drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+					s_printf("TOWNFOUND_REWARD(2): %s gains '%s'.\n", p_ptr->name, o_name);
 					msg_format(Ind, "You notice %s lying on the ground!", o_name);
  #endif
 #endif

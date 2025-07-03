@@ -5302,16 +5302,19 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 		if (slot != -1 ) {
 			//msg_format(Ind, "You notice %s lying on the ground!", o_name);
 			msg_format(Ind, "The Mathom House sends you a gift to support your exploration efforts!");
+			s_printf("DUNFOUND_REWARD(1): %s gains '%s'.\n", p_ptr->name, o_name);
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 		}
    #else /* Just drop it at our feet? */
 		drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		s_printf("DUNFOUND_REWARD(2): %s gains '%s'.\n", p_ptr->name, o_name);
 		msg_format(Ind, "You notice %s lying on the ground!", o_name);
    #endif
   #else /* Monetary reward */
 		reward = dam_roll(4000, 50);
    #ifndef DUNFOUND_REWARDS_MONEY_DROP /* Auto-pick it up? */
 		msg_format(Ind, "The Mathom House sends %d gold pieces to support your exploration efforts!", reward);
+		s_printf("DUNFOUND_REWARD(3): %s gains %d Au.\n", p_ptr->name, reward);
 		(void)gain_au(Ind, reward, FALSE, FALSE);
    #else
 		invcopy(&forge, lookup_kind(TV_GOLD, 1));
@@ -5320,6 +5323,7 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 		forge.sval = k_info[forge.k_idx].sval;
 		object_desc(Ind, o_name, &forge, TRUE, 3);
 		drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		s_printf("DUNFOUND_REWARD(4): %s gains '%s'.\n", p_ptr->name, o_name);
 		msg_format(Ind, "You notice %s lying on the ground!", o_name);
    #endif
   #endif
@@ -5357,10 +5361,12 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 	if (slot != -1 ) {
 		//msg_format(Ind, "You notice %s lying on the ground!", o_name);
 		msg_format(Ind, "The Mathom House sends you a gift to support your exploration efforts!");
+		s_printf("DUNFOUND_REWARD(5): %s gains '%s'.\n", p_ptr->name, o_name);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 	}
   #else /* Just drop it at our feet? */
 	drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	s_printf("DUNFOUND_REWARD(6): %s gains '%s'.\n", p_ptr->name, o_name);
 	msg_format(Ind, "You notice %s lying on the ground!", o_name);
   #endif
  #else /* Monetary reward */
@@ -5370,6 +5376,7 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 	reward = 34247 * (1 + 72 / (((dun_total_normal - dun_total_normal_known) * 9 + 1) / 10)); // scales from 137k (none of 27 found) to 2.5M (last two remaining of 27)
   #ifndef DUNFOUND_REWARDS_MONEY_DROP /* Auto-pick it up? */
 	msg_format(Ind, "The Mathom House sends %d gold pieces to support your exploration efforts!", reward);
+	s_printf("DUNFOUND_REWARD(7): %s gains %d Au.\n", Players[Ind]->name, reward);
 	(void)gain_au(Ind, reward, FALSE, FALSE);
   #else
 	invcopy(&forge, lookup_kind(TV_GOLD, 1));
@@ -5378,6 +5385,7 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 	forge.sval = k_info[forge.k_idx].sval;
 	object_desc(Ind, o_name, &forge, TRUE, 3);
 	drop_near(TRUE, 0, &forge, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	s_printf("DUNFOUND_REWARD(8): %s gains '%s'.\n", p_ptr->name, o_name);
 	msg_format(Ind, "You notice %s lying on the ground!", o_name);
   #endif
  #endif
