@@ -13105,7 +13105,7 @@ msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
 			if (!cave_contact(zcave, y9, x9)) broke_on_terrain1 = TRUE;
 			/* Hack: Firewalls are actually a lot of single-grid effects for each affected grid! */
 			if (project_time_effect & EFF_WALL) {
-				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect | ((flg & PROJECT_DUMY) ? EFF_DUMMY : 0x0));
 				if (effect != -1) zcave[y][x].effect = effect;
 			}
 #ifdef DEBUG_PROJECT_GRIDS
@@ -13261,7 +13261,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 	/* Novas */
 	if ((flg & PROJECT_STAR) && (project_time_effect & EFF_WALL)) {
 		/* Epicenter */
-		effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
+		effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect | ((flg & PROJECT_DUMY) ? EFF_DUMMY : 0x0));
 		if (effect != -1) zcave[y][x].effect = effect;
 
 		/* Starburst */
@@ -13282,7 +13282,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 				if (broke_on_terrain1) break; // allow the wall to be hit
 				if (!cave_contact(zcave, y, x)) broke_on_terrain1 = TRUE; // no DLS
 				if (!los(wpos, y1, x1, y, x)) break; // anti-exploit; only hit grids with line of effect to caster - Kurzel
-				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect | ((flg & PROJECT_DUMY) ? EFF_DUMMY : 0x0));
 				if (effect != -1) zcave[y][x].effect = effect;
 				everyone_lite_spot(wpos, y, x);
 			}
@@ -13577,13 +13577,13 @@ msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
 			    (project_time_effect & EFF_FIREWORKS3))
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
 				    (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
-				    project_time_effect);
+				    project_time_effect | ((flg & PROJECT_DUMY) ? EFF_DUMMY : 0x0));
 			else if (project_time_effect & EFF_METEOR)
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-				    y2, x2, 1, project_time_effect);
+				    y2, x2, 1, project_time_effect | ((flg & PROJECT_DUMY) ? EFF_DUMMY : 0x0));
 			else
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-				    y2, x2, 0, project_time_effect);
+				    y2, x2, 0, project_time_effect | ((flg & PROJECT_DUMY) ? EFF_DUMMY : 0x0));
 #ifdef ARCADE_SERVER
 #if 0
 			/* Note: Should this be here or at the EFF_WALL (Firewall) handling code further above, actually? - C. Blue */
@@ -13597,7 +13597,7 @@ msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
 #endif
 		} else {
 			effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-			    y2, x2, rad, project_time_effect);
+			    y2, x2, rad, project_time_effect | ((flg & PROJECT_DUMY) ? EFF_DUMMY : 0x0));
 		}
 		project_interval = 0;
 		project_time = 0;

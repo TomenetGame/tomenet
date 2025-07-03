@@ -3734,8 +3734,9 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			if (a != 127) {
 				(*ap) = a;
  #ifdef GRAPHICS_BG_MASK
-				/* Update the background terrain colour */
-				*ap_back = a;
+				/* Update the background terrain colour, but only if it is a damaging effect!
+				   Reason: Vanity effects are usually meant to be foreground 'objects', eg rain drops, snow flakes, fireworks. */
+				if (!(effects[c_ptr->effect].flags & EFF_DUMMY)) *ap_back = a;
  #endif
 			}
 #endif
@@ -4087,7 +4088,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	/* Special 'dummy' effects that are purely for adding unusual visuals */
 	if (!c_ptr->effect) return;
 
-	/* display blue raindrops */
+	/* display blue raindrops -- deprecated as weather was moved to clientside */
 	if ((effects[c_ptr->effect].flags & EFF_RAINING)) {
 		(*ap) = TERM_BLUE;
 		if (wind_gust > 0) (*cp) = '/';
@@ -4095,11 +4096,13 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 		else (*cp) = '|';
 	}
 	/* for WINTER_SEASON */
-	/* display white snowflakes */
+	/* display white snowflakes -- deprecated as weather was moved to clientside */
 	if ((effects[c_ptr->effect].flags & EFF_SNOWING)) {
 		(*ap) = TERM_WHITE;
 		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
 	}
+	//Note: No sandgrains, as weather was already moved to clientside before sandstorms were added
+
 	/* for NEW_YEARS_EVE */
 	/* display fireworks */
 	if ((effects[c_ptr->effect].flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3))) {
@@ -4117,7 +4120,41 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 		case GF_FW_SHDM: (*ap) = TERM_SHIELDM; break;
 		case GF_FW_MULT: (*ap) = TERM_MULTI; break;
 		}
-		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
+		if (effects[c_ptr->effect].cflags == 1) {
+			//launching
+			if (p_ptr->ascii_items) (*cp) = '|';
+			else switch ((turn / (cfg.fps / 5)) % 4) {
+			case 0:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LT1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LT2)];
+				break;
+			case 1:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LW1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LW2)];
+				break;
+			case 2:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LY1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LY2)];
+				break;
+			case 3:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LB1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_LB2)];
+				break;
+			}
+		} else {
+			//exploding
+			if (p_ptr->ascii_items) (*cp) = '*';
+			else switch ((turn / (cfg.fps / 5)) % 4) {
+			case 0:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_ET1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_ET2)];
+				break;
+			case 1:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_EW1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_EW2)];
+				break;
+			case 2:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_EY1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_EY2)];
+				break;
+			case 3:
+				(*cp) = p_ptr->k_char[((turn / (cfg.fps / 10)) % 2) ? lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_EB1) : lookup_kind(TV_PSEUDO_OBJ, SV_PO_FIREWORKS_EB2)];
+				break;
+			}
+		}
 	}
 	/* for Nether Realm finishing */
 	if ((effects[c_ptr->effect].flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3))) {
@@ -9758,6 +9795,7 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	effects[i].whot = 0;
 	effects[i].cx = cx;
 	effects[i].cy = cy;
+	effects[i].cflags = 0;
 
 	if (who_id) {
 		effects[i].caster_x = p_ptr->px;
