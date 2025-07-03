@@ -413,6 +413,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 	/* Oops conflict; took 'never duplicate' principal */
 	else if (prefix(messagelc, "/cough")) {
 	    /// count || prefix(messagelc, "/cou"))
+		/* Paralyzed/k.o.? */
+		if (p_ptr->energy <= 0) {
+			msg_print(Ind, "\377yYou cannot cough while you cannot move.");
+			return;
+		}
+
 		break_cloaking(Ind, 4);
 		msg_format_near(Ind, "\374\377%c%^s coughs noisily.", COLOUR_CHAT, p_ptr->name);
 		msg_format(Ind, "\374\377%cYou cough noisily..", COLOUR_CHAT);
@@ -420,6 +426,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		return;
 	}
 	else if (prefix(messagelc, "/shout") || (prefix(messagelc, "/sho") && !prefix(messagelc, "/show")) || prefix(messagelc, "/yell")) {
+		/* Paralyzed/k.o.? */
+		if (p_ptr->energy <= 0) {
+			msg_print(Ind, "\377yYou cannot shout while you cannot move.");
+			return;
+		}
+
 		break_cloaking(Ind, 4);
 		if (colon++) {
 			colon_u++;
@@ -443,6 +455,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		return;
 	}
 	else if (prefix(messagelc, "/scream") || (prefix(messagelc, "/scr") && !prefix(messagelc, "/screen"))) {
+		/* Paralyzed/k.o.? */
+		if (p_ptr->energy <= 0) {
+			msg_print(Ind, "\377yYou cannot scream while you cannot move.");
+			return;
+		}
+
 		break_cloaking(Ind, 6);
 		if (colon++) {
 			colon_u++;
@@ -622,8 +640,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int s = 0;
 #endif
 
-			//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
-			if (p_ptr->energy < 0) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot destroy items while you cannot move.");
+				return;
+			}
+
 			disturb(Ind, 1, 0);
 
 			/* only tagged ones? */
@@ -1183,6 +1205,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot cast while you cannot move.");
+				return;
+			}
+
 			if (*token[1] >= '1' && *token[1] <= '9') {
 				object_type *o_ptr;
 				char c[4] = "@";
@@ -1267,6 +1295,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #if 0
 		/* cast a spell by name, instead of book/position */
 		else if (prefix(messagelc, "/cast")) {
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot cast while you cannot move.");
+				return;
+			}
+
 			for (i = 0; i < 100; i++) {
 				if (!strncmp(p_ptr->spell_name[i], message3, strlen(message3))) {
 					cast_school_spell(Ind, p_ptr->spell_book[i], p_ptr->spell_pos[i], dir, item, aux);
@@ -1280,6 +1314,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if ((prefix(messagelc, "/bed")) || prefix(messagelc, "/naked")) {
 			byte start = INVEN_WIELD, end = INVEN_TOTAL;
 			object_type *o_ptr;
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot undress while you cannot move.");
+				return;
+			}
 
 			if (!tk) {
 				start = INVEN_BODY;
@@ -1320,8 +1360,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int ws, ws_org;
 			s16b slot_weapon = -1, slot_ring = -1;
 
-			/* Paralyzed? */
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot dress while you cannot move.");
+				return;
+			}
 
 			disturb(Ind, 1, 0);
 
@@ -1520,19 +1563,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				bool spell_rec_found = FALSE, spell_rel_found = FALSE;
 				object_type *o_ptr;
 
-				/* Paralyzed or just not enough energy left to perform a move? */
-
-				/* this also prevents recalling while resting, too harsh maybe */
-				//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
-				if (p_ptr->paralyzed) return;
 
 				/* Don't drain energy far below zero - mikaelh */
-				if (p_ptr->energy < 0) return;
-/* All of this isn't perfect. In theory, the command to use a specific rec-item would need to be added to the client's command queue I guess. oO */
-#if 0 /* can't use /rec while resting with this enabled, oops. */
-				/* hm, how about this? - C. Blue */
-				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
-#endif
+				/* Paralyzed/k.o.? */
+				if (p_ptr->energy <= 0) {
+					msg_print(Ind, "\377yYou cannot initiate recall while you cannot move.");
+					return;
+				}
+				/* this also prevents recalling while resting, too harsh maybe */
+				//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
+				/* All of this isn't perfect. In theory, the command to use a specific rec-item would need to be added to the client's command queue I guess. oO */
+
 
 				/* Test for 'Recall' istar spell and for 'Relocation' astral spell */
 #if 0 /* hm, which version might be easier/better?.. */
@@ -2166,15 +2208,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/sip")) {
-			/* Paralyzed? */
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot drink from a fountain while you cannot move.");
+				return;
+			}
 
 			do_cmd_drink_fountain(Ind);
 			return;
 		}
 		else if (prefix(messagelc, "/fill")) {
-			/* Paralyzed? */
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot fill bottles while you cannot move.");
+				return;
+			}
 
 			do_cmd_fill_bottle(Ind, -1);
 			return;
@@ -2190,12 +2238,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else return;
 			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
 
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot empty bottles while you cannot move.");
+				return;
+			}
+
 			do_cmd_empty_potion(Ind, k);
 			return;
 		}
 		else if (prefix(messagelc, "/rip") || prefix(messagelc, "/tear")) { //tear cloth into bandages
 			if (!tk) {
 				msg_print(Ind, "\377oUsage: /rip <inventory slot letter|+>");
+				return;
+			}
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot tear cloth while you cannot move.");
 				return;
 			}
 
@@ -2223,6 +2283,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 			}
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot roll dice while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			if (!strcmp(message, "/d") || !strcmp(message, "/r")) k = 2;
 			else if (!strcmp(message, "/die")) {
@@ -2320,6 +2387,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot flip coins while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			coin = (rand_int(2) == 0);
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2355,6 +2429,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377rYou cannot have anymore pets!");
 				return;
 			}
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot summon a pet while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			if (pet_creation(Ind))
 				msg_print(Ind, "\377USummoning a pet.");
 			else
@@ -2364,6 +2446,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 		else if (prefix(messagelc, "/unpet")) {
 #ifdef RPG_SERVER
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot dismiss your pet while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			if (strcmp(Players[Ind]->accountname, "The_sandman") || !p_ptr->privileged) return;
 			msg_print(Ind, "\377RYou abandon your pet! You cannot have anymore pets!");
 //			if (Players[Ind]->wpos.wz != 0) {
@@ -2407,6 +2496,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 			}
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot shuffle cards while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			if (!tk) {
 				msg_format(Ind, "\377%cYou shuffle a deck of 52 cards", COLOUR_GAMBLE);
@@ -2509,6 +2605,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot hand your cards over while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			msg_format(Ind, "\377%cYou hand your stack of cards over to %s.", COLOUR_GAMBLE, q_ptr->name);
 			msg_format_near(Ind, "\377%c%s hands his stack of cards over to %s.", COLOUR_GAMBLE, p_ptr->name, q_ptr->name);
 #ifdef USE_SOUND_2010
@@ -2533,7 +2636,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int value, flower;
 			char* temp;
 
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot play cards while you cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			temp = (char*)malloc(10*sizeof(char));
@@ -2594,7 +2701,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot play cards while you cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			if (tk) {
@@ -3673,14 +3784,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			recall_player(Ind, "");
 			return;
 		}
-		else if (prefix(messagelc, "/remdun")) { /* forcefully removes a dungeon or tower, even if someone is inside (gets recalled), even if there is no staircase. */
-			if (!tk) {
-				msg_print(Ind, "Usage: /remdun (d/t)");
-				return;
-			}
-			msg_format(Ind, "Dungeon removal %s.", rem_dungeon(&p_ptr->wpos, token[1][0] != 'd') ? "succeeded" : "failed");
-			return;
-		}
 #ifdef AUCTION_SYSTEM
 		else if (prefix(messagelc, "/auc") || prefix(messagelc, "/auction")) {
 			if (p_ptr->inval) {
@@ -3874,6 +3977,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Usage: /light a...w|+");
 				return;
 			}
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot refill your light while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			do_cmd_refill(Ind, k);
 			return;
 		}
@@ -4038,6 +4149,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int x, y;
 			cave_type **zcave = getcave(&p_ptr->wpos);
 
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot enter a store while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			/* Enter a player store next to us */
 			for (x = p_ptr->px - 1; x <= p_ptr->px + 1; x++)
 			for (y = p_ptr->py - 1; y <= p_ptr->py + 1; y++) {
@@ -4057,6 +4175,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int x, y;
 			bool found = FALSE;
 			cave_type **zcave = getcave(&p_ptr->wpos);
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot paint your house while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* need to specify one parm: the potion used for colouring */
 			if (tk != 1) {
@@ -4104,6 +4229,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot knock on a door while you cannot move.");
+				return;
+			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			/* Check for a house door next to us, and for a window as fallback */
 			for (x = p_ptr->px - 1; x <= p_ptr->px + 1; x++) {
 				for (y = p_ptr->py - 1; y <= p_ptr->py + 1; y++) {
@@ -4141,7 +4273,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Usage: /slap <player name>");
 				return;
 			}
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
@@ -4188,7 +4324,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Usage: /pat <player name>");
 				return;
 			}
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* hack: real Panda */
@@ -4242,7 +4382,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Usage: /hug <player name>");
 				return;
 			}
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
@@ -4277,7 +4421,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Usage: /poke <player name>");
 				return;
 			}
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
@@ -4306,7 +4454,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/applaud")) {
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			if (tk) {
@@ -4333,7 +4485,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/wave")) {
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			if (tk) {
@@ -4380,7 +4536,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "You don't have any money with you.");
 				return;
 			}
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot tip while you cannot move.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
@@ -5989,6 +6150,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot split items while you cannot move.");
+				return;
+			}
+
 			if (message3[0] == '+') {
 				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
 				else return;
@@ -6021,8 +6188,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* Paralyzed? */
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot stow items while you cannot move.");
+				return;
+			}
 
 			if (tk) {
 				if (message3[0] == '+') {
@@ -6075,8 +6245,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			/* Paralyzed? */
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot stow items while you cannot move.");
+				return;
+			}
 
 			if (message3[0] == '+') {
 				if (p_ptr->item_newest >= 0) k = p_ptr->item_newest;
@@ -6122,6 +6295,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Example:  /mix accD*  -> satchel slots: a, c twice, normal inven: d, activate.");
 				msg_format(Ind, "Last but not least you can specify repeat if you start on \"x<number of repeats>\".");
 				msg_format(Ind, "example:  /mix x9 bccd*   -> repeat 8 times. The number must range from 0 to 9.");
+				return;
+			}
+
+			/* Paralyzed/k.o.? */
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot mix chemicals while you cannot move.");
 				return;
 			}
 
@@ -9033,6 +9212,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef DUNGEON_VISIT_BONUS
 				reindex_dungeons();
 #endif
+				return;
+			}
+			else if (prefix(messagelc, "/remdun")) { /* forcefully removes a dungeon or tower, even if someone is inside (gets recalled), even if there is no staircase. */
+				if (!tk) {
+					msg_print(Ind, "Usage: /remdun (d/t)");
+					return;
+				}
+				msg_format(Ind, "Dungeon removal %s.", rem_dungeon(&p_ptr->wpos, token[1][0] != 'd') ? "succeeded" : "failed");
 				return;
 			}
 			else if (prefix(messagelc, "/debug-pos")) {
