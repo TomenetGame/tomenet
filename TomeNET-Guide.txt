@@ -9716,6 +9716,7 @@ Bree        |   0 ft/  0|The Training Tower(*)| +50..+100/ 1..2  |    100 ft
             |           |Barrow-Downs         |  50..1750/ 1..35 |   1750 ft
 Gondolin    |1000 ft/ 20|Mordor               |1700..3300/34..66 |   1650 ft
 Minas Anor  |2000 ft/ 40|The Paths of the Dead|2000..3500/40..70 |   1550 ft
+            |           |The Ash Mountains    |2950..4750/59..95 |   1850 ft
 Lothlorien  |3000 ft/ 60|Angband              |3350..6350/67..127|   3050 ft
 Khazad-dum  |4000 ft/ 80|Angband              |3350..6350/67..127|   3050 ft
 
@@ -9924,12 +9925,13 @@ together with any other floor feelings): "You feel a commanding presence.."
 Here is a list of all dungeon bosses and the artifacts they are guarding:
 (Some names have been shortened to fit.)
 
-Dungeon, sorted by depth      |         Boss         | Artifact (or extra loot)
-------------------------------+----------------------+-------------------------
+Dungeon, sorted by depth      | Boss                 | Artifact (or extra loot)
+------Town dungeons-----------+----------------------+-------------------------
 The Training Tower    (A)     | -                    | -
 Barrow-Downs                  | Wight-King           | Stone of Lore
 Mordor                        | -                    | -
 The Paths of the Dead         | Feagwath             | Doomcaller
+The Ash Mountains             | -                    | -
 Angband                       | -  (B)               | -
 ------Non-town dungeons-------+----------------------+-------------------------
 Death Fate                    | -                    | -
