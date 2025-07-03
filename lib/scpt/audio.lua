@@ -621,6 +621,7 @@ audio_bgm = {
     "Nazgul_Witchking_slain",
 
     "event_Halloween_done",--248
+    "TheAshMountains",--249
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

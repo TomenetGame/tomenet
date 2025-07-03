@@ -2265,6 +2265,7 @@ void handle_music(int Ind) {
 				else Send_music(Ind, 56, 13, 13); /* the actual specific music for this dungeon */
 			}
 			return;
+		case 33: Send_music(Ind, 249, 11, 11); return; //The Ash Mountains
 		}
 	}
 
