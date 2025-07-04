@@ -4615,7 +4615,6 @@ static bool recharge_antiriad(int Ind, int item, int num) {
 /*
  * Hook for "get_item()".  Determine if something is rechargable.
  */
-//static bool item_tester_hook_recharge(object_type *o_ptr)
 bool item_tester_hook_recharge(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -4665,13 +4664,7 @@ bool recharge(int Ind, int num, int item) {
 				if (!o_ptr->tval) break;
 				if (i == item) continue;
 
-#if 1 /* Optional: Perform a 'item_tester_hook_device()-like check: */
-				if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_STAFF && o_ptr->tval != TV_WAND
- #ifdef MSTAFF_MDEV_COMBO
-				    && !(o_ptr->tval == TV_MSTAFF && o_ptr->xtra4) //hack: marker as 'rechargable' for ITH_RECHARGE
- #endif
-				    ) continue;
-#endif
+				if (!item_tester_hook_recharge(o_ptr)) continue;
 
 				object_desc(Ind, o_name, &p_ptr->inventory[i], TRUE, 3);
 				if (!strstr(o_name, c)) continue;
@@ -11032,7 +11025,30 @@ void arm_charge(int Ind, int item, int dir) {
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
 }
-/* A charge (planted into the floor) explodes */
+/* Detonate a charge that is referenced as just an *o_ptr, with supplemented (arbitrary) wpos and x/y coords.
+   Uses a temp clone object, so it does not delete the real charge object in the process.
+   NOTE:
+   Usually charges that are 'embed'ded are from arming them, resulting in CS_MON_TRAP.
+   There is one exception though: If a charge is used as device trap 'ammo', it is embedded too,
+   but it isn't a normal, armed charge. It has the same effect though. */
+void detonate_charge_obj(object_type *o_ptr, struct worldpos *wpos, int x, int y) {
+	int o_idx;
+	object_type *q_ptr;
+
+	o_idx = o_pop();
+	if (!o_idx) return; //failure, no more free objects
+
+	q_ptr = &o_list[o_idx];
+	*q_ptr = *o_ptr;
+	q_ptr->wpos = *wpos;
+	q_ptr->ix = x;
+	q_ptr->iy = y;
+
+	q_ptr->temp |= 0x10; /* Mark as 'if this item is embedded, it is a trapkit load, not a planted stand-alone charge'. */
+	detonate_charge(o_idx);
+	q_ptr->temp &= ~0x10; /* Clear temp marker again. */
+}
+/* A charge (planted into the floor or thrown) explodes */
 void detonate_charge(int o_idx) {
 	object_type *oo_ptr = &o_list[o_idx];
 	object_type forge = (*oo_ptr), *o_ptr = &forge; /* create local working copy */
@@ -11046,6 +11062,7 @@ void detonate_charge(int o_idx) {
 	int x2, y2, dir;
 	/* Throwing a charge doesn't properly plant it - it's effectiveness is reduced: */
 	bool was_thrown = !o_ptr->embed;
+	bool trapkit = o_ptr->embed && (o_ptr->temp & 0x10);
 
 	bool rand_old = Rand_quick;
 	u32b old_seed = Rand_value;
@@ -11055,7 +11072,8 @@ void detonate_charge(int o_idx) {
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 	/* without this, when disarming it we'd generate a (nothing) */
-	if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+	if (o_ptr->embed && !trapkit && /* safety: in case this charge was thrown but happens to explode exactly while it passes over a CS_MON_TRAP grid oO' Or if it was a device trap load. */
+	    (cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
 		i = cs_ptr->sc.montrap.feat;
 		cs_erase(c_ptr, cs_ptr);
 
@@ -11068,8 +11086,8 @@ void detonate_charge(int o_idx) {
 	}
 	/* Get rid of it so we don't get 'the charge was destroyed'
 	   message from our own fire/blast effets on the o_ptr, looks silyl.
-	   This is the reason we needed to create a working copy in 'forge'.  */
-	delete_object_idx(o_idx, TRUE, FALSE);
+	   This is the reason we needed to create a working copy in 'forge'. */
+	delete_object_idx(o_idx, TRUE, FALSE); /* (This call deletes oo_ptr which is the actual object, leaving us o_ptr as local temp copy to work with) */
 
 	/* Find owner of the charge */
 	for (i = 1; i <= NumPlayers; i++) {

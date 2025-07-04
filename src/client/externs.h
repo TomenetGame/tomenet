@@ -217,6 +217,7 @@ extern byte item_tester_tval;
 extern s16b item_tester_max_weight;
 extern bool (*item_tester_hook)(object_type *o_ptr);
 extern bool item_tester_hook_device(object_type *o_ptr);
+extern bool item_tester_hook_device_charge(object_type *o_ptr); //ENABLE_DEMOLITIONIST
 
 extern bool item_tester_hook_armour(object_type *o_ptr);
 extern bool item_tester_hook_nonart_armour(object_type *o_ptr);

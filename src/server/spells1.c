@@ -3331,10 +3331,12 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 #ifdef ENABLE_DEMOLITIONIST
 					case TV_CHARGE:
 						bypass_invuln = TRUE;
-						/* Blow up? Note that detonate_charge() won't work cause it requires a cs_ptr, ie armed charge in the ground.
+						/* Blow up?
 						   However, this seems like overkill. We can just assume that blast charges have a protective outer shell and don't
 						   just blow up randomly, except when explicitely lit by a fuse.
 						   So for now: -- Blast charges are safe! Nothing to see here! --
+
+						   detonate_charge_obj(o_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py);
 						*/
 						bypass_invuln = FALSE;
 						break;
@@ -6068,8 +6070,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_DEMOLITIONIST
 				/* Detonate blast charges */
-				/* --todo first: add a type of detonate_charge() that works on non-armed charges! This function assumes a cs_ptr instead!
-				if (o_ptr->tval == TV_CHARGE && strstr(note_kill, " burn")) detonate_charge(o_ptr); */
+				if (o_ptr->tval == TV_CHARGE && strstr(note_kill, " burn")) detonate_charge_obj(o_ptr, wpos, x, y);
 #endif
 
 				/* Delete the object */

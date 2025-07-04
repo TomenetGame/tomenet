@@ -690,16 +690,29 @@ static int do_cmd_activate_skill_aux() {
 }
 
 /*
- * Hook to determine if an object is a device
+ * Hook to determine if an object is a device, for the purpose of recharging
  */
 bool item_tester_hook_device(object_type *o_ptr) {
-	if ((o_ptr->tval == TV_ROD) ||
-	    (o_ptr->tval == TV_STAFF) ||
-	    (o_ptr->tval == TV_WAND)
+	if (o_ptr->tval == TV_ROD ||
+	    o_ptr->tval == TV_STAFF ||
+	    o_ptr->tval == TV_WAND
 #ifdef MSTAFF_MDEV_COMBO
 	    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra4) //hack: marker as 'rechargable' for ITH_RECHARGE
 #endif
-	    ) return(TRUE);
+	    )
+		return(TRUE);
+
+	/* Assume not */
+	return(FALSE);
+}
+/* For device trap kits that also take demo charges (experimental) -- ENABLE_DEMOLITIONIST */
+bool item_tester_hook_device_charge(object_type *o_ptr) {
+	if (o_ptr->tval == TV_ROD ||
+	    o_ptr->tval == TV_STAFF ||
+	    o_ptr->tval == TV_WAND ||
+	    o_ptr->tval == TV_CHARGE)
+	    //Note: No MSTAFF_MDEV_COMBO allowed here, we cannot put mstaves into traps... */
+		return(TRUE);
 
 	/* Assume not */
 	return(FALSE);
@@ -709,17 +722,19 @@ bool item_tester_hook_device(object_type *o_ptr) {
  * Hook to determine if an object is a potion
  */
 static bool item_tester_hook_potion(object_type *o_ptr) {
-	if ((o_ptr->tval == TV_POTION) ||
-	    (o_ptr->tval == TV_POTION2) ||
-	    (o_ptr->tval == TV_FLASK)) return(TRUE);
+	if (o_ptr->tval == TV_POTION ||
+	    o_ptr->tval == TV_POTION2 ||
+	    o_ptr->tval == TV_FLASK)
+		return(TRUE);
 
 	/* Assume not */
 	return(FALSE);
 }
 
 static bool item_tester_hook_scroll_rune(object_type *o_ptr) {
-	if ((o_ptr->tval == TV_SCROLL) ||
-	    (o_ptr->tval == TV_RUNE)) return(TRUE);
+	if (o_ptr->tval == TV_SCROLL ||
+	    o_ptr->tval == TV_RUNE)
+		return(TRUE);
 
 	/* Assume not */
 	return(FALSE);
@@ -864,7 +879,7 @@ void do_trap(int item_kit) {
 		item_tester_hook = item_tester_hook_scroll_rune;
 		break;
 	case SV_TRAPKIT_DEVICE:
-		item_tester_hook = item_tester_hook_device;
+		item_tester_hook = item_tester_hook_device_charge; //ENABLE_DEMOLITIONIST
 		break;
 	default:
 		c_msg_print("Unknown trapping kit type!");

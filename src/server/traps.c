@@ -3907,9 +3907,14 @@ void wiz_place_trap(int Ind, int trap) {
  * Here begin monster traps code
  */
 
-/* Hook to determine if an object is a device */
-static bool item_tester_hook_device(object_type *o_ptr) {
-	if (is_magic_device(o_ptr->tval)) return(TRUE);
+/* For device trap kits, that can also take a demo charge (experimental)! */
+static bool item_tester_hook_device_charge(object_type *o_ptr) {
+	//Note: No MSTAFF_MDEV_COMBO allowed here, we cannot put mstaves into traps... */
+	if (is_magic_device(o_ptr->tval)
+#ifdef ENABLE_DEMOLITIONIST
+	    || o_ptr->tval == TV_CHARGE)
+#endif
+		return(TRUE);
 	/* Assume not */
 	return(FALSE);
 }
@@ -4061,27 +4066,27 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 
 	/* Trap kits need a second object */
 	switch (o_ptr->sval) {
-		case SV_TRAPKIT_BOW:
-			if (j_ptr->tval != TV_ARROW) return;
-			break;
-		case SV_TRAPKIT_XBOW:
-			if (j_ptr->tval != TV_BOLT) return;
-			break;
-		case SV_TRAPKIT_SLING:
-			if (j_ptr->tval != TV_SHOT) return;
-			break;
-		case SV_TRAPKIT_POTION:
-			if (!item_tester_hook_potion(j_ptr)) return;
-			break;
-		case SV_TRAPKIT_SCROLL_RUNE:
-			if (!item_tester_hook_scroll_rune(j_ptr)) return;
-			break;
-		case SV_TRAPKIT_DEVICE:
-			if (!item_tester_hook_device(j_ptr)) return;
-			break;
-		default:
-			msg_print(Ind, "Unknown trapping kit type!");
-			break;
+	case SV_TRAPKIT_BOW:
+		if (j_ptr->tval != TV_ARROW) return;
+		break;
+	case SV_TRAPKIT_XBOW:
+		if (j_ptr->tval != TV_BOLT) return;
+		break;
+	case SV_TRAPKIT_SLING:
+		if (j_ptr->tval != TV_SHOT) return;
+		break;
+	case SV_TRAPKIT_POTION:
+		if (!item_tester_hook_potion(j_ptr)) return;
+		break;
+	case SV_TRAPKIT_SCROLL_RUNE:
+		if (!item_tester_hook_scroll_rune(j_ptr)) return;
+		break;
+	case SV_TRAPKIT_DEVICE:
+		if (!item_tester_hook_device_charge(j_ptr)) return; //ENABLE_DEMOLITIONIST
+		break;
+	default:
+		msg_print(Ind, "Unknown trapping kit type!");
+		break;
 	}
 
 	/* Hack -- yet another anti-cheeze(yaac) */
@@ -4776,6 +4781,29 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	(void)project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
 	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
+
+#ifdef ENABLE_DEMOLITIONIST
+/*
+ * Experimental: Monster hitting a device trap that was loaded with a demo charge - C. Blue
+ *
+ * Return TRUE if the monster died
+ */
+static bool mon_hit_trap_aux_charge(int who, int m_idx, object_type *o_ptr) {
+	monster_type *m_ptr = &m_list[m_idx];
+	int y = m_ptr->fy;
+	int x = m_ptr->fx;
+	cave_type **zcave;
+
+	zcave = getcave(&m_ptr->wpos);
+
+ #if 0 /* WiP: First need to implement 'ammo reduction' aka load deletion, so the charge is actually erased on detonation, or this would allow for infinite usage ^^ */
+	/* Demo charges are not affected damage-wise by trapping skill, they are their own compact+finished unit after all. */
+	detonate_charge_obj(o_ptr, &m_ptr->wpos, m_ptr->fx, m_ptr->fy);
+ #endif
+
+	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+}
+#endif
 
 /*
  * Monster hitting a scroll trap -MWK-
@@ -6002,7 +6030,7 @@ bool mon_hit_trap(int m_idx) {
 #else
 				if (load_o_ptr->bpval == load_o_ptr->number) shots = 0;
 #endif
-			} else {
+			} else if (load_o_ptr->tval != TV_CHARGE) { /* wands and staves: use multiple charges aka attacks; demo charges can only ever stay at 1 shot */
 				if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
 				if (shots <= 0) shots = 1;
 				if (shots > load_o_ptr->pval) shots = load_o_ptr->pval;
@@ -6019,9 +6047,21 @@ bool mon_hit_trap(int m_idx) {
 				case TV_STAFF:
 					dead = mon_hit_trap_aux_staff(who, m_idx, load_o_ptr);
 					break;
+#ifdef ENABLE_DEMOLITIONIST
+				case TV_CHARGE:
+					dead = mon_hit_trap_aux_charge(who, m_idx, load_o_ptr);
+					break;
+#endif
 				}
+
 				/* Decrease charges */
-				if (load_o_ptr->tval != TV_ROD) load_o_ptr->pval--;
+#ifdef ENABLE_DEMOLITIONIST
+				if (load_o_ptr->tval == TV_CHARGE) {
+					/* demo charges can only ever detonate once */
+					remove = TRUE;
+				} else
+#endif
+				if (load_o_ptr->tval != TV_ROD) load_o_ptr->pval--; /* wands and staves lose a charge on each attack */
 			}
 			break;
 

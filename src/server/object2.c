@@ -780,7 +780,7 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 		/* Skip objects not on this depth */
 		if (!(inarea(wpos, &o_ptr->wpos))) continue;
 
-		if (!in_bounds_array(o_ptr->iy, o_ptr->ix)) continue; /* <- Probably can go now, was needed for old monster trap hack of 255 - y coordinate */
+		if (!in_bounds_array(o_ptr->iy, o_ptr->ix)) continue; /* <- Probably can go now, was needed for old monster trap hack of 255 - y coordinate, which has been replaced by o_ptr->embed now */
 
 		if (o_ptr->embed == 1) continue; /* Skip items inside monster traps */
 

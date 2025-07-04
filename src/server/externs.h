@@ -1948,6 +1948,7 @@ extern void arm_charge(int Ind, int item, int dir);
 extern bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown);
 extern void arm_charge_dir_and_fuse(object_type *o_ptr, int dir);
 extern void detonate_charge(int o_idx);
+extern void detonate_charge_obj(object_type *o_ptr, struct worldpos *wpos, int x, int y);
 #endif
 extern void wrap_gift(int Ind, int item);
 extern void unwrap_gift(int Ind, int item);
