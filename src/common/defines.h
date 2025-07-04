@@ -6234,55 +6234,55 @@
 
 
 /* Item-generation restriction flags */
-#define RESF_NONE		0x00000000U
+#define RESF_NONE		0x00000000ULL
 
-#define RESF_WINNER		0x00000001U	/* allow TR5_WINNERS_ONLY items */
-#define RESF_NOTRUEART		0x00000002U	/* prevent true artifacts */
-#define RESF_NORANDART		0x00000004U	/* prevent random artifacts */
-#define RESF_NODOUBLEEGO	0x00000008U	/* prevent double ego items */
+#define RESF_WINNER		0x00000001ULL	/* allow TR5_WINNERS_ONLY items */
+#define RESF_NOTRUEART		0x00000002ULL	/* prevent true artifacts */
+#define RESF_NORANDART		0x00000004ULL	/* prevent random artifacts */
+#define RESF_NODOUBLEEGO	0x00000008ULL	/* prevent double ego items */
 
-#define RESF_NOHIDSM		0x00000010U	/* prevent generation of high dragon scale mails: Only base elements + poison, metallics and pseudo. */
-#define RESF_LOWSPEED		0x00000020U	/* not more than +4 speed */
-#define RESF_NOHISPEED		0x00000040U	/* not more than +6 speed */
-#define RESF_LOWVALUE		0x00000080U	/* no items worth more than 35000 Au */
+#define RESF_NOHIDSM		0x00000010ULL	/* prevent generation of high dragon scale mails: Only base elements + poison, metallics and pseudo. */
+#define RESF_LOWSPEED		0x00000020ULL	/* not more than +4 speed */
+#define RESF_NOHISPEED		0x00000040ULL	/* not more than +6 speed */
+#define RESF_LOWVALUE		0x00000080ULL	/* no items worth more than 35000 Au */
 
-#define RESF_MIDVALUE		0x00000100U	/* no items worth more than 50000 Au */
-#define RESF_NOHIVALUE		0x00000200U	/* no items worth more than 100000 Au */
+#define RESF_MIDVALUE		0x00000100ULL	/* no items worth more than 50000 Au */
+#define RESF_NOHIVALUE		0x00000200ULL	/* no items worth more than 100000 Au */
 
-#define RESF_NOETHEREAL		0x00000400U	/* no 'ethereal' ego power (ammo) */
+#define RESF_NOETHEREAL		0x00000400ULL	/* no 'ethereal' ego power (ammo) */
 #if 0 /* not implemented: */
- #define RESF_KINDMID		0x00000800U	/* k_info value of 500..10000 */
- #define RESF_KINDHI		0x00001000U	/* k_info value of 10000.. */
- #define RESF_EGOLOW		0x00002000U	/* e_info value of ..1000 */
- #define RESF_EGOMID		0x00004000U	/* e_info value of 1000..9000 */
+ #define RESF_KINDMID		0x00000800ULL	/* k_info value of 500..10000 */
+ #define RESF_KINDHI		0x00001000ULL	/* k_info value of 10000.. */
+ #define RESF_EGOLOW		0x00002000ULL	/* e_info value of ..1000 */
+ #define RESF_EGOMID		0x00004000ULL	/* e_info value of 1000..9000 */
 #else /* use it for actual stuff.. */
- #define RESF_COND_FORCE	0x00000800U	/* force item drop of desired type according to conditions */
- #define RESF_COND_LSWORD	0x00001000U	/* force a sword (swordmen, rogues) */
- #define RESF_BOOST_PVAL	0x00002000U	/* for create_reward(): Boost lowish pvals for certain items to make them guaranteedly quite useful */
- #define RESF_CONDF_NOMSTAFF	0x00004000U	/* don't allow mage staves (persistent; for Saruman, when he chosen-drops a guaranteed one, this avoids duplicates) -- */
+ #define RESF_COND_FORCE	0x00000800ULL	/* force item drop of desired type according to conditions */
+ #define RESF_COND_LSWORD	0x00001000ULL	/* force a sword (swordmen, rogues) */
+ #define RESF_BOOST_PVAL	0x00002000ULL	/* for create_reward(): Boost lowish pvals for certain items to make them guaranteedly quite useful */
+ #define RESF_CONDF_NOMSTAFF	0x00004000ULL	/* don't allow mage staves (persistent; for Saruman, when he chosen-drops a guaranteed one, this avoids duplicates) -- */
 #endif
-#define RESF_EGOHI		0x00008000U	/* e_info value of 9000.. */
+#define RESF_EGOHI		0x00008000ULL	/* e_info value of 9000.. */
 
-#define RESF_LIFE		0x00010000U	/* allow +LIFE randarts */
-#define RESF_DEBUG_ITEM		0x00020000U	/* generate a certain item (k_idx) for debugging purpose */
-#define RESF_STOREFLAT		0x00040000U	/* generate all base item types with same probability */
-#define RESF_FORCERANDART	0x00080000U	/* generate a random artifact -- ensure the item is eligible via randart_eligible(tval) */
+#define RESF_LIFE		0x00010000ULL	/* allow +LIFE randarts */
+#define RESF_DEBUG_ITEM		0x00020000ULL	/* generate a certain item (k_idx) for debugging purpose */
+#define RESF_STOREFLAT		0x00040000ULL	/* generate all base item types with same probability */
+#define RESF_FORCERANDART	0x00080000ULL	/* generate a random artifact -- ensure the item is eligible via randart_eligible(tval) */
 
-#define RESF_NO_ENCHANT		0x00100000U	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
-#define RESF_SAURON		0x00200000U	/* don't generate The One Ring, as player has already slain Sauron or is in Mt Doom. -- This flag is abused for no_soloist drops eg from Santa Claus! */
+#define RESF_NO_ENCHANT		0x00100000ULL	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
+#define RESF_SAURON		0x00200000ULL	/* don't generate The One Ring, as player has already slain Sauron or is in Mt Doom. -- This flag is abused for no_soloist drops eg from Santa Claus! */
 
-#define RESF_COND_SWORD		0x00400000U	/* don't allow weapons besides a sword (swordmen, rogues) */
-#define RESF_COND_DARKSWORD	0x00800000U	/* don't allow weapons besides a dark sword (unbelievers) */
+#define RESF_COND_SWORD		0x00400000ULL	/* don't allow weapons besides a sword (swordmen, rogues) */
+#define RESF_COND_DARKSWORD	0x00800000ULL	/* don't allow weapons besides a dark sword (unbelievers) */
 
-#define RESF_COND_BLUNT		0x01000000U	/* don't allow weapons besides a blunt weapon (priests) */
-#define RESF_CONDF_NOSWORD	0x02000000U	/* don't allow swords (shamans) -- */
-#define RESF_CONDF_MSTAFF	0x04000000U	/* force a mage staff (mages) */
-#define RESF_COND_SLING		0x08000000U	/* don't allow weapons besides a sling (clears condition) or ammo (doesn't clear condition) (slingers) */
+#define RESF_COND_BLUNT		0x01000000ULL	/* don't allow weapons besides a blunt weapon (priests) */
+#define RESF_CONDF_NOSWORD	0x02000000ULL	/* don't allow swords (shamans) -- */
+#define RESF_CONDF_MSTAFF	0x04000000ULL	/* force a mage staff (mages) */
+#define RESF_COND_SLING		0x08000000ULL	/* don't allow weapons besides a sling (clears condition) or ammo (doesn't clear condition) (slingers) */
 
-#define RESF_COND_RANGED	0x10000000U	/* don't allow weapons besides ranged weapons (clear condition) or ammo (doesn't clear condition) (archers) */
-#define RESF_CONDF_RUNE		0x20000000U	/* force a rune (runemasters) */
-#define RESF_COND2_LARMOUR	0x40000000U	/* mostly avoid dropping heavy armour (persistent) */
-#define RESF_COND2_HARMOUR	0x80000000U	/* mostly avoid dropping light armour (persistent) */
+#define RESF_COND_RANGED	0x10000000ULL	/* don't allow weapons besides ranged weapons (clear condition) or ammo (doesn't clear condition) (archers) */
+#define RESF_CONDF_RUNE		0x20000000ULL	/* force a rune (runemasters) */
+#define RESF_COND2_LARMOUR	0x40000000ULL	/* mostly avoid dropping heavy armour (persistent) */
+#define RESF_COND2_HARMOUR	0x80000000ULL	/* mostly avoid dropping light armour (persistent) */
 
 #define RESF_MASK_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_MASK_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
@@ -6294,9 +6294,9 @@
 #define RESF_MASK_STORE		(RESF_MASK_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 #define RESF_MASK_STOREBM	(RESF_MASK_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 
-#define RESF_COND_AQUAPOLEARM	0x0000000100000000U
-#define RESF_COND_AXE		0x0000000200000000U
-#define RESF_NORMALBM		0x0000000400000000U	/* Generate ego powers on plain items that are generated in other town stores */
+#define RESF_COND_AQUAPOLEARM	0x0000000100000000ULL	/* soft-force aquatic-polearm style weapons */
+#define RESF_COND_AXE		0x0000000200000000ULL	/* soft-force axe type weapons */
+#define RESF_NORMALBM		0x0000000400000000ULL	/* Generate ego powers on plain items that are generated in other town stores */
 
 #define RESF_MASK_COND \
     (RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | \
