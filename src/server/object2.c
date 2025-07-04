@@ -12306,7 +12306,8 @@ void combine_pack(int Ind) {
 					}
 					/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
 					else if (j_ptr->number < MAX_STACK_SIZE - 1 &&
-					    p_ptr->current_force_stack - 1 == is && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+					    p_ptr->current_force_stack - 1 == is &&
+					    object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
 						int total = j_ptr->number + o_ptr->number;
 
 						j_ptr->number = MAX_STACK_SIZE - 1;
@@ -12420,7 +12421,8 @@ void combine_pack(int Ind) {
 			}
 			/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
 			else if (j_ptr->number < MAX_STACK_SIZE - 1 &&
-			    p_ptr->current_force_stack - 1 == i && object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
+			    p_ptr->current_force_stack - 1 == i &&
+			    object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
 				int total = j_ptr->number + o_ptr->number;
 
 				j_ptr->number = MAX_STACK_SIZE - 1;
@@ -12468,6 +12470,8 @@ void combine_pack(int Ind) {
 					/* Can we drop "o_ptr" onto "j_ptr"? */
 					/* 0x40: Handle !G inscription - prevents any partial combining aka partial stack-shifting across slots too though, atm :/ but that's maybe not really an issue. */
 					if (object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x40)) {
+						flag = TRUE;
+
 						/* Add together the item counts */
 						object_absorb(Ind, j_ptr, o_ptr);
 
@@ -12527,6 +12531,7 @@ void combine_pack(int Ind) {
 					}
 					/* Force-stack command can also move stack partially, to max out a destination stack at 99. */
 					else if (j_ptr->number < MAX_STACK_SIZE - 1 &&
+					    // note: we do not check for current_force_stack here, unlike in the normal inventory loop above
 					    object_similar(Ind, j_ptr, o_ptr, 0x2 | 0x100 | 0x20)) {
 						int total = j_ptr->number + o_ptr->number;
 
@@ -12535,7 +12540,7 @@ void combine_pack(int Ind) {
 
 						/* Window stuff */
 						p_ptr->window |= (PW_INVEN | PW_EQUIP);
-						redraw = TRUE;
+						flag = redraw = TRUE;
 						break; //done
 					}
 				}
@@ -12543,7 +12548,6 @@ void combine_pack(int Ind) {
 				/* Emulate a 'PW_SUBINVEN' */
 				if (redraw) {
 					display_subinven(Ind, i);
-					flag = TRUE;
 					break;
 				}
 			}
