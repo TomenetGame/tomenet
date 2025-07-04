@@ -2086,7 +2086,14 @@ static void store_create(store_type *st_ptr) {
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
 
-	if (black_market) resf = RESF_MASK_STOREBM;
+	if (black_market) {
+		resf = RESF_MASK_STOREBM;
+
+#if 1 /* EXPERIMENTAL */
+		/* Basic town BM (which is MEDIUM_LEVEL) ? Ie not expensive/secret one (which are DEEP_LEVEL)? */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_MEDIUM_LEVEL) resf |= RESF_NORMALBM;
+#endif
+	}
 	if ((st_info[st_ptr->st_idx].flags1 & SF1_FLAT_BASE)) resf |= RESF_STOREFLAT;
 
 	/* Hack -- consider up to n items */

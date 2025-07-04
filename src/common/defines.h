@@ -5032,6 +5032,8 @@
 	((tval) == TV_BLUNT && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
 	((tval) == TV_AXE && ((sval) == SV_THUNDER_AXE || (sval) == SV_INFERNAL_AXE)) || /* hunting spear (low dice, just for fun) */ \
 	((tval) == TV_POLEARM && ((sval) == SV_SCYTHE_OF_SLICING || (sval) == SV_DRAGON_LANCE)) )
+#define is_common_weapon(tval,sval) \
+	(is_weapon(tval) && !is_rare_weapon(tval,sval))
 #define is_nonmetallic_weapon(tval,sval) \
 	(((tval) == TV_BLUNT && ((sval) == SV_CLUB || (sval) == SV_WHIP || (sval) == SV_QUARTERSTAFF)) || \
 	((tval) == TV_BOOMERANG && ((sval) == SV_BOOM_WOOD || (sval) == SV_BOOM_S_WOOD)) || ((tval) == TV_BOW && ((sval) == SV_SLING || (sval) == SV_SHORT_BOW || (sval) == SV_LONG_BOW)))
@@ -5064,7 +5066,7 @@
 	(((tval) == TV_GLOVES) && ((sval) == SV_SET_OF_ELVEN_GLOVES)) || \
 	(((tval) == TV_CLOAK) && ((sval) == SV_KOLLA)) || \
 	(((tval) == TV_HARD_ARMOR) && (sval) >= SV_MITHRIL_CHAIN_MAIL) || \
-	((tval) == TV_DRAG_ARMOR) )
+	((tval) == TV_DRAG_ARMOR) ) /* includes is_top_armour() */
 /* doesn't include WINNERS_ONLY armour: */
 //	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_CHAIN_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) ||
 #define is_top_armour(tval,sval) \
@@ -5072,7 +5074,7 @@
 	((sval) == SV_DRAGON_POWER || (sval) == SV_DRAGON_SKY || \
 	(sval) == SV_DRAGON_DEATH || (sval) == SV_DRAGON_SHINING || \
 	(sval) == SV_DRAGON_MULTIHUED || (sval) == SV_DRAGON_BALANCE))
-	/* ...and possibly all winners_only armour */
+	/* ...and possibly all winners_only armour -- if these are added, include them in is_rare_armour() too accordingly! */
 #define is_common_armour(tval,sval) \
 	(is_armour(tval) && !is_rare_armour(tval,sval))
 #define sv_dsm_low(sv) \
@@ -6294,6 +6296,7 @@
 
 #define RESF_COND_AQUAPOLEARM	0x0000000100000000U
 #define RESF_COND_AXE		0x0000000200000000U
+#define RESF_NORMALBM		0x0000000400000000U	/* Generate ego powers on plain items that are generated in other town stores */
 
 #define RESF_MASK_COND \
     (RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | \

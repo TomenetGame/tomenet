@@ -6286,6 +6286,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		resf |= RESF_NORANDART;
 	}
 
+	/* Normal BM: If it's a plain weapon/armour, turn it into an ego item if it's otherwise rather worthless */
+	if ((resf & RESF_NORMALBM) && (is_common_weapon(o_ptr->tval, o_ptr->sval) || is_common_armour(o_ptr->tval, o_ptr->sval))) {
+		if (power >= 0) power = 2;
+	}
 
 	/* Assume no rolls */
 	rolls = 0;
