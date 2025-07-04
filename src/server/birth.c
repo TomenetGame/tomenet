@@ -3644,7 +3644,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 		/* a good starter item since we're not going from level 1 */
 #if 0
-		give_reward(Ind, RESF_LOW2, "", 1, 0);
+		give_reward(Ind, RESF_MASK_LOW2, "", 1, 0);
 #else
 		i = lookup_kind(TV_PARCHMENT, SV_DEED_PVP_START);
 		invcopy(o_ptr, i);

@@ -453,7 +453,7 @@ extern bool (*ang_sort_extra2_comp)(int Ind, vptr i, vptr j, vptr k, vptr m, int
 extern void (*ang_sort_extra2_swap)(int Ind, vptr i, vptr j, vptr k, vptr m, int a, int b);
 extern bool (*get_mon_num_hook)(int r_idx);
 extern bool (*get_mon_num2_hook)(int r_idx);
-extern int (*get_obj_num_hook)(int k_idx, u32b resf);
+extern int (*get_obj_num_hook)(int k_idx, u64b resf);
 extern bool (*master_move_hook)(int Ind, char * parms);
 
 extern int artifact_bias;
@@ -1474,24 +1474,24 @@ extern void wipe_o_list(struct worldpos *wpos);
 extern void wipe_o_list_safely(struct worldpos *wpos);
 extern void wipe_o_list_special(struct worldpos *wpos);
 extern void wipe_o_list_nonarts(struct worldpos *wpos);
-extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
-extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
+extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u64b resf);
+extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u64b resf);
 extern void determine_level_req(int level, object_type *o_ptr);
 extern void verify_level_req(object_type *o_ptr);
-extern void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker, bool preown);
-extern void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck);
-extern void acquirement(int Ind, struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf);
-extern void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf);
-extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold);
-extern void give_reward(int Ind, u32b resf, cptr quark, int level, int discount);
+extern void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u64b resf, obj_theme theme, int luck, byte removal_marker, bool preown);
+extern void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u64b resf, obj_theme theme, int luck);
+extern void acquirement(int Ind, struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u64b resf);
+extern void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u64b resf);
+extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u64b resf, long int treshold);
+extern void give_reward(int Ind, u64b resf, cptr quark, int level, int discount);
 extern void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonus);
 extern int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void trap_found(struct worldpos *wpos, int y, int x);
 extern void compact_objects(int size, bool purge);
 extern int o_pop(void);
-extern errr get_obj_num_prep(u32b resf);
-extern errr get_obj_num_prep_tval(int tval, u32b resf); /* was written for create_reward(..) */
-extern s16b get_obj_num(int max_level, u32b resf);
+extern errr get_obj_num_prep(u64b resf);
+extern errr get_obj_num_prep_tval(int tval, u64b resf); /* was written for create_reward(..) */
+extern s16b get_obj_num(int max_level, u64b resf);
 extern void object_known(object_type *o_ptr);
 extern bool object_aware(int Ind, object_type *o_ptr);
 extern void object_tried(int Ind, object_type *o_ptr, bool flipped);
@@ -1515,11 +1515,11 @@ extern s32b artifact_flag_cost(object_type *o_ptr, int plusses);
 extern void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp);
 
 extern void excise_object_idx(int o_idx);
-extern int kind_is_legal(int k_idx, u32b resf);
+extern int kind_is_legal(int k_idx, u64b resf);
 extern void init_match_theme(obj_theme theme);
 
 extern void kill_objs(int id);
-extern u32b place_object_restrictor;
+extern u64b place_object_restrictor;
 
 extern void handle_art_d(int aidx);
 extern void handle_art_dnum(int aidx);
@@ -1531,7 +1531,7 @@ extern void handle_art_inumpara(int aidx);
 extern byte get_attr_from_tval(object_type *o_ptr);
 extern byte anti_undead(object_type *o_ptr, player_type *p_ptr);
 extern byte anti_demon(object_type *o_ptr, player_type *p_ptr);
-extern u32b make_resf(player_type *p_ptr);
+extern u64b make_resf(player_type *p_ptr);
 
 extern void inven_index_slide(int Ind, s16b begin, s16b mod, s16b end);
 extern void inven_index_move(int Ind, s16b slot, s16b new_slot);

@@ -1152,7 +1152,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	int o_idx, i;
 	object_type *o_ptr;
 	cave_type **zcave, *c_ptr;
-	u32b resf = RESF_NOTRUEART;
+	u64b resf = RESF_NOTRUEART;
 
 	/* data written back to q_info[] */
 	struct worldpos wpos;
@@ -4934,7 +4934,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 
 /* hand out a reward object created by create_reward() to player (if individual quest)
    or to all involved players in the area (if non-individual quest) */
-static void quest_reward_create(int pInd, int q_idx, u32b resf) {
+static void quest_reward_create(int pInd, int q_idx, u64b resf) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j;
 
@@ -5077,7 +5077,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j, stage = quest_get_stage(pInd, q_idx);
 	object_type forge, *o_ptr;
-	u32b resf = RESF_NOTRUEART;
+	u64b resf = RESF_NOTRUEART;
 	/* count rewards */
 	int r_obj = 0, r_gold = 0, r_exp = 0;
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
@@ -5194,10 +5194,10 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 			/* instead use create_reward() like for events? */
 			else if (q_rew->oreward) {
 				switch (q_rew->oreward) {
-				case 1: resf |= RESF_LOW; break;
-				case 2: resf |= RESF_LOW2; break;
-				case 3: resf |= RESF_MID; break;
-				case 4: resf |= RESF_HIGH; break;
+				case 1: resf |= RESF_MASK_LOW; break;
+				case 2: resf |= RESF_MASK_LOW2; break;
+				case 3: resf |= RESF_MASK_MID; break;
+				case 4: resf |= RESF_MASK_HIGH; break;
 				case 5: break; /* 'allow randarts' */
 				}
 				quest_reward_create(pInd, q_idx, resf);
@@ -6098,7 +6098,7 @@ void questitem_d(object_type *o_ptr, int num) {
 void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos *wpos, int x, int y) {
 	qi_questor *q_questor = &q_info[q_idx].questor[questor_idx];
 	object_type forge, *o_ptr = &forge;
-	u32b resf = RESF_NOTRUEART;
+	u64b resf = RESF_NOTRUEART;
 
 	/* specific reward */
 	if (q_questor->drops_tval) {
@@ -6150,10 +6150,10 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 	/* instead use create_reward() like for events? */
 	else if (q_questor->drops_reward) {
 		switch (q_questor->drops_reward) {
-		case 1: resf |= RESF_LOW; break;
-		case 2: resf |= RESF_LOW2; break;
-		case 3: resf |= RESF_MID; break;
-		case 4: resf |= RESF_HIGH; break;
+		case 1: resf |= RESF_MASK_LOW; break;
+		case 2: resf |= RESF_MASK_LOW2; break;
+		case 3: resf |= RESF_MASK_MID; break;
+		case 4: resf |= RESF_MASK_HIGH; break;
 		case 5: break; /* 'allow randarts' */
 		}
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);

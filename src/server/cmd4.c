@@ -2825,7 +2825,7 @@ void do_cmd_check_server_settings(int Ind) {
 
 	if (k != 0) {
 		player_type p_dummy;
-		u32b resf_all, resf_win, resf_owin, resf_howin;
+		u64b resf_all, resf_win, resf_owin, resf_howin;
 		bool found = FALSE;
 
 		if ((k = cfg.unique_respawn_time))

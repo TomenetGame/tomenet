@@ -3953,7 +3953,7 @@ bool create_artifact_aux(int Ind, int item) {
 	int tries = 0;
 	char o_name[ONAME_LEN];
 	s32b old_owner;/* anti-cheeze :) */
-	u32b resf = make_resf(p_ptr);
+	u64b resf = make_resf(p_ptr);
 
 	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 

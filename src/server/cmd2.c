@@ -3764,8 +3764,8 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		    else {
 			tval = TV_RUNE;
 			get_obj_num_hook = NULL;
-			get_obj_num_prep_tval(tval, RESF_MID);
-			special_k_idx = get_obj_num(10 + getlevel(wpos), RESF_MID);
+			get_obj_num_prep_tval(tval, RESF_MASK_MID);
+			special_k_idx = get_obj_num(10 + getlevel(wpos), RESF_MASK_MID);
 			if (!special_k_idx) tval = 0;
 		    }
 		}
@@ -3774,8 +3774,8 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		if (dug_feat == FEAT_NONE && !tval && rand_int(RUNE_CHANCE) < rune_proficiency && Ind && !p_ptr->IDDC_logscum) {
 			tval = TV_RUNE;
 			get_obj_num_hook = NULL;
-			get_obj_num_prep_tval(tval, RESF_MID);
-			special_k_idx = get_obj_num(10 + getlevel(wpos), RESF_MID);
+			get_obj_num_prep_tval(tval, RESF_MASK_MID);
+			special_k_idx = get_obj_num(10 + getlevel(wpos), RESF_MASK_MID);
 			if (!special_k_idx) tval = 0;
 		}
 	}
@@ -3849,7 +3849,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					place_object_restrictor = RESF_NONE;
 #if 1
 					object_level = find_level_base;
-					generate_object(Ind, &forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
+					generate_object(Ind, &forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MASK_MID,
 						default_obj_theme, p_ptr->luck);
 					object_level = old_object_level;
 					object_desc(0, o_name, &forge, TRUE, 3);
@@ -3857,7 +3857,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 #else
 					object_level = find_level_base;
-					place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
+					place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MASK_MID,
 						default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
 					s_printf("DIGGING: %s found a random item.\n", Ind ? p_ptr->name : "<noone>");
 					object_level = old_object_level;
@@ -4200,8 +4200,8 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 
 				tval = TV_RUNE;
 				get_obj_num_hook = NULL;
-				get_obj_num_prep_tval(tval, RESF_MID);
-				special_k_idx = get_obj_num(10 + getlevel(wpos), RESF_MID);
+				get_obj_num_prep_tval(tval, RESF_MASK_MID);
+				special_k_idx = get_obj_num(10 + getlevel(wpos), RESF_MASK_MID);
 				if (!special_k_idx) {
 					special_k_idx = fallback;
 					tval = fallback_tval;

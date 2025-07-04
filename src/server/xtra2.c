@@ -5628,7 +5628,7 @@ void check_experience(int Ind) {
 			msg_print(Ind, "\375\377G* You have raised quite a bit in ranks of PvP characters!         *");
 			msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
 			msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
-			give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
+			give_reward(Ind, RESF_MASK_MID, "Gladiator's reward", 1, 0);
 		}
 		if (p_ptr->lev == MAX_PVP_LEVEL) {
 			msg_broadcast_format(Ind, "\374\377G* %s has reached the highest level available to PvP characters! *", p_ptr->name);
@@ -5636,7 +5636,7 @@ void check_experience(int Ind) {
 			msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
 			msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
 			//buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
-			give_reward(Ind, RESF_HIGH, "Gladiator's reward", 1, 0);
+			give_reward(Ind, RESF_MASK_HIGH, "Gladiator's reward", 1, 0);
 		}
 	}
 
@@ -6114,7 +6114,7 @@ bool monster_death(int Ind, int m_idx) {
 	artifact_type *a_ptr;
 
 	bool henc_cheezed = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
-	u32b resf_drops = make_resf(p_ptr), resf_chosen = resf_drops;
+	u64b resf_drops = make_resf(p_ptr), resf_chosen = resf_drops;
 	bool in_iddc;
 
 
@@ -6577,12 +6577,9 @@ bool monster_death(int Ind, int m_idx) {
 
 	/* switch to r_info next: */
 	default:
-#if 1
 		/* Watery/Aquatic denizens (naga, bullywugs...) - drop tridents/spears */
 		if ((r_ptr->d_char == 'n' || (r_ptr->flags7 & RF7_AQUATIC)) && rand_int(3))
-			/* Bad hack: Since we're out of flags, combine two otherwise mutually exclusive flags to indicate this -_-' */
-			resf_drops |= RESF_COND_SWORD | RESF_COND_BLUNT; //'aquatic_hack'
-#endif
+			resf_drops |= RESF_COND_AQUAPOLEARM;
 
 		switch (r_idx) {
 		case 1048: //unbeliever with FRIENDS
@@ -6644,7 +6641,7 @@ bool monster_death(int Ind, int m_idx) {
 			/* the dedicated +10 mstaff is not for farming! */
 			if (!(resf_chosen & RESF_NOTRUEART)) resf_drops |= RESF_CONDF_NOMSTAFF;
 			break;
-#if 1
+
 		case 731: /* Hell knight. And dwarves - drop axes mostly */
 		//case 770: /* Artsi commented out as his diz says "his _blade_" which sounds like a sword */
 		case 111: //nibelung - these don't drop combat stuff though anyway
@@ -6653,11 +6650,9 @@ bool monster_death(int Ind, int m_idx) {
 		case 865: //dwarven warrior, not enabled
 		case 936: //Nar -- has 'any' tc though
 		case 1042: //Thrain, not enabled
-			if (rand_int(3))
-				/* Bad hack: Since we're out of flags, combine two otherwise mutually exclusive flags to indicate this -_-' */
-				resf_drops |= RESF_COND_DARKSWORD | RESF_COND_BLUNT; //'axe_hack'
+			if (rand_int(3)) resf_drops |= RESF_COND_AXE;
 			break;
-#endif
+
 		/* -- for the remaining monsters here, only do 'flexible vs tough armour' choice -- */
 		default:
 			switch (r_idx) {
@@ -6789,9 +6784,9 @@ bool monster_death(int Ind, int m_idx) {
 					if (!drop_dual) resf_drops &= ~RESF_COND_FORCE;
 				} else resf_drops &= ~RESF_COND_FORCE;
 				/* successfully created a lore-fitting drop that clears our conditions? */
-				if (place_object_restrictor & RESF_COND_MASK) {
+				if (place_object_restrictor & RESF_MASK_COND) {
 					if (drop_dual) drop_dual = FALSE; //actually get another one? (for monsters dual-wielding the same item class, aka rogues -> swords)
-					else resf_drops &= ~RESF_COND_MASK; //lift the conditions
+					else resf_drops &= ~RESF_MASK_COND; //lift the conditions
 				}
 #endif
 
@@ -8901,7 +8896,7 @@ static void check_killing_reward(int Ind) {
 		msg_broadcast_format(Ind, "\374\377y** %s vanquished 10 opponents! **", p_ptr->name);
 		msg_print(Ind, "\375\377G* Another 10 aggressors have fallen by your hands! *");
 		msg_print(Ind, "\375\377G* You received a reward! *");
-		give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
+		give_reward(Ind, RESF_MASK_MID, "Gladiator's reward", 1, 0);
 	}
 }
 
@@ -11454,7 +11449,7 @@ void kill_xorder(int Ind) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	char temp[160];
 	bool great, verygreat = FALSE;
-	u32b resf;
+	u64b resf;
 
 	id = p_ptr->xorder_id;
 	for (i = 0; i < MAX_XORDERS; i++) {
@@ -11513,7 +11508,7 @@ void kill_xorder(int Ind) {
 		   buffing the quality on top of this would be too much. */
 		great = magik(50 + (plev > rlev ? rlev : plev) * 2);
 		if (great) verygreat = magik(avg);
-		resf = RESF_LOW;
+		resf = RESF_MASK_LOW;
 
 		/* Preliminary reward item */
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
@@ -12704,7 +12699,7 @@ void monster_death_mon(int am_idx, int m_idx) {
 			/* Place Object */
 			else {
 				place_object_restrictor = RESF_NONE;
-				place_object(m_ptr->owner, wpos, ny, nx, good, great, FALSE, RESF_LOW, r_ptr->drops, 0, ITEM_REMOVAL_NORMAL, FALSE);
+				place_object(m_ptr->owner, wpos, ny, nx, good, great, FALSE, RESF_MASK_LOW, r_ptr->drops, 0, ITEM_REMOVAL_NORMAL, FALSE);
 			}
 
 			/* Reset the object level */

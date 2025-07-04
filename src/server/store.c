@@ -2033,7 +2033,7 @@ static int store_tval = 0, store_level = 0;
  * Hack -- determine if a template is "good"
  * Note: Returns PERMILLE.
  */
-static int kind_is_storeok(int k_idx, u32b resf) {
+static int kind_is_storeok(int k_idx, u64b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	int p;
@@ -2078,7 +2078,7 @@ static void store_create(store_type *st_ptr) {
 	object_kind *k_ptr;
 	ego_item_type *e_ptr, *e2_ptr;
 	bool good, great;
-	u32b resf = RESF_STORE;
+	u64b resf = RESF_MASK_STORE;
 	obj_theme theme;
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) != 0;
 	//bool town_bm = (st_ptr->st_idx == STORE_BLACK);
@@ -2086,7 +2086,7 @@ static void store_create(store_type *st_ptr) {
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
 
-	if (black_market) resf = RESF_STOREBM;
+	if (black_market) resf = RESF_MASK_STOREBM;
 	if ((st_info[st_ptr->st_idx].flags1 & SF1_FLAT_BASE)) resf |= RESF_STOREFLAT;
 
 	/* Hack -- consider up to n items */
@@ -7678,13 +7678,13 @@ void reward_deed_item(int Ind, int item) {
 
 	switch (o2_ptr->sval) {
 	case SV_DEED_HIGHLANDER: /* winner's deed */
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID2, 3000); /* 95 is default depth for highlander tournament */
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID2, 3000); /* 95 is default depth for highlander tournament */
 		if (!o_ptr->note) o_ptr->note = quark_add("Highlander reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		break;
 	case SV_DEED_DUNGEONKEEPER: /* winner's deed */
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000);
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("Dungeon Keeper reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
@@ -7695,28 +7695,28 @@ void reward_deed_item(int Ind, int item) {
 		msg_print(Ind, "\377yitems for rewards, but he suggests that you get a blessing instead!");
 		return;
 	case SV_DEED_PVP_MAX:
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_HIGH, 3000);
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_HIGH, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("PvP reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		dis = 0;
 		break;
 	case SV_DEED_PVP_MID:
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID2, 3000);
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID2, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("PvP reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		dis = 0;
 		break;
 	case SV_DEED_PVP_MASS:
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000);
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("PvP reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		dis = 0;
 		break;
 	case SV_DEED_PVP_START:
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000);
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_LOW2, 3000);
 		//if (!o_ptr->note) o_ptr->note = quark_add("");
 		msg_print(Ind, "\377GThe mayor's secretary hands you an item and gives you a supportive pat.");
 		lev = 1; dis = 0;

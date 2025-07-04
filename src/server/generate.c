@@ -1844,7 +1844,7 @@ static void destroy_level(struct worldpos *wpos) {
  */
 static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_type *p_ptr) {
 	int i, j, k, tries = 1000;
-	u32b resf = make_resf(p_ptr);
+	u64b resf = make_resf(p_ptr);
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
@@ -2642,7 +2642,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	int y1a, x1a, y2a, x2a;
 	int y1b, x1b, y2b, x2b;
 	int yval, xval;
-	u32b resf = make_resf(p_ptr);
+	u64b resf = make_resf(p_ptr);
 
 	bool light;
 	cave_type *c_ptr;
@@ -2869,7 +2869,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_
 static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr) {
 	int y, x, y1, x1, lev = getlevel(wpos);
 	int y2, x2, tmp, yval, xval;
-	u32b resf = make_resf(p_ptr);
+	u64b resf = make_resf(p_ptr);
 
 	bool light;
 	cave_type *c_ptr;
@@ -4385,7 +4385,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	int ymax = v_ptr->hgt, xmax = v_ptr->wid;
 	char *data = v_text + v_ptr->text;
 
-	u32b resf = make_resf(p_ptr), eff_resf;
+	u64b resf = make_resf(p_ptr), eff_resf;
 	int eff_forbid_true = 0, eff_forbid_rand = 0;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -5583,7 +5583,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 	cave_type **zcave;
 	int dun_lev = getlevel(wpos);
 	bool placed;
-	u32b resf = make_resf(p_ptr);
+	u64b resf = make_resf(p_ptr);
 
 	if (!(zcave = getcave(wpos))) return;
 

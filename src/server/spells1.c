@@ -5215,7 +5215,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Place object */
 				if (!istown(wpos)) {
 					place_object_restrictor = RESF_NONE;
-					place_object(Ind, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
+					place_object(Ind, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_MASK_LOW, default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
 				}
 			}
 		}

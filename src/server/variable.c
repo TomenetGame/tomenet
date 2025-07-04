@@ -657,7 +657,7 @@ bool xorder_aux_extra;
 /*
  * Hack -- function hook to restrict "get_obj_num_prep()" function
  */
-int (*get_obj_num_hook)(int k_idx, u32b resf);
+int (*get_obj_num_hook)(int k_idx, u64b resf);
 
 /* the dungeon master movement hook, is called whenever he moves
  * (to make building large buildings / summoning hoards of mosnters

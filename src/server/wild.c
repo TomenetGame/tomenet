@@ -1066,7 +1066,7 @@ static bool wild_monst_aux_home_owner(int r_idx) {
 	return(FALSE);
 }
 
-static int wild_obj_aux_bones(int k_idx, u32b resf) {
+static int wild_obj_aux_bones(int k_idx, u64b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* paranoia */
@@ -1165,7 +1165,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 
 			if (cave_clean_bold(zcave,y,x)) {
 				object_level = w_ptr->radius / 2 +1;
-				place_object(0, wpos, y, x, FALSE, FALSE, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER, FALSE);
+				place_object(0, wpos, y, x, FALSE, FALSE, FALSE, RESF_MASK_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER, FALSE);
 				num_objects--;
 			}
 			trys++;
@@ -1205,7 +1205,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	if (!(w_ptr->flags & WILD_F_BONES)) {
 		trys = 0;
 		get_obj_num_hook = wild_obj_aux_bones;
-		get_obj_num_prep(RESF_WILD);
+		get_obj_num_prep(RESF_MASK_WILD);
 
 		while ((num_bones) && (trys < 100)) {
 			x = rand_range(x1,x2);

@@ -8667,7 +8667,7 @@ static int fletchery_items(int Ind, int type) {
 	object_aware(Ind, q_ptr); \
 	object_known(q_ptr); \
 	if (tlev > 50) q_ptr->ident |= ID_MENTAL; \
-	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10)) ? TRUE : FALSE, FALSE, RESF_NOART); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10)) ? TRUE : FALSE, FALSE, RESF_MASK_NOART); \
 	q_ptr->ident &= ~ID_CURSED; \
 	q_ptr->note = quark_add("handmade"); \
 	/* q_ptr->discount = 50 + 25 * rand_int(3); */ \

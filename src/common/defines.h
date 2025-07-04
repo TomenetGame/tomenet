@@ -6282,20 +6282,22 @@
 #define RESF_COND2_LARMOUR	0x40000000U	/* mostly avoid dropping heavy armour (persistent) */
 #define RESF_COND2_HARMOUR	0x80000000U	/* mostly avoid dropping light armour (persistent) */
 
-#define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
-#define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
-#define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED | RESF_NOHIVALUE)	/* prevent generation of especially powerful high-level items */
-#define RESF_MID2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED)	/* prevent generation of especially powerful high-level items, but allow full ESP for example (no price limit) */
-#define RESF_HIGH		RESF_NOART /* alias */
-#define RESF_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
-#define RESF_WILD		RESF_NONE
-#define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
-#define RESF_STOREBM		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
+#define RESF_MASK_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
+#define RESF_MASK_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
+#define RESF_MASK_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED | RESF_NOHIVALUE)	/* prevent generation of especially powerful high-level items */
+#define RESF_MASK_MID2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED)	/* prevent generation of especially powerful high-level items, but allow full ESP for example (no price limit) */
+#define RESF_MASK_HIGH		RESF_MASK_NOART /* alias */
+#define RESF_MASK_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
+#define RESF_MASK_WILD		RESF_NONE
+#define RESF_MASK_STORE		(RESF_MASK_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
+#define RESF_MASK_STOREBM	(RESF_MASK_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 
-/* Note: There is a bad 'aquatic_hack' for certain polearm drops as we're out of RESF_ flag space. -_- (RESF_COND_SWORD+RESF_COND_BLUNT)
-   Note2: Also added an 'axe_hack' for same reason (RESF_COND_DARKSWORD+RESF_COND_BLUNT) -_- */
-#define RESF_COND_MASK		(RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | RESF_CONDF_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_CONDF_RUNE)
+#define RESF_COND_AQUAPOLEARM	0x0000000100000000U
+#define RESF_COND_AXE		0x0000000200000000U
 
+#define RESF_MASK_COND \
+    (RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | \
+    RESF_CONDF_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_CONDF_RUNE | RESF_COND_AXE | RESF_COND_AQUAPOLEARM)
 
 /* ESP defines */
 #define ESP_ORC			0x00000001U

@@ -9676,7 +9676,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				return;/* see create_reward for proper loop */
 
-				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, RESF_NOART);
+				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, RESF_MASK_NOART);
 
 				msg_format(Ind, "Re-rolled ego in inventory slot %d!", k);
 				/* Window stuff */
@@ -11314,7 +11314,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(j, "\377GYou have been rewarded by the gods!");
 
 //				create_reward(j, o_ptr, 1, 100, TRUE, TRUE, make_resf(Players[j]) | RESF_NOHIDSM, 5000);
-				give_reward(j, RESF_LOW2, NULL, 0, 100);
+				give_reward(j, RESF_MASK_LOW2, NULL, 0, 100);
 				return;
 			}
 			else if (prefix(messagelc, "/debug1")) { /* debug an issue at hand */
