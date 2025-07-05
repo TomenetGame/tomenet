@@ -5263,16 +5263,16 @@ void message_pain(int Ind, int m_idx, int dam) {
 	tmp = (newhp * 100L) / oldhp;
 	percentage = (int)(tmp);
 
-	/* DEG Modified to give damage information */
-	/* Jelly's, Mold's, Vortex's, Quthl's */
+	/* Constructs, mindless spirits, vegetation: No message. */
 	if ((r_ptr->flags3 & RF3_NONLIVING)
-	    || (strchr("e", r_ptr->d_char) && (r_ptr->level <= 18 || r_ptr->level == 34)) /* Ugh hard-coding: 'Beholders' have a mouth, but actual 'Eyes', and apparently also the 'Gas Spore' don't... */
-	    ) { /* Constructs: No message. Note that this means vortices too (handled below otherwise). */
+	    || (strchr(",vmE", r_ptr->d_char) && (r_ptr->flags2 & RF2_EMPTY_MIND))
+	    || (r_ptr->d_char == 'e' && (r_ptr->level <= 18 || r_ptr->level == 34)) /* Ugh hard-coding: 'Beholders' have a mouth, but actual 'Eyes', and apparently also the 'Gas Spore' don't... */
+	    ) {
 		if (r_ptr->flags1 & RF1_UNIQUE)
 			msg_format(Ind, "\377%c%^s takes \377e%d \377%cdamage.", uniq, m_name, dam, uniq);
 		else
 			msg_format(Ind, "%^s takes \377g%d \377wdamage.", m_name, dam);
-	} else if (strchr("jmvQE", r_ptr->d_char)) {
+	} else if (strchr(",vmEeijQ", r_ptr->d_char)) {
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			if (percentage > 95)
 				msg_format(Ind, "\377%c%^s barely notices the \377e%d \377%cdamage.", uniq, m_name, dam, uniq);
