@@ -1608,7 +1608,7 @@ extern void guild_msg_format(int guild_id, cptr fmt, ...) __attribute__ ((format
 extern void guild_msg_format_ignoring(int sender, int guild_id, cptr fmt, ...) __attribute__ ((format (printf, 3, 4)));
 extern void floor_msg_format(int Ind, struct worldpos *wpos, cptr fmt, ...) __attribute__ ((format (printf, 3, 4)));
 extern void world_surface_msg(cptr msg);
-extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top);
+extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top, int *apply_exp_Ind);
 extern int guild_create(int Ind, cptr name);
 extern int guild_add(int adder, cptr name);
 extern int guild_add_self(int Ind, cptr guild);
@@ -2382,6 +2382,8 @@ extern bool set_recall_timer(int Ind, int v);
 extern bool set_recall(int Ind, int v, object_type * o_ptr);
 extern void check_experience(int Ind);
 extern void gain_exp(int Ind, s64b amount);
+extern void gain_exp_onhold(int Ind, s64b amount);
+extern void apply_exp(int Ind);
 extern void lose_exp(int Ind, s32b amount);
 extern void gain_exp_to_level(int Ind, int level);
 extern bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note);

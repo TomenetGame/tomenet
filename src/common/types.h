@@ -3298,6 +3298,9 @@ struct player_type {
 	s32b max_exp;			/* Max experience */
 	s32b exp;			/* Cur experience */
 	u16b exp_frac;			/* Cur exp frac (times 2^16) */
+	s32b gain_exp;			/* For cases where special processing needs to be done between earning and actually gaining XP (added for XP-gain-in-monsterdeath-msgs):
+					   This amout is just held off temporarily until whatever needed to be calculated in between has finished. */
+	bool gain_exp_frac;		/* For visual message: Note whether our gain_exp was really >=1 originally or whether it just became 1 due to fractional XP finally adding up. */
 
 	s16b lev;			/* Level */
 	s16b max_lev;			/* Usual level after 'restoring life levels' */

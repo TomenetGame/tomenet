@@ -31,6 +31,9 @@
 #define GHOST_XP_LOST	40
 #endif
 
+/* Percentage of XP gains that is added to max_exp when gaining XP while it is still drained [10]. */
+#define XP_DRAIN_RECOVERY 10
+
 /*
  * What % of exp points will be lost on instant resurrection?
  */
@@ -5658,6 +5661,216 @@ void check_experience(int Ind) {
 }
 
 
+/* Gain experience but put it on hold before applying. */
+void gain_exp_onhold(int Ind, s64b amount) {
+	player_type *p_ptr = Players[Ind];//, *p_ptr2=NULL;
+	//int Ind2 = 0;
+
+	//why?  if (is_admin(p_ptr) && p_ptr->lev >= 99) return;
+
+	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+	if (amount && (p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+	    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
+	    ) {
+#if 0 /* poof when gaining exp prematurely */
+		msg_print(Ind, "\377RYou failed to enter the Ironman Deep Dive Challenge!");
+		strcpy(p_ptr->died_from, "indetermination");
+		p_ptr->died_from_ridx = 0;
+		p_ptr->deathblow = 0;
+		p_ptr->death = TRUE;
+		return;
+#else /* just don't get exp */
+		return;
+#endif
+	}
+
+	if (p_ptr->IDDC_logscum) {
+		//(spammy) msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
+		return;
+	}
+
+#ifdef IRON_TEAM_EXPERIENCE
+	int iron_team_members_here = 0, iron_team_limit = 0;
+#endif
+
+#ifdef ARCADE_SERVER
+return;
+#endif
+
+	if (amount <= 0) return;
+#ifdef ALT_EXPRATIO
+	/* New way to gain exp: Exp ratio works no longer for determining required exp
+	   to level up, but instead to determine how much exp you gain: */
+	amount = (amount * 100L) / ((s64b)p_ptr->expfact);
+	if (amount < 1) amount = 1;
+#endif
+
+	/* You cant gain xp on your land */
+	if (player_is_king(Ind)) return;
+
+
+#ifdef IRON_TEAM_EXPERIENCE
+	/* moved here from party_gain_exp() for implementing the 'sync'-exception */
+	/* Iron Teams only get exp if the whole team is on the same floor! - C. Blue */
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM)) {
+		for (i = 1; i <= NumPlayers; i++) {
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+
+			/* note: this line means that iron teams must not add
+			admins, or the members won't gain exp anymore */
+			if (is_admin(p_ptr)) continue;
+
+			/* player on the same dungeon level? */
+			if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+			/* count party members on the same dlvl */
+			if (player_in_party(p_ptr->party, i)) iron_team_members_here++;
+		}
+
+		/* only gain exp if all members are here */
+		if (iron_team_members_here != parties[p_ptr->party].members) {
+			/* New: allow exception to somewhat 'sync' own exp w/ the exp of
+			iron team member having the most exp, to avoid falling back too much.
+			(most drastic example: death of everlasting char). - C. Blue */
+			if (p_ptr->exp >= parties[p_ptr->party].experience) return;
+			iron_team_limit = parties[p_ptr->party].experience;
+		}
+	}
+#endif
+
+	if (p_ptr->ghost) amount = (amount + 1) / 2;
+
+#ifdef KINGCAP_LEV
+	/* You must defeat morgoth before being allowed level > 50
+	   otherwise stop 1 exp point before 51 */
+ #ifndef ALT_EXPRATIO
+	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >=
+	    ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)))) {
+		if (p_ptr->exp + 1 >=
+		    ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)))
+			return;
+		amount = ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+		amount--;
+	}
+ #else
+	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >= ((s64b)player_exp[50 - 1]))) {
+		if (p_ptr->exp + 1 >= ((s64b)player_exp[50 - 1]))
+			return;
+		amount = ((s64b)player_exp[50 - 1]) - p_ptr->exp;
+		amount--;
+	}
+ #endif
+#endif
+#ifdef KINGCAP_EXP
+	/* You must defeat morgoth before being allowed to gain more
+	than 21,240,000 exp which is level 50 for Draconian Ranger <- might be OUTDATED */
+	if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= 21240000)) {
+		if (p_ptr->exp >= 21240000) return;
+		amount = 21240000 - p_ptr->exp;
+	}
+#endif
+
+	/* PvP-mode players have a level limit */
+	if (p_ptr->mode & MODE_PVP) {
+#ifndef ALT_EXPRATIO
+		if (p_ptr->exp + amount + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+					    (s64b)p_ptr->expfact / 100L))) {
+			if (p_ptr->exp + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+					    (s64b)p_ptr->expfact / 100L)))
+				return;
+			amount = ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+			amount--;
+		}
+#else
+		if (p_ptr->exp + amount + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1])) {
+			if (p_ptr->exp + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1]))
+				return;
+			amount = ((s64b)player_exp[MAX_PVP_LEVEL - 1]) - p_ptr->exp;
+			amount--;
+		}
+#endif
+	}
+
+#ifdef IRON_TEAM_EXPERIENCE
+	/* new: allow players to 'sync' their exp to leading player in an iron team party */
+	if (iron_team_limit && (p_ptr->exp + amount > iron_team_limit))
+		amount = iron_team_limit - p_ptr->exp;
+#endif
+
+	/* Gain some experience in a moment, just temporarily kept in limbo here */
+	p_ptr->gain_exp = amount;
+}
+/* Finally apply the XP that was put into limbo via gain_exp_onhold() */
+void apply_exp(int Ind) {
+	player_type *p_ptr = Players[Ind];//, *p_ptr2=NULL;
+	//int Ind2 = 0;
+	s64b amount = p_ptr->gain_exp;
+
+	/* Clear on-hold XP */
+	p_ptr->gain_exp = 0;
+
+	/* Gain some experience */
+	p_ptr->exp += amount;
+
+	/* Slowly recover from experience drainage */
+	if (p_ptr->exp < p_ptr->max_exp) {
+#ifdef KINGCAP_LEV
+		/* You must defeat morgoth before beong allowed level > 50 */
+ #ifndef ALT_EXPRATIO
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
+		   (s64b)p_ptr->expfact / 100L)))) {
+			if (p_ptr->max_exp >= ((s64b)((s64b)player_exp[50 - 1] *
+			   (s64b)p_ptr->expfact / 100L)))
+				return;
+			amount = (((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp);
+			amount--;
+		}
+ #else
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)player_exp[50 - 1]))) {
+			if (p_ptr->max_exp >= ((s64b)player_exp[50 - 1]))
+				return;
+			amount = (((s64b)player_exp[50 - 1]) - p_ptr->max_exp);
+			amount--;
+		}
+ #endif
+#endif
+#ifdef KINGCAP_EXP
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) >= 21240000)) {
+			if (p_ptr->max_exp >= 21240000) return;
+			amount = (21240000 - p_ptr->max_exp);
+		}
+#endif
+
+#ifdef IRON_TEAM_EXPERIENCE
+		/* new: allow players to 'sync' their exp to leading player in an iron team party */
+		if (iron_team_limit && (p_ptr->max_exp + amount > iron_team_limit))
+			amount = iron_team_limit - p_ptr->max_exp;
+#endif
+
+		/* Gain max experience (10%) */
+		p_ptr->max_exp += amount / XP_DRAIN_RECOVERY;
+
+		if (!p_ptr->warning_xp_recover) {
+			msg_format(Ind, "\374\377yWARNING: Your experience is drained! Of all XP you gain now only \377o%d%%\377y contribute", XP_DRAIN_RECOVERY);
+			msg_print(Ind, "\374\377y         to increase your true maximum, so restore your XP as soon as possible!");
+			p_ptr->warning_xp_recover = 1;
+			s_printf("warning_xp_recover: %s\n", p_ptr->name);
+		}
+	}
+
+	/* Check Experience */
+	check_experience(Ind);
+
+#ifdef IRON_TEAM_EXPERIENCE
+	/* possibly set new maximum for iron team */
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) &&
+	    p_ptr->max_exp > parties[p_ptr->party].experience)
+		parties[p_ptr->party].experience = p_ptr->max_exp;
+#endif
+}
+
 /*
  * Gain experience
  */
@@ -5739,9 +5952,7 @@ return;
 	}
 #endif
 
-
-	/* allow own kills to be gained */
-	if (p_ptr->ghost) amount = (amount * 2) / 4;
+	if (p_ptr->ghost) amount = (amount + 1) / 2;
 
 #ifdef KINGCAP_LEV
 	/* You must defeat morgoth before being allowed level > 50
@@ -5808,7 +6019,7 @@ return;
 #ifdef KINGCAP_LEV
 		/* You must defeat morgoth before beong allowed level > 50 */
  #ifndef ALT_EXPRATIO
-		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
 		   (s64b)p_ptr->expfact / 100L)))) {
 			if (p_ptr->max_exp >= ((s64b)((s64b)player_exp[50 - 1] *
 			   (s64b)p_ptr->expfact / 100L)))
@@ -5817,7 +6028,7 @@ return;
 			amount--;
 		}
  #else
-		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) + 1 >= ((s64b)player_exp[50 - 1]))) {
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)player_exp[50 - 1]))) {
 			if (p_ptr->max_exp >= ((s64b)player_exp[50 - 1]))
 				return;
 			amount = (((s64b)player_exp[50 - 1]) - p_ptr->max_exp);
@@ -5826,7 +6037,7 @@ return;
  #endif
 #endif
 #ifdef KINGCAP_EXP
-		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) >= 21240000)) {
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) >= 21240000)) {
 			if (p_ptr->max_exp >= 21240000) return;
 			amount = (21240000 - p_ptr->max_exp);
 		}
@@ -5839,10 +6050,10 @@ return;
 #endif
 
 		/* Gain max experience (10%) */
-		p_ptr->max_exp += amount / 10;
+		p_ptr->max_exp += amount / XP_DRAIN_RECOVERY;
 
 		if (!p_ptr->warning_xp_recover) {
-			msg_print(Ind, "\374\377yWARNING: Your experience is drained! Of all XP you gain now only \377o10%\377y contribute");
+			msg_format(Ind, "\374\377yWARNING: Your experience is drained! Of all XP you gain now only \377o%d%%\377y contribute", XP_DRAIN_RECOVERY);
 			msg_print(Ind, "\374\377y         to increase your true maximum, so restore your XP as soon as possible!");
 			p_ptr->warning_xp_recover = 1;
 			s_printf("warning_xp_recover: %s\n", p_ptr->name);
@@ -11835,28 +12046,40 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	return(TRUE);
 }
 
-
-
-static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool lore) {
+/* Append XP gain to the monster's death message? */
+#define SHOW_XP_GAIN
+/* 'xp': If not '-1' then display how much XP we got from the monster death. - C. Blue */
+static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool lore, int xp) {
 	player_type *p_ptr = Players[Ind];
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
-	char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
+	char m_name[MNAME_LEN], m_name_real[MNAME_LEN], xp_str[15];
 
 	/* Extract monster name */
 	monster_desc(Ind, m_name, m_idx, 0);
 	monster_desc(Ind, m_name_real, m_idx, 0x100);
 
+#ifdef SHOW_XP_GAIN
+	if (p_ptr->gain_exp_frac) {
+		sprintf(xp_str, " (<1 XP)"); /* Visual hack for when we just gain exp_frac. */
+		p_ptr->gain_exp_frac = FALSE;
+	}
+	else if (xp != -1) sprintf(xp_str, " (%d XP)", xp);
+	else xp_str[0] = 0;
+#else
+	xp_str[0] = 0;
+	p_ptr->gain_exp_frac = FALSE;
+#endif
 
 	/* Death by Missile/Spell attack */
 	/* DEG modified spell damage messages. */
 	if (note) {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
+		if (lore) msg_format(Ind, "\374\377y%^s%s from \377g%d \377ydamage.%s", m_name, note, dam, xp_str);
 		else
 #endif
-		msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
+		msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.%s", m_name, note, dam, xp_str);
 		msg_print_near_monvar(Ind, m_idx,
 		    format("\377y%^s%s from \377g%d \377ydamage.", m_name_real, note, dam),
 		    format("\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam),
@@ -11867,10 +12090,10 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	else if (!p_ptr->mon_vis[m_idx]) {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377yYou have killed %s.", m_name);
+		if (lore) msg_format(Ind, "\374\377yYou have killed %s.%s", m_name, xp_str);
 		else
 #endif
-		msg_format(Ind, "\377yYou have killed %s.", m_name);
+		msg_format(Ind, "\377yYou have killed %s.", m_name, xp_str);
 		/* other player(s) can maybe see it, so get at least 'killed' vs 'destroyed' right for them */
 		if ((r_ptr->flags3 & RF3_DEMON) ||
 		    (r_ptr->flags3 & RF3_UNDEAD) ||
@@ -11894,10 +12117,10 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	    (strchr("Evg", r_ptr->d_char))) {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377yYou have destroyed %s.", m_name);
+		if (lore) msg_format(Ind, "\374\377yYou have destroyed %s.%s", m_name, xp_str);
 		else
 #endif
-		msg_format(Ind, "\377yYou have destroyed %s.", m_name);
+		msg_format(Ind, "\377yYou have destroyed %s.%s", m_name, xp_str);
 		msg_print_near_monvar(Ind, m_idx,
 		    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
 		    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
@@ -11907,10 +12130,10 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	else {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377yYou have slain %s.", m_name);
+		if (lore) msg_format(Ind, "\374\377yYou have slain %s.%s", m_name, xp_str);
 		else
 #endif
-		msg_format(Ind, "\377yYou have slain %s.", m_name);
+		msg_format(Ind, "\377yYou have slain %s.%s", m_name, xp_str);
 		msg_print_near_monvar(Ind, m_idx,
 		    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
 		    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
@@ -11975,6 +12198,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	s64b tmp_exp;
 	int skill_trauma = (p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC)) ? 0 : get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
 	bool old_tacit = suppress_message;
+	int apply_exp_Ind[MAX_PLAYERS] = { 0 }, i;
 
 	//int dun_level2 = getlevel(&p_ptr->wpos);
 	dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
@@ -12164,7 +12388,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
-		monster_death_message(Ind, m_idx, dam, note, FALSE); //no 'lore' displayed
+		monster_death_message(Ind, m_idx, dam, note, FALSE, -1); //no 'lore' displayed
 #ifdef USE_SOUND_2010
 #else
 		sound(Ind, SOUND_KILL);
@@ -12277,30 +12501,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			lore = TRUE;
 #endif
 
-		monster_death_message(Ind, m_idx, dam, note, lore);
-
-		/* Check if it's cloned unique, ie "someone else's spawn" */
-		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
-			m_ptr->clone = 90; /* still allow some experience to be gained */
-
-#ifdef SOLO_REKING
-		/* Generate treasure and give kill credit */
-		if (monster_death(Ind, m_idx) &&
-		/* note: only our own killing blows count, not party exp! */
-		    p_ptr->solo_reking) {
-			int raw_exp = r_ptr->mexp * (100 - m_ptr->clone) / 100;
-
-			/* appropriate depth still factors in! */
-			raw_exp = det_exp_level(raw_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
-
-			p_ptr->solo_reking -= (raw_exp * 1) / 1; // 1 xp = 1 au (2.5?)
-			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
-		}
-#else
-		/* Generate treasure and give kill credit */
-		monster_death(Ind, m_idx);
-#endif
-
 		/* experience calculation: gain 2 decimal digits (for low-level exp'ing) */
 		tmp_exp *= 100;
 
@@ -12377,10 +12577,13 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 				new_exp_frac = ((tmp_exp - new_exp * p_ptr->lev * 100)
 						* 100L) / p_ptr->lev + p_ptr->exp_frac;
 
+				/* Visual hack so we don't show '0 XP' when it's actually just a fraction of an XP point... -_- */
+				p_ptr->gain_exp_frac = (new_exp == 0 && tmp_exp != 0 && new_exp_frac - p_ptr->exp_frac != 0);
+
 				/* Never get too much exp off a monster
 				   due to high level difference,
 				   make exception for low exp boosts like "holy jackal" */
-				if ((new_exp > r_ptr->mexp * 4) && (new_exp > 200)) {
+				if (new_exp > r_ptr->mexp * 4 && new_exp > 200) {
 					new_exp = r_ptr->mexp * 4;
 					new_exp_frac = 0;
 				}
@@ -12396,7 +12599,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 				/* Gain experience */
 				if (new_exp) {
-					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, new_exp);
+					if (!(p_ptr->mode & MODE_PVP)) {
+						apply_exp_Ind[0] = Ind;
+						gain_exp_onhold(Ind, new_exp);
+					}
 				} else if (!p_ptr->warning_fracexp && tmp_exp) {
 					msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
 					s_printf("warning_fracexp: %s\n", p_ptr->name);
@@ -12412,9 +12618,35 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			   Otherwise Nether Realm parties are punished.. */
 			//if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, tmp_exp);
 			//add 2 extra digits to r_ptr->mexp too by multiplying by 100, to match tmp_exp shift
-			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, tmp_exp, r_ptr->mexp * 100, m_ptr->henc, m_ptr->henc_top);
+			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, tmp_exp, r_ptr->mexp * 100, m_ptr->henc, m_ptr->henc_top, apply_exp_Ind);
 		}
 
+		monster_death_message(Ind, m_idx, dam, note, lore, p_ptr->gain_exp);
+		/* Apply the killing player's and all involved players' gain_exp amount from gain_exp_onhold(). */
+		i = -1;
+		while (apply_exp_Ind[++i]) apply_exp(apply_exp_Ind[i]);
+
+		/* Check if it's cloned unique, ie "someone else's spawn" */
+		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
+			m_ptr->clone = 90; /* still allow some experience to be gained */
+
+#ifdef SOLO_REKING
+		/* Generate treasure and give kill credit */
+		if (monster_death(Ind, m_idx) &&
+		/* note: only our own killing blows count, not party exp! */
+		    p_ptr->solo_reking) {
+			int raw_exp = r_ptr->mexp * (100 - m_ptr->clone) / 100;
+
+			/* appropriate depth still factors in! */
+			raw_exp = det_exp_level(raw_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
+
+			p_ptr->solo_reking -= (raw_exp * 1) / 1; // 1 xp = 1 au (2.5?)
+			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
+		}
+#else
+		/* Generate treasure and give kill credit */
+		monster_death(Ind, m_idx);
+#endif
 
 		/*
 		 * Necromancy skill regenerates you

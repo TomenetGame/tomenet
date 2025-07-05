@@ -3634,10 +3634,10 @@ static bool players_in_level(int Ind, int Ind2) {
 /* Note: 'amount' is actually multiplied by 100 for extra decimal digits if we're very low level (Training Tower exp'ing).
    The same is done to 'base_amount' so it's *100 too. */
 #define PERFORM_IRON_TEAM_CHECKS
-void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top) {
+void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top, int *apply_exp_Ind) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int PInd[NumPlayers], pi = 0, Ind2; /* local working copy of player indices, for efficiency hopefully */
-	int i, eff_henc, hlev = 0, htop = 0;
+	int i, eff_henc, hlev = 0, htop = 0, aeI_idx = -1;
 #ifdef ANTI_MAXPLV_EXPLOIT
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
 	int diff;
@@ -3816,6 +3816,9 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		new_exp_frac = ((new_amount - new_exp * q_ptr->lev * 100)
 		    * 100L) / q_ptr->lev + q_ptr->exp_frac;
 
+		/* Visual hack so we don't show '0 XP' when it's actually just a fraction of an XP point... -_- */
+		q_ptr->gain_exp_frac = (new_exp == 0 && new_amount != 0 && new_exp_frac - q_ptr->exp_frac != 0);
+
 		/* Keep track of experience */
 		if (new_exp_frac >= 10000L) {
 			new_exp++;
@@ -3826,8 +3829,17 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		}
 
 		/* Gain experience */
-		if (new_exp) gain_exp(Ind2, new_exp);
-		else if (!q_ptr->warning_fracexp && base_amount) {
+		if (new_exp) {
+#if 0
+			if (Ind == Ind2) {
+				gain_exp_onhold(Ind2, new_exp); //for adding the amount to the monster death message
+				apply_exp_Ind[++aeI_idx] = Ind2;
+			} else gain_exp(Ind2, new_exp);
+#else
+			apply_exp_Ind[++aeI_idx] = Ind2;
+			gain_exp_onhold(Ind2, new_exp);
+#endif
+		} else if (!q_ptr->warning_fracexp && base_amount) {
 			msg_print(Ind2, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
 			s_printf("warning_fracexp: %s\n", q_ptr->name);
 			q_ptr->warning_fracexp = 1;
