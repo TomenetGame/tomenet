@@ -5007,7 +5007,9 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		gain_exp(pInd, exp);
+		gain_exp_onhold(pInd, exp);
+		msg_format(pInd, "The quest awards %d XP to you.", Players[pInd]->gain_exp);
+		apply_exp(pInd);
 		return;
 	}
 
@@ -5030,7 +5032,13 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
+#if 0
 		gain_exp(i, exp);
+#else
+		gain_exp_onhold(i, exp);
+		msg_format(i, "The quest awards %d XP to you.", Players[i]->gain_exp);
+		apply_exp(i);
+#endif
 	}
 }
 

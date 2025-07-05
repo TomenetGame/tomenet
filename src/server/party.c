@@ -3830,15 +3830,8 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 
 		/* Gain experience */
 		if (new_exp) {
-#if 0
-			if (Ind == Ind2) {
-				gain_exp_onhold(Ind2, new_exp); //for adding the amount to the monster death message
-				apply_exp_Ind[++aeI_idx] = Ind2;
-			} else gain_exp(Ind2, new_exp);
-#else
 			apply_exp_Ind[++aeI_idx] = Ind2;
-			gain_exp_onhold(Ind2, new_exp);
-#endif
+			gain_exp_onhold(Ind2, new_exp); //for adding the amount to the monster death message
 		} else if (!q_ptr->warning_fracexp && base_amount) {
 			msg_print(Ind2, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
 			s_printf("warning_fracexp: %s\n", q_ptr->name);

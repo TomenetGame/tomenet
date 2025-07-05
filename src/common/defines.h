@@ -825,6 +825,9 @@
    (has no effect if KINGCAP_EXP is defined) */
 #define ALT_EXPRATIO
 
+/* Append XP gain to the monster's death message and trap disarm messages? */
+#define SHOW_XP_GAIN
+
 /* for PvP mode: */
 #define MIN_PVP_LEVEL	20
 #define MID_PVP_LEVEL	25

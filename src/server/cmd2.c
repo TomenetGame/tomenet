@@ -3009,7 +3009,7 @@ void do_cmd_open(int Ind, int dir) {
 #ifdef USE_SOUND_2010
 					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-					/* opening it uses only 1x trdifficulty instead of 3x */
+					/* opening it uses only 1x trdifficulty instead of 3x. (Very maybe TODO: SHOW_XP_GAIN) */
 					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)) / 3);
 				}
 
@@ -5434,11 +5434,20 @@ void do_cmd_disarm(int Ind, int dir) {
 				p_ptr->warning_trap = 1;
 
 				if (rand_int(100) < j) {
-					msg_print(Ind, "You have disarmed the chest.");
 #ifdef USE_SOUND_2010
 					sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
+					if (!(p_ptr->mode & MODE_PVP)) {
+#ifdef SHOW_XP_GAIN
+						gain_exp_onhold(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
+						msg_format(Ind, "You have disarmed the chest. (%d XP)", p_ptr->gain_exp);
+						apply_exp(Ind);
+#else
+						msg_print(Ind, "You have disarmed the chest.");
+						gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
+#endif
+					} else msg_print(Ind, "You have disarmed the chest.");
+
 					do_id_trap(Ind, o_ptr->pval);
 
 					/* Actually disarm it */
@@ -5587,14 +5596,31 @@ void do_cmd_disarm(int Ind, int dir) {
 
 			/* Success */
 			if (rand_int(100) < j) {
-				/* Message */
-				msg_format(Ind, "You have disarmed the %s.", name);
+				/* A chance to drop a trapkit; equal to the trapping skill */
+				int sdis = (int)(p_ptr->s_info[SKILL_TRAPPING].value / 1000);
+
 #ifdef USE_SOUND_2010
 				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
+				/* Traps of missing money can drop some of their stolen cash ;) */
+				if (t_idx == TRAP_OF_MISSING_MONEY && rand_int(4))
+					place_gold(Ind, &p_ptr->wpos, y, x, 10, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
+					//NOTE: In theory this can be abused to transfer gold cross-mode/to soloists even, but the amount is negligible.
 
-				/* A chance to drop a trapkit; equal to the trapping skill */
-				int sdis = (int)(p_ptr->s_info[SKILL_TRAPPING].value / 1000);
+				/* Reward */
+				if (!(p_ptr->mode & MODE_PVP)) {
+#ifdef SHOW_XP_GAIN
+					gain_exp_onhold(Ind, (TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
+					msg_format(Ind, "You have disarmed the %s. (%d XP)", name, p_ptr->gain_exp);
+					apply_exp(Ind);
+#else
+					msg_format(Ind, "You have disarmed the %s.", name);
+					gain_exp(Ind, (TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
+#endif
+				} else msg_format(Ind, "You have disarmed the %s.", name);
+
+				/* Try to identify it */
+				do_id_trap(Ind, t_idx);
 
 				if (magik(sdis)) {
 					object_type forge;
@@ -5616,17 +5642,6 @@ void do_cmd_disarm(int Ind, int dir) {
 						msg_print(Ind, "You have fashioned a trapkit of a sort from the disarmed trap.");
 					}
 				}
-
-				/* Traps of missing money can drop some of their stolen cash ;) */
-				if (t_idx == TRAP_OF_MISSING_MONEY && rand_int(4))
-					place_gold(Ind, &p_ptr->wpos, y, x, 10, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
-					//NOTE: In theory this can be abused to transfer gold cross-mode/to soloists even, but the amount is negligible.
-
-				/* Reward */
-				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
-
-				/* Try to identify it */
-				do_id_trap(Ind, t_idx);
 
 				/* Remove the trap */
 				cs_erase(c_ptr, cs_ptr);

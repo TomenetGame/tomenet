@@ -10783,6 +10783,7 @@ void player_death(int Ind) {
 				else if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
 				else Players[killer]->kills_equal++;
 
+				//TODO?: SHOW_XP_GAIN
 #if 0 /* only reward exp for killing same level or higher players */
 				if (Players[killer]->max_plv <= p_ptr->max_plv) {
 					/* note how expfact isn't multiplied, so a difference between the races remains :) */
@@ -12046,8 +12047,6 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	return(TRUE);
 }
 
-/* Append XP gain to the monster's death message? */
-#define SHOW_XP_GAIN
 /* 'xp': If not '-1' then display how much XP we got from the monster death. - C. Blue */
 static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool lore, int xp) {
 	player_type *p_ptr = Players[Ind];
