@@ -8213,6 +8213,7 @@ by town temples, see (4.5a), which will avoid turning into a ghost.
 Ghosts are very fragile, but can pass solid walls, float up and down freely
 using the < and > keys, their melee attacks can cause fear and they gain a few
 special abilities listed further below under 'Ghosts' (such as infra-vision).
+Ghosts only receive half XP points and they do not share XP with party members.
 
 If a player ultimatively dies on a dungeon or tower floor, ie he didn't turn
 into a resurrectable ghost but got completely erased, then that particular
