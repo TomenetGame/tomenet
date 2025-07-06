@@ -6451,8 +6451,10 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 		/* skip empty auto-inscriptions */
 		if (!match[0]) continue;
 
-		/* special: an 'ignore'-rule rule without inscription only works for auto-pickup/destroy but is ignored here for inscribing */
-		if (auto_inscription_ignore[i] && !auto_inscription_tag[i][0]) continue;
+		/* special: a rule that does anything except just inscribing is ignored if the tag is empty,
+		   otherwise it causes mad empty-inscriptions spam on looting. */
+		if (!auto_inscription_tag[i][0] &&
+		    (auto_inscription_ignore[i] || auto_inscription_autopickup[i] || auto_inscription_autodestroy[i])) continue;
 
 		/* skip disabled auto-inscriptions */
 		if (auto_inscription_disabled[i]) continue;
@@ -6543,15 +6545,22 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	/* no match found? */
 	if (i == stop) return(already_has_insc);
 
-	/* send the new inscription */
+	/* send the new inscription, or uninscribe if tag is empty */
 	/* security hack: avoid infinite looping */
-	if (auto_inscription_tag[i][0] && /* since the auto-ins line might just be used for auto-pickup, don't inscribe empty inscriptions (mad spam on looting) */
-	    !DISCARDABLE_INSCR_FLOOR(auto_inscription_tag[i])) { //note: the three 'cursed', 'on sale', 'stolen' (part of DISCARDxxx) are actually NOT empty inscriptions so they don't really need checking here
+	if (!DISCARDABLE_INSCR_FLOOR(auto_inscription_tag[i])) { //note: the three 'cursed', 'on sale', 'stolen' (part of DISCARDxxx) are actually NOT empty inscriptions so they don't really need checking here
+		if (auto_inscription_tag[i][0]) {
 #ifdef ENABLE_SUBINVEN
-		Send_inscribe((sslot + 1) * SUBINVEN_INVEN_MUL + slot, auto_inscription_tag[i]);
+			Send_inscribe((sslot + 1) * SUBINVEN_INVEN_MUL + slot, auto_inscription_tag[i]);
 #else
-		Send_inscribe(slot, auto_inscription_tag[i]);
+			Send_inscribe(slot, auto_inscription_tag[i]);
 #endif
+		} else {
+#ifdef ENABLE_SUBINVEN
+			Send_uninscribe((sslot + 1) * SUBINVEN_INVEN_MUL + slot);
+#else
+			Send_uninscribe(slot);
+#endif
+		}
 		return(TRUE);
 	}
 	return(already_has_insc);
