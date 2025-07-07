@@ -839,9 +839,15 @@ static void place_between(struct worldpos *wpos, int y, int x) {
 			if (!(rand_int(1)) && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos) /* Iron/ForceDown/NoUp/NoExitXXX: allow for now */
 			    && ((l_ptr = getfloor(wpos))) && !(l_ptr->flags2 & LF2_BROKEN)
 			    && ((zcave = getcave(wpos))) && (zcave[y][x].info & CAVE_STCK)) {
-				l_ptr->flags2 |= LF2_BROKEN;
-				cave_set_feat(wpos, y, x, FEAT_IRID_GATE);
-				s_printf("Broken Gate (%d,%d,%d - %d,%d).\n", wpos->wx,  wpos->wy,  wpos->wz, x, y);
+				/* Require adjacent perma walls for good measure? */
+				int d;
+
+				for (d = 0; d < 8; d++) if (cave_perma_wall(zcave, y + ddy_ddd[d], x + ddx_ddd[d])) break;
+				if (d != 8) {
+					l_ptr->flags2 |= LF2_BROKEN;
+					cave_set_feat(wpos, y, x, FEAT_IRID_GATE);
+					s_printf("Broken Gate (%d,%d,%d - %d,%d).\n", wpos->wx,  wpos->wy,  wpos->wz, x, y);
+				} else s_printf("Broken Gate failed (%d,%d,%d - %d,%d).\n", wpos->wx,  wpos->wy,  wpos->wz, x, y);
 			}
 #endif
 			return;
