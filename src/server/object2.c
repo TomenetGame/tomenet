@@ -4681,12 +4681,12 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u64b resf) 
 			/* We must make the "rarity roll" */
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
 			if ((r = rand_int(a_ptr->rarity >> difficulty)) != 0) {
-				s_printf("TRUEART_RARITY: %d failed (%d), %d (%d)\n", i, r, a_ptr->rarity >> difficulty, a_ptr->rarity);
+				//s_printf("TRUEART_RARITY: %d failed (%d), %d (%d)\n", i, r, a_ptr->rarity >> difficulty, a_ptr->rarity); //spammy
 				continue;
 			}
 #else
 			if ((r = rand_int(a_ptr->rarity)) != 0) {
-				s_printf("TRUEART_RARITY: %d failed (%d), %d\n", i, r, a_ptr->rarity);
+				//s_printf("TRUEART_RARITY: %d failed (%d), %d\n", i, r, a_ptr->rarity); //spammy
 				continue;
 			}
 #endif
