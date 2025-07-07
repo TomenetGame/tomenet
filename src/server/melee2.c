@@ -795,7 +795,6 @@ void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 		/* everyone nearby the monster can hear it too, even if no LOS */
 		if (m_idx > 0) sound_near_monster_atk(m_idx, Ind, "lightning", "thunder", SFX_TYPE_NO_OVERLAP);//SFX_TYPE_MON_SPELL
 		else sound_near_site(y, x, &p_ptr->wpos, Ind, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE);//SFX_TYPE_MON_SPELL
-
 	}
 	else if (p_ptr->sfx_monsterattack) {
 		sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
@@ -808,6 +807,48 @@ void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
+}
+
+/* This function is specifically for when a ball effect is cast but not directed at any particular player.
+   (We ignore MONSTER_SFX_WAY and treat it like 1, aka all affected players can hear it.) */
+void ball_noInd(int m_idx, int typ, int dam_hp, struct worldpos *wpos, int y, int x, int rad) {
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
+
+#ifdef USE_SOUND_2010
+	if (typ == GF_ROCKET) {
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, 0, "rocket", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, wpos, 0, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+	else if (typ == GF_DETONATION) {
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, 0, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+	else if (typ == GF_METEOR) {
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, 0, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+	else if (typ == GF_STONE_WALL) {
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, 0, "stone_wall", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+	else if (m_list[m_idx].r_idx == RI_LIVING_LIGHTNING) {
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP);//SFX_TYPE_MON_SPELL
+		else sound_near_site(y, x, wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE);//SFX_TYPE_MON_SPELL
+
+	}
+	else {
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		if (m_idx > 0) sound_near_monster_atk(m_idx, 0, "cast_ball", NULL, SFX_TYPE_MON_SPELL);
+		else sound_near_site(y, x, wpos, 0, "cast_ball", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+#endif
+
+	(void)project(m_idx, rad, wpos, y, x, dam_hp, typ, flg, "");
 }
 
 #if 0
@@ -868,8 +909,7 @@ void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int ra
 	/* Note: We don't actually use 'rad'. The projection only affects one grid, aka rad 0, from where on it unfolds.
 	   The actual 'meteor'-style effect will then use a hard-coded radius that might differ.
 	   So, todo maybe: Somehow carry over the specified 'rad' instead of it being a dummy. */
-	//(void)project(Ind, 0, &p_ptr->wpos, y, x, dam, typ, flg, p_ptr->attacker);
-	(void)project(Ind, 0, &p_ptr->wpos, y, x, dam, typ, flg, p_ptr->attacker);
+	(void)project(PROJECTOR_UNUSUAL, 0, &p_ptr->wpos, y, x, dam, typ, flg, p_ptr->attacker); //could use m_idx for better kill msg
 }
 
 
@@ -12327,7 +12367,7 @@ void process_monsters(void) {
 
 	bool		test;
 
-	int		closest, dis_to_closest, lowhp;
+	int		closest, dis_to_closest, lowhp, dis_strongest_los = 9999;
 	bool		blos, new_los;
 	bool		interval = (((turn / MONSTER_TURNS) % (cfg.fps / MONSTER_TURNS)) == 0);
 
@@ -12762,8 +12802,15 @@ void process_monsters(void) {
 			/* Skip if player wears amulet of invincibility - C. Blue */
 			    || p_ptr->admin_invinc)
 			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) { /* for Dungeon Master GF_DOMINATE */
-				if (los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) && j <= MAX_SIGHT) m_ptr->strongest_los = pl;
-				if (m_ptr->r_idx != RI_BLUE) continue;
+				if (los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) && j <= MAX_SIGHT) {
+					if (j < dis_strongest_los) {
+						dis_strongest_los = j;
+						m_ptr->strongest_los = pl;
+					}
+				}
+				/* (Note: If this 'continue' code is ever modified to be skipped for RI_BLUE,
+				   then the check (***) must accomodate for it, as closest will no longer be -1 but the actual Ind.) */
+				continue;
 			}
 
 			/* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
@@ -12986,7 +13033,7 @@ void process_monsters(void) {
 			lowhp = p_ptr->chp;
 		}
 
-		/* Paranoia -- Make sure we found a closest player */
+		/* Paranoia -- Make sure we found a closest player (***) */
 		if (closest == -1) {
 			/* hack: still move around randomly? */
 			if (may_move_Ind) {

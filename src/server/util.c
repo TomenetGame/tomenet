@@ -1324,6 +1324,9 @@ void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alte
 		/* Skip specified player, if any */
 		if (i == Ind) continue;
 
+		/* Skip players who don't want to hear attack sounds */
+		if (!p_ptr->sfx_monsterattack && type == SFX_TYPE_MON_SPELL) continue;
+
 		/* Make sure this player is at this depth */
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
@@ -1391,6 +1394,9 @@ void sound_near_site_vol(int y, int x, worldpos *wpos, int Ind, cptr name, cptr 
 
 		/* Skip specified player, if any */
 		if (i == Ind) continue;
+
+		/* Skip players who don't want to hear attack sounds */
+		if (!p_ptr->sfx_monsterattack && type == SFX_TYPE_MON_SPELL) continue;
 
 		/* Make sure this player is at this depth */
 		if (!inarea(&p_ptr->wpos, wpos)) continue;

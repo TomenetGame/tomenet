@@ -1272,7 +1272,7 @@ static void process_effects(void) {
 #endif
 					}
 				} else if (i == e_ptr->cx && j == e_ptr->cy)
-					ball(who, e_ptr->whot, e_ptr->type, e_ptr->dam, j, i, 1);
+					ball_noInd(who, e_ptr->type, e_ptr->dam, wpos, j, i, 1);
 			}
 
 			/* Generate lightning effects -- effect_xtra: -1\ 0| 1/ 2_ */

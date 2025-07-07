@@ -9819,9 +9819,6 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 			effects[i].tx = p_ptr->px;
 		}
 	}
-	else if (project_time_effect & EFF_METEOR) {
-		effects[i].whot = PROJECTOR_UNUSUAL; //could be replaced by m_idx for better kill msg
-	}
 
 	effects[i].rad = rad;
 	effects[i].who = who;

@@ -700,8 +700,7 @@ school_type *schools;
 /*
  * Lasting spell effects
  */
-int project_interval = 0;
-int project_time = 0;
+int project_interval = 0, project_time = 0;
 s32b project_time_effect = 0;
 effect_type effects[MAX_EFFECTS];
 

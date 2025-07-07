@@ -510,8 +510,7 @@ extern spell_type *school_spells;
 extern s16b max_schools;
 extern school_type *schools;
 
-extern int project_interval;
-extern int project_time;
+extern int project_interval, project_time;
 extern s32b project_time_effect;
 extern effect_type effects[MAX_EFFECTS];
 
@@ -1142,7 +1141,7 @@ extern void curse_equipment(int Ind, int chance, int heavy_chance);
 extern void process_npcs(void);
 extern bool mon_allowed_pickup(int tval);
 extern int world_check_antimagic(int Ind);
-extern void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad);
+extern void ball_noInd(int m_idx, int typ, int dam_hp, struct worldpos *wpos, int y, int x, int rad);
 extern void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int rad);
 extern int calc_grab_chance(player_type *p_ptr, int mod, int rlev);
 
