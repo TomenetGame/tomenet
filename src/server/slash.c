@@ -2044,7 +2044,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				add_xorder(Ind, j, r, num, flags);
 			return;
 		}
-		else if (prefix(messagelc, "/feeling") || prefix(messagelc, "/fe")) {
+		else if (prefix(messagelc, "/feeling") || !strcmp(messagelc, "/fe")) {
 			cave_type **zcave = getcave(&p_ptr->wpos);
 			bool no_tele = FALSE;
 
@@ -15198,6 +15198,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					//m_ptr-> = 0;
 					break;
 				}
+				return;
+			}
+			else if (prefix(messagelc, "/setfeat")) {
+				msg_format(Ind, "Setting feat %d (%s) here.", k, f_name + f_info[k].name);
+				cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, k);
 				return;
 			}
 		}
