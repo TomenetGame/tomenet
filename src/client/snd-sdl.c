@@ -632,7 +632,9 @@ int count_open_fds2(int max) {
 	struct pollfd fds[max];
 	int ret, i, count = 0;
 
-	for (i = 0; i < max; i++) fds[max].events = 0;
+	if (max <= 0) return(0); //paranoia
+
+	for (i = 0; i < max; i++) fds[i].events = 0;
 
 	ret = poll(fds, max, 0);
 	if (ret <= 0) return(0);
