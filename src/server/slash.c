@@ -2289,7 +2289,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377yYou cannot roll dice while you cannot move.");
 				return;
 			}
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			if (!strcmp(message, "/d") || !strcmp(message, "/r")) k = 2;
 			else if (!strcmp(message, "/die")) {
@@ -2341,7 +2340,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			for (i = 0; i < k; i++) rn += randint(s);
@@ -2395,8 +2393,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			coin = (rand_int(2) == 0);
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			msg_format(Ind, "\374\377%cYou flip a coin and get %s", COLOUR_GAMBLE, coin ? "heads" : "tails");
 			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %s", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
@@ -4542,7 +4538,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377yYou cannot tip while you cannot move.");
 				return;
 			}
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
@@ -5628,9 +5623,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+#if 0 /* need some better command-cooldown mechanics (todo) */
 			/* hack: consume a partial turn to avoid exploit-spam... */
-			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			if (p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou need to be able to move to use the /who command.");
+				return;
+			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#endif
 
 			if (forbidden_name(message3)) {
 				msg_print(Ind, "That's not a usable name.");
