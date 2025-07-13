@@ -14399,8 +14399,9 @@ static int Receive_special_line(int ind) {
 
 static int Receive_options(int ind) {
 	connection_t *connp = Conn[ind];
-	int player = -1, i, n;
-	char ch;
+	int player = -1, i = 0, n = 0;
+	char ch = 0;
+	char *stored_sbuf_ptr = connp->r.ptr;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -14416,11 +14417,13 @@ static int Receive_options(int ind) {
 	if (player) {
 		bool options[OPT_MAX];
 		player_type *p_ptr = Players[player];
+		C_WIPE(options, OPT_MAX, bool);
 
 		if (is_newer_than(&connp->version, 4, 9, 1, 0, 0, 0)) {
 			for (i = 0; i < OPT_MAX; i++) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
-				if (n <= 0) {
+				if (n == 0) goto rollback;
+				else if (n < 0) {
 					Destroy_connection(ind, "read error");
 					return(n);
 				}
@@ -14428,7 +14431,8 @@ static int Receive_options(int ind) {
 		} else if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
 			for (i = 0; i < OPT_MAX_154; i++) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
-				if (n <= 0) {
+				if (n == 0) goto rollback;
+				else if (n < 0) {
 					Destroy_connection(ind, "read error");
 					return(n);
 				}
@@ -14436,7 +14440,8 @@ static int Receive_options(int ind) {
 		} else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
 			for (i = 0; i < OPT_MAX_COMPAT; i++) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
-				if (n <= 0) {
+				if (n == 0) goto rollback;
+				else if (n < 0) {
 					Destroy_connection(ind, "read error");
 					return(n);
 				}
@@ -14444,7 +14449,8 @@ static int Receive_options(int ind) {
 		} else {
 			for (i = 0; i < OPT_MAX_OLD; i++) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
-				if (n <= 0) {
+				if (n == 0) goto rollback;
+				else if (n < 0) {
 					Destroy_connection(ind, "read error");
 					return(n);
 				}
@@ -14467,7 +14473,13 @@ static int Receive_options(int ind) {
 		}
 	}
 
+	/* Success */
 	return(1);
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	connp->r.ptr = stored_sbuf_ptr;
+	return(0);
 }
 
 static int Receive_screen_dimensions(int ind) {
