@@ -5623,6 +5623,7 @@ int Receive_guild_config(void) {
 	char ch, dummy[MAX_CHARS];
 	int x, y;
 	int minlev_32b; /* 32 bits transmitted over the network gets converted to 16 bits */
+	char *stored_sbuf_ptr = rbuf.ptr;
 	Term_locate(&x, &y);
 
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &master, &guild.flags, &minlev_32b, &guild_adders, &guildhall_wx, &guildhall_wy, &ghp)) <= 0) return(n);
@@ -5645,9 +5646,13 @@ int Receive_guild_config(void) {
 	for (i = 0; i < 5; i++) guild.adder[i][0] = 0;
 	for (i = 0; i < guild_adders; i++) {
 		if (i >= 5) {
-			if ((n = Packet_scanf(&rbuf, "%s", dummy)) <= 0) return(n);
+			n = Packet_scanf(&rbuf, "%s", dummy);
+			if (n == 0) goto rollback;
+			else if (n < 0) return n;
 		} else {
-			if ((n = Packet_scanf(&rbuf, "%s", guild.adder[i])) <= 0) return(n);
+			n = Packet_scanf(&rbuf, "%s", guild.adder[i]);
+			if (n == 0) goto rollback;
+			else if (n < 0) return n;
 		}
 	}
 
@@ -5692,6 +5697,11 @@ int Receive_guild_config(void) {
 
 	Term_gotoxy(x, y);
 	return(1);
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	rbuf.ptr = stored_sbuf_ptr;
+	return(0);
 }
 
 int Receive_skills(void) {
