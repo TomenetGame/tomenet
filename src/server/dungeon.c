@@ -5511,7 +5511,7 @@ static bool process_player_end_aux(int Ind) {
 	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    p_ptr->paralyzed <= cfg.spell_stack_limit && /* Hack for forced stasis - also prevents damage from starving badly */
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
-	    (!(townarea || dungeontown || safe_area(Ind)) //not in AMC either @ safe_area()
+	    (!(townarea || dungeontown || safe_area(Ind) || (c_ptr->info2 & CAVE2_REFUGE)) //not in AMC either @ safe_area()
 	    || p_ptr->food >= PY_FOOD_FULL)) { /* allow to digest even some in town etc to not get gorged in upcoming fights quickly - C. Blue */
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX) {
