@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. July 2025 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 14. July 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11723,6 +11723,8 @@ top dog Pondos and many others.
     allow for basic shopping for spells and supplies.
     If a player logs out within this refuge, next time he logs back in he will
     spawn inside the refuge again, no matter its location on the dungeon floor.
+    While standing inside the refuge area a character will not consume food (ie
+    same as in towns, so you can take your time shopping).
 
     Monsters cannot spawn in the wilderness sector of the dungeon entrance, so
     you can just stay AFK at the entrance safely, waiting for team mates.
