@@ -710,13 +710,15 @@ W:59:95:28:0:35:200
 #dirt,grass,ice,ash,mud
 L:88:400:89:400:90:0:93:0:94:200
 L:100:25:175:700:0
-A:97:1000:101:0:0:0:0:0:0:0:97:97
+# This line will cause disconnected rooms like in The Sacred Land of Mountains
+#A:97:1000:101:0:0:0:0:0:0:0:97:97
+# This line will cause connected rooms like in The Orc Cave
+A:97:1000:101:0:0:0:0:0:0:0:101:97
 A:250:750:0:0:0
 O:5:50:10:25
 F:TOWER
 F:STREAMERS | WALL_STREAMERS
-F:CAVERN
-F:FILL_METHOD_2
+F:CAVERN | FILL_METHOD_2
 R:20:3
 M:GIANT
 R:20:3
