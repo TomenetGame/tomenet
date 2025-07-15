@@ -1272,7 +1272,7 @@ void prt_indicators(u32b indicators) {
 	prt_indicator_regen((indicators & IND_REGEN) != 0);
 	prt_indicator_dispersion((indicators & IND_DISPERSION) != 0);
 	prt_indicator_charm_tstorm((indicators & IND_CHARM) != 0, (indicators & IND_TSTORM) != 0);
-	prt_indicator_pfe((indicators & IND_PFE) != 0);
+	prt_indicator_pfe_crit((indicators & IND_PFE) != 0, (indicators & IND_CRIT) != 0);
 	if ((indicators & (IND_SHIELD1 | IND_SHIELD2 | IND_SHIELD3 | IND_SHIELD4 | IND_SHIELD5 | IND_SHIELD6 | IND_SHIELD7)) != 0) prt_indicator_shield(indicators);
 	else prt_indicator_shield(0);
 }
@@ -1454,7 +1454,7 @@ void prt_indicator_charm_tstorm(bool is_active_charm, bool is_active_tstorm) {
 	Term_gotoxy(x, y);
 }
 
-void prt_indicator_pfe(bool is_active) {
+void prt_indicator_pfe_crit(bool is_active_pfe, bool is_active_crit) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1463,8 +1463,9 @@ void prt_indicator_pfe(bool is_active) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (is_active) c_put_str(TERM_GREEN, "PfE", ROW_PFE, COL_PFE);
-	else c_put_str(TERM_WHITE, "   ", ROW_PFE, COL_PFE);
+	if (is_active_pfe) c_put_str(TERM_GREEN, "PfE", ROW_PFE_CRIT, COL_PFE_CRIT);
+	else if (is_active_crit) c_put_str(TERM_ORANGE, "Crt", ROW_PFE_CRIT, COL_PFE_CRIT);
+	else c_put_str(TERM_WHITE, "   ", ROW_PFE_CRIT, COL_PFE_CRIT);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

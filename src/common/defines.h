@@ -2732,8 +2732,8 @@
 #define ROW_CHARM_TSTORM	25
 #define COL_CHARM_TSTORM	5
 
-#define ROW_PFE			25
-#define COL_PFE			9
+#define ROW_PFE_CRIT		25
+#define COL_PFE_CRIT		9
 
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
@@ -5445,7 +5445,8 @@
 #define IND_SHIELD6	0x00010000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
 #define IND_SHIELD7	0x00020000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
 #define IND_PFE		0x00040000U /* Active Protection from Evil */
-#define IND_TSTORM	0x00080000U /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
+#define IND_TSTORM	0x00080000U /* Active thunderstorm spell */
+#define IND_CRIT	0x00100000U /* Active corrupted silent force spell */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

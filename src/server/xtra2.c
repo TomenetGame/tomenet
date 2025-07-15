@@ -4007,6 +4007,10 @@ bool do_divine_crit(int Ind, int p, int v) {
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
+
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 

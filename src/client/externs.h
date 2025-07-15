@@ -819,7 +819,7 @@ extern void prt_indicator_melee_brand(bool is_active);
 extern void prt_indicator_regen(bool is_active);
 extern void prt_indicator_dispersion(bool is_active);
 extern void prt_indicator_charm_tstorm(bool is_active_charm, bool is_active_tstorm);
-extern void prt_indicator_pfe(bool is_active);
+extern void prt_indicator_pfe_crit(bool is_active_pfe, bool is_active_crit);
 extern void prt_indicator_shield(u32b flags);
 
 extern void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
