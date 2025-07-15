@@ -23033,9 +23033,9 @@ these limitations will be lifted.
                     after all other HP boni and modifications (eg +LIFE, mimic
                     form HP or Corrupted HP bonus) have been applied except for
                     the temporary Heroism or Berserk boni.
-                    These HP boni values apply at character level 50 or higher.
-                    For lower character levels, the numbers are scaled down.
-                    The final ie top-scaled (level 50) values are:
+                    These HP boni values fully apply at character level 50 or
+                    higher, for lower character levels they are scaled down.
+                    The final ie top-scaled (character level 50+) values are:
                     +4 for each 1.000 in Nature while HP is still below 800,
                     +3 for each 1.000 in Nature while HP is still below 900,
                     +2 for each 1.000 in Nature while HP is still below 1000,
