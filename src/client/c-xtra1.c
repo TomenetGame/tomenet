@@ -1271,7 +1271,7 @@ void prt_indicators(u32b indicators) {
 	prt_indicator_melee_brand((indicators & IND_MELEE_BRAND) != 0);
 	prt_indicator_regen((indicators & IND_REGEN) != 0);
 	prt_indicator_dispersion((indicators & IND_DISPERSION) != 0);
-	prt_indicator_charm((indicators & IND_CHARM) != 0);
+	prt_indicator_charm_tstorm((indicators & IND_CHARM) != 0, (indicators & IND_TSTORM) != 0);
 	prt_indicator_pfe((indicators & IND_PFE) != 0);
 	if ((indicators & (IND_SHIELD1 | IND_SHIELD2 | IND_SHIELD3 | IND_SHIELD4 | IND_SHIELD5 | IND_SHIELD6 | IND_SHIELD7)) != 0) prt_indicator_shield(indicators);
 	else prt_indicator_shield(0);
@@ -1437,7 +1437,7 @@ void prt_indicator_dispersion(bool is_active) {
 	Term_gotoxy(x, y);
 }
 
-void prt_indicator_charm(bool is_active) {
+void prt_indicator_charm_tstorm(bool is_active_charm, bool is_active_tstorm) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1446,8 +1446,9 @@ void prt_indicator_charm(bool is_active) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (is_active) c_put_str(TERM_L_BLUE, "Chm", ROW_CHARM, COL_CHARM);
-	else c_put_str(TERM_WHITE, "   ", ROW_CHARM, COL_CHARM);
+	if (is_active_charm) c_put_str(TERM_L_BLUE, "Chm", ROW_CHARM_TSTORM, COL_CHARM_TSTORM);
+	if (is_active_tstorm) c_put_str(TERM_BLUE, "Thu", ROW_CHARM_TSTORM, COL_CHARM_TSTORM);
+	else c_put_str(TERM_WHITE, "   ", ROW_CHARM_TSTORM, COL_CHARM_TSTORM);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -1479,7 +1480,7 @@ void prt_indicator_shield(u32b flags) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (!flags) c_put_str(TERM_WHITE, "   ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+	if (!flags) c_put_str(TERM_WHITE, "    ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
 	else {
 		/* Colour based on shield type? */
 		if (flags & IND_SHIELD1) /*p_ptr->tim_reflect*/ a = TERM_L_UMBER;

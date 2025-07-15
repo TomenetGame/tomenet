@@ -304,6 +304,9 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
 
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 

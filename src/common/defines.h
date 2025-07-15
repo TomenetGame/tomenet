@@ -2729,8 +2729,8 @@
 #define ROW_DISPERSION		24
 #define COL_DISPERSION		8
 
-#define ROW_CHARM		25
-#define COL_CHARM		5
+#define ROW_CHARM_TSTORM	25
+#define COL_CHARM_TSTORM	5
 
 #define ROW_PFE			25
 #define COL_PFE			9
@@ -5445,6 +5445,7 @@
 #define IND_SHIELD6	0x00010000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
 #define IND_SHIELD7	0x00020000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
 #define IND_PFE		0x00040000U /* Active Protection from Evil */
+#define IND_TSTORM	0x00080000U /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

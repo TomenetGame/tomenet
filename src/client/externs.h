@@ -818,7 +818,7 @@ extern void prt_indicator_esp(bool is_active);
 extern void prt_indicator_melee_brand(bool is_active);
 extern void prt_indicator_regen(bool is_active);
 extern void prt_indicator_dispersion(bool is_active);
-extern void prt_indicator_charm(bool is_active);
+extern void prt_indicator_charm_tstorm(bool is_active_charm, bool is_active_tstorm);
 extern void prt_indicator_pfe(bool is_active);
 extern void prt_indicator_shield(u32b flags);
 
