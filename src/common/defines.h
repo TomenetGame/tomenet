@@ -7333,8 +7333,8 @@
 
 #define DF1_WATER_RIVERS	0x00000100U	/* Allow multiple water streamers on a level */
 #define DF1_LAVA_RIVERS		0x00000200U	/* Allow multiple lava streamers on a level */
-#define DF1_CAVE		0x00000400U	/* Allow rooms */
-#define DF1_CAVERN		0x00000800U	/* Allow cavern rooms */
+#define DF1_CAVE		0x00000400U	/* Allow rooms -- todo: verify CAVE/CAVERN code */
+#define DF1_CAVERN		0x00000800U	/* Allow cavern rooms -- no effect? */
 
 #define DF1_NO_UP		0x00001000U	/* Disallow up stairs (but can recall anytime) */
 #define DF1_HOT_PLACE		0x00002000U	/* Corpses on ground and in pack decay quicker through heat -- not implemented -- todo: good idea for consumables going bad */
