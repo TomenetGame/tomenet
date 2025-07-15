@@ -6915,6 +6915,7 @@ int Receive_indicators(void) {
 int Receive_playerlist(void) {
 	int i, n, mode;
 	char ch, tmp_n[NAME_LEN], tmp[MAX_CHARS_WIDE];
+	char *stored_sbuf_ptr = rbuf.ptr;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &mode)) <= 0) return(n);
 
@@ -6930,7 +6931,10 @@ int Receive_playerlist(void) {
 		i = 0;
 		/* Receive complete list (initial login) */
 		while (TRUE) {
-			Packet_scanf(&rbuf, "%s%I", tmp_n, tmp);
+			n = Packet_scanf(&rbuf, "%s%I", tmp_n, tmp);
+			if (n == 0) goto rollback;
+			else if (n < 0) return(n);
+
 			if (!tmp_n[0]) break;
 
 			if (i < MAX_PLAYERS_LISTED) {
@@ -6943,7 +6947,10 @@ int Receive_playerlist(void) {
 		break;
 	case 2:
 		/* Add/update a specific player */
-		Packet_scanf(&rbuf, "%s%I", tmp_n, tmp);
+		n = Packet_scanf(&rbuf, "%s%I", tmp_n, tmp);
+		if (n == 0) goto rollback;
+		else if (n < 0) return(n);
+
 		for (i = 0; i < MAX_PLAYERS_LISTED; i++) {
 			/* update */
 			if (streq(playerlist_name[i], tmp_n)) {
@@ -6961,7 +6968,10 @@ int Receive_playerlist(void) {
 		break;
 	case 3:
 		/* Remove player */
-		Packet_scanf(&rbuf, "%s", tmp_n);
+		n = Packet_scanf(&rbuf, "%s", tmp_n);
+		if (n == 0) goto rollback;
+		else if (n < 0) return(n);
+
 		for (i = 0; i < NumPlayers; i++) {
 			if (strcmp(playerlist_name[i], tmp_n)) continue;
 
@@ -6979,8 +6989,12 @@ int Receive_playerlist(void) {
 	}
 
 	fix_playerlist();
-
 	return(1);
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	rbuf.ptr = stored_sbuf_ptr;
+	return(0);
 }
 
 int Receive_weather_colouring(void) {
