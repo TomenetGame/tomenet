@@ -6659,6 +6659,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		no_dam = TRUE;
 
+		if (m_ptr->questor_invincible) break; // Town Elder
 		/* Skip sleeping targets */
 		if (m_ptr->csleep) break;
 		/* Already charmed? - no effect then */
@@ -6680,7 +6681,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (r_ptr->flags1 & RF1_UNIQUE) ||
 		    (r_ptr->flags3 & RF3_UNDEAD) ||
 		    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
-		    (r_ptr->flags3 & RF3_NONLIVING)) {
+		    (r_ptr->flags3 & RF3_NONLIVING) ||
+		    (r_ptr->flags7 & RF7_NO_DEATH)) { //pft?
 			note = " is unaffected";
 			break;
 		}
