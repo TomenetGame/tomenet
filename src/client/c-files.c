@@ -2524,18 +2524,22 @@ void load_auto_inscriptions(cptr name) {
 		force = FALSE;
 
 		/* try to read a match */
-		if (ai_fgets(buf, AUTOINS_MATCH_LEN + 2, fp) == NULL) break; /* +1 to accomodate for prefixed '!' in older versions */
-		bufptr = buf;
-		if (*bufptr == '!' && version < 5) {
-			force = TRUE;
-			bufptr++;
+		if (version < 5) {
+			if (ai_fgets(buf, AUTOINS_MATCH_LEN + 1, fp) == NULL) break; /* +1 to accomodate for prefixed '!' in older versions */
+			bufptr = buf;
+			if (*bufptr == '!') {
+				force = TRUE;
+				bufptr++;
+			} else bufptr[AUTOINS_MATCH_LEN - 1] = 0;
+		} else {
+			if (ai_fgets(buf, AUTOINS_MATCH_LEN, fp) == NULL) break;
+			bufptr = buf;
 		}
-		bufptr[AUTOINS_MATCH_LEN - 1] = 0;
 
 		/* skip empty matches */
 		if (*bufptr == 0) {
 			/* try to read according tag */
-			if (ai_fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+			if (ai_fgets(buf, AUTOINS_TAG_LEN, fp) == NULL) break;
 			if (version < 5) {
 				/* try to read automation flags */
 				if (version >= 3) {
@@ -2571,7 +2575,7 @@ void load_auto_inscriptions(cptr name) {
 			if (strcmp(bufptr, auto_inscription_match[j])) continue;
 
 			/* try to read according tag */
-			if (ai_fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+			if (ai_fgets(buf, AUTOINS_TAG_LEN, fp) == NULL) break;
 			strcpy(auto_inscription_tag[j], buf);
 			auto_inscription_force[j] = force;
 
@@ -2656,7 +2660,7 @@ void load_auto_inscriptions(cptr name) {
 #endif
 
 		/* try to read according tag */
-		if (ai_fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+		if (ai_fgets(buf, AUTOINS_TAG_LEN, fp) == NULL) break;
 		strcpy(auto_inscription_tag[c_eff], buf);
 
 		if (version < 5) {
