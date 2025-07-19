@@ -1484,7 +1484,7 @@ void prt_indicator_shield(u32b flags) {
 	if (!flags) c_put_str(TERM_WHITE, "    ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
 	else {
 		/* Colour based on shield type? */
-		if (flags & IND_SHIELD1) /*p_ptr->tim_reflect*/ a = TERM_L_UMBER;
+		if (flags & IND_SHIELD1) /*p_ptr->tim_reflect*/ a = TERM_L_WHITE;
 		else if (flags & IND_SHIELD2) /*p_ptr->tim_lcage*/ a = TERM_L_BLUE;
 		else { // p_ptr->shield
 			if (flags & IND_SHIELD3) /*SHIELD_COUNTER*/ a = TERM_UMBER;
