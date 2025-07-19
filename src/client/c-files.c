@@ -2426,23 +2426,35 @@ void save_auto_inscriptions(cptr name) {
 	c_msg_format("Auto-inscriptions saved to file '%s'.", file_name);
 }
 
+/* Similar to fgets() reads at most len-1 characters and 0-terminates the string (as usual at position len-1 aka the len'th char). - C. Blue */
 static char *ai_fgets(char *buf, int len, FILE *fp) {
-	char tmp[MAX_CHARS_WIDE];
+	char tmp[1024];
 
 	while (TRUE) {
-		if (fgets(tmp, MAX_CHARS_WIDE, fp) == NULL) return(NULL);
+		if (fgets(tmp, 1024, fp) == NULL) return(NULL);
 		/* allow comments: Ignore all lines starting on '###' */
 		if (tmp[0] == '#' && tmp[1] == '#' && tmp[2] == '#') continue;
+		/* trim trailing newline from fgets() */
+		if (*tmp && tmp[strlen(tmp) - 1] == '\n') tmp[strlen(tmp) - 1] = 0;
 		break;
 	}
-	strncpy(buf, tmp, AUTOINS_MATCH_LEN + 2);
+
+	/* Paranoia edge case */
+	if (len <= 0) {
+		*buf = 0;
+		return(buf);
+	}
+
+	strncpy(buf, tmp, len);
+	/* Ensure proper string termination */
+	if (len <= strlen(buf)) buf[len - 1] = 0;
 	return(buf);
 }
 
 /* Load Auto-Inscription file (*.ins) - C. Blue */
 void load_auto_inscriptions(cptr name) {
 	FILE *fp;
-	char buf[1024], *bufptr, dummy[1024], *rptr;
+	char buf[1024], *bufptr;
 	char file_name[256], vtag[7];
 	int i, c, j, c_eff, version, vmaj, vmin, vpatch, tmp;
 	bool replaced, force;
@@ -2499,7 +2511,8 @@ void load_auto_inscriptions(cptr name) {
 		version = 5;
 
 #ifdef TEST_CLIENT
-	//c_msg_format("Read a v%d.%d.%d <%s><%c%c> .ins file, version %d.", vmaj, vmin, vpatch, vtag, vtag[0], vtag[1], version);
+	logprint(format("Read a v%d.%d.%d <%s><%c%c> .ins file, version %d.\n", vmaj, vmin, vpatch, vtag, vtag[0], vtag[1], version));
+	c_msg_format("Read a v%d.%d.%d <%s><%c%c> .ins file, version %d.", vmaj, vmin, vpatch, vtag, vtag[0], vtag[1], version);
 #endif
 
 	/* attempt to merge current auto-inscriptions, and give priority to those we want to load here */
@@ -2511,9 +2524,7 @@ void load_auto_inscriptions(cptr name) {
 		force = FALSE;
 
 		/* try to read a match */
-		if (ai_fgets(buf, AUTOINS_MATCH_LEN + 2, fp) == NULL) break;
-		if (!strchr(buf, 10)) rptr = ai_fgets(dummy, 1024, fp); /* read and discard overflow */
-		if (buf[0]) buf[strlen(buf) - 1] = 0;
+		if (ai_fgets(buf, AUTOINS_MATCH_LEN + 2, fp) == NULL) break; /* +1 to accomodate for prefixed '!' in older versions */
 		bufptr = buf;
 		if (*bufptr == '!' && version < 5) {
 			force = TRUE;
@@ -2525,8 +2536,6 @@ void load_auto_inscriptions(cptr name) {
 		if (*bufptr == 0) {
 			/* try to read according tag */
 			if (ai_fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
-			if (!strchr(buf, 10)) rptr = ai_fgets(dummy, 1024, fp); /* read and discard overflow */
-			if (buf[0]) buf[strlen(buf) - 1] = 0;
 			if (version < 5) {
 				/* try to read automation flags */
 				if (version >= 3) {
@@ -2563,8 +2572,6 @@ void load_auto_inscriptions(cptr name) {
 
 			/* try to read according tag */
 			if (ai_fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
-			if (!strchr(buf, 10)) rptr = ai_fgets(dummy, 1024, fp); /* read and discard overflow */
-			if (buf[0]) buf[strlen(buf) - 1] = 0;
 			strcpy(auto_inscription_tag[j], buf);
 			auto_inscription_force[j] = force;
 
@@ -2650,8 +2657,6 @@ void load_auto_inscriptions(cptr name) {
 
 		/* try to read according tag */
 		if (ai_fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
-		if (!strchr(buf, 10)) rptr = ai_fgets(dummy, 1024, fp); /* read and discard overflow */
-		if (buf[0]) buf[strlen(buf) - 1] = 0;
 		strcpy(auto_inscription_tag[c_eff], buf);
 
 		if (version < 5) {
@@ -2698,7 +2703,6 @@ void load_auto_inscriptions(cptr name) {
 		}
 
 		if (c >= 0) c++;
-		(void)rptr; /*stfu already, compiler O_O*/
 	}
 	//c_msg_print("Auto-inscriptions loaded/merged.");
 	fclose(fp);
