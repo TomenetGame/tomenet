@@ -5437,13 +5437,13 @@
 #define IND_REGEN	0x00000100U /* Active timed hp regeneration boost */
 #define IND_DISPERSION	0x00000200U /* Active dispersion (not timed, switchable!) */
 #define IND_CHARM	0x00000400U /* Active charm (not timed, switchable!). Note that 'Possess' is also just charm. */
-#define IND_SHIELD1	0x00000800U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
-#define IND_SHIELD2	0x00001000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
-#define IND_SHIELD3	0x00002000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
-#define IND_SHIELD4	0x00004000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
-#define IND_SHIELD5	0x00008000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
-#define IND_SHIELD6	0x00010000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
-#define IND_SHIELD7	0x00020000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) */
+#define IND_SHIELD1	0x00000800U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) - reflect */
+#define IND_SHIELD2	0x00001000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) - lightning cage */
+#define IND_SHIELD3	0x00002000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) - counter */
+#define IND_SHIELD4	0x00004000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) - fire */
+#define IND_SHIELD5	0x00008000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) - ice */
+#define IND_SHIELD6	0x00010000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) - plasma */
+#define IND_SHIELD7	0x00020000U /* Active timed (pseudo) reactive-shield spell (these are mutually exclusive) - default ('mystic shield') */
 #define IND_PFE		0x00040000U /* Active Protection from Evil */
 #define IND_TSTORM	0x00080000U /* Active thunderstorm spell */
 #define IND_CRIT	0x00100000U /* Active corrupted silent force spell */
